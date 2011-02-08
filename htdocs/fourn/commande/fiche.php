@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric	Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  *
  * This	program	is free	software; you can redistribute it and/or modify
  * it under	the	terms of the GNU General Public	License	as published by
@@ -153,12 +153,18 @@ if ($_POST['action'] ==	'addline' && $user->rights->fournisseur->commande->creer
 
 				$tva_tx	= get_default_tva($societe,$mysoc,$product->id);
 				$type = $product->type;
+				
+				// Local Taxes
+				$localtax1_tx= get_localtax($tva_tx, 1, $societe);
+	  			$localtax2_tx= get_localtax($tva_tx, 2, $societe);
 
 				$result=$commande->addline(
 				$desc,
 				$pu,
 				$qty,
 				$tva_tx,
+				$localtax1_tx,
+				$localtax2_tx,
 				$product->id,
 				$_POST['idprodfournprice'],
 				$product->fourn_ref,
@@ -179,7 +185,18 @@ if ($_POST['action'] ==	'addline' && $user->rights->fournisseur->commande->creer
 			$type=$_POST["type"];
 			$desc=$_POST['dp_desc'];
 			$tva_tx = price2num($_POST['tva_tx']);
-			if (! $_POST['dp_desc'])
+			
+			$societe='';
+			if ($commande->socid)
+			{
+				$societe=new Societe($db);
+				$societe->fetch($commande->socid);
+			}
+			// Local Taxes
+			$localtax1_tx= get_localtax($tva_tx, 1, $societe);
+	  		$localtax2_tx= get_localtax($tva_tx, 2, $societe);
+			
+	  		if (! $_POST['dp_desc'])
 			{
 				$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")).'</div>';
 			}
@@ -189,14 +206,14 @@ if ($_POST['action'] ==	'addline' && $user->rights->fournisseur->commande->creer
 				{
 					$price_base_type = 'HT';
 					$ht = price2num($_POST['pu']);
-					$result=$commande->addline($desc, $ht, $_POST['qty'], $tva_tx, 0, 0, '', $_POST['remise_percent'], $price_base_type, 0, $type);
+					$result=$commande->addline($desc, $ht, $_POST['qty'], $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $_POST['remise_percent'], $price_base_type, 0, $type);
 				}
 				else
 				{
 					$ttc = price2num($_POST['amountttc']);
 					$ht = $ttc / (1 + ($tauxtva / 100));
 					$price_base_type = 'HT';
-					$result=$commande->addline($desc, $ht, $_POST['qty'], $tva_tx, 0, 0, '', $_POST['remise_percent'], $price_base_type, $ttc, $type);
+					$result=$commande->addline($desc, $ht, $_POST['qty'], $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $_POST['remise_percent'], $price_base_type, $ttc, $type);
 				}
 			}
 		}
@@ -220,6 +237,8 @@ if ($_POST['action'] ==	'addline' && $user->rights->fournisseur->commande->creer
 			unset($_POST['np_desc']);
 			unset($_POST['pu']);
 			unset($_POST['tva_tx']);
+			unset($_POST['localtax1_tx']);
+			unset($_POST['localtax2_tx']);
 		}
 		else if (empty($mesg))
 		{
@@ -241,12 +260,20 @@ if ($_POST['action'] ==	'updateligne' && $user->rights->fournisseur->commande->c
 	$commande =	new	CommandeFournisseur($db,"",$id);
 	if ($commande->fetch($id) < 0) dol_print_error($db);
 
+	$societe=new Societe($db);
+	$societe->fetch($commande->socid);
+	
+	$localtax1_tx=get_localtax($_POST['tva_tx'],1,$societe);
+	$localtax2_tx=get_localtax($_POST['tva_tx'],2,$societe);
+	
 	$result	= $commande->updateline($_POST['elrowid'],
 	$_POST['eldesc'],
 	$_POST['pu'],
 	$_POST['qty'],
 	$_POST['remise_percent'],
 	$_POST['tva_tx'],
+	$localtax1_tx,
+	$localtax2_tx,
 	'HT',
 	0,
 	isset($_POST["type"])?$_POST["type"]:$product->type
@@ -950,13 +977,13 @@ if ($id > 0 || ! empty($ref))
 			if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
 			{
 				print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->pays_code).'</td>';
-				print '<td align="right">'.price($propal->total_localtax1).'</td>';
+				print '<td align="right">'.price($commande->total_localtax1).'</td>';
 				print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 			}
 			if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
 			{
 				print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->pays_code).'</td>';
-				print '<td align="right">'.price($propal->total_localtax2).'</td>';
+				print '<td align="right">'.price($commande->total_localtax2).'</td>';
 				print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 			}
 		}

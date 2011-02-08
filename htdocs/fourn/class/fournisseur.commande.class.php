@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
- * Copyright (C) 2010      Juanjo Menent         <jmenent@2byte.es>
+ * Copyright (C) 2010-2011 Juanjo Menent         <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,6 +59,8 @@ class CommandeFournisseur extends Commande
     var $date_commande;
     var $total_ht;
     var $total_tva;
+	var $total_localtax1;   // Total Local tax 1
+	var $total_localtax2;   // Total Local tax 2
     var $total_ttc;
     var $source;
     var $note;
@@ -100,6 +102,7 @@ class CommandeFournisseur extends Commande
 		global $conf;
 
 		$sql = "SELECT c.rowid, c.ref, c.date_creation, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva,";
+		$sql.= " c.localtax1, c.localtax2, ";
 		$sql.= " c.date_commande as date_commande, c.fk_projet as fk_project, c.remise_percent, c.source, c.fk_methode_commande,";
 		$sql.= " c.note, c.note_public, c.model_pdf,";
 		$sql.= " cm.libelle as methode_commande";
@@ -124,6 +127,8 @@ class CommandeFournisseur extends Commande
 			$this->user_author_id      = $obj->fk_user_author;
 			$this->total_ht            = $obj->total_ht;
 			$this->total_tva           = $obj->tva;
+			$this->total_localtax1	   = $obj->localtax1;
+			$this->total_localtax2	   = $obj->localtax2;
 			$this->total_ttc           = $obj->total_ttc;
 			$this->date_commande       = $this->db->jdate($obj->date_commande); // date a laquelle la commande a ete transmise
 			$this->date                = $this->db->jdate($obj->date_creation);
@@ -146,6 +151,7 @@ class CommandeFournisseur extends Commande
 			$sql = "SELECT l.rowid, l.ref as ref_fourn, l.fk_product, l.product_type, l.label, l.description,";
 			$sql.= " l.qty,";
 			$sql.= " l.tva_tx, l.remise_percent, l.subprice,";
+			$sql.= " l.localtax1_tx, l. localtax2_tx, l.total_localtax1, l.total_localtax2,";
 			$sql.= " l.total_ht, l.total_tva, l.total_ttc,";
 			$sql.= " p.rowid as product_id, p.ref, p.label as label, p.description as product_desc";
 			$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet	as l";
@@ -172,10 +178,14 @@ class CommandeFournisseur extends Commande
 					$line->description         = $objp->description;  // Description ligne
 					$line->qty                 = $objp->qty;
 					$line->tva_tx              = $objp->tva_tx;
+					$line->localtax1_tx		   = $objp->localtax1_tx;
+					$line->localtax2_tx		   = $objp->localtax2_tx;
 					$line->subprice            = $objp->subprice;
 					$line->remise_percent      = $objp->remise_percent;
 					$line->total_ht            = $objp->total_ht;
 					$line->total_tva           = $objp->total_tva;
+					$line->total_localtax1	   = $objp->total_localtax1;
+					$line->total_localtax2	   = $objp->total_localtax2;
 					$line->total_ttc           = $objp->total_ttc;
 					$line->product_type        = $objp->product_type;
 
@@ -789,23 +799,27 @@ class CommandeFournisseur extends Commande
 	}
 
 	/**
-	 *      \brief      Ajoute une ligne de commande
-	 *      \param      desc            	Description
-	 *      \param      pu              	Unit price
-	 *      \param      qty             	Quantity
-	 *      \param      txtva           	Taux tva
-	 *      \param      fk_product      	Id produit
-	 *      \param      remise_percent  	Remise
-	 *      \param      price_base_type		HT or TTC
-	 * 		\param		pu_ttc				Unit price TTC
-	 * 		\param		type				Type of line (0=product, 1=service)
-	 *      \return     int             	<=0 if KO, >0 if OK
+	 *	Add order line
+	 *	@param      desc            	Description
+	 *	@param      pu              	Unit price
+	 *	@param      qty             	Quantity
+	 *	@param      txtva           	Taux tva
+	 *	@param      txlocaltax1        	Localtax1 tax
+	 *  @param      txlocaltax2        	Localtax2 tax
+	 *	@param      fk_product      	Id produit
+	 *  @param      fk_prod_fourn_price	Id supplier price
+	 *  @param      fournref			Supplier reference
+	 *	@param      remise_percent  	Remise
+	 *	@param      price_base_type		HT or TTC
+	 *	@param		pu_ttc				Unit price TTC
+	 *	@param		type				Type of line (0=product, 1=service)
+	 *	@return     int             	<=0 if KO, >0 if OK
 	 */
-	function addline($desc, $pu_ht, $qty, $txtva, $fk_product=0, $fk_prod_fourn_price=0, $fourn_ref='', $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $type=0)
+	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $fk_prod_fourn_price=0, $fourn_ref='', $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $type=0)
 	{
 		global $langs,$mysoc;
 
-		dol_syslog("FournisseurCommande::addline $desc, $pu_ht, $qty, $txtva, $fk_product, $fk_prod_fourn_price, $fourn_ref, $remise_percent, $price_base_type, $pu_ttc, $type");
+		dol_syslog("FournisseurCommande::addline $desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2. $fk_product, $fk_prod_fourn_price, $fourn_ref, $remise_percent, $price_base_type, $pu_ttc, $type");
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
 		// Clean parameters
@@ -816,6 +830,8 @@ class CommandeFournisseur extends Commande
 		$pu_ht=price2num($pu_ht);
 		$pu_ttc=price2num($pu_ttc);
 		$txtva = price2num($txtva);
+		$txlocaltax1 = price2num($txlocaltax1);
+		$txlocaltax2 = price2num($txlocaltax2);
 		if ($price_base_type=='HT')
 		{
 			$pu=$pu_ht;
@@ -826,6 +842,8 @@ class CommandeFournisseur extends Commande
 		}
 		$desc=trim($desc);
 		if (empty($txtva)) $txtva=0;
+		if (empty($txlocaltax1)) $txlocaltax1=0;
+		if (empty($txlocaltax2)) $txlocaltax2=0;
 
 		// Check parameters
 		if ($qty < 1 && ! $fk_product)
@@ -883,10 +901,12 @@ class CommandeFournisseur extends Commande
 			// qty, pu, remise_percent et txtva
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, 0, 0, 0, $price_base_type, $info_bits);
+			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
+			$total_localtax1 = $tabprice[9];
+			$total_localtax2 = $tabprice[10];
 
 			$subprice = price2num($pu,'MU');
 
@@ -901,16 +921,18 @@ class CommandeFournisseur extends Commande
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseurdet";
 			$sql.= " (fk_commande,label, description,";
 			$sql.= " fk_product, product_type,";
-			$sql.= " qty, tva_tx, remise_percent, subprice, remise, ref,";
-			$sql.= " total_ht, total_tva, total_ttc";
+			$sql.= " qty, tva_tx, localtax1_tx, localtax2_tx, remise_percent, subprice, remise, ref,";
+			$sql.= " total_ht, total_tva, total_localtax1, total_localtax2, total_ttc";
 			$sql.= ")";
 			$sql.= " VALUES (".$this->id.", '" . addslashes($label) . "','" . addslashes($desc) . "',";
 			if ($fk_product) { $sql.= $fk_product.","; }
 			else { $sql.= "null,"; }
 			$sql.= "'".$product_type."',";
-			$sql.= "'".$qty."', ".$txtva.", ".$remise_percent.",'".price2num($subprice,'MU')."','".price2num($remise)."','".$ref."',";
+			$sql.= "'".$qty."', ".$txtva.", ".$txlocaltax1.", ".$txlocaltax2.", ".$remise_percent.",'".price2num($subprice,'MU')."','".price2num($remise)."','".$ref."',";
 			$sql.= "'".price2num($total_ht)."',";
 			$sql.= "'".price2num($total_tva)."',";
+			$sql.= "'".price2num($total_localtax1)."',";
+			$sql.= "'".price2num($total_localtax2)."',";
 			$sql.= "'".price2num($total_ttc)."'";
 			$sql.= ")";
 
@@ -1205,10 +1227,10 @@ class CommandeFournisseur extends Commande
 	  }
 
 	  $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseurdet";
-	  $sql .= " (fk_commande,label,description,fk_product, price, qty, tva_tx, remise_percent, subprice, remise, ref)";
+	  $sql .= " (fk_commande,label,description,fk_product, price, qty, tva_tx, localtax1_tx, localtax2_tx, remise_percent, subprice, remise, ref)";
 	  $sql .= " VALUES (".$idc.", '" . addslashes($libelle) . "','" . addslashes($comclient->lines[$i]->desc) . "'";
 	  $sql .= ",".$comclient->lines[$i]->fk_product.",'".price2num($comclient->lines[$i]->price)."'";
-	  $sql .= ", '".$comclient->lines[$i]->qty."', ".$comclient->lines[$i]->tva_tx.", ".$comclient->lines[$i]->remise_percent;
+	  $sql .= ", '".$comclient->lines[$i]->qty."', ".$comclient->lines[$i]->tva_tx.", ".$comclient->lines[$i]->localtax1_tx.", ".$comclient->lines[$i]->localtax2_tx.", ".$comclient->lines[$i]->remise_percent;
 	  $sql .= ", '".price2num($comclient->lines[$i]->subprice)."','0','".$ref."') ;";
 	  if ( $this->db->query( $sql) )
 	  {
@@ -1335,18 +1357,21 @@ class CommandeFournisseur extends Commande
 	}
 
 	/**
-	 *      \brief     	Update line
-	 *      \param     	rowid           Id de la ligne de facture
-	 *      \param     	desc            Description de la ligne
-	 *      \param     	pu              Prix unitaire
-	 *      \param     	qty             Quantity
-	 *      \param     	remise_percent  Pourcentage de remise de la ligne
-	 *      \param     	tva_tx          Taux TVA
-	 *	  	\param		info_bits		Miscellanous informations
-	 *	  	\param		type			Type of line (0=product, 1=service)
-	 *      \return    	int             < 0 si erreur, > 0 si ok
+	 *	Update line
+	 *	@param     	rowid           Id de la ligne de facture
+	 *	@param     	desc            Description de la ligne
+	 *	@param     	pu              Prix unitaire
+	 *	@param     	qty             Quantity
+	 *	@param     	remise_percent  Pourcentage de remise de la ligne
+	 *	@param     	tva_tx          Taux TVA
+	 *  @param     	localtax1_tx    Localtax1 tax
+	 *  @param     	localtax2_tx    Localtax2 tax
+	 *  @param     	price_base_type Type of price base
+	 *	@param		info_bits		Miscellanous informations
+	 *	@param		type			Type of line (0=product, 1=service)
+	 *	@return    	int             < 0 if error, > 0 if ok
 	 */
-	function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $txtva, $price_base_type='HT', $info_bits=0, $type=0)
+	function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type=0)
 	{
 		dol_syslog("CommandeFournisseur::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $txtva, $price_base_type, $info_bits, $type");
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
@@ -1356,11 +1381,21 @@ class CommandeFournisseur extends Commande
 			$this->db->begin();
 
 			// Clean parameters
+			if (empty($qty)) $qty=0;
+			if (empty($info_bits)) $info_bits=0;
+			if (empty($txtva)) $txtva=0;
+			if (empty($txlocaltax1)) $txlocaltax1=0;
+			if (empty($txlocaltax2)) $txlocaltax2=0;
+			if (empty($remise)) $remise=0;
+			if (empty($remise_percent)) $remise_percent=0;
+			
 			$remise_percent=price2num($remise_percent);
 			$qty=price2num($qty);
 			if (! $qty) $qty=1;
 			$pu = price2num($pu);
 			$txtva=price2num($txtva);
+			$txlocaltax1=price2num($txlocaltax1);
+			$txlocaltax2=price2num($txlocaltax2);
 
 			// Check parameters
 			if ($type < 0) return -1;
@@ -1369,10 +1404,12 @@ class CommandeFournisseur extends Commande
 			// qty, pu, remise_percent et txtva
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, 0, 0, $price_base_type, $info_bits);
+			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
+			$total_localtax1 = $tabprice[9];
+			$total_localtax2 = $tabprice[10];
 
 			// Anciens indicateurs: $price, $subprice, $remise (a ne plus utiliser)
 			$subprice = $pu;
@@ -1390,6 +1427,8 @@ class CommandeFournisseur extends Commande
 			$sql.= ",remise='".price2num($remise)."'";
 			$sql.= ",remise_percent='".price2num($remise_percent)."'";
 			$sql.= ",tva_tx='".price2num($txtva)."'";
+			$sql.= ",localtax1_tx='".price2num($txlocaltax1)."'";
+			$sql.= ",localtax2_tx='".price2num($txlocaltax2)."'";
 			$sql.= ",qty='".price2num($qty)."'";
 			if ($date_end) { $sql.= ",date_start='$date_end'"; }
 			else { $sql.=',date_start=null'; }
@@ -1398,6 +1437,8 @@ class CommandeFournisseur extends Commande
 			$sql.= ",info_bits='".$info_bits."'";
 			$sql.= ",total_ht='".price2num($total_ht)."'";
 			$sql.= ",total_tva='".price2num($total_tva)."'";
+			$sql.= ",total_localtax1='".price2num($total_localtax1)."'";
+			$sql.= ",total_localtax2='".price2num($total_localtax2)."'";
 			$sql.= ",total_ttc='".price2num($total_ttc)."'";
 			$sql.= ",product_type='".$type."'";
 			$sql.= " WHERE rowid = ".$rowid;
@@ -1558,6 +1599,8 @@ class CommandeFournisseurLigne extends OrderLine
 	// From llx_commandedet
 	var $qty;
 	var $tva_tx;
+	var $localtax1_tx;
+	var $localtax2_tx;
 	var $subprice;
 	var $remise_percent;
 	var $desc;          	// Description ligne
@@ -1565,6 +1608,8 @@ class CommandeFournisseurLigne extends OrderLine
 	var $product_type = 0;	// Type 0 = product, 1 = Service
 	var $total_ht;
 	var $total_tva;
+	var $total_localtax1;
+	var $total_localtax2;
 	var $total_ttc;
 
 	// From llx_product
@@ -1590,8 +1635,10 @@ class CommandeFournisseurLigne extends OrderLine
 	function fetch($rowid)
 	{
 		$sql = 'SELECT cd.rowid, cd.fk_commande, cd.fk_product, cd.product_type, cd.description, cd.qty, cd.tva_tx,';
+		$sql.= ' cd.localtax1_tx, cd.localtax2_tx,';
 		$sql.= ' cd.remise, cd.remise_percent, cd.subprice,';
 		$sql.= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_ttc,';
+		$sql.= ' cd.total_localtax1, cd.local_localtax2,';
 		$sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commande_fournisseurdet as cd';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON cd.fk_product = p.rowid';
@@ -1606,12 +1653,16 @@ class CommandeFournisseurLigne extends OrderLine
 			$this->qty              = $objp->qty;
 			$this->subprice         = $objp->subprice;
 			$this->tva_tx           = $objp->tva_tx;
+			$this->localtax1_tx		= $objp->localtax1_tx;
+			$this->localtax2_tx		= $objp->localtax2_tx;
 			$this->remise           = $objp->remise;
 			$this->remise_percent   = $objp->remise_percent;
 			$this->fk_product       = $objp->fk_product;
 			$this->info_bits        = $objp->info_bits;
 			$this->total_ht         = $objp->total_ht;
 			$this->total_tva        = $objp->total_tva;
+			$this->total_localtax1	= $objp->total_localtax1;
+			$this->total_localtax2	= $objp->total_localtax2;
 			$this->total_ttc        = $objp->total_ttc;
 			$this->product_type     = $objp->product_type;
 
@@ -1639,6 +1690,8 @@ class CommandeFournisseurLigne extends OrderLine
 		$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseurdet SET";
 		$sql.= " total_ht='".price2num($this->total_ht)."'";
 		$sql.= ",total_tva='".price2num($this->total_tva)."'";
+		$sql.= ",total_localtax1='".price2num($this->total_localtax1)."'";
+		$sql.= ",total_localtax2='".price2num($this->total_localtax2)."'";
 		$sql.= ",total_ttc='".price2num($this->total_ttc)."'";
 		$sql.= " WHERE rowid = ".$this->rowid;
 
