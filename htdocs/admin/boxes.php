@@ -443,7 +443,7 @@ $var=false;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="addconst">';
-print '<tr '.$bc[$var].' class=value><td>';
+print '<tr '.$bc[$var].'><td>';
 print $langs->trans("MaxNbOfLinesForBoxes")."</td>\n";
 print '<td>';
 print '<input type="text" class="flat" size="6" name="MAIN_BOXES_MAXLINES" value="'.$conf->global->MAIN_BOXES_MAXLINES.'">';

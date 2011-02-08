@@ -103,7 +103,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 print '<input type="hidden" name="constname" value="USER_MAIL_REQUIRED">';
-print "<tr $bc[$var] class=value><td>".$langs->trans("UserMailRequired").'</td><td>';
+print '<tr '.$bc[$var].'><td>'.$langs->trans("UserMailRequired").'</td><td>';
 print $form->selectyesno('constvalue',$conf->global->USER_MAIL_REQUIRED,1);
 print '</td><td align="center" width="80">';
 print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
