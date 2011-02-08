@@ -571,6 +571,7 @@ Source=Origen
 Prefix=Prefijo
 Before=Antes
 After=Después
+IPAddress=Dirección IP
 # Week day
 Day1=Lunes
 Day2=Martes
