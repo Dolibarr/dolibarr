@@ -8,6 +8,7 @@ BillsSuppliers=Facturas de proveedores
 BillsCustomersUnpaid=Facturas a clientes pendientes de cobro
 BillsCustomersUnpaidForCompany=Facturas a clientes pendientes de cobro de %s
 BillsSuppliersUnpaid=Facturas de proveedores pendientes de pago
+BillsSuppliersUnpaidForCompany=Facturas de proveedores pendientes de pago de %s
 BillsUnpaid=Pendientes de pago
 BillsLate=Retraso en el pago
 BillsStatistics=Estadísticas facturas a clientes
