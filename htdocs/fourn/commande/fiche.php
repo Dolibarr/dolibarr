@@ -130,6 +130,14 @@ if ($_POST['action'] ==	'addline' && $user->rights->fournisseur->commande->creer
 
 			$product = new ProductFournisseur($db);
 			$idprod=$product->get_buyprice($_POST['idprodfournprice'], $qty);
+			
+			//$societe='';
+			if ($commande->socid)
+			{
+				$societe=new Societe($db);
+				$societe->fetch($commande->socid);
+			}
+			
 			if ($idprod > 0)
 			{
 				$res=$product->fetch($idprod);
@@ -137,13 +145,6 @@ if ($_POST['action'] ==	'addline' && $user->rights->fournisseur->commande->creer
 				// cas special pour lequel on a les meme reference que le fournisseur
 				// $label = '['.$nv_prod->ref.'] - '. $nv_prod->libelle;
 				$label = $product->libelle;
-
-				$societe='';
-				if ($commande->socid)
-				{
-					$societe=new Societe($db);
-					$societe->fetch($commande->socid);
-				}
 
 				$desc = $product->description;
 				$desc.= $product->description && $_POST['np_desc'] ? "\n" : "";
@@ -186,12 +187,6 @@ if ($_POST['action'] ==	'addline' && $user->rights->fournisseur->commande->creer
 			$desc=$_POST['dp_desc'];
 			$tva_tx = price2num($_POST['tva_tx']);
 			
-			$societe='';
-			if ($commande->socid)
-			{
-				$societe=new Societe($db);
-				$societe->fetch($commande->socid);
-			}
 			// Local Taxes
 			$localtax1_tx= get_localtax($tva_tx, 1, $societe);
 	  		$localtax2_tx= get_localtax($tva_tx, 2, $societe);

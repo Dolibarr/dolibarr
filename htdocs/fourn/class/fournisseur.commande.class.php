@@ -823,10 +823,14 @@ class CommandeFournisseur extends Commande
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
 		// Clean parameters
-		$remise_percent=price2num($remise_percent);
-		$qty=price2num($qty);
 		if (! $qty) $qty=1;
 		if (! $info_bits) $info_bits=0;
+		if (empty($txtva)) $txtva=0;
+		if (empty($txlocaltax1)) $txlocaltax1=0;
+		if (empty($txlocaltax2)) $txlocaltax2=0;
+		
+		$remise_percent=price2num($remise_percent);
+		$qty=price2num($qty);
 		$pu_ht=price2num($pu_ht);
 		$pu_ttc=price2num($pu_ttc);
 		$txtva = price2num($txtva);
@@ -841,9 +845,7 @@ class CommandeFournisseur extends Commande
 			$pu=$pu_ttc;
 		}
 		$desc=trim($desc);
-		if (empty($txtva)) $txtva=0;
-		if (empty($txlocaltax1)) $txlocaltax1=0;
-		if (empty($txlocaltax2)) $txlocaltax2=0;
+		
 
 		// Check parameters
 		if ($qty < 1 && ! $fk_product)
