@@ -123,13 +123,13 @@ case "$1" in
 		echo "Copy icon file"
 		fileorig="/usr/share/dolibarr/doc/images/dolibarr.xpm"
 		target="/usr/share/pixmaps/"
-		cp -p $fileorig $target
+		cp -f $fileorig $target
 
 		echo "Install menu entry"
 		# This one is for Gnome ubuntu
 		fileorig="/usr/share/dolibarr/build/deb/dolibarr.desktop"
 		target="/usr/share/applications/"
-		cp -p $fileorig $target
+		cp -f $fileorig $target
 		# Not sure this one is usefull
 		if test -x /usr/bin/update-menus; then update-menus; fi
 		

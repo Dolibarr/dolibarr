@@ -1,6 +1,7 @@
 [Desktop Entry]
 # This file is used to add Ubuntu menu entry
 # It must be saved into directory /usr/share/applications
+Version=1.0
 Encoding=UTF-8
 Name=Dolibarr ERP/CRM
 GenericName=Dolibarr ERP/CRM
@@ -10,7 +11,8 @@ Exec=xdg-open http://localhost/dolibarr
 Icon=dolibarr
 Terminal=false
 Type=Application
-Category=Application;Office
+Category=Application;Office;
 StartupNotify=true
+InitialPreference=5
 #NoDisplay=true
 #OnlyShowIn=GNOME
