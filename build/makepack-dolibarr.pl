@@ -10,7 +10,7 @@ use Cwd;
 
 $PROJECT="dolibarr";
 $MAJOR="3";
-$MINOR="0";
+$MINOR="1";
 $BUILD="0-dev";		# Mettre x pour release, x-dev pour dev, x-beta pour beta, x-rc pour release candidate
 $RPMSUBVERSION="1";		# A incrementer au moment de la release
 
@@ -431,9 +431,16 @@ if ($nboftargetok) {
             close SPECFROM;
             close SPECTO;
 			print "Version set to $MAJOR.$MINOR.$newbuild\n";
+			
+	   		print "Create directory $BUILDROOT/$PROJECT/usr/share/applications\n";
+    		$ret=`mkdir -p "$BUILDROOT/$PROJECT/usr/share/applications"`;
+    		print "Copy desktop file into $BUILDROOT/$PROJECT/usr/share/applications/dolibarr.desktop\n";
+    		$ret=`cp "$SOURCE/build/deb/dolibarr.desktop" "$BUILDROOT/$PROJECT/usr/share/applications/dolibarr.desktop"`;
 
-    		print "Create directory $BUILDROOT/$PROJECT/usr/share/$PROJECT/documents\n";
-    		$ret=`mkdir -p "$BUILDROOT/$PROJECT/usr/share/$PROJECT/documents"`;
+	   		print "Create directory $BUILDROOT/$PROJECT/usr/share/pixmaps\n";
+    		$ret=`mkdir -p "$BUILDROOT/$PROJECT/usr/share/pixmaps"`;
+    		print "Copy pixmap file into $BUILDROOT/$PROJECT/usr/share/pixmaps/dolibarr.xpm\n";
+    		$ret=`cp "$SOURCE/doc/images/dolibarr.xpm" "$BUILDROOT/$PROJECT/usr/share/pixmaps/dolibarr.xpm"`;
 
     		#print "Create directory $BUILDROOT/$PROJECT/etc/$PROJECT\n";
     		#$ret=`mkdir -p "$BUILDROOT/$PROJECT/etc/$PROJECT"`;
@@ -449,6 +456,9 @@ if ($nboftargetok) {
 
     		#print "Copy apache conf file into $BUILDROOT/$PROJECT/etc/$PROJECT\n";
     		#$ret=`cp "$SOURCE/build/deb/apache.conf" "$BUILDROOT/$PROJECT/etc/$PROJECT"`;
+
+    		print "Create directory $BUILDROOT/$PROJECT/usr/share/$PROJECT/documents\n";
+    		$ret=`mkdir -p "$BUILDROOT/$PROJECT/usr/share/$PROJECT/documents"`;
 
 			print "Set permissions/owners on files/dir\n";
 		    $ret=`chown -R root.root $BUILDROOT/$PROJECT`;
