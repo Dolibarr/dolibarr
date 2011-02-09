@@ -57,8 +57,8 @@ class Project extends CommonObject
 	var $statuts;
 
 	/**
-	 *    \brief  Constructeur de la classe
-	 *    \param  DB          handler acces base de donnees
+	 *    Constructor of class
+	 *    @param  DB          Database access handler
 	 */
 	function Project($DB)
 	{
@@ -70,12 +70,15 @@ class Project extends CommonObject
 	}
 
 	/**
-	 *    \brief      Create a project into database
-	 *    \param      user        Id utilisateur qui cree
-	 *    \return     int         <0 si ko, id du projet cree si ok
+	 *    Create a project into database
+	 *    @param      user        User making creation
+	 *    @return     int         <0 if KO, id of created project if OK
 	 */
 	function create($user, $notrigger=0)
 	{
+	    global $conf;
+
+		$error=0;
 		$ret=0;
 
 		// Check parameters
@@ -86,12 +89,15 @@ class Project extends CommonObject
 			return -1;
 		}
 
+		$this->db->begin();
+
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet (";
 		$sql.= "ref";
 		$sql.= ", title";
 		$sql.= ", description";
 		$sql.= ", fk_soc";
 		$sql.= ", fk_user_creat";
+		$sql.= ", fk_statut";
 		$sql.= ", public";
 		$sql.= ", datec";
 		$sql.= ", dateo";
@@ -102,6 +108,7 @@ class Project extends CommonObject
 		$sql.= ", '".addslashes($this->description)."'";
 		$sql.= ", ".($this->socid > 0?$this->socid:"null");
 		$sql.= ", ".$user->id;
+        $sql.= ", 0";
 		$sql.= ", ".($this->public?1:0);
 		$sql.= ", ".($this->datec!=''?$this->db->idate($this->datec):'null');
 		$sql.= ", ".($this->dateo!=''?$this->db->idate($this->dateo):'null');
@@ -127,12 +134,28 @@ class Project extends CommonObject
 		}
 		else
 		{
-			$this->error=$this->db->lasterror();
-			dol_syslog("Project::Create error -2 ".$this->error, LOG_ERR);
-			$ret = -2;
+            $this->error=$this->db->lasterror();
+            $this->errno=$this->db->lasterrno();
+            dol_syslog("Project::Create error -2 ".$this->error, LOG_ERR);
+			$error++;
 		}
 
-		return $ret;
+        if (! $error && ! empty($conf->global->MAIN_DISABLEDRAFTSTATUS))
+		{
+            $res=$this->setValid($user);
+            if ($res < 0) $error++;
+		}
+
+		if (! $error)
+		{
+            $this->db->commit();
+            return $ret;
+		}
+		else
+		{
+            $this->db->rollback();
+            return -1;
+		}
 	}
 
 
@@ -350,8 +373,9 @@ class Project extends CommonObject
 	}
 
 	/**
-	 *    \brief    Supprime le projet dans la base
-	 *    \param    Utilisateur
+	 *    Delete a project from database
+	 *    @param       user            User
+	 *    @param       notrigger       Disable triggers
 	 */
 	function delete($user, $notrigger=0)
 	{
@@ -433,11 +457,11 @@ class Project extends CommonObject
 	}
 
 	/**
-	 *		\brief		Validate a project
-	 *		\param		user		User that validate
-	 *		\return		int			<0 if KO, >0 if OK
+	 *		Validate a project
+	 *		@param		user		User that validate
+	 *		@return		int			<0 if KO, >0 if OK
 	 */
-	function setValid($user, $outputdir)
+	function setValid($user)
 	{
 		global $langs, $conf;
 
@@ -485,11 +509,11 @@ class Project extends CommonObject
 	}
 
 	/**
-	 *		\brief		Close a project
-	 *		\param		user		User that validate
-	 *		\return		int			<0 if KO, >0 if OK
+	 *		Close a project
+	 *		@param		user		User that validate
+	 *		@return		int			<0 if KO, >0 if OK
 	 */
-	function setClose($user, $outputdir)
+	function setClose($user)
 	{
 		global $langs, $conf;
 

@@ -70,6 +70,10 @@ if ($_POST["action"] == 'add' && $user->rights->projet->creer)
 
     if (! $error)
     {
+        $error=0;
+
+        $db->begin();
+
         $project = new Project($db);
 
         $project->ref             = $_POST["ref"];
@@ -86,14 +90,31 @@ if ($_POST["action"] == 'add' && $user->rights->projet->creer)
         {
             // Add myself as project leader
             $result = $project->add_contact($user->id, 'PROJECTLEADER', 'internal');
+            if ($result < 0)
+            {
+                $langs->load("errors");
+                $mesg='<div class="error">'.$langs->trans($project->error).'</div>';
+                $error++;
+            }
+        }
+        else
+        {
+            $langs->load("errors");
+            $mesg='<div class="error">'.$langs->trans($project->error).'</div>';
+            $error++;
+        }
+
+        if (! $error)
+        {
+            $db->commit();
 
             Header("Location:fiche.php?id=".$project->id);
             exit;
         }
         else
         {
-            $langs->load("errors");
-            $mesg='<div class="error">'.$langs->trans($project->error).'</div>';
+            $db->rollback();
+
             $_GET["action"] = 'create';
         }
     }
@@ -177,7 +198,7 @@ if (GETPOST('action') == 'confirm_validate' && GETPOST('confirm') == 'yes')
     $project = new Project($db);
     $project->fetch(GETPOST("id"));
 
-    $result = $project->setValid($user, $conf->projet->outputdir);
+    $result = $project->setValid($user);
     if ($result <= 0)
     {
         $mesg='<div class="error">'.$project->error.'</div>';
@@ -188,7 +209,7 @@ if (GETPOST('action') == 'confirm_close' && GETPOST('confirm') == 'yes')
 {
     $project = new Project($db);
     $project->fetch(GETPOST("id"));
-    $result = $project->setClose($user, $conf->projet->outputdir);
+    $result = $project->setClose($user);
     if ($result <= 0)
     {
         $mesg='<div class="error">'.$project->error.'</div>';
@@ -199,7 +220,7 @@ if (GETPOST('action') == 'confirm_reopen' && GETPOST('confirm') == 'yes')
 {
     $project = new Project($db);
     $project->fetch(GETPOST("id"));
-    $result = $project->setValid($user, $conf->projet->outputdir);
+    $result = $project->setValid($user);
     if ($result <= 0)
     {
         $mesg='<div class="error">'.$project->error.'</div>';

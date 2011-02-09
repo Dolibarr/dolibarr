@@ -113,10 +113,10 @@ class RemiseCheque extends CommonObject
 	}
 
 	/**
-	 *	\brief  	Create a receipt to send cheques
-	 *	\param  	user 			Utilisateur qui effectue l'operation
-	 *	\param  	account_id 		Compte bancaire concerne
-	 *	\return		int				<0 if KO, >0 if OK
+	 *	Create a receipt to send cheques
+	 *	@param  	user 			Utilisateur qui effectue l'operation
+	 *	@param  	account_id 		Compte bancaire concerne
+	 *	@return		int				<0 if KO, >0 if OK
 	 */
 	function create($user, $account_id)
 	{
@@ -125,6 +125,8 @@ class RemiseCheque extends CommonObject
 		$this->errno = 0;
 		$this->id = 0;
 
+		$now=dol_now();
+
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bordereau_cheque (";
@@ -132,15 +134,17 @@ class RemiseCheque extends CommonObject
 		$sql.= ", date_bordereau";
 		$sql.= ", fk_user_author";
 		$sql.= ", fk_bank_account";
+		$sql.= ", statut";
 		$sql.= ", amount";
 		$sql.= ", number";
 		$sql.= ", entity";
 		$sql.= ", nbcheque";
 		$sql.= ") VALUES (";
-		$sql.= $this->db->idate(mktime());
-		$sql.= ", ".$this->db->idate(mktime());
+		$sql.= $this->db->idate($now);
+		$sql.= ", ".$this->db->idate($now);
 		$sql.= ", ".$user->id;
 		$sql.= ", ".$account_id;
+		$sql.= ", 0";
 		$sql.= ", 0";
 		$sql.= ", 0";
 		$sql.= ", ".$conf->entity;
@@ -155,7 +159,7 @@ class RemiseCheque extends CommonObject
 			if ($this->id == 0)
 			{
 				$this->errno = -1024;
-				dol_syslog("Remisecheque::Create Erreur Lecture ID ($this->errno)", LOG_ERR);
+				dol_syslog("Remisecheque::Create Error read id ".$this->errno, LOG_ERR);
 			}
 
 			if ($this->id > 0 && $this->errno == 0)
@@ -169,7 +173,7 @@ class RemiseCheque extends CommonObject
 				if (! $resql)
 				{
 					$this->errno = -1025;
-					dol_syslog("RemiseCheque::Create ERREUR UPDATE ($this->errno)", LOG_ERR);
+					dol_syslog("RemiseCheque::Create Error update ".$this->errno, LOG_ERR);
 				}
 			}
 
@@ -197,7 +201,7 @@ class RemiseCheque extends CommonObject
 				else
 				{
 					$this->errno = -1026;
-					dol_syslog("RemiseCheque::Create Error ($this->errno)", LOG_ERR);
+					dol_syslog("RemiseCheque::Create Error ".$this->errno, LOG_ERR);
 				}
 			}
 
@@ -214,7 +218,7 @@ class RemiseCheque extends CommonObject
 					if (!$resql)
 					{
 						$this->errno = -18;
-						dol_syslog("RemiseCheque::Create Error update bank ($this->errno)", LOG_ERR);
+						dol_syslog("RemiseCheque::Create Error update bank ".$this->errno, LOG_ERR);
 					}
 				}
 			}
@@ -224,31 +228,34 @@ class RemiseCheque extends CommonObject
 				if ($this->updateAmount() <> 0)
 				{
 					$this->errno = -1027;
-					dol_syslog("RemiseCheque::Create ERREUR ($this->errno)");
+					dol_syslog("RemiseCheque::Create Error update amount ".$this->errno, LOG_ERR);
 				}
 			}
 		}
 		else
 		{
-			$result = -1;
+			$this->errno = -1;
 			$this->error=$this->db->lasterror();
 			$this->errno=$this->db->lasterrno();
-			dol_syslog("RemiseCheque::Create Erreur $result INSERT Mysql");
+			dol_syslog("RemiseCheque::Create Error ".$this->error, LOG_ERR);
 		}
 
+	    if (! $this->errno && ! empty($conf->global->MAIN_DISABLEDRAFTSTATUS))
+        {
+            $res=$this->validate($user);
+            //if ($res < 0) $error++;
+        }
 
-		if ($this->errno == 0)
-		{
-			$this->db->commit();
-			return $this->id;
-		}
-		else
-		{
-			$this->db->rollback();
-			dol_syslog("RemiseCheque::Create ROLLBACK ($this->errno)");
-			return $this->errno;
-		}
-
+        if (! $this->errno)
+        {
+            $this->db->commit();
+            return $this->id;
+        }
+        else
+        {
+            $this->db->rollback();
+            return $this->errno;
+        }
 	}
 
 	/**
@@ -306,8 +313,9 @@ class RemiseCheque extends CommonObject
 	}
 
 	/**
-	 *  Validate receipt
-	 *  @param  user 	User
+	 *  Validate a receipt
+	 *  @param     user 	User
+	 *  @return    int      <0 if KO, >0 if OK
 	 */
 	function validate($user)
 	{
@@ -317,13 +325,12 @@ class RemiseCheque extends CommonObject
 
 		$this->db->begin();
 
-		$num=$this->getNextNumber();
+		$numref=$this->getNextNumber();
 
-		if ($this->errno == 0 && $num)
+		if ($this->errno == 0 && $numref)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
-			$sql.= " SET statut = 1";
-			$sql.= ", number = '".$num."'";
+			$sql.= " SET statut = 1, number = '".$numref."'";
 			$sql.= " WHERE rowid = ".$this->id;
 			$sql.= " AND entity = ".$conf->entity;
 			$sql.= " AND statut = 0";
@@ -336,6 +343,7 @@ class RemiseCheque extends CommonObject
 
 				if ($num == 1)
 				{
+				    $this->number = $numref;
 					$this->statut = 1;
 				}
 				else
@@ -355,14 +363,14 @@ class RemiseCheque extends CommonObject
 		if ($this->errno == 0)
 		{
 			$this->db->commit();
+			return 1;
 		}
 		else
 		{
 			$this->db->rollback();
 			dol_syslog("RemiseCheque::Validate ".$this->errno, LOG_ERR);
+            return $this->errno;
 		}
-
-		return $this->errno;
 	}
 
 
@@ -446,10 +454,10 @@ class RemiseCheque extends CommonObject
 
 
 	/**
-	 *	\brief  	Build document
-	 *	\param 		model 			Model name
-	 *	\param 		outputlangs		Object langs
-	 * 	\return  	int        		<0 if KO, >0 if OK
+	 *	Build document
+	 *	@param 		model 			Model name
+	 *	@param 		outputlangs		Object langs
+	 * 	@return  	int        		<0 if KO, >0 if OK
 	 */
 	function generatePdf($model='blochet', $outputlangs)
 	{
@@ -457,7 +465,7 @@ class RemiseCheque extends CommonObject
 
 		if (empty($model)) $model='blochet';
 
-		dol_syslog("RemiseCheque::generatePdf model=".$model, LOG_DEBUG);
+		dol_syslog("RemiseCheque::generatePdf model=".$model." id=".$this->id, LOG_DEBUG);
 
 		$dir=DOL_DOCUMENT_ROOT ."/includes/modules/cheque/pdf/";
 
@@ -469,7 +477,7 @@ class RemiseCheque extends CommonObject
 			require_once($dir.$file);
 
 			$classname='BordereauCheque'.ucfirst($model);
-			$pdf = new $classname($db);
+			$docmodel = new $classname($db);
 
 			$sql = "SELECT b.banque, b.emetteur, b.amount, b.num_chq";
 			$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
@@ -488,27 +496,27 @@ class RemiseCheque extends CommonObject
 				$i = 0;
 				while ( $objp = $this->db->fetch_object($result) )
 				{
-					$pdf->lines[$i]->bank_chq = $objp->banque;
-					$pdf->lines[$i]->emetteur_chq = $objp->emetteur;
-					$pdf->lines[$i]->amount_chq = $objp->amount;
-					$pdf->lines[$i]->num_chq = $objp->num_chq;
+					$docmodel->lines[$i]->bank_chq = $objp->banque;
+					$docmodel->lines[$i]->emetteur_chq = $objp->emetteur;
+					$docmodel->lines[$i]->amount_chq = $objp->amount;
+					$docmodel->lines[$i]->num_chq = $objp->num_chq;
 					$i++;
 				}
 			}
-			$pdf->nbcheque = $this->nbcheque;
-			$pdf->number = $this->number;
-			$pdf->amount = $this->amount;
-			$pdf->date   = $this->date_bordereau;
+			$docmodel->nbcheque = $this->nbcheque;
+			$docmodel->number = $this->number;
+			$docmodel->amount = $this->amount;
+			$docmodel->date   = $this->date_bordereau;
 
 			$account = new Account($this->db);
 			$account->fetch($this->account_id);
 
-			$pdf->account = &$account;
+			$docmodel->account = &$account;
 
 			// We save charset_output to restore it because write_file can change it if needed for
 			// output format that does not support UTF8.
 			$sav_charset_output=$outputlangs->charset_output;
-			$result=$pdf->write_file($conf->banque->dir_output.'/bordereau', $this->number, $outputlangs);
+			$result=$docmodel->write_file($conf->banque->dir_output.'/bordereau', $this->number, $outputlangs);
 			if ($result > 0)
 			{
 				$outputlangs->charset_output=$sav_charset_output;
@@ -518,7 +526,7 @@ class RemiseCheque extends CommonObject
 			{
 				$outputlangs->charset_output=$sav_charset_output;
 				dol_syslog("Error");
-				dol_print_error($db,$pdf->error);
+				dol_print_error($db,$docmodel->error);
 				return 0;
 			}
 		}

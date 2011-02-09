@@ -20,8 +20,8 @@
 
 /**
  *	\file       htdocs/compta/paiement/cheque/fiche.php
- *	\ingroup    facture
- *	\brief      Tab cheque deposit
+ *	\ingroup    bank, invoice
+ *	\brief      Page for cheque deposits
  *	\version    $Id$
  */
 
@@ -35,8 +35,8 @@ $langs->load('bills');
 $langs->load('banks');
 $langs->load('companies');
 
-$id = isset($_REQUEST["id"])?$_REQUEST["id"]:'';
-$ref= isset($_REQUEST["ref"])?$_REQUEST["ref"]:'';
+$id = GETPOST("id");
+$ref= GETPOST("ref");
 
 // Security check
 $fieldid = isset($_GET["ref"])?'number':'rowid';
@@ -88,8 +88,24 @@ if ($_GET['action'] == 'create' && $_GET["accountid"] > 0 && $user->rights->banq
 	$result = $remisecheque->create($user, $_GET["accountid"]);
 	if ($result > 0)
 	{
-		Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$remisecheque->id);
-		exit;
+        if ($remisecheque->statut == 1)     // If statut is validated, we build doc
+        {
+            $remisecheque->fetch($remisecheque->id);    // To force to reload all properties in correct property name
+    	    // Define output language
+    	    $outputlangs = $langs;
+            $newlang='';
+            if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+            //if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+            if (! empty($newlang))
+            {
+                $outputlangs = new Translate("",$conf);
+                $outputlangs->setDefaultLang($newlang);
+            }
+            $result = $remisecheque->generatePdf($_POST["model"], $outputlangs);
+        }
+
+        Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$remisecheque->id);
+        exit;
 	}
 	else
 	{
@@ -136,7 +152,19 @@ if ($_REQUEST['action'] == 'confirm_valide' && $_REQUEST['confirm'] == 'yes' && 
 	$result = $remisecheque->validate($user);
 	if ($result >= 0)
 	{
-		Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$remisecheque->id);
+        // Define output language
+        $outputlangs = $langs;
+        $newlang='';
+        if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+        //if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+        if (! empty($newlang))
+        {
+            $outputlangs = new Translate("",$conf);
+            $outputlangs->setDefaultLang($newlang);
+        }
+        $result = $remisecheque->generatePdf($_POST["model"], $outputlangs);
+
+        Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$remisecheque->id);
 		exit;
 	}
 	else
@@ -155,13 +183,15 @@ if ($_POST['action'] == 'builddoc' && $user->rights->banque->cheque)
 		$remisecheque->setDocModel($user, $_REQUEST['model']);
 	}*/
 
-	$outputlangs = $langs;
-	if (! empty($_REQUEST['lang_id']))
-	{
-		$outputlangs = new Translate("",$conf);
-		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-	}
-
+    $outputlangs = $langs;
+    $newlang='';
+    if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+    //if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+    if (! empty($newlang))
+    {
+        $outputlangs = new Translate("",$conf);
+        $outputlangs->setDefaultLang($newlang);
+    }
 	$result = $remisecheque->generatePdf($_POST["model"], $outputlangs);
 	if ($result <= 0)
 	{
