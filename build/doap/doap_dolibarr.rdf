@@ -48,8 +48,8 @@
 	<release>
 		<Version>
 			<name>stable</name>
-			<created>2010-08-01</created>
-			<revision>2.9.0</revision>
+			<created>2011-02-09</created>
+			<revision>3.0.0</revision>
 		</Version>
 	</release>
 
