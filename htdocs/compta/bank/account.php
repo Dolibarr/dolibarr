@@ -92,7 +92,8 @@ if ($_POST["action"] == 'add' && $account && ! isset($_POST["cancel"]) && $user-
 
     if (! $mesg)
     {
-        $acct=new Account($db,$account);
+        $acct=new Account($db);
+        $acct->fetch($account);
         $insertid = $acct->addline($dateop, $operation, $label, $amount, $num_chq, $cat1, $user);
         if ($insertid > 0)
         {
