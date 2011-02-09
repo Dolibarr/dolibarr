@@ -261,21 +261,30 @@ class ActionsCardCommon
             $this->tpl['display_rib']	= $this->object->display_rib();
 
             // Sales representatives
-            // TODO move in business class
-            $sql = "SELECT count(sc.rowid) as nb";
-            $sql.= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-            $sql.= " WHERE sc.fk_soc =".$this->object->id;
-            $resql = $this->db->query($sql);
-            if ($resql)
+            $this->tpl['sales_representatives'] = '';
+            $listsalesrepresentatives=$this->object->getSalesRepresentatives($user);
+            $nbofsalesrepresentative=sizeof($listsalesrepresentatives);
+            if ($nbofsalesrepresentative > 3)   // We print only number
             {
-                $num = $this->db->num_rows($resql);
-                $obj = $this->db->fetch_object($resql);
-                $this->tpl['sales_representatives'] = $obj->nb?($obj->nb):$langs->trans("NoSalesRepresentativeAffected");
+            	$this->tpl['sales_representatives'].= '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$this->object->id.'">';
+            	$this->tpl['sales_representatives'].= $nbofsalesrepresentative;
+            	$this->tpl['sales_representatives'].= '</a>';
             }
-            else
+            else if ($nbofsalesrepresentative > 0)
             {
-                dol_print_error($this->db);
+            	$userstatic=new User($db);
+            	$i=0;
+            	foreach($listsalesrepresentatives as $val)
+            	{
+            		$userstatic->id=$val['id'];
+            		$userstatic->nom=$val['name'];
+            		$userstatic->prenom=$val['firstname'];
+            		$this->tpl['sales_representatives'].= $userstatic->getNomUrl(1);
+            		$i++;
+            		if ($i < $nbofsalesrepresentative) $this->tpl['sales_representatives'].= ', ';
+            	}
             }
+            else $this->tpl['sales_representatives'].= $langs->trans("NoSalesRepresentativeAffected");
 
             // Linked member
             if ($conf->adherent->enabled)
