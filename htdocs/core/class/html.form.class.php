@@ -706,9 +706,16 @@ class Form
             $i = 0;
             if ($num)
             {
+                $contactstatic=new Contact($this->db);
+
                 while ($i < $num)
                 {
                     $obj = $this->db->fetch_object($resql);
+
+                    $contactstatic->id=$obj->rowid;
+                    $contactstatic->name=$obj->name;
+                    $contactstatic->firstname=$obj->firstname;
+
                     if ($htmlname != 'none')
                     {
                         $disabled=0;
@@ -717,18 +724,25 @@ class Form
                         {
                             print '<option value="'.$obj->rowid.'"';
                             if ($disabled) print ' disabled="true"';
-                            print ' selected="selected">'.$obj->name.' '.$obj->firstname.'</option>';
+                            print ' selected="selected">';
+                            print $contactstatic->getFullName();
+                            print '</option>';
                         }
                         else
                         {
                             print '<option value="'.$obj->rowid.'"';
                             if ($disabled) print ' disabled="true"';
-                            print '>'.$obj->name.' '.$obj->firstname.'</option>';
+                            print '>';
+                            print $contactstatic->getFullName();
+                            print '</option>';
                         }
                     }
                     else
                     {
-                        if ($selected == $obj->rowid) print $obj->name.' '.$obj->firstname;
+                        if ($selected == $obj->rowid)
+                        {
+                            print $contactstatic->getFullName();
+                        }
                     }
                     $i++;
                 }
@@ -803,9 +817,16 @@ class Form
             $i = 0;
             if ($num)
             {
+                $userstatic=new User($this->db);
+
                 while ($i < $num)
                 {
                     $obj = $this->db->fetch_object($resql);
+
+                    $userstatic->id=$obj->rowid;
+                    $userstatic->nom=$obj->name;
+                    $userstatic->prenom=$obj->firstname;
+
                     $disableline=0;
                     if (is_array($enableonly) && sizeof($enableonly) && ! in_array($obj->rowid,$enableonly)) $disableline=1;
 
@@ -821,7 +842,8 @@ class Form
                         if ($disableline) $out.= ' disabled="true"';
                         $out.= '>';
                     }
-                    $out.= $obj->name.($obj->name && $obj->firstname?' ':'').$obj->firstname;
+                    $out.= $userstatic->getFullName();
+
                     //if ($obj->admin) $out.= ' *';
                     if ($conf->global->MAIN_SHOW_LOGIN) $out.= ' ('.$obj->login.')';
                     $out.= '</option>';
