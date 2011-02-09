@@ -9,7 +9,7 @@ Section: web
 Priority: optional
 Recommends: mozilla | netscape
 Homepage: http://www.dolibarr.org
-Description: Dolibarr ERP/CRM
+Description: Dolibarr ERP & CRM
  Dolibarr ERP/CRM is an open source/free software for
  small and medium companies, foundations or freelances. It includes
  different features for Enterprise Resource Planning (ERP) and Customer
