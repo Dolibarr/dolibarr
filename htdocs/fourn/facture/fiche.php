@@ -307,36 +307,44 @@ if ($_POST['action'] == 'add' && $user->rights->fournisseur->facture->creer)
 		else
 		{
 	        $facid = $facfou->create($user);
-
-			for ($i = 1 ; $i < 9 ; $i++)
+	        if ($facid < 0)
             {
-                $label = $_POST['label'.$i];
-                $amountht  = price2num($_POST['amount'.$i]);
-                $amountttc = price2num($_POST['amountttc'.$i]);
-                $tauxtva   = price2num($_POST['tauxtva'.$i]);
-                $qty = $_POST['qty'.$i];
-                $fk_product = $_POST['fk_product'.$i];
-                if ($label)
+                $error++;
+            }
+
+            if (! $error)
+            {
+    			for ($i = 1 ; $i < 9 ; $i++)
                 {
-                    if ($amountht)
+                    $label = $_POST['label'.$i];
+                    $amountht  = price2num($_POST['amount'.$i]);
+                    $amountttc = price2num($_POST['amountttc'.$i]);
+                    $tauxtva   = price2num($_POST['tauxtva'.$i]);
+                    $qty = $_POST['qty'.$i];
+                    $fk_product = $_POST['fk_product'.$i];
+                    if ($label)
                     {
-                        $price_base='HT'; $amount=$amountht;
+                        if ($amountht)
+                        {
+                            $price_base='HT'; $amount=$amountht;
+                        }
+                        else
+                        {
+                            $price_base='TTC'; $amount=$amountttc;
+                        }
+                        $atleastoneline=1;
+                        $ret=$facfou->addline($label, $amount, $tauxtva, $qty, $fk_product, $remise_percent, '', '', '', 0, $price_base);
+                        if ($ret < 0) $error++;
                     }
-                    else
-                    {
-                        $price_base='TTC'; $amount=$amountttc;
-                    }
-                    $atleastoneline=1;
-                    $ret=$facfou->addline($label, $amount, $tauxtva, $qty, $fk_product, $remise_percent, '', '', '', 0, $price_base);
-                    if ($ret < 0) $error++;
                 }
             }
         }
 
         if ($error)
         {
+            $langs->load("errors");
             $db->rollback();
-            $mesg='<div class="error">'.$facfou->error.'</div>';
+            $mesg='<div class="error">'.$langs->trans($facfou->error).'</div>';
             $_GET['action']='create';
             $_GET['socid']=$_POST['socid'];
         }
