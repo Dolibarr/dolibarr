@@ -95,6 +95,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$outputlangs->load("companies");
 		$outputlangs->load("bills");
 		$outputlangs->load("products");
+        $outputlangs->load("compta");
 
 		$dir = $_dir . "/".get_exdir($number,2,1).$number;
 
