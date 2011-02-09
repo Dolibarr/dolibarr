@@ -154,6 +154,7 @@ llxHeader('',$langs->trans('Order'),'EN:Customers_Orders|FR:Commandes_Clients|ES
 $html = new Form($db);
 $formcompany = new FormCompany($db);
 $contactstatic=new Contact($db);
+$userstatic=new User($db);
 
 
 /* *************************************************************************** */
@@ -347,16 +348,20 @@ if ($id > 0 || ! empty($ref))
 
 				// Contact
 				print '<td>';
-				if ($tab[$i]['source']=='internal')
-				{
-					print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$tab[$i]['id'].'">';
-					print img_object($langs->trans("ShowUser"),"user").' '.$tab[$i]['nom'].'</a>';
-				}
-				if ($tab[$i]['source']=='external')
-				{
-					print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$tab[$i]['id'].'">';
-					print img_object($langs->trans("ShowContact"),"contact").' '.$tab[$i]['nom'].'</a>';
-				}
+                if ($tab[$i]['source']=='internal')
+                {
+                    $userstatic->id=$tab[$i]['id'];
+                    $userstatic->nom=$tab[$i]['nom'];
+                    $userstatic->prenom=$tab[$i]['firstname'];
+                    print $userstatic->getNomUrl(1);
+                }
+                if ($tab[$i]['source']=='external')
+                {
+                    $contactstatic->id=$tab[$i]['id'];
+                    $contactstatic->name=$tab[$i]['nom'];
+                    $contactstatic->firstname=$tab[$i]['firstname'];
+                    print $contactstatic->getNomUrl(1);
+                }
 				print '</td>';
 
 				// Type de contact
