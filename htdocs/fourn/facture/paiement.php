@@ -75,6 +75,7 @@ if ($action == 'add_paiement')
     $_POST['reyear']);
     $paiement_id = 0;
     $total = 0;
+
     // Genere tableau des montants amounts
     foreach ($_POST as $key => $value)
     {
@@ -104,14 +105,17 @@ if ($action == 'add_paiement')
         }
     }
 
-    /*
-     \TODO A activer qd gestion avoir active et que creation facture fournisseur negative interdit
-     if ($total <= 0)
-     {
-     $mesg = '<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('Amount')).'</div>';
-     $error++;
-     }
-     */
+    if ($total == 0)
+    {
+        $mesg = '<div class="error">'.$langs->transnoentities('ErrorFieldRequired',$langs->trans('PaymentAmount')).'</div>';
+        $error++;
+    }
+
+    if (empty($datepaye))
+    {
+        $fiche_erreur_message = '<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('Date')).'</div>';
+        $error++;
+    }
 
     if (! $error)
     {
