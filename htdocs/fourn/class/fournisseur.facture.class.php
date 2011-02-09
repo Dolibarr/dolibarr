@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Christophe Combelles  <ccomb@free.fr>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
- * Copyright (C) 2010      Juanjo Menent         <jmenent@2byte.es>
+ * Copyright (C) 2010-2011 Juanjo Menent         <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,8 +67,12 @@ class FactureFournisseur extends Facture
 	var $amount;
 	var $remise;
 	var $tva;
+	var $localtax1;
+	var $localtax2;
 	var $total_ht;
 	var $total_tva;
+	var $total_localtax1;
+	var $total_localtax2;
 	var $total_ttc;
 	var $note;
 	var $note_public;
@@ -94,6 +98,8 @@ class FactureFournisseur extends Facture
 		$this->amount = 0;
 		$this->remise = 0;
 		$this->tva = 0;
+		$this->total_localtax1 = 0;
+		$this->total_localtax2 = 0;
 		$this->total_ht = 0;
 		$this->total_tva = 0;
 		$this->total_ttc = 0;
@@ -183,6 +189,8 @@ class FactureFournisseur extends Facture
 					$this->lines[$i]->description,
 					$this->lines[$i]->pu_ht,
 					$this->lines[$i]->tva_tx,
+					$this->lines[$i]->localtax1_tx,
+                    $this->lines[$i]->localtax2_tx,
 					$this->lines[$i]->qty,
 					$this->lines[$i]->fk_product,
 					'HT',
@@ -310,8 +318,8 @@ class FactureFournisseur extends Facture
                 $this->close_code = $obj->close_code;
                 $this->close_note = $obj->close_note;
                 $this->tva = $obj->tva;
-                $this->localtax1 = $obj->localtax1;
-                $this->localtax2 = $obj->localtax2;
+                $this->total_localtax1 = $obj->localtax1;
+                $this->total_localtax2 = $obj->localtax2;
                 $this->total = $obj->total;
                 $this->total_ht = $obj->total_ht;
                 $this->total_tva = $obj->total_tva;
@@ -457,6 +465,7 @@ class FactureFournisseur extends Facture
 	function fetch_lines()
 	{
 		$sql = 'SELECT f.rowid, f.description, f.pu_ht, f.pu_ttc, f.qty, f.tva_tx, f.tva';
+		$sql.= ', f.localtax1_tx, f.localtax2_tx, f.total_localtax1, f.total_localtax2 ';
 		$sql.= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_product, f.product_type';
 		$sql.= ', p.rowid as product_id, p.ref, p.label as label, p.description as product_desc';
 		//$sql.= ', pf.ref_fourn';
@@ -485,10 +494,14 @@ class FactureFournisseur extends Facture
 					$this->lines[$i]->pu_ht            = $obj->pu_ht;
 					$this->lines[$i]->pu_ttc           = $obj->pu_ttc;
 					$this->lines[$i]->tva_tx           = $obj->tva_tx;
+					$this->lines[$i]->localtax1_tx     = $obj->localtax1_tx;
+					$this->lines[$i]->localtax2_tx     = $obj->localtax2_tx;
 					$this->lines[$i]->qty              = $obj->qty;
 					$this->lines[$i]->tva              = $obj->tva;
 					$this->lines[$i]->total_ht         = $obj->total_ht;
 					$this->lines[$i]->total_tva        = $obj->total_tva;
+					$this->lines[$i]->total_localtax1  = $obj->total_localtax1;
+					$this->lines[$i]->total_localtax2  = $obj->total_localtax2;
 					$this->lines[$i]->total_ttc        = $obj->total_ttc;
 					$this->lines[$i]->fk_product       = $obj->fk_product;
 					$this->lines[$i]->product_type     = $obj->product_type;
@@ -536,6 +549,8 @@ class FactureFournisseur extends Facture
         if (isset($this->total)) $this->total=trim($this->total);
         if (isset($this->total_ht)) $this->total_ht=trim($this->total_ht);
         if (isset($this->total_tva)) $this->total_tva=trim($this->total_tva);
+	//	if (isset($this->total_localtax1)) $this->total_localtax1=trim($this->total_localtax1);
+	//	if (isset($this->total_localtax2)) $this->total_localtax2=trim($this->total_localtax2);
         if (isset($this->total_ttc)) $this->total_ttc=trim($this->total_ttc);
         if (isset($this->statut)) $this->statut=trim($this->statut);
         if (isset($this->author)) $this->author=trim($this->author);
@@ -953,25 +968,29 @@ class FactureFournisseur extends Facture
 
 
 	/**
-	 * 		\brief     	Ajoute une ligne de facture (associe a aucun produit/service predefini)
-	 * 		\param    	desc            Description de la ligne
-	 * 		\param    	pu              Prix unitaire (HT ou TTC selon price_base_type)
-	 * 		\param    	txtva           Taux de tva force, sinon -1
-	 * 		\param    	qty             Quantite
-	 *		\param    	fk_product      Id du produit/service predefini
-	 * 		\param    	remise_percent  Pourcentage de remise de la ligne
-	 * 		\param    	date_start      Date de debut de validite du service
-	 * 		\param    	date_end        Date de fin de validite du service
-	 * 		\param    	ventil          Code de ventilation comptable
-	 * 		\param    	info_bits		Bits de type de lines
-	 * 		\param    	price_base_type HT ou TTC
-	 * 		\param		type			Type of line (0=product, 1=service)
-	 * 		\remarks	Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
-	 *					de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
-	 *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,idprod)
-	 *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
+	 *	Ajoute une ligne de facture (associe a aucun produit/service predefini)
+	 *		Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
+	 *		de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
+	 *		par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,idprod)
+	 *		et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
+	 *
+	 *	@param    	desc            Description de la ligne
+	 *	@param    	pu              Prix unitaire (HT ou TTC selon price_base_type)
+	 *	@param    	txtva           Taux de tva force, sinon -1
+	 *	@param		txlocaltax1		LocalTax1 Rate
+	 *	@param		txlocaltax2		LocalTax2 Rate
+	 *	@param    	qty             Quantite
+	 *	@param    	fk_product      Id du produit/service predefini
+	 *	@param    	remise_percent  Pourcentage de remise de la ligne
+	 *	@param    	date_start      Date de debut de validite du service
+	 * 	@param    	date_end        Date de fin de validite du service
+	 * 	@param    	ventil          Code de ventilation comptable
+	 *	@param    	info_bits		Bits de type de lines
+	 *	@param    	price_base_type HT ou TTC
+	 *	@param		type			Type of line (0=product, 1=service)
+	 *	@return    	int             >0 if OK, <0 if KO
 	 */
-	function addline($desc, $pu, $txtva, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0)
+	function addline($desc, $pu, $txtva, $txlocaltax1=0, $txlocaltax2=0, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0)
 	{
 		dol_syslog("FactureFourn::Addline $desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$date_start,$date_end,$ventil,$info_bits,$price_base_type,$type", LOG_DEBUG);
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
@@ -995,7 +1014,7 @@ class FactureFournisseur extends Facture
 		{
 			$idligne = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture_fourn_det');
 
-			$result=$this->updateline($idligne, $desc, $pu, $txtva, $qty, $fk_product, $price_base_type, $info_bits, $type);
+			$result=$this->updateline($idligne, $desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product, $price_base_type, $info_bits, $type);
 			if ($result > 0)
 			{
 				$this->db->commit();
@@ -1023,6 +1042,8 @@ class FactureFournisseur extends Facture
 	 * @param     	label         	Description of line
 	 * @param     	pu          	Prix unitaire (HT ou TTC selon price_base_type)
 	 * @param     	vatrate       	VAT Rate
+	 * @param		txlocaltax1		LocalTax1 Rate
+	 * @param		txlocaltax2		LocalTax2 Rate
 	 * @param     	qty           	Quantity
 	 * @param     	idproduct		Id produit
 	 * @param	  	price_base_type	HT or TTC
@@ -1030,7 +1051,7 @@ class FactureFournisseur extends Facture
 	 * @param		type			Type of line (0=product, 1=service)
 	 * @return    	int           	<0 if KO, >0 if OK
 	 */
-	function updateline($id, $label, $pu, $vatrate, $qty=1, $idproduct=0, $price_base_type='HT', $info_bits=0, $type=0)
+	function updateline($id, $label, $pu, $vatrate, $txlocaltax1=0, $txlocaltax2=0, $qty=1, $idproduct=0, $price_base_type='HT', $info_bits=0, $type=0)
 	{
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
@@ -1042,19 +1063,26 @@ class FactureFournisseur extends Facture
 		if ($type < 0) return -1;
 
 		// Clean parameters
-		if (empty($vatrate)) $vatrate=0;
+		if (empty($txlocaltax1)) $txlocaltax1=0;
+		if (empty($txlocaltax2)) $txlocaltax2=0;
+		
+		
+		$txlocaltax1=price2num($txlocaltax1);
+        $txlocaltax2=price2num($txlocaltax2);
 
 		// Calcul du total TTC et de la TVA pour la ligne a partir de
 		// qty, pu, remise_percent et txtva
 		// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 		// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-		$tabprice = calcul_price_total($qty, $pu, 0, $vatrate, 0,0, 0, $price_base_type, $info_bits);
+		$tabprice = calcul_price_total($qty, $pu, 0, $vatrate, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits);
 		$total_ht  = $tabprice[0];
 		$total_tva = $tabprice[1];
 		$total_ttc = $tabprice[2];
 		$pu_ht  = $tabprice[3];
 		$pu_tva = $tabprice[4];
 		$pu_ttc = $tabprice[5];
+		$total_localtax1 = $tabprice[9];
+		$total_localtax2 = $tabprice[10];
 
 		if ($idproduct)
 		{
@@ -1073,8 +1101,12 @@ class FactureFournisseur extends Facture
 		$sql.= ", pu_ttc = ".price2num($pu_ttc);
 		$sql.= ", qty = ".price2num($qty);
 		$sql.= ", tva_tx = ".price2num($vatrate);
+		$sql.= ", localtax1_tx = ".price2num($txlocaltax1);
+		$sql.= ", localtax2_tx = ".price2num($txlocaltax2);
 		$sql.= ", total_ht = ".price2num($total_ht);
 		$sql.= ", tva= ".price2num($total_tva);
+		$sql.= ", total_localtax1= ".price2num($total_localtax1);
+		$sql.= ", total_localtax2= ".price2num($total_localtax2);
 		$sql.= ", total_ttc = ".price2num($total_ttc);
 		if ($idproduct) $sql.= ", fk_product = ".$idproduct;
 		else $sql.= ", fk_product = null";

@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.fr>
  * Copyright (C) 2005-2011 Regis Houssin         <regis@dolibarr.fr>
- * Copyright (C) 2010      Juanjo Menent		 <jmenent@2byte.es>
+ * Copyright (C) 2010-2011 Juanjo Menent		 <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -286,6 +286,8 @@ if ($_POST['action'] == 'add' && $user->rights->fournisseur->facture->creer)
 						$desc,
 						$lines[$i]->subprice,
 						$lines[$i]->tva_tx,
+						$lines[$i]->localtax1_tx,
+						$lines[$i]->localtax2_tx,
 						$lines[$i]->qty,
 						$lines[$i]->fk_product,
 						$lines[$i]->remise_percent,
@@ -338,7 +340,11 @@ if ($_POST['action'] == 'add' && $user->rights->fournisseur->facture->creer)
                         $price_base='TTC'; $amount=$amountttc;
                     }
                     $atleastoneline=1;
-                    $ret=$facfou->addline($label, $amount, $tauxtva, $qty, $fk_product, $remise_percent, '', '', '', 0, $price_base);
+                    
+                    $product=new Product($db);
+					$product->fetch($_POST['idprod'.$i]);
+					
+                    $ret=$facfou->addline($label, $amount, $tauxtva, $product->localtax1_tx, $product->localtax2_tx, $qty, $fk_product, $remise_percent, '', '', '', 0, $price_base);
                     if ($ret < 0) $error++;
                 }
             }
@@ -370,7 +376,7 @@ if ($_GET['action'] == 'del_ligne')
 // Modification d'une ligne
 if ($_REQUEST['action'] == 'update_line')
 {
-    if ($_REQUEST['etat'] == '1' && ! $_REQUEST['cancel']) // si on valide la modification
+   if ($_REQUEST['etat'] == '1' && ! $_REQUEST['cancel']) // si on valide la modification
     {
         $facfou = new FactureFournisseur($db);
         $facfou->fetch($_GET['facid']);
@@ -392,14 +398,23 @@ if ($_REQUEST['action'] == 'update_line')
             $prod->fetch($_POST['idprod']);
             $label = $prod->libelle;
             $type = $prod->type;
+            $localtax1_tx = $prod->localtax1_tx;
+            $localtax2_tx = $prod->localtax2_tx;
         }
         else
         {
+        	if ($facfou->socid)
+			{
+				$societe=new Societe($db);
+				$societe->fetch($facfou->socid);
+			}	
             $label = $_POST['label'];
             $type = $_POST["type"]?$_POST["type"]:0;
+            $localtax1tx= get_localtax($_POST['tauxtva'], 1, $societe);
+	  		$localtax2tx= get_localtax($_POST['tauxtva'], 2, $societe);
         }
 
-        $result=$facfou->updateline($_GET['lineid'], $label, $pu, $_POST['tauxtva'], $_POST['qty'], $_POST['idprod'], $price_base_type, 0, $type);
+        $result=$facfou->updateline($_GET['lineid'], $label, $pu, $_POST['tauxtva'], $localtax1tx, $localtax2tx, $_POST['qty'], $_POST['idprod'], $price_base_type, 0, $type);
         if ($result >= 0)
         {
             unset($_POST['label']);
@@ -416,6 +431,12 @@ if ($_GET['action'] == 'addline')
         dol_print_error($db,$facfou->error);
         exit;
     }
+    
+	if ($facfou->socid)
+	{
+		$societe=new Societe($db);
+		$societe->fetch($facfou->socid);
+	}
 
     if ($_POST['idprodfournprice'])	// > 0 or -1
     {
@@ -429,17 +450,16 @@ if ($_GET['action'] == 'addline')
             // $label = '['.$product->ref.'] - '. $product->libelle;
             $label = $product->libelle;
 
-            $societe='';
-            if ($facfou->socid)
-            {
-                $societe=new Societe($db);
-                $societe->fetch($facfou->socid);
-            }
+
 
             $tvatx=get_default_tva($societe,$mysoc,$product->id);
+            
+            $localtax1tx= get_localtax($tvatx, 1, $societe);
+	  		$localtax2tx= get_localtax($tvatx, 2, $societe);
+	  		
             $type = $product->type;
 
-            $result=$facfou->addline($label, $product->fourn_pu, $tvatx, $_POST['qty'], $idprod);
+            $result=$facfou->addline($label, $product->fourn_pu, $tvatx, $localtax2tx, $localtax2tx ,$_POST['qty'], $idprod);
         }
         if ($idprod == -1)
         {
@@ -451,6 +471,9 @@ if ($_GET['action'] == 'addline')
     else
     {
         $tauxtva = price2num($_POST['tauxtva']);
+		$localtax1tx= get_localtax($tauxtva, 1, $societe);
+		$localtax2tx= get_localtax($tauxtva, 2, $societe);
+		
         if (! $_POST['label'])
         {
             $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")).'</div>';
@@ -462,15 +485,16 @@ if ($_GET['action'] == 'addline')
             {
                 $ht = price2num($_POST['amount']);
                 $price_base_type = 'HT';
+                
                 //$desc, $pu, $txtva, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0)
-                $result=$facfou->addline($_POST['label'], $ht, $tauxtva, $_POST['qty'], 0, 0, $datestart, $dateend, 0, 0, $price_base_type, $type);
+                $result=$facfou->addline($_POST['label'], $ht, $tauxtva, $localtax1tx, $localtax2tx, $_POST['qty'], 0, 0, $datestart, $dateend, 0, 0, $price_base_type, $type);
             }
             else
             {
                 $ttc = price2num($_POST['amountttc']);
                 $ht = $ttc / (1 + ($tauxtva / 100));
                 $price_base_type = 'HT';
-                $result=$facfou->addline($_POST['label'], $ht, $tauxtva, $_POST['qty'], 0, 0, $datestart, $dateend, 0, 0, $price_base_type, $type);
+                $result=$facfou->addline($_POST['label'], $ht, $tauxtva,$localtax1tx, $localtax2tx, $_POST['qty'], 0, 0, $datestart, $dateend, 0, 0, $price_base_type, $type);
             }
         }
     }
@@ -495,6 +519,8 @@ if ($_GET['action'] == 'addline')
         unset($_POST['pu']);
         unset($_POST['tva_tx']);
         unset($_POST['label']);
+		unset($localtax1_tx);
+		unset($localtax2_tx);
     }
     else if (empty($mesg))
     {
@@ -1399,13 +1425,13 @@ else
                 if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
                 {
                     print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->pays_code).'</td>';
-                    print '<td align="right">'.price($propal->total_localtax1).'</td>';
+                    print '<td align="right">'.price($fac->total_localtax1).'</td>';
                     print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
                 }
                 if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
                 {
                     print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->pays_code).'</td>';
-                    print '<td align="right">'.price($propal->total_localtax2).'</td>';
+                    print '<td align="right">'.price($fac->total_localtax2).'</td>';
                     print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
                 }
             }

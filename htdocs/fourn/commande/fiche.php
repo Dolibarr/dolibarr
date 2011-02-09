@@ -232,8 +232,8 @@ if ($_POST['action'] ==	'addline' && $user->rights->fournisseur->commande->creer
 			unset($_POST['np_desc']);
 			unset($_POST['pu']);
 			unset($_POST['tva_tx']);
-			unset($_POST['localtax1_tx']);
-			unset($_POST['localtax2_tx']);
+			unset($localtax1_tx);
+			unset($localtax2_tx);
 		}
 		else if (empty($mesg))
 		{
