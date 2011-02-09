@@ -120,18 +120,21 @@ case "$1" in
 		done
 
 		# Copy icon file
-		echo "Copy icon file"
-		fileorig="/usr/share/dolibarr/doc/images/dolibarr.xpm"
-		target="/usr/share/pixmaps/"
-		cp -f $fileorig $target
+		#echo "Copy icon file"
+		#fileorig="/usr/share/dolibarr/doc/images/dolibarr.xpm"
+		#target="/usr/share/pixmaps/"
+		#cp -f $fileorig $target
 
-		echo "Install menu entry"
+		#echo "Install menu entry"
 		# This one is for Gnome ubuntu
-		fileorig="/usr/share/dolibarr/build/deb/dolibarr.desktop"
-		target="/usr/share/applications/"
-		cp -f $fileorig $target
-		# Not sure this one is usefull
-		if test -x /usr/bin/update-menus; then update-menus; fi
+		#fileorig="/usr/share/dolibarr/build/deb/dolibarr.desktop"
+		#target="/usr/share/applications/"
+		#cp -f $fileorig $target
+		# Not sure this is usefull
+		if test -x /usr/bin/update-menus; then 
+			echo "update-menus"
+			update-menus;
+		fi
 		
 		# TODO Create the file to force parameters in Web installer
 		#if grep DBHOST /usr/share/dolibarr/htdocs/conf/conf.php > /dev/null

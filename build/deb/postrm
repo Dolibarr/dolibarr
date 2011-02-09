@@ -221,11 +221,11 @@ case "$1" in
 		echo "postrm Force remove of /usr/share/dolibarr/htdocs/install"
 		rm -fr /usr/share/dolibarr/htdocs/install
 
-		echo "postrm Remove menu entry and image"
-		fileorig="/usr/share/applications/dolibarr.desktop"
-		rm -f $fileorig
-		fileorig="/usr/share/pixmaps/dolibarr.xpm"
-		rm -f $fileorig
+		#echo "postrm Remove menu entry and image"
+		#fileorig="/usr/share/applications/dolibarr.desktop"
+		#rm -f $fileorig
+		#fileorig="/usr/share/pixmaps/dolibarr.xpm"
+		#rm -f $fileorig
 		# Not sure this is usefull
 		if test -x /usr/bin/update-menus; then update-menus; fi
 	;;
