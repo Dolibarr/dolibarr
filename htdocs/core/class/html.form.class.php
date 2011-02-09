@@ -669,17 +669,19 @@ class Form
 
 
     /**
-     *    	\brief      Retourne la liste deroulante des contacts d'une societe donnee
-     *    	\param      socid      	    Id de la societe
-     *    	\param      selected   	    Id contact pre-selectionne
-     *    	\param      htmlname  	    Nom champ formulaire ('none' pour champ non editable)
-     *      \param      show_empty      0=liste sans valeur nulle, 1=ajoute valeur inconnue
-     *      \param      exclude         Liste des id contacts a exclure
-     * 		\param		limitto			Disable answers that are not id in this array list
-     *		\return		int				<0 if KO, Nb of contact in list if OK
+     *    	Return list of all contacts (for a third party or all)
+     *    	@param      socid      	    Id ot third party or 0 for all
+     *    	@param      selected   	    Id contact pre-selectionne
+     *    	@param      htmlname  	    Nom champ formulaire ('none' pour champ non editable)
+     *      @param      show_empty      0=liste sans valeur nulle, 1=ajoute valeur inconnue
+     *      @param      exclude         Liste des id contacts a exclure
+     * 		@param		limitto			Disable answers that are not id in this array list
+     *		@return		int				<0 if KO, Nb of contact in list if OK
      */
     function select_contacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='')
     {
+        global $conf;
+
         // Permettre l'exclusion de contacts
         if (is_array($exclude))
         {
@@ -689,7 +691,8 @@ class Form
         // On recherche les societes
         $sql = "SELECT s.rowid, s.name, s.firstname FROM";
         $sql.= " ".MAIN_DB_PREFIX ."socpeople as s";
-        $sql.= " WHERE fk_soc=".$socid;
+        $sql.= " WHERE entity = ".$conf->entity;
+        if ($socid) $sql.= " AND fk_soc=".$socid;
         if (is_array($exclude) && $excludeContacts) $sql.= " AND s.rowid NOT IN ('".$excludeContacts."')";
         $sql.= " ORDER BY s.name ASC";
 
@@ -700,7 +703,7 @@ class Form
             $num=$this->db->num_rows($resql);
             if ($num == 0) return 0;
 
-            if ($htmlname != 'none') print '<select class="flat" name="'.$htmlname.'">';
+            if ($htmlname != 'none') print '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
             if ($showempty) print '<option value="0">&nbsp;</option>';
             $num = $this->db->num_rows($resql);
             $i = 0;
