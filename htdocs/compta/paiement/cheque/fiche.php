@@ -34,6 +34,7 @@ require_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
 $langs->load('bills');
 $langs->load('banks');
 $langs->load('companies');
+$langs->load('compta');
 
 $id = GETPOST("id");
 $ref= GETPOST("ref");
