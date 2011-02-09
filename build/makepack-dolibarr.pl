@@ -421,16 +421,17 @@ if ($nboftargetok) {
             open (SPECTO,">$BUILDROOT/$PROJECT/DEBIAN/control") || die "Error";
             while (<SPECFROM>) {
             	$newbuild = $BUILD;
-                $newbuild =~ s/dev/0/gi;
-                $newbuild =~ s/alpha/0/gi;
-                $newbuild =~ s/beta/1/gi;
-                if ($newbuild !~ /-/) { $newbuild.='-2'; }
+                $newbuild =~ s/(dev|alpha)/0/gi;				# dev
+                $newbuild =~ s/beta/1/gi;						# beta
+                $newbuild =~ s/rc./2/gi;						# rc
+                if ($newbuild !~ /-/) { $newbuild.='-3'; }		# finale
                 $_ =~ s/__VERSION__/$MAJOR.$MINOR.$newbuild/;
                 print SPECTO $_;
             }
             close SPECFROM;
             close SPECTO;
-
+			print "Version set to $MAJOR.$MINOR.$newbuild\n";
+			
     		print "Create directory $BUILDROOT/$PROJECT/usr/share/$PROJECT/documents\n";
     		$ret=`mkdir -p "$BUILDROOT/$PROJECT/usr/share/$PROJECT/documents"`;
 
