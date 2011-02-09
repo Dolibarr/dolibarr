@@ -706,9 +706,16 @@ class Form
             $i = 0;
             if ($num)
             {
+                $contactstatic=new Contact($this->db);
+
                 while ($i < $num)
                 {
                     $obj = $this->db->fetch_object($resql);
+
+                    $contactstatic->id=$obj->rowid;
+                    $contactstatic->name=$obj->name;
+                    $contactstatic->firstname=$obj->firstname;
+
                     if ($htmlname != 'none')
                     {
                         $disabled=0;
@@ -717,18 +724,25 @@ class Form
                         {
                             print '<option value="'.$obj->rowid.'"';
                             if ($disabled) print ' disabled="true"';
-                            print ' selected="selected">'.$obj->name.' '.$obj->firstname.'</option>';
+                            print ' selected="selected">';
+                            print $contactstatic->getFullName();
+                            print '</option>';
                         }
                         else
                         {
                             print '<option value="'.$obj->rowid.'"';
                             if ($disabled) print ' disabled="true"';
-                            print '>'.$obj->name.' '.$obj->firstname.'</option>';
+                            print '>';
+                            print $contactstatic->getFullName();
+                            print '</option>';
                         }
                     }
                     else
                     {
-                        if ($selected == $obj->rowid) print $obj->name.' '.$obj->firstname;
+                        if ($selected == $obj->rowid)
+                        {
+                            print $contactstatic->getFullName();
+                        }
                     }
                     $i++;
                 }
@@ -763,7 +777,7 @@ class Form
 
     /**
      *	\brief      Return select list of users
-     *  \param      selected        Id user preselected
+     *  \param      selected        User id or user object of user preselected. If -1, we use id of current user.
      *  \param      htmlname        Field name in form
      *  \param      show_empty      0=liste sans valeur nulle, 1=ajoute valeur inconnue
      *  \param      exclude         Array list of users id to exclude
@@ -773,7 +787,7 @@ class Form
      */
     function select_dolusers($selected='',$htmlname='userid',$show_empty=0,$exclude='',$disabled=0,$include='',$enableonly='')
     {
-        global $conf;
+        global $conf,$user;
 
         // Permettre l'exclusion d'utilisateurs
         if (is_array($exclude))	$excludeUsers = implode("','",$exclude);
@@ -800,9 +814,16 @@ class Form
             $i = 0;
             if ($num)
             {
+                $userstatic=new User($this->db);
+
                 while ($i < $num)
                 {
                     $obj = $this->db->fetch_object($resql);
+
+                    $userstatic->id=$obj->rowid;
+                    $userstatic->nom=$obj->name;
+                    $userstatic->prenom=$obj->firstname;
+
                     $disableline=0;
                     if (is_array($enableonly) && sizeof($enableonly) && ! in_array($obj->rowid,$enableonly)) $disableline=1;
 
@@ -818,7 +839,8 @@ class Form
                         if ($disableline) $out.= ' disabled="true"';
                         $out.= '>';
                     }
-                    $out.= $obj->name.($obj->name && $obj->firstname?' ':'').$obj->firstname;
+                    $out.= $userstatic->getFullName();
+
                     //if ($obj->admin) $out.= ' *';
                     if ($conf->global->MAIN_SHOW_LOGIN) $out.= ' ('.$obj->login.')';
                     $out.= '</option>';
@@ -3101,8 +3123,8 @@ class Form
      *    	\param      selected          Preselected value (''=current year, -1=none, year otherwise)
      *    	\param      htmlname          Name of HTML select object
      *    	\param      useempty          Affiche valeur vide dans liste
-     *    	\param      $min_year         Valeur minimum de l'annee dans la liste (par defaut annee courante -10)
-     *    	\param      $max_year         Valeur maximum de l'annee dans la liste (par defaut annee courante + 5)
+     *    	\param      $min_year         Offset of minimum year into list (by default current year -10)
+     *    	\param      $max_year         Offset of maximum year into list (by default current year + 5)
      * 		TODO Move into html.formother
      */
 	function select_year($selected='',$htmlname='yearid',$useempty=0, $min_year=10, $max_year=5)
