@@ -1772,7 +1772,10 @@ else
 		print '<br>';
 
 		// Contacts list
-		$result=show_contacts($conf,$langs,$db,$soc);
+		if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
+		{
+		  $result=show_contacts($conf,$langs,$db,$soc);
+		}
 
 		// Projects list
 		$result=show_projects($conf,$langs,$db,$soc);
