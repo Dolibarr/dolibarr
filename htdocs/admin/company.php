@@ -285,7 +285,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
     print '<tr class="liste_titre"><td width="35%">'.$langs->trans("CompanyInfo").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
 
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyName").'</td><td>';
+    print '<tr '.$bc[$var].'><td class="fieldrequired">'.$langs->trans("CompanyName").'</td><td>';
     print '<input name="nom" size="30" value="'. ($conf->global->MAIN_INFO_SOCIETE_NOM?$conf->global->MAIN_INFO_SOCIETE_NOM:$_POST["nom"]) . '"></td></tr>'."\n";
 
     $var=!$var;
@@ -302,7 +302,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
 
     // Country
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("Country").'</td><td>';
+    print '<tr '.$bc[$var].'><td class="fieldrequired">'.$langs->trans("Country").'</td><td>';
     $pays_selected=$pays_id;
     //if (empty($pays_selected)) $pays_selected=substr($langs->defaultlang,-2);    // Par defaut, pays de la localisation
     $form->select_pays($pays_selected,'pays_id');
