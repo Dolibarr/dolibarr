@@ -31,6 +31,7 @@ require_once(DOL_DOCUMENT_ROOT."/comm/prospect/class/prospect.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formcompany.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/comm/action/class/actioncomm.class.php");
+if ($conf->adherent->enabled) require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
 if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
 
 $langs->load('companies');
@@ -173,6 +174,29 @@ if ($socid > 0)
 	if ($societe->stcomm_id !=  2) print '<a href="fiche.php?socid='.$societe->id.'&amp;stcomm=2&amp;action=cstc">'.img_action(0,2).'</a>';
 	if ($societe->stcomm_id !=  3) print '<a href="fiche.php?socid='.$societe->id.'&amp;stcomm=3&amp;action=cstc">'.img_action(0,3).'</a>';
 	print '</td></tr>';
+
+    // Module Adherent
+    if ($conf->adherent->enabled)
+    {
+        $langs->load("members");
+        $langs->load("users");
+        print '<tr><td width="25%" valign="top">'.$langs->trans("LinkedToDolibarrMember").'</td>';
+        print '<td colspan="3">';
+        $adh=new Adherent($db);
+        $result=$adh->fetch('','',$soc->id);
+        if ($result > 0)
+        {
+            $adh->ref=$adh->getFullName($langs);
+            print $adh->getNomUrl(1);
+        }
+        else
+        {
+            print $langs->trans("UserNotLinkedToMember");
+        }
+        print '</td>';
+        print "</tr>\n";
+    }
+
 	print '</table>';
 
 

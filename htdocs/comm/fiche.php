@@ -36,6 +36,7 @@ if ($conf->facture->enabled) require_once(DOL_DOCUMENT_ROOT."/compta/facture/cla
 if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
 if ($conf->contrat->enabled) require_once(DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
+if ($conf->adherent->enabled) require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
 if (!empty($conf->global->MAIN_MODULE_CHRONODOCS)) require_once(DOL_DOCUMENT_ROOT."/chronodocs/chronodocs_entries.class.php");
 
 $langs->load("companies");
@@ -405,6 +406,28 @@ if ($socid > 0)
 		print '</td>';
 		print '</tr>';
 	}
+
+    // Module Adherent
+    if ($conf->adherent->enabled)
+    {
+        $langs->load("members");
+        $langs->load("users");
+        print '<tr><td width="25%" valign="top">'.$langs->trans("LinkedToDolibarrMember").'</td>';
+        print '<td colspan="3">';
+        $adh=new Adherent($db);
+        $result=$adh->fetch('','',$soc->id);
+        if ($result > 0)
+        {
+            $adh->ref=$adh->getFullName($langs);
+            print $adh->getNomUrl(1);
+        }
+        else
+        {
+            print $langs->trans("UserNotLinkedToMember");
+        }
+        print '</td>';
+        print "</tr>\n";
+    }
 
 	print "</table>";
 

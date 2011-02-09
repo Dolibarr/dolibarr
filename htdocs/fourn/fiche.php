@@ -32,6 +32,7 @@ require_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.class.php");
 require_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+if ($conf->adherent->enabled) require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
 
 $langs->load('suppliers');
 $langs->load('products');
@@ -176,6 +177,28 @@ if ( $societe->fetch($socid) )
 			print '</td></tr>';
 		}
 	}
+
+    // Module Adherent
+    if ($conf->adherent->enabled)
+    {
+        $langs->load("members");
+        $langs->load("users");
+        print '<tr><td width="25%" valign="top">'.$langs->trans("LinkedToDolibarrMember").'</td>';
+        print '<td colspan="3">';
+        $adh=new Adherent($db);
+        $result=$adh->fetch('','',$soc->id);
+        if ($result > 0)
+        {
+            $adh->ref=$adh->getFullName($langs);
+            print $adh->getNomUrl(1);
+        }
+        else
+        {
+            print $langs->trans("UserNotLinkedToMember");
+        }
+        print '</td>';
+        print "</tr>\n";
+    }
 
 	print '</table>';
 
