@@ -415,7 +415,7 @@ if ($socid > 0)
         print '<tr><td width="25%" valign="top">'.$langs->trans("LinkedToDolibarrMember").'</td>';
         print '<td colspan="3">';
         $adh=new Adherent($db);
-        $result=$adh->fetch('','',$soc->id);
+        $result=$adh->fetch('','',$objsoc->id);
         if ($result > 0)
         {
             $adh->ref=$adh->getFullName($langs);
