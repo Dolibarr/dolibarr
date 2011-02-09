@@ -43,7 +43,7 @@ $langs->load('bills');
 $langs->load('suppliers');
 $langs->load('companies');
 
-$facid = isset($_GET["facid"])?$_GET["facid"]:(isset($_POST["facid"])?$_POST["facid"]:'');
+$facid = GETPOST("facid");
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -51,7 +51,7 @@ $result = restrictedArea($user, 'fournisseur', $facid, 'facture_fourn', 'facture
 
 $html = new Form($db);
 $mesg='';
-$action=isset($_GET['action'])?$_GET['action']:$_POST['action'];
+$action=GETPOST(action);
 
 
 /*
@@ -210,7 +210,7 @@ if ($_POST['action'] == 'add' && $user->rights->fournisseur->facture->creer)
         $_GET['socid']=$_POST['socid'];
         $error++;
     }
-    if (empty($_POST['facnumber']))
+    if (! GETPOST('facnumber'))
     {
         $mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('RefSupplier')).'</div>';
         $_GET['action']='create';
@@ -320,40 +320,48 @@ if ($_POST['action'] == 'add' && $user->rights->fournisseur->facture->creer)
 		else
 		{
 	        $facid = $facfou->create($user);
-
-			for ($i = 1 ; $i < 9 ; $i++)
+            if ($facid < 0)
             {
-                $label = $_POST['label'.$i];
-                $amountht  = price2num($_POST['amount'.$i]);
-                $amountttc = price2num($_POST['amountttc'.$i]);
-                $tauxtva   = price2num($_POST['tauxtva'.$i]);
-                $qty = $_POST['qty'.$i];
-                $fk_product = $_POST['fk_product'.$i];
-                if ($label)
-                {
-                    if ($amountht)
-                    {
-                        $price_base='HT'; $amount=$amountht;
-                    }
-                    else
-                    {
-                        $price_base='TTC'; $amount=$amountttc;
-                    }
-                    $atleastoneline=1;
-                    
-                    $product=new Product($db);
-					$product->fetch($_POST['idprod'.$i]);
-					
-                    $ret=$facfou->addline($label, $amount, $tauxtva, $product->localtax1_tx, $product->localtax2_tx, $qty, $fk_product, $remise_percent, '', '', '', 0, $price_base);
-                    if ($ret < 0) $error++;
-                }
+                $error++;
             }
+
+            if (! $error)
+            {
+    			for ($i = 1 ; $i < 9 ; $i++)
+                {
+                    $label = $_POST['label'.$i];
+                    $amountht  = price2num($_POST['amount'.$i]);
+                    $amountttc = price2num($_POST['amountttc'.$i]);
+                    $tauxtva   = price2num($_POST['tauxtva'.$i]);
+                    $qty = $_POST['qty'.$i];
+                    $fk_product = $_POST['fk_product'.$i];
+                    if ($label)
+                    {
+                        if ($amountht)
+                        {
+                            $price_base='HT'; $amount=$amountht;
+                        }
+                        else
+                        {
+                            $price_base='TTC'; $amount=$amountttc;
+                        }
+                        $atleastoneline=1;
+
+	                    $product=new Product($db);
+						$product->fetch($_POST['idprod'.$i]);
+
+        	            $ret=$facfou->addline($label, $amount, $tauxtva, $product->localtax1_tx, $product->localtax2_tx, $qty, $fk_product, $remise_percent, '', '', '', 0, $price_base);
+            	        if ($ret < 0) $error++;
+                	}
+                }
+        	}
         }
 
         if ($error)
         {
+            $langs->load("errors");
             $db->rollback();
-            $mesg='<div class="error">'.$facfou->error.'</div>';
+            $mesg='<div class="error">'.$langs->trans($facfou->error).'</div>';
             $_GET['action']='create';
             $_GET['socid']=$_POST['socid'];
         }
@@ -407,7 +415,7 @@ if ($_REQUEST['action'] == 'update_line')
 			{
 				$societe=new Societe($db);
 				$societe->fetch($facfou->socid);
-			}	
+			}
             $label = $_POST['label'];
             $type = $_POST["type"]?$_POST["type"]:0;
             $localtax1tx= get_localtax($_POST['tauxtva'], 1, $societe);
@@ -431,7 +439,7 @@ if ($_GET['action'] == 'addline')
         dol_print_error($db,$facfou->error);
         exit;
     }
-    
+
 	if ($facfou->socid)
 	{
 		$societe=new Societe($db);
@@ -453,10 +461,10 @@ if ($_GET['action'] == 'addline')
 
 
             $tvatx=get_default_tva($societe,$mysoc,$product->id);
-            
+
             $localtax1tx= get_localtax($tvatx, 1, $societe);
 	  		$localtax2tx= get_localtax($tvatx, 2, $societe);
-	  		
+
             $type = $product->type;
 
             $result=$facfou->addline($label, $product->fourn_pu, $tvatx, $localtax2tx, $localtax2tx ,$_POST['qty'], $idprod);
@@ -473,7 +481,7 @@ if ($_GET['action'] == 'addline')
         $tauxtva = price2num($_POST['tauxtva']);
 		$localtax1tx= get_localtax($tauxtva, 1, $societe);
 		$localtax2tx= get_localtax($tauxtva, 2, $societe);
-		
+
         if (! $_POST['label'])
         {
             $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")).'</div>';
@@ -485,7 +493,7 @@ if ($_GET['action'] == 'addline')
             {
                 $ht = price2num($_POST['amount']);
                 $price_base_type = 'HT';
-                
+
                 //$desc, $pu, $txtva, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0)
                 $result=$facfou->addline($_POST['label'], $ht, $tauxtva, $localtax1tx, $localtax2tx, $_POST['qty'], 0, 0, $datestart, $dateend, 0, 0, $price_base_type, $type);
             }
