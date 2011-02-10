@@ -52,12 +52,12 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update' && empty($_POST["can
 {
 	dolibarr_set_const($db, "MAIN_DISABLE_ALL_MAILS",   $_POST["MAIN_DISABLE_ALL_MAILS"],'chaine',0,'',$conf->entity);
 
-	dolibarr_set_const($db, "MAIN_MAIL_SENDMODE",       $_POST["MAIN_MAIL_SENDMODE"],'chaine',0,'',-1);
-	dolibarr_set_const($db, "MAIN_MAIL_SMTP_PORT",      $_POST["MAIN_MAIL_SMTP_PORT"],'chaine',0,'',-1);
-	dolibarr_set_const($db, "MAIN_MAIL_SMTP_SERVER",    $_POST["MAIN_MAIL_SMTP_SERVER"],'chaine',0,'',-1);
-	if (isset($_POST["MAIN_MAIL_SMTPS_ID"]))  dolibarr_set_const($db, "MAIN_MAIL_SMTPS_ID",  $_POST["MAIN_MAIL_SMTPS_ID"],'chaine',0,'',-1);
-	if (isset($_POST["MAIN_MAIL_SMTPS_PW"]))  dolibarr_set_const($db, "MAIN_MAIL_SMTPS_PW",  $_POST["MAIN_MAIL_SMTPS_PW"],'chaine',0,'',-1);
-	if (isset($_POST["MAIN_MAIL_EMAIL_TLS"])) dolibarr_set_const($db, "MAIN_MAIL_EMAIL_TLS", $_POST["MAIN_MAIL_EMAIL_TLS"],'chaine',0,'',-1);
+	dolibarr_set_const($db, "MAIN_MAIL_SENDMODE",       $_POST["MAIN_MAIL_SENDMODE"],'chaine',0,'',0);
+	dolibarr_set_const($db, "MAIN_MAIL_SMTP_PORT",      $_POST["MAIN_MAIL_SMTP_PORT"],'chaine',0,'',0);
+	dolibarr_set_const($db, "MAIN_MAIL_SMTP_SERVER",    $_POST["MAIN_MAIL_SMTP_SERVER"],'chaine',0,'',0);
+	if (isset($_POST["MAIN_MAIL_SMTPS_ID"]))  dolibarr_set_const($db, "MAIN_MAIL_SMTPS_ID",  $_POST["MAIN_MAIL_SMTPS_ID"],'chaine',0,'',0);
+	if (isset($_POST["MAIN_MAIL_SMTPS_PW"]))  dolibarr_set_const($db, "MAIN_MAIL_SMTPS_PW",  $_POST["MAIN_MAIL_SMTPS_PW"],'chaine',0,'',0);
+	if (isset($_POST["MAIN_MAIL_EMAIL_TLS"])) dolibarr_set_const($db, "MAIN_MAIL_EMAIL_TLS", $_POST["MAIN_MAIL_EMAIL_TLS"],'chaine',0,'',0);
 
 	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_FROM",     $_POST["MAIN_MAIL_EMAIL_FROM"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_MAIL_AUTOCOPY_TO",    $_POST["MAIN_MAIL_AUTOCOPY_TO"],'chaine',0,'',$conf->entity);

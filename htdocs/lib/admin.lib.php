@@ -377,7 +377,7 @@ function dolibarr_get_const($db, $name, $entity=1)
  *	\param	    type		Type of constante (chaine par defaut)
  *	\param	    visible	    Is constant visible in Setup->Other page (0 by default)
  *	\param	    note		Note on parameter
- *	\param	    entity		Multi company id (-1 will delete all)
+ *	\param	    entity		Multi company id (0 means all entities)
  *	\return     int         -1 if KO, 1 if OK
  */
 function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $note='', $entity=1)
@@ -400,7 +400,7 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
 
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
 	$sql.= " WHERE name = ".$db->encrypt($name,1);
-	if ($entity >= 0) $sql.= " AND entity = ".$entity;
+	if ($entity > 0) $sql.= " AND entity = ".$entity;
 
 	dol_syslog("admin.lib::dolibarr_set_const sql=".$sql, LOG_DEBUG);
 	$resql=$db->query($sql);
