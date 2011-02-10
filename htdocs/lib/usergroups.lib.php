@@ -214,7 +214,6 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	    print '</tr>';
     }
 
-    if ($edit) print '<a href="'.$_SERVER["PHP_SELF"].($edit?'?action=edit&theme=':'?theme=').$subdir.'" style="font-weight: normal;" alt="'.$langs->trans("Preview").'">';
 	if ($edit)
 	{
 		if ($subdir == $conf->global->MAIN_THEME) $title=$langs->trans("ThemeCurrentlyActive");
