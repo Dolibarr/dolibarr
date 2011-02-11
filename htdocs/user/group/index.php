@@ -78,7 +78,7 @@ if ($resql)
     print "<table class=\"noborder\" width=\"100%\">";
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Group"),$_SERVER["PHP_SELF"],"g.nom",$param,"","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("NbOfUsers"),$_SERVER["PHP_SELF"],"g.nb",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("NbOfUsers"),$_SERVER["PHP_SELF"],"g.nb",$param,"",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"g.datec",$param,"","",$sortfield,$sortorder);
     print "</tr>\n";
     $var=True;
@@ -94,7 +94,7 @@ if ($resql)
         	print img_redstar($langs->trans("GlobalGroup"));
         }
         print "</td>";
-        print '<td>'.$obj->nb.'</td>';
+        print '<td align="center">'.$obj->nb.'</td>';
         print '<td width="100" align="center">'.dol_print_date($db->jdate($obj->datec),"day").'</td>';
         print "</tr>\n";
         $i++;
