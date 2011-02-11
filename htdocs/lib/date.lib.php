@@ -34,13 +34,13 @@
  */
 function dol_time_plus_duree($time,$duration_value,$duration_unit)
 {
-    if ($duration_value == 0) return $time;
-    if ($duration_value > 0) $deltastring="+".abs($duration_value);
-    if ($duration_value < 0) $deltastring="-".abs($duration_value);
-    if ($duration_unit == 'd') { $deltastring.=" day"; }
-    if ($duration_unit == 'm') { $deltastring.=" month"; }
-    if ($duration_unit == 'y') { $deltastring.=" year"; }
-    return strtotime($deltastring,$time);
+	if ($duration_value == 0) return $time;
+	if ($duration_value > 0) $deltastring="+".abs($duration_value);
+	if ($duration_value < 0) $deltastring="-".abs($duration_value);
+	if ($duration_unit == 'd') { $deltastring.=" day"; }
+	if ($duration_unit == 'm') { $deltastring.=" month"; }
+	if ($duration_unit == 'y') { $deltastring.=" year"; }
+	return strtotime($deltastring,$time);
 }
 
 
@@ -112,10 +112,10 @@ function ConvertSecondToTime($iSecond,$format='all',$lengthOfDay=86400)
  */
 function dol_get_prev_day($day, $month, $year)
 {
-    $time=dol_mktime(12,0,0,$month,$day,$year,1,0);
-    $time-=24*60*60;
-    $tmparray=dol_getdate($time,true);
-    return array('year' => $tmparray['year'], 'month' => $tmparray['mon'], 'day' => $tmparray['mday']);
+	$time=dol_mktime(12,0,0,$month,$day,$year,1,0);
+	$time-=24*60*60;
+	$tmparray=dol_getdate($time,true);
+	return array('year' => $tmparray['year'], 'month' => $tmparray['mon'], 'day' => $tmparray['mday']);
 }
 
 /** Return next day
@@ -126,10 +126,10 @@ function dol_get_prev_day($day, $month, $year)
  */
 function dol_get_next_day($day, $month, $year)
 {
-    $time=dol_mktime(12,0,0,$month,$day,$year,1,0);
-    $time+=24*60*60;
-    $tmparray=dol_getdate($time,true);
-    return array('year' => $tmparray['year'], 'month' => $tmparray['mon'], 'day' => $tmparray['mday']);
+	$time=dol_mktime(12,0,0,$month,$day,$year,1,0);
+	$time+=24*60*60;
+	$tmparray=dol_getdate($time,true);
+	return array('year' => $tmparray['year'], 'month' => $tmparray['mon'], 'day' => $tmparray['mday']);
 }
 
 /**	Return previous month
@@ -287,8 +287,37 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR')
 			//Samedi (6) et dimanche (0)
 		}
 
-		// Mettre ici cas des autres pays
+		// Pentecoste and Ascensione in Italy go to the sunday after: isn't holiday.
+		// Pentecoste is 50 days after Easter, Ascensione 40
+		if ($countrycode == 'IT')
+		{
+			$countryfound=1;
 
+			// Definition des dates feriees fixes
+			if($jour == 1 && $mois == 1) $ferie=true; // Capodanno
+			if($jour == 6 && $mois == 1) $ferie=true; // Epifania
+			if($jour == 25 && $mois == 4) $ferie=true; // Anniversario Liberazione
+			if($jour == 1 && $mois == 5) $ferie=true; // Festa del Lavoro
+			if($jour == 2 && $mois == 6) $ferie=true; // Festa della Repubblica
+			if($jour == 15 && $mois == 8) $ferie=true; // Ferragosto
+			if($jour == 1 && $mois == 11) $ferie=true; // Tutti i Santi
+			if($jour == 8 && $mois == 12) $ferie=true; // Immacolata Concezione
+			if($jour == 25 && $mois == 12) $ferie=true; // 25 decembre
+			if($jour == 26 && $mois == 12) $ferie=true; // Santo Stefano
+
+			// Calcul du jour de paques
+			$date_paques = easter_date($annee);
+			$jour_paques = date("d", $date_paques);
+			$mois_paques = date("m", $date_paques);
+			if($jour_paques == $jour && $mois_paques == $mois) $ferie=true;
+			// Paques
+
+			// Calul des samedis et dimanches
+			$jour_julien = unixtojd($timestampStart);
+			$jour_semaine = jddayofweek($jour_julien, 0);
+			if($jour_semaine == 0 || $jour_semaine == 6) $ferie=true;
+			//Samedi (6) et dimanche (0)
+		}
 
 		// Cas pays non defini
 		if (! $countryfound)
