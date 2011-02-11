@@ -560,7 +560,6 @@ if ($conf->banque->enabled)
 			print '<option value="0">'.$langs->trans("DoNotSuggestPaymentMode").'</option>';
 			while ($i < $num)
 			{
-				$var=!$var;
 				$row = $db->fetch_row($resql);
 
 				print '<option value="'.$row[0].'"';
