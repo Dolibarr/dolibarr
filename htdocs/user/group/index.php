@@ -56,18 +56,18 @@ llxHeader();
 
 print_fiche_titre($langs->trans("ListOfGroups"));
 
-$sql = "SELECT g.rowid, g.nom, g.entity, g.datec";
-$sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g";
-$sql .= " WHERE g.entity IN (0,".$conf->entity.")";
+$sql = "SELECT g.rowid, g.nom, g.entity, g.datec, COUNT(ugu.rowid) as nb";
+$sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_usergroup = g.rowid";
+$sql.= " WHERE g.entity IN (0,".$conf->entity.")";
 if ($_POST["search_group"])
 {
     $sql .= " AND (g.nom like '%".$_POST["search_group"]."%' OR g.note like '%".$_POST["search_group"]."%')";
 }
 if ($sall) $sql.= " AND (g.nom like '%".$sall."%' OR g.note like '%".$sall."%')";
-if ($sortfield)
-{
-    $sql .= " ORDER BY ".$sortfield." ".$sortorder;
-}
+$sql.= " GROUP BY g.rowid, g.nom, g.entity, g.datec";
+$sql.= $db->order($sortfield,$sortorder);
+
 $resql = $db->query($sql);
 if ($resql)
 {
@@ -77,8 +77,9 @@ if ($resql)
     $param="search_group=$search_group&amp;sall=$sall";
     print "<table class=\"noborder\" width=\"100%\">";
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Group"),"index.php","g.nom",$param,"","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("DateCreation"),"index.php","g.datec",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Group"),$_SERVER["PHP_SELF"],"g.nom",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("NbOfUsers"),$_SERVER["PHP_SELF"],"g.nb",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"g.datec",$param,"","",$sortfield,$sortorder);
     print "</tr>\n";
     $var=True;
     while ($i < $num)
@@ -93,6 +94,7 @@ if ($resql)
         	print img_redstar($langs->trans("GlobalGroup"));
         }
         print "</td>";
+        print '<td>'.$obj->nb.'</td>';
         print '<td width="100" align="center">'.dol_print_date($db->jdate($obj->datec),"day").'</td>';
         print "</tr>\n";
         $i++;
