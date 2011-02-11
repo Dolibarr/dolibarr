@@ -62,10 +62,10 @@ class FactureRec extends Facture
 	var $db_table;
 	var $propalid;
 	var $fk_project;
-	
+
 	var $rang;
 	var $special_code;
-	
+
 	var $lines=array();
 
 
@@ -327,7 +327,7 @@ class FactureRec extends Facture
 			{
 				$objp = $this->db->fetch_object($result);
 				$line = new FactureLigne($this->db);
-				
+
 				$line->rowid	        = $objp->rowid;
 				$line->desc             = $objp->description;     // Description line
 				$line->product_type     = $objp->product_type;	// Type of line
@@ -359,7 +359,7 @@ class FactureRec extends Facture
 				$line->remise           = $objp->remise;
 
 				$this->lines[$i] = $line;
-				
+
 				$i++;
 			}
 
@@ -490,9 +490,9 @@ class FactureRec extends Facture
 			$sql.= ", '".price2num($remise)."'";
 			$sql.= ", '".price2num($total_ht)."'";
 			$sql.= ", '".price2num($total_tva)."'";
-			$sql.= ", '".price2num($total_ttc)."') ;";
+			$sql.= ", '".price2num($total_ttc)."'";
 			$sql.= ", ".$rang;
-			$sql.= ", ".$special_code;
+			$sql.= ", ".$special_code.")";
 
 			dol_syslog("FactureRec::addline sql=".$sql, LOG_DEBUG);
 			if ($this->db->query( $sql))
