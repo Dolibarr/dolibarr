@@ -21,7 +21,7 @@
 /**
  *	\file       htdocs/compta/facture/fiche-rec.php
  *	\ingroup    facture
- *	\brief      Page d'affichage d'une facture recurrente
+ *	\brief      Page to show predefined invoice
  *	\version    $Id$
  */
 
@@ -33,8 +33,8 @@ require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 $langs->load('bills');
 
 // Security check
-$facid=isset($_GET["facid"])?$_GET["facid"]:$_POST["facid"];
-$action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
+$facid=GETPOST("facid");
+$action=GETPOST("action");
 if ($user->societe_id) $socid=$user->societe_id;
 $objecttype = 'facture_rec';
 if ($action == "create" || $action == "add") $objecttype = '';
@@ -83,7 +83,7 @@ if ($_POST["action"] == 'add')
 if ($_REQUEST["action"] == 'delete' && $user->rights->facture->supprimer)
 {
 	$fac = new FactureRec($db);
-	$fac->delete($_REQUEST["facid"]);
+	$fac->delete(GETPOST("facid"));
 	$facid = 0 ;
 }
 
@@ -106,9 +106,9 @@ if ($_GET["action"] == 'create')
 
 	if ($mesg) print $mesg.'<br>';
 
-	$facture = new Facture($db);
+	$facture = new Facture($db);   // Source invoice
 	$product_static=new Product($db);
-	
+
 	// Instantiate hooks of thirdparty module
 	if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
 	{
@@ -340,7 +340,7 @@ else
 
 	if ($facid > 0)
 	{
-		$fac = New FactureRec($db,0);
+		$fac = new FactureRec($db,0);
 
 		if ( $fac->fetch($facid, $user->societe_id) > 0)
 		{
