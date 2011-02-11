@@ -195,11 +195,9 @@ class FactureRec extends Facture
 	 */
 	function fetch($rowid, $socid=0)
 	{
-		dol_syslog("Facture::Fetch rowid=".$rowid.", societe_id=".$socid, LOG_DEBUG);
-
 		$sql = 'SELECT f.titre,f.fk_soc,f.amount,f.tva,f.total,f.total_ttc,f.remise_percent,f.remise_absolue,f.remise';
 		$sql.= ', f.date_lim_reglement as dlr';
-		$sql.= ', f.note, f.note_public, f.fk_user_author, f.rang, f.special_code';
+		$sql.= ', f.note, f.note_public, f.fk_user_author';
 		$sql.= ', f.fk_mode_reglement, f.fk_cond_reglement';
 		$sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql.= ', c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_doc';
@@ -211,8 +209,8 @@ class FactureRec extends Facture
 		$sql.= ' WHERE f.rowid='.$rowid;
 		if ($socid > 0)	$sql.= ' AND f.fk_soc = '.$socid;
 
+        dol_syslog("FactureRec::Fetch rowid=".$rowid.", societe_id=".$socid." sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
-
 		if ($result)
 		{
 			if ($this->db->num_rows($result))
