@@ -133,6 +133,7 @@ RemoveItManuallyAndPressF5ToContinue=Esborreu manualment i premeu F5 per continu
 KeepDefaultValuesWamp=Està utilitzant l'assistent d'instal·lació DoliWamp, els valors proposats aquí estan optimitzats. Canviels només si està segur d'això.
 KeepDefaultValuesDeb=Està utilitzant l'assistent d'instal·lació Dolibarr d'un paquet d'Ubuntu o Debian, els valors proposats per als paràmetres ja estan optimitzats. Només serà necessària la contrasenya del propietari de la base de dades a crear. Canvie l'altra informació només si està segur d'això.
 KeepDefaultValuesMamp=Està utilitzant l'assistent d'instal·lació DoliMamp, els valors proposats aquí estan optimitzats. Canviels només si està segur d'això.
+KeepDefaultValuesProxmox=Està utilitzant l'assistent d'instal·lació Dolibarr des d'una màquina virtual Proxmox, els valors proposats aquí estan optimitzats. Canviels només si està segur d'això.
 FieldRenamed=Camp renombrat
 IfLoginDoesNotExistsCheckCreateUser=Si l'login encara no existeix, ha de seleccionar l'opció "Creació de l'usuari"
 ErrorConnection=El servidor "<b>%s </b>", base de dades "<b>%s</b>", login "<b>%s</b>", o la contrasenya de la base de dades poden ser incorrectes o la versió de PHP molt vella en comparació amb la versió de la base de dades.
