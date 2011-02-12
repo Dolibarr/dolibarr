@@ -49,6 +49,8 @@ class User extends CommonObject
 	var $search_sid;
 	var $nom;
 	var $prenom;
+    var $lastname;
+    var $firstname;
 	var $note;
 	var $email;
 	var $office_phone;
@@ -144,12 +146,12 @@ class User extends CommonObject
 
 		if ($sid)
 		{
-			$sql.= " AND (u.ldap_sid = '".$sid."' || u.login = '".addslashes($login)."') LIMIT 1";
+			$sql.= " AND (u.ldap_sid = '".$sid."' || u.login = '".$this->db->escape($login)."') LIMIT 1";
 		}
 		else if ($login)
 			// permet une recherche du user par son SID ActiveDirectory ou Samba
 		{
-			$sql.= " AND u.login = '".addslashes($login)."'";
+			$sql.= " AND u.login = '".$this->db->escape($login)."'";
 		}
 		else
 		{
@@ -487,7 +489,7 @@ class User extends CommonObject
 		$sql.= " AND r.entity = ".$conf->entity;
 		$sql.= " AND ur.fk_user= ".$this->id;
 		$sql.= " AND r.perms IS NOT NULL";
-		if ($moduletag) $sql.= " AND r.module = '".addslashes($moduletag)."'";
+		if ($moduletag) $sql.= " AND r.module = '".$this->db->escape($moduletag)."'";
 
 		dol_syslog('User::getRights sql='.$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -530,7 +532,7 @@ class User extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."usergroup_rights as gr, ".MAIN_DB_PREFIX."usergroup_user as gu, ".MAIN_DB_PREFIX."rights_def as r";
 		$sql.= " WHERE r.id = gr.fk_id AND gr.fk_usergroup = gu.fk_usergroup AND gu.fk_user = ".$this->id." AND r.perms IS NOT NULL";
 		$sql.= " AND r.entity = ".$conf->entity;
-		if ($moduletag) $sql.= " AND r.module = '".addslashes($moduletag)."'";
+		if ($moduletag) $sql.= " AND r.module = '".$this->db->escape($moduletag)."'";
 
 		dol_syslog('User::getRights sql='.$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -711,7 +713,7 @@ class User extends CommonObject
 		$this->db->begin();
 
 		$sql = "SELECT login FROM ".MAIN_DB_PREFIX."user";
-		$sql.= " WHERE login ='".addslashes($this->login)."'";
+		$sql.= " WHERE login ='".$this->db->escape($this->login)."'";
 		$sql.= " AND entity IN (0,".$conf->entity.")";
 
 		dol_syslog("User::Create sql=".$sql, LOG_DEBUG);
@@ -730,7 +732,7 @@ class User extends CommonObject
 			else
 			{
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."user (datec,login,ldap_sid,entity)";
-				$sql.= " VALUES('".$this->db->idate($now)."','".addslashes($this->login)."','".$this->ldap_sid."',".$this->entity.")";
+				$sql.= " VALUES('".$this->db->idate($now)."','".$this->db->escape($this->login)."','".$this->ldap_sid."',".$this->entity.")";
 				$result=$this->db->query($sql);
 
 				dol_syslog("User::Create sql=".$sql, LOG_DEBUG);
@@ -808,12 +810,13 @@ class User extends CommonObject
 
 
 	/**
-	 *      \brief      Cree en base un utilisateur depuis l'objet contact
-	 *      \param      contact     Objet du contact source
-	 * 		\param		login		Login to force
-	 *      \return     int         si erreur <0, si ok renvoie id compte cree
+	 *      Cree en base un utilisateur depuis l'objet contact
+	 *      @param    contact     Objet du contact source
+	 * 		@param    login       Login to force
+	 *      @param    password    Password to force
+	 *      @return   int         <0 if error, if OK returns id of created user
 	 */
-	function create_from_contact($contact,$login='')
+	function create_from_contact($contact,$login='',$password='')
 	{
 		global $conf,$user,$langs;
 
@@ -1019,20 +1022,20 @@ class User extends CommonObject
 
 		// Mise a jour autres infos
 		$sql = "UPDATE ".MAIN_DB_PREFIX."user SET";
-		$sql.= " name = '".addslashes($this->nom)."'";
-		$sql.= ", firstname = '".addslashes($this->prenom)."'";
-		$sql.= ", login = '".addslashes($this->login)."'";
+		$sql.= " name = '".$this->db->escape($this->nom)."'";
+		$sql.= ", firstname = '".$this->db->escape($this->prenom)."'";
+		$sql.= ", login = '".$this->db->escape($this->login)."'";
 		$sql.= ", admin = ".$this->admin;
-		$sql.= ", office_phone = '".addslashes($this->office_phone)."'";
-		$sql.= ", office_fax = '".addslashes($this->office_fax)."'";
-		$sql.= ", user_mobile = '".addslashes($this->user_mobile)."'";
-		$sql.= ", email = '".addslashes($this->email)."'";
-		$sql.= ", webcal_login = '".addslashes($this->webcal_login)."'";
-		$sql.= ", phenix_login = '".addslashes($this->phenix_login)."'";
-		$sql.= ", phenix_pass = '".addslashes($this->phenix_pass)."'";
-		$sql.= ", note = '".addslashes($this->note)."'";
-		$sql.= ", photo = ".($this->photo?"'".addslashes($this->photo)."'":"null");
-		$sql.= ", openid = ".($this->openid?"'".addslashes($this->openid)."'":"null");
+		$sql.= ", office_phone = '".$this->db->escape($this->office_phone)."'";
+		$sql.= ", office_fax = '".$this->db->escape($this->office_fax)."'";
+		$sql.= ", user_mobile = '".$this->db->escape($this->user_mobile)."'";
+		$sql.= ", email = '".$this->db->escape($this->email)."'";
+		$sql.= ", webcal_login = '".$this->db->escape($this->webcal_login)."'";
+		$sql.= ", phenix_login = '".$this->db->escape($this->phenix_login)."'";
+		$sql.= ", phenix_pass = '".$this->db->escape($this->phenix_pass)."'";
+		$sql.= ", note = '".$this->db->escape($this->note)."'";
+		$sql.= ", photo = ".($this->photo?"'".$this->db->escape($this->photo)."'":"null");
+		$sql.= ", openid = ".($this->openid?"'".$this->db->escape($this->openid)."'":"null");
 		//$sql.= ", entity = '".$this->entity."'";
 		$sql.= " WHERE rowid = ".$this->id;
 
@@ -1177,13 +1180,13 @@ class User extends CommonObject
 
 
 	/**
-	 *  \brief     	Change le mot de passe d'un utilisateur
-	 *  \param     	user             		Object user de l'utilisateur qui fait la modification
-	 *  \param     	password         		Nouveau mot de passe en clair (a generer si non communique)
-	 *	\param		changelater				1=Change password only after clicking on confirm email
-	 *	\param		notrigger				1=Ne declenche pas les triggers
-	 *	\param		nosyncmember	        Do not synchronize linked member
-	 *  \return    	string           		If OK return clear password, 0 if no change, < 0 if error
+	 *  Change password of a user
+	 *  @param     	user             		Object user of user making change
+	 *  @param     	password         		New password in clear text (to generate if not provided)
+	 *	@param		changelater				1=Change password only after clicking on confirm email
+	 *	@param		notrigger				1=Does not launch triggers
+	 *	@param		nosyncmember	        Do not synchronize linked member
+	 *  @return    	string           		If OK return clear password, 0 if no change, < 0 if error
 	 */
 	function setPassword($user, $password='', $changelater=0, $notrigger=0, $nosyncmember=0)
 	{
@@ -1208,7 +1211,7 @@ class User extends CommonObject
 		if (! $changelater)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."user";
-			$sql.= " SET pass_crypted = '".addslashes($password_crypted)."',";
+			$sql.= " SET pass_crypted = '".$this->db->escape($password_crypted)."',";
 			$sql.= " pass_temp = null";
 			if (! empty($conf->global->DATABASE_PWD_ENCRYPTED))
 			{
@@ -1216,7 +1219,7 @@ class User extends CommonObject
 			}
 			else
 			{
-				$sql.= ", pass = '".addslashes($password)."'";
+				$sql.= ", pass = '".$this->db->escape($password)."'";
 			}
 			$sql.= " WHERE rowid = ".$this->id;
 
@@ -1287,7 +1290,7 @@ class User extends CommonObject
 			// We store clear password in password temporary field.
 			// After receiving confirmation link, we will crypt it and store it in pass_crypted
 			$sql = "UPDATE ".MAIN_DB_PREFIX."user";
-			$sql.= " SET pass_temp = '".addslashes($password)."'";
+			$sql.= " SET pass_temp = '".$this->db->escape($password)."'";
 			$sql.= " WHERE rowid = ".$this->id;
 
 			dol_syslog("User::setPassword sql=hidden", LOG_DEBUG);	// No log
@@ -1345,7 +1348,7 @@ class User extends CommonObject
 			$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$dolibarr_main_url_root);
 		}
 		if (! empty($dolibarr_main_force_https)) $urlwithouturlroot=preg_replace('/http:/i','https:',$urlwithouturlroot);
-	
+
 		// TODO Use outputlangs to translate messages
 		if (! $changelater)
 		{
@@ -1367,7 +1370,7 @@ class User extends CommonObject
 			$mesg.= $langs->trans("Password")." : $password\n\n";
 			$mesg.= "\n";
 			$mesg.= "You must click on the folowing link to validate its change.\n";
-			$url = $urlwithouturlroot.'/user/passwordforgotten.php?action=validatenewpassword&username='.$this->login."&passwordmd5=".md5($password);
+			$url = $urlwithouturlroot.DOL_URL_ROOT.'/user/passwordforgotten.php?action=validatenewpassword&username='.$this->login."&passwordmd5=".md5($password);
 			$mesg.= $url."\n\n";
 			$mesg.= "If you didn't ask anything, just forget this email\n\n";
 			dol_syslog("User::send_password url=".$url);
@@ -1850,7 +1853,7 @@ class User extends CommonObject
 	{
 		$sql = "SELECT count(mc.email) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
-		$sql.= " WHERE mc.email = '".addslashes($this->email)."'";
+		$sql.= " WHERE mc.email = '".$this->db->escape($this->email)."'";
 		$sql.= " AND mc.statut=1";      // -1 erreur, 0 non envoye, 1 envoye avec succes
 		$resql=$this->db->query($sql);
 		if ($resql)

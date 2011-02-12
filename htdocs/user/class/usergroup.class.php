@@ -495,7 +495,7 @@ class UserGroup extends CommonObject
 		$now=dol_now();
 
 		$sql = "INSERT into ".MAIN_DB_PREFIX."usergroup (datec, nom, entity)";
-		$sql.= " VALUES('".$this->db->idate($now)."','".addslashes($this->nom)."',".$conf->entity.")";
+		$sql.= " VALUES('".$this->db->idate($now)."','".$this->db->escape($this->nom)."',".$conf->entity.")";
 
 		dol_syslog("UserGroup::Create sql=".$sql, LOG_DEBUG);
 		$result=$this->db->query($sql);
@@ -535,8 +535,8 @@ class UserGroup extends CommonObject
 		$error=0;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."usergroup SET ";
-		$sql .= " nom = '".addslashes($this->nom)."',";
-		$sql .= " note = '".addslashes($this->note)."'";
+		$sql .= " nom = '".$this->db->escape($this->nom)."',";
+		$sql .= " note = '".$this->db->escape($this->note)."'";
 		$sql .= " WHERE rowid = ".$this->id;
 
 		dol_syslog("Usergroup::update sql=".$sql);
