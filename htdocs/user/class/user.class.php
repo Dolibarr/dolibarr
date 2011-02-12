@@ -146,7 +146,7 @@ class User extends CommonObject
 
 		if ($sid)
 		{
-			$sql.= " AND (u.ldap_sid = '".$sid."' || u.login = '".$this->db->escape($login)."') LIMIT 1";
+			$sql.= " AND (u.ldap_sid = '".$sid."' OR u.login = '".$this->db->escape($login)."') LIMIT 1";
 		}
 		else if ($login)
 			// permet une recherche du user par son SID ActiveDirectory ou Samba
