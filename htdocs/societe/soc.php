@@ -665,22 +665,20 @@ else
 		// Name, firstname
 		if ($soc->particulier)
 		{
-			print '<tr><td><span class="fieldrequired">'.$langs->trans('LastName').'</span></td><td><input type="text" size="30" maxlength="60" name="nom" value="'.$soc->nom.'"></td>';
+			print '<tr><td><span class="fieldrequired">'.$langs->trans('LastName').'</span></td><td'.(empty($conf->global->SOCIETE_USEPREFIX)?' colspan="3"':'').'><input type="text" size="30" maxlength="60" name="nom" value="'.$soc->nom.'"></td>';
             if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
             {
                 print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" maxlength="5" name="prefix_comm" value="'.$soc->prefix_comm.'"></td>';
             }
-            else print '<td>&nbsp;</td>';
 			print '</tr>';
 		}
 		else
 		{
-			print '<tr><td><span class="fieldrequired">'.$langs->trans('ThirdPartyName').'</span></td><td><input type="text" size="30" maxlength="60" name="nom" value="'.$soc->nom.'"></td>';
+			print '<tr><td><span class="fieldrequired">'.$langs->trans('ThirdPartyName').'</span></td><td'.(empty($conf->global->SOCIETE_USEPREFIX)?' colspan="3"':'').'><input type="text" size="30" maxlength="60" name="nom" value="'.$soc->nom.'"></td>';
             if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
             {
                 print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" maxlength="5" name="prefix_comm" value="'.$soc->prefix_comm.'"></td>';
             }
-            else print '<td>&nbsp;</td>';
 			print '</tr>';
 		}
 		// If javascript on, we show option individual
