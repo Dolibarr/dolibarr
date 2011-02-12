@@ -50,9 +50,9 @@ $adh = new Adherent($db);
 $adho = new AdherentOptions($db);
 $errmsg='';
 
-$action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
-$rowid=isset($_GET["rowid"])?$_GET["rowid"]:$_POST["rowid"];
-$typeid=isset($_GET["typeid"])?$_GET["typeid"]:$_POST["typeid"];
+$action=GETPOST("action");
+$rowid=GETPOST("rowid");
+$typeid=GETPOST("typeid");
 
 if ($rowid)
 {
@@ -123,6 +123,7 @@ if ($_POST['action'] == 'setsocid')
 		{
 			$sql ="SELECT rowid FROM ".MAIN_DB_PREFIX."adherent";
 			$sql.=" WHERE fk_soc = '".$_POST["socid"]."'";
+			$sql.=" AND entity = ".$conf->entity;
 			$resql = $db->query($sql);
 			if ($resql)
 			{
@@ -134,7 +135,7 @@ if ($_POST['action'] == 'setsocid')
 					$thirdparty=new Societe($db);
 					$thirdparty->fetch($_POST["socid"]);
 					$error++;
-					$mesg='<div class="error">'.$langs->trans("ErrorMemberIsAlreadyLinkedToThisThirdParty",$othermember->getFullName($langs),$othermember->login,$thirdparty->nom).'</div>';
+					$errmsg='<div class="error">'.$langs->trans("ErrorMemberIsAlreadyLinkedToThisThirdParty",$othermember->getFullName($langs),$othermember->login,$thirdparty->nom).'</div>';
 				}
 			}
 
@@ -617,12 +618,8 @@ if ($action == 'create')
 
     print_fiche_titre($langs->trans("NewMember"));
 
-    if ($errmsg)
-    {
-        print '<div class="error">'.$errmsg.'</div>';
-    }
+    if ($errmsg) print '<div class="error">'.$errmsg.'</div>';
     if ($mesg) print '<div class="ok">'.$mesg.'</div>';
-
 
     if ($conf->use_javascript_ajax)
     {
@@ -635,7 +632,6 @@ if ($action == 'create')
                })';
         print '</script>'."\n";
     }
-
 
     print '<form name="formsoc" action="'.$_SERVER["PHP_SELF"].'" method="post" enctype="multipart/form-data">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -818,7 +814,6 @@ if ($action == 'edit')
 	dol_htmloutput_errors($errmsg,$errmsgs);
 
 	if ($mesg) print '<div class="ok">'.$mesg.'</div>';
-
 
 	if ($conf->use_javascript_ajax)
 	{
@@ -1015,13 +1010,13 @@ if ($rowid && $action != 'edit')
 
 	dol_fiche_head($head, 'general', $langs->trans("Member"), 0, 'user');
 
-	if ($msg) print '<div class="error">'.$msg.'</div>';
+	dol_htmloutput_errors($errmsg,$errmsgs);
 
 	// Confirm create user
 	if ($_GET["action"] == 'create_user')
 	{
 		$login=$adh->login;
-		if (empty($login)) 
+		if (empty($login))
 		{
 			// Full firstname and name separated with a dot : firstname.name
 			include_once(DOL_DOCUMENT_ROOT.'/lib/functions2.lib.php');
