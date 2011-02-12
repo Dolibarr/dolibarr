@@ -32,8 +32,8 @@ require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 $langs->load("errors");
 $langs->load("admin");
 
-$mode=isset($_GET["mode"])?$_GET["mode"]:(isset($_SESSION['mode'])?$_SESSION['mode']:0);
-$mesg=isset($_GET["mesg"])?$_GET["mesg"]:"";
+$mode=GETPOST("mode")?GETPOST("mode"):(isset($_SESSION['mode'])?$_SESSION['mode']:0);
+$mesg=GETPOST("mesg");
 
 if (!$user->admin)
     accessforbidden();

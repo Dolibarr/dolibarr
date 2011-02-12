@@ -3,8 +3,8 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -580,7 +580,7 @@ class DolibarrModules
 				$sql.= " WHERE file = '".$file."'";
 				$sql.= " AND entity = ".$conf->entity;
 
-				if ($note) $sql.=" AND note ='".addslashes($note)."'";
+				if ($note) $sql.=" AND note ='".$this->db->escape($note)."'";
 
 				$result=$this->db->query($sql);
 				if ($result)
@@ -589,9 +589,9 @@ class DolibarrModules
 					if ($row[0] == 0)
 					{
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (file,entity,note)";
-						$sql.= " VALUES ('".addslashes($file)."',";
+						$sql.= " VALUES ('".$this->db->escape($file)."',";
 						$sql.= $conf->entity.",";
-						$sql.= $note?"'".addslashes($note)."'":"null";
+						$sql.= $note?"'".$this->db->escape($note)."'":"null";
 						$sql.= ")";
 
 						dol_syslog("DolibarrModules::insert_boxes sql=".$sql);
@@ -635,7 +635,7 @@ class DolibarrModules
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes";
 				$sql.= " USING ".MAIN_DB_PREFIX."boxes, ".MAIN_DB_PREFIX."boxes_def";
 				$sql.= " WHERE ".MAIN_DB_PREFIX."boxes.box_id = ".MAIN_DB_PREFIX."boxes_def.rowid";
-				$sql.= " AND ".MAIN_DB_PREFIX."boxes_def.file = '".addslashes($file)."'";
+				$sql.= " AND ".MAIN_DB_PREFIX."boxes_def.file = '".$this->db->escape($file)."'";
 				$sql.= " AND ".MAIN_DB_PREFIX."boxes_def.entity = ".$conf->entity;
 
 				dol_syslog("DolibarrModules::delete_boxes sql=".$sql);
@@ -648,7 +648,7 @@ class DolibarrModules
 				}
 
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def";
-				$sql.= " WHERE file = '".addslashes($file)."'";
+				$sql.= " WHERE file = '".$this->db->escape($file)."'";
 				$sql.= " AND entity = ".$conf->entity;
 
 				dol_syslog("DolibarrModules::delete_boxes sql=".$sql);
@@ -849,7 +849,7 @@ class DolibarrModules
 					$sql.= $this->db->encrypt($name,1);
 					$sql.= ",'".$type."'";
 					$sql.= ",".($val?$this->db->encrypt($val,1):"''");
-					$sql.= ",".($note?"'".addslashes($note)."'":"null");
+					$sql.= ",".($note?"'".$this->db->escape($note)."'":"null");
 					$sql.= ",'".$visible."'";
 					$sql.= ",".$entity;
 					$sql.= ")";
@@ -955,14 +955,14 @@ class DolibarrModules
 							$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
 							$sql.= " (id, entity, libelle, module, type, bydefault, perms, subperms)";
 							$sql.= " VALUES ";
-							$sql.= "(".$r_id.",".$conf->entity.",'".addslashes($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."','".$r_subperms."')";
+							$sql.= "(".$r_id.",".$conf->entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."','".$r_subperms."')";
 						}
 						else
 						{
 							$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
 							$sql.= " (id, entity, libelle, module, type, bydefault, perms)";
 							$sql.= " VALUES ";
-							$sql.= "(".$r_id.",".$conf->entity.",'".addslashes($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."')";
+							$sql.= "(".$r_id.",".$conf->entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."')";
 						}
 					}
 					else
@@ -970,7 +970,7 @@ class DolibarrModules
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
 						$sql .= " (id, entity, libelle, module, type, bydefault)";
 						$sql .= " VALUES ";
-						$sql .= "(".$r_id.",".$conf->entity.",'".addslashes($r_desc)."','".$r_modul."','".$r_type."',".$r_def.")";
+						$sql .= "(".$r_id.",".$conf->entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.")";
 					}
 
 					dol_syslog("DolibarrModules::insert_permissions sql=".$sql, LOG_DEBUG);
@@ -1131,7 +1131,7 @@ class DolibarrModules
 		$err=0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
-		$sql.= " WHERE module = '".addslashes($this->rights_class)."'";
+		$sql.= " WHERE module = '".$this->db->escape($this->rights_class)."'";
 		$sql.= " AND entity = ".$conf->entity;
 
 		dol_syslog("DolibarrModules::delete_menus sql=".$sql);
