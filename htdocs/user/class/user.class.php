@@ -146,12 +146,12 @@ class User extends CommonObject
 
 		if ($sid)
 		{
-			$sql.= " AND (u.ldap_sid = '".$sid."' || u.login = '".addslashes($login)."') LIMIT 1";
+			$sql.= " AND (u.ldap_sid = '".$sid."' || u.login = '".$this->db->escape($login)."') LIMIT 1";
 		}
 		else if ($login)
 			// permet une recherche du user par son SID ActiveDirectory ou Samba
 		{
-			$sql.= " AND u.login = '".addslashes($login)."'";
+			$sql.= " AND u.login = '".$this->db->escape($login)."'";
 		}
 		else
 		{
@@ -489,7 +489,7 @@ class User extends CommonObject
 		$sql.= " AND r.entity = ".$conf->entity;
 		$sql.= " AND ur.fk_user= ".$this->id;
 		$sql.= " AND r.perms IS NOT NULL";
-		if ($moduletag) $sql.= " AND r.module = '".addslashes($moduletag)."'";
+		if ($moduletag) $sql.= " AND r.module = '".$this->db->escape($moduletag)."'";
 
 		dol_syslog('User::getRights sql='.$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -532,7 +532,7 @@ class User extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."usergroup_rights as gr, ".MAIN_DB_PREFIX."usergroup_user as gu, ".MAIN_DB_PREFIX."rights_def as r";
 		$sql.= " WHERE r.id = gr.fk_id AND gr.fk_usergroup = gu.fk_usergroup AND gu.fk_user = ".$this->id." AND r.perms IS NOT NULL";
 		$sql.= " AND r.entity = ".$conf->entity;
-		if ($moduletag) $sql.= " AND r.module = '".addslashes($moduletag)."'";
+		if ($moduletag) $sql.= " AND r.module = '".$this->db->escape($moduletag)."'";
 
 		dol_syslog('User::getRights sql='.$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -713,7 +713,7 @@ class User extends CommonObject
 		$this->db->begin();
 
 		$sql = "SELECT login FROM ".MAIN_DB_PREFIX."user";
-		$sql.= " WHERE login ='".addslashes($this->login)."'";
+		$sql.= " WHERE login ='".$this->db->escape($this->login)."'";
 		$sql.= " AND entity IN (0,".$conf->entity.")";
 
 		dol_syslog("User::Create sql=".$sql, LOG_DEBUG);
@@ -732,7 +732,7 @@ class User extends CommonObject
 			else
 			{
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."user (datec,login,ldap_sid,entity)";
-				$sql.= " VALUES('".$this->db->idate($now)."','".addslashes($this->login)."','".$this->ldap_sid."',".$this->entity.")";
+				$sql.= " VALUES('".$this->db->idate($now)."','".$this->db->escape($this->login)."','".$this->ldap_sid."',".$this->entity.")";
 				$result=$this->db->query($sql);
 
 				dol_syslog("User::Create sql=".$sql, LOG_DEBUG);
@@ -1022,20 +1022,20 @@ class User extends CommonObject
 
 		// Mise a jour autres infos
 		$sql = "UPDATE ".MAIN_DB_PREFIX."user SET";
-		$sql.= " name = '".addslashes($this->nom)."'";
-		$sql.= ", firstname = '".addslashes($this->prenom)."'";
-		$sql.= ", login = '".addslashes($this->login)."'";
+		$sql.= " name = '".$this->db->escape($this->nom)."'";
+		$sql.= ", firstname = '".$this->db->escape($this->prenom)."'";
+		$sql.= ", login = '".$this->db->escape($this->login)."'";
 		$sql.= ", admin = ".$this->admin;
-		$sql.= ", office_phone = '".addslashes($this->office_phone)."'";
-		$sql.= ", office_fax = '".addslashes($this->office_fax)."'";
-		$sql.= ", user_mobile = '".addslashes($this->user_mobile)."'";
-		$sql.= ", email = '".addslashes($this->email)."'";
-		$sql.= ", webcal_login = '".addslashes($this->webcal_login)."'";
-		$sql.= ", phenix_login = '".addslashes($this->phenix_login)."'";
-		$sql.= ", phenix_pass = '".addslashes($this->phenix_pass)."'";
-		$sql.= ", note = '".addslashes($this->note)."'";
-		$sql.= ", photo = ".($this->photo?"'".addslashes($this->photo)."'":"null");
-		$sql.= ", openid = ".($this->openid?"'".addslashes($this->openid)."'":"null");
+		$sql.= ", office_phone = '".$this->db->escape($this->office_phone)."'";
+		$sql.= ", office_fax = '".$this->db->escape($this->office_fax)."'";
+		$sql.= ", user_mobile = '".$this->db->escape($this->user_mobile)."'";
+		$sql.= ", email = '".$this->db->escape($this->email)."'";
+		$sql.= ", webcal_login = '".$this->db->escape($this->webcal_login)."'";
+		$sql.= ", phenix_login = '".$this->db->escape($this->phenix_login)."'";
+		$sql.= ", phenix_pass = '".$this->db->escape($this->phenix_pass)."'";
+		$sql.= ", note = '".$this->db->escape($this->note)."'";
+		$sql.= ", photo = ".($this->photo?"'".$this->db->escape($this->photo)."'":"null");
+		$sql.= ", openid = ".($this->openid?"'".$this->db->escape($this->openid)."'":"null");
 		//$sql.= ", entity = '".$this->entity."'";
 		$sql.= " WHERE rowid = ".$this->id;
 
@@ -1211,7 +1211,7 @@ class User extends CommonObject
 		if (! $changelater)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."user";
-			$sql.= " SET pass_crypted = '".addslashes($password_crypted)."',";
+			$sql.= " SET pass_crypted = '".$this->db->escape($password_crypted)."',";
 			$sql.= " pass_temp = null";
 			if (! empty($conf->global->DATABASE_PWD_ENCRYPTED))
 			{
@@ -1219,7 +1219,7 @@ class User extends CommonObject
 			}
 			else
 			{
-				$sql.= ", pass = '".addslashes($password)."'";
+				$sql.= ", pass = '".$this->db->escape($password)."'";
 			}
 			$sql.= " WHERE rowid = ".$this->id;
 
@@ -1290,7 +1290,7 @@ class User extends CommonObject
 			// We store clear password in password temporary field.
 			// After receiving confirmation link, we will crypt it and store it in pass_crypted
 			$sql = "UPDATE ".MAIN_DB_PREFIX."user";
-			$sql.= " SET pass_temp = '".addslashes($password)."'";
+			$sql.= " SET pass_temp = '".$this->db->escape($password)."'";
 			$sql.= " WHERE rowid = ".$this->id;
 
 			dol_syslog("User::setPassword sql=hidden", LOG_DEBUG);	// No log
@@ -1853,7 +1853,7 @@ class User extends CommonObject
 	{
 		$sql = "SELECT count(mc.email) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
-		$sql.= " WHERE mc.email = '".addslashes($this->email)."'";
+		$sql.= " WHERE mc.email = '".$this->db->escape($this->email)."'";
 		$sql.= " AND mc.statut=1";      // -1 erreur, 0 non envoye, 1 envoye avec succes
 		$resql=$this->db->query($sql);
 		if ($resql)
