@@ -96,7 +96,7 @@ print $form->showrefnav($contact,'id');
 print '</td></tr>';
 
 // Name
-print '<tr><td>'.$langs->trans("Lastname").'</td><td>'.$contact->name.'</td>';
+print '<tr><td>'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><td>'.$contact->name.'</td>';
 print '<td>'.$langs->trans("Firstname").'</td><td width="25%">'.$contact->firstname.'</td></tr>';
 
 // Company

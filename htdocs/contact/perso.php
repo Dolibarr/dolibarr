@@ -103,7 +103,7 @@ if ($_GET["action"] == 'edit')
     print '</td></tr>';
 
 	// Name
-    print '<tr><td width="20%">'.$langs->trans("Lastname").'</td><td width="30%">'.$contact->nom.'</td>';
+    print '<tr><td width="20%">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><td width="30%">'.$contact->nom.'</td>';
     print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="30%">'.$contact->prenom.'</td>';
 
     // Company
