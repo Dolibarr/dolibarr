@@ -222,7 +222,7 @@ if($_GET["socid"])
 				print '<tr class="liste_titre">';
 				print '<td>'.$langs->trans("Company").'</td>';
 				print '<td>'.$langs->trans("Town").'</td>';
-				print '<td>Type<td>';
+				print '<td>'.$langs->trans("ThirdPartyType").'<td>';
 				print '<td colspan="2" align="center">&nbsp;</td>';
 				print "</tr>\n";
 
