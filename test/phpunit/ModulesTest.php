@@ -55,7 +55,6 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @xcovers modContrat
  * @xcovers modDeplacement
  * @xcovers modDocument
- * @xcovers modDomain
  * @xcovers modDon
  * @xcovers modECM
  * @xcovers modExpedition
@@ -166,7 +165,7 @@ class ModulesTest extends PHPUnit_Framework_TestCase
 		$db=$this->savdb;
 
 		$modulelist=array('Accounting','Adherent','Agenda','Banque','Barcode','Bookmark','Boutique',
-		'CashDesk','Categorie','ClickToDial','Commande','Comptabilite','Contrat','Deplacement','Document','Domain','Don',
+		'CashDesk','Categorie','ClickToDial','Commande','Comptabilite','Contrat','Deplacement','Document','Don',
 		'ECM','Expedition','Export','ExternalRss','ExternalSite','FTP','Facture',
 		'Fckeditor','Ficheinter','Fournisseur','GeoIPMaxmind','Gravatar','Import','Label','Ldap','Mailing',
 		'Mantis','Notification','Paybox','Paypal','Prelevement','Product','Projet','Propale',
