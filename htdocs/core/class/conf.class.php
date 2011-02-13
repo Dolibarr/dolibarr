@@ -283,31 +283,6 @@ class Conf
 		// Module contrat
 		$this->contrat->dir_output=$rootfordata."/contracts";
 		$this->contrat->dir_temp=$rootfordata."/contracts/temp";
-		// Module webcal
-		$this->webcal->db->type=defined('PHPWEBCALENDAR_TYPE')?PHPWEBCALENDAR_TYPE:'__dolibarr_main_db_type__';
-		$this->webcal->db->host=defined('PHPWEBCALENDAR_HOST')?PHPWEBCALENDAR_HOST:'';
-		$this->webcal->db->port=defined('PHPWEBCALENDAR_PORT')?PHPWEBCALENDAR_PORT:'';
-		$this->webcal->db->user=defined('PHPWEBCALENDAR_USER')?PHPWEBCALENDAR_USER:'';
-		$this->webcal->db->pass=defined('PHPWEBCALENDAR_PASS')?PHPWEBCALENDAR_PASS:'';
-		$this->webcal->db->name=defined('PHPWEBCALENDAR_DBNAME')?PHPWEBCALENDAR_DBNAME:'';
-		// Module phenix
-		$this->phenix->db->type=defined('PHPPHENIX_TYPE')?PHPPHENIX_TYPE:'__dolibarr_main_db_type__';
-		$this->phenix->db->host=defined('PHPPHENIX_HOST')?PHPPHENIX_HOST:'';
-		$this->phenix->db->port=defined('PHPPHENIX_PORT')?PHPPHENIX_PORT:'';
-		$this->phenix->db->user=defined('PHPPHENIX_USER')?PHPPHENIX_USER:'';
-		$this->phenix->db->pass=defined('PHPPHENIX_PASS')?PHPPHENIX_PASS:'';
-		$this->phenix->db->name=defined('PHPPHENIX_DBNAME')?PHPPHENIX_DBNAME:'';
-		$this->phenix->cookie=defined('PHPPHENIX_COOKIE')?PHPPHENIX_COOKIE:'';
-		// Module mantis
-		$this->mantis->db->type=defined('PHPMANTIS_TYPE')?PHPMANTIS_TYPE:'__dolibarr_main_db_type__';
-		$this->mantis->db->host=defined('PHPMANTIS_HOST')?PHPMANTIS_HOST:'';
-		$this->mantis->db->port=defined('PHPMANTIS_PORT')?PHPMANTIS_PORT:'';
-		$this->mantis->db->user=defined('PHPMANTIS_USER')?PHPMANTIS_USER:'';
-		$this->mantis->db->pass=defined('PHPMANTIS_PASS')?PHPMANTIS_PASS:'';
-		$this->mantis->db->name=defined('PHPMANTIS_DBNAME')?PHPMANTIS_DBNAME:'';
-		// Module oscommerce 1
-		$this->boutique->livre->enabled=defined("BOUTIQUE_LIVRE")?BOUTIQUE_LIVRE:0;
-		$this->boutique->album->enabled=defined("BOUTIQUE_ALBUM")?BOUTIQUE_ALBUM:0;
 
 
 		/*
