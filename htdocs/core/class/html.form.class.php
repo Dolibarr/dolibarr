@@ -790,7 +790,7 @@ class Form
      */
     function select_dolusers($selected='',$htmlname='userid',$show_empty=0,$exclude='',$disabled=0,$include='',$enableonly='')
     {
-        global $conf,$user;
+        global $conf,$user,$langs;
 
         // If no preselected user defined, we take current user
         if (empty($selected) && empty($conf->global->SOCIETE_DISABLE_DEFAULT_SALESREPRESENTATIVE)) $selected=$user->id;
@@ -2211,6 +2211,7 @@ class Form
     function form_contacts($page, $societe, $selected='', $htmlname='contactidp')
     {
         global $langs;
+
         if ($htmlname != "none")
         {
             print '<form method="post" action="'.$page.'">';
