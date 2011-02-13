@@ -3,29 +3,28 @@
 <phpunit>
 <filter>
   <blacklist>
-    <directory>/home/ldestail/workspace/dolibarr/htdocs/includes/smarty/libs/</directory>
-    <directory>../CVS/</directory>
-    <directory>../../test/</directory>
-    <directory>../../htdocs/includes/adodbtime/</directory>
-    <directory>../../htdocs/includes/artichow/</directory>
-    <directory>../../htdocs/includes/barcode/php-barcode/</directory>
-    <directory>../../htdocs/includes/efc_xfss/</directory>
-    <directory>../../htdocs/includes/fckeditor/</directory>
-    <directory>../../htdocs/includes/fpdf/</directory>
-    <directory>../../htdocs/includes/geoip/</directory>
-    <directory>../../htdocs/includes/jcrop/</directory>
-    <directory>../../htdocs/includes/jquery/</directory>
-    <directory>../../htdocs/includes/jsgantt/</directory>
-    <directory>../../htdocs/includes/magpierss/</directory>
-    <directory>../../htdocs/includes/nusoap/</directory>
-    <directory>../../htdocs/includes/odtphp/</directory>
-    <directory>../../htdocs/includes/php_excelreader/</directory>
-    <directory>../../htdocs/includes/php_writeexcel/</directory>
-    <directory>../../htdocs/includes/smarty/</directory>
-    <directory>../../htdocs/includes/smtps/</directory>
-    <directory>../../htdocs/includes/tcpdf/</directory>
-    <directory>../../htdocs/includes/vcard/</directory>
-    <directory>../../htdocs/includes/menus/smartphone/</directory>
+    <directory suffix=".php">../CVS/</directory>
+    <directory suffix=".php">../../test/</directory>
+    <directory suffix=".php">../../htdocs/includes/adodbtime/</directory>
+    <directory suffix=".php">../../htdocs/includes/artichow/</directory>
+    <directory suffix=".php">../../htdocs/includes/barcode/php-barcode/</directory>
+    <directory suffix=".php">../../htdocs/includes/efc_xfss/</directory>
+    <directory suffix=".php">../../htdocs/includes/fckeditor/</directory>
+    <directory suffix=".php">../../htdocs/includes/fpdf/</directory>
+    <directory suffix=".php">../../htdocs/includes/geoip/</directory>
+    <directory suffix=".php">../../htdocs/includes/jcrop/</directory>
+    <directory suffix=".php">../../htdocs/includes/jquery/</directory>
+    <directory suffix=".php">../../htdocs/includes/jsgantt/</directory>
+    <directory suffix=".php">../../htdocs/includes/magpierss/</directory>
+    <directory suffix=".php">../../htdocs/includes/menus/smartphone/</directory>
+    <directory suffix=".php">../../htdocs/includes/nusoap/</directory>
+    <directory suffix=".php">../../htdocs/includes/odtphp/</directory>
+    <directory suffix=".php">../../htdocs/includes/php_excelreader/</directory>
+    <directory suffix=".php">../../htdocs/includes/php_writeexcel/</directory>
+    <directory suffix=".php">../../htdocs/includes/smarty/</directory>
+    <directory suffix=".php">../../htdocs/includes/smtps/</directory>
+    <directory suffix=".php">../../htdocs/includes/tcpdf/</directory>
+    <directory suffix=".php">../../htdocs/includes/vcard/</directory>
     <file>../../htdocs/lib/databases/mssql.lib.php</file>
     <file>../../htdocs/lib/databases/pgsql.lib.php</file>
     <file>../../htdocs/lib/databases/mysql.lib.php</file>
@@ -40,6 +39,34 @@
     <file>../../htdocs/includes/modules/propale/modules_propale.php</file>
     <file>../../htdocs/includes/modules/project/modules_project.php</file>
     <file>../../htdocs/includes/modules/fichinter/modules_fichinter.php</file>
+    <exclude>
+    <directory suffix=".php">../CVS/</directory>
+    <directory suffix=".php">../../test/</directory>
+    <directory suffix=".php">../../htdocs/includes/adodbtime/</directory>
+    <directory suffix=".php">../../htdocs/includes/artichow/</directory>
+    <directory suffix=".php">../../htdocs/includes/barcode/php-barcode/</directory>
+    <directory suffix=".php">../../htdocs/includes/efc_xfss/</directory>
+    <directory suffix=".php">../../htdocs/includes/fckeditor/</directory>
+    <directory suffix=".php">../../htdocs/includes/fpdf/</directory>
+    <directory suffix=".php">../../htdocs/includes/geoip/</directory>
+    <directory suffix=".php">../../htdocs/includes/jcrop/</directory>
+    <directory suffix=".php">../../htdocs/includes/jquery/</directory>
+    <directory suffix=".php">../../htdocs/includes/jsgantt/</directory>
+    <directory suffix=".php">../../htdocs/includes/magpierss/</directory>
+    <directory suffix=".php">../../htdocs/includes/menus/smartphone</directory>
+    <directory suffix=".php">../../htdocs/includes/nusoap/</directory>
+    <directory suffix=".php">../../htdocs/includes/odtphp/</directory>
+    <directory suffix=".php">../../htdocs/includes/php_excelreader/</directory>
+    <directory suffix=".php">../../htdocs/includes/php_writeexcel/</directory>
+    <directory suffix=".php">../../htdocs/includes/smarty/</directory>
+    <directory suffix=".php">../../htdocs/includes/smtps/</directory>
+    <directory suffix=".php">../../htdocs/includes/tcpdf/</directory>
+    <directory suffix=".php">../../htdocs/includes/vcard/</directory>
+    <file>../../htdocs/lib/databases/mssql.lib.php</file>
+    <file>../../htdocs/lib/databases/pgsql.lib.php</file>
+    <file>../../htdocs/lib/databases/mysql.lib.php</file>
+    <!--  <file>../../htdocs/lib/databases/mysqli.lib.php</file> -->
+    </exclude>
   </whitelist>
 </filter>
 </phpunit>
