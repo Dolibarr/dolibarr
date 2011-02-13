@@ -680,7 +680,7 @@ class Form
      */
     function select_contacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='')
     {
-        global $conf;
+        global $conf,$langs;
 
         // Permettre l'exclusion de contacts
         if (is_array($exclude))
@@ -704,7 +704,7 @@ class Form
             if ($num == 0) return 0;
 
             if ($htmlname != 'none') print '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
-            if ($showempty) print '<option value="0">&nbsp;</option>';
+            if ($showempty) print '<option value="0"></option>';
             $num = $this->db->num_rows($resql);
             $i = 0;
             if ($num)
@@ -728,7 +728,7 @@ class Form
                             print '<option value="'.$obj->rowid.'"';
                             if ($disabled) print ' disabled="true"';
                             print ' selected="selected">';
-                            print $contactstatic->getFullName();
+                            print $contactstatic->getFullName($langs);
                             print '</option>';
                         }
                         else
@@ -736,7 +736,7 @@ class Form
                             print '<option value="'.$obj->rowid.'"';
                             if ($disabled) print ' disabled="true"';
                             print '>';
-                            print $contactstatic->getFullName();
+                            print $contactstatic->getFullName($langs);
                             print '</option>';
                         }
                     }
