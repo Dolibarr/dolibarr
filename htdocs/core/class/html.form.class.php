@@ -680,6 +680,8 @@ class Form
      */
     function select_contacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='')
     {
+        global $langs;
+
         // Permettre l'exclusion de contacts
         if (is_array($exclude))
         {
@@ -725,7 +727,7 @@ class Form
                             print '<option value="'.$obj->rowid.'"';
                             if ($disabled) print ' disabled="true"';
                             print ' selected="selected">';
-                            print $contactstatic->getFullName();
+                            print $contactstatic->getFullName($langs);
                             print '</option>';
                         }
                         else
@@ -733,7 +735,7 @@ class Form
                             print '<option value="'.$obj->rowid.'"';
                             if ($disabled) print ' disabled="true"';
                             print '>';
-                            print $contactstatic->getFullName();
+                            print $contactstatic->getFullName($langs);
                             print '</option>';
                         }
                     }
@@ -741,7 +743,7 @@ class Form
                     {
                         if ($selected == $obj->rowid)
                         {
-                            print $contactstatic->getFullName();
+                            print $contactstatic->getFullName($langs);
                         }
                     }
                     $i++;
@@ -787,7 +789,7 @@ class Form
      */
     function select_dolusers($selected='',$htmlname='userid',$show_empty=0,$exclude='',$disabled=0,$include='',$enableonly='')
     {
-        global $conf,$user;
+        global $conf,$user,$langs;
 
         // Permettre l'exclusion d'utilisateurs
         if (is_array($exclude))	$excludeUsers = implode("','",$exclude);
@@ -839,7 +841,7 @@ class Form
                         if ($disableline) $out.= ' disabled="true"';
                         $out.= '>';
                     }
-                    $out.= $userstatic->getFullName();
+                    $out.= $userstatic->getFullName($langs);
 
                     //if ($obj->admin) $out.= ' *';
                     if ($conf->global->MAIN_SHOW_LOGIN) $out.= ' ('.$obj->login.')';
@@ -2230,6 +2232,7 @@ class Form
     function form_contacts($page, $societe, $selected='', $htmlname='contactidp')
     {
         global $langs;
+
         if ($htmlname != "none")
         {
             print '<form method="post" action="'.$page.'">';
