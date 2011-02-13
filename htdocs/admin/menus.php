@@ -156,10 +156,10 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuManager").'</td>';
 	print '<td>';
-	print $htmladmin->select_menu($conf->global->MAIN_MENU_STANDARD,'MAIN_MENU_STANDARD',$dirtop);
+	print $htmladmin->select_menu(empty($conf->global->MAIN_MENU_STANDARD_FORCED)?$conf->global->MAIN_MENU_STANDARD:$conf->global->MAIN_MENU_STANDARD_FORCED, 'MAIN_MENU_STANDARD', $dirtop, empty($conf->global->MAIN_MENU_STANDARD_FORCED)?'':' disabled="disabled"');
 	print '</td>';
 	print '<td>';
-	print $htmladmin->select_menu($conf->global->MAIN_MENUFRONT_STANDARD,'MAIN_MENUFRONT_STANDARD',$dirtop);
+	print $htmladmin->select_menu(empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED)?$conf->global->MAIN_MENUFRONT_STANDARD:$conf->global->MAIN_MENUFRONT_STANDARD_FORCED, 'MAIN_MENUFRONT_STANDARD', $dirtop, empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED)?'':' disabled="disabled"');
 	print '</td>';
 	print '</tr>';
 
@@ -169,10 +169,10 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
     	$var=!$var;
     	print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuSmartphoneManager").'</td>';
     	print '<td>';
-    	print $htmladmin->select_menu($conf->global->MAIN_MENU_SMARTPHONE,'main_menu_smartphone',$dirsmartphone);
+    	print $htmladmin->select_menu(empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?$conf->global->MAIN_MENU_SMARTPHONE:$conf->global->MAIN_MENU_SMARTPHONE_FORCED, 'main_menu_smartphone', $dirsmartphone, empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?'':' disabled="disabled"');
     	print '</td>';
     	print '<td>';
-    	print $htmladmin->select_menu($conf->global->MAIN_MENUFRONT_SMARTPHONE,'main_menufront_smartphone',$dirsmartphone);
+    	print $htmladmin->select_menu(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?$conf->global->MAIN_MENUFRONT_SMARTPHONE:$conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED, 'main_menufront_smartphone', $dirsmartphone, empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?'':' disabled="disabled"');
     	print '</td>';
     	print '</tr>';
 	}
@@ -205,11 +205,11 @@ else
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuManager").'</td>';
 	print '<td>';
-	$filelib=preg_replace('/.php$/i','',$conf->global->MAIN_MENU_STANDARD);
+	$filelib=preg_replace('/.php$/i','',(empty($conf->global->MAIN_MENU_STANDARD_FORCED)?$conf->global->MAIN_MENU_STANDARD:$conf->global->MAIN_MENU_STANDARD_FORCED));
 	print $filelib;
 	print '</td>';
 	print '<td>';
-	$filelib=preg_replace('/.php$/i','',$conf->global->MAIN_MENUFRONT_STANDARD);
+	$filelib=preg_replace('/.php$/i','',(empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED)?$conf->global->MAIN_MENUFRONT_STANDARD:$conf->global->MAIN_MENUFRONT_STANDARD_FORCED));
 	print $filelib;
 	print '</td>';
 	print '</tr>';
@@ -220,11 +220,11 @@ else
     	print '<tr '.$bc[$var].'>';
     	print '<td>'.$langs->trans("DefaultMenuSmartphoneManager").'</td>';
     	print '<td>';
-    	$filelib=preg_replace('/.php$/i','',$conf->global->MAIN_MENU_SMARTPHONE);
+    	$filelib=preg_replace('/.php$/i','',(empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?$conf->global->MAIN_MENU_SMARTPHONE:$conf->global->MAIN_MENU_SMARTPHONE_FORCED));
     	print $filelib;
     	print '</td>';
     	print '<td>';
-    	$filelib=preg_replace('/.php$/i','',$conf->global->MAIN_MENUFRONT_SMARTPHONE);
+    	$filelib=preg_replace('/.php$/i','',(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?$conf->global->MAIN_MENUFRONT_SMARTPHONE:$conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED));
     	print $filelib;
     	print '</td>';
     	print '</tr>';

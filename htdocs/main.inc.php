@@ -669,16 +669,16 @@ if (! empty($_GET["theme"]))
 // Define menu manager to use
 if (empty($user->societe_id))    // If internal user or not defined
 {
-	$conf->top_menu=$conf->global->MAIN_MENU_STANDARD;
-	$conf->smart_menu=$conf->global->MAIN_MENU_SMARTPHONE;
+	$conf->top_menu=(empty($conf->global->MAIN_MENU_STANDARD_FORCED)?$conf->global->MAIN_MENU_STANDARD:$conf->global->MAIN_MENU_STANDARD_FORCED);
+	$conf->smart_menu=(empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?$conf->global->MAIN_MENU_SMARTPHONE:$conf->global->MAIN_MENU_SMARTPHONE_FORCED);
 	// For backward compatibility
     if ($conf->top_menu == 'eldy.php') $conf->top_menu='eldy_backoffice.php';
 	if ($conf->top_menu == 'rodolphe.php') $conf->top_menu='eldy_backoffice.php';
 }
 else                        // If external user
 {
-	$conf->top_menu=$conf->global->MAIN_MENUFRONT_STANDARD;
-	$conf->smart_menu=$conf->global->MAIN_MENUFRONT_SMARTPHONE;
+    $conf->top_menu=(empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED)?$conf->global->MAIN_MENUFRONT_STANDARD:$conf->global->MAIN_MENUFRONT_STANDARD_FORCED);
+    $conf->smart_menu=(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?$conf->global->MAIN_MENUFRONT_SMARTPHONE:$conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED);
 	// For backward compatibility
     if ($conf->top_menu == 'eldy.php') $conf->top_menu='eldy_frontoffice.php';
 	if ($conf->top_menu == 'rodolphe.php') $conf->top_menu='eldy_frontoffice.php';
@@ -1064,6 +1064,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 		$top_menu='eldy_backoffice.php';
 		include_once(DOL_DOCUMENT_ROOT."/includes/menus/standard/".$top_menu);
 	}
+
 
     print "\n".'<!-- Start top horizontal menu '.$top_menu.' -->'."\n";
 
