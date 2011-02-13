@@ -14,9 +14,10 @@ For users:
 For developers:
 - New: External modules can add their own menu manager.
 - New: External modules can remove tabs.
-- New: A module can overwrite all default language files by forcing
-       priority on langs directories on its own lang directory.
-- New: A module can show export list with an enabled condition.
+- New: External modules can force menu manager.
+- New: External modules can overwrite all default language files by
+       forcing priority on langs directories on its own lang directory.
+- New: External modules can show export list with an "enabled" condition.
 
 
 ***** ChangeLog for 3.0 compared to 2.9 *****
