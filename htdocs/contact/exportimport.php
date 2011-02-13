@@ -68,18 +68,21 @@ print '<tr><td width="20%">'.$langs->trans("Lastname").' / '.$langs->trans("Labe
 print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="25%">'.$contact->firstname.'</td></tr>';
 
 // Company
-if ($contact->socid > 0)
+if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
 {
-	$objsoc = new Societe($db);
-	$objsoc->fetch($contact->socid);
+    if ($contact->socid > 0)
+    {
+    	$objsoc = new Societe($db);
+    	$objsoc->fetch($contact->socid);
 
-	print '<tr><td width="15%">'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td></tr>';
-}
-else
-{
-	print '<tr><td width="15%">'.$langs->trans("Company").'</td><td colspan="3">';
-	print $langs->trans("ContactNotLinkedToCompany");
-	print '</td></tr>';
+    	print '<tr><td width="15%">'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td></tr>';
+    }
+    else
+    {
+    	print '<tr><td width="15%">'.$langs->trans("Company").'</td><td colspan="3">';
+    	print $langs->trans("ContactNotLinkedToCompany");
+    	print '</td></tr>';
+    }
 }
 
 // Civility

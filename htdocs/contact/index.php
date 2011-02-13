@@ -227,7 +227,7 @@ if ($result)
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Lastname"),"index.php","p.name", $begin, $param, '', $sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Firstname"),"index.php","p.firstname", $begin, $param, '', $sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Company"),"index.php","s.nom", $begin, $param, '', $sortfield,$sortorder);
+    if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) print_liste_field_titre($langs->trans("Company"),"index.php","s.nom", $begin, $param, '', $sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Phone"),"index.php","p.phone", $begin, $param, '', $sortfield,$sortorder);
     if ($_GET["view"] == 'phone')
     {
@@ -251,10 +251,13 @@ if ($result)
     print '<td class="liste_titre">';
     print '<input class="flat" type="text" name="search_prenom" size="10" value="'.$search_prenom.'">';
     print '</td>';
-    print '<td class="liste_titre">';
-    print '<input class="flat" type="text" name="search_societe" size="10" value="'.$search_societe.'">';
-    print '</td>';
-	print '<td class="liste_titre">&nbsp;</td>';
+    if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
+    {
+        print '<td class="liste_titre">';
+        print '<input class="flat" type="text" name="search_societe" size="10" value="'.$search_societe.'">';
+        print '</td>';
+    }
+    print '<td class="liste_titre">&nbsp;</td>';
     if ($_GET["view"] == 'phone')
     {
         print '<td class="liste_titre">';
@@ -302,17 +305,20 @@ if ($result)
         print '<td>'.dol_trunc($obj->firstname,20).'</td>';
 
 		// Company
-		print '<td>';
-        if ($obj->socid)
+        if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
         {
-            print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">';
-            print img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->nom,20).'</a>';
+    		print '<td>';
+            if ($obj->socid)
+            {
+                print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">';
+                print img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->nom,20).'</a>';
+            }
+            else
+            {
+                print '&nbsp;';
+            }
+            print '</td>';
         }
-        else
-        {
-            print '&nbsp;';
-        }
-        print '</td>';
 
 		// Phone
         print '<td>';

@@ -476,22 +476,25 @@ else
 			print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="30%"><input name="firstname" type="text" size="30" maxlength="80" value="'.(isset($_POST["firstname"])?$_POST["firstname"]:$object->firstname).'"></td></tr>';
 
 			// Company
-			if ($socid > 0)
-			{
-				print '<tr><td>'.$langs->trans("Company").'</td>';
-				print '<td colspan="3">';
-				print $objsoc->getNomUrl(1);
-				print '</td>';
-				print '<input type="hidden" name="socid" value="'.$objsoc->id.'">';
-				print '</td></tr>';
-			}
-			else {
-				print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">';
-				print $form->select_societes(isset($_POST["socid"])?$_POST["socid"]:'','socid','',1);
-				//print $form->select_societes('','socid','');
-				//print $langs->trans("ContactNotLinkedToCompany");
-				print '</td></tr>';
-			}
+            if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
+            {
+    			if ($socid > 0)
+    			{
+    				print '<tr><td>'.$langs->trans("Company").'</td>';
+    				print '<td colspan="3">';
+    				print $objsoc->getNomUrl(1);
+    				print '</td>';
+    				print '<input type="hidden" name="socid" value="'.$objsoc->id.'">';
+    				print '</td></tr>';
+    			}
+    			else {
+    				print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">';
+    				print $form->select_societes(isset($_POST["socid"])?$_POST["socid"]:'','socid','',1);
+    				//print $form->select_societes('','socid','');
+    				//print $langs->trans("ContactNotLinkedToCompany");
+    				print '</td></tr>';
+    			}
+            }
 
 			// Civility
 			print '<tr><td width="15%">'.$langs->trans("UserTitle").'</td><td colspan="3">';
@@ -650,11 +653,14 @@ else
 			print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="30%"><input name="firstname" type="text" size="20" maxlength="80" value="'.(isset($_POST["firstname"])?$_POST["firstname"]:$object->firstname).'"></td></tr>';
 
 			// Company
-			print '<tr><td>'.$langs->trans("Company").'</td>';
-			print '<td colspan="3">';
-			print $form->select_societes(isset($_POST["socid"])?$_POST["socid"]:($object->socid?$object->socid:-1),'socid','',1);
-			print '</td>';
-			print '</tr>';
+            if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
+            {
+    			print '<tr><td>'.$langs->trans("Company").'</td>';
+    			print '<td colspan="3">';
+    			print $form->select_societes(isset($_POST["socid"])?$_POST["socid"]:($object->socid?$object->socid:-1),'socid','',1);
+    			print '</td>';
+    			print '</tr>';
+            }
 
 			// Civility
 			print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="3">';
@@ -824,17 +830,20 @@ else
 		print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="30%">'.$object->firstname.'</td></tr>';
 
 		// Company
-		print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">';
-		if ($object->socid > 0)
-		{
-			$objsoc->fetch($object->socid);
-			print $objsoc->getNomUrl(1);
-		}
-		else
-		{
-			print $langs->trans("ContactNotLinkedToCompany");
-		}
-		print '</td></tr>';
+        if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
+        {
+            print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">';
+    		if ($object->socid > 0)
+    		{
+    			$objsoc->fetch($object->socid);
+    			print $objsoc->getNomUrl(1);
+    		}
+    		else
+    		{
+    			print $langs->trans("ContactNotLinkedToCompany");
+    		}
+    		print '</td></tr>';
+        }
 
 		// Civility
 		print '<tr><td width="15%">'.$langs->trans("UserTitle").'</td><td colspan="3">';

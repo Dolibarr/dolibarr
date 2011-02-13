@@ -107,18 +107,21 @@ if ($_GET["action"] == 'edit')
     print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="30%">'.$contact->prenom.'</td>';
 
     // Company
-	if ($contact->socid > 0)
+    if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
     {
-        $objsoc = new Societe($db);
-        $objsoc->fetch($contact->socid);
+        if ($contact->socid > 0)
+        {
+            $objsoc = new Societe($db);
+            $objsoc->fetch($contact->socid);
 
-        print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td>';
-    }
-    else
-    {
-        print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">';
-        print $langs->trans("ContactNotLinkedToCompany");
-        print '</td></tr>';
+            print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td>';
+        }
+        else
+        {
+            print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">';
+            print $langs->trans("ContactNotLinkedToCompany");
+            print '</td></tr>';
+        }
     }
 
 	// Civility
@@ -170,19 +173,22 @@ else
     print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="30%">'.$contact->firstname.'</td></tr>';
 
     // Company
-	if ($contact->socid > 0)
+    if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
     {
-        $objsoc = new Societe($db);
-        $objsoc->fetch($contact->socid);
+        if ($contact->socid > 0)
+        {
+            $objsoc = new Societe($db);
+            $objsoc->fetch($contact->socid);
 
-        print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td></tr>';
-    }
+            print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td></tr>';
+        }
 
-    else
-    {
-        print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">';
-        print $langs->trans("ContactNotLinkedToCompany");
-        print '</td></tr>';
+        else
+        {
+            print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">';
+            print $langs->trans("ContactNotLinkedToCompany");
+            print '</td></tr>';
+        }
     }
 
 	// Civility
