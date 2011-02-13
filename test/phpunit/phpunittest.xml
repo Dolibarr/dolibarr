@@ -5,6 +5,8 @@
   <blacklist>
     <directory suffix=".php">../CVS/</directory>
     <directory suffix=".php">../../test/</directory>
+    <directory suffix=".php">../../htdocs/custom/</directory>
+    <directory suffix=".php">../../htdocs/custom2/</directory>
     <directory suffix=".php">../../htdocs/includes/adodbtime/</directory>
     <directory suffix=".php">../../htdocs/includes/artichow/</directory>
     <directory suffix=".php">../../htdocs/includes/barcode/php-barcode/</directory>
@@ -42,6 +44,8 @@
     <exclude>
     <directory suffix=".php">../CVS/</directory>
     <directory suffix=".php">../../test/</directory>
+    <directory suffix=".php">../../htdocs/custom/</directory>
+    <directory suffix=".php">../../htdocs/custom2/</directory>
     <directory suffix=".php">../../htdocs/includes/adodbtime/</directory>
     <directory suffix=".php">../../htdocs/includes/artichow/</directory>
     <directory suffix=".php">../../htdocs/includes/barcode/php-barcode/</directory>
