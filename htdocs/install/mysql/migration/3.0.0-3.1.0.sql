@@ -11,3 +11,11 @@
 --
 
 ALTER TABLE llx_c_actioncomm add COLUMN position integer NOT NULL DEFAULT 0;
+
+-- Delete old constants
+DELETE from llx_const where NAME = 'MAIN_MENU_BARRETOP';
+DELETE from llx_const where NAME = 'MAIN_MENUFRONT_BARRETOP';
+DELETE from llx_const where NAME = 'MAIN_MENU_BARRELEFT';
+DELETE from llx_const where NAME = 'MAIN_MENUFRONT_BARRELEFT';
+
+

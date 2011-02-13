@@ -43,7 +43,7 @@ $dirmenu = array($dirleft,$dirsmartphone);
 
 $mesg=$_GET["mesg"];
 
-$menu_handler_top=$conf->global->MAIN_MENU_BARRETOP;
+$menu_handler_top=$conf->global->MAIN_MENU_STANDARD;
 $menu_handler_smartphone=$conf->global->MAIN_MENU_SMARTPHONE;
 $menu_handler_top=preg_replace('/_backoffice.php/i','',$menu_handler_top);
 $menu_handler_top=preg_replace('/_frontoffice.php/i','',$menu_handler_top);

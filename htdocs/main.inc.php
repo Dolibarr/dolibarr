@@ -669,7 +669,7 @@ if (! empty($_GET["theme"]))
 // Define menu manager to use
 if (empty($user->societe_id))    // If internal user or not defined
 {
-	$conf->top_menu=$conf->global->MAIN_MENU_BARRETOP;
+	$conf->top_menu=$conf->global->MAIN_MENU_STANDARD;
 	$conf->smart_menu=$conf->global->MAIN_MENU_SMARTPHONE;
 	// For backward compatibility
     if ($conf->top_menu == 'eldy.php') $conf->top_menu='eldy_backoffice.php';
@@ -677,7 +677,7 @@ if (empty($user->societe_id))    // If internal user or not defined
 }
 else                        // If external user
 {
-	$conf->top_menu=$conf->global->MAIN_MENUFRONT_BARRETOP;
+	$conf->top_menu=$conf->global->MAIN_MENUFRONT_STANDARD;
 	$conf->smart_menu=$conf->global->MAIN_MENUFRONT_SMARTPHONE;
 	// For backward compatibility
     if ($conf->top_menu == 'eldy.php') $conf->top_menu='eldy_frontoffice.php';
