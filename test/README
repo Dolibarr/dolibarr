@@ -7,8 +7,7 @@ Dolibarr quality analysis.
 
 PHPUNIT
 -------
-
-To use them, you must:
+To use make phpunit analysis, you must:
 
 * Install PHPUnit
 If using Eclipse, you must also add an entry as external tool for phpunit programm with:
