@@ -127,8 +127,9 @@ class FormAdmin
      *    @param      selected        Preselected menu value
      *    @param      htmlname        Name of html select
      *    @param      dirmenu         Directory to scan
+     *    @param      moreattrib      More attributes on html select tag
      */
-    function select_menu($selected='',$htmlname,$dirmenu)
+    function select_menu($selected='', $htmlname, $dirmenu, $moreattrib='')
     {
         global $langs,$conf;
 
@@ -152,7 +153,7 @@ class FormAdmin
 	        				$prefix='';
 	        				if (preg_match('/^eldy|^iphone/i',$file)) $prefix='0';	// 0=Recommanded, 1=Experimental, 2=Other
 	        				else $prefix='2';
-	
+
 	                        if ($file == $selected)
 	                        {
 	        					$menuarray[$prefix.'_'.$file]='<option value="'.$file.'" selected="selected">'.$filelib.'</option>';
@@ -170,7 +171,7 @@ class FormAdmin
 		ksort($menuarray);
 
 		// Affichage liste deroulante des menus
-        print '<select class="flat" name="'.$htmlname.'">';
+        print '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.($moreattrib?' '.$moreattrib:'').'>';
         $oldprefix='';
 		foreach ($menuarray as $key => $val)
 		{
@@ -224,7 +225,7 @@ class FormAdmin
 	        					if (preg_match('/^empty/i',$filelib)) continue;
 	        					if (preg_match('/\.lib/i',$filelib)) continue;
 	        					if (empty($conf->global->MAIN_FEATURES_LEVEL) && in_array($file,$expdevmenu)) continue;
-	
+
 	        					$menuarray[$filelib]=1;
 	        				}
 	        				$menuarray['all']=1;

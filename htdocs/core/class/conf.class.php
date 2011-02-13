@@ -205,8 +205,8 @@ class Conf
 		//var_dump($this->modules);
 
 		// Clean some variables
-		if (empty($this->global->MAIN_MENU_BARRETOP)) $this->global->MAIN_MENU_BARRETOP="eldy_backoffice.php";
-		if (empty($this->global->MAIN_MENUFRONT_BARRETOP)) $this->global->MAIN_MENUFRONT_BARRETOP="eldy_frontoffice.php";
+		if (empty($this->global->MAIN_MENU_STANDARD)) $this->global->MAIN_MENU_STANDARD="eldy_backoffice.php";
+		if (empty($this->global->MAIN_MENUFRONT_STANDARD)) $this->global->MAIN_MENUFRONT_STANDARD="eldy_frontoffice.php";
 		if (empty($this->global->MAIN_MENU_SMARTPHONE)) $this->global->MAIN_MENU_SMARTPHONE="iphone_backoffice.php";
 		if (empty($this->global->MAIN_MENUFRONT_SMARTPHONE)) $this->global->MAIN_MENUFRONT_SMARTPHONE="iphone_frontoffice.php";
 
