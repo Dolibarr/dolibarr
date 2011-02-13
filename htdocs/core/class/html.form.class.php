@@ -744,7 +744,7 @@ class Form
                     {
                         if ($selected == $obj->rowid)
                         {
-                            print $contactstatic->getFullName();
+                            print $contactstatic->getFullName($langs);
                         }
                     }
                     $i++;
@@ -845,7 +845,7 @@ class Form
                         if ($disableline) $out.= ' disabled="true"';
                         $out.= '>';
                     }
-                    $out.= $userstatic->getFullName();
+                    $out.= $userstatic->getFullName($langs);
 
                     //if ($obj->admin) $out.= ' *';
                     if ($conf->global->MAIN_SHOW_LOGIN) $out.= ' ('.$obj->login.')';
