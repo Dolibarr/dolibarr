@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       test/phpunit/MyTestSuite.php
+ *      \file       test/phpunit/AllTest.php
  *		\ingroup    test
  *      \brief      This file is a test suite to run all unit tests
  *      \version    $Id$
@@ -43,7 +43,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 /**
  * Class for the All test suite
  */
-class MyTestSuite
+class AllTests
 {
 	public static function suite()
     {

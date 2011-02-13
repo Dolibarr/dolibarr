@@ -20,18 +20,21 @@ If using Eclipse, you must also add an entry as external tool for phpunit progra
             Windows: "C:\Program Files (x86)\PHPUnit-3.4.9\phpunit.php" ${resource_path}
 
 * Run Unit tests: 
-Run > phpunit TestFile.php
+> cd test
+> phpunit MyFileTest.php
 If using Eclipse, select the test and click on menu "Run external tools and choose PHPUnit".
 
 * Generate a report of Unit tests code coverage among tested classes only:
-Run > phpunit --coverage-html ./report MyTestSuite.php
+> cd test
+> phpunit -d memory_limit=-1 --configuration ./phpunit/phpunittest.xml --coverage-html ./report --coverage-clover ./report/logs/phpunit.coverage.xml --log-junit ./report/logs/phpunit.xml MyClassTest.php
 Note that xdebug must be installed for this feature to work.
 
 * Generate a report of Unit tests code coverage among all Dolibarr classes:
 Increase your PHP memory (memory_limit in php.ini) to 512MB.
 Check that you use the "mysqli" driver in your conf.php file (otherwise
 edit the file phpunittest.xml).
-Run > phpunit --configuration ./phpunittest.xml --coverage-html ./report MyTestSuite.php
+> cd test
+> phpunit -d memory_limit=-1 --configuration ./phpunit/phpunittest.xml --coverage-html ./report --coverage-clover ./report/logs/phpunit.coverage.xml --log-junit ./report/logs/phpunit.xml AllTests.php
 
 
 
@@ -39,6 +42,6 @@ PHPDEPEND
 ---------
 * Install PDepend
 
-* Laucnh PDepend analysis:
-pdepend --summary-xml=./report/summary.xml --jdepend-chart=./report/jdepend.svg --overview-pyramid=./report/pyramid.svg /yourdir
- 
+* Launch PDepend analysis:
+> cd test
+> pdepend --debug -d memory_limit=-1 --configuration=./phpunit/phpunittest.xml --phpunit-xml=./report/logs/pdepend.xml --summary-xml=./report/logs/summary.xml --jdepend-chart=./report/logs/jdepend.svg --overview-pyramid=./report/logs/pyramid.svg dirtoscan

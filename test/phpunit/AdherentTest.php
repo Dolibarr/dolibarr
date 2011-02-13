@@ -125,8 +125,7 @@ class AdherentTest extends PHPUnit_Framework_TestCase
 
 		$localobject=new Adherent($this->savdb);
     	$localobject->initAsSpecimen();
-
-    	$result=$localobject->create($user);
+     	$result=$localobject->create($user);
         print __METHOD__." result=".$result."\n";
     	$this->assertLessThan($result, 0);
 

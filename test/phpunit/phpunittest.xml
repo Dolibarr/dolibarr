@@ -3,6 +3,7 @@
 <phpunit>
 <filter>
   <blacklist>
+    <directory>/home/ldestail/workspace/dolibarr/htdocs/includes/smarty/libs/</directory>
     <directory>../CVS/</directory>
     <directory>../../test/</directory>
     <directory>../../htdocs/includes/adodbtime/</directory>
