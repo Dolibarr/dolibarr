@@ -20,6 +20,7 @@ SecurityCode=Security code
 Calendar=Calendar
 AddTrip=Add trip
 Tools=Tools
+ToolsDesc=This area is dedicated to group miscellaneous tools not available into other menu entries.<br><br>Those tools can be reached from menu on the side.
 Birthday=Birthday
 BirthdayDate=Birthday
 DateToBirth=Date to birth
