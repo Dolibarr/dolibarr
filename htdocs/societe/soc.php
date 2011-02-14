@@ -800,7 +800,7 @@ else
 		if ($idprof!='-')
 		{
 			print '<td>'.$idprof.'</td><td>';
-			$soc->show_input_id_prof(1,'idprof1',$soc->siren);
+			print $formcompany->get_input_id_prof(1,'idprof1',$soc->siren,$soc->pays_code);
 			print '</td>';
 		}
 		else print '<td>&nbsp;</td><td>&nbsp;</td>';
@@ -809,7 +809,7 @@ else
 		if ($idprof!='-')
 		{
 			print '<td>'.$idprof.'</td><td>';
-			$soc->show_input_id_prof(2,'idprof2',$soc->siret);
+			print $formcompany->get_input_id_prof(2,'idprof2',$soc->siret,$soc->pays_code);
 			print '</td>';
 		}
 		else print '<td>&nbsp;</td><td>&nbsp;</td>';
@@ -820,7 +820,7 @@ else
 		if ($idprof!='-')
 		{
 			print '<td>'.$idprof.'</td><td>';
-			$soc->show_input_id_prof(3,'idprof3',$soc->ape);
+			print $formcompany->get_input_id_prof(3,'idprof3',$soc->ape,$soc->pays_code);
 			print '</td>';
 		}
 		else print '<td>&nbsp;</td><td>&nbsp;</td>';
@@ -829,7 +829,7 @@ else
 		if ($idprof!='-')
 		{
 			print '<td>'.$idprof.'</td><td>';
-			$soc->show_input_id_prof(4,'idprof4',$soc->idprof4);
+			print $formcompany->get_input_id_prof(4,'idprof4',$soc->idprof4,$soc->pays_code);
 			print '</td>';
 		}
 		else print '<td>&nbsp;</td><td>&nbsp;</td>';
@@ -1213,7 +1213,7 @@ else
 			if ($idprof!='-')
 			{
 				print '<td>'.$idprof.'</td><td>';
-				$soc->show_input_id_prof(1,'idprof1',$soc->siren);
+				print $formcompany->get_input_id_prof(1,'idprof1',$soc->siren,$soc->pays_code);
 				print '</td>';
 			}
 			else print '<td>&nbsp;</td><td>&nbsp;</td>';
@@ -1222,7 +1222,7 @@ else
 			if ($idprof!='-')
 			{
 				print '<td>'.$idprof.'</td><td>';
-				$soc->show_input_id_prof(2,'idprof2',$soc->siret);
+				print $formcompany->get_input_id_prof(2,'idprof2',$soc->siret,$soc->pays_code);
 				print '</td>';
 			}
 			else print '<td>&nbsp;</td><td>&nbsp;</td>';
@@ -1233,7 +1233,7 @@ else
 			if ($idprof!='-')
 			{
 				print '<td>'.$idprof.'</td><td>';
-				$soc->show_input_id_prof(3,'idprof3',$soc->ape);
+				print $formcompany->get_input_id_prof(3,'idprof3',$soc->ape,$soc->pays_code);
 				print '</td>';
 			}
 			else print '<td>&nbsp;</td><td>&nbsp;</td>';
@@ -1242,7 +1242,7 @@ else
 			if ($idprof!='-')
 			{
 				print '<td>'.$idprof.'</td><td>';
-				$soc->show_input_id_prof(4,'idprof4',$soc->idprof4);
+				print $formcompany->get_input_id_prof(4,'idprof4',$soc->idprof4,$soc->pays_code);
 				print '</td>';
 			}
 			else print '<td>&nbsp;</td><td>&nbsp;</td>';

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -57,12 +57,13 @@ $search_categ = isset($_GET["search_categ"])?$_GET["search_categ"]:$_POST["searc
  */
 
 $htmlother=new FormOther($db);
+$thirdpartystatic=new Societe($db);
 
 llxHeader();
 
 
-$sql = "SELECT s.rowid, s.nom, s.ville, st.libelle as stcomm, s.prefix_comm, s.code_client";
-$sql.= ",s.datec, s.datea";
+$sql = "SELECT s.rowid, s.nom, s.client, s.ville, st.libelle as stcomm, s.prefix_comm, s.code_client,";
+$sql.= " s.datec, s.datea, s.canvas";
 // We'll need these fields in order to filter by sale (including the case where the user can only see his prospects)
 if ($search_sale) $sql .= ", sc.fk_soc, sc.fk_user";
 // We'll need these fields in order to filter by categ
@@ -176,9 +177,13 @@ if ($result)
 		$var=!$var;
 
 		print "<tr $bc[$var]>";
-		print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->rowid.'">';
-		print img_object($langs->trans("ShowCustomer"),"company");
-		print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->rowid.'">'.stripslashes($obj->nom).'</a></td>';
+		print '<td>';
+		$thirdpartystatic->id=$obj->rowid;
+        $thirdpartystatic->nom=$obj->nom;
+        $thirdpartystatic->client=$obj->client;
+        $thirdpartystatic->canvas=$obj->canvas;
+        print $thirdpartystatic->getNomUrl(1);
+		print '</td>';
 		print '<td>'.$obj->ville.'</td>';
 		print '<td>'.$obj->code_client.'</td>';
 		print '<td align="right">'.dol_print_date($db->jdate($obj->datec),'day').'</td>';

@@ -597,15 +597,20 @@ class FormCompany
 		}
 	}
 
-
-	/**
-	 *
-	 */
-	function selectTypeContact($object, $defValue, $htmlname = 'type', $source, $order='code', $showempty=0)
+    /**
+     *  Return a select list with types of contacts
+     *  @param      object          Object to use to find type of contact
+     *  @param      $selected       Default selected value
+     *  @param      htmlname
+     *  @param      source
+     *  @param      order
+     *  @param      showempty       1=Add en empty line
+     */
+	function selectTypeContact($object, $selected, $htmlname = 'type', $source, $order='code', $showempty=0)
 	{
 		$lesTypes = $object->liste_type_contact($source, $order);
-		print '<select class="flat" name="'.$htmlname.'">';
-		if ($showempty) print print '<option value="0">&nbsp</option>';
+		print '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
+		if ($showempty) print print '<option value="0"></option>';
 		foreach($lesTypes as $key=>$value)
 		{
 			print '<option value="'.$key.'">'.$value.'</option>';
@@ -614,7 +619,11 @@ class FormCompany
 	}
 
 	/**
-	 *    Retourne la liste deroulante des codes postaux et des villes associées
+	 *    Return a select list with zip codes and their town
+	 *    @param       selected
+	 *    @param       htmlname
+	 *    @param       fields
+	 *    @param       fieldsize
 	 */
 	function select_ziptown($selected='',$htmlname='zipcode',$fields='',$fieldsize=0)
 	{
@@ -630,6 +639,44 @@ class FormCompany
 
 		return $out;
 	}
+
+    /**
+     *  Return HTML string to use as input of professional id into a HTML page (siren, siret, etc...)
+     *  @param      idprof          1,2,3,4 (Example: 1=siren,2=siret,3=naf,4=rcs/rm)
+     *  @param      htmlname        Name of HTML select
+     *  @param      preselected     Default value to show
+     *  @param      country_code    FR, IT, ...
+     */
+    function get_input_id_prof($idprof,$htmlname,$preselected,$country_code)
+    {
+        global $conf,$langs;
+
+        $formlength=24;
+        if ($country_code == 'FR' && empty($conf->global->MAIN_DISABLEPROFIDRULES))
+        {
+            if ($idprof==1) $formlength=9;
+            if ($idprof==2) $formlength=14;
+            if ($idprof==3) $formlength=5;      // 4 chiffres et 1 lettre depuis janvier
+            if ($idprof==4) $formlength=32;     // No maximum as we need to include a town name in this id
+        }
+        if ($country_code == 'ES' && empty($conf->global->MAIN_DISABLEPROFIDRULES))
+        {
+            if ($idprof==1) $formlength=9;  //CIF/NIF/NIE 9 digits
+            if ($idprof==2) $formlength=12; //NASS 12 digits without /
+            if ($idprof==3) $formlength=5;  //CNAE 5 digits
+            if ($idprof==4) $formlength=32; //depend of college
+        }
+
+        $selected=$preselected;
+        if (! $selected && $idprof==1) $selected=$this->siren;
+        if (! $selected && $idprof==2) $selected=$this->siret;
+        if (! $selected && $idprof==3) $selected=$this->ape;
+        if (! $selected && $idprof==4) $selected=$this->idprof4;
+
+        $out = '<input type="text" name="'.$htmlname.'" size="'.($formlength+1).'" maxlength="'.$formlength.'" value="'.$selected.'">';
+
+        return $out;
+    }
 
 }
 

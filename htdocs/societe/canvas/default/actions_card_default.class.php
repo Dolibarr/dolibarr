@@ -59,7 +59,7 @@ class ActionsCardDefault extends ActionsCardCommon
 
 		return $out;
 	}
-	
+
 	/**
 	 * 	Return the head of card (tabs)
 	 */
@@ -67,7 +67,7 @@ class ActionsCardDefault extends ActionsCardCommon
 	{
 		$head = societe_prepare_head($this->object);
 		$title = $this->getTitle($action);
-		
+
 		return dol_fiche_head($head, 'card', $title, 0, 'company');
 	}
 
@@ -105,7 +105,7 @@ class ActionsCardDefault extends ActionsCardCommon
 		$this->tpl['profid2'] 	= $this->object->siret;
 		$this->tpl['profid3'] 	= $this->object->ape;
 		$this->tpl['profid4'] 	= $this->object->idprof4;
-		
+
 		if ($conf->use_javascript_ajax && empty($conf->global->MAIN_DISABLEVATCHECK)) {
 			$js = "\n";
 	        $js.= '<script language="JavaScript" type="text/javascript">';
@@ -122,7 +122,7 @@ class ActionsCardDefault extends ActionsCardCommon
 			for ($i=1; $i<=4; $i++)
 			{
 				$this->tpl['langprofid'.$i]		= $langs->transcountry('ProfId'.$i,$this->object->pays_code);
-				$this->tpl['showprofid'.$i]		= $this->object->get_input_id_prof($i,'idprof'.$i,$this->tpl['profid'.$i]);
+				$this->tpl['showprofid'.$i]		= $formcompany->get_input_id_prof($i,'idprof'.$i,$this->tpl['profid'.$i],$this->object->pays_code);
 			}
 
 			// Type
@@ -139,7 +139,7 @@ class ActionsCardDefault extends ActionsCardCommon
 			if (empty($conf->global->MAIN_DISABLEVATCHECK))
 			{
 				$s.=' ';
-				
+
 				if ($conf->use_javascript_ajax)
 				{
 					$s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
@@ -179,7 +179,7 @@ class ActionsCardDefault extends ActionsCardCommon
 				if (empty($conf->global->MAIN_DISABLEVATCHECK))
 				{
 					$s.=' &nbsp; ';
-					
+
 					if ($conf->use_javascript_ajax)
 					{
 						$s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
@@ -194,7 +194,7 @@ class ActionsCardDefault extends ActionsCardCommon
 				{
 					$this->tpl['tva_intra'] = $s;
 				}
-				
+
 			}
 			else
 			{
@@ -215,7 +215,7 @@ class ActionsCardDefault extends ActionsCardCommon
 			}
 		}
 	}
-	
+
 	/**
 	 * 	Check permissions of a user to show a page and an object. Check read permission
 	 * 	If $_REQUEST['action'] defined, we also check write permission.
