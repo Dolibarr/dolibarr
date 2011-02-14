@@ -28,6 +28,11 @@
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 
+$langs->load("companies");
+$langs->load("customers");
+$langs->load("suppliers");
+$langs->load("commercial");
+
 // Security check
 $socid = GETPOST("socid");
 if ($user->societe_id) $socid=$user->societe_id;
