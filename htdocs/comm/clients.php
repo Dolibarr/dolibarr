@@ -31,7 +31,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 // Security check
 $socid = GETPOST("socid");
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'societe',$socid,'');
+$result = restrictedArea($user,'societe',$socid,'');
 
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
@@ -48,8 +48,8 @@ $search_ville=isset($_GET["search_ville"])?$_GET["search_ville"]:$_POST["search_
 $search_code=isset($_GET["search_code"])?$_GET["search_code"]:$_POST["search_code"];
 
 // Load sale and categ filters
-$search_sale = isset($_GET["search_sale"])?$_GET["search_sale"]:$_POST["search_sale"];
-$search_categ = isset($_GET["search_categ"])?$_GET["search_categ"]:$_POST["search_categ"];
+$search_sale = GETPOST("search_sale");
+$search_categ = GETPOST("search_categ");
 
 
 /*
@@ -61,6 +61,19 @@ $thirdpartystatic=new Societe($db);
 
 llxHeader();
 
+// Do we click on purge search criteria ?
+if (GETPOST("button_removefilter_x"))
+{
+    $search_categ='';
+    $search_sale='';
+    $socname="";
+    $search_nom="";
+    $search_ville="";
+    $search_idprof1='';
+    $search_idprof2='';
+    $search_idprof3='';
+    $search_idprof4='';
+}
 
 $sql = "SELECT s.rowid, s.nom, s.client, s.ville, st.libelle as stcomm, s.prefix_comm, s.code_client,";
 $sql.= " s.datec, s.datea, s.canvas";
@@ -68,8 +81,8 @@ $sql.= " s.datec, s.datea, s.canvas";
 if ($search_sale) $sql .= ", sc.fk_soc, sc.fk_user";
 // We'll need these fields in order to filter by categ
 if ($search_categ) $sql .= ", cs.fk_categorie, cs.fk_societe";
-$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-$sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st";
+$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,";
+$sql.= " ".MAIN_DB_PREFIX."c_stcomm as st";
 // We'll need this table joined to the select in order to filter by sale
 if ($search_sale || !$user->rights->societe->client->voir) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 // We'll need this table joined to the select in order to filter by categ
@@ -77,7 +90,7 @@ if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_societe as cs";
 $sql.= " WHERE s.fk_stcomm = st.id";
 $sql.= " AND s.client IN (1, 3)";
 $sql.= " AND s.entity = ".$conf->entity;
-if (!$user->rights->societe->client->voir) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+if (!$user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 if ($search_sale) $sql.= " AND s.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
 if ($search_categ) $sql.= " AND s.rowid = cs.fk_societe";	// Join for the needed table to filter by categ
@@ -126,7 +139,7 @@ if ($result)
 	$i = 0;
 
 	print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-	print '<table class="liste">'."\n";
+	print '<table class="liste" width="100%">'."\n";
 
 	// Filter on categories
  	$moreforfilter='';
@@ -165,8 +178,11 @@ if ($result)
 	print '</td><td class="liste_titre">';
 	print '<input type="text" class="flat" name="search_code" value="'.$search_code.'" size="10">';
 	print '</td>';
-	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'"></td>';
-	print "</tr>\n";
+	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
+    print '&nbsp; ';
+    print '<input type="image" class="liste_titre" name="button_removefilter" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" alt="'.$langs->trans("RemoveFilter").'">';
+    print '</td>';
+    print "</tr>\n";
 
 	$var=True;
 

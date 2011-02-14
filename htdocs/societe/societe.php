@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,14 +27,16 @@
 
 require_once("../main.inc.php");
 include_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 
 $langs->load("companies");
 $langs->load("customers");
 $langs->load("suppliers");
 
 // Security check
+$socid = GETPOST("socid");
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'societe','','');
+$result = restrictedArea($user,'societe',$socid,'');
 
 $search_nom=trim(isset($_GET["search_nom"])?$_GET["search_nom"]:$_POST["search_nom"]);
 $search_nom_only=trim(isset($_GET["search_nom_only"])?$_GET["search_nom_only"]:$_POST["search_nom_only"]);
@@ -46,15 +48,16 @@ $search_idprof2=trim($_REQUEST['search_idprof2']);
 $search_idprof3=trim($_REQUEST['search_idprof3']);
 $search_idprof4=trim($_REQUEST['search_idprof4']);
 
+// Load sale and categ filters
+$search_sale = GETPOST("search_sale");
+$search_categ = GETPOST("search_categ");
+
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
 $page=isset($_GET["page"])?$_GET["page"]:$_POST["page"];
-
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="s.nom";
-
 if ($page == -1) { $page = 0 ; }
-
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -74,20 +77,34 @@ if ($mode == 'search')
 
 	$sql = "SELECT s.rowid";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	if ($search_sale || !$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    // We'll need this table joined to the select in order to filter by categ
+    if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_societe as cs";
 	$sql.= " WHERE (";
-	$sql.= "s.nom like '%".addslashes($socname)."%'";
-	$sql.= " OR s.code_client LIKE '%".addslashes($socname)."%'";
-	$sql.= " OR s.email like '%".addslashes($socname)."%'";
-	$sql.= " OR s.url like '%".addslashes($socname)."%'";
+	$sql.= " s.nom like '%".$db->escape($socname)."%'";
+	$sql.= " OR s.code_client LIKE '%".$db->escape($socname)."%'";
+	$sql.= " OR s.email like '%".$db->escape($socname)."%'";
+	$sql.= " OR s.url like '%".$db->escape($socname)."%'";
 	$sql.= ")";
 	$sql.= " AND s.entity = ".$conf->entity;
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-	if ($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
+	if ($socid) $sql.= " AND s.rowid = ".$socid;
+    if ($search_sale) $sql.= " AND s.rowid = sc.fk_soc";        // Join for the needed table to filter by sale
+    if ($search_categ) $sql.= " AND s.rowid = cs.fk_societe";   // Join for the needed table to filter by categ
 	if (! $user->rights->societe->lire || ! $user->rights->fournisseur->lire)
 	{
 		if (! $user->rights->fournisseur->lire) $sql.=" AND s.fourn != 1";
 	}
+    // Insert sale filter
+    if ($search_sale)
+    {
+        $sql .= " AND sc.fk_user = ".$search_sale;
+    }
+    // Insert categ filter
+    if ($search_categ)
+    {
+        $sql .= " AND cs.fk_categorie = ".$search_categ;
+    }
 
 	$result=$db->query($sql);
 	if ($result)
@@ -116,16 +133,20 @@ if ($user->societe_id > 0)
  * View
  */
 
+$form=new Form($db);
+$htmlother=new FormOther($db);
+$companystatic=new Societe($db);
+
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$langs->trans("ThirdParty"),$help_url);
 
-$form=new Form($db);
-$companystatic=new Societe($db);
 
 // Do we click on purge search criteria ?
-if (isset($_POST["button_removefilter_x"]))
+if (GETPOST("button_removefilter_x"))
 {
-	$socname="";
+    $search_categ='';
+    $search_sale='';
+    $socname="";
 	$search_nom="";
 	$search_ville="";
 	$search_idprof1='';
@@ -155,16 +176,25 @@ if ($_GET['delsoc']) print '<div class="warning">'.$langs->trans("CompanyDeleted
  */
 $title=$langs->trans("ListOfThirdParties");
 
-$sql = "SELECT s.rowid, s.nom, s.ville, s.datec, s.datea";
-$sql.= ", st.libelle as stcomm, s.prefix_comm, s.client, s.fournisseur,";
+$sql = "SELECT s.rowid, s.nom, s.ville, s.datec, s.datea,";
+$sql.= " st.libelle as stcomm, s.prefix_comm, s.client, s.fournisseur, s.canvas,";
 $sql.= " s.siren as idprof1, s.siret as idprof2, ape as idprof3, idprof4 as idprof4";
-$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-$sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st";
-if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+// We'll need these fields in order to filter by sale (including the case where the user can only see his prospects)
+if ($search_sale) $sql .= ", sc.fk_soc, sc.fk_user";
+// We'll need these fields in order to filter by categ
+if ($search_categ) $sql .= ", cs.fk_categorie, cs.fk_societe";
+$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,";
+$sql.= " ".MAIN_DB_PREFIX."c_stcomm as st";
+// We'll need this table joined to the select in order to filter by sale
+if ($search_sale || !$user->rights->societe->client->voir) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+// We'll need this table joined to the select in order to filter by categ
+if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_societe as cs";
 $sql.= " WHERE s.fk_stcomm = st.id";
 $sql.= " AND s.entity = ".$conf->entity;
 if (! $user->rights->societe->client->voir && ! $socid)	$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid)	$sql.= " AND s.rowid = ".$socid;
+if ($search_sale) $sql.= " AND s.rowid = sc.fk_soc";        // Join for the needed table to filter by sale
+if ($search_categ) $sql.= " AND s.rowid = cs.fk_societe";   // Join for the needed table to filter by categ
 if (dol_strlen($stcomm))
 {
 	$sql.= " AND s.fk_stcomm=".$stcomm;
@@ -173,48 +203,58 @@ if (! $user->rights->societe->lire || ! $user->rights->fournisseur->lire)
 {
 	if (! $user->rights->fournisseur->lire) $sql.=" AND s.fournisseur != 1";
 }
+// Insert sale filter
+if ($search_sale)
+{
+    $sql .= " AND sc.fk_user = ".$search_sale;
+}
+// Insert categ filter
+if ($search_categ)
+{
+    $sql .= " AND cs.fk_categorie = ".$search_categ;
+}
 if ($search_nom_only)
 {
-	$sql.= " AND s.nom LIKE '%".addslashes($search_nom_only)."%'";
+	$sql.= " AND s.nom LIKE '%".$db->escape($search_nom_only)."%'";
 }
 if ($search_all)
 {
 	$sql.= " AND (";
-	$sql.= "s.nom LIKE '%".addslashes($search_all)."%'";
-	$sql.= " OR s.code_client LIKE '%".addslashes($search_all)."%'";
-	$sql.= " OR s.email like '%".addslashes($search_all)."%'";
-	$sql.= " OR s.url like '%".addslashes($search_all)."%'";
+	$sql.= "s.nom LIKE '%".$db->escape($search_all)."%'";
+	$sql.= " OR s.code_client LIKE '%".$db->escape($search_all)."%'";
+	$sql.= " OR s.email like '%".$db->escape($search_all)."%'";
+	$sql.= " OR s.url like '%".$db->escape($search_all)."%'";
 	$sql.= ")";
 }
 if ($search_nom)
 {
 	$sql.= " AND (";
-	$sql.= "s.nom LIKE '%".addslashes($search_nom)."%'";
-	$sql.= " OR s.code_client LIKE '%".addslashes($search_nom)."%'";
-	$sql.= " OR s.email like '%".addslashes($search_nom)."%'";
-	$sql.= " OR s.url like '%".addslashes($search_nom)."%'";
+	$sql.= "s.nom LIKE '%".$db->escape($search_nom)."%'";
+	$sql.= " OR s.code_client LIKE '%".$db->escape($search_nom)."%'";
+	$sql.= " OR s.email like '%".$db->escape($search_nom)."%'";
+	$sql.= " OR s.url like '%".$db->escape($search_nom)."%'";
 	$sql.= ")";
 }
 
 if ($search_ville)
 {
-	$sql .= " AND s.ville LIKE '%".addslashes($search_ville)."%'";
+	$sql .= " AND s.ville LIKE '%".$db->escape($search_ville)."%'";
 }
 if ($search_idprof1)
 {
-	$sql .= " AND s.siren LIKE '%".addslashes($search_idprof1)."%'";
+	$sql .= " AND s.siren LIKE '%".$db->escape($search_idprof1)."%'";
 }
 if ($search_idprof2)
 {
-	$sql .= " AND s.siret LIKE '%".addslashes($search_idprof2)."%'";
+	$sql .= " AND s.siret LIKE '%".$db->escape($search_idprof2)."%'";
 }
 if ($search_idprof3)
 {
-	$sql .= " AND s.ape LIKE '%".addslashes($search_idprof3)."%'";
+	$sql .= " AND s.ape LIKE '%".$db->escape($search_idprof3)."%'";
 }
 if ($search_idprof4)
 {
-	$sql .= " AND s.idprof4 LIKE '%".addslashes($search_idprof4)."%'";
+	$sql .= " AND s.idprof4 LIKE '%".$db->escape($search_idprof4)."%'";
 }
 //print $sql;
 
@@ -226,7 +266,8 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	$nbtotalofrecords = $db->num_rows($result);
 }
 
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
+$sql.= $db->order($sortfield,$sortorder);
+$sql.= $db->plimit($conf->liste_limit+1, $offset);
 
 $resql = $db->query($sql);
 if ($resql)
@@ -258,9 +299,34 @@ if ($resql)
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-	// Lignes des titres
 	print '<table class="liste" width="100%">';
-	print '<tr class="liste_titre">';
+
+    // Filter on categories
+    /* Not possible in this page because list is for ALL third parties type
+	$moreforfilter='';
+    if ($conf->categorie->enabled)
+    {
+        $moreforfilter.=$langs->trans('Categories'). ': ';
+        $moreforfilter.=$htmlother->select_categories(2,$search_categ,'search_categ');
+        $moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
+    }
+    // If the user can view prospects other than his'
+    if ($user->rights->societe->client->voir || $socid)
+    {
+        $moreforfilter.=$langs->trans('SalesRepresentatives'). ': ';
+        $moreforfilter.=$htmlother->select_salesrepresentatives($search_sale,'search_sale',$user);
+    }
+    if ($moreforfilter)
+    {
+        print '<tr class="liste_titre">';
+        print '<td class="liste_titre" colspan="8">';
+        print $moreforfilter;
+        print '</td></tr>';
+    }
+	*/
+
+    // Lines of titles
+    print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$params,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.ville","",$params,'',$sortfield,$sortorder);
 	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId1Short"),$textprofid[1],1,0),$_SERVER["PHP_SELF"],"s.siren","",$params,'nowrap="nowrap"',$sortfield,$sortorder);
@@ -313,6 +379,8 @@ if ($resql)
 		print "<tr $bc[$var]><td>";
 		$companystatic->id=$obj->rowid;
 		$companystatic->nom=$obj->nom;
+		$companystatic->canvas=$obj->canvas;
+        $companystatic->client=$obj->client;
 		print $companystatic->getNomUrl(1,'',24);
 		print "</td>\n";
 		print "<td>".$obj->ville."</td>\n";
@@ -321,20 +389,25 @@ if ($resql)
 		print "<td>".$obj->idprof3."</td>\n";
 		print "<td>".$obj->idprof4."</td>\n";
 		print '<td align="center">';
-		if ($obj->client==1 || $obj->client==3)
+		$s='';
+		if (($obj->client==1 || $obj->client==3) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))
 		{
-	  		print "<a href=\"".DOL_URL_ROOT."/comm/fiche.php?socid=".$obj->rowid."\">".$langs->trans("Customer")."</a>\n";
+	  		$companystatic->nom=$langs->trans("Customer");
+		    $s.=$companystatic->getNomUrl(0,'customer');
 		}
-		if ($obj->client == 3 && empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print " / ";
+		if ($s) print " / ";
 		if (($obj->client==2 || $obj->client==3) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
 		{
-	  		print "<a href=\"".DOL_URL_ROOT."/comm/prospect/fiche.php?socid=".$obj->rowid."\">".$langs->trans("Prospect")."</a>\n";
+            $companystatic->nom=$langs->trans("Prospect");
+            $s.=$companystatic->getNomUrl(0,'prospect');
 		}
 		if ($conf->fournisseur->enabled && $obj->fournisseur)
 		{
-			if ($obj->client) print " / ";
-			print '<a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->rowid.'">'.$langs->trans("Supplier").'</a>';
+			if ($s) print " / ";
+            $companystatic->nom=$langs->trans("Supplier");
+            $s.=$companystatic->getNomUrl(0,'supplier');
 		}
+		print $s;
 		print '</td>';
 		print '</tr>'."\n";
 		$i++;
