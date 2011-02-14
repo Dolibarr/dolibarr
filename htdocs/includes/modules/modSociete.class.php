@@ -222,7 +222,11 @@ class modSociete extends DolibarrModules
 		$this->export_permission[$r]=array(array("societe","contact","export"));
 		$this->export_fields_array[$r]=array('c.rowid'=>"IdContact",'c.civilite'=>"CivilityCode",'c.name'=>'Lastname','c.firstname'=>'Firstname','c.datec'=>"DateCreation",'c.tms'=>"DateLastModification",'c.priv'=>"ContactPrivate",'c.address'=>"Address",'c.cp'=>"Zip",'c.ville'=>"Town",'c.phone'=>"Phone",'c.fax'=>"Fax",'c.email'=>"EMail",'p.libelle'=>"Country",'p.code'=>"CountryCode",'s.rowid'=>"IdCompany",'s.nom'=>"CompanyName",'s.code_client'=>"CustomerCode",'s.code_fournisseur'=>"SupplierCode");
 		$this->export_entities_array[$r]=array('s.rowid'=>"company",'s.nom'=>"company",'s.code_client'=>"company",'s.code_fournisseur'=>"company");	// We define here only fields that use another picto
-
+        if (empty($conf->fournisseur->enabled))
+        {
+            unset($this->export_fields_array[$r]['s.code_fournisseur']);
+            unset($this->export_entities_array[$r]['s.code_fournisseur']);
+        }
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'c_pays as p, '.MAIN_DB_PREFIX.'socpeople as c';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON c.fk_soc = s.rowid';
@@ -262,11 +266,12 @@ class modSociete extends DolibarrModules
 	}
 
 
-	/**
-	 *  Fonction appelee lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
-	 *  Definit egalement les repertoires de donnees a creer pour ce module.
-	 *	@param		options		Options when enabling module
-	 */
+    /**
+     *      Function called when module is enabled.
+     *      The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+     *      It also creates data directories.
+     *      @return     int             1 if OK, 0 if KO
+     */
 	function init($options='')
 	{
 		global $conf;
@@ -284,11 +289,12 @@ class modSociete extends DolibarrModules
 		return $this->_init($sql,$options);
 	}
 
-	/**
-	 *  Fonction appelee lors de la desactivation d'un module.
-	 *  Supprime de la base les constantes, boites et permissions du module.
-	 *	@param		options		Options when disabling module
-	 */
+    /**
+     *      Function called when module is disabled.
+     *      Remove from database constants, boxes and permissions from Dolibarr database.
+     *      Data directories are not deleted.
+     *      @return     int             1 if OK, 0 if KO
+     */
 	function remove($options='')
 	{
 		$sql = array();

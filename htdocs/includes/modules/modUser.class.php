@@ -226,10 +226,12 @@ class modUser extends DolibarrModules
 	}
 
 
-	/**
-	 *   \brief      Fonction appelee lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
-	 *               Definit egalement les repertoires de donnees a creer pour ce module.
-	 */
+    /**
+     *      Function called when module is enabled.
+     *      The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+     *      It also creates data directories.
+     *      @return     int             1 if OK, 0 if KO
+     */
 	function init()
 	{
 		global $conf;
@@ -242,10 +244,12 @@ class modUser extends DolibarrModules
 		return $this->_init($sql);
 	}
 
-	/**
-	 \brief      Fonction appelee lors de la desactivation d'un module.
-	 Supprime de la base les constantes, boites et permissions du module.
-	 */
+    /**
+     *      Function called when module is disabled.
+     *      Remove from database constants, boxes and permissions from Dolibarr database.
+     *      Data directories are not deleted.
+     *      @return     int             1 if OK, 0 if KO
+     */
 	function remove()
 	{
 		$sql = array();

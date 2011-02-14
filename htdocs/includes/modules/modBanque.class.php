@@ -151,7 +151,11 @@ class modBanque extends DolibarrModules
 		$this->export_fields_array[$r]=array('b.rowid'=>'IdTransaction','ba.ref'=>'AccountRef','ba.label'=>'AccountLabel','b.datev'=>'DateValue','b.dateo'=>'DateOperation','b.label'=>'Label','b.num_chq'=>'ChequeOrTransferNumber','-b.amount'=>'Debit','b.amount'=>'Credit','b.num_releve'=>'AccountStatement','b.datec'=>"DateCreation","bu.url_id"=>"IdThirdParty","s.nom"=>"ThirdParty","s.code_compta"=>"CustomerAccountancyCode","s.code_compta_fournisseur"=>"SupplierAccountancyCode");
 		$this->export_entities_array[$r]=array('b.rowid'=>'account','ba.ref'=>'account','ba.label'=>'account','b.datev'=>'account','b.dateo'=>'account','b.label'=>'account','b.num_chq'=>'account','-b.amount'=>'account','b.amount'=>'account','b.num_releve'=>'account','b.datec'=>"account","bu.url_id"=>"company","s.nom"=>"company","s.code_compta"=>"company","s.code_compta_fournisseur"=>"company");
 		$this->export_special_array[$r]=array('-b.amount'=>'NULLIFNEG','b.amount'=>'NULLIFNEG');
-
+	    if (empty($conf->fournisseur->enabled))
+        {
+            unset($this->export_fields_array[$r]['s.code_compta_fournisseur']);
+            unset($this->export_entities_array[$r]['s.code_compta_fournisseur']);
+        }
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM ('.MAIN_DB_PREFIX.'bank_account as ba, '.MAIN_DB_PREFIX.'bank as b)';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX."bank_url as bu ON (bu.fk_bank = b.rowid AND bu.type = 'company')";
@@ -162,10 +166,12 @@ class modBanque extends DolibarrModules
 	}
 
 
-	/**
-	 *   \brief      Fonction appel�e lors de l'activation du module. Ins�re en base les constantes, boites, permissions du module.
-	 *               D�finit �galement les r�pertoires de donn�es � cr�er pour ce module.
-	 */
+    /**
+     *      Function called when module is enabled.
+     *      The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+     *      It also creates data directories.
+     *      @return     int             1 if OK, 0 if KO
+     */
 	function init()
 	{
 		global $conf;
@@ -178,10 +184,12 @@ class modBanque extends DolibarrModules
 		return $this->_init($sql);
 	}
 
-	/**
-	 *    \brief      Fonction appel�e lors de la d�sactivation d'un module.
-	 *                Supprime de la base les constantes, boites et permissions du module.
-	 */
+    /**
+     *      Function called when module is disabled.
+     *      Remove from database constants, boxes and permissions from Dolibarr database.
+     *      Data directories are not deleted.
+     *      @return     int             1 if OK, 0 if KO
+     */
 	function remove()
 	{
 		$sql = array();
