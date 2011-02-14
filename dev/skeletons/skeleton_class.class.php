@@ -198,8 +198,8 @@ class Skeleton_class // extends CommonObject
 
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."mytable SET";
-        $sql.= " field1=".(isset($this->field1)?"'".addslashes($this->field1)."'":"null").",";
-        $sql.= " field2=".(isset($this->field2)?"'".addslashes($this->field2)."'":"null")."";
+        $sql.= " field1=".(isset($this->field1)?"'".$this->db->escape($this->field1)."'":"null").",";
+        $sql.= " field2=".(isset($this->field2)?"'".$this->db->escape($this->field2)."'":"null")."";
 		//...
         $sql.= " WHERE rowid=".$this->id;
 

@@ -240,7 +240,7 @@ foreach($property as $key => $prop)
 		elseif ($prop['ischar'])
 		{
 			$varprop.='".(! isset($this->'.$prop['field'].')?\'NULL\':"\'".';
-			$varprop.="addslashes(\$this->".$prop['field'].")";
+			$varprop.="$this->db->escape(\$this->".$prop['field'].")";
 			$varprop.='."\'")."';
 			if ($i < sizeof($property)) $varprop.=",";
 			$varprop.='";';
@@ -281,8 +281,8 @@ foreach($property as $key => $prop)
 		else
 		{
 			$varprop.="\".";
-			// $sql.= " field1=".(isset($this->field1)?"'".addslashes($this->field1)."'":"null").",";
-			if ($prop['ischar']) $varprop.='(isset($this->'.$prop['field'].')?"\'".addslashes($this->'.$prop['field'].')."\'":"null")';
+			// $sql.= " field1=".(isset($this->field1)?"'".$this->db->escape($this->field1)."'":"null").",";
+			if ($prop['ischar']) $varprop.='(isset($this->'.$prop['field'].')?"\'".$this->db->escape($this->'.$prop['field'].')."\'":"null")';
 			// $sql.= " field1=".(isset($this->field1)?$this->field1:"null").",";
 			else $varprop.='(isset($this->'.$prop['field'].')?$this->'.$prop['field'].':"null")';
 			$varprop.=".\"";
@@ -293,8 +293,8 @@ foreach($property as $key => $prop)
 		$varprop.="\n";
 	}
 }
-$targetcontent=preg_replace('/\$sql.= " field1=".\(isset\(\$this->field1\)\?"\'".addslashes\(\$this->field1\)."\'":"null"\).",";/', $varprop, $targetcontent);
-$targetcontent=preg_replace('/\$sql.= " field2=".\(isset\(\$this->field2\)\?"\'".addslashes\(\$this->field2\)."\'":"null"\)."";/', '', $targetcontent);
+$targetcontent=preg_replace('/\$sql.= " field1=".\(isset\(\$this->field1\)\?"\'".$this->db->escape\(\$this->field1\)."\'":"null"\).",";/', $varprop, $targetcontent);
+$targetcontent=preg_replace('/\$sql.= " field2=".\(isset\(\$this->field2\)\?"\'".$this->db->escape\(\$this->field2\)."\'":"null"\)."";/', '', $targetcontent);
 
 // Substitute select parameters
 $varprop="\n";
