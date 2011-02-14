@@ -240,7 +240,7 @@ foreach($property as $key => $prop)
 		elseif ($prop['ischar'])
 		{
 			$varprop.='".(! isset($this->'.$prop['field'].')?\'NULL\':"\'".';
-			$varprop.="$this->db->escape(\$this->".$prop['field'].")";
+			$varprop.='$this->db->escape($this->'.$prop['field'].')';
 			$varprop.='."\'")."';
 			if ($i < sizeof($property)) $varprop.=",";
 			$varprop.='";';
