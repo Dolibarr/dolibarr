@@ -20,6 +20,7 @@ SecurityCode=Codi de seguretat
 Calendar=Calendari
 AddTrip=Crear desplaçament
 Tools=Utilitats
+ToolsDesc=Aquesta àrea està dedicada al reagrupament de diverses utilitats no disponibles a les altres entrades de menú.<br><br>La llista d'aquestes utilitats és accessible mitjançant el menú del costat.
 Birthday=Aniversari
 BirthdayDate=Data aniversari
 DateToBirth=Data de naiximent

@@ -20,6 +20,7 @@ SecurityCode=Código seguridad
 Calendar=Calendario
 AddTrip=Crear desplazamiento
 Tools=Utilidades
+ ToolsDesc=Esta área está dedicada al reagrupamiento de diversas utilidades no disponibles en las otras entradas de menú.<br><br>La lista de estas utilidades es accesible mediante el menú de al lado.
 Birthday=Aniversario
 BirthdayDate=Fecha aniversario
 DateToBirth=Fecha de nacimiento
