@@ -45,7 +45,7 @@ function print_auguria_menu($db,$atarget,$type_user)
 	$_SESSION["leftmenuopened"]="";
 
 	$menuArbo = new Menubase($db,'auguria','top');
-	$tabMenu = $menuArbo->menuTopCharger($type_user,$_SESSION['mainmenu'], 'auguria');
+	$tabMenu = $menuArbo->menuTopCharger($_SESSION['mainmenu'], '', $type_user, 'auguria');
 
 	print_start_menu_array_auguria();
 
@@ -276,7 +276,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after)
 
             // Add mainmenu in GET url. This make to go back on correct menu even when using Back on browser.
             $url=dol_buildpath($menu_array[$i]['url'],1);
-			
+
             if (! preg_match('/mainmenu=/i',$menu_array[$i]['url']))
             {
                 if (! preg_match('/\?/',$url)) $url.='?';

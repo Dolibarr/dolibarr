@@ -3652,7 +3652,8 @@ function verifCond($strRights)
 }
 
 /**
- * Replace eval function to add more security
+ * Replace eval function to add more security.
+ * This function is called by verifCond().
  *
  * @param 	string	$s
  * @return 	int		1
