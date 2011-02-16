@@ -68,7 +68,7 @@ if ($_GET["id"])
 		print '<tr><td width="20%">'.$langs->trans('Status').'</td>';
 		print '<td>'.$bon->getLibStatut(1).'</td>';
 		print '</tr>';
-		
+
 		if($bon->date_trans <> 0)
 		{
 			$muser = new User($db);
@@ -87,7 +87,7 @@ if ($_GET["id"])
 			print dol_print_date($bon->date_credit,'day');
 			print '</td></tr>';
 		}
-      	
+
       	print '</table>';
 
       	print '</div>';
@@ -136,7 +136,7 @@ if ($resql)
 
   	$var=True;
 	$total = 0;
-	
+
 	while ($i < $num)
     {
 		$obj = $db->fetch_object($resql);
@@ -147,7 +147,7 @@ if ($resql)
 
 		print substr('000000'.$obj->rowid, -6);
 		print '</a></td>';
-		print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->socid.'">'.stripslashes($obj->nom)."</a></td>\n";
+		print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.stripslashes($obj->nom)."</a></td>\n";
 
 		print '<td align="right">'.price($obj->amount)."</td>\n";
 		print '<td>'.$rej->motifs[$obj->motif].'</td>';

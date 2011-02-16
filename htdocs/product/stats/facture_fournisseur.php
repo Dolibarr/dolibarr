@@ -167,7 +167,7 @@ if ($_GET["id"] || $_GET["ref"])
                     $supplierinvoicestatic->ref=$objp->facnumber;
 					print $supplierinvoicestatic->getNomUrl(1);
                     print "</td>\n";
-                    print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,44).'</a></td>';
+                    print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,44).'</a></td>';
                     print "<td>".$objp->code_client."</td>\n";
                     print "<td align=\"center\">";
                     print dol_print_date($db->jdate($objp->datef))."</td>";

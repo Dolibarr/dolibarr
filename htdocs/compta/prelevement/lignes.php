@@ -72,7 +72,7 @@ if ($_GET["id"])
 		print '<tr><td width="20%">'.$langs->trans('Status').'</td>';
 		print '<td>'.$bon->getLibStatut(1).'</td>';
 		print '</tr>';
-		
+
 		if($bon->date_trans <> 0)
 		{
 			$muser = new User($db);
@@ -91,7 +91,7 @@ if ($_GET["id"])
 			print dol_print_date($bon->date_credit,'day');
 			print '</td></tr>';
 		}
-		
+
 		print '</table>';
 
 		print '</div>';
@@ -164,15 +164,15 @@ if ($result)
 		$obj = $db->fetch_object($result);
 
 		print "<tr $bc[$var]><td>";
-		
+
 		print $ligne->LibStatut($obj->statut,2);
 		print "&nbsp;";
-		
+
 		print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid.'">';
 		print substr('000000'.$obj->rowid, -6);
 		print '</a></td>';
 
-		print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->socid.'">'.stripslashes($obj->nom)."</a></td>\n";
+		print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.stripslashes($obj->nom)."</a></td>\n";
 
 		print '<td align="center">'.price($obj->amount)."</td>\n";
 

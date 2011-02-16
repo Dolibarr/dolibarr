@@ -46,7 +46,7 @@ if ($_GET["id"])
 
   	if ($bon->fetch($_GET["id"]) == 0)
     {
-    	$head = prelevement_prepare_head($bon);	
+    	$head = prelevement_prepare_head($bon);
       	dol_fiche_head($head, 'invoices', $langs->trans("WithdrawalReceipt"), '', 'payment');
 
       	print '<table class="border" width="100%">';
@@ -65,7 +65,7 @@ if ($_GET["id"])
 		print '<tr><td width="20%">'.$langs->trans('Status').'</td>';
 		print '<td>'.$bon->getLibStatut(1).'</td>';
 		print '</tr>';
-		
+
 		if($bon->date_trans <> 0)
 		{
 			$muser = new User($db);
@@ -84,7 +84,7 @@ if ($_GET["id"])
 			print dol_print_date($bon->date_credit,'day');
 			print '</td></tr>';
 		}
-		
+
       	print '</table>';
 
       	print '</div>';
@@ -157,7 +157,7 @@ if ($result)
 
       	print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">'.$obj->ref."</a></td>\n";
 
-      	print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->socid.'">';
+      	print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">';
       	print img_object($langs->trans("ShowCompany"),"company"). ' '.stripslashes($obj->nom)."</a></td>\n";
 
       	print '<td align="center">'.price($obj->total_ttc)."</td>\n";

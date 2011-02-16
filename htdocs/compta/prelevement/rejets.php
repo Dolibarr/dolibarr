@@ -101,7 +101,7 @@ if ($result)
 
 		print substr('000000'.$obj->rowid, -6)."</a></td>";
 
-		print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->socid.'">'.stripslashes($obj->nom)."</a></td>\n";
+		print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.stripslashes($obj->nom)."</a></td>\n";
 
 		print '<td>'.$rej->motifs[$obj->motif].'</td>';
 		print "</tr>\n";
