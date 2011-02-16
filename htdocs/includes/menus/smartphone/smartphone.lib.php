@@ -76,13 +76,13 @@ function print_smartphone_menu($db,$atarget,$type_user)
 					$menus = $leftmenu->liste;
 					//var_dump($menus);
 
-					print '<ul>';
+                    print_start_submenu_array();
 					if (is_array($menus) && !empty($menus))
 					{
-						$num = count($menus);
+					    $num = count($menus);
 						//var_dump($menus);
 
-						for($j=0; $j<$num; $j++)
+                        for($j=0; $j<$num; $j++)
 						{
 							if ($menus[$j]['level'] == 0)
 							{
@@ -116,7 +116,9 @@ function print_smartphone_menu($db,$atarget,$type_user)
 							if (empty($menus[$j+1]['level'])) print_end_menu_entry();
 						}
 					}
-					print_end_menu();
+                    print_end_menu();
+
+					print_end_menu_entry();
 				}
 			}
 		}
