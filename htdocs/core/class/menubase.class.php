@@ -430,6 +430,7 @@ class Menubase
 	 * 		@param		mainmenu		Value for mainmenu that defined top menu
 	 * 		@param		menu_handler	Name of menu_handler used (auguria, eldy...)
 	 * 		@return		array			Return array with menu entries for top menu
+	 *      TODO Mutualize menuTopCharger and menuLeftCharger
 	 */
 	function menuTopCharger($type_user, $mainmenu, $menu_handler)
 	{
@@ -542,6 +543,7 @@ class Menubase
         global $langs, $user, $conf, $leftmenu; // To export to dol_eval function
         global $rights; // To export to dol_eval function
 
+        $menutopid='';
         $leftmenu=$myleftmenu;
 
         $this->newmenu = $newmenu;
@@ -549,7 +551,7 @@ class Menubase
 
         $tabMenu = array ();
 
-        $sql = "SELECT m.rowid, m.fk_menu, m.url, m.titre, m.langs, m.perms, m.enabled, m.target, m.mainmenu, m.leftmenu";
+        $sql = "SELECT m.rowid, m.type, m.fk_menu, m.url, m.titre, m.langs, m.perms, m.enabled, m.target, m.mainmenu, m.leftmenu";
         $sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
         $sql.= " WHERE m.menu_handler in('".$menu_handler."','all')";
         $sql.= " AND m.entity = ".$conf->entity;
@@ -571,6 +573,9 @@ class Menubase
             {
                 //$objm = $this->db->fetch_object($resql);
                 $menu = $this->db->fetch_array($resql);
+
+                // Detect if it's top menu line
+                if ($menu['type'] == 'top' && $menu['mainmenu'] == $mainmenu) $menutopid=$menu['rowid'];
 
                 // Define $chaine
                 $chaine="";
@@ -644,21 +649,23 @@ class Menubase
         }
 
         // Get menutopid
-        $menutopid='';
-
-        $sql = "SELECT m.rowid, m.titre, m.type";
+        /*$sql = "SELECT m.rowid, m.titre, m.type";
         $sql.= " FROM " . MAIN_DB_PREFIX . "menu as m";
         $sql.= " WHERE m.mainmenu = '".$mainmenu."'";
         $sql.= " AND m.menu_handler in('".$menu_handler."','all')";
         $sql.= " AND m.entity = ".$conf->entity;
+        if ($type_user == 0) $sql.= " AND m.usertype in (0,2)";
+        if ($type_user == 1) $sql.= " AND m.usertype in (1,2)";
         $sql.= " AND type = 'top'";
 
+        dol_syslog("Menubase::menuLeftCharger sql=".$sql);
         // It should have only one response
         $resql = $this->db->query($sql);
         $menutop = $this->db->fetch_object($resql);
         if ($menutop) $menutopid=$menutop->rowid;
         $this->db->free($resql);
         //print "menutopid=".$menutopid." sql=".$sql;
+        */
 
         // Now edit this->newmenu to add entries in tabMenu that are in childs
         $this->recur($tabMenu, $menutopid, 1);
