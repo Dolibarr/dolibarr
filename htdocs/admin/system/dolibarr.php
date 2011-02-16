@@ -88,7 +88,10 @@ print "</td></tr>\n";
 $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("CurrentTheme").'</td><td colspan="2">'.$conf->theme.'</td></tr>'."\n";
 $var=!$var;
-print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("CurrentMenuHandler").'</td><td colspan="2">'.$conf->top_menu.'</td></tr>'."\n";
+print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("CurrentMenuHandler").'</td><td colspan="2">';
+if (preg_match('/^smartphone/',$conf->smart_menu) && isset($conf->browser->phone)) print $conf->smart_menu;
+else print $conf->top_menu;
+print '</td></tr>'."\n";
 print '</table>';
 print '<br>';
 
@@ -192,7 +195,7 @@ $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">=> '.$langs->trans("CompanyHour").'</td><td>'.$langs->trans("FeatureNotYetAvailable").'</td></tr>'."\n";
 # Client
 $var=!$var;
-print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("ClientTZ").'</td><td>'.($_SESSION['dol_tz']>=0?'+':'').$_SESSION['dol_tz'].'</td></tr>'."\n";
+print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("ClientTZ").'</td><td>'.($_SESSION['dol_tz']!=''?($_SESSION['dol_tz']>=0?'+':'').$_SESSION['dol_tz']:'').'</td></tr>'."\n";
 $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">=> '.$langs->trans("ClientOffsetWithGreenwich").'</td><td>'.($_SESSION['dol_tz']>=0?'+':'').($_SESSION['dol_tz']*60*60).'</td></tr>'."\n";
 $var=!$var;
