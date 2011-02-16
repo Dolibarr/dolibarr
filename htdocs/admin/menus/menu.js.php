@@ -39,7 +39,7 @@ require_once("../../master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions.lib.php");
 
 if (! empty($_GET["lang"])) $langs->setDefaultLang($_GET["lang"]);	// If language was forced on URL by the main.inc.php
-$langs->load("main",0,1);
+$langs->load("main",0,0);   // We need to load direction but also content to translate 'ExpandAll'
 
 ?>
 
