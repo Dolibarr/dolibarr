@@ -211,21 +211,18 @@ else
 	print '</td>';
 	print '</tr>';
 
-    if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
-    {
-    	$var=!$var;
-    	print '<tr '.$bc[$var].'>';
-    	print '<td>'.$langs->trans("DefaultMenuSmartphoneManager").'</td>';
-    	print '<td>';
-    	$filelib=preg_replace('/.php$/i','',(empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?$conf->global->MAIN_MENU_SMARTPHONE:$conf->global->MAIN_MENU_SMARTPHONE_FORCED));
-    	print $filelib;
-    	print '</td>';
-    	print '<td>';
-    	$filelib=preg_replace('/.php$/i','',(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?$conf->global->MAIN_MENUFRONT_SMARTPHONE:$conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED));
-    	print $filelib;
-    	print '</td>';
-    	print '</tr>';
-    }
+	$var=!$var;
+	print '<tr '.$bc[$var].'>';
+	print '<td>'.$langs->trans("DefaultMenuSmartphoneManager").'</td>';
+	print '<td>';
+	$filelib=preg_replace('/.php$/i','',(empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?$conf->global->MAIN_MENU_SMARTPHONE:$conf->global->MAIN_MENU_SMARTPHONE_FORCED));
+	print $filelib;
+	print '</td>';
+	print '<td>';
+	$filelib=preg_replace('/.php$/i','',(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?$conf->global->MAIN_MENUFRONT_SMARTPHONE:$conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED));
+	print $filelib;
+	print '</td>';
+	print '</tr>';
 
 	print '</table>';
 }
