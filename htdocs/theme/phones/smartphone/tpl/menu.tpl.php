@@ -17,25 +17,33 @@
  *
  * $Id$
  */
-$this->smartheader();
+require('header.tpl.php');
 ?>
+<div data-role="page" data-theme="b" id="dol-home">
 
-<!-- START MENU SMARTPHONE TEMPLATE -->
-
-<div data-role="page" id="dol-home">
-	
 	<div data-role="header" data-nobackbtn="true" data-theme="b">
 		<div id="dol-homeheader">
-			<img src="<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/'.$this->theme.'/img/dolibarr.png'; ?>">
+            <?php
+            $appli='Dolibarr';
+            if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $appli=$conf->global->MAIN_APPLICATION_TITLE;
+            print $appli;
+            ?>
 		</div>
 	</div>
 
-	<div data-role="content">
+    <div data-role="content">
+<!--
+        <ul data-role="listview" data-inset="true" data-theme="c" data-dividertheme="b">
+            <li data-role="list-divider">Overview</li>
+            <li><a href="http://jquerymobile.com/test/docs/about/intro.html">Intro to jQuery Mobile</a></li>
+            <li><a href="http://localhost/dolibarrnew/public/error-401.php">Features</a></li>
+        </ul>
+-->
 
 	<?php $menusmart->showmenu(); ?>
-	
+
 	</div><!-- /content -->
-	
+
 	<div data-role="footer" data-theme="b">
 		<div data-role="navbar">
 			<ul>
@@ -44,9 +52,12 @@ $this->smartheader();
 			</ul>
 		</div><!-- /navbar -->
 	</div><!-- /footer -->
-	
+
 </div><!-- /page -->
 
 <!-- END MENU SMARTPHONE TEMPLATE -->
 
-<?php $this->smartfooter(); ?>
+<?php
+require('footer.tpl.php');
+// $this->smartfooter();
+?>

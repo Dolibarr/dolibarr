@@ -5,6 +5,16 @@
   </head>
 
   <body>
+
+    <div data-role="page">
+
+    <!-- <div data-role="header" data-theme="b">
+            <h1>Introduction</h1>
+            <a href="../../" data-icon="home" data-iconpos="notext" data-direction="reverse" class="ui-btn-right jqm-home">Home</a>
+        </div>
+    -->
+    <div data-role="content">
+
     <h1>Error</h1>
 
     <br>
@@ -14,5 +24,9 @@
     <?php print isset($_SERVER["HTTP_REFERER"])?'You come from '.$_SERVER["HTTP_REFERER"].'.':''; ?>
 
     <hr>
+
+    </div>
+    </div>
+
   </body>
 </html>

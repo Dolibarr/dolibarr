@@ -164,18 +164,15 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	print '</tr>';
 
 	// Menu smartphone
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
-	{
-    	$var=!$var;
-    	print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuSmartphoneManager").'</td>';
-    	print '<td>';
-    	print $htmladmin->select_menu(empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?$conf->global->MAIN_MENU_SMARTPHONE:$conf->global->MAIN_MENU_SMARTPHONE_FORCED, 'main_menu_smartphone', $dirsmartphone, empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?'':' disabled="disabled"');
-    	print '</td>';
-    	print '<td>';
-    	print $htmladmin->select_menu(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?$conf->global->MAIN_MENUFRONT_SMARTPHONE:$conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED, 'main_menufront_smartphone', $dirsmartphone, empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?'':' disabled="disabled"');
-    	print '</td>';
-    	print '</tr>';
-	}
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuSmartphoneManager").'</td>';
+	print '<td>';
+	print $htmladmin->select_menu(empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?$conf->global->MAIN_MENU_SMARTPHONE:$conf->global->MAIN_MENU_SMARTPHONE_FORCED, 'main_menu_smartphone', array($dirtop,$dirsmartphone), empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?'':' disabled="disabled"');
+	print '</td>';
+	print '<td>';
+	print $htmladmin->select_menu(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?$conf->global->MAIN_MENUFRONT_SMARTPHONE:$conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED, 'main_menufront_smartphone', array($dirtop,$dirsmartphone), empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?'':' disabled="disabled"');
+	print '</td>';
+	print '</tr>';
 
 	print '</table>';
 

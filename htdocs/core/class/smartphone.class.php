@@ -26,7 +26,7 @@
 
 /**
  *  \class      Smartphone
- *	\brief      Classe de gestion des smartphones
+ *	\brief      Class to manage Smartphones
  */
 class Smartphone {
 
@@ -41,52 +41,25 @@ class Smartphone {
      *  Constructor for class
      *  @param	DB		Handler acces base de donnees
      */
-    function Smartphone($DB)
+    function Smartphone($DB,$phone)
     {
       	$this->db = $DB;
-    }
 
-    /**
-     * 	Get template directory
-     */
-    function getTemplateDir()
-    {
-    	// iWebKit template
-		if (preg_match('/android|blackberry|iphone|maemo/i',$this->phone))
-		{
-			$this->theme = 'default';
-			$this->template_dir=DOL_DOCUMENT_ROOT."/theme/phones/smartphone/tpl/";
-		}
-		// Special template
-		elseif (file_exists(DOL_DOCUMENT_ROOT."/theme/phones/".$this->phone))
-		{
-			$this->theme = 'default';
-			$this->template_dir=DOL_DOCUMENT_ROOT."/theme/phones/".$this->phone."/tpl/";
-		}
-		// Default template
-		else
-		{
-			$this->template_dir=DOL_DOCUMENT_ROOT."/theme/phones/others/tpl/";
-		}
-    }
+        $dirt='others';     // default
 
-    /**
-     *  Show HTML header
-     *  @param      title   	Web page title
-     */
-    function smartheader($type='default')
-    {
-    	global $conf;
+        if (preg_match('/android|blackberry|iphone|maemo/i',$phone))    // iWebKit template
+        {
+            $this->theme = 'default';
+            $dirt='smartphone';
+        }
+        elseif (file_exists(DOL_DOCUMENT_ROOT."/theme/phones/".$phone)) // Special template
+        {
+            $this->theme = 'default';
+            $dirt=$phone;
+        }
 
-    	if ($type == 'default') include_once($this->template_dir.'header.tpl.php');
-    }
-
-	/**
-     *  Show HTML footer
-     */
-    function smartfooter()
-    {
-    	include_once($this->template_dir.'footer.tpl.php');
+        $this->phone=$phone;
+        $this->template_dir=DOL_DOCUMENT_ROOT.'/theme/phones/'.$dirt.'/tpl/';
     }
 
 	/**
@@ -96,7 +69,7 @@ class Smartphone {
     {
     	global $conf, $langs;
 
-    	if (! $conf->smart_menu)  $conf->smart_menu ='iphone_backoffice.php';
+    	if (! $conf->smart_menu)  $conf->smart_menu ='smartphone_backoffice.php';
     	$smart_menu=$conf->smart_menu;
     	if (GETPOST('top_menu')) $smart_menu=GETPOST('top_menu');
 
@@ -104,7 +77,7 @@ class Smartphone {
     	$result=@include_once(DOL_DOCUMENT_ROOT ."/includes/menus/smartphone/".$smart_menu);
     	if (! $result)	// If failed to include, we try with standard
     	{
-    		$conf->smart_menu='iphone_backoffice.php';
+    		$conf->smart_menu='smartphone_backoffice.php';
     		include_once(DOL_DOCUMENT_ROOT ."/includes/menus/smartphone/".$smart_menu);
     	}
     	$menusmart = new MenuSmart($this->db);

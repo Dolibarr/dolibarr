@@ -62,8 +62,8 @@ insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_S
 
 insert into llx_const (name, value, type, note, visible) values ('MAIN_MENU_STANDARD','eldy_backoffice.php','chaine','Module de gestion de la barre de menu pour utilisateurs internes',0);
 insert into llx_const (name, value, type, note, visible) values ('MAIN_MENUFRONT_STANDARD','eldy_frontoffice.php','chaine','Module de gestion de la barre de menu pour utilisateurs externes',0);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_MENU_SMARTPHONE','iphone_backoffice.php','chaine','Module de gestion de la barre de menu smartphone pour utilisateurs internes',0);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_MENUFRONT_SMARTPHONE','iphone_frontoffice.php','chaine','Module de gestion de la barre de menu smartphone pour utilisateurs externes',0);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_MENU_SMARTPHONE','eldy_backoffice.php','chaine','Module de gestion de la barre de menu smartphone pour utilisateurs internes',0);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_MENUFRONT_SMARTPHONE','eldy_frontoffice.php','chaine','Module de gestion de la barre de menu smartphone pour utilisateurs externes',0);
 
 insert into llx_const (name, value, type, note, visible) values ('MAIN_THEME','eldy','chaine','Default theme',0);
 

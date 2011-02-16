@@ -17,7 +17,7 @@
  *
  * $Id$
  */
-$smartphone->smartheader();
+include('header.tpl.php');
 ?>
 
 <!-- BEGIN SMARTPHONE TEMPLATE -->
@@ -25,37 +25,39 @@ $smartphone->smartheader();
 <div data-role="page" id="dol-home" data-theme="b">
 
 	<div data-role="header" data-theme="b" data-position="inline">
-			<h1><?php echo $langs->trans('Identification'); ?></h1>
+			<div id="dol-homeheader">
+			<?php echo $langs->trans('Identification'); ?>
+			</div>
 	</div>
 
 	<div data-role="content">
-	
+
 		<form id="login" name="login" method="post" action="<?php echo $php_self; ?>">
 		<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
 		<input type="hidden" name="loginfunction" value="buildnewpassword" />
-		
+
 		<div data-role="fieldcontain">
 			<label for="username"><?php echo $langs->trans('Login'); ?></label>
 			<input type="text" name="username" id="username" value="<?php echo $login; ?>"  />
-			
+
 			<?php if ($select_entity) { ?>
 			<label for="entity" class="select"><?php echo $langs->trans('Entity'); ?></label>
 			<?php echo $select_entity; ?>
 			<?php } ?>
-			
+
 			<?php if ($captcha) { ?>
 			<label for="securitycode"><?php echo $langs->trans('SecurityCode'); ?></label>
 			<input type="text" id="securitycode" name="securitycode" />
 			<div align="center"><img src="<?php echo $dol_url_root.'/lib/antispamimage.php'; ?>" border="0" width="256" height="48" /></div>
 			<?php } ?>
 		</div>
-		
+
 		<input type="submit" data-theme="b" value="<?php echo $langs->trans('SendByMail'); ?>" />
-		
+
 		</form>
 
 	</div><!-- /content -->
-	
+
 	<div data-role="footer" data-theme="b">
 		<?php if ($mode == 'dolibarr' || ! $disabled) {
 			echo $langs->trans('SendNewPasswordDesc');
@@ -74,4 +76,6 @@ $smartphone->smartheader();
 
 <!-- END SMARTPHONE TEMPLATE -->
 
-<?php $smartphone->smartfooter(); ?>
+<?php
+include('footer.tpl.php');
+?>

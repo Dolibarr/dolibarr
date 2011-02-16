@@ -46,22 +46,24 @@ if (! isset($_GET["mainmenu"])) $_GET["mainmenu"]="home";
  * View
  */
 
-// Smartphone
-if (class_exists('Smartphone'))
-{
-	// Template directory
-	$smartphone->getTemplateDir();
-	$smartphone->title = $langs->trans("Home");
-	$smartphone->smartmenu();
-	exit;
-}
-
 // Check if company name is defined (first install)
 if (!isset($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_NOM))
 {
 	header("Location: ".DOL_URL_ROOT."/admin/company.php?mainmenu=home&leftmenu=setup&mesg=setupnotcomplete");
 	exit;
 }
+
+
+// If smartphone mode, we do no show main page, we show only menu
+if (preg_match('/^smartphone/',$conf->smart_menu) && isset($conf->browser->phone))
+{
+    include_once(DOL_DOCUMENT_ROOT.'/core/class/smartphone.class.php');
+    $smartphone = new Smartphone($db,$conf->browser->phone);  // This class is only to know template dir according to phone type
+    $smartphone->title = $langs->trans("Home");
+    $smartphone->smartmenu();
+    exit;
+}
+
 
 llxHeader();
 

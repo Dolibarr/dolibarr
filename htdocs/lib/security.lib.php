@@ -57,10 +57,11 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title=$conf->global->MAIN_APPLICATION_TITLE;
 
 	// Select templates
-	if (class_exists('Smartphone'))
+    if (preg_match('/^smartphone/',$conf->smart_menu) && isset($conf->browser->phone))
 	{
 		// Template directory
-		$smartphone->getTemplateDir();
+		include_once(DOL_DOCUMENT_ROOT.'/core/class/smartphone.class.php');
+		$smartphone = new Smartphone($db,$conf->browser->phone);  // This class is only to know template dir according to phone type
 		$smartphone->title = $title;
 		$template_dir = $smartphone->template_dir;
 	}

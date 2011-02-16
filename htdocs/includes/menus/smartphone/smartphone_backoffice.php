@@ -18,26 +18,26 @@
  */
 
 /**
- *	\file       htdocs/includes/menus/smartphone/iphone_frontoffice.php
- *	\brief      Gestionnaire nomme iphone du menu smartphone
- *	\version    $Id$
+ *		\file       htdocs/includes/menus/smartphone/smartphone_backoffice.php
+ *		\brief      Gestionnaire nomme smartphone du menu smartphone
+ *		\version    $Id$
  */
 
 
 /**
  *      \class      MenuSmart
- *	    \brief      Class to manage smartphone menu Iphone (for external users)
+ *	    \brief      Class to manage smartphone menu smartphone (for internal users)
  */
 class MenuSmart {
 
-	var $require_left=array("iphone_frontoffice");    // Si doit etre en phase avec un gestionnaire de menu particulier
-	var $hideifnotallowed=1;						// Put 0 for back office menu, 1 for front office menu
+	var $require_left=array("smartphone_backoffice");     // Si doit etre en phase avec un gestionnaire de menu particulier
+	var $hideifnotallowed=0;						// Put 0 for back office menu, 1 for front office menu
 	var $atarget="";                                // Valeur du target a utiliser dans les liens
 
 
 	/**
-	 *    \brief      Constructeur
-	 *    \param      db      Handler d'acces base de donnee
+	 *    Constructeur
+	 *    @param      db      Handler d'acces base de donnee
 	 */
 	function MenuSmart($db)
 	{
@@ -46,13 +46,13 @@ class MenuSmart {
 
 
 	/**
-	 *    \brief      Show menu
+	 *    Show menu
 	 */
 	function showmenu()
 	{
-		require_once(DOL_DOCUMENT_ROOT.'/includes/menus/smartphone/iphone.lib.php');
+		require_once(DOL_DOCUMENT_ROOT.'/includes/menus/smartphone/smartphone.lib.php');
 
-		print_iphone_menu($this->db,$this->atarget,$this->hideifnotallowed);
+		print_smartphone_menu($this->db,$this->atarget,$this->hideifnotallowed);
 	}
 
 }

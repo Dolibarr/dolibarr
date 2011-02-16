@@ -92,7 +92,7 @@ function donnefocus() {
 
 <?php if ($captcha) { ?>
 	<tr><td valign="middle" nowrap="nowrap"> &nbsp; <b><?php echo $langs->trans('SecurityCode'); ?></b></td>
-	<td valign="top" nowrap="nowrap" align="left" class="none">
+	<td valign="middle" nowrap="nowrap" align="left" class="none">
 
 	<table style="width: 100px;"><tr>
 	<td><input id="securitycode" class="flat" type="text" size="6" maxlength="5" name="code" tabindex="3"></td>

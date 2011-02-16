@@ -126,7 +126,7 @@ class FormAdmin
      *    Return list of available menus (eldy_backoffice, ...)
      *    @param      selected        Preselected menu value
      *    @param      htmlname        Name of html select
-     *    @param      dirmenu         Directory to scan
+     *    @param      dirmenu         Directory to scan or array of directories to scan
      *    @param      moreattrib      More attributes on html select tag
      */
     function select_menu($selected='', $htmlname, $dirmenu, $moreattrib='')
@@ -138,39 +138,44 @@ class FormAdmin
 		$menuarray=array();
         foreach ($conf->file->dol_document_root as $dirroot)
         {
-            $dir=$dirroot.$dirmenu;
-            if (is_dir($dir))
+            if (is_array($dirmenu)) $dirmenus=$dirmenu;
+            else $dirmenus=array($dirmenu);
+            foreach($dirmenus as $dirtoscan)
             {
-	            $handle=opendir($dir);
-	            if (is_resource($handle))
-	            {
-	                while (($file = readdir($handle))!==false)
-	                {
-	                    if (is_file($dir."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-	                    {
-	                        if (preg_match('/lib\.php$/i',$file)) continue;	// We exclude library files
-	                    	$filelib=preg_replace('/\.php$/i','',$file);
-	        				$prefix='';
-	        				if (preg_match('/^eldy|^iphone/i',$file)) $prefix='0';	// 0=Recommanded, 1=Experimental, 2=Other
-	        				else $prefix='2';
+                $dir=$dirroot.$dirtoscan;
+                if (is_dir($dir))
+                {
+    	            $handle=opendir($dir);
+    	            if (is_resource($handle))
+    	            {
+    	                while (($file = readdir($handle))!==false)
+    	                {
+    	                    if (is_file($dir."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+    	                    {
+    	                        if (preg_match('/lib\.php$/i',$file)) continue;	// We exclude library files
+    	                    	$filelib=preg_replace('/\.php$/i','',$file);
+    	        				$prefix='';
+    	        				if (preg_match('/^eldy|^smartphone/i',$file)) $prefix='0';	// 0=Recommanded, 1=Experimental, 2=Other
+    	        				else $prefix='2';
 
-	                        if ($file == $selected)
-	                        {
-	        					$menuarray[$prefix.'_'.$file]='<option value="'.$file.'" selected="selected">'.$filelib.'</option>';
-	                        }
-	                        else
-	                        {
-	                            $menuarray[$prefix.'_'.$file]='<option value="'.$file.'">'.$filelib.'</option>';
-	                        }
-	                    }
-	                }
-	                closedir($handle);
-	            }
+    	                        if ($file == $selected)
+    	                        {
+    	        					$menuarray[$prefix.'_'.$file]='<option value="'.$file.'" selected="selected">'.$filelib.'</option>';
+    	                        }
+    	                        else
+    	                        {
+    	                            $menuarray[$prefix.'_'.$file]='<option value="'.$file.'">'.$filelib.'</option>';
+    	                        }
+    	                    }
+    	                }
+    	                closedir($handle);
+    	            }
+                }
             }
         }
 		ksort($menuarray);
 
-		// Affichage liste deroulante des menus
+		// Output combo list of menus
         print '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.($moreattrib?' '.$moreattrib:'').'>';
         $oldprefix='';
 		foreach ($menuarray as $key => $val)
@@ -202,7 +207,8 @@ class FormAdmin
     {
 		global $langs,$conf;
 
-        $expdevmenu=array('iphone_backoffice.php','iphone_frontoffice.php');  // Menu to disable if $conf->global->MAIN_FEATURES_LEVEL is not set
+        //$expdevmenu=array('smartphone_backoffice.php','smartphone_frontoffice.php');  // Menu to disable if $conf->global->MAIN_FEATURES_LEVEL is not set
+		$expdevmenu=array();
 
 		$menuarray=array();
 

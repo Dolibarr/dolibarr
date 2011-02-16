@@ -19,30 +19,30 @@
  */
 
 /**
- *  \file		htdocs/includes/menus/smartphone/iphone.lib.php
- *  \brief		Library for file iphone menus
+ *  \file		htdocs/includes/menus/smartphone/smartphone.lib.php
+ *  \brief		Library for file smartphone menus
  *  \version	$Id$
  */
 
 
 /**
- * Core function to output top menu iphone
+ * Core function to output top menu smartphone
  *
  * @param $db
  * @param $atarget
  * @param $type_user     0=Internal,1=External,2=All
  */
-function print_iphone_menu($db,$atarget,$type_user)
+function print_smartphone_menu($db,$atarget,$type_user)
 {
 	require_once(DOL_DOCUMENT_ROOT."/core/class/menubase.class.php");
 
 	global $user,$conf,$langs,$dolibarr_main_db_name;
-	
+
 	$submenus='';
 
-	$menutop = new Menubase($db,'iphone','top');
-	$menuleft = new Menubase($db,'iphone','left');
-	$tabMenu = $menutop->menuTopCharger($type_user, '', 'iphone');
+	$menutop = new Menubase($db,'smartphone','top');
+	$menuleft = new Menubase($db,'smartphone','left');
+	$tabMenu = $menutop->menuTopCharger($type_user, '', 'smartphone');
 	$numTabMenu = count($tabMenu);
 
 	print_start_menu_array();
@@ -64,12 +64,12 @@ function print_iphone_menu($db,$atarget,$type_user)
 					$title=$tabMenu[$i]['titre'];
 					// To remove & and special chars: $title=dol_string_unaccent(dol_string_nospecial(dol_html_entity_decode($tabMenu[$i]['titre'],ENT_QUOTES,'UTF-8'),'',array('&')));
 					print_text_menu_entry($title);
-					
+
 					$newmenu = new Menu();
-					$leftmenu = $menuleft->menuLeftCharger($newmenu,$tabMenu[$i]['mainmenu'],'',($user->societe_id?1:0),'iphone');
+					$leftmenu = $menuleft->menuLeftCharger($newmenu,$tabMenu[$i]['mainmenu'],'',($user->societe_id?1:0),'smartphone');
 					$menus = $leftmenu->liste;
 					//var_dump($menus);
-					
+
 					print '<ul>';
 					if (is_array($menus) && !empty($menus))
 					{
@@ -89,11 +89,11 @@ function print_iphone_menu($db,$atarget,$type_user)
 								print_text_menu_entry($title);
 								if (empty($menus[$j+1]['level'])) print '</a>';
 							}
-							
+
 							if ($menus[$j]['level'] > 0)
 							{
 								if ($menus[$j-1]['level'] == 0) print_start_submenu_array();
-								
+
 								$url=dol_buildpath($menus[$j]['url'],1);
 								$url=preg_replace('/&amp.*/i','',$url);
 								print_start_menu_entry();
@@ -103,10 +103,10 @@ function print_iphone_menu($db,$atarget,$type_user)
 								print_text_menu_entry($title);
 								print '</a>';
 								print_end_menu_entry();
-								
+
 								if (empty($menus[$j+1]['level'])) print_end_menu();
 							}
-							
+
 							if (empty($menus[$j+1]['level'])) print_end_menu_entry();
 						}
 					}
@@ -115,7 +115,7 @@ function print_iphone_menu($db,$atarget,$type_user)
 			}
 		}
 	}
-	
+
 	print_end_menu();
 	print "\n";
 }

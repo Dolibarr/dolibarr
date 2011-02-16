@@ -264,14 +264,6 @@ if (sizeof($conf->need_smarty) > 0)
 	}
 }
 
-// Init Smartphone (for dev only)
-if ($conf->global->MAIN_FEATURES_LEVEL == 2 && isset($conf->browser->phone))
-{
-	include_once(DOL_DOCUMENT_ROOT."/core/class/smartphone.class.php");
-
-	$smartphone = new Smartphone($db);
-	$smartphone->phone = $conf->browser->phone;
-}
 
 /*
  * Phase authentication / login
@@ -666,23 +658,6 @@ if (! empty($_GET["theme"]))
 	$conf->css  = "/theme/".$conf->theme."/style.css.php";
 }
 
-// Define menu manager to use
-if (empty($user->societe_id))    // If internal user or not defined
-{
-	$conf->top_menu=(empty($conf->global->MAIN_MENU_STANDARD_FORCED)?$conf->global->MAIN_MENU_STANDARD:$conf->global->MAIN_MENU_STANDARD_FORCED);
-	$conf->smart_menu=(empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?$conf->global->MAIN_MENU_SMARTPHONE:$conf->global->MAIN_MENU_SMARTPHONE_FORCED);
-	// For backward compatibility
-    if ($conf->top_menu == 'eldy.php') $conf->top_menu='eldy_backoffice.php';
-	if ($conf->top_menu == 'rodolphe.php') $conf->top_menu='eldy_backoffice.php';
-}
-else                        // If external user
-{
-    $conf->top_menu=(empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED)?$conf->global->MAIN_MENUFRONT_STANDARD:$conf->global->MAIN_MENUFRONT_STANDARD_FORCED);
-    $conf->smart_menu=(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?$conf->global->MAIN_MENUFRONT_SMARTPHONE:$conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED);
-	// For backward compatibility
-    if ($conf->top_menu == 'eldy.php') $conf->top_menu='eldy_frontoffice.php';
-	if ($conf->top_menu == 'rodolphe.php') $conf->top_menu='eldy_frontoffice.php';
-}
 
 if (! defined('NOLOGIN'))
 {
@@ -703,6 +678,7 @@ if (! defined('NOLOGIN'))
 	// Load permissions
 	$user->getrights();
 }
+
 
 dol_syslog("--- Access to ".$_SERVER["PHP_SELF"]);
 //Another call for easy debugg
@@ -770,8 +746,8 @@ if (! function_exists("llxHeader"))
 	{
 		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);	// Show html headers
 		top_menu($head, $title, $target, $disablejs, $disablehead, $arrayofjs, $arrayofcss, $morequerystring);
-		left_menu('', $help_url, '', '', 1);
-		main_area();
+		left_menu('', $help_url, '', '', 1, $title);
+		main_area($title);
 	}
 }
 
@@ -1075,9 +1051,9 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
     // Show menu
     $menutop = new MenuTop($db);
 	$menutop->atarget=$target;
-	$menutop->showmenu();
+	$menutop->showmenu();      // This contains a \n
 
-	print "\n</div>\n";
+	print "</div>\n";
 
 	// Link to login card
 	$loginhtmltext=''; $logintext='';
@@ -1180,6 +1156,8 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	print "<!-- End top horizontal menu -->\n";
 
 	if (! $conf->use_javascript_ajax || ! $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '<table width="100%" class="notopnoleftnoright" summary="leftmenutable" id="undertopmenu"><tr>';
+
+
 }
 
 
@@ -1192,15 +1170,14 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
  *  @param      moresearchform             Search Form Permanent Supplemental
  *  @param      menu_array_after           Table of menu entries to show after entries of menu handler
  *  @param      leftmenuwithoutmainarea    Must be set to 1. 0 by default for backward compatibility with old modules.
+ *  @param      title                      Title of web page
  */
-function left_menu($menu_array_before, $helppagename='', $moresearchform='', $menu_array_after='', $leftmenuwithoutmainarea=0)
+function left_menu($menu_array_before, $helppagename='', $moresearchform='', $menu_array_after='', $leftmenuwithoutmainarea=0, $title='')
 {
 	global $user, $conf, $langs, $db;
 
 	$searchform='';
 	$bookmarks='';
-
-	//    print '<div class="vmenuplusfiche">'."\n";
 
 	if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print "\n".'<div class="ui-layout-west"> <!-- Begin left layout -->'."\n";
 	else print '<td class="vmenu" valign="top">';
@@ -1262,7 +1239,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	}
 
     // Left column
-    print '<!-- Begin left vertical menu '.$left_menu.' -->'."\n";
+    print '<!-- Begin left area - menu '.$left_menu.' -->'."\n";
 
     print '<div class="vmenu">'."\n";
 
@@ -1351,17 +1328,19 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '</div> <!-- End left layout -->'."\n";
 	else print '</td>';
 
-	print "\n".'<!-- End of left column, begin right area -->'."\n\n";
-	//	    print '</div>'."\n";
-	//		print '<div class="vmenuplusfiche">'."\n";
+	print "\n";
+	print '<!-- End of left area -->'."\n";
+	print "\n";
+    print '<!-- Begin right area -->'."\n";
 
-	if (empty($leftmenuwithoutmainarea)) main_area();
+
+	if (empty($leftmenuwithoutmainarea)) main_area($title);
 }
 
 /**
  *  Begin main area
  */
-function main_area()
+function main_area($title='')
 {
 	global $conf, $langs;
 
@@ -1371,12 +1350,26 @@ function main_area()
 		print '<table width="100%" class="notopnoleftnoright" summary="centermenutable" id="undertopmenu"><tr>';
 	}
 
-	print '<td valign="top"><!-- Begin right area --> '."\n";
+	print '<td valign="top">'."\n";
 
 	print "\n";
 
 	print '<div class="fiche"> <!-- begin div class="fiche" -->'."\n";
+    if (preg_match('/^smartphone/',$conf->smart_menu) && isset($conf->browser->phone))
+    {
+        print '<div data-role="page"> <!-- begin div data-role="page" -->';
 
+        print '<div data-role="header" data-nobackbtn="false" data-theme="b">';
+        print '<div id="dol-homeheader">'."\n";
+        $appli='Dolibarr';
+        if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $appli=$conf->global->MAIN_APPLICATION_TITLE;
+        print $appli;
+        print '</div>'."\n";
+        print '</div>'."\n";
+        print "\n";
+
+        print '<div data-role="content"> <!-- begin div data-role="content" -->'."\n";
+    }
 	if (! empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)) print info_admin($langs->trans("WarningYouAreInMaintenanceMode",$conf->global->MAIN_ONLY_LOGIN_ALLOWED));
 }
 
@@ -1420,12 +1413,12 @@ function getHelpParamFor($helppagename,$langs)
 
 
 /**
- *  \brief   Show a search area
- *  \param   urlaction          Url post
- *  \param   urlobject          Url of the link under the search box
- *  \param   title              Title search area
- *  \param   htmlmodesearch     'search'
- *  \param   htmlinputname      Field Name input form
+ *  Show a search area
+ *  @param   urlaction          Url post
+ *  @param   urlobject          Url of the link under the search box
+ *  @param   title              Title search area
+ *  @param   htmlmodesearch     'search'
+ *  @param   htmlinputname      Field Name input form
  */
 function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$htmlinputname)
 {
@@ -1448,6 +1441,7 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$
 /**
  *   Return list of login method of third party module.
  *   @return	array
+ *   TODO Move this into security.lib.php
  */
 function getLoginMethod()
 {
@@ -1500,9 +1494,9 @@ function getLoginMethod()
 }
 
 /**
- *		\brief   	Show HTML footer DIV + BODY + HTML
- *		\remarks	Close 2 div
- * 		\param   	foot    		A text to add in HTML generated page
+ *		Show HTML footer
+ *		Close div /DIV data-role=page + /DIV class=fiche + /DIV /DIV main layout + /BODY + /HTML
+ * 		@param   	foot    		A text to add in HTML generated page
  */
 if (! function_exists("llxFooter"))
 {
@@ -1529,11 +1523,18 @@ if (! function_exists("llxFooter"))
 			define("MAIN_CORE_ERROR",0);
 		}
 
-		print "\n\n".'</div> <!-- end div class="fiche" -->'."\n";
+        print "\n\n";
+        if (preg_match('/^smartphone/',$conf->smart_menu) && isset($conf->browser->phone))
+        {
+            print '</div> <!-- end div data-role="content" -->'."\n";
+            print '</div> <!-- end div data-role="page" -->'."\n";
+        }
+		print '</div> <!-- end div class="fiche" -->'."\n";
 
-		//    print "\n".'</div> <!-- end div class="vmenuplusfiche" -->'."\n";
+
 		print "\n".'</td></tr></table> <!-- end right area -->'."\n";
 		if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '</div></div> <!-- end main layout -->'."\n";
+
 
 		if (! empty($_SERVER['DOL_TUNING']))
 		{
@@ -1562,6 +1563,7 @@ if (! function_exists("llxFooter"))
 			if (defined('XDEBUGCOVERAGE')) { var_dump(xdebug_get_code_coverage()); }
 		}
 
+
 		// If there is some logs in buffer to show
 		if (sizeof($conf->logbuffer))
 		{
@@ -1580,6 +1582,7 @@ if (! function_exists("llxFooter"))
 		if ($foot) print '<!-- '.$foot.' -->'."\n";
 
 		if (! empty($conf->global->MAIN_HTML_FOOTER)) print $conf->global->MAIN_HTML_FOOTER."\n";
+
 
 		print "</body>\n";
 		print "</html>\n";

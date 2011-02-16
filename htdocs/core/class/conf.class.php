@@ -31,7 +31,7 @@
 
 /**
  *  \class      Conf
- *  \brief      Classe de stockage de la config courante
+ *  \brief      Class to stock current configuration
  */
 class Conf
 {
@@ -207,8 +207,8 @@ class Conf
 		// Clean some variables
 		if (empty($this->global->MAIN_MENU_STANDARD)) $this->global->MAIN_MENU_STANDARD="eldy_backoffice.php";
 		if (empty($this->global->MAIN_MENUFRONT_STANDARD)) $this->global->MAIN_MENUFRONT_STANDARD="eldy_frontoffice.php";
-		if (empty($this->global->MAIN_MENU_SMARTPHONE)) $this->global->MAIN_MENU_SMARTPHONE="iphone_backoffice.php";
-		if (empty($this->global->MAIN_MENUFRONT_SMARTPHONE)) $this->global->MAIN_MENUFRONT_SMARTPHONE="iphone_frontoffice.php";
+		if (empty($this->global->MAIN_MENU_SMARTPHONE)) $this->global->MAIN_MENU_SMARTPHONE="smartphone_backoffice.php";
+		if (empty($this->global->MAIN_MENUFRONT_SMARTPHONE)) $this->global->MAIN_MENUFRONT_SMARTPHONE="smartphone_frontoffice.php";
 
 		// Variable globales LDAP
 		if (empty($this->global->LDAP_FIELD_FULLNAME)) $this->global->LDAP_FIELD_FULLNAME='';
@@ -426,8 +426,26 @@ class Conf
 
 		// For backward compatibility
 		$this->produit=$this->product;
-	}
 
+
+        // Define menu manager in setup
+        if (empty($user->societe_id))    // If internal user or not defined
+        {
+            $this->top_menu=(empty($this->global->MAIN_MENU_STANDARD_FORCED)?$this->global->MAIN_MENU_STANDARD:$this->global->MAIN_MENU_STANDARD_FORCED);
+            $this->smart_menu=(empty($this->global->MAIN_MENU_SMARTPHONE_FORCED)?$this->global->MAIN_MENU_SMARTPHONE:$this->global->MAIN_MENU_SMARTPHONE_FORCED);
+            // For backward compatibility
+            if ($this->top_menu == 'eldy.php') $this->top_menu='eldy_backoffice.php';
+            if ($this->top_menu == 'rodolphe.php') $this->top_menu='eldy_backoffice.php';
+        }
+        else                        // If external user
+        {
+            $this->top_menu=(empty($this->global->MAIN_MENUFRONT_STANDARD_FORCED)?$this->global->MAIN_MENUFRONT_STANDARD:$this->global->MAIN_MENUFRONT_STANDARD_FORCED);
+            $this->smart_menu=(empty($this->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?$this->global->MAIN_MENUFRONT_SMARTPHONE:$this->global->MAIN_MENUFRONT_SMARTPHONE_FORCED);
+            // For backward compatibility
+            if ($this->top_menu == 'eldy.php') $this->top_menu='eldy_frontoffice.php';
+            if ($this->top_menu == 'rodolphe.php') $this->top_menu='eldy_frontoffice.php';
+        }
+	}
 }
 
 ?>

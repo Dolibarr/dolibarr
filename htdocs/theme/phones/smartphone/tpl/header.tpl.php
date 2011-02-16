@@ -17,21 +17,15 @@
  *
  * $Id$
  */
-header('Cache-Control: Public, must-revalidate');
 header("Content-type: text/html; charset=".$conf->file->character_set_client);
 ?>
-
 <!DOCTYPE html>
-
-<!-- BEGIN HEADER SMARTPHONE TEMPLATE -->
-
 <html>
-
 <head>
-<title><?php echo $this->title; ?></title>
+<title><?php echo $title; ?></title>
 <meta name="robots" content="noindex,nofollow" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
-<link rel="apple-touch-icon" href="<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/'.$this->theme.'/thumbs/homescreen.png'; ?>" />
+<link rel="apple-touch-icon" href="<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/'.$conf->theme.'/img/homescreen.png'; ?>" />
 <link rel="stylesheet" href="<?php echo DOL_URL_ROOT.'/includes/jquery/mobile/jquery.mobile-latest.min.css'; ?>" />
 <link rel="stylesheet" href="<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/default/default.css.php'; ?>" />
 <script type="text/javascript" src="<?php echo DOL_URL_ROOT.'/includes/jquery/js/jquery-latest.min.js'; ?>"></script>
