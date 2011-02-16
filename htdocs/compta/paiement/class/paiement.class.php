@@ -386,7 +386,7 @@ class Paiement
                             if (! in_array($fac->thirdparty->id,$linkaddedforthirdparty)) // Not yet done for this thirdparty
                             {
                                 $result=$acc->add_url_line($bank_line_id, $fac->thirdparty->id,
-                                DOL_URL_ROOT.'/compta/fiche.php?socid=', $fac->thirdparty->nom, 'company');
+                                DOL_URL_ROOT.'/comm/fiche.php?socid=', $fac->thirdparty->nom, 'company');
                                 if ($result <= 0) dol_print_error($this->db);
                                 $linkaddedforthirdparty[$fac->thirdparty->id]=$fac->thirdparty->id;  // Mark as done for this thirdparty
                             }

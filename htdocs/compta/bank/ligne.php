@@ -292,8 +292,8 @@ if ($result)
                     print '</a>';
                 }
                 else if ($links[$key]['type']=='company') {
-                    print '<a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$links[$key]['url_id'].'">';
-                    print img_object($langs->trans('ShowCustomer'),'company').' ';
+                    print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$links[$key]['url_id'].'">';
+                    print img_object($langs->trans('ShowThirdParty'),'company').' ';
                     print $links[$key]['label'];
                     print '</a>';
                 }
