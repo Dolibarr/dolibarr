@@ -108,6 +108,7 @@ if (isset($_SERVER["HTTP_USER_AGENT"]))
 	else $conf->browser->name='unknown';
 	// Other
 	if (in_array($conf->browser->name,array('firefox','iceweasel'))) $conf->browser->firefox=1;
+	//$conf->browser->phone='android';
 }
 
 // Chargement des includes principaux de librairies communes
