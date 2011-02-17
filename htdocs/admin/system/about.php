@@ -29,6 +29,7 @@
 require("../../main.inc.php");
 
 $langs->load("admin");
+$langs->load("help");
 
 
 /*
