@@ -289,6 +289,7 @@ FirstnameNamePosition=Orden visualización nombre/apellidos
 DescWeather=Los siguientes gráficos se mostrarán en el panel si el número de elementos llegan a estos valores:
 KeyForWebServicesAccess=clave para usar los Web Services (parámetro "dolibarrkey" en webservices)
 TestSubmitForm=Formulario de pruebas
+ThisForceAlsoTheme=Usar este gestor de menús predetermina también el tema, sea cual sea la elección del usuario. Además, este gestor de menús, especial para smartphones, solamente funciona en algunos teléfonos. Use otro gestor si observa cualquier problema.
 # Modules
 Module0Name=Usuarios y grupos
 Module0Desc=Gestión de usuarios y grupos
