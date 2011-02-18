@@ -134,39 +134,6 @@ if ($savehandler == 'files')
 	print_liste_field_titre('','','');
 	print "</tr>\n";
 
-
-	// Lignes des champs de filtre
-	/*
-	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
-
-	print '<tr class="liste_titre">';
-
-	print '<td class="liste_titre">&nbsp;</td>';
-
-	print '<td align="left" class="liste_titre">';
-	print '<input class="flat" type="text" size="10" name="search_code" value="'.$_GET["search_code"].'">';
-	print '</td>';
-
-	print '<td align="left" class="liste_titre">';
-	print '<input class="flat" type="text" size="10" name="search_ip" value="'.$_GET["search_ip"].'">';
-	print '</td>';
-
-	print '<td align="left" class="liste_titre">';
-	print '<input class="flat" type="text" size="10" name="search_user" value="'.$_GET["search_user"].'">';
-	print '</td>';
-
-	print '<td align="left" class="liste_titre">';
-	print '<input class="flat" type="text" size="10" name="search_desc" value="'.$_GET["search_desc"].'">';
-	print '</td>';
-
-	print '<td align="right" class="liste_titre">';
-	print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'">';
-	print '</td>';
-
-	print "</tr>\n";
-	print '</form>';
-	*/
-
 	$var=True;
 
 	foreach ($listofsessions as $key => $sessionentry)

@@ -300,7 +300,7 @@ if ($result)
 	print '</td><td class="liste_titre" align="right">';
 	print '<input class="flat" type="text" size="10" name="search_montant_ttc" value="'.$_REQUEST["search_montant_ttc"].'">';
 	print '</td><td class="liste_titre" colspan="2" align="right">';
-	print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
+	print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '</td>';
 	print '<td class="liste_titre" align="center">';
 	if ($conf->use_javascript_ajax) print '<a href="#" id="checkall">'.$langs->trans("All").'</a> / <a href="#" id="checknone">'.$langs->trans("None").'</a>';

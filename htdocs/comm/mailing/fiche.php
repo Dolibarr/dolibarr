@@ -915,7 +915,6 @@ else
 					foreach($listofpaths as $key => $val)
 					{
 						print img_mime($listofpaths[$key]['name']).' '.$listofpaths[$key]['name'];
-						//print ' <input type="image" style="border: 0px;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" value="'.($key+1).'" name="removedfile">';
 						print '<br>';
 					}
 				}

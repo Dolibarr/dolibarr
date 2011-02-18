@@ -92,7 +92,7 @@ if ($resql)
   print '<td><input type="text" name="search_numero" value="'.$_GET["search_numero"].'"></td>';
   print '<td><input type="text" name="search_intitule" value="'.$_GET["search_intitule"].'"></td>';
   print '<td align="right">';
-  print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
+  print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
   print '</td>';
   print '</form>';
   print '</tr>';

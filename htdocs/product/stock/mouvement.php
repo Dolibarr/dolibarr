@@ -53,7 +53,7 @@ $offset = $conf->liste_limit * $page;
 if (! $sortfield) $sortfield="m.datem";
 if (! $sortorder) $sortorder="DESC";
 
-if ($_REQUEST["button_removefilter"])
+if (GETPOST("button_removefilter"))
 {
     $year='';
     $month='';
@@ -280,8 +280,10 @@ if ($resql)
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" size="6" name="search_user" value="'.($search_user).'">';
 	print '</td>';
-	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
-    print '&nbsp; <input type="image" value="button_removefilter" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" name="button_removefilter" alt="'.$langs->trans("RemoveFilter").'">';
+	print '<td class="liste_titre" align="right">';
+	print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+    print '&nbsp; ';
+    print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 	print '</td>';
 	print "</tr>\n";
 	print '</form>';

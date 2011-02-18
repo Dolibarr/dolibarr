@@ -141,7 +141,7 @@ if ($resql)
 	print '<td class="liste_titre"><input type="text" class="flat" name="search_user" value="'.$suser.'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" name="search_ttc" value="'.$sttc.'"></td>';
 	print '<td colspan="2" class="liste_titre" align="right">';
-	print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
+	print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '</td>';
 	print '</tr>';
 

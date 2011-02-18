@@ -175,7 +175,7 @@ if ($resql)
 	$filter_date2=dol_mktime(0,0,0,$_REQUEST['op2month'],$_REQUEST['op2day'],$_REQUEST['op2year']);
 	print $form->select_date($filter_date2,'op2',0,0,1);
 	print '</td>';
-	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
+	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print "</td>";
 	print "</tr>\n";
 	print '</form>';

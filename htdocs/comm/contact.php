@@ -144,7 +144,7 @@ if ($resql)
   print '<td class="liste_titre"><input class="flat" name="search_prenom" size="12"  value="'.$_GET["search_prenom"].'"></td>';
   print '<td class="liste_titre"><input class="flat" name="search_societe" size="12"  value="'.$_GET["search_societe"].'"></td>';
   print '<td class="liste_titre">&nbsp;</td>';
-  print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt='.$langs->trans("Search").'></td>';
+  print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
   print "</tr>\n";
   print '</form>';
 

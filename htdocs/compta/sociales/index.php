@@ -166,7 +166,7 @@ if ($resql)
 	    print '<td class="liste_titre">&nbsp;</td>';
 		print '<td class="liste_titre">&nbsp;</td>';
 		print '<td class="liste_titre" align="right">';
-		print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'">';
+		print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 		print '</td>';
 		print "</tr>\n";
 

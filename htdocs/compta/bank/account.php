@@ -422,7 +422,7 @@ if ($account || $_GET["ref"])
     print '<td align="right"><input type="text" class="flat" name="req_debit" value="'.$_REQUEST["req_debit"].'" size="4"></td>';
     print '<td align="right"><input type="text" class="flat" name="req_credit" value="'.$_REQUEST["req_credit"].'" size="4"></td>';
     print '<td align="center">&nbsp;</td>';
-    print '<td align="center" width="40"><input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'"></td>';
+    print '<td align="center" width="40"><input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
     print "</tr>\n";
     print "</form>\n";
 

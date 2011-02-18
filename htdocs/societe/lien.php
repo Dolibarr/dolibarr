@@ -233,7 +233,7 @@ if($_GET["socid"])
 				print '<td valign="right">';
 				print '<input type="text" name="search_nom" value="'.$_GET["search_nom"].'">';
 				print '</td><td colspan="5" align="right">';
-				print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
+				print '<input type="image" name="button_search" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 				print '</td>';
 				print "</tr>\n";
 				print '</form>';
