@@ -57,3 +57,129 @@ else header('Cache-Control: no-cache');
 	top:0.3em;
 }
 
+.ui-btn-inner {
+    padding: 0.2em 5px;
+}
+
+input.ui-input-text, textarea.ui-input-text {
+	padding: 0.2em;
+}
+
+
+
+
+div.titre {
+	font-family: <?php print $fontlist ?>;
+	font-weight: normal;
+	color: #336666;
+	text-decoration: none;
+}
+
+
+/* ============================================================================== */
+/* Tables                                                                         */
+/* ============================================================================== */
+
+/*
+#undertopmenu {
+background-image: url("<?php echo DOL_URL_ROOT.'/theme/eldy/img/gradient.gif' ?>");
+background-repeat: repeat-x;
+}
+*/
+
+
+.nocellnopadd {
+list-style-type:none;
+margin: 0px;
+padding: 0px;
+}
+
+.notopnoleft {
+border-collapse: collapse;
+border: 0px;
+padding-top: 0px;
+padding-<?php print $left; ?>: 0px;
+padding-<?php print $right; ?>: 4px;
+padding-bottom: 4px;
+margin: 0px 0px;
+}
+.notopnoleftnoright {
+border-collapse: collapse;
+border: 0px;
+padding-top: 0px;
+padding-left: 0px;
+padding-right: 0px;
+padding-bottom: 4px;
+margin: 0px 0px 0px 0px;
+}
+
+
+table.border {
+border: 1px solid #9CACBB;
+border-collapse: collapse;
+}
+
+table.border td {
+padding: 1px 2px;
+border: 1px solid #9CACBB;
+border-collapse: collapse;
+}
+
+td.border {
+border-top: 1px solid #000000;
+border-right: 1px solid #000000;
+border-bottom: 1px solid #000000;
+border-left: 1px solid #000000;
+}
+
+
+/* Main boxes */
+
+table.noborder {
+border-collapse: collapse;
+border-top-color: #FEFEFE;
+
+border-right-width: 1px;
+border-right-color: #BBBBBB;
+border-right-style: solid;
+
+border-left-width: 1px;
+border-left-color: #BBBBBB;
+border-left-style: solid;
+
+border-bottom-width: 1px;
+border-bottom-color: #BBBBBB;
+border-bottom-style: solid;
+
+margin: 0px 0px 2px 0px;
+}
+
+table.noborder tr {
+border-top-color: #FEFEFE;
+
+border-right-width: 1px;
+border-right-color: #BBBBBB;
+border-right-style: solid;
+
+border-left-width: 1px;
+border-left-color: #BBBBBB;
+border-left-style: solid;
+height: 16px;
+}
+
+table.noborder td {
+padding: 1px 2px 0px 1px;			/* t r b l */
+}
+
+table.nobordernopadding {
+border-collapse: collapse;
+border: 0px;
+}
+table.nobordernopadding tr {
+border: 0px;
+padding: 0px 0px;
+}
+table.nobordernopadding td {
+border: 0px;
+padding: 0px 0px;
+}
