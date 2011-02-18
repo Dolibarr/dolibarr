@@ -43,46 +43,40 @@ function print_smartphone_menu($db,$atarget,$type_user,$limitmenuto)
 
 	$menutop = new Menubase($db,'smartphone','top');
 	$menuleft = new Menubase($db,'smartphone','left');
-	$tabMenu = $menutop->menuTopCharger('', '', $type_user, 'smartphone');
-	$numTabMenu = count($tabMenu);
-
-    /*$newmenu = new Menu();
-    $leftmenu = $menuleft->menuLeftCharger($newmenu,'','',($user->societe_id?1:0),'smartphone');
-    $menus = $leftmenu->liste;
-    var_dump($menus);
-    */
+	$newTabMenu = $menutop->menuTopCharger('', '', $type_user, 'smartphone');
+	$numTabMenu = count($newTabMenu);
 
 	print_start_menu_array();
 	for($i=0; $i<$numTabMenu; $i++)
 	{
-		if ($tabMenu[$i]['enabled'] == true)
+		if ($newTabMenu[$i]['enabled'] == true)
 		{
-			if ($tabMenu[$i]['right'] == true)	// Is allowed
+			if ($newTabMenu[$i]['right'] == true)	// Is allowed
 			{
 				// Define url
-				if (preg_match("/^(http:\/\/|https:\/\/)/i",$tabMenu[$i]['url']))
+				if (preg_match("/^(http:\/\/|https:\/\/)/i",$newTabMenu[$i]['url']))
 				{
-					$url = dol_buildpath($tabMenu[$i]['url'],1);
+					$url = dol_buildpath($newTabMenu[$i]['url'],1);
 					$url=preg_replace('/&amp.*/i','',$url);
 				}
 				else
 				{
 					$menus='';
 					
-					if ($limitmenuto != 'top')
+					if ($limitmenuto > 0)
 					{
 						$newmenu = new Menu();
-						$leftmenu = $menuleft->menuLeftCharger($newmenu,$tabMenu[$i]['mainmenu'],'',($user->societe_id?1:0),'smartphone');
+						$leftmenu = $menuleft->menuLeftCharger($newmenu,$newTabMenu[$i]['mainmenu'],'',($user->societe_id?1:0),'smartphone');
 						$menus = $leftmenu->liste;
 						//var_dump($menus);
 					}
 					
 					print_start_menu_entry();
 
-					if (is_array($menus) && !empty($menus))
+					if (is_array($menus) && !empty($menus) && $limitmenuto > 0)
 					{
-						$title=$tabMenu[$i]['titre'];
-						// To remove & and special chars: $title=dol_string_unaccent(dol_string_nospecial(dol_html_entity_decode($tabMenu[$i]['titre'],ENT_QUOTES,'UTF-8'),'',array('&')));
+						$title=$newTabMenu[$i]['titre'];
+						// To remove & and special chars: $title=dol_string_unaccent(dol_string_nospecial(dol_html_entity_decode($newTabMenu[$i]['titre'],ENT_QUOTES,'UTF-8'),'',array('&')));
 						print_text_menu_entry($title);
 						
 						$num = count($menus);
@@ -127,12 +121,12 @@ function print_smartphone_menu($db,$atarget,$type_user,$limitmenuto)
 					}
 					else
 					{
-						$url=dol_buildpath($tabMenu[$i]['url'],1);
+						$url=dol_buildpath($newTabMenu[$i]['url'],1);
 						$url=preg_replace('/&amp.*/i','',$url);
 						
-						print '<a href="'.$url.'"'.($tabMenu[$i]['atarget']?" target='".$tabMenu[$i]['atarget']."'":($atarget?" target=$atarget":'')).'>';
-						$title=$tabMenu[$i]['titre'];
-						// To remove & and special chars: $title=dol_string_unaccent(dol_string_nospecial(dol_html_entity_decode($tabMenu[$i]['titre'],ENT_QUOTES,'UTF-8'),'',array('&')));
+						print '<a href="'.$url.'"'.($newTabMenu[$i]['atarget']?" target='".$newTabMenu[$i]['atarget']."'":($atarget?" target=$atarget":'')).'>';
+						$title=$newTabMenu[$i]['titre'];
+						// To remove & and special chars: $title=dol_string_unaccent(dol_string_nospecial(dol_html_entity_decode($newTabMenu[$i]['titre'],ENT_QUOTES,'UTF-8'),'',array('&')));
 						print_text_menu_entry($title);
 						print '</a>';
 					}

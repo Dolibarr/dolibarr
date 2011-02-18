@@ -45,43 +45,43 @@ function print_auguria_menu($db,$atarget,$type_user)
 	$_SESSION["leftmenuopened"]="";
 
 	$menuArbo = new Menubase($db,'auguria','top');
-	$tabMenu = $menuArbo->menuTopCharger($_SESSION['mainmenu'], '', $type_user, 'auguria');
+	$newTabMenu = $menuArbo->menuTopCharger($_SESSION['mainmenu'], '', $type_user, 'auguria');
 
 	print_start_menu_array_auguria();
 
-	for($i=0; $i<count($tabMenu); $i++)
+	for($i=0; $i<count($newTabMenu); $i++)
 	{
-		if ($tabMenu[$i]['enabled'] == true)
+		if ($newTabMenu[$i]['enabled'] == true)
 		{
-			$idsel=(empty($tabMenu[$i]['mainmenu'])?'none':$tabMenu[$i]['mainmenu']);
-			if ($tabMenu[$i]['right'] == true)	// Is allowed
+			$idsel=(empty($newTabMenu[$i]['mainmenu'])?'none':$newTabMenu[$i]['mainmenu']);
+			if ($newTabMenu[$i]['right'] == true)	// Is allowed
 			{
 				// Define url
-				if (preg_match("/^(http:\/\/|https:\/\/)/i",$tabMenu[$i]['url']))
+				if (preg_match("/^(http:\/\/|https:\/\/)/i",$newTabMenu[$i]['url']))
 				{
-					$url = $tabMenu[$i]['url'];
+					$url = $newTabMenu[$i]['url'];
 				}
 				else
 				{
-					$url=dol_buildpath($tabMenu[$i]['url'],1);
+					$url=dol_buildpath($newTabMenu[$i]['url'],1);
 					if (! preg_match('/\?/',$url)) $url.='?';
 					else $url.='&';
 					if (! preg_match('/mainmenu/i',$url) || ! preg_match('/leftmenu/i',$url))
 					{
-						$url.='mainmenu='.$tabMenu[$i]['mainmenu'].'&leftmenu=&';
+						$url.='mainmenu='.$newTabMenu[$i]['mainmenu'].'&leftmenu=&';
 					}
-					$url.="idmenu=".$tabMenu[$i]['rowid'];
+					$url.="idmenu=".$newTabMenu[$i]['rowid'];
 				}
 
 				// Define the class (top menu selected or not)
-				if (! empty($_SESSION['idmenu']) && $tabMenu[$i]['rowid'] == $_SESSION['idmenu']) $classname='class="tmenusel"';
-				else if (! empty($_SESSION['mainmenu']) && $tabMenu[$i]['mainmenu'] == $_SESSION['mainmenu']) $classname='class="tmenusel"';
+				if (! empty($_SESSION['idmenu']) && $newTabMenu[$i]['rowid'] == $_SESSION['idmenu']) $classname='class="tmenusel"';
+				else if (! empty($_SESSION['mainmenu']) && $newTabMenu[$i]['mainmenu'] == $_SESSION['mainmenu']) $classname='class="tmenusel"';
 				else $classname='class="tmenu"';
 
 				print_start_menu_entry_auguria($idsel);
 				print '<div class="mainmenu '.$idsel.'"><span class="mainmenu_'.$idsel.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-				print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($tabMenu[$i]['atarget']?" target='".$tabMenu[$i]['atarget']."'":($atarget?" target=$atarget":"")).'>';
-				print_text_menu_entry_auguria($tabMenu[$i]['titre']);
+				print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($newTabMenu[$i]['atarget']?" target='".$newTabMenu[$i]['atarget']."'":($atarget?" target=$atarget":"")).'>';
+				print_text_menu_entry_auguria($newTabMenu[$i]['titre']);
 				print '</a>';
 				print_end_menu_entry_auguria();
 			}
@@ -92,7 +92,7 @@ function print_auguria_menu($db,$atarget,$type_user)
 					print_start_menu_entry_auguria($idsel);
 					print '<div class="mainmenu '.$idsel.'"><span class="mainmenu_'.$idsel.'" id="mainmenuspan_'.$idsel.'"></span></div>';
 					print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#">';
-					print_text_menu_entry_auguria($tabMenu[$i]['titre']);
+					print_text_menu_entry_auguria($newTabMenu[$i]['titre']);
 					print '</a>';
 					print_end_menu_entry_auguria();
 				}

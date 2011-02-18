@@ -431,116 +431,45 @@ class Menubase
 	 * 		@param		type_user		0=Internal,1=External,2=All
 	 * 		@param		mainmenu		Value for mainmenu that defined top menu
 	 * 		@param		menu_handler	Name of menu_handler used (auguria, eldy...)
+     * 		@param      tabMenu         If array with menu entries already loaded, we put this array here (in most cases, it's empty)
 	 * 		@return		array			Return array with menu entries for top menu
-	 *      TODO Mutualize menuTopCharger and menuLeftCharger
 	 */
-	function menuTopCharger($mainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu=array())
+	function menuTopCharger($mainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu=null)
 	{
 		global $langs, $user, $conf;
 		global $leftmenu,$rights;	// To export to dol_eval function
 
-
+        $leftmenu=$myleftmenu;  // To export to dol_eval function
+		
 		// Load datas into tabMenu
-        /*if (sizeof($tabMenu) == 0)
+        if (sizeof($tabMenu) == 0)
         {
-            $this->menuLoad($leftmenu, $type_user, $menu_handler, $tabMenu);
-            //var_dump($tabMenu);
+        	$this->menuLoad($leftmenu, $type_user, $menu_handler, $tabMenu);
         }
-        else
+        
+        $newTabMenu=array();
+        $i=0;
+        foreach($tabMenu as $val)
         {
-            // TODO Just try to find menutopid from tabMenu and mainmenu
-            $this->menuLoad($leftmenu, $type_user, $menu_handler, $tabMenu);
-        }*/
+        	if ($val[9]=='top')
+        	{
+        		
+        		$newTabMenu[$i]['rowid']=$val[0];
+        		$newTabMenu[$i]['fk_menu']=$val[1];
+        		$newTabMenu[$i]['url']=$val[2];
+        		$newTabMenu[$i]['titre']=$val[3];
+        		$newTabMenu[$i]['right']=$val[4];
+        		$newTabMenu[$i]['atarget']=$val[5];
+        		$newTabMenu[$i]['leftmenu']=$val[6];
+        		$newTabMenu[$i]['enabled']=$val[7];
+        		$newTabMenu[$i]['mainmenu']=$val[8];
+        		$newTabMenu[$i]['type']=$val[9];
+        		$newTabMenu[$i]['lang']=$val[10];
+        		$i++;
+        	}
+        }
 
-
-		$tabMenu=array();
-
-		$sql = "SELECT m.rowid, m.mainmenu, m.titre, m.url, m.langs, m.perms, m.enabled, m.target";
-		$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
-		$sql.= " WHERE m.entity = ".$conf->entity;
-		$sql.= " AND m.menu_handler in('".$menu_handler."','all')";
-		if ($type_user == 0) $sql.= " AND m.usertype in (0,2)";
-		if ($type_user == 1) $sql.= " AND m.usertype in (1,2)";
-		// If type_user == 2, no test requires
-        $sql.= " AND m.type = 'top'";
-		$sql.= " ORDER BY m.position";
-
-		dol_syslog("Menubase::menuTopCharger sql=".$sql);
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$numa = $this->db->num_rows($resql);
-
-			$a = 0;
-			$b = 0;
-			$oldrowid=0;
-			while ($a < $numa)
-			{
-				$objm = $this->db->fetch_object($resql);
-
-				// Define $chaine
-				$chaine="";
-				$title=$langs->trans($objm->titre);
-				if ($title == $objm->titre)	// Translation not found
-				{
-				    if (! empty($objm->langs)) // If there is a dedicated translation file
-					{
-						$langs->load($objm->langs);
-					}
-
-					if (preg_match("/\//",$objm->titre)) // To manage translation when title is string1/string2
-					{
-						$tab_titre = explode("/",$objm->titre);
-						$chaine = $langs->trans($tab_titre[0])."/".$langs->trans($tab_titre[1]);
-					}
-					else
-					{
-						$chaine = $langs->trans($objm->titre);
-					}
-				}
-				else
-				{
-					$chaine=$title;
-				}
-				//print "x".$objm->titre."-".$chaine;
-
-				// Define $right
-				$perms = true;
-				if ($objm->perms)
-				{
-					$perms = verifCond($objm->perms);
-				}
-
-				// Define $enabled
-				$enabled = true;
-				if ($objm->enabled)
-				{
-					$enabled = verifCond($objm->enabled);
-				}
-
-				$tabMenu[$b]['rowid'] = $objm->rowid;
-				$tabMenu[$b]['mainmenu'] = $objm->mainmenu;
-				$tabMenu[$b]['titre'] = $chaine;	// Title
-				$tabMenu[$b]['url'] = $objm->url;
-				$tabMenu[$b]['atarget'] = $objm->target;
-				if (! isset($tabMenu[$b]['right'])) $tabMenu[$b]['right'] = $perms;
-				else $tabMenu[$b]['right'] = ($tabMenu[$b]['right'] && $perms);
-				if (! isset($tabMenu[$b]['enabled'])) $tabMenu[$b]['enabled'] = $enabled;
-				else $tabMenu[$b]['enabled'] = ($tabMenu[$b]['enabled'] && $enabled);
-                $tabMenu[$b]['lang'] = $objm->langs;
-
-				//var_dump($tabMenu);
-                $b++;
-                $a++;
-			}
-            $this->db->free($resql);
-		}
-		else
-		{
-			dol_print_error($this->db);
-		}
-
-		return $tabMenu;
+        return $newTabMenu;
 	}
 
     /**
@@ -553,7 +482,7 @@ class Menubase
      * @param  $tabMenu        If array with menu entries already loaded, we put this array here (in most cases, it's empty)
      * @return array           Menu array for particular mainmenu value or full tabArray
      */
-    function menuLeftCharger($newmenu, $mainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu=array())
+    function menuLeftCharger($newmenu, $mainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu=null)
     {
         global $langs, $user, $conf; // To export to dol_eval function
         global $leftmenu,$rights; // To export to dol_eval function
@@ -566,14 +495,9 @@ class Menubase
         if (sizeof($tabMenu) == 0)
         {
             $this->menuLoad($leftmenu, $type_user, $menu_handler, $tabMenu);
-            //var_dump($tabMenu);
         }
-        else
-        {
-            // TODO Just try to find menutopid from tabMenu and mainmenu
-            $this->menuLoad($leftmenu, $type_user, $menu_handler, $tabMenu);
-        }
-
+        //var_dump($tabMenu);
+        
         // Define menutopid
         $menutopid='';
         foreach($tabMenu as $val)
@@ -691,7 +615,8 @@ class Menubase
                 else $tabMenu[$b][7] = ($tabMenu[$b][7] && $enabled);
                 $tabMenu[$b][8] = $menu['mainmenu'];
                 $tabMenu[$b][9] = $menu['type'];
-
+                $tabMenu[$b][10] = $menu['langs'];
+                
                 $b++;
                 $a++;
             }
