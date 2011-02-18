@@ -478,8 +478,7 @@ img.login, img.printer, img.entity {
 /* Menu gauche                                                                    */
 /* ============================================================================== */
 
-<?php if ((! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print')
-|| (! empty($conf->browser->phone) && class_exists('Smartphone') && empty($conf->global->MAIN_SEARCHFORM_WITH_SMARTHPONE) && empty($conf->global->BOOKMARKS_SHOW_WITH_SMARTHPONE))) { ?>
+<?php if ((! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print')) { ?>
 .vmenu {
 	display: none;
 }

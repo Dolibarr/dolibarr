@@ -153,10 +153,7 @@ if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title=$conf->global->MAIN_A
 // Select templates
 if (preg_match('/^smartphone/',$conf->smart_menu) && isset($conf->browser->phone))
 {
-    include_once(DOL_DOCUMENT_ROOT.'/core/class/smartphone.class.php');
-    $smartphone = new Smartphone($db,$conf->browser->phone);  // This class is only to know template dir according to phone type
-	$smartphone->title = $title;
-	$template_dir = $smartphone->template_dir;
+	$template_dir = DOL_DOCUMENT_ROOT.'/theme/phones/smartphone/tpl/';
 }
 else
 {
