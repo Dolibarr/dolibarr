@@ -63,17 +63,17 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update' && empty($_POST["can
 	$_SESSION["mainmenu"]="home";   // Le gestionnaire de menu a pu changer
 
 	dolibarr_set_const($db, "MAIN_MENU_STANDARD",      $_POST["MAIN_MENU_STANDARD"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MENU_SMARTPHONE",     $_POST["main_menu_smartphone"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MENU_SMARTPHONE",     $_POST["MAIN_MENU_SMARTPHONE"],'chaine',0,'',$conf->entity);
 
 	dolibarr_set_const($db, "MAIN_MENUFRONT_STANDARD", $_POST["MAIN_MENUFRONT_STANDARD"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MENUFRONT_SMARTPHONE",$_POST["main_menufront_smartphone"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MENUFRONT_SMARTPHONE",$_POST["MAIN_MENUFRONT_SMARTPHONE"],'chaine',0,'',$conf->entity);
 
 	// Define list of menu handlers to initialize
 	$listofmenuhandler=array();
 	$listofmenuhandler[preg_replace('/((_back|_front)office)?\.php/i','',$_POST["MAIN_MENU_STANDARD"])]=1;
 	$listofmenuhandler[preg_replace('/((_back|_front)office)?\.php/i','',$_POST["MAIN_MENUFRONT_STANDARD"])]=1;
-	if (isset($_POST["main_menu_smartphone"]))      $listofmenuhandler[preg_replace('/((_back|_front)office)?\.php/i','',$_POST["main_menu_smartphone"])]=1;
-	if (isset($_POST["main_menufront_smartphone"])) $listofmenuhandler[preg_replace('/((_back|_front)office)?\.php/i','',$_POST["main_menufront_smartphone"])]=1;
+	if (isset($_POST["MAIN_MENU_SMARTPHONE"]))      $listofmenuhandler[preg_replace('/((_back|_front)office)?\.php/i','',$_POST["MAIN_MENU_SMARTPHONE"])]=1;
+	if (isset($_POST["MAIN_MENUFRONT_SMARTPHONE"])) $listofmenuhandler[preg_replace('/((_back|_front)office)?\.php/i','',$_POST["MAIN_MENUFRONT_SMARTPHONE"])]=1;
 
 	// Initialize menu handlers
 	foreach ($listofmenuhandler as $key => $val)
@@ -167,10 +167,10 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuSmartphoneManager").'</td>';
 	print '<td>';
-	print $htmladmin->select_menu(empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?$conf->global->MAIN_MENU_SMARTPHONE:$conf->global->MAIN_MENU_SMARTPHONE_FORCED, 'main_menu_smartphone', array($dirtop,$dirsmartphone), empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?'':' disabled="disabled"');
+	print $htmladmin->select_menu(empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?$conf->global->MAIN_MENU_SMARTPHONE:$conf->global->MAIN_MENU_SMARTPHONE_FORCED, 'MAIN_MENU_SMARTPHONE', array($dirtop,$dirsmartphone), empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?'':' disabled="disabled"');
 	print '</td>';
 	print '<td>';
-	print $htmladmin->select_menu(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?$conf->global->MAIN_MENUFRONT_SMARTPHONE:$conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED, 'main_menufront_smartphone', array($dirtop,$dirsmartphone), empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?'':' disabled="disabled"');
+	print $htmladmin->select_menu(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?$conf->global->MAIN_MENUFRONT_SMARTPHONE:$conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED, 'MAIN_MENUFRONT_SMARTPHONE', array($dirtop,$dirsmartphone), empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?'':' disabled="disabled"');
 	print '</td>';
 	print '</tr>';
 
