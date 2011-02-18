@@ -31,8 +31,9 @@
  * @param $db
  * @param $atarget
  * @param $type_user     0=Internal,1=External,2=All
+ * @param $limitmenuto	 To limit menu to a top or left menu value
  */
-function print_smartphone_menu($db,$atarget,$type_user)
+function print_smartphone_menu($db,$atarget,$type_user,$limitmenuto)
 {
 	require_once(DOL_DOCUMENT_ROOT."/core/class/menubase.class.php");
 
@@ -66,28 +67,36 @@ function print_smartphone_menu($db,$atarget,$type_user)
 				}
 				else
 				{
+					$menus='';
+					
+					if ($limitmenuto != 'top')
+					{
+						$newmenu = new Menu();
+						$leftmenu = $menuleft->menuLeftCharger($newmenu,$tabMenu[$i]['mainmenu'],'',($user->societe_id?1:0),'smartphone');
+						$menus = $leftmenu->liste;
+						//var_dump($menus);
+					}
+					
 					print_start_menu_entry();
-					$title=$tabMenu[$i]['titre'];
-					// To remove & and special chars: $title=dol_string_unaccent(dol_string_nospecial(dol_html_entity_decode($tabMenu[$i]['titre'],ENT_QUOTES,'UTF-8'),'',array('&')));
-					print_text_menu_entry($title);
 
-					$newmenu = new Menu();
-					$leftmenu = $menuleft->menuLeftCharger($newmenu,$tabMenu[$i]['mainmenu'],'',($user->societe_id?1:0),'smartphone');
-					$menus = $leftmenu->liste;
-					//var_dump($menus);
-
-                    print_start_submenu_array();
 					if (is_array($menus) && !empty($menus))
 					{
-					    $num = count($menus);
+						$title=$tabMenu[$i]['titre'];
+						// To remove & and special chars: $title=dol_string_unaccent(dol_string_nospecial(dol_html_entity_decode($tabMenu[$i]['titre'],ENT_QUOTES,'UTF-8'),'',array('&')));
+						print_text_menu_entry($title);
+						
+						$num = count($menus);
 						//var_dump($menus);
-
+						
+					    if ($num > 0) print_start_submenu_array();
+						
                         for($j=0; $j<$num; $j++)
 						{
+							$url=dol_buildpath($menus[$j]['url'],1);
+							$url=preg_replace('/&amp.*/i','',$url);
+
 							if ($menus[$j]['level'] == 0)
 							{
-								$url=dol_buildpath($menus[$j]['url'],1);
-								$url=preg_replace('/&amp.*/i','',$url);
 								print_start_menu_entry();
 								if (empty($menus[$j+1]['level'])) print '<a href="'.$url.'"'.($menus[$j]['atarget']?" target='".$menus[$j]['atarget']."'":($atarget?" target=$atarget":'')).'>';
 								$title=$menus[$j]['titre'];
@@ -100,8 +109,6 @@ function print_smartphone_menu($db,$atarget,$type_user)
 							{
 								if ($menus[$j-1]['level'] == 0) print_start_submenu_array();
 
-								$url=dol_buildpath($menus[$j]['url'],1);
-								$url=preg_replace('/&amp.*/i','',$url);
 								print_start_menu_entry();
 								print '<a href="'.$url.'"'.($menus[$j]['atarget']?" target='".$menus[$j]['atarget']."'":($atarget?" target=$atarget":'')).'>';
 								$title=$menus[$j]['titre'];
@@ -115,8 +122,20 @@ function print_smartphone_menu($db,$atarget,$type_user)
 
 							if (empty($menus[$j+1]['level'])) print_end_menu_entry();
 						}
+						
+                    	if ($num > 0) print_end_menu();
 					}
-                    print_end_menu();
+					else
+					{
+						$url=dol_buildpath($tabMenu[$i]['url'],1);
+						$url=preg_replace('/&amp.*/i','',$url);
+						
+						print '<a href="'.$url.'"'.($tabMenu[$i]['atarget']?" target='".$tabMenu[$i]['atarget']."'":($atarget?" target=$atarget":'')).'>';
+						$title=$tabMenu[$i]['titre'];
+						// To remove & and special chars: $title=dol_string_unaccent(dol_string_nospecial(dol_html_entity_decode($tabMenu[$i]['titre'],ENT_QUOTES,'UTF-8'),'',array('&')));
+						print_text_menu_entry($title);
+						print '</a>';
+					}
 
 					print_end_menu_entry();
 				}

@@ -40,7 +40,7 @@ require('header.tpl.php');
         </ul>
 -->
 
-	<?php $menusmart->showmenu(); ?>
+	<?php $menusmart->showmenu($limitmenuto); ?>
 
 	</div><!-- /content -->
 

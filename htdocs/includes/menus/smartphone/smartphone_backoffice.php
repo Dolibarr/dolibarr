@@ -47,12 +47,13 @@ class MenuSmart {
 
 	/**
 	 *    Show menu
+	 *    @param		limitmenuto		To limit menu to a top or left menu value
 	 */
-	function showmenu()
+	function showmenu($limitmenuto)
 	{
 		require_once(DOL_DOCUMENT_ROOT.'/includes/menus/smartphone/smartphone.lib.php');
 
-		print_smartphone_menu($this->db,$this->atarget,$this->hideifnotallowed);
+		print_smartphone_menu($this->db,$this->atarget,$this->hideifnotallowed,$limitmenuto);
 	}
 
 }

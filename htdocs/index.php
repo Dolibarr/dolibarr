@@ -57,18 +57,18 @@ if (!isset($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_IN
 // If smartphone mode, we do no show main page, we show only menu
 if (preg_match('/^smartphone/',$conf->smart_menu) && isset($conf->browser->phone))
 {
-    $smart_menu=$conf->smart_menu;
-
+	$limitmenu=GETPOST('limitmenuto')?GETPOST('limitmenuto'):'top';
+	$limitmenu='';	// A virer
+	
     // Load the smartphone menu manager
-    $result=@include_once(DOL_DOCUMENT_ROOT ."/includes/menus/smartphone/".$smart_menu);
+    $result=@include_once(DOL_DOCUMENT_ROOT ."/includes/menus/smartphone/".$conf->smart_menu);
     if (! $result)	// If failed to include, we try with standard
     {
     	$conf->smart_menu='smartphone_backoffice.php';
-    	include_once(DOL_DOCUMENT_ROOT ."/includes/menus/smartphone/".$smart_menu);
+    	include_once(DOL_DOCUMENT_ROOT ."/includes/menus/smartphone/".$conf->smart_menu);
     }
 
     $menusmart = new MenuSmart($db);
-    $menusmart->atarget=$target;
 
     include_once(DOL_DOCUMENT_ROOT.'/theme/phones/smartphone/tpl/menu.tpl.php');
     exit;
