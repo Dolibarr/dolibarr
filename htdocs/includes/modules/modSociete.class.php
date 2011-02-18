@@ -228,10 +228,10 @@ class modSociete extends DolibarrModules
             unset($this->export_entities_array[$r]['s.code_fournisseur']);
         }
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
-		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'c_pays as p, '.MAIN_DB_PREFIX.'socpeople as c';
+		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'socpeople as c';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON c.fk_soc = s.rowid';
-		$this->export_sql_end[$r] .=' WHERE c.fk_pays = p.rowid';
-		$this->export_sql_end[$r] .=' AND c.entity = '.$conf->entity;
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as p ON c.fk_pays = p.rowid';
+		$this->export_sql_end[$r] .=' WHERE c.entity = '.$conf->entity;
 
 
 		// Imports
