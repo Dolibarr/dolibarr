@@ -916,6 +916,9 @@ FreeLegalTextOnInterventions=Text addicional en les fitxes d'intervenció
 FicheinterNumberingModules=Mòduls de numeració de les fitxes d'intervenció
 TemplatePDFInterventions=Model de documents de les fitxes d'intervenció
 WatermarkOnDraftInterventionCards=Marca d'aigua en fitxes d'intervenció (en cas d'estar buit)
+##### Contracts #####
+ContractsSetup=Configuració del mòdul contractes
+ContractsNumberingModules=Mòduls de numeració dels contratos
 ##### Members #####
 MembersSetup=Configuració del mòdulo Associacions
 MemberMainOptions=Opcions principals

@@ -2,7 +2,7 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
- *
+ * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -68,10 +68,18 @@ class modContrat extends DolibarrModules
 		// Dependances
 		$this->depends = array("modService");
 		$this->requiredby = array();
+		
+		// Config pages
+		$this->config_page_url = array("contract.php");
 
 		// Constantes
 		$this->const = array();
-
+		$this->const[0][0] = "CONTRACT_ADDON";
+		$this->const[0][1] = "chaine";
+		$this->const[0][2] = "mod_contract_magre";
+		$this->const[0][3] = 'Nom du gestionnaire de numerotation des contrats';
+		$this->const[0][4] = 0;
+		
 		// Boxes
 		$this->boxes = array();
 		$this->boxes[0][1] = "box_contracts.php";
@@ -121,9 +129,9 @@ class modContrat extends DolibarrModules
 	{
 		global $conf;
 
-		// Nettoyage avant activation
+		// Nettoyage avant activation	
 		$this->remove();
-
+		
 		return $this->_init($sql);
 	}
 

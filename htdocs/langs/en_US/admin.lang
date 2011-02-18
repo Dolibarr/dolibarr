@@ -913,6 +913,9 @@ FreeLegalTextOnInterventions=Free text on intervention documents
 FicheinterNumberingModules=Intervention numbering modules
 TemplatePDFInterventions=Intervention card documents models
 WatermarkOnDraftInterventionCards=Watermark on intervention card documents (any if empty)
+##### Contracts #####
+ContractsSetup=Contracts module setup
+ContractsNumberingModules=Contracts numbering modules
 ##### Members #####
 MembersSetup=Members module setup
 MemberMainOptions=Main options

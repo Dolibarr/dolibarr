@@ -922,6 +922,9 @@ FreeLegalTextOnInterventions= Mention complémentaire sur les fiches d'intervent
 FicheinterNumberingModules= Modèles de numérotation des fiches d'intervention
 TemplatePDFInterventions= Modèle de document des fiches d'intervention
 WatermarkOnDraftInterventionCards= Filigrane sur les brouillons des fiches d'intervention (aucun si vide)
+##### Contracts #####
+ContractsSetup=Configuration du module contrats
+ContractsNumberingModules=Modèles de numérotation des contrats
 ##### Members #####
 MembersSetup= Configuration du module Adhérents
 MemberMainOptions= Options principales

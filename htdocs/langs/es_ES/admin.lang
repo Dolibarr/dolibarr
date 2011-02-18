@@ -916,6 +916,9 @@ FreeLegalTextOnInterventions=Texto adicional en las fichas de intervención
 FicheinterNumberingModules=Módulos de numeración de las fichas de intervención
 TemplatePDFInterventions=Modelo de documentos de las fichas de intervención
 WatermarkOnDraftInterventionCards=Marca de agua en fichas de intervención (en caso de estar vacío)
+##### Contracts #####
+ContractsSetup=Configuración del módulo contratos
+ContractsNumberingModules=Módulos de numeración de los contratos
 ##### Members #####
 MembersSetup=Configuración del módulo Asociaciones
 MemberMainOptions=Opciones principales
