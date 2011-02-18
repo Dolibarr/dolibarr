@@ -431,7 +431,6 @@ class Menubase
 	 * 		@param		type_user		0=Internal,1=External,2=All
 	 * 		@param		mainmenu		Value for mainmenu that defined top menu
 	 * 		@param		menu_handler	Name of menu_handler used (auguria, eldy...)
-     * 		@param      tabMenu         If array with menu entries already loaded, we put this array here (in most cases, it's empty)
 	 * 		@return		array			Return array with menu entries for top menu
 	 */
 	function menuTopCharger($mainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu=null)
@@ -442,11 +441,8 @@ class Menubase
         $leftmenu=$myleftmenu;  // To export to dol_eval function
 		
 		// Load datas into tabMenu
-        if (sizeof($tabMenu) == 0)
-        {
-        	$this->menuLoad($leftmenu, $type_user, $menu_handler, $tabMenu);
-        }
-        
+        $this->menuLoad($leftmenu, $type_user, $menu_handler, $tabMenu);
+
         $newTabMenu=array();
         $i=0;
         foreach($tabMenu as $val)
@@ -495,9 +491,13 @@ class Menubase
         if (sizeof($tabMenu) == 0)
         {
             $this->menuLoad($leftmenu, $type_user, $menu_handler, $tabMenu);
+            //var_dump($tabMenu);
         }
-        //var_dump($tabMenu);
-        
+        else
+        {
+            $this->menuLoad($leftmenu, $type_user, $menu_handler, $tabMenu);
+        }
+
         // Define menutopid
         $menutopid='';
         foreach($tabMenu as $val)
