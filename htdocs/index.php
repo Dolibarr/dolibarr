@@ -57,10 +57,20 @@ if (!isset($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_IN
 // If smartphone mode, we do no show main page, we show only menu
 if (preg_match('/^smartphone/',$conf->smart_menu) && isset($conf->browser->phone))
 {
-    include_once(DOL_DOCUMENT_ROOT.'/core/class/smartphone.class.php');
-    $smartphone = new Smartphone($db,$conf->browser->phone);  // This class is only to know template dir according to phone type
-    $smartphone->title = $langs->trans("Home");
-    $smartphone->smartmenu();
+    $smart_menu=$conf->smart_menu;
+
+    // Load the smartphone menu manager
+    $result=@include_once(DOL_DOCUMENT_ROOT ."/includes/menus/smartphone/".$smart_menu);
+    if (! $result)	// If failed to include, we try with standard
+    {
+    	$conf->smart_menu='smartphone_backoffice.php';
+    	include_once(DOL_DOCUMENT_ROOT ."/includes/menus/smartphone/".$smart_menu);
+    }
+
+    $menusmart = new MenuSmart($db);
+    $menusmart->atarget=$target;
+
+    include_once(DOL_DOCUMENT_ROOT.'/theme/phones/smartphone/tpl/menu.tpl.php');
     exit;
 }
 
