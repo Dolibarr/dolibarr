@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
- * Copyright (C) 2010      Juanjo Menent         <jmenent@2byte.es>
+ * Copyright (C) 2010-2011 Juanjo Menent         <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,6 +88,55 @@ class Contrat extends CommonObject
 		$this->user_cloture = new User($DB);
 	}
 
+	/**
+	 *	Return next contract ref
+	 *	@param		soc		objet society
+	 *	@return     string	free reference for contract
+	 */
+	function getNextNumRef($soc)
+	{
+		global $db, $langs, $conf;
+		$langs->load("contract");
+
+		$dir = DOL_DOCUMENT_ROOT . "/includes/modules/contract";
+
+		if (! empty($conf->global->CONTRACT_ADDON))
+		{
+			$file = $conf->global->CONTRACT_ADDON.".php";
+
+			// Chargement de la classe de numerotation
+			$classname = $conf->global->CONTRACT_ADDON;
+
+			$result=include_once($dir.'/'.$file);
+			if ($result)
+			{
+				$obj = new $classname();
+				$numref = "";
+				$numref = $obj->getNextValue($soc,$this);
+
+				if ( $numref != "")
+				{
+					return $numref;
+				}
+				else
+				{
+					dol_print_error($db,"Contract::getNextNumRef ".$obj->error);
+					return "";
+				}
+			}
+			else
+			{
+				print $langs->trans("Error")." ".$langs->trans("Error_CONTRACT_ADDON_NotDefined");
+				return "";
+			}
+		}
+		else
+		{
+			print $langs->trans("Error")." ".$langs->trans("Error_CONTRACT_ADDON_NotDefined");
+			return "";
+		}
+	}
+	
 	/**
 	 *      \brief      Activate a contract line
 	 *      \param      user        Objet User qui active le contrat

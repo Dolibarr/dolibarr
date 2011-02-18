@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@
 require ("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/contract.lib.php');
+require_once(DOL_DOCUMENT_ROOT."/includes/modules/contract/modules_contract.php");
 if ($conf->projet->enabled)  require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
 if ($conf->propal->enabled)  require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
 if ($conf->contrat->enabled) require_once(DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
@@ -479,6 +480,12 @@ if ($_GET["action"] == 'create')
     $soc = new Societe($db);
     $soc->fetch($socid);
     
+	$contract = new Contrat($db);
+	$contract->date_contrat = time();
+	if ($contratid) $result=$contract->fetch($contratid);
+
+	$numct = $contract->getNextNumRef($soc);
+	
     print '<form name="contrat" action="'.$_SERVER["PHP_SELF"].'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     
@@ -490,7 +497,7 @@ if ($_GET["action"] == 'create')
     
     // Ref
     print '<tr><td>'.$langs->trans("Ref").'</td>';
-    print '<td><input type="text" maxlength="30" name="ref" size="20" value="'.GETPOST("ref").'"></td></tr>';
+    print '<td><input type="text" maxlength="30" name="ref" size="20" value="'.$numct.'"></td></tr>';
     
     // Customer
     print '<tr><td>'.$langs->trans("Customer").'</td><td>'.$soc->getNomUrl(1).'</td></tr>';

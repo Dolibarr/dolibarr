@@ -90,3 +90,4 @@ TypeContact_contrat_internal_SALESREPFOLL= Comercial seguiment del contracte
 TypeContact_contrat_external_BILLING= Contacte client de facturació del contracte
 TypeContact_contrat_external_CUSTOMER= Contacte client seguiment del contracte
 TypeContact_contrat_external_SALESREPSIGN= Contacte client signant del contracte
+Error_CONTRACT_ADDON_NotDefined=Constant CONTRACT_ADDON no definida
