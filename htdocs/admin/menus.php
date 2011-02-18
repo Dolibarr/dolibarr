@@ -217,10 +217,20 @@ else
 	print '<td>';
 	$filelib=preg_replace('/.php$/i','',(empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?$conf->global->MAIN_MENU_SMARTPHONE:$conf->global->MAIN_MENU_SMARTPHONE_FORCED));
 	print $filelib;
+	if (preg_match('/smartphone/',$conf->global->MAIN_MENU_SMARTPHONE_FORCED) 
+	|| (empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED) && preg_match('/smartphone/',$conf->global->MAIN_MENU_SMARTPHONE)))
+	{
+		print ' '.img_warning($langs->trans("ThisForceAlsoTheme"));
+	}
 	print '</td>';
 	print '<td>';
 	$filelib=preg_replace('/.php$/i','',(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?$conf->global->MAIN_MENUFRONT_SMARTPHONE:$conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED));
 	print $filelib;
+	if (preg_match('/smartphone/',$conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)
+	|| (empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED) && preg_match('/smartphone/',$conf->global->MAIN_MENUFRONT_SMARTPHONE)))
+	{
+		print ' '.img_warning($langs->trans("ThisForceAlsoTheme"));
+	}
 	print '</td>';
 	print '</tr>';
 
