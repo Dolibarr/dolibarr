@@ -83,6 +83,12 @@ input.ui-input-text, textarea.ui-input-text {
     background: #FFFFFF;
 }
 
+.loginform {
+    margin: 40px;
+    padding: 10px;
+}
+
+
 
 
 div.titre {

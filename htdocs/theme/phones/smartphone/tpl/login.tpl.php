@@ -35,7 +35,7 @@ include('header.tpl.php');
 
 	<div data-role="content">
 
-		<form id="login" name="login" method="post" action="<?php echo $php_self; ?>">
+		<form id="login" class="loginform" name="login" method="post" action="<?php echo $php_self; ?>">
 		<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
 		<input type="hidden" name="loginfunction" value="loginfunction" />
 
@@ -60,7 +60,7 @@ include('header.tpl.php');
 
 		<input type="submit" data-theme="b" value="<?php echo $langs->trans('Connection'); ?>" />
 
-		</form><br>
+		</form>
 
 	</div><!-- /content -->
 
