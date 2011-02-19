@@ -2065,15 +2065,18 @@ else
 			print '</td></tr>';
 
 			// Relative and absolute discounts
-			print '<tr><td>'.$langs->trans('Discounts');
+            $addabsolutediscount=' <a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$soc->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'?facid='.$object->id.'">'.$langs->trans("AddGlobalDiscount").'</a>';
+            $addcreditnote=' <a href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&socid='.$soc->id.'&type=2&backtopage='.urlencode($_SERVER["PHP_SELF"]).'?facid='.$object->id.'">'.$langs->trans("AddCreditNote").'</a>';
+
+            print '<tr><td>'.$langs->trans('Discounts');
 			print '</td><td colspan="5">';
 			if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
 			else print $langs->trans("CompanyHasNoRelativeDiscount");
-			print '. ';
 
 			if ($absolute_discount > 0)
 			{
-				if ($object->statut > 0 || $object->type == 2 || $object->type == 3)
+                print '. ';
+			    if ($object->statut > 0 || $object->type == 2 || $object->type == 3)
 				{
 					if ($object->statut == 0)
 					{
@@ -2100,8 +2103,13 @@ else
 					// Remise dispo de type remise fixe (not credit note)
 					$filter='fk_facture_source IS NULL';
 					print '<br>';
-					$html->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0,  'remise_id',$soc->id, $absolute_discount, $filter, $resteapayer);
+					$html->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0,  'remise_id',$soc->id, $absolute_discount, $filter, $resteapayer, ' - '.$addabsolutediscount);
 				}
+			}
+			else
+			{
+			     if ($object->statut == 0 && $object->type != 2 && $object->type != 3) print ' - '.$addabsolutediscount.'<br>';
+			     else print '. ';
 			}
 			if ($absolute_creditnote > 0)
 			{
@@ -2130,13 +2138,13 @@ else
 			{
 			    print $langs->trans("CompanyHasNoAbsoluteDiscount").'.';
 			}
-            if ($object->statut == 0 && $object->type != 2 && $object->type != 3)
+            /*if ($object->statut == 0 && $object->type != 2 && $object->type != 3)
             {
 			    if (! $absolute_discount && ! $absolute_creditnote) print '<br>';
-                $addabsolutediscount=' <a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$soc->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'?facid='.$object->id.'">'.$langs->trans("AddDiscount").'</a>';
-                $addcreditnote=' <a href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&socid='.$soc->id.'&type=2&backtopage='.urlencode($_SERVER["PHP_SELF"]).'?facid='.$object->id.'">'.$langs->trans("AddCreditNote").'</a>';
-			    print $addabsolutediscount.' &nbsp; - &nbsp; '.$addcreditnote;
-			}
+			    //print ' &nbsp; - &nbsp; ';
+			    print $addabsolutediscount;
+			    //print ' &nbsp; - &nbsp; '.$addcreditnote;      // We disbale link to credit note
+			}*/
 			print '</td></tr>';
 
 			// Date invoice
