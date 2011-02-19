@@ -1110,6 +1110,7 @@ NotificationEMailFrom=E-Mail emisor (From) de los correos enviados a través de 
 ##### Sendings #####
 SendingsSetup=Configuración del módulo Expediciones
 SendingsReceiptModel=Modelo de notas de entrega
+SendingsNumberingModules=Módulos de numeración de notas de entrega
 SendingsAbility=Uso de notas de entrega para los envíos a clientes
 NoNeedForDeliveryReceipts=En la mayoría de los casos, las notas de entrega (lista de productos enviados ) también actúan como notas de recepción y son firmadas por el cliente. La gestión de las notas de recepción es por lo tanto redundante y rara vez se activará.
 FreeLegalTextOnDeliveryReceipts=Texto libre en las notas de recepción

@@ -5,6 +5,7 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -213,10 +214,21 @@ if ($_GET["action"] == 'setmod')
 	dolibarr_set_const($db, "EXPEDITION_ADDON",$_GET["module"],'chaine',0,'',$conf->entity);
 }
 
+if ($_POST["action"] == 'updateMask')
+{
+	$maskconst=$_POST['maskconstexpedition'];
+	$maskvalue=$_POST['maskexpedition'];
+	if ($maskconst) dolibarr_set_const($db,$maskconst,$maskvalue,'chaine',0,'',$conf->entity);
+}
+
+if ($_GET["action"] == 'setmodel')
+{
+	dolibarr_set_const($db, "EXPEDITION_ADDON_NUMBER",$_GET["value"],'chaine',0,'',$conf->entity);
+}
 
 
 /*
- * Viewe
+ * View
  */
 
 $dir = DOL_DOCUMENT_ROOT."/includes/modules/expedition/";
@@ -253,6 +265,101 @@ if ($conf->global->MAIN_SUBMODULE_LIVRAISON)
 
 dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
 
+/*
+ * Numbering module
+ */
+//print "<br>";
+
+print_titre($langs->trans("SendingsNumberingModules"));
+
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td width="100">'.$langs->trans("Name").'</td>';
+print '<td>'.$langs->trans("Description").'</td>';
+print '<td>'.$langs->trans("Example").'</td>';
+print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
+print '<td align="center" width="16">'.$langs->trans("Infos").'</td>';
+print "</tr>\n";
+
+clearstatcache();
+
+//$dir = "../includes/modules/expedition/";
+$handle = opendir($dir);
+if (is_resource($handle))
+{
+	$var=true;
+
+	while (($file = readdir($handle))!==false)
+	{
+		if (substr($file, 0, 15) == 'mod_expedition_' && substr($file, dol_strlen($file)-3, 3) == 'php')
+		{
+			$file = substr($file, 0, dol_strlen($file)-4);
+
+			require_once(DOL_DOCUMENT_ROOT ."/includes/modules/expedition/".$file.".php");
+
+			$module = new $file;
+
+			// Show modules according to features level
+			if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+			if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+
+			if ($module->isEnabled())
+			{
+				$var=!$var;
+				print '<tr '.$bc[$var].'><td>'.$module->nom."</td>\n";
+				print '<td>';
+				print $module->info();
+				print '</td>';
+
+				// Examples
+				print '<td nowrap="nowrap">'.$module->getExample()."</td>\n";
+
+				print '<td align="center">';
+				if ($conf->global->EXPEDITION_ADDON_NUMBER == "$file")
+				{
+					print img_picto($langs->trans("Activated"),'on');
+				}
+				else
+				{
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmodel&amp;value='.$file.'">';
+					print img_picto($langs->trans("Disabled"),'off');
+					print '</a>';
+				}
+				print '</td>';
+
+				$expedition=new Expedition($db);
+				$expedition->initAsSpecimen();
+
+				// Info
+				$htmltooltip='';
+				$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
+				$facture->type=0;
+				$nextval=$module->getNextValue($mysoc,$expedition);
+				if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
+				{
+					$htmltooltip.=''.$langs->trans("NextValue").': ';
+					if ($nextval)
+					{
+						$htmltooltip.=$nextval.'<br>';
+					}
+					else
+					{
+						$htmltooltip.=$langs->trans($module->error).'<br>';
+					}
+				}
+
+				print '<td align="center">';
+				print $html->textwithpicto('',$htmltooltip,1,0);
+				print '</td>';
+
+				print '</tr>';
+			}
+		}
+	}
+	closedir($handle);
+}
+
+print '</table><br>';
 
 
 /*

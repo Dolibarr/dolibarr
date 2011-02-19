@@ -1115,6 +1115,7 @@ NotificationEMailFrom= Email émetteur (From) des mails envoyés lors des notifi
 ##### Sendings #####
 SendingsSetup= Configuration du module Expédition/Livraison
 SendingsReceiptModel= Modèle du bordereau d'expédition
+SendingsNumberingModules=Modèles de numérotation des expéditions
 SendingsAbility= Prise en charge des bons d'expédition/livraison vers le client
 NoNeedForDeliveryReceipts= Dans la plupart des cas, ce sont les bons d'expédition/livraison (liste des produits à envoyer par le transporteur) qui font office de bons de réception et qui sont signés par le client. La gestion des bons de réception fait donc double emploi et sera rarement activée.
 FreeLegalTextOnDeliveryReceipts= Mention complémentaire sur les bons de réception
