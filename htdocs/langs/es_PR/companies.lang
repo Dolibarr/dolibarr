@@ -1,0 +1,4 @@
+# Dolibarr language file - es_PR - companies
+CHARSET=UTF-8
+VATIsUsed=Sujeto a IVU
+VATIsNotUsed=No sujeto a IVU
