@@ -44,10 +44,24 @@ else header('Cache-Control: no-cache');
 ?>
 
 #dol-homeheader { height: 40px; font-size: 16px; }
+
+
 .ui-header { height: 40px; font-size: 16px; }
 
-/*.ui-mobile #dol-home {  background: #e5e5e5 url(<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/default/menu/pinstripes.png'; ?>) top center repeat-x; }*/
-.ui-mobile #dol-home {  background: #e5e5e5 }
+.ui-content {
+padding-top: 0px;
+padding-left: 0px;
+padding-right: 0;
+padding-bottom: 0px;
+}
+
+.ui-content .ui-listview {
+    margin-top: 0px;   /* Use here negative value of ui-content top padding */
+    margin-right: 0px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+}
+
 .ui-mobile #dol-homeheader { padding: 10px 5px 0; text-align: center }
 .ui-mobile #dol-homeheader h1 { margin: 0 0 10px; }
 .ui-mobile #dol-homeheader p { margin: 0; }
@@ -57,14 +71,17 @@ else header('Cache-Control: no-cache');
 	top:0.3em;
 }
 
-.ui-btn-inner {
-    padding: 0.2em 5px;
+.ui-li .ui-btn-inner {
+    padding: 0.3em 5px 0.3em 5px;
 }
 
 input.ui-input-text, textarea.ui-input-text {
 	padding: 0.2em;
 }
 
+.ui-body-c {
+    background: #FFFFFF;
+}
 
 
 
