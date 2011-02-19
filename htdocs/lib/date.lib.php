@@ -58,23 +58,28 @@ function ConvertTime2Seconds($iHours=0,$iMinutes=0,$iSeconds=0)
 
 
 /**	  	Return, in clear text, value of a number of seconds in days, hours and minutes
- *    	@param      iSecond		Number of seconds
- *    	@param      format		Output format (all: complete display, hour: displays only hours, min: displays only minutes)
- *    	@param      lengthOfDay	Length of day (default 86400 seconds)
- *    	@return     sTime		Formated text of duration
- * 	                            Example: 0 return 00:00, 3600 return 1:00, 86400 return 1d, 90000 return 1 Day 01:00
+ *    	@param      iSecond		    Number of seconds
+ *    	@param      format		    Output format (all: complete display, hour: displays only hours, min: displays only minutes)
+ *      @param      lengthOfDay     Length of day (default 86400 seconds for 1 day, 28800 for 8 hour)
+ *      @param      lengthOfWeek    Length of week (default 7)
+ *    	@return     sTime		    Formated text of duration
+ * 	                                Example: 0 return 00:00, 3600 return 1:00, 86400 return 1d, 90000 return 1 Day 01:00
  */
-function ConvertSecondToTime($iSecond,$format='all',$lengthOfDay=86400)
+function ConvertSecondToTime($iSecond,$format='all',$lengthOfDay=86400,$lengthOfWeek=7)
 {
 	global $langs;
 
-	if (empty($lengthOfDay)) $lengthOfDay = 86400;
+	if (empty($lengthOfDay))  $lengthOfDay = 86400;         // 1 day = 24 hours
+    if (empty($lengthOfWeek)) $lengthOfWeek = 7;            // 1 week = 7 days
 
 	if ($format == 'all')
 	{
 		if ($iSecond === 0) return '0';	// This is to avoid having 0 return a 12:00 AM for en_US
 
+        $sTime='';
 		$sDay=0;
+        $sWeek='';
+
 		if ($iSecond >= $lengthOfDay)
 		{
 			for($i = $iSecond; $i >= $lengthOfDay; $i -= $lengthOfDay )
@@ -85,7 +90,28 @@ function ConvertSecondToTime($iSecond,$format='all',$lengthOfDay=86400)
 			$dayTranslate = $langs->trans("Day");
 			if ($iSecond >= ($lengthOfDay*2)) $dayTranslate = $langs->trans("Days");
 		}
-		$sTime='';
+
+		if ($lengthOfWeek < 7)
+		{
+        	if ($sDay)
+            {
+                if ($sDay >= $lengthOfWeek)
+                {
+                    $sWeek = (int) ( ( $sDay - $sDay % $lengthOfWeek ) / $lengthOfWeek );
+                    $sDay = $sDay % $lengthOfWeek;
+                    $weekTranslate = $langs->trans("DurationWeek");
+                    if ($sWeek >= 2) $weekTranslate = $langs->trans("DurationWeeks");
+                    $sTime.=$sWeek.' '.$weekTranslate.' ';
+                }
+                if ($sDay>0)
+                {
+                    $dayTranslate = $langs->trans("Day");
+                    if ($sDay > 1) $dayTranslate = $langs->trans("Days");
+                    $sTime.=$sDay.' '.$dayTranslate.' ';
+                }
+            }
+		}
+
 		if ($sDay) $sTime.=$sDay.' '.$dayTranslate.' ';
 		if ($iSecond || empty($sDay))
 		{
