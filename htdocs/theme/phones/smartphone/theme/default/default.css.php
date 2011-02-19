@@ -43,6 +43,10 @@ else header('Cache-Control: no-cache');
 
 ?>
 
+.landscape, .landscape .ui-page {
+    min-height: 300px;
+}
+
 #dol-homeheader { height: 40px; font-size: 16px; }
 
 
@@ -72,7 +76,7 @@ padding-bottom: 0px;
 }
 
 .ui-li .ui-btn-inner {
-    padding: 0.3em 5px 0.3em 5px;
+    padding: 0.4em 5px 0.4em 5px;
 }
 
 input.ui-input-text, textarea.ui-input-text {
@@ -85,12 +89,13 @@ input.ui-input-text, textarea.ui-input-text {
 
 .ui-body-c {
     background: #FFFFFF;
+    text-shadow: none;
 }
 
 .loginform {
     margin-left: 10px;
     margin-right: 10px;
-    padding: 10px;
+    padding: 5px;
 }
 
 

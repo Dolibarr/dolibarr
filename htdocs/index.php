@@ -34,11 +34,17 @@ require_once(DOL_DOCUMENT_ROOT."/boxes.php");
 if (! isset($_GET["mainmenu"])) $_GET["mainmenu"]="home";
 
 
+
 /*
  * Actions
  */
 
-// No actions
+// Check if company name is defined (first install)
+if (!isset($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_NOM))
+{
+    header("Location: ".DOL_URL_ROOT."/admin/company.php?mainmenu=home&leftmenu=setup&mesg=setupnotcomplete");
+    exit;
+}
 
 
 
@@ -46,20 +52,12 @@ if (! isset($_GET["mainmenu"])) $_GET["mainmenu"]="home";
  * View
  */
 
-// Check if company name is defined (first install)
-if (!isset($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_NOM))
-{
-	header("Location: ".DOL_URL_ROOT."/admin/company.php?mainmenu=home&leftmenu=setup&mesg=setupnotcomplete");
-	exit;
-}
-
-
 // If smartphone mode, we do no show main page, we show only menu
 if (preg_match('/^smartphone/',$conf->smart_menu) && isset($conf->browser->phone))
 {
 	$limitmenuto=GETPOST('limitmenuto')?GETPOST('limitmenuto'):0;
 	$limitmenuto=1;	// A virer
-	
+
     // Load the smartphone menu manager
     $result=@include_once(DOL_DOCUMENT_ROOT ."/includes/menus/smartphone/".$conf->smart_menu);
     if (! $result)	// If failed to include, we try with standard
