@@ -318,13 +318,13 @@ if ($_socid > 0)
 		print '<table width="100%" class="noborder">';
 		print '<tr class="liste_titre">';
 		print '<td width="120" align="left">'.$langs->trans("Date").'</td>';	// Need 120+ for format with AM/PM
-		print '<td width="150" align="left">'.$langs->trans("ReasonDiscount").'</td>';
-		print '<td align="left" nowrap="nowrap">'.$langs->trans("ConsumedBy").'</td>';
+		print '<td align="left">'.$langs->trans("ReasonDiscount").'</td>';
+		print '<td width="150" nowrap="nowrap">'.$langs->trans("ConsumedBy").'</td>';
 		print '<td width="120" align="right">'.$langs->trans("AmountHT").'</td>';
 		print '<td width="80" align="right">'.$langs->trans("VATRate").'</td>';
 		print '<td width="120" align="right">'.$langs->trans("AmountTTC").'</td>';
 		print '<td width="100" align="center">'.$langs->trans("DiscountOfferedBy").'</td>';
-		print '<td width="20">&nbsp;</td>';
+		print '<td width="50">&nbsp;</td>';
 		print '</tr>';
 
 		$var = true;
@@ -360,7 +360,7 @@ if ($_socid > 0)
 				print $obj->description;
 				print '</td>';
 			}
-			print '<td align="left" nowrap="nowrap">'.$langs->trans("NotConsumed").'</td>';
+			print '<td nowrap="nowrap">'.$langs->trans("NotConsumed").'</td>';
 			print '<td align="right">'.price($obj->amount_ht).'</td>';
 			print '<td align="right">'.price2num($obj->tva_tx,'MU').'%</td>';
 			print '<td align="right">'.price($obj->amount_ttc).'</td>';
@@ -454,13 +454,13 @@ if ($_socid > 0)
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td width="120" align="left">'.$langs->trans("Date").'</td>';	// Need 120+ for format with AM/PM
-		print '<td width="150" align="left">'.$langs->trans("ReasonDiscount").'</td>';
-		print '<td align="left" nowrap="nowrap">'.$langs->trans("ConsumedBy").'</td>';
+		print '<td align="left">'.$langs->trans("ReasonDiscount").'</td>';
+		print '<td width="150" nowrap="nowrap">'.$langs->trans("ConsumedBy").'</td>';
 		print '<td width="120" align="right">'.$langs->trans("AmountHT").'</td>';
 		print '<td width="80" align="right">'.$langs->trans("VATRate").'</td>';
 		print '<td width="120" align="right">'.$langs->trans("AmountTTC").'</td>';
 		print '<td width="100" align="center">'.$langs->trans("Author").'</td>';
-		print '<td width="20">&nbsp;</td>';
+		print '<td width="50">&nbsp;</td>';
 		print '</tr>';
 
 		$var = true;

@@ -323,7 +323,7 @@ if ($socid > 0)
 	print "</td>";
 	print '</tr>';
 
-	// Reductions relative (Discounts-Drawbacks-Rebates)
+	// Relative discounts (Discounts-Drawbacks-Rebates)
 	print '<tr><td nowrap>';
 	print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
 	print $langs->trans("CustomerRelativeDiscountShort");
@@ -336,7 +336,7 @@ if ($socid > 0)
 	print '</td><td colspan="3">'.($objsoc->remise_client?$objsoc->remise_client.'%':$langs->trans("DiscountNone")).'</td>';
 	print '</tr>';
 
-	// Reductions absolues (Discounts-Drawbacks-Rebates)
+	// Absolute discounts (Discounts-Drawbacks-Rebates)
 	print '<tr><td nowrap>';
 	print '<table width="100%" class="nobordernopadding">';
 	print '<tr><td nowrap>';
@@ -344,7 +344,7 @@ if ($socid > 0)
 	print '<td><td align="right">';
 	if ($user->rights->societe->creer && !$user->societe_id > 0)
 	{
-		print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$objsoc->id.'">'.img_edit($langs->trans("Modify")).'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$objsoc->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$objsoc->id).'">'.img_edit($langs->trans("Modify")).'</a>';
 	}
 	print '</td></tr></table>';
 	print '</td>';
