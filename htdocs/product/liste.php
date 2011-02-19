@@ -199,7 +199,7 @@ if ($resql)
 	if ($num == 1 && ($sall || $snom || $sref || $sbarcode) && $_POST["action"] != 'list')
 	{
 		$objp = $db->fetch_object($resql);
-		Header("Location: fiche.php?id=$objp->rowid");
+		Header("Location: fiche.php?id=".$objp->rowid);
 		exit;
 	}
 
@@ -222,7 +222,7 @@ if ($resql)
 		$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 	}
 
-	llxHeader("",$title,$helpurl,$texte);
+	llxHeader('',$title,$helpurl,'');
 
 	// Displays product removal confirmation
 	if (!empty($_GET['delprod']))
