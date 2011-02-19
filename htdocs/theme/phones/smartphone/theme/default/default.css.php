@@ -79,12 +79,17 @@ input.ui-input-text, textarea.ui-input-text {
 	padding: 0.2em;
 }
 
+.ui-body-b {
+    background: #FFFFFF;
+}
+
 .ui-body-c {
     background: #FFFFFF;
 }
 
 .loginform {
-    margin: 40px;
+    margin-left: 10px;
+    margin-right: 10px;
     padding: 10px;
 }
 
