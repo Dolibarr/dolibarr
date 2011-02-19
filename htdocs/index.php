@@ -56,7 +56,7 @@ if (!isset($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_IN
 if (preg_match('/^smartphone/',$conf->smart_menu) && isset($conf->browser->phone))
 {
 	$limitmenuto=GETPOST('limitmenuto')?GETPOST('limitmenuto'):0;
-	$limitmenuto=1;	// A virer
+	$limitmenuto=0;	// A virer
 
     // Load the smartphone menu manager
     $result=@include_once(DOL_DOCUMENT_ROOT ."/includes/menus/smartphone/".$conf->smart_menu);
