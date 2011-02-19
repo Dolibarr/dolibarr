@@ -2108,12 +2108,16 @@ else
 			}
 			else
 			{
-			     if ($object->statut == 0 && $object->type != 2 && $object->type != 3) print ' - '.$addabsolutediscount.'<br>';
-			     else print '. ';
+			    if ($absolute_creditnote > 0)    // If not linke will be added later
+			    {
+                    if ($object->statut == 0 && $object->type != 2 && $object->type != 3) print ' - '.$addabsolutediscount.'<br>';
+
+			    }
+			    print '. ';
 			}
 			if ($absolute_creditnote > 0)
 			{
-				// If validated, we show link "add credit note to payment"
+			    // If validated, we show link "add credit note to payment"
 				if ($object->statut != 1 || $object->type == 2 || $object->type == 3)
 				{
 					if ($object->statut == 0 && $object->type != 3)
@@ -2136,7 +2140,9 @@ else
 			}
 			if (! $absolute_discount && ! $absolute_creditnote)
 			{
-			    print $langs->trans("CompanyHasNoAbsoluteDiscount").'.';
+			    print $langs->trans("CompanyHasNoAbsoluteDiscount");
+                if ($object->statut == 0 && $object->type != 2 && $object->type != 3) print ' - '.$addabsolutediscount.'<br>';
+                else print '. ';
 			}
             /*if ($object->statut == 0 && $object->type != 2 && $object->type != 3)
             {
