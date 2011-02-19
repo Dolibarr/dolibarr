@@ -431,6 +431,7 @@ class Menubase
 	 * 		@param		type_user		0=Internal,1=External,2=All
 	 * 		@param		mainmenu		Value for mainmenu that defined top menu
 	 * 		@param		menu_handler	Name of menu_handler used (auguria, eldy...)
+     * 		@param      tabMenu         If array with menu entries already loaded, we put this array here (in most cases, it's empty)
 	 * 		@return		array			Return array with menu entries for top menu
 	 */
 	function menuTopCharger($mainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu=null)
@@ -439,9 +440,12 @@ class Menubase
 		global $leftmenu,$rights;	// To export to dol_eval function
 
         $leftmenu=$myleftmenu;  // To export to dol_eval function
-		
+
 		// Load datas into tabMenu
-        $this->menuLoad($leftmenu, $type_user, $menu_handler, $tabMenu);
+        if (sizeof($tabMenu) == 0)
+        {
+        	$this->menuLoad($leftmenu, $type_user, $menu_handler, $tabMenu);
+        }
 
         $newTabMenu=array();
         $i=0;
@@ -449,7 +453,7 @@ class Menubase
         {
         	if ($val[9]=='top')
         	{
-        		
+
         		$newTabMenu[$i]['rowid']=$val[0];
         		$newTabMenu[$i]['fk_menu']=$val[1];
         		$newTabMenu[$i]['url']=$val[2];
@@ -491,12 +495,8 @@ class Menubase
         if (sizeof($tabMenu) == 0)
         {
             $this->menuLoad($leftmenu, $type_user, $menu_handler, $tabMenu);
-            //var_dump($tabMenu);
         }
-        else
-        {
-            $this->menuLoad($leftmenu, $type_user, $menu_handler, $tabMenu);
-        }
+        //var_dump($tabMenu);
 
         // Define menutopid
         $menutopid='';
@@ -509,7 +509,7 @@ class Menubase
             }
         }
 
-        // Now edit this->newmenu to add entries found into tabMenu that are in childs of mainmenu claimed
+        // Now edit this->newmenu->list to add entries found into tabMenu that are in childs of mainmenu claimed
         $this->recur($tabMenu, $menutopid, 1, $leftmenu);
 
         return $this->newmenu;
@@ -616,7 +616,7 @@ class Menubase
                 $tabMenu[$b][8] = $menu['mainmenu'];
                 $tabMenu[$b][9] = $menu['type'];
                 $tabMenu[$b][10] = $menu['langs'];
-                
+
                 $b++;
                 $a++;
             }
