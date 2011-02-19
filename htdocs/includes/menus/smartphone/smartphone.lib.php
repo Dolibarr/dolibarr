@@ -41,13 +41,15 @@ function print_smartphone_menu($db,$atarget,$type_user,$limitmenuto)
 
 	$submenus='';
 
+	$tabMenu=array();
+
 	$menutop = new Menubase($db,'smartphone','top');
 	$menuleft = new Menubase($db,'smartphone','left');
-	$newTabMenu = $menutop->menuTopCharger('', '', $type_user, 'smartphone');
+	$newTabMenu = $menutop->menuTopCharger('', '', $type_user, 'smartphone',$tabMenu);
 	$numTabMenu = count($newTabMenu);
 
 	print_start_menu_array();
-	for($i=0; $i<$numTabMenu; $i++)
+    for($i=0; $i<$numTabMenu; $i++)
 	{
 		if ($newTabMenu[$i]['enabled'] == true)
 		{
@@ -62,15 +64,15 @@ function print_smartphone_menu($db,$atarget,$type_user,$limitmenuto)
 				else
 				{
 					$menus='';
-					
+
 					if ($limitmenuto > 0)
 					{
 						$newmenu = new Menu();
-						$leftmenu = $menuleft->menuLeftCharger($newmenu,$newTabMenu[$i]['mainmenu'],'',($user->societe_id?1:0),'smartphone');
+						$leftmenu = $menuleft->menuLeftCharger($newmenu,$newTabMenu[$i]['mainmenu'],'',($user->societe_id?1:0),'smartphone',$tabMenu);
 						$menus = $leftmenu->liste;
 						//var_dump($menus);
 					}
-					
+
 					print_start_menu_entry();
 
 					if (is_array($menus) && !empty($menus) && $limitmenuto > 0)
@@ -78,12 +80,12 @@ function print_smartphone_menu($db,$atarget,$type_user,$limitmenuto)
 						$title=$newTabMenu[$i]['titre'];
 						// To remove & and special chars: $title=dol_string_unaccent(dol_string_nospecial(dol_html_entity_decode($newTabMenu[$i]['titre'],ENT_QUOTES,'UTF-8'),'',array('&')));
 						print_text_menu_entry($title);
-						
+
 						$num = count($menus);
 						//var_dump($menus);
-						
+
 					    if ($num > 0) print_start_submenu_array();
-						
+
                         for($j=0; $j<$num; $j++)
 						{
 							$url=dol_buildpath($menus[$j]['url'],1);
@@ -116,14 +118,14 @@ function print_smartphone_menu($db,$atarget,$type_user,$limitmenuto)
 
 							if (empty($menus[$j+1]['level'])) print_end_menu_entry();
 						}
-						
+
                     	if ($num > 0) print_end_menu();
 					}
 					else
 					{
 						$url=dol_buildpath($newTabMenu[$i]['url'],1);
 						$url=preg_replace('/&amp.*/i','',$url);
-						
+
 						print '<a href="'.$url.'"'.($newTabMenu[$i]['atarget']?" target='".$newTabMenu[$i]['atarget']."'":($atarget?" target=$atarget":'')).'>';
 						$title=$newTabMenu[$i]['titre'];
 						// To remove & and special chars: $title=dol_string_unaccent(dol_string_nospecial(dol_html_entity_decode($newTabMenu[$i]['titre'],ENT_QUOTES,'UTF-8'),'',array('&')));
