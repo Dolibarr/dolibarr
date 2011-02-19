@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville        <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -45,13 +45,20 @@ if ($user->societe_id > 0)
 /*
  * Actions
  */
-if ($_REQUEST["action"] == 'confirm_split' && $_REQUEST["confirm"] == 'yes')
+
+if (GETPOST('cancel') && GETPOST('backtopage'))
+{
+     Header("Location: ".GETPOST("backtopage"));
+     exit;
+}
+
+if (GETPOST("action") == 'confirm_split' && GETPOST("confirm") == 'yes')
 {
 	//if ($user->rights->societe->creer)
 	//if ($user->rights->facture->creer)
 
 	$error=0;
-	$remid=isset($_REQUEST["remid"])?$_REQUEST["remid"]:0;
+	$remid=GETPOST("remid")?GETPOST("remid"):0;
 	$discount=new DiscountAbsolute($db);
 	$res=$discount->fetch($remid);
 	if (! $res > 0)
@@ -122,7 +129,7 @@ if ($_REQUEST["action"] == 'confirm_split' && $_REQUEST["confirm"] == 'yes')
 	}
 }
 
-if ($_POST["action"] == 'setremise')
+if (GETPOST("action") == 'setremise')
 {
 	//if ($user->rights->societe->creer)
 	//if ($user->rights->facture->creer)
@@ -144,8 +151,16 @@ if ($_POST["action"] == 'setremise')
 
 			if ($result > 0)
 			{
-				Header("Location: remx.php?id=".$_GET["id"]);
-				exit;
+			    if (GETPOST("backtopage"))
+			    {
+			        Header("Location: ".GETPOST("backtopage"));
+			        exit;
+			    }
+				else
+				{
+				    Header("Location: remx.php?id=".$_GET["id"]);
+				    exit;
+				}
 			}
 			else
 			{
@@ -160,7 +175,7 @@ if ($_POST["action"] == 'setremise')
 	}
 }
 
-if ($_REQUEST["action"] == 'confirm_remove' && $_REQUEST["confirm"]=='yes')
+if (GETPOST("action") == 'confirm_remove' && GETPOST("confirm")=='yes')
 {
 	//if ($user->rights->societe->creer)
 	//if ($user->rights->facture->creer)
@@ -168,12 +183,12 @@ if ($_REQUEST["action"] == 'confirm_remove' && $_REQUEST["confirm"]=='yes')
 	$db->begin();
 
 	$discount = new DiscountAbsolute($db);
-	$result=$discount->fetch($_REQUEST["remid"]);
+	$result=$discount->fetch(GETPOST("remid"));
 	$result=$discount->delete($user);
 	if ($result > 0)
 	{
 		$db->commit();
-		header("Location: ".$_SERVER["PHP_SELF"].'?id='.$_REQUEST['id']);	// To avoid pb whith back
+		header("Location: ".$_SERVER["PHP_SELF"].'?id='.GETPOST('id'));	// To avoid pb whith back
 		exit;
 	}
 	else
@@ -213,6 +228,7 @@ if ($_socid > 0)
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$objsoc->id.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="setremise">';
+    print '<input type="hidden" name="backtopage" value="'.GETPOST('backtopage').'">';
 
 	print '<table class="border" width="100%">';
 
@@ -260,7 +276,14 @@ if ($_socid > 0)
 	print '<tr><td>'.$langs->trans("NoteReason").'</td>';
 	print '<td><input type="text" size="60" name="desc" value="'.$_POST["desc"].'"></td></tr>';
 
-	print '<tr><td align="center" colspan="2"><input type="submit" class="button" value="'.$langs->trans("AddGlobalDiscount").'"></td></tr>';
+	print '<tr><td align="center" colspan="2">';
+	print '<input type="submit" class="button" name="submit" value="'.$langs->trans("AddGlobalDiscount").'">';
+    if (GETPOST("backtopage"))
+    {
+        print '&nbsp; &nbsp; ';
+	    print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+    }
+	print '</td></tr>';
 
 	print "</table></form>";
 

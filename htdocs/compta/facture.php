@@ -1357,7 +1357,7 @@ llxHeader('',$langs->trans('Bill'),'EN:Customers_Invoices|FR:Factures_Clients|ES
 
 $html = new Form($db);
 $formfile = new FormFile($db);
-
+$now=dol_now();
 
 
 /*********************************************************************
@@ -1438,19 +1438,6 @@ if ($_GET['action'] == 'create')
 
 	// Ref
 	print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans('Draft').'</td></tr>';
-
-	/*
-	 L'info "Reference commande client" est une carac de la commande et non de la facture.
-	 Elle devrait donc etre stockee sur l'objet commande liee a la facture et non sur la facture.
-	 Pour ceux qui veulent l'utiliser au niveau de la facture, positionner la
-	 constante FAC_USE_CUSTOMER_ORDER_REF a 1.
-	 */
-	if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF)	// deprecated
-	{
-		print '<tr><td>'.$langs->trans('RefCustomerOrder').'</td><td>';
-		print '<input type="text" name="ref_client" value="'.$ref_client.'">';
-		print '</td></tr>';
-	}
 
 	// Factures predefinies
 	if (empty($_GET['propalid']) && empty($_GET['commandeid']) && empty($_GET['contratid']) && empty($_GET['originid']))
@@ -1536,7 +1523,7 @@ if ($_GET['action'] == 'create')
 
 	// Standard invoice
 	print '<tr height="18"><td width="16px" valign="middle">';
-	print '<input type="radio" name="type" value="0"'.($_POST['type']==0?' checked="true"':'').'>';
+	print '<input type="radio" name="type" value="0"'.(GETPOST('type')==0?' checked="true"':'').'>';
 	print '</td><td valign="middle">';
 	$desc=$html->textwithpicto($langs->trans("InvoiceStandardAsk"),$langs->transnoentities("InvoiceStandardDesc"),1);
 	print $desc;
@@ -1544,7 +1531,7 @@ if ($_GET['action'] == 'create')
 
 	// Deposit
 	print '<tr height="18"><td width="16px" valign="middle">';
-	print '<input type="radio" name="type" value="3"'.($_POST['type']==3?' checked="true"':'').'>';
+	print '<input type="radio" name="type" value="3"'.(GETPOST('type')==3?' checked="true"':'').'>';
 	print '</td><td valign="middle">';
 	$desc=$html->textwithpicto($langs->trans("InvoiceDeposit"),$langs->transnoentities("InvoiceDepositDesc"),1);
 	print $desc;
@@ -1554,7 +1541,7 @@ if ($_GET['action'] == 'create')
 	if ($conf->global->FACTURE_USE_PROFORMAT)
 	{
 		print '<tr height="18"><td width="16px" valign="middle">';
-		print '<input type="radio" name="type" value="4"'.($_POST['type']==4?' checked="true"':'').'>';
+		print '<input type="radio" name="type" value="4"'.(GETPOST('type')==4?' checked="true"':'').'>';
 		print '</td><td valign="middle">';
 		$desc=$html->textwithpicto($langs->trans("InvoiceProForma"),$langs->transnoentities("InvoiceProFormaDesc"),1);
 		print $desc;
@@ -1563,7 +1550,7 @@ if ($_GET['action'] == 'create')
 
 	// Replacement
 	print '<tr height="18"><td valign="middle">';
-	print '<input type="radio" name="type" value="1"'.($_POST['type']==1?' checked=true':'');
+	print '<input type="radio" name="type" value="1"'.(GETPOST('type')==1?' checked=true':'');
 	if (! $options) print ' disabled="true"';
 	print '>';
 	print '</td><td valign="middle">';
@@ -1587,7 +1574,7 @@ if ($_GET['action'] == 'create')
 
 	// Credit note
 	print '<tr height="18"><td valign="middle">';
-	print '<input type="radio" name="type" value="2"'.($_POST['type']==2?' checked=true':'');
+	print '<input type="radio" name="type" value="2"'.(GETPOST('type')==2?' checked=true':'');
 	if (! $optionsav) print ' disabled="true"';
 	print '>';
 	print '</td><td valign="middle">';
@@ -1787,9 +1774,9 @@ if ($_GET['action'] == 'create')
 	{
 		$title=$langs->trans('ProductsAndServices');
 		print_titre($title);
-		
+
 		print '<table class="noborder" width="100%">';
-		
+
 		$objectsrc->printOriginTitleList();
 		$objectsrc->printOriginLinesList($object);
 
@@ -1802,8 +1789,6 @@ else
 	/*
 	 * Show object in view mode
 	 */
-
-	$now=dol_now();
 
 	$id = $facid;
 	$ref= GETPOST('ref');
@@ -2034,38 +2019,6 @@ else
 			print $html->showrefnav($object,'ref','',1,'facnumber','ref',$morehtmlref);
 			print '</td></tr>';
 
-			// Ref client
-			/*
-			L'info "Reference commande client" est une carac de la commande et non de la facture.
-			Elle devrait donc etre stockee sur l'objet commande lie a la facture et non sur la facture.
-			Pour ceux qui utilisent ainsi, positionner la constante FAC_USE_CUSTOMER_ORDER_REF a 1.
-			*/
-			if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF)	// deprecated
-			{
-				print '<tr><td>';
-				print '<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
-				print $langs->trans('RefCustomerOrder').'</td><td align="left">';
-				print '</td>';
-				if ($_GET['action'] != 'RefCustomerOrder' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=RefCustomerOrder&amp;facid='.$object->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
-				print '</tr></table>';
-				print '</td><td colspan="5">';
-				if ($user->rights->facture->creer && $_GET['action'] == 'RefCustomerOrder')
-				{
-					print '<form action="facture.php?facid='.$object->id.'" method="post">';
-					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-					print '<input type="hidden" name="action" value="set_ref_client">';
-					print '<input type="text" class="flat" size="20" name="ref_client" value="'.$object->ref_client.'">';
-					print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
-					print '</form>';
-				}
-				else
-				{
-					print $object->ref_client;
-				}
-				print '</td>';
-				print '</tr>';
-			}
-
 			// Third party
 			print '<tr><td>'.$langs->trans('Company').'</td>';
 			print '<td colspan="5">'.$soc->getNomUrl(1,'compta');
@@ -2111,18 +2064,21 @@ else
 			}
 			print '</td></tr>';
 
-			// Discounts
-			print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="5">';
+			// Relative and absolute discounts
+			print '<tr><td>'.$langs->trans('Discounts');
+			print '</td><td colspan="5">';
 			if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
 			else print $langs->trans("CompanyHasNoRelativeDiscount");
 			print '. ';
+
 			if ($absolute_discount > 0)
 			{
 				if ($object->statut > 0 || $object->type == 2 || $object->type == 3)
 				{
 					if ($object->statut == 0)
 					{
-						print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->monnaie)).'. ';
+						print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->monnaie));
+						print '. ';
 					}
 					else
 					{
@@ -2141,10 +2097,10 @@ else
 				}
 				else
 				{
-					// Remise dispo de type non avoir
+					// Remise dispo de type remise fixe (not credit note)
 					$filter='fk_facture_source IS NULL';
 					print '<br>';
-					$html->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id,0,'remise_id',$soc->id,$absolute_discount,$filter,$resteapayer);
+					$html->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0,  'remise_id',$soc->id, $absolute_discount, $filter, $resteapayer);
 				}
 			}
 			if ($absolute_creditnote > 0)
@@ -2157,17 +2113,30 @@ else
 						$text=$langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->monnaie));
 						print $html->textwithpicto($text,$langs->trans("CreditNoteDepositUse"));
 					}
-					else print $langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->monnaie)).'.';
+					else
+					{
+					    print $langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->monnaie)).'.';
+					}
 				}
 				else
 				{
 					// Remise dispo de type avoir
 					$filter='fk_facture_source IS NOT NULL';
 					if (! $absolute_discount) print '<br>';
-					$html->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id,0,'remise_id_for_payment',$soc->id,$absolute_creditnote,$filter,$resteapayer);
+					$html->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0, 'remise_id_for_payment', $soc->id, $absolute_creditnote, $filter, $resteapayer);
 				}
 			}
-			if (! $absolute_discount && ! $absolute_creditnote) print $langs->trans("CompanyHasNoAbsoluteDiscount").'.';
+			if (! $absolute_discount && ! $absolute_creditnote)
+			{
+			    print $langs->trans("CompanyHasNoAbsoluteDiscount").'.';
+			}
+            if ($object->statut == 0 && $object->type != 2 && $object->type != 3)
+            {
+			    if (! $absolute_discount && ! $absolute_creditnote) print '<br>';
+                $addabsolutediscount=' <a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$soc->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'?facid='.$object->id.'">'.$langs->trans("AddDiscount").'</a>';
+                $addcreditnote=' <a href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&socid='.$soc->id.'&type=2&backtopage='.urlencode($_SERVER["PHP_SELF"]).'?facid='.$object->id.'">'.$langs->trans("AddCreditNote").'</a>';
+			    print $addabsolutediscount.' &nbsp; - &nbsp; '.$addcreditnote;
+			}
 			print '</td></tr>';
 
 			// Date invoice
@@ -2202,7 +2171,6 @@ else
 			 */
 
 			$nbrows=8;
-			if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF) $nbrows++;
 			if ($conf->projet->enabled) $nbrows++;
 
 			//Local taxes

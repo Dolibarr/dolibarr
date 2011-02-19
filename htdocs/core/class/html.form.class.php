@@ -2151,16 +2151,17 @@ class Form
 
 
     /**
-     *    	\brief      Affiche formulaire de selection de la remise fixe
-     *    	\param      page        	Page URL where form is shown
-     *    	\param      selected    	Value pre-selected
-     *		\param      htmlname    	Nom du formulaire select. Si none, non modifiable
-     *		\param		socid			Third party id
-     * 		\param		amount			Total amount available
-     * 	  	\param		filter			SQL filter on discounts
-     * 	  	\param		maxvalue		Max value for lines that can be selected
+     *    	Show a select box with available absolute discounts
+     *    	@param      page        	Page URL where form is shown
+     *    	@param      selected    	Value pre-selected
+     *		@param      htmlname    	Nom du formulaire select. Si none, non modifiable
+     *		@param		socid			Third party id
+     * 		@param		amount			Total amount available
+     * 	  	@param		filter			SQL filter on discounts
+     * 	  	@param		maxvalue		Max value for lines that can be selected
+     *      @param      more            More string to add
      */
-    function form_remise_dispo($page, $selected='', $htmlname='remise_id',$socid, $amount, $filter='', $maxvalue=0)
+    function form_remise_dispo($page, $selected='', $htmlname='remise_id',$socid, $amount, $filter='', $maxvalue=0, $more='')
     {
         global $conf,$langs;
         if ($htmlname != "none")
@@ -2169,7 +2170,7 @@ class Form
             print '<input type="hidden" name="action" value="setabsolutediscount">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
-            print '<tr><td>';
+            print '<tr><td nowrap="nowrap">';
             if (! $filter || $filter=='fk_facture_source IS NULL') print $langs->trans("CompanyHasAbsoluteDiscount",price($amount),$langs->transnoentities("Currency".$conf->monnaie)).': ';
             else print $langs->trans("CompanyHasCreditNote",price($amount),$langs->transnoentities("Currency".$conf->monnaie)).': ';
             //			print $langs->trans("AvailableGlobalDiscounts").': ';
@@ -2177,7 +2178,7 @@ class Form
             if ($filter) $newfilter.=' AND '.$filter;
             $nbqualifiedlines=$this->select_remises('',$htmlname,$newfilter,$socid,$maxvalue);
             print '</td>';
-            print '<td align="left">';
+            print '<td>';
             if ($nbqualifiedlines > 0)
             {
                 print ' &nbsp; <input type="submit" class="button" value="';
@@ -2185,6 +2186,7 @@ class Form
                 else print $langs->trans("UseCredit");
                 print '" title="'.$langs->trans("UseCreditNoteInInvoicePayment").'">';
             }
+            if ($more) print $more;
             print '</td>';
             print '</tr></table></form>';
         }

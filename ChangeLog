@@ -5,6 +5,7 @@ $Id$
 
 ***** ChangeLog for 3.1 compared to 3.0 *****
 For users:
+- New: Can add a discount for third party, during invoice edition.
 - New: A specialized menu is now used when using smartphones.
 - New: Can add information on current user on odt generation
 - New: Prefix on third party is not used by default. Hidden option
