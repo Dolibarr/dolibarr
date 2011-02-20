@@ -34,7 +34,7 @@ StatusSendingValidated=Validat (productes a enviar o enviats)
 StatusSendingCanceledShort=Anul.lat
 StatusSendingDraftShort=Esborrany
 StatusSendingValidatedShort=Validat
-SendingSheet=Fitxa d'enviament
+SendingSheet=Nota de lliurament
 Carriers=Transportistes
 Carrier=Transportista
 CarriersArea=Àrea transportistes
@@ -57,3 +57,4 @@ SendingMethodCOLSUI=Colissimo
 # ModelDocument
 DocumentModelSirocco=Model simple nota de lliurament
 DocumentModelTyphon=Model complet de nota de lliurament (logo...)
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constant EXPEDITION_ADDON_NUMBER no definida

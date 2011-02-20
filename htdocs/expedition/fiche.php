@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -701,7 +702,16 @@ else
 			 */
 			if ($_GET["action"] == 'valid')
 			{
-				$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$expedition->id,$langs->trans('ValidateSending'),$langs->trans("ConfirmValidateSending",$expedition->ref),'confirm_valid','',0,1);
+				$objectref = substr($expedition->ref, 1, 4);
+				if ($objectref == 'PROV')
+				{
+					$numref = $expedition->getNextNumRef($soc);
+				}
+				else
+				{
+					$numref = $expedition->ref;
+				}
+				$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$expedition->id,$langs->trans('ValidateSending'),$langs->trans("ConfirmValidateSending",$numref),'confirm_valid','',0,1);
 				if ($ret == 'html') print '<br>';
 			}
 			/*

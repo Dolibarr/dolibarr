@@ -40,7 +40,7 @@ Carrier=Carrier
 CarriersArea=Carriers area
 NewCarrier=New carrier
 ConfirmDeleteSending=Are you sure you want to delete this shipment ?
-ConfirmValidateSending=Are you sure you want to validate this shipment ?
+ConfirmValidateSending=Are you sure you want to validate this shipment with reference <b>%s</b> ?
 ConfirmCancelSending=Are you sure you want to cancel this shipment ?
 GenericTransport=Generic transport
 Enlevement=Gotten by customer
@@ -59,3 +59,5 @@ SendingMethodCOLSUI=Colissimo
 # ModelDocument
 DocumentModelSirocco=Simple document model for delivery receipts
 DocumentModelTyphon=More complete document model for delivery receipts (logo...)
+
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constant EXPEDITION_ADDON_NUMBER not defined

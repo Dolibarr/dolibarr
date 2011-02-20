@@ -40,7 +40,7 @@ Carrier=Transporteur
 CarriersArea=Espace transporteurs
 NewCarrier=Nouveau transporteur
 ConfirmDeleteSending=Êtes-vous sûr de vouloir supprimer cette expédition ?
-ConfirmValidateSending=Êtes-vous sûr de vouloir valider cette expédition ?
+ConfirmValidateSending=Êtes-vous sûr de vouloir valider cette expédition sous la référence <b>%s</b>?
 ConfirmCancelSending=Êtes-vous sûr de vouloir annuler cette expédition ?
 GenericTransport=Transporteur générique
 Enlevement=Enlèvement sur place par le client
@@ -59,3 +59,5 @@ SendingMethodCOLSUI=Colissimo Suivi
 # ModelDocument
 DocumentModelSirocco=Modèle de bon de réception/livraison simple
 DocumentModelTyphon=Modèle de bon de réception/livraison complet (logo...)
+
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constante EXPEDITION_ADDON_NUMBER non définie

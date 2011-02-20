@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2010 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2006-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2011      Juanjo Menent		 <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,7 +85,56 @@ class Expedition extends CommonObject
 		$this->statuts[0]  = 'StatusSendingDraft';
 		$this->statuts[1]  = 'StatusSendingValidated';
 	}
+	
+		/**
+	 *	Return next contract ref
+	 *	@param		soc		objet society
+	 *	@return     string	free reference for contract
+	 */
+	function getNextNumRef($soc)
+	{
+		global $db, $langs, $conf;
+		$langs->load("sendings");
 
+		$dir = DOL_DOCUMENT_ROOT . "/includes/modules/expedition";
+
+		if (! empty($conf->global->EXPEDITION_ADDON_NUMBER))
+		{
+			$file = $conf->global->EXPEDITION_ADDON_NUMBER.".php";
+
+			// Chargement de la classe de numerotation
+			$classname = $conf->global->EXPEDITION_ADDON_NUMBER;
+
+			$result=include_once($dir.'/'.$file);
+			if ($result)
+			{
+				$obj = new $classname();
+				$numref = "";
+				$numref = $obj->getNextValue($soc,$this);
+
+				if ( $numref != "")
+				{
+					return $numref;
+				}
+				else
+				{
+					dol_print_error($db,"Expedition::getNextNumRef ".$obj->error);
+					return "";
+				}
+			}
+			else
+			{
+				print $langs->trans("Error")." ".$langs->trans("Error_EXPEDITION_ADDON_NUMBER_NotDefined");
+				return "";
+			}
+		}
+		else
+		{
+			print $langs->trans("Error")." ".$langs->trans("Error_EXPEDITION_ADDON_NUMBER_NotDefined");
+			return "";
+		}
+	}
+	
 	/**
 	 *    \brief      Cree expedition en base
 	 *    \param      user        Objet du user qui cree
@@ -364,8 +414,22 @@ class Expedition extends CommonObject
 		$error = 0;
 
 		// Define new ref
-		$num = "EXP".$this->id;
+		$soc = new Societe($this->db);
+		$soc->fetch($this->socid);
 
+		// Class of company linked to order
+		$result=$soc->set_as_client();
+
+		// Define new ref
+		if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref)))
+		{
+			$num = $this->getNextNumRef($soc);
+		}
+		else
+		{
+			$num = "EXP".$this->id;
+		}
+		
 		$now=dol_now();
 
 		// Validate
