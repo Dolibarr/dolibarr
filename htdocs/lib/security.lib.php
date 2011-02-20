@@ -26,10 +26,64 @@
 
 
 /**
- *	\brief      Show Dolibarr default login page
- *	\param		langs		Lang object (must be initialized by a new).
- *	\param		conf		Conf object
- *	\param		mysoc		Company object
+ *   Return list of login methods provided by external third party modules.
+ *   @return	array
+ */
+function getLoginMethod()
+{
+	global $conf,$langs;
+
+	$login = '';
+
+	foreach($conf->login_method_modules as $dir)
+	{
+		// Check if directory exists
+		if (!is_dir($dir)) continue;
+
+		$handle=opendir($dir);
+        if (is_resource($handle))
+        {
+    		while (($file = readdir($handle))!==false)
+    		{
+    			if (is_readable($dir.'/'.$file) && preg_match('/^functions_([^_]+)\.php/',$file,$reg))
+    			{
+    				$authfile = $dir.'/'.$file;
+    				$mode = $reg[1];
+
+    				$result=include_once($authfile);
+    				if ($result)
+    				{
+    					// Call function to check user/password
+    					$usertotest=$_POST["username"];
+    					$passwordtotest=$_POST["password"];
+    					$function='check_user_password_'.$mode;
+    					$login=$function($usertotest,$passwordtotest);
+    					if ($login)
+    					{
+    						$conf->authmode=$mode;	// This properties is defined only when logged
+    					}
+    				}
+    				else
+    				{
+    					dol_syslog("Authentification ko - failed to load file '".$authfile."'",LOG_ERR);
+    					sleep(1);
+    					$langs->load('main');
+    					$langs->load('other');
+    					$_SESSION["dol_loginmesg"]=$langs->trans("ErrorFailedToLoadLoginFileForMode",$mode);
+    				}
+    			}
+    		}
+        }
+		closedir($handle);
+	}
+	return $login;
+}
+
+/**
+ *	Show Dolibarr default login page
+ *	@param		langs		Lang object (must be initialized by a new).
+ *	@param		conf		Conf object
+ *	@param		mysoc		Company object
  */
 function dol_loginfunction($langs,$conf,$mysoc)
 {
@@ -210,11 +264,11 @@ function dol_loginfunction($langs,$conf,$mysoc)
 }
 
 /**
- *  \brief      Fonction pour initialiser un salt pour la fonction crypt
- *  \param		$type		2=>renvoi un salt pour cryptage DES
+ *  Fonction pour initialiser un salt pour la fonction crypt
+ *  @param		$type		2=>renvoi un salt pour cryptage DES
  *							12=>renvoi un salt pour cryptage MD5
  *							non defini=>renvoi un salt pour cryptage par defaut
- *	\return		string		Chaine salt
+ *	@return		string		Chaine salt
  */
 function makesalt($type=CRYPT_SALT_LENGTH)
 {
@@ -238,9 +292,9 @@ function makesalt($type=CRYPT_SALT_LENGTH)
 }
 
 /**
- *  \brief   	Encode\decode database password in config file
- *  \param   	level   	Encode level: 0 no encoding, 1 encoding
- *	\return		int			<0 if KO, >0 if OK
+ *  Encode\decode database password in config file
+ *  @param   	level   	Encode level: 0 no encoding, 1 encoding
+ *	@return		int			<0 if KO, >0 if OK
  */
 function encodedecode_dbpassconf($level=0)
 {
@@ -340,9 +394,9 @@ function encodedecode_dbpassconf($level=0)
 }
 
 /**
- *	\brief   Encode une chaine de caractere
- *	\param   chaine			chaine de caracteres a encoder
- *	\return  string_coded  	chaine de caracteres encodee
+ *	Encode a string
+ *	@param   chaine			chaine de caracteres a encoder
+ *	@return  string_coded  	chaine de caracteres encodee
  */
 function dol_encode($chain)
 {
@@ -356,9 +410,9 @@ function dol_encode($chain)
 }
 
 /**
- *	\brief   Decode une chaine de caractere
- *	\param   chain    chaine de caracteres a decoder
- *	\return  string_coded  chaine de caracteres decodee
+ *	Decode a string
+ *	@param   chain    chaine de caracteres a decoder
+ *	@return  string_coded  chaine de caracteres decodee
  */
 function dol_decode($chain)
 {
@@ -376,7 +430,6 @@ function dol_decode($chain)
 
 /**
  * Return array of ciphers mode available
- *
  * @return strAv	Configuration file content
  */
 function dol_efc_config()

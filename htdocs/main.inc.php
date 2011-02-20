@@ -364,6 +364,7 @@ if (! defined('NOLOGIN'))
 		// Validation of third party module login method
 		if (is_array($conf->login_method_modules) && !empty($conf->login_method_modules))
 		{
+			include_once(DOL_DOCUMENT_ROOT . "/lib/security.lib.php");
 			$login = getLoginMethod();
 			if ($login)	$test=false;
 		}
@@ -1468,60 +1469,6 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$
 	return $ret;
 }
 
-/**
- *   Return list of login method of third party module.
- *   @return	array
- *   TODO Move this into security.lib.php
- */
-function getLoginMethod()
-{
-	global $conf,$langs;
-
-	$login = '';
-
-	foreach($conf->login_method_modules as $dir)
-	{
-		// Check if directory exists
-		if (!is_dir($dir)) continue;
-
-		$handle=opendir($dir);
-        if (is_resource($handle))
-        {
-    		while (($file = readdir($handle))!==false)
-    		{
-    			if (is_readable($dir.'/'.$file) && preg_match('/^functions_([^_]+)\.php/',$file,$reg))
-    			{
-    				$authfile = $dir.'/'.$file;
-    				$mode = $reg[1];
-
-    				$result=include_once($authfile);
-    				if ($result)
-    				{
-    					// Call function to check user/password
-    					$usertotest=$_POST["username"];
-    					$passwordtotest=$_POST["password"];
-    					$function='check_user_password_'.$mode;
-    					$login=$function($usertotest,$passwordtotest);
-    					if ($login)
-    					{
-    						$conf->authmode=$mode;	// This properties is defined only when logged
-    					}
-    				}
-    				else
-    				{
-    					dol_syslog("Authentification ko - failed to load file '".$authfile."'",LOG_ERR);
-    					sleep(1);
-    					$langs->load('main');
-    					$langs->load('other');
-    					$_SESSION["dol_loginmesg"]=$langs->trans("ErrorFailedToLoadLoginFileForMode",$mode);
-    				}
-    			}
-    		}
-        }
-		closedir($handle);
-	}
-	return $login;
-}
 
 /**
  *		Show HTML footer
