@@ -91,7 +91,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 	 *
 	 * @param $object
 	 */
-	function get_substitutionarray_object($object)
+	function get_substitutionarray_thirdparty($object)
 	{
 		global $conf;
 
@@ -120,6 +120,32 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 			'company_note'=>$object->note
 		);
 	}
+
+    /**
+     * Define array with couple subtitution key => subtitution value
+     *
+     * @param $object
+     */
+    function get_substitutionarray_object($object)
+    {
+        global $conf;
+
+        return array(
+            'object_id'=>$object->id,
+            'object_ref'=>$object->ref,
+            'object_ref_customer'=>$object->ref_client,
+            'object_ref_supplier'=>$object->ref_fournisseur,
+            'object_date'=>$object->date,
+            'object_date_creation'=>$object->date_creation,
+            'object_date_validation'=>$object->date_validation,
+            'object_total_ht'=>$object->total_ht,
+            'object_total_vat'=>$object->total_tva,
+            'object_total_ttc'=>$object->total_ttc,
+            'object_vatrate'=>$object->tva,
+            'object_note_private'=>$object->note,
+            'object_note'=>$object->note_public
+        );
+    }
 
 	/**		\brief      Return description of a module
 	 *      \return     string      Description
@@ -178,7 +204,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 			$nb++;
 			if ($nb >= 5) { $texthelp.='...<br>'; break; }
 		}
-		$tmparray=$this->get_substitutionarray_object($dummy);
+		$tmparray=$this->get_substitutionarray_thirdparty($dummy);
 		$nb=0;
 		foreach($tmparray as $key => $val)
 		{
@@ -287,7 +313,29 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 
 				create_exdir($conf->facture->dir_temp);
 
-				// Open and load template
+
+                // If BILLING contact defined on invoice, we use it
+                $usecontact=false;
+                $arrayidcontact=$object->getIdContact('external','BILLING');
+                if (sizeof($arrayidcontact) > 0)
+                {
+                    $usecontact=true;
+                    $result=$object->fetch_contact($arrayidcontact[0]);
+                }
+
+                // Recipient name
+                if (! empty($usecontact))
+                {
+                    // On peut utiliser le nom de la societe du contact
+                    if ($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) $socobject = $object->contact;
+                    else $socobject = $object->client;
+                }
+                else
+                {
+                    $socobject=$object->client;
+                }
+
+                // Open and load template
 				require_once(DOL_DOCUMENT_ROOT.'/includes/odtphp/odf.php');
 				$odfHandler = new odf($srctemplatepath, array(
 						'PATH_TO_TMP'	  => $conf->facture->dir_temp,
@@ -337,7 +385,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 					{
 					}
 				}
-				$tmparray=$this->get_substitutionarray_object($object);
+				$tmparray=$this->get_substitutionarray_thirdparty($socobject);
 				foreach($tmparray as $key=>$value)
 				{
 					try {
@@ -355,6 +403,25 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 					{
 					}
 				}
+
+			    $tmparray=$this->get_substitutionarray_object($object);
+                foreach($tmparray as $key=>$value)
+                {
+                    try {
+                        if (preg_match('/logo$/',$key)) // Image
+                        {
+                            if (file_exists($value)) $odfHandler->setImage($key, $value);
+                            else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
+                        }
+                        else    // Text
+                        {
+                            $odfHandler->setVars($key, $value, true, 'UTF-8');
+                        }
+                    }
+                    catch(OdfException $e)
+                    {
+                    }
+                }
 
 				// Write new file
 				//$result=$odfHandler->exportAsAttachedFile('toto');

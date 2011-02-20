@@ -81,7 +81,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 	 *
 	 * @param $object
 	 */
-	function get_substitutionarray_object($object)
+	function get_substitutionarray_thirdparty($object)
 	{
 		global $conf;
 
@@ -168,7 +168,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 			$nb++;
 			if ($nb >= 5) { $texthelp.='...<br>'; break; }
 		}
-		$tmparray=$this->get_substitutionarray_object($dummy);
+		$tmparray=$this->get_substitutionarray_thirdparty($dummy);
 		$nb=0;
 		foreach($tmparray as $key => $val)
 		{
@@ -209,11 +209,11 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 	}
 
 	/**
-	 *	\brief      Function to build a document on disk using the generic odt module.
-	 *	\param	    object				Object source to build document
-	 *	\param		outputlangs			Lang output object
-	 * 	\param		$srctemplatepath	Full path of source filename for generator using a template file
-	 *	\return	    int         		1 if OK, <=0 if KO
+	 *	Function to build a document on disk using the generic odt module.
+	 *	@param	    object				Object source to build document
+	 *	@param		outputlangs			Lang output object
+	 * 	@param		srctemplatepath	Full path of source filename for generator using a template file
+	 *	@return	    int         		1 if OK, <=0 if KO
 	 */
 	function write_file($object,$outputlangs,$srctemplatepath)
 	{
@@ -330,7 +330,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 					{
 					}
 				}
-				$tmparray=$this->get_substitutionarray_object($object);
+				$tmparray=$this->get_substitutionarray_thirdparty($object);
 				foreach($tmparray as $key=>$value)
 				{
 					try {
