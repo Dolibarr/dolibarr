@@ -215,7 +215,7 @@ llxHeaderPaypal($langs->trans("PaymentForm"));
 
 
 // Common variables
-$creditor=$mysoc->nom;
+$creditor=$mysoc->name;
 $paramcreditor='PAYPAL_CREDITOR_'.$suffix;
 if (! empty($conf->global->$paramcreditor)) $creditor=$conf->global->$paramcreditor;
 else if (! empty($conf->global->PAYPAL_CREDITOR)) $creditor=$conf->global->PAYPAL_CREDITOR;

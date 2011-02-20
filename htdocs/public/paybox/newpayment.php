@@ -134,7 +134,7 @@ llxHeaderPayBox($langs->trans("PaymentForm"));
 
 
 // Common variables
-$creditor=$mysoc->nom;
+$creditor=$mysoc->name;
 $paramcreditor='PAYBOX_CREDITOR_'.$suffix;
 if (! empty($conf->global->$paramcreditor)) $creditor=$conf->global->$paramcreditor;
 else if (! empty($conf->global->PAYBOX_CREDITOR)) $creditor=$conf->global->PAYBOX_CREDITOR;
