@@ -17,7 +17,7 @@
  *
  * $Id$
  */
-header("Content-type: text/html; charset=".$conf->file->character_set_client);
+top_httphead();
 ?>
 <!DOCTYPE html>
 <html>
