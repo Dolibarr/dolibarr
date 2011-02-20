@@ -104,7 +104,7 @@ if ($result)
 	print "<table class=\"noborder\" width=\"100%\">";
 
 	print '<tr class="liste_titre">';
-	print "<td><a href=\"".$_SERVER["PHP_SELF"]."?page=$page&sortorder=ASC&sortfield=prenom\">".$langs->trans("Surname")."</a> <a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&sortorder=ASC&sortfield=nom\">".$langs->trans("Name")."</a> / <a href=\"".$_SERVER["PHP_SELF"]."?page=$page&sortorder=ASC&sortfield=societe\">".$langs->trans("Company")."</a></td>\n";
+	print "<td><a href=\"".$_SERVER["PHP_SELF"]."?page=$page&sortorder=ASC&sortfield=prenom\">".$langs->trans("Surname")."</a> <a href=\"".$_SERVER['PHP_SELF']."?page=$page&sortorder=ASC&sortfield=nom\">".$langs->trans("Name")."</a> / <a href=\"".$_SERVER["PHP_SELF"]."?page=$page&sortorder=ASC&sortfield=societe\">".$langs->trans("Company")."</a></td>\n";
 	print_liste_field_titre($langs->trans("DateToBirth"),"public_list.php","naiss","",$param,$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("EMail"),"public_list.php","email","",$param,$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Zip"),"public_list.php","cp","",$param,$sortfield,$sortorder);
