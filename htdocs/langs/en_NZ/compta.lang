@@ -1,0 +1,16 @@
+# Dolibarr language file - en_NZ - compta
+# This file contains only line that must differs from en_US
+CHARSET=UTF-8
+AmountHTVATRealReceived=Amount excl GST collected
+AmountHTVATRealPaid=Amount excl GST paid
+VATToPay=GST to pay
+VATReceived=GST received
+VATToCollect=GST to collect
+VATSummary=GST Summary
+VATPaid=GST paid
+VATCollected=GST collected
+NewVATPayment=New GST payment
+VATPayment=GST Payment
+VATPayments=GST Payments
+TotalToPay=Total to pay
+TotalVATReceived=Total GST received
