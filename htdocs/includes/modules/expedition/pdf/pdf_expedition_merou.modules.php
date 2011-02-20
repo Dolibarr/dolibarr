@@ -379,7 +379,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		}
 		else
 		{
-			$text=$this->emetteur->nom;
+			$text=$this->emetteur->name;
 			$pdf->MultiCell(100, 3, $outputlangs->convToOutputCharset($text), 0, 'L');
 		}
 
@@ -439,7 +439,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		// Sender name
 		$pdf->SetTextColor(0,0,60);
 		$pdf->SetXY($blSocX,$blSocY);
-		$pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
+		$pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
 		$pdf->SetTextColor(0,0,0);
 
 		// Sender properties

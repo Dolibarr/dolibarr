@@ -401,7 +401,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 	            {
 	                $pdf->SetXY($this->marge_gauche, $posy);
 	                $pdf->SetFont('','B',$default_font_size - 2);
-	                $pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedToShort').' '.$outputlangs->convToOutputCharset($this->emetteur->nom).' '.$outputlangs->transnoentities('SendTo').':',0,'L',0);
+	                $pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedToShort').' '.$outputlangs->convToOutputCharset($this->emetteur->name).' '.$outputlangs->transnoentities('SendTo').':',0,'L',0);
 		            $posy=$pdf->GetY()+1;
 
 		            $pdf->SetXY($this->marge_gauche, $posy);
@@ -516,7 +516,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 		// Sender name
 		$pdf->SetTextColor(0,0,00);
 		$pdf->SetFont('','B', $default_font_size);
-		$pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
+		$pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
 
 		// Sender properties
 		$carac_emetteur='';

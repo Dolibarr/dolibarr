@@ -365,7 +365,7 @@ class pdf_baleine extends ModelePDFProjects
 				$pdf->MultiCell(100, 3, $langs->transnoentities("ErrorGoToModuleSetup"), 0, 'L');
 			}
 		}
-		else $pdf->MultiCell(100, 4, $outputlangs->transnoentities($this->emetteur->nom), 0, 'L');
+		else $pdf->MultiCell(100, 4, $outputlangs->transnoentities($this->emetteur->name), 0, 'L');
 
 		$pdf->SetFont('','B', $default_font_size + 3);
 		$pdf->SetXY(100,$posy);

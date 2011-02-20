@@ -22,7 +22,7 @@
  */
 
 /**
- * 		\file       htdocs/includes/modules/facture/pdf/pdf_oursin.modules.php
+ * 		\file       htdocs/includes/modules/facture/doc/pdf_oursin.modules.php
  * 		\ingroup    facture
  * 		\brief      Fichier de la classe permettant de generer les factures au modele oursin
  * 		\author	    Sylvain SCATTOLINI base sur un modele de Laurent Destailleur
@@ -541,7 +541,7 @@ class pdf_oursin extends ModelePDFFactures
 					{
 						$pdf->SetXY($this->marge_gauche, $posy);
 						$pdf->SetFont('','B', $default_font_size - 2);
-						$pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedToShort').' '.$outputlangs->convToOutputCharset($this->emetteur->nom).' '.$outputlangs->transnoentities('SendTo').':',0,'L',0);
+						$pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedToShort').' '.$outputlangs->convToOutputCharset($this->emetteur->name).' '.$outputlangs->transnoentities('SendTo').':',0,'L',0);
 						$posy=$pdf->GetY()+1;
 
 						$pdf->SetXY($this->marge_gauche, $posy);
@@ -817,7 +817,7 @@ class pdf_oursin extends ModelePDFFactures
 		}
 		else
 		{
-			$text=$this->emetteur->nom;
+			$text=$this->emetteur->name;
 			$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 		}
 
@@ -841,7 +841,7 @@ class pdf_oursin extends ModelePDFFactures
 		// Sender name
 		$pdf->SetTextColor(0,0,60);
 		$pdf->SetFont('','B', $default_font_size);
-		$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
+		$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
 
 		// Sender properties
 		$carac_emetteur = pdf_build_address($outputlangs,$this->emetteur);

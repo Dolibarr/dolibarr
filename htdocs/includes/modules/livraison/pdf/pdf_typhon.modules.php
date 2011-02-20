@@ -514,7 +514,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				$pdf->MultiCell(100, 3, $langs->transnoentities("ErrorGoToModuleSetup"), 0, 'L');
 			}
 		}
-		else $pdf->MultiCell(100, 4, $this->emetteur->nom, 0, 'L');
+		else $pdf->MultiCell(100, 4, $this->emetteur->name, 0, 'L');
 
 		$pdf->SetFont('','B', $default_font_size + 2);
 		$pdf->SetXY(100,$posy);
@@ -597,7 +597,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			// Nom emetteur
 			$pdf->SetTextColor(0,0,60);
 			$pdf->SetFont('','B',$default_font_size);
-			$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
+			$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
 
 			// Sender properties
 			$carac_emetteur = pdf_build_address($outputlangs,$this->emetteur);

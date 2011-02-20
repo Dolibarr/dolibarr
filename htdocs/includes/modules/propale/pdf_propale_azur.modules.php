@@ -531,7 +531,7 @@ class pdf_propale_azur extends ModelePDFPropales
 					{
 						$pdf->SetXY($this->marge_gauche, $posy);
 						$pdf->SetFont('','B', $default_font_size - 2);
-						$pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedToShort').' '.$outputlangs->convToOutputCharset($this->emetteur->nom).' '.$outputlangs->transnoentities('SendTo').':',0,'L',0);
+						$pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedToShort').' '.$outputlangs->convToOutputCharset($this->emetteur->name).' '.$outputlangs->transnoentities('SendTo').':',0,'L',0);
 						$posy=$pdf->GetY()+1;
 
 						$pdf->SetXY($this->marge_gauche, $posy);
@@ -886,7 +886,7 @@ class pdf_propale_azur extends ModelePDFPropales
 		}
 		else
 		{
-			$text=$this->emetteur->nom;
+			$text=$this->emetteur->name;
 			$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 		}
 
@@ -965,7 +965,7 @@ class pdf_propale_azur extends ModelePDFPropales
 			$pdf->SetXY($posx+2,$posy+3);
 			$pdf->SetTextColor(0,0,60);
 			$pdf->SetFont('','B',$default_font_size);
-			$pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
+			$pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
 
 			// Show sender information
 			$pdf->SetFont('','', $default_font_size - 1);

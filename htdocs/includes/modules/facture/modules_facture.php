@@ -172,7 +172,6 @@ function facture_pdf_create($db, $object, $message, $modele, $outputlangs)
 	}
 
     // If selected modele is a filename template (then $modele="modelname:filename")
-print 'eee'.$modele;exit;
 	$tmp=explode(':',$modele,2);
     if (! empty($tmp[1]))
     {
@@ -205,7 +204,7 @@ print 'eee'.$modele;exit;
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
 		$sav_charset_output=$outputlangs->charset_output;
-		if ($obj->write_file($object, $outputlangs, $dir.$file) > 0)
+		if ($obj->write_file($object, $outputlangs, $srctemplatepath) > 0)
 		{
 			// Success in building document. We build meta file.
 			facture_meta_create($db, $object->id);

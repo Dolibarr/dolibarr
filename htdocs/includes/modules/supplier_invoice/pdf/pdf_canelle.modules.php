@@ -282,16 +282,16 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
 					$tvaligne=$object->lines[$i]->total_tva;
-								
+
 					$localtax1ligne=$object->lines[$i]->total_localtax1;
 					$localtax2ligne=$object->lines[$i]->total_localtax2;
-					
+
 					if ($object->remise_percent) $tvaligne-=($tvaligne*$object->remise_percent)/100;
-					
+
 					$vatrate=(string) $object->lines[$i]->tva_tx;
 					$localtax1rate=(string) $object->lines[$i]->localtax1_tx;
 					$localtax2rate=(string) $object->lines[$i]->localtax2_tx;
-					
+
 					if (($object->lines[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
 					$this->tva[$vatrate] += $tvaligne;
 					$this->localtax1[$localtax1rate]+=$localtax1ligne;
@@ -451,7 +451,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalVAT"), 0, 'L', 1);
 			$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_tva), 0, 'R', 1);
-			
+
 			// Total LocalTax1
 			if (! empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on' && $object->total_localtax1>0)
 			{
@@ -528,7 +528,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 						$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
 					}
 				}
-			}	
+			}
 		}
 
 		$useborder=0;
@@ -756,7 +756,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		}
 		else
 		{*/
-			$text=$this->emetteur->nom;
+			$text=$this->emetteur->name;
 			$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 		//}
 

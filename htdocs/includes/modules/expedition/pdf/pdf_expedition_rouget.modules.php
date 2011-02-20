@@ -113,7 +113,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 		}
 		else
 		{
-			$text=$this->emetteur->nom;
+			$text=$this->emetteur->name;
 			$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 		}
 

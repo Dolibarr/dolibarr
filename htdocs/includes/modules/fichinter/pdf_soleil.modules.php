@@ -209,7 +209,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				// Sender name
 				$pdf->SetTextColor(0,0,60);
 				$pdf->SetFont('','B', $default_font_size);
-				$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
+				$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
 
 				// Sender properties
 				$carac_emetteur = pdf_build_address($outputlangs,$this->emetteur);
