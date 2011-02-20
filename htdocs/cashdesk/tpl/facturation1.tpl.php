@@ -185,19 +185,17 @@ $Id$
 				</td>
 			</tr>
 
-			<script type="text/javascript">
-				Calendar.setup ({
-					inputField	: "txtDatePaiement",
-					ifFormat	: "%Y-%m-%d",
-					button		: "btnCalendrier"
-				});
-			</script>
 		</table>
 </fieldset>
 </form>
 
 
 <script type="text/javascript">
+	Calendar.setup ({
+		inputField	: "txtDatePaiement",
+		ifFormat	: "%Y-%m-%d",
+		button		: "btnCalendrier"
+	});
 
 	if (document.getElementById('frmFacturation').txtRef.value) {
 
