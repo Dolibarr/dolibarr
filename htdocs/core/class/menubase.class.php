@@ -32,74 +32,74 @@
  */
 class Menubase
 {
-	var $db;							// To store db handler
-	var $error;							// To return error code (or message)
-	var $errors=array();				// To return several error codes (or messages)
+    var $db;							// To store db handler
+    var $error;							// To return error code (or message)
+    var $errors=array();				// To return several error codes (or messages)
 
-	var $id;
+    var $id;
 
-	var $menu_handler;
-	var $module;
-	var $type;
-	var $mainmenu;
-	var $fk_menu;
-	var $position;
-	var $url;
-	var $target;
-	var $titre;
-	var $langs;
-	var $level;
-	var $leftmenu;		//<! 0=Left menu in pre.inc.php files must not be overwrite by database menu, 1=Must be
-	var $perms;
-	var $enabled;
-	var $user;
-	var $tms;
-
-
-	/**
-	 *      Constructor
-	 *      @param     DB      Database handler
-	 *      @param     menu_handler
-	 *      @param     type
-	 */
-	function Menubase($DB,$menu_handler='',$type='')
-	{
-		$this->db = $DB;
-		$this->menu_handler = $menu_handler;
-		$this->type = $type;
-		return 1;
-	}
+    var $menu_handler;
+    var $module;
+    var $type;
+    var $mainmenu;
+    var $fk_menu;
+    var $position;
+    var $url;
+    var $target;
+    var $titre;
+    var $langs;
+    var $level;
+    var $leftmenu;		//<! 0=Left menu in pre.inc.php files must not be overwrite by database menu, 1=Must be
+    var $perms;
+    var $enabled;
+    var $user;
+    var $tms;
 
 
-	/**
-	 *      \brief      Create menu entry into database
-	 *      \param      user        User that create
-	 *      \return     int         <0 si ko, >0 si ok
-	 */
-	function create($user)
-	{
-		global $conf, $langs;
+    /**
+     *      Constructor
+     *      @param     DB      Database handler
+     *      @param     menu_handler
+     *      @param     type
+     */
+    function Menubase($DB,$menu_handler='',$type='')
+    {
+        $this->db = $DB;
+        $this->menu_handler = $menu_handler;
+        $this->type = $type;
+        return 1;
+    }
 
-		// Clean parameters
-		$this->menu_handler=trim($this->menu_handler);
-		$this->module=trim($this->module);
-		$this->type=trim($this->type);
-		$this->mainmenu=trim($this->mainmenu);
-		$this->fk_menu=trim($this->fk_menu);
-		$this->position=trim($this->position);
-		$this->url=trim($this->url);
-		$this->target=trim($this->target);
-		$this->titre=trim($this->titre);
-		$this->langs=trim($this->langs);
-		$this->level=trim($this->level);
-		$this->leftmenu=trim($this->leftmenu);
-		$this->perms=trim($this->perms);
-		$this->enabled=trim($this->enabled);
-		$this->user=trim($this->user);
-		if (! $this->level) $this->level=0;
 
-		// Check parameters
-		// Put here code to add control on parameters values
+    /**
+     *      \brief      Create menu entry into database
+     *      \param      user        User that create
+     *      \return     int         <0 si ko, >0 si ok
+     */
+    function create($user)
+    {
+        global $conf, $langs;
+
+        // Clean parameters
+        $this->menu_handler=trim($this->menu_handler);
+        $this->module=trim($this->module);
+        $this->type=trim($this->type);
+        $this->mainmenu=trim($this->mainmenu);
+        $this->fk_menu=trim($this->fk_menu);
+        $this->position=trim($this->position);
+        $this->url=trim($this->url);
+        $this->target=trim($this->target);
+        $this->titre=trim($this->titre);
+        $this->langs=trim($this->langs);
+        $this->level=trim($this->level);
+        $this->leftmenu=trim($this->leftmenu);
+        $this->perms=trim($this->perms);
+        $this->enabled=trim($this->enabled);
+        $this->user=trim($this->user);
+        if (! $this->level) $this->level=0;
+
+        // Check parameters
+        // Put here code to add control on parameters values
 
         // FIXME
         // Get the max rowid in llx_menu and use it as rowid in insert because postgresql
@@ -108,372 +108,372 @@ class Menubase
         // Two solution: Disable menu handler using database when database is postgresql or update counter when
         // enabling such menus.
 
-		// Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."menu(";
-		$sql.= "menu_handler,";
-		$sql.= "entity,";
-		$sql.= "module,";
-		$sql.= "type,";
-		$sql.= "mainmenu,";
-		$sql.= "fk_menu,";
-		$sql.= "position,";
-		$sql.= "url,";
-		$sql.= "target,";
-		$sql.= "titre,";
-		$sql.= "langs,";
-		$sql.= "level,";
-		$sql.= "leftmenu,";
-		$sql.= "perms,";
-		$sql.= "enabled,";
-		$sql.= "usertype";
-		$sql.= ") VALUES (";
-		$sql.= " '".$this->menu_handler."',";
-		$sql.= " '".$conf->entity."',";
-		$sql.= " '".$this->module."',";
-		$sql.= " '".$this->type."',";
-		$sql.= " '".$this->mainmenu."',";
-		$sql.= " '".$this->fk_menu."',";
-		$sql.= " '".$this->position."',";
-		$sql.= " '".$this->url."',";
-		$sql.= " '".$this->target."',";
-		$sql.= " '".$this->titre."',";
-		$sql.= " '".$this->langs."',";
-		$sql.= " '".$this->level."',";
-		$sql.= " '".$this->leftmenu."',";
-		$sql.= " '".$this->perms."',";
-		$sql.= " '".$this->enabled."',";
-		$sql.= " '".$this->user."'";
-		$sql.= ")";
+        // Insert request
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."menu(";
+        $sql.= "menu_handler,";
+        $sql.= "entity,";
+        $sql.= "module,";
+        $sql.= "type,";
+        $sql.= "mainmenu,";
+        $sql.= "fk_menu,";
+        $sql.= "position,";
+        $sql.= "url,";
+        $sql.= "target,";
+        $sql.= "titre,";
+        $sql.= "langs,";
+        $sql.= "level,";
+        $sql.= "leftmenu,";
+        $sql.= "perms,";
+        $sql.= "enabled,";
+        $sql.= "usertype";
+        $sql.= ") VALUES (";
+        $sql.= " '".$this->menu_handler."',";
+        $sql.= " '".$conf->entity."',";
+        $sql.= " '".$this->module."',";
+        $sql.= " '".$this->type."',";
+        $sql.= " '".$this->mainmenu."',";
+        $sql.= " '".$this->fk_menu."',";
+        $sql.= " '".$this->position."',";
+        $sql.= " '".$this->url."',";
+        $sql.= " '".$this->target."',";
+        $sql.= " '".$this->titre."',";
+        $sql.= " '".$this->langs."',";
+        $sql.= " '".$this->level."',";
+        $sql.= " '".$this->leftmenu."',";
+        $sql.= " '".$this->perms."',";
+        $sql.= " '".$this->enabled."',";
+        $sql.= " '".$this->user."'";
+        $sql.= ")";
 
-		dol_syslog("Menubase::create sql=".$sql, LOG_DEBUG);
-		$resql=$this->db->query($sql);
-		if ($resql)
-		{
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."menu");
-			dol_syslog("Menubase::create record added has rowid=".$this->id, LOG_DEBUG);
+        dol_syslog("Menubase::create sql=".$sql, LOG_DEBUG);
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."menu");
+            dol_syslog("Menubase::create record added has rowid=".$this->id, LOG_DEBUG);
 
-			return $this->id;
-		}
-		else
-		{
-			$this->error="Error ".$this->db->lasterror();
-			dol_syslog("Menubase::create ".$this->error, LOG_ERR);
-			return -1;
-		}
-	}
+            return $this->id;
+        }
+        else
+        {
+            $this->error="Error ".$this->db->lasterror();
+            dol_syslog("Menubase::create ".$this->error, LOG_ERR);
+            return -1;
+        }
+    }
 
-	/*
-	 *      \brief      Update database
-	 *      \param      user        	User that modify
-	 *      \param      notrigger	    0=no, 1=yes (no update trigger)
-	 *      \return     int         	<0 if KO, >0 if OK
-	 */
-	function update($user=0, $notrigger=0)
-	{
-		global $conf, $langs;
+    /*
+     *      \brief      Update database
+     *      \param      user        	User that modify
+     *      \param      notrigger	    0=no, 1=yes (no update trigger)
+     *      \return     int         	<0 if KO, >0 if OK
+     */
+    function update($user=0, $notrigger=0)
+    {
+        global $conf, $langs;
 
-		// Clean parameters
-		$this->rowid=trim($this->rowid);
-		$this->menu_handler=trim($this->menu_handler);
-		$this->module=trim($this->module);
-		$this->type=trim($this->type);
-		$this->mainmenu=trim($this->mainmenu);
-		$this->fk_menu=trim($this->fk_menu);
-		$this->position=trim($this->position);
-		$this->url=trim($this->url);
-		$this->target=trim($this->target);
-		$this->titre=trim($this->titre);
-		$this->langs=trim($this->langs);
-		$this->level=trim($this->level);
-		$this->leftmenu=trim($this->leftmenu);
-		$this->perms=trim($this->perms);
-		$this->enabled=trim($this->enabled);
-		$this->user=trim($this->user);
+        // Clean parameters
+        $this->rowid=trim($this->rowid);
+        $this->menu_handler=trim($this->menu_handler);
+        $this->module=trim($this->module);
+        $this->type=trim($this->type);
+        $this->mainmenu=trim($this->mainmenu);
+        $this->fk_menu=trim($this->fk_menu);
+        $this->position=trim($this->position);
+        $this->url=trim($this->url);
+        $this->target=trim($this->target);
+        $this->titre=trim($this->titre);
+        $this->langs=trim($this->langs);
+        $this->level=trim($this->level);
+        $this->leftmenu=trim($this->leftmenu);
+        $this->perms=trim($this->perms);
+        $this->enabled=trim($this->enabled);
+        $this->user=trim($this->user);
 
-		// Check parameters
-		// Put here code to add control on parameters values
+        // Check parameters
+        // Put here code to add control on parameters values
 
-		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX."menu SET";
-		$sql.= " menu_handler='".addslashes($this->menu_handler)."',";
-		$sql.= " module='".addslashes($this->module)."',";
-		$sql.= " type='".$this->type."',";
-		$sql.= " mainmenu='".addslashes($this->mainmenu)."',";
-		$sql.= " fk_menu='".$this->fk_menu."',";
-		$sql.= " position='".$this->position."',";
-		$sql.= " url='".addslashes($this->url)."',";
-		$sql.= " target='".addslashes($this->target)."',";
-		$sql.= " titre='".addslashes($this->titre)."',";
-		$sql.= " langs='".addslashes($this->langs)."',";
-		$sql.= " level='".$this->level."',";
-		$sql.= " leftmenu='".addslashes($this->leftmenu)."',";
-		$sql.= " perms='".addslashes($this->perms)."',";
-		$sql.= " enabled='".addslashes($this->enabled)."',";
-		$sql.= " usertype='".$this->user."'";
-		$sql.= " WHERE rowid=".$this->id;
+        // Update request
+        $sql = "UPDATE ".MAIN_DB_PREFIX."menu SET";
+        $sql.= " menu_handler='".addslashes($this->menu_handler)."',";
+        $sql.= " module='".addslashes($this->module)."',";
+        $sql.= " type='".$this->type."',";
+        $sql.= " mainmenu='".addslashes($this->mainmenu)."',";
+        $sql.= " fk_menu='".$this->fk_menu."',";
+        $sql.= " position='".$this->position."',";
+        $sql.= " url='".addslashes($this->url)."',";
+        $sql.= " target='".addslashes($this->target)."',";
+        $sql.= " titre='".addslashes($this->titre)."',";
+        $sql.= " langs='".addslashes($this->langs)."',";
+        $sql.= " level='".$this->level."',";
+        $sql.= " leftmenu='".addslashes($this->leftmenu)."',";
+        $sql.= " perms='".addslashes($this->perms)."',";
+        $sql.= " enabled='".addslashes($this->enabled)."',";
+        $sql.= " usertype='".$this->user."'";
+        $sql.= " WHERE rowid=".$this->id;
 
-		dol_syslog("Menubase::update sql=".$sql, LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if (! $resql)
-		{
-			$this->error="Error ".$this->db->lasterror();
-			dol_syslog("Menubase::update ".$this->error, LOG_ERR);
-			return -1;
-		}
+        dol_syslog("Menubase::update sql=".$sql, LOG_DEBUG);
+        $resql = $this->db->query($sql);
+        if (! $resql)
+        {
+            $this->error="Error ".$this->db->lasterror();
+            dol_syslog("Menubase::update ".$this->error, LOG_ERR);
+            return -1;
+        }
 
-		return 1;
-	}
-
-
-	/*
-	 *    \brief      Load object in memory from database
-	 *    \param      id          id object
-	 *    \param      user        User that load
-	 *    \return     int         <0 if KO, >0 if OK
-	 */
-	function fetch($id, $user=0)
-	{
-		global $langs;
-
-		$sql = "SELECT";
-		$sql.= " t.rowid,";
-		$sql.= " t.menu_handler,";
-		$sql.= " t.entity,";
-		$sql.= " t.module,";
-		$sql.= " t.type,";
-		$sql.= " t.mainmenu,";
-		$sql.= " t.fk_menu,";
-		$sql.= " t.position,";
-		$sql.= " t.url,";
-		$sql.= " t.target,";
-		$sql.= " t.titre,";
-		$sql.= " t.langs,";
-		$sql.= " t.level,";
-		$sql.= " t.leftmenu,";
-		$sql.= " t.perms,";
-		$sql.= " t.enabled,";
-		$sql.= " t.usertype as user,";
-		$sql.= " t.tms";
-		$sql.= " FROM ".MAIN_DB_PREFIX."menu as t";
-		$sql.= " WHERE t.rowid = ".$id;
-
-		dol_syslog("Menubase::fetch sql=".$sql, LOG_DEBUG);
-		$resql=$this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->num_rows($resql))
-			{
-				$obj = $this->db->fetch_object($resql);
-
-				$this->id    = $obj->rowid;
-
-				$this->menu_handler = $obj->menu_handler;
-				$this->entity = $obj->entity;
-				$this->module = $obj->module;
-				$this->type = $obj->type;
-				$this->mainmenu = $obj->mainmenu;
-				$this->fk_menu = $obj->fk_menu;
-				$this->position = $obj->position;
-				$this->url = $obj->url;
-				$this->target = $obj->target;
-				$this->titre = $obj->titre;
-				$this->langs = $obj->langs;
-				$this->level = $obj->level;
-				$this->leftmenu = $obj->leftmenu;
-				$this->perms = $obj->perms;
-				$this->enabled = str_replace("\"","'",$obj->enabled);
-				$this->user = $obj->user;
-				$this->tms = $this->db->jdate($obj->tms);
-			}
-			$this->db->free($resql);
-
-			return 1;
-		}
-		else
-		{
-			$this->error="Error ".$this->db->lasterror();
-			dol_syslog("Menubase::fetch ".$this->error, LOG_ERR);
-			return -1;
-		}
-	}
+        return 1;
+    }
 
 
-	/*
-	 *   \brief      Delete object in database
-	 *	\param      user        User that delete
-	 *	\return		int			<0 if KO, >0 if OK
-	 */
-	function delete($user)
-	{
-		global $conf, $langs;
+    /*
+     *    \brief      Load object in memory from database
+     *    \param      id          id object
+     *    \param      user        User that load
+     *    \return     int         <0 if KO, >0 if OK
+     */
+    function fetch($id, $user=0)
+    {
+        global $langs;
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
-		$sql.= " WHERE rowid=".$this->id;
+        $sql = "SELECT";
+        $sql.= " t.rowid,";
+        $sql.= " t.menu_handler,";
+        $sql.= " t.entity,";
+        $sql.= " t.module,";
+        $sql.= " t.type,";
+        $sql.= " t.mainmenu,";
+        $sql.= " t.fk_menu,";
+        $sql.= " t.position,";
+        $sql.= " t.url,";
+        $sql.= " t.target,";
+        $sql.= " t.titre,";
+        $sql.= " t.langs,";
+        $sql.= " t.level,";
+        $sql.= " t.leftmenu,";
+        $sql.= " t.perms,";
+        $sql.= " t.enabled,";
+        $sql.= " t.usertype as user,";
+        $sql.= " t.tms";
+        $sql.= " FROM ".MAIN_DB_PREFIX."menu as t";
+        $sql.= " WHERE t.rowid = ".$id;
 
-		dol_syslog("Menubase::delete sql=".$sql);
-		$resql = $this->db->query($sql);
-		if (! $resql)
-		{
-			$this->error="Error ".$this->db->lasterror();
-			dol_syslog("Menubase::delete ".$this->error, LOG_ERR);
-			return -1;
-		}
+        dol_syslog("Menubase::fetch sql=".$sql, LOG_DEBUG);
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            if ($this->db->num_rows($resql))
+            {
+                $obj = $this->db->fetch_object($resql);
 
-		return 1;
-	}
+                $this->id    = $obj->rowid;
+
+                $this->menu_handler = $obj->menu_handler;
+                $this->entity = $obj->entity;
+                $this->module = $obj->module;
+                $this->type = $obj->type;
+                $this->mainmenu = $obj->mainmenu;
+                $this->fk_menu = $obj->fk_menu;
+                $this->position = $obj->position;
+                $this->url = $obj->url;
+                $this->target = $obj->target;
+                $this->titre = $obj->titre;
+                $this->langs = $obj->langs;
+                $this->level = $obj->level;
+                $this->leftmenu = $obj->leftmenu;
+                $this->perms = $obj->perms;
+                $this->enabled = str_replace("\"","'",$obj->enabled);
+                $this->user = $obj->user;
+                $this->tms = $this->db->jdate($obj->tms);
+            }
+            $this->db->free($resql);
+
+            return 1;
+        }
+        else
+        {
+            $this->error="Error ".$this->db->lasterror();
+            dol_syslog("Menubase::fetch ".$this->error, LOG_ERR);
+            return -1;
+        }
+    }
 
 
-	/**
-	 *		\brief		Initialise object with example values
-	 *		\remarks	id must be 0 if object instance is a specimen.
-	 */
-	function initAsSpecimen()
-	{
-		$this->id=0;
+    /*
+     *   \brief      Delete object in database
+     *	\param      user        User that delete
+     *	\return		int			<0 if KO, >0 if OK
+     */
+    function delete($user)
+    {
+        global $conf, $langs;
 
-		$this->menu_handler='all';
-		$this->module='specimen';
-		$this->type='top';
-		$this->mainmenu='';
-		$this->fk_menu='0';
-		$this->position='';
-		$this->url='http://dummy';
-		$this->target='';
-		$this->titre='Specimen menu';
-		$this->langs='';
-		$this->level='';
-		$this->leftmenu='';
-		$this->perms='';
-		$this->enabled='';
-		$this->user='';
-		$this->tms='';
-	}
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
+        $sql.= " WHERE rowid=".$this->id;
+
+        dol_syslog("Menubase::delete sql=".$sql);
+        $resql = $this->db->query($sql);
+        if (! $resql)
+        {
+            $this->error="Error ".$this->db->lasterror();
+            dol_syslog("Menubase::delete ".$this->error, LOG_ERR);
+            return -1;
+        }
+
+        return 1;
+    }
 
 
-	/**
-	 * Complete this->newmenu with menu entry found in $tab
-	 *
-	 * @param  $tab
-	 * @param  $pere
-	 * @param  $rang
+    /**
+     *		\brief		Initialise object with example values
+     *		\remarks	id must be 0 if object instance is a specimen.
+     */
+    function initAsSpecimen()
+    {
+        $this->id=0;
+
+        $this->menu_handler='all';
+        $this->module='specimen';
+        $this->type='top';
+        $this->mainmenu='';
+        $this->fk_menu='0';
+        $this->position='';
+        $this->url='http://dummy';
+        $this->target='';
+        $this->titre='Specimen menu';
+        $this->langs='';
+        $this->level='';
+        $this->leftmenu='';
+        $this->perms='';
+        $this->enabled='';
+        $this->user='';
+        $this->tms='';
+    }
+
+
+    /**
+     * Complete this->newmenu with menu entry found in $tab
+     *
+     * @param  $tab
+     * @param  $pere
+     * @param  $rang
      * @param  $myleftmenu     Value for left that defined leftmenu
-	 */
-	function recur($tab, $pere, $rang, $myleftmenu)
-	{
-		global $leftmenu;	// To be exported in dol_eval function
+     */
+    function recur($tab, $pere, $rang, $myleftmenu)
+    {
+        global $leftmenu;	// To be exported in dol_eval function
 
-		//print "xx".$pere;
-		$leftmenu = $myleftmenu;
+        //print "xx".$pere;
+        $leftmenu = $myleftmenu;
 
-		//ballayage du tableau
-		for ($x = 0; $x < count($tab); $x++)
-		{
-			//si un element a pour pere : $pere
-			if ($tab[$x][1] == $pere)
-			{
-				if ($tab[$x][7])
-				{
-					$leftmenuConstraint = true;
-					if ($tab[$x][6])
-					{
-						$leftmenuConstraint = verifCond($tab[$x][6]);
-					}
+        //ballayage du tableau
+        for ($x = 0; $x < count($tab); $x++)
+        {
+            //si un element a pour pere : $pere
+            if ($tab[$x][1] == $pere)
+            {
+                if ($tab[$x][7])
+                {
+                    $leftmenuConstraint = true;
+                    if ($tab[$x][6])
+                    {
+                        $leftmenuConstraint = verifCond($tab[$x][6]);
+                    }
 
-					if ($leftmenuConstraint)
-					{
-						//print 'name='.$tab[$x][3].' pere='.$pere." ".$tab[$x][6];
+                    if ($leftmenuConstraint)
+                    {
+                        //print 'name='.$tab[$x][3].' pere='.$pere." ".$tab[$x][6];
 
-						$this->newmenu->add((! preg_match("/^(http:\/\/|https:\/\/)/i",$tab[$x][2])) ? $tab[$x][2] : $tab[$x][2], $tab[$x][3], $rang -1, $tab[$x][4], $tab[$x][5], $tab[$x][8]);
-						$this->recur($tab, $tab[$x][0], $rang +1, $lelfmenu);
-					}
-				}
-			}
-		}
-	}
+                        $this->newmenu->add((! preg_match("/^(http:\/\/|https:\/\/)/i",$tab[$x][2])) ? $tab[$x][2] : $tab[$x][2], $tab[$x][3], $rang -1, $tab[$x][4], $tab[$x][5], $tab[$x][8]);
+                        $this->recur($tab, $tab[$x][0], $rang +1, $lelfmenu);
+                    }
+                }
+            }
+        }
+    }
 
-	/**
-	 * Return all values of mainmenu where leftmenu defined
-	 * in pre.inc.php must be overwritten completely by dynamic menu.
-	 *
-	 * @return array
-	 */
-	function listeMainmenu()
-	{
-		global $conf;
+    /**
+     * Return all values of mainmenu where leftmenu defined
+     * in pre.inc.php must be overwritten completely by dynamic menu.
+     *
+     * @return array
+     */
+    function listeMainmenu()
+    {
+        global $conf;
 
-		$overwritemenufor=array();
+        $overwritemenufor=array();
 
-		$sql = "SELECT DISTINCT m.mainmenu";
-		$sql.= " FROM " . MAIN_DB_PREFIX . "menu as m";
-		$sql.= " WHERE m.menu_handler in ('".$this->menu_handler."','all')";
-		$sql.= " AND m.entity = ".$conf->entity;
-		$sql.= " AND m.leftmenu != '0'";	// leftmenu exists in database so pre.inc.php must be overwritten
+        $sql = "SELECT DISTINCT m.mainmenu";
+        $sql.= " FROM " . MAIN_DB_PREFIX . "menu as m";
+        $sql.= " WHERE m.menu_handler in ('".$this->menu_handler."','all')";
+        $sql.= " AND m.entity = ".$conf->entity;
+        $sql.= " AND m.leftmenu != '0'";	// leftmenu exists in database so pre.inc.php must be overwritten
 
-		//print $sql;
-		$res = $this->db->query($sql);
-		if ($res)
-		{
-			while ($menu = $this->db->fetch_array($res))
-			{
-				if ($menu['mainmenu']) $overwritemenufor[] = $menu['mainmenu'];
-			}
-		}
-		else
-		{
-			dol_print_error($this->db);
-		}
+        //print $sql;
+        $res = $this->db->query($sql);
+        if ($res)
+        {
+            while ($menu = $this->db->fetch_array($res))
+            {
+                if ($menu['mainmenu']) $overwritemenufor[] = $menu['mainmenu'];
+            }
+        }
+        else
+        {
+            dol_print_error($this->db);
+        }
 
-		return $overwritemenufor;
-	}
+        return $overwritemenufor;
+    }
 
-	/**
-	 *		Load tabMenu array
-	 * 		@param		type_user		0=Internal,1=External,2=All
-	 * 		@param		mainmenu		Value for mainmenu that defined top menu
-	 * 		@param		menu_handler	Name of menu_handler used (auguria, eldy...)
+    /**
+     *		Load tabMenu array
+     * 		@param		type_user		0=Internal,1=External,2=All
+     * 		@param		mainmenu		Value for mainmenu that defined top menu
+     * 		@param		menu_handler	Name of menu_handler used (auguria, eldy...)
      * 		@param      tabMenu         If array with menu entries already loaded, we put this array here (in most cases, it's empty)
-	 * 		@return		array			Return array with menu entries for top menu
-	 */
-	function menuTopCharger($mainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu=null)
-	{
-		global $langs, $user, $conf;
-		global $leftmenu,$rights;	// To export to dol_eval function
+     * 		@return		array			Return array with menu entries for top menu
+     */
+    function menuTopCharger($mainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu=null)
+    {
+        global $langs, $user, $conf;
+        global $leftmenu,$rights;	// To export to dol_eval function
 
         $leftmenu=$myleftmenu;  // To export to dol_eval function
 
-		// Load datas into tabMenu
+        // Load datas into tabMenu
         if (sizeof($tabMenu) == 0)
         {
-        	$this->menuLoad($leftmenu, $type_user, $menu_handler, $tabMenu);
+            $this->menuLoad($leftmenu, $type_user, $menu_handler, $tabMenu);
         }
 
         $newTabMenu=array();
         $i=0;
-	if (is_array($tabMenu))
+        if (is_array($tabMenu))
         {
-			foreach($tabMenu as $val)
-			{
-        		if ($val[9]=='top')
-        		{
+            foreach($tabMenu as $val)
+            {
+                if ($val[9]=='top')
+                {
 
-        		$newTabMenu[$i]['rowid']=$val[0];
-        		$newTabMenu[$i]['fk_menu']=$val[1];
-        		$newTabMenu[$i]['url']=$val[2];
-        		$newTabMenu[$i]['titre']=$val[3];
-        		$newTabMenu[$i]['right']=$val[4];
-        		$newTabMenu[$i]['atarget']=$val[5];
-        		$newTabMenu[$i]['leftmenu']=$val[6];
-        		$newTabMenu[$i]['enabled']=$val[7];
-        		$newTabMenu[$i]['mainmenu']=$val[8];
-        		$newTabMenu[$i]['type']=$val[9];
-        		$newTabMenu[$i]['lang']=$val[10];
-        		$i++;
-        		}
-			}
-		}
+                    $newTabMenu[$i]['rowid']=$val[0];
+                    $newTabMenu[$i]['fk_menu']=$val[1];
+                    $newTabMenu[$i]['url']=$val[2];
+                    $newTabMenu[$i]['titre']=$val[3];
+                    $newTabMenu[$i]['right']=$val[4];
+                    $newTabMenu[$i]['atarget']=$val[5];
+                    $newTabMenu[$i]['leftmenu']=$val[6];
+                    $newTabMenu[$i]['enabled']=$val[7];
+                    $newTabMenu[$i]['mainmenu']=$val[8];
+                    $newTabMenu[$i]['type']=$val[9];
+                    $newTabMenu[$i]['lang']=$val[10];
+                    $i++;
+                }
+            }
+        }
 
         return $newTabMenu;
-	}
+    }
 
     /**
      * Load entries found in database in a menu array
@@ -503,17 +503,17 @@ class Menubase
 
         // Define menutopid
         $menutopid='';
-    if (is_array($tabMenu))
-		{
-			foreach($tabMenu as $val)
-			{
-				if ($val[9] == 'top' && $val[8] == $mainmenu)
-				{
-					$menutopid=$val[0];
-					break;
-				}
-			}
-		}
+        if (is_array($tabMenu))
+        {
+            foreach($tabMenu as $val)
+            {
+                if ($val[9] == 'top' && $val[8] == $mainmenu)
+                {
+                    $menutopid=$val[0];
+                    break;
+                }
+            }
+        }
 
         // Now edit this->newmenu->list to add entries found into tabMenu that are in childs of mainmenu claimed
         $this->recur($tabMenu, $menutopid, 1, $leftmenu);
