@@ -120,7 +120,11 @@ if ($_POST["action"] == 'setusecustomercontactasrecipient')
 if ($_GET["action"] == 'set')
 {
 	$type='propal';
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES ('".$_GET["value"]."','".$type."',".$conf->entity.")";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
+    $sql.= " VALUES ('".$db->escape($_GET["value"])."','".$type."',".$conf->entity.", ";
+    $sql.= ($_GET["label"]?"'".$db->escape($_GET["label"])."'":'null').", ";
+    $sql.= (! empty($_GET["scandir"])?"'".$db->escape($_GET["scandir"])."'":"null");
+    $sql.= ")";
 	if ($db->query($sql))
 	{
 
@@ -151,11 +155,16 @@ if ($_GET["action"] == 'setdoc')
 	// On active le modele
 	$type='propal';
 	$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql_del.= " WHERE nom = '".$_GET["value"]."'";
+	$sql_del.= " WHERE nom = '".$db->escape($_GET["value"])."'";
 	$sql_del.= " AND type = '".$type."'";
 	$sql_del.= " AND entity = ".$conf->entity;
 	$result1=$db->query($sql_del);
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type,entity) VALUES ('".$_GET["value"]."','".$type."',".$conf->entity.")";
+
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
+    $sql.= " VALUES ('".$db->escape($_GET["value"])."', '".$type."', ".$conf->entity.", ";
+    $sql.= ($_GET["label"]?"'".$db->escape($_GET["label"])."'":'null').", ";
+    $sql.= (! empty($_GET["scandir"])?"'".$db->escape($_GET["scandir"])."'":"null");
+    $sql.= ")";
 	$result2=$db->query($sql);
 	if ($result1 && $result2)
 	{
@@ -347,7 +356,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 				{
 					$name = substr($file, 12, dol_strlen($file) - 24);
 					$classname = substr($file, 0, dol_strlen($file) -12);
-					
+
 					$var=!$var;
 					print "<tr ".$bc[$var].">\n  <td>";
 					print $name;
@@ -356,14 +365,14 @@ foreach ($conf->file->dol_document_root as $dirroot)
 					$module = new $classname($db);
 					print $module->description;
 					print '</td>';
-					
+
 					// Activate
 					print '<td align="center">'."\n";
 					if (in_array($name, $def))
 					{
 						if ($conf->global->PROPALE_ADDON_PDF != "$name")
 						{
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
 							print img_picto($langs->trans("Activated"),'on');
 							print '</a>';
 						}
@@ -374,12 +383,12 @@ foreach ($conf->file->dol_document_root as $dirroot)
 					}
 					else
 					{
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'">';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
 						print img_picto($langs->trans("Disabled"),'off');
 						print '</a>';
 					}
 					print "</td>";
-					
+
 					// Default
 					print '<td align="center">';
 					if ($conf->global->PROPALE_ADDON_PDF == "$name")
@@ -388,12 +397,12 @@ foreach ($conf->file->dol_document_root as $dirroot)
 					}
 					else
 					{
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'">';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
 						print img_picto($langs->trans("No"),'off');
 						print '</a>';
 					}
 					print '</td>';
-					
+
 					// Info
 					$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
 					$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
@@ -406,14 +415,14 @@ foreach ($conf->file->dol_document_root as $dirroot)
 					//$htmltooltip.='<br>'.$langs->trans("Escompte").': '.yn($module->option_escompte,1,1);
 					//$htmltooltip.='<br>'.$langs->trans("CreditNote").': '.yn($module->option_credit_note,1,1);
 					$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftProposal").': '.yn($module->option_draft_watermark,1,1);
-					
+
 					print '<td align="center">';
 					print $html->textwithpicto('',$htmltooltip,1,0);
 					print '</td>';
 					print '<td align="center">';
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'propal').'</a>';
 					print '</td>';
-					
+
 					print "</tr>\n";
 				}
 			}

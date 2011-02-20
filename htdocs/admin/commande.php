@@ -90,7 +90,11 @@ if ($_GET["action"] == 'specimen')
 if ($_GET["action"] == 'set')
 {
 	$type='order';
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES ('".$_GET["value"]."','".$type."',".$conf->entity.")";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
+    $sql.= " VALUES ('".$db->escape($_GET["value"])."','".$type."',".$conf->entity.", ";
+    $sql.= ($_GET["label"]?"'".$db->escape($_GET["label"])."'":'null').", ";
+    $sql.= (! empty($_GET["scandir"])?"'".$db->escape($_GET["scandir"])."'":"null");
+    $sql.= ")";
 	if ($db->query($sql))
 	{
 
@@ -123,11 +127,16 @@ if ($_GET["action"] == 'setdoc')
 	// On active le modele
 	$type='order';
 	$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql_del.= " WHERE nom = '".$_GET["value"]."'";
+	$sql_del.= " WHERE nom = '".$db->escape($_GET["value"])."'";
 	$sql_del.= " AND type = '".$type."'";
 	$sql_del.= " AND entity = ".$conf->entity;
 	$result1=$db->query($sql_del);
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type,entity) VALUES ('".$_GET["value"]."','".$type."',".$conf->entity.")";
+
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
+    $sql.= " VALUES ('".$_GET["value"]."', '".$type."', ".$conf->entity.", ";
+    $sql.= ($_GET["label"]?"'".$db->escape($_GET["label"])."'":'null').", ";
+    $sql.= (! empty($_GET["scandir"])?"'".$_GET["scandir"]."'":"null");
+    $sql.= ")";
 	$result2=$db->query($sql);
 	if ($result1 && $result2)
 	{
@@ -354,7 +363,7 @@ if (is_resource($handle))
     		{
     			if ($conf->global->COMMANDE_ADDON_PDF != "$name")
     			{
-    				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
+    				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
     				print img_picto($langs->trans("Activated"),'on');
     				print '</a>';
     			}
@@ -365,7 +374,7 @@ if (is_resource($handle))
     		}
     		else
     		{
-    			print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'">';
+    			print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
     			print img_picto($langs->trans("Disabled"),'off');
     			print '</a>';
     		}
@@ -379,7 +388,7 @@ if (is_resource($handle))
     		}
     		else
     		{
-    			print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'">';
+    			print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
     			print img_picto($langs->trans("No"),'off');
     			print '</a>';
     		}

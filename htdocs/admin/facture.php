@@ -110,7 +110,11 @@ if ($_POST["action"] == 'setModuleOptions')
 if ($_GET["action"] == 'set')
 {
 	$type='invoice';
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES ('".$_GET["value"]."','".$type."',".$conf->entity.")";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
+    $sql.= " VALUES ('".$db->escape($_GET["value"])."','".$type."',".$conf->entity.", ";
+    $sql.= ($_GET["label"]?"'".$db->escape($_GET["label"])."'":'null').", ";
+    $sql.= (! empty($_GET["scandir"])?"'".$db->escape($_GET["scandir"])."'":"null");
+    $sql.= ")";
 	if ($db->query($sql))
 	{
 
@@ -144,14 +148,18 @@ if ($_GET["action"] == 'setdoc')
 	$type='invoice';
 
 	$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql_del.= " WHERE nom = '".addslashes($_GET["value"])."'";
+	$sql_del.= " WHERE nom = '".$db->escape($_GET["value"])."'";
 	$sql_del.= " AND type = '".$type."'";
 	$sql_del.= " AND entity = ".$conf->entity;
     dol_syslog("facture.php ".$sql_del);
 	$result1=$db->query($sql_del);
 
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type,entity) VALUES ('".addslashes($_GET["value"])."','".$type."',".$conf->entity.")";
-    dol_syslog("facture.php ".$sql);
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
+    $sql.= " VALUES ('".$_GET["value"]."', '".$type."', ".$conf->entity.", ";
+    $sql.= ($_GET["label"]?"'".addslashes($_GET["label"])."'":'null').", ";
+    $sql.= (! empty($_GET["scandir"])?"'".$_GET["scandir"]."'":"null");
+    $sql.= ")";
+	dol_syslog("facture.php ".$sql);
 	$result2=$db->query($sql);
 	if ($result1 && $result2)
 	{
@@ -306,7 +314,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 							}
 							else
 							{
-								print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.preg_replace('/\.php$/','',$file).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+								print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.preg_replace('/\.php$/','',$file).'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 							}
 							print '</td>';
 
@@ -459,7 +467,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 							else
 							{
 								print "<td align=\"center\">\n";
-								print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+								print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 								print "</td>";
 							}
 
@@ -471,7 +479,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 							}
 							else
 							{
-								print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+								print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 							}
 							print '</td>';
 

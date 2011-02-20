@@ -131,7 +131,11 @@ if ($_GET["action"] == 'specimenfacture')   // For invoices
 
 if ($_GET["action"] == 'set')
 {
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES ('".$_GET["value"]."','".$_GET["type"]."',".$conf->entity.")";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
+    $sql.= " VALUES ('".$db->escape($_GET["value"])."','".$type."',".$conf->entity.", ";
+    $sql.= ($_GET["label"]?"'".$db->escape($_GET["label"])."'":'null').", ";
+    $sql.= (! empty($_GET["scandir"])?"'".$db->escape($_GET["scandir"])."'":"null");
+    $sql.= ")";
 	$res=$db->query($sql);
 	if ($res)
 	{
@@ -170,11 +174,16 @@ if ($_GET["action"] == 'setdoc')
 
 	// On active le modele
 	$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql_del.= " WHERE nom = '".$_GET["value"]."'";
+	$sql_del.= " WHERE nom = '".$db->escape($_GET["value"])."'";
 	$sql_del.= " AND type = '".$_GET["type"]."'";
 	$sql_del.= " AND entity = ".$conf->entity;
 	$result1=$db->query($sql_del);
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type,entity) VALUES ('".$_GET["value"]."','".$_GET["type"]."',".$conf->entity.")";
+
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
+    $sql.= " VALUES ('".$db->escape($_GET["value"])."', '".$type."', ".$conf->entity.", ";
+    $sql.= ($_GET["label"]?"'".$db->escape($_GET["label"])."'":'null').", ";
+    $sql.= (! empty($_GET["scandir"])?"'".$db->escape($_GET["scandir"])."'":"null");
+    $sql.= ")";
 	$result2=$db->query($sql);
 	if ($result1 && $result2)
 	{
@@ -384,7 +393,7 @@ if (is_resource($handle))
     			print '<td align="center">'."\n";
     			if ($conf->global->COMMANDE_SUPPLIER_ADDON_PDF != "$name")
     			{
-    				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;type=order_supplier">';
+    				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=order_supplier">';
     				print img_picto($langs->trans("Enabled"),'on');
     				print '</a>';
     			}
@@ -397,7 +406,7 @@ if (is_resource($handle))
     		else
     		{
     			print '<td align="center">'."\n";
-    			print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;type=order_supplier">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+    			print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=order_supplier">'.img_picto($langs->trans("Disabled"),'off').'</a>';
     			print "</td>";
     		}
 
@@ -409,7 +418,7 @@ if (is_resource($handle))
     		}
     		else
     		{
-    	  		print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;type=order_supplier"" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'on').'</a>';
+    	  		print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=order_supplier"" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'on').'</a>';
     		}
     		print '</td>';
 
@@ -508,7 +517,7 @@ if (is_resource($handle))
     			print "<td align=\"center\">\n";
     			if ($conf->global->INVOICE_SUPPLIER_ADDON_PDF != "$name")
     			{
-    				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;type=invoice_supplier">';
+    				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=invoice_supplier">';
     				print img_picto($langs->trans("Enabled"),'on');
     				print '</a>';
     			}
@@ -521,7 +530,7 @@ if (is_resource($handle))
     		else
     		{
     			print "<td align=\"center\">\n";
-    			print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;type=invoice_supplier">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+    			print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=invoice_supplier">'.img_picto($langs->trans("Disabled"),'off').'</a>';
     			print "</td>";
     		}
 
@@ -533,7 +542,7 @@ if (is_resource($handle))
     		}
     		else
     		{
-    	  		print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;type=invoice_supplier" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'on').'</a>';
+    	  		print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=invoice_supplier" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'on').'</a>';
     		}
     		print '</td>';
 

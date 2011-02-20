@@ -154,6 +154,7 @@ function facture_pdf_create($db, $object, $message, $modele, $outputlangs)
     error_reporting($err);
 
 	$dir = DOL_DOCUMENT_ROOT . "/includes/modules/facture/";
+    $srctemplatepath='';
 
 	// Positionne modele sur le nom du modele a utiliser
 	if (! dol_strlen($modele))
@@ -170,11 +171,32 @@ function facture_pdf_create($db, $object, $message, $modele, $outputlangs)
 		}
 	}
 
-	// Charge le modele
-	$file = "pdf_".$modele.".modules.php";
-	if (file_exists($dir.$file))
+    // If selected modele is a filename template (then $modele="modelname:filename")
+print 'eee'.$modele;exit;
+	$tmp=explode(':',$modele,2);
+    if (! empty($tmp[1]))
+    {
+        $modele=$tmp[0];
+        $srctemplatepath=$tmp[1];
+    }
+
+	// Search template file
+	$file=''; $classname=''; $filefound=0;
+	foreach(array('doc','pdf') as $prefix)
 	{
-		$classname = "pdf_".$modele;
+        $file = $prefix."_".$modele.".modules.php";
+	    if (file_exists($dir.'doc/'.$file))
+	    {
+	        $filefound=1;
+	        $classname=$prefix.'_'.$modele;
+	        $dir=$dir.'doc/';
+	        break;
+	    }
+	}
+
+	// Charge le modele
+	if ($filefound)
+	{
 		require_once($dir.$file);
 
 		$obj = new $classname($db);
@@ -183,7 +205,7 @@ function facture_pdf_create($db, $object, $message, $modele, $outputlangs)
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
 		$sav_charset_output=$outputlangs->charset_output;
-		if ($obj->write_file($object, $outputlangs) > 0)
+		if ($obj->write_file($object, $outputlangs, $dir.$file) > 0)
 		{
 			// Success in building document. We build meta file.
 			facture_meta_create($db, $object->id);

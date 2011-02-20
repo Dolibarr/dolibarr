@@ -120,7 +120,7 @@ if (is_resource($handle))
 				}
 				else
 				{
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'">';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
 					print img_picto($langs->trans("Disabled"),'off');
 					print '</a>';
 				}

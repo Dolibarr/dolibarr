@@ -22,7 +22,7 @@
  */
 
 /**
- * 		\file       htdocs/includes/modules/facture/pdf_oursin.modules.php
+ * 		\file       htdocs/includes/modules/facture/pdf/pdf_oursin.modules.php
  * 		\ingroup    facture
  * 		\brief      Fichier de la classe permettant de generer les factures au modele oursin
  * 		\author	    Sylvain SCATTOLINI base sur un modele de Laurent Destailleur

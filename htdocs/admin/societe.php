@@ -96,9 +96,9 @@ if ($_GET["action"] == 'set')
 {
 	$type='company';
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
-	$sql.= " VALUES ('".addslashes($_GET["value"])."','".$type."',".$conf->entity.", ";
-	$sql.= ($_GET["label"]?"'".addslashes($_GET["label"])."'":'null').", ";
-	$sql.= (! empty($_GET["scandir"])?"'".$_GET["scandir"]."'":"null");
+	$sql.= " VALUES ('".$db->escape($_GET["value"])."','".$type."',".$conf->entity.", ";
+	$sql.= ($_GET["label"]?"'".$db->escape($_GET["label"])."'":'null').", ";
+	$sql.= (! empty($_GET["scandir"])?"'".$db->escape($_GET["scandir"])."'":"null");
 	$sql.= ")";
 	if ($db->query($sql))
 	{
@@ -133,16 +133,18 @@ if ($_GET["action"] == 'setdoc')
 	// On active le modele
 	$type='company';
 	$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql_del.= " WHERE nom = '".$_GET["value"]."'";
+	$sql_del.= " WHERE nom = '".$db->escape($_GET["value"])."'";
 	$sql_del.= " AND type = '".$type."'";
 	$sql_del.= " AND entity = ".$conf->entity;
+    dol_syslog("societe.php ".$sql);
 	$result1=$db->query($sql_del);
 
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
-	$sql.= " VALUES ('".$_GET["value"]."', '".$type."', ".$conf->entity.", ";
-	$sql.= ($_GET["label"]?"'".addslashes($_GET["label"])."'":'null').", ";
-	$sql.= (! empty($_GET["scandir"])?"'".$_GET["scandir"]."'":"null");
+	$sql.= " VALUES ('".$db->escape($_GET["value"])."', '".$type."', ".$conf->entity.", ";
+	$sql.= ($_GET["label"]?"'".$db->escape($_GET["label"])."'":'null').", ";
+	$sql.= (! empty($_GET["scandir"])?"'".$db->escape($_GET["scandir"])."'":"null");
 	$sql.= ")";
+    dol_syslog("societe.php ".$sql);
 	$result2=$db->query($sql);
 	if ($result1 && $result2)
 	{
@@ -150,7 +152,8 @@ if ($_GET["action"] == 'setdoc')
 	}
 	else
 	{
-		$db->rollback();
+        dol_syslog("societe.php ".$db->lasterror(), LOG_ERR);
+	    $db->rollback();
 	}
 }
 

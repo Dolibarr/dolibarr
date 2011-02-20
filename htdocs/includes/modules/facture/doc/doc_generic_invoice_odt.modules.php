@@ -219,11 +219,11 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 	}
 
 	/**
-	 *	\brief      Function to build a document on disk using the generic odt module.
-	 *	\param	    object				Object source to build document
-	 *	\param		outputlangs			Lang output object
-	 * 	\param		$srctemplatepath	Full path of source filename for generator using a template file
-	 *	\return	    int         		1 if OK, <=0 if KO
+	 *	Function to build a document on disk using the generic odt module.
+	 *	@param	    object				Object source to build document
+	 *	@param		outputlangs			Lang output object
+	 * 	@param		srctemplatepath	    Full path of source filename for generator using a template file
+	 *	@return	    int         		1 if OK, <=0 if KO
 	 */
 	function write_file($object,$outputlangs,$srctemplatepath)
 	{

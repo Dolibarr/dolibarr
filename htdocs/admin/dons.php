@@ -85,9 +85,14 @@ if ($_GET["action"] == 'setdoc')
     // On active le modele
     $type='donation';
     $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-    $sql_del.= " WHERE nom = '".$_GET["value"]."' AND type = '".$type."'";
+    $sql_del.= " WHERE nom = '".$db->escape($_GET["value"])."' AND type = '".$type."'";
     $result1=$db->query($sql_del);
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type) VALUES ('".$_GET["value"]."','".$type."')";
+
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
+    $sql.= " VALUES ('".$db->escape($_GET["value"])."', '".$type."', ".$conf->entity.", ";
+    $sql.= ($_GET["label"]?"'".$db->escape($_GET["label"])."'":'null').", ";
+    $sql.= (! empty($_GET["scandir"])?"'".$db->escape($_GET["scandir"])."'":"null");
+    $sql.= ")";
     $result2=$db->query($sql);
     if ($result1 && $result2)
     {
@@ -102,7 +107,11 @@ if ($_GET["action"] == 'setdoc')
 if ($_GET["action"] == 'set')
 {
 	$type='donation';
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type) VALUES ('".$_GET["value"]."','".$type."')";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
+    $sql.= " VALUES ('".$db->escape($_GET["value"])."','".$type."',".$conf->entity.", ";
+    $sql.= ($_GET["label"]?"'".$db->escape($_GET["label"])."'":'null').", ";
+    $sql.= (! empty($_GET["scandir"])?"'".$db->escape($_GET["scandir"])."'":"null");
+    $sql.= ")";
     if ($db->query($sql))
     {
 
@@ -215,14 +224,14 @@ if (is_resource($handle))
     		        {
     		            print '&nbsp;';
     		            print '</td><td align="center">';
-    		            print '<a href="dons.php?action=setdoc&value='.$name.'">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+    		            print '<a href="dons.php?action=setdoc&value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Enabled"),'on').'</a>';
     		        }
     		        print '</td>';
     			}
     			else
     			{
     				print "<td align=\"center\">\n";
-    				print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+    				print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
     				print "</td>";
     			}
 
@@ -234,7 +243,7 @@ if (is_resource($handle))
     			}
     			else
     			{
-    				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+    				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
     			}
     			print '</td>';
 
