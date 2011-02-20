@@ -1314,20 +1314,20 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['a
 /*
  * Generate document
  */
-if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
+if (GETPOST('action') == 'builddoc')	// En get ou en post
 {
 	$object->fetch($facid);
 	$object->fetch_thirdparty();
 
-	if ($_REQUEST['model'])
+	if (GETPOST('model'))
 	{
-		$object->setDocModel($user, $_REQUEST['model']);
+		$object->setDocModel($user, GETPOST('model'));
 	}
 
 	// Define output language
 	$outputlangs = $langs;
 	$newlang='';
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
 	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
 	if (! empty($newlang))
 	{
