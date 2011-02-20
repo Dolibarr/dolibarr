@@ -161,18 +161,19 @@ class Societe extends CommonObject
 
 
     /**
-     *    \brief      Create third party in database
-     *    \param      user        Object of user that ask creation
-     *    \return     int         >= 0 if OK, < 0 if KO
+     *    Create third party in database
+     *    @param      user        Object of user that ask creation
+     *    @return     int         >= 0 if OK, < 0 if KO
      */
     function create($user='')
     {
         global $langs,$conf;
 
         // Clean parameters
+        $this->name=trim($this->name);
         $this->nom=trim($this->nom);
 
-        dol_syslog("Societe::create ".$this->nom);
+        dol_syslog("Societe::create ".$this->name);
 
         // Check parameters
         if (! empty($conf->global->SOCIETE_MAIL_REQUIRED) && ! isValidEMail($this->email))
@@ -273,14 +274,15 @@ class Societe extends CommonObject
     }
 
     /**
-     *    \brief      Check properties of third party are ok (like name, third party codes, ...)
-     *    \return     int		0 if OK, <0 if KO
+     *    Check properties of third party are ok (like name, third party codes, ...)
+     *    @return     int		0 if OK, <0 if KO
      */
     function verify()
     {
         $this->errors=array();
 
         $result = 0;
+        $this->name=trim($this->name);
         $this->nom=trim($this->nom);
 
         if (! $this->nom)
@@ -347,13 +349,13 @@ class Societe extends CommonObject
     }
 
     /**
-     *      \brief      Update parameters of third party
-     *      \param      id              			id societe
-     *      \param      user            			Utilisateur qui demande la mise a jour
-     *      \param      call_trigger    			0=non, 1=oui
-     *		\param		allowmodcodeclient			Inclut modif code client et code compta
-     *		\param		allowmodcodefournisseur		Inclut modif code fournisseur et code compta fournisseur
-     *      \return     int             			<0 si ko, >=0 si ok
+     *      Update parameters of third party
+     *      @param      id              			id societe
+     *      @param      user            			Utilisateur qui demande la mise a jour
+     *      @param      call_trigger    			0=non, 1=oui
+     *		@param		allowmodcodeclient			Inclut modif code client et code compta
+     *		@param		allowmodcodefournisseur		Inclut modif code fournisseur et code compta fournisseur
+     *      @return     int             			<0 si ko, >=0 si ok
      */
     function update($id, $user='', $call_trigger=1, $allowmodcodeclient=0, $allowmodcodefournisseur=0)
     {
@@ -365,7 +367,8 @@ class Societe extends CommonObject
 
         // Clean parameters
         $this->id=$id;
-        $this->nom=trim($this->nom);
+        $this->nom=trim($this->nom);	// TODO obsolete
+        $this->name=trim($this->name);
         $this->adresse=trim($this->adresse); // TODO obsolete
         $this->address=trim($this->address);
         $this->cp=trim($this->cp);
@@ -555,7 +558,7 @@ class Societe extends CommonObject
 
         if (empty($rowid) && empty($ref) && empty($ref_ext)) return -1;
 
-        $sql = 'SELECT s.rowid, s.nom, s.entity, s.ref_ext, s.address, s.datec as dc, s.prefix_comm';
+        $sql = 'SELECT s.rowid, s.nom as name, s.entity, s.ref_ext, s.address, s.datec as dc, s.prefix_comm';
         $sql .= ', s.price_level';
         $sql .= ', s.tms as date_update';
         $sql .= ', s.tel, s.fax, s.email, s.url, s.cp as zip, s.ville as town, s.note, s.client, s.fournisseur';
@@ -608,8 +611,8 @@ class Societe extends CommonObject
                 $this->entity       = $obj->entity;
 
                 $this->ref          = $obj->rowid;
-                $this->nom 			= $obj->nom; // TODO obsolete
-                $this->name 		= $obj->nom;
+                $this->nom 			= $obj->name; // TODO obsolete
+                $this->name 		= $obj->name;
                 $this->ref_ext      = $obj->ref_ext;
 
                 $this->datec = $this->db->jdate($obj->datec);
@@ -629,7 +632,8 @@ class Societe extends CommonObject
                 $this->pays 		= $obj->fk_pays?($langs->trans('Country'.$obj->pays_code)!='Country'.$obj->pays_code?$langs->trans('Country'.$obj->pays_code):$obj->pays):''; // TODO obsolete
                 $this->country 		= $obj->fk_pays?($langs->trans('Country'.$obj->pays_code)!='Country'.$obj->pays_code?$langs->trans('Country'.$obj->pays_code):$obj->pays):'';
 
-                $this->departement_id = $obj->fk_departement;
+                $this->departement_id = $obj->fk_departement;				// TODO obsolete
+                $this->state_id       = $obj->fk_departement;
                 $this->departement	= $obj->fk_departement?$obj->departement:'';
 
                 $transcode=$langs->trans('StatusProspect'.$obj->fk_stcomm);
@@ -1380,9 +1384,11 @@ class Societe extends CommonObject
         $lien.=(!empty($this->canvas)?'&amp;canvas='.$this->canvas:'').'">';
         $lienfin='</a>';
 
-        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCompany").': '.$this->nom,'company').$lienfin);
+        if (empty($this->name)) $this->name=$this->nom;
+        
+        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCompany").': '.$this->name,'company').$lienfin);
         if ($withpicto && $withpicto != 2) $result.=' ';
-        $result.=$lien.($maxlen?dol_trunc($this->nom,$maxlen):$this->nom).$lienfin;
+        $result.=$lien.($maxlen?dol_trunc($this->name,$maxlen):$this->name).$lienfin;
 
         return $result;
     }
@@ -1412,8 +1418,9 @@ class Societe extends CommonObject
         $contact_email = $this->contact_email_array();
         if ($this->email)
         {
-            // TODO: Tester si email non deja present dans tableau contact
-            $contact_email[-1]=$langs->trans("ThirdParty").': '.dol_trunc($this->nom,16)." &lt;".$this->email."&gt;";
+        	if (empty($this->name)) $this->name=$this->nom;
+        	// TODO: Tester si email non deja present dans tableau contact
+        	$contact_email[-1]=$langs->trans("ThirdParty").': '.dol_trunc($this->nom,16)." &lt;".$this->email."&gt;";
         }
         return $contact_email;
     }
@@ -2169,19 +2176,25 @@ class Societe extends CommonObject
         if (empty($name)) $name=trim($member->nom.' '.$member->prenom);
 
         // Positionne parametres
-        $this->email = $member->email;
-        $this->nom = $name;
-        $this->client = 1;						// A member is a customer by default
-        $this->code_client = -1;
-        $this->code_fournisseur = -1;
+        $this->nom=$name;				// TODO obsolete
+        $this->name=$name;
         $this->adresse=$member->adresse; // TODO obsolete
         $this->address=$member->adresse;
-        $this->cp=$member->cp;
-        $this->ville=$member->ville;
-        $this->pays_code=$member->pays_code;
-        $this->pays_id=$member->pays_id;
+        $this->cp=$member->cp;			// TODO obsolete
+        $this->zip=$member->cp;
+        $this->ville=$member->ville;	// TODO obsolete
+        $this->town=$member->ville;
+        $this->pays_code=$member->pays_code;	// TODO obsolete
+        $this->country_code=$member->pays_code;
+        $this->pays_id=$member->pays_id;	// TODO obsolete
+        $this->country_id=$member->pays_id;
         $this->tel=$member->phone;				// Prof phone
-
+        $this->email=$member->email;
+ 
+        $this->client = 1;				// A member is a customer by default
+        $this->code_client = -1;
+        $this->code_fournisseur = -1;
+ 
         $this->db->begin();
 
         // Cree et positionne $this->id

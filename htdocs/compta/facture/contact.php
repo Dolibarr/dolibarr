@@ -240,7 +240,7 @@ if ($id > 0 || ! empty($ref))
 			print '</td>';
 
 			print '<td colspan="1">';
-			print $mysoc->nom;
+			print $mysoc->name;
 			print '</td>';
 
 			print '<td colspan="1">';
@@ -333,7 +333,7 @@ if ($id > 0 || ! empty($ref))
                 }
 				if ($tab[$i]['socid'] < 0)
 				{
-                    print $mysoc->nom;
+                    print $mysoc->name;
                 }
 				if (! $tab[$i]['socid'])
                 {

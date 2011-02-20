@@ -797,7 +797,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 
 			// Nom emetteur
-			$carac_emetteur_name=$outputlangs->convToOutputCharset($mysoc->nom);
+			$carac_emetteur_name=$outputlangs->convToOutputCharset($mysoc->name);
 			$pdf->SetTextColor(0,0,60);
 			$pdf->SetFont('','B', $default_font_size);
 			$pdf->SetXY($this->marge_gauche+2,$posy+3);

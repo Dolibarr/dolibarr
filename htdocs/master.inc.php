@@ -243,14 +243,10 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 	$mysoc->id=0;
 	$mysoc->nom=$conf->global->MAIN_INFO_SOCIETE_NOM; 			// TODO deprecated
 	$mysoc->name=$conf->global->MAIN_INFO_SOCIETE_NOM;
-	$mysoc->adresse=$conf->global->MAIN_INFO_SOCIETE_ADRESSE; 	// TODO deprecated
 	$mysoc->address=$conf->global->MAIN_INFO_SOCIETE_ADRESSE;
-	$mysoc->cp=$conf->global->MAIN_INFO_SOCIETE_CP; 			// TODO deprecated
 	$mysoc->zip=$conf->global->MAIN_INFO_SOCIETE_CP;
-	$mysoc->ville=$conf->global->MAIN_INFO_SOCIETE_VILLE; 		// TODO deprecated
 	$mysoc->town=$conf->global->MAIN_INFO_SOCIETE_VILLE;
 	$mysoc->state_id=$conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT;
-	$mysoc->departement_id=$conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT;	// TODO deprecated
 	$mysoc->note=empty($conf->global->MAIN_INFO_SOCIETE_NOTE)?'':$conf->global->MAIN_INFO_SOCIETE_NOTE;
 
     // We define pays_id, pays_code and pays_label

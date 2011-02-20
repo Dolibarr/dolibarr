@@ -470,7 +470,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$larg_sign = ($this->page_largeur-$this->marge_gauche-$this->marge_droite)/3;
 		$pdf->Rect($this->marge_gauche, ($tab_top + $tab_height + 3), $larg_sign, 25 );
 		$pdf->SetXY ($this->marge_gauche + 2, $tab_top + $tab_height + 5);
-		$pdf->MultiCell($larg_sign,2, $outputlangs->trans("For").' '.$outputlangs->convToOutputCharset($mysoc->nom).":",'','L');
+		$pdf->MultiCell($larg_sign,2, $outputlangs->trans("For").' '.$outputlangs->convToOutputCharset($mysoc->name).":",'','L');
 
 		$pdf->Rect(2*$larg_sign+$this->marge_gauche, ($tab_top + $tab_height + 3), $larg_sign, 25 );
 		$pdf->SetXY (2*$larg_sign+$this->marge_gauche + 2, $tab_top + $tab_height + 5);

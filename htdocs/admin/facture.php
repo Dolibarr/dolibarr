@@ -585,7 +585,7 @@ print "<td>".$langs->trans("SuggestPaymentByChequeToAddress")."</td>";
 print "<td>";
 print '<select name="chq">';
 print '<option value="0">'.$langs->trans("DoNotSuggestPaymentMode").'</option>';
-print '<option value="-1"'.($conf->global->FACTURE_CHQ_NUMBER?' selected="selected"':'').'>'.$langs->trans("MenuCompanySetup").' ('.($mysoc->nom?$mysoc->nom:$langs->trans("NotDefined")).')</option>';
+print '<option value="-1"'.($conf->global->FACTURE_CHQ_NUMBER?' selected="selected"':'').'>'.$langs->trans("MenuCompanySetup").' ('.($mysoc->name?$mysoc->name:$langs->trans("NotDefined")).')</option>';
 
 $sql = "SELECT rowid, label";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank_account";

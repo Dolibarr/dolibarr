@@ -231,7 +231,7 @@ if ($id > 0)
 			print '</td>';
 
 			print '<td colspan="1">';
-			print $mysoc->nom;
+			print $mysoc->name;
 			print '</td>';
 
 			print '<td colspan="1">';
@@ -323,7 +323,7 @@ if ($id > 0)
                 }
 				if ($tab[$i]['socid'] < 0)
 				{
-                    print $mysoc->nom;
+                    print $mysoc->name;
                 }
 				if (! $tab[$i]['socid'])
                 {

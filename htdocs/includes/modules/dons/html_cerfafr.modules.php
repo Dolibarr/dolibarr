@@ -123,10 +123,10 @@ class html_cerfafr extends ModeleDon
 		        $html = str_replace('__AMOUNT__',$don->amount,$html);
 		        $html = str_replace('__CURRENCY__',$outputlangs->transnoentitiesnoconv("Currency".$conf->monnaie),$html);
 		        $html = str_replace('__CURRENCYCODE__',$conf->monnaie,$html);
-		        $html = str_replace('__MAIN_INFO_SOCIETE_NOM__',$mysoc->nom,$html);
+		        $html = str_replace('__MAIN_INFO_SOCIETE_NOM__',$mysoc->name,$html);
 		        $html = str_replace('__MAIN_INFO_SOCIETE_ADRESSE__',$mysoc->address,$html);
-		        $html = str_replace('__MAIN_INFO_SOCIETE_CP__',$mysoc->cp,$html);
-		        $html = str_replace('__MAIN_INFO_SOCIETE_VILLE__',$mysoc->ville,$html);
+		        $html = str_replace('__MAIN_INFO_SOCIETE_CP__',$mysoc->zip,$html);
+		        $html = str_replace('__MAIN_INFO_SOCIETE_VILLE__',$mysoc->town,$html);
 		        $html = str_replace('__DONATOR_NAME__',$don->nom,$html);
 		        $html = str_replace('__DONATOR_ADDRESS__',$don->adresse,$html);
 		        $html = str_replace('__DONATOR_ZIP__',$don->cp,$html);

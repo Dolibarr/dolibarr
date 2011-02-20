@@ -404,7 +404,7 @@ class pdf_standardlabel {
         $pdf->SetSubject($outputlangs->transnoentities("MembersLabels"));
         $pdf->SetCreator("Dolibarr ".DOL_VERSION);
         $pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
-        $pdf->SetKeyWords($outputlangs->transnoentities('MembersLabels')." ".$outputlangs->transnoentities("Foundation")." ".$outputlangs->convToOutputCharset($mysoc->nom));
+        $pdf->SetKeyWords($outputlangs->transnoentities('MembersLabels')." ".$outputlangs->transnoentities("Foundation")." ".$outputlangs->convToOutputCharset($mysoc->name));
         if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
 
         $pdf->SetMargins(0,0);
