@@ -115,9 +115,6 @@ foreach ($conf->file->dol_document_root as $dirroot)
 
 					$modulequalified=1;
 
-					// We discard modules that does not respect constraint on menu handlers
-					if (! empty($objMod->needtopmenu)  && sizeof($objMod->needtopmenu)  && ! in_array($conf->top_menu,$objMod->needtopmenu))   $modulequalified=0;
-
 					// We discard modules according to features level (PS: if module is activated we always show it)
 					$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',get_class($objMod)));
 					if ($objMod->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2 && ! $conf->global->$const_name) $modulequalified=0;

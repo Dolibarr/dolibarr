@@ -2096,7 +2096,6 @@ function dol_print_error($db='',$error='')
         $out.="<br>\n";
 		$out.="<b>".$langs->trans("RequestedUrl").":</b> ".$_SERVER["REQUEST_URI"]."<br>\n";;
         $out.="<b>".$langs->trans("Referer").":</b> ".(isset($_SERVER["HTTP_REFERER"])?$_SERVER["HTTP_REFERER"]:'')."<br>\n";;
-		//$out.="<b>".$langs->trans("MenuManager").":</b> ".$conf->top_menu.($conf->top_menu||$conf->left_menu?'/':'').$conf->left_menu."<br>\n";
 		$out.="<b>".$langs->trans("MenuManager").":</b> ".$conf->top_menu."<br>\n";
 		$out.="<br>\n";
 		$syslog.="url=".$_SERVER["REQUEST_URI"];

@@ -155,8 +155,10 @@ class FormAdmin
     	                        if (preg_match('/lib\.php$/i',$file)) continue;	// We exclude library files
     	                    	$filelib=preg_replace('/\.php$/i','',$file);
     	        				$prefix='';
-    	        				if (preg_match('/^eldy|^smartphone/i',$file)) $prefix='0';	// 0=Recommanded, 1=Experimental, 2=Other
-    	        				else $prefix='2';
+    	        				// 0=Recommanded, 1=Experimental, 2=Developpement, 3=Other
+    	        				if (preg_match('/^eldy/i',$file)) $prefix='0';
+                                else if (preg_match('/^smartphone/i',$file)) $prefix='2';
+    	        				else $prefix='3';
 
     	                        if ($file == $selected)
     	                        {
@@ -182,13 +184,16 @@ class FormAdmin
 		{
 			$tab=explode('_',$key);
 			$newprefix=$tab[0];
+			if ($newprefix=='1' && ($conf->global->MAIN_FEATURES_LEVEL < 1)) continue;
+			if ($newprefix=='2' && ($conf->global->MAIN_FEATURES_LEVEL < 2)) continue;
 			if (! empty($conf->browser->firefox) && $newprefix != $oldprefix)	// Add separators
 			{
 				// Affiche titre
 				print '<option value="-1" disabled="disabled">';
 				if ($newprefix=='0') print '-- '.$langs->trans("VersionRecommanded").' --';
-				if ($newprefix=='1') print '-- '.$langs->trans("VersionExperimental").' --';
-				if ($newprefix=='2') print '-- '.$langs->trans("Other").' --';
+                if ($newprefix=='1') print '-- '.$langs->trans("VersionExperimental").' --';
+				if ($newprefix=='2') print '-- '.$langs->trans("VersionDevelopment").' --';
+				if ($newprefix=='3') print '-- '.$langs->trans("Other").' --';
 				print '</option>';
 				$oldprefix=$newprefix;
 			}
