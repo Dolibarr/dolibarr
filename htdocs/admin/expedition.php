@@ -41,6 +41,11 @@ $langs->load("deliveries");
 
 if (!$user->admin) accessforbidden();
 
+if (empty($conf->global->EXPEDITION_ADDON_NUMBER))
+{
+    $conf->global->EXPEDITION_ADDON_NUMBER='mod_expedition_safor';
+}
+
 
 /*
  * Actions

@@ -85,7 +85,7 @@ class Expedition extends CommonObject
 		$this->statuts[0]  = 'StatusSendingDraft';
 		$this->statuts[1]  = 'StatusSendingValidated';
 	}
-	
+
 		/**
 	 *	Return next contract ref
 	 *	@param		soc		objet society
@@ -98,33 +98,30 @@ class Expedition extends CommonObject
 
 		$dir = DOL_DOCUMENT_ROOT . "/includes/modules/expedition";
 
-		if (! empty($conf->global->EXPEDITION_ADDON_NUMBER))
+	    if (empty($conf->global->EXPEDITION_ADDON_NUMBER))
+        {
+            $conf->global->EXPEDITION_ADDON_NUMBER='mod_expedition_safor';
+        }
+
+		$file = $conf->global->EXPEDITION_ADDON_NUMBER.".php";
+
+		// Chargement de la classe de numerotation
+		$classname = $conf->global->EXPEDITION_ADDON_NUMBER;
+
+		$result=include_once($dir.'/'.$file);
+		if ($result)
 		{
-			$file = $conf->global->EXPEDITION_ADDON_NUMBER.".php";
+			$obj = new $classname();
+			$numref = "";
+			$numref = $obj->getNextValue($soc,$this);
 
-			// Chargement de la classe de numerotation
-			$classname = $conf->global->EXPEDITION_ADDON_NUMBER;
-
-			$result=include_once($dir.'/'.$file);
-			if ($result)
+			if ( $numref != "")
 			{
-				$obj = new $classname();
-				$numref = "";
-				$numref = $obj->getNextValue($soc,$this);
-
-				if ( $numref != "")
-				{
-					return $numref;
-				}
-				else
-				{
-					dol_print_error($db,"Expedition::getNextNumRef ".$obj->error);
-					return "";
-				}
+				return $numref;
 			}
 			else
 			{
-				print $langs->trans("Error")." ".$langs->trans("Error_EXPEDITION_ADDON_NUMBER_NotDefined");
+				dol_print_error($db,"Expedition::getNextNumRef ".$obj->error);
 				return "";
 			}
 		}
@@ -134,7 +131,7 @@ class Expedition extends CommonObject
 			return "";
 		}
 	}
-	
+
 	/**
 	 *    \brief      Cree expedition en base
 	 *    \param      user        Objet du user qui cree
@@ -429,7 +426,7 @@ class Expedition extends CommonObject
 		{
 			$num = "EXP".$this->id;
 		}
-		
+
 		$now=dol_now();
 
 		// Validate

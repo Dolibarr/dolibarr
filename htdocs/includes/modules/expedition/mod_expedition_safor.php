@@ -31,7 +31,7 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/expedition/modules_expedition
 class mod_expedition_safor extends ModelNumRefExpedition
 {
 	var $version='dolibarr';
-	var $prefix='BE';
+	var $prefix='SH';
 	var $error='';
 	var $nom='Safor';
 
@@ -47,7 +47,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
     }
 
 
-	/**     
+	/**
 	 *	Return numbering example
 	 *	@return     string      Example
 	 */
@@ -57,7 +57,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	}
 
 
-	/**     
+	/**
 	 *	Test if existing numbers make problems with numbering
 	 *	@return     boolean     false if conflit, true if ok
 	 */
@@ -89,7 +89,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 		return true;
 	}
 
-	/**		
+	/**
 	 *	Return next value
 	 *	@param      objsoc      third party object
 	 *	@param		shipment	shipment object
@@ -126,7 +126,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 		return $this->prefix.$yymm."-".$num;
 	}
 
-	/**		
+	/**
 	 *Return next free value
 	 *	@param      objsoc      Object third party
 	 *	@param		objforref	Object for number to search

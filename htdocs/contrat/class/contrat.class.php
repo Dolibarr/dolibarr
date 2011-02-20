@@ -100,33 +100,30 @@ class Contrat extends CommonObject
 
 		$dir = DOL_DOCUMENT_ROOT . "/includes/modules/contract";
 
-		if (! empty($conf->global->CONTRACT_ADDON))
+		if (empty($conf->global->CONTRACT_ADDON))
 		{
-			$file = $conf->global->CONTRACT_ADDON.".php";
+		    $conf->global->CONTRACT_ADDON='mod_contract_serpis';
+		}
 
-			// Chargement de la classe de numerotation
-			$classname = $conf->global->CONTRACT_ADDON;
+		$file = $conf->global->CONTRACT_ADDON.".php";
 
-			$result=include_once($dir.'/'.$file);
-			if ($result)
+		// Chargement de la classe de numerotation
+		$classname = $conf->global->CONTRACT_ADDON;
+
+		$result=include_once($dir.'/'.$file);
+		if ($result)
+		{
+			$obj = new $classname();
+			$numref = "";
+			$numref = $obj->getNextValue($soc,$this);
+
+			if ( $numref != "")
 			{
-				$obj = new $classname();
-				$numref = "";
-				$numref = $obj->getNextValue($soc,$this);
-
-				if ( $numref != "")
-				{
-					return $numref;
-				}
-				else
-				{
-					dol_print_error($db,"Contract::getNextNumRef ".$obj->error);
-					return "";
-				}
+				return $numref;
 			}
 			else
 			{
-				print $langs->trans("Error")." ".$langs->trans("Error_CONTRACT_ADDON_NotDefined");
+				dol_print_error($db,"Contract::getNextNumRef ".$obj->error);
 				return "";
 			}
 		}
@@ -134,9 +131,9 @@ class Contrat extends CommonObject
 		{
 			print $langs->trans("Error")." ".$langs->trans("Error_CONTRACT_ADDON_NotDefined");
 			return "";
-		}
+			}
 	}
-	
+
 	/**
 	 *      \brief      Activate a contract line
 	 *      \param      user        Objet User qui active le contrat
@@ -471,9 +468,9 @@ class Contrat extends CommonObject
 				$line->date_debut_reel   = $this->db->jdate($objp->date_ouverture);
 				$line->date_fin_prevue   = $this->db->jdate($objp->date_fin_validite);
 				$line->date_fin_reel     = $this->db->jdate($objp->date_cloture);
-				
+
 				$this->lines[]			= $line;
-				
+
 				//dol_syslog("1 ".$line->desc);
 				//dol_syslog("2 ".$line->product_desc);
 

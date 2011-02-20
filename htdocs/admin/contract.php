@@ -35,9 +35,16 @@ $langs->load("contracts");
 if (!$user->admin)
 accessforbidden();
 
+if (empty($conf->global->CONTRACT_ADDON))
+{
+    $conf->global->CONTRACT_ADDON='mod_contract_serpis';
+}
+
+
 /*
  * Actions
  */
+
 if ($_POST["action"] == 'updateMask')
 {
 	$maskconst=$_POST['maskconstcontract'];
@@ -56,9 +63,11 @@ if ($_POST["action"] == 'updatePrefix') dolibarr_set_const($db, "CONTRACT_NUM_PR
 if ($_POST["action"] == 'setOffset') dolibarr_set_const($db, "CONTRACT_NUM_DELTA",$_POST["offset"],'chaine',0,'',$conf->entity);
 if ($_POST["action"] == 'setNumRestart') dolibarr_set_const($db, "CONTRACT_NUM_RESTART_BEGIN_YEAR",$_POST["numrestart"],'chaine',0,'',$conf->entity);
 
+
 /*
  * View
  */
+
 llxHeader();
 
 $dir=DOL_DOCUMENT_ROOT."/includes/modules/contract/";
