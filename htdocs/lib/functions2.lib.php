@@ -1016,7 +1016,7 @@ function getListOfModels($db,$type)
             $obj = $db->fetch_object($resql);
 
             // If this generation module needs to scan a directory, then description field is filled
-            // with the constant that contains list of directories to scan.
+            // with the constant that contains list of directories to scan (COMPANY_ADDON_PDF_ODT_PATH, ...).
             if (! empty($obj->description))	// List of directories to scan is defined
             {
                 $const=$obj->description;
