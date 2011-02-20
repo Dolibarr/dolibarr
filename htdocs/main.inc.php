@@ -57,7 +57,6 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* removed in PHP6
 	{
 		$_GET     = array_map('stripslashes_deep', $_GET);
 		$_POST    = array_map('stripslashes_deep', $_POST);
-//		$_REQUEST = array_map('stripslashes_deep', $_REQUEST);
 		$_COOKIE  = array_map('stripslashes_deep', $_COOKIE);
 		@set_magic_quotes_runtime(0);
 	}
