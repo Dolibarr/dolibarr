@@ -312,7 +312,7 @@ function thirdparty_doc_create($db, $id, $message, $modele, $outputlangs)
 		$srctemplatepath=$tmp[1];
 	}
 
-	// Charge le modele
+	// Search template
 	$file = "doc_".$modele.".modules.php";
 	if (file_exists($dir.'/'.$file))
 	{
