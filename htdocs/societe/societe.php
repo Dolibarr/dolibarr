@@ -392,19 +392,19 @@ if ($resql)
 		$s='';
 		if (($obj->client==1 || $obj->client==3) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))
 		{
-	  		$companystatic->nom=$langs->trans("Customer");
+	  		$companystatic->name=$langs->trans("Customer");
 		    $s.=$companystatic->getNomUrl(0,'customer');
 		}
-		if ($s) print " / ";
 		if (($obj->client==2 || $obj->client==3) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
 		{
-            $companystatic->nom=$langs->trans("Prospect");
+            if ($s) $s.=" / ";
+		    $companystatic->name=$langs->trans("Prospect");
             $s.=$companystatic->getNomUrl(0,'prospect');
 		}
 		if ($conf->fournisseur->enabled && $obj->fournisseur)
 		{
-			if ($s) print " / ";
-            $companystatic->nom=$langs->trans("Supplier");
+			if ($s) $s.=" / ";
+            $companystatic->name=$langs->trans("Supplier");
             $s.=$companystatic->getNomUrl(0,'supplier');
 		}
 		print $s;
