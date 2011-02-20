@@ -105,6 +105,8 @@ class modAdherent extends DolibarrModules
         // Boites
         //-------
         $this->boxes = array();
+        $r=0;
+        $this->boxes[$r][1] = "box_members.php";
 
         // Permissions
         //------------
