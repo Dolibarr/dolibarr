@@ -19,14 +19,14 @@
  */
 
 /**
- *	\file       htdocs/public/members/public_list.php
- *	\ingroup    member
+ *  \file       htdocs/public/members/public_list.php
+ *  \ingroup    member
  *  \brief      File sample to list members
  *  \version    $Id$
  */
 
-define("NOLOGIN",1);		// This means this output page does not require to be logged.
-define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+define("NOLOGIN",1);        // This means this output page does not require to be logged.
+define("NOCSRFCHECK",1);    // We accept to go on this page from external web site.
 
 require("../../main.inc.php");
 
@@ -42,21 +42,21 @@ $langs->load("other");
 
 function llxHeaderVierge($title, $head = "")
 {
-	global $user, $conf, $langs;
+    global $user, $conf, $langs;
 
-	header("Content-type: text/html; charset=".$conf->file->character_set_client);
-	print "<html>\n";
+    header("Content-type: text/html; charset=".$conf->file->character_set_client);
+    print "<html>\n";
     print "<head>\n";
     print "<title>".$title."</title>\n";
     if ($head) print $head."\n";
     print "</head>\n";
-	print "<body>\n";
+    print "<body>\n";
 }
 
 function llxFooterVierge()
 {
-	print "</body>\n";
-	print "</html>\n";
+    print "</body>\n";
+    print "</html>\n";
 }
 
 
@@ -96,49 +96,49 @@ $sql.= $db->plimit($conf->liste_limit+1, $offset);
 $result = $db->query($sql);
 if ($result)
 {
-	$num = $db->num_rows($result);
-	$i = 0;
+    $num = $db->num_rows($result);
+    $i = 0;
 
-	$param="&statut=$statut&sortorder=$sortorder&sortfield=$sortfield";
-	print_barre_liste($langs->trans("ListOfValidatedPublicMembers"), $page, "priv_liste.php", $param, $sortfield, $sortorder, '', $num, 0, '');
-	print "<table class=\"noborder\" width=\"100%\">";
+    $param="&statut=$statut&sortorder=$sortorder&sortfield=$sortfield";
+    print_barre_liste($langs->trans("ListOfValidatedPublicMembers"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, 0, '');
+    print "<table class=\"noborder\" width=\"100%\">";
 
-	print '<tr class="liste_titre">';
-	print "<td><a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&sortorder=ASC&sortfield=prenom\">".$langs->trans("Surname")."</a> <a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&sortorder=ASC&sortfield=nom\">".$langs->trans("Name")."</a> / <a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&sortorder=ASC&sortfield=societe\">".$langs->trans("Company")."</a></td>\n";
-	print_liste_field_titre($langs->trans("DateToBirth"),"public_list.php","naiss","",$param,$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("EMail"),"public_list.php","email","",$param,$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Zip"),"public_list.php","cp","",$param,$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Town"),"public_list.php","ville","",$param,$sortfield,$sortorder);
-	print "<td>".$langs->trans("Photo")."</td>\n";
-	print "</tr>\n";
+    print '<tr class="liste_titre">';
+    print "<td><a href=\"".$_SERVER["PHP_SELF"]."?page=$page&sortorder=ASC&sortfield=prenom\">".$langs->trans("Surname")."</a> <a href=\"".$_SERVER['PHP_SELF']."?page=$page&sortorder=ASC&sortfield=nom\">".$langs->trans("Name")."</a> / <a href=\"".$_SERVER["PHP_SELF"]."?page=$page&sortorder=ASC&sortfield=societe\">".$langs->trans("Company")."</a></td>\n";
+    print_liste_field_titre($langs->trans("DateToBirth"),"public_list.php","naiss","",$param,$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("EMail"),"public_list.php","email","",$param,$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Zip"),"public_list.php","cp","",$param,$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Town"),"public_list.php","ville","",$param,$sortfield,$sortorder);
+    print "<td>".$langs->trans("Photo")."</td>\n";
+    print "</tr>\n";
 
-	$var=True;
-	while ($i < $num && $i < $conf->liste_limit)
-	{
-		$objp = $db->fetch_object($result);
-		$var=!$var;
-		print "<tr $bc[$var]>";
-		print "<td><a href=\"public_card.php?id=$objp->rowid\">".$objp->prenom." ".$objp->nom.($objp->societe?" / ".$objp->societe:"")."</a></TD>\n";
-		print "<td>$objp->naiss</td>\n";
-		print "<td>$objp->email</td>\n";
-		print "<td>$objp->cp</td>\n";
-		print "<td>$objp->ville</td>\n";
-		if (isset($objp->photo) && $objp->photo!= '')
-		{
-			print "<td><A HREF=\"$objp->photo\"><IMG SRC=\"$objp->photo\" HEIGHT=64 WIDTH=64></A></TD>\n";
-		}
-		else
-		{
-			print "<td>&nbsp;</td>\n";
-		}
-		print "</tr>";
-		$i++;
-	}
-	print "</table>";
+    $var=True;
+    while ($i < $num && $i < $conf->liste_limit)
+    {
+        $objp = $db->fetch_object($result);
+        $var=!$var;
+        print "<tr $bc[$var]>";
+        print "<td><a href=\"public_card.php?id=$objp->rowid\">".$objp->prenom." ".$objp->nom.($objp->societe?" / ".$objp->societe:"")."</a></TD>\n";
+        print "<td>$objp->naiss</td>\n";
+        print "<td>$objp->email</td>\n";
+        print "<td>$objp->cp</td>\n";
+        print "<td>$objp->ville</td>\n";
+        if (isset($objp->photo) && $objp->photo!= '')
+        {
+            print "<td><a href=\"$objp->photo\"><img src=\"$objp->photo\" height=\"64\" width=\"64\"></a></td>\n";
+        }
+        else
+        {
+            print "<td>&nbsp;</td>\n";
+        }
+        print "</tr>";
+        $i++;
+    }
+    print "</table>";
 }
 else
 {
-	dol_print_error($db);
+    dol_print_error($db);
 }
 
 
