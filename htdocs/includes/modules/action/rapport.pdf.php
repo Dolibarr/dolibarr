@@ -22,12 +22,13 @@
 /**
  *	\file       htdocs/includes/modules/action/rapport.pdf.php
  *	\ingroup    commercial
- *	\brief      Fichier de generation de PDF pour les rapports d'actions
+ *	\brief      File to build PDF with events
  *	\version    $Id$
  */
 
 require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
+require_once(DOL_DOCUMENT_ROOT.'/lib/date.lib.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 /**
@@ -176,11 +177,11 @@ class CommActionRapport
 		$sql.= " a.fk_contact, a.note, a.percent as percent,";
 		$sql.= " c.libelle,";
 		$sql.= " u.login";
-		$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."user as u";
-		$sql.= " WHERE a.fk_soc = s.rowid AND c.id=a.fk_action AND a.fk_user_author = u.rowid";
-        // TODO remove usage of date_format
-		$sql.= " AND date_format(a.datep, '%m') = '".$this->month."'";
-		$sql.= " AND date_format(a.datep, '%Y') = '".$this->year."'";
+		$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
+		$sql.= " WHERE c.id=a.fk_action AND a.fk_user_author = u.rowid";
+		$sql.= " AND a.datep BETWEEN '".$this->db->idate(dol_get_first_day($this->year,$this->month,false))."'";
+		$sql.= " AND '".$this->db->idate(dol_get_last_day($this->year,$this->month,false))."'";
 		$sql.= " ORDER BY a.datep DESC";
 
 		dol_syslog("Rapport.pdf::_page sql=".$sql);
