@@ -449,10 +449,12 @@ class Menubase
 
         $newTabMenu=array();
         $i=0;
-        foreach($tabMenu as $val)
+	if (is_array($tabMenu))
         {
-        	if ($val[9]=='top')
-        	{
+			foreach($tabMenu as $val)
+			{
+        		if ($val[9]=='top')
+        		{
 
         		$newTabMenu[$i]['rowid']=$val[0];
         		$newTabMenu[$i]['fk_menu']=$val[1];
@@ -466,8 +468,9 @@ class Menubase
         		$newTabMenu[$i]['type']=$val[9];
         		$newTabMenu[$i]['lang']=$val[10];
         		$i++;
-        	}
-        }
+        		}
+			}
+		}
 
         return $newTabMenu;
 	}
@@ -500,14 +503,17 @@ class Menubase
 
         // Define menutopid
         $menutopid='';
-        foreach($tabMenu as $val)
-        {
-            if ($val[9] == 'top' && $val[8] == $mainmenu)
-            {
-                $menutopid=$val[0];
-                break;
-            }
-        }
+    if (is_array($tabMenu))
+		{
+			foreach($tabMenu as $val)
+			{
+				if ($val[9] == 'top' && $val[8] == $mainmenu)
+				{
+					$menutopid=$val[0];
+					break;
+				}
+			}
+		}
 
         // Now edit this->newmenu->list to add entries found into tabMenu that are in childs of mainmenu claimed
         $this->recur($tabMenu, $menutopid, 1, $leftmenu);
