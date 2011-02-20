@@ -100,11 +100,11 @@ if ($result)
 	$i = 0;
 
 	$param="&statut=$statut&sortorder=$sortorder&sortfield=$sortfield";
-	print_barre_liste($langs->trans("ListOfValidatedPublicMembers"), $page, "priv_liste.php", $param, $sortfield, $sortorder, '', $num, 0, '');
+	print_barre_liste($langs->trans("ListOfValidatedPublicMembers"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, 0, '');
 	print "<table class=\"noborder\" width=\"100%\">";
 
 	print '<tr class="liste_titre">';
-	print "<td><a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&sortorder=ASC&sortfield=prenom\">".$langs->trans("Surname")."</a> <a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&sortorder=ASC&sortfield=nom\">".$langs->trans("Name")."</a> / <a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&sortorder=ASC&sortfield=societe\">".$langs->trans("Company")."</a></td>\n";
+	print "<td><a href=\"".$_SERVER["PHP_SELF"]."?page=$page&sortorder=ASC&sortfield=prenom\">".$langs->trans("Surname")."</a> <a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&sortorder=ASC&sortfield=nom\">".$langs->trans("Name")."</a> / <a href=\"".$_SERVER["PHP_SELF"]."?page=$page&sortorder=ASC&sortfield=societe\">".$langs->trans("Company")."</a></td>\n";
 	print_liste_field_titre($langs->trans("DateToBirth"),"public_list.php","naiss","",$param,$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("EMail"),"public_list.php","email","",$param,$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Zip"),"public_list.php","cp","",$param,$sortfield,$sortorder);
@@ -125,7 +125,7 @@ if ($result)
 		print "<td>$objp->ville</td>\n";
 		if (isset($objp->photo) && $objp->photo!= '')
 		{
-			print "<td><A HREF=\"$objp->photo\"><IMG SRC=\"$objp->photo\" HEIGHT=64 WIDTH=64></A></TD>\n";
+			print "<td><a href=\"$objp->photo\"><img src=\"$objp->photo\" height=\"64\" width=\"64\"></a></td>\n";
 		}
 		else
 		{
