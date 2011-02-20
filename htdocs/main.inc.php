@@ -1406,9 +1406,9 @@ function main_area($title='')
 
 
 /**
- *  \brief   Return helpbaseurl, helppage and mode
- *  \param   helppagename		Page name (EN:xxx,ES:eee,FR:fff...)
- *  \param   langs				Language
+ *  Return helpbaseurl, helppage and mode
+ *  @param   helppagename		Page name (EN:xxx,ES:eee,FR:fff...)
+ *  @param   langs				Language
  */
 function getHelpParamFor($helppagename,$langs)
 {
