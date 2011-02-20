@@ -55,21 +55,32 @@ $page = $_GET["page"];
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-if (isset($_POST["button_removefilter_x"]))
-{
-	$sref="";
-	$snom="";
-}
-
-if (isset($_REQUEST['catid']))
-{
-	$catid = $_REQUEST['catid'];
-}
+$catid=GETPOST('catid');
+$toolowstock=GETPOST('toolowstock');
 
 // Load sale and categ filters
-$search_sale = isset($_GET["search_sale"])?$_GET["search_sale"]:$_POST["search_sale"];
-$search_categ = isset($_GET["search_categ"])?$_GET["search_categ"]:$_POST["search_categ"];
+$search_sale = GETPOST("search_sale");
+$search_categ = GETPOST("search_categ");
 
+if (! empty($_POST["button_removefilter_x"]))
+{
+    $sref="";
+    $snom="";
+    $sall="";
+    $search_sale="";
+    $search_categ="";
+    $type="";
+    $catid='';
+    $toolowstock='';
+}
+
+
+
+/*
+ * Actions
+ */
+
+// None
 
 
 /*
@@ -84,7 +95,7 @@ $sql = 'SELECT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price
 $sql.= ' p.fk_product_type, p.tms as datem,';
 $sql.= ' p.duration, p.tosell as statut, p.tobuy, p.seuil_stock_alerte,';
 $sql.= ' SUM(s.reel) as stock_physique';
-$sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
+$sql.= ' FROM ('.MAIN_DB_PREFIX.'product as p';
 // We'll need this table joined to the select in order to filter by categ
 if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_product as cp";
 // We disable this because this create duplicate lines
@@ -93,7 +104,7 @@ if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_product as cp";
 	$fourn_id = $_GET["fourn_id"];
 	$sql.= ", ".MAIN_DB_PREFIX."product_fournisseur as pf";
 }*/
-$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as s on p.rowid = s.fk_product';
+$sql.= ') LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as s on p.rowid = s.fk_product';
 $sql.= " WHERE p.entity = ".$conf->entity;
 if ($search_categ) $sql.= " AND p.rowid = cp.fk_product";	// Join for the needed table to filter by categ
 if (!$user->rights->produit->hidden && !$user->rights->service->hidden)
@@ -149,7 +160,7 @@ if ($search_categ)
 $sql.= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,";
 $sql.= " p.fk_product_type, p.tms,";
 $sql.= " p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte";
-if (GETPOST("toolowstock")) $sql.= " HAVING SUM(s.reel) < p.seuil_stock_alerte";    // Not used yet
+if ($toolowstock) $sql.= " HAVING SUM(s.reel) < p.seuil_stock_alerte";    // Not used yet
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit + 1 ,$offset);
 $resql = $db->query($sql) ;
@@ -202,10 +213,11 @@ if ($resql)
 		print_barre_liste($texte, $page, "reassort.php", "&sref=$sref&snom=$snom&fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":""), $sortfield, $sortorder,'',$num);
 	}
 
-	if (isset($catid))
+	if ($catid)
 	{
 		print "<div id='ways'>";
-		$c = new Categorie ($db, $catid);
+		$c = new Categorie($db);
+		$c->fetch($catid);
 		$ways = $c->print_all_ways(' &gt; ','product/reassort.php');
 		print " &gt; ".$ways[0]."<br>\n";
 		print "</div><br>";
@@ -227,7 +239,7 @@ if ($resql)
 		$moreforfilter.=$htmlother->select_categories(0,$search_categ,'search_categ');
 	 	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
 	}
-	$moreforfilter.=' &nbsp; &nbsp; '.$langs->trans("StockTooLow").' <input type="checkbox" name="toolowstock" value="1"'.(GETPOST('toolowstock')?' checked="checked"':'').'>';
+	$moreforfilter.=' &nbsp; &nbsp; '.$langs->trans("StockTooLow").' <input type="checkbox" name="toolowstock" value="1"'.($toolowstock?' checked="checked"':'').'>';
  	if ($moreforfilter)
 	{
 		print '<tr class="liste_titre">';
