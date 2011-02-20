@@ -17,8 +17,19 @@
  *
  * $Id$
  */
+header("Content-type: text/html; charset=".$conf->file->character_set_client);
+?>
+<!DOCTYPE html>
+<html>
+<?php 
 require('header.tpl.php');
 ?>
+<body>
+<script type="text/javascript">
+jQuery(document).bind("mobileinit", function(){
+    jQuery.mobile.defaultTransition('pop');
+});
+</script>
 
 <div data-role="page" data-theme="b" id="dol-home">
 
@@ -57,8 +68,5 @@ require('header.tpl.php');
 </div><!-- /page -->
 
 <!-- END MENU SMARTPHONE TEMPLATE -->
-
-<?php
-require('footer.tpl.php');
-// $this->smartfooter();
-?>
+</body>
+</html>

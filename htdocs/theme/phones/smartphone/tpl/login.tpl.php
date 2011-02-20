@@ -17,8 +17,19 @@
  *
  * $Id$
  */
+header("Content-type: text/html; charset=".$conf->file->character_set_client);
+?>
+<!DOCTYPE html>
+<html>
+<?php 
 include('header.tpl.php');
 ?>
+<body>
+<script type="text/javascript">
+jQuery(document).bind("mobileinit", function(){
+    jQuery.mobile.defaultTransition('pop');
+});
+</script>
 
 <!-- START LOGIN SMARTPHONE TEMPLATE -->
 <div data-role="page" id="dol-home" data-theme="b">
@@ -91,6 +102,5 @@ include('header.tpl.php');
 <?php } ?>
 <!-- END LOGIN SMARTPHONE TEMPLATE -->
 
-<?php
-include('footer.tpl.php');
-?>
+</body>
+</html>
