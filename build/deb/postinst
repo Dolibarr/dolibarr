@@ -49,6 +49,12 @@ case "$1" in
 			cat $fileorig | sed -e 's/__SUPERUSERLOGIN__/'$superuserlogin'/g' | sed -e 's/__SUPERUSERPASSWORD__/'$superuserpassword'/g' > $config
 		fi
 		
+        # Create /var/lib/dolibarr/documents
+        mkdir -p /var/lib/dolibarr/documents
+        chown -R www-data.www-data /var/lib/dolibarr/documents;
+        chmod -R 775 /var/lib/dolibarr/documents;
+        chmod -R g+s /var/lib/dolibarr/documents;
+
 		# Create empty conf.php
 		if [ ! -f /usr/share/dolibarr/htdocs/conf/conf.php ]
 		then 
