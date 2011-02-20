@@ -1,3 +1,6 @@
-#Wed Dec 01 20:46:32 CET 2010
+#Sun Feb 20 12:18:58 CET 2011
 eclipse.preferences.version=1
 include_path=
+org.eclipse.php.core.taskCaseSensitive=enabled
+org.eclipse.php.core.taskPriorities=NORMAL,HIGH,NORMAL
+org.eclipse.php.core.taskTags=TODO,FIXME,@todo
