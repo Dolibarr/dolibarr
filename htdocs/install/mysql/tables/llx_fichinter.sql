@@ -38,6 +38,6 @@ create table llx_fichinter
   description     text,
   note_private    text,
   note_public     text,
-  model_pdf       varchar(50)
+  model_pdf       varchar(255)
   
 )type=innodb;

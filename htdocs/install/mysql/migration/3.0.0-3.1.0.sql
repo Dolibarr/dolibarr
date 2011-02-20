@@ -12,6 +12,18 @@
 
 ALTER TABLE llx_c_actioncomm add COLUMN position integer NOT NULL DEFAULT 0;
 
+ALTER TABLE llx_commande_fournisseur MODIFY model_pdf varchar(255);
+ALTER TABLE llx_commande MODIFY model_pdf varchar(255);
+ALTER TABLE llx_don MODIFY model_pdf varchar(255);
+ALTER TABLE llx_expedition MODIFY model_pdf varchar(255);
+ALTER TABLE llx_facture_fourn MODIFY model_pdf varchar(255);
+ALTER TABLE llx_facture MODIFY model_pdf varchar(255);
+ALTER TABLE llx_fichinter MODIFY model_pdf varchar(255);
+ALTER TABLE llx_livraison MODIFY model_pdf varchar(255);
+ALTER TABLE llx_projet MODIFY model_pdf varchar(255);
+ALTER TABLE llx_propal MODIFY model_pdf varchar(255);
+
+
 -- Delete old constants
 DELETE from llx_const where NAME = 'MAIN_MENU_BARRETOP';
 DELETE from llx_const where NAME = 'MAIN_MENUFRONT_BARRETOP';

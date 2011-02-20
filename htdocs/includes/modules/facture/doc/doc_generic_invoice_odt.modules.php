@@ -242,15 +242,15 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
 		$outputlangs->load("companies");
-		$outputlangs->load("projects");
+		$outputlangs->load("bills");
 
-		if ($conf->societe->dir_output)
+		if ($conf->facture->dir_output)
 		{
 			// If $object is id instead of object
 			if (! is_object($object))
 			{
 				$id = $object;
-				$object = new Societe($this->db);
+				$object = new Facture($this->db);
 				$object->fetch($id);
 
 				if ($result < 0)
@@ -260,8 +260,8 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				}
 			}
 
-			$objectref = dol_sanitizeFileName($object->id);
-			$dir = $conf->societe->dir_output;
+			$objectref = dol_sanitizeFileName($object->ref);
+			$dir = $conf->facture->dir_output;
 			if (! preg_match('/specimen/i',$objectref)) $dir.= "/" . $objectref;
 			$file = $dir . "/" . $objectref . ".odt";
 
@@ -285,12 +285,12 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				//print "file=".$file;
 				//print "conf->societe->dir_temp=".$conf->societe->dir_temp;
 
-				create_exdir($conf->societe->dir_temp);
+				create_exdir($conf->facture->dir_temp);
 
 				// Open and load template
 				require_once(DOL_DOCUMENT_ROOT.'/includes/odtphp/odf.php');
 				$odfHandler = new odf($srctemplatepath, array(
-						'PATH_TO_TMP'	  => $conf->societe->dir_temp,
+						'PATH_TO_TMP'	  => $conf->facture->dir_temp,
 						'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
 						'DELIMITER_LEFT'  => '{',
 						'DELIMITER_RIGHT' => '}')

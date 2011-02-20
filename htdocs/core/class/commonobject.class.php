@@ -34,7 +34,7 @@
 class CommonObject
 {
 	var $db;
-	
+
 	var $linkedObjectBlock;
 	var $objectid;
 
@@ -673,8 +673,10 @@ class CommonObject
 			return -1;
 		}
 
+		$newmodelpdf=dol_trunc($modelpdf,255);
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-		$sql.= " SET model_pdf = '".$modelpdf."'";
+		$sql.= " SET model_pdf = '".$this->db->escape($newmodelpdf)."'";
 		$sql.= " WHERE rowid = ".$this->id;
 		// if ($this->element == 'facture') $sql.= " AND fk_statut < 2";
 		// if ($this->element == 'propal')  $sql.= " AND fk_statut = 0";
@@ -1286,7 +1288,7 @@ class CommonObject
 				$actionfile = 'actions_'.$module.'.class.php';
 				$daofile 	= 'dao_'.$module.'.class.php';
 				$pathroot	= '';
-				
+
 				// Include actions class (controller)
 				dol_include_once($path.$actionfile);
 
@@ -1358,7 +1360,7 @@ class CommonObject
 		global $langs,$bc;
 
 		//print 'objecttype='.$objecttype.'<br>';
-		
+
 		$this->objectid = $objectid;
 
 		$num = sizeof($this->objectid);
@@ -1381,7 +1383,7 @@ class CommonObject
             }
 			$this->linkedObjectBlock = new $classname($this->db);
 			dol_include_once('/'.$tplpath.'/tpl/linkedobjectblock.tpl.php');
-			
+
 			return $num;
 		}
 	}
@@ -1525,7 +1527,7 @@ class CommonObject
 		print '<td align="right">'.$langs->trans('Qty').'</td>';
 		print '<td align="right">'.$langs->trans('ReductionShort').'</td></tr>';
 	}
-	
+
 	/**
 	 * 	Return HTML with list of origin lines
 	 */
@@ -1560,7 +1562,7 @@ class CommonObject
 	function printOriginLine($line,$var)
 	{
 		global $langs,$bc;
-		
+
 		//var_dump($line);
 
 		$date_start=$line->date_debut_prevue;
@@ -1627,7 +1629,7 @@ class CommonObject
 		$this->tpl['price'] = price($line->subprice);
 		$this->tpl['qty'] = (($line->info_bits & 2) != 2) ? $line->qty : '&nbsp;';
 		$this->tpl['remise_percent'] = (($line->info_bits & 2) != 2) ? $line->remise_percent.'%' : '&nbsp;';
-		
+
 		include(DOL_DOCUMENT_ROOT.'/core/tpl/originproductline.tpl.php');
 	}
 }

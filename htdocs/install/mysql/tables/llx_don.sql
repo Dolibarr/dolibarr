@@ -45,6 +45,6 @@ create table llx_don
   fk_user_valid   integer NULL,
   note            text,
   note_public     text,
-  model_pdf       varchar(50),
+  model_pdf       varchar(255),
   import_key      varchar(14)
 )type=innodb;

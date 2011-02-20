@@ -36,5 +36,5 @@ create table llx_projet
   fk_statut        smallint DEFAULT 0 NOT NULL,
   note_private     text,
   note_public      text,
-  model_pdf        varchar(50)
+  model_pdf        varchar(255)
 )type=innodb;

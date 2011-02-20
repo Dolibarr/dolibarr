@@ -57,7 +57,7 @@ create table llx_propal
  
   note					text,
   note_public			text,
-  model_pdf				varchar(50),
+  model_pdf				varchar(255),
   date_livraison 		date DEFAULT NULL,		-- delivery date
   fk_adresse_livraison  integer					-- delivery address (deprecated)
 )type=innodb;

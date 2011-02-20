@@ -38,6 +38,6 @@ create table llx_livraison
   total_ht              double(24,8) DEFAULT 0,
   note                  text,
   note_public           text,
-  model_pdf             varchar(50)
+  model_pdf             varchar(255)
   
 )type=innodb;

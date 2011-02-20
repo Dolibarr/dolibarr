@@ -46,6 +46,6 @@ create table llx_expedition
   weight_units          integer,
   weight                integer,
   note                  text,
-  model_pdf             varchar(50)
+  model_pdf             varchar(255)
   
 )type=innodb;

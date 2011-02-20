@@ -49,7 +49,7 @@ create table llx_commande_fournisseur
   total_ttc           double(24,8)      default 0,
   note                text,
   note_public         text,
-  model_pdf           varchar(50),
+  model_pdf           varchar(255),
   fk_methode_commande integer default 0
 )type=innodb;
 

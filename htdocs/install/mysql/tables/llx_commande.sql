@@ -53,7 +53,7 @@ create table llx_commande
   total_ttc             double(24,8)      default 0,
   note                  text,
   note_public           text,
-  model_pdf             varchar(50),
+  model_pdf             varchar(255),
 
   facture               tinyint   default 0,
   fk_cond_reglement     integer,                       -- condition de reglement
