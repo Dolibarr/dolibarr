@@ -211,10 +211,15 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 	$mysoc=new Societe($db);
 
 	$mysoc->id=0;
+	$mysoc->nom=$conf->global->MAIN_INFO_SOCIETE_NOM; 			// TODO deprecated
 	$mysoc->name=$conf->global->MAIN_INFO_SOCIETE_NOM;
+	$mysoc->adresse=$conf->global->MAIN_INFO_SOCIETE_ADRESSE; 	// TODO deprecated
 	$mysoc->address=$conf->global->MAIN_INFO_SOCIETE_ADRESSE;
+	$mysoc->cp=$conf->global->MAIN_INFO_SOCIETE_CP; 			// TODO deprecated
 	$mysoc->zip=$conf->global->MAIN_INFO_SOCIETE_CP;
+	$mysoc->ville=$conf->global->MAIN_INFO_SOCIETE_VILLE; 		// TODO deprecated
 	$mysoc->town=$conf->global->MAIN_INFO_SOCIETE_VILLE;
+	$mysoc->departement_id=$conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT;	// TODO deprecated
 	$mysoc->state_id=$conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT;
 	$mysoc->note=empty($conf->global->MAIN_INFO_SOCIETE_NOTE)?'':$conf->global->MAIN_INFO_SOCIETE_NOTE;
 
@@ -241,7 +246,8 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
     if (is_object($langs)) $mysoc->country=($langs->trans('Country'.$country_code)!='Country'.$country_code)?$langs->trans('Country'.$country_code):$country_label;
     $mysoc->pays=$mysoc->country;    	// TODO deprecated
 
-	$mysoc->phone=empty($conf->global->MAIN_INFO_SOCIETE_TEL)?'':$conf->global->MAIN_INFO_SOCIETE_TEL;
+	$mysoc->tel=empty($conf->global->MAIN_INFO_SOCIETE_TEL)?'':$conf->global->MAIN_INFO_SOCIETE_TEL;   // TODO deprecated
+    $mysoc->phone=empty($conf->global->MAIN_INFO_SOCIETE_TEL)?'':$conf->global->MAIN_INFO_SOCIETE_TEL;
 	$mysoc->fax=empty($conf->global->MAIN_INFO_SOCIETE_FAX)?'':$conf->global->MAIN_INFO_SOCIETE_FAX;
 	$mysoc->url=empty($conf->global->MAIN_INFO_SOCIETE_WEB)?'':$conf->global->MAIN_INFO_SOCIETE_WEB;
 	// Anciens id prof

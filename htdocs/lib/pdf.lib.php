@@ -130,17 +130,17 @@ function pdf_format_address($outputlangs,$object)
     // Zip/Town/State
     if (in_array($object->pays_code,array('US')))   // US: town, state, zip
     {
-        $ret .= ($ret ? "\n" : '' ).$outputlangs->convToOutputCharset($object->ville);
+        $ret .= ($ret ? "\n" : '' ).$outputlangs->convToOutputCharset($object->town);
         if ($object->departement && in_array($object->pays_code,$countriesusingstate))
         {
             $ret.=", ".$outputlangs->convToOutputCharset($object->departement);
         }
-        if ($object->cp) $ret .= ', '.$outputlangs->convToOutputCharset($object->cp);
+        if ($object->cp) $ret .= ', '.$outputlangs->convToOutputCharset($object->zip);
     }
     else                                        // Other: zip town, state
     {
-        $ret .= ($ret ? "\n" : '' ).$outputlangs->convToOutputCharset($object->cp);
-        $ret .= ' '.$outputlangs->convToOutputCharset($object->ville);
+        $ret .= ($ret ? "\n" : '' ).$outputlangs->convToOutputCharset($object->zip);
+        $ret .= ' '.$outputlangs->convToOutputCharset($object->town);
         if ($object->departement && in_array($object->pays_code,$countriesusingstate))
         {
             $ret.=", ".$outputlangs->convToOutputCharset($object->departement);
