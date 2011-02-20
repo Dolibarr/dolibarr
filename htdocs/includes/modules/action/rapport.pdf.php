@@ -66,8 +66,8 @@ class CommActionRapport
 		$this->marge_haute=10;
 		$this->marge_basse=10;
 
-		$this->title=$langs->trans("ActionsReport").' '.$this->year."-".$this->month;
-		$this->subject=$langs->trans("ActionsReport").' '.$this->year."-".$this->month;
+        $this->title=$langs->transnoentitiesnoconv("ActionsReport").' '.$this->year."-".$this->month;
+        $this->subject=$langs->transnoentitiesnoconv("ActionsReport").' '.$this->year."-".$this->month;
 	}
 
 	/**
@@ -91,7 +91,7 @@ class CommActionRapport
 		$outputlangs->load("bills");
 		$outputlangs->load("products");
 
-		$dir = $conf->agenda->dir_temp."/";
+        $dir = $conf->agenda->dir_temp."/";
 		$file = $dir . "actions-".$this->month."-".$this->year.".pdf";
 
 		if (! file_exists($dir))
@@ -257,7 +257,7 @@ class CommActionRapport
 		// Show title
 		$pdf->SetFont('','B',10);
 		$pdf->SetXY($this->marge_gauche, $this->marge_haute);
-		$pdf->MultiCell(80, 1, $this->title, 0, 'L', 0);
+		$pdf->MultiCell(120, 1, $outputlangs->convToOutputCharset($this->title), 0, 'L', 0);
 		$pdf->SetXY($this->page_largeur-$this->marge_droite-40, $this->marge_haute);
 		$pdf->MultiCell(40, 1, $pagenb.'/{nb}', 0, 'R', 0);
 
