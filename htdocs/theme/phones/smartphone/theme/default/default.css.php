@@ -42,21 +42,30 @@ if (empty($dolibarr_nocache)) header('Cache-Control: max-age=3600, public, must-
 else header('Cache-Control: no-cache');
 
 ?>
+.ui-mobile-viewport {
+/*width:600px;
+height:600px;
+min-height: 200px;
+min-width: 600px;
+overflow:scroll; */
+}
 
 .landscape, .landscape .ui-page {
-    min-height: 300px;
 }
 
 #dol-homeheader { height: 40px; font-size: 16px; }
 
+.ui-mobile-viewport {
+    margin: 0;
+}
 
 .ui-header { height: 40px; font-size: 16px; }
 
 .ui-content {
-padding-top: 0px;
-padding-left: 0px;
+padding-top: 1px;
 padding-right: 0;
 padding-bottom: 0px;
+padding-left: 1px;
 }
 
 .ui-content .ui-listview {
@@ -64,6 +73,7 @@ padding-bottom: 0px;
     margin-right: 0px;
     margin-bottom: 0px;
     margin-left: 0px;
+    /* overflow: scroll; */
 }
 
 .ui-mobile #dol-homeheader { padding: 10px 5px 0; text-align: center }

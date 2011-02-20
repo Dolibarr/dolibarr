@@ -30,8 +30,15 @@ header("Content-type: text/html; charset=".$conf->file->character_set_client);
 <link rel="stylesheet" href="<?php echo DOL_URL_ROOT.'/theme/phones/smartphone/theme/default/default.css.php'; ?>" />
 <script type="text/javascript" src="<?php echo DOL_URL_ROOT.'/includes/jquery/js/jquery-latest.min.js'; ?>"></script>
 <script type="text/javascript" src="<?php echo DOL_URL_ROOT.'/includes/jquery/mobile/jquery.mobile-latest.min.js'; ?>"></script>
+
+
 </head>
 
 <body>
+<script type="text/javascript">
+jQuery(document).bind("mobileinit", function(){
+    jQuery.mobile.defaultTransition('pop');
+});
+</script>
 
 <!-- END HEADER SMARTPHONE TEMPLATE -->

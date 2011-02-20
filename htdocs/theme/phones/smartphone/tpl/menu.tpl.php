@@ -19,9 +19,6 @@
  */
 require('header.tpl.php');
 ?>
-<script language="text/javascript">
-$(window).resize( function(){      var height = $(window).height();      var width = $(window).width();       var ob = $('html');      if( width > height ) {          if( ob.hasClass('portrait') ) {              ob.removeClass('portrait').addClass('landscape');          }      }else{          if( ob.hasClass('landscape') ) {              ob.removeClass('landscape').addClass('portrait');          }      }  });
-</script>
 
 <div data-role="page" data-theme="b" id="dol-home">
 
