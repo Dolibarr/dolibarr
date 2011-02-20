@@ -76,41 +76,6 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 	}
 
 
-	/**
-	 * Define array with couple subtitution key => subtitution value
-	 *
-	 * @param $object
-	 */
-	function get_substitutionarray_thirdparty($object)
-	{
-		global $conf;
-
-		return array(
-			'company_name'=>$object->name,
-			'company_email'=>$object->email,
-			'company_phone'=>$object->phone,
-			'company_fax'=>$object->fax,
-			'company_address'=>$object->address,
-			'company_zip'=>$object->zip,
-			'company_town'=>$object->town,
-			'company_country'=>$object->country,
-			'company_web'=>$object->url,
-			'company_barcode'=>$object->gencod,
-			'company_vatnumber'=>$object->tva_intra,
-			'company_customercode'=>$object->code_client,
-			'company_suppliercode'=>$object->code_fournisseur,
-			'company_customeraccountancycode'=>$object->code_compta,
-			'company_supplieraccountancycode'=>$object->code_compta_fournisseur,
-			'company_juridicalstatus'=>$object->forme_juridique,
-			'company_capital'=>$object->capital,
-			'company_idprof1'=>$object->idprof1,
-			'company_idprof2'=>$object->idprof2,
-			'company_idprof3'=>$object->idprof3,
-			'company_idprof4'=>$object->idprof4,
-			'company_note'=>$object->note
-		);
-	}
-
 	/**		\brief      Return description of a module
 	 *      \return     string      Description
 	 */
@@ -151,7 +116,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		// Add list of substitution keys
 		$texthelp.='<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
         $dummy=new User($db);
-        $tmparray=$this->get_substitutionarray_user($dummy);
+        $tmparray=$this->get_substitutionarray_user($dummy,$langs);
         $nb=0;
         foreach($tmparray as $key => $val)
         {
@@ -160,7 +125,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
             if ($nb >= 5) { $texthelp.='...<br>'; break; }
         }
 		$dummy=new Societe($db);
-		$tmparray=$this->get_substitutionarray_mysoc($dummy);
+		$tmparray=$this->get_substitutionarray_mysoc($dummy,$langs);
 		$nb=0;
 		foreach($tmparray as $key => $val)
 		{
@@ -168,7 +133,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 			$nb++;
 			if ($nb >= 5) { $texthelp.='...<br>'; break; }
 		}
-		$tmparray=$this->get_substitutionarray_thirdparty($dummy);
+		$tmparray=$this->get_substitutionarray_thirdparty($dummy,$langs);
 		$nb=0;
 		foreach($tmparray as $key => $val)
 		{
@@ -289,7 +254,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				//print $odfHandler->__toString()."\n";
 
 				// Make substitutions
-			    $tmparray=$this->get_substitutionarray_user($user);
+			    $tmparray=$this->get_substitutionarray_user($user,$outputlangs);
                 //var_dump($tmparray); exit;
                 foreach($tmparray as $key=>$value)
                 {
@@ -310,7 +275,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
                     {
                     }
                 }
-				$tmparray=$this->get_substitutionarray_mysoc($mysoc);
+				$tmparray=$this->get_substitutionarray_mysoc($mysoc,$outputlangs);
 				//var_dump($tmparray); exit;
 				foreach($tmparray as $key=>$value)
 				{
@@ -330,7 +295,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 					{
 					}
 				}
-				$tmparray=$this->get_substitutionarray_thirdparty($object);
+				$tmparray=$this->get_substitutionarray_thirdparty($object,$outputlangs);
 				foreach($tmparray as $key=>$value)
 				{
 					try {

@@ -86,47 +86,12 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 	}
 
 
-	/**
-	 * Define array with couple subtitution key => subtitution value
-	 *
-	 * @param $object
-	 */
-	function get_substitutionarray_thirdparty($object)
-	{
-		global $conf;
-
-		return array(
-			'company_name'=>$object->name,
-			'company_email'=>$object->email,
-			'company_phone'=>$object->phone,
-			'company_fax'=>$object->fax,
-			'company_address'=>$object->address,
-			'company_zip'=>$object->zip,
-			'company_town'=>$object->town,
-			'company_country'=>$object->country,
-			'company_web'=>$object->url,
-			'company_barcode'=>$object->gencod,
-			'company_vatnumber'=>$object->tva_intra,
-			'company_customercode'=>$object->code_client,
-			'company_suppliercode'=>$object->code_fournisseur,
-			'company_customeraccountancycode'=>$object->code_compta,
-			'company_supplieraccountancycode'=>$object->code_compta_fournisseur,
-			'company_juridicalstatus'=>$object->forme_juridique,
-			'company_capital'=>$object->capital,
-			'company_idprof1'=>$object->idprof1,
-			'company_idprof2'=>$object->idprof2,
-			'company_idprof3'=>$object->idprof3,
-			'company_idprof4'=>$object->idprof4,
-			'company_note'=>$object->note
-		);
-	}
-
     /**
      * Define array with couple subtitution key => subtitution value
      *
      * @param $object
      */
-    function get_substitutionarray_object($object)
+    function get_substitutionarray_object($object,$outputlangs)
     {
         global $conf;
 
@@ -135,13 +100,13 @@ class doc_generic_invoice_odt extends ModelePDFFactures
             'object_ref'=>$object->ref,
             'object_ref_customer'=>$object->ref_client,
             'object_ref_supplier'=>$object->ref_fournisseur,
-            'object_date'=>$object->date,
-            'object_date_creation'=>$object->date_creation,
-            'object_date_validation'=>$object->date_validation,
-            'object_total_ht'=>$object->total_ht,
-            'object_total_vat'=>$object->total_tva,
-            'object_total_ttc'=>$object->total_ttc,
-            'object_vatrate'=>$object->tva,
+            'object_date'=>dol_print_date($object->date,'day'),
+            'object_date_creation'=>dol_print_date($object->date_creation,'dayhour'),
+            'object_date_validation'=>dol_print_date($object->date_validation,'dayhour'),
+            'object_total_ht'=>price($object->total_ht),
+            'object_total_vat'=>price($object->total_tva),
+            'object_total_ttc'=>price($object->total_ttc),
+            'object_vatrate'=>vatrate($object->tva),
             'object_note_private'=>$object->note,
             'object_note'=>$object->note_public
         );
@@ -187,7 +152,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		// Add list of substitution keys
 		$texthelp.='<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
         $dummy=new User($db);
-        $tmparray=$this->get_substitutionarray_user($dummy);
+        $tmparray=$this->get_substitutionarray_user($dummy,$langs);
         $nb=0;
         foreach($tmparray as $key => $val)
         {
@@ -196,7 +161,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
             if ($nb >= 5) { $texthelp.='...<br>'; break; }
         }
 		$dummy=new Societe($db);
-		$tmparray=$this->get_substitutionarray_mysoc($dummy);
+		$tmparray=$this->get_substitutionarray_mysoc($dummy,$langs);
 		$nb=0;
 		foreach($tmparray as $key => $val)
 		{
@@ -204,7 +169,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 			$nb++;
 			if ($nb >= 5) { $texthelp.='...<br>'; break; }
 		}
-		$tmparray=$this->get_substitutionarray_thirdparty($dummy);
+		$tmparray=$this->get_substitutionarray_thirdparty($dummy,$langs);
 		$nb=0;
 		foreach($tmparray as $key => $val)
 		{
@@ -345,7 +310,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				);
 
 				// Make substitutions
-			    $tmparray=$this->get_substitutionarray_user($user);
+			    $tmparray=$this->get_substitutionarray_user($user,$outputlangs);
                 //var_dump($tmparray); exit;
                 foreach($tmparray as $key=>$value)
                 {
@@ -365,7 +330,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
                     {
                     }
                 }
-                $tmparray=$this->get_substitutionarray_mysoc($mysoc);
+                $tmparray=$this->get_substitutionarray_mysoc($mysoc,$outputlangs);
 				//var_dump($tmparray); exit;
 				foreach($tmparray as $key=>$value)
 				{
@@ -385,7 +350,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 					{
 					}
 				}
-				$tmparray=$this->get_substitutionarray_thirdparty($socobject);
+				$tmparray=$this->get_substitutionarray_thirdparty($socobject,$outputlangs);
 				foreach($tmparray as $key=>$value)
 				{
 					try {
@@ -404,7 +369,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 					}
 				}
 
-			    $tmparray=$this->get_substitutionarray_object($object);
+			    $tmparray=$this->get_substitutionarray_object($object,$outputlangs);
                 foreach($tmparray as $key=>$value)
                 {
                     try {
