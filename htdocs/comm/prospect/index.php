@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 /**
  *	    \file       htdocs/comm/prospect/index.php
  *      \ingroup    commercial
- *		\brief      Page accueil de la zone prospection
+ *		\brief      Home page of propest area
  *		\version    $Id$
  */
 
@@ -41,6 +41,8 @@ if ($user->societe_id > 0)
 /*
  *	View
  */
+
+$companystatic=new Societe($db);
 
 llxHeader();
 
@@ -112,7 +114,7 @@ if ($resql)
  */
 if ($conf->propal->enabled && $user->rights->propale->lire)
 {
-	$sql = "SELECT p.rowid, p.ref, p.price, s.nom";
+	$sql = "SELECT p.rowid, p.ref, p.price, s.nom as sname";
 	$sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -171,7 +173,8 @@ if ($conf->agenda->enabled) show_array_actions_to_do(10);
  */
 if ($conf->propal->enabled && $user->rights->propale->lire)
 {
-	$sql = "SELECT s.nom, s.rowid as socid, p.rowid as propalid, p.total as total_ttc, p.ref, p.datep as dp, c.label as statut, c.id as statutid";
+	$sql = "SELECT s.nom as name, s.rowid as socid, s.client, s.canvas,";
+	$sql.= " p.rowid as propalid, p.total as total_ttc, p.ref, p.datep as dp, c.label as statut, c.id as statutid";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql.= ", ".MAIN_DB_PREFIX."propal as p";
 	$sql.= ", ".MAIN_DB_PREFIX."c_propalst as c";
@@ -205,7 +208,13 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 				print "<tr $bc[$var]><td><a href=\"../propal.php?id=".$obj->propalid."\">";
 				print img_object($langs->trans("ShowPropal"),"propal").' '.$obj->ref.'</a></td>';
 
-				print "<td><a href=\"fiche.php?id=".$obj->socid."\">".img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom."</a></td>\n";
+				print "<td>";
+                $companystatic->id=$obj->socid;
+                $companystatic->name=$obj->name;
+                $companystatic->client=$obj->client;
+                $companystatic->canvas=$obj->canvas;
+                print $companystatic->getNomUrl(1,'',44);
+				print "</td>\n";
 				print "<td align=\"right\">";
 				print dol_print_date($db->jdate($obj->dp),'day')."</td>\n";
 				print "<td align=\"right\">".price($obj->total_ttc)."</td></tr>\n";
@@ -228,7 +237,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
  * Societes a contacter
  *
  */
-$sql = "SELECT s.nom, s.rowid";
+$sql = "SELECT s.nom as name, s.rowid as socid, s.client, s.canvas";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE s.fk_stcomm = 1";
@@ -253,9 +262,13 @@ if ($resql)
 		{
 			$obj = $db->fetch_object($resql);
 			$var=!$var;
-			print "<tr $bc[$var]><td width=\"12%\"><a href=\"".DOL_URL_ROOT."/comm/prospect/fiche.php?socid=".$obj->rowid."\">";
-			print img_object($langs->trans("ShowCompany"),"company");
-			print ' '.$obj->nom.'</a></td></tr>';
+			print "<tr $bc[$var]><td width=\"12%\">";
+            $companystatic->id=$obj->socid;
+            $companystatic->name=$obj->name;
+            $companystatic->client=$obj->client;
+            $companystatic->canvas=$obj->canvas;
+            print $companystatic->getNomUrl(1,'prospect',44);
+			print '</td></tr>';
 			$i++;
 		}
 		print "</table><br>";

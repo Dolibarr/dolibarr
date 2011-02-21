@@ -1384,11 +1384,12 @@ class Societe extends CommonObject
         $lien.=(!empty($this->canvas)?'&amp;canvas='.$this->canvas:'').'">';
         $lienfin='</a>';
 
-        if (empty($this->name)) $this->name=$this->nom;
-        
-        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCompany").': '.$this->name,'company').$lienfin);
+        $name=$this->name;
+        if (empty($name)) $name=$this->nom;
+
+        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCompany").': '.$name,'company').$lienfin);
         if ($withpicto && $withpicto != 2) $result.=' ';
-        $result.=$lien.($maxlen?dol_trunc($this->name,$maxlen):$this->name).$lienfin;
+        $result.=$lien.($maxlen?dol_trunc($name,$maxlen):$name).$lienfin;
 
         return $result;
     }
@@ -2190,11 +2191,11 @@ class Societe extends CommonObject
         $this->country_id=$member->pays_id;
         $this->tel=$member->phone;				// Prof phone
         $this->email=$member->email;
- 
+
         $this->client = 1;				// A member is a customer by default
         $this->code_client = -1;
         $this->code_fournisseur = -1;
- 
+
         $this->db->begin();
 
         // Cree et positionne $this->id

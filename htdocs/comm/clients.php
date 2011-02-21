@@ -80,7 +80,7 @@ if (GETPOST("button_removefilter_x"))
     $search_idprof4='';
 }
 
-$sql = "SELECT s.rowid, s.nom, s.client, s.ville, st.libelle as stcomm, s.prefix_comm, s.code_client,";
+$sql = "SELECT s.rowid, s.nom as name, s.client, s.ville, st.libelle as stcomm, s.prefix_comm, s.code_client,";
 $sql.= " s.datec, s.datea, s.canvas";
 // We'll need these fields in order to filter by sale (including the case where the user can only see his prospects)
 if ($search_sale) $sql .= ", sc.fk_soc, sc.fk_user";
@@ -200,7 +200,7 @@ if ($result)
 		print "<tr $bc[$var]>";
 		print '<td>';
 		$thirdpartystatic->id=$obj->rowid;
-        $thirdpartystatic->nom=$obj->nom;
+        $thirdpartystatic->name=$obj->name;
         $thirdpartystatic->client=$obj->client;
         $thirdpartystatic->canvas=$obj->canvas;
         print $thirdpartystatic->getNomUrl(1);

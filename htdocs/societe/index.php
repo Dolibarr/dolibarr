@@ -131,8 +131,7 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
  * Last third parties modified
  */
 $max=15;
-$sql = "SELECT s.rowid, s.nom, s.client, s.fournisseur,";
-$sql.= " s.tms as datem";
+$sql = "SELECT s.rowid, s.nom as name, s.client, s.fournisseur, s.canvas, s.tms as datem";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 if (! $user->rights->societe->client->voir) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE s.entity = ".$conf->entity;
@@ -171,10 +170,11 @@ if ($result)
             // Name
             print '<td nowrap="nowrap">';
             $thirdparty_static->id=$objp->rowid;
-            $thirdparty_static->nom=$objp->nom;
+            $thirdparty_static->name=$objp->name;
             $thirdparty_static->client=$objp->client;
             $thirdparty_static->fournisseur=$objp->fournisseur;
             $thirdparty_static->datem=$db->jdate($objp->datem);
+            $thirdparty_static->canvas=$objp->canvas;
             print $thirdparty_static->getNomUrl(1,'',16);
             print "</td>\n";
             // Type
