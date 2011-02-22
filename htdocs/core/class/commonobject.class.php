@@ -1366,16 +1366,22 @@ class CommonObject
 		$num = sizeof($this->objectid);
 		if ($num)
 		{
-			$classpath = $objecttype.'/class';
-			$tplpath = $objecttype;
-			if ($objecttype == 'facture') { $tplpath = 'compta/'.$objecttype; $classpath = $tplpath.'/class'; }  // To work with non standard path
-			if ($objecttype == 'propal') { $tplpath = 'comm/'.$objecttype; $classpath = $tplpath.'/class'; }    // To work with non standard path
-            if ($objecttype == 'invoice_supplier') { $tplpath = 'fourn/facture'; $classpath = 'fourn/class'; }    // To work with non standard path
-            if ($objecttype == 'order_supplier') { $tplpath = 'fourn/commande'; $classpath = 'fourn/class'; }    // To work with non standard path
+			$element = $subelement = $objecttype;
+			if (preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
+			{
+				$element = $regs[1];
+				$subelement = $regs[2];
+			}
+			$classpath = $element.'/class';
+			$tplpath = $element;
+			if ($element == 'facture') { $tplpath = 'compta/'.$element; $classpath = $tplpath.'/class'; }  // To work with non standard path
+			if ($element == 'propal') { $tplpath = 'comm/'.$element; $classpath = $tplpath.'/class'; }    // To work with non standard path
+            if ($element == 'invoice_supplier') { $tplpath = 'fourn/facture'; $classpath = 'fourn/class'; }    // To work with non standard path
+            if ($element == 'order_supplier') { $tplpath = 'fourn/commande'; $classpath = 'fourn/class'; }    // To work with non standard path
 
-            $classfile = strtolower($objecttype); $classname = ucfirst($objecttype);
-			if ($objecttype == 'invoice_supplier') { $classfile='fournisseur.facture'; $classname='FactureFournisseur';   }
-            if ($objecttype == 'order_supplier')   { $classfile='fournisseur.commande'; $classname='CommandeFournisseur'; }
+            $classfile = strtolower($subelement); $classname = ucfirst($subelement);
+			if ($subelement == 'invoice_supplier') { $classfile='fournisseur.facture'; $classname='FactureFournisseur';   }
+            if ($subelement == 'order_supplier')   { $classfile='fournisseur.commande'; $classname='CommandeFournisseur'; }
             //print $classfile." - ".$classpath." - ".$tplpath;
             if(!class_exists($classname))
             {

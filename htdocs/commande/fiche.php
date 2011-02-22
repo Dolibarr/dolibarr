@@ -1860,7 +1860,13 @@ else
 
 				foreach($object->linked_object as $linked_object => $linked_objectid)
 				{
-					if($conf->$linked_object->enabled && $linked_object != $object->element)
+					$element = $subelement = $linked_object;
+					if (preg_match('/^([^_]+)_([^_]+)/i',$linked_object,$regs))
+					{
+						$element = $regs[1];
+						$subelement = $regs[2];
+					}
+					if($conf->$element->enabled && $element != $object->element)
 					{
 						$somethingshown=$object->showLinkedObjectBlock($linked_object,$linked_objectid,$somethingshown);
 					}
