@@ -45,12 +45,11 @@ $langs->load('bills');
 $langs->load('orders');
 $langs->load('products');
 
-$sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
-if (isset($_GET["msg"])) { $mesg=$_GET["mesg"]; }
-$year=isset($_GET["year"])?$_GET["year"]:"";
-$month=isset($_GET["month"])?$_GET["month"]:"";
-$socid=isset($_GET['socid'])?$_GET['socid']:$_POST['socid'];
-$mesg=isset($_GET['mesg'])?$_GET['mesg']:'';
+$sall=GETPOST("sall");
+$mesg=(GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
+$year=GETPOST("year");
+$month=GETPOST("month");
+$socid=GETPOST('socid');
 
 // Security check
 $module='propale';
@@ -370,11 +369,11 @@ if ($_GET["action"] == 'classifybilled')
 /*
  *  Cloture de la propale
  */
-if ($_REQUEST['action'] == 'setstatut' && $user->rights->propale->cloturer)
+if (GETPOST('action') == 'setstatut' && $user->rights->propale->cloturer)
 {
 	if (! $_POST['cancel'])
 	{
-		if (empty($_REQUEST['statut']))
+		if (! GETPOST('statut'))
 		{
 			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("CloseAs")).'</div>';
 			$_REQUEST['action']='statut';
@@ -964,8 +963,8 @@ $companystatic=new Societe($db);
 
 $now=dol_now();
 
-$id = $_REQUEST['id']?$_REQUEST['id']:$_REQUEST['id'];
-$ref= $_REQUEST['ref'];
+$id = GETPOST('id');
+$ref= GETPOST('ref');
 
 if ($id > 0 || ! empty($ref))
 {
@@ -973,7 +972,7 @@ if ($id > 0 || ! empty($ref))
 	 * Show object in view mode
 	 */
 
-	if ($mesg) 
+	if ($mesg)
 	{
 		if (! preg_match('/div class=/',$mesg)) print '<div class="ok">'.$mesg.'</div><br>';
 		else print $mesg."<br>";
@@ -1559,7 +1558,13 @@ if ($id > 0 || ! empty($ref))
 
 		foreach($object->linked_object as $linked_object => $linked_objectid)
 		{
-			if($conf->$linked_object->enabled && $linked_object != $object->element)
+			$element = $subelement = $linked_object;
+			if (preg_match('/^([^_]+)_([^_]+)/i',$linked_object,$regs))
+			{
+				$element = $regs[1];
+				$subelement = $regs[2];
+			}
+			if($conf->$element->enabled && $element != $object->element)
 			{
 				$somethingshown=$object->showLinkedObjectBlock($linked_object,$linked_objectid,$somethingshown);
 			}

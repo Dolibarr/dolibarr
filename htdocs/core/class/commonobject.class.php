@@ -1358,22 +1358,28 @@ class CommonObject
 		global $langs,$bc;
 
 		//print 'objecttype='.$objecttype.'<br>';
-		
+
 		$this->objectid = $objectid;
 
 		$num = sizeof($this->objectid);
 		if ($num)
 		{
-			$classpath = $objecttype.'/class';
-			$tplpath = $objecttype;
-			if ($objecttype == 'facture') { $tplpath = 'compta/'.$objecttype; $classpath = $tplpath.'/class'; }  // To work with non standard path
-			if ($objecttype == 'propal') { $tplpath = 'comm/'.$objecttype; $classpath = $tplpath.'/class'; }    // To work with non standard path
-            if ($objecttype == 'invoice_supplier') { $tplpath = 'fourn/facture'; $classpath = 'fourn/class'; }    // To work with non standard path
-            if ($objecttype == 'order_supplier') { $tplpath = 'fourn/commande'; $classpath = 'fourn/class'; }    // To work with non standard path
+			$element = $subelement = $objecttype;
+			if (preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
+			{
+				$element = $regs[1];
+				$subelement = $regs[2];
+			}
+			$classpath = $element.'/class';
+			$tplpath = $element;
+			if ($element == 'facture') { $tplpath = 'compta/'.$element; $classpath = $tplpath.'/class'; }  // To work with non standard path
+			if ($element == 'propal') { $tplpath = 'comm/'.$element; $classpath = $tplpath.'/class'; }    // To work with non standard path
+            if ($element == 'invoice_supplier') { $tplpath = 'fourn/facture'; $classpath = 'fourn/class'; }    // To work with non standard path
+            if ($element == 'order_supplier') { $tplpath = 'fourn/commande'; $classpath = 'fourn/class'; }    // To work with non standard path
 
-            $classfile = strtolower($objecttype); $classname = ucfirst($objecttype);
-			if ($objecttype == 'invoice_supplier') { $classfile='fournisseur.facture'; $classname='FactureFournisseur';   }
-            if ($objecttype == 'order_supplier')   { $classfile='fournisseur.commande'; $classname='CommandeFournisseur'; }
+            $classfile = strtolower($subelement); $classname = ucfirst($subelement);
+			if ($subelement == 'invoice_supplier') { $classfile='fournisseur.facture'; $classname='FactureFournisseur';   }
+            if ($subelement == 'order_supplier')   { $classfile='fournisseur.commande'; $classname='CommandeFournisseur'; }
             //print $classfile." - ".$classpath." - ".$tplpath;
             if(!class_exists($classname))
             {
@@ -1381,7 +1387,7 @@ class CommonObject
             }
 			$this->linkedObjectBlock = new $classname($this->db);
 			dol_include_once('/'.$tplpath.'/tpl/linkedobjectblock.tpl.php');
-			
+
 			return $num;
 		}
 	}
@@ -1525,7 +1531,7 @@ class CommonObject
 		print '<td align="right">'.$langs->trans('Qty').'</td>';
 		print '<td align="right">'.$langs->trans('ReductionShort').'</td></tr>';
 	}
-	
+
 	/**
 	 * 	Return HTML with list of origin lines
 	 */
@@ -1560,7 +1566,7 @@ class CommonObject
 	function printOriginLine($line,$var)
 	{
 		global $langs,$bc;
-		
+
 		//var_dump($line);
 
 		$date_start=$line->date_debut_prevue;
@@ -1627,7 +1633,7 @@ class CommonObject
 		$this->tpl['price'] = price($line->subprice);
 		$this->tpl['qty'] = (($line->info_bits & 2) != 2) ? $line->qty : '&nbsp;';
 		$this->tpl['remise_percent'] = (($line->info_bits & 2) != 2) ? $line->remise_percent.'%' : '&nbsp;';
-		
+
 		include(DOL_DOCUMENT_ROOT.'/core/tpl/originproductline.tpl.php');
 	}
 }
