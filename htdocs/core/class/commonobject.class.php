@@ -1118,7 +1118,7 @@ class CommonObject
 	/**
 	 * 	Load array of objects linked to current object. Links are loaded into this->linked_object array.
 	 */
-	function load_object_linked($sourceid='',$sourcetype='',$targetid='',$targettype='')
+	function load_object_linked($sourceid='',$sourcetype='',$targetid='',$targettype='',$clause='OR')
 	{
 		$this->linked_object=array();
 
@@ -1130,8 +1130,8 @@ class CommonObject
 		// Links beetween objects are stored in this table
 		$sql = 'SELECT fk_source, sourcetype, fk_target, targettype';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'element_element';
-		$sql.= " WHERE (fk_source = '".$sourceid."' AND sourcetype = '".$sourcetype."')";
-		$sql.= " OR    (fk_target = '".$targetid."' AND targettype = '".$targettype."')";
+		$sql.= " WHERE       (fk_source = '".$sourceid."' AND sourcetype = '".$sourcetype."')";
+		$sql.= " ".$clause." (fk_target = '".$targetid."' AND targettype = '".$targettype."')";
 
 		dol_syslog("CommonObject::load_object_linked sql=".$sql);
 		$resql = $this->db->query($sql);
@@ -1286,7 +1286,7 @@ class CommonObject
 				$actionfile = 'actions_'.$module.'.class.php';
 				$daofile 	= 'dao_'.$module.'.class.php';
 				$pathroot	= '';
-				
+
 				// Include actions class (controller)
 				dol_include_once($path.$actionfile);
 
@@ -1365,13 +1365,16 @@ class CommonObject
 		if ($num)
 		{
 			$element = $subelement = $objecttype;
+			$tplpath = $element;
+			
 			if (preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
 			{
 				$element = $regs[1];
 				$subelement = $regs[2];
+				$tplpath = $element.'/'.$subelement;
 			}
+			
 			$classpath = $element.'/class';
-			$tplpath = $element;
 			if ($element == 'facture') { $tplpath = 'compta/'.$element; $classpath = $tplpath.'/class'; }  // To work with non standard path
 			if ($element == 'propal') { $tplpath = 'comm/'.$element; $classpath = $tplpath.'/class'; }    // To work with non standard path
             if ($element == 'invoice_supplier') { $tplpath = 'fourn/facture'; $classpath = 'fourn/class'; }    // To work with non standard path
