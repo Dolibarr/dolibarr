@@ -482,7 +482,7 @@ if ($mysoc->tva_assuj == 'franchise')	// Non assujeti
 
 	print '<tr class="liste_total"><td align="left" colspan="2">'.$langs->trans("Profit").'</td>';
 	if ($modecompta == 'CREANCES-DETTES') print '<td class="border" align="right">'.price($total_ht).'</td>';
-	print '<td class="border" align="right">'.price($total_ttc).'</td>';
+	print '<td align="right">'.price($total_ttc).'</td>';
 	print '</tr>';
 
 	print '<tr>';
