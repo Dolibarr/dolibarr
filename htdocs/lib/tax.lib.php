@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2007 Yannick Warnier      <ywarnier@beeznest.org>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -80,6 +80,10 @@ function vat_by_thirdparty($db, $y, $date_start, $date_end, $modetax, $direction
 	        $sql.= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f, ".MAIN_DB_PREFIX.$invoicedettable." as fd, ".MAIN_DB_PREFIX."societe as s";
 	        $sql.= " WHERE ";
 	        $sql.= " f.fk_statut in (1,2)";	// Validated or paid (partially or completely)
+	        $sql.= " AND (f.type = 0";      // Standard
+            $sql.= " OR f.type = 1";        // Replacement
+            $sql.= " OR f.type = 2)";       // Credit note
+            //$sql.= " OR f.type = 3";      // We do not include deposit
 	        if ($y) $sql.= " AND f.datef >= '".$y."0101000000' AND f.datef <= '".$y."1231235959'";
 	        if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 	        $sql.= " AND s.rowid = f.fk_soc AND f.rowid = fd.".$fk_facture;
@@ -107,6 +111,10 @@ function vat_by_thirdparty($db, $y, $date_start, $date_end, $modetax, $direction
 	        $sql.= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f, ".MAIN_DB_PREFIX.$invoicetable." as fd, ".MAIN_DB_PREFIX."societe as s";
 	        $sql.= " WHERE ";
 			$sql.= " f.fk_statut in (2)";	// Paid (partially or completely)
+            $sql.= " AND (f.type = 0";      // Standard
+            $sql.= " OR f.type = 1";        // Replacement
+            $sql.= " OR f.type = 2)";       // Credit note
+            //$sql.= " OR f.type = 3";      // We do not include deposit
 			if ($y) $sql.= " AND f.datef >= '".$y."0101000000' AND f.datef <= '".$y."1231235959'";
 	        if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 	        $sql.= " AND s.rowid = f.fk_soc AND f.rowid = fd.".$fk_facture;
@@ -212,6 +220,10 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
 	        $sql.= " WHERE ";
 	        $sql.= " f.fk_statut in (1,2)";	// Validated or paid (partially or completely)
+            $sql.= " AND (f.type = 0";      // Standard
+            $sql.= " OR f.type = 1";        // Replacement
+            $sql.= " OR f.type = 2)";       // Credit note
+            //$sql.= " OR f.type = 3";      // We do not include deposit
 	        $sql.= " AND f.rowid = d.".$fk_facture;
 	        if ($y) $sql.= " AND f.datef >= '".$y."0101000000' AND f.datef <= '".$y."1231235959'";
 	        if ($q) $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3)." AND date_format(f.datef,'%m') <= ".($q*3).")";
@@ -249,7 +261,11 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
 	        $sql.= " WHERE ";
 			$sql.= " f.fk_statut in (1,2)";	// Validated or paid (partially or completely)
-	        $sql.= " AND f.rowid = d.".$fk_facture;
+            $sql.= " AND (f.type = 0";      // Standard
+            $sql.= " OR f.type = 1";        // Replacement
+            $sql.= " OR f.type = 2)";       // Credit note
+            //$sql.= " OR f.type = 3";      // We do not include deposit
+			$sql.= " AND f.rowid = d.".$fk_facture;
 //	        $sql.= " AND pf.".$fk_facture2." = f.rowid";
 //	        $sql.= " AND pa.rowid = pf.".$fk_payment;
 //	        $sql.= " AND pa.datep >= '".$y."0101000000' AND pa.datep <= '".$y."1231235959'";
@@ -349,6 +365,10 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
 	        $sql.= " WHERE ";
 	        $sql.= " f.fk_statut in (1,2)";	// Validated or paid (partially or completely)
+            $sql.= " AND (f.type = 0";      // Standard
+            $sql.= " OR f.type = 1";        // Replacement
+            $sql.= " OR f.type = 2)";       // Credit note
+            //$sql.= " OR f.type = 3";      // We do not include deposit
 	        $sql.= " AND f.rowid = d.".$fk_facture;
 	        if ($y) $sql.= " AND f.datef >= '".$y."0101000000' AND f.datef <= '".$y."1231235959'";
 	        if ($q) $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3)." AND date_format(f.datef,'%m') <= ".($q*3).")";
@@ -386,7 +406,11 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
 	        $sql.= " WHERE ";
 			$sql.= " f.fk_statut in (1,2)";	// Paid (partially or completely)
-	        $sql.= " AND f.rowid = d.".$fk_facture;;
+            $sql.= " AND (f.type = 0";      // Standard
+            $sql.= " OR f.type = 1";        // Replacement
+            $sql.= " OR f.type = 2)";       // Credit note
+            //$sql.= " OR f.type = 3";      // We do not include deposit
+			$sql.= " AND f.rowid = d.".$fk_facture;;
 	        $sql.= " AND pf.".$fk_facture2." = f.rowid";
 	        $sql.= " AND pa.rowid = pf.".$fk_payment;
 	        if ($y) $sql.= " AND pa.datep >= '".$y."0101000000' AND pa.datep <= '".$y."1231235959'";
