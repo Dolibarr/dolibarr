@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -482,7 +482,7 @@ if ($mysoc->tva_assuj == 'franchise')	// Non assujeti
 
 	print '<tr class="liste_total"><td align="left" colspan="2">'.$langs->trans("Profit").'</td>';
 	if ($modecompta == 'CREANCES-DETTES') print '<td class="border" align="right">'.price($total_ht).'</td>';
-	print '<td class="border" align="right">'.price($total_ttc).'</td>';
+	print '<td align="right">'.price($total_ttc).'</td>';
 	print '</tr>';
 
 	print '<tr>';
