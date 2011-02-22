@@ -2111,9 +2111,9 @@ else
 			    if ($absolute_creditnote > 0)    // If not linke will be added later
 			    {
                     if ($object->statut == 0 && $object->type != 2 && $object->type != 3) print ' - '.$addabsolutediscount.'<br>';
-
+                    else print '.';
 			    }
-			    print '. ';
+			    else print '. ';
 			}
 			if ($absolute_creditnote > 0)
 			{
