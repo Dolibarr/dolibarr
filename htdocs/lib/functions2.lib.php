@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2008 Laurent Destailleur         <eldy@users.sourceforge.net>
- * Copyright (C) 2008 Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
+/* Copyright (C) 2008-2011 Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -996,7 +996,6 @@ function getListOfModels($db,$type)
     global $conf,$langs;
     $liste=array();
     $found=0;
-
     $dirtoscan='';
 
     $sql = "SELECT nom as id, nom as lib, libelle as label, description as description";
@@ -1019,6 +1018,8 @@ function getListOfModels($db,$type)
             // with the constant that contains list of directories to scan (COMPANY_ADDON_PDF_ODT_PATH, ...).
             if (! empty($obj->description))	// List of directories to scan is defined
             {
+                include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
+
                 $const=$obj->description;
                 $dirtoscan.=($dirtoscan?',':'').preg_replace('/[\r\n]+/',',',trim($conf->global->$const));
 
