@@ -632,6 +632,7 @@ DictionnaryPaperFormat=Formatos papel
 DictionnaryFees=Tipo de desplazamientos y honorarios
 DictionnarySendingMethods=Métodos de expedición
 DictionnaryStaff=Empleados
+DictionnaryOrderMethods=Métodos de pedido
 SetupSaved=Configuración guardada
 BackToModuleList=Volver a la lista de módulos
 BackToDictionnaryList=Volver a la lista de diccionarios

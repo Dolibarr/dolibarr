@@ -28,7 +28,7 @@ SuppliersOrdersToProcess=Pedidos a proveedores a procesar
 StatusOrderCanceledShort=Anulado
 StatusOrderDraftShort=Borrador
 StatusOrderValidatedShort=Validado
-StatusOrderOnProcessShort=En curso
+StatusOrderOnProcessShort=Pdte. Recibir
 StatusOrderProcessedShort=Procesado
 StatusOrderToBillShort=A facturar
 StatusOrderApprovedShort=Aprobado
@@ -39,7 +39,7 @@ StatusOrderReceivedAllShort=Recibido
 StatusOrderCanceled=Anulado
 StatusOrderDraft=Borrador (a validar)
 StatusOrderValidated=Validado
-StatusOrderOnProcess=En proceso
+StatusOrderOnProcess=Pendiente de recibir
 StatusOrderProcessed=Procesado
 StatusOrderToBill=A facturar
 StatusOrderApproved=Aprobado
@@ -133,3 +133,9 @@ AddDeliveryCostLine=Añadir una línea de gastos de portes indicando el peso del
 # Document models
 PDFEinsteinDescription=Modelo de pedido completo (logo...)
 PDFEdisonDescription=Modelo de pedido simple
+# Orders modes
+OrderByMail=Correo
+OrderByFax=Fax
+OrderByEMail=EMail
+OrderByWWW=En línea
+OrderByPhone=Teléfono

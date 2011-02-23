@@ -28,7 +28,7 @@ SuppliersOrdersToProcess=Comandes a proveïdors a processar
 StatusOrderCanceledShort=Anul·lada
 StatusOrderDraftShort=Esborrany
 StatusOrderValidatedShort=Validada
-StatusOrderOnProcessShort=En curs
+StatusOrderOnProcessShort=Rebre
 StatusOrderProcessedShort=Processada
 StatusOrderToBillShort=A facturar
 StatusOrderApprovedShort=Aprovada
@@ -39,7 +39,7 @@ StatusOrderReceivedAllShort=Rebuda
 StatusOrderCanceled=Anul-lada
 StatusOrderDraft=Esborrany (a validar)
 StatusOrderValidated=Validada
-StatusOrderOnProcess=En procés
+StatusOrderOnProcess=Pendent de rebre
 StatusOrderProcessed=Processada
 StatusOrderToBill=A facturar
 StatusOrderApproved=Aprovada
@@ -133,3 +133,9 @@ AddDeliveryCostLine=Afegir una línia de despeses de ports indicant el pes de la
 # Document models
 PDFEinsteinDescription=Model de comanda complet (logo...)
 PDFEdisonDescription=Model de comanda simple
+# Orders modes
+OrderByMail=Correo
+OrderByFax=Fax
+OrderByEMail=EMail
+OrderByWWW=En línea
+OrderByPhone=Teléfono
