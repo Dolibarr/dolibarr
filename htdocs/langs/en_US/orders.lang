@@ -137,3 +137,9 @@ AddDeliveryCostLine=Add a delivery cost line indicating the weight of the order
 # Documents models
 PDFEinsteinDescription=A complete order model (logo...)
 PDFEdisonDescription=A simple order model
+# Orders modes
+OrderByMail=Mail
+OrderByFax=Fax
+OrderByEMail=EMail
+OrderByWWW=Online
+OrderByPhone=Phone
