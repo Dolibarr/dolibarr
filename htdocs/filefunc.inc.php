@@ -120,21 +120,42 @@ if (! empty($dolibarr_main_document_root_alt))
 }
 // Define DOL_MAIN_URL_ROOT and DOL_URL_ROOT
 $tmp=$dolibarr_main_url_root;
-if (1 == 2)	// Use auto forge url.
+if (1 == 1)	// Use auto forge url.
 {
 	if (! empty($_SERVER["SCRIPT_URL"]) && ! empty($_SERVER["SCRIPT_URI"]))
 	{
 		$tmp=str_replace($_SERVER["SCRIPT_URL"],'',$_SERVER["SCRIPT_URI"]);
 	}
-	else 
+	else
 	{
-		//print realpath($dolibarr_main_document_root).'-'.realpath($_SERVER["DOCUMENT_ROOT"]).'<br>';
-		//print $dolibarr_main_document_root.'-'.$_SERVER["DOCUMENT_ROOT"].'<br>';
+/*        print $dolibarr_main_document_root.'-'.$_SERVER["DOCUMENT_ROOT"].'<br>';
+	    print realpath($dolibarr_main_document_root).'-'.realpath($_SERVER["DOCUMENT_ROOT"]).'<br>';
 		$tmp1=realpath($dolibarr_main_document_root);
 		$tmp2=realpath($_SERVER["DOCUMENT_ROOT"]);
 		$pos=strpos($tmp1,$tmp2);
-		if ($pos !== false && $pos == 0) $tmp3=str_replace($tmp2,'',$tmp1);
-		else $tmp3=str_replace($_SERVER["DOCUMENT_ROOT"],'',$dolibarr_main_document_root);
+		if ($pos !== false && $pos == 0)
+		{
+		    $tmp3=str_replace($tmp2,'',$tmp1);
+		}
+		else
+		{
+*/
+	        $paths=explode('/',str_replace('\\','/',$_SERVER["SCRIPT_NAME"]));
+            $concatpath='';
+            foreach($paths as $path)
+            {
+                //if (empty($path)) continue;
+                if ($path) $concatpath.='/'.$path;
+                print realpath($dolibarr_main_document_root).'-'.realpath($_SERVER["DOCUMENT_ROOT"].$concatpath).'<br>';
+                $pos=strpos(realpath($dolibarr_main_document_root),realpath($_SERVER["DOCUMENT_ROOT"].$concatpath));
+                if ($pos !== false && $pos == 0)    // We found relative url
+                {
+                    $tmp3=$concatpath;
+                    print "Found relative url = ".$tmp3;
+                    break;
+    		    }
+            }
+//		}
 		$tmp='http'.((empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != 'on')?'':'s').'://'.$_SERVER["SERVER_NAME"].((empty($_SERVER["SERVER_PORT"])||$_SERVER["SERVER_PORT"]==80)?'':':'.$_SERVER["SERVER_PORT"]).($tmp3?(preg_match('/^\//',$tmp3)?'':'/').$tmp3:'');
 		//print "tmp1=".$tmp1." tmp2=".$tmp2." tmp3=".$tmp3." tmp=".$tmp;
 	}
