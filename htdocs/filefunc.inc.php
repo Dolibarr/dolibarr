@@ -65,8 +65,8 @@ error_reporting(E_ALL ^ E_NOTICE);
 $result=@include_once("conf/conf.php");
 if (! $result && ! empty($_SERVER["GATEWAY_INTERFACE"]))    // If install not done and we are in a web session
 {
-    header("Location: install/index.php");
-    exit;
+	header("Location: install/index.php");
+	exit;
 }
 
 if (empty($dolibarr_main_db_port)) $dolibarr_main_db_port=0;		// Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
@@ -85,10 +85,10 @@ if (empty($force_charset_do_notuse)) $force_charset_do_notuse='UTF-8';
 // when we post forms (we allow GET to allow direct link to access a particular page).
 if (! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && ! empty($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] != 'GET' && ! empty($_SERVER['HTTP_HOST']) && ! empty($_SERVER['HTTP_REFERER']) && ! preg_match('/'.preg_quote($_SERVER['HTTP_HOST'],'/').'/i', $_SERVER['HTTP_REFERER']))
 {
-    //print 'HTTP_POST='.$_SERVER['HTTP_HOST'].' HTTP_REFERER='.$_SERVER['HTTP_REFERER'];
-    print "Access refused by CSRF protection in main.inc.php.\n";
-    print "If you access your server behind a proxy using url rewriting, you might add the line \$dolibarr_nocsrfcheck=1 into your conf.php file.\n";
-    die;
+	//print 'HTTP_POST='.$_SERVER['HTTP_HOST'].' HTTP_REFERER='.$_SERVER['HTTP_REFERER'];
+	print "Access refused by CSRF protection in main.inc.php.\n";
+	print "If you access your server behind a proxy using url rewriting, you might add the line \$dolibarr_nocsrfcheck=1 into your conf.php file.\n";
+	die;
 }
 if (empty($dolibarr_main_db_host))
 {
@@ -116,7 +116,7 @@ define('DOL_DATA_ROOT', $dolibarr_main_data_root);					// Filesystem data (docum
 define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);			// Filesystem core php (htdocs)
 if (! empty($dolibarr_main_document_root_alt))
 {
-    define('DOL_DOCUMENT_ROOT_ALT', $dolibarr_main_document_root_alt);	// Filesystem paths to alternate core php (alternate htdocs)
+	define('DOL_DOCUMENT_ROOT_ALT', $dolibarr_main_document_root_alt);	// Filesystem paths to alternate core php (alternate htdocs)
 }
 // Define DOL_MAIN_URL_ROOT and DOL_URL_ROOT
 $tmp=$dolibarr_main_url_root;
@@ -128,34 +128,20 @@ if (1 == 1)	// Use auto forge url.
 	}
 	else
 	{
-/*        print $dolibarr_main_document_root.'-'.$_SERVER["DOCUMENT_ROOT"].'<br>';
-	    print realpath($dolibarr_main_document_root).'-'.realpath($_SERVER["DOCUMENT_ROOT"]).'<br>';
-		$tmp1=realpath($dolibarr_main_document_root);
-		$tmp2=realpath($_SERVER["DOCUMENT_ROOT"]);
-		$pos=strpos($tmp1,$tmp2);
-		if ($pos !== false && $pos == 0)
+		$real_dolibarr_main_document_root=str_replace('\\','/',realpath($dolibarr_main_document_root));
+		$paths=explode('/',str_replace('\\','/',$_SERVER["SCRIPT_NAME"]));
+		$concatpath='';
+		foreach($paths as $path)
 		{
-		    $tmp3=str_replace($tmp2,'',$tmp1);
+			if ($path) $concatpath.='/'.$path;
+			//print $real_$dolibarr_main_document_root.'-'.realpath($_SERVER["DOCUMENT_ROOT"].$concatpath).'<br>';
+			if ($real_dolibarr_main_document_root == realpath($_SERVER["DOCUMENT_ROOT"].$concatpath))
+			{
+				$tmp3=$concatpath;
+				//print "Found relative url = ".$tmp3;
+				break;
+			}
 		}
-		else
-		{
-*/
-	        $paths=explode('/',str_replace('\\','/',$_SERVER["SCRIPT_NAME"]));
-            $concatpath='';
-            foreach($paths as $path)
-            {
-                //if (empty($path)) continue;
-                if ($path) $concatpath.='/'.$path;
-                print realpath($dolibarr_main_document_root).'-'.realpath($_SERVER["DOCUMENT_ROOT"].$concatpath).'<br>';
-                $pos=strpos(realpath($dolibarr_main_document_root),realpath($_SERVER["DOCUMENT_ROOT"].$concatpath));
-                if ($pos !== false && $pos == 0)    // We found relative url
-                {
-                    $tmp3=$concatpath;
-                    print "Found relative url = ".$tmp3;
-                    break;
-    		    }
-            }
-//		}
 		$tmp='http'.((empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != 'on')?'':'s').'://'.$_SERVER["SERVER_NAME"].((empty($_SERVER["SERVER_PORT"])||$_SERVER["SERVER_PORT"]==80)?'':':'.$_SERVER["SERVER_PORT"]).($tmp3?(preg_match('/^\//',$tmp3)?'':'/').$tmp3:'');
 		//print "tmp1=".$tmp1." tmp2=".$tmp2." tmp3=".$tmp3." tmp=".$tmp;
 	}
@@ -171,10 +157,10 @@ if (! empty($dolibarr_main_url_root_alt))
 {
 	$tmp_alt=$tmp.str_replace($dolibarr_main_url_root,'',$dolibarr_main_url_root_alt);
 	define('DOL_MAIN_URL_ROOT_ALT', $tmp_alt);           							// URL absolute root (https://sss/dolibarr/custom, ...)
-    $uri=preg_replace('/^http(s?):\/\//i','',constant('DOL_MAIN_URL_ROOT_ALT'));    // $uri contains url without http*
-    $suburi = strstr($uri, '/');        											// $suburi contains url without domain
-    if ($suburi == '/') $suburi = '';   											// If $suburi is /, it is now ''
-    define('DOL_URL_ROOT_ALT', $suburi);    										// URL relative root ('', '/dolibarr/custom', ...)
+	$uri=preg_replace('/^http(s?):\/\//i','',constant('DOL_MAIN_URL_ROOT_ALT'));    // $uri contains url without http*
+	$suburi = strstr($uri, '/');        											// $suburi contains url without domain
+	if ($suburi == '/') $suburi = '';   											// If $suburi is /, it is now ''
+	define('DOL_URL_ROOT_ALT', $suburi);    										// URL relative root ('', '/dolibarr/custom', ...)
 }
 // Define DOL_URL_ROOT_FULL_STATIC
 if (! empty($dolibarr_main_url_root_static)) define('DOL_URL_ROOT_FULL_STATIC', $dolibarr_main_url_root_static);    // Used to put static images on another domain
