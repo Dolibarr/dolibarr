@@ -176,7 +176,7 @@ if ($_GET['delsoc']) print '<div class="warning">'.$langs->trans("CompanyDeleted
  */
 $title=$langs->trans("ListOfThirdParties");
 
-$sql = "SELECT s.rowid, s.nom, s.ville, s.datec, s.datea,";
+$sql = "SELECT s.rowid, s.nom as name, s.ville, s.datec, s.datea,";
 $sql.= " st.libelle as stcomm, s.prefix_comm, s.client, s.fournisseur, s.canvas,";
 $sql.= " s.siren as idprof1, s.siret as idprof2, ape as idprof3, idprof4 as idprof4";
 // We'll need these fields in order to filter by sale (including the case where the user can only see his prospects)
@@ -378,7 +378,7 @@ if ($resql)
 		$var=!$var;
 		print "<tr $bc[$var]><td>";
 		$companystatic->id=$obj->rowid;
-		$companystatic->nom=$obj->nom;
+		$companystatic->name=$obj->name;
 		$companystatic->canvas=$obj->canvas;
         $companystatic->client=$obj->client;
 		print $companystatic->getNomUrl(1,'',24);
