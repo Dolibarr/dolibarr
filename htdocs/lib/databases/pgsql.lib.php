@@ -634,7 +634,7 @@ class DoliDb
 	{
 		global $conf;
 		if (! $limit) $limit=$conf->liste_limit;
-		if ($offset > 0) return " LIMIT $offset,$limit ";
+		if ($offset > 0) return " LIMIT ".$limit." OFFSET ".$offset." ";
 		else return " LIMIT $limit ";
 	}
 
