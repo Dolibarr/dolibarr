@@ -437,7 +437,7 @@ if ($_GET['action']	== 'up'	&& $user->rights->fournisseur->commande->creer)
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
 	supplier_order_pdf_create($db, $commande, $commande->modelpdf, $outputlangs);
-	Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.'#'.$_GET['rowid']);
+	Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#'.$_GET['rowid']));
 	exit;
 }
 
@@ -454,7 +454,7 @@ if ($_GET['action']	== 'down' && $user->rights->fournisseur->commande->creer)
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
 	supplier_order_pdf_create($db, $commande, $commande->modelpdf, $outputlangs);
-	Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.'#'.$_GET['rowid']);
+	Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#'.$_GET['rowid']));
 	exit;
 }
 
