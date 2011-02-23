@@ -120,7 +120,7 @@ if (! empty($dolibarr_main_document_root_alt))
 }
 // Define DOL_MAIN_URL_ROOT and DOL_URL_ROOT
 $tmp=$dolibarr_main_url_root;
-if (1 == 1)	// Use auto forge url.
+if (1 == 2)	// Use auto forge url.
 {
 	if (! empty($_SERVER["SCRIPT_URL"]) && ! empty($_SERVER["SCRIPT_URI"]))
 	{
