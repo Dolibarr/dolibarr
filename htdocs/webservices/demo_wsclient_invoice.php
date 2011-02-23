@@ -28,7 +28,7 @@ set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 require_once("../master.inc.php");
 require_once(NUSOAP_PATH.'/nusoap.php');		// Include SOAP
 
-$WS_DOL_URL = $dolibarr_main_url_root.'/webservices/server_invoice.php';
+$WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_invoice.php';
 $WS_METHOD1  = 'getInvoice';
 $WS_METHOD2  = 'getInvoicesForThirdParty';
 

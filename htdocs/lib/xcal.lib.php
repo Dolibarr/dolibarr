@@ -317,9 +317,8 @@ function build_rssfile($format='rss',$title,$desc,$events_array,$outputfile,$fil
 		'<lastBuildDate>'.$date.'</lastBuildDate>'."\n".
 		'<generator>Dolibarr</generator>'."\n";
 
-		$url=$dolibarr_main_url_root;
-		if (! preg_match('/\/$/',$url)) $url.='/';
-		$url.='public/agenda/agendaexport.php?format=rss&exportkey='.urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY);
+        $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$dolibarr_main_url_root);
+  		$url=$urlwithouturlroot.DOL_URL_ROOT.'/public/agenda/agendaexport.php?format=rss&exportkey='.urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY);
 		$html.='<link><![CDATA['.$url.']]></link>'."\n";
 //		'<managingEditor>editor@example.com</managingEditor>'."\n"
 //    	'<webMaster>webmaster@example.com</webMaster>'."\n"

@@ -208,30 +208,28 @@ print '<br><br>';
 
 // Url list
 print '<u>'.$langs->trans("FollowingUrlAreAvailableToMakePayments").':</u><br>';
-// Should work with DOL_URL_ROOT='' or DOL_URL_ROOT='/dolibarr'
-$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$dolibarr_main_url_root);
 print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnFreeAmount",$servicename).':<br>';
-print '<b>'.$urlwithouturlroot.DOL_URL_ROOT.'/public/paypal/newpayment.php?amount=<i>9.99</i>&tag=<i>your_free_tag</i></b>'."<br>\n";
+print '<b>'.DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?amount=<i>9.99</i>&tag=<i>your_free_tag</i></b>'."<br>\n";
 if ($conf->commande->enabled)
 {
 	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnOrder",$servicename).':<br>';
-	print '<b>'.$urlwithouturlroot.DOL_URL_ROOT.'/public/paypal/newpayment.php?source=order&ref=<i>order_ref</i></b>'."<br>\n";
+	print '<b>'.DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?source=order&ref=<i>order_ref</i></b>'."<br>\n";
 }
 if ($conf->facture->enabled)
 {
 	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnInvoice",$servicename).':<br>';
-	print '<b>'.$urlwithouturlroot.DOL_URL_ROOT.'/public/paypal/newpayment.php?source=invoice&ref=<i>invoice_ref</i></b>'."<br>\n";
+	print '<b>'.DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?source=invoice&ref=<i>invoice_ref</i></b>'."<br>\n";
 //	print $langs->trans("SetupPaypalToHavePaymentCreatedAutomatically",$langs->transnoentitiesnoconv("FeatureNotYetAvailable"))."<br>\n";
 }
 if ($conf->contrat->enabled)
 {
 	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnContractLine",$servicename).':<br>';
-	print '<b>'.$urlwithouturlroot.DOL_URL_ROOT.'/public/paypal/newpayment.php?source=contractline&ref=<i>contractline_ref</i></b>'."<br>\n";
+	print '<b>'.DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?source=contractline&ref=<i>contractline_ref</i></b>'."<br>\n";
 }
 if ($conf->adherent->enabled)
 {
 	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnMemberSubscription",$servicename).':<br>';
-	print '<b>'.$urlwithouturlroot.DOL_URL_ROOT.'/public/paypal/newpayment.php?source=membersubscription&ref=<i>member_ref</i></b>'."<br>\n";
+	print '<b>'.DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?source=membersubscription&ref=<i>member_ref</i></b>'."<br>\n";
 }
 
 print "<br>";

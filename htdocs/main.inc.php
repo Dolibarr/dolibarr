@@ -184,9 +184,7 @@ if (! empty($conf->file->main_force_https))
 			// $_SERVER["HTTPS"] is 'on' when link is https, otherwise $_SERVER["HTTPS"] is empty or 'off'
 			if (empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != 'on')		// If link is http
 			{
-				$uri=preg_replace('/^http(s?):\/\//i','',$dolibarr_main_url_root);
-				$val=explode('/',$uri);	// $val[0] contains domain name and port
-				$newurl='https://'.$val[0].$_SERVER["REQUEST_URI"];
+				$newurl=preg_replace('/^http:/i','https:',DOL_MAIN_URL_ROOT).$_SERVER["REQUEST_URI"];
 			}
 		}
 	}

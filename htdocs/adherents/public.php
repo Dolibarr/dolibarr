@@ -47,11 +47,9 @@ print '<br>';
 
 print '<table class="border" cellspacing="0" cellpadding="3">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Description").'</td><td>'.$langs->trans("URL").'</td></tr>';
-// Should work with DOL_URL_ROOT='' or DOL_URL_ROOT='/dolibarr'
-$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$dolibarr_main_url_root);
-print '<tr><td>'.$langs->trans("BlankSubscriptionForm").'</td><td>'.img_picto('','object_globe.png').' '.'<a target="_blank" href="'.DOL_URL_ROOT.'/public/members/new.php'.'">'.$urlwithouturlroot.DOL_URL_ROOT.'/public/members/new.php'.'</a></td></tr>';
-print '<tr><td>'.$langs->trans("PublicMemberList").'</td><td>'.img_picto('','object_globe.png').' '.'<a target="_blank" href="'.DOL_URL_ROOT.'/public/members/public_list.php'.'">'.$urlwithouturlroot.DOL_URL_ROOT.'/public/members/public_list.php'.'</a></td></tr>';
-print '<tr><td>'.$langs->trans("PublicMemberCard").'</td><td>'.img_picto('','object_globe.png').' '.$urlwithouturlroot.DOL_URL_ROOT.'/public/members/public_card.php?id=xxx'.'</td></tr>';
+print '<tr><td>'.$langs->trans("BlankSubscriptionForm").'</td><td>'.img_picto('','object_globe.png').' '.'<a target="_blank" href="'.DOL_URL_ROOT.'/public/members/new.php'.'">'.DOL_MAIN_URL_ROOT.'/public/members/new.php'.'</a></td></tr>';
+print '<tr><td>'.$langs->trans("PublicMemberList").'</td><td>'.img_picto('','object_globe.png').' '.'<a target="_blank" href="'.DOL_URL_ROOT.'/public/members/public_list.php'.'">'.DOL_MAIN_URL_ROOT.'/public/members/public_list.php'.'</a></td></tr>';
+print '<tr><td>'.$langs->trans("PublicMemberCard").'</td><td>'.img_picto('','object_globe.png').' '.DOL_MAIN_URL_ROOT.'/public/members/public_card.php?id=xxx'.'</td></tr>';
 print '</table>';
 
 

@@ -133,6 +133,8 @@ foreach($configfileparameters as $key)
 			// Value
 			print "<td>";
 			if ($key == 'dolibarr_main_db_pass') print preg_replace('/./i','*',${$key});
+			else if ($key == 'dolibarr_main_url_root' && preg_match('/__auto__/',${$key})) print ${$key}.' => '.constant('DOL_MAIN_URL_ROOT');
+			else if ($key == 'dolibarr_main_url_root_alt' && preg_match('/__auto__/',${$key})) print ${$key}.' => '.constant('DOL_MAIN_URL_ROOT_ALT');
 			else print ${$key};
 			print "</td>";
 		}

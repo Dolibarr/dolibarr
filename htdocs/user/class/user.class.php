@@ -1339,7 +1339,7 @@ class User extends CommonObject
 		}
 
 		// Define urlwithouturlroot
-		if (1 == 1 && ! empty($_SERVER["HTTP_HOST"])) // Autodetect main url root
+		if (! empty($_SERVER["HTTP_HOST"])) // Autodetect main url root
 		{
 			$urlwithouturlroot='http://'.preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$_SERVER["HTTP_HOST"]);
 		}
