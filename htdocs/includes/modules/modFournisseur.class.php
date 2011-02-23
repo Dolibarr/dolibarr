@@ -277,8 +277,6 @@ class modFournisseur extends DolibarrModules
 			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','order_supplier',".$conf->entity.")",
 		);
 
-		$this->load_datas();
-
 		return $this->_init($sql);
 	}
 
@@ -293,49 +291,5 @@ class modFournisseur extends DolibarrModules
 		return $this->_remove($sql);
 	}
 
-	/**
-	 *    \brief      Fonction appele par l'init (donc lors de l'activation d'un module)
-	 *
-	 */
-	function load_datas()
-	{
-		$sql = "SELECT count(rowid) FROM ".MAIN_DB_PREFIX."c_methode_commande_fournisseur";
-
-		$resql=$this->db->query($sql);
-		if ($resql)
-		{
-			$row = $this->db->fetch_row($resql);
-
-			if ($row[0] == 0)
-			{
-				$this->db->free($resql);
-
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_methode_commande_fournisseur";
-				$sql .= " (code,libelle) VALUES ('OrderByMail','Courrier')";
-
-				$this->db->query($sql);
-
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_methode_commande_fournisseur";
-				$sql .= " (code,libelle) VALUES ('OrderByFax','Fax')";
-
-				$this->db->query($sql);
-
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_methode_commande_fournisseur";
-				$sql .= " (code,libelle) VALUES ('OrderByEMail','EMail')";
-
-				$this->db->query($sql);
-
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_methode_commande_fournisseur";
-				$sql .= " (code,libelle) VALUES ('OrderByPhone','Telephone')";
-
-				$this->db->query($sql);
-
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_methode_commande_fournisseur";
-				$sql .= " (code,libelle) VALUES ('OrderByWWW','En ligne')";
-
-				$this->db->query($sql);
-			}
-		}
-	}
 }
 ?>
