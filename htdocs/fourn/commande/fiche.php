@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric	Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
  * This	program	is free	software; you can redistribute it and/or modify
  * it under	the	terms of the GNU General Public	License	as published by
@@ -47,11 +47,13 @@ $langs->load('deliveries');
 $langs->load('products');
 $langs->load('stocks');
 
-$comclientid = isset($_GET["comid"])?$_GET["comid"]:'';
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$comclientid = GETPOST("comid");
+$socid = GETPOST("socid");
+$action = GETPOST('action');
+
 
 // Security check
-$id = isset($_GET["id"])?$_GET["id"]:$_POST["id"];
+$id = GETPOST("id");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'commande_fournisseur', $id,'');
 
@@ -67,25 +69,24 @@ $mesg='';
  */
 
 // Set project
-if ($_POST['action'] ==	'classin')
+if ($action ==	'classin')
 {
 	$commande	= new CommandeFournisseur($db);
 	$commande->fetch($id);
 	$commande->setProject($_POST["projectid"]);
 }
 
-if ($_REQUEST['action'] ==	'setremisepercent' && $user->rights->fournisseur->commande->creer)
+if ($action ==	'setremisepercent' && $user->rights->fournisseur->commande->creer)
 {
 	$commande = new CommandeFournisseur($db);
-	$commande->fetch($_REQUEST['id']);
+	$commande->fetch($id);
 	$result = $commande->set_remise($user, $_POST['remise_percent']);
-	$id=$_REQUEST['id'];
 }
 
-if ($_GET['action'] == 'reopen' && $user->rights->fournisseur->commande->approuver)
+if ($action == 'reopen' && $user->rights->fournisseur->commande->approuver)
 {
 	$order = new CommandeFournisseur($db);
-	$result = $order->fetch($_REQUEST['id']);
+	$result = $order->fetch($id);
 	if ($order->statut == 5 || $order->statut == 6 || $order->statut == 7 || $order->statut == 9)
 	{
 		if ($order->statut == 5) $newstatus=4;	// Received->Received partially
@@ -109,7 +110,7 @@ if ($_GET['action'] == 'reopen' && $user->rights->fournisseur->commande->approuv
 /*
  *	Add a line into product
  */
-if ($_POST['action'] ==	'addline' && $user->rights->fournisseur->commande->creer)
+if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 {
 	if (($_POST['qty'] || $_POST['pqty']) && (($_POST['pu'] && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprodfournprice']))
 	{
@@ -130,14 +131,14 @@ if ($_POST['action'] ==	'addline' && $user->rights->fournisseur->commande->creer
 
 			$product = new ProductFournisseur($db);
 			$idprod=$product->get_buyprice($_POST['idprodfournprice'], $qty);
-			
+
 			//$societe='';
 			if ($commande->socid)
 			{
 				$societe=new Societe($db);
 				$societe->fetch($commande->socid);
 			}
-			
+
 			if ($idprod > 0)
 			{
 				$res=$product->fetch($idprod);
@@ -245,7 +246,7 @@ if ($_POST['action'] ==	'addline' && $user->rights->fournisseur->commande->creer
 /*
  *	Mise a jour	d'une ligne	dans la	commande
  */
-if ($_POST['action'] ==	'updateligne' && $user->rights->fournisseur->commande->creer &&	$_POST['save'] == $langs->trans('Save'))
+if ($action == 'updateligne' && $user->rights->fournisseur->commande->creer &&	$_POST['save'] == $langs->trans('Save'))
 {
 	$product=new Product($db);
 	if ($_POST["elrowid"])
@@ -291,7 +292,7 @@ if ($_POST['action'] ==	'updateligne' && $user->rights->fournisseur->commande->c
 	}
 }
 
-if ($_REQUEST['action'] == 'confirm_deleteproductline' && $_REQUEST['confirm'] == 'yes')
+if ($action == 'confirm_deleteproductline' && $_REQUEST['confirm'] == 'yes')
 {
 	if ($user->rights->fournisseur->commande->creer)
 	{
@@ -309,10 +310,9 @@ if ($_REQUEST['action'] == 'confirm_deleteproductline' && $_REQUEST['confirm'] =
 	}
 }
 
-if ($_REQUEST['action'] == 'confirm_valid' && $_REQUEST['confirm'] == 'yes' && $user->rights->fournisseur->commande->valider)
+if ($action == 'confirm_valid' && $_REQUEST['confirm'] == 'yes' && $user->rights->fournisseur->commande->valider)
 {
 	$commande =	new	CommandeFournisseur($db);
-
 	$commande->fetch($id);
 
 	$commande->date_commande=dol_now();
@@ -327,9 +327,19 @@ if ($_REQUEST['action'] == 'confirm_valid' && $_REQUEST['confirm'] == 'yes' && $
 		}
 		supplier_order_pdf_create($db, $commande, $commande->modelpdf, $outputlangs);
 	}
+	else
+	{
+		$mesg=$commande->error;
+	}
+
+	// If we have permission, we go directly on approved step
+	if ($user->rights->fournisseur->commande->approuver)
+	{
+		$action='confirm_approve';
+	}
 }
 
-if ($_REQUEST['action'] ==	'confirm_approve' && $_REQUEST["confirm"] == 'yes'	&& $user->rights->fournisseur->commande->approuver)
+if ($action == 'confirm_approve' && $_REQUEST["confirm"] == 'yes' && $user->rights->fournisseur->commande->approuver)
 {
 	$commande =	new	CommandeFournisseur($db);
 	$commande->fetch($id);
@@ -345,7 +355,7 @@ if ($_REQUEST['action'] ==	'confirm_approve' && $_REQUEST["confirm"] == 'yes'	&&
 	}
 }
 
-if ($_REQUEST['action'] ==	'confirm_refuse' &&	$_REQUEST['confirm'] == 'yes' && $user->rights->fournisseur->commande->approuver)
+if ($action == 'confirm_refuse' &&	$_REQUEST['confirm'] == 'yes' && $user->rights->fournisseur->commande->approuver)
 {
 	$commande = new CommandeFournisseur($db);
 	$commande->fetch($id);
@@ -361,7 +371,7 @@ if ($_REQUEST['action'] ==	'confirm_refuse' &&	$_REQUEST['confirm'] == 'yes' && 
 	}
 }
 
-if ($_REQUEST['action'] ==	'confirm_commande' && $_REQUEST['confirm']	== 'yes' &&	$user->rights->fournisseur->commande->commander)
+if ($action == 'confirm_commande' && $_REQUEST['confirm']	== 'yes' &&	$user->rights->fournisseur->commande->commander)
 {
 	$commande =	new	CommandeFournisseur($db);
 	$commande->fetch($id);
@@ -378,7 +388,7 @@ if ($_REQUEST['action'] ==	'confirm_commande' && $_REQUEST['confirm']	== 'yes' &
 }
 
 
-if ($_REQUEST['action'] ==	'confirm_delete' && $_REQUEST['confirm'] == 'yes' && $user->rights->fournisseur->commande->supprimer)
+if ($action == 'confirm_delete' && $_REQUEST['confirm'] == 'yes' && $user->rights->fournisseur->commande->supprimer)
 {
 	$commande = new CommandeFournisseur($db);
 	$commande->fetch($id);
@@ -426,7 +436,7 @@ if ($_POST["action"] ==	'livraison'	&& $user->rights->fournisseur->commande->rec
 	}
 }
 
-if ($_REQUEST["action"] == 'confirm_cancel' && $_REQUEST["confirm"] == 'yes' &&	$user->rights->fournisseur->commande->commander)
+if ($action == 'confirm_cancel' && $_REQUEST["confirm"] == 'yes' &&	$user->rights->fournisseur->commande->commander)
 {
 	$commande =	new	CommandeFournisseur($db);
 	$commande->fetch($id);
@@ -442,9 +452,7 @@ if ($_REQUEST["action"] == 'confirm_cancel' && $_REQUEST["confirm"] == 'yes' &&	
 	}
 }
 
-/*
- * Ordonnancement des lignes
- */
+// Line ordering
 
 if ($_GET['action']	== 'up'	&& $user->rights->fournisseur->commande->creer)
 {
@@ -481,12 +489,9 @@ if ($_GET['action']	== 'down' && $user->rights->fournisseur->commande->creer)
 }
 
 
-if ($_REQUEST['action']	== 'builddoc')	// En get ou en	post
+if ($action == 'builddoc')	// En get ou en	post
 {
-	/*
-	 * Generation de la	commande
-	 * definit dans	/includes/modules/commande/modules_commande.php
-	 */
+	// Build document
 
 	// Sauvegarde le dernier module	choisi pour	generer	un document
 	$commande =	new	CommandeFournisseur($db);
@@ -533,10 +538,10 @@ if ($action=='remove_file')
 /*
  * Create an order
  */
-if ($_GET["action"]	== 'create')
+if ($action	== 'create')
 {
 	$fourn = new Fournisseur($db);
-	$result=$fourn->fetch($_GET["socid"]);
+	$result=$fourn->fetch($socid);
 
 	$db->begin();
 
