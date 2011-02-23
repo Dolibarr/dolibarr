@@ -72,6 +72,7 @@ For users:
        readers when using "mail php function".
 - Fix: When cloning commercial proposal, due date is creation date + delay
        by default.
+- Fix: Can edit ordering methods.
 
 For translators:
 - New: Update and complete slovenian language sl_SL.
