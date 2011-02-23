@@ -86,7 +86,7 @@ class FormOrder
 		require_once(DOL_DOCUMENT_ROOT."/core/class/html.form.class.php");
 		$form=new Form($this->db);
 
-		$sql = "SELECT rowid, libelle ";
+		$sql = "SELECT rowid, code, libelle as label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_methode_commande_fournisseur";
 		$sql.= " WHERE active = 1";
 
@@ -99,7 +99,7 @@ class FormOrder
 			while ($i < $num)
 			{
 				$obj = $this->db->fetch_object($resql);
-				$listemethodes[$obj->rowid] = $obj->libelle;
+				$listemethodes[$obj->rowid] = $langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):$obj->label;
 				$i++;
 			}
 		}
