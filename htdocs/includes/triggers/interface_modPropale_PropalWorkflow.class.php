@@ -115,7 +115,7 @@ class InterfacePropalWorkflow
     {
     	$error=0;
 
-		if ($conf->commande->enabled)
+		if (! empty($conf->commande->enabled) && ! empty($conf->PROPALE_AUTOCREATE_ORDER))
 		{
 			// Signed proposal
 			if ($object->statut == 2)
