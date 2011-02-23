@@ -181,7 +181,7 @@ if ($resql)
 		$i = 0;
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="4">'.$langs->trans("Traitement en cours").'</td></tr>';
+		print '<td colspan="4">'.$langs->trans("TreatmentInProgress").'</td></tr>';
 
 		$num = min($num,OSC_MAXNBCOM);
 		while ($i < $num)
