@@ -114,6 +114,11 @@ if ($conf->facture->enabled)
 	$url=DOL_MAIN_URL_ROOT.'/webservices/server_invoice.php?wsdl';
 	print img_picto('','object_globe.png').' '.'<a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
 }
+if ($conf->fournisseur->enabled)
+{
+    $url=DOL_MAIN_URL_ROOT.'/webservices/server_supplier_invoice.php?wsdl';
+    print img_picto('','object_globe.png').' '.'<a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+}
 print '<br>';
 
 
@@ -130,6 +135,11 @@ if ($conf->facture->enabled)
 {
 	$url=DOL_MAIN_URL_ROOT.'/webservices/server_invoice.php';
 	print img_picto('','object_globe.png').' '.'<a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+}
+if ($conf->fournisseur->enabled)
+{
+    $url=DOL_MAIN_URL_ROOT.'/webservices/server_supplier_invoice.php';
+    print img_picto('','object_globe.png').' '.'<a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
 }
 print '<br>';
 

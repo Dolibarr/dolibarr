@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,6 +64,11 @@ if ($conf->facture->enabled)
 	$url=DOL_MAIN_URL_ROOT.'/webservices/server_invoice.php?wsdl';
 	print img_picto('','object_globe.png').' '.'<a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
 }
+if ($conf->fournisseur->enabled)
+{
+    $url=DOL_MAIN_URL_ROOT.'/webservices/server_supplier_invoice.php?wsdl';
+    print img_picto('','object_globe.png').' '.'<a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+}
 print '<br>';
 
 
@@ -80,6 +85,11 @@ if ($conf->facture->enabled)
 {
 	$url=DOL_MAIN_URL_ROOT.'/webservices/server_invoice.php';
 	print img_picto('','object_globe.png').' '.'<a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+}
+if ($conf->fournisseur->enabled)
+{
+    $url=DOL_MAIN_URL_ROOT.'/webservices/server_supplier_invoice.php';
+    print img_picto('','object_globe.png').' '.'<a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
 }
 print '<br>';
 
