@@ -720,7 +720,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='')
         $sql.= " 'AC_EMAILING' as acode,";
         $sql.= " u.rowid as user_id, u.login";	// User that valid action
         $sql.= " FROM ".MAIN_DB_PREFIX."mailing as m, ".MAIN_DB_PREFIX."mailing_cibles as mc, ".MAIN_DB_PREFIX."user as u";
-        $sql.= " WHERE mc.email = '".addslashes($objcon->email)."'";	// Search is done on email.
+        $sql.= " WHERE mc.email = '".$db->escape($objcon->email)."'";	// Search is done on email.
         $sql.= " AND mc.statut = 1";
         $sql.= " AND u.rowid = m.fk_user_valid";
         $sql.= " AND mc.fk_mailing=m.rowid";

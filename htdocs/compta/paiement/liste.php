@@ -108,7 +108,7 @@ if ($_REQUEST["search_amount"])
 }
 if ($_REQUEST["search_company"])
 {
-    $sql .=" AND s.nom LIKE '%".addslashes($_REQUEST["search_company"])."%'";
+    $sql .=" AND s.nom LIKE '%".$db->escape($_REQUEST["search_company"])."%'";
 }
 
 if ($_GET["orphelins"])     // Option for debugging purpose only

@@ -134,7 +134,7 @@ if ($filter == 'outofdate')
 // Insert categ filter
 if ($search_categ)
 {
-	$sql.= " AND cf.fk_categorie = ".addslashes($search_categ);
+	$sql.= " AND cf.fk_categorie = ".$db->escape($search_categ);
 }
 
 // Count total nb of records with no order and no limits

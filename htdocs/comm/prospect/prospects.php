@@ -181,8 +181,8 @@ if ($search_sale) $sql.= " AND s.rowid = sc.fk_soc";		// Join for the needed tab
 if ($search_categ) $sql.= " AND s.rowid = cs.fk_societe";	// Join for the needed table to filter by categ
 if (isset($stcomm) && $stcomm != '') $sql.= " AND s.fk_stcomm=".$stcomm;
 
-if ($_GET["search_nom"])   $sql .= " AND s.nom like '%".addslashes(strtolower($_GET["search_nom"]))."%'";
-if ($_GET["search_ville"]) $sql .= " AND s.ville like '%".addslashes(strtolower($_GET["search_ville"]))."%'";
+if ($_GET["search_nom"])   $sql .= " AND s.nom like '%".$db->escape(strtolower($_GET["search_nom"]))."%'";
+if ($_GET["search_ville"]) $sql .= " AND s.ville like '%".$db->escape(strtolower($_GET["search_ville"]))."%'";
 // Insert levels filters
 if ($search_levels)
 {
@@ -191,16 +191,16 @@ if ($search_levels)
 // Insert sale filter
 if ($search_sale)
 {
-	$sql .= " AND sc.fk_user = ".addslashes($search_sale);
+	$sql .= " AND sc.fk_user = ".$db->escape($search_sale);
 }
 // Insert categ filter
 if ($search_categ)
 {
-	$sql .= " AND cs.fk_categorie = ".addslashes($search_categ);
+	$sql .= " AND cs.fk_categorie = ".$db->escape($search_categ);
 }
 if ($socname)
 {
-	$sql .= " AND s.nom like '%".addslashes($socname)."%'";
+	$sql .= " AND s.nom like '%".$db->escape($socname)."%'";
 	$sortfield = "s.nom";
 	$sortorder = "ASC";
 }

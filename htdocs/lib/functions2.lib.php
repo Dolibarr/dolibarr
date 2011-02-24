@@ -900,7 +900,7 @@ function dol_set_user_param($db, $conf, &$user, $tab)
         {
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."user_param(fk_user,entity,param,value)";
             $sql.= " VALUES (".$user->id.",".$conf->entity.",";
-            $sql.= " '".$key."','".addslashes($value)."');";
+            $sql.= " '".$key."','".$db->escape($value)."');";
             dol_syslog("functions2.lib::dol_set_user_param sql=".$sql, LOG_DEBUG);
 
             $result=$db->query($sql);

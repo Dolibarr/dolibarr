@@ -88,11 +88,11 @@ if ($socid)	$sql.= ' AND s.rowid = '.$socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($sref)
 {
-	$sql.= " AND c.ref LIKE '%".addslashes($sref)."%'";
+	$sql.= " AND c.ref LIKE '%".$db->escape($sref)."%'";
 }
 if ($sall)
 {
-	$sql.= " AND (c.ref LIKE '%".addslashes($sall)."%' OR c.note LIKE '%".addslashes($sall)."%')";
+	$sql.= " AND (c.ref LIKE '%".$db->escape($sall)."%' OR c.note LIKE '%".$db->escape($sall)."%')";
 }
 if ($viewstatut <> '')
 {
@@ -131,11 +131,11 @@ if ($_GET['deliveryyear'] > 0)
 }
 if (!empty($snom))
 {
-	$sql.= ' AND s.nom LIKE \'%'.addslashes($snom).'%\'';
+	$sql.= ' AND s.nom LIKE \'%'.$db->escape($snom).'%\'';
 }
 if (!empty($sref_client))
 {
-	$sql.= ' AND c.ref_client LIKE \'%'.addslashes($sref_client).'%\'';
+	$sql.= ' AND c.ref_client LIKE \'%'.$db->escape($sref_client).'%\'';
 }
 
 $sql.= ' ORDER BY '.$sortfield.' '.$sortorder;

@@ -65,11 +65,11 @@ if ($sref)
 }
 if ($sall)
 {
-	$sql.= " AND (e.label LIKE '%".addslashes($sall)."%'";
-	$sql.= " OR e.description LIKE '%".addslashes($sall)."%'";
-	$sql.= " OR e.lieu LIKE '%".addslashes($sall)."%'";
-	$sql.= " OR e.address LIKE '%".addslashes($sall)."%'";
-	$sql.= " OR e.ville LIKE '%".addslashes($sall)."%')";
+	$sql.= " AND (e.label LIKE '%".$db->escape($sall)."%'";
+	$sql.= " OR e.description LIKE '%".$db->escape($sall)."%'";
+	$sql.= " OR e.lieu LIKE '%".$db->escape($sall)."%'";
+	$sql.= " OR e.address LIKE '%".$db->escape($sall)."%'";
+	$sql.= " OR e.ville LIKE '%".$db->escape($sall)."%')";
 }
 $sql.= " GROUP BY e.rowid, e.label, e.statut, e.lieu";
 $sql.= " ORDER BY $sortfield $sortorder ";

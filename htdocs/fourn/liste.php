@@ -78,22 +78,22 @@ if ($search_categ) $sql.= " AND s.rowid = cf.fk_societe";	// Join for the needed
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid) $sql .= " AND s.rowid = ".$socid;
 if ($socname) {
-	$sql .= " AND s.nom like '%".addslashes($socname)."%'";
+	$sql .= " AND s.nom like '%".$db->escape($socname)."%'";
 	$sortfield = "s.nom";
 	$sortorder = "ASC";
 }
 if ($search_nom)
 {
-	$sql .= " AND s.nom LIKE '%".addslashes($search_nom)."%'";
+	$sql .= " AND s.nom LIKE '%".$db->escape($search_nom)."%'";
 }
 if ($search_ville)
 {
-	$sql .= " AND s.ville LIKE '%".addslashes($search_ville)."%'";
+	$sql .= " AND s.ville LIKE '%".$db->escape($search_ville)."%'";
 }
 // Insert categ filter
 if ($search_categ)
 {
-	$sql .= " AND cf.fk_categorie = ".addslashes($search_categ);
+	$sql .= " AND cf.fk_categorie = ".$db->escape($search_categ);
 }
 // Count total nb of records
 $nbtotalofrecords = 0;

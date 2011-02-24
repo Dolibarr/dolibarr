@@ -121,7 +121,7 @@ if($action == 'search' )
 	}
 	if ($conf->categorie->enabled && $catMere != -1 and $catMere)
 	{
-		$sql.= " AND cp.fk_categorie ='".addslashes($catMere)."'";
+		$sql.= " AND cp.fk_categorie ='".$db->escape($catMere)."'";
 	}
 	$sql.= " ORDER BY p.ref ASC";
 

@@ -86,7 +86,7 @@ if ($_POST["action"] == 'add' || $_POST["modify"])
 		{
 			// Ajoute boite box_external_rss dans definition des boites
 	        $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (file, note)";
-			$sql.= " VALUES ('box_external_rss.php','".addslashes($_POST["norss"].' ('.$_POST[$external_rss_title]).")')";
+			$sql.= " VALUES ('box_external_rss.php','".$db->escape($_POST["norss"].' ('.$_POST[$external_rss_title]).")')";
 	        if (! $db->query($sql))
 	        {
 	        	dol_print_error($db);

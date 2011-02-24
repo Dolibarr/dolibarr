@@ -156,7 +156,7 @@ if ($_GET["action"] == 'setdoc')
 
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
     $sql.= " VALUES ('".$_GET["value"]."', '".$type."', ".$conf->entity.", ";
-    $sql.= ($_GET["label"]?"'".addslashes($_GET["label"])."'":'null').", ";
+    $sql.= ($_GET["label"]?"'".$db->escape($_GET["label"])."'":'null').", ";
     $sql.= (! empty($_GET["scandir"])?"'".$_GET["scandir"]."'":"null");
     $sql.= ")";
 	dol_syslog("facture.php ".$sql);

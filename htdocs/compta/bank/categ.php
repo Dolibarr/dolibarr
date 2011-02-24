@@ -43,7 +43,7 @@ if ($_POST["action"] == 'add')
 		$sql.= "label";
 		$sql.= ", entity";
 		$sql.= ") VALUES (";
-		$sql.= "'".addslashes($_POST["label"])."'";
+		$sql.= "'".$db->escape($_POST["label"])."'";
 		$sql.= ", ".$conf->entity;
 		$sql.= ")";
 

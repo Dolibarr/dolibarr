@@ -191,7 +191,7 @@ if (! defined('SYSLOG_FILE_NO_ERROR'))
 // Forcage du parametrage PHP magic_quotes_gpc et nettoyage des parametres
 // (Sinon il faudrait a chaque POST, conditionner
 // la lecture de variable par stripslashes selon etat de get_magic_quotes).
-// En mode off (recommande il faut juste faire addslashes au moment d'un insert/update.
+// En mode off (recommande il faut juste faire $db->escape au moment d'un insert/update.
 function stripslashes_deep($value)
 {
 	return (is_array($value) ? array_map('stripslashes_deep', $value) : stripslashes($value));

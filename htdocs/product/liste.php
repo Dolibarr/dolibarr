@@ -143,7 +143,7 @@ else
 }
 if ($sall)
 {
-	$sql.= " AND (p.ref like '%".addslashes($sall)."%' OR p.label like '%".addslashes($sall)."%' OR p.description like '%".addslashes($sall)."%' OR p.note like '%".addslashes($sall)."%')";
+	$sql.= " AND (p.ref like '%".$db->escape($sall)."%' OR p.label like '%".$db->escape($sall)."%' OR p.description like '%".$db->escape($sall)."%' OR p.note like '%".$db->escape($sall)."%')";
 }
 # if the type is not 1, we show all products (type = 0,2,3)
 if (dol_strlen($type))
@@ -156,10 +156,10 @@ if (dol_strlen($type))
 }
 if ($sref)     $sql.= " AND p.ref like '%".$sref."%'";
 if ($sbarcode) $sql.= " AND p.barcode like '%".$sbarcode."%'";
-if ($snom)     $sql.= " AND p.label like '%".addslashes($snom)."%'";
+if ($snom)     $sql.= " AND p.label like '%".$db->escape($snom)."%'";
 if (isset($_GET["tosell"]) && dol_strlen($_GET["tosell"]) > 0)
 {
-	$sql.= " AND p.tosell = ".addslashes($_GET["tosell"]);
+	$sql.= " AND p.tosell = ".$db->escape($_GET["tosell"]);
 }
 if (isset($_GET["tobuy"]) && dol_strlen($_GET["tobuy"]) > 0)
 {
@@ -167,7 +167,7 @@ if (isset($_GET["tobuy"]) && dol_strlen($_GET["tobuy"]) > 0)
 }
 if (dol_strlen($canvas) > 0)
 {
-	$sql.= " AND p.canvas = '".addslashes($canvas)."'";
+	$sql.= " AND p.canvas = '".$db->escape($canvas)."'";
 }
 if($catid)
 {
@@ -180,7 +180,7 @@ if ($fourn_id > 0)
 // Insert categ filter
 if ($search_categ)
 {
-	$sql .= " AND cp.fk_categorie = ".addslashes($search_categ);
+	$sql .= " AND cp.fk_categorie = ".$db->escape($search_categ);
 }
 $sql.= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,";
 $sql.= " p.fk_product_type, p.tms,";

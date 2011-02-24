@@ -101,7 +101,7 @@ if ($_POST["action"] == "update")
     $dateop = dol_mktime(12,0,0,$_POST["dateomonth"],$_POST["dateoday"],$_POST["dateoyear"]);
     $dateval= dol_mktime(12,0,0,$_POST["datevmonth"],$_POST["datevday"],$_POST["datevyear"]);
     $sql = "UPDATE ".MAIN_DB_PREFIX."bank";
-    $sql.= " SET label='".addslashes($_POST["label"])."',";
+    $sql.= " SET label='".$db->escape($_POST["label"])."',";
     if (isset($_POST['amount'])) $sql.=" amount='$amount',";
     $sql.= " dateo = '".$db->idate($dateop)."', datev = '".$db->idate($dateval)."',";
     $sql.= " fk_account = ".$_POST['accountid'];
@@ -127,13 +127,13 @@ if ($_POST["action"] == 'type')
 
 if ($_POST["action"] == 'banque')
 {
-    $sql = "UPDATE ".MAIN_DB_PREFIX."bank set banque='".addslashes($_POST["banque"])."' WHERE rowid = $rowid;";
+    $sql = "UPDATE ".MAIN_DB_PREFIX."bank set banque='".$db->escape($_POST["banque"])."' WHERE rowid = $rowid;";
     $result = $db->query($sql);
 }
 
 if ($_POST["action"] == 'emetteur')
 {
-    $sql = "UPDATE ".MAIN_DB_PREFIX."bank set emetteur='".addslashes($_POST["emetteur"])."' WHERE rowid = $rowid;";
+    $sql = "UPDATE ".MAIN_DB_PREFIX."bank set emetteur='".$db->escape($_POST["emetteur"])."' WHERE rowid = $rowid;";
     $result = $db->query($sql);
 }
 

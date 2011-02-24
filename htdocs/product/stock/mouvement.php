@@ -105,19 +105,19 @@ else if ($year > 0)
 }
 if (! empty($search_movement))
 {
-	$sql.= " AND m.label LIKE '%".addslashes($search_movement)."%'";
+	$sql.= " AND m.label LIKE '%".$db->escape($search_movement)."%'";
 }
 if (! empty($search_product))
 {
-	$sql.= " AND p.label LIKE '%".addslashes($search_product)."%'";
+	$sql.= " AND p.label LIKE '%".$db->escape($search_product)."%'";
 }
 if (! empty($search_warehouse))
 {
-	$sql.= " AND s.label LIKE '%".addslashes($search_warehouse)."%'";
+	$sql.= " AND s.label LIKE '%".$db->escape($search_warehouse)."%'";
 }
 if (! empty($search_user))
 {
-	$sql.= " AND u.login LIKE '%".addslashes($search_user)."%'";
+	$sql.= " AND u.login LIKE '%".$db->escape($search_user)."%'";
 }
 if (! empty($_GET['idproduct']))
 {

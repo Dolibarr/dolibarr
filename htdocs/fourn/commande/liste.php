@@ -87,15 +87,15 @@ $sql.= " AND s.entity = ".$conf->entity;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($sref)
 {
-	$sql.= " AND cf.ref LIKE '%".addslashes($sref)."%'";
+	$sql.= " AND cf.ref LIKE '%".$db->escape($sref)."%'";
 }
 if ($snom)
 {
-	$sql.= " AND s.nom LIKE '%".addslashes($snom)."%'";
+	$sql.= " AND s.nom LIKE '%".$db->escape($snom)."%'";
 }
 if ($suser)
 {
-	$sql.= " AND u.login LIKE '%".addslashes($suser)."%'";
+	$sql.= " AND u.login LIKE '%".$db->escape($suser)."%'";
 }
 if ($sttc)
 {
@@ -103,7 +103,7 @@ if ($sttc)
 }
 if ($sall)
 {
-	$sql.= " AND (cf.ref like '%".addslashes($sall)."%' OR cf.note like '%".addslashes($sall)."%')";
+	$sql.= " AND (cf.ref like '%".$db->escape($sall)."%' OR cf.note like '%".$db->escape($sall)."%')";
 }
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 

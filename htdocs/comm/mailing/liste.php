@@ -67,7 +67,7 @@ if ($filteremail)
 	$sql.= " mc.statut as sendstatut";
 	$sql.= " FROM ".MAIN_DB_PREFIX."mailing as m, ".MAIN_DB_PREFIX."mailing_cibles as mc";
 	$sql.= " WHERE m.rowid = mc.fk_mailing AND m.entity = ".$conf->entity;
-	$sql.= " AND mc.email = '".addslashes($filteremail)."'";
+	$sql.= " AND mc.email = '".$db->escape($filteremail)."'";
 	if ($sref) $sql.= " AND m.rowid = '".$sref."'";
 	if ($sall) $sql.= " AND (m.titre like '%".$sall."%' OR m.sujet like '%".$sall."%' OR m.body like '%".$sall."%')";
 	if (! $sortorder) $sortorder="ASC";

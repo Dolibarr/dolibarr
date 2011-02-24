@@ -576,15 +576,15 @@ else
 	if ($year > 0)         $sql .= " AND date_format(p.datep, '%Y') = $year";
 	if (!empty($_GET['search_ref']))
 	{
-		$sql.= " AND p.ref LIKE '%".addslashes($_GET['search_ref'])."%'";
+		$sql.= " AND p.ref LIKE '%".$db->escape($_GET['search_ref'])."%'";
 	}
 	if (!empty($_GET['search_societe']))
 	{
-		$sql.= " AND s.nom LIKE '%".addslashes($_GET['search_societe'])."%'";
+		$sql.= " AND s.nom LIKE '%".$db->escape($_GET['search_societe'])."%'";
 	}
 	if (!empty($_GET['search_montant_ht']))
 	{
-		$sql.= " AND p.price='".addslashes($_GET['search_montant_ht'])."'";
+		$sql.= " AND p.price='".$db->escape($_GET['search_montant_ht'])."'";
 	}
 	$sql.= " ORDER BY $sortfield $sortorder, p.rowid DESC ";
 	$sql.= $db->plimit($limit + 1,$offset);

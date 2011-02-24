@@ -81,7 +81,7 @@ if ($socid)
 }
 if ($_POST["sf_ref"])
 {
-	$sql.= " AND e.ref like '%".addslashes($_POST["sf_ref"])."%'";
+	$sql.= " AND e.ref like '%".$db->escape($_POST["sf_ref"])."%'";
 }
 
 $sql.= $db->order($sortfield,$sortorder);

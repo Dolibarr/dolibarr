@@ -69,7 +69,7 @@ function check_user_password_myopenid($usertotest,$passwordtotest)
 	
 			$sql ="SELECT login";
 			$sql.=" FROM ".MAIN_DB_PREFIX."user";
-			$sql.=" WHERE openid = '".addslashes($_GET['openid_identity'])."'";
+			$sql.=" WHERE openid = '".$db->escape($_GET['openid_identity'])."'";
 			$sql.=" AND entity IN (0," . ($_SESSION["dol_entity"] ? $_SESSION["dol_entity"] : 1) . ")";
 
 			dol_syslog("functions_dolibarr::check_user_password_myopenid sql=".$sql);

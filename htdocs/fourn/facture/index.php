@@ -69,7 +69,7 @@ if ($_POST["mode"] == 'search')
 	if ($_POST["mode-search"] == 'soc')
 	{
 		$sql = "SELECT s.rowid FROM ".MAIN_DB_PREFIX."societe as s ";
-		$sql.= " WHERE s.nom like '%".addslashes(strtolower($socname))."%'";
+		$sql.= " WHERE s.nom like '%".$db->escape(strtolower($socname))."%'";
 	}
 
     $resql=$db->query($sql);
@@ -120,11 +120,11 @@ if ($_GET["filtre"])
 
 if ($_REQUEST["search_ref"])
 {
-	$sql .= " AND fac.rowid like '%".addslashes($_REQUEST["search_ref"])."%'";
+	$sql .= " AND fac.rowid like '%".$db->escape($_REQUEST["search_ref"])."%'";
 }
 if ($_REQUEST["search_ref_supplier"])
 {
-	$sql .= " AND fac.facnumber like '%".addslashes($_REQUEST["search_ref_supplier"])."%'";
+	$sql .= " AND fac.facnumber like '%".$db->escape($_REQUEST["search_ref_supplier"])."%'";
 }
 if ($month > 0)
 {
@@ -139,22 +139,22 @@ else if ($year > 0)
 }
 if ($_GET["search_libelle"])
 {
-	$sql .= " AND fac.libelle like '%".addslashes($_GET["search_libelle"])."%'";
+	$sql .= " AND fac.libelle like '%".$db->escape($_GET["search_libelle"])."%'";
 }
 
 if ($_GET["search_societe"])
 {
-	$sql .= " AND s.nom like '%".addslashes($_GET["search_societe"])."%'";
+	$sql .= " AND s.nom like '%".$db->escape($_GET["search_societe"])."%'";
 }
 
 if ($_GET["search_montant_ht"])
 {
-	$sql .= " AND fac.total_ht = '".addslashes($_GET["search_montant_ht"])."'";
+	$sql .= " AND fac.total_ht = '".$db->escape($_GET["search_montant_ht"])."'";
 }
 
 if ($_GET["search_montant_ttc"])
 {
-	$sql .= " AND fac.total_ttc = '".addslashes($_GET["search_montant_ttc"])."'";
+	$sql .= " AND fac.total_ttc = '".$db->escape($_GET["search_montant_ttc"])."'";
 }
 
 $sql.= $db->order($sortfield,$sortorder);

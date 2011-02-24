@@ -383,7 +383,7 @@ if (! $_GET['action'] && ! $_POST['action'])
     }
     if ($_REQUEST["search_company"])
     {
-        $sql .=" AND s.nom LIKE '%".addslashes($_REQUEST["search_company"])."%'";
+        $sql .=" AND s.nom LIKE '%".$db->escape($_REQUEST["search_company"])."%'";
     }
     $sql.= $db->order($sortfield,$sortorder);
     $sql.= $db->plimit($limit + 1 ,$offset);

@@ -81,15 +81,15 @@ if (! $user->rights->projet->all->lire) $sql.= " AND p.rowid IN (".$projectsList
 if ($socid) $sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 if ($_GET["search_ref"])
 {
-	$sql.= " AND p.ref LIKE '%".addslashes($_GET["search_ref"])."%'";
+	$sql.= " AND p.ref LIKE '%".$db->escape($_GET["search_ref"])."%'";
 }
 if ($_GET["search_label"])
 {
-	$sql.= " AND p.title LIKE '%".addslashes($_GET["search_label"])."%'";
+	$sql.= " AND p.title LIKE '%".$db->escape($_GET["search_label"])."%'";
 }
 if ($_GET["search_societe"])
 {
-	$sql.= " AND s.nom LIKE '%".addslashes($_GET["search_societe"])."%'";
+	$sql.= " AND s.nom LIKE '%".$db->escape($_GET["search_societe"])."%'";
 }
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit+1, $offset);

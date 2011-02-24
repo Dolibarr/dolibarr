@@ -186,13 +186,13 @@ if ($account || $_GET["ref"])
     $mode_search = 0;
     if ($_REQUEST["req_nb"])
     {
-        $sql_rech.= " AND b.num_chq like '%".addslashes($_REQUEST["req_nb"])."%'";
+        $sql_rech.= " AND b.num_chq like '%".$db->escape($_REQUEST["req_nb"])."%'";
         $param.='&amp;req_nb='.urlencode($_REQUEST["req_nb"]);
         $mode_search = 1;
     }
     if ($_REQUEST["req_desc"])
     {
-        $sql_rech.= " AND b.label like '%".addslashes($_REQUEST["req_desc"])."%'";
+        $sql_rech.= " AND b.label like '%".$db->escape($_REQUEST["req_desc"])."%'";
         $param.='&amp;req_desc='.urlencode($_REQUEST["req_desc"]);
         $mode_search = 1;
     }
@@ -210,7 +210,7 @@ if ($account || $_GET["ref"])
     }
     if ($_REQUEST["thirdparty"])
     {
-        $sql_rech.=" AND (COALESCE(s.nom,'') LIKE '%".addslashes($_REQUEST["thirdparty"])."%')";
+        $sql_rech.=" AND (COALESCE(s.nom,'') LIKE '%".$db->escape($_REQUEST["thirdparty"])."%')";
         $param.='&amp;thirdparty='.urlencode($_REQUEST["thirdparty"]);
         $mode_search = 1;
     }

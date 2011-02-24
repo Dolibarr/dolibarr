@@ -2930,19 +2930,19 @@ else
 		}
 		if ($_GET['search_ref'])
 		{
-			$sql.= ' AND f.facnumber LIKE \'%'.addslashes(trim($_GET['search_ref'])).'%\'';
+			$sql.= ' AND f.facnumber LIKE \'%'.$db->escape(trim($_GET['search_ref'])).'%\'';
 		}
 		if ($_GET['search_societe'])
 		{
-			$sql.= ' AND s.nom LIKE \'%'.addslashes(trim($_GET['search_societe'])).'%\'';
+			$sql.= ' AND s.nom LIKE \'%'.$db->escape(trim($_GET['search_societe'])).'%\'';
 		}
 		if ($_GET['search_montant_ht'])
 		{
-			$sql.= ' AND f.total = \''.addslashes(trim($_GET['search_montant_ht'])).'\'';
+			$sql.= ' AND f.total = \''.$db->escape(trim($_GET['search_montant_ht'])).'\'';
 		}
 		if ($_GET['search_montant_ttc'])
 		{
-			$sql.= ' AND f.total_ttc = \''.addslashes(trim($_GET['search_montant_ttc'])).'\'';
+			$sql.= ' AND f.total_ttc = \''.$db->escape(trim($_GET['search_montant_ttc'])).'\'';
 		}
 		if ($month > 0)
 		{
@@ -2957,11 +2957,11 @@ else
 		}
 		if ($_POST['sf_ref'])
 		{
-			$sql.= ' AND f.facnumber LIKE \'%'.addslashes(trim($_POST['sf_ref'])) . '%\'';
+			$sql.= ' AND f.facnumber LIKE \'%'.$db->escape(trim($_POST['sf_ref'])) . '%\'';
 		}
 		if ($sall)
 		{
-			$sql.= ' AND (s.nom LIKE \'%'.addslashes($sall).'%\' OR f.facnumber LIKE \'%'.addslashes($sall).'%\' OR f.note LIKE \'%'.addslashes($sall).'%\' OR fd.description LIKE \'%'.addslashes($sall).'%\')';
+			$sql.= ' AND (s.nom LIKE \'%'.$db->escape($sall).'%\' OR f.facnumber LIKE \'%'.$db->escape($sall).'%\' OR f.note LIKE \'%'.$db->escape($sall).'%\' OR fd.description LIKE \'%'.$db->escape($sall).'%\')';
 		}
         if (! $sall)
         {

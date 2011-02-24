@@ -76,7 +76,7 @@ if ($action == 'note')
 if ($mode == 'search') {
 	if ($mode-search == 'soc') {
 		$sql = "SELECT s.rowid FROM ".MAIN_DB_PREFIX."societe as s ";
-		$sql.= " WHERE lower(s.nom) like '%".addslashes(strtolower($socname))."%'";
+		$sql.= " WHERE lower(s.nom) like '%".$db->escape(strtolower($socname))."%'";
 		$sql.= " AND s.entity = ".$conf->entity;
 	}
 
@@ -113,29 +113,29 @@ if (dol_strlen($stcomm))
 
 if ($socname)
 {
-	$sql.= " AND s.nom like '%".addslashes(strtolower($socname))."%'";
+	$sql.= " AND s.nom like '%".$db->escape(strtolower($socname))."%'";
 	$sortfield = "s.nom";
 	$sortorder = "ASC";
 }
 
 if ($_GET["search_nom"])
 {
-	$sql.= " AND s.nom like '%".addslashes(strtolower($_GET["search_nom"]))."%'";
+	$sql.= " AND s.nom like '%".$db->escape(strtolower($_GET["search_nom"]))."%'";
 }
 
 if ($_GET["search_compta"])
 {
-	$sql.= " AND s.code_compta like '%".addslashes($_GET["search_compta"])."%'";
+	$sql.= " AND s.code_compta like '%".$db->escape($_GET["search_compta"])."%'";
 }
 
 if ($_GET["search_code_client"])
 {
-	$sql.= " AND s.code_client like '%".addslashes($_GET["search_code_client"])."%'";
+	$sql.= " AND s.code_client like '%".$db->escape($_GET["search_code_client"])."%'";
 }
 
 if (dol_strlen($begin))
 {
-	$sql.= " AND s.nom like '".addslashes($begin)."'";
+	$sql.= " AND s.nom like '".$db->escape($begin)."'";
 }
 
 if ($socid)

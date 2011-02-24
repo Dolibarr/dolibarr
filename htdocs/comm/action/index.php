@@ -224,7 +224,7 @@ $sql.= ' WHERE a.fk_action = ca.id';
 $sql.= ' AND a.fk_user_author = u.rowid';
 $sql.= ' AND u.entity in (0,'.$conf->entity.')';	// To limit to entity
 if ($user->societe_id) $sql.= ' AND a.fk_soc = '.$user->societe_id; // To limit to external user company
-if ($pid) $sql.=" AND a.fk_project=".addslashes($pid);
+if ($pid) $sql.=" AND a.fk_project=".$db->escape($pid);
 if ($action == 'show_day')
 {
 	$sql.= " AND (";

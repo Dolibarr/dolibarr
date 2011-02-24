@@ -748,7 +748,7 @@ function migrate_contracts_det($db,$langs,$conf)
 				$sql.= " VALUES (";
 				$sql.= $obj->cref.",".($obj->fk_product?$obj->fk_product:0).",";
 				$sql.= ($obj->mise_en_service?"4":"0").",";
-				$sql.= "'".addslashes($obj->label)."', null,";
+				$sql.= "'".$db->escape($obj->label)."', null,";
 				$sql.= ($obj->mise_en_service?"'".$obj->mise_en_service."'":($obj->date_contrat?"'".$obj->date_contrat."'":"null")).",";
 				$sql.= ($obj->mise_en_service?"'".$obj->mise_en_service."'":"null").",";
 				$sql.= ($obj->fin_validite?"'".$obj->fin_validite."'":"null").",";
@@ -1953,7 +1953,7 @@ function migrate_detail_livraison($db,$langs,$conf)
 
 					$sql = "UPDATE ".MAIN_DB_PREFIX."livraisondet SET";
 					$sql.= " fk_product=".$obj->fk_product;
-					$sql.= ",description='".addslashes($obj->description)."'";
+					$sql.= ",description='".$db->escape($obj->description)."'";
 					$sql.= ",subprice='".$obj->subprice."'";
 					$sql.= ",total_ht='".$obj->total_ht."'";
 					$sql.= " WHERE fk_commande_ligne = ".$obj->rowid;

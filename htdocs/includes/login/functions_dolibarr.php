@@ -48,7 +48,7 @@ function check_user_password_dolibarr($usertotest,$passwordtotest)
 
 		$sql ='SELECT pass, pass_crypted';
 		$sql.=' FROM '.$table;
-		$sql.=' WHERE '.$usernamecol." = '".addslashes($_POST["username"])."'";
+		$sql.=' WHERE '.$usernamecol." = '".$db->escape($_POST["username"])."'";
 		$sql.=' AND '.$entitycol." IN (0," . ($_POST["entity"] ? $_POST["entity"] : 1) . ")";
 
 		dol_syslog("functions_dolibarr::check_user_password_dolibarr sql=".$sql);

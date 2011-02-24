@@ -357,9 +357,9 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 	$sql  = "SELECT mc.rowid, mc.nom, mc.prenom, mc.email, mc.other, mc.statut, mc.date_envoi, mc.source_url, mc.source_id, mc.source_type";
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 	$sql .= " WHERE mc.fk_mailing=".$mil->id;
-	if ($search_nom)    $sql.= " AND mc.nom    like '%".addslashes($search_nom)."%'";
-	if ($search_prenom) $sql.= " AND mc.prenom like '%".addslashes($search_prenom)."%'";
-	if ($search_email)  $sql.= " AND mc.email  like '%".addslashes($search_email)."%'";
+	if ($search_nom)    $sql.= " AND mc.nom    like '%".$db->escape($search_nom)."%'";
+	if ($search_prenom) $sql.= " AND mc.prenom like '%".$db->escape($search_prenom)."%'";
+	if ($search_email)  $sql.= " AND mc.email  like '%".$db->escape($search_email)."%'";
 	$sql .= $db->order($sortfield,$sortorder);
 	$sql .= $db->plimit($conf->liste_limit+1, $offset);
 

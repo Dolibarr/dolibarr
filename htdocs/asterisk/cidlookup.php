@@ -44,10 +44,10 @@ if (empty($phone))
 $sql = "SELECT nom FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON sp.fk_soc = s.rowid";
 $sql.= " WHERE s.entity=".$conf->entity;
-$sql.= " AND (s.tel='".addslashes($phone)."'";
-$sql.= " OR sp.phone='".addslashes($phone)."'";
-$sql.= " OR sp.phone_perso='".addslashes($phone)."'";
-$sql.= " OR sp.phone_mobile='".addslashes($phone)."')";
+$sql.= " AND (s.tel='".$db->escape($phone)."'";
+$sql.= " OR sp.phone='".$db->escape($phone)."'";
+$sql.= " OR sp.phone_perso='".$db->escape($phone)."'";
+$sql.= " OR sp.phone_mobile='".$db->escape($phone)."')";
 $sql.= $db->plimit(1);
 
 dol_syslog('cidlookup search information with phone '.$phone, LOG_DEBUG);

@@ -112,7 +112,7 @@ if ($_GET["action"] == 'del')
 {
 	$type='company';
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql.= " WHERE nom='".addslashes($_GET["value"])."' AND type='".$type."' AND entity=".$conf->entity;
+	$sql.= " WHERE nom='".$db->escape($_GET["value"])."' AND type='".$type."' AND entity=".$conf->entity;
 	if ($db->query($sql))
 	{
 

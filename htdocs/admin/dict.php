@@ -387,7 +387,7 @@ if ($_POST["actionadd"] || $_POST["actionmodify"])
         if ($tabrowid[$_POST["id"]] && !in_array($tabrowid[$_POST["id"]],$listfieldmodify))
         {
             $sql.= $tabrowid[$_POST["id"]]."=";
-            $sql.= "'".addslashes($_POST["rowid"])."', ";
+            $sql.= "'".$db->escape($_POST["rowid"])."', ";
         }
         $i = 0;
         foreach ($listfieldmodify as $field)
