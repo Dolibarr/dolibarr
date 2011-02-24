@@ -935,7 +935,7 @@ function pdf_getTotalQty($object,$type='',$outputlangs)
 			{
 				$total += $object->lines[$i]->qty;
 			}
-			if ($type==9 && !empty($object->hooks) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code))
+			else if ($type==9 && !empty($object->hooks) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code))
 			{
 				// TODO add hook function
 			}
