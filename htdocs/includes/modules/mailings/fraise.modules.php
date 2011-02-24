@@ -58,12 +58,13 @@ class mailing_fraise extends MailingTargets
 	function getSqlArrayForStats()
 	{
         global $langs;
+        
         $langs->load("members");
 
 		// Array for requests for statistics board
 	    $statssql=array();
 
-        $statssql[0] ="SELECT '".addslashes($langs->trans("FundationMembers"))."' as label, count(*) as nb";
+        $statssql[0] ="SELECT '".$this->db->escape($langs->trans("FundationMembers"))."' as label, count(*) as nb";
 		$statssql[0].=" FROM ".MAIN_DB_PREFIX."adherent where statut = 1";
 
 		return $statssql;

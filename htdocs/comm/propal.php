@@ -1652,8 +1652,8 @@ else
 	$pageprev = $page - 1;
 	$pagenext = $page + 1;
 
-	$viewstatut=addslashes($_GET['viewstatut']);
-	$object_statut = addslashes($_GET['propal_statut']);
+	$viewstatut=$db->escape($_GET['viewstatut']);
+	$object_statut = $db->escape($_GET['propal_statut']);
 	if($object_statut != '')
 	$viewstatut=$object_statut;
 
@@ -1679,17 +1679,17 @@ else
 	}
 	if (!empty($_GET['search_ref']))
 	{
-		$sql.= " AND p.ref LIKE '%".addslashes($_GET['search_ref'])."%'";
+		$sql.= " AND p.ref LIKE '%".$db->escape($_GET['search_ref'])."%'";
 	}
 	if (!empty($_GET['search_societe']))
 	{
-		$sql.= " AND s.nom LIKE '%".addslashes($_GET['search_societe'])."%'";
+		$sql.= " AND s.nom LIKE '%".$db->escape($_GET['search_societe'])."%'";
 	}
 	if (!empty($_GET['search_montant_ht']))
 	{
-		$sql.= " AND p.total_ht='".addslashes($_GET['search_montant_ht'])."'";
+		$sql.= " AND p.total_ht='".$db->escape($_GET['search_montant_ht'])."'";
 	}
-	if ($sall) $sql.= " AND (s.nom like '%".addslashes($sall)."%' OR p.note like '%".addslashes($sall)."%' OR pd.description like '%".addslashes($sall)."%')";
+	if ($sall) $sql.= " AND (s.nom like '%".$db->escape($sall)."%' OR p.note like '%".$db->escape($sall)."%' OR pd.description like '%".$db->escape($sall)."%')";
 	if ($socid) $sql.= ' AND s.rowid = '.$socid;
 	if ($viewstatut <> '')
 	{
@@ -1708,7 +1708,7 @@ else
 	}
 	if (dol_strlen($_POST['sf_ref']) > 0)
 	{
-		$sql.= " AND p.ref like '%".addslashes($_POST["sf_ref"]) . "%'";
+		$sql.= " AND p.ref like '%".$db->escape($_POST["sf_ref"]) . "%'";
 	}
 
 	$sql.= ' ORDER BY '.$sortfield.' '.$sortorder.', p.ref DESC';

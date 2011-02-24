@@ -46,7 +46,7 @@ if (! empty($_SERVER['DOL_TUNING']))
 // Forcing parameter setting magic_quotes_gpc and cleaning parameters
 // (Otherwise he would have for each position, condition
 // Reading stripslashes variable according to state get_magic_quotes_gpc).
-// Off mode (recommended, you just do addslashes when an insert / update.
+// Off mode (recommended, you just do $db->escape when an insert / update.
 function stripslashes_deep($value)
 {
 	return (is_array($value) ? array_map('stripslashes_deep', $value) : stripslashes($value));
