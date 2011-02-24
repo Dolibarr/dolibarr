@@ -42,5 +42,5 @@ create table llx_contrat
   note                    text,
   note_public             text
   
-)type=innodb;
+)ENGINE=innodb;
 

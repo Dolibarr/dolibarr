@@ -25,4 +25,4 @@ create table llx_c_typent
   code      varchar(12)  UNIQUE NOT NULL,
   libelle   varchar(30),
   active    tinyint DEFAULT 1   NOT NULL
-)type=innodb;
+)ENGINE=innodb;

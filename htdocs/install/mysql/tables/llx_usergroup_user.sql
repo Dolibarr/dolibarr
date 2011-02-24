@@ -25,4 +25,4 @@ create table llx_usergroup_user
   fk_usergroup  integer NOT NULL,
 
   UNIQUE(fk_user,fk_usergroup)
-)type=innodb;
+)ENGINE=innodb;

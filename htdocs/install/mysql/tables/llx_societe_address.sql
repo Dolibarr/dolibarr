@@ -36,4 +36,4 @@ create table llx_societe_address
   note               text,                                --
   fk_user_creat      integer,
   fk_user_modif      integer
-)type=innodb;
+)ENGINE=innodb;

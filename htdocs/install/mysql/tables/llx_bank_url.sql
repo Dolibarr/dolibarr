@@ -27,4 +27,4 @@ create table llx_bank_url
   url             varchar(255),
   label           varchar(255),
   type            varchar(20) NOT NULL
-)type=innodb;
+)ENGINE=innodb;

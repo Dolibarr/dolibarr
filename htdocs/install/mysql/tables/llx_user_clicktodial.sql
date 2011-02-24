@@ -28,4 +28,4 @@ create table llx_user_clicktodial
   pass          varchar(64),
   poste         varchar(20)
 
-)type=innodb;
+)ENGINE=innodb;

@@ -24,5 +24,5 @@ create table llx_societe_commerciaux
   rowid         integer AUTO_INCREMENT PRIMARY KEY,
   fk_soc        integer,
   fk_user       integer
-)type=innodb;
+)ENGINE=innodb;
 

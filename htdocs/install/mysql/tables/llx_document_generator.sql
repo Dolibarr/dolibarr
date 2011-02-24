@@ -25,4 +25,4 @@ create table llx_document_generator
   classfile       varchar(255) NOT NULL,
   class           varchar(255) NOT NULL
 
-)type=innodb;
+)ENGINE=innodb;

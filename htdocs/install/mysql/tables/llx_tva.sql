@@ -32,7 +32,7 @@ create table llx_tva
   fk_bank         integer,  
   fk_user_creat   integer,                    -- utilisateur qui a cree l'info
   fk_user_modif   integer                     -- utilisateur qui a modifi� l'info
-)type=innodb;
+)ENGINE=innodb;
 
 -- 
 -- List of codes for the field entity

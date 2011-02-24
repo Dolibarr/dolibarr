@@ -33,4 +33,4 @@ create table llx_ecm_directories
   date_m		  timestamp,
   fk_user_c		  integer,
   fk_user_m		  integer
-) type=innodb;
+) ENGINE=innodb;

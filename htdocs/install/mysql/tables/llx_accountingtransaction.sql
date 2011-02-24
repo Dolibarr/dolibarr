@@ -29,4 +29,4 @@ create table llx_accountingtransaction
     fk_source       integer NOT NULL,
     sourcetype      varchar(16) NOT NULL,
     url             varchar(255)
-)type=innodb;
+)ENGINE=innodb;

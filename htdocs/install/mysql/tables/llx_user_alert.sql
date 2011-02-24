@@ -25,4 +25,4 @@ create table llx_user_alert
   type         integer,
   fk_contact   integer, -- pointe sur llx_socpeople
   fk_user      integer
-)type=innodb;
+)ENGINE=innodb;

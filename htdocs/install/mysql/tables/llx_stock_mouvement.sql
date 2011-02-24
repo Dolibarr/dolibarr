@@ -31,4 +31,4 @@ create table llx_stock_mouvement
   type_mouvement  smallint,
   fk_user_author  integer,
   label           varchar(128)
-)type=innodb;
+)ENGINE=innodb;

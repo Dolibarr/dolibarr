@@ -31,5 +31,5 @@ create table llx_element_contact
   element_id		int NOT NULL, 		    -- la reference de l'element.
   fk_c_type_contact	int NOT NULL,	        -- nature du contact.
   fk_socpeople      integer NOT NULL
-)type=innodb;
+)ENGINE=innodb;
 

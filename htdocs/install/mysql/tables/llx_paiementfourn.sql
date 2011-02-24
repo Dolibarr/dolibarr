@@ -32,4 +32,4 @@ create table llx_paiementfourn
   note              text,
   fk_bank           integer NOT NULL,
   statut			smallint NOT NULL DEFAULT 0
-)type=innodb;
+)ENGINE=innodb;

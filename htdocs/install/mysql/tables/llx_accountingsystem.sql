@@ -28,4 +28,4 @@ create table llx_accountingsystem
   fk_author         varchar(20),
   tms               timestamp,
   active            smallint        DEFAULT 0
-)type=innodb;
+)ENGINE=innodb;

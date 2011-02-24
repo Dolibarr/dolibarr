@@ -25,5 +25,5 @@ create table llx_c_stcomm
   code     varchar(12)  UNIQUE NOT NULL,
   libelle  varchar(30),
   active   tinyint default 1  NOT NULL
-)type=innodb;
+)ENGINE=innodb;
 

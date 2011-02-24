@@ -60,4 +60,4 @@ create table llx_propal
   model_pdf				varchar(255),
   date_livraison 		date DEFAULT NULL,		-- delivery date
   fk_adresse_livraison  integer					-- delivery address (deprecated)
-)type=innodb;
+)ENGINE=innodb;

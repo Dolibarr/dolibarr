@@ -54,7 +54,7 @@ create table llx_user
   statut            tinyint DEFAULT 1,
   photo             varchar(255),     -- filename or url of photo
   lang              varchar(6)
-)type=innodb;
+)ENGINE=innodb;
 
 -- 
 -- List of codes for the field entity

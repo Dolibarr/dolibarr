@@ -36,4 +36,4 @@ create table llx_c_type_contact
   code          varchar(16) NOT NULL,
   libelle 	    varchar(64)	NOT NULL,
   active  	    tinyint DEFAULT 1  NOT NULL
-)type=innodb;
+)ENGINE=innodb;

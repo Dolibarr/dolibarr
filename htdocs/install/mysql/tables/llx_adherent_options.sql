@@ -25,4 +25,4 @@ create table llx_adherent_options
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
   tms              timestamp,
   fk_member        integer NOT NULL     -- member id 
-)type=innodb;
+)ENGINE=innodb;

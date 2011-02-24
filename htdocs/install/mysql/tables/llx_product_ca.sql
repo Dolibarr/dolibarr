@@ -25,4 +25,4 @@ create table llx_product_ca
   year          smallint UNSIGNED,
   ca_genere     float,
   UNIQUE (fk_product, year)
-)type=innodb;
+)ENGINE=innodb;

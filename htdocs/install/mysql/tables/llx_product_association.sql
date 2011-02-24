@@ -25,5 +25,5 @@ create table llx_product_association
   fk_product_pere       integer NOT NULL DEFAULT 0, -- id du produit maitre
   fk_product_fils       integer NOT NULL DEFAULT 0, -- id du sous-produit
   qty                   double NULL
-)type=innodb;
+)ENGINE=innodb;
 

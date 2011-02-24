@@ -35,4 +35,4 @@ create table llx_prelevement_facture_demande
   number              varchar(255),
   cle_rib             varchar(5)
 
-)type=innodb;
+)ENGINE=innodb;

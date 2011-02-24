@@ -34,4 +34,4 @@ create table llx_prelevement_lignes
 
   note                text
 
-)type=innodb;
+)ENGINE=innodb;

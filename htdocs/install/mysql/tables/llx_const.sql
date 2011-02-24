@@ -35,7 +35,7 @@ create table llx_const
   visible     tinyint DEFAULT 1 NOT NULL,
   note        text,
   tms         timestamp
-) type=innodb;
+) ENGINE=innodb;
 
 -- 
 -- List of codes for the field entity

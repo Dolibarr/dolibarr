@@ -29,4 +29,4 @@ create table llx_bookmark
   title       varchar(64),
   favicon     varchar(24),
   position    integer DEFAULT 0
-)type=innodb;
+)ENGINE=innodb;

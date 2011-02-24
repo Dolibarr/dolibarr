@@ -28,4 +28,4 @@ create table llx_accountingaccount
   account_number  varchar(20)  NOT NULL,
   account_parent  varchar(20),
   label           varchar(128) NOT NULL
-)type=innodb;
+)ENGINE=innodb;

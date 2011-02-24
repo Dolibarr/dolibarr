@@ -28,5 +28,5 @@ create table llx_element_element
   sourcetype		varchar(16) NOT NULL,
   fk_target			integer NOT NULL,
   targettype		varchar(16) NOT NULL
-) type=innodb;
+) ENGINE=innodb;
 

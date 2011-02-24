@@ -35,4 +35,4 @@ create table llx_adherent_type
   vote             varchar(3) NOT NULL DEFAULT 'yes',
   note             text,
   mail_valid       text -- mail envoye a la validation
-)type=innodb;
+)ENGINE=innodb;

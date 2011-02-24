@@ -51,7 +51,7 @@ create table llx_mailing
   joined_file2       varchar(255),
   joined_file3       varchar(255),
   joined_file4       varchar(255)
-)type=innodb;
+)ENGINE=innodb;
 
 --
 -- List of codes for the field entity

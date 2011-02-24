@@ -29,4 +29,4 @@ create table llx_document
   fk_group        integer      NULL,
   permissions     char(9)      DEFAULT 'rw-rw-rw'
 
-)type=innodb;
+)ENGINE=innodb;

@@ -61,4 +61,4 @@ create table llx_commande
   date_livraison 	      date 	  default NULL,
   fk_adresse_livraison  integer,                       -- delivery address (deprecated)
   import_key            varchar(14)
-)type=innodb;
+)ENGINE=innodb;

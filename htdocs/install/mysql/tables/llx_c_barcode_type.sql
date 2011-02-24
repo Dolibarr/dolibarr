@@ -28,4 +28,4 @@ create table llx_c_barcode_type
   coder    varchar(16)        NOT NULL,
   example  varchar(16)        NOT NULL
   
-)type=innodb;
+)ENGINE=innodb;

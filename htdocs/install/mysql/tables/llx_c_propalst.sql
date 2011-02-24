@@ -25,5 +25,5 @@ create table llx_c_propalst
   code            varchar(12) UNIQUE NOT NULL,
   label           varchar(30),
   active          tinyint DEFAULT 1  NOT NULL
-)type=innodb;
+)ENGINE=innodb;
 

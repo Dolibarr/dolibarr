@@ -43,4 +43,4 @@ create table llx_facture_fourn_det
   date_start        datetime   DEFAULT NULL,       -- date debut si service
   date_end          datetime   DEFAULT NULL,       -- date fin si service
   import_key        varchar(14)
-)type=innodb;
+)ENGINE=innodb;

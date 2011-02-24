@@ -25,5 +25,5 @@ create table llx_usergroup_rights
   fk_id         integer NOT NULL,
 
   UNIQUE(fk_usergroup,fk_id)
-)type=innodb;
+)ENGINE=innodb;
 

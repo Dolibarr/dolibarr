@@ -73,4 +73,4 @@ create table llx_product
   finished					tinyint      DEFAULT NULL,
   hidden					tinyint      DEFAULT 0,			-- Need permission see also hidden products
   import_key				varchar(14)						-- Import key
-)type=innodb;
+)ENGINE=innodb;

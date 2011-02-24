@@ -37,4 +37,4 @@ create table llx_deplacement
   fk_projet         integer DEFAULT 0,
   note				text,
   note_public       text
-)type=innodb;
+)ENGINE=innodb;

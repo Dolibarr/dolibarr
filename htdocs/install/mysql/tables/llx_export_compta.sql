@@ -27,4 +27,4 @@ create table llx_export_compta
   fk_user          integer NOT NULL,
   note             text
 
-)type=innodb;
+)ENGINE=innodb;

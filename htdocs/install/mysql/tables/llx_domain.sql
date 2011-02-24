@@ -24,5 +24,5 @@ create table llx_domain
   datec           datetime,
   label           varchar(255),
   note            text
-)type=innodb;
+)ENGINE=innodb;
 

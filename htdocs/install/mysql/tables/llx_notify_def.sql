@@ -28,4 +28,4 @@ create table llx_notify_def
   fk_contact      integer,
   fk_user		  integer,
   type            varchar(16) DEFAULT 'email'
-)type=innodb;
+)ENGINE=innodb;

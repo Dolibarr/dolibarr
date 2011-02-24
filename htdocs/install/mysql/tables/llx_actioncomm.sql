@@ -61,7 +61,7 @@ create table llx_actioncomm
   fk_supplier_order   integer,
   fk_supplier_invoice integer
 
-)type=innodb;
+)ENGINE=innodb;
 
 
 

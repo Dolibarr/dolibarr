@@ -61,4 +61,4 @@ create table llx_adherent
   fk_user_mod      integer,
   fk_user_valid    integer,
   import_key       varchar(14)                  -- Import key
-)type=innodb;
+)ENGINE=innodb;

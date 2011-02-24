@@ -71,4 +71,4 @@ create table llx_facture
   model_pdf           varchar(255),
   import_key          varchar(14)
 
-)type=innodb;
+)ENGINE=innodb;

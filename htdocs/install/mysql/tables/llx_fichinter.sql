@@ -40,4 +40,4 @@ create table llx_fichinter
   note_public     text,
   model_pdf       varchar(255)
   
-)type=innodb;
+)ENGINE=innodb;

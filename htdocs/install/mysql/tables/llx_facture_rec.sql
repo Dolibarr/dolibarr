@@ -54,4 +54,4 @@ create table llx_facture_rec
   date_last_gen      datetime DEFAULT NULL,
   nb_gen_done        integer DEFAULT NULL,
   nb_gen_max         integer DEFAULT NULL
-)type=innodb;
+)ENGINE=innodb;

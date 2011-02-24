@@ -26,4 +26,4 @@ create table llx_c_ziptown
   zip	 			varchar(10) NOT NULL,			-- Zip code
   town				varchar(255) NOT NULL,			-- Town name
   active 			tinyint NOT NULL DEFAULT 1
-)type=innodb;
+)ENGINE=innodb;

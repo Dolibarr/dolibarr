@@ -27,6 +27,6 @@ create table llx_dolibarr_modules
   active_date    datetime    NOT NULL,
   active_version varchar(25) NOT NULL
 
-)type=innodb;
+)ENGINE=innodb;
 
 

@@ -54,7 +54,7 @@ create table llx_bank_account
   min_allowed    integer DEFAULT 0,
   min_desired    integer DEFAULT 0,
   comment        text
-)type=innodb;
+)ENGINE=innodb;
 
 -- 
 -- List of codes for the field entity

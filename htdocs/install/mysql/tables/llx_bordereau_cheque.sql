@@ -37,4 +37,4 @@ create table llx_bordereau_cheque
   note              text,
   statut            smallint NOT NULL DEFAULT 0
   
-)type=innodb;
+)ENGINE=innodb;

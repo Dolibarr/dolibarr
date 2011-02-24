@@ -47,4 +47,4 @@ create table llx_don
   note_public     text,
   model_pdf       varchar(255),
   import_key      varchar(14)
-)type=innodb;
+)ENGINE=innodb;

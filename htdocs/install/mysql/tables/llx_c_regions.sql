@@ -28,5 +28,5 @@ create table llx_c_regions
   tncc        integer,
   nom         varchar(50),
   active      tinyint DEFAULT 1 NOT NULL
-)type=innodb;
+)ENGINE=innodb;
 

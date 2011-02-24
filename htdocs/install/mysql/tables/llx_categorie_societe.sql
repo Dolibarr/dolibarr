@@ -22,4 +22,4 @@ create table llx_categorie_societe
 (
   fk_categorie  integer NOT NULL,
   fk_societe    integer NOT NULL
-)type=innodb;
+)ENGINE=innodb;

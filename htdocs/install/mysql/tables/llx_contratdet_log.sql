@@ -28,4 +28,4 @@ create table llx_contratdet_log
   fk_user_author        integer NOT NULL,
   commentaire           text
 
-)type=innodb;
+)ENGINE=innodb;

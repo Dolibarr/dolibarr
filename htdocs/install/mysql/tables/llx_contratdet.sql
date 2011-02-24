@@ -59,4 +59,4 @@ create table llx_contratdet
   fk_user_cloture       integer,
   commentaire           text
 
-)type=innodb;
+)ENGINE=innodb;

@@ -52,7 +52,7 @@ create table llx_facturedet
   special_code        integer UNSIGNED DEFAULT 0,		-- code pour les lignes speciales
   rang                integer    DEFAULT 0,				-- ordre d'affichage
   import_key          varchar(14)
-)type=innodb;
+)ENGINE=innodb;
 
 -- 
 -- List of codes for special_code

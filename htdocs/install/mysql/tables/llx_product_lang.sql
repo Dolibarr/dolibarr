@@ -28,4 +28,4 @@ create table llx_product_lang
   label          varchar(255) NOT NULL,
   description    text,
   note           text
-)type=innodb;
+)ENGINE=innodb;

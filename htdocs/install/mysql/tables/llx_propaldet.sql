@@ -52,7 +52,7 @@ create table llx_propaldet
 
   special_code      integer UNSIGNED DEFAULT 0,      -- code pour les lignes speciales
   rang              integer      DEFAULT 0           -- ordre affichage sur la propal
-)type=innodb;
+)ENGINE=innodb;
 
 -- 
 -- Liste des codes pour special_code

@@ -29,4 +29,4 @@ create table llx_prelevement_rejet
   note                  text,
   afacturer             tinyint default 0,
   fk_facture            integer
-)type=innodb;
+)ENGINE=innodb;

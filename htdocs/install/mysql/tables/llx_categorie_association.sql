@@ -23,4 +23,4 @@ create table llx_categorie_association
 (
   fk_categorie_mere   integer NOT NULL,
   fk_categorie_fille  integer NOT NULL
-)type=innodb;
+)ENGINE=innodb;

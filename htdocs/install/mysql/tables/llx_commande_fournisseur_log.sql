@@ -28,4 +28,4 @@ create table llx_commande_fournisseur_log
   fk_statut        smallint NOT NULL,
   fk_user          integer NOT NULL,
   comment          varchar(255) NULL
-)type=innodb;
+)ENGINE=innodb;

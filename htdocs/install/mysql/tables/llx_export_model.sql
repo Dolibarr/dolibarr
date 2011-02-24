@@ -28,4 +28,4 @@ create table llx_export_model
   	label         varchar(50) NOT NULL,
   	type		  varchar(20) NOT NULL,
   	field         text NOT NULL
-)type=innodb;
+)ENGINE=innodb;

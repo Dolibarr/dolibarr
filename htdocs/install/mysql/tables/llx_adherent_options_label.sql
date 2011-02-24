@@ -30,4 +30,4 @@ create table llx_adherent_options_label
 	type            varchar(8),
 	size            integer DEFAULT 0,
 	pos             integer DEFAULT 0
-)type=innodb;
+)ENGINE=innodb;

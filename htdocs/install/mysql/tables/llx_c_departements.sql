@@ -29,7 +29,7 @@ create table llx_c_departements
   ncc              varchar(50),
   nom              varchar(50),
   active           tinyint DEFAULT 1  NOT NULL
-)type=innodb;
+)ENGINE=innodb;
 
 
 

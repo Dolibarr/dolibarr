@@ -26,5 +26,5 @@ create table llx_element_rang
   fk_child			integer NOT NULL,
   childtype			varchar(16) NOT NULL,
   rang				integer	DEFAULT 0
-) type=innodb;
+) ENGINE=innodb;
 

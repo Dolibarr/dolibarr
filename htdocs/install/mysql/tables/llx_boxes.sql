@@ -31,4 +31,4 @@ create table llx_boxes
   position    smallint NOT NULL,
   box_order   varchar(3) NOT NULL,
   fk_user	  integer default 0 NOT NULL
-)type=innodb;
+)ENGINE=innodb;

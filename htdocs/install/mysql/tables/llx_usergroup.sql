@@ -28,7 +28,7 @@ create table llx_usergroup
   datec         datetime,
   tms           timestamp,
   note          text
-)type=innodb;
+)ENGINE=innodb;
 
 -- 
 -- List of codes for the field entity

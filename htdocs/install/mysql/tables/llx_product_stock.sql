@@ -27,5 +27,5 @@ create table llx_product_stock
   fk_entrepot     integer NOT NULL,
   reel            real,           					-- physical stock
   pmp             double(24,8) default 0 NOT NULL	-- PMP value for product in this warehouse
-)type=innodb;
+)ENGINE=innodb;
 

@@ -33,4 +33,4 @@ create table llx_prelevement_notifications
   fk_user   integer NOT NULL,
   action    varchar(32) 
 
-)type=innodb;
+)ENGINE=innodb;

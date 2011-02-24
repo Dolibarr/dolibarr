@@ -31,5 +31,5 @@ create table llx_c_tva
   active            tinyint DEFAULT 1 NOT NULL,
   accountancy_code 	varchar(15)  DEFAULT NULL
 
-)type=innodb;
+)ENGINE=innodb;
 

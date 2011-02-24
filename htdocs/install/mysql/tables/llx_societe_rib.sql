@@ -38,4 +38,4 @@ create table llx_societe_rib
   adresse_proprio varchar(255)
 
 
-)type=innodb;
+)ENGINE=innodb;

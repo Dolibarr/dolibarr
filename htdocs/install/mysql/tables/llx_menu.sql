@@ -41,7 +41,7 @@ CREATE TABLE llx_menu
 	enabled       varchar(255) NULL default '1',    -- Condition to show or hide
 	usertype      integer NOT NULL default '0',     -- 0 if menu for all users, 1 for external only, 2 for internal only
 	tms           timestamp
-) type=innodb;
+) ENGINE=innodb;
 
 -- 
 -- List of codes for the field entity

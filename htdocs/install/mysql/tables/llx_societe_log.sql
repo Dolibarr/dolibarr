@@ -28,4 +28,4 @@ create table llx_societe_log
   fk_user     integer,			-- Ne pas mettre de controle d'integrite sur les tables de logs
   author      varchar(30),
   label       varchar(128)
-)type=innodb;
+)ENGINE=innodb;

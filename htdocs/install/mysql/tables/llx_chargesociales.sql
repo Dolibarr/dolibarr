@@ -29,7 +29,7 @@ create table llx_chargesociales
   amount     real     default 0 NOT NULL,
   paye       smallint default 0 NOT NULL,
   periode    date
-)type=innodb;
+)ENGINE=innodb;
 
 -- 
 -- List of codes for the field entity

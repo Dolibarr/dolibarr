@@ -30,4 +30,4 @@ create table llx_notify
   objet_type      varchar(24) NOT NULL,
   objet_id        integer NOT NULL,
   email           varchar(255)
-)type=innodb;
+)ENGINE=innodb;

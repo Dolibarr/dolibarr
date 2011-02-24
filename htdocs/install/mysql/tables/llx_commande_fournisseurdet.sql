@@ -44,4 +44,4 @@ create table llx_commande_fournisseurdet
   date_start                 datetime     DEFAULT NULL,       -- date debut si service
   date_end                   datetime     DEFAULT NULL,       -- date fin si service
   info_bits	                 integer      DEFAULT 0     -- TVA NPR ou non
-)type=innodb;
+)ENGINE=innodb;

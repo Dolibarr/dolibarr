@@ -39,4 +39,4 @@ create table llx_paiement
   statut           smallint DEFAULT 0 NOT NULL,
   fk_export_compta integer DEFAULT 0 NOT NULL
 
-)type=innodb;
+)ENGINE=innodb;

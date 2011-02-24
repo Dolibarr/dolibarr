@@ -29,7 +29,7 @@ create table llx_rights_def
   subperms      varchar(50),
   type          varchar(1),
   bydefault     tinyint DEFAULT 0
-)type=innodb;
+)ENGINE=innodb;
 
 -- 
 -- List of codes for the field entity

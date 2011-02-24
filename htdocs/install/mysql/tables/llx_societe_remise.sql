@@ -26,9 +26,9 @@ create table llx_societe_remise
   fk_soc          integer NOT NULL,
   tms             timestamp,
   datec	          datetime,                            -- creation date
-  fk_user_author  integer,                             -- utilisateur qui a créé l'info
-  remise_client   real           DEFAULT 0,            -- remise systématique pour le client
+  fk_user_author  integer,                             -- utilisateur qui a crï¿½ï¿½ l'info
+  remise_client   real           DEFAULT 0,            -- remise systï¿½matique pour le client
   note            text
 
-)type=innodb;
+)ENGINE=innodb;
 

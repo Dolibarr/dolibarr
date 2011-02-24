@@ -28,4 +28,4 @@ create table llx_extra_fields_options
   
   rank 					integer
   
-)type=innodb;
+)ENGINE=innodb;

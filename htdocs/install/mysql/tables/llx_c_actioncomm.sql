@@ -29,4 +29,4 @@ create table llx_c_actioncomm
   active     tinyint DEFAULT 1 NOT NULL,
   todo       tinyint,
   position   integer NOT NULL DEFAULT 0
-)type=innodb;
+)ENGINE=innodb;

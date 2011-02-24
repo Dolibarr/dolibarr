@@ -27,5 +27,5 @@ create table llx_c_forme_juridique
   libelle    	varchar(255),
   isvatexempted	tinyint DEFAULT 0  NOT NULL,
   active     	tinyint DEFAULT 1  NOT NULL
-)type=innodb;
+)ENGINE=innodb;
 

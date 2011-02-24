@@ -36,4 +36,4 @@ create table llx_entrepot
   statut          tinyint DEFAULT 1,			-- 1 open, 0 close
   valo_pmp        float(12,4),					-- valoristaion du stock en PMP
   fk_user_author  integer
-)type=innodb;
+)ENGINE=innodb;

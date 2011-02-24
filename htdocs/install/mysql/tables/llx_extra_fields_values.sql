@@ -33,4 +33,4 @@ create table llx_extra_fields_values
   fk_user_create 		integer,
   fk_user_modif 		integer
   
-)type=innodb;
+)ENGINE=innodb;

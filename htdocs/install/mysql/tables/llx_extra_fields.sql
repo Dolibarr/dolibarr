@@ -34,4 +34,4 @@ create table llx_extra_fields
   rank 					integer,
   
   assign                integer         -- ???
-)type=innodb;
+)ENGINE=innodb;

@@ -23,4 +23,4 @@ create table llx_categorie_fournisseur
   fk_categorie  integer NOT NULL,
   fk_societe    integer NOT NULL,
   UNIQUE (fk_categorie, fk_societe)
-)type=innodb;
+)ENGINE=innodb;

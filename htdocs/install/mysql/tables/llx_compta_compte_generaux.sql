@@ -28,4 +28,4 @@ create table llx_compta_compte_generaux
   note            text,
 
   UNIQUE(numero)
-)type=innodb;
+)ENGINE=innodb;

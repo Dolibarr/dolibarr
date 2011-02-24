@@ -30,7 +30,7 @@ create table llx_product_fournisseur
   ref_fourn       varchar(30),
   entity          integer DEFAULT 1 NOT NULL,	   -- multi company id
   fk_user_author  integer
-)type=innodb;
+)ENGINE=innodb;
 
 -- 
 -- List of codes for the field entity

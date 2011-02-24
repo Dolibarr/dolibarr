@@ -51,7 +51,7 @@ create table llx_commande_fournisseur
   note_public         text,
   model_pdf           varchar(255),
   fk_methode_commande integer default 0
-)type=innodb;
+)ENGINE=innodb;
 
 -- 
 -- List of codes for the field entity

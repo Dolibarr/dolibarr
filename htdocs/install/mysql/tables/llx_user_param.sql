@@ -26,7 +26,7 @@ create table llx_user_param
   entity        integer DEFAULT 1 NOT NULL,	-- multi company id
   param         varchar(64)  NOT NULL,
   value         varchar(255) NOT NULL
-)type=innodb;
+)ENGINE=innodb;
 
 -- 
 -- List of codes for the field entity

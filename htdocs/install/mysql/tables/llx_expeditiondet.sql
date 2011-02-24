@@ -27,4 +27,4 @@ create table llx_expeditiondet
   fk_entrepot       integer,           -- Entrepot de depart du produit
   qty               real,              -- Quantity
   rang              integer  DEFAULT 0
-)type=innodb;
+)ENGINE=innodb;

@@ -28,4 +28,4 @@ create table llx_product_fournisseur_price_log
   quantity                    double,
   fk_user                     integer
 
-)type=innodb;
+)ENGINE=innodb;

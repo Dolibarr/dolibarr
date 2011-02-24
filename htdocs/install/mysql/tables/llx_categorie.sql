@@ -30,7 +30,7 @@ create table llx_categorie
 	fk_soc          integer DEFAULT NULL,					-- attribution of the category has a company (for product only)
 	visible         tinyint DEFAULT 1 NOT NULL,           -- determine if the products are visible or not
     import_key      varchar(14)                  -- Import key
-)type=innodb;
+)ENGINE=innodb;
 
 -- 
 -- List of codes for the field type

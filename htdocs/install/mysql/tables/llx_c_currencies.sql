@@ -25,5 +25,5 @@ create table llx_c_currencies
   label       varchar(64),
   labelsing   varchar(64),
   active      tinyint DEFAULT 1  NOT NULL
-)type=innodb;
+)ENGINE=innodb;
 

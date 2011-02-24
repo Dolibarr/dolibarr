@@ -26,4 +26,4 @@ create table llx_c_pays
   code_iso varchar(3)         ,
   libelle  varchar(50)        NOT NULL,
   active   tinyint DEFAULT 1  NOT NULL
-)type=innodb;
+)ENGINE=innodb;

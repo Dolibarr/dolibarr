@@ -26,4 +26,4 @@ create table llx_c_shipment_mode
   libelle          varchar(50) NOT NULL,
   description      text,
   active           tinyint DEFAULT 0
-)type=innodb;
+)ENGINE=innodb;

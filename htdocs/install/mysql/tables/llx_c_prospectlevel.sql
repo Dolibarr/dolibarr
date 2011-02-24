@@ -24,5 +24,5 @@ create table llx_c_prospectlevel
   label           varchar(30),
   sortorder       smallint,
   active          smallint    DEFAULT 1 NOT NULL
-) type=innodb;
+) ENGINE=innodb;
 

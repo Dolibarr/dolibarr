@@ -35,7 +35,7 @@ create table llx_events
   ip             varchar(32) NOT NULL,        -- ip
   user_agent     varchar(255) NULL,           -- user agent
   fk_object      integer                      -- id of related object
-) type=innodb;
+) ENGINE=innodb;
 
 -- 
 -- List of codes for the field entity

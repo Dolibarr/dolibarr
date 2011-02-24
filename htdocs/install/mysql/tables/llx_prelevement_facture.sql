@@ -24,4 +24,4 @@ create table llx_prelevement_facture
   fk_facture             integer NOT NULL,
   fk_prelevement_lignes  integer NOT NULL
 
-)type=innodb;
+)ENGINE=innodb;

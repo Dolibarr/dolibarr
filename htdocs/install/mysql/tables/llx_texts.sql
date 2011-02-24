@@ -33,4 +33,4 @@ create table llx_texts
   content         text,                         -- Texte si modele texte
 
   tms             timestamp
-)type=innodb;
+)ENGINE=innodb;

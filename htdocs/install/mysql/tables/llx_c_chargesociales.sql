@@ -27,7 +27,7 @@ create table llx_c_chargesociales
   active       tinyint DEFAULT 1  NOT NULL,
   code         varchar(12) NOT NULL,
   fk_pays      integer DEFAULT 1 NOT NULL
-)type=innodb;
+)ENGINE=innodb;
 
 
 

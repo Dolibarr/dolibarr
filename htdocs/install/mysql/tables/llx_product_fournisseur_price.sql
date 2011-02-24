@@ -30,4 +30,4 @@ create table llx_product_fournisseur_price
   unitprice                   double(24,8) DEFAULT 0,
   fk_user                     integer
 
-)type=innodb;
+)ENGINE=innodb;

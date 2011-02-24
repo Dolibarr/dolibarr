@@ -26,4 +26,4 @@ create table llx_societe_prices
   datec	             datetime,
   fk_user_author     integer,
   price_level        tinyint   DEFAULT 1
-)type=innodb;
+)ENGINE=innodb;

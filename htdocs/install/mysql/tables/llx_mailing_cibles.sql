@@ -34,5 +34,5 @@ create table llx_mailing_cibles
   source_id          integer,
   source_type        varchar(16),
   date_envoi         datetime
-)type=innodb;
+)ENGINE=innodb;
 

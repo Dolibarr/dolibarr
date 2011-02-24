@@ -41,4 +41,4 @@ create table llx_prelevement_bons
   date_credit    datetime,           -- date de credit sur le compte
   fk_user_credit integer             -- user qui a remonte l'info de credit
 
-)type=innodb;
+)ENGINE=innodb;

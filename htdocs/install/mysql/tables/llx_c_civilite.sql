@@ -25,5 +25,5 @@ create table llx_c_civilite
   code        varchar(6) UNIQUE NOT NULL,
   civilite	  varchar(50),
   active      tinyint DEFAULT 1  NOT NULL
-)type=innodb;
+)ENGINE=innodb;
 

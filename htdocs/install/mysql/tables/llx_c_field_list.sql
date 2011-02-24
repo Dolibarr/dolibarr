@@ -33,4 +33,4 @@ create table llx_c_field_list
   enabled       varchar(255)	DEFAULT 1,					-- Condition to show or hide
   rang      	integer 		DEFAULT 0
   
-)type=innodb;
+)ENGINE=innodb;

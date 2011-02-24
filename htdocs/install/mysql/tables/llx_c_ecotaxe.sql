@@ -28,4 +28,4 @@ create table llx_c_ecotaxe
   organization varchar(255),                -- Organisme gerant le bareme tarifaire
   fk_pays      integer NOT NULL,            -- Pays correspondant
   active       tinyint DEFAULT 1  NOT NULL
-)type=innodb;
+)ENGINE=innodb;

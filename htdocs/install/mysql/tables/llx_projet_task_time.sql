@@ -26,4 +26,4 @@ create table llx_projet_task_time
   task_duration    double,
   fk_user          integer,
   note             text
-)type=innodb;
+)ENGINE=innodb;

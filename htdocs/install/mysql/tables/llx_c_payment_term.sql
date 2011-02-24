@@ -29,4 +29,4 @@ create table llx_c_payment_term
   fdm             tinyint,    -- reglement fin de mois
   nbjour          smallint,
   decalage		  smallint
-)type=innodb;
+)ENGINE=innodb;

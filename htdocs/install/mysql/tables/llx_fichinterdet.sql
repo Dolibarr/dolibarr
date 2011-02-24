@@ -27,4 +27,4 @@ create table llx_fichinterdet
   description       text,              -- description de la ligne d'intervention
   duree             integer,           -- duree de la ligne d'intervention
   rang              integer DEFAULT 0  -- ordre affichage sur la fiche
-)type=innodb;
+)ENGINE=innodb;

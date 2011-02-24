@@ -24,4 +24,4 @@ create table llx_paiement_facture
   fk_paiement     integer,
   fk_facture      integer,
   amount          real     DEFAULT 0
-)type=innodb;
+)ENGINE=innodb;

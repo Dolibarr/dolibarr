@@ -83,4 +83,4 @@ create table llx_societe
   default_lang             varchar(6),									-- default language
   canvas				   varchar(32),			                        -- type of canvas if used (null by default)
   import_key               varchar(14)                          		-- import key
-)type=innodb;
+)ENGINE=innodb;
