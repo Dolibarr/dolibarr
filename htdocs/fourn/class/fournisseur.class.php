@@ -222,7 +222,7 @@ class Fournisseur extends Societe
 	{
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie (label,visible,type)";
 		$sql.= " VALUES ";
-		$sql.= " ('".addslashes($name)."',1,1)";
+		$sql.= " ('".$this->db->escape($name)."',1,1)";
 
 		dol_syslog("Fournisseur::CreateCategory sql=".$sql);
 		$resql = $this->db->query($sql);

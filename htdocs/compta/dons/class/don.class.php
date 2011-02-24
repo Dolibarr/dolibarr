@@ -321,16 +321,16 @@ class Don extends CommonObject
 		$sql.= ", ".$conf->entity;
 		$sql.= ", ".price2num($this->amount);
 		$sql.= ", ".$this->modepaiementid;
-		$sql.= ", '".addslashes($this->prenom)."'";
-		$sql.= ", '".addslashes($this->nom)."'";
-		$sql.= ", '".addslashes($this->societe)."'";
-		$sql.= ", '".addslashes($this->adresse)."'";
+		$sql.= ", '".$this->db->escape($this->prenom)."'";
+		$sql.= ", '".$this->db->escape($this->nom)."'";
+		$sql.= ", '".$this->db->escape($this->societe)."'";
+		$sql.= ", '".$this->db->escape($this->adresse)."'";
 		$sql.= ", '".$this->cp."'";
-		$sql.= ", '".addslashes($this->ville)."'";
-		$sql.= ", '".addslashes($this->pays)."'"; // TODO use fk_pays
+		$sql.= ", '".$this->db->escape($this->ville)."'";
+		$sql.= ", '".$this->db->escape($this->pays)."'"; // TODO use fk_pays
 		$sql.= ", ".$this->public;
 		$sql.= ", ".($this->fk_project > 0?$this->fk_project:"null");
-		$sql.= ", '".addslashes($this->note)."'";
+		$sql.= ", '".$this->db->escape($this->note)."'";
 		$sql.= ", ".$user->id;
 		$sql.= ", null";
 		$sql.= ", '".$this->date."'";
@@ -363,16 +363,16 @@ class Don extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET ";
 		$sql .= "amount = " . price2num($this->amount);
 		$sql .= ",fk_paiement = ".$this->modepaiementid;
-		$sql .= ",prenom = '".addslashes($this->prenom)."'";
-		$sql .= ",nom='".addslashes($this->nom)."'";
-		$sql .= ",societe='".addslashes($this->societe)."'";
-		$sql .= ",adresse='".addslashes($this->adresse)."'";
+		$sql .= ",prenom = '".$this->db->escape($this->prenom)."'";
+		$sql .= ",nom='".$this->db->escape($this->nom)."'";
+		$sql .= ",societe='".$this->db->escape($this->societe)."'";
+		$sql .= ",adresse='".$this->db->escape($this->adresse)."'";
 		$sql .= ",cp='".$this->cp."'";
-		$sql .= ",ville='".addslashes($this->ville)."'";
-		$sql .= ",pays='".addslashes($this->pays)."'"; // TODO use fk_pays
+		$sql .= ",ville='".$this->db->escape($this->ville)."'";
+		$sql .= ",pays='".$this->db->escape($this->pays)."'"; // TODO use fk_pays
 		$sql .= ",public=".$this->public;
 		$sql .= ",fk_don_projet=".($this->fk_project>0?$this->fk_project:'null');
-		$sql .= ",note='".addslashes($this->note)."'";
+		$sql .= ",note='".$this->db->escape($this->note)."'";
 		$sql .= ",datedon='".$this->date."'";
 		$sql .= ",email='".$this->email."'";
 		$sql .= ",fk_statut=".$this->statut;

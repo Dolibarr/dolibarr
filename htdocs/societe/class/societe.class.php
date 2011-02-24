@@ -429,28 +429,28 @@ class Societe extends CommonObject
             dol_syslog("Societe::Update verify ok");
 
             $sql = "UPDATE ".MAIN_DB_PREFIX."societe";
-            $sql.= " SET nom = '" . addslashes($this->nom) ."'"; // Champ obligatoire
+            $sql.= " SET nom = '" . $this->db->escape($this->nom) ."'"; // Champ obligatoire
             $sql.= ",datea = '".$this->db->idate(mktime())."'";
-            $sql.= ",address = '" . addslashes($this->address) ."'";
+            $sql.= ",address = '" . $this->db->escape($this->address) ."'";
 
             $sql.= ",cp = ".($this->cp?"'".$this->cp."'":"null");
-            $sql.= ",ville = ".($this->ville?"'".addslashes($this->ville)."'":"null");
+            $sql.= ",ville = ".($this->ville?"'".$this->db->escape($this->ville)."'":"null");
 
             $sql .= ",fk_departement = '" . ($this->departement_id?$this->departement_id:'0') ."'";
             $sql .= ",fk_pays = '" . ($this->pays_id?$this->pays_id:'0') ."'";
 
-            $sql .= ",tel = ".($this->tel?"'".addslashes($this->tel)."'":"null");
-            $sql .= ",fax = ".($this->fax?"'".addslashes($this->fax)."'":"null");
-            $sql .= ",email = ".($this->email?"'".addslashes($this->email)."'":"null");
-            $sql .= ",url = ".($this->url?"'".addslashes($this->url)."'":"null");
+            $sql .= ",tel = ".($this->tel?"'".$this->db->escape($this->tel)."'":"null");
+            $sql .= ",fax = ".($this->fax?"'".$this->db->escape($this->fax)."'":"null");
+            $sql .= ",email = ".($this->email?"'".$this->db->escape($this->email)."'":"null");
+            $sql .= ",url = ".($this->url?"'".$this->db->escape($this->url)."'":"null");
 
-            $sql .= ",siren   = '". addslashes($this->siren)   ."'";
-            $sql .= ",siret   = '". addslashes($this->siret)   ."'";
-            $sql .= ",ape     = '". addslashes($this->ape)     ."'";
-            $sql .= ",idprof4 = '". addslashes($this->idprof4) ."'";
+            $sql .= ",siren   = '". $this->db->escape($this->siren)   ."'";
+            $sql .= ",siret   = '". $this->db->escape($this->siret)   ."'";
+            $sql .= ",ape     = '". $this->db->escape($this->ape)     ."'";
+            $sql .= ",idprof4 = '". $this->db->escape($this->idprof4) ."'";
 
             $sql .= ",tva_assuj = ".($this->tva_assuj!=''?"'".$this->tva_assuj."'":"null");
-            $sql .= ",tva_intra = '" . addslashes($this->tva_intra) ."'";
+            $sql .= ",tva_intra = '" . $this->db->escape($this->tva_intra) ."'";
 
             // Local taxes
             $sql .= ",localtax1_assuj = ".($this->localtax1_assuj!=''?"'".$this->localtax1_assuj."'":"null");
@@ -458,7 +458,7 @@ class Societe extends CommonObject
 
             $sql .= ",capital = ".$this->capital;
 
-            $sql .= ",prefix_comm = ".($this->prefix_comm?"'".addslashes($this->prefix_comm)."'":"null");
+            $sql .= ",prefix_comm = ".($this->prefix_comm?"'".$this->db->escape($this->prefix_comm)."'":"null");
 
             $sql .= ",fk_effectif = ".($this->effectif_id?"'".$this->effectif_id."'":"null");
 
@@ -476,24 +476,24 @@ class Societe extends CommonObject
             {
                 //$this->check_codeclient();
 
-                $sql .= ", code_client = ".($this->code_client?"'".addslashes($this->code_client)."'":"null");
+                $sql .= ", code_client = ".($this->code_client?"'".$this->db->escape($this->code_client)."'":"null");
 
                 // Attention get_codecompta peut modifier le code suivant le module utilise
                 if (empty($this->code_compta)) $this->get_codecompta('customer');
 
-                $sql .= ", code_compta = ".($this->code_compta?"'".addslashes($this->code_compta)."'":"null");
+                $sql .= ", code_compta = ".($this->code_compta?"'".$this->db->escape($this->code_compta)."'":"null");
             }
 
             if ($allowmodcodefournisseur)
             {
                 //$this->check_codefournisseur();
 
-                $sql .= ", code_fournisseur = ".($this->code_fournisseur?"'".addslashes($this->code_fournisseur)."'":"null");
+                $sql .= ", code_fournisseur = ".($this->code_fournisseur?"'".$this->db->escape($this->code_fournisseur)."'":"null");
 
                 // Attention get_codecompta peut modifier le code suivant le module utilise
                 if (empty($this->code_compta_fournisseur)) $this->get_codecompta('supplier');
 
-                $sql .= ", code_compta_fournisseur = ".($this->code_compta_fournisseur?"'".addslashes($this->code_compta_fournisseur)."'":"null");
+                $sql .= ", code_compta_fournisseur = ".($this->code_compta_fournisseur?"'".$this->db->escape($this->code_compta_fournisseur)."'":"null");
             }
             $sql .= ", fk_user_modif = ".($user->id > 0 ? "'".$user->id."'":"null");
             $sql .= " WHERE rowid = '" . $id ."'";
@@ -1135,7 +1135,7 @@ class Societe extends CommonObject
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise ";
             $sql.= " (datec, fk_soc, remise_client, note, fk_user_author)";
             $sql.= " VALUES (".$this->db->idate(mktime()).", ".$this->id.", '".$remise."',";
-            $sql.= " '".addslashes($note)."',";
+            $sql.= " '".$this->db->escape($note)."',";
             $sql.= " ".$user->id;
             $sql.= ")";
 
@@ -2147,7 +2147,7 @@ class Societe extends CommonObject
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_log (datel, fk_soc, fk_statut, fk_user, author, label)";
         $sql.= " VALUES ('".$dateaction."', ".$socid.", ".$id_status.",";
         $sql.= "'".$user->id."',";
-        $sql.= "'".addslashes($user->login)."',";
+        $sql.= "'".$this->db->escape($user->login)."',";
         $sql.= "'Change statut from ".$oldstcomm." to ".$stcommid."'";
         $sql.= ")";
         $result = $thi->db->query($sql);

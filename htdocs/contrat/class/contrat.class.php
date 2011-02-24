@@ -154,7 +154,7 @@ class Contrat extends CommonObject
 		$sql.= " date_fin_validite = ".(dol_strlen($date_end)!=0?"'".$this->db->idate($date_end)."'":"null").",";
 		$sql.= " fk_user_ouverture = ".$user->id.",";
 		$sql.= " date_cloture = null,";
-		$sql.= " commentaire = '".addslashes($comment)."'";
+		$sql.= " commentaire = '".$this->db->escape($comment)."'";
 		$sql.= " WHERE rowid = ".$line_id . " AND (statut = 0 OR statut = 3 OR statut = 5)";
 
 		dol_syslog("Contrat::active_line sql=".$sql);
@@ -200,7 +200,7 @@ class Contrat extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET statut = 5,";
 		$sql.= " date_cloture = '".$this->db->idate($date_end)."',";
 		$sql.= " fk_user_cloture = ".$user->id.",";
-		$sql.= " commentaire = '".addslashes($comment)."'";
+		$sql.= " commentaire = '".$this->db->escape($comment)."'";
 		$sql.= " WHERE rowid = ".$line_id . " AND statut = 4";
 
 		$resql = $this->db->query($sql) ;
@@ -885,7 +885,7 @@ class Contrat extends CommonObject
 			$sql.= " price_ht, remise";								// \TODO A virer
 			if ($date_start > 0) { $sql.= ",date_ouverture_prevue"; }
 			if ($date_end > 0)  { $sql.= ",date_fin_validite"; }
-			$sql.= ") VALUES ($this->id, '" . addslashes($label) . "','" . addslashes($desc) . "',";
+			$sql.= ") VALUES ($this->id, '" . $this->db->escape($label) . "','" . $this->db->escape($desc) . "',";
 			$sql.= ($fk_product>0 ? $fk_product : "null").",";
 			$sql.= " '".$qty."',";
 			$sql.= " '".$txtva."',";
@@ -978,7 +978,7 @@ class Contrat extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet set description='".addslashes($desc)."'";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet set description='".$this->db->escape($desc)."'";
 		$sql .= ",price_ht='" .     price2num($price)."'";
 		$sql .= ",subprice='" .     price2num($subprice)."'";
 		$sql .= ",remise='" .       price2num($remise)."'";
@@ -1794,8 +1794,8 @@ class ContratLigne
 		$sql.= " fk_contrat='".$this->fk_contrat."',";
 		$sql.= " fk_product=".($this->fk_product?"'".$this->fk_product."'":'null').",";
 		$sql.= " statut='".$this->statut."',";
-		$sql.= " label='".addslashes($this->label)."',";
-		$sql.= " description='".addslashes($this->description)."',";
+		$sql.= " label='".$this->db->escape($this->label)."',";
+		$sql.= " description='".$this->db->escape($this->description)."',";
 		$sql.= " date_commande=".($this->date_commande!=''?$this->db->idate($this->date_commande):"null").",";
 		$sql.= " date_ouverture_prevue=".($this->date_ouverture_prevue!=''?$this->db->idate($this->date_ouverture_prevue):"null").",";
 		$sql.= " date_ouverture=".($this->date_ouverture!=''?$this->db->idate($this->date_ouverture):"null").",";
@@ -1819,7 +1819,7 @@ class ContratLigne
 		$sql.= " fk_user_author=".($this->fk_user_author >= 0?$this->fk_user_author:"NULL").",";
 		$sql.= " fk_user_ouverture=".($this->fk_user_ouverture > 0?$this->fk_user_ouverture:"NULL").",";
 		$sql.= " fk_user_cloture=".($this->fk_user_cloture > 0?$this->fk_user_cloture:"NULL").",";
-		$sql.= " commentaire='".addslashes($this->commentaire)."'";
+		$sql.= " commentaire='".$this->db->escape($this->commentaire)."'";
 		$sql.= " WHERE rowid=".$this->id;
 
 		dol_syslog("ContratLigne::update sql=".$sql, LOG_DEBUG);

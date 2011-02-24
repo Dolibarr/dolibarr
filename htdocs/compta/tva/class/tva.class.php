@@ -172,8 +172,8 @@ class Tva extends CommonObject
 		$sql.= " datep=".$this->db->idate($this->datep).",";
 		$sql.= " datev=".$this->db->idate($this->datev).",";
 		$sql.= " amount='".$this->amount."',";
-		$sql.= " label='".addslashes($this->label)."',";
-		$sql.= " note='".addslashes($this->note)."',";
+		$sql.= " label='".$this->db->escape($this->label)."',";
+		$sql.= " note='".$this->db->escape($this->note)."',";
 		$sql.= " fk_bank='".$this->fk_bank."',";
 		$sql.= " fk_user_creat='".$this->fk_user_creat."',";
 		$sql.= " fk_user_modif='".$this->fk_user_modif."'";
@@ -504,8 +504,8 @@ class Tva extends CommonObject
 		$sql.= ") ";
         $sql.= " VALUES ('".$this->db->idate($this->datep)."',";
         $sql.= "'".$this->db->idate($this->datev)."'," . $this->amount;
-        if ($this->note)  $sql.=", '".addslashes($this->note)."'";
-        if ($this->label) $sql.=", '".addslashes($this->label)."'";
+        if ($this->note)  $sql.=", '".$this->db->escape($this->note)."'";
+        if ($this->label) $sql.=", '".$this->db->escape($this->label)."'";
         $sql.=", '".$user->id."', NULL";
         $sql.= ")";
 

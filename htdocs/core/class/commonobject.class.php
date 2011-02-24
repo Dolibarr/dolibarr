@@ -563,7 +563,7 @@ class CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as te";
 		if ($this->ismultientitymanaged == 2 || ($this->element != 'societe' && !$this->isnolinkedbythird && !$user->rights->societe->client->voir)) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to entity
 		if (!$this->isnolinkedbythird && !$user->rights->societe->client->voir) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$alias.".rowid = sc.fk_soc";
-		$sql.= " WHERE te.".$fieldid." < '".addslashes($this->ref)."'";
+		$sql.= " WHERE te.".$fieldid." < '".$this->db->escape($this->ref)."'";
 		if (!$this->isnolinkedbythird && !$user->rights->societe->client->voir) $sql.= " AND sc.fk_user = " .$user->id;
 		if (! empty($filter)) $sql.=" AND ".$filter;
 		if ($this->ismultientitymanaged == 2 || ($this->element != 'societe' && !$this->isnolinkedbythird && !$user->rights->societe->client->voir)) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to entity
@@ -584,7 +584,7 @@ class CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as te";
 		if ($this->ismultientitymanaged == 2 || ($this->element != 'societe' && !$this->isnolinkedbythird && !$user->rights->societe->client->voir)) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to entity
 		if (!$this->isnolinkedbythird && !$user->rights->societe->client->voir) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$alias.".rowid = sc.fk_soc";
-		$sql.= " WHERE te.".$fieldid." > '".addslashes($this->ref)."'";
+		$sql.= " WHERE te.".$fieldid." > '".$this->db->escape($this->ref)."'";
 		if (!$this->isnolinkedbythird && !$user->rights->societe->client->voir) $sql.= " AND sc.fk_user = " .$user->id;
 		if (isset($filter)) $sql.=" AND ".$filter;
 		if ($this->ismultientitymanaged == 2 || ($this->element != 'societe' && !$this->isnolinkedbythird && !$user->rights->societe->client->voir)) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to entity
@@ -925,11 +925,11 @@ class CommonObject
 		// TODO uniformize fields note_private
 		if ($this->table_element == 'fichinter' || $this->table_element == 'projet' || $this->table_element == 'projet_task')
 		{
-			$sql.= " SET note_private = '".addslashes($note)."'";
+			$sql.= " SET note_private = '".$this->db->escape($note)."'";
 		}
 		else
 		{
-			$sql.= " SET note = '".addslashes($note)."'";
+			$sql.= " SET note = '".$this->db->escape($note)."'";
 		}
 		$sql.= " WHERE rowid =". $this->id;
 
@@ -961,7 +961,7 @@ class CommonObject
 		}
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-		$sql.= " SET note_public = '".addslashes($note_public)."'";
+		$sql.= " SET note_public = '".$this->db->escape($note_public)."'";
 		$sql.= " WHERE rowid =". $this->id;
 
 		dol_syslog("CommonObject::update_note_public sql=".$sql);

@@ -103,9 +103,9 @@ class Project extends CommonObject
 		$sql.= ", dateo";
 		$sql.= ", datee";
 		$sql.= ") VALUES (";
-		$sql.= "'".addslashes($this->ref)."'";
-		$sql.= ", '".addslashes($this->title)."'";
-		$sql.= ", '".addslashes($this->description)."'";
+		$sql.= "'".$this->db->escape($this->ref)."'";
+		$sql.= ", '".$this->db->escape($this->title)."'";
+		$sql.= ", '".$this->db->escape($this->description)."'";
 		$sql.= ", ".($this->socid > 0?$this->socid:"null");
 		$sql.= ", ".$user->id;
         $sql.= ", 0";
@@ -178,8 +178,8 @@ class Project extends CommonObject
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet SET";
 			$sql.= " ref='".$this->ref."'";
-			$sql.= ", title = '".addslashes($this->title)."'";
-			$sql.= ", description = '".addslashes($this->description)."'";
+			$sql.= ", title = '".$this->db->escape($this->title)."'";
+			$sql.= ", description = '".$this->db->escape($this->description)."'";
 			$sql.= ", fk_soc = ".($this->socid > 0?$this->socid:"null");
 			$sql.= ", fk_statut = ".$this->statut;
 			$sql.= ", public = ".($this->public?1:0);

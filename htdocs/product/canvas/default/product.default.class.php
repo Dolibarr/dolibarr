@@ -207,7 +207,7 @@ class ProductDefault extends Product
 			{
 				if ($field['enabled'])
 				{
-					$sql.= $clause." ".$field['name']." LIKE '%".addslashes($sall)."%'";
+					$sql.= $clause." ".$field['name']." LIKE '%".$this->db->escape($sall)."%'";
 					if ($clause=='') $clause = ' OR';
 				}
 			}
@@ -220,17 +220,17 @@ class ProductDefault extends Product
 			if ($field['enabled'])
 			{
 				$fieldname = "s".$field['alias'];
-				if (${$fieldname}) $sql.= " AND ".$field['name']." LIKE '%".addslashes(${$fieldname})."%'";
+				if (${$fieldname}) $sql.= " AND ".$field['name']." LIKE '%".$this->db->escape(${$fieldname})."%'";
 			}
 		}
 
 		if (isset($_GET["tosell"]) && dol_strlen($_GET["tosell"]) > 0)
 		{
-			$sql.= " AND p.tosell = ".addslashes($_GET["tosell"]);
+			$sql.= " AND p.tosell = ".$this->db->escape($_GET["tosell"]);
 		}
 		if (isset($_GET["canvas"]) && dol_strlen($_GET["canvas"]) > 0)
 		{
-			$sql.= " AND p.canvas = '".addslashes($_GET["canvas"])."'";
+			$sql.= " AND p.canvas = '".$this->db->escape($_GET["canvas"])."'";
 		}
 		$sql.= $this->db->order($sortfield,$sortorder);
 		$sql.= $this->db->plimit($limit + 1 ,$offset);

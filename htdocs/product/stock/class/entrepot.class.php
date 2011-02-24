@@ -81,7 +81,7 @@ class Entrepot extends CommonObject
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."entrepot (datec, fk_user_author, label)";
-		$sql .= " VALUES (".$this->db->idate(mktime()).",".$user->id.",'".addslashes($this->libelle)."')";
+		$sql .= " VALUES (".$this->db->idate(mktime()).",".$user->id.",'".$this->db->escape($this->libelle)."')";
 
 		dol_syslog("Entrepot::create sql=".$sql);
 		$result=$this->db->query($sql);
@@ -127,13 +127,13 @@ class Entrepot extends CommonObject
 	 */
 	function update($id, $user)
 	{
-		$this->libelle=addslashes(trim($this->libelle));
-		$this->description=addslashes(trim($this->description));
+		$this->libelle=$this->db->escape(trim($this->libelle));
+		$this->description=$this->db->escape(trim($this->description));
 
-		$this->lieu=addslashes(trim($this->lieu));
-		$this->address=addslashes(trim($this->address));
+		$this->lieu=$this->db->escape(trim($this->lieu));
+		$this->address=$this->db->escape(trim($this->address));
 		$this->cp=trim($this->cp);
-		$this->ville=addslashes(trim($this->ville));
+		$this->ville=$this->db->escape(trim($this->ville));
 		$this->pays_id=trim($this->pays_id?$this->pays_id:0);
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."entrepot ";

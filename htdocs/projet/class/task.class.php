@@ -253,8 +253,8 @@ class Task extends CommonObject
         $sql = "UPDATE ".MAIN_DB_PREFIX."projet_task SET";
 		$sql.= " fk_projet=".(isset($this->fk_project)?$this->fk_project:"null").",";
 		$sql.= " fk_task_parent=".(isset($this->fk_task_parent)?$this->fk_task_parent:"null").",";
-		$sql.= " label=".(isset($this->label)?"'".addslashes($this->label)."'":"null").",";
-		$sql.= " description=".(isset($this->description)?"'".addslashes($this->description)."'":"null").",";
+		$sql.= " label=".(isset($this->label)?"'".$this->db->escape($this->label)."'":"null").",";
+		$sql.= " description=".(isset($this->description)?"'".$this->db->escape($this->description)."'":"null").",";
 		$sql.= " duration_effective=".(isset($this->duration_effective)?$this->duration_effective:"null").",";
 		$sql.= " dateo=".($this->date_start!=''?$this->db->idate($this->date_start):'null').",";
 		$sql.= " datee=".($this->date_end!=''?$this->db->idate($this->date_end):'null').",";
@@ -670,7 +670,7 @@ class Task extends CommonObject
 		$sql.= ", '".$this->db->idate($this->timespent_date)."'";
 		$sql.= ", ".$this->timespent_duration;
 		$sql.= ", ".$this->timespent_fk_user;
-		$sql.= ", ".(isset($this->timespent_note)?"'".addslashes($this->timespent_note)."'":"null");
+		$sql.= ", ".(isset($this->timespent_note)?"'".$this->db->escape($this->timespent_note)."'":"null");
 		$sql.= ")";
 
 		dol_syslog(get_class($this)."::addTimeSpent sql=".$sql, LOG_DEBUG);
@@ -777,7 +777,7 @@ class Task extends CommonObject
 		$sql.= " task_date = '".$this->db->idate($this->timespent_date)."',";
 		$sql.= " task_duration = ".$this->timespent_duration.",";
 		$sql.= " fk_user = ".$this->timespent_fk_user.",";
-		$sql.= " note = ".(isset($this->timespent_note)?"'".addslashes($this->timespent_note)."'":"null");
+		$sql.= " note = ".(isset($this->timespent_note)?"'".$this->db->escape($this->timespent_note)."'":"null");
 		$sql.= " WHERE rowid = ".$this->timespent_id;
 
 		dol_syslog(get_class($this)."::updateTimeSpent sql=".$sql, LOG_DEBUG);

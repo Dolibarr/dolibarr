@@ -89,7 +89,7 @@ class AdherentType extends CommonObject
         $sql.= "libelle";
         $sql.= ", entity";
         $sql.= ") VALUES (";
-        $sql.= "'".addslashes($this->libelle)."'";
+        $sql.= "'".$this->db->escape($this->libelle)."'";
         $sql.= ", ".$conf->entity;
         $sql.= ")";
 
@@ -119,11 +119,11 @@ class AdherentType extends CommonObject
         $sql = "UPDATE ".MAIN_DB_PREFIX."adherent_type ";
         $sql.= "SET ";
         $sql.= "statut = ".$this->statut.",";
-        $sql.= "libelle = '".addslashes($this->libelle) ."',";
+        $sql.= "libelle = '".$this->db->escape($this->libelle) ."',";
         $sql.= "cotisation = '".$this->cotisation."',";
-        $sql.= "note = '".addslashes($this->note)."',";
+        $sql.= "note = '".$this->db->escape($this->note)."',";
         $sql.= "vote = '".$this->vote."',";
-        $sql.= "mail_valid = '".addslashes($this->mail_valid)."'";
+        $sql.= "mail_valid = '".$this->db->escape($this->mail_valid)."'";
 
         $sql .= " WHERE rowid = $this->id";
 

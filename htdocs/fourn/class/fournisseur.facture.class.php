@@ -569,19 +569,19 @@ class FactureFournisseur extends Facture
 
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn SET";
-        $sql.= " facnumber=".(isset($this->facnumber)?"'".addslashes($this->facnumber)."'":"null").",";
+        $sql.= " facnumber=".(isset($this->facnumber)?"'".$this->db->escape($this->facnumber)."'":"null").",";
         $sql.= " entity=".(isset($this->entity)?$this->entity:"null").",";
         $sql.= " type=".(isset($this->type)?$this->type:"null").",";
         $sql.= " fk_soc=".(isset($this->fk_soc)?$this->fk_soc:"null").",";
         $sql.= " datec=".(dol_strlen($this->datec)!=0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
         $sql.= " datef=".(dol_strlen($this->date)!=0 ? "'".$this->db->idate($this->date)."'" : 'null').",";
         $sql.= " tms=".(dol_strlen($this->tms)!=0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
-        $sql.= " libelle=".(isset($this->label)?"'".addslashes($this->label)."'":"null").",";
+        $sql.= " libelle=".(isset($this->label)?"'".$this->db->escape($this->label)."'":"null").",";
         $sql.= " paye=".(isset($this->paye)?$this->paye:"null").",";
         $sql.= " amount=".(isset($this->amount)?$this->amount:"null").",";
         $sql.= " remise=".(isset($this->remise)?$this->remise:"null").",";
-        $sql.= " close_code=".(isset($this->close_code)?"'".addslashes($this->close_code)."'":"null").",";
-        $sql.= " close_note=".(isset($this->close_note)?"'".addslashes($this->close_note)."'":"null").",";
+        $sql.= " close_code=".(isset($this->close_code)?"'".$this->db->escape($this->close_code)."'":"null").",";
+        $sql.= " close_note=".(isset($this->close_note)?"'".$this->db->escape($this->close_note)."'":"null").",";
         $sql.= " tva=".(isset($this->tva)?$this->tva:"null").",";
         $sql.= " localtax1=".(isset($this->localtax1)?$this->localtax1:"null").",";
         $sql.= " localtax2=".(isset($this->localtax2)?$this->localtax2:"null").",";
@@ -596,10 +596,10 @@ class FactureFournisseur extends Facture
         $sql.= " fk_projet=".(isset($this->fk_project)?$this->fk_project:"null").",";
         $sql.= " fk_cond_reglement=".(isset($this->fk_cond_reglement)?$this->fk_cond_reglement:"null").",";
         $sql.= " date_lim_reglement=".(dol_strlen($this->date_echeance)!=0 ? "'".$this->db->idate($this->date_echeance)."'" : 'null').",";
-        $sql.= " note=".(isset($this->note)?"'".addslashes($this->note)."'":"null").",";
-        $sql.= " note_public=".(isset($this->note_public)?"'".addslashes($this->note_public)."'":"null").",";
-        $sql.= " model_pdf=".(isset($this->model_pdf)?"'".addslashes($this->model_pdf)."'":"null").",";
-        $sql.= " import_key=".(isset($this->import_key)?"'".addslashes($this->import_key)."'":"null")."";
+        $sql.= " note=".(isset($this->note)?"'".$this->db->escape($this->note)."'":"null").",";
+        $sql.= " note_public=".(isset($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null").",";
+        $sql.= " model_pdf=".(isset($this->model_pdf)?"'".$this->db->escape($this->model_pdf)."'":"null").",";
+        $sql.= " import_key=".(isset($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null")."";
         $sql.= " WHERE rowid=".$this->id;
 
         $this->db->begin();
@@ -700,7 +700,7 @@ class FactureFournisseur extends Facture
 	{
 		if ($user->rights->fournisseur->facture->creer)
 		{
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn SET facnumber = '.(empty($ref_supplier) ? 'NULL' : '\''.addslashes($ref_supplier).'\'');
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn SET facnumber = '.(empty($ref_supplier) ? 'NULL' : '\''.$this->db->escape($ref_supplier).'\'');
 			$sql.= ' WHERE rowid = '.$this->id;
 
 			dol_syslog("FactureFournisseur::set_ref_supplier sql=".$sql);
@@ -1096,7 +1096,7 @@ class FactureFournisseur extends Facture
 		}
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det SET";
-		$sql.= " description ='".addslashes($label)."'";
+		$sql.= " description ='".$this->db->escape($label)."'";
 		$sql.= ", pu_ht = ".price2num($pu_ht);
 		$sql.= ", pu_ttc = ".price2num($pu_ttc);
 		$sql.= ", qty = ".price2num($qty);

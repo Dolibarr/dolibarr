@@ -182,7 +182,7 @@ class Expedition extends CommonObject
 		$sql.= ", ".$this->socid;
 		$sql.= ", ".($this->fk_delivery_address>0?$this->fk_delivery_address:"null");
 		$sql.= ", ".($this->expedition_method_id>0?$this->expedition_method_id:"null");
-		$sql.= ", '".addslashes($this->tracking_number)."'";
+		$sql.= ", '".$this->db->escape($this->tracking_number)."'";
 		$sql.= ", ".$this->weight;
 		$sql.= ", ".$this->sizeS;	// TODO Should use this->trueDepth
 		$sql.= ", ".$this->sizeW;	// TODO Should use this->trueWidth
@@ -664,8 +664,8 @@ class Expedition extends CommonObject
         $sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET";
 
 		$sql.= " tms=".(dol_strlen($this->tms)!=0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
-		$sql.= " ref=".(isset($this->ref)?"'".addslashes($this->ref)."'":"null").",";
-		$sql.= " ref_customer=".(isset($this->ref_customer)?"'".addslashes($this->ref_customer)."'":"null").",";
+		$sql.= " ref=".(isset($this->ref)?"'".$this->db->escape($this->ref)."'":"null").",";
+		$sql.= " ref_customer=".(isset($this->ref_customer)?"'".$this->db->escape($this->ref_customer)."'":"null").",";
 		$sql.= " fk_soc=".(isset($this->socid)?$this->socid:"null").",";
 		$sql.= " date_creation=".(dol_strlen($this->date_creation)!=0 ? "'".$this->db->idate($this->date_creation)."'" : 'null').",";
 		$sql.= " fk_user_author=".(isset($this->fk_user_author)?$this->fk_user_author:"null").",";
@@ -675,7 +675,7 @@ class Expedition extends CommonObject
 		$sql.= " date_delivery=".(dol_strlen($this->date_delivery)!=0 ? "'".$this->db->idate($this->date_delivery)."'" : 'null').",";
 		$sql.= " fk_address=".(isset($this->fk_adresse_livraison)?$this->fk_adresse_livraison:"null").",";
 		$sql.= " fk_expedition_methode=".(isset($this->expedition_method_id)?$this->expedition_method_id:"null").",";
-		$sql.= " tracking_number=".(isset($this->tracking_number)?"'".addslashes($this->tracking_number)."'":"null").",";
+		$sql.= " tracking_number=".(isset($this->tracking_number)?"'".$this->db->escape($this->tracking_number)."'":"null").",";
 		$sql.= " fk_statut=".(isset($this->statut)?$this->statut:"null").",";
 		$sql.= " height=".(isset($this->trueHeight)?$this->trueHeight:"null").",";
 		$sql.= " width=".(isset($this->trueWidth)?$this->trueWidth:"null").",";
@@ -683,8 +683,8 @@ class Expedition extends CommonObject
 		$sql.= " size=".(isset($this->trueDepth)?$this->trueDepth:"null").",";
 		$sql.= " weight_units=".(isset($this->weight_units)?$this->weight_units:"null").",";
 		$sql.= " weight=".(isset($this->trueWeight)?$this->trueWeight:"null").",";
-		$sql.= " note=".(isset($this->note)?"'".addslashes($this->note)."'":"null").",";
-		$sql.= " model_pdf=".(isset($this->model_pdf)?"'".addslashes($this->model_pdf)."'":"null").",";
+		$sql.= " note=".(isset($this->note)?"'".$this->db->escape($this->note)."'":"null").",";
+		$sql.= " model_pdf=".(isset($this->model_pdf)?"'".$this->db->escape($this->model_pdf)."'":"null").",";
 		$sql.= " entity=".$conf->entity;
 
         $sql.= " WHERE rowid=".$this->id;

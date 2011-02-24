@@ -73,7 +73,7 @@ class RemiseCheque extends CommonObject
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON bc.fk_bank_account = ba.rowid";
 		$sql.= " WHERE bc.entity = ".$conf->entity;
 		if ($id)  $sql.= " AND bc.rowid = ".$id;
-		if ($ref) $sql.= " AND bc.number = '".addslashes($ref)."'";
+		if ($ref) $sql.= " AND bc.number = '".$this->db->escape($ref)."'";
 
 		dol_syslog("RemiseCheque::fetch sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);

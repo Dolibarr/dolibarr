@@ -103,8 +103,8 @@ class Deplacement extends CommonObject
 		$sql.= ", ".$user->id;
 		$sql.= ", ".$this->fk_user;
 		$sql.= ", '".$this->type."'";
-		$sql.= ", ".($this->note?"'".addslashes($this->note)."'":"null");
-		$sql.= ", ".($this->note_public?"'".addslashes($this->note_public)."'":"null");
+		$sql.= ", ".($this->note?"'".$this->db->escape($this->note)."'":"null");
+		$sql.= ", ".($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
 		$sql.= ", ".($this->fk_project > 0? $this->fk_project : 0);
 		$sql.= ", ".($this->fk_soc > 0? $this->fk_soc : "null");
 		$sql.= ")";
@@ -166,8 +166,8 @@ class Deplacement extends CommonObject
 		$sql .= " , type = '".$this->type."'";
 		$sql .= " , fk_user = ".$this->fk_user;
 		$sql .= " , fk_soc = ".($this->socid > 0?$this->socid:'null');
-		$sql .= " , note = ".($this->note?"'".addslashes($this->note)."'":"null");
-		$sql .= " , note_public = ".($this->note_public?"'".addslashes($this->note_public)."'":"null");
+		$sql .= " , note = ".($this->note?"'".$this->db->escape($this->note)."'":"null");
+		$sql .= " , note_public = ".($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
 		$sql .= " , fk_projet = ".($this->fk_project>0?$this->fk_project:0);
 		$sql .= " WHERE rowid = ".$this->id;
 

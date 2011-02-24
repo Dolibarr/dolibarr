@@ -127,7 +127,7 @@ class FactureRec extends Facture
 			$sql.= ", ".$this->db->idate(mktime());
 			$sql.= ", '".$facsrc->amount."'";
 			$sql.= ", '".$facsrc->remise."'";
-			$sql.= ", '".addslashes($this->note)."'";
+			$sql.= ", '".$this->db->escape($this->note)."'";
 			$sql.= ", '".$user->id."'";
 			$sql.= ", ".($facsrc->fk_project?"'".$facsrc->fk_project."'":"null");
 			$sql.= ", '".$facsrc->cond_reglement_id."'";
@@ -477,7 +477,7 @@ class FactureRec extends Facture
 			$sql.= ", special_code";
 			$sql.= ") VALUES (";
 			$sql.= "'".$facid."'";
-			$sql.= ", '".addslashes($desc)."'";
+			$sql.= ", '".$this->db->escape($desc)."'";
 			$sql.= ", ".price2num($price);
 			$sql.= ", ".price2num($qty);
 			$sql.= ", ".price2num($txtva);

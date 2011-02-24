@@ -98,7 +98,7 @@ class Events // extends CommonObject
 		$sql.= " ".($_SERVER['HTTP_USER_AGENT']?"'".dol_trunc($_SERVER['HTTP_USER_AGENT'],250)."'":'NULL').",";
 		$sql.= " ".$this->db->idate($this->dateevent).",";
 		$sql.= " ".($user->id?"'".$user->id."'":'NULL').",";
-		$sql.= " '".addslashes($this->description)."'";
+		$sql.= " '".$this->db->escape($this->description)."'";
 		$sql.= ")";
 
 		dol_syslog("Events::create sql=".$sql, LOG_DEBUG);
@@ -139,7 +139,7 @@ class Events // extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."events SET";
 		$sql.= " type='".$this->type."',";
 		$sql.= " dateevent=".$this->db->idate($this->dateevent).",";
-		$sql.= " description='".addslashes($this->description)."'";
+		$sql.= " description='".$this->db->escape($this->description)."'";
 		$sql.= " WHERE rowid=".$this->id;
 
 		dol_syslog("Events::update sql=".$sql, LOG_DEBUG);

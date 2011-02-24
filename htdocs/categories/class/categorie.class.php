@@ -142,7 +142,7 @@ class Categorie
 			$sql.= "fk_soc,";
 		}
 		$sql.=  "visible, type) ";
-		$sql.= "VALUES ('".addslashes($this->label)."', '".addslashes($this->description)."',";
+		$sql.= "VALUES ('".$this->db->escape($this->label)."', '".$this->db->escape($this->description)."',";
 		if ($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)
 		{
 			$sql.= ($this->socid != -1 ? $this->socid : 'null').",";
@@ -230,10 +230,10 @@ class Categorie
 		}
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."categorie";
-		$sql.= " SET label = '".addslashes($this->label)."'";
+		$sql.= " SET label = '".$this->db->escape($this->label)."'";
 		if ($this->description)
 		{
-			$sql .= ", description = '".addslashes($this->description)."'";
+			$sql .= ", description = '".$this->db->escape($this->description)."'";
 		}
 		if ($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)
 		{
@@ -807,7 +807,7 @@ class Categorie
 	{
 		$sql = "SELECT count(c.rowid)";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_association as ca";
-		$sql.= " WHERE c.label = '".addslashes($this -> label)."' AND type=".$this->type;
+		$sql.= " WHERE c.label = '".$this->db->escape($this -> label)."' AND type=".$this->type;
 		dol_syslog("Categorie::already_exists sql=".$sql);
 		$res  = $this->db->query($sql);
 		if ($res)

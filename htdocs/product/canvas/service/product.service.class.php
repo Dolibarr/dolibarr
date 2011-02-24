@@ -155,18 +155,18 @@ class ProductService extends Product
 		if (!$user->rights->service->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
 		if ($sall)
 		{
-			$sql.= " AND (p.ref like '%".addslashes($sall)."%' OR p.label like '%".addslashes($sall)."%' OR p.description like '%".addslashes($sall)."%' OR p.note like '%".addslashes($sall)."%')";
+			$sql.= " AND (p.ref like '%".$this->db->escape($sall)."%' OR p.label like '%".$this->db->escape($sall)."%' OR p.description like '%".$this->db->escape($sall)."%' OR p.note like '%".$this->db->escape($sall)."%')";
 		}
 		if ($sref)     $sql.= " AND p.ref like '%".$sref."%'";
 		if ($sbarcode) $sql.= " AND p.barcode like '%".$sbarcode."%'";
-		if ($snom)     $sql.= " AND p.label like '%".addslashes($snom)."%'";
+		if ($snom)     $sql.= " AND p.label like '%".$this->db->escape($snom)."%'";
 		if (isset($_GET["tosell"]) && dol_strlen($_GET["tosell"]) > 0)
 		{
-			$sql.= " AND p.tosell = ".addslashes($_GET["tosell"]);
+			$sql.= " AND p.tosell = ".$this->db->escape($_GET["tosell"]);
 		}
 		if (isset($_GET["canvas"]) && dol_strlen($_GET["canvas"]) > 0)
 		{
-			$sql.= " AND p.canvas = '".addslashes($_GET["canvas"])."'";
+			$sql.= " AND p.canvas = '".$this->db->escape($_GET["canvas"])."'";
 		}
 		if($catid)
 		{
@@ -179,7 +179,7 @@ class ProductService extends Product
 		// Insert categ filter
 		if ($search_categ)
 		{
-			$sql .= " AND cp.fk_categorie = ".addslashes($search_categ);
+			$sql .= " AND cp.fk_categorie = ".$this->db->escape($search_categ);
 		}
 		$sql.= $this->db->order($sortfield,$sortorder);
 		$sql.= $this->db->plimit($limit + 1 ,$offset);

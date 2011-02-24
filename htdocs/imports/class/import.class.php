@@ -230,7 +230,7 @@ class Import
 
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'import_model (';
 		$sql.= 'label, type, field)';
-		$sql.= " VALUES ('".addslashes($this->model_name)."', '".$this->datatoimport."', '".$this->hexa."')";
+		$sql.= " VALUES ('".$this->db->escape($this->model_name)."', '".$this->datatoimport."', '".$this->hexa."')";
 
 		dol_syslog("Import::create sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);

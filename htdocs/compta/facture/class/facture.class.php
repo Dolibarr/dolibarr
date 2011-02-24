@@ -860,10 +860,10 @@ class Facture extends CommonObject
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."facture SET";
 
-        $sql.= " facnumber=".(isset($this->ref)?"'".addslashes($this->ref)."'":"null").",";
+        $sql.= " facnumber=".(isset($this->ref)?"'".$this->db->escape($this->ref)."'":"null").",";
         $sql.= " type=".(isset($this->type)?$this->type:"null").",";
-        $sql.= " ref_client=".(isset($this->ref_client)?"'".addslashes($this->ref_client)."'":"null").",";
-        $sql.= " increment=".(isset($this->increment)?"'".addslashes($this->increment)."'":"null").",";
+        $sql.= " ref_client=".(isset($this->ref_client)?"'".$this->db->escape($this->ref_client)."'":"null").",";
+        $sql.= " increment=".(isset($this->increment)?"'".$this->db->escape($this->increment)."'":"null").",";
         $sql.= " fk_soc=".(isset($this->socid)?$this->socid:"null").",";
         $sql.= " datec=".(strval($this->date_creation)!='' ? "'".$this->db->idate($this->date_creation)."'" : 'null').",";
         $sql.= " datef=".(strval($this->date)!='' ? "'".$this->db->idate($this->date)."'" : 'null').",";
@@ -873,8 +873,8 @@ class Facture extends CommonObject
         $sql.= " remise_percent=".(isset($this->remise_percent)?$this->remise_percent:"null").",";
         $sql.= " remise_absolue=".(isset($this->remise_absolue)?$this->remise_absolue:"null").",";
         $sql.= " remise=".(isset($this->remise)?$this->remise:"null").",";
-        $sql.= " close_code=".(isset($this->close_code)?"'".addslashes($this->close_code)."'":"null").",";
-        $sql.= " close_note=".(isset($this->close_note)?"'".addslashes($this->close_note)."'":"null").",";
+        $sql.= " close_code=".(isset($this->close_code)?"'".$this->db->escape($this->close_code)."'":"null").",";
+        $sql.= " close_note=".(isset($this->close_note)?"'".$this->db->escape($this->close_note)."'":"null").",";
         $sql.= " tva=".(isset($this->total_tva)?$this->total_tva:"null").",";
         $sql.= " localtax1=".(isset($this->total_localtax1)?$this->total_localtax1:"null").",";
         $sql.= " localtax2=".(isset($this->total_localtax2)?$this->total_localtax2:"null").",";
@@ -888,10 +888,10 @@ class Facture extends CommonObject
         $sql.= " fk_cond_reglement=".(isset($this->cond_reglement_id)?$this->cond_reglement_id:"null").",";
         $sql.= " fk_mode_reglement=".(isset($this->mode_reglement_id)?$this->mode_reglement_id:"null").",";
         $sql.= " date_lim_reglement=".(strval($this->date_lim_reglement)!='' ? "'".$this->db->idate($this->date_lim_reglement)."'" : 'null').",";
-        $sql.= " note=".(isset($this->note)?"'".addslashes($this->note)."'":"null").",";
-        $sql.= " note_public=".(isset($this->note_public)?"'".addslashes($this->note_public)."'":"null").",";
-        $sql.= " model_pdf=".(isset($this->modelpdf)?"'".addslashes($this->modelpdf)."'":"null").",";
-        $sql.= " import_key=".(isset($this->import_key)?"'".addslashes($this->import_key)."'":"null")."";
+        $sql.= " note=".(isset($this->note)?"'".$this->db->escape($this->note)."'":"null").",";
+        $sql.= " note_public=".(isset($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null").",";
+        $sql.= " model_pdf=".(isset($this->modelpdf)?"'".$this->db->escape($this->modelpdf)."'":"null").",";
+        $sql.= " import_key=".(isset($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null")."";
 
         $sql.= " WHERE rowid=".$this->id;
 
@@ -1028,7 +1028,7 @@ class Facture extends CommonObject
         if (empty($ref_client))
         $sql .= ' SET ref_client = NULL';
         else
-        $sql .= ' SET ref_client = \''.addslashes($ref_client).'\'';
+        $sql .= ' SET ref_client = \''.$this->db->escape($ref_client).'\'';
         $sql .= ' WHERE rowid = '.$this->id;
         if ($this->db->query($sql))
         {
@@ -1216,8 +1216,8 @@ class Facture extends CommonObject
             $sql = 'UPDATE '.MAIN_DB_PREFIX.'facture SET';
             $sql.= ' fk_statut=2';
             if (! $close_code) $sql.= ', paye=1';
-            if ($close_code) $sql.= ", close_code='".addslashes($close_code)."'";
-            if ($close_note) $sql.= ", close_note='".addslashes($close_note)."'";
+            if ($close_code) $sql.= ", close_code='".$this->db->escape($close_code)."'";
+            if ($close_note) $sql.= ", close_note='".$this->db->escape($close_note)."'";
             $sql.= ' WHERE rowid = '.$this->id;
 
             $resql = $this->db->query($sql);
@@ -1325,8 +1325,8 @@ class Facture extends CommonObject
 
         $sql = 'UPDATE '.MAIN_DB_PREFIX.'facture SET';
         $sql.= ' fk_statut=3';
-        if ($close_code) $sql.= ", close_code='".addslashes($close_code)."'";
-        if ($close_note) $sql.= ", close_note='".addslashes($close_note)."'";
+        if ($close_code) $sql.= ", close_code='".$this->db->escape($close_code)."'";
+        if ($close_note) $sql.= ", close_note='".$this->db->escape($close_note)."'";
         $sql.= ' WHERE rowid = '.$this->id;
 
         $resql = $this->db->query($sql);
@@ -3202,7 +3202,7 @@ class FactureLigne
         $sql.= ' rang, special_code,';
         $sql.= ' info_bits, total_ht, total_tva, total_localtax1, total_localtax2, total_ttc)';
         $sql.= " VALUES (".$this->fk_facture.",";
-        $sql.= " '".addslashes($this->desc)."',";
+        $sql.= " '".$this->db->escape($this->desc)."',";
         $sql.= " ".price2num($this->qty).",";
         $sql.= " ".price2num($this->tva_tx).",";
         $sql.= " ".price2num($this->localtax1_tx).",";
@@ -3329,7 +3329,7 @@ class FactureLigne
 
         // Mise a jour ligne en base
         $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET";
-        $sql.= " description='".addslashes($this->desc)."'";
+        $sql.= " description='".$this->db->escape($this->desc)."'";
         $sql.= ",subprice=".price2num($this->subprice)."";
         $sql.= ",price=".price2num($this->price)."";
         $sql.= ",remise=".price2num($this->remise)."";

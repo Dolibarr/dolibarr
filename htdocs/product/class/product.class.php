@@ -290,7 +290,7 @@ class Product extends CommonObject
 					$sql.= ", '".$this->ref."'";
 					$sql.= ", ".price2num($price_min_ht);
 					$sql.= ", ".price2num($price_min_ttc);
-					$sql.= ", ".($this->libelle?"'".addslashes($this->libelle)."'":"null");
+					$sql.= ", ".($this->libelle?"'".$this->db->escape($this->libelle)."'":"null");
 					$sql.= ", ".$user->id;
 					$sql.= ", ".$this->type;
 					$sql.= ", ".price2num($price_ht);
@@ -448,7 +448,7 @@ class Product extends CommonObject
 		$this->accountancy_code_sell= trim($this->accountancy_code_sell);
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."product";
-		$sql.= " SET label = '" . addslashes($this->libelle) ."'";
+		$sql.= " SET label = '" . $this->db->escape($this->libelle) ."'";
 		$sql.= ",ref = '" . $this->ref ."'";
 		$sql.= ",tva_tx = " . $this->tva_tx;
 
@@ -469,10 +469,10 @@ class Product extends CommonObject
 		$sql.= ",volume = " . ($this->volume!='' ? "'".$this->volume."'" : 'null');
 		$sql.= ",volume_units = " . ($this->volume_units!='' ? "'".$this->volume_units."'" : 'null');
 		$sql.= ",seuil_stock_alerte = " . ((isset($this->seuil_stock_alerte) && $this->seuil_stock_alerte != '') ? "'".$this->seuil_stock_alerte."'" : "null");
-		$sql.= ",description = '" . addslashes($this->description) ."'";
-        $sql.= ",customcode = '" .        addslashes($this->customcode) ."'";
+		$sql.= ",description = '" . $this->db->escape($this->description) ."'";
+        $sql.= ",customcode = '" .        $this->db->escape($this->customcode) ."'";
         $sql.= ",fk_country = " . ($this->country_id > 0 ? $this->country_id : 'null');
-        $sql.= ",note = '" .        addslashes($this->note) ."'";
+        $sql.= ",note = '" .        $this->db->escape($this->note) ."'";
 		$sql.= ",duration = '" . $this->duration_value . $this->duration_unit ."'";
 		$sql.= ",accountancy_code_buy = '" . $this->accountancy_code_buy."'";
 		$sql.= ",accountancy_code_sell= '" . $this->accountancy_code_sell."'";
@@ -627,17 +627,17 @@ class Product extends CommonObject
 				if ($this->db->num_rows($result)) // si aucune ligne dans la base
 				{
 					$sql2 = "UPDATE ".MAIN_DB_PREFIX."product_lang";
-					$sql2.= " SET label='".addslashes($this->libelle)."',";
-					$sql2.= " description='".addslashes($this->description)."',";
-					$sql2.= " note='".addslashes($this->note)."'";
+					$sql2.= " SET label='".$this->db->escape($this->libelle)."',";
+					$sql2.= " description='".$this->db->escape($this->description)."',";
+					$sql2.= " note='".$this->db->escape($this->note)."'";
 					$sql2.= " WHERE fk_product=".$this->id." AND lang='".$key."'";
 				}
 				else
 				{
 					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."product_lang (fk_product, lang, label, description, note)";
-					$sql2.= " VALUES(".$this->id.",'".$key."','". addslashes($this->libelle);
-					$sql2.= "','".addslashes($this->description);
-					$sql2.= "','".addslashes($this->note)."')";
+					$sql2.= " VALUES(".$this->id.",'".$key."','". $this->db->escape($this->libelle);
+					$sql2.= "','".$this->db->escape($this->description);
+					$sql2.= "','".$this->db->escape($this->note)."')";
 				}
 				if (!$this->db->query($sql2)) return -1;
 			}
@@ -646,17 +646,17 @@ class Product extends CommonObject
 				if ($this->db->num_rows($result)) // si aucune ligne dans la base
 				{
 					$sql2 = "UPDATE ".MAIN_DB_PREFIX."product_lang";
-					$sql2.= " SET label='".addslashes($this->multilangs["$key"]["libelle"])."',";
-					$sql2.= " description='".addslashes($this->multilangs["$key"]["description"])."',";
-					$sql2.= " note='".addslashes($this->multilangs["$key"]["note"])."'";
+					$sql2.= " SET label='".$this->db->escape($this->multilangs["$key"]["libelle"])."',";
+					$sql2.= " description='".$this->db->escape($this->multilangs["$key"]["description"])."',";
+					$sql2.= " note='".$this->db->escape($this->multilangs["$key"]["note"])."'";
 					$sql2.= " WHERE fk_product=".$this->id." AND lang='".$key."'";
 				}
 				else
 				{
 					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."product_lang (fk_product, lang, label, description, note)";
-					$sql2.= " VALUES(".$this->id.",'".$key."','". addslashes($this->multilangs["$key"]["libelle"]);
-					$sql2.= "','".addslashes($this->multilangs["$key"]["description"]);
-					$sql2.= "','".addslashes($this->multilangs["$key"]["note"])."')";
+					$sql2.= " VALUES(".$this->id.",'".$key."','". $this->db->escape($this->multilangs["$key"]["libelle"]);
+					$sql2.= "','".$this->db->escape($this->multilangs["$key"]["description"]);
+					$sql2.= "','".$this->db->escape($this->multilangs["$key"]["note"])."')";
 				}
 
 				// on ne sauvegarde pas des champs vides
@@ -990,7 +990,7 @@ class Product extends CommonObject
 		$sql.= " import_key";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
 		if ($id) $sql.= " WHERE rowid = '".$id."'";
-		if ($ref) $sql.= " WHERE ref = '".addslashes($ref)."'";
+		if ($ref) $sql.= " WHERE ref = '".$this->db->escape($ref)."'";
 
 		dol_syslog("Product::fetch sql=".$sql);
 		$result = $this->db->query($sql);
@@ -2097,7 +2097,7 @@ class Product extends CommonObject
 			$prods = array ();
 			while ($record = $this->db->fetch_array ($res))
 			{
-				$prods[addslashes($record['label'])] = array(0=>$record['id']);
+				$prods[$this->db->escape($record['label'])] = array(0=>$record['id']);
 			}
 			return $prods;
 		}
@@ -2127,12 +2127,12 @@ class Product extends CommonObject
 			$prods = array();
 			while ($rec = $this->db->fetch_array($res))
 			{
-				//$prods[addslashes($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty'],2=>$rec['fk_product_type']);
-				$prods[addslashes($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty']);
+				//$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty'],2=>$rec['fk_product_type']);
+				$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty']);
 				$listofchilds=$this->getChildsArbo($rec['id']);
 				foreach($listofchilds as $keyChild => $valueChild)
 				{
-					$prods[addslashes($rec['label'])][$keyChild] = $valueChild;
+					$prods[$this->db->escape($rec['label'])][$keyChild] = $valueChild;
 				}
 			}
 			//var_dump($prods);

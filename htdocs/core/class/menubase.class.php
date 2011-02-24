@@ -195,20 +195,20 @@ class Menubase
 
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."menu SET";
-        $sql.= " menu_handler='".addslashes($this->menu_handler)."',";
-        $sql.= " module='".addslashes($this->module)."',";
+        $sql.= " menu_handler='".$this->db->escape($this->menu_handler)."',";
+        $sql.= " module='".$this->db->escape($this->module)."',";
         $sql.= " type='".$this->type."',";
-        $sql.= " mainmenu='".addslashes($this->mainmenu)."',";
+        $sql.= " mainmenu='".$this->db->escape($this->mainmenu)."',";
         $sql.= " fk_menu='".$this->fk_menu."',";
         $sql.= " position='".$this->position."',";
-        $sql.= " url='".addslashes($this->url)."',";
-        $sql.= " target='".addslashes($this->target)."',";
-        $sql.= " titre='".addslashes($this->titre)."',";
-        $sql.= " langs='".addslashes($this->langs)."',";
+        $sql.= " url='".$this->db->escape($this->url)."',";
+        $sql.= " target='".$this->db->escape($this->target)."',";
+        $sql.= " titre='".$this->db->escape($this->titre)."',";
+        $sql.= " langs='".$this->db->escape($this->langs)."',";
         $sql.= " level='".$this->level."',";
-        $sql.= " leftmenu='".addslashes($this->leftmenu)."',";
-        $sql.= " perms='".addslashes($this->perms)."',";
-        $sql.= " enabled='".addslashes($this->enabled)."',";
+        $sql.= " leftmenu='".$this->db->escape($this->leftmenu)."',";
+        $sql.= " perms='".$this->db->escape($this->perms)."',";
+        $sql.= " enabled='".$this->db->escape($this->enabled)."',";
         $sql.= " usertype='".$this->user."'";
         $sql.= " WHERE rowid=".$this->id;
 

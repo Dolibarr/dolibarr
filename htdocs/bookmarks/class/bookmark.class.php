@@ -111,7 +111,7 @@ class Bookmark
         $sql.= ($this->fk_user > 0?"'".$this->fk_user."'":"0").",";
         $sql.= " ".$this->db->idate(gmmktime()).",";
         $sql.= " '".$this->url."', '".$this->target."',";
-        $sql.= " '".addslashes($this->title)."', '".$this->favicon."', '".$this->position."'";
+        $sql.= " '".$this->db->escape($this->title)."', '".$this->favicon."', '".$this->position."'";
         if ($this->fk_soc) $sql.=",".$this->fk_soc;
         $sql.= ")";
 
@@ -157,9 +157,9 @@ class Bookmark
     	$sql = "UPDATE ".MAIN_DB_PREFIX."bookmark";
         $sql.= " SET fk_user = ".($this->fk_user > 0?"'".$this->fk_user."'":"0");
         $sql.= " ,dateb = '".$this->db->idate($this->datec)."'";
-        $sql.= " ,url = '".addslashes($this->url)."'";
+        $sql.= " ,url = '".$this->db->escape($this->url)."'";
         $sql.= " ,target = '".$this->target."'";
-        $sql.= " ,title = '".addslashes($this->title)."'";
+        $sql.= " ,title = '".$this->db->escape($this->title)."'";
         $sql.= " ,favicon = '".$this->favicon."'";
         $sql.= " ,position = '".$this->position."'";
         $sql.= " WHERE rowid = ".$this->id;

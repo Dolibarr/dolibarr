@@ -135,7 +135,7 @@ class AdherentOptions
 		{
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_options_label(name, label, type, pos, size, entity)";
 			$sql.= " VALUES('".$attrname."',";
-			$sql.= " '".addslashes($label)."',";
+			$sql.= " '".$this->db->escape($label)."',";
 			$sql.= " '".$type."',";
 			$sql.= " '".$pos."',";
 			$sql.= " '".$size."',";
@@ -292,7 +292,7 @@ class AdherentOptions
 			$sql.= ") VALUES (";
 			$sql.= "'".$attrname."',";
 			$sql.= " ".$conf->entity.",";
-			$sql.= " '".addslashes($label)."',";
+			$sql.= " '".$this->db->escape($label)."',";
 			$sql.= " '".$type."',";
 			$sql.= " '".$size."'";
 			$sql.= ")";

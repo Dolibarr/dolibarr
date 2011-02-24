@@ -88,7 +88,7 @@ class Address
 		if ($result >= 0)
 		{
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_address (label, fk_soc, name, datec, fk_user_creat) ";
-			$sql .= " VALUES ('".addslashes($this->label)."', '".$socid."', '".addslashes($this->name)."', ".$this->db->idate(mktime()).", '".$user->id."')";
+			$sql .= " VALUES ('".$this->db->escape($this->label)."', '".$socid."', '".$this->db->escape($this->name)."', ".$this->db->idate(mktime()).", '".$user->id."')";
 
 			$result=$this->db->query($sql);
 			if ($result)
@@ -190,18 +190,18 @@ class Address
 			dol_syslog("Address::Update verify ok");
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."societe_address";
-			$sql.= " SET label = '" . addslashes($this->label) ."'"; // Champ obligatoire
-			$sql.= ",name = '" . addslashes($this->name) ."'"; // Champ obligatoire
-			$sql.= ",address = '" . addslashes($this->address) ."'";
+			$sql.= " SET label = '" . $this->db->escape($this->label) ."'"; // Champ obligatoire
+			$sql.= ",name = '" . $this->db->escape($this->name) ."'"; // Champ obligatoire
+			$sql.= ",address = '" . $this->db->escape($this->address) ."'";
 
 			if ($this->cp)
 			{ $sql .= ",cp = '" . $this->cp ."'"; }
 
 			if ($this->ville)
-			{ $sql .= ",ville = '" . addslashes($this->ville) ."'"; }
+			{ $sql .= ",ville = '" . $this->db->escape($this->ville) ."'"; }
 
 			$sql .= ",fk_pays = '" . ($this->pays_id?$this->pays_id:'0') ."'";
-			$sql.= ",note = '" . addslashes($this->note) ."'";
+			$sql.= ",note = '" . $this->db->escape($this->note) ."'";
 
 			if ($this->tel)
 			{ $sql .= ",tel = '" . $this->tel ."'"; }

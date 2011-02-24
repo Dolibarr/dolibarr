@@ -75,7 +75,7 @@ class MouvementStock
 			$sql.= " (datem, fk_product, fk_entrepot, value, type_mouvement, fk_user_author, label, price)";
 			$sql.= " VALUES ('".$this->db->idate($now)."', ".$fk_product.", ".$entrepot_id.", ".$qty.", ".$type.",";
 			$sql.= " ".$user->id.",";
-			$sql.= " '".addslashes($label)."',";
+			$sql.= " '".$this->db->escape($label)."',";
 			$sql.= " '".price2num($price)."')";
 
 			dol_syslog("MouvementStock::_create sql=".$sql, LOG_DEBUG);

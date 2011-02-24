@@ -113,11 +113,11 @@ class PaymentTerm // extends CommonObject
         $sql.= ") VALUES (";
 
 		$sql.= " ".(! isset($this->rowid)?'NULL':"'".$this->rowid."'").",";
-		$sql.= " ".(! isset($this->code)?'NULL':"'".addslashes($this->code)."'").",";
+		$sql.= " ".(! isset($this->code)?'NULL':"'".$this->db->escape($this->code)."'").",";
 		$sql.= " ".(! isset($this->sortorder)?'NULL':"'".$this->sortorder."'").",";
 		$sql.= " ".(! isset($this->active)?'NULL':"'".$this->active."'").",";
-		$sql.= " ".(! isset($this->libelle)?'NULL':"'".addslashes($this->libelle)."'").",";
-		$sql.= " ".(! isset($this->libelle_facture)?'NULL':"'".addslashes($this->libelle_facture)."'").",";
+		$sql.= " ".(! isset($this->libelle)?'NULL':"'".$this->db->escape($this->libelle)."'").",";
+		$sql.= " ".(! isset($this->libelle_facture)?'NULL':"'".$this->db->escape($this->libelle_facture)."'").",";
 		$sql.= " ".(! isset($this->fdm)?'NULL':"'".$this->fdm."'").",";
 		$sql.= " ".(! isset($this->nbjour)?'NULL':"'".$this->nbjour."'").",";
 		$sql.= " ".(! isset($this->decalage)?'NULL':"'".$this->decalage."'")."";
@@ -292,11 +292,11 @@ class PaymentTerm // extends CommonObject
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."c_payment_term SET";
 
-		$sql.= " code=".(isset($this->code)?"'".addslashes($this->code)."'":"null").",";
+		$sql.= " code=".(isset($this->code)?"'".$this->db->escape($this->code)."'":"null").",";
 		$sql.= " sortorder=".(isset($this->sortorder)?$this->sortorder:"null").",";
 		$sql.= " active=".(isset($this->active)?$this->active:"null").",";
-		$sql.= " libelle=".(isset($this->libelle)?"'".addslashes($this->libelle)."'":"null").",";
-		$sql.= " libelle_facture=".(isset($this->libelle_facture)?"'".addslashes($this->libelle_facture)."'":"null").",";
+		$sql.= " libelle=".(isset($this->libelle)?"'".$this->db->escape($this->libelle)."'":"null").",";
+		$sql.= " libelle_facture=".(isset($this->libelle_facture)?"'".$this->db->escape($this->libelle_facture)."'":"null").",";
 		$sql.= " fdm=".(isset($this->fdm)?$this->fdm:"null").",";
 		$sql.= " nbjour=".(isset($this->nbjour)?$this->nbjour:"null").",";
 		$sql.= " decalage=".(isset($this->decalage)?$this->decalage:"null")."";

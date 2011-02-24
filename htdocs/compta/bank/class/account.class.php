@@ -130,7 +130,7 @@ class Account extends CommonObject
         $sql.= "'".$line_id."'";
         $sql.= ", '".$url_id."'";
         $sql.= ", '".$url."'";
-        $sql.= ", '".addslashes($label)."'";
+        $sql.= ", '".$this->db->escape($label)."'";
         $sql.= ", '".$type."'";
         $sql.= ")";
 
@@ -258,14 +258,14 @@ class Account extends CommonObject
         $sql.= "'".$this->db->idate(mktime())."'";
         $sql.= ", '".$this->db->idate($date)."'";
         $sql.= ", '".$this->db->idate($datev)."'";
-        $sql.= ", '".addslashes($label)."'";
+        $sql.= ", '".$this->db->escape($label)."'";
         $sql.= ", ".price2num($amount);
         $sql.= ", '".$user->id."'";
         $sql.= ", ".($num_chq?"'".$num_chq."'":"null");
         $sql.= ", '".$this->rowid."'";
         $sql.= ", '".$oper."'";
-        $sql.= ", ".($emetteur?"'".addslashes($emetteur)."'":"null");
-        $sql.= ", ".($banque?"'".addslashes($banque)."'":"null");
+        $sql.= ", ".($emetteur?"'".$this->db->escape($emetteur)."'":"null");
+        $sql.= ", ".($banque?"'".$this->db->escape($banque)."'":"null");
         $sql.= ")";
 
         dol_syslog("Account::addline sql=".$sql);
@@ -347,15 +347,15 @@ class Account extends CommonObject
         $sql.= ", fk_pays";
         $sql.= ") VALUES (";
         $sql.= "'".$this->db->idate($now)."'";
-        $sql.= ", '".addslashes($this->ref)."'";
-        $sql.= ", '".addslashes($this->label)."'";
+        $sql.= ", '".$this->db->escape($this->ref)."'";
+        $sql.= ", '".$this->db->escape($this->label)."'";
         $sql.= ", ".$conf->entity;
-        $sql.= ", '".addslashes($this->account_number)."'";
+        $sql.= ", '".$this->db->escape($this->account_number)."'";
         $sql.= ", '".$this->currency_code."'";
         $sql.= ", ".$this->rappro;
         $sql.= ", ".price2num($this->min_allowed);
         $sql.= ", ".price2num($this->min_desired);
-        $sql.= ", '".addslashes($this->comment)."'";
+        $sql.= ", '".$this->db->escape($this->comment)."'";
         $sql.= ", ".($this->fk_departement>0?"'".$this->fk_departement."'":"null");
         $sql.= ", ".$this->fk_pays;
         $sql.= ")";
@@ -438,8 +438,8 @@ class Account extends CommonObject
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."bank_account SET ";
 
-        $sql.= " ref   = '".addslashes($this->ref)."'";
-        $sql.= ",label = '".addslashes($this->label)."'";
+        $sql.= " ref   = '".$this->db->escape($this->ref)."'";
+        $sql.= ",label = '".$this->db->escape($this->label)."'";
 
         $sql.= ",courant = ".$this->courant;
         $sql.= ",clos = ".$this->clos;
@@ -451,7 +451,7 @@ class Account extends CommonObject
 
         $sql.= ",min_allowed = '".price2num($this->min_allowed)."'";
         $sql.= ",min_desired = '".price2num($this->min_desired)."'";
-        $sql.= ",comment     = '".addslashes($this->comment)."'";
+        $sql.= ",comment     = '".$this->db->escape($this->comment)."'";
 
         $sql.= ",fk_departement = ".($this->fk_departement>0?"'".$this->fk_departement."'":"null");
         $sql.= ",fk_pays = ".$this->fk_pays;
@@ -496,16 +496,16 @@ class Account extends CommonObject
         }
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."bank_account SET ";
-        $sql.= " bank  = '".addslashes($this->bank)."'";
+        $sql.= " bank  = '".$this->db->escape($this->bank)."'";
         $sql.= ",code_banque='".$this->code_banque."'";
         $sql.= ",code_guichet='".$this->code_guichet."'";
         $sql.= ",number='".$this->number."'";
         $sql.= ",cle_rib='".$this->cle_rib."'";
         $sql.= ",bic='".$this->bic."'";
         $sql.= ",iban_prefix = '".$this->iban."'";
-        $sql.= ",domiciliation='".addslashes($this->domiciliation)."'";
-        $sql.= ",proprio = '".addslashes($this->proprio)."'";
-        $sql.= ",adresse_proprio = '".addslashes($this->adresse_proprio)."'";
+        $sql.= ",domiciliation='".$this->db->escape($this->domiciliation)."'";
+        $sql.= ",proprio = '".$this->db->escape($this->proprio)."'";
+        $sql.= ",adresse_proprio = '".$this->db->escape($this->adresse_proprio)."'";
         $sql.= ",fk_departement = ".($this->fk_departement>0?"'".$this->fk_departement."'":"null");
         $sql.= ",fk_pays = ".$this->fk_pays;
         $sql.= " WHERE rowid = ".$this->id;
@@ -548,7 +548,7 @@ class Account extends CommonObject
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON ba.fk_departement = d.rowid';
         $sql.= " WHERE entity = ".$conf->entity;
         if ($id)  $sql.= " AND ba.rowid  = ".$id;
-        if ($ref) $sql.= " AND ba.ref = '".addslashes($ref)."'";
+        if ($ref) $sql.= " AND ba.ref = '".$this->db->escape($ref)."'";
 
         dol_syslog("Account::fetch sql=".$sql);
         $result = $this->db->query($sql);

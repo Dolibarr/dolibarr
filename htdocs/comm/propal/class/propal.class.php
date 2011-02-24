@@ -484,7 +484,7 @@ class Propal extends CommonObject
 			$sql.= " , tva_tx=".price2num($txtva);
 			$sql.= " , localtax1_tx=".price2num($txlocaltax1);
 			$sql.= " , localtax2_tx=".price2num($txlocaltax2);
-			$sql.= " , description='".addslashes($desc)."'";
+			$sql.= " , description='".$this->db->escape($desc)."'";
 			$sql.= " , total_ht=".price2num($total_ht);
 			$sql.= " , total_tva=".price2num($total_tva);
 			$sql.= " , total_localtax1=".price2num($total_localtax1);
@@ -631,13 +631,13 @@ class Propal extends CommonObject
 		$sql.= ", '".$this->db->idate($now)."'";
 		$sql.= ", '(PROV)'";
 		$sql.= ", ".($user->id > 0 ? "'".$user->id."'":"null");
-		$sql.= ", '".addslashes($this->note)."'";
-		$sql.= ", '".addslashes($this->note_public)."'";
+		$sql.= ", '".$this->db->escape($this->note)."'";
+		$sql.= ", '".$this->db->escape($this->note_public)."'";
 		$sql.= ", '".$this->modelpdf."'";
 		$sql.= ", '".$this->db->idate($this->fin_validite)."'";
 		$sql.= ", ".$this->cond_reglement_id;
 		$sql.= ", ".$this->mode_reglement_id;
-		$sql.= ", '".addslashes($this->ref_client)."'";
+		$sql.= ", '".$this->db->escape($this->ref_client)."'";
 		$sql.= ", ".($this->date_livraison!=''?"'".$this->db->idate($this->date_livraison)."'":'null');
 		$sql.= ", ".$conf->entity;
 		$sql.= ")";
@@ -1237,7 +1237,7 @@ class Propal extends CommonObject
 		{
 			dol_syslog('Propale::set_ref_client this->id='.$this->id.', ref_client='.$ref_client);
 
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'propal SET ref_client = '.(empty($ref_client) ? 'NULL' : '\''.addslashes($ref_client).'\'');
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'propal SET ref_client = '.(empty($ref_client) ? 'NULL' : '\''.$this->db->escape($ref_client).'\'');
 			$sql.= ' WHERE rowid = '.$this->id;
 			if ($this->db->query($sql) )
 			{
@@ -1340,7 +1340,7 @@ class Propal extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
-		$sql.= " SET fk_statut = ".$statut.", note = '".addslashes($note)."', date_cloture=".$this->db->idate(mktime()).", fk_user_cloture=".$user->id;
+		$sql.= " SET fk_statut = ".$statut.", note = '".$this->db->escape($note)."', date_cloture=".$this->db->idate(mktime()).", fk_user_cloture=".$user->id;
 		$sql.= " WHERE rowid = ".$this->id;
 
 		$resql=$this->db->query($sql);
@@ -2315,7 +2315,7 @@ class PropaleLigne
 		$sql.= ' info_bits, ';
 		$sql.= ' total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, special_code, rang, marge_tx, marque_tx)';
 		$sql.= " VALUES (".$this->fk_propal.",";
-		$sql.= " '".addslashes($this->desc)."',";
+		$sql.= " '".$this->db->escape($this->desc)."',";
 		$sql.= " ".($this->fk_product?"'".$this->fk_product."'":"null").",";
 		$sql.= " '".$this->product_type."',";
 		$sql.= " ".($this->fk_remise_except?"'".$this->fk_remise_except."'":"null").",";
@@ -2379,7 +2379,7 @@ class PropaleLigne
 
 		// Mise a jour ligne en base
 		$sql = "UPDATE ".MAIN_DB_PREFIX."propaldet SET";
-		$sql.= " description='".addslashes($this->desc)."'";
+		$sql.= " description='".$this->db->escape($this->desc)."'";
 		if ($fk_remise_except) $sql.= ",fk_remise_except=".$this->fk_remise_except;
 		else $sql.= ",fk_remise_except=null";
 		$sql.= ",tva_tx='".price2num($this->tva_tx)."'";

@@ -79,7 +79,7 @@ class Cotisation extends CommonObject
         $sql.= " VALUES (".$this->fk_adherent.", ".$this->db->idate(mktime()).",";
 		$sql.= " ".$this->db->idate($this->dateh).",";
 		$sql.= " ".$this->db->idate($this->datef).",";
-		$sql.= " ".$this->amount.",'".addslashes($this->note)."')";
+		$sql.= " ".$this->amount.",'".$this->db->escape($this->note)."')";
 
 		dol_syslog("Cotisation::create sql=".$sql);
 		$resql = $this->db->query($sql);
@@ -157,7 +157,7 @@ class Cotisation extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."cotisation SET ";
 		$sql .= " fk_adherent = ".$this->fk_adherent.",";
-		$sql .= " note=".($this->note ? "'".addslashes($this->note)."'" : 'null').",";
+		$sql .= " note=".($this->note ? "'".$this->db->escape($this->note)."'" : 'null').",";
 		$sql .= " cotisation = '".price2num($this->amount)."',";
 		$sql .= " dateadh='".$this->db->idate($this->dateh)."',";
 		$sql .= " datef='".$this->db->idate($this->datef)."',";

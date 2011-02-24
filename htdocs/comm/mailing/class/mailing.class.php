@@ -143,9 +143,9 @@ class Mailing extends CommonObject
 	function update($user)
 	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing ";
-		$sql .= " SET titre = '".addslashes($this->titre)."'";
-		$sql .= ", sujet = '".addslashes($this->sujet)."'";
-		$sql .= ", body = '".addslashes($this->body)."'";
+		$sql .= " SET titre = '".$this->db->escape($this->titre)."'";
+		$sql .= ", sujet = '".$this->db->escape($this->sujet)."'";
+		$sql .= ", body = '".$this->db->escape($this->body)."'";
 		$sql .= ", email_from = '".$this->email_from."'";
 		$sql .= ", email_replyto = '".$this->email_replyto."'";
 		$sql .= ", email_errorsto = '".$this->email_errorsto."'";

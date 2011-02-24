@@ -571,9 +571,9 @@ class Commande extends CommonObject
 		$sql.= " VALUES ('(PROV)',".$this->socid.", ".$this->db->idate(gmmktime()).", ".$user->id.", ".$this->fk_project;
 		$sql.= ", ".$this->db->idate($this->date_commande);
 		$sql.= ", ".($this->source>=0 && $this->source != '' ?$this->source:'null');
-		$sql.= ", '".addslashes($this->note)."'";
-		$sql.= ", '".addslashes($this->note_public)."'";
-		$sql.= ", '".addslashes($this->ref_client)."', '".$this->modelpdf."'";
+		$sql.= ", '".$this->db->escape($this->note)."'";
+		$sql.= ", '".$this->db->escape($this->note_public)."'";
+		$sql.= ", '".$this->db->escape($this->ref_client)."', '".$this->modelpdf."'";
 		$sql.= ", ".($this->cond_reglement_id>0?"'".$this->cond_reglement_id."'":"null");
 		$sql.= ", ".($this->mode_reglement_id>0?"'".$this->mode_reglement_id."'":"null");
 		$sql.= ", ".($this->date_livraison?"'".$this->db->idate($this->date_livraison)."'":"null");
@@ -1769,7 +1769,7 @@ class Commande extends CommonObject
 			dol_syslog('Commande::set_ref_client this->id='.$this->id.', ref_client='.$ref_client);
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET';
-			$sql.= ' ref_client = '.(empty($ref_client) ? 'NULL' : '\''.addslashes($ref_client).'\'');
+			$sql.= ' ref_client = '.(empty($ref_client) ? 'NULL' : '\''.$this->db->escape($ref_client).'\'');
 			$sql.= ' WHERE rowid = '.$this->id;
 
 			if ($this->db->query($sql) )
@@ -1886,7 +1886,7 @@ class Commande extends CommonObject
 
 			// Mise a jour ligne en base
 			$sql = "UPDATE ".MAIN_DB_PREFIX."commandedet SET";
-			$sql.= " description='".addslashes($desc)."'";
+			$sql.= " description='".$this->db->escape($desc)."'";
 			$sql.= ",price='".price2num($price)."'";
 			$sql.= ",subprice='".price2num($subprice)."'";
 			$sql.= ",remise='".price2num($remise)."'";
@@ -2620,7 +2620,7 @@ class OrderLine
 		$sql.= ' special_code, rang, marge_tx, marque_tx,';
 		$sql.= ' info_bits, total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, date_start, date_end)';
 		$sql.= " VALUES (".$this->fk_commande.",";
-		$sql.= " '".addslashes($this->desc)."',";
+		$sql.= " '".$this->db->escape($this->desc)."',";
 		$sql.= " '".price2num($this->qty)."',";
 		$sql.= " '".price2num($this->tva_tx)."',";
 		$sql.= " '".price2num($this->localtax1_tx)."',";

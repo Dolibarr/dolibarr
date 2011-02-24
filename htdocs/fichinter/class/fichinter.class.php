@@ -141,7 +141,7 @@ class Fichinter extends CommonObject
 		$sql.= ", '".$this->ref."'";
 		$sql.= ", ".$conf->entity;
 		$sql.= ", ".$this->author;
-		$sql.= ", ".($this->description?"'".addslashes($this->description)."'":"null");
+		$sql.= ", ".($this->description?"'".$this->db->escape($this->description)."'":"null");
 		$sql.= ", '".$this->modelpdf."'";
 		$sql.= ", ".($this->fk_project ? $this->fk_project : 0);
 		$sql.= ", ".$this->statut;
@@ -180,7 +180,7 @@ class Fichinter extends CommonObject
 		 *  Insertion dans la base
 		 */
 		$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter SET ";
-		$sql.= ", description  = '".addslashes($this->description)."'";
+		$sql.= ", description  = '".$this->db->escape($this->description)."'";
 		$sql.= ", duree = ".$this->duree;
 		$sql.= ", fk_projet = ".$this->fk_project;
 		$sql.= " WHERE rowid = ".$id;
@@ -638,7 +638,7 @@ class Fichinter extends CommonObject
 		if ($user->rights->ficheinter->creer)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
-			$sql.= " SET description = '".addslashes($description)."'";
+			$sql.= " SET description = '".$this->db->escape($description)."'";
 			$sql.= " WHERE rowid = ".$this->id;
 			$sql.= " AND entity = ".$conf->entity;
 			$sql.= " AND fk_statut = 0";
@@ -895,7 +895,7 @@ class FichinterLigne
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'fichinterdet';
 		$sql.= ' (fk_fichinter, description, date, duree, rang)';
 		$sql.= " VALUES (".$this->fk_fichinter.",";
-		$sql.= " '".addslashes($this->desc)."',";
+		$sql.= " '".$this->db->escape($this->desc)."',";
 		$sql.= " ".$this->db->idate($this->datei).",";
 		$sql.= " ".$this->duration.",";
 		$sql.= ' '.$rangToUse;
@@ -938,7 +938,7 @@ class FichinterLigne
 
 		// Mise a jour ligne en base
 		$sql = "UPDATE ".MAIN_DB_PREFIX."fichinterdet SET";
-		$sql.= " description='".addslashes($this->desc)."'";
+		$sql.= " description='".$this->db->escape($this->desc)."'";
 		$sql.= ",date=".$this->db->idate($this->datei);
 		$sql.= ",duree=".$this->duration;
 		$sql.= ",rang='".$this->rang."'";

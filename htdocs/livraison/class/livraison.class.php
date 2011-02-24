@@ -125,7 +125,7 @@ class Livraison extends CommonObject
 			$numref = "(PROV".$this->id.")";
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."livraison ";
-			$sql.= "SET ref = '".addslashes($numref)."'";
+			$sql.= "SET ref = '".$this->db->escape($numref)."'";
 			$sql.= " WHERE rowid = ".$this->id;
 
 			dol_syslog("Livraison::create sql=".$sql, LOG_DEBUG);
@@ -220,7 +220,7 @@ class Livraison extends CommonObject
 		$sql.= " fk_product, description, qty)";
 		$sql.= " VALUES (".$this->id.",".$commande_ligne_id.",";
 		$sql.= " ".($idprod>0?$idprod:"null").",";
-		$sql.= " ".($description?"'".addslashes($description)."'":"null").",";
+		$sql.= " ".($description?"'".$this->db->escape($description)."'":"null").",";
 		$sql.= $qty.")";
 
 		dol_syslog("Livraison::create_line sql=".$sql, LOG_DEBUG);
@@ -365,7 +365,7 @@ class Livraison extends CommonObject
 					}
 
 					$sql = "UPDATE ".MAIN_DB_PREFIX."livraison SET";
-					$sql.= " ref='".addslashes($this->ref)."'";
+					$sql.= " ref='".$this->db->escape($this->ref)."'";
 					$sql.= ", fk_statut = 1";
 					$sql.= ", date_valid = ".$this->db->idate(mktime());
 					$sql.= ", fk_user_valid = ".$user->id;

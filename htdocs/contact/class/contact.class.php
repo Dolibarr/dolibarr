@@ -112,7 +112,7 @@ class Contact extends CommonObject
 		$sql.= " VALUES ('".$this->db->idate($now)."',";
 		if ($this->socid > 0) $sql.= " ".$this->socid.",";
 		else $sql.= "null,";
-		$sql.= "'".addslashes($this->name)."',";
+		$sql.= "'".$this->db->escape($this->name)."',";
 		$sql.= " ".($user->id > 0 ? "'".$user->id."'":"null").",";
 		$sql.= " ".$this->priv.",";
         $sql.= " ".($this->canvas?"'".$this->canvas."'":"null");
@@ -204,24 +204,24 @@ class Contact extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET ";
-		if ($this->socid > 0) $sql .= " fk_soc='".addslashes($this->socid)."',";
+		if ($this->socid > 0) $sql .= " fk_soc='".$this->db->escape($this->socid)."',";
 		if ($this->socid == -1) $sql .= " fk_soc=null,";
-		$sql .= "  civilite='".addslashes($this->civilite_id)."'";
-		$sql .= ", name='".addslashes($this->name)."'";
-		$sql .= ", firstname='".addslashes($this->firstname)."'";
-		$sql .= ", address='".addslashes($this->address)."'";
-		$sql .= ", cp='".addslashes($this->cp)."'";
-		$sql .= ", ville='".addslashes($this->ville)."'";
+		$sql .= "  civilite='".$this->db->escape($this->civilite_id)."'";
+		$sql .= ", name='".$this->db->escape($this->name)."'";
+		$sql .= ", firstname='".$this->db->escape($this->firstname)."'";
+		$sql .= ", address='".$this->db->escape($this->address)."'";
+		$sql .= ", cp='".$this->db->escape($this->cp)."'";
+		$sql .= ", ville='".$this->db->escape($this->ville)."'";
 		$sql .= ", fk_pays=".($this->fk_pays>0?$this->fk_pays:'NULL');
 		$sql .= ", fk_departement=".($this->fk_departement>0?$this->fk_departement:'NULL');
-		$sql .= ", poste='".addslashes($this->poste)."'";
-		$sql .= ", fax='".addslashes($this->fax)."'";
-		$sql .= ", email='".addslashes($this->email)."'";
-		$sql .= ", note='".addslashes($this->note)."'";
-		$sql .= ", phone = '".addslashes($this->phone_pro)."'";
-		$sql .= ", phone_perso = '".addslashes($this->phone_perso)."'";
-		$sql .= ", phone_mobile = '".addslashes($this->phone_mobile)."'";
-		$sql .= ", jabberid = '".addslashes($this->jabberid)."'";
+		$sql .= ", poste='".$this->db->escape($this->poste)."'";
+		$sql .= ", fax='".$this->db->escape($this->fax)."'";
+		$sql .= ", email='".$this->db->escape($this->email)."'";
+		$sql .= ", note='".$this->db->escape($this->note)."'";
+		$sql .= ", phone = '".$this->db->escape($this->phone_pro)."'";
+		$sql .= ", phone_perso = '".$this->db->escape($this->phone_perso)."'";
+		$sql .= ", phone_mobile = '".$this->db->escape($this->phone_mobile)."'";
+		$sql .= ", jabberid = '".$this->db->escape($this->jabberid)."'";
 		$sql .= ", priv = '".$this->priv."'";
 		$sql .= ", fk_user_modif=".($user->id > 0 ? "'".$user->id."'":"null");
 		$sql .= ", default_lang=".($this->default_lang?"'".$this->default_lang."'":"null");
@@ -752,7 +752,7 @@ class Contact extends CommonObject
 	{
 		$sql = "SELECT count(mc.email) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
-		$sql.= " WHERE mc.email = '".addslashes($this->email)."'";
+		$sql.= " WHERE mc.email = '".$this->db->escape($this->email)."'";
 		$sql.= " AND mc.statut=1";      // -1 erreur, 0 non envoye, 1 envoye avec succes
 		$resql=$this->db->query($sql);
 		if ($resql)

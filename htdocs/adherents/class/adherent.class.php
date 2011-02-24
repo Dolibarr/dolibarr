@@ -388,21 +388,21 @@ class Adherent extends CommonObject
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
         $sql.= " civilite = ".($this->civilite_id?"'".$this->civilite_id."'":"null");
-        $sql.= ", prenom = ".($this->prenom?"'".addslashes($this->prenom)."'":"null");
-        $sql.= ", nom="     .($this->nom?"'".addslashes($this->nom)."'":"null");
-        $sql.= ", login="   .($this->login?"'".addslashes($this->login)."'":"null");
-        $sql.= ", societe=" .($this->societe?"'".addslashes($this->societe)."'":"null");
+        $sql.= ", prenom = ".($this->prenom?"'".$this->db->escape($this->prenom)."'":"null");
+        $sql.= ", nom="     .($this->nom?"'".$this->db->escape($this->nom)."'":"null");
+        $sql.= ", login="   .($this->login?"'".$this->db->escape($this->login)."'":"null");
+        $sql.= ", societe=" .($this->societe?"'".$this->db->escape($this->societe)."'":"null");
         $sql.= ", fk_soc="  .($this->fk_soc > 0?"'".$this->fk_soc."'":"null");
-        $sql.= ", adresse=" .($this->adresse?"'".addslashes($this->adresse)."'":"null");
-        $sql.= ", cp="      .($this->cp?"'".addslashes($this->cp)."'":"null");
-        $sql.= ", ville="   .($this->ville?"'".addslashes($this->ville)."'":"null");
+        $sql.= ", adresse=" .($this->adresse?"'".$this->db->escape($this->adresse)."'":"null");
+        $sql.= ", cp="      .($this->cp?"'".$this->db->escape($this->cp)."'":"null");
+        $sql.= ", ville="   .($this->ville?"'".$this->db->escape($this->ville)."'":"null");
         $sql.= ", pays="          .($this->pays_id>0?"'".$this->pays_id."'":"null");
         $sql.= ", fk_departement=".($this->fk_departement>0?"'".$this->fk_departement."'":"null");
         $sql.= ", email="   ."'".$this->email."'";
-        $sql.= ", phone="   .($this->phone?"'".addslashes($this->phone)."'":"null");
-        $sql.= ", phone_perso="  .($this->phone_perso?"'".addslashes($this->phone_perso)."'":"null");
-        $sql.= ", phone_mobile=" .($this->phone_mobile?"'".addslashes($this->phone_mobile)."'":"null");
-        $sql.= ", note="    .($this->note?"'".addslashes($this->note)."'":"null");
+        $sql.= ", phone="   .($this->phone?"'".$this->db->escape($this->phone)."'":"null");
+        $sql.= ", phone_perso="  .($this->phone_perso?"'".$this->db->escape($this->phone_perso)."'":"null");
+        $sql.= ", phone_mobile=" .($this->phone_mobile?"'".$this->db->escape($this->phone_mobile)."'":"null");
+        $sql.= ", note="    .($this->note?"'".$this->db->escape($this->note)."'":"null");
         $sql.= ", photo="   .($this->photo?"'".$this->photo."'":"null");
         $sql.= ", public="  ."'".$this->public."'";
         $sql.= ", statut="  .$this->statut;
@@ -743,7 +743,7 @@ class Adherent extends CommonObject
         }
 
         // Mise a jour
-        $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET pass = '".addslashes($password_indatabase)."'";
+        $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET pass = '".$this->db->escape($password_indatabase)."'";
         $sql.= " WHERE rowid = ".$this->id;
 
         //dol_syslog("Adherent::Password sql=hidden");

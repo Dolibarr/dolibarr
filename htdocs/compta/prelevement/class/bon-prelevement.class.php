@@ -208,7 +208,7 @@ class BonPrelevement extends CommonObject
             $sql.= ") VALUES (";
             $sql.= $this->id;
             $sql.= ", ".$client_id;
-            $sql.= ", '".addslashes($client_nom)."'";
+            $sql.= ", '".$this->db->escape($client_nom)."'";
             $sql.= ", '".price2num($amount)."'";
             $sql.= ", '".$code_banque."'";
             $sql.= ", '".$code_guichet."'";

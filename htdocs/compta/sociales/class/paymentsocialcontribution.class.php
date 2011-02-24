@@ -117,7 +117,7 @@ class PaymentSocialContribution extends CommonObject
 			$sql.= " VALUES ($this->chid, '".$this->db->idate($now)."',";
 			$sql.= " '".$this->db->idate($this->datepaye)."',";
 			$sql.= " ".$totalamount.",";
-			$sql.= " ".$this->paiementtype.", '".addslashes($this->num_paiement)."', '".addslashes($this->note)."', ".$user->id.",";
+			$sql.= " ".$this->paiementtype.", '".$this->db->escape($this->num_paiement)."', '".$this->db->escape($this->note)."', ".$user->id.",";
 			$sql.= " 0)";
 
 			dol_syslog(get_class($this)."::create sql=".$sql);
@@ -254,8 +254,8 @@ class PaymentSocialContribution extends CommonObject
 		$sql.= " datep=".(dol_strlen($this->datep)!=0 ? "'".$this->db->idate($this->datep)."'" : 'null').",";
 		$sql.= " amount=".(isset($this->amount)?$this->amount:"null").",";
 		$sql.= " fk_typepaiement=".(isset($this->fk_typepaiement)?$this->fk_typepaiement:"null").",";
-		$sql.= " num_paiement=".(isset($this->num_paiement)?"'".addslashes($this->num_paiement)."'":"null").",";
-		$sql.= " note=".(isset($this->note)?"'".addslashes($this->note)."'":"null").",";
+		$sql.= " num_paiement=".(isset($this->num_paiement)?"'".$this->db->escape($this->num_paiement)."'":"null").",";
+		$sql.= " note=".(isset($this->note)?"'".$this->db->escape($this->note)."'":"null").",";
 		$sql.= " fk_bank=".(isset($this->fk_bank)?$this->fk_bank:"null").",";
 		$sql.= " fk_user_creat=".(isset($this->fk_user_creat)?$this->fk_user_creat:"null").",";
 		$sql.= " fk_user_modif=".(isset($this->fk_user_modif)?$this->fk_user_modif:"null")."";

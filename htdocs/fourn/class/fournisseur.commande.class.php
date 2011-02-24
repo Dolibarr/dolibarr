@@ -232,7 +232,7 @@ class CommandeFournisseur extends Commande
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur_log (datelog, fk_commande, fk_statut, fk_user, comment)";
 		$sql.= " VALUES (".$this->db->idate($datelog).",".$this->id.", ".$statut.", ";
 		$sql.= $user->id.", ";
-		$sql.= ($comment?"'".addslashes($comment)."'":'null');
+		$sql.= ($comment?"'".$this->db->escape($comment)."'":'null');
 		$sql.= ")";
 
 		dol_syslog("FournisseurCommande::log sql=".$sql, LOG_DEBUG);
@@ -926,7 +926,7 @@ class CommandeFournisseur extends Commande
 			$sql.= " qty, tva_tx, localtax1_tx, localtax2_tx, remise_percent, subprice, remise, ref,";
 			$sql.= " total_ht, total_tva, total_localtax1, total_localtax2, total_ttc";
 			$sql.= ")";
-			$sql.= " VALUES (".$this->id.", '" . addslashes($label) . "','" . addslashes($desc) . "',";
+			$sql.= " VALUES (".$this->id.", '" . $this->db->escape($label) . "','" . $this->db->escape($desc) . "',";
 			if ($fk_product) { $sql.= $fk_product.","; }
 			else { $sql.= "null,"; }
 			$sql.= "'".$product_type."',";
@@ -1230,7 +1230,7 @@ class CommandeFournisseur extends Commande
 
 	  $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseurdet";
 	  $sql .= " (fk_commande,label,description,fk_product, price, qty, tva_tx, localtax1_tx, localtax2_tx, remise_percent, subprice, remise, ref)";
-	  $sql .= " VALUES (".$idc.", '" . addslashes($libelle) . "','" . addslashes($comclient->lines[$i]->desc) . "'";
+	  $sql .= " VALUES (".$idc.", '" . $this->db->escape($libelle) . "','" . $this->db->escape($comclient->lines[$i]->desc) . "'";
 	  $sql .= ",".$comclient->lines[$i]->fk_product.",'".price2num($comclient->lines[$i]->price)."'";
 	  $sql .= ", '".$comclient->lines[$i]->qty."', ".$comclient->lines[$i]->tva_tx.", ".$comclient->lines[$i]->localtax1_tx.", ".$comclient->lines[$i]->localtax2_tx.", ".$comclient->lines[$i]->remise_percent;
 	  $sql .= ", '".price2num($comclient->lines[$i]->subprice)."','0','".$ref."') ;";
@@ -1257,8 +1257,8 @@ class CommandeFournisseur extends Commande
 		$result = 0;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
-		$sql.= " SET note  ='".addslashes($note)."',";
-		$sql.= " note_public  ='".addslashes($note_public)."'";
+		$sql.= " SET note  ='".$this->db->escape($note)."',";
+		$sql.= " note_public  ='".$this->db->escape($note_public)."'";
 		$sql.= " WHERE rowid = ".$this->id;
 
 		dol_syslog("CommandeFournisseur::UpdateNote sql=".$sql);
@@ -1424,7 +1424,7 @@ class CommandeFournisseur extends Commande
 
 			// Mise a jour ligne en base
 			$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseurdet SET";
-			$sql.= " description='".addslashes($desc)."'";
+			$sql.= " description='".$this->db->escape($desc)."'";
 			$sql.= ",subprice='".price2num($subprice)."'";
 			$sql.= ",remise='".price2num($remise)."'";
 			$sql.= ",remise_percent='".price2num($remise_percent)."'";

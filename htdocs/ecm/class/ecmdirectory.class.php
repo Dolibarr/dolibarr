@@ -131,10 +131,10 @@ class EcmDirectory // extends CommonObject
 			$sql.= "date_c,";
 			$sql.= "fk_user_c";
 			$sql.= ") VALUES (";
-			$sql.= " '".addslashes($this->label)."',";
+			$sql.= " '".$this->db->escape($this->label)."',";
 			$sql.= " '".$conf->entity."',";
 			$sql.= " '".$this->fk_parent."',";
-			$sql.= " '".addslashes($this->description)."',";
+			$sql.= " '".$this->db->escape($this->description)."',";
 			$sql.= " ".($this->cachenbofdoc).",";
 			$sql.= " '".$this->db->idate($this->date_c)."',";
 			$sql.= " '".$this->fk_user_c."'";
@@ -201,9 +201,9 @@ class EcmDirectory // extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories SET";
-		$sql.= " label='".addslashes($this->label)."',";
+		$sql.= " label='".$this->db->escape($this->label)."',";
 		$sql.= " fk_parent='".$this->fk_parent."',";
-		$sql.= " description='".addslashes($this->description)."'";
+		$sql.= " description='".$this->db->escape($this->description)."'";
 		$sql.= " WHERE rowid=".$this->id;
 
 		dol_syslog("EcmDirectories::update sql=".$sql, LOG_DEBUG);

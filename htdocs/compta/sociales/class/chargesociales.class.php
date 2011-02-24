@@ -123,7 +123,7 @@ class ChargeSociales extends CommonObject
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."chargesociales (fk_type, libelle, date_ech, periode, amount)";
-		$sql.= " VALUES (".$this->type.",'".addslashes($this->lib)."',";
+		$sql.= " VALUES (".$this->type.",'".$this->db->escape($this->lib)."',";
 		$sql.= " '".$this->db->idate($this->date_ech)."','".$this->db->idate($this->periode)."',";
 		$sql.= " ".price2num($newamount);
 		$sql.= ")";
@@ -180,7 +180,7 @@ class ChargeSociales extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales";
-		$sql.= " SET libelle='".addslashes($this->lib)."',";
+		$sql.= " SET libelle='".$this->db->escape($this->lib)."',";
 		$sql.= " date_ech='".$this->db->idate($this->date_ech)."',";
 		$sql.= " periode='".$this->db->idate($this->periode)."'";
 		$sql.= " WHERE rowid=".$this->id;
