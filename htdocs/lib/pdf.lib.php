@@ -915,4 +915,42 @@ function pdf_getlinetotalexcltax($object,$i,$outputlangs)
     }
 }
 
+/**
+ *	Return total quantity of products and/or services
+ *	@param		object				Object
+ *	@param		type				Type of line (all=all, 0=product, 1=service, 9=other)
+ *  @param    	outputlang			Object lang for output
+ */
+function pdf_getTotalQty($object,$type='',$outputlangs)
+{
+	$total=0;
+	$nblignes=sizeof($object->lines);
+	
+	// Loop on each lines
+	for ($i = 0 ; $i < $nblignes ; $i++)
+	{
+		if ($object->lines[$i]->special_code != 3)
+		{
+			if ($type=='all')
+			{
+				$total += $object->lines[$i]->qty;
+			}
+			else if ($type==9 && !empty($object->hooks) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code))
+			{
+				// TODO add hook function
+			}
+			else if ($type==0 && $object->lines[$i]->product_type == 0)
+			{
+				$total += $object->lines[$i]->qty;
+			}
+			else if ($type==1 && $object->lines[$i]->product_type == 1)
+			{
+				$total += $object->lines[$i]->qty;
+			}
+		}
+	}
+	
+	return $total;
+}
+
 ?>
