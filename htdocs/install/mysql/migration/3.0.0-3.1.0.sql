@@ -30,4 +30,6 @@ DELETE from llx_const where NAME = 'MAIN_MENUFRONT_BARRETOP';
 DELETE from llx_const where NAME = 'MAIN_MENU_BARRELEFT';
 DELETE from llx_const where NAME = 'MAIN_MENUFRONT_BARRELEFT';
 
+ALTER TABLE llx_facture_fourn ADD column   ref_ext             varchar(30) after entity;
+
 
