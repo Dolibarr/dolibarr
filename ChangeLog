@@ -16,6 +16,7 @@ For users:
 - New: Standing orders module use bank account from banks module.
 - New: Ask password when creating a user from a contact.
 - New: task #10577: Use a numbering module for shipment and contract
+- Fix: Better Postgresql compatibility.
 
 For developers:
 - New: External modules can add their own menu manager.
