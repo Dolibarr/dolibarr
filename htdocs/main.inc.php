@@ -1068,7 +1068,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
     $menutop = new MenuTop($db);
 	$menutop->atarget=$target;
 	$menutop->showmenu();
-	
+
 	print "\n</div>\n";
 
 	// Link to login card
@@ -1102,7 +1102,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	$loginhtmltext.='<br><b>'.$langs->trans("CurrentUserLanguage").'</b>: '.($s?$s.' ':'').$langs->getDefaultLang();
 	$loginhtmltext.='<br><b>'.$langs->trans("Browser").'</b>: '.$conf->browser->name.' ('.$_SERVER['HTTP_USER_AGENT'].')';
 	if (! empty($conf->browser->phone)) $loginhtmltext.='<br><b>'.$langs->trans("Phone").'</b>: '.$conf->browser->phone;
-	if (! empty($_SESSION["disablemodules"])) $loginhtmltext.='<br><b>'.$langs->trans("DisabledModules").'</b>: <br>'.join('<br>',explode(',',$_SESSION["disablemodules"]));
+	if (! empty($_SESSION["disablemodules"])) $loginhtmltext.='<br><b>'.$langs->trans("DisabledModules").'</b>: <br>'.join(', ',explode(',',$_SESSION["disablemodules"]));
 
 	// Link info
 	$logouthtmltext=''; $logouttext='';
@@ -1125,12 +1125,12 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 		$logouttext.=' alt="'.dol_escape_htmltag($langs->trans("Logout")).'" title=""';
 		$logouttext.='>';
 	}
-	
+
 	print '<div class="login_block">'."\n";
     print '<table class="nobordernopadding" summary=""><tr>';
-	
+
 	print $html->textwithtooltip('',$loginhtmltext,2,1,$logintext,'',1);
-	
+
 	// Select entity
 	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY))
 	{
