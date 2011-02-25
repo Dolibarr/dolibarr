@@ -42,16 +42,16 @@ if (empty($dolibarr_main_demo)) accessforbidden('Parameter dolibarr_main_demo mu
 
 $demoprofiles=array(
 	array('default'=>'-1', 'key'=>'profdemofun','label'=>'DemoFundation',
-	'disablemodules'=>'banque,barcode,boutique,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,facture,ficheinter,fournisseur,prelevement,produit,projet,propal,propale,service,societe,stock,tax',
+	'disablemodules'=>'banque,barcode,boutique,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,facture,ficheinter,fournisseur,prelevement,product,projet,propal,propale,service,societe,stock,tax',
 	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png'),
 	array('default'=>'0', 'key'=>'profdemofun2','label'=>'DemoFundation2',
-	'disablemodules'=>'barcode,boutique,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,facture,ficheinter,fournisseur,prelevement,produit,projet,propal,propale,service,societe,stock',
+	'disablemodules'=>'barcode,boutique,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,facture,ficheinter,fournisseur,prelevement,product,projet,propal,propale,service,societe,stock,tax',
 	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png'),
 	array('default'=>'1', 'key'=>'profdemoservonly','label'=>'DemoCompanyServiceOnly',
-	'disablemodules'=>'adherent,barcode,boutique,cashdesk,don,expedition,externalsite,prelevement,stock',
+	'disablemodules'=>'adherent,barcode,boutique,cashdesk,categorie,don,expedition,externalsite,prelevement,product,stock',
 	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot8.png'),
 	array('default'=>'-1','key'=>'profdemoshopwithdesk','label'=>'DemoCompanyShopWithCashDesk',
-	'disablemodules'=>'adherent,boutique,don,externalsite,ficheinter,prelevement,produit,stock',
+	'disablemodules'=>'adherent,boutique,don,externalsite,ficheinter,prelevement,product,stock',
 	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot2.png'),
 	array('default'=>'0', 'key'=>'profdemoprodstock','label'=>'DemoCompanyProductAndStocks',
 	'disablemodules'=>'adherent,boutique,don,externalsite,ficheinter,prelevement,service',
@@ -66,8 +66,8 @@ $alwaysuncheckedmodules=array('paybox','paypal','filemanager','google','scanner'
 $alwayshiddenmodules=array('accounting','barcode','bookmark','boutique','clicktodial','document','domain','externalrss','externalsite','fckeditor','ftp','geoipmaxmind','gravatar','label','ldap','mantis','memcached','notification',
                             'syslog','user','webservices',
                             // Extended modules
-                            'awstats','bittorrent','cabinetmed','filemanager','monitoring','nltechno','ovh','phenix','phpsysinfo','submiteverywhere',
-                            'thomsonphonebook','webcalendar','webmail');
+                            'awstats','bittorrent','cabinetmed','filemanager','monitoring','nltechno','ovh','phenix','phpsysinfo','postnuke','submiteverywhere',
+                            'survey','thomsonphonebook','voyage','webcalendar','webmail');
 
 // Search modules
 $dirlist=$conf->file->dol_document_root;
