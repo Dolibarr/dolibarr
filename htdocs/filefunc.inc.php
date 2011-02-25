@@ -134,7 +134,7 @@ if (1 == 1)	// Use auto forge url.
 		foreach($paths as $path)
 		{
 			if ($path) $concatpath.='/'.$path;
-			//print $real_$dolibarr_main_document_root.'-'.realpath($_SERVER["DOCUMENT_ROOT"].$concatpath).'<br>';
+			//print $real_dolibarr_main_document_root.'-'.realpath($_SERVER["DOCUMENT_ROOT"].$concatpath).'<br>';
 			if ($real_dolibarr_main_document_root == realpath($_SERVER["DOCUMENT_ROOT"].$concatpath))
 			{
 				$tmp3=$concatpath;
