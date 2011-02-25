@@ -90,7 +90,18 @@ class modMantis extends DolibarrModules
 		//------
 		$r=0;
 
-		$this->menu[$r]=array('fk_menu'=>0,'type'=>'top','titre'=>'BugTracker','mainmenu'=>'mantis','leftmenu'=>'1','url'=>'/mantis/mantis.php','langs'=>'other','position'=>100,'perms'=>'','target'=>'','user'=>0);
+        $this->menu[$r]=array('fk_menu'=>0,
+                              'type'=>'top',
+                              'titre'=>'BugTracker',
+                              'mainmenu'=>'mantis',
+                              'leftmenu'=>'1',
+                              'url'=>'/mantis/mantis.php',
+                              'langs'=>'other',
+                              'position'=>100,
+                              'enabled'=>'$conf->mantis->enabled',
+                              'perms'=>'',
+                              'target'=>'',
+                              'user'=>0);
 		$r++;
 
 	}
