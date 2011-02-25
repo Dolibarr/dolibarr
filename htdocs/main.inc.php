@@ -588,7 +588,7 @@ if (! defined('NOLOGIN'))
 		}
 
 		// Module webcalendar
-		if (! empty($conf->webcal->enabled) && $user->webcal_login != "")
+		if (! empty($conf->webcalendar->enabled) && $user->webcal_login != "")
 		{
 			$domain='';
 
