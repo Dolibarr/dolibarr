@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -435,7 +435,8 @@ else
 	$sql.= " AND b.fk_type= 'CHQ'";
 	$sql.= " AND b.fk_bordereau = ".$remisecheque->id;
 	$sql.= " ORDER BY $sortfield $sortorder";
-	//print $sql;
+
+	dol_syslog(basename(__FILE__)." sql=".$sql);
 	$resql = $db->query($sql);
 	if ($resql)
 	{
