@@ -191,7 +191,7 @@ if ($_POST["action"] == 'add_action')
 	}
 
 	// Special for module webcal and phenix
-	if ($_POST["add_webcal"] == 'on' && $conf->webcal->enabled) $actioncomm->use_webcal=1;
+	if ($_POST["add_webcal"] == 'on' && $conf->webcalendar->enabled) $actioncomm->use_webcal=1;
 	if ($_POST["add_phenix"] == 'on' && $conf->phenix->enabled) $actioncomm->use_phenix=1;
 
 	// Check parameters
@@ -1021,7 +1021,7 @@ function add_row_for_calendar_link()
 	$nbtr=0;
 
 	// Lien avec calendrier si module active
-	if ($conf->webcal->enabled)
+	if ($conf->webcalendar->enabled)
 	{
 		if ($conf->global->PHPWEBCALENDAR_SYNCRO != 'never')
 		{

@@ -746,7 +746,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	// Autres caracteristiques issus des autres modules
 
 	// Module Webcalendar
-	if ($conf->webcal->enabled)
+	if ($conf->webcalendar->enabled)
 	{
 		print "<tr>".'<td valign="top">'.$langs->trans("LoginWebcal").'</td>';
 		print '<td><input size="30" type="text" name="webcal_login" value="'.$_POST["webcal_login"].'"></td></tr>';
@@ -903,7 +903,7 @@ else
 			$rowspan=11;
 			if ($conf->societe->enabled) $rowspan++;
 			if ($conf->adherent->enabled) $rowspan++;
-			if ($conf->webcal->enabled) $rowspan++;
+			if ($conf->webcalendar->enabled) $rowspan++;
 			if ($conf->phenix->enabled) $rowspan+=2;
 
 			// Login
@@ -1037,7 +1037,7 @@ else
 			// Autres caracteristiques issus des autres modules
 
 			// Module Webcalendar
-			if ($conf->webcal->enabled)
+			if ($conf->webcalendar->enabled)
 			{
 				$langs->load("other");
 				print '<tr><td valign="top">'.$langs->trans("LoginWebcal").'</td>';
@@ -1309,7 +1309,7 @@ else
 			$rowspan=9;
 			if ($conf->societe->enabled) $rowspan++;
 			if ($conf->adherent->enabled) $rowspan++;
-			if ($conf->webcal->enabled) $rowspan++;
+			if ($conf->webcalendar->enabled) $rowspan++;
 			if ($conf->phenix->enabled) $rowspan+=2;
 
 			print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
@@ -1525,7 +1525,7 @@ else
 			// Autres caracteristiques issus des autres modules
 
 			// Module Webcalendar
-			if ($conf->webcal->enabled)
+			if ($conf->webcalendar->enabled)
 			{
 				$langs->load("other");
 				print "<tr>".'<td valign="top">'.$langs->trans("LoginWebcal").'</td>';

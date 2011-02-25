@@ -197,7 +197,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 	}
 
 	// Financial
-	if ($conf->compta->enabled || $conf->accounting->enabled
+	if ($conf->comptabilite->enabled || $conf->accounting->enabled
 	|| $conf->facture->enabled || $conf->deplacement->enabled || $conf->don->enabled)
 	{
 		$langs->load("compta");
@@ -968,7 +968,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
             }
 
             // Compta simple
-            if ($conf->compta->enabled && $conf->global->FACTURE_VENTILATION)
+            if ($conf->comptabilite->enabled && $conf->global->FACTURE_VENTILATION)
             {
                 $newmenu->add("/compta/ventilation/index.php?leftmenu=ventil",$langs->trans("Dispatch"),0,$user->rights->compta->ventilation->lire);
                 if ($leftmenu=="ventil") $newmenu->add("/compta/ventilation/liste.php",$langs->trans("ToDispatch"),1,$user->rights->compta->ventilation->lire);
@@ -988,7 +988,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
             }
 
             // Rapports
-            if ($conf->compta->enabled || $conf->accounting->enabled)
+            if ($conf->comptabilite->enabled || $conf->accounting->enabled)
             {
                 $langs->load("compta");
 
