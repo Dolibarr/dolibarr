@@ -30,7 +30,7 @@ create table llx_paiementcharge
   num_paiement    varchar(50),
   note            text,
   fk_bank         integer NOT NULL,
-  fk_user_creat   integer,            -- utilisateur qui a cr�� l'info
-  fk_user_modif   integer             -- utilisateur qui a modifi� l'info
+  fk_user_creat   integer,            -- creation user
+  fk_user_modif   integer             -- last modification user
 
 )ENGINE=innodb;
