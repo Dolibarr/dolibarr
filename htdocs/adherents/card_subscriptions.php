@@ -719,8 +719,11 @@ if ($rowid)
                             code=jQuery("#selectoperation option:selected").val();
                             if (code == \'CHQ\')
                             {
-                                jQuery(\'#fieldchqemetteur\').val(jQuery(\'#memberlabel\').val());
                                 jQuery(\'.fieldrequireddyn\').addClass(\'fieldrequired\');
+                            	if (jQuery(\'#fieldrequireddyn\').val() == \'\')
+                            	{
+                                	jQuery(\'#fieldchqemetteur\').val(jQuery(\'#memberlabel\').val());
+                            	}
                             }
                             else
                             {
