@@ -684,7 +684,8 @@ if ($rowid)
         {
             print "\n".'<script type="text/javascript" language="javascript">';
             print 'jQuery(document).ready(function () {
-                        jQuery(".bankswitchclass").'.($bankdirect||$bankviainvoice?'show()':'hide()').';
+                        jQuery(".bankswitchclass").'.($bankdirect||$bankviainvoice||in_array(GETPOST('paymentsave'),array('bankdirect','bankviainvoice'))?'show()':'hide()').';
+                        jQuery(".bankswitchclass2").'.($bankdirect||$bankviainvoice||in_array(GETPOST('paymentsave'),array('bankdirect','bankviainvoice'))?'show()':'hide()').';
                         jQuery("#none").click(function() {
                             jQuery(".bankswitchclass").hide();
                             jQuery(".bankswitchclass2").hide();
