@@ -329,13 +329,14 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
                 {
                     require_once(DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php');
                     require_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
+                    require_once(DOL_DOCUMENT_ROOT.'/lib/functions.lib.php');
 
                     // Creation de la ligne paiement
                     $amounts[$invoice->id] = price2num($cotisation);
                     $paiement = new Paiement($db);
                     $paiement->datepaye     = $datecotisation;
                     $paiement->amounts      = $amounts;
-                    $paiement->paiementid   = $operation;
+                    $paiement->paiementid   = dol_getIdFromCode($db,$operation,'paiement');
                     $paiement->num_paiement = $num_chq;
                     $paiement->note         = $label;
 
@@ -442,12 +443,12 @@ if ($rowid)
     print $html->showrefnav($adh,'rowid');
     print '</td></tr>';
 
-    // Nom
-    print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur">'.$adh->nom.'&nbsp;</td>';
+    // Name
+    print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur">'.$adh->lastname.'&nbsp;</td>';
     print '</tr>';
 
-    // Prenom
-    print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur">'.$adh->prenom.'&nbsp;</td>';
+    // Firstname
+    print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur">'.$adh->firstname.'&nbsp;</td>';
     print '</tr>';
 
     // Login
@@ -679,7 +680,8 @@ if ($rowid)
         {
             print "\n".'<script type="text/javascript" language="javascript">';
             print 'jQuery(document).ready(function () {
-                        jQuery(".bankswitchclass").'.($bankdirect||$bankviainvoice?'show()':'hide()').';
+                        jQuery(".bankswitchclass").'.($bankdirect||$bankviainvoice||in_array(GETPOST('paymentsave'),array('bankdirect','bankviainvoice'))?'show()':'hide()').';
+                        jQuery(".bankswitchclass2").'.($bankdirect||$bankviainvoice||in_array(GETPOST('paymentsave'),array('bankdirect','bankviainvoice'))?'show()':'hide()').';
                         jQuery("#none").click(function() {
                             jQuery(".bankswitchclass").hide();
                             jQuery(".bankswitchclass2").hide();
@@ -696,6 +698,14 @@ if ($rowid)
                             jQuery(".bankswitchclass").hide();
                             jQuery(".bankswitchclass2").show();
                         });
+                        jQuery("#selectoperation").change(function() {
+                            code=jQuery("#selectoperation option:selected").val();
+                            if (code == \'CHQ\')
+                            {
+                                jQuery(\'#fieldchqemetteur\').val(jQuery(\'#memberlabel\').val());
+                                jQuery(\'#fieldchqemetteur\').val(jQuery(\'#memberlabel\').val());
+                            }
+                        });
                         ';
             if (GETPOST('paymentsave')) print 'jQuery("#'.GETPOST('paymentsave').'").attr(\'checked\',true);';
     	    print '});';
@@ -706,6 +716,8 @@ if ($rowid)
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="cotisation">';
         print '<input type="hidden" name="rowid" value="'.$rowid.'">';
+        print '<input type="hidden" name="memberlabel" id="memberlabel" value="'.dol_escape_htmltag($adh->getFullName()).'">';
+        print '<input type="hidden" name="thirdpartylabel" id="thirdpartylabel" value="'.dol_escape_htmltag($company->name).'">';
         print "<table class=\"border\" width=\"100%\">\n";
 
         $today=mktime();
@@ -804,7 +816,7 @@ if ($rowid)
 
                 // Payment mode
                 print '<tr class="bankswitchclass"><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
-                $html->select_types_paiements($_POST["operation"],'operation');
+                $html->select_types_paiements($_POST["operation"],'operation','',2);
                 print "</td></tr>\n";
 
                 print '<tr class="bankswitchclass2"><td>'.$langs->trans('Numero');

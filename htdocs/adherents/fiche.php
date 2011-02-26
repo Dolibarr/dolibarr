@@ -157,12 +157,12 @@ if ($_POST["action"] == 'confirm_create_user' && $_POST["confirm"] == 'yes' && $
 		if ($result < 0)
 		{
 			$langs->load("errors");
-			$msg=$langs->trans($nuser->error);
+			$errmsg=$langs->trans($nuser->error);
 		}
 	}
 	else
 	{
-		$msg=$adh->error;
+		$errmsg=$adh->error;
 	}
 }
 
@@ -178,12 +178,13 @@ if ($_POST["action"] == 'confirm_create_thirdparty' && $_POST["confirm"] == 'yes
 		if ($result < 0)
 		{
 			$langs->load("errors");
-			$msg=$langs->trans($company->error);
+			$errmsg=$langs->trans($company->error);
+			$errmsgs=$company->errors;
 		}
 	}
 	else
 	{
-		$msg=$adh->error;
+		$errmsg=$adh->error;
 	}
 }
 
@@ -471,7 +472,7 @@ if ($user->rights->adherent->supprimer && $_REQUEST["action"] == 'confirm_delete
     }
     else
     {
-    	$mesg=$adh->error;
+    	$errmesg=$adh->error;
     }
 }
 
@@ -613,8 +614,8 @@ if ($action == 'create')
 
     print_fiche_titre($langs->trans("NewMember"));
 
-    if ($errmsg) print '<div class="error">'.$errmsg.'</div>';
-    if ($mesg) print '<div class="ok">'.$mesg.'</div>';
+    dol_htmloutput_errors($errmsg,$errmsgs);
+    dol_htmloutput_mesg($mesg,$mesgs);
 
     if ($conf->use_javascript_ajax)
     {
