@@ -120,32 +120,27 @@ if (! empty($dolibarr_main_document_root_alt))
 }
 // Define DOL_MAIN_URL_ROOT and DOL_URL_ROOT
 $tmp=$dolibarr_main_url_root;
-if (1 == 1)	// Use auto forge url.
+$found=0;
+$real_dolibarr_main_document_root=str_replace('\\','/',realpath($dolibarr_main_document_root));
+$pathroot=$_SERVER["DOCUMENT_ROOT"];
+$paths=explode('/',str_replace('\\','/',$_SERVER["SCRIPT_NAME"]));
+$concatpath='';
+foreach($paths as $path)
 {
-	if (! empty($_SERVER["SCRIPT_URL"]) && ! empty($_SERVER["SCRIPT_URI"]))
-	{
-		$tmp=str_replace($_SERVER["SCRIPT_URL"],'',$_SERVER["SCRIPT_URI"]);
-	}
-	else
-	{
-		$real_dolibarr_main_document_root=str_replace('\\','/',realpath($dolibarr_main_document_root));
-		$paths=explode('/',str_replace('\\','/',$_SERVER["SCRIPT_NAME"]));
-		$concatpath='';
-		foreach($paths as $path)
-		{
-			if ($path) $concatpath.='/'.$path;
-			//print $real_dolibarr_main_document_root.'-'.realpath($_SERVER["DOCUMENT_ROOT"].$concatpath).'<br>';
-			if ($real_dolibarr_main_document_root == realpath($_SERVER["DOCUMENT_ROOT"].$concatpath))
-			{
-				$tmp3=$concatpath;
-				//print "Found relative url = ".$tmp3;
-				break;
-			}
-		}
-		$tmp='http'.((empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != 'on')?'':'s').'://'.$_SERVER["SERVER_NAME"].((empty($_SERVER["SERVER_PORT"])||$_SERVER["SERVER_PORT"]==80)?'':':'.$_SERVER["SERVER_PORT"]).($tmp3?(preg_match('/^\//',$tmp3)?'':'/').$tmp3:'');
-		//print "tmp1=".$tmp1." tmp2=".$tmp2." tmp3=".$tmp3." tmp=".$tmp;
-	}
+    if ($path) $concatpath.='/'.$path;
+    //print $real_$dolibarr_main_document_root.'-'.realpath($pathroot.$concatpath).'<br>';
+    if ($real_dolibarr_main_document_root == realpath($pathroot.$concatpath))
+    {
+        $tmp3=$concatpath;
+        //print "Found relative url = ".$tmp3;
+        $found=1;
+        break;
+    }
 }
+if (! $found) $tmp=$dolibarr_main_url_root;
+else $tmp='http'.((empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != 'on')?'':'s').'://'.$_SERVER["SERVER_NAME"].((empty($_SERVER["SERVER_PORT"])||$_SERVER["SERVER_PORT"]==80)?'':':'.$_SERVER["SERVER_PORT"]).($tmp3?(preg_match('/^\//',$tmp3)?'':'/').$tmp3:'');
+//print "tmp1=".$tmp1." tmp2=".$tmp2." tmp3=".$tmp3." tmp=".$tmp;
+
 if (! empty($dolibarr_main_force_https)) $tmp=preg_replace('/^http:/i','https:',$tmp);
 define('DOL_MAIN_URL_ROOT', $tmp);											// URL absolute root (https://sss/dolibarr, ...)
 $uri=preg_replace('/^http(s?):\/\//i','',constant('DOL_MAIN_URL_ROOT'));	// $uri contains url without http*
