@@ -361,7 +361,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
                     $paiement = new Paiement($db);
                     $paiement->datepaye     = $datecotisation;
                     $paiement->amounts      = $amounts;
-                    $paiement->paiementid   = dol_getIdFromCode($db,$operation,'paiement');
+                    $paiement->paiementid   = dol_getIdFromCode($db,$operation,'c_paiement');
                     $paiement->num_paiement = $num_chq;
                     $paiement->note         = $label;
 
@@ -720,7 +720,7 @@ if ($rowid)
                             if (code == \'CHQ\')
                             {
                                 jQuery(\'.fieldrequireddyn\').addClass(\'fieldrequired\');
-                            	if (jQuery(\'#fieldrequireddyn\').val() == \'\')
+                            	if (jQuery(\'#fieldchqemetteur\').val() == \'\')
                             	{
                                 	jQuery(\'#fieldchqemetteur\').val(jQuery(\'#memberlabel\').val());
                             	}

@@ -91,7 +91,7 @@ if ($_POST['action'] == 'add_paiement' || ($_POST['action'] == 'confirm_paiement
 	}
 
 	// Check parameters
-	if ($_POST['paiementid'] <= 0)
+	if (! GETPOST('paiementcode'))
 	{
 		$fiche_erreur_message = '<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('PaymentMode')).'</div>';
 		$error++;
@@ -151,7 +151,7 @@ if ($_POST['action'] == 'confirm_paiement' && $_POST['confirm'] == 'yes')
 		$paiement = new Paiement($db);
 		$paiement->datepaye     = $datepaye;
 		$paiement->amounts      = $amounts;   // Tableau de montant
-		$paiement->paiementid   = $_POST['paiementid'];
+		$paiement->paiementid   = dol_getIdFromCode($db,$_POST['paiementcode'],'c_paiement');
 		$paiement->num_paiement = $_POST['num_paiement'];
 		$paiement->note         = $_POST['comment'];
 
@@ -234,13 +234,37 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 			$formquestion[$i++]=array('type' => 'hidden','name' => 'type',  'value' => $facture->type);
 		}
 
+        if ($conf->use_javascript_ajax)
+        {
+            print "\n".'<script type="text/javascript" language="javascript">';
+			print 'jQuery(document).ready(function () {';
+			print 'jQuery("#selectpaiementcode").change(function() {
+                            code=jQuery("#selectpaiementcode option:selected").val();
+                            if (code == \'CHQ\')
+                            {
+                                jQuery(\'.fieldrequireddyn\').addClass(\'fieldrequired\');
+                            	if (jQuery(\'#fieldchqemetteur\').val() == \'\')
+                            	{
+                                	jQuery(\'#fieldchqemetteur\').val(jQuery(\'#thirdpartylabel\').val());
+                            	}
+                            }
+                            else
+                            {
+                                jQuery(\'.fieldrequireddyn\').removeClass(\'fieldrequired\');
+                            }
+                        });';
+    	    print '});';
+            print '</script>'."\n";
+        }
+        			
 		print '<form name="add_paiement" action="paiement.php" method="post">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="add_paiement">';
 		print '<input type="hidden" name="facid" value="'.$facture->id.'">';
 		print '<input type="hidden" name="socid" value="'.$facture->socid.'">';
 		print '<input type="hidden" name="type" value="'.$facture->type.'">';
-
+        print '<input type="hidden" name="thirdpartylabel" id="thirdpartylabel" value="'.dol_escape_htmltag($facture->client->name).'">';
+		
 		print '<table class="border" width="100%">';
 
 		print '<tr><td><span class="fieldrequired">'.$langs->trans('Company').'</span></td><td colspan="2">'.$facture->client->getNomUrl(4)."</td></tr>\n";
@@ -254,7 +278,7 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 		print '<td>'.$langs->trans('Comments').'</td></tr>';
 
 		print '<tr><td><span class="fieldrequired">'.$langs->trans('PaymentMode').'</span></td><td>';
-		$html->select_types_paiements(empty($_POST['paiementid'])?'':$_POST['paiementid'],'paiementid');
+		$html->select_types_paiements(empty($_POST['paiementcode'])?'':$_POST['paiementcode'],'paiementcode','',2);
 		print "</td>\n";
 
 		print '<td rowspan="5" valign="top">';
@@ -280,10 +304,10 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 		print '</td>';
 		print '<td><input name="num_paiement" type="text" value="'.(empty($_POST['num_paiement'])?'':$_POST['num_paiement']).'"></td></tr>';
 
-		print '<tr><td>'.$langs->trans('CheckTransmitter');
+		print '<tr><td class="fieldrequireddyn">'.$langs->trans('CheckTransmitter');
 		print ' <em>('.$langs->trans("ChequeMaker").')</em>';
 		print '</td>';
-		print '<td><input name="chqemetteur" size="30" type="text" value="'.(empty($_POST['chqemetteur'])?$facture->client->nom:$_POST['chqemetteur']).'"></td></tr>';
+		print '<td><input id="fieldchqemetteur" name="chqemetteur" size="30" type="text" value="'.(empty($_POST['chqemetteur'])?'':$_POST['chqemetteur']).'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans('Bank');
 		print ' <em>('.$langs->trans("ChequeBank").')</em>';
