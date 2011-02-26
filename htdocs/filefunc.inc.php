@@ -137,7 +137,10 @@ foreach($paths as $path)
         break;
     }
 }
-if (! $found) $tmp=$dolibarr_main_url_root;
+if (! $found)	// If autodetect fails (Ie: when uing apache alias that point outside default DOCUMENT_ROOT. 
+{
+	$tmp=$dolibarr_main_url_root;
+}
 else $tmp='http'.((empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != 'on')?'':'s').'://'.$_SERVER["SERVER_NAME"].((empty($_SERVER["SERVER_PORT"])||$_SERVER["SERVER_PORT"]==80)?'':':'.$_SERVER["SERVER_PORT"]).($tmp3?(preg_match('/^\//',$tmp3)?'':'/').$tmp3:'');
 //print "tmp1=".$tmp1." tmp2=".$tmp2." tmp3=".$tmp3." tmp=".$tmp;
 
