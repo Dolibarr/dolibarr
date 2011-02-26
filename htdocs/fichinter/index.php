@@ -141,7 +141,7 @@ if ($result)
 		print "</td>\n";
 		print '<td>';
 		$companystatic->nom=$objp->nom;
-		$companystatic->socid=$objp->socid;
+		$companystatic->id=$objp->socid;
 		$companystatic->client=$objp->client;
 		print $companystatic->getNomUrl(1,'',44);
 		print '<td>'.dol_htmlentitiesbr(dol_trunc($objp->description,20)).'</td>';
