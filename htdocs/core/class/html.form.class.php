@@ -1541,13 +1541,13 @@ class Form
 
 
     /**
-     *      \brief      Retourne la liste des modes de paiements possibles
-     *      \param      selected        Id du mode de paiement pre-selectionne
-     *      \param      htmlname        Nom de la zone select
-     *      \param      filtertype      To filter on field type in llx_c_paiement
-     *      \param      format          0=id+libelle, 1=code+code, 2=code+libelle
-     *      \param      empty			1=peut etre vide, 0 sinon
-     * 		\param		noadmininfo		0=Add admin info, 1=Disable admin info
+     *      Return list of payment methods
+     *      @param      selected        Id du mode de paiement pre-selectionne
+     *      @param      htmlname        Nom de la zone select
+     *      @param      filtertype      To filter on field type in llx_c_paiement
+     *      @param      format          0=id+libelle, 1=code+code, 2=code+libelle
+     *      @param      empty			1=peut etre vide, 0 sinon
+     * 		@param		noadmininfo		0=Add admin info, 1=Disable admin info
      */
     function select_types_paiements($selected='',$htmlname='paiementtype',$filtertype='',$format=0, $empty=0, $noadmininfo=0)
     {
