@@ -178,7 +178,7 @@ if ($_POST["action"] == 'confirm_create_thirdparty' && $_POST["confirm"] == 'yes
 	{
 		// Creation user
 		$company = new Societe($db);
-		$result=$company->create_from_member($adh,$_POST["name"]);
+		$result=$company->create_from_member($adh,$_POST["companyname"]);
 
 		if ($result < 0)
 		{
