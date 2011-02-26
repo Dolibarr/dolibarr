@@ -3458,7 +3458,7 @@ function dol_htmloutput_errors($mesgstring='',$mesgarray='')
 {
 	global $langs;
 
-	$ret = 0;
+	$ret = '';
 	$langs->load("errors");
 
 	if (is_array($mesgarray) && sizeof($mesgarray))
