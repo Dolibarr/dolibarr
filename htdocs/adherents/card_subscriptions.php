@@ -703,7 +703,11 @@ if ($rowid)
                             if (code == \'CHQ\')
                             {
                                 jQuery(\'#fieldchqemetteur\').val(jQuery(\'#memberlabel\').val());
-                                jQuery(\'#fieldchqemetteur\').val(jQuery(\'#memberlabel\').val());
+                                jQuery(\'.fieldrequireddyn\').addClass(\'fieldrequired\');
+                            }
+                            else
+                            {
+                                jQuery(\'.fieldrequireddyn\').removeClass(\'fieldrequired\');
                             }
                         });
                         ';
@@ -824,7 +828,7 @@ if ($rowid)
                 print '</td>';
                 print '<td><input id="fieldnum_chq" name="num_chq" type="text" size="8" value="'.(empty($_POST['num_chq'])?'':$_POST['num_chq']).'"></td></tr>';
 
-                print '<tr class="bankswitchclass2"><td>'.$langs->trans('CheckTransmitter');
+                print '<tr class="bankswitchclass2 fieldrequireddyn"><td>'.$langs->trans('CheckTransmitter');
                 print ' <em>('.$langs->trans("ChequeMaker").')</em>';
                 print '</td>';
                 print '<td><input id="fieldchqemetteur" name="chqemetteur" size="32" type="text" value="'.(empty($_POST['chqemetteur'])?$facture->client->nom:$_POST['chqemetteur']).'"></td></tr>';
