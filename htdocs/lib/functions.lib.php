@@ -3457,7 +3457,7 @@ function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok')
 {
 	global $langs;
 
-	$ret = 0;
+	$ret = '';
 
 	if (is_array($mesgarray) && sizeof($mesgarray))
 	{

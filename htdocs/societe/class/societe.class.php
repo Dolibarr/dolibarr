@@ -2225,7 +2225,7 @@ class Societe extends CommonObject
         else
         {
             // $this->error deja positionne
-            dol_syslog("Societe::create_from_member - 2 - ".$this->error, LOG_ERR);
+            dol_syslog("Societe::create_from_member - 2 - ".$this->error." - ".join(',',$this->errors), LOG_ERR);
 
             $this->db->rollback();
             return $result;
