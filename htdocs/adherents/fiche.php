@@ -390,7 +390,7 @@ if ($_POST["action"] == 'add' && $user->rights->adherent->creer)
     // Check parameters
     if (empty($morphy) || $morphy == "-1") {
     	$error++;
-        $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Person"))."<br>\n";
+        $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Nature"))."<br>\n";
     }
     // Test si le login existe deja
     if (empty($login)) {
@@ -638,7 +638,7 @@ if ($action == 'create')
     // Moral-Physique
     $morphys["phy"] = $langs->trans("Physical");
     $morphys["mor"] = $langs->trans("Moral");
-    print '<tr><td><span class="fieldrequired">'.$langs->trans("Person")."</span></td><td>\n";
+    print '<tr><td><span class="fieldrequired">'.$langs->trans("Nature")."</span></td><td>\n";
     print $html->selectarray("morphy", $morphys, isset($_POST["morphy"])?$_POST["morphy"]:$adh->morphy, 1);
     print "</td>\n";
 
@@ -841,7 +841,7 @@ if ($action == 'edit')
 	// Physique-Moral
 	$morphys["phy"] = $langs->trans("Physical");
 	$morphys["mor"] = $langs->trans("Morale");
-	print '<tr><td><span class="fieldrequired">'.$langs->trans("Person").'</span></td><td colspan="2">';
+	print '<tr><td><span class="fieldrequired">'.$langs->trans("Nature").'</span></td><td colspan="2">';
 	print $html->selectarray("morphy",  $morphys, isset($_POST["morphy"])?$_POST["morphy"]:$adh->morphy);
 	print "</td></tr>";
 
@@ -1155,7 +1155,7 @@ if ($rowid && $action != 'edit')
 	print '</td></tr>';
 
     // Morphy
-    print '<tr><td>'.$langs->trans("Person").'</td><td class="valeur" colspan="2">'.$adh->getmorphylib().'</td></tr>';
+    print '<tr><td>'.$langs->trans("Nature").'</td><td class="valeur" colspan="2">'.$adh->getmorphylib().'</td></tr>';
 
     // Company
     print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur" colspan="2">'.$adh->societe.'</td></tr>';
@@ -1375,7 +1375,7 @@ if ($rowid && $action != 'edit')
 		{
 			if ($user->rights->societe->creer)
 			{
-				if ($adh->statut != -1) print '<a class="butAction" href="fiche.php?rowid='.$adh->id.'&amp;action=create_thirdparty">'.$langs->trans("CreateDolibarrThirdParty").'</a>';
+				if ($adh->statut != -1) print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$adh->id.'&amp;action=create_thirdparty">'.$langs->trans("CreateDolibarrThirdParty").'</a>';
 				else print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("CreateDolibarrThirdParty").'</a>';
 			}
 			else
@@ -1389,7 +1389,7 @@ if ($rowid && $action != 'edit')
 		{
 			if ($user->rights->user->user->creer)
 			{
-				if ($adh->statut != -1) print '<a class="butAction" href="fiche.php?rowid='.$adh->id.'&amp;action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a>';
+				if ($adh->statut != -1) print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$adh->id.'&amp;action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a>';
 				else print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("CreateDolibarrLogin").'</a>';
 			}
 			else

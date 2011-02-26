@@ -88,8 +88,33 @@ if ($rowid)
  * 	Actions
  */
 
+// Create third party from a member
+if ($action == 'confirm_create_thirdparty' && $_POST["confirm"] == 'yes' && $user->rights->societe->creer)
+{
+	if ($result > 0)
+	{
+		// Creation user
+		$company = new Societe($db);
+		$result=$company->create_from_member($adh,$_POST["companyname"]);
+		
+		if ($result < 0)
+		{
+			$langs->load("errors");
+			$errmsg=$langs->trans($company->error);
+			$errmsgs=$company->errors;
+		}
+		else
+		{
+			$action='addsubscription';
+		}
+	}
+	else
+	{
+		$errmsg=$adh->error;
+	}
+}
 
-if ($_POST['action'] == 'setuserid' && ($user->rights->user->self->creer || $user->rights->user->user->creer))
+if ($action == 'setuserid' && ($user->rights->user->self->creer || $user->rights->user->user->creer))
 {
     $error=0;
     if (empty($user->rights->user->user->creer))    // If can edit only itself user, we can link to itself only
@@ -113,7 +138,7 @@ if ($_POST['action'] == 'setuserid' && ($user->rights->user->self->creer || $use
     }
 }
 
-if ($_POST['action'] == 'setsocid')
+if ($action == 'setsocid')
 {
     $error=0;
     if (! $error)
@@ -148,7 +173,7 @@ if ($_POST['action'] == 'setsocid')
     }
 }
 
-if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisation' && ! $_POST["cancel"])
+if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $_POST["cancel"])
 {
     $error=0;
 
@@ -547,15 +572,7 @@ if ($rowid)
     dol_fiche_end();
 
 
-    if ($errmsg)
-    {
-        if (preg_match('/^Error/i',$errmsg))
-        {
-            $langs->load("errors");
-            $errmsg=$langs->trans($errmsg);
-        }
-        print '<div class="error">'.$errmsg.'</div>'."\n";
-    }
+    dol_htmloutput_errors($errmg,$errmsgs);
 
 
     /*
@@ -565,11 +582,11 @@ if ($rowid)
     // Lien nouvelle cotisation si non brouillon et non resilie
     if ($user->rights->adherent->cotisation->creer)
     {
-        if ($action != 'addsubscription')
+        if ($action != 'addsubscription' && $action != 'create_thirdparty')
         {
             print '<div class="tabsAction">';
 
-            if ($adh->statut > 0) print "<a class=\"butAction\" href=\"card_subscriptions.php?rowid=$rowid&action=addsubscription\">".$langs->trans("AddSubscription")."</a>";
+            if ($adh->statut > 0) print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$rowid.'&action=addsubscription">'.$langs->trans("AddSubscription")."</a>";
             else print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("AddSubscription").'</a>';
 
             print "<br>\n";
@@ -583,7 +600,7 @@ if ($rowid)
     /*
      * List of subscriptions
      */
-    if ($action != 'addsubscription')
+    if ($action != 'addsubscription' && $action != 'create_thirdparty')
     {
         $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe,";
         $sql.= " c.rowid as crowid, c.cotisation,";
@@ -662,7 +679,7 @@ if ($rowid)
     /*
      * Add new subscription form
      */
-    if ($action == 'addsubscription' && $user->rights->adherent->cotisation->creer)
+    if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->rights->adherent->cotisation->creer)
     {
         print '<br>';
 
@@ -716,11 +733,34 @@ if ($rowid)
             print '</script>'."\n";
         }
 
+
+		// Confirm create third party
+		if ($_GET["action"] == 'create_thirdparty')
+		{
+			$name = $adh->getFullName($langs);
+			if (! empty($name))
+			{
+				if ($adh->societe) $name.=' ('.$adh->societe.')';
+			}
+			else
+			{
+				$name=$adh->societe;
+			}
+	
+			// Create a form array
+			$formquestion=array(
+			array('label' => $langs->trans("NameToCreate"), 'type' => 'text', 'name' => 'companyname', 'value' => $name));
+	
+			$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?rowid=".$adh->id,$langs->trans("CreateDolibarrThirdParty"),$langs->trans("ConfirmCreateThirdParty"),"confirm_create_thirdparty",$formquestion,1);
+			if ($ret == 'html') print '<br>';
+		}
+
+        
         print '<form name="cotisation" method="post" action="'.$_SERVER["PHP_SELF"].'">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="cotisation">';
         print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-        print '<input type="hidden" name="memberlabel" id="memberlabel" value="'.dol_escape_htmltag($adh->getFullName()).'">';
+        print '<input type="hidden" name="memberlabel" id="memberlabel" value="'.dol_escape_htmltag($adh->getFullName($langs)).'">';
         print '<input type="hidden" name="thirdpartylabel" id="thirdpartylabel" value="'.dol_escape_htmltag($company->name).'">';
         print "<table class=\"border\" width=\"100%\">\n";
 
@@ -799,7 +839,13 @@ if ($rowid)
                     if (empty($adh->fk_soc) || empty($bankviainvoice)) print ' disabled="true"';
                     print '> '.$langs->trans("MoreActionBankViaInvoice");
                     if ($adh->fk_soc) print ' ('.$langs->trans("ThirdParty").': '.$company->getNomUrl(1).')';
-                    else print ' ('.$langs->trans("NoThirdPartyAssociatedToMember").')';
+                    else 
+                    {
+                    	print ' ('.$langs->trans("NoThirdPartyAssociatedToMember");
+                    	print ' - <a href="'.$_SERVER["PHP_SELF"].'?rowid='.$adh->id.'&amp;action=create_thirdparty">';
+                    	print $langs->trans("CreateDolibarrThirdParty");
+                    	print '</a>)';
+                    }
                     print '<br>';
                 }
                 if ($conf->societe->enabled && $conf->facture->enabled)
@@ -808,7 +854,13 @@ if ($rowid)
                     if (empty($adh->fk_soc) || empty($bankviainvoice)) print ' disabled="true"';
                     print '> '.$langs->trans("MoreActionInvoiceOnly");
                     if ($adh->fk_soc) print ' ('.$langs->trans("ThirdParty").': '.$company->getNomUrl(1).')';
-                    else print ' ('.$langs->trans("NoThirdPartyAssociatedToMember").')';
+                    else 
+                    {
+                    	print ' ('.$langs->trans("NoThirdPartyAssociatedToMember");
+                    	print ' - <a href="'.$_SERVER["PHP_SELF"].'?rowid='.$adh->id.'&amp;action=create_thirdparty">';
+                    	print $langs->trans("CreateDolibarrThirdParty");
+                    	print '</a>)';
+                    }
                     print '<br>';
                 }
                 print '</td></tr>';
