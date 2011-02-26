@@ -713,7 +713,7 @@ if ($rowid)
                         });
     	                jQuery("#invoiceonly").click(function() {
                             jQuery(".bankswitchclass").hide();
-                            jQuery(".bankswitchclass2").show();
+                            jQuery(".bankswitchclass2").hide();
                         });
                         jQuery("#selectoperation").change(function() {
                             code=jQuery("#selectoperation option:selected").val();
