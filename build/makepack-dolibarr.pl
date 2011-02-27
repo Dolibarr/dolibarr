@@ -219,9 +219,11 @@ if ($nboftargetok) {
     if ($nboftargetneedcvs)
 	{
     	print "Go to directory $SOURCE\n";
+   		$olddir=getcwd();
    		chdir("$SOURCE");
     	print "Run cvs update -P -d\n";
     	$ret=`cvs update -P -d 2>&1`;
+    	chdir("$olddir");
 	}
 	
     # Update buildroot if required
@@ -302,6 +304,7 @@ if ($nboftargetok) {
             }
             else
             {
+                print "Move $FILENAMETGZ.tgz to $DESTI/$FILENAMETGZ.tgz\n";
         		$ret=`mv "$FILENAMETGZ.tgz" "$DESTI/$FILENAMETGZ.tgz"`;
             }
     		next;
@@ -313,17 +316,24 @@ if ($nboftargetok) {
     		unlink("$FILENAMEZIP.zip");
     		print "Compress $FILENAMETGZ into $FILENAMEZIP.zip...\n";
  
-     		print "Go to directory $BUILDROOT\n";
+            print "Go to directory $BUILDROOT\n";
+     		$olddir=getcwd();
      		chdir("$BUILDROOT");
- 
     		$cmd= "7z a -r -tzip -xr\@\"$BUILDROOT\/$FILENAMETGZ\/build\/zip\/zip_exclude.txt\" -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMETGZ\\*";
 			print $cmd."\n";
 			$ret= `$cmd`;
-			#print $ret;
-			#print "Go to directory $DESTI\n";
-     		#chdir("$DESTI");
-			print "Move $FILENAMEZIP.zip to $DESTI\n";
-    		rename("$BUILDROOT/$FILENAMEZIP.zip","$DESTI/$FILENAMEZIP.zip");
+            chdir("$olddir");
+            			
+            if ($OS =~ /windows/i)
+            {
+                print "Move $FILENAMEZIP.zip to $DESTI/$FILENAMEZIP.zip\n";
+                $ret=`mv "$BUILDROOT/$FILENAMEZIP.zip" "$DESTI/$FILENAMEZIP.zip"`;
+            }
+            else
+            {
+                print "Move $FILENAMEZIP.zip to $DESTI/$FILENAMEZIP.zip\n";
+                $ret=`mv "$BUILDROOT/$FILENAMEZIP.zip" "$DESTI/$FILENAMEZIP.zip"`;
+            }
     		next;
     	}
     
@@ -469,12 +479,25 @@ if ($nboftargetok) {
 		    $ret=`chmod -R 755 $BUILDROOT/$PROJECT/DEBIAN`;
 
      		print "Go to directory $BUILDROOT\n";
+            $olddir=getcwd();
      		chdir("$BUILDROOT");
  
     		$cmd="dpkg -b $BUILDROOT/$PROJECT $BUILDROOT/${FILENAMEDEB}.deb";
     		print "Launch DEB build ($cmd)\n";
     		$ret=`$cmd`;
     		print $ret."\n";
+            chdir("$olddir");
+    		
+            if ($OS =~ /windows/i)
+            {
+                print "Move ${FILENAMEDEB}.deb to $BUILDROOT/${FILENAMEDEB}.deb\n";
+                $ret=`mv "$BUILDROOT/${FILENAMEDEB}.deb" "$DESTI/${FILENAMEDEB}.deb"`;
+            }
+            else
+            {
+                print "Move ${FILENAMEDEB}.deb to $BUILDROOT/${FILENAMEDEB}.deb\n";
+                $ret=`mv "$BUILDROOT/${FILENAMEDEB}.deb" "$DESTI/${FILENAMEDEB}.deb"`;
+            }
         	next;
         }
         
