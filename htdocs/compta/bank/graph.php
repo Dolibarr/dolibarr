@@ -846,7 +846,7 @@ if ($mode == 'showalltime')
 {
 	print '<tr><td align="center">';
 	$file = "balance".$account.".png";
-	print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=bank_temp&file='.$file.'" alt="" title="">';
+	print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='.$file.'" alt="" title="">';
 	print '</td></tr>';
 }
 
