@@ -43,6 +43,7 @@ ErrorModuleRequirePHPVersion= Erreur, ce module requiert une version %s ou supé
 ErrorModuleRequireDolibarrVersion= Erreur, ce module requiert une version %s ou supérieure de Dolibarr
 ErrorDecimalLargerThanAreForbidden= Erreur, les précisions supérieures à <b>%s</b> ne sont pas supportées.
 DictionnarySetup= Dictionnaires
+Dictionnary= Dictionnaires
 DisableJavascript= Désactiver les fonctions Javascript et Ajax
 ConfirmAjax= Utiliser les popups de confirmation Ajax
 UseSearchToSelectCompany= Utiliser un champ avec autocomplétion pour choisir un tiers (plutôt qu'une liste déroulante).<br><br>Notez que si vous avez un nombre important de produits ou services (> 100 000), vous pouvez améliorer les performances en définissant la constante SOCIETE_DONOTSEARCH_ANYWHERE à 1 dans Configuration->Divers. La recherche sera alors limitée au début de la chaine.
