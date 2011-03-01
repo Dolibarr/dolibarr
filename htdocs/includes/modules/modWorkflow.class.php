@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin  <regis@dolibarr.fr>
+/* Copyright (C) 2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +26,7 @@
 /**
  *      \file       htdocs/includes/modules/modWorkflow.class.php
  *      \ingroup    workflow
- *      \brief      Fichier de description et activation du module Workflow
+ *      \brief      File to describe and activate module Workflow
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
@@ -58,7 +59,7 @@ class modWorkflow extends DolibarrModules
         // Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
         $this->description = "Workflow management";
         // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-        $this->version = 'experimental';
+        $this->version = 'dolibarr';
         // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         // Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
