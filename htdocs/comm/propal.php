@@ -1507,7 +1507,7 @@ if ($id > 0 || ! empty($ref))
 			// Close
 			if ($object->statut == 1 && $user->rights->propale->cloturer)
 			{
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=statut#close"';
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=statut'.(empty($conf->global->MAIN_JUMP_TAG)?'':'#close').'"';
 				print '>'.$langs->trans('Close').'</a>';
 			}
 
