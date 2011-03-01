@@ -311,15 +311,15 @@ if ($nboftargetok) {
     	}
 
     	if ($target eq 'ZIP') {
-    		print "Rename $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMETGZ\n";
-			rename("$BUILDROOT/$PROJECT","$BUILDROOT/$FILENAMETGZ");
+    		print "Rename $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMEZIP\n";
+			rename("$BUILDROOT/$PROJECT","$BUILDROOT/$FILENAMEZIP");
     		unlink("$FILENAMEZIP.zip");
     		print "Compress $FILENAMEZIP into $FILENAMEZIP.zip...\n";
  
             print "Go to directory $BUILDROOT\n";
      		$olddir=getcwd();
      		chdir("$BUILDROOT");
-    		$cmd= "7z a -r -tzip -xr\@\"$BUILDROOT\/$FILENAMETGZ\/build\/zip\/zip_exclude.txt\" -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMETGZ\\*";
+    		$cmd= "7z a -r -tzip -xr\@\"$BUILDROOT\/$FILENAMEZIP\/build\/zip\/zip_exclude.txt\" -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMEZIP\\*";
 			print $cmd."\n";
 			$ret= `$cmd`;
             chdir("$olddir");
