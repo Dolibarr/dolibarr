@@ -311,8 +311,8 @@ if ($nboftargetok) {
         }
 
         if ($target eq 'ZIP') {
-            print "Rename $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMETGZ\n";
-            rename("$BUILDROOT/$PROJECT","$BUILDROOT/$FILENAMETGZ");
+            print "Rename $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMEZIP\n";
+            rename("$BUILDROOT/$PROJECT","$BUILDROOT/$FILENAMEZIP");
             unlink("$FILENAMEZIP.zip");
             print "Compress $FILENAMEZIP into $FILENAMEZIP.zip...\n";
  
