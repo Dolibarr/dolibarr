@@ -49,13 +49,12 @@ class CommonDocGenerator
         return array(
             'myuser_lastname'=>$user->lastname,
             'myuser_firstname'=>$user->firstname,
-            /*'myuser_login'=>$user->login,
+            'myuser_login'=>$user->login,
             'myuser_phone'=>$user->officephone,
             'myuser_fax'=>$user->officefax,
             'myuser_mobile'=>$user->user_mobile,
             'myuser_email'=>$user->user_email,
-            'myuser_web'=>$user->url,
-            'myuser_note'=>$user->note*/
+            'myuser_web'=>$user->url
         );
     }
 
