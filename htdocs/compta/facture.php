@@ -548,6 +548,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 			$object->type              = 1;
 
 			$facid=$object->createFromCurrent($user);
+			if ($facid <= 0) $mesg=$object->error;
 		}
 	}
 
@@ -1426,6 +1427,17 @@ if ($_GET['action'] == 'create')
 	}
 	$absolute_discount=$soc->getAvailableDiscounts();
 
+
+	if ($conf->use_javascript_ajax)
+	{
+        print '<script>
+            jQuery(function() {
+                jQuery( "#fac_replacement" ).combobox();
+                jQuery( "#fac_avoir" ).combobox();
+            });
+            </script>';
+	}
+
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
@@ -1555,12 +1567,12 @@ if ($_GET['action'] == 'create')
 	print '>';
 	print '</td><td valign="middle">';
 	$text=$langs->trans("InvoiceReplacementAsk").' ';
-	$text.='<select class="flat" name="fac_replacement"';
+	$text.='<select class="flat" name="fac_replacement" id="fac_replacement"';
 	if (! $options) $text.=' disabled="true"';
 	$text.='>';
 	if ($options)
 	{
-		$text.='<option value="-1">&nbsp;</option>';
+		$text.='<option value="-1"></option>';
 		$text.=$options;
 	}
 	else
@@ -1580,12 +1592,12 @@ if ($_GET['action'] == 'create')
 	print '</td><td valign="middle">';
 	$text=$langs->transnoentities("InvoiceAvoirAsk").' ';
 	//	$text.='<input type="text" value="">';
-	$text.='<select class="flat" name="fac_avoir"';
+	$text.='<select class="flat" name="fac_avoir" id="fac_avoir"';
 	if (! $optionsav) $text.=' disabled="true"';
 	$text.='>';
 	if ($optionsav)
 	{
-		$text.='<option value="-1">&nbsp;</option>';
+		$text.='<option value="-1"></option>';
 		$text.=$optionsav;
 	}
 	else
@@ -1644,7 +1656,7 @@ if ($_GET['action'] == 'create')
 	print $html->selectarray('model',$liste,$conf->global->FACTURE_ADDON_PDF);
 	print "</td></tr>";
 
-	// Note publique
+	// Public note
 	print '<tr>';
 	print '<td class="border" valign="top">'.$langs->trans('NotePublic').'</td>';
 	print '<td valign="top" colspan="2">';
@@ -1655,7 +1667,7 @@ if ($_GET['action'] == 'create')
 	}
 	print '</textarea></td></tr>';
 
-	// Note privee
+	// Private note
 	if (! $user->societe_id)
 	{
 		print '<tr>';
