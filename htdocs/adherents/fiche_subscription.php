@@ -129,7 +129,7 @@ if ($user->rights->adherent->cotisation->creer && $_REQUEST["action"] == 'update
 if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && $user->rights->adherent->cotisation->creer)
 {
 	$result=$subscription->fetch($rowid);
-    $result=$subscription->delete();
+    $result=$subscription->delete($user);
     if ($result > 0)
     {
     	Header("Location: card_subscriptions.php?rowid=".$subscription->fk_adherent);
