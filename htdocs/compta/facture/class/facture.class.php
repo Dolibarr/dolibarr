@@ -44,6 +44,7 @@ class Facture extends CommonObject
 {
     var $db;
     var $error;
+    var $errors=array();
     var $element='facture';
     var $table_element='facture';
     var $table_element_line = 'facturedet';
@@ -464,6 +465,11 @@ class Facture extends CommonObject
         dol_syslog("Facture::createFromCurrent invertdetail=".$invertdetail." socid=".$this->socid." nboflines=".sizeof($facture->lines));
 
         $facid = $facture->create($user);
+        if ($facid <= 0)
+        {
+            $this->error=$facture->error;
+            $this->errors=$facture->errors;
+        }
 
         return $facid;
     }
