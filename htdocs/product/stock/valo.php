@@ -91,7 +91,7 @@ if ($result)
 	print "<tr class=\"liste_titre\">";
 	print_liste_field_titre($langs->trans("Ref"),"valo.php", "e.label","","","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("LocationSummary"),"valo.php", "e.lieu","","","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("EstimatedStockValue"),"valo.php", "valo",'','','align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("EstimatedStockValue"),"valo.php", "e.valo_pmp",'','','align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),"valo.php", "e.statut",'','','align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
