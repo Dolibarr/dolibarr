@@ -314,7 +314,7 @@ if ($nboftargetok) {
     		print "Rename $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMETGZ\n";
 			rename("$BUILDROOT/$PROJECT","$BUILDROOT/$FILENAMETGZ");
     		unlink("$FILENAMEZIP.zip");
-    		print "Compress $FILENAMETGZ into $FILENAMEZIP.zip...\n";
+    		print "Compress $FILENAMEZIP into $FILENAMEZIP.zip...\n";
  
             print "Go to directory $BUILDROOT\n";
      		$olddir=getcwd();
