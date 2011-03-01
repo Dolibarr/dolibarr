@@ -44,7 +44,7 @@ class InterfaceWorkflowManager
         $this->name = preg_replace('/^Interface/i','',get_class($this));
         $this->family = "core";
         $this->description = "Triggers of this module allows to manage workflows";
-        $this->version = 'experimental';            // 'development', 'experimental', 'dolibarr' or version
+        $this->version = 'dolibarr';            // 'development', 'experimental', 'dolibarr' or version
     }
 
 

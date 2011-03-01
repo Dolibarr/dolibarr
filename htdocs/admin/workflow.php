@@ -30,6 +30,7 @@ require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 
 $langs->load("admin");
+$langs->load("workflow");
 
 if (!$user->admin)
 accessforbidden();
@@ -101,7 +102,7 @@ if (sizeof($workflowcodes) > 0)
     {
     	$var = !$var;
     	print "<tr ".$bc[$var].">\n";
-    	print "<td>".$langs->trans($code)."</td>\n";
+    	print "<td>".$langs->trans('desc'.$code)."</td>\n";
     	if (! empty($conf->global->$code))
     	{
             print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=del'.$code.'">';
