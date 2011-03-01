@@ -216,7 +216,7 @@ if ($nboftargetok) {
     	}
 
     	if ($target eq 'ZIP') {
-    		unlink $FILENAMEZIP.zip;
+    		unlink "$FILENAMEZIP.zip";
     		print "Compress $FILENAMETGZ into $FILENAMEZIP.zip...\n";
      		chdir("$BUILDROOT");
             #print "cd $BUILDROOTNT & 7z a -r -tzip -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMETGZ\\*.*\n";
