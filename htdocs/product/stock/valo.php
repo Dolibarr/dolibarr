@@ -65,11 +65,11 @@ if ($sref)
 }
 if ($sall)
 {
-	$sql.= " AND (e.label LIKE '%".addslashes($sall)."%'";
-	$sql.= " OR e.description LIKE '%".addslashes($sall)."%'";
-	$sql.= " OR e.lieu LIKE '%".addslashes($sall)."%'";
-	$sql.= " OR e.address LIKE '%".addslashes($sall)."%'";
-	$sql.= " OR e.ville LIKE '%".addslashes($sall)."%')";
+	$sql.= " AND (e.label LIKE '%".$db->escape($sall)."%'";
+	$sql.= " OR e.description LIKE '%".$db->escape($sall)."%'";
+	$sql.= " OR e.lieu LIKE '%".$db->escape($sall)."%'";
+	$sql.= " OR e.address LIKE '%".$db->escape($sall)."%'";
+	$sql.= " OR e.ville LIKE '%".$db->escape($sall)."%')";
 }
 $sql.= " GROUP BY e.rowid, e.label, e.statut, e.lieu";
 $sql.= " ORDER BY $sortfield $sortorder ";
@@ -91,7 +91,7 @@ if ($result)
 	print "<tr class=\"liste_titre\">";
 	print_liste_field_titre($langs->trans("Ref"),"valo.php", "e.label","","","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("LocationSummary"),"valo.php", "e.lieu","","","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("EstimatedStockValue"),"valo.php", "valo",'','','align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("EstimatedStockValue"),"valo.php", "e.valo_pmp",'','','align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),"valo.php", "e.statut",'','','align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
