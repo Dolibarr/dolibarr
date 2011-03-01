@@ -34,3 +34,7 @@ ALTER TABLE llx_facture_fourn ADD column ref_ext varchar(30) after entity;
 ALTER TABLE llx_commande_fournisseur ADD column ref_ext varchar(30) after entity;
 
 
+ALTER TABLE llx_facturedet DROP INDEX uk_fk_remise_except;
+ALTER TABLE llx_facturedet ADD UNIQUE INDEX uk_fk_remise_except (fk_remise_except, fk_facture);
+
+

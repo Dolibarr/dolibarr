@@ -43,6 +43,7 @@ ALTER TABLE llx_expedition MODIFY date_expedition datetime;
 ALTER TABLE llx_expedition MODIFY date_delivery datetime NULL;
 
 ALTER TABLE llx_societe ADD COLUMN canvas varchar(32) DEFAULT NULL AFTER default_lang;
+ALTER TABLE llx_societe MODIFY canvas varchar(32) DEFAULT NULL;
 
 ALTER TABLE llx_cond_reglement RENAME TO llx_c_payment_term;
 ALTER TABLE llx_expedition_methode RENAME TO llx_c_shipment_mode;
@@ -159,3 +160,6 @@ UPDATE llx_documentmodel set type='order_supplier' WHERE type='supplier_order';
 UPDATE llx_c_type_contact set element='invoice_supplier' WHERE element='facture_fourn';
 UPDATE llx_c_type_contact set module='invoice_supplier' WHERE module='supplier_invoice';
 UPDATE llx_c_type_contact set module='order_supplier' WHERE module='supplier_order';
+
+ALTER TABLE llx_facturedet DROP INDEX uk_fk_remise_except;
+ALTER TABLE llx_facturedet ADD UNIQUE INDEX uk_fk_remise_except (fk_remise_except, fk_facture);
