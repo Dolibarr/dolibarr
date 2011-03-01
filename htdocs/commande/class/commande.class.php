@@ -772,6 +772,91 @@ class Commande extends CommonObject
 	}
 
 
+    /**
+     *      Load an object from a proposal and create a new order into database
+     *      @param      object          Object source
+     *      @param      invertdetail    Reverse sign of amounts for lines
+     *      @return     int             <0 if KO, 0 if nothing done, 1 if OK
+     */
+    function createFromProposal($object,$invertdetail=0)
+    {
+        global $conf,$user,$langs;
+
+        $error=0;
+
+	   // Signed proposal
+        if ($object->statut == 2)
+        {
+            $this->date_commande = dol_now();
+            $this->source = 0;
+
+            for ($i = 0 ; $i < sizeof($object->lines) ; $i++)
+            {
+                $line = new OrderLine($this->db);
+
+                $line->libelle           = $object->lines[$i]->libelle;
+                $line->desc              = $object->lines[$i]->desc;
+                $line->price             = $object->lines[$i]->price;
+                $line->subprice          = $object->lines[$i]->subprice;
+                $line->tva_tx            = $object->lines[$i]->tva_tx;
+                $line->localtax1_tx      = $object->lines[$i]->localtax1_tx;
+                $line->localtax2_tx      = $object->lines[$i]->localtax2_tx;
+                $line->qty               = $object->lines[$i]->qty;
+                $line->fk_remise_except  = $object->lines[$i]->fk_remise_except;
+                $line->remise_percent    = $object->lines[$i]->remise_percent;
+                $line->fk_product        = $object->lines[$i]->fk_product;
+                $line->info_bits         = $object->lines[$i]->info_bits;
+                $line->product_type      = $object->lines[$i]->product_type;
+                $line->special_code      = $object->lines[$i]->special_code;
+
+                $this->lines[$i] = $line;
+            }
+
+            $this->socid                = $object->socid;
+            $this->fk_project           = $object->fk_project;
+            $this->cond_reglement_id    = $object->cond_reglement_id;
+            $this->mode_reglement_id    = $object->mode_reglement_id;
+            $this->date_livraison       = $object->date_livraison;
+            $this->fk_delivery_address  = $object->fk_delivery_address;
+            $this->contact_id           = $object->contactid;
+            $this->ref_client           = $object->ref_client;
+            $this->note                 = $object->note;
+            $this->note_public          = $object->note_public;
+
+            $this->origin      = $object->element;
+            $this->origin_id   = $object->id;
+
+            $ret = $this->create($user);
+
+            if ($ret > 0)
+            {
+                // Hooks
+                if (! empty($object->hooks))
+                {
+                    foreach($object->hooks as $module)
+                    {
+                        $result = $module->createfrom($object,$ret,$this->element);
+                        if ($result < 0) $error++;
+                    }
+                }
+
+                if (! $error)
+                {
+                    // Ne pas passer par la commande provisoire
+                    if ($conf->global->COMMANDE_VALID_AFTER_CLOSE_PROPAL == 1)
+                    {
+                        $this->fetch($ret);
+                        $this->valid($user);
+                    }
+                    return 1;
+                }
+                else return -1;
+            }
+        }
+        else return 0;
+    }
+
+
 	/**
 	 *     Add an order line into database (linked to product/service or not)
 	 *     @param      commandeid      	Id of line
