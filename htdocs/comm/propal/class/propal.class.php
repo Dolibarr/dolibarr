@@ -1540,44 +1540,48 @@ class Propal extends CommonObject
 			}
 		}
 
-		$sql= "SELECT rowid as facid, facnumber, total, datef as df, fk_user_author, fk_statut, paye";
-		$sql.= " FROM ".MAIN_DB_PREFIX."facture";
-		$sql.= " WHERE rowid IN (".implode(',',$linkedInvoices).")";
-
-		dol_syslog("Propal::InvoiceArrayList sql=".$sql);
-		$resql=$this->db->query($sql);
-
-		if ($resql)
+		if (sizeof($linkedInvoices) > 0)
 		{
-			$tab_sqlobj=array();
-			$nump = $this->db->num_rows($resql);
-			for ($i = 0;$i < $nump;$i++)
-			{
-				$sqlobj = $this->db->fetch_object($resql);
-				$tab_sqlobj[] = $sqlobj;
-			}
-			$this->db->free($resql);
+    		$sql= "SELECT rowid as facid, facnumber, total, datef as df, fk_user_author, fk_statut, paye";
+    		$sql.= " FROM ".MAIN_DB_PREFIX."facture";
+    		$sql.= " WHERE rowid IN (".implode(',',$linkedInvoices).")";
 
-			$nump = sizeOf($tab_sqlobj);
+    		dol_syslog("Propal::InvoiceArrayList sql=".$sql);
+    		$resql=$this->db->query($sql);
 
-			if ($nump)
-			{
-				$i = 0;
-				while ($i < $nump)
-				{
-					$obj = array_shift($tab_sqlobj);
+    		if ($resql)
+    		{
+    			$tab_sqlobj=array();
+    			$nump = $this->db->num_rows($resql);
+    			for ($i = 0;$i < $nump;$i++)
+    			{
+    				$sqlobj = $this->db->fetch_object($resql);
+    				$tab_sqlobj[] = $sqlobj;
+    			}
+    			$this->db->free($resql);
 
-					$ga[$i] = $obj;
+    			$nump = sizeOf($tab_sqlobj);
 
-					$i++;
-				}
-			}
-			return $ga;
+    			if ($nump)
+    			{
+    				$i = 0;
+    				while ($i < $nump)
+    				{
+    					$obj = array_shift($tab_sqlobj);
+
+    					$ga[$i] = $obj;
+
+    					$i++;
+    				}
+    			}
+    			return $ga;
+    		}
+    		else
+    		{
+    			return -1;
+    		}
 		}
-		else
-		{
-			return -1;
-		}
+		else return $ga;
 	}
 
 	/**
