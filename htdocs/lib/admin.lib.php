@@ -308,12 +308,12 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='')
 
 
 /**
- *	\brief		Effacement d'une constante dans la base de donnees
- *	\sa			dolibarr_get_const, dolibarr_sel_const
- *	\param	    db          Handler d'acces base
- *	\param	    name		Name of constant or rowid of line
- *	\param	    entity		Multi company id, -1 for all entities
- *	\return     int         <0 if KO, >0 if OK
+ *	Effacement d'une constante dans la base de donnees
+ *	@see		dolibarr_get_const, dolibarr_sel_const
+ *	@param	    db          Handler d'acces base
+ *	@param	    name		Name of constant or rowid of line
+ *	@param	    entity		Multi company id, -1 for all entities
+ *	@return     int         <0 if KO, >0 if OK
  */
 function dolibarr_del_const($db, $name, $entity=1)
 {
@@ -340,12 +340,12 @@ function dolibarr_del_const($db, $name, $entity=1)
 }
 
 /**
- *	\brief      Recupere une constante depuis la base de donnees.
- *	\sa			dolibarr_del_const, dolibarr_set_const
- *	\param	    db          Handler d'acces base
- *	\param	    name				Nom de la constante
- *	\param	    entity			Multi company id
- *	\return     string      Valeur de la constante
+ *	Recupere une constante depuis la base de donnees.
+ *	@see		dolibarr_del_const, dolibarr_set_const
+ *	@param	    db          Handler d'acces base
+ *	@param	    name		Nom de la constante
+ *	@param	    entity		Multi company id
+ *	@return     string      Valeur de la constante
  */
 function dolibarr_get_const($db, $name, $entity=1)
 {
@@ -369,16 +369,16 @@ function dolibarr_get_const($db, $name, $entity=1)
 
 
 /**
- *	\brief      Insert a parameter (key,value) into database.
- *	\sa			dolibarr_del_const, dolibarr_get_const
- *	\param	    db          Database handler
- *	\param	    name		Name of constant
- *	\param	    value		Value of constant
- *	\param	    type		Type of constante (chaine par defaut)
- *	\param	    visible	    Is constant visible in Setup->Other page (0 by default)
- *	\param	    note		Note on parameter
- *	\param	    entity		Multi company id (0 means all entities)
- *	\return     int         -1 if KO, 1 if OK
+ *	Insert a parameter (key,value) into database.
+ *	@see		dolibarr_del_const, dolibarr_get_const
+ *	@param	    db          Database handler
+ *	@param	    name		Name of constant
+ *	@param	    value		Value of constant
+ *	@param	    type		Type of constante (chaine par defaut)
+ *	@param	    visible	    Is constant visible in Setup->Other page (0 by default)
+ *	@param	    note		Note on parameter
+ *	@param	    entity		Multi company id (0 means all entities)
+ *	@return     int         -1 if KO, 1 if OK
  */
 function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $note='', $entity=1)
 {
