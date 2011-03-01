@@ -92,32 +92,40 @@ print "</tr>\n";
 
 clearstatcache();
 
-$workflowcodes=array('WORKFLOW_PROPAL_AUTOCREATE_ORDER'=>'WORKFLOW_PROPAL_AUTOCREATE_ORDER');
+$workflowcodes=array();
+if ($conf->propal->enabled && $conf->commande->enabled) $workflowcodes['WORKFLOW_PROPAL_AUTOCREATE_ORDER']='WORKFLOW_PROPAL_AUTOCREATE_ORDER';
 
-foreach($workflowcodes as $code)
+if (sizeof($workflowcodes) > 0)
 {
-	$var = !$var;
-	print "<tr ".$bc[$var].">\n";
-	print "<td>".$langs->trans($code)."</td>\n";
-	if (! empty($conf->global->$code))
-	{
-        print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=del'.$code.'">';
-        print img_picto($langs->trans("Activated"),'on');
-        print '</a></td>';
-	}
-	else
-	{
-		print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=set'.$code.'">';
-		print img_picto($langs->trans("Disabled"),'off');
-		print '</a></td>';
-	}
+    foreach($workflowcodes as $code)
+    {
+    	$var = !$var;
+    	print "<tr ".$bc[$var].">\n";
+    	print "<td>".$langs->trans($code)."</td>\n";
+    	if (! empty($conf->global->$code))
+    	{
+            print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=del'.$code.'">';
+            print img_picto($langs->trans("Activated"),'on');
+            print '</a></td>';
+    	}
+    	else
+    	{
+    		print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=set'.$code.'">';
+    		print img_picto($langs->trans("Disabled"),'off');
+    		print '</a></td>';
+    	}
 
-	print '<td align="center">';
-	//$s=$modCodeTiers->getToolTip($langs,$soc,-1);
-	//print $form->textwithpicto('',$s,1);
-	print '</td>';
+    	print '<td align="center">';
+    	//$s=$modCodeTiers->getToolTip($langs,$soc,-1);
+    	//print $form->textwithpicto('',$s,1);
+    	print '</td>';
 
-	print '</tr>';
+    	print '</tr>';
+    }
+}
+else
+{
+    print '<tr><td colspan="3">'.$langs->trans("ThereIsNoWorkflowToModify");
 }
 print '</table>';
 

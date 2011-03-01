@@ -101,7 +101,7 @@ class InterfaceWorkflowManager
         if ($action == 'PROPAL_CLOSE_SIGNED')
         {
         	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            if (! empty($conf->commande->enabled) && ! empty($conf->WORKFLOW_PROPAL_AUTOCREATE_ORDER))
+            if (! empty($conf->commande->enabled) && ! empty($conf->global->WORKFLOW_PROPAL_AUTOCREATE_ORDER))
             {
                 include_once(DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php');
                 $order = new Commande($this->db);
