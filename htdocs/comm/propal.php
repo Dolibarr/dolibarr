@@ -1434,17 +1434,17 @@ if ($id > 0 || ! empty($ref))
 		$form_close = '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 		$form_close.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		$form_close.= '<table class="border" width="100%">';
+        $form_close.= '<tr><td width="150"  align="left">'.$langs->trans("CloseAs").'</td><td align="left">';
+        $form_close.= '<input type="hidden" name="action" value="setstatut">';
+        $form_close.= '<select id="statut" name="statut" class="flat">';
+        $form_close.= '<option value="0">&nbsp;</option>';
+        $form_close.= '<option value="2">'.$object->labelstatut[2].'</option>';
+        $form_close.= '<option value="3">'.$object->labelstatut[3].'</option>';
+        $form_close.= '</select>';
+        $form_close.= '</td></tr>';
 		$form_close.= '<tr><td width="150" align="left">'.$langs->trans('Note').'</td><td align="left"><textarea cols="70" rows="'.ROWS_3.'" wrap="soft" name="note">';
 		$form_close.= $object->note;
 		$form_close.= '</textarea></td></tr>';
-		$form_close.= '<tr><td width="150"  align="left">'.$langs->trans("CloseAs").'</td><td align="left">';
-		$form_close.= '<input type="hidden" name="action" value="setstatut">';
-		$form_close.= '<select name="statut">';
-		$form_close.= '<option value="0">&nbsp;</option>';
-		$form_close.= '<option value="2">'.$object->labelstatut[2].'</option>';
-		$form_close.= '<option value="3">'.$object->labelstatut[3].'</option>';
-		$form_close.= '</select>';
-		$form_close.= '</td></tr>';
 		$form_close.= '<tr><td align="center" colspan="2">';
 		$form_close.= '<input type="submit" class="button" name="validate" value="'.$langs->trans('Validate').'">';
 		$form_close.= ' &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
@@ -1489,7 +1489,16 @@ if ($id > 0 || ! empty($ref))
 				}
 			}
 
-			// Create an invoice and classify billed
+            // Create an order
+            if ($conf->commande->enabled && $object->statut == 2 && $user->societe_id == 0)
+            {
+                if ($user->rights->commande->creer)
+                {
+                    print '<a class="butAction" href="'.DOL_URL_ROOT.'/commande/fiche.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateOrder").'</a>';
+                }
+            }
+
+            // Create an invoice and classify billed
 			if ($conf->facture->enabled && $object->statut == 2 && $user->societe_id == 0)
 			{
 				if ($user->rights->facture->creer)
