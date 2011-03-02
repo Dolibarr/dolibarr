@@ -316,7 +316,7 @@ foreach my $target (keys %CHOOSEDTARGET) {
     }
 }
 
-if (! $btach) {
+if (! $batch) {
     print "\nPress key to finish...";
     my $WAITKEY=<STDIN>;
 }
