@@ -983,7 +983,7 @@ class Propal extends CommonObject
 				 */
 				$sql = "SELECT d.rowid, d.fk_propal, d.description, d.price, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.qty, d.fk_remise_except, d.remise_percent, d.subprice, d.fk_product,";
 				$sql.= " d.info_bits, d.total_ht, d.total_tva, d.total_localtax1, d.total_localtax2, d.total_ttc, d.marge_tx, d.marque_tx, d.special_code, d.rang, d.product_type,";
-				$sql.= " p.ref, p.label, p.description as product_desc";
+                $sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label';
 				$sql.= " FROM ".MAIN_DB_PREFIX."propaldet as d";
 				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON d.fk_product = p.rowid";
 				$sql.= " WHERE d.fk_propal = ".$this->id;
@@ -1027,10 +1027,11 @@ class Propal extends CommonObject
 
 						$line->fk_product       = $objp->fk_product;
 
+                        $line->ref              = $objp->product_ref;
 						$line->libelle          = $objp->label;        // TODO deprecated
 						$line->label          	= $objp->label;        // Label produit
 						$line->product_desc     = $objp->product_desc; // Description produit
-						$line->ref              = $objp->ref;
+                        $line->fk_product_type  = $objp->fk_product_type;
 
 						$this->lines[$i]        = $line;
 						//dol_syslog("1 ".$line->fk_product);
@@ -2140,7 +2141,7 @@ class Propal extends CommonObject
 				$this->lines[$i]->ref				= $obj->ref;
 				$this->lines[$i]->product_label		= $obj->product_label;
 				$this->lines[$i]->product_desc		= $obj->product_desc;
-				$this->lines[$i]->fk_product_type	= $obj->fk_product_type;
+				$this->lines[$i]->fk_product_type	= $obj->fk_product_type;  // deprecated
 				$this->lines[$i]->product_type		= $obj->product_type;
 				$this->lines[$i]->qty				= $obj->qty;
 				$this->lines[$i]->subprice			= $obj->subprice;
