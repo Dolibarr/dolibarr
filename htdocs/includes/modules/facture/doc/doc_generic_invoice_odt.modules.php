@@ -89,7 +89,8 @@ class doc_generic_invoice_odt extends ModelePDFFactures
     /**
      * Define array with couple subtitution key => subtitution value
      *
-     * @param $object
+     * @param   $object             Main object to use as data source
+     * @param   $outputlangs        Lang object to use for output
      */
     function get_substitutionarray_object($object,$outputlangs)
     {
@@ -112,8 +113,35 @@ class doc_generic_invoice_odt extends ModelePDFFactures
         );
     }
 
-	/**		\brief      Return description of a module
-	 *      \return     string      Description
+    /**
+     * Define array with couple subtitution key => subtitution value
+     *
+     * @param   $line
+     * @param   $outputlangs        Lang object to use for output
+     */
+    function get_substitutionarray_lines($line,$outputlangs)
+    {
+        global $conf;
+
+        return array(
+            'line_fulldesc'=>$line->product_ref.(($line->product_ref && $line->desc)?' - ':'').$line->desc,
+            'line_product_ref'=>$line->product_ref,
+            'line_desc'=>$line->desc,
+            'line_vatrate'=>vatrate($line->tva_tx,true,$line->info_bits),
+            'line_up'=>price($line->subprice, 0, $outputlangs),
+            'line_qty'=>$line->qty,
+            'line_discount_percent'=>($line->remise_percent?$line->remise_percent.'%':''),
+            'line_price_ht'=>price($line->total_ht, 0, $outputlangs),
+            'line_price_ttc'=>price($line->total_ttc, 0, $outputlangs),
+            'line_price_vat'=>price($line->total_tva, 0, $outputlangs),
+            'line_date_start'=>$line->date_start,
+            'line_date_end'=>$line->date_end
+        );
+    }
+
+	/**		Return description of a module
+     *      @param      langs        Lang object to use for output
+	 *      @return     string       Description
 	 */
 	function info($langs)
 	{
@@ -270,7 +298,8 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				//print "srctemplatepath=".$srctemplatepath;	// Src filename
 				$newfile=basename($srctemplatepath);
 				$newfiletmp=preg_replace('/\.odt/i','',$newfile);
-				$file=$dir.'/'.$newfiletmp.'.'.dol_print_date(dol_now(),'%Y%m%d%H%M%S').'.odt';
+				//$file=$dir.'/'.$newfiletmp.'.'.dol_print_date(dol_now(),'%Y%m%d%H%M%S').'.odt';
+				$file=$dir.'/'.$newfiletmp.'.odt';
 				//print "newdir=".$dir;
 				//print "newfile=".$newfile;
 				//print "file=".$file;
@@ -388,6 +417,46 @@ class doc_generic_invoice_odt extends ModelePDFFactures
                     }
                 }
 
+                try
+                {
+                    $listlines = $odfHandler->setSegment('lines');
+                    //var_dump($object->lines);exit;
+                    foreach ($object->lines as $line)
+                    {
+                        $tmparray=$this->get_substitutionarray_lines($line,$outputlangs);
+                        foreach($tmparray as $key => $val)
+                        {
+                                try {
+                                $listlines->setVars($key, $val);
+                             }
+                             catch(OdfException $e)
+                             {
+                             }
+                             catch(SegmentException $e)
+                             {
+                             }
+                        }
+                        $listlines->merge();
+                    }
+                    $odfHandler->mergeSegment($listlines);
+                }
+                catch(OdfException $e)
+                {
+                    $this->error=$e->getMessage();
+                    dol_syslog($this->error, LOG_WARNING);
+                    return -1;
+                }
+/*
+                $listlines = $odfHandler->setSegment('commande');
+                for ($j = 0; $j < 3; $j++) {
+                        $listlines->setVars('commande_cod', 'phpunittest_cod_' . $j);
+                        $listlines->setVars('commande_des', 'phpunittest_des_' . $j);
+                        $listlines->setVars('commande_qte', 'phpunittest_qte_' . $j);
+                        $listlines->setVars('commande_prix', 'phpunittest_prix_' . $j);
+                        $listlines->merge();
+                }
+                $odfHandler->mergeSegment($listlines);
+*/
 				// Write new file
 				//$result=$odfHandler->exportAsAttachedFile('toto');
 				$odfHandler->saveToDisk($file);
