@@ -11,8 +11,8 @@ use Cwd;
 $PROJECT="dolibarr";
 $MAJOR="3";
 $MINOR="1";
-$BUILD="0-dev";     # Mettre x pour release, x-dev pour dev, x-beta pour beta, x-rc pour release candidate
-$RPMSUBVERSION="1";     # A incrementer au moment de la release
+$BUILD="0-dev";		# Mettre x pour release, x-dev pour dev, x-beta pour beta, x-rc pour release candidate
+$RPMSUBVERSION="1";		# A incrementer au moment de la release
 
 @LISTETARGET=("TGZ","ZIP","RPM","DEB","EXE","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
 %REQUIREMENTTARGET=(                            # Tool requirement for each package
@@ -70,10 +70,10 @@ elsif (-d "/etc" && -d "/Users") { $OS='macosx'; $CR=''; }
 elsif ("$^O" =~ /cygwin/i || "$^O" =~ /win32/i) { $OS='windows'; $CR="\r"; }
 if (! $OS) {
     print "$PROG.$Extension was not able to detect your OS.\n";
-    print "Can't continue.\n";
-    print "$PROG.$Extension aborted.\n";
+	print "Can't continue.\n";
+	print "$PROG.$Extension aborted.\n";
     sleep 2;
-    exit 1;
+	exit 1;
 }
 
 # Define buildroot
@@ -91,7 +91,7 @@ if ($OS =~ /windows/) {
 if (! $TEMP || ! -d $TEMP) {
     print "Error: A temporary directory can not be find.\n";
     print "Check that TEMP or TMP environment variable is set correctly.\n";
-    print "$PROG.$Extension aborted.\n";
+	print "$PROG.$Extension aborted.\n";
     sleep 2;
     exit 2;
 } 
@@ -102,11 +102,11 @@ my $copyalreadydone=0;
 my $batch=0;
 
 for (0..@ARGV-1) {
-    if ($ARGV[$_] =~ /^-*target=(\w+)/i)   { $target=$1; $batch=1; }
-    if ($ARGV[$_] =~ /^-*desti=(.+)/i)     { $DESTI=$1; }
+	if ($ARGV[$_] =~ /^-*target=(\w+)/i)   { $target=$1; $batch=1; }
+	if ($ARGV[$_] =~ /^-*desti=(.+)/i)     { $DESTI=$1; }
     if ($ARGV[$_] =~ /^-*prefix=(.+)/i)    {
-        $PREFIX=$1; 
-        $FILENAMESNAPSHOT.="-".$PREFIX; 
+    	$PREFIX=$1; 
+    	$FILENAMESNAPSHOT.="-".$PREFIX; 
     }
 }
 
@@ -127,40 +127,40 @@ else {
     my $found=0;
     my $NUM_SCRIPT;
     while (! $found) {
-        my $cpt=0;
-        printf(" %d - %3s    (%s)\n",$cpt,"All","Need ".join(",",values %REQUIREMENTTARGET));
-        foreach my $target (@LISTETARGET) {
-            $cpt++;
-            printf(" %d - %3s    (%s)\n",$cpt,$target,"Need ".$REQUIREMENTTARGET{$target});
-        }
+    	my $cpt=0;
+    	printf(" %d - %3s    (%s)\n",$cpt,"All","Need ".join(",",values %REQUIREMENTTARGET));
+    	foreach my $target (@LISTETARGET) {
+    		$cpt++;
+    		printf(" %d - %3s    (%s)\n",$cpt,$target,"Need ".$REQUIREMENTTARGET{$target});
+    	}
     
-        # On demande de choisir le fichier à passer
-        print "Choose one package number or several separated with space: ";
-        $NUM_SCRIPT=<STDIN>; 
-        chomp($NUM_SCRIPT);
-        if ($NUM_SCRIPT =~ s/-//g) {
-            # Do not do copy    
-            $copyalreadydone=1;
-        }
-        if ($NUM_SCRIPT !~ /^[0-$cpt\s]+$/)
-        {
-            print "This is not a valid package number list.\n";
-            $found = 0;
-        }
-        else
-        {
-            $found = 1;
-        }
+    	# On demande de choisir le fichier à passer
+    	print "Choose one package number or several separated with space: ";
+    	$NUM_SCRIPT=<STDIN>; 
+    	chomp($NUM_SCRIPT);
+    	if ($NUM_SCRIPT =~ s/-//g) {
+    		# Do not do copy	
+    		$copyalreadydone=1;
+    	}
+    	if ($NUM_SCRIPT !~ /^[0-$cpt\s]+$/)
+    	{
+    		print "This is not a valid package number list.\n";
+    		$found = 0;
+    	}
+    	else
+    	{
+    		$found = 1;
+    	}
     }
     print "\n";
     if ($NUM_SCRIPT) {
-        foreach my $num (split(/\s+/,$NUM_SCRIPT)) {
-            $CHOOSEDTARGET{$LISTETARGET[$num-1]}=1;
-        }
+    	foreach my $num (split(/\s+/,$NUM_SCRIPT)) {
+    		$CHOOSEDTARGET{$LISTETARGET[$num-1]}=1;
+    	}
     }
     else {
-        foreach my $key (@LISTETARGET) {
-            $CHOOSEDTARGET{$key}=1;
+    	foreach my $key (@LISTETARGET) {
+    	    $CHOOSEDTARGET{$key}=1;
         }
     }
 }
@@ -201,15 +201,15 @@ $nboftargetneedbuildroot=0;
 $nboftargetneedcvs=0;
 foreach my $target (keys %CHOOSEDTARGET) {
     if ($CHOOSEDTARGET{$target} < 0) { next; }
-    if ($target ne 'EXE' && $target ne 'EXEDOLIWAMP') 
-    {
-        $nboftargetneedbuildroot++;
-    }
-    if ($target eq 'SNAPSHOT')
-    {
-        $nboftargetneedcvs++;
-    }
-    $nboftargetok++;
+	if ($target ne 'EXE' && $target ne 'EXEDOLIWAMP') 
+	{
+		$nboftargetneedbuildroot++;
+	}
+	if ($target eq 'SNAPSHOT')
+	{
+		$nboftargetneedcvs++;
+	}
+	$nboftargetok++;
 }
 
 if ($nboftargetok) {
@@ -217,47 +217,47 @@ if ($nboftargetok) {
     # Update CVS if required
     #-----------------------
     if ($nboftargetneedcvs)
-    {
-        print "Go to directory $SOURCE\n";
-        $olddir=getcwd();
-        chdir("$SOURCE");
-        print "Run cvs update -P -d\n";
-        $ret=`cvs update -P -d 2>&1`;
-        chdir("$olddir");
-    }
-    
+	{
+    	print "Go to directory $SOURCE\n";
+   		$olddir=getcwd();
+   		chdir("$SOURCE");
+    	print "Run cvs update -P -d\n";
+    	$ret=`cvs update -P -d 2>&1`;
+    	chdir("$olddir");
+	}
+	
     # Update buildroot if required
     #-----------------------------
     if ($nboftargetneedbuildroot)
-    {
-        if (! $copyalreadydone) {
-            print "Delete directory $BUILDROOT\n";
-            $ret=`rm -fr "$BUILDROOT"`;
-        
-            mkdir "$BUILDROOT";
-            mkdir "$BUILDROOT/dolibarr";
-            print "Copy $SOURCE into $BUILDROOT/dolibarr\n";
-            $ret=`cp -pr "$SOURCE" "$BUILDROOT/dolibarr"`;
-        }
-        print "Clean $BUILDROOT\n";
-        $ret=`rm -fr $BUILDROOT/$PROJECT/.cache`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/.project`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/.settings`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/index.php`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/build/html`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/documents`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/document`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/conf/conf.php.mysql`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/conf/conf.php.old`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/conf/conf.php.postgres`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/conf/conf*sav*`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/custom`;
+	{
+	    if (! $copyalreadydone) {
+	    	print "Delete directory $BUILDROOT\n";
+	    	$ret=`rm -fr "$BUILDROOT"`;
+	    
+	    	mkdir "$BUILDROOT";
+	    	mkdir "$BUILDROOT/$PROJECT";
+	    	print "Copy $SOURCE into $BUILDROOT/$PROJECT\n";
+	    	$ret=`cp -pr "$SOURCE" "$BUILDROOT/$PROJECT"`;
+	    }
+	    print "Clean $BUILDROOT\n";
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/.cache`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/.project`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/.settings`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/index.php`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/build/html`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/documents`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/document`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/conf/conf.php.mysql`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/conf/conf.php.old`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/conf/conf.php.postgres`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/conf/conf*sav*`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/custom`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/custom2`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/theme/bureau2crea`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/test`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/Thumbs.db $BUILDROOT/$PROJECT/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/*/Thumbs.db`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/CVS* $BUILDROOT/$PROJECT/*/CVS* $BUILDROOT/$PROJECT/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/*/CVS*`;
-    }
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/test`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/Thumbs.db $BUILDROOT/$PROJECT/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/*/Thumbs.db`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/CVS* $BUILDROOT/$PROJECT/*/CVS* $BUILDROOT/$PROJECT/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/*/CVS*`;
+	}
     
     # Build package for each target
     #------------------------------
@@ -266,64 +266,64 @@ if ($nboftargetok) {
     
         print "\nBuild package for target $target\n";
 
-        if ($target eq 'SNAPSHOT') {
-            print "Rename $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMESNAPSHOT\n";
-            rename("$BUILDROOT/$PROJECT","$BUILDROOT/$FILENAMESNAPSHOT");
-            unlink("$FILENAMESNAPSHOT.tgz");
+    	if ($target eq 'SNAPSHOT') {
+    		print "Rename $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMESNAPSHOT\n";
+			rename("$BUILDROOT/$PROJECT","$BUILDROOT/$FILENAMESNAPSHOT");
+    		unlink("$DESTI/$FILENAMESNAPSHOT.tgz");
 
-            print "Compress $BUILDROOT into $FILENAMESNAPSHOT.tgz...\n";
-            #$cmd="tar --exclude \"$BUILDROOT/tgz/tar_exclude.txt\" --exclude .cache --exclude .settings --exclude conf.php --directory \"$BUILDROOT\" -czvf \"$FILENAMESNAPSHOT.tgz\" $FILENAMESNAPSHOT";
-            $cmd="tar --exclude doli*.tgz --exclude doli*.deb --exclude doli*.exe --exclude doli*.zip --exclude doli*.rpm --exclude .cache --exclude .settings --exclude conf.php --exclude conf.php.mysql --exclude conf.php.old --exclude conf.php.postgres --directory \"$BUILDROOT\" --mode=go-w --group=500 --owner=500 -czvf \"$FILENAMESNAPSHOT.tgz\" $FILENAMESNAPSHOT";
-            print $cmd."\n";
-            $ret=`$cmd`;
+    		print "Compress $BUILDROOT into $FILENAMESNAPSHOT.tgz...\n";
+   		    #$cmd="tar --exclude \"$BUILDROOT/tgz/tar_exclude.txt\" --exclude .cache --exclude .settings --exclude conf.php --directory \"$BUILDROOT\" -czvf \"$FILENAMESNAPSHOT.tgz\" $FILENAMESNAPSHOT";
+   		    $cmd="tar --exclude doli*.tgz --exclude doli*.deb --exclude doli*.exe --exclude doli*.zip --exclude doli*.rpm --exclude .cache --exclude .settings --exclude conf.php --exclude conf.php.mysql --exclude conf.php.old --exclude conf.php.postgres --directory \"$BUILDROOT\" --mode=go-w --group=500 --owner=500 -czvf \"$FILENAMESNAPSHOT.tgz\" $FILENAMESNAPSHOT";
+			print $cmd."\n";
+			$ret=`$cmd`;
             if ($OS =~ /windows/i)
             {
-                print "Move $FILENAMESNAPSHOT.tgz to $DESTI/$FILENAMESNAPSHOT.tgz\n";
-                $ret=`mv "$FILENAMESNAPSHOT.tgz" "$DESTI/$FILENAMESNAPSHOT.tgz"`;
+        		print "Move $FILENAMESNAPSHOT.tgz to $DESTI/$FILENAMESNAPSHOT.tgz\n";
+        		$ret=`mv "$FILENAMESNAPSHOT.tgz" "$DESTI/$FILENAMESNAPSHOT.tgz"`;
             }
             else
             {
-                print "Move $FILENAMESNAPSHOT.tgz to $DESTI/$FILENAMESNAPSHOT.tgz\n";
-                $ret=`mv "$FILENAMESNAPSHOT.tgz" "$DESTI/$FILENAMESNAPSHOT.tgz"`;
+        		print "Move $FILENAMESNAPSHOT.tgz to $DESTI/$FILENAMESNAPSHOT.tgz\n";
+        		$ret=`mv "$FILENAMESNAPSHOT.tgz" "$DESTI/$FILENAMESNAPSHOT.tgz"`;
             }
-            next;
-        }
+    		next;
+    	}
 
-        if ($target eq 'TGZ') {
-            print "Rename $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMETGZ\n";
-            rename("$BUILDROOT/$PROJECT","$BUILDROOT/$FILENAMETGZ");
-            print "Remove target $FILENAMETGZ.tgz...\n";
-            unlink("$FILENAMETGZ.tgz");
-            print "Compress $FILENAMETGZ into $FILENAMETGZ.tgz...\n";
-            $cmd="tar --exclude-vcs --exclude-from \"$DESTI/tgz/tar_exclude.txt\" --directory \"$BUILDROOT\" --mode=go-w --group=500 --owner=500 -czvf \"$FILENAMETGZ.tgz\" $FILENAMETGZ";
-            $ret=`$cmd`;
+    	if ($target eq 'TGZ') {
+    		print "Rename $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMETGZ\n";
+			rename("$BUILDROOT/$PROJECT","$BUILDROOT/$FILENAMETGZ");
+    		print "Remove target $FILENAMETGZ.tgz...\n";
+    		unlink("$FILENAMETGZ.tgz");
+    		print "Compress $FILENAMETGZ into $FILENAMETGZ.tgz...\n";
+   		    $cmd="tar --exclude-vcs --exclude-from \"$DESTI/tgz/tar_exclude.txt\" --directory \"$BUILDROOT\" --mode=go-w --group=500 --owner=500 -czvf \"$FILENAMETGZ.tgz\" $FILENAMETGZ";
+   		    $ret=`$cmd`;
             if ($OS =~ /windows/i)
             {
-                print "Move $FILENAMETGZ.tgz to $DESTI/$FILENAMETGZ.tgz\n";
-                $ret=`mv "$FILENAMETGZ.tgz" "$DESTI/$FILENAMETGZ.tgz"`;
+        		print "Move $FILENAMETGZ.tgz to $DESTI/$FILENAMETGZ.tgz\n";
+        		$ret=`mv "$FILENAMETGZ.tgz" "$DESTI/$FILENAMETGZ.tgz"`;
             }
             else
             {
                 print "Move $FILENAMETGZ.tgz to $DESTI/$FILENAMETGZ.tgz\n";
-                $ret=`mv "$FILENAMETGZ.tgz" "$DESTI/$FILENAMETGZ.tgz"`;
+        		$ret=`mv "$FILENAMETGZ.tgz" "$DESTI/$FILENAMETGZ.tgz"`;
             }
-            next;
-        }
+    		next;
+    	}
 
-        if ($target eq 'ZIP') {
-            print "Rename $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMEZIP\n";
-            rename("$BUILDROOT/$PROJECT","$BUILDROOT/$FILENAMEZIP");
-            unlink("$FILENAMEZIP.zip");
-            print "Compress $FILENAMEZIP into $FILENAMEZIP.zip...\n";
+    	if ($target eq 'ZIP') {
+    		print "Rename $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMEZIP\n";
+			rename("$BUILDROOT/$PROJECT","$BUILDROOT/$FILENAMEZIP");
+    		unlink("$DESTI/$FILENAMEZIP.zip");
+    		print "Compress $FILENAMEZIP into $FILENAMEZIP.zip...\n";
  
             print "Go to directory $BUILDROOT\n";
-            $olddir=getcwd();
-            chdir("$BUILDROOT");
-            $cmd= "7z a -r -tzip -xr\@\"$BUILDROOT\/$FILENAMEZIP\/build\/zip\/zip_exclude.txt\" -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMEZIP\\*";
-            print $cmd."\n";
-            $ret= `$cmd`;
+     		$olddir=getcwd();
+     		chdir("$BUILDROOT");
+    		$cmd= "7z a -r -tzip -xr\@\"$BUILDROOT\/$FILENAMEZIP\/build\/zip\/zip_exclude.txt\" -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMEZIP\\*";
+			print $cmd."\n";
+			$ret= `$cmd`;
             chdir("$olddir");
-                        
+            			
             if ($OS =~ /windows/i)
             {
                 print "Move $FILENAMEZIP.zip to $DESTI/$FILENAMEZIP.zip\n";
@@ -334,25 +334,25 @@ if ($nboftargetok) {
                 print "Move $FILENAMEZIP.zip to $DESTI/$FILENAMEZIP.zip\n";
                 $ret=`mv "$BUILDROOT/$FILENAMEZIP.zip" "$DESTI/$FILENAMEZIP.zip"`;
             }
-            next;
-        }
+    		next;
+    	}
     
-        if ($target eq 'RPM') {                 # Linux only
-            print "RPM build is not yet available\n";
-            return;
-            
-            print "Rename $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMETGZ\n";
-            rename("$BUILDROOT/$PROJECT","$BUILDROOT/$FILENAMETGZ");
-            unlink("$FILENAMETGZ.tgz");
-            print "Compress $FILENAMETGZ into $FILENAMETGZ.tgz...\n";
-            $ret=`tar --exclude-from "$SOURCE/build/tgz/tar_exclude.txt" --directory "$BUILDROOT" -czvf "$BUILDROOT/$FILENAMETGZ.tgz" $FILENAMETGZ`;
+    	if ($target eq 'RPM') {                 # Linux only
+			print "RPM build is not yet available\n";
+			return;
+			
+    		print "Rename $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMETGZ\n";
+			rename("$BUILDROOT/$PROJECT","$BUILDROOT/$FILENAMETGZ");
+    		unlink("$DESTI/$FILENAMETGZ.tgz");
+    		print "Compress $FILENAMETGZ into $FILENAMETGZ.tgz...\n";
+    		$ret=`tar --exclude-from "$SOURCE/build/tgz/tar_exclude.txt" --directory "$BUILDROOT" -czvf "$BUILDROOT/$FILENAMETGZ.tgz" $FILENAMETGZ`;
 
-            print "Move $FILENAMETGZ.tgz to $RPMDIR/SOURCES/$FILENAMETGZ.tgz\n";
-            $cmd="mv \"$BUILDROOT/$FILENAMETGZ.tgz\" \"$RPMDIR/SOURCES/$FILENAMETGZ.tgz\"";
+    		print "Move $FILENAMETGZ.tgz to $RPMDIR/SOURCES/$FILENAMETGZ.tgz\n";
+    		$cmd="mv \"$BUILDROOT/$FILENAMETGZ.tgz\" \"$RPMDIR/SOURCES/$FILENAMETGZ.tgz\"";
             $ret=`$cmd`;
 
-            $BUILDFIC="$FILENAME.spec";
-            print "Generate file $BUILDROOT/$BUILDFIC\n";
+    		$BUILDFIC="$FILENAME.spec";
+ 			print "Generate file $BUILDROOT/$BUILDFIC\n";
             open (SPECFROM,"<$SOURCE/build/rpm/${BUILDFIC}") || die "Error";
             open (SPECTO,">$BUILDROOT/$BUILDFIC") || die "Error";
             while (<SPECFROM>) {
@@ -362,132 +362,133 @@ if ($nboftargetok) {
             close SPECFROM;
             close SPECTO;
     
-            print "Launch RPM build (rpm --clean -ba $BUILDROOT/${BUILDFIC})\n";
-            $ret=`rpm --clean -ba $BUILDROOT/${BUILDFIC}`;
-        
-            print "Move $RPMDIR/RPMS/noarch/${FILENAMERPM}.noarch.rpm into $DESTI/${FILENAMERPM}.noarch.rpm\n";
-            $cmd="mv \"$RPMDIR/RPMS/noarch/${FILENAMERPM}.noarch.rpm\" \"$DESTI/${FILENAMERPM}.noarch.rpm\"";
-            $ret=`$cmd`;
-            next;
-        }
-        
-        if ($target eq 'DEB') {
-            
-            $ret=`rm -fr $BUILDROOT/$PROJECT/.cvsignore $BUILDROOT/$PROJECT/*/.cvsignore $BUILDROOT/$PROJECT/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/*/*/*/.cvsignore`;
+    		print "Launch RPM build (rpm --clean -ba $BUILDROOT/${BUILDFIC})\n";
+    		$ret=`rpm --clean -ba $BUILDROOT/${BUILDFIC}`;
+    	
+   		    print "Move $RPMDIR/RPMS/noarch/${FILENAMERPM}.noarch.rpm into $DESTI/${FILENAMERPM}.noarch.rpm\n";
+   		    $cmd="mv \"$RPMDIR/RPMS/noarch/${FILENAMERPM}.noarch.rpm\" \"$DESTI/${FILENAMERPM}.noarch.rpm\"";
+    		$ret=`$cmd`;
+    		next;
+    	}
+    	
+    	if ($target eq 'DEB') {
+    		unlink("$DESTI/$FILENAMEDEB.deb");
+			
+		    $ret=`rm -fr $BUILDROOT/$PROJECT/.cvsignore $BUILDROOT/$PROJECT/*/.cvsignore $BUILDROOT/$PROJECT/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/*/*/*/.cvsignore`;
 
-            print "Move $BUILDROOT/$PROJECT $BUILDROOT/$PROJECT.tmp\n";
-            $cmd="mv \"$BUILDROOT/$PROJECT\" \"$BUILDROOT/$PROJECT.tmp\"";
+    		print "Move $BUILDROOT/$PROJECT $BUILDROOT/$PROJECT.tmp\n";
+    		$cmd="mv \"$BUILDROOT/$PROJECT\" \"$BUILDROOT/$PROJECT.tmp\"";
             $ret=`$cmd`;
 
-            print "Create directory $BUILDROOT/$PROJECT/usr/share\n";
-            $ret=`mkdir -p "$BUILDROOT/$PROJECT/usr/share"`;
+    		print "Create directory $BUILDROOT/$PROJECT/usr/share\n";
+    		$ret=`mkdir -p "$BUILDROOT/$PROJECT/usr/share"`;
 
-            print "Move $BUILDROOT/$PROJECT.tmp $BUILDROOT/$PROJECT/usr/share/$PROJECT\n";
-            $cmd="mv \"$BUILDROOT/$PROJECT.tmp\" \"$BUILDROOT/$PROJECT/usr/share/$PROJECT\"";
+    		print "Move $BUILDROOT/$PROJECT.tmp $BUILDROOT/$PROJECT/usr/share/$PROJECT\n";
+    		$cmd="mv \"$BUILDROOT/$PROJECT.tmp\" \"$BUILDROOT/$PROJECT/usr/share/$PROJECT\"";
             $ret=`$cmd`;
-            
-            print "Create directory $BUILDROOT/$PROJECT/DEBIAN\n";
-            $ret=`mkdir "$BUILDROOT/$PROJECT/DEBIAN"`;
-            print "Copy $SOURCE/build/deb/* to $BUILDROOT/$PROJECT/DEBIAN\n";
-            $ret=`cp -r "$SOURCE/build/deb/." "$BUILDROOT/$PROJECT/DEBIAN"`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT/DEBIAN/CVS`;
+    		
+    		print "Create directory $BUILDROOT/$PROJECT/DEBIAN\n";
+    		$ret=`mkdir "$BUILDROOT/$PROJECT/DEBIAN"`;
+    		print "Copy $SOURCE/build/deb/* to $BUILDROOT/$PROJECT/DEBIAN\n";
+    		$ret=`cp -r "$SOURCE/build/deb/." "$BUILDROOT/$PROJECT/DEBIAN"`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECT/DEBIAN/CVS`;
  
-            print "Remove config file\n";
-            $ret=`rm -f $BUILDROOT/$PROJECT/usr/share/$PROJECT/htdocs/conf/conf.php`;
+ 			print "Remove config file\n";
+		    $ret=`rm -f $BUILDROOT/$PROJECT/usr/share/$PROJECT/htdocs/conf/conf.php`;
 
-            print "Remove other files\n";
-            $ret=`rm -f $BUILDROOT/$PROJECT/usr/share/$PROJECT/build/DoliWamp-*`;
-            $ret=`rm -f $BUILDROOT/$PROJECT/usr/share/$PROJECT/build/DoliMamp-*`;
-            $ret=`rm -f $BUILDROOT/$PROJECT/usr/share/$PROJECT/build/dolibarr-*.tar`;
-            $ret=`rm -f $BUILDROOT/$PROJECT/usr/share/$PROJECT/build/dolibarr-*.tgz`;
-            $ret=`rm -f $BUILDROOT/$PROJECT/usr/share/$PROJECT/build/dolibarr-*.zip`;
-            $ret=`rm -f $BUILDROOT/$PROJECT/usr/share/$PROJECT/build/dolibarr-*.deb`;
-            $ret=`rm -f $BUILDROOT/$PROJECT/usr/share/$PROJECT/build/doxygen/doxygen_warnings.log`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/build/html`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/dev/dbmodel`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/dev/fpdf`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/dev/initdata`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/dev/iso-normes`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/dev/phpcheckstyle`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/dev/phpunit`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/dev/spec`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/dev/uml`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/dev/xdebug`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/doc/flyer`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/doc/font`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/doc/tshirt`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/doc/rollup`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/htdocs/conf/conf.php.mysql`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/htdocs/conf/conf.php.old`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/htdocs/conf/conf.php.postgres`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/htdocs/conf/conf*sav*`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/test`;
+ 			print "Remove other files\n";
+		    $ret=`rm -f $BUILDROOT/$PROJECT/usr/share/$PROJECT/build/DoliWamp-*`;
+		    $ret=`rm -f $BUILDROOT/$PROJECT/usr/share/$PROJECT/build/DoliMamp-*`;
+		    $ret=`rm -f $BUILDROOT/$PROJECT/usr/share/$PROJECT/build/dolibarr-*.tar`;
+		    $ret=`rm -f $BUILDROOT/$PROJECT/usr/share/$PROJECT/build/dolibarr-*.tgz`;
+		    $ret=`rm -f $BUILDROOT/$PROJECT/usr/share/$PROJECT/build/dolibarr-*.zip`;
+		    $ret=`rm -f $BUILDROOT/$PROJECT/usr/share/$PROJECT/build/dolibarr-*.deb`;
+		    $ret=`rm -f $BUILDROOT/$PROJECT/usr/share/$PROJECT/build/doxygen/doxygen_warnings.log`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/build/html`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/dev/dbmodel`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/dev/fpdf`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/dev/initdata`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/dev/iso-normes`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/dev/phpcheckstyle`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/dev/phpunit`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/dev/spec`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/dev/uml`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/dev/xdebug`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/doc/flyer`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/doc/font`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/doc/tshirt`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/doc/rollup`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/htdocs/conf/conf.php.mysql`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/htdocs/conf/conf.php.old`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/htdocs/conf/conf.php.postgres`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/htdocs/conf/conf*sav*`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/test`;
             # To remove once stable
             $ret=`rm -f $BUILDROOT/$PROJECT/usr/share/$PROJECT/htdocs/incluces/modules/facture/doc/doc_generic_invoice_odt.modules.php`;
             $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/htdocs/htdocs/theme/bureau2crea`;
 
-            print "Edit version in file $BUILDROOT/$PROJECT/DEBIAN/control\n";
+ 			print "Edit version in file $BUILDROOT/$PROJECT/DEBIAN/control\n";
             open (SPECFROM,"<$SOURCE/build/deb/control") || die "Error";
             open (SPECTO,">$BUILDROOT/$PROJECT/DEBIAN/control") || die "Error";
             while (<SPECFROM>) {
-                $newbuild = $BUILD;
-                $newbuild =~ s/(dev|alpha)/0/gi;                # dev
-                $newbuild =~ s/beta/1/gi;                       # beta
-                $newbuild =~ s/rc./2/gi;                        # rc
-                if ($newbuild !~ /-/) { $newbuild.='-3'; }      # finale
+            	$newbuild = $BUILD;
+                $newbuild =~ s/(dev|alpha)/0/gi;				# dev
+                $newbuild =~ s/beta/1/gi;						# beta
+                $newbuild =~ s/rc./2/gi;						# rc
+                if ($newbuild !~ /-/) { $newbuild.='-3'; }		# finale
                 $_ =~ s/__VERSION__/$MAJOR.$MINOR.$newbuild/;
                 print SPECTO $_;
             }
             close SPECFROM;
             close SPECTO;
-            print "Version set to $MAJOR.$MINOR.$newbuild\n";
-            
-            print "Create directory $BUILDROOT/$PROJECT/usr/share/applications\n";
-            $ret=`mkdir -p "$BUILDROOT/$PROJECT/usr/share/applications"`;
-            print "Copy desktop file into $BUILDROOT/$PROJECT/usr/share/applications/dolibarr.desktop\n";
-            $ret=`cp "$SOURCE/build/deb/dolibarr.desktop" "$BUILDROOT/$PROJECT/usr/share/applications/dolibarr.desktop"`;
+			print "Version set to $MAJOR.$MINOR.$newbuild\n";
+			
+	   		print "Create directory $BUILDROOT/$PROJECT/usr/share/applications\n";
+    		$ret=`mkdir -p "$BUILDROOT/$PROJECT/usr/share/applications"`;
+    		print "Copy desktop file into $BUILDROOT/$PROJECT/usr/share/applications/dolibarr.desktop\n";
+    		$ret=`cp "$SOURCE/build/deb/dolibarr.desktop" "$BUILDROOT/$PROJECT/usr/share/applications/dolibarr.desktop"`;
 
-            print "Create directory $BUILDROOT/$PROJECT/usr/share/pixmaps\n";
-            $ret=`mkdir -p "$BUILDROOT/$PROJECT/usr/share/pixmaps"`;
-            print "Copy pixmap file into $BUILDROOT/$PROJECT/usr/share/pixmaps/dolibarr.xpm\n";
-            $ret=`cp "$SOURCE/doc/images/dolibarr.xpm" "$BUILDROOT/$PROJECT/usr/share/pixmaps/dolibarr.xpm"`;
+	   		print "Create directory $BUILDROOT/$PROJECT/usr/share/pixmaps\n";
+    		$ret=`mkdir -p "$BUILDROOT/$PROJECT/usr/share/pixmaps"`;
+    		print "Copy pixmap file into $BUILDROOT/$PROJECT/usr/share/pixmaps/dolibarr.xpm\n";
+    		$ret=`cp "$SOURCE/doc/images/dolibarr.xpm" "$BUILDROOT/$PROJECT/usr/share/pixmaps/dolibarr.xpm"`;
 
-            #print "Create directory $BUILDROOT/$PROJECT/etc/$PROJECT\n";
-            #$ret=`mkdir -p "$BUILDROOT/$PROJECT/etc/$PROJECT"`;
+    		#print "Create directory $BUILDROOT/$PROJECT/etc/$PROJECT\n";
+    		#$ret=`mkdir -p "$BUILDROOT/$PROJECT/etc/$PROJECT"`;
 
-            #print "Copy changelog file into $BUILDROOT/$PROJECT/DEBIAN\n";
-            #$ret=`cp "$SOURCE/ChangeLog" "$BUILDROOT/$PROJECT/DEBIAN/changelog"`;
+    		#print "Copy changelog file into $BUILDROOT/$PROJECT/DEBIAN\n";
+    		#$ret=`cp "$SOURCE/ChangeLog" "$BUILDROOT/$PROJECT/DEBIAN/changelog"`;
 
-            print "Copy README file into $BUILDROOT/$PROJECT/DEBIAN\n";
-            $ret=`cp "$SOURCE/README" "$BUILDROOT/$PROJECT/DEBIAN/README"`;
+    		print "Copy README file into $BUILDROOT/$PROJECT/DEBIAN\n";
+    		$ret=`cp "$SOURCE/README" "$BUILDROOT/$PROJECT/DEBIAN/README"`;
 
-            print "Copy copyright file into $BUILDROOT/$PROJECT/DEBIAN\n";
-            $ret=`cp "$SOURCE/COPYRIGHT" "$BUILDROOT/$PROJECT/DEBIAN/copyright"`;
+    		print "Copy copyright file into $BUILDROOT/$PROJECT/DEBIAN\n";
+    		$ret=`cp "$SOURCE/COPYRIGHT" "$BUILDROOT/$PROJECT/DEBIAN/copyright"`;
 
-            #print "Copy apache conf file into $BUILDROOT/$PROJECT/etc/$PROJECT\n";
-            #$ret=`cp "$SOURCE/build/deb/apache.conf" "$BUILDROOT/$PROJECT/etc/$PROJECT"`;
+    		#print "Copy apache conf file into $BUILDROOT/$PROJECT/etc/$PROJECT\n";
+    		#$ret=`cp "$SOURCE/build/deb/apache.conf" "$BUILDROOT/$PROJECT/etc/$PROJECT"`;
 
-            print "Create directory $BUILDROOT/$PROJECT/usr/share/$PROJECT/documents\n";
-            $ret=`mkdir -p "$BUILDROOT/$PROJECT/usr/share/$PROJECT/documents"`;
+    		print "Create directory $BUILDROOT/$PROJECT/usr/share/$PROJECT/documents\n";
+    		$ret=`mkdir -p "$BUILDROOT/$PROJECT/usr/share/$PROJECT/documents"`;
 
-            print "Set permissions/owners on files/dir\n";
-            $ret=`chown -R root.root $BUILDROOT/$PROJECT`;
-            $ret=`chown -R www-data.www-data $BUILDROOT/$PROJECT/usr/share/$PROJECT/documents`;
-            $ret=`chmod -R 555 $BUILDROOT/$PROJECT`;
-            $ret=`chmod 755 $BUILDROOT/$PROJECT`;
-            $ret=`chmod -R 755 $BUILDROOT/$PROJECT/usr/share/$PROJECT/documents`;
-            $ret=`chmod -R 755 $BUILDROOT/$PROJECT/DEBIAN`;
+			print "Set permissions/owners on files/dir\n";
+		    $ret=`chown -R root.root $BUILDROOT/$PROJECT`;
+		    $ret=`chown -R www-data.www-data $BUILDROOT/$PROJECT/usr/share/$PROJECT/documents`;
+		    $ret=`chmod -R 555 $BUILDROOT/$PROJECT`;
+		    $ret=`chmod 755 $BUILDROOT/$PROJECT`;
+		    $ret=`chmod -R 755 $BUILDROOT/$PROJECT/usr/share/$PROJECT/documents`;
+		    $ret=`chmod -R 755 $BUILDROOT/$PROJECT/DEBIAN`;
 
-            print "Go to directory $BUILDROOT\n";
+     		print "Go to directory $BUILDROOT\n";
             $olddir=getcwd();
-            chdir("$BUILDROOT");
+     		chdir("$BUILDROOT");
  
-            $cmd="dpkg -b $BUILDROOT/$PROJECT $BUILDROOT/${FILENAMEDEB}.deb";
-            print "Launch DEB build ($cmd)\n";
-            $ret=`$cmd`;
-            print $ret."\n";
+    		$cmd="dpkg -b $BUILDROOT/$PROJECT $BUILDROOT/${FILENAMEDEB}.deb";
+    		print "Launch DEB build ($cmd)\n";
+    		$ret=`$cmd`;
+    		print $ret."\n";
             chdir("$olddir");
-            
+    		
             if ($OS =~ /windows/i)
             {
                 print "Move ${FILENAMEDEB}.deb to $BUILDROOT/${FILENAMEDEB}.deb\n";
@@ -498,33 +499,33 @@ if ($nboftargetok) {
                 print "Move ${FILENAMEDEB}.deb to $BUILDROOT/${FILENAMEDEB}.deb\n";
                 $ret=`mv "$BUILDROOT/${FILENAMEDEB}.deb" "$DESTI/${FILENAMEDEB}.deb"`;
             }
-            next;
+        	next;
         }
         
-        if ($target eq 'EXE') {
-            unlink "$FILENAMEEXE.exe";
-            print "Compress into $FILENAMEEXE.exe by $FILENAMEEXE.nsi...\n";
-            $command="\"$REQUIREMENTTARGET{$target}\" /DMUI_VERSION_DOT=$MAJOR.$MINOR.$BUILD /X\"SetCompressor bzip2\" \"$SOURCE\\build\\exe\\$FILENAME.nsi\"";
+    	if ($target eq 'EXE') {
+    		unlink "$DESTI/$FILENAMEEXE.exe";
+    		print "Compress into $FILENAMEEXE.exe by $FILENAMEEXE.nsi...\n";
+    		$command="\"$REQUIREMENTTARGET{$target}\" /DMUI_VERSION_DOT=$MAJOR.$MINOR.$BUILD /X\"SetCompressor bzip2\" \"$SOURCE\\build\\exe\\$FILENAME.nsi\"";
             print "$command\n";
-            $ret=`$command`;
-            print "Move $FILENAMEEXE.exe to $DESTI\n";
-            rename("$SOURCE\\build\\exe\\$FILENAMEEXE.exe","$DESTI/$FILENAMEEXE.exe");
-            next;
-        }
+    		$ret=`$command`;
+    		print "Move $FILENAMEEXE.exe to $DESTI\n";
+    		rename("$SOURCE\\build\\exe\\$FILENAMEEXE.exe","$DESTI/$FILENAMEEXE.exe");
+    		next;
+    	}
     
-        if ($target eq 'EXEDOLIWAMP') 
-        {
-            unlink "$FILENAMEEXEDOLIWAMP.exe";
-            print "Compil exe $FILENAMEEXEDOLIWAMP.exe file from iss file \"$SOURCE\\build\\exe\\doliwamp\\doliwamp.iss\"\n";
-            $cmd= "iscc.exe \"$SOURCE\\build\\exe\\doliwamp\\doliwamp.iss\"";
-            print "$cmd\n";
-            $ret= `$cmd`;
-            #print "$ret\n";
-            print "Move \"$SOURCE\\build\\$FILENAMEEXEDOLIWAMP.exe\" to $DESTI/$FILENAMEEXEDOLIWAMP.exe\n";
-            rename("$SOURCE/build/$FILENAMEEXEDOLIWAMP.exe","$DESTI/$FILENAMEEXEDOLIWAMP.exe");
-            next;
-        }
-    
+    	if ($target eq 'EXEDOLIWAMP') 
+    	{
+    		unlink "$DESTI/$FILENAMEEXEDOLIWAMP.exe";
+    		print "Compil exe $FILENAMEEXEDOLIWAMP.exe file from iss file \"$SOURCE\\build\\exe\\doliwamp\\doliwamp.iss\"\n";
+    		$cmd= "iscc.exe \"$SOURCE\\build\\exe\\doliwamp\\doliwamp.iss\"";
+			print "$cmd\n";
+			$ret= `$cmd`;
+			#print "$ret\n";
+			print "Move \"$SOURCE\\build\\$FILENAMEEXEDOLIWAMP.exe\" to $DESTI/$FILENAMEEXEDOLIWAMP.exe\n";
+    		rename("$SOURCE/build/$FILENAMEEXEDOLIWAMP.exe","$DESTI/$FILENAMEEXEDOLIWAMP.exe");
+    		next;
+    	}
+	
     }
 
 }

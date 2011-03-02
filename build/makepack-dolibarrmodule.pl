@@ -13,6 +13,7 @@ $PROJECT="mymodule";
 @LISTETARGET=("TGZ");   # Possible packages
 %REQUIREMENTTARGET=(    # Tool requirement for each package
 "TGZ"=>"tar",
+"ZIP"=>"7z"
 );
 %ALTERNATEPATH=(
 );
@@ -68,6 +69,15 @@ $BUILDROOT="$TEMP/dolibarr-buildroot";
 my $copyalreadydone=0;
 my $batch=0;
 
+for (0..@ARGV-1) {
+	if ($ARGV[$_] =~ /^-*target=(\w+)/i)   { $target=$1; $batch=1; }
+	if ($ARGV[$_] =~ /^-*desti=(.+)/i)     { $DESTI=$1; }
+    if ($ARGV[$_] =~ /^-*prefix=(.+)/i)    {
+    	$PREFIX=$1; 
+    	$FILENAMESNAPSHOT.="-".$PREFIX; 
+    }
+}
+
 print "Makepack module version $VERSION\n";
 print "Enter name for your module (mymodule, mywonderfulmondule, ...) : ";
 $PROJECT=<STDIN>;
@@ -89,7 +99,7 @@ if (! -f "makepack-".$PROJECT.".conf")
 print "Enter value for version: ";
 $PROJVERSION=<STDIN>;
 chomp($PROJVERSION);
-($MAJOR,$MINOR)=split(/\./,$PROJVERSION,2);
+($MAJOR,$MINOR,$BUILD)=split(/\./,$PROJVERSION,3);
 if ($MINOR eq '')
 {
 	print "Enter value for minor version: ";
@@ -99,6 +109,7 @@ if ($MINOR eq '')
 
 $FILENAME="$PROJECT";
 $FILENAMETGZ="module_$PROJECT-$MAJOR.$MINOR";
+$FILENAMEZIP="module_$PROJECT-$MAJOR.$MINOR";
 if (-d "/usr/src/redhat") {
     # redhat
     $RPMDIR="/usr/src/redhat";
@@ -111,10 +122,13 @@ if (-d "/usr/src/RPM") {
 $SOURCE="$DIR/..";
 $DESTI="$SOURCE/build";
 
+print "Source directory: $SOURCE\n";
+print "Target directory: $DESTI\n";
+
 
 # Choose package targets
 #-----------------------
-$target="TGZ";    # Dolibarr modules are tgz format
+$target="ZIP";    # Dolibarr modules are this format
 $CHOOSEDTARGET{uc($target)}=1;
 
 
@@ -150,46 +164,90 @@ print "\n";
 # Check if there is at least on target to build
 #----------------------------------------------
 $nboftargetok=0;
+$nboftargetneedbuildroot=0;
+$nboftargetneedcvs=0;
 foreach my $target (keys %CHOOSEDTARGET) {
     if ($CHOOSEDTARGET{$target} < 0) { next; }
-    $nboftargetok++;
+	if ($target ne 'EXE' && $target ne 'EXEDOLIWAMP') 
+	{
+		$nboftargetneedbuildroot++;
+	}
+	if ($target eq 'SNAPSHOT')
+	{
+		$nboftargetneedcvs++;
+	}
+	$nboftargetok++;
 }
 
 if ($nboftargetok) {
 
-    # Update buildroot
-    #-----------------
-    if (! $copyalreadydone) {
-    	print "Delete directory $BUILDROOT\n";
-    	$ret=`rm -fr "$BUILDROOT"`;
-    	mkdir "$BUILDROOT";
-    	
-		$result=open(IN,"<makepack-".$PROJECT.".conf");
-		if (! $result) { die "Error: Can't open conf file makepack-".$PROJECT.".conf for reading.\n"; }
-	    while(<IN>)
-	    {
-	    	if ($_ =~ /^#/) { next; }	# Do not process comments
-			
-			$_ =~ s/\n//;
-	    	$_ =~ /^(.*)\/[^\/]+/;
-	    	print "Create directory $BUILDROOT/$1\n";
-	    	$ret=`mkdir -p "$BUILDROOT/$1"`;
-	    	print "Copy $SOURCE/$_ into $BUILDROOT/$_\n";
-    		$ret=`cp -pr "$SOURCE/$_" "$BUILDROOT/$_"`;
-		}	
-		close IN;
-		
-		@timearray=localtime(time());
-		$fulldate=($timearray[5]+1900).'-'.($timearray[4]+1).'-'.$timearray[3].' '.$timearray[2].':'.$timearray[1];
-		$versionfile=open(VF,">$BUILDROOT/build/version-".$PROJECT.".txt");
+    # Update CVS if required
+    #-----------------------
+    if ($nboftargetneedcvs)
+	{
+    	print "Go to directory $SOURCE\n";
+   		$olddir=getcwd();
+   		chdir("$SOURCE");
+    	print "Run cvs update -P -d\n";
+    	$ret=`cvs update -P -d 2>&1`;
+    	chdir("$olddir");
+	}
+	
+    # Update buildroot if required
+    #-----------------------------
+    if ($nboftargetneedbuildroot)
+	{
+	    if (! $copyalreadydone) {
+	    	print "Delete directory $BUILDROOT\n";
+	    	$ret=`rm -fr "$BUILDROOT"`;
 
-		print "Create version file $BUILDROOT/build/version-".$PROJECT.".txt with date ".$fulldate."\n";
-		$ret=`mkdir -p "$BUILDROOT/build"`;
-		print VF "Version: ".$MAJOR.".".$MINOR."\n";
-		print VF "Build  : ".$fulldate."\n";
-		close VF;
-    }
-    
+	    	mkdir "$BUILDROOT";
+	    	mkdir "$BUILDROOT/$PROJECT";
+	    	
+			$result=open(IN,"<makepack-".$PROJECT.".conf");
+			if (! $result) { die "Error: Can't open conf file makepack-".$PROJECT.".conf for reading.\n"; }
+		    while(<IN>)
+		    {
+		    	if ($_ =~ /^#/) { next; }	# Do not process comments
+				
+				$_ =~ s/\n//;
+		    	$_ =~ /^(.*)\/[^\/]+/;
+		    	print "Create directory $BUILDROOT/$PROJECT/$1\n";
+		    	$ret=`mkdir -p "$BUILDROOT/$PROJECT/$1"`;
+		    	print "Copy $SOURCE/$_ into $BUILDROOT/$PROJECT/$_\n";
+	    		$ret=`cp -pr "$SOURCE/$_" "$BUILDROOT/$PROJECT/$_"`;
+			}	
+			close IN;
+			
+			@timearray=localtime(time());
+			$fulldate=($timearray[5]+1900).'-'.($timearray[4]+1).'-'.$timearray[3].' '.$timearray[2].':'.$timearray[1];
+			open(VF,">$BUILDROOT/$PROJECT/build/version-".$PROJECT.".txt");
+	
+			print "Create version file $BUILDROOT/$PROJECT/build/version-".$PROJECT.".txt with date ".$fulldate."\n";
+			$ret=`mkdir -p "$BUILDROOT/$PROJECT/build"`;
+			print VF "Version: ".$MAJOR.".".$MINOR."\n";
+			print VF "Build  : ".$fulldate."\n";
+			close VF;
+	    }
+	    print "Clean $BUILDROOT\n";
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/.cache`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/.project`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/.settings`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/index.php`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/build/html`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/documents`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/document`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/conf/conf.php.mysql`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/conf/conf.php.old`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/conf/conf.php.postgres`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/conf/conf*sav*`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/custom`;
+        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/custom2`;
+        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/theme/bureau2crea`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/test`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/Thumbs.db $BUILDROOT/$PROJECT/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/*/Thumbs.db`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/CVS* $BUILDROOT/$PROJECT/*/CVS* $BUILDROOT/$PROJECT/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/*/CVS*`;
+	}    
     
     # Build package for each target
     #------------------------------
@@ -216,19 +274,26 @@ if ($nboftargetok) {
     	}
 
     	if ($target eq 'ZIP') {
-    		unlink "$FILENAMEZIP.zip";
-    		print "Compress $FILENAMETGZ into $FILENAMEZIP.zip...\n";
-     		chdir("$BUILDROOT");
-            #print "cd $BUILDROOTNT & 7z a -r -tzip -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMETGZ\\*.*\n";
-            #$ret=`cd $BUILDROOTNT & 7z a -r -tzip -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMETGZ\\*.*`;
-    		$ret=`7z a -r -tzip -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMETGZ\\*.*`;
-			print "Move $FILENAMEZIP.zip to $DESTI\n";
-    		rename("$BUILDROOT/$FILENAMEZIP.zip","$DESTI/$FILENAMEZIP.zip");
+    		print "Remove target $FILENAMEZIP.zip...\n";
+    		unlink "$DESTI/$FILENAMEZIP.zip";
+    		print "Compress $FILENAMEZIP into $FILENAMEZIP.zip...\n";
+
+            print "Go to directory $BUILDROOT/$PROJECT\n";
+     		$olddir=getcwd();
+     		chdir("$BUILDROOT/$PROJECT");
+    		$cmd= "7z a -r -tzip -mx $BUILDROOT/$FILENAMEZIP.zip *";
+			print $cmd."\n";
+			$ret= `$cmd`;
+            chdir("$olddir");
+
+            print "Move $FILENAMEZIP.zip to $DESTI/$FILENAMEZIP.zip\n";
+            $ret=`mv "$BUILDROOT/$FILENAMEZIP.zip" "$DESTI/$FILENAMEZIP.zip"`;
     		next;
     	}
     
     	if ($target eq 'EXE') {
-    		unlink "$FILENAMEEXE.exe";
+    		print "Remove target $FILENAMEEXE.exe...\n";
+    		unlink "$DESTI/$FILENAMEEXE.exe";
     		print "Compress into $FILENAMEEXE.exe by $FILENAMEEXE.nsi...\n";
     		$command="\"$REQUIREMENTTARGET{$target}\" /DMUI_VERSION_DOT=$MAJOR.$MINOR.$BUILD /X\"SetCompressor bzip2\" \"$SOURCE\\build\\exe\\$FILENAME.nsi\"";
             print "$command\n";
