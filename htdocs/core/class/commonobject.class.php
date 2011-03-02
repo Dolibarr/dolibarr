@@ -1368,14 +1368,14 @@ class CommonObject
 		{
 			$element = $subelement = $objecttype;
 			$tplpath = $element;
-			
+
 			if (preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
 			{
 				$element = $regs[1];
 				$subelement = $regs[2];
 				$tplpath = $element.'/'.$subelement;
 			}
-			
+
 			$classpath = $element.'/class';
 			if ($element == 'facture') { $tplpath = 'compta/'.$element; $classpath = $tplpath.'/class'; }  // To work with non standard path
 			if ($element == 'propal') { $tplpath = 'comm/'.$element; $classpath = $tplpath.'/class'; }    // To work with non standard path

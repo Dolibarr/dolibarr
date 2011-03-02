@@ -18,6 +18,7 @@ For users:
 - New: task #10577: Use a numbering module for shipment and contract
 - New: Add a first workflow module to create automatic action on some
        events (create order on proposal closing).
+- New: Can create manually order from proposal.
 - Fix: Better Postgresql compatibility.
 
 For developers:
