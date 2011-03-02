@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2011 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
@@ -505,7 +505,7 @@ if ($_REQUEST['action'] == 'confirm_converttoreduc' && $_REQUEST['confirm'] == '
  */
 if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 {
-	$object->socid=$_POST['socid'];
+	$object->socid=GETPOST('socid');
 
 	$db->begin();
 
@@ -681,7 +681,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 				if ($element == 'propal')   { $element = 'comm/propal'; $subelement = 'propal'; }
 				if ($element == 'contract') { $element = $subelement = 'contrat'; }
 
-				$object->origin 	= $_POST['origin'];
+				$object->origin    = $_POST['origin'];
 				$object->origin_id = $_POST['originid'];
 
 				$facid = $object->create($user);
@@ -777,7 +777,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 		}
 	}
 
-	// Fin creation facture, on l'affiche
+	// End of object creation, we show it
 	if ($facid > 0 && ! $error)
 	{
 		$db->commit();
@@ -1438,7 +1438,7 @@ if ($_GET['action'] == 'create')
             </script>';
 	}
 
-	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="socid" value="'.$soc->id.'">' ."\n";
@@ -1449,7 +1449,7 @@ if ($_GET['action'] == 'create')
 	print '<table class="border" width="100%">';
 
 	// Ref
-	print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans('Draft').'</td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans('Draft').'</td></tr>';
 
 	// Factures predefinies
 	if (empty($_GET['propalid']) && empty($_GET['commandeid']) && empty($_GET['contratid']) && empty($_GET['originid']))
@@ -1488,7 +1488,7 @@ if ($_GET['action'] == 'create')
 	}
 
 	// Tiers
-	print '<tr><td class="fieldrequired">'.$langs->trans('Company').'</td><td colspan="2">';
+	print '<tr><td class="fieldrequired">'.$langs->trans('Customer').'</td><td colspan="2">';
 	print $soc->getNomUrl(1);
 	print '<input type="hidden" name="socid" value="'.$soc->id.'">';
 	print '</td>';
@@ -1700,7 +1700,9 @@ if ($_GET['action'] == 'create')
 		print '<input type="hidden" name="origin"         value="'.$objectsrc->element.'">';
 		print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
 
-		print '<tr><td>'.$langs->trans($classname).'</td><td colspan="2">'.$objectsrc->getNomUrl(1).'</td></tr>';
+        $newclassname=$classname;
+        if ($newclassname=='Propal') $newclassname='CommercialProposal';
+		print '<tr><td>'.$langs->trans($newclassname).'</td><td colspan="2">'.$objectsrc->getNomUrl(1).'</td></tr>';
 		print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($objectsrc->total_ht).'</td></tr>';
 		print '<tr><td>'.$langs->trans('TotalVAT').'</td><td colspan="2">'.price($objectsrc->total_tva)."</td></tr>";
 		if ($mysoc->pays_code=='ES')
@@ -1774,9 +1776,9 @@ if ($_GET['action'] == 'create')
 		}
 	}
 
-	// Bouton "Create Draft"
 	print "</table>\n";
 
+    // Button "Create Draft"
 	print '<br><center><input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'"></center>';
 
 	print "</form>\n";
