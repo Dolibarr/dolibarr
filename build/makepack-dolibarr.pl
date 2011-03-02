@@ -235,9 +235,9 @@ if ($nboftargetok) {
 	    	$ret=`rm -fr "$BUILDROOT"`;
 	    
 	    	mkdir "$BUILDROOT";
-	    	mkdir "$BUILDROOT/dolibarr";
-	    	print "Copy $SOURCE into $BUILDROOT/dolibarr\n";
-	    	$ret=`cp -pr "$SOURCE" "$BUILDROOT/dolibarr"`;
+	    	mkdir "$BUILDROOT/$PROJECT";
+	    	print "Copy $SOURCE into $BUILDROOT/$PROJECT\n";
+	    	$ret=`cp -pr "$SOURCE" "$BUILDROOT/$PROJECT"`;
 	    }
 	    print "Clean $BUILDROOT\n";
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/.cache`;
@@ -269,7 +269,7 @@ if ($nboftargetok) {
     	if ($target eq 'SNAPSHOT') {
     		print "Rename $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMESNAPSHOT\n";
 			rename("$BUILDROOT/$PROJECT","$BUILDROOT/$FILENAMESNAPSHOT");
-    		unlink("$FILENAMESNAPSHOT.tgz");
+    		unlink("$DESTI/$FILENAMESNAPSHOT.tgz");
 
     		print "Compress $BUILDROOT into $FILENAMESNAPSHOT.tgz...\n";
    		    #$cmd="tar --exclude \"$BUILDROOT/tgz/tar_exclude.txt\" --exclude .cache --exclude .settings --exclude conf.php --directory \"$BUILDROOT\" -czvf \"$FILENAMESNAPSHOT.tgz\" $FILENAMESNAPSHOT";
@@ -313,7 +313,7 @@ if ($nboftargetok) {
     	if ($target eq 'ZIP') {
     		print "Rename $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMEZIP\n";
 			rename("$BUILDROOT/$PROJECT","$BUILDROOT/$FILENAMEZIP");
-    		unlink("$FILENAMEZIP.zip");
+    		unlink("$DESTI/$FILENAMEZIP.zip");
     		print "Compress $FILENAMEZIP into $FILENAMEZIP.zip...\n";
  
             print "Go to directory $BUILDROOT\n";
@@ -343,7 +343,7 @@ if ($nboftargetok) {
 			
     		print "Rename $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMETGZ\n";
 			rename("$BUILDROOT/$PROJECT","$BUILDROOT/$FILENAMETGZ");
-    		unlink("$FILENAMETGZ.tgz");
+    		unlink("$DESTI/$FILENAMETGZ.tgz");
     		print "Compress $FILENAMETGZ into $FILENAMETGZ.tgz...\n";
     		$ret=`tar --exclude-from "$SOURCE/build/tgz/tar_exclude.txt" --directory "$BUILDROOT" -czvf "$BUILDROOT/$FILENAMETGZ.tgz" $FILENAMETGZ`;
 
@@ -372,6 +372,7 @@ if ($nboftargetok) {
     	}
     	
     	if ($target eq 'DEB') {
+    		unlink("$DESTI/$FILENAMEDEB.deb");
 			
 		    $ret=`rm -fr $BUILDROOT/$PROJECT/.cvsignore $BUILDROOT/$PROJECT/*/.cvsignore $BUILDROOT/$PROJECT/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/*/*/*/.cvsignore`;
 
@@ -502,7 +503,7 @@ if ($nboftargetok) {
         }
         
     	if ($target eq 'EXE') {
-    		unlink "$FILENAMEEXE.exe";
+    		unlink "$DESTI/$FILENAMEEXE.exe";
     		print "Compress into $FILENAMEEXE.exe by $FILENAMEEXE.nsi...\n";
     		$command="\"$REQUIREMENTTARGET{$target}\" /DMUI_VERSION_DOT=$MAJOR.$MINOR.$BUILD /X\"SetCompressor bzip2\" \"$SOURCE\\build\\exe\\$FILENAME.nsi\"";
             print "$command\n";
@@ -514,7 +515,7 @@ if ($nboftargetok) {
     
     	if ($target eq 'EXEDOLIWAMP') 
     	{
-    		unlink "$FILENAMEEXEDOLIWAMP.exe";
+    		unlink "$DESTI/$FILENAMEEXEDOLIWAMP.exe";
     		print "Compil exe $FILENAMEEXEDOLIWAMP.exe file from iss file \"$SOURCE\\build\\exe\\doliwamp\\doliwamp.iss\"\n";
     		$cmd= "iscc.exe \"$SOURCE\\build\\exe\\doliwamp\\doliwamp.iss\"";
 			print "$cmd\n";
