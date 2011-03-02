@@ -807,6 +807,7 @@ class Commande extends CommonObject
                 $line->fk_product        = $object->lines[$i]->fk_product;
                 $line->info_bits         = $object->lines[$i]->info_bits;
                 $line->product_type      = $object->lines[$i]->product_type;
+                $line->rang              = $object->lines[$i]->rang;
                 $line->special_code      = $object->lines[$i]->special_code;
 
                 $this->lines[$i] = $line;
