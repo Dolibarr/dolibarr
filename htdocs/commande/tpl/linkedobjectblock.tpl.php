@@ -48,7 +48,7 @@ for ($i = 0 ; $i < $num ; $i++)
 	$linkedObjectBlock->fetch($objectid[$i]);
 	$var=!$var;
 ?>
-<tr <?php echo $bc[$var]; ?> ><td>
+<tr <?php echo $GLOBALS['bc'][$var]; ?> ><td>
 	<a href="<?php echo DOL_URL_ROOT.'/commande/fiche.php?id='.$linkedObjectBlock->id ?>"><?php echo img_object($langs->trans("ShowOrder"),"order").' '.$linkedObjectBlock->ref; ?></a></td>
 	<td align="center"><?php echo dol_print_date($linkedObjectBlock->date,'day'); ?></td>
 	<td align="right"><?php echo price($linkedObjectBlock->total_ht); ?></td>
