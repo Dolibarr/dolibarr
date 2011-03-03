@@ -138,7 +138,7 @@ class Propal extends CommonObject
 		$this->labelstatut[0]=$langs->trans("PropalStatusDraft");
 		$this->labelstatut[1]=$langs->trans("PropalStatusValidated");
 		$this->labelstatut[2]=($conf->global->PROPAL_STATUS_SIGNED_LABEL ? $conf->global->PROPAL_STATUS_SIGNED_LABEL : $langs->trans("PropalStatusSigned"));
-		$this->labelstatut[3]=($conf->global->PROPAL_STATUS_NOTSIGNED_LABEL ? $conf->global->PROPAL_STATUS_SIGNED_LABEL : $langs->trans("PropalStatusNotSigned"));
+		$this->labelstatut[3]=($conf->global->PROPAL_STATUS_NOTSIGNED_LABEL ? $conf->global->PROPAL_STATUS_NOTSIGNED_LABEL : $langs->trans("PropalStatusNotSigned"));
 		$this->labelstatut[4]=$langs->trans("PropalStatusBilled");
 		$this->labelstatut_short[0]=$langs->trans("PropalStatusDraftShort");
 		$this->labelstatut_short[1]=$langs->trans("Opened");
