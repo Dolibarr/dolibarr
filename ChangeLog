@@ -19,6 +19,8 @@ For users:
 - New: Add a first workflow module to create automatic action on some
        events (create order on proposal closing).
 - New: Can create manually order from proposal.
+- New: Use autocompletion on invoice select when creating replacement 
+       or credit note invoice.
 - Fix: Better Postgresql compatibility.
 
 For developers:
