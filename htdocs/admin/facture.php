@@ -64,8 +64,8 @@ if ($_GET["action"] == 'specimen')
 	$facture = new Facture($db);
 	$facture->initAsSpecimen();
 
-	// Charge le modele
-	$dir = DOL_DOCUMENT_ROOT . "/includes/modules/facture/";
+	// Load template
+	$dir = DOL_DOCUMENT_ROOT . "/includes/modules/facture/doc/";
 	$file = "pdf_".$modele.".modules.php";
 	if (file_exists($dir.$file))
 	{
