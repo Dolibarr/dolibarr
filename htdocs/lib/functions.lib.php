@@ -3331,7 +3331,6 @@ function make_substitutions($chaine,$substitutionarray,$outputlangs,$object='')
 {
 	global $conf,$user;
 
-    $dir=$dirroot."/includes/modules/substitutions";
     $listfonc=array('numberwords'); // For the moment only one substitution module to search
     foreach($listfonc as $fonc)
     {
