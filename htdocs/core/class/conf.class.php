@@ -231,6 +231,7 @@ class Conf
 
 		// For backward compatibility
 		// TODO Replace this->xxx->enabled by this->modulename->enabled to remove this code
+		if ( isset($this->compta->enabled))
 		$this->compta->enabled=$this->comptabilite->enabled;
 		$this->propal->enabled=defined("MAIN_MODULE_PROPALE")?MAIN_MODULE_PROPALE:0;
 
