@@ -80,14 +80,14 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		$this->option_freetext = 1;				   // Support add of a personalised text
 		$this->option_draft_watermark = 1;		   // Support add of a watermark on drafts
 
-		// Recupere emmetteur
+		// Recupere emetteur
 		$this->emetteur=$mysoc;
 		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'etait pas defini
 	}
 
 
     /**
-     * Define array with couple subtitution key => subtitution value
+     * Define array with couple substitution key => substitution value
      *
      * @param   $object             Main object to use as data source
      * @param   $outputlangs        Lang object to use for output
@@ -114,7 +114,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
     }
 
     /**
-     * Define array with couple subtitution key => subtitution value
+     * Define array with couple substitution key => substitution value
      *
      * @param   $line
      * @param   $outputlangs        Lang object to use for output
