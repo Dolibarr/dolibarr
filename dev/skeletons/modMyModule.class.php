@@ -45,7 +45,9 @@ class modMyModule extends DolibarrModules
 	 */
 	function modMyModule($DB)
 	{
-		$this->db = $DB;
+        global $langs,$conf;
+		
+        $this->db = $DB;
 
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
@@ -120,17 +122,34 @@ class modMyModule extends DolibarrModules
 		// 'contact'          to add a tab in contact view
         $this->tabs = array();
 
-		// Boxes
-		$this->boxes = array();			// List of boxes
-		$r=0;
+        // Dictionnaries
+        $this->dictionnaries=array();
+        /*
+        $this->dictionnaries=array(
+            'langs'=>'cabinetmed@cabinetmed',
+            'tabname'=>array(MAIN_DB_PREFIX."cabinetmed_diaglec",MAIN_DB_PREFIX."cabinetmed_examenprescrit",MAIN_DB_PREFIX."cabinetmed_motifcons"),
+            'tablib'=>array("DiagnostiqueLesionnel","ExamenPrescrit","MotifConsultation"),
+            'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'cabinetmed_diaglec as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'cabinetmed_examenprescrit as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'cabinetmed_motifcons as f'),
+            'tabsqlsort'=>array("label ASC","label ASC","label ASC"),
+            'tabfield'=>array("code,label","code,label","code,label"),
+            'tabfieldvalue'=>array("code,label","code,label","code,label"),
+            'tabfieldinsert'=>array("code,label","code,label","code,label"),
+            'tabrowid'=>array("rowid","rowid","rowid"),
+            'tabcond'=>array($conf->cabinetmed->enabled,$conf->cabinetmed->enabled,$conf->cabinetmed->enabled)
+        );
+        */
 
+        // Boxes
 		// Add here list of php file(s) stored in includes/boxes that contains class to show a box.
+        $this->boxes = array();			// List of boxes
+		$r=0;
 		// Example:
-		//$this->boxes[$r][1] = "myboxa.php";
-		//$r++;
-		//$this->boxes[$r][1] = "myboxb.php";
-		//$r++;
-
+		/*
+		$this->boxes[$r][1] = "myboxa.php";
+		$r++;
+		$this->boxes[$r][1] = "myboxb.php";
+		$r++;
+		*/
 
 		// Permissions
 		$this->rights = array();		// Permission array used by this module
