@@ -29,6 +29,7 @@
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/propal.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
 
 $langs->load('propal');
@@ -58,161 +59,158 @@ $html = new Form($db);
 
 if ($_GET["id"] > 0)
 {
-	$propal = new Propal($db);
+	$object = new Propal($db);
 
-	if ( $propal->fetch($_GET["id"], $user->societe_id) > 0)
+	if ($object->fetch($id,$ref) > 0)
 	{
-		$soc = new Societe($db, $propal->socid);
-		$soc->fetch($propal->socid);
+		$soc = new Societe($db, $object->socid);
+		$soc->fetch($object->socid);
 
-		$head = propal_prepare_head($propal);
+		$head = propal_prepare_head($object);
 		dol_fiche_head($head, 'preview', $langs->trans('Proposal'), 0, 'propal');
 
 
 		/*
 		 *   Propal
 		 */
-		$sql = 'SELECT s.nom, s.rowid, p.price, p.fk_projet, p.remise, p.tva, p.total, p.ref, p.fk_statut, p.datep as dp, p.note,';
-		$sql.= ' p.fk_user_author, p.fk_user_valid, p.fk_user_cloture, p.datec, p.date_valid, p.date_cloture';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
-		$sql.= ', '.MAIN_DB_PREFIX.'propal as p';
-		$sql.= ' WHERE p.fk_soc = s.rowid';
-		$sql.= ' AND p.rowid = '.$propal->id;
-
-		$result = $db->query($sql);
-
-		if ($result) {
-			if ($db->num_rows($result)) {
-				$obj = $db->fetch_object($result);
-
-				$societe = new Societe($db);
-				$societe->fetch($obj->rowid);
-
-				print '<table class="border" width="100%">';
-
-				// Ref
-				print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="5">'.$propal->ref.'</td></tr>';
-
-				// Ref client
-				print '<tr><td>';
-				print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
-				print $langs->trans('RefCustomer').'</td><td align="left">';
-				print '</td>';
-				print '</tr></table>';
-				print '</td><td colspan="5">';
-				print $propal->ref_client;
-				print '</td>';
+		print '<table class="border" width="100%">';
+		
+		// Ref
+		print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="5">'.$object->ref.'</td></tr>';
+		
+		// Ref client
+		print '<tr><td>';
+		print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
+		print $langs->trans('RefCustomer').'</td><td align="left">';
+		print '</td>';
+		print '</tr></table>';
+		print '</td><td colspan="5">';
+		print $object->ref_client;
+		print '</td>';
+		print '</tr>';
+		
+		$rowspan=2;
+		
+		// Tiers
+		print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$soc->getNomUrl(1).'</td>';
+		print '</tr>';
+		
+		// Ligne info remises tiers
+		print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="5">';
+		if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
+		else print $langs->trans("CompanyHasNoRelativeDiscount");
+		$absolute_discount=$soc->getAvailableDiscounts();
+		print '. ';
+		if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
+		else print $langs->trans("CompanyHasNoAbsoluteDiscount");
+		print '.';
+		print '</td></tr>';
+		
+		// ligne
+		// partie Gauche
+		print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">';
+		print dol_print_date($propal->date,'daytext');
+		print '</td>';
+		
+		// partie Droite sur $rowspan lignes
+		print '<td colspan="2" rowspan="'.$rowspan.'" valign="top" width="50%">';
+		
+		/*
+		 * Documents
+		 */
+		$propalref = dol_sanitizeFileName($propal->ref);
+		$dir_output = $conf->propale->dir_output . "/";
+		$filepath = $dir_output . $propalref . "/";
+		$file = $filepath . $propalref . ".pdf";
+		$filedetail = $filepath . $propalref . "-detail.pdf";
+		$relativepath = "${propalref}/${propalref}.pdf";
+		$relativepathdetail = "${propalref}/${propalref}-detail.pdf";
+		
+		// Chemin vers png apercus
+		$relativepathimage = "${propalref}/${propalref}.pdf.png";
+		$fileimage = $file.".png";          // Si PDF d'1 page
+		$fileimagebis = $file.".png.0";     // Si PDF de plus d'1 page
+		
+		$var=true;
+		
+		// Si fichier PDF existe
+		if (file_exists($file))
+		{
+			$encfile = urlencode($file);
+			print_titre($langs->trans("Documents"));
+			print '<table class="border" width="100%">';
+			
+			print "<tr $bc[$var]><td>".$langs->trans("Propal")." PDF</td>";
+			
+			print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=propal&file='.urlencode($relativepath).'">'.$propal->ref.'.pdf</a></td>';
+			
+			print '<td align="right">'.dol_print_size(dol_filesize($file)).'</td>';
+			print '<td align="right">'.dol_print_date(dol_filemtime($file),'dayhour').'</td>';
+			print '</tr>';
+			
+			// Si fichier detail PDF existe
+			// TODO obsolete ?
+			if (file_exists($filedetail))
+			{
+				print "<tr $bc[$var]><td>Propal detaillee</td>";
+				
+				print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=propal&file='.urlencode($relativepathdetail).'">'.$propal->ref.'-detail.pdf</a></td>';
+				print '<td align="right">'.dol_print_size(dol_filesize($filedetail)).'</td>';
+				print '<td align="right">'.dol_print_date(dol_filemtime($filedetail),'dayhour').'</td>';
 				print '</tr>';
-
-				$rowspan=2;
-
-				// Tiers
-				print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$societe->getNomUrl(1).'</td>';
-				print '</tr>';
-
-				// Ligne info remises tiers
-				print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="5">';
-				if ($societe->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$societe->remise_client);
-				else print $langs->trans("CompanyHasNoRelativeDiscount");
-				$absolute_discount=$societe->getAvailableDiscounts();
-				print '. ';
-				if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
-				else print $langs->trans("CompanyHasNoAbsoluteDiscount");
-				print '.';
-				print '</td></tr>';
-
-				// ligne
-				// partie Gauche
-				print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">';
-				print dol_print_date($propal->date,'daytext');
-				print '</td>';
-
-				// partie Droite sur $rowspan lignes
-				print '<td colspan="2" rowspan="'.$rowspan.'" valign="top" width="50%">';
-
-				/*
-				 * Documents
-				 */
-				$propalref = dol_sanitizeFileName($propal->ref);
-				$dir_output = $conf->propale->dir_output . "/";
-				$filepath = $dir_output . $propalref . "/";
-				$file = $filepath . $propalref . ".pdf";
-				$filedetail = $filepath . $propalref . "-detail.pdf";
-				$relativepath = "${propalref}/${propalref}.pdf";
-				$relativepathdetail = "${propalref}/${propalref}-detail.pdf";
-
-				// Chemin vers png apercus
-				$relativepathimage = "${propalref}/${propalref}.pdf.png";
-				$fileimage = $file.".png";          // Si PDF d'1 page
-				$fileimagebis = $file.".png.0";     // Si PDF de plus d'1 page
-
-				$var=true;
-
-				// Si fichier PDF existe
-				if (file_exists($file))
+			}
+			print "</table>\n";
+			
+			// Conversion du PDF en image png si fichier png non existant
+			if (! file_exists($fileimage) && ! file_exists($fileimagebis))
+			{
+				if (class_exists("Imagick"))
 				{
-					$encfile = urlencode($file);
-					print_titre($langs->trans("Documents"));
-					print '<table class="border" width="100%">';
-
-					print "<tr $bc[$var]><td>".$langs->trans("Propal")." PDF</td>";
-
-					print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=propal&file='.urlencode($relativepath).'">'.$propal->ref.'.pdf</a></td>';
-					print '<td align="right">'.dol_print_size(dol_filesize($file)).'</td>';
-					print '<td align="right">'.dol_print_date(dol_filemtime($file),'dayhour').'</td>';
-					print '</tr>';
-
-					// Si fichier detail PDF existe
-					if (file_exists($filedetail)) { // propal detaillee supplementaire
-						print "<tr $bc[$var]><td>Propal detaillee</td>";
-
-						print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=propal&file='.urlencode($relativepathdetail).'">'.$propal->ref.'-detail.pdf</a></td>';
-						print '<td align="right">'.dol_print_size(dol_filesize($filedetail)).'</td>';
-						print '<td align="right">'.dol_print_date(dol_filemtime($filedetail),'dayhour').'</td>';
-						print '</tr>';
-					}
-					print "</table>\n";
-
-					// Conversion du PDF en image png si fichier png non existant
-					if (! file_exists($fileimage) && ! file_exists($fileimagebis))
+					$image=new Imagick();
+					$image->readImage($file) ;
+					
+					/*
+					if ( imagick_iserror( $handle ) )
 					{
-						if (class_exists("Imagick"))
-						{
-							$handle = imagick_readimage( $file ) ;
-							if ( imagick_iserror( $handle ) )
-							{
-								$reason      = imagick_failedreason( $handle ) ;
-								$description = imagick_faileddescription( $handle ) ;
-
-								print "handle failed!<BR>\nReason: $reason<BR>\nDescription: $description<BR>\n";
-							}
-							imagick_convert( $handle, "PNG" ) ;
-							if ( imagick_iserror( $handle ) )
-							{
-								$reason      = imagick_failedreason( $handle ) ;
-								$description = imagick_faileddescription( $handle ) ;
-								print "handle failed!<BR>\nReason: $reason<BR>\nDescription: $description<BR>\n";
-							}
-							imagick_writeimages( $handle, $file .".png");
-						} else {
-							$langs->load("other");
-							print '<font class="error">'.$langs->trans("ErrorNoImagickReadimage").'</font>';
-						}
+						$reason      = imagick_failedreason( $handle ) ;
+						$description = imagick_faileddescription( $handle ) ;
+						
+						print "handle failed!<BR>\nReason: $reason<BR>\nDescription: $description<BR>\n";
+					}
+					*/
+					
+					$image->setImageFormat("PNG");
+					
+					/*
+					if ( imagick_iserror( $handle ) )
+					{
+						$reason      = imagick_failedreason( $handle ) ;
+						$description = imagick_faileddescription( $handle ) ;
+						print "handle failed!<BR>\nReason: $reason<BR>\nDescription: $description<BR>\n";
+					}
+					*/
+					
+					$image->writeImage($file.".png");
+					
+					} 
+					else
+					{
+						$langs->load("other");
+						print '<font class="error">'.$langs->trans("ErrorNoImagickReadimage").'</font>';
 					}
 				}
-
-				print "</td>";
-				print '</tr>';
-
-				print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';
-				print '<td align="right" colspan="2"><b>'.price($propal->price).'</b></td>';
-				print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
-				print '</table>';
 			}
-		} else {
-			dol_print_error($db);
-		}
-	} else {
+			
+			print "</td>";
+			print '</tr>';
+			
+			print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';
+			print '<td align="right" colspan="2"><b>'.price($propal->price).'</b></td>';
+			print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+			print '</table>';
+	}
+	else
+	{
 		// Propal non trouvee
 		print $langs->trans("ErrorPropalNotFound",$_GET["id"]);
 	}
