@@ -174,7 +174,6 @@ if ($id > 0 || ! empty($ref))
                 	print '<font class="error">'.$langs->trans("ErrorNoImagickReadimage").'</font>';
                 }
             }
-
         }
         print "</td></tr>";
 
@@ -229,7 +228,7 @@ elseif (file_exists($fileimagebis))
 {
 	$multiple = $relativepath . "-";
 	
-	for ($i = 0; $i < $ret; $i++)
+	for ($i = 0; $i < 20; $i++)
 	{
 		$preview = $multiple.$i.'.png';
 		
