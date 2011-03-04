@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007      Cyrille de Lambert   <cyrille.delambert@auguria.net>
  * Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
