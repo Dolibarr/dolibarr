@@ -662,7 +662,7 @@ function dol_convert_file($file,$ext='png')
 		if ($ret)
 		{
 			$count = $image->getNumberImages();
-			$ret = $image->writeImages( $file . "." . $ext, true );
+			$ret = $image->writeImage( $file . "." . $ext, true );
 			if ($ret) return $count;
 			else return -3;
 		}
