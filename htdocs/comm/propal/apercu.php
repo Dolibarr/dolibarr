@@ -36,9 +36,10 @@ $langs->load('propal');
 $langs->load("bills");
 $langs->load('compta');
 
-$id = isset($_GET["id"])?$_GET["id"]:'';
-
 // Security check
+$socid=0;
+$id = GETPOST("id");
+$ref = GETPOST("ref");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'propale', $id, 'propal');
 
@@ -57,7 +58,7 @@ $html = new Form($db);
 /*                                                                             */
 /* *************************************************************************** */
 
-if ($_GET["id"] > 0)
+if ($id > 0 || ! empty($ref))
 {
 	$object = new Propal($db);
 
@@ -118,16 +119,16 @@ if ($_GET["id"] > 0)
 		/*
 		 * Documents
 		 */
-		$propalref = dol_sanitizeFileName($object->ref);
+		$objectref = dol_sanitizeFileName($object->ref);
 		$dir_output = $conf->propale->dir_output . "/";
-		$filepath = $dir_output . $propalref . "/";
-		$file = $filepath . $propalref . ".pdf";
-		$filedetail = $filepath . $propalref . "-detail.pdf";
-		$relativepath = "${propalref}/${propalref}.pdf";
-		$relativepathdetail = "${propalref}/${propalref}-detail.pdf";
+		$filepath = $dir_output . $objectref . "/";
+		$file = $filepath . $objectref . ".pdf";
+		$filedetail = $filepath . $objectref . "-detail.pdf";
+		$relativepath = "${objectref}/${objectref}.pdf";
+		$relativepathdetail = "${objectref}/${objectref}-detail.pdf";
 		
 		// Chemin vers png apercus
-		$relativepathimage = "${propalref}/${propalref}.pdf.png";
+		$relativepathimage = "${objectref}/${objectref}.pdf.png";
 		$fileimage = $file.".png";          // Si PDF d'1 page
 		$fileimagebis = $file.".png.0";     // Si PDF de plus d'1 page
 		

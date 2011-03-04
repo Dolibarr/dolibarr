@@ -27,76 +27,61 @@
 
 require('../../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/prelevement.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 require_once DOL_DOCUMENT_ROOT."/compta/prelevement/class/bon-prelevement.class.php";
 
 $langs->load("bills");
 $langs->load("categories");
 
-/*
- * Securite acces client
- */
-if (!$user->rights->prelevement->bons->lire) accessforbidden();
+// Security check
+$socid=0;
+$id = GETPOST("id");
+$ref = GETPOST("ref");
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'prelevement', $id);
 
 
 llxHeader('','Bon de prelevement');
 
 $html = new Form($db);
 
-if ($_GET["id"])
+if ($id > 0 || ! empty($ref))
 {
-	$bon = new BonPrelevement($db,"");
+	$object = new BonPrelevement($db,"");
 
-	if ($bon->fetch($_GET["id"]) == 0)
+	if ($object->fetch($id) == 0)
     {
-		$head = prelevement_prepare_head($bon);	
-		dol_fiche_head($head, 'preview', 'Prelevement : '. $bon->ref);
+		$head = prelevement_prepare_head($object);	
+		dol_fiche_head($head, 'preview', 'Prelevement : '. $object->ref);
 
 		print '<table class="border" width="100%">';
 
-		print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>'.$bon->ref.'</td></tr>';
-		print '<tr><td width="20%">'.$langs->trans("Amount").'</td><td>'.price($bon->amount).'</td></tr>';
+		print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>'.$object->ref.'</td></tr>';
+		print '<tr><td width="20%">'.$langs->trans("Amount").'</td><td>'.price($object->amount).'</td></tr>';
 		print '<tr><td width="20%">'.$langs->trans("File").'</td><td>';
 
-		$relativepath = 'bon/'.$bon->ref;
+		$relativepath = 'bon/'.$object->ref;
 
-		print '<a href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart=prelevement&amp;file='.urlencode($relativepath).'">'.$bon->ref.'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart=prelevement&amp;file='.urlencode($relativepath).'">'.$object->ref.'</a>';
 
 		print '</td></tr>';
 		print '</table><br>';
 
-		$fileimage = $conf->prelevement->dir_output.'/receipts/'.$bon->ref.'.ps.png.0';
-		$fileps = $conf->prelevement->dir_output.'/receipts/'.$bon->ref.'.ps';
+		$fileimage = $conf->prelevement->dir_output.'/receipts/'.$object->ref.'.ps.png.0';
+		$fileps = $conf->prelevement->dir_output.'/receipts/'.$object->ref.'.ps';
 
 		// Conversion du PDF en image png si fichier png non existant
 		if (!file_exists($fileimage))
         {
-			print $fileimage;
 			if (class_exists("Imagick"))
 			{
-
-				$handle = imagick_readimage( $fileps ) ;
-
-				if ( imagick_iserror( $handle ) )
-				{
-					$reason      = imagick_failedreason( $handle ) ;
-					$description = imagick_faileddescription( $handle ) ;
-
-					print "handle failed!<BR>\nReason: $reason<BR>\nDescription: $description<BR>\n";
-				}
-				imagick_convert( $handle, "PNG" ) ;
-
-				if ( imagick_iserror( $handle ) )
-				{
-					$reason      = imagick_failedreason( $handle ) ;
-					$description = imagick_faileddescription( $handle ) ;
-
-					print "handle failed!<BR>\nReason: $reason<BR>\nDescription: $description<BR>\n";
-				}
-				imagick_writeimage( $handle, $fileps .".png");
+				$ret = dol_convert_file($file);
+				if ($ret < 0) $error++;
 			}
 			else
 			{
-				print "Les fonctions <i>imagick</i> ne sont pas disponibles sur ce PHP";
+				$langs->load("other");
+				print '<font class="error">'.$langs->trans("ErrorNoImagickReadimage").'</font>';
 			}
 		}
 

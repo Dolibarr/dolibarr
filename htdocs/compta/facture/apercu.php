@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      �ric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,38 +22,33 @@
  */
 
 /**
-	    \file       htdocs/compta/facture/apercu.php
-		\ingroup    facture
-		\brief      Page de l'onglet apercu d'une facture
-		\version    $Revision$
-*/
+ * 	    \file       htdocs/compta/facture/apercu.php
+ * 		\ingroup    facture
+ * 		\brief      Page de l'onglet apercu d'une facture
+ * 		\version    $Revision$
+ */
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/invoice.lib.php');
+require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
-
-
-if (!$user->rights->facture->lire)
-  accessforbidden();
 
 $langs->load("bills");
 
-
-// S�curit� acc�s client
-if ($user->societe_id > 0)
-{
-  $action = '';
-  $socid = $user->societe_id;
-}
-
+// Security check
+$socid=0;
+$id = GETPOST("id");
+$ref = GETPOST("ref");
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'facture', $id);
 
 
 /*
  * View
  */
 
-$now=gmmktime();
+$now=dol_now();
 
 llxHeader('',$langs->trans("Bill"),'Facture');
 
@@ -64,20 +60,22 @@ $html = new Form($db);
 /*                                                                             */
 /* *************************************************************************** */
 
-if ($_GET["facid"] > 0)
+if ($id > 0 || ! empty($ref))
 {
-    $fac = New Facture($db);
-    if ( $fac->fetch($_GET["facid"], $user->societe_id) > 0)
+    $object = New Facture($db);
+    
+    if ($object->fetch($id,$ref) > 0)
     {
-        $soc = new Societe($db, $fac->socid);
-        $soc->fetch($fac->socid);
+        $soc = new Societe($db, $object->socid);
+        $soc->fetch($object->socid);
+        
         $author = new User($db);
-        if ($fac->user_author)
+        if ($object->user_author)
         {
-            $author->fetch($fac->user_author);
+            $author->fetch($object->user_author);
         }
 
-		$head = facture_prepare_head($fac);
+		$head = facture_prepare_head($object);
         dol_fiche_head($head, 'preview', $langs->trans("InvoiceCustomer"), 0, 'bill');
 
 
@@ -88,7 +86,7 @@ if ($_GET["facid"] > 0)
 		$rowspan=3;
 
         // Reference
-        print '<tr><td width="20%">'.$langs->trans('Ref').'</td><td colspan="5">'.$fac->ref.'</td></tr>';
+        print '<tr><td width="20%">'.$langs->trans('Ref').'</td><td colspan="5">'.$object->ref.'</td></tr>';
 
 		// Societe
         print '<tr><td>'.$langs->trans("Company").'</td>';
@@ -97,57 +95,42 @@ if ($_GET["facid"] > 0)
 
         // Dates
         print '<tr><td>'.$langs->trans("Date").'</td>';
-        print '<td colspan="3">'.dol_print_date($fac->date,"daytext").'</td>';
-        print '<td>'.$langs->trans("DateMaxPayment").'</td><td>' . dol_print_date($fac->date_lim_reglement,"daytext");
-        if ($fac->paye == 0 && $fac->date_lim_reglement < ($now - $conf->facture->client->warning_delay)) print img_warning($langs->trans("Late"));
+        print '<td colspan="3">'.dol_print_date($object->date,"daytext").'</td>';
+        print '<td>'.$langs->trans("DateMaxPayment").'</td><td>' . dol_print_date($object->date_lim_reglement,"daytext");
+        if ($object->paye == 0 && $object->date_lim_reglement < ($now - $conf->facture->client->warning_delay)) print img_warning($langs->trans("Late"));
         print "</td></tr>";
 
-        // Conditions et modes de r�glement
+        // Conditions et modes de reglement
         print '<tr><td>'.$langs->trans("PaymentConditions").'</td><td colspan="3">';
-        $html->form_conditions_reglement($_SERVER["PHP_SELF"]."?facid=$fac->id",$fac->cond_reglement_id,"none");
+        $html->form_conditions_reglement($_SERVER["PHP_SELF"]."?facid=$object->id",$object->cond_reglement_id,"none");
         print '</td>';
         print '<td width="25%">'.$langs->trans("PaymentMode").'</td><td width="25%">';
-        $html->form_modes_reglement($_SERVER["PHP_SELF"]."?facid=$fac->id",$fac->mode_reglement_id,"none");
+        $html->form_modes_reglement($_SERVER["PHP_SELF"]."?facid=$object->id",$object->mode_reglement_id,"none");
         print '</td></tr>';
 
 		// Remise globale
 		print '<tr><td>'.$langs->trans('GlobalDiscount').'</td>';
-/*
-		if ($fac->brouillon == 1 && $user->rights->facture->creer)
-		{
-			print '<form action="facture.php?facid='.$fac->id.'" method="post">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input type="hidden" name="action" value="setremise">';
-			print '<td colspan="3"><input type="text" name="remise" size="1" value="'.$fac->remise_percent.'">% ';
-			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'"></td>';
-			print '</form>';
-		}
-		else
-		{
-*/
-			print '<td colspan="3">'.$fac->remise_percent.'%</td>';
-//		}
+		print '<td colspan="3">'.$object->remise_percent.'%</td>';
 
         $nbrows=5;
         if ($conf->projet->enabled) $nbrows++;
-		    print '<td rowspan="'.$nbrows.'" colspan="2" valign="top">';
+        print '<td rowspan="'.$nbrows.'" colspan="2" valign="top">';
 
         /*
          * Documents
          */
-        $facref = dol_sanitizeFileName($fac->ref);
+        $objectref = dol_sanitizeFileName($object->ref);
         $dir_output = $conf->facture->dir_output . "/";
-				$filepath = $dir_output . $facref . "/";
-        $file = $filepath . $facref . ".pdf";
-        $filedetail = $filepath . $facref . "-detail.pdf";
-        $relativepath = "${facref}/${facref}.pdf";
-        $relativepathdetail = "${facref}/${facref}-detail.pdf";
+		$filepath = $dir_output . $objectref . "/";
+        $file = $filepath . $objectref . ".pdf";
+        $filedetail = $filepath . $objectref . "-detail.pdf";
+        $relativepath = "${objectref}/${objectref}.pdf";
+        $relativepathdetail = "${objectref}/${objectref}-detail.pdf";
 
-        // Chemin vers png aper�us
-        $relativepathimage = "${facref}/${facref}.pdf.png";
+        // Chemin vers png apercus
+        $relativepathimage = "${obejctref}/${objectref}.pdf.png";
         $fileimage = $file.".png";          // Si PDF d'1 page
         $fileimagebis = $file.".png.0";     // Si PDF de plus d'1 page
-
 
         $var=true;
 
@@ -160,7 +143,7 @@ if ($_GET["facid"] > 0)
 
             print "<tr $bc[$var]><td>".$langs->trans("Bill")." PDF</td>";
 
-            print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=facture&file='.urlencode($relativepath).'">'.$fac->ref.'.pdf</a></td>';
+            print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=facture&file='.urlencode($relativepath).'">'.$object->ref.'.pdf</a></td>';
             print '<td align="right">'.dol_print_size(dol_filesize($file)). '</td>';
             print '<td align="right">'.dol_print_date(dol_filemtime($file),'dayhour').'</td>';
             print '</tr>';
@@ -168,9 +151,9 @@ if ($_GET["facid"] > 0)
             // Si fichier detail PDF existe
             if (file_exists($filedetail)) // facture detaillee supplementaire
             {
-                print "<tr $bc[$var]><td>Facture d�taill�e</td>";
+                print "<tr $bc[$var]><td>Facture detaillee</td>";
 
-                print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=facture&file='.urlencode($relativepathdetail).'">'.$fac->ref.'-detail.pdf</a></td>';
+                print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=facture&file='.urlencode($relativepathdetail).'">'.$object->ref.'-detail.pdf</a></td>';
                 print '<td align="right">'.dol_print_size(dol_filesize($filedetail)).'</td>';
                 print '<td align="right">'.dol_print_date(dol_filemtime($filedetail),'dayhour').'</td>';
                 print '</tr>';
@@ -179,35 +162,17 @@ if ($_GET["facid"] > 0)
             print "</table>\n";
 
             // Conversion du PDF en image png si fichier png non existant
-					if (! file_exists($fileimage) && ! file_exists($fileimagebis))
-					{
-						if (class_exists("Imagick"))
-						{
-                    $handle = imagick_readimage( $file ) ;
-                    if ( imagick_iserror( $handle ) )
-                    {
-                        $reason      = imagick_failedreason( $handle ) ;
-                        $description = imagick_faileddescription( $handle ) ;
-
-                        print "handle failed!<BR>\nReason: $reason<BR>\nDescription: $description<BR>\n";
-                    }
-
-                    imagick_convert( $handle, "PNG" ) ;
-
-                    if ( imagick_iserror( $handle ) )
-                    {
-                        $reason      = imagick_failedreason( $handle ) ;
-                        $description = imagick_faileddescription( $handle ) ;
-
-                        print "handle failed!<BR>\nReason: $reason<BR>\nDescription: $description<BR>\n";
-                    }
-
-                    imagick_writeimages( $handle, $file .".png");
+            if (! file_exists($fileimage) && ! file_exists($fileimagebis))
+            {
+            	if (class_exists("Imagick"))
+            	{
+            		$ret = dol_convert_file($file);
+					if ($ret < 0) $error++;
                 }
                 else
-				        {
-                   $langs->load("other");
-							     print '<font class="error">'.$langs->trans("ErrorNoImagickReadimage").'</font>';
+                {
+                	$langs->load("other");
+                	print '<font class="error">'.$langs->trans("ErrorNoImagickReadimage").'</font>';
                 }
             }
 
@@ -215,16 +180,16 @@ if ($_GET["facid"] > 0)
         print "</td></tr>";
 
         print '<tr><td>'.$langs->trans("AmountHT").'</td>';
-        print '<td align="right" colspan="2"><b>'.price($fac->total_ht).'</b></td>';
+        print '<td align="right" colspan="2"><b>'.price($object->total_ht).'</b></td>';
         print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
-		print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right" colspan="2" nowrap>'.price($fac->total_tva).'</td>';
+		print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right" colspan="2" nowrap>'.price($object->total_tva).'</td>';
 		print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
-		print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right" colspan="2" nowrap>'.price($fac->total_ttc).'</td>';
+		print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right" colspan="2" nowrap>'.price($object->total_ttc).'</td>';
 		print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 
 		// Statut
-		print '<tr><td>'.$langs->trans('Status').'</td><td align="left" colspan="3">'.($fac->getLibStatut()).'</td></tr>';
+		print '<tr><td>'.$langs->trans('Status').'</td><td align="left" colspan="3">'.($object->getLibStatut()).'</td></tr>';
 
 		// Projet
         if ($conf->projet->enabled)
@@ -232,11 +197,11 @@ if ($_GET["facid"] > 0)
             $langs->load("projects");
 	        print '<tr>';
             print '<td>'.$langs->trans("Project").'</td><td colspan="3">';
-            if ($fac->fk_project > 0)
+            if ($object->fk_project > 0)
             {
                 $project = New Project($db);
-                $project->fetch($fac->fk_project);
-                print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$fac->fk_project.'">'.$project->title.'</a>';
+                $project->fetch($object->fk_project);
+                print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$object->fk_project.'">'.$project->title.'</a>';
             }
             else
             {
@@ -250,35 +215,33 @@ if ($_GET["facid"] > 0)
     }
     else
     {
-        // Facture non trouv�e
+        // Facture non trouvee
         print $langs->trans("ErrorBillNotFound",$_GET["facid"]);
     }
 }
 
-// Si fichier png PDF d'1 page trouv�
+// Si fichier png PDF d'1 page trouve
 if (file_exists($fileimage))
 {
   print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercufacture&file='.urlencode($relativepathimage).'">';
 }
-// Si fichier png PDF de plus d'1 page trouv�
+// Si fichier png PDF de plus d'1 page trouve
 elseif (file_exists($fileimagebis))
+{
+	$multiple = $relativepathimage . ".";
+	
+	for ($i = 0; $i < 20; $i++)
 	{
-		$multiple = $relativepathimage . ".";
-
-		for ($i = 0; $i < 20; $i++)
+		$preview = $multiple.$i;
+		
+		if (file_exists($dir_output.$preview))
 		{
-			$preview = $multiple.$i;
-
-			if (file_exists($dir_output.$preview))
-      {
-      	print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercufacture&file='.urlencode($preview).'"><p>';
-      }
+			print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercufacture&file='.urlencode($preview).'"><p>';
+		}
 	}
 }
 
-
 print '</div>';
-
 
 $db->close();
 
