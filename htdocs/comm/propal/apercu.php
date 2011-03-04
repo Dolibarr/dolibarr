@@ -166,48 +166,24 @@ if ($_GET["id"] > 0)
 			{
 				if (class_exists("Imagick"))
 				{
-					$image=new Imagick();
-					$image->readImage($file) ;
-					
-					/*
-					if ( imagick_iserror( $handle ) )
-					{
-						$reason      = imagick_failedreason( $handle ) ;
-						$description = imagick_faileddescription( $handle ) ;
-						
-						print "handle failed!<BR>\nReason: $reason<BR>\nDescription: $description<BR>\n";
-					}
-					*/
-					
-					$image->setImageFormat("PNG");
-					
-					/*
-					if ( imagick_iserror( $handle ) )
-					{
-						$reason      = imagick_failedreason( $handle ) ;
-						$description = imagick_faileddescription( $handle ) ;
-						print "handle failed!<BR>\nReason: $reason<BR>\nDescription: $description<BR>\n";
-					}
-					*/
-					
-					$image->writeImage($file.".png");
-					
-					} 
-					else
-					{
-						$langs->load("other");
-						print '<font class="error">'.$langs->trans("ErrorNoImagickReadimage").'</font>';
-					}
+					$ret = dol_convert_file($file);
+					if ($ret < 0) $error++;
+				} 
+				else
+				{
+					$langs->load("other");
+					print '<font class="error">'.$langs->trans("ErrorNoImagickReadimage").'</font>';
 				}
 			}
-			
-			print "</td>";
-			print '</tr>';
-			
-			print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';
-			print '<td align="right" colspan="2"><b>'.price($object->price).'</b></td>';
-			print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
-			print '</table>';
+		}
+		
+		print "</td>";
+		print '</tr>';
+		
+		print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';
+		print '<td align="right" colspan="2"><b>'.price($object->price).'</b></td>';
+		print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+		print '</table>';
 	}
 	else
 	{

@@ -647,4 +647,34 @@ function dol_remove_file_process($filenb,$donotupdatesession=0)
 	return $mesg;
 }
 
+/**
+ * 	Convert file to image
+ */
+function dol_convert_file($file,$ext='png')
+{
+	global $langs;
+	
+	$image=new Imagick();
+	$ret = $image->readImage($file);
+	if ($ret)
+	{
+		$ret = $image->setImageFormat($ext);
+		if ($ret)
+		{
+			$ret = $image->writeImage( $file . "." . $ext );
+			if (! $ret) return -3;
+		}
+		else
+		{
+			return -2;
+		}
+	}
+	else
+	{
+		return -1;
+	}
+	
+	return 1;
+}
+
 ?>
