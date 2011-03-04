@@ -202,7 +202,7 @@ elseif (file_exists($fileimagebis))
 {
 	$multiple = $relativepath . "-";
 
-	for ($i = 0; $i < 20; $i++)
+	for ($i = 0; $i < $ret; $i++)
 	{
 		$preview = $multiple.$i.'.png';
 
