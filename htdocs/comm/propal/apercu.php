@@ -109,7 +109,7 @@ if ($_GET["id"] > 0)
 		// ligne
 		// partie Gauche
 		print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">';
-		print dol_print_date($propal->date,'daytext');
+		print dol_print_date($object->date,'daytext');
 		print '</td>';
 		
 		// partie Droite sur $rowspan lignes
@@ -118,7 +118,7 @@ if ($_GET["id"] > 0)
 		/*
 		 * Documents
 		 */
-		$propalref = dol_sanitizeFileName($propal->ref);
+		$propalref = dol_sanitizeFileName($object->ref);
 		$dir_output = $conf->propale->dir_output . "/";
 		$filepath = $dir_output . $propalref . "/";
 		$file = $filepath . $propalref . ".pdf";
@@ -142,7 +142,7 @@ if ($_GET["id"] > 0)
 			
 			print "<tr $bc[$var]><td>".$langs->trans("Propal")." PDF</td>";
 			
-			print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=propal&file='.urlencode($relativepath).'">'.$propal->ref.'.pdf</a></td>';
+			print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=propal&file='.urlencode($relativepath).'">'.$object->ref.'.pdf</a></td>';
 			
 			print '<td align="right">'.dol_print_size(dol_filesize($file)).'</td>';
 			print '<td align="right">'.dol_print_date(dol_filemtime($file),'dayhour').'</td>';
@@ -154,7 +154,7 @@ if ($_GET["id"] > 0)
 			{
 				print "<tr $bc[$var]><td>Propal detaillee</td>";
 				
-				print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=propal&file='.urlencode($relativepathdetail).'">'.$propal->ref.'-detail.pdf</a></td>';
+				print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=propal&file='.urlencode($relativepathdetail).'">'.$object->ref.'-detail.pdf</a></td>';
 				print '<td align="right">'.dol_print_size(dol_filesize($filedetail)).'</td>';
 				print '<td align="right">'.dol_print_date(dol_filemtime($filedetail),'dayhour').'</td>';
 				print '</tr>';
@@ -205,7 +205,7 @@ if ($_GET["id"] > 0)
 			print '</tr>';
 			
 			print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';
-			print '<td align="right" colspan="2"><b>'.price($propal->price).'</b></td>';
+			print '<td align="right" colspan="2"><b>'.price($object->price).'</b></td>';
 			print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 			print '</table>';
 	}
