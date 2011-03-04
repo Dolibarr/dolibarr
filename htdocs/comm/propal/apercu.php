@@ -128,9 +128,8 @@ if ($id > 0 || ! empty($ref))
 		$relativepathdetail = "${objectref}/${objectref}-detail.pdf";
 		
 		// Chemin vers png apercus
-		$relativepathimage = "${objectref}/${objectref}.pdf.png";
 		$fileimage = $file.".png";          // Si PDF d'1 page
-		$fileimagebis = $file.".png.0";     // Si PDF de plus d'1 page
+		$fileimagebis = $file."-0.png";     // Si PDF de plus d'1 page
 		
 		$var=true;
 		
@@ -201,11 +200,11 @@ if (file_exists($fileimage))
 // Si fichier png PDF de plus d'1 page trouve
 elseif (file_exists($fileimagebis))
 {
-	$multiple = $relativepathimage . ".";
+	$multiple = $relativepath . "-";
 
 	for ($i = 0; $i < 20; $i++)
 	{
-		$preview = $multiple.$i;
+		$preview = $multiple.$i.'.png';
 
 		if (file_exists($dir_output.$preview))
 		{
