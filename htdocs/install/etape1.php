@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -204,7 +204,7 @@ if ($_POST["action"] == "set")
 	}
 
 	// Force https
-	$_POST["main_force_https"] = ((isset($_POST["main_force_https"]) && $_POST["main_force_https"] == "on")?'1':'0');
+	$main_force_https = ( (GETPOST("main_force_https") && (GETPOST("main_force_https") == "on" || GETPOST("main_force_https") == 1)) ? '1' : '0');
 
 	/**
 	 * Write conf file on disk
@@ -535,7 +535,7 @@ function write_conf_file($conffile)
 		fputs($fp, '$dolibarr_main_document_root=\''.addslashes($main_dir).'\';');
 		fputs($fp,"\n");
 
-		fputs($fp, '#$dolibarr_main_url_root_alt=\''.addslashes("/custom").'\';');
+		fputs($fp, '#$dolibarr_main_url_root_alt=\''.addslashes($_POST["main_url"]."/custom").'\';');
 		fputs($fp,"\n");
 
 		fputs($fp, '#$dolibarr_main_document_root_alt=\''.addslashes($main_dir."/custom").'\';');
@@ -581,7 +581,7 @@ function write_conf_file($conffile)
         fputs($fp, '$dolibarr_nocsrfcheck=\'0\';');
         fputs($fp,"\n");
 
-        fputs($fp, '$dolibarr_main_force_https=\''.$_POST["main_force_https"].'\';');
+        fputs($fp, '$dolibarr_main_force_https=\''.$main_force_https.'\';');
 		fputs($fp,"\n");
 
 		fputs($fp, '$dolibarr_main_cookie_cryptkey=\''.$key.'\';');

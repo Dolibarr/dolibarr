@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien DiCintio   <sdicintio@ressource-toi.org>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -211,7 +211,7 @@ if (empty($dolibarr_main_url_root))
 	</tr>
 
 <?php
-if (1 == 2) {   // Disabled during install process because HTTPS may not be yet configured in web server and need experienced skills
+if (isset($_SERVER["HTTPS"])) {   // Enabled if the installation process is "https://"
 ?>
 	<tr>
 		<td valign="top" class="label"><?php echo $langs->trans("ForceHttps"); ?></td>
