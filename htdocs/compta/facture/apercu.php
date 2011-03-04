@@ -181,8 +181,8 @@ if ($_GET["facid"] > 0)
             // Conversion du PDF en image png si fichier png non existant
 					if (! file_exists($fileimage) && ! file_exists($fileimagebis))
 					{
-						if (function_exists("imagick_readimage"))
-            {
+						if (class_exists("Imagick"))
+						{
                     $handle = imagick_readimage( $file ) ;
                     if ( imagick_iserror( $handle ) )
                     {

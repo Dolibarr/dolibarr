@@ -71,7 +71,7 @@ if ($_GET["id"])
 		if (!file_exists($fileimage))
         {
 			print $fileimage;
-			if (function_exists(imagick_readimage))
+			if (class_exists("Imagick"))
 			{
 
 				$handle = imagick_readimage( $fileps ) ;

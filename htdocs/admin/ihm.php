@@ -219,7 +219,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')	// Edit
 	print '</tr>';
 
     // Activate preview tab on element card
-    if (function_exists("imagick_readimage"))
+    if (class_exists("Imagick"))
 	{
 	    $var=!$var;
 	    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("UsePreviewTabs").'</td><td>';
@@ -420,7 +420,7 @@ else	// Show
 	print "</tr>";
 
     // Activate preview tab on element card
-    if (function_exists("imagick_readimage"))
+    if (class_exists("Imagick"))
 	{
 		$var=!$var;
 	    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("UsePreviewTabs").'</td><td>';

@@ -2,7 +2,7 @@
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,10 +20,10 @@
  */
 
 /**
- \file		htdocs/comm/propal/apercu.php
- \ingroup	propal
- \brief		Page de l'onglet apercu d'une propal
- \version	$Id$
+ *  \file		htdocs/comm/propal/apercu.php
+ *  \ingroup	propal
+ *  \brief		Page de l'onglet apercu d'une propal
+ *  \version	$Id$
  */
 
 require("../../main.inc.php");
@@ -176,7 +176,7 @@ if ($_GET["id"] > 0)
 					// Conversion du PDF en image png si fichier png non existant
 					if (! file_exists($fileimage) && ! file_exists($fileimagebis))
 					{
-						if (function_exists("imagick_readimage"))
+						if (class_exists("Imagick"))
 						{
 							$handle = imagick_readimage( $file ) ;
 							if ( imagick_iserror( $handle ) )
