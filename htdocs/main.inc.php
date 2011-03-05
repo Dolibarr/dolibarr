@@ -330,8 +330,19 @@ if (! defined('NOLOGIN'))
 	{
 		// It is not already authenticated, it requests the login / password
 
+	    // If in demo mode, we check we go to home page through the public/demo/index.php page
+	    if ($dolibarr_main_demo && $_SERVER['PHP_SELF'] == DOL_URL_ROOT.'/index.php')  // We ask index page
+        {
+            if (! preg_match('/public/',$_SERVER['HTTP_REFERER']))
+            {
+                dol_syslog("Call index page from another url than demo page");
+                header("Location: ".DOL_URL_ROOT.'/public/demo/index.php');
+                exit;
+            }
+        }
+
 		// Verification security graphic code
-		if ($test && isset($_POST["username"]) && ! empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA))
+		if (isset($_POST["username"]) && ! empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA))
 		{
 			require_once DOL_DOCUMENT_ROOT.'/includes/artichow/Artichow.cfg.php';
 			require_once ARTICHOW."/AntiSpam.class.php";
