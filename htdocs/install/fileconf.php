@@ -211,7 +211,7 @@ if (empty($dolibarr_main_url_root))
 	</tr>
 
 <?php
-if (isset($_SERVER["HTTPS"])) {   // Enabled if the installation process is "https://"
+if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if the installation process is "https://"
 ?>
 	<tr>
 		<td valign="top" class="label"><?php echo $langs->trans("ForceHttps"); ?></td>
