@@ -113,7 +113,7 @@ if ($action == 'add_paiement')
 
     if (empty($datepaye))
     {
-        $fiche_erreur_message = '<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('Date')).'</div>';
+        $mesg = '<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('Date')).'</div>';
         $error++;
     }
 
@@ -173,8 +173,6 @@ llxHeader();
 
 $html=new Form($db);
 
-if ($mesg) print $mesg;
-
 if ($action == 'create' || $action == 'add_paiement')
 {
     $facture = new FactureFournisseur($db);
@@ -201,6 +199,9 @@ if ($action == 'create' || $action == 'add_paiement')
             $total = $obj->total;
 
             print_fiche_titre($langs->trans('DoPayment'));
+
+            if ($mesg) print $mesg;
+            if ($errmsg) print $errmsg;
 
             print '<form name="addpaiement" action="paiement.php" method="post">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -401,6 +402,9 @@ if (! $_GET['action'] && ! $_POST['action'])
         $paramlist.=($_REQUEST["search_amount"]?"&search_amount=".$_REQUEST["search_amount"]:"");
 
         print_barre_liste($langs->trans('SupplierPayments'), $page, 'paiement.php',$paramlist,$sortfield,$sortorder,'',$num);
+
+        if ($mesg) print $mesg;
+        if ($errmsg) print $errmsg;
 
         print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
         print '<table class="noborder" width="100%">';
