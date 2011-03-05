@@ -119,7 +119,12 @@ if ($_GET["id"])
         {
         	print "<tr>".'<td width="25%" valign="top">ClickToDial URL</td>';
         	print '<td class="valeur">';
-    		print $form->textwithpicto($conf->global->CLICKTODIAL_URL,$langs->trans("ClickToDialUrlDesc"));
+            if (empty($conf->global->CLICKTODIAL_URL))
+            {
+                $langs->load("errors");
+                print '<font class="error">'.$langs->trans("ErrorModuleSetupNotComplete").'</font>';
+            }
+            else print $form->textwithpicto($conf->global->CLICKTODIAL_URL,$langs->trans("ClickToDialUrlDesc"));
         	print '</td>';
         	print '</tr>';
         }
@@ -155,7 +160,12 @@ if ($_GET["id"])
         {
         	print "<tr>".'<td width="25%" valign="top">ClickToDial URL</td>';
         	print '<td class="valeur">';
-    		print $form->textwithpicto($conf->global->CLICKTODIAL_URL,$langs->trans("ClickToDialUrlDesc"));
+        	if (empty($conf->global->CLICKTODIAL_URL))
+        	{
+        	    $langs->load("errors");
+        	    print '<font class="error">'.$langs->trans("ErrorModuleSetupNotComplete").'</font>';
+        	}
+        	else print $form->textwithpicto($conf->global->CLICKTODIAL_URL,$langs->trans("ClickToDialUrlDesc"));
         	print '</td>';
         	print '</tr>';
         }
