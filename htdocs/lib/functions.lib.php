@@ -1056,7 +1056,7 @@ function dol_print_ip($ip,$mode=0)
 /**
  *	Return true if email syntax is ok.
  *	@param	    address     email (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
- *	@return     boolean     true if email syntax is OK, false if KO or empty string/
+ *	@return     boolean     true if email syntax is OK, false if KO or empty string
  */
 function isValidEmail($address)
 {
@@ -1073,6 +1073,16 @@ function isValidEmail($address)
 	{
 		return false;
 	}
+}
+
+/**
+ *  Return true if phone number syntax is ok.
+ *  @param      address     phone (Ex: "0601010101")
+ *  @return     boolean     true if phone syntax is OK, false if KO or empty string
+ */
+function isValidPhone($address)
+{
+    return true;
 }
 
 

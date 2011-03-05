@@ -179,10 +179,10 @@ class FormMail
 	}
 
 	/**
-	 *	\brief  		Show the form to input an email
-	 *	\param			addfileaction		Name of action when posting file attachments
-	 *	\param			removefileaction	Name of action when removing file attachments
-	 * 	\remarks		this->withfile: 0=No attaches files, 1=Show attached files, 2=Can add new attached files
+	 *	Show the form to input an email
+     *  this->withfile: 0=No attaches files, 1=Show attached files, 2=Can add new attached files
+	 *	@param			addfileaction		Name of action when posting file attachments
+	 *	@param			removefileaction	Name of action when removing file attachments
 	 */
 	function show_form($addfileaction='addfile',$removefileaction='removefile')
 	{

@@ -936,7 +936,7 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile']
                 }
                 else	// Id du contact
                 {
-                    $sendto = $object->client->contact_get_email($_POST['receiver']);
+                    $sendto = $object->client->contact_get_property($_POST['receiver'],'email');
                     $sendtoid = $_POST['receiver'];
                 }
             }

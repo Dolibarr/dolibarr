@@ -155,7 +155,7 @@ if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 
 				$tva_tx	= get_default_tva($societe,$mysoc,$product->id);
 				$type = $product->type;
-				
+
 				// Local Taxes
 				$localtax1_tx= get_localtax($tva_tx, 1, $societe);
 	  			$localtax2_tx= get_localtax($tva_tx, 2, $societe);
@@ -187,11 +187,11 @@ if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 			$type=$_POST["type"];
 			$desc=$_POST['dp_desc'];
 			$tva_tx = price2num($_POST['tva_tx']);
-			
+
 			// Local Taxes
 			$localtax1_tx= get_localtax($tva_tx, 1, $societe);
 	  		$localtax2_tx= get_localtax($tva_tx, 2, $societe);
-			
+
 	  		if (! $_POST['dp_desc'])
 			{
 				$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")).'</div>';
@@ -258,10 +258,10 @@ if ($action == 'updateligne' && $user->rights->fournisseur->commande->creer &&	$
 
 	$societe=new Societe($db);
 	$societe->fetch($commande->socid);
-	
+
 	$localtax1_tx=get_localtax($_POST['tva_tx'],1,$societe);
 	$localtax2_tx=get_localtax($_POST['tva_tx'],2,$societe);
-	
+
 	$result	= $commande->updateline($_POST['elrowid'],
 	$_POST['eldesc'],
 	$_POST['pu'],
@@ -637,7 +637,7 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile']
 				}
 				else	// Id du contact
 				{
-					$sendto = $commande->client->contact_get_email($_POST['receiver']);
+					$sendto = $commande->client->contact_get_property($_POST['receiver'],'email');
 					$sendtoid = $_POST['receiver'];
 				}
 			}

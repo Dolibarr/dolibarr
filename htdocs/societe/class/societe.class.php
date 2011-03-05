@@ -1409,14 +1409,14 @@ class Societe extends CommonObject
 
 
     /**
-     *    \brief      Renvoie la liste des contacts emails existant pour la societe
-     *    \return     array       tableau des contacts emails
+     *    Return list of contacts emails existing for third party
+     *    @return     array       Array of contacts emails
      */
     function thirdparty_and_contact_email_array()
     {
         global $langs;
 
-        $contact_email = $this->contact_email_array();
+        $contact_email = $this->contact_property_array('email');
         if ($this->email)
         {
         	if (empty($this->name)) $this->name=$this->nom;
@@ -1427,14 +1427,33 @@ class Societe extends CommonObject
     }
 
     /**
-     *    \brief      Renvoie la liste des contacts emails existant pour la societe
-     *    \return     array       tableau des contacts emails
+     *    Return list of contacts mobile phone existing for third party
+     *    @return     array       Array of contacts emails
      */
-    function contact_email_array()
+    function thirdparty_and_contact_phone_array()
     {
-        $contact_email = array();
+        global $langs;
 
-        $sql = "SELECT rowid, email, name, firstname";
+        $contact_phone = $this->contact_property_array('mobile');
+        if ($this->tel)
+        {
+            if (empty($this->name)) $this->name=$this->nom;
+            // TODO: Tester si tel non deja present dans tableau contact
+            $contact_phone[-1]=$langs->trans("ThirdParty").': '.dol_trunc($this->nom,16)." &lt;".$this->tel."&gt;";
+        }
+        return $contact_phone;
+    }
+
+    /**
+     *    Return list of contacts emails or mobile existing for third party
+     *    @param        mode        'email' or 'mobile'
+     *    @return       array       Array of contacts emails or mobile
+     */
+    function contact_property_array($mode='email')
+    {
+        $contact_property = array();
+
+        $sql = "SELECT rowid, email, phone_mobile, name, firstname";
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople";
         $sql.= " WHERE fk_soc = '".$this->id."'";
         $resql=$this->db->query($sql);
@@ -1447,7 +1466,9 @@ class Societe extends CommonObject
                 while ($i < $nump)
                 {
                     $obj = $this->db->fetch_object($resql);
-                    $contact_email[$obj->rowid] = trim($obj->firstname." ".$obj->name)." &lt;".$obj->email."&gt;";
+                    if ($mode == 'email') $property=$obj->email;
+                    else if ($mode == 'mobile') $property=$obj->phone_mobile;
+                    $contact_property[$obj->rowid] = trim($obj->firstname." ".$obj->name)." &lt;".$property."&gt;";
                     $i++;
                 }
             }
@@ -1456,7 +1477,7 @@ class Societe extends CommonObject
         {
             dol_print_error($this->db);
         }
-        return $contact_email;
+        return $contact_property;
     }
 
 
@@ -1492,13 +1513,18 @@ class Societe extends CommonObject
     }
 
     /**
-     *    Return email of contact from its id
+     *    Return property of contact from its id
      *    @param      rowid       id of contact
+     *    @param      mode        'email' or 'mobile'
      *    @return     string      email of contact
      */
-    function contact_get_email($rowid)
+    function contact_get_property($rowid,$mode)
     {
-        $sql = "SELECT rowid, email, name, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE rowid = '".$rowid."'";
+        $contact_property='';
+
+        $sql = "SELECT rowid, email, phone_mobile, name, firstname";
+        $sql.= " FROM ".MAIN_DB_PREFIX."socpeople";
+        $sql.= " WHERE rowid = '".$rowid."'";
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -1507,13 +1533,12 @@ class Societe extends CommonObject
 
             if ($nump)
             {
-
                 $obj = $this->db->fetch_object($resql);
 
-                $contact_email = "$obj->firstname $obj->name <$obj->email>";
-
+                if ($mode == 'email') $contact_property = "$obj->firstname $obj->name <$obj->email>";
+                else if ($mode == 'mobile') $contact_property = $obj->phone_mobile;
             }
-            return $contact_email;
+            return $contact_property;
         }
         else
         {

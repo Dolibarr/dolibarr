@@ -29,7 +29,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 $langs->load("companies");
 $langs->load("products");
 $langs->load("admin");
-$langs->load("mails");
+$langs->load("sms");
 $langs->load("other");
 $langs->load("errors");
 
@@ -241,7 +241,7 @@ else
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMS_FROM",ini_get('sendmail_from')?ini_get('sendmail_from'):$langs->transnoentities("Undefined")).'</td>';
 	print '<td>'.$conf->global->MAIN_MAIL_SMS_FROM;
-	if (!empty($conf->global->MAIN_MAIL_SMS_FROM) && ! isValidEmail($conf->global->MAIN_MAIL_SMS_FROM)) print img_warning($langs->trans("ErrorBadEMail"));
+	if (!empty($conf->global->MAIN_MAIL_SMS_FROM) && ! isValidPhone($conf->global->MAIN_MAIL_SMS_FROM)) print img_warning($langs->trans("ErrorBadPhone"));
 	print '</td></tr>';
 
 	// Autocopy to
@@ -310,22 +310,20 @@ else
 		// Cree l'objet formulaire mail
 		include_once(DOL_DOCUMENT_ROOT."/core/class/html.formsms.class.php");
 		$formsms = new FormSms($db);
-		$formsms->fromname = (isset($_POST['fromname'])?$_POST['fromname']:$conf->global->MAIN_MAIL_SMS_FROM);
-		$formsms->fromsms = (isset($_POST['fromsms'])?$_POST['fromsms']:$conf->global->MAIN_MAIL_SMS_FROM);
+        $formsms->fromtype='user';
+        $formsms->fromid=$user->id;
+        $formsms->fromsms = (isset($_POST['fromsms'])?$_POST['fromsms']:($conf->global->MAIN_MAIL_SMS_FROM?$conf->global->MAIN_MAIL_SMS_FROM:$user->user_mobile));
 		$formsms->withfromreadonly=0;
 		$formsms->withsubstit=0;
 		$formsms->withfrom=1;
 		$formsms->witherrorsto=1;
-		$formsms->withto=(isset($_POST['sendto'])?$_POST['sendto']:$user->email?$user->email:1);
-		$formsms->withtocc=(isset($_POST['sendtocc'])?$_POST['sendtocc']:1);
-		$formsms->withtoccc=(isset($_POST['sendtoccc'])?$_POST['sendtoccc']:1);
+		$formsms->withto=(isset($_POST['sendto'])?$_POST['sendto']:$user->user_mobile?$user->user_mobile:1);
 		$formsms->withtopic=(isset($_POST['subject'])?$_POST['subject']:$langs->trans("Test"));
 		$formsms->withtopicreadonly=0;
 		$formsms->withfile=2;
 		$formsms->withbody=(isset($_POST['message'])?$_POST['message']:$langs->trans("PredefinedMailTest"));
 		$formsms->withbodyreadonly=0;
 		$formsms->withcancel=1;
-		$formsms->withdeliveryreceipt=1;
 		$formsms->withfckeditor=0;
 		// Tableau des substitutions
 		$formsms->substit=$substitutionarrayfortest;
@@ -335,13 +333,7 @@ else
 		$formsms->param["mailid"]=$mil->id;
 		$formsms->param["returnurl"]=DOL_URL_ROOT."/admin/sms.php";
 
-		// Init list of files
-		if (! empty($_REQUEST["mode"]) && $_REQUEST["mode"]=='init')
-		{
-			$formsms->clear_attached_files();
-		}
-
-		$formsms->show_form('addfile','removefile');
+		$formsms->show_form();
 
 		print '<br>';
 	}
