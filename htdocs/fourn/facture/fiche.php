@@ -405,6 +405,8 @@ if ($_REQUEST['action'] == 'update_line')
             $prod = new Product($db);
             $prod->fetch($_POST['idprod']);
             $label = $prod->libelle;
+            if (trim($_POST['label']) != trim($label)) $label=$_POST['label'];
+
             $type = $prod->type;
             $localtax1_tx = $prod->localtax1_tx;
             $localtax2_tx = $prod->localtax2_tx;
