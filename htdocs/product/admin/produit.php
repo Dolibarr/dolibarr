@@ -78,7 +78,7 @@ else if ($_POST["action"] == 'useecotaxe')
 
 
 /*
- * Affiche page
+ * View
  */
 
 $formbarcode=new FormBarCode($db);
@@ -87,6 +87,15 @@ llxHeader('',$langs->trans("ProductSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("ProductSetup"),$linkback,'setup');
+
+$h = 0;
+
+$head[$h][0] = DOL_URL_ROOT."/product/admin/produit.php";
+$head[$h][1] = $langs->trans("Products");
+$hselected=$h;
+$h++;
+
+dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
 
 $html=new Form($db);
 $var=true;
@@ -249,7 +258,7 @@ if ($conf->global->PRODUCT_CANVAS_ABILITY)
     				if ($conf->$module->enabled)
     				{
     					$var=!$var;
-    					print "<tr $bc[$var]><td>";
+    					print "<tr ".$bc[$var]."><td>";
 
     					print $object->description;
 
