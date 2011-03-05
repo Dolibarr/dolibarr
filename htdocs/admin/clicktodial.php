@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.org>
+ * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 /**
  *   \file       htdocs/admin/clicktodial.php
  *   \ingroup    clicktodial
- *   \brief      Page d'administration/configuration du module clicktodial
+ *   \brief      Page to setup module clicktodial
  *   \version    $Id$
  */
 
@@ -72,14 +72,14 @@ $var=true;
 
 print '<table class="nobordernopadding" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Name").'</td>';
-print '<td>'.$langs->trans("Value").'</td><td>'.$langs->trans("Description").'</td>';
+print '<td width="120">'.$langs->trans("Name").'</td>';
+print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 $var=!$var;
-print '<tr '.$bc[$var].'><td>';
+print '<tr '.$bc[$var].'><td valign="top">';
 print $langs->trans("URL").'</td><td>';
-print '<input size="48" type="text" name="url" value="'.$conf->global->CLICKTODIAL_URL.'">';
-print '</td><td>';
+print '<input size="92" type="text" name="url" value="'.$conf->global->CLICKTODIAL_URL.'"><br>';
+print '<br>';
 print $langs->trans("ClickToDialUrlDesc").'<br>';
 print $langs->trans("Example").':<br>http://myphoneserver/mypage?login=__LOGIN__&password=__PASS__&caller=__PHONEFROM__&called=__PHONETO__';
 print '</td></tr>';
