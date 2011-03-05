@@ -94,12 +94,12 @@ function dol_include_once($relpath)
 /**
  *	Return path of url or filesystem. Return default_root or alternate root if file_exist fails.
  * 	@param			path		Relative path to file (if mode=0, ie: mydir/myfile, ../myfile, ...) or relative url (if mode=1).
- *  @param			mode		0=Used for a Filesystem path, 1=Used for an URL path
+ *  @param			type		0=Used for a Filesystem path, 1=Used for an URL path (output relative), 2=Used for an URL path (output full path)
  *  @return         string		Full filsystem path (if mode=0), Full url path (if mode=1)
  */
-function dol_buildpath($path,$mode=0)
+function dol_buildpath($path,$type=0)
 {
-	if (empty($mode))	// For a filesystem path
+	if (empty($type))	// For a filesystem path
 	{
 		$res = DOL_DOCUMENT_ROOT.$path;	// Standard value
 		if (defined('DOL_DOCUMENT_ROOT_ALT') && DOL_DOCUMENT_ROOT_ALT)	// We check only if alternate feature is used
@@ -109,21 +109,34 @@ function dol_buildpath($path,$mode=0)
 	}
 	else				// For an url path
 	{
-		$res = DOL_URL_ROOT.$path;		// Standard value
-		if (defined('DOL_URL_ROOT_ALT') && DOL_URL_ROOT_ALT)			// We check only if alternate feature is used
-		{
-			// We try to get local path of file on filesystem from url
-			// FIXME Trying to know if a file on disk exist by forging path on disk from url
-			// works only for some web server and some setup. This is bugged when
-			// using proxy, rewriting, virtual path, etc...
-			preg_match('/^([^.]+(\.css)?(\.php)?(\.js)?)/i',$path,$regs);
-			if (! empty($regs[1])) $filepath = $regs[1];
-			// An alternative for proxy but extremely slow
-			//$url = 'http://'.$_SERVER["SERVER_NAME"].DOL_URL_ROOT.$path;
-			//if (! @file_get_contents($url)) $res = DOL_URL_ROOT_ALT.$path;
-			//if (! @fopen($url, 'r')) $res = DOL_URL_ROOT_ALT.$path;
-			if (! file_exists(DOL_DOCUMENT_ROOT.$filepath)) $res = DOL_URL_ROOT_ALT.$path;
-		}
+        // We try to get local path of file on filesystem from url
+        // Note that trying to know if a file on disk exist by forging path on disk from url
+        // works only for some web server and some setup. This is bugged when
+        // using proxy, rewriting, virtual path, etc...
+	    if ($type == 1)
+	    {
+    		$res = DOL_URL_ROOT.$path;		// Standard value
+    		if (defined('DOL_URL_ROOT_ALT') && DOL_URL_ROOT_ALT)			// We check only if alternate feature is used
+    		{
+    			preg_match('/^([^.]+(\.css)?(\.php)?(\.js)?)/i',$path,$regs);    // Take part before '?'
+    			if (! empty($regs[1]))
+    			{
+        			if (! file_exists(DOL_DOCUMENT_ROOT.$regs[1])) $res = DOL_URL_ROOT_ALT.$path;
+    			}
+    		}
+	    }
+        if ($type == 2)
+        {
+            $res = DOL_MAIN_URL_ROOT.$path;      // Standard value
+            if (defined('DOL_URL_ROOT_ALT') && DOL_URL_ROOT_ALT)            // We check only if alternate feature is used
+            {
+                preg_match('/^([^.]+(\.css)?(\.php)?(\.js)?)/i',$path,$regs);    // Take part before '?'
+                if (! empty($regs[1]))
+                {
+                    if (! file_exists(DOL_DOCUMENT_ROOT.$regs[1])) $res = DOL_MAIN_URL_ROOT_ALT.$path;
+                }
+            }
+        }
 	}
 
 	return $res;
