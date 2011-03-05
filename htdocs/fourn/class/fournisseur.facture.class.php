@@ -1083,6 +1083,7 @@ class FactureFournisseur extends Facture
 		$object->date_creation      = '';
 		$object->date_validation    = '';
 		$object->date               = '';
+        $object->date_echeance      = '';
 		$object->ref_client         = '';
 		$object->close_code         = '';
 		$object->close_note         = '';
