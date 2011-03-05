@@ -61,12 +61,18 @@ $formfile = new FormFile($db);
 
 print_fiche_titre($langs->trans("Backup"),'','setup');
 
-// TODO Define ExecTimeLimit and MemoryLimit
+$ExecTimeLimit=600;
 if (!empty($ExecTimeLimit)) {
-@set_time_limit($ExecTimeLimit);
+    // Cette page peut etre longue. On augmente le delai autorise.
+    // Ne fonctionne que si on est pas en safe_mode.
+    $err=error_reporting();
+    error_reporting(0);     // Disable all errors
+    //error_reporting(E_ALL);
+    @set_time_limit($ExecTimeLimit);   // Need more than 240 on Windows 7/64
+    error_reporting($err);
 }
 if (!empty($MemoryLimit)) {
-@ini_set('memory_limit', $MemoryLimit);
+    @ini_set('memory_limit', $MemoryLimit);
 }
 
 // Start with empty buffer
@@ -181,6 +187,7 @@ if ($what == 'mysql')
 		$errormsg=$langs->trans("ErrorFailedToWriteInDir");
 	}
 	// Get errorstring
+    // TODO Scan full file instead of 2048 first char to search for "-- dump completed"
 	if ($compression == 'none') $handle = fopen($outputfile, 'r');
 	if ($compression == 'gz')   $handle = gzopen($outputfile, 'r');
 	if ($compression == 'bz')   $handle = bzopen($outputfile, 'r');
