@@ -124,7 +124,7 @@ class Conf
 					if (! defined("$key")) define ("$key", $value);	// In some cases, the constant might be already forced (Example: SYSLOG_FILE during install)
 					$this->global->$key=$value;
 
-					if ($value)
+					if ($value && preg_match('/^MAIN_MODULE_/',$key))
 					{
 						// If this is constant for a css file activated by a module
 						if (preg_match('/^MAIN_MODULE_([A-Z_]+)_CSS$/i',$key))
@@ -187,6 +187,13 @@ class Conf
 							// Add this module in list of modules that need smarty
 							$this->need_smarty[]=$module;
 						}
+					    // If this is constant for a smarty need by a module
+                        elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_SMS$/i',$key,$reg))
+                        {
+                            $module=strtolower($reg[1]);
+                            // Add this module in list of modules that need smarty
+                            $this->sms_engine[]=$module;
+                        }
 						// If this is a module constant
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)$/i',$key,$reg))
 						{
