@@ -118,8 +118,10 @@ class FactureFournisseur extends Facture
 	{
 		global $langs,$conf;
 
+		$now=dol_now();
+
 		// Clear parameters
-		if (empty($this->date)) $this->date=gmmktime();
+		if (empty($this->date)) $this->date=$now;
 
 		$socid = $this->socid;
 		$number = $this->ref_supplier?$this->ref_supplier:$this->ref;
@@ -148,7 +150,7 @@ class FactureFournisseur extends Facture
 		$sql.= ", ".$conf->entity;
 		$sql.= ", '".$this->db->escape($this->libelle)."'";
 		$sql.= ", ".$this->socid;
-		$sql.= ", ".$this->db->idate(gmmktime());
+		$sql.= ", ".$this->db->idate($now);
 		$sql.= ", '".$this->db->idate($this->date)."'";
 		$sql.= ", '".$this->db->escape($this->note)."'";
 		$sql.= ", '".$this->db->escape($this->note_public)."'";
@@ -1065,8 +1067,8 @@ class FactureFournisseur extends Facture
 		// Clean parameters
 		if (empty($txlocaltax1)) $txlocaltax1=0;
 		if (empty($txlocaltax2)) $txlocaltax2=0;
-		
-		
+
+
 		$txlocaltax1=price2num($txlocaltax1);
         $txlocaltax2=price2num($txlocaltax2);
 
@@ -1332,10 +1334,10 @@ class FactureFournisseur extends Facture
 	}
 
 	/**
-	 *		\brief      Load an object from its id and create a new one in database
-	 *		\param      fromid     		Id of object to clone
-	 *		\param		invertdetail	Reverse sign of amounts for lines
-	 * 	 	\return		int				New id of clone
+	 *		Load an object from its id and create a new one in database
+	 *		@param      fromid     		Id of object to clone
+	 *		@param		invertdetail	Reverse sign of amounts for lines
+	 * 	 	@return		int				New id of clone
 	 */
 	function createFromClone($fromid,$invertdetail=0)
 	{
@@ -1360,6 +1362,7 @@ class FactureFournisseur extends Facture
 		$object->date_creation      = '';
 		$object->date_validation    = '';
 		$object->date               = '';
+        $object->date_echeance      = '';
 		$object->ref_client         = '';
 		$object->close_code         = '';
 		$object->close_note         = '';
