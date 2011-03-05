@@ -112,7 +112,7 @@ if ($action == 'add_paiement')
 
     if (empty($datepaye))
     {
-        $fiche_erreur_message = '<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('Date')).'</div>';
+        $mesg = '<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('Date')).'</div>';
         $error++;
     }
 
@@ -173,6 +173,7 @@ llxHeader();
 $html=new Form($db);
 
 if ($mesg) print $mesg;
+if ($errmsg) print $errmsg;
 
 if ($action == 'create' || $action == 'add_paiement')
 {
