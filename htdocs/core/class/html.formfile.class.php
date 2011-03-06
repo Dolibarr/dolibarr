@@ -128,7 +128,7 @@ class FormFile
 	/**
 	 *      Show the box with list of available documents for object
 	 *      @param      modulepart          propal, facture, facture_fourn, ...
-	 *      @param      filename            Sub dir to scan (Example: '9/9', 'FA9999'). Use '' if filedir already complete)
+	 *      @param      filename            Sub dir to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if filedir already complete)
 	 *      @param      filedir             Dir to scan
 	 *      @param      urlsource           Url of origin page (for return)
 	 *      @param      genallowed          Generation is allowed (1/0 or array of formats)
@@ -161,7 +161,7 @@ class FormFile
 			$forcenomultilang=0;
 		}
 
-		$filename = dol_sanitizeFileName($filename);
+		//$filename = dol_sanitizeFileName($filename);    //Must be sanitized before calling show_documents
 		$headershown=0;
 		$showempty=0;
 		$i=0;
@@ -405,8 +405,8 @@ class FormFile
 			$relativepath=$file["name"];								// Cas general
 			if ($filename) $relativepath=$filename."/".$file["name"];	// Cas propal, facture...
 			// Autre cas
-			if ($modulepart == 'donation')   { $relativepath = get_exdir($filename,2).$file["name"]; }
-			if ($modulepart == 'export')     { $relativepath = $file["name"]; }
+			if ($modulepart == 'donation')            { $relativepath = get_exdir($filename,2).$file["name"]; }
+			if ($modulepart == 'export')              { $relativepath = $file["name"]; }
 
 			if (!$iconPDF) print "<tr ".$bc[$var].">";
 

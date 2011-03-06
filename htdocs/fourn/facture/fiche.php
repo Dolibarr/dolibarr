@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.fr>
  * Copyright (C) 2005-2011 Regis Houssin         <regis@dolibarr.fr>
@@ -1827,16 +1827,15 @@ else
                  * Documents generes
                  */
 
-                $facfournref=dol_sanitizeFileName($fac->ref);
-                $file=$conf->fournisseur->dir_output.'/facture/'. $facfournref .	'/'	. $facfournref . '.pdf';
-                $relativepath =	$facfournref.'/'.$facfournref.'.pdf';
-                $filedir = $conf->fournisseur->dir_output	. '/facture/' .	$facfournref;
+                $ref=dol_sanitizeFileName($fac->ref);
+                $subdir = get_exdir($fac->id,2).$ref;
+                $filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($fac->id,2).$ref;
                 $urlsource=$_SERVER['PHP_SELF'].'?facid='.$fac->id;
                 $genallowed=$user->rights->fournisseur->facture->creer;
                 $delallowed=$user->rights->fournisseur->facture->supprimer;
 
                 print '<br>';
-                $somethingshown=$formfile->show_documents('facture_fournisseur',$facfournref,$filedir,$urlsource,$genallowed,$delallowed,$fac->modelpdf);
+                $somethingshown=$formfile->show_documents('facture_fournisseur',$subdir,$filedir,$urlsource,$genallowed,$delallowed,$fac->modelpdf);
 
                 $object=$fac;
 
@@ -1873,7 +1872,7 @@ else
         if ($_GET['action'] == 'presend')
         {
             $ref = dol_sanitizeFileName($fac->ref);
-            $file = $conf->fournisseur->facture->dir_output . '/' . $ref . '/' . $ref . '.pdf';
+            $file = $conf->fournisseur->facture->dir_output.'/'.get_exdir($fac->id,2).$ref.'.pdf';
 
             print '<br>';
             print_titre($langs->trans('SendBillByMail'));
