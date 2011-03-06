@@ -1402,13 +1402,13 @@ else
                 if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
                 {
                     print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->pays_code).'</td>';
-                    print '<td align="right">'.price($propal->total_localtax1).'</td>';
+                    print '<td align="right">'.price($fac->total_localtax1).'</td>';
                     print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
                 }
                 if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
                 {
                     print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->pays_code).'</td>';
-                    print '<td align="right">'.price($propal->total_localtax2).'</td>';
+                    print '<td align="right">'.price($fac->total_localtax2).'</td>';
                     print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
                 }
             }
@@ -1794,16 +1794,15 @@ else
                  * Documents generes
                  */
 
-                $facfournref=dol_sanitizeFileName($fac->ref);
-                $file=$conf->fournisseur->dir_output.'/facture/'. $facfournref .	'/'	. $facfournref . '.pdf';
-                $relativepath =	$facfournref.'/'.$facfournref.'.pdf';
-                $filedir = $conf->fournisseur->dir_output	. '/facture/' .	$facfournref;
+                $ref=dol_sanitizeFileName($fac->ref);
+                $subdir = get_exdir($fac->id,2).$ref;
+                $filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($fac->id,2).$ref;
                 $urlsource=$_SERVER['PHP_SELF'].'?facid='.$fac->id;
                 $genallowed=$user->rights->fournisseur->facture->creer;
                 $delallowed=$user->rights->fournisseur->facture->supprimer;
 
                 print '<br>';
-                $somethingshown=$formfile->show_documents('facture_fournisseur',$facfournref,$filedir,$urlsource,$genallowed,$delallowed,$fac->modelpdf);
+                $somethingshown=$formfile->show_documents('facture_fournisseur',$subdir,$filedir,$urlsource,$genallowed,$delallowed,$fac->modelpdf);
 
                 $object=$fac;
 
@@ -1840,7 +1839,7 @@ else
         if ($_GET['action'] == 'presend')
         {
             $ref = dol_sanitizeFileName($fac->ref);
-            $file = $conf->fournisseur->facture->dir_output . '/' . $ref . '/' . $ref . '.pdf';
+            $file = $conf->fournisseur->facture->dir_output.'/'.get_exdir($fac->id,2).$ref.'.pdf';
 
             print '<br>';
             print_titre($langs->trans('SendBillByMail'));
