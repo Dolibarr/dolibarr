@@ -33,7 +33,7 @@ create table llx_adherent
   civilite         varchar(6),
   nom              varchar(50),
   prenom           varchar(50),
-  login            varchar(50) NOT NULL, -- login
+  login            varchar(50),          -- login
   pass             varchar(50),          -- password
   fk_adherent_type integer NOT NULL,
   morphy           varchar(3) NOT NULL, -- personne morale / personne physique

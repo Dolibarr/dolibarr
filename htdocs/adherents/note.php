@@ -98,18 +98,35 @@ if ($id)
 	print '</td>';
 	print '</tr>';
 
-    // Nom
-    print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur" colspan="3">'.$adh->nom.'&nbsp;</td>';
-	print '</tr>';
-
-    // Prenom
-    print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur" colspan="3">'.$adh->prenom.'&nbsp;</td></tr>';
-
     // Login
-    print '<tr><td>'.$langs->trans("Login").'</td><td class="valeur" colspan="3">'.$adh->login.'&nbsp;</td></tr>';
+    if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
+    {
+        print '<tr><td>'.$langs->trans("Login").'</td><td class="valeur">'.$adh->login.'&nbsp;</td></tr>';
+    }
+
+    // Morphy
+    print '<tr><td>'.$langs->trans("Nature").'</td><td class="valeur" >'.$adh->getmorphylib().'</td>';
+    /*print '<td rowspan="'.$rowspan.'" align="center" valign="middle" width="25%">';
+    print $html->showphoto('memberphoto',$member);
+    print '</td>';*/
+    print '</tr>';
 
     // Type
     print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
+
+    // Company
+    print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$adh->societe.'</td></tr>';
+
+    // Civility
+    print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$adh->getCivilityLabel().'&nbsp;</td>';
+    print '</tr>';
+
+    // Lastname
+    print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur" colspan="3">'.$adh->nom.'&nbsp;</td>';
+	print '</tr>';
+
+    // Firstname
+    print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur" colspan="3">'.$adh->prenom.'&nbsp;</td></tr>';
 
     // Status
     print '<tr><td>'.$langs->trans("Status").'</td><td class="valeur">'.$adh->getLibStatut(4).'</td></tr>';

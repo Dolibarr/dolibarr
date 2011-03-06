@@ -96,7 +96,7 @@ if ($action == 'confirm_create_thirdparty' && $_POST["confirm"] == 'yes' && $use
 		// Creation user
 		$company = new Societe($db);
 		$result=$company->create_from_member($adh,$_POST["companyname"]);
-		
+
 		if ($result < 0)
 		{
 			$langs->load("errors");
@@ -457,6 +457,10 @@ if ($rowid)
 
     dol_fiche_head($head, 'subscription', $langs->trans("Member"), 0, 'user');
 
+    $rowspan=9;
+    if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) $rowspan+=1;
+    if ($conf->societe->enabled) $rowspan++;
+
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="rowid" value="'.$adh->id.'">';
@@ -464,9 +468,32 @@ if ($rowid)
 
     // Ref
     print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
-    print '<td class="valeur">';
+    print '<td class="valeur" colspan="2">';
     print $html->showrefnav($adh,'rowid');
     print '</td></tr>';
+
+    // Login
+    if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
+    {
+        print '<tr><td>'.$langs->trans("Login").'</td><td class="valeur" colspan="2">'.$adh->login.'&nbsp;</td></tr>';
+    }
+
+    // Morphy
+    print '<tr><td>'.$langs->trans("Nature").'</td><td class="valeur" >'.$adh->getmorphylib().'</td>';
+    print '<td rowspan="'.$rowspan.'" align="center" valign="middle" width="25%">';
+    print $html->showphoto('memberphoto',$adh);
+    print '</td>';
+    print '</tr>';
+
+    // Type
+    print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
+
+    // Company
+    print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$adh->societe.'</td></tr>';
+
+    // Civility
+    print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$adh->getCivilityLabel().'&nbsp;</td>';
+    print '</tr>';
 
     // Name
     print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur">'.$adh->lastname.'&nbsp;</td>';
@@ -475,12 +502,6 @@ if ($rowid)
     // Firstname
     print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur">'.$adh->firstname.'&nbsp;</td>';
     print '</tr>';
-
-    // Login
-    print '<tr><td>'.$langs->trans("Login").'</td><td class="valeur">'.$adh->login.'&nbsp;</td></tr>';
-
-    // Type
-    print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
 
     // Status
     print '<tr><td>'.$langs->trans("Status").'</td><td class="valeur">'.$adh->getLibStatut(4).'</td></tr>';
@@ -749,16 +770,16 @@ if ($rowid)
 			{
 				$name=$adh->societe;
 			}
-	
+
 			// Create a form array
 			$formquestion=array(
 			array('label' => $langs->trans("NameToCreate"), 'type' => 'text', 'name' => 'companyname', 'value' => $name));
-	
+
 			$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?rowid=".$adh->id,$langs->trans("CreateDolibarrThirdParty"),$langs->trans("ConfirmCreateThirdParty"),"confirm_create_thirdparty",$formquestion,1);
 			if ($ret == 'html') print '<br>';
 		}
 
-        
+
         print '<form name="cotisation" method="post" action="'.$_SERVER["PHP_SELF"].'">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="cotisation">';
@@ -842,7 +863,7 @@ if ($rowid)
                     if (empty($adh->fk_soc) || empty($bankviainvoice)) print ' disabled="true"';
                     print '> '.$langs->trans("MoreActionBankViaInvoice");
                     if ($adh->fk_soc) print ' ('.$langs->trans("ThirdParty").': '.$company->getNomUrl(1).')';
-                    else 
+                    else
                     {
                     	print ' ('.$langs->trans("NoThirdPartyAssociatedToMember");
                     	print ' - <a href="'.$_SERVER["PHP_SELF"].'?rowid='.$adh->id.'&amp;action=create_thirdparty">';
@@ -857,7 +878,7 @@ if ($rowid)
                     if (empty($adh->fk_soc) || empty($bankviainvoice)) print ' disabled="true"';
                     print '> '.$langs->trans("MoreActionInvoiceOnly");
                     if ($adh->fk_soc) print ' ('.$langs->trans("ThirdParty").': '.$company->getNomUrl(1).')';
-                    else 
+                    else
                     {
                     	print ' ('.$langs->trans("NoThirdPartyAssociatedToMember");
                     	print ' - <a href="'.$_SERVER["PHP_SELF"].'?rowid='.$adh->id.'&amp;action=create_thirdparty">';

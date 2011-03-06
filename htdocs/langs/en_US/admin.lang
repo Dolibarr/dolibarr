@@ -925,6 +925,7 @@ ContractsNumberingModules=Contracts numbering modules
 MembersSetup=Members module setup
 MemberMainOptions=Main options
 AddSubscriptionIntoAccount=Suggest by default to create a bank transaction, in bank module, when adding a new payed subscription 
+AdherentLoginRequired= Manage a Login for each member
 AdherentMailRequired=EMail required to create a new member
 MemberSendInformationByMailByDefault=Checkbox to send mail confirmation to members (validation or new subscription) is on by default
 ##### LDAP setup #####

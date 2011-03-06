@@ -150,6 +150,29 @@ if ($id > 0)
         print $html->showrefnav($member,'rowid');
         print '</td></tr>';
 
+        // Login
+        if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
+        {
+            print '<tr><td>'.$langs->trans("Login").'</td><td class="valeur">'.$member->login.'&nbsp;</td></tr>';
+        }
+
+        // Morphy
+        print '<tr><td>'.$langs->trans("Nature").'</td><td class="valeur" >'.$member->getmorphylib().'</td>';
+        /*print '<td rowspan="'.$rowspan.'" align="center" valign="middle" width="25%">';
+        print $html->showphoto('memberphoto',$member);
+        print '</td>';*/
+        print '</tr>';
+
+        // Type
+        print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$membert->getNomUrl(1)."</td></tr>\n";
+
+        // Company
+        print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$member->societe.'</td></tr>';
+
+        // Civility
+        print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$member->getCivilityLabel().'&nbsp;</td>';
+        print '</tr>';
+
         // Nom
         print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur">'.$member->nom.'&nbsp;</td>';
         print '</tr>';
@@ -157,12 +180,6 @@ if ($id > 0)
         // Prenom
         print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur">'.$member->prenom.'&nbsp;</td>';
         print '</tr>';
-
-        // Login
-        print '<tr><td>'.$langs->trans("Login").'</td><td class="valeur">'.$member->login.'&nbsp;</td></tr>';
-
-        // Type
-        print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$membert->getNomUrl(1)."</td></tr>\n";
 
         // Status
         print '<tr><td>'.$langs->trans("Status").'</td><td class="valeur">'.$member->getLibStatut(4).'</td></tr>';

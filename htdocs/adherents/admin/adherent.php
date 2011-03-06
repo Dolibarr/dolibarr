@@ -5,7 +5,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
- * 
+ *
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,6 +47,11 @@ if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
 {
 	if (($_POST["constname"]=='ADHERENT_CARD_TYPE' || $_POST["constname"]=='ADHERENT_ETIQUETTE_TYPE')
 		&& $_POST["constvalue"] == -1) $_POST["constvalue"]='';
+    if ($_POST["constname"]=='ADHERENT_LOGIN_NOT_REQUIRED') // Invert choice
+    {
+        if ($_POST["constvalue"]) $_POST["constvalue"]=0;
+        else $_POST["constvalue"]=1;
+    }
 
 	$const=$_POST["constname"];
 	$value=$_POST["constvalue"];
@@ -105,6 +110,23 @@ print '<td align="center">'.$langs->trans("Action").'</td>';
 print "</tr>\n";
 $var=true;
 $form = new Form($db);
+
+// Login/Pass required for members
+if ($conf->global->MAIN_FEATURES_LEVEL > 0)
+{
+    $var=!$var;
+    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="action" value="update">';
+    print '<input type="hidden" name="rowid" value="'.$rowid.'">';
+    print '<input type="hidden" name="constname" value="ADHERENT_LOGIN_NOT_REQUIRED">';
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("AdherentLoginRequired").'</td><td>';
+    print $form->selectyesno('constvalue',!$conf->global->ADHERENT_LOGIN_NOT_REQUIRED,1);
+    print '</td><td align="center" width="80">';
+    print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
+    print "</td></tr>\n";
+    print '</form>';
+}
 
 // Mail required for members
 $var=!$var;

@@ -935,6 +935,7 @@ ContractsNumberingModules=Modèles de numérotation des contrats
 MembersSetup= Configuration du module Adhérents
 MemberMainOptions= Options principales
 AddSubscriptionIntoAccount= Proposer par défaut la création d'une écriture bancaire, dans le module banque, à l'enregistrement d'une adhésion payante
+AdherentLoginRequired= Gérer un login pour chaque adhérent
 AdherentMailRequired= EMail obligatoire pour créer un nouvel adhérent
 MemberSendInformationByMailByDefault= Case à cocher pour envoyer un mail de confirmation (validation ou nouvelle cotisation) aux adhérents est à oui par défaut.
 ##### LDAP setup #####

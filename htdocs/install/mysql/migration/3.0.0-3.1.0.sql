@@ -10,6 +10,8 @@
 -- To change type of field: ALTER TABLE llx_table MODIFY name varchar(60);
 --
 
+ALTER TABLE llx_adherent MODIFY login varchar(50);
+
 ALTER TABLE llx_c_actioncomm add COLUMN position integer NOT NULL DEFAULT 0;
 
 ALTER TABLE llx_commande_fournisseur MODIFY model_pdf varchar(255);

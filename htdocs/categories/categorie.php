@@ -358,8 +358,8 @@ else if ($_GET["id"] || $_GET["ref"])
 		if ($_GET["ref"]) $result = $member->fetch('',$_GET["ref"]);
 		if ($_GET["id"]) $result = $member->fetch($_GET["id"]);
 
-		$adht = new AdherentType($db);
-		$adht->fetch($member->typeid);
+		$membert = new AdherentType($db);
+		$membert->fetch($member->typeid);
 
 		llxHeader("","",$langs->trans("Member"));
 
@@ -369,6 +369,9 @@ else if ($_GET["id"] || $_GET["ref"])
 		$picto='user';
 		dol_fiche_head($head, 'category', $titre,0,$picto);
 
+        $rowspan=5;
+        if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) $rowspan+=1;
+        if ($conf->societe->enabled) $rowspan++;
 
 		print '<table class="border" width="100%">';
 
@@ -378,19 +381,36 @@ else if ($_GET["id"] || $_GET["ref"])
 		print $html->showrefnav($member,'rowid');
 		print '</td></tr>';
 
-		// Nom
+        // Login
+        if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
+        {
+    		print '<tr><td>'.$langs->trans("Login").'</td><td class="valeur">'.$member->login.'&nbsp;</td></tr>';
+        }
+
+        // Morphy
+        print '<tr><td>'.$langs->trans("Nature").'</td><td class="valeur" >'.$member->getmorphylib().'</td>';
+        /*print '<td rowspan="'.$rowspan.'" align="center" valign="middle" width="25%">';
+        print $html->showphoto('memberphoto',$member);
+        print '</td>';*/
+        print '</tr>';
+
+        // Type
+        print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$membert->getNomUrl(1)."</td></tr>\n";
+
+        // Company
+        print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$member->societe.'</td></tr>';
+
+        // Civility
+        print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$member->getCivilityLabel().'&nbsp;</td>';
+        print '</tr>';
+
+        // Nom
 		print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur">'.$member->nom.'&nbsp;</td>';
 		print '</tr>';
 
 		// Prenom
 		print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur">'.$member->prenom.'&nbsp;</td>';
 		print '</tr>';
-
-		// Login
-		print '<tr><td>'.$langs->trans("Login").'</td><td class="valeur">'.$member->login.'&nbsp;</td></tr>';
-
-		// Type
-		print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
 
 		// Status
 		print '<tr><td>'.$langs->trans("Status").'</td><td class="valeur">'.$member->getLibStatut(4).'</td></tr>';
