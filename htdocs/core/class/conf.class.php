@@ -192,7 +192,7 @@ class Conf
                         {
                             $module=strtolower($reg[1]);
                             // Add this module in list of modules that need smarty
-                            $this->sms_engine[]=$module;
+                            $this->sms_engine[$module]=$module;
                         }
 						// If this is a module constant
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)$/i',$key,$reg))

@@ -84,8 +84,7 @@ class FormSms
 	}
 
 	/**
-	 *	Show the form to input an email
-	 * 	this->withfile: 0=No attaches files, 1=Show attached files, 2=Can add new attached files
+	 *	Show the form to input an sms
 	 */
 	function show_form()
 	{
@@ -96,8 +95,27 @@ class FormSms
 		$langs->load("sms");
 
 		$form=new Form($DB);
+        $soc=new Societe($this->db);
+		if ($this->withtosocid > 0)
+        {
+            $soc->fetch($this->withtosocid);
+        }
 
-		print "\n<!-- Debut form mail -->\n";
+		print "\n<!-- Debut form SMS -->\n";
+
+    print '
+<script language="javascript">
+function limitChars(textarea, limit, infodiv)
+{
+    var text = textarea.value;
+    var textlength = text.length;
+    var info = document.getElementById(infodiv);
+
+    info.innerHTML = \''.$langs->trans("SmsInfoCharRemain").': \' + (limit - textlength);
+    return true;
+}
+</script>';
+
 		print "<form method=\"POST\" name=\"mailform\" enctype=\"multipart/form-data\" action=\"".$this->param["returnurl"]."\">\n";
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		foreach ($this->param as $key=>$value)
@@ -152,8 +170,26 @@ class FormSms
 			else
 			{
 				print "<tr><td>".$langs->trans("SmsFrom")."</td><td>";
-				print '<input type="text" name="fromname" size="30" value="'.$this->fromsms.'">';
-				print "</td></tr>\n";
+                //print '<input type="text" name="fromname" size="30" value="'.$this->fromsms.'">';
+                print '<select name="fromsms" id="valid" class="flat">';
+                if ($conf->global->MAIN_SMS_SENDMODE == 'ovh')
+                {
+                    dol_include_once('/ovh/class/ovhsms.class.php');
+                    $sms = new OvhSms($db);
+                    $resultsender = $sms->SmsSenderList($conf->global->OVHSMS_ACCOUNT);
+                }
+                else
+                {
+                    $resultsender[0]->number=$this->fromsms;
+                }
+                $i=0;
+                while($resultsender[$i]){
+                    print '<option value="'.$resultsender[$i]->number.'">'.$resultsender[$i]->number.'</option>';
+                    $i++;
+                }
+                print '</select>';
+                print '</td>';
+				print "</tr>\n";
 			}
 		}
 
@@ -161,7 +197,9 @@ class FormSms
 		if ($this->withto || is_array($this->withto))
 		{
 			print '<tr><td width="180">';
-			print $form->textwithpicto($langs->trans("MailTo"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
+			//$moretext=$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients");
+			$moretext='';
+			print $form->textwithpicto($langs->trans("SmsTo"),$moretext);
 			print '</td><td>';
 			if ($this->withtoreadonly)
 			{
@@ -169,14 +207,12 @@ class FormSms
 			}
 			else
 			{
-				print "<input size=\"".(is_array($this->withto)?"30":"60")."\" name=\"sendto\" value=\"".(! is_array($this->withto) && ! is_numeric($this->withto)? (isset($_REQUEST["sendto"])?$_REQUEST["sendto"]:$this->withto) :"")."\">";
+			    print "<input size=\"16\" name=\"sendto\" value=\"".(! is_array($this->withto) && ! is_numeric($this->withto)? (isset($_REQUEST["sendto"])?$_REQUEST["sendto"]:$this->withto):"+")."\">";
 				if ($this->withtosocid > 0)
 				{
 					$liste=array();
 					$liste[0]='&nbsp;';
-					$soc=new Societe($this->db);
-					$soc->fetch($this->withtosocid);
-					foreach ($soc->thirdparty_and_contact_email_array() as $key=>$value)
+					foreach ($soc->thirdparty_and_contact_phone_array() as $key=>$value)
 					{
 						$liste[$key]=$value;
 					}
@@ -184,6 +220,7 @@ class FormSms
 					//var_dump($_REQUEST);exit;
 					print $form->selectarray("receiver", $liste, isset($_REQUEST["receiver"])?$_REQUEST["receiver"]:0);
 				}
+				print ' '.$langs->trans("SmsInfoNumero");
 			}
 			print "</td></tr>\n";
 		}
@@ -212,8 +249,7 @@ class FormSms
 		// Message
 		if ($this->withbody)
 		{
-			$defaultmessage=$langs->transnoentities("ThisIsATestMessage");
-
+			$defaultmessage='';
 			if ($this->param["models"]=='body') 			{ $defaultmessage=$this->withbody; }
 			/*if ($this->param["models"]=='facture_send')    	{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendInvoice"); }
 			if ($this->param["models"]=='facture_relance') 	{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendInvoiceReminder"); }
@@ -235,15 +271,34 @@ class FormSms
 			}
 			else
 			{
-				// Editeur wysiwyg
-				require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-				$doleditor=new DolEditor('message',$defaultmessage,'',128,'dolibarr_notes','In',true,false,$this->withfckeditor,3,72);
-				$doleditor->Create();
+                print '<textarea cols="40" name="message" id="message" rows="4" onkeyup="limitChars(this, 160, \'charlimitinfo\')">'.$defaultmessage.'</textarea>';
+                print '<div id="charlimitinfo">'.$langs->trans("SmsInfoCharRemain").': '.(160-dol_strlen($defaultmessage)).'</div></td>';
 			}
 			print "</td></tr>\n";
 		}
 
-		print "<tr><td align=center colspan=2><center>";
+		print '
+           <tr>
+            <td>'.$langs->trans("DelayBeforeSending").':</td>
+            <td> <input name="deferred" id="deferred" size="4" value="0"></td></tr>
+
+              <tr><td>'.$langs->trans("Type").' :</td><td>
+           <select name="class" id="valid" class="flat">
+           <option value="0">Flash</option>
+           <option value="1" selected="selected">Standard</option>
+           <option value="2">SIM</option>
+           <option value="3">ToolKit</option>
+           </select></td></tr>
+
+           <tr><td>'.$langs->trans("Priority").' :</td><td>
+           <select name="class" id="valid" class="flat">
+           <option value="0">0</option>
+           <option value="1">1</option>
+           <option value="2">2</option>
+           <option value="3" selected="selected">3</option>
+           </select></td></tr>';
+
+		print '<tr><td align="center" colspan="2"><center>';
 		print "<input class=\"button\" type=\"submit\" name=\"sendmail\" value=\"".$langs->trans("SendSms")."\"";
 		print ">";
 		if ($this->withcancel)
@@ -255,7 +310,7 @@ class FormSms
 		print "</table>\n";
 
 		print "</form>\n";
-		print "<!-- Fin form mail -->\n";
+		print "<!-- Fin form SMS -->\n";
 	}
 
 

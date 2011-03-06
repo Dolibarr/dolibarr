@@ -321,7 +321,7 @@ else
 		$formsms->withtopic=(isset($_POST['subject'])?$_POST['subject']:$langs->trans("Test"));
 		$formsms->withtopicreadonly=0;
 		$formsms->withfile=2;
-		$formsms->withbody=(isset($_POST['message'])?$_POST['message']:$langs->trans("PredefinedMailTest"));
+		$formsms->withbody=(isset($_POST['message'])?$_POST['message']:$langs->trans("ThisIsATestMessage"));
 		$formsms->withbodyreadonly=0;
 		$formsms->withcancel=1;
 		$formsms->withfckeditor=0;
