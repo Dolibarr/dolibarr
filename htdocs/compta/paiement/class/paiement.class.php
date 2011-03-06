@@ -24,12 +24,13 @@
  *	\brief      File of class to manage payments of customers invoices
  *	\version    $Id$
  */
+require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
 
 
 /**     \class      Paiement
  *		\brief      Classe permettant la gestion des paiements des factures clients
  */
-class Paiement
+class Paiement extends CommonObject
 {
     var $db;
     var $error;
@@ -65,9 +66,9 @@ class Paiement
 	}
 
 	/**
-	 *    \brief      Recupere l'objet paiement
-	 *    \param      id      id du paiement a recuperer
-	 *    \return     int     <0 si ko, 0 si non trouve, >0 si ok
+	 *    Load payment from database
+	 *    @param      id      id of payment to get
+	 *    @return     int     <0 if KO, 0 if not found, >0 if OK
 	 */
 	function fetch($id)
 	{
@@ -216,10 +217,10 @@ class Paiement
 
 
 	/**
-	 *      \brief      Supprime un paiement ainsi que les lignes qu'il a genere dans comptes
-	 *                  Si le paiement porte sur un ecriture compte qui est rapprochee, on refuse
-	 *                  Si le paiement porte sur au moins une facture a "payee", on refuse
-	 *      \return     int     <0 si ko, >0 si ok
+	 *      Supprime un paiement ainsi que les lignes qu'il a genere dans comptes
+	 *      Si le paiement porte sur un ecriture compte qui est rapprochee, on refuse
+	 *      Si le paiement porte sur au moins une facture a "payee", on refuse
+	 *      @return     int     <0 si ko, >0 si ok
 	 */
 	function delete()
 	{

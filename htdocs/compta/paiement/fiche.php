@@ -38,8 +38,8 @@ $langs->load('banks');
 $langs->load('companies');
 
 // Security check
-$id=isset($_GET["id"])?$_GET["id"]:$_POST["id"];
-$action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
+$id=GETPOST("id");
+$action=GETPOST("action");
 if ($user->societe_id) $socid=$user->societe_id;
 // TODO ajouter regle pour restreindre acces paiement
 //$result = restrictedArea($user, 'facture', $id,'');
@@ -51,12 +51,31 @@ $mesg='';
  * Actions
  */
 
-if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes' && $user->rights->facture->paiement)
+if ($action == 'setnote' && $user->rights->facture->paiement)
+{
+    $db->begin();
+
+    $paiement = new Paiement($db);
+    $paiement->fetch($id);
+    $result = $paiement->update_note(GETPOST('note'));
+    if ($result > 0)
+    {
+        $db->commit();
+        $action='';
+    }
+    else
+    {
+        $mesg='<div class="error">'.$paiement->error.'</div>';
+        $db->rollback();
+    }
+}
+
+if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes' && $user->rights->facture->paiement)
 {
 	$db->begin();
 
 	$paiement = new Paiement($db);
-	$paiement->fetch($_GET['id']);
+	$paiement->fetch($id);
 	$result = $paiement->delete();
 	if ($result > 0)
 	{
@@ -71,12 +90,12 @@ if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes' && 
 	}
 }
 
-if ($_REQUEST['action'] == 'confirm_valide' && $_REQUEST['confirm'] == 'yes' && $user->rights->facture->paiement)
+if ($action == 'confirm_valide' && GETPOST('confirm') == 'yes' && $user->rights->facture->paiement)
 {
 	$db->begin();
 
 	$paiement = new Paiement($db);
-	$paiement->id = $_GET['id'];
+    $paiement->fetch($id);
 	if ($paiement->valide() > 0)
 	{
 		$db->commit();
@@ -117,10 +136,10 @@ llxHeader();
 $thirdpartystatic=new Societe($db);
 
 $paiement = new Paiement($db);
-$result=$paiement->fetch($_GET['id']);
+$result=$paiement->fetch($id);
 if ($result <= 0)
 {
-	dol_print_error($db,'Payement '.$_GET['id'].' not found in database');
+	dol_print_error($db,'Payement '.$id.' not found in database');
 	exit;
 }
 
@@ -128,12 +147,12 @@ $html = new Form($db);
 
 $h=0;
 
-$head[$h][0] = DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$_GET["id"];
+$head[$h][0] = DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$id;
 $head[$h][1] = $langs->trans("Card");
 $hselected = $h;
 $h++;
 
-$head[$h][0] = DOL_URL_ROOT.'/compta/paiement/info.php?id='.$_GET["id"];
+$head[$h][0] = DOL_URL_ROOT.'/compta/paiement/info.php?id='.$id;
 $head[$h][1] = $langs->trans("Info");
 $h++;
 
@@ -143,7 +162,7 @@ dol_fiche_head($head, $hselected, $langs->trans("PaymentCustomerInvoice"), 0, 'p
 /*
  * Confirmation de la suppression du paiement
  */
-if ($_GET['action'] == 'delete')
+if ($action == 'delete')
 {
 	$ret=$html->form_confirm('fiche.php?id='.$paiement->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete','',0,2);
 	if ($ret == 'html') print '<br>';
@@ -152,7 +171,7 @@ if ($_GET['action'] == 'delete')
 /*
  * Confirmation de la validation du paiement
  */
-if ($_GET['action'] == 'valide')
+if ($action == 'valide')
 {
 	$facid = $_GET['facid'];
 	$ret=$html->form_confirm('fiche.php?id='.$paiement->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);
@@ -186,7 +205,9 @@ print '<tr><td valign="top">'.$langs->trans('Amount').'</td><td colspan="3">'.pr
 
 
 // Note
-print '<tr><td valign="top">'.$langs->trans('Note').'</td><td colspan="3">'.nl2br($paiement->note).'</td></tr>';
+print '<tr><td valign="top">'.$html->editfieldkey("Note",'note',$paiement->note,'id',$paiement->id,$user->rights->facture->paiement).'</td><td colspan="3">';
+print $html->editfieldval("Note",'note',$paiement->note,'id',$paiement->id,$user->rights->facture->paiement,'text');
+print '</td></tr>';
 
 // Bank account
 if ($conf->banque->enabled)
@@ -305,18 +326,18 @@ if ($conf->global->BILL_ADD_PAYMENT_VALIDATION)
 	{
 		if ($user->rights->facture->paiement)
 		{
-			print '<a class="butAction" href="fiche.php?id='.$_GET['id'].'&amp;facid='.$objp->facid.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
+			print '<a class="butAction" href="fiche.php?id='.$id.'&amp;facid='.$objp->facid.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
 		}
 	}
 }
 
-if ($user->societe_id == 0 && $_GET['action'] == '')
+if ($user->societe_id == 0 && $action == '')
 {
 	if ($user->rights->facture->paiement)
 	{
 		if (! $disable_delete)
 		{
-			print '<a class="butActionDelete" href="fiche.php?id='.$_GET['id'].'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+			print '<a class="butActionDelete" href="fiche.php?id='.$id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
 		}
 		else
 		{

@@ -85,14 +85,14 @@ class Form
     }
 
     /**
-     *	\brief		Output val field for an editable field
-     * 	\param		text			Text of label (not used in this function)
-     * 	\param		htmlname		Name of select field
-     * 	\param		preselected		Preselected value for parameter
-     * 	\param		paramkey		Key of parameter (unique if there is several parameter to show)
-     * 	\param		perm			Permission to allow button to edit parameter
-     * 	\param		typeofdata		Type of data (string by default, email, ...)
-     *  \return     string         HTML edit field
+     *	Output val field for an editable field
+     * 	@param		text			Text of label (not used in this function)
+     * 	@param		htmlname		Name of select field
+     * 	@param		preselected		Preselected value for parameter
+     * 	@param		paramkey		Key of parameter (unique if there is several parameter to show)
+     * 	@param		perm			Permission to allow button to edit parameter
+     * 	@param		typeofdata		Type of data ('string' by default, 'email', 'text', ...)
+     *  @return     string          HTML edit field
      */
     function editfieldval($text,$htmlname,$preselected,$paramkey,$paramvalue,$perm,$typeofdata='string')
     {
@@ -107,7 +107,14 @@ class Form
             $ret.='<input type="hidden" name="'.$paramkey.'" value="'.$paramvalue.'">';
             $ret.='<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             $ret.='<tr><td>';
-            $ret.='<input type="text" name="'.$htmlname.'" value="'.$preselected.'">';
+            if (in_array($typeofdata,array('string','email')))
+            {
+                $ret.='<input type="text" name="'.$htmlname.'" value="'.$preselected.'">';
+            }
+            else if ($typeofdata == 'text')
+            {
+                $ret.='<textarea name="'.$htmlname.'">'.$preselected.'</textarea>';
+            }
             $ret.='</td>';
             $ret.='<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             $ret.='</tr></table>'."\n";
