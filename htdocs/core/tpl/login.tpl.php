@@ -84,7 +84,7 @@ jQuery(document).ready(function () {
 </script>
 
 <form id="login" name="login" method="post" action="<?php echo $php_self; ?>">
-<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
+<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
 <input type="hidden" name="loginfunction" value="loginfunction" />
 <!-- Add fields to send local user information -->
 <input type="hidden" name="tz" id="tz" value="" />
@@ -115,7 +115,7 @@ jQuery(document).ready(function () {
 
 <tr><td valign="top" nowrap="nowrap"> &nbsp; <b><?php echo $langs->trans('Password'); ?></b> &nbsp; </td>
 <td valign="top" nowrap="nowrap">
-<input id="password" name="password" class="flat" type="password" size="15" maxlength="30" value="<?php echo $password; ?>" tabindex="2">
+<input id="password" name="password" class="flat" type="password" size="15" maxlength="30" value="<?php echo $password; ?>" tabindex="2" />
 </td></tr>
 
 	<?php if ($select_entity) { ?>
