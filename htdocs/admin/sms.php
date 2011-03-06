@@ -38,7 +38,8 @@ accessforbidden();
 
 $substitutionarrayfortest=array(
 '__ID__' => 'TESTIdRecord',
-'__EMAIL__' => 'TESTEMail',
+'__PHONEFROM__' => 'TESTPhoneFrom',
+'__PHONETO__' => 'TESTPhoneTo',
 '__LASTNAME__' => 'TESTLastname',
 '__FIRSTNAME__' => 'TESTFirstname'
 );

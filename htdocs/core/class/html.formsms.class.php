@@ -86,7 +86,7 @@ class FormSms
 	/**
 	 *	Show the form to input an sms
 	 */
-	function show_form()
+	function show_form($width='180px')
 	{
 		global $conf, $langs, $user;
 
@@ -133,7 +133,7 @@ function limitChars(textarea, limit, infodiv)
 			{
 				$help.=$key.' -> '.$langs->trans($val).'<br>';
 			}
-			print $form->textwithpicto($langs->trans("EMailTestSubstitutionReplacedByGenericValues"),$help);
+			print $form->textwithpicto($langs->trans("SmsTestSubstitutionReplacedByGenericValues"),$help);
 			print "</td></tr>\n";
 		}
 
@@ -143,7 +143,7 @@ function limitChars(textarea, limit, infodiv)
 			if ($this->withfromreadonly)
 			{
 				print '<input type="hidden" name="fromsms" value="'.$this->fromsms.'">';
-				print "<tr><td width=\"180\">".$langs->trans("SmsFrom")."</td><td>";
+				print "<tr><td width=\"".$width."\">".$langs->trans("SmsFrom")."</td><td>";
 				if ($this->fromtype == 'user')
 				{
 					$langs->load("users");
@@ -169,7 +169,7 @@ function limitChars(textarea, limit, infodiv)
 			}
 			else
 			{
-				print "<tr><td>".$langs->trans("SmsFrom")."</td><td>";
+				print "<tr><td width=\"".$width."\">".$langs->trans("SmsFrom")."</td><td>";
                 //print '<input type="text" name="fromname" size="30" value="'.$this->fromsms.'">';
 				if ($conf->global->MAIN_SMS_SENDMODE == 'ovh')
                 {
@@ -316,47 +316,6 @@ function limitChars(textarea, limit, infodiv)
 
 		print "</form>\n";
 		print "<!-- Fin form SMS -->\n";
-	}
-
-
-	/**
-	 *    \brief  Affiche la partie de formulaire pour saisie d'un sms
-	 *    \param  withtopic   1 pour proposer a la saisie le sujet
-	 *    \param  withbody    1 pour proposer a la saisie le corps du message
-	 *    \param  withfile    1 pour proposer a la saisie l'ajout d'un fichier joint
-	 *    \todo   Fonction a virer quand fichier /comm/mailing.php vire (= quand ecran dans /comm/mailing prets)
-	 */
-	function sms_topicmessagefile($withtopic=1,$withbody=1,$withfile=1,$defaultbody)
-	{
-		global $langs;
-
-		$langs->load("other");
-
-		print "<table class=\"border\" width=\"100%\">";
-
-		// Topic
-		if ($withtopic)
-		{
-			print "<tr>";
-			print "<td width=\"180\">".$langs->trans("MailTopic")."</td>";
-			print "<td>";
-			print "<input type=\"text\" size=\"60\" name=\"subject\" value=\"\">";
-			print "</td></tr>";
-		}
-
-		// Message
-		if ($withbody)
-		{
-			print "<tr>";
-			print "<td width=\"180\" valign=\"top\">".$langs->trans("MailText")."</td>";
-			print "<td>";
-			print "<textarea rows=\"8\" cols=\"72\" name=\"message\">";
-			print $defaultbody;
-			print "</textarea>";
-			print "</td></tr>";
-		}
-
-		print "</table>";
 	}
 
 }

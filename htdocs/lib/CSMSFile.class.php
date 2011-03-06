@@ -134,15 +134,14 @@ class CSMSFile
                 $ovhsms->class=$this->class;
 
                 $res=$ovhsms->SmsSend();
-
-				if (! $res)
+				if ($res <= 0)
 				{
-					$this->error="Failed to send SMS<br>Check your server logs and your firewalls setup";
-					dol_syslog("CSMSFile::sendfile: mail end error=".$this->error, LOG_ERROR);
+					$this->error=$ovhsms->error;
+					dol_syslog("CSMSFile::sendfile: sms send error=".$this->error, LOG_ERROR);
 				}
 				else
 				{
-					dol_syslog("CSMSFile::sendfile: mail end success", LOG_DEBUG);
+					dol_syslog("CSMSFile::sendfile: sms send success", LOG_DEBUG);
 				}
 			}
 			else
