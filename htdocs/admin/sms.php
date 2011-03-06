@@ -43,12 +43,14 @@ $substitutionarrayfortest=array(
 '__FIRSTNAME__' => 'TESTFirstname'
 );
 
+$action=GETPOST('action');
+
 
 /*
  * Actions
  */
 
-if (isset($_POST["action"]) && $_POST["action"] == 'update' && empty($_POST["cancel"]))
+if ($action == 'update' && empty($_POST["cancel"]))
 {
 	dolibarr_set_const($db, "MAIN_DISABLE_ALL_SMS",   $_POST["MAIN_DISABLE_ALL_SMS"],'chaine',0,'',$conf->entity);
 
@@ -65,61 +67,63 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update' && empty($_POST["can
 /*
  * Send sms
  */
-if ($_POST['action'] == 'send' && ! $_POST['cancel'])
+if ($action == 'send' && ! $_POST['cancel'])
 {
 	$error=0;
 
-	$email_from='';
-	if (! empty($_POST["fromname"])) $email_from=$_POST["fromname"].' ';
-	if (! empty($_POST["fromsms"])) $email_from.='<'.$_POST["fromsms"].'>';
-
-	$errors_to  = $_POST["errorstosms"];
-	$sendto     = $_POST["sendto"];
-	$body       = $_POST['message'];
-	$deliveryreceipt= $_POST["deliveryreceipt"];
+	$smsfrom='';
+	if (! empty($_POST["fromsms"])) $smsfrom=GETPOST("fromsms");
+	if (empty($smsfrom)) $smsfrom=GETPOST("fromname");
+	$sendto     = GETPOST("sendto");
+	$body       = GETPOST('message');
+	$deliveryreceipt= GETPOST("deliveryreceipt");
+    $deferred   = GETPOST('deferred');
+    $priority   = GETPOST('priority');
+    $class      = GETPOST('class');
+    $errors_to  = GETPOST("errorstosms");
 
 	// Create form object
 	include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formsms.class.php');
 	$formsms = new FormSms($db);
 
-	if (empty($_POST["fromsms"]))
+    if (empty($body))
+    {
+        $message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Message")).'</div>';
+        $action='test';
+        $error++;
+    }
+	if (empty($smsfrom) || ! str_replace('+','',$smsfrom))
 	{
 		$message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("SmsFrom")).'</div>';
-		$_GET["action"]='test';
+        $action='test';
 		$error++;
 	}
-	if (empty($sendto))
+	if (empty($sendto) || ! str_replace('+','',$sendto))
 	{
 		$message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("SmsTo")).'</div>';
-		$_GET["action"]='test';
+        $action='test';
 		$error++;
 	}
 	if (! $error)
 	{
-		// Le message est-il en html
-		$msgishtml=0;	// Message is not HTML
-
-		// Pratique les substitutions sur le sujet et message
-		$subject=make_substitutions($subject,$substitutionarrayfortest,$langs);
+		// Make substitutions into message
 		$body=make_substitutions($body,$substitutionarrayfortest,$langs);
 
 		require_once(DOL_DOCUMENT_ROOT."/lib/CSMSFile.class.php");
-		$smsfile = new CSMSFile($subject,$sendto,$email_from,$body,
-		$filepath,$mimetype,$filename,
-		$sendtocc, $sendtoccc, $deliveryreceipt, $msgishtml,$errors_to);
 
-		$result=$smsfile->sendfile();
+		$smsfile = new CSMSFile($sendto, $smsfrom, $body, $deliveryreceipt, $deferred, $priority, $class);  // This define OvhSms->login, pass, session and account
+		$result=$smsfile->sendfile(); // This send SMS
 
 		if ($result)
 		{
-			$message='<div class="ok">'.$langs->trans("SmsSuccessfulySent",$email_from,$sendto).'</div>';
+			$message='<div class="ok">'.$langs->trans("SmsSuccessfulySent",$smsfrom,$sendto).'</div>';
 		}
 		else
 		{
 			$message='<div class="error">'.$langs->trans("ResultKo").'<br>'.$smsfile->error.' '.$result.'</div>';
 		}
 
-		$_GET["action"]='';
+		$action='';
 	}
 }
 
@@ -151,9 +155,10 @@ if ($message) print $message.'<br>';
 
 // List of sending methods
 $listofmethods=$conf->sms_engine;
+$listofmethods['']='';
+asort($listofmethods);
 
-
-if (isset($_GET["action"]) && $_GET["action"] == 'edit')
+if ($action == 'edit')
 {
 	$html=new Form($db);
 
@@ -188,7 +193,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 
 	// From
 	$var=!$var;
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMS_FROM",ini_get('sendmail_from')?ini_get('sendmail_from'):$langs->transnoentities("Undefined")).'</td>';
+	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMS_FROM",$langs->transnoentities("Undefined")).'</td>';
 	print '<td><input class="flat" name="MAIN_MAIL_SMS_FROM" size="32" value="' . $conf->global->MAIN_MAIL_SMS_FROM;
 	print '"></td></tr>';
 
@@ -228,15 +233,15 @@ else
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_SMS_SENDMODE").'</td><td>';
 	$text=$listofmethods[$conf->global->MAIN_SMS_SENDMODE];
-	if (empty($text)) $text=$langs->trans("Undefined").img_warning();
+	if (empty($text)) $text=$langs->trans("Undefined").' '.img_warning();
 	print $text;
 	print '</td></tr>';
 
 	// From
 	$var=!$var;
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMS_FROM",ini_get('sendmail_from')?ini_get('sendmail_from'):$langs->transnoentities("Undefined")).'</td>';
+	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMS_FROM",$langs->transnoentities("Undefined")).'</td>';
 	print '<td>'.$conf->global->MAIN_MAIL_SMS_FROM;
-	if (!empty($conf->global->MAIN_MAIL_SMS_FROM) && ! isValidPhone($conf->global->MAIN_MAIL_SMS_FROM)) print img_warning($langs->trans("ErrorBadPhone"));
+	if (!empty($conf->global->MAIN_MAIL_SMS_FROM) && ! isValidPhone($conf->global->MAIN_MAIL_SMS_FROM)) print ' '.img_warning($langs->trans("ErrorBadPhone"));
 	print '</td></tr>';
 
 	// Autocopy to
@@ -268,8 +273,14 @@ else
 		print '<a class="butActionRefused" href="#" title="'.$langs->trans("FeatureNotAvailableOnLinux").'">'.$langs->trans("DoTestServerAvailability").'</a>';
 	}*/
 
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&amp;mode=init">'.$langs->trans("DoTestSend").'</a>';
-
+	if (! empty($conf->global->MAIN_SMS_SENDMODE))
+	{
+	   print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&amp;mode=init">'.$langs->trans("DoTestSend").'</a>';
+	}
+	else
+	{
+       print '<a class="butActionRefused" href="#">'.$langs->trans("DoTestSend").'</a>';
+	}
 	print '</div>';
 
 
@@ -297,7 +308,7 @@ else
 	}*/
 
 	// Affichage formulaire de TEST simple
-	if ($_GET["action"] == 'test')
+	if ($action == 'test')
 	{
 		print '<br>';
 		print_titre($langs->trans("DoTestSend"));
@@ -313,10 +324,8 @@ else
 		$formsms->withfrom=1;
 		$formsms->witherrorsto=1;
 		$formsms->withto=(isset($_POST['sendto'])?$_POST['sendto']:$user->user_mobile?$user->user_mobile:1);
-		$formsms->withtopic=(isset($_POST['subject'])?$_POST['subject']:$langs->trans("Test"));
-		$formsms->withtopicreadonly=0;
 		$formsms->withfile=2;
-		$formsms->withbody=(isset($_POST['message'])?$_POST['message']:$langs->trans("ThisIsATestMessage"));
+		$formsms->withbody=(isset($_POST['message'])?(empty($_POST['message'])?1:$_POST['message']):$langs->trans("ThisIsATestMessage"));
 		$formsms->withbodyreadonly=0;
 		$formsms->withcancel=1;
 		$formsms->withfckeditor=0;

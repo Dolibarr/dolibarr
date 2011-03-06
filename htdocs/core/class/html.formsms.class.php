@@ -62,8 +62,8 @@ class FormSms
 
 
 	/**
-	 *	\brief     Constructeur
-	 *  \param     DB      handler d'acces base de donnee
+	 *	Constructor
+	 *  @param     DB      handler d'acces base de donnee
 	 */
 	function FormSms($DB)
 	{
@@ -171,8 +171,7 @@ function limitChars(textarea, limit, infodiv)
 			{
 				print "<tr><td>".$langs->trans("SmsFrom")."</td><td>";
                 //print '<input type="text" name="fromname" size="30" value="'.$this->fromsms.'">';
-                print '<select name="fromsms" id="valid" class="flat">';
-                if ($conf->global->MAIN_SMS_SENDMODE == 'ovh')
+				if ($conf->global->MAIN_SMS_SENDMODE == 'ovh')
                 {
                     dol_include_once('/ovh/class/ovhsms.class.php');
                     $sms = new OvhSms($db);
@@ -182,12 +181,18 @@ function limitChars(textarea, limit, infodiv)
                 {
                     $resultsender[0]->number=$this->fromsms;
                 }
-                $i=0;
-                while($resultsender[$i]){
-                    print '<option value="'.$resultsender[$i]->number.'">'.$resultsender[$i]->number.'</option>';
-                    $i++;
+                if (sizeof($resultsender) > 0)
+                {
+                    print '<select name="fromsms" id="valid" class="flat">';
+                    $i=0;
+                    while($resultsender[$i])
+                    {
+                        print '<option value="'.$resultsender[$i]->number.'">'.$resultsender[$i]->number.'</option>';
+                        $i++;
+                    }
+                    print '</select>';
                 }
-                print '</select>';
+                else print '<span class="error">'.$langs->trans("SmsNoPossibleRecipientFound").'</span>';
                 print '</td>';
 				print "</tr>\n";
 			}
@@ -207,7 +212,7 @@ function limitChars(textarea, limit, infodiv)
 			}
 			else
 			{
-			    print "<input size=\"16\" name=\"sendto\" value=\"".(! is_array($this->withto) && ! is_numeric($this->withto)? (isset($_REQUEST["sendto"])?$_REQUEST["sendto"]:$this->withto):"+")."\">";
+			    print "<input size=\"16\" name=\"sendto\" value=\"".(! is_array($this->withto) && $this->withto != '1'? (isset($_REQUEST["sendto"])?$_REQUEST["sendto"]:$this->withto):"+")."\">";
 				if ($this->withtosocid > 0)
 				{
 					$liste=array();
@@ -282,20 +287,20 @@ function limitChars(textarea, limit, infodiv)
             <td>'.$langs->trans("DelayBeforeSending").':</td>
             <td> <input name="deferred" id="deferred" size="4" value="0"></td></tr>
 
-              <tr><td>'.$langs->trans("Type").' :</td><td>
+           <tr><td>'.$langs->trans("Priority").' :</td><td>
+           <select name="priority" id="valid" class="flat">
+           <option value="0">0</option>
+           <option value="1">1</option>
+           <option value="2">2</option>
+           <option value="3" selected="selected">3</option>
+           </select></td></tr>
+
+           <tr><td>'.$langs->trans("Type").' :</td><td>
            <select name="class" id="valid" class="flat">
            <option value="0">Flash</option>
            <option value="1" selected="selected">Standard</option>
            <option value="2">SIM</option>
            <option value="3">ToolKit</option>
-           </select></td></tr>
-
-           <tr><td>'.$langs->trans("Priority").' :</td><td>
-           <select name="class" id="valid" class="flat">
-           <option value="0">0</option>
-           <option value="1">1</option>
-           <option value="2">2</option>
-           <option value="3" selected="selected">3</option>
            </select></td></tr>';
 
 		print '<tr><td align="center" colspan="2"><center>';

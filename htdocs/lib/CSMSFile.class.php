@@ -1,0 +1,190 @@
+<?php
+/* Copyright (C) 2000-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * or see http://www.gnu.org/
+ *
+ * Lots of code inspired from Dan Potter's CSMSFile class
+ */
+
+/**
+ *      \file       htdocs/lib/CSMSFile.class.php
+ *      \brief      File of class to send sms
+ *		\version    $Id$
+ *      \author	    Laurent Destailleur.
+ */
+
+/**
+ *      \class      CSMSFile
+ *      \brief      Class to send SMS
+ *      \remarks    Usage: $smsfile = new CSMSFile($subject,$sendto,$replyto,$message,$filepath,$mimetype,$filename,$cc,$ccc,$deliveryreceipt,$msgishtml,$errors_to);
+ *      \remarks           $smsfile->sendfile();
+ */
+class CSMSFile
+{
+    var $error='';
+
+    var $message;
+	var $addr_from;
+	var $addr_to;
+	var $deliveryreceipt;
+	var $deferred;
+	var $priority;
+	var $class;
+
+
+	/**
+	 *	CSMSFile
+	 *	@param 	to                  Recipients SMS
+	 *	@param 	from                Sender SMS
+	 *	@param 	msg                 Message
+	 *	@param 	deliveryreceipt		Ask a delivery receipt
+	 */
+	function CSMSFile($to,$from,$msg,$deliveryreceipt=0,$deferred=0,$priority=3,$class=1)
+	{
+		global $conf;
+
+		// On definit fin de ligne
+		$this->eol="\n";
+		if (preg_match('/^win/i',PHP_OS)) $this->eol="\r\n";
+		if (preg_match('/^mac/i',PHP_OS)) $this->eol="\r";
+
+		// If ending method not defined
+		if (empty($conf->global->MAIN_SMS_SENDMODE))
+		{
+		    $this->error='No SMS Engine defined';
+		    return -1;
+		}
+
+		dol_syslog("CSMSFile::CSMSFile: MAIN_SMS_SENDMODE=".$conf->global->MAIN_SMS_SENDMODE." charset=".$conf->file->character_set_client." from=$from, to=$to, errors_to=$errors_to", LOG_DEBUG);
+		dol_syslog("CSMSFile::CSMSFile: deliveryreceipt=".$deliveryreceipt." deferred=".$deferred." priority=".$priority." class=".$class, LOG_DEBUG);
+
+		// Action according to choosed sending method
+		if ($conf->global->MAIN_SMS_SENDMODE == 'ovh')
+		{
+		    $this->addr_from=$from;
+		    $this->addr_to=$to;
+            $this->message=$msg;
+            $this->deliveryreceipt=$deliveryreceipt;
+            $this->deferred=$deferred;
+            $this->priority=$priority;
+            $this->class=$class;
+		}
+		else
+		{
+			// Send mail method not correctly defined
+			// --------------------------------------
+
+			return 'Bad value for MAIN_SMS_SENDMODE constant';
+		}
+	}
+
+
+	/**
+	 * Send mail that was prepared by constructor
+	 *
+	 * @return    boolean     True if mail sent, false otherwise
+	 */
+	function sendfile()
+	{
+		global $conf;
+
+		$errorlevel=error_reporting();
+		error_reporting($errorlevel ^ E_WARNING);   // Desactive warnings
+
+		$res=false;
+
+        dol_syslog("CSMSFile::sendfile addr_to=".$this->addr_to, LOG_DEBUG);
+        dol_syslog("CSMSFile::sendfile message=\n".$this->message);
+
+        $this->message=stripslashes($this->message);
+
+        if (! empty($conf->global->MAIN_SMS_DEBUG)) $this->dump_sms();
+
+		if (empty($conf->global->MAIN_DISABLE_ALL_SMS))
+		{
+			// Action according to choosed sending method
+			if ($conf->global->MAIN_SMS_SENDMODE == 'ovh')
+			{
+				dol_include_once('/ovh/class/ovhsms.class.php');
+				$ovhsms=new OvhSms($this->db);
+				//$ovhsms->session='';
+				//$ovhsms->account='';
+				$ovhsms->expe=$this->addr_from;
+				$ovhsms->dest=$this->addr_to;
+				$ovhsms->message=$this->message;
+				//$ovhsms->validity='';
+				$ovhsms->deferred=$this->deferred;
+				$ovhsms->priority=$this->priority;
+                $ovhsms->class=$this->class;
+
+                $res=$ovhsms->SmsSend();
+
+				if (! $res)
+				{
+					$this->error="Failed to send SMS<br>Check your server logs and your firewalls setup";
+					dol_syslog("CSMSFile::sendfile: mail end error=".$this->error, LOG_ERROR);
+				}
+				else
+				{
+					dol_syslog("CSMSFile::sendfile: mail end success", LOG_DEBUG);
+				}
+			}
+			else
+			{
+				// Send mail method not correctly defined
+				// --------------------------------------
+
+				return 'Bad value for MAIN_SMS_SENDMODE constant';
+			}
+		}
+		else
+		{
+			$this->error='No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_SMS';
+			dol_syslog("CSMSFile::sendfile: ".$this->error, LOG_WARNING);
+		}
+
+		error_reporting($errorlevel);              // Reactive niveau erreur origine
+
+		return $res;
+	}
+
+
+	/**
+	 *  Write content of a SMTP request into a dump file (mode = all)
+	 *  Used for debugging.
+	 */
+	function dump_sms()
+	{
+		global $conf,$dolibarr_main_data_root;
+
+		if (@is_writeable($dolibarr_main_data_root))	// Avoid fatal error on fopen with open_basedir
+		{
+			$fp = fopen($dolibarr_main_data_root."/dolibarr_sms.log","w");
+
+			fputs($fp, $this->message);
+
+			fclose($fp);
+			if (! empty($conf->global->MAIN_UMASK))
+			@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
+		}
+	}
+
+}
+
+?>
