@@ -115,9 +115,15 @@ function analyse_sql_and_script(&$var,$get)
 analyse_sql_and_script($_GET,1);
 analyse_sql_and_script($_POST,0);
 
+// Clean PHP_SELF for prevent XSS attack
+// Get the name of the current file
+$phpself = basename($_SERVER["SCRIPT_NAME"]);
+// Get everything from start of PHP_SELF to where $phpself begins
+// Cut that part out, and place $phpself after it
+$_SERVER['PHP_SELF'] = substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'],$phpself)) . $phpself;
+
 // This is to make Dolibarr working with Plesk
 if (! empty($_SERVER['DOCUMENT_ROOT'])) set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
-
 
 // Include the conf.php and functions.lib.php
 require_once("filefunc.inc.php");
