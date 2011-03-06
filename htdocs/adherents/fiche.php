@@ -992,7 +992,6 @@ if ($rowid && $action != 'edit')
 	/* ************************************************************************** */
 
     $adh = new Adherent($db);
-    $adh->id = $rowid;
     $res=$adh->fetch($rowid);
     if ($res < 0) dol_print_error($db);
     $res=$adh->fetch_optionals($rowid);
