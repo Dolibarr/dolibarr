@@ -46,7 +46,7 @@ if (! empty($_SERVER['DOL_TUNING']))
 // Forcing parameter setting magic_quotes_gpc and cleaning parameters
 // (Otherwise he would have for each position, condition
 // Reading stripslashes variable according to state get_magic_quotes_gpc).
-// Off mode (recommended, you just do addslashes when an insert / update.
+// Off mode (recommended, you just do $db->escape when an insert / update.
 function stripslashes_deep($value)
 {
 	return (is_array($value) ? array_map('stripslashes_deep', $value) : stripslashes($value));
@@ -116,9 +116,15 @@ function analyse_sql_and_script(&$var,$get)
 analyse_sql_and_script($_GET,1);
 analyse_sql_and_script($_POST,0);
 
+// Clean PHP_SELF for prevent XSS attack
+// Get the name of the current file
+$phpself = basename($_SERVER["SCRIPT_NAME"]);
+// Get everything from start of PHP_SELF to where $phpself begins
+// Cut that part out, and place $phpself after it
+$_SERVER['PHP_SELF'] = substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'],$phpself)) . $phpself;
+
 // This is to make Dolibarr working with Plesk
 if (! empty($_SERVER['DOCUMENT_ROOT'])) set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
-
 
 // Include the conf.php and functions.lib.php
 require_once("filefunc.inc.php");
