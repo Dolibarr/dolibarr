@@ -248,7 +248,7 @@ class Adherent extends CommonObject
     }
 
     /**
-     *	Fonction qui cree l'adherent
+     *	Create a member into database
      *	@param      user        	Objet user qui demande la creation
      *	@param      notrigger		1 ne declenche pas les triggers, 0 sinon
      *	@return		int				<0 if KO, >0 if OK
@@ -257,6 +257,8 @@ class Adherent extends CommonObject
     {
         global $conf,$langs;
 
+        $now=dol_now();
+
         // Check parameters
         if (! empty($conf->global->ADHERENT_MAIL_REQUIRED) && ! isValidEMail($this->email))
         {
@@ -264,11 +266,14 @@ class Adherent extends CommonObject
             $this->error = $langs->trans("ErrorBadEMail",$this->email);
             return -1;
         }
-        if (! $this->datec) $this->datec=gmmktime();
-        if (empty($this->login))
+        if (! $this->datec) $this->datec=$now;
+        if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
         {
-            $this->error = $langs->trans("ErrorWrongValueForParameterX","Login");
-            return -1;
+            if (empty($this->login))
+            {
+                $this->error = $langs->trans("ErrorWrongValueForParameterX","Login");
+                return -1;
+            }
         }
 
         $this->db->begin();
@@ -278,7 +283,7 @@ class Adherent extends CommonObject
         $sql.= " (datec,login,fk_user_author,fk_user_mod,fk_user_valid,morphy,fk_adherent_type,entity)";
         $sql.= " VALUES (";
         $sql.= " '".$this->db->idate($this->datec)."'";
-        $sql.= ", '".$this->login."'";
+        $sql.= ", ".($this->login?"'".$this->db->escape($this->login)."'":"null");
         $sql.= ", ".($user->id>0?$user->id:"null");	// Can be null because member can be create by a guest or a script
         $sql.= ", null, null, '".$this->morphy."'";
         $sql.= ", '".$this->typeid."'";

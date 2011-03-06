@@ -377,36 +377,33 @@ if ($_POST["action"] == 'add' && $user->rights->adherent->creer)
     $adh->fk_soc      = $socid;
     $adh->public      = $public;
 
-    foreach($_POST as $key => $value)
-    {
-        if (preg_match("/^options_/",$key))
-        {
-			//escape values from POST, at least with $db->escape, to avoid obvious SQL injections
-			//(array_options is directly input in the DB in adherent.class.php::update())
-			$adh->array_options[$key]=$db->escape($_POST[$key]);
-        }
-    }
-
     // Check parameters
     if (empty($morphy) || $morphy == "-1") {
     	$error++;
         $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Nature"))."<br>\n";
     }
     // Test si le login existe deja
-    if (empty($login)) {
-        $error++;
-        $errmsg .= $langs->trans("ErrorFieldRequired",$langs->trans("Login"))."<br>\n";
-    }
-    else {
-        $sql = "SELECT login FROM ".MAIN_DB_PREFIX."adherent WHERE login='".$login."'";
-        $result = $db->query($sql);
-        if ($result) {
-            $num = $db->num_rows($result);
-        }
-        if ($num) {
+    if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
+    {
+        if (empty($login)) {
             $error++;
-            $langs->load("errors");
-            $errmsg .= $langs->trans("ErrorLoginAlreadyExists",$login)."<br>\n";
+            $errmsg .= $langs->trans("ErrorFieldRequired",$langs->trans("Login"))."<br>\n";
+        }
+        else {
+            $sql = "SELECT login FROM ".MAIN_DB_PREFIX."adherent WHERE login='".$db->escape($login)."'";
+            $result = $db->query($sql);
+            if ($result) {
+                $num = $db->num_rows($result);
+            }
+            if ($num) {
+                $error++;
+                $langs->load("errors");
+                $errmsg .= $langs->trans("ErrorLoginAlreadyExists",$login)."<br>\n";
+            }
+        }
+        if (empty($pass)) {
+            $error++;
+            $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentities("Password"))."<br>\n";
         }
     }
     if (empty($nom)) {
@@ -427,10 +424,6 @@ if ($_POST["action"] == 'add' && $user->rights->adherent->creer)
         $error++;
         $langs->load("errors");
         $errmsg .= $langs->trans("ErrorBadEMail",$email)."<br>\n";
-    }
-    if (empty($pass)) {
-        $error++;
-        $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentities("Password"))."<br>\n";
     }
     $public=0;
     if (isset($public)) $public=1;
@@ -635,11 +628,28 @@ if ($action == 'create')
 
     print '<table class="border" width="100%">';
 
+    // Login
+    if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
+    {
+        print '<tr><td><span class="fieldrequired">'.$langs->trans("Login").' / '.$langs->trans("Id").'</span></td><td><input type="text" name="member_login" size="40" value="'.(isset($_POST["member_login"])?$_POST["member_login"]:$adh->login).'"></td></tr>';
+    }
+
     // Moral-Physique
     $morphys["phy"] = $langs->trans("Physical");
     $morphys["mor"] = $langs->trans("Moral");
     print '<tr><td><span class="fieldrequired">'.$langs->trans("Nature")."</span></td><td>\n";
     print $html->selectarray("morphy", $morphys, isset($_POST["morphy"])?$_POST["morphy"]:$adh->morphy, 1);
+    print "</td>\n";
+
+    // Type
+    print '<tr><td><span class="fieldrequired">'.$langs->trans("MemberType").'</span></td><td>';
+    $listetype=$adht->liste_array();
+    if (sizeof($listetype))
+    {
+        print $html->selectarray("typeid", $listetype, isset($_POST["typeid"])?$_POST["typeid"]:$typeid, 1);
+    } else {
+        print '<font class="error">'.$langs->trans("NoTypeDefinedGoToSetup").'</font>';
+    }
     print "</td>\n";
 
     // Company
@@ -658,40 +668,29 @@ if ($action == 'create')
     print '<tr><td>'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40" value="'.(isset($_POST["prenom"])?$_POST["prenom"]:$adh->prenom).'"></td>';
     print '</tr>';
 
-    // Login
-    print '<tr><td><span class="fieldrequired">'.$langs->trans("Login").'</span></td><td><input type="text" name="member_login" size="40" value="'.(isset($_POST["member_login"])?$_POST["member_login"]:$adh->login).'"></td></tr>';
-
-    // Mot de passe
-    $generated_password='';
-    if ($conf->global->USER_PASSWORD_GENERATED)
+    // Password
+    if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
     {
-        $nomclass="modGeneratePass".ucfirst($conf->global->USER_PASSWORD_GENERATED);
-        $nomfichier=$nomclass.".class.php";
-        //print DOL_DOCUMENT_ROOT."/includes/modules/security/generate/".$nomclass;
-        require_once(DOL_DOCUMENT_ROOT."/includes/modules/security/generate/".$nomfichier);
-        $genhandler=new $nomclass($db,$conf,$langs,$user);
-        $generated_password=$genhandler->getNewGeneratedPassword();
+        $generated_password='';
+        if ($conf->global->USER_PASSWORD_GENERATED)
+        {
+            $nomclass="modGeneratePass".ucfirst($conf->global->USER_PASSWORD_GENERATED);
+            $nomfichier=$nomclass.".class.php";
+            //print DOL_DOCUMENT_ROOT."/includes/modules/security/generate/".$nomclass;
+            require_once(DOL_DOCUMENT_ROOT."/includes/modules/security/generate/".$nomfichier);
+            $genhandler=new $nomclass($db,$conf,$langs,$user);
+            $generated_password=$genhandler->getNewGeneratedPassword();
+        }
+        print '<tr><td><span class="fieldrequired">'.$langs->trans("Password").'</span></td><td>';
+        print '<input size="30" maxsize="32" type="text" name="password" value="'.$generated_password.'">';
+        print '</td></tr>';
     }
-    print '<tr><td><span class="fieldrequired">'.$langs->trans("Password").'</span></td><td>';
-    print '<input size="30" maxsize="32" type="text" name="password" value="'.$generated_password.'">';
-    print '</td></tr>';
-
-    // Type
-    print '<tr><td><span class="fieldrequired">'.$langs->trans("MemberType").'</span></td><td>';
-    $listetype=$adht->liste_array();
-    if (sizeof($listetype))
-    {
-        print $html->selectarray("typeid", $listetype, isset($_POST["typeid"])?$_POST["typeid"]:$typeid, 1);
-    } else {
-        print '<font class="error">'.$langs->trans("NoTypeDefinedGoToSetup").'</font>';
-    }
-    print "</td>\n";
 
     // Address
     print '<tr><td valign="top">'.$langs->trans("Address").'</td><td>';
     print '<textarea name="adresse" wrap="soft" cols="40" rows="2">'.(isset($_POST["adresse"])?$_POST["adresse"]:$adh->adresse).'</textarea></td></tr>';
 
-    // CP / Ville
+    // Zip / Town
     print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td><input type="text" name="cp" size="8" value="'.(isset($_POST["cp"])?$_POST["cp"]:$adh->cp).'"> <input type="text" name="ville" size="32" value="'.(isset($_POST["ville"])?$_POST["ville"]:$adh->ville).'"></td></tr>';
 
     // Country
@@ -824,6 +823,7 @@ if ($action == 'edit')
 	}
 
 	$rowspan=17;
+    if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) $rowspan+=1;
 	$rowspan+=sizeof($adho->attribute_label);
 	if ($conf->societe->enabled) $rowspan++;
 
@@ -838,31 +838,49 @@ if ($action == 'edit')
     // Ref
     print '<tr><td>'.$langs->trans("Ref").'</td><td class="valeur" colspan="2">'.$adh->id.'</td></tr>';
 
-	// Physique-Moral
+    // Login
+    if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
+    {
+        print '<tr><td><span class="fieldrequired">'.$langs->trans("Login").' / '.$langs->trans("Id").'</span></td><td colspan="2"><input type="text" name="login" size="30" value="'.(isset($_POST["login"])?$_POST["login"]:$adh->login).'"></td></tr>';
+    }
+
+    // Physique-Moral
 	$morphys["phy"] = $langs->trans("Physical");
 	$morphys["mor"] = $langs->trans("Morale");
-	print '<tr><td><span class="fieldrequired">'.$langs->trans("Nature").'</span></td><td colspan="2">';
+	print '<tr><td><span class="fieldrequired">'.$langs->trans("Nature").'</span></td><td>';
 	print $html->selectarray("morphy",  $morphys, isset($_POST["morphy"])?$_POST["morphy"]:$adh->morphy);
-	print "</td></tr>";
-
-	// Societe
-	print '<tr><td>'.$langs->trans("Company").'</td><td colspan="2"><input type="text" name="societe" size="40" value="'.(isset($_POST["societe"])?$_POST["societe"]:$adh->societe).'"></td></tr>';
-
-	// Civilite
-	print '<tr><td width="20%">'.$langs->trans("UserTitle").'</td><td width="35%">';
-	print $htmlcompany->select_civilite(isset($_POST["civilite_id"])?$_POST["civilite_id"]:$adh->civilite_id)."\n";
-	print '</td>';
-
-	// Photo
+	print "</td>";
+    // Photo
     print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
-	print $html->showphoto('memberphoto',$adh)."\n";
+    print $html->showphoto('memberphoto',$adh)."\n";
     if ($caneditfieldmember)
     {
         print '<br><br><table class="nobordernopadding"><tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
         print '<tr><td>';
         print '<input type="file" class="flat" name="photo">';
         print '</td></tr></table>';
-	}
+    }
+    print '</td>';
+
+    // Type
+    print '<tr><td><span class="fieldrequired">'.$langs->trans("Type").'</span></td><td>';
+    if ($user->rights->adherent->creer)
+    {
+        print $html->selectarray("typeid",  $adht->liste_array(), (isset($_POST["typeid"])?$_POST["typeid"]:$adh->typeid));
+    }
+    else
+    {
+        print $adht->getNomUrl(1);
+        print '<input type="hidden" name="typeid" value="'.$adh->typeid.'">';
+    }
+    print "</td></tr>";
+
+	// Company
+	print '<tr><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.(isset($_POST["societe"])?$_POST["societe"]:$adh->societe).'"></td></tr>';
+
+	// Civilite
+	print '<tr><td width="20%">'.$langs->trans("UserTitle").'</td><td width="35%">';
+	print $htmlcompany->select_civilite(isset($_POST["civilite_id"])?$_POST["civilite_id"]:$adh->civilite_id)."\n";
 	print '</td>';
 	print '</tr>';
 
@@ -874,24 +892,11 @@ if ($action == 'edit')
 	print '<tr><td width="20%">'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40" value="'.(isset($_POST["prenom"])?$_POST["prenom"]:$adh->prenom).'"></td>';
 	print '</tr>';
 
-	// Login
-	print '<tr><td><span class="fieldrequired">'.$langs->trans("Login").'</span></td><td><input type="text" name="login" size="30" value="'.(isset($_POST["login"])?$_POST["login"]:$adh->login).'"></td></tr>';
-
 	// Password
-	print '<tr><td><span class="fieldrequired">'.$langs->trans("Password").'</span></td><td><input type="password" name="pass" size="30" value="'.(isset($_POST["pass"])?$_POST["pass"]:$adh->pass).'"></td></tr>';
-
-	// Type
-	print '<tr><td><span class="fieldrequired">'.$langs->trans("Type").'</span></td><td>';
-	if ($user->rights->adherent->creer)
+	if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
 	{
-		print $html->selectarray("typeid",  $adht->liste_array(), (isset($_POST["typeid"])?$_POST["typeid"]:$adh->typeid));
+	    print '<tr><td><span class="fieldrequired">'.$langs->trans("Password").'</span></td><td><input type="password" name="pass" size="30" value="'.(isset($_POST["pass"])?$_POST["pass"]:$adh->pass).'"></td></tr>';
 	}
-	else
-	{
-		print $adht->getNomUrl(1);
-		print '<input type="hidden" name="typeid" value="'.$adh->typeid.'">';
-	}
-	print "</td></tr>";
 
 	// Address
 	print '<tr><td>'.$langs->trans("Address").'</td><td>';
@@ -1143,7 +1148,8 @@ if ($rowid && $action != 'edit')
         if ($ret == 'html') print '<br>';
     }
 
-    $rowspan=15+sizeof($adho->attribute_label);
+    $rowspan=18+sizeof($adho->attribute_label);
+    if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) $rowspan+=1;
     if ($conf->societe->enabled) $rowspan++;
 
     print '<table class="border" width="100%">';
@@ -1154,35 +1160,42 @@ if ($rowid && $action != 'edit')
 	print $html->showrefnav($adh,'rowid');
 	print '</td></tr>';
 
-    // Morphy
-    print '<tr><td>'.$langs->trans("Nature").'</td><td class="valeur" colspan="2">'.$adh->getmorphylib().'</td></tr>';
+    // Login
+    if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
+    {
+        print '<tr><td>'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur" colspan="2">'.$adh->login.'&nbsp;</td>';
+        print '</tr>';
+    }
+
+	// Morphy
+    print '<tr><td>'.$langs->trans("Nature").'</td><td class="valeur" >'.$adh->getmorphylib().'</td>';
+    print '<td rowspan="'.$rowspan.'" align="center" valign="middle" width="25%">';
+    print $html->showphoto('memberphoto',$adh);
+    print '</td>';
+    print '</tr>';
+
+    // Type
+    print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
 
     // Company
-    print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur" colspan="2">'.$adh->societe.'</td></tr>';
+    print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$adh->societe.'</td></tr>';
 
 	// Civility
-    print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur" colspan="2">'.$adh->getCivilityLabel().'&nbsp;</td>';
+    print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$adh->getCivilityLabel().'&nbsp;</td>';
 	print '</tr>';
 
     // Name
-    print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur" colspan="2">'.$adh->nom.'&nbsp;</td>';
+    print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur">'.$adh->nom.'&nbsp;</td>';
 	print '</tr>';
 
     // Firstname
-    print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur" colspan="2">'.$adh->prenom.'&nbsp;</td></tr>';
-
-    // Login
-    print '<tr><td>'.$langs->trans("Login").'</td><td class="valeur">'.$adh->login.'&nbsp;</td>';
-	print '<td rowspan="'.$rowspan.'" align="center" valign="middle" width="25%">';
-	print $html->showphoto('memberphoto',$adh);
-    print '</td>';
-	print '</tr>';
+    print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur">'.$adh->prenom.'&nbsp;</td></tr>';
 
 	// Password
-	print '<tr><td>'.$langs->trans("Password").'</td><td>'.preg_replace('/./i','*',$adh->pass).'</td></tr>';
-
-	// Type
-	print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
+    if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
+    {
+        print '<tr><td>'.$langs->trans("Password").'</td><td>'.preg_replace('/./i','*',$adh->pass).'</td></tr>';
+    }
 
     // Address
     print '<tr><td>'.$langs->trans("Address").'</td><td class="valeur">'.nl2br($adh->adresse).'</td></tr>';
