@@ -65,8 +65,7 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update' && empty($_POST["can
 /*
  * Send sms
  */
-if (($_POST['action'] == 'send' || $_POST['action'] == 'sendhtml')
-&& ! $_POST['addfile'] && ! $_POST['addfilehtml'] && ! $_POST["removedfile"] && ! $_POST['cancel'])
+if ($_POST['action'] == 'send' && ! $_POST['cancel'])
 {
 	$error=0;
 
@@ -76,9 +75,6 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'sendhtml')
 
 	$errors_to  = $_POST["errorstosms"];
 	$sendto     = $_POST["sendto"];
-	$sendtocc   = $_POST["sendtocc"];
-	$sendtoccc  = $_POST["sendtoccc"];
-	$subject    = $_POST['subject'];
 	$body       = $_POST['message'];
 	$deliveryreceipt= $_POST["deliveryreceipt"];
 
@@ -102,18 +98,17 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'sendhtml')
 	{
 		// Le message est-il en html
 		$msgishtml=0;	// Message is not HTML
-		if ($_POST['action'] == 'sendhtml') $msgishtml=1;	// Force message to HTML
 
 		// Pratique les substitutions sur le sujet et message
 		$subject=make_substitutions($subject,$substitutionarrayfortest,$langs);
 		$body=make_substitutions($body,$substitutionarrayfortest,$langs);
 
 		require_once(DOL_DOCUMENT_ROOT."/lib/CSMSFile.class.php");
-		$mailfile = new CSMSFile($subject,$sendto,$email_from,$body,
+		$smsfile = new CSMSFile($subject,$sendto,$email_from,$body,
 		$filepath,$mimetype,$filename,
 		$sendtocc, $sendtoccc, $deliveryreceipt, $msgishtml,$errors_to);
 
-		$result=$mailfile->sendfile();
+		$result=$smsfile->sendfile();
 
 		if ($result)
 		{
@@ -121,7 +116,7 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'sendhtml')
 		}
 		else
 		{
-			$message='<div class="error">'.$langs->trans("ResultKo").'<br>'.$mailfile->error.' '.$result.'</div>';
+			$message='<div class="error">'.$langs->trans("ResultKo").'<br>'.$smsfile->error.' '.$result.'</div>';
 		}
 
 		$_GET["action"]='';
@@ -330,8 +325,8 @@ else
 		// Tableau des parametres complementaires du post
 		$formsms->param["action"]="send";
 		$formsms->param["models"]="body";
-		$formsms->param["mailid"]=$mil->id;
-		$formsms->param["returnurl"]=DOL_URL_ROOT."/admin/sms.php";
+		$formsms->param["smsid"]=0;
+		$formsms->param["returnurl"]=$_SERVER["PHP_SELF"];
 
 		$formsms->show_form();
 

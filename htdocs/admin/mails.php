@@ -618,8 +618,8 @@ else
 		// Tableau des parametres complementaires du post
 		$formmail->param["action"]="send";
 		$formmail->param["models"]="body";
-		$formmail->param["mailid"]=$mil->id;
-		$formmail->param["returnurl"]=DOL_URL_ROOT."/admin/mails.php";
+		$formmail->param["mailid"]=0;
+		$formmail->param["returnurl"]=$_SERVER["PHP_SELF"];
 
 		// Init list of files
 		if (! empty($_REQUEST["mode"]) && $_REQUEST["mode"]=='init')
@@ -663,8 +663,8 @@ else
 		// Tableau des parametres complementaires du post
 		$formmail->param["action"]="sendhtml";
 		$formmail->param["models"]="body";
-		$formmail->param["mailid"]=$mil->id;
-		$formmail->param["returnurl"]=DOL_URL_ROOT."/admin/mails.php";
+		$formmail->param["mailid"]=0;
+		$formmail->param["returnurl"]=$_SERVER["PHP_SELF"];
 
 		// Init list of files
 		if (! empty($_REQUEST["mode"]) && $_REQUEST["mode"]=='init')

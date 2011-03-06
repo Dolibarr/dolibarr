@@ -116,7 +116,7 @@ function limitChars(textarea, limit, infodiv)
 }
 </script>';
 
-		print "<form method=\"POST\" name=\"mailform\" enctype=\"multipart/form-data\" action=\"".$this->param["returnurl"]."\">\n";
+		print "<form method=\"POST\" name=\"smsform\" enctype=\"multipart/form-data\" action=\"".$this->param["returnurl"]."\">\n";
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		foreach ($this->param as $key=>$value)
 		{
