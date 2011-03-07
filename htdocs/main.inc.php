@@ -87,23 +87,15 @@ function analyse_sql_and_script(&$var,$get)
 	{
 		foreach ($var as $key => $value)
 		{
-			/*if (test_sql_and_script_inject($key,$get) > 0) // We do not check key, only values
+			if (analyse_sql_and_script($value,$get))
+			{
+				$var[$key] = $value;
+			}
+			else
 			{
 				print 'Access refused by SQL/Script injection protection in main.inc.php';
 				exit;
 			}
-			else
-			{*/
-				if (analyse_sql_and_script($value,$get))
-				{
-					$var[$key] = $value;
-				}
-				else
-				{
-					print 'Access refused by SQL/Script injection protection in main.inc.php';
-					exit;
-				}
-			/*}*/
 		}
 		return true;
 	}
