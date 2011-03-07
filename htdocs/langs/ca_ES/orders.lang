@@ -134,8 +134,8 @@ AddDeliveryCostLine=Afegir una línia de despeses de ports indicant el pes de la
 PDFEinsteinDescription=Model de comanda complet (logo...)
 PDFEdisonDescription=Model de comanda simple
 # Orders modes
-OrderByMail=Correo
+OrderByMail=Correu
 OrderByFax=Fax
-OrderByEMail=EMail
-OrderByWWW=En línea
-OrderByPhone=Teléfono
+OrderByEMail=E-Mail
+OrderByWWW=En línia
+OrderByPhone=Telèfon

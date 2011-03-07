@@ -1,0 +1,6 @@
+# Dolibarr language file - es_ES - workflow 
+CHARSET= UTF-8
+WorkflowSetup=Configuración del módulo workflow
+WorkflowDesc=Este módulo le permite cambiar el comportamiento automatizado. De forma predeterminada, el workflow está abierto y no impuesto. Active los enlaces automáticos que le interesan.
+ThereIsNoWorkflowToModify=No hay workflow modificable para los módulos que tiene activados. 
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Crear un pedido de cliente automáticamente a la firma de un presupuesto

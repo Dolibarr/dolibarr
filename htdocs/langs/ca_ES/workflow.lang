@@ -1,0 +1,6 @@
+# Dolibarr language file - ca_ES - workflow 
+CHARSET=UTF-8
+WorkflowSetup=Configuració del mòdul workflow
+WorkflowDesc=Aquest mòdul us permet canviar el comportament automatitzat. Per defecte, el workflow és obert i no imposat. Activi els enllaços automàtics que li interessen.
+ThereIsNoWorkflowToModify=No hi ha workflow modificable per als mòduls que té activats.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Crear una comanda de client automàticament a la signatura d'un pressupost

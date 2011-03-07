@@ -136,6 +136,6 @@ PDFEdisonDescription=Modelo de pedido simple
 # Orders modes
 OrderByMail=Correo
 OrderByFax=Fax
-OrderByEMail=EMail
+OrderByEMail=E-Mail
 OrderByWWW=En línea
 OrderByPhone=Teléfono
