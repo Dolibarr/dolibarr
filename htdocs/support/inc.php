@@ -123,25 +123,25 @@ if (empty($conf->db->user)) $conf->db->user='';
 
 
 
-// Forcage du parametrage PHP magic_quotes_gpc et nettoyage des parametres
-// (Sinon il faudrait a chaque POST, conditionner
-// la lecture de variable par stripslashes selon etat de get_magic_quotes).
-// En mode off (recommande il faut juste faire $db->escape au moment d'un insert/update.
-function stripslashes_deep($value)
-{
-	return (is_array($value) ? array_map('stripslashes_deep', $value) : stripslashes($value));
-}
-//if (! preg_match('/PHP\/6/i', $_SERVER['SERVER_SOFTWARE']))
-if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* plus pris en compte dans PHP6
+// Removed magic_quotes
+if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* removed in PHP6
 {
 	if (get_magic_quotes_gpc())
 	{
+		// Forcing parameter setting magic_quotes_gpc and cleaning parameters
+		// (Otherwise he would have for each position, condition
+		// Reading stripslashes variable according to state get_magic_quotes_gpc).
+		// Off mode (recommended, you just do $db->escape when an insert / update.
+		function stripslashes_deep($value)
+		{
+			return (is_array($value) ? array_map('stripslashes_deep', $value) : stripslashes($value));
+		}
 		$_GET     = array_map('stripslashes_deep', $_GET);
 		$_POST    = array_map('stripslashes_deep', $_POST);
 		$_COOKIE  = array_map('stripslashes_deep', $_COOKIE);
 		$_REQUEST = array_map('stripslashes_deep', $_REQUEST);
+		@set_magic_quotes_runtime(0);
 	}
-	@set_magic_quotes_runtime(0);
 }
 
 // Defini objet langs

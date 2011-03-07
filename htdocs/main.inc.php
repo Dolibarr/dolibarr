@@ -43,25 +43,25 @@ if (! empty($_SERVER['DOL_TUNING']))
 	if (defined('XDEBUGCOVERAGE')) { xdebug_start_code_coverage(); }
 }
 
-// Forcing parameter setting magic_quotes_gpc and cleaning parameters
-// (Otherwise he would have for each position, condition
-// Reading stripslashes variable according to state get_magic_quotes_gpc).
-// Off mode (recommended, you just do $db->escape when an insert / update.
-function stripslashes_deep($value)
-{
-	return (is_array($value) ? array_map('stripslashes_deep', $value) : stripslashes($value));
-}
+// Removed magic_quotes
 if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* removed in PHP6
 {
 	if (get_magic_quotes_gpc())
 	{
+		// Forcing parameter setting magic_quotes_gpc and cleaning parameters
+		// (Otherwise he would have for each position, condition
+		// Reading stripslashes variable according to state get_magic_quotes_gpc).
+		// Off mode (recommended, you just do $db->escape when an insert / update.
+		function stripslashes_deep($value)
+		{
+			return (is_array($value) ? array_map('stripslashes_deep', $value) : stripslashes($value));
+		}
 		$_GET     = array_map('stripslashes_deep', $_GET);
 		$_POST    = array_map('stripslashes_deep', $_POST);
 		$_COOKIE  = array_map('stripslashes_deep', $_COOKIE);
 		@set_magic_quotes_runtime(0);
 	}
 }
-
 
 // Security: SQL Injection and XSS Injection (scripts) protection (Filters on GET, POST)
 function test_sql_and_script_inject($val,$get)
@@ -112,15 +112,15 @@ function analyse_sql_and_script(&$var,$get)
 		return (test_sql_and_script_inject($var,$get) <= 0);
 	}
 }
-//analyse_sql_and_script($_GET,1);
-//analyse_sql_and_script($_POST,0);
-$morevaltochecklikeget=array($_SERVER["QUERY_STRING"]);
-analyse_sql_and_script($morevaltochecklikeget,1);
+// Sanity check on URL
 $morevaltochecklikepost=array($_SERVER["PHP_SELF"]);
 analyse_sql_and_script($morevaltochecklikepost,0);
+// Sanity check on GET parameters
+$morevaltochecklikeget=array($_SERVER["QUERY_STRING"]);
+analyse_sql_and_script($morevaltochecklikeget,1);
+// Sanity check on POST
+analyse_sql_and_script($_POST,0);
 /*
-//print $_SERVER["SCRIPT_NAME"];
-//print $_SERVER['PHP_SELF'];
 // Clean PHP_SELF for prevent XSS attack
 // Get the name of the current file
 $phpself = basename($_SERVER["SCRIPT_NAME"]);
