@@ -1828,8 +1828,8 @@ else
                  */
 
                 $ref=dol_sanitizeFileName($fac->ref);
-                $subdir = $ref;
-                $filedir = $conf->fournisseur->facture->dir_output.'/'.$ref;
+                $subdir = get_exdir($fac->id,2).$ref;
+                $filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($fac->id,2).$ref;
                 $urlsource=$_SERVER['PHP_SELF'].'?facid='.$fac->id;
                 $genallowed=$user->rights->fournisseur->facture->creer;
                 $delallowed=$user->rights->fournisseur->facture->supprimer;
