@@ -70,7 +70,7 @@ if ($_POST['sendit'] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	if ($facture->fetch($facid))
 	{
         $ref=dol_sanitizeFileName($facture->ref);
-        $upload_dir = $conf->fournisseur->facture->dir_output.'/'.$ref;
+        $upload_dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($facture->id,2).$ref;
 
 		if (create_exdir($upload_dir) >= 0)
 		{
@@ -108,7 +108,7 @@ if ($action=='delete')
 	if ($facture->fetch($facid))
 	{
         $ref=dol_sanitizeFileName($facture->ref);
-        $upload_dir = $conf->fournisseur->facture->dir_output.'/'.$ref;
+        $upload_dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($facture->id,2).$ref;
 
 		$file = $upload_dir . '/' . $_GET['urlfile'];	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 		dol_delete_file($file);
@@ -133,7 +133,7 @@ if ($facid > 0)
 		$facture->fetch_thirdparty();
 
         $ref=dol_sanitizeFileName($facture->ref);
-        $upload_dir = $conf->fournisseur->facture->dir_output.'/'.$ref;
+        $upload_dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($facture->id,2).$ref;
 
 		$head = facturefourn_prepare_head($facture);
 		dol_fiche_head($head, 'documents', $langs->trans('SupplierInvoice'), 0, 'bill');
