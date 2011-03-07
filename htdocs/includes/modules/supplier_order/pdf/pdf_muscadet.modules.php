@@ -129,13 +129,13 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			// Definition de $dir et $file
 			if ($object->specimen)
 			{
-				$dir = $conf->fournisseur->dir_output.'/commande';
+				$dir = $conf->fournisseur->commande->dir_output;
 				$file = $dir . "/SPECIMEN.pdf";
 			}
 			else
 			{
 				$objectref = dol_sanitizeFileName($object->ref);
-				$dir = $conf->fournisseur->dir_output . "/commande/" . $objectref;
+				$dir = $conf->fournisseur->commande->dir_output . '/'. $objectref;
 				$file = $dir . "/" . $objectref . ".pdf";
 			}
 
