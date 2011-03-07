@@ -294,7 +294,7 @@ class Facture extends CommonObject
             else
             {
                 dol_syslog("There is ".sizeof($this->lines)." lines that are array lines");
-                for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
+                foreach ($this->lines as $i => $line)
                 {
                     if (($this->lines[$i]->info_bits & 0x01) == 0)	// We keep only lines with first bit = 0
                     {
