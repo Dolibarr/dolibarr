@@ -164,12 +164,14 @@ if ($what == 'mysql')
 
 	if ($handle)
 	{
+	    $ok=0;
 		dol_syslog("Run command ".$fullcommandcrypted);
 		$handlein = popen($fullcommandclear, 'r');
 		while (!feof($handlein))
 		{
 			$read = fgets($handlein);
 			fwrite($handle,$read);
+			if (preg_match('/-- Dump completed/i',$read)) $ok=1;
 		}
 		pclose($handlein);
 
@@ -187,7 +189,6 @@ if ($what == 'mysql')
 		$errormsg=$langs->trans("ErrorFailedToWriteInDir");
 	}
 	// Get errorstring
-    // TODO Scan full file instead of 2048 first char to search for "-- dump completed"
 	if ($compression == 'none') $handle = fopen($outputfile, 'r');
 	if ($compression == 'gz')   $handle = gzopen($outputfile, 'r');
 	if ($compression == 'bz')   $handle = bzopen($outputfile, 'r');
@@ -199,7 +200,7 @@ if ($what == 'mysql')
 		if ($compression == 'none') fclose($handle);
 		if ($compression == 'gz')   gzclose($handle);
 		if ($compression == 'bz')   bzclose($handle);
-		if (preg_match('/^-- MySql/i',$errormsg)) $errormsg='';	// Pas erreur
+		if ($ok && preg_match('/^-- MySql/i',$errormsg)) $errormsg='';	// Pas erreur
 		else
 		{
 			// Renommer fichier sortie en fichier erreur
