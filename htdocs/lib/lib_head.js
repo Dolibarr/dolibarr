@@ -549,18 +549,6 @@ function newpopup(url,title) {
 /*
  * ================================================================= 
  * Purpose:
- * Fonction pour champ saisie en mode ajax. Used for autocompletion of products.
- * Author: Laurent Destailleur 
- * Licence: GPL
- * ==================================================================
- */
-/* function publish_selvalue(obj) { $(obj.name).value = obj.options[obj.selectedIndex].value; } */
-
-
-
-/*
- * ================================================================= 
- * Purpose:
  * Applique un delai avant execution. Used for autocompletion of companies.
  * Input:   funct, delay 
  * Author:  Regis Houssin 
