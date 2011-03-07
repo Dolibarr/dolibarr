@@ -80,20 +80,20 @@ function test_sql_and_script_inject($val,$get)
 	if ($get) $sql_inj += preg_match('/"/i', $val);	// We refused " in GET parameters value
 	return $sql_inj;
 }
+// Security: Return true if OK, false otherwise
 function analyse_sql_and_script(&$var,$get)
 {
 	if (is_array($var))
 	{
-		$result = array();
 		foreach ($var as $key => $value)
 		{
-			if (test_sql_and_script_inject($key,$get) > 0)
+			/*if (test_sql_and_script_inject($key,$get) > 0) // We do not check key, only values
 			{
 				print 'Access refused by SQL/Script injection protection in main.inc.php';
 				exit;
 			}
 			else
-			{
+			{*/
 				if (analyse_sql_and_script($value,$get))
 				{
 					$var[$key] = $value;
@@ -103,7 +103,7 @@ function analyse_sql_and_script(&$var,$get)
 					print 'Access refused by SQL/Script injection protection in main.inc.php';
 					exit;
 				}
-			}
+			/*}*/
 		}
 		return true;
 	}
@@ -112,15 +112,22 @@ function analyse_sql_and_script(&$var,$get)
 		return (test_sql_and_script_inject($var,$get) <= 0);
 	}
 }
-analyse_sql_and_script($_GET,1);
-analyse_sql_and_script($_POST,0);
-
+//analyse_sql_and_script($_GET,1);
+//analyse_sql_and_script($_POST,0);
+$morevaltochecklikeget=array($_SERVER["QUERY_STRING"]);
+analyse_sql_and_script($morevaltochecklikeget,1);
+$morevaltochecklikepost=array($_SERVER["PHP_SELF"]);
+analyse_sql_and_script($morevaltochecklikepost,0);
+/*
+//print $_SERVER["SCRIPT_NAME"];
+//print $_SERVER['PHP_SELF'];
 // Clean PHP_SELF for prevent XSS attack
 // Get the name of the current file
 $phpself = basename($_SERVER["SCRIPT_NAME"]);
 // Get everything from start of PHP_SELF to where $phpself begins
 // Cut that part out, and place $phpself after it
 $_SERVER['PHP_SELF'] = substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'],$phpself)) . $phpself;
+*/
 
 // This is to make Dolibarr working with Plesk
 if (! empty($_SERVER['DOCUMENT_ROOT'])) set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
