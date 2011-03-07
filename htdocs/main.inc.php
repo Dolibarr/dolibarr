@@ -43,21 +43,21 @@ if (! empty($_SERVER['DOL_TUNING']))
 	if (defined('XDEBUGCOVERAGE')) { xdebug_start_code_coverage(); }
 }
 
-// Forcing parameter setting magic_quotes_gpc and cleaning parameters
-// (Otherwise he would have for each position, condition
-// Reading stripslashes variable according to state get_magic_quotes_gpc).
-// Off mode (recommended, you just do $db->escape when an insert / update.
-function stripslashes_deep($value)
-{
-	return (is_array($value) ? array_map('stripslashes_deep', $value) : stripslashes($value));
-}
+// Removed magic_quotes
 if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* removed in PHP6
 {
 	if (get_magic_quotes_gpc())
 	{
+		// Forcing parameter setting magic_quotes_gpc and cleaning parameters
+		// (Otherwise he would have for each position, condition
+		// Reading stripslashes variable according to state get_magic_quotes_gpc).
+		// Off mode (recommended, you just do $db->escape when an insert / update.
+		function stripslashes_deep($value)
+		{
+			return (is_array($value) ? array_map('stripslashes_deep', $value) : stripslashes($value));
+		}
 		$_GET     = array_map('stripslashes_deep', $_GET);
 		$_POST    = array_map('stripslashes_deep', $_POST);
-//		$_REQUEST = array_map('stripslashes_deep', $_REQUEST);
 		$_COOKIE  = array_map('stripslashes_deep', $_COOKIE);
 		@set_magic_quotes_runtime(0);
 	}
@@ -81,29 +81,21 @@ function test_sql_and_script_inject($val,$get)
 	if ($get) $sql_inj += preg_match('/"/i', $val);	// We refused " in GET parameters value
 	return $sql_inj;
 }
+// Security: Return true if OK, false otherwise
 function analyse_sql_and_script(&$var,$get)
 {
 	if (is_array($var))
 	{
-		$result = array();
 		foreach ($var as $key => $value)
 		{
-			if (test_sql_and_script_inject($key,$get) > 0)
+			if (analyse_sql_and_script($value,$get))
 			{
-				print 'Access refused by SQL/Script injection protection in main.inc.php';
-				exit;
+				$var[$key] = $value;
 			}
 			else
 			{
-				if (analyse_sql_and_script($value,$get))
-				{
-					$var[$key] = $value;
-				}
-				else
-				{
-					print 'Access refused by SQL/Script injection protection in main.inc.php';
-					exit;
-				}
+				print 'Access refused by SQL/Script injection protection in main.inc.php';
+				exit;
 			}
 		}
 		return true;
@@ -113,18 +105,18 @@ function analyse_sql_and_script(&$var,$get)
 		return (test_sql_and_script_inject($var,$get) <= 0);
 	}
 }
-analyse_sql_and_script($_GET,1);
+// Sanity check on URL
+$morevaltochecklikepost=array($_SERVER["PHP_SELF"]);
+analyse_sql_and_script($morevaltochecklikepost,0);
+// Sanity check on GET parameters
+$morevaltochecklikeget=array($_SERVER["QUERY_STRING"]);
+analyse_sql_and_script($morevaltochecklikeget,1);
+// Sanity check on POST
 analyse_sql_and_script($_POST,0);
-
-// Clean PHP_SELF for prevent XSS attack
-// Get the name of the current file
-$phpself = basename($_SERVER["SCRIPT_NAME"]);
-// Get everything from start of PHP_SELF to where $phpself begins
-// Cut that part out, and place $phpself after it
-$_SERVER['PHP_SELF'] = substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'],$phpself)) . $phpself;
 
 // This is to make Dolibarr working with Plesk
 if (! empty($_SERVER['DOCUMENT_ROOT'])) set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
+
 
 // Include the conf.php and functions.lib.php
 require_once("filefunc.inc.php");
