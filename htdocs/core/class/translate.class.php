@@ -417,21 +417,21 @@ class Translate {
 	{
 		if (! empty($this->tab_translate[$key]))	// Translation is available
 		{
-			//$str=preg_replace('/\\\"/','"',$this->tab_translate[$key]);	// To solve some translation keys containing key=abc\"def\"ghi instead of abc"def"ghi
             $str=$this->tab_translate[$key];
 
 			if (! preg_match('/^Format/',$key)) $str=sprintf($str,$param1,$param2,$param3,$param4);	// Replace %s and %d except for FormatXXX strings.
 			if ($maxsize) $str=dol_trunc($str,$maxsize);
-			// On remplace les tags HTML par __xx__ pour eviter traduction par htmlentities
+
+			// We replace some HTML tags by __xx__ to avoid having them encoded by htmlentities
             $str=str_replace(array('<','>','"',),array('__lt__','__gt__','__quot__'),$str);
 
 			$str=$this->convToOutputCharset($str);	// Convert string to $this->charset_output
 
-			// Cryptage en html de la chaine
+			// Crypt string into HTML
 			// $str est une chaine stockee en memoire au format $this->charset_output
 			$str=htmlentities($str,ENT_QUOTES,$this->charset_output);
 
-			// On restaure les tags HTML
+			// Restore HTML tags
             $str=str_replace(array('__lt__','__gt__','__quot__'),array('<','>','"',),$str);
 			return $str;
 		}
