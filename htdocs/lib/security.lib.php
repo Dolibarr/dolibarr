@@ -292,7 +292,7 @@ function makesalt($type=CRYPT_SALT_LENGTH)
 }
 
 /**
- *  Encode\decode database password in config file
+ *  Encode or decode database password in config file
  *  @param   	level   	Encode level: 0 no encoding, 1 encoding
  *	@return		int			<0 if KO, >0 if OK
  */

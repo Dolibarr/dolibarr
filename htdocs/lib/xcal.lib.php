@@ -340,7 +340,7 @@ function build_rssfile($format='rss',$title,$desc,$events_array,$outputfile,$fil
 			$eventqualified=true;
 			if ($filter)
 			{
-				// \TODO Add a filter
+				// TODO Add a filter
 
 				$eventqualified=false;
 			}

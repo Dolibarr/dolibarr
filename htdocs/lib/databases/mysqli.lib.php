@@ -503,11 +503,11 @@ class DoliDb
 
 
 	/**
-	 *	\brief      Defini le tri de la requete.
-	 *	\param	    sortfield   liste des champ de tri
-	 *	\param	    sortorder   ordre du tri
-	 *	\return	    string      chaine exprimant la syntax sql de l'ordre de tri
-	 *	\TODO		A mutualiser dans classe mere
+	 * Define sort criteria of request
+	 * @param	    sortfield   List of sort fields
+	 * @param	    sortorder   Sort order
+	 * @return	    string      String to provide syntax of a sort sql string
+	 * TODO			Mutualized this into a mother class
 	 */
 	function order($sortfield=0,$sortorder=0)
 	{

@@ -1148,10 +1148,10 @@ class CommandeFournisseur extends Commande
 	}
 
 	/**
-	 * 	Set a delivery in database for this supplier order
-	 *	@param		user		User that input data
-	 *	@param		date		Date of reception
-	 *	@param		type		Type of receipt
+	 * 	\bref		Set a delivery in database for this supplier order
+	 *	\param		user		User that input data
+	 *	\param		date		Date of reception
+	 *	\param		type		Type of receipt
 	 */
 	function Livraison($user, $date, $type, $comment)
 	{

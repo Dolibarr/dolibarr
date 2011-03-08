@@ -201,7 +201,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 
 					$pdf->MultiCell(20, 3, $outputlangs->convToOutputCharset($object->lines[$i]->ref), 0, 'C');
 
-					// \TODO Field not yet saved in database
+					// TODO Field not yet saved in database
 					//$pdf->SetXY (133, $curY );
 					//$pdf->MultiCell(10, 5, $object->lines[$i]->tva_tx, 0, 'C');
 
