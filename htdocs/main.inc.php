@@ -106,11 +106,17 @@ function analyse_sql_and_script(&$var,$get)
 	}
 }
 // Sanity check on URL
-$morevaltochecklikepost=array($_SERVER["PHP_SELF"]);
-analyse_sql_and_script($morevaltochecklikepost,0);
+if (! empty($_SERVER["PHP_SELF"]))
+{
+    $morevaltochecklikepost=array($_SERVER["PHP_SELF"]);
+    analyse_sql_and_script($morevaltochecklikepost,0);
+}
 // Sanity check on GET parameters
-$morevaltochecklikeget=array($_SERVER["QUERY_STRING"]);
-analyse_sql_and_script($morevaltochecklikeget,1);
+if (! empty($_SERVER["QUERY_STRING"]))
+{
+    $morevaltochecklikeget=array($_SERVER["QUERY_STRING"]);
+    analyse_sql_and_script($morevaltochecklikeget,1);
+}
 // Sanity check on POST
 analyse_sql_and_script($_POST,0);
 
