@@ -112,12 +112,10 @@ function print_end_menu_array_empty()
 
 
 /**
-        \class      MenuLeft
-        \brief      Class for left empty menu
-*/
+ *       \class      MenuLeft
+ *       \brief      Class for left empty menu
+ */
 class MenuLeft {
-
-    var $require_top=array("empty");     // If this top menu handler must be used with a particular left menu handler
 
     var $db;
     var $menu_array;

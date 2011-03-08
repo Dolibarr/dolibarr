@@ -73,8 +73,6 @@ class MenuTop {
  */
 class MenuLeft {
 
-    var $require_top=array("auguria_frontoffice");     // Si doit etre en phase avec un gestionnaire de menu du haut particulier
-
     var $db;
     var $menu_array;
     var $menu_array_after;
