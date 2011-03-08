@@ -17,7 +17,7 @@
  */
 
 /**
- *       \file       htdocs/webservices/client.php
+ *       \file       htdocs/webservices/demo_wsclient_invoice.php
  *       \brief      Demo page to make a client call to Dolibarr WebServices "server_invoice"
  *       \version    $Id$
  */

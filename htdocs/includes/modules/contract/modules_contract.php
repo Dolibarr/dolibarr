@@ -23,7 +23,7 @@
  */
 
 /**
- *  \file       htdocs/includes/modules/contract/mod_contract.php
+ *  \file       htdocs/includes/modules/contract/modules_contract.php
  *  \ingroup    contract
  *  \brief      File of class to manage contract numbering
  *  \version    $Id$

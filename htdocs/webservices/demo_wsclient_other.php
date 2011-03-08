@@ -17,7 +17,7 @@
  */
 
 /**
- *       \file       htdocs/webservices/demo_client_other.php
+ *       \file       htdocs/webservices/demo_wsclient_other.php
  *       \brief      Demo page to make a client call to Dolibarr WebServices "server_other"
  *       \version    $Id$
  */

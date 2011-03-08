@@ -21,7 +21,7 @@
  */
 
 /**
- *	    \file       htdocs/htdocs/core/class/commondocgenerator.class.php
+ *	    \file       htdocs/core/class/commondocgenerator.class.php
  *		\ingroup    core
  *		\brief      File of parent class for documents generators
  *		\version    $Id$
