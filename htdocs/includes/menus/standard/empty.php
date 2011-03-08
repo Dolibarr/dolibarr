@@ -28,15 +28,15 @@
  */
 class MenuTop {
 
+	var $db;
     var $require_left=array("empty");   // If this top menu handler must be used with a particular left menu handler
     var $hideifnotallowed=false;		// Put 0 for back office menu, 1 for front office menu
-
     var $atarget="";               		// To store arget to use in menu links
 
 
     /**
-     *    \brief      Constructor
-     *    \param      db      Dabatase handler
+     *    Constructor
+     *    @param      db      Dabatase handler
      */
     function MenuTop($db)
     {
@@ -45,7 +45,7 @@ class MenuTop {
 
 
     /**
-     *    \brief      Show menu
+     *    Show menu
      */
     function showmenu()
     {

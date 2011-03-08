@@ -37,14 +37,15 @@
 
 class MenuTop {
 
+	var $db;
 	var $require_left=array("auguria_backoffice");  // Si doit etre en phase avec un gestionnaire de menu gauche particulier
 	var $hideifnotallowed=0;						// Put 0 for back office menu, 1 for front office menu
 	var $atarget="";                                // Valeur du target a utiliser dans les liens
 
 
 	/**
-	 *    \brief      Constructeur
-	 *    \param      db      Database access handler
+	 *    Constructeur
+	 *    @param      db      Database access handler
 	 */
 	function MenuTop($db)
 	{
@@ -53,7 +54,7 @@ class MenuTop {
 
 
 	/**
-	 *    \brief      Show menu
+	 *    Show menu
 	 */
 	function showmenu()
 	{

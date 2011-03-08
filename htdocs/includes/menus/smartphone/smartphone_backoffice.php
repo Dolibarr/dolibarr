@@ -30,6 +30,7 @@
  */
 class MenuSmart {
 
+	var $db;
 	var $require_left=array("smartphone_backoffice");     // Si doit etre en phase avec un gestionnaire de menu particulier
 	var $hideifnotallowed=0;						// Put 0 for back office menu, 1 for front office menu
 	var $atarget="";                                // Valeur du target a utiliser dans les liens
@@ -37,7 +38,7 @@ class MenuSmart {
 
 	/**
 	 *    Constructeur
-	 *    @param      db      Handler d'acces base de donnee
+	 *    @param      db      Database handler
 	 */
 	function MenuSmart($db)
 	{

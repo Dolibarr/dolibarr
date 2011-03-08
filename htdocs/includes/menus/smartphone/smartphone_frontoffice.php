@@ -36,8 +36,8 @@ class MenuSmart {
 
 
 	/**
-	 *    \brief      Constructeur
-	 *    \param      db      Handler d'acces base de donnee
+	 *    Constructor
+	 *    @param      db      Database handler
 	 */
 	function MenuSmart($db)
 	{
