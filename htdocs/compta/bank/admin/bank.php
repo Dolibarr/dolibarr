@@ -134,7 +134,7 @@ $bankorder[1][2]='BankCode DeskCode BankAccountNumberKey AccountNumber';
 $var = true;
 $i=0;
 
-while ($i<=1)
+while ($i < sizeof($bankorder))
 {
 	$var = !$var;
 
