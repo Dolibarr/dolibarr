@@ -93,7 +93,7 @@ if (function_exists('socket_create'))
         echo "There is no Remote debug server at this address.\n";
 	}
 	socket_close($client);
-	socket_close($sock);
+	socket_close($socket);
 }
 else
 {
