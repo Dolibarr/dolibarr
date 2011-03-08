@@ -66,7 +66,25 @@ if (function_exists('socket_create'))
 	if ($client)
 	{
 	   echo "Connection established: ".$client." - address=".$address." port=".$port."<br>\n";
-	   echo "There is a Remote debug server at this address.\n";
+	   echo "There is a Remote debug server at this address.<br>\n";
+	   echo "<br>\n";
+	   echo "To be sure this debugger accepts input from your PHP server, be sure to have\n";
+	   echo "your php.ini file with this :<br>\n";
+	   echo 'xdebug.remote_enable=on<br>
+             xdebug.remote_handle=dbgp<br>
+             xdebug.remote_host=localhost<br>
+             xdebug.remote_port=9000<br>
+             xdebug.profiler_enable=1<br>
+             xdebug.show_local_vars=off<br>
+             xdebug.profiler_output_dir=/tmp/xdebug<br>
+             xdebug.profiler_append=0<br>
+	   '."\n";
+       print "<br>\n";
+	   echo 'Then check in your debug server (Eclipse), you have setup:<br>
+	         XDebug with same port than in php.ini<br>
+	         Allow Remote debug=yes or prompt<br>'."\n";
+       print "<br>\n";
+	   echo "Then, to run a debug session, add parameter XDEBUG_SESSION_START=aname on your URL. To stop, remove cookie XDEBUG_SESSION_START.\n";
 	}
 	else
 	{
