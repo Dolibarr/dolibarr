@@ -1839,6 +1839,8 @@ else
 
                 $object=$fac;
 
+                if ($somethingshown) print '<br>';
+                
                 /*
                  * Linked object block
                  */
