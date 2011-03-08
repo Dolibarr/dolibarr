@@ -1378,9 +1378,9 @@ class CommonObject
 
 			$classpath = $element.'/class';
 			if ($objecttype == 'facture') { $tplpath = 'compta/'.$element; $classpath = $tplpath.'/class'; }  // To work with non standard path
-			if ($objecttype == 'propal') { $tplpath = 'comm/'.$element; $classpath = $tplpath.'/class'; }    // To work with non standard path
+			if ($objecttype == 'propal')  { $tplpath = 'comm/'.$element; $classpath = $tplpath.'/class'; }    // To work with non standard path
             if ($objecttype == 'invoice_supplier') { $tplpath = 'fourn/facture'; $classpath = 'fourn/class'; }    // To work with non standard path
-            if ($objecttype == 'order_supplier') { $tplpath = 'fourn/commande'; $classpath = 'fourn/class'; }    // To work with non standard path
+            if ($objecttype == 'order_supplier')   { $tplpath = 'fourn/commande'; $classpath = 'fourn/class'; }    // To work with non standard path
 
             $classfile = strtolower($subelement); $classname = ucfirst($subelement);
 			if ($objecttype == 'invoice_supplier') { $classfile='fournisseur.facture'; $classname='FactureFournisseur';   }
