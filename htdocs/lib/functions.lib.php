@@ -1422,9 +1422,9 @@ function img_view($alt = "default", $float=0, $other='')
 }
 
 /**
- \brief      Affiche logo effacer
- \param      alt         Texte sur le alt de l'image
- \return     string      Retourne tag img
+ *  Show delete logo
+ *  @param      alt         Texte sur le alt de l'image
+ *  @return     string      Retourne tag img
  */
 function img_delete($alt = "default")
 {
@@ -1435,10 +1435,10 @@ function img_delete($alt = "default")
 
 
 /**
- *	\brief      Affiche logo help avec curseur "?"
- * 	\param		usehelpcursor
- * 	\param		usealttitle		Texte to use as alt title
- * 	\return     string      	Retourne tag img
+ *	Show help logo with cursor "?"
+ * 	@param		usehelpcursor
+ * 	@param		usealttitle		Texte to use as alt title
+ * 	@return     string      	Retourne tag img
  */
 function img_help($usehelpcursor=1,$usealttitle=1)
 {
