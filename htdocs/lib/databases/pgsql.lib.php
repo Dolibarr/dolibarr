@@ -1117,6 +1117,26 @@ class DoliDb
 	}
 
 	/**
+	 *	Update format of a field into a table
+	 *	@param	    table 			Name of table
+	 *	@param		field_name 		Name of field to modify
+	 *	@param	    field_desc 		Array with description of field format
+	 *	@return	    int				<0 if KO, >0 if OK
+	 */
+	function DDLUpdateField($table,$field_name,$field_desc)
+	{
+		$sql = "ALTER TABLE ".MAIN_DB_PREFIX.$table;
+		$sql .= " MODIFY COLUMN ".$field_name." ".$field_desc['type'];
+		if ($field_desc['type'] == 'int' || $field_desc['type'] == 'varchar') $sql.="(".$field_desc['value'].")";
+
+		dol_syslog($sql,LOG_DEBUG);
+		if (! $this->query($sql))
+		return -1;
+		else
+		return 1;
+	}
+	
+	/**
 	 *	\brief      Drop a field in table
 	 *	\param	    table 			Nom de la table
 	 *	\param		field_name 		Nom du champ a inserer
