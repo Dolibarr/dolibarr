@@ -72,17 +72,18 @@ class FactureRec extends Facture
 	/**
 	 * 		\brief		Initialisation de la classe
 	 */
-	function FactureRec($DB, $facid=0)
+	function FactureRec($DB)
 	{
 		$this->db = $DB ;
-		$this->facid = $facid;
 	}
 
 	/**
-	 * 		\brief		Create a predefined invoice
-	 *		\return		int			<0 if KO, id of invoice if OK
+	 * 		Create a predefined invoice
+	 * 		@param		user
+	 * 		@param		facid		Id of source invoice
+	 *		@return		int			<0 if KO, id of invoice if OK
 	 */
-	function create($user)
+	function create($user,$facid)
 	{
 		global $conf, $langs;
 
@@ -102,7 +103,7 @@ class FactureRec extends Facture
 
 		// Charge facture modele
 		$facsrc=new Facture($this->db);
-		$result=$facsrc->fetch($this->facid);
+		$result=$facsrc->fetch($facid);
 		if ($result > 0)
 		{
 			// On positionne en mode brouillon la facture
@@ -190,10 +191,9 @@ class FactureRec extends Facture
 	/**
 	 *	\brief      Recupere l'objet facture et ses lignes de factures
 	 *	\param      rowid       id de la facture a recuperer
-	 *	\param      socid       id de societe
 	 *	\return     int         >0 si ok, <0 si ko
 	 */
-	function fetch($rowid, $socid=0)
+	function fetch($rowid)
 	{
 		$sql = 'SELECT f.titre,f.fk_soc,f.amount,f.tva,f.total,f.total_ttc,f.remise_percent,f.remise_absolue,f.remise';
 		$sql.= ', f.date_lim_reglement as dlr';
@@ -207,7 +207,6 @@ class FactureRec extends Facture
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id';
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = f.rowid AND el.targettype = 'facture'"; // TODO remplacer par une fonction
 		$sql.= ' WHERE f.rowid='.$rowid;
-		if ($socid > 0)	$sql.= ' AND f.fk_soc = '.$socid;
 
         dol_syslog("FactureRec::Fetch rowid=".$rowid.", societe_id=".$socid." sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -374,29 +373,30 @@ class FactureRec extends Facture
 
 
 	/**
-	 * Supprime la facture
+	 * 		Delete current invoice
+	 * 		@return		int		<0 if KO, >0 if OK
 	 */
-	function delete($rowid)
+	function delete()
 	{
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet_rec WHERE fk_facture = $rowid;";
-
-		if ($this->db->query( $sql) )
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet_rec WHERE fk_facture = ".$this->id;
+		dol_syslog($sql);
+		if ($this->db->query($sql))
 		{
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_rec WHERE rowid = $rowid";
-
-			if ($this->db->query( $sql) )
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_rec WHERE rowid = ".$this->id;
+			dol_syslog($sql);
+			if ($this->db->query($sql))
 			{
 				return 1;
 			}
 			else
 			{
-				print "Err : ".$this->db->error();
+				$this->error=$this->db->lasterror();
 				return -1;
 			}
 		}
 		else
 		{
-			print "Err : ".$this->db->error();
+			$this->error=$this->db->lasterror();
 			return -2;
 		}
 	}
@@ -443,7 +443,7 @@ class FactureRec extends Facture
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
 
-			// \TODO A virer
+			// TODO A virer
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 			if (trim(dol_strlen($remise_percent)) > 0)
 			{
@@ -495,7 +495,7 @@ class FactureRec extends Facture
 			dol_syslog("FactureRec::addline sql=".$sql, LOG_DEBUG);
 			if ($this->db->query( $sql))
 			{
-				$this->id=$facid;	// \TODO A virer
+				$this->id=$facid;	// TODO A virer
 				$this->update_price();
 				return 1;
 			}
@@ -510,17 +510,18 @@ class FactureRec extends Facture
 
 
 	/**
-	 *		\brief		Rend la facture automatique
-	 *
+	 *		Rend la facture automatique
+	 *		@param		user
+	 *		@param		freq
+	 *		@param		courant
 	 */
 	function set_auto($user, $freq, $courant)
 	{
 		if ($user->rights->facture->creer)
 		{
-
 			$sql = "UPDATE ".MAIN_DB_PREFIX."facture_rec ";
 			$sql .= " SET frequency = '".$freq."', last_gen='".$courant."'";
-			$sql .= " WHERE rowid = ".$this->facid.";";
+			$sql .= " WHERE rowid = ".$this->id;
 
 			$resql = $this->db->query($sql);
 
@@ -532,7 +533,7 @@ class FactureRec extends Facture
 			}
 			else
 			{
-				print $this->db->error() . ' in ' . $sql;
+				dol_print_error($this->db);
 				return -1;
 			}
 		}

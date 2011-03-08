@@ -62,11 +62,11 @@ $sortfield="f.datef";
 // Create predefined invoice
 if ($_POST["action"] == 'add')
 {
-	$facturerec = new FactureRec($db, $facid);
+	$facturerec = new FactureRec($db);
 	$facturerec->titre = $_POST["titre"];
 	$facturerec->note  = $_POST["comment"];
 
-	if ($facturerec->create($user) > 0)
+	if ($facturerec->create($user,$facid) > 0)
 	{
 		$facid = $facturerec->id;
 		$action = '';
@@ -82,8 +82,9 @@ if ($_POST["action"] == 'add')
 // Suppression
 if ($_REQUEST["action"] == 'delete' && $user->rights->facture->supprimer)
 {
-	$fac = new FactureRec($db);
-	$fac->delete(GETPOST("facid"));
+	$facrec = new FactureRec($db);
+	$facrec->fetch(GETPOST("facid"));
+	$facrec->delete();
 	$facid = 0 ;
 }
 
@@ -340,9 +341,9 @@ else
 
 	if ($facid > 0)
 	{
-		$fac = new FactureRec($db,0);
+		$fac = new FactureRec($db);
 
-		if ( $fac->fetch($facid, $user->societe_id) > 0)
+		if ($fac->fetch($facid, $user->societe_id) > 0)
 		{
 			$soc = new Societe($db, $fac->socid);
 			$soc->fetch($fac->socid);

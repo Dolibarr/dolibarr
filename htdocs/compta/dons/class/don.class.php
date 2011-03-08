@@ -286,10 +286,10 @@ class Don extends CommonObject
 	}
 
 	/**
-	 *    \brief      Creation du don en base
-	 *    \param      user          Objet utilisateur qui cree le don
-	 *    \return     int           Id don cree si ok, <0 si ko
-	 *    \TODO    add numbering module for Ref
+	 *    Create donation record into database
+	 *    @param      user          Objet utilisateur qui cree le don
+	 *    @return     int           Id don cree si ok, <0 si ko
+	 *    TODO    add numbering module for Ref
 	 */
 	function create($user)
 	{

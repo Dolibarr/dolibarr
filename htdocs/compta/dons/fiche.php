@@ -446,7 +446,7 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
 
 	print "</div>";
 
-	// \TODO Gerer action emettre paiement
+	// TODO Gerer action emettre paiement
 	$resteapayer = 0;
 
 
@@ -462,7 +462,7 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
 		print '<a class="butAction" href="fiche.php?rowid='.$don->id.'&action=valid_promesse">'.$langs->trans("ValidPromess").'</a>';
 	}
 
-	// \TODO Gerer action emettre paiement
+	// TODO Gerer action emettre paiement
 	if ($don->statut == 1 && $resteapayer > 0)
 	{
 		print "<a class=\"butAction\" href=\"paiement.php?facid=$facid&action=create\">".$langs->trans("DoPayment")."</a>";
