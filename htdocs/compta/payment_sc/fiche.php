@@ -84,8 +84,7 @@ if ($_REQUEST['action'] == 'confirm_valide' && $_REQUEST['confirm'] == 'yes' && 
 	{
 		$db->commit();
 
-		// \TODO Boucler sur les facture liees a ce paiement et regenerer le pdf
-		$factures=array();
+		$factures=array();	// TODO Get all id of invoices linked to this payment
 		foreach($factures as $id)
 		{
 			$fac = new Facture($db);

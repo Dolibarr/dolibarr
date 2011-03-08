@@ -61,7 +61,7 @@ class FormOrder
 		print '<select class="flat" name="'.$htmlname.'" '.$htmloption.'>';
 		if ($addempty) print '<option value="-1" selected="selected">&nbsp;</option>';
 
-		// \TODO Aller chercher les sources dans dictionnaire
+		// TODO Aller chercher les sources dans dictionnaire
 		print '<option value="0"'.($selected=='0'?' selected="selected"':'').'>'.$langs->trans('OrderSource0').'</option>';
 		print '<option value="1"'.($selected=='1'?' selected="selected"':'').'>'.$langs->trans('OrderSource1').'</option>';
 		print '<option value="2"'.($selected=='2'?' selected="selected"':'').'>'.$langs->trans('OrderSource2').'</option>';

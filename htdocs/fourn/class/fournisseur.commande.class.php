@@ -912,7 +912,7 @@ class CommandeFournisseur extends Commande
 
 			$subprice = price2num($pu,'MU');
 
-			// \TODO A virer
+			// TODO A virer
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 			$remise = 0;
 			if ($remise_percent > 0)
@@ -1148,10 +1148,10 @@ class CommandeFournisseur extends Commande
 	}
 
 	/**
-	 * 	\bref		Set a delivery in database for this supplier order
-	 *	\param		user		User that input data
-	 *	\param		date		Date of reception
-	 *	\param		type		Type of receipt
+	 * 	Set a delivery in database for this supplier order
+	 *	@param		user		User that input data
+	 *	@param		date		Date of reception
+	 *	@param		type		Type of receipt
 	 */
 	function Livraison($user, $date, $type, $comment)
 	{

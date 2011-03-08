@@ -1780,7 +1780,7 @@ class Facture extends CommonObject
             if ($result > 0)
             {
                 // Mise a jour informations denormalisees au niveau de la facture meme
-                $this->id=$facid;	// \TODO A virer
+                $this->id=$facid;	// TODO To move this we must remove parameter facid into this function declaration
                 $result=$this->update_price();
                 if ($result > 0)
                 {

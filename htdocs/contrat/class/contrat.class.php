@@ -866,7 +866,7 @@ class Contrat extends CommonObject
 			$total_ttc = $tabprice[2];
 			$total_localtax1= $tabprice[9];
 			$total_localtax2= $tabprice[10];
-			// \TODO A virer
+			// TODO A virer
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 			$remise = 0;
 			$price = price2num(round($pu_ht, 2));
@@ -882,7 +882,7 @@ class Contrat extends CommonObject
 			$sql.= " localtax1_tx, localtax2_tx, remise_percent, subprice,";
 			$sql.= " total_ht, total_tva, total_localtax1, total_localtax2, total_ttc,";
 			$sql.= " info_bits,";
-			$sql.= " price_ht, remise";								// \TODO A virer
+			$sql.= " price_ht, remise";								// TODO A virer
 			if ($date_start > 0) { $sql.= ",date_ouverture_prevue"; }
 			if ($date_end > 0)  { $sql.= ",date_fin_validite"; }
 			$sql.= ") VALUES ($this->id, '" . $this->db->escape($label) . "','" . $this->db->escape($desc) . "',";
@@ -894,7 +894,7 @@ class Contrat extends CommonObject
 			$sql.= " ".price2num($remise_percent).",".price2num($pu_ht).",";
 			$sql.= " ".price2num($total_ht).",".price2num($total_tva).",".price2num($total_localtax1).",".price2num($total_localtax2).",".price2num($total_ttc).",";
 			$sql.= " '".$info_bits."',";
-			$sql.= " ".price2num($price).",".price2num( $remise);	// \TODO A virer
+			$sql.= " ".price2num($price).",".price2num( $remise);	// TODO A virer
 			if ($date_start > 0) { $sql.= ",".$this->db->idate($date_start); }
 			if ($date_end > 0) { $sql.= ",".$this->db->idate($date_end); }
 			$sql.= ")";
