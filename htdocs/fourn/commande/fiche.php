@@ -1368,8 +1368,6 @@ if ($id > 0 || ! empty($ref))
 
 			$object=$commande;
 
-            if ($somethingshown) print '<br>';
-			
             /*
              * Linked object block
              */

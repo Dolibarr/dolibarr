@@ -22,6 +22,13 @@
 <!-- BEGIN PHP TEMPLATE -->
 
 <?php
+
+$langs = $GLOBALS['langs'];
+$somethingshown = $GLOBALS['somethingshown'];
+$linkedObjectBlock = $GLOBALS['object']->linkedObjectBlock;
+$objectid = $GLOBALS['object']->objectid;
+$num = count($objectid);
+
 $langs->load("bills");
 if ($somethingshown) { echo '<br>'; }
 if ($num > 1) print_titre($langs->trans("RelatedBills"));
