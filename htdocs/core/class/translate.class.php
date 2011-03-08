@@ -70,11 +70,11 @@ class Translate {
 	function setDefaultLang($srclang='fr_FR')
 	{
 		global $conf;
-		
+
 		//dol_syslog("Translate::setDefaultLang srclang=".$srclang,LOG_DEBUG);
 
 		// If a module ask to force a priority on langs directories (to use its own lang files)
-		if (! empty($conf->global->MAIN_FORCELANGDIR)) 
+		if (! empty($conf->global->MAIN_FORCELANGDIR))
 		{
 			$more=array();
 			foreach($conf->file->dol_document_root as $dir)
@@ -82,9 +82,9 @@ class Translate {
 				$newdir=$dir.$conf->global->MAIN_FORCELANGDIR;
 				if (! in_array($newdir,$this->dir)) $more[]=$newdir;
 			}
-			$this->dir=array_merge($more,$this->dir);			
+			$this->dir=array_merge($more,$this->dir);
 		}
-		
+
 		$this->origlang=$srclang;
 
 		if (empty($srclang) || $srclang == 'auto')
@@ -264,7 +264,7 @@ class Translate {
 										if ($alt < 2 || empty($this->tab_translate[$key]))	// We load direction only for primary files or if not yer load
 										{
                                             $this->tab_translate[$key]=$value;
-                                            
+
 											if ($stopafterdirection) break;	// We do not save tab if we stop after DIRECTION
 											else if ($usecachekey) $tabtranslatedomain[$key]=$value;
 										}
@@ -276,7 +276,7 @@ class Translate {
 
 										//print 'XX'.$key;
 										$this->tab_translate[$key]=$value;
-										
+
 										if ($usecachekey) $tabtranslatedomain[$key]=$value;	// To save lang content in cache
 									}
 								}
@@ -415,50 +415,45 @@ class Translate {
 	 */
 	function trans($key, $param1='', $param2='', $param3='', $param4='', $maxsize=0)
 	{
-		global $mysoc;
-
 		if (! empty($this->tab_translate[$key]))	// Translation is available
 		{
-			$str=preg_replace('/\\\"/','"',$this->tab_translate[$key]);	// To solve some translation keys containing key=abc\"def\"ghi instead of abc"def"ghi
+			//$str=preg_replace('/\\\"/','"',$this->tab_translate[$key]);	// To solve some translation keys containing key=abc\"def\"ghi instead of abc"def"ghi
+            $str=$this->tab_translate[$key];
 
 			if (! preg_match('/^Format/',$key)) $str=sprintf($str,$param1,$param2,$param3,$param4);	// Replace %s and %d except for FormatXXX strings.
 			if ($maxsize) $str=dol_trunc($str,$maxsize);
 			// On remplace les tags HTML par __xx__ pour eviter traduction par htmlentities
-			$newstr=str_replace('<','__lt__',$str);
-			$newstr=str_replace('>','__gt__',$newstr);
-			$newstr=str_replace('"','__quot__',$newstr);
+            $str=str_replace(array('<','>','"',),array('__lt__','__gt__','__quot__'),$str);
 
-			$newstr=$this->convToOutputCharset($newstr);	// Convert string to $this->charset_output
+			$str=$this->convToOutputCharset($str);	// Convert string to $this->charset_output
 
 			// Cryptage en html de la chaine
-			// $newstr est une chaine stockee en memoire au format $this->charset_output
-			$newstr=htmlentities($newstr,ENT_QUOTES,$this->charset_output);
+			// $str est une chaine stockee en memoire au format $this->charset_output
+			$str=htmlentities($str,ENT_QUOTES,$this->charset_output);
 
 			// On restaure les tags HTML
-			$newstr=str_replace('__lt__','<',$newstr);
-			$newstr=str_replace('__gt__','>',$newstr);
-			$newstr=str_replace('__quot__','"',$newstr);
-			return $newstr;
+            $str=str_replace(array('__lt__','__gt__','__quot__'),array('<','>','"',),$str);
+			return $str;
 		}
 		else								// Translation is not available
 		{
-			$newstr=$this->getTradFromKey($key);
-			return $this->convToOutputCharset($newstr);
+			$str=$this->getTradFromKey($key);
+			return $this->convToOutputCharset($str);
 		}
 	}
 
 
 	/**
-	 *  \brief       Return translated value of a text string
+	 *  Return translated value of a text string
 	 *               Si il n'y a pas de correspondance pour ce texte, on cherche dans fichier alternatif
 	 *               et si toujours pas trouve, il est retourne tel quel.
 	 *               Parameters of this method must not contains any HTML tags.
-	 *  \param       key         key of string to translate
-	 *  \param       param1      chaine de param1
-	 *  \param       param2      chaine de param2
-	 *  \param       param3      chaine de param3
-	 *  \param       param4      chaine de param4
-	 *  \return      string      chaine traduite
+	 *  @param       key         key of string to translate
+	 *  @param       param1      chaine de param1
+	 *  @param       param2      chaine de param2
+	 *  @param       param3      chaine de param3
+	 *  @param       param4      chaine de param4
+	 *  @return      string      chaine traduite
 	 */
 	function transnoentities($key, $param1='', $param2='', $param3='', $param4='')
 	{
