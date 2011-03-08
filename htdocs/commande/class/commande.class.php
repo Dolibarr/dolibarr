@@ -1375,10 +1375,10 @@ class Commande extends CommonObject
 	}
 
 	/**
-	 *      \brief      Load array this->expeditions of nb of products sent by line in order
-	 *      \param      filtre_statut       Filter on status
-	 *      \return     int                	<0 if KO, Nb of lines found if OK
-	 *      \TODO deprecated, move to Sending class
+	 *      Load array this->expeditions of nb of products sent by line in order
+	 *      @param      filtre_statut       Filter on status
+	 *      @return     int                	<0 if KO, Nb of lines found if OK
+	 *      TODO deprecated, move to Shipping class
 	 */
 	function loadExpeditions($filtre_statut=-1)
 	{
@@ -1424,7 +1424,7 @@ class Commande extends CommonObject
 
 	/**
 	 * Renvoie un tableau avec nombre de lignes d'expeditions
-	 * \TODO deprecated, move to Sending class
+	 * TODO deprecated, move to Shipping class
 	 */
 	function nb_expedition()
 	{
@@ -1440,10 +1440,10 @@ class Commande extends CommonObject
 	}
 
 	/**
-	 *      \brief      Renvoie un tableau avec les livraisons par ligne
-	 *      \param      filtre_statut       Filtre sur statut
-	 *      \return     int                 0 si OK, <0 si KO
-	 *      \TODO  deprecated, move to Delivery class
+	 *      Renvoie un tableau avec les livraisons par ligne
+	 *      @param      filtre_statut       Filtre sur statut
+	 *      @return     int                 0 si OK, <0 si KO
+	 *      TODO  deprecated, move to Shipping class
 	 */
 	function livraison_array($filtre_statut=-1)
 	{
@@ -2177,7 +2177,6 @@ class Commande extends CommonObject
 		global $langs;
 
 		$label=$langs->trans('OrderSource'.$this->source);
-		// \TODO Si libelle non trouve, on va chercher en base dans dictionnaire
 
 		if ($label == 'OrderSource') return '';
 		return $label;

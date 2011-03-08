@@ -371,25 +371,30 @@ class Translate {
 	{
 		global $db;
 		$newstr=$key;
-		if (preg_match('/CurrencySing([A-Z][A-Z][A-Z])$/i',$key,$reg))
+		if (preg_match('/^CurrencySing([A-Z][A-Z][A-Z])$/i',$key,$reg))
 		{
 			$newstr=$this->getLabelFromKey($db,$reg[1],'c_currencies','code_iso','labelsing');
 		}
-		else if (preg_match('/Currency([A-Z][A-Z][A-Z])$/i',$key,$reg))
+		else if (preg_match('/^Currency([A-Z][A-Z][A-Z])$/i',$key,$reg))
 		{
 			$newstr=$this->getLabelFromKey($db,$reg[1],'c_currencies','code_iso','label');
 		}
-		else if (preg_match('/SendingMethod([0-9A-Z]+)$/i',$key,$reg))
+		else if (preg_match('/^SendingMethod([0-9A-Z]+)$/i',$key,$reg))
 		{
 			$newstr=$this->getLabelFromKey($db,$reg[1],'c_shipment_mode','code','libelle');
 		}
-        else if (preg_match('/PaymentTypeShort([0-9A-Z]+)$/i',$key,$reg))
+        else if (preg_match('/^PaymentTypeShort([0-9A-Z]+)$/i',$key,$reg))
         {
             $newstr=$this->getLabelFromKey($db,$reg[1],'c_paiement','code','libelle');
         }
-        else if (preg_match('/Civility([0-9A-Z]+)$/i',$key,$reg))
+        else if (preg_match('/^Civility([0-9A-Z]+)$/i',$key,$reg))
         {
             $newstr=$this->getLabelFromKey($db,$reg[1],'c_civilite','code','civilite');
+        }
+        else if (preg_match('/^OrderSource([0-9A-Z]+)$/i',$key,$reg))
+        {
+        	// TODO Add a table for OrderSourceX
+            //$newstr=$this->getLabelFromKey($db,$reg[1],'c_ordersource','code','label');
         }
         return $newstr;
 	}
