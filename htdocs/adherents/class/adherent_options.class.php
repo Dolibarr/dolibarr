@@ -77,51 +77,41 @@ class AdherentOptions
 	}
 
 	/**
-	 *  \brief  	Add a new attribute
-	 *  \param		attrname			nom de l'atribut
-	 *  \param		type				type de l'attribut
-	 *  \param		length				longuer de l'attribut
-	 *  \remarks	Ceci correspond a un alter de la table et pas a un insert
+	 *	Add a new optionnal attribute
+	 *	@param	attrname			code of attribute
+	 *  @param	type				Type of attribute ('int', 'text', 'varchar', 'date', 'datehour')
+	 *  @param	length				Size/length of attribute
 	 */
 	function create($attrname,$type='varchar',$length=255) {
 
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
-			$sql = "ALTER TABLE ".MAIN_DB_PREFIX."adherent_options ";
-			switch ($type){
-				case 'varchar' :
-				case 'interger' :
-					$sql .= " ADD $attrname $type($length)";
-					break;
-				case 'text' :
-				case 'date' :
-				case 'datetime' :
-					$sql .= " ADD $attrname $type";
-					break;
-				default:
-					$sql .= " ADD $attrname $type";
-					break;
-			}
-
-			dol_syslog("AdherentOptions::create sql=".$sql, LOG_DEBUG);
-			if ($this->db->query($sql))
+			$field_desc = array('type'=>$type, 'value'=>$length);
+			$result=$this->db->DDLAddField(MAIN_DB_PREFIX.'adherent_options', $attrname, $field_desc);
+			if ($result > 0)
 			{
 				return 1;
 			}
 			else
 			{
-				dol_print_error($this->db);
-				return 0;
+				$this->error=$this->db->lasterror();
+				return -1;	
 			}
-		}else{
+		}
+		else
+		{
 			return 0;
 		}
 	}
 
 	/**
-	 *	\brief 	Fonction qui cree un label
-	 *	\param	attrname			nom de l'atribut
-	 *	\param	label				nom du label
+	 *	Add description of a new optionnal attribute
+	 *	@param	attrname			code of attribute
+	 *	@param	label				label of attribute
+	 *  @param	type				Type of attribute ('int', 'text', 'varchar', 'date', 'datehour')
+	 *  @param	pos					Position of attribute
+	 *  @param	size				Size/length of attribute
+	 *  @return	int					<=0 if KO, >0 if OK
 	 */
 	function create_label($attrname,$label='',$type='',$pos=0,$size=0)
 	{
@@ -156,9 +146,9 @@ class AdherentOptions
 	}
 
 	/**
-	 *	Fonction qui supprime un attribut
-	 *	@param		$attrname			nom de l'atribut
-	 *  TODO pouvoir gerer les entités
+	 *	Delete an optionnal attribute
+	 *	@param	attrname			Code of attribute to delete
+	 *  TODO This does not work with multicompany module
 	 */
 	function delete($attrname)
 	{
@@ -183,8 +173,8 @@ class AdherentOptions
 	}
 
 	/**
-	 *	\brief 	Fonction qui supprime un label
-	 *	\param	attrname			nom du label
+	 *	Delete description of an optionnal attribute
+	 *	@param	attrname			Code of attribute to delete
 	 */
 	function delete_label($attrname)
 	{
@@ -215,43 +205,27 @@ class AdherentOptions
 	}
 
 	/**
-	 * 	\brief 		Fonction qui modifie le type d'un attribut optionnel
-	 *  \param		attrname			nom de l'atribut
-	 *  \param		type				type de l'attribut
-	 *  \param		length				longuer de l'attribut
-	 * 	\return		int					>0 if OK, <=0 if error
-	 *  \TODO pouvoir gerer les entités
+	 * 	Modify type of a personalized attribute
+	 *  @param		attrname			name of attribute
+	 *  @param		type				type of attribute
+	 *  @param		length				length of attribute
+	 * 	@return		int					>0 if OK, <=0 if KO
+	 *  TODO This does not works with mutlicompany module
 	 */
 	function update($attrname,$type='varchar',$length=255)
 	{
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
-			$sql = "ALTER TABLE ".MAIN_DB_PREFIX."adherent_options";
-			switch ($type){
-				case 'varchar' :
-				case 'interger' :
-					$sql .= " MODIFY COLUMN $attrname $type($length)";
-					break;
-				case 'text' :
-				case 'date' :
-				case 'datetime' :
-					$sql .= " MODIFY COLUMN $attrname $type";
-					break;
-				default:
-					$sql .= " MODIFY COLUMN $attrname $type";
-					break;
-			}
-			//$sql .= "MODIFY COLUMN $attrname $type($length)";
-
-			dol_syslog("AdherentOptions::update sql=".$sql);
-			if ( $this->db->query($sql) )
+			$field_desc = array('type'=>$type, 'value'=>$length);
+			$result=$this->db->DDLUpdateField(MAIN_DB_PREFIX.'adherent_options', $attrname, $field_desc);
+			if ($result > 0)
 			{
 				return 1;
 			}
 			else
 			{
-				print dol_print_error($this->db);
-				return 0;
+				$this->error=$this->db->lasterror();
+				return -1;	
 			}
 		}
 		else
@@ -262,11 +236,11 @@ class AdherentOptions
 	}
 
 	/**
-	 *  \brief 	Modify an optionnal attribute
-	 *  \param	attrname			nom de l'atribut
-	 *  \param	label				nom du label
-	 *  \param	type				type
-	 *  \param	size				size
+	 *  Modify description of an optionnal attribute
+	 *  @param	attrname			nom de l'atribut
+	 *  @param	label				nom du label
+	 *  @param	type				type
+	 *  @param	size				size
 	 */
 	function update_label($attrname,$label,$type,$size)
 	{
@@ -284,7 +258,7 @@ class AdherentOptions
 			$resql1=$this->db->query($sql_del);
 
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_options_label(";
-			$sql.= " name,";
+			$sql.= " name,";		// This is code
 			$sql.= " entity,";
 			$sql.= " label,";
 			$sql.= " type,";

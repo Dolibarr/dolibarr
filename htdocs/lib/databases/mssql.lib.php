@@ -920,7 +920,7 @@ class DoliDb
 	 */
 	function DDLUpdateField($table,$field_name,$field_desc)
 	{
-		$sql = "ALTER TABLE ".MAIN_DB_PREFIX.$table;
+		$sql = "ALTER TABLE ".$table;
 		$sql .= " MODIFY COLUMN ".$field_name." ".$field_desc['type'];
 		if ($field_desc['type'] == 'int' || $field_desc['type'] == 'varchar') $sql.="(".$field_desc['value'].")";
 
