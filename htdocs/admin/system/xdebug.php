@@ -51,13 +51,29 @@ if (!function_exists('xdebug_is_enabled'))
 
 if (function_exists('socket_create'))
 {
-	$address = '127.0.0.1';
-	$port = 9000;
-	$sock = socket_create(AF_INET, SOCK_STREAM, 0);
-	socket_bind($sock, $address, $port) or die('Unable to bind');
-	socket_listen($sock);
-	$client = socket_accept($sock);
-	echo "connection established: $client";
+    $address = empty($conf->global->XDEBUG_SERVER)?'127.0.0.1':$conf->global->XDEBUG_SERVER;
+    $port = empty($conf->global->XDEBUG_PORT)?9000:$conf->global->XDEBUG_PORT;
+
+    print 'XDEBUG_SERVER: '.$address."<br>\n";
+    print 'XDEBUG_PORT: '.$port."<br>\n";
+    print "<br>\n";
+    $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+	if (empty($socket)) die('Unable to preapre a socket');
+	//socket_bind($sock, $address, $port) or die('Unable to bind on address='.$address.' port='.$port);
+	//socket_listen($sock);
+	//$client = socket_accept($sock);
+	$client=socket_connect($socket, $address, $port);
+	if ($client)
+	{
+	   echo "Connection established: ".$client." - address=".$address." port=".$port."<br>\n";
+	   echo "There is a Remote debug server at this address.\n";
+	}
+	else
+	{
+	    print socket_strerror(socket_last_error());
+        echo "Failed to connect to address=".$address." port=".$port."<br>\n";
+        echo "There is no Remote debug server at this address.\n";
+	}
 	socket_close($client);
 	socket_close($sock);
 }
