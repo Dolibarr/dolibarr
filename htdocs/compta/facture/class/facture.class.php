@@ -1727,7 +1727,7 @@ class Facture extends CommonObject
                 $rangtouse = $rangmax + 1;
             }
 
-            // \TODO A virer
+            // TODO A virer
             // Anciens indicateurs: $price, $remise (a ne plus utiliser)
             $price = $pu;
             $remise = 0;
@@ -1772,7 +1772,7 @@ class Facture extends CommonObject
             $this->line->origin=$origin;
             $this->line->origin_id=$origin_id;
 
-            // \TODO Ne plus utiliser
+            // TODO Ne plus utiliser
             $this->line->price=($this->type==2?-1:1)*abs($price);
             $this->line->remise=($this->type==2?-1:1)*abs($remise);
 

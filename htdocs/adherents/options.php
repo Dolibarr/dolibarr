@@ -44,13 +44,20 @@ if ($_POST["action"] == 'add' && $user->rights->adherent->configurer)
 		// Type et taille non encore pris en compte => varchar(255)
 		if (isset($_POST["attrname"]) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$_POST['attrname']))
 		{
-			$adho->create($_POST['attrname'],$_POST['type'],$_POST['size']);
-			if (isset($_POST['label']))
+			$result=$adho->create($_POST['attrname'],$_POST['type'],$_POST['size']);
+			if ($result > 0)
 			{
-				$adho->create_label($_POST['attrname'],$_POST['label'],$_POST['type'],$_POST['pos'],$_POST['size']);
+				if (isset($_POST['label']))
+				{
+					$adho->create_label($_POST['attrname'],$_POST['label'],$_POST['type'],$_POST['pos'],$_POST['size']);
+				}
+				Header("Location: ".$_SERVER["PHP_SELF"]);
+				exit;
 			}
-			Header("Location: ".$_SERVER["PHP_SELF"]);
-			exit;
+			else
+			{
+				$mesg=$adho->error;
+			}
 		}
 		else
 		{
@@ -68,13 +75,20 @@ if ($_POST["action"] == 'update' && $user->rights->adherent->configurer)
 	{
 		if (isset($_POST["attrname"]) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$_POST['attrname']))
 		{
-			$adho->update($_POST['attrname'],$_POST['type'],$_POST['size']);
-			if (isset($_POST['label']))
+			$result=$adho->update($_POST['attrname'],$_POST['type'],$_POST['size']);
+			if ($result > 0)
 			{
-				$adho->update_label($_POST['attrname'],$_POST['label'],$_POST['type'],$_POST['size']);
+				if (isset($_POST['label']))
+				{
+					$adho->update_label($_POST['attrname'],$_POST['label'],$_POST['type'],$_POST['size']);
+				}
+				Header("Location: ".$_SERVER["PHP_SELF"]);
+				exit;
 			}
-			Header("Location: ".$_SERVER["PHP_SELF"]);
-			exit;
+			else
+			{
+				$mesg=$adho->error;
+			}
 		}
 		else
 		{

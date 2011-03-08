@@ -478,8 +478,8 @@ class Propal extends CommonObject
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."propaldet ";
 			$sql.= " SET qty='".$qty."'";
-			$sql.= " , price='". price2num($price)."'";			// \TODO A virer
-			$sql.= " , remise_percent='".$remise_percent."'";	// \TODO A virer
+			$sql.= " , price='". price2num($price)."'";			// TODO A virer
+			$sql.= " , remise_percent='".$remise_percent."'";	// TODO A virer
 			$sql.= " , subprice=".price2num($pu);
 			$sql.= " , tva_tx=".price2num($txtva);
 			$sql.= " , localtax1_tx=".price2num($txlocaltax1);
@@ -2391,8 +2391,8 @@ class PropaleLigne
 		$sql.= ",qty='".price2num($this->qty)."'";
 		$sql.= ",subprice=".price2num($this->subprice)."";
 		$sql.= ",remise_percent=".price2num($this->remise_percent)."";
-		$sql.= ",price=".price2num($this->price)."";					// \TODO A virer
-		$sql.= ",remise=".price2num($this->remise)."";					// \TODO A virer
+		$sql.= ",price=".price2num($this->price)."";					// TODO A virer
+		$sql.= ",remise=".price2num($this->remise)."";					// TODO A virer
 		$sql.= ",info_bits='".$this->info_bits."'";
 		$sql.= ",total_ht=".price2num($this->total_ht)."";
 		$sql.= ",total_tva=".price2num($this->total_tva)."";
