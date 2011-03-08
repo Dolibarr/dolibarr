@@ -3,6 +3,7 @@
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +75,7 @@ $status=GETPOST("status");
 $maxprint=GETPOST("maxprint");
 
 if (GETPOST('viewcal'))  { $action='show_month'; $day=''; }         // View by month
-if (GETPOST('viewweek')) { $action='show_week'; $week='TODO'; }     // View by week
+if (GETPOST('viewweek')) { $action='show_week'; $week=date("W"); }     // View by week
 if (GETPOST('viewday'))  { $action='show_day'; $day=date("d"); }    // View by day
 
 $langs->load("other");
@@ -142,6 +143,10 @@ if (empty($action) || $action=='show_month')
     if ($next_day < 6) $next_day+=7;
     $lastdaytoshow=dol_mktime(0,0,0,$next_month,$next_day,$next_year);
 }
+if ($action=='show_week')
+{
+	
+}
 if ($action=='show_day')
 {
     $prev = dol_get_prev_day($day, $month, $year);
@@ -186,6 +191,10 @@ if (empty($action) || $action=='show_month')
     $nav.=" <span id=\"month_name\">".dol_print_date(dol_mktime(0,0,0,$month,1,$year),"%b %Y");
     $nav.=" </span>\n";
     $nav.="<a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;region=".$region.$param."\">".img_next($langs->trans("Next"))."</a>\n";
+}
+if ($action=='show_week')
+{
+	
 }
 if ($action=='show_day')
 {
@@ -506,6 +515,10 @@ if (empty($action) || $action == 'show_month')		// View by month
 		echo " </tr>\n";
 	}
 	echo "</table>\n";
+}
+elseif ($action == 'show_week') // View by day
+{
+	print $langs->trans("FeatureNotYetAvailable"); //Work in progress...
 }
 else	// View by day
 {
