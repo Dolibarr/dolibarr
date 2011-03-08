@@ -161,7 +161,10 @@ form {
     padding: 0em 0em 0em 0em;
     margin: 0em 0em 0em 0em;
 }
-
+div.float
+{
+    float:<?php print $left; ?>;
+}
 
 
 /* For dragging lines */
