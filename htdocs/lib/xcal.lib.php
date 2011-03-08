@@ -422,11 +422,11 @@ function format_cal($format,$string)
 }
 
 /**
- *	\brief		Cut string after 75 chars. Add CRLF+Space.
- *	\param		string		String to convert
- *	\return		string 		String converted
- *	\remarks	line must be encoded in UTF-8
-*/
+ *	Cut string after 75 chars. Add CRLF+Space.
+ *	line must be encoded in UTF-8
+ *	@param		line		String to convert
+ *	@return		string 		String converted
+ */
 function CalEncode($line)
 {
 	$out = '';

@@ -121,10 +121,9 @@ function supplier_invoice_pdf_create($db, $object, $model, $outputlangs)
 }
 
 /**
- * Enter description here...
- *
+ * Delete preview files
  * @param   $db
- * @param   $propalid
+ * @param   $objectid
  * @return  int
  */
 function supplier_invoice_delete_preview($db, $objectid)

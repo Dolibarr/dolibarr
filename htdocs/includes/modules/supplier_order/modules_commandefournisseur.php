@@ -196,10 +196,9 @@ function supplier_order_pdf_create($db, $object, $model, $outputlangs)
 }
 
 /**
- * Enter description here...
- *
+ * Delete preview files
  * @param   $db
- * @param   $propalid
+ * @param   $objectid
  * @return  int
  */
 function supplier_order_delete_preview($db, $objectid)

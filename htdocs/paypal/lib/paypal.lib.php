@@ -432,12 +432,10 @@ $countryCode, $currencyCode, $tag )
 
 
 /**
- '-------------------------------------------------------------------------------------------------------------------------------------------
  * hash_call: Function to perform the API call to PayPal using API signature
- * @methodName is name of API  method.
- * @nvpStr is nvp string.
- * returns an associtive array containing the response from the server.
- '-------------------------------------------------------------------------------------------------------------------------------------------
+ * @param	methodName 	is name of API  method.
+ * @param	nvpStr 		is nvp string.
+ * @return	array		returns an associtive array containing the response from the server.
  */
 function hash_call($methodName,$nvpStr)
 {

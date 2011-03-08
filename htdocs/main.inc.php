@@ -790,7 +790,7 @@ if (! function_exists("llxHeader"))
 
 
 /**
- *  Show HTML header
+ *  Show HTTP header
  */
 function top_httphead()
 {

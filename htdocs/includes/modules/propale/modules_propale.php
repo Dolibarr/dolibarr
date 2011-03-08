@@ -218,10 +218,10 @@ function propale_pdf_create($db, $object, $modele, $outputlangs)
 }
 
 /**
- * 	Supprime l'image de previsualitation, pour le cas de regeneration de propal
+ *  Delete preview files
  * 	@param	    db  		objet base de donnee
  * 	@param	    propalid	id de la propal a effacer
- * 	@param     propalref reference de la propal si besoin
+ * 	@param      propalref   reference de la propal si besoin
  */
 function propale_delete_preview($db, $propalid, $propalref='')
 {
