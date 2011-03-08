@@ -71,7 +71,7 @@ UseAvToScanUploadedFiles=Utilització d'un antivirus per escanejar els fitxers p
 AntiVirusCommand=Ruta completa cap al comandament antivirus
 AntiVirusCommandExample=Exemple per a ClamWin: c:\Program Files (x86)\ClamWin\bin\clamscan.exe<br>Exemple per a ClamAv: /usr/bin/clamscan
 AntiVirusParam=Paràmetres complementaris en la línia de comandes
-AntiVirusParamExample=Exemple per a ClamWin: --database=\"C:\Program Files (x86)\ClamWin\lib\"
+AntiVirusParamExample=Exemple per a ClamWin: --database="C:\Program Files (x86)\ClamWin\lib"
 ComptaSetup=Configuració del mòdul Comptabilitat
 UserSetup=Configuració gestió dels usuaris
 MenuSetup=Administració dels menús per base de dades
@@ -1086,7 +1086,7 @@ SyslogFacility=Facilitat
 SyslogLevel=Nivell
 SyslogSimpleFile=Arxiu
 SyslogFilename=Nom i ruta de l'arxiu
-YouCanUseDOL_DATA_ROOT=Podeu utilitzar DOL_DATA_ROOT/dolibarr.log per a un registre a la carpeta  \"documents\" de Dolibarr. Tanmateix, pot establir una carpeta diferent per guardar aquest arxiu.
+YouCanUseDOL_DATA_ROOT=Podeu utilitzar DOL_DATA_ROOT/dolibarr.log per a un registre a la carpeta documents de Dolibarr. Tanmateix, pot establir una carpeta diferent per guardar aquest arxiu.
 ErrorUnknownSyslogConstant=La constant %s no és una constant syslog coneguda
 ##### Donations #####
 DonationsSetup=Configuració del mòdul subvencions

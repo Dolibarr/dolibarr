@@ -71,7 +71,7 @@ UseAvToScanUploadedFiles=Utilización de un antivirus para escanear los archivos
 AntiVirusCommand=Ruta completa hacia el comando antivirus
 AntiVirusCommandExample=Ejemplo para ClamWin: c:\Program Files (x86)\ClamWin\bin\clamscan.exe<br>Ejemplo para ClamAv: /usr/bin/clamscan
 AntiVirusParam=Parámetros complementarios en la línea de comandos
-AntiVirusParamExample=Ejemplo para ClamWin: --database=\"C:\Program Files (x86)\ClamWin\lib\"
+AntiVirusParamExample=Ejemplo para ClamWin: --database="C:\Program Files (x86)\ClamWin\lib"
 ComptaSetup=Configuración del módulo Contabilidad
 UserSetup=Configuración gestión de los usuarios
 MenuSetup=Administración de los menús por base de datos

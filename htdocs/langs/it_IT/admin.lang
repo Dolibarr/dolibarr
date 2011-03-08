@@ -1151,9 +1151,9 @@ NoSessionFound=PHP sembra non consentire alla lista sessioni attive. Directory u
 FormToTestFileUploadForm=Modulo per caricare file di prova (secondo configurazione)
 PreviewNotAvailable=Anteprima non disponibile
 AntiVirusCommand=Percorso completo al comando antivirus
-AntiVirusCommandExample=Esempio per ClamWin: c: \ Program Files (x86) \ ClamWin \ bin \ clamscan.exe <br> Esempio per ClamAV: / usr / bin / clamscan
+AntiVirusCommandExample=Esempio per ClamWin: c:\Program Files (x86)\ClamWin\bin\clamscan.exe <br> Esempio per ClamAV: / usr / bin / clamscan
 AntiVirusParam=Più parametri sulla riga di comando
-AntiVirusParamExample=Esempio per ClamWin: - database = "C: \ Program Files (x86) \ ClamWin lib \"
+AntiVirusParamExample=Esempio per ClamWin: --database="C:\Program Files (x86)\ClamWin\lib"
 YouCanDownloadBackupFile=i file generati possono essere scaricati
 IgnoreDuplicateRecords=Ignora errori di record duplicati (INSERT IGNORE)
 InstrucToEncodePass=Per avere password codificate nel <b>conf.php</b> file, sostituire la riga <br> <b>dolibarr_main_db_pass $ ="..."</b> <br> da <br> <b>dolibarr_main_db_pass $ = "criptato: %s"</b>
