@@ -70,9 +70,9 @@ class pdf_propale_jaune extends ModelePDFPropales
 
 		$this->error = "";
 
-		// Recupere emmetteur
+		// Recupere emetteur
 		$this->emetteur=$mysoc;
-		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si on trouve pas
+		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si on ne trouve pas
 	}
 
 
@@ -241,7 +241,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 					{
 						$this->_pagefoot($pdf,$object,$outputlangs);
 
-						$this->_tableau($pdf, $tab_top, $tab_height, $nexY);
+						$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
 
 						// New page
 						$pdf->AddPage();
