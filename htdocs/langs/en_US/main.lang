@@ -572,6 +572,7 @@ Prefix=Prefix
 Before=Before
 After=After
 IPAddress=IP address
+Frequency=Frequency
 # Week day
 Day1=Monday
 Day2=Tuesday
