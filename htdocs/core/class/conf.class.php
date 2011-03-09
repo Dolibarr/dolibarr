@@ -101,8 +101,8 @@ class Conf
 		 * - En constante php (TODO a virer)
 		 * - En $this->global->key=value
 		 */
-		$sql = "SELECT ".$db->decrypt('name')." as name";
-		$sql.= ",".$db->decrypt('value')." as value, entity";
+		$sql = "SELECT ".$db->decrypt('name')." as name,";
+		$sql.= " ".$db->decrypt('value')." as value, entity";
 		$sql.= " FROM ".MAIN_DB_PREFIX."const";
 		$sql.= " WHERE entity IN (0,".$this->entity.")";
 		$sql.= " ORDER BY entity";	// This is to have entity 0 first, then entity 1 that overwrite.
@@ -208,7 +208,6 @@ class Conf
 
         // By default, we repeat info on all tabs
 		if (! isset($this->global->MAIN_REPEATCONTACTONEACHTAB)) $this->global->MAIN_REPEATCONTACTONEACHTAB=1;
-        //if (! isset($this->global->MAIN_REPEATTASKONEACHTAB)) $this->global->MAIN_REPEATTASKONEACHTAB=1; No more required as we have now an agenda tab
 
 		$rootfordata = DOL_DATA_ROOT;
 		$rootforuser = DOL_DATA_ROOT;
@@ -305,10 +304,7 @@ class Conf
 		// $this->compta->mode = Option du module Comptabilite (simple ou expert):
 		// Defini le mode de calcul des etats comptables (CA,...)
 		$this->compta->mode = 'RECETTES-DEPENSES';  // By default
-		if (isset($this->global->COMPTA_MODE)) {
-			// Peut etre 'RECETTES-DEPENSES' ou 'CREANCES-DETTES'
-			$this->compta->mode = $this->global->COMPTA_MODE;
-		}
+		if (isset($this->global->COMPTA_MODE)) $this->compta->mode = $this->global->COMPTA_MODE;  // Can be 'RECETTES-DEPENSES' ou 'CREANCES-DETTES'
 
 		// $this->defaulttx
 		if (isset($this->global->FACTURE_TVAOPTION) && $this->global->FACTURE_TVAOPTION == 'franchise')
@@ -334,29 +330,18 @@ class Conf
 
 		// $this->email_from = email pour envoi par dolibarr des mails automatiques
 		$this->email_from = "dolibarr-robot@domain.com";
-		if (! empty($this->global->MAIN_MAIL_EMAIL_FROM))
-		{
-			$this->email_from = $this->global->MAIN_MAIL_EMAIL_FROM;
-		}
+		if (! empty($this->global->MAIN_MAIL_EMAIL_FROM)) $this->email_from = $this->global->MAIN_MAIL_EMAIL_FROM;
+
 		// $this->notification->email_from = email pour envoi par Dolibarr des notifications
 		$this->notification->email_from=$this->email_from;
-		if (! empty($this->global->NOTIFICATION_EMAIL_FROM))
-		{
-			$this->notification->email_from=$this->global->NOTIFICATION_EMAIL_FROM;
-		}
+		if (! empty($this->global->NOTIFICATION_EMAIL_FROM)) $this->notification->email_from=$this->global->NOTIFICATION_EMAIL_FROM;
 
 		// $this->mailing->email_from = email pour envoi par Dolibarr des mailings
-		$this->mailing->email_from=$this->email_from;;
-		if (! empty($this->global->MAILING_EMAIL_FROM))
-		{
-			$this->mailing->email_from=$this->global->MAILING_EMAIL_FROM;
-		}
+		$this->mailing->email_from=$this->email_from;
+		if (! empty($this->global->MAILING_EMAIL_FROM))	$this->mailing->email_from=$this->global->MAILING_EMAIL_FROM;
 
 		// Defini MAIN_GRAPH_LIBRARY
-		if (empty($this->global->MAIN_GRAPH_LIBRARY))
-		{
-			$this->global->MAIN_GRAPH_LIBRARY = 'artichow';
-		}
+		if (empty($this->global->MAIN_GRAPH_LIBRARY)) $this->global->MAIN_GRAPH_LIBRARY = 'artichow';
 
         // Format for date (used by default when not found or searched in lang)
         $this->format_date_short="%d/%m/%Y";            # Format of day with PHP/C tags (strftime functions)
@@ -408,18 +393,15 @@ class Conf
         {
             $this->top_menu=(empty($this->global->MAIN_MENU_STANDARD_FORCED)?$this->global->MAIN_MENU_STANDARD:$this->global->MAIN_MENU_STANDARD_FORCED);
             $this->smart_menu=(empty($this->global->MAIN_MENU_SMARTPHONE_FORCED)?$this->global->MAIN_MENU_SMARTPHONE:$this->global->MAIN_MENU_SMARTPHONE_FORCED);
-            // For backward compatibility
-            if ($this->top_menu == 'eldy.php') $this->top_menu='eldy_backoffice.php';
-            if ($this->top_menu == 'rodolphe.php') $this->top_menu='eldy_backoffice.php';
         }
         else                        // If external user
         {
             $this->top_menu=(empty($this->global->MAIN_MENUFRONT_STANDARD_FORCED)?$this->global->MAIN_MENUFRONT_STANDARD:$this->global->MAIN_MENUFRONT_STANDARD_FORCED);
             $this->smart_menu=(empty($this->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?$this->global->MAIN_MENUFRONT_SMARTPHONE:$this->global->MAIN_MENUFRONT_SMARTPHONE_FORCED);
-            // For backward compatibility
-            if ($this->top_menu == 'eldy.php') $this->top_menu='eldy_frontoffice.php';
-            if ($this->top_menu == 'rodolphe.php') $this->top_menu='eldy_frontoffice.php';
         }
+        // For backward compatibility
+        if ($this->top_menu == 'eldy.php') $this->top_menu='eldy_backoffice.php';
+        elseif ($this->top_menu == 'rodolphe.php') $this->top_menu='eldy_backoffice.php';
 	}
 }
 
