@@ -62,7 +62,9 @@ class FactureFournisseur extends Facture
 
 	var $author;
 	var $libelle;
-	var $date;
+    var $datec;
+    var $tms;
+    var $date;
 	var $date_echeance;
 	var $amount;
 	var $remise;

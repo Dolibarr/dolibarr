@@ -113,12 +113,14 @@ $server->wsdl->addComplexType(
     	'id' => array('name'=>'id','type'=>'xsd:string'),
         'ref' => array('name'=>'ref','type'=>'xsd:string'),
         'ref_ext' => array('name'=>'ref_ext','type'=>'xsd:string'),
+        'ref_supplier' => array('name'=>'ref_supplier','type'=>'xsd:string'),
         'fk_user_author' => array('name'=>'fk_user_author','type'=>'xsd:string'),
         'fk_user_valid' => array('name'=>'fk_user_valid','type'=>'xsd:string'),
-        'date' => array('name'=>'date','type'=>'xsd:date'),
         'date_creation' => array('name'=>'date_creation','type'=>'xsd:dateTime'),
         'date_validation' => array('name'=>'date_validation','type'=>'xsd:dateTime'),
         'date_modification' => array('name'=>'date_modification','type'=>'xsd:dateTime'),
+        'date_invoice' => array('name'=>'date_invoice','type'=>'xsd:date'),
+        'date_term' => array('name'=>'date_modification','type'=>'xsd:date'),
         'type' => array('name'=>'type','type'=>'xsd:int'),
         'total_net' => array('name'=>'type','type'=>'xsd:double'),
         'total_vat' => array('name'=>'type','type'=>'xsd:double'),
@@ -336,7 +338,7 @@ function getSupplierInvoicesForThirdParty($authentication,$idthirdparty)
 	{
 		$linesinvoice=array();
 
-		$sql.='SELECT f.rowid as facid, facnumber as ref, ref_ext, type, fk_statut as status, total_ttc, total, tva';
+		$sql.='SELECT f.rowid as facid';
 		$sql.=' FROM '.MAIN_DB_PREFIX.'facture_fourn as f';
 		//$sql.=', '.MAIN_DB_PREFIX.'societe as s';
 		//$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product = p.rowid';
@@ -380,13 +382,25 @@ function getSupplierInvoicesForThirdParty($authentication,$idthirdparty)
 				$linesinvoice[]=array(
 					'id'=>$invoice->id,
 				    'ref'=>$invoice->ref,
+				    'ref_supplier'=>$invoice->ref_supplier,
 				    'ref_ext'=>$invoice->ref_ext,
 				    'type'=>$invoice->type,
                     'status'=>$invoice->statut,
 				    'total_net'=>$invoice->total_ht,
 					'total_vat'=>$invoice->total_tva,
 					'total'=>$invoice->total_ttc,
-		    		'lines' => $linesresp
+                    'date_creation'=>dol_print_date($invoice->datec,'dayhourrfc'),
+                    'date_modification'=>dol_print_date($invoice->tms,'dayhourrfc'),
+                    'date_invoice'=>dol_print_date($invoice->date,'dayhourrfc'),
+                    'date_term'=>dol_print_date($invoice->date_echeance,'dayhourrfc'),
+                    'label'=>$invoice->libelle,
+                    'paid'=>$invoice->paye,
+                    'note'=>$invoice->note,
+                    'note_public'=>$invoice->note_public,
+                    'close_code'=>$invoice->close_code,
+                    'close_note'=>$invoice->close_note,
+
+				    'lines' => $linesresp
 				);
 
 				$i++;
