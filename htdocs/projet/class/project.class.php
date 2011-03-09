@@ -350,12 +350,14 @@ class Project extends CommonObject
 	}
 
 	/**
-	 *    \brief    Supprime le projet dans la base
-	 *    \param    Utilisateur
+     *    Delete a project from database
+     *    @param        user            User
+     *    @param        notrigger       Disable triggers
+     *    @return       int             <0 if KO, 0 if not possible, >0 if OK
 	 */
 	function delete($user, $notrigger=0)
 	{
-		global $conf;
+		global $langs,$conf;
 
 		$error=0;
 
