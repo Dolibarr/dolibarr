@@ -367,7 +367,7 @@ foreach($mainmenuusedarray as $key => $val)
 	font-size: 10px;	/* To reduce to have more entries */
 	font-family:Tahoma,sans-serif;
 	text-transform:uppercase;
-	background: url(<?php echo DOL_URL_ROOT.'/theme/auguria' ?>/img/menus/topmenu_bg.gif) repeat-x bottom left;
+	background: url(<?php echo DOL_URL_ROOT.'/theme/auguria' ?>/img/menus/topmenu_bg.png) repeat-x bottom left;
 }
 
 .tmenu ul{
@@ -422,7 +422,7 @@ foreach($mainmenuusedarray as $key => $val)
 	display:block;
 	padding:4px 8px 0 0;
 	width:auto;
-	background: url(<?php echo DOL_URL_ROOT.'/theme/auguria' ?>/img/menus/topmenu_right.gif) no-repeat top right;
+	background: url(<?php echo DOL_URL_ROOT.'/theme/auguria' ?>/img/menus/topmenu_right.png) no-repeat top right;
 	height:33px;
 }
 
