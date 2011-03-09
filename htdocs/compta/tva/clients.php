@@ -179,13 +179,13 @@ if (is_array($coll_list))
 	$i = 1;
 	foreach($coll_list as $coll)
 	{
-		if($min == 0 or ($min>0 and $coll[2]>$min))
+		if($min == 0 or ($min > 0 && $coll->amount > $min))
 		{
 			$var=!$var;
-			$intra = str_replace($find,$replace,$coll[1]);
+			$intra = str_replace($find,$replace,$coll->tva_intra);
 			if(empty($intra))
 			{
-				if($coll[4] == '1')
+				if($coll->assuj == '1')
 				{
 					$intra = $langs->trans('Unknown');
 				}
@@ -196,15 +196,15 @@ if (is_array($coll_list))
 			}
 			print "<tr $bc[$var]>";
 			print "<td nowrap>".$i."</td>";
-			$company_static->id=$coll[5];
-			$company_static->nom=$coll[0];
+			$company_static->id=$coll->socid;
+			$company_static->nom=$coll->nom;
 			print '<td nowrap>'.$company_static->getNomUrl(1).'</td>';
 			$find = array(' ','.');
 			$replace = array('','');
 			print "<td nowrap>".$intra."</td>";
-			print "<td nowrap align=\"right\">".price($coll[2])."</td>";
-			print "<td nowrap align=\"right\">".price($coll[3])."</td>";
-			$total = $total + $coll[3];
+			print "<td nowrap align=\"right\">".price($coll->amount)."</td>";
+			print "<td nowrap align=\"right\">".price($coll->tva)."</td>";
+			$total = $total + $coll->tva;
 			print "</tr>\n";
 			$i++;
 		}
@@ -251,13 +251,13 @@ if (is_array($coll_list))
 	$i = 1;
 	foreach($coll_list as $coll)
 	{
-		if($min == 0 or ($min>0 and $coll[2]>$min))
+		if($min == 0 or ($min > 0 && $coll->amount > $min))
 		{
 			$var=!$var;
-			$intra = str_replace($find,$replace,$coll[1]);
+			$intra = str_replace($find,$replace,$coll->tva_intra);
 			if(empty($intra))
 			{
-				if($coll[4] == '1')
+				if($coll->assuj == '1')
 				{
 					$intra = $langs->trans('Unknown');
 				}
@@ -268,15 +268,15 @@ if (is_array($coll_list))
 			}
 			print "<tr $bc[$var]>";
 			print "<td nowrap>".$i."</td>";
-			$company_static->id=$coll[5];
-			$company_static->nom=$coll[0];
+			$company_static->id=$coll->socid;
+			$company_static->nom=$coll->nom;
 			print '<td nowrap>'.$company_static->getNomUrl(1).'</td>';
 			$find = array(' ','.');
 			$replace = array('','');
 			print "<td nowrap>".$intra."</td>";
-			print "<td nowrap align=\"right\">".price($coll[2])."</td>";
-			print "<td nowrap align=\"right\">".price($coll[3])."</td>";
-			$total = $total + $coll[3];
+			print "<td nowrap align=\"right\">".price($coll->amount)."</td>";
+			print "<td nowrap align=\"right\">".price($coll->tva)."</td>";
+			$total = $total + $coll->tva;
 			print "</tr>\n";
 			$i++;
 		}

@@ -148,7 +148,7 @@ function vat_by_thirdparty($db, $y, $date_start, $date_end, $modetax, $direction
         $resql = $db->query($sql);
         if ($resql)
         {
-            while($assoc = $db->fetch_array($resql))
+            while($assoc = $db->fetch_object($resql))
             {
                 $list[] = $assoc;
             }
