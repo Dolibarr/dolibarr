@@ -179,33 +179,31 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 	    $Yoff=40;
 
 	    // Add list of linked orders
-	    $object->load_object_linked();
+	    // TODO possibility to use with other document (business module,...)
+	    //$object->load_object_linked();
+	    
+	    $origin 	= $object->origin;
+		$origin_id 	= $object->origin_id;
 
-	    if ($conf->commande->enabled)
+	    // TODO move to external function
+		if ($conf->$origin->enabled)
 		{
 			$outputlangs->load('orders');
-			foreach($object->linked_object as $key => $val)
+			
+			$classname = ucfirst($origin);
+			$linkedobject = new $classname($this->db);
+			$result=$linkedobject->fetch($origin_id);
+			if ($result >= 0)
 			{
-				if ($key == 'commande')
-				{
-					for ($i = 0; $i<sizeof($val);$i++)
-					{
-						$newobject=new Commande($this->db);
-						$result=$newobject->fetch($val[$i]);
-						if ($result >= 0)
-						{
-							$pdf->SetFont('','', $default_font_size - 2);
-							$text=$newobject->ref;
-							if ($newobject->ref_client) $text.=' ('.$newobject->ref_client.')';
-                            $Yoff = $Yoff+8;
-							$pdf->SetXY($this->page_largeur - $this->marge_droite - 60,$Yoff);
-							$pdf->MultiCell(60, 4, $outputlangs->transnoentities("RefOrder") ." : ".$outputlangs->transnoentities($text), 0, 'R');
-                            $Yoff = $Yoff+4;
-                            $pdf->SetXY($this->page_largeur - $this->marge_droite - 60,$Yoff);
-                            $pdf->MultiCell(60, 4, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->commande->date,"%d %b %Y",false,$outputlangs,true), 0, 'R');
-						}
-					}
-				}
+				$pdf->SetFont('','', $default_font_size - 2);
+				$text=$linkedobject->ref;
+				if ($linkedobject->ref_client) $text.=' ('.$linkedobject->ref_client.')';
+				$Yoff = $Yoff+8;
+				$pdf->SetXY($this->page_largeur - $this->marge_droite - 60,$Yoff);
+				$pdf->MultiCell(60, 4, $outputlangs->transnoentities("RefOrder") ." : ".$outputlangs->transnoentities($text), 0, 'R');
+				$Yoff = $Yoff+4;
+				$pdf->SetXY($this->page_largeur - $this->marge_droite - 60,$Yoff);
+				$pdf->MultiCell(60, 4, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->commande->date,"%d %b %Y",false,$outputlangs,true), 0, 'R');
 			}
 		}
 
