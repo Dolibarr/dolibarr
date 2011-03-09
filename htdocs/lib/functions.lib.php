@@ -37,6 +37,16 @@ if (! defined('DOL_DOCUMENT_ROOT'))	    define('DOL_DOCUMENT_ROOT', '..');
 if (! defined('DOL_DOCUMENT_ROOT_ALT'))	define('DOL_DOCUMENT_ROOT_ALT', '');	// If option not enabled, we keep it disabled but avoid warning
 if (! defined('ADODB_DATE_VERSION'))    include_once(DOL_DOCUMENT_ROOT."/includes/adodbtime/adodb-time.inc.php");
 
+/**
+ *  Function called at end of web php process
+ */
+function dol_shutdown()
+{
+    global $conf,$user,$langs,$db;
+    $disconnectdone=false;
+    if (is_object($db) && ! empty($db->connected)) $disconnectdone=$db->close();
+    dol_syslog("--- End access to ".$_SERVER["PHP_SELF"].($disconnectdone?' (Warn: db disconnection forced)':''));
+}
 
 /**
  *  Return value of a param into GET or POST supervariable
@@ -162,10 +172,10 @@ function dol_clone($object)
 }
 
 /**
- *	\brief          Optimize a size for some browsers (phone, smarphone, ...)
- * 	\param			size		Size we want
- * 	\param			type		Type of optimizing(''=Optimize for a truncate, 'width'=Optimize for screen width)
- *	\return         int			New size after optimizing
+ *	Optimize a size for some browsers (phone, smarphone, ...)
+ * 	@param			size		Size we want
+ * 	@param			type		Type of optimizing(''=Optimize for a truncate, 'width'=Optimize for screen width)
+ *	@return         int			New size after optimizing
  */
 function dol_size($size,$type='')
 {
