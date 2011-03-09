@@ -314,6 +314,8 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         $beforeversionarray=explode('.','3.1.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
         {
+            migrate_directories($db,$langs,$conf,'/rss','/externalrss');
+
             // Reload modules
             migrate_reload_modules($db,$langs,$conf);
 

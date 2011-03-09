@@ -50,10 +50,9 @@ class Conf
 	var $css;          // Contains full path of css page ("/theme/eldy/style.css.php", ...)
     //! Used to store current menu handlers
 	var $top_menu;
-	var $left_menu;
 	var $smart_menu;
 
-	//! Used to store entity for multi-company (default 1)
+	//! Used to store instance for multi-company (default 1)
 	var $entity=1;
 
 	var $css_modules			= array();
@@ -91,7 +90,7 @@ class Conf
 		dol_syslog("Conf::setValues");
 
 		// Directory of core triggers
-		$this->triggers_modules[] = "/includes/triggers";	// Relative path
+		$this->triggers_modules[] = "/includes/triggers";	// Default relative path to triggers file
 
 		// Avoid warning if not defined
 		if (empty($this->db->dolibarr_main_db_encryption)) $this->db->dolibarr_main_db_encryption=0;
@@ -160,26 +159,6 @@ class Conf
 								$this->hooks_modules[$modulename][]=$value;
 							}
 						}
-						// If this is constant to force a module directories (used to manage some exceptions)
-						// Should not be used by modules
-						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_DIR_/i',$key,$reg))
-						{
-							$module=strtolower($reg[1]);
-							// If with submodule name
-							if (preg_match('/_DIR_([A-Z_]+)?_([A-Z]+)$/i',$key,$reg))
-							{
-								$dir_name  = "dir_".strtolower($reg[2]);
-								$submodule = strtolower($reg[1]);
-								$this->$module->$submodule->$dir_name = $value;		// We put only dir name. We will add DOL_DATA_ROOT later
-								//print '->'.$module.'->'.$submodule.'->'.$dir_name.' = '.$this->$module->$submodule->$dir_name.'<br>';
-							}
-							elseif (preg_match('/_DIR_([A-Z]+)$/i',$key,$reg))
-							{
-								$dir_name  = "dir_".strtolower($reg[1]);
-								$this->$module->$dir_name = $value;		// We put only dir name. We will add DOL_DATA_ROOT later
-								//print '->'.$module.'->'.$dir_name.' = '.$this->$module->$dir_name.'<br>';
-							}
-						}
 						// If this is constant for a smarty need by a module
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_NEEDSMARTY$/i',$key,$reg))
 						{
@@ -187,7 +166,7 @@ class Conf
 							// Add this module in list of modules that need smarty
 							$this->need_smarty[]=$module;
 						}
-					    // If this is constant for a smarty need by a module
+					    // If this is constant for a sms engine
                         elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_SMS$/i',$key,$reg))
                         {
                             $module=strtolower($reg[1]);
@@ -238,19 +217,14 @@ class Conf
 
 		// For backward compatibility
 		// TODO Replace this->xxx->enabled by this->modulename->enabled to remove this code
-		if ( isset($this->compta->enabled))
-		$this->compta->enabled=$this->comptabilite->enabled;
-		$this->propal->enabled=defined("MAIN_MODULE_PROPALE")?MAIN_MODULE_PROPALE:0;
+		if (isset($this->comptabilite->enabled)) $this->compta->enabled=$this->comptabilite->enabled;
+		if (isset($this->propale->enabled)) $this->propal->enabled=$this->propale->enabled;
 
 		// Define default dir_output and dir_temp for directories of modules
 		foreach($this->modules as $module)
 		{
-			if (empty($this->$module->dir_output)) $this->$module->dir_output=$rootfordata."/".$module;
-			else $this->$module->dir_output=$rootfordata.$this->$module->dir_output;
-			//print 'this->'.$module.'->dir_output='.$this->$module->dir_output.'<br>';
-			if (empty($this->$module->dir_temp)) $this->$module->dir_temp=$rootfordata."/".$module."/temp";
-			else $this->$module->dir_temp=$rootfordata.$this->$module->dir_temp;
-			//print 'this->'.$module.'->dir_temp='.$this->$module->dir_temp.'<br>';
+			$this->$module->dir_output=$rootfordata."/".$module;
+			$this->$module->dir_temp=$rootfordata."/".$module."/temp";
 		}
 
 		// For mycompany setup
@@ -267,10 +241,6 @@ class Conf
 
 		// Exception: Some dir are not the name of module. So we keep exception here
 		// for backward compatibility.
-
-		// Module RSS
-		$this->externalrss->dir_output=$rootfordata."/rss";
-		$this->externalrss->dir_temp=$rootfordata."/rss/temp";
 
 		// Sous module bons d'expedition
 		$this->expedition_bon->enabled=defined("MAIN_SUBMODULE_EXPEDITION")?MAIN_SUBMODULE_EXPEDITION:0;
