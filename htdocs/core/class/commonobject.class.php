@@ -550,7 +550,7 @@ class CommonObject
 
 		if (! $this->table_element)
 		{
-			dol_print_error("CommonObject::load_previous_next_ref was called on objet with property table_element not defined", LOG_ERR);
+			dol_print_error('',"CommonObject::load_previous_next_ref was called on objet with property table_element not defined", LOG_ERR);
 			return -1;
 		}
 
