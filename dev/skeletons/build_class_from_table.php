@@ -293,8 +293,8 @@ foreach($property as $key => $prop)
 		$varprop.="\n";
 	}
 }
-$targetcontent=preg_replace('/\$sql.= " field1=".\(isset\(\$this->field1\)\?"\'".$this->db->escape\(\$this->field1\)."\'":"null"\).",";/', $varprop, $targetcontent);
-$targetcontent=preg_replace('/\$sql.= " field2=".\(isset\(\$this->field2\)\?"\'".$this->db->escape\(\$this->field2\)."\'":"null"\)."";/', '', $targetcontent);
+$targetcontent=preg_replace('/\$sql.= " field1=".\(isset\(\$this->field1\)\?"\'".\$this->db->escape\(\$this->field1\)."\'":"null"\).",";/', $varprop, $targetcontent);
+$targetcontent=preg_replace('/\$sql.= " field2=".\(isset\(\$this->field2\)\?"\'".\$this->db->escape\(\$this->field2\)."\'":"null"\)."";/', '', $targetcontent);
 
 // Substitute select parameters
 $varprop="\n";
