@@ -523,7 +523,8 @@ if ($action == 'builddoc')	// En get ou en	post
 // Delete file in doc form
 if ($action=='remove_file')
 {
-	$commande = new CommandeFournisseur($db);
+    require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+    $commande = new CommandeFournisseur($db);
 
 	if ($commande->fetch($id))
 	{

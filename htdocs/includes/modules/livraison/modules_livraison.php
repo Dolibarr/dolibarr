@@ -198,6 +198,7 @@ function delivery_order_pdf_create($db, $object, $model='', $outputlangs='')
 function delivery_order_delete_preview($db, $deliveryid)
 {
 	global $langs,$conf;
+    require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 
 	$delivery = new Livraison($db,"",$deliveryid);
 	$delivery->fetch($deliveryid);

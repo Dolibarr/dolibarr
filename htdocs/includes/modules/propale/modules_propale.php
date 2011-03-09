@@ -22,7 +22,7 @@
 /**
  *  \file       htdocs/includes/modules/propale/modules_propale.php
  *  \ingroup    propale
- *  \brief      Fichier contenant la classe mere de generation des propales en PDF 
+ *  \brief      Fichier contenant la classe mere de generation des propales en PDF
  *  			et la classe mere de numerotation des propales
  *	\version    $Id$
  */
@@ -148,10 +148,10 @@ function propale_pdf_create($db, $object, $modele, $outputlangs)
 
 	// Positionne modele sur le nom du modele de propale a utiliser
 	$file = "pdf_propale_".$modele.".modules.php";
-	
+
 	// On verifie l'emplacement du modele
 	$file = dol_buildpath($dir.$file);
-	
+
 	if ($modele && file_exists($file)) $modelisok=1;
 
 	// Si model pas encore bon
@@ -226,6 +226,7 @@ function propale_pdf_create($db, $object, $modele, $outputlangs)
 function propale_delete_preview($db, $propalid, $propalref='')
 {
 	global $langs,$conf;
+    require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 
 	if (!$propalref)
 	{

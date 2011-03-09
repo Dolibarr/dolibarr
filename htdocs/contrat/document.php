@@ -21,11 +21,11 @@
  */
 
 /**
-        \file       htdocs/contrat/document.php
-        \ingroup    contrat
-        \brief      Page des documents joints sur les contrats
-        \version    $Id$
-*/
+ *       \file       htdocs/contrat/document.php
+ *       \ingroup    contrat
+ *       \brief      Page des documents joints sur les contrats
+ *       \version    $Id$
+ */
 
 require ("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/contract.lib.php");

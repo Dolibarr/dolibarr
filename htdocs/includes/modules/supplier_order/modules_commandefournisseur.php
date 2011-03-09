@@ -204,6 +204,7 @@ function supplier_order_pdf_create($db, $object, $model, $outputlangs)
 function supplier_order_delete_preview($db, $objectid)
 {
 	global $langs,$conf;
+    require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 
 	$comfourn = new CommandeFournisseur($db,"",$objectid);
 	$comfourn->fetch($objectid);

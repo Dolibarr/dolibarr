@@ -108,7 +108,8 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 // Delete
 if ($action=='delete')
 {
-	$facture = new Facture($db);
+    require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+    $facture = new Facture($db);
 
 	$facid=$_GET["id"];
 	if ($facture->fetch($facid))

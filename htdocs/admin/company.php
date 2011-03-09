@@ -198,6 +198,8 @@ if ($_GET["action"] == 'addthumb')
 
 if ($_GET["action"] == 'removelogo')
 {
+    require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+
     $logofile=$conf->mycompany->dir_output.'/logos/'.$mysoc->logo;
     dol_delete_file($logofile);
     dolibarr_del_const($db, "MAIN_INFO_SOCIETE_LOGO",$conf->entity);

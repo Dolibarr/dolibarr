@@ -3,15 +3,16 @@
  */
 
 /**
- \file       htdocs/ecm/docother.php
- \ingroup    ecm
- \brief      Main ecm page
- \version    $Id$
- \author		Laurent Destailleur
+ *  \file       htdocs/ecm/docother.php
+ *  \ingroup    ecm
+ *  \brief      Main ecm page
+ *  \version    $Id$
+ *  \author		Laurent Destailleur
  */
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 
 // Load traductions files
 $langs->load("ecm");

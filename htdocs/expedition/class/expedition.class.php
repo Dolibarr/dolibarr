@@ -389,6 +389,7 @@ class Expedition extends CommonObject
 	function valid($user)
 	{
 		global $conf;
+        require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 
 		dol_syslog("Expedition::valid");
 
@@ -727,10 +728,11 @@ class Expedition extends CommonObject
     }
 
     /**
-	 * 	\brief		Delete shipping
+	 * 	Delete shipping
 	 */
 	function delete()
 	{
+        require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet";

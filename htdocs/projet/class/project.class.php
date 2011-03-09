@@ -376,10 +376,12 @@ class Project extends CommonObject
 	 *    Delete a project from database
 	 *    @param       user            User
 	 *    @param       notrigger       Disable triggers
+     *    @return       int             <0 if KO, 0 if not possible, >0 if OK
 	 */
 	function delete($user, $notrigger=0)
 	{
-		global $conf;
+		global $langs,$conf;
+        require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 
 		$error=0;
 

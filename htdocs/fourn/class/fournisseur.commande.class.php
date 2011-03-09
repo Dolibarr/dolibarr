@@ -255,6 +255,7 @@ class CommandeFournisseur extends Commande
 	function valid($user)
 	{
 		global $langs,$conf;
+        require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 
 		$error=0;
 
@@ -828,7 +829,7 @@ class CommandeFournisseur extends Commande
 		if (empty($txtva)) $txtva=0;
 		if (empty($txlocaltax1)) $txlocaltax1=0;
 		if (empty($txlocaltax2)) $txlocaltax2=0;
-		
+
 		$remise_percent=price2num($remise_percent);
 		$qty=price2num($qty);
 		$pu_ht=price2num($pu_ht);
@@ -845,7 +846,7 @@ class CommandeFournisseur extends Commande
 			$pu=$pu_ttc;
 		}
 		$desc=trim($desc);
-		
+
 
 		// Check parameters
 		if ($qty < 1 && ! $fk_product)
@@ -1148,10 +1149,10 @@ class CommandeFournisseur extends Commande
 	}
 
 	/**
-	 * 	\bref		Set a delivery in database for this supplier order
-	 *	\param		user		User that input data
-	 *	\param		date		Date of reception
-	 *	\param		type		Type of receipt
+	 * 	Set a delivery in database for this supplier order
+	 *	@param		user		User that input data
+	 *	@param		date		Date of reception
+	 *	@param		type		Type of receipt
 	 */
 	function Livraison($user, $date, $type, $comment)
 	{
@@ -1390,7 +1391,7 @@ class CommandeFournisseur extends Commande
 			if (empty($txlocaltax2)) $txlocaltax2=0;
 			if (empty($remise)) $remise=0;
 			if (empty($remise_percent)) $remise_percent=0;
-			
+
 			$remise_percent=price2num($remise_percent);
 			$qty=price2num($qty);
 			if (! $qty) $qty=1;

@@ -293,6 +293,7 @@ function facture_meta_create($db, $facid, $message="")
 function facture_delete_preview($db, $facid)
 {
 	global $langs,$conf;
+    require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 
 	$fac = new Facture($db,"",$facid);
 	$fac->fetch($facid);

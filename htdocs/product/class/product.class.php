@@ -2682,7 +2682,9 @@ class Product extends CommonObject
 	 */
 	function delete_photo($file)
 	{
-		$dir = dirname($file).'/'; // Chemin du dossier contenant l'image d'origine
+        require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+
+        $dir = dirname($file).'/'; // Chemin du dossier contenant l'image d'origine
 		$dirthumb = $dir.'/thumbs/'; // Chemin du dossier contenant la vignette
 		$filename = preg_replace('/'.preg_quote($dir,'/').'/i','',$file); // Nom du fichier
 

@@ -273,9 +273,9 @@ class Categorie
 		global $conf,$langs;
 
 		$error=0;
-		
+
 		dol_syslog("Categorie::remove");
-		
+
 		$this->db->begin();
 
 		if (! $error)
@@ -322,7 +322,7 @@ class Categorie
 				$error++;
 			}
 		}
-		
+
 		// Link childs to parent
 		if (! $error)
 		{
@@ -358,7 +358,7 @@ class Categorie
 				// Fin appel triggers
 			}
 		}
-				
+
 		if (! $error)
 		{
 			$this->db->commit();
@@ -1197,7 +1197,9 @@ class Categorie
 	 */
 	function delete_photo($file)
 	{
-		$dir = dirname($file).'/'; // Chemin du dossier contenant l'image d'origine
+        require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+
+	    $dir = dirname($file).'/'; // Chemin du dossier contenant l'image d'origine
 		$dirthumb = $dir.'/thumbs/'; // Chemin du dossier contenant la vignette
 		$filename = preg_replace('/'.preg_quote($dir,'/').'/i','',$file); // Nom du fichier
 

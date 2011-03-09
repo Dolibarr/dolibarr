@@ -851,6 +851,7 @@ if ($_REQUEST['action']	== 'builddoc')
 // Delete file in doc form
 if ($action=='remove_file')
 {
+    require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
     $facture = new FactureFournisseur($db);
 
     if ($facture->fetch($id))

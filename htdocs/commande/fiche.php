@@ -862,6 +862,8 @@ if ($_REQUEST['action'] == 'remove_file')
 {
     if ($object->fetch($id))
     {
+        require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+
         $upload_dir = $conf->commande->dir_output . "/";
         $file = $upload_dir . '/' . $_GET['file'];
         dol_delete_file($file);

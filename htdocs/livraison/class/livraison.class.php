@@ -316,6 +316,7 @@ class Livraison extends CommonObject
 	function valid($user)
 	{
 		global $conf;
+        require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 
 		dol_syslog("livraison.class.php::valid begin");
 
@@ -501,7 +502,7 @@ class Livraison extends CommonObject
 			$line->qty               = $expedition->lines[$i]->qty_shipped;
 			$line->fk_product        = $expedition->lines[$i]->fk_product;
 			$line->ref               = $expedition->lines[$i]->ref;
-			
+
 			$this->lines[$i] = $line;
 		}
 
@@ -559,10 +560,10 @@ class Livraison extends CommonObject
 
 	/**
 	 * Supprime la fiche
-	 *
 	 */
 	function delete()
 	{
+        require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."livraisondet";
@@ -790,7 +791,7 @@ class Livraison extends CommonObject
 		$line->description    = 'Description';
 		$line->price          = 100;
 		$line->total_ht       = 100;
-		
+
 		$this->lines[$i] = $line;
 	}
 

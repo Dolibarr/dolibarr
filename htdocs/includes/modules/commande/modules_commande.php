@@ -221,6 +221,7 @@ function commande_pdf_create($db, $object, $modele, $outputlangs)
 function commande_delete_preview($db, $commandeid, $commanderef='')
 {
 	global $langs,$conf;
+    require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 
 	if (!$commanderef)
 	{
