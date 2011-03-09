@@ -8,6 +8,7 @@
 -- To add a column:         ALTER TABLE llx_table ADD COLUMN newcol varchar(60) NOT NULL DEFAULT '0' AFTER existingcol;
 -- To rename a column:      ALTER TABLE llx_table CHANGE COLUMN oldname newname varchar(60);
 -- To change type of field: ALTER TABLE llx_table MODIFY name varchar(60);
+-- To remove a column:      ALTER TABLE llx_table DROP COLUMN colname;
 --
 
 -- Fix bad old data
@@ -133,7 +134,8 @@ ALTER TABLE llx_mailing_cibles MODIFY source_url varchar(160);
 ALTER TABLE llx_mailing_cibles ADD COLUMN source_id integer after source_url;
 ALTER TABLE llx_mailing_cibles ADD COLUMN source_type varchar(16) after source_id;
 
-ALTER TABLE llx_facture_rec MODIFY frequency integer;
+ALTER TABLE llx_facture_rec DROP COLUMN frequency;
+ALTER TABLE llx_facture_rec ADD COLUMN frequency          integer;
 ALTER TABLE llx_facture_rec ADD COLUMN unit_frequency     varchar(2) DEFAULT 'd';
 ALTER TABLE llx_facture_rec ADD COLUMN date_when          datetime DEFAULT NULL;
 ALTER TABLE llx_facture_rec ADD COLUMN date_last_gen      datetime DEFAULT NULL;
