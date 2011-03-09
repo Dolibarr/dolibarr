@@ -76,7 +76,9 @@ if ($result)
 
 	if ($statut >= 0)
 	{
-		print_barre_liste($libelle[$statut], $page, "liste.php", "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield");
+        $donationstatic->statut=$statut;
+        $label=$donationstatic->getLibStatut(0);
+	    print_barre_liste($label, $page, "liste.php", "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield");
 	}
 	else
 	{
