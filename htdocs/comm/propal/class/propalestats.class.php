@@ -88,13 +88,14 @@ class PropaleStats extends Stats
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE date_format(p.datep,'%Y') = ".$year;
 		$sql.= " AND ".$this->where;
-		$sql.= " GROUP BY dm DESC";
+		$sql.= " GROUP BY dm";
+        $sql.= $this->db->order('dm','DESC');
 
 		return $this->_getNbByMonth($year, $sql);
 	}
 
 	/**
-	 * Renvoie le nombre de propale par ann�e
+	 * Renvoie le nombre de propale par annee
 	 *
 	 */
 	function getNbByYear()
@@ -105,12 +106,13 @@ class PropaleStats extends Stats
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE ".$this->where;
-		$sql.= " GROUP BY dm DESC";
+		$sql.= " GROUP BY dm";
+        $sql.= $this->db->order('dm','DESC');
 
 		return $this->_getNbByYear($sql);
 	}
 	/**
-	 * Renvoie le nombre de propale par mois pour une ann�e donn�e
+	 * Renvoie le nombre de propale par mois pour une annee donnee
 	 *
 	 */
 	function getAmountByMonth($year)
@@ -122,7 +124,8 @@ class PropaleStats extends Stats
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE date_format(p.datep,'%Y') = ".$year;
 		$sql.= " AND ".$this->where;
-		$sql.= " GROUP BY dm DESC";
+		$sql.= " GROUP BY dm";
+        $sql.= $this->db->order('dm','DESC');
 
 		return $this->_getAmountByMonth($year, $sql);
 	}
@@ -139,7 +142,8 @@ class PropaleStats extends Stats
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE date_format(p.datep,'%Y') = ".$year;
 		$sql.= " AND ".$this->where;
-		$sql.= " GROUP BY dm DESC";
+		$sql.= " GROUP BY dm";
+        $sql.= $this->db->order('dm','DESC');
 
 		return $this->_getAverageByMonth($year, $sql);
 	}
@@ -157,7 +161,8 @@ class PropaleStats extends Stats
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE ".$this->where;
-		$sql.= " GROUP BY year DESC";
+		$sql.= " GROUP BY year";
+        $sql.= $this->db->order('year','DESC');
 
 		return $this->_getAllByYear($sql);
 	}
