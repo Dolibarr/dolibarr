@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,7 +76,9 @@ if ($result)
 
 	if ($statut >= 0)
 	{
-		print_barre_liste($libelle[$statut], $page, "liste.php", "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield");
+	    $donationstatic->statut=$statut;
+	    $label=$donationstatic->getLibStatut(0);
+		print_barre_liste($label, $page, "liste.php", "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield");
 	}
 	else
 	{
