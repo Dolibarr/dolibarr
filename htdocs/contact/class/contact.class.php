@@ -112,7 +112,7 @@ class Contact extends CommonObject
 		$sql.= " VALUES ('".$this->db->idate($now)."',";
 		if ($this->socid > 0) $sql.= " ".$this->socid.",";
 		else $sql.= "null,";
-		$sql.= "'".addslashes($this->name)."',";
+		$sql.= "'".$this->db->escape($this->name)."',";
 		$sql.= " ".($user->id > 0 ? "'".$user->id."'":"null").",";
 		$sql.= " ".$this->priv.",";
         $sql.= " ".($this->canvas?"'".$this->canvas."'":"null");
@@ -204,24 +204,24 @@ class Contact extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET ";
-		if ($this->socid > 0) $sql .= " fk_soc='".addslashes($this->socid)."',";
+		if ($this->socid > 0) $sql .= " fk_soc='".$this->db->escape($this->socid)."',";
 		if ($this->socid == -1) $sql .= " fk_soc=null,";
-		$sql .= "  civilite='".addslashes($this->civilite_id)."'";
-		$sql .= ", name='".addslashes($this->name)."'";
-		$sql .= ", firstname='".addslashes($this->firstname)."'";
-		$sql .= ", address='".addslashes($this->address)."'";
-		$sql .= ", cp='".addslashes($this->cp)."'";
-		$sql .= ", ville='".addslashes($this->ville)."'";
+		$sql .= "  civilite='".$this->db->escape($this->civilite_id)."'";
+		$sql .= ", name='".$this->db->escape($this->name)."'";
+		$sql .= ", firstname='".$this->db->escape($this->firstname)."'";
+		$sql .= ", address='".$this->db->escape($this->address)."'";
+		$sql .= ", cp='".$this->db->escape($this->cp)."'";
+		$sql .= ", ville='".$this->db->escape($this->ville)."'";
 		$sql .= ", fk_pays=".($this->fk_pays>0?$this->fk_pays:'NULL');
 		$sql .= ", fk_departement=".($this->fk_departement>0?$this->fk_departement:'NULL');
-		$sql .= ", poste='".addslashes($this->poste)."'";
-		$sql .= ", fax='".addslashes($this->fax)."'";
-		$sql .= ", email='".addslashes($this->email)."'";
-		$sql .= ", note='".addslashes($this->note)."'";
-		$sql .= ", phone = '".addslashes($this->phone_pro)."'";
-		$sql .= ", phone_perso = '".addslashes($this->phone_perso)."'";
-		$sql .= ", phone_mobile = '".addslashes($this->phone_mobile)."'";
-		$sql .= ", jabberid = '".addslashes($this->jabberid)."'";
+		$sql .= ", poste='".$this->db->escape($this->poste)."'";
+		$sql .= ", fax='".$this->db->escape($this->fax)."'";
+		$sql .= ", email='".$this->db->escape($this->email)."'";
+		$sql .= ", note='".$this->db->escape($this->note)."'";
+		$sql .= ", phone = '".$this->db->escape($this->phone_pro)."'";
+		$sql .= ", phone_perso = '".$this->db->escape($this->phone_perso)."'";
+		$sql .= ", phone_mobile = '".$this->db->escape($this->phone_mobile)."'";
+		$sql .= ", jabberid = '".$this->db->escape($this->jabberid)."'";
 		$sql .= ", priv = '".$this->priv."'";
 		$sql .= ", fk_user_modif=".($user->id > 0 ? "'".$user->id."'":"null");
 		$sql .= ", default_lang=".($this->default_lang?"'".$this->default_lang."'":"null");
@@ -452,50 +452,53 @@ class Contact extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id             = $obj->rowid;
-				$this->ref            = $obj->rowid;
-				$this->civilite_id    = $obj->civilite_id;
-				$this->name           = $obj->name;
-				$this->firstname      = $obj->firstname;
-				$this->nom            = $obj->name;
-				$this->prenom         = $obj->firstname;
+				$this->id				= $obj->rowid;
+				$this->ref				= $obj->rowid;
+				$this->civilite_id		= $obj->civilite_id;
+				$this->name				= $obj->name;
+				$this->firstname		= $obj->firstname;
+				$this->nom				= $obj->name;			// TODO deprecated
+				$this->prenom			= $obj->firstname;		// TODO deprecated
 
-				$this->address        = $obj->address;
-				$this->adresse        = $obj->address; // TODO obsolete
-				$this->cp             = $obj->cp;
-				$this->ville          = $obj->ville;
+				$this->address			= $obj->address;
+				$this->adresse			= $obj->address; 		// TODO deprecated
+				$this->cp				= $obj->cp;				// TODO deprecated
+				$this->zip				= $obj->cp;
+				$this->ville			= $obj->ville;			// TODO deprecated
+				$this->town				= $obj->ville;
 
-				$this->fk_departement = $obj->fk_departement;
+				$this->fk_departement	= $obj->fk_departement;
 				$this->departement_code = $obj->departement_code;
-				$this->departement	  = $obj->departement;
+				$this->departement		= $obj->departement;	// TODO deprecated
+				$this->state			= $obj->departement;
 
-				$this->fk_pays        = $obj->fk_pays;
-				$this->pays_code      = $obj->fk_pays?$obj->pays_code:'';
-				$this->pays           = ($obj->fk_pays > 0)?$langs->transnoentities("Country".$obj->pays_code):$langs->transnoentities("SelectCountry");
+				$this->fk_pays			= $obj->fk_pays;
+				$this->pays_code		= $obj->fk_pays?$obj->pays_code:'';
+				$this->pays				= ($obj->fk_pays > 0)?$langs->transnoentities("Country".$obj->pays_code):$langs->transnoentities("SelectCountry");
 
-				$this->societeid      = $obj->fk_soc;
-				$this->socid          = $obj->fk_soc;
-				$this->socname        = $obj->socname;
-				$this->poste          = $obj->poste;
+				$this->societeid		= $obj->fk_soc;
+				$this->socid			= $obj->fk_soc;
+				$this->socname			= $obj->socname;
+				$this->poste			= $obj->poste;
 
-				$this->phone_pro      = trim($obj->phone);
-				$this->fax            = trim($obj->fax);
-				$this->phone_perso    = trim($obj->phone_perso);
-				$this->phone_mobile   = trim($obj->phone_mobile);
+				$this->phone_pro		= trim($obj->phone);
+				$this->fax				= trim($obj->fax);
+				$this->phone_perso		= trim($obj->phone_perso);
+				$this->phone_mobile		= trim($obj->phone_mobile);
 
-				$this->email          = $obj->email;
-				$this->jabberid       = $obj->jabberid;
-				$this->priv           = $obj->priv;
-				$this->mail           = $obj->email;
+				$this->email			= $obj->email;
+				$this->jabberid			= $obj->jabberid;
+				$this->priv				= $obj->priv;
+				$this->mail				= $obj->email;
 
-				$this->birthday       = dol_stringtotime($obj->birthday);
+				$this->birthday			= dol_stringtotime($obj->birthday);
 				//print "fetch: ".$obj->birthday.'-'.$this->birthday;
-				$this->birthday_alert = $obj->birthday_alert;
-				$this->note           = $obj->note;
-				$this->default_lang   = $obj->default_lang;
-				$this->user_id        = $obj->user_id;
-				$this->user_login     = $obj->user_login;
-				$this->canvas 		  = $obj->canvas;
+				$this->birthday_alert 	= $obj->birthday_alert;
+				$this->note				= $obj->note;
+				$this->default_lang		= $obj->default_lang;
+				$this->user_id			= $obj->user_id;
+				$this->user_login		= $obj->user_login;
+				$this->canvas			= $obj->canvas;
 
 				// Recherche le user Dolibarr lie a ce contact
 				$sql = "SELECT u.rowid ";
@@ -752,7 +755,7 @@ class Contact extends CommonObject
 	{
 		$sql = "SELECT count(mc.email) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
-		$sql.= " WHERE mc.email = '".addslashes($this->email)."'";
+		$sql.= " WHERE mc.email = '".$this->db->escape($this->email)."'";
 		$sql.= " AND mc.statut=1";      // -1 erreur, 0 non envoye, 1 envoye avec succes
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -800,8 +803,8 @@ class Contact extends CommonObject
 
 
 	/**
-	 *    \brief      Retourne le libelle de civilite du contact
-	 *    \return     string      Nom traduit de la civilite
+	 *    Return label of a civility contact
+	 *    @return     string      Translated name of civility
 	 */
 	function getCivilityLabel()
 	{
