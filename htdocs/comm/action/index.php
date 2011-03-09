@@ -146,7 +146,27 @@ if (empty($action) || $action=='show_month')
 }
 if ($action=='show_week')
 {
-	  	
+	$prev = dol_get_first_day_week($day, $month, $year);
+   	$prev_year  = $prev['prev_year'];
+    $prev_month = $prev['prev_month'];
+    $prev_day   = $prev['prev_day'];
+    $first_day	= $prev['first_day'];
+
+    $week = $prev['week']; 
+    
+    $day =(int)$day;
+    $next = dol_get_next_week($day, $week, $month, $year);
+    $next_year  = $next['year'];
+    $next_month = $next['month'];
+    $next_day   = $next['day'];
+ 
+    // Define firstdaytoshow and lastdaytoshow
+    $firstdaytoshow=dol_mktime(0,0,0,$prev_month,$first_day,$prev_year);
+    $lastdaytoshow=dol_mktime(0,0,0,$next_month,$next_day,$next_year);
+    
+    $max_day_in_month = date("t",dol_mktime(0,0,0,$month,1,$year));  
+    
+    $tmpday = $first_day; 	
 }
 if ($action=='show_day')
 {
@@ -195,10 +215,10 @@ if (empty($action) || $action=='show_month')
 }
 if ($action=='show_week')
 {
-	$nav ="<a href=\"?year=".$prev_year."&amp;month=".$prev_month."&amp;week=".$prev_week."&amp;day=".$prev_day."&amp;region=".$region.$param."\">".img_previous($langs->trans("Previous"))."</a>\n";
+	$nav ="<a href=\"?year=".$prev_year."&amp;month=".$prev_month."&amp;day=".$prev_day."&amp;region=".$region.$param."\">".img_previous($langs->trans("Previous"))."</a>\n";
 	$nav.=" <span id=\"month_name\">".dol_print_date(dol_mktime(0,0,0,$month,1,$year),"%Y").", ".$langs->trans("Week")." ".$week;
 	$nav.=" </span>\n";
-	$nav.="<a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;week=".$next_week."&amp;day=".$next_day."&amp;region=".$region.$param."\">".img_next($langs->trans("Next"))."</a>\n";
+	$nav.="<a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;day=".$next_day."&amp;region=".$region.$param."\">".img_next($langs->trans("Next"))."</a>\n";
 }
 if ($action=='show_day')
 {
@@ -522,7 +542,52 @@ if (empty($action) || $action == 'show_month')		// View by month
 }
 elseif ($action == 'show_week') // View by week
 {
-	print $langs->trans("FeatureNotYetAvailable"); //Work in progress...
+	//print $langs->trans("FeatureNotYetAvailable"); //Work in progress...
+	
+	echo '<table width="100%" class="nocellnopadd">';
+	echo ' <tr class="liste_titre">';
+	$i=0;
+	while ($i < 7)
+	{
+		echo '  <td align="center">'.$langs->trans("Day".(($i+(isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:1)) % 7))."</td>\n";
+		$i++;
+	}
+	echo " </tr>\n";
+
+	// In loops, tmpday contains day nb in current month (can be zero or negative for days of previous month)
+	//var_dump($eventarray);
+	//print $tmpday;
+	
+	echo " <tr>\n";
+	
+	for($iter_day = 0; $iter_day < 7; $iter_day++)
+	{
+		if(($tmpday <= $max_day_in_month))
+		{
+			// Show days of the current week
+			$curtime = dol_mktime (0, 0, 0, $month, $tmpday, $year);
+
+			if($curtime == $now)
+				$style='cal_today';
+			else
+				$style='cal_current_month';
+
+			echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
+			show_day_events($db, $tmpday, $month, $year, $month, $style, $eventarray, 0, $maxlength, $param, 1, 300);
+			echo "  </td>\n";
+		}
+		else
+		{
+			$style='cal_current_month';
+			echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
+			show_day_events($db, $tmpday - $max_day_in_month, $next_month, $next_year, $month, $style, $eventarray, 0, $maxlength, $param, 1, 300);
+			echo "</td>\n";
+		}
+		$tmpday++;
+	}
+	echo " </tr>\n";
+
+	echo "</table>\n";
 }
 else	// View by day
 {

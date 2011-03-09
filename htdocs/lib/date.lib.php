@@ -204,22 +204,14 @@ function dol_get_next_month($month, $year)
  *	@param		year	Year
  *	@return		array	Previous year,month,week
  */
-function dol_get_prev_week($week, $year)
+function dol_get_prev_week($day, $week, $month, $year)
 {
-	if ($week == 1)
-	{
-		$prev_week  = 52;
-		$prev_month = 12;
-		$prev_year  = $year - 1;
-	}
-	else
-	{
-		$prev_week	= $week-1;
-		$str_tmp = str_pad($prev_week, 2, 0, STR_PAD_LEFT); 
-		$prev_month = date('n', strtotime($year.'-W'.$str_tmp));
-		$prev_year  = $year;
-	}
-	return array('year' => $prev_year, 'month'=>$prev_month, 'week' => $prev_week);
+	$tmparray = dol_get_first_day_week($day, $month, $year);
+	
+	$time=dol_mktime(12,0,0,$month,$tmparray['first_day'],$year,1,0);
+	$time-=24*60*60*7;
+	$tmparray=dol_getdate($time,true);
+	return array('year' => $tmparray['year'], 'month' => $tmparray['mon'], 'day' => $tmparray['mday']);
 }
  
 /**	Return next week
@@ -227,22 +219,16 @@ function dol_get_prev_week($week, $year)
  *	@param		year	Year
  *	@return		array	Next year,month,week
  */
-function dol_get_next_week($week, $year)
+function dol_get_next_week($day,$week, $month, $year)
 {
-	if ($week == 52)
-	{
-		$next_week  = 1;
-		$next_month = 1;
-		$next_year  = $year + 1;
-	}
-	else
-	{
-		$next_week  = $week + 1;
-		$str_tmp = str_pad($next_week, 2, 0, STR_PAD_LEFT); 
-		$next_month = date('n', strtotime($year.'-W'.$str_tmp));
-		$next_year  = $year;
-	}
-	return array('year' => $next_year, 'month'=>$next_month, 'week' => $next_week);
+	$tmparray = dol_get_first_day_week($day, $month, $year);
+	
+	$time=dol_mktime(12,0,0,$month,$tmparray['first_day'],$year,1,0);
+	$time+=24*60*60*7;
+	$tmparray=dol_getdate($time,true);
+	
+	return array('year' => $tmparray['year'], 'month' => $tmparray['mon'], 'day' => $tmparray['mday']);
+	
 }
 
 /**	Return GMT time for first day of a month or year
@@ -284,71 +270,115 @@ function dol_get_last_day($year,$month=12,$gm=false)
 	return $datelim;
 }
 
-/**	Return  first day of week for a week
+/**	Return first day of week for a date
  *	@param		day			Day
  * 	@param		month		Month
+ *  @param		year		Year
  * 	@param		gm			False = Return date to compare with server TZ, True to compare with GM date.
- *	@return		Timestamp	Date for first day of week
+ *	@return		array		year,month, week,first_day,prev_year,prev_month,prev_day
  */
-function dol_get_first_day_of_week($day,$month,$year,$gm=false) 
+function dol_get_first_day_week($day,$month,$year,$gm=false) 
 {
+	global $conf;
+	
 	$date=dol_mktime(0,0,0,$month,$day,$year,$gm);
+	
+	// TODO: Modify->the week can begins with any day!
 	
 	if (isset($conf->global->MAIN_START_WEEK))
 	{
 		if ($conf->global->MAIN_START_WEEK==1)
 		{
-			$getdate = getdate($date);
+			$tmparray = dol_getdate($date,true);
  
     		// How many days ahead monday are we?
-    		switch ( $getdate['wday'] ) 
+    		switch ( $tmparray['wday'] ) 
     		{
         		case 0: // we are on sunday
             		$days = 6;
             		break;
  
         		default: // any other day
-            		$days = $getdate['wday']-1;
+            		$days = $tmparray['wday']-1;
             		break;
     		}
  
     		$seconds = $days*24*60*60;
-    		$monday = date($getdate[0])-$seconds;
- 
-    		return $monday;
- 		
+    		$tmpday = date($tmparray[0])-$seconds;
+    		
 		}
 		else
 		{
-        	$getdate = getdate($date);
+        	$tmparray = dol_getdate($date,true);
     		// substact as many days as days ahead sunday we are
-    		$seconds = $getdate['wday']*24*60*60;
-    		$sunday = date($getdate[0])-$seconds;
- 
-    		return $sunday;
+    		$seconds = $tmparray['wday']*24*60*60;
+    		$tmpday = date($tmparray[0])-$seconds;
 		}
 	}
 	else 
 	{
-		$getdate = getdate($date);
+		$tmpday = dol_getdate($date,true);
 
     	// How many days ahead monday are we?
-    	switch ( $getdate['wday'] ) 
+    	switch ( $tmparray['wday'] ) 
     	{
         	case 0: // we are on sunday
             	$days = 6;
             	break;
             	
 	        default: // any other day
-    	        $days = $getdate['wday']-1;
+    	        $days = $tmparray['wday']-1;
         	    break;
     	}
  
     	$seconds = $days*24*60*60;
-    	$monday = date($getdate[0])-$seconds;
- 
-    	return $monday;
+    	$tmpday = date($tmparray[0])-$seconds;
 	}
+	
+	$tmpday = date("d",$tmpday);
+	
+	if ($tmpday>$day)
+    {
+    	$prev_month = $month-1;
+		$prev_year  = $year;
+  
+    	if ($prev_month==0)
+    	{
+    		$prev_month = 12;
+    		$prev_year  = $year-1;
+    	}
+    }
+    else 
+    {
+    	$prev_month = $month;
+		$prev_year  = $year;
+    }
+    
+    $tmpday 	= $tmpday;
+    $prev_month = $prev_month;
+	$prev_year  = $prev_year;
+	
+	$tmptime=dol_mktime(12,0,0,$month,$tmpday,$year,1,0);
+	$tmptime-=24*60*60*7;
+	$tmparray=dol_getdate($tmptime,true);
+	
+    $prev_day   = $tmparray['mday'];
+    
+	if ($prev_day>$tmpday)
+    {
+    	$prev_month = $month-1;
+		$prev_year  = $year;
+  
+    	if ($prev_month==0)
+    	{
+    		$prev_month = 12;
+    		$prev_year  = $year-1;
+    	}
+    }
+	
+    $week = date("W",dol_mktime(0,0,0,$month,$tmpday,$year,$gm));
+    
+	return array('year' => $year, 'month' => $month, 'week' => $week, 'first_day' => $tmpday, 'prev_year' => $prev_year, 'prev_month' => $prev_month, 'prev_day' => $prev_day);
 }
 
 /**
