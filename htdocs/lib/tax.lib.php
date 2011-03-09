@@ -74,13 +74,12 @@ function vat_by_thirdparty($db, $y, $date_start, $date_end, $modetax, $direction
         }
         if ($conf->global->MAIN_MODULE_COMPTABILITE)
         {
-            $sql = "SELECT s.nom as nom, s.tva_intra as tva_intra,";
-            $sql.= " sum(fd.total_ht) as amount, sum(fd.".$total_tva.") as tva,";
-            $sql.= " s.tva_assuj as assuj, s.rowid as socid";
+            $sql = "SELECT s.rowid as socid, s.nom as nom, s.tva_intra as tva_intra, s.tva_assuj as assuj,";
+            $sql.= " sum(fd.total_ht) as amount, sum(fd.".$total_tva.") as tva";
             $sql.= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f, ".MAIN_DB_PREFIX.$invoicedettable." as fd, ".MAIN_DB_PREFIX."societe as s";
             $sql.= " WHERE ";
             $sql.= " f.fk_statut in (1,2)"; // Validated or paid (partially or completely)
-	        $sql.= " AND (f.type = 0";      // Standard
+            $sql.= " AND (f.type = 0";      // Standard
             $sql.= " OR f.type = 1";        // Replacement
             $sql.= " OR f.type = 2)";       // Credit note
             //$sql.= " OR f.type = 3";      // We do not include deposit
@@ -96,7 +95,7 @@ function vat_by_thirdparty($db, $y, $date_start, $date_end, $modetax, $direction
             }
             if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
             $sql.= " AND s.rowid = f.fk_soc AND f.rowid = fd.".$fk_facture;
-            $sql.= " GROUP BY s.rowid";
+            $sql.= " GROUP BY s.rowid, s.nom, s.tva_intra, s.tva_assuj";
         }
     }
     else
@@ -114,9 +113,8 @@ function vat_by_thirdparty($db, $y, $date_start, $date_end, $modetax, $direction
         if ($conf->global->MAIN_MODULE_COMPTABILITE)
         {
             // Tva sur factures payes (should be on payment)
-/*          $sql = "SELECT s.nom as nom, s.tva_intra as tva_intra,";
-            $sql.= " sum(fd.total_ht) as amount, sum(".$total_tva.") as tva,";
-            $sql.= " s.tva_assuj as assuj, s.rowid as socid";
+/*          $sql = "SELECT s.rowid as socid, s.nom as nom, s.tva_intra as tva_intra, s.tva_assuj as assuj,";
+            $sql.= " sum(fd.total_ht) as amount, sum(".$total_tva.") as tva";
             $sql.= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f, ".MAIN_DB_PREFIX.$invoicetable." as fd, ".MAIN_DB_PREFIX."societe as s";
             $sql.= " WHERE ";
             $sql.= " f.fk_statut in (2)";   // Paid (partially or completely)
@@ -136,7 +134,7 @@ function vat_by_thirdparty($db, $y, $date_start, $date_end, $modetax, $direction
             }
             if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
             $sql.= " AND s.rowid = f.fk_soc AND f.rowid = fd.".$fk_facture;
-            $sql.= " GROUP BY s.rowid";
+            $sql.= " GROUP BY s.rowid as socid, s.nom as nom, s.tva_intra as tva_intra, s.tva_assuj as assuj";
 */
             $sql = 'TODO';
         }
