@@ -94,7 +94,8 @@ class DeplacementStats extends Stats
 		$sql.= " FROM ".$this->from;
 		$sql.= " WHERE YEAR(dated) = ".$year;
 		$sql.= " AND ".$this->where;
-		$sql.= " GROUP BY dm DESC";
+		$sql.= " GROUP BY dm";
+        $sql.= $this->db->order('dm','DESC');
 
 		$res=$this->_getNbByMonth($year, $sql);
 		//var_dump($res);print '<br>';
@@ -113,7 +114,8 @@ class DeplacementStats extends Stats
 		$sql.= " FROM ".$this->from;
 		$sql.= " WHERE date_format(dated,'%Y') = ".$year;
 		$sql.= " AND ".$this->where;
-		$sql.= " GROUP BY dm DESC";
+		$sql.= " GROUP BY dm";
+		$sql.= $this->db->order('dm','DESC');
 
 		$res=$this->_getAmountByMonth($year, $sql);
 		//var_dump($res);print '<br>';
@@ -131,7 +133,8 @@ class DeplacementStats extends Stats
 		$sql.= " FROM ".$this->from;
 		$sql.= " WHERE date_format(dated,'%Y') = ".$year;
 		$sql.= " AND ".$this->where;
-		$sql.= " GROUP BY dm DESC";
+		$sql.= " GROUP BY dm";
+        $sql.= $this->db->order('dm','DESC');
 
 		return $this->_getAverageByMonth($year, $sql);
 	}
@@ -145,7 +148,8 @@ class DeplacementStats extends Stats
 		$sql = "SELECT date_format(dated,'%Y') as year, count(*) as nb, sum(".$this->field.") as total, avg(".$this->field.") as avg";
 		$sql.= " FROM ".$this->from;
 		$sql.= " WHERE ".$this->where;
-		$sql.= " GROUP BY year DESC";
+		$sql.= " GROUP BY year";
+        $sql.= $this->db->order('year','DESC');
 
 		return $this->_getAllByYear($sql);
 	}
