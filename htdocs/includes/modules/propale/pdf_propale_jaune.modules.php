@@ -241,7 +241,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 					{
 						$this->_pagefoot($pdf,$object,$outputlangs);
 
-						$this->_tableau($pdf, $tab_top, $tab_height, $nexY);
+						$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
 
 						// New page
 						$pdf->AddPage();
