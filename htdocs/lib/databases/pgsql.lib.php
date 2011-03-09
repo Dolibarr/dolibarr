@@ -247,6 +247,7 @@ class DoliDb
                     $newreg3=preg_replace('/ DEFAULT 0/i','',$newreg3);
                     $newreg3=preg_replace('/ DEFAULT \'[0-9a-zA-Z_@]*\'/i','',$newreg3);
                     $line.= "ALTER TABLE ".$reg[1]." ALTER COLUMN ".$reg[2]." TYPE ".$newreg3;
+                    // TODO Add alter to set default value or null/not null if there is this in $reg[3]
                 }
 
                 # alter table add primary key (field1, field2 ...) -> We remove the primary key name not accepted by PostGreSQL
