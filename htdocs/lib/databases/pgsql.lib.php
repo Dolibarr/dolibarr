@@ -353,6 +353,7 @@ class DoliDb
 			$port=5432;
 		}
 		$con_string = "host=$host port=$port dbname=$name user=$login password=$passwd";
+        //print 'xxx'.$con_string;
 		$this->db = pg_connect($con_string);
 		if ($this->db)
 		{
