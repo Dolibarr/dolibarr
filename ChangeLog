@@ -23,6 +23,7 @@ For users:
 - New: Can create manually order from proposal.
 - New: Use autocompletion on invoice select when creating replacement 
        or credit note invoice.
+- New: task #10885: Add a week view for calendar    
 - Fix: Better Postgresql compatibility.
 
 For developers:
