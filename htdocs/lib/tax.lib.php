@@ -26,7 +26,7 @@
 
 
 /**
- * 	\brief		Look for collectable VAT clients in the chosen year
+ * 	\brief		Look for collectable VAT clients in the chosen year (and month)
  *	\param		db			Database handle
  *	\param		y			Year
  *  \param		date_start	Start date
@@ -35,7 +35,7 @@
  *	\param		direction	'sell' or 'buy'
  *	\return		array		List of customers third parties with vat, -1 if no accountancy module, -2 if not yet developped, -3 if error
  */
-function vat_by_thirdparty($db, $y, $date_start, $date_end, $modetax, $direction)
+function vat_by_thirdparty($db, $y, $date_start, $date_end, $modetax, $direction, $m=0)
 {
 	global $conf;
 
@@ -80,7 +80,16 @@ function vat_by_thirdparty($db, $y, $date_start, $date_end, $modetax, $direction
 	        $sql.= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f, ".MAIN_DB_PREFIX.$invoicedettable." as fd, ".MAIN_DB_PREFIX."societe as s";
 	        $sql.= " WHERE ";
 	        $sql.= " f.fk_statut in (1,2)";	// Validated or paid (partially or completely)
-	        if ($y) $sql.= " AND f.datef >= '".$y."0101000000' AND f.datef <= '".$y."1231235959'";
+            if ($y && $m)
+            {
+                $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
+                $sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y,$m,false))."'";
+            }
+            else if ($y)
+            {
+                $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,1,false))."'";
+                $sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y,12,false))."'";
+            }
 	        if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 	        $sql.= " AND s.rowid = f.fk_soc AND f.rowid = fd.".$fk_facture;
 	        $sql.= " GROUP BY s.rowid";
@@ -107,7 +116,16 @@ function vat_by_thirdparty($db, $y, $date_start, $date_end, $modetax, $direction
 	        $sql.= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f, ".MAIN_DB_PREFIX.$invoicetable." as fd, ".MAIN_DB_PREFIX."societe as s";
 	        $sql.= " WHERE ";
 			$sql.= " f.fk_statut in (2)";	// Paid (partially or completely)
-			if ($y) $sql.= " AND f.datef >= '".$y."0101000000' AND f.datef <= '".$y."1231235959'";
+            if ($y && $m)
+            {
+                $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
+                $sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y,$m,false))."'";
+            }
+            else if ($y)
+            {
+                $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,1,false))."'";
+                $sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y,12,false))."'";
+            }
 	        if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 	        $sql.= " AND s.rowid = f.fk_soc AND f.rowid = fd.".$fk_facture;
 			$sql.= " GROUP BY s.rowid";
@@ -217,9 +235,17 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
             $sql.= " OR f.type = 2)";       // Credit note
             //$sql.= " OR f.type = 3";      // We do not include deposit
 	        $sql.= " AND f.rowid = d.".$fk_facture;
-	        if ($y) $sql.= " AND f.datef >= '".$y."0101000000' AND f.datef <= '".$y."1231235959'";
+            if ($y && $m)
+            {
+                $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
+                $sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y,$m,false))."'";
+            }
+            else if ($y)
+	        {
+	            $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,1,false))."'";
+                $sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y,12,false))."'";
+	        }
 	        if ($q) $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3)." AND date_format(f.datef,'%m') <= ".($q*3).")";
-	        if ($m) $sql.= " AND (date_format(f.datef,'%m') > ".($m-1)." AND date_format(f.datef,'%m') <= ".($m).")";
 	        if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 	        $sql.= " AND (d.product_type = 0";								// Limit to products
 	        $sql.= " AND d.date_start is null AND d.date_end IS NULL)";		// enhance detection of service
@@ -262,14 +288,21 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
 //	        $sql.= " AND pa.rowid = pf.".$fk_payment;
 //	        $sql.= " AND pa.datep >= '".$y."0101000000' AND pa.datep <= '".$y."1231235959'";
 //	        $sql.= " AND (date_format(pa.datep,'%m') > ".(($q-1)*3)." AND date_format(pa.datep,'%m') <= ".($q*3).")";
-	        if ($y) $sql.= " AND f.datef >= '".$y."0101000000' AND f.datef <= '".$y."1231235959'";
+            if ($y && $m)
+            {
+                $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
+                $sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y,$m,false))."'";
+            }
+	        else if ($y)
+            {
+                $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,1,false))."'";
+                $sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y,12,false))."'";
+            }
 	        if ($q) $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3)." AND date_format(f.datef,'%m') <= ".($q*3).")";
-	        if ($m) $sql.= " AND (date_format(f.datef,'%m') > ".($m-1)." AND date_format(f.datef,'%m') <= ".($m).")";
 	        if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 	        $sql.= " AND (d.product_type = 0";								// Limit to products
 	        $sql.= " AND d.date_start is null AND d.date_end IS NULL)";		// enhance detection of service
 			$sql.= " ORDER BY d.rowid, d.".$fk_facture;
-	        //print $sql;
 		}
     }
 
@@ -362,9 +395,17 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
             $sql.= " OR f.type = 2)";       // Credit note
             //$sql.= " OR f.type = 3";      // We do not include deposit
 	        $sql.= " AND f.rowid = d.".$fk_facture;
-	        if ($y) $sql.= " AND f.datef >= '".$y."0101000000' AND f.datef <= '".$y."1231235959'";
+            if ($y && $m)
+            {
+                $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
+                $sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y,$m,false))."'";
+            }
+            else if ($y)
+            {
+                $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,1,false))."'";
+                $sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y,12,false))."'";
+            }
 	        if ($q) $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3)." AND date_format(f.datef,'%m') <= ".($q*3).")";
-	        if ($m) $sql.= " AND (date_format(f.datef,'%m') > ".($m-1)." AND date_format(f.datef,'%m') <= ".($m).")";
 	        if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 	        $sql.= " AND (d.product_type = 1";								// Limit to services
 	        $sql.= " OR d.date_start is NOT null OR d.date_end IS NOT NULL)";		// enhance detection of service
@@ -405,9 +446,17 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
 			$sql.= " AND f.rowid = d.".$fk_facture;;
 	        $sql.= " AND pf.".$fk_facture2." = f.rowid";
 	        $sql.= " AND pa.rowid = pf.".$fk_payment;
-	        if ($y) $sql.= " AND pa.datep >= '".$y."0101000000' AND pa.datep <= '".$y."1231235959'";
+            if ($y && $m)
+            {
+                $sql.= " AND pa.datep >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
+                $sql.= " AND pa.datep <= '".$db->idate(dol_get_last_day($y,$m,false))."'";
+            }
+            else if ($y)
+            {
+                $sql.= " AND pa.datep >= '".$db->idate(dol_get_first_day($y,1,false))."'";
+                $sql.= " AND pa.datep <= '".$db->idate(dol_get_last_day($y,12,false))."'";
+            }
 	        if ($q) $sql.= " AND (date_format(pa.datep,'%m') > ".(($q-1)*3)." AND date_format(pa.datep,'%m') <= ".($q*3).")";
-	        if ($m) $sql.= " AND (date_format(pa.datep,'%m') > ".($m-1)." AND date_format(pa.datep,'%m') <= ".($m).")";
 	        if ($date_start && $date_end) $sql.= " AND pa.datep >= ".$db->idate($date_start)." AND pa.datep <= ".$db->idate($date_end);
 	        $sql.= " AND (d.product_type = 1";								// Limit to services
 	        $sql.= " OR d.date_start is NOT null OR d.date_end IS NOT NULL)";		// enhance detection of service
