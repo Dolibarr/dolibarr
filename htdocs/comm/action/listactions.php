@@ -221,7 +221,7 @@ if ($resql)
 		$actionstatic->id=$obj->id;
 		$actionstatic->type_code=$obj->acode;
 		$actionstatic->libelle=$obj->label;
-		print $actionstatic->getNomUrl(1,12);
+		print $actionstatic->getNomUrl(1,20);
 		print '</td>';
 
 		// Titre
