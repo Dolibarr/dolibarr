@@ -354,7 +354,8 @@ class DoliDb
 		}
 		$con_string = "host=$host port=$port dbname=$name user=$login password=$passwd";
         //print 'xxx'.$con_string;
-		$this->db = pg_connect($con_string);
+        //$this->db = pg_pconnect($con_string);   // To us persistent connection because this one cost 1ms, non ersisten cost 30ms
+        $this->db = pg_connect($con_string);
 		if ($this->db)
 		{
 			$this->database_name = $name;
