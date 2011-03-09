@@ -241,6 +241,7 @@ class DoliDb
                 {
                     $line = "-- ".$line." replaced by --\n";
                     $newreg3=$reg[3];
+                    $newreg3=preg_replace('/ DEFAULT NULL/i','',$newreg3);
                     $newreg3=preg_replace('/ NOT NULL/i','',$newreg3);
                     $newreg3=preg_replace('/ NULL/i','',$newreg3);
                     $newreg3=preg_replace('/ DEFAULT 0/i','',$newreg3);
@@ -1135,7 +1136,7 @@ class DoliDb
 		else
 		return 1;
 	}
-	
+
 	/**
 	 *	\brief      Drop a field in table
 	 *	\param	    table 			Nom de la table
