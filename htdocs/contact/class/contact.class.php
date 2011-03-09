@@ -452,50 +452,53 @@ class Contact extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id             = $obj->rowid;
-				$this->ref            = $obj->rowid;
-				$this->civilite_id    = $obj->civilite_id;
-				$this->name           = $obj->name;
-				$this->firstname      = $obj->firstname;
-				$this->nom            = $obj->name;
-				$this->prenom         = $obj->firstname;
+				$this->id				= $obj->rowid;
+				$this->ref				= $obj->rowid;
+				$this->civilite_id		= $obj->civilite_id;
+				$this->name				= $obj->name;
+				$this->firstname		= $obj->firstname;
+				$this->nom				= $obj->name;			// TODO deprecated
+				$this->prenom			= $obj->firstname;		// TODO deprecated
 
-				$this->address        = $obj->address;
-				$this->adresse        = $obj->address; // TODO obsolete
-				$this->cp             = $obj->cp;
-				$this->ville          = $obj->ville;
+				$this->address			= $obj->address;
+				$this->adresse			= $obj->address; 		// TODO deprecated
+				$this->cp				= $obj->cp;				// TODO deprecated
+				$this->zip				= $obj->cp;
+				$this->ville			= $obj->ville;			// TODO deprecated
+				$this->town				= $obj->ville;
 
-				$this->fk_departement = $obj->fk_departement;
+				$this->fk_departement	= $obj->fk_departement;
 				$this->departement_code = $obj->departement_code;
-				$this->departement	  = $obj->departement;
+				$this->departement		= $obj->departement;	// TODO deprecated
+				$this->state			= $obj->departement;
 
-				$this->fk_pays        = $obj->fk_pays;
-				$this->pays_code      = $obj->fk_pays?$obj->pays_code:'';
-				$this->pays           = ($obj->fk_pays > 0)?$langs->transnoentities("Country".$obj->pays_code):$langs->transnoentities("SelectCountry");
+				$this->fk_pays			= $obj->fk_pays;
+				$this->pays_code		= $obj->fk_pays?$obj->pays_code:'';
+				$this->pays				= ($obj->fk_pays > 0)?$langs->transnoentities("Country".$obj->pays_code):$langs->transnoentities("SelectCountry");
 
-				$this->societeid      = $obj->fk_soc;
-				$this->socid          = $obj->fk_soc;
-				$this->socname        = $obj->socname;
-				$this->poste          = $obj->poste;
+				$this->societeid		= $obj->fk_soc;
+				$this->socid			= $obj->fk_soc;
+				$this->socname			= $obj->socname;
+				$this->poste			= $obj->poste;
 
-				$this->phone_pro      = trim($obj->phone);
-				$this->fax            = trim($obj->fax);
-				$this->phone_perso    = trim($obj->phone_perso);
-				$this->phone_mobile   = trim($obj->phone_mobile);
+				$this->phone_pro		= trim($obj->phone);
+				$this->fax				= trim($obj->fax);
+				$this->phone_perso		= trim($obj->phone_perso);
+				$this->phone_mobile		= trim($obj->phone_mobile);
 
-				$this->email          = $obj->email;
-				$this->jabberid       = $obj->jabberid;
-				$this->priv           = $obj->priv;
-				$this->mail           = $obj->email;
+				$this->email			= $obj->email;
+				$this->jabberid			= $obj->jabberid;
+				$this->priv				= $obj->priv;
+				$this->mail				= $obj->email;
 
-				$this->birthday       = dol_stringtotime($obj->birthday);
+				$this->birthday			= dol_stringtotime($obj->birthday);
 				//print "fetch: ".$obj->birthday.'-'.$this->birthday;
-				$this->birthday_alert = $obj->birthday_alert;
-				$this->note           = $obj->note;
-				$this->default_lang   = $obj->default_lang;
-				$this->user_id        = $obj->user_id;
-				$this->user_login     = $obj->user_login;
-				$this->canvas 		  = $obj->canvas;
+				$this->birthday_alert 	= $obj->birthday_alert;
+				$this->note				= $obj->note;
+				$this->default_lang		= $obj->default_lang;
+				$this->user_id			= $obj->user_id;
+				$this->user_login		= $obj->user_login;
+				$this->canvas			= $obj->canvas;
 
 				// Recherche le user Dolibarr lie a ce contact
 				$sql = "SELECT u.rowid ";
