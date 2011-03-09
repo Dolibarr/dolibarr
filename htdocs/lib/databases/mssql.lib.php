@@ -230,16 +230,21 @@ class DoliDb
 	}
 
 
-	/**
-	 * \brief       Fermeture d'une connexion vers une database.
-	 * \return	    resource
-	 * \see        	connect
-	 */
-	function close()
-	{
-		dol_syslog("DoliDB::disconnect",LOG_DEBUG);
-		return $this->db?mssql_close($this->db):0;
-	}
+    /**
+     *  Close database connexion
+     *  @return     boolean     True if disconnect successfull, false otherwise
+     *  @see        connect
+     */
+    function close()
+    {
+        if ($this->db)
+        {
+          //dol_syslog("DoliDB::disconnect",LOG_DEBUG);
+          $this->connected=0;
+          return mssql_close($this->db);
+        }
+        return false;
+    }
 
 
 	/**
@@ -930,7 +935,7 @@ class DoliDb
 		else
 		return 1;
 	}
-	
+
 	/**
 	 *	\brief      Drop a field in table
 	 *	\param	    table 			Nom de la table
