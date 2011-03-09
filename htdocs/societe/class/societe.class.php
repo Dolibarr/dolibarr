@@ -791,6 +791,7 @@ class Societe extends CommonObject
     function delete($id)
     {
         global $user,$langs,$conf;
+        require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 
         dol_syslog("Societe::Delete", LOG_DEBUG);
         $sqr = 0;

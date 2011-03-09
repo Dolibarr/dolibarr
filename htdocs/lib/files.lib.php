@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -128,7 +128,6 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 
 /**
  * Fast compare of 2 files identified by their properties ->name, ->date and ->size
- *
  * @param 	$a		File 1
  * @param 	$b		File 2
  * @return 	int		1, 0, 1
@@ -355,7 +354,6 @@ function dol_filesize($pathoffile)
 
 /**
  * Return time of a file
- *
  * @param 	$pathoffile
  * @return 	timestamp	Time of file
  */
@@ -423,14 +421,14 @@ function dol_move($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
 }
 
 /**
- *	\brief  Move an uploaded file after some controls.
- * 			If there is errors (virus found, antivir in error, bad filename), file is not moved.
- *	\param	src_file			Source full path filename ($_FILES['field']['tmp_name'])
- *	\param	dest_file			Target full path filename
- * 	\param	allowoverwrite		1=Overwrite target file if it already exists
- * 	\param	disablevirusscan	1=Disable virus scan
- * 	\param	uploaderrorcode		Value of upload error code ($_FILES['field']['error'])
- *	\return int         		>0 if OK, <0 or string if KO
+ *	Move an uploaded file after some controls.
+ * 	If there is errors (virus found, antivir in error, bad filename), file is not moved.
+ *	@param	src_file			Source full path filename ($_FILES['field']['tmp_name'])
+ *	@param	dest_file			Target full path filename
+ * 	@param	allowoverwrite		1=Overwrite target file if it already exists
+ * 	@param	disablevirusscan	1=Disable virus scan
+ * 	@param	uploaderrorcode		Value of upload error code ($_FILES['field']['error'])
+ *	@return int         		>0 if OK, <0 or string if KO
  */
 function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disablevirusscan=0, $uploaderrorcode=0)
 {
@@ -539,11 +537,91 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 	return 1;
 }
 
+/**
+ *  Remove a file or several files with a mask
+ *  @param      file            File to delete or mask of file to delete
+ *  @param      disableglob     Disable usage of glob like *
+ *  @param      boolean         True if file is deleted, False if error
+ */
+function dol_delete_file($file,$disableglob=0)
+{
+    //print "x".$file." ".$disableglob;
+    $ok=true;
+    $file_osencoded=dol_osencode($file);    // New filename encoded in OS filesystem encoding charset
+    if (empty($disableglob))
+    {
+        foreach (glob($file_osencoded) as $filename)
+        {
+            $ok=unlink($filename);  // The unlink encapsulated by dolibarr
+            if ($ok) dol_syslog("Removed file ".$filename,LOG_DEBUG);
+            else dol_syslog("Failed to remove file ".$filename,LOG_WARNING);
+        }
+    }
+    else
+    {
+        $ok=unlink($file_osencoded);        // The unlink encapsulated by dolibarr
+        if ($ok) dol_syslog("Removed file ".$file_osencoded,LOG_DEBUG);
+        else dol_syslog("Failed to remove file ".$file_osencoded,LOG_WARNING);
+    }
+    return $ok;
+}
+
+/**
+ *  Remove a directory (not recursive, so content must be empty).
+ *  If directory is not empty, return false
+ *  @param      file            Directory to delete
+ *  @return     boolean         True if success, false if error
+ */
+function dol_delete_dir($dir)
+{
+    $dir_osencoded=dol_osencode($dir);
+    return rmdir($dir_osencoded);
+}
+
+/**
+ *  Remove a directory $dir and its subdirectories
+ *  @param      file            Dir to delete
+ *  @param      count           Counter to count nb of deleted elements
+ *  @return     int             Number of files and directory removed
+ */
+function dol_delete_dir_recursive($dir,$count=0)
+{
+    dol_syslog("functions.lib:dol_delete_dir_recursive ".$dir,LOG_DEBUG);
+    $dir_osencoded=dol_osencode($dir);
+    if ($handle = opendir("$dir_osencoded"))
+    {
+        while (false !== ($item = readdir($handle)))
+        {
+            if (! utf8_check($item)) $item=utf8_encode($item);  // should be useless
+
+            if ($item != "." && $item != "..")
+            {
+                if (is_dir(dol_osencode("$dir/$item")))
+                {
+                    $count=dol_delete_dir_recursive("$dir/$item",$count);
+                }
+                else
+                {
+                    dol_delete_file("$dir/$item",1);
+                    $count++;
+                    //echo " removing $dir/$item<br>\n";
+                }
+            }
+        }
+        closedir($handle);
+        dol_delete_dir($dir);
+        $count++;
+        //echo "removing $dir<br>\n";
+    }
+
+    //echo "return=".$count;
+    return $count;
+}
+
 
 /**
  * Get and save an upload file (for example after submitting a new file a mail form).
  * All information used are in db, conf, langs, user and _FILES.
- *
  * @param	upload_dir				Directory to store upload files
  * @param	allowoverwrite			1=Allow overwrite existing file
  * @param	donotupdatesession		1=Do no edit _SESSION variable
@@ -602,7 +680,6 @@ function dol_add_file_process($upload_dir,$allowoverwrite=0,$donotupdatesession=
 /**
  * Remove an uploaded file (for example after submitting a new file a mail form).
  * All information used are in db, conf, langs, user and _FILES.
- *
  * @param	filenb					File nb to delete
  * @param	donotupdatesession		1=Do no edit _SESSION variable
  * @return	string					Message with result of upload and store.
@@ -649,11 +726,13 @@ function dol_remove_file_process($filenb,$donotupdatesession=0)
 
 /**
  * 	Convert file to image
+ *  @param      file        Input file name
+ *  @param      ext         Extension of target file
  */
 function dol_convert_file($file,$ext='png')
 {
 	global $langs;
-	
+
 	$image=new Imagick();
 	$ret = $image->readImage($file);
 	if ($ret)
@@ -662,7 +741,7 @@ function dol_convert_file($file,$ext='png')
 		if ($ret)
 		{
 			$count = $image->getNumberImages();
-			$ret = $image->writeImage( $file . "." . $ext, true );
+			$ret = $image->writeImages( $file . "." . $ext, true );
 			if ($ret) return $count;
 			else return -3;
 		}
@@ -675,7 +754,7 @@ function dol_convert_file($file,$ext='png')
 	{
 		return -1;
 	}
-	
+
 	return 1;
 }
 

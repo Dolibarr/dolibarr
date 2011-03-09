@@ -326,6 +326,7 @@ class EcmDirectory // extends CommonObject
 	function delete($user)
 	{
 		global $conf, $langs;
+        require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 
 		$relativepath=$this->getRelativePath(1);	// Ex: dir1/dir2/dir3
 

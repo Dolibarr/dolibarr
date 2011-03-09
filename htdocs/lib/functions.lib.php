@@ -38,6 +38,16 @@ if (! defined('DOL_DOCUMENT_ROOT_ALT'))	define('DOL_DOCUMENT_ROOT_ALT', '');	// 
 if (! defined('ADODB_DATE_VERSION'))    include_once(DOL_DOCUMENT_ROOT."/includes/adodbtime/adodb-time.inc.php");
 
 /**
+ *  This function output memory used by PHP and exit everything. Used for debugging purpose.
+ */
+function dol_stopwithmem()
+{
+    print memory_get_usage();
+    llxFooter();
+    exit;
+}
+
+/**
  *  Function called at end of web php process
  */
 function dol_shutdown()
@@ -2437,12 +2447,12 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 }
 
 /**
- *	\brief  	Fonction servant a afficher les fleches de navigation dans les pages de listes
- *	\param	page				Numero of page
- *	\param	file				Lien
- *	\param	options         	Autres parametres d'url a propager dans les liens ("" par defaut)
- *	\param	nextpage	    	Faut-il une page suivante
- *	\param	betweenarraows		HTML Content to show between arrows
+ *	Fonction servant a afficher les fleches de navigation dans les pages de listes
+ *	@param	page				Numero of page
+ *	@param	file				Lien
+ *	@param	options         	Autres parametres d'url a propager dans les liens ("" par defaut)
+ *	@param	nextpage	    	Faut-il une page suivante
+ *	@param	betweenarraows		HTML Content to show between arrows
  */
 function print_fleche_navigation($page,$file,$options='',$nextpage,$betweenarrows='')
 {
@@ -2460,94 +2470,12 @@ function print_fleche_navigation($page,$file,$options='',$nextpage,$betweenarrow
 
 
 /**
- *	Remove a file or several files with a mask
- *	@param		file			File to delete or mask of file to delete
- * 	@param		disableglob		Disable usage of glob like *
- *	@param		boolean			True if file is deleted, False if error
- */
-function dol_delete_file($file,$disableglob=0)
-{
-	//print "x".$file." ".$disableglob;
-	$ok=true;
-	$file_osencoded=dol_osencode($file);	// New filename encoded in OS filesystem encoding charset
-	if (empty($disableglob))
-	{
-		foreach (glob($file_osencoded) as $filename)
-		{
-			$ok=unlink($filename);	// The unlink encapsulated by dolibarr
-			if ($ok) dol_syslog("Removed file ".$filename,LOG_DEBUG);
-			else dol_syslog("Failed to remove file ".$filename,LOG_WARNING);
-		}
-	}
-	else
-	{
-		$ok=unlink($file_osencoded);		// The unlink encapsulated by dolibarr
-		if ($ok) dol_syslog("Removed file ".$file_osencoded,LOG_DEBUG);
-		else dol_syslog("Failed to remove file ".$file_osencoded,LOG_WARNING);
-	}
-	return $ok;
-}
-
-/**
- *	Remove a directory (not recursive, so content must be empty).
- *  If directory is not empty, return false
- *	@param		file			Directory to delete
- * 	@return		boolean			True if success, false if error
- */
-function dol_delete_dir($dir)
-{
-	$dir_osencoded=dol_osencode($dir);
-	return rmdir($dir_osencoded);
-}
-
-/**
- *	Remove a directory $dir and its subdirectories
- *	@param		file			Dir to delete
- *	@param		count			Counter to count nb of deleted elements
- *	@return		int				Number of files and directory removed
- */
-function dol_delete_dir_recursive($dir,$count=0)
-{
-	dol_syslog("functions.lib:dol_delete_dir_recursive ".$dir,LOG_DEBUG);
-	$dir_osencoded=dol_osencode($dir);
-	if ($handle = opendir("$dir_osencoded"))
-	{
-		while (false !== ($item = readdir($handle)))
-		{
-			if (! utf8_check($item)) $item=utf8_encode($item);	// should be useless
-
-			if ($item != "." && $item != "..")
-			{
-				if (is_dir(dol_osencode("$dir/$item")))
-				{
-					$count=dol_delete_dir_recursive("$dir/$item",$count);
-				}
-				else
-				{
-					dol_delete_file("$dir/$item",1);
-					$count++;
-					//echo " removing $dir/$item<br>\n";
-				}
-			}
-		}
-		closedir($handle);
-		dol_delete_dir($dir);
-		$count++;
-		//echo "removing $dir<br>\n";
-	}
-
-	//echo "return=".$count;
-	return $count;
-}
-
-
-/**
- *		\brief      Fonction qui retourne un taux de tva formate pour visualisation
- *		\remarks    Fonction utilisee dans les pdf et les pages html
- *		\param	    rate			Rate value to format (19.6 19,6 19.6% 19,6%,...)
- *		\param		foundpercent	Add a percent % sign in output
- *		\param		info_bits		Miscellanous information on vat
- *		\return		string			Chaine avec montant formate (19,6 ou 19,6% ou 8.5% *)
+ *	Fonction qui retourne un taux de tva formate pour visualisation
+ *	Utilisee dans les pdf et les pages html
+ *	@param	    rate			Rate value to format (19.6 19,6 19.6% 19,6%,...)
+ *  @param		foundpercent	Add a percent % sign in output
+ *	@param		info_bits		Miscellanous information on vat
+ *  @return		string			Chaine avec montant formate (19,6 ou 19,6% ou 8.5% *)
  */
 function vatrate($rate,$addpercent=false,$info_bits=0)
 {
@@ -3528,22 +3456,12 @@ function dol_htmloutput_errors($mesgstring='',$mesgarray='')
     return dol_htmloutput_mesg($mesgstring, $mesgarray, 'error');
 }
 
-/**
- *	This function output memory used by PHP and exit everything. Used for debugging purpose.
- */
-function stopwithmem()
-{
-	print memory_get_usage();
-	llxFooter();
-	exit;
-}
-
 
 /**
- * 	\brief	Advanced sort array by second index function, which produces
- *			ascending (default) or descending output and uses optionally
- *			natural case insensitive sorting (which can be optionally case
- *			sensitive as well).
+ * 	Advanced sort array by second index function, which produces
+ *	ascending (default) or descending output and uses optionally
+ *	natural case insensitive sorting (which can be optionally case
+ *	sensitive as well).
  */
 function dol_sort_array(&$array, $index, $order='asc', $natsort, $case_sensitive)
 {
@@ -3594,7 +3512,7 @@ function utf8_check($str)
 
 /**
  *      Return an UTF-8 string encoded into OS filesystem encoding. This function is used to define
- * 	                value to pass to filesystem PHP functions.
+ * 	    value to pass to filesystem PHP functions.
  *      @param      $str        String to encode (UTF-8)
  * 		@return		string		Encoded string (UTF-8, ISO-8859-1)
  */
@@ -3654,7 +3572,6 @@ function dol_getIdFromCode($db,$key,$tablename,$fieldkey='code',$fieldid='id')
 
 /**
  * Verify if condition in string is ok or not
- *
  * @param 	string 		$strRights
  * @return 	boolean		true or false
  */
@@ -3686,7 +3603,6 @@ function verifCond($strRights)
 /**
  * Replace eval function to add more security.
  * This function is called by verifCond().
- *
  * @param 	string	$s
  * @return 	int		1
  */
@@ -3710,7 +3626,7 @@ function dol_eval($s)
 if (! function_exists('glob') && ! is_callable('glob'))
 {
     /**
-     *  \brief      For replace glob() function
+     *  To define glob() function if not exists
      */
     function glob($pattern)
 	{
@@ -3747,7 +3663,7 @@ if (! function_exists('glob') && ! is_callable('glob'))
 }
 
 /**
- * 	\brief		For dol_glob() function
+ * 	For dol_glob() function
  */
 function pattern_match($pattern,$string)
 {
