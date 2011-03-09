@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -198,6 +199,51 @@ function dol_get_next_month($month, $year)
 	return array('year' => $next_year, 'month' => $next_month);
 }
 
+/**	Return previous week
+ * 	@param		week	Week
+ *	@param		year	Year
+ *	@return		array	Previous year,month,week
+ */
+function dol_get_prev_week($week, $year)
+{
+	if ($week == 1)
+	{
+		$prev_week  = 52;
+		$prev_month = 12;
+		$prev_year  = $year - 1;
+	}
+	else
+	{
+		$prev_week	= $week-1;
+		$str_tmp = str_pad($prev_week, 2, 0, STR_PAD_LEFT); 
+		$prev_month = date('n', strtotime($year.'-W'.$str_tmp));
+		$prev_year  = $year;
+	}
+	return array('year' => $prev_year, 'month'=>$prev_month, 'week' => $prev_week);
+}
+ 
+/**	Return next week
+ *	@param		week	Week
+ *	@param		year	Year
+ *	@return		array	Next year,month,week
+ */
+function dol_get_next_week($week, $year)
+{
+	if ($week == 52)
+	{
+		$next_week  = 1;
+		$next_month = 1;
+		$next_year  = $year + 1;
+	}
+	else
+	{
+		$next_week  = $week + 1;
+		$str_tmp = str_pad($next_week, 2, 0, STR_PAD_LEFT); 
+		$next_month = date('n', strtotime($year.'-W'.$str_tmp));
+		$next_year  = $year;
+	}
+	return array('year' => $next_year, 'month'=>$next_month, 'week' => $next_week);
+}
 
 /**	Return GMT time for first day of a month or year
  *	@param		year		Year
@@ -238,6 +284,72 @@ function dol_get_last_day($year,$month=12,$gm=false)
 	return $datelim;
 }
 
+/**	Return  first day of week for a week
+ *	@param		day			Day
+ * 	@param		month		Month
+ * 	@param		gm			False = Return date to compare with server TZ, True to compare with GM date.
+ *	@return		Timestamp	Date for first day of week
+ */
+function dol_get_first_day_of_week($day,$month,$year,$gm=false) 
+{
+	$date=dol_mktime(0,0,0,$month,$day,$year,$gm);
+	
+	if (isset($conf->global->MAIN_START_WEEK))
+	{
+		if ($conf->global->MAIN_START_WEEK==1)
+		{
+			$getdate = getdate($date);
+ 
+    		// How many days ahead monday are we?
+    		switch ( $getdate['wday'] ) 
+    		{
+        		case 0: // we are on sunday
+            		$days = 6;
+            		break;
+ 
+        		default: // any other day
+            		$days = $getdate['wday']-1;
+            		break;
+    		}
+ 
+    		$seconds = $days*24*60*60;
+    		$monday = date($getdate[0])-$seconds;
+ 
+    		return $monday;
+ 		
+		}
+		else
+		{
+        	$getdate = getdate($date);
+    		// substact as many days as days ahead sunday we are
+    		$seconds = $getdate['wday']*24*60*60;
+    		$sunday = date($getdate[0])-$seconds;
+ 
+    		return $sunday;
+		}
+	}
+	else 
+	{
+		$getdate = getdate($date);
+
+    	// How many days ahead monday are we?
+    	switch ( $getdate['wday'] ) 
+    	{
+        	case 0: // we are on sunday
+            	$days = 6;
+            	break;
+            	
+	        default: // any other day
+    	        $days = $getdate['wday']-1;
+        	    break;
+    	}
+ 
+    	$seconds = $days*24*60*60;
+    	$monday = date($getdate[0])-$seconds;
+ 
+    	return $monday;
+	}
+}
 
 /**
  *	Fonction retournant le nombre de jour fieries samedis et dimanches entre 2 dates entrees en timestamp

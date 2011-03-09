@@ -69,13 +69,14 @@ $action=GETPOST('action','alpha');
 //$year=GETPOST("year");
 $year=GETPOST("year","int")?GETPOST("year","int"):date("Y");
 $month=GETPOST("month","int")?GETPOST("month","int"):date("m");
+$week=GETPOST("week","int")?GETPOST("week","int"):date("W");
 $day=GETPOST("day","int")?GETPOST("day","int"):0;
 $pid=GETPOST("projectid","int")?GETPOST("projectid","int"):0;
 $status=GETPOST("status");
 $maxprint=GETPOST("maxprint");
 
 if (GETPOST('viewcal'))  { $action='show_month'; $day=''; }         // View by month
-if (GETPOST('viewweek')) { $action='show_week'; $week=date("W"); }     // View by week
+if (GETPOST('viewweek')) { $action='show_week'; $week=date("W"); $day=date("d");}     // View by week
 if (GETPOST('viewday'))  { $action='show_day'; $day=date("d"); }    // View by day
 
 $langs->load("other");
@@ -145,7 +146,7 @@ if (empty($action) || $action=='show_month')
 }
 if ($action=='show_week')
 {
-	
+	  	
 }
 if ($action=='show_day')
 {
@@ -181,7 +182,7 @@ if ($socid)   $param.="&socid=".$socid;
 if ($showbirthday) $param.="&showbirthday=1";
 if ($pid)     $param.="&projectid=".$pid;
 if (GETPOST("type"))   $param.="&type=".GETPOST("type");
-if ($action == 'show_day') $param.='&action='.$action;
+if ($action == 'show_day' || $action == 'show_week') $param.='&action='.$action;
 if ($maxprint) $param.="&maxprint=on";
 
 // Show navigation bar
@@ -194,7 +195,10 @@ if (empty($action) || $action=='show_month')
 }
 if ($action=='show_week')
 {
-	
+	$nav ="<a href=\"?year=".$prev_year."&amp;month=".$prev_month."&amp;week=".$prev_week."&amp;day=".$prev_day."&amp;region=".$region.$param."\">".img_previous($langs->trans("Previous"))."</a>\n";
+	$nav.=" <span id=\"month_name\">".dol_print_date(dol_mktime(0,0,0,$month,1,$year),"%Y").", ".$langs->trans("Week")." ".$week;
+	$nav.=" </span>\n";
+	$nav.="<a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;week=".$next_week."&amp;day=".$next_day."&amp;region=".$region.$param."\">".img_next($langs->trans("Next"))."</a>\n";
 }
 if ($action=='show_day')
 {
@@ -516,7 +520,7 @@ if (empty($action) || $action == 'show_month')		// View by month
 	}
 	echo "</table>\n";
 }
-elseif ($action == 'show_week') // View by day
+elseif ($action == 'show_week') // View by week
 {
 	print $langs->trans("FeatureNotYetAvailable"); //Work in progress...
 }
@@ -569,9 +573,8 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 	global $cachethirdparty, $cachecontact;
 
 	if ($_GET["maxprint"] == 'on') $maxPrint=0;   // Force to remove limits
-
+	
 	$curtime = dol_mktime (0, 0, 0, $month, $day, $year);
-
 	print '<table class="nobordernopadding" width="100%">';
 	print '<tr style="background: #EEEEEE"><td align="left" nowrap="nowrap">';
 	print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?';
