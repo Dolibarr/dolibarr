@@ -281,62 +281,24 @@ function dol_get_first_day_week($day,$month,$year,$gm=false)
 {
 	global $conf;
 	
-	$date=dol_mktime(0,0,0,$month,$day,$year,$gm);
+	$date = dol_mktime(0,0,0,$month,$day,$year,$gm);
 	
-	// TODO: Modify->the week can begins with any day!
+	//Checking conf of start week
+	$start_week = (isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:1);
 	
-	if (isset($conf->global->MAIN_START_WEEK))
-	{
-		if ($conf->global->MAIN_START_WEEK==1)
-		{
-			$tmparray = dol_getdate($date,true);
- 
-    		// How many days ahead monday are we?
-    		switch ( $tmparray['wday'] ) 
-    		{
-        		case 0: // we are on sunday
-            		$days = 6;
-            		break;
- 
-        		default: // any other day
-            		$days = $tmparray['wday']-1;
-            		break;
-    		}
- 
-    		$seconds = $days*24*60*60;
-    		$tmpday = date($tmparray[0])-$seconds;
-    		
-		}
-		else
-		{
-        	$tmparray = dol_getdate($date,true);
-    		// substact as many days as days ahead sunday we are
-    		$seconds = $tmparray['wday']*24*60*60;
-    		$tmpday = date($tmparray[0])-$seconds;
-		}
-	}
-	else 
-	{
-		$tmpday = dol_getdate($date,true);
-
-    	// How many days ahead monday are we?
-    	switch ( $tmparray['wday'] ) 
-    	{
-        	case 0: // we are on sunday
-            	$days = 6;
-            	break;
-            	
-	        default: // any other day
-    	        $days = $tmparray['wday']-1;
-        	    break;
-    	}
- 
-    	$seconds = $days*24*60*60;
-    	$tmpday = date($tmparray[0])-$seconds;
-	}
-	
+	$tmparray = dol_getdate($date,true);
+ 	
+	//Calculate days to count 
+	$days = $start_week - $tmparray['wday'];
+ 	if ($days>=1) $days=7-$days;
+ 	$days = abs($days);
+    $seconds = $days*24*60*60;
+    
+    //Get first day of week
+    $tmpday = date($tmparray[0])-$seconds;
 	$tmpday = date("d",$tmpday);
 	
+	//Check first day of week is form this month or not
 	if ($tmpday>$day)
     {
     	$prev_month = $month-1;
@@ -353,17 +315,14 @@ function dol_get_first_day_week($day,$month,$year,$gm=false)
     	$prev_month = $month;
 		$prev_year  = $year;
     }
-    
-    $tmpday 	= $tmpday;
-    $prev_month = $prev_month;
-	$prev_year  = $prev_year;
-	
+
+    //Get first day of next week 
 	$tmptime=dol_mktime(12,0,0,$month,$tmpday,$year,1,0);
 	$tmptime-=24*60*60*7;
 	$tmparray=dol_getdate($tmptime,true);
-	
     $prev_day   = $tmparray['mday'];
     
+    //Check first day of week is form this month or not
 	if ($prev_day>$tmpday)
     {
     	$prev_month = $month-1;
