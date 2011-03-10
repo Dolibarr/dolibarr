@@ -254,11 +254,15 @@ class Form
     function select_country($selected='',$htmlname='pays_id',$htmloption='')
     {
         global $conf,$langs;
+        
         $langs->load("dict");
 
         $out='';
+        $countryArray=array();
+        $code_iso=array();
+        $label=array();
 
-        $sql = "SELECT rowid, code, libelle, active";
+        $sql = "SELECT rowid, code as code_iso, libelle as label";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
         $sql.= " WHERE active = 1";
         $sql.= " ORDER BY code ASC";
@@ -273,24 +277,29 @@ class Form
             if ($num)
             {
                 $foundselected=false;
-                while ($i < $num)
-                {
+                
+            	while ($i < $num) {
                     $obj = $this->db->fetch_object($resql);
-                    if ($selected && $selected != '-1' &&
-                    ($selected == $obj->rowid || $selected == $obj->code || $selected == $obj->libelle) )
-                    {
-                        $foundselected=true;
-                        $out.= '<option value="'.$obj->rowid.'" selected="selected">';
-                    }
-                    else
-                    {
-                        $out.= '<option value="'.$obj->rowid.'">';
-                    }
-                    // Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-                    if ($obj->code) { $out.= $obj->code . ' - '; }
-                    $out.= ($obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code?$langs->trans("Country".$obj->code):($obj->libelle!='-'?$obj->libelle:'&nbsp;'));
-                    $out.= '</option>';
+                    $countryArray[$i]['rowid'] 		= $obj->rowid;
+                    $countryArray[$i]['code_iso'] 	= $obj->code_iso;
+                    $countryArray[$i]['label']		= ($obj->code_iso && $langs->trans("Country".$obj->code_iso)!="Country".$obj->code_iso?$langs->trans("Country".$obj->code_iso):($obj->label!='-'?$obj->label:'&nbsp;'));
+                    $code_iso[$i] = $countryArray[$i]['code_iso'];
+                	$label[$i] 	= $countryArray[$i]['label'];
                     $i++;
+                }
+
+                array_multisort($label, SORT_ASC, $countryArray);
+                
+                foreach ($countryArray as $row) {
+                	if ($selected && $selected != '-1' && ($selected == $row['rowid'] || $selected == $row['code_iso'] || $selected == $row['label']) ) {
+                        $foundselected=true;
+                        $out.= '<option value="'.$row['rowid'].'" selected="selected">';
+                    } else {
+                        $out.= '<option value="'.$row['rowid'].'">';
+                    }
+                    if ($row['code_iso']) $out.= $row['code_iso'] . ' - ';
+                    $out.= $row['label'];
+                    $out.= '</option>';
                 }
             }
             $out.= '</select>';
@@ -2356,7 +2365,8 @@ class Form
                     } else {
                         $out.= '<option value="'.$row['code_iso'].'">';
                     }
-                    $out.= $row['code_iso'] . ' - ' . $row['label'];
+                    if ($row['code_iso']) $out.= $row['code_iso'] . ' - ';
+                    $out.= $row['label'];
                     $out.= '</option>';
                 }
             }
