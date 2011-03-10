@@ -2299,7 +2299,6 @@ class Form
      *    Retourne la liste des devises, dans la langue de l'utilisateur
      *    @param     selected    code devise pre-selectionne
      *    @param     htmlname    nom de la liste deroulante
-     *    TODO      trier liste sur noms apres traduction plutot que avant
      */
     function select_currency($selected='',$htmlname='currency_id')
     {
@@ -2307,21 +2306,24 @@ class Form
     }
 
     /**
-     *    \brief     Retourne la liste des devises, dans la langue de l'utilisateur
-     *    \param     selected    code devise pre-selectionne
-     *    \param     htmlname    nom de la liste deroulante
-     *    \todo      trier liste sur noms apres traduction plutot que avant
+     *    Retourne la liste des devises, dans la langue de l'utilisateur
+     *    @param     selected    code devise pre-selectionne
+     *    @param     htmlname    nom de la liste deroulante
      */
     function selectcurrency($selected='',$htmlname='currency_id')
     {
         global $conf,$langs,$user;
+        
         $langs->load("dict");
 
         $out='';
+        $currencyArray=array();
+        $code_iso=array();
+        $label=array();
 
         if ($selected=='euro' || $selected=='euros') $selected='EUR';   // Pour compatibilite
 
-        $sql = "SELECT code, code_iso, label, active";
+        $sql = "SELECT code_iso, label";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_currencies";
         $sql.= " WHERE active = 1";
         $sql.= " ORDER BY code_iso ASC";
@@ -2335,23 +2337,27 @@ class Form
             if ($num)
             {
                 $foundselected=false;
-                while ($i < $num)
-                {
+                
+                while ($i < $num) {
                     $obj = $this->db->fetch_object($resql);
-                    if ($selected && $selected == $obj->code_iso)
-                    {
-                        $foundselected=true;
-                        $out.= '<option value="'.$obj->code_iso.'" selected="selected">';
-                    }
-                    else
-                    {
-                        $out.= '<option value="'.$obj->code_iso.'">';
-                    }
-                    if ($obj->code_iso) { $out.= $obj->code_iso . ' - '; }
-                    // Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-                    $out.= ($obj->code_iso && $langs->trans("Currency".$obj->code_iso)!="Currency".$obj->code_iso?$langs->trans("Currency".$obj->code_iso):($obj->label!='-'?$obj->label:''));
-                    $out.= '</option>';
+                    $currencyArray[$i]['code_iso'] 	= $obj->code_iso;
+                    $currencyArray[$i]['label']		= ($obj->code_iso && $langs->trans("Currency".$obj->code_iso)!="Currency".$obj->code_iso?$langs->trans("Currency".$obj->code_iso):($obj->label!='-'?$obj->label:''));
+                    $code_iso[$i] = $currencyArray[$i]['code_iso'];
+                	$label[$i] 	= $currencyArray[$i]['label'];
                     $i++;
+                }
+
+                array_multisort($label, SORT_ASC, $currencyArray);
+                
+                foreach ($currencyArray as $row) {
+                	if ($selected && $selected == $row['code_iso']) {
+                        $foundselected=true;
+                        $out.= '<option value="'.$row['code_iso'].'" selected="selected">';
+                    } else {
+                        $out.= '<option value="'.$row['code_iso'].'">';
+                    }
+                    $out.= $row['code_iso'] . ' - ' . $row['label'];
+                    $out.= '</option>';
                 }
             }
             $out.= '</select>';
