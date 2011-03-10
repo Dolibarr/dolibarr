@@ -237,7 +237,6 @@ class Form
      *    @param     selected         Id or Code or Label of preselected country
      *    @param     htmlname         Name of html select object
      *    @param     htmloption       Options html on select object
-     *    TODO       trier liste sur noms apres traduction plutot que avant
      */
     function select_pays($selected='',$htmlname='pays_id',$htmloption='')
     {
@@ -249,7 +248,6 @@ class Form
      *    @param     selected         Id or Code or Label of preselected country
      *    @param     htmlname         Name of html select object
      *    @param     htmloption       Options html on select object
-     *    TODO       trier liste sur noms apres traduction plutot que avant
      */
     function select_country($selected='',$htmlname='pays_id',$htmloption='')
     {
