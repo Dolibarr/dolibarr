@@ -52,6 +52,7 @@ create table llx_societe
   fk_effectif              integer        DEFAULT 0,            		--
   fk_typent                integer        DEFAULT 0,            		--
   fk_forme_juridique       integer        DEFAULT 0,            		-- forme juridique INSEE
+  fk_currency			   integer		  DEFAULT 0,					-- currency
   siren	                   varchar(16),                         		-- IDProf1: siren ou RCS pour france
   siret                    varchar(16),                         		-- IDProf2: siret pour france
   ape                      varchar(16),                         		-- IDProf3: code ape pour france

@@ -39,4 +39,4 @@ ALTER TABLE llx_commande_fournisseur ADD column ref_ext varchar(30) after entity
 ALTER TABLE llx_facturedet DROP INDEX uk_fk_remise_except;
 ALTER TABLE llx_facturedet ADD UNIQUE INDEX uk_fk_remise_except (fk_remise_except, fk_facture);
 
-
+ALTER TABLE llx_societe ADD column fk_currency integer DEFAULT 0 after fk_forme_juridique;
