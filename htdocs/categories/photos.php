@@ -29,22 +29,29 @@
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/categories.lib.php");
 
-$langs->load("category");
+$langs->load("categories");
 $langs->load("bills");
-
-$mesg = '';
-$type=$_REQUEST['type'];
 
 // Security check
 if (!$user->rights->categorie->lire) accessforbidden();
 
-if ($_REQUEST['id'] == "")
+$mesg = '';
+
+$id=GETPOST('id');
+$ref=GETPOST('ref');
+$type=GETPOST('type');
+$action=GETPOST('action');
+$confirm=GETPOST('confirm');
+
+if ($id == "")
 {
 	dol_print_error('','Missing parameter id');
 	exit();
 }
 
+$object = new Categorie($db);
 
 /*
  * Actions
@@ -52,26 +59,22 @@ if ($_REQUEST['id'] == "")
 
 if ($_FILES['userfile']['size'] > 0 && $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
-	if ($_GET["id"])
+	if ($id)
 	{
-		$c = new Categorie($db);
-		$result = $c->fetch($_GET["id"]);
+		$result = $object->fetch($id);
 
-		$result = $c->add_photo($conf->categorie->dir_output, $_FILES['userfile']);
+		$result = $object->add_photo($conf->categorie->dir_output, $_FILES['userfile']);
 	}
 }
 
-
-if ($_REQUEST["action"] == 'confirm_delete' && $_GET["file"] && $_REQUEST['confirm'] == 'yes' && $user->rights->categorie->creer)
+if ($action == 'confirm_delete' && $_GET["file"] && $confirm == 'yes' && $user->rights->categorie->creer)
 {
-	$c = new Categorie($db);
-	$c->delete_photo($conf->categorie->dir_output."/".$_GET["file"]);
+	$object->delete_photo($conf->categorie->dir_output."/".$_GET["file"]);
 }
 
-if ($_GET["action"] == 'addthumb' && $_GET["file"])
+if ($action == 'addthumb' && $_GET["file"])
 {
-	$c = new Category($db);
-	$c->add_thumb($conf->categorie->dir_output."/".$_GET["file"]);
+	$object->add_thumb($conf->categorie->dir_output."/".$_GET["file"]);
 }
 
 
@@ -81,48 +84,29 @@ if ($_GET["action"] == 'addthumb' && $_GET["file"])
 
 llxHeader ("","",$langs->trans("Categories"));
 
-$c = new Categorie($db);
-$c->fetch($_REQUEST['id']);
-
 $html = new Form($db);
 
-if ($_GET["id"] || $_GET["ref"])
+if (!empty($id) || !empty($ref))
 {
-	$c = new Categorie($db);
-
-	if ($_GET["id"]) $result = $c->fetch($_GET["id"]);
-
+	$result = $object->fetch($id);
 
 	if ($result)
 	{
-
-		$h = 0;
-		$head = array();
-
-		$head[$h][0] = DOL_URL_ROOT.'/categories/viewcat.php?id='.$c->id.'&amp;type='.$type;
-		$head[$h][1] = $langs->trans("Card");
-		$head[$h][2] = 'card';
-		$h++;
-
-		$head[$h][0] = DOL_URL_ROOT.'/categories/photos.php?id='.$c->id.'&amp;type='.$type;
-		$head[$h][1] = $langs->trans("Photos");
-		$head[$h][2] = 'photos';
-		$h++;
-
 		$title=$langs->trans("ProductsCategoryShort");
 		if ($type == 0) $title=$langs->trans("ProductsCategoryShort");
 		elseif ($type == 1) $title=$langs->trans("SuppliersCategoryShort");
 		elseif ($type == 2) $title=$langs->trans("CustomersCategoryShort");
 		elseif ($type == 3) $title=$langs->trans("MembersCategoryShort");
 
+		$head = categories_prepare_head($object,$type);
 		dol_fiche_head($head, 'photos', $title, 0, 'category');
 
 		/*
 		 * Confirmation de la suppression de photo
 		 */
-		if ($_GET['action'] == 'delete')
+		if ($action == 'delete')
 		{
-			$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$c->id.'&type='.$type.'&file='.$_GET["file"], $langs->trans('DeletePicture'), $langs->trans('ConfirmDeletePicture'), 'confirm_delete', '', 0, 1);
+			$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&type='.$type.'&file='.$_GET["file"], $langs->trans('DeletePicture'), $langs->trans('ConfirmDeletePicture'), 'confirm_delete', '', 0, 1);
 			if ($ret == 'html') print '<br>';
 		}
 
@@ -132,7 +116,7 @@ if ($_GET["id"] || $_GET["ref"])
 
 		// Path of category
 		print '<tr><td width="20%" class="notopnoleft">';
-		$ways = $c->print_all_ways ();
+		$ways = $object->print_all_ways ();
 		print $langs->trans("Ref").'</td><td>';
 		print '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
 		foreach ($ways as $way)
@@ -144,23 +128,23 @@ if ($_GET["id"] || $_GET["ref"])
 		// Description
 		print '<tr><td width="20%" class="notopnoleft">';
 		print $langs->trans("Description").'</td><td>';
-		print nl2br($c->description);
+		print nl2br($object->description);
 		print '</td></tr>';
 
 		// Visibility
 /*		if ($type == 0 && $conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)
 		{
-			if ($c->socid)
+			if ($object->socid)
 			{
 				$soc = new Societe($db);
-				$soc->fetch($c->socid);
+				$soc->fetch($object->socid);
 
 				print '<tr><td width="20%" class="notopnoleft">';
 				print $langs->trans("AssignedToTheCustomer").'</td><td>';
 				print $soc->getNomUrl(1);
 				print '</td></tr>';
 
-				$catsMeres = $c->get_meres ();
+				$catsMeres = $object->get_meres ();
 
 				if ($catsMeres < 0)
 				{
@@ -170,7 +154,7 @@ if ($_GET["id"] || $_GET["ref"])
 				{
 					print '<tr><td width="20%" class="notopnoleft">';
 					print $langs->trans("CategoryContents").'</td><td>';
-					print ($c->visible ? $langs->trans("Visible") : $langs->trans("Invisible"));
+					print ($object->visible ? $langs->trans("Visible") : $langs->trans("Invisible"));
 					print '</td></tr>';
 				}
 			}
@@ -178,7 +162,7 @@ if ($_GET["id"] || $_GET["ref"])
 			{
 				print '<tr><td width="20%" class="notopnoleft">';
 				print $langs->trans("CategoryContents").'</td><td>';
-				print ($c->visible ? $langs->trans("Visible") : $langs->trans("Invisible"));
+				print ($object->visible ? $langs->trans("Visible") : $langs->trans("Invisible"));
 				print '</td></tr>';
 			}
 		}
@@ -186,7 +170,7 @@ if ($_GET["id"] || $_GET["ref"])
 		{
 			print '<tr><td width="20%" class="notopnoleft">';
 			print $langs->trans("CategoryContents").'</td><td>';
-			print ($c->visible ? $langs->trans("Visible") : $langs->trans("Invisible"));
+			print ($object->visible ? $langs->trans("Visible") : $langs->trans("Invisible"));
 			print '</td></tr>';
 		}
 */
@@ -205,11 +189,11 @@ if ($_GET["id"] || $_GET["ref"])
 
 		print "\n<div class=\"tabsAction\">\n";
 
-		if ($_GET["action"] != 'ajout_photo' && $user->rights->produit->creer)
+		if ($action != 'ajout_photo' && $user->rights->produit->creer)
 		{
 			if (! empty($conf->global->MAIN_UPLOAD_DOC))
 			{
-				print '<a class="butAction" href="'.DOL_URL_ROOT.'/categories/photos.php?action=ajout_photo&amp;id='.$c->id.'&amp;type='.$type.'">';
+				print '<a class="butAction" href="'.DOL_URL_ROOT.'/categories/photos.php?action=ajout_photo&amp;id='.$object->id.'&amp;type='.$type.'">';
 				print $langs->trans("AddPhoto").'</a>';
 			}
 			else
@@ -224,15 +208,15 @@ if ($_GET["id"] || $_GET["ref"])
 		/*
 		 * Ajouter une photo
 		 */
-		if ($_GET["action"] == 'ajout_photo' && $user->rights->categorie->creer && ! empty($conf->global->MAIN_UPLOAD_DOC))
+		if ($action == 'ajout_photo' && $user->rights->categorie->creer && ! empty($conf->global->MAIN_UPLOAD_DOC))
 		{
 			// Affiche formulaire upload
 			$formfile=new FormFile($db);
-			$formfile->form_attach_new_file(DOL_URL_ROOT.'/categories/photos.php?id='.$c->id.'&amp;type='.$type,$langs->trans("AddPhoto"),1);
+			$formfile->form_attach_new_file(DOL_URL_ROOT.'/categories/photos.php?id='.$object->id.'&amp;type='.$type,$langs->trans("AddPhoto"),1);
 		}
 
 		// Affiche photos
-		if ($_GET["action"] != 'ajout_photo')
+		if ($action != 'ajout_photo')
 		{
 			$nbphoto=0;
 			$nbbyrow=5;
@@ -240,13 +224,13 @@ if ($_GET["id"] || $_GET["ref"])
 			$maxWidth = 160;
 			$maxHeight = 120;
 
-			$pdir = get_exdir($c->id,2) . $c->id ."/photos/";
+			$pdir = get_exdir($object->id,2) . $object->id ."/photos/";
 			$dir = $conf->categorie->dir_output.'/'.$pdir;
 
 			print '<br>';
 			print '<table width="100%" valign="top" align="center" border="0" cellpadding="2" cellspacing="2">';
 
-			foreach ($c->liste_photos($dir) as $key => $obj)
+			foreach ($object->liste_photos($dir) as $key => $obj)
 			{
 				$nbphoto++;
 
@@ -270,9 +254,9 @@ if ($_GET["id"] || $_GET["ref"])
 				$viewfilename=$obj['photo'];
 
 				// Taille de l'image
-				$c->get_image_size($dir.$filename);
-				$imgWidth = ($c->imgWidth < $maxWidth) ? $c->imgWidth : $maxWidth;
-				$imgHeight = ($c->imgHeight < $maxHeight) ? $c->imgHeight : $maxHeight;
+				$object->get_image_size($dir.$filename);
+				$imgWidth = ($object->imgWidth < $maxWidth) ? $object->imgWidth : $maxWidth;
+				$imgHeight = ($object->imgHeight < $maxHeight) ? $object->imgHeight : $maxHeight;
 
 				print '<img border="0" width="'.$imgWidth.'" height="'.$imgHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=categorie&file='.urlencode($pdir.$filename).'">';
 
@@ -281,7 +265,7 @@ if ($_GET["id"] || $_GET["ref"])
 				print '<br>';
 
 				// On propose la generation de la vignette si elle n'existe pas et si la taille est superieure aux limites
-				if (!$obj['photo_vignette'] && preg_match('/(\.bmp|\.gif|\.jpg|\.jpeg|\.png)$/i',$obj['photo']) && ($c->imgWidth > $maxWidth || $c->imgHeight > $maxHeight))
+				if (!$obj['photo_vignette'] && preg_match('/(\.bmp|\.gif|\.jpg|\.jpeg|\.png)$/i',$obj['photo']) && ($object->imgWidth > $maxWidth || $object->imgHeight > $maxHeight))
 				{
 					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=addthumb&amp;type='.$type.'&amp;file='.urlencode($pdir.$viewfilename).'">'.img_refresh($langs->trans('GenerateThumb')).'&nbsp;&nbsp;</a>';
 				}

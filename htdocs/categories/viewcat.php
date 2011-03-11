@@ -28,46 +28,51 @@
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/categories.lib.php");
 
 // Security check
-if (! $user->rights->categorie->lire)
-{
-	accessforbidden();
-}
+if (! $user->rights->categorie->lire) accessforbidden();
 
 $mesg = '';
 
-if (GETPOST('id') == "")
+$mesg = '';
+$id=GETPOST('id');
+$ref=GETPOST('ref');
+$type=GETPOST('type');
+$action=GETPOST('action');
+$confirm=GETPOST('confirm');
+
+if ($id == "")
 {
 	dol_print_error('','Missing parameter id');
 	exit();
 }
 
-$c = new Categorie($db);
-$result=$c->fetch(GETPOST('id'));
+$object = new Categorie($db);
+$result=$object->fetch($id);
 if ($result <= 0)
 {
-	dol_print_error($db,$c->error);
+	dol_print_error($db,$object->error);
 	exit;
 }
 
-$type=$c->type;
+$type=$object->type;
 
 
 /*
  *	Actions
  */
 
-if ($user->rights->categorie->supprimer && $_POST["action"] == 'confirm_delete' && $_POST['confirm'] == 'yes')
+if ($user->rights->categorie->supprimer && $action == 'confirm_delete' && $confirm == 'yes')
 {
-	if ($c->delete($user) >= 0)
+	if ($object->delete($user) >= 0)
 	{
 		header("Location: ".DOL_URL_ROOT.'/categories/index.php?type='.$type);
 		exit;
 	}
 	else
 	{
-		$mesg='<div class="error">'.$c->error.'</div>';
+		$mesg='<div class="error">'.$object->error.'</div>';
 	}
 }
 
@@ -81,22 +86,7 @@ $html = new Form($db);
 
 llxHeader ("","",$langs->trans("Categories"));
 
-
 if ($mesg) print $mesg.'<br>';
-
-
-$h = 0;
-$head = array();
-
-$head[$h][0] = DOL_URL_ROOT.'/categories/viewcat.php?id='.$c->id.'&amp;type='.$type;
-$head[$h][1] = $langs->trans("Card");
-$head[$h][2] = 'card';
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT.'/categories/photos.php?id='.$c->id.'&amp;type='.$type;
-$head[$h][1] = $langs->trans("Photos");
-$head[$h][2] = 'photos';
-$h++;
 
 if ($type == 0) $title=$langs->trans("ProductsCategoryShort");
 elseif ($type == 1) $title=$langs->trans("SuppliersCategoryShort");
@@ -104,15 +94,16 @@ elseif ($type == 2) $title=$langs->trans("CustomersCategoryShort");
 elseif ($type == 3) $title=$langs->trans("MembersCategoryShort");
 else $title=$langs->trans("Category");
 
+$head = categories_prepare_head($object,$type);
 dol_fiche_head($head, 'card', $title, 0, 'category');
 
 
 /*
  * Confirmation suppression
  */
-if ($_GET['action'] == 'delete')
+if ($action == 'delete')
 {
-	$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$c->id.'&amp;type='.$type,$langs->trans('DeleteCategory'),$langs->trans('ConfirmDeleteCategory'),'confirm_delete');
+	$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;type='.$type,$langs->trans('DeleteCategory'),$langs->trans('ConfirmDeleteCategory'),'confirm_delete');
 	if ($ret == 'html') print '<br>';
 }
 
@@ -120,7 +111,7 @@ print '<table border="0" width="100%" class="border">';
 
 // Path of category
 print '<tr><td width="20%" class="notopnoleft">';
-$ways = $c->print_all_ways ();
+$ways = $object->print_all_ways ();
 print $langs->trans("Ref").'</td><td>';
 print '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
 foreach ($ways as $way)
@@ -132,7 +123,7 @@ print '</td></tr>';
 // Description
 print '<tr><td width="20%" class="notopnoleft">';
 print $langs->trans("Description").'</td><td>';
-print nl2br($c->description);
+print nl2br($object->description);
 print '</td></tr>';
 
 print '</table>';
@@ -147,13 +138,13 @@ print "<div class='tabsAction'>\n";
 
 if ($user->rights->categorie->creer)
 {
-	$socid = ($c->socid ? "&amp;socid=".$c->socid : "");
-	print "<a class='butAction' href='edit.php?id=".$c->id.$socid."&amp;type=".$type."'>".$langs->trans("Modify")."</a>";
+	$socid = ($object->socid ? "&amp;socid=".$object->socid : "");
+	print "<a class='butAction' href='edit.php?id=".$object->id.$socid."&amp;type=".$type."'>".$langs->trans("Modify")."</a>";
 }
 
 if ($user->rights->categorie->supprimer)
 {
-	print "<a class='butActionDelete' href='".DOL_URL_ROOT."/categories/viewcat.php?action=delete&amp;id=".$c->id."&amp;type=".$type."'>".$langs->trans("Delete")."</a>";
+	print "<a class='butActionDelete' href='".DOL_URL_ROOT."/categories/viewcat.php?action=delete&amp;id=".$object->id."&amp;type=".$type."'>".$langs->trans("Delete")."</a>";
 }
 
 print "</div>";
@@ -161,7 +152,7 @@ print "</div>";
 
 
 
-$cats = $c->get_filles();
+$cats = $object->get_filles();
 if ($cats < 0)
 {
 	dol_print_error();
@@ -173,7 +164,7 @@ else
 	print "<tr class='liste_titre'><td colspan='2'>".$langs->trans("SubCats").'</td><td align="right">';
 	if ($user->rights->categorie->creer)
 	{
-		print "<a href='".DOL_URL_ROOT."/categories/fiche.php?action=create&amp;catorigin=".$c->id."&amp;socid=".$c->socid."&amp;type=".$type."&amp;urlfrom=".urlencode($_SERVER["PHP_SELF"].'?id='.$c->id.'&type='.$type)."'>";
+		print "<a href='".DOL_URL_ROOT."/categories/fiche.php?action=create&amp;catorigin=".$object->id."&amp;socid=".$object->socid."&amp;type=".$type."&amp;urlfrom=".urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&type='.$type)."'>";
 		print img_picto($langs->trans("Create"),'filenew');
 		print "</a>";
 	}
@@ -214,10 +205,10 @@ else
 }
 
 // List of products
-if ($c->type == 0)
+if ($object->type == 0)
 {
 
-	$prods = $c->get_type("product","Product");
+	$prods = $object->get_type("product","Product");
 	if ($prods < 0)
 	{
 		dol_print_error();
@@ -253,9 +244,9 @@ if ($c->type == 0)
 	}
 }
 
-if ($c->type == 1)
+if ($object->type == 1)
 {
-	$socs = $c->get_type("societe","Fournisseur","fournisseur");
+	$socs = $object->get_type("societe","Fournisseur","fournisseur");
 	if ($socs < 0)
 	{
 		dol_print_error();
@@ -291,9 +282,9 @@ if ($c->type == 1)
 	}
 }
 
-if($c->type == 2)
+if($object->type == 2)
 {
-	$socs = $c->get_type("societe","Societe");
+	$socs = $object->get_type("societe","Societe");
 	if ($socs < 0)
 	{
 		dol_print_error();
@@ -329,14 +320,14 @@ if($c->type == 2)
 }
 
 // List of members
-if ($c->type == 3)
+if ($object->type == 3)
 {
 	require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
 
-	$prods = $c->get_type("member","Adherent");
+	$prods = $object->get_type("member","Adherent");
 	if ($prods < 0)
 	{
-		dol_print_error($db,$c->error);
+		dol_print_error($db,$object->error);
 	}
 	else
 	{

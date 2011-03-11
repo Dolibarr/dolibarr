@@ -45,23 +45,28 @@ $langs->load('bills');
 $langs->load('orders');
 $langs->load('products');
 
+$id=GETPOST('id');
+$ref=GETPOST('ref');
+$socid=GETPOST('socid');
+$action=GETPOST('action');
+$confirm=GETPOST('confirm');
+
 $sall=GETPOST("sall");
 $mesg=(GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
 $year=GETPOST("year");
 $month=GETPOST("month");
-$socid=GETPOST('socid');
 
 // Security check
 $module='propale';
-if (isset($_GET["socid"]))
+if (isset($socid))
 {
-	$objectid=$_GET["socid"];
+	$objectid=$socid;
 	$module='societe';
 	$dbtable='';
 }
-else if (isset($_GET["id"]) &&  $_GET["id"] > 0)
+else if (isset($id) &&  $id > 0)
 {
-	$objectid=$_GET["id"];
+	$objectid=$id;
 	$module='propale';
 	$dbtable='propal';
 }
