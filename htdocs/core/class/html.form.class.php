@@ -881,23 +881,24 @@ class Form
     /**
      *  Return list of products for customer in Ajax if Ajax activated or go to select_produits_do
      *
-     *  @param    selected        Preselected products
-     *  @param    htmlname        Name of HTML seletc field (must be unique in page)
-     *  @param    filtertype      Filter on product type (''=nofilter, 0=product, 1=service)
-     *  @param    limit           Limit on number of returned lines
-     *  @param    price_level     Level of price to show
-     *  @param	  status		  -1=Return all products, 0=Products not on sell, 1=Products on sell
-     *  @param	  finished     	  2=all, 1=finished, 0=raw material
+     *  @param		selected				Preselected products
+     *  @param		htmlname				Name of HTML seletc field (must be unique in page)
+     *  @param		filtertype				Filter on product type (''=nofilter, 0=product, 1=service)
+     *  @param		limit					Limit on number of returned lines
+     *  @param		price_level				Level of price to show
+     *  @param		status					-1=Return all products, 0=Products not on sell, 1=Products on sell
+     *  @param		finished				2=all, 1=finished, 0=raw material
+     *  @param		$selected_input_value	Value of preselected input text (with ajax)
      */
-    function select_produits($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$status=1,$finished=2)
+    function select_produits($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$status=1,$finished=2,$selected_input_value='')
     {
         global $langs,$conf;
 
         if ($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
         {
             // mode=1 means customers products
-            print ajax_autocompleter('', $htmlname, DOL_URL_ROOT.'/product/ajaxproducts.php', 'outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
-            print $langs->trans("RefOrLabel").' : <input type="text" size="20" name="search_'.$htmlname.'" id="search_'.$htmlname.'">';
+            print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajaxproducts.php', 'outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
+            print $langs->trans("RefOrLabel").' : <input type="text" size="20" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'" />';
             print '<br>';
         }
         else
