@@ -18,10 +18,10 @@
  */
 
 /**
- *  	\file       htdocs/fourn/recap-fourn.php
- *		\ingroup    fournisseur
- *		\brief      Page de fiche recap fournisseur
- *		\version    $Id$
+ *      \file       htdocs/fourn/recap-fourn.php
+ *      \ingroup    fournisseur
+ *      \brief      Page de fiche recap fournisseur
+ *      \version    $Id$
  */
 
 require("../main.inc.php");
@@ -84,7 +84,7 @@ if ($socid > 0)
 
     if ($conf->fournisseur->enabled && $user->rights->facture->lire)
     {
-        // Factures
+        // Invoices list
         print_fiche_titre($langs->trans("SupplierPreview"));
 
         print '<table class="noborder" width="100%">';
@@ -147,17 +147,17 @@ if ($socid > 0)
                 print '<td align="right">&nbsp;</td>';
                 print '<td align="right">'.price($solde)."</td>\n";
 
-                // Auteur
+                // Author
                 print '<td nowrap="nowrap" width="50"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$objf->userid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$objf->login.'</a></td>';
 
                 print "</tr>\n";
 
                 // Payments
                 $sql = "SELECT p.rowid, p.datep as dp, pf.amount, p.statut,";
-                $sql.= " p.fk_user_creat, u.login, u.rowid as userid";
+                $sql.= " p.fk_user_author, u.login, u.rowid as userid";
                 $sql.= " FROM ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf,";
-                $sql.= " ".MAIN_DB_PREFIX."paiement as p";
-                $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON p.fk_user_creat = u.rowid";
+                $sql.= " ".MAIN_DB_PREFIX."paiementfourn as p";
+                $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON p.fk_user_author = u.rowid";
                 $sql.= " WHERE pf.fk_paiementfourn = p.rowid";
                 $sql.= " AND pf.fk_facturefourn = ".$fac->id;
 
