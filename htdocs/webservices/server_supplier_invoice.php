@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,6 +75,7 @@ $server->wsdl->addComplexType(
     array(
         'id' => array('name'=>'id','type'=>'xsd:string'),
         'type' => array('name'=>'type','type'=>'xsd:int'),
+        'desc' => array('name'=>'desc','type'=>'xsd:string'),
     	'fk_product' => array('name'=>'fk_product','type'=>'xsd:int'),
         'total_net' => array('name'=>'total_net','type'=>'xsd:double'),
     	'total_vat' => array('name'=>'total_vat','type'=>'xsd:double'),
@@ -367,6 +368,7 @@ function getSupplierInvoicesForThirdParty($authentication,$idthirdparty)
    				    $linesresp[]=array(
     					'id'=>$line->rowid,
     					'type'=>$line->product_type,
+                        'desc'=>dol_htmlcleanlastbr($line->description),
     					'total_net'=>$line->total_ht,
     					'total_vat'=>$line->total_tva,
     					'total'=>$line->total_ttc,

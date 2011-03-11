@@ -75,7 +75,8 @@ $server->wsdl->addComplexType(
     array(
         'id' => array('name'=>'id','type'=>'xsd:string'),
         'type' => array('name'=>'type','type'=>'xsd:int'),
-    	'fk_product' => array('name'=>'fk_product','type'=>'xsd:int'),
+        'desc' => array('name'=>'desc','type'=>'xsd:string'),
+        'fk_product' => array('name'=>'fk_product','type'=>'xsd:int'),
         'total_net' => array('name'=>'total_net','type'=>'xsd:double'),
     	'total_vat' => array('name'=>'total_vat','type'=>'xsd:double'),
     	'total' => array('name'=>'total','type'=>'xsd:double'),
@@ -258,11 +259,15 @@ function getInvoice($authentication,$id,$ref,$ref_ext)
 					$linesresp[]=array(
 						'id'=>$line->rowid,
 						'type'=>$line->product_type,
-						'total_net'=>$line->total_ht,
+                        'desc'=>dol_htmlcleanlastbr($line->description),
+					    'total_net'=>$line->total_ht,
 						'total_vat'=>$line->total_tva,
 						'total'=>$line->total_ttc,
                         'vat_rate'=>$line->tva_tx,
-                        'qty'=>$line->qty
+                        'qty'=>$line->qty,
+                        'product_ref'=>$line->product_ref,
+                        'product_label'=>$line->product_label,
+                        'product_desc'=>$line->product_desc,
 					);
 					$i++;
 				}
