@@ -40,6 +40,9 @@ class Categorie
 {
 	var $error;
 	var $db;
+	
+	var $element='category';
+	var $table_element='category';
 
 	var $id;
 	var $id_mere;
