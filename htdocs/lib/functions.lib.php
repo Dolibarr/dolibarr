@@ -3739,6 +3739,7 @@ function picto_from_langcode($codelang)
  *                              'product'          to add a tab in product view
  *                              'propal'           to add a tab in propal view
  *                              'member'           to add a tab in fundation member view
+ *                              'categories_x'	   to add a tab in category view ('x': type of category (0=product, 1=supplier, 2=customer, 3=member)
  *  @param      mode            'add' to complete head, 'remove' to remove entries
  */
 function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode='add')
