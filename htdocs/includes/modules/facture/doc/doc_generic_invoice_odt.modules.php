@@ -210,12 +210,19 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		$texte.= $form->textwithpicto($texttitle,$texthelp,1,'help');
 		//var_dump($listofdir);
 
-		$texte.= '<textarea class="flat" cols="80" name="value1">';
+		$texte.= '<table><tr><td>';
+		$texte.= '<textarea class="flat" cols="60" name="value1">';
 		$texte.=$conf->global->FACTURE_ADDON_PDF_ODT_PATH;
 		$texte.= '</textarea>';
+        $texte.= '</td>';
+		$texte.= '<td align="center">&nbsp; ';
+        $texte.= '<input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button">';
+        $texte.= '</td>';
+		$texte.= '</tr>';
+        $texte.= '</table>';
 
 		// Scan directories
-		if (sizeof($listofdir)) $texte.='<br>'.$langs->trans("NumberOfModelFilesFound").': '.sizeof($listoffiles);
+		if (sizeof($listofdir)) $texte.=$langs->trans("NumberOfModelFilesFound").': '.sizeof($listoffiles);
 
 		$texte.= '</td>';
 
@@ -225,11 +232,11 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		$texte.= '</td>';
 		$texte.= '</tr>';
 
-		// Example
-		$texte.= '<tr><td align="center">';
+		/*$texte.= '<tr>';
+		$texte.= '<td align="center">';
 		$texte.= '<input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button">';
 		$texte.= '</td>';
-		$texte.= '</tr>';
+		$texte.= '</tr>';*/
 
 		$texte.= '</table>';
 		$texte.= '</form>';
