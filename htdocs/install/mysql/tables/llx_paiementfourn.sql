@@ -25,7 +25,7 @@ create table llx_paiementfourn
   tms               timestamp,
   datec             datetime,          -- date de creation de l'enregistrement
   datep             datetime,          -- date de paiement
-  amount            real DEFAULT 0,    -- montant
+  amount            double(24,8) DEFAULT 0,    -- montant
   fk_user_author    integer,           -- auteur
   fk_paiement       integer NOT NULL,  -- moyen de paiement
   num_paiement      varchar(50),       -- numero de paiement (cheque)
