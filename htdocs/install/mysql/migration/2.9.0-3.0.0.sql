@@ -10,6 +10,9 @@
 -- To change type of field: ALTER TABLE llx_table MODIFY name varchar(60);
 -- To remove a column:      ALTER TABLE llx_table DROP COLUMN colname;
 
+ALTER TABLE llx_paiement MODIFY amount double(24,8); 
+ALTER TABLE llx_paiement_facture MODIFY amount double(24,8); 
+
 -- Fix bad old data
 UPDATE llx_bank_url SET type='payment' WHERE type='?' AND label='(payment)' AND url LIKE '%compta/paiement/fiche.php%';
 
