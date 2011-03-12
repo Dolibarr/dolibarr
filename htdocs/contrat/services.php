@@ -199,7 +199,7 @@ if ($resql)
 		print '<td>';
 		$productstatic->id=$obj->pid;
 		$productstatic->type=$obj->ptype;
-		$productstatic->ref=$obj->label?$obj->label:$obj->pid;
+		$productstatic->ref=$obj->label?$obj->label:($obj->description?$obj->description:$obj->pid);
 		print $productstatic->getNomUrl(1,'',20);
 		print '</td>';
 
