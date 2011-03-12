@@ -155,7 +155,7 @@ function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
     dol_syslog("IBS_WAIT: $IBS_WAIT", LOG_DEBUG);
     dol_syslog("IBS_LANG: $IBS_LANG", LOG_DEBUG);
     dol_syslog("IBS_OUTPUT: $IBS_OUTPUT", LOG_DEBUG);
-    dol_syslog("PBX_IDENTIFIANT: $PBX_IDENTITIANT", LOG_DEBUG);
+    dol_syslog("PBX_IDENTIFIANT: $PBX_IDENTIFIANT", LOG_DEBUG);
     dol_syslog("PBX_SOURCE: $PBX_SOURCE", LOG_DEBUG);
     dol_syslog("PBX_TYPEPAIEMENT: $PBX_TYPEPAIEMENT", LOG_DEBUG);
 
