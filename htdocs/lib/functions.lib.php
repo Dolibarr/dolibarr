@@ -138,7 +138,7 @@ function dol_buildpath($path,$type=0)
     		$res = DOL_URL_ROOT.$path;		// Standard value
     		if (defined('DOL_URL_ROOT_ALT') && DOL_URL_ROOT_ALT)			// We check only if alternate feature is used
     		{
-    			preg_match('/^([^.]+(\.css)?(\.php)?(\.js)?(\.png)?(\.jpg)?)/i',$path,$regs);    // Take part before '?'
+    			preg_match('/^([^.]+(\.css\.php|\.css|\.js\.php|\.js|\.png|\.jpg|\.php)?)/i',$path,$regs);    // Take part before '?'
     			if (! empty($regs[1]))
     			{
         			if (! file_exists(DOL_DOCUMENT_ROOT.$regs[1])) $res = DOL_URL_ROOT_ALT.$path;
@@ -150,7 +150,7 @@ function dol_buildpath($path,$type=0)
             $res = DOL_MAIN_URL_ROOT.$path;      // Standard value
             if (defined('DOL_URL_ROOT_ALT') && DOL_URL_ROOT_ALT)            // We check only if alternate feature is used
             {
-                preg_match('/^([^.]+(\.css)?(\.php)?(\.js)?(\.png)?(\.jpg)?)/i',$path,$regs);    // Take part before '?'
+                preg_match('/^([^.]+(\.css\.php|\.css|\.js\.php|\.js|\.png|\.jpg|\.php)?)/i',$path,$regs);    // Take part before '?'
                 if (! empty($regs[1]))
                 {
                     if (! file_exists(DOL_DOCUMENT_ROOT.$regs[1])) $res = DOL_MAIN_URL_ROOT_ALT.$path;
