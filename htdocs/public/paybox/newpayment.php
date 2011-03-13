@@ -117,7 +117,7 @@ if (GETPOST("action") == 'dopayment')
 	{
 		dol_syslog("newpayment.php call paybox api and do redirect", LOG_DEBUG);
 
-		print_paybox_redirect($PRICE, $conf->monnaie, $EMAIL, $urlok, $urlko, $TAG);
+		print_paybox_redirect($PRICE, $conf->monnaie, $EMAIL, $urlok, $urlko, $FULLTAG);
 
 		session_destroy();
 		exit;
