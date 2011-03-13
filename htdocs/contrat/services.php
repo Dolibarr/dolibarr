@@ -96,7 +96,7 @@ if ($mode == "5") $sql.= " AND cd.statut = 5";
 if ($filter == "expired") $sql.= " AND date_fin_validite < ".$db->idate($now);
 if ($search_nom)      $sql.= " AND s.nom like '%".$db->escape($search_nom)."%'";
 if ($search_contract) $sql.= " AND c.rowid = '".$db->escape($search_contract)."'";
-if ($search_service)  $sql.= " AND (p.ref like '%".$db->escape($search_service)."%' OR p.description like '%".$db->escape($search_service)."%')";
+if ($search_service)  $sql.= " AND (p.ref like '%".$db->escape($search_service)."%' OR p.description like '%".$db->escape($search_service)."%' OR cd.description LIKE '%".$db->escape($search_service)."%')";
 if ($socid > 0)       $sql.= " AND s.rowid = ".$socid;
 $filter_date1=dol_mktime(0,0,0,$_REQUEST['op1month'],$_REQUEST['op1day'],$_REQUEST['op1year']);
 $filter_date2=dol_mktime(0,0,0,$_REQUEST['op2month'],$_REQUEST['op2day'],$_REQUEST['op2year']);
@@ -197,10 +197,18 @@ if ($resql)
 
 		// Service
 		print '<td>';
-		$productstatic->id=$obj->pid;
-		$productstatic->type=$obj->ptype;
-		$productstatic->ref=$obj->label?$obj->label:($obj->description?$obj->description:$obj->pid);
-		print $productstatic->getNomUrl(1,'',20);
+		if ($obj->pid) 
+		{
+			$productstatic->id=$obj->pid;
+			$productstatic->type=$obj->ptype;
+			$productstatic->ref=$obj-label?$obj->label:$obj->pid;
+			print $productstatic->getNomUrl(1,'',20);
+		}
+		else
+		{
+			if ($obj->type == 0) print img_object($obj->description,'product').dol_trunc($obj->description,20);
+			if ($obj->type == 1) print img_object($obj->description,'service').dol_trunc($obj->description,20);
+		}
 		print '</td>';
 
 		// Third party
