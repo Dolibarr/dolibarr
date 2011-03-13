@@ -2209,10 +2209,10 @@ class Facture extends CommonObject
 
 
     /**
-     *	\brief      Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
-     *	\param      mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle lon
-     *	\param		alreadypaid		0=No payment already done, 1=Some payments already done
-     *	\return     string        	Libelle
+     *  Return label of object status
+     *  @param      mode            0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto
+     *  @param      alreadypaid     0=No payment already done, 1=Some payments already done
+     *  @return     string          Label
      */
     function getLibStatut($mode=0,$alreadypaid=-1)
     {
