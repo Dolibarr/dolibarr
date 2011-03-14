@@ -41,8 +41,8 @@ $canadduser=($user->admin || $user->rights->user->user->creer);
 $canreaduser=($user->admin || $user->rights->user->user->lire);
 $canedituser=($user->admin || $user->rights->user->user->creer);
 $candisableuser=($user->admin || $user->rights->user->user->supprimer);
-$canreadgroup=true;
-$caneditgroup=true;
+$canreadgroup=$canreaduser;
+$caneditgroup=$canedituser;
 if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 {
 	$canreadgroup=($user->admin || $user->rights->user->group_advance->read);
