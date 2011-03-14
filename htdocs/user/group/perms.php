@@ -3,7 +3,7 @@
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -113,6 +113,15 @@ if ($_GET["id"])
 		            {
 		                include_once($dir."/".$file);
 		                $objMod = new $modName($db);
+		                // Load all lang files of module
+		                if (isset($objMod->langfiles) && is_array($objMod->langfiles))
+		                {
+		                	foreach($objMod->langfiles as $domain)
+		                	{
+		                		$langs->load($domain);
+		                	}
+		                }
+		                // Load all permissions
 		                if ($objMod->rights_class) {
 
 		                    $ret=$objMod->insert_permissions(0);
