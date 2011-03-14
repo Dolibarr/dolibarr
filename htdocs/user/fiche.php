@@ -3,7 +3,7 @@
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -41,8 +41,8 @@ $canadduser=($user->admin || $user->rights->user->user->creer);
 $canreaduser=($user->admin || $user->rights->user->user->lire);
 $canedituser=($user->admin || $user->rights->user->user->creer);
 $candisableuser=($user->admin || $user->rights->user->user->supprimer);
-$canreadgroup=true;
-$caneditgroup=true;
+$canreadgroup=$canreaduser;
+$caneditgroup=$canedituser;
 if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 {
 	$canreadgroup=($user->admin || $user->rights->user->group_advance->read);
