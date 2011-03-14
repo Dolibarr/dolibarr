@@ -1,5 +1,6 @@
 -- ========================================================================
 -- Copyright (C) 2000-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2011      Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -26,8 +27,8 @@ create table llx_societe_remise
   fk_soc          integer NOT NULL,
   tms             timestamp,
   datec	          datetime,                            -- creation date
-  fk_user_author  integer,                             -- utilisateur qui a créé l'info
-  remise_client   real           DEFAULT 0,            -- remise systématique pour le client
+  fk_user_author  integer,                             -- creation user
+  remise_client   double(6,3)  DEFAULT 0 NOT NULL,     -- discount
   note            text
 
 )type=innodb;

@@ -9,7 +9,6 @@
 -- To rename a column:      ALTER TABLE llx_table CHANGE COLUMN oldname newname varchar(60);
 -- To change type of field: ALTER TABLE llx_table MODIFY name varchar(60);
 -- To remove a column:      ALTER TABLE llx_table DROP COLUMN colname;
---
 
 ALTER TABLE llx_paiement MODIFY amount double(24,8); 
 ALTER TABLE llx_paiement_facture MODIFY amount double(24,8); 
@@ -168,3 +167,5 @@ UPDATE llx_c_type_contact set module='order_supplier' WHERE module='supplier_ord
 
 ALTER TABLE llx_facturedet DROP INDEX uk_fk_remise_except;
 ALTER TABLE llx_facturedet ADD UNIQUE INDEX uk_fk_remise_except (fk_remise_except, fk_facture);
+
+ALTER TABLE llx_societe_remise MODIFY remise_client double(6,3) DEFAULT 0 NOT NULL;
