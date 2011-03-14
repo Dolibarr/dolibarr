@@ -26,6 +26,6 @@ create table llx_element_lock
 	datel    			datetime,				-- date of lock
 	datem    			datetime,				-- date of unlock/modif
 	fk_user_modif   	integer,
-	lock				tinyint DEFAULT 0,		-- 0 unlock, 1 lock
+	lock				tinyint DEFAULT 0		-- 0 unlock, 1 lock
 	
 )ENGINE=innodb;
