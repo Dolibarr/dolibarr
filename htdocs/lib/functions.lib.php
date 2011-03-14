@@ -3752,7 +3752,19 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
             $values=explode(':',$value);
             if ($mode == 'add')
             {
-                if (sizeof($values) == 5)       // new declaration
+            	if (sizeof($values) == 6)       // new declaration with permissions
+                {
+                    if ($values[0] != $type) continue;
+                    if (verifCond($values[4]))
+                    {
+                    	if ($values[3]) $langs->load($values[3]);
+                    	$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i',$object->id,$values[5]),1);
+                    	$head[$h][1] = $langs->trans($values[2]);
+                    	$head[$h][2] = str_replace('+','',$values[1]);
+                    	$h++;
+                    }
+                }
+            	if (sizeof($values) == 5)       // new declaration
                 {
                     if ($values[0] != $type) continue;
                     if ($values[3]) $langs->load($values[3]);
