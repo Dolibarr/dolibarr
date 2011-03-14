@@ -167,3 +167,5 @@ UPDATE llx_c_type_contact set module='order_supplier' WHERE module='supplier_ord
 
 ALTER TABLE llx_facturedet DROP INDEX uk_fk_remise_except;
 ALTER TABLE llx_facturedet ADD UNIQUE INDEX uk_fk_remise_except (fk_remise_except, fk_facture);
+
+ALTER TABLE llx_societe_remise MODIFY remise_client double(6,3) DEFAULT 0 NOT NULL;

@@ -12,7 +12,7 @@
 
 ALTER TABLE llx_adherent MODIFY login varchar(50);
 
-ALTER TABLE llx_c_actioncomm add COLUMN position integer NOT NULL DEFAULT 0;
+ALTER TABLE llx_c_actioncomm ADD COLUMN position integer NOT NULL DEFAULT 0;
 
 ALTER TABLE llx_commande_fournisseur MODIFY model_pdf varchar(255);
 ALTER TABLE llx_commande MODIFY model_pdf varchar(255);
@@ -27,16 +27,18 @@ ALTER TABLE llx_propal MODIFY model_pdf varchar(255);
 
 
 -- Delete old constants
-DELETE from llx_const where NAME = 'MAIN_MENU_BARRETOP';
-DELETE from llx_const where NAME = 'MAIN_MENUFRONT_BARRETOP';
-DELETE from llx_const where NAME = 'MAIN_MENU_BARRELEFT';
-DELETE from llx_const where NAME = 'MAIN_MENUFRONT_BARRELEFT';
+DELETE FROM llx_const WHERE name = 'MAIN_MENU_BARRETOP';
+DELETE FROM llx_const WHERE name = 'MAIN_MENUFRONT_BARRETOP';
+DELETE FROM llx_const WHERE name = 'MAIN_MENU_BARRELEFT';
+DELETE FROM llx_const WHERE name = 'MAIN_MENUFRONT_BARRELEFT';
 
-ALTER TABLE llx_facture_fourn ADD column ref_ext varchar(30) after entity;
-ALTER TABLE llx_commande_fournisseur ADD column ref_ext varchar(30) after entity;
+ALTER TABLE llx_facture_fourn ADD COLUMN ref_ext varchar(30) AFTER entity;
+ALTER TABLE llx_commande_fournisseur ADD COLUMN ref_ext varchar(30) AFTER entity;
 
 
 ALTER TABLE llx_facturedet DROP INDEX uk_fk_remise_except;
 ALTER TABLE llx_facturedet ADD UNIQUE INDEX uk_fk_remise_except (fk_remise_except, fk_facture);
 
-ALTER TABLE llx_societe ADD column fk_currency integer DEFAULT 0 after fk_forme_juridique;
+ALTER TABLE llx_societe ADD COLUMN fk_currency integer DEFAULT 0 AFTER fk_forme_juridique;
+
+ALTER TABLE llx_societe_remise MODIFY remise_client double(6,3) DEFAULT 0 NOT NULL;
