@@ -8,11 +8,11 @@ http://sourceforge.net/donate/index.php?group_id=128076
 ------------------------------------------------------------
 
 Name: TCPDF
-Version: 5.9.023
-Release date: 2010-11-25
+Version: 5.9.060
+Release date: 2011-03-08
 Author:	Nicola Asuni
 
-Copyright (c) 2002-2010:
+Copyright (c) 2002-2011:
 	Nicola Asuni
 	Tecnick.com s.r.l.
 	Via Della Pace, 11
@@ -61,12 +61,13 @@ Installation (full instructions on http:  www.tcpdf.org):
 
 Source Code Documentation:
 	doc/index.html
+	http://www.tcpdf.org/doc/
 
 For Additional Documentation:
 	http:  www.tcpdf.org
 
 License
-	Copyright (C) 2002-2010  Nicola Asuni - Tecnick.com S.r.l.
+	Copyright (C) 2002-2011  Nicola Asuni - Tecnick.com S.r.l.
 
 	TCPDF is free software: you can redistribute it and/or modify it
 	under the terms of the GNU Lesser General Public License as

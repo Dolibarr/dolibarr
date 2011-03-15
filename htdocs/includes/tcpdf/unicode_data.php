@@ -1,9 +1,9 @@
 <?php
 //============================================================+
 // File name   : unicode_data.php
-// Version     : 1.0.006
+// Version     : 1.0.007
 // Begin       : 2008-01-01
-// Last Update : 2010-10-18
+// Last Update : 2010-12-16
 // Author      : Nicola Asuni - Tecnick.com S.r.l - Via Della Pace, 11 - 09044 - Quartucciu (CA) - ITALY - www.tecnick.com - info@tecnick.com
 // License     : GNU-LGPL v3 (http://www.gnu.org/copyleft/lesser.html)
 // -------------------------------------------------------------------
@@ -35,71 +35,67 @@
 // Saleh AlMatrafe
 
 /**
+ * @file
  * Unicode data class for TCPDF library.
  * @author Nicola Asuni
- * @copyright 2008-2010 Nicola Asuni - Tecnick.com S.r.l (www.tecnick.com) Via Della Pace, 11 - 09044 - Quartucciu (CA) - ITALY - www.tecnick.com - info@tecnick.com
  * @package com.tecnick.tcpdf
- * @link http://www.tcpdf.org
- * @license http://www.gnu.org/copyleft/lesser.html LGPL
  * @since 2.1.000 (2008-01-08)
-*/
+ */
 
 /**
-* This is a PHP class containing Unicde data for TCPDF library
-* @name TCPDF_UNICODE_DATA
-* @package com.tecnick.tcpdf
-* @version 1.0.006
-* @author Nicola Asuni - info@tecnick.com
-* @link http://www.tcpdf.org
-* @license http://www.gnu.org/copyleft/lesser.html LGPL
-*/
+ * @class TCPDF_UNICODE_DATA
+ * This is a PHP class containing Unicde data for TCPDF library
+ * @package com.tecnick.tcpdf
+ * @version 1.0.007
+ * @author Nicola Asuni - info@tecnick.com
+ */
 class TCPDF_UNICODE_DATA {
 
 /**
- * @var Unicode code for Left-to-Right Mark
- * @access public
+ * Unicode code for Left-to-Right Mark.
+ * @public
  */
 public $uni_LRM = 8206;
 
 /**
- * @var Unicode code for Right-to-Left Mark
- * @access public
+ * Unicode code for Right-to-Left Mark.
+ * @public
  */
 public $uni_RLM = 8207;
 
 /**
- * @var Unicode code for Left-to-Right Embedding
- * @access public
+ * Unicode code for Left-to-Right Embedding.
+ * @public
  */
 public $uni_LRE = 8234;
 
 /**
- * @var Unicode code for Right-to-Left Embedding
- * @access public
+ * Unicode code for Right-to-Left Embedding.
+ * @public
  */
 public $uni_RLE = 8235;
 
 /**
- * @var Unicode code for Pop Directional Format
- * @access public
+ * Unicode code for Pop Directional Format.
+ * @public
  */
 public $uni_PDF = 8236;
 
 /**
- * @var Unicode code for Left-to-Right Override
- * @access public
+ * Unicode code for Left-to-Right Override.
+ * @public
  */
 public $uni_LRO = 8237;
 
 /**
- * @var Unicode code for Right-to-Left Override
- * @access public
+ * Unicode code for Right-to-Left Override.
+ * @public
  */
 public $uni_RLO = 8238;
 
-/*
- * @var Pattern to test RTL (Righ-To-Left) strings using regular expressions.
- * @access public
+/**
+ * Pattern to test RTL (Righ-To-Left) strings using regular expressions.
+ * @public
  */
 public $uni_RE_PATTERN_RTL = "/(
 	  \xD6\xBE                                             # R
@@ -115,10 +111,9 @@ public $uni_RE_PATTERN_RTL = "/(
 	| \xE2\x80[\xAB\xAE]                                   # RLE & RLO
 	)/x";
 
-/*
- * @var Pattern to test Arabic strings using regular expressions.
- * Source: http://www.w3.org/International/questions/qa-forms-utf-8
- * @access public
+/**
+ * Pattern to test Arabic strings using regular expressions. Source: http://www.w3.org/International/questions/qa-forms-utf-8
+ * @public
  */
 public $uni_RE_PATTERN_ARABIC = "/(
 		  \xD8[\x80-\x83\x8B\x8D\x9B\x9E\x9F\xA1-\xBA]  # AL
@@ -143,8 +138,8 @@ public $uni_RE_PATTERN_ARABIC = "/(
 		)/x";
 
 /**
- * @var Array of Unicode types
- * @access public
+ * Array of Unicode types.
+ * @public
  */
 public $uni_type = array(
 0=>'BN',
@@ -17870,10 +17865,8 @@ public $uni_type = array(
 );
 
 /**
- * @var Mirror unicode characters.
- * For information on bidi mirroring, see UAX #9: Bidirectional Algorithm,
- * at http://www.unicode.org/unicode/reports/tr9/
- * @access public
+ * Mirror unicode characters. For information on bidi mirroring, see UAX #9: Bidirectional Algorithm, at http://www.unicode.org/unicode/reports/tr9/
+ * @public
  */
 public $uni_mirror = array (
 0x0028=>0x0029,
@@ -18230,8 +18223,8 @@ public $uni_mirror = array (
 0xFF63=>0xFF62);
 
 /**
- * @var Arabic shape substitutions: char code => (isolated, final, initial, medial)
- * @access public
+ * Arabic shape substitutions: char code => (isolated, final, initial, medial).
+ * @public
  */
 public $uni_arabicsubst = array(
 1569=>array(65152),
@@ -18313,8 +18306,8 @@ public $uni_arabicsubst = array(
 );
 
 /**
- * @var Arabic laa letter: char code => isolated, final, initial, medial
- * @access public
+ * Arabic laa letter: (char code => isolated, final, initial, medial).
+ * @public
  */
 public $uni_laa_array = array (
 1570 =>array(65269, 65270, 65269, 65270),
@@ -18324,10 +18317,10 @@ public $uni_laa_array = array (
 );
 
 /**
- * @var Array of character substitutions for sequences of two diacritics symbols.
+ * Array of character substitutions for sequences of two diacritics symbols.
  * Putting the combining mark and character in the same glyph allows us to avoid the two marks overlapping each other in an illegible manner.
  * second NSM char code => substitution char
- * @access public
+ * @public
  */
 public $uni_diacritics = array (
 1612=>64606, # Shadda + Dammatan
@@ -18338,8 +18331,8 @@ public $uni_diacritics = array (
 );
 
 /**
- * @var Array of character substitutions from UTF-8 Unicode to Latin1
- * @access public
+ * Array of character substitutions from UTF-8 Unicode to Latin1.
+ * @public
  */
 public $uni_utf8tolatin = array (
 8364=>128, # Euro1

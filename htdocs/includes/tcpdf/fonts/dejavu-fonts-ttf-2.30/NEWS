@@ -1,3 +1,38 @@
+Changes from 2.31 to 2.32
+
+* added to Sans: Latin small letter p with stroke (U+1D7D), Latin capital letter p with stroke through descender (U+A750), Latin small letter p with stroke through descender (U+A751), Latin capital letter thorn with stroke (U+A764), Latin small letter thorn with stroke (U+A765), Latin capital letter thorn with stroke through descender (U+A766), Latin small letter thorn with stroke through descender (U+A767), Latin capital letter q with stroke through descender (U+A756), Latin small letter q with stroke through descender (U+A757), Latin capital letter p with flourish (U+A752), Latin small letter p with flourish (U+A753) (by Ben Laenen)
+* add new Indian rupee symbol (U+20B9) to Sans, Serif and Mono (although standardization in Unicode not complete yet, UTC did assign this code point) (by Ben Laenen)
+* Sans: adjusted U+0E3F, U+20AB, U+20AD-U+20AE, U+20B1, U+20B5, U+20B8 to have them take up the same width as digits (by Gee Fung Sit 薛至峰)
+* added U+23E8 to Sans (by Thomas Henlich)
+* fixed numerous bugs (#22579, #28189, #28977, N'Ko in Windows, fixed U+FB4F, anchors for U+0332-U+0333, made extensions in Misc. Technical connect, and other small fixes) (by Gee Fung Sit 薛至峰)
+* added looptail g as stylistic variant to Serif (by Gee Fung Sit 薛至峰)
+* added the remaining precomposed characters in Latin Extended Additional in Serif (by Gee Fung Sit 薛至峰)
+* added Georgian Mkhedruli (U+10D0-U+10FC) to Sans ExtraLight (by Besarion Gugushvili)
+* fix spacing in hinting of U+042E (Ю) in Mono (by Ben Laenen)
+* replaced U+2650 and minor changes to U+2640-U+2642, U+2699, U+26A2-U+26A5, U+26B2-U+26B5, U+26B8 in Sans (by Gee Fung Sit 薛至峰)
+* added U+1E9C-U+1E9D, U+1EFA-U+1EFB, U+2028-U+2029, U+20B8, U+2150-U+2152, U+2189, U+26C0-U+26C3, U+A722-U+A725, U+1F030-U+1F093 to Sans (by Gee Fung Sit 薛至峰)
+* added U+1E9C-U+1E9E, U+1EFA-U+1EFB, U+2028-U+2029, U+20B8, U+2181-U+2182, U+2185 U+A722-U+A725, to Sans ExtraLight (by Gee Fung Sit 薛至峰)
+* added U+20B8, U+22A2-U+22A5, U+A722-U+A725 to Mono (by Gee Fung Sit 薛至峰)
+* added U+02CD, U+01BF, U+01F7, U+0222-U+0223, U+0243-U+0244, U+0246-U+024F, U+2150-U+2152, U+2189, U+239B-U+23AD and U+A73D to Serif (by Gee Fung Sit 薛至峰)
+
+Changes from 2.30 to 2.31
+
+* fixed bug where Serif Condensed Italic wouldn't get proper subfamily tags (by
+  Ben Laenen)
+* added math operators U+2234-U+2237 to Mono (by Ben Laenen)
+* removed buggy instructions of U+032D (by Eugeniy Meshcheryakov)
+* added U+2C70, U+2C7E, U+2C7F to Sans and Sans Mono (by Denis Jacquerye)
+* added U+2C7D to Sans Mono (by Denis Jacquerye)
+* added U+2C6D, U+2C70-2C73, U+2C7E-2C7F to Serif (by Denis Jacquerye)
+* added extremas to alpha U+03B1 in Serif-Italic (by Denis Jacquerye)
+* added U+4A4, U+4A5 to Mono (by Andrey V. Panov)
+* added Arabic letters U+0657, U+0670, U+0688-U+0690, U+0693-U+0694,
+  U+0696-U+0697, U+0699-U+06A0, U+06A2-U+06A3, U+06A5, U+06A7-U+06A8,
+  U+06AA-U+06AE, U+06B0-U+06B4, U+06B6-U+06B9, U+06BB-U+06BE and their
+  contextual forms to Sans (by MihailJP)
+* added U+A78D LATIN CAPITAL LETTER TURNED H for coming Unicode 6.0 (by Denis
+  Jacquerye) 
+
 Changes from 2.29 to 2.30
 
 * added U+0462-U+0463 to Mono (by Denis Jacquerye) 

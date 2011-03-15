@@ -30,6 +30,10 @@ particular ISO 10646 blocks.
 	Arabic Presentation Forms-A		(U+FB50-U+FDFF)
 	Arabic Presentation Forms-B		(U+FE70-U+FEFF)
 
+* Yannis Haralambous and Wellcome Institute
+
+	Sinhala					(U+0D80-U+0DFF)
+
 * Young U. Ryu <ryoung AT utdallas.edu>
 
 	Arrows					(U+2190-U+21FF)
@@ -183,7 +187,15 @@ particular ISO 10646 blocks.
 
 * Daniel Johnson
 
+	Armenian (serif)                        (U+0530-U+058F)
 	Cherokee                                (U+13A0-U+13FF)
+	Unified Canadian Aboriginal Syllabics   (U+1400-U+167F)
+	UCAS Extended                           (U+18B0-U+18F5)
+	Tifinagh                                (U+2D30-U+2D7F)
+	Vai                                     (U+A500-U+A62B)
+	Latin Extended-D (Mayanist letters)     (U+A720-U+A7FF)
+	Kayah Li                                (U+A900-U+A92F)
+	Osmanya                                 (U+10480-U+104a7)
 
 * George Douros
 
@@ -196,7 +208,22 @@ particular ISO 10646 blocks.
 	Dominoes                                (U+1F030-U+1F093)
 
 * Steve White <stevan_white AT gmail.com>
+	Glagolitic                              (U+2C00-U+2C5F)
 	Coptic                                  (U+2C80-U+2CFF)
+
+* Pavel Skrylev is responsible for
+	Cyrillic Extended-A                     (U+2DEO-U+2DFF)
+  as well as many of the additions to
+	Cyrillic Extended-B                     (U+A640-U+A65F)
+
+* Mark Williamson
+  Made the MPH 2 Damase font, from which 
+	Hanunóo                                 (U+1720-U+173F)
+	Buginese                                (U+1A00-U+1A1F)
+	Tai Le                                  (U+1950-U+197F)
+	Ugaritic                                (U+10380-U+1039F)
+	Old Persian                             (U+103A0-U+103DF)
+
 
 * Primož Peterlin <primoz.peterlin AT biofiz.mf.uni-lj.si>
   maintained FreeFont for several years, and is thanked for all his work.

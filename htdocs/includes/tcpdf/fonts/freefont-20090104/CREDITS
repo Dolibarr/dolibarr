@@ -122,7 +122,6 @@ intlfonts 1.2 package and is available under the GPL at
 
 	Thai					(U+0E00-U+0E7F)
 
-
 * Shaheed R. Haque <srhaque AT iee.org>
 
 Shaheed Haque has developed a basic set of basic Bengali glyphs
@@ -357,6 +356,12 @@ precisely, "Public Domain under GNU Licence Produced by DMS
 Electronics for The Sri Lanka Tipitaka Project" (taken from the font
 comment), and took the effort of recoding the font to Unicode.
 
+These glyphs were later replaced by those from the LKLUG font
+<http://www.lug.lk/fonts/lklug>
+
+Finally the range was completely replaced by glyphs from the sinh TeX
+font, with much help and advice from Harshula Jayasuriya.
+
 	Sinhala					(U+0D80-U+0DFF)
        
 
@@ -515,8 +520,56 @@ of ancient sources.
 
 Created by hand a Cherokee range specially for FreeFont to be "in line with
 the classic Cherokee typefaces used in 19th century printing", but also to
-fit well with ranges previously in FreeFont.
+fit well with ranges previously in FreeFont.  Then he made Unified Canadian
+Syllabics in Sans, and a Cherokee and Kayah Li in Mono!  And never to be
+outdone by himself, then did UCAS Extended and Osmanya....  What next?
+
+	Armenian (serif)                        (U+0530-U+058F)
 	Cherokee                                (U+13A0-U+13FF)
+	Unified Canadian Aboriginal Syllabics   (U+1400-U+167F)
+	UCAS Extended                           (U+18B0-U+18F5)
+	Kayah Li                                (U+A900-U+A92F)
+	Tifinagh                                (U+2D30-U+2D7F)
+	Vai                                     (U+A500-U+A62B)
+	Latin Extended-D (Mayanist letters)     (U+A720-U+A7FF)
+	Osmanya                                 (U+10480-U+104a7)
+
+* Yannis Haralambous and Wellcome Institute
+
+In 1994, The Wellcome Library
+  The Wellcome Institute for the History of Medicine
+  183 Euston Road, London NW1 2BE, England.
+commissioned Mr. Haralambous to produce a Sinhalese font for them.
+
+We have received 03/09 official notice from Robert Kiley, Head of e-Strategy
+for the Wellcome Library, that Yannis' font could be included in GNU
+FreeFont under its GNU license.
+
+Thanks to Dominik Wujastyk, for providing us with feedback and contacts
+to repsonsible people at the Trust.
+
+	Sinhala					(U+0D80-U+0DFF)
+
+* The Sinhala font project http://sinhala.sourceforge.net/
+
+The Sinhala font project has taken the glyphs from Yannis Haralambous'
+Sinhala font, to produce a Unicode TrueType font, LKLUG.  These glyphs
+were for a while included in FreeFont.
+
+	Sinhala					(U+0D80-U+0DFF)
+
+* Steve White <stevan_white AT googlemail.com>
+
+Filled in a lot of missing characters, got some font features working,
+left fingerprints almost everywhere, and is responsible for these blocks:
+
+	Glagolitic                              (U+2C00-U+2C5F)
+	Coptic                                  (U+2C80-U+2CFF)
+
+* Pavel Skrylev is responsible for
+	Cyrillic Extended-A                     (U+2DEO-U+2DFF)
+  as well as many of the additions to
+	Cyrillic Extended-B                     (U+A640-U+A65F)
 
 Notes:
 
