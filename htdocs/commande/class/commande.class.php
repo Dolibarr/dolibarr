@@ -896,7 +896,10 @@ class Commande extends CommonObject
         if (empty($qty)) $qty=0;
         if (empty($info_bits)) $info_bits=0;
         if (empty($rang)) $rang=0;
-
+        if (empty($txtva)) $txtva=0;
+        if (empty($txlocaltax1)) $txlocaltax1=0;
+        if (empty($txlocaltax2)) $txlocaltax2=0;
+        
 		$remise_percent=price2num($remise_percent);
 		$qty=price2num($qty);
 		$pu_ht=price2num($pu_ht);

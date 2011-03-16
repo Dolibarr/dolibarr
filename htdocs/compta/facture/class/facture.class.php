@@ -1683,7 +1683,10 @@ class Facture extends CommonObject
         if (empty($info_bits)) $info_bits=0;
         if (empty($rang)) $rang=0;
         if (empty($ventil)) $ventil=0;
-
+        if (empty($txtva)) $txtva=0;
+        if (empty($txlocaltax1)) $txlocaltax1=0;
+        if (empty($txlocaltax2)) $txlocaltax2=0;
+        
         $remise_percent=price2num($remise_percent);
         $qty=price2num($qty);
         $pu_ht=price2num($pu_ht);
