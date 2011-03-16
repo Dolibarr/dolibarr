@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copytight (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,14 +25,24 @@
  *		\version	$Id$
  */
 
-require("../../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php');
+require_once("../../../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");
 
-$langs->load("bills");
-$langs->load("compta");
 $langs->load("banks");
 $langs->load("categories");
 
+
+/**
+ * Replace the default llxHeader function
+ * @param $head
+ * @param $title
+ * @param $help_url
+ * @param $target
+ * @param $disablejs
+ * @param $disablehead
+ * @param $arrayofjs
+ * @param $arrayofcss
+ */
 function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='')
 {
 	global $db, $user, $conf, $langs;
@@ -44,10 +55,11 @@ function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0
 	// Entry for each bank account
 	if ($user->rights->banque->lire)
 	{
-		$sql = "SELECT rowid, label, courant";
+		$sql = "SELECT rowid, label, courant, rappro, courant";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
 		$sql.= " WHERE entity = ".$conf->entity;
 		$sql.= " AND clos = 0";
+        $sql.= " ORDER BY label";
 
 		$resql = $db->query($sql);
 		if ($resql)
@@ -55,12 +67,16 @@ function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0
 			$numr = $db->num_rows($resql);
 			$i = 0;
 
-			if ($numr > 0) 	$menu->add("/compta/bank/index.php",$langs->trans("BankAccounts"),0,$user->rights->banque->lire);
+			if ($numr > 0) 	$menu->add('/compta/bank/index.php',$langs->trans("BankAccounts"),0,$user->rights->banque->lire);
 
 			while ($i < $numr)
 			{
 				$objp = $db->fetch_object($resql);
-				$menu->add_submenu("/compta/bank/fiche.php?id=".$objp->rowid,$objp->label,1,$user->rights->banque->lire);
+				$menu->add_submenu('/compta/bank/fiche.php?id='.$objp->rowid,$objp->label,1,$user->rights->banque->lire);
+                if ($objp->rappro && $objp->courant != 2)  // If not cash account and can be reconciliate
+                {
+				    $menu->add_submenu('/compta/bank/rappro.php?account='.$objp->rowid,$langs->trans("Conciliate"),2,$user->rights->banque->consolidate);
+                }
 /*
 				$menu->add_submenu("/compta/bank/annuel.php?account=".$objp->rowid ,$langs->trans("IOMonthlyReporting"));
 				$menu->add_submenu("/compta/bank/graph.php?account=".$objp->rowid ,$langs->trans("Graph"));
@@ -69,11 +85,12 @@ function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0
 				$i++;
 			}
 		}
+		else dol_print_error($db);
 		$db->free($resql);
 	}
 
 	left_menu('', $help_url, '', $menu->liste, 1);
-	main_area();
+    main_area();
 }
 
 ?>
