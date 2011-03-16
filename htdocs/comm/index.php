@@ -158,8 +158,8 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 		if ($num > 0)
 		{
 			print '<table class="noborder" width="100%">';
-			print "<tr class=\"liste_titre\">";
-			print "<td colspan=\"3\">".$langs->trans("ProposalsDraft")."</td></tr>";
+			print '<tr class="liste_titre">';
+			print '<td colspan="3">'.$langs->trans("ProposalsDraft").'</td></tr>';
 
 			$i = 0;
 			$var=true;
@@ -279,7 +279,7 @@ $max=3;
 
 if ($conf->propal->enabled && $user->rights->propale->lire)
 {
-	$sql = "SELECT s.nom as name, s.rowid, s.canvas, p.rowid as propalid, p.total_ht, p.ref, p.fk_statut, p.datep as dp";
+	$sql = "SELECT s.nom as name, s.rowid as socid, s.client, s.canvas, p.rowid as propalid, p.total_ht, p.ref, p.fk_statut, p.datep as dp";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql.= ", ".MAIN_DB_PREFIX."propal as p";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -329,17 +329,17 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 			print '</td>';
 
 			print '<td align="left">';
-            $companystatic->id=$obj->socid;
-            $companystatic->name=$obj->name;
-            $companystatic->client=$obj->client;
-            $companystatic->canvas=$obj->canvas;
+            $companystatic->id=$objp->socid;
+            $companystatic->name=$objp->name;
+            $companystatic->client=$objp->client;
+            $companystatic->canvas=$objp->canvas;
             print $companystatic->getNomUrl(1,'customer',44);
 			print '</td>';
-			print "<td align=\"right\">";
-			print dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
-			print "<td align=\"right\">".price($objp->total_ht)."</td>\n";
-			print "<td align=\"center\" width=\"14\">".$propalstatic->LibStatut($objp->fk_statut,3)."</td>\n";
-			print "</tr>\n";
+			print '<td align="right">';
+			print dol_print_date($db->jdate($objp->dp),'day').'</td>'."\n";
+			print '<td align="right">'.price($objp->total_ht).'</td>'."\n";
+			print '<td align="center" width="14">'.$propalstatic->LibStatut($objp->fk_statut,3).'</td>'."\n";
+			print '</tr>'."\n";
 			$i++;
 			$var=!$var;
 		}
@@ -604,12 +604,12 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 
 				print "</td>";
 
-				print "<td align=\"left\"><a href=\"fiche.php?socid=".$obj->rowid."\">".img_object($langs->trans("ShowCompany"),"company")." ".dol_trunc($obj->nom,44)."</a></td>\n";
-				print "<td align=\"right\">";
-				print dol_print_date($db->jdate($obj->dp),'day')."</td>\n";
-				print "<td align=\"right\">".price($obj->total_ttc)."</td>";
-				print "<td align=\"center\" width=\"14\">".$propalstatic->LibStatut($obj->fk_statut,3)."</td>\n";
-				print "</tr>\n";
+				print '<td align="left"><a href="fiche.php?socid='.$obj->rowid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->nom,44).'</a></td>'."\n";
+				print '<td align="right">';
+				print dol_print_date($db->jdate($obj->dp),'day').'</td>'."\n";
+				print '<td align="right">'.price($obj->total_ttc).'</td>';
+				print '<td align="center" width="14">'.$propalstatic->LibStatut($obj->fk_statut,3).'</td>'."\n";
+				print '</tr>'."\n";
 				$i++;
 				$total += $obj->total_ttc;
 			}
