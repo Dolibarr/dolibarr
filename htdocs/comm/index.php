@@ -140,7 +140,7 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire)
  */
 if ($conf->propal->enabled && $user->rights->propale->lire)
 {
-	$sql = "SELECT p.rowid, p.ref, p.total_ht, s.rowid as socid, s.nom, s.client";
+	$sql = "SELECT p.rowid, p.ref, p.total_ht, s.rowid as socid, s.nom as name, s.client, s.canvas";
 	$sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -158,8 +158,8 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 		if ($num > 0)
 		{
 			print '<table class="noborder" width="100%">';
-			print "<tr class=\"liste_titre\">";
-			print "<td colspan=\"3\">".$langs->trans("ProposalsDraft")."</td></tr>";
+			print '<tr class="liste_titre">';
+			print '<td colspan="3">'.$langs->trans("ProposalsDraft").'</td></tr>';
 
 			$i = 0;
 			$var=true;
@@ -174,8 +174,9 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 				print '</td>';
 				print '<td nowrap="nowrap">';
 				$companystatic->id=$obj->socid;
-				$companystatic->nom=$obj->nom;
+				$companystatic->name=$obj->name;
 				$companystatic->client=$obj->client;
+				$companystatic->canvas=$obj->canvas;
 				print $companystatic->getNomUrl(1,'customer',16);
 				print '</td>';
 				print '<td align="right" nowrap="nowrap">'.price($obj->total_ht).'</td></tr>';
@@ -205,7 +206,7 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
 {
 	$langs->load("orders");
 
-	$sql = "SELECT c.rowid, c.ref, c.total_ttc, s.rowid as socid, s.nom, s.client";
+	$sql = "SELECT c.rowid, c.ref, c.total_ttc, s.rowid as socid, s.nom as name, s.client, s.canvas";
 	$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -235,8 +236,9 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
 				print '<tr '.$bc[$var].'><td nowrap="nowrap"><a href="../commande/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref.'</a></td>';
 				print '<td nowrap="nowrap">';
 				$companystatic->id=$obj->socid;
-				$companystatic->nom=$obj->nom;
+				$companystatic->name=$obj->name;
 				$companystatic->client=$obj->client;
+                $companystatic->canvas=$obj->canvas;
 				print $companystatic->getNomUrl(1,'customer',16);
 				print '</td>';
 				print '<td align="right" nowrap="nowrap">'.price($obj->total_ttc).'</td></tr>';
@@ -277,7 +279,7 @@ $max=3;
 
 if ($conf->propal->enabled && $user->rights->propale->lire)
 {
-	$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.total_ht, p.ref, p.fk_statut, p.datep as dp";
+	$sql = "SELECT s.nom as name, s.rowid as socid, s.client, s.canvas, p.rowid as propalid, p.total_ht, p.ref, p.fk_statut, p.datep as dp";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql.= ", ".MAIN_DB_PREFIX."propal as p";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -326,12 +328,18 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 
 			print '</td>';
 
-			print '<td align="left"><a href="fiche.php?socid='.$objp->rowid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,44).'</a></td>';
-			print "<td align=\"right\">";
-			print dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
-			print "<td align=\"right\">".price($objp->total_ht)."</td>\n";
-			print "<td align=\"center\" width=\"14\">".$propalstatic->LibStatut($objp->fk_statut,3)."</td>\n";
-			print "</tr>\n";
+			print '<td align="left">';
+            $companystatic->id=$objp->socid;
+            $companystatic->name=$objp->name;
+            $companystatic->client=$objp->client;
+            $companystatic->canvas=$objp->canvas;
+            print $companystatic->getNomUrl(1,'customer',44);
+			print '</td>';
+			print '<td align="right">';
+			print dol_print_date($db->jdate($objp->dp),'day').'</td>'."\n";
+			print '<td align="right">'.price($objp->total_ht).'</td>'."\n";
+			print '<td align="center" width="14">'.$propalstatic->LibStatut($objp->fk_statut,3).'</td>'."\n";
+			print '</tr>'."\n";
 			$i++;
 			$var=!$var;
 		}
@@ -352,7 +360,7 @@ if ($conf->societe->enabled && $user->rights->societe->lire)
 {
 	$langs->load("boxes");
 
-	$sql = "SELECT s.rowid,s.nom,s.client,s.datec,s.tms";
+	$sql = "SELECT s.rowid, s.nom as name, s.client, s.datec,s.tms";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE s.client IN (1, 2, 3)";
@@ -376,15 +384,15 @@ if ($conf->societe->enabled && $user->rights->societe->lire)
 		print '</tr>';
 		if ($num)
 		{
-			$company=new Societe($db);
 			while ($i < $num)
 			{
 				$objp = $db->fetch_object($resql);
-				$company->id=$objp->rowid;
-				$company->nom=$objp->nom;
-				$company->client=$objp->client;
+				$companystatic->id=$objp->rowid;
+				$companystatic->name=$objp->name;
+				$companystatic->client=$objp->client;
+                $companystatic->canvas=$objp->canvas;
 				print '<tr '.$bc[$var].'>';
-				print '<td nowrap="nowrap">'.$company->getNomUrl(1,'customer',48).'</td>';
+				print '<td nowrap="nowrap">'.$companystatic->getNomUrl(1,'customer',48).'</td>';
 				print '<td align="right" nowrap>';
 				if ($objp->client == 2 || $objp->client == 3) print $langs->trans("Prospect");
 				if ($objp->client == 3) print ' / ';
@@ -412,7 +420,7 @@ if ($conf->fournisseur->enabled && $user->rights->societe->lire)
 {
 	$langs->load("boxes");
 
-	$sql = "SELECT s.nom, s.rowid, s.datec as dc, s.tms as dm";
+	$sql = "SELECT s.nom as name, s.rowid, s.datec as dc, s.canvas, s.tms as dm";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE s.fournisseur = 1";
@@ -435,14 +443,14 @@ if ($conf->fournisseur->enabled && $user->rights->societe->lire)
 		print '</tr>';
 		if ($num)
 		{
-			$company=new Societe($db);
 			while ($i < $num && $i < $max)
 			{
 				$objp = $db->fetch_object($result);
-				$company->id=$objp->rowid;
-				$company->nom=$objp->nom;
-				print '<tr '.$bc[$var].'>';
-				print '<td nowrap="nowrap">'.$company->getNomUrl(1,'supplier',48).'</td>';
+				$companystatic->id=$objp->rowid;
+                $companystatic->name=$objp->name;
+                $companystatic->canvas=$objp->canvas;
+                print '<tr '.$bc[$var].'>';
+				print '<td nowrap="nowrap">'.$companystatic->getNomUrl(1,'supplier',44).'</td>';
 				print '<td align="right">'.dol_print_date($db->jdate($objp->dm),'day').'</td>';
 				print '</tr>';
 				$var=!$var;
@@ -485,7 +493,8 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire && 0) // TODO A REFA
 {
 	$langs->load("contracts");
 
-	$sql = "SELECT s.nom, s.rowid, c.statut, c.rowid as contratid, p.ref, c.mise_en_service as datemes, c.fin_validite as datefin, c.date_cloture as dateclo";
+	$sql = "SELECT s.nom as name, s.rowid, s.canvas, ";
+	$sql.= " c.statut, c.rowid as contratid, p.ref, c.mise_en_service as datemes, c.fin_validite as datefin, c.date_cloture as dateclo";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql.= ", ".MAIN_DB_PREFIX."contrat as c";
 	$sql.= ", ".MAIN_DB_PREFIX."product as p";
@@ -517,7 +526,12 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire && 0) // TODO A REFA
 			{
 				$obj = $db->fetch_object($resql);
 				print "<tr ".$bc[$var]."><td><a href=\"../contrat/fiche.php?id=".$obj->contratid."\">".img_object($langs->trans("ShowContract","contract"))." ".$obj->ref."</a></td>";
-				print "<td><a href=\"fiche.php?socid=".$obj->rowid."\">".img_object($langs->trans("ShowCompany","company"))." ".$obj->nom."</a></td>\n";
+				print '<td>';
+                $companystatic->id=$objp->rowid;
+                $companystatic->name=$objp->name;
+                $companystatic->canvas=$objp->canvas;
+                print $companystatic->getNomUrl(1,'customer',44);
+				print '</td>'."\n";
 				print "<td align=\"right\">".$staticcontrat->LibStatut($obj->statut,3)."</td></tr>\n";
 				$var=!$var;
 				$i++;
@@ -590,12 +604,12 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 
 				print "</td>";
 
-				print "<td align=\"left\"><a href=\"fiche.php?socid=".$obj->rowid."\">".img_object($langs->trans("ShowCompany"),"company")." ".dol_trunc($obj->nom,44)."</a></td>\n";
-				print "<td align=\"right\">";
-				print dol_print_date($db->jdate($obj->dp),'day')."</td>\n";
-				print "<td align=\"right\">".price($obj->total_ttc)."</td>";
-				print "<td align=\"center\" width=\"14\">".$propalstatic->LibStatut($obj->fk_statut,3)."</td>\n";
-				print "</tr>\n";
+				print '<td align="left"><a href="fiche.php?socid='.$obj->rowid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->nom,44).'</a></td>'."\n";
+				print '<td align="right">';
+				print dol_print_date($db->jdate($obj->dp),'day').'</td>'."\n";
+				print '<td align="right">'.price($obj->total_ttc).'</td>';
+				print '<td align="center" width="14">'.$propalstatic->LibStatut($obj->fk_statut,3).'</td>'."\n";
+				print '</tr>'."\n";
 				$i++;
 				$total += $obj->total_ttc;
 			}
