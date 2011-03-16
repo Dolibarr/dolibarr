@@ -701,7 +701,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
     // Description long of product line
     if ($desc && ($desc != $label))
     {
-        if ($libelleproduitservice && !$hidedesc) $libelleproduitservice.="\n";
+        if ( $libelleproduitservice && ! empty($hidedesc) ) $libelleproduitservice.="\n";
 
         if ($desc == '(CREDIT_NOTE)' && $object->lines[$i]->fk_remise_except)
         {
@@ -713,7 +713,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
         {
             if ($idprod)
             {
-                if (!$hidedesc) $libelleproduitservice.=$desc;
+                if (! empty($hidedesc)) $libelleproduitservice.=$desc;
             }
             else
             {
