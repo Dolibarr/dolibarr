@@ -54,7 +54,7 @@ $comid = GETPOST("id");
 if (empty($comid)) $comid=GETPOST("orderid");
 
 // Security check
-$socid=0;
+$socid=GETPOST('socid');
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'commande',$comid,'');
 
