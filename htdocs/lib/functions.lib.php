@@ -1905,12 +1905,12 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 		{
 			$sql='';
 
-			$check = array('user','usergroup','produit','service','produit|service'); // Test on entity only (Objects with no link to company)
+			$check = array('banque','user','usergroup','produit','service','produit|service'); // Test on entity only (Objects with no link to company)
 			$checksoc = array('societe');	 // Test for societe object
 			$checkother = array('contact');	 // Test on entity and link to societe. Allowed if link is empty (Ex: contacts...).
             $checkproject = array('projet'); // Test for project object
 			$nocheck = array('categorie','barcode','stock','fournisseur');	// No test
-            $checkdefault = 'all other not already defined'; // Test on entity and link to societe. Not allowed if link is empty (Ex: invoice, orders...).
+            $checkdefault = 'all other not already defined'; // Test on entity and link to third party. Not allowed if link is empty (Ex: invoice, orders...).
 
 			// If dbtable not defined, we use same name for table than module name
 			if (empty($dbtablename)) $dbtablename = $feature;
@@ -1990,7 +1990,7 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
                     if (! in_array($objectid,$tmparray)) accessforbidden();
                 }
             }
-			else if (!in_array($feature,$nocheck))
+			else if (!in_array($feature,$nocheck))	// By default we check with link to third party
 			{
 				// If external user: Check permission for external users
 				if ($user->societe_id > 0)
