@@ -422,33 +422,46 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     {
         if ($maskraz > 12) return 'ErrorBadMaskBadRazMonth';
 
-        // Define reg
-        if ($maskraz > 1 && ! preg_match('/^(.*)\{(m)+\}\{(y)+\}/i',$maskwithonlyymcode,$reg)) return 'ErrorCantUseRazInStartedYearIfNoYearMonthInMask';
-        else if ($maskraz > 1 && ! preg_match('/^(.*)\{(y)+\}\{(m)+\}/i',$maskwithonlyymcode,$reg)) return 'ErrorCantUseRazInStartedYearIfNoYearMonthInMask';
-        if ($maskraz <= 1 && ! preg_match('/^(.*)\{(y)+\}/i',$maskwithonlyymcode,$reg)) return 'ErrorCantUseRazIfNoYearInMask';
-        //print "x".$maskwithonlyymcode." ".$maskraz;
-        
+        // Define posy, posm and reg
+        if ($maskraz > 1)
+        {
+        	 if (! preg_match('/^(.*)\{(y+)\}\{(m+)\}/i',$maskwithonlyymcode)
+        	 	&& ! preg_match('/^(.*)\{(m+)\}\{(y+)\}/i',$maskwithonlyymcode)) return 'ErrorCantUseRazInStartedYearIfNoYearMonthInMask';
+        	 if (preg_match('/^(.*)\{(y+)\}\{(m+)\}/i',$maskwithonlyymcode,$reg)) { $posy=2; $posm=3; }
+        	 elseif (preg_match('/^(.*)\{(m+)\}\{(y+)\}/i',$maskwithonlyymcode,$reg)) { $posy=3; $posm=2; }
+        	 if (dol_strlen($reg[$posy]) < 2) return 'ErrorCantUseRazWithYearOnOneDigit';
+        } 
+        else
+        {
+        	if (! preg_match('/^(.*)\{(y+)\}/i',$maskwithonlyymcode)) return 'ErrorCantUseRazIfNoYearInMask';	
+        	if (preg_match('/^(.*)\{(y+)\}/i',$maskwithonlyymcode,$reg)) { $posy=2; $posm=0; }
+        }
+        //print "x".$maskwithonlyymcode." ".$maskraz." ".$posy." ".$posm;
+
         // Define $yearcomp and $monthcomp (that will be use in the select where to search max number)
         $monthcomp=$maskraz;
         $yearoffset=0;
         $yearcomp=0;
         if (date("m",$date) < $maskraz) { $yearoffset=-1; }	// If current month lower that month of return to zero, year is previous year
-        if (dol_strlen($reg[2]) == 4) $yearcomp=sprintf("%04d",date("Y",$date)+$yearoffset);
-        if (dol_strlen($reg[2]) == 2) $yearcomp=sprintf("%02d",date("y",$date)+$yearoffset);
-        if (dol_strlen($reg[2]) == 1) $yearcomp=substr(date("y",$date),2,1)+$yearoffset;
-
+        if (dol_strlen($reg[$posy]) == 4) $yearcomp=sprintf("%04d",date("Y",$date)+$yearoffset);
+        if (dol_strlen($reg[$posy]) == 2) $yearcomp=sprintf("%02d",date("y",$date)+$yearoffset);
+        if (dol_strlen($reg[$posy]) == 1) $yearcomp=substr(date("y",$date),2,1)+$yearoffset;
         $sqlwhere='';
         $sqlwhere.='( (SUBSTRING('.$field.', '.(dol_strlen($reg[1])+1).', '.dol_strlen($reg[2]).') >= '.$yearcomp;
         if ($monthcomp > 1)	// Test useless if monthcomp = 1 (or 0 is same as 1)
         {
-            $sqlwhere.=' AND SUBSTRING('.$field.', '.(dol_strlen($reg[1])+dol_strlen($reg[2])+1).', '.dol_strlen($reg[3]).') >= '.$monthcomp.')';
-            $sqlwhere.=' OR SUBSTRING('.$field.', '.(dol_strlen($reg[1])+1).', '.dol_strlen($reg[2]).') >= '.sprintf("%02d",($yearcomp+1)).' )';
+        	if (dol_strlen($reg[$posy]) == 4) $yearcomp1=sprintf("%04d",date("Y",$date)+$yearoffset+1);
+        	if (dol_strlen($reg[$posy]) == 2) $yearcomp1=sprintf("%02d",date("y",$date)+$yearoffset+1);
+        	// FIXME If mask is {mm}{yy}, sqlwhere is wrong here
+        	$sqlwhere.=' AND SUBSTRING('.$field.', '.(dol_strlen($reg[1])+dol_strlen($reg[2])+1).', '.dol_strlen($reg[3]).') >= '.$monthcomp.')';
+            $sqlwhere.=' OR SUBSTRING('.$field.', '.(dol_strlen($reg[1])+1).', '.dol_strlen($reg[2]).') >= '.$yearcomp1.' )';
         }
         else
         {
             $sqlwhere.=') )';
         }
     }
+    //print $sqlwhere;
     //print "masktri=".$masktri." maskcounter=".$maskcounter." maskraz=".$maskraz." maskoffset=".$maskoffset." yearcomp=".$yearcomp."<br>\n";
 
     // Define $sqlstring
