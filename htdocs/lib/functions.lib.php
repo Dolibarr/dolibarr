@@ -3414,9 +3414,9 @@ function monthArrayOrSelected($selected=0)
  *	@return		html			Return html output
  *  @see        dol_print_error
  */
-function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $ajax=0)
+function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok')
 {
-	global $langs;
+	global $conf, $langs;
 
 	$ret = '';
 	$out = '';
@@ -3424,24 +3424,24 @@ function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $ajax=0)
 	if (is_array($mesgarray) && sizeof($mesgarray))
 	{
         $langs->load("errors");
-	    if (! $ajax) $out.= '<div class="'.$style.'">';
+	    if (! $conf->global->MAIN_USE_JQUERY_JNOTIFY) $out.= '<div class="'.$style.'">';
 		foreach($mesgarray as $message)
 		{
 			$ret++;
 			$out.= $langs->trans($message);
 			if ($ret < sizeof($mesgarray)) $out.= "<br>\n";
 		}
-		if (! $ajax) $out.= '</div>';
+		if (! $conf->global->MAIN_USE_JQUERY_JNOTIFY) $out.= '</div>';
 	}
 	if ($mesgstring)
 	{
         $langs->load("errors");
 	    $ret++;
-		if (! $ajax) $out.= '<div class="'.$style.'">';
+		if (! $conf->global->MAIN_USE_JQUERY_JNOTIFY) $out.= '<div class="'.$style.'">';
 		$out.= $langs->trans($mesgstring);
-		if (! $ajax) $out.= '</div>';
+		if (! $conf->global->MAIN_USE_JQUERY_JNOTIFY) $out.= '</div>';
 	}
-	if ($ajax)
+	if ($conf->global->MAIN_USE_JQUERY_JNOTIFY)
 	{ 
 		print '<script type="text/javascript">
 				jQuery(document).ready(function() {
@@ -3464,9 +3464,9 @@ function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $ajax=0)
  *  @return     html            Return html output
  *  @see        dol_print_error
  */
-function dol_htmloutput_errors($mesgstring='',$mesgarray='',$ajax=0)
+function dol_htmloutput_errors($mesgstring='',$mesgarray='')
 {
-    return dol_htmloutput_mesg($mesgstring, $mesgarray, 'error',$ajax);
+    return dol_htmloutput_mesg($mesgstring, $mesgarray, 'error');
 }
 
 
