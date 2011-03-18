@@ -423,9 +423,9 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
         if ($maskraz > 12) return 'ErrorBadMaskBadRazMonth';
 
         // Define reg
-        //if ($maskraz > 1 && ! preg_match('/^(.*)\{(y)+\}\{(m)+\}/i',$maskwithonlyymcode,$reg) && ! preg_match('/^(.*)\{(m)+\}\{(y)+\}/i',$maskwithonlyymcode,$reg)) return 'ErrorCantUseRazInStartedYearIfNoYearMonthInMask';
-        if ($maskraz > 1 && ! preg_match('/^(.*)\{(y+)\}\{(m+)\}/i',$maskwithonlyymcode,$reg)) return 'ErrorCantUseRazInStartedYearIfNoYearMonthInMask';
-        if ($maskraz <= 1 && ! preg_match('/^(.*)\{(y+)\}/i',$maskwithonlyymcode,$reg)) return 'ErrorCantUseRazIfNoYearInMask';
+        if ($maskraz > 1 && ! preg_match('/^(.*)\{(m)+\}\{(y)+\}/i',$maskwithonlyymcode,$reg)) return 'ErrorCantUseRazInStartedYearIfNoYearMonthInMask';
+        if ($maskraz > 1 && ! preg_match('/^(.*)\{(y)+\}\{(m)+\}/i',$maskwithonlyymcode,$reg)) return 'ErrorCantUseRazInStartedYearIfNoYearMonthInMask';
+        if ($maskraz <= 1 && ! preg_match('/^(.*)\{(y)+\}/i',$maskwithonlyymcode,$reg)) return 'ErrorCantUseRazIfNoYearInMask';
         //print "x".$maskwithonlyymcode." ".$maskraz;
         
         // Define $yearcomp and $monthcomp (that will be use in the select where to search max number)
