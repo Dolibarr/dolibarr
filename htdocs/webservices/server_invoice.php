@@ -191,7 +191,7 @@ $ns
 /**
  * Get invoice from id, ref or ref_ext
  */
-function getInvoice($authentication,$id,$ref,$ref_ext)
+function getInvoice($authentication,$id='',$ref='',$ref_ext='')
 {
 	global $db,$conf,$langs;
 

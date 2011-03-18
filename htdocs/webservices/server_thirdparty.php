@@ -126,7 +126,7 @@ $ns
 
 
 // Full methods code
-function getThirdParty($authentication,$id,$ref,$ref_ext)
+function getThirdParty($authentication,$id='',$ref='',$ref_ext='')
 {
 	global $db,$conf,$langs;
 
