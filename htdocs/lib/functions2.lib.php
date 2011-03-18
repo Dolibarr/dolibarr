@@ -424,7 +424,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
 
         // Define reg
         if ($maskraz > 1 && ! preg_match('/^(.*)\{(m)+\}\{(y)+\}/i',$maskwithonlyymcode,$reg)) return 'ErrorCantUseRazInStartedYearIfNoYearMonthInMask';
-        if ($maskraz > 1 && ! preg_match('/^(.*)\{(y)+\}\{(m)+\}/i',$maskwithonlyymcode,$reg)) return 'ErrorCantUseRazInStartedYearIfNoYearMonthInMask';
+        else if ($maskraz > 1 && ! preg_match('/^(.*)\{(y)+\}\{(m)+\}/i',$maskwithonlyymcode,$reg)) return 'ErrorCantUseRazInStartedYearIfNoYearMonthInMask';
         if ($maskraz <= 1 && ! preg_match('/^(.*)\{(y)+\}/i',$maskwithonlyymcode,$reg)) return 'ErrorCantUseRazIfNoYearInMask';
         //print "x".$maskwithonlyymcode." ".$maskraz;
         
