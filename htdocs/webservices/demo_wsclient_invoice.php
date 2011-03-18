@@ -31,6 +31,7 @@ require_once(NUSOAP_PATH.'/nusoap.php');		// Include SOAP
 $WS_DOL_URL = $dolibarr_main_url_root.'/webservices/server_invoice.php';
 $WS_METHOD1  = 'getInvoice';
 $WS_METHOD2  = 'getInvoicesForThirdParty';
+$ns='http://www.dolibarr.org/ns/';
 
 
 // Set the WebService URL
@@ -39,11 +40,13 @@ $soapclient1 = new nusoap_client($WS_DOL_URL);
 if ($soapclient1)
 {
 	$soapclient1->soap_defencoding='UTF-8';
+	$soapclient1->decodeUTF8(false);
 }
 $soapclient2 = new nusoap_client($WS_DOL_URL);
 if ($soapclient2)
 {
     $soapclient2->soap_defencoding='UTF-8';
+	$soapclient2->decodeUTF8(false);
 }
 
 // Call the WebService method and store its result in $result.
@@ -56,7 +59,7 @@ $authentication=array(
 
 $parameters = array('authentication'=>$authentication,'id'=>1,'ref'=>'');
 dol_syslog("Call method ".$WS_METHOD1);
-$result1 = $soapclient1->call($WS_METHOD1,$parameters);
+$result1 = $soapclient1->call($WS_METHOD1,$parameters,$ns,'');
 if (! $result1)
 {
 	print $soapclient1->error_str;
@@ -65,7 +68,7 @@ if (! $result1)
 
 $parameters = array('authentication'=>$authentication,'idthirdparty'=>'1');
 dol_syslog("Call method ".$WS_METHOD2);
-$result2 = $soapclient2->call($WS_METHOD2,$parameters);
+$result2 = $soapclient2->call($WS_METHOD2,$parameters,$ns,'');
 if (! $result2)
 {
     print $soapclient2->error_str;

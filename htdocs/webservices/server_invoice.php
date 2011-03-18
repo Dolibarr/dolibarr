@@ -46,6 +46,7 @@ if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
 // Create the soap Object
 $server = new nusoap_server();
 $server->soap_defencoding='UTF-8';
+$server->decode_utf8=false;
 $ns='http://www.dolibarr.org/ns/';
 $server->configureWSDL('WebServicesDolibarrInvoice',$ns);
 $server->wsdl->schemaTargetNamespace=$ns;
@@ -212,11 +213,6 @@ function getInvoice($authentication,$id,$ref,$ref_ext)
 		$error++;
 		$errorcode='BAD_VALUE_FOR_SECURITY_KEY'; $errorlabel='Value provided into dolibarrkey entry field does not match security key defined in Webservice module setup';
 	}
-    if (! $error && ! empty($authentication['entity']) && ! is_numeric($authentication['entity']))
-    {
-        $error++;
-        $errorcode='BAD_PARAMETERS'; $errorlabel="Parameter entity must be empty (or a numeric with id of instance if multicompany module is used).";
-    }
 
 	if (! $error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext)))
 	{
