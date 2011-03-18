@@ -359,6 +359,8 @@ foreach ($conf->file->dol_document_root as $dirroot)
 							print '</td>';
 
 							print "</tr>\n";
+							
+							if (! empty($module->error)) dol_htmloutput_errors($module->error,'',$conf->global->MAIN_USE_JQUERY_JNOTIFY);
 						}
 					}
 				}

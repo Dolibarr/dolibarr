@@ -3414,31 +3414,44 @@ function monthArrayOrSelected($selected=0)
  *	@return		html			Return html output
  *  @see        dol_print_error
  */
-function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok')
+function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $ajax=0)
 {
 	global $langs;
 
 	$ret = '';
+	$out = '';
 
 	if (is_array($mesgarray) && sizeof($mesgarray))
 	{
         $langs->load("errors");
-	    print '<div class="'.$style.'">';
+	    if (! $ajax) $out.= '<div class="'.$style.'">';
 		foreach($mesgarray as $message)
 		{
 			$ret++;
-			print $langs->trans($message);
-			if ($ret < sizeof($mesgarray)) print "<br>\n";
+			$out.= $langs->trans($message);
+			if ($ret < sizeof($mesgarray)) $out.= "<br>\n";
 		}
-		print '</div>';
+		if (! $ajax) $out.= '</div>';
 	}
 	if ($mesgstring)
 	{
         $langs->load("errors");
 	    $ret++;
-		print '<div class="'.$style.'">';
-		print $langs->trans($mesgstring);
-		print '</div>';
+		if (! $ajax) $out.= '<div class="'.$style.'">';
+		$out.= $langs->trans($mesgstring);
+		if (! $ajax) $out.= '</div>';
+	}
+	if ($ajax)
+	{ 
+		print '<script type="text/javascript">
+				jQuery(document).ready(function() {
+					jQuery.jnotify("'.$out.'", "'.($style=="ok" ? 3000 : $style).'", '.($style=="ok" ? "false" : "true").');
+				});
+			</script>';
+	}
+	else
+	{
+		print $out;
 	}
 
 	return $ret;
@@ -3451,9 +3464,9 @@ function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok')
  *  @return     html            Return html output
  *  @see        dol_print_error
  */
-function dol_htmloutput_errors($mesgstring='',$mesgarray='')
+function dol_htmloutput_errors($mesgstring='',$mesgarray='',$ajax=0)
 {
-    return dol_htmloutput_mesg($mesgstring, $mesgarray, 'error');
+    return dol_htmloutput_mesg($mesgstring, $mesgarray, 'error',$ajax);
 }
 
 
