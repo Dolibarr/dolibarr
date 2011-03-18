@@ -29,7 +29,9 @@ require_once("../master.inc.php");
 require_once(NUSOAP_PATH.'/nusoap.php');		// Include SOAP
 
 $WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_other.php';
+//$WS_DOL_URL = 'http://localhost:8080/';	// If not a page, should end with /
 $WS_METHOD  = 'getVersions';
+$ns='http://www.dolibarr.org/ns/';
 
 
 // Set the WebService URL
@@ -38,6 +40,7 @@ $soapclient = new nusoap_client($WS_DOL_URL);
 if ($soapclient)
 {
 	$soapclient->soap_defencoding='UTF-8';
+	$soapclient->decodeUTF8(false);
 }
 
 // Call the WebService method and store its result in $result.
@@ -49,10 +52,16 @@ $authentication=array(
     'entity'=>'');
 $parameters = array('authentication'=>$authentication);
 dol_syslog("Call method ".$WS_METHOD);
-$result = $soapclient->call($WS_METHOD,$parameters);
+$result = $soapclient->call($WS_METHOD,$parameters,$ns,'');
 if (! $result)
 {
+	//var_dump($soapclient);
+	//print_r($soapclient);
 	print $soapclient->error_str;
+	print "<br>\n\n";
+	print $soapclient->request;
+	print "<br>\n\n";
+	print $soapclient->response;
 	exit;
 }
 

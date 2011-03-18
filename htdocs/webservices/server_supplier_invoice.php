@@ -46,6 +46,7 @@ if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
 // Create the soap Object
 $server = new nusoap_server();
 $server->soap_defencoding='UTF-8';
+$server->decode_utf8=false;
 $ns='http://www.dolibarr.org/ns/';
 $server->configureWSDL('WebServicesDolibarrSupplierInvoice',$ns);
 $server->wsdl->schemaTargetNamespace=$ns;
@@ -193,7 +194,7 @@ $ns
 /**
  * Get invoice from id, ref or ref_ext
  */
-function getSupplierInvoice($authentication,$id,$ref,$ref_ext)
+function getSupplierInvoice($authentication,$id='',$ref='',$ref_ext='')
 {
 	global $db,$conf,$langs;
 

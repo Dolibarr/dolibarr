@@ -46,6 +46,7 @@ if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
 // Create the soap Object
 $server = new nusoap_server();
 $server->soap_defencoding='UTF-8';
+$server->decode_utf8=false;
 $ns='http://www.dolibarr.org/ns/';
 $server->configureWSDL('WebServicesDolibarrThirdParty',$ns);
 $server->wsdl->schemaTargetNamespace=$ns;
@@ -125,7 +126,7 @@ $ns
 
 
 // Full methods code
-function getThirdParty($authentication,$id,$ref,$ref_ext)
+function getThirdParty($authentication,$id='',$ref='',$ref_ext='')
 {
 	global $db,$conf,$langs;
 
