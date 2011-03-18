@@ -212,12 +212,7 @@ if ($user->rights->categorie->creer)
 
 		print_fiche_titre($langs->trans("CreateCat"));
 
-		if ($categorie->error)
-		{
-			print '<div class="error">';
-			print $categorie->error;
-			print '</div>';
-		}
+		dol_htmloutput_errors($categorie->error);
 
 		print '<table width="100%" class="border">';
 
