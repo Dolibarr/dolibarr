@@ -3411,7 +3411,7 @@ function monthArrayOrSelected($selected=0)
  *	@param		mesgstring		Message
  *	@param		mesgarray		Messages array
  *  @param      style           Style of message output
- *	@return		html			Return html output
+ *	@return		string			Return html output
  *  @see        dol_print_error
  */
 function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok')
@@ -3424,25 +3424,25 @@ function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok')
 	if (is_array($mesgarray) && sizeof($mesgarray))
 	{
         $langs->load("errors");
-	    if (! $conf->global->MAIN_USE_JQUERY_JNOTIFY) $out.= '<div class="'.$style.'">';
+	    if (empty($conf->global->MAIN_USE_JQUERY_JNOTIFY)) $out.= '<div class="'.$style.'">';
 		foreach($mesgarray as $message)
 		{
 			$ret++;
 			$out.= $langs->trans($message);
 			if ($ret < sizeof($mesgarray)) $out.= "<br>\n";
 		}
-		if (! $conf->global->MAIN_USE_JQUERY_JNOTIFY) $out.= '</div>';
+		if (empty($conf->global->MAIN_USE_JQUERY_JNOTIFY)) $out.= '</div>';
 	}
 	if ($mesgstring)
 	{
         $langs->load("errors");
 	    $ret++;
-		if (! $conf->global->MAIN_USE_JQUERY_JNOTIFY) $out.= '<div class="'.$style.'">';
+		if (empty($conf->global->MAIN_USE_JQUERY_JNOTIFY)) $out.= '<div class="'.$style.'">';
 		$out.= $langs->trans($mesgstring);
-		if (! $conf->global->MAIN_USE_JQUERY_JNOTIFY) $out.= '</div>';
+		if (empty($conf->global->MAIN_USE_JQUERY_JNOTIFY)) $out.= '</div>';
 	}
-	if ($conf->global->MAIN_USE_JQUERY_JNOTIFY && ! empty($out))
-	{ 
+	if (! empty($conf->global->MAIN_USE_JQUERY_JNOTIFY) && $out)
+	{
 		print '<script type="text/javascript">
 				jQuery(document).ready(function() {
 					jQuery.jnotify("'.$out.'", "'.($style=="ok" ? 3000 : $style).'", '.($style=="ok" ? "false" : "true").');
