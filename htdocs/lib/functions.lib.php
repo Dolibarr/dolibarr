@@ -3441,7 +3441,7 @@ function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok')
 		$out.= $langs->trans($mesgstring);
 		if (! $conf->global->MAIN_USE_JQUERY_JNOTIFY) $out.= '</div>';
 	}
-	if ($conf->global->MAIN_USE_JQUERY_JNOTIFY)
+	if ($conf->global->MAIN_USE_JQUERY_JNOTIFY && ! empty($out))
 	{ 
 		print '<script type="text/javascript">
 				jQuery(document).ready(function() {
