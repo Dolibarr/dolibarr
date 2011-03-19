@@ -248,16 +248,17 @@ class Form
      *    @param     selected         Id or Code or Label of preselected country
      *    @param     htmlname         Name of html select object
      *    @param     htmloption       Options html on select object
+     *    @return    string           HTML string with select
      */
     function select_country($selected='',$htmlname='pays_id',$htmloption='')
     {
         global $conf,$langs;
-        
+
         $langs->load("dict");
 
         $out='';
         $countryArray=array();
-        $code_iso=array();
+        //$code_iso=array();
         $label=array();
 
         $sql = "SELECT rowid, code as code_iso, libelle as label";
@@ -265,7 +266,7 @@ class Form
         $sql.= " WHERE active = 1";
         $sql.= " ORDER BY code ASC";
 
-        dol_syslog("Form::select_pays sql=".$sql);
+        dol_syslog("Form::select_country sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -275,28 +276,30 @@ class Form
             if ($num)
             {
                 $foundselected=false;
-                
-            	while ($i < $num) {
+
+            	while ($i < $num)
+            	{
                     $obj = $this->db->fetch_object($resql);
                     $countryArray[$i]['rowid'] 		= $obj->rowid;
                     $countryArray[$i]['code_iso'] 	= $obj->code_iso;
-                    $countryArray[$i]['label']		= ($obj->code_iso && $langs->trans("Country".$obj->code_iso)!="Country".$obj->code_iso?$langs->trans("Country".$obj->code_iso):($obj->label!='-'?$obj->label:'&nbsp;'));
-                    $code_iso[$i] = $countryArray[$i]['code_iso'];
+                    $countryArray[$i]['label']		= ($obj->code_iso && $langs->trans("Country".$obj->code_iso)!="Country".$obj->code_iso?$langs->trans("Country".$obj->code_iso):($obj->label!='-'?$obj->label:''));
+                    //$code_iso[$i] = $countryArray[$i]['code_iso'];
                 	$label[$i] 	= $countryArray[$i]['label'];
                     $i++;
                 }
 
                 array_multisort($label, SORT_ASC, $countryArray);
-                
-                foreach ($countryArray as $row) {
+
+                foreach ($countryArray as $row)
+                {
                 	if ($selected && $selected != '-1' && ($selected == $row['rowid'] || $selected == $row['code_iso'] || $selected == $row['label']) ) {
                         $foundselected=true;
                         $out.= '<option value="'.$row['rowid'].'" selected="selected">';
                     } else {
                         $out.= '<option value="'.$row['rowid'].'">';
                     }
-                    if ($row['code_iso']) $out.= $row['code_iso'] . ' - ';
                     $out.= $row['label'];
+                    if ($row['code_iso']) $out.= ' ('.$row['code_iso'] . ')';
                     $out.= '</option>';
                 }
             }
@@ -2321,7 +2324,7 @@ class Form
     function selectcurrency($selected='',$htmlname='currency_id')
     {
         global $conf,$langs,$user;
-        
+
         $langs->load("dict");
 
         $out='';
@@ -2345,7 +2348,7 @@ class Form
             if ($num)
             {
                 $foundselected=false;
-                
+
                 while ($i < $num) {
                     $obj = $this->db->fetch_object($resql);
                     $currencyArray[$i]['code_iso'] 	= $obj->code_iso;
@@ -2356,7 +2359,7 @@ class Form
                 }
 
                 array_multisort($label, SORT_ASC, $currencyArray);
-                
+
                 foreach ($currencyArray as $row) {
                 	if ($selected && $selected == $row['code_iso']) {
                         $foundselected=true;

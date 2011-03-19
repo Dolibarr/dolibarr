@@ -302,7 +302,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
     print '<tr '.$bc[$var].'><td class="fieldrequired">'.$langs->trans("Country").'</td><td>';
     $pays_selected=$pays_id;
     //if (empty($pays_selected)) $pays_selected=substr($langs->defaultlang,-2);    // Par defaut, pays de la localisation
-    $form->select_pays($pays_selected,'pays_id');
+    print $form->select_country($pays_selected,'pays_id');
     if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
     print '</td></tr>'."\n";
 
