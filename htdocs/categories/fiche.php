@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
  * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2007      Patrick Raguin	  	<patrick.raguin@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -36,28 +36,23 @@ $langs->load("categories");
 $socid=GETPOST('socid');
 if (!$user->rights->categorie->lire) accessforbidden();
 
-if (GETPOST('choix'))
+$action		= GETPOST('action');
+$cancel		= GETPOST('cancel');
+$origin		= GETPOST('origin');
+$catorigin	= GETPOST('catorigin');
+$nbcats 	= (GETPOST('choix') ? GETPOST('choix') : 1);
+$type 		= GETPOST('type');
+$urlfrom	= GETPOST("urlfrom");
+
+if ($origin)
 {
-	$nbcats = GETPOST('choix');
-}
-else
-{ // par default, une nouvelle categorie sera dans une seule categorie mere
-	$nbcats = 1;
+	if ($type == 0) $idProdOrigin 		= $origin;
+	if ($type == 1) $idSupplierOrigin 	= $origin;
+	if ($type == 2) $idCompanyOrigin 	= $origin;
+	if ($type == 3) $idMemberOrigin 	= $origin;
 }
 
-if (GETPOST('origin'))
-{
-	if ($_GET['type'] == 0) $idProdOrigin = GETPOST('origin');
-	if ($_GET['type'] == 1) $idSupplierOrigin = GETPOST('origin');
-	if ($_GET['type'] == 2) $idCompanyOrigin = GETPOST('origin');
-	if ($_GET['type'] == 3) $idMemberOrigin = GETPOST('origin');
-}
-
-if (GETPOST('catorigin'))
-{
-	if ($_GET['type'] == 0) $idCatOrigin = GETPOST('catorigin');
-}
-$urlfrom=GETPOST("urlfrom");
+if ($catorigin && $type == 0) $idCatOrigin = $catorigin;
 
 
 /*
@@ -65,10 +60,10 @@ $urlfrom=GETPOST("urlfrom");
  */
 
 // Add action
-if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
+if ($action == 'add' && $user->rights->categorie->creer)
 {
 	// Action ajout d'une categorie
-	if ($_POST["cancel"])
+	if ($cancel)
 	{
 		if ($urlfrom)
 		{
@@ -77,70 +72,69 @@ if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 		}
 		else if ($idProdOrigin)
 		{
-			header("Location: ".DOL_URL_ROOT.'/categories/categorie.php?id='.$idProdOrigin.'&type='.$_GET["type"]);
+			header("Location: ".DOL_URL_ROOT.'/categories/categorie.php?id='.$idProdOrigin.'&type='.$type);
 			exit;
 		}
 		else if ($idCompanyOrigin)
 		{
-			header("Location: ".DOL_URL_ROOT.'/categories/categorie.php?socid='.$idCompanyOrigin.'&type='.$_GET["type"]);
+			header("Location: ".DOL_URL_ROOT.'/categories/categorie.php?socid='.$idCompanyOrigin.'&type='.$type);
 			exit;
 		}
 		else if ($idSupplierOrigin)
 		{
-			header("Location: ".DOL_URL_ROOT.'/categories/categorie.php?socid='.$idSupplierOrigin.'&type='.$_GET["type"]);
+			header("Location: ".DOL_URL_ROOT.'/categories/categorie.php?socid='.$idSupplierOrigin.'&type='.$type);
 			exit;
 		}
 		else if ($idMemberOrigin)
 		{
-			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idMemberOrigin.'&type='.$_GET["type"]);
+			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idMemberOrigin.'&type='.$type);
 			exit;
 		}
 		else if ($idCatOrigin)
 		{
-			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idCatOrigin.'&type='.$_GET["type"]);
+			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idCatOrigin.'&type='.$type);
 			exit;
 		}
 		else
 		{
-			header("Location: ".DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$_GET["type"]);
+			header("Location: ".DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type);
 			exit;
 		}
 	}
 
-	$categorie = new Categorie($db);
+	$object = new Categorie($db);
 
-	$categorie->label          = $_POST["nom"];
-	$categorie->description    = $_POST["description"];
-	$categorie->socid          = ($_POST["socid"] ? $_POST["socid"] : 'null');
-	$categorie->visible        = $_POST["visible"];
-	$categorie->type		   = $_POST["type"];
+	$object->label			= $_POST["nom"];
+	$object->description	= $_POST["description"];
+	$object->socid			= ($_POST["socid"] ? $_POST["socid"] : 'null');
+	$object->visible		= $_POST["visible"];
+	$object->type			= $type;
 
-	if($_POST['catMere'] != "-1")
-	$categorie->id_mere = $_POST['catMere'];
+	if($_POST['catMere'] != "-1") $object->id_mere = $_POST['catMere'];
 
-	if (! $categorie->label)
+	if (! $object->label)
 	{
-		$categorie->error = $langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref"));
+		$object->error = $langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref"));
 		$_GET["action"] = 'create';
 	}
 
 	// Create category in database
-	if (! $categorie->error)
+	if (! $object->error)
 	{
-		$result = $categorie->create();
+		$result = $object->create();
 		if ($result > 0)
 		{
-			$_GET["action"] = 'confirmed';
+			$action = 'confirmed';
 			$_POST["addcat"] = '';
 		}
 	}
 }
 
 // Confirm action
-if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
+if ($action == 'add' && $user->rights->categorie->creer)
 {
 	// Action confirmation de creation categorie
-	if ($_GET["action"] == 'confirmed')
+	if ($action == 'confirmed')
 	{
 		if ($urlfrom)
 		{
@@ -164,7 +158,7 @@ if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 		}
 		else if ($idMemberOrigin)
 		{
-			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idMemberOrigin.'&type='.$_GET["type"]);
+			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idMemberOrigin.'&type='.$type);
 			exit;
 		}
 		else if ($idCatOrigin)
@@ -173,7 +167,7 @@ if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 			exit;
 		}
 
-		header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$result.'&type='.$_POST["type"]);
+		header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$result.'&type='.$type);
 		exit;
 	}
 }
@@ -191,46 +185,40 @@ if ($user->rights->categorie->creer)
 	/*
 	 * Fiche en mode creation
 	 */
-	if ($_GET["action"] == 'create' || $_POST["addcat"] == 'addcat')
+	if ($action == 'create' || $_POST["addcat"] == 'addcat')
 	{
-		print '<form action="'.$_SERVER['PHP_SELF'].'?type='.$_GET['type'].'" method="post">';
+		print '<form action="'.$_SERVER['PHP_SELF'].'?type='.$type.'" method="POST">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="urlfrom" value="'.$urlfrom.'">';
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="addcat" value="addcat">';
 		print '<input type="hidden" name="id" value="'.GETPOST('origin').'">';
-		print '<input type="hidden" name="type" value="'.$_GET['type'].'">';
-		if (GETPOST('origin'))
-		{
-			print '<input type="hidden" name="origin" value="'.GETPOST('origin').'">';
-		}
-		if (GETPOST('catorigin'))
-		{
-			print '<input type="hidden" name="catorigin" value="'.GETPOST('catorigin').'">';
-		}
+		print '<input type="hidden" name="type" value="'.$type.'">';
 		print '<input type="hidden" name="nom" value="'.dol_escape_htmltag($nom).'">';
+		if ($origin) print '<input type="hidden" name="origin" value="'.$origin.'">';
+		if ($catorigin)	print '<input type="hidden" name="catorigin" value="'.$catorigin.'">';
 
 		print_fiche_titre($langs->trans("CreateCat"));
 
-		dol_htmloutput_errors($categorie->error);
+		dol_htmloutput_errors($object->error);
 
 		print '<table width="100%" class="border">';
 
 		// Ref
 		print '<tr>';
-		print '<td width="25%" class="fieldrequired">'.$langs->trans("Ref").'</td><td><input name="nom" size="25" value="'.$categorie->label.'">';
+		print '<td width="25%" class="fieldrequired">'.$langs->trans("Ref").'</td><td><input name="nom" size="25" value="'.$object->label.'">';
 		print'</td></tr>';
 
 		// Description
 		print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
 		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-		$doleditor=new DolEditor('description',$categorie->description,'',200,'dolibarr_notes','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC,ROWS_6,50);
+		$doleditor=new DolEditor('description',$object->description,'',200,'dolibarr_notes','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC,ROWS_6,50);
 		$doleditor->Create();
 		print '</td></tr>';
 
 		// Parent category
 		print '<tr><td>'.$langs->trans ("AddIn").'</td><td>';
-		print $html->select_all_categories($_GET['type'],GETPOST('catorigin'));
+		print $html->select_all_categories($type,$catorigin);
 		print '</td></tr>';
 
 		print '</table>';
@@ -244,7 +232,6 @@ if ($user->rights->categorie->creer)
 		print '</form>';
 	}
 }
-
 
 $db->close();
 
