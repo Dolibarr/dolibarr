@@ -2363,8 +2363,8 @@ class Form
                     } else {
                         $out.= '<option value="'.$row['code_iso'].'">';
                     }
-                    if ($row['code_iso']) $out.= $row['code_iso'] . ' - ';
                     $out.= $row['label'];
+                    if ($row['code_iso']) $out.= ' ('.$row['code_iso'] . ')';
                     $out.= '</option>';
                 }
             }
