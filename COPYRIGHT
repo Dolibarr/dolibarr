@@ -26,6 +26,7 @@ jQuery            1.5.1    GPL and MIT Licence         Yes              JS libra
 jQuery UI         1.8.10   GPL and MIT Licence         Yes              JS library+Plugin UI
 jQuery Layout     1.3.0	   GPL and MIT Licence         Yes              JS library+Plugin Layout (RC-29.12)
 jQuery TableDnD   0.5      GPL and MIT Licence         Yes              JS library+Plugin TableDnD
+jQuery jNotify	  1.1.00   Apache Software License 2.0 No GPL3 only		JS library+Plugin jNotify
 jQuery Mobile	  1.0a3	   GPL and MIT Licence		   Yes			    JS library for smartphone
 MagPieRss         0.72     GPL 2.0                     Yes              Load RSS
 NuSoap            0.9.5    LGPL 2.1                    Yes              Interfaces with third tools
