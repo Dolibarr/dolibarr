@@ -263,7 +263,7 @@ foreach($fulltree as $key => $val)
 		$categstatic->id=$val['id'];
 		$categstatic->ref=$val['label'];
 		$categstatic->type=$type;
-		print $categstatic->getNomUrl(0,'',28);
+		print ' &nbsp;'.$categstatic->getNomUrl(0,'',28);
 		
 		//print ' &nbsp;'.dol_trunc($val['label'],28);
 		//if ($section == $val['id']) print '</u>';
