@@ -123,10 +123,11 @@ class Paiement extends CommonObject
 	/**
 	 *    Create payment of invoices into database.
 	 *    Use this->amounts to have list of invoices for the payment
-	 *    @param      user        object user
-	 *    @return     int         id of created payment, < 0 if error
+	 *    @param       user                object user
+	 *    @param       closepaidinvoices   1=Also close payed invoices to paid, 0=Do nothing more
+	 *    @return      int                 id of created payment, < 0 if error
 	 */
-	function create($user)
+	function create($user,$closepaidinvoices=0)
 	{
 		global $langs,$conf;
 
@@ -159,7 +160,7 @@ class Paiement extends CommonObject
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'paiement');
 
-			// Insere liens montants / factures
+			// Insert links amount / invoices
 			foreach ($this->amounts as $key => $amount)
 			{
 				$facid = $key;
@@ -171,7 +172,26 @@ class Paiement extends CommonObject
 
 					dol_syslog(get_class($this).'::Create Amount line '.$key.' insert paiement_facture sql='.$sql);
 					$resql=$this->db->query($sql);
-					if (! $resql)
+					if ($resql)
+					{
+					    if ($closepaidinvoices)
+					    {
+					        $invoice=new Facture($this->db);
+					        $invoice->fetch($facid);
+                            $paiement = $invoice->getSommePaiement();
+                            $creditnotes=$invoice->getSumCreditNotesUsed();
+                            $deposits=$invoice->getSumDepositsUsed();
+                            $alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
+                            $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
+
+                            if ($remaintopay == 0)
+                            {
+    					        $result=$invoice->set_paid($user,'','');
+                            }
+                            else dol_syslog("Remain to pay for invoice ".$facid." not null. We do nothing.");
+					    }
+					}
+					else
 					{
 						$this->error=$this->db->lasterror();
 						dol_syslog(get_class($this).'::Create insert paiement_facture error='.$this->error, LOG_ERR);

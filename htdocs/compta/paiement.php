@@ -143,49 +143,59 @@ if ($_POST['action'] == 'confirm_paiement' && $_POST['confirm'] == 'yes')
 
 	$datepaye = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 
+	$db->begin();
+
+	// Creation of payment line
+	$paiement = new Paiement($db);
+	$paiement->datepaye     = $datepaye;
+	$paiement->amounts      = $amounts;   // Array with all payments dispatching
+	$paiement->paiementid   = dol_getIdFromCode($db,$_POST['paiementcode'],'c_paiement');
+	$paiement->num_paiement = $_POST['num_paiement'];
+	$paiement->note         = $_POST['comment'];
+
 	if (! $error)
 	{
-		$db->begin();
-
-		// Creation de la ligne paiement
-		$paiement = new Paiement($db);
-		$paiement->datepaye     = $datepaye;
-		$paiement->amounts      = $amounts;   // Tableau de montant
-		$paiement->paiementid   = dol_getIdFromCode($db,$_POST['paiementcode'],'c_paiement');
-		$paiement->num_paiement = $_POST['num_paiement'];
-		$paiement->note         = $_POST['comment'];
-
-		if (! $error)
+		$paiement_id = $paiement->create($user,(GETPOST('closepaidinvoices')=='on'?1:0));
+		if ($paiement_id < 0)
 		{
-    		$paiement_id = $paiement->create($user);
-    		if ($paiement_id < 0)
-    		{
-    		    $errmsg=$paiement->error;
-    		    $error++;
-    		}
+		    $errmsg=$paiement->error;
+		    $error++;
 		}
+	}
 
-		if (! $error)
-		{
-		    $result=$paiement->addPaymentToBank($user,'payment','(CustomerInvoicePayment)',$_POST['accountid'],$_POST['chqemetteur'],$_POST['chqbank']);
-            if ($result < 0)
+	if (! $error)
+	{
+	    $result=$paiement->addPaymentToBank($user,'payment','(CustomerInvoicePayment)',$_POST['accountid'],$_POST['chqemetteur'],$_POST['chqbank']);
+        if ($result < 0)
+        {
+            $errmsg=$paiement->error;
+            $error++;
+        }
+	}
+
+	if (! $error)
+	{
+		$db->commit();
+
+		// If payment dispatching on more than one invoice, we keep on summary page, otherwise go on invoice card
+        $invoiceid=0;
+		foreach ($paiement->amounts as $key => $amount)
+        {
+            $facid = $key;
+            if (is_numeric($amount) && $amount <> 0)
             {
-                $errmsg=$paiement->error;
-                $error++;
+                if ($invoiceid != 0) $invoiceid=-1; // There is more than one invoice payed by this payment
+                else $invoiceid=$facid;
             }
-		}
-
-		if (! $error)
-		{
-			$db->commit();
-			$loc = DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$paiement_id;
-			Header('Location: '.$loc);
-			exit;
-		}
-		else
-		{
-			$db->rollback();
-		}
+        }
+		if ($invoiceid > 0) $loc = DOL_URL_ROOT.'/compta/facture.php?facid='.$invoiceid;
+		else $loc = DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$paiement_id;
+		Header('Location: '.$loc);
+		exit;
+	}
+	else
+	{
+		$db->rollback();
 	}
 }
 
@@ -197,7 +207,6 @@ if ($_POST['action'] == 'confirm_paiement' && $_POST['confirm'] == 'yes')
 llxHeader();
 
 $html=new Form($db);
-$facturestatic=new Facture($db);
 
 
 if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_POST['action'] == 'add_paiement')
@@ -256,7 +265,7 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
     	    print '});';
             print '</script>'."\n";
         }
-        			
+
 		print '<form name="add_paiement" action="paiement.php" method="post">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="add_paiement">';
@@ -264,9 +273,10 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 		print '<input type="hidden" name="socid" value="'.$facture->socid.'">';
 		print '<input type="hidden" name="type" value="'.$facture->type.'">';
         print '<input type="hidden" name="thirdpartylabel" id="thirdpartylabel" value="'.dol_escape_htmltag($facture->client->name).'">';
-		
+
 		print '<table class="border" width="100%">';
 
+		// Third party
 		print '<tr><td><span class="fieldrequired">'.$langs->trans('Company').'</span></td><td colspan="2">'.$facture->client->getNomUrl(4)."</td></tr>\n";
 
 		// Date payment
@@ -278,7 +288,7 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 		print '<td>'.$langs->trans('Comments').'</td></tr>';
 
 		print '<tr><td><span class="fieldrequired">'.$langs->trans('PaymentMode').'</span></td><td>';
-		$html->select_types_paiements(empty($_POST['paiementcode'])?'':$_POST['paiementcode'],'paiementcode','',2);
+		$html->select_types_paiements(GETPOST('paiementcode'),'paiementcode','',2);
 		print "</td>\n";
 
 		print '<td rowspan="5" valign="top">';
@@ -290,7 +300,7 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 			if ($facture->type != 2) print '<td><span class="fieldrequired">'.$langs->trans('AccountToCredit').'</span></td>';
 			if ($facture->type == 2) print '<td><span class="fieldrequired">'.$langs->trans('AccountToDebit').'</span></td>';
 			print '<td>';
-			$html->select_comptes(empty($_POST['accountid'])?'':$_POST['accountid'],'accountid',0,'',2);
+			$html->select_comptes(GETPOST('accountid'),'accountid',0,'',2);
 			print '</td>';
 		}
 		else
@@ -302,17 +312,18 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 		print '<tr><td>'.$langs->trans('Numero');
 		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
 		print '</td>';
-		print '<td><input name="num_paiement" type="text" value="'.(empty($_POST['num_paiement'])?'':$_POST['num_paiement']).'"></td></tr>';
+		print '<td><input name="num_paiement" type="text" value="'.GETPOST('num_paiement').'"></td></tr>';
 
-		print '<tr><td class="fieldrequireddyn">'.$langs->trans('CheckTransmitter');
+		// Check transmitter
+		print '<tr><td class="'.(GETPOST('paiementcode')=='CHQ'?'fieldrequired ':'').'fieldrequireddyn">'.$langs->trans('CheckTransmitter');
 		print ' <em>('.$langs->trans("ChequeMaker").')</em>';
 		print '</td>';
-		print '<td><input id="fieldchqemetteur" name="chqemetteur" size="30" type="text" value="'.(empty($_POST['chqemetteur'])?'':$_POST['chqemetteur']).'"></td></tr>';
+		print '<td><input id="fieldchqemetteur" name="chqemetteur" size="30" type="text" value="'.GETPOST('chqemetteur').'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans('Bank');
 		print ' <em>('.$langs->trans("ChequeBank").')</em>';
 		print '</td>';
-		print '<td><input name="chqbank" size="30" type="text" value="'.(empty($_POST['chqbank'])?'':$_POST['chqbank']).'"></td></tr>';
+		print '<td><input name="chqbank" size="30" type="text" value="'.GETPOST('chqbank').'"></td></tr>';
 
 		print '</table>';
 
@@ -366,17 +377,18 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 					$objp = $db->fetch_object($resql);
 					$var=!$var;
 
-					$facturestatic->ref=$objp->facnumber;
-					$facturestatic->id=$objp->facid;
-					$facturestatic->type=$objp->type;
-
-					$creditnotes=$facturestatic->getSumCreditNotesUsed();
-					$deposits=$facturestatic->getSumDepositsUsed();
+					$invoice=new Facture($db);
+					$invoice->fetch($objp->facid);
+                    $paiement = $invoice->getSommePaiement();
+					$creditnotes=$invoice->getSumCreditNotesUsed();
+					$deposits=$invoice->getSumDepositsUsed();
+                    $alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
+                    $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
 
 					print '<tr '.$bc[$var].'>';
 
 					print '<td>';
-					print $facturestatic->getNomUrl(1,'');
+					print $invoice->getNomUrl(1,'');
 					print "</td>\n";
 
 					// Date
@@ -386,14 +398,13 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 					print '<td align="right">'.price($objp->total_ttc).'</td>';
 
 					// Recu
-					$paiement = $facturestatic->getSommePaiement();
 					print '<td align="right">'.price($paiement);
 					if ($creditnotes) print '+'.price($creditnotes);
 					if ($deposits) print '+'.price($deposits);
 					print '</td>';
 
 					// Remain to pay
-					print '<td align="right">'.price(price2num($objp->total_ttc - $paiement - $creditnotes - $deposits,'MT')).'</td>';
+					print '<td align="right">'.price($remaintopay).'</td>';
 
 					// Amount
 					print '<td align="right">';
@@ -411,7 +422,7 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 
 					// Warning
 					print '<td align="center" width="16">';
-					if ($amounts[$facturestatic->id] && $amounts[$facturestatic->id] > $amountsresttopay[$facturestatic->id])
+					if ($amounts[$invoice->id] && $amounts[$invoice->id] > $amountsresttopay[$invoice->id])
 					{
 						print ' '.img_warning($langs->trans("PaymentHigherThanReminderToPay"));
 					}
@@ -457,7 +468,8 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 		if ($_POST["action"] != 'add_paiement')
 		{
 			//			print '<tr><td colspan="3" align="center">';
-			print '<br><center><input type="submit" class="button" value="'.$langs->trans('Save').'"></center>';
+			print '<center><br><input type="checkbox" checked="checked" name="closepaidinvoices"> '.$langs->trans("ClosePaidInvoicesAutomatically");
+			print '<br><input type="submit" class="button" value="'.$langs->trans('Save').'"></center>';
 			//			print '</td></tr>';
 		}
 
@@ -476,6 +488,11 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 
 			print '<br>';
 			$text=$langs->trans('ConfirmCustomerPayment',$totalpaiement,$langs->trans("Currency".$conf->monnaie));
+			if (GETPOST('closepaidinvoices'))
+			{
+			    $text.='<br>'.$langs->trans("AllCompletelyPayedInvoiceWillBeClosed");
+			    print '<input type="hidden" name="closepaidinvoices" value="'.GETPOST('closepaidinvoices').'">';
+			}
 			$html->form_confirm($_SERVER['PHP_SELF'].'?facid='.$facture->id.'&socid='.$facture->socid.'&type='.$facture->type,$langs->trans('ReceivedCustomersPayments'),$text,'confirm_paiement',$formquestion,$preselectedchoice);
 		}
 
@@ -485,9 +502,9 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 
 
 /**
- *  \brief      Affichage de la liste des paiements
+ *  Show list of payments
  */
-if (! $_GET['action'] && ! $_POST['action'])
+if (! GETPOST('action'))
 {
 	if ($page == -1) $page = 0 ;
 	$limit = $conf->liste_limit;

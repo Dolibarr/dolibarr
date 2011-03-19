@@ -252,15 +252,14 @@ if ($resql)
 	print '<td>'.$langs->trans('Bill').'</td>';
 	print '<td>'.$langs->trans('Company').'</td>';
 	print '<td align="right">'.$langs->trans('ExpectedToPay').'</td>';
-	print '<td align="center">'.$langs->trans('Status').'</td>';
-	print '<td align="right">'.$langs->trans('PayedByThisPayment').'</td>';
+    print '<td align="right">'.$langs->trans('PayedByThisPayment').'</td>';
+    print '<td align="right">'.$langs->trans('RemainderToPay').'</td>';
+    print '<td align="right">'.$langs->trans('Status').'</td>';
 	print "</tr>\n";
 
 	if ($num > 0)
 	{
 		$var=True;
-
-		$facturestatic=new Facture($db);
 
 		while ($i < $num)
 		{
@@ -268,12 +267,17 @@ if ($resql)
 			$var=!$var;
 			print '<tr '.$bc[$var].'>';
 
-			// Invoice
+            $invoice=new Facture($db);
+            $invoice->fetch($objp->facid);
+            $paiement = $invoice->getSommePaiement();
+            $creditnotes=$invoice->getSumCreditNotesUsed();
+            $deposits=$invoice->getSumDepositsUsed();
+            $alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
+            $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
+
+            // Invoice
 			print '<td>';
-			$facturestatic->id=$objp->facid;
-			$facturestatic->ref=$objp->facnumber;
-			$facturestatic->type=$objp->type;
-			print $facturestatic->getNomUrl(1);
+			print $invoice->getNomUrl(1);
 			print "</td>\n";
 
 			// Third party
@@ -286,11 +290,14 @@ if ($resql)
 			// Expected to pay
 			print '<td align="right">'.price($objp->total_ttc).'</td>';
 
-			// Statut
-			print '<td align="center">'.$facturestatic->LibStatut($objp->paye,$objp->fk_statut,2,1).'</td>';
+            // Amount payed
+            print '<td align="right">'.price($objp->amount).'</td>';
 
-			// Amount payed
-			print '<td align="right">'.price($objp->amount).'</td>';
+            // Remain to pay
+            print '<td align="right">'.price($remaintopay).'</td>';
+
+			// Status
+			print '<td align="right">'.$invoice->getLibStatut(5, $alreadypayed).'</td>';
 
 			print "</tr>\n";
 			if ($objp->paye == 1)	// If at least one invoice is paid, disable delete

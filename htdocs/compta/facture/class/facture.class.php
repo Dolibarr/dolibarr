@@ -419,10 +419,10 @@ class Facture extends CommonObject
 
 
     /**
-     *	\brief      Create a new invoice in database from current invoice
-     *	\param      user    		Object user that ask creation
-     *	\param		invertdetail	Reverse sign of amounts for lines
-     *	\return		int				<0 si ko, >0 si ok
+     *	Create a new invoice in database from current invoice
+     *	@param      user    		Object user that ask creation
+     *	@param		invertdetail	Reverse sign of amounts for lines
+     *	@return		int				<0 if KO, >0 if OK
      */
     function createFromCurrent($user,$invertdetail=0)
     {
@@ -476,10 +476,10 @@ class Facture extends CommonObject
 
 
     /**
-     *		\brief      Load an object from its id and create a new one in database
-     *		\param      fromid     		Id of object to clone
-     *		\param		invertdetail	Reverse sign of amounts for lines
-     * 	 	\return		int				New id of clone
+     *		Load an object from its id and create a new one in database
+     *		@param      fromid     		Id of object to clone
+     *		@param		invertdetail	Reverse sign of amounts for lines
+     * 	 	@return		int				New id of clone
      */
     function createFromClone($fromid,$invertdetail=0)
     {
@@ -741,8 +741,8 @@ class Facture extends CommonObject
 
 
     /**
-     *	\brief      Recupere les lignes de factures dans this->lines
-     *	\return     int         1 if OK, < 0 if KO
+     *	Recupere les lignes de factures dans this->lines
+     *	@return     int         1 if OK, < 0 if KO
      */
     function fetch_lines()
     {
@@ -1203,11 +1203,11 @@ class Facture extends CommonObject
     }
 
     /**
-     *      \brief      Tag la facture comme paye completement (close_code non renseigne) ou partiellement (close_code renseigne) + appel trigger BILL_PAYED
-     *      \param      user      	Objet utilisateur qui modifie
-     *		\param      close_code	Code renseigne si on classe a payee completement alors que paiement incomplet (cas ecompte par exemple)
-     *	   	\param      close_note	Commentaire renseigne si on classe a payee alors que paiement incomplet (cas ecompte par exemple)
-     *      \return     int         <0 si ok, >0 si ok
+     *      Tag la facture comme paye completement (close_code non renseigne) ou partiellement (close_code renseigne) + appel trigger BILL_PAYED
+     *      @param      user      	Objet utilisateur qui modifie
+     *		@param      close_code	Code renseigne si on classe a payee completement alors que paiement incomplet (cas escompte par exemple)
+     *	   	@param      close_note	Commentaire renseigne si on classe a payee alors que paiement incomplet (cas escompte par exemple)
+     *      @return     int         <0 si ok, >0 si ok
      */
     function set_paid($user,$close_code='',$close_note='')
     {
@@ -1686,7 +1686,7 @@ class Facture extends CommonObject
         if (empty($txtva)) $txtva=0;
         if (empty($txlocaltax1)) $txlocaltax1=0;
         if (empty($txlocaltax2)) $txlocaltax2=0;
-        
+
         $remise_percent=price2num($remise_percent);
         $qty=price2num($qty);
         $pu_ht=price2num($pu_ht);
@@ -2227,7 +2227,7 @@ class Facture extends CommonObject
      *    	\param      paye          	Etat paye
      *    	\param      statut        	Id statut
      *    	\param      mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-     *		\param		alreadypaid	Montant deja paye
+     *		\param		alreadypaid	    Montant deja paye
      *		\param		type			Type facture
      *    	\return     string        	Libelle du statut
      */

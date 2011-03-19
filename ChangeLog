@@ -5,6 +5,7 @@ $Id$
 
 ***** ChangeLog for 3.1 compared to 3.0 *****
 For users:
+- New: task #10969 : Add checkbox to close automatically invoice to "payed"
 - New: Can edit note of payment.
 - New: Login is not mandatory in member module.
 - New: Reduce a step into supplier order workflow to save time (if user
