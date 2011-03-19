@@ -845,7 +845,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 
 		// Displays title
 		$appli='Dolibarr';
-		if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $appli=$conf->global->MAIN_APPLICATION_TITLE;
+		if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $appli=$conf->global->MAIN_APPLICATION_TITLE;
 
 		if ($title) print '<title>'.$appli.' - '.$title.'</title>';
 		else print "<title>".$appli."</title>";
@@ -859,7 +859,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/css/'.$jquerytheme.'/jquery-ui-latest.custom.css" type="text/css" />'."\n";
             print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/tooltip/jquery.tooltip.css" type="text/css" />'."\n";
             // jQuery jnotify
-			if ($conf->global->MAIN_USE_JQUERY_JNOTIFY)	print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify.min.css" type="text/css" />'."\n";
+			if (!empty($conf->global->MAIN_USE_JQUERY_JNOTIFY))	print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify.min.css" type="text/css" />'."\n";
         }
 
         print '<!-- Includes for Dolibarr, modules or specific pages-->'."\n";
@@ -902,14 +902,14 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tablednd/jquery.tablednd_0_5'.$ext.'"></script>'."\n";
 			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tooltip/jquery.tooltip.min'.$ext.'"></script>'."\n";
 			// jQuery Layout
-			if ($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT || defined('REQUIRE_JQUERY_LAYOUT'))
+			if (!empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) || defined('REQUIRE_JQUERY_LAYOUT'))
 			{
 				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/layout/jquery.layout-latest.min'.$ext.'"></script>'."\n";
 			}
 			// jQuery jnotify
-			if ($conf->global->MAIN_USE_JQUERY_JNOTIFY)	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify.min.js"></script>'."\n";
+			if (!empty($conf->global->MAIN_USE_JQUERY_JNOTIFY))	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify.min.js"></script>'."\n";
             // CKEditor
-            if (! empty($conf->global->FCKEDITOR_EDITORNAME) && $conf->global->FCKEDITOR_EDITORNAME == 'ckeditor')
+            if (!empty($conf->global->FCKEDITOR_EDITORNAME) && $conf->global->FCKEDITOR_EDITORNAME == 'ckeditor')
             {
                 print '<!-- Includes JS for CKEditor -->'."\n";
                 print '<script type="text/javascript">var CKEDITOR_BASEPATH = \''.DOL_URL_ROOT.'/includes/ckeditor/\';</script>'."\n";
