@@ -31,7 +31,7 @@ require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/treeview.lib.php");
 
-$type=isset($_GET['type'])?$_GET['type']:(isset($_POST['type'])?$_POST['type']:0);
+$type=(GETPOST('type') ? GETPOST('type') : 0);
 
 if (!$user->rights->categorie->lire) accessforbidden();
 
@@ -259,13 +259,13 @@ foreach($fulltree as $key => $val)
 		// Show link
 		print '<td valign="middle">';
 		//if ($section == $val['id']) print ' <u>';
-		/* We don't want a link
+		// We don't want a link ... why ?
 		$categstatic->id=$val['id'];
 		$categstatic->ref=$val['label'];
 		$categstatic->type=$type;
 		print $categstatic->getNomUrl(0,'',28);
-		*/
-		print ' &nbsp;'.dol_trunc($val['label'],28);
+		
+		//print ' &nbsp;'.dol_trunc($val['label'],28);
 		//if ($section == $val['id']) print '</u>';
 		print '</td>';
 		print '</tr></table>';
@@ -306,14 +306,10 @@ if ($nbofentries == 0)
 	print '</tr>';
 }
 
-
 // ----- End of section -----
 // --------------------------
 
-
-
 print "</table>";
-
 
 $db->close();
 
