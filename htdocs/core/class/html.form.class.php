@@ -258,7 +258,6 @@ class Form
 
         $out='';
         $countryArray=array();
-        //$code_iso=array();
         $label=array();
 
         $sql = "SELECT rowid, code as code_iso, libelle as label";
@@ -283,7 +282,6 @@ class Form
                     $countryArray[$i]['rowid'] 		= $obj->rowid;
                     $countryArray[$i]['code_iso'] 	= $obj->code_iso;
                     $countryArray[$i]['label']		= ($obj->code_iso && $langs->trans("Country".$obj->code_iso)!="Country".$obj->code_iso?$langs->trans("Country".$obj->code_iso):($obj->label!='-'?$obj->label:''));
-                    //$code_iso[$i] = $countryArray[$i]['code_iso'];
                 	$label[$i] 	= $countryArray[$i]['label'];
                     $i++;
                 }
@@ -2329,7 +2327,6 @@ class Form
 
         $out='';
         $currencyArray=array();
-        $code_iso=array();
         $label=array();
 
         if ($selected=='euro' || $selected=='euros') $selected='EUR';   // Pour compatibilite
@@ -2353,7 +2350,6 @@ class Form
                     $obj = $this->db->fetch_object($resql);
                     $currencyArray[$i]['code_iso'] 	= $obj->code_iso;
                     $currencyArray[$i]['label']		= ($obj->code_iso && $langs->trans("Currency".$obj->code_iso)!="Currency".$obj->code_iso?$langs->trans("Currency".$obj->code_iso):($obj->label!='-'?$obj->label:''));
-                    $code_iso[$i] = $currencyArray[$i]['code_iso'];
                 	$label[$i] 	= $currencyArray[$i]['label'];
                     $i++;
                 }
