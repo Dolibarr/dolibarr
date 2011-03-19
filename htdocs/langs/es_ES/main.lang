@@ -126,6 +126,7 @@ TestConnection=Probar la conexión
 ToClone=Copiar
 ConfirmClone=Selecciones datos que desea copiar.
 NoCloneOptionsSpecified=no hay datos definidos para copiar
+Of=de
 CopyOf=Copia de
 Show=Ver
 ShowCardHere=Ver la ficha aquí

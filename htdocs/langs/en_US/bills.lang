@@ -366,6 +366,7 @@ DisabledBecausePayments=Not possible since there is some payments
 CantRemovePaymentWithOneInvoicePaid=Can't remove payment since there is at least on invoice classified payed
 ExpectedToPay=Expected payment
 PayedByThisPayment=Payed by this payment
+ClosePaidInvoicesAutomatically=Classify "Payed" all invoices entierely payed. 
 ##### Types de contacts #####
 TypeContact_facture_internal_SALESREPFOLL=Representative following-up customer invoice
 TypeContact_facture_external_BILLING=Customer invoice contact
@@ -375,51 +376,10 @@ TypeContact_facture_fourn_internal_SALESREPFOLL=Representative following-up supp
 TypeContact_facture_fourn_external_BILLING=Supplier invoice contact
 TypeContact_facture_fourn_external_SHIPPING=Supplier shipping contact
 TypeContact_facture_fourn_external_SERVICE=Supplier service contact
-
-
-# oursin PDF model
-Of=du
-
-# bernique PDF model
-PDFBerniqueDescription=Invoice model Bernique
-
-# bigorneau PDF Model
-PDFBigorneauDescription=Invoice model Bigorneau
-
-# bulot PDF Model
-PDFBulotDescription=Invoice model Bulot
-
 # crabe PDF Model
 PDFCrabeDescription=Invoice model Crabe. A complete invoice model (Support VAT option, discounts, payments conditions, logo, etc...)
-
-# huitre PDF Model
-PDFHuitreDescription=Invoice model Huitre
-
 # oursin PDF Model
 PDFOursinDescription=Invoice model oursin
-
-# tourteau PDF Model
-PDFTourteauDescription=Invoice model Tourteau
-
-
-
-
 # NumRef Modules
-
 TerreNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 TerreNumRefModelError=A bill starting with $syymm already exists and is not compatible with this model of sequence. Remove it or rename it to activate this module.
-
-# Deprecated
-
-# orion
-OrionNumRefModelDesc1=Return the number under the format FAYYNNNNN where YY is the year and NNNNN the increment number starting at 1.
-OrionNumRefModelDesc2=The year is increased by 1 WITHOUT an initialisation to zero at the start of the fiscal year.
-OrionNumRefModelDesc3=Define the variable SOCIETE_FISCAL_MONTH_START with the month at the start of the fiscal year, example: 9 for September.
-OrionNumRefModelDesc4=In this example, we shall have on the 1st of September 2006 an invoice named FA700354.
-# titan
-TitanNumRefModelDesc1=Return the number with format FAYYNNNNN where YY is the year and NNNNN is the increment number starting from 1.
-TitanNumRefModelDesc2=The year is incremented by 1 and the increment number is initialized to zero at the start of the fiscal year. 
-TitanNumRefModelDesc3=Define the variable SOCIETE_FISCAL_MONTH_START with the month at the start of the fiscal year, example: 9 for September.
-TitanNumRefModelDesc4=In this example, we shall have on the 1st September 2006 an invoice named FA0700001
-# pluton
-PlutonNumRefModelDesc1=Return a customizable invoice number according to a defined mask.

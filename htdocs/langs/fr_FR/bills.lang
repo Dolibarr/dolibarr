@@ -366,6 +366,7 @@ DisabledBecausePayments=Non disponible car il existe des paiements
 CantRemovePaymentWithOneInvoicePaid=Suppression impossible quand il existe au moins une facture classée payée.
 ExpectedToPay=Paiement attendu
 PayedByThisPayment=Règlé par ce paiement
+ClosePaidInvoicesAutomatically=Classer automatiquement à "Payé" les factures entièrement payés. 
 ##### Types de contacts #####
 TypeContact_facture_internal_SALESREPFOLL=Responsable suivi facture client
 TypeContact_facture_external_BILLING=Contact client facturation
@@ -375,36 +376,9 @@ TypeContact_facture_fourn_internal_SALESREPFOLL=Responsable suivi facture fourni
 TypeContact_facture_fourn_external_BILLING=Contact fournisseur facturation
 TypeContact_facture_fourn_external_SHIPPING=Contact fournisseur livraison
 TypeContact_facture_fourn_external_SERVICE=Contact fournisseur prestation
-
-
-
-# oursin PDF model
-Of=du
-
-# bernique PDF model
-PDFBerniqueDescription=Modèle pour les factures avec plusieurs taux de tva, inclut aussi le numéro de TVA Intracommunautaire
-
-# bigorneau PDF Model
-PDFBigorneauDescription=Modèle de facture sans boîte info règlement
-
-# bulot PDF Model
-PDFBulotDescription=Modèle de facture avec remise et infos règlement
-
 # crabe PDF Model
 PDFCrabeDescription=Modèle de facture complet (Gère l'option fiscale de facturation TVA, le choix du mode de règlement à afficher, logo...)
-
-# huitre PDF Model
-PDFHuitreDescription=Modèle de facture avec remise et infos règlement
-
 # oursin PDF Model
 PDFOursinDescription=Modèle de facture complet (basé sur crabe, gère l'option fiscale de facturation TVA, le choix du mode de règlement à afficher, les remises, le nom du projet, la référence propale, logo...)
-
-# tourteau PDF Model
-PDFTourteauDescription=Modèle de facture sans remise
-
-
-
-
 # NumRef Modules
-
 TerreNumRefModelDesc1=Renvoie le numéro sous la forme %syymm-nnnn pour les factures et %syymm-nnnn pour les avoirs où yy est l'année, mm le mois et nnnn un compteur séquentiel sans rupture et sans remise à 0

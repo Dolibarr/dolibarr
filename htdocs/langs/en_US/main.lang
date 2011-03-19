@@ -127,6 +127,7 @@ TestConnection=Test connection
 ToClone=Clone
 ConfirmClone=Choose data you want to clone :
 NoCloneOptionsSpecified=No data to clone defined.
+Of=of
 CopyOf=Copy of
 Show=Show
 ShowCardHere=Show card

@@ -126,6 +126,7 @@ TestConnection=Tester la connexion
 ToClone=Cloner
 ConfirmClone=Veuillez choisir votre option de clonage :
 NoCloneOptionsSpecified=Aucun option de clonage n'a été spécifiée.
+Of=du
 CopyOf=Copie de
 Show=Voir
 ShowCardHere=Voir la fiche ici
