@@ -47,42 +47,47 @@ class FormActions
 
 
     /**
-     *      \brief      Show list of action status
-     * 		\param		formname	Name of form where select in included
-     * 		\param		selected	Preselected value
-     * 		\param		canedit		1=can edit, 0=read only
+     *      Show list of action status
+     * 		@param		formname	Name of form where select in included
+     * 		@param		selected	Preselected value
+     * 		@param		canedit		1=can edit, 0=read only
+     *      @param      htmlname    Name of html prefix for html fields (selectX and valX)
      */
-    function form_select_status_action($formname,$selected,$canedit=1)
+    function form_select_status_action($formname,$selected,$canedit=1,$htmlname='complete')
     {
         global $langs,$conf;
 
-        $listofstatus=array('0'=>$langs->trans("ActionRunningNotStarted"),'50'=>$langs->trans("ActionRunningShort"),'100'=>$langs->trans("ActionDoneShort"));
+        $listofstatus=array('-1'=>$langs->trans("ActionNotApplicable"),
+                            '0'=>$langs->trans("ActionRunningNotStarted"),
+                            '50'=>$langs->trans("ActionRunningShort"),
+                            '100'=>$langs->trans("ActionDoneShort"));
 
         if ($conf->use_javascript_ajax)
         {
             print "\n";
             print '<script type="text/javascript">'."\n";
             print 'function select_status(mypercentage) {'."\n";
-            print 'document.'.$formname.'.percentageshown.value=mypercentage;'."\n";
+            print 'document.'.$formname.'.percentageshown.value=(mypercentage>=0?mypercentage:\'\');'."\n";
             print 'document.'.$formname.'.percentage.value=mypercentage;'."\n";
-            print 'if (mypercentage == 0) { document.'.$formname.'.percentageshown.disabled=true; }'."\n";
+            print 'if (mypercentage == -1) { document.'.$formname.'.percentageshown.disabled=true; }'."\n";
+            print 'else if (mypercentage == 0) { document.'.$formname.'.percentageshown.disabled=true; }'."\n";
             print 'else if (mypercentage == 100) { document.'.$formname.'.percentageshown.disabled=true; }'."\n";
             print 'else { document.'.$formname.'.percentageshown.disabled=false; }'."\n";
             print '}'."\n";
             print '</script>'."\n";
-            print '<select '.($canedit?'':'disabled="true" ').'name="status" class="flat" onChange="select_status(document.'.$formname.'.status.value)">';
+            print '<select '.($canedit?'':'disabled="true" ').'name="status" id="select'.$htmlname.'" class="flat" onChange="select_status(document.'.$formname.'.status.value)">';
             foreach($listofstatus as $key => $val)
             {
                 print '<option value="'.$key.'"'.($selected == $key?' selected="selected"':'').'>'.$val.'</option>';
             }
             print '</select>';
             if ($selected == 0 || $selected == 100) $canedit=0;
-            print ' <input type="text" name="percentageshown" class="flat" value="'.$selected.'" size="2"'.($canedit?'':' disabled="true"').' onChange="select_status(document.'.$formname.'.percentageshown.value)">%';
+            print ' <input type="text" id="val'.$htmlname.'" name="percentageshown" class="flat" value="'.($selected>=0?$selected:'').'" size="2"'.($canedit&&($selected>=0)?'':' disabled="true"').' onChange="select_status(document.'.$formname.'.percentageshown.value)">%';
             print ' <input type="hidden" name="percentage" value="'.$selected.'">';
         }
         else
         {
-            print ' <input type="text" name="percentage" class="flat" value="'.$selected.'" size="2"'.($canedit?'':' disabled="true"').'>%';
+            print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat" value="'.($selected>=0?$selected:'').'" size="2"'.($canedit?'':' disabled="true"').'>%';
         }
     }
 

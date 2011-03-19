@@ -779,14 +779,14 @@ class Form
     }
 
     /**
-     *	\brief      Return select list of users
-     *  \param      selected        Id user preselected
-     *  \param      htmlname        Field name in form
-     *  \param      show_empty      0=liste sans valeur nulle, 1=ajoute valeur inconnue
-     *  \param      exclude         Array list of users id to exclude
-     * 	\param		disabled		If select list must be disabled
-     *  \param      include         Array list of users id to include
-     * 	\param		enableonly		Array list of users id to be enabled. All other must be disabled
+     *	Return select list of users
+     *  @param      selected        Id user preselected
+     *  @param      htmlname        Field name in form
+     *  @param      show_empty      0=liste sans valeur nulle, 1=ajoute valeur inconnue
+     *  @param      exclude         Array list of users id to exclude
+     * 	@param		disabled		If select list must be disabled
+     *  @param      include         Array list of users id to include
+     * 	@param		enableonly		Array list of users id to be enabled. All other must be disabled
      */
     function select_users($selected='',$htmlname='userid',$show_empty=0,$exclude='',$disabled=0,$include='',$enableonly='')
     {
@@ -794,21 +794,21 @@ class Form
     }
 
     /**
-     *	\brief      Return select list of users
-     *  \param      selected        User id or user object of user preselected. If -1, we use id of current user.
-     *  \param      htmlname        Field name in form
-     *  \param      show_empty      0=liste sans valeur nulle, 1=ajoute valeur inconnue
-     *  \param      exclude         Array list of users id to exclude
-     * 	\param		disabled		If select list must be disabled
-     *  \param      include         Array list of users id to include
-     * 	\param		enableonly		Array list of users id to be enabled. All other must be disabled
+     *	Return select list of users
+     *  @param      selected        User id or user object of user preselected. If -1, we use id of current user.
+     *  @param      htmlname        Field name in form
+     *  @param      show_empty      0=liste sans valeur nulle, 1=ajoute valeur inconnue
+     *  @param      exclude         Array list of users id to exclude
+     * 	@param		disabled		If select list must be disabled
+     *  @param      include         Array list of users id to include
+     * 	@param		enableonly		Array list of users id to be enabled. All other must be disabled
      */
     function select_dolusers($selected='',$htmlname='userid',$show_empty=0,$exclude='',$disabled=0,$include='',$enableonly='')
     {
         global $conf,$user,$langs;
 
         // If no preselected user defined, we take current user
-        if (empty($selected) && empty($conf->global->SOCIETE_DISABLE_DEFAULT_SALESREPRESENTATIVE)) $selected=$user->id;
+        if ($selected < -1 && empty($conf->global->SOCIETE_DISABLE_DEFAULT_SALESREPRESENTATIVE)) $selected=$user->id;
 
         // Permettre l'exclusion d'utilisateurs
         if (is_array($exclude))	$excludeUsers = implode("','",$exclude);
@@ -829,7 +829,7 @@ class Form
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            $out.= '<select class="flat" name="'.$htmlname.'"'.($disabled?' disabled="true"':'').'>';
+            $out.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled="true"':'').'>';
             if ($show_empty) $out.= '<option value="-1"'.($id==-1?' selected="selected"':'').'>&nbsp;</option>'."\n";
             $num = $this->db->num_rows($resql);
             $i = 0;

@@ -464,6 +464,16 @@ if (GETPOST('action') == 'create')
                     jQuery("#fullday").change(function() {
                         setdatefields();
                     });
+                    jQuery("#selectcomplete").change(function() {
+                        if (jQuery("#selectcomplete").val() == 100)
+                        {
+                            if (jQuery("#doneby").val() <= 0) jQuery("#doneby").val(\''.$user->id.'\');
+                        }
+                        if (jQuery("#selectcomplete").val() == 0)
+                        {
+                            jQuery("#doneby").val(-1);
+                        }
+                   });
                })';
         print '</script>'."\n";
     }
@@ -521,8 +531,8 @@ if (GETPOST('action') == 'create')
 	// Status
 	print '<tr><td width="10%">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td>';
 	print '<td>';
-	$percent=0;
-	if (GETPOST('percentage'))
+	$percent=-1;
+	if (isset($_GET['percentage']) || isset($_POST['percentage']))
 	{
 		$percent=GETPOST('percentage');
 	}
@@ -531,7 +541,7 @@ if (GETPOST('action') == 'create')
 		if (GETPOST("afaire") == 1) $percent=0;
 		if (GETPOST("afaire") == 2) $percent=100;
 	}
-	print $htmlactions->form_select_status_action('formaction',$percent,1);
+	print $htmlactions->form_select_status_action('formaction',$percent,1,'complete');
 	print '</td></tr>';
 
     // Location
@@ -550,7 +560,7 @@ if (GETPOST('action') == 'create')
 
 	// Realised by
 	print '<tr><td nowrap>'.$langs->trans("ActionDoneBy").'</td><td>';
-	$html->select_users(GETPOST("doneby")?GETPOST("doneby"):$actioncomm->userdone,'doneby',1);
+	$html->select_users(GETPOST("doneby")?GETPOST("doneby"):($percent==100?$actioncomm->userdone:0),'doneby',1);
 	print '</td></tr>';
 
 	print '</table>';
