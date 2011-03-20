@@ -72,7 +72,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 
         // Defini position des colonnes
         $this->line_height = 5;
-		$this->line_per_page = 25;
+		$this->line_per_page = 40;
 		$this->tab_height = 200;	//$this->line_height * $this->line_per_page;
 	}
 
@@ -87,9 +87,10 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	{
 		global $user,$conf,$langs;
 
-		if (! is_object($outputlangs)) $outputlangs=$langs;
-		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!class_exists('TCPDF')) $outputlangs->charset_output='ISO-8859-1';
+        if (! is_object($outputlangs)) $outputlangs=$langs;
+        // For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
+        $sav_charset_output=$outputlangs->charset_output;
+        if (!class_exists('TCPDF')) $outputlangs->charset_output='ISO-8859-1';
 
 		$outputlangs->load("main");
 		$outputlangs->load("companies");
@@ -114,20 +115,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$year = sprintf("%04d",$year);
 		$_file = $dir . "/bordereau-".$number.".pdf";
 
-		// Protection et encryption du pdf
-/*		if ($conf->global->PDF_SECURITY_ENCRYPTION)
-		{
-			$pdf = new FPDI_Protection('P','mm',$this->format);
-			$pdfrights = array('print'); // Ne permet que l'impression du document
-			$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-			$pdfownerpass = NULL; // Mot de passe du proprietaire, cree aleatoirement si pas defini
-			$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
-		}
-		else
-		{
-			$pdf=new FPDI('P','mm',$this->format);
-		}
-*/
+		// Create PDF instance
         $pdf=pdf_getInstance($this->format);
 
         if (class_exists('TCPDF'))
@@ -141,7 +129,6 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$pagenb=0;
 		$pdf->SetDrawColor(128,128,128);
 
-		$pdf->SetDrawColor(128,128,128);
 		$pdf->SetTitle($outputlangs->transnoentities("CheckReceipt")." ".$number);
 		$pdf->SetSubject($outputlangs->transnoentities("CheckReceipt"));
 		$pdf->SetCreator("Dolibarr ".DOL_VERSION);
@@ -152,15 +139,13 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 		$pdf->SetAutoPageBreak(1,0);
 
-		$lines=$this->line_per_page;	// There is no line in such PDF.
-
-		$pages = intval($lines / $this->line_per_page);
-
-		if (($lines % $this->line_per_page)>0)
+		$nboflines=sizeof($this->lines);
+		// Define nb of page
+		$pages = intval($nboflines / $this->line_per_page);
+		if (($nboflines % $this->line_per_page)>0)
 		{
 			$pages++;
 		}
-
 		if ($pages == 0)
 		{
 			// force to build at least one page if report has no lines
@@ -168,10 +153,10 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		}
 
 		$pdf->AddPage();
+        $pagenb++;
+		$this->Header($pdf, $pagenb, $pages, $outputlangs);
 
-		$this->Header($pdf, 1, $pages, $outputlangs);
-
-		$this->Body($pdf, 1, $outputlangs);
+		$this->Body($pdf, $pagenb, $pages, $outputlangs);
 
 		// Pied de page
 		$this->_pagefoot($pdf,'',$outputlangs);
@@ -183,15 +168,16 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		if (! empty($conf->global->MAIN_UMASK))
 			@chmod($file, octdec($conf->global->MAIN_UMASK));
 
-		return 1;   // Pas d'erreur
+        $outputlangs->charset_output=$sav_charset_output;
+	    return 1;   // Pas d'erreur
 	}
 
 
 	/**
-	 *	\brief  Generate Header
-	 *	\param  pdf pdf object
-	 *	\param  page current page number
-	 *	\param  pages number of pages
+	 *	Generate Header
+	 *	@param  pdf         Pdf object
+	 *	@param  page        Current page number
+	 *	@param  pages       Total number of pages
 	 */
 	function Header(&$pdf, $page, $pages, $outputlangs)
 	{
@@ -293,7 +279,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	/**
 	 *	Output array
 	 */
-	function Body(&$pdf, $page, $outputlangs)
+	function Body(&$pdf, $pagenb, $pages, $outputlangs)
 	{
 		// x=10 - Num
 		// x=30 - Banque
@@ -303,8 +289,11 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$oldprowid = 0;
 		$pdf->SetFillColor(220,220,220);
 		$yp = 0;
+		$lineinpage=0;
 		for ($j = 0 ; $j < sizeof($this->lines) ; $j++)
 		{
+		    $lineinpage++;
+
 			$pdf->SetXY (1, $this->tab_top + 10 + $yp);
 			$pdf->MultiCell(8, $this->line_height, $j+1, 0, 'R', 0);
 
@@ -321,6 +310,19 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 			$pdf->MultiCell(20, $this->line_height, price($this->lines[$j]->amount_chq), 0, 'R', 0);
 
 			$yp = $yp + $this->line_height;
+
+			if ($lineinpage >= $this->line_per_page && $j < (sizeof($this->lines)-1))
+			{
+			    $lineinpage=0; $yp=0;
+
+                // New page
+                $pdf->AddPage();
+                $pagenb++;
+                $this->Header($pdf, $pagenb, $pages, $outputlangs);
+                $pdf->SetFont('','', $default_font_size - 1);
+                $pdf->MultiCell(0, 3, '');      // Set interline to 3
+                $pdf->SetTextColor(0,0,0);
+			}
 		}
 	}
 
