@@ -3777,7 +3777,7 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
                     	$h++;
                     }
                 }
-            	if (sizeof($values) == 5)       // new declaration
+            	else if (sizeof($values) == 5)       // new declaration
                 {
                     if ($values[0] != $type) continue;
                     if ($values[3]) $langs->load($values[3]);
