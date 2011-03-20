@@ -22,18 +22,20 @@ header('Cache-Control: Public, must-revalidate');
 header("Content-type: text/html; charset=".$conf->file->character_set_client);
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<!-- <!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> -->
+<!-- <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> -->
+<!-- <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> -->
 <!-- Ce DTD est KO car inhibe document.body.scrollTop -->
 <!-- <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> -->
 
 <!-- BEGIN PHP TEMPLATE -->
 
 <html>
+<!-- <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr"> -->
 <head>
-<meta name="robots" content="noindex,nofollow">
+<meta name="robots" content="noindex,nofollow" />
 <title><?php echo $langs->trans('Login'); ?></title>
 <script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/js/jquery-latest.min.js"></script>
-<link rel="stylesheet" type="text/css" href="<?php echo $conf_css; ?>">
+<link rel="stylesheet" type="text/css" href="<?php echo $conf_css; ?>" />
 <style type="text/css">
 <!--
 #login {
@@ -96,7 +98,7 @@ jQuery(document).ready(function () {
 <table class="login" summary="<?php echo $title; ?>" cellpadding="0" cellspacing="0" border="0" align="center">
 <tr class="vmenu"><td align="center"><?php echo $title; ?></td></tr>
 </table>
-<br>
+<br />
 
 <table class="login" summary="Login area" cellpadding="2" align="center">
 
@@ -104,7 +106,7 @@ jQuery(document).ready(function () {
 
 <tr>
 
-<td valign="bottom"> &nbsp; <b><?php echo $langs->trans('Login'); ?></b> &nbsp; </td>
+<td valign="bottom"> &nbsp; <strong><label for="username"><?php echo $langs->trans('Login'); ?></label></strong> &nbsp; </td>
 <td valign="bottom" nowrap="nowrap">
 <input type="text" id="username" name="username" class="flat" size="15" maxlength="40" value="<?php echo $login; ?>" tabindex="1" /></td>
 
@@ -114,13 +116,13 @@ jQuery(document).ready(function () {
 </td>
 </tr>
 
-<tr><td valign="top" nowrap="nowrap"> &nbsp; <b><?php echo $langs->trans('Password'); ?></b> &nbsp; </td>
+<tr><td valign="top" nowrap="nowrap"> &nbsp; <strong><label for="password"><?php echo $langs->trans('Password'); ?></label></strong> &nbsp; </td>
 <td valign="top" nowrap="nowrap">
 <input id="password" name="password" class="flat" type="password" size="15" maxlength="30" value="<?php echo $password; ?>" tabindex="2" />
 </td></tr>
 
 	<?php if ($select_entity) { ?>
-		<tr><td valign="top" nowrap="nowrap"> &nbsp; <b><?php echo $langs->trans('Entity'); ?></b> &nbsp; </td>
+		<tr><td valign="top" nowrap="nowrap"> &nbsp; <strong><?php echo $langs->trans('Entity'); ?></strong> &nbsp; </td>
 		<td valign="top" nowrap="nowrap">
 		<?php echo $select_entity; ?>
 		</td></tr>
@@ -131,8 +133,8 @@ jQuery(document).ready(function () {
 		<td valign="top" nowrap="nowrap" align="left" class="none">
 
 		<table style="width: 100px;"><tr>
-		<td><input id="securitycode" class="flat" type="text" size="6" maxlength="5" name="code" tabindex="4"></td>
-		<td><img src="<?php echo DOL_URL_ROOT ?>/lib/antispamimage.php" border="0" width="128" height="36"></td>
+		<td><input id="securitycode" class="flat" type="text" size="6" maxlength="5" name="code" tabindex="4" /></td>
+		<td><img src="<?php echo DOL_URL_ROOT ?>/lib/antispamimage.php" border="0" width="128" height="36" /></td>
 		<td><a href="<?php echo $php_self; ?>"><?php echo $captcha_refresh; ?></a></td>
 		</tr></table>
 
@@ -141,7 +143,7 @@ jQuery(document).ready(function () {
 
 <tr><td colspan="3">&nbsp;</td></tr>
 
-<tr><td colspan="3" style="text-align:center;"><br>
+<tr><td colspan="3" style="text-align:center;"><br />
 <input type="submit" class="button" value="&nbsp; <?php echo $langs->trans('Connection'); ?> &nbsp;" tabindex="5" />
 </td></tr>
 
@@ -184,7 +186,7 @@ jQuery(document).ready(function () {
 		<center><table summary="info" cellpadding="0" cellspacing="0" border="0" align="center" width="750">
 		<tr><td align="center">
 		<?php echo $main_home; ?>
-		</td></tr></table></center><br>
+		</td></tr></table></center><br />
 	<?php } ?>
 
 	<?php
