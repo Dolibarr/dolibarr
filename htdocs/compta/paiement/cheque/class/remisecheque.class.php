@@ -114,11 +114,12 @@ class RemiseCheque extends CommonObject
 
 	/**
 	 *	Create a receipt to send cheques
-	 *	@param  	user 			Utilisateur qui effectue l'operation
-	 *	@param  	account_id 		Compte bancaire concerne
+	 *	@param  	user 			User making creation
+	 *	@param  	account_id 		Bank account for cheque receipt
+	 *  @param      limit           Limit number of cheque to this
 	 *	@return		int				<0 if KO, >0 if OK
 	 */
-	function create($user, $account_id)
+	function create($user, $account_id, $limit=40)
 	{
 		global $conf;
 
@@ -186,7 +187,7 @@ class RemiseCheque extends CommonObject
 				$sql.= " AND b.amount > 0";
 				$sql.= " AND b.fk_bordereau = 0";
 				$sql.= " AND b.fk_account='".$account_id."'";
-				$sql.= " LIMIT 40"; // On limite a 40 pour ne generer des PDF que d'une page
+				if ($limit) $sql.= $this->db->plimit($limit);
 
 				dol_syslog("RemiseCheque::Create sql=".$sql, LOG_DEBUG);
 				$resql = $this->db->query($sql);

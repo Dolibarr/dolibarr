@@ -86,7 +86,7 @@ if ($_POST['action'] == 'setdate' && $user->rights->banque->cheque)
 if ($_GET['action'] == 'create' && $_GET["accountid"] > 0 && $user->rights->banque->cheque)
 {
 	$remisecheque = new RemiseCheque($db);
-	$result = $remisecheque->create($user, $_GET["accountid"]);
+	$result = $remisecheque->create($user, $_GET["accountid"], 0);
 	if ($result > 0)
 	{
         if ($remisecheque->statut == 1)     // If statut is validated, we build doc
@@ -536,6 +536,7 @@ if ($_GET['action'] != 'new')
 	{
 		$dirchequereceipts = $dir.get_exdir($remisecheque->number,2,1).$remisecheque->ref;
 		$formfile->show_documents("remisecheque",$remisecheque->ref,$dirchequereceipts,$_SERVER["PHP_SELF"].'?id='.$remisecheque->id,1,1);
+		print '<br>';
 	}
 }
 
