@@ -431,7 +431,7 @@ class ActionComm extends CommonObject
         if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         $sql.= ")";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid AND s.entity in (0, ".$conf->entity.")";
-        $sql.= " WHERE a.percent < 100";
+        $sql.= " WHERE a.percent >= 0 AND a.percent < 100";
         if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND a.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
         if ($user->societe_id) $sql.=" AND a.fk_soc = ".$user->societe_id;
         //print $sql;
