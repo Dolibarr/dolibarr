@@ -74,10 +74,9 @@ $day=GETPOST("day","int")?GETPOST("day","int"):0;
 $pid=GETPOST("projectid","int")?GETPOST("projectid","int"):0;
 $status=GETPOST("status");
 $maxprint=GETPOST("maxprint");
-
-if (GETPOST('viewcal'))  { $action='show_month'; $day=''; }         // View by month
-if (GETPOST('viewweek')) { $action='show_week'; $week=date("W"); $day=date("d");}     // View by week
-if (GETPOST('viewday'))  { $action='show_day'; $day=date("d"); }    // View by day
+if (GETPOST('viewcal'))  { $action='show_month'; $day=''; }                                                   // View by month
+if (GETPOST('viewweek')) { $action='show_week'; $week=($week?$week:date("W")); $day=($day?$day:date("d")); }  // View by week
+if (GETPOST('viewday'))  { $action='show_day'; $day=($day?$day:date("d")); }                                  // View by day
 
 $langs->load("other");
 $langs->load("commercial");
@@ -152,21 +151,21 @@ if ($action=='show_week')
     $prev_day   = $prev['prev_day'];
     $first_day	= $prev['first_day'];
 
-    $week = $prev['week']; 
-    
+    $week = $prev['week'];
+
     $day =(int)$day;
     $next = dol_get_next_week($day, $week, $month, $year);
     $next_year  = $next['year'];
     $next_month = $next['month'];
     $next_day   = $next['day'];
- 
+
     // Define firstdaytoshow and lastdaytoshow
     $firstdaytoshow=dol_mktime(0,0,0,$prev_month,$first_day,$prev_year);
     $lastdaytoshow=dol_mktime(0,0,0,$next_month,$next_day,$next_year);
-    
-    $max_day_in_month = date("t",dol_mktime(0,0,0,$month,1,$year));  
-    
-    $tmpday = $first_day; 	
+
+    $max_day_in_month = date("t",dol_mktime(0,0,0,$month,1,$year));
+
+    $tmpday = $first_day;
 }
 if ($action=='show_day')
 {
@@ -471,10 +470,10 @@ if (is_readable($color_file))
 if (! is_array($theme_datacolor)) $theme_datacolor=array(array(120,130,150), array(200,160,180), array(190,190,220));
 
 // Add link to show birthdays
-$link='<a href="'.$_SERVER['PHP_SELF'];
-$newparam=$param;
+$newparam=$param;   // newparam is for birthday links
 $newparam=preg_replace('/showbirthday=[0-1]/i','showbirthday='.(empty($showbirthday)?1:0),$newparam);
 if (! preg_match('/showbirthday=/i',$newparam)) $newparam.='&showbirthday=1';
+$link='<a href="'.$_SERVER['PHP_SELF'];
 $link.='?'.$newparam;
 $link.='">';
 if (empty($showbirthday)) $link.=$langs->trans("AgendaShowBirthdayEvents");
@@ -484,7 +483,13 @@ print_fiche_titre('',$link);
 
 if (empty($action) || $action == 'show_month')		// View by month
 {
-	echo '<table width="100%" class="nocellnopadd">';
+    $newparam=$param;   // newparam is for birthday links
+    $newparam=preg_replace('/action=show_month&?/i','',$newparam);
+    $newparam=preg_replace('/action=show_week&?/i','',$newparam);
+    $newparam=preg_replace('/day=[0-9][0-9]&?/i','',$newparam);
+    $newparam=preg_replace('/month=[0-9][0-9]&?/i','',$newparam);
+    $newparam=preg_replace('/year=[0-9]+&?/i','',$newparam);
+    echo '<table width="100%" class="nocellnopadd">';
 	echo ' <tr class="liste_titre">';
 	$i=0;
 	while ($i < 7)
@@ -507,7 +512,7 @@ if (empty($action) || $action == 'show_month')		// View by month
 			{
 				$style='cal_other_month';
 				echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
-				show_day_events ($db, $max_day_in_prev_month + $tmpday, $prev_month, $prev_year, $month, $style, $eventarray, $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW, $maxlength, $param);
+				show_day_events ($db, $max_day_in_prev_month + $tmpday, $prev_month, $prev_year, $month, $style, $eventarray, $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW, $maxlength, $newparam);
 				echo "  </td>\n";
 			}
 			/* Show days of the current month */
@@ -523,7 +528,7 @@ if (empty($action) || $action == 'show_month')		// View by month
 				$style='cal_current_month';
 
 				echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
-				show_day_events($db, $tmpday, $month, $year, $month, $style, $eventarray, $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW, $maxlength, $param);
+				show_day_events($db, $tmpday, $month, $year, $month, $style, $eventarray, $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW, $maxlength, $newparam);
 				echo "  </td>\n";
 			}
 			/* Show days after the current month (next month) */
@@ -531,7 +536,7 @@ if (empty($action) || $action == 'show_month')		// View by month
 			{
 				$style='cal_other_month';
 				echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
-				show_day_events($db, $tmpday - $max_day_in_month, $next_month, $next_year, $month, $style, $eventarray, $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW, $maxlength, $param);
+				show_day_events($db, $tmpday - $max_day_in_month, $next_month, $next_year, $month, $style, $eventarray, $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW, $maxlength, $newparam);
 				echo "</td>\n";
 			}
 			$tmpday++;
@@ -542,8 +547,12 @@ if (empty($action) || $action == 'show_month')		// View by month
 }
 elseif ($action == 'show_week') // View by week
 {
-	//print $langs->trans("FeatureNotYetAvailable"); //Work in progress...
-	
+    $newparam=$param;   // newparam is for birthday links
+    $newparam=preg_replace('/action=show_month&?/i','',$newparam);
+    $newparam=preg_replace('/action=show_week&?/i','',$newparam);
+    $newparam=preg_replace('/day=[0-9][0-9]&?/i','',$newparam);
+    $newparam=preg_replace('/month=[0-9][0-9]&?/i','',$newparam);
+    $newparam=preg_replace('/year=[0-9]+&?/i','',$newparam);
 	echo '<table width="100%" class="nocellnopadd">';
 	echo ' <tr class="liste_titre">';
 	$i=0;
@@ -557,9 +566,9 @@ elseif ($action == 'show_week') // View by week
 	// In loops, tmpday contains day nb in current month (can be zero or negative for days of previous month)
 	//var_dump($eventarray);
 	//print $tmpday;
-	
+
 	echo " <tr>\n";
-	
+
 	for($iter_day = 0; $iter_day < 7; $iter_day++)
 	{
 		if(($tmpday <= $max_day_in_month))
@@ -573,14 +582,14 @@ elseif ($action == 'show_week') // View by week
 				$style='cal_current_month';
 
 			echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
-			show_day_events($db, $tmpday, $month, $year, $month, $style, $eventarray, 0, $maxlength, $param, 1, 300);
+			show_day_events($db, $tmpday, $month, $year, $month, $style, $eventarray, 0, $maxlength, $newparam, 1, 300);
 			echo "  </td>\n";
 		}
 		else
 		{
 			$style='cal_current_month';
 			echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
-			show_day_events($db, $tmpday - $max_day_in_month, $next_month, $next_year, $month, $style, $eventarray, 0, $maxlength, $param, 1, 300);
+			show_day_events($db, $tmpday - $max_day_in_month, $next_month, $next_year, $month, $style, $eventarray, 0, $maxlength, $newparam, 1, 300);
 			echo "</td>\n";
 		}
 		$tmpday++;
@@ -591,7 +600,13 @@ elseif ($action == 'show_week') // View by week
 }
 else	// View by day
 {
-	// Code to show just one day
+    $newparam=$param;   // newparam is for birthday links
+    $newparam=preg_replace('/action=show_month&?/i','',$newparam);
+    $newparam=preg_replace('/action=show_week&?/i','',$newparam);
+    $newparam=preg_replace('/day=[0-9][0-9]&?/i','',$newparam);
+    $newparam=preg_replace('/month=[0-9][0-9]&?/i','',$newparam);
+    $newparam=preg_replace('/year=[0-9]+&?/i','',$newparam);
+    // Code to show just one day
 	$style='cal_current_month';
 	$timestamp=dol_mktime(12,0,0,$month,$day,$year);
 	$arraytimestamp=adodb_getdate(dol_mktime(12,0,0,$month,$day,$year));
@@ -601,7 +616,7 @@ else	// View by day
 	echo " </tr>\n";
 	echo " <tr>\n";
 	echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
-	show_day_events ($db, $day, $month, $year, $month, $style, $eventarray, 0, 80, $param, 1, 300);
+	show_day_events ($db, $day, $month, $year, $month, $style, $eventarray, 0, 80, $newparam, 1, 300);
 	echo "</td>\n";
 	echo " </tr>\n";
 	echo '</table>';
@@ -616,7 +631,6 @@ llxFooter('$Date$ - $Revision$');
 
 /**
  * Show event of a particular day
- *
  * @param 	$db				 Database handler
  * @param 	$day			 Day
  * @param 	$month			 Month
@@ -638,12 +652,12 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 	global $cachethirdparty, $cachecontact;
 
 	if ($_GET["maxprint"] == 'on') $maxPrint=0;   // Force to remove limits
-	
+
 	$curtime = dol_mktime (0, 0, 0, $month, $day, $year);
 	print '<table class="nobordernopadding" width="100%">';
 	print '<tr style="background: #EEEEEE"><td align="left" nowrap="nowrap">';
 	print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?';
-	print 'action=show_day&day='.str_pad($day, 2, "0", STR_PAD_LEFT);
+	print 'action=show_day&day='.str_pad($day, 2, "0", STR_PAD_LEFT).'&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$year;
 	print $newparam;
 	//.'&month='.$month.'&year='.$year;
 	print '">';
@@ -780,7 +794,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 					print '</td>';
                     // Status - Percent
 					print '<td align="right" nowrap="nowrap">';
-					if ($event->type_code != 'BIRTHDAY') print $event->getLibStatut(3);
+					if ($event->type_code != 'BIRTHDAY') print $event->getLibStatut(3,1);
 					else print '&nbsp;';
 					print '</td></tr></table>';
 					$i++;

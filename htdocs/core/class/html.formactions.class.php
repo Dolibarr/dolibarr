@@ -1,5 +1,5 @@
 <?php
-/* Copyright (c) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (c) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,8 +25,8 @@
 
 
 /**
- *      \class      FormActions
- *      \brief      Classe permettant la generation de composants html actions
+ *      \class  FormActions
+ *      \brief  Class to manage building of HTML components
  */
 class FormActions
 {
@@ -35,8 +35,8 @@ class FormActions
 
 
     /**
-     *		\brief     Constructeur
-     *		\param     DB      handler d'acc�s base de donn�e
+     *		Constructor
+     *		@param     DB      Database access handler
      */
     function FormActions($DB)
     {

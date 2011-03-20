@@ -1,6 +1,6 @@
 <?php
 /* Copyright (c) 2002-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier        <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien Di Cintio   <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
@@ -313,9 +313,9 @@ class Form
 
 
     /**
-     *    \brief      Retourne la liste des types de comptes financiers
-     *    \param      selected        Type pre-selectionne
-     *    \param      htmlname        Nom champ formulaire
+     *    Retourne la liste des types de comptes financiers
+     *    @param      selected        Type pre-selectionne
+     *    @param      htmlname        Nom champ formulaire
      */
     function select_type_comptes_financiers($selected=1,$htmlname='type')
     {
@@ -347,13 +347,13 @@ class Form
 
 
     /**
-     *		\brief      Return list of social contributions.
-     * 		\remarks	Use mysoc->pays_id or mysoc->pays_code so they must be defined.
-     *		\param      selected        Preselected type
-     *		\param      htmlname        Name of field in form
-     * 		\param		useempty		Set to 1 if we want an empty value
-     * 		\param		maxlen			Max length of text in combo box
-     * 		\param		help			Add or not the admin help picto
+     *		Return list of social contributions.
+     * 		Use mysoc->pays_id or mysoc->pays_code so they must be defined.
+     *		@param      selected        Preselected type
+     *		@param      htmlname        Name of field in form
+     * 		@param		useempty		Set to 1 if we want an empty value
+     * 		@param		maxlen			Max length of text in combo box
+     * 		@param		help			Add or not the admin help picto
      */
     function select_type_socialcontrib($selected='',$htmlname='actioncode', $useempty=0, $maxlen=40, $help=1)
     {
@@ -2623,9 +2623,7 @@ class Form
 
         if ($d)
         {
-            /*
-             * Affiche date en popup
-             */
+            // Show date with popup
             if ($conf->use_javascript_ajax && $conf->use_popup_calendar)
             {
                 //print "e".$set_time." t ".$conf->format_date_short;
@@ -2649,7 +2647,7 @@ class Form
                     {
                         $retstring.='<button id="'.$prefix.'Button" type="button" class="dpInvisibleButtons"';
                         $base=DOL_URL_ROOT.'/lib/';
-                        $retstring.=' onClick="showDP(\''.$base.'\',\''.$prefix.'\',\''.$langs->trans("FormatDateShortJava").'\',\''.$langs->defaultlang.'\');">'.img_object($langs->trans("SelectDate"),'calendar').'</button>';
+                        $retstring.=' onClick="showDP(\''.$base.'\',\''.$prefix.'\',\''.$langs->trans("FormatDateShortJava").'\',\''.$langs->defaultlang.'\');">'.img_object($langs->trans("SelectDate"),'calendarday').'</button>';
                     }
 
                     $retstring.='<input type="hidden" id="'.$prefix.'day"   name="'.$prefix.'day"   value="'.$sday.'">'."\n";
@@ -2659,40 +2657,10 @@ class Form
                 else
                 {
                     print "Bad value of calendar";
-                    // Calendrier popup version defaut
-                    /*
-                    if ($langs->defaultlang != "")
-                    {
-                        $retstring.='<script type="text/javascript">';
-                        $retstring.='selectedLanguage = "'.substr($langs->defaultlang,0,2).'"';
-                        $retstring.='</script>';
-                    }
-                    $retstring.='<script type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_calendar.js"></script>';
-                    $retstring.='<input id="'.$prefix.'" type="text" name="'.$prefix.'" size="9" value="'.$formated_date.'"';
-                    $retstring.=' onChange="dpChangeDay(\''.$prefix.'\',\''.$langs->trans("FormatDateShortJava").'\')"';
-                    $retstring.='> ';
-                    $retstring.='<input type="hidden" id="'.$prefix.'day"   name="'.$prefix.'day"   value="'.$sday.'">'."\n";
-                    $retstring.='<input type="hidden" id="'.$prefix.'month" name="'.$prefix.'month" value="'.$smonth.'">'."\n";
-                    $retstring.='<input type="hidden" id="'.$prefix.'year"  name="'.$prefix.'year"  value="'.$syear.'">'."\n";
-                    if ($form_name =="")
-                    {
-                        $retstring.='<a href="javascript:showCalendar(document.forms[3].'.$prefix.')">';
-                        $retstring.='<img style="vertical-align:middle" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/calendar.png" border="0" alt="" title="">';
-                        $retstring.='</a>';
-                    }
-                    else
-                    {
-                        $retstring.='<a href="javascript:showCalendar(document.forms[\''.$form_name.'\'].'.$prefix.')">';
-                        $retstring.='<img style="vertical-align:middle" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/calendar.png" border="0" alt="" title="">';
-                        $retstring.='</a>';
-                    }
-                    */
                 }
             }
 
-            /*
-             * Show date with combo selects
-             */
+            // Show date with combo selects
             if (! $conf->use_javascript_ajax || ! $conf->use_popup_calendar)
             {
                 // Jour
@@ -2763,9 +2731,7 @@ class Form
 
         if ($h)
         {
-            /*
-             * Affiche heure en select
-             */
+            // Show hour
             $retstring.='<select'.($disabled?' disabled="true"':'').' class="flat '.($fullday?$fullday.'hour':'').'" name="'.$prefix.'hour">';
             if ($empty) $retstring.='<option value="-1">&nbsp;</option>';
             for ($hour = 0; $hour < 24; $hour++)
@@ -2789,9 +2755,7 @@ class Form
 
         if ($m)
         {
-            /*
-             * Affiche min en select
-             */
+            // Show minutes
             $retstring.='<select'.($disabled?' disabled="true"':'').' class="flat '.($fullday?$fullday.'min':'').'" name="'.$prefix.'min">';
             if ($empty) $retstring.='<option value="-1">&nbsp;</option>';
             for ($min = 0; $min < 60 ; $min++)
@@ -2862,10 +2826,10 @@ class Form
     }
 
     /**
-     *	\brief  	Function to show a form to select a duration on a page
-     *	\param		prefix   	prefix
-     *	\param  	iSecond  	Default preselected duration (number of seconds)
-     * 	\param		disabled	Disable the combo box
+     *	Function to show a form to select a duration on a page
+     *	@param		prefix   	prefix
+     *	@param  	iSecond  	Default preselected duration (number of seconds)
+     * 	@param		disabled	Disable the combo box
      */
     function select_duration($prefix,$iSecond='',$disabled=0)
     {

@@ -871,15 +871,35 @@ if ($id)
 		else print dol_print_date($act->datep,'day');
 		if ($act->percentage == 0 && $act->datep && $act->datep < ($now - $delay_warning)) print img_warning($langs->trans("Late"));
 		print '</td>';
-		print '<td rowspan="2" align="center" valign="middle" width="140">'."\n";
-        print '<form name="listactionsfilter" action="'.DOL_URL_ROOT.'/comm/action/index.php" method="POST">';
+		print '<td rowspan="3" align="center" valign="middle" width="140">'."\n";
+        print '<form name="listactionsfiltermonth" action="'.DOL_URL_ROOT.'/comm/action/index.php" method="POST">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="action" value="show_month">';
         print '<input type="hidden" name="year" value="'.dol_print_date($act->datep,'%Y').'">';
         print '<input type="hidden" name="month" value="'.dol_print_date($act->datep,'%m').'">';
+        print '<input type="hidden" name="day" value="'.dol_print_date($act->datep,'%d').'">';
         //print '<input type="hidden" name="day" value="'.dol_print_date($act->datep,'%d').'">';
-        print img_picto($langs->trans("ViewCal"),'object_calendar').' <input type="submit" class="button" name="viewcal" value="'.$langs->trans("ViewCal").'">';
+        print img_picto($langs->trans("ViewCal"),'object_calendar').' <input type="submit" style="width: 120px" class="button" name="viewcal" value="'.$langs->trans("ViewCal").'">';
         print '</form>'."\n";
-		print '</td>';
+        print '<form name="listactionsfilterweek" action="'.DOL_URL_ROOT.'/comm/action/index.php" method="POST">';
+        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="action" value="show_week">';
+        print '<input type="hidden" name="year" value="'.dol_print_date($act->datep,'%Y').'">';
+        print '<input type="hidden" name="month" value="'.dol_print_date($act->datep,'%m').'">';
+        print '<input type="hidden" name="day" value="'.dol_print_date($act->datep,'%d').'">';
+        //print '<input type="hidden" name="day" value="'.dol_print_date($act->datep,'%d').'">';
+        print img_picto($langs->trans("ViewCal"),'object_calendarweek').' <input type="submit" style="width: 120px" class="button" name="viewweek" value="'.$langs->trans("ViewWeek").'">';
+        print '</form>'."\n";
+        print '<form name="listactionsfilterday" action="'.DOL_URL_ROOT.'/comm/action/index.php" method="POST">';
+        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="action" value="show_day">';
+        print '<input type="hidden" name="year" value="'.dol_print_date($act->datep,'%Y').'">';
+        print '<input type="hidden" name="month" value="'.dol_print_date($act->datep,'%m').'">';
+        print '<input type="hidden" name="day" value="'.dol_print_date($act->datep,'%d').'">';
+        //print '<input type="hidden" name="day" value="'.dol_print_date($act->datep,'%d').'">';
+        print img_picto($langs->trans("ViewCal"),'object_calendarday').' <input type="submit" style="width: 120px" class="button" name="viewday" value="'.$langs->trans("ViewDay").'">';
+        print '</form>'."\n";
+        print '</td>';
 		print '</tr>';
 
 		// Date end
@@ -889,8 +909,8 @@ if ($id)
 		if ($act->percentage > 0 && $act->percentage < 100 && $act->datef && $act->datef < ($now- $delay_warning)) print img_warning($langs->trans("Late"));
 		print '</td></tr>';
 
-		// Statut
-		print '<tr><td nowrap>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3">';
+		// Status
+		print '<tr><td nowrap>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="2">';
 		print $act->getLibStatut(4);
 		print '</td></tr>';
 

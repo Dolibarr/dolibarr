@@ -46,6 +46,7 @@ ToDoActions=Incomplete events
 ToDoActionsFor=Incomplete events for %s
 SendPropalRef=Send commercial proposal %s
 SendOrderRef=Send order %s
+StatusNotApplicable=Not applicable
 StatusActionToDo=To do
 StatusActionDone=Complete
 MyActionsAsked=Actions I have recorded

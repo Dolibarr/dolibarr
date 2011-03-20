@@ -25,6 +25,7 @@ For users:
 - New: Use autocompletion on invoice select when creating replacement 
        or credit note invoice.
 - New: task #10885: Add a week view for calendar    
+- New: task #11018 : Add a status "not applicable" on event
 - Fix: Better Postgresql compatibility.
 
 For developers:
