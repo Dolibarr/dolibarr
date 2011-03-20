@@ -125,8 +125,15 @@ else
 		}
 	}
 
-	// Creation contact
-	if ($_POST["action"] == 'add' && $user->rights->societe->contact->creer)
+	// Cancel
+	if (GETPOST("cancel") && GETPOST('backtopage'))
+	{
+		header("Location: ".GETPOST('backtopage'));
+		exit;
+	}
+	
+	// Add contact
+	if (GETPOST("action") == 'add' && $user->rights->societe->contact->creer)
 	{
 	    $error=0;
 
@@ -467,8 +474,7 @@ else
 			print '<form method="post" name="formsoc" action="'.$_SERVER["PHP_SELF"].'">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="add">';
-			print '<input type="hidden" name="backtopage" value="'.GETPOST("backtopage").'">';
-            print '<input type="hidden" name="action" value="add">';
+			print '<input type="hidden" name="backtopage" value="'.GETPOST('backtopage').'">';
 			print '<table class="border" width="100%">';
 
 			// Name
@@ -592,7 +598,14 @@ else
             print "</table><br>";
 
 
-            print '<center><input type="submit" class="button" value="'.$langs->trans("Add").'"></center>';
+            print '<center>';
+            print '<input type="submit" class="button" name="add" value="'.$langs->trans("Add").'">';
+            if (GETPOST('backtopage'))
+            {
+				print ' &nbsp; &nbsp; ';            	
+            	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+            }
+            print '</center>';
 
 			print "</form>";
 		}
