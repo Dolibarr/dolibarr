@@ -137,7 +137,7 @@ foreach($paths as $path)
         break;
     }
 }
-if (! $found)	// If autodetect fails (Ie: when uing apache alias that point outside default DOCUMENT_ROOT. 
+if (! $found)	// If autodetect fails (Ie: when uing apache alias that point outside default DOCUMENT_ROOT.
 {
 	$tmp=$dolibarr_main_url_root;
 }
@@ -153,7 +153,8 @@ define('DOL_URL_ROOT', $suburi);											// URL relative root ('', '/dolibarr'
 // Define DOL_MAIN_URL_ROOT_ALT and DOL_URL_ROOT_ALT
 if (! empty($dolibarr_main_url_root_alt))
 {
-	$tmp_alt=$tmp.str_replace($dolibarr_main_url_root,'',$dolibarr_main_url_root_alt);
+    $altpart=str_replace($dolibarr_main_url_root,'',$dolibarr_main_url_root_alt);
+	$tmp_alt=$tmp.(preg_match('/^\//',$altpart)?'':'/').$altpart;
 	define('DOL_MAIN_URL_ROOT_ALT', $tmp_alt);           							// URL absolute root (https://sss/dolibarr/custom, ...)
 	$uri=preg_replace('/^http(s?):\/\//i','',constant('DOL_MAIN_URL_ROOT_ALT'));    // $uri contains url without http*
 	$suburi = strstr($uri, '/');        											// $suburi contains url without domain
