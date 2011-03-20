@@ -106,6 +106,7 @@ Enabled=Enabled
 Disable=Disable
 Disabled=Disabled
 Add=Add
+AddLink=Add link
 Update=Update
 AddActionToDo=Add action to do
 AddActionDone=Add action done

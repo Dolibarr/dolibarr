@@ -177,7 +177,9 @@ else
 		if (! $error && $id > 0)
 		{
              $db->commit();
-             Header("Location: fiche.php?id=".$id);
+             if (GETPOST('backtopage')) $url=GETPOST('backtopage');
+             else $url='fiche.php?id='.$id;
+             Header("Location: ".$url);
              exit;
 		}
 		else
@@ -385,9 +387,7 @@ else
 	// When used in standard mode
 	// -----------------------------------------
 
-	/*
-	 * Confirmation de la suppression du contact
-	 */
+	// Confirm deleting contact
 	if ($user->rights->societe->contact->supprimer)
 	{
 		if ($_GET["action"] == 'delete')
@@ -411,9 +411,7 @@ else
 			$_GET["id"]=0;
 		}
 
-		/*
-		 * Affichage onglets
-		 */
+		// Show tabs
 		$head = contact_prepare_head($object);
 
 		dol_fiche_head($head, 'card', $langs->trans("ContactsAddresses"), 0, 'contact');
@@ -469,6 +467,8 @@ else
 			print '<form method="post" name="formsoc" action="'.$_SERVER["PHP_SELF"].'">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="add">';
+			print '<input type="hidden" name="backtopage" value="'.GETPOST("backtopage").'">';
+            print '<input type="hidden" name="action" value="add">';
 			print '<table class="border" width="100%">';
 
 			// Name

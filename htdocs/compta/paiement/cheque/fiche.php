@@ -290,7 +290,7 @@ if ($_GET['action'] == 'new')
 	$sql.= " AND ba.entity = ".$conf->entity;
 	$sql.= " AND b.fk_bordereau = 0";
 	$sql.= " AND b.amount > 0";
-	$sql.= " ORDER BY b.emetteur ASC, b.rowid ASC";
+	$sql.= $db->order("b.dateo,b.rowid","ASC");
 
 	$resql = $db->query($sql);
 	if ($resql)
@@ -319,11 +319,11 @@ if ($_GET['action'] == 'new')
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("DateChequeReceived")." &nbsp;</td>\n";
-		print '<td width="120">'.$langs->trans("ChequeNumber")."</td>\n";
-		print '<td>'.$langs->trans("CheckTransmitter")."</td>\n";
-		print '<td>'.$langs->trans("Bank")."</td>\n";
-		print '<td align="right">'.$langs->trans("Amount")."</td>\n";
+		print '<td style="min-width: 120px">'.$langs->trans("DateChequeReceived")." &nbsp;</td>\n";
+		print '<td style="min-width: 120px">'.$langs->trans("ChequeNumber")."</td>\n";
+		print '<td style="min-width: 200px">'.$langs->trans("CheckTransmitter")."</td>\n";
+		print '<td style="min-width: 200px">'.$langs->trans("Bank")."</td>\n";
+		print '<td align="right" width="100px">'.$langs->trans("Amount")."</td>\n";
 		print "</tr>\n";
 
 		$var=true;
@@ -336,7 +336,7 @@ if ($_GET['action'] == 'new')
 			$accounts[$objp->bid] += 1;
 
 			print "<tr ".$bc[$var].">";
-			print '<td width="120">'.dol_print_date($value["date"],'day').'</td>';
+			print '<td>'.dol_print_date($value["date"],'day').'</td>';
 			print '<td>'.$value["numero"]."</td>\n";
 			print '<td>'.$value["emetteur"]."</td>\n";
 			print '<td>'.$value["banque"]."</td>\n";

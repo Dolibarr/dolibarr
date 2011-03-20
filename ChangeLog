@@ -35,6 +35,7 @@ For developers:
 - New: External modules can overwrite all default language files by
        forcing priority on langs directories on its own lang directory.
 - New: External modules can show export list with an "enabled" condition.
+- New: Support a backtopage parameter on contact creation page
 
 
 ***** ChangeLog for 3.0 compared to 2.9 *****

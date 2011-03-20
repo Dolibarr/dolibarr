@@ -242,24 +242,10 @@ else
 				{
 					$db->commit();
 
-					if ( $soc->client == 1 )
-					{
-						Header("Location: ".DOL_URL_ROOT."/comm/fiche.php?socid=".$soc->id);
-						return;
-					}
-					else
-					{
-						if (  $soc->fournisseur == 1 )
-						{
-							Header("Location: ".DOL_URL_ROOT."/fourn/fiche.php?socid=".$soc->id);
-							return;
-						}
-						else
-						{
-							Header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$soc->id);
-							return;
-						}
-					}
+                    $url=$_SERVER["PHP_SELF"]."?socid=".$soc->id;
+					if (($soc->client == 1 || $soc->client == 3) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) $url=DOL_URL_ROOT."/comm/fiche.php?socid=".$soc->id;
+					else if ($soc->fournisseur == 1) $url=DOL_URL_ROOT."/fourn/fiche.php?socid=".$soc->id;
+                    Header("Location: ".$url);
 					exit;
 				}
 				else
