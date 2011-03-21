@@ -54,16 +54,8 @@ for ($i = 0 ; $i < $num ; $i++)
 	<td align="right">&nbsp;</td>
 	<td align="right"><?php echo $linkedObjectBlock->getLibStatut(6); ?></td>
 </tr>
-<?php
-$total = $total + $linkedObjectBlock->total_ht;
-}
+<?php } ?>
 
-?>
-<tr class="liste_total">
-	<td align="left" colspan="2"><?php echo $langs->trans('TotalHT'); ?></td>
-	<td align="right"><?php echo price($total); ?></td>
-	<td>&nbsp;</td>
-</tr>
 </table>
 
 <!-- END PHP TEMPLATE -->
