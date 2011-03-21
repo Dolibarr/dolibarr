@@ -43,12 +43,14 @@ $langs->load("bills");
 $langs->load("products");
 
 // Security check
-$socid=GETPOST("socid");
-$contratid = isset($_GET["id"])?$_GET["id"]:'';
+$socid = GETPOST("socid");
+$contratid = GETPOST("id");
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'contrat',$contratid,'contrat');
 
 $usehm=$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE;
+
+$object = new Contrat($db);
 
 
 /*
@@ -57,33 +59,31 @@ $usehm=$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE;
 
 if ($_REQUEST["action"] == 'confirm_active' && $_REQUEST["confirm"] == 'yes' && $user->rights->contrat->activer)
 {
-    $contrat = new Contrat($db);
-    $contrat->fetch($_GET["id"]);
-    $result = $contrat->active_line($user, $_GET["ligne"], $_GET["date"], $_GET["dateend"], $_GET["comment"]);
+    $object->fetch($_GET["id"]);
+    $result = $object->active_line($user, $_GET["ligne"], $_GET["date"], $_GET["dateend"], $_GET["comment"]);
 
     if ($result > 0)
     {
-        Header("Location: fiche.php?id=".$contrat->id);
+        Header("Location: fiche.php?id=".$object->id);
         exit;
     }
     else {
-        $mesg=$contrat->error;
+        $mesg=$object->error;
     }
 }
 
 if ($_REQUEST["action"] == 'confirm_closeline' && $_REQUEST["confirm"] == 'yes' && $user->rights->contrat->activer)
 {
-    $contrat = new Contrat($db);
-    $contrat->fetch($_GET["id"]);
-    $result = $contrat->close_line($user, $_GET["ligne"], $_GET["dateend"], urldecode($_GET["comment"]));
+    $object->fetch($_GET["id"]);
+    $result = $object->close_line($user, $_GET["ligne"], $_GET["dateend"], urldecode($_GET["comment"]));
 
     if ($result > 0)
     {
-        Header("Location: fiche.php?id=".$contrat->id);
+        Header("Location: fiche.php?id=".$object->id);
         exit;
     }
     else {
-        $mesg=$contrat->error;
+        $mesg=$object->error;
     }
 }
 
@@ -146,27 +146,25 @@ if ($_POST["remonth"] && $_POST["reday"] && $_POST["reyear"])
 
 if ($_POST["action"] == 'add')
 {
-    $contrat = new Contrat($db);
+    $object->socid         = $_POST["socid"];
+    $object->date_contrat   = $datecontrat;
 
-    $contrat->socid         = $_POST["socid"];
-    $contrat->date_contrat   = $datecontrat;
+    $object->commercial_suivi_id      = $_POST["commercial_suivi_id"];
+    $object->commercial_signature_id  = $_POST["commercial_signature_id"];
 
-    $contrat->commercial_suivi_id      = $_POST["commercial_suivi_id"];
-    $contrat->commercial_signature_id  = $_POST["commercial_signature_id"];
+    $object->note           = trim($_POST["note"]);
+    $object->fk_project     = trim($_POST["projectid"]);
+    $object->remise_percent = trim($_POST["remise_percent"]);
+    $object->ref            = trim($_POST["ref"]);
 
-    $contrat->note           = trim($_POST["note"]);
-    $contrat->fk_project     = trim($_POST["projectid"]);
-    $contrat->remise_percent = trim($_POST["remise_percent"]);
-    $contrat->ref            = trim($_POST["ref"]);
-
-    $result = $contrat->create($user,$langs,$conf);
+    $result = $object->create($user,$langs,$conf);
     if ($result > 0)
     {
-        Header("Location: fiche.php?id=".$contrat->id);
+        Header("Location: fiche.php?id=".$object->id);
         exit;
     }
     else {
-        $mesg='<div class="error">'.$contrat->error.'</div>';
+        $mesg='<div class="error">'.$object->error.'</div>';
     }
     $_GET["socid"]=$_POST["socid"];
     $_GET["action"]='create';
@@ -175,23 +173,21 @@ if ($_POST["action"] == 'add')
 
 if ($_POST["action"] == 'classin')
 {
-    $contrat = new Contrat($db);
-    $contrat->fetch($_GET["id"]);
-    $contrat->setProject($_POST["projectid"]);
+    $object->fetch($_GET["id"]);
+    $object->setProject($_POST["projectid"]);
 }
 
 if ($_POST["action"] == 'addline' && $user->rights->contrat->creer)
 {
     if ($_POST["pqty"] && (($_POST["pu"] != '' && $_POST["desc"]) || $_POST["idprod"]))
     {
-        $contrat = new Contrat($db);
-        $ret=$contrat->fetch($_GET["id"]);
+        $ret=$object->fetch($_GET["id"]);
         if ($ret < 0)
 		{
 			dol_print_error($db,$commande->error);
 			exit;
 		}
-		$ret=$contrat->fetch_thirdparty();
+		$ret=$object->fetch_thirdparty();
 
 		$date_start='';
 		$date_end='';
@@ -229,16 +225,16 @@ if ($_POST["action"] == 'addline' && $user->rights->contrat->creer)
             $prod = new Product($db, $_POST['idprod']);
             $prod->fetch($_POST['idprod']);
 
-            $tva_tx = get_default_tva($mysoc,$contrat->client,$prod->id);
-            $tva_npr = get_default_npr($mysoc,$contrat->client,$prod->id);
+            $tva_tx = get_default_tva($mysoc,$object->client,$prod->id);
+            $tva_npr = get_default_npr($mysoc,$object->client,$prod->id);
 
             // On defini prix unitaire
-            if ($conf->global->PRODUIT_MULTIPRICES && $contrat->client->price_level)
+            if ($conf->global->PRODUIT_MULTIPRICES && $object->client->price_level)
             {
-            	$pu_ht = $prod->multiprices[$contrat->client->price_level];
-            	$pu_ttc = $prod->multiprices_ttc[$contrat->client->price_level];
-            	$price_min = $prod->multiprices_min[$contrat->client->price_level];
-            	$price_base_type = $prod->multiprices_base_type[$contrat->client->price_level];
+            	$pu_ht = $prod->multiprices[$object->client->price_level];
+            	$pu_ttc = $prod->multiprices_ttc[$object->client->price_level];
+            	$price_min = $prod->multiprices_min[$object->client->price_level];
+            	$price_base_type = $prod->multiprices_base_type[$object->client->price_level];
             }
             else
             {
@@ -275,21 +271,21 @@ if ($_POST["action"] == 'addline' && $user->rights->contrat->creer)
 	        $desc=$_POST['desc'];
         }
 
-        $localtax1_tx=get_localtax($tva_tx,1,$contrat->client);
-        $localtax2_tx=get_localtax($tva_tx,2,$contrat->client);
+        $localtax1_tx=get_localtax($tva_tx,1,$object->client);
+        $localtax2_tx=get_localtax($tva_tx,2,$object->client);
 
 		$info_bits=0;
 		if ($tva_npr) $info_bits |= 0x01;
 		
     	if($price_min && (price2num($pu_ht)*(1-price2num($_POST['remise_percent'])/100) < price2num($price_min)))
 		{
-			$contrat->error = $langs->trans("CantBeLessThanMinPrice",price2num($price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)) ;
+			$object->error = $langs->trans("CantBeLessThanMinPrice",price2num($price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)) ;
 			$result = -1 ;
 		}
 		else
 		{
 			// Insert line
-			$result = $contrat->addline(
+			$result = $object->addline(
 	                $desc,
 	                $pu_ht,
 	                $_POST["pqty"],
@@ -313,52 +309,52 @@ if ($_POST["action"] == 'addline' && $user->rights->contrat->creer)
 			$outputlangs = $langs;
 			$newlang='';
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$contrat->client->default_lang;
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
 			if (! empty($newlang))
 			{
 				$outputlangs = new Translate("",$conf);
 				$outputlangs->setDefaultLang($newlang);
 			}
-			contrat_pdf_create($db, $contrat->id, $contrat->modelpdf, $outputlangs);
+			contrat_pdf_create($db, $object->id, $object->modelpdf, $outputlangs);
 		*/
 		}
 		else
 		{
-            $mesg='<div class="error">'.$contrat->error.'</div>';
+            $mesg='<div class="error">'.$object->error.'</div>';
 		}
     }
 }
 
 if ($_POST["action"] == 'updateligne' && $user->rights->contrat->creer && ! $_POST["cancel"])
 {
-    $contratline = new ContratLigne($db);
-    if ($contratline->fetch($_POST["elrowid"]))
+    $objectline = new ContratLigne($db);
+    if ($objectline->fetch($_POST["elrowid"]))
     {
 		$db->begin();
 
-		if ($date_start_real_update == '') $date_start_real_update=$contratline->date_ouverture;
-		if ($date_end_real_update == '')   $date_end_real_update=$contratline->date_cloture;
+		if ($date_start_real_update == '') $date_start_real_update=$objectline->date_ouverture;
+		if ($date_end_real_update == '')   $date_end_real_update=$objectline->date_cloture;
 
-		$localtax1_tx=get_localtax($_POST["eltva_tx"],1,$contrat->client);
-        $localtax2_tx=get_localtax($_POST["eltva_tx"],2,$contrat->client);
+		$localtax1_tx=get_localtax($_POST["eltva_tx"],1,$object->client);
+        $localtax2_tx=get_localtax($_POST["eltva_tx"],2,$object->client);
 
-		$contratline->description=$_POST["eldesc"];
-		$contratline->price_ht=$_POST["elprice"];
-		$contratline->subprice=$_POST["elprice"];
-        $contratline->qty=$_POST["elqty"];
-        $contratline->remise_percent=$_POST["elremise_percent"];
-		$contratline->tva_tx=$_POST["eltva_tx"];
-		$contratline->localtax1_tx=$localtax1_tx;
-		$contratline->localtax2_tx=$localtax2_tx;
-		$contratline->date_ouverture_prevue=$date_start_update;
-		$contratline->date_ouverture=$date_start_real_update;
-		$contratline->date_fin_validite=$date_end_update;
-        $contratline->date_cloture=$date_end_real_update;
-		$contratline->fk_user_cloture=$user->id;
+		$objectline->description=$_POST["eldesc"];
+		$objectline->price_ht=$_POST["elprice"];
+		$objectline->subprice=$_POST["elprice"];
+        $objectline->qty=$_POST["elqty"];
+        $objectline->remise_percent=$_POST["elremise_percent"];
+		$objectline->tva_tx=$_POST["eltva_tx"];
+		$objectline->localtax1_tx=$localtax1_tx;
+		$objectline->localtax2_tx=$localtax2_tx;
+		$objectline->date_ouverture_prevue=$date_start_update;
+		$objectline->date_ouverture=$date_start_real_update;
+		$objectline->date_fin_validite=$date_end_update;
+        $objectline->date_cloture=$date_end_real_update;
+		$objectline->fk_user_cloture=$user->id;
 		
 		// TODO verifier price_min si fk_product et multiprix
 
-		$result=$contratline->update($user);
+		$result=$objectline->update($user);
         if ($result > 0)
         {
             $db->commit();
@@ -377,43 +373,39 @@ if ($_POST["action"] == 'updateligne' && $user->rights->contrat->creer && ! $_PO
 
 if ($_REQUEST["action"] == 'confirm_deleteline' && $_REQUEST["confirm"] == 'yes' && $user->rights->contrat->creer)
 {
-    $contrat = new Contrat($db);
-    $contrat->fetch($_GET["id"]);
-    $result = $contrat->deleteline($_GET["lineid"],$user);
+    $object->fetch($_GET["id"]);
+    $result = $object->deleteline($_GET["lineid"],$user);
 
     if ($result >= 0)
     {
-        Header("Location: fiche.php?id=".$contrat->id);
+        Header("Location: fiche.php?id=".$object->id);
         exit;
     }
 	else
 	{
-		$mesg=$contrat->error;
+		$mesg=$object->error;
 	}
 }
 
 if ($_REQUEST["action"] == 'confirm_valid' && $_REQUEST["confirm"] == 'yes' && $user->rights->contrat->creer)
 {
-    $contrat = new Contrat($db);
-    $contrat->fetch($_GET["id"]);
-    $result = $contrat->validate($user,$langs,$conf);
+    $object->fetch($_GET["id"]);
+    $result = $object->validate($user,$langs,$conf);
 }
 
 // Close all lines
 if ($_REQUEST["action"] == 'confirm_close' && $_REQUEST["confirm"] == 'yes' && $user->rights->contrat->creer)
 {
-    $contrat = new Contrat($db);
-    $contrat->fetch($_GET["id"]);
-    $result = $contrat->cloture($user,$langs,$conf);
+    $object->fetch($_GET["id"]);
+    $result = $object->cloture($user,$langs,$conf);
 }
 
 if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes')
 {
     if ($user->rights->contrat->supprimer)
     {
-        $contrat = new Contrat($db);
-        $contrat->id = $_GET["id"];
-        $result=$contrat->delete($user,$langs,$conf);
+        $object->id = $_GET["id"];
+        $result=$object->delete($user,$langs,$conf);
         if ($result >= 0)
 		{
 			Header("Location: index.php");
@@ -421,7 +413,7 @@ if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes')
 		}
 		else
 		{
-			$mesg='<div class="error">'.$contrat->error.'</div>';
+			$mesg='<div class="error">'.$object->error.'</div>';
 		}
     }
 }
@@ -443,7 +435,7 @@ if ($_REQUEST["action"] == 'confirm_move' && $_REQUEST["confirm"] == 'yes')
 			}
 			else
 			{
-				$mesg='<div class="error">'.$contrat->error.'</div>';
+				$mesg='<div class="error">'.$object->error.'</div>';
 			}
     	}
 		else
@@ -463,7 +455,7 @@ llxHeader('',$langs->trans("ContractCard"),"Contrat");
 $form = new Form($db);
 $html = new Form($db);
 
-$contratlignestatic=new ContratLigne($db);
+$objectlignestatic=new ContratLigne($db);
 
 
 /*********************************************************************
@@ -480,11 +472,10 @@ if ($_GET["action"] == 'create')
     $soc = new Societe($db);
     $soc->fetch($socid);
     
-	$contract = new Contrat($db);
-	$contract->date_contrat = time();
-	if ($contratid) $result=$contract->fetch($contratid);
+	$object->date_contrat = time();
+	if ($contratid) $result=$object->fetch($contratid);
 
-	$numct = $contract->getNextNumRef($soc);
+	$numct = $object->getNextNumRef($soc);
 	
     print '<form name="contrat" action="'.$_SERVER["PHP_SELF"].'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -638,33 +629,32 @@ else
 	$ref= $_GET['ref'];
 	if ($id > 0 || ! empty($ref))
     {
-        $contrat = new Contrat($db);
-        $result=$contrat->fetch($_GET['id'],$_GET['ref']);
+        $result=$object->fetch($_GET['id'],$_GET['ref']);
         if ($result > 0)
         {
-        	$id = $contrat->id; // if $_GET['ref']
-        	$result=$contrat->fetch_lines();
+        	$id = $object->id; // if $_GET['ref']
+        	$result=$object->fetch_lines();
         }
         if ($result < 0)
         {
-            dol_print_error($db,$contrat->error);
+            dol_print_error($db,$object->error);
             exit;
         }
 
         if ($mesg) print $mesg;
 
-		$nbofservices=sizeof($contrat->lines);
+		$nbofservices=sizeof($object->lines);
 
         $author = new User($db);
-        $author->fetch($contrat->user_author_id);
+        $author->fetch($object->user_author_id);
 
         $commercial_signature = new User($db);
-        $commercial_signature->fetch($contrat->commercial_signature_id);
+        $commercial_signature->fetch($object->commercial_signature_id);
 
         $commercial_suivi = new User($db);
-        $commercial_suivi->fetch($contrat->commercial_suivi_id);
+        $commercial_suivi->fetch($object->commercial_suivi_id);
 
-	    $head = contract_prepare_head($contrat);
+	    $head = contract_prepare_head($object);
 
         $hselected = 0;
 
@@ -702,7 +692,7 @@ else
         /*
          *   Contrat
          */
-        if ($contrat->brouillon && $user->rights->contrat->creer)
+        if ($object->brouillon && $user->rights->contrat->creer)
         {
             print '<form action="fiche.php?id='.$id.'" method="post">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -713,18 +703,18 @@ else
 
         // Ref du contrat
         print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
-		print $html->showrefnav($contrat,'ref','',1,'ref','ref','');
+		print $html->showrefnav($object,'ref','',1,'ref','ref','');
         print "</td></tr>";
 
         // Customer
         print "<tr><td>".$langs->trans("Customer")."</td>";
-        print '<td colspan="3">'.$contrat->societe->getNomUrl(1).'</td></tr>';
+        print '<td colspan="3">'.$object->societe->getNomUrl(1).'</td></tr>';
 
 		// Ligne info remises tiers
         print '<tr><td>'.$langs->trans('Discount').'</td><td colspan="3">';
-		if ($contrat->societe->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$contrat->societe->remise_client);
+		if ($object->societe->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$object->societe->remise_client);
 		else print $langs->trans("CompanyHasNoRelativeDiscount");
-		$absolute_discount=$contrat->societe->getAvailableDiscounts();
+		$absolute_discount=$object->societe->getAvailableDiscounts();
 		print '. ';
 		if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->trans("Currency".$conf->monnaie));
 		else print $langs->trans("CompanyHasNoAbsoluteDiscount");
@@ -733,13 +723,13 @@ else
 
         // Statut contrat
         print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
-        if ($contrat->statut==0) print $contrat->getLibStatut(2);
-		else print $contrat->getLibStatut(4);
+        if ($object->statut==0) print $object->getLibStatut(2);
+		else print $object->getLibStatut(4);
         print "</td></tr>";
 
         // Date
         print '<tr><td>'.$langs->trans("Date").'</td>';
-        print '<td colspan="3">'.dol_print_date($contrat->date_contrat,"dayhour")."</td></tr>\n";
+        print '<td colspan="3">'.dol_print_date($object->date_contrat,"dayhour")."</td></tr>\n";
 
         // Projet
         if ($conf->projet->enabled)
@@ -754,18 +744,18 @@ else
             print '</td><td colspan="3">';
             if ($_GET["action"] == "classer")
             {
-                $form->form_project("fiche.php?id=$id",$contrat->socid,$contrat->fk_project,"projectid");
+                $form->form_project("fiche.php?id=$id",$object->socid,$object->fk_project,"projectid");
             }
             else
             {
-                $form->form_project("fiche.php?id=$id",$contrat->socid,$contrat->fk_project,"none");
+                $form->form_project("fiche.php?id=$id",$object->socid,$object->fk_project,"none");
             }
             print "</td></tr>";
         }
 
         print "</table>";
 
-        if ($contrat->brouillon == 1 && $user->rights->contrat->creer)
+        if ($object->brouillon == 1 && $user->rights->contrat->creer)
         {
             print '</form>';
         }
@@ -775,7 +765,7 @@ else
 		$servicepos=(isset($_REQUEST["servicepos"])?$_REQUEST["servicepos"]:1);
 		$colorb='666666';
 
-		$arrayothercontracts=$contrat->getListOfContracts('others');
+		$arrayothercontracts=$object->getListOfContracts('others');
 
 		/*
          * Lines of contracts
@@ -803,7 +793,7 @@ else
 			$sql.= " p.ref, p.label";
 			$sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
-			$sql.= " WHERE cd.rowid = ".$contrat->lines[$cursorline-1]->id;
+			$sql.= " WHERE cd.rowid = ".$object->lines[$cursorline-1]->id;
 
 			$result = $db->query($sql);
 			if ($result)
@@ -859,28 +849,28 @@ else
 					}
 					// Icon move, update et delete (statut contrat 0=brouillon,1=valide,2=ferme)
 					print '<td align="right" nowrap="nowrap">';
-					if ($user->rights->contrat->creer && sizeof($arrayothercontracts) && ($contrat->statut >= 0))
+					if ($user->rights->contrat->creer && sizeof($arrayothercontracts) && ($object->statut >= 0))
 					{
-						print '<a href="fiche.php?id='.$contrat->id.'&amp;action=move&amp;rowid='.$objp->rowid.'">';
+						print '<a href="fiche.php?id='.$object->id.'&amp;action=move&amp;rowid='.$objp->rowid.'">';
 						print img_picto($langs->trans("MoveToAnotherContract"),'uparrow');
 						print '</a>';
 					}
 					else {
 						print '&nbsp;';
 					}
-					if ($user->rights->contrat->creer && ($contrat->statut >= 0))
+					if ($user->rights->contrat->creer && ($object->statut >= 0))
 					{
-						print '<a href="fiche.php?id='.$contrat->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
+						print '<a href="fiche.php?id='.$object->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
 						print img_edit();
 						print '</a>';
 					}
 					else {
 						print '&nbsp;';
 					}
-					if ( $user->rights->contrat->creer && ($contrat->statut >= 0))
+					if ( $user->rights->contrat->creer && ($object->statut >= 0))
 					{
 						print '&nbsp;';
-						print '<a href="fiche.php?id='.$contrat->id.'&amp;action=deleteline&amp;rowid='.$objp->rowid.'">';
+						print '<a href="fiche.php?id='.$object->id.'&amp;action=deleteline&amp;rowid='.$objp->rowid.'">';
 						print img_delete();
 						print '</a>';
 					}
@@ -939,7 +929,7 @@ else
 					}
 					print '<textarea name="eldesc" cols="70" rows="1">'.$objp->description.'</textarea></td>';
 					print '<td align="right">';
-					print $form->select_tva("eltva_tx",$objp->tva_tx,$mysoc,$contrat->societe);
+					print $form->select_tva("eltva_tx",$objp->tva_tx,$mysoc,$object->societe);
 					print '</td>';
 					print '<td align="right"><input size="5" type="text" name="elprice" value="'.price($objp->subprice).'"></td>';
 					print '<td align="center"><input size="2" type="text" name="elqty" value="'.$objp->qty.'"></td>';
@@ -967,7 +957,7 @@ else
 				dol_print_error($db);
 			}
 
-			if ($contrat->statut > 0)
+			if ($object->statut > 0)
 			{
 				print '<tr '.$bc[false].'>';
 				print '<td colspan="6"><hr></td>';
@@ -980,16 +970,16 @@ else
 			/*
 			 * Confirmation to delete service line of contract
 			 */
-			if ($_REQUEST["action"] == 'deleteline' && ! $_REQUEST["cancel"] && $user->rights->contrat->creer && $contrat->lines[$cursorline-1]->id == $_GET["rowid"])
+			if ($_REQUEST["action"] == 'deleteline' && ! $_REQUEST["cancel"] && $user->rights->contrat->creer && $object->lines[$cursorline-1]->id == $_GET["rowid"])
 			{
-				$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$contrat->id."&lineid=".$_GET["rowid"],$langs->trans("DeleteContractLine"),$langs->trans("ConfirmDeleteContractLine"),"confirm_deleteline",'',0,1);
+				$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id."&lineid=".$_GET["rowid"],$langs->trans("DeleteContractLine"),$langs->trans("ConfirmDeleteContractLine"),"confirm_deleteline",'',0,1);
 				if ($ret == 'html') print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[false].' height="6"><td></td></tr></table>';
 			}
 
 			/*
 			 * Confirmation to move service toward another contract
 			 */
-			if ($_REQUEST["action"] == 'move' && ! $_REQUEST["cancel"] && $user->rights->contrat->creer && $contrat->lines[$cursorline-1]->id == $_GET["rowid"])
+			if ($_REQUEST["action"] == 'move' && ! $_REQUEST["cancel"] && $user->rights->contrat->creer && $object->lines[$cursorline-1]->id == $_GET["rowid"])
 			{
 				$arraycontractid=array();
 				foreach($arrayothercontracts as $contractcursor)
@@ -1002,50 +992,50 @@ else
 				'text' => $langs->trans("ConfirmMoveToAnotherContractQuestion"),
 				array('type' => 'select', 'name' => 'newcid', 'values' => $arraycontractid));
 
-				$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$contrat->id."&lineid=".$_GET["rowid"],$langs->trans("MoveToAnotherContract"),$langs->trans("ConfirmMoveToAnotherContract"),"confirm_move",$formquestion);
+				$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id."&lineid=".$_GET["rowid"],$langs->trans("MoveToAnotherContract"),$langs->trans("ConfirmMoveToAnotherContract"),"confirm_move",$formquestion);
 				print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[false].' height="6"><td></td></tr></table>';
 			}
 
 			/*
 			 * Confirmation de la validation activation
 			 */
-			if ($_REQUEST["action"] == 'active' && ! $_REQUEST["cancel"] && $user->rights->contrat->activer && $contrat->lines[$cursorline-1]->id == $_GET["ligne"])
+			if ($_REQUEST["action"] == 'active' && ! $_REQUEST["cancel"] && $user->rights->contrat->activer && $object->lines[$cursorline-1]->id == $_GET["ligne"])
 			{
 				$dateactstart = dol_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 				$dateactend   = dol_mktime(12, 0 , 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
 				$comment      = $_POST["comment"];
-				$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$contrat->id."&ligne=".$_GET["ligne"]."&date=".$dateactstart."&dateend=".$dateactend."&comment=".urlencode($comment),$langs->trans("ActivateService"),$langs->trans("ConfirmActivateService",dol_print_date($dateactstart,"%A %d %B %Y")),"confirm_active", '', 0, 1);
+				$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id."&ligne=".$_GET["ligne"]."&date=".$dateactstart."&dateend=".$dateactend."&comment=".urlencode($comment),$langs->trans("ActivateService"),$langs->trans("ConfirmActivateService",dol_print_date($dateactstart,"%A %d %B %Y")),"confirm_active", '', 0, 1);
 				print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[false].' height="6"><td></td></tr></table>';
 			}
 
 			/*
 			 * Confirmation de la validation fermeture
 			 */
-			if ($_REQUEST["action"] == 'closeline' && ! $_REQUEST["cancel"] && $user->rights->contrat->activer && $contrat->lines[$cursorline-1]->id == $_GET["ligne"])
+			if ($_REQUEST["action"] == 'closeline' && ! $_REQUEST["cancel"] && $user->rights->contrat->activer && $object->lines[$cursorline-1]->id == $_GET["ligne"])
 			{
 				$dateactstart = dol_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 				$dateactend   = dol_mktime(12, 0 , 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
 				$comment      = $_POST["comment"];
-				$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$contrat->id."&ligne=".$_GET["ligne"]."&date=".$dateactstart."&dateend=".$dateactend."&comment=".urlencode($comment), $langs->trans("CloseService"), $langs->trans("ConfirmCloseService",dol_print_date($dateactend,"%A %d %B %Y")), "confirm_closeline", '', 0, 1);
+				$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id."&ligne=".$_GET["ligne"]."&date=".$dateactstart."&dateend=".$dateactend."&comment=".urlencode($comment), $langs->trans("CloseService"), $langs->trans("ConfirmCloseService",dol_print_date($dateactend,"%A %d %B %Y")), "confirm_closeline", '', 0, 1);
 				print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[false].' height="6"><td></td></tr></table>';
 			}
 
 
 			// Area with status and activation info of line
-			if ($contrat->statut > 0)
+			if ($object->statut > 0)
 			{
 				print '<table class="notopnoleft" width="100%">';
 
 				print '<tr '.$bc[false].'>';
-				print '<td>'.$langs->trans("ServiceStatus").': '.$contrat->lines[$cursorline-1]->getLibStatut(4).'</td>';
+				print '<td>'.$langs->trans("ServiceStatus").': '.$object->lines[$cursorline-1]->getLibStatut(4).'</td>';
 				print '<td width="30" align="right">';
 				if ($user->societe_id == 0)
 				{
-					if ($contrat->statut > 0 && $_REQUEST["action"] != 'activateline' && $_REQUEST["action"] != 'unactivateline')
+					if ($object->statut > 0 && $_REQUEST["action"] != 'activateline' && $_REQUEST["action"] != 'unactivateline')
 					{
 						$action='activateline';
 						if ($objp->statut == 4) $action='unactivateline';
-						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$contrat->id.'&amp;ligne='.$contrat->lines[$cursorline-1]->id.'&amp;action='.$action.'">';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;ligne='.$object->lines[$cursorline-1]->id.'&amp;action='.$action.'">';
 						print img_edit();
 						print '</a>';
 					}
@@ -1084,12 +1074,12 @@ else
 				print '</table>';
 			}
 
-			if ($user->rights->contrat->activer && $_REQUEST["action"] == 'activateline' && $contrat->lines[$cursorline-1]->id == $_GET["ligne"])
+			if ($user->rights->contrat->activer && $_REQUEST["action"] == 'activateline' && $object->lines[$cursorline-1]->id == $_GET["ligne"])
 			{
 				/**
 				 * Activer la ligne de contrat
 				 */
-				print '<form name="active" action="'.$_SERVER["PHP_SELF"].'?id='.$contrat->id.'&amp;ligne='.$_GET["ligne"].'&amp;action=active" method="post">';
+				print '<form name="active" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;ligne='.$_GET["ligne"].'&amp;action=active" method="post">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 				print '<table class="noborder" width="100%">';
@@ -1134,12 +1124,12 @@ else
 				print '</form>';
 			}
 
-			if ($user->rights->contrat->activer && $_REQUEST["action"] == 'unactivateline' && $contrat->lines[$cursorline-1]->id == $_GET["ligne"])
+			if ($user->rights->contrat->activer && $_REQUEST["action"] == 'unactivateline' && $object->lines[$cursorline-1]->id == $_GET["ligne"])
 			{
 				/**
 				 * Desactiver la ligne de contrat
 				 */
-				print '<form name="closeline" action="'.$_SERVER["PHP_SELF"].'?id='.$contrat->id.'&amp;ligne='.$contrat->lines[$cursorline-1]->id.'&amp;action=closeline" method="post">';
+				print '<form name="closeline" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;ligne='.$object->lines[$cursorline-1]->id.'&amp;action=closeline" method="post">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 				print '<table class="noborder" width="100%">';
@@ -1195,7 +1185,7 @@ else
 		/*
 		 * Ajouter une ligne produit/service
 		 */
-		if ($user->rights->contrat->creer && ($contrat->statut >= 0))
+		if ($user->rights->contrat->creer && ($object->statut >= 0))
 		{
 			print '<br>';
 			print '<table class="noborder" width="100%">';	// Array with (n*2)+1 lines
@@ -1223,7 +1213,7 @@ else
 			print '<td colspan="3">';
 			// multiprix
 			if($conf->global->PRODUIT_MULTIPRICES)
-				$form->select_produits('','idprod',1,$conf->product->limit_size,$contrat->societe->price_level);
+				$form->select_produits('','idprod',1,$conf->product->limit_size,$object->societe->price_level);
 			else
 				$form->select_produits('','idprod',1,$conf->product->limit_size);
 			if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) print '<br>';
@@ -1231,7 +1221,7 @@ else
 			print '</td>';
 
 			print '<td align="center"><input type="text" class="flat" size="2" name="pqty" value="1"></td>';
-			print '<td align="right" nowrap><input type="text" class="flat" size="1" name="premise" value="'.$contrat->societe->remise_client.'">%</td>';
+			print '<td align="right" nowrap><input type="text" class="flat" size="1" name="premise" value="'.$object->societe->remise_client.'">%</td>';
 			print '<td align="center" colspan="2" rowspan="2"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 			print '</tr>'."\n";
 
@@ -1259,11 +1249,11 @@ else
 			print '<td><textarea name="desc" cols="70" rows="'.ROWS_2.'"></textarea></td>';
 
 			print '<td>';
-			$form->select_tva("tva_tx",$conf->defaulttx,$mysoc,$contrat->societe);
+			$form->select_tva("tva_tx",$conf->defaulttx,$mysoc,$object->societe);
 			print '</td>';
 			print '<td align="right"><input type="text" class="flat" size="4" name="pu" value=""></td>';
 			print '<td align="center"><input type="text" class="flat" size="2" name="pqty" value="1"></td>';
-			print '<td align="right" nowrap><input type="text" class="flat" size="1" name="premise" value="'.$contrat->societe->remise_client.'">%</td>';
+			print '<td align="right" nowrap><input type="text" class="flat" size="1" name="premise" value="'.$object->societe->remise_client.'">%</td>';
 			print '<td align="center" rowspan="2" colspan="2"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 
 			print '</tr>'."\n";
@@ -1299,20 +1289,20 @@ else
         {
             print '<div class="tabsAction">';
 
-            if ($contrat->statut == 0 && $nbofservices)
+            if ($object->statut == 0 && $nbofservices)
             {
                 if ($user->rights->contrat->creer) print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
 				else print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Validate").'</a>';
             }
 
-            if ($conf->facture->enabled && $contrat->statut > 0)
+            if ($conf->facture->enabled && $object->statut > 0)
             {
                 $langs->load("bills");
-				if ($user->rights->facture->creer) print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$contrat->element.'&amp;originid='.$contrat->id.'&amp;socid='.$contrat->societe->id.'">'.$langs->trans("CreateBill").'</a>';
+				if ($user->rights->facture->creer) print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->societe->id.'">'.$langs->trans("CreateBill").'</a>';
 				else print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("CreateBill").'</a>';
             }
 
-			if ($contrat->nbofservicesclosed < $nbofservices)
+			if ($object->nbofservicesclosed < $nbofservices)
             {
 				//if (! $numactive)
 				//{
@@ -1327,7 +1317,7 @@ else
             // On peut supprimer entite si
 			// - Droit de creer + mode brouillon (erreur creation)
 			// - Droit de supprimer
-			if (($user->rights->contrat->creer && $contrat->statut == 0) || $user->rights->contrat->supprimer)
+			if (($user->rights->contrat->creer && $object->statut == 0) || $user->rights->contrat->supprimer)
             {
                 print '<a class="butActionDelete" href="fiche.php?id='.$id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
             }
@@ -1339,17 +1329,17 @@ else
 		/*
 		 * Linked object block
 		 */
-		$contrat->load_object_linked($contrat->id,$contrat->element);
+		$object->load_object_linked($object->id,$object->element);
 
-		if (! empty($contrat->linked_object))
+		if (! empty($object->linked_object))
 		{
 			print '<table width="100%"><tr><td width="50%" valign="top">';
 
-			foreach($contrat->linked_object as $linked_object => $linked_objectid)
+			foreach($object->linked_object as $linked_object => $linked_objectid)
 			{
-				if($conf->$linked_object->enabled && $linked_object != $contrat->element)
+				if($conf->$linked_object->enabled && $linked_object != $object->element)
 				{
-					$somethingshown=$contrat->showLinkedObjectBlock($linked_object,$linked_objectid,$somethingshown);
+					$somethingshown=$object->showLinkedObjectBlock($linked_object,$linked_objectid,$somethingshown);
 				}
 			}
 
