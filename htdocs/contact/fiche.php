@@ -139,25 +139,25 @@ else
 
 	    $db->begin();
 
-		$object->socid        = $_POST["socid"];
+		$object->socid			= $_POST["socid"];
 
-		$object->name         = $_POST["name"];
-		$object->firstname    = $_POST["firstname"];
-		$object->civilite_id  = $_POST["civilite_id"];
-		$object->poste        = $_POST["poste"];
-		$object->address      = $_POST["address"];
-		$object->cp           = $_POST["cp"];
-		$object->ville        = $_POST["ville"];
-		$object->fk_pays      = $_POST["pays_id"];
+		$object->name			= $_POST["name"];
+		$object->firstname		= $_POST["firstname"];
+		$object->civilite_id	= $_POST["civilite_id"];
+		$object->poste			= $_POST["poste"];
+		$object->address		= $_POST["address"];
+		$object->zip			= $_POST["zipcode"];
+		$object->town			= $_POST["town"];
+		$object->fk_pays		= $_POST["pays_id"];
 		$object->fk_departement = $_POST["departement_id"];
-		$object->email        = $_POST["email"];
-		$object->phone_pro    = $_POST["phone_pro"];
-		$object->phone_perso  = $_POST["phone_perso"];
-		$object->phone_mobile = $_POST["phone_mobile"];
-		$object->fax          = $_POST["fax"];
-		$object->jabberid     = $_POST["jabberid"];
-		$object->priv         = $_POST["priv"];
-		$object->note         = $_POST["note"];
+		$object->email			= $_POST["email"];
+		$object->phone_pro		= $_POST["phone_pro"];
+		$object->phone_perso	= $_POST["phone_perso"];
+		$object->phone_mobile	= $_POST["phone_mobile"];
+		$object->fax			= $_POST["fax"];
+		$object->jabberid		= $_POST["jabberid"];
+		$object->priv			= $_POST["priv"];
+		$object->note			= $_POST["note"];
 
         // Note: Correct date should be completed with location to have exact GM time of birth.
         $object->birthday = dol_mktime(0,0,0,$_POST["birthdaymonth"],$_POST["birthdayday"],$_POST["birthdayyear"]);
@@ -229,29 +229,29 @@ else
 
 			$object->oldcopy=dol_clone($object);
 
-			$object->old_name      = $_POST["old_name"];
-			$object->old_firstname = $_POST["old_firstname"];
+			$object->old_name		= $_POST["old_name"];
+			$object->old_firstname	= $_POST["old_firstname"];
 
-			$object->socid         = $_POST["socid"];
-			$object->name          = $_POST["name"];
-			$object->firstname     = $_POST["firstname"];
-			$object->civilite_id   = $_POST["civilite_id"];
-			$object->poste         = $_POST["poste"];
+			$object->socid			= $_POST["socid"];
+			$object->name			= $_POST["name"];
+			$object->firstname		= $_POST["firstname"];
+			$object->civilite_id	= $_POST["civilite_id"];
+			$object->poste			= $_POST["poste"];
 
-			$object->address       = $_POST["address"];
-			$object->cp            = $_POST["cp"];
-			$object->ville         = $_POST["ville"];
-			$object->fk_departement= $_POST["departement_id"];
-			$object->fk_pays       = $_POST["pays_id"];
+			$object->address		= $_POST["address"];
+			$object->zip			= $_POST["zipcode"];
+			$object->town			= $_POST["town"];
+			$object->fk_departement	= $_POST["departement_id"];
+			$object->fk_pays		= $_POST["pays_id"];
 
-			$object->email         = $_POST["email"];
-			$object->phone_pro     = $_POST["phone_pro"];
-			$object->phone_perso   = $_POST["phone_perso"];
-			$object->phone_mobile  = $_POST["phone_mobile"];
-			$object->fax           = $_POST["fax"];
-			$object->jabberid      = $_POST["jabberid"];
-			$object->priv          = $_POST["priv"];
-			$object->note          = $_POST["note"];
+			$object->email			= $_POST["email"];
+			$object->phone_pro		= $_POST["phone_pro"];
+			$object->phone_perso	= $_POST["phone_perso"];
+			$object->phone_mobile	= $_POST["phone_mobile"];
+			$object->fax			= $_POST["fax"];
+			$object->jabberid		= $_POST["jabberid"];
+			$object->priv			= $_POST["priv"];
+			$object->note			= $_POST["note"];
 
 			$result = $object->update($_POST["contactid"], $user);
 
@@ -514,10 +514,12 @@ else
 			print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3"><textarea class="flat" name="address" cols="70">'.(isset($_POST["address"])?$_POST["address"]:$object->address).'</textarea></td>';
 
 			// Zip / Town
-			if (($objsoc->typent_code == 'TE_PRIVATE') && dol_strlen(trim($object->cp)) == 0) $object->cp = $objsoc->cp;			// Predefined with third party
-			if (($objsoc->typent_code == 'TE_PRIVATE') && dol_strlen(trim($object->ville)) == 0) $object->ville = $objsoc->ville;	// Predefined with third party
-			print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3"><input name="cp" type="text" size="6" maxlength="80" value="'.(isset($_POST["cp"])?$_POST["cp"]:$object->cp).'">&nbsp;';
-			print '<input name="ville" type="text" size="20" value="'.(isset($_POST["ville"])?$_POST["ville"]:$object->ville).'" maxlength="80"></td></tr>';
+			if (($objsoc->typent_code == 'TE_PRIVATE') && dol_strlen(trim($object->zip)) == 0) $object->zip = $objsoc->zip;			// Predefined with third party
+			if (($objsoc->typent_code == 'TE_PRIVATE') && dol_strlen(trim($object->town)) == 0) $object->town = $objsoc->town;	// Predefined with third party
+			print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3">';
+			print $formcompany->select_ziptown((isset($_POST["zipcode"])?$_POST["zipcode"]:$object->zip),'zipcode',array('town','selectpays_id','departement_id'),6).'&nbsp;';
+			print $formcompany->select_ziptown((isset($_POST["town"])?$_POST["town"]:$object->town),'town',array('zipcode','selectpays_id','departement_id'));
+			print '</td></tr>';
 
 			// Country
 			if (dol_strlen(trim($object->fk_pays)) == 0) $object->fk_pays = $objsoc->pays_id;	// Predefined with third party
@@ -686,8 +688,10 @@ else
 			print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3"><textarea class="flat" name="address" cols="70">'.(isset($_POST["address"])?$_POST["address"]:$object->address).'</textarea></td>';
 
 			// Zip / Town
-			print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3"><input name="cp" type="text" size="6" maxlength="80" value="'.(isset($_POST["cp"])?$_POST["cp"]:$object->cp).'">&nbsp;';
-			print '<input name="ville" type="text" size="20" value="'.(isset($_POST["ville"])?$_POST["ville"]:$object->ville).'" maxlength="80"></td></tr>';
+			print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3">';
+			print $formcompany->select_ziptown((isset($_POST["zipcode"])?$_POST["zipcode"]:$object->zip),'zipcode',array('town','selectpays_id','departement_id'),6).'&nbsp;';
+			print $formcompany->select_ziptown((isset($_POST["town"])?$_POST["town"]:$object->town),'town',array('zipcode','selectpays_id','departement_id'));
+			print '</td></tr>';
 
 			// Country
 			print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';

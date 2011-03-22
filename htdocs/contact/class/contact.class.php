@@ -46,8 +46,10 @@ class Contact extends CommonObject
 	var $name;
 	var $firstname;
 	var $address;
-	var $cp;
-	var $ville;
+	var $cp;	// TODO deprecated
+	var $zip;
+	var $ville;	// TODO deprecated
+	var $town;
 
 	var $fk_departement;		// Id of department
 	var $departement_code;		// Code of department
@@ -210,8 +212,8 @@ class Contact extends CommonObject
 		$sql .= ", name='".$this->db->escape($this->name)."'";
 		$sql .= ", firstname='".$this->db->escape($this->firstname)."'";
 		$sql .= ", address='".$this->db->escape($this->address)."'";
-		$sql .= ", cp='".$this->db->escape($this->cp)."'";
-		$sql .= ", ville='".$this->db->escape($this->ville)."'";
+		$sql .= ", cp='".$this->db->escape($this->zip)."'";
+		$sql .= ", ville='".$this->db->escape($this->town)."'";
 		$sql .= ", fk_pays=".($this->fk_pays>0?$this->fk_pays:'NULL');
 		$sql .= ", fk_departement=".($this->fk_departement>0?$this->fk_departement:'NULL');
 		$sql .= ", poste='".$this->db->escape($this->poste)."'";
