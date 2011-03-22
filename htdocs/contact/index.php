@@ -136,19 +136,19 @@ else
 
 if ($search_nom)        // filtre sur le nom
 {
-    $sql .= " AND p.name like '%".addslashes($search_nom)."%'";
+    $sql .= " AND p.name like '%".$db->escape($search_nom)."%'";
 }
 if ($search_prenom)     // filtre sur le prenom
 {
-    $sql .= " AND p.firstname like '%".addslashes($search_prenom)."%'";
+    $sql .= " AND p.firstname like '%".$db->escape($search_prenom)."%'";
 }
 if ($search_societe)    // filtre sur la societe
 {
-    $sql .= " AND s.nom like '%".addslashes($search_societe)."%'";
+    $sql .= " AND s.nom like '%".$db->escape($search_societe)."%'";
 }
 if ($search_email)      // filtre sur l'email
 {
-    $sql .= " AND p.email like '%".addslashes($search_email)."%'";
+    $sql .= " AND p.email like '%".$db->escape($search_email)."%'";
 }
 if ($type == "o")        // filtre sur type
 {
@@ -168,7 +168,7 @@ if ($type == "p")        // filtre sur type
 }
 if ($sall)
 {
-    $sql .= " AND (p.name like '%".addslashes($sall)."%' OR p.firstname like '%".addslashes($sall)."%' OR p.email like '%".addslashes($sall)."%') ";
+    $sql .= " AND (p.name like '%".$db->escape($sall)."%' OR p.firstname like '%".$db->escape($sall)."%' OR p.email like '%".$db->escape($sall)."%') ";
 }
 if ($socid)
 {
@@ -339,8 +339,7 @@ if ($result)
 
         // Links Add action and Export vcard
         print '<td align="right">';
-        $link='<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;backtopage=1&amp;contactid='.$cid.'&amp;socid='.$socid.'">'.img_object($langs->trans("AddAction"),"calendar").'</a>';
-        print $link;
+        print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;backtopage=1&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->socid.'">'.img_object($langs->trans("AddAction"),"calendar").'</a>';
         print ' &nbsp; ';
         print '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$obj->cidp.'">';
         print img_picto($langs->trans("VCard"),'vcard.png').' ';

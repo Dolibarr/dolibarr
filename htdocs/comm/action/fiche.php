@@ -573,7 +573,7 @@ if (GETPOST('action') == 'create')
 	print '</td></tr>';
 
 	// If company is forced, we propose contacts (may be contact is also forced)
-	if (GETPOST("socid") > 0)
+	if (GETPOST("contactid") > 0 || GETPOST("socid") > 0)
 	{
 		print '<tr><td nowrap>'.$langs->trans("ActionOnContact").'</td><td>';
 		$html->select_contacts(GETPOST("socid"),GETPOST('contactid'),'contactid',1,1);
