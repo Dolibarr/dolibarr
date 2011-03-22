@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -57,7 +57,6 @@ if (isset($_GET["error"])) $error=$_GET["error"];
 $cactioncomm = new CActionComm($db);
 $actioncomm = new ActionComm($db);
 $contact = new Contact($db);
-
 
 
 /*
@@ -410,8 +409,6 @@ if (GETPOST("action") == 'update')
 	}
 }
 
-
-
 /*
  * View
  */
@@ -583,7 +580,7 @@ if (GETPOST('action') == 'create')
 	print '</td></tr>';
 
 	// If company is forced, we propose contacts (may be contact is also forced)
-	if (GETPOST("socid") > 0)
+	if (GETPOST("contactid") > 0 || GETPOST("socid") > 0)
 	{
 		print '<tr><td nowrap>'.$langs->trans("ActionOnContact").'</td><td>';
 		$html->select_contacts(GETPOST("socid"),GETPOST('contactid'),'contactid',1,1);
