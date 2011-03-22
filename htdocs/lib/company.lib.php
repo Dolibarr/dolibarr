@@ -860,4 +860,78 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='')
 
 }
 
+/**
+ * 		Show html area for list of subsidiaries
+ *		@param		conf		Object conf
+ * 		@param		lang		Object lang
+ * 		@param		db			Database handler
+ * 		@param		objsoc		Third party object
+ */
+function show_subsidiaries($conf,$langs,$db,$object)
+{
+	global $user;
+	global $bc;
+
+	$i=-1;
+
+	$sql = "SELECT s.rowid, s.nom as name, s.address, s.cp as zip, s.ville as town, s.code_client, s.canvas";
+	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+	$sql.= " WHERE s.parent = ".$object->id;
+	$sql.= " AND s.entity = ".$conf->entity;
+	$sql.= " ORDER BY s.nom";
+
+	$result = $db->query($sql);
+	$num = $db->num_rows($result);
+
+	if ($num)
+	{
+		$socstatic = new Societe($db);
+		
+		print_titre($langs->trans("Subsidiaries"));
+		print "\n".'<table class="noborder" width="100%">'."\n";
+
+		print '<tr class="liste_titre"><td>'.$langs->trans("Company").'</td>';
+		print '<td>'.$langs->trans("Address").'</td><td>'.$langs->trans("Zip").'</td>';
+		print '<td>'.$langs->trans("Town").'</td><td>'.$langs->trans("CustomerCode").'</td>';
+		print "<td>&nbsp;</td>";
+		print "</tr>";
+
+		$i=0;
+		$var=true;
+
+		while ($i < $num)
+		{
+			$obj = $db->fetch_object($result);
+			$var = !$var;
+
+			print "<tr ".$bc[$var].">";
+
+			print '<td>';
+			$socstatic->id = $obj->rowid;
+			$socstatic->name = $obj->name;
+			$socstatic->canvas = $obj->canvas;
+			print $socstatic->getNomUrl(1);
+			print '</td>';
+
+			print '<td>'.$obj->address.'</td>';
+			print '<td>'.$obj->zip.'</td>';
+			print '<td>'.$obj->town.'</td>';
+			print '<td>'.$obj->code_client.'</td>';
+
+			print '<td align="center">';
+			print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$obj->rowid.'&amp;action=edit">';
+			print img_edit();
+			print '</a></td>';
+
+			print "</tr>\n";
+			$i++;
+		}
+		print "\n</table>\n";
+	}
+
+	print "<br>\n";
+
+	return $i;
+}
+
 ?>

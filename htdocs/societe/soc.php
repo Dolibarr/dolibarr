@@ -477,6 +477,9 @@ if (! empty($canvas))
 			print '</table>';
 
 			print '<br>';
+			
+			// Subsidiaries list
+			$result=show_subsidiaries($conf,$langs,$db,$soccanvas->control->object);
 
 			// Contacts list
 			$result=show_contacts($conf,$langs,$db,$soccanvas->control->object);
@@ -1754,6 +1757,9 @@ else
 		print '</table>';
 
 		print '<br>';
+		
+		// Subsidiaries list
+		$result=show_subsidiaries($conf,$langs,$db,$soc);
 
 		// Contacts list
 		if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
