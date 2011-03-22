@@ -96,7 +96,7 @@ class ActionsContactCardCommon
         	$this->tpl[select_civility] = $formcompany->select_civility($this->object->civilite_id);
         	
         	// Predefined with third party
-        	if ($objsoc->typent_code == 'TE_PRIVATE')
+        	if ($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS))
         	{
         		if (dol_strlen(trim($this->object->address)) == 0) $this->tpl['address'] = $objsoc->address;
         		if (dol_strlen(trim($this->object->zip)) == 0) $this->object->zip = $objsoc->zip;
