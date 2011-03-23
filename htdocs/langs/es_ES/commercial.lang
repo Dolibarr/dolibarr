@@ -46,6 +46,7 @@ DoneAndToDoActionsFor=Listado de eventos realizados o a realizar por %s
 DoneAndToDoActions=Listado de eventos realizados o a realizar
 SendPropalRef=Envío del presupuesto %s
 SendOrderRef=Envío del pedido %s
+StatusNotApplicable=No aplicable
 StatusActionToDo=A realizar
 StatusActionDone=Realizado
 StatusActionInProcess=En curso

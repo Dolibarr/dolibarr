@@ -46,6 +46,7 @@ DoneAndToDoActionsFor=Llista d'esdeveniments realitzats o a realitzar per %s
 DoneAndToDoActions=Llista d'esdeveniments realitzats o a realitzar
 SendPropalRef=Enviament del pressupost %s
 SendOrderRef=Enviament de la comanda %s
+StatusNotApplicable=No aplicable
 StatusActionToDo=A realitzar
 StatusActionDone=Realitzat
 StatusActionInProcess=En curs
