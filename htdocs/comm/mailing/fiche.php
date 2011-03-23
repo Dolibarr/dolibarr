@@ -301,7 +301,7 @@ if ($_POST["action"] == 'send' && empty($_POST["cancel"]))
 {
 	$mil = new Mailing($db);
 	$result=$mil->fetch($_POST["mailid"]);
-	
+
 	$error=0;
 
 	$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($mil->id,2,0,1);
@@ -312,7 +312,7 @@ if ($_POST["action"] == 'send' && empty($_POST["cancel"]))
 		$message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("MailTo")).'</div>';
 		$error++;
 	}
-	
+
 	if (! $error)
 	{
 		// Ajout CSS
@@ -653,7 +653,7 @@ else
 		$head = emailing_prepare_head($mil);
 
 		dol_fiche_head($head, 'card', $langs->trans("Mailing"), 0, 'email');
-		
+
 		if ($message) print $message."<br>";
 
 		// Confirmation de la validation du mailing
@@ -728,13 +728,13 @@ else
 			print '</td></tr>';
 
 			// From
-			print '<tr><td>'.$html->editfieldkey("MailFrom",'from',$mil->email_from,'id',$mil->id,$user->rights->mailing->creer,'email').'</td><td colspan="3">';
-			print $html->editfieldval("MailFrom",'from',$mil->email_from,'id',$mil->id,$user->rights->mailing->creer,'email');
+			print '<tr><td>'.$html->editfieldkey("MailFrom",'from',$mil->email_from,'id',$mil->id,$user->rights->mailing->creer && $mil->statut < 3,'email').'</td><td colspan="3">';
+			print $html->editfieldval("MailFrom",'from',$mil->email_from,'id',$mil->id,$user->rights->mailing->creer && $mil->statut < 3,'email');
 			print '</td></tr>';
 
 			// Errors to
-			print '<tr><td>'.$html->editfieldkey("MailErrorsTo",'errorsto',$mil->email_errorsto,'id',$mil->id,$user->rights->mailing->creer,'email').'</td><td colspan="3">';
-			print $html->editfieldval("MailErrorsTo",'errorsto',$mil->email_errorsto,'id',$mil->id,$user->rights->mailing->creer,'email');
+			print '<tr><td>'.$html->editfieldkey("MailErrorsTo",'errorsto',$mil->email_errorsto,'id',$mil->id,$user->rights->mailing->creer && $mil->statut < 3,'email').'</td><td colspan="3">';
+			print $html->editfieldval("MailErrorsTo",'errorsto',$mil->email_errorsto,'id',$mil->id,$user->rights->mailing->creer && $mil->statut < 3,'email');
 			print '</td></tr>';
 
 			// Status
@@ -757,7 +757,7 @@ else
 					$text=$langs->trans('NotEnoughPermissions');
 					print $html->textwithpicto($nbemail,$text,1,'warning');
 				}
-				
+
 			}
 			else
 			{
