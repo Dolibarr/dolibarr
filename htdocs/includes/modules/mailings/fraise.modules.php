@@ -58,7 +58,7 @@ class mailing_fraise extends MailingTargets
 	function getSqlArrayForStats()
 	{
         global $langs;
-        
+
         $langs->load("members");
 
 		// Array for requests for statistics board
@@ -111,7 +111,7 @@ class mailing_fraise extends MailingTargets
         $s.='<option value="0">'.$langs->trans("MemberStatusResiliatedShort").'</option>';
         $s.='</select>';
         $s.='<br>';
-        $s.=$langs->trans("DateEndSubscription").': ';
+        $s.=$langs->trans("DateEndSubscription").': &nbsp;';
         $s.=$langs->trans("After").' > '.$form->select_date(-1,'subscriptionafter',0,0,1,'fraise',1,0,1,0);
         $s.=' &nbsp; ';
         $s.=$langs->trans("Before").' < '.$form->select_date(-1,'subscriptionbefore',0,0,1,'fraise',1,0,1,0);

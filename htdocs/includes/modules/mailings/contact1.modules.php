@@ -20,7 +20,7 @@
  */
 
 /**
- *	\file       htdocs/includes/modules/mailings/poire.modules.php
+ *	\file       htdocs/includes/modules/mailings/contact1.modules.php
  *	\ingroup    mailing
  *	\brief      File of class to offer a selector of emailing targets with Rule 'Poire'.
  *	\version    $Id$
@@ -30,10 +30,10 @@ include_once DOL_DOCUMENT_ROOT.'/includes/modules/mailings/modules_mailings.php'
 
 
 /**
- *	\class      mailing_poire
+ *	\class      mailing_contact1
  *	\brief      Class to offer a selector of emailing targets with Rule 'Poire'.
  */
-class mailing_poire extends MailingTargets
+class mailing_contact1 extends MailingTargets
 {
 	var $name='ContactCompanies';                     // Identifiant du module mailing
 	var $desc='Contacts des tiers (prospects, clients, fournisseurs...)';      			// Libell� utilis� si aucune traduction pour MailingModuleDescXXX ou XXX=name trouv�e
@@ -44,7 +44,7 @@ class mailing_poire extends MailingTargets
 	var $db;
 
 
-	function mailing_poire($DB)
+	function mailing_contact1($DB)
 	{
 		$this->db=$DB;
 	}
@@ -57,15 +57,15 @@ class mailing_poire extends MailingTargets
 		$langs->load("commercial");
 
 		$statssql=array();
-		$statssql[0] = "SELECT '".$langs->trans("NbOfCompaniesContacts")."' as label";
-		$statssql[0].= ", count(distinct(c.email)) as nb";
-		$statssql[0].= " FROM ".MAIN_DB_PREFIX."socpeople as c";
-		$statssql[0].= ", ".MAIN_DB_PREFIX."societe as s";
+		$statssql[0] = "SELECT '".$langs->trans("NbOfCompaniesContacts")."' as label,";
+		$statssql[0].= " count(distinct(c.email)) as nb";
+		$statssql[0].= " FROM ".MAIN_DB_PREFIX."socpeople as c,";
+		$statssql[0].= " ".MAIN_DB_PREFIX."societe as s";
 		$statssql[0].= " WHERE s.rowid = c.fk_soc";
 		$statssql[0].= " AND s.entity = ".$conf->entity;
 		$statssql[0].= " AND c.entity = ".$conf->entity;
 		$statssql[0].= " AND s.client IN (1, 3)";
-		$statssql[0].= " AND c.email != ''";
+		$statssql[0].= " AND c.email != ''";      // Note that null != '' is false
 
 		return $statssql;
 	}
@@ -82,12 +82,12 @@ class mailing_poire extends MailingTargets
 		global $conf;
 
 		$sql  = "SELECT count(distinct(c.email)) as nb";
-		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
-		$sql .= ", ".MAIN_DB_PREFIX."societe as s";
+		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c,";
+		$sql .= " ".MAIN_DB_PREFIX."societe as s";
 		$sql .= " WHERE s.rowid = c.fk_soc";
 		$sql .= " AND c.entity = ".$conf->entity;
 		$sql .= " AND s.entity = ".$conf->entity;
-		$sql .= " AND c.email != ''";
+		$sql .= " AND c.email != ''"; // Note that null != '' is false
 
 		// La requete doit retourner un champ "nb" pour etre comprise
 		// par parent::getNbOfRecipients
@@ -226,7 +226,7 @@ class mailing_poire extends MailingTargets
                     		'firstname' => $obj->firstname,
                     		'other' =>
                                 ($langs->transnoentities("ThirdParty").'='.$obj->companyname).';'.
-                                ($langs->transnoentities("Civility").'='.$langs->transnoentities("Civility".$obj->civilite)),
+                                ($langs->transnoentities("Civility").'='.($obj->civilite?$langs->transnoentities("Civility".$obj->civilite):'')),
                             'source_url' => $this->url($obj->id),
                             'source_id' => $obj->id,
                             'source_type' => 'contact'

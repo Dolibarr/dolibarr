@@ -9,7 +9,7 @@
  */
 
 /**
- *	\file       htdocs/includes/modules/mailings/dolibarr_services_expired.modules.php
+ *	\file       htdocs/includes/modules/mailings/thirdparties_services_expired.modules.php
  *	\ingroup    mailing
  *	\brief      File of class to offer a selector of emailing targets with Rule 'services expired'.
  *	\version    $Id$
@@ -19,10 +19,10 @@ require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 
 
 /**
- *	\class      mailing_dolibarr_services_expired
+ *	\class      mailing_thirdparties_services_expired
  *	\brief      Class to offer a selector of emailing targets with Rule 'services expired'.
  */
-class mailing_dolibarr_services_expired extends MailingTargets
+class mailing_thirdparties_services_expired extends MailingTargets
 {
 	var $name='DolibarrContractsLinesExpired';
 	var $desc='Third parties with expired contract\'s lines';
@@ -38,9 +38,9 @@ class mailing_dolibarr_services_expired extends MailingTargets
 	 * Constructor
 	 *
 	 * @param  $DB
-	 * @return mailing_dolibarr_services_expired
+	 * @return mailing_thirdparties_services_expired
 	 */
-	function mailing_dolibarr_services_expired($DB)
+	function mailing_thirdparties_services_expired($DB)
 	{
 		$this->db=$DB;
 

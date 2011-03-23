@@ -10,7 +10,7 @@
  */
 
 /**
- *	\file       htdocs/includes/modules/mailings/kiwi.modules.php
+ *	\file       htdocs/includes/modules/mailings/thirdparties.modules.php
  *	\ingroup    mailing
  *	\brief      Example file to provide a list of recipients for mailing module
  *	\version    $Revision$
@@ -20,10 +20,10 @@ include_once DOL_DOCUMENT_ROOT.'/includes/modules/mailings/modules_mailings.php'
 
 
 /**
- *	    \class      mailing_kiwi
+ *	    \class      mailing_thirdparties
  *		\brief      Class to manage a list of personalised recipients for mailing feature
  */
-class mailing_kiwi extends MailingTargets
+class mailing_thirdparties extends MailingTargets
 {
 	// CHANGE THIS: Put here a name not already used
 	var $name='ContactsCategories';
@@ -38,7 +38,7 @@ class mailing_kiwi extends MailingTargets
 	var $db;
 
 
-	function mailing_kiwi($DB)
+	function mailing_thirdparties($DB)
 	{
 		$this->db=$DB;
 	}

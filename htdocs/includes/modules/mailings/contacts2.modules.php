@@ -18,7 +18,7 @@
  */
 
 /**
- *    	\file       htdocs/includes/modules/mailings/myrtille.modules.php
+ *    	\file       htdocs/includes/modules/mailings/contacts2.modules.php
  *    	\ingroup    mailing
  *    	\brief      Provides a list of recipients for mailing module
  *    	\version    $Revision$
@@ -28,10 +28,10 @@ include_once DOL_DOCUMENT_ROOT.'/includes/modules/mailings/modules_mailings.php'
 
 
 /**
- * 	    \class      mailing_myrtille
+ * 	    \class      mailing_contacts2
  * 		\brief      Class to manage a list of personalised recipients for mailing feature
  */
-class mailing_myrtille extends MailingTargets
+class mailing_contacts2 extends MailingTargets
 {
     var $name='ContactsByFunction';
     // This label is used if no translation is found for key MailingModuleDescXXX where XXX=name is found
@@ -43,11 +43,20 @@ class mailing_myrtille extends MailingTargets
     var $db;
 
 
-    function mailing_myrtille($DB)
+    function mailing_contacts2($DB)
     {
         $this->db=$DB;
     }
 
+
+    /**
+     *      \brief      Renvoie url lien vers fiche de la source du destinataire du mailing
+     *      \return     string      Url lien
+     */
+    function url($id)
+    {
+        return '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$id.'">'.img_object('',"contact").'</a>';
+    }
 
     /**
      *    This is the main function that returns the array of emails
@@ -57,18 +66,21 @@ class mailing_myrtille extends MailingTargets
      */
     function add_to_target($mailing_id,$filtersarray=array())
     {
-    	global $conf;
-    	
+    	global $conf,$langs;
+
     	$target = array();
-    	
-    	$sql = "SELECT sp.rowid, sp.email, sp.name, sp.firstname";
-    	$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
-    	$sql.= " WHERE (sp.email IS NOT NULL AND sp.email != '')";
-    	$sql.= " AND (sp.poste IS NOT NULL AND sp.poste != '')";
+
+        // La requete doit retourner: id, email, fk_contact, name, firstname, other
+        $sql = "SELECT sp.rowid as id, sp.email as email, sp.rowid as fk_contact,";
+        $sql.= " sp.name as name, sp.firstname as firstname, sp.civilite,";
+        $sql.= " s.nom as companyname";
+    	$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp,";
+        $sql.= " ".MAIN_DB_PREFIX."societe as s";
+        $sql.= " WHERE s.rowid = sp.fk_soc";
+    	$sql.= " AND sp.email != ''";  // Note that null != '' is false
     	$sql.= " AND sp.entity = ".$conf->entity;
     	if ($filtersarray[0]<>'all') $sql.= " AND sp.poste ='".$filtersarray[0]."'";
     	$sql.= " ORDER BY sp.name, sp.firstname";
-    	
     	$resql = $this->db->query($sql);
     	if ($resql)
     	{
@@ -78,11 +90,16 @@ class mailing_myrtille extends MailingTargets
     		{
     			$obj= $this->db->fetch_object($resql);
     			$target[] = array(
-                    		'email' => $obj->email,
-                    		'name' => $obj->name,
-                    		'firstname' => $obj->firstname,
-                    		'other' => $other,
-		                	'url' => '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->rowid.'">'.img_object('',"contact").'</a>'
+                            'email' => $obj->email,
+                            'fk_contact' => $obj->fk_contact,
+                            'name' => $obj->name,
+                            'firstname' => $obj->firstname,
+                            'other' =>
+                                ($langs->transnoentities("ThirdParty").'='.$obj->companyname).';'.
+                                ($langs->transnoentities("Civility").'='.($obj->civilite?$langs->transnoentities("Civility".$obj->civilite):'')),
+                            'source_url' => $this->url($obj->id),
+                            'source_id' => $obj->id,
+                            'source_type' => 'contact'
 							);
 				$i++;
 			}
@@ -104,17 +121,19 @@ class mailing_myrtille extends MailingTargets
 		global $conf;
 
 		$statssql=array();
-		for ($i=0; $i<5; $i++) {
-			$statssql[$i] = "SELECT sp.poste as label";
-			$statssql[$i].= ", count(distinct(sp.email)) as nb";
-			$statssql[$i].= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
-			$statssql[$i].= " WHERE (sp.email IS NOT NULL AND sp.email != '')";
-			$statssql[$i].= " AND (sp.poste IS NOT NULL AND sp.poste != '')";
-			$statssql[$i].= " AND sp.entity = ".$conf->entity;
-			$statssql[$i].= " GROUP BY label";
-			$statssql[$i].= " ORDER BY nb DESC";
-			$statssql[$i].= " LIMIT $i,1";
-		}
+		/*for ($i=0; $i<5; $i++) {
+            $statssql[$i] = "SELECT sp.poste as label";
+            $statssql[$i].= ", count(distinct(sp.email)) as nb";
+            $statssql[$i].= " FROM ".MAIN_DB_PREFIX."socpeople as sp,";
+            $statssql[$i].= " ".MAIN_DB_PREFIX."societe as s";
+            $statssql[$i].= " WHERE s.rowid = sp.fk_soc";
+            $statssql[$i].= " AND sp.email != ''";  // Note that null != '' is false
+            $statssql[$i].= " AND (sp.poste IS NOT NULL AND sp.poste != '')";
+            $statssql[$i].= " AND sp.entity = ".$conf->entity;
+            $statssql[$i].= " GROUP BY label";
+            $statssql[$i].= " ORDER BY nb DESC";
+            $statssql[$i].= " LIMIT $i,1";
+		}*/
 
 		return $statssql;
 	}
@@ -127,13 +146,14 @@ class mailing_myrtille extends MailingTargets
     function getNbOfRecipients()
     {
     	global $conf;
-    	
+
     	$sql = "SELECT count(distinct(sp.email)) as nb";
-    	$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
-    	$sql.= " WHERE sp.entity = ".$conf->entity;
-    	$sql.= " AND (sp.email IS NOT NULL AND sp.email != '')";
-    	$sql.= " AND (sp.poste IS NOT NULL AND sp.poste != '')";
-    	
+    	$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp,";
+        $sql.= " ".MAIN_DB_PREFIX."societe as s";
+        $sql.= " WHERE s.rowid = sp.fk_soc";
+        $sql.= " AND s.entity = ".$conf->entity;
+        $sql.= " AND sp.entity = ".$conf->entity;
+    	$sql.= " AND sp.email != ''";  // Note that null != '' is false
     	// La requete doit retourner un champ "nb" pour etre comprise
     	// par parent::getNbOfRecipients
     	return parent::getNbOfRecipients($sql);
@@ -147,22 +167,24 @@ class mailing_myrtille extends MailingTargets
     function formFilter()
     {
     	global $conf, $langs;
-    	
+
     	$langs->load("companies");
 
         $sql = "SELECT sp.poste, count(distinct(sp.email)) AS nb";
-        $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
-        $sql.= " WHERE sp.entity = ".$conf->entity;
-        $sql.= " AND (sp.email IS NOT NULL AND sp.email != '')";
+        $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp,";
+        $sql.= " ".MAIN_DB_PREFIX."societe as s";
+        $sql.= " WHERE s.rowid = sp.fk_soc";
+        $sql.= " AND sp.entity = ".$conf->entity;
+        $sql.= " AND sp.email != ''";    // Note that null != '' is false
         $sql.= " AND (sp.poste IS NOT NULL AND sp.poste != '')";
         $sql.= " GROUP BY sp.poste";
         $sql.= " ORDER BY sp.poste";
-        
+
         $resql = $this->db->query($sql);
-        
+
         $s='';
         $s.='<select name="filter" class="flat">';
-        $s.='<option value="all">'.$langs->trans("ContactsAllShort").'</option>';
+        $s.='<option value="all"></option>';
         if ($resql)
         {
             $num = $this->db->num_rows($resql);
