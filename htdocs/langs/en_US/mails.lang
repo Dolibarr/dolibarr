@@ -77,6 +77,8 @@ MailingModuleDescFundationMembers=Foundation members with emails
 MailingModuleDescEmailsFromFile=EMails from a text file (email;lastname;firstname;other)
 MailingModuleDescContactsCategories=Third parties with emails (by category)
 MailingModuleDescDolibarrContractsLinesExpired=Third parties with expired contract's lines
+MailingModuleDescContactsByCompanyCategory=Contacts with emails by third parties category
+MailingModuleDescMembersCategories=Foundation members with emails (by categories)
 
 LineInFile=Line %s in file
 RecipientSelectionModules=Defined requests for recipient's selection
