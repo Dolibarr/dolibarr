@@ -79,6 +79,7 @@ MailingModuleDescContactsCategories=Tiers avec e-mail (par catégorie)
 MailingModuleDescDolibarrContractsLinesExpired=Tiers avec lignes de contrats de services expirées
 MailingModuleDescContactsByCompanyCategory=Contacts avec e-mail par catégorie de tiers
 MailingModuleDescMembersCategories=Adhérents avec e-mail (par catégorie)
+MailingModuleDescContactsByFunction=Contacts par poste/fonction
 
 LineInFile=Ligne %s du fichier
 RecipientSelectionModules=Modules de sélection des destinataires
