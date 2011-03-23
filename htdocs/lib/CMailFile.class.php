@@ -674,7 +674,8 @@ class CMailFile
         //$strContent = rtrim(chunk_split($strContent));    // Function chunck_split seems bugged
         $strContent = rtrim(wordwrap($strContent));
 
-		$out.=$strContent.$this->eol;
+		$out.= $strContent.$this->eol;
+		$out.= $this->eol;
 
 		return $out;
 	}
