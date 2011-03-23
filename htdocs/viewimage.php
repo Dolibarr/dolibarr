@@ -276,6 +276,13 @@ if ($modulepart)
         $accessallowed=1;
         $original_file=$conf->scanner->dir_temp.'/'.$user->id.'/'.$original_file;
     }
+    
+	// Wrapping pour les images fckeditor
+    elseif ($modulepart == 'fckeditor')
+    {
+        $accessallowed=1;
+        $original_file=$conf->fckeditor->dir_output.'/'.$original_file;
+    }
 
     // GENERIC Wrapping
 	// If modulepart=module_user_temp	Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart/temp/iduser

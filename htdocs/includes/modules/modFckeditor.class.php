@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,22 +19,23 @@
  */
 
 /**
- \defgroup   fckeditor     Module fckeditor
- \brief      Module pour mettre en page les zones de saisie de texte
- \version	$Id$
+ *  \defgroup   fckeditor     Module fckeditor
+ *  \brief      Module pour mettre en page les zones de saisie de texte
+ *  \version	$Id$
  */
 
 /**
- \file       htdocs/includes/modules/modFckeditor.class.php
- \ingroup    fckeditor
- \brief      Fichier de description et activation du module Fckeditor
+ *  \file       htdocs/includes/modules/modFckeditor.class.php
+ *  \ingroup    fckeditor
+ *  \brief      Fichier de description et activation du module Fckeditor
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
-/** \class modFckeditor
- \brief      Classe de description et activation du module Fckeditor
+/** 
+ * 	\class modFckeditor
+ *  \brief      Classe de description et activation du module Fckeditor
  */
 
 class modFckeditor extends DolibarrModules
@@ -60,7 +61,7 @@ class modFckeditor extends DolibarrModules
 		$this->picto='list';
 
 		// Data directories to create when module is enabled
-		$this->dirs = array("/fckeditor/temp","/fckeditor/images");
+		$this->dirs = array("/fckeditor/temp","/fckeditor/image");
 
 		// Config pages
 		$this->config_page_url = array("fckeditor.php");
