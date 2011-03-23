@@ -211,6 +211,7 @@ DateProcess=Process date
 DatePlanShort=Date planed
 DateRealShort=Date real.
 DateBuild=Report build date
+DatePayment=Date of payment
 DurationYear=year
 DurationMonth=month
 DurationWeek=week

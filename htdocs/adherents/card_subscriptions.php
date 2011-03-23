@@ -185,6 +185,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
     // Subscription informations
     $datecotisation=0;
     $datesubend=0;
+    $paymentdate=0;
     if ($_POST["reyear"] && $_POST["remonth"] && $_POST["reday"])
     {
         $datecotisation=dol_mktime(0, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
@@ -200,6 +201,16 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
     $cotisation=$_POST["cotisation"];	// Amount of subscription
     $label=$_POST["label"];
 
+    // Payment informations
+    $accountid=$_POST["accountid"];
+    $operation=$_POST["operation"]; // Payment mode
+    $num_chq=$_POST["num_chq"];
+    $emetteur_nom=$_POST["chqemetteur"];
+    $emetteur_banque=$_POST["chqbank"];
+    $option=$_POST["paymentsave"];
+    if (empty($option)) $option='none';
+
+    // Check parameters
     if (! $datecotisation)
     {
         $error++;
@@ -210,15 +221,12 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
     {
         $datesubend=dol_time_plus_duree(dol_time_plus_duree($datecotisation,$defaultdelay,$defaultdelayunit),-1,'d');
     }
-
-    // Payment informations
-    $accountid=$_POST["accountid"];
-    $operation=$_POST["operation"];	// Payment mode
-    $num_chq=$_POST["num_chq"];
-    $emetteur_nom=$_POST["chqemetteur"];
-    $emetteur_banque=$_POST["chqbank"];
-    $option=$_POST["paymentsave"];
-    if (empty($option)) $option='none';
+    if (($option == 'bankviainvoice' || $option == 'bankdirect') && ! $paymentdate)
+    {
+        $error++;
+        $errmsg=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DatePayment"));
+        $action='addsubscription';
+    }
 
     // Check if a payment is mandatory or not
     if (! $error && $adht->cotisation)	// Type adherent soumis a cotisation
@@ -271,7 +279,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
                 $acct=new Account($db);
                 $result=$acct->fetch($accountid);
 
-                $dateop=dol_now();
+                $dateop=$paymentdate;
 
                 $insertid=$acct->addline($dateop, $operation, $label, $cotisation, $num_chq, '', $user, $emetteur_nom, $emetteur_banque);
                 if ($insertid > 0)
@@ -353,7 +361,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
                 // Validate invoice
                 $result=$invoice->validate($user);
 
-                // Add payment on invoice
+                // Add payment onto invoice
                 if ($option == 'bankviainvoice' && $accountid)
                 {
                     require_once(DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php');
@@ -363,7 +371,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
                     // Creation de la ligne paiement
                     $amounts[$invoice->id] = price2num($cotisation);
                     $paiement = new Paiement($db);
-                    $paiement->datepaye     = $datecotisation;
+                    $paiement->datepaye     = $paymentdate;
                     $paiement->amounts      = $amounts;
                     $paiement->paiementid   = dol_getIdFromCode($db,$operation,'c_paiement');
                     $paiement->num_paiement = $num_chq;

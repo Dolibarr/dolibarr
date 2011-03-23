@@ -210,6 +210,7 @@ DateProcess=Date traitement
 DatePlanShort=Date planif.
 DateRealShort=Date réal.
 DateBuild=Date génération du rapport
+DatePayment=Date paiement
 DurationYear=an
 DurationMonth=mois
 DurationWeek=semaine
