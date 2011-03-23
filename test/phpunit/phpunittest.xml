@@ -21,7 +21,7 @@
     <directory suffix=".php">../../htdocs/includes/menus/smartphone/</directory>
     <directory suffix=".php">../../htdocs/includes/nusoap/</directory>
     <directory suffix=".php">../../htdocs/includes/odtphp/</directory>
-    <directory suffix=".php">../../htdocs/includes/php_excelreader/</directory>
+    <directory suffix=".php">../../htdocs/includes/phpexcel/</directory>
     <directory suffix=".php">../../htdocs/includes/php_writeexcel/</directory>
     <directory suffix=".php">../../htdocs/includes/smarty/</directory>
     <directory suffix=".php">../../htdocs/includes/smtps/</directory>
@@ -60,7 +60,7 @@
     <directory suffix=".php">../../htdocs/includes/menus/smartphone</directory>
     <directory suffix=".php">../../htdocs/includes/nusoap/</directory>
     <directory suffix=".php">../../htdocs/includes/odtphp/</directory>
-    <directory suffix=".php">../../htdocs/includes/php_excelreader/</directory>
+    <directory suffix=".php">../../htdocs/includes/phpexcel/</directory>
     <directory suffix=".php">../../htdocs/includes/php_writeexcel/</directory>
     <directory suffix=".php">../../htdocs/includes/smarty/</directory>
     <directory suffix=".php">../../htdocs/includes/smtps/</directory>
