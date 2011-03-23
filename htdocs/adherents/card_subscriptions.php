@@ -193,6 +193,10 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
     {
         $datesubend=dol_mktime(0, 0, 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
     }
+    if ($_POST["paymentyear"] && $_POST["paymentmonth"] && $_POST["paymentday"])
+    {
+        $paymentdate=dol_mktime(0, 0, 0, $_POST["paymentmonth"], $_POST["paymentday"], $_POST["paymentyear"]);
+    }
     $cotisation=$_POST["cotisation"];	// Amount of subscription
     $label=$_POST["label"];
 
@@ -593,7 +597,7 @@ if ($rowid)
     dol_fiche_end();
 
 
-    dol_htmloutput_errors($errmg,$errmsgs);
+    dol_htmloutput_errors($errmsg,$errmsgs);
 
 
     /*
@@ -791,6 +795,13 @@ if ($rowid)
         $today=mktime();
         $datefrom=0;
         $dateto=0;
+        $paymentdate=-1;
+
+        // Date payment
+        if ($_POST["paymentyear"] && $_POST["paymentmonth"] && $_POST["paymentday"])
+        {
+            $paymentdate=dol_mktime(0, 0, 0, $_POST["paymentmonth"], $_POST["paymentday"], $_POST["paymentyear"]);
+        }
 
         // Date start subscription
         print '<tr><td width="30%" class="fieldrequired">'.$langs->trans("DateSubscription").'</td><td>';
@@ -897,6 +908,11 @@ if ($rowid)
                 // Payment mode
                 print '<tr class="bankswitchclass"><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
                 $html->select_types_paiements($_POST["operation"],'operation','',2);
+                print "</td></tr>\n";
+
+                // Date of payment
+                print '<tr class="bankswitchclass"><td class="fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
+                $html->select_date($paymentdate?$paymentdate:-1,'payment',0,0,1,'cotisation',1,1);
                 print "</td></tr>\n";
 
                 print '<tr class="bankswitchclass2"><td>'.$langs->trans('Numero');
