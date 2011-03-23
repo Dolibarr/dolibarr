@@ -32,8 +32,9 @@ MagPieRss         0.72     GPL 2.0                     Yes              Load RSS
 NuSoap            0.9.5    LGPL 2.1                    Yes              Interfaces with third tools
 OdtPHP            1.0.1    GPL 2.0                     Yes              Library to build/edit ODT files
 Php-barcode       0.3pl1   GPL 2.0                     Yes              Bar code generation
-PHP_WriteExcel    0.3.0    LGPL 2.1                    Yes              Excel files generation
-PHP_ExcelReader   2.21     MIT License                 Yes              Parse and retrieve information from XLS files
+PHP_WriteExcel    0.3.0    LGPL 2.1                    Yes              Excel files generation (obsolete)
+PHP_ExcelReader   2.21     MIT License                 Yes              Parse and retrieve information from XLS files (obsolete)
+PHPExcel		  1.7.6    LGPL 2.1                    Yes              Read/Write XLS files, read ODS files
 Smarty            2.6.26   LGPL 2.1                    Yes              Templates engine used by some pages
 SMTPs             1.15     GPL                         Yes              SMTPS library
 TCPDF             5.9.060  LGPL 3.0                    Yes				PDF generation
