@@ -154,6 +154,7 @@ class mailing_contacts2 extends MailingTargets
         $sql.= " AND s.entity = ".$conf->entity;
         $sql.= " AND sp.entity = ".$conf->entity;
     	$sql.= " AND sp.email != ''";  // Note that null != '' is false
+    	$sql.= " AND sp.poste != ''";
     	// La requete doit retourner un champ "nb" pour etre comprise
     	// par parent::getNbOfRecipients
     	return parent::getNbOfRecipients($sql);
