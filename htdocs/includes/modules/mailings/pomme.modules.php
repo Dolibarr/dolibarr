@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2009 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2011 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin       <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -55,8 +55,8 @@ class mailing_pomme extends MailingTargets
 		$langs->load("users");
 
 		$statssql=array();
-		$sql = "SELECT '".$langs->trans("DolibarrUsers")."' as label";
-		$sql.= ", count(distinct(u.email)) as nb";
+		$sql = "SELECT '".$langs->trans("DolibarrUsers")."' as label,";
+		$sql.= " count(distinct(u.email)) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 		$sql.= " WHERE u.email != ''"; // u.email IS NOT NULL est implicite dans ce test
 		$sql.= " AND u.entity IN (0,".$conf->entity.")";
@@ -100,6 +100,7 @@ class mailing_pomme extends MailingTargets
 
 		$s='';
 		$s.='<select name="filter" class="flat">';
+		$s.='<option value="-1"></option>';
 		$s.='<option value="1">'.$langs->trans("Enabled").'</option>';
 		$s.='<option value="0">'.$langs->trans("Disabled").'</option>';
 		$s.='</select>';
