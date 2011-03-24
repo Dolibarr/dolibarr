@@ -155,7 +155,18 @@ class mailing_contacts3 extends MailingTargets
     {
     	global $conf;
 
-        $sql = "SELECT count(distinct(sp.email)) as nb";
+    	// We must report here number of contacts when absolutely no filter selected (so all contacts).
+    	// Number with a filter are show in the combo list for each filter.
+        // If we want a filter "is inside at least one category", we must add it into formFilter
+    	$sql = "SELECT count(distinct(c.email)) as nb";
+        $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c,";
+        $sql.= " ".MAIN_DB_PREFIX."societe as s";
+        $sql.= " WHERE s.rowid = c.fk_soc";
+        $sql.= " AND c.entity = ".$conf->entity;
+        $sql.= " AND s.entity = ".$conf->entity;
+        $sql.= " AND c.email != ''"; // Note that null != '' is false
+        /*
+    	$sql = "SELECT count(distinct(sp.email)) as nb";
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp,";
         $sql.= " ".MAIN_DB_PREFIX."societe as s,";
         $sql.= " ".MAIN_DB_PREFIX."categorie as c,";
@@ -166,6 +177,7 @@ class mailing_contacts3 extends MailingTargets
         $sql.= " AND sp.email != ''"; // Note that null != '' is false
         $sql.= " AND cs.fk_categorie = c.rowid";
         $sql.= " AND cs.fk_societe = sp.fk_soc";
+        */
     	// La requete doit retourner un champ "nb" pour etre comprise
     	// par parent::getNbOfRecipients
     	return parent::getNbOfRecipients($sql);

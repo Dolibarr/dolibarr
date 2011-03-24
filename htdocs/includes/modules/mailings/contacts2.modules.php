@@ -148,6 +148,9 @@ class mailing_contacts2 extends MailingTargets
     {
     	global $conf;
 
+        // We must report here number of contacts when absolutely no filter selected (so all contacts).
+        // Number with a filter are show in the combo list for each filter.
+        // If we want a filter "function is defined", we must add it into formFilter
     	$sql = "SELECT count(distinct(sp.email)) as nb";
     	$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp,";
         $sql.= " ".MAIN_DB_PREFIX."societe as s";
