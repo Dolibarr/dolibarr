@@ -78,7 +78,7 @@ class mailing_contacts2 extends MailingTargets
         $sql.= " ".MAIN_DB_PREFIX."societe as s";
         $sql.= " WHERE s.rowid = sp.fk_soc";
     	$sql.= " AND sp.email != ''";  // Note that null != '' is false
-    	$sql.= " AND sp.poste != ''";
+    	//$sql.= " AND sp.poste != ''";
     	$sql.= " AND sp.entity = ".$conf->entity;
     	if ($filtersarray[0]<>'all') $sql.= " AND sp.poste ='".$filtersarray[0]."'";
     	$sql.= " ORDER BY sp.name, sp.firstname";
@@ -148,6 +148,9 @@ class mailing_contacts2 extends MailingTargets
     {
     	global $conf;
 
+        // We must report here number of contacts when absolutely no filter selected (so all contacts).
+        // Number with a filter are show in the combo list for each filter.
+        // If we want a filter "a position is defined", we must add it into formFilter
     	$sql = "SELECT count(distinct(sp.email)) as nb";
     	$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp,";
         $sql.= " ".MAIN_DB_PREFIX."societe as s";
@@ -155,7 +158,7 @@ class mailing_contacts2 extends MailingTargets
         $sql.= " AND s.entity = ".$conf->entity;
         $sql.= " AND sp.entity = ".$conf->entity;
     	$sql.= " AND sp.email != ''";  // Note that null != '' is false
-    	$sql.= " AND sp.poste != ''";
+    	//$sql.= " AND sp.poste != ''";
     	// La requete doit retourner un champ "nb" pour etre comprise
     	// par parent::getNbOfRecipients
     	return parent::getNbOfRecipients($sql);
