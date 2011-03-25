@@ -2953,7 +2953,7 @@ class Form
             $no="0";
         }
 
-        $resultyesno = '<select class="flat" name="'.$htmlname.'">'."\n";
+        $resultyesno = '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">'."\n";
         if (("$value" == 'yes') || ($value == 1))
         {
             $resultyesno .= '<option value="'.$yes.'" selected="selected">'.$langs->trans("Yes").'</option>'."\n";

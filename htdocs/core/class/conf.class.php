@@ -343,6 +343,8 @@ class Conf
 		// Defini MAIN_GRAPH_LIBRARY
 		if (empty($this->global->MAIN_GRAPH_LIBRARY)) $this->global->MAIN_GRAPH_LIBRARY = 'artichow';
 
+        if (! isset($this->global->MAIN_MAIL_EMAIL_INLINE_IMAGES)) $this->global->MAIN_MAIL_EMAIL_INLINE_IMAGES=1;
+
         // Format for date (used by default when not found or searched in lang)
         $this->format_date_short="%d/%m/%Y";            # Format of day with PHP/C tags (strftime functions)
         $this->format_date_short_java="dd/MM/yyyy";     # Format of day with Java tags
