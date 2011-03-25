@@ -301,7 +301,7 @@ if ($_POST["action"] == 'send' && empty($_POST["cancel"]))
 {
 	$mil = new Mailing($db);
 	$result=$mil->fetch($_POST["mailid"]);
-	
+
 	$error=0;
 
 	$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($mil->id,2,0,1);
@@ -312,7 +312,7 @@ if ($_POST["action"] == 'send' && empty($_POST["cancel"]))
 		$message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("MailTo")).'</div>';
 		$error++;
 	}
-	
+
 	if (! $error)
 	{
 		// Ajout CSS
@@ -428,7 +428,7 @@ if ($_REQUEST["action"] == 'setdesc' || $_REQUEST["action"] == 'setfrom' || $_RE
 }
 
 // Action update emailing
-if (! empty($_POST["removedfile"]))
+if (! empty($_POST["removedfileid"]))
 {
 	$mil = new Mailing($db);
 	$mil->fetch($_POST["id"]);
@@ -438,7 +438,7 @@ if (! empty($_POST["removedfile"]))
 	$listofpaths=dol_dir_list($upload_dir,'all',0,'','','name',SORT_ASC,0);
 
 	// Remove file
-	$filenb=($_POST["removedfile"]-1);
+	$filenb=($_POST["removedfileid"]-1);
 	if (isset($listofpaths[$filenb]))
 	{
 		$result=dol_delete_file($listofpaths[$filenb]['fullname'],1);
@@ -653,7 +653,7 @@ else
 		$head = emailing_prepare_head($mil);
 
 		dol_fiche_head($head, 'card', $langs->trans("Mailing"), 0, 'email');
-		
+
 		if ($message) print $message."<br>";
 
 		// Confirmation de la validation du mailing
@@ -757,7 +757,7 @@ else
 					$text=$langs->trans('NotEnoughPermissions');
 					print $html->textwithpicto($nbemail,$text,1,'warning');
 				}
-				
+
 			}
 			else
 			{
@@ -915,7 +915,6 @@ else
 					foreach($listofpaths as $key => $val)
 					{
 						print img_mime($listofpaths[$key]['name']).' '.$listofpaths[$key]['name'];
-						//print ' <input type="image" style="border: 0px;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" value="'.($key+1).'" name="removedfile">';
 						print '<br>';
 					}
 				}
@@ -1002,7 +1001,8 @@ else
 					foreach($listofpaths as $key => $val)
 					{
 						print img_mime($listofpaths[$key]['name']).' '.$listofpaths[$key]['name'];
-						print ' <input type="image" style="border: 0px;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" value="'.($key+1).'" name="removedfile">';
+						print ' <input type="image" style="border: 0px;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" value="removedfile" name="removedfile" />';
+						print '<input type="hidden" name="removedfileid" value="'.($key+1).'" />';
 						print '<br>';
 					}
 				}
