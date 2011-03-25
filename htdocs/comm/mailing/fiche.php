@@ -428,7 +428,7 @@ if ($_REQUEST["action"] == 'setdesc' || $_REQUEST["action"] == 'setfrom' || $_RE
 }
 
 // Action update emailing
-if (! empty($_POST["removedfile"]))
+if (! empty($_POST["removedfileid"]))
 {
 	$mil = new Mailing($db);
 	$mil->fetch($_POST["id"]);
@@ -438,7 +438,7 @@ if (! empty($_POST["removedfile"]))
 	$listofpaths=dol_dir_list($upload_dir,'all',0,'','','name',SORT_ASC,0);
 
 	// Remove file
-	$filenb=($_POST["removedfile"]-1);
+	$filenb=($_POST["removedfileid"]-1);
 	if (isset($listofpaths[$filenb]))
 	{
 		$result=dol_delete_file($listofpaths[$filenb]['fullname'],1);
@@ -1001,7 +1001,8 @@ else
 					foreach($listofpaths as $key => $val)
 					{
 						print img_mime($listofpaths[$key]['name']).' '.$listofpaths[$key]['name'];
-						print ' <input type="image" style="border: 0px;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" value="'.($key+1).'" name="removedfile">';
+						print ' <input type="image" style="border: 0px;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" value="removedfile" name="removedfile" />';
+						print '<input type="hidden" name="removedfileid" value="'.($key+1).'" />';
 						print '<br>';
 					}
 				}
