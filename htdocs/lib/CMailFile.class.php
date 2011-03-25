@@ -46,7 +46,9 @@ class CMailFile
 	var $addr_cc;
 	var $addr_bcc;
 
-	var $mime_boundary;
+	var $mixed_boundary;
+	var $related_boundary;
+	var $alternative_boundary;
 	var $deliveryreceipt;
 
 	var $eol;
@@ -110,8 +112,8 @@ class CMailFile
 		if (preg_match('/^win/i',PHP_OS)) $this->eol="\r\n";
 		if (preg_match('/^mac/i',PHP_OS)) $this->eol="\r";
 
-		// On defini mime_boundary
-		$this->mime_boundary = md5(uniqid("dolibarr"));
+		// On defini mixed_boundary
+		$this->mixed_boundary = md5(uniqid("dolibarr"));
 
 		// On defini related_boundary
 		$this->related_boundary = md5(uniqid("dolibarr"));
@@ -177,7 +179,7 @@ class CMailFile
 			$smtp_headers = "";
 			$mime_headers = "";
 			$text_body = "";
-			$text_encoded = "";
+			$files_encoded = "";
 
 			// Define smtp_headers
 			$this->subject = $subject;
@@ -205,24 +207,26 @@ class CMailFile
 
 			// Define body in text_body
 			$text_body = $this->write_body($msg);
+			$text_body.= "--" . $this->alternative_boundary . "--" . $this->eol;
 
 			// Encode images
 			if ($this->atleastoneimage)
 			{
 				$images_encoded = $this->write_images($this->images_encoded);
+				$images_encoded.= "--" . $this->related_boundary . "--" . $this->eol;
 			}
 
 			// Add attachments to text_encoded
 			if ($this->atleastonefile)
 			{
-				$text_encoded = $this->write_files($filename_list,$mimetype_list,$mimefilename_list);
+				$files_encoded = $this->write_files($filename_list,$mimetype_list,$mimefilename_list);
 			}
 
 			// We now define $this->headers et $this->message
 			$this->headers = $smtp_headers . $mime_headers;
 
-			$this->message = $text_body . $images_encoded . $text_encoded;
-			$this->message.= "--" . $this->mime_boundary . "--" . $this->eol;
+			$this->message = $text_body . $images_encoded . $files_encoded;
+			$this->message.= "--" . $this->mixed_boundary . "--" . $this->eol;
 
 			// On nettoie le header pour qu'il ne se termine pas par un retour chariot.
 			// Ceci evite aussi les lignes vides en fin qui peuvent etre interpretees
@@ -596,9 +600,23 @@ class CMailFile
 		$out.= "X-Mailer: Dolibarr version " . DOL_VERSION ." (using php mail)".$this->eol;
 		$out.= "MIME-Version: 1.0".$this->eol;
 
-		$out.= "Content-Type: multipart/related; boundary=\"".$this->mime_boundary."\"".$this->eol;
-		//$out.= "Content-Type: multipart/mixed; boundary=\"".$this->mime_boundary."\"".$this->eol;
+		$out.= "Content-Type: multipart/mixed; boundary=\"".$this->mixed_boundary."\"".$this->eol;
 		$out.= "Content-Transfer-Encoding: 8bit".$this->eol;
+		
+		if ($this->atleastoneimage)
+		{
+			$out.= "--" . $this->mixed_boundary . $this->eol;
+			$out.= "Content-Type: multipart/related; boundary=\"".$this->related_boundary."\"".$this->eol;
+			$out.= $this->eol;
+			$out.= "--" . $this->related_boundary . $this->eol;
+		}
+		else
+		{
+			$out.= "--" . $this->mixed_boundary . $this->eol;
+		}
+		
+		$out.= "Content-Type: multipart/alternative; boundary=\"".$this->alternative_boundary."\"".$this->eol;
+		$out.= $this->eol;
 
 		//$out.=$this->eol;	// Comment this to try to solve pb of hidden attached files. New line must be after the X-attachments
 		dol_syslog("CMailFile::write_smtpheaders smtp_header=\n".$out);
@@ -648,12 +666,12 @@ class CMailFile
 
 		if ($this->msgishtml)
 		{
-			$out.= "--" . $this->mime_boundary . $this->eol;
+			$out.= "--" . $this->alternative_boundary . $this->eol;
 			$out.= "Content-Type: text/html; charset=".$conf->file->character_set_client.$this->eol;
 		}
 		else
 		{
-			$out.= "--" . $this->mime_boundary . $this->eol;
+			$out.= "--" . $this->alternative_boundary . $this->eol;
 			$out.= "Content-Type: text/plain; charset=".$conf->file->character_set_client.$this->eol;
 		}
 		$out.= $this->eol;
@@ -704,7 +722,7 @@ class CMailFile
 					if ($mimefilename_list[$i]) $filename_list[$i] = $mimefilename_list[$i];
 					if (! $mimetype_list[$i]) { $mimetype_list[$i] = "application/octet-stream"; }
 
-					$out.= "--" . $this->mime_boundary . $this->eol;
+					$out.= "--" . $this->mixed_boundary . $this->eol;
                     $out.= "Content-Disposition: attachment; filename=\"".$filename_list[$i]."\"".$this->eol;
 					$out.= "Content-Type: " . $mimetype_list[$i] . "; name=\"".$filename_list[$i]."\"".$this->eol;
 					$out.= "Content-Transfer-Encoding: base64".$this->eol;
@@ -741,7 +759,7 @@ class CMailFile
 			{
 				dol_syslog("CMailFile::write_images: i=$i");
 
-				$out.= "--" . $this->mime_boundary . $this->eol;
+				$out.= "--" . $this->related_boundary . $this->eol;
 				$out.= "Content-Type: " . $img["content_type"] . "; name=\"".$img["name"]."\"".$this->eol;
 				$out.= "Content-Transfer-Encoding: base64".$this->eol;
 				$out.= "Content-Disposition: inline; filename=\"".$img["name"]."\"".$this->eol;
