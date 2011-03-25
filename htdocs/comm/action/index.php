@@ -392,7 +392,7 @@ if ($showbirthday)
 
 $maxlength=16;
 $cachethirdparties=array();
-$cachecontact=array();
+$cachecontacts=array();
 
 // Define theme_datacolor array
 $color_file = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/graph-color.php";
@@ -516,7 +516,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$action
 	global $user, $conf, $langs;
 	global $filter, $filtera, $filtert, $filterd, $status;
 	global $theme_datacolor;
-	global $cachethirdparty, $cachecontact;
+	global $cachethirdparties, $cachecontacts;
 
 	if ($_GET["action"] == 'maxPrint')
 	{
@@ -611,16 +611,18 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$action
                                 $thirdparty->fetch($action->societe->id);
                                 $cachethirdparties[$action->societe->id]=$thirdparty;
                             }
+                            else $thirdparty=$cachethirdparties[$event->societe->id];
                             $linerelatedto.=$thirdparty->getNomUrl(1,'',$length);
                         }
                         if (! empty($action->contact->id))
                         {
-                            if (empty($cachetcontact[$action->societe->id]))
+                            if (empty($cachecontacts[$action->contact->id]))
                             {
                                 $contact=new Contact($db);
                                 $contact->fetch($action->contact->id);
-                                $cachethirdparties[$action->contact->id]=$thirdparty;
+                                $cachecontacts[$action->contact->id]=$contact;
                             }
+                            else $contact=$cachecontacts[$event->contact->id];
                             if ($linerelatedto) $linerelatedto.=' / ';
                             $linerelatedto.=$contact->getNomUrl(1,'',$length);
                         }
