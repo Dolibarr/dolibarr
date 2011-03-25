@@ -760,6 +760,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                                 $thirdparty->fetch($event->societe->id);
                                 $cachethirdparties[$event->societe->id]=$thirdparty;
                             }
+                            else $thirdparty=$cachethirdparties[$event->societe->id];
                             $linerelatedto.=$thirdparty->getNomUrl(1,'',$length);
                         }
                         if (! empty($event->contact->id))
@@ -768,8 +769,9 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                             {
                                 $contact=new Contact($db);
                                 $contact->fetch($event->contact->id);
-                                $cachecontacts[$event->contact->id]=$thirdparty;
+                                $cachecontacts[$event->contact->id]=$contact;
                             }
+                            else $contact=$cachecontacts[$event->contact->id];
                             if ($linerelatedto) $linerelatedto.=' / ';
                             $linerelatedto.=$contact->getNomUrl(1,'',$length);
                         }
