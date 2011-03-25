@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -59,6 +59,7 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update' && empty($_POST["can
 	if (isset($_POST["MAIN_MAIL_SMTPS_ID"]))  dolibarr_set_const($db, "MAIN_MAIL_SMTPS_ID",  $_POST["MAIN_MAIL_SMTPS_ID"],'chaine',0,'',0);
 	if (isset($_POST["MAIN_MAIL_SMTPS_PW"]))  dolibarr_set_const($db, "MAIN_MAIL_SMTPS_PW",  $_POST["MAIN_MAIL_SMTPS_PW"],'chaine',0,'',0);
 	if (isset($_POST["MAIN_MAIL_EMAIL_TLS"])) dolibarr_set_const($db, "MAIN_MAIL_EMAIL_TLS", $_POST["MAIN_MAIL_EMAIL_TLS"],'chaine',0,'',0);
+    dolibarr_set_const($db, "MAIN_MAIL_EMAIL_INLINE_IMAGES", $_POST["MAIN_MAIL_EMAIL_INLINE_IMAGES"],'chaine',0,'',0);
 
 	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_FROM",     $_POST["MAIN_MAIL_EMAIL_FROM"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_MAIL_AUTOCOPY_TO",    $_POST["MAIN_MAIL_AUTOCOPY_TO"],'chaine',0,'',$conf->entity);
@@ -269,6 +270,46 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 {
 	$html=new Form($db);
 
+    if ($conf->use_javascript_ajax)
+    {
+        print "\n".'<script type="text/javascript" language="javascript">';
+        print 'jQuery(document).ready(function () {
+                    function initfields()
+                    {
+                        if (jQuery("#MAIN_MAIL_SENDMODE").val()==\'mail\')
+                        {
+                            jQuery(".drag").hide();
+                            jQuery("#MAIN_MAIL_EMAIL_TLS").val(0);
+                            jQuery("#MAIN_MAIL_EMAIL_TLS").attr(\'disabled\', \'disabled\');
+                            jQuery("#MAIN_MAIL_EMAIL_INLINE_IMAGES").val('.$conf->global->MAIN_MAIL_EMAIL_INLINE_IMAGES.');
+                            jQuery("#MAIN_MAIL_EMAIL_INLINE_IMAGES").removeAttr(\'disabled\');
+                            ';
+        if ($linuxlike)
+        {
+            print '         jQuery("#MAIN_MAIL_SMTP_SERVER").attr(\'disabled\', \'disabled\');';
+            print '         jQuery("#MAIN_MAIL_SMTP_PORT").attr(\'disabled\', \'disabled\');';
+        }
+        print '
+                        }
+                        if (jQuery("#MAIN_MAIL_SENDMODE").val()==\'smtps\')
+                        {
+                            jQuery(".drag").show();
+                            jQuery("#MAIN_MAIL_EMAIL_TLS").val('.$conf->global->MAIN_MAIL_EMAIL_TLS.');
+                            jQuery("#MAIN_MAIL_EMAIL_TLS").removeAttr(\'disabled\');
+                            jQuery("#MAIN_MAIL_SMTP_SERVER").removeAttr(\'disabled\');
+                            jQuery("#MAIN_MAIL_SMTP_PORT").removeAttr(\'disabled\');
+                            jQuery("#MAIN_MAIL_EMAIL_INLINE_IMAGES").val(0);
+                            jQuery("#MAIN_MAIL_EMAIL_INLINE_IMAGES").attr(\'disabled\', \'disabled\');
+                        }
+                    }
+                    initfields();
+                    jQuery("#MAIN_MAIL_SENDMODE").change(function() {
+                        initfields();
+                    });
+               })';
+        print '</script>'."\n";
+    }
+
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="update">';
@@ -311,7 +352,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	// Server
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>';
-	if ($linuxlike && ($conf->global->MAIN_MAIL_SENDMODE == 'mail' || $conf->global->MAIN_MAIL_SENDMODE == 'simplemail'))
+	if (! $conf->use_javascript_ajax && $linuxlike && ($conf->global->MAIN_MAIL_SENDMODE == 'mail' || $conf->global->MAIN_MAIL_SENDMODE == 'simplemail'))
 	{
 		print $langs->trans("MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike");
 		print '</td><td>';
@@ -320,19 +361,20 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	else
 	{
 		$smtpserver = ini_get('SMTP')?ini_get('SMTP'):$langs->transnoentities("Undefined");
-		print $langs->trans("MAIN_MAIL_SMTP_SERVER",$smtpserver);
+        if ($linuxlike) print $langs->trans("MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike");
+        else print $langs->trans("MAIN_MAIL_SMTP_SERVER",$smtpserver);
 		print '</td><td>';
 		// SuperAdministrator access only
 		if ((empty($conf->global->MAIN_MODULE_MULTICOMPANY)) || ($user->admin && !$user->entity))
 		{
-			print '<input class="flat" name="MAIN_MAIL_SMTP_SERVER" size="18" value="' . $conf->global->MAIN_MAIL_SMTP_SERVER . '">';
+			print '<input class="flat" id="MAIN_MAIL_SMTP_SERVER" name="MAIN_MAIL_SMTP_SERVER" size="18" value="' . $conf->global->MAIN_MAIL_SMTP_SERVER . '">';
 		}
 		else
 		{
 			$text = $conf->global->MAIN_MAIL_SMTP_SERVER ? $conf->global->MAIN_MAIL_SMTP_SERVER : $smtpserver;
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
 			print $html->textwithpicto($text,$htmltext,1,'superadmin');
-			print '<input type="hidden" name="MAIN_MAIL_SMTP_SERVER" value="'.$conf->global->MAIN_MAIL_SMTP_SERVER.'">';
+			print '<input type="hidden" id="MAIN_MAIL_SMTP_SERVER" name="MAIN_MAIL_SMTP_SERVER" value="'.$conf->global->MAIN_MAIL_SMTP_SERVER.'">';
 		}
 	}
 	print '</td></tr>';
@@ -340,7 +382,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	// Port
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>';
-	if ($linuxlike && ($conf->global->MAIN_MAIL_SENDMODE == 'mail' || $conf->global->MAIN_MAIL_SENDMODE == 'simplemail'))
+	if (! $conf->use_javascript_ajax && $linuxlike && ($conf->global->MAIN_MAIL_SENDMODE == 'mail' || $conf->global->MAIN_MAIL_SENDMODE == 'simplemail'))
 	{
 		print $langs->trans("MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike");
 		print '</td><td>';
@@ -349,28 +391,29 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	else
 	{
 		$smtpport = ini_get('smtp_port')?ini_get('smtp_port'):$langs->transnoentities("Undefined");
-		print $langs->trans("MAIN_MAIL_SMTP_PORT",$smtpport);
+		if ($linuxlike) print $langs->trans("MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike");
+		else print $langs->trans("MAIN_MAIL_SMTP_PORT",$smtpport);
 		print '</td><td>';
 		// SuperAdministrator access only
 		if ((empty($conf->global->MAIN_MODULE_MULTICOMPANY)) || ($user->admin && !$user->entity))
 		{
-			print '<input class="flat" name="MAIN_MAIL_SMTP_PORT" size="3" value="' . $conf->global->MAIN_MAIL_SMTP_PORT . '">';
+			print '<input class="flat" id="MAIN_MAIL_SMTP_PORT" name="MAIN_MAIL_SMTP_PORT" size="3" value="' . $conf->global->MAIN_MAIL_SMTP_PORT . '">';
 		}
 		else
 		{
 			$text = $conf->global->MAIN_MAIL_SMTP_PORT ? $conf->global->MAIN_MAIL_SMTP_PORT : $smtpport;
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
 			print $html->textwithpicto($text,$htmltext,1,'superadmin');
-			print '<input type="hidden" name="MAIN_MAIL_SMTP_PORT" value="'.$conf->global->MAIN_MAIL_SMTP_PORT.'">';
+			print '<input type="hidden" id="MAIN_MAIL_SMTP_PORT" name="MAIN_MAIL_SMTP_PORT" value="'.$conf->global->MAIN_MAIL_SMTP_PORT.'">';
 		}
 	}
 	print '</td></tr>';
 
 	// ID
-	if ($conf->global->MAIN_MAIL_SENDMODE == 'smtps')
+	if ($conf->use_javascript_ajax || $conf->global->MAIN_MAIL_SENDMODE == 'smtps')
 	{
 		$var=!$var;
-		print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTPS_ID").'</td><td>';
+		print '<tr '.$bcdd[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTPS_ID").'</td><td>';
 		// SuperAdministrator access only
 		if ((empty($conf->global->MAIN_MODULE_MULTICOMPANY)) || ($user->admin && !$user->entity))
 		{
@@ -386,10 +429,10 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	}
 
 	// PW
-	if ($conf->global->MAIN_MAIL_SENDMODE == 'smtps')
+	if ($conf->use_javascript_ajax || $conf->global->MAIN_MAIL_SENDMODE == 'smtps')
 	{
 		$var=!$var;
-		print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTPS_PW").'</td><td>';
+		print '<tr '.$bcdd[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTPS_PW").'</td><td>';
 		// SuperAdministrator access only
 		if ((empty($conf->global->MAIN_MODULE_MULTICOMPANY)) || ($user->admin && !$user->entity))
 		{
@@ -407,7 +450,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	// TLS
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_TLS").'</td><td>';
-	if ($conf->global->MAIN_MAIL_SENDMODE == 'smtps')
+	if ($conf->use_javascript_ajax || $conf->global->MAIN_MAIL_SENDMODE == 'smtps')
 	{
 		if (function_exists('openssl_open'))
 		{
@@ -418,6 +461,12 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	else print yn(0).' ('.$langs->trans("NotSupported").')';
 	print '</td></tr>';
 
+    // Inline images
+/*    $var=!$var;
+    print '<tr '.$bcnd[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_INLINE_IMAGES").'</td><td>';
+    print $html->selectyesno('MAIN_MAIL_EMAIL_INLINE_IMAGES',$conf->global->MAIN_MAIL_EMAIL_INLINE_IMAGES,1);
+    print '</td></tr>';
+*/
 	// Separator
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td colspan="2">&nbsp;</td></tr>';
@@ -517,6 +566,12 @@ else
 	else print yn(0).' ('.$langs->trans("NotSupported").')';
 	print '</td></tr>';
 
+    // Inline images
+/*  	$var=!$var;
+    print '<tr '.$bcnd[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_INLINE_IMAGES").'</td><td>';
+    print yn($conf->global->MAIN_MAIL_EMAIL_INLINE_IMAGES,1,0);
+    print '</td></tr>';
+*/
 	// Separator
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td colspan="2">&nbsp;</td></tr>';
