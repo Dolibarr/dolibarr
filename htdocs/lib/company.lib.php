@@ -146,16 +146,22 @@ function societe_prepare_head2($object)
     $head[$h][2] = 'company';
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT .'/societe/rib.php?socid='.$object->id;
-    $head[$h][1] = $langs->trans("BankAccount")." $account->number";
-    $head[$h][2] = 'rib';
-    $h++;
-
-    $head[$h][0] = 'lien.php?socid='.$object->id;
-    $head[$h][1] = $langs->trans("ParentCompany");
-    $head[$h][2] = 'links';
-    $h++;
-
+    if (empty($conf->global->SOCIETE_DISABLE_BANKACCOUNT))
+    {
+	    $head[$h][0] = DOL_URL_ROOT .'/societe/rib.php?socid='.$object->id;
+	    $head[$h][1] = $langs->trans("BankAccount")." $account->number";
+	    $head[$h][2] = 'rib';
+	    $h++;
+    }
+    
+    if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY))
+    {
+	    $head[$h][0] = 'lien.php?socid='.$object->id;
+	    $head[$h][1] = $langs->trans("ParentCompany");
+	    $head[$h][2] = 'links';
+	    $h++;
+    }
+    
     $head[$h][0] = 'commerciaux.php?socid='.$object->id;
     $head[$h][1] = $langs->trans("SalesRepresentative");
     $head[$h][2] = 'salesrepresentative';

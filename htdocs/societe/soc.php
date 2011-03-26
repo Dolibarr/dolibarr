@@ -1606,44 +1606,50 @@ else
 		}
 
 		// Ban
-		print '<tr><td>';
-		print '<table width="100%" class="nobordernopadding"><tr><td>';
-		print $langs->trans('RIB');
-		print '<td><td align="right">';
-		if ($user->rights->societe->creer)
-		print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id.'">'.img_edit().'</a>';
-		else
-		print '&nbsp;';
-		print '</td></tr></table>';
-		print '</td>';
-		print '<td colspan="3">';
-		print $soc->display_rib();
-		print '</td></tr>';
-
-		// Parent company
-		print '<tr><td>';
-		print '<table width="100%" class="nobordernopadding"><tr><td>';
-		print $langs->trans('ParentCompany');
-		print '<td><td align="right">';
-		if ($user->rights->societe->creer)
-		print '<a href="'.DOL_URL_ROOT.'/societe/lien.php?socid='.$soc->id.'">'.img_edit() .'</a>';
-		else
-		print '&nbsp;';
-		print '</td></tr></table>';
-		print '</td>';
-		print '<td colspan="3">';
-		if ($soc->parent)
+		if (empty($conf->global->SOCIETE_DISABLE_BANKACCOUNT)) 
 		{
-			$socm = new Societe($db);
-			$socm->fetch($soc->parent);
-			print $socm->getNomUrl(1).' '.($socm->code_client?"(".$socm->code_client.")":"");
-			print $socm->ville?' - '.$socm->ville:'';
+			print '<tr><td>';
+			print '<table width="100%" class="nobordernopadding"><tr><td>';
+			print $langs->trans('RIB');
+			print '<td><td align="right">';
+			if ($user->rights->societe->creer)
+			print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id.'">'.img_edit().'</a>';
+			else
+			print '&nbsp;';
+			print '</td></tr></table>';
+			print '</td>';
+			print '<td colspan="3">';
+			print $soc->display_rib();
+			print '</td></tr>';
 		}
-		else {
-			print $langs->trans("NoParentCompany");
+		
+		// Parent company
+		if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY)) 
+		{
+			print '<tr><td>';
+			print '<table width="100%" class="nobordernopadding"><tr><td>';
+			print $langs->trans('ParentCompany');
+			print '<td><td align="right">';
+			if ($user->rights->societe->creer)
+			print '<a href="'.DOL_URL_ROOT.'/societe/lien.php?socid='.$soc->id.'">'.img_edit() .'</a>';
+			else
+			print '&nbsp;';
+			print '</td></tr></table>';
+			print '</td>';
+			print '<td colspan="3">';
+			if ($soc->parent)
+			{
+				$socm = new Societe($db);
+				$socm->fetch($soc->parent);
+				print $socm->getNomUrl(1).' '.($socm->code_client?"(".$socm->code_client.")":"");
+				print $socm->ville?' - '.$socm->ville:'';
+			}
+			else {
+				print $langs->trans("NoParentCompany");
+			}
+			print '</td></tr>';
 		}
-		print '</td></tr>';
-
+		
 		// Commercial
 		print '<tr><td>';
 		print '<table width="100%" class="nobordernopadding"><tr><td>';
