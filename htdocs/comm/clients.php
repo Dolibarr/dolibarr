@@ -170,18 +170,20 @@ if ($result)
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Company"),"clients.php","s.nom","",$param,"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("CustomerCode"),"clients.php","s.code_client","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Town"),"clients.php","s.ville","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("CustomerCode"),"clients.php","s.code_client","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateCreation"),"clients.php","datec","",$param,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" name="search_nom" value="'.$search_nom.'">';
-	print '</td><td class="liste_titre">';
+	print '</td>';
+    print '<td class="liste_titre">';
+    print '<input type="text" class="flat" name="search_code" value="'.$search_code.'" size="10">';
+    print '</td>';
+	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" name="search_ville" value="'.$search_ville.'" size="10">';
-	print '</td><td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_code" value="'.$search_code.'" size="10">';
 	print '</td>';
 	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
     print '&nbsp; ';
@@ -205,8 +207,8 @@ if ($result)
         $thirdpartystatic->canvas=$obj->canvas;
         print $thirdpartystatic->getNomUrl(1);
 		print '</td>';
+        print '<td>'.$obj->code_client.'</td>';
 		print '<td>'.$obj->ville.'</td>';
-		print '<td>'.$obj->code_client.'</td>';
 		print '<td align="right">'.dol_print_date($db->jdate($obj->datec),'day').'</td>';
 		print "</tr>\n";
 		$i++;
