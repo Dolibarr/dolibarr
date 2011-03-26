@@ -687,13 +687,14 @@ class Form
      *    	Return list of all contacts (for a third party or all)
      *    	@param      socid      	    Id ot third party or 0 for all
      *    	@param      selected   	    Id contact pre-selectionne
-     *    	@param      htmlname  	    Nom champ formulaire ('none' pour champ non editable)
-     *      @param      show_empty      0=liste sans valeur nulle, 1=ajoute valeur inconnue
-     *      @param      exclude         Liste des id contacts a exclure
+     *    	@param      htmlname  	    Name of HTML field ('none' for a not editable field)
+     *      @param      show_empty      0=no empty value, 1=add an empty value
+     *      @param      exclude         List of contacts id to exclude
      * 		@param		limitto			Disable answers that are not id in this array list
+     * 	    @param		showfunction    Add function into label
      *		@return		int				<0 if KO, Nb of contact in list if OK
      */
-    function select_contacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='')
+    function select_contacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='',$showfunction=0)
     {
         global $conf,$langs;
 
@@ -704,7 +705,7 @@ class Form
         }
 
         // On recherche les societes
-        $sql = "SELECT s.rowid, s.name, s.firstname FROM";
+        $sql = "SELECT s.rowid, s.name, s.firstname, s.poste FROM";
         $sql.= " ".MAIN_DB_PREFIX ."socpeople as s";
         $sql.= " WHERE entity = ".$conf->entity;
         if ($socid) $sql.= " AND fk_soc=".$socid;
@@ -744,6 +745,7 @@ class Form
                             if ($disabled) print ' disabled="true"';
                             print ' selected="selected">';
                             print $contactstatic->getFullName($langs);
+                            if ($showfunction && $obj->poste) print ' ('.$obj->poste.')';
                             print '</option>';
                         }
                         else
@@ -752,6 +754,7 @@ class Form
                             if ($disabled) print ' disabled="true"';
                             print '>';
                             print $contactstatic->getFullName($langs);
+                            if ($showfunction && $obj->poste) print ' ('.$obj->poste.')';
                             print '</option>';
                         }
                     }
@@ -760,6 +763,7 @@ class Form
                         if ($selected == $obj->rowid)
                         {
                             print $contactstatic->getFullName($langs);
+                            if ($showfunction && $obj->poste) print ' ('.$obj->poste.')';
                         }
                     }
                     $i++;
