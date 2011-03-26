@@ -762,17 +762,20 @@ else
 		print '</td></tr>';
 
 		// State
-		print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
-		if ($soc->pays_id)
+		if (empty($conf->global->SOCIETE_DISABLE_STATE)) 
 		{
-			$formcompany->select_departement($soc->departement_id,$soc->pays_code);
+			print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
+			if ($soc->pays_id)
+			{
+				$formcompany->select_departement($soc->departement_id,$soc->pays_code);
+			}
+			else
+			{
+				print $countrynotdefined;
+			}
+			print '</td></tr>';
 		}
-		else
-		{
-			print $countrynotdefined;
-		}
-		print '</td></tr>';
-
+		
 		// Phone / Fax
 		print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="tel" value="'.$soc->tel.'"></td>';
 		print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax" value="'.$soc->fax.'"></td></tr>';
@@ -1183,11 +1186,14 @@ else
 			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 			print '</td></tr>';
 
-			// Department
-			print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
-			$formcompany->select_departement($soc->departement_id,$soc->pays_code);
-			print '</td></tr>';
-
+			// State
+			if (empty($conf->global->SOCIETE_DISABLE_STATE)) 
+			{
+				print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
+				$formcompany->select_departement($soc->departement_id,$soc->pays_code);
+				print '</td></tr>';
+			}
+			
 			// Phone / Fax
 			print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="tel" value="'.$soc->tel.'"></td>';
 			print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax" value="'.$soc->fax.'"></td></tr>';
@@ -1424,8 +1430,8 @@ else
 		else print ($img?$img.' ':'').$soc->pays;
 		print '</td></tr>';
 
-		// Department
-		print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">'.$soc->departement.'</td>';
+		// State
+		if (empty($conf->global->SOCIETE_DISABLE_STATE)) print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">'.$soc->departement.'</td>';
 
 		print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dol_print_phone($soc->tel,$soc->pays_code,0,$soc->id,'AC_TEL').'</td>';
 		print '<td>'.$langs->trans('Fax').'</td><td>'.dol_print_phone($soc->fax,$soc->pays_code,0,$soc->id,'AC_FAX').'</td></tr>';
