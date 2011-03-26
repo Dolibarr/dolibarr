@@ -169,7 +169,7 @@ else
     print '</td></tr>';
 
 	// Name
-    print '<tr><td width="20%">'.$langs->trans("Lastname").'</td><td width="30%">'.$contact->name.'</td>';
+    print '<tr><td width="20%">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><td width="30%">'.$contact->name.'</td>';
     print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="30%">'.$contact->firstname.'</td></tr>';
 
     // Company
