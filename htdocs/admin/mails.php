@@ -569,12 +569,15 @@ else
 	else print yn(0).' ('.$langs->trans("NotSupported").')';
 	print '</td></tr>';
 
-    // Inline images
-/*  	$var=!$var;
-    print '<tr '.$bcnd[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_INLINE_IMAGES").'</td><td>';
-    print yn($conf->global->MAIN_MAIL_EMAIL_INLINE_IMAGES,1,0);
-    print '</td></tr>';
-*/
+	// Inline images
+	if ($conf->global->MAIN_FEATURES_LEVEL > 0)
+	{
+		$var=!$var;
+		print '<tr '.$bcnd[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_INLINE_IMAGES").'</td><td>';
+		print yn($conf->global->MAIN_MAIL_EMAIL_INLINE_IMAGES,1,0);
+		print '</td></tr>';
+	}
+
 	// Separator
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td colspan="2">&nbsp;</td></tr>';
