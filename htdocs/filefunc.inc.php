@@ -161,10 +161,7 @@ if (! empty($dolibarr_main_url_root_alt))
 	if ($suburi == '/') $suburi = '';   											// If $suburi is /, it is now ''
 	define('DOL_URL_ROOT_ALT', $suburi);    										// URL relative root ('', '/dolibarr/custom', ...)
 }
-// Define DOL_URL_ROOT_FULL_STATIC
-if (! empty($dolibarr_main_url_root_static)) define('DOL_URL_ROOT_FULL_STATIC', $dolibarr_main_url_root_static);    // Used to put static images on another domain
 // Define prefix
-if (isset($_SERVER["LLX_DBNAME"])) $dolibarr_main_db_prefix=$_SERVER["LLX_DBNAME"];
 define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
 
 
