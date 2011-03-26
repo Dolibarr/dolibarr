@@ -1349,7 +1349,7 @@ class Societe extends CommonObject
      *		@param		maxlen			Max length of text
      *		@return		string			String with URL
      */
-    function getNomUrl($withpicto=0,$option='customer',$maxlen=0)
+    function getNomUrl($withpicto=0,$option='',$maxlen=0)
     {
         global $conf,$langs;
 
@@ -1358,7 +1358,7 @@ class Societe extends CommonObject
 
         if ($option == 'customer' || $option == 'compta')
         {
-            if ($this->client == 1 && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))  // Only customer
+            if (($this->client == 1 || $this->client == 3) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))  // Only customer
             {
                 $lien = '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$this->id;
             }

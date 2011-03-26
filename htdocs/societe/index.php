@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -52,7 +52,7 @@ print '<table border="0" width="100%" class="notopnoleftnoright">';
 print '<tr><td valign="top" width="30%" class="notopnoleft">';
 
 /*
- * Zone recherche tiers
+ * Search area
  */
 $rowspan=2;
 print '<form method="post" action="'.DOL_URL_ROOT.'/societe/societe.php">';
@@ -72,7 +72,7 @@ print "</table></form><br>";
 
 
 /*
- * Nombre de tiers
+ * Statistics area
  */
 $third = array();
 $total=0;
@@ -181,17 +181,20 @@ if ($result)
             print '<td align="center">';
             if ($thirdparty_static->client==1 || $thirdparty_static->client==3)
             {
-                print "<a href=\"".DOL_URL_ROOT."/comm/fiche.php?socid=".$thirdparty_static->id."\">".$langs->trans("Customer")."</a>\n";
+            	$thirdparty_static->name=$langs->trans("Customer");
+            	print $thirdparty_static->getNomUrl(0,'customer');
             }
             if ($thirdparty_static->client == 3 && empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print " / ";
             if (($thirdparty_static->client==2 || $thirdparty_static->client==3) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
             {
-                print "<a href=\"".DOL_URL_ROOT."/comm/prospect/fiche.php?socid=".$thirdparty_static->id."\">".$langs->trans("Prospect")."</a>\n";
+            	$thirdparty_static->name=$langs->trans("Prospect");
+            	print $thirdparty_static->getNomUrl(0,'prospect');
             }
             if ($conf->fournisseur->enabled && $thirdparty_static->fournisseur)
             {
                 if ($thirdparty_static->client) print " / ";
-                print '<a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$thirdparty_static->id.'">'.$langs->trans("Supplier").'</a>';
+            	$thirdparty_static->name=$langs->trans("Supplier");
+            	print $thirdparty_static->getNomUrl(0,'supplier');
             }
             print '</td>';
             // Last modified date
