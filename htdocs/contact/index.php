@@ -37,20 +37,24 @@ $contactid = isset($_GET["id"])?$_GET["id"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'contact', $contactid,'');
 
-$search_nom=isset($_GET["search_nom"])?$_GET["search_nom"]:$_POST["search_nom"];
-$search_prenom=isset($_GET["search_prenom"])?$_GET["search_prenom"]:$_POST["search_prenom"];
-$search_societe=isset($_GET["search_societe"])?$_GET["search_societe"]:$_POST["search_societe"];
-$search_email=isset($_GET["search_email"])?$_GET["search_email"]:$_POST["search_email"];
-$search_priv=isset($_GET["search_priv"])?$_GET["search_priv"]:(isset($_POST["search_priv"])?$_POST["search_priv"]:'');
+$search_nom=GETPOST("search_nom");
+$search_prenom=GETPOST("search_prenom");
+$search_societe=GETPOST("search_societe");
+$search_phone=GETPOST("search_phone");
+$search_phoneper=GETPOST("search_phoneper");
+$search_phonepro=GETPOST("search_phonepro");
+$search_phonemob=GETPOST("search_phonemob");
+$search_fax=GETPOST("search_fax");
+$search_email=GETPOST("search_email");
+$search_priv=GETPOST("search_priv");
 
-$type = isset($_GET["type"])?$_GET["type"]:$_POST["type"];
+$type=GETPOST("type");
+$view=GETPOST("view");
 
-$view=isset($_GET["view"])?$_GET["view"]:$_POST["view"];
-
-$sall=isset($_GET["contactname"])?$_GET["contactname"]:$_POST["contactname"];
-$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
-$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
-$page = isset($_GET["page"])?$_GET["page"]:$_POST["page"];
+$sall=GETPOST("contactname");
+$sortfield = GETPOST("sortfield");
+$sortorder = GETPOST("sortorder");
+$page = GETPOST("page");
 
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="p.name";
@@ -88,6 +92,11 @@ if ($_POST["button_removefilter"])
     $search_nom="";
     $search_prenom="";
     $search_societe="";
+    $search_phone="";
+    $search_phoneper="";
+    $search_phonepro="";
+    $search_phonemob="";
+    $search_fax="";
     $search_email="";
     $search_priv="";
     $sall="";
@@ -146,7 +155,27 @@ if ($search_societe)    // filtre sur la societe
 {
     $sql .= " AND s.nom like '%".$db->escape($search_societe)."%'";
 }
-if ($search_email)      // filtre sur l'email
+if (strlen($search_phone))
+{
+    $sql .= " AND (p.phone like '%".$db->escape($search_phone)."%' OR p.phone_perso like '%".$db->escape($search_phone)."%' OR p.phone_mobile like '%".$db->escape($search_phone)."%')";
+}
+if (strlen($search_phoneper))
+{
+    $sql .= " AND p.phone like '%".$db->escape($search_phoneper)."%'";
+}
+if (strlen($search_phonepro))
+{
+    $sql .= " AND p.phone_perso like '%".$db->escape($search_phonepro)."%'";
+}
+if (strlen($search_phonemob))
+{
+    $sql .= " AND p.phone_mobile like '%".$db->escape($search_phonemob)."%'";
+}
+if (strlen($search_fax))
+{
+    $sql .= " AND p.fax like '%".$db->escape($search_fax)."%'";
+}
+if (strlen($search_email))      // filtre sur l'email
 {
     $sql .= " AND p.email like '%".$db->escape($search_email)."%'";
 }
@@ -182,7 +211,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     $nbtotalofrecords = $db->num_rows($result);
 }
 // Add order and limit
-if($_GET["view"] == "recent")
+if($view == "recent")
 {
     $sql.= " ORDER BY p.datec DESC ";
 	$sql.= " ".$db->plimit($conf->liste_limit+1, $offset);
@@ -201,7 +230,7 @@ if ($result)
 	$contactstatic=new Contact($db);
 
     $begin=$_GET["begin"];
-    $param ='&begin='.urlencode($begin).'&view='.urlencode($_GET["view"]).'&userid='.urlencode($_GET["userid"]).'&contactname='.urlencode($sall);
+    $param ='&begin='.urlencode($begin).'&view='.urlencode($view).'&userid='.urlencode($_GET["userid"]).'&contactname='.urlencode($sall);
     $param.='&type='.urlencode($type).'&view='.urlencode($view).'&search_nom='.urlencode($search_nom).'&search_prenom='.urlencode($search_prenom).'&search_societe='.urlencode($search_societe).'&search_email='.urlencode($search_email);
 	if ($search_priv == '0' || $search_priv == '1') $param.="&search_priv=".urlencode($search_priv);
 
@@ -228,14 +257,15 @@ if ($result)
     print_liste_field_titre($langs->trans("Lastname"),"index.php","p.name", $begin, $param, '', $sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Firstname"),"index.php","p.firstname", $begin, $param, '', $sortfield,$sortorder);
     if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) print_liste_field_titre($langs->trans("Company"),"index.php","s.nom", $begin, $param, '', $sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Phone"),"index.php","p.phone", $begin, $param, '', $sortfield,$sortorder);
-    if ($_GET["view"] == 'phone')
+    if ($view == 'phone')
     {
-        print '<td class="liste_titre">'.$langs->trans("Mobile").'</td>';
-        print '<td class="liste_titre">'.$langs->trans("Fax").'</td>';
+        print_liste_field_titre($langs->trans("Phone"),"index.php","p.phone", $begin, $param, '', $sortfield,$sortorder);
+        print_liste_field_titre($langs->trans("Mobile"),"index.php","p.phone_mob", $begin, $param, '', $sortfield,$sortorder);
+        print_liste_field_titre($langs->trans("Fax"),"index.php","p.fax", $begin, $param, '', $sortfield,$sortorder);
     }
     else
     {
+        print_liste_field_titre($langs->trans("Phone"),"index.php","p.phone", $begin, $param, '', $sortfield,$sortorder);
         print_liste_field_titre($langs->trans("EMail"),"index.php","p.email", $begin, $param, '', $sortfield,$sortorder);
     }
     print_liste_field_titre($langs->trans("DateModificationShort"),"index.php","p.tms", $begin, $param, 'align="center"', $sortfield,$sortorder);
@@ -257,20 +287,25 @@ if ($result)
         print '<input class="flat" type="text" name="search_societe" size="10" value="'.$search_societe.'">';
         print '</td>';
     }
-    print '<td class="liste_titre">&nbsp;</td>';
-    if ($_GET["view"] == 'phone')
+    if ($view == 'phone')
     {
         print '<td class="liste_titre">';
-        print '&nbsp;';
+        print '<input class="flat" type="text" name="search_phonepro" size="10" value="'.$search_phonepro.'">';
         print '</td>';
         print '<td class="liste_titre">';
-        print '&nbsp;';
+        print '<input class="flat" type="text" name="search_phonemob" size="10" value="'.$search_phonemob.'">';
+        print '</td>';
+        print '<td class="liste_titre">';
+        print '<input class="flat" type="text" name="search_fax" size="10" value="'.$search_fax.'">';
         print '</td>';
     }
     else
     {
         print '<td class="liste_titre">';
-        print '<input class="flat" type="text" name="search_email" size="12" value="'.$search_email.'">';
+        print '<input class="flat" type="text" name="search_phone" size="10" value="'.$search_phone.'">';
+        print '</td>';
+        print '<td class="liste_titre">';
+        print '<input class="flat" type="text" name="search_email" size="10" value="'.$search_email.'">';
         print '</td>';
     }
 	print '<td class="liste_titre">&nbsp;</td>';
@@ -321,20 +356,20 @@ if ($result)
             print '</td>';
         }
 
-		// Phone
-        print '<td>';
-		print dol_print_phone($obj->phone,$obj->pays_code,$obj->cidp,$obj->socid,'AC_TEL');
-    	print '</td>';
-
-        if ($_GET["view"] == 'phone')
+        if ($view == 'phone')
         {
+            // Phone
+            print '<td>'.dol_print_phone($obj->phone,$obj->pays_code,$obj->cidp,$obj->socid,'AC_TEL').'</td>';
+            // Phone mobile
             print '<td>'.dol_print_phone($obj->phone_mobile,$obj->pays_code,$obj->cidp,$obj->socid,'AC_TEL').'</td>';
-
+            // Fax
             print '<td>'.dol_print_phone($obj->fax,$obj->pays_code,$obj->cidp,$obj->socid,'AC_TEL').'</td>';
         }
         else
         {
-        	// EMail
+            // Phone
+            print '<td>'.dol_print_phone($obj->phone,$obj->pays_code,$obj->cidp,$obj->socid,'AC_TEL').'</td>';
+            // EMail
             print '<td>'.dol_print_email($obj->email,$obj->cidp,$obj->socid,'AC_EMAIL',18).'</td>';
         }
 
@@ -360,7 +395,7 @@ if ($result)
 
     print '</form>';
 
-    if ($num > $limit) print_barre_liste('' ,$page, "index.php", '&amp;begin='.$begin.'&amp;view='.$_GET["view"].'&amp;userid='.$_GET["userid"], $sortfield, $sortorder,'',$num,$nbtotalofrecords, '');
+    if ($num > $limit) print_barre_liste('' ,$page, "index.php", '&amp;begin='.$begin.'&amp;view='.$view.'&amp;userid='.$_GET["userid"], $sortfield, $sortorder,'',$num,$nbtotalofrecords, '');
 
     $db->free($result);
 }
