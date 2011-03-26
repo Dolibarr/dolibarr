@@ -297,6 +297,7 @@ DescWeather=The following pictures will be shown on dashboard when number of lat
 KeyForWebServicesAccess=Key to use Web Services (parameter "dolibarrkey" in webservices)
 TestSubmitForm=Input test form
 ThisForceAlsoTheme=Using this menu manager will also use its own theme whatever is user choice. Also this menu manager specialized for smartphones does not works on all smartphone. Use another menu manager if you epxerience problems on yours. 
+ThemeDir=Skins directory
 
 # Modules
 Module0Name=Users & groups

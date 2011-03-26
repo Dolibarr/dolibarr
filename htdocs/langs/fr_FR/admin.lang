@@ -298,6 +298,7 @@ DescWeather=Les graphiques suivant seront affichées sur le tableau de bord si l
 KeyForWebServicesAccess=Clé pour utiliser les Web Services (paramètre "dolibarrkey" dans les webservices)
 TestSubmitForm=Formulaire de test de saisie
 ThisForceAlsoTheme=Utiliser ce gestionnaire de menu force aussi le theme quelquesoit le choix de theme de l'utilisateur. De plus, ce gestionnaire de menu, spécialisé pour smartphone, ne fonctionne que sur certains téléphones. Utiliser un autre gestionnaire si vous constatez des problèmes.
+ThemeDir=Répertoire des thèmes
 
 # Modules= undefined
 Module0Name= Utilisateurs & groupes

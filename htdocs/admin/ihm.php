@@ -44,8 +44,6 @@ if (!$user->admin)
 
 if (! defined("MAIN_MOTD")) define("MAIN_MOTD","");
 
-$dirtheme = "../theme";
-
 // List of supported permanent search area
 $searchform=array(	"MAIN_SEARCHFORM_SOCIETE","MAIN_SEARCHFORM_CONTACT",
 					"MAIN_SEARCHFORM_PRODUITSERVICE","MAIN_SEARCHFORM_ADHERENT");

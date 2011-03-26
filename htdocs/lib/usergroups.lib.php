@@ -149,9 +149,12 @@ function group_prepare_head($object)
  */
 function show_theme($fuser,$edit=0,$foruserprofile=false)
 {
-    global $conf,$langs,$dirtheme,$bc;
+    global $conf,$langs,$bc;
 
-
+    
+	$dirtheme=dol_buildpath($conf->global->MAIN_FORCETHEMEDIR.'/theme',0);
+	$urltheme=dol_buildpath($conf->global->MAIN_FORCETHEMEDIR.'/theme',1);
+	
     $selected_theme=$conf->global->MAIN_THEME;
     if (! empty($fuser)) $selected_theme=$fuser->conf->MAIN_THEME;
 
@@ -170,7 +173,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     }
     else
     {
-    	print '<tr class="liste_titre"><td>'.$langs->trans("DefaultSkin").'</td>';
+    	print '<tr class="liste_titre"><td width="35%">'.$langs->trans("DefaultSkin").'</td>';
     	print '<td align="right">';
     	$url='http://www.dolistore.com/lang-en/4-skins';
     	if (preg_match('/fr/i',$langs->defaultlang)) $url='http://www.dolistore.com/lang-fr/4-themes';
@@ -192,6 +195,14 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	    print '</tr>';
     }
 
+    if (! $foruserprofile)
+    {
+	    print '<tr '.$bc[$var].'>';
+	    print '<td>'.$langs->trans("ThemeDir").'</td>';
+	    print '<td'.($foruserprofile?' colspan="3"':'').'>'.$dirtheme.'</td>';
+	    print '</tr>';
+    }
+        
 	if ($edit)
 	{
 		if ($subdir == $conf->global->MAIN_THEME) $title=$langs->trans("ThemeCurrentlyActive");
@@ -219,12 +230,13 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 
             print '<td align="center">';
             $file=$dirtheme."/".$subdir."/thumb.png";
-            if (! file_exists($file)) $file=$dirtheme."/common/nophoto.jpg";
+            $url=$urltheme."/".$subdir."/thumb.png";
+            if (! file_exists($file)) $url=$urltheme."/common/nophoto.jpg";
             print '<table><tr><td>';
 			print '<a href="'.$_SERVER["PHP_SELF"].($edit?'?action=edit&theme=':'?theme=').$subdir.(! empty($_GET["optioncss"])?'&optioncss='.$_GET["optioncss"]:'').($fuser?'&id='.$fuser->id:'').'" style="font-weight: normal;" alt="'.$langs->trans("Preview").'">';
 			if ($subdir == $conf->global->MAIN_THEME) $title=$langs->trans("ThemeCurrentlyActive");
 			else $title=$langs->trans("ShowPreview");
-            print '<img src="'.$file.'" border="0" width="80" height="60" alt="'.$title.'" title="'.$title.'">';
+            print '<img src="'.$url.'" border="0" width="80" height="60" alt="'.$title.'" title="'.$title.'">';
 			print '</a>';
 			print '</td></tr><tr><td align="center">';
             if ($subdir == $selected_theme)

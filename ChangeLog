@@ -31,6 +31,7 @@ For users:
 - Fix: Better Postgresql compatibility.
 
 For developers:
+- New: External modules can force skin directory so force their own skins.
 - New: External modules can add their own menu manager.
 - New: External modules can remove tabs.
 - New: External modules can force menu manager.
