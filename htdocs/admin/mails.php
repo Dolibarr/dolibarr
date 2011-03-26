@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2009-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -462,11 +462,14 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	print '</td></tr>';
 
     // Inline images
-/*    $var=!$var;
-    print '<tr '.$bcnd[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_INLINE_IMAGES").'</td><td>';
-    print $html->selectyesno('MAIN_MAIL_EMAIL_INLINE_IMAGES',$conf->global->MAIN_MAIL_EMAIL_INLINE_IMAGES,1);
-    print '</td></tr>';
-*/
+	if ($conf->global->MAIN_FEATURES_LEVEL > 0)
+	{
+		$var=!$var;
+		print '<tr '.$bcnd[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_INLINE_IMAGES").'</td><td>';
+		print $html->selectyesno('MAIN_MAIL_EMAIL_INLINE_IMAGES',$conf->global->MAIN_MAIL_EMAIL_INLINE_IMAGES,1);
+		print '</td></tr>';
+	}
+
 	// Separator
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td colspan="2">&nbsp;</td></tr>';
