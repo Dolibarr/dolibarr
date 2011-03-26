@@ -40,6 +40,7 @@ $result = restrictedArea($user, 'contact', $contactid,'');
 $search_nom=GETPOST("search_nom");
 $search_prenom=GETPOST("search_prenom");
 $search_societe=GETPOST("search_societe");
+$search_poste=GETPOST("search_poste");
 $search_phone=GETPOST("search_phone");
 $search_phoneper=GETPOST("search_phoneper");
 $search_phonepro=GETPOST("search_phonepro");
@@ -92,6 +93,7 @@ if ($_POST["button_removefilter"])
     $search_nom="";
     $search_prenom="";
     $search_societe="";
+    $search_poste="";
     $search_phone="";
     $search_phoneper="";
     $search_phonepro="";
@@ -114,7 +116,7 @@ llxHeader('',$langs->trans("ContactsAddresses"),'EN:Module_Third_Parties|FR:Modu
 $form=new Form($db);
 
 $sql = "SELECT s.rowid as socid, s.nom,";
-$sql.= " p.rowid as cidp, p.name, p.firstname, p.email,";
+$sql.= " p.rowid as cidp, p.name, p.firstname, p.poste, p.email,";
 $sql.= " p.phone, p.phone_mobile, p.fax, p.fk_pays, p.priv,";
 $sql.= " p.tms,";
 $sql.= " cp.code as pays_code";
@@ -154,6 +156,10 @@ if ($search_prenom)     // filtre sur le prenom
 if ($search_societe)    // filtre sur la societe
 {
     $sql .= " AND s.nom like '%".$db->escape($search_societe)."%'";
+}
+if (strlen($search_poste))    // filtre sur la societe
+{
+    $sql .= " AND p.poste like '%".$db->escape($search_poste)."%'";
 }
 if (strlen($search_phone))
 {
@@ -256,6 +262,7 @@ if ($result)
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Lastname"),"index.php","p.name", $begin, $param, '', $sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Firstname"),"index.php","p.firstname", $begin, $param, '', $sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("PostOrFunction"),"index.php","p.poste", $begin, $param, '', $sortfield,$sortorder);
     if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) print_liste_field_titre($langs->trans("Company"),"index.php","s.nom", $begin, $param, '', $sortfield,$sortorder);
     if ($view == 'phone')
     {
@@ -276,36 +283,39 @@ if ($result)
     // Ligne des champs de filtres
     print '<tr class="liste_titre">';
     print '<td class="liste_titre">';
-    print '<input class="flat" type="text" name="search_nom" size="10" value="'.$search_nom.'">';
+    print '<input class="flat" type="text" name="search_nom" size="9" value="'.$search_nom.'">';
     print '</td>';
     print '<td class="liste_titre">';
-    print '<input class="flat" type="text" name="search_prenom" size="10" value="'.$search_prenom.'">';
+    print '<input class="flat" type="text" name="search_prenom" size="9" value="'.$search_prenom.'">';
+    print '</td>';
+    print '<td class="liste_titre">';
+    print '<input class="flat" type="text" name="search_poste" size="9" value="'.$search_poste.'">';
     print '</td>';
     if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
     {
         print '<td class="liste_titre">';
-        print '<input class="flat" type="text" name="search_societe" size="10" value="'.$search_societe.'">';
+        print '<input class="flat" type="text" name="search_societe" size="9" value="'.$search_societe.'">';
         print '</td>';
     }
     if ($view == 'phone')
     {
         print '<td class="liste_titre">';
-        print '<input class="flat" type="text" name="search_phonepro" size="10" value="'.$search_phonepro.'">';
+        print '<input class="flat" type="text" name="search_phonepro" size="9" value="'.$search_phonepro.'">';
         print '</td>';
         print '<td class="liste_titre">';
-        print '<input class="flat" type="text" name="search_phonemob" size="10" value="'.$search_phonemob.'">';
+        print '<input class="flat" type="text" name="search_phonemob" size="9" value="'.$search_phonemob.'">';
         print '</td>';
         print '<td class="liste_titre">';
-        print '<input class="flat" type="text" name="search_fax" size="10" value="'.$search_fax.'">';
+        print '<input class="flat" type="text" name="search_fax" size="9" value="'.$search_fax.'">';
         print '</td>';
     }
     else
     {
         print '<td class="liste_titre">';
-        print '<input class="flat" type="text" name="search_phone" size="10" value="'.$search_phone.'">';
+        print '<input class="flat" type="text" name="search_phone" size="9" value="'.$search_phone.'">';
         print '</td>';
         print '<td class="liste_titre">';
-        print '<input class="flat" type="text" name="search_email" size="10" value="'.$search_email.'">';
+        print '<input class="flat" type="text" name="search_email" size="9" value="'.$search_email.'">';
         print '</td>';
     }
 	print '<td class="liste_titre">&nbsp;</td>';
@@ -340,7 +350,10 @@ if ($result)
 		// Firstname
         print '<td>'.dol_trunc($obj->firstname,20).'</td>';
 
-		// Company
+		// Function
+        print '<td>'.dol_trunc($obj->poste,20).'</td>';
+        
+        // Company
         if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
         {
     		print '<td>';
