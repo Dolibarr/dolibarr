@@ -68,7 +68,7 @@ if ($_POST["action"] == 'add_action')
     if (! empty($_POST["backtopage"])) $backtopage=$_POST["backtopage"];
     if (! $backtopage)
     {
-        if ($socid > 0) $backtopage = DOL_URL_ROOT.'/comm/fiche.php?socid='.$socid;
+        if ($socid > 0) $backtopage = DOL_URL_ROOT.'/societe/agenda.php?socid='.$socid;
         else $backtopage=DOL_URL_ROOT.'/comm/action/index.php';
     }
 
