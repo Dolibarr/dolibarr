@@ -93,7 +93,7 @@ if ($MINOR eq '')
 }
 
 # Ask module
-print "Enter name for your module (mymodule, mywonderfulmondule, ...) : ";
+print "Enter name for your module (mymodule, mywonderfulmondule, ... or 'all') : ";
 $PROJECTINPUT=<STDIN>;
 chomp($PROJECTINPUT);
 print "Move to ".$DIR." directory.\n";
