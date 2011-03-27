@@ -577,6 +577,7 @@ Before=Before
 After=After
 IPAddress=IP address
 Frequency=Frequency
+IM=Instant messaging
 # Week day
 Day1=Monday
 Day2=Tuesday
