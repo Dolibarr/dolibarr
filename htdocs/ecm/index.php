@@ -46,7 +46,7 @@ $langs->load("contracts");
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'ecm','');
+$result = restrictedArea($user, 'ecm', 0);
 
 // Load permissions
 $user->getrights('ecm');
