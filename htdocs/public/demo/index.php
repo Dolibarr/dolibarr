@@ -62,12 +62,12 @@ $demoprofiles=array(
 	);
 
 $alwayscheckedmodules=array('barcode','bookmark','externalrss','fckeditor','geoipmaxmind','gravatar','memcached','syslog','user','webservices');  // Technical module we always want
-$alwaysuncheckedmodules=array('paybox','paypal','filemanager','google','scanner');  // Module we never want
+$alwaysuncheckedmodules=array('paybox','paypal','filemanager','google','scanner','workflow');  // Module we never want
 $alwayshiddenmodules=array('accounting','barcode','bookmark','boutique','clicktodial','document','domain','externalrss','externalsite','fckeditor','ftp','geoipmaxmind','gravatar','label','ldap','mantis','memcached','notification',
                             'syslog','user','webservices',
                             // Extended modules
                             'awstats','bittorrent','cabinetmed','filemanager','monitoring','nltechno','ovh','phenix','phpsysinfo','postnuke','submiteverywhere',
-                            'survey','thomsonphonebook','voyage','webcalendar','webmail');
+                            'survey','thomsonphonebook','voyage','webcalendar','webmail','zipautofillfr');
 
 // Search modules
 $dirlist=$conf->file->dol_document_root;
