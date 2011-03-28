@@ -51,14 +51,14 @@ $substitutionarrayfortest=array(
 if (isset($_POST["action"]) && $_POST["action"] == 'update' && empty($_POST["cancel"]))
 {
 	dolibarr_set_const($db, "MAIN_DISABLE_ALL_MAILS",   $_POST["MAIN_DISABLE_ALL_MAILS"],'chaine',0,'',$conf->entity);
-	
+
 	dolibarr_set_const($db, "MAIN_MAIL_SENDMODE",       $_POST["MAIN_MAIL_SENDMODE"],'chaine',0,'',0);
 	dolibarr_set_const($db, "MAIN_MAIL_SMTP_PORT",      $_POST["MAIN_MAIL_SMTP_PORT"],'chaine',0,'',0);
 	dolibarr_set_const($db, "MAIN_MAIL_SMTP_SERVER",    $_POST["MAIN_MAIL_SMTP_SERVER"],'chaine',0,'',0);
 	if (isset($_POST["MAIN_MAIL_SMTPS_ID"]))  dolibarr_set_const($db, "MAIN_MAIL_SMTPS_ID",  $_POST["MAIN_MAIL_SMTPS_ID"],'chaine',0,'',0);
 	if (isset($_POST["MAIN_MAIL_SMTPS_PW"]))  dolibarr_set_const($db, "MAIN_MAIL_SMTPS_PW",  $_POST["MAIN_MAIL_SMTPS_PW"],'chaine',0,'',0);
 	if (isset($_POST["MAIN_MAIL_EMAIL_TLS"])) dolibarr_set_const($db, "MAIN_MAIL_EMAIL_TLS", $_POST["MAIN_MAIL_EMAIL_TLS"],'chaine',0,'',0);
-	
+
 	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_FROM",     $_POST["MAIN_MAIL_EMAIL_FROM"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_MAIL_AUTOCOPY_TO",    $_POST["MAIN_MAIL_AUTOCOPY_TO"],'chaine',0,'',$conf->entity);
 
@@ -602,9 +602,9 @@ else
 		$formmail->withsubstit=0;
 		$formmail->withfrom=1;
 		$formmail->witherrorsto=1;
-		$formmail->withto=(isset($_POST['sendto'])?$_POST['sendto']:$user->email?$user->email:1);
-		$formmail->withtocc=(isset($_POST['sendtocc'])?$_POST['sendtocc']:1);
-		$formmail->withtoccc=(isset($_POST['sendtoccc'])?$_POST['sendtoccc']:1);
+		$formmail->withto=(! empty($_POST['sendto'])?$_POST['sendto']:($user->email?$user->email:1));
+        $formmail->withtocc=(! empty($_POST['sendtocc'])?$_POST['sendtocc']:1);       // ! empty to keep field if empty
+        $formmail->withtoccc=(! empty($_POST['sendtoccc'])?$_POST['sendtoccc']:1);    // ! empty to keep field if empty
 		$formmail->withtopic=(isset($_POST['subject'])?$_POST['subject']:$langs->trans("Test"));
 		$formmail->withtopicreadonly=0;
 		$formmail->withfile=2;
@@ -647,9 +647,9 @@ else
 		$formmail->withsubstit=0;
 		$formmail->withfrom=1;
 		$formmail->witherrorsto=1;
-		$formmail->withto=(isset($_POST['sendto'])?$_POST['sendto']:$user->email?$user->email:1);
-		$formmail->withtocc=(isset($_POST['sendtocc'])?$_POST['sendtocc']:1);
-		$formmail->withtoccc=(isset($_POST['sendtoccc'])?$_POST['sendtoccc']:1);
+		$formmail->withto=(! empty($_POST['sendto'])?$_POST['sendto']:($user->email?$user->email:1));
+        $formmail->withtocc=(! empty($_POST['sendtocc'])?$_POST['sendtocc']:1);       // ! empty to keep field if empty
+        $formmail->withtoccc=(! empty($_POST['sendtoccc'])?$_POST['sendtoccc']:1);    // ! empty to keep field if empty
 		$formmail->withtopic=(isset($_POST['subject'])?$_POST['subject']:$langs->trans("Test"));
 		$formmail->withtopicreadonly=0;
 		$formmail->withfile=2;
