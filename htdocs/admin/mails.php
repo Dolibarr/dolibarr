@@ -664,7 +664,7 @@ else
 		$formmail->withsubstit=0;
 		$formmail->withfrom=1;
 		$formmail->witherrorsto=1;
-		$formmail->withto=(isset($_POST['sendto'])?$_POST['sendto']:$user->email?$user->email:1);
+		$formmail->withto=(! empty($_POST['sendto'])?$_POST['sendto']:($user->email?$user->email:1));
 		$formmail->withtocc=(! empty($_POST['sendtocc'])?$_POST['sendtocc']:1);       // ! empty to keep field if empty
 		$formmail->withtoccc=(! empty($_POST['sendtoccc'])?$_POST['sendtoccc']:1);    // ! empty to keep field if empty
 		$formmail->withtopic=(isset($_POST['subject'])?$_POST['subject']:$langs->trans("Test"));
@@ -709,7 +709,7 @@ else
 		$formmail->withsubstit=0;
 		$formmail->withfrom=1;
 		$formmail->witherrorsto=1;
-		$formmail->withto=(isset($_POST['sendto'])?$_POST['sendto']:$user->email?$user->email:1);
+		$formmail->withto=(! empty($_POST['sendto'])?$_POST['sendto']:($user->email?$user->email:1));
         $formmail->withtocc=(! empty($_POST['sendtocc'])?$_POST['sendtocc']:1);       // ! empty to keep field if empty
         $formmail->withtoccc=(! empty($_POST['sendtoccc'])?$_POST['sendtoccc']:1);    // ! empty to keep field if empty
 		$formmail->withtopic=(isset($_POST['subject'])?$_POST['subject']:$langs->trans("Test"));
