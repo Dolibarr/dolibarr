@@ -932,8 +932,15 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			print '<!-- Includes JS specific to page -->'."\n";
 			foreach($arrayofjs as $jsfile)
 			{
-				if (! preg_match('/^\//',$jsfile)) $jsfile='/'.$jsfile;	// For backward compatibility
-				print '<script type="text/javascript" src="'.dol_buildpath($jsfile,1).'"></script>'."\n";
+				if (preg_match('/^http/i',$jsfile))
+				{
+					print '<script type="text/javascript" src="'.$jsfile.'"></script>'."\n";
+				}
+				else
+				{
+					if (! preg_match('/^\//',$jsfile)) $jsfile='/'.$jsfile;	// For backward compatibility
+					print '<script type="text/javascript" src="'.dol_buildpath($jsfile,1).'"></script>'."\n";
+				}
 			}
 		}
 
