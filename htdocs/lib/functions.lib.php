@@ -1849,6 +1849,10 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 			{
 				if (! $user->rights->banque->cheque) $deleteok=0;
 			}
+            else if ($feature == 'ecm')
+            {
+                if (! $user->rights->ecm->upload) $deleteok=0;
+            }
 			else if (! empty($feature2))	// This should be used for future changes
 			{
 				if (empty($user->rights->$feature->$feature2->supprimer)
