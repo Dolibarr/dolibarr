@@ -167,3 +167,7 @@ DocForLabels=Génération d'étiquette d'adresses (Format de planche actuellemen
 SubscriptionPayment=Paiement cotisation
 LastSubscriptionDate=Date de la dernière cotisation
 LastSubscriptionAmount=Montant de la dernière cotisation
+MembersStatisticsByCountries=Statistiques des membres par pays
+NbOfMembers=Nombre de membres
+NoValidatedMemberYet=Aucun membre validé trouvé
+MembersByCountryDesc=Cet écran vous présente une vue statistique du nombre d'adhérent par pays. Le graphique utilise toutefois le service en ligne de graphique de Google et n'est opérationnel uniquement si une connexion internet est disponible.
