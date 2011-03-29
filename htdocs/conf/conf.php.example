@@ -14,13 +14,15 @@
 
 # dolibarr_main_url_root
 # This parameter defines the root URL of your Dolibarr index.php page.
-# It must link to the directory htdocs. It is autodetected with version
-# 3.1 and more but required to show full url bookmarks for some 
-# services (ie: agenda rss export url, ...)
+# It must link to the htdocs directory htdocs.
+# In most cases, this is autodetected but it still required to show full
+# url bookmarks for some services (ie: agenda rss export url, ...) or
+# when using Apache dir aliases (autodetect fails).
 # Examples:
 # $dolibarr_main_url_root='http://localhost';
 # $dolibarr_main_url_root='http://mydolibarrvirtualhost';
 # $dolibarr_main_url_root='http://myserver/dolibarr/htdocs';
+# $dolibarr_main_url_root='http://myserver/dolibarralias';
 #
 $dolibarr_main_url_root='';
 
