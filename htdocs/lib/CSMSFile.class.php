@@ -141,7 +141,9 @@ class CSMSFile
 				}
 				else
 				{
-					dol_syslog("CSMSFile::sendfile: sms send success", LOG_DEBUG);
+					dol_syslog("CSMSFile::sendfile: sms send success with id=".$res, LOG_DEBUG);
+					//var_dump($res);        // 1973128
+					$this->dump_sms_result($res);
 				}
 			}
 			else
@@ -183,6 +185,26 @@ class CSMSFile
 			@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
 		}
 	}
+
+    /**
+     *  Write content of a SMTP request into a dump file (mode = all)
+     *  Used for debugging.
+     */
+    function dump_sms_result($result)
+    {
+        global $conf,$dolibarr_main_data_root;
+
+        if (@is_writeable($dolibarr_main_data_root))    // Avoid fatal error on fopen with open_basedir
+        {
+            $fp = fopen($dolibarr_main_data_root."/dolibarr_sms.log","a+");
+
+            fputs($fp, "\nResult id=".$result);
+
+            fclose($fp);
+            if (! empty($conf->global->MAIN_UMASK))
+            @chmod($outputfile, octdec($conf->global->MAIN_UMASK));
+        }
+    }
 
 }
 
