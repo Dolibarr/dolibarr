@@ -82,13 +82,16 @@ if ($mode)
 	}
 	if ($mode == 'memberbystate')
 	{
-		$label=$langs->trans("State");
+        $label=$langs->trans("Country");
+	    $label2=$langs->trans("State");
 
 		$data = array();
-		$sql.="SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, c.nom as label";
+		$sql.="SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, p.libelle as label, c.nom as label2";
 		$sql.=" FROM ".MAIN_DB_PREFIX."adherent as d LEFT JOIN ".MAIN_DB_PREFIX."c_departements as c on d.fk_departement = c.rowid";
-		$sql.=" WHERE statut = 1";
-		$sql.=" GROUP BY c.nom";
+        $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_regions as r on c.fk_region = r.rowid";
+        $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p on r.fk_pays = p.rowid";
+        $sql.=" WHERE statut = 1";
+		$sql.=" GROUP BY p.libelle, c.nom";
 		//print $sql;
 	}
 
@@ -113,6 +116,7 @@ if ($mode)
 			if ($mode == 'memberbystate')
 			{
 				$data[]=array('label'=>($obj->label?$obj->label:$langs->trans("Unknown")),
+				            'label2'=>($obj->label2?$obj->label2:$langs->trans("Unknown")),
 							'nb'=>$obj->nb,
 							'lastdate'=>$obj->lastdate
 				);
@@ -198,6 +202,7 @@ if ($mode)
 	print '<table class="border" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td align="center">'.$label.'</td>';
+    if ($label2) print '<td align="center">'.$label2.'</td>';
 	print '<td align="center">'.$langs->trans("NbOfMembers").'</td>';
 	print '<td align="center">'.$langs->trans("LastMemberDate").'</td>';
 	print '</tr>';
@@ -210,7 +215,8 @@ if ($mode)
 		$var=!$var;
 		print '<tr '.$bc[$var].'>';
 	    print '<td align="center">'.$val['label'].'</td>';
-		print '<td align="right">'.$val['nb'].'</td>';
+        if ($label2) print '<td align="center">'.$val['label2'].'</td>';
+	    print '<td align="right">'.$val['nb'].'</td>';
 		print '<td align="right">'.dol_print_date($val['lastdate'],'dayhour').'</td>';
 		print '</tr>';
 		$oldyear=$year;
