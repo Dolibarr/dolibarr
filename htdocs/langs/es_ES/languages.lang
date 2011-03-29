@@ -1,8 +1,10 @@
 # Dolibarr language file - es_ES - languages
 CHARSET=UTF-8
 Language_ar_AR=Árabe
+Language_ar_SA=Árabe
 Language_ca_ES=Catalán
 Language_da_DA=Danés
+Language_da_DK=Danés
 Language_de_DE=Alemán
 Language_de_AT=Alemán (Austria)
 Language_el_GR=Griego
@@ -34,4 +36,5 @@ Language_ru_RU=Ruso
 Language_tr_TR=Turco
 Language_sl_SI=Esloveno
 Language_sv_SV=Sueco
+Language_sv_SE=Sueco
 Language_zh_CN=Chino
