@@ -86,7 +86,7 @@ if ($mode)
 	    $label2=$langs->trans("State");
 
 		$data = array();
-		$sql.="SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, p.libelle as label, c.nom as label2";
+		$sql.="SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, p.code, p.libelle as label, c.nom as label2";
 		$sql.=" FROM ".MAIN_DB_PREFIX."adherent as d LEFT JOIN ".MAIN_DB_PREFIX."c_departements as c on d.fk_departement = c.rowid";
         $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_regions as r on c.fk_region = r.rowid";
         $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p on r.fk_pays = p.rowid";
@@ -107,7 +107,7 @@ if ($mode)
 			$obj=$db->fetch_object($resql);
 			if ($mode == 'memberbycountry')
 			{
-				$data[]=array('label'=>($langs->trans("Country".$obj->code)!="Country".$obj->code?$langs->trans("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
+				$data[]=array('label'=>(($obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code)?$langs->trans("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
 							'code'=>$obj->code,
 							'nb'=>$obj->nb,
 							'lastdate'=>$obj->lastdate
@@ -115,7 +115,7 @@ if ($mode)
 			}
 			if ($mode == 'memberbystate')
 			{
-				$data[]=array('label'=>($langs->trans("Country".$obj->code)!="Country".$obj->code?$langs->trans("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
+				$data[]=array('label'=>(($obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code)?$langs->trans("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
 				            'label2'=>($obj->label2?$obj->label2:$langs->trans("Unknown")),
 							'nb'=>$obj->nb,
 							'lastdate'=>$obj->lastdate
