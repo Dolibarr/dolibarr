@@ -115,7 +115,7 @@ if ($mode)
 			}
 			if ($mode == 'memberbystate')
 			{
-				$data[]=array('label'=>($obj->label?$obj->label:$langs->trans("Unknown")),
+				$data[]=array('label'=>($langs->trans("Country".$obj->code)!="Country".$obj->code?$langs->trans("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
 				            'label2'=>($obj->label2?$obj->label2:$langs->trans("Unknown")),
 							'nb'=>$obj->nb,
 							'lastdate'=>$obj->lastdate
