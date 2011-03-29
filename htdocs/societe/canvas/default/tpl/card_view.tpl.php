@@ -77,9 +77,9 @@
 
 <tr>
 	<td width="25%"><?php echo $langs->trans('Zip'); ?></td>
-	<td width="25%"><?php echo $this->control->tpl['cp']; ?></td>
+	<td width="25%"><?php echo $this->control->tpl['zip']; ?></td>
 	<td width="25%"><?php echo $langs->trans('Town'); ?></td>
-	<td width="25%"><?php echo $this->control->tpl['ville']; ?></td>
+	<td width="25%"><?php echo $this->control->tpl['town']; ?></td>
 </tr>
 
 <tr>
