@@ -27,10 +27,10 @@ ALTER TABLE llx_propal MODIFY model_pdf varchar(255);
 
 
 -- Delete old constants
-DELETE FROM llx_const WHERE name = 'MAIN_MENU_BARRETOP';
-DELETE FROM llx_const WHERE name = 'MAIN_MENUFRONT_BARRETOP';
-DELETE FROM llx_const WHERE name = 'MAIN_MENU_BARRELEFT';
-DELETE FROM llx_const WHERE name = 'MAIN_MENUFRONT_BARRELEFT';
+DELETE FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_MENU_BARRETOP';
+DELETE FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_MENUFRONT_BARRETOP';
+DELETE FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_MENU_BARRELEFT';
+DELETE FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_MENUFRONT_BARRELEFT';
 
 ALTER TABLE llx_facture_fourn ADD COLUMN ref_ext varchar(30) AFTER entity;
 ALTER TABLE llx_commande_fournisseur ADD COLUMN ref_ext varchar(30) AFTER entity;

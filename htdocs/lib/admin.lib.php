@@ -218,6 +218,32 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='')
 			// Ajout trace sur requete (eventuellement a commenter si beaucoup de requetes)
 			if (! $silent) print '<tr><td valign="top">'.$langs->trans("Request").' '.($i+1)." sql='".$newsql."'</td></tr>\n";
 			dol_syslog('Admin.lib::run_sql Request '.($i+1).' sql='.$newsql, LOG_DEBUG);
+			
+			// Replace for encrypt data
+			if (preg_match_all('/__ENCRYPT\(\'([^\,]+)\'\)__/i',$newsql,$reg))
+			{
+				$num=count($reg[0]);
+
+				for($i=0;$i<$num;$i++)
+				{
+					$from 	= $reg[0][$i];
+					$to		= $db->encrypt($reg[1][$i],1);
+					$newsql	= str_replace($from,$to,$newsql);
+				}
+			}
+			
+			// Replace for decrypt data
+			if (preg_match_all('/__DECRYPT\(\'([^\,]+)\'\)__/i',$newsql,$reg))
+			{
+				$num=count($reg[0]);
+
+				for($i=0;$i<$num;$i++)
+				{
+					$from 	= $reg[0][$i];
+					$to		= $db->decrypt($reg[1][$i]);
+					$newsql	= str_replace($from,$to,$newsql);
+				}
+			}
 
 			// Replace __x__ with rowid of insert nb x
 			while (preg_match('/__([0-9]+)__/',$newsql,$reg))
