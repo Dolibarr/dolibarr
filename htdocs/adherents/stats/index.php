@@ -76,7 +76,7 @@ if ($mode)
 		$data = array();
 		$sql.="SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, c.code, c.libelle as label";
 		$sql.=" FROM ".MAIN_DB_PREFIX."adherent as d LEFT JOIN ".MAIN_DB_PREFIX."c_pays as c on d.pays = c.rowid";
-		$sql.=" WHERE statut = 1";
+		$sql.=" WHERE d.statut = 1";
 		$sql.=" GROUP BY c.libelle, c.code";
 		//print $sql;
 	}
@@ -88,10 +88,10 @@ if ($mode)
 		$data = array();
 		$sql.="SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, p.code, p.libelle as label, c.nom as label2";
 		$sql.=" FROM ".MAIN_DB_PREFIX."adherent as d LEFT JOIN ".MAIN_DB_PREFIX."c_departements as c on d.fk_departement = c.rowid";
-        $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_regions as r on c.fk_region = r.rowid";
-        $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p on r.fk_pays = p.rowid";
-        $sql.=" WHERE statut = 1";
-		$sql.=" GROUP BY p.libelle, c.nom";
+        $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_regions as r on c.fk_region = r.code_region";
+        $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p on d.pays = p.rowid";
+        $sql.=" WHERE d.statut = 1";
+		$sql.=" GROUP BY p.libelle, p.code, c.nom";
 		//print $sql;
 	}
 
