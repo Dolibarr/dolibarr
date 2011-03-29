@@ -1,4 +1,4 @@
-Dolibarr language file - es_ES - main
+# Dolibarr language file - es_ES - main
 CHARSET=UTF-8
 DIRECTION=ltr
 SeparatorDecimal=,
@@ -210,6 +210,7 @@ DateProcess=Fecha proceso
 DatePlanShort=Fecha planif.
 DateRealShort=Fecha real
 DateBuild=Fecha generación del informe
+DatePayment=Fecha pago
 DurationYear=año
 DurationMonth=mes
 DurationWeek=semana
@@ -312,6 +313,7 @@ ActionsToDo=Eventos a realizar
 ActionsDone=Eventos realizados
 ActionsToDoShort=A realizar
 ActionsDoneShort=Realizadas
+ActionNotApplicable=No aplicable
 ActionRunningNotStarted=No empezado
 ActionRunningShort=Empezado
 ActionDoneShort=Terminado
@@ -575,6 +577,7 @@ Before=Antes
 After=Después
 IPAddress=Dirección IP
 Frequency=Frecuencia
+IM=Mensajería instantánea
 # Week day
 Day1=Lunes
 Day2=Martes
