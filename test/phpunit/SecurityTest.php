@@ -65,7 +65,7 @@ class SecurityTest extends PHPUnit_Framework_TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return CMailFile
+	 * @return SecurityTest
 	 */
 	function SecurityTest()
 	{
