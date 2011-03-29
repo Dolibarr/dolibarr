@@ -104,7 +104,7 @@ class Translate {
 		if (isset($langpart[1]))	// If its a long code xx_YY
 		{
 			// Array to convert short lang code into other long code.
-			$longforshort=array('ar'=>'ar_AR');
+			$longforshort=array('ar'=>'ar_SA');
 			if (isset($longforshort[strtolower($langpart[0])])) $srclang=$longforshort[strtolower($langpart[0])];
 			else {
 				$srclang=strtolower($langpart[0])."_".strtoupper($langpart[1]);
