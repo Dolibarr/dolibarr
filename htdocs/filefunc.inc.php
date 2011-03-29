@@ -119,7 +119,7 @@ if (! empty($dolibarr_main_document_root_alt))
 	define('DOL_DOCUMENT_ROOT_ALT', $dolibarr_main_document_root_alt);	// Filesystem paths to alternate core php (alternate htdocs)
 }
 // Define DOL_MAIN_URL_ROOT and DOL_URL_ROOT
-$tmp=$dolibarr_main_url_root;
+$tmp='';
 $found=0;
 $real_dolibarr_main_document_root=str_replace('\\','/',realpath($dolibarr_main_document_root));
 $pathroot=$_SERVER["DOCUMENT_ROOT"];
