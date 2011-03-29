@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - admin 
+# Dolibarr language file - es_ES - admin
 CHARSET=UTF-8
 Version=Versión
 VersionProgram=Versión programa
@@ -232,6 +232,7 @@ MAIN_MAIL_SENDMODE=Método de envío de e-mails
 MAIN_MAIL_SMTPS_ID=ID de autentificación SMTP  si se requiere autenticación SMTP
 MAIN_MAIL_SMTPS_PW=Contraseña autentificación SMTP si se requiere autentificación SMTP
 MAIN_MAIL_EMAIL_TLS=Uso de encriptación TLS (SSL)
+MAIN_MAIL_EMAIL_INLINE_IMAGES=Posibilidad de integrar las imágenes en los e-mails
 MAIN_DISABLE_ALL_SMS=Desactivar globalmente todo envío de SMS (para modo de pruebas o demo)
 MAIN_SMS_SENDMODE=Método de envío de SMS
 MAIN_MAIL_SMS_FROM=Número de teléfono por defecto para los envíos SMS
@@ -297,6 +298,7 @@ DescWeather=Los siguientes gráficos se mostrarán en el panel si el número de 
 KeyForWebServicesAccess=clave para usar los Web Services (parámetro "dolibarrkey" en webservices)
 TestSubmitForm=Formulario de pruebas
 ThisForceAlsoTheme=Usar este gestor de menús predetermina también el tema, sea cual sea la elección del usuario. Además, este gestor de menús, especial para smartphones, solamente funciona en algunos teléfonos. Use otro gestor si observa cualquier problema.
+ThemeDir=Directorio de los temas
 # Modules
 Module0Name=Usuarios y grupos
 Module0Desc=Gestión de usuarios y grupos
