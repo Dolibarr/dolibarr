@@ -35,7 +35,6 @@ if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU',1);
 if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML',1);
 if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
 
-session_cache_limiter( FALSE );
 
 require_once("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions.lib.php");
@@ -84,7 +83,7 @@ body {
     width: 100%;
     margin: 0px;
     }
-
+    
 #mainbody .connexion_box {
 	position: absolute;
     top: 2px;
@@ -92,7 +91,7 @@ body {
     height: 12px;
     text-align: left;
     }
-
+    
 #mainbody .connexion_box .login, #mainbody .connexion_box .printer {
 	margin-left: 10px;
     font-size: 10px;
@@ -100,7 +99,7 @@ body {
     padding: 0px !important;
     padding-right: 10px !important;
     }
-
+    
 #mainbody .connexion_box .login a {
 	color: #333;
     text-decoration: none;
@@ -133,9 +132,6 @@ input.flat {
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
-input:disabled {
-background:#ddd;
-}
 textarea  {
 	font-size: <?php print $fontsize ?>px;
 	font-family: <?php print $fontlist ?>;
@@ -151,9 +147,6 @@ textarea.flat {
     border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
-}
-textarea:disabled {
-background:#ddd;
 }
 select.flat {
 	background: #FDFDFD;
@@ -174,7 +167,7 @@ input.button[type=submit] {
     margin: 0px;
     background-repeat: repeat-x;
     border: 2px solid #336600;
-    color: #336600;
+    color: #FFFFFF;
     cursor: pointer;
     font-size: 10px;
 }
@@ -208,11 +201,6 @@ form {
     padding: 0em 0em 0em 0em;
     margin: 0em 0em 0em 0em;
 }
-div.float
-{
-    float:<?php print $left; ?>;
-}
-
 
 /* For dragging lines */
 
@@ -231,10 +219,9 @@ td.showDragHandle {
 /* Styles de positionnement des zones                                             */
 /* ============================================================================== */
 
-
-
-td.vmenu {
-    width: 220px;
+div.leftContent {
+	margin-left: 20px !important;
+    width: 220px !important;
 }
 
 div.vmenu {
@@ -245,12 +232,19 @@ div.vmenu {
 }
 
 div.fiche {
-    margin-<?php print $left; ?>: 12px;
-    margin-<?php print $right; ?>: 10px;
-	margin-bottom: 10px;
-    padding: 0px;²
+	margin: 0px 20px 20px 40px;
+    padding: 0px;
     position: relative;
     height: auto;
+}
+
+
+/* ============================================================================== */
+/* Barre de redmiensionnement menu                                                */
+/* ============================================================================== */
+
+.ui-layout-resizer-west-open {
+	left: 240px !important;
 }
 
 /* ============================================================================== */
@@ -279,7 +273,7 @@ div.tmenu {
     white-space: nowrap;
     border-left: 0px;
     padding: 0px;
-    margin: 10px 0px 10px 0px;
+    margin: 10px 20px 10px 20px;
     font-size: 13px;
     background-image : url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_tmenu.jpg' ?>) ;
     height: 22px;
@@ -433,36 +427,37 @@ li.tmenu, li.tmenusel {
 li.tmenu span, li.tmenusel span {
 	margin: 0px 10px 0px 10px;
     }
-
+    
 li.tmenu {
     background-image : url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_tmenu_btnD.jpg' ?>);
     background-position: right;
     }
-
+        
 li.tmenu a {
 	position: relative;
 	display: block;
     width: 100%;
+    height: 22px;
     background-image : url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_tmenu_btnG.jpg' ?>);
     background-position: left;
 	background-repeat: no-repeat;
     font-size: 12px;
     font-family: Geneva, Verdana, sans-serif;
-    line-height: 22px;
+    line-height: 25px;
     color: #FFF;
     font-weight: normal;
     }
-
+    
 li.tmenu a:hover {
 	color: #842F00;
     }
-
+    
 li.tmenusel {
     background-image : url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_tmenusel_btnD.jpg' ?>);
     background-position: right;
     }
-
-li.tmenusel a {
+    
+li.tmenusel a.tmenusel {
 	position: relative;
 	display: block;
     width: 100%;
@@ -472,15 +467,15 @@ li.tmenusel a {
 	background-repeat: no-repeat;
     font-size: 12px;
     font-family: Geneva, Verdana, sans-serif;
-    line-height: 22px;
-    color: #474747;
+    line-height: 25px;
+    color: #303030;
     font-weight: normal;
     }
-
+    
 li.tmenusel a:hover {
 	color: #474747;
     }
-
+    
 li.tmenu a.tmenudisabled {
 	color: #CCC;
     }
@@ -491,17 +486,10 @@ li.tmenu a.tmenudisabled {
 
 /* Login */
 
-div.login_block {
-    <?php if (GETPOST("optioncss") == 'print') { ?>
-    display: none;
-    <?php } ?>
-}
-
 div.login {
   position: absolute;
-  <?php print $right; ?>: 60px;
-  top: 5px;
-  padding: 0px 8px;
+  <?php print $right; ?>: 30px;
+  padding: 12px 8px;
   margin: 0px 0px 1px 0px;
   font-weight: bold;
 }
@@ -513,10 +501,9 @@ div.login a:hover {
 	text-decoration:underline;
 }
 
-img.login, img.printer, img.entity {
+img.login, img.printer {
   position: absolute;
-  <?php print $right; ?>: 25px;
-  top: -3px;
+  <?php print $right; ?>: 20px;
   padding: 10px 0px 0px 0px;
   text-decoration: none;
   color: white;
@@ -525,17 +512,14 @@ img.login, img.printer, img.entity {
 img.printer {
   <?php print $right; ?>: 4px;
 }
-img.entity {
-  <?php print $right; ?>: 45px;
-}
-
 
 
 /* ============================================================================== */
 /* Menu gauche                                                                    */
 /* ============================================================================== */
 
-<?php if ((! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print')) { ?>
+<?php if ((! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print')
+|| (! empty($conf->browser->phone) && class_exists('Smartphone') && empty($conf->global->MAIN_SEARCHFORM_WITH_SMARTHPONE) && empty($conf->global->BOOKMARKS_SHOW_WITH_SMARTHPONE))) { ?>
 .vmenu {
 	display: none;
 }
@@ -896,7 +880,7 @@ td.photo {
 
 div.tabs {
     top: 20px;
-    margin: 20px 0px 0px 0px;
+    margin: 10px 0px 0px 0px;
     text-align: left;
     width: 100%;
     background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_tmenu.jpg' ?>);
@@ -904,6 +888,12 @@ div.tabs {
     border-bottom: 2px solid #842F00;
     background-repeat: repeat-x;
     background-position: bottom;
+}
+
+div.tabs a.tabTitle {
+	margin-right: 5px;
+    position: relative;
+    float: left;
 }
 
 div.tabs a.tab {
@@ -950,41 +940,26 @@ div.tabs a.tab:hover {
 	color: #333333;
 }
 
-a.tabTitle {
-    background: #D8610F;
-    color: white;
-	font-family: <?php print $fontlist ?>;
-    font-weight: normal;
-    padding: 0px 6px 0px 2px;
-    margin: 0px 0px 0px 6px;
-	float: left;
-    text-decoration: none;
-    white-space: nowrap;
-    border-<?php print $right; ?>: 1px solid #555555;
-    border-<?php print $left; ?>: 1px solid #D8D8D8;
-    border-top: 1px solid #D8D8D8;
-}
-
 /*div.tabs {
     top: 20px;
     margin: 1px 0px 0px 0px;
     padding: 0px 6px 0px 0px;
     text-align: <?php print $left; ?>;
-}*/
+}
 
 div.tabBar {
-/*    color: #234046;*/
+    color: #234046;
     margin: 0px 0px 10px 0px;
-/*    background: #dee7ec url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/tab_background.png' ?>) repeat-x; */
+    background: #dee7ec url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/tab_background.png' ?>) repeat-x;
 }
 
 div.tabsAction {
-    margin: 12px 0em 1px 0em;
+    margin: 20px 0em 1px 0em;
     padding: 0em 0em;
     text-align: right;
 }
 
-/*
+
 a.tabTitle {
     background: #5088A9;
     color: white;
@@ -1244,30 +1219,50 @@ table.liste td {
 padding-right: 2px;
 }
 
-tr.liste_titre {
-    height: 20px;
+table.noborder {
     background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_centerBlock-title.jpg' ?>);
     background-repeat: no-repeat;
-    bakground-position: top right;
-    color: #FFFFFF;
+    background-position: top right;
+    vertical-align: text-top;
+}
+
+tr.liste_titre {
+    height: 20px;
+/*    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_centerBlock-title.jpg' ?>);
+    background-repeat: no-repeat;
+    background-position: top right;
+*/    color: #FFFFFF;
     font-family: <?php print $fontlist ?>;
-    line-height: 8px;
+    line-height: 18px;
     padding-left: 10px;
     white-space: nowrap;
 }
 
 tr.liste_titre td {
 	padding-left: 3px;
+    vertical-align: text-top;
 }
 
 td.liste_titre {
-    background: #7699A9;
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/menus/trtitle.png' ?>);
     background-repeat: repeat-x;
     color: #FFFFFF;
     font-family: <?php print $fontlist ?>;
     font-weight: normal;
     white-space: nowrap;
+    background-image: none;
+}
+
+tr.liste_titre select.flat {
+	float: left;
+    width: 200px;
+    position: relative;
+    margin: 30px 10px 10px 0px; 
+}
+
+tr.liste_titre input.button {
+	float: left;
+    position: relative;
+    margin: 30px 10px 10px 0px; 
 }
 
 td.liste_titre_sel {
@@ -1419,18 +1414,16 @@ div.error {
   background-color: #AD1800;
   height: 20px;
   line-height: 20px;
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 
 /* Info admin */
 div.info {
-  color: #707070;
+  color: #505050;
   padding: 0.2em 0.2em 0.2em 0.2em;
   margin: 0.5em 0em 0.5em 0em;
-  border: 1px solid #c0c0d0;
-  -moz-border-radius:6px;
-  background: #efefd4;
+  border: 1px solid #878003;
+  background: #F4EAA2;
 }
 
 
@@ -1969,19 +1962,20 @@ A.none, A.none:active, A.none:visited, A.none:hover {
     line-height:1.5;
     zoom:1;
     font-weight: normal;
-    font-family:<?php echo $fontlist; ?>;
+    font-family:Verdana,Arial,sans-serif;
     font-size:1em;
 }
-.ui-widget {
-    font-family:<?php echo $fontlist; ?>;
-    font-size:<?php echo $fontsize; ?>px;
-}
-.ui-button { margin-left: -1px; }
-.ui-button-icon-only .ui-button-text { height: 8px; }
-.ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text { padding: 2px 0px 6px 0px; }
-.ui-button-text
-{
-    line-height: 1em !important;
-}
-.ui-autocomplete-input { margin: 0; padding: 1px; }
 
+div.tabsAction {
+	margin-top: 10px;
+}
+
+table.noborder {
+	margin-bottom: 10px;
+    position: relative;
+    float: left;
+}
+
+div.leftContent {
+	background-color: #FFF;
+}
