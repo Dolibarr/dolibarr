@@ -28,6 +28,7 @@ For users:
        or credit note invoice.
 - New: task #10885: Add a week view for calendar    
 - New: task #11018 : Add a status "not applicable" on event
+- New: Add region/country statistics for member module. 
 - Fix: Better Postgresql compatibility.
 
 For developers:
@@ -39,6 +40,10 @@ For developers:
        forcing priority on langs directories on its own lang directory.
 - New: External modules can show export list with an "enabled" condition.
 - New: Support a backtopage parameter on contact creation page
+
+For translators:
+- Fix: Move code ar_AR to ar_SA, sv_SV to sv_SE and da_Da to da_DK.
+
 
 
 ***** ChangeLog for 3.0 compared to 2.9 *****
