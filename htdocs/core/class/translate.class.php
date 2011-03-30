@@ -96,26 +96,22 @@ class Translate {
 			$codetouse=$langlist[0];
 		}
 		else $codetouse=$srclang;
-
 		// We redefine $srclang
 		$langpart=explode("_",$codetouse);
 		//print "Short before _ : ".$langpart[0].'/ Short after _ : '.$langpart[1].'<br>';
 
-		if (isset($langpart[1]))	// If its a long code xx_YY
+        // Array to convert short lang code into other long code.
+        $longforshort=array('ar'=>'ar_SA', 'el'=>'el_GR', 'ca'=>'ca_ES', 'en'=>'en_US', 'nb'=>'nb_NO', 'no'=>'nb_NO');
+		if (isset($langpart[1]))	// If it's for a codetouse that is a long code xx_YY
 		{
-			// Array to convert short lang code into other long code.
-			$longforshort=array('ar'=>'ar_SA');
 			if (isset($longforshort[strtolower($langpart[0])])) $srclang=$longforshort[strtolower($langpart[0])];
 			else {
 				$srclang=strtolower($langpart[0])."_".strtoupper($langpart[1]);
-				// Array to convert long lang code into other long code.
 				$longforlong=array('no_nb'=>'nb_NO');
 				if (isset($longforlong[strtolower($srclang)])) $srclang=$longforlong[strtolower($srclang)];
 			}
 		}
-		else {							// If its a short code xx
-			// Array to convert short lang code into long code.
-			$longforshort=array('en'=>'en_US', 'ca'=>'ca_ES', 'nb'=>'nb_NO', 'no'=>'nb_NO');
+		else {						// If it's for a codetouse that is a short code xx
 			if (isset($longforshort[strtolower($langpart[0])])) $srclang=$longforshort[strtolower($langpart[0])];
 			else $srclang=strtolower($langpart[0])."_".strtoupper($langpart[0]);
 		}
