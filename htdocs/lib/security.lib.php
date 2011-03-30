@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2008-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2008-2010 Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2008-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -164,7 +164,8 @@ function dol_loginfunction($langs,$conf,$mysoc)
 
 		if (! empty($conf->global->MAIN_MULTICOMPANY_COOKIE))
 		{
-			$entityCookieName = 'DOLENTITYID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].$realpath);
+			$prefix=dol_getprefix();
+			$entityCookieName = 'DOLENTITYID_'.$prefix;
 			if (isset($_COOKIE[$entityCookieName]))
 			{
 				include_once(DOL_DOCUMENT_ROOT . "/core/class/cookie.class.php");
@@ -212,7 +213,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		{
 			$mc = new ActionsMulticompany($db);
 
-			$select_entity=$mc->select_entities($lastentity,'tabindex="3"');
+			$select_entity=$mc->select_entities($lastentity, 1, 'tabindex="3"');
 		}
 	}
 

@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2007-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2008-2010 Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2008-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -184,7 +184,7 @@ else $focus_element = 'password';
 
 // Send password button enabled ?
 $disabled='disabled';
-if ($mode == 'dolibarr') $disabled='';
+if (preg_match('/dolibarr/i',$mode)) $disabled='';
 if ($conf->global->MAIN_SECURITY_ENABLE_SENDPASSWORD) $disabled='';	 // To force button enabled
 
 // Show logo (search in order: small company logo, large company logo, theme logo, common logo)
@@ -206,18 +206,35 @@ elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.png'))
 	$urllogo=DOL_URL_ROOT.'/theme/dolibarr_logo.png';
 }
 
-if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)) $rowspan++;
-
-// Entity field
+// Entity combobox
+$select_entity='';
 if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)  && ! $disabled)
 {
-	global $db;
+	$rowspan++;
+	$lastuser='';
+	$lastentity = GETPOST('entity');
+	
+	if (! empty($conf->global->MAIN_MULTICOMPANY_COOKIE))
+	{
+		$prefix=dol_getprefix();
+		$entityCookieName = 'DOLENTITYID_'.$prefix;
+		if (isset($_COOKIE[$entityCookieName]))
+		{
+			include_once(DOL_DOCUMENT_ROOT . "/core/class/cookie.class.php");
+			
+			$cryptkey = (! empty($conf->file->cookie_cryptkey) ? $conf->file->cookie_cryptkey : '' );
+			
+			$entityCookie = new DolCookie($cryptkey);
+			$cookieValue = $entityCookie->_getCookie($entityCookieName);
+			list($lastuser, $lastentity) = explode('|', $cookieValue);
+		}
+	}
 
 	$res=dol_include_once('/multicompany/class/actions_multicompany.class.php');
 	if ($res)
 	{
 		$mc = new ActionsMulticompany($db);
-		$select_entity = $mc->select_entities($mc->entities,$conf->entity,'tabindex="2"');
+		$select_entity = $mc->select_entities($lastentity,0,'tabindex="2"');
 	}
 }
 
