@@ -792,6 +792,24 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
     return $libelleproduitservice;
 }
 
+/**
+ *	Return line num
+ *	@param		object				Object
+ *	@param		$i					Current line number
+ *  @param    	outputlang			Object lang for output
+ */
+function pdf_getlinenum($object,$i,$outputlangs)
+{
+    if (!empty($object->hooks) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code))
+    {
+        // TODO add hook function
+    }
+    else
+    {
+        return dol_htmlentitiesbr($object->lines[$i]->num);
+    }
+}
+
 
 /**
  *	Return line ref
