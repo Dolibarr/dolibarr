@@ -837,7 +837,7 @@ class User extends CommonObject
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."user";
 			$sql.= " SET fk_socpeople=".$contact->id;
-			if ($contact->societeid) $sql.=", fk_societe=".$contact->societeid;
+			if ($contact->socid) $sql.=", fk_societe=".$contact->socid;
 			$sql.= " WHERE rowid=".$this->id;
 			$resql=$this->db->query($sql);
 

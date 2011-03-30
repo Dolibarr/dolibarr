@@ -478,7 +478,6 @@ class Contact extends CommonObject
 				$this->pays_code		= $obj->fk_pays?$obj->pays_code:'';
 				$this->pays				= ($obj->fk_pays > 0)?$langs->transnoentities("Country".$obj->pays_code):$langs->transnoentities("SelectCountry");
 
-				$this->societeid		= $obj->fk_soc;
 				$this->socid			= $obj->fk_soc;
 				$this->socname			= $obj->socname;
 				$this->poste			= $obj->poste;
