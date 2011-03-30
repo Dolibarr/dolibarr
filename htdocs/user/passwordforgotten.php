@@ -234,7 +234,7 @@ if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)  && ! $disabled)
 	if ($res)
 	{
 		$mc = new ActionsMulticompany($db);
-		$select_entity = $mc->select_entities($lastentity,0,'tabindex="2"');
+		$select_entity = $mc->select_entities($lastentity,'tabindex="2"');
 	}
 }
 
