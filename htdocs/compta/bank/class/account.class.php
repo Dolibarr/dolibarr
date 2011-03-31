@@ -23,7 +23,7 @@
 /**
  *	\file       htdocs/compta/bank/class/account.class.php
  *	\ingroup    banque
- *	\brief      Fichier de la classe des comptes bancaires
+ *	\brief      File of class to manage bank accounts
  *	\version    $Id$
  */
 
@@ -869,6 +869,35 @@ class Account extends CommonObject
         return $result;
     }
 
+
+    // Method after here are common to Account and CompanyBankAccount
+
+
+    /**
+     *     Return if an account has valid information
+     *     @return     int         1 if correct, <=0 if wrong
+     */
+    function verif()
+    {
+        require_once DOL_DOCUMENT_ROOT . '/lib/bank.lib.php';
+
+        // Call function to check BAN
+        if (! checkBanForAccount($this))
+        {
+            $this->error_number = 12;
+            $this->error_message = 'RIBControlError';
+        }
+
+        if ($this->error_number == 0)
+        {
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
     /**
      * 	Return account country code
      *	@return		String		country code
@@ -889,7 +918,16 @@ class Account extends CommonObject
             if (preg_match("/^([a-zA-Z][a-zA-Z])/i",$this->iban,$reg)) return $reg[1];
         }
 
-        // We return country code of company
+        // If this class is linked to a third party
+        if (! empty($this->socid))
+        {
+            require_once(DOL_DOCUMENT_ROOT ."/societe/class/societe.class.php");
+            $company=new Societe($this->db);
+            $result=$company->fetch($this->socid);
+            if (! empty($company->pays_code)) return $company->pays_code;
+        }
+
+        // We return country code of managed company
         if (! empty($mysoc->pays_code)) return $mysoc->pays_code;
 
         return '';
@@ -897,17 +935,37 @@ class Account extends CommonObject
 
     /**
      * 	Return if a bank account is defined with detailed information (bank code, desk code, number and key)
-     * 	@return		boolean		true or false
+     * 	@return		int        0=Use only an account number
+     *                         1=Need Bank, Desk, Number and Key (France, Spain, ...)
+     *                         2=Neek Bank onyl (BSB for Australia)
      */
     function useDetailedBBAN()
     {
         $country_code=$this->getCountryCode();
 
-        if ($country_code == 'FR') return true; // France
-        if ($country_code == 'ES') return true; // Spain
-        if ($country_code == 'GA') return true; // Gabon
+        if (in_array($country_code,array('FR','ES','GA'))) return 1; // France, Spain, Gabon
+        if (in_array($country_code,array('AU'))) return 2;           // Australia
+        return 0;
+    }
 
-        return false;
+    /**
+     * Initialize properties with test values
+     */
+    function initAsSpecimen()
+    {
+        $this->bank            = 'MyBank';
+        $this->courant         = 1;
+        $this->clos            = 0;
+        $this->code_banque     = '123';
+        $this->code_guichet    = '456';
+        $this->number          = 'ABC12345';
+        $this->cle_rib         = 50;
+        $this->bic             = 'AA12';
+        $this->iban            = 'FR999999999';
+        $this->iban_prefix     = 'FR';  // deprecated
+        $this->domiciliation   = 'The bank addresse';
+        $this->proprio         = 'Owner';
+        $this->adresse_proprio = 'Owner address';
     }
 
 }
