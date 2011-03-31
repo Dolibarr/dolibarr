@@ -20,14 +20,17 @@
 /*
  * 		\files		htdocs/societe/class/companybankaccount.class.php
  *		\ingroup    societe
- *		\brief      File of class to manage bank accounts description
+ *		\brief      File of class to manage bank accounts description of third parties
  *   	\version	$Id$
  */
 
+require_once(DOL_DOCUMENT_ROOT ."/compta/bank/class/account.class.php");
+
+
 /**
- * 	\brief	Class to manage bank accounts description
+ * 	\brief	Class to manage bank accounts description of third parties
  */
-class CompanyBankAccount
+class CompanyBankAccount extends Account
 {
 	var $rowid;
 	var $socid;
@@ -186,84 +189,6 @@ class CompanyBankAccount
 	function error()
 	{
 		return $this->error;
-	}
-
-
-	/**
-	 *
-	 *
-	 */
-	function verif()
-	{
-		require_once DOL_DOCUMENT_ROOT . '/lib/bank.lib.php';
-
-		// Call function to check BAN
-		if (! checkBanForAccount($this))
-		{
-			$this->error_number = 12;
-			$this->error_message = 'RIBControlError';
-		}
-
-		if ($this->error_number == 0)
-		{
-			return 1;
-		}
-		else
-		{
-			return 0;
-		}
-	}
-
-	/**
-	 * 	Return account country code.
-	 *  Use this->iban and this->socid.
-	 *	@return		String		country code
-	 */
-	function getCountryCode()
-	{
-		if (! empty($this->iban))
-		{
-			// If IBAN defined, we can know country of account from it
-			if (preg_match("/^[a-z]{2}/i",$this->iban,$reg)) return $reg[1];
-		}
-
-		// We return country code
-		$company=new Societe($this->db);
-		$result=$company->fetch($this->socid);
-		if (! empty($company->pays_code)) return $company->pays_code;
-
-		return '';
-	}
-
-	/**
-	 * 	Return if a bank account is defined with detailed information (bank code, desk code, number and key)
-	 * 	@return		boolean		true or false
-	 */
-	function useDetailedBBAN()
-	{
-		if ($this->getCountryCode() == 'FR') return true;
-		if ($this->getCountryCode() == 'ES') return true;
-		return false;
-	}
-
-	/**
-	 * Initialize properties with test values
-	 */
-	function initAsSpecimen()
-	{
-		$this->bank            = 'MyBank';
-		$this->courant         = 1;
-		$this->clos            = 0;
-		$this->code_banque     = '123';
-		$this->code_guichet    = '456';
-		$this->number          = 'ABC12345';
-		$this->cle_rib         = 50;
-		$this->bic             = 'AA12';
-		$this->iban		       = 'FR999999999';
-		$this->iban_prefix     = 'FR';	// deprecated
-		$this->domiciliation   = 'The bank addresse';
-		$this->proprio         = 'Owner';
-		$this->adresse_proprio = 'Owner address';
 	}
 
 }

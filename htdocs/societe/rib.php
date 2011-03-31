@@ -119,7 +119,7 @@ if ($_GET["socid"] && $_GET["action"] != 'edit')
 	print '<tr><td valign="top">'.$langs->trans("Bank").'</td>';
 	print '<td colspan="4">'.$account->bank.'</td></tr>';
 
-	if ($account->useDetailedBBAN())
+	if ($account->useDetailedBBAN() == 1)
 	{
 		print '<tr><td>'.$langs->trans("BankCode").'</td>';
 		print '<td colspan="3">'.$account->code_banque.'</td>';
@@ -129,12 +129,18 @@ if ($_GET["socid"] && $_GET["action"] != 'edit')
 		print '<td colspan="3">'.$account->code_guichet.'</td>';
 		print '</tr>';
 	}
+    if ($account->useDetailedBBAN() == 2)
+    {
+        print '<tr><td>'.$langs->trans("BankCode").'</td>';
+        print '<td colspan="3">'.$account->code_banque.'</td>';
+        print '</tr>';
+    }
 
 	print '<tr><td>'.$langs->trans("BankAccountNumber").'</td>';
 	print '<td colspan="3">'.$account->number.'</td>';
 	print '</tr>';
 
-	if ($account->useDetailedBBAN())
+	if ($account->useDetailedBBAN() == 1)
 	{
 		print '<tr><td>'.$langs->trans("BankAccountNumberKey").'</td>';
 		print '<td colspan="3">'.$account->cle_rib.'</td>';
@@ -204,7 +210,7 @@ if ($_GET["socid"] && $_GET["action"] == 'edit' && $user->rights->societe->creer
 	print '<td colspan="4"><input size="30" type="text" name="bank" value="'.$account->bank.'"></td></tr>';
 
 	// BBAN
-	if ($account->useDetailedBBAN())
+	if ($account->useDetailedBBAN() == 1)
 	{
 		print '<tr><td>'.$langs->trans("BankCode").'</td>';
 		print '<td><input size="8" type="text" class="flat" name="code_banque" value="'.$account->code_banque.'"></td>';
@@ -214,12 +220,18 @@ if ($_GET["socid"] && $_GET["action"] == 'edit' && $user->rights->societe->creer
 		print '<td><input size="8" type="text" class="flat" name="code_guichet" value="'.$account->code_guichet.'"></td>';
 		print '</tr>';
 	}
+    if ($account->useDetailedBBAN() == 2)
+    {
+        print '<tr><td>'.$langs->trans("BankCode").'</td>';
+        print '<td><input size="8" type="text" class="flat" name="code_banque" value="'.$account->code_banque.'"></td>';
+        print '</tr>';
+    }
 
 	print '<td>'.$langs->trans("BankAccountNumber").'</td>';
 	print '<td><input size="15" type="text" class="flat" name="number" value="'.$account->number.'"></td>';
 	print '</tr>';
 
-	if ($account->useDetailedBBAN())
+	if ($account->useDetailedBBAN() == 1)
 	{
 		print '<td>'.$langs->trans("BankAccountNumberKey").'</td>';
 		print '<td><input size="3" type="text" class="flat" name="cle_rib" value="'.$account->cle_rib.'"></td>';

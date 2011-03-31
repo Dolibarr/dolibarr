@@ -81,13 +81,9 @@ function bank_prepare_head($obj)
 
 
 /**
- *		\brief    Check account number informations for a bank account
- *		\param    code_banque     code banque
- *		\param    code_guichet    code guichet
- *		\param    num_compte      numero de compte
- *		\param    cle             cle
- *		\param    iban            Ne sert pas pour le calcul de cle mais sert pour determiner le pays
- *		\return   int             true si les infos sont bonnes, false si erreur
+ *		Check account number informations for a bank account
+ *		@param    account       A bank account
+ *		@return   int           True if informations are valid, false otherwise
  */
 function checkBanForAccount($account)
 {
@@ -132,22 +128,25 @@ function checkBanForAccount($account)
 	if ($country_code == 'ES')	// Spanish rules
 	{
 		$CCC = strtolower(trim($account->number));
-
 		$rib = strtolower(trim($account->code_banque).trim($account->code_guichet));
-
     	$cle_rib=strtolower(CheckES($rib,$CCC));
-
 		if ($cle_rib == strtolower($account->cle))
     	{
     		return true;
 		}
 		return false;
     }
+    if ($country_code == 'AU')  // Australian
+    {
+        if (strlen($account->code_banque) > 7) return false; // Sould be 6 but can be 123-456
+        else if (strlen($account->code_banque) < 6) return false; // Sould be 6
+        else return true;
+    }
 
 	// No particular rule
 	// If account is CompanyBankAccount class, we use number
 	// If account is Account class, we use num_compte
-	if (empty($account->num_compte) && empty($account->number))
+	if (empty($account->number))
 	{
 		return false;
 	}
@@ -160,7 +159,7 @@ function checkBanForAccount($account)
  * 	Returns the key for Spanish Banks Accounts
  *  @return		string		Key
  */
-Function CheckES($IentOfi,$InumCta)
+function CheckES($IentOfi,$InumCta)
 {
 	$APesos = Array(1,2,4,8,5,10,9,7,3,6); // Array de "pesos"
 	$DC1=0;

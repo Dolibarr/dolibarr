@@ -341,8 +341,16 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0)
 
         if (empty($onlynumber)) $pdf->line($curx+1, $cury+1, $curx+1, $cury+8 );
 
-        $fieldstoshow=array('bank','desk','number','key');
-        if ($conf->global->BANK_SHOW_ORDER_OPTION==1) $fieldstoshow=array('bank','desk','key','number');
+        if ($usedetailedbban == 1)
+        {
+            $fieldstoshow=array('bank','desk','number','key');
+            if ($conf->global->BANK_SHOW_ORDER_OPTION==1) $fieldstoshow=array('bank','desk','key','number');
+        }
+        else if ($usedetailedbban == 2)
+        {
+            $fieldstoshow=array('bank','number');
+        }
+        else dol_print_error('','Value returned by function useDetailedBBAN not managed');
 
         foreach ($fieldstoshow as $val)
         {
@@ -943,7 +951,7 @@ function pdf_getTotalQty($object,$type='',$outputlangs)
 {
 	$total=0;
 	$nblignes=sizeof($object->lines);
-	
+
 	// Loop on each lines
 	for ($i = 0 ; $i < $nblignes ; $i++)
 	{
@@ -967,7 +975,7 @@ function pdf_getTotalQty($object,$type='',$outputlangs)
 			}
 		}
 	}
-	
+
 	return $total;
 }
 

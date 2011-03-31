@@ -5,6 +5,7 @@ $Id$
 
 ***** ChangeLog for 3.1 compared to 3.0 *****
 For users:
+- New: Support BSB code for bank account in australia.
 - New: Can set date of payment for autocreate invoice/payment when 
        creating a foundation subscription.
 - New: task #10969 : Add checkbox to close automatically invoice to "payed"
