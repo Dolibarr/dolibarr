@@ -167,6 +167,7 @@ if ($action == 'add_paiement')
  * View
  */
 
+$supplierstatic=new Societe($db);
 $invoicesupplierstatic = new FactureFournisseur($db);
 
 llxHeader();
@@ -214,7 +215,11 @@ if ($action == 'create' || $action == 'add_paiement')
             print '<table class="border" width="100%">';
 
             print '<tr class="liste_titre"><td colspan="3">'.$langs->trans('Payment').'</td>';
-            print '<tr><td>'.$langs->trans('Company').'</td><td colspan="2">'.$obj->nom.'</td></tr>';
+            print '<tr><td>'.$langs->trans('Company').'</td><td colspan="2">';
+            $supplierstatic->id=$obj->socid;
+            $supplierstatic->name=$obj->nom;
+            print $supplierstatic->getNomUrl(1,'supplier');
+            print '</td></tr>';
             print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td>';
             $html->select_date($dateinvoice,'','','','',"addpaiement",1,1);
             print '</td>';
