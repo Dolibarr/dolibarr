@@ -752,6 +752,23 @@ else
 
 $heightforframes=48;
 
+// Switch to another entity
+if (!empty($conf->global->MAIN_MODULE_MULTICOMPANY))
+{
+	if (GETPOST('action') == 'switchentity' && $user->admin && ! $user->entity)
+	{
+		require_once("../class/actions_multicompany.class.php");
+		
+		$mc = new ActionsMulticompany($db);
+		
+		if($mc->switchEntity(GETPOST('entity_id')) > 0)
+		{
+			Header("Location: ".DOL_URL_ROOT.'/');
+			exit;
+		}
+	}
+}
+
 
 // Functions
 
