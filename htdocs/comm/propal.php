@@ -232,6 +232,14 @@ if ($_POST['action'] == 'setaddress' && $user->rights->propale->creer)
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
+//delai de livraison
+if ($_POST['action'] == 'setdelivery' && $user->rights->propale->creer)
+{
+	$object->fetch($_GET["id"]);
+	$result=$object->set_delivery($user,$_POST['delivery']);
+	if ($result < 0) dol_print_error($db,$object->error);
+}
+
 // Positionne ref client
 if ($_POST['action'] == 'set_ref_client' && $user->rights->propale->creer)
 {
@@ -257,6 +265,7 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 			$object->ref       				= $_POST['ref'];
 			$object->datep 					= dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 			$object->date_livraison 		= dol_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
+			$object->delivery 				= $_POST['delivery'];
 			$object->fk_delivery_address 	= $_POST['fk_address'];
 			$object->duree_validite			= $_POST['duree_validite'];
 			$object->cond_reglement_id 		= $_POST['cond_reglement_id'];
@@ -284,6 +293,7 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 		$object->ref_client 			= $_POST['ref_client'];
 		$object->datep 					= dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 		$object->date_livraison 		= dol_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
+		$object->delivery 				= $_POST['delivery'];
 		$object->fk_delivery_address 	= $_POST['fk_address'];
 		$object->duree_validite 		= $_POST['duree_validite'];
 		$object->cond_reglement_id 		= $_POST['cond_reglement_id'];
@@ -1260,6 +1270,25 @@ if ($id > 0 || ! empty($ref))
 		}
 		print '</td></tr>';
 	}
+
+	// Delivery
+	print '<tr><td>';
+	print '<table class="nobordernopadding" width="100%"><tr><td>';
+	print $langs->trans('DeliveryPeriod');
+	print '</td>';
+	if ($_GET['action'] != 'editdelivery' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDelivery'),1).'</a></td>';
+	print '</tr></table>';
+	print '</td><td colspan="3">';
+	if ($_GET['action'] == 'editdelivery')
+	{
+		$html->form_delivery($_SERVER['PHP_SELF'].'?id='.$object->id,$object->delivery,'delivery');
+	}
+	else
+	{
+		$html->form_delivery($_SERVER['PHP_SELF'].'?id='.$object->id,$object->delivery,'none');
+	}
+	print '</td>';
+	print '</tr>';
 
 	// Payment term
 	print '<tr><td>';

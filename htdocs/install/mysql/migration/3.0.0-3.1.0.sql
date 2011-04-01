@@ -42,3 +42,5 @@ ALTER TABLE llx_facturedet ADD UNIQUE INDEX uk_fk_remise_except (fk_remise_excep
 ALTER TABLE llx_societe ADD COLUMN fk_currency integer DEFAULT 0 AFTER fk_forme_juridique;
 
 ALTER TABLE llx_societe_remise MODIFY remise_client double(6,3) DEFAULT 0 NOT NULL;
+
+ALTER TABLE llx_propal ADD COLUMN delivery varchar(60) DEFAULT 0 NULL AFTER fk_adresse_livraison;

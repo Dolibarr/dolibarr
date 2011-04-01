@@ -1487,6 +1487,76 @@ class Form
         }
     }
 
+	 /**
+     *      \brief      Charge dans cache la liste des délais de livraison possibles
+     *      \return     int             Nb lignes chargees, 0 si deja chargees, <0 si ko
+     */
+    function load_cache_delivery()
+    {
+        global $langs;
+
+        if (sizeof($this->cache_delivery)) return 0;    // Cache deja charge
+
+        $sql = "SELECT rowid, code, libelle";
+        $sql.= " FROM ".MAIN_DB_PREFIX.'c_delivery';
+        $sql.= " WHERE active=1";
+        $sql.= " ORDER BY rowid";
+        dol_syslog('Form::load_cache_delivery sql='.$sql,LOG_DEBUG);
+        $resql = $this->db->query($sql);
+        if ($resql)
+        {
+            $num = $this->db->num_rows($resql);
+            $i = 0;
+            while ($i < $num)
+            {
+                $obj = $this->db->fetch_object($resql);
+
+                // Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
+                $libelle=($langs->trans("DeliveryType".$obj->code)!=("DeliveryType".$obj->code)?$langs->trans("DeliveryType".$obj->code):($obj->libelle!='-'?$obj->libelle:''));
+                $this->cache_delivery[$obj->rowid]['code'] =$obj->code;
+                $this->cache_delivery[$obj->rowid]['label']=$libelle;
+                $i++;
+            }
+            return 1;
+        }
+        else {
+            dol_print_error($this->db);
+            return -1;
+        }
+    }
+
+	/**
+     *      \brief      Retourne la liste des types de delais de livraison possibles
+     *      \param      selected        Id du type de delais pre-selectionne
+     *      \param      htmlname        Nom de la zone select
+     *      \param      filtertype      Pour filtre
+     *		\param		addempty		Ajoute entree vide
+     */
+    function select_delivery($selected='',$htmlname='delivery',$filtertype='',$addempty=0)
+    {
+        global $langs,$user;
+
+        $this->load_cache_delivery();
+
+        print '<select class="flat" name="'.$htmlname.'">';
+        if ($addempty) print '<option value="0">&nbsp;</option>';
+        foreach($this->cache_delivery as $id => $arraydelivery)
+        {
+            if ($selected == $id)
+            {
+                print '<option value="'.$id.'" selected="selected">';
+            }
+            else
+            {
+                print '<option value="'.$id.'">';
+            }
+            print $arraydelivery['label'];
+            print '</option>';
+        }
+        print '</select>';
+        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+    }
+
     /**
      *      \brief      Charge dans cache la liste des types de paiements possibles
      *      \return     int             Nb lignes chargees, 0 si deja chargees, <0 si ko
@@ -2053,6 +2123,40 @@ class Form
             {
                 $this->load_cache_conditions_paiements();
                 print $this->cache_conditions_paiements[$selected]['label'];
+            } else {
+                print "&nbsp;";
+            }
+        }
+    }
+
+	 /**
+     *    	\brief      Affiche formulaire de selection de delais de livraison
+     *    	\param      page        	Page
+     *    	\param      selected    	Id condition pre-selectionne
+     *    	\param      htmlname    	Name of select html field
+     *		\param		addempty		Ajoute entree vide
+     */
+    function form_delivery($page, $selected='', $htmlname='delivery', $addempty=0)
+    {
+        global $langs;
+        if ($htmlname != "none")
+        {
+            print '<form method="post" action="'.$page.'">';
+            print '<input type="hidden" name="action" value="setdelivery">';
+            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+            print '<tr><td>';
+            $this->select_delivery($selected,$htmlname,-1,$addempty);
+            print '</td>';
+            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+            print '</tr></table></form>';
+        }
+        else
+        {
+            if ($selected)
+            {
+                $this->load_cache_delivery();
+                print $this->cache_delivery[$selected]['label'];
             } else {
                 print "&nbsp;";
             }

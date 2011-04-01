@@ -95,6 +95,7 @@ class Propal extends CommonObject
 	var $fk_address;
 	var $address_type;
 	var $adresse;
+	var $delivery;
 
 	var $products=array();
 
@@ -617,6 +618,7 @@ class Propal extends CommonObject
 		$sql.= ", fk_mode_reglement";
 		$sql.= ", ref_client";
 		$sql.= ", date_livraison";
+		$sql.= ", delivery";
 		$sql.= ", entity";
 		$sql.= ") ";
 		$sql.= " VALUES (";
@@ -639,6 +641,7 @@ class Propal extends CommonObject
 		$sql.= ", ".$this->mode_reglement_id;
 		$sql.= ", '".$this->db->escape($this->ref_client)."'";
 		$sql.= ", ".($this->date_livraison!=''?"'".$this->db->idate($this->date_livraison)."'":'null');
+		$sql.= ", ".$this->delivery;
 		$sql.= ", ".$conf->entity;
 		$sql.= ")";
 
@@ -901,6 +904,7 @@ class Propal extends CommonObject
 		$sql.= ", datep as dp";
 		$sql.= ", fin_validite as dfv";
 		$sql.= ", date_livraison as date_livraison";
+		$sql.= ", delivery";
 		$sql.= ", model_pdf, ref_client";
 		$sql.= ", note, note_public";
 		$sql.= ", fk_projet, fk_statut";
@@ -954,6 +958,7 @@ class Propal extends CommonObject
 				$this->datep                = $this->db->jdate($obj->dp);
 				$this->fin_validite         = $this->db->jdate($obj->dfv);
 				$this->date_livraison       = $this->db->jdate($obj->date_livraison);
+				$this->delivery             = $obj->delivery;
 				$this->fk_delivery_address  = $obj->fk_adresse_livraison;	// TODO obsolete
 				$this->fk_address  			= $obj->fk_adresse_livraison;
 
@@ -1221,6 +1226,34 @@ class Propal extends CommonObject
 			{
 				$this->error=$this->db->error();
 				dol_syslog("Propal::set_adresse_livraison Erreur SQL");
+				return -1;
+			}
+		}
+	}
+
+	/**
+	 *      \brief      Set delivery 
+	 *      \param      user		  Objet utilisateur qui modifie
+	 *      \param      delivery      delai de livraison
+	 *      \return     int           <0 si ko, >0 si ok
+	 */
+	function set_delivery($user, $delivery)
+	{
+		if ($user->rights->propale->creer)
+		{
+			$sql = "UPDATE ".MAIN_DB_PREFIX."propal ";
+			$sql.= " SET delivery = '".$delivery."'";
+			$sql.= " WHERE rowid = ".$this->id;
+
+			if ($this->db->query($sql))
+			{
+				$this->delivery = $delivery;
+				return 1;
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				dol_syslog("Propal::set_delivery Erreur SQL");
 				return -1;
 			}
 		}

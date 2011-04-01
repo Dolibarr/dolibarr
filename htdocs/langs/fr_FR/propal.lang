@@ -80,6 +80,8 @@ ClonePropal=Cloner proposition commerciale
 ConfirmClonePropal=Êtes-vous sûr de vouloir cloner cette proposition commerciale <b>%s</b> ?
 ProposalsAndProposalsLines=Propositions commerciales clientes et lignes de propositions
 ProposalLine=Ligne de proposition
+DeliveryPeriod=Délai de livraison (à réception de commande)
+SetDelivery=Définir le délai de livraison
 ##### Types de contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Commercial suivi propale
 TypeContact_propal_external_BILLING=Contact client facturation propale
