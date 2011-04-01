@@ -187,7 +187,7 @@ if ($_GET["id"])
 			print '</td></tr>';
 			print '<tr><td width="20%">'.$langs->trans("File").'</td><td>';
 			print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
-			print '<input class="flat" type="file" name="userfile" size="80"><br>';
+			print '<input class="flat" type="file" name="userfile"><br>';
 			print '</td></tr>';
 			print '</table><br>';
 			print '<center><input type="submit" class="button" value="'.$langs->trans("Send").'">';
