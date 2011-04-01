@@ -2,7 +2,7 @@
 # \file         dolibarr.pl
 # \brief        Dolibarr script install for Virtualmin Pro
 # \version      $Revision$
-# \author       (c)2009-2010 Regis Houssin  <regis@dolibarr.fr>
+# \author       (c)2009-2011 Regis Houssin  <regis@dolibarr.fr>
 #----------------------------------------------------------------------------
 
 
@@ -31,7 +31,7 @@ return "Regis Houssin";
 # script_dolibarr_versions()
 sub script_dolibarr_versions
 {
-return ( "3.0.0", "2.9.0", "2.8.1" );
+return ( "3.0.0", "2.9.0" );
 }
 
 sub script_dolibarr_category
@@ -87,7 +87,7 @@ else {
 	$rv .= &ui_table_row("Install sub-directory under <tt>$hdir</tt>",
 			     &ui_opt_textbox("dir", "dolibarr", 30,
 					     "At top level"));
-	if ($d->{'ssl'} && $ver >= 2.9) {
+	if ($d->{'ssl'} && $ver >= 3.0) {
 		$rv .= &ui_table_row("Force https connection?",
 				     &ui_yesno_radio("forcehttps", 0));
 		}
@@ -346,9 +346,9 @@ return (1, "Dolibarr directory and tables deleted.");
 sub script_dolibarr_latest
 {
 local ($ver) = @_;
-if ($ver >= 2.9) {
+if ($ver >= 3.0) {
 	return ( "http://www.dolibarr.fr/files/stable/",
-		 "dolibarr\\-(2\\.[0-9\\.]+)" );
+		 "dolibarr\\-(3\\.[0-9\\.]+)" );
 	}
 return ( );
 }
