@@ -47,6 +47,7 @@ class Form
     // Cache arrays
     var $cache_types_paiements=array();
     var $cache_conditions_paiements=array();
+    var $cache_availability=array();
 
     var $tva_taux_value;
     var $tva_taux_libelle;

@@ -55,3 +55,7 @@ create table llx_c_availability
 ALTER TABLE llx_propal ADD COLUMN fk_availability integer DEFAULT 0 AFTER fk_adresse_livraison;
 ALTER TABLE llx_propal CHANGE COLUMN delivery fk_availability integer DEFAULT 0;
 ALTER TABLE llx_availability CHANGE COLUMN libelle label varchar(60) NOT NULL;
+INSERT INTO llx_c_availability (rowid,code,label,active) VALUES (1, 'DSP', 'Disponible', 1);
+INSERT INTO llx_c_availability (rowid,code,label,active) VALUES (2, 'USM', 'Une semaine', 1);
+INSERT INTO llx_c_availability (rowid,code,label,active) VALUES (3, 'DSM', 'Deux semaines', 1);
+INSERT INTO llx_c_availability (rowid,code,label,active) VALUES (4, 'TSM', 'Trois semaines', 1);

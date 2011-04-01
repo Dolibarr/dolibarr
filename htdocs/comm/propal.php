@@ -1281,7 +1281,7 @@ if ($id > 0 || ! empty($ref))
 	print '</td><td colspan="3">';
 	if ($_GET['action'] == 'editavailability')
 	{
-		$html->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_availability,'availability');
+		$html->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_availability,'fk_availability');
 	}
 	else
 	{
