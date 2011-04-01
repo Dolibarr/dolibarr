@@ -15,25 +15,14 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- $Id: llx_c_delivery.sql,v 1.2 2011/02/24 09:57:04 hregis Exp $
+-- $Id$
 -- ========================================================================
 
-create table llx_c_delivery
+create table llx_c_availability
 (
-  `rowid` int(11) NOT NULL auto_increment,
-  `code` varchar(30) default NULL,
-  `libelle` varchar(60) default NULL,
-  `active` tinyint(4) NOT NULL default '1',
-  PRIMARY KEY  (`rowid`)
+	rowid		integer	 	AUTO_INCREMENT PRIMARY KEY,
+	code		varchar(30) NOT NULL,
+	label		varchar(60) NOT NULL,
+	active		tinyint 	DEFAULT 1  NOT NULL
+
 )ENGINE=innodb;
-
---
--- Contenu de la table `llx_c_delivery`
---
-
-INSERT INTO `llx_c_delivery` (`rowid`, `code`, `libelle`, `active`) VALUES
-(1, 'DSP', 'Disponible', 1),
-(2, 'USM', 'Une semaine', 1),
-(3, 'DSM', 'Deux semaines', 1),
-(4, 'TSM', 'Trois semaines', 1);
-
