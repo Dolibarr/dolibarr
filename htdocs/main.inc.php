@@ -777,7 +777,7 @@ if (!empty($conf->global->MAIN_MODULE_MULTICOMPANY))
 		
 		$mc = new ActionsMulticompany($db);
 		
-		if($mc->switchEntity(GETPOST('entity_id')) > 0)
+		if($mc->switchEntity(GETPOST('entity')) > 0)
 		{
 			Header("Location: ".DOL_URL_ROOT.'/');
 			exit;
