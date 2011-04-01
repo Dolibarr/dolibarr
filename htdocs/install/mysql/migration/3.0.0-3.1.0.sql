@@ -51,6 +51,7 @@ create table llx_c_availability
 	active		tinyint 	DEFAULT 1  NOT NULL
 
 )ENGINE=innodb;
+
 ALTER TABLE llx_propal ADD COLUMN fk_availability integer DEFAULT 0 AFTER fk_adresse_livraison;
 ALTER TABLE llx_propal CHANGE COLUMN delivery fk_availability integer DEFAULT 0;
-ALTER TABLE llx_availability CHANGE COLUMN libelle label integer varchar(60) NOT NULL;
+ALTER TABLE llx_availability CHANGE COLUMN libelle label varchar(60) NOT NULL;

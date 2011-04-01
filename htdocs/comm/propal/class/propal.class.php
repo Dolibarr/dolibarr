@@ -95,7 +95,7 @@ class Propal extends CommonObject
 	var $fk_address;
 	var $address_type;
 	var $adresse;
-	var $delivery;
+	var $fk_availability;
 
 	var $products=array();
 
@@ -618,7 +618,7 @@ class Propal extends CommonObject
 		$sql.= ", fk_mode_reglement";
 		$sql.= ", ref_client";
 		$sql.= ", date_livraison";
-		$sql.= ", delivery";
+		$sql.= ", fk_availability";
 		$sql.= ", entity";
 		$sql.= ") ";
 		$sql.= " VALUES (";
@@ -641,7 +641,7 @@ class Propal extends CommonObject
 		$sql.= ", ".$this->mode_reglement_id;
 		$sql.= ", '".$this->db->escape($this->ref_client)."'";
 		$sql.= ", ".($this->date_livraison!=''?"'".$this->db->idate($this->date_livraison)."'":'null');
-		$sql.= ", ".$this->delivery;
+		$sql.= ", ".$this->fk_availability;
 		$sql.= ", ".$conf->entity;
 		$sql.= ")";
 
@@ -904,7 +904,7 @@ class Propal extends CommonObject
 		$sql.= ", datep as dp";
 		$sql.= ", fin_validite as dfv";
 		$sql.= ", date_livraison as date_livraison";
-		$sql.= ", delivery";
+		$sql.= ", fk_availability";
 		$sql.= ", model_pdf, ref_client";
 		$sql.= ", note, note_public";
 		$sql.= ", fk_projet, fk_statut";
@@ -958,7 +958,7 @@ class Propal extends CommonObject
 				$this->datep                = $this->db->jdate($obj->dp);
 				$this->fin_validite         = $this->db->jdate($obj->dfv);
 				$this->date_livraison       = $this->db->jdate($obj->date_livraison);
-				$this->delivery             = $obj->delivery;
+				$this->fk_availability      = $obj->fk_availability;
 				$this->fk_delivery_address  = $obj->fk_adresse_livraison;	// TODO obsolete
 				$this->fk_address  			= $obj->fk_adresse_livraison;
 
@@ -1237,23 +1237,23 @@ class Propal extends CommonObject
 	 *      \param      delivery      delai de livraison
 	 *      \return     int           <0 si ko, >0 si ok
 	 */
-	function set_delivery($user, $delivery)
+	function set_availability($user, $id)
 	{
 		if ($user->rights->propale->creer)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."propal ";
-			$sql.= " SET delivery = '".$delivery."'";
+			$sql.= " SET fk_availability = '".$id."'";
 			$sql.= " WHERE rowid = ".$this->id;
 
 			if ($this->db->query($sql))
 			{
-				$this->delivery = $delivery;
+				$this->fk_availability = $id;
 				return 1;
 			}
 			else
 			{
 				$this->error=$this->db->error();
-				dol_syslog("Propal::set_delivery Erreur SQL");
+				dol_syslog("Propal::set_availability Erreur SQL");
 				return -1;
 			}
 		}

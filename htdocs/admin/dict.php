@@ -75,7 +75,7 @@ $tabname[17]= MAIN_DB_PREFIX."c_type_fees";
 $tabname[18]= MAIN_DB_PREFIX."c_shipment_mode";
 $tabname[19]= MAIN_DB_PREFIX."c_effectif";
 $tabname[20]= MAIN_DB_PREFIX."c_methode_commande_fournisseur";
-$tabname[21]= MAIN_DB_PREFIX."c_delivery";
+$tabname[21]= MAIN_DB_PREFIX."c_availability";
 
 // Dictionary labels
 $tablib[1] = "DictionnaryCompanyJuridicalType";
@@ -98,7 +98,7 @@ $tablib[17]= "DictionnaryFees";
 $tablib[18]= "DictionnarySendingMethods";
 $tablib[19]= "DictionnaryStaff";
 $tablib[20]= "DictionnaryOrderMethods";
-$tablib[21]= "DictionnaryDelivery";
+$tablib[21]= "DictionnaryAvailability";
 
 // Requete pour extraction des donnees des dictionnaires
 $tabsql[1] = "SELECT f.rowid as rowid, f.code, f.libelle, p.code as pays_code, p.libelle as pays, f.active FROM ".MAIN_DB_PREFIX."c_forme_juridique as f, ".MAIN_DB_PREFIX."c_pays as p WHERE f.fk_pays=p.rowid";
@@ -121,7 +121,7 @@ $tabsql[17]= "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREF
 $tabsql[18]= "SELECT rowid   as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_shipment_mode";
 $tabsql[19]= "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_effectif";
 $tabsql[20]= "SELECT rowid   as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_methode_commande_fournisseur";
-$tabsql[21]= "SELECT rowid   as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_delivery";
+$tabsql[21]= "SELECT rowid   as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_availability";
 
 // Critere de tri du dictionnaire
 $tabsqlsort[1] ="pays ASC, code ASC";
@@ -144,7 +144,7 @@ $tabsqlsort[17]="code ASC";
 $tabsqlsort[18]="code ASC, libelle ASC";
 $tabsqlsort[19]="id ASC";
 $tabsqlsort[20]="code ASC, libelle ASC";
-$tabsqlsort[21]="code ASC, libelle ASC";
+$tabsqlsort[21]="code ASC, label ASC";
 
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield[1] = "code,libelle,pays";
@@ -167,7 +167,7 @@ $tabfield[17]= "code,libelle";
 $tabfield[18]= "code,libelle";
 $tabfield[19]= "code,libelle";
 $tabfield[20]= "code,libelle";
-$tabfield[21]= "code,libelle";
+$tabfield[21]= "code,label";
 
 // Nom des champs d'edition pour modification d'un enregistrement
 $tabfieldvalue[1] = "code,libelle,pays";
@@ -190,7 +190,7 @@ $tabfieldvalue[17]= "code,libelle";
 $tabfieldvalue[18]= "code,libelle";
 $tabfieldvalue[19]= "code,libelle";
 $tabfieldvalue[20]= "code,libelle";
-$tabfieldvalue[21]= "code,libelle";
+$tabfieldvalue[21]= "code,label";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert[1] = "code,libelle,fk_pays";
@@ -213,7 +213,7 @@ $tabfieldinsert[17]= "code,libelle";
 $tabfieldinsert[18]= "code,libelle";
 $tabfieldinsert[19]= "code,libelle";
 $tabfieldinsert[20]= "code,libelle";
-$tabfieldinsert[21]= "code,libelle";
+$tabfieldinsert[21]= "code,label";
 
 // Nom du rowid si le champ n'est pas de type autoincrement
 // Example: "" if id field is "rowid" and has autoincrement on

@@ -1491,17 +1491,17 @@ class Form
      *      \brief      Charge dans cache la liste des délais de livraison possibles
      *      \return     int             Nb lignes chargees, 0 si deja chargees, <0 si ko
      */
-    function load_cache_delivery()
+    function load_cache_availability()
     {
         global $langs;
 
-        if (sizeof($this->cache_delivery)) return 0;    // Cache deja charge
+        if (sizeof($this->cache_availability)) return 0;    // Cache deja charge
 
-        $sql = "SELECT rowid, code, libelle";
-        $sql.= " FROM ".MAIN_DB_PREFIX.'c_delivery';
+        $sql = "SELECT rowid, code, label";
+        $sql.= " FROM ".MAIN_DB_PREFIX.'c_availability';
         $sql.= " WHERE active=1";
         $sql.= " ORDER BY rowid";
-        dol_syslog('Form::load_cache_delivery sql='.$sql,LOG_DEBUG);
+        dol_syslog('Form::load_cache_availability sql='.$sql,LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -1512,9 +1512,9 @@ class Form
                 $obj = $this->db->fetch_object($resql);
 
                 // Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-                $libelle=($langs->trans("DeliveryType".$obj->code)!=("DeliveryType".$obj->code)?$langs->trans("DeliveryType".$obj->code):($obj->libelle!='-'?$obj->libelle:''));
-                $this->cache_delivery[$obj->rowid]['code'] =$obj->code;
-                $this->cache_delivery[$obj->rowid]['label']=$libelle;
+                $label=($langs->trans("AvailabilityType".$obj->code)!=("AvailabilityType".$obj->code)?$langs->trans("AvailabilityType".$obj->code):($obj->label!='-'?$obj->label:''));
+                $this->cache_availability[$obj->rowid]['code'] =$obj->code;
+                $this->cache_availability[$obj->rowid]['label']=$label;
                 $i++;
             }
             return 1;
@@ -1532,15 +1532,15 @@ class Form
      *      \param      filtertype      Pour filtre
      *		\param		addempty		Ajoute entree vide
      */
-    function select_delivery($selected='',$htmlname='delivery',$filtertype='',$addempty=0)
+    function select_availability($selected='',$htmlname='availability',$filtertype='',$addempty=0)
     {
         global $langs,$user;
 
-        $this->load_cache_delivery();
+        $this->load_cache_availability();
 
         print '<select class="flat" name="'.$htmlname.'">';
         if ($addempty) print '<option value="0">&nbsp;</option>';
-        foreach($this->cache_delivery as $id => $arraydelivery)
+        foreach($this->cache_availability as $id => $arrayavailability)
         {
             if ($selected == $id)
             {
@@ -1550,7 +1550,7 @@ class Form
             {
                 print '<option value="'.$id.'">';
             }
-            print $arraydelivery['label'];
+            print $arrayavailability['label'];
             print '</option>';
         }
         print '</select>';
@@ -2136,17 +2136,17 @@ class Form
      *    	\param      htmlname    	Name of select html field
      *		\param		addempty		Ajoute entree vide
      */
-    function form_delivery($page, $selected='', $htmlname='delivery', $addempty=0)
+    function form_availability($page, $selected='', $htmlname='availability', $addempty=0)
     {
         global $langs;
         if ($htmlname != "none")
         {
             print '<form method="post" action="'.$page.'">';
-            print '<input type="hidden" name="action" value="setdelivery">';
+            print '<input type="hidden" name="action" value="setavailability">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
-            $this->select_delivery($selected,$htmlname,-1,$addempty);
+            $this->select_availability($selected,$htmlname,-1,$addempty);
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             print '</tr></table></form>';
@@ -2155,8 +2155,8 @@ class Form
         {
             if ($selected)
             {
-                $this->load_cache_delivery();
-                print $this->cache_delivery[$selected]['label'];
+                $this->load_cache_availability();
+                print $this->cache_availability[$selected]['label'];
             } else {
                 print "&nbsp;";
             }
