@@ -819,6 +819,12 @@ SomeTranslationAreUncomplete=Some languages may be partially translated or may c
 MenuUseLayout=Make vertical menu hidable (option javascript must not be disabled)
 MAIN_DISABLE_METEO=Disable meteo view
 TestLoginToAPI=Test login to API
+ProxyDesc=Some features of Dolibarr need to have an Internet access to work. If the Dolibarr server is behind a Proxy server, those parameters tells Dolibarr how to access Internet through it. 
+MAIN_PROXY_USE=Use a proxy server
+MAIN_PROXY_HOST=Name/Address of proxy server
+MAIN_PROXY_PORT=Port of proxy server
+MAIN_PROXY_USER=Login to use the proxy server
+MAIN_PROXY_PASS=Password to use the proxy server
 
 ##### Module password generation
 PasswordGenerationStandard=Return a password generated according to internal Dolibarr algorithm: 8 characters containing shared numbers and characters in lowercase.

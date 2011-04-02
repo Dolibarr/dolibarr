@@ -172,7 +172,7 @@ print '<table width="100%" class="noborder">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("Parameters").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
-print '<td>&nbsp;</td>';
+print '<td width="100">&nbsp;</td>';
 print "</tr>\n";
 
 $var=!$var;
@@ -183,7 +183,7 @@ print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("SessionTimeOut").'</td><td align="right">';
 print $form->textwithpicto('',$langs->trans("SessionExplanation",ini_get("session.gc_probability"),ini_get("session.gc_divisor")));
 print '</td>';
-print '<td nowrap="1">';
+print '<td nowrap="nowrap">';
 print '<input class="flat" name="MAIN_SESSION_TIMEOUT" type="text" size="6" value="'.htmlentities($conf->global->MAIN_SESSION_TIMEOUT).'"> '.$langs->trans("seconds");
 print '</td>';
 print '<td align="right">';
@@ -202,14 +202,14 @@ $var=true;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Parameters").'</td>';
-print '<td align="center" width="80">'.$langs->trans("Status").'</td>';
+print '<td align="right" width="100">'.$langs->trans("Status").'</td>';
 print '</tr>';
 
 // Enable Captcha code
 $var=!$var;
 print "<tr ".$bc[$var].">";
 print '<td colspan="3">'.$langs->trans("UseCaptchaCode").'</td>';
-print '<td align="center">';
+print '<td align="right">';
 if (function_exists("imagecreatefrompng"))
 {
 	if ($conf->global->MAIN_SECURITY_ENABLECAPTCHA == 0)
@@ -236,7 +236,7 @@ print '</tr>';
 $var=!$var;
 print "<tr ".$bc[$var].">";
 print '<td colspan="3">'.$langs->trans("UseAdvancedPerms").'</td>';
-print '<td align="center">';
+print '<td align="right">';
 if ($conf->global->MAIN_USE_ADVANCED_PERMS == 0)
 {
 	print '<a href="security_other.php?action=activate_advancedperms">'.img_picto($langs->trans("Disabled"),'off').'</a>';
@@ -262,7 +262,8 @@ $var=false;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("Parameters").'</td>';
-print '<td colspan="2">'.$langs->trans("Value").'</td>';
+print '<td>'.$langs->trans("Value").'</td>';
+print '<td width="100">&nbsp;</td>';
 print '</tr>';
 
 print '<form action="'.$_SERVER["PHP_SELF"].'?action=set_main_upload_doc" method="POST">';
@@ -273,10 +274,10 @@ $max=@ini_get('upload_max_filesize');
 if ($max) print ' '.$langs->trans("MustBeLowerThanPHPLimit",$max*1024,$langs->trans("Kb")).'.';
 else print ' '.$langs->trans("NoMaxSizeByPHPLimit").'.';
 print '</td>';
-print '<td nowrap="1">';
+print '<td nowrap="nowrap">';
 print '<input class="flat" name="MAIN_UPLOAD_DOC" type="text" size="6" value="'.htmlentities($conf->global->MAIN_UPLOAD_DOC).'"> '.$langs->trans("Kb");
 print '</td>';
-print '<td align="center">';
+print '<td align="right">';
 print '<input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'">';
 print '</td>';
 print '</tr></form>';
@@ -288,10 +289,10 @@ print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("UMask").'</td><td align="right">';
 print $form->textwithpicto('',$langs->trans("UMaskExplanation"));
 print '</td>';
-print '<td nowrap="1">';
+print '<td nowrap="nowrap">';
 print '<input class="flat" name="MAIN_UMASK" type="text" size="6" value="'.htmlentities($conf->global->MAIN_UMASK).'">';
 print '</td>';
-print '<td align="center">';
+print '<td align="right">';
 print '<input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'">';
 print '</td>';
 print '</tr></form>';
@@ -305,7 +306,7 @@ print '<td colspan="2">'.$langs->trans("AntiVirusCommand").'<br>';
 print $langs->trans("AntiVirusCommandExample");
 // Check command in inside safe_mode
 print '</td>';
-print '<td align="center" width="100">';
+print '<td align="center">';
 if (ini_get('safe_mode') && ! empty($conf->global->MAIN_ANTIVIRUS_COMMAND))
 {
 	$langs->load("errors");
@@ -317,7 +318,7 @@ if (ini_get('safe_mode') && ! empty($conf->global->MAIN_ANTIVIRUS_COMMAND))
 		dol_syslog("safe_mode is on, basedir is ".$basedir.", safe_mode_exec_dir is ".ini_get('safe_mode_exec_dir'), LOG_WARNING);
 	}
 }
-print '<input type="text" name="MAIN_ANTIVIRUS_COMMAND" size=80 value="'.htmlentities($conf->global->MAIN_ANTIVIRUS_COMMAND).'">';
+print '<input type="text" name="MAIN_ANTIVIRUS_COMMAND" size="72" value="'.htmlentities($conf->global->MAIN_ANTIVIRUS_COMMAND).'">';
 print "</td>";
 print '<td align="right">';
 print '<input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'">';
@@ -333,8 +334,8 @@ print "<tr ".$bc[$var].">";
 print '<td colspan="2">'.$langs->trans("AntiVirusParam").'<br>';
 print $langs->trans("AntiVirusParamExample");
 print '</td>';
-print '<td align="center" width="100">';
-print '<input type="text" name="MAIN_ANTIVIRUS_PARAM" size=80 value="'.htmlentities($conf->global->MAIN_ANTIVIRUS_PARAM).'">';
+print '<td align="center">';
+print '<input type="text" name="MAIN_ANTIVIRUS_PARAM" size="72" value="'.htmlentities($conf->global->MAIN_ANTIVIRUS_PARAM).'">';
 print "</td>";
 print '<td align="right">';
 print '<input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'">';

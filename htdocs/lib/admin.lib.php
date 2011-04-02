@@ -220,7 +220,7 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='')
 			// Ajout trace sur requete (eventuellement a commenter si beaucoup de requetes)
 			if (! $silent) print '<tr><td valign="top">'.$langs->trans("Request").' '.($i+1)." sql='".$newsql."'</td></tr>\n";
 			dol_syslog('Admin.lib::run_sql Request '.($i+1).' sql='.$newsql, LOG_DEBUG);
-			
+
 			// Replace for encrypt data
 			if (preg_match_all('/__ENCRYPT\(\'([^\,]+)\'\)__/i',$newsql,$reg))
 			{
@@ -233,7 +233,7 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='')
 					$newsql	= str_replace($from,$to,$newsql);
 				}
 			}
-			
+
 			// Replace for decrypt data
 			if (preg_match_all('/__DECRYPT\(\'([^\,]+)\'\)__/i',$newsql,$reg))
 			{
@@ -475,27 +475,32 @@ function security_prepare_head()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/perms.php";
-	$head[$h][1] = $langs->trans("DefaultRights");
-	$head[$h][2] = 'default';
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT."/admin/security.php";
-	$head[$h][1] = $langs->trans("Passwords");
-	$head[$h][2] = 'passwords';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT."/admin/proxy.php";
+    $head[$h][1] = $langs->trans("Proxy");
+    $head[$h][2] = 'proxy';
+    $h++;
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/security_other.php";
 	$head[$h][1] = $langs->trans("Miscellanous");
 	$head[$h][2] = 'misc';
 	$h++;
 
+    $head[$h][0] = DOL_URL_ROOT."/admin/security.php";
+    $head[$h][1] = $langs->trans("Passwords");
+    $head[$h][2] = 'passwords';
+    $h++;
+
 	$head[$h][0] = DOL_URL_ROOT."/admin/events.php";
 	$head[$h][1] = $langs->trans("Audit");
 	$head[$h][2] = 'audit';
 	$h++;
 
-	return $head;
+	$head[$h][0] = DOL_URL_ROOT."/admin/perms.php";
+    $head[$h][1] = $langs->trans("DefaultRights");
+    $head[$h][2] = 'default';
+    $h++;
+
+    return $head;
 }
 
 

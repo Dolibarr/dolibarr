@@ -29,7 +29,8 @@ For users:
        or credit note invoice.
 - New: task #10885: Add a week view for calendar    
 - New: task #11018 : Add a status "not applicable" on event
-- New: Add region/country statistics for member module. 
+- New: Add region/country statistics for member module.
+- New: Can define a proxy for external web access.
 - Fix: Better Postgresql compatibility.
 
 For developers:
