@@ -328,7 +328,7 @@ html, body {
         ,   north__size:        34
         ,   north__resizable:   false
         ,   north__closable:    false
-        ,   west__size:         320
+        ,   west__size:         340
         ,   west__minSize:      280
         ,   west__slidable:     true
         ,   west__resizable:    true
