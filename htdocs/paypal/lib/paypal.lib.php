@@ -146,7 +146,6 @@ function print_paypal_redirect($paymentAmount,$currencyCodeType,$paymentType,$re
     global $conf, $langs;
     global $API_Endpoint, $API_Url, $API_version, $USE_PROXY, $PROXY_HOST, $PROXY_PORT;
     global $PAYPAL_API_USER, $PAYPAL_API_PASSWORD, $PAYPAL_API_SIGNATURE;
-    global $sBNCode;
 
     global $shipToName, $shipToStreet, $shipToCity, $shipToState, $shipToCountryCode, $shipToZip, $shipToStreet2, $phoneNum;
 
@@ -242,7 +241,6 @@ $shipToName, $shipToStreet, $shipToCity, $shipToState, $shipToCountryCode, $ship
     global $conf, $langs;
     global $API_Endpoint, $API_Url, $API_version, $USE_PROXY, $PROXY_HOST, $PROXY_PORT;
     global $PAYPAL_API_USER, $PAYPAL_API_PASSWORD, $PAYPAL_API_SIGNATURE;
-    global $sBNCode;
 
     $nvpstr="&AMT=". urlencode($paymentAmount);
     $nvpstr = $nvpstr . "&PAYMENTACTION=" . urlencode($paymentType);
@@ -311,7 +309,6 @@ function GetDetails( $token )
     global $conf, $langs;
     global $API_Endpoint, $API_Url, $API_version, $USE_PROXY, $PROXY_HOST, $PROXY_PORT;
     global $PAYPAL_API_USER, $PAYPAL_API_PASSWORD, $PAYPAL_API_SIGNATURE;
-    global $sBNCode;
 
     //'---------------------------------------------------------------------------
     //' Build a second API request to PayPal, using the token as the
@@ -350,7 +347,6 @@ function ConfirmPayment( $token, $paymentType, $currencyCodeType, $payerID, $ipa
     global $conf, $langs;
     global $API_Endpoint, $API_Url, $API_version, $USE_PROXY, $PROXY_HOST, $PROXY_PORT;
     global $PAYPAL_API_USER, $PAYPAL_API_PASSWORD, $PAYPAL_API_SIGNATURE;
-    global $sBNCode;
 
     $nvpstr  = '&TOKEN=' . urlencode($token) . '&PAYERID=' . urlencode($payerID) . '&PAYMENTACTION=' . urlencode($paymentType) . '&AMT=' . urlencode($FinalPaymentAmt);
     $nvpstr .= '&CURRENCYCODE=' . urlencode($currencyCodeType) . '&IPADDRESS=' . urlencode($ipaddress);
@@ -406,7 +402,6 @@ $countryCode, $currencyCode, $tag )
     global $conf, $langs;
     global $API_Endpoint, $API_Url, $API_version, $USE_PROXY, $PROXY_HOST, $PROXY_PORT;
     global $PAYPAL_API_USER, $PAYPAL_API_PASSWORD, $PAYPAL_API_SIGNATURE;
-    global $sBNCode;
 
     //Construct the parameter string that describes DoDirectPayment
     $nvpstr = "&AMT=" . urlencode($paymentAmount);
@@ -441,9 +436,8 @@ function hash_call($methodName,$nvpStr)
 {
     //declaring of global variables
     global $conf, $langs;
-    global $API_Endpoint, $API_Url, $API_version, $USE_PROXY, $PROXY_HOST, $PROXY_PORT;
+    global $API_Endpoint, $API_Url, $API_version, $USE_PROXY, $PROXY_HOST, $PROXY_PORT, $PROXY_USER, $PROXY_PASS;
     global $PAYPAL_API_USER, $PAYPAL_API_PASSWORD, $PAYPAL_API_SIGNATURE;
-    global $sBNCode;
 
     dol_syslog("Paypal API endpoint ".$API_Endpoint);
 
@@ -451,10 +445,10 @@ function hash_call($methodName,$nvpStr)
     $ch = curl_init();
 
     /*print $API_Endpoint."-".$API_version."-".$PAYPAL_API_USER."-".$PAYPAL_API_PASSWORD."-".$PAYPAL_API_SIGNATURE."<br>";
-     print $USE_PROXY."-".$gv_ApiErrorURL."-".$sBNCode."<br>";
+     print $USE_PROXY."-".$gv_ApiErrorURL."<br>";
      print $nvpStr;
      exit;*/
-    curl_setopt($ch, CURLOPT_URL,$API_Endpoint);
+    curl_setopt($ch, CURLOPT_URL, $API_Endpoint);
     curl_setopt($ch, CURLOPT_VERBOSE, 1);
 
     //turning off the server and peer verification(TrustManager Concept).
@@ -465,17 +459,22 @@ function hash_call($methodName,$nvpStr)
     curl_setopt($ch, CURLOPT_POST, 1);
 
     //if USE_PROXY constant set to TRUE in Constants.php, then only proxy will be enabled.
-    //Set proxy name to PROXY_HOST and port number to PROXY_PORT in constants.php
-    if($USE_PROXY) curl_setopt ($ch, CURLOPT_PROXY, $PROXY_HOST. ":" . $PROXY_PORT);
+    if ($USE_PROXY)
+    {
+        dol_syslog("Paypal API hash_call set proxy to ".$PROXY_HOST. ":" . $PROXY_PORT." - ".$PROXY_USER. ":" . $PROXY_PASS);
+        //curl_setopt ($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP); // Curl 7.10
+        curl_setopt ($ch, CURLOPT_PROXY, $PROXY_HOST. ":" . $PROXY_PORT);
+        if ($PROXY_USER) curl_setopt ($ch, CURLOPT_PROXYUSERPWD, $PROXY_USER. ":" . $PROXY_PASS);
+    }
 
     //NVPRequest for submitting to server
-    $nvpreq ="METHOD=" . urlencode($methodName) . "&VERSION=" . urlencode($API_version) . "&PWD=" . urlencode($PAYPAL_API_PASSWORD) . "&USER=" . urlencode($PAYPAL_API_USER) . "&SIGNATURE=" . urlencode($PAYPAL_API_SIGNATURE) . $nvpStr . "&BUTTONSOURCE=" . urlencode($sBNCode);
+    $nvpreq ="METHOD=" . urlencode($methodName) . "&VERSION=" . urlencode($API_version) . "&PWD=" . urlencode($PAYPAL_API_PASSWORD) . "&USER=" . urlencode($PAYPAL_API_USER) . "&SIGNATURE=" . urlencode($PAYPAL_API_SIGNATURE) . $nvpStr;
     $nvpreq.="&LOCALE=".strtoupper($langs->getDefaultLang(1));
     //$nvpreq.="&BRANDNAME=".urlencode();       // Override merchant name
     //$nvpreq.="&NOTIFYURL=".urlencode();       // For Instant Payment Notification url
 
 
-    dol_syslog("Paypal API Request nvpreq=".$nvpreq);
+    dol_syslog("Paypal API hash_call nvpreq=".$nvpreq);
 
     //setting the nvpreq as POST FIELD to curl
     curl_setopt($ch, CURLOPT_POSTFIELDS, $nvpreq);
@@ -487,7 +486,7 @@ function hash_call($methodName,$nvpStr)
     $_SESSION['nvpReqArray']=$nvpReqArray;
 
     //convrting NVPResponse to an Associative Array
-    dol_syslog("Paypal API Response nvpresp=".$response);
+    dol_syslog("Paypal API hash_call Response nvpresp=".$response);
     $nvpResArray=deformatNVP($response);
 
     if (curl_errno($ch))
