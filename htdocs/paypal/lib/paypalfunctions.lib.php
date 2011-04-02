@@ -51,9 +51,11 @@ else
 }
 
 // Proxy
-$PROXY_HOST = '127.0.0.1';
-$PROXY_PORT = '808';
-$USE_PROXY = false;
+$PROXY_HOST = $conf->global->MAIN_PROXY_HOST;
+$PROXY_PORT = $conf->global->MAIN_PROXY_PORT;
+$PROXY_USER = $conf->global->MAIN_PROXY_USER;
+$PROXY_PASS = $conf->global->MAIN_PROXY_PASS;
+$USE_PROXY = empty($conf->global->MAIN_PROXY_USE)?false:true;
 
 // BN Code  is only applicable for partners
 $sBNCode = "PP-ECWizard";
