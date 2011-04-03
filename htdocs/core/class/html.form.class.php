@@ -726,6 +726,7 @@ class Form
             $i = 0;
             if ($num)
             {
+            	include_once(DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php');
                 $contactstatic=new Contact($this->db);
 
                 while ($i < $num)
