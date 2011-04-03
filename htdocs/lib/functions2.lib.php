@@ -430,10 +430,10 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
         	 if (preg_match('/^(.*)\{(y+)\}\{(m+)\}/i',$maskwithonlyymcode,$reg)) { $posy=2; $posm=3; }
         	 elseif (preg_match('/^(.*)\{(m+)\}\{(y+)\}/i',$maskwithonlyymcode,$reg)) { $posy=3; $posm=2; }
         	 if (dol_strlen($reg[$posy]) < 2) return 'ErrorCantUseRazWithYearOnOneDigit';
-        } 
+        }
         else
         {
-        	if (! preg_match('/^(.*)\{(y+)\}/i',$maskwithonlyymcode)) return 'ErrorCantUseRazIfNoYearInMask';	
+        	if (! preg_match('/^(.*)\{(y+)\}/i',$maskwithonlyymcode)) return 'ErrorCantUseRazIfNoYearInMask';
         	if (preg_match('/^(.*)\{(y+)\}/i',$maskwithonlyymcode,$reg)) { $posy=2; $posm=0; }
         }
         //print "x".$maskwithonlyymcode." ".$maskraz." ".$posy." ".$posm;
@@ -1113,4 +1113,48 @@ function dol_buildlogin($lastname,$firstname)
 	$login.=strtolower(dol_string_unaccent($lastname));
 	$login=dol_string_nospecial($login,''); // For special names
 	return $login;
+}
+
+
+
+/**
+ *  Return array to use for SoapClient constructor
+ *  @return     param
+ */
+function getSoapParams()
+{
+    global $conf;
+
+    $params=array();
+    $proxyuse=($conf->global->MAIN_PROXY_USE?true:false);
+    $proxyhost=($conf->global->MAIN_PROXY_USE?$conf->global->MAIN_PROXY_HOST:false);
+    $proxyport=($conf->global->MAIN_PROXY_USE?$conf->global->MAIN_PROXY_PORT:false);
+    $proxyuser=($conf->global->MAIN_PROXY_USE?$conf->global->MAIN_PROXY_USER:false);
+    $proxypass=($conf->global->MAIN_PROXY_USE?$conf->global->MAIN_PROXY_PASS:false);
+    $timeout=(empty($conf->global->MAIN_USE_CONNECT_TIMEOUT)?10:$conf->global->MAIN_USE_CONNECT_TIMEOUT);               // Connection timeout
+    $response_timeout=(empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT)?30:$conf->global->MAIN_USE_RESPONSE_TIMEOUT);    // Response timeout
+    //print extension_loaded('soap');
+    if ($proxyuse)
+    {
+        $params=array('connection_timeout'=>$timeout,
+                      'response_timeout'=>$response_timeout,
+                      'proxy_use'      => 1,
+                      'proxy_host'     => $proxyhost,
+                      'proxy_port'     => $proxyport,
+                      'proxy_login'    => $proxyuser,
+                      'proxy_password' => $proxypass
+                );
+    }
+    else
+    {
+        $params=array('connection_timeout'=>$timeout,
+                      'response_timeout'=>$response_timeout,
+                      'proxy_use'      => 0,
+                      'proxy_host'     => false,
+                      'proxy_port'     => false,
+                      'proxy_login'    => false,
+                      'proxy_password' => false
+                 );
+    }
+    return $params;
 }
