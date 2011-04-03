@@ -80,6 +80,30 @@ $head=security_prepare_head();
 dol_fiche_head($head, 'proxy', $langs->trans("Security"));
 
 
+if ($conf->use_javascript_ajax)
+{
+    print "\n".'<script type="text/javascript" language="javascript">';
+    print 'jQuery(document).ready(function () {
+                function initfields()
+                {
+                    if (jQuery("#MAIN_PROXY_USE").val()==\'1\')
+                    {
+                        jQuery(".drag").show();
+                    }
+                    if (jQuery("#MAIN_PROXY_USE").val()==\'0\')
+                    {
+                        jQuery(".drag").hide();
+                    }
+                }
+                initfields();
+                jQuery("#MAIN_PROXY_USE").change(function() {
+                    initfields();
+                });
+           })';
+    print '</script>'."\n";
+}
+
+
 // Timeout
 $var=true;
 
@@ -91,7 +115,7 @@ print '<table width="100%" class="noborder">';
 
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("Parameters").'</td>';
-print '<td>'.$langs->trans("Value").'</td>';
+print '<td width="200">'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
 $var=!$var;
@@ -127,7 +151,7 @@ print '</td>';
 print '</tr>';
 
 $var=!$var;
-print '<tr '.$bc[$var].'>';
+print '<tr '.$bcdd[$var].'>';
 print '<td>'.$langs->trans("MAIN_PROXY_HOST").'</td><td align="right">';
 //print $form->textwithpicto('',$langs->trans("SessionExplanation",ini_get("session.gc_probability"),ini_get("session.gc_divisor")));
 print '</td>';
@@ -137,7 +161,7 @@ print '</td>';
 print '</tr>';
 
 $var=!$var;
-print '<tr '.$bc[$var].'>';
+print '<tr '.$bcdd[$var].'>';
 print '<td>'.$langs->trans("MAIN_PROXY_PORT").'</td><td align="right">';
 //print $form->textwithpicto('',$langs->trans("SessionExplanation",ini_get("session.gc_probability"),ini_get("session.gc_divisor")));
 print '</td>';
@@ -147,7 +171,7 @@ print '</td>';
 print '</tr>';
 
 $var=!$var;
-print '<tr '.$bc[$var].'>';
+print '<tr '.$bcdd[$var].'>';
 print '<td>'.$langs->trans("MAIN_PROXY_USER").'</td><td align="right">';
 //print $form->textwithpicto('',$langs->trans("SessionExplanation",ini_get("session.gc_probability"),ini_get("session.gc_divisor")));
 print '</td>';
@@ -157,7 +181,7 @@ print '</td>';
 print '</tr>';
 
 $var=!$var;
-print '<tr '.$bc[$var].'>';
+print '<tr '.$bcdd[$var].'>';
 print '<td>'.$langs->trans("MAIN_PROXY_PASS").'</td><td align="right">';
 //print $form->textwithpicto('',$langs->trans("SessionExplanation",ini_get("session.gc_probability"),ini_get("session.gc_divisor")));
 print '</td>';
