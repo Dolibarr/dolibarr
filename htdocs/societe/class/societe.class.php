@@ -815,14 +815,14 @@ class Societe extends CommonObject
 	            dol_syslog("Societe::Delete erreur -1 ".$this->error, LOG_ERR);
 	            return -1;
 	        }
-        }		
+        }
         if ($haschild > 0)
         {
             $this->error="ErrorRecordHasChildren";
             return -1;
         }
 
-        
+
         if ($this->db->begin())
         {
             // Added by Matelli (see http://matelli.fr/showcases/patchs-dolibarr/fix-third-party-deleting.html)
@@ -1340,9 +1340,12 @@ class Societe extends CommonObject
         $lien.=(!empty($this->canvas)?'&amp;canvas='.$this->canvas:'').'">';
         $lienfin='</a>';
 
-        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCompany").': '.$this->nom,'company').$lienfin);
+        $name=$this->name;
+        if (empty($name)) $name=$this->nom;
+
+        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCompany").': '.$name,'company').$lienfin);
         if ($withpicto && $withpicto != 2) $result.=' ';
-        $result.=$lien.($maxlen?dol_trunc($this->nom,$maxlen):$this->nom).$lienfin;
+        $result.=$lien.($maxlen?dol_trunc($name,$maxlen):$name).$lienfin;
 
         return $result;
     }
