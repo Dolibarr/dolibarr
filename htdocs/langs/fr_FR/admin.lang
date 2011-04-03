@@ -644,6 +644,7 @@ DictionnaryPaperFormat= Format papiers
 DictionnaryFees= Types de déplacement et notes de frais
 DictionnarySendingMethods= Méthodes d'expédition
 DictionnaryStaff= Effectifs
+DictionnaryAvailability= Délai de livraison
 DictionnaryOrderMethods=Méthodes de commandes
 SetupSaved= Configuration sauvegardée
 BackToModuleList= Retour liste des modules
