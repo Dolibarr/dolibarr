@@ -476,7 +476,7 @@ function security_prepare_head()
 	$head = array();
 
     $head[$h][0] = DOL_URL_ROOT."/admin/proxy.php";
-    $head[$h][1] = $langs->trans("Proxy");
+    $head[$h][1] = $langs->trans("ExternalAccess");
     $head[$h][2] = 'proxy';
     $h++;
 
