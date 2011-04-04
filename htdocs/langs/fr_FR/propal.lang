@@ -89,3 +89,5 @@ TypeContact_propal_external_CUSTOMER=Contact client suivi propale
 # Documents models
 DocModelAzurDescription=Modèle de propositions commerciales complet (logo...)
 DocModelJauneDescription=Modèle de proposition Jaune
+Numbershort=N°
+
