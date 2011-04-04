@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,7 +95,7 @@ print '<input type="hidden" name="action" value="builddoc">';
 $cmonth = GETPOST("remonth")?GETPOST("remonth"):date("n", time());
 $syear = GETPOST("reyear")?GETPOST("reyear"):date("Y", time());
 
-print '<select name="remonth">';
+print '<select class="flat" name="remonth">';
 for ($month = 1 ; $month < 13 ; $month++)
 {
     if ($month == $cmonth)
@@ -108,7 +108,7 @@ for ($month = 1 ; $month < 13 ; $month++)
     }
 }
 print "</select>";
-print '<select name="reyear">';
+print '<select class="flat" name="reyear">';
 
 for ($formyear = $syear - 2; $formyear < $syear +1 ; $formyear++)
 {
