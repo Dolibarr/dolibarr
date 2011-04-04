@@ -193,8 +193,8 @@ td.vmenu {
 }
 
 div.fiche {
-	margin-<?php print $left; ?>: 4px;
-	margin-<?php print $right; ?>: 4px;
+	margin-<?php print $left; ?>: 6px;
+	margin-<?php print $right; ?>: 5px;
 }
 
 /* ============================================================================== */
@@ -531,7 +531,7 @@ div.blockvmenupair, div.blockvmenuimpair
     padding-top: 3px;
     padding-bottom: 3px;
     margin: 1px 0px 0px 0px;
-	background: #A3BCC6;
+	background: #FFFFFF;
     background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/tmenu.jpg' ?>);
     background-position:top;
     background-repeat:repeat-x;
@@ -830,7 +830,7 @@ div.tabsAction {
 
 
 a.tabTitle {
-    background: #436976;
+    background: #657090;
     color: white;
 	font-family: <?php print $fontlist ?>;
     font-weight: normal;
@@ -845,7 +845,7 @@ a.tabTitle {
 
 a.tab:link {
     background: #dee7ec;
-    color: #436976;
+    color: #434956;
 	font-family: <?php print $fontlist ?>;
     padding: 0px 6px;
     margin: 0em 0.2em;
@@ -853,6 +853,7 @@ a.tab:link {
     white-space: nowrap;
     -moz-border-radius-topleft:6px;
     -moz-border-radius-topright:6px;
+    font-weight: normal;
 
     border-<?php print $right; ?>: 1px solid #555555;
     border-<?php print $left; ?>: 1px solid #D8D8D8;
@@ -860,7 +861,7 @@ a.tab:link {
 }
 a.tab:visited {
     background: #dee7ec;
-    color: #436976;
+    color: #434956;
 	font-family: <?php print $fontlist ?>;
     padding: 0px 6px;
     margin: 0em 0.2em;
@@ -868,6 +869,7 @@ a.tab:visited {
     white-space: nowrap;
     -moz-border-radius-topleft:6px;
     -moz-border-radius-topright:6px;
+    font-weight: normal;
 
     border-<?php print $right; ?>: 1px solid #555555;
     border-<?php print $left; ?>: 1px solid #D8D8D8;
@@ -877,12 +879,13 @@ a.tab#active {
     background: white;
     border-bottom: #dee7ec 1px solid;
 	font-family: <?php print $fontlist ?>;
-    color: #436976;
+    color: #434956;
     padding: 0px 6px;
     margin: 0em 0.2em;
     text-decoration: none;
     -moz-border-radius-topleft:6px;
     -moz-border-radius-topright:6px;
+    font-weight: normal;
 
     border-<?php print $right; ?>: 1px solid #555555;
     border-<?php print $left; ?>: 1px solid #D8D8D8;
@@ -891,13 +894,14 @@ a.tab#active {
 }
 a.tab:hover {
     background: white;
-    color: #436976;
+    color: #434956;
 	font-family: <?php print $fontlist ?>;
     padding: 0px 6px;
     margin: 0em 0.2em;
     text-decoration: none;
     -moz-border-radius-topleft:6px;
     -moz-border-radius-topright:6px;
+    font-weight: normal;
 
     border-<?php print $right; ?>: 1px solid #555555;
     border-<?php print $left; ?>: 1px solid #D8D8D8;
@@ -905,7 +909,7 @@ a.tab:hover {
 }
 
 a.tabimage {
-    color: #436976;
+    color: #434956;
 	font-family: <?php print $fontlist ?>;
     text-decoration: none;
     white-space: nowrap;
@@ -917,7 +921,7 @@ td.tab {
 
 span.tabspan {
     background: #dee7ec;
-    color: #436976;
+    color: #434956;
 	font-family: <?php print $fontlist ?>;
     padding: 0px 6px;
     margin: 0em 0.2em;
@@ -942,7 +946,7 @@ a.butAction:link, a.butAction:visited, a.butAction:hover, a.butAction:active, a.
 	font-weight: bold;
 	background: white;
 	border: 1px solid #8CACBB;
-	color: #436976;
+	color: #434956;
 	padding: 0em 0.7em;
 	margin: 0em 0.5em;
 	text-decoration: none;
@@ -1111,7 +1115,7 @@ padding-right: 2px;
 tr.liste_titre {
 height: 16px;
 background: #7699A9;
-background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre.png' ?>);
+background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre2.png' ?>);
 background-repeat: repeat-x;
 color: #334444;
 font-family: <?php print $fontlist ?>;
@@ -1120,7 +1124,7 @@ white-space: nowrap;
 }
 td.liste_titre {
 background: #7699A9;
-background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre.png' ?>);
+background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre2.png' ?>);
 background-repeat: repeat-x;
 color: #334444;
 font-family: <?php print $fontlist ?>;
@@ -1131,7 +1135,7 @@ white-space: nowrap;
 td.liste_titre_sel
 {
 background: #7699A9;
-background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre.png' ?>);
+background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre2.png' ?>);
 background-repeat: repeat-x;
 color: #F5FFFF;
 font-family: <?php print $fontlist ?>;
@@ -1141,7 +1145,7 @@ white-space: nowrap;
 }
 input.liste_titre {
 background: #7699A9;
-background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre.png' ?>);
+background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre2.png' ?>);
 background-repeat: repeat-x;
 border: 0px;
 }
@@ -1208,7 +1212,7 @@ padding-bottom: 4px;
 
 tr.box_titre {
 background: #7699A9;
-background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre.png' ?>);
+background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre2.png' ?>);
 background-repeat: repeat-x;
 color: #334444;
 font-family: <?php print $fontlist ?>, sans-serif;
