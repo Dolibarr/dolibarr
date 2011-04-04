@@ -833,11 +833,11 @@ a.tabTitle {
     background: #657090;
     color: white;
 	font-family: <?php print $fontlist ?>;
-    font-weight: normal;
     padding: 0px 6px;
     margin: 0px 6px;
     text-decoration: none;
     white-space: nowrap;
+
     border-<?php print $right; ?>: 1px solid #555555;
     border-<?php print $left; ?>: 1px solid #D8D8D8;
     border-top: 1px solid #D8D8D8;
@@ -853,7 +853,6 @@ a.tab:link {
     white-space: nowrap;
     -moz-border-radius-topleft:6px;
     -moz-border-radius-topright:6px;
-    font-weight: normal;
 
     border-<?php print $right; ?>: 1px solid #555555;
     border-<?php print $left; ?>: 1px solid #D8D8D8;
@@ -869,7 +868,6 @@ a.tab:visited {
     white-space: nowrap;
     -moz-border-radius-topleft:6px;
     -moz-border-radius-topright:6px;
-    font-weight: normal;
 
     border-<?php print $right; ?>: 1px solid #555555;
     border-<?php print $left; ?>: 1px solid #D8D8D8;
@@ -885,7 +883,6 @@ a.tab#active {
     text-decoration: none;
     -moz-border-radius-topleft:6px;
     -moz-border-radius-topright:6px;
-    font-weight: normal;
 
     border-<?php print $right; ?>: 1px solid #555555;
     border-<?php print $left; ?>: 1px solid #D8D8D8;
@@ -901,7 +898,6 @@ a.tab:hover {
     text-decoration: none;
     -moz-border-radius-topleft:6px;
     -moz-border-radius-topright:6px;
-    font-weight: normal;
 
     border-<?php print $right; ?>: 1px solid #555555;
     border-<?php print $left; ?>: 1px solid #D8D8D8;
