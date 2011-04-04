@@ -693,9 +693,10 @@ class Form
      *      @param      exclude         List of contacts id to exclude
      * 		@param		limitto			Disable answers that are not id in this array list
      * 	    @param		showfunction    Add function into label
+     * 		@param		moreclass		Add more class to class style
      *		@return		int				<0 if KO, Nb of contact in list if OK
      */
-    function select_contacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='',$showfunction=0)
+    function select_contacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='',$showfunction=0, $moreclass='')
     {
         global $conf,$langs;
 
@@ -720,7 +721,7 @@ class Form
             $num=$this->db->num_rows($resql);
             if ($num == 0) return 0;
 
-            if ($htmlname != 'none') print '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
+            if ($htmlname != 'none') print '<select class="flat'.($moreclass?' '.$moreclass:'').'" id="'.$htmlname.'" name="'.$htmlname.'">';
             if ($showempty) print '<option value="0"></option>';
             $num = $this->db->num_rows($resql);
             $i = 0;
