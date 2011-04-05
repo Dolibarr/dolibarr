@@ -98,10 +98,17 @@ class modECM extends DolibarrModules
 		$this->rights[$r][1] = 'Consulter les documents';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'read';
+		
+		$r++;
+		$this->rights[$r][0] = 2502;
+		$this->rights[$r][1] = 'Telecharger les documents';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'download';
 
 		$r++;
-		$this->rights[$r][0] = 2502;
+		$this->rights[$r][0] = 2503;
 		$this->rights[$r][1] = 'Soumettre ou supprimer des documents';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 1;
