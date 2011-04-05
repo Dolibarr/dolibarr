@@ -986,7 +986,7 @@ class Propal extends CommonObject
 				/*
 				 * Lignes propales liees a un produit ou non
 				 */
-				$sql = "SELECT d.rowid, d.fk_propal, d.description, d.price, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.qty, d.fk_remise_except, d.remise_percent, d.subprice, d.fk_product,";
+				$sql = "SELECT d.rowid, d.fk_propal, d.fk_parent_line, d.description, d.price, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.qty, d.fk_remise_except, d.remise_percent, d.subprice, d.fk_product,";
 				$sql.= " d.info_bits, d.total_ht, d.total_tva, d.total_localtax1, d.total_localtax2, d.total_ttc, d.marge_tx, d.marque_tx, d.special_code, d.rang, d.product_type,";
                 $sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label';
 				$sql.= " FROM ".MAIN_DB_PREFIX."propaldet as d";
@@ -1008,6 +1008,7 @@ class Propal extends CommonObject
 
 						$line->rowid			= $objp->rowid;
 						$line->fk_propal		= $objp->fk_propal;
+						$line->fk_parent_line	= $objp->fk_parent_line;
 						$line->product_type     = $objp->product_type;
 						$line->desc             = $objp->description;  // Description ligne
 						$line->qty              = $objp->qty;
@@ -2223,6 +2224,7 @@ class PropaleLigne
 	// From llx_propaldet
 	var $rowid;
 	var $fk_propal;
+	var $fk_parent_line;
 	var $desc;          	// Description ligne
 	var $fk_product;		// Id produit predefini
 	var $product_type = 0;	// Type 0 = product, 1 = Service
@@ -2275,7 +2277,7 @@ class PropaleLigne
 	 */
 	function fetch($rowid)
 	{
-		$sql = 'SELECT pd.rowid, pd.fk_propal, pd.fk_product, pd.description, pd.price, pd.qty, pd.tva_tx,';
+		$sql = 'SELECT pd.rowid, pd.fk_propal, pd.fk_parent_line, pd.fk_product, pd.description, pd.price, pd.qty, pd.tva_tx,';
 		$sql.= ' pd.remise, pd.remise_percent, pd.fk_remise_except, pd.subprice,';
 		$sql.= ' pd.info_bits, pd.total_ht, pd.total_tva, pd.total_ttc, pd.marge_tx, pd.marque_tx, pd.special_code, pd.rang,';
 		$sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc';
@@ -2286,31 +2288,33 @@ class PropaleLigne
 		if ($result)
 		{
 			$objp = $this->db->fetch_object($result);
-			$this->rowid          = $objp->rowid;
-			$this->fk_propal      = $objp->fk_propal;
-			$this->desc           = $objp->description;
-			$this->qty            = $objp->qty;
-			$this->price          = $objp->price;		// deprecated
-			$this->subprice       = $objp->subprice;
-			$this->tva_tx         = $objp->tva_tx;
-			$this->remise         = $objp->remise;
-			$this->remise_percent = $objp->remise_percent;
+			
+			$this->rowid			= $objp->rowid;
+			$this->fk_propal		= $objp->fk_propal;
+			$this->fk_parent_line	= $objp->fk_parent_line;
+			$this->desc				= $objp->description;
+			$this->qty				= $objp->qty;
+			$this->price			= $objp->price;		// deprecated
+			$this->subprice			= $objp->subprice;
+			$this->tva_tx			= $objp->tva_tx;
+			$this->remise			= $objp->remise;
+			$this->remise_percent	= $objp->remise_percent;
 			$this->fk_remise_except = $objp->fk_remise_except;
-			$this->fk_product     = $objp->fk_product;
-			$this->info_bits      = $objp->info_bits;
+			$this->fk_product		= $objp->fk_product;
+			$this->info_bits		= $objp->info_bits;
 
-			$this->total_ht       = $objp->total_ht;
-			$this->total_tva      = $objp->total_tva;
-			$this->total_ttc      = $objp->total_ttc;
+			$this->total_ht			= $objp->total_ht;
+			$this->total_tva		= $objp->total_tva;
+			$this->total_ttc		= $objp->total_ttc;
 
-			$this->marge_tx       = $objp->marge_tx;
-			$this->marque_tx      = $objp->marque_tx;
-			$this->special_code   = $objp->special_code;
-			$this->rang           = $objp->rang;
+			$this->marge_tx			= $objp->marge_tx;
+			$this->marque_tx		= $objp->marque_tx;
+			$this->special_code		= $objp->special_code;
+			$this->rang				= $objp->rang;
 
-			$this->ref            = $objp->product_ref;
-			$this->libelle        = $objp->product_libelle;
-			$this->product_desc	  = $objp->product_desc;
+			$this->ref				= $objp->product_ref;
+			$this->libelle			= $objp->product_libelle;
+			$this->product_desc		= $objp->product_desc;
 
 			$this->db->free($result);
 		}
