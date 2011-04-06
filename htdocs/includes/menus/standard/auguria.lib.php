@@ -214,30 +214,19 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after)
         require_once(DOL_DOCUMENT_ROOT."/core/class/menubase.class.php");
 
         $menuArbo = new Menubase($db,'auguria','left');
-        $overwritemenufor = $menuArbo->listeMainmenu();
         $newmenu = $menuArbo->menuLeftCharger($newmenu,$mainmenu,$leftmenu,($user->societe_id?1:0),'auguria');
         //var_dump($newmenu);
-
-        /*
-         * Menu AUTRES (Pour les menus du haut qui ne serait pas geres)
-         */
-        if ($mainmenu && ! in_array($mainmenu,$overwritemenufor)) { $mainmenu=""; }
     }
 
 
-    /**
-     *  Si on est sur un cas gere de surcharge du menu, on ecrase celui par defaut
-     */
     //var_dump($menu_array_before);exit;
     //var_dump($menu_array_after);exit;
     $menu_array=$newmenu->liste;
-    //if ($mainmenu) {
     if (is_array($menu_array_before)) $menu_array=array_merge($menu_array_before, $menu_array);
     if (is_array($menu_array_after))  $menu_array=array_merge($menu_array, $menu_array_after);
-    //}
     //var_dump($menu_array);exit;
 
-    // Affichage du menu
+    // Show menu
     $alt=0;
     if (is_array($menu_array))
     {
