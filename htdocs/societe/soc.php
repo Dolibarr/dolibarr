@@ -397,42 +397,54 @@ if (! empty($objcanvas->template_dir))
 	}
 	else
 	{
-		$result=$objcanvas->fetch($socid);       // Relaod object
-    	$objcanvas->assign_values('view');   // Assign values
-		$objcanvas->display_canvas('view');  // Show template
+		// Fetch object
+		$result=$objcanvas->fetch($socid);
+		if ($result > 0)
+		{
+			// Assign values
+			$objcanvas->assign_values('view');
 
-		// TODO Move this also into template
-		print '<table width="100%"><tr><td valign="top" width="50%">';
-		print '<a name="builddoc"></a>'; // ancre
+			// Display canvas
+			$objcanvas->display_canvas('view');
 
-		/*
-		 * Documents generes
-		 */
-		$filedir=$conf->societe->dir_output.'/'.$socid;
-		$urlsource=$_SERVER["PHP_SELF"]."?socid=".$socid;
-		$genallowed=$user->rights->societe->creer;
-		$delallowed=$user->rights->societe->supprimer;
 
-		$var=true;
+			print '<table width="100%"><tr><td valign="top" width="50%">';
+			print '<a name="builddoc"></a>'; // ancre
 
-		$somethingshown=$formfile->show_documents('company',$socid,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$objcanvas->control->object->default_lang);
+			/*
+			 * Documents generes
+			 */
+			$filedir=$conf->societe->dir_output.'/'.$socid;
+			$urlsource=$_SERVER["PHP_SELF"]."?socid=".$socid;
+			$genallowed=$user->rights->societe->creer;
+			$delallowed=$user->rights->societe->supprimer;
 
-		print '</td>';
-		print '<td></td>';
-		print '</tr>';
-		print '</table>';
+			$var=true;
 
-		print '<br>';
+			$somethingshown=$formfile->show_documents('company',$socid,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$objcanvas->control->object->default_lang);
 
-		// Subsidiaries list
-		$result=show_subsidiaries($conf,$langs,$db,$objcanvas->control->object);
+			print '</td>';
+			print '<td></td>';
+			print '</tr>';
+			print '</table>';
 
-		// Contacts list
-		$result=show_contacts($conf,$langs,$db,$objcanvas->control->object);
+			print '<br>';
 
-		// Projects list
-		$result=show_projects($conf,$langs,$db,$objcanvas->control->object);
+			// Subsidiaries list
+			$result=show_subsidiaries($conf,$langs,$db,$objcanvas->control->object);
+
+			// Contacts list
+			$result=show_contacts($conf,$langs,$db,$objcanvas->control->object);
+
+			// Projects list
+			$result=show_projects($conf,$langs,$db,$objcanvas->control->object);
+		}
+		else
+		{
+			dol_htmloutput_errors($objcanvas->error,$objcanvas->errors);
+		}
 	}
+
 }
 else
 {
