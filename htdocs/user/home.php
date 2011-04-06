@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,10 +25,11 @@
 
 require("../main.inc.php");
 
-if (! $user->rights->user->user->lire && !$user->admin)
+if (! $user->rights->user->user->lire && ! $user->admin)
 {
 	// Redirection vers la page de l'utilisateur
 	Header("Location: fiche.php?id=".$user->id);
+	exit;
 }
 
 $langs->load("users");
@@ -44,6 +45,8 @@ $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 
 $companystatic = new Societe($db);
+$fuserstatic = new User($db);
+
 
 /*
  * View
@@ -90,12 +93,11 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 
 
 /*
- * Derniers utilisateurs crees
+ * Last created users
  */
 $max=10;
 
-$sql = "SELECT u.rowid, u.name, u.firstname, u.admin, u.login, u.fk_societe, u.datec,";
-$sql.= " u.entity, u.ldap_sid,";
+$sql = "SELECT u.rowid, u.name, u.firstname, u.admin, u.login, u.fk_societe, u.datec, u.statut, u.entity, u.ldap_sid,";
 $sql.= " s.nom, s.canvas";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_societe = s.rowid";
@@ -109,7 +111,7 @@ if ($resql)
 {
 	$num = $db->num_rows($resql);
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("LastUsersCreated",min($num,$max)).'</td></tr>';
+	print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("LastUsersCreated",min($num,$max)).'</td></tr>';
 	$var = true;
 	$i = 0;
 
@@ -145,6 +147,12 @@ if ($resql)
 		else print $langs->trans("InternalUser");
 		print '</td>';
 		print '<td align="right">'.dol_print_date($db->jdate($obj->datec),'dayhour').'</td>';
+        print '<td align="right">';
+        $fuserstatic->id=$obj->id;
+        $fuserstatic->statut=$obj->statut;
+        print $fuserstatic->getLibStatut(3);
+        print '</td>';
+
 		print '</tr>';
 		$i++;
 	}
@@ -164,13 +172,13 @@ else
 if ($canreadperms)
 {
 	$max=5;
-	
+
 	$sql = "SELECT g.rowid, g.nom, g.note, g.entity, g.datec";
 	$sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g";
 	$sql.= " WHERE g.entity IN (0,".$conf->entity.")";
 	$sql.= $db->order("g.datec","DESC");
 	$sql.= $db->plimit($max);
-	
+
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -179,12 +187,12 @@ if ($canreadperms)
 		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastGroupsCreated",($num ? $num : $max)).'</td></tr>';
 		$var = true;
 		$i = 0;
-		
+
 		while ($i < $num && (! $max || $i < $max))
 		{
 			$obj = $db->fetch_object($resql);
 			$var=!$var;
-			
+
 			print "<tr $bc[$var]>";
 			print '<td><a href="'.DOL_URL_ROOT.'/user/group/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$obj->nom.'</a>';
 			if (!$obj->entity)
@@ -197,7 +205,7 @@ if ($canreadperms)
 			$i++;
 		}
 		print "</table><br>";
-		
+
 		$db->free($resql);
 	}
 	else

@@ -1591,9 +1591,9 @@ class User extends CommonObject
 
 
 	/**
-	 *    \brief      Retourne le libelle du statut d'un user (actif, inactif)
-	 *    \param      mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
-	 *    \return     string        Libelle
+	 *    Retourne le libelle du statut d'un user (actif, inactif)
+	 *    @param      mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
+	 *    @return     string        Label of status
 	 */
 	function getLibStatut($mode=0)
 	{
@@ -1601,10 +1601,10 @@ class User extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Renvoi le libelle d'un statut donne
-	 *    	\param      statut        	Id statut
-	 *    	\param      mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *    	\return     string        	Libelle du statut
+	 *    	Renvoi le libelle d'un statut donne
+	 *    	@param      statut        	Id statut
+	 *    	@param      mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *    	@return     string        	Label of status
 	 */
 	function LibStatut($statut,$mode=0)
 	{

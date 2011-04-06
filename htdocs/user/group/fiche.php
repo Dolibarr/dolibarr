@@ -220,7 +220,7 @@ if ($_POST["action"] == 'update')
 llxHeader('',$langs->trans("GroupCard"));
 
 $html = new Form($db);
-
+$fuserstatic = new User($db);
 
 if ($action == 'create')
 {
@@ -377,7 +377,7 @@ else
 
             if (!empty($idList))
             {
-            	$sql = "SELECT u.rowid, u.login, u.name, u.firstname, u.admin";
+            	$sql = "SELECT u.rowid, u.login, u.name, u.firstname, u.admin, u.statut";
             	$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
             	$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
             	$sql.= " AND u.rowid NOT IN (".$idList.")";
@@ -404,7 +404,7 @@ else
             }
             else
             {
-            	$sql = "SELECT u.rowid, u.login, u.name, u.firstname, u.admin";
+            	$sql = "SELECT u.rowid, u.login, u.name, u.firstname, u.admin, u.statut";
             	$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
             	$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
             	$sql.= " ORDER BY u.name";
@@ -450,7 +450,7 @@ else
             /*
              * Membres du groupe
              */
-            $sql = "SELECT u.rowid, u.login, u.name, u.firstname, u.admin, u.entity";
+            $sql = "SELECT u.rowid, u.login, u.name, u.firstname, u.admin, u.entity, u.statut";
             $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
             $sql.= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
             $sql.= " WHERE ug.fk_user = u.rowid";
@@ -468,8 +468,10 @@ else
                 print '<td class="liste_titre" width="25%">'.$langs->trans("Login").'</td>';
                 print '<td class="liste_titre" width="25%">'.$langs->trans("Lastname").'</td>';
                 print '<td class="liste_titre" width="25%">'.$langs->trans("Firstname").'</td>';
+                print '<td class="liste_titre" align="right">'.$langs->trans("Status").'</td>';
                 print '<td>&nbsp;</td>';
-                print "<td>&nbsp;</td></tr>\n";
+                print "<td>&nbsp;</td>";
+                print "</tr>\n";
                 if ($num) {
                     $var=True;
                     while ($i < $num)
@@ -491,11 +493,13 @@ else
                         print '</td>';
                         print '<td>'.ucfirst(stripslashes($obj->name)).'</td>';
                         print '<td>'.ucfirst(stripslashes($obj->firstname)).'</td>';
-                        print '<td>&nbsp;</td><td>';
-
+                        $fuserstatic->id=$obj->id;
+                        $fuserstatic->statut=$obj->statut;
+                        print '<td align="right">'.$fuserstatic->getLibStatut(5).'</td>';
+                        print '<td>&nbsp;</td>';
+                        print '<td align="right">';
                         if ($user->admin)
                         {
-
                             print '<a href="fiche.php?id='.$group->id.'&amp;action=removeuser&amp;user='.$obj->rowid.'">';
                             print img_delete($langs->trans("RemoveFromGroup"));
                         }
