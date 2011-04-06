@@ -1440,7 +1440,7 @@ class CommonObject
 
 			if (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line))
 			{
-				if (empty($line->fk_parent_line)) $this->hooks[$line->special_code]->printObjectLine($this,$line,$num,$i);
+				if (empty($line->fk_parent_line)) $this->hooks[$line->special_code]->printObjectLine($this,$line,$num,$i,$dateSelector,$seller,$buyer);
 			}
 			else
 			{
