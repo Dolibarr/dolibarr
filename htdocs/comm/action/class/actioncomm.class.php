@@ -176,8 +176,9 @@ class ActionComm extends CommonObject
         $sql.= "propalrowid,";
         $sql.= "fk_commande,";
         $sql.= "fk_supplier_invoice,";
-        $sql.= "fk_supplier_order)";
-        $sql.= " VALUES (";
+        $sql.= "fk_supplier_order,";
+        $sql.= "entity";
+        $sql.= ") VALUES (";
         $sql.= "'".$this->db->idate($now)."',";
         $sql.= (strval($this->datep)!=''?"'".$this->db->idate($this->datep)."'":"null").",";
         $sql.= (strval($this->datef)!=''?"'".$this->db->idate($this->datef)."'":"null").",";
@@ -198,7 +199,8 @@ class ActionComm extends CommonObject
         $sql.= ($this->propalrowid?$this->propalrowid:"null").",";
         $sql.= ($this->orderrowid?$this->orderrowid:"null").",";
         $sql.= ($this->supplierinvoicerowid?$this->supplierinvoicerowid:"null").",";
-        $sql.= ($this->supplierorderrowid?$this->supplierorderrowid:"null");
+        $sql.= ($this->supplierorderrowid?$this->supplierorderrowid:"null").",";
+        $sql.= $conf->entity;
         $sql.= ")";
 
         dol_syslog("ActionComm::add sql=".$sql);
@@ -687,8 +689,9 @@ class ActionComm extends CommonObject
 			$sql.= " c.id as type_id, c.code as type_code, c.libelle";
 			$sql.= " FROM (".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."actioncomm as a)";
         	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_author";
-        	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = a.fk_soc";
+        	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = a.fk_soc AND s.entity IN (0, ".$conf->entity.")";
 			$sql.= " WHERE a.fk_action=c.id";
+			$sql.= " AND a.entity = ".$conf->entity;
 			foreach ($filters as $key => $value)
 			{
 				if ($key == 'notolderthan') $sql.=" AND a.datep >= '".$this->db->idate($now-($value*24*60*60))."'";
