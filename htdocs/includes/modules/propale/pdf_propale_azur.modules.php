@@ -442,15 +442,15 @@ class pdf_propale_azur extends ModelePDFPropales
 			$posy=$pdf->GetY()+4;
 		}
 		
-	// Show availability conditions
-		if ($object->type != 2 && $object->availability_code || $object->availability)
+		// Show availability conditions
+		if ($object->type != 2 && ($object->availability_code || $object->availability))
 		{
 			$pdf->SetFont('','B', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche, $posy);
 			$titre = $outputlangs->transnoentities("AvailabilityPeriod").':';
 			$pdf->MultiCell(80, 4, $titre, 0, 'L');
-			$pdf->SetTextColor(200,0,0);
-			$pdf->SetFont('','B', $default_font_size - 2);
+			$pdf->SetTextColor(0,0,0);
+			$pdf->SetFont('','', $default_font_size - 2);
 			$pdf->SetXY(82, $posy);
 			$lib_availability=$outputlangs->transnoentities("AvailabilityPeriod".$object->availability_code)!=('AvailabilityPeriod'.$object->availability_code)?$outputlangs->transnoentities("AvailabilityPeriod".$object->availability_code):$outputlangs->convToOutputCharset($object->availability);
 			$lib_availability=str_replace('\n',"\n",$lib_availability);
@@ -493,7 +493,7 @@ class pdf_propale_azur extends ModelePDFPropales
 				$posy=$pdf->GetY()+1;
 			}
 
-			// Sown payment mode
+			// Shown payment mode
 			if ($object->mode_reglement_code
 			&& $object->mode_reglement_code != 'CHQ'
 			&& $object->mode_reglement_code != 'VIR')
@@ -793,7 +793,7 @@ class pdf_propale_azur extends ModelePDFPropales
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('','',$default_font_size - 2);
 		$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$conf->monnaie));
-		$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $tab_top - 4);
+		$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $tab_top-4);
 		$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
 
 		$pdf->SetDrawColor(128,128,128);

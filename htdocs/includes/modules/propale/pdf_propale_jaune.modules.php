@@ -174,7 +174,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 				$pdf->SetTextColor(0,0,0);
 
 				$tab_top = 100;
-				$tab_height = 150;
+				$tab_height = 130;
 
 				$pdf->SetFillColor(242,239,119);
 				$pdf->SetXY (10, $tab_top + 10 );
@@ -262,7 +262,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 				// Affiche zone infos
 				$this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs);
 
-				$tab2_top = 254;
+				$tab2_top = $tab_top + $tab_height;
 				$tab2_lh = 4;
 
 				$pdf->SetFont('','', $default_font_size);
@@ -325,8 +325,25 @@ class pdf_propale_jaune extends ModelePDFPropales
 			$posy=$pdf->GetY()+4;
 		}
 
+		// Show availability conditions
+		if ($object->type != 2 && ($object->availability_code || $object->availability))
+		{
+			$pdf->SetFont('','B', $default_font_size - 2);
+			$pdf->SetXY($this->marge_gauche, $posy);
+			$titre = $outputlangs->transnoentities("AvailabilityPeriod").':';
+			$pdf->MultiCell(80, 4, $titre, 0, 'L');
+			$pdf->SetTextColor(0,0,0);
+			$pdf->SetFont('','', $default_font_size - 2);
+			$pdf->SetXY(82, $posy);
+			$lib_availability=$outputlangs->transnoentities("AvailabilityPeriod".$object->availability_code)!=('AvailabilityPeriod'.$object->availability_code)?$outputlangs->transnoentities("AvailabilityPeriod".$object->availability_code):$outputlangs->convToOutputCharset($object->availability);
+			$lib_availability=str_replace('\n',"\n",$lib_availability);
+			$pdf->MultiCell(80, 4, $lib_availability,0,'L');
+
+			$posy=$pdf->GetY()+1;
+		}
+		
         // Show payments conditions
-		if ($object->cond_reglement_code || $object->cond_reglement)
+		if ($object->type != 2 && ($object->cond_reglement_code || $object->cond_reglement))
 		{
 			$pdf->SetFont('','B', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche, $posy);
@@ -342,95 +359,98 @@ class pdf_propale_jaune extends ModelePDFPropales
 			$posy=$pdf->GetY()+3;
 		}
 
-        // Check a payment mode is defined
-        /* Not used with orders
-        if (empty($object->mode_reglement_code)
-        	&& ! $conf->global->FACTURE_CHQ_NUMBER
-        	&& ! $conf->global->FACTURE_RIB_NUMBER)
+		if ($object->type != 2)
 		{
-            $pdf->SetXY($this->marge_gauche, $posy);
-            $pdf->SetTextColor(200,0,0);
-			$pdf->SetFont('','B', $default_font_size - 2);
-            $pdf->MultiCell(90, 3, $outputlangs->transnoentities("ErrorNoPaiementModeConfigured"),0,'L',0);
-            $pdf->SetTextColor(0,0,0);
-
-            $posy=$pdf->GetY()+1;
-        }*/
-
-      	// Show payment mode
-        if ($object->mode_reglement_code
-        	 && $object->mode_reglement_code != 'CHQ'
-           	 && $object->mode_reglement_code != 'VIR')
-           	 {
-	            $pdf->SetFont('','B', $default_font_size - 2);
+	        // Check a payment mode is defined
+	        /* Not used with orders
+	        if (empty($object->mode_reglement_code)
+	        	&& ! $conf->global->FACTURE_CHQ_NUMBER
+	        	&& ! $conf->global->FACTURE_RIB_NUMBER)
+			{
 	            $pdf->SetXY($this->marge_gauche, $posy);
-	            $titre = $outputlangs->transnoentities("PaymentMode").':';
-	            $pdf->MultiCell(80, 5, $titre, 0, 'L');
-
-	            $pdf->SetFont('','', $default_font_size - 2);
-	            $pdf->SetXY(50, $posy);
-	            //print "xxx".$outputlangs->transnoentities("PaymentType".$object->mode_reglement_code);exit;
-	            $lib_mode_reg=$outputlangs->transnoentities("PaymentType".$object->mode_reglement_code)!=('PaymentType'.$object->mode_reglement_code)?$outputlangs->transnoentities("PaymentType".$object->mode_reglement_code):$outputlangs->convToOutputCharset($object->mode_reglement);
-	            $pdf->MultiCell(80, 5, $lib_mode_reg,0,'L');
-
-	            $posy=$pdf->GetY()+2;
-           	 }
-
-		// Show payment mode CHQ
-        if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'CHQ')
-        {
-        	// Si mode reglement non force ou si force a CHQ
-	        if ($conf->global->FACTURE_CHQ_NUMBER)
-	        {
-	            if ($conf->global->FACTURE_CHQ_NUMBER > 0)
-	            {
-	                $account = new Account($this->db);
-	                $account->fetch($conf->global->FACTURE_CHQ_NUMBER);
-
-	                $pdf->SetXY($this->marge_gauche, $posy);
-	                $pdf->SetFont('','B', $default_font_size - 2);
-	                $pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo',$account->proprio).':',0,'L',0);
-		            $posy=$pdf->GetY()+1;
-
-	                $pdf->SetXY($this->marge_gauche, $posy);
-					$pdf->SetFont('','', $default_font_size - 2);
-	                $pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($account->adresse_proprio), 0, 'L', 0);
-		            $posy=$pdf->GetY()+2;
-	            }
-	            if ($conf->global->FACTURE_CHQ_NUMBER == -1)
-	            {
-	                $pdf->SetXY($this->marge_gauche, $posy);
-	                $pdf->SetFont('','B',$default_font_size - 2);
-	                $pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedToShort').' '.$outputlangs->convToOutputCharset($this->emetteur->name).' '.$outputlangs->transnoentities('SendTo').':',0,'L',0);
-		            $posy=$pdf->GetY()+1;
-
+	            $pdf->SetTextColor(200,0,0);
+				$pdf->SetFont('','B', $default_font_size - 2);
+	            $pdf->MultiCell(90, 3, $outputlangs->transnoentities("ErrorNoPaiementModeConfigured"),0,'L',0);
+	            $pdf->SetTextColor(0,0,0);
+	
+	            $posy=$pdf->GetY()+1;
+	        }*/
+	
+	      	// Show payment mode
+	        if ($object->mode_reglement_code
+	        	 && $object->mode_reglement_code != 'CHQ'
+	           	 && $object->mode_reglement_code != 'VIR')
+	           	 {
+		            $pdf->SetFont('','B', $default_font_size - 2);
 		            $pdf->SetXY($this->marge_gauche, $posy);
-					$pdf->SetFont('','', $default_font_size - 2);
-	                $pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->getFullAddress()), 0, 'L', 0);
+		            $titre = $outputlangs->transnoentities("PaymentMode").':';
+		            $pdf->MultiCell(80, 5, $titre, 0, 'L');
+	
+		            $pdf->SetFont('','', $default_font_size - 2);
+		            $pdf->SetXY(50, $posy);
+		            //print "xxx".$outputlangs->transnoentities("PaymentType".$object->mode_reglement_code);exit;
+		            $lib_mode_reg=$outputlangs->transnoentities("PaymentType".$object->mode_reglement_code)!=('PaymentType'.$object->mode_reglement_code)?$outputlangs->transnoentities("PaymentType".$object->mode_reglement_code):$outputlangs->convToOutputCharset($object->mode_reglement);
+		            $pdf->MultiCell(80, 5, $lib_mode_reg,0,'L');
+	
 		            $posy=$pdf->GetY()+2;
-	            }
-	        }
-		}
-
-        // If payment mode not forced or forced to VIR, show payment with BAN
-        /* Not enough space
-        if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'VIR')
-        {
-	        if (! empty($conf->global->FACTURE_RIB_NUMBER))
+	           	 }
+	
+			// Show payment mode CHQ
+	        if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'CHQ')
 	        {
-                $account = new Account($this->db);
-                $account->fetch($conf->global->FACTURE_RIB_NUMBER);
-
-                $curx=$this->marge_gauche;
-                $cury=$posy;
-
-                $posy=pdf_bank($pdf,$outputlangs,$curx,$cury,$account);
-
-                $posy+=2;
-	        }
+	        	// Si mode reglement non force ou si force a CHQ
+		        if ($conf->global->FACTURE_CHQ_NUMBER)
+		        {
+		            if ($conf->global->FACTURE_CHQ_NUMBER > 0)
+		            {
+		                $account = new Account($this->db);
+		                $account->fetch($conf->global->FACTURE_CHQ_NUMBER);
+	
+		                $pdf->SetXY($this->marge_gauche, $posy);
+		                $pdf->SetFont('','B', $default_font_size - 2);
+		                $pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo',$account->proprio).':',0,'L',0);
+			            $posy=$pdf->GetY()+1;
+	
+		                $pdf->SetXY($this->marge_gauche, $posy);
+						$pdf->SetFont('','', $default_font_size - 2);
+		                $pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($account->adresse_proprio), 0, 'L', 0);
+			            $posy=$pdf->GetY()+2;
+		            }
+		            if ($conf->global->FACTURE_CHQ_NUMBER == -1)
+		            {
+		                $pdf->SetXY($this->marge_gauche, $posy);
+		                $pdf->SetFont('','B',$default_font_size - 2);
+		                $pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedToShort').' '.$outputlangs->convToOutputCharset($this->emetteur->name).' '.$outputlangs->transnoentities('SendTo').':',0,'L',0);
+			            $posy=$pdf->GetY()+1;
+	
+			            $pdf->SetXY($this->marge_gauche, $posy);
+						$pdf->SetFont('','', $default_font_size - 2);
+		                $pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->getFullAddress()), 0, 'L', 0);
+			            $posy=$pdf->GetY()+2;
+		            }
+		        }
+			}
+		
+	        // If payment mode not forced or forced to VIR, show payment with BAN
+	        /* Not enough space
+	        if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'VIR')
+	        {
+		        if (! empty($conf->global->FACTURE_RIB_NUMBER))
+		        {
+	                $account = new Account($this->db);
+	                $account->fetch($conf->global->FACTURE_RIB_NUMBER);
+	
+	                $curx=$this->marge_gauche;
+	                $cury=$posy;
+	
+	                $posy=pdf_bank($pdf,$outputlangs,$curx,$cury,$account);
+	
+	                $posy+=2;
+		        }
+			}
+			*/
 		}
-		*/
-
+		
 		return $posy;
 	}
 
@@ -455,32 +475,34 @@ class pdf_propale_jaune extends ModelePDFPropales
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('','', $default_font_size - 2);
 		$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$conf->monnaie));
-		$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $tab_top - 4);
+		$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $tab_top-4);
 		$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
 
 		$pdf->SetFont('','', $default_font_size - 1);
 
+		$haut=6;
+		
 		$pdf->SetXY(10,$tab_top);
-		$pdf->MultiCell(20,10,$outputlangs->transnoentities("Ref"),0,'L',1);
+		$pdf->MultiCell(20,$haut,$outputlangs->transnoentities("Ref"),0,'L',1);
 
 		$pdf->SetXY(30,$tab_top);
-		$pdf->MultiCell(102,10,$outputlangs->transnoentities("Designation"),0,'L',1);
+		$pdf->MultiCell(102,$haut,$outputlangs->transnoentities("Designation"),0,'L',1);
 
 		$pdf->line(132, $tab_top, 132, $tab_top + $tab_height);
 		$pdf->SetXY(132,$tab_top);
-		$pdf->MultiCell(12, 10,$outputlangs->transnoentities("VAT"),0,'C',1);
+		$pdf->MultiCell(12, $haut,$outputlangs->transnoentities("VAT"),0,'C',1);
 
 		$pdf->line(144, $tab_top, 144, $tab_top + $tab_height);
 		$pdf->SetXY(144,$tab_top);
-		$pdf->MultiCell(10,10,$outputlangs->transnoentities("Qty"),0,'C',1);
+		$pdf->MultiCell(10,$haut,$outputlangs->transnoentities("Qty"),0,'C',1);
 
 		$pdf->line(154, $tab_top, 154, $tab_top + $tab_height);
 		$pdf->SetXY(154,$tab_top);
-		$pdf->MultiCell(22,10,$outputlangs->transnoentities("PriceU"),0,'R',1);
+		$pdf->MultiCell(22,$haut,$outputlangs->transnoentities("PriceU"),0,'R',1);
 
 		$pdf->line(176, $tab_top, 176, $tab_top + $tab_height);
 		$pdf->SetXY(176,$tab_top);
-		$pdf->MultiCell(24,10,$outputlangs->transnoentities("Total"),0,'R',1);
+		$pdf->MultiCell(24,$haut,$outputlangs->transnoentities("Total"),0,'R',1);
 
 		$pdf->Rect(10, $tab_top, 190, $tab_height);
 
