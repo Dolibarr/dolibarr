@@ -3116,6 +3116,7 @@ function migrate_delete_old_files($db,$langs,$conf)
     DOL_DOCUMENT_ROOT.'/includes/triggers/interface_modCommande_Ecotax.class.php',
     DOL_DOCUMENT_ROOT.'/includes/triggers/interface_modCommande_fraisport.class.php',
     DOL_DOCUMENT_ROOT.'/includes/triggers/interface_modPropale_PropalWorkflow.class.php',
+    DOL_DOCUMENT_ROOT.'/includes/modules/mailings/dolibarr_services_expired.modules.php',
     DOL_DOCUMENT_ROOT.'/includes/modules/mailings/poire.modules.php',
     DOL_DOCUMENT_ROOT.'/includes/modules/mailings/kiwi.modules.php'
     );
