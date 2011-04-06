@@ -28,12 +28,8 @@
 ?>
 
 <!-- BEGIN PHP TEMPLATE freeproductline_create.tpl.php -->
-<?php
-// TODO à déplacer
-if ($conf->global->PRODUIT_USE_MARKUP) $colspan = 'colspan="2"';
-?>
 <tr class="liste_titre nodrag nodrop">
-	<td <?php echo $colspan; ?>><a name="add"></a><?php echo $langs->trans('AddNewLine').' - '.$langs->trans("FreeZone"); ?></td>
+	<td><a name="add"></a><?php echo $langs->trans('AddNewLine').' - '.$langs->trans("FreeZone"); ?></td>
 	<td align="right"><?php echo $langs->trans('VAT'); ?></td>
 	<td align="right"><?php echo $langs->trans('PriceUHT'); ?></td>
 	<td align="right"><?php echo $langs->trans('Qty'); ?></td>
@@ -42,16 +38,22 @@ if ($conf->global->PRODUIT_USE_MARKUP) $colspan = 'colspan="2"';
 </tr>
 
 <form name="addproduct" id="addproduct" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id; ?>#add" method="POST">
-<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
-<input type="hidden" name="action" value="addline">
-<input type="hidden" name="id" value="<?php echo $this->id; ?>">
+<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
+<input type="hidden" name="action" value="addline" />
+<input type="hidden" name="id" value="<?php echo $this->id; ?>" />
 
 <tr <?php echo $bcnd[$var]; ?>>
-	<td <?php echo $colspan; ?>>
+	<td>
 	<?php
 	echo $html->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1);
 	if (($conf->product->enabled && $conf->service->enabled) || (empty($conf->product->enabled) && empty($conf->service->enabled))) echo '<br>';
-
+	
+	if (! empty($object->hooks)) {
+		foreach($object->hooks as $module) {
+			$module->formAddProductOption($object);
+		}
+	}
+	
 	// Editor wysiwyg
 	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
     $nbrows=ROWS_2;

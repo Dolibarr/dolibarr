@@ -298,7 +298,7 @@ class Propal extends CommonObject
 	 *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,'',produit)
 	 *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
 	 */
-	function addline($propalid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $type=0, $rang=-1, $special_code=0)
+	function addline($propalid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0)
 	{
 		global $conf;
 
@@ -385,6 +385,7 @@ class Propal extends CommonObject
 			$this->line->total_ttc=$total_ttc;
 			$this->line->product_type=$type;
 			$this->line->special_code=$special_code;
+			$this->line->fk_parent_line=$fk_parent_line;
 
 			// Mise en option de la ligne
 			//if ($conf->global->PROPALE_USE_OPTION_LINE && !$qty) $ligne->special_code=3;
@@ -2345,6 +2346,7 @@ class PropaleLigne
 		if (empty($this->remise_percent)) $this->remise_percent=0;
 		if (empty($this->info_bits)) $this->info_bits=0;
 		if (empty($this->special_code)) $this->special_code=0;
+		if (empty($this->fk_parent_line)) $this->fk_parent_line=0;
 
 		// Check parameters
 		if ($this->product_type < 0) return -1;
@@ -2353,11 +2355,12 @@ class PropaleLigne
 
 		// Insert line into database
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'propaldet';
-		$sql.= ' (fk_propal, description, fk_product, product_type, fk_remise_except, qty, tva_tx, localtax1_tx, localtax2_tx,';
+		$sql.= ' (fk_propal, fk_parent_line, description, fk_product, product_type, fk_remise_except, qty, tva_tx, localtax1_tx, localtax2_tx,';
 		$sql.= ' subprice, remise_percent, ';
 		$sql.= ' info_bits, ';
 		$sql.= ' total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, special_code, rang, marge_tx, marque_tx)';
 		$sql.= " VALUES (".$this->fk_propal.",";
+		$sql.= " ".$this->fk_parent_line.",";
 		$sql.= " '".$this->db->escape($this->desc)."',";
 		$sql.= " ".($this->fk_product?"'".$this->fk_product."'":"null").",";
 		$sql.= " '".$this->product_type."',";

@@ -28,15 +28,9 @@
 ?>
 
 <!-- BEGIN PHP TEMPLATE predefinedproductline_create.tpl.php -->
-<?php
-if ($conf->global->PRODUIT_USE_MARKUP)
-$colspan = 'colspan="4"';
-else
-$colspan = 'colspan="3"';
-?>
 
 <tr class="liste_titre nodrag nodrop">
-	<td <?php echo $colspan; ?>>
+	<td colspan="3">
 	<?php
 	echo $langs->trans("AddNewLine").' - ';
 	if ($conf->service->enabled)
@@ -56,7 +50,7 @@ $colspan = 'colspan="3"';
 <input type="hidden" name="id" value="<?php echo $this->id; ?>">
 
 <tr <?php echo $bcnd[$var]; ?>>
-	<td <?php echo $colspan; ?>>
+	<td colspan="3">
 	<?php
 	// multiprix
 	if($conf->global->PRODUIT_MULTIPRICES)
@@ -65,6 +59,12 @@ $colspan = 'colspan="3"';
 	$html->select_produits('','idprod','',$conf->product->limit_size);
 
 	if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) print '<br>';
+	
+	if (! empty($object->hooks)) {
+		foreach($object->hooks as $module) {
+			$module->formAddProductOption($object);
+		}
+	}
 
 	// Editor wysiwyg
 	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");

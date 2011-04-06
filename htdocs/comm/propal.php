@@ -750,7 +750,10 @@ if ($_POST['action'] == "addline" && $user->rights->propale->creer)
 			$price_base_type,
 			$pu_ttc,
 			$info_bits,
-			$type
+			$type,
+			-1,
+			0,
+			$_POST['fk_parent_line']
 			);
 
 			if ($result > 0)

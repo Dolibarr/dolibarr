@@ -1325,7 +1325,7 @@ class CommonObject
 	 */
 	function showAddPredefinedProductForm($dateSelector,$seller,$buyer)
 	{
-		global $conf,$langs;
+		global $conf,$langs,$object;
 		global $html,$bcnd,$var;
 
         // Use global variables + $dateSelector + $seller and $buyer
@@ -1340,9 +1340,9 @@ class CommonObject
      */
 	function showAddFreeProductForm($dateSelector,$seller,$buyer)
 	{
-		global $conf,$langs;
+		global $conf,$langs,$object;
 		global $html,$bcnd,$var;
-
+		
         // Use global variables + $dateSelector + $seller and $buyer
 		include(DOL_DOCUMENT_ROOT.'/core/tpl/freeproductline_create.tpl.php');
 	}
