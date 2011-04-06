@@ -121,7 +121,7 @@ $tabsql[17]= "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREF
 $tabsql[18]= "SELECT rowid   as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_shipment_mode";
 $tabsql[19]= "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_effectif";
 $tabsql[20]= "SELECT rowid   as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_methode_commande_fournisseur";
-$tabsql[21]= "SELECT rowid   as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_availability";
+$tabsql[21]= "SELECT c.rowid  as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_availability AS c";
 
 // Critere de tri du dictionnaire
 $tabsqlsort[1] ="pays ASC, code ASC";
@@ -238,7 +238,7 @@ $tabrowid[17]= "id";
 $tabrowid[18]= "rowid";
 $tabrowid[19]= "id";
 $tabrowid[20]= "";
-$tabrowid[21]= "";
+$tabrowid[21]= "rowid";
 
 // Condition to show dictionnary in setup page
 $tabcond[1] = true;

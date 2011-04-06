@@ -441,6 +441,23 @@ class pdf_propale_azur extends ModelePDFPropales
 
 			$posy=$pdf->GetY()+4;
 		}
+		
+	// Show availability conditions
+		if ($object->type != 2 && $object->availability_code || $object->availability)
+		{
+			$pdf->SetFont('','B', $default_font_size - 2);
+			$pdf->SetXY($this->marge_gauche, $posy);
+			$titre = $outputlangs->transnoentities("AvailabilityPeriod").':';
+			$pdf->MultiCell(80, 4, $titre, 0, 'L');
+			$pdf->SetTextColor(200,0,0);
+			$pdf->SetFont('','B', $default_font_size - 2);
+			$pdf->SetXY(82, $posy);
+			$lib_availability=$outputlangs->transnoentities("AvailabilityPeriod".$object->availability_code)!=('AvailabilityPeriod'.$object->availability_code)?$outputlangs->transnoentities("AvailabilityPeriod".$object->availability_code):$outputlangs->convToOutputCharset($object->availability);
+			$lib_availability=str_replace('\n',"\n",$lib_availability);
+			$pdf->MultiCell(80, 4, $lib_availability,0,'L');
+
+			$posy=$pdf->GetY()+1;
+		}
 
 		// Show payments conditions
 		if ($object->type != 2 && ($object->cond_reglement_code || $object->cond_reglement))

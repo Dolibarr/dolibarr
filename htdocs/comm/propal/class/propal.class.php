@@ -95,7 +95,8 @@ class Propal extends CommonObject
 	var $fk_address;
 	var $address_type;
 	var $adresse;
-	var $fk_availability;
+	var $availability_id;
+	var $availability_code;
 
 	var $products=array();
 
@@ -642,7 +643,7 @@ class Propal extends CommonObject
 		$sql.= ", ".$this->mode_reglement_id;
 		$sql.= ", '".$this->db->escape($this->ref_client)."'";
 		$sql.= ", ".($this->date_livraison!=''?"'".$this->db->idate($this->date_livraison)."'":'null');
-		$sql.= ", ".$this->fk_availability;
+		$sql.= ", ".$this->availability_id;
 		$sql.= ", ".$conf->entity;
 		$sql.= ")";
 
@@ -905,7 +906,7 @@ class Propal extends CommonObject
 		$sql.= ", datep as dp";
 		$sql.= ", fin_validite as dfv";
 		$sql.= ", date_livraison as date_livraison";
-		$sql.= ", fk_availability";
+		$sql.= ", ca.code as availability_code, ca.label as availability";
 		$sql.= ", model_pdf, ref_client";
 		$sql.= ", note, note_public";
 		$sql.= ", fk_projet, fk_statut";
@@ -919,6 +920,7 @@ class Propal extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_propalst as c, ".MAIN_DB_PREFIX."propal as p";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_mode_reglement = cp.id';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON p.fk_cond_reglement = cr.rowid';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_availability as ca ON p.fk_availability = ca.rowid';
 		$sql.= " WHERE p.fk_statut = c.id";
 		$sql.= " AND p.entity = ".$conf->entity;
 		if ($ref) $sql.= " AND p.ref='".$ref."'";
@@ -959,7 +961,9 @@ class Propal extends CommonObject
 				$this->datep                = $this->db->jdate($obj->dp);
 				$this->fin_validite         = $this->db->jdate($obj->dfv);
 				$this->date_livraison       = $this->db->jdate($obj->date_livraison);
-				$this->fk_availability      = $obj->fk_availability;
+				$this->availability_id      = $obj->fk_availability;
+				$this->availability_code    = $obj->availability_code;
+				$this->availability         = $obj->availability;
 				$this->fk_delivery_address  = $obj->fk_adresse_livraison;	// TODO obsolete
 				$this->fk_address  			= $obj->fk_adresse_livraison;
 
@@ -1779,6 +1783,39 @@ class Propal extends CommonObject
 			return -2;
 		}
 	}
+	
+/**
+	 *   \brief      Change le delai de livraison
+	 *   \param      availability_id      Id du nouveau delai de livraison
+	 *   \return     int                    >0 si ok, <0 si ko
+	 */
+	function availability($availability_id)
+	{
+		dol_syslog('Propale::availability('.$availability_id.')');
+		if ($this->statut >= 0)
+		{
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'propal';
+			$sql .= ' SET fk_availability = '.$availability_id;
+			$sql .= ' WHERE rowid='.$this->id;
+			if ( $this->db->query($sql) )
+			{
+				$this->availability_id = $availability_id;
+				return 1;
+			}
+			else
+			{
+				dol_syslog('Propale::availability Erreur '.$sql.' - '.$this->db->error());
+				$this->error=$this->db->error();
+				return -1;
+			}
+		}
+		else
+		{
+			dol_syslog('Propale::availability, etat propale incompatible');
+			$this->error='Etat propale incompatible '.$this->statut;
+			return -2;
+		}
+	}
 
 
 	/**
@@ -1997,6 +2034,8 @@ class Propal extends CommonObject
 		$this->cond_reglement_code = 'RECEP';
 		$this->mode_reglement_id   = 7;
 		$this->mode_reglement_code = 'CHQ';
+		$this->availability_id     = 1;
+		$this->availability_code   = 'DSP';
 		$this->note_public='This is a comment (public)';
 		$this->note='This is a comment (private)';
 		// Lines

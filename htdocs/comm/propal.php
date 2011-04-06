@@ -232,14 +232,6 @@ if ($_POST['action'] == 'setaddress' && $user->rights->propale->creer)
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
-// Availability
-if ($_POST['action'] == 'setavailability' && $user->rights->propale->creer)
-{
-	$object->fetch($_GET["id"]);
-	$result=$object->set_availability($user,$_POST['fk_availability']);
-	if ($result < 0) dol_print_error($db,$object->error);
-}
-
 // Positionne ref client
 if ($_POST['action'] == 'set_ref_client' && $user->rights->propale->creer)
 {
@@ -265,7 +257,7 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 			$object->ref       				= $_POST['ref'];
 			$object->datep 					= dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 			$object->date_livraison 		= dol_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
-			$object->fk_availability 		= $_POST['fk_availability'];
+			$object->availability_id 		= $_POST['availability_id'];
 			$object->fk_delivery_address 	= $_POST['fk_address'];
 			$object->duree_validite			= $_POST['duree_validite'];
 			$object->cond_reglement_id 		= $_POST['cond_reglement_id'];
@@ -293,7 +285,7 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 		$object->ref_client 			= $_POST['ref_client'];
 		$object->datep 					= dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 		$object->date_livraison 		= dol_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
-		$object->fk_availability 		= $_POST['fk_availability'];
+		$object->availability_id 		= $_POST['availability_id'];
 		$object->fk_delivery_address 	= $_POST['fk_address'];
 		$object->duree_validite 		= $_POST['duree_validite'];
 		$object->cond_reglement_id 		= $_POST['cond_reglement_id'];
@@ -890,6 +882,14 @@ if ($_POST['action'] == 'classin')
 	$object->setProject($_POST['projectid']);
 }
 
+// Delai de livraison
+if ($_POST["action"] == 'setavailability')
+{
+	$object->fetch($_REQUEST['id']);
+	$result = $object->availability($_POST['availability_id']);
+	$_GET['id']=$_REQUEST['id'];
+}
+
 // Conditions de reglement
 if ($_POST["action"] == 'setconditions')
 {
@@ -1284,12 +1284,13 @@ if ($id > 0 || ! empty($ref))
 	print '</td><td colspan="3">';
 	if ($_GET['action'] == 'editavailability')
 	{
-		$html->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_availability,'fk_availability');
+		$html->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id,$object->availability_id,'availability_id');
 	}
 	else
 	{
-		$html->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_availability,'none');
+		$html->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id,$object->availability_id,'none');
 	}
+	
 	print '</td>';
 	print '</tr>';
 

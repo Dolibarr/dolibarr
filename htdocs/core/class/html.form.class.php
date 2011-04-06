@@ -1490,7 +1490,7 @@ class Form
         }
     }
 
-	 /**
+ /**
      *      \brief      Charge dans cache la liste des délais de livraison possibles
      *      \return     int             Nb lignes chargees, 0 si deja chargees, <0 si ko
      */
@@ -1535,7 +1535,7 @@ class Form
      *      \param      filtertype      Pour filtre
      *		\param		addempty		Ajoute entree vide
      */
-    function select_availability($selected='',$htmlname='availability',$filtertype='',$addempty=0)
+ function select_availability($selected='',$htmlname='availid',$filtertype='',$addempty=0)
     {
         global $langs,$user;
 
@@ -2139,7 +2139,7 @@ class Form
      *    	\param      htmlname    	Name of select html field
      *		\param		addempty		Ajoute entree vide
      */
-    function form_availability($page, $selected='', $htmlname='availability', $addempty=0)
+ function form_availability($page, $selected='', $htmlname='availability', $addempty=0)
     {
         global $langs;
         if ($htmlname != "none")
