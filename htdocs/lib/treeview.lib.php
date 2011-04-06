@@ -139,20 +139,12 @@ function tree_showpad(&$fulltree,$key,$selected=0)
 
 
 
-// ------------------------------- Used by enu editor -----------------
+// ------------------------------- Used by menu editor -----------------
 
 /**
- * 	\brief		Ad javascript tree functions
- */
-function tree_addjs()
-{
-	global $langs;
-	print '<script src="'.DOL_URL_ROOT.'/admin/menus/menu.js.php?lang='.$langs->defaultlang.'" type="text/javascript"></script>';
-}
-
-
-/* cette fonction gere le decallage des elements
- suivant leur position dans l'arborescence
+ *  Show an element with correct offset
+ *  @param      $tab    Array of all elements
+ *  @param      $rang   Level of offset
  */
 function tree_showline($tab,$rang)
 {
@@ -220,10 +212,11 @@ function tree_showline($tab,$rang)
 }
 
 
-/*fonction r�cursive d'affichage de l'arbre
- $tab  :tableau des �l�ments
- $pere :index de l'�l�ment courant
- $rang :d�callage de l'�l�ment
+/**
+ *  Recursive function to output menu tree
+ *  @param      $tab    Array of elements
+ *  @param      $pere   Id of parent
+ *  @param      $rang   Level of element
  */
 function tree_recur($tab,$pere,$rang)
 {
@@ -232,17 +225,16 @@ function tree_recur($tab,$pere,$rang)
 	if ($rang > 10)	return;	// Protection contre boucle infinie
 
 	//ballayage du tableau
-	for ($x=0;$x<count($tab);$x++)
+	$sizeoftab=count($tab);
+	for ($x=0; $x < $sizeoftab; $x++)
 	{
-		//si un �l�ment a pour p�re : $pere
+		// If an element has $pere for parent
 		if ($tab[$x][1]==$pere)
 		{
-			//on l'affiche avec le d�callage courrant
+			// We shot it with an offset
 			tree_showline($tab[$x],$rang);
 
-			/*et on recherche ses fils
-			 en rappelant la fonction recur()
-			 (+ incr�mentation du d�callage)*/
+			// And now we search all its sons of lower level
 			tree_recur($tab,$tab[$x][0],$rang+1);
 		}
 	}

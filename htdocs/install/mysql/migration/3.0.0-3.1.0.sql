@@ -43,7 +43,12 @@ ALTER TABLE llx_societe ADD COLUMN fk_currency integer DEFAULT 0 AFTER fk_forme_
 
 ALTER TABLE llx_societe_remise MODIFY remise_client double(6,3) DEFAULT 0 NOT NULL;
 
-create table llx_c_availability
+ALTER TABLE llx_menu ADD COLUMN fk_mainmenu   varchar(16) after fk_menu;
+ALTER TABLE llx_menu ADD COLUMN fk_leftmenu   varchar(16) after fk_menu;
+ALTER TABLE llx_menu MODIFY leftmenu varchar(100) NULL;
+
+
+CREATE TABLE llx_c_availability
 (
 	rowid		integer	 	AUTO_INCREMENT PRIMARY KEY,
 	code		varchar(30) NOT NULL,
@@ -55,7 +60,9 @@ create table llx_c_availability
 ALTER TABLE llx_propal ADD COLUMN fk_availability integer DEFAULT 0 AFTER fk_adresse_livraison;
 ALTER TABLE llx_propal CHANGE COLUMN delivery fk_availability integer DEFAULT 0;
 ALTER TABLE llx_availability CHANGE COLUMN libelle label varchar(60) NOT NULL;
-INSERT INTO llx_c_availability (rowid,code,label,active) VALUES (1, 'DSP', 'Disponible', 1);
-INSERT INTO llx_c_availability (rowid,code,label,active) VALUES (2, 'USM', 'Une semaine', 1);
-INSERT INTO llx_c_availability (rowid,code,label,active) VALUES (3, 'DSM', 'Deux semaines', 1);
-INSERT INTO llx_c_availability (rowid,code,label,active) VALUES (4, 'TSM', 'Trois semaines', 1);
+
+INSERT INTO llx_c_availability (rowid,code,label,active) VALUES (1, 'AV_NOW', 'Immediate', 1);
+INSERT INTO llx_c_availability (rowid,code,label,active) VALUES (2, 'AV_1W',  'One week', 1);
+INSERT INTO llx_c_availability (rowid,code,label,active) VALUES (3, 'AV_2W',  'Two weeks', 1);
+INSERT INTO llx_c_availability (rowid,code,label,active) VALUES (4, 'AV_3W',  'Three weeks', 1);
+

@@ -65,27 +65,6 @@ if (isset($_GET["action"]) && ($_GET["action"] == 'up'))
 	$current=array();
 	$previous=array();
 
-	// Redefine order
-	/*$sql = "SELECT m.rowid, m.position";
-	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql.= " WHERE m.menu_handler='".$menu_handler."'";
-	$sql.= " AND m.entity = ".$conf->entity;
-	$sql.= " ORDER BY m.position, m.rowid";
-	dol_syslog("admin/menus/index.php ".$sql);
-	$resql = $db->query($sql);
-	$num = $db->num_rows($resql);
-	$i = 0;
-	while($i < $num)
-	{
-		$obj = $db->fetch_object($resql);
-		$sqlupdate ="UPDATE ".MAIN_DB_PREFIX."menu as m SET position=".($i+1);
-		$sqlupdate.=" WHERE m.menu_handler='".$menu_handler."'";
-		$sqlupdate.=" AND m.entity = ".$conf->entity;
-		$sqlupdate.=" AND rowid=".$obj->rowid;
-		$resql2 = $db->query($sqlupdate);
-		$i++;
-	}*/
-
 	// Get current position
 	$sql = "SELECT m.rowid, m.position, m.type, m.fk_menu";
 	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
@@ -223,8 +202,9 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 
 $html=new Form($db);
 $htmladmin=new FormAdmin($db);
+$arrayofjs=array('/admin/menus/menu.js.php?lang='.$langs->defaultlang);
 
-llxHeader();
+llxHeader('',$langs->trans("Menus"),'','',0,0,$arrayofjs);
 
 
 print_fiche_titre($langs->trans("Menus"),'','setup');
@@ -292,8 +272,6 @@ $rangLast = 0;
 $idLast = -1;
 if ($conf->use_javascript_ajax)
 {
-	tree_addjs();
-
 	/*-------------------- MAIN -----------------------
 	tableau des elements de l'arbre:
 	c'est un tableau a 2 dimensions.
@@ -315,6 +293,7 @@ if ($conf->use_javascript_ajax)
 	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
 	$sql.= " WHERE menu_handler = '".$menu_handler."'";
 	$sql.= " AND entity = ".$conf->entity;
+	$sql.= " AND fk_menu >= 0";
 	$sql.= " ORDER BY m.position, m.rowid";		// Order is position then rowid (because we need a sort criteria when position is same)
 	$res  = $db->query($sql);
 

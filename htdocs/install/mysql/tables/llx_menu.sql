@@ -29,14 +29,16 @@ CREATE TABLE llx_menu
 	module        varchar(64),                      -- Module name if record is added by a module
 	type          varchar(4) NOT NULL,              -- Menu top or left
 	mainmenu      varchar(100) NOT NULL,            -- Name family/module (home, companies, ...)
-	fk_menu       integer NOT NULL,                 -- 0 or Id of mother menu line
+    leftmenu      varchar(100) NULL,                -- Name family/module for left menu (setup, info, ...)
+	fk_menu       integer NOT NULL,                 -- 0 or Id of mother menu line, or -1 if we use fk_mainmenu and fk_leftmenu
+    fk_mainmenu   varchar(16),                      -- 
+    fk_leftmenu   varchar(16),                      -- 
 	position      integer NOT NULL,                 -- Sort order of entry
 	url           varchar(255) NOT NULL,            -- Relative (or absolute) url to go
 	target        varchar(100) NULL,                -- Target of Url link
 	titre         varchar(255) NOT NULL,            -- Key for menu translation 
 	langs         varchar(100),                     -- Lang file to load for translation
-	level         smallint,                         -- Used by auguria menu only. Do not use.
-	leftmenu      varchar(1) NULL default '1',      -- Say if left menu defined in pre.inc.php and used by top menu must be overwritten by dynamic databse menu (1=yes by default)
+	level         smallint,                         -- Deprecated. Not used.
 	perms         varchar(255),                     -- Condition to show enabled or disabled
 	enabled       varchar(255) NULL default '1',    -- Condition to show or hide
 	usertype      integer NOT NULL default '0',     -- 0 if menu for all users, 1 for external only, 2 for internal only

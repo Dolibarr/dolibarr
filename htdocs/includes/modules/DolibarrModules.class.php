@@ -1036,8 +1036,8 @@ class DolibarrModules
 
 
 	/**
-	 *	\brief      Insert menus entries into llx_menu*
-	 *	\return     int     Nb of errors (0 if OK)
+	 *	Insert menus entries found into $this->menu into llx_menu*
+	 *	@return     int     Nb of errors (0 if OK)
 	 */
 	function insert_menus()
 	{
@@ -1063,15 +1063,27 @@ class DolibarrModules
 			else
 			{
 				//print 'xxx'.$this->menu[$key]['fk_menu'];exit;
-				$numparent=$this->menu[$key]['fk_menu'];
-				$numparent=str_replace('r=','',$numparent);
-				if (isset($this->menu[$numparent]['rowid']))
+				$foundparent=0;
+				$fk_parent=$this->menu[$key]['fk_menu'];
+				if (preg_match('/r=/',$fk_parent))
 				{
-					$menu->fk_menu=$this->menu[$numparent]['rowid'];
+    				$fk_parent=str_replace('r=','',$fk_parent);
+    				if (isset($this->menu[$fk_parent]['rowid']))
+    				{
+    					$menu->fk_menu=$this->menu[$fk_parent]['rowid'];
+                        $foundparent=1;
+    				}
 				}
-				else
+				elseif (preg_match('/mainmenu=(.*),leftmenu=(.*)/',$fk_parent,$reg))
 				{
-					$this->error="BadDefinitionOfMenuArrayInModuleDescriptor";
+				    $menu->fk_menu=-1;
+				    $menu->fk_mainmenu=$reg[1];
+				    $menu->fk_leftmenu=$reg[2];
+                    $foundparent=1;
+				}
+				if (! $foundparent)
+				{
+					$this->error="ErrorBadDefinitionOfMenuArrayInModuleDescriptor (bad value for key fk_menu)";
 					dol_syslog("DolibarrModules::insert_menus ".$this->error." ".$this->menu[$key]['fk_menu'], LOG_ERR);
 					$err++;
 				}

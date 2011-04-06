@@ -72,9 +72,9 @@ class Menubase
 
 
     /**
-     *      \brief      Create menu entry into database
-     *      \param      user        User that create
-     *      \return     int         <0 si ko, >0 si ok
+     *      Create menu entry into database
+     *      @param      user        User that create
+     *      @return     int         <0 if KO, Id of record if OK
      */
     function create($user)
     {
@@ -85,14 +85,15 @@ class Menubase
         $this->module=trim($this->module);
         $this->type=trim($this->type);
         $this->mainmenu=trim($this->mainmenu);
+        $this->leftmenu=trim($this->leftmenu);
         $this->fk_menu=trim($this->fk_menu);
+        $this->fk_mainmenu=trim($this->fk_mainmenu);
+        $this->fk_leftmenu=trim($this->fk_leftmenu);
         $this->position=trim($this->position);
         $this->url=trim($this->url);
         $this->target=trim($this->target);
         $this->titre=trim($this->titre);
         $this->langs=trim($this->langs);
-        $this->level=trim($this->level);
-        $this->leftmenu=trim($this->leftmenu);
         $this->perms=trim($this->perms);
         $this->enabled=trim($this->enabled);
         $this->user=trim($this->user);
@@ -115,14 +116,15 @@ class Menubase
         $sql.= "module,";
         $sql.= "type,";
         $sql.= "mainmenu,";
+        $sql.= "leftmenu,";
         $sql.= "fk_menu,";
+        $sql.= "fk_mainmenu,";
+        $sql.= "fk_leftmenu,";
         $sql.= "position,";
         $sql.= "url,";
         $sql.= "target,";
         $sql.= "titre,";
         $sql.= "langs,";
-        $sql.= "level,";
-        $sql.= "leftmenu,";
         $sql.= "perms,";
         $sql.= "enabled,";
         $sql.= "usertype";
@@ -132,14 +134,15 @@ class Menubase
         $sql.= " '".$this->module."',";
         $sql.= " '".$this->type."',";
         $sql.= " '".$this->mainmenu."',";
+        $sql.= " '".$this->leftmenu."',";
         $sql.= " '".$this->fk_menu."',";
+        $sql.= " ".($this->fk_mainmenu?"'".$this->fk_mainmenu."'":"null").",";
+        $sql.= " ".($this->fk_leftmenu?"'".$this->fk_leftmenu."'":"null").",";
         $sql.= " '".$this->position."',";
         $sql.= " '".$this->url."',";
         $sql.= " '".$this->target."',";
         $sql.= " '".$this->titre."',";
         $sql.= " '".$this->langs."',";
-        $sql.= " '".$this->level."',";
-        $sql.= " '".$this->leftmenu."',";
         $sql.= " '".$this->perms."',";
         $sql.= " '".$this->enabled."',";
         $sql.= " '".$this->user."'";
@@ -162,11 +165,11 @@ class Menubase
         }
     }
 
-    /*
-     *      \brief      Update database
-     *      \param      user        	User that modify
-     *      \param      notrigger	    0=no, 1=yes (no update trigger)
-     *      \return     int         	<0 if KO, >0 if OK
+    /**
+     *      Update menu entry into database
+     *      @param      user        	User that modify
+     *      @param      notrigger	    0=no, 1=yes (no update trigger)
+     *      @return     int         	<0 if KO, >0 if OK
      */
     function update($user=0, $notrigger=0)
     {
@@ -178,14 +181,15 @@ class Menubase
         $this->module=trim($this->module);
         $this->type=trim($this->type);
         $this->mainmenu=trim($this->mainmenu);
+        $this->leftmenu=trim($this->leftmenu);
         $this->fk_menu=trim($this->fk_menu);
+        $this->fk_mainmenu=trim($this->fk_mainmenu);
+        $this->fk_leftmenu=trim($this->fk_leftmenu);
         $this->position=trim($this->position);
         $this->url=trim($this->url);
         $this->target=trim($this->target);
         $this->titre=trim($this->titre);
         $this->langs=trim($this->langs);
-        $this->level=trim($this->level);
-        $this->leftmenu=trim($this->leftmenu);
         $this->perms=trim($this->perms);
         $this->enabled=trim($this->enabled);
         $this->user=trim($this->user);
@@ -199,14 +203,15 @@ class Menubase
         $sql.= " module='".$this->db->escape($this->module)."',";
         $sql.= " type='".$this->type."',";
         $sql.= " mainmenu='".$this->db->escape($this->mainmenu)."',";
+        $sql.= " leftmenu='".$this->db->escape($this->leftmenu)."',";
         $sql.= " fk_menu='".$this->fk_menu."',";
+        $sql.= " fk_mainmenu=".($this->fk_mainmenu?"'".$this->fk_mainmenu."'":"null").",";
+        $sql.= " fk_leftmenu=".($this->fk_leftmenu?"'".$this->fk_leftmenu."'":"null").",";
         $sql.= " position='".$this->position."',";
         $sql.= " url='".$this->db->escape($this->url)."',";
         $sql.= " target='".$this->db->escape($this->target)."',";
         $sql.= " titre='".$this->db->escape($this->titre)."',";
         $sql.= " langs='".$this->db->escape($this->langs)."',";
-        $sql.= " level='".$this->level."',";
-        $sql.= " leftmenu='".$this->db->escape($this->leftmenu)."',";
         $sql.= " perms='".$this->db->escape($this->perms)."',";
         $sql.= " enabled='".$this->db->escape($this->enabled)."',";
         $sql.= " usertype='".$this->user."'";
@@ -242,14 +247,13 @@ class Menubase
         $sql.= " t.module,";
         $sql.= " t.type,";
         $sql.= " t.mainmenu,";
+        $sql.= " t.leftmenu,";
         $sql.= " t.fk_menu,";
         $sql.= " t.position,";
         $sql.= " t.url,";
         $sql.= " t.target,";
         $sql.= " t.titre,";
         $sql.= " t.langs,";
-        $sql.= " t.level,";
-        $sql.= " t.leftmenu,";
         $sql.= " t.perms,";
         $sql.= " t.enabled,";
         $sql.= " t.usertype as user,";
@@ -272,14 +276,13 @@ class Menubase
                 $this->module = $obj->module;
                 $this->type = $obj->type;
                 $this->mainmenu = $obj->mainmenu;
+                $this->leftmenu = $obj->leftmenu;
                 $this->fk_menu = $obj->fk_menu;
                 $this->position = $obj->position;
                 $this->url = $obj->url;
                 $this->target = $obj->target;
                 $this->titre = $obj->titre;
                 $this->langs = $obj->langs;
-                $this->level = $obj->level;
-                $this->leftmenu = $obj->leftmenu;
                 $this->perms = $obj->perms;
                 $this->enabled = str_replace("\"","'",$obj->enabled);
                 $this->user = $obj->user;
@@ -324,8 +327,8 @@ class Menubase
 
 
     /**
-     *		\brief		Initialise object with example values
-     *		\remarks	id must be 0 if object instance is a specimen.
+     *		Initialise object with example values
+     *		Id must be 0 if object instance is a specimen.
      */
     function initAsSpecimen()
     {
@@ -389,41 +392,6 @@ class Menubase
                 }
             }
         }
-    }
-
-    /**
-     * Return all values of mainmenu where leftmenu defined
-     * in pre.inc.php must be overwritten completely by dynamic menu.
-     *
-     * @return array
-     */
-    function listeMainmenu()
-    {
-        global $conf;
-
-        $overwritemenufor=array();
-
-        $sql = "SELECT DISTINCT m.mainmenu";
-        $sql.= " FROM " . MAIN_DB_PREFIX . "menu as m";
-        $sql.= " WHERE m.menu_handler in ('".$this->menu_handler."','all')";
-        $sql.= " AND m.entity = ".$conf->entity;
-        $sql.= " AND m.leftmenu != '0'";	// leftmenu exists in database so pre.inc.php must be overwritten
-
-        //print $sql;
-        $res = $this->db->query($sql);
-        if ($res)
-        {
-            while ($menu = $this->db->fetch_array($res))
-            {
-                if ($menu['mainmenu']) $overwritemenufor[] = $menu['mainmenu'];
-            }
-        }
-        else
-        {
-            dol_print_error($this->db);
-        }
-
-        return $overwritemenufor;
     }
 
     /**
