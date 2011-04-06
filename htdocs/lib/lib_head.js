@@ -676,7 +676,7 @@ function hideMessage(fieldId,message) {
                         }
                     }
                 })
-                .addClass( "ui-widget ui-widget-content ui-corner-left" );
+                .addClass( "ui-widget ui-widget-content ui-corner-left dolibarrcombobox" );
 
             input.data( "autocomplete" )._renderItem = function( ul, item ) {
                 return jQuery( "<li></li>" )
