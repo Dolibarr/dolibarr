@@ -44,9 +44,8 @@ class DaoThirdPartyIndividual extends Societe
 	/**
 	 *    Lecture des donnees dans la base
 	 *    @param	id          Element id
-	 *    @param	action		Type of action
 	 */
-	function fetch($id='', $action='')
+	function fetch($id)
 	{
 		$result = parent::fetch($id);
 

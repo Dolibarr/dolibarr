@@ -72,7 +72,7 @@ class ActionsCardCommon
         {
             $this->tpl[$key] = $value;
         }
-        
+
         if ($action == 'create')
         {
         	if ($conf->use_javascript_ajax)
@@ -110,7 +110,7 @@ class ActionsCardCommon
 					})
 				</script>'."\n";
 			}
-        	
+
             // Load object modCodeClient
             $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
             if (! $module) dolibarr_error('',$langs->trans("ErrorModuleThirdPartyCodeInCompanyModuleNotDefined"));
@@ -138,11 +138,11 @@ class ActionsCardCommon
             $this->tpl['ismodifiable_customercode'] = $this->object->codeclient_modifiable();
             $s=$modCodeClient->getToolTip($langs,$this->object,0);
             $this->tpl['help_customercode'] = $form->textwithpicto('',$s,1);
-            
+
             if ($conf->fournisseur->enabled)
             {
             	$this->tpl['supplier_enabled'] = 1;
-            	
+
             	// Load object modCodeFournisseur
             	$module=$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON;
             	if (! $module) $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
@@ -155,7 +155,7 @@ class ActionsCardCommon
             	$this->tpl['auto_suppliercode'] = $modCodeFournisseur->code_auto;
             	// We verified if the tag prefix is used
             	if ($modCodeFournisseur->code_auto) $this->tpl['prefix_suppliercode'] = $modCodeFournisseur->verif_prefixIsUsed();
-            	
+
             	// Supplier
             	$this->tpl['yn_supplier'] = $form->selectyesno("fournisseur",$this->object->fournisseur,1);
             	$this->tpl['suppliercode'] = $this->object->code_fournisseur;
@@ -163,7 +163,7 @@ class ActionsCardCommon
             	$this->tpl['ismodifiable_suppliercode'] = $this->object->codefournisseur_modifiable();
             	$s=$modCodeFournisseur->getToolTip($langs,$this->object,1);
             	$this->tpl['help_suppliercode'] = $form->textwithpicto('',$s,1);
-            	
+
             	$this->object->LoadSupplierCateg();
             	$this->tpl['suppliercategory'] = $this->object->SupplierCategories;
             	$this->tpl['select_suppliercategory'] = $form->selectarray("fournisseur_categorie",$this->object->SupplierCategories,$_POST["fournisseur_categorie"],1);
@@ -588,7 +588,7 @@ class ActionsCardCommon
         			}
 
         			$oldsoccanvas = new Canvas($this->db);
-        			$oldsoccanvas->getCanvas('thirdparty','card',$this->canvas);
+        			$oldsoccanvas->getCanvas('thirdparty','card',$this->object->canvas);
         			$result=$oldsoccanvas->fetch($socid);
 
         			// To not set code if third party is not concerned. But if it had values, we keep them.

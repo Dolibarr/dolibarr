@@ -1240,7 +1240,8 @@ class CommonObject
 
     /**
      *  Load type of canvas of an object
-     *  @param      id      element id
+     *  @param      id      Record id
+     *  @param      ref     Record ref
      */
     function getCanvas($id=0,$ref='')
     {

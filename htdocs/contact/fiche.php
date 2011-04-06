@@ -40,10 +40,12 @@ $langs->load("other");
 $langs->load("commercial");
 
 $errors = array();
-$socid = GETPOST("socid");
+
+$action = GETPOST('action');
 
 // Security check
-$id = isset($_GET["id"])?$_GET["id"]:'';
+$socid = GETPOST("socid");
+$id = GETPOST("id");
 if ($user->societe_id) $socid=$user->societe_id;
 
 $object = new Contact($db);
@@ -54,8 +56,7 @@ $canvas = (!empty($object->canvas)?$object->canvas:GETPOST("canvas"));
 if (! empty($canvas))
 {
     require_once(DOL_DOCUMENT_ROOT."/core/class/canvas.class.php");
-    $objcanvas = new Canvas($db);
-
+    $objcanvas = new Canvas($db,$action);
     $objcanvas->getCanvas('contact','contactcard',$canvas);
 
     // Security check
@@ -72,20 +73,21 @@ else
  *	Actions
  */
 
-// If canvas is defined, because on url, or because contact was created with canvas feature on,
-// we use the canvas feature.
-// If canvas is not defined, we use standard feature.
-if (! empty($canvas))
+// If canvas actions are defined, because on url, or because contact was created with canvas feature on, we use the canvas feature.
+// If canvas actions are not defined, we use standard feature.
+if (method_exists($objcanvas->control,'doActions'))
 {
     // -----------------------------------------
     // When used with CANVAS
     // -----------------------------------------
-
-    // Load data control
     $objcanvas->doActions($id);
 }
 else
 {
+    // -----------------------------------------
+    // When used in standard mode
+    // -----------------------------------------
+
     // Creation utilisateur depuis contact
     if ($_POST["action"] == 'confirm_create_user' && $_POST["confirm"] == 'yes' && $user->rights->user->user->creer)
     {
@@ -286,16 +288,18 @@ if ($socid > 0)
     $objsoc->fetch($socid);
 }
 
-if (! empty($canvas))
+if (! empty($objcanvas->template_dir))
 {
     // -----------------------------------------
     // When used with CANVAS
     // -----------------------------------------
+    //$objcanvas->doOutput($socid);
 
-    if (GETPOST("action") == 'create')
+    if ($action == 'create')
     {
-        // Set action type to objcanvas->action
-        $objcanvas->setAction(GETPOST("action"));
+        /*
+         * Mode creation
+         */
 
         // Assign _POST data to objcanvas->object->xxx
         $objcanvas->assign_post();
@@ -314,16 +318,13 @@ if (! empty($canvas))
         dol_htmloutput_errors($objcanvas->error,$objcanvas->errors);
 
         // Display canvas
-        $objcanvas->display_canvas();
+        $objcanvas->display_canvas('create');
     }
-    else if (GETPOST("id") && GETPOST("action") == 'edit')
+    else if ($action == 'edit')
     {
         /*
          * Mode edition
          */
-
-        // Set action type
-        $objcanvas->setAction(GETPOST("action"));
 
         // Fetch object
         $result=$objcanvas->fetch($id);
@@ -342,19 +343,18 @@ if (! empty($canvas))
             $objcanvas->assign_values();
 
             // Display canvas
-            $objcanvas->display_canvas();
+            $objcanvas->display_canvas('edit');
         }
         else
         {
             dol_htmloutput_errors($objcanvas->error,$objcanvas->errors);
         }
     }
-
-    if (GETPOST("id") && GETPOST("action") != 'edit')
+    else
     {
-        // Set action type
-        $objcanvas->setAction('view');
-
+        /*
+         * Mode view
+         */
         // Fetch object
         $result=$objcanvas->fetch($id);
         if ($result > 0)
@@ -375,7 +375,7 @@ if (! empty($canvas))
             dol_htmloutput_errors($objcanvas->error,$objcanvas->errors);
 
             // Display canvas
-            $objcanvas->display_canvas();
+            $objcanvas->display_canvas('view');
 
             print show_actions_todo($conf,$langs,$db,$objsoc,$objcanvas->control->object);
 

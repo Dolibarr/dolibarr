@@ -44,7 +44,10 @@ $langs->load("banks");
 $langs->load("users");
 if ($conf->notification->enabled) $langs->load("mails");
 
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$action = GETPOST('action');
+
+// Security check
+$socid = GETPOST("socid");
 if ($user->societe_id) $socid=$user->societe_id;
 
 $soc = new Societe($db);
@@ -55,12 +58,10 @@ $canvas = (!empty($soc->canvas)?$soc->canvas:GETPOST("canvas"));
 if (! empty($canvas))
 {
 	require_once(DOL_DOCUMENT_ROOT."/core/class/canvas.class.php");
-	$soccanvas = new Canvas($db);
-
-	$soccanvas->getCanvas('thirdparty','card',$canvas);
-
+	$objcanvas = new Canvas($db,$action);
+	$objcanvas->getCanvas('thirdparty','card',$canvas);
 	// Security check
-	$result = $soccanvas->restrictedArea($user, 'societe', $socid);
+	$result = $objcanvas->restrictedArea($user, 'societe', $socid);
 }
 else
 {
@@ -74,17 +75,14 @@ else
  * Actions
  */
 
-// If canvas is defined, because on url, or because company was created with canvas feature on,
-// we use the canvas feature.
-// If canvas is not defined, we use standard feature.
-if (! empty($canvas))
+// If canvas actions are defined, because on url, or because contact was created with canvas feature on, we use the canvas feature.
+// If canvas actions are not defined, we use standard feature.
+if (method_exists($objcanvas->control,'doActions'))
 {
 	// -----------------------------------------
 	// When used with CANVAS
 	// -----------------------------------------
-
-	// Load data control
-	$soccanvas->doActions($socid);
+	$objcanvas->doActions($socid);
 }
 else
 {
@@ -283,7 +281,6 @@ else
 				else
 				{
 					$soc->id = $socid;
-					$reload = 0;
 
 					$mesg = $soc->error;
 					$_GET["action"]= "edit";
@@ -304,7 +301,6 @@ else
 		}
 		else
 		{
-			$reload = 0;
 			$langs->load("errors");
 			$mesg=$langs->trans($soc->error);
 			$_GET["action"]='';
@@ -371,67 +367,61 @@ $formcompany = new FormCompany($db);
 $countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
 
-if (! empty($canvas))
+if (! empty($objcanvas->template_dir))
 {
 	// -----------------------------------------
 	// When used with CANVAS
 	// -----------------------------------------
-	if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] || GETPOST("action") == 'create')
+	if ($action == 'create')
 	{
-		/*
-		 *	Mode creation
-		 */
-
-		// Set action type
-		$soccanvas->setAction(GETPOST("action"));
-
-		// Card header
-		$title = $soccanvas->getTitle();
-		print_fiche_titre($title);
+        /*
+         * Mode creation
+         */
 
 		// Assign _POST data
-		$soccanvas->assign_post();
+		$objcanvas->assign_post();
 
 		// Assign template values
-		$soccanvas->assign_values();
+		$objcanvas->assign_values();
+
+        // Card header
+        $title = $objcanvas->getTitle();
+        print_fiche_titre($title);
 
 		// Show errors
-		dol_htmloutput_errors($soccanvas->error,$soccanvas->errors);
+		dol_htmloutput_errors($objcanvas->error,$objcanvas->errors);
 
 		// Display canvas
-		$soccanvas->display_canvas();
+		$objcanvas->display_canvas('create');
 	}
-	elseif (GETPOST("action") == 'edit')
+	elseif ($action == 'edit')
 	{
 		/*
 		 * Mode edition
 		 */
 
-		// Set action type
-		$soccanvas->setAction(GETPOST("action"));
-
 		// Card header
-		$title = $soccanvas->getTitle();
+		$title = $objcanvas->getTitle();
 		print_fiche_titre($title);
 
-		if ($reload || ! $_POST["nom"])
+		if (! $_POST["nom"])
 		{
 			//Reload object
-			$soccanvas->fetch($socid);
+			$objcanvas->fetch($socid);
 		}
 		else
 		{
 			// Assign _POST data
-			$soccanvas->assign_post();
+			$objcanvas->assign_post();
 		}
 
-		dol_htmloutput_errors($soccanvas->error,$soccanvas->errors);
+		dol_htmloutput_errors($objcanvas->error,$objcanvas->errors);
 
 		// Assign values
-		$soccanvas->assign_values();
+		$objcanvas->assign_values();
 
 		// Display canvas
-		$soccanvas->display_canvas();
+		$objcanvas->display_canvas('edit');
 	}
 	else
 	{
@@ -439,21 +429,18 @@ if (! empty($canvas))
 		 * Mode view
 		 */
 
-		// Set action type
-		$soccanvas->setAction('view');
-
 		// Fetch object
-		$result=$soccanvas->fetch($socid);
+		$result=$objcanvas->fetch($socid);
 		if ($result > 0)
 		{
 			// Card header
-			$soccanvas->showHead();
+			$objcanvas->showHead();
 
 			// Assign values
-			$soccanvas->assign_values();
+			$objcanvas->assign_values();
 
 			// Display canvas
-			$soccanvas->display_canvas();
+			$objcanvas->display_canvas('view');
 
 
 			print '<table width="100%"><tr><td valign="top" width="50%">';
@@ -469,7 +456,7 @@ if (! empty($canvas))
 
 			$var=true;
 
-			$somethingshown=$formfile->show_documents('company',$socid,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$soccanvas->control->object->default_lang);
+			$somethingshown=$formfile->show_documents('company',$socid,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$objcanvas->control->object->default_lang);
 
 			print '</td>';
 			print '<td></td>';
@@ -477,19 +464,19 @@ if (! empty($canvas))
 			print '</table>';
 
 			print '<br>';
-			
+
 			// Subsidiaries list
-			$result=show_subsidiaries($conf,$langs,$db,$soccanvas->control->object);
+			$result=show_subsidiaries($conf,$langs,$db,$objcanvas->control->object);
 
 			// Contacts list
-			$result=show_contacts($conf,$langs,$db,$soccanvas->control->object);
+			$result=show_contacts($conf,$langs,$db,$objcanvas->control->object);
 
 			// Projects list
-			$result=show_projects($conf,$langs,$db,$soccanvas->control->object);
+			$result=show_projects($conf,$langs,$db,$objcanvas->control->object);
 		}
 		else
 		{
-			dol_htmloutput_errors($soccanvas->error,$soccanvas->errors);
+			dol_htmloutput_errors($objcanvas->error,$objcanvas->errors);
 		}
 	}
 
@@ -499,7 +486,7 @@ else
 	// -----------------------------------------
 	// When used in standard mode
 	// -----------------------------------------
-	if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] || GETPOST('action') == 'create')
+	if (GETPOST('action') == 'create')
 	{
 		/*
 		 *  Creation
@@ -762,7 +749,7 @@ else
 		print '</td></tr>';
 
 		// State
-		if (empty($conf->global->SOCIETE_DISABLE_STATE)) 
+		if (empty($conf->global->SOCIETE_DISABLE_STATE))
 		{
 			print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
 			if ($soc->pays_id)
@@ -775,7 +762,7 @@ else
 			}
 			print '</td></tr>';
 		}
-		
+
 		// Phone / Fax
 		print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="tel" value="'.$soc->tel.'"></td>';
 		print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax" value="'.$soc->fax.'"></td></tr>';
@@ -978,7 +965,7 @@ else
 				$prefixSupplierIsUsed = $modCodeFournisseur->verif_prefixIsUsed();
 			}
 
-			if ($reload || ! $_POST["nom"])
+			if (! $_POST["nom"])
 			{
 				$soc = new Societe($db);
 				$soc->id = $socid;
@@ -1187,13 +1174,13 @@ else
 			print '</td></tr>';
 
 			// State
-			if (empty($conf->global->SOCIETE_DISABLE_STATE)) 
+			if (empty($conf->global->SOCIETE_DISABLE_STATE))
 			{
 				print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
 				$formcompany->select_departement($soc->departement_id,$soc->pays_code);
 				print '</td></tr>';
 			}
-			
+
 			// Phone / Fax
 			print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="tel" value="'.$soc->tel.'"></td>';
 			print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax" value="'.$soc->fax.'"></td></tr>';
@@ -1606,7 +1593,7 @@ else
 		}
 
 		// Ban
-		if (empty($conf->global->SOCIETE_DISABLE_BANKACCOUNT)) 
+		if (empty($conf->global->SOCIETE_DISABLE_BANKACCOUNT))
 		{
 			print '<tr><td>';
 			print '<table width="100%" class="nobordernopadding"><tr><td>';
@@ -1622,9 +1609,9 @@ else
 			print $soc->display_rib();
 			print '</td></tr>';
 		}
-		
+
 		// Parent company
-		if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY)) 
+		if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY))
 		{
 			print '<tr><td>';
 			print '<table width="100%" class="nobordernopadding"><tr><td>';
@@ -1649,7 +1636,7 @@ else
 			}
 			print '</td></tr>';
 		}
-		
+
 		// Commercial
 		print '<tr><td>';
 		print '<table width="100%" class="nobordernopadding"><tr><td>';
@@ -1769,7 +1756,7 @@ else
 		print '</table>';
 
 		print '<br>';
-		
+
 		// Subsidiaries list
 		$result=show_subsidiaries($conf,$langs,$db,$soc);
 
