@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,10 +76,7 @@ $sql.= " date_format(a.datep, '%Y') as year";
 $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a,";
 $sql.= " ".MAIN_DB_PREFIX."user as u";
 $sql.= " WHERE a.fk_user_author = u.rowid";
-if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY))
-{
-	$sql.= " AND u.entity in (0, ".$conf->entity.")";
-}
+$sql.= " AND a.entity = ".$conf->entity;
 $sql.= " AND percent = 100";
 $sql.= " GROUP BY year, month, df";
 $sql.= " ORDER BY year DESC, month DESC, df DESC";

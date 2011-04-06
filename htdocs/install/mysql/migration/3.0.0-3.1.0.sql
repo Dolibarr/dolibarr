@@ -66,3 +66,5 @@ INSERT INTO llx_c_availability (rowid,code,label,active) VALUES (2, 'AV_1W',  'O
 INSERT INTO llx_c_availability (rowid,code,label,active) VALUES (3, 'AV_2W',  'Two weeks', 1);
 INSERT INTO llx_c_availability (rowid,code,label,active) VALUES (4, 'AV_3W',  'Three weeks', 1);
 
+ALTER TABLE llx_actioncomm ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER id;
+

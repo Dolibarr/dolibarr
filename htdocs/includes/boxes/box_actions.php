@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,10 +76,10 @@ class box_actions extends ModeleBoxes {
 			$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm AS ta, ";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " ".MAIN_DB_PREFIX."societe_commerciaux AS sc, ";
 			$sql.= MAIN_DB_PREFIX."actioncomm AS a";
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe AS s ON a.fk_soc = s.rowid";
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid AND s.entity IN (0, ".$conf->entity.")";
 			$sql.= " WHERE a.fk_action = ta.id";
+			$sql.= " AND a.entity = ".$conf->entity;
 			$sql.= " AND a.percent <> 100";
-			$sql.= " AND s.entity = ".$conf->entity;
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 			if($user->societe_id)	$sql.= " AND s.rowid = ".$user->societe_id;
 			$sql.= " ORDER BY a.datec DESC";
