@@ -577,6 +577,7 @@ class Propal extends CommonObject
 
 		// Clean parameters
 		$this->fin_validite = $this->datep + ($this->duree_validite * 24 * 3600);
+        if (empty($this->availability_id)) $this->availability_id=0;
 
 		dol_syslog("Propal::Create");
 
@@ -1238,7 +1239,7 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *      \brief      Set delivery 
+	 *      \brief      Set delivery
 	 *      \param      user		  Objet utilisateur qui modifie
 	 *      \param      delivery      delai de livraison
 	 *      \return     int           <0 si ko, >0 si ok
@@ -1783,7 +1784,7 @@ class Propal extends CommonObject
 			return -2;
 		}
 	}
-	
+
 /**
 	 *   \brief      Change le delai de livraison
 	 *   \param      availability_id      Id du nouveau delai de livraison
@@ -2328,7 +2329,7 @@ class PropaleLigne
 		if ($result)
 		{
 			$objp = $this->db->fetch_object($result);
-			
+
 			$this->rowid			= $objp->rowid;
 			$this->fk_propal		= $objp->fk_propal;
 			$this->fk_parent_line	= $objp->fk_parent_line;
