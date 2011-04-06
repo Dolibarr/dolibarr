@@ -43,6 +43,8 @@ class Menubase
     var $type;
     var $mainmenu;
     var $fk_menu;
+    var $fk_mainmenu;
+    var $fk_leftmenu;
     var $position;
     var $url;
     var $target;
