@@ -103,8 +103,7 @@ class Canvas
 		/*print 'canvas='.$this->canvas.'<br>';
 		print 'childmodule='.$childmodule.' targetmodule='.$targetmodule.'<br>';
 		print 'this->aliasmodule='.$this->aliasmodule.' this->targetmodule='.$this->targetmodule.'<br>';
-		print 'childmodule='.$conf->$childmodule->enabled.' targetmodule='.$conf->$targetmodule->enabled.'<br>';
-        */
+		print 'childmodule='.$conf->$childmodule->enabled.' targetmodule='.$conf->$targetmodule->enabled.'<br>';*/
 
 		if (! $conf->$childmodule->enabled || ! $conf->$targetmodule->enabled) accessforbidden();
 
@@ -132,7 +131,7 @@ class Canvas
         }
 
 		// Include specific library
-		// FIXME Specific libraries must be included by files that need them only, so by actions and/or dao files.
+		// TODO Specific libraries must be included by files that need them only, so by actions and/or dao files.
 		$libfile = dol_buildpath('/'.$this->aliasmodule.'/lib/'.$this->aliasmodule.'.lib.php');
 		if (file_exists($libfile)) require_once($libfile);
 
@@ -142,6 +141,8 @@ class Canvas
         {
             $this->template_dir='';
         }
+        //print '/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/tpl/';
+        //print 'template_dir='.$this->template_dir.'<br>';
 
 		return 1;
 	}
@@ -196,18 +197,7 @@ class Canvas
 
 
     /**
-     *  Return the title of card
-     *  // FIXME An output function is stored inside an action class. Must change this.
-     */
-    function getTitle()
-    {
-        if (method_exists($this->control,'getTitle')) return $this->control->getTitle($this->action);
-        else return '';
-    }
-
-    /**
      *  Return the head of card (tabs)
-     *  // FIXME An output function is stored inside an action class. Must change this.
      */
     function showHead()
     {
@@ -217,7 +207,7 @@ class Canvas
 
     /**
      *    Assigne les valeurs POST dans l'objet
-     *    // FIXME This is useless. POST is already visible from everywhere.
+     *    // TODO This should be useless. POST is already visible from everywhere.
      */
     function assign_post()
     {
@@ -230,7 +220,7 @@ class Canvas
 	 */
 	function assign_values()
 	{
-		$this->control->assign_values($this->action);
+	    if (method_exists($this->control,'assign_values')) $this->control->assign_values($this->action);
 	}
 
 	/**

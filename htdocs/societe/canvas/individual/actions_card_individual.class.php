@@ -44,32 +44,23 @@ class ActionsCardIndividual extends ActionsCardCommon
 		$this->db 				= $DB;
 	}
 
-	/**
-	 * 	Return the title of card
-	 */
-	function getTitle($action)
-	{
-		global $langs;
 
-		$out='';
+    /**
+     *  Return the title of card
+     */
+    function getTitle($action)
+    {
+        global $langs;
 
-		if ($action == 'view') 		$out.= $langs->trans("Individual");
-		if ($action == 'edit') 		$out.= $langs->trans("EditIndividual");
-		if ($action == 'create')	$out.= $langs->trans("NewIndividual");
+        $out='';
 
-		return $out;
-	}
-	
-	/**
-	 * 	Return the head of card (tabs)
-	 */
-	function showHead($action)
-	{
-		$head = societe_prepare_head($this->object);
-		$title = $this->getTitle($action);
-		
-		return dol_fiche_head($head, 'card', $title, 0, 'company');
-	}
+        if ($action == 'view')      $out.= $langs->trans("Individual");
+        if ($action == 'edit')      $out.= $langs->trans("EditIndividual");
+        if ($action == 'create')    $out.= $langs->trans("NewIndividual");
+
+        return $out;
+    }
+
 
 	/**
      *    Assigne les valeurs POST dans l'objet
@@ -115,7 +106,7 @@ class ActionsCardIndividual extends ActionsCardCommon
 			}
 		}
 	}
-	
+
 	/**
 	 * 	Check permissions of a user to show a page and an object. Check read permission
 	 * 	If $_REQUEST['action'] defined, we also check write permission.

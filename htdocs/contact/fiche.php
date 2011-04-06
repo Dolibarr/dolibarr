@@ -81,6 +81,16 @@ if (method_exists($objcanvas->control,'doActions'))
     // When used with CANVAS
     // -----------------------------------------
     $objcanvas->doActions($id);
+    if (empty($objcanvas->error) && (empty($objcanvas->errors) || sizeof($objcanvas->errors) == 0))
+    {
+        if ($action=='add')    { $objcanvas->action='create'; $action='create'; }
+        if ($action=='update') { $objcanvas->action='view';   $action='view'; }
+    }
+    else
+    {
+        if ($action=='add')    { $objcanvas->action='create'; $action='create'; }
+        if ($action=='update') { $objcanvas->action='edit';   $action='edit'; }
+    }
 }
 else
 {
@@ -297,94 +307,27 @@ if (! empty($objcanvas->template_dir))
 
     if ($action == 'create')
     {
-        /*
-         * Mode creation
-         */
-
-        // Assign _POST data to objcanvas->object->xxx
-        $objcanvas->assign_post();
-
-        // Assign template values into objcanvas->control->tpl
-        $objcanvas->assign_values();
-
-        // Card header TODO This should be done into canvas_display
-        $title = $objcanvas->getTitle();
-        print_fiche_titre($title);
-
-        // Show errors TODO This should be done into assign_values()
-        // that should get string of dol_htmloutput_errors and
-        // assigne it into objcanvas->control->tpl like other strings to show
-        // by templates, then output of string should be done into display_canvas
-        dol_htmloutput_errors($objcanvas->error,$objcanvas->errors);
-
-        // Display canvas
-        $objcanvas->display_canvas('create');
+        $objcanvas->assign_post();            // Assign POST data
+        $objcanvas->assign_values($action);   // Set value for templates
+        $objcanvas->display_canvas($action);  // Show template
     }
     else if ($action == 'edit')
     {
-        /*
-         * Mode edition
-         */
-
-        // Fetch object
-        $result=$objcanvas->fetch($id);
-        if ($result > 0)
-        {
-            // Card header
-            $objcanvas->showHead();
-
-            if ($_POST["name"])
-            {
-                // Assign _POST data
-                $objcanvas->assign_post();
-            }
-
-            // Assign values
-            $objcanvas->assign_values();
-
-            // Display canvas
-            $objcanvas->display_canvas('edit');
-        }
-        else
-        {
-            dol_htmloutput_errors($objcanvas->error,$objcanvas->errors);
-        }
+        $objcanvas->fetch($id);               // Reload object
+        $objcanvas->assign_post();            // Assign POST data
+        $objcanvas->assign_values($action);   // Set value for templates
+        $objcanvas->display_canvas($action);  // Show template
     }
     else
     {
-        /*
-         * Mode view
-         */
-        // Fetch object
-        $result=$objcanvas->fetch($id);
-        if ($result > 0)
-        {
-            // Assign values
-            $objcanvas->assign_values();
+        $result=$objcanvas->fetch($id);         // Reload object
+        $objcanvas->assign_values('view');  // Assign values
+        $objcanvas->display_canvas('view'); // Show template
 
-            // FIXME div of tab is shown by showHead but /div is closed by
-            // display_canvas. All output should be processed by template so
-            // showHead and dol_htmloutput_errors should be moved into
-            // display_canvas.
+        // TODO Move this also into template
+        print show_actions_todo($conf,$langs,$db,$objsoc,$objcanvas->control->object);
 
-            // Card header
-            $objcanvas->showHead();
-
-            // Show errors TODO This output string should be set by
-            // assign_values and output by template into display_canvas
-            dol_htmloutput_errors($objcanvas->error,$objcanvas->errors);
-
-            // Display canvas
-            $objcanvas->display_canvas('view');
-
-            print show_actions_todo($conf,$langs,$db,$objsoc,$objcanvas->control->object);
-
-            print show_actions_done($conf,$langs,$db,$objsoc,$objcanvas->control->object);
-        }
-        else
-        {
-            dol_htmloutput_errors($objcanvas->error,$objcanvas->errors);
-        }
+        print show_actions_done($conf,$langs,$db,$objsoc,$objcanvas->control->object);
     }
 
 }

@@ -21,6 +21,10 @@
 
 <!-- BEGIN PHP TEMPLATE -->
 
+<?php
+dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']);
+?>
+
 <?php if ($this->control->tpl['action_delete']) echo $this->control->tpl['action_delete']; ?>
 <?php if ($this->control->tpl['js_checkVatPopup']) echo $this->control->tpl['js_checkVatPopup']; ?>
 

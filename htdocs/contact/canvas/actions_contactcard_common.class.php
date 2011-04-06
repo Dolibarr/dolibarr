@@ -53,8 +53,148 @@ class ActionsContactCardCommon
 		$this->db = $DB;
 	}
 
+
     /**
-     *    Assigne les valeurs par defaut pour le canvas
+     *    Load data control
+     */
+    function doActions($id)
+    {
+        global $conf, $user, $langs;
+
+        // Creation utilisateur depuis contact
+        if (GETPOST("action") == 'confirm_create_user' && GETPOST("confirm") == 'yes')
+        {
+            // Recuperation contact actuel
+            $result = $this->object->fetch($id);
+
+            if ($result > 0)
+            {
+                $this->db->begin();
+
+                // Creation user
+                $nuser = new User($this->db);
+                $result=$nuser->create_from_contact($this->object,$_POST["login"]);
+
+                if ($result > 0)
+                {
+                    $result2=$nuser->setPassword($user,$_POST["password"],0,1,1);
+                    if ($result2)
+                    {
+                        $this->db->commit();
+                    }
+                    else
+                    {
+                        $this->db->rollback();
+                    }
+                }
+                else
+                {
+                    $this->errors=$nuser->error;
+
+                    $this->db->rollback();
+                }
+            }
+            else
+            {
+                $this->errors=$this->object->errors;
+            }
+        }
+
+        // Creation contact
+        if ($_POST["action"] == 'add')
+        {
+            $this->assign_post();
+
+            if (! $_POST["name"])
+            {
+                array_push($this->errors,$langs->trans("ErrorFieldRequired",$langs->transnoentities("Lastname").' / '.$langs->transnoentities("Label")));
+                $_GET["action"] = $_POST["action"] = 'create';
+            }
+
+            if ($_POST["name"])
+            {
+                $id =  $this->object->create($user);
+                if ($id > 0)
+                {
+                    Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+                    exit;
+                }
+                else
+                {
+                    $this->errors=$this->object->errors;
+                    $_GET["action"] = $_POST["action"] = 'create';
+                }
+            }
+        }
+
+        if (GETPOST("action") == 'confirm_delete' && GETPOST("confirm") == 'yes')
+        {
+            $result=$this->object->fetch($id);
+
+            $this->object->old_name = $_POST["old_name"];
+            $this->object->old_firstname = $_POST["old_firstname"];
+
+            $result = $this->object->delete();
+            if ($result > 0)
+            {
+                Header("Location: index.php");
+                exit;
+            }
+            else
+            {
+                $this->errors=$this->object->errors;
+            }
+        }
+
+        if ($_POST["action"] == 'update' && ! $_POST["cancel"])
+        {
+            if (empty($_POST["name"]))
+            {
+                $this->error=array($langs->trans("ErrorFieldRequired",$langs->transnoentities("Name").' / '.$langs->transnoentities("Label")));
+                $_GET["action"] = $_POST["action"] = 'edit';
+            }
+
+            if (empty($this->error))
+            {
+                $this->object->fetch($_POST["contactid"]);
+
+                $this->object->oldcopy=dol_clone($this->object);
+
+                $this->assign_post();
+
+                $result = $this->object->update($_POST["contactid"], $user);
+
+                if ($result > 0)
+                {
+                    $this->object->old_name='';
+                    $this->object->old_firstname='';
+                }
+                else
+                {
+                    $this->errors=$this->object->errors;
+                }
+            }
+        }
+    }
+
+
+    /**
+     *  Return the title of card
+     */
+    function getTitle($action)
+    {
+        global $langs;
+
+        $out='';
+
+        if ($action == 'view' || $action == 'edit') $out.= $langs->trans("Contact");
+        if ($action == 'create') $out.= $langs->trans("AddContact");
+
+        return $out;
+    }
+
+	/**
+     *    Set content of ->tpl array, to use into template
      *    @param      action     Type of template
      */
     function assign_values($action='')
@@ -66,6 +206,10 @@ class ActionsContactCardCommon
         {
             $this->tpl[$key] = $value;
         }
+
+        $this->tpl['title']=$this->getTitle($action);
+        $this->tpl['error']=$this->error;
+        $this->tpl['errors']=$this->errors;
 
         if ($action == 'create' || $action == 'edit')
         {
@@ -81,7 +225,7 @@ class ActionsContactCardCommon
 					})
 				</script>'."\n";
 			}
-			
+
         	if (is_object($objsoc) && $objsoc->id > 0)
         	{
         		$this->tpl['company'] = $objsoc->getNomUrl(1);
@@ -91,10 +235,10 @@ class ActionsContactCardCommon
         	{
         		$this->tpl['company'] = $form->select_company($this->object->socid,'socid','',1);
         	}
-        	
+
         	// Civility
         	$this->tpl[select_civility] = $formcompany->select_civility($this->object->civilite_id);
-        	
+
         	// Predefined with third party
         	if ($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS))
         	{
@@ -105,13 +249,13 @@ class ActionsContactCardCommon
         		if (dol_strlen(trim($this->object->fax)) == 0) $this->object->fax = $objsoc->fax;
         		if (dol_strlen(trim($this->object->email)) == 0) $this->object->email = $objsoc->email;
         	}
-        	
+
             // Zip
             $this->tpl['select_zip'] = $formcompany->select_ziptown($this->object->zip,'zipcode',array('town','selectpays_id','departement_id'),6);
 
             // Town
             $this->tpl['select_town'] = $formcompany->select_ziptown($this->object->town,'town',array('zipcode','selectpays_id','departement_id'));
-            
+
             if (dol_strlen(trim($this->object->fk_pays)) == 0) $this->object->fk_pays = $objsoc->pays_id;
 
             // Country
@@ -123,12 +267,12 @@ class ActionsContactCardCommon
             // State
             if ($this->object->fk_pays) $this->tpl['select_state'] = $formcompany->select_state($this->object->fk_departement,$this->object->pays_code);
             else $this->tpl['select_state'] = $countrynotdefined;
-            
+
             // Public or private
             $selectarray=array('0'=>$langs->trans("ContactPublic"),'1'=>$langs->trans("ContactPrivate"));
             $this->tpl['select_visibility'] = $form->selectarray('priv',$selectarray,$this->object->priv,0);
         }
-        
+
         if ($action == 'view' || $action == 'edit')
         {
         	// Emailing
@@ -137,13 +281,13 @@ class ActionsContactCardCommon
 				$langs->load("mails");
 				$this->tpl['nb_emailing'] = $this->object->getNbOfEMailings();
 			}
-        	
+
         	// Linked element
         	$this->tpl['contact_element'] = array();
         	$i=0;
-        	
+
         	$this->object->load_ref_elements();
-        	
+
         	if ($conf->commande->enabled)
         	{
         		$this->tpl['contact_element'][$i]['linked_element_label'] = $langs->trans("ContactForOrders");
@@ -168,7 +312,7 @@ class ActionsContactCardCommon
         		$this->tpl['contact_element'][$i]['linked_element_value'] = $this->object->ref_facturation?$this->object->ref_facturation:$langs->trans("NoContactForAnyInvoice");
         		$i++;
         	}
-        	
+
         	// Dolibarr user
         	if ($this->object->user_id)
 			{
@@ -186,7 +330,7 @@ class ActionsContactCardCommon
         		// Full firstname and name separated with a dot : firstname.name
         		include_once(DOL_DOCUMENT_ROOT.'/lib/functions2.lib.php');
         		$login=dol_buildlogin($this->object->nom, $this->object->prenom);
-        		
+
         		$generated_password='';
         		if (! $ldap_sid)
         		{
@@ -201,21 +345,21 @@ class ActionsContactCardCommon
         			}
         		}
         		$password=$generated_password;
-        		
+
         		// Create a form array
         		$formquestion=array(
 			     array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login),
 			     array('label' => $langs->trans("Password"), 'type' => 'text', 'name' => 'password', 'value' => $password));
-        		
+
         		$this->tpl['action_create_user'] = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id,$langs->trans("CreateDolibarrLogin"),$langs->trans("ConfirmCreateContact"),"confirm_create_user",$formquestion,'no');
         	}
-        	
+
         	$this->tpl['showrefnav'] = $form->showrefnav($this->object,'id');
-        	
+
         	if ($this->object->socid > 0)
         	{
         		$objsoc = new Societe($this->db);
-        		
+
         		$objsoc->fetch($this->object->socid);
         		$this->tpl['company'] = $objsoc->getNomUrl(1);
         	}
@@ -223,11 +367,11 @@ class ActionsContactCardCommon
         	{
         		$this->tpl['company'] = $langs->trans("ContactNotLinkedToCompany");
         	}
-        	
+
         	$this->tpl['civility'] = $this->object->getCivilityLabel();
 
             $this->tpl['address'] = dol_nl2br($this->object->address);
-            
+
             $this->tpl['zip'] = ($this->object->zip?$this->object->zip.'&nbsp;':'');
 
             $img=picto_from_langcode($this->object->pays_code);
@@ -238,9 +382,9 @@ class ActionsContactCardCommon
             $this->tpl['phone_mobile'] 	= dol_print_phone($this->object->phone_mobile,$this->object->pays_code,0,$this->object->id,'AC_TEL');
             $this->tpl['fax'] 			= dol_print_phone($this->object->fax,$this->object->pays_code,0,$this->object->id,'AC_FAX');
             $this->tpl['email'] 		= dol_print_email($this->object->email,0,$this->object->id,'AC_EMAIL');
-            
+
             $this->tpl['visibility'] = $this->object->LibPubPriv($this->object->priv);
-            
+
             $this->tpl['note'] = nl2br($this->object->note);
         }
     }
@@ -254,7 +398,7 @@ class ActionsContactCardCommon
 
         $this->object->old_name 			= 	$_POST["old_name"];
         $this->object->old_firstname 		= 	$_POST["old_firstname"];
-        
+
         $this->object->socid				=	$_POST["socid"];
         $this->object->name					=	$_POST["name"];
         $this->object->firstname			= 	$_POST["firstname"];
@@ -291,129 +435,6 @@ class ActionsContactCardCommon
             $this->object->pays_code	=	$obj->code;
             $this->object->pays			=	$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->libelle;
         }
-    }
-
-    /**
-     *    Load data control
-     */
-    function doActions($id)
-    {
-    	global $conf, $user, $langs;
-    	
-    	// Creation utilisateur depuis contact
-    	if (GETPOST("action") == 'confirm_create_user' && GETPOST("confirm") == 'yes')
-    	{
-    		// Recuperation contact actuel
-    		$result = $this->object->fetch($id);
-    		
-    		if ($result > 0)
-    		{
-    			$this->db->begin();
-    			
-    			// Creation user
-    			$nuser = new User($this->db);
-    			$result=$nuser->create_from_contact($this->object,$_POST["login"]);
-    			
-    			if ($result > 0)
-    			{
-    				$result2=$nuser->setPassword($user,$_POST["password"],0,1,1);
-    				if ($result2)
-    				{
-    					$this->db->commit();
-    				}
-    				else
-    				{
-    					$this->db->rollback();
-    				}
-    			}
-    			else
-    			{
-    				$this->errors=$nuser->error;
-    				
-    				$this->db->rollback();
-    			}
-    		}
-    		else
-    		{
-    			$this->errors=$this->object->errors;
-    		}
-    	}
-    	
-    	// Creation contact
-    	if ($_POST["action"] == 'add')
-    	{
-    		$this->assign_post();
-    		
-    		if (! $_POST["name"])
-    		{
-    			array_push($this->errors,$langs->trans("ErrorFieldRequired",$langs->transnoentities("Lastname").' / '.$langs->transnoentities("Label")));
-    			$_GET["action"] = $_POST["action"] = 'create';
-    		}
-
-    		if ($_POST["name"])
-    		{
-    			$id =  $this->object->create($user);
-    			if ($id > 0)
-    			{
-    				Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
-    				exit;
-    			}
-    			else
-    			{
-    				$this->errors=$this->object->errors;
-    				$_GET["action"] = $_POST["action"] = 'create';
-    			}
-    		}
-    	}
-    	
-    	if (GETPOST("action") == 'confirm_delete' && GETPOST("confirm") == 'yes')
-    	{
-    		$result=$this->object->fetch($id);
-    		
-    		$this->object->old_name = $_POST["old_name"];
-    		$this->object->old_firstname = $_POST["old_firstname"];
-    		
-    		$result = $this->object->delete();
-    		if ($result > 0)
-    		{
-    			Header("Location: index.php");
-    			exit;
-    		}
-    		else
-    		{
-    			$this->errors=$this->object->errors;
-    		}
-    	}
-    	
-    	if ($_POST["action"] == 'update' && ! $_POST["cancel"])
-    	{
-    		if (empty($_POST["name"]))
-    		{
-    			$this->error=array($langs->trans("ErrorFieldRequired",$langs->transnoentities("Name").' / '.$langs->transnoentities("Label")));
-    			$_GET["action"] = $_POST["action"] = 'edit';
-    		}
-
-    		if (empty($this->error))
-    		{
-    			$this->object->fetch($_POST["contactid"]);
-    			
-    			$this->object->oldcopy=dol_clone($this->object);
-    			
-    			$this->assign_post();
-    			
-    			$result = $this->object->update($_POST["contactid"], $user);
-    			
-    			if ($result > 0)
-    			{
-    				$this->object->old_name='';
-    				$this->object->old_firstname='';
-    			}
-    			else
-    			{
-    				$this->errors=$this->object->errors;
-    			}
-    		}
-    	}
     }
 
 }

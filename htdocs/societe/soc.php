@@ -83,6 +83,16 @@ if (method_exists($objcanvas->control,'doActions'))
 	// When used with CANVAS
 	// -----------------------------------------
 	$objcanvas->doActions($socid);
+    if (empty($objcanvas->error) && (empty($objcanvas->errors) || sizeof($objcanvas->errors) == 0))
+    {
+        if ($action=='add')    { $objcanvas->action='create'; $action='create'; }
+        if ($action=='update') { $objcanvas->action='view';   $action='view'; }
+    }
+    else
+    {
+        if ($action=='add')    { $objcanvas->action='create'; $action='create'; }
+        if ($action=='update') { $objcanvas->action='edit';   $action='edit'; }
+    }
 }
 else
 {
@@ -374,112 +384,55 @@ if (! empty($objcanvas->template_dir))
 	// -----------------------------------------
 	if ($action == 'create')
 	{
-        /*
-         * Mode creation
-         */
-
-		// Assign _POST data
-		$objcanvas->assign_post();
-
-		// Assign template values
-		$objcanvas->assign_values();
-
-        // Card header
-        $title = $objcanvas->getTitle();
-        print_fiche_titre($title);
-
-		// Show errors
-		dol_htmloutput_errors($objcanvas->error,$objcanvas->errors);
-
-		// Display canvas
-		$objcanvas->display_canvas('create');
+        $objcanvas->assign_post();            // Assign POST data
+        $objcanvas->assign_values($action);   // Set value for templates
+        $objcanvas->display_canvas($action);  // Show template
 	}
 	elseif ($action == 'edit')
 	{
-		/*
-		 * Mode edition
-		 */
-
-		// Card header
-		$title = $objcanvas->getTitle();
-		print_fiche_titre($title);
-
-		if (! $_POST["nom"])
-		{
-			//Reload object
-			$objcanvas->fetch($socid);
-		}
-		else
-		{
-			// Assign _POST data
-			$objcanvas->assign_post();
-		}
-
-		dol_htmloutput_errors($objcanvas->error,$objcanvas->errors);
-
-		// Assign values
-		$objcanvas->assign_values();
-
-		// Display canvas
-		$objcanvas->display_canvas('edit');
+    	$objcanvas->fetch($socid);            // Reload object
+		$objcanvas->assign_post();            // Assign POST data
+		$objcanvas->assign_values($action);   // Set value for templates
+		$objcanvas->display_canvas($action);  // Show template
 	}
 	else
 	{
+		$result=$objcanvas->fetch($socid);       // Relaod object
+    	$objcanvas->assign_values('view');   // Assign values
+		$objcanvas->display_canvas('view');  // Show template
+
+		// TODO Move this also into template
+		print '<table width="100%"><tr><td valign="top" width="50%">';
+		print '<a name="builddoc"></a>'; // ancre
+
 		/*
-		 * Mode view
+		 * Documents generes
 		 */
+		$filedir=$conf->societe->dir_output.'/'.$socid;
+		$urlsource=$_SERVER["PHP_SELF"]."?socid=".$socid;
+		$genallowed=$user->rights->societe->creer;
+		$delallowed=$user->rights->societe->supprimer;
 
-		// Fetch object
-		$result=$objcanvas->fetch($socid);
-		if ($result > 0)
-		{
-			// Card header
-			$objcanvas->showHead();
+		$var=true;
 
-			// Assign values
-			$objcanvas->assign_values();
+		$somethingshown=$formfile->show_documents('company',$socid,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$objcanvas->control->object->default_lang);
 
-			// Display canvas
-			$objcanvas->display_canvas('view');
+		print '</td>';
+		print '<td></td>';
+		print '</tr>';
+		print '</table>';
 
+		print '<br>';
 
-			print '<table width="100%"><tr><td valign="top" width="50%">';
-			print '<a name="builddoc"></a>'; // ancre
+		// Subsidiaries list
+		$result=show_subsidiaries($conf,$langs,$db,$objcanvas->control->object);
 
-			/*
-			 * Documents generes
-			 */
-			$filedir=$conf->societe->dir_output.'/'.$socid;
-			$urlsource=$_SERVER["PHP_SELF"]."?socid=".$socid;
-			$genallowed=$user->rights->societe->creer;
-			$delallowed=$user->rights->societe->supprimer;
+		// Contacts list
+		$result=show_contacts($conf,$langs,$db,$objcanvas->control->object);
 
-			$var=true;
-
-			$somethingshown=$formfile->show_documents('company',$socid,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$objcanvas->control->object->default_lang);
-
-			print '</td>';
-			print '<td></td>';
-			print '</tr>';
-			print '</table>';
-
-			print '<br>';
-
-			// Subsidiaries list
-			$result=show_subsidiaries($conf,$langs,$db,$objcanvas->control->object);
-
-			// Contacts list
-			$result=show_contacts($conf,$langs,$db,$objcanvas->control->object);
-
-			// Projects list
-			$result=show_projects($conf,$langs,$db,$objcanvas->control->object);
-		}
-		else
-		{
-			dol_htmloutput_errors($objcanvas->error,$objcanvas->errors);
-		}
+		// Projects list
+		$result=show_projects($conf,$langs,$db,$objcanvas->control->object);
 	}
-
 }
 else
 {

@@ -21,6 +21,12 @@
 
 <!-- BEGIN PHP TEMPLATE -->
 
+<?php
+print_fiche_titre($this->control->tpl['title']);
+
+dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']);
+?>
+
 <?php echo $this->control->tpl['ajax_selectcountry']; ?>
 <?php if ($this->control->tpl['js_checkVatPopup']) echo $this->control->tpl['js_checkVatPopup']; ?>
 

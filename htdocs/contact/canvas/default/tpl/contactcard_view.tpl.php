@@ -21,72 +21,76 @@
 
 <!-- BEGIN PHP TEMPLATE -->
 
+<?php
+dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']);
+?>
+
 <?php if ($this->control->tpl['action_create_user']) echo $this->control->tpl['action_create_user']; ?>
 <?php if ($this->control->tpl['action_delete']) echo $this->control->tpl['action_delete']; ?>
 
 <table class="border" width="100%">
-		
+
 <tr>
 	<td width="20%"><?php echo $langs->trans("Ref"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['showrefnav']; ?></td>
 </tr>
-		
+
 <tr>
 	<td width="20%"><?php echo $langs->trans("Lastname"); ?></td>
 	<td width="30%"><?php echo $this->control->tpl['name']; ?></td>
 	<td width="25%"><?php echo $langs->trans("Firstname"); ?></td>
 	<td width="25%"><?php echo $this->control->tpl['firstname']; ?></td>
 </tr>
-		
+
 <tr>
 	<td><?php echo $langs->trans("Company"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['company']; ?></td>
 </tr>
-		
+
 <tr>
 	<td width="15%"><?php echo $langs->trans("UserTitle"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['civility']; ?></td>
 </tr>
-		
+
 <tr>
 	<td><?php echo $langs->trans("PostOrFunction" ); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['poste']; ?></td>
 </tr>
-		
+
 <tr>
 	<td><?php echo $langs->trans("Address"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['address']; ?></td>
 </tr>
-		
+
 <tr>
 	<td><?php echo $langs->trans("Zip").' / '.$langs->trans("Town"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['zip'].$this->control->tpl['ville']; ?></td>
 </tr>
-		
+
 <tr>
 	<td><?php echo $langs->trans("Country"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['country']; ?></td>
 </tr>
-		
+
 <tr>
 	<td><?php echo $langs->trans('State'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['departement']; ?></td>
 </tr>
-		
+
 <tr>
 	<td><?php echo $langs->trans("PhonePro"); ?></td>
 	<td><?php echo $this->control->tpl['phone_pro']; ?></td>
 	<td><?php echo $langs->trans("PhonePerso"); ?></td>
 	<td><?php echo $this->control->tpl['phone_perso']; ?></td>
 </tr>
-		
+
 <tr>
 	<td><?php echo $langs->trans("PhoneMobile"); ?></td>
 	<td><?php echo $this->control->tpl['phone_mobile']; ?></td>
 	<td><?php echo $langs->trans("Fax"); ?></td>
 	<td><?php echo $this->control->tpl['fax']; ?></td>
 </tr>
-		
+
 <tr>
 	<td><?php echo $langs->trans("EMail"); ?></td>
 	<td><?php echo $this->control->tpl['email']; ?></td>
@@ -97,17 +101,17 @@
 	<td colspan="2">&nbsp;</td>
 	<?php } ?>
 </tr>
-		
+
 <tr>
 	<td><?php echo $langs->trans("Jabberid"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['jabberid']; ?></td>
 </tr>
-		
+
 <tr>
 	<td><?php echo $langs->trans("ContactVisibility"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['visibility']; ?></td>
 </tr>
-		
+
 <tr>
 	<td valign="top"><?php echo $langs->trans("Note"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['note']; ?></td>
@@ -124,14 +128,14 @@
 	<td><?php echo $langs->trans("DolibarrLogin"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['dolibarr_user']; ?></td>
 </tr>
-		
+
 </table>
 
 </div>
 
 <?php if (! $user->societe_id) { ?>
 <div class="tabsAction">
-				
+
 <?php if ($user->rights->societe->contact->creer) { ?>
 <a class="butAction" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&amp;action=edit&amp;canvas='.$canvas; ?>"><?php echo $langs->trans('Modify'); ?></a>
 <?php } ?>

@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin  <regis@dolibarr.fr>
+/* Copyright (C) 2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,21 +45,25 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 		$this->db = $DB;
 	}
 
+    /**
+     *  Execute actions
+     *  @param      Id of object (may be empty for creation)
+     */
+    function doActions($id)
+    {
+        $return = parent::doActions($id);
+        return $return;
+    }
+
+
 	/**
 	 * 	Return the title of card
 	 */
 	function getTitle($action)
 	{
-		global $langs;
-
-		$out='';
-
-		if ($action == 'view' || $action == 'edit') $out.= $langs->trans("Contact");
-		if ($action == 'create') $out.= $langs->trans("AddContact");
-
-		return $out;
+		return parent::getTitle($action);
 	}
-	
+
 	/**
 	 * 	Return the head of card (tabs)
 	 */
@@ -66,7 +71,7 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 	{
 		$head = contact_prepare_head($this->object);
 		$title = $this->getTitle($action);
-		
+
 		return dol_fiche_head($head, 'card', $title, 0, 'contact');
 	}
 
@@ -79,17 +84,6 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
     }
 
 	/**
-	 * 	Execute actions
-	 * 	@param 		Id of object (may be empty for creation)
-	 */
-	function doActions($id)
-	{
-		$return = parent::doActions($id);
-
-		return $return;
-	}
-
-	/**
 	 *    Assign custom values for canvas
 	 *    @param      action     Type of action
 	 */
@@ -100,8 +94,15 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 
 		parent::assign_values($action);
 
+        $this->tpl['title'] = $this->getTitle($action);
+        $this->tpl['error'] = $this->error;
+        $this->tpl['errors']= $this->errors;
+
 		if ($action == 'view')
 		{
+            // Card header
+            $this->tpl['showhead']=$this->showHead($action);
+
 			// Confirm delete contact
         	if ($user->rights->societe->contact->supprimer)
         	{
@@ -112,7 +113,7 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
         	}
 		}
 	}
-	
+
 	/**
 	 * 	Check permissions of a user to show a page and an object. Check read permission
 	 * 	If $_REQUEST['action'] defined, we also check write permission.

@@ -21,6 +21,12 @@
 
 <!-- BEGIN PHP TEMPLATE -->
 
+<?php
+print_fiche_titre($this->control->tpl['title']);
+
+dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']);
+?>
+
 <?php echo $this->control->tpl['ajax_selectcountry']; ?>
 
 <form action="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id']; ?>" method="POST" name="formsoc">

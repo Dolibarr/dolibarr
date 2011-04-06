@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin  <regis@dolibarr.fr>
+/* Copyright (C) 2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,32 +45,22 @@ class ActionsCardDefault extends ActionsCardCommon
 		$this->db = $DB;
 	}
 
-	/**
-	 * 	Return the title of card
-	 */
-	function getTitle($action)
-	{
-		global $langs;
+    /**
+     *  Return the title of card
+     */
+    function getTitle($action)
+    {
+        global $langs;
 
-		$out='';
+        $out='';
 
-		if ($action == 'view') 		$out.= $langs->trans("ThirdParty");
-		if ($action == 'edit') 		$out.= $langs->trans("EditCompany");
-		if ($action == 'create')	$out.= $langs->trans("NewCompany");
+        if ($action == 'view')      $out.= $langs->trans("ThirdParty");
+        if ($action == 'edit')      $out.= $langs->trans("EditCompany");
+        if ($action == 'create')    $out.= $langs->trans("NewCompany");
 
-		return $out;
-	}
+        return $out;
+    }
 
-	/**
-	 * 	Return the head of card (tabs)
-	 */
-	function showHead($action)
-	{
-		$head = societe_prepare_head($this->object);
-		$title = $this->getTitle($action);
-
-		return dol_fiche_head($head, 'card', $title, 0, 'company');
-	}
 
 	/**
      *    Assigne les valeurs POST dans l'objet
