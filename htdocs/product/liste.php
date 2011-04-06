@@ -33,13 +33,13 @@ if ($conf->categorie->enabled) require_once(DOL_DOCUMENT_ROOT."/categories/class
 $langs->load("products");
 $langs->load("stocks");
 
-$canvas=GETPOST('canvas','alpha');
-
 $sref=GETPOST("sref");
 $sbarcode=GETPOST("sbarcode");
 $snom=GETPOST("snom");
 $sall=GETPOST("sall");
 $type=GETPOST("type","int");
+$search_sale = GETPOST("search_sale");
+$search_categ = GETPOST("search_categ");
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -53,14 +53,31 @@ if (! $sortorder) $sortorder="ASC";
 
 $limit = $conf->liste_limit;
 
-// Security check
-if ($type=='0') $result=restrictedArea($user,'produit',$id,'product','','',$fieldid);
-else if ($type=='1') $result=restrictedArea($user,'service',$id,'service','','',$fieldid);
-else $result=restrictedArea($user,'produit|service',$id,'service','','',$fieldid);
+$action = GETPOST('action');
 
-// Load sale and categ filters
-$search_sale = GETPOST("search_sale");
-$search_categ = GETPOST("search_categ");
+// Security check
+
+// Get object canvas (By default, this is not defined, so standard usage of dolibarr)
+//if (!empty($id)) $object->getCanvas($id);
+$canvas = (!empty($object->canvas)?$object->canvas:GETPOST("canvas"));
+if (! empty($canvas))
+{
+    require_once(DOL_DOCUMENT_ROOT."/core/class/canvas.class.php");
+    $objcanvas = new Canvas($db,$action);
+    //$objcanvas->getCanvas('product','xxx',$canvas);
+
+    // Security check
+    if ($type=='0') $result=$objcanvas->restrictedArea($user,'produit',$id,'product','','',$fieldid);
+    else if ($type=='1') $result=$objcanvas->restrictedArea($user,'service',$id,'service','','',$fieldid);
+    else $result=$objcanvas->restrictedArea($user,'produit|service',$id,'service','','',$fieldid);
+}
+else
+{
+    // Security check
+    if ($type=='0') $result=restrictedArea($user,'produit',$id,'product','','',$fieldid);
+    else if ($type=='1') $result=restrictedArea($user,'service',$id,'service','','',$fieldid);
+    else $result=restrictedArea($user,'produit|service',$id,'service','','',$fieldid);
+}
 
 
 
@@ -88,7 +105,7 @@ if ($conf->categorie->enabled && GETPOST('catid'))
 
 $htmlother=new FormOther($db);
 
-if (!empty($canvas) && file_exists(DOL_DOCUMENT_ROOT.'/product/canvas/'.$canvas.'/product.'.$canvas.'.class.php') )
+if (! empty($objcanvas->template_dir))
 {
 	$classname = 'Product'.ucfirst($canvas);
 	include_once(DOL_DOCUMENT_ROOT.'/product/canvas/'.$canvas.'/product.'.$canvas.'.class.php');
