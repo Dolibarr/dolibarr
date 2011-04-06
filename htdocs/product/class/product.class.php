@@ -215,7 +215,7 @@ class Product extends CommonObject
 		if (empty($this->price))     	$this->price = 0;
 		if (empty($this->price_min)) 	$this->price_min = 0;
 		if (empty($this->status))    	$this->status = 0;
-		if (empty($this->status_buy))    	$this->status_buy = 0;
+		if (empty($this->status_buy))   $this->status_buy = 0;
 		if (empty($this->finished))  	$this->finished = 0;
 		if (empty($this->hidden))    	$this->hidden = 0;
 
@@ -366,6 +366,13 @@ class Product extends CommonObject
 
 			if ($this->errno === 0)
 			{
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers('PRODUCT_CREATE',$this,$user,$langs,$conf);
+				if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				// Fin appel triggers
+				
 				$this->db->commit();
 				return $id;
 			}
@@ -482,6 +489,8 @@ class Product extends CommonObject
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
+			$this->id = $id;
+			
 			// Multilangs
 			if($conf->global->MAIN_MULTILANGS)
 			{
@@ -491,6 +500,14 @@ class Product extends CommonObject
 					return -2;
 				}
 			}
+			
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			$interface=new Interfaces($this->db);
+			$result=$interface->run_triggers('PRODUCT_MODIFY',$this,$user,$langs,$conf);
+			if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			// Fin appel triggers
+			
 			return 1;
 		}
 		else
