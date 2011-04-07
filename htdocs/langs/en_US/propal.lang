@@ -80,6 +80,15 @@ ClonePropal=Clone commercial proposal
 ConfirmClonePropal=Are you sure you want to clone this commercial proposal <b>%s</b> ?
 ProposalsAndProposalsLines=Commercial proposal and lines
 ProposalLine=Proposal line
+AvailabilityPeriod=Availability delay
+SetAvailability=Set availability delay
+AfterOrder=after order
+##### Availability #####
+AvailabilityTypeAV_NOW=Immediate
+AvailabilityTypeAV_1W=1 week
+AvailabilityTypeAV_2W=2 weeks
+AvailabilityTypeAV_3W=3 weeks
+AvailabilityTypeAV_1M=1 month
 ##### Types de contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Representative following-up proposal
 TypeContact_propal_external_BILLING=Customer invoice contact

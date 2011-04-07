@@ -80,8 +80,15 @@ ClonePropal=Cloner proposition commerciale
 ConfirmClonePropal=Êtes-vous sûr de vouloir cloner cette proposition commerciale <b>%s</b> ?
 ProposalsAndProposalsLines=Propositions commerciales clientes et lignes de propositions
 ProposalLine=Ligne de proposition
-AvailabilityPeriod=Délai de livraison (à réception de commande)
+AvailabilityPeriod=Délai de livraison
 SetAvailability=Définir le délai de livraison
+AfterOrder=après commande
+##### Availability #####
+AvailabilityTypeAV_NOW=Immediate
+AvailabilityTypeAV_1W=1 semaine
+AvailabilityTypeAV_2W=2 semaines
+AvailabilityTypeAV_3W=3 semaines
+AvailabilityTypeAV_1M=1 mois
 ##### Types de contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Commercial suivi propale
 TypeContact_propal_external_BILLING=Contact client facturation propale

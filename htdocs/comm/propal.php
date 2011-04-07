@@ -1278,6 +1278,7 @@ if ($id > 0 || ! empty($ref))
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('AvailabilityPeriod');
+	if ($conf->commande->enabled) print ' ('.$langs->trans('AfterOrder').')';
 	print '</td>';
 	if ($_GET['action'] != 'editavailability' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editavailability&amp;id='.$object->id.'">'.img_edit($langs->trans('SetAvailability'),1).'</a></td>';
 	print '</tr></table>';
@@ -1290,7 +1291,7 @@ if ($id > 0 || ! empty($ref))
 	{
 		$html->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id,$object->availability_id,'none');
 	}
-	
+
 	print '</td>';
 	print '</tr>';
 
