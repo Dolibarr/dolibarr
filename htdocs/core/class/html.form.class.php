@@ -146,14 +146,16 @@ class Form
      *	@param	direction			-1=Le picto est avant, 0=pas de picto, 1=le picto est apres
      *	@param	img					Code img du picto (use img_xxx() function to get it)
      *  @param  extracss            Add a CSS style to td tags
-     *  @param  notable             Do not include table and tr tags
+     *  @param  notabs              Do not include table and tr tags
+     *  @param  incbefore			Include code before the text
      *	@return	string				Code html du tooltip (texte+picto)
      * 	@see	Use function textwithpicto if you can.
      */
-    function textwithtooltip($text,$htmltext,$tooltipon=1,$direction=0,$img='',$extracss='',$notabs=0)
+    function textwithtooltip($text,$htmltext,$tooltipon=1,$direction=0,$img='',$extracss='',$notabs=0,$incbefore='')
     {
         global $conf;
-
+        
+        if ($incbefore) $text = $incbefore.$text;
         if (! $htmltext) return $text;
 
         $paramfortooltip ='';

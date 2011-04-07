@@ -542,9 +542,9 @@ class Propal extends CommonObject
 	{
 		if ($this->statut == 0)
 		{
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."propaldet WHERE rowid = ".$lineid;
+			$line=new PropaleLigne($this->db);
 
-			if ($this->db->query($sql) )
+			if ($line->delete($lineid))
 			{
 				$this->update_price();
 
@@ -2453,8 +2453,31 @@ class PropaleLigne
 			return -1;
 		}
 	}
-
-
+	
+	/**
+	 * 	Delete line in database
+	 *	@return	 int  <0 si ko, >0 si ok
+	 */
+	function delete($rowid)
+	{
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."propaldet WHERE rowid = ".$rowid;
+		if ($this->db->query($sql) )
+		{
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			$interface=new Interfaces($this->db);
+			$result = $interface->run_triggers('LINEPROPAL_DELETE',$this,$user,$langs,$conf);
+			if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			// Fin appel triggers
+			
+			return 1;
+		}
+		else
+		{
+			return -1;
+		}
+	}
+	
 	/**
 	 *      \brief     	Mise a jour de l'objet ligne de propale en base
 	 *		\return		int		<0 si ko, >0 si ok

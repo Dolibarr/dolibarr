@@ -41,6 +41,7 @@
 				}
 			}
 		} else {
+			if (! empty($line->fk_parent_line)) echo img_picto('', 'rightarrow');
 			if ($type==1) $text = img_object($langs->trans('Service'),'service');
 			else $text = img_object($langs->trans('Product'),'product');
 			echo $text.' '.nl2br($line->description);
