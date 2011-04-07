@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - bills
+# Dolibarr language file - ca_ES - bills 
 CHARSET=UTF-8
 Bill=Factura
 Bills=Factures
@@ -72,7 +72,7 @@ PaymentConditionsShort=Condicions pagament
 PaymentAmount=Import pagament
 ValidatePayment=Validar aquest pagament
 PaymentHigherThanReminderToPay=Pagament superior a la resta a pagar
-HelpPaymentHigherThanReminderToPay= Atenció, l'import del pagament d'una o més factures és superior a la resta a pagar.<br>Corregiu la entrada, en cas contrari, confirmeu i pensi en crear un abonament d'allò percebut en excés per cada factura sobrepagada.
+HelpPaymentHigherThanReminderToPay=Atenció, l'import del pagament d'una o més factures és superior a la resta a pagar.<br>Corregiu la entrada, en cas contrari, confirmeu i pensi en crear un abonament d'allò percebut en excés per cada factura sobrepagada.
 ClassifyPaid=Classificar 'Pagat'
 ClassifyPaidPartially=Classificar 'Pagat parcialment'
 ClassifyCanceled=Classificar 'Abandonat'
@@ -234,6 +234,8 @@ RelativeDiscount=Descompte relatiu
 GlobalDiscount=Descompte fixe
 CreditNote=Abonament
 CreditNotes=Abonaments
+AddDiscount=Crear descompte fix
+AddCreditNote=Crear factura de pagament
 Deposit=Bestreta
 Deposits=Bestretes
 DiscountFromCreditNote=Descompte resultant del abonament %s
@@ -276,7 +278,7 @@ TotalOfTwoDiscountMustEqualsOriginal=La suma de l'import dels 2 nous descomptes 
 ConfirmRemoveDiscount=Esteu segur de voler eliminar aquest descompte?
 RelatedBill=Factura associada
 RelatedBills=Factures associades
-# PaymentConditions
+# PaymentConditions==
 PaymentConditionShortRECEP=A la recepció
 PaymentConditionRECEP=A la recepció de la factura
 PaymentConditionShort30D=30 dies
@@ -362,6 +364,8 @@ DisabledBecausePayments=No disponible ja que hi ha pagaments
 CantRemovePaymentWithOneInvoicePaid=Eliminació impossible quan hi ha almenys una factura classificada com a pagada.
 ExpectedToPay=Esperant el pagament
 PayedByThisPayment=Pagada per aquest pagament
+ClosePaidInvoicesAutomatically=Classificar automàticament com "Pagada" les factures completament pagades.
+AllCompletelyPayedInvoiceWillBeClosed=Totes les factures amb una resta a pagar 0 seran automàticament tancades a l'estat "Pagada".
 ##### Types de contacts #####
 TypeContact_facture_internal_SALESREPFOLL=Responsable seguiment factura a client
 TypeContact_facture_external_BILLING=Contacte client facturació
