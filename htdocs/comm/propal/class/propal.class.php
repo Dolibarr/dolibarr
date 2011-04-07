@@ -2371,7 +2371,7 @@ class PropaleLigne
 	 */
 	function insert()
 	{
-		global $conf;
+		global $conf,$langs,$user;
 
 		dol_syslog("PropaleLigne::insert rang=".$this->rang);
 
@@ -2460,6 +2460,8 @@ class PropaleLigne
 	 */
 	function delete($rowid)
 	{
+		global $conf,$langs,$user;
+		
 		// For triggers
 		$this->fetch($rowid);
 		
