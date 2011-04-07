@@ -978,10 +978,11 @@ class CommonObject
 	}
 
 	/**
-	 *	 Update total_ht, total_ttc and total_vat for an object (sum of lines)
-	 *	 @return		int			<0 if KO, >0 if OK
+	 *	Update total_ht, total_ttc and total_vat for an object (sum of lines)
+	 *	@param		exclspec	Exclude special product (product_type=9)
+	 *	@return		int			<0 if KO, >0 if OK
 	 */
-	function update_price()
+	function update_price($exclspec=0)
 	{
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
@@ -1000,6 +1001,7 @@ class CommonObject
 		$sql = 'SELECT qty, total_ht, '.$fieldtva.' as total_tva, '.$fieldlocaltax1.' as total_localtax1, '.$fieldlocaltax2.' as total_localtax2, total_ttc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 		$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
+		if ($exclspec) $sql.= ' AND product_type <> 9';
 
 		dol_syslog("CommonObject::update_price sql=".$sql);
 		$resql = $this->db->query($sql);

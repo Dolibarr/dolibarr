@@ -400,7 +400,7 @@ class Propal extends CommonObject
 			if ($result > 0)
 			{
 				// Mise a jour informations denormalisees au niveau de la propale meme
-				$result=$this->update_price();
+				$result=$this->update_price(1);
 				if ($result > 0)
 				{
 					$this->db->commit();
@@ -500,7 +500,7 @@ class Propal extends CommonObject
 			$result=$this->db->query($sql);
 			if ($result > 0)
 			{
-				$this->update_price();
+				$this->update_price(1);
 
 				$this->fk_propal = $this->id;
 				$this->rowid = $rowid;
@@ -546,7 +546,7 @@ class Propal extends CommonObject
 
 			if ($line->delete($lineid))
 			{
-				$this->update_price();
+				$this->update_price(1);
 
 				return 1;
 			}
