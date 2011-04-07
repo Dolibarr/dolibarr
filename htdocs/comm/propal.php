@@ -1112,7 +1112,7 @@ if ($id > 0 || ! empty($ref))
 	print '</td>';
 	print '</tr>';
 
-	$rowspan=9;
+	$rowspan=10;
 
 	// Company
 	print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$soc->getNomUrl(1).'</td>';
@@ -1505,7 +1505,7 @@ if ($id > 0 || ! empty($ref))
 		if ($_GET['action'] != 'statut' && $_GET['action'] <> 'editline')
 		{
 			// Valid
-			if ($object->statut == 0 && $user->rights->propale->valider)
+			if ($object->statut == 0 && $user->rights->propale->valider && sizeof($object->lines) > 0)
 			{
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=validate"';
 				print '>'.$langs->trans('Validate').'</a>';
