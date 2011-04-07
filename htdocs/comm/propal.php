@@ -1112,7 +1112,7 @@ if ($id > 0 || ! empty($ref))
 	print '</td>';
 	print '</tr>';
 
-	$rowspan=9;
+	$rowspan=10;
 
 	// Company
 	print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$soc->getNomUrl(1).'</td>';
