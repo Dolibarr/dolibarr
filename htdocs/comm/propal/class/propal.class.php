@@ -2460,7 +2460,13 @@ class PropaleLigne
 	 */
 	function delete($rowid)
 	{
+		// For triggers
+		$this->fetch($rowid);
+		
+		$this->db->begin();
+		
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."propaldet WHERE rowid = ".$rowid;
+		dol_syslog("PropaleLigne::delete sql=".$sql, LOG_DEBUG);
 		if ($this->db->query($sql) )
 		{
 			// Appel des triggers
@@ -2470,10 +2476,15 @@ class PropaleLigne
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
 			
+			$this->db->commit();
+			
 			return 1;
 		}
 		else
 		{
+			$this->error=$this->db->error()." sql=".$sql;
+			dol_syslog("PropaleLigne::delete Error ".$this->error, LOG_ERR);
+			$this->db->rollback();
 			return -1;
 		}
 	}
