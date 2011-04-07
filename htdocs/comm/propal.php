@@ -704,7 +704,7 @@ if ($_POST['action'] == "addline" && $user->rights->propale->creer)
 			}
 
 			$desc = $prod->description;
-			$desc.= ($prod->description && $_POST['np_desc']) ? "\n" : "";
+			$desc.= ($prod->description && $_POST['np_desc']) ? ((dol_textishtml($prod->description) || dol_textishtml($_POST['np_desc']))?"<br />\n":"\n") : "";
 			$desc.= $_POST['np_desc'];
 			$type = $prod->type;
 		}
@@ -1112,7 +1112,7 @@ if ($id > 0 || ! empty($ref))
 	print '</td>';
 	print '</tr>';
 
-	$rowspan=10;
+	$rowspan=9;
 
 	// Company
 	print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$soc->getNomUrl(1).'</td>';
@@ -1504,11 +1504,11 @@ if ($id > 0 || ! empty($ref))
 
 		if ($_GET['action'] != 'statut' && $_GET['action'] <> 'editline')
 		{
-			// Valid
-			if ($object->statut == 0 && $user->rights->propale->valider && sizeof($object->lines) > 0)
+			// Validate
+			if ($object->statut == 0 && $user->rights->propale->valider)
 			{
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=validate"';
-				print '>'.$langs->trans('Validate').'</a>';
+			    if (sizeof($object->lines) > 0) print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=validate">'.$langs->trans('Validate').'</a>';
+			    else print '<a class="butActionRefused" href="#">'.$langs->trans('Validate').'</a>';
 			}
 
 			// Edit
