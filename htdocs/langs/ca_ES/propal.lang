@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - propal 
+# Dolibarr language file - ca_ES - propal
 CHARSET=UTF-8
 Proposals=Pressupostos
 Proposal=Pressupost
@@ -80,10 +80,20 @@ ClonePropal=Clonar pressupost
 ConfirmClonePropal=Esteu segur de voler clonar aquest pressupost <b>%s</b>?
 ProposalsAndProposalsLines=Pressupostos a clients i línies de pressupostos
 ProposalLine=Línia de pressupost
+AvailabilityPeriod=Temps de lliurament
+SetAvailability=Definir el temps de lliurament
+AfterOrder=després de la comanda
+##### Availability #####
+AvailabilityTypeAV_NOW=Immediata
+AvailabilityTypeAV_1W=1 setmana
+AvailabilityTypeAV_2W=2 setmanes
+AvailabilityTypeAV_3W=3 setmanes
+AvailabilityTypeAV_1M=1 mes
 ##### Types de contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Comercial seguiment pressupost
 TypeContact_propal_external_BILLING=Contacte client de facturació pressupost
 TypeContact_propal_external_CUSTOMER=Contacte client seguiment pressupost
-# Documents models
+# Documents models=undefined
 DocModelAzurDescription=Model de pressupost complet (logo...)
 DocModelJauneDescription=Model de pressupost Jaune
+Numbershort=Nº

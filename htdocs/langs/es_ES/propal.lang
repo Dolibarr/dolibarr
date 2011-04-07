@@ -80,6 +80,15 @@ ClonePropal=Clonar presupuesto
 ConfirmClonePropal=¿Está seguro de querer clonar este presupuesto <b>%s</b>?
 ProposalsAndProposalsLines=Presupuestos a clientes y líneas de presupuestos
 ProposalLine=Línea de presupuesto
+AvailabilityPeriod=Tiempo de entrega
+SetAvailability=Definir el tiempo de entrega
+AfterOrder=despues del pedido
+##### Availability #####
+AvailabilityTypeAV_NOW=Inmediata
+AvailabilityTypeAV_1W=1 semana
+AvailabilityTypeAV_2W=2 semanas
+AvailabilityTypeAV_3W=3 semanas
+AvailabilityTypeAV_1M=1 mes
 ##### Types de contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Comercial seguimiento presupuesto
 TypeContact_propal_external_BILLING=Contacto cliente de facturación presupuesto
@@ -87,3 +96,4 @@ TypeContact_propal_external_CUSTOMER=Contacto cliente seguimiento presupuesto
 # Documents models
 DocModelAzurDescription=Modelo de presupuesto completo (logo...)
 DocModelJauneDescription=Modelo de presupuesto Jaune
+Numbershort=N°
