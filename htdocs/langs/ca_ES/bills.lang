@@ -364,7 +364,7 @@ DisabledBecausePayments=No disponible ja que hi ha pagaments
 CantRemovePaymentWithOneInvoicePaid=Eliminació impossible quan hi ha almenys una factura classificada com a pagada.
 ExpectedToPay=Esperant el pagament
 PayedByThisPayment=Pagada per aquest pagament
-ClosePaidInvoicesAutomatically=Classificar automàticament com "Pagada" les factures completament pagades.
+ClosePaidInvoicesAutomatically=Classificar com "Pagades" les factures completament pagades.
 AllCompletelyPayedInvoiceWillBeClosed=Totes les factures amb una resta a pagar 0 seran automàticament tancades a l'estat "Pagada".
 ##### Types de contacts #####
 TypeContact_facture_internal_SALESREPFOLL=Responsable seguiment factura a client
