@@ -102,8 +102,6 @@ class Propal extends CommonObject
 
 	var $lines = array();
 	var $line;
-	var $newchild;
-	var $oldchild;
 
 	var $origin;
 	var $origin_id;
@@ -480,6 +478,11 @@ class Propal extends CommonObject
 			
 			// Update line
 			$this->line=new PropaleLigne($this->db);
+			
+			// Stock previous line records
+			$staticline=new PropaleLigne($this->db);
+			$staticline->fetch($rowid);
+			$this->line->oldline = $staticline;
 			
 			$this->line->rowid=$rowid;
 			$this->line->desc=$desc;
@@ -2259,6 +2262,8 @@ class PropaleLigne
 {
 	var $db;
 	var $error;
+	
+	var $oldline;
 
 	// From llx_propaldet
 	var $rowid;
@@ -2501,6 +2506,8 @@ class PropaleLigne
 	 */
 	function update($notrigger=0)
 	{
+		global $conf,$langs,$user;
+		
 		// Clean parameters
 		if (empty($this->tva_tx)) $this->tva_tx=0;
 		if (empty($this->localtax1_tx)) $this->localtax1_tx=0;
