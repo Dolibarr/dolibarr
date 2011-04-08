@@ -143,9 +143,10 @@ class FormFile
 	 * 		@param		title				Title to show on top of form
 	 * 		@param		buttonlabel			Label on submit button
 	 * 		@param		codelang			Default language code to use on lang combo box if multilang is enabled
+	 * 		@param		hooks				Object hook of external modules
 	 * 		@return		int					<0 if KO, number of shown files if OK
 	 */
-	function show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='',$codelang='')
+	function show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='',$codelang='',$hooks='')
 	{
 		// filedir = conf->...dir_ouput."/".get_exdir(id)
 		include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
@@ -358,6 +359,15 @@ class FormFile
 				print '&nbsp;';
 			}
 			print '</td>';
+			
+			// Hook of thirdparty module
+			if (! empty($hooks) && is_array($hooks))
+			{
+				foreach($hooks as $module)
+				{
+					$module->formBuilddocOptions();
+				}
+			}
 
 			// Button
 			print '<td align="center" colspan="'.($delallowed?'2':'1').'">';
@@ -374,6 +384,15 @@ class FormFile
 			print '</td>';
 
 			print '</tr>';
+			
+			// Hook of thirdparty module
+			if (! empty($hooks) && is_array($hooks))
+			{
+				foreach($hooks as $module)
+				{
+					$module->formBuilddocOptions();
+				}
+			}
 		}
 
 		// Get list of files

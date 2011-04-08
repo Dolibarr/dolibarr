@@ -50,7 +50,7 @@
 
 	if (! empty($this->hooks)) {
 		foreach($this->hooks as $module) {
-			$module->formAddProductOption($this,$line->fk_parent_line);
+			$module->formEditProductOptions($this,$line->fk_parent_line);
 			echo '<br>';
 		}
 	}

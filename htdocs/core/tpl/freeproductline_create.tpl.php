@@ -50,7 +50,7 @@
 	
 	if (! empty($object->hooks)) {
 		foreach($object->hooks as $module) {
-			$module->formAddProductOption($object);
+			$module->formCreateProductOptions($object);
 		}
 	}
 	
