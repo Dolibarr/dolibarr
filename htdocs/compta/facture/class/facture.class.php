@@ -2566,16 +2566,19 @@ class Facture extends CommonObject
 
 
     /**
-     *  Renvoi si une facture peut etre supprimee completement.
-     *	La regle est la suivante:
-     *	Si facture derniere, non provisoire, sans paiement et non exporte en compta -> oui fin de regle
-     *  Si facture brouillon et provisoire -> oui
+     *  Return if an invoice can be deleted
+     *	Rule is:
+     *	If hidden option FACTURE_CAN_BE_REMOVED is on, we can
+     *  If invoice has a definitive ref, is last, without payment and not dipatched into accountancy -> yes end of rule
+     *  If invoice is draft and ha a temporary ref -> yes
      *  @return    int         <0 if KO, 0=no, 1=yes
      */
     function is_erasable()
     {
         global $conf;
 
+        if (! empty($conf->global->FACTURE_CAN_BE_REMOVED)) return 1;
+        
         // on verifie si la facture est en numerotation provisoire
         $facref = substr($this->ref, 1, 4);
 
