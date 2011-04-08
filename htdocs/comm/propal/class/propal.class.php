@@ -1,12 +1,12 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2011 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2008      Raphael Bertrand (Resultic)   <raphael.bertrand@resultic.fr>
- * Copyright (C) 2010      Juanjo Menent         <jmenent@2byte.es>
+ * Copyright (C) 2010-2011 Juanjo Menent         <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,6 +102,8 @@ class Propal extends CommonObject
 
 	var $lines = array();
 	var $line;
+	var $newchild;
+	var $oldchild;
 
 	var $origin;
 	var $origin_id;
@@ -438,7 +440,7 @@ class Propal extends CommonObject
 	 *	\param     	info_bits        	Miscellanous informations
 	 *    \return     int             	0 en cas de succes
 	 */
-	function updateline($rowid, $pu, $qty, $remise_percent=0, $txtva, $txlocaltax1=0, $txlocaltax2=0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0)
+	function updateline($rowid, $pu, $qty, $remise_percent=0, $txtva, $txlocaltax1=0, $txlocaltax2=0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0)
 	{
 		global $conf,$user,$langs;
 
@@ -468,9 +470,6 @@ class Propal extends CommonObject
 			$total_localtax1 = $tabprice[9];
 			$total_localtax2 = $tabprice[10];
 
-			if (empty($qty) && empty($special_code)) $special_code=3;
-
-
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 			$price = $pu;
 			if ($remise_percent > 0)
@@ -478,41 +477,40 @@ class Propal extends CommonObject
 				$remise = round(($pu * $remise_percent / 100), 2);
 				$price = $pu - $remise;
 			}
-
-			$sql = "UPDATE ".MAIN_DB_PREFIX."propaldet ";
-			$sql.= " SET qty='".$qty."'";
-			$sql.= " , price='". price2num($price)."'";			// TODO A virer
-			$sql.= " , remise_percent='".$remise_percent."'";	// TODO A virer
-			$sql.= " , subprice=".price2num($pu);
-			$sql.= " , tva_tx=".price2num($txtva);
-			$sql.= " , localtax1_tx=".price2num($txlocaltax1);
-			$sql.= " , localtax2_tx=".price2num($txlocaltax2);
-			$sql.= " , description='".$this->db->escape($desc)."'";
-			$sql.= " , total_ht=".price2num($total_ht);
-			$sql.= " , total_tva=".price2num($total_tva);
-			$sql.= " , total_localtax1=".price2num($total_localtax1);
-			$sql.= " , total_localtax2=".price2num($total_localtax2);
-			$sql.= " , total_ttc=".price2num($total_ttc);
-			$sql.= " , info_bits=".$info_bits;
-			$sql.= " , special_code=".$special_code;
-			$sql.= " WHERE rowid = '".$rowid."'";
-
-			$result=$this->db->query($sql);
+			
+			// Update line
+			$this->line=new PropaleLigne($this->db);
+			
+			$this->line->rowid=$rowid;
+			$this->line->desc=$desc;
+			$this->line->qty=$qty;
+			$this->line->tva_tx=$txtva;
+			$this->line->localtax1_tx=$txlocaltax1;
+			$this->line->localtax2_tx=$txlocaltax2;
+			$this->line->remise_percent=$remise_percent;
+			$this->line->subprice=$pu;
+			$this->line->info_bits=$info_bits;
+			$this->line->total_ht=$total_ht;
+			$this->line->total_tva=$total_tva;
+			$this->line->total_localtax1=$total_localtax1;
+			$this->line->total_localtax2=$total_localtax2;
+			$this->line->total_ttc=$total_ttc;
+			$this->line->special_code=$special_code;
+			$this->line->fk_parent_line=$fk_parent_line;
+			
+			if (empty($qty) && empty($special_code)) $this->line->special_code=3;
+			
+			// TODO deprecated
+			$this->line->price=$price;
+			$this->line->remise=$remise;
+			
+			$result=$this->line->update();
 			if ($result > 0)
 			{
 				$this->update_price(1);
 
 				$this->fk_propal = $this->id;
 				$this->rowid = $rowid;
-				if (! $notrigger)
-				{
-					// Appel des triggers
-					include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
-					$interface=new Interfaces($this->db);
-					$result = $interface->run_triggers('LINEPROPAL_UPDATE',$this,$user,$langs,$conf);
-					if ($result < 0) { $error++; $this->errors=$interface->errors; }
-					// Fin appel triggers
-				}
 
 				$this->db->commit();
 				return $result;
@@ -2301,6 +2299,12 @@ class PropaleLigne
 	var $ref;						// Reference produit
 	var $libelle;       // Label produit
 	var $product_desc;  // Description produit
+	
+	var $localtax1_tx;
+	var $localtax2_tx;
+	var $total_localtax1;
+	var $total_localtax2;
+	
 
 
 	/**
@@ -2369,7 +2373,7 @@ class PropaleLigne
 	 *      \brief     	Insert object line propal in database
 	 *		\return		int		<0 if KO, >0 if OK
 	 */
-	function insert()
+	function insert($notrigger=0)
 	{
 		global $conf,$langs,$user;
 
@@ -2495,28 +2499,44 @@ class PropaleLigne
 	 *      \brief     	Mise a jour de l'objet ligne de propale en base
 	 *		\return		int		<0 si ko, >0 si ok
 	 */
-	function update()
+	function update($notrigger=0)
 	{
+		// Clean parameters
+		if (empty($this->tva_tx)) $this->tva_tx=0;
+		if (empty($this->localtax1_tx)) $this->localtax1_tx=0;
+		if (empty($this->localtax2_tx)) $this->localtax2_tx=0;
+		if (empty($this->total_localtax1)) $this->total_localtax1=0;
+		if (empty($this->total_localtax2)) $this->total_localtax2=0;
+		if (empty($this->marque_tx)) $this->marque_tx=0;
+		if (empty($this->marge_tx)) $this->marge_tx=0;
+		if (empty($this->remise)) $this->remise=0;
+		if (empty($this->remise_percent)) $this->remise_percent=0;
+		if (empty($this->info_bits)) $this->info_bits=0;
+		if (empty($this->special_code)) $this->special_code=0;
+		if (empty($this->fk_parent_line)) $this->fk_parent_line=0;
+		
 		$this->db->begin();
 
 		// Mise a jour ligne en base
 		$sql = "UPDATE ".MAIN_DB_PREFIX."propaldet SET";
 		$sql.= " description='".$this->db->escape($this->desc)."'";
-		if ($fk_remise_except) $sql.= ",fk_remise_except=".$this->fk_remise_except;
-		else $sql.= ",fk_remise_except=null";
-		$sql.= ",tva_tx='".price2num($this->tva_tx)."'";
-		$sql.= ",qty='".price2num($this->qty)."'";
-		$sql.= ",subprice=".price2num($this->subprice)."";
-		$sql.= ",remise_percent=".price2num($this->remise_percent)."";
-		$sql.= ",price=".price2num($this->price)."";					// TODO A virer
-		$sql.= ",remise=".price2num($this->remise)."";					// TODO A virer
-		$sql.= ",info_bits='".$this->info_bits."'";
-		$sql.= ",total_ht=".price2num($this->total_ht)."";
-		$sql.= ",total_tva=".price2num($this->total_tva)."";
-		$sql.= ",total_ttc=".price2num($this->total_ttc)."";
-		$sql.= ",rang='".$this->rang."'";
-		$sql.= ",marge_tx='".$this->marge_tx."'";
-		$sql.= ",marque_tx='".$this->marque_tx."'";
+		$sql.= " , tva_tx='".price2num($this->tva_tx)."'";
+		$sql.= " , localtax1_tx=".price2num($this->localtax1_tx);
+		$sql.= " , localtax2_tx=".price2num($this->localtax2_tx);
+		$sql.= " , qty='".price2num($this->qty)."'";
+		$sql.= " , subprice=".price2num($this->subprice)."";
+		$sql.= " , remise_percent=".price2num($this->remise_percent)."";
+		$sql.= " , price=".price2num($this->price)."";					// TODO A virer
+		$sql.= " , remise=".price2num($this->remise)."";				// TODO A virer
+		$sql.= " , info_bits='".$this->info_bits."'";
+		$sql.= " , total_ht=".price2num($this->total_ht)."";
+		$sql.= " , total_tva=".price2num($this->total_tva)."";
+		$sql.= " , total_ttc=".price2num($this->total_ttc)."";
+		$sql.= " , marge_tx='".$this->marge_tx."'";
+		$sql.= " , marque_tx='".$this->marque_tx."'";
+		$sql.= " , info_bits=".$this->info_bits;
+		if ($this->special_code != '') $sql.= " , special_code=".$this->special_code;
+		$sql.= " , fk_parent_line=".($this->fk_parent_line>0?$this->fk_parent_line:"null");
 		$sql.= " WHERE rowid = ".$this->rowid;
 
 		dol_syslog("PropaleLigne::update sql=$sql");
@@ -2524,6 +2544,16 @@ class PropaleLigne
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
+			if (! $notrigger)
+			{
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result = $interface->run_triggers('LINEPROPAL_UPDATE',$this,$user,$langs,$conf);
+				if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				// Fin appel triggers
+			}
+			
 			$this->db->commit();
 			return 1;
 		}
