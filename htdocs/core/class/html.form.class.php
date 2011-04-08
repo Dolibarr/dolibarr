@@ -2702,8 +2702,8 @@ class Form
         if($h == '') $h=0;
         if($m == '') $m=0;
         if($empty == '') $empty=0;
-
-        if (! $set_time && $empty == 0) $set_time = time();
+        
+        if (! $set_time && $empty == 0) $set_time = dol_now();
 
         // Analyse de la date de pre-selection
         if (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?/',$set_time,$reg))
@@ -2845,7 +2845,7 @@ class Form
         if ($h)
         {
             // Show hour
-            $retstring.='<select'.($disabled?' disabled="true"':'').' class="flat '.($fullday?$fullday.'hour':'').'" name="'.$prefix.'hour">';
+        	$retstring.='<select'.($disabled?' disabled="true"':'').' class="flat '.($fullday?$fullday.'hour':'').'" name="'.$prefix.'hour">';
             if ($empty) $retstring.='<option value="-1">&nbsp;</option>';
             for ($hour = 0; $hour < 24; $hour++)
             {
