@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin       <regis@dolibarr.fr>
- * Copyright (C) 2010 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2010-2011 Regis Houssin       <regis@dolibarr.fr>
+ * Copyright (C) 2010-2011 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,15 @@
 <tr <?php echo $bc[$var]; ?>>
 	<td>
 	<a name="<?php echo $line->id; ?>"></a>
+	
 	<?php
+	if (! empty($this->hooks)) {
+		foreach($this->hooks as $module) {
+			$module->formAddProductOption($this,$line->fk_parent_line);
+			echo '<br>';
+		}
+	}
+
 	// editeur wysiwyg
     $nbrows=ROWS_2;
     if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
