@@ -359,15 +359,6 @@ class FormFile
 				print '&nbsp;';
 			}
 			print '</td>';
-			
-			// Hook of thirdparty module
-			if (! empty($hooks) && is_array($hooks))
-			{
-				foreach($hooks as $module)
-				{
-					$module->formBuilddocOptions();
-				}
-			}
 
 			// Button
 			print '<td align="center" colspan="'.($delallowed?'2':'1').'">';
