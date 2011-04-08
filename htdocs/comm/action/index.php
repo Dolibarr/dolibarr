@@ -668,6 +668,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 	if ($user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create)
 	{
 	    //$param='month='.$monthshown.'&year='.$year;
+	    // TODO If day is current day, we also for hour/min/secondes in url
 		print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&datep='.sprintf("%04d%02d%02d",$year,$month,$day).'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam?'?'.$newparam:'')).'">';
 		print img_picto($langs->trans("NewAction"),'edit_add.png');
 		print '</a>';
@@ -751,10 +752,10 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 
 						// If action related to company / contact
 						$linerelatedto='';$length=16;
-						if (! empty($event->societe->id) && ! empty($event->contact->id)) $length=8;
-                        if (! empty($event->societe->id))
+						if (! empty($event->societe->id) && ! empty($event->contact->id)) $length=round($length/2);
+                        if (! empty($event->societe->id) && $event->societe->id > 0)
                         {
-                            if (empty($cachethirdparties[$event->societe->id]))
+                            if (! is_object($cachethirdparties[$event->societe->id]))
                             {
                                 $thirdparty=new Societe($db);
                                 $thirdparty->fetch($event->societe->id);
@@ -763,9 +764,9 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                             else $thirdparty=$cachethirdparties[$event->societe->id];
                             $linerelatedto.=$thirdparty->getNomUrl(1,'',$length);
                         }
-                        if (! empty($event->contact->id))
+                        if (! empty($event->contact->id) && $event->contact->id > 0)
                         {
-                            if (empty($cachecontacts[$event->contact->id]))
+                            if (! is_object($cachecontacts[$event->contact->id]))
                             {
                                 $contact=new Contact($db);
                                 $contact->fetch($event->contact->id);
