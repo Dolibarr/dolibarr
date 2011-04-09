@@ -81,13 +81,13 @@ foreach($modules as $const => $desc)
 	    {
 	    	dolibarr_set_const($db, "FCKEDITOR_ENABLE_DETAILS", "1",'chaine',0,'',$conf->entity);
 	    }
-	    Header("Location: fckeditor.php");
+	    Header("Location: ".$_SERVER["PHP_SELF"]);
 	    exit;
 	}
 	if ($_GET["action"] == 'disable_'.strtolower($const))
 	{
 		dolibarr_del_const($db, "FCKEDITOR_ENABLE_".$const,$conf->entity);
-		Header("Location: fckeditor.php");
+		Header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	}
 }
@@ -161,7 +161,8 @@ print '<br>'."\n";
 print '<!-- Editor name = '.$conf->global->FCKEDITOR_EDITORNAME.' -->';
 print_fiche_titre($langs->trans("TestSubmitForm"),'','');
 print '<form name="formtest" method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-$editor=new DolEditor('formtestfield',isset($conf->global->FCKEDITOR_TEST)?$conf->global->FCKEDITOR_TEST:'Test','',200,'dolibarr_notes','In', true);
+$uselocalbrowser=true;
+$editor=new DolEditor('formtestfield',isset($conf->global->FCKEDITOR_TEST)?$conf->global->FCKEDITOR_TEST:'Test','',200,'dolibarr_notes','In', true, $uselocalbrowser);
 $editor->Create();
 print '<center><input class="button" type="submit" name="save" value="'.$langs->trans("Save").'"></center>'."\n";
 print '</form>'."\n";
