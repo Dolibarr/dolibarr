@@ -592,11 +592,19 @@ class Commande extends CommonObject
 
 			if ($this->id)
 			{
+				$fk_parent_line=0;
+				$num=sizeof($this->lines);
+				
 				/*
 				 *  Insertion du detail des produits dans la base
 				 */
-				for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
+				for ($i=0;$i<$num;$i++)
 				{
+					// Reset fk_parent_line for no child products and special product
+					if (($this->lines[$i]->product_type != 9 && empty($this->lines[$i]->fk_parent_line)) || $this->lines[$i]->product_type == 9) {
+						$fk_parent_line = 0;
+					}
+					
 					$result = $this->addline(
 					$this->id,
 					$this->lines[$i]->desc,
@@ -615,7 +623,8 @@ class Commande extends CommonObject
 					$this->lines[$i]->date_end,
 					$this->lines[$i]->product_type,
 					$this->lines[$i]->rang,
-					$this->lines[$i]->special_code
+					$this->lines[$i]->special_code,
+					$fk_parent_line
 					);
 					if ($result < 0)
 					{
@@ -623,6 +632,10 @@ class Commande extends CommonObject
 						dol_print_error($this->db);
 						$this->db->rollback();
 						return -1;
+					}
+					// Defined the new fk_parent_line
+					if ($result > 0 && $this->lines[$i]->product_type == 9) {
+						$fk_parent_line = $result;
 					}
 				}
 
@@ -985,8 +998,8 @@ class Commande extends CommonObject
 			$this->line->price=$price;
 			$this->line->remise=$remise;
 
-			$result=$this->line->insert();
-			if ($result > 0)
+			$resInsert=$this->line->insert();
+			if ($resInsert > 0)
 			{
 				// Mise a jour informations denormalisees au niveau de la commande meme
 				$this->id=$commandeid;	// TODO A virer
@@ -994,7 +1007,7 @@ class Commande extends CommonObject
 				if ($result > 0)
 				{
 					$this->db->commit();
-					return 1;
+					return $resInsert;
 				}
 				else
 				{

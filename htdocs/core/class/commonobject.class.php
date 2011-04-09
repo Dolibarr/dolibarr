@@ -700,7 +700,7 @@ class CommonObject
 	 *      Stocke un numero de rang pour toutes les lignes de detail d'un element qui n'en ont pas.
 	 * 		@param		renum		true to renum all already ordered lines, false to renum only not already ordered lines.
 	 */
-	function line_order($renum=false)
+	function line_order($renum=false, $rowidorder='ASC')
 	{
 		if (! $this->table_element_line)
 		{
@@ -727,7 +727,7 @@ class CommonObject
 		{
 			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 			$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
-			$sql.= ' ORDER BY rang ASC, rowid ASC';
+			$sql.= ' ORDER BY rang ASC, rowid '.$rowidorder;
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
@@ -736,13 +736,9 @@ class CommonObject
 				while ($i < $num)
 				{
 					$row = $this->db->fetch_row($resql);
-					$li[$i] = $row[0];
+					$this->updateRangOfLine($row[0], ($i+1));
 					$i++;
 				}
-			}
-			for ($i = 0 ; $i < sizeof($li) ; $i++)
-			{
-				$this->updateRangOfLine($li[$i], ($i+1));
 			}
 		}
 	}
@@ -896,15 +892,36 @@ class CommonObject
 	 * 	   Get max value used for position of line (rang)
 	 *     @result     int     Max value of rang in table of lines
 	 */
-	function line_max()
+	function line_max($fk_parent_line=0)
 	{
-		$sql = 'SELECT max(rang) FROM '.MAIN_DB_PREFIX.$this->table_element_line;
-		$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
-		$resql = $this->db->query($sql);
-		if ($resql)
+		// Search the last rang with fk_parent_line
+		if ($fk_parent_line)
 		{
-			$row = $this->db->fetch_row($resql);
-			return $row[0];
+			$sql = 'SELECT max(rang) FROM '.MAIN_DB_PREFIX.$this->table_element_line;
+			$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
+			$sql.= ' AND fk_parent_line = '.$fk_parent_line;
+			$resql = $this->db->query($sql);
+			if ($resql)
+			{
+				$row = $this->db->fetch_row($resql);
+				if (! empty($row[0])) {
+					return $row[0];
+				} else {
+					return $this->getRangOfLine($fk_parent_line);
+				}
+			}
+		}
+		// If not, search the last rang of element
+		else
+		{
+			$sql = 'SELECT max(rang) FROM '.MAIN_DB_PREFIX.$this->table_element_line;
+			$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
+			$resql = $this->db->query($sql);
+			if ($resql)
+			{
+				$row = $this->db->fetch_row($resql);
+				return $row[0];
+			}
 		}
 	}
 

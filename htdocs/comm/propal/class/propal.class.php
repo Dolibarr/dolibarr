@@ -350,7 +350,7 @@ class Propal extends CommonObject
 			$rangtouse = $rang;
 			if ($rangtouse == -1)
 			{
-				$rangmax = $this->line_max();
+				$rangmax = $this->line_max($fk_parent_line);
 				$rangtouse = $rangmax + 1;
 			}
 
@@ -399,6 +399,9 @@ class Propal extends CommonObject
 			$result=$this->line->insert();
 			if ($result > 0)
 			{
+				// Reorder if child line
+				if (! empty($fk_parent_line)) $this->line_order(true,'DESC');
+				
 				// Mise a jour informations denormalisees au niveau de la propale meme
 				$result=$this->update_price(1);
 				if ($result > 0)
