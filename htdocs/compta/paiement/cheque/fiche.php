@@ -2,6 +2,7 @@
 /* Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,8 +86,16 @@ if ($_POST['action'] == 'setdate' && $user->rights->banque->cheque)
 
 if ($_GET['action'] == 'create' && $_GET["accountid"] > 0 && $user->rights->banque->cheque)
 {
+	
+	if (is_array($_POST['toRemise']))
+		$result = $remisecheque->create($user, $_GET["accountid"], 0); // $result = $remisecheque->create($user, $_GET["accountid"], 0, $_POST['toRemise']);	
+	
+	else 
+		$result = $remisecheque->create($user, $_GET["accountid"], 0);
+	
 	$remisecheque = new RemiseCheque($db);
-	$result = $remisecheque->create($user, $_GET["accountid"], 0);
+	//$result = $remisecheque->create($user, $_GET["accountid"], 0);
+	
 	if ($result > 0)
 	{
         if ($remisecheque->statut == 1)     // If statut is validated, we build doc
@@ -216,6 +225,23 @@ llxHeader();
 $html = new Form($db);
 $formfile = new FormFile($db);
 
+
+?>
+<script language="javascript" type="text/javascript">
+jQuery(document).ready(function() 
+{
+	jQuery("#checkall").click(function() 
+	{
+		jQuery(".checkforremise").attr('checked', true);
+	});
+	jQuery("#checknone").click(function() 
+	{
+		jQuery(".checkforremise").attr('checked', false);
+	});
+});
+</script>
+<?php
+
 if ($_GET['action'] == 'new')
 {
 	$h=0;
@@ -281,7 +307,7 @@ if ($_GET['action'] == 'new')
 	print '<tr><td width="30%">'.$langs->trans('Date').'</td><td width="70%">'.dol_print_date($now,'day').'</td></tr>';
 	print '</table><br>';
 
-	$sql = "SELECT ba.rowid as bid, b.dateo as date,";
+	$sql = "SELECT ba.rowid as bid, b.dateo as date, b.rowid as chqid, ";
 	$sql.= " b.amount, ba.label, b.emetteur, b.num_chq, b.banque";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b ";
 	$sql.= ",".MAIN_DB_PREFIX."bank_account as ba ";
@@ -304,6 +330,7 @@ if ($_GET['action'] == 'new')
 			$lines[$obj->bid][$i]["emetteur"] = $obj->emetteur;
 			$lines[$obj->bid][$i]["numero"] = $obj->num_chq;
 			$lines[$obj->bid][$i]["banque"] = $obj->banque;
+			$lines[$obj->bid][$i]["id"] = $obj->chqid;
 			$i++;
 		}
 
@@ -324,6 +351,10 @@ if ($_GET['action'] == 'new')
 		print '<td style="min-width: 200px">'.$langs->trans("CheckTransmitter")."</td>\n";
 		print '<td style="min-width: 200px">'.$langs->trans("Bank")."</td>\n";
 		print '<td align="right" width="100px">'.$langs->trans("Amount")."</td>\n";
+		print '<td align="center" width="100px">'.$langs->trans("Select")."<br>";
+		if ($conf->use_javascript_ajax) print '<a href="#" id="checkall">'.$langs->trans("All").'</a> / <a href="#" id="checknone">'.$langs->trans("None").'</a>';
+		print '</td>';
+		
 		print "</tr>\n";
 
 		$var=true;
@@ -340,8 +371,12 @@ if ($_GET['action'] == 'new')
 			print '<td>'.$value["numero"]."</td>\n";
 			print '<td>'.$value["emetteur"]."</td>\n";
 			print '<td>'.$value["banque"]."</td>\n";
-			print '<td align="right">'.price($value["amount"]).'</td>';
+			print '<td align="right">'.price($value["amount"]).'</td>';			
+			print '<td align="center">';
+			print '<input id="'.$value["id"].'" class="flat checkforremise" checked="true" type="checkbox" name="toRemise[]" value="'.$value["id"].'">';	
+			print '</td>' ;		
 			print '</tr>';
+			
 			$i++;
 		}
 		print "</table>";
