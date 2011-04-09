@@ -301,6 +301,7 @@ ThisForceAlsoTheme=Utiliser ce gestionnaire de menu force aussi le theme quelque
 ThemeDir=Répertoire des thèmes
 ConnectionTimeout=Timeout de connexion
 ResponseTimeout=Timeout de réponse
+SmsTestMessage=Message de test de __PHONEFROM__ vers __PHONETO__
 
 # Modules= undefined
 Module0Name= Utilisateurs & groupes
