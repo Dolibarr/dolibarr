@@ -102,7 +102,7 @@ FCKConfig.ToolbarLocation = 'In' ;
 FCKConfig.ToolbarSets["dolibarr_mailings"] = [
         ['FitWindow','Source'],
         ['Cut','Copy','Paste','PasteText','PasteWord','-','SpellCheck','-','Preview','Print'],
-        ['Undo','Redo','-','Find','Replace','-','SelectAll'],
+        ['Undo','Redo','-','Find','Replace'],
         ['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript','-','TextColor','BGColor','-','RemoveFormat'],
         ['OrderedList','UnorderedList','-','Outdent','Indent'],
         ['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
@@ -113,11 +113,11 @@ FCKConfig.ToolbarSets["dolibarr_mailings"] = [
 FCKConfig.ToolbarSets["dolibarr_notes"] = [
         ['FitWindow','Source'],
         ['Cut','Copy','Paste','PasteText','PasteWord','-','SpellCheck','-','Preview','Print'],
-        ['Undo','Redo','-','Find','Replace','-','SelectAll'],
+        ['Undo','Redo','-','Find','Replace'],
         ['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript','-','TextColor','BGColor','-','RemoveFormat'],
         ['OrderedList','UnorderedList','-','Outdent','Indent'],
         ['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
-        ['Link','Unlink','Anchor','Image','Table','Rule','SpecialChar'],
+        ['Link','Unlink','Image','Table','Rule','SpecialChar'],
         ['FontName','FontSize']
 ] ;
 
@@ -180,6 +180,7 @@ FCKConfig.Keystrokes = [
 	[ SHIFT + 32 /*SPACE*/, 'Nbsp' ]
 ] ;
 
+//FCKConfig.ContextMenu = ['Generic','Link','Anchor','Image','Flash','Select','Textarea','Checkbox','Radio','TextField','HiddenField','ImageButton','Button','BulletedList','NumberedList','Table','Form','DivContainer'] ;
 FCKConfig.ContextMenu = ['Generic','Link','Anchor','Image','Flash','Select','Textarea','Checkbox','Radio','TextField','HiddenField','ImageButton','Button','BulletedList','NumberedList','Table','Form','DivContainer'] ;
 FCKConfig.BrowserContextMenuOnCtrl = false ;
 FCKConfig.BrowserContextMenu = false ;
