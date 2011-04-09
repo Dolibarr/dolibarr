@@ -1570,9 +1570,9 @@ class CommonObject
 		{
 			$var=!$var;
 
-			if ($line->product_type == 9 && ! empty($line->special_code))
+			if (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line))
 			{
-				$object->hooks[$line->special_code]->printOriginObjectLine($line,$i);
+				if (empty($line->fk_parent_line)) $object->hooks[$line->special_code]->printOriginObjectLine($this,$line,$i);
 			}
 			else
 			{
@@ -1598,12 +1598,15 @@ class CommonObject
 		if ($line->date_debut_reel) $date_start=$line->date_debut_reel;
 		$date_end=$line->date_fin_prevue;
 		if ($line->date_fin_reel) $date_end=$line->date_fin_reel;
-
+		
+		$this->tpl['label'] = '';
+		if (! empty($line->fk_parent_line)) $this->tpl['label'].= img_picto('', 'rightarrow');
+		
 		if (($line->info_bits & 2) == 2)
 		{
 			$discount=new DiscountAbsolute($db);
 			$discount->fk_soc = $this->socid;
-			$this->tpl['label'] = $discount->getNomUrl(0,'discount');
+			$this->tpl['label'].= $discount->getNomUrl(0,'discount');
 		}
 		else if ($line->fk_product)
 		{
@@ -1611,7 +1614,7 @@ class CommonObject
 			$productstatic->id = $line->fk_product;
 			$productstatic->ref = $line->ref;
 			$productstatic->type = $line->fk_product_type;
-			$this->tpl['label'] = $productstatic->getNomUrl(1);
+			$this->tpl['label'].= $productstatic->getNomUrl(1);
 			$this->tpl['label'].= $line->label?' - '.$line->label:'';
 			// Dates
 			if ($date_start || $date_end)
@@ -1621,7 +1624,7 @@ class CommonObject
 		}
 		else
 		{
-			$this->tpl['label'] = ($line->product_type == -1 ? '&nbsp;' : ($line->product_type == 1 ? img_object($langs->trans(''),'service') : img_object($langs->trans(''),'product')));
+			$this->tpl['label'].= ($line->product_type == -1 ? '&nbsp;' : ($line->product_type == 1 ? img_object($langs->trans(''),'service') : img_object($langs->trans(''),'product')));
 			$this->tpl['label'].= ($line->label ? '&nbsp;'.$line->label : '');
 			// Dates
 			if ($date_start || $date_end)
@@ -1658,7 +1661,7 @@ class CommonObject
 		$this->tpl['price'] = price($line->subprice);
 		$this->tpl['qty'] = (($line->info_bits & 2) != 2) ? $line->qty : '&nbsp;';
 		$this->tpl['remise_percent'] = (($line->info_bits & 2) != 2) ? $line->remise_percent.'%' : '&nbsp;';
-
+		
 		include(DOL_DOCUMENT_ROOT.'/core/tpl/originproductline.tpl.php');
 	}
 }
