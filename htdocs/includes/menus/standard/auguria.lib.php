@@ -197,7 +197,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after)
         $mysoc->logo_mini=$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI;
         if (! empty($mysoc->logo_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
         {
-            $urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('thumbs/'.$mysoc->logo_mini);
+            $urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=companylogo&amp;file='.urlencode('thumbs/'.$mysoc->logo_mini);
             print "\n".'<!-- Show logo on menu -->'."\n";
             print '<div class="blockvmenuimpair">'."\n";
             print '<center><img title="'.$title.'" src="'.$urllogo.'"></center>'."\n";

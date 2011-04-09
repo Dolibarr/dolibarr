@@ -101,9 +101,9 @@ FCKConfig.ToolbarLocation = 'In' ;
 /* Ne pas mettre le lien sur objets internes (Image,Smiley) sur le type mailing */
 FCKConfig.ToolbarSets["dolibarr_mailings"] = [
         ['FitWindow','Source'],
-        ['Cut','Copy','Paste','PasteText','PasteWord','-','SpellCheck','-','Preview','Print'],
+        ['Cut','Copy','Paste','-','SpellCheck'],
         ['Undo','Redo','-','Find','Replace'],
-        ['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript','-','TextColor','BGColor','-','RemoveFormat'],
+        ['Bold','Italic','Underline','StrikeThrough','Subscript','Superscript','-','TextColor','BGColor','RemoveFormat'],
         ['OrderedList','UnorderedList','-','Outdent','Indent'],
         ['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
         ['Link','Unlink','Anchor','Image','Table','Rule','SpecialChar'],
@@ -112,9 +112,9 @@ FCKConfig.ToolbarSets["dolibarr_mailings"] = [
 
 FCKConfig.ToolbarSets["dolibarr_notes"] = [
         ['FitWindow','Source'],
-        ['Cut','Copy','Paste','PasteText','PasteWord','-','SpellCheck','-','Preview','Print'],
+        ['Cut','Copy','Paste','-','SpellCheck'],
         ['Undo','Redo','-','Find','Replace'],
-        ['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript','-','TextColor','BGColor','-','RemoveFormat'],
+        ['Bold','Italic','Underline','StrikeThrough','Subscript','Superscript','-','TextColor','BGColor','RemoveFormat'],
         ['OrderedList','UnorderedList','-','Outdent','Indent'],
         ['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
         ['Link','Unlink','Image','Table','Rule','SpecialChar'],
@@ -123,13 +123,13 @@ FCKConfig.ToolbarSets["dolibarr_notes"] = [
 
 FCKConfig.ToolbarSets["dolibarr_details"] = [
         ['FitWindow','Source'],
-        ['Cut','Copy','Paste','-','Preview'],
+        ['Cut','Copy','Paste'],
         ['Undo','Redo'],
-        ['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript','-','TextColor','BGColor','-','RemoveFormat'],
+        ['Bold','Italic','Underline','StrikeThrough','Subscript','Superscript','-','TextColor','RemoveFormat'],
         ['OrderedList','UnorderedList','-','Outdent','Indent'],
         ['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
         ['SpecialChar'],
-        ['FontName','FontSize']
+        ['FontSize']
 ] ;
 
 FCKConfig.ToolbarSets["Default"] = [
