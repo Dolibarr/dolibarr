@@ -46,7 +46,7 @@ CKEDITOR.editorConfig = function( config )
 
 	config.toolbar_dolibarr_mailings = 
 	[
-	 	['Source'],
+	 	['Source','Maximize'],
 	 	['Cut','Copy','Paste','-','SpellChecker'],
 	 	['Undo','Redo','-','Find','Replace'],
 	    ['Font','FontSize'],
@@ -70,9 +70,9 @@ CKEDITOR.editorConfig = function( config )
 	
 	config.toolbar_dolibarr_details =
 	[
-	 	['Source'],
+	 	['Source','Maximize'],
 	 	['Cut','Copy','Paste','-','SpellChecker'],
-	    ['FontSize'],
+	    ['Font','FontSize'],
 	    ['Bold','Italic','Underline','Strike','Subscript','Superscript','-','TextColor','RemoveFormat'],
 	 	['NumberedList','BulletedList','Outdent','Indent'],
 	 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
