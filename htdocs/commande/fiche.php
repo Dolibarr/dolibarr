@@ -570,7 +570,10 @@ if ($_POST['action'] == 'addline' && $user->rights->commande->creer)
                 $pu_ttc,
                 $date_start,
                 $date_end,
-                $type
+                $type,
+                -1,
+                '',
+                $_POST['fk_parent_line']
                 );
 
                 if ($result > 0)
@@ -677,7 +680,8 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
         $info_bits,
         $date_start,
         $date_end,
-        $type
+        $type,
+        $_POST['fk_parent_line']
         );
 
         if ($result >= 0)
@@ -1476,7 +1480,7 @@ else
             /*
              *   Commande
              */
-            $nbrow=7;
+            $nbrow=8;
             if ($conf->projet->enabled) $nbrow++;
 
             //Local taxes
@@ -1939,7 +1943,7 @@ else
                 $genallowed=$user->rights->commande->creer;
                 $delallowed=$user->rights->commande->supprimer;
 
-                $somethingshown=$formfile->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
+                $somethingshown=$formfile->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang,$object->hooks);
 
                 /*
                  * Linked object block

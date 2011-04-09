@@ -544,6 +544,9 @@ class Propal extends CommonObject
 		if ($this->statut == 0)
 		{
 			$line=new PropaleLigne($this->db);
+			
+			// For triggers
+			$line->fetch($lineid);
 
 			if ($line->delete($lineid))
 			{
@@ -2470,9 +2473,6 @@ class PropaleLigne
 	function delete($rowid)
 	{
 		global $conf,$langs,$user;
-		
-		// For triggers
-		$this->fetch($rowid);
 		
 		$this->db->begin();
 		
