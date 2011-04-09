@@ -44,6 +44,7 @@ $langs->load("bills");
 $langs->load("orders");
 $langs->load("agenda");
 
+$action=GETPOST("action");
 
 // Security check
 $socid = GETPOST('socid');
@@ -57,12 +58,12 @@ if (isset($_GET["error"])) $error=$_GET["error"];
 $cactioncomm = new CActionComm($db);
 $actioncomm = new ActionComm($db);
 $contact = new Contact($db);
-
+//var_dump($_POST);
 
 /*
  * Action creation de l'action
  */
-if ($_POST["action"] == 'add_action')
+if ($action == 'add_action')
 {
     $backtopage='';
     if (! empty($_POST["backtopage"])) $backtopage=$_POST["backtopage"];
@@ -105,7 +106,7 @@ if ($_POST["action"] == 'add_action')
 	if (! $datep2 && $_POST["percentage"] == 100)
 	{
 		$error=1;
-		$_GET["action"] = 'create';
+		$action = 'create';
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("DateEnd")).'</div>';
 	}
 
@@ -113,7 +114,7 @@ if ($_POST["action"] == 'add_action')
 	if (! $_POST["actioncode"])
 	{
 		$error=1;
-		$_GET["action"] = 'create';
+		$action = 'create';
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Type")).'</div>';
 	}
 	else
@@ -145,26 +146,8 @@ if ($_POST["action"] == 'add_action')
 	}
 	$actioncomm->fk_project = isset($_POST["projectid"])?$_POST["projectid"]:0;
 	$actioncomm->datep = $datep;
-	//$actioncomm->date = $datea;
 	$actioncomm->datef = $datep2;
-	//$actioncomm->dateend = $datea2;
-	//if ($_POST["percentage"] < 100 && strval($actioncomm->datep) != '') $actioncomm->datep=$actioncomm->date;
-	if ($actioncomm->type_code == 'AC_RDV')
-	{
-		// RDV
-		if ($actioncomm->datef && $actioncomm->datef < dol_now('tzref'))
-		{
-			$actioncomm->percentage = 100;
-		}
-		else
-		{
-			$actioncomm->percentage = 0;
-		}
-	}
-	else
-	{
-		$actioncomm->percentage = isset($_POST["percentage"])?$_POST["percentage"]:0;
-	}
+	$actioncomm->percentage = isset($_POST["percentage"])?$_POST["percentage"]:0;
 	$actioncomm->duree=(($_POST["dureehour"] * 60) + $_POST["dureemin"]) * 60;
 
 	$usertodo=new User($db);
@@ -197,20 +180,20 @@ if ($_POST["action"] == 'add_action')
 	if ($actioncomm->type_code == 'AC_RDV' && ($datep == '' || $datep2 == ''))
 	{
 		$error=1;
-		$_GET["action"] = 'create';
+		$action = 'create';
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DateEnd")).'</div>';
 	}
 	if ($datea && $_POST["percentage"] == 0)
 	{
 		$error=1;
-		$_GET["action"] = 'create';
+		$action = 'create';
 		$mesg='<div class="error">'.$langs->trans("ErrorStatusCantBeZeroIfStarted").'</div>';
 	}
 
 	if (! $_POST["apyear"] && ! $_POST["adyear"])
 	{
 		$error=1;
-		$_GET["action"] = 'create';
+		$action = 'create';
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")).'</div>';
 	}
 
@@ -263,7 +246,7 @@ if ($_POST["action"] == 'add_action')
 /*
  * Action suppression de l'action
  */
-if (GETPOST("action") == 'confirm_delete' && GETPOST("confirm") == 'yes')
+if ($action == 'confirm_delete' && GETPOST("confirm") == 'yes')
 {
 	$actioncomm = new ActionComm($db);
 	$actioncomm->fetch($id);
@@ -288,7 +271,7 @@ if (GETPOST("action") == 'confirm_delete' && GETPOST("confirm") == 'yes')
 /*
  * Action mise a jour de l'action
  */
-if (GETPOST("action") == 'update')
+if ($action == 'update')
 {
 	if (! $_POST["cancel"])
 	{
@@ -355,7 +338,7 @@ if (GETPOST("action") == 'update')
 		if (! $datep2 && $_POST["percentage"] == 100)
 		{
 			$error=$langs->trans("ErrorFieldRequired",$langs->trans("DateEnd"));
-			$_GET["action"] = 'edit';
+			$action = 'edit';
 		}
 
 		// Users
@@ -409,6 +392,7 @@ if (GETPOST("action") == 'update')
 	}
 }
 
+
 /*
  * View
  */
@@ -420,7 +404,7 @@ $html = new Form($db);
 $htmlactions = new FormActions($db);
 
 
-if (GETPOST('action') == 'create')
+if ($action == 'create')
 {
 	$contact = new Contact($db);
 
@@ -471,6 +455,10 @@ if (GETPOST('action') == 'create')
                             jQuery("#doneby").val(-1);
                         }
                    });
+                   jQuery("#actioncode").change(function() {
+                        if (jQuery("#actioncode").val() == \'AC_RDV\') jQuery("#dateend").addClass("fieldrequired");
+                        else jQuery("#dateend").removeClass("fieldrequired");
+                   });
                })';
         print '</script>'."\n";
     }
@@ -519,7 +507,7 @@ if (GETPOST('action') == 'create')
 	// Date end
 	$datef=$actioncomm->datef;
     if (GETPOST('datef','int',1)) $datef=dol_stringtotime(GETPOST('datef','int',1),0);
-	print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td>';
+	print '<tr><td><span id="dateend"'.(GETPOST("actioncode") == 'AC_RDV'?' class="fieldrequired"':'').'>'.$langs->trans("DateActionEnd").'</span></td><td>';
 	if (GETPOST("afaire") == 1) $html->select_date($datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
 	else if (GETPOST("afaire") == 2) $html->select_date($datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
 	else $html->select_date($datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
@@ -682,13 +670,13 @@ if ($id)
 	$delay_warning=$conf->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;
 
 	// Confirmation suppression action
-	if (GETPOST("action") == 'delete')
+	if ($action == 'delete')
 	{
 		$ret=$html->form_confirm("fiche.php?id=".$id,$langs->trans("DeleteAction"),$langs->trans("ConfirmDeleteAction"),"confirm_delete",'','',1);
 		if ($ret == 'html') print '<br>';
 	}
 
-	if (GETPOST("action") == 'edit')
+	if ($action == 'edit')
 	{
 	    if ($conf->use_javascript_ajax)
         {
@@ -1007,7 +995,7 @@ if ($id)
 
 	print '<div class="tabsAction">';
 
-	if ($_GET["action"] != 'edit')
+	if ($action != 'edit')
 	{
 		if ($user->rights->agenda->allactions->create ||
 		   (($act->author->id == $user->id || $act->usertodo->id == $user->id) && $user->rights->agenda->myactions->create))
