@@ -592,7 +592,12 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
             $urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=companylogo&amp;file='.urlencode('thumbs/'.$mysoc->logo_mini);
             print "\n".'<!-- Show logo on menu -->'."\n";
             print '<div class="blockvmenuimpair">'."\n";
+            print '<div class="menu_titre"></div>';
+            print '<div class="menu_top"></div>';
+            print '<div class="menu_contenu">';
             print '<center><img title="'.$title.'" src="'.$urllogo.'"></center>'."\n";
+            print '</div>';
+            print '<div class="menu_end"></div>';
             print '</div>'."\n";
         }
     }
