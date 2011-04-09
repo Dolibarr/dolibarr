@@ -407,7 +407,7 @@ class Propal extends CommonObject
 				if ($result > 0)
 				{
 					$this->db->commit();
-					return 1;
+					return $this->line->rowid;
 				}
 				else
 				{
@@ -675,9 +675,17 @@ class Propal extends CommonObject
 				 */
 				if (! $error)
 				{
-					for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
+					$fk_parent_line=0;
+					$num=sizeof($this->lines);
+					
+					for ($i=0;$i<$num;$i++)
 					{
-						$resql = $this->addline(
+						// Reset fk_parent_line for no child products and special product
+						if (($this->lines[$i]->product_type != 9 && empty($this->lines[$i]->fk_parent_line)) || $this->lines[$i]->product_type == 9) {
+							$fk_parent_line = 0;
+						}
+						
+						$result = $this->addline(
 						$this->id,
 						$this->lines[$i]->desc,
 						$this->lines[$i]->subprice,
@@ -692,15 +700,20 @@ class Propal extends CommonObject
 						0,
 						$this->lines[$i]->product_type,
 						$this->lines[$i]->rang,
-						$this->lines[$i]->special_code
+						$this->lines[$i]->special_code,
+						$fk_parent_line
 						);
 
-						if ($resql < 0)
+						if ($result < 0)
 						{
 							$error++;
 							$this->error=$this->db->error;
 							dol_print_error($this->db);
 							break;
+						}
+						// Defined the new fk_parent_line
+						if ($result > 0 && $this->lines[$i]->product_type == 9) {
+							$fk_parent_line = $result;
 						}
 					}
 				}
@@ -839,20 +852,18 @@ class Propal extends CommonObject
 		}
 
 		// Clear fields
-		$object->user_author        = $user->id;
-		$object->user_valid         = '';
-		$object->date               = '';
-		$object->datep 				= $now;
-		$object->fin_validite       = $object->datep + ($this->duree_validite * 24 * 3600);
-		$object->ref_client         = '';
+		$object->user_author	= $user->id;
+		$object->user_valid		= '';
+		$object->date			= '';
+		$object->datep			= $now;
+		$object->fin_validite	= $object->datep + ($this->duree_validite * 24 * 3600);
+		$object->ref_client		= '';
 
+		// Set ref
 		require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".$conf->global->PROPALE_ADDON.".php");
 		$obj = $conf->global->PROPALE_ADDON;
 		$modPropale = new $obj;
-		$numpr = $modPropale->getNextValue($objsoc,$object);
-
-		// Set ref
-		$object->ref                = $numpr;
+		$object->ref = $modPropale->getNextValue($objsoc,$object);
 
 		// Create clone
 		$result=$object->create($user);
