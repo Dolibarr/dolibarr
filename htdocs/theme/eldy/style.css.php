@@ -1849,3 +1849,13 @@ A.none, A.none:active, A.none:visited, A.none:hover {
     line-height: 1em !important;
 }
 .ui-autocomplete-input { margin: 0; padding: 1px; }
+
+
+/* ============================================================================== */
+/*  CKEditor                                                                      */
+/* ============================================================================== */
+
+.cke_editor table, .cke_editor tr, .cke_editor td
+{
+    border: 0px solid #FF0000 !important;
+}

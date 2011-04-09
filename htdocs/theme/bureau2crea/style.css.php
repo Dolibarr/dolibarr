@@ -83,7 +83,7 @@ body {
     width: 100%;
     margin: 0px;
     }
-    
+
 #mainbody .connexion_box {
 	position: absolute;
     top: 2px;
@@ -91,7 +91,7 @@ body {
     height: 12px;
     text-align: left;
     }
-    
+
 #mainbody .connexion_box .login, #mainbody .connexion_box .printer {
 	margin-left: 10px;
     font-size: 10px;
@@ -99,7 +99,7 @@ body {
     padding: 0px !important;
     padding-right: 10px !important;
     }
-    
+
 #mainbody .connexion_box .login a {
 	color: #333;
     text-decoration: none;
@@ -427,12 +427,12 @@ li.tmenu, li.tmenusel {
 li.tmenu span, li.tmenusel span {
 	margin: 0px 10px 0px 10px;
     }
-    
+
 li.tmenu {
     background-image : url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_tmenu_btnD.jpg' ?>);
     background-position: right;
     }
-        
+
 li.tmenu a {
 	position: relative;
 	display: block;
@@ -447,16 +447,16 @@ li.tmenu a {
     color: #FFF;
     font-weight: normal;
     }
-    
+
 li.tmenu a:hover {
 	color: #842F00;
     }
-    
+
 li.tmenusel {
     background-image : url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_tmenusel_btnD.jpg' ?>);
     background-position: right;
     }
-    
+
 li.tmenusel a.tmenusel {
 	position: relative;
 	display: block;
@@ -471,11 +471,11 @@ li.tmenusel a.tmenusel {
     color: #303030;
     font-weight: normal;
     }
-    
+
 li.tmenusel a:hover {
 	color: #474747;
     }
-    
+
 li.tmenu a.tmenudisabled {
 	color: #CCC;
     }
@@ -1256,13 +1256,13 @@ tr.liste_titre select.flat {
 	float: left;
     width: 200px;
     position: relative;
-    margin: 30px 10px 10px 0px; 
+    margin: 30px 10px 10px 0px;
 }
 
 tr.liste_titre input.button {
 	float: left;
     position: relative;
-    margin: 30px 10px 10px 0px; 
+    margin: 30px 10px 10px 0px;
 }
 
 td.liste_titre_sel {
@@ -1978,4 +1978,14 @@ table.noborder {
 
 div.leftContent {
 	background-color: #FFF;
+}
+
+
+/* ============================================================================== */
+/*  CKEditor                                                                      */
+/* ============================================================================== */
+
+.cke_editor table, .cke_editor tr, .cke_editor td
+{
+    border: 0px solid #FF0000 !important;
 }

@@ -60,7 +60,7 @@ class DolEditor
      *                                    	'In' chaque fenetre d'edition a la propre barre d'outils
      *                                    	'Out:nom' partage de la barre d'outils ou 'nom' est le nom du DIV qui affiche la barre
      *      @param  toolbarstartexpanded  	visible ou non au demarrage
-	 *		@param	uselocalbrowser			Enabled to add links to local object with local browsers. If false, only external images can be added in content.
+	 *		@param	uselocalbrowser			Enabled to add links to local object with local browser. If false, only external images can be added in content.
 	 *      @param  okforextandededitor     True=Allow usage of extended editor tool (like fckeditor)
      *      @param  rows                    Size of rows for textarea tool
 	 *      @param  cols                    Size of cols for textarea tool
@@ -71,8 +71,10 @@ class DolEditor
 
     	dol_syslog("DolEditor::DolEditor htmlname=".$htmlname." tool=".$tool);
 
-        // Name of extended editor to use
-        $this->tool=empty($conf->global->FCKEDITOR_EDITORNAME)?'fckeditor':$conf->global->FCKEDITOR_EDITORNAME;
+        // Name of extended editor to use (FCKEDITOR_EDITORNAME can be 'ckeditor' or 'fckeditor')
+        $defaulteditor='ckeditor';
+        $this->tool=empty($conf->global->FCKEDITOR_EDITORNAME)?$defaulteditor:$conf->global->FCKEDITOR_EDITORNAME;
+        $this->uselocalbrowser=$uselocalbrowser;
 
         // Check if extended editor is ok. If not we force textarea
         if (empty($conf->fckeditor->enabled) || ! $okforextendededitor)
@@ -166,8 +168,9 @@ class DolEditor
             						toolbarStartupExpanded: '.($this->toolbarstartexpanded ? 'true' : 'false').',
             						width: '.($this->width ? $this->width : '\'\'').',
             						height: '.$this->height.',
-            						skin: \''.$skin.'\',
-                                    on :   {
+                                    skin: \''.$skin.'\',
+                                    on :
+                                            {
                                                 instanceReady : function( ev )
                                                 {
                                                     // Output paragraphs as <p>Text</p>.
@@ -180,7 +183,15 @@ class DolEditor
                                                             breakAfterClose : true
                                                         });
                                                 }
-                                            }
+                                            }';
+            	if ($this->uselocalbrowser)
+            	{
+                    print ','."\n".'    filebrowserBrowseUrl : \'/browser/browse.php\',
+                                        filebrowserUploadUrl : \'/uploader/upload.php\',
+                                        filebrowserImageWindowWidth : \'640\',
+                                        filebrowserImageWindowHeight : \'480\'';
+            	}
+            	print '
             					});
 
             			});

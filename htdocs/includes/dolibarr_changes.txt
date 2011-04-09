@@ -7,6 +7,12 @@ ALL:
 Replace "& new" by "new"
 
 
+CKEDITOR:
+---------
+Remove border and padding into style .cke_skin_kama
+into file includes/ckeditor/skins/kama/editor.css
+
+
 NUSOAP:
 -------
 * In file nusoap.php, to avoid a warning,

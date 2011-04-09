@@ -7,7 +7,24 @@ CKEDITOR.editorConfig = function( config )
 {
 	// Define changes to default configuration here.
 	// http://docs.cksource.com/CKEditor_3.x/Developers_Guide
-	
+	// http://docs.cksource.com/ckeditor_api/symbols/CKEDITOR.config.html
+	config.enterMode = CKEDITOR.ENTER_BR;
+	config.resize_enabled = false;
+	//config.resize_maxHeight = 3000;
+	//config.resize_maxWidth = 3000;
+	//config.height = '300px';
+	//config.resize_dir = 'vertical';	// horizontal, vertical, both
+	config.removePlugins = 'elementspath,save,font';
+	config.removeDialogTabs = 'flash:advanced';	// config.removeDialogTabs = 'flash:advanced;image:Link';
+	config.protectedSource.push( /<\?[\s\S]*?\?>/g );   // Prevent PHP Code to be formatted
+	//config.menu_groups = 'clipboard,table,anchor,link,image';	// for context menu 'clipboard,form,tablecell,tablecellproperties,tablerow,tablecolumn,table,anchor,link,image,flash,checkbox,radio,textfield,hiddenfield,imagebutton,button,select,textarea' 
+	//config.language = 'de';
+	//config.defaultLanguage = 'en';
+	//config.contentsLanguage = 'fr';
+	config.fullPage = false;	// Not a full html page string, just part of it
+	config.dialog_backgroundCoverColor = 'rgb(255, 254, 253)';
+	//config.contentsCss = '/css/mysitestyles.css';
+
 	config.toolbar_Full =
 	[
 	    ['Source','-','Save','NewPage','Preview','-','Templates'],
@@ -29,37 +46,36 @@ CKEDITOR.editorConfig = function( config )
 
 	config.toolbar_dolibarr_mailings = 
 	[
-	 	['FitWindow','Source'],
-	 	['Cut','Copy','Paste','PasteText','PasteWord','-','SpellCheck','-','Preview','Print'],
-	 	['Undo','Redo','-','Find','Replace','-','SelectAll'],
-	 	['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript','-','TextColor','BGColor','-','RemoveFormat'],
-	 	['OrderedList','UnorderedList','-','Outdent','Indent'],
-	 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
-	 	['Link','Unlink','Anchor','Image','Table','Rule','SpecialChar'],
-	 	['FontName','FontSize']
+	 	['Source'],
+	 	['Cut','Copy','Paste','-','SpellChecker'],
+	 	['Undo','Redo','-','Find','Replace'],
+	    ['Font','FontSize'],
+	 	['Bold','Italic','Underline','Strike','Subscript','Superscript','-','TextColor','RemoveFormat'],
+	 	['NumberedList','BulletedList','Outdent','Indent'],
+	 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
+	 	['Link','Unlink','Anchor','Image','Table','SpecialChar']
 	 ];
 	
 	config.toolbar_dolibarr_notes =
 	[
-	 	['FitWindow','Source'],
-	 	['Cut','Copy','Paste','PasteText','PasteWord','-','SpellCheck','-','Preview','Print'],
-	 	['Undo','Redo','-','Find','Replace','-','SelectAll'],
-	 	['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript','-','TextColor','BGColor','-','RemoveFormat'],
-	    ['OrderedList','UnorderedList','-','Outdent','Indent'],
-	    ['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
-	    ['Link','Unlink','Anchor','Image','Table','Rule','SpecialChar'],
-	    ['FontName','FontSize']
+	 	['Source'],
+	 	['Cut','Copy','Paste','-','SpellChecker'],
+	 	['Undo','Redo','-','Find','Replace'],
+	    ['Font','FontSize'],
+	 	['Bold','Italic','Underline','Strike','Subscript','Superscript','-','TextColor','RemoveFormat'],
+	 	['NumberedList','BulletedList','Outdent','Indent'],
+	 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
+	    ['Link','Unlink','Image','Table','SpecialChar']
 	];
 	
 	config.toolbar_dolibarr_details =
 	[
-	 	['FitWindow','Source'],
-	 	['Cut','Copy','Paste','-','Preview'],
-	    ['Undo','Redo'],
-	    ['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript','-','TextColor','BGColor','-','RemoveFormat'],
-	    ['OrderedList','UnorderedList','-','Outdent','Indent'],
-	    ['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
-	    ['SpecialChar'],
-	    ['FontName','FontSize']
+	 	['Source'],
+	 	['Cut','Copy','Paste','-','SpellChecker'],
+	    ['FontSize'],
+	    ['Bold','Italic','Underline','Strike','Subscript','Superscript','-','TextColor','RemoveFormat'],
+	 	['NumberedList','BulletedList','Outdent','Indent'],
+	 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
+	    ['SpecialChar']
 	];
 };
