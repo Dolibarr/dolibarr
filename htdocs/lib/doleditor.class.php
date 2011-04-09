@@ -50,7 +50,7 @@ class DolEditor
 
     /**
      *      Create an object to build an HTML area to edit a large string content
-     *      
+     *
      *      @param 	htmlname		        Nom formulaire html WYSIWIG
      *      @param 	content			        Contenu edition WYSIWIG
      *      @param	width					Largeur en pixel de la zone edition (auto by default)
@@ -152,15 +152,35 @@ class DolEditor
             {
             	if (! defined('REQUIRE_CKEDITOR')) define('REQUIRE_CKEDITOR','1');
 
+            	//$skin='kama';
+            	//$skin='office2003';
+            	//$skin='v2';
+            	$skin='kama';
+
             	print '<script type="text/javascript">
             			jQuery(document).ready(function () {
             				CKEDITOR.replace(\''.$this->htmlname.'\',
             					{
-            						customConfig : \''.DOL_URL_ROOT.'/theme/'.$conf->theme.'/ckeditor/config.js\',
+            						customConfig : \''.dol_buildpath('/theme/'.$conf->theme.'/ckeditor/config.js',1).'\',
             						toolbar: \''.$this->toolbarname.'\',
             						toolbarStartupExpanded: '.($this->toolbarstartexpanded ? 'true' : 'false').',
             						width: '.($this->width ? $this->width : '\'\'').',
-            						height: '.$this->height.'
+            						height: '.$this->height.',
+            						skin: \''.$skin.'\',
+                                    on :   {
+                                                instanceReady : function( ev )
+                                                {
+                                                    // Output paragraphs as <p>Text</p>.
+                                                    this.dataProcessor.writer.setRules( \'p\',
+                                                        {
+                                                            indent : false,
+                                                            breakBeforeOpen : true,
+                                                            breakAfterOpen : false,
+                                                            breakBeforeClose : false,
+                                                            breakAfterClose : true
+                                                        });
+                                                }
+                                            }
             					});
 
             			});
