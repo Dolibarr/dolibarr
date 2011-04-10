@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -51,6 +51,20 @@ function llxHeader() { }
 
 require("./main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
+
+
+if (GETPOST("cache"))
+{
+    // Important: Following code is to avoid page request by browser and PHP CPU at
+    // each Dolibarr page access.
+    if (empty($dolibarr_nocache))
+    {
+         header('Cache-Control: max-age=3600, public, must-revalidate');
+         header('Pragma: cache');       // This is to avoid having Pragma: no-cache
+    }
+    else header('Cache-Control: no-cache');
+    //print $dolibarr_nocache; exit;
+}
 
 // Define mime type
 $type = 'application/octet-stream';
@@ -276,7 +290,7 @@ if ($modulepart)
         $accessallowed=1;
         $original_file=$conf->scanner->dir_temp.'/'.$user->id.'/'.$original_file;
     }
-    
+
 	// Wrapping pour les images fckeditor
     elseif ($modulepart == 'fckeditor')
     {
