@@ -996,8 +996,8 @@ class CommonObject
 
 	/**
 	 *	Update total_ht, total_ttc and total_vat for an object (sum of lines)
-	 *	@param		exclspec	Exclude special product (product_type=9)
-	 *	@return		int			<0 if KO, >0 if OK
+	 *	@param	   exclspec       Exclude special product (product_type=9)
+	 *	@return	   int			  <0 if KO, >0 if OK
 	 */
 	function update_price($exclspec=0)
 	{
@@ -1036,11 +1036,11 @@ class CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				$this->total_ht       += $obj->total_ht;
-				$this->total_tva      += $obj->total_tva;
+				$this->total_ht        += $obj->total_ht;
+				$this->total_tva       += $obj->total_tva;
 				$this->total_localtax1 += $obj->total_localtax1;
 				$this->total_localtax2 += $obj->total_localtax2;
-				$this->total_ttc      += $obj->total_ttc;
+				$this->total_ttc       += $obj->total_ttc;
 
 				$i++;
 			}
@@ -1049,28 +1049,13 @@ class CommonObject
 
 			// Now update field total_ht, total_ttc and tva
 			$fieldht='total_ht';
-
 			$fieldtva='tva';
-
 			$fieldlocaltax1='localtax1';
 			$fieldlocaltax2='localtax2';
-
 			$fieldttc='total_ttc';
-
-			if ($this->element == 'facture' || $this->element == 'facturerec')
-			{
-				$fieldht='total';
-			}
-
-			if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier')
-			{
-				$fieldtva='total_tva';
-			}
-
-			if ($this->element == 'propal')
-			{
-				$fieldttc='total';
-			}
+			if ($this->element == 'facture' || $this->element == 'facturerec')             $fieldht='total';
+			if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') $fieldtva='total_tva';
+			if ($this->element == 'propal')                                                $fieldttc='total';
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET';
 			$sql .= " ".$fieldht."='".price2num($this->total_ht)."',";
@@ -1362,7 +1347,7 @@ class CommonObject
 	{
 		global $conf,$langs,$object;
 		global $html,$bcnd,$var;
-		
+
         // Use global variables + $dateSelector + $seller and $buyer
 		include(DOL_DOCUMENT_ROOT.'/core/tpl/freeproductline_create.tpl.php');
 	}
@@ -1598,10 +1583,10 @@ class CommonObject
 		if ($line->date_debut_reel) $date_start=$line->date_debut_reel;
 		$date_end=$line->date_fin_prevue;
 		if ($line->date_fin_reel) $date_end=$line->date_fin_reel;
-		
+
 		$this->tpl['label'] = '';
 		if (! empty($line->fk_parent_line)) $this->tpl['label'].= img_picto('', 'rightarrow');
-		
+
 		if (($line->info_bits & 2) == 2)
 		{
 			$discount=new DiscountAbsolute($db);
@@ -1661,7 +1646,7 @@ class CommonObject
 		$this->tpl['price'] = price($line->subprice);
 		$this->tpl['qty'] = (($line->info_bits & 2) != 2) ? $line->qty : '&nbsp;';
 		$this->tpl['remise_percent'] = (($line->info_bits & 2) != 2) ? vatrate($line->remise_percent, true) : '&nbsp;';
-		
+
 		include(DOL_DOCUMENT_ROOT.'/core/tpl/originproductline.tpl.php');
 	}
 }
