@@ -1,13 +1,13 @@
 <?php
 /* Copyright (C) 2002-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio   <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier        <benoit.mortier@opensides.be>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2010 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
- * Copyright (C) 2010      Juanjo Menent         <jmenent@2byte.es>
+ * Copyright (C) 2010-2011 Juanjo Menent         <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1787,7 +1787,7 @@ class Facture extends CommonObject
             {
                 // Mise a jour informations denormalisees au niveau de la facture meme
                 $this->id=$facid;	// TODO To move this we must remove parameter facid into this function declaration
-                $result=$this->update_price();
+                $result=$this->update_price(1);
                 if ($result > 0)
                 {
                     $this->db->commit();
@@ -1902,7 +1902,7 @@ class Facture extends CommonObject
             if ($result > 0)
             {
                 // Mise a jour info denormalisees au niveau facture
-                $this->update_price();
+                $this->update_price(1);
                 $this->db->commit();
                 return $result;
             }

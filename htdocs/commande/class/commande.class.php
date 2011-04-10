@@ -1003,7 +1003,7 @@ class Commande extends CommonObject
 			{
 				// Mise a jour informations denormalisees au niveau de la commande meme
 				$this->id=$commandeid;	// TODO A virer
-				$result=$this->update_price($commandeid);
+				$result=$this->update_price(1);
 				if ($result > 0)
 				{
 					$this->db->commit();
@@ -2023,7 +2023,7 @@ class Commande extends CommonObject
 			if ($result > 0)
 			{
 				// Mise a jour info denormalisees
-				$this->update_price();
+				$this->update_price(1);
 
 				$this->db->commit();
 				return $result;
