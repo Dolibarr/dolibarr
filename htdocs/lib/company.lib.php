@@ -153,7 +153,7 @@ function societe_prepare_head2($object)
 	    $head[$h][2] = 'rib';
 	    $h++;
     }
-    
+
     if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY))
     {
 	    $head[$h][0] = 'lien.php?socid='.$object->id;
@@ -161,7 +161,7 @@ function societe_prepare_head2($object)
 	    $head[$h][2] = 'links';
 	    $h++;
     }
-    
+
     $head[$h][0] = 'commerciaux.php?socid='.$object->id;
     $head[$h][1] = $langs->trans("SalesRepresentative");
     $head[$h][2] = 'salesrepresentative';
@@ -524,12 +524,12 @@ function show_contacts($conf,$langs,$db,$object)
 
 
 /**
- *    	\brief      Show html area with actions to do
- * 		\param		conf		Object conf
- * 		\param		langs		Object langs
- * 		\param		db			Object db
- * 		\param		objsoc		Object third party
- * 		\param		objcon		Object contact
+ *    	Show html area with actions to do
+ * 		@param		conf		Object conf
+ * 		@param		langs		Object langs
+ * 		@param		db			Object db
+ * 		@param		object		Object third party
+ * 		@param		objcon		Object contact
  */
 function show_actions_todo($conf,$langs,$db,$object,$objcon='')
 {
@@ -657,12 +657,12 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='')
 }
 
 /**
- *    	\brief      Show html area with actions done
- * 		\param		conf		Object conf
- * 		\param		langs		Object langs
- * 		\param		db			Object db
- * 		\param		objsoc		Object third party
- * 		\param		objcon		Object contact
+ *    	Show html area with actions done
+ * 		@param		conf		Object conf
+ * 		@param		langs		Object langs
+ * 		@param		db			Object db
+ * 		@param		objsoc		Object third party
+ * 		@param		objcon		Object contact
  */
 function show_actions_done($conf,$langs,$db,$object,$objcon='')
 {
@@ -892,7 +892,7 @@ function show_subsidiaries($conf,$langs,$db,$object)
 	if ($num)
 	{
 		$socstatic = new Societe($db);
-		
+
 		print_titre($langs->trans("Subsidiaries"));
 		print "\n".'<table class="noborder" width="100%">'."\n";
 
