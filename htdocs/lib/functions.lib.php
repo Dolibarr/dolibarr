@@ -3594,26 +3594,22 @@ function dol_getIdFromCode($db,$key,$tablename,$fieldkey='code',$fieldid='id')
  */
 function verifCond($strRights)
 {
-	global $user,$conf,$langs,$leftmenu;
-	global $rights;	// To export to dol_eval function
+	global $user,$conf,$langs;
+	global $leftmenu;
+	global $rights;    // To export to dol_eval function
 
 	//print $strRights."<br>\n";
-	if ($strRights != "")
+    $rights = true;
+	if ($strRights != '')
 	{
-		$rights = true;
-		$tab_rights = explode("||", $strRights);
-		$i = 0;
-		while (($i < count($tab_rights)) && ($rights == true)) {
+		//$tab_rights = explode('&&', $strRights);
+		//$i = 0;
+		//while (($i < count($tab_rights)) && ($rights == true)) {
 			$str = 'if(!(' . $strRights . ')) { $rights = false; }';
 			dol_eval($str);
-			$i++;
-		}
+		//	$i++;
+		//}
 	}
-	else
-	{
-		$rights = true;
-	}
-
 	return $rights;
 }
 
@@ -3621,22 +3617,16 @@ function verifCond($strRights)
  * Replace eval function to add more security.
  * This function is called by verifCond().
  * @param 	string	$s
- * @return 	int		1
  */
 function dol_eval($s)
 {
 	// Only global variables can be changed by eval function and returned to caller
 	global $langs, $user, $conf;
+    global $leftmenu;
 	global $rights;
-	global $leftmenu;
-
-	// \todo
-	// Warning. We must add code to exclude test if it contains = (affectation) that is not == (compare)
 
 	//print $s."<br>\n";
 	eval($s);
-
-	return 1;
 }
 
 
