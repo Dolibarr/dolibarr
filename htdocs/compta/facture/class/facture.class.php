@@ -1956,33 +1956,34 @@ class Facture extends CommonObject
             $this->db->rollback();
             return -1;
         }
-
-        // Efface ligne de facture
-        $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facturedet';
-        $sql.= ' WHERE rowid = '.$rowid;
-
-        dol_syslog("Facture::Deleteline sql=".$sql);
-        $result = $this->db->query($sql);
-        if (! $result)
+        
+        $line=new FactureLigne($this->db);
+        
+        // For triggers
+        $line->fetch($rowid);
+        
+        if ($line->delete($user) > 0)
         {
-            $this->error=$this->db->error();
-            dol_syslog("Facture::Deleteline  Error ".$this->error, LOG_ERR);
-            $this->db->rollback();
-            return -1;
+        	$result=$this->update_price(1);
+        	
+        	if ($result > 0)
+        	{
+        		$this->db->commit();
+        		return 1;
+        	}
+        	else
+        	{
+        		$this->db->rollback();
+        		$this->error=$this->db->lasterror();
+        		return -1;
+        	}
         }
-
-        $result=$this->update_price();
-
-        // Appel des triggers
-        include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
-        $interface=new Interfaces($this->db);
-        $result = $interface->run_triggers('LINEBILL_DELETE',$this,$user,$langs,$conf);
-        if ($result < 0) { $error++; $this->errors=$interface->errors; }
-        // Fin appel triggers
-
-        $this->db->commit();
-
-        return 1;
+        else
+        {
+        	$this->db->rollback();
+        	$this->error=$this->db->lasterror();
+        	return -1;
+        }
     }
 
     /**
@@ -3186,7 +3187,6 @@ class FactureLigne
         }
     }
 
-
     /**
      *	\brief     	Insert line in database
      *	\param      notrigger		1 no triggers
@@ -3335,7 +3335,6 @@ class FactureLigne
         }
     }
 
-
     /**
      *  	Update line into database
      *		@return		int		<0 if KO, >0 if OK
@@ -3406,6 +3405,40 @@ class FactureLigne
             return -2;
         }
     }
+    
+	/**
+	 * 	Delete line in database
+	 *	@return	 int  <0 si ko, >0 si ok
+	 */
+	function delete($rowid)
+	{
+		global $conf,$langs,$user;
+		
+		$this->db->begin();
+		
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet WHERE rowid = ".$rowid;
+		dol_syslog("FactureLigne::delete sql=".$sql, LOG_DEBUG);
+		if ($this->db->query($sql) )
+		{
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			$interface=new Interfaces($this->db);
+			$result = $interface->run_triggers('LINEBILL_DELETE',$this,$user,$langs,$conf);
+			if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			// Fin appel triggers
+			
+			$this->db->commit();
+			
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->error()." sql=".$sql;
+			dol_syslog("FactureLigne::delete Error ".$this->error, LOG_ERR);
+			$this->db->rollback();
+			return -1;
+		}
+	}
 
     /**
      *      \brief     	Mise a jour en base des champs total_xxx de ligne de facture

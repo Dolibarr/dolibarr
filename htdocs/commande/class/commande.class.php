@@ -1551,7 +1551,7 @@ class Commande extends CommonObject
 
 					if ($result > 0)
 					{
-						$result=$this->update_price();
+						$result=$this->update_price(1);
 
 						if ($result > 0)
 						{
