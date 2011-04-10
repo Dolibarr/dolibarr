@@ -250,7 +250,7 @@ class Propal extends CommonObject
 			$result=$propalligne->insert();
 			if ($result > 0)
 			{
-				$result=$this->update_price();
+				$result=$this->update_price(1);
 				if ($result > 0)
 				{
 					$this->db->commit();
@@ -750,7 +750,7 @@ class Propal extends CommonObject
 				if (! $error)
 				{
 					// Mise a jour infos denormalisees
-					$resql=$this->update_price();
+					$resql=$this->update_price(1);
 					if ($resql)
 					{
 						if (! $notrigger)
@@ -1336,7 +1336,7 @@ class Propal extends CommonObject
 			if ($this->db->query($sql) )
 			{
 				$this->remise_percent = $remise;
-				$this->update_price();
+				$this->update_price(1);
 				return 1;
 			}
 			else
@@ -1370,7 +1370,7 @@ class Propal extends CommonObject
 			if ($this->db->query($sql) )
 			{
 				$this->remise_absolue = $remise;
-				$this->update_price();
+				$this->update_price(1);
 				return 1;
 			}
 			else

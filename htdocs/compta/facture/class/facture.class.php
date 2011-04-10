@@ -1022,7 +1022,7 @@ class Facture extends CommonObject
             $lineid=$facligne->insert();
             if ($lineid > 0)
             {
-                $result=$this->update_price();
+                $result=$this->update_price(1);
                 if ($result > 0)
                 {
                     // Cr�e lien entre remise et ligne de facture
@@ -1499,7 +1499,7 @@ class Facture extends CommonObject
 
         if ($num)
         {
-            $this->update_price();
+            $this->update_price(1);
 
             // Validate
             $sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
@@ -2037,7 +2037,7 @@ class Facture extends CommonObject
             if ($this->db->query($sql))
             {
                 $this->remise_percent = $remise;
-                $this->update_price($this->id);
+                $this->update_price(1);
                 return 1;
             }
             else
@@ -2073,7 +2073,7 @@ class Facture extends CommonObject
             if ($this->db->query($sql))
             {
                 $this->remise_absolue = $remise;
-                $this->update_price($this->id);
+                $this->update_price(1);
                 return 1;
             }
             else
@@ -3388,7 +3388,6 @@ class FactureLigne
         // Check parameters
         if ($this->product_type < 0) return -1;
 
-
         $this->db->begin();
 
         // Mise a jour ligne en base
@@ -3500,6 +3499,8 @@ class FactureLigne
         $sql.= ",total_localtax2=".price2num($this->total_localtax2)."";
         $sql.= ",total_ttc=".price2num($this->total_ttc)."";
         $sql.= " WHERE rowid = ".$this->rowid;
+        
+        dol_syslog("PropaleLigne::update_total sql=".$sql, LOG_DEBUG);
 
         $resql=$this->db->query($sql);
         if ($resql)

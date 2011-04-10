@@ -1271,7 +1271,7 @@ class Commande extends CommonObject
 			$result=$line->insert();
 			if ($result > 0)
 			{
-				$result=$this->update_price();
+				$result=$this->update_price(1);
 				if ($result > 0)
 				{
 					$this->db->commit();
@@ -1610,7 +1610,7 @@ class Commande extends CommonObject
 			if ($this->db->query($sql))
 	  {
 	  	$this->remise_percent = $remise;
-	  	$this->update_price();
+	  	$this->update_price(1);
 	  	return 1;
 	  }
 	  else
@@ -1645,7 +1645,7 @@ class Commande extends CommonObject
 			if ($this->db->query($sql))
 	  {
 	  	$this->remise_absolue = $remise;
-	  	$this->update_price();
+	  	$this->update_price(1);
 	  	return 1;
 	  }
 	  else
