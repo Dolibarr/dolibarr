@@ -33,6 +33,8 @@ if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
 require('../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formcompany.class.php");
 
+
+
 /*
  * View
  */
@@ -49,7 +51,7 @@ top_httphead();
 dol_syslog(join(',',$_GET));
 
 
-// Generation liste des societes
+// Generation of list of zip-town
 if (! empty($_GET['zipcode']) || ! empty($_GET['town']))
 {
 	$return_arr = array();
@@ -59,76 +61,70 @@ if (! empty($_GET['zipcode']) || ! empty($_GET['town']))
 	$zipcode = $_GET['zipcode']?$_GET['zipcode']:'';
 	$town = $_GET['town']?$_GET['town']:'';
 
-	$sql = "SELECT z.rowid, z.zip, z.town, z.fk_county";
-	$sql.= ", p.rowid as fk_country, p.code as country_code, p.libelle as country";
-	$sql.= ", d.rowid as fk_county, d.code_departement as county_code , d.nom as county";
-	$sql.= " FROM ".MAIN_DB_PREFIX."c_ziptown as z";
-	$sql.= ", ".MAIN_DB_PREFIX ."c_departements as d";
-	$sql.= ", ".MAIN_DB_PREFIX."c_regions as r";
-	$sql.= ",".MAIN_DB_PREFIX."c_pays as p";
-	$sql.= " WHERE z.fk_county = d.rowid";
-	$sql.= " AND d.fk_region = r.code_region";
-	$sql.= " AND r.fk_pays = p.rowid";
-	$sql.= " AND z.active = 1 AND d.active = 1 AND r.active = 1 AND p.active = 1";
-	if ($zipcode) " AND z.zip LIKE '" . $db->escape($zipcode) . "%'";
-	if ($town) " AND z.town LIKE '%" . $db->escape($town) . "%'";
-	$sql.= " ORDER BY p.rowid, z.zip, z.town";
+	if ($conf->global->MAIN_USE_ZIPTOWN_DICTIONNARY)   // Use zip-town table
+	{
+    	$sql = "SELECT z.rowid, z.zip, z.town, z.fk_county";
+    	$sql.= ", p.rowid as fk_country, p.code as country_code, p.libelle as country";
+    	$sql.= ", d.rowid as fk_county, d.code_departement as county_code , d.nom as county";
+    	$sql.= " FROM ".MAIN_DB_PREFIX."c_ziptown as z";
+    	$sql.= ", ".MAIN_DB_PREFIX ."c_departements as d";
+    	$sql.= ", ".MAIN_DB_PREFIX."c_regions as r";
+    	$sql.= ",".MAIN_DB_PREFIX."c_pays as p";
+    	$sql.= " WHERE z.fk_county = d.rowid";
+    	$sql.= " AND d.fk_region = r.code_region";
+    	$sql.= " AND r.fk_pays = p.rowid";
+    	$sql.= " AND z.active = 1 AND d.active = 1 AND r.active = 1 AND p.active = 1";
+    	if ($zipcode) " AND z.zip LIKE '" . $db->escape($zipcode) . "%'";
+    	if ($town) " AND z.town LIKE '%" . $db->escape($town) . "%'";
+    	$sql.= " ORDER BY p.rowid, z.zip, z.town";
+        $sql.= $db->plimit(50); // Avoid pb with bad criteria
+	}
+	else                                               // Use table of third parties
+	{
+        $sql = "SELECT DISTINCT s.cp as zip, s.ville as town, s.fk_departement as fk_county, s.fk_pays as fk_country";
+        $sql.= ", p.code as country_code, p.libelle as country";
+        $sql.= ", d.code_departement as county_code , d.nom as county";
+        $sql.= " FROM ".MAIN_DB_PREFIX.'societe as s';
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX ."c_departements as d ON fk_departement = d.rowid";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.'c_pays as p ON fk_pays = p.rowid';
+        $sql.= " WHERE";
+        if ($zipcode) $sql.= " s.cp LIKE '".$db->escape($zipcode)."%'";
+        if ($town) $sql.= " s.ville LIKE '%" . $db->escape($town) . "%'";
+        $sql.= " ORDER BY s.fk_pays, s.cp, s.ville";
+	}
 
-	//print $sql;
+    //print $sql;
 	$resql=$db->query($sql);
 	//var_dump($db);
 	if ($resql)
 	{
-		$num = $db->num_rows($resql);
-		//print 'num='.$num;
-
-		if (! $num)
+		while ($row = $db->fetch_array($resql))
 		{
-			$sql = "SELECT DISTINCT s.cp as zip, s.ville as town, s.fk_departement as fk_county, s.fk_pays as fk_country";
-			$sql.= ", p.code as country_code, p.libelle as country";
-			$sql.= ", d.code_departement as county_code , d.nom as county";
-			$sql.= " FROM ".MAIN_DB_PREFIX.'societe as s';
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX ."c_departements as d ON fk_departement = d.rowid";
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX.'c_pays as p ON fk_pays = p.rowid';
-			$sql.= " WHERE";
-			if ($zipcode) $sql.= " s.cp LIKE '".$db->escape($zipcode)."%'";
-			if ($town) $sql.= " s.ville LIKE '%" . $db->escape($town) . "%'";
-			$sql.= " ORDER BY s.fk_pays, s.cp, s.ville";
-			$sql.= $db->plimit(50);	// Avoid pb with bad criteria
-			//print $sql;
-			$resql=$db->query($sql);
-		}
+			$country = $row['fk_country']?($langs->trans('Country'.$row['country_code'])!='Country'.$row['country_code']?$langs->trans('Country'.$row['country_code']):$row['country']):'';
+			$county = $row['fk_county']?($langs->trans($row['county_code'])!=$row['county_code']?$langs->trans($row['county_code']):($row['county']!='-'?$row['county']:'')):'';
 
-		if ($resql)
-		{
-			while ($row = $db->fetch_array($resql))
+			$row_array['label'] = $row['zip'].' '.$row['town'];
+			$row_array['label'] .= ($county || $country)?' (':'';
+            $row_array['label'] .= $county;
+			$row_array['label'] .= ($county && $country?' - ':'');
+            $row_array['label'] .= $country;
+            $row_array['label'] .= ($county || $country)?')':'';
+            if ($zipcode)
 			{
-				$country = $row['fk_country']?($langs->trans('Country'.$row['country_code'])!='Country'.$row['country_code']?$langs->trans('Country'.$row['country_code']):$row['country']):'';
-				$county = $row['fk_county']?($langs->trans($row['county_code'])!=$row['county_code']?$langs->trans($row['county_code']):($row['county']!='-'?$row['county']:'')):'';
-
-				$row_array['label'] = $row['zip'].' '.$row['town'];
-				$row_array['label'] .= ($county || $country)?' (':'';
-                $row_array['label'] .= $county;
-				$row_array['label'] .= ($county && $country?' - ':'');
-                $row_array['label'] .= $country;
-                $row_array['label'] .= ($county || $country)?')':'';
-                if ($zipcode)
-				{
-					$row_array['value'] = $row['zip'];
-					$row_array['town'] = $row['town'];
-				}
-				if ($town)
-				{
-					$row_array['value'] = $row['town'];
-					$row_array['zipcode'] = $row['zip'];
-				}
-				$row_array['selectpays_id'] = $row['fk_country'];
-				$row_array['departement_id'] = $row['fk_county'];
-
-				$row_array['states'] = $formcompany->select_state('',$row['fk_country'],'');
-
-				array_push($return_arr,$row_array);
+				$row_array['value'] = $row['zip'];
+				$row_array['town'] = $row['town'];
 			}
+			if ($town)
+			{
+				$row_array['value'] = $row['town'];
+				$row_array['zipcode'] = $row['zip'];
+			}
+			$row_array['selectpays_id'] = $row['fk_country'];
+			$row_array['departement_id'] = $row['fk_county'];
+
+			$row_array['states'] = $formcompany->select_state('',$row['fk_country'],'');
+
+			array_push($return_arr,$row_array);
 		}
 	}
 
