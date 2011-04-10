@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -953,7 +953,7 @@ class Commande extends CommonObject
 			$rangtouse = $rang;
 			if ($rangtouse == -1)
 			{
-				$rangmax = $this->line_max();
+				$rangmax = $this->line_max($fk_parent_line);
 				$rangtouse = $rangmax + 1;
 			}
 
@@ -998,16 +998,19 @@ class Commande extends CommonObject
 			$this->line->price=$price;
 			$this->line->remise=$remise;
 
-			$resInsert=$this->line->insert();
-			if ($resInsert > 0)
+			$result=$this->line->insert();
+			if ($result > 0)
 			{
+				// Reorder if child line
+				if (! empty($fk_parent_line)) $this->line_order(true,'DESC');
+				
 				// Mise a jour informations denormalisees au niveau de la commande meme
 				$this->id=$commandeid;	// TODO A virer
 				$result=$this->update_price(1);
 				if ($result > 0)
 				{
 					$this->db->commit();
-					return $resInsert;
+					return $this->line->rowid;
 				}
 				else
 				{
@@ -2777,7 +2780,7 @@ class OrderLine
 			}
 
 			$this->db->commit();
-			return $this->rowid;
+			return 1;
 		}
 		else
 		{

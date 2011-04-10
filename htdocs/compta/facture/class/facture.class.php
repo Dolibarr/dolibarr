@@ -1728,7 +1728,7 @@ class Facture extends CommonObject
             $rangtouse = $rang;
             if ($rangtouse == -1)
             {
-                $rangmax = $this->line_max();
+                $rangmax = $this->line_max($fk_parent_line);
                 $rangtouse = $rangmax + 1;
             }
 
@@ -1785,6 +1785,9 @@ class Facture extends CommonObject
             $result=$this->line->insert();
             if ($result > 0)
             {
+            	// Reorder if child line
+				if (! empty($fk_parent_line)) $this->line_order(true,'DESC');
+				
                 // Mise a jour informations denormalisees au niveau de la facture meme
                 $this->id=$facid;	// TODO To move this we must remove parameter facid into this function declaration
                 $result=$this->update_price(1);
@@ -3055,6 +3058,8 @@ class FactureLigne
     var $rowid;
     //! Id facture
     var $fk_facture;
+    //! Id parent line
+    var $fk_parent_line;
     //! Description ligne
     var $desc;
     var $fk_product;		// Id of predefined product
