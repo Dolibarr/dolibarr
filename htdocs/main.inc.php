@@ -774,9 +774,9 @@ if (!empty($conf->global->MAIN_MODULE_MULTICOMPANY))
 	if (GETPOST('action') == 'switchentity' && $user->admin && ! $user->entity)
 	{
 		require_once("../class/actions_multicompany.class.php");
-		
+
 		$mc = new ActionsMulticompany($db);
-		
+
 		if($mc->switchEntity(GETPOST('entity')) > 0)
 		{
 			Header("Location: ".DOL_URL_ROOT.'/');
@@ -914,8 +914,8 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			// Other external js
 			require_once DOL_DOCUMENT_ROOT.'/lib/ajax.lib.php';
 
-			$mini='';$ext='.js';
-			if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x01)) { $mini='_mini'; $ext='.jgz'; }	// mini='_mini', ext='.gz'
+			$ext='.js';
+			if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x01)) { $ext='.jgz'; }	// mini='_mini', ext='.gz'
 
 			// JQuery. Must be before other includes (prototype/scriptaculous/...)
 			print '<!-- Includes JS for JQuery -->'."\n";
