@@ -1572,7 +1572,7 @@ class CommonObject
 
 			if (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line))
 			{
-				if (empty($line->fk_parent_line)) $object->hooks[$line->special_code]->printOriginObjectLine($this,$line,$i);
+				if (empty($line->fk_parent_line)) $object->hooks[$line->special_code]->printOriginObjectLine($this,$line,$var,$i);
 			}
 			else
 			{
@@ -1657,10 +1657,10 @@ class CommonObject
 			$this->tpl['description'] = '&nbsp;';
 		}
 
-		$this->tpl['vat_rate'] = vatrate($line->tva_tx);
+		$this->tpl['vat_rate'] = vatrate($line->tva_tx, true);
 		$this->tpl['price'] = price($line->subprice);
 		$this->tpl['qty'] = (($line->info_bits & 2) != 2) ? $line->qty : '&nbsp;';
-		$this->tpl['remise_percent'] = (($line->info_bits & 2) != 2) ? $line->remise_percent.'%' : '&nbsp;';
+		$this->tpl['remise_percent'] = (($line->info_bits & 2) != 2) ? vatrate($line->remise_percent, true) : '&nbsp;';
 		
 		include(DOL_DOCUMENT_ROOT.'/core/tpl/originproductline.tpl.php');
 	}
