@@ -273,6 +273,8 @@ class Facture extends CommonObject
              */
             if (sizeof($this->lines) && is_object($this->lines[0]))
             {
+            	$fk_parent_line = 0;
+            	
                 dol_syslog("There is ".sizeof($this->lines)." lines that are invoice lines objects");
                 foreach ($this->lines as $i => $val)
                 {
@@ -281,7 +283,18 @@ class Facture extends CommonObject
                     $newinvoiceline->fk_facture=$this->id;
                     if ($result >= 0 && ($newinvoiceline->info_bits & 0x01) == 0)	// We keep only lines with first bit = 0
                     {
-                        $result=$newinvoiceline->insert();
+                    	// Reset fk_parent_line for no child products and special product
+						if (($newinvoiceline->product_type != 9 && empty($newinvoiceline->fk_parent_line)) || $newinvoiceline->product_type == 9) {
+							$fk_parent_line = 0;
+						}
+						
+                    	$newinvoiceline->fk_parent_line=$fk_parent_line;
+						$result=$newinvoiceline->insert();
+                    	
+                    	// Defined the new fk_parent_line
+						if ($result > 0 && $newinvoiceline->product_type == 9) {
+							$fk_parent_line = $result;
+						}
                     }
                     if ($result < 0)
                     {
@@ -293,11 +306,18 @@ class Facture extends CommonObject
             }
             else
             {
+            	$fk_parent_line = 0;
+            	
                 dol_syslog("There is ".sizeof($this->lines)." lines that are array lines");
                 foreach ($this->lines as $i => $val)
                 {
                     if (($this->lines[$i]->info_bits & 0x01) == 0)	// We keep only lines with first bit = 0
                     {
+	                    // Reset fk_parent_line for no child products and special product
+						if (($this->lines[$i]->product_type != 9 && empty($this->lines[$i]->fk_parent_line)) || $this->lines[$i]->product_type == 9) {
+							$fk_parent_line = 0;
+						}
+						
                         $result = $this->addline(
                         $this->id,
                         $this->lines[$i]->desc,
@@ -317,7 +337,10 @@ class Facture extends CommonObject
                         0,
                         $this->lines[$i]->product_type,
                         $this->lines[$i]->rang,
-                        $this->lines[$i]->special_code
+                        $this->lines[$i]->special_code,
+                        '',
+                        0,
+                        $fk_parent_line
                         );
                         if ($result < 0)
                         {
@@ -326,6 +349,11 @@ class Facture extends CommonObject
                             $this->db->rollback();
                             return -1;
                         }
+                        
+	                    // Defined the new fk_parent_line
+						if ($result > 0 && $this->lines[$i]->product_type == 9) {
+							$fk_parent_line = $result;
+						}
                     }
                 }
             }
@@ -373,7 +401,7 @@ class Facture extends CommonObject
 
             if (! $error)
             {
-                $result=$this->update_price();
+                $result=$this->update_price(1);
                 if ($result > 0)
                 {
                     // Appel des triggers
@@ -486,8 +514,14 @@ class Facture extends CommonObject
         global $conf,$user,$langs;
 
         $error=0;
+        
+        // Load source object
+        $objFrom=new Facture($this->db);
+        $objFrom->fetch($fromid);
 
+        // Load new object
         $object=new Facture($this->db);
+        $object->fetch($fromid);
 
         // Instantiate hooks of thirdparty module
         if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
@@ -496,10 +530,6 @@ class Facture extends CommonObject
         }
 
         $this->db->begin();
-
-        // Load source object
-        $object->fetch($fromid);
-        $objFrom = $object;
 
         $object->id=0;
         $object->statut=0;
