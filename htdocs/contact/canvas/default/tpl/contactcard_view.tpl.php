@@ -149,6 +149,11 @@ dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']
 <?php } ?>
 
 </div><br>
-<?php } ?>
+<?php }
+
+echo $this->control->tpl['actionstodo'];
+
+echo $this->control->tpl['actionsdone'];
+?>
 
 <!-- END PHP TEMPLATE -->

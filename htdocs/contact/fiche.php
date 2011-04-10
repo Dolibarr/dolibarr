@@ -320,26 +320,10 @@ if (! empty($objcanvas->template_dir))
     }
     else
     {
-        // Fetch object
-        $result=$objcanvas->fetch($id);
-        if ($result > 0)
-        {
-            // Assign values
-            $objcanvas->assign_values('view');
-
-            // Display canvas
-            $objcanvas->display_canvas('view');
-
-            print show_actions_todo($conf,$langs,$db,$objsoc,$objcanvas->control->object);
-
-            print show_actions_done($conf,$langs,$db,$objsoc,$objcanvas->control->object);
-        }
-        else
-        {
-            dol_htmloutput_errors($objcanvas->error,$objcanvas->errors);
-        }
+        $result=$objcanvas->fetch($id);         // Reload object
+        $objcanvas->assign_values('view');  // Assign values
+        $objcanvas->display_canvas('view'); // Show template
     }
-
 }
 else
 {

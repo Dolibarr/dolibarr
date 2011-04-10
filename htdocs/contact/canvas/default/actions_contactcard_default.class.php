@@ -89,7 +89,7 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 	 */
 	function assign_values($action='')
 	{
-		global $langs, $user;
+		global $conf, $db, $langs, $user;
 		global $form;
 
 		parent::assign_values($action);
@@ -111,6 +111,13 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
         			$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id,$langs->trans("DeleteContact"),$langs->trans("ConfirmDeleteContact"),"confirm_delete",'',0,1);
         		}
         	}
+
+        	$objsoc = new Societe($db);
+            $objsoc->fetch($this->object->fk_soc);
+
+            $this->tpl['actionstodo']=show_actions_todo($conf,$langs,$db,$objsoc,$this->control->object);
+
+            $this->tpl['actionsdone']=show_actions_done($conf,$langs,$db,$objsoc,$this->control->object);
 		}
 	}
 
