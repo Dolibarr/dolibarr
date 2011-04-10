@@ -3090,8 +3090,8 @@ class FactureLigne
     var $total_ht;
     //! Total TVA  de la ligne toute quantite et incluant la remise ligne
     var $total_tva;
-    var $total_localtax1=0; //Total Local tax 1 de la ligne
-    var $total_localtax2=0; //Total Local tax 2 de la ligne
+    var $total_localtax1; //Total Local tax 1 de la ligne
+    var $total_localtax2; //Total Local tax 2 de la ligne
     //! Total TTC de la ligne toute quantite et incluant la remise ligne
     var $total_ttc;
 
@@ -3344,6 +3344,16 @@ class FactureLigne
 
         // Clean parameters
         $this->desc=trim($this->desc);
+		if (empty($this->tva_tx)) $this->tva_tx=0;
+		if (empty($this->localtax1_tx)) $this->localtax1_tx=0;
+		if (empty($this->localtax2_tx)) $this->localtax2_tx=0;
+		if (empty($this->total_localtax1)) $this->total_localtax1=0;
+		if (empty($this->total_localtax2)) $this->total_localtax2=0;
+		if (empty($this->remise)) $this->remise=0;
+		if (empty($this->remise_percent)) $this->remise_percent=0;
+		if (empty($this->info_bits)) $this->info_bits=0;
+		if (empty($this->product_type)) $this->product_type=0;
+		if (empty($this->fk_parent_line)) $this->fk_parent_line=0;
 
         // Check parameters
         if ($this->product_type < 0) return -1;
@@ -3447,6 +3457,10 @@ class FactureLigne
     {
         $this->db->begin();
         dol_syslog("FactureLigne::update_total", LOG_DEBUG);
+        
+        // Clean parameters
+		if (empty($this->total_localtax1)) $this->total_localtax1=0;
+		if (empty($this->total_localtax2)) $this->total_localtax2=0;
 
         // Mise a jour ligne en base
         $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET";

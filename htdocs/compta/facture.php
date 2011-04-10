@@ -1059,7 +1059,8 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 		$localtax2_rate,
 		'HT',
 		$info_bits,
-		$type
+		$type,
+		GETPOST('fk_parent_line')
 		);
 
 		// Define output language

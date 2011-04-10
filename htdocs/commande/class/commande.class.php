@@ -2827,12 +2827,12 @@ class OrderLine
 		$sql.= " , total_ht=".price2num($this->total_ht)."";
 		$sql.= " , total_tva=".price2num($this->total_tva)."";
 		$sql.= " , total_ttc=".price2num($this->total_ttc)."";
-		$sql.= " , total_localtax1='".price2num($total_localtax1)."'";
-		$sql.= " , total_localtax2='".price2num($total_localtax2)."'";
+		$sql.= " , total_localtax1='".price2num($this->total_localtax1)."'";
+		$sql.= " , total_localtax2='".price2num($this->total_localtax2)."'";
 		$sql.= " , info_bits=".$this->info_bits;
-		if ($date_start) { $sql.= " , date_start='".$this->db->idate($date_start)."'"; }
+		if ($this->date_start) { $sql.= " , date_start='".$this->db->idate($this->date_start)."'"; }
 		else { $sql.=' , date_start=null'; }
-		if ($date_end) { $sql.= " , date_end='".$this->db->idate($date_end)."'"; }
+		if ($this->date_end) { $sql.= " , date_end='".$this->db->idate($this->date_end)."'"; }
 		$sql.= " , product_type=".$this->product_type;
 		$sql.= " , fk_parent_line=".($this->fk_parent_line>0?$this->fk_parent_line:"null");
 		
@@ -2872,6 +2872,10 @@ class OrderLine
 	function update_total()
 	{
 		$this->db->begin();
+		
+		// Clean parameters
+		if (empty($this->total_localtax1)) $this->total_localtax1=0;
+		if (empty($this->total_localtax2)) $this->total_localtax2=0;
 
 		// Mise a jour ligne en base
 		$sql = "UPDATE ".MAIN_DB_PREFIX."commandedet SET";
