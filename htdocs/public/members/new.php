@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2001-2002 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -144,13 +144,14 @@ if ($_POST["action"] == 'add')
 		$adh->email       = $_POST["email"];
 		$adh->login       = $login;
 		$adh->pass        = $_POST["pass1"];
-		$adh->naiss       = $_POST["naiss"];
 		$adh->photo       = $_POST["photo"];
 		$adh->note        = $_POST["note"];
 		$adh->pays        = $_POST["pays"];
 		$adh->typeid      = $_POST["type"];
 		$adh->note        = $_POST["comment"];
 		$adh->morphy      = $_POST["morphy"];
+        if (preg_match('/-/',$_POST["naiss"])) $adh->naiss = dol_stringtotime($_POST["naiss"],1);
+        else $adh->naiss = $_POST["naiss"];
 
 		foreach($_POST as $key => $value){
 			if (preg_match("/^options_/",$key)){
