@@ -1923,12 +1923,11 @@ class Facture extends CommonObject
     }
 
     /**
-     *	\brief		Supprime une ligne facture de la base
-     *	\param		rowid		Id de la ligne de facture a supprimer
-     *	\param		user		User object
-     *	\return		int			<0 if KO, >0 if OK
+     *	Delete line in database
+     *	@param		rowid		Id of line to delete
+     *	@return		int			<0 if KO, >0 if OK
      */
-    function deleteline($rowid, $user='')
+    function deleteline($rowid)
     {
         global $langs, $conf;
 
@@ -1962,7 +1961,7 @@ class Facture extends CommonObject
         // For triggers
         $line->fetch($rowid);
         
-        if ($line->delete($user) > 0)
+        if ($line->delete() > 0)
         {
         	$result=$this->update_price(1);
         	
@@ -3410,13 +3409,13 @@ class FactureLigne
 	 * 	Delete line in database
 	 *	@return	 int  <0 si ko, >0 si ok
 	 */
-	function delete($rowid)
+	function delete()
 	{
 		global $conf,$langs,$user;
 		
 		$this->db->begin();
 		
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet WHERE rowid = ".$rowid;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet WHERE rowid = ".$this->rowid;
 		dol_syslog("FactureLigne::delete sql=".$sql, LOG_DEBUG);
 		if ($this->db->query($sql) )
 		{

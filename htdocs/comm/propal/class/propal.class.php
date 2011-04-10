@@ -551,7 +551,7 @@ class Propal extends CommonObject
 			// For triggers
 			$line->fetch($lineid);
 
-			if ($line->delete($lineid))
+			if ($line->delete() > 0)
 			{
 				$this->update_price(1);
 
@@ -2484,13 +2484,13 @@ class PropaleLigne
 	 * 	Delete line in database
 	 *	@return	 int  <0 si ko, >0 si ok
 	 */
-	function delete($rowid)
+	function delete()
 	{
 		global $conf,$langs,$user;
 		
 		$this->db->begin();
 		
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."propaldet WHERE rowid = ".$rowid;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."propaldet WHERE rowid = ".$this->rowid;
 		dol_syslog("PropaleLigne::delete sql=".$sql, LOG_DEBUG);
 		if ($this->db->query($sql) )
 		{

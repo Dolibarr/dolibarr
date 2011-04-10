@@ -1547,9 +1547,7 @@ class Commande extends CommonObject
 					// For triggers
 					$line->fetch($lineid);
 
-					$result=$line->delete($user);
-
-					if ($result > 0)
+					if ($line->delete() > 0)
 					{
 						$result=$this->update_price(1);
 
@@ -2663,13 +2661,12 @@ class OrderLine
 	}
 
 	/**
-	 *    	\brief     	Supprime la ligne de commande en base
-	 *		\user		User object
-	 *		\return		int <0 si ko, >0 si ok
+	 * 	Delete line in database
+	 *	@return	 int  <0 si ko, >0 si ok
 	 */
-	function delete($user)
+	function delete()
 	{
-		global $langs, $conf;
+		global $conf, $user, $langs;
 
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commandedet WHERE rowid='".$this->rowid."';";
 
