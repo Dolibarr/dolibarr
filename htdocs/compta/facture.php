@@ -699,9 +699,12 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 					{
 						$lines = $srcobject->lines;
 						if (empty($lines) && method_exists($srcobject,'fetch_lines'))  $lines = $srcobject->fetch_lines();
-
-						for ($i = 0 ; $i < sizeof($lines) ; $i++)
-						{
+		                
+		                $fk_parent_line=0;
+						$num=sizeof($lines);
+		                
+		                for ($i=0;$i<$num;$i++)
+		                {
 						    $desc=($lines[$i]->desc?$lines[$i]->desc:$lines[$i]->libelle);
 							$product_type=($lines[$i]->product_type?$lines[$i]->product_type:0);
 
@@ -713,6 +716,11 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 							$date_end=$lines[$i]->date_fin_prevue;
 							if ($lines[$i]->date_fin_reel) $date_end=$lines[$i]->date_fin_reel;
 							if ($lines[$i]->date_end) $date_end=$lines[$i]->date_end;
+							
+		                	// Reset fk_parent_line for no child products and special product
+		                    if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
+		                    	$fk_parent_line = 0;
+		                    }
 
 							$result = $object->addline(
 							$facid,
@@ -735,7 +743,8 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 							$lines[$i]->rang,
 							$lines[$i]->special_code,
 							$object->origin,
-							$lines[$i]->rowid
+							$lines[$i]->rowid,
+							$fk_parent_line
 							);
 
 							if ($result < 0)
@@ -743,7 +752,22 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 								$error++;
 								break;
 							}
+							
+		                	// Defined the new fk_parent_line
+		                    if ($result > 0 && $lines[$i]->product_type == 9) {
+		                    	$fk_parent_line = $result;
+		                    }
 						}
+						
+						// Hooks
+		                if (! empty($object->hooks))
+		                {
+		                	foreach($object->hooks as $module)
+		                	{
+		                		$res = $module->createfrom($srcobject,$facid,$object->element);
+		                		if ($res < 0) $error++;
+		                	}
+		                }
 					}
 					else
 					{

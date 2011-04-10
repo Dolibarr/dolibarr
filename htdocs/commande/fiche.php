@@ -242,12 +242,6 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
                 $lines = $srcobject->lines;
                 if (empty($lines) && method_exists($srcobject,'fetch_lines'))  $lines = $srcobject->fetch_lines();
                 
-                // Instantiate hooks of thirdparty module
-                if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
-                {
-                	$object->callHooks('objectcard');
-                }
-                
                 $fk_parent_line=0;
 				$num=sizeof($lines);
                 

@@ -746,7 +746,7 @@ class Facture extends CommonObject
      */
     function fetch_lines()
     {
-        $sql = 'SELECT l.rowid, l.fk_product, l.description, l.product_type, l.price, l.qty, l.tva_tx, ';
+        $sql = 'SELECT l.rowid, l.fk_product, l.fk_parent_line, l.description, l.product_type, l.price, l.qty, l.tva_tx, ';
         $sql.= ' l.localtax1_tx, l.localtax2_tx, l.remise, l.remise_percent, l.fk_remise_except, l.subprice,';
         $sql.= ' l.rang, l.special_code,';
         $sql.= ' l.date_start as date_start, l.date_end as date_end,';
@@ -797,6 +797,7 @@ class Facture extends CommonObject
                 $line->code_ventilation = $objp->fk_code_ventilation;
                 $line->rang				= $objp->rang;
                 $line->special_code		= $objp->special_code;
+                $line->fk_parent_line	= $objp->fk_parent_line;
 
                 // Ne plus utiliser
                 $line->price            = $objp->price;
@@ -1672,7 +1673,7 @@ class Facture extends CommonObject
      *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,produit)
      *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
      */
-    function addline($facid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0, $type=0, $rang=-1, $special_code=0, $origin='', $origin_id=0)
+    function addline($facid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0, $type=0, $rang=-1, $special_code=0, $origin='', $origin_id=0, $fk_parent_line=0)
     {
         dol_syslog("Facture::Addline facid=$facid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, fk_product=$fk_product,remise_percent=$remise_percent,date_start=$date_start,date_end=$date_end,ventil=$ventil,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type", LOG_DEBUG);
         include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
@@ -1773,6 +1774,7 @@ class Facture extends CommonObject
             $this->line->total_localtax2=($this->type==2?-1:1)*abs($total_localtax2);
             $this->line->total_ttc=      ($this->type==2?-1:1)*abs($total_ttc);
             $this->line->special_code=$special_code;
+            $this->line->fk_parent_line=$fk_parent_line;
             $this->line->origin=$origin;
             $this->line->origin_id=$origin_id;
 
@@ -1789,7 +1791,7 @@ class Facture extends CommonObject
                 if ($result > 0)
                 {
                     $this->db->commit();
-                    return 1;
+                    return $this->line->rowid;
                 }
                 else
                 {
@@ -1825,7 +1827,7 @@ class Facture extends CommonObject
      * 		@param		type			Type of line (0=product, 1=service)
      *      @return    	int             < 0 if KO, > 0 if OK
      */
-    function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $date_start, $date_end, $txtva, $txlocaltax1=0, $txlocaltax2=0,$price_base_type='HT', $info_bits=0, $type=0)
+    function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $date_start, $date_end, $txtva, $txlocaltax1=0, $txlocaltax2=0,$price_base_type='HT', $info_bits=0, $type=0, $fk_parent_line=0)
     {
         include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
@@ -1890,6 +1892,7 @@ class Facture extends CommonObject
             $this->line->total_ttc			= ($this->type==2?-1:1)*abs($total_ttc);
             $this->line->info_bits			= $info_bits;
             $this->line->product_type		= $type;
+            $this->line->fk_parent_line		= $fk_parent_line;
 
             // A ne plus utiliser
             $this->line->price=$price;
@@ -3120,7 +3123,7 @@ class FactureLigne
      */
     function fetch($rowid)
     {
-        $sql = 'SELECT fd.rowid, fd.fk_facture, fd.fk_product, fd.product_type, fd.description, fd.price, fd.qty, fd.tva_tx,';
+        $sql = 'SELECT fd.rowid, fd.fk_facture, fd.fk_parent_line, fd.fk_product, fd.product_type, fd.description, fd.price, fd.qty, fd.tva_tx,';
         $sql.= ' fd.localtax1_tx, fd. localtax2_tx, fd.remise, fd.remise_percent, fd.fk_remise_except, fd.subprice,';
         $sql.= ' fd.date_start as date_start, fd.date_end as date_end,';
         $sql.= ' fd.info_bits, fd.total_ht, fd.total_tva, fd.total_ttc, fd.rang,';
@@ -3129,43 +3132,46 @@ class FactureLigne
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet as fd';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON fd.fk_product = p.rowid';
         $sql.= ' WHERE fd.rowid = '.$rowid;
+        
         $result = $this->db->query($sql);
         if ($result)
         {
             $objp = $this->db->fetch_object($result);
-            $this->rowid          = $objp->rowid;
-            $this->fk_facture     = $objp->fk_facture;
-            $this->desc           = $objp->description;
-            $this->qty            = $objp->qty;
-            $this->subprice       = $objp->subprice;
-            $this->tva_tx         = $objp->tva_tx;
-            $this->localtax1_tx	  = $objp->localtax1_tx;
-            $this->localtax2_tx	  = $objp->localtax2_tx;
-            $this->remise_percent = $objp->remise_percent;
-            $this->fk_remise_except = $objp->fk_remise_except;
-            $this->fk_product     = $objp->fk_product;
-            $this->product_type   = $objp->product_type;
-            $this->date_start     = $this->db->jdate($objp->date_start);
-            $this->date_end       = $this->db->jdate($objp->date_end);
-            $this->info_bits      = $objp->info_bits;
-            $this->total_ht       = $objp->total_ht;
-            $this->total_tva      = $objp->total_tva;
-            $this->total_localtax1= $objp->total_localtax1;
-            $this->total_localtax2= $objp->total_localtax2;
-            $this->total_ttc      = $objp->total_ttc;
-            $this->fk_code_ventilation = $objp->fk_code_ventilation;
-            $this->fk_export_compta    = $objp->fk_export_compta;
-            $this->rang           = $objp->rang;
+            
+            $this->rowid				= $objp->rowid;
+            $this->fk_facture			= $objp->fk_facture;
+            $this->fk_parent_line		= $objp->fk_parent_line;
+            $this->desc					= $objp->description;
+            $this->qty					= $objp->qty;
+            $this->subprice				= $objp->subprice;
+            $this->tva_tx				= $objp->tva_tx;
+            $this->localtax1_tx			= $objp->localtax1_tx;
+            $this->localtax2_tx			= $objp->localtax2_tx;
+            $this->remise_percent		= $objp->remise_percent;
+            $this->fk_remise_except		= $objp->fk_remise_except;
+            $this->fk_product			= $objp->fk_product;
+            $this->product_type			= $objp->product_type;
+            $this->date_start			= $this->db->jdate($objp->date_start);
+            $this->date_end				= $this->db->jdate($objp->date_end);
+            $this->info_bits			= $objp->info_bits;
+            $this->total_ht				= $objp->total_ht;
+            $this->total_tva			= $objp->total_tva;
+            $this->total_localtax1		= $objp->total_localtax1;
+            $this->total_localtax2		= $objp->total_localtax2;
+            $this->total_ttc			= $objp->total_ttc;
+            $this->fk_code_ventilation	= $objp->fk_code_ventilation;
+            $this->fk_export_compta		= $objp->fk_export_compta;
+            $this->rang					= $objp->rang;
 
             // Ne plus utiliser
-            $this->price          = $objp->price;
-            $this->remise         = $objp->remise;
+            $this->price				= $objp->price;
+            $this->remise				= $objp->remise;
 
-            $this->ref			  = $objp->product_ref;      // deprecated
-            $this->product_ref    = $objp->product_ref;
-            $this->libelle		  = $objp->product_libelle;  // deprecated
-            $this->product_label  = $objp->product_libelle;
-            $this->product_desc	  = $objp->product_desc;
+            $this->ref					= $objp->product_ref;      // deprecated
+            $this->product_ref			= $objp->product_ref;
+            $this->libelle				= $objp->product_libelle;  // deprecated
+            $this->product_label		= $objp->product_libelle;
+            $this->product_desc			= $objp->product_desc;
 
             $this->db->free($result);
         }
@@ -3201,6 +3207,7 @@ class FactureLigne
         if (empty($this->subprice)) $this->subprice=0;
         if (empty($this->price))    $this->price=0;
         if (empty($this->special_code)) $this->special_code=0;
+        if (empty($this->fk_parent_line)) $this->fk_parent_line=0;
 
         // Check parameters
         if ($this->product_type < 0) return -1;
@@ -3209,12 +3216,13 @@ class FactureLigne
 
         // Insertion dans base de la ligne
         $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facturedet';
-        $sql.= ' (fk_facture, description, qty, tva_tx, localtax1_tx, localtax2_tx,';
+        $sql.= ' (fk_facture, fk_parent_line, description, qty, tva_tx, localtax1_tx, localtax2_tx,';
         $sql.= ' fk_product, product_type, remise_percent, subprice, price, remise, fk_remise_except,';
         $sql.= ' date_start, date_end, fk_code_ventilation, fk_export_compta, ';
         $sql.= ' rang, special_code,';
         $sql.= ' info_bits, total_ht, total_tva, total_localtax1, total_localtax2, total_ttc)';
         $sql.= " VALUES (".$this->fk_facture.",";
+        $sql.= " ".$this->fk_parent_line.",";
         $sql.= " '".$this->db->escape($this->desc)."',";
         $sql.= " ".price2num($this->qty).",";
         $sql.= " ".price2num($this->tva_tx).",";
@@ -3365,6 +3373,7 @@ class FactureLigne
         $sql.= ",total_localtax1=".price2num($this->total_localtax1)."";
         $sql.= ",total_localtax2=".price2num($this->total_localtax2)."";
         $sql.= ",total_ttc=".price2num($this->total_ttc)."";
+        $sql.= ",fk_parent_line=".($this->fk_parent_line>0?$this->fk_parent_line:"null");
         $sql.= " WHERE rowid = ".$this->rowid;
 
         dol_syslog("FactureLigne::update sql=".$sql);
