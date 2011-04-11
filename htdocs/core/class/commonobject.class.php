@@ -1328,7 +1328,7 @@ class CommonObject
 	 *  But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
      *  @param          $dateSelector       1=Show also date range input fields
 	 */
-	function showAddPredefinedProductForm($dateSelector,$seller,$buyer)
+	function formAddPredefinedProduct($dateSelector,$seller,$buyer)
 	{
 		global $conf,$langs,$object;
 		global $html,$bcnd,$var;
@@ -1343,7 +1343,7 @@ class CommonObject
      *  But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
      *  @param          $dateSelector       1=Show also date range input fields
      */
-	function showAddFreeProductForm($dateSelector,$seller,$buyer)
+	function formAddFreeProduct($dateSelector,$seller,$buyer)
 	{
 		global $conf,$langs,$object;
 		global $html,$bcnd,$var;
@@ -1403,14 +1403,17 @@ class CommonObject
 	}
 
 	/**
-	 * 	Return HTML table with title list
+	 * 	Return HTML with object lines list.
+	 *  Array $this->lines must be defined.
+	 *  @param     $dateSelector       Show date input fields (if service)
+	 *  @param     $seller             Object of seller third party
+	 *  @param     uyer                Object of buyer third party
      *  TODO Move this into page (into a lib.php file if mutualized. No code for output must be present into a business class).
-     *  But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
 	 */
-	function print_title_list()
+	function printObjectLines($dateSelector=0,$seller,$buyer)
 	{
 		global $conf,$langs;
-
+		
 		print '<tr class="liste_titre nodrag nodrop">';
 		print '<td>'.$langs->trans('Description').'</td>';
 		if ($conf->global->PRODUIT_USE_MARKUP) print '<td align="right" width="80">'.$langs->trans('Markup').'</td>';
@@ -1423,18 +1426,7 @@ class CommonObject
 		print '<td width="10">&nbsp;</td>';
 		print '<td nowrap="nowrap">&nbsp;</td>'; // No width to allow autodim
 		print "</tr>\n";
-	}
-
-	/**
-	 * 	Return HTML with object lines list.
-	 *  Array $this->lines must be defined.
-	 *  @param     $dateSelector       Show date input fields (if service)
-	 *  @param     $seller             Object of seller third party
-	 *  @param     uyer                Object of buyer third party
-     *  TODO Move this into page (into a lib.php file if mutualized. No code for output must be present into a business class).
-	 */
-	function printLinesList($dateSelector=0,$seller,$buyer)
-	{
+		
 		$num = count($this->lines);
 		$var = true;
 		$i	 = 0;
@@ -1527,12 +1519,12 @@ class CommonObject
 	}
 
 	/**
-	 * 	Return HTML table with origin title list
+	 * 	Return HTML with list of origin lines
 	 */
-	function printOriginTitleList()
+	function printOriginLinesList($object)
 	{
 		global $langs;
-
+		
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans('Ref').'</td>';
 		print '<td>'.$langs->trans('Description').'</td>';
@@ -1540,13 +1532,7 @@ class CommonObject
 		print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
 		print '<td align="right">'.$langs->trans('Qty').'</td>';
 		print '<td align="right">'.$langs->trans('ReductionShort').'</td></tr>';
-	}
-
-	/**
-	 * 	Return HTML with list of origin lines
-	 */
-	function printOriginLinesList($object)
-	{
+		
 		$num = count($this->lines);
 		$var = true;
 		$i	 = 0;

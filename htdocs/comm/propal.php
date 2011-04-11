@@ -1425,12 +1425,9 @@ if ($id > 0 || ! empty($ref))
 	}
 
 	print '<table id="tablelines" class="noborder" width="100%">';
-
-	if (!empty($object->lines))
-	{
-		$object->print_title_list();
-		$object->printLinesList(0,$mysoc,$soc);
-	}
+	
+	// Show object lines
+	if (! empty($object->lines)) $object->printObjectLines(0,$mysoc,$soc);
 
 	/*
 	 * Form to add new line
@@ -1442,13 +1439,13 @@ if ($id > 0 || ! empty($ref))
 			$var=true;
 
 			// Add free products/services
-			$object->showAddFreeProductForm(0,$mysoc,$soc);
+			$object->formAddFreeProduct(0,$mysoc,$soc);
 
 			// Add predefined products/services
 			if ($conf->product->enabled || $conf->service->enabled)
 			{
 				$var=!$var;
-				$object->showAddPredefinedProductForm(0,$mysoc,$soc);
+				$object->formAddPredefinedProduct(0,$mysoc,$soc);
 			}
 
 			// Hook of thirdparty module
