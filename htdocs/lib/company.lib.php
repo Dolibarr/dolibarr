@@ -530,10 +530,13 @@ function show_contacts($conf,$langs,$db,$object)
  * 		@param		db			Object db
  * 		@param		object		Object third party
  * 		@param		objcon		Object contact
+ *      @param      noprint     Return string but does not output it
  */
-function show_actions_todo($conf,$langs,$db,$object,$objcon='')
+function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
 {
     global $bc;
+
+    $out='';
 
     if ($conf->agenda->enabled)
     {
@@ -542,14 +545,14 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='')
         $userstatic=new User($db);
         $contactstatic = new Contact($db);
 
-        print "\n";
-        if (is_object($objcon) && $objcon->id) print_titre($langs->trans("TasksHistoryForThisContact"));
-        else print_titre($langs->trans("ActionsOnCompany"));
+        $out.="\n";
+        if (is_object($objcon) && $objcon->id) $out.=load_fiche_titre($langs->trans("TasksHistoryForThisContact"),'','');
+        else $out.=load_fiche_titre($langs->trans("ActionsOnCompany"),'','');
 
-        print '<table width="100%" class="noborder">';
-        print '<tr class="liste_titre">';
-        print '<td colspan="7"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?socid='.$object->id.'&amp;status=todo">'.$langs->trans("ActionsToDoShort").'</a></td><td align="right">&nbsp;</td>';
-        print '</tr>';
+        $out.='<table width="100%" class="noborder">';
+        $out.='<tr class="liste_titre">';
+        $out.='<td colspan="7"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?socid='.$object->id.'&amp;status=todo">'.$langs->trans("ActionsToDoShort").'</a></td><td align="right">&nbsp;</td>';
+        $out.='</tr>';
 
         $sql = "SELECT a.id, a.label,";
         $sql.= " a.datep as dp,";
@@ -585,33 +588,33 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='')
 
                     $datep=$db->jdate($obj->dp);
 
-                    print "<tr ".$bc[$var].">";
+                    $out.="<tr ".$bc[$var].">";
 
-                    print '<td width="120" align="left" nowrap="nowrap">'.dol_print_date($datep,'dayhour')."</td>\n";
+                    $out.='<td width="120" align="left" nowrap="nowrap">'.dol_print_date($datep,'dayhour')."</td>\n";
 
                     // Picto warning
-                    print '<td width="16">';
-                    if ($datep && $datep < (time()- ($conf->global->MAIN_DELAY_ACTIONS_TODO *60*60*24)) ) print ' '.img_warning($langs->trans("Late"));
-                    else print '&nbsp;';
-                    print '</td>';
+                    $out.='<td width="16">';
+                    if ($datep && $datep < (time()- ($conf->global->MAIN_DELAY_ACTIONS_TODO *60*60*24)) ) $out.=' '.img_warning($langs->trans("Late"));
+                    else $out.='&nbsp;';
+                    $out.='</td>';
 
                     if ($obj->propalrowid)
                     {
-                        print '<td width="140"><a href="propal.php?id='.$obj->propalrowid.'">'.img_object($langs->trans("ShowAction"),"task");
+                        $out.='<td width="140"><a href="propal.php?id='.$obj->propalrowid.'">'.img_object($langs->trans("ShowAction"),"task");
                         $transcode=$langs->trans("Action".$obj->acode);
                         $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
-                        print $libelle;
-                        print '</a></td>';
+                        $out.=$libelle;
+                        $out.='</a></td>';
                     }
                     else
                     {
                         $actionstatic->type_code=$obj->acode;
                         $actionstatic->libelle=$obj->libelle;
                         $actionstatic->id=$obj->id;
-                        print '<td width="140">'.$actionstatic->getNomUrl(1,16).'</td>';
+                        $out.='<td width="140">'.$actionstatic->getNomUrl(1,16).'</td>';
                     }
 
-                    print '<td colspan="2">'.$obj->label.'</td>';
+                    $out.='<td colspan="2">'.$obj->label.'</td>';
 
                     // Contact pour cette action
                     if (! $objcon->id && $obj->fk_contact > 0)
@@ -619,23 +622,23 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='')
                         $contactstatic->name=$obj->name;
                         $contactstatic->firstname=$obj->firstname;
                         $contactstatic->id=$obj->fk_contact;
-                        print '<td width="120">'.$contactstatic->getNomUrl(1,'',10).'</td>';
+                        $out.='<td width="120">'.$contactstatic->getNomUrl(1,'',10).'</td>';
                     }
                     else
                     {
-                        print '<td>&nbsp;</td>';
+                        $out.='<td>&nbsp;</td>';
                     }
 
-                    print '<td width="80" nowrap="nowrap">';
+                    $out.='<td width="80" nowrap="nowrap">';
                     $userstatic->id=$obj->fk_user_author;
                     $userstatic->login=$obj->login;
-                    print $userstatic->getLoginUrl(1);
-                    print '</td>';
+                    $out.=$userstatic->getLoginUrl(1);
+                    $out.='</td>';
 
                     // Statut
-                    print '<td nowrap="nowrap" width="20">'.$actionstatic->LibStatut($obj->percent,3).'</td>';
+                    $out.='<td nowrap="nowrap" width="20">'.$actionstatic->LibStatut($obj->percent,3).'</td>';
 
-                    print "</tr>\n";
+                    $out.="</tr>\n";
                     $i++;
                 }
             }
@@ -650,10 +653,13 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='')
         {
             dol_print_error($db);
         }
-        print "</table>\n";
+        $out.="</table>\n";
 
-        print "<br>\n";
+        $out.="<br>\n";
     }
+
+    if ($noprint) return $out;
+    else print $out;
 }
 
 /**
@@ -661,13 +667,15 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='')
  * 		@param		conf		Object conf
  * 		@param		langs		Object langs
  * 		@param		db			Object db
- * 		@param		objsoc		Object third party
+ * 		@param		object		Object third party
  * 		@param		objcon		Object contact
+ *      @param      noprint     Return string but does not output it
  */
-function show_actions_done($conf,$langs,$db,$object,$objcon='')
+function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
 {
     global $bc;
 
+    $out='';
     $histo=array();
     $numaction = 0 ;
 
@@ -770,67 +778,67 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='')
         $orderstatic=new Commande($db);
         $facturestatic=new Facture($db);
 
-        print "\n";
-        print '<table class="noborder" width="100%">';
-        print '<tr class="liste_titre">';
-        print '<td colspan="8"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?socid='.$object->id.'&amp;status=done">'.$langs->trans("ActionsDoneShort").'</a></td>';
-        print '</tr>';
+        $out.="\n";
+        $out.='<table class="noborder" width="100%">';
+        $out.='<tr class="liste_titre">';
+        $out.='<td colspan="8"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?socid='.$object->id.'&amp;status=done">'.$langs->trans("ActionsDoneShort").'</a></td>';
+        $out.='</tr>';
 
         foreach ($histo as $key=>$value)
         {
             $var=!$var;
-            print "<tr ".$bc[$var].">";
+            $out.="<tr ".$bc[$var].">";
 
             // Champ date
-            print '<td width="120" nowrap="nowrap">'.dol_print_date($histo[$key]['date'],'dayhour')."</td>\n";
+            $out.='<td width="120" nowrap="nowrap">'.dol_print_date($histo[$key]['date'],'dayhour')."</td>\n";
 
             // Picto
-            print '<td width="16">&nbsp;</td>';
+            $out.='<td width="16">&nbsp;</td>';
 
             // Action
-            print '<td width="140">';
+            $out.='<td width="140">';
             if ($histo[$key]['type']=='action')
             {
                 $actionstatic->type_code=$histo[$key]['acode'];
                 $actionstatic->libelle=$histo[$key]['libelle'];
                 $actionstatic->id=$histo[$key]['id'];
-                print $actionstatic->getNomUrl(1,16);
+                $out.=$actionstatic->getNomUrl(1,16);
             }
             if ($histo[$key]['type']=='mailing')
             {
-                print '<a href="'.DOL_URL_ROOT.'/comm/mailing/fiche.php?id='.$histo[$key]['id'].'">'.img_object($langs->trans("ShowEMailing"),"email").' ';
+                $out.='<a href="'.DOL_URL_ROOT.'/comm/mailing/fiche.php?id='.$histo[$key]['id'].'">'.img_object($langs->trans("ShowEMailing"),"email").' ';
                 $transcode=$langs->trans("Action".$histo[$key]['acode']);
                 $libelle=($transcode!="Action".$histo[$key]['acode']?$transcode:'Send mass mailing');
-                print dol_trunc($libelle,30);
+                $out.=dol_trunc($libelle,30);
             }
-            print '</td>';
+            $out.='</td>';
 
             // Note
-            print '<td>'.dol_trunc($histo[$key]['note'], 30).'</td>';
+            $out.='<td>'.dol_trunc($histo[$key]['note'], 30).'</td>';
 
             // Objet lie
-            print '<td>';
+            $out.='<td>';
             if ($histo[$key]['pid'] && $conf->propal->enabled)
             {
                 $propalstatic->ref=$langs->trans("ProposalShort");
                 $propalstatic->id=$histo[$key]['pid'];
-                print $propalstatic->getNomUrl(1);
+                $out.=$propalstatic->getNomUrl(1);
             }
             elseif ($histo[$key]['oid'] && $conf->commande->enabled)
             {
                 $orderstatic->ref=$langs->trans("Order");
                 $orderstatic->id=$histo[$key]['oid'];
-                print $orderstatic->getNomUrl(1);
+                $out.=$orderstatic->getNomUrl(1);
             }
             elseif ($histo[$key]['fid'] && $conf->facture->enabled)
             {
                 $facturestatic->ref=$langs->trans("Invoice");
                 $facturestatic->id=$histo[$key]['fid'];
                 $facturestatic->type=$histo[$key]['ftype'];
-                print $facturestatic->getNomUrl(1,'compta');
+                $out.=$facturestatic->getNomUrl(1,'compta');
             }
-            else print '&nbsp;';
-            print '</td>';
+            else $out.='&nbsp;';
+            $out.='</td>';
 
             // Contact pour cette action
             if (! $objcon->id && $histo[$key]['contact_id'] > 0)
@@ -838,32 +846,34 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='')
                 $contactstatic->name=$histo[$key]['name'];
                 $contactstatic->firstname=$histo[$key]['firstname'];
                 $contactstatic->id=$histo[$key]['contact_id'];
-                print '<td width="120">'.$contactstatic->getNomUrl(1,'',10).'</td>';
+                $out.='<td width="120">'.$contactstatic->getNomUrl(1,'',10).'</td>';
             }
             else
             {
-                print '<td>&nbsp;</td>';
+                $out.='<td>&nbsp;</td>';
             }
 
             // Auteur
-            print '<td nowrap="nowrap" width="80">';
+            $out.='<td nowrap="nowrap" width="80">';
             $userstatic->id=$histo[$key]['userid'];
             $userstatic->login=$histo[$key]['login'];
-            print $userstatic->getLoginUrl(1);
-            print '</td>';
+            $out.=$userstatic->getLoginUrl(1);
+            $out.='</td>';
 
             // Statut
-            print '<td nowrap="nowrap" width="20">'.$actionstatic->LibStatut($histo[$key]['percent'],3).'</td>';
+            $out.='<td nowrap="nowrap" width="20">'.$actionstatic->LibStatut($histo[$key]['percent'],3).'</td>';
 
-            print "</tr>\n";
+            $out.="</tr>\n";
             $i++;
         }
-        print "</table>\n";
-        print "<br>\n";
+        $out.="</table>\n";
+        $out.="<br>\n";
 
         $db->free($result);
     }
 
+    if ($noprint) return $out;
+    else print $out;
 }
 
 /**

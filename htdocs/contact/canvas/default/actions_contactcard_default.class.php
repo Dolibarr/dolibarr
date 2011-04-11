@@ -115,9 +115,9 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
         	$objsoc = new Societe($db);
             $objsoc->fetch($this->object->fk_soc);
 
-            $this->tpl['actionstodo']=show_actions_todo($conf,$langs,$db,$objsoc,$this->control->object);
+            $this->tpl['actionstodo']=show_actions_todo($conf,$langs,$db,$objsoc,$this->control->object,1);
 
-            $this->tpl['actionsdone']=show_actions_done($conf,$langs,$db,$objsoc,$this->control->object);
+            $this->tpl['actionsdone']=show_actions_done($conf,$langs,$db,$objsoc,$this->control->object,1);
 		}
 	}
 
