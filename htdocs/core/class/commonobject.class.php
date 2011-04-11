@@ -22,7 +22,11 @@
  *	\file       htdocs/core/class/commonobject.class.php
  *	\ingroup    core
  *	\brief      Fichier de la classe mere des classes metiers (facture, contrat, propal, commande, etc...)
+<<<<<<< commonobject.class.php
  *	\version    $Id$
+=======
+ *	\version    $Id$
+>>>>>>> 1.107
  */
 
 
@@ -996,12 +1000,16 @@ class CommonObject
 
 	/**
 	 *	Update total_ht, total_ttc and total_vat for an object (sum of lines)
-	 *	@param	   exclspec       Exclude special product (product_type=9)
-	 *	@return	   int			  <0 if KO, >0 if OK
+	 *	@param	   exclspec          Exclude special product (product_type=9)
+	 *  @param     roundingadjust    -1=Use default method (MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND or 0), 0=Use total of rounding, 1=Use rounding of total
+	 *	@return	   int               <0 if KO, >0 if OK
 	 */
-	function update_price($exclspec=0)
+	function update_price($exclspec=0,$roundingadjust=-1)
 	{
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
+
+		if ($roundingadjust < 0 && isset($conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND)) $roundingadjust=$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND;
+        if ($roundingadjust < 0) $roundingadjust=0;
 
 		$err=0;
 
@@ -1009,13 +1017,10 @@ class CommonObject
 		$fieldtva='total_tva';
 		$fieldlocaltax1='total_localtax1';
 		$fieldlocaltax2='total_localtax2';
+		if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') $fieldtva='tva';
 
-		if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier')
-		{
-			$fieldtva='tva';
-		}
-
-		$sql = 'SELECT qty, total_ht, '.$fieldtva.' as total_tva, '.$fieldlocaltax1.' as total_localtax1, '.$fieldlocaltax2.' as total_localtax2, total_ttc';
+		$sql = 'SELECT qty, total_ht, '.$fieldtva.' as total_tva, '.$fieldlocaltax1.' as total_localtax1, '.$fieldlocaltax2.' as total_localtax2, total_ttc,';
+		$sql.= ' tva_tx as vatrate';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 		$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
 		if ($exclspec) $sql.= ' AND product_type <> 9';
@@ -1042,10 +1047,28 @@ class CommonObject
 				$this->total_localtax2 += $obj->total_localtax2;
 				$this->total_ttc       += $obj->total_ttc;
 
+				// TODO Also fill array by vat rate
+                $varates[$this->vatrate][]=array('total_ht'=>$obj->total_ht,'total_tva'=>$obj->total_tva,'total_ttc'=>$obj->total_ttc,
+                                                 'total_localtax1'=>$obj->total_localtax1,'total_localtax2'=>$obj->total_localtax2);
 				$i++;
 			}
 
 			$this->db->free($resql);
+
+			// TODO
+			if ($roundingadjust)
+			{
+			    // For each vatrate, calculate if two method of calculation differs
+
+
+			    // If it differs
+			    if (1==2)
+			    {
+                    // Adjust a line and update it
+
+
+			    }
+			}
 
 			// Now update field total_ht, total_ttc and tva
 			$fieldht='total_ht';
@@ -1122,7 +1145,12 @@ class CommonObject
 	}
 
 	/**
-	 * 	Load array of objects linked to current object. Links are loaded into this->linked_object array.
+	 * 	   Load array of objects linked to current object. Links are loaded into this->linked_object array.
+	 *     @param  sourceid
+	 *     @param  sourcetype
+	 *     @param  targetid
+	 *     @param  targettype
+	 *     @param  clause
 	 */
 	function load_object_linked($sourceid='',$sourcetype='',$targetid='',$targettype='',$clause='OR')
 	{
@@ -1166,11 +1194,11 @@ class CommonObject
 	}
 
 	/**
-	 *      \brief      Set statut of an object
-	 *      \param		statut			Statut to set
-	 *      \param		elementid		Id of element to force (use this->id by default)
-	 *      \param		elementtype		Type of element to force (use ->this->element by default)
-	 *      \return     int				<0 if ko, >0 if ok
+	 *      Set statut of an object
+	 *      @param		statut			Statut to set
+	 *      @param		elementid		Id of element to force (use this->id by default)
+	 *      @param		elementtype		Type of element to force (use ->this->element by default)
+	 *      @return     int				<0 if ko, >0 if ok
 	 */
 	function setStatut($statut,$elementId='',$elementType='')
 	{
@@ -1238,7 +1266,7 @@ class CommonObject
 		}
 		else
 		{
-			print $sql;
+			dol_print_error($db,$sql);
 		}
 	}
 
@@ -1309,7 +1337,9 @@ class CommonObject
 				$modelclassname = 'Dao'.ucfirst($module);
 				$this->hooks[$objModule->module_number]->object = new $modelclassname($this->db);
 
-				dol_include_once('/'.$module.'/lib/'.$module.'.lib.php');
+				// We comment this because library must be included into file that need it,
+				// so include should be done into actions_ and/or dao file
+				// dol_include_once('/'.$module.'/lib/'.$module.'.lib.php');
 			}
 		}
 	}
@@ -1317,15 +1347,70 @@ class CommonObject
 
 
 
-    // TODO: All functions here must be moved into a lib file and included into page as they are not business code
-    // but only "view" code.
+    // TODO: All functions here must be redesigned and moved as they are not business functions but output functions
 
 
+    /* This is to show linked object block */
 
-	/**
+
+    /**
+     *  Show linked object block
+     *  TODO Move this into html.class.php
+     *  But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
+     *  @param  $objecttype          Type of object (invoice, propal, order, invoice_supplier, order_supplier, ...)
+     *  @param  $objectid
+     *  @param  $somethingshown
+     */
+    function showLinkedObjectBlock($objecttype,$objectid,$somethingshown=0)
+    {
+        global $langs,$bc;
+
+        //print 'objecttype='.$objecttype.'<br>';
+
+        $this->objectid = $objectid;
+
+        $num = sizeof($this->objectid);
+        if ($num)
+        {
+            $element = $subelement = $objecttype;
+            $tplpath = $element;
+
+            if (preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
+            {
+                $element = $regs[1];
+                $subelement = $regs[2];
+                $tplpath = $element.'/'.$subelement;
+            }
+
+            $classpath = $element.'/class';
+            if ($objecttype == 'facture') { $tplpath = 'compta/'.$element; $classpath = $tplpath.'/class'; }  // To work with non standard path
+            if ($objecttype == 'propal')  { $tplpath = 'comm/'.$element; $classpath = $tplpath.'/class'; }    // To work with non standard path
+            if ($objecttype == 'invoice_supplier') { $tplpath = 'fourn/facture'; $classpath = 'fourn/class'; }    // To work with non standard path
+            if ($objecttype == 'order_supplier')   { $tplpath = 'fourn/commande'; $classpath = 'fourn/class'; }    // To work with non standard path
+
+            $classfile = strtolower($subelement); $classname = ucfirst($subelement);
+            if ($objecttype == 'invoice_supplier') { $classfile='fournisseur.facture'; $classname='FactureFournisseur';   }
+            if ($objecttype == 'order_supplier')   { $classfile='fournisseur.commande'; $classname='CommandeFournisseur'; }
+            //print $classfile." - ".$classpath." - ".$tplpath;
+            if(!class_exists($classname))
+            {
+                dol_include_once("/".$classpath."/".$classfile.".class.php");
+            }
+            $this->linkedObjectBlock = new $classname($this->db);
+            dol_include_once('/'.$tplpath.'/tpl/linkedobjectblock.tpl.php');
+
+            return $num;
+        }
+    }
+
+
+    /* This is to show add lines */
+
+
+    /**
 	 *	Show add predefined products/services form
-     *  TODO Move this into page (into a lib.php file if mutualized. No code for output must be present into a business class).
-	 *  But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
+     *  TODO Edit templates to use global variables and include them directly in controller call
+	 *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
      *  @param          $dateSelector       1=Show also date range input fields
 	 */
 	function formAddPredefinedProduct($dateSelector,$seller,$buyer)
@@ -1339,7 +1424,7 @@ class CommonObject
 
 	/**
 	 *	Show add free products/services form
-     *  TODO Move this into page (into a lib.php file if mutualized. No code for output must be present into a business class).
+     *  TODO Edit templates to use global variables and include them directly in controller call
      *  But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
      *  @param          $dateSelector       1=Show also date range input fields
      */
@@ -1352,68 +1437,21 @@ class CommonObject
 		include(DOL_DOCUMENT_ROOT.'/core/tpl/freeproductline_create.tpl.php');
 	}
 
+
+
+    /* This is to show array of line of details */
+
+
 	/**
-	 *	Show linked object block
-     *  TODO Move this into page (into a lib.php file if mutualized. No code for output must be present into a business class).
+	 * 	Return HTML table for object lines
+     *  TODO Move this into an output class file (htmlline.class.php)
+     *  If lines are into a template, title must also be into a template
      *  But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
-	 *	@param	$objecttype          Type of object (invoice, propal, order, invoice_supplier, order_supplier, ...)
-	 *	@param	$objectid
-	 *	@param	$somethingshown
-	 */
-	function showLinkedObjectBlock($objecttype,$objectid,$somethingshown=0)
-	{
-		global $langs,$bc;
-
-		//print 'objecttype='.$objecttype.'<br>';
-
-		$this->objectid = $objectid;
-
-		$num = sizeof($this->objectid);
-		if ($num)
-		{
-			$element = $subelement = $objecttype;
-			$tplpath = $element;
-
-			if (preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
-			{
-				$element = $regs[1];
-				$subelement = $regs[2];
-				$tplpath = $element.'/'.$subelement;
-			}
-
-			$classpath = $element.'/class';
-			if ($objecttype == 'facture') { $tplpath = 'compta/'.$element; $classpath = $tplpath.'/class'; }  // To work with non standard path
-			if ($objecttype == 'propal')  { $tplpath = 'comm/'.$element; $classpath = $tplpath.'/class'; }    // To work with non standard path
-            if ($objecttype == 'invoice_supplier') { $tplpath = 'fourn/facture'; $classpath = 'fourn/class'; }    // To work with non standard path
-            if ($objecttype == 'order_supplier')   { $tplpath = 'fourn/commande'; $classpath = 'fourn/class'; }    // To work with non standard path
-
-            $classfile = strtolower($subelement); $classname = ucfirst($subelement);
-			if ($objecttype == 'invoice_supplier') { $classfile='fournisseur.facture'; $classname='FactureFournisseur';   }
-            if ($objecttype == 'order_supplier')   { $classfile='fournisseur.commande'; $classname='CommandeFournisseur'; }
-            //print $classfile." - ".$classpath." - ".$tplpath;
-            if(!class_exists($classname))
-            {
-            	dol_include_once("/".$classpath."/".$classfile.".class.php");
-            }
-			$this->linkedObjectBlock = new $classname($this->db);
-			dol_include_once('/'.$tplpath.'/tpl/linkedobjectblock.tpl.php');
-
-			return $num;
-		}
-	}
-
-	/**
-	 * 	Return HTML with object lines list.
-	 *  Array $this->lines must be defined.
-	 *  @param     $dateSelector       Show date input fields (if service)
-	 *  @param     $seller             Object of seller third party
-	 *  @param     uyer                Object of buyer third party
-     *  TODO Move this into page (into a lib.php file if mutualized. No code for output must be present into a business class).
 	 */
 	function printObjectLines($dateSelector=0,$seller,$buyer)
 	{
 		global $conf,$langs;
-		
+
 		print '<tr class="liste_titre nodrag nodrop">';
 		print '<td>'.$langs->trans('Description').'</td>';
 		if ($conf->global->PRODUIT_USE_MARKUP) print '<td align="right" width="80">'.$langs->trans('Markup').'</td>';
@@ -1426,7 +1464,7 @@ class CommonObject
 		print '<td width="10">&nbsp;</td>';
 		print '<td nowrap="nowrap">&nbsp;</td>'; // No width to allow autodim
 		print "</tr>\n";
-		
+
 		$num = count($this->lines);
 		$var = true;
 		$i	 = 0;
@@ -1449,7 +1487,11 @@ class CommonObject
 	}
 
 	/**
-	 * 	Return HTML with selected object line
+	 * 	Return HTML content of a detail line
+     *  TODO Move this into an output class file (htmlline.class.php)
+     *  TODO Do not use GET here, but put information into parameter of function
+     *  If lines are into a template, title must also be into a template
+     *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
 	 * 	@param	    $line		       Selected object line to output
 	 *  @param      $var               Is it a an odd line
 	 *  @param      $num               Number of line
@@ -1457,8 +1499,6 @@ class CommonObject
      *  @param      $dateSelector      1=Show also date range input fields
      *  @param      $seller            Object of seller third party
      *  @param      $buyer             Object of buyer third party
-     *  TODO Move this into page (into a lib.php file if mutualized. No code for output must be present into a business class).
-     *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
 	 */
 	function printLine($line,$var=true,$num=0,$i=0,$dateSelector=0,$seller,$buyer)
 	{
@@ -1476,7 +1516,7 @@ class CommonObject
 		if (! empty($line->date_end)) $type=1;
 
 		// Ligne en mode visu
-		// TODO simplifier les templates
+		// TODO Do not use GET here, but put information into parameter of function
 		if ($_GET['action'] != 'editline' || $_GET['lineid'] != $line->id)
 		{
 			// Produit
@@ -1518,13 +1558,20 @@ class CommonObject
 		}
 	}
 
+
+	/* This is to show array of line of details of source object */
+
+
 	/**
-	 * 	Return HTML with list of origin lines
+	 * 	Return HTML table table of source object lines
+     *  TODO Move this and previous function into output html class file (htmlline.class.php).
+     *  If lines are into a template, title must also be into a template
+     *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
 	 */
 	function printOriginLinesList($object)
 	{
 		global $langs;
-		
+
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans('Ref').'</td>';
 		print '<td>'.$langs->trans('Description').'</td>';
@@ -1532,7 +1579,7 @@ class CommonObject
 		print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
 		print '<td align="right">'.$langs->trans('Qty').'</td>';
 		print '<td align="right">'.$langs->trans('ReductionShort').'</td></tr>';
-		
+
 		$num = count($this->lines);
 		$var = true;
 		$i	 = 0;
@@ -1555,9 +1602,12 @@ class CommonObject
 	}
 
 	/**
-	 * 	Return HTML with origin line
-	 * 	@param		element		Element type
-	 * 	@param		id			Element id
+	 * 	Return HTML with a line of table array of source object lines
+     *  TODO Move this and previous function into output html class file (htmlline.class.php).
+     *  If lines are into a template, title must also be into a template
+     *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
+	 * 	@param		line
+	 * 	@param		var
 	 */
 	function printOriginLine($line,$var)
 	{
@@ -1573,7 +1623,7 @@ class CommonObject
 		$this->tpl['label'] = '';
 		if (! empty($line->fk_parent_line)) $this->tpl['label'].= img_picto('', 'rightarrow');
 
-		if (($line->info_bits & 2) == 2)
+		if (($line->info_bits & 2) == 2)  // TODO Not sure this is used for source object
 		{
 			$discount=new DiscountAbsolute($db);
 			$discount->fk_soc = $this->socid;
@@ -1606,13 +1656,13 @@ class CommonObject
 
 		if ($line->desc)
 		{
-			if ($line->desc == '(CREDIT_NOTE)')
+			if ($line->desc == '(CREDIT_NOTE)')  // TODO Not sure this is used for source object
 			{
 				$discount=new DiscountAbsolute($this->db);
 				$discount->fetch($line->fk_remise_except);
 				$this->tpl['description'] = $langs->transnoentities("DiscountFromCreditNote",$discount->getNomUrl(0));
 			}
-			elseif ($line->desc == '(DEPOSIT)')
+			elseif ($line->desc == '(DEPOSIT)')  // TODO Not sure this is used for source object
 			{
 				$discount=new DiscountAbsolute($this->db);
 				$discount->fetch($line->fk_remise_except);

@@ -28,4 +28,4 @@
 	<td align="right"><?php echo $this->tpl['qty']; ?></td>
 	<td align="right"><?php echo $this->tpl['remise_percent']; ?></td>
 </tr>
-<!-- END PHP TEMPLATE predefinedproductline_view.tpl.php -->
+<!-- END PHP TEMPLATE originproductline.tpl.php -->
