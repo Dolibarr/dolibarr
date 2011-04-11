@@ -2426,7 +2426,7 @@ class PropaleLigne
 		$sql.= ' info_bits, ';
 		$sql.= ' total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, special_code, rang, marge_tx, marque_tx)';
 		$sql.= " VALUES (".$this->fk_propal.",";
-		$sql.= " ".$this->fk_parent_line.",";
+		$sql.= " ".($this->fk_parent_line>0?"'".$this->fk_parent_line."'":"null").",";
 		$sql.= " '".$this->db->escape($this->desc)."',";
 		$sql.= " ".($this->fk_product?"'".$this->fk_product."'":"null").",";
 		$sql.= " '".$this->product_type."',";

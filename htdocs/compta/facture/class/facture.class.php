@@ -3256,7 +3256,7 @@ class FactureLigne
         $sql.= ' rang, special_code,';
         $sql.= ' info_bits, total_ht, total_tva, total_localtax1, total_localtax2, total_ttc)';
         $sql.= " VALUES (".$this->fk_facture.",";
-        $sql.= " ".$this->fk_parent_line.",";
+        $sql.= " ".($this->fk_parent_line>0?"'".$this->fk_parent_line."'":"null").",";
         $sql.= " '".$this->db->escape($this->desc)."',";
         $sql.= " ".price2num($this->qty).",";
         $sql.= " ".price2num($this->tva_tx).",";
