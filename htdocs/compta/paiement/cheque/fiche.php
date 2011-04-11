@@ -86,15 +86,15 @@ if ($_POST['action'] == 'setdate' && $user->rights->banque->cheque)
 
 if ($_GET['action'] == 'create' && $_GET["accountid"] > 0 && $user->rights->banque->cheque)
 {
+		
+	$remisecheque = new RemiseCheque($db);
+	//$result = $remisecheque->create($user, $_GET["accountid"], 0);
 	
 	if (is_array($_POST['toRemise']))
 		$result = $remisecheque->create($user, $_GET["accountid"], 0); // $result = $remisecheque->create($user, $_GET["accountid"], 0, $_POST['toRemise']);	
 	
 	else 
 		$result = $remisecheque->create($user, $_GET["accountid"], 0);
-	
-	$remisecheque = new RemiseCheque($db);
-	//$result = $remisecheque->create($user, $_GET["accountid"], 0);
 	
 	if ($result > 0)
 	{
