@@ -2534,7 +2534,7 @@ else
 			print '<table id="tablelines" class="noborder" width="100%">';
 
 		    // Show object lines
-		    if (! empty($object->lines)) $object->printObjectLines(0,$mysoc,$soc);
+		    if (! empty($object->lines)) $object->printObjectLines(1,$mysoc,$soc);
 
 			/*
 			 * Form to add new line
