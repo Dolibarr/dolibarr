@@ -311,6 +311,7 @@ class Propal extends CommonObject
 		if (empty($qty)) $qty=0;
 		if (empty($info_bits)) $info_bits=0;
 		if (empty($rang)) $rang=0;
+		if (empty($fk_parent_line) || $fk_parent_line < 0) $fk_parent_line=0;
 
 		$remise_percent=price2num($remise_percent);
 		$qty=price2num($qty);

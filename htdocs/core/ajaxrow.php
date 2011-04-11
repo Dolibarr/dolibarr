@@ -47,7 +47,8 @@ top_httphead();
 print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
 
 // Registering the location of boxes
-if((isset($_GET['roworder']) && !empty($_GET['roworder'])) && (isset($_GET['element']) && !empty($_GET['element'])))
+if((isset($_GET['roworder']) && !empty($_GET['roworder'])) && (isset($_GET['table_element_line']) && !empty($_GET['table_element_line']))
+	&& (isset($_GET['fk_element']) && !empty($_GET['fk_element'])) && (isset($_GET['element_id']) && !empty($_GET['element_id'])) )
 {
 	$roworder = explode(',',$_GET['roworder']);
 	
@@ -64,8 +65,11 @@ if((isset($_GET['roworder']) && !empty($_GET['roworder'])) && (isset($_GET['elem
 	dol_syslog("AjaxRow roworder=".$_GET['roworder']." neworder=".$roworder." element=".$_GET['element'], LOG_DEBUG);
 
 	$row=new CommonObject($db);
-	$row->table_element_line = $_GET['element'];
+	$row->table_element_line = $_GET['table_element_line'];
+	$row->fk_element = $_GET['fk_element'];
+	$row->id = $_GET['element_id'];
 	$result=$row->line_ajaxorder($roworder);
+	$result=$row->line_order(true);
 }
 
 ?>
