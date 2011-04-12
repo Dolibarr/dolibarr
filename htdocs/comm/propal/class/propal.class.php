@@ -932,6 +932,7 @@ class Propal extends CommonObject
 		$sql.= ", fk_projet, fk_statut";
 		$sql.= ", fk_user_author, fk_user_valid, fk_user_cloture";
 		$sql.= ", fk_adresse_livraison";
+		$sql.= ", p.fk_availability";
 		$sql.= ", p.fk_cond_reglement";
 		$sql.= ", p.fk_mode_reglement";
 		$sql.= ", c.label as statut_label";
