@@ -50,7 +50,7 @@ if ($_POST["action"] == 'add')
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Name")).'</div>';
 		$error++;
 	}
-	if (empty($_POST["constvalue"]))
+	if ($_POST["constvalue"]=='')
 	{
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Value")).'</div>';
 		$error++;
