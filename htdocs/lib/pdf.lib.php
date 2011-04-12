@@ -657,7 +657,7 @@ function pdf_writelinedesc(&$pdf,$object,$i,$outputlangs,$w,$h,$posx,$posy,$hide
     {
         if (empty($object->lines[$i]->fk_parent_line))
         {
-        	return $object->hooks[$object->lines[$i]->special_code]->pdf_writelinedesc($pdf,$object,$i,$outputlangs,$w,$h,$posx,$posy);
+        	return $object->hooks[$object->lines[$i]->special_code]->pdf_writelinedesc($pdf,$object,$i,$outputlangs,$w,$h,$posx,$posy,$hideref,$hidedesc,$issupplierline);
         }
     }
     else
@@ -956,7 +956,7 @@ function pdf_getlinetotalexcltax($object,$i,$outputlangs)
         {
         	if (empty($object->lines[$i]->fk_parent_line))
         	{
-        		// TODO add hook function
+        		return $object->hooks[$object->lines[$i]->special_code]->pdf_getlinetotalexcltax($object,$i,$outputlangs);
         	}
         }
         else

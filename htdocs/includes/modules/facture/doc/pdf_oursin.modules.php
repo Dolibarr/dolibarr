@@ -619,7 +619,7 @@ class pdf_oursin extends ModelePDFFactures
 		{
 			foreach( $this->tva as $tvakey => $tvaval )
 			{
-				if ($tvakey)    // On affiche pas taux 0
+				if ($tvakey > 0)    // On affiche pas taux 0
 				{
 					$this->atleastoneratenotnull++;
 
