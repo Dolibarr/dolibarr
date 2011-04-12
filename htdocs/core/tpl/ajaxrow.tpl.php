@@ -40,7 +40,7 @@ jQuery(document).ready(function(){
 			var element_id = "<?php echo $object->id; ?>";
 			jQuery.get("<?php echo DOL_URL_ROOT; ?>/core/ajaxrow.php?roworder="+roworder+"&table_element_line="+table_element_line+"&fk_element="+fk_element+"&element_id="+element_id);
 			if (reloadpage == 1) {
-				location.reload();
+				location.href = '<?php echo $_SERVER['PHP_SELF']; ?>';
 			} else {
 				jQuery("#tablelines .drag").each(
 					function( intIndex ) {
