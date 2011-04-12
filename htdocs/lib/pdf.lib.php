@@ -653,9 +653,12 @@ function pdf_writelinedesc(&$pdf,$object,$i,$outputlangs,$w,$h,$posx,$posy,$hide
 {
     global $db, $conf, $langs;
 
-    if (!empty($object->hooks) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code))
+    if (! empty($object->hooks) && ( ($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
     {
-        return $object->hooks[$object->lines[$i]->special_code]->pdf_writelinedesc($pdf,$object,$i,$outputlangs,$w,$h,$posx,$posy);
+        if (empty($object->lines[$i]->fk_parent_line))
+        {
+        	return $object->hooks[$object->lines[$i]->special_code]->pdf_writelinedesc($pdf,$object,$i,$outputlangs,$w,$h,$posx,$posy);
+        }
     }
     else
     {
@@ -808,9 +811,12 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
  */
 function pdf_getlinenum($object,$i,$outputlangs)
 {
-    if (!empty($object->hooks) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code))
+    if (! empty($object->hooks) && ( ($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
     {
-        // TODO add hook function
+    	if (empty($object->lines[$i]->fk_parent_line))
+        {
+        	// TODO add hook function
+        }
     }
     else
     {
@@ -827,9 +833,12 @@ function pdf_getlinenum($object,$i,$outputlangs)
  */
 function pdf_getlineref($object,$i,$outputlangs)
 {
-    if (!empty($object->hooks) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code))
+    if (! empty($object->hooks) && ( ($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
     {
-        // TODO add hook function
+    	if (empty($object->lines[$i]->fk_parent_line))
+        {
+        	// TODO add hook function
+        }
     }
     else
     {
@@ -845,9 +854,12 @@ function pdf_getlineref($object,$i,$outputlangs)
  */
 function pdf_getlinevatrate($object,$i,$outputlangs)
 {
-    if (!empty($object->hooks) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code))
+    if (! empty($object->hooks) && ( ($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
     {
-        // TODO add hook function
+        if (empty($object->lines[$i]->fk_parent_line))
+        {
+        	// TODO add hook function
+        }
     }
     else
     {
@@ -863,9 +875,12 @@ function pdf_getlinevatrate($object,$i,$outputlangs)
  */
 function pdf_getlineupexcltax($object,$i,$outputlangs)
 {
-    if (!empty($object->hooks) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code))
+    if (! empty($object->hooks) && ( ($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
     {
-        // TODO add hook function
+        if (empty($object->lines[$i]->fk_parent_line))
+        {
+        	// TODO add hook function
+        }
     }
     else
     {
@@ -883,9 +898,12 @@ function pdf_getlineqty($object,$i,$outputlangs)
 {
     if ($object->lines[$i]->special_code != 3)
     {
-        if (!empty($object->hooks) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code))
+        if (! empty($object->hooks) && ( ($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
         {
-            // TODO add hook function
+        	if (empty($object->lines[$i]->fk_parent_line))
+        	{
+        		// TODO add hook function
+        	}
         }
         else
         {
@@ -903,11 +921,15 @@ function pdf_getlineqty($object,$i,$outputlangs)
 function pdf_getlineremisepercent($object,$i,$outputlangs)
 {
     include_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
+    
     if ($object->lines[$i]->special_code != 3)
     {
-        if (!empty($object->hooks) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code))
+        if (! empty($object->hooks) && ( ($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
         {
-            // TODO add hook function
+        	if (empty($object->lines[$i]->fk_parent_line))
+        	{
+        		// TODO add hook function
+        	}
         }
         else
         {
@@ -930,9 +952,12 @@ function pdf_getlinetotalexcltax($object,$i,$outputlangs)
     }
     else
     {
-        if (!empty($object->hooks) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code))
+        if (! empty($object->hooks) && ( ($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
         {
-            // TODO add hook function
+        	if (empty($object->lines[$i]->fk_parent_line))
+        	{
+        		// TODO add hook function
+        	}
         }
         else
         {
@@ -961,9 +986,12 @@ function pdf_getTotalQty($object,$type='',$outputlangs)
 			{
 				$total += $object->lines[$i]->qty;
 			}
-			else if ($type==9 && !empty($object->hooks) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code))
+			else if ($type==9 && ! empty($object->hooks) && ( ($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
 			{
-				// TODO add hook function
+				if (empty($object->lines[$i]->fk_parent_line))
+				{
+					// TODO add hook function
+				}
 			}
 			else if ($type==0 && $object->lines[$i]->product_type == 0)
 			{
