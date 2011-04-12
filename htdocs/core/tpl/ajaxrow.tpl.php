@@ -33,20 +33,25 @@ jQuery(document).ready(function(){
 
     jQuery("#tablelines").tableDnD({
 		onDrop: function(table, row) {
-		   var roworder = cleanSerialize(jQuery("#tablelines").tableDnDSerialize());
-		   var table_element_line = "<?php echo $object->table_element_line; ?>";
-		   var fk_element = "<?php echo $object->fk_element; ?>";
-		   var element_id = "<?php echo $object->id; ?>";
-		   jQuery.get("<?php echo DOL_URL_ROOT; ?>/core/ajaxrow.php?roworder="+roworder+"&table_element_line="+table_element_line+"&fk_element="+fk_element+"&element_id="+element_id);
-		   jQuery("#tablelines .drag").each(
-				function( intIndex ){
-					jQuery(this).removeClass("pair impair");
-					if (intIndex % 2 == 0) jQuery(this).addClass('impair');
-                    if (intIndex % 2 == 1) jQuery(this).addClass('pair');
-				});
-		   },
+			var reloadpage = "<?php echo $conf->global->MAIN_FORCE_RELOAD_PAGE; ?>";
+			var roworder = cleanSerialize(jQuery("#tablelines").tableDnDSerialize());
+			var table_element_line = "<?php echo $object->table_element_line; ?>";
+			var fk_element = "<?php echo $object->fk_element; ?>";
+			var element_id = "<?php echo $object->id; ?>";
+			jQuery.get("<?php echo DOL_URL_ROOT; ?>/core/ajaxrow.php?roworder="+roworder+"&table_element_line="+table_element_line+"&fk_element="+fk_element+"&element_id="+element_id);
+			if (reloadpage == 1) {
+				location.reload();
+			} else {
+				jQuery("#tablelines .drag").each(
+					function( intIndex ) {
+						jQuery(this).removeClass("pair impair");
+						if (intIndex % 2 == 0) jQuery(this).addClass('impair');
+						if (intIndex % 2 == 1) jQuery(this).addClass('pair');
+					});
+			}
+		},
 		onDragClass: "dragClass",
-        dragHandle: "tdlineupdown"
+		dragHandle: "tdlineupdown"
 	});
     jQuery(".tdlineupdown").hover(
     	function() { jQuery(this).addClass('showDragHandle'); },
