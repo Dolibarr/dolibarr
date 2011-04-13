@@ -175,7 +175,7 @@ if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes'
 				$outputlangs = new Translate("",$conf);
 				$outputlangs->setDefaultLang($newlang);
 			}
-			$result=facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs);
+			$result=facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
 			if ($result > 0)
 			{
 				Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$facid);
@@ -328,7 +328,7 @@ if ($_REQUEST['action'] == 'confirm_valid' && $_REQUEST['confirm'] == 'yes' && $
 			$outputlangs = new Translate("",$conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs);
+		facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
 	}
 	else
 	{
@@ -385,7 +385,7 @@ if ($_GET['action'] == 'modif' && $user->rights->facture->unvalidate)
 			$outputlangs = new Translate("",$conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs);
+		facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
 	}
 }
 
@@ -699,10 +699,10 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 					{
 						$lines = $srcobject->lines;
 						if (empty($lines) && method_exists($srcobject,'fetch_lines'))  $lines = $srcobject->fetch_lines();
-		                
+
 		                $fk_parent_line=0;
 						$num=sizeof($lines);
-		                
+
 		                for ($i=0;$i<$num;$i++)
 		                {
 						    $desc=($lines[$i]->desc?$lines[$i]->desc:$lines[$i]->libelle);
@@ -716,7 +716,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 							$date_end=$lines[$i]->date_fin_prevue;
 							if ($lines[$i]->date_fin_reel) $date_end=$lines[$i]->date_fin_reel;
 							if ($lines[$i]->date_end) $date_end=$lines[$i]->date_end;
-							
+
 		                	// Reset fk_parent_line for no child products and special product
 		                    if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
 		                    	$fk_parent_line = 0;
@@ -752,13 +752,13 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 								$error++;
 								break;
 							}
-							
+
 		                	// Defined the new fk_parent_line
 		                    if ($result > 0 && $lines[$i]->product_type == 9) {
 		                    	$fk_parent_line = $result;
 		                    }
 						}
-						
+
 						// Hooks
 		                if (! empty($object->hooks))
 		                {
@@ -975,7 +975,7 @@ if (($_POST['action'] == 'addline' || $_POST['action'] == 'addline_predef') && $
 			$outputlangs = new Translate("",$conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs);
+		facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
 
 		unset($_POST['qty']);
 		unset($_POST['type']);
@@ -1073,7 +1073,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 			$outputlangs = new Translate("",$conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs);
+		facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
 	}
 }
 
@@ -1104,7 +1104,7 @@ if ($_GET['action'] == 'up' && $user->rights->facture->creer)
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
-	facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs);
+	facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
 
 	Header ('Location: '.$_SERVER["PHP_SELF"].'?facid='.$object->id.'#'.$_GET['rowid']);
 	exit;
@@ -1126,7 +1126,7 @@ if ($_GET['action'] == 'down' && $user->rights->facture->creer)
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
-	facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs);
+	facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
 
 	Header ('Location: '.$_SERVER["PHP_SELF"].'?facid='.$object->id.'#'.$_GET['rowid']);
 	exit;
@@ -1360,7 +1360,7 @@ if (GETPOST('action') == 'builddoc')	// En get ou en post
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
-	$result=facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs);
+	$result=facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
 	if ($result <= 0)
 	{
 		dol_print_error($db,$result);
@@ -2856,7 +2856,7 @@ else
 						$outputlangs = new Translate("",$conf);
 						$outputlangs->setDefaultLang($newlang);
 					}
-					$result=facture_pdf_create($db, $object, '', $_REQUEST['model'], $outputlangs);
+					$result=facture_pdf_create($db, $object, '', $_REQUEST['model'], $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
 					if ($result <= 0)
 					{
 						dol_print_error($db,$result);
