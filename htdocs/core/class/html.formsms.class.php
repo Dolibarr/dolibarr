@@ -186,7 +186,7 @@ function limitChars(textarea, limit, infodiv)
                 }
                 else
                 {
-                    dol_syslog("Warning: The SMS sending method has not been defined into MAIN_SMS_SENDMODE");
+                    dol_syslog("Warning: The SMS sending method has not been defined into MAIN_SMS_SENDMODE", LOG_WARNING);
                     $resultsender[0]->number=$this->fromsms;
                 }
                 if (sizeof($resultsender) > 0)
