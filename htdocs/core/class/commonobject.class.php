@@ -1339,6 +1339,22 @@ class CommonObject
 			}
 		}
 	}
+	
+	/**
+	 * 	Get special code of line
+	 * 	@param		lineid		Id of line
+	 */
+	function getSpecialCode($lineid)
+	{
+		$sql = 'SELECT special_code FROM '.MAIN_DB_PREFIX.$this->table_element_line;
+		$sql.= ' WHERE rowid = '.$lineid;
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$row = $this->db->fetch_row($resql);
+			return $row[0];
+		}
+	}
 
 
 

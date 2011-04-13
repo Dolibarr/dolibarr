@@ -239,7 +239,7 @@ class pdf_propale_azur extends ModelePDFPropales
 
 					// Description de la ligne produit
 					$curX = $this->posxdesc-1;
-					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,4,$curX,$curY);
+					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,4,$curX,$curY,GETPOST('hideref'),GETPOST('hidedesc'));
 
 					$pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
 					$nexY = $pdf->GetY();
