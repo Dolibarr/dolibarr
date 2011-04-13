@@ -174,11 +174,19 @@ function limitChars(textarea, limit, infodiv)
 				if ($conf->global->MAIN_SMS_SENDMODE == 'ovh')
                 {
                     dol_include_once('/ovh/class/ovhsms.class.php');
-                    $sms = new OvhSms($db);
-                    $resultsender = $sms->SmsSenderList($conf->global->OVHSMS_ACCOUNT);
+                    try
+                    {
+                        $sms = new OvhSms($db);
+                        $resultsender = $sms->SmsSenderList($conf->global->OVHSMS_ACCOUNT);
+                    }
+                    catch(Exception $e)
+                    {
+                        dol_print_error('','Error to get list of senders: '.$e->getMessage());
+                    }
                 }
                 else
                 {
+                    dol_syslog("Warning: The SMS sending method has not been defined into MAIN_SMS_SENDMODE");
                     $resultsender[0]->number=$this->fromsms;
                 }
                 if (sizeof($resultsender) > 0)
