@@ -102,12 +102,16 @@ class pdf_einstein extends ModelePDFCommandes
 	}
 
 	/**
-	 *		\brief      Fonction generant la commande sur le disque
-	 *		\param	    object				Objet commande a generer
-	 *		\param		outputlangs		Lang object for output language
-	 *		\return	    int         	1=ok, 0=ko
+     *  Function to build pdf onto disk
+     *  @param      object          Id of object to generate
+     *  @param      outputlangs     Lang output object
+     *  @param      srctemplatepath Full path of source filename for generator using a template file
+     *  @param      hidedetails     Do not show line details
+     *  @param      hidedesc        Do not show desc
+     *  @param      hideref         Do not show ref
+     *  @return     int             1=OK, 0=KO
 	 */
-	function write_file($object,$outputlangs)
+	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
 		global $user,$langs,$conf;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -251,7 +255,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 					// Description of product line
 					$curX = $this->posxdesc-1;
-					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,4,$curX,$curY,GETPOST('hideref'),GETPOST('hidedesc'));
+					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,4,$curX,$curY,$hideref,$hidedesc);
 
 					$pdf->SetFont('','',  $default_font_size - 1);   // On repositionne la police par defaut
 					$nexY = $pdf->GetY();
@@ -259,18 +263,18 @@ class pdf_einstein extends ModelePDFCommandes
 					// TVA
 					if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 					{
-						$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, GETPOST('hidedetails'));
+						$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails);
 						$pdf->SetXY ($this->posxtva, $curY);
 						$pdf->MultiCell($this->posxup-$this->posxtva-1, 3, $vat_rate, 0, 'R');
 					}
 
 					// Prix unitaire HT avant remise
-					$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs, GETPOST('hidedetails'));
+					$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY ($this->posxup, $curY);
 					$pdf->MultiCell($this->posxqty-$this->posxup-1, 3, $up_excl_tax, 0, 'R', 0);
 
 					// Quantity
-					$qty = pdf_getlineqty($object, $i, $outputlangs, GETPOST('hidedetails'));
+					$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY ($this->posxqty, $curY);
 					$pdf->MultiCell($this->posxdiscount-$this->posxqty-1, 3, $qty, 0, 'R');
 
@@ -278,12 +282,12 @@ class pdf_einstein extends ModelePDFCommandes
 					$pdf->SetXY ($this->posxdiscount, $curY);
 					if ($object->lines[$i]->remise_percent)
 					{
-						$remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs, GETPOST('hidedetails'));
+						$remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails);
 						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 3, $remise_percent, 0, 'R');
 					}
 
 					// Total HT ligne
-					$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, GETPOST('hidedetails'));
+					$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY ($this->postotalht, $curY);
 					$pdf->MultiCell(26, 3, $total_excl_tax, 0, 'R', 0);
 

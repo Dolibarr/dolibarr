@@ -140,13 +140,16 @@ class ModeleNumRefCommandes
  *  @param	    object			object order
  *  @param	    modele			force le modele a utiliser ('' to not force)
  *  @param		outputlangs		objet lang a utiliser pour traduction
+ *  @param      hidedetails     Hide details of lines
+ *  @param      hidedesc        Hide description
  */
-function commande_pdf_create($db, $object, $modele, $outputlangs)
+function commande_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0)
 {
 	global $conf,$langs;
 	$langs->load("orders");
 
 	$dir = DOL_DOCUMENT_ROOT."/includes/modules/commande/";
+	$srctemplatepath='';
 	$modelisok=0;
 	$liste=array();
 
@@ -183,7 +186,7 @@ function commande_pdf_create($db, $object, $modele, $outputlangs)
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
 		$sav_charset_output=$outputlangs->charset_output;
-		if ($obj->write_file($object, $outputlangs) > 0)
+		if ($obj->write_file($object, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc) > 0)
 		{
 			$outputlangs->charset_output=$sav_charset_output;
 			// on supprime l'image correspondant au preview
@@ -193,7 +196,7 @@ function commande_pdf_create($db, $object, $modele, $outputlangs)
 		else
 		{
 			$outputlangs->charset_output=$sav_charset_output;
-			dol_syslog("Erreur dans commande_pdf_create");
+			dol_syslog("Error");
 			dol_print_error($db,$obj->error);
 			return 0;
 		}

@@ -87,12 +87,16 @@ class pdf_edison extends ModelePDFCommandes
 
 
 	/**
-	 *	\brief      Fonction generant la commande sur le disque
-	 *	\param	    com				id de la propale a generer
-	 *	\param		outputlangs		Lang output object
-	 *	\return	    int     		1=ok, 0=ko
+     *  Function to build pdf onto disk
+     *  @param      object          Id of object to generate
+     *  @param      outputlangs     Lang output object
+     *  @param      srctemplatepath Full path of source filename for generator using a template file
+     *  @param      hidedetails     Do not show line details
+     *  @param      hidedesc        Do not show desc
+     *  @param      hideref         Do not show ref
+     *  @return     int             1=OK, 0=KO
 	 */
-	function write_file($object,$outputlangs)
+	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
 		global $user,$conf,$langs,$mysoc;
 
@@ -203,7 +207,7 @@ class pdf_edison extends ModelePDFCommandes
 					$pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
 
 					// Description de la ligne produit
-					pdf_writelinedesc($pdf,$object,$i,$outputlangs,100,3,30,$curY,1,GETPOST('hidedesc'));
+					pdf_writelinedesc($pdf,$object,$i,$outputlangs,100,3,30,$curY,1,$hidedesc);
 					//$pdf->writeHTMLCell(100, 3, 30, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
 
 					$pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
@@ -213,19 +217,19 @@ class pdf_edison extends ModelePDFCommandes
 					$pdf->SetXY (10, $curY);
 					$pdf->MultiCell(20, 3, $ref, 0, 'C');
 
-					$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, GETPOST('hidedetails'));
+					$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY (133, $curY);
 					$pdf->MultiCell(12, 3, $vat_rate, 0, 'C');
 
-					$qty = pdf_getlineqty($object, $i, $outputlangs, GETPOST('hidedetails'));
+					$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY (145, $curY);
 					$pdf->MultiCell(10, 3, $qty, 0, 'C');
 
-					$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs, GETPOST('hidedetails'));
+					$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY (156, $curY);
 					$pdf->MultiCell(18, 3, $up_excl_tax, 0, 'R', 0);
 
-					$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, GETPOST('hidedetails'));
+					$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY (174, $curY);
 					$pdf->MultiCell(26, 3, $total_excl_tax, 0, 'R', 0);
 

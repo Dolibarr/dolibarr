@@ -77,12 +77,16 @@ class pdf_propale_jaune extends ModelePDFPropales
 
 
 	/**
-	 *	\brief      Fonction generant la propale sur le disque
-	 *	\param	    object			Objet propal
-	 *	\param		outputlangs		Lang object for output language
-	 *	\return	    int     		1=ok, 0=ko
+     *  Function to build pdf onto disk
+     *  @param      object          Id of object to generate
+     *  @param      outputlangs     Lang output object
+     *  @param      srctemplatepath Full path of source filename for generator using a template file
+     *  @param      hidedetails     Do not show line details
+     *  @param      hidedesc        Do not show desc
+     *  @param      hideref         Do not show ref
+     *  @return     int             1=OK, 0=KO
 	 */
-	function write_file($object,$outputlangs)
+	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
 		global $user,$langs,$conf;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -192,7 +196,7 @@ class pdf_propale_jaune extends ModelePDFPropales
                     $pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
 
                     // Description de la ligne produit
-					pdf_writelinedesc($pdf,$object,$i,$outputlangs,102,4,30,$curY,1,GETPOST('hidedesc'));
+					pdf_writelinedesc($pdf,$object,$i,$outputlangs,102,4,30,$curY,1,$hidedesc);
 
 					$pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
 					$nexY = $pdf->GetY();
@@ -201,19 +205,19 @@ class pdf_propale_jaune extends ModelePDFPropales
 					$pdf->SetXY (10, $curY );
 					$pdf->MultiCell(20, 4, $ref, 0, 'L', 0);
 
-					$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, GETPOST('hidedetails'));
+					$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY (132, $curY );
 					$pdf->MultiCell(12, 4, $vat_rate, 0, 'R');
 
-					$qty = pdf_getlineqty($object, $i, $outputlangs, GETPOST('hidedetails'));
+					$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY (144, $curY );
 					$pdf->MultiCell(10, 4, $qty, 0, 'R', 0);
 
-					$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs, GETPOST('hidedetails'));
+					$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY (154, $curY );
 					$pdf->MultiCell(22, 4, $up_excl_tax, 0, 'R', 0);
 
-					$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, GETPOST('hidedetails'));
+					$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY (176, $curY );
 					$pdf->MultiCell(24, 4, $total_excl_tax, 0, 'R', 0);
 
@@ -339,7 +343,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 
 			$posy=$pdf->GetY()+1;
 		}
-		
+
         // Show payments conditions
 		if ($object->type != 2 && ($object->cond_reglement_code || $object->cond_reglement))
 		{
@@ -370,10 +374,10 @@ class pdf_propale_jaune extends ModelePDFPropales
 				$pdf->SetFont('','B', $default_font_size - 2);
 	            $pdf->MultiCell(90, 3, $outputlangs->transnoentities("ErrorNoPaiementModeConfigured"),0,'L',0);
 	            $pdf->SetTextColor(0,0,0);
-	
+
 	            $posy=$pdf->GetY()+1;
 	        }*/
-	
+
 	      	// Show payment mode
 	        if ($object->mode_reglement_code
 	        	 && $object->mode_reglement_code != 'CHQ'
@@ -383,16 +387,16 @@ class pdf_propale_jaune extends ModelePDFPropales
 		            $pdf->SetXY($this->marge_gauche, $posy);
 		            $titre = $outputlangs->transnoentities("PaymentMode").':';
 		            $pdf->MultiCell(80, 5, $titre, 0, 'L');
-	
+
 		            $pdf->SetFont('','', $default_font_size - 2);
 		            $pdf->SetXY(50, $posy);
 		            //print "xxx".$outputlangs->transnoentities("PaymentType".$object->mode_reglement_code);exit;
 		            $lib_mode_reg=$outputlangs->transnoentities("PaymentType".$object->mode_reglement_code)!=('PaymentType'.$object->mode_reglement_code)?$outputlangs->transnoentities("PaymentType".$object->mode_reglement_code):$outputlangs->convToOutputCharset($object->mode_reglement);
 		            $pdf->MultiCell(80, 5, $lib_mode_reg,0,'L');
-	
+
 		            $posy=$pdf->GetY()+2;
 	           	 }
-	
+
 			// Show payment mode CHQ
 	        if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'CHQ')
 	        {
@@ -403,12 +407,12 @@ class pdf_propale_jaune extends ModelePDFPropales
 		            {
 		                $account = new Account($this->db);
 		                $account->fetch($conf->global->FACTURE_CHQ_NUMBER);
-	
+
 		                $pdf->SetXY($this->marge_gauche, $posy);
 		                $pdf->SetFont('','B', $default_font_size - 2);
 		                $pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo',$account->proprio).':',0,'L',0);
 			            $posy=$pdf->GetY()+1;
-	
+
 		                $pdf->SetXY($this->marge_gauche, $posy);
 						$pdf->SetFont('','', $default_font_size - 2);
 		                $pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($account->adresse_proprio), 0, 'L', 0);
@@ -420,7 +424,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 		                $pdf->SetFont('','B',$default_font_size - 2);
 		                $pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedToShort').' '.$outputlangs->convToOutputCharset($this->emetteur->name).' '.$outputlangs->transnoentities('SendTo').':',0,'L',0);
 			            $posy=$pdf->GetY()+1;
-	
+
 			            $pdf->SetXY($this->marge_gauche, $posy);
 						$pdf->SetFont('','', $default_font_size - 2);
 		                $pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->getFullAddress()), 0, 'L', 0);
@@ -428,7 +432,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 		            }
 		        }
 			}
-		
+
 	        // If payment mode not forced or forced to VIR, show payment with BAN
 	        /* Not enough space
 	        if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'VIR')
@@ -437,18 +441,18 @@ class pdf_propale_jaune extends ModelePDFPropales
 		        {
 	                $account = new Account($this->db);
 	                $account->fetch($conf->global->FACTURE_RIB_NUMBER);
-	
+
 	                $curx=$this->marge_gauche;
 	                $cury=$posy;
-	
+
 	                $posy=pdf_bank($pdf,$outputlangs,$curx,$cury,$account);
-	
+
 	                $posy+=2;
 		        }
 			}
 			*/
 		}
-		
+
 		return $posy;
 	}
 
@@ -479,7 +483,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 		$pdf->SetFont('','', $default_font_size - 1);
 
 		$haut=6;
-		
+
 		$pdf->SetXY(10,$tab_top);
 		$pdf->MultiCell(20,$haut,$outputlangs->transnoentities("Ref"),0,'L',1);
 
