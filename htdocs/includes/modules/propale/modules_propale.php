@@ -138,9 +138,10 @@ class ModeleNumRefPropales
  * 	@param		outputlangs		objet lang a utiliser pour traduction
  *  @param      hidedetails     Hide details of lines
  *  @param      hidedesc        Hide description
- * 	@return     int         	0 si KO, 1 si OK
+ *  @param      hideref         Hide ref
+ * 	@return     int         	0 if KO, 1 if OK
  */
-function propale_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0)
+function propale_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 {
 	global $langs;
 	$langs->load("propale");

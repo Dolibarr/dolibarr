@@ -165,7 +165,7 @@ if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes'
                 $outputlangs = new Translate("",$conf);
                 $outputlangs->setDefaultLang($newlang);
             }
-            commande_pdf_create($db, $object, $object->modelpdf, $outputlangs);
+            commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
         }
         else
         {
@@ -241,10 +241,10 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
             {
                 $lines = $srcobject->lines;
                 if (empty($lines) && method_exists($srcobject,'fetch_lines'))  $lines = $srcobject->fetch_lines();
-                
+
                 $fk_parent_line=0;
 				$num=sizeof($lines);
-                
+
                 for ($i=0;$i<$num;$i++)
                 {
                     $desc=($lines[$i]->desc?$lines[$i]->desc:$lines[$i]->libelle);
@@ -258,7 +258,7 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
                     $date_end=$lines[$i]->date_fin_prevue;
                     if ($lines[$i]->date_fin_reel) $date_end=$lines[$i]->date_fin_reel;
                     if ($lines[$i]->date_end) $date_end=$lines[$i]->date_end;
-                    
+
                     // Reset fk_parent_line for no child products and special product
                     if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
                     	$fk_parent_line = 0;
@@ -291,13 +291,13 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
                         $error++;
                         break;
                     }
-                    
+
                     // Defined the new fk_parent_line
                     if ($result > 0 && $lines[$i]->product_type == 9) {
                     	$fk_parent_line = $result;
                     }
                 }
-                
+
                 // Hooks
                 if (! empty($object->hooks))
                 {
@@ -612,7 +612,7 @@ if ($_POST['action'] == 'addline' && $user->rights->commande->creer)
                         $outputlangs = new Translate("",$conf);
                         $outputlangs->setDefaultLang($newlang);
                     }
-                    commande_pdf_create($db, $object, $object->modelpdf, $outputlangs);
+                    commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
 
                     unset($_POST['qty']);
                     unset($_POST['type']);
@@ -720,7 +720,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
                 $outputlangs = new Translate("",$conf);
                 $outputlangs->setDefaultLang($newlang);
             }
-            commande_pdf_create($db, $object, $object->modelpdf, $outputlangs);
+            commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
         }
         else
         {
@@ -754,7 +754,7 @@ if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes' &
             $outputlangs = new Translate("",$conf);
             $outputlangs->setDefaultLang($newlang);
         }
-        commande_pdf_create($db, $object, $object->modelpdf, $outputlangs);
+        commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
     }
 }
 
@@ -793,7 +793,7 @@ if ($_GET['action'] == 'modif' && $user->rights->commande->creer)
             $outputlangs = new Translate("",$conf);
             $outputlangs->setDefaultLang($newlang);
         }
-        commande_pdf_create($db, $object, $object->modelpdf, $outputlangs);
+        commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
     }
 }
 
@@ -818,7 +818,7 @@ if ($_GET['action'] == 'up' && $user->rights->commande->creer)
         $outputlangs->setDefaultLang($newlang);
     }
 
-    commande_pdf_create($db, $object, $object->modelpdf, $outputlangs);
+    commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
 
     Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$comid.'#'.$_GET['rowid']);
     exit;
@@ -840,7 +840,7 @@ if ($_GET['action'] == 'down' && $user->rights->commande->creer)
         $outputlangs = new Translate("",$conf);
         $outputlangs->setDefaultLang($newlang);
     }
-    commande_pdf_create($db, $object, $object->modelpdf, $outputlangs);
+    commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
 
     Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$comid.'#'.$_GET['rowid']);
     exit;
@@ -872,7 +872,7 @@ if ($_REQUEST['action'] == 'builddoc')	// In get or post
         $outputlangs = new Translate("",$conf);
         $outputlangs->setDefaultLang($newlang);
     }
-    $result=commande_pdf_create($db, $object, $object->modelpdf, $outputlangs);
+    $result=commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
     if ($result <= 0)
     {
         dol_print_error($db,$result);
@@ -1377,7 +1377,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
         print_titre($title);
 
         print '<table class="noborder" width="100%">';
-        
+
         $objectsrc->printOriginLinesList($object);
 
         print '</table>';

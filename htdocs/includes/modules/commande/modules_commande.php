@@ -142,8 +142,10 @@ class ModeleNumRefCommandes
  *  @param		outputlangs		objet lang a utiliser pour traduction
  *  @param      hidedetails     Hide details of lines
  *  @param      hidedesc        Hide description
+ *  @param      hideref         Hide ref
+ *  @return     int             0 if KO, 1 if OK
  */
-function commande_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0)
+function commande_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 {
 	global $conf,$langs;
 	$langs->load("orders");

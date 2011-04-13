@@ -142,9 +142,10 @@ class ModeleNumRefFactures
  *	@param		outputlangs		objet lang a utiliser pour traduction
  *  @param      hidedetails     Hide details of lines
  *  @param      hidedesc        Hide description
+ *  @param      hideref         Hide ref
  *	@return  	int        		<0 if KO, >0 if OK
  */
-function facture_pdf_create($db, $object, $message, $modele, $outputlangs, $hidedetails=0, $hidedesc=0)
+function facture_pdf_create($db, $object, $message, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 {
 	global $conf,$langs;
 	$langs->load("bills");

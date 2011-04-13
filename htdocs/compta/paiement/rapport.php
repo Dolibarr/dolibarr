@@ -71,7 +71,6 @@ if ($_POST["action"] == 'builddoc')
     else
     {
         $outputlangs->charset_output=$sav_charset_output;
-        dol_syslog("Erreur dans commande_pdf_create");
         dol_print_error($db,$obj->error);
     }
 

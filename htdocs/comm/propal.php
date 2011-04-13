@@ -168,7 +168,7 @@ if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes'
 			$outputlangs = new Translate("",$conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		propale_pdf_create($db, $object, $object->modelpdf, $outputlangs);
+		propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
 
 		Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 		exit;
@@ -198,7 +198,7 @@ if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes' &
 			$outputlangs = new Translate("",$conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		propale_pdf_create($db, $object, $object->modelpdf, $outputlangs);
+		propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
 	}
 	else
 	{
@@ -348,7 +348,7 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 				$outputlangs = new Translate("",$conf);
 				$outputlangs->setDefaultLang($newlang);
 			}
-			propale_pdf_create($db, $object, $object->modelpdf, $outputlangs);
+			propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
 
 			Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
 			exit;
@@ -606,7 +606,7 @@ if ($_GET['action'] == 'modif' && $user->rights->propale->creer)
 		$outputlangs->setDefaultLang($newlang);
 	}
 
-	propale_pdf_create($db, $object, $object->modelpdf, $outputlangs);
+	propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
 }
 
 if ($_POST['action'] == "setabsolutediscount" && $user->rights->propale->creer)
@@ -760,7 +760,7 @@ if ($_POST['action'] == "addline" && $user->rights->propale->creer)
 					$outputlangs = new Translate("",$conf);
 					$outputlangs->setDefaultLang($newlang);
 				}
-				propale_pdf_create($db, $object, $object->modelpdf, $outputlangs);
+				propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
 
 				unset($_POST['qty']);
 				unset($_POST['type']);
@@ -838,7 +838,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST
 			$outputlangs = new Translate("",$conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		propale_pdf_create($db, $object, $object->modelpdf, $outputlangs);
+		propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
 	}
 }
 
@@ -865,7 +865,7 @@ if ($_REQUEST['action'] == 'builddoc' && $user->rights->propale->creer)
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
-	$result=propale_pdf_create($db, $object, $object->modelpdf, $outputlangs);
+	$result=propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
 	if ($result <= 0)
 	{
 		dol_print_error($db,$result);
@@ -943,7 +943,7 @@ if ($_GET['action'] == 'up' && $user->rights->propale->creer)
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
-	propale_pdf_create($db, $object, $object->modelpdf, $outputlangs);
+	propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
 
 	Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'#'.$_GET['rowid']);
 	exit;
@@ -965,7 +965,7 @@ if ($_GET['action'] == 'down' && $user->rights->propale->creer)
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
-	propale_pdf_create($db, $object, $object->modelpdf, $outputlangs);
+	propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
 
 	Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'#'.$_GET['rowid']);
 	exit;
@@ -1425,7 +1425,7 @@ if ($id > 0 || ! empty($ref))
 	}
 
 	print '<table id="tablelines" class="noborder" width="100%">';
-	
+
 	// Show object lines
 	if (! empty($object->lines)) $object->printObjectLines(0,$mysoc,$soc);
 
