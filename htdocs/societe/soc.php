@@ -299,7 +299,8 @@ else
 		}
 	}
 
-	if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && $user->rights->societe->supprimer)
+	// Delete third party
+	if (GETPOST("action") == 'confirm_delete' && GETPOST("confirm") == 'yes' && $user->rights->societe->supprimer)
 	{
 		$soc->fetch($socid);
 		$result = $soc->delete($socid);
@@ -321,9 +322,9 @@ else
 	/*
 	 * Generate document
 	 */
-	if ($_REQUEST['action'] == 'builddoc')  // En get ou en post
+	if (GETPOST('action') == 'builddoc')  // En get ou en post
 	{
-		if (is_numeric($_REQUEST['model']))
+		if (is_numeric(GETPOST('model')))
 		{
 			$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Model"));
 		}
@@ -397,54 +398,42 @@ if (! empty($objcanvas->template_dir))
 	}
 	else
 	{
-		// Fetch object
-		$result=$objcanvas->fetch($socid);
-		if ($result > 0)
-		{
-			// Assign values
-			$objcanvas->assign_values('view');
+		$result=$objcanvas->fetch($socid);       // Relaod object
+    	$objcanvas->assign_values('view');   // Assign values
+		$objcanvas->display_canvas('view');  // Show template
 
-			// Display canvas
-			$objcanvas->display_canvas('view');
+		// TODO Move this also into template
+		print '<table width="100%"><tr><td valign="top" width="50%">';
+		print '<a name="builddoc"></a>'; // ancre
 
+		/*
+		 * Documents generes
+		 */
+		$filedir=$conf->societe->dir_output.'/'.$socid;
+		$urlsource=$_SERVER["PHP_SELF"]."?socid=".$socid;
+		$genallowed=$user->rights->societe->creer;
+		$delallowed=$user->rights->societe->supprimer;
 
-			print '<table width="100%"><tr><td valign="top" width="50%">';
-			print '<a name="builddoc"></a>'; // ancre
+		$var=true;
 
-			/*
-			 * Documents generes
-			 */
-			$filedir=$conf->societe->dir_output.'/'.$socid;
-			$urlsource=$_SERVER["PHP_SELF"]."?socid=".$socid;
-			$genallowed=$user->rights->societe->creer;
-			$delallowed=$user->rights->societe->supprimer;
+		$somethingshown=$formfile->show_documents('company',$socid,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$objcanvas->control->object->default_lang);
 
-			$var=true;
+		print '</td>';
+		print '<td></td>';
+		print '</tr>';
+		print '</table>';
 
-			$somethingshown=$formfile->show_documents('company',$socid,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$objcanvas->control->object->default_lang);
+		print '<br>';
 
-			print '</td>';
-			print '<td></td>';
-			print '</tr>';
-			print '</table>';
+		// Subsidiaries list
+		$result=show_subsidiaries($conf,$langs,$db,$objcanvas->control->object);
 
-			print '<br>';
+		// Contacts list
+		$result=show_contacts($conf,$langs,$db,$objcanvas->control->object);
 
-			// Subsidiaries list
-			$result=show_subsidiaries($conf,$langs,$db,$objcanvas->control->object);
-
-			// Contacts list
-			$result=show_contacts($conf,$langs,$db,$objcanvas->control->object);
-
-			// Projects list
-			$result=show_projects($conf,$langs,$db,$objcanvas->control->object);
-		}
-		else
-		{
-			dol_htmloutput_errors($objcanvas->error,$objcanvas->errors);
-		}
+		// Projects list
+		$result=show_projects($conf,$langs,$db,$objcanvas->control->object);
 	}
-
 }
 else
 {
@@ -1317,7 +1306,7 @@ else
 
 
 		// Confirm delete third party
-		if ($_GET["action"] == 'delete')
+		if (GETPOST("action") == 'delete')
 		{
 			$html = new Form($db);
 			$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?socid=".$soc->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete",'',0,2);

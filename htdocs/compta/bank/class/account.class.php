@@ -205,6 +205,8 @@ class Account extends CommonObject
         $emetteur=trim($emetteur);
         $banque=trim($banque);
 
+        $now=dol_now();
+
         if (is_numeric($oper))    // Clean oper to have a code instead of a rowid
         {
             $sql ="SELECT code FROM ".MAIN_DB_PREFIX."c_paiement";
@@ -255,7 +257,7 @@ class Account extends CommonObject
         $sql.= ", fk_type";
         $sql.= ",emetteur,banque";
         $sql.= ") VALUES (";
-        $sql.= "'".$this->db->idate(mktime())."'";
+        $sql.= "'".$this->db->idate($now)."'";
         $sql.= ", '".$this->db->idate($date)."'";
         $sql.= ", '".$this->db->idate($datev)."'";
         $sql.= ", '".$this->db->escape($label)."'";
