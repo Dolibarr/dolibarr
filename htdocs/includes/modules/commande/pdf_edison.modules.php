@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2008      Raphael Bertrand     <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -203,7 +203,7 @@ class pdf_edison extends ModelePDFCommandes
 					$pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
 
 					// Description de la ligne produit
-					pdf_writelinedesc($pdf,$object,$i,$outputlangs,100,3,30,$curY,1);
+					pdf_writelinedesc($pdf,$object,$i,$outputlangs,100,3,30,$curY,1,GETPOST('hidedesc'));
 					//$pdf->writeHTMLCell(100, 3, 30, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
 
 					$pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
@@ -213,19 +213,19 @@ class pdf_edison extends ModelePDFCommandes
 					$pdf->SetXY (10, $curY);
 					$pdf->MultiCell(20, 3, $ref, 0, 'C');
 
-					$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs);
+					$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, GETPOST('hidedetails'));
 					$pdf->SetXY (133, $curY);
 					$pdf->MultiCell(12, 3, $vat_rate, 0, 'C');
 
-					$qty = pdf_getlineqty($object, $i, $outputlangs);
+					$qty = pdf_getlineqty($object, $i, $outputlangs, GETPOST('hidedetails'));
 					$pdf->SetXY (145, $curY);
 					$pdf->MultiCell(10, 3, $qty, 0, 'C');
 
-					$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs);
+					$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs, GETPOST('hidedetails'));
 					$pdf->SetXY (156, $curY);
 					$pdf->MultiCell(18, 3, $up_excl_tax, 0, 'R', 0);
 
-					$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs);
+					$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, GETPOST('hidedetails'));
 					$pdf->SetXY (174, $curY);
 					$pdf->MultiCell(26, 3, $total_excl_tax, 0, 'R', 0);
 

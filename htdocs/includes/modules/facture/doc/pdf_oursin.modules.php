@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2005      Sylvain SCATTOLINI   <sylvain@s-infoservices.com>
  * Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2008      Raphael Bertrand     <raphael.bertrand@resultic.fr>
@@ -219,9 +219,7 @@ class pdf_oursin extends ModelePDFFactures
 					$curY = $nexY;
 
 					// Description of product line
-					//$libelleproduitservice=pdf_getlinedesc($object,$i,$outputlangs);
-                    pdf_writelinedesc($pdf,$object,$i,$outputlangs,108,3,$this->posxdesc-1,$curY+1);
-					//$pdf->writeHTMLCell(108, 3, $this->posxdesc-1, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
+                    pdf_writelinedesc($pdf,$object,$i,$outputlangs,108,3,$this->posxdesc-1,$curY+1,GETPOST('hideref'),GETPOST('hidedesc'));
 
 					$nexY = $pdf->GetY();
 
@@ -230,31 +228,31 @@ class pdf_oursin extends ModelePDFFactures
 					{
 						if ($this->franchise!=1)
 						{
-							$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs);
+							$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, GETPOST('hidedetails'));
 							$pdf->SetXY ($this->marges['g']+118, $curY);
 							$pdf->MultiCell(12, 3, $vat_rate, 0, 'R');
 						}
 					}
 
 					// Prix unitaire HT avant remise
-					$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs);
+					$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs, GETPOST('hidedetails'));
 					$pdf->SetXY ($this->marges['g']+132, $curY);
 					$pdf->MultiCell(16, 3, $up_excl_tax, 0, 'R', 0);
 
 					// Quantity
-					$qty = pdf_getlineqty($object, $i, $outputlangs);
+					$qty = pdf_getlineqty($object, $i, $outputlangs, GETPOST('hidedetails'));
 					$pdf->SetXY ($this->marges['g']+150, $curY);
 					$pdf->MultiCell(10, 3, $qty, 0, 'R');
 
 					// Remise sur ligne
 					$pdf->SetXY ($this->marges['g']+160, $curY);
 					if ($object->lines[$i]->remise_percent) {
-						$remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs);
+						$remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs, GETPOST('hidedetails'));
 						$pdf->MultiCell(14, 3, $remise_percent, 0, 'R');
 					}
 
 					// Total HT
-					$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs);
+					$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, GETPOST('hidedetails'));
 					$pdf->SetXY ($this->marges['g']+168, $curY);
 					$pdf->MultiCell(21, 3, $total_excl_tax, 0, 'R', 0);
 

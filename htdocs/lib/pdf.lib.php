@@ -848,6 +848,10 @@ function pdf_getlineref($object,$i,$outputlangs)
  *	@param		object				Object
  *	@param		$i					Current line number
  *  @param    	outputlang			Object lang for output
+ *  @param		hidedetails			Hide value
+ *  								0 = no
+ *  								1 = yes
+ *  								2 = just special lines
  */
 function pdf_getlinevatrate($object,$i,$outputlangs,$hidedetails=0)
 {
@@ -859,7 +863,7 @@ function pdf_getlinevatrate($object,$i,$outputlangs,$hidedetails=0)
     }
     else
     {
-        return vatrate($object->lines[$i]->tva_tx,1,$object->lines[$i]->info_bits);
+        if (empty($hidedetails) || $hidedetails > 1) return vatrate($object->lines[$i]->tva_tx,1,$object->lines[$i]->info_bits);
     }
 }
 
@@ -868,6 +872,10 @@ function pdf_getlinevatrate($object,$i,$outputlangs,$hidedetails=0)
  *	@param		object				Object
  *	@param		$i					Current line number
  *  @param    	outputlang			Object lang for output
+ *  @param		hidedetails			Hide value
+ *  								0 = no
+ *  								1 = yes
+ *  								2 = just special lines
  */
 function pdf_getlineupexcltax($object,$i,$outputlangs,$hidedetails=0)
 {
@@ -879,7 +887,7 @@ function pdf_getlineupexcltax($object,$i,$outputlangs,$hidedetails=0)
     }
     else
     {
-        return price($object->lines[$i]->subprice);
+        if (empty($hidedetails) || $hidedetails > 1) return price($object->lines[$i]->subprice);
     }
 }
 
@@ -888,6 +896,10 @@ function pdf_getlineupexcltax($object,$i,$outputlangs,$hidedetails=0)
  *	@param		object				Object
  *	@param		$i					Current line number
  *  @param    	outputlang			Object lang for output
+ *  @param		hidedetails			Hide value
+ *  								0 = no
+ *  								1 = yes
+ *  								2 = just special lines
  */
 function pdf_getlineqty($object,$i,$outputlangs,$hidedetails=0)
 {
@@ -901,7 +913,7 @@ function pdf_getlineqty($object,$i,$outputlangs,$hidedetails=0)
         }
         else
         {
-            return $object->lines[$i]->qty;
+            if (empty($hidedetails) || $hidedetails > 1) return $object->lines[$i]->qty;
         }
     }
 }
@@ -911,6 +923,10 @@ function pdf_getlineqty($object,$i,$outputlangs,$hidedetails=0)
  *	@param		object				Object
  *	@param		$i					Current line number
  *  @param    	outputlang			Object lang for output
+ *  @param		hidedetails			Hide value
+ *  								0 = no
+ *  								1 = yes
+ *  								2 = just special lines
  */
 function pdf_getlineremisepercent($object,$i,$outputlangs,$hidedetails=0)
 {
@@ -926,7 +942,7 @@ function pdf_getlineremisepercent($object,$i,$outputlangs,$hidedetails=0)
         }
         else
         {
-            return dol_print_reduction($object->lines[$i]->remise_percent,$outputlangs);
+            if (empty($hidedetails) || $hidedetails > 1) return dol_print_reduction($object->lines[$i]->remise_percent,$outputlangs);
         }
     }
 }
@@ -936,6 +952,10 @@ function pdf_getlineremisepercent($object,$i,$outputlangs,$hidedetails=0)
  *	@param		object				Object
  *	@param		$i					Current line number
  *  @param    	outputlang			Object lang for output
+ *  @param		hidedetails			Hide value
+ *  								0 = no
+ *  								1 = yes
+ *  								2 = just special lines
  */
 function pdf_getlinetotalexcltax($object,$i,$outputlangs,$hidedetails=0)
 {
@@ -945,7 +965,7 @@ function pdf_getlinetotalexcltax($object,$i,$outputlangs,$hidedetails=0)
     }
     else
     {
-        if (! empty($object->hooks) && ( ($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
+        if (! empty($object->hooks) && ( ($object->lines[$i]->product_type == 9 && ! empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
         {
         	$special_code = $object->lines[$i]->special_code;
         	if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
@@ -953,7 +973,7 @@ function pdf_getlinetotalexcltax($object,$i,$outputlangs,$hidedetails=0)
         }
         else
         {
-            return price($object->lines[$i]->total_ht);
+            if (empty($hidedetails) || $hidedetails > 1) return price($object->lines[$i]->total_ht);
         }
     }
 }
@@ -978,7 +998,7 @@ function pdf_getTotalQty($object,$type='',$outputlangs)
 			{
 				$total += $object->lines[$i]->qty;
 			}
-			else if ($type==9 && ! empty($object->hooks) && ( ($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
+			else if ($type==9 && ! empty($object->hooks) && ( ($object->lines[$i]->product_type == 9 && ! empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
 			{
 				$special_code = $object->lines[$i]->special_code;
 				if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
