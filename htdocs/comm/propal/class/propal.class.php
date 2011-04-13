@@ -442,7 +442,7 @@ class Propal extends CommonObject
 	 *	\param     	info_bits        	Miscellanous informations
 	 *    \return     int             	0 en cas de succes
 	 */
-	function updateline($rowid, $pu, $qty, $remise_percent=0, $txtva, $txlocaltax1=0, $txlocaltax2=0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0)
+	function updateline($rowid, $pu, $qty, $remise_percent=0, $txtva, $txlocaltax1=0, $txlocaltax2=0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $skip_update_total=0)
 	{
 		global $conf,$user,$langs;
 
@@ -504,6 +504,7 @@ class Propal extends CommonObject
 			$this->line->total_ttc=$total_ttc;
 			$this->line->special_code=$special_code;
 			$this->line->fk_parent_line=$fk_parent_line;
+			$this->line->skip_update_total=$skip_update_total;
 			
 			if (empty($qty) && empty($special_code)) $this->line->special_code=3;
 			
@@ -2329,7 +2330,7 @@ class PropaleLigne
 	var $total_localtax1;
 	var $total_localtax2;
 	
-
+	var $skip_update_total; // Skip update price total for special lines
 
 	/**
 	 *      \brief     Constructeur d'objets ligne de propal
@@ -2552,9 +2553,12 @@ class PropaleLigne
 		$sql.= " , price=".price2num($this->price)."";					// TODO A virer
 		$sql.= " , remise=".price2num($this->remise)."";				// TODO A virer
 		$sql.= " , info_bits='".$this->info_bits."'";
-		$sql.= " , total_ht=".price2num($this->total_ht)."";
-		$sql.= " , total_tva=".price2num($this->total_tva)."";
-		$sql.= " , total_ttc=".price2num($this->total_ttc)."";
+		if (empty($this->skip_update_total))
+		{
+			$sql.= " , total_ht=".price2num($this->total_ht)."";
+			$sql.= " , total_tva=".price2num($this->total_tva)."";
+			$sql.= " , total_ttc=".price2num($this->total_ttc)."";
+		}
 		$sql.= " , marge_tx='".$this->marge_tx."'";
 		$sql.= " , marque_tx='".$this->marque_tx."'";
 		$sql.= " , info_bits=".$this->info_bits;

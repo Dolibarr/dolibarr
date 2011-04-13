@@ -1943,7 +1943,7 @@ class Commande extends CommonObject
 	 * 	\param		type				Type of line (0=product, 1=service)
 	 *  \return   	int              	< 0 si erreur, > 0 si ok
 	 */
-	function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $txtva, $txlocaltax1=0,$txlocaltax2=0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0)
+	function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $txtva, $txlocaltax1=0,$txlocaltax2=0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $skip_update_total=0)
 	{
         global $conf;
 
@@ -2016,6 +2016,7 @@ class Commande extends CommonObject
 			$this->line->date_end=$date_end;
 			$this->line->product_type=$type;
 			$this->line->fk_parent_line=$fk_parent_line;
+			$this->line->skip_update_total=$skip_update_total;
 			
 			// TODO deprecated
 			$this->line->price=$price;
@@ -2591,6 +2592,8 @@ class OrderLine
 	// Start and end date of the line
 	var $date_start;
 	var $date_end;
+	
+	var $skip_update_total; // Skip update price total for special lines
 
 
 	/**
@@ -2825,9 +2828,12 @@ class OrderLine
 		$sql.= " , price=".price2num($this->price)."";					// TODO A virer
 		$sql.= " , remise=".price2num($this->remise)."";				// TODO A virer
 		$sql.= " , info_bits='".$this->info_bits."'";
-		$sql.= " , total_ht=".price2num($this->total_ht)."";
-		$sql.= " , total_tva=".price2num($this->total_tva)."";
-		$sql.= " , total_ttc=".price2num($this->total_ttc)."";
+		if (empty($this->skip_update_total))
+		{
+			$sql.= " , total_ht=".price2num($this->total_ht)."";
+			$sql.= " , total_tva=".price2num($this->total_tva)."";
+			$sql.= " , total_ttc=".price2num($this->total_ttc)."";
+		}
 		$sql.= " , total_localtax1='".price2num($this->total_localtax1)."'";
 		$sql.= " , total_localtax2='".price2num($this->total_localtax2)."'";
 		$sql.= " , info_bits=".$this->info_bits;

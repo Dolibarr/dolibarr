@@ -1861,7 +1861,7 @@ class Facture extends CommonObject
      * 		@param		type			Type of line (0=product, 1=service)
      *      @return    	int             < 0 if KO, > 0 if OK
      */
-    function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $date_start, $date_end, $txtva, $txlocaltax1=0, $txlocaltax2=0,$price_base_type='HT', $info_bits=0, $type=0, $fk_parent_line=0)
+    function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $date_start, $date_end, $txtva, $txlocaltax1=0, $txlocaltax2=0,$price_base_type='HT', $info_bits=0, $type=0, $fk_parent_line=0, $skip_update_total=0)
     {
         include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
@@ -1927,6 +1927,7 @@ class Facture extends CommonObject
             $this->line->info_bits			= $info_bits;
             $this->line->product_type		= $type;
             $this->line->fk_parent_line		= $fk_parent_line;
+            $this->line->skip_update_total	= $skip_update_total;
 
             // A ne plus utiliser
             $this->line->price=$price;
@@ -3142,6 +3143,8 @@ class FactureLigne
     var $libelle;      		// Product label (deprecated)
     var $product_label;     // Product label
     var $product_desc;  	// Description produit
+    
+    var $skip_update_total; // Skip update price total for special lines
 
 
     /**
@@ -3281,11 +3284,14 @@ class FactureLigne
         $sql.= ' '.$this->rang.',';
         $sql.= ' '.$this->special_code.',';
         $sql.= " '".$this->info_bits."',";
-        $sql.= " ".price2num($this->total_ht).",";
-        $sql.= " ".price2num($this->total_tva).",";
+        if (empty($this->skip_update_total))
+		{
+			$sql.= " ".price2num($this->total_ht).",";
+			$sql.= " ".price2num($this->total_tva).",";
+			$sql.= " ".price2num($this->total_ttc);
+		}
         $sql.= " ".price2num($this->total_localtax1).",";
         $sql.= " ".price2num($this->total_localtax2).",";
-        $sql.= " ".price2num($this->total_ttc);
         $sql.= ')';
 
         dol_syslog("FactureLigne::insert sql=".$sql);
