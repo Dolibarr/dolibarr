@@ -164,7 +164,7 @@ if ($_GET["action"] == 'create')
 
 	// delai de livraison
     print '<tr><td>'.$langs->trans('AvailabilityPeriod').'</td><td colspan="2">';
-    $html->select_Availability($soc->Availability,'Availability_id');
+    $html->select_availability($soc->availability,'availability_id');
     print '</td></tr>';
 
 	// Delivery date (or manufacturing)
