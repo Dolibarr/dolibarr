@@ -19,11 +19,11 @@
  */
 
 /**
-        \file       htdocs/commande/contact.php
-        \ingroup    commande
-        \brief      Onglet de gestion des contacts de commande
-        \version    $Id$
-*/
+ *     \file       htdocs/commande/contact.php
+ *     \ingroup    commande
+ *     \brief      Onglet de gestion des contacts de commande
+ *     \version    $Id$
+ */
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
@@ -180,7 +180,7 @@ if ($id > 0 || ! empty($ref))
 		dol_fiche_head($head, 'contact', $langs->trans("CustomerOrder"), 0, 'order');
 
 
-		/*
+	   /*
 		*   Facture synthese pour rappel
 		*/
 		print '<table class="border" width="100%">';
@@ -218,7 +218,7 @@ if ($id > 0 || ! empty($ref))
 
 		/*
 		* Ajouter une ligne de contact
-		* Non affich� en mode modification de ligne
+		* Non affiche en mode modification de ligne
 		*/
 		if ($_GET["action"] != 'editline' && $user->rights->facture->creer)
 		{
@@ -227,7 +227,7 @@ if ($id > 0 || ! empty($ref))
 			print '<td>'.$langs->trans("Company").'</td>';
 			print '<td>'.$langs->trans("Contacts").'</td>';
 			print '<td>'.$langs->trans("ContactType").'</td>';
-			print '<td colspan="3">&nbsp;</td>';
+			print '<td colspan="2">&nbsp;</td>';
 			print "</tr>\n";
 
 			$var = false;
@@ -239,7 +239,7 @@ if ($id > 0 || ! empty($ref))
 			print '<input type="hidden" name="id" value="'.$id.'">';
 
 			// Ligne ajout pour contact interne
-			print "<tr $bc[$var]>";
+			print '<tr'.$bc[$var].'>';
 
 			print '<td nowrap="nowrap">';
 			print img_object('','user').' '.$langs->trans("Users");
@@ -250,7 +250,7 @@ if ($id > 0 || ! empty($ref))
 			print '</td>';
 
 			print '<td colspan="1">';
-			//$userAlreadySelected = $commande->getListContactId('internal');	// On ne doit pas desactiver un contact deja selectionner car on doit pouvoir le seclectionner une deuxieme fois pour un autre type
+			//$userAlreadySelected = $commande->getListContactId('internal');	// On ne doit pas desactiver un contact deja selectionne car on doit pouvoir le selectionner une deuxieme fois pour un autre type
 			$html->select_users($user->id,'contactid',0,$userAlreadySelected);
 			print '</td>';
 			print '<td>';
@@ -269,7 +269,7 @@ if ($id > 0 || ! empty($ref))
 
 			// Ligne ajout pour contact externe
 			$var=!$var;
-			print "<tr $bc[$var]>";
+			print '<tr'.$bc[$var].'>';
 
 			print '<td nowrap="nowrap">';
 			print img_object('','contact').' '.$langs->trans("ThirdPartyContacts");
@@ -281,7 +281,7 @@ if ($id > 0 || ! empty($ref))
 			print '</td>';
 
 			print '<td colspan="1">';
-			// $contactAlreadySelected = $commande->getListContactId('external');	// On ne doit pas desactiver un contact deja selectionner car on doit pouvoir le seclectionner une deuxieme fois pour un autre type
+			// $contactAlreadySelected = $commande->getListContactId('external');	// On ne doit pas desactiver un contact deja selectionne car on doit pouvoir le selectionner une deuxieme fois pour un autre type
 			$nbofcontacts=$html->select_contacts($selectedCompany, '', 'contactid', 0, $contactAlreadySelected);
 			if ($nbofcontacts == 0) print $langs->trans("NoContactDefined");
 			print '</td>';
@@ -395,7 +395,7 @@ if ($id > 0 || ! empty($ref))
 	}
 	else
 	{
-		// Contrat non trouv
+		// Contrat non trouve
 		print "ErrorRecordNotFound";
 	}
 }
