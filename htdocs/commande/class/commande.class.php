@@ -1760,6 +1760,34 @@ class Commande extends CommonObject
 			}
 		}
 	}
+	
+/**
+	 *      \brief      Set delivery
+	 *      \param      user		  Objet utilisateur qui modifie
+	 *      \param      delivery      delai de livraison
+	 *      \return     int           <0 si ko, >0 si ok
+	 */
+	function set_availability($user, $id)
+	{
+		if ($user->rights->commande->creer)
+		{
+			$sql = "UPDATE ".MAIN_DB_PREFIX."commande ";
+			$sql.= " SET fk_availability = '".$id."'";
+			$sql.= " WHERE rowid = ".$this->id;
+
+			if ($this->db->query($sql))
+			{
+				$this->fk_availability = $id;
+				return 1;
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				dol_syslog("Commande::set_availability Erreur SQL");
+				return -1;
+			}
+		}
+	}
 
 	/**
 	 *    \brief      Return list of orders (eventuelly filtered on a user) into an array
