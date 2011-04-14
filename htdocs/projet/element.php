@@ -191,7 +191,8 @@ foreach ($listofreferent as $key => $value)
 		if (sizeof($elementarray)>0 && is_array($elementarray))
 		{
 			$var=true;
-			$total = 0;
+			$total_ht = 0;
+			$total_ttc = 0;
 			for ($i = 0; $i<sizeof($elementarray);$i++)
 			{
 				$element = new $classname($db);
