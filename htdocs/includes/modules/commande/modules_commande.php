@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -150,21 +150,25 @@ function commande_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0
 	global $conf,$langs;
 	$langs->load("orders");
 
-	$dir = DOL_DOCUMENT_ROOT."/includes/modules/commande/";
+	$dir = "/includes/modules/commande/";
 	$srctemplatepath='';
 	$modelisok=0;
 	$liste=array();
 
 	// Positionne modele sur le nom du modele de commande a utiliser
 	$file = "pdf_".$modele.".modules.php";
-	if ($modele && file_exists($dir.$file))   $modelisok=1;
+	// On verifie l'emplacement du modele
+	$file = dol_buildpath($dir.$file);
+	if ($modele && file_exists($file))   $modelisok=1;
 
 	// Si model pas encore bon
 	if (! $modelisok)
 	{
 		if ($conf->global->COMMANDE_ADDON_PDF) $modele = $conf->global->COMMANDE_ADDON_PDF;
 		$file = "pdf_".$modele.".modules.php";
-		if (file_exists($dir.$file))   $modelisok=1;
+		// On verifie l'emplacement du modele
+        $file = dol_buildpath($dir.$file);
+		if (file_exists($file))   $modelisok=1;
 	}
 
 	// Si model pas encore bon
@@ -174,14 +178,16 @@ function commande_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0
 		$liste=$model->liste_modeles($db);
 		$modele=key($liste);        // Renvoie premiere valeur de cle trouve dans le tableau
 		$file = "pdf_".$modele.".modules.php";
-		if (file_exists($dir.$file))   $modelisok=1;
+		// On verifie l'emplacement du modele
+        $file = dol_buildpath($dir.$file);
+		if (file_exists($file))   $modelisok=1;
 	}
 
 	// Charge le modele
 	if ($modelisok)
 	{
 		$classname = "pdf_".$modele;
-		require_once($dir.$file);
+		require_once($file);
 
 		$obj = new $classname($db);
 
