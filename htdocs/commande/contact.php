@@ -227,6 +227,7 @@ if ($id > 0 || ! empty($ref))
 			print '<td>'.$langs->trans("Company").'</td>';
 			print '<td>'.$langs->trans("Contacts").'</td>';
 			print '<td>'.$langs->trans("ContactType").'</td>';
+			print '<td>&nbsp;</td>';
 			print '<td colspan="2">&nbsp;</td>';
 			print "</tr>\n";
 
@@ -239,7 +240,7 @@ if ($id > 0 || ! empty($ref))
 			print '<input type="hidden" name="id" value="'.$id.'">';
 
 			// Ligne ajout pour contact interne
-			print '<tr'.$bc[$var].'>';
+			print '<tr '.$bc[$var].'>';
 
 			print '<td nowrap="nowrap">';
 			print img_object('','user').' '.$langs->trans("Users");
@@ -269,7 +270,7 @@ if ($id > 0 || ! empty($ref))
 
 			// Ligne ajout pour contact externe
 			$var=!$var;
-			print '<tr'.$bc[$var].'>';
+			print '<tr '.$bc[$var].'>';
 
 			print '<td nowrap="nowrap">';
 			print img_object('','contact').' '.$langs->trans("ThirdPartyContacts");
@@ -295,7 +296,7 @@ if ($id > 0 || ! empty($ref))
 
 			print "</form>";
 
-			print '<tr><td colspan="6">&nbsp;</td></tr>';
+			print '<tr><td colspan="7">&nbsp;</td></tr>';
 		}
 
 		// List of linked contacts
