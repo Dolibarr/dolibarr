@@ -13,7 +13,6 @@
 ALTER TABLE llx_adherent MODIFY login varchar(50);
 
 ALTER TABLE llx_c_actioncomm ADD COLUMN position integer NOT NULL DEFAULT 0;
-ALTER TABLE llx_commande ADD COLUMN fk_availability integer(11) NULL DEFAULT 0;
 
 ALTER TABLE llx_commande_fournisseur MODIFY model_pdf varchar(255);
 ALTER TABLE llx_commande MODIFY model_pdf varchar(255);
@@ -58,9 +57,9 @@ CREATE TABLE llx_c_availability
 
 )ENGINE=innodb;
 
-ALTER TABLE llx_propal ADD COLUMN fk_availability integer DEFAULT 0 AFTER fk_adresse_livraison;
-ALTER TABLE llx_propal CHANGE COLUMN delivery fk_availability integer DEFAULT 0;
-ALTER TABLE llx_availability CHANGE COLUMN libelle label varchar(60) NOT NULL;
+ALTER TABLE llx_propal CHANGE COLUMN delivery fk_availability integer NULL;
+ALTER TABLE llx_propal ADD COLUMN fk_availability integer NULL AFTER fk_adresse_livraison;
+ALTER TABLE llx_commande ADD COLUMN fk_availability integer NULL;
 
 INSERT INTO llx_c_availability (rowid,code,label,active) VALUES (1, 'AV_NOW', 'Immediate', 1);
 INSERT INTO llx_c_availability (rowid,code,label,active) VALUES (2, 'AV_1W',  '1 week', 1);
