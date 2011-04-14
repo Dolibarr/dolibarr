@@ -1808,6 +1808,8 @@ else
              * Lines
              */
             $result = $object->getLinesArray();
+            
+            $numlines = count($object->lines);
 
             if ($conf->use_javascript_ajax && $object->statut == 0)
             {
