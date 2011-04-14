@@ -166,7 +166,7 @@ if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes'
                 $outputlangs = new Translate("",$conf);
                 $outputlangs->setDefaultLang($newlang);
             }
-            commande_pdf_create($db, $object, $object->modelpdf, $outputlangs);
+            commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
         }
         else
         {
@@ -204,7 +204,7 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
     $object->modelpdf             = $_POST['model'];
     $object->cond_reglement_id    = $_POST['cond_reglement_id'];
     $object->mode_reglement_id    = $_POST['mode_reglement_id'];
-	$object->availability_id      = $_POST['availability_id'];
+    $object->availability_id      = $_POST['availability_id'];
     $object->date_livraison       = $datelivraison;
     $object->fk_delivery_address  = $_POST['fk_address'];
     $object->contactid            = $_POST['contactidp'];
@@ -244,7 +244,10 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
                 $lines = $srcobject->lines;
                 if (empty($lines) && method_exists($srcobject,'fetch_lines'))  $lines = $srcobject->fetch_lines();
 
-                for ($i = 0 ; $i < sizeof($lines) ; $i++)
+                $fk_parent_line=0;
+				$num=sizeof($lines);
+
+                for ($i=0;$i<$num;$i++)
                 {
                     $desc=($lines[$i]->desc?$lines[$i]->desc:$lines[$i]->libelle);
                     $product_type=($lines[$i]->product_type?$lines[$i]->product_type:0);
@@ -257,6 +260,11 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
                     $date_end=$lines[$i]->date_fin_prevue;
                     if ($lines[$i]->date_fin_reel) $date_end=$lines[$i]->date_fin_reel;
                     if ($lines[$i]->date_end) $date_end=$lines[$i]->date_end;
+
+                    // Reset fk_parent_line for no child products and special product
+                    if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
+                    	$fk_parent_line = 0;
+                    }
 
                     $result = $object->addline(
                     $object_id,
@@ -276,7 +284,8 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
                     $dateend,
                     $product_type,
                     $lines[$i]->rang,
-                    $lines[$i]->special_code
+                    $lines[$i]->special_code,
+                    $fk_parent_line
                     );
 
                     if ($result < 0)
@@ -284,6 +293,21 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
                         $error++;
                         break;
                     }
+
+                    // Defined the new fk_parent_line
+                    if ($result > 0 && $lines[$i]->product_type == 9) {
+                    	$fk_parent_line = $result;
+                    }
+                }
+
+                // Hooks
+                if (! empty($object->hooks))
+                {
+                	foreach($object->hooks as $module)
+                	{
+                		$res = $module->createfrom($srcobject,$object_id,$object->element);
+                		if ($res < 0) $error++;
+                	}
                 }
             }
             else
@@ -579,7 +603,10 @@ if ($_POST['action'] == 'addline' && $user->rights->commande->creer)
                 $pu_ttc,
                 $date_start,
                 $date_end,
-                $type
+                $type,
+                -1,
+                '',
+                $_POST['fk_parent_line']
                 );
 
                 if ($result > 0)
@@ -594,7 +621,7 @@ if ($_POST['action'] == 'addline' && $user->rights->commande->creer)
                         $outputlangs = new Translate("",$conf);
                         $outputlangs->setDefaultLang($newlang);
                     }
-                    commande_pdf_create($db, $object, $object->modelpdf, $outputlangs);
+                    commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
 
                     unset($_POST['qty']);
                     unset($_POST['type']);
@@ -686,7 +713,8 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
         $info_bits,
         $date_start,
         $date_end,
-        $type
+        $type,
+        $_POST['fk_parent_line']
         );
 
         if ($result >= 0)
@@ -701,7 +729,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
                 $outputlangs = new Translate("",$conf);
                 $outputlangs->setDefaultLang($newlang);
             }
-            commande_pdf_create($db, $object, $object->modelpdf, $outputlangs);
+            commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
         }
         else
         {
@@ -735,7 +763,7 @@ if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes' &
             $outputlangs = new Translate("",$conf);
             $outputlangs->setDefaultLang($newlang);
         }
-        commande_pdf_create($db, $object, $object->modelpdf, $outputlangs);
+        commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
     }
 }
 
@@ -774,7 +802,7 @@ if ($_GET['action'] == 'modif' && $user->rights->commande->creer)
             $outputlangs = new Translate("",$conf);
             $outputlangs->setDefaultLang($newlang);
         }
-        commande_pdf_create($db, $object, $object->modelpdf, $outputlangs);
+        commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
     }
 }
 
@@ -799,7 +827,7 @@ if ($_GET['action'] == 'up' && $user->rights->commande->creer)
         $outputlangs->setDefaultLang($newlang);
     }
 
-    commande_pdf_create($db, $object, $object->modelpdf, $outputlangs);
+    commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
 
     Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$comid.'#'.$_GET['rowid']);
     exit;
@@ -821,7 +849,7 @@ if ($_GET['action'] == 'down' && $user->rights->commande->creer)
         $outputlangs = new Translate("",$conf);
         $outputlangs->setDefaultLang($newlang);
     }
-    commande_pdf_create($db, $object, $object->modelpdf, $outputlangs);
+    commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
 
     Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$comid.'#'.$_GET['rowid']);
     exit;
@@ -853,7 +881,7 @@ if ($_REQUEST['action'] == 'builddoc')	// In get or post
         $outputlangs = new Translate("",$conf);
         $outputlangs->setDefaultLang($newlang);
     }
-    $result=commande_pdf_create($db, $object, $object->modelpdf, $outputlangs);
+    $result=commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
     if ($result <= 0)
     {
         dol_print_error($db,$result);
@@ -1129,7 +1157,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
             $soc = $objectsrc->client;
             $cond_reglement_id  = (!empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(!empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
             $mode_reglement_id  = (!empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(!empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
-			$availability_id  = (!empty($objectsrc->availability_id)?$objectsrc->availability_id:(!empty($soc->availability_id)?$soc->availability_id:0));
+            $availability_id  = (!empty($objectsrc->availability_id)?$objectsrc->availability_id:(!empty($soc->availability_id)?$soc->availability_id:0));
             $remise_percent     = (!empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
             $remise_absolue     = (!empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(!empty($soc->remise_absolue)?$soc->remise_absolue:0));
             $dateinvoice        = empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
@@ -1139,7 +1167,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
     {
         $cond_reglement_id  = $soc->cond_reglement_id;
         $mode_reglement_id  = $soc->mode_reglement_id;
-		$availability_id    = $soc->availability_id;
+        $availability_id    = $soc->availability_id;
         $remise_percent     = $soc->remise_percent;
         $remise_absolue     = 0;
         $dateinvoice        = empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
@@ -1286,7 +1314,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
             // Calcul contrat->price (HT), contrat->total (TTC), contrat->tva
             $objectsrc->remise_absolue=$remise_absolue;
             $objectsrc->remise_percent=$remise_percent;
-            $objectsrc->update_price();
+            $objectsrc->update_price(1);
         }
 
         print "\n<!-- ".$classname." info -->";
@@ -1366,7 +1394,6 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 
         print '<table class="noborder" width="100%">';
 
-        $objectsrc->printOriginTitleList();
         $objectsrc->printOriginLinesList($object);
 
         print '</table>';
@@ -1695,8 +1722,8 @@ else
                 $html->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->mode_reglement_id,'none');
             }
             print '</td></tr>';
-
-			 // Availability
+            
+            // Availability
             print '<tr><td height="10">';
             print '<table class="nobordernopadding" width="100%"><tr><td>';
             print $langs->trans('AvailabilityPeriod');
@@ -1789,13 +1816,8 @@ else
 
             print '<table id="tablelines" class="noborder" width="100%">';
 
-            if (!empty($object->lines))
-            {
-                $object->print_title_list();
-                $object->printLinesList(1,$mysoc,$soc);
-            }
-
-            $numlines=sizeof($object->lines);
+            // Show object lines
+            if (! empty($object->lines)) $object->printObjectLines(1,$mysoc,$soc);
 
             /*
              * Form to add new line
@@ -1806,13 +1828,13 @@ else
                 {
                     $var=true;
 
-                    $object->showAddFreeProductForm(1,$mysoc,$soc);
+                    $object->formAddFreeProduct(1,$mysoc,$soc);
 
                     // Add predefined products/services
                     if ($conf->product->enabled || $conf->service->enabled)
                     {
                         $var=!$var;
-                        $object->showAddPredefinedProductForm(1,$mysoc,$soc);
+                        $object->formAddPredefinedProduct(1,$mysoc,$soc);
                     }
 
                     // Hook of thirdparty module
@@ -1973,7 +1995,7 @@ else
                 $genallowed=$user->rights->commande->creer;
                 $delallowed=$user->rights->commande->supprimer;
 
-                $somethingshown=$formfile->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
+                $somethingshown=$formfile->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang,$object->hooks);
 
                 /*
                  * Linked object block
