@@ -62,6 +62,8 @@ class Commande extends CommonObject
 	var $cond_reglement_code;
 	var $mode_reglement_id;
 	var $mode_reglement_code;
+	var $availability_id;
+	var $availability_code;
 	var $fk_delivery_address;
 	var $adresse;
 	var $date;				// Date commande
@@ -565,7 +567,7 @@ class Commande extends CommonObject
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande (";
 		$sql.= " ref, fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note, note_public, ref_client";
-		$sql.= ", model_pdf, fk_cond_reglement, fk_mode_reglement, date_livraison, fk_adresse_livraison";
+		$sql.= ", model_pdf, fk_cond_reglement, fk_mode_reglement, fk_availability, date_livraison, fk_adresse_livraison";
 		$sql.= ", remise_absolue, remise_percent";
 		$sql.= ", entity";
 		$sql.= ")";
@@ -577,6 +579,7 @@ class Commande extends CommonObject
 		$sql.= ", '".$this->db->escape($this->ref_client)."', '".$this->modelpdf."'";
 		$sql.= ", ".($this->cond_reglement_id>0?"'".$this->cond_reglement_id."'":"null");
 		$sql.= ", ".($this->mode_reglement_id>0?"'".$this->mode_reglement_id."'":"null");
+		$sql.= ", ".($this->availability_id>0?"'".$this->availability_id."'":"null");
 		$sql.= ", ".($this->date_livraison?"'".$this->db->idate($this->date_livraison)."'":"null");
 		$sql.= ", ".($this->fk_delivery_address>0?$this->fk_delivery_address:'NULL');
 		$sql.= ", ".($this->remise_absolue>0?$this->remise_absolue:'NULL');
@@ -832,6 +835,7 @@ class Commande extends CommonObject
             $this->fk_project           = $object->fk_project;
             $this->cond_reglement_id    = $object->cond_reglement_id;
             $this->mode_reglement_id    = $object->mode_reglement_id;
+            $this->availability_id      = $object->availability_id;
             $this->date_livraison       = $object->date_livraison;
             $this->fk_delivery_address  = $object->fk_delivery_address;
             $this->contact_id           = $object->contactid;
@@ -1120,17 +1124,19 @@ class Commande extends CommonObject
 		if (empty($id) && empty($ref)) return -1;
 
 		$sql = 'SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut';
-		$sql.= ', c.amount_ht, c.total_ht, c.total_ttc, c.tva as total_tva, c.localtax1 as total_localtax1, c.localtax2 as total_localtax2, c.fk_cond_reglement, c.fk_mode_reglement';
+		$sql.= ', c.amount_ht, c.total_ht, c.total_ttc, c.tva as total_tva, c.localtax1 as total_localtax1, c.localtax2 as total_localtax2, c.fk_cond_reglement, c.fk_mode_reglement, c.fk_availability';
 		$sql.= ', c.date_commande';
 		$sql.= ', c.date_livraison';
 		$sql.= ', c.fk_projet, c.remise_percent, c.remise, c.remise_absolue, c.source, c.facture as facturee';
 		$sql.= ', c.note, c.note_public, c.ref_client, c.model_pdf, c.fk_adresse_livraison';
 		$sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql.= ', cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle, cr.libelle_facture as cond_reglement_libelle_doc';
+		$sql.= ', ca.code as availability_code';
 		$sql.= ', el.fk_source';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commande as c';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON (c.fk_cond_reglement = cr.rowid)';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON (c.fk_mode_reglement = p.id)';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_availability as ca ON (c.fk_availability = ca.rowid)';
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = c.rowid AND el.targettype = '".$this->element."'";
 		$sql.= " WHERE c.entity = ".$conf->entity;
 		if ($ref) $sql.= " AND c.ref='".$ref."'";
@@ -1172,6 +1178,8 @@ class Commande extends CommonObject
 				$this->cond_reglement_code    = $obj->cond_reglement_code;
 				$this->cond_reglement         = $obj->cond_reglement_libelle;
 				$this->cond_reglement_doc     = $obj->cond_reglement_libelle_doc;
+				$this->availability_id		  = $obj->fk_availability;
+				$this->availability_code      = $obj->availability_code;
 				$this->date_livraison         = $this->db->jdate($obj->date_livraison);
 				$this->fk_delivery_address    = $obj->fk_adresse_livraison;
 				$this->propale_id             = $obj->fk_source;
@@ -1863,6 +1871,39 @@ class Commande extends CommonObject
 			return -2;
 		}
 	}
+	
+/**
+	 *   \brief      Change le delai de livraison
+	 *   \param      mode        Id du nouveau mode
+	 *   \return     int         >0 si ok, <0 si ko
+	 */
+	function availability($availability_id)
+	{
+		dol_syslog('Commande::availability('.$availability_id.')');
+		if ($this->statut >= 0)
+		{
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
+			$sql .= ' SET fk_availability = '.$availability_id;
+			$sql .= ' WHERE rowid='.$this->id;
+			if ( $this->db->query($sql) )
+			{
+				$this->availability_id = $availability_id;
+				return 1;
+			}
+			else
+			{
+				dol_syslog('Commande::availability Erreur '.$sql.' - '.$this->db->error(), LOG_ERR);
+				$this->error=$this->db->lasterror();
+				return -1;
+			}
+		}
+		else
+		{
+			dol_syslog('Commande::availability, etat facture incompatible', LOG_ERR);
+			$this->error='Etat commande incompatible '.$this->statut;
+			return -2;
+		}
+	}
 
 	/**
 	 *      \brief      Set customer ref
@@ -2404,6 +2445,7 @@ class Commande extends CommonObject
 		$this->date_lim_reglement=$this->date+3600*24*30;
 		$this->cond_reglement_code = 'RECEP';
 		$this->mode_reglement_code = 'CHQ';
+		$this->availability_code   = 'DSP';
 		$this->note_public='This is a comment (public)';
 		$this->note='This is a comment (private)';
 		// Lines

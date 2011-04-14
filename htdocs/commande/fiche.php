@@ -203,6 +203,7 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
     $object->modelpdf             = $_POST['model'];
     $object->cond_reglement_id    = $_POST['cond_reglement_id'];
     $object->mode_reglement_id    = $_POST['mode_reglement_id'];
+    $object->availability_id      = $_POST['availability_id'];
     $object->date_livraison       = $datelivraison;
     $object->fk_delivery_address  = $_POST['fk_address'];
     $object->contactid            = $_POST['contactidp'];
@@ -1148,6 +1149,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
             $soc = $objectsrc->client;
             $cond_reglement_id  = (!empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(!empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
             $mode_reglement_id  = (!empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(!empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
+            $availability_id  = (!empty($objectsrc->availability_id)?$objectsrc->availability_id:(!empty($soc->availability_id)?$soc->availability_id:0));
             $remise_percent     = (!empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
             $remise_absolue     = (!empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(!empty($soc->remise_absolue)?$soc->remise_absolue:0));
             $dateinvoice        = empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
@@ -1157,6 +1159,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
     {
         $cond_reglement_id  = $soc->cond_reglement_id;
         $mode_reglement_id  = $soc->mode_reglement_id;
+        $availability_id    = $soc->availability_id;
         $remise_percent     = $soc->remise_percent;
         $remise_absolue     = 0;
         $dateinvoice        = empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
@@ -1704,6 +1707,24 @@ else
             else
             {
                 $html->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->mode_reglement_id,'none');
+            }
+            print '</td></tr>';
+            
+            // Availability
+            print '<tr><td height="10">';
+            print '<table class="nobordernopadding" width="100%"><tr><td>';
+            print $langs->trans('AvailabilityPeriod');
+            print '</td>';
+            if ($_GET['action'] != 'editavailability' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editavailability&amp;id='.$object->id.'">'.img_edit($langs->trans('SetAvailability'),1).'</a></td>';
+            print '</tr></table>';
+            print '</td><td colspan="2">';
+            if ($_GET['action'] == 'editavailability')
+            {
+                $html->form_Availability($_SERVER['PHP_SELF'].'?id='.$object->id,$object->Availability_id,'Availability_id');
+            }
+            else
+            {
+                $html->form_Availability($_SERVER['PHP_SELF'].'?id='.$object->id,$object->Availability_id,'none');
             }
             print '</td></tr>';
 
