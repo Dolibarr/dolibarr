@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
+ * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -116,7 +117,7 @@ if ($_GET["action"] == 'create')
 	print '<tr><td class="fieldrequired">'.$langs->trans("Ref").'</td><td colspan="2"><input name="ref" value="'.$numpr.'"></td></tr>';
 
 	// Reference client
-	print '<tr><td>'.$langs->trans('RefCustomer').'</td><td>';
+	print '<tr><td>'.$langs->trans('RefCustomer').'</td><td colspan="2">';
 	print '<input type="text" name="ref_client" value=""></td>';
 	print '</tr>';
 
@@ -160,6 +161,11 @@ if ($_GET["action"] == 'create')
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="2">';
 	$html->select_types_paiements($soc->mode_reglement,'mode_reglement_id');
 	print '</td></tr>';
+
+	// delai de livraison
+    print '<tr><td>'.$langs->trans('AvailabilityPeriod').'</td><td colspan="2">';
+    $html->select_Availability($soc->Availability,'Availability_id');
+    print '</td></tr>';
 
 	// Delivery date (or manufacturing)
 	print '<tr><td>'.$langs->trans("DeliveryDate").'</td>';
