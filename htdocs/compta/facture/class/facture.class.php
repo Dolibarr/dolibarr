@@ -3258,7 +3258,7 @@ class FactureLigne
         $sql.= ' fk_product, product_type, remise_percent, subprice, price, remise, fk_remise_except,';
         $sql.= ' date_start, date_end, fk_code_ventilation, fk_export_compta, ';
         $sql.= ' rang, special_code,';
-        $sql.= ' info_bits, total_ht, total_tva, total_localtax1, total_localtax2, total_ttc)';
+        $sql.= ' info_bits, total_ht, total_tva, total_ttc, total_localtax1, total_localtax2)';
         $sql.= " VALUES (".$this->fk_facture.",";
         $sql.= " ".($this->fk_parent_line>0?"'".$this->fk_parent_line."'":"null").",";
         $sql.= " '".$this->db->escape($this->desc)."',";
@@ -3284,14 +3284,11 @@ class FactureLigne
         $sql.= ' '.$this->rang.',';
         $sql.= ' '.$this->special_code.',';
         $sql.= " '".$this->info_bits."',";
-        if (empty($this->skip_update_total))
-		{
-			$sql.= " ".price2num($this->total_ht).",";
-			$sql.= " ".price2num($this->total_tva).",";
-			$sql.= " ".price2num($this->total_ttc);
-		}
+        $sql.= " ".price2num($this->total_ht).",";
+		$sql.= " ".price2num($this->total_tva).",";
+		$sql.= " ".price2num($this->total_ttc).",";
         $sql.= " ".price2num($this->total_localtax1).",";
-        $sql.= " ".price2num($this->total_localtax2).",";
+        $sql.= " ".price2num($this->total_localtax2);
         $sql.= ')';
 
         dol_syslog("FactureLigne::insert sql=".$sql);
@@ -3417,11 +3414,14 @@ class FactureLigne
         $sql.= ",product_type=".$this->product_type;
         $sql.= ",rang='".$this->rang."'";
         $sql.= ",info_bits='".$this->info_bits."'";
-        $sql.= ",total_ht=".price2num($this->total_ht)."";
-        $sql.= ",total_tva=".price2num($this->total_tva)."";
+        if ($empty($this->skip_update_total))
+        {
+        	$sql.= ",total_ht=".price2num($this->total_ht)."";
+        	$sql.= ",total_tva=".price2num($this->total_tva)."";
+        	$sql.= ",total_ttc=".price2num($this->total_ttc)."";
+        }
         $sql.= ",total_localtax1=".price2num($this->total_localtax1)."";
         $sql.= ",total_localtax2=".price2num($this->total_localtax2)."";
-        $sql.= ",total_ttc=".price2num($this->total_ttc)."";
         $sql.= ",fk_parent_line=".($this->fk_parent_line>0?$this->fk_parent_line:"null");
         $sql.= " WHERE rowid = ".$this->rowid;
 
