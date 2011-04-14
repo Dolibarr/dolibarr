@@ -156,7 +156,7 @@ function facture_pdf_create($db, $object, $message, $modele, $outputlangs, $hide
     @set_time_limit(120);
     error_reporting($err);
 
-	$dir = DOL_DOCUMENT_ROOT . "/includes/modules/facture/";
+	$dir = "/includes/modules/facture/";
     $srctemplatepath='';
 
 	// Positionne modele sur le nom du modele a utiliser
@@ -187,11 +187,14 @@ function facture_pdf_create($db, $object, $message, $modele, $outputlangs, $hide
 	foreach(array('doc','pdf') as $prefix)
 	{
         $file = $prefix."_".$modele.".modules.php";
-	    if (file_exists($dir.'doc/'.$file))
+        
+        // On verifie l'emplacement du modele
+        $file = dol_buildpath($dir.'doc/'.$file);
+	    
+        if (file_exists($file))
 	    {
 	        $filefound=1;
 	        $classname=$prefix.'_'.$modele;
-	        $dir=$dir.'doc/';
 	        break;
 	    }
 	}
@@ -199,7 +202,7 @@ function facture_pdf_create($db, $object, $message, $modele, $outputlangs, $hide
 	// Charge le modele
 	if ($filefound)
 	{
-		require_once($dir.$file);
+		require_once($file);
 
 		$obj = new $classname($db);
 		$obj->message = $message;
