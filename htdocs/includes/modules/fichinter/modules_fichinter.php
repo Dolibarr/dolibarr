@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,11 +20,11 @@
  */
 
 /**
- \file       htdocs/includes/modules/fichinter/modules_fichinter.php
- \ingroup    ficheinter
- \brief      Fichier contenant la classe mere de generation des fiches interventions en PDF
- et la classe mere de numerotation des fiches interventions
- \version    $Id$
+ *  \file       htdocs/includes/modules/fichinter/modules_fichinter.php
+ *  \ingroup    ficheinter
+ *  \brief      Fichier contenant la classe mere de generation des fiches interventions en PDF
+ *   et la classe mere de numerotation des fiches interventions
+ *   \version    $Id$
  */
 
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
@@ -67,24 +67,25 @@ class ModelePDFFicheinter
 
 
 /**
- \class      ModeleNumRefFicheinter
- \brief      Classe mere des modeles de numerotation des references de fiches d'intervention
+ *  \class      ModeleNumRefFicheinter
+ *  \brief      Classe mere des modeles de numerotation des references de fiches d'intervention
  */
-
 class ModeleNumRefFicheinter
 {
 	var $error='';
 
-	/**     \brief     	Return if a module can be used or not
-	 *      	\return		boolean     true if module can be used
+	/**
+	 * 	Return if a module can be used or not
+	 * 	@return		boolean     true if module can be used
 	 */
 	function isEnabled()
 	{
 		return true;
 	}
 
-	/**     \brief      Renvoi la description par defaut du modele de numerotation
-	 *      \return     string      Texte descripif
+	/**
+	 * 	Renvoi la description par defaut du modele de numerotation
+	 * 	@return     string      Texte descripif
 	 */
 	function info()
 	{
@@ -93,8 +94,9 @@ class ModeleNumRefFicheinter
 		return $langs->trans("NoDescription");
 	}
 
-	/**     \brief      Renvoi un exemple de numerotation
-	 *      \return     string      Example
+	/**
+	 * 	Renvoi un exemple de numerotation
+	 * 	@return     string      Example
 	 */
 	function getExample()
 	{
@@ -103,17 +105,19 @@ class ModeleNumRefFicheinter
 		return $langs->trans("NoExample");
 	}
 
-	/**     \brief      Test si les numeros deja en vigueur dans la base ne provoquent pas de
-	 *                  de conflits qui empechera cette numerotation de fonctionner.
-	 *      \return     boolean     false si conflit, true si ok
+	/**
+	 * 	Test si les numeros deja en vigueur dans la base ne provoquent pas de
+	 * 	de conflits qui empechera cette numerotation de fonctionner.
+	 * 	@return     boolean     false si conflit, true si ok
 	 */
 	function canBeActivated()
 	{
 		return true;
 	}
 
-	/**     \brief      Renvoi prochaine valeur attribuee
-	 *      \return     string      Valeur
+	/**
+	 * 	Renvoi prochaine valeur attribuee
+	 * 	@return     string      Valeur
 	 */
 	function getNextValue()
 	{
@@ -121,8 +125,9 @@ class ModeleNumRefFicheinter
 		return $langs->trans("NotAvailable");
 	}
 
-	/**     \brief      Renvoi version du module numerotation
-	 *      	\return     string      Valeur
+	/**
+	 * 	Renvoi version du module numerotation
+	 * 	@return     string      Valeur
 	 */
 	function getVersion()
 	{
@@ -150,7 +155,7 @@ function fichinter_create($db, $object, $modele='', $outputlangs='')
 	global $conf,$langs;
 	$langs->load("ficheinter");
 
-	$dir = DOL_DOCUMENT_ROOT."/includes/modules/fichinter/";
+	$dir = "/includes/modules/fichinter/";
 
 	// Positionne modele sur le nom du modele de facture a utiliser
 	if (! dol_strlen($modele))
@@ -162,18 +167,19 @@ function fichinter_create($db, $object, $modele='', $outputlangs='')
 		else
 		{
 			$modele = 'soleil';
-		    //dol_syslog("Error ".$langs->trans("Error_FICHEINTER_ADDON_PDF_NotDefined"), LOG_ERR);
-			//print "Error ".$langs->trans("Error_FICHEINTER_ADDON_PDF_NotDefined");
-			//return 0;
 		}
 	}
 
 	// Charge le modele
 	$file = "pdf_".$modele.".modules.php";
-	if (file_exists($dir.$file))
+	
+	// On verifie l'emplacement du modele
+	$file = dol_buildpath($dir.$file);
+	
+	if (file_exists($file))
 	{
 		$classname = "pdf_".$modele;
-		require_once($dir.$file);
+		require_once($file);
 
 		$obj = new $classname($db);
 
@@ -202,10 +208,10 @@ function fichinter_create($db, $object, $modele='', $outputlangs='')
 }
 
 /**
- * \brief     Deletes the image preview, in case of regeneration
- * \param	  db			database object
- * \param	  fichinterid	id to delete
- * \param     fichinterref	reference if needed
+ * 	Deletes the image preview, in case of regeneration
+ * 	@param	  db			database object
+ * 	@param	  fichinterid	id to delete
+ * 	@param    fichinterref	reference if needed
  */
 function fichinter_delete_preview($db, $fichinterid, $fichinterref='')
 {
