@@ -1875,11 +1875,7 @@ div.table {
 	/* Forcer le tableau à prendre la largeur écran */
 	width:100%;
 }
-/* tbody optionnel */
-div.tbody {
-	display:table-row-group;
-}
-div.tr {
+div.thead {
 	height: 24px;
 	background: #7699A9;
 	background-image: url(<?php echo DOL_URL_ROOT.'/theme/auguria/img/menus/trtitle.png' ?>);
@@ -1888,6 +1884,15 @@ div.tr {
 	font-family: <?php print $fontlist ?>;
 	/* border-bottom: 1px solid #FDFFFF; */
 	white-space: nowrap;
+	display:table-row-group;
+}
+div.tfoot {
+	display:table-row-group;
+}
+div.tbody {
+	display:table-row-group;
+}
+div.tr {
 	display:table-row;
 }
 div.td {

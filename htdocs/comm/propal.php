@@ -1424,6 +1424,8 @@ if ($id > 0 || ! empty($ref))
 		include(DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php');
 	}
 
+	// TODO test using div instead of tables
+	//print '<div class="table">';
 	print '<table id="tablelines" class="noborder" width="100%">';
 
 	// Show object lines
@@ -1460,6 +1462,8 @@ if ($id > 0 || ! empty($ref))
 		}
 	}
 
+	// TODO test using div instead of tables
+	//print '</div>';
 	print '</table>';
 
 	print '</div>';

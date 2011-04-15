@@ -1464,10 +1464,9 @@ class CommonObject
 	{
 		global $conf,$langs;
 		
-		// TODO: test using div instead of tables
+		// TODO test using div instead of tables
 /*
-		print '<div class="table">';
-		print '<div class="tbody">';
+		print '<div class="thead">';
 		print '<div class="tr">';
 		print '<div class="td desc">'.$langs->trans('Description').'</div>';
 		print '<div class="td">'.$langs->trans('VAT').'</div>';
@@ -1478,7 +1477,7 @@ class CommonObject
 		print '<div class="td ten">&nbsp;</div>';
 		print '<div class="td ten">&nbsp;</div>';
 		print '<div class="td end">&nbsp;</div>';
-		print '</div></div></div>';
+		print '</div></div>';
 */
 
 		print '<tr class="liste_titre nodrag nodrop">';
