@@ -1463,10 +1463,26 @@ class CommonObject
 	function printObjectLines($dateSelector=0,$seller,$buyer)
 	{
 		global $conf,$langs;
+		
+		// TODO: test using div instead of tables
+		/*
+		print '<div class="table">';
+		print '<div class="tbody">';
+		print '<div class="tr">';
+		print '<div class="td">'.$langs->trans('Description').'</div>';
+		print '<div class="td">'.$langs->trans('VAT').'</div>';
+		print '<div class="td">'.$langs->trans('PriceUHT').'</div>';
+		print '<div class="td">'.$langs->trans('Qty').'</div>';
+		print '<div class="td">'.$langs->trans('ReductionShort').'</div>';
+		print '<div class="td">'.$langs->trans('TotalHTShort').'</div>';
+		print '<div class="td">&nbsp;</div>';
+		print '<div class="td">&nbsp;</div>';
+		print '<div class="td end">&nbsp;</div>';
+		print '</div></div></div>';
+		*/
 
 		print '<tr class="liste_titre nodrag nodrop">';
 		print '<td>'.$langs->trans('Description').'</td>';
-		if ($conf->global->PRODUIT_USE_MARKUP) print '<td align="right" width="80">'.$langs->trans('Markup').'</td>';
 		print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
 		print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
 		print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';

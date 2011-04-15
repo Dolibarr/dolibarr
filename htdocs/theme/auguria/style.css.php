@@ -1863,3 +1863,38 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 {
     border: 0px solid #FF0000 !important;
 }
+
+/* ============================================================================== */
+/*  Test using div instead of tables                                              */
+/* ============================================================================== */
+
+div.table {
+	display:table;
+	/* Joindre les bords des cellules */
+	border-collapse:collapse;
+	/* Forcer le tableau à prendre la largeur écran */
+	width:100%;
+}
+/* tbody optionnel */
+div.tbody {
+	display:table-row-group;
+}
+div.tr {
+	height: 24px;
+	background: #7699A9;
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/auguria/img/menus/trtitle.png' ?>);
+	background-repeat: repeat-x;
+	color: #FFFFFF;
+	font-family: <?php print $fontlist ?>;
+	/* border-bottom: 1px solid #FDFFFF; */
+	white-space: nowrap;
+	display:table-row;
+}
+div.td {
+	display:table-cell;
+	padding:5px;
+	width:24.5%;
+}
+div.end {
+	width:auto;
+}
