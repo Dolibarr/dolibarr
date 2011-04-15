@@ -486,12 +486,25 @@ li.tmenu a.tmenudisabled {
 
 /* Login */
 
+div.login_block {
+	position: absolute;
+	<?php print $right; ?>: 5px;
+	top: 3px;
+	font-weight: bold;
+	<?php if (GETPOST("optioncss") == 'print') { ?>
+	display: none;
+	<?php } ?>
+}
+
+div.login_block table {
+	display: inline;
+}
+
 div.login {
-  position: absolute;
-  <?php print $right; ?>: 30px;
-  padding: 12px 8px;
-  margin: 0px 0px 1px 0px;
-  font-weight: bold;
+	white-space:nowrap;
+	padding: 8px 0px 0px 0px;
+	margin: 0px 0px 0px 8px;
+	font-weight: bold;
 }
 div.login a {
 	color: #234046;
@@ -501,16 +514,12 @@ div.login a:hover {
 	text-decoration:underline;
 }
 
-img.login, img.printer {
-  position: absolute;
-  <?php print $right; ?>: 20px;
-  padding: 10px 0px 0px 0px;
-  text-decoration: none;
-  color: white;
-  font-weight: bold;
-}
-img.printer {
-  <?php print $right; ?>: 4px;
+img.login, img.printer, img.entity {
+	padding: 8px 0px 0px 0px;
+	margin: 0px 0px 0px 8px;
+	text-decoration: none;
+	color: white;
+	font-weight: bold;
 }
 
 
