@@ -1892,8 +1892,16 @@ div.tr {
 }
 div.td {
 	display:table-cell;
+	text-align: right;
 	padding:5px;
-	width:24.5%;
+	width:auto;
+}
+div.td.desc {
+	text-align: left;
+	width: 70%;
+}
+div.td.ten {
+	width: 10px;
 }
 div.end {
 	width:auto;
