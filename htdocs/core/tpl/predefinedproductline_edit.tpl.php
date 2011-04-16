@@ -32,7 +32,7 @@
 <input type="hidden" name="token" value="<?php  echo $_SESSION['newtoken']; ?>">
 <input type="hidden" name="action" value="updateligne">
 <input type="hidden" name="id" value="<?php echo $this->id; ?>">
-<input type="hidden" name="lineid" value="<?php echo $_GET["lineid"]; ?>">
+<input type="hidden" name="lineid" value="<?php echo $line->id; ?>">
 
 <tr <?php echo $bc[$var]; ?>>
 	<td>

@@ -1459,8 +1459,12 @@ class CommonObject
      *  TODO Move this into an output class file (htmlline.class.php)
      *  If lines are into a template, title must also be into a template
      *  But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
+     *  @param      $seller            Object of seller third party
+     *  @param      $buyer             Object of buyer third party
+     *  @param		$selected		   Object line selected
+     *  @param      $dateSelector      1=Show also date range input fields
 	 */
-	function printObjectLines($dateSelector=0,$seller,$buyer)
+	function printObjectLines($seller,$buyer,$selected=0,$dateSelector=0)
 	{
 		global $conf,$langs;
 		
@@ -1505,11 +1509,11 @@ class CommonObject
 
 			if (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line))
 			{
-				if (empty($line->fk_parent_line)) $this->hooks[$line->special_code]->printObjectLine($this,$line,$var,$num,$i,$dateSelector,$seller,$buyer);
+				if (empty($line->fk_parent_line)) $this->hooks[$line->special_code]->printObjectLine($this,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected);
 			}
 			else
 			{
-				$this->printLine($line,$var,$num,$i,$dateSelector,$seller,$buyer);
+				$this->printLine($line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected);
 			}
 
 			$i++;
@@ -1521,7 +1525,6 @@ class CommonObject
 	/**
 	 * 	Return HTML content of a detail line
      *  TODO Move this into an output class file (htmlline.class.php)
-     *  TODO Do not use GET here, but put information into parameter of function
      *  If lines are into a template, title must also be into a template
      *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
 	 * 	@param	    $line		       Selected object line to output
@@ -1531,8 +1534,9 @@ class CommonObject
      *  @param      $dateSelector      1=Show also date range input fields
      *  @param      $seller            Object of seller third party
      *  @param      $buyer             Object of buyer third party
+     *  @param		$selected		   Object line selected
 	 */
-	function printLine($line,$var=true,$num=0,$i=0,$dateSelector=0,$seller,$buyer)
+	function printLine($line,$var=true,$num=0,$i=0,$dateSelector=0,$seller,$buyer,$selected=0)
 	{
 		global $conf,$langs,$user;
 		global $html,$bc,$bcdd;
@@ -1549,7 +1553,7 @@ class CommonObject
 
 		// Ligne en mode visu
 		// TODO Do not use GET here, but put information into parameter of function
-		if ($_GET['action'] != 'editline' || $_GET['lineid'] != $line->id)
+		if ($_GET['action'] != 'editline' || $selected != $line->id)
 		{
 			// Produit
 			if ($line->fk_product > 0)
@@ -1576,7 +1580,7 @@ class CommonObject
 		}
 
 		// Ligne en mode update
-		if ($this->statut == 0 && $_GET["action"] == 'editline' && $_GET["lineid"] == $line->id)
+		if ($this->statut == 0 && $_GET["action"] == 'editline' && $selected == $line->id)
 		{
 			if ($line->fk_product > 0)
 			{
