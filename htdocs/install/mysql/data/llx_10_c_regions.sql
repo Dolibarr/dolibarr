@@ -154,6 +154,23 @@ INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, act
 -- Regions Australia (id pays=28)
 insert into llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) values (2801, 28, 2801, '', 0, 'Australia', 1);
 
+-- Regions Chile (id pays=67)
+INSERT INTO llx_c_regions (rowid, code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (6701, 01, 67, NULL, NULL, 'Tarapacá', 1);
+INSERT INTO llx_c_regions (rowid, code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (6702, 02, 67, NULL, NULL, 'Antofagasta', 1);
+INSERT INTO llx_c_regions (rowid, code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (6703, 03, 67, NULL, NULL, 'Atacama', 1);
+INSERT INTO llx_c_regions (rowid, code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (6704, 04, 67, NULL, NULL, 'Coquimbo', 1);
+INSERT INTO llx_c_regions (rowid, code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (6705, 05, 67, NULL, NULL, 'Valparaíso', 1);
+INSERT INTO llx_c_regions (rowid, code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (6706, 06, 67, NULL, NULL, 'General Bernardo O Higgins', 1);
+INSERT INTO llx_c_regions (rowid, code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (6707, 07, 67, NULL, NULL, 'Maule', 1);
+INSERT INTO llx_c_regions (rowid, code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (6708, 08, 67, NULL, NULL, 'Biobío', 1);
+INSERT INTO llx_c_regions (rowid, code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (6709, 09, 67, NULL, NULL, 'Raucanía', 1);
+INSERT INTO llx_c_regions (rowid, code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (6710, 10, 67, NULL, NULL, 'Los Lagos', 1);
+INSERT INTO llx_c_regions (rowid, code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (6711, 11, 67, NULL, NULL, 'Aysén General Carlos Ibáñez del Campo', 1);
+INSERT INTO llx_c_regions (rowid, code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (6712, 12, 67, NULL, NULL, 'Magallanes y Antártica Chilena', 1);
+INSERT INTO llx_c_regions (rowid, code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (6713, 13, 67, NULL, NULL, 'Metropolitana de Santiago', 1);
+INSERT INTO llx_c_regions (rowid, code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (6714, 14, 67, NULL, NULL, 'Los Ríos', 1);
+INSERT INTO llx_c_regions (rowid, code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (6715, 15, 67, NULL, NULL, 'Arica y Parinacota', 1);
+
 -- Regions San Salvador (id pays=86)
 INSERT INTO llx_c_regions (rowid, code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (8601, 8601, 86, NULL, NULL, 'Central', 1);
 INSERT INTO llx_c_regions (rowid, code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (8602, 8602, 86, NULL, NULL, 'Oriental', 1);
