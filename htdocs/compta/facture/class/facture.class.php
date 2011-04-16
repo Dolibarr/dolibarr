@@ -3414,7 +3414,7 @@ class FactureLigne
         $sql.= ",product_type=".$this->product_type;
         $sql.= ",rang='".$this->rang."'";
         $sql.= ",info_bits='".$this->info_bits."'";
-        if ($empty($this->skip_update_total))
+        if (empty($this->skip_update_total))
         {
         	$sql.= ",total_ht=".price2num($this->total_ht)."";
         	$sql.= ",total_tva=".price2num($this->total_tva)."";
