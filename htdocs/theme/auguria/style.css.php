@@ -1868,12 +1868,12 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 /*  Test using div instead of tables                                              */
 /* ============================================================================== */
 
-div.table {
-	display:table;
+div.tablelines {
+	display: table;
 	/* Joindre les bords des cellules */
-	border-collapse:collapse;
+	border-collapse: collapse;
 	/* Forcer le tableau à prendre la largeur écran */
-	width:100%;
+	width: 100%;
 }
 div.thead {
 	height: 24px;
@@ -1884,30 +1884,44 @@ div.thead {
 	font-family: <?php print $fontlist ?>;
 	/* border-bottom: 1px solid #FDFFFF; */
 	white-space: nowrap;
-	display:table-row-group;
+	display: table-row-group;
 }
 div.tfoot {
-	display:table-row-group;
+	display: table-row-group;
 }
 div.tbody {
-	display:table-row-group;
+	display: table-row-group;
 }
 div.tr {
-	display:table-row;
+	display: table-row;
 }
 div.td {
-	display:table-cell;
+	display: table-cell;
 	text-align: right;
-	padding:5px;
-	width:auto;
+	padding: 5px;
+	width: 10%;
 }
-div.td.desc {
+div.td.firstcol {
 	text-align: left;
-	width: 70%;
+	width: 65%;
 }
-div.td.ten {
-	width: 10px;
+div.td.endcol {
+	width: 5px;
 }
 div.end {
-	width:auto;
+	width: auto;
+}
+
+div.dragClass {
+    color: #002255;
+}
+div.showDragHandle {
+	cursor: move;
+}
+div.tdlineupdown {
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/grip.png' ?>);
+    background-repeat: no-repeat;
+    background-position: center center;
+    cursor: move;
+	white-space: nowrap;
 }

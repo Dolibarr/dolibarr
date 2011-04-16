@@ -1466,16 +1466,17 @@ class CommonObject
 		
 		// TODO test using div instead of tables
 /*
+		print '<div class="table" id="tablelines">';
 		print '<div class="thead">';
 		print '<div class="tr">';
-		print '<div class="td desc">'.$langs->trans('Description').'</div>';
+		print '<div class="td firstcol">'.$langs->trans('Description').'</div>';
 		print '<div class="td">'.$langs->trans('VAT').'</div>';
 		print '<div class="td">'.$langs->trans('PriceUHT').'</div>';
 		print '<div class="td">'.$langs->trans('Qty').'</div>';
 		print '<div class="td">'.$langs->trans('ReductionShort').'</div>';
 		print '<div class="td">'.$langs->trans('TotalHTShort').'</div>';
-		print '<div class="td ten">&nbsp;</div>';
-		print '<div class="td ten">&nbsp;</div>';
+		print '<div class="td endcol">&nbsp;</div>';
+		print '<div class="td endcol">&nbsp;</div>';
 		print '<div class="td end">&nbsp;</div>';
 		print '</div></div>';
 */
@@ -1495,7 +1496,9 @@ class CommonObject
 		$num = count($this->lines);
 		$var = true;
 		$i	 = 0;
-
+		
+		//print '<div class="tbody">';
+		
 		foreach ($this->lines as $line)
 		{
 			$var=!$var;
@@ -1511,6 +1514,8 @@ class CommonObject
 
 			$i++;
 		}
+		
+		//print '</div></div>';
 	}
 
 	/**
@@ -1561,6 +1566,7 @@ class CommonObject
 
 				// Use global variables + $seller and $buyer
 				include(DOL_DOCUMENT_ROOT.'/core/tpl/predefinedproductline_view.tpl.php');
+				//include(DOL_DOCUMENT_ROOT.'/core/tpl/predefinedproductlinediv_view.tpl.php');
 			}
 			else
 			{

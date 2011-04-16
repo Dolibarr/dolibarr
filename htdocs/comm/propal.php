@@ -1425,11 +1425,13 @@ if ($id > 0 || ! empty($ref))
 	}
 
 	// TODO test using div instead of tables
-	//print '<div class="table">';
+	//print '<div class="table" id="tablelines">';
 	print '<table id="tablelines" class="noborder" width="100%">';
 
 	// Show object lines
 	if (! empty($object->lines)) $object->printObjectLines(0,$mysoc,$soc);
+	
+	//print '<table id="tablelines" class="noborder" width="100%">';
 
 	/*
 	 * Form to add new line
@@ -1463,8 +1465,8 @@ if ($id > 0 || ! empty($ref))
 	}
 
 	// TODO test using div instead of tables
-	//print '</div>';
 	print '</table>';
+	//print '</div>';
 
 	print '</div>';
 	print "\n";
