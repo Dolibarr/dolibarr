@@ -1429,7 +1429,7 @@ if ($id > 0 || ! empty($ref))
 	print '<table id="tablelines" class="noborder" width="100%">';
 
 	// Show object lines
-	if (! empty($object->lines)) $object->printObjectLines($mysoc,$soc,GETPOST('lineid'));
+	if (! empty($object->lines)) $object->printObjectLines(GETPOST('action'),$mysoc,$soc,GETPOST('lineid'));
 	
 	//print '<table id="tablelines" class="noborder" width="100%">';
 

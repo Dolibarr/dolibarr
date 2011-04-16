@@ -1819,7 +1819,7 @@ else
             print '<table id="tablelines" class="noborder" width="100%">';
 
             // Show object lines
-            if (! empty($object->lines)) $object->printObjectLines($mysoc,$soc,GETPOST('lineid'),1);
+            if (! empty($object->lines)) $object->printObjectLines(GETPOST('action'),$mysoc,$soc,GETPOST('lineid'),1);
 
             /*
              * Form to add new line
