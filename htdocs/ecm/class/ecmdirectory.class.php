@@ -423,9 +423,9 @@ class EcmDirectory // extends CommonObject
 	}
 
 	/**
-	 *  \brief     	Return relative path of a directory on disk
-	 * 	\param		force		Force reload of full arbo even if already loaded
-	 *	\return		string		Relative physical path
+	 *  Return relative path of a directory on disk
+	 * 	@param		force		Force reload of full arbo even if already loaded
+	 *	@return		string		Relative physical path
 	 */
 	function getRelativePath($force=0)
 	{
