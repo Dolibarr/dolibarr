@@ -108,14 +108,23 @@ class Contact extends CommonObject
 		if (! $this->socid) $this->socid = 0;
 		if (! $this->priv) $this->priv = 0;
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (datec, fk_soc, name, fk_user_creat, priv, canvas)";
-		$sql.= " VALUES ('".$this->db->idate($now)."',";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (";
+		$sql.= " datec";
+		$sql.= ", fk_soc";
+		$sql.= ", name";
+		$sql.= ", fk_user_creat";
+		$sql.= ", priv";
+		$sql.= ", canvas";
+		$sql.= ", entity";
+		$sql.= ") VALUES (";
+		$sql.= "'".$this->db->idate($now)."',";
 		if ($this->socid > 0) $sql.= " ".$this->socid.",";
 		else $sql.= "null,";
 		$sql.= "'".$this->db->escape($this->name)."',";
 		$sql.= " ".($user->id > 0 ? "'".$user->id."'":"null").",";
 		$sql.= " ".$this->priv.",";
-        $sql.= " ".($this->canvas?"'".$this->canvas."'":"null");
+        $sql.= " ".($this->canvas?"'".$this->canvas."'":"null").",";
+        $sql.= " ".$conf->entity;
 		$sql.= ")";
 
 		dol_syslog("Contact::create sql=".$sql);
