@@ -213,7 +213,7 @@ if ($modulepart)
 	}
 
 	// Wrapping pour les factures fournisseurs
-	else if ($modulepart == 'facture_fournisseur')
+	else if ($modulepart == 'facture_fournisseur' || $modulepart == 'invoice_supplier')
 	{
 		if ($user->rights->fournisseur->facture->lire || preg_match('/^specimen/i',$original_file))
 		{
