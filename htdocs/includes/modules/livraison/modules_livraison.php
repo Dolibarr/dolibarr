@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2006-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2006-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -144,7 +144,7 @@ function delivery_order_pdf_create($db, $object, $model='', $outputlangs='')
 	global $conf,$langs;
 	$langs->load("deliveries");
 
-	$dir = DOL_DOCUMENT_ROOT."/includes/modules/livraison/pdf/";
+	$dir = "/includes/modules/livraison/pdf/";
 
 	// Positionne modele sur le nom du modele de bon de livraison a utiliser
 	if (! dol_strlen($model))
@@ -161,10 +161,12 @@ function delivery_order_pdf_create($db, $object, $model='', $outputlangs='')
 	}
 	// Charge le modele
 	$file = "pdf_".$model.".modules.php";
-	if (file_exists($dir.$file))
+	// On verifie l'emplacement du modele
+	$file = dol_buildpath($dir.$file);
+	if (file_exists($file))
 	{
 		$classname = "pdf_".$model;
-		require_once($dir.$file);
+		require_once($file);
 
 		$obj = new $classname($db);
 

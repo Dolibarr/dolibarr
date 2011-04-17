@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,19 +71,25 @@ function expedition_pdf_create($db, $object, $modele, $outputlangs)
 	global $conf,$langs;
 	$langs->load("sendings");
 
-	$dir = DOL_DOCUMENT_ROOT."/includes/modules/expedition/pdf/";
+	$dir = "/includes/modules/expedition/pdf/";
 	$modelisok=0;
 
 	// Positionne modele sur le nom du modele de commande a utiliser
 	$file = "pdf_expedition_".$modele.".modules.php";
-	if ($modele && file_exists($dir.$file)) $modelisok=1;
+	
+	// On verifie l'emplacement du modele
+	$file = dol_buildpath($dir.$file);
+	
+	if ($modele && file_exists($file)) $modelisok=1;
 
     // Si model pas encore bon
 	if (! $modelisok)
 	{
 		if ($conf->global->EXPEDITION_ADDON_PDF) $modele = $conf->global->EXPEDITION_ADDON_PDF;
       	$file = "pdf_expedition_".$modele.".modules.php";
-    	if (file_exists($dir.$file)) $modelisok=1;
+      	// On verifie l'emplacement du modele
+		$file = dol_buildpath($dir.$file);
+    	if (file_exists($file)) $modelisok=1;
     }
 
     // Si model pas encore bon
@@ -94,7 +100,9 @@ function expedition_pdf_create($db, $object, $modele, $outputlangs)
 		$liste=$model->liste_modeles($db);
         $modele=key($liste);        // Renvoie premiere valeur de cle trouve dans le tableau
       	$file = "pdf_expedition_".$modele.".modules.php";
-    	if (file_exists($dir.$file)) $modelisok=1;
+      	// On verifie l'emplacement du modele
+		$file = dol_buildpath($dir.$file);
+    	if (file_exists($file)) $modelisok=1;
 	}
 
 	// Charge le modele
@@ -102,7 +110,7 @@ function expedition_pdf_create($db, $object, $modele, $outputlangs)
 	{
 	    dol_syslog("expedition_pdf_create ".$modele);
 		$classname = "pdf_expedition_".$modele;
-		require_once($dir.$file);
+		require_once($file);
 
 		$obj = new $classname($db);
 

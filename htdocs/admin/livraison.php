@@ -1,10 +1,10 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -166,7 +166,6 @@ if ($_GET["action"] == 'setmod')
  * View
  */
 
-$dir = DOL_DOCUMENT_ROOT."/includes/modules/livraison/";
 $html=new Form($db);
 
 llxHeader("","");
@@ -213,78 +212,85 @@ print '</tr>'."\n";
 
 clearstatcache();
 
-$handle = opendir($dir);
-
-$var=true;
-if (is_resource($handle))
+foreach ($conf->file->dol_document_root as $dirroot)
 {
-    $var=true;
-    while (($file = readdir($handle))!==false)
-    {
-        if (substr($file, 0, 14) == 'mod_livraison_' && substr($file, dol_strlen($file)-3, 3) == 'php')
+	$dir = $dirroot . "/includes/modules/livraison/";
+
+	if (is_dir($dir))
+	{
+		$handle = opendir($dir);
+		if (is_resource($handle))
 		{
-			$file = substr($file, 0, dol_strlen($file)-4);
-
-			require_once(DOL_DOCUMENT_ROOT ."/includes/modules/livraison/".$file.".php");
-
-			$module = new $file;
-
-			// Show modules according to features level
-		    if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-		    if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
-
-		    if ($module->isEnabled())
+		    $var=true;
+		    while (($file = readdir($handle))!==false)
 		    {
-				$var=!$var;
-				print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
-				print $module->info();
-				print '</td>';
-
-				// Affiche example
-				print '<td nowrap="nowrap">'.$module->getExample().'</td>';
-
-				print '<td align="center">';
-				if ($conf->global->LIVRAISON_ADDON == "$file")
+		        if (substr($file, 0, 14) == 'mod_livraison_' && substr($file, dol_strlen($file)-3, 3) == 'php')
 				{
-					print img_picto($langs->trans("Activated"),'on');
+					$file = substr($file, 0, dol_strlen($file)-4);
+		
+					require_once(DOL_DOCUMENT_ROOT ."/includes/modules/livraison/".$file.".php");
+		
+					$module = new $file;
+		
+					// Show modules according to features level
+				    if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+				    if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+		
+				    if ($module->isEnabled())
+				    {
+						$var=!$var;
+						print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
+						print $module->info();
+						print '</td>';
+		
+						// Affiche example
+						print '<td nowrap="nowrap">'.$module->getExample().'</td>';
+		
+						print '<td align="center">';
+						if ($conf->global->LIVRAISON_ADDON == "$file")
+						{
+							print img_picto($langs->trans("Activated"),'on');
+						}
+						else
+						{
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+						}
+						print '</td>';
+		
+						$livraison=new Livraison($db);
+						$livraison->initAsSpecimen();
+		
+						// Info
+						$htmltooltip='';
+						$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
+						$facture->type=0;
+				        $nextval=$module->getNextValue($mysoc,$livraison);
+						if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
+						{
+							$htmltooltip.=''.$langs->trans("NextValue").': ';
+					        if ($nextval)
+							{
+								$htmltooltip.=$nextval.'<br>';
+							}
+							else
+							{
+								$htmltooltip.=$langs->trans($module->error).'<br>';
+							}
+						}
+		
+						print '<td align="center">';
+						print $html->textwithpicto('',$htmltooltip,1,0);
+						print '</td>';
+		
+						print '</tr>';
+				    }
 				}
-				else
-				{
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
-				}
-				print '</td>';
-
-				$livraison=new Livraison($db);
-				$livraison->initAsSpecimen();
-
-				// Info
-				$htmltooltip='';
-				$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-				$facture->type=0;
-		        $nextval=$module->getNextValue($mysoc,$livraison);
-				if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
-				{
-					$htmltooltip.=''.$langs->trans("NextValue").': ';
-			        if ($nextval)
-					{
-						$htmltooltip.=$nextval.'<br>';
-					}
-					else
-					{
-						$htmltooltip.=$langs->trans($module->error).'<br>';
-					}
-				}
-
-				print '<td align="center">';
-				print $html->textwithpicto('',$htmltooltip,1,0);
-				print '</td>';
-
-				print '</tr>';
 		    }
+		    closedir($handle);
 		}
-    }
-    closedir($handle);
+	}
 }
+
 print '</table>';
 
 
@@ -331,89 +337,87 @@ print "</tr>\n";
 
 clearstatcache();
 
-$dir = DOL_DOCUMENT_ROOT."/includes/modules/livraison/pdf/";
-
-if(is_dir($dir))
+foreach ($conf->file->dol_document_root as $dirroot)
 {
-	$handle=opendir($dir);
-	$var=true;
+	$dir = $dirroot . "/includes/modules/livraison/pdf/";
 
-    if (is_resource($handle))
-    {
-    	while (($file = readdir($handle))!==false)
-    	{
-    		if (substr($file, dol_strlen($file) -12) == '.modules.php' && substr($file,0,4) == 'pdf_')
-    		{
-    			$name = substr($file, 4, dol_strlen($file) - 16);
-    			$classname = substr($file, 0, dol_strlen($file) - 12);
-
-    			$var=!$var;
-    			print "<tr $bc[$var]><td>";
-    			print $name;
-    			print "</td><td>\n";
-    			require_once($dir.$file);
-    			$module = new $classname($db);
-
-    			print $module->description;
-    			print '</td>';
-
-    			// Activ
-    			if (in_array($name, $def))
-    			{
-    				print "<td align=\"center\">\n";
-    				if ($conf->global->LIVRAISON_ADDON_PDF != "$name")
-    				{
-    					print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
-    					print img_picto($langs->trans("Enabled"),'on');
-    					print '</a>';
-    				}
-    				else
-    				{
-    					print img_picto($langs->trans("Enabled"),'on');
-    				}
-    				print "</td>";
-    			}
-    			else
-    			{
-    				print "<td align=\"center\">\n";
-    				print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
-    				print "</td>";
-    			}
-
-    			// Defaut
-    			print "<td align=\"center\">";
-    			if ($conf->global->LIVRAISON_ADDON_PDF == "$name")
-    			{
-    				print img_picto($langs->trans("Default"),'on');
-    			}
-    			else
-    			{
-    				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
-    			}
-    			print '</td>';
-
-    			// Info
-    			$htmltooltip =    ''.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
-    			$htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
-    			$htmltooltip.='<br><br>'.$langs->trans("FeaturesSupported").':';
-    			$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
-    	    	print '<td align="center">';
-    	    	print $html->textwithpicto('',$htmltooltip,1,0);
-    	    	print '</td>';
-    	    	print '<td align="center">';
-    	    	print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'sending').'</a>';
-    	    	print '</td>';
-
-    			print '</tr>';
-    		}
-    	}
-    	closedir($handle);
-    }
+	if (is_dir($dir))
+	{
+		$handle = opendir($dir);
+		if (is_resource($handle))
+		{
+	    	while (($file = readdir($handle))!==false)
+	    	{
+	    		if (substr($file, dol_strlen($file) -12) == '.modules.php' && substr($file,0,4) == 'pdf_')
+	    		{
+	    			$name = substr($file, 4, dol_strlen($file) - 16);
+	    			$classname = substr($file, 0, dol_strlen($file) - 12);
+	
+	    			$var=!$var;
+	    			print "<tr $bc[$var]><td>";
+	    			print $name;
+	    			print "</td><td>\n";
+	    			require_once($dir.$file);
+	    			$module = new $classname($db);
+	
+	    			print $module->description;
+	    			print '</td>';
+	
+	    			// Activ
+	    			if (in_array($name, $def))
+	    			{
+	    				print "<td align=\"center\">\n";
+	    				if ($conf->global->LIVRAISON_ADDON_PDF != "$name")
+	    				{
+	    					print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
+	    					print img_picto($langs->trans("Enabled"),'on');
+	    					print '</a>';
+	    				}
+	    				else
+	    				{
+	    					print img_picto($langs->trans("Enabled"),'on');
+	    				}
+	    				print "</td>";
+	    			}
+	    			else
+	    			{
+	    				print "<td align=\"center\">\n";
+	    				print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+	    				print "</td>";
+	    			}
+	
+	    			// Defaut
+	    			print "<td align=\"center\">";
+	    			if ($conf->global->LIVRAISON_ADDON_PDF == "$name")
+	    			{
+	    				print img_picto($langs->trans("Default"),'on');
+	    			}
+	    			else
+	    			{
+	    				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+	    			}
+	    			print '</td>';
+	
+	    			// Info
+	    			$htmltooltip =    ''.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
+	    			$htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+	    			$htmltooltip.='<br><br>'.$langs->trans("FeaturesSupported").':';
+	    			$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
+	    	    	print '<td align="center">';
+	    	    	print $html->textwithpicto('',$htmltooltip,1,0);
+	    	    	print '</td>';
+	    	    	print '<td align="center">';
+	    	    	print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'sending').'</a>';
+	    	    	print '</td>';
+	
+	    			print '</tr>';
+	    		}
+	    	}
+	    	closedir($handle);
+	    }
+	}
 }
-else
-{
-	print "<tr><td><b>ERROR</b>: $dir is not a directory !</td></tr>\n";
-}
+
 print '</table>';
 
 /*
