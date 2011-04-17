@@ -64,39 +64,43 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 
 			if ($qualified)
 			{
-				// Check whether this is a file or directory and whether we're interested in that type
-				if (is_dir(dol_osencode($path."/".$file)) && (($types=="directories") || ($types=="all")))
+			    $isdir=is_dir(dol_osencode($path."/".$file));
+			    // Check whether this is a file or directory and whether we're interested in that type
+				if ($isdir && (($types=="directories") || ($types=="all") || $recursive))
 				{
 					// Add entry into file_list array
-					if ($loaddate || $sortcriteria == 'date') $filedate=dol_filemtime($path."/".$file);
-					if ($loadsize || $sortcriteria == 'size') $filesize=dol_filesize($path."/".$file);
+                    if (($types=="directories") || ($types=="all"))
+                    {
+    				    if ($loaddate || $sortcriteria == 'date') $filedate=dol_filemtime($path."/".$file);
+    					if ($loadsize || $sortcriteria == 'size') $filesize=dol_filesize($path."/".$file);
 
-					if (! $filter || preg_match('/'.$filter.'/i',$path.'/'.$file))
-					{
-						$file_list[] = array(
-						"name" => $file,
-						"fullname" => $path.'/'.$file,
-						"date" => $filedate,
-						"size" => $filesize,
-						"type" => 'dir'
-						);
-					}
+    					if (! $filter || preg_match('/'.$filter.'/i',$path.'/'.$file))
+    					{
+    						$file_list[] = array(
+    						"name" => $file,
+    						"fullname" => $path.'/'.$file,
+    						"date" => $filedate,
+    						"size" => $filesize,
+    						"type" => 'dir'
+    						);
+    					}
+                    }
 
 					// if we're in a directory and we want recursive behavior, call this function again
 					if ($recursive)
 					{
-						$file_list = array_merge($file_list,dol_dir_list($path."/".$file."/", $types, $recursive, $filter, $excludefilter, $sortcriteria, $sortorder));
+						$file_list = array_merge($file_list,dol_dir_list($path."/".$file, $types, $recursive, $filter, $excludefilter, $sortcriteria, $sortorder, $mode));
 					}
 				}
-				else if (! is_dir(dol_osencode($path."/".$file)) && (($types == "files") || ($types == "all")))
+				else if (! $isdir && (($types == "files") || ($types == "all")))
 				{
-					// Add file into file_list array
+				    // Add file into file_list array
 					if ($loaddate || $sortcriteria == 'date') $filedate=dol_filemtime($path."/".$file);
 					if ($loadsize || $sortcriteria == 'size') $filesize=dol_filesize($path."/".$file);
 
 					if (! $filter || preg_match('/'.$filter.'/i',$path.'/'.$file))
 					{
-						$file_list[] = array(
+					    $file_list[] = array(
 						"name" => $file,
 						"fullname" => $path.'/'.$file,
 						"date" => $filedate,
