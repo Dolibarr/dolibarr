@@ -375,7 +375,7 @@ class FormFile
 			print '</td>';
 
 			print '</tr>';
-			
+
 			// Hook of thirdparty module
 			if (! empty($hooks) && is_array($hooks))
 			{
@@ -490,7 +490,7 @@ class FormFile
 
 		// Affiche liste des documents existant
 		if (empty($useinecm)) print_titre($langs->trans("AttachedFiles"));
-		else { $bc[true]=''; $bc[false]=''; };
+		//else { $bc[true]=''; $bc[false]=''; };
 		$url=$_SERVER["PHP_SELF"];
 		print '<table width="100%" class="nobordernopadding">';
 		print '<tr class="liste_titre">';
@@ -513,7 +513,7 @@ class FormFile
 				if (! $relativepath) $relativepath=dol_sanitizeFileName($object->ref).'/';
 
 				$var=!$var;
-				print "<tr $bc[$var]><td>";
+				print '<tr '.$bc[$var].'><td>';
 				//print "XX".$file['name'];	//$file['name'] must be utf8
 				print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
 				if ($forcedownload) print '&attachment=1';
