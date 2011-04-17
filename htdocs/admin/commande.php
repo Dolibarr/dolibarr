@@ -1,10 +1,10 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville	        <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur          <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur          <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio          <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier               <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Andre Cianfarani             <acianfa@free.fr>
- * Copyright (C) 2005-2010 Regis Houssin                <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin                <regis@dolibarr.fr>
  * Copyright (C) 2008 	   Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -188,7 +188,6 @@ if ($_POST["action"] == 'set_use_customer_contact_as_recipient')
 
 llxHeader();
 
-$dir = "../includes/modules/commande/";
 $html=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
@@ -215,79 +214,86 @@ print "</tr>\n";
 
 clearstatcache();
 
-$dir = "../includes/modules/commande/";
-$handle = opendir($dir);
-if (is_resource($handle))
+foreach ($conf->file->dol_document_root as $dirroot)
 {
-	$var=true;
+	$dir = $dirroot . "/includes/modules/commande/";
 
-	while (($file = readdir($handle))!==false)
+	if (is_dir($dir))
 	{
-		if (substr($file, 0, 13) == 'mod_commande_' && substr($file, dol_strlen($file)-3, 3) == 'php')
+		$handle = opendir($dir);
+		if (is_resource($handle))
 		{
-			$file = substr($file, 0, dol_strlen($file)-4);
+			$var=true;
 
-			require_once(DOL_DOCUMENT_ROOT ."/includes/modules/commande/".$file.".php");
-
-			$module = new $file;
-
-			// Show modules according to features level
-			if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-			if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
-
-			if ($module->isEnabled())
+			while (($file = readdir($handle))!==false)
 			{
-				$var=!$var;
-				print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
-				print $module->info();
-				print '</td>';
-
-				// Examples
-				print '<td nowrap="nowrap">'.$module->getExample()."</td>\n";
-
-				print '<td align="center">';
-				if ($conf->global->COMMANDE_ADDON == "$file")
+				if (substr($file, 0, 13) == 'mod_commande_' && substr($file, dol_strlen($file)-3, 3) == 'php')
 				{
-					print img_picto($langs->trans("Activated"),'on');
-				}
-				else
-				{
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'">';
-					print img_picto($langs->trans("Disabled"),'off');
-					print '</a>';
-				}
-				print '</td>';
-
-				$commande=new Commande($db);
-				$commande->initAsSpecimen();
-
-				// Info
-				$htmltooltip='';
-				$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-				$facture->type=0;
-				$nextval=$module->getNextValue($mysoc,$commande);
-				if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
-				{
-					$htmltooltip.=''.$langs->trans("NextValue").': ';
-					if ($nextval)
+					$file = substr($file, 0, dol_strlen($file)-4);
+		
+					require_once(DOL_DOCUMENT_ROOT ."/includes/modules/commande/".$file.".php");
+		
+					$module = new $file;
+		
+					// Show modules according to features level
+					if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+					if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+		
+					if ($module->isEnabled())
 					{
-						$htmltooltip.=$nextval.'<br>';
-					}
-					else
-					{
-						$htmltooltip.=$langs->trans($module->error).'<br>';
+						$var=!$var;
+						print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
+						print $module->info();
+						print '</td>';
+		
+						// Examples
+						print '<td nowrap="nowrap">'.$module->getExample()."</td>\n";
+		
+						print '<td align="center">';
+						if ($conf->global->COMMANDE_ADDON == "$file")
+						{
+							print img_picto($langs->trans("Activated"),'on');
+						}
+						else
+						{
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'">';
+							print img_picto($langs->trans("Disabled"),'off');
+							print '</a>';
+						}
+						print '</td>';
+		
+						$commande=new Commande($db);
+						$commande->initAsSpecimen();
+		
+						// Info
+						$htmltooltip='';
+						$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
+						$facture->type=0;
+						$nextval=$module->getNextValue($mysoc,$commande);
+						if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
+						{
+							$htmltooltip.=''.$langs->trans("NextValue").': ';
+							if ($nextval)
+							{
+								$htmltooltip.=$nextval.'<br>';
+							}
+							else
+							{
+								$htmltooltip.=$langs->trans($module->error).'<br>';
+							}
+						}
+		
+						print '<td align="center">';
+						print $html->textwithpicto('',$htmltooltip,1,0);
+						print '</td>';
+		
+						print '</tr>';
 					}
 				}
-
-				print '<td align="center">';
-				print $html->textwithpicto('',$htmltooltip,1,0);
-				print '</td>';
-
-				print '</tr>';
 			}
+			closedir($handle);
 		}
 	}
-	closedir($handle);
 }
 
 print '</table><br>';
@@ -322,7 +328,6 @@ else
 	dol_print_error($db);
 }
 
-$dir = "../includes/modules/commande/";
 
 print "<table class=\"noborder\" width=\"100%\">\n";
 print "<tr class=\"liste_titre\">\n";
@@ -336,89 +341,97 @@ print "</tr>\n";
 
 clearstatcache();
 
-$handle=opendir($dir);
-
-$var=true;
-if (is_resource($handle))
+foreach ($conf->file->dol_document_root as $dirroot)
 {
-    while (($file = readdir($handle))!==false)
-    {
-    	if (preg_match('/\.modules\.php$/i',$file) && substr($file,0,4) == 'pdf_')
-    	{
-    		$name = substr($file, 4, dol_strlen($file) -16);
-    		$classname = substr($file, 0, dol_strlen($file) -12);
+	$dir = $dirroot . "/includes/modules/commande/";
 
-    		$var=!$var;
-    		print "<tr ".$bc[$var].">\n  <td>";
-    		print "$name";
-    		print "</td>\n  <td>\n";
-    		require_once($dir.$file);
-    		$module = new $classname($db);
-    		print $module->description;
-    		print "</td>\n";
-
-    		// Activated
-    		print "<td align=\"center\">\n";
-    		if (in_array($name, $def))
-    		{
-    			if ($conf->global->COMMANDE_ADDON_PDF != "$name")
-    			{
-    				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
-    				print img_picto($langs->trans("Activated"),'on');
-    				print '</a>';
-    			}
-    			else
-    			{
-    				print img_picto($langs->trans("Activated"),'on');
-    			}
-    		}
-    		else
-    		{
-    			print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
-    			print img_picto($langs->trans("Disabled"),'off');
-    			print '</a>';
-    		}
-    		print "</td>";
-
-    		// Defaut
-    		print "<td align=\"center\">";
-    		if ($conf->global->COMMANDE_ADDON_PDF == "$name")
-    		{
-    			print img_picto($langs->trans("Yes"),'on');
-    		}
-    		else
-    		{
-    			print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
-    			print img_picto($langs->trans("No"),'off');
-    			print '</a>';
-    		}
-    		print '</td>';
-
-    		// Info
-    		$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
-    		$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
-    		$htmltooltip.='<br>'.$langs->trans("Height").'/'.$langs->trans("Width").': '.$module->page_hauteur.'/'.$module->page_largeur;
-    		$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-    		$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
-    		$htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg,1,1);
-    		$htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg,1,1);
-    		$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang,1,1);
-    		//$htmltooltip.='<br>'.$langs->trans("Escompte").': '.yn($module->option_escompte,1,1);
-    		//$htmltooltip.='<br>'.$langs->trans("CreditNote").': '.yn($module->option_credit_note,1,1);
-    		$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftOrders").': '.yn($module->option_draft_watermark,1,1);
-
-    		print '<td align="center">';
-    		print $html->textwithpicto('',$htmltooltip,1,0);
-    		print '</td>';
-    		print '<td align="center">';
-    		print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'order').'</a>';
-    		print '</td>';
-
-    		print "</tr>\n";
-    	}
-    }
-    closedir($handle);
+	if (is_dir($dir))
+	{
+		$handle = opendir($dir);
+		if (is_resource($handle))
+		{
+			$var=true;
+		    while (($file = readdir($handle))!==false)
+		    {
+		    	if (preg_match('/\.modules\.php$/i',$file) && substr($file,0,4) == 'pdf_')
+		    	{
+		    		$name = substr($file, 4, dol_strlen($file) -16);
+		    		$classname = substr($file, 0, dol_strlen($file) -12);
+		
+		    		$var=!$var;
+		    		print "<tr ".$bc[$var].">\n  <td>";
+		    		print "$name";
+		    		print "</td>\n  <td>\n";
+		    		require_once($dir.$file);
+		    		$module = new $classname($db);
+		    		print $module->description;
+		    		print "</td>\n";
+		
+		    		// Activated
+		    		print "<td align=\"center\">\n";
+		    		if (in_array($name, $def))
+		    		{
+		    			if ($conf->global->COMMANDE_ADDON_PDF != "$name")
+		    			{
+		    				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
+		    				print img_picto($langs->trans("Activated"),'on');
+		    				print '</a>';
+		    			}
+		    			else
+		    			{
+		    				print img_picto($langs->trans("Activated"),'on');
+		    			}
+		    		}
+		    		else
+		    		{
+		    			print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
+		    			print img_picto($langs->trans("Disabled"),'off');
+		    			print '</a>';
+		    		}
+		    		print "</td>";
+		
+		    		// Defaut
+		    		print "<td align=\"center\">";
+		    		if ($conf->global->COMMANDE_ADDON_PDF == "$name")
+		    		{
+		    			print img_picto($langs->trans("Yes"),'on');
+		    		}
+		    		else
+		    		{
+		    			print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
+		    			print img_picto($langs->trans("No"),'off');
+		    			print '</a>';
+		    		}
+		    		print '</td>';
+		
+		    		// Info
+		    		$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
+		    		$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
+		    		$htmltooltip.='<br>'.$langs->trans("Height").'/'.$langs->trans("Width").': '.$module->page_hauteur.'/'.$module->page_largeur;
+		    		$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+		    		$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
+		    		$htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg,1,1);
+		    		$htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg,1,1);
+		    		$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang,1,1);
+		    		//$htmltooltip.='<br>'.$langs->trans("Escompte").': '.yn($module->option_escompte,1,1);
+		    		//$htmltooltip.='<br>'.$langs->trans("CreditNote").': '.yn($module->option_credit_note,1,1);
+		    		$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftOrders").': '.yn($module->option_draft_watermark,1,1);
+		
+		    		print '<td align="center">';
+		    		print $html->textwithpicto('',$htmltooltip,1,0);
+		    		print '</td>';
+		    		print '<td align="center">';
+		    		print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'order').'</a>';
+		    		print '</td>';
+		
+		    		print "</tr>\n";
+		    	}
+		    }
+		    closedir($handle);
+		}
+	}
 }
+
 print '</table>';
 
 //Autres Options

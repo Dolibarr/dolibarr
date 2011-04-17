@@ -215,7 +215,6 @@ print '</tr>'."\n";
 
 clearstatcache();
 
-$var=true;
 foreach ($conf->file->dol_document_root as $dirroot)
 {
 	$dir = $dirroot . "/includes/modules/propale/";
@@ -225,6 +224,8 @@ foreach ($conf->file->dol_document_root as $dirroot)
 		$handle = opendir($dir);
 		if (is_resource($handle))
 		{
+			$var=true;
+			
 			while (($file = readdir($handle))!==false)
 			{
 				if (substr($file, 0, 12) == 'mod_propale_' && substr($file, dol_strlen($file)-3, 3) == 'php')
@@ -340,13 +341,14 @@ print "</tr>\n";
 
 clearstatcache();
 
-$var=true;
 foreach ($conf->file->dol_document_root as $dirroot)
 {
 	$dir = $dirroot . "/includes/modules/propale/";
 
 	if (is_dir($dir))
 	{
+		$var=true;
+		
 		$handle=opendir($dir);
 		if (is_resource($handle))
 		{
