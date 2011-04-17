@@ -524,9 +524,9 @@ class DoliDb
 
 
 	/**
-	 *	\brief      Escape a string to insert data.
-	 *	\param	    stringtoencode		String to escape
-	 *	\return	    string				String escaped
+	 *	   Escape a string to insert data.
+	 *     @param	    stringtoencode		String to escape
+	 *     @return	    string				String escaped
 	 */
 	function escape($stringtoencode)
 	{
@@ -535,23 +535,10 @@ class DoliDb
 
 
 	/**
-	 *   Formatage (par la base de donnees) d'un champ de la base au format TMS ou Date (YYYY-MM-DD HH:MM:SS)
-	 *   afin de retourner une donnee toujours au format universel date TMS unix.
-	 *   Fonction a utiliser pour generer les SELECT.
-	 *   @param	    	param       Nom champ base de type date ou chaine 'YYYY-MM-DD HH:MM:SS'
-	 *   @return		date        Date au format TMS.
-	 *	 @deprecated	Remove unix_timestamp functions so use jdate instead
-	 */
-	function pdate($param)
-	{
-		return "unix_timestamp(".$param.")";
-	}
-
-	/**
-	 *   \brief     Convert (by PHP) a GM Timestamp date into a string date with PHP server TZ to insert into a date field.
-	 *              Function to use to build INSERT, UPDATE or WHERE predica
-	 *   \param	    param       Date TMS to convert
-	 *   \return	string      Date in a string YYYYMMDDHHMMSS
+	 *   Convert (by PHP) a GM Timestamp date into a string date with PHP server TZ to insert into a date field.
+	 *   Function to use to build INSERT, UPDATE or WHERE predica
+	 *   @param	    param       Date TMS to convert
+	 *   @return	string      Date in a string YYYYMMDDHHMMSS
 	 */
 	function idate($param)
 	{
@@ -559,10 +546,10 @@ class DoliDb
 	}
 
 	/**
-	 *	\brief  	Convert (by PHP) a PHP server TZ string date into a GM Timestamps date
-	 * 				19700101020000 -> 3600 with TZ+1
-	 * 	\param		string			Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
-	 *	\return		date			Date TMS
+	 *	Convert (by PHP) a PHP server TZ string date into a GM Timestamps date
+	 * 	19700101020000 -> 3600 with TZ+1
+	 * 	@param		string			Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
+	 *	@return		date			Date TMS
 	 */
 	function jdate($string)
 	{
@@ -573,11 +560,11 @@ class DoliDb
 	}
 
 	/**
-	 *	\brief      Formatage d'un if SQL
-	 *	\param		test            chaine test
-	 *	\param		resok           resultat si test egal
-	 *	\param		resko           resultat si test non egal
-	 *	\return		string          chaine formate SQL
+	 *	Formate a SQL IF
+	 *	@param		test            chaine test
+	 *	@param		resok           resultat si test egal
+	 *	@param		resko           resultat si test non egal
+	 *	@return		string          chaine formate SQL
 	 */
 	function ifsql($test,$resok,$resko)
 	{
