@@ -88,7 +88,7 @@ if (empty($PAYPAL_API_SIGNATURE))
  * View
  */
 
-dol_syslog("Callback url when a PayPal payment was done ".$_SERVER["QUERY_STRING"]);
+dol_syslog("Callback url when a PayPal payment was done. query_string=".$_SERVER["QUERY_STRING"]);
 
 llxHeaderPaypal($langs->trans("PaymentForm"));
 

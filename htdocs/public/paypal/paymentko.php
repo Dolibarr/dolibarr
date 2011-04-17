@@ -58,7 +58,7 @@ $langs->load("paypal");
  * View
  */
 
-dol_syslog("Callback url when a PayPal payment was canceled ".$_SERVER["QUERY_STRING"]);
+dol_syslog("Callback url when a PayPal payment was canceled. query_string=".$_SERVER["QUERY_STRING"]);
 
 llxHeaderPaypal($langs->trans("PaymentForm"));
 

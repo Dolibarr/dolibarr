@@ -58,7 +58,7 @@ $langs->load("paypal");
  * View
  */
 
-dol_syslog("Callback url when a PayBox payment was canceled ".$_SERVER["QUERY_STRING"]);
+dol_syslog("Callback url when a PayBox payment was canceled. query_string=".$_SERVER["QUERY_STRING"]);
 
 llxHeaderPayBox($langs->trans("PaymentForm"));
 
