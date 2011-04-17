@@ -70,8 +70,10 @@ include_once(DOL_DOCUMENT_ROOT.'/includes/modules/export/modules_export.php');
 $model=new ModeleExports();
 $liste=$model->liste_modeles($db);
 
+$var=true;
 foreach($liste as $key => $val)
 {
+    $var=!$var;
     print '<tr '.$bc[$var].'>';
     print '<td width="16">'.img_picto_common($model->getDriverLabel($key),$model->getPicto($key)).'</td>';
     $text=$model->getDriverDesc($key);
@@ -94,13 +96,13 @@ print '<td>'.$langs->trans("Module").'</td>';
 print '<td>'.$langs->trans("ExportableDatas").'</td>';
 //print '<td>&nbsp;</td>';
 print '</tr>';
-$val=true;
+$var=true;
 if (sizeof($export->array_export_code))
 {
     foreach ($export->array_export_code as $key => $value)
     {
-        $val=!$val;
-        print '<tr '.$bc[$val].'><td>';
+        $var=!$var;
+        print '<tr '.$bc[$var].'><td>';
         //print img_object($export->array_export_module[$key]->getName(),$export->array_export_module[$key]->picto).' ';
         print $export->array_export_module[$key]->getName();
         print '</td><td>';
