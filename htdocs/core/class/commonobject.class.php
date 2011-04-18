@@ -560,7 +560,7 @@ class CommonObject
 		if ($this->element == 'societe') $alias = 'te';
 		
 		// Sharings between entities
-		if ($conf->global->MAIN_MODULE_MULTICOMPANY)
+		if ($conf->global->MAIN_MODULE_MULTICOMPANY && $this->ismultientitymanaged == 1)
 		{
 			dol_include_once('/multicompany/class/actions_multicompany.class.php');
 			$mc = new ActionsMulticompany($db);
