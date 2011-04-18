@@ -85,6 +85,10 @@ INSERT INTO llx_c_source (rowid,code,label,active) VALUES (7, 'SRC_06', 'Magasin
 
 ALTER TABLE llx_actioncomm ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER id;
 
+ALTER TABLE llx_propaldet ADD INDEX idx_propaldet_fk_product (fk_product);
+ALTER TABLE llx_commandedet ADD INDEX idx_commandedet_fk_product (fk_product);
+ALTER TABLE llx_facturedet ADD INDEX idx_facturedet_fk_product (fk_product);
+
 --Add Chile data
 -- Regions Chile (id pays=67)
 INSERT INTO llx_c_regions (rowid, code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (6701, 6701, 67, NULL, NULL, 'Tarapacá', 1);

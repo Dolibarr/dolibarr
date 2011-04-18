@@ -1,5 +1,6 @@
 -- ===================================================================
 -- Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2011 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -23,5 +24,6 @@
 -- V4 DELETE llx_facturedet FROM llx_facturedet LEFT JOIN llx_facture ON llx_facturedet.fk_facture = llx_facture.rowid WHERE llx_facture.rowid IS NULL;
 
 ALTER TABLE llx_facturedet ADD INDEX idx_facturedet_fk_facture (fk_facture);
+ALTER TABLE llx_facturedet ADD INDEX idx_facturedet_fk_product (fk_product);
 ALTER TABLE llx_facturedet ADD UNIQUE INDEX uk_fk_remise_except (fk_remise_except, fk_facture);
 ALTER TABLE llx_facturedet ADD CONSTRAINT fk_facturedet_fk_facture FOREIGN KEY (fk_facture) REFERENCES llx_facture (rowid);

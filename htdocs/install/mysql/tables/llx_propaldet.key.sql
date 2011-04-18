@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2009 Regis Houssin  <regis@dolibarr.fr>
+-- Copyright (C) 2009-2011 Regis Houssin  <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,4 +21,6 @@
 
 
 ALTER TABLE llx_propaldet ADD INDEX idx_propaldet_fk_propal (fk_propal);
+ALTER TABLE llx_propaldet ADD INDEX idx_propaldet_fk_product (fk_product);
+
 ALTER TABLE llx_propaldet ADD CONSTRAINT fk_propaldet_fk_propal FOREIGN KEY (fk_propal) REFERENCES llx_propal (rowid);

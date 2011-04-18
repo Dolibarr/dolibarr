@@ -198,12 +198,15 @@ class Conf
 			// Sharings between entities
 			if ($this->multicompany->enabled)
 			{
-				dol_include_once('/multicompany/class/actions_multicompany.class.php');
-				$mc = new ActionsMulticompany($db);
-				
-				foreach($multicompany_sharing as $key => $value)
+				$ret = @dol_include_once('/multicompany/class/actions_multicompany.class.php');
+				if ($ret)
 				{
-					$this->entities[$key]=$mc->check_entity($value);
+					$mc = new ActionsMulticompany($db);
+					
+					foreach($multicompany_sharing as $key => $value)
+					{
+						$this->entities[$key]=$mc->check_entity($value);
+					}
 				}
 			}
 		}

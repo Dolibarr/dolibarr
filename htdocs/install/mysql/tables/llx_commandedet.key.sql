@@ -1,5 +1,6 @@
 -- ===================================================================
 -- Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2011 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,4 +22,6 @@
 
 
 ALTER TABLE llx_commandedet ADD INDEX idx_commandedet_fk_commande (fk_commande);
+ALTER TABLE llx_commandedet ADD INDEX idx_commandedet_fk_product (fk_product);
+
 ALTER TABLE llx_commandedet ADD CONSTRAINT fk_commandedet_fk_commande FOREIGN KEY (fk_commande) REFERENCES llx_commande (rowid);
