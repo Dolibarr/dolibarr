@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,9 +37,17 @@ if ($type=='0') $result=restrictedArea($user,'produit',$id,'product','','',$fiel
 else if ($type=='1') $result=restrictedArea($user,'service',$id,'service','','',$fieldid);
 else $result=restrictedArea($user,'produit|service',$id,'service','','',$fieldid);
 
+$langs->load("products");
+
 $product_static = new Product($db);
 
-$langs->load("products");
+// Sharings between entities
+if ($conf->global->MAIN_MODULE_MULTICOMPANY)
+{
+	dol_include_once('/multicompany/class/actions_multicompany.class.php');
+	$mc = new ActionsMulticompany($db);
+	$mc->getEntitySharing('product');
+}
 
 
 /*
@@ -107,7 +115,7 @@ $prodser[0][0]=$prodser[0][1]=$prodser[1][0]=$prodser[1][1]=0;
 
 $sql = "SELECT COUNT(p.rowid) as total, p.fk_product_type, p.tosell, p.tobuy";
 $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-$sql.= " WHERE p.entity = ".$conf->entity;
+$sql.= " WHERE p.entity IN (0,".($mc->share ? $mc->share : $conf->entity).")";
 $sql.= " GROUP BY p.fk_product_type, p.tosell, p.tobuy";
 $result = $db->query($sql);
 while ($objp = $db->fetch_object($result))
@@ -122,7 +130,7 @@ print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").'</
 if ($conf->product->enabled)
 {
 	$statProducts = "<tr $bc[0]>";
-	$statProducts.= '<td><a href="liste.php?type=0&amp;tosell=0">'.$langs->trans("ProductsNotOnSell").'</a></td><td align="right">'.round($prodser[0][0]).'</td>';
+	$statProducts.= '<td><a href="liste.php?type=0&amp;tosell=0&amp;tobuy=0">'.$langs->trans("ProductsNotOnSell").'</a></td><td align="right">'.round($prodser[0][0]).'</td>';
 	$statProducts.= "</tr>";
 	$statProducts.= "<tr $bc[1]>";
 	$statProducts.= '<td><a href="liste.php?type=0&amp;tosell=1">'.$langs->trans("ProductsOnSell").'</a></td><td align="right">'.round($prodser[0][1]).'</td>';
@@ -131,7 +139,7 @@ if ($conf->product->enabled)
 if ($conf->service->enabled)
 {
 	$statServices = "<tr $bc[0]>";
-	$statServices.= '<td><a href="liste.php?type=1&amp;tosell=0">'.$langs->trans("ServicesNotOnSell").'</a></td><td align="right">'.round($prodser[1][0]).'</td>';
+	$statServices.= '<td><a href="liste.php?type=1&amp;tosell=0&amp;tobuy=0">'.$langs->trans("ServicesNotOnSell").'</a></td><td align="right">'.round($prodser[1][0]).'</td>';
 	$statServices.= "</tr>";
 	$statServices.= "<tr $bc[1]>";
 	$statServices.= '<td><a href="liste.php?type=1&amp;tosell=1">'.$langs->trans("ServicesOnSell").'</a></td><td align="right">'.round($prodser[1][1]).'</td>';
@@ -167,7 +175,7 @@ $max=15;
 $sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.tosell, p.tobuy,";
 $sql.= " p.tms as datem";
 $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-$sql.= " WHERE p.entity = ".$conf->entity;
+$sql.= " WHERE p.entity IN (0,".($mc->share ? $mc->share : $conf->entity).")";
 if (empty($user->rights->produit->hidden) && empty($user->rights->service->hidden)) $sql.=' AND p.hidden=0';
 else
 {

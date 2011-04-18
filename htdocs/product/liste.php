@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +40,8 @@ $sall=GETPOST("sall");
 $type=GETPOST("type","int");
 $search_sale = GETPOST("search_sale");
 $search_categ = GETPOST("search_categ");
+$tosell = GETPOST("tosell");
+$tobuy = GETPOST("tobuy");
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -79,6 +81,13 @@ else
     else $result=restrictedArea($user,'produit|service',$id,'service','','',$fieldid);
 }
 
+// Sharings between entities
+if ($conf->global->MAIN_MODULE_MULTICOMPANY)
+{
+	dol_include_once('/multicompany/class/actions_multicompany.class.php');
+	$mc = new ActionsMulticompany($db);
+	$mc->getEntitySharing('product');
+}
 
 
 /*
@@ -147,7 +156,7 @@ if ($_GET["fourn_id"] > 0)  // The DISTINCT is used to avoid duplicate from this
 	$fourn_id = $_GET["fourn_id"];
 	$sql.= ", ".MAIN_DB_PREFIX."product_fournisseur as pf";
 }
-$sql.= " WHERE p.entity = ".$conf->entity;
+$sql.= " WHERE p.entity IN (0,".($mc->share ? $mc->share : $conf->entity).")";
 if ($search_categ) $sql.= " AND p.rowid = cp.fk_product";	// Join for the needed table to filter by categ
 if (!$user->rights->produit->hidden && !$user->rights->service->hidden)
 {
@@ -160,7 +169,7 @@ else
 }
 if ($sall)
 {
-	$sql.= " AND (p.ref like '%".$db->escape($sall)."%' OR p.label like '%".$db->escape($sall)."%' OR p.description like '%".$db->escape($sall)."%' OR p.note like '%".$db->escape($sall)."%')";
+	$sql.= " AND (p.ref LIKE '%".$db->escape($sall)."%' OR p.label LIKE '%".$db->escape($sall)."%' OR p.description LIKE '%".$db->escape($sall)."%' OR p.note LIKE '%".$db->escape($sall)."%')";
 }
 # if the type is not 1, we show all products (type = 0,2,3)
 if (dol_strlen($type))
@@ -174,13 +183,13 @@ if (dol_strlen($type))
 if ($sref)     $sql.= " AND p.ref like '%".$sref."%'";
 if ($sbarcode) $sql.= " AND p.barcode like '%".$sbarcode."%'";
 if ($snom)     $sql.= " AND p.label like '%".$db->escape($snom)."%'";
-if (isset($_GET["tosell"]) && dol_strlen($_GET["tosell"]) > 0)
+if (isset($tosell) && dol_strlen($tosell) > 0)
 {
-	$sql.= " AND p.tosell = ".$db->escape($_GET["tosell"]);
+	$sql.= " AND p.tosell = ".$db->escape($tosell);
 }
-if (isset($_GET["tobuy"]) && dol_strlen($_GET["tobuy"]) > 0)
+if (isset($tobuy) && dol_strlen($tobuy) > 0)
 {
-    $sql.= " AND p.tobuy = ".$_GET["tobuy"];
+    $sql.= " AND p.tobuy = ".$db->escape($tobuy);
 }
 if (dol_strlen($canvas) > 0)
 {
@@ -213,21 +222,12 @@ if ($resql)
 
 	$i = 0;
 
-	if ($num == 1 && ($sall || $snom || $sref || $sbarcode) && $_POST["action"] != 'list')
+	if ($num == 1 && ($sall || $snom || $sref || $sbarcode) && $action != 'list')
 	{
 		$objp = $db->fetch_object($resql);
 		Header("Location: fiche.php?id=".$objp->rowid);
 		exit;
 	}
-
-	if (isset($_GET["tosell"]) || isset($_POST["tosell"]))
-	{
-		$tosell = (isset($_GET["tosell"])?$_GET["tosell"]:$_POST["tosell"]);
-	}
-    if (isset($_GET["tobuy"]) || isset($_POST["tobuy"]))
-    {
-        $tosell = (isset($_GET["tobuy"])?$_GET["tobuy"]:$_POST["tobuy"]);
-    }
 
 	$helpurl='';
 	if (isset($_GET["type"]) && $_GET["type"] == 0)
