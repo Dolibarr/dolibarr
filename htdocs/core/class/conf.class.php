@@ -195,8 +195,6 @@ class Conf
 				$i++;
 			}
 			
-			$i = 0;
-			
 			// Sharings between entities
 			if ($this->multicompany->enabled)
 			{
