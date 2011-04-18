@@ -1918,14 +1918,6 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 
 			// If dbtable not defined, we use same name for table than module name
 			if (empty($dbtablename)) $dbtablename = $feature;
-			
-			// Sharings between entities
-			if ($conf->global->MAIN_MODULE_MULTICOMPANY)
-			{
-				dol_include_once('/multicompany/class/actions_multicompany.class.php');
-				$mc = new ActionsMulticompany($db);
-				$mc->getEntitySharing($dbtablename);
-			}
 
 			// Check permission for object with entity
 			if (in_array($feature,$check))
@@ -1933,7 +1925,7 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 				$sql = "SELECT dbt.".$dbt_select;
 				$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql.= " WHERE dbt.".$dbt_select." = ".$objectid;
-				$sql.= " AND dbt.entity IN (0,".($mc->share ? $mc->share : $conf->entity).")";
+				$sql.= " AND dbt.entity IN (0,".(! empty($conf->entities[$dbtablename]) ? $conf->entities[$dbtablename] : $conf->entity).")";
 			}
 			else if (in_array($feature,$checksoc))
 			{
@@ -1951,7 +1943,7 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 					$sql.= " WHERE sc.fk_soc = ".$objectid;
 					$sql.= " AND sc.fk_user = ".$user->id;
 					$sql.= " AND sc.fk_soc = s.rowid";
-					$sql.= " AND s.entity IN (0,".($mc->share ? $mc->share : $conf->entity).")";
+					$sql.= " AND s.entity IN (0,".(! empty($conf->entities[$dbtablename]) ? $conf->entities[$dbtablename] : $conf->entity).")";
 				}
 				// If multicompany and internal users with all permissions, check user is in correct entity
 				else if ($conf->global->MAIN_MODULE_MULTICOMPANY)
@@ -1959,7 +1951,7 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 					$sql = "SELECT s.rowid";
 					$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 					$sql.= " WHERE s.rowid = ".$objectid;
-					$sql.= " AND s.entity IN (0,".($mc->share ? $mc->share : $conf->entity).")";
+					$sql.= " AND s.entity IN (0,".(! empty($conf->entities[$dbtablename]) ? $conf->entities[$dbtablename] : $conf->entity).")";
 				}
 			}
 			else if (in_array($feature,$checkother))
@@ -1980,7 +1972,7 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 					$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON dbt.fk_soc = sc.fk_soc AND sc.fk_user = '".$user->id."'";
 					$sql.= " WHERE dbt.rowid = ".$objectid;
 					$sql.= " AND (dbt.fk_soc IS NULL OR sc.fk_soc IS NOT NULL)";	// Contact not linked to a company or to a company of user
-					$sql.= " AND dbt.entity IN (0,".($mc->share ? $mc->share : $conf->entity).")";
+					$sql.= " AND dbt.entity IN (0,".(! empty($conf->entities[$dbtablename]) ? $conf->entities[$dbtablename] : $conf->entity).")";
 				}
 				// If multicompany and internal users with all permissions, check user is in correct entity
 				else if ($conf->global->MAIN_MODULE_MULTICOMPANY)
@@ -1988,7 +1980,7 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 					$sql = "SELECT dbt.rowid";
 					$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 					$sql.= " WHERE dbt.rowid = ".$objectid;
-					$sql.= " AND dbt.entity IN (0,".($mc->share ? $mc->share : $conf->entity).")";
+					$sql.= " AND dbt.entity IN (0,".(! empty($conf->entities[$dbtablename]) ? $conf->entities[$dbtablename] : $conf->entity).")";
 				}
 			}
 			else if (in_array($feature,$checkproject))
@@ -2022,7 +2014,7 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 					$sql.= " WHERE dbt.".$dbt_select." = ".$objectid;
 					$sql.= " AND sc.fk_soc = dbt.".$dbt_keyfield;
 					$sql.= " AND dbt.".$dbt_keyfield." = s.rowid";
-					$sql.= " AND s.entity IN (0,".($mc->share ? $mc->share : $conf->entity).")";
+					$sql.= " AND s.entity IN (0,".(! empty($conf->entities[$dbtablename]) ? $conf->entities[$dbtablename] : $conf->entity).")";
 					$sql.= " AND sc.fk_user = ".$user->id;
 				}
 				// If multicompany and internal users with all permissions, check user is in correct entity
@@ -2031,7 +2023,7 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 					$sql = "SELECT dbt.".$dbt_select;
 					$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 					$sql.= " WHERE dbt.".$dbt_select." = ".$objectid;
-					$sql.= " AND dbt.entity IN (0,".($mc->share ? $mc->share : $conf->entity).")";
+					$sql.= " AND dbt.entity IN (0,".(! empty($conf->entities[$dbtablename]) ? $conf->entities[$dbtablename] : $conf->entity).")";
 				}
 			}
 

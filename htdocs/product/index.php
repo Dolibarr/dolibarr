@@ -41,14 +41,6 @@ $langs->load("products");
 
 $product_static = new Product($db);
 
-// Sharings between entities
-if ($conf->global->MAIN_MODULE_MULTICOMPANY)
-{
-	dol_include_once('/multicompany/class/actions_multicompany.class.php');
-	$mc = new ActionsMulticompany($db);
-	$mc->getEntitySharing('product');
-}
-
 
 /*
  * View
@@ -115,7 +107,7 @@ $prodser[0][0]=$prodser[0][1]=$prodser[1][0]=$prodser[1][1]=0;
 
 $sql = "SELECT COUNT(p.rowid) as total, p.fk_product_type, p.tosell, p.tobuy";
 $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-$sql.= " WHERE p.entity IN (0,".($mc->share ? $mc->share : $conf->entity).")";
+$sql.= " WHERE p.entity IN (0,".(! empty($conf->entities['product']) ? $conf->entities['product'] : $conf->entity).")";
 $sql.= " GROUP BY p.fk_product_type, p.tosell, p.tobuy";
 $result = $db->query($sql);
 while ($objp = $db->fetch_object($result))
@@ -175,7 +167,7 @@ $max=15;
 $sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.tosell, p.tobuy,";
 $sql.= " p.tms as datem";
 $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-$sql.= " WHERE p.entity IN (0,".($mc->share ? $mc->share : $conf->entity).")";
+$sql.= " WHERE p.entity IN (0,".(! empty($conf->entities['product']) ? $conf->entities['product'] : $conf->entity).")";
 if (empty($user->rights->produit->hidden) && empty($user->rights->service->hidden)) $sql.=' AND p.hidden=0';
 else
 {

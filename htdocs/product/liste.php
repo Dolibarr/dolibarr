@@ -81,14 +81,6 @@ else
     else $result=restrictedArea($user,'produit|service');
 }
 
-// Sharings between entities
-if ($conf->global->MAIN_MODULE_MULTICOMPANY)
-{
-	dol_include_once('/multicompany/class/actions_multicompany.class.php');
-	$mc = new ActionsMulticompany($db);
-	$mc->getEntitySharing('product');
-}
-
 
 /*
  * Actions
@@ -156,7 +148,7 @@ if ($_GET["fourn_id"] > 0)  // The DISTINCT is used to avoid duplicate from this
 	$fourn_id = $_GET["fourn_id"];
 	$sql.= ", ".MAIN_DB_PREFIX."product_fournisseur as pf";
 }
-$sql.= " WHERE p.entity IN (0,".($mc->share ? $mc->share : $conf->entity).")";
+$sql.= ' WHERE p.entity IN (0,'.(! empty($conf->entities['product']) ? $conf->entities['product'] : $conf->entity).')';
 if ($search_categ) $sql.= " AND p.rowid = cp.fk_product";	// Join for the needed table to filter by categ
 if (!$user->rights->produit->hidden && !$user->rights->service->hidden)
 {

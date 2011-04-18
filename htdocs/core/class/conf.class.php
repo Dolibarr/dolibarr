@@ -62,6 +62,7 @@ class Conf
 	var $login_method_modules	= array();
 	var $need_smarty			= array();
 	var $modules				= array();
+	var $entities				= array();
 
 	var $logbuffer				= array();
 
@@ -182,6 +183,15 @@ class Conf
 							// Add this module in list of enabled modules
 							$this->modules[]=$module;
 						}
+					}
+					// Sharings between entities
+					else if ($value && preg_match('/^MULTICOMPANY_([A-Z_]+)_SHARING$/',$key,$reg))
+					{
+						dol_include_once('/multicompany/class/actions_multicompany.class.php');
+						$mc = new ActionsMulticompany($db);
+						$module=strtolower($reg[1]);
+						$mc->getEntitySharing($module);
+						$this->entities[$module]=$mc->entities;
 					}
 				}
 				$i++;

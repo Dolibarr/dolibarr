@@ -558,14 +558,6 @@ class CommonObject
 		// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 		$alias = 's';
 		if ($this->element == 'societe') $alias = 'te';
-		
-		// Sharings between entities
-		if ($conf->global->MAIN_MODULE_MULTICOMPANY && $this->ismultientitymanaged == 1)
-		{
-			dol_include_once('/multicompany/class/actions_multicompany.class.php');
-			$mc = new ActionsMulticompany($db);
-			$mc->getEntitySharing($this->element);
-		}
 
 		$sql = "SELECT MAX(te.".$fieldid.")";
 		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as te";
@@ -575,7 +567,7 @@ class CommonObject
 		if (!$this->isnolinkedbythird && !$user->rights->societe->client->voir) $sql.= " AND sc.fk_user = " .$user->id;
 		if (! empty($filter)) $sql.=" AND ".$filter;
 		if ($this->ismultientitymanaged == 2 || ($this->element != 'societe' && !$this->isnolinkedbythird && !$user->rights->societe->client->voir)) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to entity
-		if ($this->ismultientitymanaged == 1) $sql.= ' AND te.entity IN (0,'.($mc->share ? $mc->share : $conf->entity).')';
+		if ($this->ismultientitymanaged == 1) $sql.= ' AND te.entity IN (0,'.(! empty($conf->entities[$this->element]) ? $conf->entities[$this->element] : $conf->entity).')';
 
 		//print $sql."<br>";
 		$result = $this->db->query($sql) ;
@@ -596,7 +588,7 @@ class CommonObject
 		if (!$this->isnolinkedbythird && !$user->rights->societe->client->voir) $sql.= " AND sc.fk_user = " .$user->id;
 		if (isset($filter)) $sql.=" AND ".$filter;
 		if ($this->ismultientitymanaged == 2 || ($this->element != 'societe' && !$this->isnolinkedbythird && !$user->rights->societe->client->voir)) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to entity
-		if ($this->ismultientitymanaged == 1) $sql.= ' AND te.entity IN (0,'.($mc->share ? $mc->share : $conf->entity).')';
+		if ($this->ismultientitymanaged == 1) $sql.= ' AND te.entity IN (0,'.(! empty($conf->entities[$this->element]) ? $conf->entities[$this->element] : $conf->entity).')';
 		// Rem: Bug in some mysql version: SELECT MIN(rowid) FROM llx_socpeople WHERE rowid > 1 when one row in database with rowid=1, returns 1 instead of null
 
 		//print $sql."<br>";
