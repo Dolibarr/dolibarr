@@ -223,7 +223,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 					$nexY+=2;    // Passe espace entre les lignes
 
 					// Cherche nombre de lignes a venir pour savoir si place suffisante
-					if ($i < ($nblines - 1))	// If it's not last line
+					if ($i < ($nblines - 1) && empty($hidedesc))	// If it's not last line
 					{
 						//on recupere la description du produit suivant
 						$follow_descproduitservice = $object->lines[$i+1]->desc;

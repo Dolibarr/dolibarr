@@ -53,14 +53,17 @@ if (GETPOST('mesg','int',1) && isset($_SESSION['message'])) $mesg=$_SESSION['mes
 $sall=isset($_GET['sall'])?trim($_GET['sall']):trim($_POST['sall']);
 $projectid=isset($_GET['projectid'])?$_GET['projectid']:0;
 
+$id=(GETPOST('id')?GETPOST("id"):GETPOST("facid"));  // For backward compatibility
+$ref=GETPOST('ref');
+$socid=GETPOST('socid');
+$action=GETPOST('action');
+$confirm=GETPOST('confirm');
+$lineid=GETPOST('lineid');
+
 // Security check
-$socid=GETPOST("socid");
-$facid=GETPOST("id");
-if (empty($facid)) $facid=GETPOST("facid");    // For backward compatibility
-$ref=GETPOST("ref");
 $fieldid = isset($_GET["ref"])?'facnumber':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'facture', $facid,'','','fk_soc',$fieldid);
+$result = restrictedArea($user, 'facture', $id,'','','fk_soc',$fieldid);
 
 // Nombre de ligne pour choix de produit/service predefinis
 $NBLINES=4;
@@ -92,7 +95,7 @@ if (! empty($object->hooks))
 }
 
 // Action clone object
-if ($_REQUEST["action"] == 'confirm_clone' && $_REQUEST['confirm'] == 'yes')
+if ($action == 'confirm_clone' && $confirm == 'yes')
 {
 	if (1==0 && empty($_REQUEST["clone_content"]) && empty($_REQUEST["clone_receivers"]))
 	{
@@ -100,7 +103,7 @@ if ($_REQUEST["action"] == 'confirm_clone' && $_REQUEST['confirm'] == 'yes')
 	}
 	else
 	{
-		$result=$object->createFromClone($facid);
+		$result=$object->createFromClone($id);
 		if ($result > 0)
 		{
 			header("Location: ".$_SERVER['PHP_SELF'].'?facid='.$result);
@@ -109,21 +112,21 @@ if ($_REQUEST["action"] == 'confirm_clone' && $_REQUEST['confirm'] == 'yes')
 		else
 		{
 			$mesg=$object->error;
-			$_GET['action']='';
+			$action='';
 		}
 	}
 }
 
-if ($_GET['action'] == 'reopen' && $user->rights->facture->creer)
+if ($action == 'reopen' && $user->rights->facture->creer)
 {
-	$result = $object->fetch($facid);
+	$result = $object->fetch($id);
 	if ($object->statut == 2
 	|| ($object->statut == 3 && $object->close_code != 'replaced'))
 	{
 		$result = $object->set_unpaid($user);
 		if ($result > 0)
 		{
-			Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$facid);
+			Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id);
 			exit;
 		}
 		else
@@ -134,11 +137,11 @@ if ($_GET['action'] == 'reopen' && $user->rights->facture->creer)
 }
 
 // Suppression de la facture
-if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes' && $user->rights->facture->supprimer)
+if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->facture->supprimer)
 {
 	if ($user->rights->facture->supprimer)
 	{
-		$result = $object->fetch($facid);
+		$result = $object->fetch($id);
 		$result = $object->delete();
 		if ($result > 0)
 		{
@@ -155,11 +158,11 @@ if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes' && 
 /*
  *  Supprime une ligne produit AVEC ou SANS confirmation
  */
-if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes')
+if ($action == 'confirm_deleteline' && $confirm == 'yes')
 {
 	if ($user->rights->facture->creer)
 	{
-		$object->fetch($facid);
+		$object->fetch($id);
 		$object->fetch_thirdparty();
 
 		$result = $object->deleteline($_GET['lineid'], $user);
@@ -178,20 +181,20 @@ if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes'
 			$result=facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
 			if ($result > 0)
 			{
-				Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$facid);
+				Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id);
 				exit;
 			}
 		}
 		else
 		{
 			$mesg='<div clas="error">'.$object->error.'</div>';
-			$_GET['action']='';
+			$action='';
 		}
 	}
 }
 
 // Supprime affectation d'un avoir a la facture
-if ($_GET['action'] == 'unlinkdiscount')
+if ($action == 'unlinkdiscount')
 {
 	if ($user->rights->facture->creer)
 	{
@@ -202,9 +205,9 @@ if ($_GET['action'] == 'unlinkdiscount')
 }
 
 // Validation
-if ($_GET['action'] == 'valid')
+if ($action == 'valid')
 {
-	$object->fetch($facid);
+	$object->fetch($id);
 
 	// On verifie signe facture
 	if ($object->type == 2)
@@ -213,7 +216,7 @@ if ($_GET['action'] == 'valid')
 		if ($object->total_ht >= 0)
 		{
 			$mesg='<div class="error">'.$langs->trans("ErrorInvoiceAvoirMustBeNegative").'</div>';
-			$_GET['action']='';
+			$action='';
 		}
 	}
 	else
@@ -222,60 +225,60 @@ if ($_GET['action'] == 'valid')
 		if ($object->total_ht < 0)
 		{
 			$mesg='<div class="error">'.$langs->trans("ErrorInvoiceOfThisTypeMustBePositive").'</div>';
-			$_GET['action']='';
+			$action='';
 		}
 	}
 }
 
-if ($_POST['action'] == 'classin')
+if ($action == 'classin')
 {
-	$object->fetch($facid);
+	$object->fetch($id);
 	$object->setProject($_POST['projectid']);
 }
 
-if ($_POST['action'] == 'setmode')
+if ($action == 'setmode')
 {
-	$object->fetch($facid);
+	$object->fetch($id);
 	$result=$object->mode_reglement($_POST['mode_reglement_id']);
 	if ($result < 0) dol_print_error($object->db,$object->error);
 }
 
-if ($_POST['action'] == 'setinvoicedate')
+if ($action == 'setinvoicedate')
 {
-	$object->fetch($facid);
+	$object->fetch($id);
 	$object->date=dol_mktime(12,0,0,$_POST['invoicedatemonth'],$_POST['invoicedateday'],$_POST['invoicedateyear']);
 	if ($object->date_lim_reglement < $object->date) $object->date_lim_reglement=$object->date;
 	$result=$object->update($user);
 	if ($result < 0) dol_print_error($object->db,$object->error);
 }
 
-if ($_POST['action'] == 'setpaymentterm')
+if ($action == 'setpaymentterm')
 {
-    $object->fetch($facid);
+    $object->fetch($id);
     $date_lim_reglement=dol_mktime(12,0,0,$_POST['paymenttermmonth'],$_POST['paymenttermday'],$_POST['paymenttermyear']);
     $result=$object->cond_reglement($object->cond_reglement_id,$date_lim_reglement);
     if ($result < 0) dol_print_error($object->db,$object->error);
 }
 
-if ($_POST['action'] == 'setconditions')
+if ($action == 'setconditions')
 {
-	$object->fetch($facid);
+	$object->fetch($id);
 	$result=$object->cond_reglement($_POST['cond_reglement_id']);
 	if ($result < 0) dol_print_error($object->db,$object->error);
 }
 
-if ($_REQUEST['action'] == 'setremisepercent' && $user->rights->facture->creer)
+if ($action == 'setremisepercent' && $user->rights->facture->creer)
 {
-	$object->fetch($facid);
+	$object->fetch($id);
 	$result = $object->set_remise($user, $_POST['remise_percent']);
 }
 
-if ($_POST['action'] == "setabsolutediscount" && $user->rights->facture->creer)
+if ($action == "setabsolutediscount" && $user->rights->facture->creer)
 {
 	// POST[remise_id] ou POST[remise_id_for_payment]
 	if (! empty($_POST["remise_id"]))
 	{
-		$ret=$object->fetch($facid);
+		$ret=$object->fetch($id);
 		if ($ret > 0)
 		{
 			$result=$object->insert_discount($_POST["remise_id"]);
@@ -295,7 +298,7 @@ if ($_POST['action'] == "setabsolutediscount" && $user->rights->facture->creer)
 		$discount = new DiscountAbsolute($db);
 		$discount->fetch($_POST["remise_id_for_payment"]);
 
-		$result=$discount->link_to_invoice(0,$facid);
+		$result=$discount->link_to_invoice(0,$id);
 		if ($result < 0)
 		{
 			$mesg='<div class="error">'.$discount->error.'</div>';
@@ -303,16 +306,16 @@ if ($_POST['action'] == "setabsolutediscount" && $user->rights->facture->creer)
 	}
 }
 
-if ($_POST['action'] == 'set_ref_client')
+if ($action == 'set_ref_client')
 {
-	$object->fetch($facid);
+	$object->fetch($id);
 	$object->set_ref_client($_POST['ref_client']);
 }
 
 // Classify to validated
-if ($_REQUEST['action'] == 'confirm_valid' && $_REQUEST['confirm'] == 'yes' && $user->rights->facture->valider)
+if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->facture->valider)
 {
-	$object->fetch($facid);
+	$object->fetch($id);
 	$object->fetch_thirdparty();
 
 	$result = $object->validate($user);
@@ -337,9 +340,9 @@ if ($_REQUEST['action'] == 'confirm_valid' && $_REQUEST['confirm'] == 'yes' && $
 }
 
 // Repasse la facture en mode brouillon (unvalidate)
-if ($_GET['action'] == 'modif' && $user->rights->facture->unvalidate)
+if ($action == 'modif' && $user->rights->facture->unvalidate)
 {
-	$object->fetch($facid);
+	$object->fetch($id);
 	$object->fetch_thirdparty();
 
 	// On verifie si la facture a des paiements
@@ -390,15 +393,15 @@ if ($_GET['action'] == 'modif' && $user->rights->facture->unvalidate)
 }
 
 // Classify "paid"
-if ($_REQUEST['action'] == 'confirm_paid' && $_REQUEST['confirm'] == 'yes' && $user->rights->facture->paiement)
+if ($action == 'confirm_paid' && $confirm == 'yes' && $user->rights->facture->paiement)
 {
-	$object->fetch($facid);
+	$object->fetch($id);
 	$result = $object->set_paid($user);
 }
 // Classif  "paid partialy"
-if ($_REQUEST['action'] == 'confirm_paid_partially' && $_REQUEST['confirm'] == 'yes' && $user->rights->facture->paiement)
+if ($action == 'confirm_paid_partially' && $confirm == 'yes' && $user->rights->facture->paiement)
 {
-	$object->fetch($facid);
+	$object->fetch($id);
 	$close_code=$_POST["close_code"];
 	$close_note=$_POST["close_note"];
 	if ($close_code)
@@ -411,9 +414,9 @@ if ($_REQUEST['action'] == 'confirm_paid_partially' && $_REQUEST['confirm'] == '
 	}
 }
 // Classify "abandoned"
-if ($_REQUEST['action'] == 'confirm_canceled' && $_REQUEST['confirm'] == 'yes')
+if ($action == 'confirm_canceled' && $confirm == 'yes')
 {
-	$object->fetch($facid);
+	$object->fetch($id);
 	$close_code=$_POST["close_code"];
 	$close_note=$_POST["close_note"];
 	if ($close_code)
@@ -427,11 +430,11 @@ if ($_REQUEST['action'] == 'confirm_canceled' && $_REQUEST['confirm'] == 'yes')
 }
 
 // Convertir en reduc
-if ($_REQUEST['action'] == 'confirm_converttoreduc' && $_REQUEST['confirm'] == 'yes' && $user->rights->facture->creer)
+if ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $user->rights->facture->creer)
 {
 	$db->begin();
 
-	$object->fetch($facid);
+	$object->fetch($id);
 	$object->fetch_thirdparty();
 	$object->fetch_lines();
 
@@ -503,7 +506,7 @@ if ($_REQUEST['action'] == 'confirm_converttoreduc' && $_REQUEST['confirm'] == '
 /*
  * Insert new invoice in database
  */
-if ($_POST['action'] == 'add' && $user->rights->facture->creer)
+if ($action == 'add' && $user->rights->facture->creer)
 {
 	$object->socid=GETPOST('socid');
 
@@ -547,8 +550,8 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 			$object->fk_facture_source = $_POST['fac_replacement'];
 			$object->type              = 1;
 
-			$facid=$object->createFromCurrent($user);
-			if ($facid <= 0) $mesg=$object->error;
+			$id=$object->createFromCurrent($user);
+			if ($id <= 0) $mesg=$object->error;
 		}
 	}
 
@@ -592,7 +595,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 			$object->fk_facture_source = $_POST['fac_avoir'];
 			$object->type              = 2;
 
-			$facid = $object->create($user);
+			$id = $object->create($user);
 
 			// Add predefined lines
 			for ($i = 1; $i <= $NBLINES; $i++)
@@ -603,7 +606,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 					$product->fetch($_POST['idprod'.$i]);
 					$startday=dol_mktime(12, 0 , 0, $_POST['date_start'.$i.'month'], $_POST['date_start'.$i.'day'], $_POST['date_start'.$i.'year']);
 					$endday=dol_mktime(12, 0 , 0, $_POST['date_end'.$i.'month'], $_POST['date_end'.$i.'day'], $_POST['date_end'.$i.'year']);
-					$result=$object->addline($facid,$product->description,$product->price, $_POST['qty'.$i], $product->tva_tx, $product->localtax1_tx, $product->localtax2_tx, $_POST['idprod'.$i], $_POST['remise_percent'.$i], $startday, $endday, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type);
+					$result=$object->addline($id,$product->description,$product->price, $_POST['qty'.$i], $product->tva_tx, $product->localtax1_tx, $product->localtax2_tx, $_POST['idprod'.$i], $_POST['remise_percent'.$i], $startday, $endday, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type);
 				}
 			}
 		}
@@ -633,7 +636,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 			// Source facture
 			$object->fac_rec        = $_POST['fac_rec'];
 
-			$facid = $object->create($user);
+			$id = $object->create($user);
 		}
 	}
 
@@ -684,9 +687,9 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 				$object->origin    = $_POST['origin'];
 				$object->origin_id = $_POST['originid'];
 
-				$facid = $object->create($user);
+				$id = $object->create($user);
 
-				if ($facid > 0)
+				if ($id > 0)
 				{
 					dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
 
@@ -723,7 +726,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 		                    }
 
 							$result = $object->addline(
-							$facid,
+							$id,
 							$desc,
 							$lines[$i]->subprice,
 							$lines[$i]->qty,
@@ -764,7 +767,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 		                {
 		                	foreach($object->hooks as $module)
 		                	{
-		                		$res = $module->createfrom($srcobject,$facid,$object->element);
+		                		$res = $module->createfrom($srcobject,$id,$object->element);
 		                		if ($res < 0) $error++;
 		                	}
 		                }
@@ -784,7 +787,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 			// If some invoice's lines already known
 			else
 			{
-				$facid = $object->create($user);
+				$id = $object->create($user);
 
 				for ($i = 1; $i <= $NBLINES; $i++)
 				{
@@ -794,7 +797,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 						$product->fetch($_POST['idprod'.$i]);
 						$startday=dol_mktime(12, 0 , 0, $_POST['date_start'.$i.'month'], $_POST['date_start'.$i.'day'], $_POST['date_start'.$i.'year']);
 						$endday=dol_mktime(12, 0 , 0, $_POST['date_end'.$i.'month'], $_POST['date_end'.$i.'day'], $_POST['date_end'.$i.'year']);
-						$result=$object->addline($facid,$product->description,$product->price, $_POST['qty'.$i], $product->tva_tx, $product->localtax1_tx, $product->localtax2_tx, $_POST['idprod'.$i], $_POST['remise_percent'.$i], $startday, $endday, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type);
+						$result=$object->addline($id,$product->description,$product->price, $_POST['qty'.$i], $product->tva_tx, $product->localtax1_tx, $product->localtax2_tx, $_POST['idprod'.$i], $_POST['remise_percent'.$i], $startday, $endday, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type);
 					}
 				}
 			}
@@ -802,10 +805,10 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 	}
 
 	// End of object creation, we show it
-	if ($facid > 0 && ! $error)
+	if ($id > 0 && ! $error)
 	{
 		$db->commit();
-		Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$facid);
+		Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id);
 		exit;
 	}
 	else
@@ -819,7 +822,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 }
 
 // Add a new line
-if (($_POST['action'] == 'addline' || $_POST['action'] == 'addline_predef') && $user->rights->facture->creer)
+if (($action == 'addline' || $action == 'addline_predef') && $user->rights->facture->creer)
 {
 	$result=0;
 
@@ -845,7 +848,7 @@ if (($_POST['action'] == 'addline' || $_POST['action'] == 'addline_predef') && $
 	}
 	if ($result >= 0 && ( ($_POST['np_price']!='' && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprod'] ) )
 	{
-		$ret=$object->fetch($facid);
+		$ret=$object->fetch($id);
 		if ($ret < 0)
 		{
 			dol_print_error($db,$object->error);
@@ -941,7 +944,7 @@ if (($_POST['action'] == 'addline' || $_POST['action'] == 'addline_predef') && $
 			{
 				// Insert line
 				$result = $object->addline(
-				$facid,
+				$id,
 				$desc,
 				$pu_ht,
 				$_POST['qty'],
@@ -994,9 +997,9 @@ if (($_POST['action'] == 'addline' || $_POST['action'] == 'addline_predef') && $
 	$_POST["action"]='';
 }
 
-if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST['save'] == $langs->trans('Save'))
+if ($action == 'updateligne' && $user->rights->facture->creer && $_POST['save'] == $langs->trans('Save'))
 {
-	if (! $object->fetch($facid) > 0) dol_print_error($db);
+	if (! $object->fetch($id) > 0) dol_print_error($db);
 	$object->fetch_thirdparty();
 
 	// Clean parameters
@@ -1077,9 +1080,9 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 	}
 }
 
-if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST['cancel'] == $langs->trans('Cancel'))
+if ($action == 'updateligne' && $user->rights->facture->creer && $_POST['cancel'] == $langs->trans('Cancel'))
 {
-	Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$facid);   // Pour reaffichage de la fiche en cours d'edition
+	Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id);   // Pour reaffichage de la fiche en cours d'edition
 	exit;
 }
 
@@ -1088,9 +1091,9 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
  * Ordonnancement des lignes
  */
 
-if ($_GET['action'] == 'up' && $user->rights->facture->creer)
+if ($action == 'up' && $user->rights->facture->creer)
 {
-	$object->fetch($facid);
+	$object->fetch($id);
 	$object->fetch_thirdparty();
 	$object->line_up($_GET['rowid']);
 
@@ -1110,9 +1113,9 @@ if ($_GET['action'] == 'up' && $user->rights->facture->creer)
 	exit;
 }
 
-if ($_GET['action'] == 'down' && $user->rights->facture->creer)
+if ($action == 'down' && $user->rights->facture->creer)
 {
-	$object->fetch($facid);
+	$object->fetch($id);
 	$object->fetch_thirdparty();
 	$object->line_down($_GET['rowid']);
 
@@ -1169,13 +1172,13 @@ if (! empty($_POST['removedfile']))
 /*
  * Send mail
  */
-if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_POST['cancel'])
+if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_POST['cancel'])
 {
 	$langs->load('mails');
 
 	$actiontypecode='';$subject='';$actionmsg='';$actionmsg2='';
 
-	$result=$object->fetch($facid);
+	$result=$object->fetch($id);
 	$result=$object->fetch_thirdparty();
 
 	if ($result > 0)
@@ -1216,7 +1219,7 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['a
 				$sendtocc = $_POST['sendtocc'];
 				$deliveryreceipt = $_POST['deliveryreceipt'];
 
-				if ($_POST['action'] == 'send')
+				if ($action == 'send')
 				{
 					if (dol_strlen($_POST['subject'])) $subject = $_POST['subject'];
 					else $subject = $langs->transnoentities('Bill').' '.$object->ref;
@@ -1230,7 +1233,7 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['a
 					}
 					//$actionmsg2=$langs->transnoentities('Action'.$actiontypecode);
 				}
-				if ($_POST['action'] == 'relance')
+				if ($action == 'relance')
 				{
 					if (dol_strlen($_POST['subject'])) $subject = $_POST['subject'];
 					else $subject = $langs->transnoentities('Relance facture '.$object->ref);
@@ -1334,7 +1337,7 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['a
 		dol_syslog('Impossible de lire les donnees de la facture. Le fichier facture n\'a peut-etre pas ete genere.');
 	}
 
-	$_GET['action'] = 'presend';
+	$action = 'presend';
 }
 
 /*
@@ -1342,7 +1345,7 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['a
  */
 if (GETPOST('action') == 'builddoc')	// En get ou en post
 {
-	$object->fetch($facid);
+	$object->fetch($id);
 	$object->fetch_thirdparty();
 
 	if (GETPOST('model'))
@@ -1391,7 +1394,7 @@ $now=dol_now();
  * Mode creation
  *
  **********************************************************************/
-if ($_GET['action'] == 'create')
+if ($action == 'create')
 {
 	$facturestatic=new Facture($db);
 
@@ -1827,10 +1830,6 @@ else
 	/*
 	 * Show object in view mode
 	 */
-
-	$id = $facid;
-	$ref= GETPOST('ref');
-
 	if ($id > 0 || ! empty($ref))
 	{
 		if ($mesg) print $mesg.'<br>';
@@ -1878,7 +1877,7 @@ else
 			dol_fiche_head($head, 'compta', $langs->trans('InvoiceCustomer'), 0, 'bill');
 
 			// Confirmation de la conversion de l'avoir en reduc
-			if ($_GET['action'] == 'converttoreduc')
+			if ($action == 'converttoreduc')
 			{
 				$text=$langs->trans('ConfirmConvertToReduc');
 				$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?facid='.$object->id,$langs->trans('ConvertToReduc'),$text,'confirm_converttoreduc','',"yes",2);
@@ -1886,7 +1885,7 @@ else
 			}
 
 			// Confirmation to delete invoice
-			if ($_GET['action'] == 'delete')
+			if ($action == 'delete')
 			{
 				$text=$langs->trans('ConfirmDeleteBill');
 				$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?facid='.$object->id,$langs->trans('DeleteBill'),$text,'confirm_delete','',0,1);
@@ -1894,7 +1893,7 @@ else
 			}
 
 			// Confirmation de la validation
-			if ($_GET['action'] == 'valid')
+			if ($action == 'valid')
 			{
 				// on verifie si l'objet est en numerotation provisoire
 				$objectref = substr($object->ref, 1, 4);
@@ -1928,12 +1927,12 @@ else
 			}
 
 			// Confirmation du classement paye
-			if ($_GET['action'] == 'paid' && $resteapayer <= 0)
+			if ($action == 'paid' && $resteapayer <= 0)
 			{
 				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$object->id,$langs->trans('ClassifyPaid'),$langs->trans('ConfirmClassifyPaidBill',$object->ref),'confirm_paid','',"yes",1);
 				if ($ret == 'html') print '<br>';
 			}
-			if ($_GET['action'] == 'paid' && $resteapayer > 0)
+			if ($action == 'paid' && $resteapayer > 0)
 			{
 				// Code
 				$i=0;
@@ -1965,7 +1964,7 @@ else
 			}
 
 			// Confirmation du classement abandonne
-			if ($_GET['action'] == 'canceled')
+			if ($action == 'canceled')
 			{
 				// S'il y a une facture de remplacement pas encore validee (etat brouillon),
 				// on ne permet pas de classer abandonner la facture.
@@ -2007,7 +2006,7 @@ else
 			}
 
 			// Confirmation de la suppression d'une ligne produit
-			if ($_GET['action'] == 'ask_deleteline')
+			if ($action == 'ask_deleteline')
 			{
 				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$object->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 'no', 1);
 				if ($ret == 'html') print '<br>';
@@ -2016,7 +2015,7 @@ else
 			/*
 			 * TODO ajout temporaire pour test en attendant la migration en template
 			 */
-			if ($_GET['action'] == 'ask_deletemilestone')
+			if ($action == 'ask_deletemilestone')
 			{
 				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$object->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteMilestone'), $langs->trans('ConfirmDeleteMilestone'), 'confirm_deletemilestone','',0,1);
 				if ($ret == 'html') print '<br>';
@@ -2196,13 +2195,13 @@ else
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('Date');
 			print '</td>';
-			if ($object->type != 2 && $_GET['action'] != 'editinvoicedate' && $object->brouillon && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editinvoicedate&amp;facid='.$object->id.'">'.img_edit($langs->trans('SetDate'),1).'</a></td>';
+			if ($object->type != 2 && $action != 'editinvoicedate' && $object->brouillon && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editinvoicedate&amp;facid='.$object->id.'">'.img_edit($langs->trans('SetDate'),1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="3">';
 
 			if ($object->type != 2)
 			{
-				if ($_GET['action'] == 'editinvoicedate')
+				if ($action == 'editinvoicedate')
 				{
 					$html->form_date($_SERVER['PHP_SELF'].'?facid='.$object->id,$object->date,'invoicedate');
 				}
@@ -2392,12 +2391,12 @@ else
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('DateMaxPayment');
 			print '</td>';
-			if ($object->type != 2 && $_GET['action'] != 'editpaymentterm' && $object->brouillon && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editpaymentterm&amp;facid='.$object->id.'">'.img_edit($langs->trans('SetDate'),1).'</a></td>';
+			if ($object->type != 2 && $action != 'editpaymentterm' && $object->brouillon && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editpaymentterm&amp;facid='.$object->id.'">'.img_edit($langs->trans('SetDate'),1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="3">';
 			if ($object->type != 2)
 			{
-				if ($_GET['action'] == 'editpaymentterm')
+				if ($action == 'editpaymentterm')
 				{
 					$html->form_date($_SERVER['PHP_SELF'].'?facid='.$object->id,$object->date_lim_reglement,'paymentterm');
 				}
@@ -2418,12 +2417,12 @@ else
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('PaymentConditionsShort');
 			print '</td>';
-			if ($object->type != 2 && $_GET['action'] != 'editconditions' && $object->brouillon && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;facid='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+			if ($object->type != 2 && $action != 'editconditions' && $object->brouillon && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;facid='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="3">';
 			if ($object->type != 2)
 			{
-				if ($_GET['action'] == 'editconditions')
+				if ($action == 'editconditions')
 				{
 					$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id,$object->cond_reglement_id,'cond_reglement_id');
 				}
@@ -2443,10 +2442,10 @@ else
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('PaymentMode');
 			print '</td>';
-			if ($_GET['action'] != 'editmode' && $object->brouillon && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;facid='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+			if ($action != 'editmode' && $object->brouillon && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;facid='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="3">';
-			if ($_GET['action'] == 'editmode')
+			if ($action == 'editmode')
 			{
 				$html->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id,$object->mode_reglement_id,'mode_reglement_id');
 			}
@@ -2497,7 +2496,7 @@ else
 				print '<table class="nobordernopadding" width="100%"><tr><td>';
 				print $langs->trans('Project');
 				print '</td>';
-				if ($_GET['action'] != 'classin')
+				if ($action != 'classin')
 				{
 					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classin&amp;facid='.$object->id.'">';
 					print img_edit($langs->trans('SetProject'),1);
@@ -2506,7 +2505,7 @@ else
 				print '</tr></table>';
 
 				print '</td><td colspan="3">';
-				if ($_GET['action'] == 'classin')
+				if ($action == 'classin')
 				{
 					$html->form_project($_SERVER['PHP_SELF'].'?facid='.$object->id,$object->socid,$object->fk_project,'projectid');
 				}
@@ -2534,12 +2533,12 @@ else
 			print '<table id="tablelines" class="noborder" width="100%">';
 
 		    // Show object lines
-		    if (! empty($object->lines)) $object->printObjectLines(GETPOST('action'),$mysoc,$soc,GETPOST('lineid'),1);
+		    if (! empty($object->lines)) $object->printObjectLines($action,$mysoc,$soc,$lineid,1);
 
 			/*
 			 * Form to add new line
 			 */
-			if ($object->statut == 0 && $user->rights->facture->creer && $_GET['action'] <> 'valid' && $_GET['action'] <> 'editline')
+			if ($object->statut == 0 && $user->rights->facture->creer && $action <> 'valid' && $action <> 'editline')
 			{
 				$var=true;
 
@@ -2572,9 +2571,9 @@ else
 			 * Boutons actions
 			 */
 
-			if ($_GET['action'] != 'prerelance' && $_GET['action'] != 'presend')
+			if ($action != 'prerelance' && $action != 'presend')
 			{
-				if ($user->societe_id == 0 && $_GET['action'] <> 'valid' && $_GET['action'] <> 'editline')
+				if ($user->societe_id == 0 && $action <> 'valid' && $action <> 'editline')
 				{
 					print '<div class="tabsAction">';
 
@@ -2773,7 +2772,7 @@ else
 			}
 
 
-			if ($_GET['action'] != 'prerelance' && $_GET['action'] != 'presend')
+			if ($action != 'prerelance' && $action != 'presend')
 			{
 				print '<table width="100%"><tr><td width="50%" valign="top">';
 				print '<a name="builddoc"></a>'; // ancre
@@ -2826,13 +2825,13 @@ else
 				 * Affiche formulaire mail
 				 */
 
-				// By default if $_GET['action']=='presend'
+				// By default if $action=='presend'
 				$titreform='SendBillByMail';
 				$topicmail='SendBillRef';
 				$action='send';
 				$modelmail='facture_send';
 
-				if ($_GET['action'] == 'prerelance')	// For backward compatibility
+				if ($action == 'prerelance')	// For backward compatibility
 				{
 					$titrefrom='SendReminderBillByMail';
 					$topicmail='SendReminderBillRef';

@@ -50,6 +50,7 @@ $ref=GETPOST('ref');
 $socid=GETPOST('socid');
 $action=GETPOST('action');
 $confirm=GETPOST('confirm');
+$lineid=GETPOST('lineid');
 
 $sall=GETPOST("sall");
 $mesg=(GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
@@ -1429,7 +1430,7 @@ if ($id > 0 || ! empty($ref))
 	print '<table id="tablelines" class="noborder" width="100%">';
 
 	// Show object lines
-	if (! empty($object->lines)) $object->printObjectLines(GETPOST('action'),$mysoc,$soc,GETPOST('lineid'));
+	if (! empty($object->lines)) $object->printObjectLines($action,$mysoc,$soc,$lineid);
 	
 	//print '<table id="tablelines" class="noborder" width="100%">';
 
@@ -1438,7 +1439,7 @@ if ($id > 0 || ! empty($ref))
 	 */
 	if ($object->statut == 0 && $user->rights->propale->creer)
 	{
-		if ($_GET['action'] != 'editline')
+		if ($action != 'editline')
 		{
 			$var=true;
 
@@ -1471,7 +1472,7 @@ if ($id > 0 || ! empty($ref))
 	print '</div>';
 	print "\n";
 
-	if ($_GET['action'] == 'statut')
+	if ($action == 'statut')
 	{
 		/*
 		 * Formulaire cloture (signe ou non)
@@ -1504,11 +1505,11 @@ if ($id > 0 || ! empty($ref))
 	/*
 	 * Boutons Actions
 	 */
-	if ($_GET['action'] != 'presend')
+	if ($action != 'presend')
 	{
 		print '<div class="tabsAction">';
 
-		if ($_GET['action'] != 'statut' && $_GET['action'] <> 'editline')
+		if ($action != 'statut' && $action <> 'editline')
 		{
 			// Validate
 			if ($object->statut == 0 && $user->rights->propale->valider)
@@ -1584,7 +1585,7 @@ if ($id > 0 || ! empty($ref))
 		print "<br>\n";
 	}
 
-	if ($_GET['action'] != 'presend')
+	if ($action != 'presend')
 	{
 		print '<table width="100%"><tr><td width="50%" valign="top">';
 		print '<a name="builddoc"></a>'; // ancre
@@ -1639,7 +1640,7 @@ if ($id > 0 || ! empty($ref))
 	 * Action presend
 	 *
 	 */
-	if ($_GET['action'] == 'presend')
+	if ($action == 'presend')
 	{
 		$ref = dol_sanitizeFileName($object->ref);
 		$file = $conf->propale->dir_output . '/' . $ref . '/' . $ref . '.pdf';

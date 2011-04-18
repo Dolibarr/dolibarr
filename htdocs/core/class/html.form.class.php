@@ -948,7 +948,7 @@ class Form
         {
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND pl.lang='". $langs->getDefaultLang() ."'";
         }
-        $sql.= " WHERE p.entity = ".$conf->entity;
+        $sql.= ' WHERE p.entity IN (0,'.(! empty($conf->entities['product']) ? $conf->entities['product'] : $conf->entity).')';
         if (empty($user->rights->produit->hidden) && empty($user->rights->service->hidden)) $sql.=' AND p.hidden=0';
         else
         {
@@ -974,8 +974,8 @@ class Form
         {
             if ($filterkey && $filterkey != '')
             {
-                $sql.=" AND (p.ref like '".$filterkey."%' OR p.label like '".$filterkey."%'";
-                if ($conf->global->MAIN_MULTILANGS) $sql.=" OR pl.label like '".$filterkey."%'";
+                $sql.=" AND (p.ref LIKE '".$filterkey."%' OR p.label LIKE '".$filterkey."%'";
+                if ($conf->global->MAIN_MULTILANGS) $sql.=" OR pl.label LIKE '".$filterkey."%'";
                 $sql.=")";
             }
         }
@@ -983,8 +983,8 @@ class Form
         {
             if ($filterkey && $filterkey != '')
             {
-                $sql.=" AND (p.ref like '%".$filterkey."%' OR p.label like '%".$filterkey."%'";
-                if ($conf->global->MAIN_MULTILANGS) $sql.=" OR pl.label like '%".$filterkey."%'";
+                $sql.=" AND (p.ref LIKE '%".$filterkey."%' OR p.label LIKE '%".$filterkey."%'";
+                if ($conf->global->MAIN_MULTILANGS) $sql.=" OR pl.label LIKE '%".$filterkey."%'";
                 $sql.=")";
             }
         }

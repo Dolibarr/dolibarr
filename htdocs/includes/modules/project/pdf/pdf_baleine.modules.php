@@ -240,10 +240,10 @@ class pdf_baleine extends ModelePDFProjects
 					$nexY+=2;    // Passe espace entre les lignes
 
 					// Cherche nombre de lignes a venir pour savoir si place suffisante
-					if ($i < ($nblignes - 1))	// If it's not last line
+					if ($i < ($nblignes - 1) && empty($hidedesc))	// If it's not last line
 					{
 						//on recupere la description du produit suivant
-						$follow_descproduitservice = $object->lines[$i+1]->label;
+						$follow_descproduitservice = $object->lines[$i+1]->desc;
 						//on compte le nombre de ligne afin de verifier la place disponible (largeur de ligne 52 caracteres)
 						$nblineFollowDesc = (dol_nboflines_bis($follow_descproduitservice,52,$outputlangs->charset_output)*4);
 					}
