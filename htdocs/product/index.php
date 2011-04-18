@@ -33,9 +33,9 @@ if ($type =='' && !$user->rights->produit->lire) $type='1';	// Force global page
 if ($type =='' && !$user->rights->service->lire) $type='0';	// Force global page on prpduct page only
 
 // Security check
-if ($type=='0') $result=restrictedArea($user,'produit',$id,'product','','',$fieldid);
-else if ($type=='1') $result=restrictedArea($user,'service',$id,'service','','',$fieldid);
-else $result=restrictedArea($user,'produit|service',$id,'service','','',$fieldid);
+if ($type=='0') $result=restrictedArea($user,'produit');
+else if ($type=='1') $result=restrictedArea($user,'service');
+else $result=restrictedArea($user,'produit|service');
 
 $langs->load("products");
 

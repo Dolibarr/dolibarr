@@ -69,16 +69,16 @@ if (! empty($canvas))
     //$objcanvas->getCanvas('product','xxx',$canvas);
 
     // Security check
-    if ($type=='0') $result=$objcanvas->restrictedArea($user,'produit',$id,'product','','',$fieldid);
-    else if ($type=='1') $result=$objcanvas->restrictedArea($user,'service',$id,'service','','',$fieldid);
-    else $result=$objcanvas->restrictedArea($user,'produit|service',$id,'service','','',$fieldid);
+    if ($type=='0') $result=$objcanvas->restrictedArea($user,'produit');
+    else if ($type=='1') $result=$objcanvas->restrictedArea($user,'service');
+    else $result=$objcanvas->restrictedArea($user,'produit|service');
 }
 else
 {
     // Security check
-    if ($type=='0') $result=restrictedArea($user,'produit',$id,'product','','',$fieldid);
-    else if ($type=='1') $result=restrictedArea($user,'service',$id,'service','','',$fieldid);
-    else $result=restrictedArea($user,'produit|service',$id,'service','','',$fieldid);
+    if ($type=='0') $result=restrictedArea($user,'produit');
+    else if ($type=='1') $result=restrictedArea($user,'service');
+    else $result=restrictedArea($user,'produit|service');
 }
 
 // Sharings between entities
