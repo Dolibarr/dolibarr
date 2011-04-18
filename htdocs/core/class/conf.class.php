@@ -112,6 +112,7 @@ class Conf
 		if ($result)
 		{
 			$numr = $db->num_rows($result);
+			$multicompany_sharing=array();
 			$i = 0;
 
 			while ($i < $numr)
@@ -187,14 +188,25 @@ class Conf
 					// Sharings between entities
 					else if ($value && preg_match('/^MULTICOMPANY_([A-Z_]+)_SHARING$/',$key,$reg))
 					{
-						dol_include_once('/multicompany/class/actions_multicompany.class.php');
-						$mc = new ActionsMulticompany($db);
 						$module=strtolower($reg[1]);
-						$mc->getEntitySharing($module);
-						$this->entities[$module]=$mc->entities;
+						$multicompany_sharing[$module]=$value;
 					}
 				}
 				$i++;
+			}
+			
+			$i = 0;
+			
+			// Sharings between entities
+			if ($this->multicompany->enabled)
+			{
+				dol_include_once('/multicompany/class/actions_multicompany.class.php');
+				$mc = new ActionsMulticompany($db);
+				
+				foreach($multicompany_sharing as $key => $value)
+				{
+					$this->entities[$key]=$mc->check_entity($value);
+				}
 			}
 		}
 		$db->free($result);
