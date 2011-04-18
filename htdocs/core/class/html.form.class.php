@@ -10,6 +10,7 @@
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerker@telenet.be>
  * Copyright (C) 2007      Patrick Raguin        <patrick.raguin@gmail.com>
  * Copyright (C) 2010      Juanjo Menent         <jmenent@2byte.es>
+ * Copyright (C) 2010      Philippe Grand        <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,6 +49,7 @@ class Form
     var $cache_types_paiements=array();
     var $cache_conditions_paiements=array();
     var $cache_availability=array();
+	var $cache_source=array();
 
     var $tva_taux_value;
     var $tva_taux_libelle;
@@ -1562,6 +1564,76 @@ class Form
         if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
     }
 
+	/**
+     *      \brief      Charge dans cache la liste des origines de commande possibles
+     *      \return     int             Nb lignes chargees, 0 si deja chargees, <0 si ko
+     */
+    function load_cache_source()
+    {
+        global $langs;
+
+        if (sizeof($this->cache_source)) return 0;    // Cache deja charge
+
+        $sql = "SELECT rowid, code, label";
+        $sql.= " FROM ".MAIN_DB_PREFIX.'c_source';
+        $sql.= " WHERE active=1";
+        $sql.= " ORDER BY rowid";
+        dol_syslog('Form::load_cache_source sql='.$sql,LOG_DEBUG);
+        $resql = $this->db->query($sql);
+        if ($resql)
+        {
+            $num = $this->db->num_rows($resql);
+            $i = 0;
+            while ($i < $num)
+            {
+                $obj = $this->db->fetch_object($resql);
+
+                // Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
+                $label=($langs->trans("SourceType".$obj->code)!=("SourceType".$obj->code)?$langs->trans("SourceType".$obj->code):($obj->label!='-'?$obj->label:''));
+                $this->cache_source[$obj->rowid]['code'] =$obj->code;
+                $this->cache_source[$obj->rowid]['label']=$label;
+                $i++;
+            }
+            return 1;
+        }
+        else {
+            dol_print_error($this->db);
+            return -1;
+        }
+    }
+
+	/**
+     *      \brief      Retourne la liste des types d'origine de propal/commande possibles
+     *      \param      selected        Id du type d'origine pre-selectionne
+     *      \param      htmlname        Nom de la zone select
+     *      \param      filtertype      Pour filtre
+     *		\param		addempty		Ajoute entree vide
+     */
+ function select_source($selected='',$htmlname='sourceid',$filtertype='',$addempty=0)
+    {
+        global $langs,$user;
+
+        $this->load_cache_source();
+
+        print '<select class="flat" name="'.$htmlname.'">';
+        if ($addempty) print '<option value="0">&nbsp;</option>';
+        foreach($this->cache_source as $id => $arraysource)
+        {
+            if ($selected == $id)
+            {
+                print '<option value="'.$id.'" selected="selected">';
+            }
+            else
+            {
+                print '<option value="'.$id.'">';
+            }
+            print $arraysource['label'];
+            print '</option>';
+        }
+        print '</select>';
+        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+    }
+
     /**
      *      \brief      Charge dans cache la liste des types de paiements possibles
      *      \return     int             Nb lignes chargees, 0 si deja chargees, <0 si ko
@@ -2168,7 +2240,39 @@ class Form
         }
     }
 
-
+	/**
+     *    	\brief      Affiche formulaire de selection d'origine de propal/commande
+     *    	\param      page        	Page
+     *    	\param      selected    	Id condition pre-selectionne
+     *    	\param      htmlname    	Name of select html field
+     *		\param		addempty		Ajoute entree vide
+     */
+ function form_source($page, $selected='', $htmlname='source', $addempty=0)
+    {
+        global $langs;
+        if ($htmlname != "none")
+        {
+            print '<form method="post" action="'.$page.'">';
+            print '<input type="hidden" name="action" value="setsource">';
+            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+            print '<tr><td>';
+            $this->select_source($selected,$htmlname,-1,$addempty);
+            print '</td>';
+            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+            print '</tr></table></form>';
+        }
+        else
+        {
+            if ($selected)
+            {
+                $this->load_cache_source();
+                print $this->cache_source[$selected]['label'];
+            } else {
+                print "&nbsp;";
+            }
+        }
+    }
     /**
      *    \brief      Affiche formulaire de selection d'une date
      *    \param      page        Page
