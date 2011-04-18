@@ -57,6 +57,15 @@ CREATE TABLE llx_c_availability
 
 )ENGINE=innodb;
 
+CREATE TABLE llx_c_source
+(
+	rowid		integer	 	AUTO_INCREMENT PRIMARY KEY,
+	code		varchar(30) NOT NULL,
+	label		varchar(60) NOT NULL,
+	active		tinyint 	DEFAULT 1  NOT NULL
+
+)ENGINE=innodb;
+
 ALTER TABLE llx_propal CHANGE COLUMN delivery fk_availability integer NULL;
 ALTER TABLE llx_propal ADD COLUMN fk_availability integer NULL AFTER fk_adresse_livraison;
 ALTER TABLE llx_commande ADD COLUMN fk_availability integer NULL;
@@ -65,6 +74,14 @@ INSERT INTO llx_c_availability (rowid,code,label,active) VALUES (1, 'AV_NOW', 'I
 INSERT INTO llx_c_availability (rowid,code,label,active) VALUES (2, 'AV_1W',  '1 week', 1);
 INSERT INTO llx_c_availability (rowid,code,label,active) VALUES (3, 'AV_2W',  '2 weeks', 1);
 INSERT INTO llx_c_availability (rowid,code,label,active) VALUES (4, 'AV_3W',  '3 weeks', 1);
+
+INSERT INTO llx_c_source (rowid,code,label,active) VALUES (1, 'SRC_00', 'Proposition commerciale', 1);
+INSERT INTO llx_c_source (rowid,code,label,active) VALUES (2, 'SRC_01',  'Internet', 1);
+INSERT INTO llx_c_source (rowid,code,label,active) VALUES (3, 'SRC_02',  'Campagne courrier', 1);
+INSERT INTO llx_c_source (rowid,code,label,active) VALUES (4, 'SRC_03',  'Campagne téléphone', 1);
+INSERT INTO llx_c_source (rowid,code,label,active) VALUES (5, 'SRC_04', 'Campagne fax', 1);
+INSERT INTO llx_c_source (rowid,code,label,active) VALUES (6, 'SRC_05', 'Commercial', 1);
+INSERT INTO llx_c_source (rowid,code,label,active) VALUES (7, 'SRC_06', 'Magasin', 1);
 
 ALTER TABLE llx_actioncomm ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER id;
 
