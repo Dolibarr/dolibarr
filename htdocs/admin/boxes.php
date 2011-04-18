@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -289,43 +289,56 @@ if ($resql)
 
 		dol_include_once($sourcefile);
 		$box=new $boxname($db,$obj->note);
-
-//		if (in_array($obj->rowid, $actives) && $box->box_multiple <> 1)
-		if (in_array($obj->rowid, $actives))
+		
+		$enabled=true;
+		if ($box->depends && sizeof($box->depends) > 0)
 		{
-			// La boite est deja activee
-		}
-		else
-		{
-			$var = ! $var;
-
-			if (preg_match('/^([^@]+)@([^@]+)$/i',$box->boximg))
+			foreach($box->depends as $module)
 			{
-				$logo = $box->boximg;
+				if (empty($conf->$module->enabled)) $enabled=false;
+			}
+		}
+		
+		if ($enabled)
+		{
+			//if (in_array($obj->rowid, $actives) && $box->box_multiple <> 1)
+			if (in_array($obj->rowid, $actives))
+			{
+				// La boite est deja activee
 			}
 			else
 			{
-				$logo=preg_replace("/^object_/i","",$box->boximg);
+				$var=!$var;
+	
+				if (preg_match('/^([^@]+)@([^@]+)$/i',$box->boximg))
+				{
+					$logo = $box->boximg;
+				}
+				else
+				{
+					$logo=preg_replace("/^object_/i","",$box->boximg);
+				}
+	
+				print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<tr '.$bc[$var].'>';
+				print '<td>'.img_object("",$logo).' '.$box->boxlabel.'</td>';
+				print '<td>' . ($obj->note?$obj->note:'&nbsp;') . '</td>';
+				print '<td>' . $sourcefile . '</td>';
+	
+				// Pour chaque position possible, on affiche un lien
+				// d'activation si boite non deja active pour cette position
+				print '<td>';
+				print $html->selectarray("pos",$pos_name);
+				print '<input type="hidden" name="action" value="add">';
+				print '<input type="hidden" name="boxid" value="'.$obj->rowid.'">';
+				print ' <input type="submit" class="button" name="button" value="'.$langs->trans("Activate").'">';
+				print '</td>';
+	
+				print '</tr></form>';
 			}
-
-			print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<tr '.$bc[$var].'>';
-			print '<td>'.img_object("",$logo).' '.$box->boxlabel.'</td>';
-			print '<td>' . ($obj->note?$obj->note:'&nbsp;') . '</td>';
-			print '<td>' . $sourcefile . '</td>';
-
-			// Pour chaque position possible, on affiche un lien
-			// d'activation si boite non deja active pour cette position
-			print '<td>';
-			print $html->selectarray("pos",$pos_name);
-			print '<input type="hidden" name="action" value="add">';
-			print '<input type="hidden" name="boxid" value="'.$obj->rowid.'">';
-			print ' <input type="submit" class="button" name="button" value="'.$langs->trans("Activate").'">';
-			print '</td>';
-
-			print '</tr></form>';
 		}
+		
 		$i++;
 	}
 

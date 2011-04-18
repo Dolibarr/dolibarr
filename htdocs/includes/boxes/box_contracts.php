@@ -31,7 +31,7 @@ class box_contracts extends ModeleBoxes {
     var $boxcode="lastcontracts";
     var $boximg="object_contract";
     var $boxlabel;
-    var $depends = array("contrat");	// conf->propal->enabled
+    var $depends = array("contrat");	// conf->contrat->enabled
 
     var $db;
     var $param;
