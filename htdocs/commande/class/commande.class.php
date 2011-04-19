@@ -1356,6 +1356,7 @@ class Commande extends CommonObject
             $row = $this->db->fetch_row($resql);
             return $row[0];
         }
+        else dol_print_error($this->db);
 	}
 
 	/**
