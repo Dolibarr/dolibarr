@@ -70,7 +70,7 @@ else
 print '<table border="0" width="100%" class="notopnoleftnoright">';
 print '<tr><td width="30%" valign="top" class="notopnoleft">';
 
-print_projecttasks_array($db,0,$socid,$projectsListId,$mine);
+print_projecttasks_array($db,$socid,$projectsListId,$mine);
 
 
 /* Affichage de la liste des projets d'aujourd'hui */

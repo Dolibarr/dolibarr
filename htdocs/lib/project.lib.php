@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -593,12 +593,11 @@ function clean_orphelins($db)
  * Return HTML table with list of projects and number of opened tasks
  *
  * @param   $db
- * @param   $mine               Limited to project i am contact to
  * @param   $socid
  * @param   $projectsListId
  * @param   $mytasks            Limited to task i am contact to
  */
-function print_projecttasks_array($db, $mine, $socid, $projectsListId, $mytasks=0)
+function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0)
 {
 	global $langs,$conf,$user,$bc;
 
