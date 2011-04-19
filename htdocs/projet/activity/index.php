@@ -29,6 +29,7 @@ require ("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
 require_once(DOL_DOCUMENT_ROOT."/projet/class/task.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
 
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 
@@ -88,7 +89,7 @@ $sql.= " AND p.entity = ".$conf->entity;
 $sql.= " AND tt.fk_task = t.rowid";
 $sql.= " AND tt.fk_user = ".$user->id;
 $sql.= " AND date_format(task_date,'%d%m%y') = ".strftime("%d%m%y",time());
-$sql.= " AND p.rowid in ('".$projectsListId."')";
+$sql.= " AND p.rowid in (".$projectsListId.")";
 $sql.= " GROUP BY p.rowid, p.ref, p.title";
 
 $resql = $db->query($sql);
@@ -106,7 +107,7 @@ if ( $resql )
 		$projectstatic->ref=$row->ref;
 		print $projectstatic->getNomUrl(1);
 		print '</td>';
-		print '<td align="right">'.$row->nb.'</td>';
+		print '<td align="right">'.ConvertSecondToTime($row->nb).'</td>';
 		print "</tr>\n";
 		$total += $row->nb;
 	}
@@ -119,7 +120,7 @@ else
 }
 print '<tr class="liste_total">';
 print '<td>'.$langs->trans('Total').'</td>';
-print '<td align="right">'.$total.'</td>';
+print '<td align="right">'.ConvertSecondToTime($total).'</td>';
 print "</tr>\n";
 print "</table>";
 
@@ -139,7 +140,7 @@ $sql.= " AND p.entity = ".$conf->entity;
 $sql.= " AND tt.fk_task = t.rowid";
 $sql.= " AND tt.fk_user = ".$user->id;
 $sql.= " AND date_format(date_add(task_date, INTERVAL 1 DAY),'%d%m%y') = ".strftime("%d%m%y",time());
-$sql.= " AND p.rowid in ('".$projectsListId."')";
+$sql.= " AND p.rowid in (".$projectsListId.")";
 $sql.= " GROUP BY p.rowid";
 
 $resql = $db->query($sql);
@@ -157,7 +158,7 @@ if ( $resql )
 		$projectstatic->ref=$row->ref;
 		print $projectstatic->getNomUrl(1);
 		print '</td>';
-		print '<td align="right">'.$row->nb.'</td>';
+		print '<td align="right">'.ConvertSecondToTime($row->nb).'</td>';
 		print "</tr>\n";
 		$total += $row->nb;
 	}
@@ -170,7 +171,7 @@ else
 }
 print '<tr class="liste_total">';
 print '<td>'.$langs->trans('Total').'</td>';
-print '<td align="right">'.$total.'</td>';
+print '<td align="right">'.ConvertSecondToTime($total).'</td>';
 print "</tr>\n";
 print "</table>";
 
@@ -192,7 +193,7 @@ $sql.= " AND p.entity = ".$conf->entity;
 $sql.= " AND tt.fk_task = t.rowid";
 $sql.= " AND tt.fk_user = ".$user->id;
 $sql.= " AND week(task_date) = ".strftime("%W",time());
-$sql.= " AND p.rowid in ('".$projectsListId."')";
+$sql.= " AND p.rowid in (".$projectsListId.")";
 $sql.= " GROUP BY p.rowid";
 
 $resql = $db->query($sql);
@@ -210,7 +211,7 @@ if ( $resql )
 		$projectstatic->ref=$row->ref;
 		print $projectstatic->getNomUrl(1);
 		print '</td>';
-		print '<td align="right">'.$row->nb.'</td>';
+		print '<td align="right">'.ConvertSecondToTime($row->nb).'</td>';
 		print "</tr>\n";
 		$total += $row->nb;
 	}
@@ -223,7 +224,7 @@ else
 }
 print '<tr class="liste_total">';
 print '<td>'.$langs->trans('Total').'</td>';
-print '<td align="right">'.$total.'</td>';
+print '<td align="right">'.ConvertSecondToTime($total).'</td>';
 print "</tr>\n";
 print "</table><br>";
 
@@ -243,7 +244,7 @@ $sql.= " AND p.entity = ".$conf->entity;
 $sql.= " AND tt.fk_task = t.rowid";
 $sql.= " AND tt.fk_user = ".$user->id;
 $sql.= " AND month(task_date) = ".strftime("%m",$now);
-$sql.= " AND p.rowid in ('".$projectsListId."')";
+$sql.= " AND p.rowid in (".$projectsListId.")";
 $sql.= " GROUP BY p.rowid";
 
 $resql = $db->query($sql);
@@ -259,7 +260,7 @@ if ( $resql )
 		$projectstatic->ref=$row->ref;
 		print $projectstatic->getNomUrl(1);
 		print '</td>';
-		print '<td align="right">'.$row->nb.'</td>';
+		print '<td align="right">'.ConvertSecondToTime($row->nb).'</td>';
 		print "</tr>\n";
 		$var=!$var;
 	}
@@ -287,7 +288,7 @@ $sql.= " AND p.entity = ".$conf->entity;
 $sql.= " AND tt.fk_task = t.rowid";
 $sql.= " AND tt.fk_user = ".$user->id;
 $sql.= " AND YEAR(task_date) = ".strftime("%Y",$now);
-$sql.= " AND p.rowid in ('".$projectsListId."')";
+$sql.= " AND p.rowid in (".$projectsListId.")";
 $sql.= " GROUP BY p.rowid";
 
 $var=false;
@@ -302,7 +303,7 @@ if ( $resql )
 		$projectstatic->ref=$row->ref;
 		print $projectstatic->getNomUrl(1);
 		print '</td>';
-		print '<td align="right">'.$row->nb.'</td>';
+		print '<td align="right">'.ConvertSecondToTime($row->nb).'</td>';
 		print "</tr>\n";
 		$var=!$var;
 	}
