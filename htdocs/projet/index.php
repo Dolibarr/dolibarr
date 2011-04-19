@@ -48,8 +48,9 @@ if (!$user->rights->projet->lire) accessforbidden();
 $socstatic=new Societe($db);
 $projectstatic=new Project($db);
 
-$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1);
+$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,($mine?$mine:($user->rights->projet->all->lire?2:0)),1);
 //var_dump($projectsListId);
+
 
 llxHeader("",$langs->trans("Projects"),"EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos");
 
@@ -69,7 +70,7 @@ else
 print '<table border="0" width="100%" class="notopnoleftnoright">';
 print '<tr><td width="30%" valign="top" class="notopnoleft">';
 
-print_projecttasks_array($db,$mine,$socid,$projectsListId);
+print_projecttasks_array($db,$socid,$projectsListId);
 
 print '</td><td width="70%" valign="top" class="notopnoleft">';
 

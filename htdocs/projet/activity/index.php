@@ -50,8 +50,8 @@ $langs->load("projects");
 $now = dol_now();
 
 $projectstatic=new Project($db);
-//$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1);
-$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);  // Return all project i have permission on. I want my tasks and some of my task may be on a public projet that is not my project
+//$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,($mine?$mine:($user->rights->projet->all->lire?2:0)),1);
+$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);  // Return all projects I have permission on because I want my tasks and some of my task may be on a public projet that is not my project
 
 $title=$langs->trans("Activities");
 if ($mine) $title=$langs->trans("MyActivities");

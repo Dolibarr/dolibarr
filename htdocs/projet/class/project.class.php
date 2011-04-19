@@ -787,7 +787,7 @@ class Project extends CommonObject
 	 * Return array of projects a user has permission on, is affected to, or all projects
 	 *
 	 * @param 	user		User object
-	 * @param 	mode		0=All project I have permission on, 1=Projects affected to me only, 2=Will return list of all projects
+	 * @param 	mode		0=All project I have permission on, 1=Projects affected to me only, 2=Will return list of all projects with no test on contacts
 	 * @param 	list		0=Return array,1=Return string list
 	 * @param	socid		0=No filter on third party, id of third party
 	 * @return 	array or string
