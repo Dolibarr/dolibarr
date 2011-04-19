@@ -594,7 +594,7 @@ function clean_orphelins($db)
  *
  * @param   $db
  * @param   $socid
- * @param   $projectsListId
+ * @param   $projectsListId     Id of project i have permission on
  * @param   $mytasks            Limited to task i am contact to
  */
 function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0)
@@ -628,8 +628,7 @@ function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0)
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t ON p.rowid = t.fk_projet";
 	}
 	$sql.= " WHERE p.entity = ".$conf->entity;
-    if (! $user->rights->projet->all->lire) $sql.= " AND p.rowid IN (".$projectsListId.")";
-	//if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+    $sql.= " AND p.rowid IN (".$projectsListId.")";
     if ($socid) $sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
     if ($mytasks)
     {
