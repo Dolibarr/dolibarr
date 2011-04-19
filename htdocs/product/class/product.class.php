@@ -372,7 +372,7 @@ class Product extends CommonObject
 				$result=$interface->run_triggers('PRODUCT_CREATE',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// Fin appel triggers
-				
+
 				$this->db->commit();
 				return $id;
 			}
@@ -490,7 +490,7 @@ class Product extends CommonObject
 		if ($resql)
 		{
 			$this->id = $id;
-			
+
 			// Multilangs
 			if($conf->global->MAIN_MULTILANGS)
 			{
@@ -500,14 +500,14 @@ class Product extends CommonObject
 					return -2;
 				}
 			}
-			
+
 			// Appel des triggers
 			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('PRODUCT_MODIFY',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
-			
+
 			return 1;
 		}
 		else
@@ -2431,7 +2431,7 @@ class Product extends CommonObject
 	 *    \brief      Deplace fichier recupere sur internet (utilise pour interface avec OSC)
 	 *    \param      sdir        		Repertoire destination finale
 	 *    \param      $files      		url de l'image
-	 *	\author		Jean Heimburger		juin 2007
+	 *	  \author	  Jean Heimburger	june 2007
 	 */
 	function add_photo_web($sdir, $file)
 	{
@@ -2451,13 +2451,14 @@ class Product extends CommonObject
 			// \todo A faire
 
 			// Cree fichier en taille origine
-			$content = file_get_contents($file);
-
-			$nom = basename($file);
-			$im = fopen(dol_osencode($dir.$nom),'wb');
-			fwrite($im, $content);
-			fclose($im);
-			//		}
+            $content = @file_get_contents(urlencode($file));
+            if( $content)
+            {
+               $nom = basename($file);
+               $im = fopen(dol_osencode($dir.$nom),'wb');
+               fwrite($im, $content);
+               fclose($im);
+            }
 		}
 	}
 
