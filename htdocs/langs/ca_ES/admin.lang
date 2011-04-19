@@ -302,7 +302,7 @@ ThemeDir=Directori dels temes
 ConnectionTimeout=Timeout de connexió
 ResponseTimeout=Timeout de resposta
 SmsTestMessage=Missatge de prova de __PHONEFROM__ per __PHONETO__
-# Modules
+# Modules= undefined==
 Module0Name=Usuaris y grups
 Module0Desc=Gestió d'usuaris i grups
 Module1Name=Tercers
@@ -647,6 +647,7 @@ DictionnarySendingMethods=Mètodes d'expedició
 DictionnaryStaff=Empleats
 DictionnaryAvailability=Temps de lliurament
 DictionnaryOrderMethods=Mètodes de comanda
+DictionnarySource=Orígens de pressupostos/comandes
 SetupSaved=Configuració desada
 BackToModuleList=Retornar llista de mòduls
 BackToDictionnaryList=Tornar a la llista de diccionaris
@@ -840,7 +841,7 @@ MAIN_PROXY_HOST=Nom/Adreça del servidor proxy
 MAIN_PROXY_PORT=Port del servidor proxy
 MAIN_PROXY_USER=Login del servidor proxy
 MAIN_PROXY_PASS=Contrasenya del servidor proxy
-##### Module password generation
+##### Module password generation= undefined==
 PasswordGenerationStandard=Retorna una contrasenya generada per l'algoritme intern Dolibarr: 8 caràcters, números i caràcters en minúscules barrejades.
 PasswordGenerationNone=No ofereix contrasenyes. La contrasenya s'introdueix manualment.
 ##### Users setup #####

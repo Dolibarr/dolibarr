@@ -302,7 +302,7 @@ ThemeDir=Directorio de los temas
 ConnectionTimeout=Timeout de conexión
 ResponseTimeout=Timeout de respuesta
 SmsTestMessage=Mensaje de prueba de __PHONEFROM__ para __PHONETO__
-# Modules
+# Modules= undefined=
 Module0Name=Usuarios y grupos
 Module0Desc=Gestión de usuarios y grupos
 Module1Name=Terceros
@@ -647,6 +647,7 @@ DictionnarySendingMethods=Métodos de expedición
 DictionnaryStaff=Empleados
 DictionnaryAvailability=Tiempo de entrega
 DictionnaryOrderMethods=Métodos de pedido
+DictionnarySource=Orígenes de presupuestos/pedidos
 SetupSaved=Configuración guardada
 BackToModuleList=Volver a la lista de módulos
 BackToDictionnaryList=Volver a la lista de diccionarios
@@ -840,7 +841,7 @@ MAIN_PROXY_HOST=Nombre/Dirección del servidor proxy
 MAIN_PROXY_PORT=Puerto del servidor proxy
 MAIN_PROXY_USER=Login del servidor proxy
 MAIN_PROXY_PASS=Contraseña del servidor proxy
-##### Module password generation
+##### Module password generation= undefined=
 PasswordGenerationStandard=Devuelve una contraseña generada por el algoritmo interno Dolibarr: 8 caracteres, números y caracteres en minúsculas mezcladas.
 PasswordGenerationNone=No ofrece contraseñas. La contraseña se introduce manualmente.
 ##### Users setup #####
