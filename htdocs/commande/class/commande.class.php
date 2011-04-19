@@ -1460,7 +1460,7 @@ class Commande extends CommonObject
 	 */
 	function nb_expedition()
 	{
-        $sql = 'SELECT count(*) ';
+        $sql = 'SELECT count(*)';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'expedition as e,';
         $sql.= ' '.MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = 'shipping'";
         $sql.= " WHERE el.fk_source = ".$this->id;
@@ -1471,6 +1471,7 @@ class Commande extends CommonObject
 			$row = $this->db->fetch_row($resql);
 			return $row[0];
 		}
+        else dol_print_error($this->db);
 	}
 
 	/**
