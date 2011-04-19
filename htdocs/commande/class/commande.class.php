@@ -812,7 +812,7 @@ class Commande extends CommonObject
         if (empty($txtva)) $txtva=0;
         if (empty($txlocaltax1)) $txlocaltax1=0;
         if (empty($txlocaltax2)) $txlocaltax2=0;
-        
+
 		$remise_percent=price2num($remise_percent);
 		$qty=price2num($qty);
 		$pu_ht=price2num($pu_ht);
@@ -1345,15 +1345,17 @@ class Commande extends CommonObject
 	 */
 	function nb_expedition()
 	{
-		$sql = 'SELECT count(*) FROM '.MAIN_DB_PREFIX.'expedition as e';
-		$sql .=" WHERE e.fk_commande = ".$this->id;
+        $sql = 'SELECT count(*)';
+        $sql.= ' FROM '.MAIN_DB_PREFIX.'expedition as e,';
+        $sql.= ' '.MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = 'shipping'";
+        $sql.= " WHERE el.fk_source = ".$this->id;
 
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$row = $this->db->fetch_row($resql);
-			return $row[0];
-		}
+        $resql = $this->db->query($sql);
+        if ($resql)
+        {
+            $row = $this->db->fetch_row($resql);
+            return $row[0];
+        }
 	}
 
 	/**
