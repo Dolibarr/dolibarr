@@ -597,7 +597,7 @@ class Commande extends CommonObject
 			{
 				$fk_parent_line=0;
 				$num=sizeof($this->lines);
-				
+
 				/*
 				 *  Insertion du detail des produits dans la base
 				 */
@@ -607,7 +607,7 @@ class Commande extends CommonObject
 					if (($this->lines[$i]->product_type != 9 && empty($this->lines[$i]->fk_parent_line)) || $this->lines[$i]->product_type == 9) {
 						$fk_parent_line = 0;
 					}
-					
+
 					$result = $this->addline(
 					$this->id,
 					$this->lines[$i]->desc,
@@ -918,7 +918,7 @@ class Commande extends CommonObject
         if (empty($txlocaltax1)) $txlocaltax1=0;
         if (empty($txlocaltax2)) $txlocaltax2=0;
         if (empty($fk_parent_line) || $fk_parent_line < 0) $fk_parent_line=0;
-        
+
 		$remise_percent=price2num($remise_percent);
 		$qty=price2num($qty);
 		$pu_ht=price2num($pu_ht);
@@ -1008,7 +1008,7 @@ class Commande extends CommonObject
 			{
 				// Reorder if child line
 				if (! empty($fk_parent_line)) $this->line_order(true,'DESC');
-				
+
 				// Mise a jour informations denormalisees au niveau de la commande meme
 				$this->id=$commandeid;	// TODO A virer
 				$result=$this->update_price(1);
@@ -1460,8 +1460,10 @@ class Commande extends CommonObject
 	 */
 	function nb_expedition()
 	{
-		$sql = 'SELECT count(*) FROM '.MAIN_DB_PREFIX.'expedition as e';
-		$sql .=" WHERE e.fk_commande = ".$this->id;
+        $sql = 'SELECT count(*) ';
+        $sql.= ' FROM '.MAIN_DB_PREFIX.'expedition as e,';
+        $sql.= ' '.MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = 'shipping'";
+        $sql.= " WHERE el.fk_source = ".$this->id;
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -1480,9 +1482,7 @@ class Commande extends CommonObject
 	function livraison_array($filtre_statut=-1)
 	{
 		$delivery = new Livraison($this->db);
-
 		$deliveryArray = $delivery->livraison_array($filtre_statut);
-
 		return $deliveryArray;
 	}
 
@@ -1552,7 +1552,7 @@ class Commande extends CommonObject
 
 					// Delete line
 					$line = new OrderLine($this->db);
-					
+
 					// For triggers
 					$line->fetch($lineid);
 
@@ -1760,7 +1760,7 @@ class Commande extends CommonObject
 			}
 		}
 	}
-	
+
 /**
 	 *      \brief      Set delivery
 	 *      \param      user		  Objet utilisateur qui modifie
@@ -1899,7 +1899,7 @@ class Commande extends CommonObject
 			return -2;
 		}
 	}
-	
+
 /**
 	 *   \brief      Change le delai de livraison
 	 *   \param      mode        Id du nouveau mode
@@ -2058,15 +2058,15 @@ class Commande extends CommonObject
 				$remise = round(($pu * $remise_percent / 100),2);
 				$price = ($pu - $remise);
 			}
-			
+
 			// Update line
 			$this->line=new OrderLine($this->db);
-			
+
 			// Stock previous line records
 			$staticline=new OrderLine($this->db);
 			$staticline->fetch($rowid);
 			$this->line->oldline = $staticline;
-			
+
 			$this->line->rowid=$rowid;
 			$this->line->desc=$desc;
 			$this->line->qty=$qty;
@@ -2086,7 +2086,7 @@ class Commande extends CommonObject
 			$this->line->product_type=$type;
 			$this->line->fk_parent_line=$fk_parent_line;
 			$this->line->skip_update_total=$skip_update_total;
-			
+
 			// TODO deprecated
 			$this->line->price=$price;
 			$this->line->remise=$remise;
@@ -2662,7 +2662,7 @@ class OrderLine
 	// Start and end date of the line
 	var $date_start;
 	var $date_end;
-	
+
 	var $skip_update_total; // Skip update price total for special lines
 
 
@@ -2869,7 +2869,7 @@ class OrderLine
 	function update($notrigger=0)
 	{
 		global $conf,$langs,$user;
-		
+
 		// Clean parameters
 		if (empty($this->tva_tx)) $this->tva_tx=0;
 		if (empty($this->localtax1_tx)) $this->localtax1_tx=0;
@@ -2883,7 +2883,7 @@ class OrderLine
 		if (empty($this->info_bits)) $this->info_bits=0;
 		if (empty($this->product_type)) $this->product_type=0;
 		if (empty($this->fk_parent_line)) $this->fk_parent_line=0;
-		
+
 		$this->db->begin();
 
 		// Mise a jour ligne en base
@@ -2912,7 +2912,7 @@ class OrderLine
 		if ($this->date_end) { $sql.= " , date_end='".$this->db->idate($this->date_end)."'"; }
 		$sql.= " , product_type=".$this->product_type;
 		$sql.= " , fk_parent_line=".($this->fk_parent_line>0?$this->fk_parent_line:"null");
-		
+
 		$sql.= " WHERE rowid = ".$this->rowid;
 
 		dol_syslog("OrderLine::update sql=$sql");
@@ -2929,7 +2929,7 @@ class OrderLine
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// Fin appel triggers
 			}
-			
+
 			$this->db->commit();
 			return 1;
 		}
@@ -2941,7 +2941,7 @@ class OrderLine
 			return -2;
 		}
 	}
-	
+
 	/**
 	 *      \brief     	Mise a jour de l'objet ligne de commande en base
 	 *		\return		int		<0 si ko, >0 si ok
@@ -2949,7 +2949,7 @@ class OrderLine
 	function update_total()
 	{
 		$this->db->begin();
-		
+
 		// Clean parameters
 		if (empty($this->total_localtax1)) $this->total_localtax1=0;
 		if (empty($this->total_localtax2)) $this->total_localtax2=0;
