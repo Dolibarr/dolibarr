@@ -67,8 +67,8 @@ CREATE TABLE llx_c_source
 )ENGINE=innodb;
 
 ALTER TABLE llx_propal CHANGE COLUMN delivery fk_availability integer NULL;
-ALTER TABLE llx_propal ADD COLUMN fk_availability integer NULL AFTER fk_adresse_livraison;
-ALTER TABLE llx_commande ADD COLUMN fk_availability integer NULL;
+ALTER TABLE llx_propal ADD COLUMN fk_availability integer NULL AFTER date_livraison;
+ALTER TABLE llx_commande ADD COLUMN fk_availability integer NULL AFTER date_livraison;
 
 INSERT INTO llx_c_availability (rowid,code,label,active) VALUES (1, 'AV_NOW', 'Immediate', 1);
 INSERT INTO llx_c_availability (rowid,code,label,active) VALUES (2, 'AV_1W',  '1 week', 1);

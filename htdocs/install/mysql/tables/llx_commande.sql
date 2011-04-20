@@ -58,7 +58,8 @@ create table llx_commande
   facture               tinyint   default 0,
   fk_cond_reglement     integer,                       -- condition de reglement
   fk_mode_reglement     integer,                       -- mode de reglement
-  date_livraison 	      date 	  default NULL,
+  date_livraison 	    date 	  default NULL,
+  fk_availability 		integer NULL,
   fk_adresse_livraison  integer,                       -- delivery address (deprecated)
   import_key            varchar(14)
 )ENGINE=innodb;

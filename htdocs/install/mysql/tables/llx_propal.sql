@@ -1,6 +1,6 @@
 -- ===================================================================
 -- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+-- Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
 -- Copyright (C) 2010      Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
 --
@@ -59,5 +59,6 @@ create table llx_propal
   note_public			text,
   model_pdf				varchar(255),
   date_livraison 		date DEFAULT NULL,		-- delivery date
+  fk_availability 		integer NULL,
   fk_adresse_livraison  integer					-- delivery address (deprecated)
 )ENGINE=innodb;
