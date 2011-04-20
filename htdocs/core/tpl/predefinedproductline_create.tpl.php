@@ -58,12 +58,13 @@
 	else
 	$html->select_produits('','idprod','',$conf->product->limit_size);
 
-	if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) print '<br>';
+	if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) echo '<br>';
 	
 	if (! empty($object->hooks)) {
 		foreach($object->hooks as $module) {
 			$module->formCreateProductOptions($object);
 		}
+		echo '<br>';
 	}
 
 	// Editor wysiwyg

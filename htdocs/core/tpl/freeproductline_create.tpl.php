@@ -52,6 +52,7 @@
 		foreach($object->hooks as $module) {
 			$module->formCreateProductOptions($object);
 		}
+		echo '<br>';
 	}
 	
 	// Editor wysiwyg
