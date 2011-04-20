@@ -2,6 +2,7 @@
 /* Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,9 +118,10 @@ class RemiseCheque extends CommonObject
 	 *	@param  	user 			User making creation
 	 *	@param  	account_id 		Bank account for cheque receipt
 	 *  @param      limit           Limit number of cheque to this
+	 *  @param		toRemise		array with cheques to remise
 	 *	@return		int				<0 if KO, >0 if OK
 	 */
-	function create($user, $account_id, $limit=40)
+	function create($user, $account_id, $limit=40,$toRemise)
 	{
 		global $conf;
 
@@ -207,19 +209,28 @@ class RemiseCheque extends CommonObject
 			}
 
 			if ($this->id > 0 && $this->errno == 0)
-			{
+			{		
 				foreach ($lines as $lineid)
 				{
-					$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
-					$sql.= " SET fk_bordereau = ".$this->id;
-					$sql.= " WHERE rowid = ".$lineid;
-
-					dol_syslog("RemiseCheque::Create sql=".$sql, LOG_DEBUG);
-					$resql = $this->db->query($sql);
-					if (!$resql)
+					$checkremise=false;
+					foreach ($toRemise as $linetoremise)
 					{
-						$this->errno = -18;
-						dol_syslog("RemiseCheque::Create Error update bank ".$this->errno, LOG_ERR);
+						if($linetoremise==$lineid) $checkremise=true;
+					}
+					
+					if($checkremise==true)
+					{
+						$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
+						$sql.= " SET fk_bordereau = ".$this->id;
+						$sql.= " WHERE rowid = ".$lineid;
+
+						dol_syslog("RemiseCheque::Create sql=".$sql, LOG_DEBUG);
+						$resql = $this->db->query($sql);
+						if (!$resql)
+						{
+							$this->errno = -18;
+							dol_syslog("RemiseCheque::Create Error update bank ".$this->errno, LOG_ERR);
+						}
 					}
 				}
 			}

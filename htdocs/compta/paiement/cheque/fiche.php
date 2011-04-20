@@ -84,42 +84,42 @@ if ($_POST['action'] == 'setdate' && $user->rights->banque->cheque)
     }
 }
 
-if ($_GET['action'] == 'create' && $_GET["accountid"] > 0 && $user->rights->banque->cheque)
+if ($_POST['action'] == 'create' && $_POST["accountid"] > 0 && $user->rights->banque->cheque)
 {
-		
-	$remisecheque = new RemiseCheque($db);
-	//$result = $remisecheque->create($user, $_GET["accountid"], 0);
-	
 	if (is_array($_POST['toRemise']))
-		$result = $remisecheque->create($user, $_GET["accountid"], 0); // $result = $remisecheque->create($user, $_GET["accountid"], 0, $_POST['toRemise']);	
-	
-	else 
-		$result = $remisecheque->create($user, $_GET["accountid"], 0);
-	
-	if ($result > 0)
 	{
-        if ($remisecheque->statut == 1)     // If statut is validated, we build doc
-        {
-            $remisecheque->fetch($remisecheque->id);    // To force to reload all properties in correct property name
-    	    // Define output language
-    	    $outputlangs = $langs;
-            $newlang='';
-            if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-            //if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
-            if (! empty($newlang))
-            {
-                $outputlangs = new Translate("",$conf);
-                $outputlangs->setDefaultLang($newlang);
-            }
-            $result = $remisecheque->generatePdf($_POST["model"], $outputlangs);
-        }
+		$remisecheque = new RemiseCheque($db);	
+		$result = $remisecheque->create($user, $_POST["accountid"], 0, $_POST['toRemise']);
+		if ($result > 0)
+		{
+	        if ($remisecheque->statut == 1)     // If statut is validated, we build doc
+	        {
+	            $remisecheque->fetch($remisecheque->id);    // To force to reload all properties in correct property name
+	    	    // Define output language
+	    	    $outputlangs = $langs;
+	            $newlang='';
+	            if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+	            //if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+	            if (! empty($newlang))
+	            {
+	                $outputlangs = new Translate("",$conf);
+	                $outputlangs->setDefaultLang($newlang);
+	            }
+	            $result = $remisecheque->generatePdf($_POST["model"], $outputlangs);
+	        }
 
-        Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$remisecheque->id);
-        exit;
+       		Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$remisecheque->id);
+        	exit;
+		}
+		else
+		{
+			$mesg='<div class="error">'.$remisecheque->error.'</div>';
+		}
 	}
 	else
 	{
-		$mesg='<div class="error">'.$remisecheque->error.'</div>';
+		Header("Location: ".$_SERVER["PHP_SELF"]."?action=new");
+		exit;
 	}
 }
 
@@ -343,7 +343,11 @@ if ($_GET['action'] == 'new')
 	foreach ($accounts as $bid => $account_label)
 	{
 		$num = $db->num_rows($resql);
-
+		print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="action" value="create">';
+		print '<input type="hidden" name="accountid" value="'.$bid.'">';
+		
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td style="min-width: 120px">'.$langs->trans("DateChequeReceived")." &nbsp;</td>\n";
@@ -384,13 +388,14 @@ if ($_GET['action'] == 'new')
 		print '<div class="tabsAction">';
 		if ($user->rights->banque->cheque)
 		{
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=create&amp;accountid='.$bid.'">'.$langs->trans('NewCheckDepositOn',$account_label).'</a>';
+			print '<input type="submit" class="button" value="'.$langs->trans('NewCheckDepositOn',$account_label).'">';
 		}
 		else
 		{
 			print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('NewCheckDepositOn',$account_label).'</a>';
 		}
 		print '</div><br>';
+		print '</form>';
 	}
 
 }
