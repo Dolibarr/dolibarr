@@ -32,6 +32,7 @@ For users:
 - New: task #11018 : Add a status "not applicable" on event
 - New: Add region/country statistics for member module.
 - New: Can define a proxy for external web access.
+- New: task #11003: checkbox on checks to deposit
 - Fix: Better Postgresql compatibility.
 
 For developers:
