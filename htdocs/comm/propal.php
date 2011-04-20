@@ -1007,9 +1007,11 @@ if ($id > 0 || ! empty($ref))
 
 	$head = propal_prepare_head($object);
 	dol_fiche_head($head, 'comm', $langs->trans('Proposal'), 0, 'propal');
-
+	
+	$formconfirm='';
+	
 	// Clone confirmation
-	if ($_GET["action"] == 'clone')
+	if ($action == 'clone')
 	{
 		// Create an array for form
 		$formquestion=array(
@@ -1017,41 +1019,29 @@ if ($id > 0 || ! empty($ref))
 		//array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1)
 		);
 		// Paiement incomplet. On demande si motif = escompte ou autre
-		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('ClonePropal'),$langs->trans('ConfirmClonePropal',$object->ref),'confirm_clone',$formquestion,'yes',1);
-		if ($ret == 'html') print '<br>';
+		$formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('ClonePropal'),$langs->trans('ConfirmClonePropal',$object->ref),'confirm_clone',$formquestion,'yes',1);
 	}
 
 	/*
 	 * Confirmation de la suppression de la propale
 	 */
-	if ($_GET['action'] == 'delete')
+	if ($action == 'delete')
 	{
-		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteProp'), $langs->trans('ConfirmDeleteProp'), 'confirm_delete','',0,1);
-		if ($ret == 'html') print '<br>';
+		$formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteProp'), $langs->trans('ConfirmDeleteProp'), 'confirm_delete','',0,1);
 	}
 
 	/*
 	 * Confirmation de la suppression d'une ligne produit/service
 	 */
-	if ($_GET['action'] == 'ask_deleteline')
+	if ($action == 'ask_deleteline')
 	{
-		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline','',0,1);
-		if ($ret == 'html') print '<br>';
-	}
-
-	/*
-	 * TODO ajout temporaire pour test en attendant la migration en template
-	 */
-	if ($_GET['action'] == 'ask_deletemilestone')
-	{
-		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteMilestone'), $langs->trans('ConfirmDeleteMilestone'), 'confirm_deletemilestone','',0,1);
-		if ($ret == 'html') print '<br>';
+		$formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline','',0,1);
 	}
 
 	/*
 	 * Confirmation de la validation de la propale
 	 */
-	if ($_GET['action'] == 'validate')
+	if ($action == 'validate')
 	{
 		// on verifie si l'objet est en numerotation provisoire
 		$ref = substr($object->ref, 1, 4);
@@ -1073,9 +1063,20 @@ if ($id > 0 || ! empty($ref))
 			$text.=$notify->confirmMessage('NOTIFY_VAL_PROPAL',$object->socid);
 		}
 
-		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateProp'), $text, 'confirm_validate','',0,1);
-		if ($ret == 'html') print '<br>';
+		$formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateProp'), $text, 'confirm_validate','',0,1);
 	}
+	
+	// Hook of thirdparty module
+	if (empty($formconfirm) && ! empty($object->hooks))
+	{
+		foreach($object->hooks as $module)
+		{
+			if (empty($formconfirm)) $formconfirm = $module->formconfirm($action,$object,$lineid);
+		}
+	}
+	
+	// Print form confirm
+	print $formconfirm;
 
 
 	/*

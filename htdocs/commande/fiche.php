@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2010 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2010      Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2011      Philippe Grand        <philippe.grand@atoo-net.com>
@@ -1429,20 +1429,21 @@ else
 
             $head = commande_prepare_head($object);
             dol_fiche_head($head, 'order', $langs->trans("CustomerOrder"), 0, 'order');
+            
+            $formconfirm='';
 
             /*
              * Confirmation de la suppression de la commande
              */
-            if ($_GET['action'] == 'delete')
+            if ($action == 'delete')
             {
-                $ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', '', 0, 1);
-                if ($ret == 'html') print '<br>';
+                $formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', '', 0, 1);
             }
 
             /*
              * Confirmation de la validation
              */
-            if ($_GET['action'] == 'validate')
+            if ($action == 'validate')
             {
                 // on verifie si l'objet est en numerotation provisoire
                 $ref = substr($object->ref, 1, 4);
@@ -1463,48 +1464,35 @@ else
                     $text.='<br>';
                     $text.=$notify->confirmMessage('NOTIFY_VAL_ORDER',$object->socid);
                 }
-                $ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateOrder'), $text, 'confirm_validate', '', 0, 1);
-                if ($ret == 'html') print '<br>';
+                $formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateOrder'), $text, 'confirm_validate', '', 0, 1);
             }
 
             /*
              * Confirmation de la cloture
              */
-            if ($_GET['action'] == 'close')
+            if ($action == 'close')
             {
-                $ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('CloseOrder'), $langs->trans('ConfirmCloseOrder'), 'confirm_close', '', 0, 1);
-                if ($ret == 'html') print '<br>';
+                $formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('CloseOrder'), $langs->trans('ConfirmCloseOrder'), 'confirm_close', '', 0, 1);
             }
 
             /*
              * Confirmation de l'annulation
              */
-            if ($_GET['action'] == 'cancel')
+            if ($action == 'cancel')
             {
-                $ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('Cancel'), $langs->trans('ConfirmCancelOrder'), 'confirm_cancel', '', 0, 1);
-                if ($ret == 'html') print '<br>';
+                $formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('Cancel'), $langs->trans('ConfirmCancelOrder'), 'confirm_cancel', '', 0, 1);
             }
 
             /*
              * Confirmation de la suppression d'une ligne produit
              */
-            if ($_GET['action'] == 'ask_deleteline')
+            if ($action == 'ask_deleteline')
             {
-                $ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
-                if ($ret == 'html') print '<br>';
-            }
-
-            /*
-             * TODO ajout temporaire pour test en attendant la migration en template
-             */
-            if ($_GET['action'] == 'ask_deletemilestone')
-            {
-                $ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteMilestone'), $langs->trans('ConfirmDeleteMilestone'), 'confirm_deletemilestone','',0,1);
-                if ($ret == 'html') print '<br>';
+                $formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
             }
 
             // Clone confirmation
-            if ($_GET["action"] == 'clone')
+            if ($action == 'clone')
             {
                 // Create an array for form
                 $formquestion=array(
@@ -1512,9 +1500,20 @@ else
                 //array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1)
                 );
                 // Paiement incomplet. On demande si motif = escompte ou autre
-                $ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneOrder'),$langs->trans('ConfirmCloneOrder',$object->ref),'confirm_clone',$formquestion,'yes',1);
-                if ($ret == 'html') print '<br>';
+                $formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneOrder'),$langs->trans('ConfirmCloneOrder',$object->ref),'confirm_clone',$formquestion,'yes',1);
             }
+            
+            // Hook of thirdparty module
+			if (empty($formconfirm) && ! empty($object->hooks))
+			{
+				foreach($object->hooks as $module)
+				{
+					if (empty($formconfirm)) $formconfirm = $module->formconfirm($action,$object,$lineid);
+				}
+			}
+			
+			// Print form confirm
+			print $formconfirm;
 
             /*
              *   Commande

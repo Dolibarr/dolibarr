@@ -1875,21 +1875,21 @@ else
 			$head = facture_prepare_head($object);
 
 			dol_fiche_head($head, 'compta', $langs->trans('InvoiceCustomer'), 0, 'bill');
+			
+			$formconfirm='';
 
 			// Confirmation de la conversion de l'avoir en reduc
 			if ($action == 'converttoreduc')
 			{
 				$text=$langs->trans('ConfirmConvertToReduc');
-				$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?facid='.$object->id,$langs->trans('ConvertToReduc'),$text,'confirm_converttoreduc','',"yes",2);
-				if ($ret == 'html') print '<br>';
+				$formconfirm=$html->formconfirm($_SERVER['PHP_SELF'].'?facid='.$object->id,$langs->trans('ConvertToReduc'),$text,'confirm_converttoreduc','',"yes",2);
 			}
 
 			// Confirmation to delete invoice
 			if ($action == 'delete')
 			{
 				$text=$langs->trans('ConfirmDeleteBill');
-				$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?facid='.$object->id,$langs->trans('DeleteBill'),$text,'confirm_delete','',0,1);
-				if ($ret == 'html') print '<br>';
+				$formconfirm=$html->formconfirm($_SERVER['PHP_SELF'].'?facid='.$object->id,$langs->trans('DeleteBill'),$text,'confirm_delete','',0,1);
 			}
 
 			// Confirmation de la validation
@@ -1922,15 +1922,13 @@ else
 					$text.=$notify->confirmMessage('NOTIFY_VAL_FAC',$object->socid);
 				}
 
-				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$object->id,$langs->trans('ValidateBill'),$text,'confirm_valid','',"yes",($conf->notification->enabled?0:2));
-				if ($ret == 'html') print '<br>';
+				$formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id,$langs->trans('ValidateBill'),$text,'confirm_valid','',"yes",($conf->notification->enabled?0:2));
 			}
 
 			// Confirmation du classement paye
 			if ($action == 'paid' && $resteapayer <= 0)
 			{
-				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$object->id,$langs->trans('ClassifyPaid'),$langs->trans('ConfirmClassifyPaidBill',$object->ref),'confirm_paid','',"yes",1);
-				if ($ret == 'html') print '<br>';
+				$formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id,$langs->trans('ClassifyPaid'),$langs->trans('ConfirmClassifyPaidBill',$object->ref),'confirm_paid','',"yes",1);
 			}
 			if ($action == 'paid' && $resteapayer > 0)
 			{
@@ -1959,8 +1957,7 @@ else
 				array('type' => 'text',  'name' => 'close_note', 'label' => $langs->trans("Comment"), 'value' => '', 'size' => '100')
 				);
 				// Paiement incomplet. On demande si motif = escompte ou autre
-				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$object->id,$langs->trans('ClassifyPaid'),$langs->trans('ConfirmClassifyPaidPartially',$object->ref),'confirm_paid_partially',$formquestion,"yes");
-				if ($ret == 'html') print '<br>';
+				$formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id,$langs->trans('ClassifyPaid'),$langs->trans('ConfirmClassifyPaidPartially',$object->ref),'confirm_paid_partially',$formquestion,"yes");
 			}
 
 			// Confirmation du classement abandonne
@@ -2000,29 +1997,18 @@ else
 					array('type' => 'text',  'name' => 'close_note', 'label' => $langs->trans("Comment"), 'value' => '', 'size' => '100')
 					);
 
-					$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?facid='.$object->id,$langs->trans('CancelBill'),$langs->trans('ConfirmCancelBill',$object->ref),'confirm_canceled',$formquestion,"yes");
-					if ($ret == 'html') print '<br>';
+					$formconfirm=$html->formconfirm($_SERVER['PHP_SELF'].'?facid='.$object->id,$langs->trans('CancelBill'),$langs->trans('ConfirmCancelBill',$object->ref),'confirm_canceled',$formquestion,"yes");
 				}
 			}
 
 			// Confirmation de la suppression d'une ligne produit
 			if ($action == 'ask_deleteline')
 			{
-				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$object->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 'no', 1);
-				if ($ret == 'html') print '<br>';
-			}
-
-			/*
-			 * TODO ajout temporaire pour test en attendant la migration en template
-			 */
-			if ($action == 'ask_deletemilestone')
-			{
-				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$object->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteMilestone'), $langs->trans('ConfirmDeleteMilestone'), 'confirm_deletemilestone','',0,1);
-				if ($ret == 'html') print '<br>';
+				$formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 'no', 1);
 			}
 
 			// Clone confirmation
-			if ($_GET["action"] == 'clone')
+			if ($action == 'clone')
 			{
 				// Create an array for form
 				$formquestion=array(
@@ -2030,9 +2016,20 @@ else
 				//array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1)
 				);
 				// Paiement incomplet. On demande si motif = escompte ou autre
-				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$object->id,$langs->trans('CloneInvoice'),$langs->trans('ConfirmCloneInvoice',$object->ref),'confirm_clone',$formquestion,'yes',1);
-				if ($ret == 'html') print '<br>';
+				$formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id,$langs->trans('CloneInvoice'),$langs->trans('ConfirmCloneInvoice',$object->ref),'confirm_clone',$formquestion,'yes',1);
 			}
+			
+			// Hook of thirdparty module
+			if (empty($formconfirm) && ! empty($object->hooks))
+			{
+				foreach($object->hooks as $module)
+				{
+					if (empty($formconfirm)) $formconfirm = $module->formconfirm($action,$object,$lineid);
+				}
+			}
+			
+			// Print form confirm
+			print $formconfirm;
 
 
 			// Invoice content
