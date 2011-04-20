@@ -5,7 +5,7 @@
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
 -- Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
 -- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
--- Copyright (C) 2010 	   Juanjo Menent        <jmenent@2byte.es>
+-- Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -193,3 +193,5 @@ INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, act
 INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (15211,  152, 15211, '', 0, 'Les îles Agaléga', 1);
 INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (15212,  152, 15212, '', 0, 'Les écueils des Cargados Carajos', 1);
 
+-- Regions Mexique (id pays=154)
+insert into llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) values (15401,  154, 15401, '', 0, 'Mexique', 1);
