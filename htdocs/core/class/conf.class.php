@@ -196,7 +196,7 @@ class Conf
 			}
 			
 			// Sharings between entities
-			if ($this->multicompany->enabled && ! empty($multicompany_sharing))
+			if (isset($this->multicompany->enabled) && $this->multicompany->enabled && ! empty($multicompany_sharing))
 			{
 				$ret = @dol_include_once('/multicompany/class/actions_multicompany.class.php');
 				if ($ret)
