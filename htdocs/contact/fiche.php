@@ -314,7 +314,9 @@ if (! empty($objcanvas->template_dir))
     else if ($action == 'edit')
     {
         $objcanvas->fetch($id);               // Reload object
-        $objcanvas->assign_post();            // Assign POST data
+        if (! empty($_POST)) {
+        	$objcanvas->assign_post();        // Assign POST data
+        }
         $objcanvas->assign_values($action);   // Set value for templates
         $objcanvas->display_canvas($action);  // Show template
     }

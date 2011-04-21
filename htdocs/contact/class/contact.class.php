@@ -44,7 +44,9 @@ class Contact extends CommonObject
 	var $id;
 	var $civilite_id;
 	var $name;
+	var $nom;
 	var $firstname;
+	var $prenom;
 	var $address;
 	var $cp;	// TODO deprecated
 	var $zip;
@@ -436,7 +438,9 @@ class Contact extends CommonObject
 	function fetch($id, $user=0)
 	{
 		global $langs;
+		
 		$langs->load("companies");
+		
 		$sql = "SELECT c.rowid, c.fk_soc, c.civilite as civilite_id, c.name, c.firstname,";
 		$sql.= " c.address, c.cp, c.ville,";
 		$sql.= " c.fk_pays,";
