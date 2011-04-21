@@ -179,6 +179,9 @@ INSERT INTO llx_c_regions (rowid, code_region, fk_pays, cheflieu, tncc, nom, act
 INSERT INTO llx_c_regions (rowid, code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (8602, 8602, 86, NULL, NULL, 'Oriental', 1);
 INSERT INTO llx_c_regions (rowid, code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (8603, 8603, 86, NULL, NULL, 'Occidental', 1);
 
+-- Regions Honduras (id pays=114)
+insert into llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) values (11401,  114, 11401, '', 0, 'Honduras', 1);
+
 -- Regions India (id pays=117)
 insert into llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) values (11701,  117, 11701, '', 0, 'India', 1);
 
