@@ -167,7 +167,7 @@ if ( $soc->fetch($soc->id) )
 	print '</tr>';
 
 	$var=false;
-	if (count($soc->contact_email_array()) > 0)
+	if (count($soc->thirdparty_and_contact_email_array()) > 0)
 	{
 		// Load array of notifications type available
 		$sql = "SELECT a.rowid, a.code, a.titre";
@@ -195,7 +195,7 @@ if ( $soc->fetch($soc->id) )
 
 		print '<input type="hidden" name="action" value="add">';
 		print '<tr '.$bc[$var].'><td>';
-		print $html->selectarray("contactid",$soc->contact_email_array());
+		print $html->selectarray("contactid",$soc->thirdparty_and_contact_email_array());
 		print '</td>';
 		print '<td>';
 		print $html->selectarray("actionid",$actions);
