@@ -107,7 +107,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 	$conf->db->name = $dolibarr_main_db_name;
 	$conf->db->user = $dolibarr_main_db_user;
 	$conf->db->pass = $dolibarr_main_db_pass;
-	
+
 	// Load type and crypt key
 	if (empty($dolibarr_main_db_encryption)) $dolibarr_main_db_encryption=0;
 	$conf->db->dolibarr_main_db_encryption = $dolibarr_main_db_encryption;
@@ -243,7 +243,8 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 			$listtables=array(  'llx_adherent_options',
 								'llx_bank_class',
 								'llx_c_ecotaxe',
-								'llx_c_methode_commande_fournisseur');
+								'llx_c_methode_commande_fournisseur',   // table renamed
+    		                    'llx_c_input_method');
 
 			$listtables = $db->DDLListTables($conf->db->name,'');
 		    foreach ($listtables as $val)

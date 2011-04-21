@@ -19,11 +19,4 @@
 -- $Id$
 -- ========================================================================
 
-create table llx_c_methode_commande_fournisseur
-(
-  rowid    integer AUTO_INCREMENT PRIMARY KEY,
-  code     varchar(30),
-  libelle  varchar(60),
-  active   tinyint default 1  NOT NULL
-)ENGINE=innodb;
-
+ALTER TABLE llx_c_input_method ADD UNIQUE INDEX uk_c_input_method(code);

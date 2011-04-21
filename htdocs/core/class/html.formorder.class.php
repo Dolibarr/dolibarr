@@ -87,7 +87,7 @@ class FormOrder
 		$form=new Form($this->db);
 
 		$sql = "SELECT rowid, code, libelle as label";
-		$sql.= " FROM ".MAIN_DB_PREFIX."c_methode_commande_fournisseur";
+		$sql.= " FROM ".MAIN_DB_PREFIX."c_demand_method";
 		$sql.= " WHERE active = 1";
 
 		dol_syslog("Form::select_methodes_commande sql=".$sql);

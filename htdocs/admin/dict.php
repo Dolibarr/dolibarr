@@ -74,9 +74,10 @@ $tabname[16]= MAIN_DB_PREFIX."c_prospectlevel";
 $tabname[17]= MAIN_DB_PREFIX."c_type_fees";
 $tabname[18]= MAIN_DB_PREFIX."c_shipment_mode";
 $tabname[19]= MAIN_DB_PREFIX."c_effectif";
-$tabname[20]= MAIN_DB_PREFIX."c_methode_commande_fournisseur";
+$tabname[20]= MAIN_DB_PREFIX."c_demand_method";
 $tabname[21]= MAIN_DB_PREFIX."c_availability";
 $tabname[22]= MAIN_DB_PREFIX."c_source";
+//$tabname[23]= MAIN_DB_PREFIX."c_demand_reason";
 
 // Dictionary labels
 $tablib[1] = "DictionnaryCompanyJuridicalType";
@@ -122,7 +123,7 @@ $tabsql[16]= "SELECT code, label as libelle, active FROM ".MAIN_DB_PREFIX."c_pro
 $tabsql[17]= "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_type_fees";
 $tabsql[18]= "SELECT rowid   as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_shipment_mode";
 $tabsql[19]= "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_effectif";
-$tabsql[20]= "SELECT rowid   as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_methode_commande_fournisseur";
+$tabsql[20]= "SELECT rowid   as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_demand_method";
 $tabsql[21]= "SELECT c.rowid  as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_availability AS c";
 $tabsql[22]= "SELECT c.rowid  as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_source AS c";
 
@@ -874,7 +875,7 @@ function fieldList($fieldlist,$obj='')
 
     foreach ($fieldlist as $field => $value)
     {
-        
+
         if ($fieldlist[$field] == 'pays') {
             if (in_array('region_id',$fieldlist)) { print '<td>&nbsp;</td>'; continue; }	// For region page, we do not show the country input
             print '<td>';

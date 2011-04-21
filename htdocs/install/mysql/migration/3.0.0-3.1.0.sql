@@ -10,6 +10,8 @@
 -- To change type of field: ALTER TABLE llx_table MODIFY name varchar(60);
 --
 
+RENAME TABLE llx_c_methode_commande_fournisseur TO llx_c_input_method;
+
 ALTER TABLE llx_adherent MODIFY login varchar(50);
 
 ALTER TABLE llx_c_actioncomm ADD COLUMN position integer NOT NULL DEFAULT 0;
