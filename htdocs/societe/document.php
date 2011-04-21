@@ -152,7 +152,7 @@ if ($socid > 0)
 		print '<table class="border"width="100%">';
 
 		// Ref
-		print '<tr><td width="30%">'.$langs->trans("Name").'</td>';
+		print '<tr><td width="30%">'.$langs->trans("ThirdPartyName").'</td>';
 		print '<td colspan="3">';
 		print $form->showrefnav($societe,'socid','',($user->societe_id?0:1),'rowid','nom');
 		print '</td></tr>';

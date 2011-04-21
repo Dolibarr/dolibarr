@@ -108,7 +108,7 @@ if ($_GET["socid"])
 
 	print '<table class="border" width="100%">';
 
-    print '<tr><td width="20%">'.$langs->trans('Name').'</td>';
+    print '<tr><td width="20%">'.$langs->trans('ThirdPartyName').'</td>';
     print '<td colspan="3">';
     print $form->showrefnav($soc,'socid','',($user->societe_id?0:1),'rowid','nom');
     print '</td></tr>';

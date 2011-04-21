@@ -113,7 +113,7 @@ if ( $soc->fetch($soc->id) )
 
 	print '<table class="border"width="100%">';
 
-	print '<tr><td width="20%">'.$langs->trans("Name").'</td><td colspan="3">';
+	print '<tr><td width="20%">'.$langs->trans("ThirdPartyName").'</td><td colspan="3">';
 	print $form->showrefnav($soc,'socid','',($user->societe_id?0:1),'rowid','nom');
 	print '</td></tr>';
 

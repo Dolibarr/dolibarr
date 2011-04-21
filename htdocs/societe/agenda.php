@@ -80,7 +80,7 @@ if ($_GET["socid"])
 
 	print '<table class="border" width="100%">';
 
-	print '<tr><td width="25%">'.$langs->trans("Name").'</td><td colspan="3">';
+	print '<tr><td width="25%">'.$langs->trans("ThirdPartyName").'</td><td colspan="3">';
 	print $html->showrefnav($soc,'socid','',($user->societe_id?0:1),'rowid','nom');
 	print '</td></tr>';
 

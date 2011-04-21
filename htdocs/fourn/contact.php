@@ -36,13 +36,11 @@ $langs->load("companies");
 
 llxHeader();
 
-/*
- * S�curit� acc�s client
- */
+// Security check
 if ($user->societe_id > 0)
 {
-  $action = '';
-  $socid = $user->societe_id;
+    $action = '';
+    $socid = $user->societe_id;
 }
 
 $sortfield = GETPOST("sortfield",'alpha');
@@ -59,7 +57,6 @@ $limit = $conf->liste_limit;
 
 /*
  * Mode liste
- *
  */
 
 $sql = "SELECT s.rowid as socid, s.nom, st.libelle as stcomm, p.rowid as cidp, p.name, p.firstname, p.email, p.phone";
@@ -70,65 +67,66 @@ $sql .= " WHERE s.fk_stcomm = st.id AND s.fournisseur = 1 AND s.rowid = p.fk_soc
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 
 if (dol_strlen($stcomm)) {
-  $sql .= " AND s.fk_stcomm=$stcomm";
+    $sql .= " AND s.fk_stcomm=$stcomm";
 }
 
 if (dol_strlen($begin)) {
-  $sql .= " AND p.name like '$begin%'";
+    $sql .= " AND p.name like '$begin%'";
 }
 
 if ($contactname) {
-  $sql .= " AND p.name like '%".strtolower($contactname)."%'";
-  $sortfield = "p.name";
-  $sortorder = "ASC";
+    $sql .= " AND p.name like '%".strtolower($contactname)."%'";
+    $sortfield = "p.name";
+    $sortorder = "ASC";
 }
 
 if ($socid) {
-  $sql .= " AND s.rowid = ".$socid;
+    $sql .= " AND s.rowid = ".$socid;
 }
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit, $offset);
 
 $result = $db->query($sql);
-if ($result) {
-  $num = $db->num_rows($result);
+if ($result)
+{
+    $num = $db->num_rows($result);
 
-  print_barre_liste($langs->trans("ListOfContacts")." (".$langs->trans("Suppliers").")",$page, "contact.php", "",$sortfield,$sortorder,"",$num);
+    print_barre_liste($langs->trans("ListOfContacts")." (".$langs->trans("Suppliers").")",$page, "contact.php", "",$sortfield,$sortorder,"",$num);
 
-  print '<table class="liste" width="100%">';
-  print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Lastname"),"contact.php","p.name", $begin, "", "", $sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("Firstname"),"contact.php","p.firstname", $begin, "", "", $sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("Company"),"contact.php","s.nom", $begin, "", "", $sortfield,$sortorder);
-  print '<td class="liste_titre">'.$langs->trans("Email").'</td>';
-  print '<td class="liste_titre">'.$langs->trans("Phone").'</td>';
-  print "</tr>\n";
-  $var=True;
-  $i = 0;
-  while ($i < min($num,$limit))
+    print '<table class="liste" width="100%">';
+    print '<tr class="liste_titre">';
+    print_liste_field_titre($langs->trans("Lastname"),"contact.php","p.name", $begin, "", "", $sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Firstname"),"contact.php","p.firstname", $begin, "", "", $sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Company"),"contact.php","s.nom", $begin, "", "", $sortfield,$sortorder);
+    print '<td class="liste_titre">'.$langs->trans("Email").'</td>';
+    print '<td class="liste_titre">'.$langs->trans("Phone").'</td>';
+    print "</tr>\n";
+    $var=True;
+    $i = 0;
+    while ($i < min($num,$limit))
     {
-      $obj = $db->fetch_object($result);
+        $obj = $db->fetch_object($result);
 
-      $var=!$var;
+        $var=!$var;
 
-      print "<tr $bc[$var]>";
+        print "<tr $bc[$var]>";
 
-      print '<td><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->cidp.'">'.img_object($langs->trans("ShowContact"),"contact").' '.$obj->name.'</a></td>';
-      print '<td>'.$obj->firstname.'</td>';
-      print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
-      print '<td>'.$obj->email.'</td>';
-      print '<td>'.$obj->phone.'</td>';
+        print '<td><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->cidp.'">'.img_object($langs->trans("ShowContact"),"contact").' '.$obj->name.'</a></td>';
+        print '<td>'.$obj->firstname.'</td>';
+        print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
+        print '<td>'.$obj->email.'</td>';
+        print '<td>'.$obj->phone.'</td>';
 
-      print "</tr>\n";
-      $i++;
+        print "</tr>\n";
+        $i++;
     }
-  print "</table>";
-  $db->free($result);
+    print "</table>";
+    $db->free($result);
 
 }
 else
 {
-  dol_print_error($db);
+    dol_print_error($db);
 }
 
 $db->close();

@@ -91,7 +91,7 @@ if ( $societe->fetch($socid) )
 	print '<tr><td valign="top" width="50%" class="notopnoleft">';
 
 	print '<table width="100%" class="border">';
-	print '<tr><td width="20%">'.$langs->trans("Name").'</td><td width="80%" colspan="3">';
+	print '<tr><td width="20%">'.$langs->trans("ThirdPartyName").'</td><td width="80%" colspan="3">';
 	$societe->next_prev_filter="te.fournisseur = 1";
 	print $form->showrefnav($societe,'socid','',($user->societe_id?0:1),'rowid','nom','','');
 	print '</td></tr>';
