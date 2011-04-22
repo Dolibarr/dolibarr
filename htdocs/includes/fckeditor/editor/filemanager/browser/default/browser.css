@@ -67,9 +67,9 @@ body, td, input, select
 
 .Button, button
 {
-	color: #3b3b1f;
-	border: #737357 1px solid;
-	background-color: #c7c78f;
+	color: #3b3b3b;
+	border: #939393 1px solid;
+	background-color: #dedede;
 }
 
 .FolderListCurrentFolder img
