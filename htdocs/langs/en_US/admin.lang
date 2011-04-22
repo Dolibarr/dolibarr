@@ -301,6 +301,7 @@ ThemeDir=Skins directory
 ConnectionTimeout=Connexion timeout
 ResponseTimeout=Response timeout
 SmsTestMessage=Test message from __PHONEFROM__ to __PHONETO__
+AdvancedEditor=WYSIWYG Editor
 
 # Modules
 Module0Name=Users & groups
