@@ -188,10 +188,11 @@ class DolEditor
             	{
                     print ','."\n";
                     // To use filemanager with old fckeditor (GPL)
-                    print '    filebrowserBrowseUrl : \''.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanager/browser/default/browser.html?Connector='.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanager/connectors/php/connector.php\',
-                               filebrowserUploadUrl : \''.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanager/connectors/php/upload.php?Type=File\',
-                               filebrowserImageBrowseUrl : \''.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanager/browser/default/browser.html?Type=Image&Connector='.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanager/connectors/php/connector.php\',
-                               filebrowserImageUploadUrl : \''.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanager/connectors/php/upload.php?Type=Image\','."\n";
+                    print '    filebrowserBrowseUrl : \''.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanagerdol/browser/default/browser.html?Connector='.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanagerdol/connectors/php/connector.php\',';
+                    //print '    filebrowserUploadUrl : \''.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanagerdol/connectors/php/upload.php?Type=File\',';
+                    print '    filebrowserImageBrowseUrl : \''.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanagerdol/browser/default/browser.html?Type=Image&Connector='.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanagerdol/connectors/php/connector.php\',';
+                    //print '    filebrowserImageUploadUrl : \''.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanagerdol/connectors/php/upload.php?Type=Image\',';
+                    print "\n";
                     // To use filemanager with ckfinder (Non free) and ckfinder directory is inside htdocs/includes
 /*                  print '    filebrowserBrowseUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/ckfinder.html\',
                                filebrowserImageBrowseUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/ckfinder.html?Type=Images\',
