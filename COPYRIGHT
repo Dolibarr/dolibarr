@@ -22,12 +22,12 @@ FPDI              1.3.4    Apache Software License 2.0 No GPL3 only     PDF temp
 FPDI_Protection   1.0.3    Apache Software License 2.0 No GPL3 only     PDF encryption (8 files)
 GeoIP             x.x                                  Yes              GeoIP Maxmind conversion
 JCrop			  0.9.8	   MIT Licence				   Yes				JS library to crop images
-jQuery            1.5.1    GPL and MIT Licence         Yes              JS library
-jQuery UI         1.8.10   GPL and MIT Licence         Yes              JS library+Plugin UI
+jQuery            1.5.2    GPL and MIT Licence         Yes              JS library
+jQuery UI         1.8.11   GPL and MIT Licence         Yes              JS library+Plugin UI
 jQuery Layout     1.3.0	   GPL and MIT Licence         Yes              JS library+Plugin Layout (RC-29.12)
 jQuery TableDnD   0.5      GPL and MIT Licence         Yes              JS library+Plugin TableDnD
 jQuery jNotify	  1.1.00   Apache Software License 2.0 No GPL3 only		JS library+Plugin jNotify
-jQuery Mobile	  1.0a3	   GPL and MIT Licence		   Yes			    JS library for smartphone
+jQuery Mobile	  1.0a4.1  GPL and MIT Licence		   Yes			    JS library for smartphone
 MagPieRss         0.72     GPL 2.0                     Yes              Load RSS
 NuSoap            0.9.5    LGPL 2.1                    Yes              Interfaces with third tools
 OdtPHP            1.0.1    GPL 2.0                     Yes              Library to build/edit ODT files
