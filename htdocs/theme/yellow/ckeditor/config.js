@@ -24,6 +24,7 @@ CKEDITOR.editorConfig = function( config )
 	config.fullPage = false;	// Not a full html page string, just part of it
 	config.dialog_backgroundCoverColor = 'rgb(255, 254, 253)';
 	//config.contentsCss = '/css/mysitestyles.css';
+	config.image_previewText='';
 
 	config.toolbar_Full =
 	[
