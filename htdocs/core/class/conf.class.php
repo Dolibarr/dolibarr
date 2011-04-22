@@ -194,7 +194,7 @@ class Conf
 				}
 				$i++;
 			}
-			
+
 			// Sharings between entities
 			if (isset($this->multicompany->enabled) && $this->multicompany->enabled && ! empty($multicompany_sharing))
 			{
@@ -202,7 +202,7 @@ class Conf
 				if ($ret)
 				{
 					$mc = new ActionsMulticompany($db);
-					
+
 					foreach($multicompany_sharing as $key => $value)
 					{
 						$this->entities[$key]=$mc->check_entity($value);
@@ -367,7 +367,7 @@ class Conf
 		if (empty($this->global->MAIN_GRAPH_LIBRARY)) $this->global->MAIN_GRAPH_LIBRARY = 'artichow';
 
         if (! isset($this->global->MAIN_MAIL_EMAIL_INLINE_IMAGES)) $this->global->MAIN_MAIL_EMAIL_INLINE_IMAGES=1;
-        if (! isset($this->global->FCKEDITOR_EDITORNAME)) $this->global->FCKEDITOR_EDITORNAME='fckeditor';  // ckeditor to switch
+        if (! isset($this->global->FCKEDITOR_EDITORNAME)) $this->global->FCKEDITOR_EDITORNAME='ckeditor';  // fckeditor to switch
 
         // Format for date (used by default when not found or searched in lang)
         $this->format_date_short="%d/%m/%Y";            # Format of day with PHP/C tags (strftime functions)
