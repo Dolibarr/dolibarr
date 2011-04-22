@@ -31,6 +31,7 @@ ViewWithPredefinedFilters=Vues avec filtres prédéfinis
 AutoActions=Alimentation automatique de l'agenda
 AgendaAutoActionDesc=Définissez dans cet onglet les événements pour lesquels dolibarr créera automatiquement une action dans l'agenda. Si aucune case n'est cochée (par défaut), seules les actions manuelles seront incluses dans l'agenda.
 AgendaSetupOtherDesc=Cette page permet de configurer les autres paramètres du module agenda.
+AgendaExtSitesDesc=Cette page permet de configurer les calendriers externes.
 ActionsEvents=Événements pour lesquels Dolibarr doit créer une action dans l'agenda en automatique.
 PropalValidatedInDolibarr=Proposition %s validée
 InvoiceValidatedInDolibarr=Facture %s validée
@@ -55,3 +56,4 @@ AgendaUrlOptions4=<b>logint=%s</b> pour limiter l'export aux actions affectées 
 AgendaUrlOptions5=<b>logind=%s</b> pour limiter l'export aux actions réalisées par l'utilisateur <b>%s</b>.
 AgendaShowBirthdayEvents=Afficher anniversaires contacts
 AgendaHideBirthdayEvents=Cacher anniversaires contacts
+ExtSites=Calendriers externes

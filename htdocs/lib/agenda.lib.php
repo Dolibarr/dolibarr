@@ -311,6 +311,12 @@ function agenda_prepare_head()
 	$head[$h][1] = $langs->trans("Export");
 	$head[$h][2] = 'xcal';
 	$h++;
+	
+	$head[$h][0] = DOL_URL_ROOT."/admin/agenda_extsites.php";
+	$head[$h][1] = $langs->trans("ExtSites");
+	$head[$h][2] = 'extsites';
+	$h++;
+	
 
 	return $head;
 }

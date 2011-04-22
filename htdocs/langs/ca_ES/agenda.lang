@@ -31,6 +31,7 @@ ViewWithPredefinedFilters= Veure amb els filtres predefinits
 AutoActions= Inclusió automàtica a l'agenda
 AgendaAutoActionDesc= Definir els esdeveniments aquí per què voleu que Dolibarr creu automàticament una acció en l'ordre del dia. Si no està marcada (per defecte), es podran crear manualment.
 AgendaSetupOtherDesc= Aquesta pàgina us permet configurar altres paràmetres del mòdul agenda.
+AgendaExtSitesDesc=Aquesta pàgina us permet configurar calendaris externs.
 ActionsEvents= Esdeveniments per a què Dolibarr crei una acció de forma automàtica
 PropalValidatedInDolibarr= Pressupost %s validat
 InvoiceValidatedInDolibarr= Factura %s validada
@@ -55,3 +56,4 @@ AgendaUrlOptions4= <b>logint=%s</b> per a restringir insercions a accions que af
 AgendaUrlOptions5= <b>logind= %s</b> per a restringir insercions a accions realitzades per l'usuari <b>%s</b>.
 AgendaShowBirthdayEvents= Mostra aniversari dels contactes
 AgendaHideBirthdayEvents= Amaga aniversari dels contacte
+ExtSites=Calendaris externs
