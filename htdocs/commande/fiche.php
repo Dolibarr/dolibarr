@@ -1865,17 +1865,13 @@ else
                     // Valid
                     if ($object->statut == 0 && $object->total_ttc >= 0 && $numlines > 0 && $user->rights->commande->valider)
                     {
-                        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=validate"';
-                        print '>'.$langs->trans('Validate').'</a>';
+                        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=validate">'.$langs->trans('Validate').'</a>';
                     }
 
                     // Edit
-                    if ($object->statut == 1)
+                    if ($object->statut == 1 && $user->rights->commande->creer)
                     {
-                        if ($user->rights->commande->creer)
-                        {
-                            print '<a class="butAction" href="fiche.php?id='.$object->id.'&amp;action=modif">'.$langs->trans('Modify').'</a>';
-                        }
+                        print '<a class="butAction" href="fiche.php?id='.$object->id.'&amp;action=modif">'.$langs->trans('Modify').'</a>';
                     }
 
                     // Send
@@ -1893,24 +1889,16 @@ else
                     }
 
                     // Ship
+                    $numshipping=0;
                     if ($conf->expedition->enabled)
                     {
+                    	$numshipping = $object->nb_expedition();
+                    	
                         if ($object->statut > 0 && $object->statut < 3 && $object->getNbOfProductsLines() > 0)
                         {
                             if ($user->rights->expedition->creer)
                             {
-                                // Chargement des permissions
-                                /*$error = $user->load_entrepots();	deprecated
-                                if (sizeof($user->entrepots) === 1)
-                                {
-                                print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$id.'&amp;action=create&amp;commande_id='.$id.'&entrepot_id='.$user->entrepots[0]['id'].'">';
-                                print $langs->trans('ShipProduct').'</a>';
-
-                                }
-                                else
-                                {*/
                                 print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/shipment.php?id='.$object->id.'">'.$langs->trans('ShipProduct').'</a>';
-                                //}
                             }
                             else
                             {
@@ -1940,13 +1928,9 @@ else
                     }
 
                     // Close
-                    if ($object->statut == 1 || $object->statut == 2)
+                    if (($object->statut == 1 || $object->statut == 2) && $user->rights->commande->cloturer)
                     {
-                        if ($user->rights->commande->cloturer)
-                        {
-                            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=close"';
-                            print '>'.$langs->trans('Close').'</a>';
-                        }
+                        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=close">'.$langs->trans('Close').'</a>';
                     }
 
                     // Clone
@@ -1956,21 +1940,22 @@ else
                     }
 
                     // Cancel order
-                    if ($object->statut == 1)
+                    if ($object->statut == 1 && $user->rights->commande->annuler)
                     {
-                        $nb_expedition = $object->nb_expedition();
-                        if ($user->rights->commande->annuler && $nb_expedition == 0)
-                        {
-                            print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=cancel"';
-                            print '>'.$langs->trans('Cancel').'</a>';
-                        }
+                        print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=cancel">'.$langs->trans('Cancel').'</a>';
                     }
 
                     // Delete order
                     if ($user->rights->commande->supprimer)
                     {
-                        print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete"';
-                        print '>'.$langs->trans('Delete').'</a>';
+                    	if ($numshipping == 0)
+                    	{
+                    		print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+                    	}
+                    	else
+                    	{
+                    		print '<a class="butActionRefused" href="#" title="'.$langs->trans("ShippingExist").'">'.$langs->trans("Delete").'</a>';
+                    	}
                     }
 
                     print '</div>';

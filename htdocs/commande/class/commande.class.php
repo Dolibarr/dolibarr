@@ -1461,9 +1461,11 @@ class Commande extends CommonObject
 	function nb_expedition()
 	{
         $sql = 'SELECT count(*)';
-        $sql.= ' FROM '.MAIN_DB_PREFIX.'expedition as e,';
-        $sql.= ' '.MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = 'shipping'";
-        $sql.= " WHERE el.fk_source = ".$this->id;
+        $sql.= ' FROM '.MAIN_DB_PREFIX.'expedition as e';
+        $sql.= ', '.MAIN_DB_PREFIX.'element_element as el';
+        $sql.= ' WHERE el.fk_source = '.$this->id;
+        $sql.= " AND el.fk_target = e.rowid";
+        $sql.= " AND el.targettype = 'shipping'";
 
 		$resql = $this->db->query($sql);
 		if ($resql)
