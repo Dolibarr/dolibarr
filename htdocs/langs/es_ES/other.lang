@@ -200,6 +200,7 @@ MemberResiliatedInDolibarr=Miembro %s dado de baja en Dolibarr
 MemberDeletedInDolibarr=Miembro %s eliminado de Dolibarr
 MemberSubscriptionAddedInDolibarr=Subscripción del miembro % añadida en Dolibarr
 ##### Export #####
+Export=Exportación
 ExportsArea=Área de exportaciones
 AvailableFormats=Formatos disponibles
 LibraryUsed=Librería utilizada
