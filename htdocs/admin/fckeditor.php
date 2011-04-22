@@ -133,7 +133,7 @@ foreach($modules as $const => $desc)
 	print '<td>'.$langs->trans($desc).'</td>';
 	print '<td align="center" width="20">';
 
-	$constante = FCKEDITOR_ENABLE_.$const;
+	$constante = 'FCKEDITOR_ENABLE_'.$const;
 	$value = $conf->global->$constante;
 
 	print $value == 1 ? img_tick() : '&nbsp;';
