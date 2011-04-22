@@ -392,7 +392,9 @@ if (! empty($objcanvas->template_dir))
 	elseif ($action == 'edit')
 	{
     	$objcanvas->fetch($socid);            // Reload object
-		$objcanvas->assign_post();            // Assign POST data
+		if (! empty($_POST)) {
+			$objcanvas->assign_post();            // Assign POST data
+		}
 		$objcanvas->assign_values($action);   // Set value for templates
 		$objcanvas->display_canvas($action);  // Show template
 	}
