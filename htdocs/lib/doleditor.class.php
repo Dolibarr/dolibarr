@@ -186,10 +186,24 @@ class DolEditor
                                             }';
             	if ($this->uselocalbrowser)
             	{
-                    print ','."\n".'    filebrowserBrowseUrl : \'/browser/browse.php\',
-                                        filebrowserUploadUrl : \'/uploader/upload.php\',
-                                        filebrowserImageWindowWidth : \'640\',
-                                        filebrowserImageWindowHeight : \'480\'';
+                    print ','."\n";
+                    // To use filemanager with old fckeditor (GPL)
+                    print '    filebrowserBrowseUrl : \''.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanager/browser/default/browser.html?Connector='.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanager/connectors/php/connector.php\',
+                               filebrowserUploadUrl : \''.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanager/connectors/php/upload.php?Type=File\',
+                               filebrowserImageBrowseUrl : \''.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanager/browser/default/browser.html?Type=Image&Connector='.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanager/connectors/php/connector.php\',
+                               filebrowserImageUploadUrl : \''.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanager/connectors/php/upload.php?Type=Image\','."\n";
+                    // To use filemanager with ckfinder (Non free) and ckfinder directory is inside htdocs/includes
+/*                  print '    filebrowserBrowseUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/ckfinder.html\',
+                               filebrowserImageBrowseUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/ckfinder.html?Type=Images\',
+                               filebrowserFlashBrowseUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/ckfinder.html?Type=Flash\',
+                               filebrowserUploadUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files\',
+                               filebrowserImageUploadUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images\',
+                               filebrowserFlashUploadUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Flash\','."\n";
+*/
+                    print '    filebrowserWindowWidth : \'900\',
+                               filebrowserWindowHeight : \'500\',
+                               filebrowserImageWindowWidth : \'900\',
+                               filebrowserImageWindowHeight : \'500\'';
             	}
             	print '
             					});
