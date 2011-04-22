@@ -204,7 +204,13 @@ if ($_POST["action"] == "set")
 	}
 
 	// Force https
-	$main_force_https = ( (GETPOST("main_force_https") && (GETPOST("main_force_https") == "on" || GETPOST("main_force_https") == 1)) ? '1' : '0');
+	$main_force_https = ( (GETPOST("main_force_https") && ( GETPOST("main_force_https") == "on" || GETPOST("main_force_https") == 1) ) ? '1' : '0');
+	
+	// Use alternative directory
+	$main_use_alt_dir = ( (GETPOST("main_use_alt_dir") && ( GETPOST("main_use_alt_dir") == "on" || GETPOST("main_use_alt_dir") == 1) ) ? '' : '#');
+	
+	// Alternative root directory name
+	$main_alt_dir_name = ( (GETPOST("main_alt_dir_name") && GETPOST("main_alt_dir_name") != '') ? GETPOST("main_alt_dir_name") : 'custom');
 
 	/**
 	 * Write conf file on disk
@@ -505,7 +511,7 @@ pFooter($error,$setuplang,'jsinfo');
 function write_conf_file($conffile)
 {
 	global $conf,$langs;
-	global $_POST,$main_dir,$main_data_dir,$main_force_https;
+	global $_POST,$main_dir,$main_data_dir,$main_force_https,$main_use_alt_dir,$main_alt_dir_name;
 	global $dolibarr_main_url_root,$dolibarr_main_document_root,$dolibarr_main_data_root,$dolibarr_main_db_host;
 	global $dolibarr_main_db_port,$dolibarr_main_db_name,$dolibarr_main_db_user,$dolibarr_main_db_pass;
 	global $dolibarr_main_db_type,$dolibarr_main_db_character_set,$dolibarr_main_db_collation,$dolibarr_main_authentication;
@@ -535,10 +541,10 @@ function write_conf_file($conffile)
 		fputs($fp, '$dolibarr_main_document_root=\''.addslashes($main_dir).'\';');
 		fputs($fp,"\n");
 
-		fputs($fp, '#$dolibarr_main_url_root_alt=\''.addslashes($_POST["main_url"]."/custom").'\';');
+		fputs($fp, $main_use_alt_dir.'$dolibarr_main_url_root_alt=\''.addslashes($_POST["main_url"]."/".$main_alt_dir_name).'\';');
 		fputs($fp,"\n");
 
-		fputs($fp, '#$dolibarr_main_document_root_alt=\''.addslashes($main_dir."/custom").'\';');
+		fputs($fp, $main_use_alt_dir.'$dolibarr_main_document_root_alt=\''.addslashes($main_dir."/".$main_alt_dir_name).'\';');
 		fputs($fp,"\n");
 
 		fputs($fp, '$dolibarr_main_data_root=\''.addslashes($main_data_dir).'\';');

@@ -31,7 +31,7 @@ return "Regis Houssin";
 # script_dolibarr_versions()
 sub script_dolibarr_versions
 {
-return ( "3.0.0", "2.9.0" );
+return ( "3.0.0" );
 }
 
 sub script_dolibarr_category
@@ -180,9 +180,11 @@ $err && return (0, "Failed to extract source : $err");
 # Add config file
 local $cfiledir = "$opts->{'dir'}/conf/";
 local $docdir = "$opts->{'dir'}/documents";
+local $altdir = "$opts->{'dir'}/custom";
 local $cfile = $cfiledir."conf.php";
 local $oldcfile = &transname();
 local $olddocdir = &transname();
+local $oldaltdir = &transname();
 local $url;
 
 $tmpl = &get_template($d->{'template'});
@@ -204,23 +206,27 @@ if ($opts->{'path'} =~ /\w/) {
 }
 
 if (!$upgrade) {
-        local $cdef = "$opts->{'dir'}/conf/conf.php.example";
-        &run_as_domain_user($d, "cp ".quotemeta($cdef)." ".quotemeta($cfile));
+	local $cdef = "$opts->{'dir'}/conf/conf.php.example";
+    &run_as_domain_user($d, "cp ".quotemeta($cdef)." ".quotemeta($cfile));
 	&set_ownership_permissions(undef, undef, 0777, $cfiledir);
 	&set_ownership_permissions(undef, undef, 0666, $cfile);
 	&run_as_domain_user($d, "mkdir ".quotemeta($docdir));
 	&set_ownership_permissions(undef, undef, 0777, $docdir);
-        }
+	&run_as_domain_user($d, "mkdir ".quotemeta($altdir));
+	&set_ownership_permissions(undef, undef, 0777, $altdir);
+}
 else {
-	# Preserve old config file and documents directory
+	# Preserve old config file, documents and custom directory
 	&copy_source_dest($cfile, $oldcfile);
 	&copy_source_dest($docdir, $olddocdir);
-	}
+	&copy_source_dest($altdir, $oldaltdir);
+}
 
 if ($upgrade) {
-	# Put back original config file and documents directory
+	# Put back original config file, documents and custom directory
 	&copy_source_dest_as_domain_user($d, $oldcfile, $cfile);
 	&copy_source_dest_as_domain_user($d, $olddocdir, $docdir);
+	&copy_source_dest_as_domain_user($d, $oldaltdir, $altdir);
 	
 	# First page (Update database schema)
 	local @params = ( [ "action", "upgrade" ],
@@ -266,6 +272,8 @@ else {
 			  [ "main_force_https", $opts->{'forcehttps'} ],
 			  [ "dolibarr_main_db_character_set", $charset ],
 			  [ "dolibarr_main_db_collation", $collate ],
+			  [ "usealternaterootdir", "1" ],
+			  [ "main_alt_dir_name", "custom" ],
 			 );
 	local $err = &call_dolibarr_wizard_page(\@params, "etape1", $d, $opts);
 	return (-1, "Dolibarr wizard failed : $err") if ($err);
