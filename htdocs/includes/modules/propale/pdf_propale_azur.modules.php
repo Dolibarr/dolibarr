@@ -203,9 +203,9 @@ class pdf_propale_azur extends ModelePDFPropales
 				$tab_top = 90;
 				$tab_top_middlepage = 50;
 				$tab_top_newpage = 50;
-				$tab_height = 150;
-				$tab_height_middlepage = 190;
-				$tab_height_newpage = 150;
+				$tab_height = 130;
+				$tab_height_middlepage = 200;
+				$tab_height_endpage = 170;
 
 				// Affiche notes
 				if (! empty($object->note_public))
@@ -322,7 +322,7 @@ class pdf_propale_azur extends ModelePDFPropales
 					else
 					{
 						$tab_top_in_current_page=$tab_top_newpage;
-						$tab_height_in_current_page=$tab_height_newpage;
+						$tab_height_in_current_page=$tab_height_middlepage;
 					}
 					if (($nexY+$nblineFollowDesc) > ($tab_top_in_current_page+$tab_height_in_current_page) && $i < ($nblignes - 1))
 					{
@@ -332,7 +332,7 @@ class pdf_propale_azur extends ModelePDFPropales
 						}
 						else
 						{
-							$this->_tableau($pdf, $tab_top_newpage, $tab_height_newpage, $nexY, $outputlangs);
+							$this->_tableau($pdf, $tab_top_newpage, $tab_height_middlepage, $nexY, $outputlangs);
 						}
 
 						$this->_pagefoot($pdf,$object,$outputlangs);
@@ -358,8 +358,8 @@ class pdf_propale_azur extends ModelePDFPropales
 				}
 				else
 				{
-					$this->_tableau($pdf, $tab_top_newpage, $tab_height_newpage, $nexY, $outputlangs);
-					$bottomlasttab=$tab_top_newpage + $tab_height_newpage + 1;
+					$this->_tableau($pdf, $tab_top_newpage, $tab_height_endpage, $nexY, $outputlangs);
+					$bottomlasttab=$tab_top_newpage + $tab_height_endpage + 1;
 				}
 
 				// Affiche zone infos
