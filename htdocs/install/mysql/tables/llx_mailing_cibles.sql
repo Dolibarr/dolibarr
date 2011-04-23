@@ -1,6 +1,7 @@
 -- ========================================================================
 -- Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2011 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -29,6 +30,7 @@ create table llx_mailing_cibles
   prenom             varchar(160),
   email              varchar(160) NOT NULL,
   other              varchar(255) NULL,
+  tracker            varchar(128) NULL,
   statut             smallint NOT NULL DEFAULT 0,
   source_url         varchar(160),
   source_id          integer,

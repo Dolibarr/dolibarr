@@ -91,6 +91,8 @@ ALTER TABLE llx_propaldet ADD INDEX idx_propaldet_fk_product (fk_product);
 ALTER TABLE llx_commandedet ADD INDEX idx_commandedet_fk_product (fk_product);
 ALTER TABLE llx_facturedet ADD INDEX idx_facturedet_fk_product (fk_product);
 
+ALTER TABLE llx_mailing_cibles ADD COLUMN tracker varchar(128) NULL AFTER other;
+
 --Add Chile data (id pays=67)
 -- Regions Chile
 INSERT INTO llx_c_regions (rowid, code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (6701, 6701, 67, NULL, NULL, 'Tarapacá', 1);
