@@ -91,7 +91,8 @@ ALTER TABLE llx_propaldet ADD INDEX idx_propaldet_fk_product (fk_product);
 ALTER TABLE llx_commandedet ADD INDEX idx_commandedet_fk_product (fk_product);
 ALTER TABLE llx_facturedet ADD INDEX idx_facturedet_fk_product (fk_product);
 
-ALTER TABLE llx_mailing_cibles ADD COLUMN tracker varchar(128) NULL AFTER other;
+ALTER TABLE llx_mailing_cibles ADD COLUMN tag varchar(128) NULL AFTER other;
+ALTER TABLE llx_mailing ADD COLUMN tag varchar(128) NULL AFTER email_errorsto;
 
 --Add Chile data (id pays=67)
 -- Regions Chile

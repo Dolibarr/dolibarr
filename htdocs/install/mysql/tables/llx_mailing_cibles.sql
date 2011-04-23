@@ -23,18 +23,19 @@
 
 create table llx_mailing_cibles
 (
-  rowid              integer AUTO_INCREMENT PRIMARY KEY,
-  fk_mailing         integer NOT NULL,
-  fk_contact         integer NOT NULL,
-  nom                varchar(160),
-  prenom             varchar(160),
-  email              varchar(160) NOT NULL,
-  other              varchar(255) NULL,
-  tracker            varchar(128) NULL,
-  statut             smallint NOT NULL DEFAULT 0,
-  source_url         varchar(160),
-  source_id          integer,
-  source_type        varchar(16),
-  date_envoi         datetime
+  rowid				integer AUTO_INCREMENT PRIMARY KEY,
+  fk_mailing		integer NOT NULL,
+  fk_contact		integer NOT NULL,
+  nom				varchar(160),
+  prenom			varchar(160),
+  email				varchar(160) NOT NULL,
+  other				varchar(255) NULL,
+  tag				varchar(128) NULL,
+  statut			smallint NOT NULL DEFAULT 0,
+  source_url		varchar(160),
+  source_id			integer,
+  source_type		varchar(16),
+  date_envoi		datetime
+  
 )ENGINE=innodb;
 
