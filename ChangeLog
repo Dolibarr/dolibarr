@@ -33,6 +33,8 @@ For users:
 - New: Add region/country statistics for member module.
 - New: Can define a proxy for external web access.
 - New: task #11003: checkbox on checks to deposit
+- New: Numbering module for invoice use same number for invoice 
+       and credit note if mask is same.
 - Fix: Better Postgresql compatibility.
 
 For developers:

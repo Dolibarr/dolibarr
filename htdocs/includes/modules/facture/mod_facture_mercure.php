@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  *
@@ -128,8 +128,8 @@ class mod_facture_mercure extends ModeleNumRefFactures
         }
 
         $where='';
-        if ($facture->type == 2) $where.= " AND type = 2";
-        else $where.=" AND type != 2";
+        //if ($facture->type == 2) $where.= " AND type = 2";
+        //else $where.=" AND type != 2";
 
         $numFinal=get_next_value($db,$mask,'facture','facnumber',$where,$objsoc,$facture->date,$mode);
         if (! preg_match('/([0-9])+/',$numFinal)) $this->error = $numFinal;
