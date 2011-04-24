@@ -1123,7 +1123,7 @@ class CommandeFournisseur extends Commande
 	function get_methodes_commande()
 	{
 		$sql = "SELECT rowid, libelle";
-		$sql.= " FROM ".MAIN_DB_PREFIX."c_demand_method";
+		$sql.= " FROM ".MAIN_DB_PREFIX."c_input_method";
 		$sql.= " WHERE active = 1";
 
 		$resql=$this->db->query($sql);
