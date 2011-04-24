@@ -1986,6 +1986,7 @@ class Form
 
         $more='';
         $formconfirm='';
+        $inputarray=array();
 
         if (empty($height)) $height=170;
 
@@ -1997,15 +1998,16 @@ class Form
             {
                 if ($input['type'] == 'text')
                 {
-                    $more.='<tr><td valign="top">'.$input['label'].'</td><td valign="top" colspan="2" align="left"><input type="text" class="flat" name="'.$input['name'].'" size="'.$input['size'].'" value="'.$input['value'].'"></td></tr>'."\n";
+                    $more.='<tr><td valign="top">'.$input['label'].'</td><td valign="top" colspan="2" align="left"><input type="text" class="flat" id="'.$input['name'].'" name="'.$input['name'].'" size="'.$input['size'].'" value="'.$input['value'].'"></td></tr>'."\n";
                 }
                 if ($input['type'] == 'password')
                 {
-                    $more.='<tr><td valign="top">'.$input['label'].'</td><td valign="top" colspan="2" align="left"><input type="password" class="flat" name="'.$input['name'].'" size="'.$input['size'].'" value="'.$input['value'].'"></td></tr>'."\n";
+                    $more.='<tr><td valign="top">'.$input['label'].'</td><td valign="top" colspan="2" align="left"><input type="password" class="flat" id="'.$input['name'].'" name="'.$input['name'].'" size="'.$input['size'].'" value="'.$input['value'].'"></td></tr>'."\n";
                 }
                 if ($input['type'] == 'select')
                 {
-                    $more.='<tr><td valign="top">';
+                	$more.='<tr><td valign="top">';
+                	if (! empty($input['label'])) $more.=$input['label'].'</td><td valign="top" colspan="2" align="left">';
                     $more.=$this->selectarray($input['name'],$input['values'],'',1);
                     $more.='</td></tr>'."\n";
                 }
@@ -2014,7 +2016,7 @@ class Form
                     $more.='<tr>';
                     //$more.='<td valign="top">'.$input['label'].' &nbsp;';
                     $more.='<td valign="top">'.$input['label'].' </td><td valign="top" align="left">';
-                    $more.='<input type="checkbox" class="flat" name="'.$input['name'].'"';
+                    $more.='<input type="checkbox" class="flat" id="'.$input['name'].'" name="'.$input['name'].'"';
                     if (! is_bool($input['value']) && $input['value'] != 'false') $more.=' checked="true"';
                     if (is_bool($input['value']) && $input['value']) $more.=' checked="true"';
                     if ($input['disabled']) $more.=' disabled="true"';
@@ -2032,7 +2034,7 @@ class Form
                         $more.='<tr>';
                         if ($i==0) $more.='<td valign="top">'.$input['label'].'</td>';
                         else $more.='<td>&nbsp;</td>';
-                        $more.='<td valign="top" width="20"><input type="radio" class="flat" name="'.$input['name'].'" value="'.$selkey.'"';
+                        $more.='<td valign="top" width="20"><input type="radio" class="flat" id="'.$input['name'].'" name="'.$input['name'].'" value="'.$selkey.'"';
                         if ($input['disabled']) $more.=' disabled="true"';
                         $more.='></td>';
                         $more.='<td valign="top" align="left">';
@@ -2041,6 +2043,14 @@ class Form
                         $i++;
                     }
                 }
+            	if ($input['type'] == 'other')
+                {
+                	$more.='<tr><td valign="top">';
+                	if (! empty($input['label'])) $more.=$input['label'].'</td><td valign="top" colspan="2" align="left">';
+                    $more.=$input['value'];
+                    $more.='</td></tr>'."\n";
+                }
+                array_push($inputarray,$input['name']);
             }
             $more.='</table>'."\n";
         }
@@ -2058,6 +2068,7 @@ class Form
             $formconfirm.= '</div>'."\n";
             $formconfirm.= '<script type="text/javascript">
                 var choice=\'ko\';
+                var	$inputarray='.json_encode($inputarray).';
 			    jQuery("#dialog-confirm").dialog({
 			        autoOpen: true,
 			        resizable: false,
@@ -2066,7 +2077,18 @@ class Form
 			        modal: true,
 			        closeOnEscape: false,
 			        close: function(event, ui) {
-			             if (choice == \'ok\') location.href=\''.$pageyes.'\';
+			             if (choice == \'ok\') {
+			             	var options="";
+			             	if ($inputarray.length>0) {
+			             		$.each($inputarray, function() {
+			             			var inputname = this;
+			             			var inputvalue = $("#" + this).val();
+			             			options += \'&\' + inputname + \'=\' + inputvalue;
+			             		});
+			             		//alert( options );
+			             	}
+			             	location.href=\''.$pageyes.'\' + options;
+			             }
                          '.($pageno?'if (choice == \'ko\') location.href=\''.$pageno.'\';':'').'
 		              },
 			        buttons: {
@@ -2086,7 +2108,7 @@ class Form
         }
         else
         {
-            $formconfirm.= '<form method="post" action="'.$page.'" class="notoptoleftroright">'."\n";
+            $formconfirm.= '<form method="POST" action="'.$page.'" class="notoptoleftroright">'."\n";
             $formconfirm.= '<input type="hidden" name="action" value="'.$action.'">';
             $formconfirm.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
 

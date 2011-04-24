@@ -90,13 +90,13 @@ if (! empty($object->hooks))
 // Action clone object
 if ($action == 'confirm_clone' && $confirm == 'yes')
 {
-    if (1==0 && empty($_REQUEST["clone_content"]) && empty($_REQUEST["clone_receivers"]))
+    if ( 1==0 && ! GETPOST('clone_content') && ! GETPOST('clone_receivers') )
     {
         $mesg='<div class="error">'.$langs->trans("NoCloneOptionsSpecified").'</div>';
     }
     else
     {
-        $result=$object->createFromClone($id);
+        $result=$object->createFromClone($id, 0, GETPOST('socid'));
         if ($result > 0)
         {
             header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
@@ -1497,7 +1497,8 @@ else
                 // Create an array for form
                 $formquestion=array(
                 //'text' => $langs->trans("ConfirmClone"),
-                //array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1)
+                //array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1),
+                //array('type' => 'other', 'name' => 'socid',   'label' => $langs->trans("SelectThirdParty"),   'value' => $html->select_company(GETPOST('socid'),'socid','(s.client=1 OR s.client=3)'))
                 );
                 // Paiement incomplet. On demande si motif = escompte ou autre
                 $formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneOrder'),$langs->trans('ConfirmCloneOrder',$object->ref),'confirm_clone',$formquestion,'yes',1);
@@ -1936,7 +1937,7 @@ else
                     // Clone
                     if ($user->rights->commande->creer)
                     {
-                        print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=clone&amp;object=order">'.$langs->trans("ToClone").'</a>';
+                        print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;object=order">'.$langs->trans("ToClone").'</a>';
                     }
 
                     // Cancel order

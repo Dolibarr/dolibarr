@@ -710,12 +710,13 @@ class Commande extends CommonObject
 
 
 	/**
-	 *		\brief      Load an object from its id and create a new one in database
-	 *		\param      fromid     		Id of object to clone
-	 *		\param		invertdetail	Reverse sign of amounts for lines
-	 * 	 	\return		int				New id of clone
+	 *		Load an object from its id and create a new one in database
+	 *		@param      fromid     		Id of object to clone
+	 *		@param		invertdetail	Reverse sign of amounts for lines
+	 *		@param		socid			Id of thirdparty
+	 * 	 	@return		int				New id of clone
 	 */
-	function createFromClone($fromid,$invertdetail=0)
+	function createFromClone($fromid,$invertdetail=0,$socid=0)
 	{
 		global $conf,$user,$langs;
 
@@ -734,6 +735,13 @@ class Commande extends CommonObject
 		// Load source object
 		$object->fetch($fromid);
 		$objFrom = $object;
+		
+		// Change socid if needed
+		if (! empty($socid) && $socid != $object->socid)
+		{
+			$object->socid = $socid;
+			// TODO clear delivery address, project linked, change product price if multi-prices
+		}
 
 		$object->id=0;
 		$object->statut=0;
