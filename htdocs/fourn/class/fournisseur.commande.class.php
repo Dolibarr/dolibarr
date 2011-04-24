@@ -107,7 +107,7 @@ class CommandeFournisseur extends Commande
 		$sql.= " c.note, c.note_public, c.model_pdf,";
 		$sql.= " cm.libelle as methode_commande";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_demand_method as cm ON cm.rowid = c.fk_methode_commande";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_input_method as cm ON cm.rowid = c.fk_methode_commande";
 		$sql.= " WHERE c.entity = ".$conf->entity;
 		if ($ref) $sql.= " AND c.ref='".$ref."'";
 		else $sql.= " AND c.rowid=".$id;
