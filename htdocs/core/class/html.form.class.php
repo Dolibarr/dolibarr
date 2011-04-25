@@ -582,7 +582,7 @@ class Form
             }
             else
             {
-                $out.= '<select id="select'.$htmlname.'" class="flat" name="'.$htmlname.'">';
+                $out.= '<select id="'.$htmlname.'" class="flat" name="'.$htmlname.'">';
                 if ($showempty) $out.= '<option value="-1">&nbsp;</option>';
                 $num = $this->db->num_rows($resql);
                 $i = 0;
