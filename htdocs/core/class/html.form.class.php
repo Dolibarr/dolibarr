@@ -1992,7 +1992,7 @@ class Form
 
         if ($formquestion)
         {
-            $more.='<table class="nobordernopadding" width="100%">'."\n";
+        	$more.='<table class="nobordernopadding" width="100%">'."\n";
             $more.='<tr><td colspan="3" valign="top">'.$formquestion['text'].'</td></tr>'."\n";
             foreach ($formquestion as $key => $input)
             {
@@ -2064,7 +2064,8 @@ class Form
 
             // New code using jQuery only
             $formconfirm.= '<div id="dialog-confirm" title="'.dol_escape_htmltag($title).'">';
-            $formconfirm.= img_help('','').' '.$more.$question;
+            $formconfirm.= img_help('','').' '.$question;
+            if (! empty($more)) $formconfirm.= '<p>'.$more.'</p>';
             $formconfirm.= '</div>'."\n";
             $formconfirm.= '<script type="text/javascript">
                 var choice=\'ko\';
@@ -2235,7 +2236,7 @@ class Form
      *    	\param      htmlname    	Name of select html field
      *		\param		addempty		Ajoute entree vide
      */
- function form_availability($page, $selected='', $htmlname='availability', $addempty=0)
+    function form_availability($page, $selected='', $htmlname='availability', $addempty=0)
     {
         global $langs;
         if ($htmlname != "none")
@@ -2269,7 +2270,7 @@ class Form
      *    	\param      htmlname    	Name of select html field
      *		\param		addempty		Ajoute entree vide
      */
- function form_source($page, $selected='', $htmlname='source', $addempty=0)
+    function form_source($page, $selected='', $htmlname='source', $addempty=0)
     {
         global $langs;
         if ($htmlname != "none")
