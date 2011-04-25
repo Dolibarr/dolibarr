@@ -198,6 +198,22 @@ function ajax_dialog($title,$message,$w=350,$h=150)
 }
 
 /**
+ * 	Convert combox
+ */
+function ajax_combobox($htmlname)
+{
+	$msg.= '<script type="text/javascript">
+    $(function() {
+    	$( "#'.$htmlname.'" ).combobox();
+    });
+	</script>';
+	
+    $msg.= "\n";
+    
+    return $msg;
+}
+
+/**
  *
  * Enter description here ...
  * @param unknown_type $var

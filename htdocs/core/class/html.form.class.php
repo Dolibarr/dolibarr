@@ -545,7 +545,6 @@ class Form
         if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         $sql.= " WHERE s.entity = ".$conf->entity;
         if ($filter) $sql.= " AND ".$filter;
-        //if (is_numeric($selected) && $conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT)	$sql.= " AND s.rowid = ".$selected;
         if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
         $sql.= " ORDER BY nom ASC";
 
@@ -555,71 +554,41 @@ class Form
         {
             if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT && ! $forcecombo)
             {
-            	/*
-                $minLength = (is_numeric($conf->global->COMPANY_USE_SEARCH_TO_SELECT)?$conf->global->COMPANY_USE_SEARCH_TO_SELECT:2);
-
-            	$socid = 0;
-                if ($selected)
+                //$minLength = (is_numeric($conf->global->COMPANY_USE_SEARCH_TO_SELECT)?$conf->global->COMPANY_USE_SEARCH_TO_SELECT:2);
+            	
+            	$out.= ajax_combobox($htmlname);
+            }
+            
+            $out.= '<select id="'.$htmlname.'" class="flat" name="'.$htmlname.'">';
+            if ($showempty) $out.= '<option value="-1">&nbsp;</option>';
+            $num = $this->db->num_rows($resql);
+            $i = 0;
+            if ($num)
+            {
+                while ($i < $num)
                 {
                     $obj = $this->db->fetch_object($resql);
-                    $socid = $obj->rowid?$obj->rowid:'';
-                }
-
-                $out.= "\n".'<!-- Input text for third party with Ajax.Autocompleter (select_societes) -->'."\n";
-                $out.= '<table class="nobordernopadding"><tr class="nocellnopadd">';
-                $out.= '<td class="nobordernopadding">';
-                if ($socid == 0)
-                {
-                	$out.= '<input type="text" size="30" id="search_'.$htmlname.'" name="search_'.$htmlname.'" value="" />';
-                }
-                else
-                {
-                    $out.= '<input type="text" size="30" id="search_'.$htmlname.'" name="search_'.$htmlname.'" value="'.$obj->nom.'" />';
-                }
-                $out.= ajax_autocompleter(($socid?$socid:-1),$htmlname,DOL_URL_ROOT.'/societe/ajaxcompanies.php?filter='.urlencode($filter), '', $minLength);
-                $out.= '</td>';
-                $out.= '</tr>';
-                $out.= '</table>';*/
-            	
-            	$out.= '<script>
-            		$(function() {
-                		$( "#'.$htmlname.'" ).combobox();
-            		});
-            	</script>';
-            }
-            //else
-            //{
-                $out.= '<select id="'.$htmlname.'" class="flat" name="'.$htmlname.'">';
-                if ($showempty) $out.= '<option value="-1">&nbsp;</option>';
-                $num = $this->db->num_rows($resql);
-                $i = 0;
-                if ($num)
-                {
-                    while ($i < $num)
+                    $label=$obj->nom;
+                    if ($showtype)
                     {
-                        $obj = $this->db->fetch_object($resql);
-                        $label=$obj->nom;
-                        if ($showtype)
-                        {
-                            if ($obj->client || $obj->fournisseur) $label.=' (';
-                            if ($obj->client == 1 || $obj->client == 3) $label.=$langs->trans("Customer");
-                            if ($obj->client == 2 || $obj->client == 3) $label.=($obj->client==3?', ':'').$langs->trans("Prospect");
-                            if ($obj->fournisseur) $label.=($obj->client?', ':'').$langs->trans("Supplier");
-                            if ($obj->client || $obj->fournisseur) $label.=')';
-                        }
-                        if ($selected > 0 && $selected == $obj->rowid)
-                        {
-                            $out.= '<option value="'.$obj->rowid.'" selected="selected">'.$label.'</option>';
-                        }
-                        else
-                        {
-                            $out.= '<option value="'.$obj->rowid.'">'.$label.'</option>';
-                        }
-                        $i++;
+                        if ($obj->client || $obj->fournisseur) $label.=' (';
+                        if ($obj->client == 1 || $obj->client == 3) $label.=$langs->trans("Customer");
+                        if ($obj->client == 2 || $obj->client == 3) $label.=($obj->client==3?', ':'').$langs->trans("Prospect");
+                        if ($obj->fournisseur) $label.=($obj->client?', ':'').$langs->trans("Supplier");
+                        if ($obj->client || $obj->fournisseur) $label.=')';
                     }
+                    if ($selected > 0 && $selected == $obj->rowid)
+                    {
+                        $out.= '<option value="'.$obj->rowid.'" selected="selected">'.$label.'</option>';
+                    }
+                    else
+                    {
+                        $out.= '<option value="'.$obj->rowid.'">'.$label.'</option>';
+                    }
+                    $i++;
                 }
-                $out.= '</select>';
-            //}
+            }
+            $out.= '</select>';
         }
         else
         {

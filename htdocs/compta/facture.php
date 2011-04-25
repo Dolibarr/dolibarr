@@ -1458,12 +1458,8 @@ if ($action == 'create')
 
 	if ($conf->use_javascript_ajax)
 	{
-        print '<script>
-            jQuery(function() {
-                jQuery( "#fac_replacement" ).combobox();
-                jQuery( "#fac_avoir" ).combobox();
-            });
-            </script>';
+        print ajax_combobox('fac_replacement');
+        print ajax_combobox('fac_avoir');
 	}
 
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
