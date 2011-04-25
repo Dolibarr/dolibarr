@@ -1987,7 +1987,7 @@ class Form
      *     @param  height          Force height of box
      *     @return string          'ajax' if a confirm ajax popup is shown, 'html' if it's an html form
      */
-    function formconfirm($page, $title, $question, $action, $formquestion='', $selectedchoice="", $useajax=0, $height=170, $width=400)
+    function formconfirm($page, $title, $question, $action, $formquestion='', $selectedchoice="", $useajax=0, $height=170, $width=500)
     {
         global $langs,$conf;
 
