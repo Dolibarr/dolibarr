@@ -5,6 +5,7 @@ ErrorPrefixAlreadyExists=El prefijo %s ya existe. Indique otro.
 ErrorSetACountryFirst=Defina en primer lugar el país
 DeleteThirdParty=Eliminar un tercero
 ConfirmDeleteCompany=¿Está seguro de querer eliminar esta empresa y toda la información dependiente?
+SelectThirdParty=Seleccionar un tercero
 DeleteContact=Eliminar un contacto
 ConfirmDeleteContact=¿Está seguro de querer eliminar este contacto y toda su información inherente?
 MenuNewThirdParty=Nuevo tercero

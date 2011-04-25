@@ -3,6 +3,7 @@ CHARSET=UTF-8
 ErrorCompanyNameAlreadyExists=El nom de l'empresa %s ja existeix. Indiqui altre.
 ErrorPrefixAlreadyExists=El prefix %s ja existeix. Indiqui altre.
 ErrorSetACountryFirst=Definiu en primer lloc el país
+SelectThirdParty=Seleccionar un tercer
 DeleteThirdParty=Eliminar un tercer
 ConfirmDeleteCompany=Esteu segur de voler eliminar aquesta empresa i tota la informació dependent?
 DeleteContact=Eliminar un contacte
