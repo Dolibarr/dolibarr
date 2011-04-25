@@ -813,12 +813,13 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *		\brief      Load an object from its id and create a new one in database
-	 *		\param      fromid     		Id of object to clone
-	 *		\param		invertdetail	Reverse sign of amounts for lines
-	 * 	 	\return		int				New id of clone
+	 *		Load an object from its id and create a new one in database
+	 *		@param      fromid     		Id of object to clone
+	 *		@param		invertdetail	Reverse sign of amounts for lines
+	 *		@param		socid			Id of thirdparty
+	 * 	 	@return		int				New id of clone
 	 */
-	function createFromClone($fromid,$invertdetail=0)
+	function createFromClone($fromid,$invertdetail=0,$socid=0)
 	{
 		global $user,$langs,$conf;
 
@@ -839,12 +840,31 @@ class Propal extends CommonObject
 		// Load source object
 		$object->fetch($fromid);
 		$objFrom = $object;
+		
+		$objsoc=new Societe($this->db);
+		
+		// Change socid if needed
+		if (! empty($socid) && $socid != $object->socid)
+		{
+			if ($objsoc->fetch($socid)>0)
+			{
+				$object->socid 					= $objsoc->id;
+				$object->cond_reglement_id		= $objsoc->cond_reglement_id;
+				$object->mode_reglement_id		= $objsoc->mode_reglement_id;
+				$object->fk_project				= '';
+				$object->fk_delivery_address	= '';
+			}
+			
+			// TODO Change product price if multi-prices
+		}
+		else
+		{
+			$objsoc->fetch($object->socid);
+		}
 
 		$object->id=0;
 		$object->statut=0;
 
-		require_once(DOL_DOCUMENT_ROOT ."/societe/class/societe.class.php");
-		$objsoc=new Societe($this->db);
 		$objsoc->fetch($object->socid);
 
 		if (empty($conf->global->PROPALE_ADDON) || ! is_readable(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".$conf->global->PROPALE_ADDON.".php"))

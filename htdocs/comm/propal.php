@@ -101,15 +101,15 @@ if (! empty($object->hooks))
 }
 
 // Action clone object
-if ($_REQUEST["action"] == 'confirm_clone' && $_REQUEST['confirm'] == 'yes')
+if ($action == 'confirm_clone' && $confirm == 'yes')
 {
-	if (1==0 && empty($_REQUEST["clone_content"]) && empty($_REQUEST["clone_receivers"]))
+	if (1==0 &&  ! GETPOST('clone_content') && ! GETPOST('clone_receivers') )
 	{
 		$mesg='<div class="error">'.$langs->trans("NoCloneOptionsSpecified").'</div>';
 	}
 	else
 	{
-		$result=$object->createFromClone($_REQUEST["id"]);
+		$result=$object->createFromClone($id,0,GETPOST('socid'));
 		if ($result > 0)
 		{
 			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
@@ -1016,7 +1016,9 @@ if ($id > 0 || ! empty($ref))
 		// Create an array for form
 		$formquestion=array(
 		//'text' => $langs->trans("ConfirmClone"),
-		//array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1)
+		//array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1),
+		//array('type' => 'checkbox', 'name' => 'update_prices',   'label' => $langs->trans("PuttingPricesUpToDate"),   'value' => 1),
+		array('type' => 'other', 'name' => 'socid',   'label' => $langs->trans("SelectThirdParty"),   'value' => $html->select_company(GETPOST('socid'),'socid','(s.client=1 OR s.client=3)'))
 		);
 		// Paiement incomplet. On demande si motif = escompte ou autre
 		$formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('ClonePropal'),$langs->trans('ConfirmClonePropal',$object->ref),'confirm_clone',$formquestion,'yes',1);
@@ -1570,7 +1572,7 @@ if ($id > 0 || ! empty($ref))
 			// Clone
 			if ($object->type == 0 && $user->rights->propale->creer)
 			{
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=clone&amp;object=propal">'.$langs->trans("ToClone").'</a>';
+				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;object=propal">'.$langs->trans("ToClone").'</a>';
 			}
 
 			// Delete

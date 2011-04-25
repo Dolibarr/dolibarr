@@ -739,13 +739,13 @@ class Commande extends CommonObject
 		// Change socid if needed
 		if (! empty($socid) && $socid != $object->socid)
 		{
-			$socstatic = new Societe($this->db);
+			$objsoc = new Societe($this->db);
 			
-			if ($socstatic->fetch($socid)>0)
+			if ($objsoc->fetch($socid)>0)
 			{
-				$object->socid 					= $socid;
-				$object->cond_reglement_id		= $soc->cond_reglement_id;
-				$object->mode_reglement_id		= $soc->mode_reglement_id;
+				$object->socid 					= $objsoc->id;
+				$object->cond_reglement_id		= $objsoc->cond_reglement_id;
+				$object->mode_reglement_id		= $objsoc->mode_reglement_id;
 				$object->fk_project				= '';
 				$object->fk_delivery_address	= '';
 			}
