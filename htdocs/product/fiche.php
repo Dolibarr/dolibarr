@@ -44,14 +44,16 @@ $langs->load("other");
 if ($conf->stock->enabled) $langs->load("stocks");
 if ($conf->facture->enabled) $langs->load("bills");
 
+$id=GETPOST('id');
+$ref=GETPOST('ref');
+$action=GETPOST('action');
+$confirm=GETPOST('confirm');
+
 // Security check
-if (isset($_GET["id"]) || isset($_GET["ref"]))
-{
-	$id = isset($_GET["id"])?$_GET["id"]:(isset($_GET["ref"])?$_GET["ref"]:'');
-}
-$fieldid = isset($_GET["ref"])?'ref':'rowid';
+if (isset($id) || isset($ref)) $value = isset($id)?$id:(isset($ref)?$ref:'');
+$type = isset($ref)?'ref':'rowid';
 $socid=$user->societe_id?$user->societe_id:0;
-$result=restrictedArea($user,'produit|service',$id,'product','','',$fieldid);
+$result=restrictedArea($user,'produit|service',$value,'product','','',$type);
 
 // For canvas usage
 if (empty($_GET["canvas"]))
@@ -67,7 +69,7 @@ $mesg = '';
  * Actions
  */
 
-if ($_POST['action'] == 'setproductaccountancycodebuy')
+if ($action == 'setproductaccountancycodebuy')
 {
 	$product = new Product($db);
 	$result=$product->fetch($_POST['id']);
@@ -77,53 +79,51 @@ if ($_POST['action'] == 'setproductaccountancycodebuy')
 	{
 		$mesg=join(',',$product->errors);
 	}
-	$POST["action"]="";
+	$action="";
 	$id=$_POST["id"];
 	$_GET["id"]=$_POST["id"];
 }
 
-if ($_POST['action'] == 'setproductaccountancycodesell')
+if ($action == 'setproductaccountancycodesell')
 {
 	$product = new Product($db);
-	$result=$product->fetch($_POST['id']);
+	$result=$product->fetch($id);
 	$product->accountancy_code_sell=$_POST["productaccountancycodesell"];
 	$result=$product->update($product->id,$user,1,0,1);
 	if ($result < 0)
 	{
 		$mesg=join(',',$product->errors);
 	}
-	$POST["action"]="";
-	$id=$_POST["id"];
-	$_GET["id"]=$_POST["id"];
+	$action="";
 }
 
-if ($_GET["action"] == 'fastappro')
+if ($action == 'fastappro')
 {
 	$product = new Product($db);
-	$product->fetch($_GET["id"]);
+	$product->fetch($id);
 	$result = $product->fastappro($user);
-	Header("Location: fiche.php?id=".$_GET["id"]);
+	Header("Location: fiche.php?id=".$id);
 	exit;
 }
 
 
 // Add a product or service
-if ($_POST["action"] == 'add' && ($user->rights->produit->creer || $user->rights->service->creer))
+if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service->creer))
 {
 	$error=0;
 
 	if (empty($_POST["libelle"]))
 	{
 		$mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('Label')).'</div>';
-		$_GET["action"] = "create";
+		$action = "create";
 		$_GET["canvas"] = $_POST["canvas"];
 		$_GET["type"] 	= $_POST["type"];
 		$error++;
 	}
-	if (empty($_POST["ref"]))
+	if (empty($ref))
 	{
 		$mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('Ref')).'</div>';
-		$_GET["action"] = "create";
+		$action = "create";
 		$_GET["canvas"] = $_POST["canvas"];
 		$_GET["type"] 	= $_POST["type"];
 		$error++;
@@ -142,7 +142,7 @@ if ($_POST["action"] == 'add' && ($user->rights->produit->creer || $user->rights
 
 	if (! $error)
 	{
-		$product->ref                = $_POST["ref"];
+		$product->ref                = $ref;
 		$product->libelle            = $_POST["libelle"];
 		$product->price_base_type    = $_POST["price_base_type"];
 		if ($product->price_base_type == 'TTC') $product->price_ttc = $_POST["price"];
@@ -204,7 +204,7 @@ if ($_POST["action"] == 'add' && ($user->rights->produit->creer || $user->rights
 		else
 		{
 			$mesg='<div class="error">'.$langs->trans($product->error).'</div>';
-			$_GET["action"] = "create";
+			$action = "create";
 			$_GET["canvas"] = $product->canvas;
 			$_GET["type"] = $_POST["type"];
 		}
@@ -212,12 +212,11 @@ if ($_POST["action"] == 'add' && ($user->rights->produit->creer || $user->rights
 }
 
 // Update a product or service
-if ($_POST["action"] == 'update' && ($user->rights->produit->creer || $user->rights->service->creer))
+if ($action == 'update' && ($user->rights->produit->creer || $user->rights->service->creer))
 {
 	if (! empty($_POST["cancel"]))
 	{
-		$_GET["action"] = '';
-		$_GET["id"] = $_POST["id"];
+		$action = '';
 	}
 	else
 	{
@@ -232,9 +231,9 @@ if ($_POST["action"] == 'update' && ($user->rights->produit->creer || $user->rig
 			$product = $canvas->load_canvas('product',$_POST["canvas"]);
 		}
 
-		if ($product->fetch($_POST["id"]))
+		if ($product->fetch($id))
 		{
-			$product->ref                = $_POST["ref"];
+			$product->ref                = $ref;
 			$product->libelle            = $_POST["libelle"];
 			$product->description        = dol_htmlcleanlastbr($_POST["desc"]);
 			$product->note               = dol_htmlcleanlastbr($_POST["note"]);
@@ -261,20 +260,17 @@ if ($_POST["action"] == 'update' && ($user->rights->produit->creer || $user->rig
 			{
 				if ($product->update($product->id, $user) > 0)
 				{
-					$_GET["action"] = '';
-					$_GET["id"] = $_POST["id"];
+					$action = '';
 				}
 				else
 				{
-					$_GET["action"] = 'edit';
-					$_GET["id"] = $_POST["id"];
+					$action = 'edit';
 					$mesg = $product->error;
 				}
 			}
 			else
 			{
-				$_GET["action"] = 'edit';
-				$_GET["id"] = $_POST["id"];
+				$action = 'edit';
 				$mesg = $langs->trans("ErrorProductBadRefOrLabel");
 			}
 		}
@@ -282,9 +278,9 @@ if ($_POST["action"] == 'update' && ($user->rights->produit->creer || $user->rig
 }
 
 // Action clone object
-if ($_POST["action"] == 'confirm_clone' && $_POST['confirm'] == 'yes' && ($user->rights->produit->creer || $user->rights->service->creer))
+if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->produit->creer || $user->rights->service->creer))
 {
-	if (empty($_REQUEST["clone_content"]) && empty($_REQUEST["clone_prices"]))
+	if (! GETPOST('clone_content') && ! GETPOST('clone_prices') )
 	{
 		$mesg='<div class="error">'.$langs->trans("NoCloneOptionsSpecified").'</div>';
 	}
@@ -293,10 +289,10 @@ if ($_POST["action"] == 'confirm_clone' && $_POST['confirm'] == 'yes' && ($user-
 		$db->begin();
 
 		$product = new Product($db);
-		$originalId = $_GET["id"];
-		if ($product->fetch($_GET["id"]) > 0)
+		$originalId = $id;
+		if ($product->fetch($id) > 0)
 		{
-			$product->ref = $_REQUEST["clone_ref"];
+			$product->ref = GETPOST('clone_ref');
 			$product->status = 0;
 			$product->finished = 1;
 			$product->id = null;
@@ -321,7 +317,7 @@ if ($_POST["action"] == 'confirm_clone' && $_POST['confirm'] == 'yes' && ($user-
 						$db->rollback();
 
 						$_error = 1;
-						$_GET["action"] = "";
+						$action = "";
 
 						$mesg='<div class="error">'.$langs->trans("ErrorProductAlreadyExists",$product->ref);
 						$mesg.=' <a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref.'">'.$langs->trans("ShowCardHere").'</a>.';
@@ -347,11 +343,11 @@ if ($_POST["action"] == 'confirm_clone' && $_POST['confirm'] == 'yes' && ($user-
 /*
  * Suppression d'un produit/service pas encore affect
  */
-if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes' && $user->rights->produit->supprimer)
+if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->produit->supprimer)
 {
 	$product = new Product($db);
-	$product->fetch($_GET['id']);
-	$result = $product->delete($_GET['id']);
+	$product->fetch($id);
+	$result = $product->delete($id);
 
 	if ($result == 0)
 	{
@@ -361,7 +357,7 @@ if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes' && 
 	else
 	{
 		$reload = 0;
-		$_GET['action']='';
+		$action='';
 	}
 }
 
@@ -369,7 +365,7 @@ if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes' && 
 /*
  * Ajout du produit dans une propal
  */
-if ($_POST["action"] == 'addinpropal')
+if ($action == 'addinpropal')
 {
 	$propal = new Propal($db);
 	$result=$propal->fetch($_POST["propalid"]);
@@ -388,7 +384,7 @@ if ($_POST["action"] == 'addinpropal')
 	}
 
 	$prod = new Product($db);
-	$result=$prod->fetch($_GET['id']);
+	$result=$prod->fetch($id);
 	if ($result <= 0)
 	{
 		dol_print_error($db,$prod->error);
@@ -451,7 +447,7 @@ if ($_POST["action"] == 'addinpropal')
 /*
  * Ajout du produit dans une commande
  */
-if ($_POST["action"] == 'addincommande')
+if ($action == 'addincommande')
 {
 	$commande = new Commande($db);
 	$result=$commande->fetch($_POST["commandeid"]);
@@ -470,7 +466,7 @@ if ($_POST["action"] == 'addincommande')
 	}
 
 	$prod = new Product($db);
-	$result=$prod->fetch($_GET['id']);
+	$result=$prod->fetch($id);
 	if ($result <= 0)
 	{
 		dol_print_error($db,$prod->error);
@@ -535,7 +531,7 @@ if ($_POST["action"] == 'addincommande')
 /*
  * Ajout du produit dans une facture
  */
-if ($_POST["action"] == 'addinfacture' && $user->rights->facture->creer)
+if ($action == 'addinfacture' && $user->rights->facture->creer)
 {
 	$facture = New Facture($db);
 	$result=$facture->fetch($_POST["factureid"]);
@@ -554,7 +550,7 @@ if ($_POST["action"] == 'addinfacture' && $user->rights->facture->creer)
 	}
 
 	$prod = new Product($db);
-	$result = $prod->fetch($_GET["id"]);
+	$result = $prod->fetch($id);
 	if ($result <= 0)
 	{
 		dol_print_error($db,$prod->error);
@@ -637,7 +633,7 @@ $formproduct = new FormProduct($db);
 /*
  * Fiche creation du produit
  */
-if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->rights->service->creer))
+if ($action == 'create' && ($user->rights->produit->creer || $user->rights->service->creer))
 {
 	$helpurl='';
 	if (isset($_GET["type"]) && $_GET["type"] == 0) $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
@@ -663,7 +659,7 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 
 		print '<table class="border" width="100%">';
 		print '<tr>';
-		print '<td class="fieldrequired" width="20%">'.$langs->trans("Ref").'</td><td><input name="ref" size="40" maxlength="32" value="'.$_POST["ref"].'">';
+		print '<td class="fieldrequired" width="20%">'.$langs->trans("Ref").'</td><td><input name="ref" size="40" maxlength="32" value="'.$ref.'">';
 		if ($_error == 1)
 		{
 			print $langs->trans("RefAlreadyExists");
@@ -836,19 +832,19 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
  * Product card
  */
 
-if ($_GET["id"] || $_GET["ref"])
+if ($id || $ref)
 {
 	$product=new Product($db);
 
 	// TODO en attendant d'inclure le nom du canvas dans les liens
 	$productstatic = new Product($db);
-	$result = $productstatic->getCanvas($_GET["id"],$_GET["ref"]);
+	$result = $productstatic->getCanvas($id,$ref);
 	$usecanvas=$productstatic->canvas;
 	if (empty($conf->global->MAIN_USE_CANVAS)) $usecanvas=0;
 
 	if (empty($usecanvas))
 	{
-		$product->fetch($_GET["id"],$_GET["ref"]);
+		$product->fetch($id,$ref);
 	}
 	else 	// Gestion des produits specifiques
 	{
@@ -857,7 +853,7 @@ if ($_GET["id"] || $_GET["ref"])
 		$product = $canvas->load_canvas('product',$productstatic->canvas);
 		if (! $product) dol_print_error('','Faled to load canvas product-'.$productstatic->canvas);
 
-		$canvas->fetch($productstatic->id,'',$_GET["action"]);
+		$canvas->fetch($productstatic->id,'',$action);
 	}
 
 	llxHeader('',$langs->trans("CardProduct".$product->type));
@@ -865,7 +861,7 @@ if ($_GET["id"] || $_GET["ref"])
 	/*
 	 * Fiche en mode edition
 	 */
-	if ($_GET["action"] == 'edit' && ($user->rights->produit->creer || $user->rights->service->creer))
+	if ($action == 'edit' && ($user->rights->produit->creer || $user->rights->service->creer))
 	{
 		if (empty($usecanvas))
 		{
@@ -878,7 +874,7 @@ if ($_GET["id"] || $_GET["ref"])
 			}
 
 			// Main official, simple, and not duplicated code
-			print "<form action=\"fiche.php\" method=\"post\">\n";
+			print '<form action="fiche.php" method="POST">'."\n";
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="update">';
 			print '<input type="hidden" name="id" value="'.$product->id.'">';
@@ -1050,7 +1046,7 @@ if ($_GET["id"] || $_GET["ref"])
 		dol_fiche_head($head, 'card', $titre, 0, $picto);
 
 		// Confirmation de la suppression de la facture
-		if ($_GET["action"] == 'delete')
+		if ($action == 'delete')
 		{
 			$ret=$html->form_confirm("fiche.php?id=".$product->id,$langs->trans("DeleteProduct"),$langs->trans("ConfirmDeleteProduct"),"confirm_delete",'',0,2);
 			if ($ret == 'html') print '<br>';
@@ -1214,7 +1210,7 @@ if ($_GET["id"] || $_GET["ref"])
 	}
 
 }
-else if (!$_GET["action"] == 'create')
+else if ($action != 'create')
 {
 	Header("Location: index.php");
 	exit;
@@ -1223,7 +1219,7 @@ else if (!$_GET["action"] == 'create')
 
 
 // Clone confirmation
-if ($_GET["action"] == 'clone')
+if ($action == 'clone')
 {
 	// Create an array for form
 	$formquestion=array(
@@ -1233,7 +1229,7 @@ if ($_GET["action"] == 'clone')
 	array('type' => 'checkbox', 'name' => 'clone_prices', 'label' => $langs->trans("ClonePricesProduct").' ('.$langs->trans("FeatureNotYetAvailable").')', 'value' => 0, 'disabled' => true)
 	);
 	// Paiement incomplet. On demande si motif = escompte ou autre
-	$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$product->id,$langs->trans('CloneProduct'),$langs->trans('ConfirmCloneProduct',$product->ref),'confirm_clone',$formquestion,'yes');
+	$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$product->id,$langs->trans('CloneProduct'),$langs->trans('ConfirmCloneProduct',$product->ref),'confirm_clone',$formquestion,'yes',2,230,600);
 }
 
 
@@ -1243,9 +1239,9 @@ if ($_GET["action"] == 'clone')
 /*                                                                            */
 /* ************************************************************************** */
 
-print "\n<div class=\"tabsAction\">\n";
+print "\n".'<div class="tabsAction">'."\n";
 
-if ($_GET["action"] == '')
+if ($action == '')
 {
 	if ($user->rights->produit->creer || $user->rights->service->creer)
 	{
@@ -1282,7 +1278,7 @@ print "\n</div><br>\n";
  * All the "Add to" areas
  */
 
-if ($product->id && $_GET["action"] == '' && $product->status)
+if ($product->id && $action == '' && $product->status)
 {
 	print '<table width="100%" class="noborder">';
 

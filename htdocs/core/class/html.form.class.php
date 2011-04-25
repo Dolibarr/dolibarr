@@ -1939,9 +1939,9 @@ class Form
      *     @param  height          Force height of box
      *     @return string          'ajax' if a confirm ajax popup is shown, 'html' if it's an html form
      */
-    function form_confirm($page, $title, $question, $action, $formquestion='', $selectedchoice="", $useajax=0, $height=0)
+    function form_confirm($page, $title, $question, $action, $formquestion='', $selectedchoice="", $useajax=0, $height=170, $width=500)
     {
-    	print $this->formconfirm($page, $title, $question, $action, $formquestion, $selectedchoice, $useajax, $height);
+    	print $this->formconfirm($page, $title, $question, $action, $formquestion, $selectedchoice, $useajax, $height, $width);
     }
 
     /**
@@ -1970,58 +1970,61 @@ class Form
             $more.='<tr><td colspan="3" valign="top">'.$formquestion['text'].'</td></tr>'."\n";
             foreach ($formquestion as $key => $input)
             {
-                if ($input['type'] == 'text')
-                {
-                    $more.='<tr><td valign="top">'.$input['label'].'</td><td valign="top" colspan="2" align="left"><input type="text" class="flat" id="'.$input['name'].'" name="'.$input['name'].'" size="'.$input['size'].'" value="'.$input['value'].'" /></td></tr>'."\n";
-                }
-                if ($input['type'] == 'password')
-                {
-                    $more.='<tr><td valign="top">'.$input['label'].'</td><td valign="top" colspan="2" align="left"><input type="password" class="flat" id="'.$input['name'].'" name="'.$input['name'].'" size="'.$input['size'].'" value="'.$input['value'].'" /></td></tr>'."\n";
-                }
-                if ($input['type'] == 'select')
-                {
-                	$more.='<tr><td valign="top">';
-                	if (! empty($input['label'])) $more.=$input['label'].'</td><td valign="top" colspan="2" align="left">';
-                    $more.=$this->selectarray($input['name'],$input['values'],'',1);
-                    $more.='</td></tr>'."\n";
-                }
-                if ($input['type'] == 'checkbox')
-                {
-                    $more.='<tr>';
-                    $more.='<td valign="top">'.$input['label'].' </td><td valign="top" align="left">';
-                    $more.='<input type="checkbox" class="flat" id="'.$input['name'].'" name="'.$input['name'].'"';
-                    if (! is_bool($input['value']) && $input['value'] != 'false') $more.=' checked="true"';
-                    if (is_bool($input['value']) && $input['value']) $more.=' checked="true"';
-                    if ($input['disabled']) $more.=' disabled="true"';
-                    $more.=' /></td>';
-                    $more.='<td valign="top" align="left">&nbsp;</td>';
-                    $more.='</tr>'."\n";
-                }
-                if ($input['type'] == 'radio')
-                {
-                    $i=0;
-                    foreach($input['values'] as $selkey => $selval)
-                    {
-                        $more.='<tr>';
-                        if ($i==0) $more.='<td valign="top">'.$input['label'].'</td>';
-                        else $more.='<td>&nbsp;</td>';
-                        $more.='<td valign="top" width="20"><input type="radio" class="flat" id="'.$input['name'].'" name="'.$input['name'].'" value="'.$selkey.'"';
-                        if ($input['disabled']) $more.=' disabled="true"';
-                        $more.=' /></td>';
-                        $more.='<td valign="top" align="left">';
-                        $more.=$selval;
-                        $more.='</td></tr>'."\n";
-                        $i++;
-                    }
-                }
-            	if ($input['type'] == 'other')
-                {
-                	$more.='<tr><td valign="top">';
-                	if (! empty($input['label'])) $more.=$input['label'].'</td><td valign="top" colspan="2" align="left">';
-                    $more.=$input['value'];
-                    $more.='</td></tr>'."\n";
-                }
-                array_push($inputarray,$input['name']);
+            	if (is_array($input))
+            	{
+            		if ($input['type'] == 'text')
+	                {
+	                    $more.='<tr><td valign="top">'.$input['label'].'</td><td valign="top" colspan="2" align="left"><input type="text" class="flat" id="'.$input['name'].'" name="'.$input['name'].'" size="'.$input['size'].'" value="'.$input['value'].'" /></td></tr>'."\n";
+	                }
+	                else if ($input['type'] == 'password')
+	                {
+	                    $more.='<tr><td valign="top">'.$input['label'].'</td><td valign="top" colspan="2" align="left"><input type="password" class="flat" id="'.$input['name'].'" name="'.$input['name'].'" size="'.$input['size'].'" value="'.$input['value'].'" /></td></tr>'."\n";
+	                }
+	                else if ($input['type'] == 'select')
+	                {
+	                	$more.='<tr><td valign="top">';
+	                	if (! empty($input['label'])) $more.=$input['label'].'</td><td valign="top" colspan="2" align="left">';
+	                    $more.=$this->selectarray($input['name'],$input['values'],'',1);
+	                    $more.='</td></tr>'."\n";
+	                }
+	                else if ($input['type'] == 'checkbox')
+	                {
+	                    $more.='<tr>';
+	                    $more.='<td valign="top">'.$input['label'].' </td><td valign="top" align="left">';
+	                    $more.='<input type="checkbox" class="flat" id="'.$input['name'].'" name="'.$input['name'].'"';
+	                    if (! is_bool($input['value']) && $input['value'] != 'false') $more.=' checked="true"';
+	                    if (is_bool($input['value']) && $input['value']) $more.=' checked="true"';
+	                    if ($input['disabled']) $more.=' disabled="true"';
+	                    $more.=' /></td>';
+	                    $more.='<td valign="top" align="left">&nbsp;</td>';
+	                    $more.='</tr>'."\n";
+	                }
+	                else if ($input['type'] == 'radio')
+	                {
+	                    $i=0;
+	                    foreach($input['values'] as $selkey => $selval)
+	                    {
+	                        $more.='<tr>';
+	                        if ($i==0) $more.='<td valign="top">'.$input['label'].'</td>';
+	                        else $more.='<td>&nbsp;</td>';
+	                        $more.='<td valign="top" width="20"><input type="radio" class="flat" id="'.$input['name'].'" name="'.$input['name'].'" value="'.$selkey.'"';
+	                        if ($input['disabled']) $more.=' disabled="true"';
+	                        $more.=' /></td>';
+	                        $more.='<td valign="top" align="left">';
+	                        $more.=$selval;
+	                        $more.='</td></tr>'."\n";
+	                        $i++;
+	                    }
+	                }
+	            	else if ($input['type'] == 'other')
+	                {
+	                	$more.='<tr><td valign="top">';
+	                	if (! empty($input['label'])) $more.=$input['label'].'</td><td valign="top" colspan="2" align="left">';
+	                    $more.=$input['value'];
+	                    $more.='</td></tr>'."\n";
+	                }
+	                array_push($inputarray,$input['name']);
+            	}
             }
             $more.='</table>'."\n";
         }

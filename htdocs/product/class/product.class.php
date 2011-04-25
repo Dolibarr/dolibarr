@@ -1007,7 +1007,7 @@ class Product extends CommonObject
 		$sql.= " import_key";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
 		if ($id) $sql.= " WHERE rowid = '".$id."'";
-		if ($ref) $sql.= " WHERE ref = '".$this->db->escape($ref)."'";
+		else if ($ref) $sql.= " WHERE ref = '".$this->db->escape($ref)."'";
 
 		dol_syslog("Product::fetch sql=".$sql);
 		$result = $this->db->query($sql);
