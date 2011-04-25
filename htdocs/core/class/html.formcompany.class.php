@@ -560,7 +560,7 @@ class FormCompany
 			else
 			{
 				$javaScript = "window.location='./contact.php?".$var_id."=".$object->id."&amp;".$htmlname."=' + form.".$htmlname.".options[form.".$htmlname.".selectedIndex].value;";
-				print '<select class="flat" name="'.$htmlname.'" onChange="'.$javaScript.'">';
+				print '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'" onChange="'.$javaScript.'">';
 				$num = $object->db->num_rows($resql);
 				$i = 0;
 				if ($num)
