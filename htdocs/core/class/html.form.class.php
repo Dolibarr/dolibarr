@@ -545,7 +545,7 @@ class Form
         if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         $sql.= " WHERE s.entity = ".$conf->entity;
         if ($filter) $sql.= " AND ".$filter;
-        if (is_numeric($selected) && $conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT)	$sql.= " AND s.rowid = ".$selected;
+        //if (is_numeric($selected) && $conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT)	$sql.= " AND s.rowid = ".$selected;
         if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
         $sql.= " ORDER BY nom ASC";
 
@@ -555,6 +555,7 @@ class Form
         {
             if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT && ! $forcecombo)
             {
+            	/*
                 $minLength = (is_numeric($conf->global->COMPANY_USE_SEARCH_TO_SELECT)?$conf->global->COMPANY_USE_SEARCH_TO_SELECT:2);
 
             	$socid = 0;
@@ -578,10 +579,16 @@ class Form
                 $out.= ajax_autocompleter(($socid?$socid:-1),$htmlname,DOL_URL_ROOT.'/societe/ajaxcompanies.php?filter='.urlencode($filter), '', $minLength);
                 $out.= '</td>';
                 $out.= '</tr>';
-                $out.= '</table>';
+                $out.= '</table>';*/
+            	
+            	$out.= '<script>
+            		$(function() {
+                		$( "#'.$htmlname.'" ).combobox();
+            		});
+            	</script>';
             }
-            else
-            {
+            //else
+            //{
                 $out.= '<select id="'.$htmlname.'" class="flat" name="'.$htmlname.'">';
                 if ($showempty) $out.= '<option value="-1">&nbsp;</option>';
                 $num = $this->db->num_rows($resql);
@@ -612,7 +619,7 @@ class Form
                     }
                 }
                 $out.= '</select>';
-            }
+            //}
         }
         else
         {
@@ -1539,7 +1546,7 @@ class Form
      *      \param      filtertype      Pour filtre
      *		\param		addempty		Ajoute entree vide
      */
- function select_availability($selected='',$htmlname='availid',$filtertype='',$addempty=0)
+    function select_availability($selected='',$htmlname='availid',$filtertype='',$addempty=0)
     {
         global $langs,$user;
 
@@ -1609,7 +1616,7 @@ class Form
      *      \param      filtertype      Pour filtre
      *		\param		addempty		Ajoute entree vide
      */
- function select_source($selected='',$htmlname='sourceid',$filtertype='',$addempty=0)
+    function select_source($selected='',$htmlname='sourceid',$filtertype='',$addempty=0)
     {
         global $langs,$user;
 
@@ -1980,15 +1987,13 @@ class Form
      *     @param  height          Force height of box
      *     @return string          'ajax' if a confirm ajax popup is shown, 'html' if it's an html form
      */
-    function formconfirm($page, $title, $question, $action, $formquestion='', $selectedchoice="", $useajax=0, $height=0)
+    function formconfirm($page, $title, $question, $action, $formquestion='', $selectedchoice="", $useajax=0, $height=170, $width=400)
     {
         global $langs,$conf;
 
         $more='';
         $formconfirm='';
         $inputarray=array();
-
-        if (empty($height)) $height=170;
 
         if ($formquestion)
         {
@@ -1998,11 +2003,11 @@ class Form
             {
                 if ($input['type'] == 'text')
                 {
-                    $more.='<tr><td valign="top">'.$input['label'].'</td><td valign="top" colspan="2" align="left"><input type="text" class="flat" id="'.$input['name'].'" name="'.$input['name'].'" size="'.$input['size'].'" value="'.$input['value'].'"></td></tr>'."\n";
+                    $more.='<tr><td valign="top">'.$input['label'].'</td><td valign="top" colspan="2" align="left"><input type="text" class="flat" id="'.$input['name'].'" name="'.$input['name'].'" size="'.$input['size'].'" value="'.$input['value'].'" /></td></tr>'."\n";
                 }
                 if ($input['type'] == 'password')
                 {
-                    $more.='<tr><td valign="top">'.$input['label'].'</td><td valign="top" colspan="2" align="left"><input type="password" class="flat" id="'.$input['name'].'" name="'.$input['name'].'" size="'.$input['size'].'" value="'.$input['value'].'"></td></tr>'."\n";
+                    $more.='<tr><td valign="top">'.$input['label'].'</td><td valign="top" colspan="2" align="left"><input type="password" class="flat" id="'.$input['name'].'" name="'.$input['name'].'" size="'.$input['size'].'" value="'.$input['value'].'" /></td></tr>'."\n";
                 }
                 if ($input['type'] == 'select')
                 {
@@ -2014,15 +2019,12 @@ class Form
                 if ($input['type'] == 'checkbox')
                 {
                     $more.='<tr>';
-                    //$more.='<td valign="top">'.$input['label'].' &nbsp;';
                     $more.='<td valign="top">'.$input['label'].' </td><td valign="top" align="left">';
                     $more.='<input type="checkbox" class="flat" id="'.$input['name'].'" name="'.$input['name'].'"';
                     if (! is_bool($input['value']) && $input['value'] != 'false') $more.=' checked="true"';
                     if (is_bool($input['value']) && $input['value']) $more.=' checked="true"';
                     if ($input['disabled']) $more.=' disabled="true"';
-                    $more.='>';
-                    $more.='</td>';
-                    //$more.='<td valign="top" align="left">&nbsp;</td>';
+                    $more.=' /></td>';
                     $more.='<td valign="top" align="left">&nbsp;</td>';
                     $more.='</tr>'."\n";
                 }
@@ -2036,7 +2038,7 @@ class Form
                         else $more.='<td>&nbsp;</td>';
                         $more.='<td valign="top" width="20"><input type="radio" class="flat" id="'.$input['name'].'" name="'.$input['name'].'" value="'.$selkey.'"';
                         if ($input['disabled']) $more.=' disabled="true"';
-                        $more.='></td>';
+                        $more.=' /></td>';
                         $more.='<td valign="top" align="left">';
                         $more.=$selval;
                         $more.='</td></tr>'."\n";
@@ -2064,8 +2066,8 @@ class Form
 
             // New code using jQuery only
             $formconfirm.= '<div id="dialog-confirm" title="'.dol_escape_htmltag($title).'">';
-            $formconfirm.= img_help('','').' '.$question;
             if (! empty($more)) $formconfirm.= '<p>'.$more.'</p>';
+            $formconfirm.= img_help('','').' '.$question;
             $formconfirm.= '</div>'."\n";
             $formconfirm.= '<script type="text/javascript">
                 var choice=\'ko\';
@@ -2074,7 +2076,7 @@ class Form
 			        autoOpen: true,
 			        resizable: false,
 			        height:'.$height.',
-			        width:600,
+			        width:'.$width.',
 			        modal: true,
 			        closeOnEscape: false,
 			        close: function(event, ui) {
