@@ -739,8 +739,18 @@ class Commande extends CommonObject
 		// Change socid if needed
 		if (! empty($socid) && $socid != $object->socid)
 		{
-			$object->socid = $socid;
-			// TODO clear delivery address, project linked, change product price if multi-prices
+			$socstatic = new Societe($this->db);
+			
+			if ($socstatic->fetch($socid)>0)
+			{
+				$object->socid 					= $socid;
+				$object->cond_reglement_id		= $soc->cond_reglement_id;
+				$object->mode_reglement_id		= $soc->mode_reglement_id;
+				$object->fk_project				= '';
+				$object->fk_delivery_address	= '';
+			}
+			
+			// TODO Change product price if multi-prices
 		}
 
 		$object->id=0;

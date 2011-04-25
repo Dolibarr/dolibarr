@@ -1498,7 +1498,7 @@ else
                 $formquestion=array(
                 //'text' => $langs->trans("ConfirmClone"),
                 //array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1),
-                //array('type' => 'other', 'name' => 'socid',   'label' => $langs->trans("SelectThirdParty"),   'value' => $html->select_company(GETPOST('socid'),'socid','(s.client=1 OR s.client=3)'))
+                array('type' => 'other', 'name' => 'socid',   'label' => $langs->trans("SelectThirdParty"),   'value' => $html->select_company(GETPOST('socid'),'socid','(s.client=1 OR s.client=3)'))
                 );
                 // Paiement incomplet. On demande si motif = escompte ou autre
                 $formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneOrder'),$langs->trans('ConfirmCloneOrder',$object->ref),'confirm_clone',$formquestion,'yes',1);
