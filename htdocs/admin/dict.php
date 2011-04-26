@@ -125,7 +125,7 @@ $tabsql[18]= "SELECT rowid   as rowid, code, libelle, active FROM ".MAIN_DB_PREF
 $tabsql[19]= "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_effectif";
 $tabsql[20]= "SELECT rowid   as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_input_method";
 $tabsql[21]= "SELECT c.rowid  as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_availability AS c";
-$tabsql[22]= "SELECT c.rowid  as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_source AS c";
+$tabsql[22]= "SELECT rowid  as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_demand_reason";
 
 // Critere de tri du dictionnaire
 $tabsqlsort[1] ="pays ASC, code ASC";
