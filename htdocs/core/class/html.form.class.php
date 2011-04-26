@@ -49,7 +49,7 @@ class Form
     var $cache_types_paiements=array();
     var $cache_conditions_paiements=array();
     var $cache_availability=array();
-	var $cache_source=array();
+	var $cache_demand_reason=array();
 
     var $tva_taux_value;
     var $tva_taux_libelle;
@@ -1538,17 +1538,17 @@ class Form
      *      \brief      Charge dans cache la liste des origines de commande possibles
      *      \return     int             Nb lignes chargees, 0 si deja chargees, <0 si ko
      */
-    function load_cache_source()
+    function load_cache_demand_reason()
     {
         global $langs;
 
-        if (sizeof($this->cache_source)) return 0;    // Cache deja charge
+        if (sizeof($this->cache_demand_reason)) return 0;    // Cache deja charge
 
         $sql = "SELECT rowid, code, label";
-        $sql.= " FROM ".MAIN_DB_PREFIX.'c_source';
+        $sql.= " FROM ".MAIN_DB_PREFIX.'c_demand_reason';
         $sql.= " WHERE active=1";
         $sql.= " ORDER BY rowid";
-        dol_syslog('Form::load_cache_source sql='.$sql,LOG_DEBUG);
+        dol_syslog('Form::load_cache_demand_reason sql='.$sql,LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -1559,9 +1559,9 @@ class Form
                 $obj = $this->db->fetch_object($resql);
 
                 // Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-                $label=($langs->trans("SourceType".$obj->code)!=("SourceType".$obj->code)?$langs->trans("SourceType".$obj->code):($obj->label!='-'?$obj->label:''));
-                $this->cache_source[$obj->rowid]['code'] =$obj->code;
-                $this->cache_source[$obj->rowid]['label']=$label;
+                $label=($langs->trans("DemandReasonType".$obj->code)!=("DemandReasonType".$obj->code)?$langs->trans("DemandReasonType".$obj->code):($obj->label!='-'?$obj->label:''));
+                $this->cache_demand_reason[$obj->rowid]['code'] =$obj->code;
+                $this->cache_demand_reason[$obj->rowid]['label']=$label;
                 $i++;
             }
             return 1;
@@ -1579,15 +1579,15 @@ class Form
      *      \param      filtertype      Pour filtre
      *		\param		addempty		Ajoute entree vide
      */
-    function select_source($selected='',$htmlname='sourceid',$filtertype='',$addempty=0)
+    function select_demand_reason($selected='',$htmlname='demandreasonid',$filtertype='',$addempty=0)
     {
         global $langs,$user;
 
-        $this->load_cache_source();
+        $this->load_cache_demand_reason();
 
         print '<select class="flat" name="'.$htmlname.'">';
         if ($addempty) print '<option value="0">&nbsp;</option>';
-        foreach($this->cache_source as $id => $arraysource)
+        foreach($this->cache_demand_reason as $id => $arraydemandreason)
         {
             if ($selected == $id)
             {
@@ -1597,7 +1597,7 @@ class Form
             {
                 print '<option value="'.$id.'">';
             }
-            print $arraysource['label'];
+            print $arraydemandreason['label'];
             print '</option>';
         }
         print '</select>';
@@ -2238,17 +2238,17 @@ class Form
      *    	\param      htmlname    	Name of select html field
      *		\param		addempty		Ajoute entree vide
      */
-    function form_source($page, $selected='', $htmlname='source', $addempty=0)
+    function form_demand_reason($page, $selected='', $htmlname='demandreason', $addempty=0)
     {
         global $langs;
         if ($htmlname != "none")
         {
             print '<form method="post" action="'.$page.'">';
-            print '<input type="hidden" name="action" value="setsource">';
+            print '<input type="hidden" name="action" value="setdemandreason">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
-            $this->select_source($selected,$htmlname,-1,$addempty);
+            $this->select_demand_reason($selected,$htmlname,-1,$addempty);
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             print '</tr></table></form>';
@@ -2257,8 +2257,8 @@ class Form
         {
             if ($selected)
             {
-                $this->load_cache_source();
-                print $this->cache_source[$selected]['label'];
+                $this->load_cache_demand_reason();
+                print $this->cache_demand_reason[$selected]['label'];
             } else {
                 print "&nbsp;";
             }

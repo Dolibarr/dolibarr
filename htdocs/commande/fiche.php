@@ -208,6 +208,7 @@ if ($action == 'add' && $user->rights->commande->creer)
     $object->cond_reglement_id    = $_POST['cond_reglement_id'];
     $object->mode_reglement_id    = $_POST['mode_reglement_id'];
     $object->availability_id      = $_POST['availability_id'];
+	$object->demand_reason_id     = $_POST['demand_reason_id'];
     $object->date_livraison       = $datelivraison;
     $object->fk_delivery_address  = $_POST['fk_address'];
     $object->contactid            = $_POST['contactidp'];
@@ -460,6 +461,13 @@ if ($action == 'setavailability' && $user->rights->commande->creer)
 {
     $object->fetch($id);
     $result=$object->availability($_POST['availability_id']);
+    if ($result < 0) dol_print_error($db,$object->error);
+}
+
+if ($action == 'setdemandreason' && $user->rights->commande->creer)
+{
+    $object->fetch($id);
+    $result=$object->demand_reason($_POST['demand_reason_id']);
     if ($result < 0) dol_print_error($db,$object->error);
 }
 
@@ -1161,6 +1169,7 @@ if ($action == 'create' && $user->rights->commande->creer)
             $cond_reglement_id  = (!empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(!empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
             $mode_reglement_id  = (!empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(!empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
             $availability_id  = (!empty($objectsrc->availability_id)?$objectsrc->availability_id:(!empty($soc->availability_id)?$soc->availability_id:0));
+			$demand_reason_id  = (!empty($objectsrc->demand_reason_id)?$objectsrc->demand_reason_id:(!empty($soc->demand_reason_id)?$soc->demand_reason_id:0));
             $remise_percent     = (!empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
             $remise_absolue     = (!empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(!empty($soc->remise_absolue)?$soc->remise_absolue:0));
             $dateinvoice        = empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
@@ -1174,6 +1183,7 @@ if ($action == 'create' && $user->rights->commande->creer)
         $cond_reglement_id  = $soc->cond_reglement_id;
         $mode_reglement_id  = $soc->mode_reglement_id;
         $availability_id    = $soc->availability_id;
+		$demand_reason_id   = $soc->demand_reason_id;
         $remise_percent     = $soc->remise_percent;
         $remise_absolue     = 0;
         $dateinvoice        = empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
@@ -1265,6 +1275,11 @@ if ($action == 'create' && $user->rights->commande->creer)
 	// delai de livraison
     print '<tr><td>'.$langs->trans('AvailabilityPeriod').'</td><td>';
     $html->select_availability($soc->availability,'availability_id');
+    print '</td></tr>';
+
+	// Source de commande
+    print '<tr><td>'.$langs->trans('Source').'</td><td>';
+    $html->select_demand_reason($soc->demand_reason,'demand_reason_id');
     print '</td></tr>';
 
     // Projet
@@ -1742,6 +1757,24 @@ else
             else
             {
                 $html->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id,$object->availability_id,'none');
+            }
+            print '</td></tr>';
+
+			// Origine de la demande
+            print '<tr><td height="10">';
+            print '<table class="nobordernopadding" width="100%"><tr><td>';
+            print $langs->trans('Source');
+            print '</td>';
+            if ($_GET['action'] != 'editdemandreason' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdemandreason&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDemandReason'),1).'</a></td>';
+            print '</tr></table>';
+            print '</td><td colspan="2">';
+            if ($_GET['action'] == 'editdemandreason')
+            {
+                $html->form_demand_reason($_SERVER['PHP_SELF'].'?id='.$object->id,$object->demand_reason_id,'demand_reason_id');
+            }
+            else
+            {
+                $html->form_demand_reason($_SERVER['PHP_SELF'].'?id='.$object->id,$object->demand_reason_id,'none');
             }
             print '</td></tr>';
 

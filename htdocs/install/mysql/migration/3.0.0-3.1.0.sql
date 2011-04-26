@@ -37,6 +37,7 @@ DELETE FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_MENUFRONT_BARRELEFT';
 
 ALTER TABLE llx_facture_fourn ADD COLUMN ref_ext varchar(30) AFTER entity;
 ALTER TABLE llx_commande_fournisseur ADD COLUMN ref_ext varchar(30) AFTER entity;
+ALTER TABLE llx_commande ADD COLUMN fk_demand_reason int(11) AFTER fk_availability;
 
 
 ALTER TABLE llx_facturedet DROP INDEX uk_fk_remise_except;
