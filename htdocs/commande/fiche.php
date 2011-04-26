@@ -1538,7 +1538,7 @@ else
             /*
              *   Commande
              */
-            $nbrow=8;
+            $nbrow=9;
             if ($conf->projet->enabled) $nbrow++;
 
             //Local taxes
