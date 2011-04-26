@@ -4,6 +4,7 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,8 +77,7 @@ $tabname[18]= MAIN_DB_PREFIX."c_shipment_mode";
 $tabname[19]= MAIN_DB_PREFIX."c_effectif";
 $tabname[20]= MAIN_DB_PREFIX."c_input_method";
 $tabname[21]= MAIN_DB_PREFIX."c_availability";
-$tabname[22]= MAIN_DB_PREFIX."c_source";
-//$tabname[23]= MAIN_DB_PREFIX."c_demand_reason";
+$tabname[22]= MAIN_DB_PREFIX."c_demand_reason";
 
 // Dictionary labels
 $tablib[1] = "DictionnaryCompanyJuridicalType";
