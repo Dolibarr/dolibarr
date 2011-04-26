@@ -42,12 +42,13 @@ if ($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK)
 	exit;
 }
 
-$action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
+$action=GETPOST('action');
 $mode=$dolibarr_main_authentication;
 if (! $mode) $mode='http';
 
-$login = isset($_POST["username"])?$_POST["username"]:'';
-$conf->entity = isset($_POST["entity"])?$_POST["entity"]:1;
+$username 		= GETPOST('username');
+$passwordmd5	= GETPOST('passwordmd5');
+$conf->entity 	= ( GETPOST('entity') ? GETPOST('entity') : 1 );
 
 
 /**
@@ -55,17 +56,17 @@ $conf->entity = isset($_POST["entity"])?$_POST["entity"]:1;
  */
 
 // Action modif mot de passe
-if ($_GET["action"] == 'validatenewpassword' && $_GET["username"] && $_GET["passwordmd5"])
+if ($action == 'validatenewpassword' && $username && $passwordmd5)
 {
     $edituser = new User($db);
     $result=$edituser->fetch('',$_GET["username"]);
 	if ($result < 0)
 	{
-        $message = '<div class="error">'.$langs->trans("ErrorLoginDoesNotExists",$_GET["username"]).'</div>';
+        $message = '<div class="error">'.$langs->trans("ErrorLoginDoesNotExists",$username).'</div>';
 	}
 	else
 	{
-		if (md5($edituser->pass_temp) == $_GET["passwordmd5"])
+		if (md5($edituser->pass_temp) == $passwordmd5)
 		{
 			$newpassword=$edituser->setPassword($user,$edituser->pass_temp,0);
 			dol_syslog("passwordforgotten.php new password for user->id=".$edituser->id." validated in database");
@@ -81,7 +82,7 @@ if ($_GET["action"] == 'validatenewpassword' && $_GET["username"] && $_GET["pass
 	}
 }
 // Action modif mot de passe
-if ($_POST["action"] == 'buildnewpassword' && $_POST["username"])
+if ($action == 'buildnewpassword' && $username)
 {
 	require_once DOL_DOCUMENT_ROOT.'/includes/artichow/Artichow.cfg.php';
 	require_once ARTICHOW."/AntiSpam.class.php";
@@ -97,11 +98,11 @@ if ($_POST["action"] == 'buildnewpassword' && $_POST["username"])
 	else
 	{
 	    $edituser = new User($db);
-	    $result=$edituser->fetch('',$_POST["username"],'',1);
+	    $result=$edituser->fetch('',$username,'',1);
 		if ($result <= 0 && $edituser->error == 'USERNOTFOUND')
 		{
-	        $message = '<div class="error">'.$langs->trans("ErrorLoginDoesNotExists",$_POST["username"]).'</div>';
-			$_POST["username"]='';
+	        $message = '<div class="error">'.$langs->trans("ErrorLoginDoesNotExists",$username).'</div>';
+			$username='';
 		}
 		else
 		{
@@ -124,7 +125,7 @@ if ($_POST["action"] == 'buildnewpassword' && $_POST["username"])
 			        {
 			        	$message = '<div class="ok">'.$langs->trans("PasswordChangeRequestSent",$edituser->login,$edituser->email).'</div>';
 						//$message.=$newpassword;
-						$_POST["username"]='';
+						$username='';
 					}
 					else
 					{
@@ -179,7 +180,7 @@ else
 	$login_background = DOL_URL_ROOT.'/theme/login_background.png';
 }
 
-if (! $_REQUEST["username"]) $focus_element = 'username';
+if (! $username) $focus_element = 'username';
 else $focus_element = 'password';
 
 // Send password button enabled ?
