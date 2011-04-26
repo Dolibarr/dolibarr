@@ -261,8 +261,7 @@ if (! empty($conf->global->MAIN_SECURITY_CSRF))	// Check validity of token, only
 }
 
 // Disable modules (this must be after session_start and after conf has been loaded)
-if (! empty($_GET["disablemodules"]))  $_SESSION["disablemodules"]=$_GET["disablemodules"];
-if (! empty($_POST["disablemodules"])) $_SESSION["disablemodules"]=$_POST["disablemodules"];
+if (GETPOST('disablemodules'))  $_SESSION["disablemodules"]=GETPOST('disablemodules');
 if (! empty($_SESSION["disablemodules"]))
 {
 	$disabled_modules=explode(',',$_SESSION["disablemodules"]);
@@ -369,7 +368,7 @@ if (! defined('NOLOGIN'))
 				// Appel des triggers
 				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 				$interface=new Interfaces($db);
-				$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,$_POST["entity"]);
+				$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,GETPOST('entity'));
 				if ($result < 0) { $error++; }
 				// Fin appel triggers
 			}
@@ -664,7 +663,7 @@ if (! defined('NOLOGIN'))
 		$conf->css  = "/theme/".$conf->theme."/style.css.php";
 	}
 	// Set javascript option
-    if (empty($_GET["nojs"]))   // If javascript was not disabled on URL
+    if (! GETPOST('nojs'))   // If javascript was not disabled on URL
     {
     	if (! empty($user->conf->MAIN_DISABLE_JAVASCRIPT))
     	{
@@ -677,7 +676,7 @@ if (! defined('NOLOGIN'))
 
 if (! defined('NOREQUIRETRAN'))
 {
-	if (empty($_GET["lang"]))	// If language was not forced on URL
+	if (! GETPOST('lang'))	// If language was not forced on URL
 	{
 		// If user has chosen its own language
 		if (! empty($user->conf->MAIN_LANG_DEFAULT))
@@ -692,7 +691,7 @@ if (! defined('NOREQUIRETRAN'))
 	}
 	else	// If language was forced on URL
 	{
-		$langs->setDefaultLang($_GET["lang"]);
+		$langs->setDefaultLang(GETPOST('lang'));
 	}
 }
 
@@ -887,13 +886,13 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         // Output style sheets (optioncss='print' or '')
         $themepath=dol_buildpath((empty($conf->global->MAIN_FORCETHEMEDIR)?'':$conf->global->MAIN_FORCETHEMEDIR).$conf->css,1);
         //print 'themepath='.$themepath;exit;
-		print '<link rel="stylesheet" type="text/css" title="default" href="'.$themepath.'?lang='.$langs->defaultlang.'&theme='.$conf->theme.(! empty($_GET["optioncss"])?'&optioncss='.$_GET["optioncss"]:'').'">'."\n";
+		print '<link rel="stylesheet" type="text/css" title="default" href="'.$themepath.'?lang='.$langs->defaultlang.'&theme='.$conf->theme.(GETPOST('optioncss')?'&optioncss='.GETPOST('optioncss'):'').'">'."\n";
 		// CSS forced by modules (relative url starting with /)
 		if (is_array($conf->css_modules))
 		{
 			foreach($conf->css_modules as $cssfile)
 			{	// cssfile is an absolute path
-				print '<link rel="stylesheet" type="text/css" title="default" href="'.dol_buildpath($cssfile,1).'?lang='.$langs->defaultlang.'&theme='.$conf->theme.(! empty($_GET["optioncss"])?'&optioncss='.$_GET["optioncss"]:'').'">'."\n";
+				print '<link rel="stylesheet" type="text/css" title="default" href="'.dol_buildpath($cssfile,1).'?lang='.$langs->defaultlang.'&theme='.$conf->theme.(GETPOST('optioncss')?'&optioncss='.GETPOST('optioncss'):'').'">'."\n";
 			}
 		}
 		// CSS forced by page in top_htmlhead call (relative url starting with /)
@@ -901,7 +900,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		{
 			foreach($arrayofcss as $cssfile)
 			{
-				print '<link rel="stylesheet" type="text/css" title="default" href="'.dol_buildpath($cssfile,1).'?lang='.$langs->defaultlang.'&theme='.$conf->theme.(! empty($_GET["optioncss"])?'&optioncss='.$_GET["optioncss"]:'').'">'."\n";
+				print '<link rel="stylesheet" type="text/css" title="default" href="'.dol_buildpath($cssfile,1).'?lang='.$langs->defaultlang.'&theme='.$conf->theme.(GETPOST('optioncss')?'&optioncss='.GETPOST('optioncss'):'').'">'."\n";
 			}
 		}
 

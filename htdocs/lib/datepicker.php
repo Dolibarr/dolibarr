@@ -39,7 +39,7 @@ if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML',1);
 
 require_once("../main.inc.php");
 
-if (! empty($_GET["lang"])) $langs->setDefaultLang($_GET["lang"]);	// If language was forced on URL by the main.inc.php
+if (GETPOST('lang')) $langs->setDefaultLang(GETPOST('lang'));	// If language was forced on URL by the main.inc.php
 $langs->load("main");
 $right=($langs->trans("DIRECTION")=='rtl'?'left':'right');
 $left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
@@ -53,7 +53,7 @@ $left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
 print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">'."\n";
 print '<html>'."\n";
 print '<head>'."\n";
-if (isset($_GET["mode"]) && $_GET["mode"] == 'test')
+if (GETPOST('mode') && GETPOST('mode') == 'test')
 {
 	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_head.js"></script>'."\n";
 }

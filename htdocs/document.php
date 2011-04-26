@@ -32,12 +32,7 @@
 
 define('NOTOKENRENEWAL',1); // Disables token renewal
 
-// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-$encoding = '';
-$action = isset($_GET["action"])?$_GET["action"]:'';
-$original_file = isset($_GET["file"])?$_GET["file"]:'';
-$modulepart = isset($_GET["modulepart"])?$_GET["modulepart"]:'';
-$urlsource = isset($_GET["urlsource"])?$_GET["urlsource"]:'';
+$modulepart = (!empty($_GET['modulepart'])?$_GET['modulepart']:'');
 
 // Pour autre que bittorrent, on charge environnement + info issus de logon (comme le user)
 if (($modulepart == 'bittorrent') && ! defined("NOLOGIN"))
@@ -61,9 +56,15 @@ function llxHeader() { }
 require("./main.inc.php");	// Load $user and permissions
 require_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
 
+// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+$encoding = '';
+$action = GETPOST('action');
+$original_file = GETPOST('file');
+$urlsource = GETPOST('urlsource');
+
 // Define mime type
 $type = 'application/octet-stream';
-if (! empty($_GET["type"])) $type=$_GET["type"];
+if (GETPOST('type')) $type=GETPOST('type');
 else $type=dol_mimetype($original_file);
 //print 'X'.$type.'-'.$original_file;exit;
 
@@ -478,7 +479,7 @@ if (preg_match('/\.\./',$original_file) || preg_match('/[<>|]/',$original_file))
 {
 	dol_syslog("Refused to deliver file ".$original_file);
 	// Do no show plain path in shown error message
-	dol_print_error(0,$langs->trans("ErrorFileNameInvalid",$_GET["file"]));
+	dol_print_error(0,$langs->trans("ErrorFileNameInvalid",$original_file));
 	exit;
 }
 
@@ -493,7 +494,7 @@ if ($action == 'remove_file')	// Remove a file
 	$original_file_osencoded=dol_osencode($original_file);	// New file name encoded in OS encoding charset
 	if (! file_exists($original_file_osencoded))
 	{
-		dol_print_error(0,$langs->trans("ErrorFileDoesNotExists",$_GET["file"]));
+		dol_print_error(0,$langs->trans("ErrorFileDoesNotExists",$original_file));
 		exit;
 	}
 

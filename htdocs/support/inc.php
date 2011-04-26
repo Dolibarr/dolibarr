@@ -146,7 +146,7 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* removed in PHP6
 
 // Defini objet langs
 $langs = new Translate('..',$conf);
-if (isset($_GET["lang"])) $langs->setDefaultLang($_GET["lang"]);
+if (GETPOST('lang')) $langs->setDefaultLang(GETPOST('lang'));
 else $langs->setDefaultLang('auto');
 
 $bc[false]=' class="bg1"';

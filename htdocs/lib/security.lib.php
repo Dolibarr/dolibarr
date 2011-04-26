@@ -90,7 +90,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	global $dolibarr_main_demo,$db;
 	global $smartphone;
 
-	$langcode=(empty($_GET["lang"])?((is_object($langs)&&$langs->defaultlang)?$langs->defaultlang:'auto'):$_GET["lang"]);
+	$langcode=(GETPOST('lang')?((is_object($langs)&&$langs->defaultlang)?$langs->defaultlang:'auto'):GETPOST('lang'));
 	$langs->setDefaultLang($langcode);
 
 	$langs->load("main");
