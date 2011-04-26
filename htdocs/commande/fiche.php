@@ -1164,6 +1164,9 @@ if ($action == 'create' && $user->rights->commande->creer)
             $remise_percent     = (!empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
             $remise_absolue     = (!empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(!empty($soc->remise_absolue)?$soc->remise_absolue:0));
             $dateinvoice        = empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
+            
+            // Object source contacts list
+            $srccontactslist = $objectsrc->liste_contact(-1,'external',1);
         }
     }
     else
@@ -1207,7 +1210,7 @@ if ($action == 'create' && $user->rights->commande->creer)
      * Contact de la commande
      */
     print "<tr><td>".$langs->trans("DefaultContact").'</td><td>';
-    $html->select_contacts($soc->id,$setcontact,'contactidp',1);
+    $html->select_contacts($soc->id,$setcontact,'contactidp',1,$srccontactslist);
     print '</td></tr>';
 
     // Ligne info remises tiers

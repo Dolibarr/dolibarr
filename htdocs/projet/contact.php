@@ -296,7 +296,7 @@ if ($id > 0 || ! empty($ref))
 				print '</td>';
 
 				print '<td colspan="1">';
-				$nbofcontacts=$html->select_contacts($selectedCompany, '', 'contactid', 0);
+				$nbofcontacts=$html->select_contacts($selectedCompany, '', 'contactid');
 				if ($nbofcontacts == 0) print $langs->trans("NoContactDefined");
 				print '</td>';
 				print '<td>';

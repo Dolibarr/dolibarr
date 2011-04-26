@@ -571,7 +571,7 @@ if ($action == 'create')
 	if (GETPOST("contactid") > 0 || GETPOST("socid") > 0)
 	{
 		print '<tr><td nowrap>'.$langs->trans("ActionOnContact").'</td><td>';
-		$html->select_contacts(GETPOST("socid"),GETPOST('contactid'),'contactid',1,1);
+		$html->select_contacts(GETPOST("socid"),GETPOST('contactid'),'contactid',1);
 		print '</td></tr>';
 	}
 

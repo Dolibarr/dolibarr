@@ -680,18 +680,11 @@ class Form
     {
         global $conf,$langs;
 
-        // Permettre l'exclusion de contacts
-        if (is_array($exclude))
-        {
-            $excludeContacts = implode("','",$exclude);
-        }
-
         // On recherche les societes
         $sql = "SELECT s.rowid, s.name, s.firstname, s.poste FROM";
         $sql.= " ".MAIN_DB_PREFIX ."socpeople as s";
         $sql.= " WHERE entity = ".$conf->entity;
         if ($socid) $sql.= " AND fk_soc=".$socid;
-        if (is_array($exclude) && $excludeContacts) $sql.= " AND s.rowid NOT IN ('".$excludeContacts."')";
         $sql.= " ORDER BY s.name ASC";
 
         dol_syslog("Form::select_contacts sql=".$sql);
@@ -721,6 +714,7 @@ class Form
                     if ($htmlname != 'none')
                     {
                         $disabled=0;
+                        if (is_array($exclude) && sizeof($exclude) && in_array($obj->rowid,$exclude)) $disabled=1;
                         if (is_array($limitto) && sizeof($limitto) && ! in_array($obj->rowid,$limitto)) $disabled=1;
                         if ($selected && $selected == $obj->rowid)
                         {

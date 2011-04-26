@@ -261,12 +261,13 @@ class CommonObject
 	}
 
 	/**
-	 *    \brief      Get array of all contacts for an object
-	 *    \param      statut        Status of lines to get (-1=all)
-	 *    \param      source        Source of contact: external or thirdparty (llx_socpeople) or internal (llx_user)
-	 *    \return     array			Array of id of contacts
+	 *    Get array of all contacts for an object
+	 *    @param		statut		Status of lines to get (-1=all)
+	 *    @param		source		Source of contact: external or thirdparty (llx_socpeople) or internal (llx_user)
+	 *    @param		list		0:all, 1:just id
+	 *    @return		array		Array of contacts
 	 */
-	function liste_contact($statut=-1,$source='external')
+	function liste_contact($statut=-1,$source='external',$list=0)
 	{
 		global $langs;
 
@@ -300,12 +301,21 @@ class CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				$transkey="TypeContact_".$obj->element."_".$obj->source."_".$obj->code;
-				$libelle_type=($langs->trans($transkey)!=$transkey ? $langs->trans($transkey) : $obj->libelle);
-				$tab[$i]=array('source'=>$obj->source,'socid'=>$obj->socid,'id'=>$obj->id,'nom'=>$obj->nom, 'firstname'=>$obj->firstname,
-                               'rowid'=>$obj->rowid,'code'=>$obj->code,'libelle'=>$libelle_type,'status'=>$obj->statut);
+				if (! $list)
+				{
+					$transkey="TypeContact_".$obj->element."_".$obj->source."_".$obj->code;
+					$libelle_type=($langs->trans($transkey)!=$transkey ? $langs->trans($transkey) : $obj->libelle);
+					$tab[$i]=array('source'=>$obj->source,'socid'=>$obj->socid,'id'=>$obj->id,'nom'=>$obj->nom, 'firstname'=>$obj->firstname,
+					               'rowid'=>$obj->rowid,'code'=>$obj->code,'libelle'=>$libelle_type,'status'=>$obj->statut);
+				}
+				else
+				{
+					$tab[$i]=$obj->id;
+				}
+				
 				$i++;
 			}
+			
 			return $tab;
 		}
 		else
