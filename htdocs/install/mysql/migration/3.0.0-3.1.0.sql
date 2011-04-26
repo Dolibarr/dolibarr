@@ -11,7 +11,7 @@
 --
 
 RENAME TABLE llx_c_methode_commande_fournisseur TO llx_c_input_method;
-RENAME TABLE llx_c_source TO llx_c_input_reason;
+RENAME TABLE llx_c_source TO llx_c_demand_reason;
 
 ALTER TABLE llx_adherent MODIFY login varchar(50);
 
@@ -60,7 +60,7 @@ CREATE TABLE llx_c_availability
 
 )ENGINE=innodb;
 
-CREATE TABLE llx_c_source
+CREATE TABLE llx_c_demand_reason
 (
 	rowid		integer	 	AUTO_INCREMENT PRIMARY KEY,
 	code		varchar(30) NOT NULL,
@@ -78,13 +78,13 @@ INSERT INTO llx_c_availability (rowid,code,label,active) VALUES (2, 'AV_1W',  '1
 INSERT INTO llx_c_availability (rowid,code,label,active) VALUES (3, 'AV_2W',  '2 weeks', 1);
 INSERT INTO llx_c_availability (rowid,code,label,active) VALUES (4, 'AV_3W',  '3 weeks', 1);
 
-INSERT INTO llx_c_input_reason (rowid,code,label,active) VALUES (1, 'SRC_00', 'Proposition commerciale', 1);
-INSERT INTO llx_c_input_reason (rowid,code,label,active) VALUES (2, 'SRC_01',  'Internet', 1);
-INSERT INTO llx_c_input_reason (rowid,code,label,active) VALUES (3, 'SRC_02',  'Campagne courrier', 1);
-INSERT INTO llx_c_input_reason (rowid,code,label,active) VALUES (4, 'SRC_03',  'Campagne téléphone', 1);
-INSERT INTO llx_c_input_reason (rowid,code,label,active) VALUES (5, 'SRC_04', 'Campagne fax', 1);
-INSERT INTO llx_c_input_reason (rowid,code,label,active) VALUES (6, 'SRC_05', 'Commercial', 1);
-INSERT INTO llx_c_input_reason (rowid,code,label,active) VALUES (7, 'SRC_06', 'Magasin', 1);
+INSERT INTO llx_c_demand_reason (rowid,code,label,active) VALUES (1, 'SRC_00', 'Proposition commerciale', 1);
+INSERT INTO llx_c_demand_reason (rowid,code,label,active) VALUES (2, 'SRC_01',  'Internet', 1);
+INSERT INTO llx_c_demand_reason (rowid,code,label,active) VALUES (3, 'SRC_02',  'Campagne courrier', 1);
+INSERT INTO llx_c_demand_reason (rowid,code,label,active) VALUES (4, 'SRC_03',  'Campagne téléphone', 1);
+INSERT INTO llx_c_demand_reason (rowid,code,label,active) VALUES (5, 'SRC_04', 'Campagne fax', 1);
+INSERT INTO llx_c_demand_reason (rowid,code,label,active) VALUES (6, 'SRC_05', 'Commercial', 1);
+INSERT INTO llx_c_demand_reason (rowid,code,label,active) VALUES (7, 'SRC_06', 'Magasin', 1);
 
 ALTER TABLE llx_actioncomm ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER id;
 
