@@ -849,8 +849,8 @@ class Propal extends CommonObject
 			if ($objsoc->fetch($socid)>0)
 			{
 				$object->socid 					= $objsoc->id;
-				$object->cond_reglement_id		= $objsoc->cond_reglement_id;
-				$object->mode_reglement_id		= $objsoc->mode_reglement_id;
+				$object->cond_reglement_id		= (! empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
+				$object->mode_reglement_id		= (! empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
 				$object->fk_project				= '';
 				$object->fk_delivery_address	= '';
 			}
