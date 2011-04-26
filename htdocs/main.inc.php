@@ -75,6 +75,7 @@ function test_sql_and_script_inject($val,$get)
 	$sql_inj += preg_match('/insert[\s]+into/i', $val);
 	$sql_inj += preg_match('/select.+from/i', $val);
 	$sql_inj += preg_match('/union.+select/i', $val);
+	$sql_inj += preg_match('/(\.\.%2f)+/i', $val);
 	// For XSS Injection done by adding javascript with script
 	$sql_inj += preg_match('/<script/i', $val);
 	// For XSS Injection done by adding javascript with onmousemove, etc... (closing a src or href tag with not cleaned param)
@@ -664,9 +665,9 @@ if (! defined('NOREQUIRETRAN'))
 }
 
 // Case forcing style from url
-if (! empty($_GET["theme"]))
+if (GETPOST('theme'))
 {
-	$conf->theme=$_GET["theme"];
+	$conf->theme=GETPOST('theme');
 	$conf->css  = "/theme/".$conf->theme."/style.css.php";
 }
 
