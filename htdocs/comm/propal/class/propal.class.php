@@ -7,6 +7,7 @@
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2008      Raphael Bertrand (Resultic)   <raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2011 Juanjo Menent         <jmenent@2byte.es>
+ * Copyright (C) 2010-2011 Philippe Grand        <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,6 +98,8 @@ class Propal extends CommonObject
 	var $adresse;
 	var $availability_id;
 	var $availability_code;
+	var $demand_reason_id;
+	var $demand_reason_code;
 
 	var $products=array();
 
@@ -631,6 +634,7 @@ class Propal extends CommonObject
 		$sql.= ", ref_client";
 		$sql.= ", date_livraison";
 		$sql.= ", fk_availability";
+		$sql.= ", fk_demand_reason";
 		$sql.= ", entity";
 		$sql.= ") ";
 		$sql.= " VALUES (";
@@ -654,6 +658,7 @@ class Propal extends CommonObject
 		$sql.= ", '".$this->db->escape($this->ref_client)."'";
 		$sql.= ", ".($this->date_livraison!=''?"'".$this->db->idate($this->date_livraison)."'":'null');
 		$sql.= ", ".$this->availability_id;
+		$sql.= ", ".$this->demand_reason_id;
 		$sql.= ", ".$conf->entity;
 		$sql.= ")";
 
@@ -954,6 +959,7 @@ class Propal extends CommonObject
 		$sql.= ", fk_user_author, fk_user_valid, fk_user_cloture";
 		$sql.= ", fk_adresse_livraison";
 		$sql.= ", p.fk_availability";
+		$sql.= ", p.fk_demand_reason";
 		$sql.= ", p.fk_cond_reglement";
 		$sql.= ", p.fk_mode_reglement";
 		$sql.= ", c.label as statut_label";
@@ -963,6 +969,7 @@ class Propal extends CommonObject
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_mode_reglement = cp.id';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON p.fk_cond_reglement = cr.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_availability as ca ON p.fk_availability = ca.rowid';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_demand_reason as dr ON p.fk_demand_reason = dr.rowid';
 		$sql.= " WHERE p.fk_statut = c.id";
 		$sql.= " AND p.entity = ".$conf->entity;
 		if ($ref) $sql.= " AND p.ref='".$ref."'";
@@ -1006,6 +1013,9 @@ class Propal extends CommonObject
 				$this->availability_id      = $obj->fk_availability;
 				$this->availability_code    = $obj->availability_code;
 				$this->availability         = $obj->availability;
+				$this->demand_reason_id     = $obj->fk_demand_reason;
+				$this->demand_reason_code   = $obj->demand_reason_code;
+				$this->demand_reason        = $obj->demand_reason;
 				$this->fk_delivery_address  = $obj->fk_adresse_livraison;	// TODO obsolete
 				$this->fk_address  			= $obj->fk_adresse_livraison;
 
@@ -1307,6 +1317,34 @@ class Propal extends CommonObject
 		}
 	}
 
+	/**
+	 *      \brief      Set source of demand
+	 *      \param      user		  Objet utilisateur qui modifie
+	 *      \param      demand_reason  source of demand
+	 *      \return     int           <0 si ko, >0 si ok
+	 */
+	function set_demand_reason($user, $id)
+	{
+		if ($user->rights->propale->creer)
+		{
+			$sql = "UPDATE ".MAIN_DB_PREFIX."propal ";
+			$sql.= " SET fk_demand_reason = '".$id."'";
+			$sql.= " WHERE rowid = ".$this->id;
+
+			if ($this->db->query($sql))
+			{
+				$this->fk_demand_reason = $id;
+				return 1;
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				dol_syslog("Propal::set_demand_reason Erreur SQL");
+				return -1;
+			}
+		}
+	}
+	
 	/**
 	 *      \brief      Positionne numero reference client
 	 *      \param      user            Utilisateur qui modifie
@@ -1858,6 +1896,39 @@ class Propal extends CommonObject
 			return -2;
 		}
 	}
+	
+	/**
+	 *   \brief      Change l'origine de la demande
+	 *   \param      demand_reason_id      Id de la nouvelle origine de demande
+	 *   \return     int                    >0 si ok, <0 si ko
+	 */
+	function demand_reason($demand_reason_id)
+	{
+		dol_syslog('Propale::demand_reason('.$demand_reason_id.')');
+		if ($this->statut >= 0)
+		{
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'propal';
+			$sql .= ' SET fk_demand_reason = '.$demand_reason_id;
+			$sql .= ' WHERE rowid='.$this->id;
+			if ( $this->db->query($sql) )
+			{
+				$this->demand_reason_id = $demand_reason_id;
+				return 1;
+			}
+			else
+			{
+				dol_syslog('Propale::demand_reason Erreur '.$sql.' - '.$this->db->error());
+				$this->error=$this->db->error();
+				return -1;
+			}
+		}
+		else
+		{
+			dol_syslog('Propale::demand_reason, etat propale incompatible');
+			$this->error='Etat propale incompatible '.$this->statut;
+			return -2;
+		}
+	}
 
 
 	/**
@@ -2078,6 +2149,8 @@ class Propal extends CommonObject
 		$this->mode_reglement_code = 'CHQ';
 		$this->availability_id     = 1;
 		$this->availability_code   = 'DSP';
+		$this->demand_reason_id    = 1;
+		$this->demand_reason_code  = 'SRC_00';
 		$this->note_public='This is a comment (public)';
 		$this->note='This is a comment (private)';
 		// Lines

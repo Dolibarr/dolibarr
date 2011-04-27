@@ -161,6 +161,11 @@ if ($_GET["action"] == 'create')
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="2">';
 	$html->select_types_paiements($soc->mode_reglement,'mode_reglement_id');
 	print '</td></tr>';
+	
+	// Source de propale
+    print '<tr><td>'.$langs->trans('Source').'</td><td>';
+    $html->select_demand_reason($soc->demand_reason,'demand_reason_id');
+    print '</td></tr>';
 
 	// delai de livraison
     print '<tr><td>'.$langs->trans('AvailabilityPeriod').'</td><td colspan="2">';

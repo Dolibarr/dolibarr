@@ -6,6 +6,7 @@
  * Copyright (C) 2005-2011 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2010-2011 Juanjo Menent         <jmenent@2byte.es>
+ * Copyright (C) 2010-2011 Philippe Grand        <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -259,6 +260,7 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 			$object->datep 					= dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 			$object->date_livraison 		= dol_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
 			$object->availability_id 		= $_POST['availability_id'];
+			$object->demand_reason_id       = $_POST['demand_reason_id'];
 			$object->fk_delivery_address 	= $_POST['fk_address'];
 			$object->duree_validite			= $_POST['duree_validite'];
 			$object->cond_reglement_id 		= $_POST['cond_reglement_id'];
@@ -287,6 +289,7 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 		$object->datep 					= dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 		$object->date_livraison 		= dol_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
 		$object->availability_id 		= $_POST['availability_id'];
+		$object->demand_reason_id       = $_POST['demand_reason_id'];
 		$object->fk_delivery_address 	= $_POST['fk_address'];
 		$object->duree_validite 		= $_POST['duree_validite'];
 		$object->cond_reglement_id 		= $_POST['cond_reglement_id'];
@@ -894,6 +897,14 @@ if ($_POST["action"] == 'setavailability')
 	$_GET['id']=$_REQUEST['id'];
 }
 
+// Origine de la propale
+if ($_POST["action"] == 'setdemandreason')
+{
+	$object->fetch($_REQUEST['id']);
+	$result = $object->demand_reason($_POST['demand_reason_id']);
+	$_GET['id']=$_REQUEST['id'];
+}
+
 // Conditions de reglement
 if ($_POST["action"] == 'setconditions')
 {
@@ -1119,7 +1130,7 @@ if ($id > 0 || ! empty($ref))
 	print '</td>';
 	print '</tr>';
 
-	$rowspan=10;
+	$rowspan=11;
 
 	// Company
 	print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$soc->getNomUrl(1).'</td>';
@@ -1297,6 +1308,26 @@ if ($id > 0 || ! empty($ref))
 	else
 	{
 		$html->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id,$object->availability_id,'none');
+	}
+
+	print '</td>';
+	print '</tr>';
+	
+	// Origine de la demande
+	print '<tr><td>';
+	print '<table class="nobordernopadding" width="100%"><tr><td>';
+	print $langs->trans('Source');
+	print '</td>';
+	if ($_GET['action'] != 'editdemandreason' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdemandreason&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDemandReason'),1).'</a></td>';
+	print '</tr></table>';
+	print '</td><td colspan="3">';
+	if ($_GET['action'] == 'editdemandreason')
+	{
+		$html->form_demand_reason($_SERVER['PHP_SELF'].'?id='.$object->id,$object->demand_reason_id,'demand_reason_id');
+	}
+	else
+	{
+		$html->form_demand_reason($_SERVER['PHP_SELF'].'?id='.$object->id,$object->demand_reason_id,'none');
 	}
 
 	print '</td>';
