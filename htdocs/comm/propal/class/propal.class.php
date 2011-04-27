@@ -590,6 +590,7 @@ class Propal extends CommonObject
 		// Clean parameters
 		$this->fin_validite = $this->datep + ($this->duree_validite * 24 * 3600);
         if (empty($this->availability_id)) $this->availability_id=0;
+        if (empty($this->demand_reason_id)) $this->demand_reason_id=0;
 
 		dol_syslog("Propal::Create");
 
@@ -953,6 +954,7 @@ class Propal extends CommonObject
 		$sql.= ", fin_validite as dfv";
 		$sql.= ", date_livraison as date_livraison";
 		$sql.= ", ca.code as availability_code, ca.label as availability";
+		$sql.= ", dr.code as demand_reason_code, dr.label as demand_reason";
 		$sql.= ", model_pdf, ref_client";
 		$sql.= ", note, note_public";
 		$sql.= ", fk_projet, fk_statut";
