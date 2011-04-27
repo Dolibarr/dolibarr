@@ -673,7 +673,6 @@ if (! defined('NOLOGIN'))
     else $conf->use_javascript_ajax=0;
 }
 
-
 if (! defined('NOREQUIRETRAN'))
 {
 	if (! GETPOST('lang'))	// If language was not forced on URL
@@ -691,14 +690,14 @@ if (! defined('NOREQUIRETRAN'))
 	}
 	else	// If language was forced on URL
 	{
-		$langs->setDefaultLang(GETPOST('lang'));
+		$langs->setDefaultLang(GETPOST('lang','alpha',1));
 	}
 }
 
 // Case forcing style from url
 if (GETPOST('theme'))
 {
-	$conf->theme=GETPOST('theme');
+	$conf->theme=GETPOST('theme','alpha',1);
 	$conf->css  = "/theme/".$conf->theme."/style.css.php";
 }
 
