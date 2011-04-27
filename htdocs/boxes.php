@@ -219,8 +219,7 @@ class InfoBox
 					{
 						$boxname = $regs[1];
 						$module = $regs[2];
-						
-						dol_include_once("/".$module."/inc/boxes/".$boxname.".php");
+						$sourcefile = dol_buildpath("/".$module."/inc/boxes/".$boxname.".php");
 					}
 					else
 					{
@@ -241,7 +240,7 @@ class InfoBox
 					{
 						foreach($box->depends as $module)
 						{
-							//							print $module.'<br>';
+							//print $module.'<br>';
 							if (empty($conf->$module->enabled)) $enabled=false;
 						}
 					}
