@@ -31,16 +31,12 @@
  */
 
 define('NOTOKENRENEWAL',1); // Disables token renewal
-
-$modulepart = (!empty($_GET['modulepart'])?$_GET['modulepart']:'');
-
 // Pour autre que bittorrent, on charge environnement + info issus de logon (comme le user)
-if (($modulepart == 'bittorrent') && ! defined("NOLOGIN"))
+if (isset($_GET["modulepart"]) && $_GET["modulepart"] == 'bittorrent' && ! defined("NOLOGIN"))
 {
 	define("NOLOGIN",1);
 	define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 }
-
 if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
@@ -48,19 +44,26 @@ if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
 // C'est un wrapper, donc header vierge
 function llxHeader() { }
 
+require("./main.inc.php");	// Load $user and permissions
+require_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
+
+$encoding = '';
+$action = GETPOST("action");
+$original_file = GETPOST("file");	// Do not use urldecode here ($_GET are already decoded by PHP).
+$modulepart = GETPOST("modulepart");
+$urlsource = GETPOST("urlsource");
+
+
+/*
+ * Action
+ */
+
+// None
+
 
 /*
  * View
  */
-
-require("./main.inc.php");	// Load $user and permissions
-require_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
-
-// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-$encoding = '';
-$action = GETPOST('action');
-$original_file = GETPOST('file');
-$urlsource = GETPOST('urlsource');
 
 // Define mime type
 $type = 'application/octet-stream';
@@ -478,8 +481,8 @@ if (! $accessallowed)
 if (preg_match('/\.\./',$original_file) || preg_match('/[<>|]/',$original_file))
 {
 	dol_syslog("Refused to deliver file ".$original_file);
-	// Do no show plain path in shown error message
-	dol_print_error(0,$langs->trans("ErrorFileNameInvalid",$original_file));
+	$file=basename($original_file);		// Do no show plain path of original_file in shown error message
+	dol_print_error(0,$langs->trans("ErrorFileNameInvalid",$file));
 	exit;
 }
 
@@ -494,7 +497,8 @@ if ($action == 'remove_file')	// Remove a file
 	$original_file_osencoded=dol_osencode($original_file);	// New file name encoded in OS encoding charset
 	if (! file_exists($original_file_osencoded))
 	{
-		dol_print_error(0,$langs->trans("ErrorFileDoesNotExists",$original_file));
+		$file=basename($original_file);		// Do no show plain path of original_file in shown error message
+		dol_print_error(0,$langs->trans("ErrorFileDoesNotExists",$file));
 		exit;
 	}
 
