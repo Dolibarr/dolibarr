@@ -469,7 +469,7 @@ function dolibarr_fiche_head($links, $active='0', $title='', $notab=0)
  *	@param	    active      Active tab name
  *	@param      title       Title
  *	@param      notab		0=Add tab header, 1=no tab header
- * 	@param		picto		Add a picto on tab titel
+ * 	@param		picto		Add a picto on tab title
  */
 function dol_fiche_head($links, $active='0', $title='', $notab=0, $picto='')
 {
