@@ -301,6 +301,7 @@ ThemeDir=Skins directory
 ConnectionTimeout=Connexion timeout
 ResponseTimeout=Response timeout
 SmsTestMessage=Test message from __PHONEFROM__ to __PHONETO__
+ModuleMustBeEnabledFirst=Module <b>%s</b> must be enabled first before using this feature.
 
 # Modules
 Module0Name=Users & groups
