@@ -3809,36 +3809,4 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
     }
 }
 
-/**
- * Converts newlines and break tags to an
- * arbitrary string selected by the user,
- * defaults to PHP_EOL.
- *
- * In the case where a break tag is followed by
- * any amount of whitespace, including \r and \n,
- * the tag and the whitespace will be converted
- * to a single instance of the line break argument.
- *
- * @author Matthew Kastor
- * @param string $string
- *   string in which newlines and break tags will be replaced
- * @param string $line_break
- *   replacement string for newlines and break tags
- * @return string
- *   Returns the original string with newlines and break tags
- *   converted
- */
-function convert_line_breaks($string, $line_break=PHP_EOL) {
-    $patterns = array(   
-                        "/(<br>|<br \/>|<br\/>)\s*/i",
-                        "/(\r\n|\r|\n)/"
-    );
-    $replacements = array(   
-                            PHP_EOL,
-                            $line_break
-    );
-    $string = preg_replace($patterns, $replacements, $string);
-    return $string;
-}
-
 ?>
