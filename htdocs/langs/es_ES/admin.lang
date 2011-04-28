@@ -302,7 +302,8 @@ ThemeDir=Directorio de los temas
 ConnectionTimeout=Timeout de conexión
 ResponseTimeout=Timeout de respuesta
 SmsTestMessage=Mensaje de prueba de __PHONEFROM__ para __PHONETO__
-# Modules= undefined=
+ModuleMustBeEnabledFirst=Para usar esta función debe estar activado el módulo <b>%s</b>.
+# Modules
 Module0Name=Usuarios y grupos
 Module0Desc=Gestión de usuarios y grupos
 Module1Name=Terceros

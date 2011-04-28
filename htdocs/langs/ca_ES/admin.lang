@@ -302,7 +302,8 @@ ThemeDir=Directori dels temes
 ConnectionTimeout=Timeout de connexió
 ResponseTimeout=Timeout de resposta
 SmsTestMessage=Missatge de prova de __PHONEFROM__ per __PHONETO__
-# Modules= undefined==
+ModuleMustBeEnabledFirst=Per utilitzar aquesta funció ha d'estar activat el mòdul <b>%s</b>.
+# Modules
 Module0Name=Usuaris y grups
 Module0Desc=Gestió d'usuaris i grups
 Module1Name=Tercers
