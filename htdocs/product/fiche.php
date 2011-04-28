@@ -1099,7 +1099,7 @@ if ($id || $ref)
 			print '</td></tr>';
 
 			// Description
-			print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="2">'.nl2br($product->description).'</td></tr>';
+			print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="2">'.dol_nl2br($product->description,1,true).'</td></tr>';
 
 			// Nature
 			if($product->type!=1)

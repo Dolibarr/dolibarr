@@ -3064,8 +3064,8 @@ function dol_nl2br($stringtoencode,$nl2brmode=0,$forxml=false)
     }
 	else
 	{
-		$ret=str_replace("\r","",$stringtoencode);
-		$ret=str_replace("\n",($forxml?'<br />':'<br>'),$ret);
+		$ret=preg_replace('/(<br>|<br\s*\/>|<br\/>)\s*(\r\n|\r|\n)+/i',($forxml?'<br />':'<br>'),$stringtoencode);
+		$ret=preg_replace('/([^<li\s*>])+(\r\n|\r|\n)+/i',($forxml?'<br />':'<br>'),$ret);
 		return $ret;
 	}
 }
@@ -3087,7 +3087,8 @@ function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0,$pagecodefrom='UTF-8')
 {
 	if (dol_textishtml($stringtoencode))
 	{
-	    $newstring=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i','<br>',$stringtoencode);	// Replace "<br type="_moz" />" by "<br>". It's same and avoid pb with FPDF.
+	    $newstring=preg_replace('/([^<li\s*>])+(\r\n|\r|\n)+/i',($forxml?'<br />':'<br>'),$stringtoencode); // Don't replace if in list
+		$newstring=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i','<br>',$newstring);	// Replace "<br type="_moz" />" by "<br>". It's same and avoid pb with FPDF.
 		$newstring=preg_replace('/<br>$/i','',$newstring);	// Replace "<br type="_moz" />" by "<br>". It's same and avoid pb with FPDF.
 		$newstring=strtr($newstring,array('&'=>'__and__','<'=>'__lt__','>'=>'__gt__','"'=>'__dquot__'));
 		$newstring=dol_htmlentities($newstring,ENT_COMPAT,$pagecodefrom);	// Make entity encoding
@@ -3270,6 +3271,7 @@ function dol_textishtml($msg,$option=0)
 		elseif (preg_match('/<br/i',$msg))				return true;
 		elseif (preg_match('/<span/i',$msg))			return true;
 		elseif (preg_match('/<div/i',$msg))				return true;
+		elseif (preg_match('/<li/i',$msg))				return true;
 		elseif (preg_match('/<table/i',$msg))			return true;
 		elseif (preg_match('/<font/i',$msg))			return true;
 		elseif (preg_match('/<strong/i',$msg))			return true;
@@ -3805,6 +3807,38 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
             }
         }
     }
+}
+
+/**
+ * Converts newlines and break tags to an
+ * arbitrary string selected by the user,
+ * defaults to PHP_EOL.
+ *
+ * In the case where a break tag is followed by
+ * any amount of whitespace, including \r and \n,
+ * the tag and the whitespace will be converted
+ * to a single instance of the line break argument.
+ *
+ * @author Matthew Kastor
+ * @param string $string
+ *   string in which newlines and break tags will be replaced
+ * @param string $line_break
+ *   replacement string for newlines and break tags
+ * @return string
+ *   Returns the original string with newlines and break tags
+ *   converted
+ */
+function convert_line_breaks($string, $line_break=PHP_EOL) {
+    $patterns = array(   
+                        "/(<br>|<br \/>|<br\/>)\s*/i",
+                        "/(\r\n|\r|\n)/"
+    );
+    $replacements = array(   
+                            PHP_EOL,
+                            $line_break
+    );
+    $string = preg_replace($patterns, $replacements, $string);
+    return $string;
 }
 
 ?>
