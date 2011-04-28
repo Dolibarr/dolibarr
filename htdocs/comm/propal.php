@@ -119,18 +119,18 @@ if ($action == 'confirm_clone' && $confirm == 'yes')
 		else
 		{
 			$mesg=$object->error;
-			$_GET['action']='';
-			$_GET['id']=$_REQUEST['id'];
+			$action='';
+			//$_GET['id']=$_REQUEST['id'];
 		}
 	}
 }
 
 // Suppression de la propale
-if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes')
+if ($action == 'confirm_delete' && $confirm == 'yes')
 {
 	if ($user->rights->propale->supprimer)
 	{
-		$object->fetch($_GET["id"]);
+		$object->fetch($id);
 		$result=$object->delete($user);
 		$id = 0;
 		$brouillon = 1;
@@ -150,13 +150,13 @@ if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes')
 }
 
 // Remove line
-if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes')
+if ($action == 'confirm_deleteline' && $confirm == 'yes')
 {
 	if ($user->rights->propale->creer)
 	{
-		$object->fetch($_GET["id"]);
+		$object->fetch($id);
 		$object->fetch_thirdparty();
-		$result = $object->deleteline($_GET['lineid']);
+		$result = $object->deleteline($lineid);
 		// reorder lines
 		if ($result) $object->line_order(true);
 
@@ -182,9 +182,9 @@ if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes'
 }
 
 // Validation
-if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes' && $user->rights->propale->valider)
+if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->propale->valider)
 {
-	$object->fetch($_GET["id"]);
+	$object->fetch($id);
 	$object->fetch_thirdparty();
 
 	$result=$object->valid($user);
@@ -210,26 +210,26 @@ if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes' &
 
 if ($_POST['action'] == 'setdate')
 {
-	$object->fetch($_GET["id"]);
+	$object->fetch($id);
 	$result=$object->set_date($user,dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']));
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 if ($_POST['action'] == 'setecheance')
 {
-	$object->fetch($_GET["id"]);
+	$object->fetch($id);
 	$result=$object->set_echeance($user,dol_mktime(12, 0, 0, $_POST['echmonth'], $_POST['echday'], $_POST['echyear']));
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 if ($_POST['action'] == 'setdate_livraison')
 {
-	$object->fetch($_GET["id"]);
+	$object->fetch($id);
 	$result=$object->set_date_livraison($user,dol_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']));
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
 if ($_POST['action'] == 'setaddress' && $user->rights->propale->creer)
 {
-	$object->fetch($_GET["id"]);
+	$object->fetch($id);
 	$result=$object->set_adresse_livraison($user,$_POST['fk_address']);
 	if ($result < 0) dol_print_error($db,$object->error);
 }
@@ -237,7 +237,7 @@ if ($_POST['action'] == 'setaddress' && $user->rights->propale->creer)
 // Positionne ref client
 if ($_POST['action'] == 'set_ref_client' && $user->rights->propale->creer)
 {
-	$object->fetch($_GET["id"]);
+	$object->fetch($id);
 	$object->set_ref_client($user, $_POST['ref_client']);
 }
 
@@ -371,9 +371,9 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 }
 
 // Classify billed
-if ($_GET["action"] == 'classifybilled')
+if ($action == 'classifybilled')
 {
-	$object->fetch($_GET["id"]);
+	$object->fetch($id);
 	$object->cloture($user, 4, '');
 }
 
@@ -387,12 +387,12 @@ if (GETPOST('action') == 'setstatut' && $user->rights->propale->cloturer)
 		if (! GETPOST('statut'))
 		{
 			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("CloseAs")).'</div>';
-			$_REQUEST['action']='statut';
-			$_GET['action']='statut';
+			$action='statut';
+			$action='statut';
 		}
 		else
 		{
-			$object->fetch($_GET["id"]);
+			$object->fetch($id);
 			// prevent browser refresh from closing proposal several times
 			if ($object->statut==1)
 			{
@@ -416,7 +416,7 @@ if ($_POST['addfile'])
 
 	$mesg=dol_add_file_process($upload_dir,0,0);
 
-	$_GET["action"]='presend';
+	$action='presend';
 	$_POST["action"]='presend';
 }
 
@@ -433,7 +433,7 @@ if (! empty($_POST['removedfile']))
 
 	$mesg=dol_remove_file_process($_POST['removedfile'],0);
 
-	$_GET["action"]='presend';
+	$action='presend';
 	$_POST["action"]='presend';
 }
 
@@ -590,12 +590,12 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile']
 	}
 }
 
-if ($_GET['action'] == 'modif' && $user->rights->propale->creer)
+if ($action == 'modif' && $user->rights->propale->creer)
 {
 	/*
 	 *  Repasse la propale en mode brouillon
 	 */
-	$object->fetch($_GET["id"]);
+	$object->fetch($id);
 	$object->fetch_thirdparty();
 	$object->set_draft($user);
 
@@ -617,8 +617,8 @@ if ($_POST['action'] == "setabsolutediscount" && $user->rights->propale->creer)
 {
 	if ($_POST["remise_id"])
 	{
-		$object->id=$_GET["id"];
-		$ret=$object->fetch($_GET["id"]);
+		$object->id=$id;
+		$ret=$object->fetch($id);
 		if ($ret > 0)
 		{
 			$result=$object->insert_discount($_POST["remise_id"]);
@@ -849,9 +849,9 @@ if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST
 /*
  * Generation doc (depuis lien ou depuis cartouche doc)
  */
-if ($_REQUEST['action'] == 'builddoc' && $user->rights->propale->creer)
+if ($action == 'builddoc' && $user->rights->propale->creer)
 {
-	$object->fetch($_GET["id"]);
+	$object->fetch($id);
 	$object->fetch_thirdparty();
 
 	if ($_REQUEST['model'])
@@ -885,7 +885,7 @@ if ($_REQUEST['action'] == 'builddoc' && $user->rights->propale->creer)
 // Set project
 if ($_POST['action'] == 'classin')
 {
-	$object->fetch($_GET['id']);
+	$object->fetch($id);
 	$object->setProject($_POST['projectid']);
 }
 
@@ -894,7 +894,7 @@ if ($_POST["action"] == 'setavailability')
 {
 	$object->fetch($_REQUEST['id']);
 	$result = $object->availability($_POST['availability_id']);
-	$_GET['id']=$_REQUEST['id'];
+	$id=$_REQUEST['id'];
 }
 
 // Origine de la propale
@@ -902,7 +902,7 @@ if ($_POST["action"] == 'setdemandreason')
 {
 	$object->fetch($_REQUEST['id']);
 	$result = $object->demand_reason($_POST['demand_reason_id']);
-	$_GET['id']=$_REQUEST['id'];
+	$id=$_REQUEST['id'];
 }
 
 // Conditions de reglement
@@ -910,21 +910,21 @@ if ($_POST["action"] == 'setconditions')
 {
 	$object->fetch($_REQUEST['id']);
 	$result = $object->cond_reglement($_POST['cond_reglement_id']);
-	$_GET['id']=$_REQUEST['id'];
+	$id=$_REQUEST['id'];
 }
 
-if ($_REQUEST['action'] == 'setremisepercent' && $user->rights->propale->creer)
+if ($action == 'setremisepercent' && $user->rights->propale->creer)
 {
 	$object->fetch($_REQUEST["id"]);
 	$result = $object->set_remise_percent($user, $_POST['remise_percent']);
-	$_GET["id"]=$_REQUEST["id"];
+	$id=$_REQUEST["id"];
 }
 
-if ($_REQUEST['action'] == 'setremiseabsolue' && $user->rights->propale->creer)
+if ($action == 'setremiseabsolue' && $user->rights->propale->creer)
 {
 	$object->fetch($_REQUEST["id"]);
 	$result = $object->set_remise_absolue($user, $_POST['remise_absolue']);
-	$_GET["id"]=$_REQUEST["id"];
+	$id=$_REQUEST["id"];
 }
 
 // Mode de reglement
@@ -932,18 +932,18 @@ if ($_POST["action"] == 'setmode')
 {
 	$object->fetch($_REQUEST["id"]);
 	$result = $object->mode_reglement($_POST['mode_reglement_id']);
-	$_GET["id"]=$_REQUEST["id"];
+	$id=$_REQUEST["id"];
 }
 
 /*
  * Ordonnancement des lignes
  */
 
-if ($_GET['action'] == 'up' && $user->rights->propale->creer)
+if ($action == 'up' && $user->rights->propale->creer)
 {
-	$object->fetch($_GET["id"]);
+	$object->fetch($id);
 	$object->fetch_thirdparty();
-	$object->line_up($_GET['rowid']);
+	$object->line_up(GETPOST('rowid'));
 
 	// Define output language
 	$outputlangs = $langs;
@@ -957,15 +957,15 @@ if ($_GET['action'] == 'up' && $user->rights->propale->creer)
 	}
 	propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
 
-	Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'#'.$_GET['rowid']);
+	Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.'#'.GETPOST('rowid'));
 	exit;
 }
 
-if ($_GET['action'] == 'down' && $user->rights->propale->creer)
+if ($action == 'down' && $user->rights->propale->creer)
 {
-	$object->fetch($_GET['id']);
+	$object->fetch($id);
 	$object->fetch_thirdparty();
-	$object->line_down($_GET['rowid']);
+	$object->line_down(GETPOST('rowid'));
 
 	// Define output language
 	$outputlangs = $langs;
@@ -979,7 +979,7 @@ if ($_GET['action'] == 'down' && $user->rights->propale->creer)
 	}
 	propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
 
-	Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'#'.$_GET['rowid']);
+	Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.'#'.GETPOST('rowid'));
 	exit;
 }
 
@@ -1111,10 +1111,10 @@ if ($id > 0 || ! empty($ref))
 	print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
 	print $langs->trans('RefCustomer').'</td><td align="left">';
 	print '</td>';
-	if ($_GET['action'] != 'refclient' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;id='.$object->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
+	if ($action != 'refclient' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;id='.$object->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="5">';
-	if ($user->rights->propale->creer && $_GET['action'] == 'refclient')
+	if ($user->rights->propale->creer && $action == 'refclient')
 	{
 		print '<form action="propal.php?id='.$object->id.'" method="post">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -1172,10 +1172,10 @@ if ($id > 0 || ! empty($ref))
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('Date');
 	print '</td>';
-	if ($_GET['action'] != 'editdate' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDate'),1).'</a></td>';
+	if ($action != 'editdate' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDate'),1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
-	if ($object->brouillon && $_GET['action'] == 'editdate')
+	if ($object->brouillon && $action == 'editdate')
 	{
 		print '<form name="editdate" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -1217,10 +1217,10 @@ if ($id > 0 || ! empty($ref))
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('DateEndPropal');
 	print '</td>';
-	if ($_GET['action'] != 'editecheance' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editecheance&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+	if ($action != 'editecheance' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editecheance&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
-	if ($object->brouillon && $_GET['action'] == 'editecheance')
+	if ($object->brouillon && $action == 'editecheance')
 	{
 		print '<form name="editecheance" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -1250,10 +1250,10 @@ if ($id > 0 || ! empty($ref))
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('DeliveryDate');
 	print '</td>';
-	if ($_GET['action'] != 'editdate_livraison' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'),1).'</a></td>';
+	if ($action != 'editdate_livraison' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'),1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
-	if ($_GET['action'] == 'editdate_livraison')
+	if ($action == 'editdate_livraison')
 	{
 		print '<form name="editdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -1277,17 +1277,17 @@ if ($id > 0 || ! empty($ref))
 		print $langs->trans('DeliveryAddress');
 		print '</td>';
 
-		if ($_GET['action'] != 'editdelivery_address' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_address&amp;socid='.$object->socid.'&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
+		if ($action != 'editdelivery_address' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_address&amp;socid='.$object->socid.'&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="3">';
 
-		if ($_GET['action'] == 'editdelivery_address')
+		if ($action == 'editdelivery_address')
 		{
-			$html->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$_GET['socid'],'fk_address','propal',$object->id);
+			$html->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,GETPOST('socid'),'fk_address','propal',$object->id);
 		}
 		else
 		{
-			$html->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$_GET['socid'],'none','propal',$object->id);
+			$html->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,GETPOST('socid'),'none','propal',$object->id);
 		}
 		print '</td></tr>';
 	}
@@ -1298,10 +1298,10 @@ if ($id > 0 || ! empty($ref))
 	print $langs->trans('AvailabilityPeriod');
 	if ($conf->commande->enabled) print ' ('.$langs->trans('AfterOrder').')';
 	print '</td>';
-	if ($_GET['action'] != 'editavailability' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editavailability&amp;id='.$object->id.'">'.img_edit($langs->trans('SetAvailability'),1).'</a></td>';
+	if ($action != 'editavailability' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editavailability&amp;id='.$object->id.'">'.img_edit($langs->trans('SetAvailability'),1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
-	if ($_GET['action'] == 'editavailability')
+	if ($action == 'editavailability')
 	{
 		$html->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id,$object->availability_id,'availability_id');
 	}
@@ -1318,10 +1318,10 @@ if ($id > 0 || ! empty($ref))
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('Source');
 	print '</td>';
-	if ($_GET['action'] != 'editdemandreason' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdemandreason&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDemandReason'),1).'</a></td>';
+	if ($action != 'editdemandreason' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdemandreason&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDemandReason'),1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
-	if ($_GET['action'] == 'editdemandreason')
+	if ($action == 'editdemandreason')
 	{
 		$html->form_demand_reason($_SERVER['PHP_SELF'].'?id='.$object->id,$object->demand_reason_id,'demand_reason_id');
 	}
@@ -1338,10 +1338,10 @@ if ($id > 0 || ! empty($ref))
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('PaymentConditionsShort');
 	print '</td>';
-	if ($_GET['action'] != 'editconditions' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+	if ($action != 'editconditions' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
-	if ($_GET['action'] == 'editconditions')
+	if ($action == 'editconditions')
 	{
 		$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->cond_reglement_id,'cond_reglement_id');
 	}
@@ -1358,10 +1358,10 @@ if ($id > 0 || ! empty($ref))
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('PaymentMode');
 	print '</td>';
-	if ($_GET['action'] != 'editmode' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+	if ($action != 'editmode' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
-	if ($_GET['action'] == 'editmode')
+	if ($action == 'editmode')
 	{
 		$html->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->mode_reglement_id,'mode_reglement_id');
 	}
@@ -1380,10 +1380,10 @@ if ($id > 0 || ! empty($ref))
 		print $langs->trans('Project').'</td>';
 		if ($user->rights->propale->creer)
 		{
-			if ($_GET['action'] != 'classer') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classer&amp;id='.$object->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
+			if ($action != 'classer') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classer&amp;id='.$object->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="3">';
-			if ($_GET['action'] == 'classer')
+			if ($action == 'classer')
 			{
 				$html->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'projectid');
 			}
@@ -1741,8 +1741,8 @@ else
 	$pageprev = $page - 1;
 	$pagenext = $page + 1;
 
-	$viewstatut=$db->escape($_GET['viewstatut']);
-	$object_statut = $db->escape($_GET['propal_statut']);
+	$viewstatut=$db->escape(GETPOST('viewstatut'));
+	$object_statut = $db->escape(GETPOST('propal_statut'));
 	if($object_statut != '')
 	$viewstatut=$object_statut;
 
@@ -1766,17 +1766,17 @@ else
 	{
 		$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	}
-	if (!empty($_GET['search_ref']))
+	if (GETPOST('search_ref'))
 	{
-		$sql.= " AND p.ref LIKE '%".$db->escape($_GET['search_ref'])."%'";
+		$sql.= " AND p.ref LIKE '%".$db->escape(GETPOST('search_ref'))."%'";
 	}
 	if (!empty($_GET['search_societe']))
 	{
-		$sql.= " AND s.nom LIKE '%".$db->escape($_GET['search_societe'])."%'";
+		$sql.= " AND s.nom LIKE '%".$db->escape(GETPOST('search_societe'))."%'";
 	}
 	if (!empty($_GET['search_montant_ht']))
 	{
-		$sql.= " AND p.total_ht='".$db->escape($_GET['search_montant_ht'])."'";
+		$sql.= " AND p.total_ht='".$db->escape(GETPOST('search_montant_ht'))."'";
 	}
 	if ($sall) $sql.= " AND (s.nom like '%".$db->escape($sall)."%' OR p.note like '%".$db->escape($sall)."%' OR pd.description like '%".$db->escape($sall)."%')";
 	if ($socid) $sql.= ' AND s.rowid = '.$socid;
@@ -1833,10 +1833,10 @@ else
 
 		print '<tr class="liste_titre">';
 		print '<td class="liste_titre">';
-		print '<input class="flat" size="10" type="text" name="search_ref" value="'.$_GET['search_ref'].'">';
+		print '<input class="flat" size="10" type="text" name="search_ref" value="'.GETPOST('search_ref').'">';
 		print '</td>';
 		print '<td class="liste_titre" align="left">';
-		print '<input class="flat" type="text" size="16" name="search_societe" value="'.$_GET['search_societe'].'">';
+		print '<input class="flat" type="text" size="16" name="search_societe" value="'.GETPOST('search_societe').'">';
 		print '</td>';
 		print '<td class="liste_titre" colspan="1" align="right">';
 		print $langs->trans('Month').': <input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
@@ -1848,7 +1848,7 @@ else
 		print '</td>';
 		print '<td class="liste_titre" colspan="1">&nbsp;</td>';
 		print '<td class="liste_titre" align="right">';
-		print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$_GET['search_montant_ht'].'">';
+		print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.GETPOST('search_montant_ht').'">';
 		print '</td>';
 		print '<td class="liste_titre">&nbsp;</td>';
 		print '<td class="liste_titre" align="right">';
