@@ -35,7 +35,12 @@ $langs->load("orders");
 $langs->load("sendings");
 $langs->load("companies");
 
-$id = isset($_GET["id"])?$_GET["id"]:'';
+$id=GETPOST('id');
+$ligne=GETPOST('ligne');
+$lineid=GETPOST('lineid');
+$action=GETPOST('action');
+
+$id = isset($id)?$id:'';
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -51,9 +56,9 @@ if ($_POST["action"] == 'addcontact' && $user->rights->propale->creer)
 
 	$result = 0;
 	$propal = new Propal($db);
-	$result = $propal->fetch($_GET["id"]);
+	$result = $propal->fetch($id);
 
-    if ($result > 0 && $_GET["id"] > 0)
+    if ($result > 0 && $id > 0)
     {
   		$result = $propal->add_contact($_POST["contactid"], $_POST["type"], $_POST["source"]);
     }
@@ -80,7 +85,7 @@ if ($_POST["action"] == 'addcontact' && $user->rights->propale->creer)
 if ($_POST["action"] == 'updateligne' && $user->rights->propale->creer)
 {
 	$propal = new Propal($db);
-	if ($propal->fetch($_GET["id"]))
+	if ($propal->fetch($id))
 	{
 		$contact = $propal->detail_contact($_POST["elrowid"]);
 		$type = $_POST["type"];
@@ -102,16 +107,16 @@ if ($_POST["action"] == 'updateligne' && $user->rights->propale->creer)
 }
 
 // bascule du statut d'un contact
-if ($_GET["action"] == 'swapstatut' && $user->rights->propale->creer)
+if ($action == 'swapstatut' && $user->rights->propale->creer)
 {
 	$propal = new Propal($db);
-	if ($propal->fetch($_GET["id"]))
+	if ($propal->fetch($id))
 	{
-		$contact = $propal->detail_contact($_GET["ligne"]);
+		$contact = $propal->detail_contact($ligne);
 		$id_type_contact = $contact->fk_c_type_contact;
 		$statut = ($contact->statut == 4) ? 5 : 4;
 
-		$result = $propal->update_contact($_GET["ligne"], $statut, $id_type_contact);
+		$result = $propal->update_contact($ligne, $statut, $id_type_contact);
 		if ($result >= 0)
 		{
 			$db->commit();
@@ -127,11 +132,11 @@ if ($_GET["action"] == 'swapstatut' && $user->rights->propale->creer)
 }
 
 // Efface un contact
-if ($_GET["action"] == 'deleteline' && $user->rights->propale->creer)
+if ($action == 'deleteline' && $user->rights->propale->creer)
 {
 	$propal = new Propal($db);
-	$propal->fetch($_GET["id"]);
-	$result = $propal->delete_contact($_GET["lineid"]);
+	$propal->fetch($id);
+	$result = $propal->delete_contact($lineid);
 
 	if ($result >= 0)
 	{
@@ -163,8 +168,8 @@ $userstatic=new User($db);
 /* *************************************************************************** */
 if (isset($mesg)) print $mesg;
 
-$id = $_GET["id"];
-$ref= $_GET["ref"];
+$id = $id;
+$ref= GETPOST('ref');
 if ($id > 0 || ! empty($ref))
 {
 	$propal = New Propal($db);
@@ -222,7 +227,7 @@ if ($id > 0 || ! empty($ref))
 		* Ajouter une ligne de contact
 		* Non affiche en mode modification de ligne
 		*/
-		if ($_GET["action"] != 'editline' && $user->rights->propale->creer)
+		if ($action != 'editline' && $user->rights->propale->creer)
 		{
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("Source").'</td>';
@@ -241,19 +246,19 @@ if ($id > 0 || ! empty($ref))
 			print '<input type="hidden" name="source" value="internal">';
 
 			// Ligne ajout pour contact interne
-			print "<tr $bc[$var]>";
+			print '<tr'.$bc[$var].'>';
 
 			print '<td nowrap="nowrap">';
 			print img_object('','user').' '.$langs->trans("Users");
 			print '</td>';
 
-			print '<td colspan="1">';
+			print '<td>';
 			print $conf->global->MAIN_INFO_SOCIETE_NOM;
 			print '</td>';
 
-			print '<td colspan="1">';
+			print '<td>';
 			// On recupere les id des users deja selectionnes
-			//$userAlreadySelected = $propal->getListContactId('internal');	// On ne doit pas desactiver un contact deja selectionner car on doit pouvoir le seclectionner une deuxieme fois pour un autre type
+			//$userAlreadySelected = $propal->getListContactId('internal');	// On ne doit pas desactiver un contact deja selectionne car on doit pouvoir le selectionner une deuxieme fois pour un autre type
 			$html->select_users($user->id,'contactid',0,$userAlreadySelected);
 			print '</td>';
 			print '<td>';
@@ -272,18 +277,18 @@ if ($id > 0 || ! empty($ref))
 
 			// Ligne ajout pour contact externe
 			$var=!$var;
-			print "<tr $bc[$var]>";
+			print '<tr'.$bc[$var].'>';
 
 			print '<td nowrap="nowrap">';
 			print img_object('','contact').' '.$langs->trans("ThirdPartyContacts");
 			print '</td>';
 
-			print '<td colspan="1">';
+			print '<td>';
 			$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$propal->client->id;
 			$selectedCompany = $formcompany->selectCompaniesForNewContact($propal, 'id', $selectedCompany, 'newcompany');
 			print '</td>';
 
-			print '<td colspan="1">';
+			print '<td>';
 			$nbofcontacts=$html->select_contacts($selectedCompany, '', 'contactid');
 			if ($nbofcontacts == 0) print $langs->trans("NoContactDefined");
 			print '</td>';
@@ -295,10 +300,13 @@ if ($id > 0 || ! empty($ref))
 			print '></td>';
 			print '</tr>';
 
-			print "</form>";
+			print '</form>';
 
 			print '<tr><td colspan="6">&nbsp;</td></tr>';
+			print '</table>';
 		}
+
+		print '<table class="noborder" width="100%">';
 
 		// Liste des contacts lies
 		print '<tr class="liste_titre">';
@@ -306,8 +314,7 @@ if ($id > 0 || ! empty($ref))
 		print '<td>'.$langs->trans("Company").'</td>';
 		print '<td>'.$langs->trans("Contacts").'</td>';
 		print '<td>'.$langs->trans("ContactType").'</td>';
-		print '<td align="center">'.$langs->trans("Status").'</td>';
-		print '<td colspan="2">&nbsp;</td>';
+		print '<td align="center" colspan="3">'.$langs->trans("Status").'</td>';
 		print "</tr>\n";
 
 		$companystatic = new Societe($db);
@@ -378,7 +385,7 @@ if ($id > 0 || ! empty($ref))
 				print '</td>';
 
 				// Icon update et delete
-				print '<td align="center" nowrap>';
+				print '<td align="center" nowrap colspan="3">';
 				if ($user->rights->propale->creer)
 				{
 					print '&nbsp;';
