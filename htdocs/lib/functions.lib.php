@@ -471,7 +471,7 @@ function dolibarr_fiche_head($links, $active='0', $title='', $notab=0)
  *	@param      notab		0=Add tab header, 1=no tab header
  * 	@param		picto		Add a picto on tab title
  */
-function dol_fiche_head($links, $active='0', $title='', $notab=0, $picto='')
+function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto='')
 {
 	print "\n".'<div class="tabs">'."\n";
 
