@@ -1402,12 +1402,12 @@ class Societe extends CommonObject
      *  @param		nobr			Do not use br
      *	@return		string			Full address string
      */
-    function getFullAddress($withcountry=0,$nobr=0)
+    function getFullAddress($withcountry=0,$sep="\n")
     {
         $ret='';
-        $ret.=($this->address?$this->address.($nobr?" ":"\n"):'');
+        $ret.=($this->address?$this->address.$sep:'');
         $ret.=trim($this->zip.' '.$this->town);
-        if ($withcountry) $ret.=' '.$this->pays;
+        if ($withcountry) $ret.=($this->pays?$sep.$this->pays:'');
         return trim($ret);
     }
 
