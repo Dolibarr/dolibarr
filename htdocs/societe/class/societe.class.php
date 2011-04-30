@@ -1398,14 +1398,17 @@ class Societe extends CommonObject
 
     /**
      * 	Return full address of a third party (TODO in format of its country)
-     *	@return		string		Full address string
+     * 	@param		withcountry		Add country
+     *  @param		nobr			Do not use br
+     *	@return		string			Full address string
      */
-    function getFullAddress()
+    function getFullAddress($withcountry=0,$nobr=0)
     {
         $ret='';
-        $ret.=($this->address?$this->address."\n":'');
+        $ret.=($this->address?$this->address.($nobr?" ":"\n"):'');
         $ret.=trim($this->zip.' '.$this->town);
-        return $ret;
+        if ($withcountry) $ret.=' '.$this->pays;
+        return trim($ret);
     }
 
 
