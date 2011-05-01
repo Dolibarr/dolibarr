@@ -305,9 +305,9 @@ function dol_string_nospecial($str,$newstr='_',$badchars='')
 }
 
 /**
- *  \brief       Returns text escaped for inclusion in javascript code
- *  \param       $stringtoescape	String to escape
- *  \return      string      		Escaped string
+ *  Returns text escaped for inclusion into javascript code
+ *  @param       $stringtoescape	String to escape
+ *  @return      string      		Escaped string
  */
 function dol_escape_js($stringtoescape)
 {
@@ -3372,9 +3372,9 @@ function get_date_range($date_start,$date_end,$format = '',$outputlangs='')
 
 
 /**
- *	\brief   Retourne un tableau des mois ou le mois selectionne
- *	\param   selected			Mois a selectionner ou -1
- *	\return  string or array	Month string or array if selected < 0
+ *	Retourne un tableau des mois ou le mois selectionne
+ *	@param   selected			Mois a selectionner ou -1
+ *	@return  string or array	Month string or array if selected < 0
  */
 function monthArrayOrSelected($selected=0)
 {
@@ -3415,7 +3415,7 @@ function monthArrayOrSelected($selected=0)
 
 
 /**
- *	Returns formated messages (Used to show messages on html output)
+ *	Print formated messages to output (Used to show messages on html output)
  *	@param		mesgstring		Message
  *	@param		mesgarray		Messages array
  *  @param      style           Style of message output
@@ -3453,7 +3453,7 @@ function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok')
 	{
 		print '<script type="text/javascript">
 				jQuery(document).ready(function() {
-					jQuery.jnotify("'.$out.'", "'.($style=="ok" ? 3000 : $style).'", '.($style=="ok" ? "false" : "true").');
+					jQuery.jnotify("'.dol_escape_js($out).'", "'.($style=="ok" ? 3000 : $style).'", '.($style=="ok" ? "false" : "true").');
 				});
 			</script>';
 	}
@@ -3466,7 +3466,7 @@ function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok')
 }
 
 /**
- *  Returns formated errors messages (Used to show errors on html output)
+ *  Print formated error messages to output (Used to show messages on html output)
  *  @param      mesgstring      Error message
  *  @param      mesgarray       Error messages array
  *  @return     html            Return html output
