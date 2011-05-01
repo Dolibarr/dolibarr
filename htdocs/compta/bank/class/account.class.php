@@ -531,13 +531,20 @@ class Account extends CommonObject
 
     /**
      *      Load a bank account into memory from database
-     *      @param      id      Id du compte a recuperer
-     *      @param      ref     Ref du compte a recuperer
+     *      @param      id      	Id of bank account to get
+     *      @param      ref     	Ref of bank account to get
+     *      @param		ref_ext		External ref of bank account to get
      */
-    function fetch($id,$ref='')
+    function fetch($id,$ref='',$ref_ext='')
     {
         global $conf;
 
+        if (empty($id) && empty($ref) && empty($ref_ext)) 
+        {
+        	$this->error="ErrorBadParameters";
+        	return -1;
+        }
+        
         $sql = "SELECT ba.rowid, ba.ref, ba.label, ba.bank, ba.number, ba.courant, ba.clos, ba.rappro, ba.url,";
         $sql.= " ba.code_banque, ba.code_guichet, ba.cle_rib, ba.bic, ba.iban_prefix as iban,";
         $sql.= " ba.domiciliation, ba.proprio, ba.adresse_proprio, ba.fk_departement, ba.fk_pays,";
@@ -1091,7 +1098,7 @@ class AccountLine extends CommonObject
 
         if ($this->rappro)
         {
-            // Protection pour eviter tout suppression d'une ligne consolid�e
+            // Protection to avoid any delete of consolidated lines
             $this->error="DeleteNotPossibleLineIsConsolidated";
             return -1;
         }

@@ -334,15 +334,8 @@ class ActionsContactCardCommon
         		$generated_password='';
         		if (! $ldap_sid)
         		{
-        			if ($conf->global->USER_PASSWORD_GENERATED)
-        			{
-        				$nomclass="modGeneratePass".ucfirst($conf->global->USER_PASSWORD_GENERATED);
-        				$nomfichier=$nomclass.".class.php";
-        				//print DOL_DOCUMENT_ROOT."/includes/modules/security/generate/".$nomclass;
-        				require_once(DOL_DOCUMENT_ROOT."/includes/modules/security/generate/".$nomfichier);
-        				$genhandler=new $nomclass($this->db,$conf,$langs,$user);
-        				$generated_password=$genhandler->getNewGeneratedPassword();
-        			}
+					include_once(DOL_DOCUMENT_ROOT.'/lib/security.lib.php');
+	        		$generated_password=getRandomPassword('');
         		}
         		$password=$generated_password;
 

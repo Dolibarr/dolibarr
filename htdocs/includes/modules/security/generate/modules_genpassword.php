@@ -20,7 +20,7 @@
 /**
  *		\file       htdocs/includes/modules/security/generate/modules_genpassword.php
  *		\ingroup    core
- *		\brief      Fichier contenant la classe m�re de generation des mots de passe
+ *		\brief      File with parent class for password generating classes
  *		\version    $Id$
  */
 require_once(DOL_DOCUMENT_ROOT.'/lib/functions.lib.php');

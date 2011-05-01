@@ -1196,12 +1196,11 @@ class User extends CommonObject
 
 		dol_syslog("User::setPassword user=".$user->id." password=".preg_replace('/./i','*',$password)." changelater=".$changelater." notrigger=".$notrigger." nosyncmember=".$nosyncmember, LOG_DEBUG);
 
-		// Si nouveau mot de passe non communique, on genere par module
+        // If new password not provided, we generate one
 		if (! $password)
 		{
-			// TODO Mettre appel au module de generation de mot de passe
-			$password=creer_pass_aleatoire_1('');
-			//$password=creer_pass_aleatoire_2('');
+			include_once(DOL_DOCUMENT_ROOT.'/lib/security.lib.php');
+	        $password=getRandomPassword('');
 		}
 
 		// Crypte avec md5
@@ -1646,12 +1645,12 @@ class User extends CommonObject
 
 
 	/**
-	 *	\brief		Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
-	 *	\param		info		Info string loaded by _load_ldap_info
-	 *	\param		mode		0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
+	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
+	 *	@param		info		Info string loaded by _load_ldap_info
+	 *	@param		mode		0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
 	 *							1=
 	 *							2=Return key only (uid=qqq)
-	 *	\return		string		DN
+	 *	@return		string		DN
 	 */
 	function _load_ldap_dn($info,$mode=0)
 	{
@@ -1664,14 +1663,8 @@ class User extends CommonObject
 	}
 
 	/**
-	 *	\brief		Initialise tableau info (tableau des attributs LDAP)
-	 *	\return		array		Tableau info des attributs
-	 */
-
-
-	/**
-	 *	\brief		Initialize the info array (array of LDAP values) that will be used to call LDAP functions
-	 *	\return		array		Tableau info des attributs
+	 *	Initialize the info array (array of LDAP values) that will be used to call LDAP functions
+	 *	@return		array		Tableau info des attributs
 	 */
 	function _load_ldap_info()
 	{
@@ -1741,7 +1734,7 @@ class User extends CommonObject
 
 
 	/**
-	 *		\brief		Initialise le user avec valeurs fictives aleatoire
+	 *		Initialize user with default values
 	 */
 	function initAsSpecimen()
 	{
@@ -1774,44 +1767,8 @@ class User extends CommonObject
 	}
 
 	/**
-	 *    \brief      Charge la liste ->entrepots[] des entrepots pour l'utilisateur
-	 *    \return     int   0 si ok, <> 0 si erreur
-	 */
-	/* deprecated
-	function load_entrepots()
-	{
-		$err=0;
-		$this->entrepots = array();
-		$sql = "SELECT e.rowid,ue.consult,ue.send,e.label";
-		$sql.= " FROM ".MAIN_DB_PREFIX."user_entrepot as ue,".MAIN_DB_PREFIX."entrepot as e";
-		$sql.= " WHERE fk_user = '".$this->id."'";
-		$sql .= " AND e.statut = 1";
-		$sql .= " AND e.rowid = ue.fk_entrepot";
-
-		if ( $this->db->query($sql) )
-		{
-			$i=0;
-			while ($obj = $this->db->fetch_object($result) )
-	  {
-	  	$this->entrepots[$i]['id'] = $obj->consult;
-	  	$this->entrepots[$i]['consult'] = $obj->consult;
-	  	$this->entrepots[$i]['send'] = $obj->send;
-	  	$this->entrepots[$i]['label'] = $obj->label;
-	  	$i++;
-	  }
-		}
-		else
-		{
-			$err++;
-			dol_print_error($this->db);
-		}
-		return $err;
-	}
-*/
-
-	/*
-	 *       \brief     Charge les informations d'ordre info dans l'objet user
-	 *       \param     id     id du user a charger
+	 *       Load info of user object
+	 *       @param     id     id of user to load
 	 */
 	function info($id)
 	{
@@ -1846,8 +1803,8 @@ class User extends CommonObject
 
 
 	/**
-	 *    \brief        Return number of mass Emailing received by this contacts with its email
-	 *    \return       int     Number of EMailings
+	 *    Return number of mass Emailing received by this contacts with its email
+	 *    @return       int     Number of EMailings
 	 */
 	function getNbOfEMailings()
 	{
@@ -1872,9 +1829,9 @@ class User extends CommonObject
 	}
 
 	/**
-	 *    \brief        Return number of existing users
-	 *    \param		limitToActive		limit to active users
-	 *    \return       int     			Number of users
+	 *    Return number of existing users
+	 *    @param		limitToActive		limit to active users
+	 *    @return       int     			Number of users
 	 */
 	function getNbOfUsers($limitToActive=0)
 	{
@@ -1901,54 +1858,6 @@ class User extends CommonObject
 		}
 	}
 
-}
-
-
-/**
- *	\brief      Fonction pour creer un mot de passe aleatoire en minuscule
- *	\param	    sel			Donnee aleatoire
- *	\return		string		Mot de passe
- */
-function creer_pass_aleatoire_1($sel = "")
-{
-	$longueur = 8;
-
-	return strtolower(substr(md5(uniqid(mt_rand())),0,$longueur));
-}
-
-
-/**
- *	\brief      Fonction pour creer un mot de passe aleatoire melangeant majuscule,
- *				minuscule, chiffre et alpha et caracteres speciaux
- *	\remarks    La fonction a ete prise sur http://www.uzine.net/spip
- *	\param	    sel			Donnee aleatoire
- *	\return		string		Mot de passe
- */
-function creer_pass_aleatoire_2($sel = "")
-{
-	$longueur=8;
-
-	$seed = (double) (microtime() + 1) * time();
-	srand($seed);
-
-	for ($i = 0; $i < $longueur; $i++)
-	{
-		if (!$s)
-		{
-			if (!$s) $s = mt_rand();
-			$s = substr(md5(uniqid($s).$sel), 0, 16);
-		}
-		$r = unpack("Cr", pack("H2", $s.$s));
-		$x = $r['r'] & 63;
-		if ($x < 10) $x = chr($x + 48);
-		else if ($x < 36) $x = chr($x + 55);
-		else if ($x < 62) $x = chr($x + 61);
-		else if ($x == 63) $x = '/';
-		else $x = '.';
-		$pass .= $x;
-		$s = substr($s, 2);
-	}
-	return $pass;
 }
 
 ?>

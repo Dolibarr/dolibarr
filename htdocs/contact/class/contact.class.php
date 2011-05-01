@@ -490,7 +490,8 @@ class Contact extends CommonObject
 				$this->fk_pays			= $obj->fk_pays;
 				$this->pays_code		= $obj->fk_pays?$obj->pays_code:'';
 				$this->pays				= ($obj->fk_pays > 0)?$langs->transnoentities("Country".$obj->pays_code):$langs->transnoentities("SelectCountry");
-
+				$this->country			= ($obj->fk_pays > 0)?$langs->transnoentities("Country".$obj->pays_code):$langs->transnoentities("SelectCountry");
+				
 				$this->socid			= $obj->fk_soc;
 				$this->socname			= $obj->socname;
 				$this->poste			= $obj->poste;
@@ -788,12 +789,12 @@ class Contact extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
-	 *		\param		withpicto		Inclut le picto dans le lien
-	 *		\param		option			Sur quoi pointe le lien
-	 *		\param		maxlen			Longueur max libelle
-	 *		\return		string			Chaine avec URL
-	 *		\remarks	Utilise $this->id, $this->name et $this->firstname
+	 *    	Return name of contact with link (and eventually picto)
+	 *		Use $this->id, $this->name, $this->firstname, this->civilite_id
+	 *		@param		withpicto		Include picto with link
+	 *		@param		option			Where the link point to
+	 *		@param		maxlen			Max length of 
+	 *		@return		string			String with URL
 	 */
 	function getNomUrl($withpicto=0,$option='',$maxlen=0)
 	{
@@ -816,6 +817,31 @@ class Contact extends CommonObject
 	}
 
 
+    /**
+     * 	Return full address of contact
+     * 	@param		withcountry		1=Add country into address string
+     *  @param		sep				Separator to use to build string
+     *	@return		string			Full address string
+     */
+    function getFullAddress($withcountry=0,$sep="\n")
+    {
+        $ret='';
+        if (in_array($this->country,array('us')))
+        {
+	        $ret.=($this->address?$this->address.$sep:'');
+	        $ret.=trim($this->zip.' '.$this->town);
+	        if ($withcountry) $ret.=($this->country?$sep.$this->country:'');
+        }
+        else
+        {
+	        $ret.=($this->address?$this->address.$sep:'');
+	        $ret.=trim($this->zip.' '.$this->town);
+	        if ($withcountry) $ret.=($this->country?$sep.$this->country:'');
+        }
+        return trim($ret);
+    }
+	
+	
 	/**
 	 *    Return label of a civility contact
 	 *    @return     string      Translated name of civility

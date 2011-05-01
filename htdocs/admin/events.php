@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,11 +31,11 @@ require_once(DOL_DOCUMENT_ROOT."/lib/agenda.lib.php");
 if (!$user->admin)
     accessforbidden();
 
-
+$langs->load("users");
 $langs->load("admin");
 $langs->load("other");
 
-$action=$_POST["action"];
+$action=GETPOST("action");
 
 
 // List of all events supported by triggers

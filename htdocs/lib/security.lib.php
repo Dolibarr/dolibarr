@@ -41,39 +41,39 @@ function getLoginMethod()
 		if (!is_dir($dir)) continue;
 
 		$handle=opendir($dir);
-        if (is_resource($handle))
-        {
-    		while (($file = readdir($handle))!==false)
-    		{
-    			if (is_readable($dir.'/'.$file) && preg_match('/^functions_([^_]+)\.php/',$file,$reg))
-    			{
-    				$authfile = $dir.'/'.$file;
-    				$mode = $reg[1];
+		if (is_resource($handle))
+		{
+			while (($file = readdir($handle))!==false)
+			{
+				if (is_readable($dir.'/'.$file) && preg_match('/^functions_([^_]+)\.php/',$file,$reg))
+				{
+					$authfile = $dir.'/'.$file;
+					$mode = $reg[1];
 
-    				$result=include_once($authfile);
-    				if ($result)
-    				{
-    					// Call function to check user/password
-    					$usertotest=$_POST["username"];
-    					$passwordtotest=$_POST["password"];
-    					$function='check_user_password_'.$mode;
-    					$login=$function($usertotest,$passwordtotest);
-    					if ($login)
-    					{
-    						$conf->authmode=$mode;	// This properties is defined only when logged
-    					}
-    				}
-    				else
-    				{
-    					dol_syslog("Authentification ko - failed to load file '".$authfile."'",LOG_ERR);
-    					sleep(1);
-    					$langs->load('main');
-    					$langs->load('other');
-    					$_SESSION["dol_loginmesg"]=$langs->trans("ErrorFailedToLoadLoginFileForMode",$mode);
-    				}
-    			}
-    		}
-        }
+					$result=include_once($authfile);
+					if ($result)
+					{
+						// Call function to check user/password
+						$usertotest=$_POST["username"];
+						$passwordtotest=$_POST["password"];
+						$function='check_user_password_'.$mode;
+						$login=$function($usertotest,$passwordtotest);
+						if ($login)
+						{
+							$conf->authmode=$mode;	// This properties is defined only when logged
+						}
+					}
+					else
+					{
+						dol_syslog("Authentification ko - failed to load file '".$authfile."'",LOG_ERR);
+						sleep(1);
+						$langs->load('main');
+						$langs->load('other');
+						$_SESSION["dol_loginmesg"]=$langs->trans("ErrorFailedToLoadLoginFileForMode",$mode);
+					}
+				}
+			}
+		}
 		closedir($handle);
 	}
 	return $login;
@@ -96,7 +96,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	$langs->load("main");
 	$langs->load("other");
 	$langs->load("help");
-    $langs->load("admin");
+	$langs->load("admin");
 
 	$main_authentication=$conf->file->main_authentication;
 	$session_name=session_name();
@@ -111,7 +111,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title=$conf->global->MAIN_APPLICATION_TITLE;
 
 	// Select templates
-    if (preg_match('/^smartphone/',$conf->smart_menu) && isset($conf->browser->phone))
+	if (preg_match('/^smartphone/',$conf->smart_menu) && isset($conf->browser->phone))
 	{
 		$template_dir = DOL_DOCUMENT_ROOT.'/theme/phones/smartphone/tpl/';
 	}
@@ -131,7 +131,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	$conf_css = DOL_URL_ROOT.$conf->css;
 
 	// Set cookie for timeout management
-    $prefix=dol_getprefix();
+	$prefix=dol_getprefix();
 	$sessiontimeout='DOLSESSTIMEOUT_'.$prefix;
 	if (! empty($conf->global->MAIN_SESSION_TIMEOUT)) setcookie($sessiontimeout, $conf->global->MAIN_SESSION_TIMEOUT, 0, "/", '', 0);
 
@@ -276,13 +276,13 @@ function makesalt($type=CRYPT_SALT_LENGTH)
 	dol_syslog("security.lib.php::makesalt type=".$type);
 	switch($type)
 	{
-	case 12:	// 8 + 4
-		$saltlen=8; $saltprefix='$1$'; $saltsuffix='$'; break;
-	case 8:		// 8 + 4 (Pour compatibilite, ne devrait pas etre utilise)
-		$saltlen=8; $saltprefix='$1$'; $saltsuffix='$'; break;
-	case 2:		// 2
-	default: 	// by default, fall back on Standard DES (should work everywhere)
-		$saltlen=2; $saltprefix=''; $saltsuffix=''; break;
+		case 12:	// 8 + 4
+			$saltlen=8; $saltprefix='$1$'; $saltsuffix='$'; break;
+		case 8:		// 8 + 4 (Pour compatibilite, ne devrait pas etre utilise)
+			$saltlen=8; $saltprefix='$1$'; $saltsuffix='$'; break;
+		case 2:		// 2
+		default: 	// by default, fall back on Standard DES (should work everywhere)
+			$saltlen=2; $saltprefix=''; $saltsuffix=''; break;
 	}
 	$salt='';
 	while(dol_strlen($salt) < $saltlen) $salt.=chr(mt_rand(64,126));
@@ -495,45 +495,67 @@ function dol_efc_config()
 
 	if (count($available) > 0)
 	{
-       // Content of configuration
-       $strAv = "<?php\n";
-       $strAv.= "/* Copyright (C) 2003 HumanEasy, Lda. <humaneasy@sitaar.com>\n";
-       $strAv.= " * Copyright (C) 2009 Regis Houssin <regis@dolibarr.fr>\n";
-       $strAv.= " *\n";
-       $strAv.= " * All rights reserved.\n";
-       $strAv.= " * This file is licensed under GNU GPL version 2 or above.\n";
-       $strAv.= " * Please visit http://www.gnu.org to now more about it.\n";
-       $strAv.= " */\n\n";
-       $strAv.= "/**\n";
-       $strAv.= " *  Name: EasyFileCrypt Extending Crypt Class\n";
-       $strAv.= " *  Version: 1.0\n";
-       $strAv.= " *  Created: ".date("r")."\n";
-       $strAv.= " *  Ciphers Installed on this system: ".count($ciphers)."\n";
-       $strAv.= " */\n\n";
-       $strAv.= "    \$xfss = Array ( ";
+		// Content of configuration
+		$strAv = "<?php\n";
+		$strAv.= "/* Copyright (C) 2003 HumanEasy, Lda. <humaneasy@sitaar.com>\n";
+		$strAv.= " * Copyright (C) 2009 Regis Houssin <regis@dolibarr.fr>\n";
+		$strAv.= " *\n";
+		$strAv.= " * All rights reserved.\n";
+		$strAv.= " * This file is licensed under GNU GPL version 2 or above.\n";
+		$strAv.= " * Please visit http://www.gnu.org to now more about it.\n";
+		$strAv.= " */\n\n";
+		$strAv.= "/**\n";
+		$strAv.= " *  Name: EasyFileCrypt Extending Crypt Class\n";
+		$strAv.= " *  Version: 1.0\n";
+		$strAv.= " *  Created: ".date("r")."\n";
+		$strAv.= " *  Ciphers Installed on this system: ".count($ciphers)."\n";
+		$strAv.= " */\n\n";
+		$strAv.= "    \$xfss = Array ( ";
 
-       foreach ($ciphers as $avCipher) {
+		foreach ($ciphers as $avCipher) {
 
-           $v = "";
-           if (count($available["$avCipher"]) > 0) {
-              foreach ($available["$avCipher"] as $avMode)
-                  $v .= " '".$avMode."', ";
+			$v = "";
+			if (count($available["$avCipher"]) > 0) {
+				foreach ($available["$avCipher"] as $avMode)
+				$v .= " '".$avMode."', ";
 
-                  $i = dol_strlen($v) - 2;
-                  if ($v[$i] == ",")
-                    $v = substr($v, 2, $i - 3);
-           }
-           if (!empty($v)) $v = " '".$v."' ";
-           $strAv .= "'".$avCipher."' => Array (".$v."),\n                    ";
-       }
-       $strAv = rtrim($strAv);
-       if ($strAv[dol_strlen($strAv) - 1] == ",")
-          $strAv = substr($strAv, 0, dol_strlen($strAv) - 1);
-       $strAv .= " );\n\n";
-       $strAv .= "?>";
+				$i = dol_strlen($v) - 2;
+				if ($v[$i] == ",")
+				$v = substr($v, 2, $i - 3);
+			}
+			if (!empty($v)) $v = " '".$v."' ";
+			$strAv .= "'".$avCipher."' => Array (".$v."),\n                    ";
+		}
+		$strAv = rtrim($strAv);
+		if ($strAv[dol_strlen($strAv) - 1] == ",")
+		$strAv = substr($strAv, 0, dol_strlen($strAv) - 1);
+		$strAv .= " );\n\n";
+		$strAv .= "?>";
 
-       return $strAv;
-   }
+		return $strAv;
+	}
+}
+
+/**
+ * Return a generated password using default module
+ * @return		string		New value for password
+ */
+function getRandomPassword()
+{
+	global $db,$conf,$langs,$user;
+	
+	$generated_password='';
+	if ($conf->global->USER_PASSWORD_GENERATED)
+	{
+		$nomclass="modGeneratePass".ucfirst($conf->global->USER_PASSWORD_GENERATED);
+		$nomfichier=$nomclass.".class.php";
+		//print DOL_DOCUMENT_ROOT."/includes/modules/security/generate/".$nomclass;
+		require_once(DOL_DOCUMENT_ROOT."/includes/modules/security/generate/".$nomfichier);
+		$genhandler=new $nomclass($db,$conf,$langs,$user);
+		$generated_password=$genhandler->getNewGeneratedPassword();
+		unset($genhandler);
+	}
+	return $generated_password;
 }
 
 ?>
