@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,21 +123,14 @@ if ($id)
 	{
 		print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 		print "<input type=\"hidden\" name=\"id\" value=\"".$fuser->id."\">";
-		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_USER)
-	    {
-		    // Editeur wysiwyg
-			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-			$doleditor=new DolEditor('note',$fuser->note,'',280,'dolibarr_notes','In',true);
-			$doleditor->Create();
-	    }
-	    else
-	    {
-			print '<textarea name="note" cols="80" rows="10">'.dol_htmlentitiesbr_decode($fuser->note).'</textarea>';
-	    }
+	    // Editeur wysiwyg
+		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+		$doleditor=new DolEditor('note',$fuser->note,'',280,'dolibarr_notes','In',true,false,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_USER,10,80);
+		$doleditor->Create();
 	}
 	else
 	{
-		print nl2br($fuser->note);
+		print dol_textishtml($fuser->note)?$fuser->note:dol_nl2br($fuser->note,1,true);
 	}
 	print "</td></tr>";
 
@@ -162,7 +155,7 @@ if ($id)
 
     if ($user->rights->user->user->creer && $action != 'edit')
     {
-        print "<a class=\"butAction\" href=\"note.php?id=$fuser->id&amp;action=edit\">".$langs->trans('Modify')."</a>";
+        print "<a class=\"butAction\" href=\"note.php?id=".$fuser->id."&amp;action=edit\">".$langs->trans('Modify')."</a>";
     }
 
     print "</div>";

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003,2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006      Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010           Juanjo Menent        <jmenent@2byte.es>
  *
@@ -127,7 +127,7 @@ if ($socid > 0)
 	}
 	else
 	{
-		print nl2br($societe->note);
+		print dol_textishtml($societe->note)?$societe->note:dol_nl2br($societe->note,1,true);
 	}
 	print "</td></tr>";
 

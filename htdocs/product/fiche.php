@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
@@ -1082,7 +1082,7 @@ if ($id || $ref)
 			print '<tr><td>'.$html->editfieldkey("ProductAccountancySellCode",'productaccountancycodesell',$product->accountancy_code_sell,'id',$product->id,$user->rights->produit->creer).'</td><td colspan="2">';
 			print $html->editfieldval("ProductAccountancySellCode",'productaccountancycodesell',$product->accountancy_code_sell,'id',$product->id,$user->rights->produit->creer);
 			print '</td></tr>';
-			
+
 			// Accountancy buy code
 			print '<tr><td>'.$html->editfieldkey("ProductAccountancyBuyCode",'productaccountancycodebuy',$product->accountancy_code_buy,'id',$product->id,$user->rights->produit->creer).'</td><td colspan="2">';
 			print $html->editfieldval("ProductAccountancyBuyCode",'productaccountancycodebuy',$product->accountancy_code_buy,'id',$product->id,$user->rights->produit->creer);
@@ -1099,7 +1099,7 @@ if ($id || $ref)
 			print '</td></tr>';
 
 			// Description
-			print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="2">'.dol_nl2br($product->description,1,true).'</td></tr>';
+			print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="2">'.(dol_textishtml($product->description)?$product->description:dol_nl2br($product->description,1,true)).'</td></tr>';
 
 			// Nature
 			if($product->type!=1)
@@ -1196,7 +1196,7 @@ if ($id || $ref)
             */
 
 			// Note
-			print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="2">'.nl2br($product->note).'</td></tr>';
+			print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="2">'.(dol_textishtml($product->note)?$product->note:dol_nl2br($product->note,1,true)).'</td></tr>';
 
 			print "</table>\n";
 		}
