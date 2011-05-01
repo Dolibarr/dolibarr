@@ -119,7 +119,7 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
         $input="A string first<br>\nA string second<br>";
         $after=dol_htmlcleanlastbr($input);
         $this->assertEquals($after,"A string first<br>\nA string second");
-        $input="A string\n<br>\n";
+        $input="A string\n<br type=\"_moz\" />\n";
         $after=dol_htmlcleanlastbr($input);
         $this->assertEquals($after,"A string");
         $input="A string\n<br><br />\n\n";

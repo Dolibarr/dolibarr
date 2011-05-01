@@ -121,7 +121,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
         $_SERVER["DOCUMENT_ROOT"]='/var/www';
 		$_SERVER["SCRIPT_NAME"]='/dolibarrnew/admin/system/phpinfo.php';
 		$expectedresult='/dolibarrnew';
-		// Put this into conf.php if you want to text alt
+		// Put this into conf.php if you want to test alt
 		//$dolibarr_main_url_root='http://localhost/dolibarralias';
 		//$dolibarr_main_url_root_alt='http://localhost/dolibarralias/custom2';
 
@@ -133,7 +133,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
         $_SERVER["DOCUMENT_ROOT"]='/var/www';
 		$_SERVER["SCRIPT_NAME"]='/aaa/htdocs/admin/system/phpinfo.php';
 		$expectedresult='/aaa/htdocs';
-		// Put this into conf.php if you want to text alt
+		// Put this into conf.php if you want to test alt
 		//$dolibarr_main_url_root='http://localhost/dolibarralias';
 		//$dolibarr_main_url_root_alt='http://localhost/dolibarralias/custom2';
 
@@ -146,7 +146,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
         $_SERVER["DOCUMENT_ROOT"]='/home/ldestail/workspace/dolibarr/htdocs';
 		$_SERVER["SCRIPT_NAME"]='/admin/system/phpinfo.php';
 		$expectedresult='';
-		// Put this into conf.php if you want to text alt
+		// Put this into conf.php if you want to test alt
 		//$dolibarr_main_url_root='http://localhost/dolibarralias';
 		//$dolibarr_main_url_root_alt='http://localhost/dolibarralias/custom2';
 
@@ -159,7 +159,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
         $_SERVER["DOCUMENT_ROOT"]='/var/www/dolibarr';	// This is a link that point to /home/ldestail/workspace/dolibarr/htdocs
 		$_SERVER["SCRIPT_NAME"]='/admin/system/phpinfo.php';
 		$expectedresult='';
-		// Put this into conf.php if you want to text alt
+		// Put this into conf.php if you want to test alt
 		//$dolibarr_main_url_root='http://localhost/dolibarralias';
 		//$dolibarr_main_url_root_alt='http://localhost/dolibarralias/custom2';
 
@@ -180,7 +180,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
 		print __METHOD__." DOL_URL_ROOT=".DOL_URL_ROOT."\n";
         print __METHOD__." DOL_MAIN_URL_ROOT_ALT=".DOL_MAIN_URL_ROOT_ALT."\n";
 		print __METHOD__." DOL_URL_ROOT_ALT=".DOL_URL_ROOT_ALT."\n";
-		$this->assertEquals(DOL_URL_ROOT."x",$expectedresult."x");
+		$this->assertEquals(DOL_URL_ROOT,$expectedresult);
 
 		return true;
     }

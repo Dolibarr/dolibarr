@@ -49,14 +49,20 @@ class AllTests
     {
 		$suite = new PHPUnit_Framework_TestSuite('PHPUnit Framework');
 
-        require_once dirname(__FILE__).'/DateLibTest.php';
+        //require_once dirname(__FILE__).'/CoreTest.php';
+        //$suite->addTestSuite('CoreTest');
+		require_once dirname(__FILE__).'/DateLibTest.php';
 		$suite->addTestSuite('DateLibTest');
+        require_once dirname(__FILE__).'/FunctionsTest.php';
+        $suite->addTestSuite('FunctionsTest');
 
         require_once dirname(__FILE__).'/SecurityTest.php';
         $suite->addTestSuite('SecurityTest');
 
         require_once dirname(__FILE__).'/BuildDocTest.php';
         $suite->addTestSuite('BuildDocTest');
+        require_once dirname(__FILE__).'/CMailFileTest.php';
+        $suite->addTestSuite('CMailFileTest');
 
         require_once dirname(__FILE__).'/CommonObjectTest.php';
         $suite->addTestSuite('CommonObjectTest');
@@ -90,10 +96,8 @@ class AllTests
         require_once dirname(__FILE__).'/CategorieTest.php';
         $suite->addTestSuite('CategorieTest');
 
-        require_once dirname(__FILE__).'/ModulesTest.php';
+        require_once dirname(__FILE__).'/ModulesTest.php';  // At end because it's the longer
         $suite->addTestSuite('ModulesTest');
-        require_once dirname(__FILE__).'/CMailFileTest.php';
-        $suite->addTestSuite('CMailFileTest');
 
         return $suite;
     }
