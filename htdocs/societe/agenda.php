@@ -71,7 +71,7 @@ if ($_GET["socid"])
 
 	$soc = new Societe($db);
 	$result = $soc->fetch($_GET["socid"]);
-	llxHeader("","",$langs->trans("Category"));
+	llxHeader("",$langs->trans("Agenda"),$langs->trans("Category"));
 
 	if ($conf->notification->enabled) $langs->load("mails");
 	$head = societe_prepare_head($soc);

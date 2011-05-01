@@ -122,7 +122,8 @@ if ($_REQUEST['action'] == 'confirm_deletefile' && $_REQUEST['confirm'] == 'yes'
 
 $form = new Form($db);
 
-llxHeader();
+$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+llxHeader('',$langs->trans("ThirdParty").' - '.$langs->trans("Files"),$help_url);
 
 if ($socid > 0)
 {
