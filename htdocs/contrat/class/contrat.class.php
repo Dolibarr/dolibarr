@@ -397,6 +397,8 @@ class Contrat extends CommonObject
 
 		$now=dol_now();
 
+		$this->lines=array();
+
 		// Selectionne les lignes contrats liees a un produit
 		$sql = "SELECT p.label, p.description as product_desc, p.ref,";
 		$sql.= " d.rowid, d.fk_contrat, d.statut, d.description, d.price_ht, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.qty, d.remise_percent, d.subprice,";
