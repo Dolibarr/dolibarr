@@ -48,9 +48,10 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="s.nom";
 
-$search_nom=isset($_GET["search_nom"])?$_GET["search_nom"]:$_POST["search_nom"];
-$search_ville=isset($_GET["search_ville"])?$_GET["search_ville"]:$_POST["search_ville"];
-$search_code=isset($_GET["search_code"])?$_GET["search_code"]:$_POST["search_code"];
+$search_nom=GETPOST("search_nom");
+$search_ville=GETPOST("search_ville");
+$search_code=GETPOST("search_code");
+$search_compta=GETPOST("search_compta");
 
 // Load sale and categ filters
 $search_sale = GETPOST("search_sale");
@@ -80,7 +81,7 @@ if (GETPOST("button_removefilter_x"))
     $search_idprof4='';
 }
 
-$sql = "SELECT s.rowid, s.nom as name, s.client, s.ville, st.libelle as stcomm, s.prefix_comm, s.code_client,";
+$sql = "SELECT s.rowid, s.nom as name, s.client, s.ville, st.libelle as stcomm, s.prefix_comm, s.code_client, s.code_compta,";
 $sql.= " s.datec, s.datea, s.canvas";
 // We'll need these fields in order to filter by sale (including the case where the user can only see his prospects)
 if ($search_sale) $sql .= ", sc.fk_soc, sc.fk_user";
@@ -102,6 +103,7 @@ if ($search_categ) $sql.= " AND s.rowid = cs.fk_societe";	// Join for the needed
 if ($search_nom)   $sql.= " AND s.nom like '%".$db->escape(strtolower($search_nom))."%'";
 if ($search_ville) $sql.= " AND s.ville like '%".$db->escape(strtolower($search_ville))."%'";
 if ($search_code)  $sql.= " AND s.code_client like '%".$db->escape(strtolower($search_code))."%'";
+if ($search_compta) $sql .= " AND s.code_compta LIKE '%".$db->escape($search_compta)."%'";
 // Insert sale filter
 if ($search_sale)
 {
@@ -163,29 +165,38 @@ if ($result)
  	if ($moreforfilter)
 	{
 		print '<tr class="liste_titre">';
-		print '<td class="liste_titre" colspan="9">';
+		print '<td class="liste_titre" colspan="5">';
 	    print $moreforfilter;
 	    print '</td></tr>';
 	}
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.ville","",$param,"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.ville","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client","",$param,"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("AccountancyCode"),$_SERVER["PHP_SELF"],"s.code_compta","",$param,'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"datec","",$param,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
+
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_nom" value="'.$search_nom.'">';
+	print '<input type="text" class="flat" name="search_nom" value="'.$search_nom.'" size="10">';
 	print '</td>';
+
+	print '<td class="liste_titre">';
+    print '<input type="text" class="flat" name="search_ville" value="'.$search_ville.'" size="10">';
+    print '</td>';
+
     print '<td class="liste_titre">';
     print '<input type="text" class="flat" name="search_code" value="'.$search_code.'" size="10">';
     print '</td>';
-	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_ville" value="'.$search_ville.'" size="10">';
-	print '</td>';
-	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+
+    print '<td align="left" class="liste_titre">';
+    print '<input type="text" class="flat" name="search_compta" value="'.$search_compta.'" size="10">';
+    print '</td>';
+
+    print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
     print '&nbsp; ';
     print '<input type="image" class="liste_titre" name="button_removefilter" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
     print '</td>';
@@ -207,9 +218,10 @@ if ($result)
         $thirdpartystatic->canvas=$obj->canvas;
         print $thirdpartystatic->getNomUrl(1);
 		print '</td>';
+        print '<td>'.$obj->ville.'</td>';
         print '<td>'.$obj->code_client.'</td>';
-		print '<td>'.$obj->ville.'</td>';
-		print '<td align="right">'.dol_print_date($db->jdate($obj->datec),'day').'</td>';
+        print '<td>'.$obj->code_compta.'</td>';
+        print '<td align="right">'.dol_print_date($db->jdate($obj->datec),'day').'</td>';
 		print "</tr>\n";
 		$i++;
 	}

@@ -32,9 +32,11 @@ $langs->load("suppliers");
 $langs->load("orders");
 $langs->load("companies");
 
-$socname = isset($_GET["socname"])?$_GET["socname"]:'';
-$search_nom = isset($_GET["search_nom"])?$_GET["search_nom"]:'';
-$search_ville = isset($_GET["search_ville"])?$_GET["search_ville"]:'';
+$socname = GETPOST("socname");
+$search_nom = GETPOST("search_nom");
+$search_ville = GETPOST("search_ville");
+$search_code_fournisseur=GETPOST("search_code_fournisseur");
+$search_compta_fournisseur=GETPOST("search_compta_fournisseur");
 
 $langs->load("suppliers");
 $langs->load("orders");
@@ -82,14 +84,11 @@ if ($socname) {
 	$sortfield = "s.nom";
 	$sortorder = "ASC";
 }
-if ($search_nom)
-{
-	$sql .= " AND s.nom LIKE '%".$db->escape($search_nom)."%'";
-}
-if ($search_ville)
-{
-	$sql .= " AND s.ville LIKE '%".$db->escape($search_ville)."%'";
-}
+if ($search_nom)   $sql .= " AND s.nom LIKE '%".$db->escape($search_nom)."%'";
+if ($search_ville) $sql .= " AND s.ville LIKE '%".$db->escape($search_ville)."%'";
+if ($search_nom)   $sql .= " AND s.nom LIKE '%".$db->escape($search_nom)."%'";
+if ($search_code_fournisseur)   $sql .= " AND s.code_fournisseur LIKE '%".$db->escape($search_code_fournisseur)."%'";
+if ($search_compta_fournisseur) $sql .= " AND s.code_compta_fournisseur LIKE '%".$db->escape($search_compta_fournisseur)."%'";
 // Insert categ filter
 if ($search_categ)
 {
@@ -130,7 +129,7 @@ if ($resql)
 	if ($moreforfilter)
 	{
 		print '<tr class="liste_titre">';
-		print '<td class="liste_titre" colspan="6">';
+		print '<td class="liste_titre" colspan="5">';
 		print $moreforfilter;
 		print '</td></tr>';
 	}
@@ -139,25 +138,25 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,'valign="middle"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.ville","",$param,'valign="middle"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("SupplierCode"),$_SERVER["PHP_SELF"],"s.code_fournisseur","",$param,'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("AccountancyCode"),$_SERVER["PHP_SELF"],"s.code_compta","",$param,'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"datec","",$param,'align="center"',$sortfield,$sortorder);
-	print '<td class="liste_titre">&nbsp;</td>';
+	print_liste_field_titre($langs->trans("AccountancyCode"),$_SERVER["PHP_SELF"],"s.code_compta_fournisseur","",$param,'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"datec","",$param,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
 
 	print '<td class="liste_titre"><input type="text" class="flat" name="search_nom" value="'.$search_nom.'"></td>';
+
 	print '<td class="liste_titre"><input type="text" class="flat" name="search_ville" value="'.$search_ville.'"></td>';
 
 	print '<td align="left" class="liste_titre">';
-	print '<input class="flat" type="text" size="10" name="search_code_fournisseur" value="'.$_GET["search_code_fournisseur"].'">';
+	print '<input class="flat" type="text" size="10" name="search_code_fournisseur" value="'.$search_code_fournisseur.'">';
 	print '</td>';
 
 	print '<td align="left" class="liste_titre">';
-	print '<input class="flat" type="text" size="10" name="search_compta" value="'.$_GET["search_compta"].'">';
+	print '<input class="flat" type="text" size="10" name="search_compta_fournisseur" value="'.$search_compta_fournisseur.'">';
 	print '</td>';
 
-	print '<td class="liste_titre" colspan="2" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
+	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
 
 	print '</tr>';
 
@@ -168,14 +167,13 @@ if ($resql)
 		$obj = $db->fetch_object($resql);
 		$var=!$var;
 
-		print "<tr $bc[$var]>";
+		print "<tr ".$bc[$var].">";
 		print '<td><a href="fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").'</a>';
 		print "&nbsp;<a href=\"fiche.php?socid=".$obj->socid."\">".$obj->nom."</a></td>\n";
 		print "<td>".$obj->ville."</td>\n";
 		print '<td align="left">'.$obj->code_fournisseur.'&nbsp;</td>';
 		print '<td align="left">'.$obj->code_compta_fournisseur.'&nbsp;</td>';
-		print '<td align="center">'.dol_print_date($db->jdate($obj->datec)).'</td>';
-		print "<td>&nbsp;</td>\n";
+		print '<td align="right">'.dol_print_date($db->jdate($obj->datec),'day').'</td>';
 		print "</tr>\n";
 		$i++;
 	}
