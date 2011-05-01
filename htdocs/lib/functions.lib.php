@@ -3064,10 +3064,7 @@ function dol_nl2br($stringtoencode,$nl2brmode=0,$forxml=false)
     }
 	else
 	{
-		$ret=str_replace("\r","",$stringtoencode);
-		$ret=str_replace("\n",($forxml?'<br />':'<br>'),$ret);
-		//$ret=preg_replace('/(<br>|<br\s*\/>|<br\/>)\s*(\r\n|\r|\n)+/i',($forxml?'<br />':'<br>'),$stringtoencode);
-		//$ret=preg_replace('/([^<li\s*>]+)(\r\n|\r|\n)+/i',($forxml?'$1<br />':'$1<br>'),$ret);
+		$ret=preg_replace('/(\r\n|\r|\n)/i',($forxml?'<br />':'<br>'),$stringtoencode);
 		return $ret;
 	}
 }
