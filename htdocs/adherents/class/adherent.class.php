@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
@@ -715,7 +715,7 @@ class Adherent extends CommonObject
     /**
      *    Change password of a user
      *    @param     user             Object user de l'utilisateur qui fait la modification
-     *    @param     password         Nouveau mot de passe (e generer si non communique)
+     *    @param     password         Nouveau mot de passe (a generer si non communique)
      *    @param     isencrypted      0 ou 1 si il faut crypter le mot de passe en base (0 par defaut)
      *	  @param	 notrigger		  1=Ne declenche pas les triggers
      *    @param	 nosyncuser		  Do not synchronize linked user
@@ -729,12 +729,11 @@ class Adherent extends CommonObject
 
         dol_syslog("Adherent::Password user=".$user->id." password=".preg_replace('/./i','*',$password)." isencrypted=".$isencrypted);
 
-        // Si nouveau mot de passe non communique, on genere par module
+        // If new password not provided, we generate one
         if (! $password)
         {
-            // TODO Mettre appel au module de generation de mot de passe
-            $password=create_random_psw_1('');
-            //$password=create_random_psw_2('');
+			include_once(DOL_DOCUMENT_ROOT.'/lib/security.lib.php');
+	        $password=getRandomPassword('');
         }
 
         // Cryptage mot de passe
@@ -892,8 +891,8 @@ class Adherent extends CommonObject
 
 
     /**
-     *		Fonction qui recupere l'adherent depuis son login
-     *		@param	    login		login de l'adherent
+     *		Method to get member from its login
+     *		@param	    login		login of member
      */
     function fetch_login($login)
     {
@@ -974,10 +973,13 @@ class Adherent extends CommonObject
                 $this->pass           = $obj->pass;
                 $this->societe        = $obj->societe;
                 $this->fk_soc         = $obj->fk_soc;
-                $this->adresse        = $obj->adresse;
-                $this->cp             = $obj->cp;
-                $this->ville          = $obj->ville;
-
+                $this->adresse        = $obj->adresse;	// TODO deprecated
+                $this->cp             = $obj->cp;		// TODO deprecated
+                $this->ville          = $obj->ville;	// TODO deprecated
+                $this->address        = $obj->adresse;
+                $this->zip            = $obj->cp;
+                $this->town           = $obj->ville;
+                
                 $this->fk_departement = $obj->fk_departement;
                 $this->departement_code = $obj->fk_departement?$obj->departement_code:'';
                 $this->departement	  = $obj->fk_departement?$obj->departement:'';
@@ -987,7 +989,8 @@ class Adherent extends CommonObject
                 if ($langs->trans("Country".$obj->pays_code) != "Country".$obj->pays_code) $this->pays = $langs->trans("Country".$obj->pays_code);
                 elseif ($obj->pays_lib) $this->pays=$obj->pays_lib;
                 else $this->pays=$obj->pays;
-
+				$this->country        = $this->pays;
+				
                 $this->phone          = $obj->phone;
                 $this->phone_perso    = $obj->phone_perso;
                 $this->phone_mobile   = $obj->phone_mobile;
@@ -1013,7 +1016,7 @@ class Adherent extends CommonObject
                 $this->user_id        = $obj->user_id;
                 $this->user_login     = $obj->user_login;
 
-                // Charge autres proprietes
+                // Load other properties
                 $result=$this->fetch_subscriptions();
 
                 return $result;
@@ -1745,6 +1748,31 @@ class Adherent extends CommonObject
         return $result;
     }
 
+
+    /**
+     * 	Return full address of member
+     * 	@param		withcountry		1=Add country into address string
+     *  @param		sep				Separator to use to build string
+     *	@return		string			Full address string
+     */
+    function getFullAddress($withcountry=0,$sep="\n")
+    {
+        $ret='';
+        if (in_array($this->country,array('us')))
+        {
+	        $ret.=($this->address?$this->address.$sep:'');
+	        $ret.=trim($this->zip.' '.$this->town);
+	        if ($withcountry) $ret.=($this->country?$sep.$this->country:'');
+        }
+        else
+        {
+	        $ret.=($this->address?$this->address.$sep:'');
+	        $ret.=trim($this->zip.' '.$this->town);
+	        if ($withcountry) $ret.=($this->country?$sep.$this->country:'');
+        }
+        return trim($ret);
+    }
+    
 
     /**
      *    	Retourne le libelle du statut d'un adherent (brouillon, valide, resilie)
