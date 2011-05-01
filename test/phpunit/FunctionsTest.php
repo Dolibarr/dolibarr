@@ -115,19 +115,43 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
     {
         $input="A string<br>";
         $after=dol_htmlcleanlastbr($input);
-        $this->assertEquals($after,"A string");
+        $this->assertEquals("A string",$after);
         $input="A string first<br>\nA string second<br>";
         $after=dol_htmlcleanlastbr($input);
-        $this->assertEquals($after,"A string first<br>\nA string second");
+        $this->assertEquals("A string first<br>\nA string second",$after);
         $input="A string\n<br type=\"_moz\" />\n";
         $after=dol_htmlcleanlastbr($input);
-        $this->assertEquals($after,"A string");
+        $this->assertEquals("A string",$after);
         $input="A string\n<br><br />\n\n";
         $after=dol_htmlcleanlastbr($input);
-        $this->assertEquals($after,"A string");
+        $this->assertEquals("A string",$after);
 
         return true;
     }
+
+    /**
+     */
+    public function testHtmlEntitiesBr()
+    {
+        $input="A string\nwith a é, &, < and >.";   // Text not already HTML
+        $after=dol_htmlentitiesbr($input,0);    // Add <br> before \n
+        $this->assertEquals("A string<br>\nwith a &eacute;, &amp;, &lt; and &gt;.",$after);
+
+        $input="A string\nwith a é, &, < and >.";   // Text not already HTML
+        $after=dol_htmlentitiesbr($input,1);    // Replace \n with <br>
+        $this->assertEquals("A string<br>with a &eacute;, &amp;, &lt; and &gt;.",$after);
+
+        $input="A string<br>\nwith a é, &, < and >.";   // Text already HTML, so &,<,> should not be converted
+        $after=dol_htmlentitiesbr($input);
+        $this->assertEquals("A string<br>\nwith a &eacute;, &, < and >.",$after);
+
+        $input="<li>\nA string with a é, &, < and >.</li>\nAnother string";   // Text already HTML, so &,<,> should not be converted
+        $after=dol_htmlentitiesbr($input);
+        $this->assertEquals("<li>\nA string with a &eacute;, &, < and >.</li>\nAnother string",$after);
+
+        return true;
+    }
+
 
 }
 ?>

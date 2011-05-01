@@ -3064,36 +3064,42 @@ function dol_nl2br($stringtoencode,$nl2brmode=0,$forxml=false)
     }
 	else
 	{
-		$ret=preg_replace('/(<br>|<br\s*\/>|<br\/>)\s*(\r\n|\r|\n)+/i',($forxml?'<br />':'<br>'),$stringtoencode);
-		$ret=preg_replace('/([^<li\s*>])+(\r\n|\r|\n)+/i',($forxml?'<br />':'<br>'),$ret);
+		$ret=str_replace("\r","",$stringtoencode);
+		$ret=str_replace("\n",($forxml?'<br />':'<br>'),$ret);
+		//$ret=preg_replace('/(<br>|<br\s*\/>|<br\/>)\s*(\r\n|\r|\n)+/i',($forxml?'<br />':'<br>'),$stringtoencode);
+		//$ret=preg_replace('/([^<li\s*>]+)(\r\n|\r|\n)+/i',($forxml?'$1<br />':'$1<br>'),$ret);
 		return $ret;
 	}
 }
 
 /**
- *	\brief		This function is called to encode a string into a HTML string but differs from htmlentities because
- * 				all entities but &,<,> are converted. This permits to encode special chars to entities with no double
- *              encoding for already encoded HTML strings.
- * 				This function also remove last CR/BR.
- *	\param		stringtoencode		String to encode
- *	\param		nl2brmode			0=Adding br before \n, 1=Replacing \n by br (for use with FPDF writeHTMLCell function for example)
- *	\remarks	For PDF usage, you can show text by 2 ways:
- *				- writeHTMLCell -> param must be encoded into HTML.
- *				- MultiCell -> param must not be encoded into HTML.
- *				Because writeHTMLCell convert also \n into <br>, if function
- *				is used to build PDF, nl2brmode must be 1.
+ *	This function is called to encode a string into a HTML string but differs from htmlentities because
+ * 	all entities but &,<,> are converted. This permits to encode special chars to entities with no double
+ *  encoding for already encoded HTML strings.
+ * 	This function also remove last CR/BR.
+ *  For PDF usage, you can show text by 2 ways:
+ *              - writeHTMLCell -> param must be encoded into HTML.
+ *              - MultiCell -> param must not be encoded into HTML.
+ *              Because writeHTMLCell convert also \n into <br>, if function
+ *              is used to build PDF, nl2brmode must be 1.
+ *	@param		stringtoencode		String to encode
+ *	@param		nl2brmode			0=Adding br before \n, 1=Replacing \n by br (for use with FPDF writeHTMLCell function for example)
+ *  @param      pagecodefrom        Pagecode stringtoencode is encoded
  */
 function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0,$pagecodefrom='UTF-8')
 {
 	if (dol_textishtml($stringtoencode))
 	{
-	    $newstring=preg_replace('/([^<li\s*>])+(\r\n|\r|\n)+/i',($forxml?'<br />':'<br>'),$stringtoencode); // Don't replace if in list
-		$newstring=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i','<br>',$newstring);	// Replace "<br type="_moz" />" by "<br>". It's same and avoid pb with FPDF.
-		$newstring=preg_replace('/<br>$/i','',$newstring);	// Replace "<br type="_moz" />" by "<br>". It's same and avoid pb with FPDF.
+	    $newstring=$stringtoencode;
+	    //$newstring=preg_replace('/([^<li\s*>]+)(\r\n|\r|\n)+/i',($forxml?'$1<br />':'$1<br>'),$stringtoencode); // Don't replace if in list
+        //$newstring=preg_replace('/<li\s*>(\r\n|\r|\n)+/','__li__',$newstring); // Don't replace if \n is just after a li
+	    //$newstring=preg_replace('/(\r\n|\r|\n)+/i',($forxml?'<br />':'<br>'),$newstring); // If already HTML, CR should be <br> so we don't change \n
+        $newstring=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i','<br>',$newstring);	// Replace "<br type="_moz" />" by "<br>". It's same and avoid pb with FPDF.
+		$newstring=preg_replace('/<br>$/i','',$newstring);	// Remove last <br>
 		$newstring=strtr($newstring,array('&'=>'__and__','<'=>'__lt__','>'=>'__gt__','"'=>'__dquot__'));
 		$newstring=dol_htmlentities($newstring,ENT_COMPAT,$pagecodefrom);	// Make entity encoding
 		$newstring=strtr($newstring,array('__and__'=>'&','__lt__'=>'<','__gt__'=>'>','__dquot__'=>'"'));
-		// If already HTML, CR should be <br> so we don't change \n
+        //$newstring=strtr($newstring,array('__li__'=>"<li>\n")); // Restore <li>\n
 	}
 	else {
 		$newstring=dol_nl2br(dol_htmlentities($stringtoencode,ENT_COMPAT,$pagecodefrom),$nl2brmode);
