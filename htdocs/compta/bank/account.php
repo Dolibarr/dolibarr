@@ -214,6 +214,12 @@ if ($account || $_GET["ref"])
         $param.='&amp;thirdparty='.urlencode($_REQUEST["thirdparty"]);
         $mode_search = 1;
     }
+    if ($_REQUEST["paiementtype"])
+    {
+        $sql_rech.=" AND b.fk_type = '".$db->escape($_REQUEST["paiementtype"])."'";
+        $param.='&amp;paiementtype='.urlencode($_REQUEST["paiementtype"]);
+        $mode_search = 1;
+    }
 
     $sql = "SELECT count(*) as nb";
     $sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
@@ -415,7 +421,12 @@ if ($account || $_GET["ref"])
     print '<input type="hidden" name="account" value="' . $acct->id . '">';
 
     print '<tr class="liste_titre">';
-    print '<td colspan="3">&nbsp;</td>';
+    print '<td colspan="2">&nbsp;</td>';
+    print '<td>';
+    //$filtertype=array('TIP'=>'TIP','PRE'=>'PRE',...)
+    $filtertype='';
+    print $html->select_types_paiements($_REQUEST['paiementtype'],'paiementtype',$filtertype,2,1,1,8);
+    print '</td>';
     print '<td><input type="text" class="flat" name="req_nb" value="'.$_REQUEST["req_nb"].'" size="2"></td>';
     print '<td><input type="text" class="flat" name="req_desc" value="'.$_REQUEST["req_desc"].'" size="24"></td>';
     print '<td><input type="text" class="flat" name="thirdparty" value="'.$_REQUEST["thirdparty"].'" size="14"></td>';

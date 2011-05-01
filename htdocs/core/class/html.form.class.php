@@ -156,7 +156,7 @@ class Form
     function textwithtooltip($text,$htmltext,$tooltipon=1,$direction=0,$img='',$extracss='',$notabs=0,$incbefore='')
     {
         global $conf;
-        
+
         if ($incbefore) $text = $incbefore.$text;
         if (! $htmltext) return $text;
 
@@ -555,10 +555,10 @@ class Form
             if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT && ! $forcecombo)
             {
                 //$minLength = (is_numeric($conf->global->COMPANY_USE_SEARCH_TO_SELECT)?$conf->global->COMPANY_USE_SEARCH_TO_SELECT:2);
-            	
+
             	$out.= ajax_combobox($htmlname);
             }
-            
+
             $out.= '<select id="'.$htmlname.'" class="flat" name="'.$htmlname.'">';
             if ($showempty) $out.= '<option value="-1">&nbsp;</option>';
             $num = $this->db->num_rows($resql);
@@ -1681,12 +1681,13 @@ class Form
      *      Return list of payment methods
      *      @param      selected        Id du mode de paiement pre-selectionne
      *      @param      htmlname        Nom de la zone select
-     *      @param      filtertype      To filter on field type in llx_c_paiement
-     *      @param      format          0=id+libelle, 1=code+code, 2=code+libelle
+     *      @param      filtertype      To filter on field type in llx_c_paiement (array('code'=>xx,'label'=>zz))
+     *      @param      format          0=id+libelle, 1=code+code, 2=code+libelle, 3=id+code
      *      @param      empty			1=peut etre vide, 0 sinon
      * 		@param		noadmininfo		0=Add admin info, 1=Disable admin info
+     *      @param      maxlength       Max length of label
      */
-    function select_types_paiements($selected='',$htmlname='paiementtype',$filtertype='',$format=0, $empty=0, $noadmininfo=0)
+    function select_types_paiements($selected='',$htmlname='paiementtype',$filtertype='',$format=0, $empty=0, $noadmininfo=0,$maxlength=0)
     {
         global $langs,$user;
 
@@ -1712,13 +1713,15 @@ class Form
             if ($format == 0) print '<option value="'.$id.'"';
             if ($format == 1) print '<option value="'.$arraytypes['code'].'"';
             if ($format == 2) print '<option value="'.$arraytypes['code'].'"';
+            if ($format == 3) print '<option value="'.$id.'"';
             // Si selected est text, on compare avec code, sinon avec id
             if (preg_match('/[a-z]/i', $selected) && $selected == $arraytypes['code']) print ' selected="selected"';
             elseif ($selected == $id) print ' selected="selected"';
             print '>';
-            if ($format == 0) $value=$arraytypes['label'];
+            if ($format == 0) $value=($maxlength?dol_trunc($arraytypes['label'],$maxlength):$arraytypes['label']);
             if ($format == 1) $value=$arraytypes['code'];
-            if ($format == 2) $value=$arraytypes['label'];
+            if ($format == 2) $value=($maxlength?dol_trunc($arraytypes['label'],$maxlength):$arraytypes['label']);
+            if ($format == 3) $value=$arraytypes['code'];
             print $value?$value:'&nbsp;';
             print '</option>';
         }
@@ -2797,7 +2800,7 @@ class Form
         if($h == '') $h=0;
         if($m == '') $m=0;
         if($empty == '') $empty=0;
-        
+
         if (! $set_time && $empty == 0) $set_time = dol_now('tzuser');
 
         // Analyse de la date de pre-selection
