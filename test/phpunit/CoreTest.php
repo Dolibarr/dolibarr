@@ -27,6 +27,7 @@
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 require_once 'PHPUnit/Framework.php';
+require_once dirname(__FILE__).'/../../htdocs/lib/functions.lib.php';
 
 if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
 if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
@@ -107,7 +108,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
     	print __METHOD__."\n";
     }
 
-  	
+
     /**
      */
     public function testDetectURLROOT()
@@ -123,7 +124,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
 		// Put this into conf.php if you want to text alt
 		//$dolibarr_main_url_root='http://localhost/dolibarralias';
 		//$dolibarr_main_url_root_alt='http://localhost/dolibarralias/custom2';
-		
+
     	// Test for subdir aaa (that point to dolibarr) in root directory /var/www
 		// URL: http://localhost/aaa/htdocs/admin/system/phpinfo.php
         $_SERVER["HTTPS"]='';
@@ -135,8 +136,8 @@ class CoreTest extends PHPUnit_Framework_TestCase
 		// Put this into conf.php if you want to text alt
 		//$dolibarr_main_url_root='http://localhost/dolibarralias';
 		//$dolibarr_main_url_root_alt='http://localhost/dolibarralias/custom2';
-		
-		// Test for virtual host localhostdolibarrnew that point to htdocs directory with 
+
+		// Test for virtual host localhostdolibarrnew that point to htdocs directory with
 		// a direct document root
 		// URL: http://localhostdolibarrnew/admin/system/phpinfo.php
         $_SERVER["HTTPS"]='';
@@ -148,8 +149,8 @@ class CoreTest extends PHPUnit_Framework_TestCase
 		// Put this into conf.php if you want to text alt
 		//$dolibarr_main_url_root='http://localhost/dolibarralias';
 		//$dolibarr_main_url_root_alt='http://localhost/dolibarralias/custom2';
-		
-		// Test for virtual host localhostdolibarrnew that point to htdocs directory with 
+
+		// Test for virtual host localhostdolibarrnew that point to htdocs directory with
 		// a symbolic link
 		// URL: http://localhostdolibarrnew/admin/system/phpinfo.php
         $_SERVER["HTTPS"]='';
@@ -161,9 +162,9 @@ class CoreTest extends PHPUnit_Framework_TestCase
 		// Put this into conf.php if you want to text alt
 		//$dolibarr_main_url_root='http://localhost/dolibarralias';
 		//$dolibarr_main_url_root_alt='http://localhost/dolibarralias/custom2';
-		
-		// Test for alias /dolibarr
-		// URL: http://localhost/dolibarr/admin/system/phpinfo.php
+
+		// Test for alias /dolibarralias
+		// URL: http://localhost/dolibarralias/admin/system/phpinfo.php
         $_SERVER["HTTPS"]='';
         $_SERVER["SERVER_NAME"]='localhost';
         $_SERVER["SERVER_PORT"]='80';
@@ -173,17 +174,16 @@ class CoreTest extends PHPUnit_Framework_TestCase
 		// Put this into conf.php because autodetect will fails in this case
 		//$dolibarr_main_url_root='http://localhost/dolibarralias';
 		//$dolibarr_main_url_root_alt='http://localhost/dolibarralias/custom2';
-		
+
 		include dirname(__FILE__).'/../../htdocs/filefunc.inc.php';
 		print __METHOD__." DOL_MAIN_URL_ROOT=".DOL_MAIN_URL_ROOT."\n";
 		print __METHOD__." DOL_URL_ROOT=".DOL_URL_ROOT."\n";
         print __METHOD__." DOL_MAIN_URL_ROOT_ALT=".DOL_MAIN_URL_ROOT_ALT."\n";
 		print __METHOD__." DOL_URL_ROOT_ALT=".DOL_URL_ROOT_ALT."\n";
-		$this->assertEquals(DOL_URL_ROOT,$expectedresult);
-		
+		$this->assertEquals(DOL_URL_ROOT."x",$expectedresult."x");
+
 		return true;
     }
 
-    
 }
 ?>
