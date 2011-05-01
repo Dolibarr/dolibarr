@@ -486,7 +486,7 @@ if ($result)
         print "</table>";
 
         // Releve rappro
-        if ($acct->rappro)  // Si compte rapprochable
+        if ($acct->canBeConciliated() > 0)  // Si compte rapprochable
         {
             print '<br>'."\n";
             print_fiche_titre($langs->trans("Reconciliation"),'','');

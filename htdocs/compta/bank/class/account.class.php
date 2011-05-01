@@ -44,11 +44,13 @@ class Account extends CommonObject
     var $rowid;
     var $ref;
     var $label;
-    var $type;		// 'payment', 'company', 'member', 'banktransfert', 'payment_supplier', 'sc', 'payment_vat', ...
+    //! 1=Compte courant/check/carte, 2=Compte liquide, 0=Compte épargne
+    var $courant;
+    var $type;      // same as courant
     //! Name
     var $bank;
     var $clos;
-    var $rappro;
+    var $rappro;    // If bank need to be conciliated
     var $url;
     //! BBAN field for French Code banque
     var $code_banque;
@@ -65,8 +67,6 @@ class Account extends CommonObject
     var $proprio;
     var $adresse_proprio;
 
-    //! 1=Compte courant/check/carte, 2=Compte liquide, 0=Compte épargne
-    var $courant;
 
     var $fk_departement;
     var $departement_code;
@@ -105,6 +105,19 @@ class Account extends CommonObject
         $this->status[0]=$langs->trans("StatusAccountOpened");
         $this->status[1]=$langs->trans("StatusAccountClosed");
 
+        return 1;
+    }
+
+
+    /**
+     *  Return if a bank account need to be conciliated
+     *  @return     int         1 if need to be concialiated, < 0 otherwise.
+     */
+    function canBeConciliated()
+    {
+        if (empty($this->rappro)) return -1;
+        if ($this->courant == 2) return -2;
+        if ($this->clos) return -3;
         return 1;
     }
 
@@ -539,12 +552,12 @@ class Account extends CommonObject
     {
         global $conf;
 
-        if (empty($id) && empty($ref) && empty($ref_ext)) 
+        if (empty($id) && empty($ref) && empty($ref_ext))
         {
         	$this->error="ErrorBadParameters";
         	return -1;
         }
-        
+
         $sql = "SELECT ba.rowid, ba.ref, ba.label, ba.bank, ba.number, ba.courant, ba.clos, ba.rappro, ba.url,";
         $sql.= " ba.code_banque, ba.code_guichet, ba.cle_rib, ba.bic, ba.iban_prefix as iban,";
         $sql.= " ba.domiciliation, ba.proprio, ba.adresse_proprio, ba.fk_departement, ba.fk_pays,";
@@ -1002,9 +1015,10 @@ class AccountLine extends CommonObject
     var $note;
     var $fk_user_author;
     var $fk_user_rappro;
+    var $fk_type;
     var $num_releve;
     var $num_chq;
-    var $rappro;
+    var $rappro;        // Is it conciliated ?
 
     var $bank_account_label;
 

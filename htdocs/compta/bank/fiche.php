@@ -283,14 +283,6 @@ if ($action == 'create')
 	}
 	print '</td></tr>';
 
-    // Conciliable
-    /*print '<tr><td valign="top">'.$langs->trans("Conciliable").'</td>';
-    print '<td colspan="3">';
-    if ($account->type == 0 || $account->type == 1) print '<input type="checkbox" class="flat" name="norappro" '.($account->rappro?'':'checked="true"').'"> '.$langs->trans("DisableConciliation");
-    if ($account->type == 2)                        print $langs->trans("No").' ('.$langs->trans("CashAccount").')';
-    print '</td></tr>';
-    */
-
 	// Accountancy code
     if ($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED)
     {
@@ -420,8 +412,10 @@ else
 		// Conciliate
 		print '<tr><td valign="top">'.$langs->trans("Conciliable").'</td>';
 		print '<td colspan="3">';
-		if ($account->type == 0 || $account->type == 1) print ($account->rappro==1 ? $langs->trans("Yes") : ($langs->trans("No").' ('.$langs->trans("ConciliationDisabled").')'));
-		if ($account->type == 2)                        print $langs->trans("No").' ('.$langs->trans("CashAccount").')';
+		$conciliate=$account->canBeConciliated();
+		if ($conciliate == -2) print $langs->trans("No").' ('.$langs->trans("CashAccount").')';
+        else if ($conciliate == -3) print $langs->trans("No").' ('.$langs->trans("Closed").')';
+		else print ($account->rappro==1 ? $langs->trans("Yes") : ($langs->trans("No").' ('.$langs->trans("ConciliationDisabled").')'));
 		print '</td></tr>';
 
 		// Accountancy code
@@ -561,8 +555,10 @@ else
 		// Conciliable
         print '<tr><td valign="top">'.$langs->trans("Conciliable").'</td>';
         print '<td colspan="3">';
-        if ($account->type == 0 || $account->type == 1) print '<input type="checkbox" class="flat" name="norappro"'.($account->rappro?'':' checked="true"').'"> '.$langs->trans("DisableConciliation");
-        if ($account->type == 2)                        print $langs->trans("No").' ('.$langs->trans("CashAccount").')';
+        $conciliate=$account->canBeConciliated();
+        if ($conciliate == -2) print $langs->trans("No").' ('.$langs->trans("CashAccount").')';
+        else if ($conciliate == -3) print $langs->trans("No").' ('.$langs->trans("Closed").')';
+        else print '<input type="checkbox" class="flat" name="norappro"'.($account->rappro?'':' checked="true"').'"> '.$langs->trans("DisableConciliation");
         print '</td></tr>';
 
         // Accountancy code

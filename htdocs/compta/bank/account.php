@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copytight (C) 2004      Christophe Combelles <ccomb@free.fr>
  * Copytight (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  * Copytight (C) 2010-2011 Juanjo Menent        <jmenent@@2byte.es>
@@ -651,7 +651,7 @@ if ($account || $_GET["ref"])
                 }
 
                 // Transaction reconciliated or edit link
-                if ($objp->rappro && $acct->type != 2)  // Si non compte cash
+                if ($objp->rappro && $acct->canBeConciliated() > 0)  // If line not conciliated and account can be conciliated
                 {
                     print "<td align=\"center\" nowrap>";
                     print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'&amp;page='.$page.'">';
@@ -676,7 +676,7 @@ if ($account || $_GET["ref"])
                         print img_view();
                         print '</a>';
                     }
-                    if ($acct->rappro && empty($objp->rappro))
+                    if ($acct->canBeConciliated() > 0 && empty($objp->rappro))
                     {
                         if ($db->jdate($objp->dv) < ($now - $conf->bank->rappro->warning_delay))
                         {
