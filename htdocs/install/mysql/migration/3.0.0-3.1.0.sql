@@ -11,7 +11,6 @@
 --
 
 RENAME TABLE llx_c_methode_commande_fournisseur TO llx_c_input_method;
-RENAME TABLE llx_c_source TO llx_c_demand_reason;
 
 ALTER TABLE llx_adherent MODIFY login varchar(50);
 
