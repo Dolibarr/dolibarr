@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,8 +39,8 @@ class InterfaceActionsAuto
     var $desc;
 
     /**
-     *   \brief      Constructeur.
-     *   \param      DB      Handler d'acces base
+     *   Constructor.
+     *   @param      DB      Database handler
      */
     function InterfaceActionsAuto($DB)
     {
@@ -53,8 +53,8 @@ class InterfaceActionsAuto
     }
 
     /**
-     *   \brief      Renvoi nom du lot de triggers
-     *   \return     string      Nom du lot de triggers
+     *   Return name of triggers set
+     *   @return     string      Name of triggers set
      */
     function getName()
     {
@@ -62,8 +62,8 @@ class InterfaceActionsAuto
     }
 
     /**
-     *   \brief      Renvoi descriptif du lot de triggers
-     *   \return     string      Descriptif du lot de triggers
+     *   Return description of triggers set
+     *   @return     string      Description of triggers set
      */
     function getDesc()
     {
@@ -71,8 +71,8 @@ class InterfaceActionsAuto
     }
 
     /**
-     *   \brief      Renvoi version du lot de triggers
-     *   \return     string      Version du lot de triggers
+     *   Return version of triggers set
+     *   @return     string      Version of triggers set
      */
     function getVersion()
     {
@@ -557,7 +557,7 @@ class InterfaceActionsAuto
 			$actioncomm->datef       = $now;
 			$actioncomm->durationp   = 0;
 			$actioncomm->punctual    = 1;
-			$actioncomm->percentage  = 100;
+			$actioncomm->percentage  = -1;   // Not applicable
 			$actioncomm->contact     = new Contact($this->db,$object->sendtoid);
 			$actioncomm->societe     = new Societe($this->db,$object->socid);
 			$actioncomm->author      = $user;   // User saving action
