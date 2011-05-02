@@ -1,0 +1,21 @@
+Dolibarr language file - es_HN - main
+CHARSET=UTF-8
+DIRECTION=ltr
+SeparatorDecimal=,
+SeparatorThousand=
+FormatDateShort=%d/%m/%Y
+FormatDateShortJava=dd/MM/yyyy
+FormatHourShort=%H:%M
+FormatHourShortDuration=%H:%M
+FormatDateTextShort=%d %b %Y
+FormatDateText=%d %B %Y
+FormatDateHourShort=%d/%m/%Y %H:%M
+FormatDateHourTextShort=%d %b %Y %H:%M
+FormatDateHourText=%d %B %Y %H:%M
+AmountVAT=Importe ISV
+TotalVAT=Total ISV
+IncludedVAT=ISV incluido
+HT=Sin ISV
+TTC=ISV incluido
+VAT=ISV
+VATRate=Tasa ISV
