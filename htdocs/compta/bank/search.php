@@ -80,9 +80,9 @@ $sql.= " b.fk_account, b.fk_type,";
 $sql.= " ba.rowid as bankid, ba.ref as bankref,";
 $sql.= " bu.label as labelurl, bu.url_id";
 $sql.= " FROM ";
-if (! empty($_REQUEST["bid"])) $sql.= MAIN_DB_PREFIX."bank_class as l, ";
-$sql.= MAIN_DB_PREFIX."bank_account as ba, ";
-$sql.= MAIN_DB_PREFIX."bank as b";
+if (! empty($_REQUEST["bid"])) $sql.= MAIN_DB_PREFIX."bank_class as l,";
+$sql.= " ".MAIN_DB_PREFIX."bank_account as ba,";
+$sql.= " ".MAIN_DB_PREFIX."bank as b";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu ON bu.fk_bank = b.rowid AND type = 'company'";
 $sql.= " WHERE b.fk_account = ba.rowid";
 $sql.= " AND ba.entity = ".$conf->entity;
@@ -117,7 +117,7 @@ for ($i = 1 ; $i <= $si; $i++) {
 }
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit+1,$offset);
-
+print $sql;
 $resql = $db->query($sql);
 if ($resql)
 {

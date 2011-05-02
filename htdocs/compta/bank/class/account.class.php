@@ -995,7 +995,7 @@ class Account extends CommonObject
 
 /**
  *	\class      AccountLine
- *	\brief      Classe permettant la gestion des lignes de transactions bancaires
+ *	\brief      Classto manage bank transaction lines
  */
 class AccountLine extends CommonObject
 {
@@ -1011,16 +1011,18 @@ class AccountLine extends CommonObject
     var $datev;
     var $amount;
     var $label;
-    var $fk_account;
     var $note;
     var $fk_user_author;
     var $fk_user_rappro;
     var $fk_type;
-    var $num_releve;
-    var $num_chq;
-    var $rappro;        // Is it conciliated ?
+    var $rappro;        // Is it conciliated
+    var $num_releve;    // If conciliated, what is bank receipt
+    var $num_chq;       // Num of cheque
+    var $bank_chq;      // Bank of cheque
+    var $fk_bordereau;  // Id of cheque receipt
 
-    var $bank_account_label;
+    var $fk_account;            // Id of bank account
+    var $bank_account_label;    // Label of bank account
 
 
     /**
@@ -1037,9 +1039,9 @@ class AccountLine extends CommonObject
     }
 
     /**
-     *  Charge en memoire depuis la base, une ecriture sur le compte
-     *  @param      id      Id de la ligne ecriture a recuperer
-     *  @param      ref     Ref of object
+     *  Load into memory content of a bank transaction line
+     *  @param      id      Id of bank transaction to load
+     *  @param      ref     Ref of bank transation to load
      *	@return		int		<0 if KO, >0 if OK
      */
     function fetch($rowid,$ref='')
@@ -1052,6 +1054,8 @@ class AccountLine extends CommonObject
         $sql = "SELECT b.rowid, b.datec, b.datev, b.dateo, b.amount, b.label as label, b.fk_account,";
         $sql.= " b.fk_user_author, b.fk_user_rappro,";
         $sql.= " b.fk_type, b.num_releve, b.num_chq, b.rappro, b.note,";
+        $sql.= " b.fk_bordereau, b.banque, b.emetteur,";
+        //$sql.= " b.author"; // Is this used ?
         $sql.= " ba.label as bank_account_label";
         $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
         $sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
@@ -1076,18 +1080,20 @@ class AccountLine extends CommonObject
                 $this->dateo         = $obj->dateo;
                 $this->amount        = $obj->amount;
                 $this->label         = $obj->label;
-                $this->fk_account    = $obj->fk_account;
                 $this->note          = $obj->note;
 
                 $this->fk_user_author = $obj->fk_user_author;
                 $this->fk_user_rappro = $obj->fk_user_rappro;
 
-                $this->fk_type        = $obj->fk_type;
+                $this->fk_type        = $obj->fk_type;      // Type of transaction
+                $this->rappro         = $obj->rappro;
                 $this->num_releve     = $obj->num_releve;
+
                 $this->num_chq        = $obj->num_chq;
+                $this->bank_chq       = $obj->bank_chq;
+                $this->fk_bordereau   = $obj->fk_bordereau;
 
-                $this->rappro        = $obj->rappro;
-
+                $this->fk_account    = $obj->fk_account;
                 $this->bank_account_label = $obj->bank_account_label;
             }
             $this->db->free($result);
