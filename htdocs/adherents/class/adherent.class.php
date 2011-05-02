@@ -383,6 +383,10 @@ class Adherent extends CommonObject
 
         dol_syslog("Adherent::update notrigger=".$notrigger.", nosyncuser=".$nosyncuser.", nosyncuserpass=".$nosyncuserpass.", email=".$this->email);
 
+        // Clean parameters
+        if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->nom=ucwords(trim($this->nom));
+        if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->prenom=ucwords(trim($this->prenom));
+
         // Check parameters
         if (! empty($conf->global->ADHERENT_MAIL_REQUIRED) && ! isValidEMail($this->email))
         {
@@ -979,7 +983,7 @@ class Adherent extends CommonObject
                 $this->address        = $obj->adresse;
                 $this->zip            = $obj->cp;
                 $this->town           = $obj->ville;
-                
+
                 $this->fk_departement = $obj->fk_departement;
                 $this->departement_code = $obj->fk_departement?$obj->departement_code:'';
                 $this->departement	  = $obj->fk_departement?$obj->departement:'';
@@ -990,7 +994,7 @@ class Adherent extends CommonObject
                 elseif ($obj->pays_lib) $this->pays=$obj->pays_lib;
                 else $this->pays=$obj->pays;
 				$this->country        = $this->pays;
-				
+
                 $this->phone          = $obj->phone;
                 $this->phone_perso    = $obj->phone_perso;
                 $this->phone_mobile   = $obj->phone_mobile;
@@ -1772,7 +1776,7 @@ class Adherent extends CommonObject
         }
         return trim($ret);
     }
-    
+
 
     /**
      *    	Retourne le libelle du statut d'un adherent (brouillon, valide, resilie)

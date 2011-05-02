@@ -170,8 +170,9 @@ class Societe extends CommonObject
         global $langs,$conf;
 
         // Clean parameters
-        $this->name=trim($this->name);
-        $this->nom=trim($this->nom);
+        $this->name=$this->name?trim($this->name):trim($this->nom);
+        if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->name=ucwords($this->name);
+        $this->nom=$this->name;     // For backward compatibility
 
         dol_syslog("Societe::create ".$this->name);
 
@@ -199,7 +200,7 @@ class Societe extends CommonObject
         if ($result >= 0)
         {
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, entity, datec, datea, fk_user_creat, canvas)";
-            $sql.= " VALUES ('".$this->db->escape($this->nom)."', ".$conf->entity.", '".$this->db->idate($now)."', '".$this->db->idate($now)."'";
+            $sql.= " VALUES ('".$this->db->escape($this->name)."', ".$conf->entity.", '".$this->db->idate($now)."', '".$this->db->idate($now)."'";
             $sql.= ", ".($user->id > 0 ? "'".$user->id."'":"null");
             $sql.= ", ".($this->canvas ? "'".$this->canvas."'":"null");
             $sql.= ")";
@@ -253,7 +254,7 @@ class Societe extends CommonObject
                 if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
                 {
 
-                    $this->error=$langs->trans("ErrorCompanyNameAlreadyExists",$this->nom);
+                    $this->error=$langs->trans("ErrorCompanyNameAlreadyExists",$this->name);
                 }
                 else
                 {
@@ -282,10 +283,10 @@ class Societe extends CommonObject
         $this->errors=array();
 
         $result = 0;
-        $this->name=trim($this->name);
-        $this->nom=trim($this->nom);
+        $this->name=$this->name?trim($this->name):trim($this->nom);
+        $this->nom=$this->name; // For backward compatibility
 
-        if (! $this->nom)
+        if (! $this->name)
         {
             $this->errors[] = 'ErrorBadThirdPartyName';
             $result = -2;
@@ -365,14 +366,18 @@ class Societe extends CommonObject
 
         dol_syslog("Societe::Update id=".$id." call_trigger=".$call_trigger." allowmodcodeclient=".$allowmodcodeclient." allowmodcodefournisseur=".$allowmodcodefournisseur);
 
+        $now=dol_now();
+
         // Clean parameters
         $this->id=$id;
-        $this->nom=trim($this->nom);	// TODO obsolete
-        $this->name=trim($this->name);
-        $this->adresse=trim($this->adresse); // TODO obsolete
-        $this->address=trim($this->address);
-        $this->cp=trim($this->cp);
-        $this->ville=trim($this->ville);
+        $this->name=$this->name?trim($this->name):trim($this->nom);
+        $this->nom=trim($this->nom);    // TODO obsolete
+        $this->address=$this->address?trim($this->address):trim($this->adresse);
+        $this->adresse=$this->address;  // TODO obsolete
+        $this->zip=$this->zip?trim($this->zip):trim($this->cp);
+        $this->cp=$this->zip;           // TODO obsolete
+        $this->town=$this->town?trim($this->town):trim($this->ville);
+        $this->ville=$this->town;       // TODO obsolete
         $this->departement_id=trim($this->departement_id);
         $this->pays_id=trim($this->pays_id);
         $this->tel=trim($this->tel);
@@ -429,12 +434,12 @@ class Societe extends CommonObject
             dol_syslog("Societe::Update verify ok");
 
             $sql = "UPDATE ".MAIN_DB_PREFIX."societe";
-            $sql.= " SET nom = '" . $this->db->escape($this->nom) ."'"; // Champ obligatoire
-            $sql.= ",datea = '".$this->db->idate(mktime())."'";
+            $sql.= " SET nom = '" . $this->db->escape($this->name) ."'"; // Champ obligatoire
+            $sql.= ",datea = '".$this->db->idate($now)."'";
             $sql.= ",address = '" . $this->db->escape($this->address) ."'";
 
-            $sql.= ",cp = ".($this->cp?"'".$this->cp."'":"null");
-            $sql.= ",ville = ".($this->ville?"'".$this->db->escape($this->ville)."'":"null");
+            $sql.= ",cp = ".($this->zip?"'".$this->zip."'":"null");
+            $sql.= ",ville = ".($this->town?"'".$this->db->escape($this->town)."'":"null");
 
             $sql .= ",fk_departement = '" . ($this->departement_id?$this->departement_id:'0') ."'";
             $sql .= ",fk_pays = '" . ($this->pays_id?$this->pays_id:'0') ."'";
@@ -611,19 +616,19 @@ class Societe extends CommonObject
                 $this->entity       = $obj->entity;
 
                 $this->ref          = $obj->rowid;
-                $this->nom 			= $obj->name; // TODO obsolete
                 $this->name 		= $obj->name;
+                $this->nom          = $obj->name; // TODO obsolete
                 $this->ref_ext      = $obj->ref_ext;
 
                 $this->datec = $this->db->jdate($obj->datec);
                 $this->date_update = $this->db->jdate($obj->date_update);
 
-                $this->adresse 		= $obj->address; // TODO obsolete
                 $this->address 		= $obj->address;
-                $this->cp 			= $obj->zip;	// TODO obsolete
+                $this->adresse      = $obj->address; // TODO obsolete
                 $this->zip 			= $obj->zip;
-                $this->ville 		= $obj->town;// TODO obsolete
+                $this->cp           = $obj->zip;    // TODO obsolete
                 $this->town 		= $obj->town;
+                $this->ville        = $obj->town;// TODO obsolete
 
                 $this->pays_id 		= $obj->fk_pays;						// TODO obsolete
                 $this->country_id   = $obj->fk_pays;
@@ -977,21 +982,20 @@ class Societe extends CommonObject
     }
 
     /**
-     *    \brief      Attribut le prefix de la societe en base
-     *
+     *    Update record to set prefix
      */
     function attribute_prefix()
     {
         global $conf;
 
-        $sql = "SELECT nom FROM ".MAIN_DB_PREFIX."societe WHERE rowid = '".$this->id."'";
+        $sql = "SELECT nom as name FROM ".MAIN_DB_PREFIX."societe WHERE rowid = '".$this->id."'";
         $resql=$this->db->query( $sql);
         if ($resql)
         {
             if ($this->db->num_rows($resql))
             {
                 $obj=$this->db->fetch_object($resql);
-                $nom = preg_replace("/[[:punct:]]/","",$obj->nom);
+                $nom = preg_replace("/[[:punct:]]/","",$obj->name);
                 $this->db->free();
 
                 $prefix = $this->genprefix($nom,4);
@@ -1385,8 +1389,7 @@ class Societe extends CommonObject
         $lien.=(!empty($this->canvas)?'&amp;canvas='.$this->canvas:'').'">';
         $lienfin='</a>';
 
-        $name=$this->name;
-        if (empty($name)) $name=$this->nom;
+        $name=$this->name?$this->name:$this->nom;
 
         if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCompany").': '.$name,'company').$lienfin);
         if ($withpicto && $withpicto != 2) $result.=' ';
@@ -1434,7 +1437,7 @@ class Societe extends CommonObject
         {
         	if (empty($this->name)) $this->name=$this->nom;
         	// TODO: Tester si email non deja present dans tableau contact
-        	$contact_email[-1]=$langs->trans("ThirdParty").': '.dol_trunc($this->nom,16)." &lt;".$this->email."&gt;";
+        	$contact_email[-1]=$langs->trans("ThirdParty").': '.dol_trunc($this->name,16)." &lt;".$this->email."&gt;";
         }
         return $contact_email;
     }
@@ -1452,7 +1455,7 @@ class Societe extends CommonObject
         {
             if (empty($this->name)) $this->name=$this->nom;
             // TODO: Tester si tel non deja present dans tableau contact
-            $contact_phone[-1]=$langs->trans("ThirdParty").': '.dol_trunc($this->nom,16)." &lt;".$this->tel."&gt;";
+            $contact_phone[-1]=$langs->trans("ThirdParty").': '.dol_trunc($this->name,16)." &lt;".$this->tel."&gt;";
         }
         return $contact_phone;
     }
@@ -2027,7 +2030,7 @@ class Societe extends CommonObject
      */
     function info($id)
     {
-        $sql = "SELECT s.rowid, s.nom, s.datec, s.datea,";
+        $sql = "SELECT s.rowid, s.nom as name, s.datec, s.datea,";
         $sql.= " fk_user_creat, fk_user_modif";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
         $sql.= " WHERE s.rowid = ".$id;
@@ -2052,7 +2055,7 @@ class Societe extends CommonObject
                     $muser->fetch($obj->fk_user_modif);
                     $this->user_modification = $muser;
                 }
-                $this->ref			     = $obj->nom;
+                $this->ref			     = $obj->name;
                 $this->date_creation     = $this->db->jdate($obj->datec);
                 $this->date_modification = $this->db->jdate($obj->datea);
             }
@@ -2202,17 +2205,17 @@ class Societe extends CommonObject
 
 
     /**
-     *      Cree en base un tiers depuis l'objet adherent
-     *      @param      member		Objet adherent source
-     * 		@param		socname		Name of third to force
-     *      @return     int			Si erreur <0, si ok renvoie id compte cree
+     *      Create a third party into database from a member object
+     *      @param      member		Object member
+     * 		@param		socname		Name of third party to force
+     *      @return     int			<0 if KO, id of created account if OK
      */
     function create_from_member($member,$socname='')
     {
         global $conf,$user,$langs;
 
-        $name = !empty($socname)?$socname:$member->societe;
-        if (empty($name)) $name=trim($member->nom.' '.$member->prenom);
+        $name = $socname?$socname:$member->societe;
+        if (empty($name)) $name=$member->getFullName($langs);
 
         // Positionne parametres
         $this->nom=$name;				// TODO obsolete
@@ -2283,7 +2286,8 @@ class Societe extends CommonObject
 
         // Initialize parameters
         $this->id=0;
-        $this->nom = 'THIRDPARTY SPECIMEN '.dol_print_date($now,'dayhourlog');
+        $this->name = 'THIRDPARTY SPECIMEN '.dol_print_date($now,'dayhourlog');
+        $this->nom = $this->name;   // For backward compatibility
         $this->specimen=1;
         $this->cp='99999';
         $this->ville='MyTown';

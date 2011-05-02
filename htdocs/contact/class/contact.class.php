@@ -109,14 +109,18 @@ class Contact extends CommonObject
 
 		// Clean parameters
 		$this->name=trim($this->name);
-		if (! $this->socid) $this->socid = 0;
+        $this->firstname=trim($this->firstname);
+        if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->name=ucwords($this->name);
+        if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname=ucwords($this->firstname);
+        if (! $this->socid) $this->socid = 0;
 		if (! $this->priv) $this->priv = 0;
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (";
 		$sql.= " datec";
 		$sql.= ", fk_soc";
-		$sql.= ", name";
-		$sql.= ", fk_user_creat";
+        $sql.= ", name";
+        $sql.= ", firstname";
+        $sql.= ", fk_user_creat";
 		$sql.= ", priv";
 		$sql.= ", canvas";
 		$sql.= ", entity";
@@ -125,6 +129,7 @@ class Contact extends CommonObject
 		if ($this->socid > 0) $sql.= " ".$this->socid.",";
 		else $sql.= "null,";
 		$sql.= "'".$this->db->escape($this->name)."',";
+        $sql.= "'".$this->db->escape($this->firstname)."',";
 		$sql.= " ".($user->id > 0 ? "'".$user->id."'":"null").",";
 		$sql.= " ".$this->priv.",";
         $sql.= " ".($this->canvas?"'".$this->canvas."'":"null").",";
@@ -438,9 +443,9 @@ class Contact extends CommonObject
 	function fetch($id, $user=0)
 	{
 		global $langs;
-		
+
 		$langs->load("companies");
-		
+
 		$sql = "SELECT c.rowid, c.fk_soc, c.civilite as civilite_id, c.name, c.firstname,";
 		$sql.= " c.address, c.cp, c.ville,";
 		$sql.= " c.fk_pays,";
@@ -491,7 +496,7 @@ class Contact extends CommonObject
 				$this->pays_code		= $obj->fk_pays?$obj->pays_code:'';
 				$this->pays				= ($obj->fk_pays > 0)?$langs->transnoentities("Country".$obj->pays_code):$langs->transnoentities("SelectCountry");
 				$this->country			= ($obj->fk_pays > 0)?$langs->transnoentities("Country".$obj->pays_code):$langs->transnoentities("SelectCountry");
-				
+
 				$this->socid			= $obj->fk_soc;
 				$this->socname			= $obj->socname;
 				$this->poste			= $obj->poste;
@@ -793,7 +798,7 @@ class Contact extends CommonObject
 	 *		Use $this->id, $this->name, $this->firstname, this->civilite_id
 	 *		@param		withpicto		Include picto with link
 	 *		@param		option			Where the link point to
-	 *		@param		maxlen			Max length of 
+	 *		@param		maxlen			Max length of
 	 *		@return		string			String with URL
 	 */
 	function getNomUrl($withpicto=0,$option='',$maxlen=0)
@@ -840,8 +845,8 @@ class Contact extends CommonObject
         }
         return trim($ret);
     }
-	
-	
+
+
 	/**
 	 *    Return label of a civility contact
 	 *    @return     string      Translated name of civility
