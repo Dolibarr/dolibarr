@@ -220,27 +220,27 @@ if (! empty($conf->global->PAYPAL_SECURITY_TOKEN)) $token='&token='.md5($conf->g
 // Url list
 print '<u>'.$langs->trans("FollowingUrlAreAvailableToMakePayments").':</u><br>';
 print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnFreeAmount",$servicename).':<br>';
-print '<b>'.DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?amount=<i>9.99</i>&tag=<i>your_free_tag'.$token.'</i></b>'."<br>\n";
+print '<strong>'.DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?amount=<em>9.99</em>&tag=<em>your_free_tag'.$token.'</em></strong>'."<br>\n";
 if ($conf->commande->enabled)
 {
 	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnOrder",$servicename).':<br>';
-	print '<b>'.DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?source=order&ref=<i>order_ref'.$token.'</i></b>'."<br>\n";
+	print '<strong>'.DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?source=order&ref=<em>order_ref'.$token.'</em></strong>'."<br>\n";
 }
 if ($conf->facture->enabled)
 {
 	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnInvoice",$servicename).':<br>';
-	print '<b>'.DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?source=invoice&ref=<i>invoice_ref'.$token.'</i></b>'."<br>\n";
+	print '<strong>'.DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?source=invoice&ref=<em>invoice_ref'.$token.'</em></strong>'."<br>\n";
 //	print $langs->trans("SetupPaypalToHavePaymentCreatedAutomatically",$langs->transnoentitiesnoconv("FeatureNotYetAvailable"))."<br>\n";
 }
 if ($conf->contrat->enabled)
 {
 	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnContractLine",$servicename).':<br>';
-	print '<b>'.DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?source=contractline&ref=<i>contractline_ref'.$token.'</i></b>'."<br>\n";
+	print '<strong>'.DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?source=contractline&ref=<em>contractline_ref'.$token.'</em></strong>'."<br>\n";
 }
 if ($conf->adherent->enabled)
 {
 	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnMemberSubscription",$servicename).':<br>';
-	print '<b>'.DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?source=membersubscription&ref=<i>member_ref'.$token.'</i></b>'."<br>\n";
+	print '<strong>'.DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?source=membersubscription&ref=<em>member_ref'.$token.'</em></strong>'."<br>\n";
 }
 
 print "<br>";
