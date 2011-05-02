@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.org>
+ * Copyright (C) 2011      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,6 +49,7 @@ if ($_POST["action"] == 'setvalue' && $user->admin)
     $result=dolibarr_set_const($db, "PAYPAL_CREDITOR",$_POST["PAYPAL_CREDITOR"],'chaine',0,'',$conf->entity);
     $result=dolibarr_set_const($db, "PAYPAL_API_INTEGRAL_OR_PAYPALONLY",$_POST["PAYPAL_API_INTEGRAL_OR_PAYPALONLY"],'chaine',0,'',$conf->entity);
     $result=dolibarr_set_const($db, "PAYPAL_CSS_URL",$_POST["PAYPAL_CSS_URL"],'chaine',0,'',$conf->entity);
+    $result=dolibarr_set_const($db, "PAYPAL_SECURITY_TOKEN",$_POST["PAYPAL_SECURITY_TOKEN"],'chaine',0,'',$conf->entity);
     $result=dolibarr_set_const($db, "PAYPAL_MESSAGE_OK",$_POST["PAYPAL_MESSAGE_OK"],'chaine',0,'',$conf->entity);
     $result=dolibarr_set_const($db, "PAYPAL_MESSAGE_KO",$_POST["PAYPAL_MESSAGE_KO"],'chaine',0,'',$conf->entity);
 
@@ -154,14 +156,20 @@ $var=!$var;
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("VendorName").'</td><td>';
 print '<input size="64" type="text" name="PAYPAL_CREDITOR" value="'.$conf->global->PAYPAL_CREDITOR.'">';
-print '<br>'.$langs->trans("Example").': '.$mysoc->name;
+print ' &nbsp; '.$langs->trans("Example").': '.$mysoc->name;
 print '</td></tr>';
 
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("CSSUrlForPaymentForm").'</td><td>';
 print '<input size="64" type="text" name="PAYPAL_CSS_URL" value="'.$conf->global->PAYPAL_CSS_URL.'">';
-print '<br>'.$langs->trans("Example").': http://mysite/mycss.css';
+print ' &nbsp; '.$langs->trans("Example").': http://mysite/mycss.css';
+print '</td></tr>';
+
+$var=!$var;
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("SecurityToken").'</td><td>';
+print '<input size="64" type="text" name="PAYPAL_SECURITY_TOKEN" value="'.$conf->global->PAYPAL_SECURITY_TOKEN.'">';
 print '</td></tr>';
 
 $var=!$var;
@@ -206,30 +214,33 @@ print '</div>';
 
 print '<br><br>';
 
+$token='';
+if (! empty($conf->global->PAYPAL_SECURITY_TOKEN)) $token='&token='.md5($conf->global->PAYPAL_SECURITY_TOKEN);
+
 // Url list
 print '<u>'.$langs->trans("FollowingUrlAreAvailableToMakePayments").':</u><br>';
 print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnFreeAmount",$servicename).':<br>';
-print '<b>'.DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?amount=<i>9.99</i>&tag=<i>your_free_tag</i></b>'."<br>\n";
+print '<b>'.DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?amount=<i>9.99</i>&tag=<i>your_free_tag'.$token.'</i></b>'."<br>\n";
 if ($conf->commande->enabled)
 {
 	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnOrder",$servicename).':<br>';
-	print '<b>'.DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?source=order&ref=<i>order_ref</i></b>'."<br>\n";
+	print '<b>'.DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?source=order&ref=<i>order_ref'.$token.'</i></b>'."<br>\n";
 }
 if ($conf->facture->enabled)
 {
 	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnInvoice",$servicename).':<br>';
-	print '<b>'.DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?source=invoice&ref=<i>invoice_ref</i></b>'."<br>\n";
+	print '<b>'.DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?source=invoice&ref=<i>invoice_ref'.$token.'</i></b>'."<br>\n";
 //	print $langs->trans("SetupPaypalToHavePaymentCreatedAutomatically",$langs->transnoentitiesnoconv("FeatureNotYetAvailable"))."<br>\n";
 }
 if ($conf->contrat->enabled)
 {
 	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnContractLine",$servicename).':<br>';
-	print '<b>'.DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?source=contractline&ref=<i>contractline_ref</i></b>'."<br>\n";
+	print '<b>'.DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?source=contractline&ref=<i>contractline_ref'.$token.'</i></b>'."<br>\n";
 }
 if ($conf->adherent->enabled)
 {
 	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnMemberSubscription",$servicename).':<br>';
-	print '<b>'.DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?source=membersubscription&ref=<i>member_ref</i></b>'."<br>\n";
+	print '<b>'.DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?source=membersubscription&ref=<i>member_ref'.$token.'</i></b>'."<br>\n";
 }
 
 print "<br>";

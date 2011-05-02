@@ -55,6 +55,7 @@ $langs->load("paypal");
 // tag (a free text, required if type is empty)
 // currency (iso code)
 
+$ref=GETPOST('ref','alpha');
 $suffix=GETPOST("suffix",'alpha');
 $amount=price2num(GETPOST("amount"));
 if (! GETPOST("currency",'alpha')) $currency=$conf->global->MAIN_MONNAIE;
@@ -341,7 +342,7 @@ if (GETPOST("source") == 'order')
 	require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
 
 	$order=new Commande($db);
-	$result=$order->fetch('',$_REQUEST["ref"]);
+	$result=$order->fetch('',$ref);
 	if ($result < 0)
 	{
 		$mesg=$order->error;
@@ -358,7 +359,7 @@ if (GETPOST("source") == 'order')
 
 	$fulltag='ORD='.$order->ref.'.CUS='.$order->client->id;
 	//$fulltag.='.NAM='.strtr($order->client->nom,"-"," ");
-	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $fulltag.='.TAG='.$_REQUEST["tag"]; }
+	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
 	$fulltag=dol_string_unaccent($fulltag);
 
 	// Creditor
@@ -450,7 +451,7 @@ if (GETPOST("source") == 'invoice')
 	require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 
 	$invoice=new Facture($db);
-	$result=$invoice->fetch('',$_REQUEST["ref"]);
+	$result=$invoice->fetch('',$ref);
 	if ($result < 0)
 	{
 		$mesg=$invoice->error;
@@ -467,7 +468,7 @@ if (GETPOST("source") == 'invoice')
 
 	$fulltag='INV='.$invoice->ref.'.CUS='.$invoice->client->id;
 	//$fulltag.='.NAM='.strtr($invoice->client->nom,"-"," ");
-	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $fulltag.='.TAG='.$_REQUEST["tag"]; }
+	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
 	$fulltag=dol_string_unaccent($fulltag);
 
 	// Creditor
@@ -558,7 +559,7 @@ if (GETPOST("source") == 'contractline')
 	require_once(DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
 
 	$contractline=new ContratLigne($db);
-	$result=$contractline->fetch('',$_REQUEST["ref"]);
+	$result=$contractline->fetch('',$ref);
 	if ($result < 0)
 	{
 		$mesg=$contractline->error;
@@ -619,11 +620,11 @@ if (GETPOST("source") == 'contractline')
 
 	$fulltag='COL='.$contractline->ref.'.CON='.$contract->ref.'.CUS='.$contract->client->id;
 	//$fulltag.='.NAM='.strtr($contract->client->nom,"-"," ");
-	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $fulltag.='.TAG='.$_REQUEST["tag"]; }
+	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
 	$fulltag=dol_string_unaccent($fulltag);
 
 	$qty=1;
-	if (isset($_REQUEST["qty"])) $qty=$_REQUEST["qty"];
+	if (GETPOST('qty')) $qty=GETPOST('qty');
 
 	// Creditor
 	$var=!$var;
@@ -756,7 +757,7 @@ if (GETPOST("source") == 'membersubscription')
 	require_once(DOL_DOCUMENT_ROOT."/adherents/class/cotisation.class.php");
 
 	$member=new Adherent($db);
-	$result=$member->fetch('',$_REQUEST["ref"]);
+	$result=$member->fetch('',$ref);
 	if ($result < 0)
 	{
 		$mesg=$member->error;
@@ -773,7 +774,7 @@ if (GETPOST("source") == 'membersubscription')
 
 	$fulltag='MEM='.$member->id;
 	//$fulltag.='.NAM='.strtr($member->getFullName($langs),"-"," ");
-	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $fulltag.='.TAG='.$_REQUEST["tag"]; }
+	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
 	$fulltag=dol_string_unaccent($fulltag);
 
 	// Creditor
