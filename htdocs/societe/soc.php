@@ -129,20 +129,24 @@ else
 		{
 			$soc->particulier           = $_REQUEST["private"];
 
-			$soc->nom                   = empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?trim($_POST["prenom"].' '.$_POST["nom"]):trim($_POST["nom"].' '.$_POST["prenom"]);
+			$soc->name                  = empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?trim($_POST["prenom"].' '.$_POST["nom"]):trim($_POST["nom"].' '.$_POST["prenom"]);
+			$soc->nom                   = $soc->name;     // TODO obsolete
 			$soc->nom_particulier       = $_POST["nom"];
 			$soc->prenom                = $_POST["prenom"];
 			$soc->civilite_id           = $_POST["civilite_id"];
 		}
 		else
 		{
-			$soc->nom                   = $_POST["nom"];
+            $soc->name                  = $_POST["nom"];
+		    $soc->nom                   = $soc->name;     // TODO obsolete
 		}
-		$soc->address               = $_POST["adresse"];
+        $soc->address               = $_POST["adresse"];
 		$soc->adresse               = $_POST["adresse"]; // TODO obsolete
-		$soc->cp                    = $_POST["zipcode"];
-		$soc->ville                 = $_POST["town"];
-		$soc->pays_id               = $_POST["pays_id"];
+        $soc->zip                   = $_POST["zipcode"];
+		$soc->cp                    = $_POST["zipcode"]; // TODO obsolete
+        $soc->town                  = $_POST["town"];
+        $soc->ville                 = $_POST["town"];    // TODO obsolete
+        $soc->pays_id               = $_POST["pays_id"];
 		$soc->departement_id        = $_POST["departement_id"];
 		$soc->tel                   = $_POST["tel"];
 		$soc->fax                   = $_POST["fax"];
@@ -230,9 +234,11 @@ else
 						$contact->name=$soc->nom_particulier;
 						$contact->firstname=$soc->prenom;
 						$contact->address=$soc->address;
-						$contact->cp=$soc->cp;
-						$contact->ville=$soc->ville;
-						$contact->fk_pays=$soc->fk_pays;
+						$contact->zip=$soc->zip;
+                        $contact->cp=$soc->cp;
+						$contact->town=$soc->town;
+                        $contact->ville=$soc->ville;
+                        $contact->fk_pays=$soc->fk_pays;
 						$contact->socid=$soc->id;                   // fk_soc
 						$contact->status=1;
 						$contact->email=$soc->email;
