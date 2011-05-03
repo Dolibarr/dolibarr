@@ -166,7 +166,7 @@ if ($resql)
 	print '<input type="text" class="flat" name="credit" size="6" value="'.$credit.'">';
 	print '</td>';
 	print '<td class="liste_titre" align="center">';
-	$html->select_types_paiements(empty($_REQUEST["type"])?'':$_REQUEST["type"], 'type', '', 2, 0, 1);
+	$html->select_types_paiements(empty($_REQUEST["type"])?'':$_REQUEST["type"], 'type', '', 2, 0, 1, 8);
 	print '</td>';
 	print '<td class="liste_titre" align="right">';
 	print '<input type="hidden" name="action" value="search">';
