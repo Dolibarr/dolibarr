@@ -75,7 +75,7 @@ $html = new Form($db);
 if ($vline) $viewline = $vline;
 else $viewline = 50;
 
-$sql = "SELECT b.rowid, b.dateo as do, b.amount, b.label, b.rappro, b.num_releve, b.num_chq,";
+$sql = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq,";
 $sql.= " b.fk_account, b.fk_type,";
 $sql.= " ba.rowid as bankid, ba.ref as bankref,";
 $sql.= " bu.label as labelurl, bu.url_id";
@@ -84,8 +84,19 @@ if (! empty($_REQUEST["bid"])) $sql.= MAIN_DB_PREFIX."bank_class as l,";
 $sql.= " ".MAIN_DB_PREFIX."bank_account as ba,";
 $sql.= " ".MAIN_DB_PREFIX."bank as b";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu ON bu.fk_bank = b.rowid AND type = 'company'";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON bu.url_id = s.rowid";
 $sql.= " WHERE b.fk_account = ba.rowid";
 $sql.= " AND ba.entity = ".$conf->entity;
+if (GETPOST("req_nb"))
+{
+    $sql.= " AND b.num_chq like '%".$db->escape(GETPOST("req_nb"))."%'";
+    $param.='&amp;req_nb='.urlencode(GETPOST("req_nb"));
+}
+if (GETPOST("thirdparty"))
+{
+    $sql.=" AND (COALESCE(s.nom,'') LIKE '%".$db->escape(GETPOST("thirdparty"))."%')";
+    $param.='&amp;thirdparty='.urlencode(GETPOST("thirdparty"));
+}
 if (! empty($_REQUEST["bid"]))
 {
 	$sql.= " AND b.rowid=l.lineid AND l.fk_categ=".$_REQUEST["bid"];
@@ -141,32 +152,36 @@ if ($resql)
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'b.rowid','',$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('DateOperationShort'),$_SERVER['PHP_SELF'],'b.dateo','',$param,'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('DateOperationShort'),$_SERVER['PHP_SELF'],'b.dateo','',$param,'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans('Value'),$_SERVER['PHP_SELF'],'b.datev','',$param,'align="center"',$sortfield,$sortorder);
+	print '<td class="liste_titre" align="center">'.$langs->trans("Type").'</td>';
+    print '<td class="liste_titre">'.$langs->trans("Numero").'</td>';
 	print '<td class="liste_titre">'.$langs->trans("Description").'</td>';
 	print '<td class="liste_titre">'.$langs->trans("ThirdParty").'</td>';
 	print '<td class="liste_titre" align="right">'.$langs->trans("Debit").'</td>';
 	print '<td class="liste_titre" align="right">'.$langs->trans("Credit").'</td>';
-	print '<td class="liste_titre" align="center">'.$langs->trans("Type").'</td>';
-	print '<td class="liste_titre" align="left">'.$langs->trans("Account").'</td>';
+	print '<td class="liste_titre" align="left"> &nbsp; '.$langs->trans("Account").'</td>';
 	print "</tr>\n";
 
 	print '<form method="post" action="search.php">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="description" size="28" value="'.$description.'">';
+    print '<td class="liste_titre">&nbsp;</td>';
+    print '<td class="liste_titre">&nbsp;</td>';
+    print '<td class="liste_titre" align="center">';
+    $html->select_types_paiements(empty($_REQUEST["type"])?'':$_REQUEST["type"], 'type', '', 2, 0, 1, 8);
+    print '</td>';
+    print '<td class="liste_titre"><input type="text" class="flat" name="req_nb" value="'.GETPOST("req_nb").'" size="2"></td>';
+    print '<td class="liste_titre">';
+	print '<input type="text" class="flat" name="description" size="24" value="'.$description.'">';
 	print '</td>';
-	print '<td class="liste_titre">&nbsp;</td>';
+    print '<td class="liste_titre"><input type="text" class="flat" name="thirdparty" value="'.GETPOST("thirdparty").'" size="14"></td>';
 	print '<td class="liste_titre" align="right">';
-	print '<input type="text" class="flat" name="debit" size="6" value="'.$debit.'">';
+	print '<input type="text" class="flat" name="debit" size="4" value="'.$debit.'">';
 	print '</td>';
 	print '<td class="liste_titre" align="right">';
-	print '<input type="text" class="flat" name="credit" size="6" value="'.$credit.'">';
-	print '</td>';
-	print '<td class="liste_titre" align="center">';
-	$html->select_types_paiements(empty($_REQUEST["type"])?'':$_REQUEST["type"], 'type', '', 2, 0, 1, 8);
+	print '<input type="text" class="flat" name="credit" size="4" value="'.$credit.'">';
 	print '</td>';
 	print '<td class="liste_titre" align="right">';
 	print '<input type="hidden" name="action" value="search">';
@@ -189,82 +204,24 @@ if ($resql)
 		print "<a href=\"ligne.php?rowid=".$objp->rowid.'">'.img_object($langs->trans("ShowPayment"),"payment").' '.$objp->rowid."</a> &nbsp; ";
 		print '</td>';
 
-		// Date
-		print '<td align="left" nowrap="nowrap">'.dol_print_date($db->jdate($objp->do),"day")." &nbsp; </td>\n";
+		// Date ope
+        print '<td align="center" nowrap="nowrap">'.dol_print_date($db->jdate($objp->do),"day")."</td>\n";
 
-		// Description
+        // Date value
+        print '<td align="center" nowrap="nowrap">'.dol_print_date($db->jdate($objp->dv),"day")."</td>\n";
+
+        // Payment type
+        print "<td align=\"center\">";
+        $labeltype=$langs->getLabelFromKey($db,$objp->fk_type,'c_paiement','code','libelle');
+        if ($labeltype == 'SOLD') print '&nbsp;'; //$langs->trans("InitialBankBalance");
+        else print $labeltype;
+        print "</td>\n";
+
+        // Num
+        print '<td nowrap>'.($objp->num_chq?$objp->num_chq:"")."</td>\n";
+
+        // Description
 		print "<td>";
-
-		/* This bloc is same than in page compta/bank/account.php
-
-		 		// Show generic description
-				if (preg_match('/^\((.*)\)$/i',$objp->label,$reg))
-				{
-					// Generic description because between (). We show it after translating.
-					print $langs->trans($reg[1]);
-				}
-				else
-				{
-					print dol_trunc($objp->label,60);
-				}
-				// Add links after description
-				$links = $acct->get_url($objp->rowid);
-				foreach($links as $key=>$val)
-				{
-					if ($links[$key]['type']=='payment') {
-						$paymentstatic->id=$links[$key]['url_id'];
-						print ' '.$paymentstatic->getNomUrl(2);
-					}
-					else if ($links[$key]['type']=='payment_supplier') {
-						$paymentsupplierstatic->id=$links[$key]['url_id'];
-						$paymentsupplierstatic->ref=$links[$key]['url_id'];
-						print ' '.$paymentsupplierstatic->getNomUrl(2);
-					}
-					else if ($links[$key]['type']=='company') {
-					}
-					else if ($links[$key]['type']=='sc') {	// This is waiting for card to link to payment_sc
-						$chargestatic->id=$links[$key]['url_id'];
-						$chargestatic->ref=$links[$key]['url_id'];
-						$chargestatic->lib=$langs->trans("SocialContribution");
-						print ' '.$chargestatic->getNomUrl(2);
-					}
-					else if ($links[$key]['type']=='payment_sc')
-					{
-						//print ' - ';
-						print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/fiche.php?id='.$links[$key]['url_id'].'">';
-						print ' '.img_object($langs->trans('ShowPayment'),'payment').' ';
-						//print $langs->trans("SocialContributionPayment");
-						print '</a>';
-
-					}
-					else if ($links[$key]['type']=='payment_vat')
-					{
-						$paymentvatstatic->id=$links[$key]['url_id'];
-						$paymentvatstatic->ref=$links[$key]['url_id'];
-						print ' '.$paymentvatstatic->getNomUrl(2);
-					}
-					else if ($links[$key]['type']=='banktransfert') {
-						// Do not show this link (avoid confusion). Can already be accessed from transaction detail
-					}
-					else if ($links[$key]['type']=='member') {
-					}
-					else {
-						//print ' - ';
-						print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
-						if (preg_match('/^\((.*)\)$/i',$links[$key]['label'],$reg))
-						{
-							// Label generique car entre parentheses. On l'affiche en le traduisant
-							if ($reg[1]=='paiement') $reg[1]='Payment';
-							print $langs->trans($reg[1]);
-						}
-						else
-						{
-							print $links[$key]['label'];
-						}
-						print '</a>';
-					}
-				}
-		*/
 
 		print "<a href=\"ligne.php?rowid=".$objp->rowid."&amp;account=".$objp->fk_account."\">";
 		$reg=array();
@@ -298,13 +255,6 @@ if ($resql)
 		{
 			print "<td>&nbsp;</td><td align=\"right\">".price($objp->amount)."</td>\n";
 		}
-
-		// Payment type
-		print "<td align=\"center\">";
-		$labeltype=$langs->getLabelFromKey($db,$objp->fk_type,'c_paiement','code','libelle');
-		if ($labeltype == 'SOLD') print '&nbsp;'; //$langs->trans("InitialBankBalance");
-		else print $labeltype;
-		print "</td>\n";
 
 		// Bank account
 		print '<td align="left" nowrap="nowrap">';

@@ -48,10 +48,12 @@ $fieldid = isset($_GET["ref"])?'ref':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'banque',$id,'bank_account','','',$fieldid);
 
+$req_nb=GETPOST("req_nb",'',3);
+$thirdarty=GETPOST("thirdparty",'',3);
+$account=GETPOST("account");
+$vline=GETPOST("vline");
+$action=GETPOST("action");
 
-$account=isset($_GET["account"])?$_GET["account"]:$_POST["account"];
-$vline=isset($_GET["vline"])?$_GET["vline"]:$_POST["vline"];
-$action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 $page=isset($_GET["page"])?$_GET["page"]:0;
 $negpage=isset($_GET["negpage"])?$_GET["negpage"]:0;
 if ($negpage)
@@ -184,10 +186,10 @@ if ($account || $_GET["ref"])
     $param='';
     $sql_rech='';
     $mode_search = 0;
-    if ($_REQUEST["req_nb"])
+    if ($req_nb)
     {
-        $sql_rech.= " AND b.num_chq like '%".$db->escape($_REQUEST["req_nb"])."%'";
-        $param.='&amp;req_nb='.urlencode($_REQUEST["req_nb"]);
+        $sql_rech.= " AND b.num_chq like '%".$db->escape($req_nb)."%'";
+        $param.='&amp;req_nb='.urlencode($req_nb);
         $mode_search = 1;
     }
     if ($_REQUEST["req_desc"])
@@ -208,10 +210,10 @@ if ($account || $_GET["ref"])
         $param.='&amp;req_credit='.urlencode($_REQUEST["req_credit"]);
         $mode_search = 1;
     }
-    if ($_REQUEST["thirdparty"])
+    if ($thirdparty)
     {
-        $sql_rech.=" AND (COALESCE(s.nom,'') LIKE '%".$db->escape($_REQUEST["thirdparty"])."%')";
-        $param.='&amp;thirdparty='.urlencode($_REQUEST["thirdparty"]);
+        $sql_rech.=" AND (COALESCE(s.nom,'') LIKE '%".$db->escape($thirdparty)."%')";
+        $param.='&amp;thirdparty='.urlencode($thirdparty);
         $mode_search = 1;
     }
     if ($_REQUEST["paiementtype"])
@@ -311,11 +313,11 @@ if ($account || $_GET["ref"])
     }
     $navig.= $langs->trans("Page")." "; // ' Page ';
     $navig.='<input type="text" name="negpage" size="1" class="flat" value="'.($nbpage-$page).'">';
-    $navig.='<input type="hidden" name="req_nb"     value="'.$_REQUEST["req_nb"].'">';
+    $navig.='<input type="hidden" name="req_nb"     value="'.$req_nb.'">';
     $navig.='<input type="hidden" name="req_desc"   value="'.$_REQUEST["req_desc"].'">';
     $navig.='<input type="hidden" name="req_debit"  value="'.$_REQUEST["req_debit"].'">';
     $navig.='<input type="hidden" name="req_credit" value="'.$_REQUEST["req_credit"].'">';
-    $navig.='<input type="hidden" name="thirdparty" value="'.$_REQUEST["thirdparty"].'">';
+    $navig.='<input type="hidden" name="thirdparty" value="'.$thirdparty.'">';
     $navig.='<input type="hidden" name="nbpage"  value="'.$nbpage.'">';
     $navig.='<input type="hidden" name="account" value="'.($acct->id).'">';
     $navig.='/'.$nbpage.' ';
@@ -421,15 +423,16 @@ if ($account || $_GET["ref"])
     print '<input type="hidden" name="account" value="' . $acct->id . '">';
 
     print '<tr class="liste_titre">';
-    print '<td colspan="2">&nbsp;</td>';
+    print '<td>&nbsp;</td>';
+    print '<td>&nbsp;</td>';
     print '<td>';
     //$filtertype=array('TIP'=>'TIP','PRE'=>'PRE',...)
     $filtertype='';
     print $html->select_types_paiements($_REQUEST['paiementtype'],'paiementtype',$filtertype,2,1,1,8);
     print '</td>';
-    print '<td><input type="text" class="flat" name="req_nb" value="'.$_REQUEST["req_nb"].'" size="2"></td>';
+    print '<td><input type="text" class="flat" name="req_nb" value="'.$req_nb.'" size="2"></td>';
     print '<td><input type="text" class="flat" name="req_desc" value="'.$_REQUEST["req_desc"].'" size="24"></td>';
-    print '<td><input type="text" class="flat" name="thirdparty" value="'.$_REQUEST["thirdparty"].'" size="14"></td>';
+    print '<td><input type="text" class="flat" name="thirdparty" value="'.$thirdparty.'" size="14"></td>';
     print '<td align="right"><input type="text" class="flat" name="req_debit" value="'.$_REQUEST["req_debit"].'" size="4"></td>';
     print '<td align="right"><input type="text" class="flat" name="req_credit" value="'.$_REQUEST["req_credit"].'" size="4"></td>';
     print '<td align="center">&nbsp;</td>';
@@ -533,6 +536,8 @@ if ($account || $_GET["ref"])
                 if ($objp->fk_type == 'SOLD') $label='&nbsp;';
                 print $label;
                 print "</td>\n";
+
+                // Num
                 print '<td nowrap>'.($objp->num_chq?$objp->num_chq:"")."</td>\n";
 
                 // Description
