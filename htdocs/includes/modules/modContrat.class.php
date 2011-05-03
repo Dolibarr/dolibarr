@@ -68,7 +68,7 @@ class modContrat extends DolibarrModules
 		// Dependances
 		$this->depends = array("modService");
 		$this->requiredby = array();
-		
+
 		// Config pages
 		$this->config_page_url = array("contract.php");
 
@@ -76,10 +76,10 @@ class modContrat extends DolibarrModules
 		$this->const = array();
 		$this->const[0][0] = "CONTRACT_ADDON";
 		$this->const[0][1] = "chaine";
-		$this->const[0][2] = "mod_contract_magre";
+		$this->const[0][2] = "mod_contract_serpis";
 		$this->const[0][3] = 'Nom du gestionnaire de numerotation des contrats';
 		$this->const[0][4] = 0;
-		
+
 		// Boxes
 		$this->boxes = array();
 		$this->boxes[0][1] = "box_contracts.php";
@@ -129,9 +129,9 @@ class modContrat extends DolibarrModules
 	{
 		global $conf;
 
-		// Nettoyage avant activation	
+		// Nettoyage avant activation
 		$this->remove();
-		
+
 		return $this->_init($sql);
 	}
 
