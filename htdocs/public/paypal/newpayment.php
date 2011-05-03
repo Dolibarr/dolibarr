@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2009-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,6 @@ $langs->load("paypal");
 // tag (a free text, required if type is empty)
 // currency (iso code)
 
-$ref=GETPOST('ref','alpha');
 $suffix=GETPOST("suffix",'alpha');
 $amount=price2num(GETPOST("amount"));
 if (! GETPOST("currency",'alpha')) $currency=$conf->global->MAIN_MONNAIE;
@@ -84,19 +83,37 @@ $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$dolib
 $urlok=$urlwithouturlroot.DOL_URL_ROOT.'/public/paypal/paymentok.php?';
 $urlko=$urlwithouturlroot.DOL_URL_ROOT.'/public/paypal/paymentko.php?';
 
-// Complete urls
+// Complete urls for post treatment
+$SOURCE=GETPOST("source",'alpha');
+$ref=$REF=GETPOST('ref','alpha');
 $TAG=GETPOST("tag",'alpha');
-$FULLTAG=GETPOST("fulltag",'alpha');  // fulltag is tag with more informations
+$FULLTAG=GETPOST("fulltag",'alpha');		// fulltag is tag with more informations
+$SECUREKEY=GETPOST("securekey",'alpha');	// Secure key
 
-if (!empty($TAG))
+if (! empty($SOURCE))
+{
+    $urlok.='source='.urlencode($SOURCE).'&';
+    $urlko.='source='.urlencode($SOURCE).'&';
+}
+if (! empty($REF))
+{
+    $urlok.='ref='.urlencode($REF).'&';
+    $urlko.='ref='.urlencode($REF).'&';
+}
+if (! empty($TAG))
 {
     $urlok.='tag='.urlencode($TAG).'&';
     $urlko.='tag='.urlencode($TAG).'&';
 }
-if (!empty($FULLTAG))
+if (! empty($FULLTAG))
 {
     $urlok.='fulltag='.urlencode($FULLTAG).'&';
     $urlko.='fulltag='.urlencode($FULLTAG).'&';
+}
+if (! empty($SECUREKEY))
+{
+    $urlok.='securekey='.urlencode($SECUREKEY).'&';
+    $urlko.='securekey='.urlencode($SECUREKEY).'&';
 }
 $urlok=preg_replace('/&$/','',$urlok);  // Remove last &
 $urlko=preg_replace('/&$/','',$urlko);  // Remove last &
@@ -282,7 +299,13 @@ $found=false;
 $error=0;
 $var=false;
 
-
+// Check security token
+$valid=true;
+if (! empty($conf->global->PAYPAL_SECURITY_TOKEN) )
+{
+	$token = md5($conf->global->PAYPAL_SECURITY_TOKEN . $ref);
+	if ($SECUREKEY != $token) $valid=false;
+}
 
 // Free payment
 if (! GETPOST("source"))
@@ -334,7 +357,7 @@ if (! GETPOST("source"))
 
 
 // Payment on customer order
-if (GETPOST("source") == 'order')
+if (GETPOST("source") == 'order' && $valid)
 {
 	$found=true;
 	$langs->load("orders");
@@ -443,7 +466,7 @@ if (GETPOST("source") == 'order')
 
 
 // Payment on customer invoice
-if (GETPOST("source") == 'invoice')
+if (GETPOST("source") == 'invoice' && $valid)
 {
 	$found=true;
 	$langs->load("bills");
@@ -551,7 +574,7 @@ if (GETPOST("source") == 'invoice')
 }
 
 // Payment on contract line
-if (GETPOST("source") == 'contractline')
+if (GETPOST("source") == 'contractline' && $valid)
 {
 	$found=true;
 	$langs->load("contracts");
@@ -748,7 +771,7 @@ if (GETPOST("source") == 'contractline')
 }
 
 // Payment on member subscription
-if (GETPOST("source") == 'membersubscription')
+if (GETPOST("source") == 'membersubscription' && $valid)
 {
 	$found=true;
 	$langs->load("members");

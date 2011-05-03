@@ -215,7 +215,7 @@ print '</div>';
 print '<br><br>';
 
 $token='';
-if (! empty($conf->global->PAYPAL_SECURITY_TOKEN)) $token='&token='.md5($conf->global->PAYPAL_SECURITY_TOKEN);
+if (! empty($conf->global->PAYPAL_SECURITY_TOKEN)) $token='&securekey='.md5($conf->global->PAYPAL_SECURITY_TOKEN);
 
 // Url list
 print '<u>'.$langs->trans("FollowingUrlAreAvailableToMakePayments").':</u><br>';
