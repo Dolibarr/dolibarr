@@ -33,6 +33,7 @@ require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypal.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypalfunctions.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/security.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 
@@ -303,7 +304,7 @@ $var=false;
 $valid=true;
 if (! empty($conf->global->PAYPAL_SECURITY_TOKEN) )
 {
-	$token = md5($conf->global->PAYPAL_SECURITY_TOKEN . $ref);
+	$token = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . $ref, 2);
 	if ($SECUREKEY != $token) $valid=false;
 }
 

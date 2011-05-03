@@ -558,4 +558,17 @@ function getRandomPassword()
 	return $generated_password;
 }
 
+/**
+ * 	Returns a hash of a string
+ * 	@param 	chain	String to hash
+ * 	@param	type	Type of hash (0:md5, 1:sha1, 2:sha1+md5)
+ * 	@return	hash	hash of string
+ */
+function dol_hash($chain,$type=0)
+{
+	if ($type == 1) return sha1($chain);
+	else if ($type == 2) return sha1(md5($chain));
+	else return md5($chain);
+}
+
 ?>

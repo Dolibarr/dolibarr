@@ -26,6 +26,7 @@
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/security.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
 
 $servicename='PayPal';
@@ -215,7 +216,7 @@ print '</div>';
 print '<br><br>';
 
 $token='';
-if (! empty($conf->global->PAYPAL_SECURITY_TOKEN)) $token='&securekey='.md5($conf->global->PAYPAL_SECURITY_TOKEN);
+if (! empty($conf->global->PAYPAL_SECURITY_TOKEN)) $token='&securekey='.dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
 
 // Url list
 print '<u>'.$langs->trans("FollowingUrlAreAvailableToMakePayments").':</u><br>';
