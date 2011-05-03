@@ -114,6 +114,7 @@ class Contrat extends CommonObject
 		if ($result)
 		{
 			$obj = new $classname();
+
 			$numref = "";
 			$numref = $obj->getNextValue($soc,$this);
 
@@ -123,7 +124,7 @@ class Contrat extends CommonObject
 			}
 			else
 			{
-				dol_print_error($db,"Contract::getNextNumRef ".$obj->error);
+				dol_print_error($db,"Contract::getNextValue ".$obj->error);
 				return "";
 			}
 		}
