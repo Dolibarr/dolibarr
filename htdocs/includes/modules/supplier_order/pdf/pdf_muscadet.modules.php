@@ -209,7 +209,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 				$tab_top = 90;
 				$tab_top_newpage = 50;
-				$tab_height = 110;
+				$tab_height = 150;
 				$tab_height_newpage = 150;
 
 				// Affiche notes
