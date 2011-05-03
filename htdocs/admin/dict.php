@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
@@ -276,6 +276,30 @@ $tabcond[22]= $conf->commande->enabled||$conf->propale->enabled;
 
 complete_dictionnary_with_modules($taborder,$tabname,$tablib,$tabsql,$tabsqlsort,$tabfield,$tabfieldvalue,$tabfieldinsert,$tabrowid,$tabcond);
 
+// Define elementList and sourceList (used for dictionnary "type of contacts")
+$elementList = array();
+$sourceList=array();
+if (GETPOST("id") == 11)
+{
+    $langs->load("orders");
+    $langs->load("contracts");
+    $langs->load("projects");
+    $langs->load("propal");
+    $langs->load("bills");
+    $langs->load("interventions");
+    $elementList = array("commande"=>$langs->trans("Order"),
+    "order_supplier"=>$langs->trans("SupplierOrder"),
+    "contrat"=>$langs->trans("Contract"),
+    "project"=>$langs->trans("Project"),
+    "project_task"=>$langs->trans("Task"),
+    "propal"=>$langs->trans("Propal"),
+    "facture"=>$langs->trans("Bill"),
+    "facture_fourn"=>$langs->trans("SupplierBill"),
+    "fichinter"=>$langs->trans("InterventionCard"));
+    if ($conf->global->MAIN_SUPPORT_CONTACT_TYPE_FOR_THIRDPARTIES) $elementList["societe"]=$langs->trans("ThirdParty");
+    $sourceList = array("internal"=>$langs->trans("Internal"),
+    "external"=>$langs->trans("External"));
+}
 
 $msg='';
 
@@ -868,6 +892,7 @@ function fieldList($fieldlist,$obj='')
 {
     global $conf,$langs,$db;
     global $region_id;
+    global $elementList,$sourceList;
 
     $html = new Form($db);
     $formadmin = new FormAdmin($db);
@@ -903,22 +928,7 @@ function fieldList($fieldlist,$obj='')
         // Le type de l'element (pour les type de contact).'
         elseif ($fieldlist[$field] == 'element')
         {
-            $langs->load("orders");
-            $langs->load("contracts");
-            $langs->load("project");
-            $langs->load("propal");
-            $langs->load("bills");
-            $langs->load("interventions");
             print '<td>';
-            $elementList = array("commande"=>$langs->trans("Order"),
-			"order_supplier"=>$langs->trans("SupplierOrder"),
-			"contrat"=>$langs->trans("Contract"),
-			"project"=>$langs->trans("Project"),
-			"project_task"=>$langs->trans("Task"),
-			"propal"=>$langs->trans("Propal"),
-			"facture"=>$langs->trans("Bill"),
-			"facture_fourn"=>$langs->trans("SupplierBill"),
-			"fichinter"=>$langs->trans("InterventionCard"));
             print $html->selectarray('element', $elementList,$obj->$fieldlist[$field]);
             print '</td>';
         }
@@ -926,9 +936,7 @@ function fieldList($fieldlist,$obj='')
         elseif ($fieldlist[$field] == 'source')
         {
             print '<td>';
-            $elementList = array("internal"=>$langs->trans("Internal"),
-			"external"=>$langs->trans("External"));
-            print $html->selectarray('source', $elementList,$obj->$fieldlist[$field]);
+            print $html->selectarray('source', $sourceList,$obj->$fieldlist[$field]);
             print '</td>';
         }
         elseif ($fieldlist[$field] == 'type' && $tabname[$_GET["id"]] == MAIN_DB_PREFIX."c_actioncomm")
