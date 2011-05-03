@@ -1135,7 +1135,6 @@ function isValidPhone($address)
 
 /**
  * Make a strlen call. Works even if mbstring module not enabled.
- *
  * @param   $string
  * @param   $stringencoding
  * @return  int
@@ -1150,7 +1149,6 @@ function dol_strlen($string,$stringencoding='UTF-8')
 
 /**
  * Make a substring. Works even in mbstring module not enabled
- *
  * @param   $string
  * @param   $start
  * @param   $length
@@ -1318,10 +1316,10 @@ function img_picto_common($alt, $picto, $options='', $pictoisfullpath=0)
 }
 
 /**
- *	\brief      Show logo action
- *	\param      alt         Text for image alt and title
- *	\param      numaction   Action to show
- *	\return     string      Return an img tag
+ *	Show logo action
+ *	@param      alt         Text for image alt and title
+ *	@param      numaction   Action to show
+ *	@return     string      Return an img tag
  */
 function img_action($alt = "default", $numaction)
 {
@@ -1338,9 +1336,9 @@ function img_action($alt = "default", $numaction)
 
 
 /**
- *	\brief      Affiche logo fichier
- *	\param      alt         Texte sur le alt de l'image
- *	\return     string      Retourne tag img
+ *	Affiche logo fichier
+ *	@param      alt         Texte sur le alt de l'image
+ *	@return     string      Retourne tag img
  */
 function img_file($alt = "default")
 {
@@ -1350,9 +1348,9 @@ function img_file($alt = "default")
 }
 
 /**
- *	\brief      Affiche logo refresh
- *	\param      alt         Texte sur le alt de l'image
- *	\return     string      Retourne tag img
+ *	Affiche logo refresh
+ *	@param      alt         Texte sur le alt de l'image
+ *	@return     string      Retourne tag img
  */
 function img_refresh($alt = "default")
 {
@@ -1362,9 +1360,9 @@ function img_refresh($alt = "default")
 }
 
 /**
- *	\brief      Affiche logo dossier
- *	\param      alt         Texte sur le alt de l'image
- *	\return     string      Retourne tag img
+ *	Affiche logo dossier
+ *	@param      alt         Texte sur le alt de l'image
+ *	@return     string      Retourne tag img
  */
 function img_folder($alt = "default")
 {
@@ -1374,9 +1372,9 @@ function img_folder($alt = "default")
 }
 
 /**
- *	\brief      Affiche logo nouveau fichier
- *	\param      alt         Texte sur le alt de l'image
- *	\return     string      Retourne tag img
+ *	Affiche logo nouveau fichier
+ *	@param      alt         Texte sur le alt de l'image
+ *	@return     string      Retourne tag img
  */
 function img_file_new($alt = "default")
 {
@@ -1386,10 +1384,10 @@ function img_file_new($alt = "default")
 }
 
 /**
- \brief      Affiche logo pdf
- \param      alt         Texte sur le alt de l'image
- \param      $size       Taille de l'icone : 3 = 16x16px , 2 = 14x14px
- \return     string      Retourne tag img
+ *  Affiche logo pdf
+ *  @param      alt         Texte sur le alt de l'image
+ *  @param      $size       Taille de l'icone : 3 = 16x16px , 2 = 14x14px
+ *  @return     string      Retourne tag img
  */
 function img_pdf($alt = "default",$size=3)
 {
@@ -1399,9 +1397,9 @@ function img_pdf($alt = "default",$size=3)
 }
 
 /**
- *	\brief      Affiche logo +
- *	\param      alt         Texte sur le alt de l'image
- *	\return     string      Retourne tag img
+ *	Affiche logo +
+ *	@param      alt         Texte sur le alt de l'image
+ *	@return     string      Retourne tag img
  */
 function img_edit_add($alt = "default")
 {
@@ -1410,9 +1408,9 @@ function img_edit_add($alt = "default")
 	return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/edit_add.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
 }
 /**
- *	\brief      Affiche logo -
- *	\param      alt         Texte sur le alt de l'image
- *	\return     string      Retourne tag img
+ *	Affiche logo -
+ *	@param      alt         Texte sur le alt de l'image
+ *	@return     string      Retourne tag img
  */
 function img_edit_remove($alt = "default")
 {
@@ -1422,10 +1420,10 @@ function img_edit_remove($alt = "default")
 }
 
 /**
- *	\brief      Affiche logo editer/modifier fiche
- *	\param      alt         Texte sur le alt de l'image
- *	\param      float       Si il faut y mettre le style "float: right"
- *	\return     string      Retourne tag img
+ *	Affiche logo editer/modifier fiche
+ *	@param      alt         Texte sur le alt de l'image
+ *	@param      float       Si il faut y mettre le style "float: right"
+ *	@return     string      Retourne tag img
  */
 function img_edit($alt = "default", $float=0, $other='')
 {
@@ -1439,10 +1437,10 @@ function img_edit($alt = "default", $float=0, $other='')
 }
 
 /**
- *	\brief      Affiche logo voir fiche
- *	\param      alt         Texte sur le alt de l'image
- *	\param      float       Si il faut y mettre le style "float: right"
- *	\return     string      Retourne tag img
+ *	Affiche logo voir fiche
+ *	@param      alt         Texte sur le alt de l'image
+ *	@param      float       Si il faut y mettre le style "float: right"
+ *	@return     string      Retourne tag img
  */
 function img_view($alt = "default", $float=0, $other='')
 {
@@ -1491,9 +1489,9 @@ function img_help($usehelpcursor=1,$usealttitle=1)
 }
 
 /**
- *	\brief      Affiche logo info
- *	\param      alt         Texte sur le alt de l'image
- *	\return     string      Retourne tag img
+ *	Affiche logo info
+ *	@param      alt         Texte sur le alt de l'image
+ *	@return     string      Retourne tag img
  */
 function img_info($alt = "default")
 {
@@ -1503,10 +1501,10 @@ function img_info($alt = "default")
 }
 
 /**
- *	\brief      Affiche logo warning
- *	\param      alt         Texte sur le alt de l'image
- *	\param      float       Si il faut afficher le style "float: right"
- *	\return     string      Retourne tag img
+ *	Affiche logo warning
+ *	@param      alt         Texte sur le alt de l'image
+ *	@param      float       Si il faut afficher le style "float: right"
+ *	@return     string      Retourne tag img
  */
 function img_warning($alt = "default",$float=0)
 {
@@ -1520,10 +1518,10 @@ function img_warning($alt = "default",$float=0)
 }
 
 /**
- *	\brief      Affiche logo redstar
- *	\param      alt         Texte sur le alt de l'image
- *	\param      float       Si il faut afficher le style "float: right"
- *	\return     string      Retourne tag img
+ *	Affiche logo redstar
+ *	@param      alt         Texte sur le alt de l'image
+ *	@param      float       Si il faut afficher le style "float: right"
+ *	@return     string      Retourne tag img
  */
 function img_redstar($alt = "default",$float=0)
 {
@@ -1537,9 +1535,9 @@ function img_redstar($alt = "default",$float=0)
 }
 
 /**
- \brief      Affiche logo error
- \param      alt         Texte sur le alt de l'image
- \return     string      Retourne tag img
+ *  Affiche logo error
+ *  @param      alt         Texte sur le alt de l'image
+ *  @return     string      Retourne tag img
  */
 function img_error($alt = "default")
 {
@@ -1549,10 +1547,10 @@ function img_error($alt = "default")
 }
 
 /**
- *	\brief      Affiche logo telephone
- *	\param      alt         Texte sur le alt de l'image
- *	\param		option		Choose of logo
- *	\return     string      Retourne tag img
+ *	Affiche logo telephone
+ *	@param      alt         Texte sur le alt de l'image
+ *	@param		option		Choose of logo
+ *	@return     string      Retourne tag img
  */
 function img_phone($alt = "default",$option=0)
 {
@@ -1566,9 +1564,9 @@ function img_phone($alt = "default",$option=0)
 
 
 /**
- *	\brief      Affiche logo suivant
- *	\param      alt         Texte sur le alt de l'image
- *	\return     string      Retourne tag img
+ *	Affiche logo suivant
+ *	@param      alt         Texte sur le alt de l'image
+ *	@return     string      Retourne tag img
  */
 function img_next($alt = "default")
 {
@@ -1580,9 +1578,9 @@ function img_next($alt = "default")
 }
 
 /**
- *	\brief      Affiche logo precedent
- *	\param      alt     Texte sur le alt de l'image
- *	\return     string      Retourne tag img
+ *	Affiche logo precedent
+ *	@param      alt     Texte sur le alt de l'image
+ *	@return     string      Retourne tag img
  */
 function img_previous($alt = "default")
 {
@@ -1620,10 +1618,10 @@ function img_up($alt = "default", $selected=0)
 }
 
 /**
- *	\brief      Affiche logo gauche
- *	\param      alt         Texte sur le alt de l'image
- *	\param      selected    Affiche version "selected" du logo
- *	\return     string      Retourne tag img
+ *	Affiche logo gauche
+ *	@param      alt         Texte sur le alt de l'image
+ *	@param      selected    Affiche version "selected" du logo
+ *	@return     string      Retourne tag img
  */
 function img_left($alt = "default", $selected=0)
 {
@@ -1634,10 +1632,10 @@ function img_left($alt = "default", $selected=0)
 }
 
 /**
- *	\brief      Affiche logo droite
- *	\param      alt         Texte sur le alt de l'image
- *	\param      selected    Affiche version "selected" du logo
- *	\return     string      Retourne tag img
+ *	Affiche logo droite
+ *	@param      alt         Texte sur le alt de l'image
+ *	@param      selected    Affiche version "selected" du logo
+ *	@return     string      Retourne tag img
  */
 function img_right($alt = "default", $selected=0)
 {
@@ -1648,9 +1646,9 @@ function img_right($alt = "default", $selected=0)
 }
 
 /**
- *	\brief      Affiche logo tick
- *	\param      alt         Texte sur le alt de l'image
- *	\return     string      Retourne tag img
+ *	Affiche logo tick
+ *	@param      alt         Texte sur le alt de l'image
+ *	@return     string      Retourne tag img
  */
 function img_tick($alt = "default")
 {
@@ -1660,9 +1658,9 @@ function img_tick($alt = "default")
 }
 
 /**
- *	\brief      Affiche le logo tick si allow
- *	\param      allow       Authorise ou non
- *	\return     string      Retourne tag img
+ *	Affiche le logo tick si allow
+ *	@param      allow       Authorise ou non
+ *	@return     string      Retourne tag img
  */
 function img_allow($allow,$alt='default')
 {
@@ -1700,10 +1698,10 @@ function img_mime($file,$alt='')
 
 
 /**
- *	\brief      Show information for admin users
- *	\param      text			Text info
- *	\param      infoonimgalt	Info is shown only on alt of star picto, otherwise it is show on output after the star picto
- *	\return		string			String with info text
+ *	Show information for admin users
+ *	@param      text			Text info
+ *	@param      infoonimgalt	Info is shown only on alt of star picto, otherwise it is show on output after the star picto
+ *	@return		string			String with info text
  */
 function info_admin($texte,$infoonimgalt=0)
 {
@@ -1726,15 +1724,15 @@ function info_admin($texte,$infoonimgalt=0)
 
 
 /**
- *	\brief      Check permissions of a user to show a page and an object. Check read permission
- * 				If $_REQUEST['action'] defined, we also check write and delete permission.
- *	\param      user      	  	User to check
- *	\param      features	    Features to check (in most cases, it's module name)
- *	\param      objectid      	Object ID if we want to check permission on a particular record (optionnal)
- *	\param      dbtablename    	Table name where object is stored. Not used if objectid is null (optionnal)
- *	\param      feature2		Feature to check (second level of permission)
- *  \param      dbt_keyfield    Field name for socid foreign key if not fk_soc. (optionnal)
- *  \param      dbt_select      Field name for select if not rowid. (optionnal)
+ *	Check permissions of a user to show a page and an object. Check read permission
+ * 	If $_REQUEST['action'] defined, we also check write and delete permission.
+ *	@param      user      	  	User to check
+ *	@param      features	    Features to check (in most cases, it's module name)
+ *	@param      objectid      	Object ID if we want to check permission on a particular record (optionnal)
+ *	@param      dbtablename    	Table name where object is stored. Not used if objectid is null (optionnal)
+ *	@param      feature2		Feature to check (second level of permission)
+ *  @param      dbt_keyfield    Field name for socid foreign key if not fk_soc. (optionnal)
+ *  @param      dbt_select      Field name for select if not rowid. (optionnal)
  * 	@return		int				Always 1, die process if not allowed
  */
 function restrictedArea($user, $features='societe', $objectid=0, $dbtablename='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid')
@@ -2240,15 +2238,15 @@ function dol_print_error_email()
 
 
 /**
- *	\brief      Show title line of an array
- *	\param	    name        libelle champ
- *	\param	    file        url pour clic sur tri
- *	\param	    field       champ de tri
- *	\param	    begin       ("" par defaut)
- *	\param	    options     ("" par defaut)
- *	\param      td          options de l'attribut td ("" par defaut)
- *	\param      sortfield   field currently used to sort
- *	\param      sortorder   ordre du tri
+ *	Show title line of an array
+ *	@param	    name        libelle champ
+ *	@param	    file        url pour clic sur tri
+ *	@param	    field       champ de tri
+ *	@param	    begin       ("" par defaut)
+ *	@param	    options     ("" par defaut)
+ *	@param      td          options de l'attribut td ("" par defaut)
+ *	@param      sortfield   field currently used to sort
+ *	@param      sortorder   ordre du tri
  */
 function print_liste_field_titre($name, $file, $field, $begin="", $options="", $td="", $sortfield="", $sortorder="")
 {
@@ -2355,18 +2353,18 @@ function load_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath
 }
 
 /**
- *	\brief  Print a title with navigation controls for pagination
- *	\param	titre				Title to show (required)
- *	\param	page				Numero of page (required)
- *	\param	file				Url of page (required)
- *	\param	options         	parametres complementaires lien ('' par defaut)
- *	\param	sortfield       	champ de tri ('' par defaut)
- *	\param	sortorder       	ordre de tri ('' par defaut)
- *	\param	center          	chaine du centre ('' par defaut)
- *	\param	num					number of records found by select with limit+1
- *	\param	totalnboflines		Total number of records/lines for all pages (if known)
- *	\param	picto				Icon to use before title (should be a 32x32 transparent png file)
- *	\param	pictoisfullpath		1=Icon name is a full absolute url of image
+ *	Print a title with navigation controls for pagination
+ *	@param	titre				Title to show (required)
+ *	@param	page				Numero of page (required)
+ *	@param	file				Url of page (required)
+ *	@param	options         	parametres complementaires lien ('' par defaut)
+ *	@param	sortfield       	champ de tri ('' par defaut)
+ *	@param	sortorder       	ordre de tri ('' par defaut)
+ *	@param	center          	chaine du centre ('' par defaut)
+ *	@param	num					number of records found by select with limit+1
+ *	@param	totalnboflines		Total number of records/lines for all pages (if known)
+ *	@param	picto				Icon to use before title (should be a 32x32 transparent png file)
+ *	@param	pictoisfullpath		1=Icon name is a full absolute url of image
  */
 function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines=0, $picto='title.png', $pictoisfullpath=0)
 {
@@ -2860,17 +2858,17 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $idprod=0)
 
 
 /**
- *	\brief      	Fonction qui renvoie si tva doit etre tva percue recuperable
- *	\remarks    	Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
+ *	Fonction qui renvoie si tva doit etre tva percue recuperable
+ *	             	Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
  *					Si le (pays vendeur = pays acheteur) alors TVA par defaut=TVA du produit vendu. Fin de regle.
  *					Si (vendeur et acheteur dans Communaute europeenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par defaut=0 (La TVA doit etre paye par acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
  *					Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = particulier ou entreprise sans num TVA intra) alors TVA par defaut=TVA du produit vendu. Fin de regle
  *					Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = entreprise avec num TVA) intra alors TVA par defaut=0. Fin de regle
  *					Sinon TVA proposee par defaut=0. Fin de regle.
- *	\param      	societe_vendeuse    	Objet societe vendeuse
- *	\param      	societe_acheteuse   	Objet societe acheteuse
- *  \param          idprod                  Id product
- *	\return     	float               	0 or 1
+ *	@param      	societe_vendeuse    	Objet societe vendeuse
+ *	@param      	societe_acheteuse   	Objet societe acheteuse
+ *  @param          idprod                  Id product
+ *	@return     	float               	0 or 1
  */
 function get_default_npr($societe_vendeuse, $societe_acheteuse, $idprod)
 {
@@ -2878,12 +2876,12 @@ function get_default_npr($societe_vendeuse, $societe_acheteuse, $idprod)
 }
 
 /**
- *	\brief      	Function that return localtax of a product line (according to seller, buyer and product vat rate)
- *	\param      	societe_vendeuse    	Objet societe vendeuse
- *	\param      	societe_acheteuse   	Objet societe acheteuse
- *  \param			local					Localtax to process (1 or 2)
- *	\param      	idprod					Id product
- *	\return     	float               	Taux de localtax appliquer, -1 si ne peut etre determine
+ *	Function that return localtax of a product line (according to seller, buyer and product vat rate)
+ *	@param      	societe_vendeuse    	Objet societe vendeuse
+ *	@param      	societe_acheteuse   	Objet societe acheteuse
+ *  @param			local					Localtax to process (1 or 2)
+ *	@param      	idprod					Id product
+ *	@return     	float               	Taux de localtax appliquer, -1 si ne peut etre determine
  */
 function get_default_localtax($societe_vendeuse, $societe_acheteuse, $local, $idprod=0)
 {
@@ -2912,10 +2910,10 @@ function get_default_localtax($societe_vendeuse, $societe_acheteuse, $local, $id
 }
 
 /**
- *	\brief  Return yes or no in current language
- *	\param	yesno			Value to test (1, 'yes', 'true' or 0, 'no', 'false')
- *	\param	case			1=Yes/No, 0=yes/no
- *	\param	color			0=texte only, 1=Text is formated with a color font style ('ok' or 'error'), 2=Text is formated with 'ok' color.
+ *	Return yes or no in current language
+ *	@param	yesno			Value to test (1, 'yes', 'true' or 0, 'no', 'false')
+ *	@param	case			1=Yes/No, 0=yes/no
+ *	@param	color			0=texte only, 1=Text is formated with a color font style ('ok' or 'error'), 2=Text is formated with 'ok' color.
  */
 function yn($yesno, $case=1, $color=0)
 {
@@ -3027,8 +3025,8 @@ function dol_mkdir($dir)
 
 
 /**
- *	\brief   Retourne le picto champ obligatoire
- *	\return  string		Chaine avec picto obligatoire
+ *	Return picto saying a field is required
+ *	@return  string		Chaine avec picto obligatoire
  */
 function picto_required()
 {
@@ -3121,8 +3119,8 @@ function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0,$pagecodefrom='UTF-8')
 }
 
 /**
- *	\brief		This function is called to decode a HTML string (it decodes entities and br tags)
- *	\param		stringtodecode		String to decode
+ *	This function is called to decode a HTML string (it decodes entities and br tags)
+ *	@param		stringtodecode		String to decode
  */
 function dol_htmlentitiesbr_decode($stringtodecode,$pagecodeto='UTF-8')
 {
@@ -3135,8 +3133,8 @@ function dol_htmlentitiesbr_decode($stringtodecode,$pagecodeto='UTF-8')
 }
 
 /**
- *	\brief		This function remove all ending \n and br at end
- *	\param		stringtodecode		String to decode
+ *	This function remove all ending \n and br at end
+ *	@param		stringtodecode		String to decode
  */
 function dol_htmlcleanlastbr($stringtodecode)
 {
@@ -3145,9 +3143,9 @@ function dol_htmlcleanlastbr($stringtodecode)
 }
 
 /**
- *	\brief		This function is called to decode a string with HTML entities (it decodes entities tags)
- * 	\param   	string      stringhtml
- * 	\return  	string	  	decodestring
+ *	This function is called to decode a string with HTML entities (it decodes entities tags)
+ * 	@param   	string      stringhtml
+ * 	@return  	string	  	decodestring
  */
 function dol_entity_decode($stringhtml,$pagecodeto='UTF-8')
 {
@@ -3183,11 +3181,11 @@ function dol_htmlentities($a,$b,$c)
 
 
 /**
- *	\brief		Check if a string is a correct iso string
- *				If not, it will we considered not HTML encoded even if it is by FPDF.
- *	\remarks	Example, if string contains euro symbol that has ascii code 128.
- *	\param		s		String to check
- *	\return	int		0 if bad iso, 1 if good iso
+ *	Check if a string is a correct iso string
+ *	If not, it will we considered not HTML encoded even if it is by FPDF.
+ *	Example, if string contains euro symbol that has ascii code 128.
+ *	@param       s       String to check
+ *	@return	     int     0 if bad iso, 1 if good iso
  */
 function dol_string_is_good_iso($s)
 {
@@ -3205,10 +3203,10 @@ function dol_string_is_good_iso($s)
 
 
 /**
- *	\brief		Return nb of lines of a clear text
- *	\param		s			String to check
- * 	\param		maxchar		Not yet used
- *	\return		int			Number of lines
+ *	Return nb of lines of a clear text
+ *	@param		s			String to check
+ * 	@param		maxchar		Not yet used
+ *	@return		int			Number of lines
  */
 function dol_nboflines($s,$maxchar=0)
 {
@@ -3221,11 +3219,11 @@ function dol_nboflines($s,$maxchar=0)
 
 
 /**
- *	\brief     	Return nb of lines of a formated text with \n and <br>
- *	\param	   	texte      		Text
- *	\param	   	maxlinesize  	Largeur de ligne en caracteres (ou 0 si pas de limite - defaut)
- * 	\param		charset			Give the charset used to encode the $texte variable in memory.
- *	\return    	int				Number of lines
+ *	Return nb of lines of a formated text with \n and <br>
+ *	@param	   	texte      		Text
+ *	@param	   	maxlinesize  	Largeur de ligne en caracteres (ou 0 si pas de limite - defaut)
+ * 	@param		charset			Give the charset used to encode the $texte variable in memory.
+ *	@return    	int				Number of lines
  */
 function dol_nboflines_bis($texte,$maxlinesize=0,$charset='UTF-8')
 {
@@ -3257,8 +3255,8 @@ function dol_nboflines_bis($texte,$maxlinesize=0,$charset='UTF-8')
 }
 
 /**
- *	\brief		Fonction simple identique a microtime de PHP 5 mais compatible PHP 4
- *	\return		float		Time en millisecondes avec decimal pour microsecondes
+ *	 Same function than microtime in PHP 5 but compatible with PHP4
+ *	 @return		float		Time (millisecondes) with microsecondes in decimal part
  */
 function dol_microtime_float()
 {
@@ -3267,10 +3265,10 @@ function dol_microtime_float()
 }
 
 /*
- *		\brief		Return if a text is a html content
- *		\param		msg			Content to check
- *		\param		option		0=Full detection, 1=Fast check
- *		\return		boolean		true/false
+ *		Return if a text is a html content
+ *		@param		msg			Content to check
+ *		@param		option		0=Full detection, 1=Fast check
+ *		@return		boolean		true/false
  */
 function dol_textishtml($msg,$option=0)
 {
