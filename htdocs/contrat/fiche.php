@@ -757,7 +757,7 @@ else
                         $productstatic->ref=$objp->pref;
                         print $productstatic->getNomUrl(1,'',20);
                         print $objp->label?' - '.dol_trunc($objp->label,16):'';
-						if ($objp->description) print '<br>'.nl2br($objp->description);
+						if ($objp->description) print '<br>'.dol_nl2br($objp->description);
 						print '</td>';
 					}
 					else
