@@ -266,7 +266,7 @@ if ($resql)
 				}
 		*/
 
-		print "<a href=\"ligne.php?rowid=$objp->rowid&amp;account=$objp->fk_account\">";
+		print "<a href=\"ligne.php?rowid=".$objp->rowid."&amp;account=".$objp->fk_account."\">";
 		$reg=array();
 		preg_match('/\((.+)\)/i',$objp->label,$reg);	// Si texte entoure de parenthee on tente recherche de traduction
 		if ($reg[1] && $langs->trans($reg[1])!=$reg[1]) print $langs->trans($reg[1]);
@@ -300,7 +300,11 @@ if ($resql)
 		}
 
 		// Payment type
-		print "<td align=\"center\">".$langs->getLabelFromKey($db,$objp->fk_type,'c_paiement','code','libelle')."</td>\n";
+		print "<td align=\"center\">";
+		$labeltype=$langs->getLabelFromKey($db,$objp->fk_type,'c_paiement','code','libelle');
+		if ($labeltype == 'SOLD') print '&nbsp;'; //$langs->trans("InitialBankBalance");
+		else print $labeltype;
+		print "</td>\n";
 
 		// Bank account
 		print '<td align="left" nowrap="nowrap">';
