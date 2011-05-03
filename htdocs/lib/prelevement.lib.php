@@ -90,7 +90,7 @@ function prelevement_prepare_head($object)
  */
 function prelevement_check_config()
 {
-	
+	global $conf;
 	if(empty($conf->global->PRELEVEMENT_ID_BANKACCOUNT)) return -1; 
 	if(empty($conf->global->PRELEVEMENT_CODE_BANQUE)) return -1;
 	if(empty($conf->global->PRELEVEMENT_CODE_GUICHET)) return -1;
