@@ -276,7 +276,7 @@ if ($_POST["action"] == 'addline' && $user->rights->contrat->creer)
 
 		$info_bits=0;
 		if ($tva_npr) $info_bits |= 0x01;
-		
+
     	if($price_min && (price2num($pu_ht)*(1-price2num($_POST['remise_percent'])/100) < price2num($price_min)))
 		{
 			$object->error = $langs->trans("CantBeLessThanMinPrice",price2num($price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)) ;
@@ -351,7 +351,7 @@ if ($_POST["action"] == 'updateligne' && $user->rights->contrat->creer && ! $_PO
 		$objectline->date_fin_validite=$date_end_update;
         $objectline->date_cloture=$date_end_real_update;
 		$objectline->fk_user_cloture=$user->id;
-		
+
 		// TODO verifier price_min si fk_product et multiprix
 
 		$result=$objectline->update($user);
@@ -468,31 +468,31 @@ if ($_GET["action"] == 'create')
     dol_fiche_head($head, $a, $langs->trans("AddContract"), 0, 'contract');
 
     if ($mesg) print $mesg;
-    
+
     $soc = new Societe($db);
     $soc->fetch($socid);
-    
+
 	$object->date_contrat = time();
 	if ($contratid) $result=$object->fetch($contratid);
 
 	$numct = $object->getNextNumRef($soc);
-	
+
     print '<form name="contrat" action="'.$_SERVER["PHP_SELF"].'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    
+
     print '<input type="hidden" name="action" value="add">';
     print '<input type="hidden" name="socid" value="'.$soc->id.'">'."\n";
     print '<input type="hidden" name="remise_percent" value="0">';
-    
+
     print '<table class="border" width="100%">';
-    
+
     // Ref
     print '<tr><td>'.$langs->trans("Ref").'</td>';
     print '<td><input type="text" maxlength="30" name="ref" size="20" value="'.$numct.'"></td></tr>';
-    
+
     // Customer
     print '<tr><td>'.$langs->trans("Customer").'</td><td>'.$soc->getNomUrl(1).'</td></tr>';
-    
+
     // Ligne info remises tiers
     print '<tr><td>'.$langs->trans('Discount').'</td><td>';
     if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
@@ -503,33 +503,33 @@ if ($_GET["action"] == 'create')
     else print $langs->trans("CompanyHasNoAbsoluteDiscount");
     print '.';
     print '</td></tr>';
-    
+
     // Commercial suivi
     print '<tr><td width="20%" nowrap><span class="fieldrequired">'.$langs->trans("TypeContact_contrat_internal_SALESREPFOLL").'</span></td><td>';
     print $form->select_users(GETPOST("commercial_suivi_id"),'commercial_suivi_id',1,'');
     print '</td></tr>';
-    
+
     // Commercial signature
     print '<tr><td width="20%" nowrap><span class="fieldrequired">'.$langs->trans("TypeContact_contrat_internal_SALESREPSIGN").'</span></td><td>';
     print $form->select_users(GETPOST("commercial_signature_id"),'commercial_signature_id',1,'');
     print '</td></tr>';
-    
+
     print '<tr><td><span class="fieldrequired">'.$langs->trans("Date").'</span></td><td>';
     $form->select_date($datecontrat,'',0,0,'',"contrat");
     print "</td></tr>";
-    
+
     if ($conf->projet->enabled)
     {
     	print '<tr><td>'.$langs->trans("Project").'</td><td>';
     	select_projects($soc->id,GETPOST("projectid"),"projectid");
     	print "</td></tr>";
     }
-    
+
     print '<tr><td>'.$langs->trans("NotePublic").'</td><td valign="top">';
     print '<textarea name="note_public" wrap="soft" cols="70" rows="'.ROWS_3.'">';
     print GETPOST("note_public");
     print '</textarea></td></tr>';
-    
+
     if (! $user->societe_id)
     {
     	print '<tr><td>'.$langs->trans("NotePrivate").'</td><td valign="top">';
@@ -537,82 +537,11 @@ if ($_GET["action"] == 'create')
     	print GETPOST("note");
     	print '</textarea></td></tr>';
     }
-    
+
     print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
-    
+
     print "</table>\n";
     print "</form>\n";
-
-// TODO A quoi ca sert ?
-/*
-            if ($propalid)
-            {
-                print '<br>';
-                print_titre($langs->trans("Products"));
-
-                print '<table class="noborder" width="100%">';
-                print '<tr class="liste_titre"><td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Product").'</td>';
-                print '<td align="right">'.$langs->trans("Price").'</td>';
-                print '<td align="center">'.$langs->trans("Qty").'</td>';
-                print '<td align="center">'.$langs->trans("ReductionShort").'</td>';
-                print '</tr>';
-
-                $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.price, pt.qty, p.rowid as prodid, pt.remise_percent";
-                $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as pt";
-                $sql.= ", ".MAIN_DB_PREFIX."product as p";
-                $sql.= " WHERE pt.fk_product = p.rowid";
-                $sql.= " AND pt.fk_propal = ".$propalid;
-                $sql .= " ORDER BY pt.rowid ASC";
-                $result = $db->query($sql);
-                if ($result)
-                {
-                    $num = $db->num_rows($result);
-                    $i = 0;
-                    $var=True;
-                    while ($i < $num)
-                    {
-                        $objp = $db->fetch_object($result);
-                        $var=!$var;
-                        print "<tr $bc[$var]><td>[$objp->ref]</td>\n";
-                        print '<td>'.$objp->product.'</td>';
-                        print "<td align=\"right\">".price($objp->price).'</td>';
-                        print '<td align="center">'.$objp->qty.'</td>';
-                        print '<td align="center">'.$objp->remise_percent.'%</td>';
-                        print "</tr>\n";
-                        $i++;
-                    }
-                }
-                $sql = "SELECT pt.rowid, pt.description as product, pt.price, pt.qty, pt.remise_percent";
-                $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as pt";
-                $sql.= " WHERE  pt.fk_propal = ".$propalid;
-                $sql.= " AND pt.fk_product = 0";
-                $sql.= " ORDER BY pt.rowid ASC";
-                $result=$db->query($sql);
-                if ($result)
-                {
-                    $num = $db->num_rows($result);
-                    $i = 0;
-                    while ($i < $num)
-                    {
-                        $objp = $db->fetch_object($result);
-                        $var=!$var;
-                        print "<tr $bc[$var]><td>&nbsp;</td>\n";
-                        print '<td>'.$objp->product.'</td>';
-                        print '<td align="right">'.price($objp->price).'</td>';
-                        print '<td align="center">'.$objp->remise_percent.'%</td>';
-                        print '<td align="center">'.$objp->qty.'</td>';
-                        print "</tr>\n";
-                        $i++;
-                    }
-                }
-                else
-                {
-                    dol_print_error($db);
-                }
-
-                print '</table>';
-            }
-*/
 
     print '</div>';
 }
@@ -770,6 +699,7 @@ else
 		/*
          * Lines of contracts
          */
+        $productstatic=new Product($db);
 
 		// Title line for service
 		print '<table class="notopnoleft" width="100%">';	// Array with (n*2)+1 lines
@@ -790,7 +720,7 @@ else
 			$sql.= " cd.date_ouverture_prevue as date_debut, cd.date_ouverture as date_debut_reelle,";
 			$sql.= " cd.date_fin_validite as date_fin, cd.date_cloture as date_fin_reelle,";
 			$sql.= " cd.commentaire as comment,";
-			$sql.= " p.ref, p.label";
+			$sql.= " p.rowid as pid, p.ref as pref, p.label as label, p.fk_product_type as ptype";
 			$sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
 			$sql.= " WHERE cd.rowid = ".$object->lines[$cursorline-1]->id;
@@ -822,9 +752,11 @@ else
 					if ($objp->fk_product > 0)
 					{
 						print '<td>';
-						print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
-						print img_object($langs->trans("ShowService"),"service").' '.$objp->ref.'</a>';
-						print $objp->label?' - '.$objp->label:'';
+                        $productstatic->id=$objp->fk_product;
+                        $productstatic->type=$objp->ptype;
+                        $productstatic->ref=$objp->pref;
+                        print $productstatic->getNomUrl(1,'',20);
+                        print $objp->label?' - '.dol_trunc($objp->label,16):'';
 						if ($objp->description) print '<br>'.nl2br($objp->description);
 						print '</td>';
 					}
@@ -918,9 +850,11 @@ else
 					print '<td>';
 					if ($objp->fk_product)
 					{
-						print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
-						print img_object($langs->trans("ShowService"),"service").' '.$objp->ref.'</a>';
-						print $objp->label?' - '.$objp->label:'';
+                        $productstatic->id=$objp->fk_product;
+                        $productstatic->type=$objp->ptype;
+                        $productstatic->ref=$objp->pref;
+                        print $productstatic->getNomUrl(1,'',20);
+                        print $objp->label?' - '.dol_trunc($objp->label,16):'';
 						print '<br>';
 					}
 					else

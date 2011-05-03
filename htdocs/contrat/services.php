@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -74,7 +74,7 @@ llxHeader();
 $sql = "SELECT c.rowid as cid, c.ref, c.statut as cstatut,";
 $sql.= " s.rowid as socid, s.nom,";
 $sql.= " cd.rowid, cd.description, cd.statut,";
-$sql.= " p.rowid as pid, p.label as label, p.fk_product_type as ptype,";
+$sql.= " p.rowid as pid, p.ref as pref, p.label as label, p.fk_product_type as ptype,";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " sc.fk_soc, sc.fk_user,";
 $sql.= " cd.date_ouverture_prevue,";
 $sql.= " cd.date_ouverture,";
@@ -188,7 +188,7 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 		$var=!$var;
-		print "<tr $bc[$var]>";
+		print "<tr ".$bc[$var].">";
 		print '<td>';
 		$contractstatic->id=$obj->cid;
 		$contractstatic->ref=$obj->ref?$obj->ref:$obj->cid;
@@ -197,12 +197,13 @@ if ($resql)
 
 		// Service
 		print '<td>';
-		if ($obj->pid) 
+		if ($obj->pid)
 		{
 			$productstatic->id=$obj->pid;
 			$productstatic->type=$obj->ptype;
-			$productstatic->ref=$obj-label?$obj->label:$obj->pid;
+			$productstatic->ref=$obj->pref;
 			print $productstatic->getNomUrl(1,'',20);
+            print $obj->label?' - '.dol_trunc($obj->label,16):'';
 		}
 		else
 		{

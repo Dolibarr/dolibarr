@@ -102,8 +102,8 @@ if ($resql)
     print '<tr class="liste_titre">';
     $param='&amp;search_contract='.$search_contract;
     $param.='&amp;search_nom='.$search_nom;
-    print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "c.rowid","","$param",'width="50"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Company"), $_SERVER["PHP_SELF"], "s.nom","","$param","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "c.rowid","","$param",'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Company"), $_SERVER["PHP_SELF"], "s.nom","","$param",'',$sortfield,$sortorder);
     //print_liste_field_titre($langs->trans("DateCreation"), $_SERVER["PHP_SELF"], "c.datec","","$param",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("DateContract"), $_SERVER["PHP_SELF"], "c.date_contrat","","$param",'align="center"',$sortfield,$sortorder);
     //print_liste_field_titre($langs->trans("Status"), $_SERVER["PHP_SELF"], "c.statut","","$param",'align="center"',$sortfield,$sortorder);
@@ -134,8 +134,8 @@ if ($resql)
     {
         $obj = $db->fetch_object($resql);
         $var=!$var;
-        print "<tr $bc[$var]>";
-        print "<td nowrap><a href=\"fiche.php?id=$obj->cid\">";
+        print '<tr '.$bc[$var].'>';
+        print '<td nowrap="nowrap"><a href="fiche.php?id='.$obj->cid.'">';
         print img_object($langs->trans("ShowContract"),"contract").' '.(isset($obj->ref) ? $obj->ref : $obj->cid) .'</a>';
         if ($obj->nb_late) print img_warning($langs->trans("Late"));
         print '</td>';
