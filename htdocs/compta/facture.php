@@ -1871,7 +1871,7 @@ else
 			$head = facture_prepare_head($object);
 
 			dol_fiche_head($head, 'compta', $langs->trans('InvoiceCustomer'), 0, 'bill');
-			
+
 			$formconfirm='';
 
 			// Confirmation de la conversion de l'avoir en reduc
@@ -2014,7 +2014,7 @@ else
 				// Paiement incomplet. On demande si motif = escompte ou autre
 				$formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id,$langs->trans('CloneInvoice'),$langs->trans('ConfirmCloneInvoice',$object->ref),'confirm_clone',$formquestion,'yes',1);
 			}
-			
+
 			// Hook of thirdparty module
 			if (empty($formconfirm) && ! empty($object->hooks))
 			{
@@ -2023,7 +2023,7 @@ else
 					if (empty($formconfirm)) $formconfirm = $module->formconfirm($action,$object,$lineid);
 				}
 			}
-			
+
 			// Print form confirm
 			print $formconfirm;
 
@@ -3044,10 +3044,9 @@ else
 			print '<td class="liste_titre" colspan="1" align="center">';
 			print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
 			//print '&nbsp;'.$langs->trans('Year').': ';
-			$max_year = date("Y");
 			$syear = $year;
 			//if ($syear == '') $syear = date("Y");
-			$html->select_year($syear,'year',1, '', $max_year);
+			$html->select_year($syear,'year',1, 20, 5);
 			print '</td>';
 			print '<td class="liste_titre" align="left">&nbsp;</td>';
 			print '<td class="liste_titre" align="left">';

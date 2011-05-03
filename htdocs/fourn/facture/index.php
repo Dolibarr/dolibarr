@@ -206,7 +206,7 @@ if ($resql)
 	//print '&nbsp;'.$langs->trans('Year').': ';
 	$syear = $year;
 	//if ($syear == '') $syear = date("Y");
-	$html->select_year($syear?$syear:-1,'year',1, 10, 10);
+	$html->select_year($syear?$syear:-1,'year',1, 20, 5);
 	print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="left">';

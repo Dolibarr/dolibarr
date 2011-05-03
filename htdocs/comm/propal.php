@@ -1018,9 +1018,9 @@ if ($id > 0 || ! empty($ref))
 
 	$head = propal_prepare_head($object);
 	dol_fiche_head($head, 'comm', $langs->trans('Proposal'), 0, 'propal');
-	
+
 	$formconfirm='';
-	
+
 	// Clone confirmation
 	if ($action == 'clone')
 	{
@@ -1078,7 +1078,7 @@ if ($id > 0 || ! empty($ref))
 
 		$formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateProp'), $text, 'confirm_validate','',0,1);
 	}
-	
+
 	// Hook of thirdparty module
 	if (empty($formconfirm) && ! empty($object->hooks))
 	{
@@ -1087,7 +1087,7 @@ if ($id > 0 || ! empty($ref))
 			if (empty($formconfirm)) $formconfirm = $module->formconfirm($action,$object,$lineid);
 		}
 	}
-	
+
 	// Print form confirm
 	print $formconfirm;
 
@@ -1312,7 +1312,7 @@ if ($id > 0 || ! empty($ref))
 
 	print '</td>';
 	print '</tr>';
-	
+
 	// Origine de la demande
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
@@ -1465,7 +1465,7 @@ if ($id > 0 || ! empty($ref))
 
 	// Show object lines
 	if (! empty($object->lines)) $object->printObjectLines($action,$mysoc,$soc,$lineid);
-	
+
 	//print '<table id="tablelines" class="noborder" width="100%">';
 
 	/*
@@ -1841,10 +1841,9 @@ else
 		print '<td class="liste_titre" colspan="1" align="right">';
 		print $langs->trans('Month').': <input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
 		print '&nbsp;'.$langs->trans('Year').': ';
-		$max_year = date("Y");
 		$syear = $year;
 		//if($syear == '') $syear = date("Y");
-		$html->select_year($syear,'year',1, '', $max_year);
+		$html->select_year($syear,'year',1, 20, 5);
 		print '</td>';
 		print '<td class="liste_titre" colspan="1">&nbsp;</td>';
 		print '<td class="liste_titre" align="right">';

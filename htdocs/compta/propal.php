@@ -622,11 +622,10 @@ else
 		print '<td class="liste_titre" colspan="1" align="right">';
 		print $langs->trans('Month').': <input class="flat" type="text" size="2" maxlength="2" name="month" value="'.$month.'">';
 		print '&nbsp;'.$langs->trans('Year').': ';
-		$max_year = date("Y");
 		$syear = $year;
 		if($syear == '')
 		$syear = date("Y");
-		$html->select_year($syear,'year',1, '', $max_year);
+		$html->select_year($syear,'year',1, 20, 5);
 		print '</td>';
 		print '<td class="liste_titre" align="right">';
 		print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$_GET['search_montant_ht'].'">';

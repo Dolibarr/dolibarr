@@ -3301,12 +3301,12 @@ class Form
     }
 
     /**
-     *    	\brief      Return HTML combo list of years
-     *      \param      selected          Preselected value (''=current year, -1=none, year otherwise)
-     *    	\param      htmlname          Name of HTML select object
-     *    	\param      useempty          Affiche valeur vide dans liste
-     *    	\param      $min_year         Offset of minimum year into list (by default current year -10)
-     *    	\param      $max_year         Offset of maximum year into list (by default current year + 5)
+     *    	Return HTML combo list of years
+     *      @param      selected          Preselected value (''=current year, -1=none, year otherwise)
+     *    	@param      htmlname          Name of HTML select object
+     *    	@param      useempty          Affiche valeur vide dans liste
+     *    	@param      $min_year         Offset of minimum year into list (by default current year -10)
+     *    	@param      $max_year         Offset of maximum year into list (by default current year + 5)
      * 		TODO Move into html.formother
      */
 	function select_year($selected='',$htmlname='yearid',$useempty=0, $min_year=10, $max_year=5)

@@ -264,7 +264,7 @@ if ($resql)
 	print '&nbsp;'.$langs->trans('Year').': ';
 	$max_year = date("Y");
 	$syear = $year;
-	$form->select_year($syear,'year',1, '', $max_year);
+	$form->select_year($syear,'year',1, 20, 5);
 	print '</td>';
 	// Label of movement
 	print '<td class="liste_titre" align="left">';
