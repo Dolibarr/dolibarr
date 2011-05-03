@@ -117,7 +117,8 @@ for ($i = 1 ; $i <= $si; $i++) {
 }
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit+1,$offset);
-print $sql;
+//print $sql;
+
 $resql = $db->query($sql);
 if ($resql)
 {
