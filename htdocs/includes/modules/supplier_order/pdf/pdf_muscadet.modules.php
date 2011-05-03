@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2011 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
- * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010      Juanjo Menent         <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -682,14 +682,21 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			$text=$this->emetteur->name;
 			$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 		}
-
-		$pdf->SetFont('','B', $default_font_size + 3);
+		
+		$pdf->SetFont('','B',$default_font_size + 3);
 		$pdf->SetXY(100,$posy);
 		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("SupplierOrder")." ".$outputlangs->convToOutputCharset($object->ref), '' , 'R');
-		$pdf->SetFont('','', $default_font_size + 2);
+		$title=$outputlangs->transnoentities("SupplierOrder");
+		$pdf->MultiCell(100, 4, $title, '' , 'R');
 
 		$posy+=6;
+		$pdf->SetFont('','B',$default_font_size + 2);
+		$pdf->SetXY(100,$posy);
+		$pdf->SetTextColor(0,0,60);
+		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Ref")." : " . $outputlangs->convToOutputCharset($object->ref), '', 'R');
+
+		$posy+=6;
+		$pdf->SetFont('','', $default_font_size + 2);
 		$pdf->SetXY(100,$posy);
 		if ($object->date_commande)
 		{
