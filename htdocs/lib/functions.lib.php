@@ -687,6 +687,7 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
  *	@param		string			Date in a string
  *				                YYYYMMDD
  *	                 			YYYYMMDDHHMMSS
+ *								YYYY-MM-DDTHH:MM:SSZ (RFC3339)
  *		                		DD/MM/YY or DD/MM/YYYY (this format should not be used anymore)
  *		                		DD/MM/YY HH:MM:SS or DD/MM/YYYY HH:MM:SS (this format should not be used anymore)
  *		                		19700101020000 -> 7200
@@ -710,6 +711,17 @@ function dol_stringtotime($string, $gm=1)
 		$ssec = $reg[6];
 		if ($syear < 50) $syear+=1900;
 		if ($syear >= 50 && $syear < 100) $syear+=2000;
+		$string=sprintf("%04d%02d%02d%02d%02d%02d",$syear,$smonth,$sday,$shour,$smin,$ssec);
+	}
+	// Convert date RFC3339
+	else if (preg_match('/^([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})Z$/i',$string,$reg))
+	{
+		$syear = $reg[1];
+		$smonth = $reg[2];
+		$sday = $reg[3];
+		$shour = $reg[4];
+		$smin = $reg[5];
+		$ssec = $reg[6];
 		$string=sprintf("%04d%02d%02d%02d%02d%02d",$syear,$smonth,$sday,$shour,$smin,$ssec);
 	}
 
