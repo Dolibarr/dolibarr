@@ -603,7 +603,7 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 	if ($format == 'dayhourldap')       $format='%Y%m%d%H%M%SZ';
 	if ($format == 'dayhourxcard')      $format='%Y%m%dT%H%M%SZ';
     if ($format == 'dayxcard')          $format='%Y%m%d';
-    if ($format == 'dayhourrfc')        $format='%Y-%m-%d %H:%M:%SZ';  // DATE_RFC3339
+    if ($format == 'dayhourrfc')        $format='%Y-%m-%dT%H:%M:%SZ';  // DATE_RFC3339
 
 	// If date undefined or "", we return ""
 	if (dol_strlen($time) == 0) return '';		// $time=0 allowed (it means 01/01/1970 00:00:00)
