@@ -833,6 +833,7 @@ a.tabTitle {
     background: #657090;
     color: white;
 	font-family: <?php print $fontlist ?>;
+	font-weight: normal;
     padding: 0px 6px;
     margin: 0px 6px;
     text-decoration: none;
