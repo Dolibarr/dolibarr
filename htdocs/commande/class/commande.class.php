@@ -4,9 +4,10 @@
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2011 Jean Heimburger           <jean@tiaris.info>
  *
  * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * it under the terms of the GNU  *General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
  *
@@ -458,6 +459,15 @@ class Commande extends CommonObject
 
 			if ($this->db->query($sql))
 			{
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers('ORDER_CLOTURE',$this,$user,$langs,$conf);
+				if ($result < 0) { 
+					$error++; $this->errors=$interface->errors; 
+					return -1;
+				}
+				// Fin appel triggers
 				return 1;
 			}
 			else
@@ -506,7 +516,17 @@ class Commande extends CommonObject
 						if ($result < 0) { $error++; }
 					}
 				}
-
+				
+				if (! $error)
+				{
+					// Appel des triggers
+					include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+					$interface=new Interfaces($this->db);
+					$result=$interface->run_triggers('ORDER_CANCEL',$this,$user,$langs,$conf);
+					if ($result < 0) { $error++; $this->errors=$interface->errors; }
+					// Fin appel triggers
+				}
+				
 				if (! $error)
 				{
 					$this->statut=-1;
