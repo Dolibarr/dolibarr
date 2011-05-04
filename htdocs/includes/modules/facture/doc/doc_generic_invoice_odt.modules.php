@@ -344,6 +344,11 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 						'DELIMITER_LEFT'  => '{',
 						'DELIMITER_RIGHT' => '}')
 				);
+				// After construction $odfHandler->contentXml contains content and
+				// [!-- BEGIN row.lines --]*[!-- END row.lines --] has been replaced by
+				// [!-- BEGIN lines --]*[!-- END lines --]
+                //print html_entity_decode($odfHandler->__toString());
+                //print exit;
 
 				// Make substitutions
 			    $tmparray=$this->get_substitutionarray_user($user,$outputlangs);
@@ -453,18 +458,8 @@ class doc_generic_invoice_odt extends ModelePDFFactures
                     dol_syslog($this->error, LOG_WARNING);
                     return -1;
                 }
-/*
-                $listlines = $odfHandler->setSegment('commande');
-                for ($j = 0; $j < 3; $j++) {
-                        $listlines->setVars('commande_cod', 'phpunittest_cod_' . $j);
-                        $listlines->setVars('commande_des', 'phpunittest_des_' . $j);
-                        $listlines->setVars('commande_qte', 'phpunittest_qte_' . $j);
-                        $listlines->setVars('commande_prix', 'phpunittest_prix_' . $j);
-                        $listlines->merge();
-                }
-                $odfHandler->mergeSegment($listlines);
-*/
-				// Write new file
+
+                // Write new file
 				//$result=$odfHandler->exportAsAttachedFile('toto');
 				$odfHandler->saveToDisk($file);
 
