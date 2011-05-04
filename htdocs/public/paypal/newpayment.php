@@ -120,14 +120,6 @@ $urlok=preg_replace('/&$/','',$urlok);  // Remove last &
 $urlko=preg_replace('/&$/','',$urlko);  // Remove last &
 
 // Clean parameters
-$PAYPAL_API_USER="";
-if ($conf->global->PAYPAL_API_USER) $PAYPAL_API_USER=$conf->global->PAYPAL_API_USER;
-$PAYPAL_API_PASSWORD="";
-if ($conf->global->PAYPAL_API_PASSWORD) $PAYPAL_API_PASSWORD=$conf->global->PAYPAL_API_PASSWORD;
-$PAYPAL_API_SIGNATURE="";
-if ($conf->global->PAYPAL_API_SIGNATURE) $PAYPAL_API_SIGNATURE=$conf->global->PAYPAL_API_SIGNATURE;
-$PAYPAL_API_SANDBOX="";
-if ($conf->global->PAYPAL_API_SANDBOX) $PAYPAL_API_SANDBOX=$conf->global->PAYPAL_API_SANDBOX;
 $PAYPAL_API_OK="";
 if ($urlok) $PAYPAL_API_OK=$urlok;
 $PAYPAL_API_KO="";
