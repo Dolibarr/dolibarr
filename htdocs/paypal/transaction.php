@@ -113,8 +113,29 @@ llxHeader();
 
 <?php
 
+// Call Paypal API
+if (! empty($nvpStr))
+{
+	$resArray=hash_call("TransactionSearch",$nvpStr);
+	
+	//var_dump($resArray);
+	
+	$reqArray=$_SESSION['nvpReqArray'];
+	
+	$ack = strtoupper($resArray["ACK"]);
+	$errors='';
+	if($ack!="SUCCESS" && $ack!="SUCCESSWITHWARNING")
+	{
+		$_SESSION['reshash']=$resArray;
+		$errors = GetApiError();
+	}
+}
+
+dol_htmloutput_errors('',$errors);
+
 print_barre_liste($langs->trans('PaypalTransaction'), $page, $_SERVER['PHP_SELF']);
 
+// Search parameters
 print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
@@ -143,26 +164,7 @@ print '</table>';
 print '</form>';
 
 
-// Call Paypal API
-if (! empty($nvpStr))
-{
-	$resArray=hash_call("TransactionSearch",$nvpStr);
-	
-	//var_dump($resArray);
-	
-	$reqArray=$_SESSION['nvpReqArray'];
-	
-	/*
-	$ack = strtoupper($resArray["ACK"]);
-	if($ack!="SUCCESS" && $ack!="SUCCESSWITHWARNING")
-	{
-		$_SESSION['reshash']=$resArray;
-		$location = "APIError.php";
-		header("Location: $location");
-	}
-	*/
-}
-
+// Transactions list
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print_liste_field_titre($langs->trans('ID'),$_SERVER['PHP_SELF'],'','',''.$socid.'&amp;viewstatut='.$viewstatut,'width="25%"',$sortfield,$sortorder);

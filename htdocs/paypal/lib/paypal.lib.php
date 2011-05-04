@@ -506,6 +506,27 @@ function hash_call($methodName,$nvpStr)
     return $nvpResArray;
 }
 
+/**
+ * 	Get API errors
+ */
+function GetApiError()
+{
+	$errors=array();
+	
+	$resArray=$_SESSION['reshash'];
+	
+	if(isset($_SESSION['curl_error_no']))
+	{
+		$errors[] = $_SESSION['curl_error_no'].'-'.$_SESSION['curl_error_msg'];
+	}
+	
+	foreach($resArray as $key => $value)
+	{
+		$errors[] = $key.'-'.$value;
+	}
+	
+	return $errors;
+}
 
 
 /*'----------------------------------------------------------------------------------
