@@ -152,7 +152,7 @@ print $langs->trans('TransactionID').': ';
 print '<input type="text" name="transactionID" />&nbsp;';
 
 print '<input type="submit" value="'.$langs->trans('Send').'" />';
-print '</td</tr>';
+print '</td></tr>';
 
 print '</table>';
 print '</form>';
@@ -169,10 +169,12 @@ print_liste_field_titre($langs->trans('GrossAmount'),$_SERVER['PHP_SELF'],'','',
 print_liste_field_titre($langs->trans('FeeAmount'),$_SERVER['PHP_SELF'],'','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut, 'align="right"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans('NetAmount'),$_SERVER['PHP_SELF'],'','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut, 'align="right"',$sortfield,$sortorder);
 print '</tr>';
+
+$var=true;
 	
 if(! isset($resArray["L_TRANSACTIONID0"]))
 {
-	print '<tr>';
+	print '<tr '.$bc[$var].'>';
 	print '<td colspan="6">'.$langs->trans("NoTransactionSelected").'</td>';
 	print '</tr>';
 }
@@ -182,6 +184,8 @@ else
 	
 	while (isset($resArray["L_TRANSACTIONID".$i]))
 	{
+		$var=!$var;
+		
 		$transactionID 	= $resArray["L_TRANSACTIONID".$i];
 		$timeStamp		= dol_stringtotime($resArray["L_TIMESTAMP".$i]);
 		$payerName		= $resArray["L_NAME".$i];
@@ -191,7 +195,7 @@ else
 		$currency 		= $resArray["L_CURRENCYCODE".$i];
 		$status			= $resArray["L_STATUS".$i];
 		
-		print '<tr>';
+		print '<tr '.$bc[$var].'>';
 		print '<td><a id="transactiondetailslink'.$i.'"  href="details.php?transactionID='.$transactionID.'">'.$transactionID.'</a></td>';
 		print '<td align="center">'.dol_print_date($timeStamp,'dayhour').'</td>';
 		print '<td align="center">'.$status.'</td>';
