@@ -62,7 +62,7 @@ if(isset($startDateStr) && ! empty($startDateStr)) {
 	$start_date_str = $startDateStr;
 	$start_time 	= dol_stringtotime($start_date_str);
 } else {
-	$start_time 	= dol_now()-86400;
+	$start_time 	= dol_now()-2592000; // 30 days
 	$start_date_str = dol_print_date($start_time,'day');
 }
 
