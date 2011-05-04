@@ -1290,6 +1290,7 @@ function img_picto($alt, $picto, $options='', $pictoisfullpath=0)
 	{
 		$picto = $regs[1];
 		$path = $regs[2];
+		if (! preg_match('/(\.png|\.gif)$/i',$picto)) $picto.='.png';
         // If img file not into standard path, we use alternate path
 		if (defined('DOL_URL_ROOT_ALT') && DOL_URL_ROOT_ALT && ! file_exists(DOL_DOCUMENT_ROOT.'/'.$path.'/img/'.$picto)) $url = DOL_URL_ROOT_ALT;
 	}

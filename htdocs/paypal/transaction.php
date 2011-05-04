@@ -133,7 +133,7 @@ if (! empty($nvpStr))
 
 dol_htmloutput_errors('',$errors);
 
-print_barre_liste($langs->trans('PaypalTransaction'), $page, $_SERVER['PHP_SELF']);
+print_fiche_titre($langs->trans('PaypalTransaction'), '', 'paypal_logo@paypal');
 
 // Search parameters
 print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
@@ -141,24 +141,18 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 print '<table>';
 
-print '<tr>';
-print '<td>'.$langs->trans('DateStart').': </td>';
-print '<td><input type="text" id="startDateStr" name="startDateStr" maxlength="20" size="10" value="'.$start_date_str.'" /></td>';
-print '</tr>';
+print '<tr><td>';
+print $langs->trans('DateStart').': ';
+print '<input type="text" id="startDateStr" name="startDateStr" maxlength="20" size="10" value="'.$start_date_str.'" />&nbsp;';
 
-print '<tr>';
-print '<td>'.$langs->trans('DateEnd').': </td>';
-print '<td><input type="text" id="endDateStr" name="endDateStr" maxlength="20" size="10"  value="'.$end_date_str.'" /></td>';
-print '</tr>';
+print $langs->trans('DateEnd').': ';
+print '<input type="text" id="endDateStr" name="endDateStr" maxlength="20" size="10"  value="'.$end_date_str.'" />&nbsp;';
 
-print '<tr>';
-print '<td>'.$langs->trans('TransactionID').': </td>';
-print '<td><input type="text" name="transactionID" /></td>';
-print '</tr>';
+print $langs->trans('TransactionID').': ';
+print '<input type="text" name="transactionID" />&nbsp;';
 
-print '<tr>';
-print '<td><input type="submit" value="'.$langs->trans('Send').'" /></td>';
-print '</tr>';
+print '<input type="submit" value="'.$langs->trans('Send').'" />';
+print '</td</tr>';
 
 print '</table>';
 print '</form>';
