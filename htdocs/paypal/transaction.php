@@ -112,7 +112,9 @@ llxHeader();
 		});
 		$( "div.paypal_link" ).click(function() {
 			var id_value = $(this).attr("id");
-			$.jnotify("<?php echo $langs->trans('PleaseBePatient'); ?>", 2000);
+			if ($.jnotify) {
+				$.jnotify("<?php echo $langs->trans('PleaseBePatient'); ?>", 2000);
+			}
 			$.get( "<?php echo DOL_URL_ROOT; ?>/paypal/ajaxtransactiondetails.php", {
 				transaction_id: id_value
 			},
