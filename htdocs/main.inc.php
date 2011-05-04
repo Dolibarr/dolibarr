@@ -989,12 +989,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		$langs->trans("December")
 		);
 		print '<script type="text/javascript">';
-		print 'var tradMonths = [';
-		foreach($tradMonths as $month)
-		{
-			print '"'.addslashes($month).'",';
-		}
-		print '""];';
+		print 'var tradMonths = '.json_encode($tradMonths).';';
 		print '</script>'."\n";
 		
 		// Define tradMonthsMin javascript array (we define this in datapicker AND in parent page to avoid errors with IE8)
@@ -1012,12 +1007,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		$langs->trans("DecemberMin")
 		);
 		print '<script type="text/javascript">';
-		print 'var tradMonthsMin = [';
-		foreach($tradMonthsMin as $monthmin)
-		{
-			print '"'.addslashes($monthmin).'",';
-		}
-		print '""];';
+		print 'var tradMonthsMin = '.json_encode($tradMonthsMin).';';
 		print '</script>'."\n";
 		
 		// Define tradDays javascript array (we define this in datapicker AND in parent page to avoid errors with IE8)
@@ -1030,12 +1020,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		$langs->trans("Sunday")
 		);
 		print '<script type="text/javascript">';
-		print 'var tradDays = [';
-		foreach($tradDays as $day)
-		{
-			print '"'.addslashes($day).'",';
-		}
-		print '""];';
+		print 'var tradDays = '.json_encode($tradDays).';';
 		print '</script>'."\n";
 		
 		// Define tradDaysMin javascript array (we define this in datapicker AND in parent page to avoid errors with IE8)
@@ -1048,12 +1033,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		$langs->trans("SundayMin")
 		);
 		print '<script type="text/javascript">';
-		print 'var tradDaysMin = [';
-		foreach($tradDaysMin as $daymin)
-		{
-			print '"'.addslashes($daymin).'",';
-		}
-		print '""];';
+		print 'var tradDaysMin = '.json_encode($tradDaysMin).';';
 		print '</script>'."\n";
 
 		if (! empty($head)) print $head."\n";
