@@ -225,7 +225,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 		if (is_resource($handle))
 		{
 			$var=true;
-			
+
 			while (($file = readdir($handle))!==false)
 			{
 				if (substr($file, 0, 12) == 'mod_propale_' && substr($file, dol_strlen($file)-3, 3) == 'php')
@@ -247,8 +247,12 @@ foreach ($conf->file->dol_document_root as $dirroot)
 						print $module->info();
 						print '</td>';
 
-						// Examples
-						print '<td nowrap="nowrap">'.$module->getExample()."</td>\n";
+                        // Show example of numbering module
+                        print '<td nowrap="nowrap">';
+                        $tmp=$module->getExample();
+                        if (preg_match('/^Error/',$tmp)) print $langs->trans($tmp);
+                        else print $tmp;
+                        print '</td>'."\n";
 
 						print '<td align="center">';
 						if ($conf->global->PROPALE_ADDON == "$file")
@@ -348,7 +352,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 	if (is_dir($dir))
 	{
 		$var=true;
-		
+
 		$handle=opendir($dir);
 		if (is_resource($handle))
 		{

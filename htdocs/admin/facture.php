@@ -35,6 +35,7 @@ $langs->load("admin");
 $langs->load("companies");
 $langs->load("bills");
 $langs->load("other");
+$langs->load("errors");
 
 if (!$user->admin)
 accessforbidden();
@@ -303,8 +304,12 @@ foreach ($conf->file->dol_document_root as $dirroot)
 
                             print '</td>';
 
-                            // Affiche example
-                            print '<td nowrap="nowrap">'.$module->getExample().'</td>';
+                            // Show example of numbering module
+                            print '<td nowrap="nowrap">';
+                            $tmp=$module->getExample();
+                            if (preg_match('/^Error/',$tmp)) print $langs->trans($tmp);
+                            else print $tmp;
+                            print '</td>'."\n";
 
                             print '<td align="center">';
                             //print "> ".$conf->global->FACTURE_ADDON." - ".$file;
@@ -359,7 +364,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 
                             if ($conf->global->FACTURE_ADDON.'.php' == $file)  // If module is the one used, we show existing errors
                             {
-                                if (! empty($module->error)) dol_htmloutput_errors($module->error,'');
+                                if (! empty($module->error)) dol_htmloutput_errors($module->error,'',1);
                             }
 
                             print '</td>';

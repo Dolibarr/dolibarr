@@ -119,8 +119,12 @@ if (is_resource($handle))
 				print $module->info();
 				print '</td>';
 
-				// Examples
-				print '<td nowrap="nowrap">'.$module->getExample()."</td>\n";
+                // Show example of numbering module
+                print '<td nowrap="nowrap">';
+                $tmp=$module->getExample();
+                if (preg_match('/^Error/',$tmp)) print $langs->trans($tmp);
+                else print $tmp;
+                print '</td>'."\n";
 
 				print '<td align="center">';
 				if ($conf->global->CONTRACT_ADDON == "$file")

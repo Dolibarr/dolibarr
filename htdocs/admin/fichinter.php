@@ -206,39 +206,43 @@ clearstatcache();
 foreach ($conf->file->dol_document_root as $dirroot)
 {
 	$dir = $dirroot . "/includes/modules/fichinter/";
-	
+
 	if (is_dir($dir))
 	{
 		$handle = opendir($dir);
 		if (is_resource($handle))
 		{
 			$var=true;
-		
+
 			while (($file = readdir($handle))!==false)
 			{
 				if (preg_match('/^(mod_.*)\.php$/i',$file,$reg))
 				{
 					$file = $reg[1];
 					$classname = substr($file,4);
-		
+
 					require_once($dir.$file.".php");
-		
+
 					$module = new $file;
-		
+
 					// Show modules according to features level
 					if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
 					if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
-		
+
 					if ($module->isEnabled())
 					{
 						$var=!$var;
 						print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
 						print $module->info();
 						print '</td>';
-		
-						// Examples
-						print '<td nowrap="nowrap">'.$module->getExample()."</td>\n";
-		
+
+                        // Show example of numbering module
+                        print '<td nowrap="nowrap">';
+                        $tmp=$module->getExample();
+                        if (preg_match('/^Error/',$tmp)) print $langs->trans($tmp);
+                        else print $tmp;
+                        print '</td>'."\n";
+
 						print '<td align="center">';
 						if ($conf->global->FICHEINTER_ADDON == $classname)
 						{
@@ -249,10 +253,10 @@ foreach ($conf->file->dol_document_root as $dirroot)
 							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$classname.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 						}
 						print '</td>';
-		
+
 						$ficheinter=new Fichinter($db);
 						$ficheinter->initAsSpecimen();
-		
+
 						// Info
 						$htmltooltip='';
 						$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
@@ -264,7 +268,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 						print '<td align="center">';
 						print $html->textwithpicto('',$htmltooltip,1,0);
 						print '</td>';
-		
+
 						print '</tr>';
 					}
 				}
@@ -332,9 +336,9 @@ foreach ($conf->file->dol_document_root as $dirroot)
 		    	{
 		    		$name = substr($file, 4, dol_strlen($file) -16);
 		    		$classname = substr($file, 0, dol_strlen($file) -12);
-		
+
 		    		$var=!$var;
-		
+
 		    		print '<tr '.$bc[$var].'><td>';
 		    		echo "$name";
 		    		print "</td><td>\n";
@@ -342,7 +346,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 		    		$module = new $classname();
 		    		print $module->description;
 		    		print '</td>';
-		
+
 		    		// Active
 		    		if (in_array($name, $def))
 		    		{
@@ -365,7 +369,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 		    			print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 		    			print "</td>";
 		    		}
-		
+
 		    		// Defaut
 		    		print "<td align=\"center\">";
 		    		if ($conf->global->FICHEINTER_ADDON_PDF == "$name")
@@ -377,7 +381,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 		    			print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 		    		}
 		    		print '</td>';
-		
+
 		    		// Info
 		    		$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
 		    		$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
@@ -394,7 +398,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 		    		print '<td align="center">';
 		    		print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'intervention').'</a>';
 		    		print '</td>';
-		
+
 		    		print '</tr>';
 		    	}
 		    }

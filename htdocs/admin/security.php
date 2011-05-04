@@ -259,8 +259,12 @@ foreach ($arrayhandler as $key => $module)
         print $langs->trans("MinLength").': '.$module->length;
         print '</td>';
 
-        // Affiche example
-        print '<td width="60">'.$module->getExample().'</td>';
+        // Show example of numbering module
+        print '<td nowrap="nowrap">';
+        $tmp=$module->getExample();
+        if (preg_match('/^Error/',$tmp)) print $langs->trans($tmp);
+        else print $tmp;
+        print '</td>'."\n";
 
         print '<td width="100" align="center">';
         if ($conf->global->USER_PASSWORD_GENERATED == $key)
