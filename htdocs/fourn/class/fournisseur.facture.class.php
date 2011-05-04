@@ -358,7 +358,6 @@ class FactureFournisseur extends Facture
             {
                 $this->error='Bill with id '.$rowid.' not found sql='.$sql;
                 dol_syslog(get_class($this).'::Fetch rowid='.$rowid.' numrows=0 sql='.$sql);
-                dol_print_error('',$sql);
                 return -2;
             }
 

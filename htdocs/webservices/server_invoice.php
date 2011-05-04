@@ -54,22 +54,23 @@ $server->wsdl->schemaTargetNamespace=$ns;
 
 // Define WSDL content
 $server->wsdl->addComplexType(
-        'authentication',
- 	    'complexType',
-	    'struct',
-	    'all',
-	    '',
-	    array(
-	        'dolibarrkey' => array('name'=>'dolibarrkey','type'=>'xsd:string'),
-	    	'sourceapplication' => array('name'=>'sourceapplication','type'=>'xsd:string'),
-	    	'login' => array('name'=>'login','type'=>'xsd:string'),
-	        'password' => array('name'=>'password','type'=>'xsd:string'),
-	        'entity' => array('name'=>'entity','type'=>'xsd:string'),
-	    ));
+    'authentication',
+    'complexType',
+    'struct',
+    'all',
+    '',
+    array(
+        'dolibarrkey' => array('name'=>'dolibarrkey','type'=>'xsd:string'),
+    	'sourceapplication' => array('name'=>'sourceapplication','type'=>'xsd:string'),
+    	'login' => array('name'=>'login','type'=>'xsd:string'),
+        'password' => array('name'=>'password','type'=>'xsd:string'),
+        'entity' => array('name'=>'entity','type'=>'xsd:string'),
+    )
+);
 
 $server->wsdl->addComplexType(
     'line',
-    'element',
+    'complexType',
     'struct',
     'all',
     '',
@@ -104,10 +105,26 @@ $server->wsdl->addComplexType(
     ),
     'tns:line'
 );
+$server->wsdl->addComplexType(
+    'LinesArray2',
+    'complexType',
+    'array',
+    'sequence',
+    '',
+    array(
+        'line' => array(
+            'name' => 'line',
+            'type' => 'tns:line',
+            'minOccurs' => '0',
+            'maxOccurs' => 'unbounded'
+        )
+    )
+);
+
 
 $server->wsdl->addComplexType(
     'invoice',
-    'element',		// If we put element here instead of complexType to have tag called invoice in getInvoicesForThirdParty we brek getInvoice
+    'complexType',
     'struct',
     'all',
     '',
@@ -130,7 +147,7 @@ $server->wsdl->addComplexType(
         'status' => array('name'=>'status','type'=>'xsd:int'),
         'close_code' => array('name'=>'close_code','type'=>'xsd:string'),
         'close_note' => array('name'=>'close_note','type'=>'xsd:string'),
-    	'lines' => array('name'=>'lines','type'=>'tns:LinesArray')
+    	'lines' => array('name'=>'lines','type'=>'tns:LinesArray2')
     )
 );
 
@@ -146,31 +163,43 @@ $server->wsdl->addComplexType(
     ),
     'tns:invoice'
 );
-
 $server->wsdl->addComplexType(
-    'invoices',
+    'InvoicesArray2',
     'complexType',
     'array',
+    'sequence',
     '',
-    'SOAP-ENC:Array',
-    array(),
     array(
-        array('ref'=>'SOAP-ENC:arrayType','wsdl:arrayType'=>'tns:invoice[]')
-    ),
-    'tns:invoice'
+        'invoice' => array(
+            'name' => 'invoice',
+            'type' => 'tns:invoice',
+            'minOccurs' => '0',
+            'maxOccurs' => 'unbounded'
+        )
+    )
 );
 
-$server->wsdl->addComplexType(
-        'result',
- 	    'complexType',
-	    'struct',
-	    'all',
-	    '',
-	    array(
-	        'result_code' => array('name'=>'result_code','type'=>'xsd:string'),
-	        'result_label' => array('name'=>'result_label','type'=>'xsd:string'),
-	    ));
 
+$server->wsdl->addComplexType(
+    'result',
+    'complexType',
+    'struct',
+    'all',
+    '',
+    array(
+        'result_code' => array('name'=>'result_code','type'=>'xsd:string'),
+        'result_label' => array('name'=>'result_label','type'=>'xsd:string'),
+    )
+);
+
+
+
+// 5 styles: RPC/encoded, RPC/literal, Document/encoded (not WS-I compliant), Document/literal, Document/literal wrapped
+// Style merely dictates how to translate a WSDL binding to a SOAP message. Nothing more. You can use either style with any programming model.
+// http://www.ibm.com/developerworks/webservices/library/ws-whichwsdl/
+$styledoc='rpc';       // rpc/document (document is an extend into SOAP 1.0 to support unstructured messages)
+$styleuse='encoded';   // encoded/literal/literal wrapped
+// Better choice is document/literal wrapped but literal wrapped not supported by nusoap.
 
 // Register WSDL
 $server->register('getInvoice',
@@ -178,14 +207,33 @@ $server->register('getInvoice',
 array('authentication'=>'tns:authentication','id'=>'xsd:string','ref'=>'xsd:string','ref_ext'=>'xsd:string'),
 // Exit values
 array('result'=>'tns:result','invoice'=>'tns:invoice'),
-$ns
+$ns,
+$ns.'#getInvoice',
+$styledoc,
+$styleuse,
+'WS to get a particular invoice'
 );
 $server->register('getInvoicesForThirdParty',
 // Entry values
 array('authentication'=>'tns:authentication','idthirdparty'=>'xsd:string'),
 // Exit values
-array('result'=>'tns:result','invoices'=>'tns:invoices'),
-$ns
+array('result'=>'tns:result','invoices'=>'tns:InvoicesArray2'),
+$ns,
+$ns.'#getInvoicesForThirdParty',
+$styledoc,
+$styleuse,
+'WS to get all invoices of a third party'
+);
+$server->register('createInvoice',
+// Entry values
+array('authentication'=>'tns:authentication','idthirdparty'=>'xsd:string','invoice'=>'tns:invoice'),
+// Exit values
+array('result'=>'tns:result','id'=>'xsd:string','ref'=>'xsd:string'),
+$ns,
+$ns.'#createInvoice',
+$styledoc,
+$styleuse,
+'WS to create an invoice'
 );
 
 
@@ -279,11 +327,23 @@ function getInvoice($authentication,$id='',$ref='',$ref_ext='')
 			        'invoice'=>array(
 				    	'id' => $invoice->id,
 			   			'ref' => $invoice->ref,
-			   			'ref_ext' => $invoice->ref_ext,
-			            'status'=>$invoice->statut,
-			            'fk_user_author' => $invoice->fk_user_author,
-			            'fk_user_valid' => $invoice->fk_user_valid,
-			    		'lines' => $linesresp
+			   			'ref_ext' => $invoice->ref_ext?$invoice->ref_ext:'',   // If not defined, field is not added into soap
+			            'fk_user_author' => $invoice->user_author?$invoice->user_author:'',
+			            'fk_user_valid' => $invoice->user_valid?$invoice->user_valid:'',
+                        'date' => $invoice->date?dol_print_date($invoice->date,'dayrfc'):'',
+                        'date_creation' => $invoice->date_creation?dol_print_date($invoice->date_creation,'dayhourrfc'):'',
+                        'date_validation' => $invoice->date_validation?dol_print_date($invoice->date_creation,'dayhourrfc'):'',
+                        'date_modification' => $invoice->datem?dol_print_date($invoice->datem,'dayhourrfc'):'',
+                        'type' => $invoice->type,
+                        'total_net' => $invoice->total_ht,
+                        'total_vat' => $invoice->total_tva,
+                        'total' => $invoice->total_ttc,
+                        'note' => $invoice->note?$invoice->note:'',
+                        'note_public' => $invoice->note_public?$invoice->note_public:'',
+                        'status'=> $invoice->statut,
+                        'close_code' => $invoice->close_code?$invoice->close_code:'',
+                        'close_note' => $invoice->close_note?$invoice->close_note:'',
+			            'lines' => $linesresp
 //					        'lines' => array('0'=>array('id'=>222,'type'=>1),
 //				        				 '1'=>array('id'=>333,'type'=>1))
 
@@ -384,14 +444,24 @@ function getInvoicesForThirdParty($authentication,$idthirdparty)
 
 				// Now define invoice
 				$linesinvoice[]=array(
-					'id'=>$invoice->id,
-				    'ref'=>$invoice->ref,
-				    'ref_ext'=>$invoice->ref_ext,
-				    'type'=>$invoice->type,
-                    'status'=>$invoice->statut,
-				    'total_net'=>$invoice->total_ht,
-					'total_vat'=>$invoice->total_tva,
-					'total'=>$invoice->total_ttc,
+                    'id' => $invoice->id,
+                    'ref' => $invoice->ref,
+                    'ref_ext' => $invoice->ref_ext?$invoice->ref_ext:'',   // If not defined, field is not added into soap
+                    'fk_user_author' => $invoice->user_author?$invoice->user_author:'',
+                    'fk_user_valid' => $invoice->user_valid?$invoice->user_valid:'',
+                    'date' => $invoice->date?dol_print_date($invoice->date,'dayrfc'):'',
+                    'date_creation' => $invoice->date_creation?dol_print_date($invoice->date_creation,'dayhourrfc'):'',
+                    'date_validation' => $invoice->date_validation?dol_print_date($invoice->date_creation,'dayhourrfc'):'',
+                    'date_modification' => $invoice->datem?dol_print_date($invoice->datem,'dayhourrfc'):'',
+                    'type' => $invoice->type,
+                    'total_net' => $invoice->total_ht,
+                    'total_vat' => $invoice->total_tva,
+                    'total' => $invoice->total_ttc,
+                    'note' => $invoice->note?$invoice->note:'',
+                    'note_public' => $invoice->note_public?$invoice->note_public:'',
+                    'status'=> $invoice->statut,
+                    'close_code' => $invoice->close_code?$invoice->close_code:'',
+                    'close_note' => $invoice->close_note?$invoice->close_note:'',
 		    		'lines' => $linesresp
 				);
 
@@ -417,6 +487,50 @@ function getInvoicesForThirdParty($authentication,$idthirdparty)
 	}
 
 	return $objectresp;
+}
+
+
+/**
+ * Get list of invoices for third party
+ */
+function createInvoice($authentication,$idthirdparty,$invoice)
+{
+    global $db,$conf,$langs;
+
+    dol_syslog("Function: createInvoiceForThirdParty login=".$authentication['login']." idthirdparty=".$idthirdparty);
+
+    if ($authentication['entity']) $conf->entity=$authentication['entity'];
+
+    $objectresp=array();
+    $errorcode='';$errorlabel='';
+    $error=0;
+
+    if (! $error && ($authentication['dolibarrkey'] != $conf->global->WEBSERVICES_KEY))
+    {
+        $error++;
+        $errorcode='BAD_VALUE_FOR_SECURITY_KEY'; $errorlabel='Value provided into dolibarrkey entry field does not match security key defined in Webservice module setup';
+    }
+
+    if (! $error && empty($idthirdparty))
+    {
+        $error++;
+        $errorcode='BAD_PARAMETERS'; $errorlabel='Parameter id is not provided';
+    }
+
+    if (! $error)
+    {
+        //var_dump($invoice['ref_ext']);
+        //var_dump($invoice['lines'][0]['type']);
+
+
+    }
+
+    if ($error)
+    {
+        $objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+    }
+
+    return $objectresp;
 }
 
 

@@ -79,13 +79,25 @@ $server->wsdl->addComplexType(
     ));
 
 
+// 5 styles: RPC/encoded, RPC/literal, Document/encoded (not WS-I compliant), Document/literal, Document/literal wrapped
+// Style merely dictates how to translate a WSDL binding to a SOAP message. Nothing more. You can use either style with any programming model.
+// http://www.ibm.com/developerworks/webservices/library/ws-whichwsdl/
+$styledoc='rpc';       // rpc/document (document is an extend into SOAP 1.0 to support unstructured messages)
+$styleuse='encoded';   // encoded/literal/literal wrapped
+// Better choice is document/literal wrapped but literal wrapped not supported by nusoap.
+
 // Register WSDL
 $server->register('getVersions',
 // Entry values
 array('authentication'=>'tns:authentication'),
 // Exit values
 array('result'=>'tns:result','dolibarr'=>'xsd:string','os'=>'xsd:string','php'=>'xsd:string','webserver'=>'xsd:string'),
-$ns);
+$ns,
+$ns.'#getVersions',
+$styledoc,
+$styleuse,
+'WS to get Versions'
+);
 
 
 

@@ -29,7 +29,7 @@ require_once("../master.inc.php");
 require_once(NUSOAP_PATH.'/nusoap.php');		// Include SOAP
 
 $WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_invoice.php';
-//$WS_DOL_URL = 'http://localhost:8080/';	// If not a page, should end with /
+//$WS_DOL_URL = 'http://localhost:8080/';	// To test with Soapui mock. If not a page, should end with /
 $WS_METHOD1  = 'getInvoice';
 $WS_METHOD2  = 'getInvoicesForThirdParty';
 $ns='http://www.dolibarr.org/ns/';
@@ -58,30 +58,39 @@ $authentication=array(
     'password'=>'changeme',
     'entity'=>'');
 
-$parameters = array('authentication'=>$authentication,'id'=>1,'ref'=>'');
-dol_syslog("Call method ".$WS_METHOD1);
-$result1 = $soapclient1->call($WS_METHOD1,$parameters,$ns,'');
-if (! $result1)
+
+// Test url 1
+if ($WS_METHOD1)
 {
-	print $soapclient1->error_str;
-	print "<br>\n\n";
-	print $soapclient1->request;
-	print "<br>\n\n";
-	print $soapclient1->response;
-	exit;
+    $parameters = array('authentication'=>$authentication,'id'=>1,'ref'=>'');
+    dol_syslog("Call method ".$WS_METHOD1);
+    $result1 = $soapclient1->call($WS_METHOD1,$parameters,$ns,'');
+    if (! $result1)
+    {
+    	print $soapclient1->error_str;
+    	print "<br>\n\n";
+    	print $soapclient1->request;
+    	print "<br>\n\n";
+    	print $soapclient1->response;
+    	exit;
+    }
 }
 
-$parameters = array('authentication'=>$authentication,'idthirdparty'=>'1');
-dol_syslog("Call method ".$WS_METHOD2);
-$result2 = $soapclient2->call($WS_METHOD2,$parameters,$ns,'');
-if (! $result2)
+// Test url 2
+if ($WS_METHOD2)
 {
-	print $soapclient2->error_str;
-	print "<br>\n\n";
-	print $soapclient2->request;
-	print "<br>\n\n";
-	print $soapclient2->response;
-	exit;
+    $parameters = array('authentication'=>$authentication,'idthirdparty'=>'4');
+    dol_syslog("Call method ".$WS_METHOD2);
+    $result2 = $soapclient2->call($WS_METHOD2,$parameters,$ns,'');
+    if (! $result2)
+    {
+    	print $soapclient2->error_str;
+    	print "<br>\n\n";
+    	print $soapclient2->request;
+    	print "<br>\n\n";
+    	print $soapclient2->response;
+    	exit;
+    }
 }
 
 

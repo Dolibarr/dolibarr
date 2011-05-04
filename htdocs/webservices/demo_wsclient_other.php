@@ -50,20 +50,26 @@ $authentication=array(
     'login'=>'admin',
     'password'=>'changeme',
     'entity'=>'');
-$parameters = array('authentication'=>$authentication);
-dol_syslog("Call method ".$WS_METHOD);
-$result = $soapclient->call($WS_METHOD,$parameters,$ns,'');
-if (! $result)
+
+// Test URL
+if ($WS_METHOD)
 {
-	//var_dump($soapclient);
-	//print_r($soapclient);
-	print $soapclient->error_str;
-	print "<br>\n\n";
-	print $soapclient->request;
-	print "<br>\n\n";
-	print $soapclient->response;
-	exit;
+    $parameters = array('authentication'=>$authentication);
+    dol_syslog("Call method ".$WS_METHOD);
+    $result = $soapclient->call($WS_METHOD,$parameters,$ns,'');
+    if (! $result)
+    {
+    	//var_dump($soapclient);
+    	//print_r($soapclient);
+    	print $soapclient->error_str;
+    	print "<br>\n\n";
+    	print $soapclient->request;
+    	print "<br>\n\n";
+    	print $soapclient->response;
+    	exit;
+    }
 }
+
 
 /*
  * View
