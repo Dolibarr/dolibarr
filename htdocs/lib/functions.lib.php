@@ -3431,12 +3431,14 @@ function monthArrayOrSelected($selected=0)
 /**
  *	Print formated messages to output (Used to show messages on html output)
  *	@param		mesgstring		Message
- *	@param		mesgarray		Messages array
+ *	@param		mesgarray       Messages array
  *  @param      style           Style of message output
  *	@return		string			Return html output
+ *  @return     $keepembedded   Set to 1 in error message must be kept embedded into its html place (this disable jnotify)
  *  @see        dol_print_error
+ *  @see        dol_htmloutput_errors
  */
-function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok')
+function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepembedded=0)
 {
 	global $conf, $langs;
 
@@ -3463,32 +3465,36 @@ function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok')
 		$out.= $langs->trans($mesgstring);
 		if (empty($conf->global->MAIN_USE_JQUERY_JNOTIFY)) $out.= '</div>';
 	}
-	if (! empty($conf->global->MAIN_USE_JQUERY_JNOTIFY) && $out)
+	if ($out)
 	{
-		print '<script type="text/javascript">
-				jQuery(document).ready(function() {
-					jQuery.jnotify("'.dol_escape_js($out).'", "'.($style=="ok" ? 3000 : $style).'", '.($style=="ok" ? "false" : "true").');
-				});
-			</script>';
+	    if (! empty($conf->global->MAIN_USE_JQUERY_JNOTIFY) && ! $keepembedded)
+    	{
+    		print '<script type="text/javascript">
+    				jQuery(document).ready(function() {
+    					jQuery.jnotify("'.dol_escape_js($out).'", "'.($style=="ok" ? 3000 : $style).'", '.($style=="ok" ? "false" : "true").');
+    				});
+    			</script>';
+    	}
+    	else
+    	{
+    		print $out;
+    	}
 	}
-	else
-	{
-		print $out;
-	}
-
 	return $ret;
 }
 
 /**
  *  Print formated error messages to output (Used to show messages on html output)
- *  @param      mesgstring      Error message
- *  @param      mesgarray       Error messages array
- *  @return     html            Return html output
+ *  @param      mesgstring          Error message
+ *  @param      mesgarray           Error messages array
+ *  @return     keepembedded        Set to 1 in error message must be kept embedded into its html place (this disable jnotify)
+ *  @return     html                Return html output
  *  @see        dol_print_error
+ *  @see        dol_htmloutput_mesg
  */
-function dol_htmloutput_errors($mesgstring='',$mesgarray='')
+function dol_htmloutput_errors($mesgstring='', $mesgarray='', $keepembedded=0)
 {
-    return dol_htmloutput_mesg($mesgstring, $mesgarray, 'error');
+    return dol_htmloutput_mesg($mesgstring, $mesgarray, 'error', $keepembedded);
 }
 
 

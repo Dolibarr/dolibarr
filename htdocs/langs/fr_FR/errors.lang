@@ -76,3 +76,6 @@ ErrorDatabaseParameterWrong=Le paramètre de configuration de la base de donnée
 ErrorNumRefModel=Une référence existe en base (%s) et est incompatible avec cette numérotation. Supprimez la ligne ou renommez la référence pour activer ce module.
 ErrorQtyTooLowForThisSupplier=Quantité insuffisante pour ce fournisseur ou aucun tarif défini sur ce produit pour ce fournisseur
 ErrorModuleSetupNotComplete=La configuration du module semble incomplète. Aller dans l'espace Configuration - Modules pour corriger.
+ErrorBadMask=Erreur sur le masque
+ErrorBadMaskFailedToLocatePosOfSequence=Erreur, masque sans numéro de séquence
+ErrorBadMaskBadRazMonth=Erreur, mauvais valeur de remise à zéro
