@@ -5,6 +5,7 @@
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2007      Jean Heimburger      <jean@tiaris.info>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2011      Jean Heimburger      <jean@tiaris.info>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2451,14 +2452,14 @@ class Product extends CommonObject
 			// \todo A faire
 
 			// Cree fichier en taille origine
-            $content = @file_get_contents(urlencode($file));
-            if( $content)
-            {
-               $nom = basename($file);
-               $im = fopen(dol_osencode($dir.$nom),'wb');
-               fwrite($im, $content);
-               fclose($im);
-            }
+			$content = @file_get_contents($file);
+			if( $content)
+			{	
+				$nom = basename($file);
+				$im = fopen(dol_osencode($dir.$nom),'wb');
+				fwrite($im, $content);
+				fclose($im);
+			}
 		}
 	}
 
