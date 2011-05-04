@@ -331,6 +331,34 @@ function GetDetails( $token )
     return $resArray;
 }
 
+/**
+ * 	Get transaction details
+ * 	@param		transactionID		Transaction id
+ */
+function GetTransactionDetails($transactionID)
+{
+	global $API_Endpoint, $API_Url, $API_version, $USE_PROXY, $PROXY_HOST, $PROXY_PORT;
+    global $PAYPAL_API_USER, $PAYPAL_API_PASSWORD, $PAYPAL_API_SIGNATURE;
+    
+    $transactionID=urlencode($transactionID);
+    
+    /* Construct the request string that will be sent to PayPal.
+       The variable $nvpstr contains all the variables and is a
+       name value pair string with & as a delimiter */
+    $nvpStr="&TRANSACTIONID=$transactionID";
+    
+    /* Make the API call to PayPal, using API signature.
+       The API response is stored in an associative array called $resArray */
+    $resArray=hash_call("gettransactionDetails",$nvpStr);
+    
+    /* Next, collect the API request in the associative array $reqArray
+       as well to display back to the browser.
+       Normally you wouldnt not need to do this, but its shown for testing */
+    $reqArray=$_SESSION['nvpReqArray'];
+    
+    return $resArray;
+}
+
 /*
  '-------------------------------------------------------------------------------------------------------------------------------------------
  ' Purpose:     Validate payment

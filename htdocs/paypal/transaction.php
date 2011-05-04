@@ -32,17 +32,19 @@ $langs->load("paypal");
 // Security check
 //$result=restrictedArea($user,'paypal');
 
-$action = GETPOST('action');
-$page = GETPOST("page",'int');
-$startDateStr=GETPOST('startDateStr');
-$endDateStr=GETPOST('endDateStr');
-$transactionID=urlencode(GETPOST('transactionID'));
+$action 		= GETPOST('action');
+$id 			= GETPOST('id');
+$page 			= GETPOST("page",'int');
+$startDateStr	= GETPOST('startDateStr');
+$endDateStr		= GETPOST('endDateStr');
+$transactionID	= urlencode(GETPOST('transactionID'));
 
 if ($page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
+$errors='';
 
 /*
  * Actions
@@ -108,8 +110,31 @@ llxHeader();
 				dates.not( this ).datepicker( "option", option, date );
 			}
 		});
+		$( "div.paypal_link" ).click(function() {
+			var id_value = $(this).attr("id");
+			$.jnotify("<?php echo $langs->trans('PleaseBePatient'); ?>", 2000);
+			$.get( "<?php echo DOL_URL_ROOT; ?>/paypal/ajaxtransactiondetails.php", {
+				transaction_id: id_value
+			},
+			function(details) {
+				$( "div #paypal_detail_content" ).html(details);
+				$( "div #paypal-details" ).dialog({
+					modal: true,
+					width: 500,
+					buttons: {
+						Ok: function() {
+							$( this ).dialog( "close" );
+						}
+					}
+				});
+			});
+		});
 	});
 </script>
+
+<div id="paypal-details" title="<?php echo $langs->trans('TransactionDetails'); ?>" style="display: none;">
+	<div id="paypal_detail_content"></div>
+</div>
 
 <?php
 
@@ -123,7 +148,6 @@ if (! empty($nvpStr))
 	$reqArray=$_SESSION['nvpReqArray'];
 	
 	$ack = strtoupper($resArray["ACK"]);
-	$errors='';
 	if($ack!="SUCCESS" && $ack!="SUCCESSWITHWARNING")
 	{
 		$_SESSION['reshash']=$resArray;
@@ -196,7 +220,7 @@ else
 		$status			= $resArray["L_STATUS".$i];
 		
 		print '<tr '.$bc[$var].'>';
-		print '<td><a id="transactiondetailslink'.$i.'"  href="details.php?transactionID='.$transactionID.'">'.$transactionID.'</a></td>';
+		print '<td><div id="'.$transactionID.'" class="paypal_link" style="font-weight:bold;cursor:pointer;">'.$transactionID.'</div></td>';
 		print '<td align="center">'.dol_print_date($timeStamp,'dayhour').'</td>';
 		print '<td align="center">'.$status.'</td>';
 		print '<td align="right">'.$payerName.'</td>';
