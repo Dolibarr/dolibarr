@@ -462,9 +462,9 @@ class Commande extends CommonObject
 				// Appel des triggers
 				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('ORDER_CLOTURE',$this,$user,$langs,$conf);
-				if ($result < 0) { 
-					$error++; $this->errors=$interface->errors; 
+				$result=$interface->run_triggers('ORDER_CLOSE',$this,$user,$langs,$conf);
+				if ($result < 0) {
+					$error++; $this->errors=$interface->errors;
 					return -1;
 				}
 				// Fin appel triggers
@@ -516,7 +516,7 @@ class Commande extends CommonObject
 						if ($result < 0) { $error++; }
 					}
 				}
-				
+
 				if (! $error)
 				{
 					// Appel des triggers
@@ -526,7 +526,7 @@ class Commande extends CommonObject
 					if ($result < 0) { $error++; $this->errors=$interface->errors; }
 					// Fin appel triggers
 				}
-				
+
 				if (! $error)
 				{
 					$this->statut=-1;
@@ -758,12 +758,12 @@ class Commande extends CommonObject
 		// Load source object
 		$object->fetch($fromid);
 		$objFrom = $object;
-		
+
 		// Change socid if needed
 		if (! empty($socid) && $socid != $object->socid)
 		{
 			$objsoc = new Societe($this->db);
-			
+
 			if ($objsoc->fetch($socid)>0)
 			{
 				$object->socid 					= $objsoc->id;
@@ -772,7 +772,7 @@ class Commande extends CommonObject
 				$object->fk_project				= '';
 				$object->fk_delivery_address	= '';
 			}
-			
+
 			// TODO Change product price if multi-prices
 		}
 
