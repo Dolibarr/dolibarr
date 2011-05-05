@@ -70,6 +70,8 @@ class CommandeFournisseur extends Commande
     var $fk_project;
 	var $cond_reglement_id;
 	var $cond_reglement_code;
+	var $mode_reglement_id;
+	var $mode_reglement_code;
 
 
 	/**   \brief      Constructeur
@@ -106,12 +108,14 @@ class CommandeFournisseur extends Commande
 
 		$sql = "SELECT c.rowid, c.ref, c.date_creation, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva,";
 		$sql.= " c.localtax1, c.localtax2, ";
-		$sql.= " c.date_commande as date_commande, c.fk_cond_reglement, c.fk_projet as fk_project, c.remise_percent, c.source, c.fk_methode_commande,";
+		$sql.= " c.date_commande as date_commande, c.fk_cond_reglement, c.fk_mode_reglement, c.fk_projet as fk_project, c.remise_percent, c.source, c.fk_methode_commande,";
 		$sql.= " c.note, c.note_public, c.model_pdf,";
 		$sql.= " cm.libelle as methode_commande,";
 		$sql.= " cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle";
+		$sql.= " p.code as mode_reglement_code, p.libelle as mode_reglement_libelle";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_payment_term as cr ON (c.fk_cond_reglement = cr.rowid)";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as p ON (c.fk_mode_reglement = p.id)";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_input_method as cm ON cm.rowid = c.fk_methode_commande";
 		$sql.= " WHERE c.entity = ".$conf->entity;
 		if ($ref) $sql.= " AND c.ref='".$ref."'";
@@ -146,7 +150,10 @@ class CommandeFournisseur extends Commande
 			$this->fk_project          = $obj->fk_project;
 			$this->cond_reglement_id   = $obj->fk_cond_reglement;
 			$this->cond_reglement_code = $obj->cond_reglement_code;
-			$this->cond_reglement      = $obj->cond_reglement_libelle;;
+			$this->cond_reglement      = $obj->cond_reglement_libelle;
+			$this->mode_reglement_id   = $obj->fk_mode_reglement;
+			$this->mode_reglement_code = $obj->mode_reglement_code;
+			$this->mode_reglement      = $obj->mode_reglement_libelle;
 			$this->note                = $obj->note;
 			$this->note_public         = $obj->note_public;
 			$this->modelpdf            = $obj->model_pdf;
@@ -1184,6 +1191,39 @@ class CommandeFournisseur extends Commande
 		else
 		{
 			dol_syslog('CommandeFournisseur::cond_reglement, etat commande incompatible', LOG_ERR);
+			$this->error='Etat commande incompatible '.$this->statut;
+			return -2;
+		}
+	}
+	
+/**
+	 *   \brief      Change le mode de reglement
+	 *   \param      mode        Id du nouveau mode
+	 *   \return     int         >0 si ok, <0 si ko
+	 */
+	function mode_reglement($mode_reglement_id)
+	{
+		dol_syslog('CommandeFournisseur::mode_reglement('.$mode_reglement_id.')');
+		if ($this->statut >= 0)
+		{
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur';
+			$sql .= ' SET fk_mode_reglement = '.$mode_reglement_id;
+			$sql .= ' WHERE rowid='.$this->id;
+			if ( $this->db->query($sql) )
+			{
+				$this->mode_reglement_id = $mode_reglement_id;
+				return 1;
+			}
+			else
+			{
+				dol_syslog('CommandeFournisseur::mode_reglement Erreur '.$sql.' - '.$this->db->error(), LOG_ERR);
+				$this->error=$this->db->lasterror();
+				return -1;
+			}
+		}
+		else
+		{
+			dol_syslog('CommandeFournisseur::mode_reglement, etat commande incompatible', LOG_ERR);
 			$this->error='Etat commande incompatible '.$this->statut;
 			return -2;
 		}
