@@ -77,4 +77,5 @@ ErrorQtyTooLowForThisSupplier=Quantity too low for this supplier or no price def
 ErrorModuleSetupNotComplete=Setup of module looks to be uncomplete. Go on Setup - Modules to complete.
 ErrorBadMask=Error on mask
 ErrorBadMaskFailedToLocatePosOfSequence=Error, mask without sequence number
-ErrorBadMaskBadRazMonth=Erreur, bad reset value
+ErrorBadMaskBadRazMonth=Error, bad reset value
+ErrorSelectAtLeastOne=Error. Select at least one entry.

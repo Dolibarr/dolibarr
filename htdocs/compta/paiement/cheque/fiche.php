@@ -37,8 +37,9 @@ $langs->load('banks');
 $langs->load('companies');
 $langs->load('compta');
 
-$id = GETPOST("id");
-$ref= GETPOST("ref");
+$id =GETPOST("id");
+$ref=GETPOST("ref");
+$action=GETPOST('action');
 
 // Security check
 $fieldid = isset($_GET["ref"])?'number':'rowid';
@@ -63,7 +64,7 @@ $dir=$conf->banque->dir_output.'/bordereau/';
  * Actions
  */
 
-if ($_POST['action'] == 'setdate' && $user->rights->banque->cheque)
+if ($action == 'setdate' && $user->rights->banque->cheque)
 {
     $remisecheque = new RemiseCheque($db);
     $result = $remisecheque->fetch(GETPOST('id'));
@@ -84,11 +85,11 @@ if ($_POST['action'] == 'setdate' && $user->rights->banque->cheque)
     }
 }
 
-if ($_POST['action'] == 'create' && $_POST["accountid"] > 0 && $user->rights->banque->cheque)
+if ($action == 'create' && $_POST["accountid"] > 0 && $user->rights->banque->cheque)
 {
 	if (is_array($_POST['toRemise']))
 	{
-		$remisecheque = new RemiseCheque($db);	
+		$remisecheque = new RemiseCheque($db);
 		$result = $remisecheque->create($user, $_POST["accountid"], 0, $_POST['toRemise']);
 		if ($result > 0)
 		{
@@ -118,12 +119,12 @@ if ($_POST['action'] == 'create' && $_POST["accountid"] > 0 && $user->rights->ba
 	}
 	else
 	{
-		Header("Location: ".$_SERVER["PHP_SELF"]."?action=new");
-		exit;
+        $mesg=$langs->trans("ErrorSelectAtLeastOne");
+	    $action='new';
 	}
 }
 
-if ($_GET['action'] == 'remove' && $_GET["id"] > 0 && $_GET["lineid"] > 0 && $user->rights->banque->cheque)
+if ($action == 'remove' && $_GET["id"] > 0 && $_GET["lineid"] > 0 && $user->rights->banque->cheque)
 {
 	$remisecheque = new RemiseCheque($db);
 	$remisecheque->id = $_GET["id"];
@@ -139,7 +140,7 @@ if ($_GET['action'] == 'remove' && $_GET["id"] > 0 && $_GET["lineid"] > 0 && $us
 	}
 }
 
-if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes' && $user->rights->banque->cheque)
+if ($action == 'confirm_delete' && $_REQUEST['confirm'] == 'yes' && $user->rights->banque->cheque)
 {
 	$remisecheque = new RemiseCheque($db);
 	$remisecheque->id = $_GET["id"];
@@ -155,7 +156,7 @@ if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes' && 
 	}
 }
 
-if ($_REQUEST['action'] == 'confirm_valide' && $_REQUEST['confirm'] == 'yes' && $user->rights->banque->cheque)
+if ($action == 'confirm_valide' && $_REQUEST['confirm'] == 'yes' && $user->rights->banque->cheque)
 {
 	$remisecheque = new RemiseCheque($db);
 	$result = $remisecheque->fetch($_GET["id"]);
@@ -183,7 +184,7 @@ if ($_REQUEST['action'] == 'confirm_valide' && $_REQUEST['confirm'] == 'yes' && 
 	}
 }
 
-if ($_POST['action'] == 'builddoc' && $user->rights->banque->cheque)
+if ($action == 'builddoc' && $user->rights->banque->cheque)
 {
 	$remisecheque = new RemiseCheque($db);
 	$result = $remisecheque->fetch($_GET["id"]);
@@ -226,23 +227,7 @@ $html = new Form($db);
 $formfile = new FormFile($db);
 
 
-?>
-<script language="javascript" type="text/javascript">
-jQuery(document).ready(function() 
-{
-	jQuery("#checkall").click(function() 
-	{
-		jQuery(".checkforremise").attr('checked', true);
-	});
-	jQuery("#checknone").click(function() 
-	{
-		jQuery(".checkforremise").attr('checked', false);
-	});
-});
-</script>
-<?php
-
-if ($_GET['action'] == 'new')
+if ($action == 'new')
 {
 	$h=0;
 	$head[$h][0] = $_SERVER["PHP_SELF"].'?action=new';
@@ -276,7 +261,7 @@ else
 	/*
 	 * Confirmation de la suppression du bordereau
 	 */
-	if ($_GET['action'] == 'delete')
+	if ($action == 'delete')
 	{
 		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$remisecheque->id, $langs->trans("DeleteCheckReceipt"), $langs->trans("ConfirmDeleteCheckReceipt"), 'confirm_delete','','',1);
 		if ($ret == 'html') print '<br>';
@@ -285,7 +270,7 @@ else
 	/*
 	 * Confirmation de la validation du bordereau
 	 */
-	if ($_GET['action'] == 'valide')
+	if ($action == 'valide')
 	{
 		$facid = $_GET['facid'];
 		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$remisecheque->id, $langs->trans("ValidateCheckReceipt"), $langs->trans("ConfirmValidateCheckReceipt"), 'confirm_valide','','',1);
@@ -293,10 +278,11 @@ else
 	}
 }
 
-if ($mesg) print $mesg.'<br>';
+//if ($mesg) print $mesg.'<br>';
+dol_htmloutput_errors($mesg);
 
 
-if ($_GET['action'] == 'new')
+if ($action == 'new')
 {
 	$accounts = array();
 	$lines = array();
@@ -342,12 +328,29 @@ if ($_GET['action'] == 'new')
 
 	foreach ($accounts as $bid => $account_label)
 	{
+
+        print '
+        <script language="javascript" type="text/javascript">
+        jQuery(document).ready(function()
+        {
+            jQuery("#checkall_'.$bid.'").click(function()
+            {
+                jQuery(".checkforremise_'.$bid.'").attr(\'checked\', true);
+            });
+            jQuery("#checknone_'.$bid.'").click(function()
+            {
+                jQuery(".checkforremise_'.$bid.'").attr(\'checked\', false);
+            });
+        });
+        </script>
+        ';
+
 		$num = $db->num_rows($resql);
 		print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="create">';
 		print '<input type="hidden" name="accountid" value="'.$bid.'">';
-		
+
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td style="min-width: 120px">'.$langs->trans("DateChequeReceived")." &nbsp;</td>\n";
@@ -356,9 +359,9 @@ if ($_GET['action'] == 'new')
 		print '<td style="min-width: 200px">'.$langs->trans("Bank")."</td>\n";
 		print '<td align="right" width="100px">'.$langs->trans("Amount")."</td>\n";
 		print '<td align="center" width="100px">'.$langs->trans("Select")."<br>";
-		if ($conf->use_javascript_ajax) print '<a href="#" id="checkall">'.$langs->trans("All").'</a> / <a href="#" id="checknone">'.$langs->trans("None").'</a>';
+		if ($conf->use_javascript_ajax) print '<a href="#" id="checkall_'.$bid.'">'.$langs->trans("All").'</a> / <a href="#" id="checknone_'.$bid.'">'.$langs->trans("None").'</a>';
 		print '</td>';
-		
+
 		print "</tr>\n";
 
 		$var=true;
@@ -375,12 +378,12 @@ if ($_GET['action'] == 'new')
 			print '<td>'.$value["numero"]."</td>\n";
 			print '<td>'.$value["emetteur"]."</td>\n";
 			print '<td>'.$value["banque"]."</td>\n";
-			print '<td align="right">'.price($value["amount"]).'</td>';			
+			print '<td align="right">'.price($value["amount"]).'</td>';
 			print '<td align="center">';
-			print '<input id="'.$value["id"].'" class="flat checkforremise" checked="true" type="checkbox" name="toRemise[]" value="'.$value["id"].'">';	
-			print '</td>' ;		
+			print '<input id="'.$value["id"].'" class="flat checkforremise_'.$bid.'" checked="true" type="checkbox" name="toRemise[]" value="'.$value["id"].'">';
+			print '</td>' ;
 			print '</tr>';
-			
+
 			$i++;
 		}
 		print "</table>";
@@ -423,10 +426,10 @@ else
     print '<table class="nobordernopadding" width="100%"><tr><td>';
     print $langs->trans('Date');
     print '</td>';
-    if ($_GET['action'] != 'editdate') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDate'),1).'</a></td>';
+    if ($action != 'editdate') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDate'),1).'</a></td>';
     print '</tr></table>';
     print '</td><td colspan="2">';
-    if ($_GET['action'] == 'editdate')
+    if ($action == 'editdate')
     {
         print '<form name="setdate" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -551,7 +554,7 @@ else
 
 print '<div class="tabsAction">';
 
-if ($user->societe_id == 0 && sizeof($accounts) == 1 && $_GET['action'] == 'new' && $user->rights->banque->cheque)
+if ($user->societe_id == 0 && sizeof($accounts) == 1 && $action == 'new' && $user->rights->banque->cheque)
 {
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=create&amp;accountid='.$account_id.'">'.$langs->trans('NewCheckReceipt').'</a>';
 }
@@ -570,7 +573,7 @@ print '</div>';
 
 
 
-if ($_GET['action'] != 'new')
+if ($action != 'new')
 {
 	if ($remisecheque->statut == 1)
 	{

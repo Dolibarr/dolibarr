@@ -3442,29 +3442,38 @@ function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
 {
 	global $conf, $langs;
 
-	$ret = '';
-	$out = '';
+	$ret='';
+	$out='';
+	$divstart=$divend='';
 
-	if (is_array($mesgarray) && sizeof($mesgarray))
-	{
+    if (empty($conf->global->MAIN_USE_JQUERY_JNOTIFY) && ! preg_match('/<div class=".*">/i',$out))
+    {
+        $divstart='<div class="'.$style.'">';
+        $divend='</div>';
+    }
+
+    if ((is_array($mesgarray) && sizeof($mesgarray)) || $mesgstring)
+    {
         $langs->load("errors");
-	    if (empty($conf->global->MAIN_USE_JQUERY_JNOTIFY)) $out.= '<div class="'.$style.'">';
-		foreach($mesgarray as $message)
-		{
-			$ret++;
-			$out.= $langs->trans($message);
-			if ($ret < sizeof($mesgarray)) $out.= "<br>\n";
-		}
-		if (empty($conf->global->MAIN_USE_JQUERY_JNOTIFY)) $out.= '</div>';
-	}
-	if ($mesgstring)
-	{
-        $langs->load("errors");
-	    $ret++;
-		if (empty($conf->global->MAIN_USE_JQUERY_JNOTIFY)) $out.= '<div class="'.$style.'">';
-		$out.= $langs->trans($mesgstring);
-		if (empty($conf->global->MAIN_USE_JQUERY_JNOTIFY)) $out.= '</div>';
-	}
+        $out.=$divstart;
+        if (is_array($mesgarray) && sizeof($mesgarray))
+    	{
+    		foreach($mesgarray as $message)
+    		{
+    			$ret++;
+    			$out.= $langs->trans($message);
+    			if ($ret < sizeof($mesgarray)) $out.= "<br>\n";
+    		}
+    	}
+    	if ($mesgstring)
+    	{
+            $langs->load("errors");
+    	    $ret++;
+    		$out.= $langs->trans($mesgstring);
+    	}
+	   $out.=$divend;
+    }
+
 	if ($out)
 	{
 	    if (! empty($conf->global->MAIN_USE_JQUERY_JNOTIFY) && ! $keepembedded)
