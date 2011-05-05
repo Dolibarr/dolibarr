@@ -42,6 +42,10 @@ $langs->load("orders");
 if (!$user->admin)
 accessforbidden();
 
+$type=GETPOST('type');
+$value=GETPOST('value');
+$action=GETPOST('action');
+
 $specimenthirdparty=new Societe($db);
 $specimenthirdparty->initAsSpecimen();
 
@@ -50,14 +54,14 @@ $specimenthirdparty->initAsSpecimen();
  * Actions
  */
 
-if ($_POST["action"] == 'updateMask')
+if ($action == 'updateMask')
 {
 	$maskconstorder=$_POST['maskconstorder'];
 	$maskorder=$_POST['maskorder'];
 	if ($maskconstorder)  dolibarr_set_const($db,$maskconstorder,$maskorder,'chaine',0,'',$conf->entity);
 }
 
-if ($_GET["action"] == 'specimen')  // For orders
+if ($action == 'specimen')  // For orders
 {
 	$modele=$_GET["module"];
 
@@ -93,7 +97,7 @@ if ($_GET["action"] == 'specimen')  // For orders
 	}
 }
 
-if ($_GET["action"] == 'specimenfacture')   // For invoices
+if ($action == 'specimenfacture')   // For invoices
 {
 	$modele=$_GET["module"];
 
@@ -129,10 +133,10 @@ if ($_GET["action"] == 'specimenfacture')   // For invoices
 	}
 }
 
-if ($_GET["action"] == 'set')
+if ($action == 'set')
 {
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
-    $sql.= " VALUES ('".$db->escape($_GET["value"])."','".$type."',".$conf->entity.", ";
+    $sql.= " VALUES ('".$db->escape($value)."','".$type."',".$conf->entity.", ";
     $sql.= ($_GET["label"]?"'".$db->escape($_GET["label"])."'":'null').", ";
     $sql.= (! empty($_GET["scandir"])?"'".$db->escape($_GET["scandir"])."'":"null");
     $sql.= ")";
@@ -144,11 +148,11 @@ if ($_GET["action"] == 'set')
 //	else dol_print_error($db);
 }
 
-if ($_GET["action"] == 'del')
+if ($action == 'del')
 {
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql.= " WHERE nom = '".$_GET["value"]."'";
-	$sql.= " AND type = '".$_GET["type"]."'";
+	$sql.= " WHERE nom = '".$value."'";
+	$sql.= " AND type = '".$type."'";
 	$sql.= " AND entity = ".$conf->entity;
 	$db->query($sql);
 	if ($res)
@@ -158,29 +162,29 @@ if ($_GET["action"] == 'del')
 //    else dol_print_error($db);
 }
 
-if ($_GET["action"] == 'setdoc')
+if ($action == 'setdoc')
 {
 	$db->begin();
 
-	if ($_GET["type"] == 'order_supplier' && dolibarr_set_const($db, "COMMANDE_SUPPLIER_ADDON_PDF",$_GET["value"],'chaine',0,'',$conf->entity))
+	if ($_GET["type"] == 'order_supplier' && dolibarr_set_const($db, "COMMANDE_SUPPLIER_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
 	{
-		$conf->global->COMMANDE_SUPPLIER_ADDON_PDF = $_GET["value"];
+		$conf->global->COMMANDE_SUPPLIER_ADDON_PDF = $value;
 	}
 
-	if ($_GET["type"] == 'invoice_supplier' && dolibarr_set_const($db, "INVOICE_SUPPLIER_ADDON_PDF",$_GET["value"],'chaine',0,'',$conf->entity))
+	if ($_GET["type"] == 'invoice_supplier' && dolibarr_set_const($db, "INVOICE_SUPPLIER_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
 	{
-		$conf->global->INVOICE_SUPPLIER_ADDON_PDF = $_GET["value"];
+		$conf->global->INVOICE_SUPPLIER_ADDON_PDF = $value;
 	}
 
 	// On active le modele
 	$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql_del.= " WHERE nom = '".$db->escape($_GET["value"])."'";
-	$sql_del.= " AND type = '".$_GET["type"]."'";
+	$sql_del.= " WHERE nom = '".$db->escape($value)."'";
+	$sql_del.= " AND type = '".$type."'";
 	$sql_del.= " AND entity = ".$conf->entity;
 	$result1=$db->query($sql_del);
 
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
-    $sql.= " VALUES ('".$db->escape($_GET["value"])."', '".$type."', ".$conf->entity.", ";
+    $sql.= " VALUES ('".$db->escape($value)."', '".$type."', ".$conf->entity.", ";
     $sql.= ($_GET["label"]?"'".$db->escape($_GET["label"])."'":'null').", ";
     $sql.= (! empty($_GET["scandir"])?"'".$db->escape($_GET["scandir"])."'":"null");
     $sql.= ")";
@@ -195,21 +199,21 @@ if ($_GET["action"] == 'setdoc')
 	}
 }
 
-if ($_GET["action"] == 'setmod')
+if ($action == 'setmod')
 {
 	// TODO Verifier si module numerotation choisi peut etre active
 	// par appel methode canBeActivated
 
-	dolibarr_set_const($db, "COMMANDE_SUPPLIER_ADDON",$_GET["value"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "COMMANDE_SUPPLIER_ADDON",$value,'chaine',0,'',$conf->entity);
 }
 
-if ($_POST["action"] == 'addcat')
+if ($action == 'addcat')
 {
 	$fourn = new Fournisseur($db);
 	$fourn->CreateCategory($user,$_POST["cat"]);
 }
 
-if ($_POST["action"] == 'set_SUPPLIER_INVOICE_FREE_TEXT')
+if ($action == 'set_SUPPLIER_INVOICE_FREE_TEXT')
 {
 	dolibarr_set_const($db, "SUPPLIER_INVOICE_FREE_TEXT",$_POST["SUPPLIER_INVOICE_FREE_TEXT"],'chaine',0,'',$conf->entity);
 }
@@ -334,12 +338,11 @@ $dir = DOL_DOCUMENT_ROOT.'/includes/modules/supplier_order/pdf/';
 print_titre($langs->trans("OrdersModelModule"));
 
 // Defini tableau def de modele
-$type='order_supplier';
 $def = array();
 
 $sql = "SELECT nom";
 $sql.= " FROM ".MAIN_DB_PREFIX."document_model";
-$sql.= " WHERE type = '".$type."'";
+$sql.= " WHERE type = 'order_supplier'";
 $sql.= " AND entity = ".$conf->entity;
 
 $resql=$db->query($sql);
@@ -422,7 +425,7 @@ if (is_resource($handle))
     		}
     		else
     		{
-    	  		print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=order_supplier"" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'on').'</a>';
+    	  		print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=order_supplier"" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
     		}
     		print '</td>';
 
@@ -459,12 +462,11 @@ $dir = DOL_DOCUMENT_ROOT.'/includes/modules/supplier_invoice/pdf/';
 print_titre($langs->trans("BillsPDFModules"));
 
 // Defini tableau def de modele
-$type='invoice_supplier';
 $def = array();
 
 $sql = "SELECT nom";
 $sql.= " FROM ".MAIN_DB_PREFIX."document_model";
-$sql.= " WHERE type = '".$type."'";
+$sql.= " WHERE type = 'invoice_supplier'";
 $sql.= " AND entity = ".$conf->entity;
 
 $resql=$db->query($sql);
@@ -546,7 +548,7 @@ if (is_resource($handle))
     		}
     		else
     		{
-    	  		print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=invoice_supplier" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'on').'</a>';
+    	  		print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=invoice_supplier" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
     		}
     		print '</td>';
 
