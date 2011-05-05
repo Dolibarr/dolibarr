@@ -174,7 +174,7 @@ print '<input type="text" id="startDateStr" name="startDateStr" maxlength="20" s
 print $langs->trans('DateEnd').': ';
 print '<input type="text" id="endDateStr" name="endDateStr" maxlength="20" size="10"  value="'.$end_date_str.'" />&nbsp;';
 
-print $langs->trans('TransactionID').': ';
+print $langs->trans('Ref').': ';
 print '<input type="text" name="transactionID" />&nbsp;';
 
 print '<input type="submit" value="'.$langs->trans('Send').'" />';
@@ -187,7 +187,7 @@ print '</form>';
 // Transactions list
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print_liste_field_titre($langs->trans('ID'),$_SERVER['PHP_SELF'],'','',''.$socid.'&amp;viewstatut='.$viewstatut,'width="20%"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'','',''.$socid.'&amp;viewstatut='.$viewstatut,'width="20%"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans('ThirdPartyName'),$_SERVER['PHP_SELF'],'','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut, 'align="left"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans('Date'),$_SERVER['PHP_SELF'],'','',''.$socid.'&amp;viewstatut='.$viewstatut,'align="center"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans('GrossAmount'),$_SERVER['PHP_SELF'],'','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut, 'align="right"',$sortfield,$sortorder);
