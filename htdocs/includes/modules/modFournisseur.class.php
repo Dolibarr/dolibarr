@@ -215,8 +215,8 @@ class modFournisseur extends DolibarrModules
 							$this->rights[$r][1] = 'Envoyer les factures par mail';
 							$this->rights[$r][2] = 'a';
 							$this->rights[$r][3] = 0;
-							$this->rights[$r][4] = 'facture';
-							$this->rights[$r][5] = 'envoyer';
+							$this->rights[$r][4] = 'supplier_invoice_advance';
+							$this->rights[$r][5] = 'send';
 
 		                    $r++;
 		                    $this->rights[$r][0] = 1236;

@@ -1559,13 +1559,17 @@ if ($id > 0 || ! empty($ref))
 			}
 
 			// Send
-			if ($object->statut == 1 && $user->rights->propale->envoyer)
+			if ($object->statut == 1)
 			{
 				$propref = dol_sanitizeFileName($object->ref);
 				$file = $conf->propale->dir_output . '/'.$propref.'/'.$propref.'.pdf';
 				if (file_exists($file))
 				{
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
+                    if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->propale->propal_advance->send)
+                    {
+					   print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
+                    }
+                    else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
 				}
 			}
 

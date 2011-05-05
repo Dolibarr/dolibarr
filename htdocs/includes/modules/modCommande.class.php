@@ -130,7 +130,8 @@ class modCommande extends DolibarrModules
 		$this->rights[$r][1] = 'Envoyer les commandes clients';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'envoyer';
+		$this->rights[$r][4] = 'order_advance';
+        $this->rights[$r][5] = 'send';
 
 		$r++;
 		$this->rights[$r][0] = 87;

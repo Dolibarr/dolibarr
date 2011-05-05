@@ -1173,7 +1173,7 @@ if ($action == 'create' && $user->rights->commande->creer)
             $remise_percent     = (!empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
             $remise_absolue     = (!empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(!empty($soc->remise_absolue)?$soc->remise_absolue:0));
             $dateinvoice        = empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
-            
+
             // Object source contacts list
             $srccontactslist = $objectsrc->liste_contact(-1,'external',1);
         }
@@ -1447,7 +1447,7 @@ else
 
             $head = commande_prepare_head($object);
             dol_fiche_head($head, 'order', $langs->trans("CustomerOrder"), 0, 'order');
-            
+
             $formconfirm='';
 
             /*
@@ -1522,7 +1522,7 @@ else
                 // Paiement incomplet. On demande si motif = escompte ou autre
                 $formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneOrder'),$langs->trans('ConfirmCloneOrder',$object->ref),'confirm_clone',$formquestion,'yes',1);
             }
-            
+
             // Hook of thirdparty module
 			if (empty($formconfirm) && ! empty($object->hooks))
 			{
@@ -1531,7 +1531,7 @@ else
 					if (empty($formconfirm)) $formconfirm = $module->formconfirm($action,$object,$lineid);
 				}
 			}
-			
+
 			// Print form confirm
 			print $formconfirm;
 
@@ -1741,7 +1741,7 @@ else
                 $html->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->mode_reglement_id,'none');
             }
             print '</td></tr>';
-            
+
             // Availability
             print '<tr><td height="10">';
             print '<table class="nobordernopadding" width="100%"><tr><td>';
@@ -1845,7 +1845,7 @@ else
              * Lines
              */
             $result = $object->getLinesArray();
-            
+
             $numlines = count($object->lines);
 
             if ($conf->use_javascript_ajax && $object->statut == 0)
@@ -1915,14 +1915,15 @@ else
                     // Send
                     if ($object->statut > 0)
                     {
-                        if ($user->rights->commande->envoyer)
+                        $comref = dol_sanitizeFileName($object->ref);
+                        $file = $conf->commande->dir_output . '/'.$comref.'/'.$comref.'.pdf';
+                        if (file_exists($file))
                         {
-                            $comref = dol_sanitizeFileName($object->ref);
-                            $file = $conf->commande->dir_output . '/'.$comref.'/'.$comref.'.pdf';
-                            if (file_exists($file))
+                            if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->commande->order_advance->send))
                             {
                                 print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
                             }
+                            else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
                         }
                     }
 
@@ -1931,7 +1932,7 @@ else
                     if ($conf->expedition->enabled)
                     {
                     	$numshipping = $object->nb_expedition();
-                    	
+
                         if ($object->statut > 0 && $object->statut < 3 && $object->getNbOfProductsLines() > 0)
                         {
                             if ($user->rights->expedition->creer)

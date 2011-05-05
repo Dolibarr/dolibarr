@@ -129,7 +129,7 @@ class modFicheinter  extends DolibarrModules
 
         $r++;
         $this->rights[$r][0] = 68;
-        $this->rights[$r][1] = 'Envoyer les fiches d\'intervention';
+        $this->rights[$r][1] = 'Envoyer les fiches d\'intervention par courriel';
         $this->rights[$r][2] = 'r';
         $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'ficheinter_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
