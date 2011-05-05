@@ -77,6 +77,14 @@ if ($action == 'setconditions' && $user->rights->fournisseur->commande->creer)
     $result=$commande->cond_reglement($_POST['cond_reglement_id']);
 }
 
+// mode de reglement
+if ($action == 'setmode' && $user->rights->fournisseur->commande->creer)
+{
+    $commande	= new CommandeFournisseur($db);
+	$commande->fetch($id);
+    $result=$commande->mode_reglement($_POST['mode_reglement_id']);
+}
+
 // Set project
 if ($action ==	'classin')
 {
@@ -969,6 +977,24 @@ if ($id > 0 || ! empty($ref))
 		}
 		print "</td>";
 		print '</tr>';
+		
+		// Mode of payment
+        print '<tr><td height="10">';
+        print '<table class="nobordernopadding" width="100%"><tr><td>';
+        print $langs->trans('PaymentMode');
+        print '</td>';
+        if ($_GET['action'] != 'editmode' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+        print '</tr></table>';
+        print '</td><td colspan="2">';
+        if ($_GET['action'] == 'editmode')
+        {
+            $html->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->mode_reglement_id,'mode_reglement_id');
+        }
+        else
+        {
+            $html->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->mode_reglement_id,'none');
+        }
+        print '</td></tr>';
 
 		// Project
 		if ($conf->projet->enabled)
