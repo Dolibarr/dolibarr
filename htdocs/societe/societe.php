@@ -105,7 +105,6 @@ if ($mode == 'search')
     {
         $sql .= " AND cs.fk_categorie = ".$search_categ;
     }
-
 	$result=$db->query($sql);
 	if ($result)
 	{
@@ -333,7 +332,7 @@ if ($resql)
 	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId2Short"),$textprofid[2],1,0),$_SERVER["PHP_SELF"],"s.siret","",$params,'nowrap="nowrap"',$sortfield,$sortorder);
 	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId3Short"),$textprofid[3],1,0),$_SERVER["PHP_SELF"],"s.ape","",$params,'nowrap="nowrap"',$sortfield,$sortorder);
 	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId4Short"),$textprofid[4],1,0),$_SERVER["PHP_SELF"],"s.idprof4","",$params,'nowrap="nowrap"',$sortfield,$sortorder);
-	print '<td class="liste_titre" colspan="2" align="center">&nbsp;</td>';
+	print '<td></td>';
 	print "</tr>\n";
 
 	// Lignes des champs de filtre
@@ -388,7 +387,7 @@ if ($resql)
 		print "<td>".$obj->idprof2."</td>\n";
 		print "<td>".$obj->idprof3."</td>\n";
 		print "<td>".$obj->idprof4."</td>\n";
-		print '<td align="center">';
+		print '<td colspan="2" align="center">';
 		$s='';
 		if (($obj->client==1 || $obj->client==3) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))
 		{

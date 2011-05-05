@@ -54,6 +54,7 @@ class Societe extends CommonObject
     var $adresse; // TODO obsolete
     var $cp;
     var $ville;
+    var $status; // 0=activity ceased, 1= in activity
 
     var $departement_id;
     var $departement_code;
@@ -155,6 +156,7 @@ class Societe extends CommonObject
         $this->prefixCustomerIsRequired = 0;
         $this->prefixSupplierIsRequired = 0;
         $this->tva_assuj = 1;
+        $this->status = 1;
 
         return 1;
     }
@@ -199,10 +201,11 @@ class Societe extends CommonObject
 
         if ($result >= 0)
         {
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, entity, datec, datea, fk_user_creat, canvas)";
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, entity, datec, datea, fk_user_creat, canvas, status)";
             $sql.= " VALUES ('".$this->db->escape($this->name)."', ".$conf->entity.", '".$this->db->idate($now)."', '".$this->db->idate($now)."'";
             $sql.= ", ".($user->id > 0 ? "'".$user->id."'":"null");
             $sql.= ", ".($this->canvas ? "'".$this->canvas."'":"null");
+            $sql.= ", ".$this->status;
             $sql.= ")";
 
             dol_syslog("Societe::create sql=".$sql);
@@ -396,6 +399,7 @@ class Societe extends CommonObject
 
         $this->tva_assuj=trim($this->tva_assuj);
         $this->tva_intra=dol_sanitizeFileName($this->tva_intra,'');
+        if (empty($this->status)) $this->status = 0;
 
         // Local taxes
         $this->localtax1_assuj=trim($this->localtax1_assuj);
@@ -456,6 +460,7 @@ class Societe extends CommonObject
 
             $sql .= ",tva_assuj = ".($this->tva_assuj!=''?"'".$this->tva_assuj."'":"null");
             $sql .= ",tva_intra = '" . $this->db->escape($this->tva_intra) ."'";
+            $sql .= ",status = " .$this->status;
 
             // Local taxes
             $sql .= ",localtax1_assuj = ".($this->localtax1_assuj!=''?"'".$this->localtax1_assuj."'":"null");
@@ -576,6 +581,7 @@ class Societe extends CommonObject
         $sql .= ', s.fk_departement, s.fk_pays, s.fk_stcomm, s.remise_client, s.mode_reglement, s.cond_reglement, s.tva_assuj';
         $sql .= ', s.localtax1_assuj, s.localtax2_assuj, s.fk_prospectlevel, s.default_lang';
         $sql .= ', s.import_key';
+        $sql .= ', s.status';
         $sql .= ', fj.libelle as forme_juridique';
         $sql .= ', e.libelle as effectif';
         $sql .= ', p.code as pays_code, p.libelle as pays';
@@ -674,6 +680,7 @@ class Societe extends CommonObject
 
                 $this->tva_assuj      = $obj->tva_assuj;
                 $this->tva_intra      = $obj->tva_intra;
+                $this->status = $obj->status;
 
                 // Local Taxes
                 $this->localtax1_assuj      = $obj->localtax1_assuj;

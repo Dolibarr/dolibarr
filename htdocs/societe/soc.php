@@ -162,13 +162,13 @@ else
 		$soc->capital               = $_POST["capital"];
 		$soc->gencod                = $_POST["gencod"];
 
+        $soc->tva_intra             = $_POST["tva_intra"];
 		$soc->tva_assuj             = $_POST["assujtva_value"];
+        $soc->status        = $_POST["status"];
 
 		// Local Taxes
 		$soc->localtax1_assuj       = $_POST["localtax1assuj_value"];
 		$soc->localtax2_assuj       = $_POST["localtax2assuj_value"];
-
-		$soc->tva_intra             = $_POST["tva_intra"];
 
 		$soc->forme_juridique_code  = $_POST["forme_juridique_code"];
 		$soc->effectif_id           = $_POST["effectif_id"];
@@ -509,6 +509,7 @@ else
 		$soc->effectif_id=$_POST["effectif_id"];
 
 		$soc->tva_assuj = $_POST["assujtva_value"];
+        $soc->status= $_POST["status"];
 
 		//Local Taxes
 		$soc->localtax1_assuj       = $_POST["localtax1assuj_value"];
@@ -684,7 +685,12 @@ else
     		}
 		}
 
-		// Barcode
+        // Status
+        print '<tr><td>'.$langs->trans('Status').'</td><td colspan="3">';
+        print $form->selectarray('status', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),1);
+        print '</td></tr>';
+
+        // Barcode
 		if ($conf->global->MAIN_MODULE_BARCODE)
 		{
 			print '<tr><td>'.$langs->trans('Gencod').'</td><td colspan="3"><input type="text" name="gencod">';
@@ -965,6 +971,7 @@ else
 
 				$soc->tva_assuj = $_POST["assujtva_value"];
 				$soc->tva_intra=$_POST["tva_intra"];
+                $soc->status=$_POST["status"];
 
 				//Local Taxes
 				$soc->localtax1_assuj       = $_POST["localtax1assuj_value"];
@@ -1111,6 +1118,12 @@ else
     			}
 			}
 
+			// Status
+            print '<tr><td>'.$langs->trans("Status").'</td><td>';
+            print $form->selectarray('status', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),$soc->status);
+            print '</td></tr>';
+
+            // Barcode
 			if ($conf->global->MAIN_MODULE_BARCODE)
 			{
 				print '<tr><td valign="top">'.$langs->trans('Gencod').'</td><td colspan="3"><input type="text" name="gencod" value="'.$soc->gencod.'">';
@@ -1362,6 +1375,13 @@ else
 			print '</td></tr>';
 		}
 
+		// Status
+	    print '<tr><td>'.$langs->trans("Status").'</td>';
+        $activity_status = $soc->status == 1 ? $langs->trans('InActivity') : $langs->trans('ActivityCeased');   // nouvelle entrée statut activité
+        print '<td colspan="3">'.$activity_status;
+        print '</td></tr>';
+
+		// Barcode
 		if ($conf->global->MAIN_MODULE_BARCODE)
 		{
 			print '<tr><td>'.$langs->trans('Gencod').'</td><td colspan="3">'.$soc->gencod.'</td></tr>';
