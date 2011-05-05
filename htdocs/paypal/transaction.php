@@ -30,7 +30,7 @@ require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypalfunctions.lib.php");
 $langs->load("paypal");
 
 // Security check
-//$result=restrictedArea($user,'paypal');
+$result=restrictedArea($user,'paypal','','','transaction');
 
 $action 		= GETPOST('action');
 $id 			= GETPOST('id');

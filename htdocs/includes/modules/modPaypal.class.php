@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2011      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +66,7 @@ class modPaypal extends DolibarrModules
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory, use this->picto=DOL_URL_ROOT.'/module/img/file.png'
-		$this->picto=DOL_URL_ROOT.'/paypal/img/paypal.png';
+		$this->picto='paypal@paypal';
 
 		// Data directories to create when module is enabled.
 		$this->dirs = array('/paypal/temp');
@@ -81,7 +82,7 @@ class modPaypal extends DolibarrModules
 		$this->requiredby = array();	// List of modules id to disable if this one is disabled
 		$this->phpmin = array(4,1);					  // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(3,0,-2); // Minimum version of Dolibarr required by module
-		$this->langfiles = array("paybox");
+		$this->langfiles = array("paypal");
 
 		// Constants
 		$this->const = array();			// List of particular constants to add when module is enabled
@@ -108,14 +109,21 @@ class modPaypal extends DolibarrModules
 		$this->rights = array();		// Permission array used by this module
 		$r=0;
 
-		// Add here list of permission defined by an id, a label, a boolean and two constant strings.
-		// Example:
-		// $this->rights[$r][0] = 2000; 				// Permission id (must not be already used)
-		// $this->rights[$r][1] = 'Permision label';	// Permission label
-		// $this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
-		// $this->rights[$r][4] = 'level1';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		// $this->rights[$r][5] = 'level2';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		// $r++;
+		$this->rights[$r][0] = 50201; // id de la permission
+		$this->rights[$r][1] = 'Read transactions'; // libelle de la permission
+		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
+		$this->rights[$r][4] = 'transaction';
+		$this->rights[$r][5] = 'read';
+		$r++;
+		
+		$this->rights[$r][0] = 50202; // id de la permission
+		$this->rights[$r][1] = 'Import transactions'; // libelle de la permission
+		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][4] = 'transaction';
+		$this->rights[$r][5] = 'import';
+		$r++;
 
 
 		// Main menu entries
