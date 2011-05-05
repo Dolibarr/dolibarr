@@ -162,7 +162,7 @@ class modUser extends DolibarrModules
 		$this->rights[$r][1] = 'Modifier ses propres permissions';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 1;
-		$this->rights[$r][4] = 'self_advance';
+		$this->rights[$r][4] = 'self_advance';          // Visible if option MAIN_USE_ADVANCED_PERMS is on
 		$this->rights[$r][5] = 'writeperms';
 
 		$r++;
@@ -170,7 +170,7 @@ class modUser extends DolibarrModules
 		$this->rights[$r][1] = 'Consulter les groupes';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'group_advance';
+		$this->rights[$r][4] = 'group_advance';        // Visible if option MAIN_USE_ADVANCED_PERMS is on
 		$this->rights[$r][5] = 'read';
 
 		$r++;
@@ -178,7 +178,7 @@ class modUser extends DolibarrModules
 		$this->rights[$r][1] = 'Consulter les permissions des groupes';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'group_advance';
+		$this->rights[$r][4] = 'group_advance';       // Visible if option MAIN_USE_ADVANCED_PERMS is on
 		$this->rights[$r][5] = 'readperms';
 
 		$r++;
@@ -186,7 +186,7 @@ class modUser extends DolibarrModules
 		$this->rights[$r][1] = 'Creer/modifier les groupes et leurs permissions';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'group_advance';
+		$this->rights[$r][4] = 'group_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
 		$this->rights[$r][5] = 'write';
 
 		$r++;
@@ -194,7 +194,7 @@ class modUser extends DolibarrModules
 		$this->rights[$r][1] = 'Supprimer ou desactiver les groupes';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'group_advance';
+		$this->rights[$r][4] = 'group_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
 		$this->rights[$r][5] = 'delete';
 
 		$r++;

@@ -259,6 +259,7 @@ print '<td align="center" width="24">&nbsp;</td>';
 print '<td>'.$langs->trans("Permissions").'</td>';
 print '</tr>'."\n";
 
+//print "xx".$conf->global->MAIN_USE_ADVANCED_PERMS;
 $sql = "SELECT r.id, r.libelle, r.module";
 $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
 $sql.= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"

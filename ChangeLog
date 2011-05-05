@@ -5,6 +5,7 @@ $Id$
 
 ***** ChangeLog for 3.1 compared to 3.0 *****
 For users:
+- New: Can send interventions cards by email.
 - New: Add option MAIN_FIRST_TO_UPPER to force upper case of first 
        letters for names and firstname.
 - New: Can filter of payment type in bank transaction list.
