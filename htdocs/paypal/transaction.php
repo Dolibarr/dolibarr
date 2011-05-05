@@ -187,13 +187,13 @@ print '</form>';
 // Transactions list
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print_liste_field_titre($langs->trans('ID'),$_SERVER['PHP_SELF'],'','',''.$socid.'&amp;viewstatut='.$viewstatut,'width="25%"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans('ID'),$_SERVER['PHP_SELF'],'','',''.$socid.'&amp;viewstatut='.$viewstatut,'width="20%"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans('ThirdPartyName'),$_SERVER['PHP_SELF'],'','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut, 'align="left"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans('Date'),$_SERVER['PHP_SELF'],'','',''.$socid.'&amp;viewstatut='.$viewstatut,'align="center"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans('Status'),$_SERVER['PHP_SELF'],'','',''.$socid.'&amp;viewstatut='.$viewstatut,'align="center"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans('ThirdPartyName'),$_SERVER['PHP_SELF'],'','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut, 'align="right"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans('GrossAmount'),$_SERVER['PHP_SELF'],'','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut, 'align="right"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans('FeeAmount'),$_SERVER['PHP_SELF'],'','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut, 'align="right"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans('NetAmount'),$_SERVER['PHP_SELF'],'','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut, 'align="right"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans('Status'),$_SERVER['PHP_SELF'],'','',''.$socid.'&amp;viewstatut='.$viewstatut,'align="right"',$sortfield,$sortorder);
 print '</tr>';
 
 $var=true;
@@ -223,12 +223,12 @@ else
 		
 		print '<tr '.$bc[$var].'>';
 		print '<td><div id="'.$transactionID.'" class="paypal_link" style="font-weight:bold;cursor:pointer;">'.$transactionID.'</div></td>';
+		print '<td align="left">'.$payerName.'</td>';
 		print '<td align="center">'.dol_print_date($timeStamp,'dayhour').'</td>';
-		print '<td align="center">'.$status.'</td>';
-		print '<td align="right">'.$payerName.'</td>';
 		print '<td align="right">'.$amount.' '.$currency.'</td>';
 		print '<td align="right">'.$feeamount.' '.$currency.'</td>';
 		print '<td align="right">'.$netamount.' '.$currency.'</td>';
+		print '<td align="right">'.$status.'</td>';
 		print '</tr>';
 		
 		$i++;
