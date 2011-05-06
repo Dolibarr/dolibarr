@@ -2469,15 +2469,14 @@ class Commande extends CommonObject
 	 */
 	function getNomUrl($withpicto=0,$option=0)
 	{
-		global $langs;
+		global $conf, $langs;
 
 		$result='';
-		$urlOption='';
 
-		if ($option == 3) $urlOption = '/compta';
-		if ($option == 4) $urlOption = '/expedition';
+		$urlOption = '/commande/fiche.php';
+		if ($conf->expedition->enabled && ($option == 1 || $option == 2)) $urlOption = '/expedition/shipment.php';
 
-		$lien = '<a href="'.DOL_URL_ROOT.$urlOption.'/commande/fiche.php?id='.$this->id.'">';
+		$lien = '<a href="'.DOL_URL_ROOT.$urlOption.'?id='.$this->id.'">';
 		$lienfin='</a>';
 
 		$picto='order';

@@ -54,16 +54,7 @@ function commande_prepare_head($object)
 		$head[$h][2] = 'shipping';
 		$h++;
 	}
-/*
-	// Commande a facturer
-	if ($conf->facture->enabled)
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/compta/commande/fiche.php?id='.$commande->id;
-		$head[$h][1] = $langs->trans("AccountancyCard");
-		$head[$h][2] = 'accountancy';
-		$h++;
-	}
-*/
+
 	if ($conf->use_preview_tabs)
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/commande/apercu.php?id='.$object->id;

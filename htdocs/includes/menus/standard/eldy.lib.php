@@ -931,7 +931,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
             if ($conf->commande->enabled)
             {
                 $langs->load("orders");
-                if ($conf->facture->enabled) $newmenu->add("/compta/commande/liste.php?leftmenu=orders&amp;status=3&amp;afacturer=1", $langs->trans("MenuOrdersToBill"), 0, $user->rights->commande->lire);
+                if ($conf->facture->enabled) $newmenu->add("/commande/liste.php?leftmenu=orders&amp;status=3&amp;afacturer=1", $langs->trans("MenuOrdersToBill"), 0, $user->rights->commande->lire);
                 //                  if ($leftmenu=="orders") $newmenu->add("/commande/", $langs->trans("StatusOrderToBill"), 1 ,$user->rights->commande->lire);
             }
 

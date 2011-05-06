@@ -1452,12 +1452,43 @@ class CommonObject
      *  @param  $objectid
      *  @param  $somethingshown
      */
-    function showLinkedObjectBlock($objecttype,$objectid,$somethingshown=0)
+    function showLinkedObjectBlock($somethingshown=0)
     {
         global $langs,$bc;
+        
+        $this->fetch_object_linked();
 
+        $num = sizeof($this->linkedObjects);
+        
+        foreach($this->linkedObjects as $objecttype => $objects)
+        {
+        	$tplpath = $element = $subelement = $objecttype;
+            
+        	if (preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
+            {
+                $element = $regs[1];
+                $subelement = $regs[2];
+                $tplpath = $element.'/'.$subelement;
+            }
+            
+        	// To work with non standard path
+            if ($objecttype == 'facture') { $tplpath = 'compta/'.$element; }
+            if ($objecttype == 'propal')  { $tplpath = 'comm/'.$element; }
+            if ($objecttype == 'shipping') { $tplpath = 'expedition'; }
+            if ($objecttype == 'delivery') { $tplpath = 'livraison'; }
+            if ($objecttype == 'invoice_supplier') { $tplpath = 'fourn/facture'; }
+            if ($objecttype == 'order_supplier')   { $tplpath = 'fourn/commande'; }
+            
+            $this->linkedObjectBlock = $objects;
+            
+            dol_include_once('/'.$tplpath.'/tpl/linkedobjectblock.tpl.php');
+        }
+        
+        return $num;
+        
+        
         //print 'objecttype='.$objecttype.'<br>';
-
+/*
         $this->objectid = $objectid;
 
         $num = sizeof($this->objectid);
@@ -1496,6 +1527,7 @@ class CommonObject
 
             return $num;
         }
+        */
     }
 
 

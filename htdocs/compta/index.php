@@ -700,7 +700,7 @@ if ($conf->facture->enabled && $conf->commande->enabled && $user->rights->comman
 			$i = 0;
 			print '<table class="noborder" width="100%">';
 			print "<tr class=\"liste_titre\">";
-			print '<td colspan="2">'.$langs->trans("OrdersToBill").' <a href="'.DOL_URL_ROOT.'/compta/commande/liste.php?status=3&afacturer=1">('.$num.')</a></td>';
+			print '<td colspan="2">'.$langs->trans("OrdersToBill").' <a href="'.DOL_URL_ROOT.'/commande/liste.php?status=3&afacturer=1">('.$num.')</a></td>';
 			if ($conf->global->MAIN_SHOW_HT_ON_SUMMARY) print '<td align="right">'.$langs->trans("AmountHT").'</td>';
 			print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
 			print '<td align="right">'.$langs->trans("ToBill").'</td>';
