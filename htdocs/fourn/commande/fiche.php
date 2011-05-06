@@ -471,7 +471,7 @@ if ($action == 'confirm_cancel' && $_REQUEST["confirm"] == 'yes' &&	$user->right
 
 // Line ordering
 
-if ($_GET['action']	== 'up'	&& $user->rights->fournisseur->commande->creer)
+if ($action	== 'up'	&& $user->rights->fournisseur->commande->creer)
 {
 	$commande =	new	CommandeFournisseur($db,'',$id);
 	$commande->fetch($id);
@@ -488,7 +488,7 @@ if ($_GET['action']	== 'up'	&& $user->rights->fournisseur->commande->creer)
 	exit;
 }
 
-if ($_GET['action']	== 'down' && $user->rights->fournisseur->commande->creer)
+if ($action	== 'down' && $user->rights->fournisseur->commande->creer)
 {
 	$commande =	new	CommandeFournisseur($db,'',$id);
 	$commande->fetch($id);
@@ -823,7 +823,7 @@ if ($id > 0 || ! empty($ref))
 		/*
 		 * Confirmation de la suppression de	la commande
 		 */
-		if ($_GET['action']	== 'delete')
+		if ($action	== 'delete')
 		{
 			$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', '', 0, 2);
 			if ($ret == 'html') print '<br>';
@@ -832,7 +832,7 @@ if ($id > 0 || ! empty($ref))
 		/*
 		 * Confirmation de la validation
 		 */
-		if ($_GET['action']	== 'valid')
+		if ($action	== 'valid')
 		{
 			$commande->date_commande=gmmktime();
 
@@ -855,7 +855,7 @@ if ($id > 0 || ! empty($ref))
 		/*
 		 * Confirmation de l'approbation
 		 */
-		if ($_GET['action']	== 'approve')
+		if ($action	== 'approve')
 		{
 			$ret=$html->form_confirm("fiche.php?id=$commande->id",$langs->trans("ApproveThisOrder"),$langs->trans("ConfirmApproveThisOrder",$commande->ref),"confirm_approve", '', 1, 1);
 			if ($ret == 'html') print '<br>';
@@ -863,7 +863,7 @@ if ($id > 0 || ! empty($ref))
 		/*
 		 * Confirmation de la desapprobation
 		 */
-		if ($_GET['action']	== 'refuse')
+		if ($action	== 'refuse')
 		{
 			$ret=$html->form_confirm("fiche.php?id=$commande->id",$langs->trans("DenyingThisOrder"),$langs->trans("ConfirmDenyingThisOrder",$commande->ref),"confirm_refuse", '', 0, 1);
 			if ($ret == 'html') print '<br>';
@@ -871,7 +871,7 @@ if ($id > 0 || ! empty($ref))
 		/*
 		 * Confirmation de l'annulation
 		 */
-		if ($_GET['action']	== 'cancel')
+		if ($action	== 'cancel')
 		{
 			$ret=$html->form_confirm("fiche.php?id=$commande->id",$langs->trans("Cancel"),$langs->trans("ConfirmCancelThisOrder",$commande->ref),"confirm_cancel", '', 0, 1);
 			if ($ret == 'html') print '<br>';
@@ -891,7 +891,7 @@ if ($id > 0 || ! empty($ref))
 		/*
 		 * Confirmation de la suppression d'une ligne produit
 		 */
-		if ($_GET['action'] == 'delete_product_line')
+		if ($action == 'delete_product_line')
 		{
 			$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$commande->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline','',0,2);
 			if ($ret == 'html') print '<br>';
@@ -964,10 +964,10 @@ if ($id > 0 || ! empty($ref))
 		print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
 		print $langs->trans('PaymentConditions');
 		print '<td>';
-		if ($_GET['action'] != 'editconditions') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+		if ($action != 'editconditions') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="2">';
-		if ($_GET['action'] == 'editconditions')
+		if ($action == 'editconditions')
 		{
 			$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$commande->id,  $commande->cond_reglement_id,'cond_reglement_id');
 		}
@@ -977,16 +977,18 @@ if ($id > 0 || ! empty($ref))
 		}
 		print "</td>";
 		print '</tr>';
-		
+
 		// Mode of payment
-        print '<tr><td height="10">';
-        print '<table class="nobordernopadding" width="100%"><tr><td>';
+        $langs->load('bills');
+		$html = new Form($db);
+		print '<tr><td nowrap>';
+		print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
         print $langs->trans('PaymentMode');
         print '</td>';
-        if ($_GET['action'] != 'editmode' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+        if ($action != 'editmode') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
         print '</tr></table>';
         print '</td><td colspan="2">';
-        if ($_GET['action'] == 'editmode')
+        if ($action == 'editmode')
         {
             $html->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->mode_reglement_id,'mode_reglement_id');
         }
@@ -1004,11 +1006,11 @@ if ($id > 0 || ! empty($ref))
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('Project');
 			print '</td>';
-			if ($_GET['action'] != 'classer') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classer&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
+			if ($action != 'classer') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classer&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="2">';
 			//print "$commande->id, $commande->socid, $commande->fk_project";
-			if ($_GET['action'] == 'classer')
+			if ($action == 'classer')
 			{
 				$html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->socid, $commande->fk_project, 'projectid');
 			}
@@ -1086,7 +1088,7 @@ if ($id > 0 || ! empty($ref))
 			if (! empty($line->date_end)) $type=1;
 
 			// Ligne en mode visu
-			if ($_GET['action'] != 'editline' || $_GET['rowid'] != $line->id)
+			if ($action != 'editline' || $_GET['rowid'] != $line->id)
 			{
 				print '<tr '.$bc[$var].'>';
 
@@ -1315,13 +1317,13 @@ if ($id > 0 || ! empty($ref))
 		print '</div>';
 
 
-		if ($_GET['action'] != 'presend')
+		if ($action != 'presend')
 		{
 
 			/**
 			 * Boutons actions
 			 */
-			if ($user->societe_id == 0 && $_GET['action'] != 'editline' && $_GET['action'] != 'delete')
+			if ($user->societe_id == 0 && $action != 'editline' && $action != 'delete')
 			{
 				print '<div	class="tabsAction">';
 
@@ -1519,7 +1521,7 @@ if ($id > 0 || ! empty($ref))
 		 * Action presend
 		 *
 		 */
-		if ($_GET['action'] == 'presend')
+		if ($action == 'presend')
 		{
 			$ref = dol_sanitizeFileName($commande->ref);
 			$file = $conf->fournisseur->commande->dir_output . '/' . $ref . '/' . $ref . '.pdf';
