@@ -1259,28 +1259,16 @@ else
             print "</div>";
 			print '<br>';
         }
+        
+        print '<table width="100%"><tr><td width="50%" valign="top">';
 
 		/*
 		 * Linked object block
 		 */
-		$object->load_object_linked($object->id,$object->element);
-
-		if (! empty($object->linked_object))
-		{
-			print '<table width="100%"><tr><td width="50%" valign="top">';
-
-			foreach($object->linked_object as $linked_object => $linked_objectid)
-			{
-				if($conf->$linked_object->enabled && $linked_object != $object->element)
-				{
-					$somethingshown=$object->showLinkedObjectBlock($linked_object,$linked_objectid,$somethingshown);
-				}
-			}
-
-			print '</td><td valign="top" width="50%">';
-			print '</td></tr></table>';
-		}
-
+        $somethingshown=$object->showLinkedObjectBlock();
+        
+        print '</td><td valign="top" width="50%">';
+        print '</td></tr></table>';
     }
 }
 

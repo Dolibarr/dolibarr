@@ -681,7 +681,7 @@ else
 			$soc->fetch($expedition->socid);
 
 			// delivery link
-			$expedition->load_object_linked($expedition->id,$expedition->element,-1,-1);
+			$expedition->fetchObjectLinked($expedition->id,$expedition->element,-1,-1);
 
 			$head=shipping_prepare_head($expedition);
 			dol_fiche_head($head, 'shipping', $langs->trans("Sending"), 0, 'sending');
@@ -1076,7 +1076,7 @@ else
 				}
 			}
 
-			if ($conf->livraison_bon->enabled && $expedition->statut == 1 && $user->rights->expedition->livraison->creer && empty($expedition->linked_object))
+			if ($conf->livraison_bon->enabled && $expedition->statut == 1 && $user->rights->expedition->livraison->creer && empty($expedition->linkedObjectsIds))
 			{
 				print '<a class="butAction" href="fiche.php?id='.$expedition->id.'&amp;action=create_delivery">'.$langs->trans("DeliveryOrder").'</a>';
 			}

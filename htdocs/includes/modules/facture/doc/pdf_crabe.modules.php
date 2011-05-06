@@ -1092,59 +1092,36 @@ class pdf_crabe extends ModelePDFFactures
 
 		// Add list of linked orders and proposals
 		// TODO mutualiser
-	    $object->load_object_linked();
-
-	    if ($conf->propal->enabled)
-		{
-			require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
-
-			$outputlangs->load('propal');
-			foreach($object->linked_object as $key => $val)
-			{
-				if ($key == 'propal')
-				{
-					for ($i = 0; $i<sizeof($val);$i++)
-					{
-						$newobject=new Propal($this->db);
-						$result=$newobject->fetch($val[$i]);
-						if ($result >= 0)
-						{
-							$posy+=4;
-							$pdf->SetXY(100,$posy);
-							$pdf->SetFont('','', $default_font_size - 1);
-							$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefProposal")." : ".$outputlangs->transnoentities($newobject->ref), '', 'R');
-						}
-					}
-				}
+	    $object->fetchObjectLinked();
+	    
+	    foreach($object->linkedObjects as $objecttype => $objects)
+	    {
+	    	if ($objecttype == 'propal')
+	    	{
+	    		$outputlangs->load('propal');
+	    		$num=sizeof($objects);
+	    		for ($i=0;$i<$num;$i++)
+	    		{
+	    			$posy+=4;
+	    			$pdf->SetXY(100,$posy);
+	    			$pdf->SetFont('','', $default_font_size - 1);
+	    			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefProposal")." : ".$outputlangs->transnoentities($objects[$i]->ref), '', 'R');
+	    		}
 			}
-		}
-
-	    // TODO mutualiser
-		if ($conf->commande->enabled)
-		{
-			require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
-
-			$outputlangs->load('orders');
-			foreach($object->linked_object as $key => $val)
+			else if ($objecttype == 'commande')
 			{
-				if ($key == 'commande')
-				{
-					for ($i = 0; $i<sizeof($val);$i++)
-					{
-						$newobject=new Commande($this->db);
-						$result=$newobject->fetch($val[$i]);
-						if ($result >= 0)
-						{
-							$posy+=4;
-							$pdf->SetXY(100,$posy);
-							$pdf->SetFont('','', $default_font_size - 1);
-							$text=$newobject->ref;
-							if ($newobject->ref_client) $text.=' ('.$newobject->ref_client.')';
-							$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text), '', 'R');
-						}
-					}
-				}
-			}
+				$outputlangs->load('orders');
+				$num=sizeof($objects);
+	    		for ($i=0;$i<$num;$i++)
+	    		{
+	    			$posy+=4;
+	    			$pdf->SetXY(100,$posy);
+	    			$pdf->SetFont('','', $default_font_size - 1);
+	    			$text=$objects[$i]->ref;
+	    			if ($objects[$i]->ref_client) $text.=' ('.$objects[$i]->ref_client.')';
+	    			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text), '', 'R');
+	    		}
+	    	}
 		}
 
 		if ($showaddress)

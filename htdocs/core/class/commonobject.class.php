@@ -1151,16 +1151,19 @@ class CommonObject
 	}
 
 	/**
-	 * 	   Load array of objects linked to current object. Links are loaded into this->linked_object array.
+	 * 	   Fetch array of objects linked to current object. Links are loaded into this->linked_object array.
 	 *     @param  sourceid
 	 *     @param  sourcetype
 	 *     @param  targetid
 	 *     @param  targettype
 	 *     @param  clause			OR, AND
 	 */
-	function load_object_linked($sourceid='',$sourcetype='',$targetid='',$targettype='',$clause='OR')
+	function fetchObjectLinked($sourceid='',$sourcetype='',$targetid='',$targettype='',$clause='OR')
 	{
-		$this->linked_object=array();
+		global $conf;
+		
+		$this->linkedObjectsIds=array();
+		$this->linkedObjects=array();
 		
 		$justsource=false;
 		$justtarget=false;
@@ -1168,10 +1171,10 @@ class CommonObject
 		if (! empty($sourceid) && ! empty($sourcetype) && empty($targetid) && empty($targettype)) $justsource=true;
 		if (empty($sourceid) && empty($sourcetype) && ! empty($targetid) && ! empty($targettype)) $justtarget=true;
 
-		$sourceid = (!empty($sourceid)?$sourceid:$this->id);
-		$targetid = (!empty($targetid)?$targetid:$this->id);
-		$sourcetype = (!empty($sourcetype)?$sourcetype:$this->origin);
-		$targettype = (!empty($targettype)?$targettype:$this->element);
+		$sourceid = (! empty($sourceid) ? $sourceid : $this->id );
+		$targetid = (! empty($targetid) ? $targetid : $this->id );
+		$sourcetype = (! empty($sourcetype) ? $sourcetype : (! empty($this->origin) ? $this->origin : $this->element ) );
+		$targettype = (! empty($targettype) ? $targettype : $this->element );
 
 		// Links beetween objects are stored in this table
 		$sql = 'SELECT fk_source, sourcetype, fk_target, targettype';
@@ -1187,8 +1190,9 @@ class CommonObject
 			$sql.= "(fk_source = '".$sourceid."' AND sourcetype = '".$sourcetype."')";
 			$sql.= " ".$clause." (fk_target = '".$targetid."' AND targettype = '".$targettype."')";
 		}
-		
-		dol_syslog("CommonObject::load_object_linked sql=".$sql);
+		//print $sql;
+
+		dol_syslog("CommonObject::fetchObjectLink sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1199,72 +1203,63 @@ class CommonObject
 				$obj = $this->db->fetch_object($resql);
 				if ($obj->fk_source == $sourceid)
 				{
-					$this->linked_object[$obj->targettype][]=$obj->fk_target;
+					$this->linkedObjectsIds[$obj->targettype][]=$obj->fk_target;
 				}
 				if ($obj->fk_target == $targetid)
 				{
-					$this->linked_object[$obj->sourcetype][]=$obj->fk_source;
+					$this->linkedObjectsIds[$obj->sourcetype][]=$obj->fk_source;
 				}
 				$i++;
+			}
+			
+			if (! empty($this->linkedObjectsIds))
+			{
+				foreach($this->linkedObjectsIds as $objecttype => $objectids)
+				{
+					// Parse element/subelement (ex: project_task)
+					$module = $element = $subelement = $objecttype;
+					if (preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
+					{
+						$module = $element = $regs[1];
+						$subelement = $regs[2];
+					}
+					
+					$classpath = $element.'/class';
+					
+					// To work with non standard path
+					if ($objecttype == 'facture') { $classpath = 'compta/facture/class'; }
+		            if ($objecttype == 'propal')  { $classpath = 'comm/propal/class'; }
+		            if ($objecttype == 'shipping') { $classpath = 'expedition/class'; $subelement = 'expedition'; $module = 'expedition_bon'; }
+		            if ($objecttype == 'delivery') { $classpath = 'livraison/class'; $subelement = 'livraison'; $module = 'livraison_bon'; }
+		            if ($objecttype == 'invoice_supplier') { $classpath = 'fourn/class'; }
+		            if ($objecttype == 'order_supplier')   { $classpath = 'fourn/class'; }
+		
+		            $classfile = strtolower($subelement); $classname = ucfirst($subelement);
+		            if ($objecttype == 'invoice_supplier') { $classfile = 'fournisseur.facture'; $classname='FactureFournisseur'; }
+		            if ($objecttype == 'order_supplier')   { $classfile = 'fournisseur.commande'; $classname='CommandeFournisseur'; }
+		            
+		            if ($conf->$module->enabled && $element != $this->element)
+		            {
+			            dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
+			            
+						$num=sizeof($objectids);
+						
+						for ($i=0;$i<$num;$i++)
+						{
+							$object = new $classname($this->db);
+							$ret = $object->fetch($objectids[$i]);
+							if ($ret >= 0)
+							{
+								$this->linkedObjects[$objecttype][$i] = $object;
+							}
+						}
+		            }
+				}
 			}
 		}
 		else
 		{
 			dol_print_error($this->db);
-		}
-	}
-
-	/**
-	 * 		Fetch objects linked
-	 */
-	function fetch_object_linked($sourceid='',$sourcetype='',$targetid='',$targettype='',$clause='OR')
-	{
-		global $conf;
-		
-		$this->linkedObjects=array();
-		
-		$this->load_object_linked($sourceid,$sourcetype,$targetid,$targettype,$clause);
-		
-		foreach($this->linked_object as $objecttype => $objects)
-		{
-			// Parse element/subelement (ex: project_task)
-			$element = $subelement = $objecttype;
-			if (preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
-			{
-				$element = $regs[1];
-				$subelement = $regs[2];
-			}
-			
-			$classpath = $element.'/class';
-			
-			// To work with non standard path
-			if ($objecttype == 'facture') { $classpath = 'compta/facture/class'; }
-            if ($objecttype == 'propal')  { $classpath = 'comm/propal/class'; }
-            if ($objecttype == 'shipping') { $classpath = 'expedition/class'; $subelement = 'expedition'; }
-            if ($objecttype == 'delivery') { $classpath = 'livraison/class'; $subelement = 'livraison'; }
-            if ($objecttype == 'invoice_supplier') { $classpath = 'fourn/class'; }
-            if ($objecttype == 'order_supplier')   { $classpath = 'fourn/class'; }
-
-            $classfile = strtolower($subelement); $classname = ucfirst($subelement);
-            if ($objecttype == 'invoice_supplier') { $classfile = 'fournisseur.facture'; $classname='FactureFournisseur'; }
-            if ($objecttype == 'order_supplier')   { $classfile = 'fournisseur.commande'; $classname='CommandeFournisseur'; }
-            
-            if ($conf->$element->enabled)
-            {
-	            dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
-	            
-				$num=sizeof($objects);
-				
-				for ($i=0;$i<$num;$i++)
-				{
-					$object = new $classname($this->db);
-					$ret = $object->fetch($objects[$i]);
-					if ($ret >= 0)
-					{
-						$this->linkedObjects[$objecttype][$i] = $object;
-					}
-				}
-            }
 		}
 	}
 	
@@ -1443,23 +1438,19 @@ class CommonObject
 
     /* This is to show linked object block */
 
-
     /**
      *  Show linked object block
      *  TODO Move this into html.class.php
      *  But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
-     *  @param  $objecttype          Type of object (invoice, propal, order, invoice_supplier, order_supplier, ...)
-     *  @param  $objectid
-     *  @param  $somethingshown
      */
-    function showLinkedObjectBlock($somethingshown=0)
+    function showLinkedObjectBlock()
     {
         global $langs,$bc;
         
-        $this->fetch_object_linked();
+        $this->fetchObjectLinked();
 
         $num = sizeof($this->linkedObjects);
-        
+
         foreach($this->linkedObjects as $objecttype => $objects)
         {
         	$tplpath = $element = $subelement = $objecttype;
@@ -1485,49 +1476,6 @@ class CommonObject
         }
         
         return $num;
-        
-        
-        //print 'objecttype='.$objecttype.'<br>';
-/*
-        $this->objectid = $objectid;
-
-        $num = sizeof($this->objectid);
-        if ($num)
-        {
-            $element = $subelement = $objecttype;
-            $tplpath = $element;
-
-            if (preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
-            {
-                $element = $regs[1];
-                $subelement = $regs[2];
-                $tplpath = $element.'/'.$subelement;
-            }
-
-            $classpath = $element.'/class';
-            
-            // To work with non standard path
-            if ($objecttype == 'facture') { $tplpath = 'compta/'.$element; $classpath = $tplpath.'/class'; }
-            if ($objecttype == 'propal')  { $tplpath = 'comm/'.$element; $classpath = $tplpath.'/class'; }
-            if ($objecttype == 'shipping') { $classpath = 'expedition/class'; $subelement = 'expedition'; }
-            if ($objecttype == 'delivery') { $classpath = 'livraison/class'; $subelement = 'livraison'; }
-            if ($objecttype == 'invoice_supplier') { $tplpath = 'fourn/facture'; $classpath = 'fourn/class'; }
-            if ($objecttype == 'order_supplier')   { $tplpath = 'fourn/commande'; $classpath = 'fourn/class'; }
-
-            $classfile = strtolower($subelement); $classname = ucfirst($subelement);
-            if ($objecttype == 'invoice_supplier') { $classfile='fournisseur.facture'; $classname='FactureFournisseur';   }
-            if ($objecttype == 'order_supplier')   { $classfile='fournisseur.commande'; $classname='CommandeFournisseur'; }
-            //print $classfile." - ".$classpath." - ".$tplpath;
-            if(!class_exists($classname))
-            {
-                dol_include_once("/".$classpath."/".$classfile.".class.php");
-            }
-            $this->linkedObjectBlock = new $classname($this->db);
-            dol_include_once('/'.$tplpath.'/tpl/linkedobjectblock.tpl.php');
-
-            return $num;
-        }
-        */
     }
 
 

@@ -1637,25 +1637,27 @@ class Propal extends CommonObject
 		$ga = array();
 		$linkedInvoices = array();
 
-		$this->load_object_linked($id,$this->element);
-		foreach($this->linked_object as $object => $objectid)
+		$this->fetchObjectLinked($id,$this->element);
+		foreach($this->linkedObjectsIds as $objecttype => $objectid)
 		{
-			for ($i = 0; $i<sizeof($objectid);$i++)
+			$numi=sizeof($objectid);
+			for ($i=0;$i<$numi;$i++)
 			{
 				// Cas des factures liees directement
-				if ($object == 'facture')
+				if ($objecttype == 'facture')
 				{
 					$linkedInvoices[] = $objectid[$i];
 				}
 				// Cas des factures liees via la commande
 				else
 				{
-					$this->load_object_linked($objectid[$i],$object,-1,-1);
-					foreach($this->linked_object as $object => $objectid)
+					$this->fetchObjectLinked($objectid[$i],$objecttype);
+					foreach($this->linkedObjectsIds as $subobjecttype => $subobjectid)
 					{
-						for ($j = 0; $j<sizeof($objectid);$j++)
+						$numj=sizeof($subobjectid);
+						for ($j=0;$j<$numj;$j++)
 						{
-							$linkedInvoices[] = $objectid[$j];
+							$linkedInvoices[] = $subobjectid[$j];
 						}
 					}
 				}

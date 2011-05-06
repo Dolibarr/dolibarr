@@ -549,7 +549,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 		// Add origin linked objects
 		// TODO extend to other objects
-	    $object->fetch_object_linked('','',$object->id,'delivery');
+	    $object->getObjectLinked('','',$object->id,'delivery');
 
 	    if (! empty($object->linkedObjects))
 		{
@@ -557,7 +557,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			
 			foreach($object->linkedObjects as $elementtype => $objects)
 			{
-				$object->fetch_object_linked('','',$objects[0]->id,$objects[0]->element);
+				$object->getObjectLinked('','',$objects[0]->id,$objects[0]->element);
 				
 				foreach($object->linkedObjects as $elementtype => $objects)
 				{

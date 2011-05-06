@@ -110,15 +110,7 @@ $form=new Form($db);
 *
 * Put here code to view linked object
 ****************************************************/
-$myobject->load_object_linked($myobject->id,$myobject->element);
-
-foreach($myobject->linked_object as $linked_object => $linked_objectid)
-{
-	if ($conf->$linked_object->enabled)
-	{
-		$somethingshown=$myobject->showLinkedObjectBlock($linked_object,$linked_objectid,$somethingshown);
-	}
-}
+$somethingshown=$myobject->showLinkedObjectBlock();
 
 // End of page
 $db->close();

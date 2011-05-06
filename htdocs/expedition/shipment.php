@@ -247,7 +247,7 @@ if ($id > 0 || ! empty($ref))
 		print '</td>';
 		print '</tr>';
 
-		// Delivery date planed
+		// Delivery date planned
 		print '<tr><td height="10">';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('DateDeliveryPlanned');
@@ -655,10 +655,8 @@ if ($id > 0 || ! empty($ref))
 				print '</div>';
 			}
 		}
-
-
+		
 		show_list_sending_receive('commande',$commande->id);
-
 	}
 	else
 	{

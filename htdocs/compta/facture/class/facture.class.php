@@ -2435,7 +2435,7 @@ class Facture extends CommonObject
         }
 
         $obj = new $classname();
-
+        
         $numref = "";
         $numref = $obj->getNumRef($soc,$this,$mode);
 
@@ -2445,8 +2445,8 @@ class Facture extends CommonObject
         }
         else
         {
-            dol_print_error($db,"Facture::getNextNumRef ".$obj->error);
-            return '';
+            //dol_print_error($db,"Facture::getNextNumRef ".$obj->error);
+            return false;
         }
     }
 

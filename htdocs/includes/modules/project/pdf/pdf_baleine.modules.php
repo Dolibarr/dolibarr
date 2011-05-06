@@ -385,32 +385,26 @@ class pdf_baleine extends ModelePDFProjects
 
 		// Add list of linked orders
 		// TODO mutualiser
-	    $object->load_object_linked();
+	    $object->fecthObjectLinked();
+	    
+	    foreach($object->linkedObjects as $objecttype => $objects)
+	    {
+	    	if ($objecttype == 'commande')
+	    	{
+	    		$outputlangs->load('orders');
+	    		$num=sizeof($objects);
+	    		for ($i=0;$i<$num;$i++)
+	    		{
+	    			$posy+=4;
+	    			$pdf->SetXY(100,$posy);
+	    			$pdf->SetFont('','', $default_font_size - 1);
+	    			$text=$objects[$i]->ref;
+	    			if ($objects[$i]->ref_client) $text.=' ('.$objects[$i]->ref_client.')';
+	    			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text), '', 'R');
+	    		}
+	    	}
+	    }
 
-	    if ($conf->commande->enabled)
-		{
-			$outputlangs->load('orders');
-			foreach($object->linked_object as $key => $val)
-			{
-				if ($key == 'commande')
-				{
-					for ($i = 0; $i<sizeof($val);$i++)
-					{
-						$newobject=new Commande($this->db);
-						$result=$newobject->fetch($val[$i]);
-						if ($result >= 0)
-						{
-							$posy+=4;
-							$pdf->SetXY(100,$posy);
-							$pdf->SetFont('','', $default_font_size - 1);
-							$text=$newobject->ref;
-							if ($newobject->ref_client) $text.=' ('.$newobject->ref_client.')';
-							$pdf->MultiCell(100, 4, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text), '', 'R');
-						}
-					}
-				}
-			}
-		}
 
 	}
 

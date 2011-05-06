@@ -1847,18 +1847,7 @@ else
                 /*
                  * Linked object block
                  */
-                $object->load_object_linked($object->id,$object->element);
-
-                foreach($object->linked_object as $linked_object => $linked_objectid)
-                {
-                    $tmpmodule=$linked_object;
-                    if ($linked_object == 'invoice_supplier') $tmpmodule='fournisseur';
-                    if ($linked_object == 'order_supplier') $tmpmodule='fournisseur';
-                    if($conf->$tmpmodule->enabled && $linked_object != $object->element)
-                    {
-                        $somethingshown=$object->showLinkedObjectBlock($linked_object,$linked_objectid,$somethingshown);
-                    }
-                }
+                $somethingshown=$object->showLinkedObjectBlock();
 
                 print '</td><td valign="top" width="50%">';
                 print '<br>';

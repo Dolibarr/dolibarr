@@ -798,18 +798,19 @@ class Livraison extends CommonObject
 	/**
 	 *   \brief      Renvoie la quantite de produit restante a livrer pour une commande
 	 *   \return     array		Product remaining to be delivered
+	 *   TODO use new function
 	 */
 	function getRemainingDelivered()
 	{
 		global $langs;
 
 		// Get the linked object
-		$this->load_object_linked(-1,-1,$this->id,$this->element);
-
+		$this->fetchObjectLinked(-1,-1,$this->id,$this->element);
+		//var_dump($this->linkedObjectIds);
 		// Get the product ref and qty in source
 		$sqlSourceLine = "SELECT st.rowid, st.description, st.qty";
 		$sqlSourceLine.= ", p.ref, p.label";
-		$sqlSourceLine.= " FROM ".MAIN_DB_PREFIX.$this->linked_object[0]['type']."det as st";
+		$sqlSourceLine.= " FROM ".MAIN_DB_PREFIX.$this->linkedObjectIds[0]['type']."det as st";
 		$sqlSourceLine.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON st.fk_product = p.rowid";
 		$sqlSourceLine.= " WHERE fk_".$this->linked_object[0]['type']." = ".$this->linked_object[0]['linkid'];
 

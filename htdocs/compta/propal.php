@@ -74,6 +74,7 @@ else if (! empty($_GET["id"]))
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, $module, $objectid, $dbtable);
 
+$object = new Propal($db);
 
 
 /******************************************************************************/
@@ -83,18 +84,16 @@ $result = restrictedArea($user, $module, $objectid, $dbtable);
 if ($_GET["action"] == 'setstatut')
 {
 	// Close proposal
-	$propal = new Propal($db);
-	$propal->id = $_GET["id"];
-	$propal->cloture($user, $_GET["statut"], $note);
+	$object->id = $_GET["id"];
+	$object->cloture($user, $_GET["statut"], $note);
 
 }
 
 // Set project
 if ($_POST['action'] == 'classin')
 {
-	$propal = new Propal($db);
-	$propal->fetch($_GET["id"]);
-	$propal->setProject($_POST['projectid']);
+	$object->fetch($_GET["id"]);
+	$object->setProject($_POST['projectid']);
 }
 
 
@@ -122,13 +121,12 @@ if ($id > 0 || ! empty($ref))
 
 	$product_static=new Product($db);
 
-	$propal = new Propal($db);
-	$propal->fetch($_GET["id"],$_GET["ref"]);
+	$object->fetch($_GET["id"],$_GET["ref"]);
 
 	$societe = new Societe($db);
-	$societe->fetch($propal->socid);
+	$societe->fetch($object->socid);
 
-	$head = propal_prepare_head($propal);
+	$head = propal_prepare_head($object);
 	dol_fiche_head($head, 'compta', $langs->trans('Proposal'), 0, 'propal');
 
 
@@ -141,7 +139,7 @@ if ($id > 0 || ! empty($ref))
 
 	// Ref
 	print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="5">';
-	print $html->showrefnav($propal,'ref',$linkback,1,'ref','ref','');
+	print $html->showrefnav($object,'ref',$linkback,1,'ref','ref','');
 	print '</td></tr>';
 
 	// Ref client
@@ -149,10 +147,10 @@ if ($id > 0 || ! empty($ref))
 	print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
 	print $langs->trans('RefCustomer').'</td><td align="left">';
 	print '</td>';
-	if ($_GET['action'] != 'refclient' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;id='.$propal->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
+	if ($_GET['action'] != 'refclient' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;id='.$object->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="5">';
-	print $propal->ref_client;
+	print $object->ref_client;
 	print '</td>';
 	print '</tr>';
 
@@ -174,7 +172,7 @@ if ($id > 0 || ! empty($ref))
 
 	// Dates
 	print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">';
-	print dol_print_date($propal->date,'daytext');
+	print dol_print_date($object->date,'daytext');
 	print '</td>';
 
 	if ($conf->projet->enabled) $rowspan++;
@@ -187,16 +185,16 @@ if ($id > 0 || ! empty($ref))
 	}
 
 	// Note
-	print '<td valign="top" colspan="2" width="50%" rowspan="'.$rowspan.'">'.$langs->trans('NotePublic').' :<br>'. nl2br($propal->note_public).'</td>';
+	print '<td valign="top" colspan="2" width="50%" rowspan="'.$rowspan.'">'.$langs->trans('NotePublic').' :<br>'. nl2br($object->note_public).'</td>';
 	print '</tr>';
 
 	// Date fin propal
 	print '<tr>';
 	print '<td>'.$langs->trans('DateEndPropal').'</td><td colspan="3">';
-	if ($propal->fin_validite)
+	if ($object->fin_validite)
 	{
-		print dol_print_date($propal->fin_validite,'daytext');
-		if ($propal->statut == 1 && $propal->fin_validite < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+		print dol_print_date($object->fin_validite,'daytext');
+		if ($object->statut == 1 && $object->fin_validite < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
 	}
 	else
 	{
@@ -210,16 +208,16 @@ if ($id > 0 || ! empty($ref))
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('PaymentConditionsShort');
 	print '</td>';
-	if ($_GET['action'] != 'editconditions' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$propal->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+	if ($_GET['action'] != 'editconditions' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 	if ($_GET['action'] == 'editconditions')
 	{
-		$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$propal->id,$propal->cond_reglement_id,'cond_reglement_id');
+		$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->cond_reglement_id,'cond_reglement_id');
 	}
 	else
 	{
-		$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$propal->id,$propal->cond_reglement_id,'none');
+		$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->cond_reglement_id,'none');
 	}
 	print '</td>';
 
@@ -229,16 +227,16 @@ if ($id > 0 || ! empty($ref))
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('PaymentMode');
 	print '</td>';
-	if ($_GET['action'] != 'editmode' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$propal->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+	if ($_GET['action'] != 'editmode' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 	if ($_GET['action'] == 'editmode')
 	{
-		$html->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$propal->id,$propal->mode_reglement_id,'mode_reglement_id');
+		$html->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->mode_reglement_id,'mode_reglement_id');
 	}
 	else
 	{
-		$html->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$propal->id,$propal->mode_reglement_id,'none');
+		$html->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->mode_reglement_id,'none');
 	}
 	print '</td></tr>';
 
@@ -251,28 +249,28 @@ if ($id > 0 || ! empty($ref))
 		print $langs->trans('Project').'</td>';
 		if (1 == 2 && $user->rights->propale->creer)
 		{
-			if ($_GET['action'] != 'classer') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classer&amp;id='.$propal->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
+			if ($_GET['action'] != 'classer') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classer&amp;id='.$object->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="3">';
 			if ($_GET['action'] == 'classer')
 			{
-				$html->form_project($_SERVER['PHP_SELF'].'?id='.$propal->id, $propal->socid, $propal->fk_project, 'projectid');
+				$html->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'projectid');
 			}
 			else
 			{
-				$html->form_project($_SERVER['PHP_SELF'].'?id='.$propal->id, $propal->socid, $propal->fk_project, 'none');
+				$html->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none');
 			}
 			print '</td></tr>';
 		}
 		else
 		{
 			print '</td></tr></table>';
-			if (!empty($propal->fk_project))
+			if (!empty($object->fk_project))
 			{
 				print '<td colspan="3">';
 				$project = new Project($db);
-				$project->fetch($propal->fk_project);
-				print '<a href="../projet/fiche.php?id='.$propal->fk_project.'" title="'.$langs->trans('ShowProject').'">';
+				$project->fetch($object->fk_project);
+				print '<a href="../projet/fiche.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
 				print $project->ref;
 				print '</a>';
 				print '</td>';
@@ -287,10 +285,10 @@ if ($id > 0 || ! empty($ref))
 
 	// Amount
 	print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';
-	print '<td align="right" colspan="2"><b>'.price($propal->total_ht).'</b></td>';
+	print '<td align="right" colspan="2"><b>'.price($object->total_ht).'</b></td>';
 	print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
-	print '<tr><td height="10">'.$langs->trans('AmountVAT').'</td><td align="right" colspan="2">'.price($propal->total_tva).'</td>';
+	print '<tr><td height="10">'.$langs->trans('AmountVAT').'</td><td align="right" colspan="2">'.price($object->total_tva).'</td>';
 	print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
 	// Amount Local Taxes
@@ -299,24 +297,24 @@ if ($id > 0 || ! empty($ref))
 		if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
 		{
 			print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->pays_code).'</td>';
-			print '<td align="right" colspan="2">'.price($propal->total_localtax1).'</td>';
+			print '<td align="right" colspan="2">'.price($object->total_localtax1).'</td>';
 			print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 		}
 		if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
 		{
 			print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->pays_code).'</td>';
-			print '<td align="right" colspan="2">'.price($propal->total_localtax2).'</td>';
+			print '<td align="right" colspan="2">'.price($object->total_localtax2).'</td>';
 			print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 		}
 	}
 
 
-	print '<tr><td height="10">'.$langs->trans('AmountTTC').'</td><td align="right" colspan="2">'.price($propal->total_ttc).'</td>';
+	print '<tr><td height="10">'.$langs->trans('AmountTTC').'</td><td align="right" colspan="2">'.price($object->total_ttc).'</td>';
 	print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
 
 	// Statut
-	print '<tr><td height="10">'.$langs->trans('Status').'</td><td align="left" colspan="3">'.$propal->getLibStatut(4).'</td></tr>';
+	print '<tr><td height="10">'.$langs->trans('Status').'</td><td align="left" colspan="3">'.$object->getLibStatut(4).'</td></tr>';
 	print '</table><br>';
 
 	/*
@@ -332,7 +330,7 @@ if ($id > 0 || ! empty($ref))
 	$sql.= ' p.description as product_desc';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt';
 	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product=p.rowid';
-	$sql.= ' WHERE pt.fk_propal = '.$propal->id;
+	$sql.= ' WHERE pt.fk_propal = '.$object->id;
 	$sql.= ' ORDER BY pt.rang ASC, pt.rowid';
 	$resql = $db->query($sql);
 	if ($resql)
@@ -402,7 +400,7 @@ if ($id > 0 || ! empty($ref))
 					print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 					if (($objp->info_bits & 2) == 2)
 					{
-						print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$propal->socid.'">';
+						print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$object->socid.'">';
 						print img_object($langs->trans("ShowReduc"),'reduc').' '.$langs->trans("Discount");
 						print '</a>';
 						if ($objp->description)
@@ -477,17 +475,17 @@ if ($id > 0 || ! empty($ref))
 	 */
 	print '<div class="tabsAction">';
 
-	if ($propal->statut <> 4 && $user->societe_id == 0)
+	if ($object->statut <> 4 && $user->societe_id == 0)
 	{
-		if ($propal->statut == 2 && $user->rights->facture->creer)
+		if ($object->statut == 2 && $user->rights->facture->creer)
 		{
-			print '<a class="butAction" href="facture.php?action=create&origin='.$propal->element.'&originid='.$propal->id.'&socid='.$propal->socid.'">'.$langs->trans("BuildBill").'</a>';
+			print '<a class="butAction" href="facture.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("BuildBill").'</a>';
 		}
 
-		$arraypropal=$propal->getInvoiceArrayList();
-		if ($propal->statut == 2 && is_array($arraypropal) && sizeof($arraypropal) > 0)
+		$arraypropal=$object->getInvoiceArrayList();
+		if ($object->statut == 2 && is_array($arraypropal) && sizeof($arraypropal) > 0)
 		{
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$propal->id.'&action=setstatut&statut=4&socid='.$propal->socid.'">'.$langs->trans("ClassifyBilled").'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=setstatut&statut=4&socid='.$object->socid.'">'.$langs->trans("ClassifyBilled").'</a>';
 		}
 	}
 	print "</div>";
@@ -500,9 +498,9 @@ if ($id > 0 || ! empty($ref))
 	/*
 	 * Documents generes
 	 */
-	$filename=dol_sanitizeFileName($propal->ref);
-	$filedir=$conf->propale->dir_output . "/" . dol_sanitizeFileName($propal->ref);
-	$urlsource=$_SERVER["PHP_SELF"]."?id=".$propal->id;
+	$filename=dol_sanitizeFileName($object->ref);
+	$filedir=$conf->propale->dir_output . "/" . dol_sanitizeFileName($object->ref);
+	$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
 	$genallowed=0;
 	$delallowed=0;
 
@@ -514,22 +512,14 @@ if ($id > 0 || ! empty($ref))
 	/*
 	 * Linked object block
 	 */
-	$propal->load_object_linked($propal->id,$propal->element);
-
-	foreach($propal->linked_object as $linked_object => $linked_objectid)
-	{
-		if($conf->$linked_object->enabled && $linked_object != $propal->element)
-		{
-			$somethingshown=$propal->showLinkedObjectBlock($linked_object,$linked_objectid,$somethingshown);
-		}
-	}
+	$somethingshown=$object->showLinkedObjectBlock();
 
 	print '</td><td valign="top" width="50%">';
 
 	// List of actions on element
 	include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php');
 	$formactions=new FormActions($db);
-	$somethingshown=$formactions->showactions($propal,'propal',$socid);
+	$somethingshown=$formactions->showactions($object,'propal',$socid);
 
 	print '</td></tr></table>';
 

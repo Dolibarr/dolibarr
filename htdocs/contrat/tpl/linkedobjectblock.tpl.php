@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin <regis@dolibarr.fr>
+/* Copyright (C) 2010-2011 Regis Houssin <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,13 +24,10 @@
 <?php
 
 $langs = $GLOBALS['langs'];
-$somethingshown = $GLOBALS['somethingshown'];
 $linkedObjectBlock = $GLOBALS['object']->linkedObjectBlock;
-$objectid = $GLOBALS['object']->objectid;
-$num = count($objectid);
 
 $langs->load("contracts");
-if ($somethingshown) { echo '<br>'; }
+echo '<br />';
 print_titre($langs->trans('RelatedContracts'));
 ?>
 <table class="noborder" width="100%">
@@ -42,17 +39,16 @@ print_titre($langs->trans('RelatedContracts'));
 </tr>
 <?php
 $var=true;
-for ($i = 0 ; $i < $num ; $i++)
+foreach($linkedObjectBlock as $object)
 {
-	$linkedObjectBlock->fetch($objectid[$i]);
-    $linkedObjectBlock->fetch_lines();
+    $object->fetch_lines();
 	$var=!$var;
 ?>
 <tr <?php echo $bc[$var]; ?> ><td>
-	<a href="<?php echo DOL_URL_ROOT.'/contrat/fiche.php?id='.$linkedObjectBlock->id ?>"><?php echo img_object($langs->trans("ShowContract"),"contract").' '.$linkedObjectBlock->ref; ?></a></td>
-	<td align="center"><?php echo dol_print_date($linkedObjectBlock->date_contrat,'day'); ?></td>
+	<a href="<?php echo DOL_URL_ROOT.'/contrat/fiche.php?id='.$object->id ?>"><?php echo img_object($langs->trans("ShowContract"),"contract").' '.$object->ref; ?></a></td>
+	<td align="center"><?php echo dol_print_date($object->date_contrat,'day'); ?></td>
 	<td align="right">&nbsp;</td>
-	<td align="right"><?php echo $linkedObjectBlock->getLibStatut(6); ?></td>
+	<td align="right"><?php echo $object->getLibStatut(6); ?></td>
 </tr>
 <?php } ?>
 

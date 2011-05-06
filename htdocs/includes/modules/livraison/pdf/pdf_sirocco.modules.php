@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -420,7 +420,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 
 		// Add origin linked objects
 		// TODO extend to other objects
-	    $object->fetch_object_linked('','',$object->id,'delivery');
+	    $object->getObjectLinked('','',$object->id,'delivery');
 
 	    if (! empty($object->linkedObjects))
 		{
@@ -428,7 +428,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 			
 			foreach($object->linkedObjects as $elementtype => $objects)
 			{
-				$object->fetch_object_linked('','',$objects[0]->id,$objects[0]->element);
+				$object->getObjectLinked('','',$objects[0]->id,$objects[0]->element);
 				
 				foreach($object->linkedObjects as $elementtype => $objects)
 				{

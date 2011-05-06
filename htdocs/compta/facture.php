@@ -2793,21 +2793,7 @@ else
                 /*
                  * Linked object block
                  */
-                $object->load_object_linked($object->id,$object->element);
-
-                foreach($object->linked_object as $linked_object => $linked_objectid)
-                {
-                    $element = $subelement = $linked_object;
-                    if (preg_match('/^([^_]+)_([^_]+)/i',$linked_object,$regs))
-                    {
-                        $element = $regs[1];
-                        $subelement = $regs[2];
-                    }
-                    if($conf->$element->enabled && $element != $object->element)
-                    {
-                        $somethingshown=$object->showLinkedObjectBlock($linked_object,$linked_objectid,$somethingshown);
-                    }
-                }
+                $somethingshown=$object->showLinkedObjectBlock();
 
                 print '</td><td valign="top" width="50%">';
 

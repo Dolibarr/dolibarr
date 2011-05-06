@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin <regis@dolibarr.fr>
+/* Copyright (C) 2010-2011 Regis Houssin <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,13 +24,10 @@
 <?php
 
 $langs = $GLOBALS['langs'];
-$somethingshown = $GLOBALS['somethingshown'];
 $linkedObjectBlock = $GLOBALS['object']->linkedObjectBlock;
-$objectid = $GLOBALS['object']->objectid;
-$num = count($objectid);
 
 $langs->load("bills");
-if ($somethingshown) { echo '<br>'; }
+echo '<br />';
 if ($num > 1) print_titre($langs->trans("RelatedBills"));
 else print_titre($langs->trans("RelatedBill"));
 ?>
@@ -43,19 +40,18 @@ else print_titre($langs->trans("RelatedBill"));
 </tr>
 <?php
 $var=true;
-for ($i = 0 ; $i < $num ; $i++)
+foreach($linkedObjectBlock as $object)
 {
-	$linkedObjectBlock->fetch($objectid[$i]);
 	$var=!$var;
 ?>
 <tr <?php echo $GLOBALS['bc'][$var]; ?> ><td>
-	<a href="<?php echo DOL_URL_ROOT.'/compta/facture.php?facid='.$linkedObjectBlock->id ?>"><?php echo img_object($langs->trans("ShowBill"),"bill").' '.$linkedObjectBlock->ref; ?></a></td>
-	<td align="center"><?php echo dol_print_date($linkedObjectBlock->date,'day'); ?></td>
-	<td align="right"><?php echo price($linkedObjectBlock->total_ht); ?></td>
-	<td align="right"><?php echo $linkedObjectBlock->getLibStatut(3); ?></td>
+	<a href="<?php echo DOL_URL_ROOT.'/compta/facture.php?facid='.$object->id ?>"><?php echo img_object($langs->trans("ShowBill"),"bill").' '.$object->ref; ?></a></td>
+	<td align="center"><?php echo dol_print_date($object->date,'day'); ?></td>
+	<td align="right"><?php echo price($object->total_ht); ?></td>
+	<td align="right"><?php echo $object->getLibStatut(3); ?></td>
 </tr>
 <?php
-$total = $total + $linkedObjectBlock->total_ht;
+$total = $total + $object->total_ht;
 }
 ?>
 <tr class="liste_total">

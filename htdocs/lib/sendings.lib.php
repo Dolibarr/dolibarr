@@ -41,9 +41,9 @@ function shipping_prepare_head($object)
 	$head[$h][2] = 'shipping';
 	$h++;
 
-	if ($conf->livraison_bon->enabled && $user->rights->expedition->livraison->lire && $object->linked_object['delivery'][0])
+	if ($conf->livraison_bon->enabled && $user->rights->expedition->livraison->lire && ! empty($object->linkedObjectsIds['delivery'][0]))
 	{
-		$head[$h][0] = DOL_URL_ROOT."/livraison/fiche.php?id=".$object->linked_object['delivery'][0];
+		$head[$h][0] = DOL_URL_ROOT."/livraison/fiche.php?id=".$object->linkedObjectsIds['delivery'][0];
 		$head[$h][1] = $langs->trans("DeliveryCard");
 		$head[$h][2] = 'delivery';
 		$h++;
@@ -216,14 +216,12 @@ function show_list_sending_receive($origin='commande',$origin_id,$filter='')
 				{
 					include_once(DOL_DOCUMENT_ROOT.'/livraison/class/livraison.class.php');
 					$expedition->id=$objp->sendingid;
-					$expedition->load_object_linked($expedition->id,$expedition->element,-1,-1);
-					$livraison_id=$expedition->linked_object['delivery'][0];
+					$expedition->fetchObjectLinked($expedition->id,$expedition->element);
+					//var_dump($expedition->linkedObjects);
+					$receiving=$expedition->linkedObjects['delivery'][0];
 
-					if ($livraison_id)
+					if (! empty($receiving))
 					{
-						$receiving=new Livraison($db);
-						$receiving->fetch($livraison_id);
-
 						// $expedition->fk_origin_line = id of det line of order
 						// $receiving->fk_origin_line = id of det line of order
 						// $receiving->origin may be 'shipping'
