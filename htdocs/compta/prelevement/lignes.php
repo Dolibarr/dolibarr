@@ -116,13 +116,6 @@ $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-/*if ($sortorder == "") {
-	$sortorder="DESC";
-}
-if ($sortfield == "") {
-	$sortfield="pl.fk_soc";
-}*/
-
 /*
  * Liste des lignes de prelevement
  *

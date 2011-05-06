@@ -33,14 +33,16 @@ $langs->load("widthdrawals");
 $langs->load("categories");
 
 // Security check
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$socid = GETPOST("socid");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'prelevement','','','bons');
 
-$page = $_GET["page"];
-$sortorder = $_GET["sortorder"];
-$sortfield = $_GET["sortfield"];
-
+// Get supervariables
+$page = GETPOST("page");
+$sortorder = ((GETPOST("sortorder")=="")) ? "DESC" : GETPOST("sortorder");
+$sortfield = ((GETPOST("sortfield")=="")) ? "p.datec" : GETPOST("sortfield");
+$statut = GETPOST("statut");
+$search_line = GETPOST("search_ligne");
 
 llxHeader('',$langs->trans("WithdrawalsReceipts"));
 
@@ -50,9 +52,6 @@ if ($page == -1) { $page = 0 ; }
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortorder) $sortorder="DESC";
-if (! $sortfield) $sortfield="p.datec";
-
 
 
 /*
@@ -72,7 +71,7 @@ if ($result)
   $num = $db->num_rows($result);
   $i = 0;
 
-  $urladd= "&amp;statut=".$_GET["statut"];
+  $urladd= "&amp;statut=".$statut;
 
   print_barre_liste($langs->trans("WithdrawalsReceipts"), $page, "bons.php", $urladd, $sortfield, $sortorder, '', $num);
 
@@ -87,7 +86,7 @@ if ($result)
 
   print '<tr class="liste_titre">';
   print '<form action="bons.php" method="GET">';
-  print '<td class="liste_titre"><input type="text" class="flat" name="search_ligne" value="'. $_GET["search_ligne"].'" size="10"></td>';
+  print '<td class="liste_titre"><input type="text" class="flat" name="search_ligne" value="'. $search_line.'" size="10"></td>';
   print '<td class="liste_titre">&nbsp;</td>';
   print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
   print '</form>';
