@@ -138,5 +138,5 @@ PaymentDateUpdateFailed=Payment date could not be updated
 BankTransactionLine=Bank transaction
 AllAccounts=All bank/cash accounts
 BackToAccount=Back to account
-ShowAllAccounts=Show fo all accounts
+ShowAllAccounts=Show for all accounts
 FutureTransaction=Transaction in futur. No way to conciliate.
