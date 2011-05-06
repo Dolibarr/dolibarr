@@ -34,16 +34,23 @@ $langs->load("companies");
 $langs->load("categories");
 
 // Security check
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$socid = GETPOST("socid");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'prelevement','','','bons');
+
+// Get supervariables
+$page = GETPOST("page");
+$sortorder = ((GETPOST("sortorder")=="")) ? "DESC" : GETPOST("sortorder");
+$sortfield = ((GETPOST("sortfield")=="")) ? "p.datec" : GETPOST("sortfield");
+$search_line = GETPOST("search_ligne");
+$search_bon = GETPOST("search_bon");
+$search_code = GETPOST("search_code");
+$search_societe = GETPOST("search_societe");
+$statut = GETPOST("statut");
 
 $bon=new BonPrelevement($db,"");
 $ligne=new LignePrelevement($db,$user);
 
-$page = $_GET["page"];
-$sortorder = (empty($_GET["sortorder"])) ? "DESC" : $_GET["sortorder"];
-$sortfield = (empty($_GET["sortfield"])) ? "p.datec" : $_GET["sortfield"];
 $offset = $conf->liste_limit * $page ;
 
 
@@ -69,22 +76,21 @@ $sql.= " AND pf.fk_facture = f.rowid";
 $sql.= " AND f.fk_soc = s.rowid";
 $sql.= " AND f.entity = ".$conf->entity;
 if ($socid) $sql.= " AND s.rowid = ".$socid;
-if ($_GET["search_ligne"])
+if ($search_line)
 {
-    $sql.= " AND pl.rowid = '".$_GET["search_ligne"]."'";
+    $sql.= " AND pl.rowid = '".$search_line."'";
 }
-if ($_GET["search_bon"])
+if ($search_bon)
 {
-    $sql.= " AND p.ref LIKE '%".$_GET["search_bon"]."%'";
+    $sql.= " AND p.ref LIKE '%".$search_bon."%'";
 }
-if ($_GET["search_code"])
+if ($search_code)
 {
-    $sql.= " AND s.code_client LIKE '%".$_GET["search_code"]."%'";
+    $sql.= " AND s.code_client LIKE '%".$search_code."%'";
 }
-if ($_GET["search_societe"])
+if ($search_societe)
 {
-    $sel = $_GET["search_societe"];
-    $sql .= " AND s.nom LIKE '%".$sel."%'";
+    $sql .= " AND s.nom LIKE '%".$search_societe."%'";
 }
 $sql.=$db->order($sortfield,$sortorder);
 $sql.=$db->plimit($conf->liste_limit+1, $offset);
@@ -95,8 +101,8 @@ if ($result)
     $num = $db->num_rows($result);
     $i = 0;
 
-    $urladd = "&amp;statut=".$_GET["statut"];
-    $urladd .= "&amp;search_bon=".$_GET["search_bon"];
+    $urladd = "&amp;statut=".$statut;
+    $urladd .= "&amp;search_bon=".$search_bon;
 
     print_barre_liste($langs->trans("WithdrawalsLines"), $page, "liste.php", $urladd, $sortfield, $sortorder, '', $num);
 
@@ -116,11 +122,11 @@ if ($result)
 
     print '<form action="liste.php" method="GET">';
     print '<tr class="liste_titre">';
-    print '<td class="liste_titre"><input type="text" class="flat" name="search_ligne" value="'. $_GET["search_ligne"].'" size="6"></td>';
-    print '<td class="liste_titre"><input type="text" class="flat" name="search_bon" value="'. $_GET["search_bon"].'" size="8"></td>';
+    print '<td class="liste_titre"><input type="text" class="flat" name="search_ligne" value="'. $search_line.'" size="6"></td>';
+    print '<td class="liste_titre"><input type="text" class="flat" name="search_bon" value="'. $search_bon.'" size="8"></td>';
     print '<td>&nbsp;</td>';
-    print '<td class="liste_titre"><input type="text" class="flat" name="search_societe" value="'. $_GET["search_societe"].'" size="12"></td>';
-    print '<td class="liste_titre" align="center"><input type="text" class="flat" name="search_code" value="'. $_GET["search_code"].'" size="8"></td>';
+    print '<td class="liste_titre"><input type="text" class="flat" name="search_societe" value="'. $search_societe.'" size="12"></td>';
+    print '<td class="liste_titre" align="center"><input type="text" class="flat" name="search_code" value="'. $search_code.'" size="8"></td>';
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
