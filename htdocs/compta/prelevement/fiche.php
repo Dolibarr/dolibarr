@@ -40,27 +40,30 @@ $langs->load("categories");
 // Security check
 if ($user->societe_id > 0) accessforbidden();
 
+// Get supervariables
+$action = GETPOST("action");
+$id = GETPOST("id");
 
 /*
  * Actions
  */
 
-if (GETPOST("action") == 'confirm_credite' && GETPOST("confirm") == 'yes')
+if ( $action == 'confirm_credite' && GETPOST("confirm") == 'yes')
 {
 	$bon = new BonPrelevement($db,"");
-	$bon->id = $_GET["id"];
+	$bon->id = $id;
 	$bon->set_credite();
 
-	Header("Location: fiche.php?id=".$_GET["id"]);
+	Header("Location: fiche.php?id=".$id);
 	exit;
 }
 
-if (GETPOST("action") == 'infotrans' && $user->rights->prelevement->bons->send)
+if ($action == 'infotrans' && $user->rights->prelevement->bons->send)
 {
 	require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 
 	$bon = new BonPrelevement($db,"");
-	$bon->fetch($_GET["id"]);
+	$bon->fetch($id);
 
 	if ($_FILES['userfile']['name'] && basename($_FILES['userfile']['name'],".ps") == $bon->ref)
 	{
@@ -68,12 +71,12 @@ if (GETPOST("action") == 'infotrans' && $user->rights->prelevement->bons->send)
 
 		if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $dir . "/" . $_FILES['userfile']['name'],1) > 0)
 		{
-			$dt = dol_mktime(12,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
+			$dt = dol_mktime(12,0,0,GETPOST("remonth"),GETPOST("reday"),GETPOST("reyear"));
 
-			$bon->set_infotrans($user, $dt, $_POST["methode"]);
+			$bon->set_infotrans($user, $dt, GETPOST("methode"));
 		}
 
-		Header("Location: fiche.php?id=".$_GET["id"]);
+		Header("Location: fiche.php?id=".$id);
         exit;
 	}
 	else
@@ -83,21 +86,21 @@ if (GETPOST("action") == 'infotrans' && $user->rights->prelevement->bons->send)
 	}
 }
 
-if (GETPOST("action") == 'infocredit' && $user->rights->prelevement->bons->credit)
+if ($action == 'infocredit' && $user->rights->prelevement->bons->credit)
 {
 	$bon = new BonPrelevement($db,"");
-	$bon->fetch($_GET["id"]);
-	$dt = mktime(12,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
+	$bon->fetch($id);
+	$dt = dol_mktime(12,0,0,GETPOST("remonth"),GETPOST("reday"),GETPOST("reyear"));
 
 	$error = $bon->set_infocredit($user, $dt);
 
 	if ($error == 0)
 	{
-		Header("Location: fiche.php?id=".$_GET["id"]);
+		Header("Location: fiche.php?id=".$id);
 	}
 	else
 	{
-		Header("Location: fiche.php?id=".$_GET["id"]."&error=$error");
+		Header("Location: fiche.php?id=".$id."&error=$error");
 	}
 	exit;
 }
@@ -111,21 +114,21 @@ llxHeader('',$langs->trans("WithdrawalReceipt"));
 
 $html = new Form($db);
 
-if ($_GET["id"])
+if ($id)
 {
 	$bon = new BonPrelevement($db,"");
 
-	if ($bon->fetch($_GET["id"]) == 0)
+	if ($bon->fetch($id) == 0)
 	{
 		$head = prelevement_prepare_head($bon);
 		dol_fiche_head($head, 'prelevement', $langs->trans("WithdrawalReceipt"), '', 'payment');
 
-		if (isset($_GET["error"]))
+		if (GETPOST("error")!='')
 		{
-			print '<div class="error">'.$bon->ReadError($_GET["error"]).'</div>';
+			print '<div class="error">'.$bon->ReadError(GETPOST("error")).'</div>';
 		}
 
-		if ($_GET["action"] == 'credite')
+		if ($action == 'credite')
 		{
 			$ret=$html->form_confirm("fiche.php?id=".$bon->id,$langs->trans("ClassCredited"),$langs->trans("ClassCreditedConfirm"),"confirm_credite",'',1,1);
 			if ($ret == 'html') print '<br>';

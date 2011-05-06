@@ -35,6 +35,9 @@ if ($user->societe_id > 0) accessforbidden();
 $langs->load("withdrawals");
 $langs->load("categories");
 
+// Get supervariables
+$prev_id = GETPOST("id");
+$page = GETPOST("page");
 
 /*
  * View
@@ -42,13 +45,11 @@ $langs->load("categories");
 
 llxHeader('',$langs->trans("WithdrawalReceipt"));
 
-$prev_id = $_GET["id"];
-
 if ($prev_id)
 {
 	$bon = new BonPrelevement($db,"");
 
-	if ($bon->fetch($_GET["id"]) == 0)
+	if ($bon->fetch($prev_id) == 0)
 	{
 		$head = prelevement_prepare_head($bon);
 		dol_fiche_head($head, 'statistics', $langs->trans("WithdrawalReceipt"), '', 'payment');
@@ -96,7 +97,8 @@ if ($prev_id)
 	}
 	else
 	{
-		print "Erreur";
+		$langs->load("errors");
+		print $langs->trans("Error");
 	}
 
 	/*

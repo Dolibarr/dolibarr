@@ -38,13 +38,20 @@ $langs->load("categories");
 // Securite acces client
 if ($user->societe_id > 0) accessforbidden();
 
+// Get supervariables
+$prev_id = GETPOST("id");
+$socid = GETPOST("socid");
+$page = GETPOST("page");
+$sortorder = ((GETPOST("sortorder")=="")) ? "DESC" : GETPOST("sortorder");
+$sortfield = ((GETPOST("sortfield")=="")) ? "p.ref" : GETPOST("sortfield");
+
 llxHeader('',$langs->trans("WithdrawalReceipt"));
 
-if ($_GET["id"])
+if ($prev_id)
 {
   	$bon = new BonPrelevement($db,"");
 
-  	if ($bon->fetch($_GET["id"]) == 0)
+  	if ($bon->fetch($prev_id) == 0)
     {
     	$head = prelevement_prepare_head($bon);	
       	dol_fiche_head($head, 'invoices', $langs->trans("WithdrawalReceipt"), '', 'payment');
@@ -95,10 +102,6 @@ if ($_GET["id"])
     }
 }
 
-
-$page = $_GET["page"];
-$sortorder = (empty($_GET["sortorder"])) ? "DESC" : $_GET["sortorder"];
-$sortfield = (empty($_GET["sortfield"])) ? "p.datec" : $_GET["sortfield"];
 $offset = $conf->liste_limit * $page ;
 
 /*
@@ -117,8 +120,8 @@ $sql.= " AND pl.fk_prelevement_bons = p.rowid";
 $sql.= " AND f.fk_soc = s.rowid";
 $sql.= " AND pf.fk_facture = f.rowid";
 $sql.= " AND f.entity = ".$conf->entity;
-if ($_GET["id"]) $sql.= " AND p.rowid=".$_GET["id"];
-if ($_GET["socid"]) $sql.= " AND s.rowid = ".$_GET["socid"];
+if ($prev_id) $sql.= " AND p.rowid=".$prev_id;
+if ($socid) $sql.= " AND s.rowid = ".$socid;
 $sql.= " ORDER BY $sortfield $sortorder ";
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
 
@@ -129,7 +132,7 @@ if ($result)
   	$num = $db->num_rows($result);
   	$i = 0;
 
-  	$urladd = "&amp;id=".$_GET["id"];
+  	$urladd = "&amp;id=".$prev_id;
 
   	print_barre_liste("", $page, "factures.php", $urladd, $sortfield, $sortorder, '', $num);
 
@@ -184,7 +187,7 @@ if ($result)
       	$i++;
     }
 
-  	if($_GET["socid"])
+  	if($socid)
     {
       	print "<tr $bc[$var]><td>";
 

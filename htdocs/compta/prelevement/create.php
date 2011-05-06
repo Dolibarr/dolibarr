@@ -40,21 +40,23 @@ $langs->load("bills");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
+// Get supervariables
+$action = GETPOST("action");
 
 /*
  * Actions
  */
 
 // Change customer bank information to withdraw
-if ($_POST["action"] == 'modify')
+if ($action == 'modify')
 {
     for ($i = 1 ; $i < 9 ; $i++)
     {
-        dolibarr_set_const($db, $_POST["nom$i"], $_POST["value$i"],'chaine',0,'',$conf->entity);
+        dolibarr_set_const($db, GETPOST("nom$i"), GETPOST("value$i"),'chaine',0,'',$conf->entity);
     }
 }
 
-if ($_GET["action"] == 'create')
+if ($action == 'create')
 {
     $bprev = new BonPrelevement($db);
     $result=$bprev->create($conf->global->PRELEVEMENT_CODE_BANQUE, $conf->global->PRELEVEMENT_CODE_GUICHET);

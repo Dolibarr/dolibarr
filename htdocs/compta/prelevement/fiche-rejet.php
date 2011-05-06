@@ -36,18 +36,20 @@ $langs->load("categories");
 // Securite acces client
 if ($user->societe_id > 0) accessforbidden();
 
+// Get supervariables
+$prev_id = GETPOST("id");
+$page = GETPOST("page");
+
 /*
  * View
  */
 llxHeader('',$langs->trans("WithdrawalReceipt"));
 
-$prev_id = $_GET["id"];
-
-if ($_GET["id"])
+if ($prev_id)
 {
   	$bon = new BonPrelevement($db,"");
 
-  	if ($bon->fetch($_GET["id"]) == 0)
+  	if ($bon->fetch($prev_id) == 0)
     {
     	$head = prelevement_prepare_head($bon);
       	dol_fiche_head($head, 'rejects', $langs->trans("WithdrawalReceipt"), '', 'payment');
@@ -98,7 +100,6 @@ if ($_GET["id"])
     }
 }
 
-$page = $_GET["page"];
 $rej = new RejetPrelevement($db, $user);
 
 /*
@@ -119,7 +120,7 @@ $sql.= " AND p.entity = ".$conf->entity;
 $sql.= " AND pl.fk_soc = s.rowid";
 $sql.= " AND pl.statut = 3 ";
 $sql.= " AND pr.fk_prelevement_lignes = pl.rowid";
-if ($_GET["socid"]) $sql.= " AND s.rowid = ".$_GET["socid"];
+if ($socid) $sql.= " AND s.rowid = ".$socid;
 $sql.= " ORDER BY pl.amount DESC";
 
 $resql = $db->query($sql);

@@ -37,6 +37,14 @@ if ($user->societe_id > 0) accessforbidden();
 
 $langs->load("categories");
 
+// Get supervariables
+$prev_id = GETPOST("id");
+$socid = GETPOST("socid");
+$page = GETPOST("page");
+$sortorder = ((GETPOST("sortorder")=="")) ? "DESC" : GETPOST("sortorder");
+$sortfield = ((GETPOST("sortfield")=="")) ? "pl.fk_soc" : GETPOST("sortfield");
+
+
 
 /*
  * View
@@ -44,13 +52,11 @@ $langs->load("categories");
 
 llxHeader('',$langs->trans("WithdrawalReceipt"));
 
-$prev_id = $_GET["id"];
-
-if ($_GET["id"])
+if ($prev_id)
 {
 	$bon = new BonPrelevement($db,"");
 
-	if ($bon->fetch($_GET["id"]) == 0)
+	if ($bon->fetch($prev_id) == 0)
 	{
 		$head = prelevement_prepare_head($bon);
 		dol_fiche_head($head, 'lines', $langs->trans("WithdrawalReceipt"), '', 'payment');
@@ -102,10 +108,6 @@ if ($_GET["id"])
 	}
 }
 
-$page = $_GET["page"];
-$sortorder = $_GET["sortorder"];
-$sortfield = $_GET["sortfield"];
-
 $ligne=new LignePrelevement($db,$user);
 
 if ($page == -1) { $page = 0 ; }
@@ -114,12 +116,12 @@ $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-if ($sortorder == "") {
+/*if ($sortorder == "") {
 	$sortorder="DESC";
 }
 if ($sortfield == "") {
 	$sortfield="pl.fk_soc";
-}
+}*/
 
 /*
  * Liste des lignes de prelevement
@@ -133,7 +135,7 @@ $sql.= ", ".MAIN_DB_PREFIX."societe as s";
 $sql.= " WHERE pl.fk_prelevement_bons=".$prev_id;
 $sql.= " AND pl.fk_soc = s.rowid";
 $sql.= " AND s.entity = ".$conf->entity;
-if ($_GET["socid"])	$sql.= " AND s.rowid = ".$_GET["socid"];
+if ($socid)	$sql.= " AND s.rowid = ".$socid;
 $sql.= " ORDER BY $sortfield $sortorder ";
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
 
@@ -144,7 +146,7 @@ if ($result)
 	$num = $db->num_rows($result);
 	$i = 0;
 
-	$urladd = "&amp;id=".$_GET["id"];
+	$urladd = "&amp;id=".$prev_id;
 
 	print_barre_liste("", $page, "lignes.php", $urladd, $sortfield, $sortorder, '', $num);
 	print"\n<!-- debut table -->\n";
@@ -152,7 +154,7 @@ if ($result)
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Lines"),"lignes.php","pl.rowid",'',$urladd);
 	print_liste_field_titre($langs->trans("ThirdParty"),"lignes.php","s.nom",'',$urladd);
-	print_liste_field_titre($langs->trans("Amount"),"lignes.php","f.total_ttc","",$urladd,'align="center"');
+	print_liste_field_titre($langs->trans("Amount"),"lignes.php","pl.amount","",$urladd,'align="center"');
 	print '<td colspan="2">&nbsp;</td></tr>';
 
 	$var=false;
@@ -194,7 +196,7 @@ if ($result)
 		$i++;
 	}
 
-	if($_GET["socid"])
+	if($socid)
 	{
 		print "<tr $bc[$var]><td>";
 
