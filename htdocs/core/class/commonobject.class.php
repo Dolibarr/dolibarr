@@ -1156,11 +1156,17 @@ class CommonObject
 	 *     @param  sourcetype
 	 *     @param  targetid
 	 *     @param  targettype
-	 *     @param  clause
+	 *     @param  clause			OR, AND
 	 */
 	function load_object_linked($sourceid='',$sourcetype='',$targetid='',$targettype='',$clause='OR')
 	{
 		$this->linked_object=array();
+		
+		$justsource=false;
+		$justtarget=false;
+		
+		if (! empty($sourceid) && ! empty($sourcetype) && empty($targetid) && empty($targettype)) $justsource=true;
+		if (empty($sourceid) && empty($sourcetype) && ! empty($targetid) && ! empty($targettype)) $justtarget=true;
 
 		$sourceid = (!empty($sourceid)?$sourceid:$this->id);
 		$targetid = (!empty($targetid)?$targetid:$this->id);
@@ -1170,9 +1176,18 @@ class CommonObject
 		// Links beetween objects are stored in this table
 		$sql = 'SELECT fk_source, sourcetype, fk_target, targettype';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'element_element';
-		$sql.= " WHERE       (fk_source = '".$sourceid."' AND sourcetype = '".$sourcetype."')";
-		$sql.= " ".$clause." (fk_target = '".$targetid."' AND targettype = '".$targettype."')";
-
+		$sql.= " WHERE ";
+		if ($justsource || $justtarget)
+		{
+			if ($justsource) $sql.= "fk_source = '".$sourceid."' AND sourcetype = '".$sourcetype."'";
+			if ($justtarget) $sql.= "fk_target = '".$targetid."' AND targettype = '".$targettype."'";
+		}
+		else
+		{
+			$sql.= "(fk_source = '".$sourceid."' AND sourcetype = '".$sourcetype."')";
+			$sql.= " ".$clause." (fk_target = '".$targetid."' AND targettype = '".$targettype."')";
+		}
+		
 		dol_syslog("CommonObject::load_object_linked sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -1199,6 +1214,56 @@ class CommonObject
 		}
 	}
 
+	/**
+	 * 		Fetch objects linked
+	 */
+	function fetch_object_linked($sourceid='',$sourcetype='',$targetid='',$targettype='',$clause='OR')
+	{
+		global $conf;
+		
+		$this->linkedObjects=array();
+		
+		$this->load_object_linked($sourceid,$sourcetype,$targetid,$targettype,$clause);
+		
+		foreach($this->linked_object as $key => $value)
+		{
+			// Parse element/subelement (ex: project_task)
+			$element = $subelement = $key;
+			if (preg_match('/^([^_]+)_([^_]+)/i',$key,$regs))
+			{
+				$element = $regs[1];
+				$subelement = $regs[2];
+			}
+			
+			// For compatibility
+			if ($element == 'facture') { $element = 'compta/facture'; $subelement = 'facture'; }
+            if ($element == 'order' || $element == 'commande')    { $element = $subelement = 'commande'; }
+            if ($element == 'propal')   { $element = 'comm/propal'; $subelement = 'propal'; }
+            if ($element == 'contract') { $element = $subelement = 'contrat'; }
+            if ($element == 'shipping') { $element = $subelement = 'expedition'; }
+            if ($element == 'delivery') { $element = $subelement = 'livraison'; }
+            
+            if ($conf->$element->enabled)
+            {
+	            dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
+	
+	            $classname = ucfirst($subelement);
+	            
+				$num=sizeof($value);
+				
+				for ($i=0;$i<$num;$i++)
+				{
+					$object = new $classname($this->db);
+					$ret = $object->fetch($value[$i]);
+					if ($ret >= 0)
+					{
+						$this->linkedObjects[$key][$i] = $object;
+					}
+				}
+            }
+		}
+	}
+	
 	/**
 	 *      Set statut of an object
 	 *      @param		statut			Statut to set

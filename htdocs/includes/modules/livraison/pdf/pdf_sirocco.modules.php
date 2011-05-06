@@ -418,36 +418,34 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 
 		$pdf->SetFont('','B', $default_font_size - 1);
 
-		// Add list of linked orders
-		// TODO mutualiser
-	    $object->load_object_linked();
+		// Add origin linked objects
+		// TODO extend to other objects
+	    $object->fetch_object_linked('','',$object->id,'delivery');
 
-	    if ($conf->commande->enabled)
+	    if (! empty($object->linkedObjects))
 		{
 			$outputlangs->load('orders');
-			foreach($object->linked_object as $key => $val)
+			
+			foreach($object->linkedObjects as $elementtype => $objects)
 			{
-				if ($key == 'shipping')     // Link to shipment
+				$object->fetch_object_linked('','',$objects[0]->id,$objects[0]->element);
+				
+				foreach($object->linkedObjects as $elementtype => $objects)
 				{
-					for ($i = 0; $i<sizeof($val);$i++)
+					$num=sizeof($objects);
+					for ($i=0;$i<$num;$i++)
 					{
-					    $newtmp=new Expedition($this->db);
-                        $result=$newtmp->fetch($val[$i]);
-
-                        if (($newtmp->origin=='commande' || $newtmp->origin=='order') && $newtmp->origin_id)
-                        {
-    						$newobject=new Commande($this->db);
-    						$result=$newobject->fetch($newtmp->origin_id);
-    						if ($result >= 0)
-    						{
-                                $posy+=7;
-                                $pdf->SetXY($this->page_largeur - $this->marge_droite - 100,$posy);
-								$pdf->SetFont('','', $default_font_size - 1);
-                                $text=$newobject->ref;
-                                if ($newobject->ref_client) $text.=' ('.$newobject->ref_client.')';
-                                $pdf->MultiCell(100, 4, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text), '', 'R');
-    						}
-                        }
+						$order=new Commande($this->db);
+						$result=$order->fetch($objects[$i]->id);
+						if ($result >= 0)
+						{
+							$posy+=5;
+							$pdf->SetXY(100,$posy);
+							$pdf->SetFont('','', $default_font_size - 1);
+							$text=$order->ref;
+							if ($order->ref_client) $text.=' ('.$order->ref_client.')';
+							$pdf->MultiCell(100, 4, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text), '', 'R');
+						}
 					}
 				}
 			}
