@@ -314,6 +314,9 @@ ListCustomersShort=Llistat de clients
 ThirdPartiesArea=Àrea Tercers
 LastModifiedThirdParties=Els %s últims tercers modificats
 UniqueThirdParties=Total de tercers únics
+InActivity=En activitat
+ActivityCeased=Activitat cessada
+ActivityStateFilter=Estat d'activitat
 # Monkey
 MonkeyNumRefModelDesc=Retorna un número sota el format %syymm-nnnn per als codis de clients  i %syymm-nnnn per als codis dels proveïdors, on yy és l'any, mm el mes i nnnn un comptador seqüencial sense ruptura i sense tornar a 0.
 # Leopard
