@@ -44,8 +44,8 @@ class ModelePDFFactures extends CommonDocGenerator
 	var $error='';
 
 	/**
-	 *      \brief      Return list of active generation modules
-	 * 		\param		$db		Database handler
+	 *  Return list of active generation modules
+	 * 	@param		$db		Database handler
 	 */
 	function liste_modeles($db)
 	{
@@ -69,16 +69,16 @@ class ModeleNumRefFactures
 {
 	var $error='';
 
-	/**     \brief     	Return if a module can be used or not
-	 *      	\return		boolean     true if module can be used
+	/**  Return if a module can be used or not
+	 *   @return	boolean     true if module can be used
 	 */
 	function isEnabled()
 	{
 		return true;
 	}
 
-	/**		\brief		Renvoi la description par defaut du modele de numerotation
-	 *      	\return     string      Texte descripif
+	/**	 Renvoi la description par defaut du modele de numerotation
+	 *   @return    string      Texte descripif
 	 */
 	function info()
 	{
@@ -87,8 +87,8 @@ class ModeleNumRefFactures
 		return $langs->trans("NoDescription");
 	}
 
-	/**     \brief     	Renvoi un exemple de numerotation
-	 *		\return		string      Example
+	/**  Renvoi un exemple de numerotation
+	 *	 @return	string      Example
 	 */
 	function getExample()
 	{
@@ -97,19 +97,19 @@ class ModeleNumRefFactures
 		return $langs->trans("NoExample");
 	}
 
-	/**     \brief     	Test si les numeros deja en vigueur dans la base ne provoquent pas
-	 *                  	de conflits qui empecheraient cette numerotation de fonctionner.
-	 *      	\return		boolean     false si conflit, true si ok
+	/**  Test si les numeros deja en vigueur dans la base ne provoquent pas
+	 *   de conflits qui empecheraient cette numerotation de fonctionner.
+	 *   @return	boolean     false si conflit, true si ok
 	 */
 	function canBeActivated()
 	{
 		return true;
 	}
 
-	/**     \brief      Renvoi prochaine valeur attribuee
-	 *      	\param      objsoc		Objet societe
-	 *      	\param      facture		Objet facture
-	 *      	\return     string      Valeur
+	/**  Renvoi prochaine valeur attribuee
+	 *   @param     objsoc		Objet societe
+	 *   @param     facture		Objet facture
+	 *   @return    string      Valeur
 	 */
 	function getNextValue($objsoc,$facture)
 	{
@@ -117,8 +117,8 @@ class ModeleNumRefFactures
 		return $langs->trans("NotAvailable");
 	}
 
-	/**     \brief      Renvoi version du module numerotation
-	 *      	\return     string      Valeur
+	/**  Renvoi version du modele de numerotation
+	 *   @return    string      Valeur
 	 */
 	function getVersion()
 	{
@@ -134,8 +134,8 @@ class ModeleNumRefFactures
 
 
 /**
- *	Cree un facture sur disque en fonction du modele de FACTURE_ADDON_PDF
- *	@param   	db  			objet base de donnee
+ *	Cree une facture sur le disque en fonction du modele de FACTURE_ADDON_PDF
+ *	@param   	db  			objet base de donnees
  *	@param   	object			Object invoice
  *	@param	    message			message
  *	@param	    modele			force le modele a utiliser ('' to not force)
@@ -159,7 +159,7 @@ function facture_pdf_create($db, $object, $message, $modele, $outputlangs, $hide
 	$dir = "/includes/modules/facture/";
     $srctemplatepath='';
 
-	// Positionne modele sur le nom du modele a utiliser
+	// Positionne le modele sur le nom du modele a utiliser
 	if (! dol_strlen($modele))
 	{
 		if (! empty($conf->global->FACTURE_ADDON_PDF))
@@ -292,9 +292,9 @@ function facture_meta_create($db, $facid, $message="")
 
 
 /**
- *	\brief      Supprime l'image de previsualitation, pour le cas de regeneration de facture
- *	\param	    db  		objet base de donnee
- *	\param	    facid		id de la facture a creer
+ *	Supprime l'image de previsualitation, pour le cas de regeneration de facture
+ *	@param	   db  		objet base de donnee
+ *	@param	   facid	id de la facture a creer
  */
 function facture_delete_preview($db, $facid)
 {
