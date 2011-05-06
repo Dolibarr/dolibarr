@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
  * Copyright (C) 2008-2009 Laurent Destailleur   <eldy@uers.sourceforge.net>
+ * Copyright (C) 2011 Juanjo Menent			  	 <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +37,7 @@ if ( $_GET['filtre'] ) {
 	if ($conf->stock->enabled && !empty($conf_fkentrepot)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot = '".$conf_fkentrepot."'";
 	$sql.= " WHERE p.tosell = 1";
 	$sql.= " AND p.fk_product_type = 0";
-	$sql.= " AND (p.ref LIKE '%".$_GET['filtre']."%' OR p.label LIKE '%".$_GET['filtre']."%')";
+	$sql.= " AND (p.ref LIKE '%".$_GET['filtre']."%' OR p.label LIKE '%".$_GET['filtre']."%' OR p.barcode='".$_GET['filtre']."')";
 	$sql.= " ORDER BY label";
 
 	dol_syslog("facturation.php sql=".$sql);
@@ -97,11 +98,11 @@ if ( $nbr_enreg > 1 ) {
 
 	if ( $nbr_enreg > $conf_taille_listes ) {
 
-		$top_liste_produits = '----- '.$conf_taille_listes.' '.$langs->transnoentitiesnoconv("Products").' '.$langs->trans("on").' '.$nbr_enreg.' -----';
+		$top_liste_produits = '----- '.$conf_taille_listes.' '.$langs->transnoentitiesnoconv("CashDeskProducts").' '.$langs->trans("CashDeskOn").' '.$nbr_enreg.' -----';
 
 	} else {
 
-		$top_liste_produits = '----- '.$nbr_enreg.' '.$langs->transnoentitiesnoconv("Products").' '.$langs->trans("on").' '.$nbr_enreg.' -----';
+		$top_liste_produits = '----- '.$nbr_enreg.' '.$langs->transnoentitiesnoconv("CashDeskProducts").' '.$langs->trans("CashDeskOn").' '.$nbr_enreg.' -----';
 
 	}
 

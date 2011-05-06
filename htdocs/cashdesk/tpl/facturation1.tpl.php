@@ -4,7 +4,9 @@ $langs->load("bills");
 $langs->load("cashdesk");
 ?>
 <!--
-Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
+Copyright (C) 2007-2008 Jeremie Ollivier 	<jeremie.o@laposte.net>
+Copyright (C) 2011      Laurent Destailleur <eldy@users.sourceforge.net>
+Copyright (C) 2011		Juanjo Menent 		<jmenent@2byte.es>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -39,8 +41,8 @@ $Id$
 			<td><input class="texte_ref" type="text" id ="txtRef" name="txtRef" value="<?php echo $obj_facturation->ref() ?>"
 				onchange="javascript: setSource('REF');"
 				onfocus="javascript: this.select(); verifResultat('resultats_dhtml', this.value);"
-				onBlur="javascript: document.getElementById('resultats_dhtml').innerHTML = '';"
-				onKeyUp="javascript: verifResultat('resultats_dhtml', this.value);" />
+				onBlur="javascript: document.getElementById('resultats_dhtml').innerHTML = '';"/>
+				<!--onKeyUp="javascript: verifResultat('resultats_dhtml', this.value);" />-- >
 			</td>
 			<td class="select_design">
 				<select name="selProduit" onchange="javascript: setSource('LISTE');">
@@ -62,7 +64,7 @@ $Id$
 								$label = $tab_designations[$i]['label'];
 
 								print '<option '.$selected.' value="'.$tab_designations[$i]['rowid'].'">'.$tab_designations[$i]['ref'].' - '.dol_trunc($label,28,'middle');
-								if ($conf->stock->enabled && !empty($conf_fkentrepot)) print ' ('.$langs->trans("Warehouse").': '.$tab_designations[$i]['reel'].')';
+								if ($conf->stock->enabled && !empty($conf_fkentrepot)) print ' ('.$langs->trans("CashDeskWarehouse").': '.$tab_designations[$i]['reel'].')';
 								print '</option>'."\n				";
 
 							}
@@ -80,7 +82,7 @@ $Id$
 								$label = $tab_designations[$i]['label'];
 
 								print '<option '.$selected.' value="'.$tab_designations[$i]['rowid'].'">'.$tab_designations[$i]['ref'].' - '.dol_trunc($label,28,'middle');
-								if ($conf->stock->enabled && !empty($conf_fkentrepot)) print ' ('.$langs->trans("Warehouse").': '.(empty($tab_designations[$i]['reel'])?0:$tab_designations[$i]['reel']).')';
+								if ($conf->stock->enabled && !empty($conf_fkentrepot)) print ' ('.$langs->trans("CashDeskWarehouse").': '.(empty($tab_designations[$i]['reel'])?0:$tab_designations[$i]['reel']).')';
 								print '</option>'."\n				";
 
 							}
@@ -152,9 +154,9 @@ $Id$
 <form id="frmDifference"  class="formulaire1" method="post" onsubmit="javascript: return verifReglement()" action="validation_verif.php?action=valide_achat">
 	<input type="hidden" name="hdnChoix" value="" />
 	<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
-<fieldset class="cadre_facturation"><legend class="titre1"><?php echo $langs->trans("Difference"); ?></legend>
+<fieldset class="cadre_facturation"><legend class="titre1"><?php echo $langs->trans("Amount"); ?></legend>
 		<table>
-			<tr><th class="label1"><?php echo $langs->trans("AmountExpected"); ?></th><th class="label1"><?php echo $langs->trans("Received"); ?></th><th class="label1"><?php echo $langs->trans("ExcessReceived"); ?></th></tr>
+			<tr><th class="label1"><?php echo $langs->trans("TotalTicket"); ?></th><th class="label1"><?php echo $langs->trans("Received"); ?></th><th class="label1"><?php echo $langs->trans("Change"); ?></th></tr>
 			<tr>
 			<!-- Affichage du montant du -->
 			<td><input class="texte2_off" type="text" name="txtDu" value="<?php echo price2num($obj_facturation->prix_total_ttc (), 'MT'); ?>" disabled="disabled" /></td>
@@ -181,7 +183,7 @@ $Id$
 				<input class="bouton_mode_reglement" type="submit" name="btnModeReglement" value="<?php echo $langs->trans("Reported"); ?>" onclick="javascript: verifClic('DIF');" />
 				<?php echo $langs->trans("DateEcheance"); ?> :
 				<input class="texte2" type="text" id="txtDatePaiement" name="txtDatePaiement" value="" />
-				<input class="bouton_cal" type="image" src="img/calendrier.png" id="btnCalendrier" value="..." title="Cliquez pour afficher le calendrier" />
+				<input class="bouton_cal" type="image" src="img/calendrier.png" id="btnCalendrier" value="..." title="<?php echo $langs->trans("CalTip"); ?>" />
 				</td>
 			</tr>
 

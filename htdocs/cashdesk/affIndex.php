@@ -2,6 +2,7 @@
 /* Copyright (C) 2007-2008 Jeremie Ollivier      <jeremie.o@laposte.net>
  * Copyright (C) 2008-2010 Laurent Destailleur   <eldy@uers.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2011      Juanjo Menent         <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,11 +29,13 @@ require('../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php');
 
 // Test if already logged
-if ( $_SESSION['uid'] <= 0 ) {
+if ( $_SESSION['uid'] <= 0 ) 
+{
 	header ('Location: index.php');
 	exit;
 }
 
+$langs->load("cashdesk");
 
 /*
  * View

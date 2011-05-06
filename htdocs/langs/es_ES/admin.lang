@@ -417,8 +417,8 @@ Module13452Name=SpeedFinder
 Module13452Desc=Motor de búsqueda en AJAX para buscar en 2 segundos un nombre basándose en parte de un número de teléfono 
 Module50000Name=PayBox
 Module50000Desc=Módulo para proporcionar un pago en línea con tarjeta de crédito mediante Paybox
-Module50100Name=Punto de venta
-Module50100Desc=Caja registradora de punto de venta
+Module50100Name=TPV
+Module50100Desc=Terminal Punto de Venta para la venta en mostrador
 Module50200Name=Paypal
 Module50200Desc=Módulo para proporcionar un pago en línea con tarjeta de crédito mediante Paypal
 Permission11=Consultar facturas
@@ -1234,13 +1234,13 @@ PastDelayVCalExport=No exportar los eventos de más de
 ##### ClickToDial #####
 ClickToDialDesc=Este módulo permite agregar un icono después del número de teléfono de contactos Dolibarr. Un clic en este icono, Llama a un servidor con una URL que se indica a continuación. Esto puede ser usado para llamar al sistema call center de Dolibarr que puede llamar al número de teléfono en un sistema SIP, por ejemplo.
 ##### Point Of Sales (CashDesk) #####
-CashDesk=Caja registradora
-CashDeskSetup=Configuración del módulo TPV/Caja registradora
+CashDesk=TPV
+CashDeskSetup=Configuración del módulo Terminal Punto de Venta
 CashDeskThirdPartyForSell=Tercero genérico a usar para la venta
 CashDeskBankAccountForSell=Cuenta a utilizar para los cobros en efectivo (caja)
 CashDeskBankAccountForCheque=Cuenta a utilizar para los cobros con cheques
 CashDeskBankAccountForCB=Cuenta a utilizar para los cobros con tarjeta de crédito
-CashDeskIdWareHouse=Almacén que se utiliza para las ventas
+CashDeskIdWareHouse=Almacén a utilizar para las ventas
 ##### Bookmark #####
 BookmarkSetup=Configuración del módulo Marcadores
 BookmarkDesc=Este módulo le permite gestionar los enlaces y accesos directos. También permite añadir cualquier página de Dolibarr o enlace web en el menú de acceso rápido de la izquierda.

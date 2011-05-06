@@ -417,8 +417,8 @@ Module13452Name=SpeedFinder
 Module13452Desc=Motor de cerca en AJAX per cercar en 2 segons un nom basant-se en part d'un número de telèfon
 Module50000Name=PayBox
 Module50000Desc=Mòdul per a proporcionar un pagament en línia amb targeta de crèdit mitjançant Paybox
-Module50100Name=Punt de venda
-Module50100Desc=Caixa registradora de punt de venda
+Module50100Name=TPV
+Module50100Desc=Terminal Punt de Venda per a la venda al taulell
 Module50200Name=Paypal
 Module50200Desc=Mòdul per a proporcionar un pagament en línia amb targeta de crèdit mitjançant Paypal
 Permission11=Consultar factures
@@ -1234,8 +1234,8 @@ PastDelayVCalExport=No exportar els esdeveniments de més de
 ##### ClickToDial #####
 ClickToDialDesc=Aquest mòdul permet afegir una icona després del número de telèfon de contactes Dolibarr. Un clic en aquesta icona, Truca a un servidor amb un URL que s'indica a continuació. Això pot ser usat per anomenar al sistema centre de Dolibarr que pot trucar al número de telèfon en un sistema SIP, per exemple.
 ##### Point Of Sales (CashDesk) #####
-CashDesk=Caixa registradora
-CashDeskSetup=Mòdul de configuració TPV/Caixa registradora
+CashDesk=TPV
+CashDeskSetup=Mòdul de configuració Terminal Punt de Venda
 CashDeskThirdPartyForSell=Tercer genéric a utilitzar per a les vendes
 CashDeskBankAccountForSell=Compte a utilitzar per als cobraments en efectiu (caixa)
 CashDeskBankAccountForCheque=Compte a utilitzar per als cobraments amb xecs
