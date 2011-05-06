@@ -37,7 +37,10 @@ if ( $_GET['filtre'] ) {
 	if ($conf->stock->enabled && !empty($conf_fkentrepot)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot = '".$conf_fkentrepot."'";
 	$sql.= " WHERE p.tosell = 1";
 	$sql.= " AND p.fk_product_type = 0";
-	$sql.= " AND (p.ref LIKE '%".$_GET['filtre']."%' OR p.label LIKE '%".$_GET['filtre']."%' OR p.barcode='".$_GET['filtre']."')";
+	$sql.= " AND (p.ref LIKE '%".$_GET['filtre']."%' OR p.label LIKE '%".$_GET['filtre']."%' ";
+	if ($conf->barcode->enabled) $sql.= " OR p.barcode='".$_GET['filtre']."')";
+	else $sql.= ")";
+		 
 	$sql.= " ORDER BY label";
 
 	dol_syslog("facturation.php sql=".$sql);
