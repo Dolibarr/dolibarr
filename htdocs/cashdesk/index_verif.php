@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2008 Jeremie Ollivier    <jeremie.o@laposte.net>
  * Copyright (C) 2008-2010 Laurent Destailleur <eldy@uers.sourceforge.net>
+ * Copyright (C) 2011	   Juanjo Menent	   <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,12 +29,10 @@ $langs->load("main");
 $langs->load("admin");
 $langs->load("cashdesk");
 
-$username = $_POST['txtUsername'];
-$password = $_POST['pwdPassword'];
-$thirdpartyid = isset($_POST['socid'])?$_POST['socid']:$conf->global->CASHDESK_ID_THIRDPARTY;
-$warehouseid = isset($_POST['warehouseid'])?$_POST['warehouseid']:$conf->global->CASHDESK_ID_WAREHOUSE;
-
-$error = '';
+$username = GETPOST("txtUsername");
+$password = GETPOST("pwdPassword");
+$thirdpartyid = (GETPOST("socid")!='')?GETPOST("socid"):$conf->global->CASHDESK_ID_THIRDPARTY;
+$warehouseid = (GETPOST("warehouseid")!='')?GETPOST("warehouseid"):$conf->global->CASHDESK_ID_WAREHOUSE;
 
 // Check username
 if (empty($username))
@@ -51,17 +50,18 @@ if (! ($thirdpartyid > 0))
 }
 
 // If we setup stock module to ask movement on invoices, we must not allow access if required setup not finished.
-if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_BILL && ! ($warehouseid > 0))
+if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_BILL &&  ! ($warehouseid > 0))
 {
-	$retour=$langs->trans("You ask to decrease stock on invoice creation but warehouse for this is was not defined (Change stock module setup, or choose a warehouse).");
+	$retour=$langs->trans("CashDeskSetupStock");
 	header ('Location: '.DOL_URL_ROOT.'/cashdesk/index.php?err='.urlencode($retour).'&user='.$username);
 	exit;
 }
 
 if (! empty($_POST['txtUsername']) && $conf->banque->enabled && (empty($conf_fkaccount_cash) || empty($conf_fkaccount_cheque) || empty($conf_fkaccount_cb)))
 {
-//  $error.= '<div class="error"></div>';
-    header("Location: index.php?err=".urlencode('Setup of Point of Sale module not complete. Bank account not defined').'&user='.$username);
+	$langs->load("errors");
+	$retour=$langs->trans("ErrorModuleSetupNotComplete");
+    header ('Location: '.DOL_URL_ROOT.'/cashdesk/index.php?err='.urlencode($retour).'&user='.$username);
     exit;
 }
 
