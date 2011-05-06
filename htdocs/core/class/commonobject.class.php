@@ -1225,39 +1225,43 @@ class CommonObject
 		
 		$this->load_object_linked($sourceid,$sourcetype,$targetid,$targettype,$clause);
 		
-		foreach($this->linked_object as $key => $value)
+		foreach($this->linked_object as $objecttype => $objects)
 		{
 			// Parse element/subelement (ex: project_task)
-			$element = $subelement = $key;
-			if (preg_match('/^([^_]+)_([^_]+)/i',$key,$regs))
+			$element = $subelement = $objecttype;
+			if (preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
 			{
 				$element = $regs[1];
 				$subelement = $regs[2];
 			}
 			
-			// For compatibility
-			if ($element == 'facture') { $element = 'compta/facture'; $subelement = 'facture'; }
-            if ($element == 'order' || $element == 'commande')    { $element = $subelement = 'commande'; }
-            if ($element == 'propal')   { $element = 'comm/propal'; $subelement = 'propal'; }
-            if ($element == 'contract') { $element = $subelement = 'contrat'; }
-            if ($element == 'shipping') { $element = $subelement = 'expedition'; }
-            if ($element == 'delivery') { $element = $subelement = 'livraison'; }
+			$classpath = $element.'/class';
+			
+			// To work with non standard path
+			if ($objecttype == 'facture') { $classpath = 'compta/facture/class'; }
+            if ($objecttype == 'propal')  { $classpath = 'comm/propal/class'; }
+            if ($objecttype == 'shipping') { $classpath = 'expedition/class'; $subelement = 'expedition'; }
+            if ($objecttype == 'delivery') { $classpath = 'livraison/class'; $subelement = 'livraison'; }
+            if ($objecttype == 'invoice_supplier') { $classpath = 'fourn/class'; }
+            if ($objecttype == 'order_supplier')   { $classpath = 'fourn/class'; }
+
+            $classfile = strtolower($subelement); $classname = ucfirst($subelement);
+            if ($objecttype == 'invoice_supplier') { $classfile = 'fournisseur.facture'; $classname='FactureFournisseur'; }
+            if ($objecttype == 'order_supplier')   { $classfile = 'fournisseur.commande'; $classname='CommandeFournisseur'; }
             
             if ($conf->$element->enabled)
             {
-	            dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
-	
-	            $classname = ucfirst($subelement);
+	            dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
 	            
-				$num=sizeof($value);
+				$num=sizeof($objects);
 				
 				for ($i=0;$i<$num;$i++)
 				{
 					$object = new $classname($this->db);
-					$ret = $object->fetch($value[$i]);
+					$ret = $object->fetch($objects[$i]);
 					if ($ret >= 0)
 					{
-						$this->linkedObjects[$key][$i] = $object;
+						$this->linkedObjects[$objecttype][$i] = $object;
 					}
 				}
             }
@@ -1470,10 +1474,14 @@ class CommonObject
             }
 
             $classpath = $element.'/class';
-            if ($objecttype == 'facture') { $tplpath = 'compta/'.$element; $classpath = $tplpath.'/class'; }  // To work with non standard path
-            if ($objecttype == 'propal')  { $tplpath = 'comm/'.$element; $classpath = $tplpath.'/class'; }    // To work with non standard path
-            if ($objecttype == 'invoice_supplier') { $tplpath = 'fourn/facture'; $classpath = 'fourn/class'; }    // To work with non standard path
-            if ($objecttype == 'order_supplier')   { $tplpath = 'fourn/commande'; $classpath = 'fourn/class'; }    // To work with non standard path
+            
+            // To work with non standard path
+            if ($objecttype == 'facture') { $tplpath = 'compta/'.$element; $classpath = $tplpath.'/class'; }
+            if ($objecttype == 'propal')  { $tplpath = 'comm/'.$element; $classpath = $tplpath.'/class'; }
+            if ($objecttype == 'shipping') { $classpath = 'expedition/class'; $subelement = 'expedition'; }
+            if ($objecttype == 'delivery') { $classpath = 'livraison/class'; $subelement = 'livraison'; }
+            if ($objecttype == 'invoice_supplier') { $tplpath = 'fourn/facture'; $classpath = 'fourn/class'; }
+            if ($objecttype == 'order_supplier')   { $tplpath = 'fourn/commande'; $classpath = 'fourn/class'; }
 
             $classfile = strtolower($subelement); $classname = ucfirst($subelement);
             if ($objecttype == 'invoice_supplier') { $classfile='fournisseur.facture'; $classname='FactureFournisseur';   }
