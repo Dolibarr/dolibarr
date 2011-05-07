@@ -30,6 +30,10 @@ ALTER TABLE llx_livraison MODIFY model_pdf varchar(255);
 ALTER TABLE llx_projet MODIFY model_pdf varchar(255);
 ALTER TABLE llx_propal MODIFY model_pdf varchar(255);
 
+ALTER TABLE llx_societe MODIFY siren varchar(32);
+ALTER TABLE llx_societe MODIFY siret varchar(32);
+ALTER TABLE llx_societe MODIFY ape varchar(32);
+ALTER TABLE llx_societe MODIFY idprof4 varchar(32);
 
 -- Delete old constants
 DELETE FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_MENU_BARRETOP';
