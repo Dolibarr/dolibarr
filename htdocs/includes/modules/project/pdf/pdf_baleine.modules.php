@@ -383,12 +383,13 @@ class pdf_baleine extends ModelePDFProjects
 
 		$pdf->SetTextColor(0,0,60);
 
-		// Add list of linked orders
-		// TODO mutualiser
-	    $object->fecthObjectLinked();
-	    
+		// Add list of linked objects
+		/* Removed: A project can have more than thousands linked objects (orders, invoices, proposals, etc....
+		$object->fetchObjectLinked();
+
 	    foreach($object->linkedObjects as $objecttype => $objects)
 	    {
+	        var_dump($objects);exit;
 	    	if ($objecttype == 'commande')
 	    	{
 	    		$outputlangs->load('orders');
@@ -404,7 +405,7 @@ class pdf_baleine extends ModelePDFProjects
 	    		}
 	    	}
 	    }
-
+        */
 
 	}
 
