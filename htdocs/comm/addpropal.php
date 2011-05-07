@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
@@ -43,6 +43,13 @@ $langs->load("bills");
 $langs->load("orders");
 $langs->load("deliveries");
 
+/*
+ * Actions
+ */
+
+// None
+
+
 
 /*
  * View
@@ -55,9 +62,7 @@ print_fiche_titre($langs->trans("NewProp"));
 $html=new Form($db);
 
 
-/*
- * Creation d'une nouvelle propale
- */
+// Add new proposal
 if ($_GET["action"] == 'create')
 {
 	$soc = new Societe($db);
@@ -127,9 +132,7 @@ if ($_GET["action"] == 'create')
 	print '</td>';
 	print '</tr>';
 
-	/*
-	 * Contact de la propale
-	 */
+	// Contacts
 	print "<tr><td>".$langs->trans("DefaultContact")."</td><td colspan=\"2\">\n";
 	$html->select_contacts($soc->id,$setcontact,'contactidp',1);
 	print '</td></tr>';
@@ -161,15 +164,15 @@ if ($_GET["action"] == 'create')
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="2">';
 	$html->select_types_paiements($soc->mode_reglement,'mode_reglement_id');
 	print '</td></tr>';
-	
-	// Source de propale
+
+	// What trigger creation
     print '<tr><td>'.$langs->trans('Source').'</td><td>';
-    $html->select_demand_reason($soc->demand_reason,'demand_reason_id');
+    $html->select_demand_reason($propal->demand_reason,'demand_reason_id',"SRC_PROP",1);
     print '</td></tr>';
 
 	// delai de livraison
     print '<tr><td>'.$langs->trans('AvailabilityPeriod').'</td><td colspan="2">';
-    $html->select_availability($soc->availability,'availability_id');
+    $html->select_availability($propal->availability,'availability_id');
     print '</td></tr>';
 
 	// Delivery date (or manufacturing)

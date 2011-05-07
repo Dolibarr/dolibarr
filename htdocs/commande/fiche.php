@@ -1274,15 +1274,15 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 	// delai de livraison
     print '<tr><td>'.$langs->trans('AvailabilityPeriod').'</td><td>';
-    $html->select_availability($soc->availability,'availability_id');
+    $html->select_availability($propal->availability,'availability_id');
     print '</td></tr>';
 
-	// Source de commande
+	// What trigger creation
     print '<tr><td>'.$langs->trans('Source').'</td><td>';
-    $html->select_demand_reason($soc->demand_reason,'demand_reason_id');
+    $html->select_demand_reason((GETPOST("origin")=='propal'?'SRC_COMM':''),'demand_reason_id','',1);
     print '</td></tr>';
 
-    // Projet
+    // Project
     if ($conf->projet->enabled)
     {
         $projectid = 0;
@@ -1296,10 +1296,6 @@ if ($action == 'create' && $user->rights->commande->creer)
         }
         print '</td></tr>';
     }
-
-    print '<tr><td>'.$langs->trans('Source').'</td><td colspan="2">';
-    $formorder->selectSourcesCommande((GETPOST("origin")=='propal'?'0':''),'source_id',1);
-    print '</td></tr>';
 
     print '<tr><td>'.$langs->trans('Model').'</td>';
     print '<td colspan="2">';
@@ -1770,7 +1766,7 @@ else
             print '</td><td colspan="2">';
             if ($_GET['action'] == 'editdemandreason')
             {
-                $html->form_demand_reason($_SERVER['PHP_SELF'].'?id='.$object->id,$object->demand_reason_id,'demand_reason_id');
+                $html->form_demand_reason($_SERVER['PHP_SELF'].'?id='.$object->id,$object->demand_reason_id,'demand_reason_id',1);
             }
             else
             {

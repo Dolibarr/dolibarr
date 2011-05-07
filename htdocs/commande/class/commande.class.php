@@ -1180,7 +1180,7 @@ class Commande extends CommonObject
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON (c.fk_cond_reglement = cr.rowid)';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON (c.fk_mode_reglement = p.id)';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_availability as ca ON (c.fk_availability = ca.rowid)';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_demand_reason as dr ON (c.fk_demand_reason = ca.rowid)';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_input_reason as dr ON (c.fk_demand_reason = ca.rowid)';
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = c.rowid AND el.targettype = '".$this->element."'";
 		$sql.= " WHERE c.entity = ".$conf->entity;
 		if ($ref) $sql.= " AND c.ref='".$ref."'";

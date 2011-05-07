@@ -405,7 +405,7 @@ class Propal extends CommonObject
 			{
 				// Reorder if child line
 				if (! empty($fk_parent_line)) $this->line_order(true,'DESC');
-				
+
 				// Mise a jour informations denormalisees au niveau de la propale meme
 				$result=$this->update_price(1);
 				if ($result > 0)
@@ -482,15 +482,15 @@ class Propal extends CommonObject
 				$remise = round(($pu * $remise_percent / 100), 2);
 				$price = $pu - $remise;
 			}
-			
+
 			// Update line
 			$this->line=new PropaleLigne($this->db);
-			
+
 			// Stock previous line records
 			$staticline=new PropaleLigne($this->db);
 			$staticline->fetch($rowid);
 			$this->line->oldline = $staticline;
-			
+
 			$this->line->rowid=$rowid;
 			$this->line->desc=$desc;
 			$this->line->qty=$qty;
@@ -508,13 +508,13 @@ class Propal extends CommonObject
 			$this->line->special_code=$special_code;
 			$this->line->fk_parent_line=$fk_parent_line;
 			$this->line->skip_update_total=$skip_update_total;
-			
+
 			if (empty($qty) && empty($special_code)) $this->line->special_code=3;
-			
+
 			// TODO deprecated
 			$this->line->price=$price;
 			$this->line->remise=$remise;
-			
+
 			$result=$this->line->update();
 			if ($result > 0)
 			{
@@ -552,7 +552,7 @@ class Propal extends CommonObject
 		if ($this->statut == 0)
 		{
 			$line=new PropaleLigne($this->db);
-			
+
 			// For triggers
 			$line->fetch($lineid);
 
@@ -685,14 +685,14 @@ class Propal extends CommonObject
 				{
 					$fk_parent_line=0;
 					$num=sizeof($this->lines);
-					
+
 					for ($i=0;$i<$num;$i++)
 					{
 						// Reset fk_parent_line for no child products and special product
 						if (($this->lines[$i]->product_type != 9 && empty($this->lines[$i]->fk_parent_line)) || $this->lines[$i]->product_type == 9) {
 							$fk_parent_line = 0;
 						}
-						
+
 						$result = $this->addline(
 						$this->id,
 						$this->lines[$i]->desc,
@@ -846,9 +846,9 @@ class Propal extends CommonObject
 		// Load source object
 		$object->fetch($fromid);
 		$objFrom = $object;
-		
+
 		$objsoc=new Societe($this->db);
-		
+
 		// Change socid if needed
 		if (! empty($socid) && $socid != $object->socid)
 		{
@@ -860,7 +860,7 @@ class Propal extends CommonObject
 				$object->fk_project				= '';
 				$object->fk_delivery_address	= '';
 			}
-			
+
 			// TODO Change product price if multi-prices
 		}
 		else
@@ -971,7 +971,7 @@ class Propal extends CommonObject
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_mode_reglement = cp.id';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON p.fk_cond_reglement = cr.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_availability as ca ON p.fk_availability = ca.rowid';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_demand_reason as dr ON p.fk_demand_reason = dr.rowid';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_input_reason as dr ON p.fk_demand_reason = dr.rowid';
 		$sql.= " WHERE p.fk_statut = c.id";
 		$sql.= " AND p.entity = ".$conf->entity;
 		if ($ref) $sql.= " AND p.ref='".$ref."'";
@@ -1346,7 +1346,7 @@ class Propal extends CommonObject
 			}
 		}
 	}
-	
+
 	/**
 	 *      \brief      Positionne numero reference client
 	 *      \param      user            Utilisateur qui modifie
@@ -1900,7 +1900,7 @@ class Propal extends CommonObject
 			return -2;
 		}
 	}
-	
+
 	/**
 	 *   \brief      Change l'origine de la demande
 	 *   \param      demand_reason_id      Id de la nouvelle origine de demande
@@ -2379,7 +2379,7 @@ class PropaleLigne
 {
 	var $db;
 	var $error;
-	
+
 	var $oldline;
 
 	// From llx_propaldet
@@ -2421,12 +2421,12 @@ class PropaleLigne
 	var $ref;						// Reference produit
 	var $libelle;       // Label produit
 	var $product_desc;  // Description produit
-	
+
 	var $localtax1_tx;
 	var $localtax2_tx;
 	var $total_localtax1;
 	var $total_localtax2;
-	
+
 	var $skip_update_total; // Skip update price total for special lines
 
 	/**
@@ -2579,7 +2579,7 @@ class PropaleLigne
 			return -1;
 		}
 	}
-	
+
 	/**
 	 * 	Delete line in database
 	 *	@return	 int  <0 si ko, >0 si ok
@@ -2587,9 +2587,9 @@ class PropaleLigne
 	function delete()
 	{
 		global $conf,$langs,$user;
-		
+
 		$this->db->begin();
-		
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."propaldet WHERE rowid = ".$this->rowid;
 		dol_syslog("PropaleLigne::delete sql=".$sql, LOG_DEBUG);
 		if ($this->db->query($sql) )
@@ -2600,9 +2600,9 @@ class PropaleLigne
 			$result = $interface->run_triggers('LINEPROPAL_DELETE',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
-			
+
 			$this->db->commit();
-			
+
 			return 1;
 		}
 		else
@@ -2613,7 +2613,7 @@ class PropaleLigne
 			return -1;
 		}
 	}
-	
+
 	/**
 	 *      \brief     	Mise a jour de l'objet ligne de propale en base
 	 *		\return		int		<0 si ko, >0 si ok
@@ -2621,7 +2621,7 @@ class PropaleLigne
 	function update($notrigger=0)
 	{
 		global $conf,$langs,$user;
-		
+
 		// Clean parameters
 		if (empty($this->tva_tx)) $this->tva_tx=0;
 		if (empty($this->localtax1_tx)) $this->localtax1_tx=0;
@@ -2635,7 +2635,7 @@ class PropaleLigne
 		if (empty($this->info_bits)) $this->info_bits=0;
 		if (empty($this->special_code)) $this->special_code=0;
 		if (empty($this->fk_parent_line)) $this->fk_parent_line=0;
-		
+
 		$this->db->begin();
 
 		// Mise a jour ligne en base
@@ -2677,7 +2677,7 @@ class PropaleLigne
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// Fin appel triggers
 			}
-			
+
 			$this->db->commit();
 			return 1;
 		}

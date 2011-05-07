@@ -77,7 +77,7 @@ $tabname[18]= MAIN_DB_PREFIX."c_shipment_mode";
 $tabname[19]= MAIN_DB_PREFIX."c_effectif";
 $tabname[20]= MAIN_DB_PREFIX."c_input_method";
 $tabname[21]= MAIN_DB_PREFIX."c_availability";
-$tabname[22]= MAIN_DB_PREFIX."c_demand_reason";
+$tabname[22]= MAIN_DB_PREFIX."c_input_reason";
 
 // Dictionary labels
 $tablib[1] = "DictionnaryCompanyJuridicalType";
@@ -125,7 +125,7 @@ $tabsql[18]= "SELECT rowid   as rowid, code, libelle, active FROM ".MAIN_DB_PREF
 $tabsql[19]= "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_effectif";
 $tabsql[20]= "SELECT rowid   as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_input_method";
 $tabsql[21]= "SELECT c.rowid  as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_availability AS c";
-$tabsql[22]= "SELECT rowid  as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_demand_reason";
+$tabsql[22]= "SELECT rowid  as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_input_reason";
 
 // Critere de tri du dictionnaire
 $tabsqlsort[1] ="pays ASC, code ASC";

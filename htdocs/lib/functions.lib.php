@@ -3512,6 +3512,12 @@ function dol_htmloutput_errors($mesgstring='', $mesgarray='', $keepembedded=0)
  *	ascending (default) or descending output and uses optionally
  *	natural case insensitive sorting (which can be optionally case
  *	sensitive as well).
+ *  @param      array           Array to sort
+ *  @param      index
+ *  @param      order
+ *  @param      natsort
+ *  @param      cas_sensitive
+ *  @return     Sorted array
  */
 function dol_sort_array(&$array, $index, $order='asc', $natsort, $case_sensitive)
 {

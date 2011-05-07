@@ -1535,17 +1535,17 @@ class Form
     }
 
 	/**
-     *      \brief      Charge dans cache la liste des origines de commande possibles
-     *      \return     int             Nb lignes chargees, 0 si deja chargees, <0 si ko
+     *      Load into cache cache_demand_reason, array of input reasons
+     *      @return     int             Nb of lines loaded, 0 if already loaded, <0 if ko
      */
     function load_cache_demand_reason()
     {
         global $langs;
 
-        if (sizeof($this->cache_demand_reason)) return 0;    // Cache deja charge
+        if (sizeof($this->cache_demand_reason)) return 0;    // Cache already loaded
 
         $sql = "SELECT rowid, code, label";
-        $sql.= " FROM ".MAIN_DB_PREFIX.'c_demand_reason';
+        $sql.= " FROM ".MAIN_DB_PREFIX.'c_input_reason';
         $sql.= " WHERE active=1";
         $sql.= " ORDER BY rowid";
         dol_syslog('Form::load_cache_demand_reason sql='.$sql,LOG_DEBUG);
@@ -1554,16 +1554,21 @@ class Form
         {
             $num = $this->db->num_rows($resql);
             $i = 0;
+            $tmparray=array();
             while ($i < $num)
             {
                 $obj = $this->db->fetch_object($resql);
 
                 // Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
                 $label=($langs->trans("DemandReasonType".$obj->code)!=("DemandReasonType".$obj->code)?$langs->trans("DemandReasonType".$obj->code):($obj->label!='-'?$obj->label:''));
-                $this->cache_demand_reason[$obj->rowid]['code'] =$obj->code;
-                $this->cache_demand_reason[$obj->rowid]['label']=$label;
+                $tmparray[$obj->rowid]['id']   =$obj->rowid;
+                $tmparray[$obj->rowid]['code'] =$obj->code;
+                $tmparray[$obj->rowid]['label']=$label;
                 $i++;
             }
+            $this->cache_demand_reason=dol_sort_array($tmparray,'label');
+            //var_dump($this->cache_demand_reason);exit;
+            unset($tmparray);
             return 1;
         }
         else {
@@ -1573,29 +1578,31 @@ class Form
     }
 
 	/**
-     *      \brief      Retourne la liste des types d'origine de propal/commande possibles
-     *      \param      selected        Id du type d'origine pre-selectionne
-     *      \param      htmlname        Nom de la zone select
-     *      \param      filtertype      Pour filtre
-     *		\param		addempty		Ajoute entree vide
+     *      Return list of events that triggered an object creation
+     *      @param      selected        Id du type d'origine pre-selectionne
+     *      @param      htmlname        Nom de la zone select
+     *      @param      exclude         To exclude a code value (Example: SRC_PROP)
+     *		@param		addempty		Add an empty entry
      */
-    function select_demand_reason($selected='',$htmlname='demandreasonid',$filtertype='',$addempty=0)
+    function select_demand_reason($selected='',$htmlname='demandreasonid',$exclude='',$addempty=0)
     {
         global $langs,$user;
 
         $this->load_cache_demand_reason();
 
         print '<select class="flat" name="'.$htmlname.'">';
-        if ($addempty) print '<option value="0">&nbsp;</option>';
+        if ($addempty) print '<option value="0"'.(empty($selected)?' selected="selected"':'').'>&nbsp;</option>';
         foreach($this->cache_demand_reason as $id => $arraydemandreason)
         {
-            if ($selected == $id)
+            if ($arraydemandreason['code']==$exclude) continue;
+
+            if ($selected == $arraydemandreason['id'])
             {
-                print '<option value="'.$id.'" selected="selected">';
+                print '<option value="'.$arraydemandreason['id'].'" selected="selected">';
             }
             else
             {
-                print '<option value="'.$id.'">';
+                print '<option value="'.$arraydemandreason['id'].'">';
             }
             print $arraydemandreason['label'];
             print '</option>';
@@ -2235,11 +2242,11 @@ class Form
     }
 
 	/**
-     *    	\brief      Affiche formulaire de selection d'origine de propal/commande
-     *    	\param      page        	Page
-     *    	\param      selected    	Id condition pre-selectionne
-     *    	\param      htmlname    	Name of select html field
-     *		\param		addempty		Ajoute entree vide
+     *    	Affiche formulaire de selection d'origine de propal/commande
+     *    	@param      page        	Page
+     *    	@param      selected    	Id condition pre-selectionne
+     *    	@param      htmlname    	Name of select html field
+     *		@param		addempty		Ajoute entree vide
      */
     function form_demand_reason($page, $selected='', $htmlname='demandreason', $addempty=0)
     {
@@ -2261,7 +2268,14 @@ class Form
             if ($selected)
             {
                 $this->load_cache_demand_reason();
-                print $this->cache_demand_reason[$selected]['label'];
+                foreach ($this->cache_demand_reason as $key => $val)
+                {
+                    if ($val['id'] == $selected)
+                    {
+                        print $val['label'];
+                        break;
+                    }
+                }
             } else {
                 print "&nbsp;";
             }

@@ -1321,9 +1321,10 @@ if ($id > 0 || ! empty($ref))
 	if ($action != 'editdemandreason' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdemandreason&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDemandReason'),1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
+	//print $object->demand_reason_id;
 	if ($action == 'editdemandreason')
 	{
-		$html->form_demand_reason($_SERVER['PHP_SELF'].'?id='.$object->id,$object->demand_reason_id,'demand_reason_id');
+		$html->form_demand_reason($_SERVER['PHP_SELF'].'?id='.$object->id,$object->demand_reason_id,'demand_reason_id',1);
 	}
 	else
 	{
