@@ -2134,11 +2134,11 @@ class Form
 
 
     /**
-     *    \brief      Affiche formulaire de selection de projet
-     *    \param      page        Page
-     *    \param      socid       Id societe
-     *    \param      selected    Id projet pre-selectionne
-     *    \param      htmlname    Nom du formulaire select
+     *    Show a form to select a project
+     *    @param      page        Page
+     *    @param      socid       Id societe
+     *    @param      selected    Id projet pre-selectionne
+     *    @param      htmlname    Nom du formulaire select
      */
     function form_project($page, $socid, $selected='', $htmlname='projectid')
     {
@@ -2174,11 +2174,11 @@ class Form
     }
 
     /**
-     *    	\brief      Affiche formulaire de selection de conditions de paiement
-     *    	\param      page        	Page
-     *    	\param      selected    	Id condition pre-selectionne
-     *    	\param      htmlname    	Name of select html field
-     *		\param		addempty		Ajoute entree vide
+     *    	Show a form to select payment conditions
+     *    	@param      page        	Page
+     *    	@param      selected    	Id condition pre-selectionne
+     *    	@param      htmlname    	Name of select html field
+     *		@param		addempty		Ajoute entree vide
      */
     function form_conditions_reglement($page, $selected='', $htmlname='cond_reglement_id', $addempty=0)
     {
@@ -2208,11 +2208,11 @@ class Form
     }
 
 	 /**
-     *    	\brief      Affiche formulaire de selection de delais de livraison
-     *    	\param      page        	Page
-     *    	\param      selected    	Id condition pre-selectionne
-     *    	\param      htmlname    	Name of select html field
-     *		\param		addempty		Ajoute entree vide
+     *    	Show a form to select a delivery delay
+     *    	@param      page        	Page
+     *    	@param      selected    	Id condition pre-selectionne
+     *    	@param      htmlname    	Name of select html field
+     *		@param		addempty		Ajoute entree vide
      */
     function form_availability($page, $selected='', $htmlname='availability', $addempty=0)
     {
@@ -2242,11 +2242,11 @@ class Form
     }
 
 	/**
-     *    	Affiche formulaire de selection d'origine de propal/commande
+     *    	Show a select form to select origin
      *    	@param      page        	Page
      *    	@param      selected    	Id condition pre-selectionne
      *    	@param      htmlname    	Name of select html field
-     *		@param		addempty		Ajoute entree vide
+     *		@param		addempty		Add empty entry
      */
     function form_demand_reason($page, $selected='', $htmlname='demandreason', $addempty=0)
     {
@@ -2281,11 +2281,12 @@ class Form
             }
         }
     }
+
     /**
-     *    \brief      Affiche formulaire de selection d'une date
-     *    \param      page        Page
-     *    \param      selected    Date preselected
-     *    \param      htmlname    Name of input html field
+     *    Show a form to select a date
+     *    @param      page        Page
+     *    @param      selected    Date preselected
+     *    @param      htmlname    Name of input html field
      */
     function form_date($page, $selected='', $htmlname)
     {
@@ -2317,12 +2318,12 @@ class Form
 
 
     /**
-     *    	\brief      Affiche formulaire de selection d'un utilisateur
-     *    	\param      page        	Page
-     *   	\param      selected    	Id of user preselected
-     *    	\param      htmlname    	Name of input html field
-     *  	\param      exclude         List of users id to exclude
-     *  	\param      include         List of users id to include
+     *    	Show a select form to choose a user
+     *    	@param      page        	Page
+     *   	@param      selected    	Id of user preselected
+     *    	@param      htmlname    	Name of input html field
+     *  	@param      exclude         List of users id to exclude
+     *  	@param      include         List of users id to include
      */
     function form_users($page, $selected='', $htmlname='userid', $exclude='', $include='')
     {
