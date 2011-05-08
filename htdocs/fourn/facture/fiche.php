@@ -51,7 +51,7 @@ $result = restrictedArea($user, 'fournisseur', $facid, 'facture_fourn', 'facture
 
 $html = new Form($db);
 $mesg='';
-$action=GETPOST(action);
+$action=GETPOST("action");
 
 
 /*
