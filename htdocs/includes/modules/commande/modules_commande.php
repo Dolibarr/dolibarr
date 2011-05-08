@@ -44,8 +44,8 @@ class ModelePDFCommandes
 	var $error='';
 
 	/**
-	 *      \brief      Return list of active generation modules
-	 * 		\param		$db		Database handler
+	 *  Return list of active generation modules
+	 * 	@param		$db		Database handler
 	 */
 	function liste_modeles($db)
 	{
@@ -72,16 +72,16 @@ class ModeleNumRefCommandes
 {
 	var $error='';
 
-	/**     \brief     	Return if a module can be used or not
-	 *      	\return		boolean     true if module can be used
+	/**  Return if a module can be used or not
+	 *   @return		boolean     true if module can be used
 	 */
 	function isEnabled()
 	{
 		return true;
 	}
 
-	/**     \brief      Renvoi la description par defaut du modele de numerotation
-	 *      \return     string      Texte descripif
+	/**  Renvoie la description par defaut du modele de numerotation
+	 *   @return     string      Texte descripif
 	 */
 	function info()
 	{
@@ -90,8 +90,8 @@ class ModeleNumRefCommandes
 		return $langs->trans("NoDescription");
 	}
 
-	/**     \brief      Renvoi un exemple de numerotation
-	 *      \return     string      Example
+	/**  Renvoie un exemple de numerotation
+	 *   @return     string      Example
 	 */
 	function getExample()
 	{
@@ -100,17 +100,16 @@ class ModeleNumRefCommandes
 		return $langs->trans("NoExample");
 	}
 
-	/**     \brief      Test si les numeros deja en vigueur dans la base ne provoquent pas de
-	 *                  de conflits qui empechera cette numerotation de fonctionner.
-	 *      \return     boolean     false si conflit, true si ok
+	/**  Test si les numeros deja en vigueur dans la base ne provoquent pas de conflits qui empecheraient cette numerotation de fonctionner.
+	 *   @return     boolean     false si conflit, true si ok
 	 */
 	function canBeActivated()
 	{
 		return true;
 	}
 
-	/**     \brief      Renvoi prochaine valeur attribuee
-	 *      \return     string      Valeur
+	/**  Renvoie prochaine valeur attribuee
+	 *   @return     string      Valeur
 	 */
 	function getNextValue()
 	{
@@ -118,8 +117,8 @@ class ModeleNumRefCommandes
 		return $langs->trans("NotAvailable");
 	}
 
-	/**     \brief      Renvoi version du module numerotation
-	 *      	\return     string      Valeur
+	/**  Renvoie version du module numerotation
+	 *   @return     string      Valeur
 	 */
 	function getVersion()
 	{
@@ -136,7 +135,7 @@ class ModeleNumRefCommandes
 
 /**
  *  Cree un bon de commande sur disque en fonction d'un modele
- *  @param	    db  			objet base de donnee
+ *  @param	    db  			data base object
  *  @param	    object			object order
  *  @param	    modele			force le modele a utiliser ('' to not force)
  *  @param		outputlangs		objet lang a utiliser pour traduction
@@ -176,7 +175,7 @@ function commande_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0
 	{
 		$model=new ModelePDFCommandes();
 		$liste=$model->liste_modeles($db);
-		$modele=key($liste);        // Renvoie premiere valeur de cle trouve dans le tableau
+		$modele=key($liste);        // Renvoie premiere valeur de cle trouvee dans le tableau
 		$file = "pdf_".$modele.".modules.php";
 		// On verifie l'emplacement du modele
         $file = dol_buildpath($dir.$file);
@@ -224,10 +223,10 @@ function commande_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0
 }
 
 /**
- *  \brief      Supprime l'image de previsualitation, pour le cas de regeneration de commande
- *  \param	    db  		objet base de donnee
- *  \param	    commandeid	id de la commande a effacer
- *  \param      commanderef reference de la commande si besoin
+ *  Supprime l'image de previsualitation, pour le cas de regeneration de commande
+ *  @param	    db  		data base object
+ *  @param	    commandeid	id de la commande a effacer
+ *  @param      commanderef reference de la commande si besoin
  */
 function commande_delete_preview($db, $commandeid, $commanderef='')
 {
