@@ -549,7 +549,7 @@ class CommandeFournisseur extends Commande
 
 
 	/**
-	 *  Renvoie la reference de commande suivante non utilisee en fonction du module
+	 *  Renvoie la reference de commande suivante non utilisee en fonction du modele
 	 *                  de numerotation actif defini dans COMMANDE_SUPPLIER_ADDON
 	 *  @param	    soc  		            objet societe
 	 *  @return     string                  reference libre pour la facture
@@ -560,8 +560,6 @@ class CommandeFournisseur extends Commande
 		$langs->load("orders");
 
 		$dir = DOL_DOCUMENT_ROOT .'/includes/modules/supplier_order/';
-		$modelisok=0;
-		$liste=array();
 
 		if (! empty($conf->global->COMMANDE_SUPPLIER_ADDON))
 		{
@@ -569,7 +567,7 @@ class CommandeFournisseur extends Commande
 
 			if (is_readable($dir.'/'.$file))
 			{
-				// Definition du nom de module de numerotation de commande fournisseur
+				// Definition du nom de modele de numerotation de commande fournisseur
 				$modName=$conf->global->COMMANDE_SUPPLIER_ADDON;
 				require_once($dir.'/'.$file);
 
