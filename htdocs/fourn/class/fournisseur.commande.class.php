@@ -74,8 +74,8 @@ class CommandeFournisseur extends Commande
 	var $mode_reglement_code;
 
 
-	/**   \brief      Constructeur
-	 *    \param      DB      Handler d'acces aux bases de donnees
+	/**  Constructeur
+	 *   @param      DB      Handler d'acces aux bases de donnees
 	 */
 	function CommandeFournisseur($DB)
 	{
@@ -106,12 +106,15 @@ class CommandeFournisseur extends Commande
 	{
 		global $conf;
 
+		// Check parameters
+		if (empty($id) && empty($ref)) return -1;
+
 		$sql = "SELECT c.rowid, c.ref, c.date_creation, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva,";
 		$sql.= " c.localtax1, c.localtax2, ";
 		$sql.= " c.date_commande as date_commande, c.fk_cond_reglement, c.fk_mode_reglement, c.fk_projet as fk_project, c.remise_percent, c.source, c.fk_methode_commande,";
 		$sql.= " c.note, c.note_public, c.model_pdf,";
 		$sql.= " cm.libelle as methode_commande,";
-		$sql.= " cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle";
+		$sql.= " cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle,";
 		$sql.= " p.code as mode_reglement_code, p.libelle as mode_reglement_libelle";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_payment_term as cr ON (c.fk_cond_reglement = cr.rowid)";
@@ -151,6 +154,7 @@ class CommandeFournisseur extends Commande
 			$this->cond_reglement_id   = $obj->fk_cond_reglement;
 			$this->cond_reglement_code = $obj->cond_reglement_code;
 			$this->cond_reglement      = $obj->cond_reglement_libelle;
+			$this->cond_reglement_doc  = $obj->cond_reglement_libelle_doc;
 			$this->mode_reglement_id   = $obj->fk_mode_reglement;
 			$this->mode_reglement_code = $obj->mode_reglement_code;
 			$this->mode_reglement      = $obj->mode_reglement_libelle;
@@ -235,12 +239,12 @@ class CommandeFournisseur extends Commande
 	}
 
 	/**
-	 *      \brief      Add a line in log table
-	 *      \param      user        User making action
-	 *      \param      statut      Status of order
-	 *      \param      datelog     Date of change
-	 * 		\param		comment		Comment
-	 *      \return     int         <0 if KO, >0 if OK
+	 *   Add a line in log table
+	 *   @param      user        User making action
+	 *   @param      statut      Status of order
+	 *   @param      datelog     Date of change
+	 * 	 @param		 comment		Comment
+	 *   @return     int         <0 if KO, >0 if OK
 	 */
 	function log($user, $statut, $datelog, $comment='')
 	{
@@ -264,8 +268,8 @@ class CommandeFournisseur extends Commande
 	}
 
 	/**
-	 *		\brief		Validate an order
-	 *		\param		user		Utilisateur qui valide
+	 *	Validate an order
+	 *	@param		user		Utilisateur qui valide
 	 */
 	function valid($user)
 	{
@@ -280,7 +284,7 @@ class CommandeFournisseur extends Commande
 		{
 			$this->db->begin();
 
-			// Definition du nom de module de numerotation de commande
+			// Definition du nom de modele de numerotation de commande
 			$soc = new Societe($this->db);
 			$soc->fetch($this->fourn_id);
 
@@ -305,7 +309,7 @@ class CommandeFournisseur extends Commande
 			$resql=$this->db->query($sql);
 			if (! $resql)
 			{
-				dol_syslog("Commande::valid() Echec update - 10 - sql=".$sql, LOG_ERR);
+				dol_syslog("CommandeFournisseur::valid() Echec update - 10 - sql=".$sql, LOG_ERR);
 				dol_print_error($this->db);
 				$error++;
 			}
@@ -373,11 +377,87 @@ class CommandeFournisseur extends Commande
 		}
 	}
 
+	/**
+	 *	Set draft status
+	 *	@param		user		Object user that modify
+	 *	@return		int			<0 if KO, >0 if OK
+	 */
+	function set_draft($user)
+	{
+		global $conf,$langs;
+
+		$error=0;
+
+		// Protection
+		if ($this->statut == 0)
+		{
+			dol_syslog("CommandeFournisseur::set_draft already draft status", LOG_WARNING);
+			return 0;
+		}
+
+		if (! $user->rights->fournisseur->commande->valider)
+		{
+			$this->error='Permission denied';
+			return -1;
+		}
+
+		$this->db->begin();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
+		$sql.= " SET fk_statut = 0";
+		$sql.= " WHERE rowid = ".$this->id;
+
+		dol_syslog("CommandeFournisseur::set_draft sql=".$sql, LOG_DEBUG);
+		if ($this->db->query($sql))
+		{
+			// If stock is incremented on validate order, we must redecrement it
+			if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 0)
+			{
+				require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
+
+				for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
+				{
+					if ($this->lines[$i]->fk_product > 0 && $this->lines[$i]->product_type == 0)
+					{
+						$mouvP = new MouvementStock($this->db);
+						// We increment stock of product (and sub-products)
+						$entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
+						$result=$mouvP->reception($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->subprice);
+						if ($result < 0) { $error++; }
+					}
+				}
+
+				if (!$error)
+				{
+					$this->statut=0;
+					$this->db->commit();
+					return $result;
+				}
+				else
+				{
+					$this->error=$mouvP->error;
+					$this->db->rollback();
+					return $result;
+				}
+			}
+
+			$this->statut=0;
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			$this->db->rollback();
+			dol_syslog($this->error, LOG_ERR);
+			return -1;
+		}
+	}
 
 	/**
-	 *    \brief      Return label of the status of object
-	 *    \param      mode          0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label
-	 *    \return     string        Label
+	 *  Return label of the status of object
+	 *  @param      mode          0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label
+	 *  @return     string        Label
 	 */
 	function getLibStatut($mode=0)
 	{
@@ -385,10 +465,10 @@ class CommandeFournisseur extends Commande
 	}
 
 	/**
-	 *    	\brief      Return label of a status
-	 * 		\param      statut		Id statut
-	 *    	\param      mode        0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto
-	 *    	\return     string		Label of status
+	 *  Return label of a status
+	 * 	@param      statut		Id statut
+	 *  @param      mode        0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto
+	 *  @return     string		Label of status
 	 */
 	function LibStatut($statut,$mode=0)
 	{
@@ -444,10 +524,10 @@ class CommandeFournisseur extends Commande
 
 
 	/**
-	 *	\brief      Renvoie nom clicable (avec eventuellement le picto)
-	 *	\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-	 *	\param		option			Sur quoi pointe le lien
-	 *	\return		string			Chaine avec URL
+	 *	Renvoie nom clicable (avec eventuellement le picto)
+	 *	@param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *	@param		option			Sur quoi pointe le lien
+	 *	@return		string			Chaine avec URL
 	 */
 	function getNomUrl($withpicto=0,$option='')
 	{
@@ -469,10 +549,10 @@ class CommandeFournisseur extends Commande
 
 
 	/**
-	 *      \brief      Renvoie la reference de commande suivante non utilisee en fonction du module
+	 *  Renvoie la reference de commande suivante non utilisee en fonction du module
 	 *                  de numerotation actif defini dans COMMANDE_SUPPLIER_ADDON
-	 *      \param	    soc  		            objet societe
-	 *      \return     string                  reference libre pour la facture
+	 *  @param	    soc  		            objet societe
+	 *  @return     string                  reference libre pour la facture
 	 */
 	function getNextNumRef($soc)
 	{
@@ -523,8 +603,8 @@ class CommandeFournisseur extends Commande
 	}
 
 	/**
-	 * 		\brief		Accept an order
-	 *		\param		user		Object user
+	 * 	Accept an order
+	 *	@param		user		Object user
 	 */
 	function approve($user)
 	{
@@ -603,8 +683,8 @@ class CommandeFournisseur extends Commande
 	}
 
 	/**
-	 * 		\brief		Refuse an order
-	 * 		\param		user		User making action
+	 * 	Refuse an order
+	 * 	@param		user		User making action
 	 */
 	function refuse($user)
 	{
@@ -646,9 +726,9 @@ class CommandeFournisseur extends Commande
 	}
 
 	/**
-	 * 		\brief		Cancel an approved order
-	 * 		\param		user		User making action
-	 *		\remarks	L'annulation se fait apres l'approbation
+	 * 	Cancel an approved order
+	 * 	@param		user		User making action
+	 *	@remarks	L'annulation se fait apres l'approbation
 	 */
 	function Cancel($user)
 	{
@@ -761,6 +841,7 @@ class CommandeFournisseur extends Commande
 		$sql.= ", fk_statut";
 		$sql.= ", source";
 		$sql.= ", model_pdf";
+		$sql.= ", fk_mode_reglement";
 		$sql.= ") ";
 		$sql.= " VALUES (";
 		$sql.= "''";
@@ -771,6 +852,7 @@ class CommandeFournisseur extends Commande
 		$sql.= ", 0";
 		$sql.= ", 0";
 		$sql.= ", '".$conf->global->COMMANDE_SUPPLIER_ADDON_PDF."'";
+		$sql.= ", ".$this->mode_reglement_id;
 		$sql.= ")";
 
 		dol_syslog("CommandeFournisseur::Create sql=".$sql);
@@ -1164,9 +1246,9 @@ class CommandeFournisseur extends Commande
 	}
 
 	/**
-	 *   \brief      Change les conditions de reglement de la commande
-	 *   \param      cond_reglement_id      Id de la nouvelle condition de reglement
-	 *   \return     int                    >0 si ok, <0 si ko
+	 *  Change les conditions de reglement de la commande
+	 *  @param      cond_reglement_id      Id de la nouvelle condition de reglement
+	 *  @return     int                    >0 si ok, <0 si ko
 	 */
 	function cond_reglement($cond_reglement_id)
 	{
@@ -1195,11 +1277,11 @@ class CommandeFournisseur extends Commande
 			return -2;
 		}
 	}
-	
-/**
-	 *   \brief      Change le mode de reglement
-	 *   \param      mode        Id du nouveau mode
-	 *   \return     int         >0 si ok, <0 si ko
+
+	/**
+	 *  Change le mode de reglement
+	 *  @param      mode        Id du nouveau mode
+	 *  @return     int         >0 si ok, <0 si ko
 	 */
 	function mode_reglement($mode_reglement_id)
 	{
@@ -1288,9 +1370,10 @@ class CommandeFournisseur extends Commande
 		return $result ;
 	}
 
-	/**     \brief      Cree la commande depuis une propale existante
-	 \param      user            Utilisateur qui cree
-	 \param      propale_id      id de la propale qui sert de modele
+	/**     
+	 *  Cree la commande depuis une propale existante
+	 *  @param      user            Utilisateur qui cree
+	 *  @param      propale_id      id de la propale qui sert de modele
 	 */
 	function updateFromCommandeClient($user, $idc, $comclientid)
 	{
@@ -1327,8 +1410,8 @@ class CommandeFournisseur extends Commande
 
 
 	/**
-	 *		\brief		Met a jour les notes
-	 *		\return		int			<0 si ko, >=0 si ok
+	 *	Met a jour les notes
+	 *	@return		int			<0 si ko, >=0 si ok
 	 */
 	function UpdateNote($user, $note, $note_public)
 	{
@@ -1400,9 +1483,9 @@ class CommandeFournisseur extends Commande
 
 
 	/**
-	 *      \brief      Tag order with a particular status
-	 *      \param      user        Object user that change status
-	 *      \return     int         <0 if KO, >0 if OK
+	 *  Tag order with a particular status
+	 *  @param      user        Object user that change status
+	 *  @return     int         <0 if KO, >0 if OK
 	 */
 	function setStatus($user,$status)
 	{
@@ -1713,8 +1796,8 @@ class CommandeFournisseurLigne extends OrderLine
 	}
 
 	/**
-	 *  \brief     Load line order
-	 *  \param     rowid           id line order
+	 *  Load line order
+	 *  @param     rowid           id line order
 	 */
 	function fetch($rowid)
 	{
@@ -1763,8 +1846,8 @@ class CommandeFournisseurLigne extends OrderLine
 	}
 
 	/**
-	 *      \brief     	Mise a jour de l'objet ligne de commande en base
-	 *		\return		int		<0 si ko, >0 si ok
+	 *  Mise a jour de l'objet ligne de commande en base
+	 *  @return		int		<0 si ko, >0 si ok
 	 */
 	function update_total()
 	{
