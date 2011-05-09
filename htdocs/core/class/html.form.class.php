@@ -1566,8 +1566,8 @@ class Form
                 $tmparray[$obj->rowid]['label']=$label;
                 $i++;
             }
-            $this->cache_demand_reason=dol_sort_array($tmparray,'label');
-            //var_dump($this->cache_demand_reason);exit;
+            $this->cache_demand_reason=dol_sort_array($tmparray,'label', $order='asc', $natsort, $case_sensitive);
+            
             unset($tmparray);
             return 1;
         }
