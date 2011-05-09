@@ -319,7 +319,7 @@ ThirdPartiesArea=Espace Tiers
 LastModifiedThirdParties=Les %s derniers tiers modifiés
 UniqueThirdParties=Total de tiers uniques
 InActivity=En activité
-ActivityCeased=En cessation d'activité
+ActivityCeased=Clos
 ActivityStateFilter=Statut d'activité
 
 # Monkey

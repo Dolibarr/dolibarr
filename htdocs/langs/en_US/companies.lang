@@ -311,8 +311,8 @@ ListCustomersShort=List of customers
 ThirdPartiesArea=Third parties area
 LastModifiedThirdParties=Last %s modified third parties
 UniqueThirdParties=Total of unique third parties
-InActivity=In activity
-ActivityCeased=Activity ceased
+InActivity=Open
+ActivityCeased=Closed
 ActivityStateFilter=Activity status
 
 # Monkey
