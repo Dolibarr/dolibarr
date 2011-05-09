@@ -33,6 +33,7 @@
  *	\brief      File of class with all html predefined components
  *	\version	$Id$
  */
+ $action = GETPOST("action");
 
 
 /**
@@ -82,7 +83,7 @@ class Form
         $ret.='<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
         $ret.=$langs->trans($text);
         $ret.='</td>';
-        if ($_GET['action'] != 'edit'.$htmlname && $perm) $ret.='<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&amp;'.$paramkey.'='.$paramvalue.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
+        if ($action != 'edit'.$htmlname && $perm) $ret.='<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&amp;'.$paramkey.'='.$paramvalue.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
         $ret.='</tr></table>';
         return $ret;
     }
@@ -101,7 +102,7 @@ class Form
     {
         global $langs;
         $ret='';
-        if ($_GET['action'] == 'edit'.$htmlname)
+        if ($action == 'edit'.$htmlname)
         {
             $ret.="\n";
             $ret.='<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
@@ -1567,7 +1568,7 @@ class Form
                 $i++;
             }
             $this->cache_demand_reason=dol_sort_array($tmparray,'label', $order='asc', $natsort, $case_sensitive);
-            
+
             unset($tmparray);
             return 1;
         }
@@ -1612,8 +1613,8 @@ class Form
     }
 
     /**
-     *      Charge dans cache la liste des types de paiements possibles
-     *      @return     int             Nb lignes chargees, 0 si deja chargees, <0 si ko
+     *      \brief      Charge dans cache la liste des types de paiements possibles
+     *      \return     int             Nb lignes chargees, 0 si deja chargees, <0 si ko
      */
     function load_cache_types_paiements()
     {
@@ -1652,11 +1653,11 @@ class Form
 
 
     /**
-     *      Retourne la liste des types de paiements possibles
-     *      @param      selected        Id du type de paiement pre-selectionne
-     *      @param      htmlname        Nom de la zone select
-     *      @param      filtertype      Pour filtre
-     *		@param		addempty		Ajoute entree vide
+     *      \brief      Retourne la liste des types de paiements possibles
+     *      \param      selected        Id du type de paiement pre-selectionne
+     *      \param      htmlname        Nom de la zone select
+     *      \param      filtertype      Pour filtre
+     *		\param		addempty		Ajoute entree vide
      */
     function select_conditions_paiements($selected='',$htmlname='condid',$filtertype=-1,$addempty=0)
     {
@@ -1737,9 +1738,9 @@ class Form
     }
 
     /**
-     *      Selection HT ou TTC
-     *      @param      selected        Id pre-selectionne
-     *      @param      htmlname        Nom de la zone select
+     *      \brief      Selection HT ou TTC
+     *      \param      selected        Id pre-selectionne
+     *      \param      htmlname        Nom de la zone select
      */
     function select_PriceBaseType($selected='',$htmlname='price_base_type')
     {
@@ -1747,9 +1748,9 @@ class Form
     }
 
     /**
-     *      Selection HT ou TTC
-     *      @param      selected        Id pre-selectionne
-     *      @param      htmlname        Nom de la zone select
+     *      \brief      Selection HT ou TTC
+     *      \param      selected        Id pre-selectionne
+     *      \param      htmlname        Nom de la zone select
      */
     function load_PriceBaseType($selected='',$htmlname='price_base_type')
     {
@@ -1780,9 +1781,9 @@ class Form
     }
 
     /**
-     *    Retourne la liste deroulante des differents etats d'une propal.
+     *    \brief      Retourne la liste deroulante des differents etats d'une propal.
      *                Les valeurs de la liste sont les id de la table c_propalst
-     *    @param      selected    etat pre-selectionne
+     *    \param      selected    etat pre-selectionne
      */
     function select_propal_statut($selected='')
     {
@@ -2359,10 +2360,10 @@ class Form
 
 
     /**
-     *    Affiche formulaire de selection des modes de reglement
-     *    @param      page        Page
-     *    @param      selected    Id mode pre-selectionne
-     *    @param      htmlname    Name of select html field
+     *    \brief      Affiche formulaire de selection des modes de reglement
+     *    \param      page        Page
+     *    \param      selected    Id mode pre-selectionne
+     *    \param      htmlname    Name of select html field
      */
     function form_modes_reglement($page, $selected='', $htmlname='mode_reglement_id')
     {
@@ -2447,10 +2448,10 @@ class Form
 
 
     /**
-     *    @Affiche formulaire de selection des contacts
-     *    @param      page        Page
-     *    @param      selected    Id contact pre-selectionne
-     *    @param      htmlname    Nom du formulaire select
+     *    \brief      Affiche formulaire de selection des contacts
+     *    \param      page        Page
+     *    \param      selected    Id contact pre-selectionne
+     *    \param      htmlname    Nom du formulaire select
      */
     function form_contacts($page, $societe, $selected='', $htmlname='contactidp')
     {
@@ -2490,12 +2491,12 @@ class Form
     }
 
     /**
-     *    	Affiche formulaire de selection de l'adresse
-     *    	@param      page        	Page
-     *    	@param      selected    	Id condition pre-selectionne
-     *    	@param      htmlname    	Nom du formulaire select
-     *		@param		origin        	Origine de l'appel pour pouvoir creer un retour
-     *      @param      originid      	Id de l'origine
+     *    	\brief      Affiche formulaire de selection de l'adresse
+     *    	\param      page        	Page
+     *    	\param      selected    	Id condition pre-selectionne
+     *    	\param      htmlname    	Nom du formulaire select
+     *		\param		origin        	Origine de l'appel pour pouvoir creer un retour
+     *      \param      originid      	Id de l'origine
      */
     function form_address($page, $selected='', $socid, $htmlname='address_id', $origin='', $originid='')
     {
@@ -2605,15 +2606,15 @@ class Form
     }
 
     /**
-     *      @Output an HTML select vat rate
-     *      @param      htmlname            Nom champ html
-     *      @param      selectedrate        Forcage du taux tva pre-selectionne. Mettre '' pour aucun forcage.
-     *      @param      societe_vendeuse    Objet societe vendeuse
-     *      @param      societe_acheteuse   Objet societe acheteuse
-     *      @param      idprod              Id product
-     *      @param      info_bits           Miscellanous information on line
-     *      @param      type               ''=Unknown, 0=Product, 1=Service (Used if idprod not defined)
-     *      @remarks    Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
+     *      \brief      Output an HTML select vat rate
+     *      \param      htmlname            Nom champ html
+     *      \param      selectedrate        Forcage du taux tva pre-selectionne. Mettre '' pour aucun forcage.
+     *      \param      societe_vendeuse    Objet societe vendeuse
+     *      \param      societe_acheteuse   Objet societe acheteuse
+     *      \param      idprod              Id product
+     *      \param      info_bits           Miscellanous information on line
+     *      \param      type               ''=Unknown, 0=Product, 1=Service (Used if idprod not defined)
+     *      \remarks    Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
      *                  Si le (pays vendeur = pays acheteur) alors la TVA par defaut=TVA du produit vendu. Fin de regle.
      *                  Si (vendeur et acheteur dans Communaute europeenne) et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par defaut=0 (La TVA doit etre paye par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
      *                  Si (vendeur et acheteur dans Communaute europeenne) et bien vendu autre que transport neuf alors la TVA par defaut=TVA du produit vendu. Fin de regle.
@@ -2628,15 +2629,15 @@ class Form
 
 
     /**
-     *      Output an HTML select vat rate
-     *      @param      htmlname           Nom champ html
-     *      @param      selectedrate       Forcage du taux tva pre-selectionne. Mettre '' pour aucun forcage.
-     *      @param      societe_vendeuse   Objet societe vendeuse
-     *      @param      societe_acheteuse  Objet societe acheteuse
-     *      @param      idprod             Id product
-     *      @param      info_bits          Miscellanous information on line
-     *      @param      type               ''=Unknown, 0=Product, 1=Service (Used if idprod not defined)
-     *      @remarks    Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
+     *      \brief      Output an HTML select vat rate
+     *      \param      htmlname           Nom champ html
+     *      \param      selectedrate       Forcage du taux tva pre-selectionne. Mettre '' pour aucun forcage.
+     *      \param      societe_vendeuse   Objet societe vendeuse
+     *      \param      societe_acheteuse  Objet societe acheteuse
+     *      \param      idprod             Id product
+     *      \param      info_bits          Miscellanous information on line
+     *      \param      type               ''=Unknown, 0=Product, 1=Service (Used if idprod not defined)
+     *      \remarks    Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
      *                  Si le (pays vendeur = pays acheteur) alors la TVA par defaut=TVA du produit vendu. Fin de regle.
      *                  Si (vendeur et acheteur dans Communaute europeenne) et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par defaut=0 (La TVA doit etre paye par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
      *                  Si (vendeur et acheteur dans Communaute europeenne) et bien vendu autre que transport neuf alors la TVA par defaut=TVA du produit vendu. Fin de regle.
@@ -3197,11 +3198,11 @@ class Form
 
 
     /**
-     *    Retourne la liste des modeles d'export
-     *    @param      selected          Id modele pre-selectionne
-     *    @param      htmlname          Nom de la zone select
-     *    @param      type              Type des modeles recherches
-     *    @param      useempty          Affiche valeur vide dans liste
+     *    \brief      Retourne la liste des modeles d'export
+     *    \param      selected          Id modele pre-selectionne
+     *    \param      htmlname          Nom de la zone select
+     *    \param      type              Type des modeles recherches
+     *    \param      useempty          Affiche valeur vide dans liste
      */
     function select_export_model($selected='',$htmlname='exportmodelid',$type='',$useempty=0)
     {
@@ -3244,10 +3245,10 @@ class Form
     }
 
     /**
-     *    	Return HTML combo list of week
-     *    	@param      selected          Preselected value
-     *    	@param      htmlname          Nom de la zone select
-     *    	@param      useempty          Affiche valeur vide dans liste
+     *    	\brief      Return HTML combo list of week
+     *    	\param      selected          Preselected value
+     *    	\param      htmlname          Nom de la zone select
+     *    	\param      useempty          Affiche valeur vide dans liste
      * 		TODO Move into html.formother
      */
     function select_dayofweek($selected='',$htmlname='weekid',$useempty=0)
@@ -3284,10 +3285,10 @@ class Form
     }
 
     /**
-     *    	Return HTML combo list of month
-     *    	@param      selected          Preselected value
-     *    	@param      htmlname          Nom de la zone select
-     *    	@param      useempty          Affiche valeur vide dans liste
+     *    	\brief      Return HTML combo list of month
+     *    	\param      selected          Preselected value
+     *    	\param      htmlname          Nom de la zone select
+     *    	\param      useempty          Affiche valeur vide dans liste
      * 		TODO Move into html.formother
      */
     function select_month($selected='',$htmlname='monthid',$useempty=0)
@@ -3394,11 +3395,11 @@ class Form
 
 
     /**
-     *    	Return HTML code to output a photo
-     *    	@param      modulepart		Id to define module concerned
-     *     	@param      object			Object containing data to retrieve file name
-     * 		@param		width			Width of photo
-     * 	  	@return     string    		HTML code to output photo
+     *    	\brief      Return HTML code to output a photo
+     *    	\param      modulepart		Id to define module concerned
+     *     	\param      object			Object containing data to retrieve file name
+     * 		\param		width			Width of photo
+     * 	  	\return     string    		HTML code to output photo
      */
     function showphoto($modulepart,$object,$width=100)
     {
