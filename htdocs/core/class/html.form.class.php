@@ -33,7 +33,6 @@
  *	\brief      File of class with all html predefined components
  *	\version	$Id$
  */
- $action = GETPOST("action");
 
 
 /**
@@ -75,6 +74,7 @@ class Form
      * @param      perm            Permission to allow button to edit parameter
      * @param      typeofdata      Type of data (string by default, email, ...)
      * @return     string          HTML edit field
+     * TODO no GET or POST in class file, use a param
      */
     function editfieldkey($text,$htmlname,$preselected,$paramkey,$paramvalue,$perm,$typeofdata='string')
     {
@@ -83,7 +83,7 @@ class Form
         $ret.='<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
         $ret.=$langs->trans($text);
         $ret.='</td>';
-        if ($action != 'edit'.$htmlname && $perm) $ret.='<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&amp;'.$paramkey.'='.$paramvalue.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
+        if (GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&amp;'.$paramkey.'='.$paramvalue.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
         $ret.='</tr></table>';
         return $ret;
     }
@@ -97,12 +97,13 @@ class Form
      * 	@param		perm			Permission to allow button to edit parameter
      * 	@param		typeofdata		Type of data ('string' by default, 'email', 'text', ...)
      *  @return     string          HTML edit field
+     *  TODO no GET or POST in class file, use a param
      */
     function editfieldval($text,$htmlname,$preselected,$paramkey,$paramvalue,$perm,$typeofdata='string')
     {
         global $langs;
         $ret='';
-        if ($action == 'edit'.$htmlname)
+        if (GETPOST('action') == 'edit'.$htmlname)
         {
             $ret.="\n";
             $ret.='<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
