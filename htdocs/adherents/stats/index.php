@@ -95,6 +95,11 @@ if ($mode)
 		//print $sql;
 	}
 
+	$langsen=new Translate('',$conf);
+    $langsen->setDefaultLang('en_US');
+    $langsen->load("dict");
+    //print $langsen->trans("Country"."FI");exit;
+
 	// Define $data array
 	dol_syslog("Count member sql=".$sql);
 	$resql=$db->query($sql);
@@ -108,6 +113,7 @@ if ($mode)
 			if ($mode == 'memberbycountry')
 			{
 				$data[]=array('label'=>(($obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code)?$langs->trans("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
+                            'label_en'=>(($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code)!="Country".$obj->code)?$langsen->transnoentitiesnoconv("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
 							'code'=>$obj->code,
 							'nb'=>$obj->nb,
 							'lastdate'=>$obj->lastdate
@@ -116,6 +122,7 @@ if ($mode)
 			if ($mode == 'memberbystate')
 			{
 				$data[]=array('label'=>(($obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code)?$langs->trans("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
+                            'label_en'=>(($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code)!="Country".$obj->code)?$langsen->transnoentitiesnoconv("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
 				            'label2'=>($obj->label2?$obj->label2:$langs->trans("Unknown")),
 							'nb'=>$obj->nb,
 							'lastdate'=>$obj->lastdate
@@ -172,9 +179,11 @@ if ($mode == 'memberbycountry')
 	$i=0;
 	foreach($data as $val)
 	{
-		// fix case of uk
-	    if ($val['label'] == 'Great Britain') { $val['label'] = 'United Kingdom'; }
-	    print "\tdata.setValue(".$i.", 0, \"".ucfirst($val['label'])."\");\n";
+	    //$valcountry=ucfirst($val['code']);
+	    $valcountry=ucfirst($val['label_en']);
+        // fix case of uk
+	    if ($valcountry == 'Great Britain') { $valcountry = 'United Kingdom'; }
+	    print "\tdata.setValue(".$i.", 0, \"".$valcountry."\");\n";
 	    print "\tdata.setValue(".$i.", 1, ".$val['nb'].");\n";
 	    // Google's Geomap only supports up to 400 entries
 	    if ($i >= 400){ break; }
@@ -182,7 +191,9 @@ if ($mode == 'memberbycountry')
 	}
 
 	print "\tvar options = {};\n";
-	print "\toptions['dataMode'] = 'regions';\n";
+    print "\toptions['dataMode'] = 'regions';\n";
+    print "\toptions['showZoomOut'] = false;\n";
+    //print "\toptions['zoomOutLabel'] = '".dol_escape_js($langs->transnoentitiesnoconv("Numbers"))."';\n";
 	print "\toptions['width'] = ".$graphwidth.";\n";
 	print "\toptions['height'] = ".$graphheight.";\n";
 	print "\tvar container = document.getElementById('".$mode."');\n";
