@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric	Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  *
@@ -48,19 +48,16 @@ $langs->load('deliveries');
 $langs->load('products');
 $langs->load('stocks');
 
-$comclientid = GETPOST("comid");
-$socid = GETPOST("socid");
-$action = GETPOST('action');
-
+$id 			= GETPOST("id");
+$ref 			= GETPOST("ref");
+$action 		= GETPOST("action");
+$comclientid 	= GETPOST("comid");
+$socid			= GETPOST("socid");
+$projectid		= GETPOST("projectid");
 
 // Security check
-$id = GETPOST("id");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'commande_fournisseur', $id,'');
-
-// Recuperation	de l'id	de projet
-$projectid =	0;
-if ($_GET["projectid"]) $projectid =	$_GET["projectid"];
 
 $mesg='';
 
@@ -576,8 +573,7 @@ if ($action	== 'create')
 		}
 
 		$id=$orderid;
-		$_GET['id']=$id;
-		$_REQUEST['id']=$id;
+		
 		$db->commit();
 	}
 	else
@@ -796,9 +792,6 @@ $productstatic = new Product($db);
 /* *************************************************************************** */
 
 $now=dol_now();
-
-$id = $_REQUEST['id'];
-$ref= $_REQUEST['ref'];
 
 if ($id > 0 || ! empty($ref))
 {
