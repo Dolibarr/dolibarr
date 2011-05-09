@@ -289,3 +289,11 @@ CurrencyXOF=Francos CFA BCEAO
 CurrencySingXOF=Franco CFA BCEAO
 CurrencyXPF=Francos CFP
 CurrencySingXPF=Franco CFP
+#### Input reasons #####
+DemandReasonTypeSRC_INTE=Internet
+DemandReasonTypeSRC_CAMP_MAIL=Campaña correo
+DemandReasonTypeSRC_CAMP_EMAIL=Campaña E-Mailing
+DemandReasonTypeSRC_CAMP_PHO=Campaña telefónica
+DemandReasonTypeSRC_CAMP_FAX=Campaña fax
+DemandReasonTypeSRC_COMM=Contacto comercial
+DemandReasonTypeSRC_SHOP=Contacto tienda
