@@ -471,10 +471,10 @@ class Form
     }
 
     /**
-     *		\brief      Return list of types of notes
-     *		\param      selected        Preselected type
-     *		\param      htmlname        Name of field in form
-     * 		\param		showempty		Add an empty field
+     *		Return list of types of notes
+     *		@param      selected        Preselected type
+     *		@param      htmlname        Name of field in form
+     * 		@param		showempty		Add an empty field
      */
     function select_type_fees($selected='',$htmlname='type',$showempty=0)
     {
@@ -602,12 +602,12 @@ class Form
 
 
     /**
-     *    	\brief      Return HTML combo list of absolute discounts
-     *    	\param      selected        Id remise fixe pre-selectionnee
-     *    	\param      htmlname        Nom champ formulaire
-     *    	\param      filter          Criteres optionnels de filtre
-     * 		\param		maxvalue		Max value for lines that can be selected
-     * 		\return		int				Return number of qualifed lines in list
+     *    	Return HTML combo list of absolute discounts
+     *    	@param      selected        Id remise fixe pre-selectionnee
+     *    	@param      htmlname        Nom champ formulaire
+     *    	@param      filter          Criteres optionnels de filtre
+     * 		@param		maxvalue		Max value for lines that can be selected
+     * 		@return		int				Return number of qualifed lines in list
      */
     function select_remises($selected='',$htmlname='remise_id',$filter='',$socid, $maxvalue=0)
     {
@@ -864,7 +864,6 @@ class Form
 
     /**
      *  Return list of products for customer in Ajax if Ajax activated or go to select_produits_do
-     *
      *  @param		selected				Preselected products
      *  @param		htmlname				Name of HTML seletc field (must be unique in page)
      *  @param		filtertype				Filter on product type (''=nofilter, 0=product, 1=service)
@@ -893,7 +892,6 @@ class Form
 
     /**
      *	Return list of products for a customer
-     *
      *	@param      selected        Preselected product
      *	@param      htmlname        Name of select html
      *  @param		filtertype      Filter on product type (''=nofilter, 0=product, 1=service)
@@ -1120,7 +1118,6 @@ class Form
 
     /**
      *	Return list of products for customer in Ajax if Ajax activated or go to select_produits_fournisseurs_do
-     *
      *	@param		socid			Id third party
      *	@param     	selected        Preselected product
      *	@param     	htmlname        Name of HTML Select
@@ -1145,7 +1142,6 @@ class Form
 
     /**
      *	Retourne la liste des produits de fournisseurs
-     *
      *	@param		socid   		Id societe fournisseur (0 pour aucun filtre)
      *	@param      selected        Produit pre-selectionne
      *	@param      htmlname        Nom de la zone select
@@ -1294,8 +1290,9 @@ class Form
     }
 
     /**
-     *	\brief		Retourn list of suppliers prices for a product
-     *	\param		productid   		    Id of product
+     *	Return list of suppliers prices for a product
+     *  @param		productid       Id of product
+     *  @param      htmlname        Name of HTML field
      */
     function select_product_fourn_price($productid,$htmlname='productfournpriceid')
     {
@@ -1381,9 +1378,11 @@ class Form
     }
 
     /**
-     *    \brief      Retourne la liste deroulante des adresses
-     *    \param      selected        Id contact pre-selectionn
-     *    \param      htmlname        Nom champ formulaire
+     *    Retourne la liste deroulante des adresses
+     *    @param      selected          Id contact pre-selectionn
+     *    @param      socid
+     *    @param      htmlname          Name of HTML field
+     *    @param      showempty         Add an empty field
      */
     function select_address($selected='', $socid, $htmlname='address_id',$showempty=0)
     {
@@ -1429,8 +1428,8 @@ class Form
 
 
     /**
-     *      \brief      Charge dans cache la liste des conditions de paiements possibles
-     *      \return     int             Nb lignes chargees, 0 si deja chargees, <0 si ko
+     *      Charge dans cache la liste des conditions de paiements possibles
+     *      @return     int             Nb lignes chargees, 0 si deja chargees, <0 si ko
      */
     function load_cache_conditions_paiements()
     {
@@ -1466,9 +1465,9 @@ class Form
         }
     }
 
- /**
-     *      \brief      Charge dans cache la liste des délais de livraison possibles
-     *      \return     int             Nb lignes chargees, 0 si deja chargees, <0 si ko
+    /**
+     *      Charge dans cache la liste des délais de livraison possibles
+     *      @return     int             Nb lignes chargees, 0 si deja chargees, <0 si ko
      */
     function load_cache_availability()
     {
@@ -1505,11 +1504,11 @@ class Form
     }
 
 	/**
-     *      \brief      Retourne la liste des types de delais de livraison possibles
-     *      \param      selected        Id du type de delais pre-selectionne
-     *      \param      htmlname        Nom de la zone select
-     *      \param      filtertype      Pour filtre
-     *		\param		addempty		Ajoute entree vide
+     *      Retourne la liste des types de delais de livraison possibles
+     *      @param      selected        Id du type de delais pre-selectionne
+     *      @param      htmlname        Nom de la zone select
+     *      @param      filtertype      Pour filtre
+     *		@param		addempty		Ajoute entree vide
      */
     function select_availability($selected='',$htmlname='availid',$filtertype='',$addempty=0)
     {
@@ -1614,8 +1613,8 @@ class Form
     }
 
     /**
-     *      \brief      Charge dans cache la liste des types de paiements possibles
-     *      \return     int             Nb lignes chargees, 0 si deja chargees, <0 si ko
+     *      Charge dans cache la liste des types de paiements possibles
+     *      @return     int             Nb lignes chargees, 0 si deja chargees, <0 si ko
      */
     function load_cache_types_paiements()
     {
@@ -3199,11 +3198,11 @@ class Form
 
 
     /**
-     *    \brief      Retourne la liste des modeles d'export
-     *    \param      selected          Id modele pre-selectionne
-     *    \param      htmlname          Nom de la zone select
-     *    \param      type              Type des modeles recherches
-     *    \param      useempty          Affiche valeur vide dans liste
+     *    Retourne la liste des modeles d'export
+     *    @param      selected          Id modele pre-selectionne
+     *    @param      htmlname          Nom de la zone select
+     *    @param      type              Type des modeles recherches
+     *    @param      useempty          Affiche valeur vide dans liste
      */
     function select_export_model($selected='',$htmlname='exportmodelid',$type='',$useempty=0)
     {
@@ -3246,10 +3245,10 @@ class Form
     }
 
     /**
-     *    	\brief      Return HTML combo list of week
-     *    	\param      selected          Preselected value
-     *    	\param      htmlname          Nom de la zone select
-     *    	\param      useempty          Affiche valeur vide dans liste
+     *    	Return HTML combo list of week
+     *    	@param      selected          Preselected value
+     *    	@param      htmlname          Nom de la zone select
+     *    	@param      useempty          Affiche valeur vide dans liste
      * 		TODO Move into html.formother
      */
     function select_dayofweek($selected='',$htmlname='weekid',$useempty=0)
@@ -3286,10 +3285,10 @@ class Form
     }
 
     /**
-     *    	\brief      Return HTML combo list of month
-     *    	\param      selected          Preselected value
-     *    	\param      htmlname          Nom de la zone select
-     *    	\param      useempty          Affiche valeur vide dans liste
+     *    	Return HTML combo list of month
+     *    	@param      selected          Preselected value
+     *    	@param      htmlname          Nom de la zone select
+     *    	@param      useempty          Affiche valeur vide dans liste
      * 		TODO Move into html.formother
      */
     function select_month($selected='',$htmlname='monthid',$useempty=0)
@@ -3396,11 +3395,11 @@ class Form
 
 
     /**
-     *    	\brief      Return HTML code to output a photo
-     *    	\param      modulepart		Id to define module concerned
-     *     	\param      object			Object containing data to retrieve file name
-     * 		\param		width			Width of photo
-     * 	  	\return     string    		HTML code to output photo
+     *    	Return HTML code to output a photo
+     *    	@param      modulepart		Id to define module concerned
+     *     	@param      object			Object containing data to retrieve file name
+     * 		@param		width			Width of photo
+     * 	  	@return     string    		HTML code to output photo
      */
     function showphoto($modulepart,$object,$width=100)
     {
