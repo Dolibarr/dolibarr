@@ -1757,14 +1757,14 @@ else
             print '</td></tr>';
 
 			// Origine de la demande
-            print '<tr><td height="10">';
+           print '<tr><td height="10">';
             print '<table class="nobordernopadding" width="100%"><tr><td>';
             print $langs->trans('Source');
             print '</td>';
-            if ($action != 'editdemandreason' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdemandreason&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDemandReason'),1).'</a></td>';
+            if ($_GET['action'] != 'editdemandreason' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdemandreason&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDemandReason'),1).'</a></td>';
             print '</tr></table>';
-            print '</td><td colspan="2">';
-            if ($action == 'editdemandreason')
+            print '</td><td>';
+            if ($_GET['action'] == 'editdemandreason')
             {
                 $html->form_demand_reason($_SERVER['PHP_SELF'].'?id='.$object->id,$object->demand_reason_id,'demand_reason_id',1);
             }
@@ -1772,7 +1772,10 @@ else
             {
                 $html->form_demand_reason($_SERVER['PHP_SELF'].'?id='.$object->id,$object->demand_reason_id,'none');
             }
+            print '</td><td>';
+            print '<a href="'.DOL_URL_ROOT.'/admin/dict.php?id=22&origin=order&originid='.$object->id.'">'.$langs->trans("DictionnarySource").'</a>';
             print '</td></tr>';
+
 
             // Project
             if ($conf->projet->enabled)
