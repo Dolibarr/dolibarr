@@ -51,12 +51,12 @@ $langs->load('propal');
 $langs->load('deliveries');
 $langs->load('products');
 
-$id=(GETPOST("id")?GETPOST("id"):GETPOST("orderid"));
-$ref=GETPOST('ref');
-$socid=GETPOST('socid');
-$action=GETPOST('action');
-$confirm=GETPOST('confirm');
-$lineid=GETPOST('lineid');
+$id      =(GETPOST("id")?GETPOST("id"):GETPOST("orderid"));
+$ref     = GETPOST('ref');
+$socid   = GETPOST('socid');
+$action  = GETPOST('action');
+$confirm = GETPOST('confirm');
+$lineid  = GETPOST('lineid');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -105,7 +105,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes')
         else
         {
             $mesg=$object->error;
-            $_GET['action']='';
+            $action='';
         }
     }
 }
@@ -376,8 +376,8 @@ if ($action == 'add' && $user->rights->commande->creer)
     else
     {
         $db->rollback();
-        $_GET["action"]='create';
-        $_GET['socid']=$_POST['socid'];
+        $action='create';
+        $socid=$_POST['socid'];
         if (! $mesg) $mesg='<div class="error">'.$object->error.'</div>';
     }
 
@@ -932,7 +932,7 @@ if ($_POST['addfile'])
 
     $mesg=dol_add_file_process($upload_dir,0,0);
 
-    $_GET["action"]='presend';
+    $action         ='presend';
     $_POST["action"]='presend';
 }
 
@@ -949,7 +949,7 @@ if (! empty($_POST['removedfile']))
 
     $mesg=dol_remove_file_process($_POST['removedfile'],0);
 
-    $_GET["action"]='presend';
+    $action         ='presend';
     $_POST["action"]='presend';
 }
 
@@ -1088,7 +1088,7 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
             {
                 $langs->load("other");
                 $mesg='<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').' !</div>';
-                $_GET["action"]='presend';
+                $action='presend';
                 dol_syslog('Recipient email is empty');
             }
         }
@@ -1206,25 +1206,25 @@ if ($action == 'create' && $user->rights->commande->creer)
     print '<table class="border" width="100%">';
 
     // Reference
-    print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td>'.$langs->trans("Draft").'</td></tr>';
+    print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans("Draft").'</td></tr>';
 
     // Reference client
-    print '<tr><td>'.$langs->trans('RefCustomer').'</td><td>';
+    print '<tr><td>'.$langs->trans('RefCustomer').'</td><td colspan="2">';
     print '<input type="text" name="ref_client" value=""></td>';
     print '</tr>';
 
     // Client
-    print '<tr><td class="fieldrequired">'.$langs->trans('Customer').'</td><td>'.$soc->getNomUrl(1).'</td></tr>';
+    print '<tr><td class="fieldrequired">'.$langs->trans('Customer').'</td><td colspan="2">'.$soc->getNomUrl(1).'</td></tr>';
 
     /*
      * Contact de la commande
      */
-    print "<tr><td>".$langs->trans("DefaultContact").'</td><td>';
+    print "<tr><td>".$langs->trans("DefaultContact").'</td><td colspan="2">';
     $html->select_contacts($soc->id,$setcontact,'contactidp',1,$srccontactslist);
     print '</td></tr>';
 
     // Ligne info remises tiers
-    print '<tr><td>'.$langs->trans('Discounts').'</td><td>';
+    print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="2">';
     if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
     else print $langs->trans("CompanyHasNoRelativeDiscount");
     print '. ';
@@ -1235,12 +1235,12 @@ if ($action == 'create' && $user->rights->commande->creer)
     print '</td></tr>';
 
     // Date
-    print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td>';
+    print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td colspan="2">';
     $html->select_date('','re','','','',"crea_commande",1,1);
     print '</td></tr>';
 
     // Date de livraison
-    print "<tr><td>".$langs->trans("DeliveryDate")."</td><td>";
+    print "<tr><td>".$langs->trans("DeliveryDate").'</td><td colspan="2">';
     if ($conf->global->DATE_LIVRAISON_WEEK_DELAY)
     {
         $datedelivery = time() + ((7*$conf->global->DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
@@ -1256,29 +1256,29 @@ if ($action == 'create' && $user->rights->commande->creer)
     if ($conf->global->COMMANDE_ADD_DELIVERY_ADDRESS)
     {
         // Link to edit: $html->form_address($_SERVER['PHP_SELF'].'?action=create','',$soc->id,'adresse_livraison_id','commande','');
-        print '<tr><td nowrap="nowrap">'.$langs->trans('DeliveryAddress').'</td><td>';
-        $numaddress = $html->select_address($soc->fk_delivery_address, $_GET['socid'],'fk_address',1);
+        print '<tr><td nowrap="nowrap">'.$langs->trans('DeliveryAddress').'</td><td colspan="2">';
+        $numaddress = $html->select_address($soc->fk_delivery_address, $socid,'fk_address',1);
         print ' &nbsp; <a href="../comm/address.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddAddress").'</a>';
         print '</td></tr>';
     }
 
     // Conditions de reglement
-    print '<tr><td nowrap="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
+    print '<tr><td nowrap="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
     $html->select_conditions_paiements($soc->cond_reglement,'cond_reglement_id',-1,1);
     print '</td></tr>';
 
     // Mode de reglement
-    print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
+    print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="2">';
     $html->select_types_paiements($soc->mode_reglement,'mode_reglement_id');
     print '</td></tr>';
 
 	// delai de livraison
-    print '<tr><td>'.$langs->trans('AvailabilityPeriod').'</td><td>';
+    print '<tr><td>'.$langs->trans('AvailabilityPeriod').'</td><td colspan="2">';
     $html->select_availability($propal->availability,'availability_id');
     print '</td></tr>';
 
 	// What trigger creation
-    print '<tr><td>'.$langs->trans('Source').'</td><td>';
+    print '<tr><td>'.$langs->trans('Source').'</td><td colspan="2">';
     $html->select_demand_reason((GETPOST("origin")=='propal'?'SRC_COMM':''),'demand_reason_id','',1);
     print '</td></tr>';
 
@@ -1558,10 +1558,10 @@ else
             print '<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
             print $langs->trans('RefCustomer').'</td><td align="left">';
             print '</td>';
-            if ($_GET['action'] != 'refcustomer' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refcustomer&amp;id='.$object->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
+            if ($action != 'refcustomer' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refcustomer&amp;id='.$object->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
             print '</tr></table>';
             print '</td><td colspan="3">';
-            if ($user->rights->commande->creer && $_GET['action'] == 'refcustomer')
+            if ($user->rights->commande->creer && $action == 'refcustomer')
             {
                 print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
                 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -1619,10 +1619,10 @@ else
             print $langs->trans('Date');
             print '</td>';
 
-            if ($_GET['action'] != 'editdate' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDate'),1).'</a></td>';
+            if ($action != 'editdate' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDate'),1).'</a></td>';
             print '</tr></table>';
             print '</td><td colspan="2">';
-            if ($_GET['action'] == 'editdate')
+            if ($action == 'editdate')
             {
                 print '<form name="setdate" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
                 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -1654,10 +1654,10 @@ else
             print $langs->trans('DateDeliveryPlanned');
             print '</td>';
 
-            if ($_GET['action'] != 'editdate_livraison') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'),1).'</a></td>';
+            if ($action != 'editdate_livraison') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'),1).'</a></td>';
             print '</tr></table>';
             print '</td><td colspan="2">';
-            if ($_GET['action'] == 'editdate_livraison')
+            if ($action == 'editdate_livraison')
             {
                 print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
                 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -1684,17 +1684,17 @@ else
                 print $langs->trans('DeliveryAddress');
                 print '</td>';
 
-                if ($_GET['action'] != 'editdelivery_adress' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$object->socid.'&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
+                if ($action != 'editdelivery_adress' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$object->socid.'&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
                 print '</tr></table>';
                 print '</td><td colspan="2">';
 
-                if ($_GET['action'] == 'editdelivery_adress')
+                if ($action == 'editdelivery_adress')
                 {
-                    $html->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$_GET['socid'],'fk_address','commande',$object->id);
+                    $html->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$socid,'fk_address','commande',$object->id);
                 }
                 else
                 {
-                    $html->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$_GET['socid'],'none','commande',$object->id);
+                    $html->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$socid,'none','commande',$object->id);
                 }
                 print '</td></tr>';
             }
@@ -1705,10 +1705,10 @@ else
             print $langs->trans('PaymentConditionsShort');
             print '</td>';
 
-            if ($_GET['action'] != 'editconditions' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+            if ($action != 'editconditions' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
             print '</tr></table>';
             print '</td><td colspan="2">';
-            if ($_GET['action'] == 'editconditions')
+            if ($action == 'editconditions')
             {
                 $html->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->cond_reglement_id,'cond_reglement_id');
             }
@@ -1725,10 +1725,10 @@ else
             print '<table class="nobordernopadding" width="100%"><tr><td>';
             print $langs->trans('PaymentMode');
             print '</td>';
-            if ($_GET['action'] != 'editmode' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+            if ($action != 'editmode' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
             print '</tr></table>';
             print '</td><td colspan="2">';
-            if ($_GET['action'] == 'editmode')
+            if ($action == 'editmode')
             {
                 $html->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->mode_reglement_id,'mode_reglement_id');
             }
@@ -1743,10 +1743,10 @@ else
             print '<table class="nobordernopadding" width="100%"><tr><td>';
             print $langs->trans('AvailabilityPeriod');
             print '</td>';
-            if ($_GET['action'] != 'editavailability' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editavailability&amp;id='.$object->id.'">'.img_edit($langs->trans('SetAvailability'),1).'</a></td>';
+            if ($action != 'editavailability' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editavailability&amp;id='.$object->id.'">'.img_edit($langs->trans('SetAvailability'),1).'</a></td>';
             print '</tr></table>';
             print '</td><td colspan="2">';
-            if ($_GET['action'] == 'editavailability')
+            if ($action == 'editavailability')
             {
                 $html->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id,$object->availability_id,'availability_id');
             }
@@ -1761,10 +1761,10 @@ else
             print '<table class="nobordernopadding" width="100%"><tr><td>';
             print $langs->trans('Source');
             print '</td>';
-            if ($_GET['action'] != 'editdemandreason' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdemandreason&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDemandReason'),1).'</a></td>';
+            if ($action != 'editdemandreason' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdemandreason&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDemandReason'),1).'</a></td>';
             print '</tr></table>';
             print '</td><td colspan="2">';
-            if ($_GET['action'] == 'editdemandreason')
+            if ($action == 'editdemandreason')
             {
                 $html->form_demand_reason($_SERVER['PHP_SELF'].'?id='.$object->id,$object->demand_reason_id,'demand_reason_id',1);
             }
@@ -1782,11 +1782,11 @@ else
                 print '<table class="nobordernopadding" width="100%"><tr><td>';
                 print $langs->trans('Project');
                 print '</td>';
-                if ($_GET['action'] != 'classer') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classer&amp;id='.$object->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
+                if ($action != 'classer') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classer&amp;id='.$object->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
                 print '</tr></table>';
                 print '</td><td colspan="2">';
                 //print "$object->id, $object->socid, $object->fk_project";
-                if ($_GET['action'] == 'classer')
+                if ($action == 'classer')
                 {
                     $html->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'projectid');
                 }
@@ -1859,7 +1859,7 @@ else
              */
             if ($object->statut == 0 && $user->rights->commande->creer)
             {
-                if ($_GET['action'] != 'editline')
+                if ($action != 'editline')
                 {
                     $var=true;
 
