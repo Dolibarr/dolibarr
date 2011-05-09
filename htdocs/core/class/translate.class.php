@@ -171,16 +171,15 @@ class Translate {
 			$modulename = (!empty($regs[1])?$regs[2]:'');
 		}
 
-		// Check cache
+        // Check cache
 		if (! empty($this->tab_loaded[$newdomain]))	// File already loaded for this domain
 		{
-			//dol_syslog("Translate::Load already loaded for ".$domain);
+			//dol_syslog("Translate::Load already loaded for newdomain=".$newdomain);
 			return 0;
 		}
 
+        $fileread=0;
 		$langofdir=(empty($forcelangdir)?$this->defaultlang:$forcelangdir);
-		$fileread=0;
-		//dol_syslog("Translate::Load langofdir=".$langofdir);
 
 		// Redefine alt
 		$langarray=explode('_',$langofdir);
@@ -328,32 +327,6 @@ class Translate {
 		&& $this->tab_translate["SeparatorDecimal"] == $this->tab_translate["SeparatorThousand"]) $this->tab_translate["SeparatorThousand"]='';
 
 		return 1;
-	}
-
-
-	/**
-	 *  Mark domain as not loaded to be able to load it again.
-	 *  @param      domain      File name to load (.lang file). Use @ before value if domain is in a module directory.
-	 */
-	function UnLoad($domain)
-	{
-		dol_syslog("Translate::UnLoad domain=".$domain." marked as not loaded", LOG_DEBUG);
-		$this->tab_loaded[$domain]=0;
-	}
-
-	/**
-	 *	Return list of files already loaded into memory
-	 *  @return     string      List of files loaded into memory "main=1,errors=1,..."
-	 */
-	function list_domainloaded()
-	{
-		$ret='Loaded from '.join(',',$this->dir).': ';
-		foreach($this->tab_loaded as $key=>$val)
-		{
-			if ($ret) $ret.=',';
-			$ret.=$key.'='.$val;
-		}
-		return $ret;
 	}
 
 	/**
