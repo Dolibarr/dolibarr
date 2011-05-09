@@ -245,8 +245,8 @@ if ($id > 0 || ! empty($ref))
 			print '<input type="hidden" name="action" value="addcontact">';
 			print '<input type="hidden" name="source" value="internal">';
 
-			// Ligne ajout pour contact interne
-			print '<tr'.$bc[$var].'>';
+            // Line to add an internal contact
+            print "<tr ".$bc[$var].">";
 
 			print '<td nowrap="nowrap">';
 			print img_object('','user').' '.$langs->trans("Users");
@@ -275,9 +275,9 @@ if ($id > 0 || ! empty($ref))
  			print '<input type="hidden" name="id" value="'.$id.'">';
 			print '<input type="hidden" name="source" value="external">';
 
-			// Ligne ajout pour contact externe
-			$var=!$var;
-			print '<tr'.$bc[$var].'>';
+            // Line to add an external contact
+            $var=!$var;
+            print "<tr ".$bc[$var].">";
 
 			print '<td nowrap="nowrap">';
 			print img_object('','contact').' '.$langs->trans("ThirdPartyContacts");
@@ -302,11 +302,9 @@ if ($id > 0 || ! empty($ref))
 
 			print '</form>';
 
-			print '<tr><td colspan="6">&nbsp;</td></tr>';
-			print '</table>';
+            print '<tr><td colspan="6">&nbsp;</td></tr>';
 		}
 
-		print '<table class="noborder" width="100%">';
 
 		// Liste des contacts lies
 		print '<tr class="liste_titre">';
