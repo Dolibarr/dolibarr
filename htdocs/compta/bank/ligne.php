@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Xavier DUTOIT        <doli@sydesy.com>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -264,10 +264,10 @@ if ($result)
         $i++;
 
 
-        // Account
+        // Bank account
         print "<tr><td>".$langs->trans("Account")."</td>";
         print '<td colspan="4">';
-        print '<a href="account.php?account='.$acct->id.'">'.img_object($langs->trans("ShowAccount"),'account').' '.$acct->label.'</a>';
+        print $acct->getNomUrl(1,'transactions');
         print '</td>';
         print '</tr>';
 
@@ -355,7 +355,7 @@ if ($result)
         }
         print "</td></tr>";
 
-        // Bank
+        // Bank of cheque
         print "<tr><td>".$langs->trans("Bank")."</td><td colspan=\"3\">";
         if ($user->rights->banque->modifier)
         {
