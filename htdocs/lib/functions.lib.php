@@ -1041,10 +1041,10 @@ function dol_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$separ=
 			// This line is for backward compatibility
 			$url = sprintf($urlmask, urlencode($phone), urlencode($user->clicktodial_poste), urlencode($user->clicktodial_login), urlencode($user->clicktodial_password));
 			// Thoose lines are for substitution
-			$substitarray=array('__PHONEFROM__'=>$user->clicktodial_poste,
-			               		'__PHONETO__'=>$phone,
-						   		'__LOGIN__'=>$user->clicktodial_login,
-			               		'__PASS__'=>$user->clicktodial_password);
+			$substitarray=array('__PHONEFROM__'=>urlencode($user->clicktodial_poste),
+			               		'__PHONETO__'=>urlencode($phone),
+						   		'__LOGIN__'=>urlencode($user->clicktodial_login),
+			               		'__PASS__'=>urlencode($user->clicktodial_password));
 			$url = make_substitutions($url, $substitarray, $langs);
 			$newphonesav=$newphone;
 			$newphone ='<a href="'.$url.'"';
