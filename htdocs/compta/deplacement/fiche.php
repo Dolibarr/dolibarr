@@ -339,7 +339,7 @@ else
 
 				// Date
 				print '<tr><td>'.$langs->trans("Date").'</td><td>';
-				print dol_print_date($deplacement->date);
+				print dol_print_date($deplacement->date,'day');
 				print '</td></tr>';
 
 				// Km/Price
