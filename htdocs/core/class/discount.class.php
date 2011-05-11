@@ -48,8 +48,8 @@ class DiscountAbsolute
 	var $ref_facture_source;	// Ref facture avoir a l'origine de la remise
 
 	/**
-	 *    \brief  Constructeur de la classe
-	 *    \param  DB          handler acc�s base de donn�es
+	 *    Constructor
+	 *    @param  DB          Database handler
 	 */
 	function DiscountAbsolute($DB)
 	{
