@@ -1576,11 +1576,12 @@ class Facture extends CommonObject
                 }
             }
 
-            // Set new ref
+            // Set new ref and define current statut
             if (! $error)
             {
                 $this->ref = $num;
                 $this->facnumber=$num;
+                $this->statut=1;
             }
 
             $this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
