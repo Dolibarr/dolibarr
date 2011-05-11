@@ -2454,7 +2454,7 @@ class Product extends CommonObject
 			// Cree fichier en taille origine
 			$content = @file_get_contents($file);
 			if( $content)
-			{	
+			{
 				$nom = basename($file);
 				$im = fopen(dol_osencode($dir.$nom),'wb');
 				fwrite($im, $content);
@@ -2517,7 +2517,25 @@ class Product extends CommonObject
 		$dirthumb = $dir.'thumbs/';
 		$pdirthumb = $pdir.'thumbs/';
 
-		$return='<!-- Photo -->';
+
+		$return ='<!-- Photo -->'."\n";
+        /*$return.="<script type=\"text/javascript\">
+        jQuery(function() {
+            jQuery('a.lightbox').lightBox({
+                overlayBgColor: '#888',
+                overlayOpacity: 0.6,
+                imageLoading: '".DOL_URL_ROOT."/theme/eldy/img/working.gif',
+                imageBtnClose: '".DOL_URL_ROOT."/theme/eldy/img/previous.png',
+                imageBtnPrev: '".DOL_URL_ROOT."/theme/eldy/img/1leftarrow.png',
+                imageBtnNext: '".DOL_URL_ROOT."/theme/eldy/img/1rightarrow.png',
+                containerResizeSpeed: 350,
+                txtImage: '".$langs->trans("Image")."',
+                txtOf: '".$langs->trans("on")."',
+                fixedNavigation:false
+            	});
+            });
+        </script>\n";
+        */
 		$nbphoto=0;
 
 		$dir_osencoded=dol_osencode($dir);
@@ -2555,7 +2573,7 @@ class Product extends CommonObject
     						if ($nbbyrow) $return.= '<td width="'.ceil(100/$nbbyrow).'%" class="photo">';
 
     						$return.= "\n";
-    						$return.= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'" target="_blank">';
+    						$return.= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'" class="lightbox" target="_blank">';
 
     						// Show image (width height=$maxheight)
     						// Si fichier vignette disponible et image source trop grande, on utilise la vignette, sinon on utilise photo origine
@@ -2570,7 +2588,7 @@ class Product extends CommonObject
     							$return.= '<img class="photo" border="0" height="'.$maxheight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
     						}
 
-    						$return.= '</a>';
+    						$return.= '</a>'."\n";
 
     						if ($showfilename) $return.= '<br>'.$viewfilename;
     						if ($showaction)
