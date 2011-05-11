@@ -99,7 +99,7 @@ llxHeader();
 			monthNamesShort: tradMonthsMin,
 			dayNames: tradDays,
 			dayNamesMin: tradDaysMin,
-			dateFormat: 'dd/mm/yy',
+			dateFormat: '<?php echo $langs->trans("FormatDateShortJQuery"); ?>',
 			onSelect: function( selectedDate ) {
 				var option = this.id == "startDateStr" ? "minDate" : "maxDate",
 					instance = $( this ).data( "datepicker" ),
@@ -144,7 +144,6 @@ llxHeader();
 if (! empty($nvpStr))
 {
 	$resArray=hash_call("TransactionSearch",$nvpStr);
-	
 	//var_dump($resArray);
 	
 	$reqArray=$_SESSION['nvpReqArray'];
