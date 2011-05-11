@@ -128,11 +128,10 @@ if ($action == 'add_paiement')
         $paiement->paiementid   = $_POST['paiementid'];
         $paiement->num_paiement = $_POST['num_paiement'];
         $paiement->note         = $_POST['comment'];
-
         if (! $error)
         {
-            $paiement_id = $paiement->create($user);
-            if (! $paiement_id > 0)
+            $paiement_id = $paiement->create($user,(GETPOST('closepaidinvoices')=='on'?1:0));
+            if ($paiement_id < 0)
             {
                 $errmsg='<div class="error">'.$paiement->error.'</div>';
                 $error++;
@@ -326,12 +325,10 @@ if ($action == 'create' || $action == 'add_paiement')
                 dol_print_error($db);
             }
 
-            /*
-             *
-             */
-
-            print '<br>';
-            print '<center><input type="submit" class="button" value="'.$langs->trans('Save').'"></center>';
+			//			print '<tr><td colspan="3" align="center">';
+			print '<center><br><input type="checkbox" checked="checked" name="closepaidinvoices"> '.$langs->trans("ClosePaidInvoicesAutomatically");
+			print '<br><input type="submit" class="button" value="'.$langs->trans('Save').'"></center>';
+			//			print '</td></tr>';
 
             print '</form>';
         }

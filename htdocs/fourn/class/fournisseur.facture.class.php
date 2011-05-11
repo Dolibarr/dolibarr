@@ -638,9 +638,9 @@ class FactureFournisseur extends Facture
 	}
 
 	/**
-	 *      \brief      Tag la facture comme payee completement
-	 *      \param      user        Objet utilisateur qui modifie l'etat
-	 *      \return     int         <0 si ko, >0 si ok
+	 *      Tag invoice as a payed invoice
+	 *      @param      user        Object user
+	 *      @return     int         <0 si ko, >0 si ok
 	 */
 	function set_paid($user)
 	{

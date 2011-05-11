@@ -174,6 +174,7 @@ class Paiement extends CommonObject
 					$resql=$this->db->query($sql);
 					if ($resql)
 					{
+						// If we want to closed payed invoices
 					    if ($closepaidinvoices)
 					    {
 					        $invoice=new Facture($this->db);

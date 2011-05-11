@@ -116,11 +116,12 @@ class PaiementFourn extends Paiement
 	}
 
 	/**
-	 *    \brief      Create payment in database
-	 *    \param      user        Object of creating user
-	 *    \return     int         id of created payment, < 0 if error
+	 *    Create payment in database
+	 *    @param      user        			Object of creating user
+	 *    @param       closepaidinvoices   	1=Also close payed invoices to paid, 0=Do nothing more
+	 *    @return     int         			id of created payment, < 0 if error
 	 */
-	function create($user)
+	function create($user,$closepaidinvoices=0)
 	{
 		global $langs,$conf;
 
@@ -162,11 +163,34 @@ class PaiementFourn extends Paiement
 						$amount = price2num($amount);
 						$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn_facturefourn (fk_facturefourn, fk_paiementfourn, amount)';
 						$sql .= ' VALUES ('.$facid.','. $this->id.',\''.$amount.'\')';
-						if (! $this->db->query($sql) )
+						$resql=$this->db->query($sql);
+						if ($resql)
+						{
+							// If we want to closed payed invoices
+						    if ($closepaidinvoices)
+						    {
+						        $invoice=new FactureFournisseur($this->db);
+						        $invoice->fetch($facid);
+	                            $paiement = $invoice->getSommePaiement();
+	                            //$creditnotes=$invoice->getSumCreditNotesUsed();
+	                            $creditnotes=0;
+	                            //$deposits=$invoice->getSumDepositsUsed();
+	                            $deposits=0;
+	                            $alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
+	                            $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
+	                            if ($remaintopay == 0)
+	                            {
+	    					        $result=$invoice->set_paid($user,'','');
+	                            }
+	                            else dol_syslog("Remain to pay for invoice ".$facid." not null. We do nothing.");
+							}
+						}
+						else
 						{
 							dol_syslog('Paiement::Create Erreur INSERT dans paiement_facture '.$facid);
 							$error++;
 						}
+						
 					}
 					else
 					{
