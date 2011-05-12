@@ -340,7 +340,7 @@ if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->facture->v
 }
 
 // Repasse la facture en mode brouillon (unvalidate)
-if ($action == 'modif' && $user->rights->facture->unvalidate)
+if ($action == 'modif' && ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->facture->valider) || $user->rights->facture->invoice_advance->unvalidate))
 {
     $object->fetch($id);
     $object->fetch_thirdparty();
@@ -2580,7 +2580,7 @@ else
                         {
                             if (! $objectidnext)
                             {
-                                if ($user->rights->facture->unvalidate)
+                                if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->facture->valider) || $user->rights->facture->invoice_advance->unvalidate)
                                 {
                                     print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=modif">'.$langs->trans('Modify').'</a>';
                                 }

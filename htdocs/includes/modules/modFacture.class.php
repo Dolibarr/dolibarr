@@ -131,7 +131,8 @@ class modFacture extends DolibarrModules
 		$this->rights[$r][1] = 'Dévalider les factures';
 		$this->rights[$r][2] = 'a';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'unvalidate';
+        $this->rights[$r][4] = 'invoice_advance';
+		$this->rights[$r][5] = 'unvalidate';
 
 		$r++;
 		$this->rights[$r][0] = 14;
