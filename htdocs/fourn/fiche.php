@@ -120,7 +120,9 @@ if ( $societe->fetch($socid) )
 	}
 
 	// Address
-	print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">'.nl2br($societe->address).'</td></tr>';
+	print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">';
+	dol_print_address($societe->address,'gmap','thirdparty',$societe->id);
+	print '</td></tr>';
 
 	// Zip / Town
 	print '<tr><td>'.$langs->trans("Zip").'</td><td>'.$societe->cp.'</td>';
@@ -177,6 +179,11 @@ if ( $societe->fetch($socid) )
 			print '</td></tr>';
 		}
 	}
+
+    // TVA Intra
+    print '<tr><td nowrap>'.$langs->trans('VATIntraVeryShort').'</td><td colspan="3">';
+    print $objsoc->tva_intra;
+    print '</td></tr>';
 
     // Module Adherent
     if ($conf->adherent->enabled)

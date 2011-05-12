@@ -187,7 +187,7 @@ if ($socid > 0)
 
 	print '<table class="border" width="100%">';
 
-	print '<tr><td width="30%">'.$langs->trans("Name").'</td><td width="70%" colspan="3">';
+	print '<tr><td width="30%">'.$langs->trans("ThirdPartyName").'</td><td width="70%" colspan="3">';
 	$objsoc->next_prev_filter="te.client in (1,3)";
 	print $form->showrefnav($objsoc,'socid','',($user->societe_id?0:1),'rowid','nom','','');
 	print '</td></tr>';
@@ -220,7 +220,9 @@ if ($socid > 0)
 	}
 
 	// Address
-	print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3">'.nl2br($objsoc->address)."</td></tr>";
+	print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3">';
+	dol_print_address($objsoc->address,'gmap','contact',$objsoc->id);
+	print "</td></tr>";
 
 	// Zip / Town
 	print '<tr><td>'.$langs->trans('Zip').'</td><td>'.$objsoc->cp."</td>";

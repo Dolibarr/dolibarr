@@ -57,7 +57,6 @@ if ($_GET["action"] == 'cstc')
 // set prospect level
 if ($_POST["action"] == 'setprospectlevel' && $user->rights->societe->creer)
 {
-
 	$societe = new Societe($db, $_GET["socid"]);
 	$societe->fk_prospectlevel=$_POST['prospect_level_id'];
 	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_prospectlevel='".$_POST['prospect_level_id'];
@@ -100,12 +99,15 @@ if ($socid > 0)
 	print '<tr><td valign="top" width="50%" class="notopnoleft">';
 
 	print '<table class="border" width="100%">';
-	print '<tr><td width="25%">'.$langs->trans("Name").'</td><td width="80%" colspan="3">';
+	print '<tr><td width="25%">'.$langs->trans("ThirdPartyName").'</td><td width="80%" colspan="3">';
 	$societe->next_prev_filter="te.client in (2,3)";
 	print $form->showrefnav($societe,'socid','',($user->societe_id?0:1),'rowid','nom','','');
 	print '</td></tr>';
 
-	print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">'.nl2br($societe->address)."</td></tr>";
+	// Address
+	print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">';
+	dol_print_address($societe->address,'gmap','thirdparty',$societe->id);
+	print "</td></tr>";
 
 	// Zip / Town
 	print '<tr><td>'.$langs->trans('Zip').'</td><td>'.$societe->cp.'</td>';
@@ -126,8 +128,6 @@ if ($socid > 0)
 
 	// Web
 	print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$societe->url\">$societe->url</a></td></tr>";
-
-	print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">'.$societe->forme_juridique.'</td></tr>';
 
 	// Level of prospect
 	print '<tr><td nowrap>';

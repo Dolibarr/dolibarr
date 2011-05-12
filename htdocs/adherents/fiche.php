@@ -1189,7 +1189,9 @@ if ($rowid && $action != 'edit')
     }
 
     // Address
-    print '<tr><td>'.$langs->trans("Address").'</td><td class="valeur">'.nl2br($adh->adresse).'</td></tr>';
+    print '<tr><td>'.$langs->trans("Address").'</td><td class="valeur">';
+    dol_print_address($adh->adresse,'gmap','member',$adh->id);
+    print '</td></tr>';
 
     // Zip / Town
     print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td class="valeur">'.$adh->cp.' '.$adh->ville.'</td></tr>';

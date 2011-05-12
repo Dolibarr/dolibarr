@@ -808,7 +808,9 @@ else
         print '<tr><td>'.$langs->trans("PostOrFunction" ).'</td><td colspan="3">'.$object->poste.'</td>';
 
         // Address
-        print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3">'.nl2br($object->address).'</td></tr>';
+        print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3">';
+        dol_print_address($object->address,'gmap','thirdparty',$object->id);
+        print '</td></tr>';
 
         // Zip Town
         print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3">';
