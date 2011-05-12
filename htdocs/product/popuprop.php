@@ -51,7 +51,17 @@ $staticproduct=new Product($db);
  * View
  */
 
-llxHeader();
+$helpurl='';
+if (isset($_GET["type"]) && $_GET["type"] == 0)
+{
+    $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+}
+if (isset($_GET["type"]) && $_GET["type"] == 1)
+{
+    $helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+}
+
+llxHeader('',$title,$helpurl,'');
 
 //On n'affiche le lien page suivante que s'il y a une page suivante ...
 $sql = "SELECT count(*) as c";
