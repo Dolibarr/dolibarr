@@ -115,7 +115,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		$texthelp=$langs->trans("ListOfDirectoriesForModelGenODT");
 		// Add list of substitution keys
 		$texthelp.='<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
-        $dummy=new User($db);
+        /*$dummy=new User($db);
         $tmparray=$this->get_substitutionarray_user($dummy,$langs);
         $nb=0;
         foreach($tmparray as $key => $val)
@@ -140,7 +140,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 			$texthelp.='{'.$key.'}<br>';
 			$nb++;
 			if ($nb >= 5) { $texthelp.='...<br>'; break; }
-		}
+		}*/
 		$texthelp.=$langs->trans("FullListOnOnlineDocumentation");
 
 		$texte.= $form->textwithpicto($texttitle,$texthelp,1,'help');

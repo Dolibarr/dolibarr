@@ -44,6 +44,9 @@ class pdf_crabe extends ModelePDFFactures
 {
 	var $emetteur;	// Objet societe qui emet
 
+    var $phpmin = array(4,3,0); // Minimum version of PHP required by module
+    var $version = 'dolibarr';
+
 
 	/**
 	 *		Constructor
@@ -1093,7 +1096,7 @@ class pdf_crabe extends ModelePDFFactures
 		// Add list of linked orders and proposals
 		// TODO mutualiser
 	    $object->fetchObjectLinked();
-	    
+
 	    foreach($object->linkedObjects as $objecttype => $objects)
 	    {
 	    	if ($objecttype == 'propal')

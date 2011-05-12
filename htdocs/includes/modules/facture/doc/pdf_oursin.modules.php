@@ -44,6 +44,10 @@ class pdf_oursin extends ModelePDFFactures
 	var $emetteur;	// Objet societe qui emet
 	var $marges=array("g"=>10,"h"=>5,"d"=>10,"b"=>15);
 
+    var $phpmin = array(4,3,0); // Minimum version of PHP required by module
+	var $version = 'dolibarr';
+
+
 	/**
 	 *	\brief  Constructeur
 	 *	\param	db		Database handler
@@ -964,7 +968,7 @@ class pdf_oursin extends ModelePDFFactures
 		// Add list of linked orders and proposals
 		// TODO mutualiser
 	    $object->fectObjectLinked();
-	    
+
 	    foreach($object->linkedObjects as $objecttype => $objects)
 	    {
 	    	if ($objecttype == 'propal')

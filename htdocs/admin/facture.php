@@ -438,6 +438,14 @@ foreach ($conf->file->dol_document_root as $dirroot)
             {
                 while (($file = readdir($handle))!==false)
                 {
+                    $filelist[]=$file;
+                }
+                closedir($handle);
+                //sort($filelist);
+                //var_dump($filelist);
+
+                foreach($filelist as $file)
+                {
                     if (preg_match('/\.modules\.php$/i',$file) && preg_match('/^(pdf_|doc_)/',$file))
                     {
                         $name = substr($file, 4, dol_strlen($file) -16);
@@ -532,7 +540,6 @@ foreach ($conf->file->dol_document_root as $dirroot)
                         }
                     }
                 }
-                closedir($handle);
             }
         }
     }

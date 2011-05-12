@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010 Laurent Destailleur <ely@users.sourceforge.net>
+/* Copyright (C) 2010-2011 Laurent Destailleur <ely@users.sourceforge.net>
 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,8 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 	var $emetteur;	// Objet societe qui emet
 
 	var $phpmin = array(5,2,0);	// Minimum version of PHP required by module
-	var $version = 'development';
+	var $version = 'dolibarr';
+
 
 	/**
 	 *		\brief  Constructor
@@ -179,7 +180,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		$texthelp=$langs->trans("ListOfDirectoriesForModelGenODT");
 		// Add list of substitution keys
 		$texthelp.='<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
-        $dummy=new User($db);
+        /*$dummy=new User($db);
         $tmparray=$this->get_substitutionarray_user($dummy,$langs);
         $nb=0;
         foreach($tmparray as $key => $val)
@@ -204,7 +205,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 			$texthelp.='{'.$key.'}<br>';
 			$nb++;
 			if ($nb >= 5) { $texthelp.='...<br>'; break; }
-		}
+		}*/
 		$texthelp.=$langs->trans("FullListOnOnlineDocumentation");
 
 		$texte.= $form->textwithpicto($texttitle,$texthelp,1,'help');
