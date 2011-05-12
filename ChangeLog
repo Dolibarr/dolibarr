@@ -5,6 +5,16 @@ $Id$
 
 ***** ChangeLog for 3.1 compared to 3.0 *****
 For users:
+- New: War against number of clicks:
+       - When adding a free bank transaction, form to add next one is still
+         visible (save one click).
+       - task #10969 : Add checkbox to close automatically invoice
+         if payment is complete (save 3 clicks).
+       - Reduce a step into supplier order workflow to save time. If user
+         has permission to approve, order is approved when order is validated.
+         (Save 2 clicks).
+- New: Can add a discount for third party, during invoice edition (and we 
+  saved clicks again).
 - New: Add status for third parties.
 - New: Can send interventions cards by email.
 - New: Add option MAIN_FIRST_TO_UPPER to force upper case of first 
@@ -14,13 +24,9 @@ For users:
 - New: Support BSB code for bank account in australia.
 - New: Can set date of payment for autocreate invoice/payment when 
        creating a foundation subscription.
-- New: task #10969 : Add checkbox to close automatically invoice to "payed"
 - New: Can edit note of payment.
 - New: Login is not mandatory in member module.
-- New: Reduce a step into supplier order workflow to save time (if user
-       has permission to approve, order is approved when order is validated).
 - New: Add box last members for foundation module.
-- New: Can add a discount for third party, during invoice edition.
 - New: A specialized menu is now used when using smartphones.
 - New: Can add information on current user on odt generation
 - New: Prefix on third party is not used by default. Hidden option
