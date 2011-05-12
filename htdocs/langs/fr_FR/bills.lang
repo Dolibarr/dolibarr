@@ -378,8 +378,8 @@ TypeContact_facture_fourn_external_BILLING=Contact fournisseur facturation
 TypeContact_facture_fourn_external_SHIPPING=Contact fournisseur livraison
 TypeContact_facture_fourn_external_SERVICE=Contact fournisseur prestation
 # crabe PDF Model
-PDFCrabeDescription=Modèle de facture complet (Gère l'option fiscale de facturation TVA, le choix du mode de règlement à afficher, logo...)
+PDFCrabeDescription=Modèle de facture PDF complet (modèle recommandé par défaut)
 # oursin PDF Model
-PDFOursinDescription=Modèle de facture complet (basé sur crabe, gère l'option fiscale de facturation TVA, le choix du mode de règlement à afficher, les remises, le nom du projet, la référence propale, logo...)
+PDFOursinDescription=Modèle de facture PDF complet (modèle alternatif)
 # NumRef Modules
 TerreNumRefModelDesc1=Renvoie le numéro sous la forme %syymm-nnnn pour les factures et %syymm-nnnn pour les avoirs où yy est l'année, mm le mois et nnnn un compteur séquentiel sans rupture et sans remise à 0
