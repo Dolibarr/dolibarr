@@ -1097,7 +1097,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                 }
                 if ($conf->propal->enabled)
                 {
-                    $newmenu->add("/product/popuprop.php?leftmenu=stats&amp;type=0", $langs->trans("Popularity"), 1, $user->rights->produit->lire && $user->rights->propale->lire);
+                    $newmenu->add("/product/popuprop.php?leftmenu=stats&amp;type=0", $langs->trans("Statistics"), 1, $user->rights->produit->lire && $user->rights->propale->lire);
                 }
                 if ($conf->stock->enabled)
                 {
@@ -1116,7 +1116,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                 $newmenu->add("/product/liste.php?leftmenu=service&amp;type=1", $langs->trans("List"), 1, $user->rights->service->lire);
                 if ($conf->propal->enabled)
                 {
-                    $newmenu->add("/product/popuprop.php?leftmenu=stats&amp;type=1", $langs->trans("Popularity"), 1, $user->rights->service->lire && $user->rights->propale->lire);
+                    $newmenu->add("/product/popuprop.php?leftmenu=stats&amp;type=1", $langs->trans("Statistics"), 1, $user->rights->service->lire && $user->rights->propale->lire);
                 }
             }
 
