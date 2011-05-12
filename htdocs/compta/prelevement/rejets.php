@@ -1,7 +1,7 @@
 <?PHP
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2010      Juanjo Menent 		<jmenent@2byte.es>
+ * Copyright (C) 2010-2011 Juanjo Menent 		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,20 +31,20 @@ $langs->load("companies");
 $langs->load("categories");
 
 // Security check
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$socid = GETPOST("socid");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'prelevement','','','bons');
 
+// Get supervariables
+$page = GETPOST("page");
+$sortorder = GETPOST("sortorder");
+$sortfield = GETPOST("sortfield");
 
 /*
  * View
  */
 
 llxHeader('',$langs->trans("WithdrawsRefused"));
-
-$page = $_GET["page"];
-$sortorder = $_GET["sortorder"];
-$sortfield = $_GET["sortfield"];
 
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;

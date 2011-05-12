@@ -39,39 +39,47 @@ $langs->load("bills");
 $langs->load("withdrawals");
 $langs->load("categories");
 
+// Get supervariables
+$action = GETPOST("action");
+$id = GETPOST("id");
+$socid = GETPOST("socid");
 
-if ($_POST["action"] == 'confirm_rejet')
+$page = GETPOST("page");
+$sortorder = GETPOST("sortorder");
+$sortfield = GETPOST("sortfield");
+
+if ($action == 'confirm_rejet')
 {
-	if ( $_POST["confirm"] == 'yes')
+	if ( GETPOST("confirm") == 'yes')
 	{
-		$daterej = mktime(2, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+		$daterej = mktime(2, 0 , 0, GETPOST("remonth"), GETPOST("reday"), GETPOST("reyear"));
 
 		$lipre = new LignePrelevement($db, $user);
 
-		if ($lipre->fetch($_GET["id"]) == 0)
+		if ($lipre->fetch($id) == 0)
 		{
 
-			if ($_POST["motif"] > 0 && $daterej < time())
+			if (GETPOST("motif") > 0 && $daterej < time())
 			{
 				$rej = new RejetPrelevement($db, $user);
 
-				$rej->create($user, $_GET["id"], $_POST["motif"], $daterej, $lipre->bon_rowid, $_POST["facturer"]);
+				$rej->create($user, $id, GETPOST("motif"), $daterej, $lipre->bon_rowid, GETPOST("facturer"));
 
-				Header("Location: ligne.php?id=".$_GET["id"]);
+				Header("Location: ligne.php?id=".$id);
 				exit;
 			}
 			else
 			{
-				dol_syslog("Motif : ".$_POST["motif"]);
+				dol_syslog("Motif : ".GETPOST("motif"));
 				dol_syslog("$daterej $time ");
-				Header("Location: ligne.php?id=".$_GET["id"]."&action=rejet");
+				Header("Location: ligne.php?id=".$id."&action=rejet");
 				exit;
 			}
 		}
 	}
 	else
 	{
-		Header("Location: ligne.php?id=".$_GET["id"]);
+		Header("Location: ligne.php?id=".$id);
 		exit;
 	}
 }
@@ -83,16 +91,16 @@ if ($_POST["action"] == 'confirm_rejet')
 llxHeader('',$langs->trans("StandingOrder"));
 
 $h = 0;
-$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$_GET["id"];
+$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$id;
 $head[$h][1] = $langs->trans("Card");
 $hselected = $h;
 $h++;
 
-if ($_GET["id"])
+if ($id)
 {
 	$lipre = new LignePrelevement($db, $user);
 
-	if ($lipre->fetch($_GET["id"]) == 0)
+	if ($lipre->fetch($id) == 0)
 	{
 		$bon = new BonPrelevement($db);
 		$bon->fetch($lipre->bon_rowid);
@@ -143,7 +151,7 @@ if ($_GET["id"])
 		dol_print_error($db);
 	}
 
-	if ($_GET["action"] == 'rejet' && $user->rights->prelevement->bons->credit)
+	if ($action == 'rejet' && $user->rights->prelevement->bons->credit)
 	{
 		$html = new Form($db);
 
@@ -152,7 +160,7 @@ if ($_GET["id"])
 
 		$rej = new RejetPrelevement($db, $user);
 
-		print '<form name="confirm_rejet" method="post" action="ligne.php?id='.$_GET["id"].'">';
+		print '<form name="confirm_rejet" method="post" action="ligne.php?id='.$id.'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="confirm_rejet">';
 		print '<table class="border" width="100%">';
@@ -198,7 +206,7 @@ if ($_GET["id"])
 
 	print "<div class=\"tabsAction\">";
 
-	if ($_GET["action"] == '')
+	if ($action == '')
 	{
 		if ($bon->statut == 2 && $lipre->statut == 2 && $user->rights->prelevement->bons->credit)
 		{
@@ -212,9 +220,7 @@ if ($_GET["id"])
 
 	print "</div>";
 
-	$page = $_GET["page"];
-	$sortorder = $_GET["sortorder"];
-	$sortfield = $_GET["sortfield"];
+
 
 	if ($page == -1) { $page = 0 ; }
 
@@ -241,8 +247,8 @@ if ($_GET["id"])
 	$sql.= " AND f.fk_soc = s.rowid";
 	$sql.= " AND pf.fk_facture = f.rowid";
 	$sql.= " AND f.entity = ".$conf->entity;
-	$sql.= " AND pl.rowid=".$_GET["id"];
-	if ($_GET["socid"])	$sql.= " AND s.rowid = ".$_GET["socid"];
+	$sql.= " AND pl.rowid=".$id;
+	if ($socid)	$sql.= " AND s.rowid = ".$socid;
 	$sql.= " ORDER BY $sortfield $sortorder ";
 	$sql.= $db->plimit($conf->liste_limit+1, $offset);
 
@@ -253,7 +259,7 @@ if ($_GET["id"])
 		$num = $db->num_rows($result);
 		$i = 0;
 
-		$urladd = "&amp;id=".$_GET["id"];
+		$urladd = "&amp;id=".$id;
 
 		print_barre_liste($langs->trans("Bills"), $page, "factures.php", $urladd, $sortfield, $sortorder, '', $num, 0, '');
 
