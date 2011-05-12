@@ -967,7 +967,7 @@ class pdf_oursin extends ModelePDFFactures
 
 		// Add list of linked orders and proposals
 		// TODO mutualiser
-	    $object->fectObjectLinked();
+	    $object->fetchObjectLinked();
 
 	    foreach($object->linkedObjects as $objecttype => $objects)
 	    {

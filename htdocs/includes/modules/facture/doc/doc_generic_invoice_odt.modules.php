@@ -75,11 +75,11 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		$this->option_modereg = 0;                 // Affiche mode reglement
 		$this->option_condreg = 0;                 // Affiche conditions reglement
 		$this->option_codeproduitservice = 0;      // Affiche code produit-service
-		$this->option_multilang = 1;               // Dispo en plusieurs langues
+		$this->option_multilang = 0;               // Dispo en plusieurs langues
 		$this->option_escompte = 0;                // Affiche si il y a eu escompte
 		$this->option_credit_note = 0;             // Support credit notes
 		$this->option_freetext = 1;				   // Support add of a personalised text
-		$this->option_draft_watermark = 1;		   // Support add of a watermark on drafts
+		$this->option_draft_watermark = 0;		   // Support add of a watermark on drafts
 
 		// Recupere emetteur
 		$this->emetteur=$mysoc;
