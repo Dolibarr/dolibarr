@@ -1377,8 +1377,8 @@ else
 
 		// Status
 	    print '<tr><td>'.$langs->trans("Status").'</td>';
-        $activity_status = $soc->status == 1 ? $langs->trans('InActivity') : $langs->trans('ActivityCeased');   // nouvelle entrée statut activité
-        print '<td colspan="3">'.$activity_status;
+        print '<td colspan="3">';
+        print $soc->getLibStatut(2);
         print '</td></tr>';
 
 		// Barcode

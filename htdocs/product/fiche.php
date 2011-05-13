@@ -997,23 +997,6 @@ if ($id || $ref)
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
             print '</td></tr>';
 
-            // Hidden
-			/*
-			if ((! $product->isservice() && $user->rights->produit->hidden)
-			|| ($product->isservice() && $user->rights->service->hidden))
-			{
-				print '<tr><td>'.$langs->trans("HiddenIntoCombo").'</td><td>';
-				print $html->selectyesno('hidden',$product->hidden);
-				print '</td></tr>';
-			}
-			else
-			{
-				print '<tr><td>'.$langs->trans("HiddenIntoCombo").'</td><td>';
-				print yn("No");
-				print '</td></tr>';
-			}
-            */
-
 			// Note
 			print '<tr><td valign="top">'.$langs->trans("NoteNotVisibleOnBill").'</td><td colspan="2">';
 			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
@@ -1054,11 +1037,13 @@ if ($id || $ref)
 
 		if (empty($usecanvas))
 		{
-			// En mode visu
+            $isphoto=$product->is_photo_available($conf->product->dir_output);
+
+		    // En mode visu
 			print '<table class="border" width="100%"><tr>';
 
 			// Ref
-			print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="2">';
+			print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="'.(2+($isphoto?1:0)).'">';
 			print $html->showrefnav($product,'ref','',1,'ref');
 			print '</td>';
 
@@ -1067,8 +1052,12 @@ if ($id || $ref)
 			// Label
 			print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$product->libelle.'</td>';
 
-			$nblignes=5;
-			if ($product->is_photo_available($conf->product->dir_output))
+			$nblignes=9;
+			if ($product->type!=1) $nblignes++;
+			if ($product->isservice()) $nblignes++;
+			else $nblignes+=4;
+
+			if ($isphoto)
 			{
 				// Photo
 				print '<td valign="middle" align="center" width="30%" rowspan="'.$nblignes.'">';
@@ -1175,25 +1164,10 @@ if ($id || $ref)
 
             // Custom code
             print '<tr><td>'.$langs->trans("CustomCode").'</td><td colspan="2">'.$product->customcode.'</td>';
+
             // Origin country code
             print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td colspan="2">'.getCountry($product->country_id,0,$db).'</td>';
 
-			// Hidden
-			/*
-			if ((! $product->isservice() && $user->rights->produit->hidden)
-			|| ($product->isservice() && $user->rights->service->hidden))
-			{
-				print '<tr><td>'.$langs->trans("HiddenIntoCombo").'</td><td colspan="2">';
-				print yn($product->hidden);
-				print "</td></tr>\n";
-			}
-			else
-			{
-				print '<tr><td>'.$langs->trans("HiddenIntoCombo").'</td><td>';
-				print yn("No");
-				print '</td></tr>';
-			}
-            */
 
 			// Note
 			print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="2">'.(dol_textishtml($product->note)?$product->note:dol_nl2br($product->note,1,true)).'</td></tr>';

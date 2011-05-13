@@ -307,7 +307,7 @@ if ($resql)
 		if ($conf->barcode->enabled) print_liste_field_titre($langs->trans("BarCode"),"liste.php", "p.barcode",$param,"","",$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("DateModification"),"liste.php", "p.tms",$param,"",'align="center"',$sortfield,$sortorder);
 		if ($conf->service->enabled && $type != 0) print_liste_field_titre($langs->trans("Duration"),"liste.php", "p.duration",$param,"",'align="center"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("SellingPrice"),"liste.php", "p.price",$param,"",'align="right"',$sortfield,$sortorder);
+		if (empty($conf->global->PRODUIT_MULTIPRICES)) print_liste_field_titre($langs->trans("SellingPrice"),"liste.php", "p.price",$param,"",'align="right"',$sortfield,$sortorder);
 		if ($conf->stock->enabled && $user->rights->stock->lire && $type != 1) print '<td class="liste_titre" align="right">'.$langs->trans("PhysicalStock").'</td>';
 		print_liste_field_titre($langs->trans("Sell"),"liste.php", "p.tosell",$param,"",'align="right"',$sortfield,$sortorder);
         print_liste_field_titre($langs->trans("Buy"),"liste.php", "p.tobuy",$param,"",'align="right"',$sortfield,$sortorder);
@@ -330,24 +330,35 @@ if ($resql)
 		print '<td class="liste_titre">';
 		print '&nbsp;';
 		print '</td>';
+
+		// Duration
 		if ($conf->service->enabled && $type != 0)
 		{
 			print '<td class="liste_titre">';
 			print '&nbsp;';
 			print '</td>';
 		}
-		print '<td class="liste_titre">';
-		print '&nbsp;';
-		print '</td>';
+
+		// Sell price
+        if (empty($conf->global->PRODUIT_MULTIPRICES))
+        {
+    		print '<td class="liste_titre">';
+    		print '&nbsp;';
+    		print '</td>';
+        }
+
+		// Stock
 		if ($conf->stock->enabled && $user->rights->stock->lire && $type != 1)
 		{
 			print '<td class="liste_titre">';
 			print '&nbsp;';
 			print '</td>';
 		}
-        print '<td class="liste_titre">';
+
+		print '<td class="liste_titre">';
         print '&nbsp;';
         print '</td>';
+
 		print '<td class="liste_titre" align="right">';
 		print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 		print '<input type="image" class="liste_titre" name="button_removefilter" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
@@ -414,11 +425,14 @@ if ($resql)
 				print '</td>';
 			}
 
-			// Price
-			print '<td align="right">';
-			if ($objp->price_base_type == 'TTC') print price($objp->price_ttc).' '.$langs->trans("TTC");
-			else print price($objp->price).' '.$langs->trans("HT");
-			print '</td>';
+			// Sell price
+			if (empty($conf->global->PRODUIT_MULTIPRICES))
+			{
+			    print '<td align="right">';
+    			if ($objp->price_base_type == 'TTC') print price($objp->price_ttc).' '.$langs->trans("TTC");
+    			else print price($objp->price).' '.$langs->trans("HT");
+    			print '</td>';
+			}
 
 			// Show stock
 			if ($conf->stock->enabled && $user->rights->stock->lire && $type != 1)

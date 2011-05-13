@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
@@ -114,7 +114,7 @@ $html = new Form($db);
 
 $product = new Product($db);
 if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
-if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
+if ($_GET["id"])  $result = $product->fetch($_GET["id"]);
 
 llxHeader("","",$langs->trans("CardProduct".$product->type));
 
@@ -136,8 +136,10 @@ print '</tr>';
 // Label
 print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
 
-$nblignes=4;
-if ($product->is_photo_available($conf->product->dir_output))
+$isphoto=$product->is_photo_available($conf->product->dir_output);
+
+$nblignes=5;
+if ($isphoto)
 {
 	// Photo
 	print '<td valign="middle" align="center" width="30%" rowspan="'.$nblignes.'">';
@@ -148,7 +150,7 @@ if ($product->is_photo_available($conf->product->dir_output))
 print '</tr>';
 
 // MultiPrix
-if($conf->global->PRODUIT_MULTIPRICES)
+if ($conf->global->PRODUIT_MULTIPRICES)
 {
 	if ($socid)
 	{
