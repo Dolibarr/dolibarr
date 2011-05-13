@@ -18,7 +18,7 @@
  */
 
 /**
- *	    \file       htdocs/adherents/stats/bycountry.php
+ *	    \file       htdocs/adherents/stats/index.php
  *      \ingroup    member
  *		\brief      Page des stats
  *		\version    $Id$
@@ -61,6 +61,7 @@ llxHeader('','','','',0,0,array('http://www.google.com/jsapi'));
 $title=$langs->trans("Statistics");
 if ($mode == 'memberbycountry') $title=$langs->trans("MembersStatisticsByCountries");
 if ($mode == 'memberbystate') $title=$langs->trans("MembersStatisticsByState");
+if ($mode == 'memberbytown') $title=$langs->trans("MembersStatisticsByTown");
 
 print_fiche_titre($title, $mesg);
 
@@ -94,6 +95,19 @@ if ($mode)
 		$sql.=" GROUP BY p.libelle, p.code, c.nom";
 		//print $sql;
 	}
+    if ($mode == 'memberbytown')
+    {
+        $label=$langs->trans("Country");
+        $label2=$langs->trans("Town");
+
+        $data = array();
+        $sql.="SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, p.code, p.libelle as label, d.ville as label2";
+        $sql.=" FROM ".MAIN_DB_PREFIX."adherent as d";
+        $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p on d.pays = p.rowid";
+        $sql.=" WHERE d.statut = 1";
+        $sql.=" GROUP BY p.libelle, p.code, d.ville";
+        //print $sql;
+    }
 
 	$langsen=new Translate('',$conf);
     $langsen->setDefaultLang('en_US');
@@ -128,6 +142,15 @@ if ($mode)
 							'lastdate'=>$obj->lastdate
 				);
 			}
+            if ($mode == 'memberbytown')
+            {
+                $data[]=array('label'=>(($obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code)?$langs->trans("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
+                            'label_en'=>(($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code)!="Country".$obj->code)?$langsen->transnoentitiesnoconv("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
+                            'label2'=>($obj->label2?$obj->label2:$langs->trans("Unknown")),
+                            'nb'=>$obj->nb,
+                            'lastdate'=>$obj->lastdate
+                );
+            }
 
 			$i++;
 		}
@@ -149,6 +172,7 @@ else
 {
 	if ($mode == 'memberbycountry') print $langs->trans("MembersByCountryDesc").'<br>';
 	else if ($mode == 'memberbystate') print $langs->trans("MembersByStateDesc").'<br>';
+    else if ($mode == 'memberbytown') print $langs->trans("MembersByTownDesc").'<br>';
 	else
 	{
 		print $langs->trans("MembersStatisticsDesc").'<br>';
@@ -156,6 +180,8 @@ else
 		print '<a href="'.$_SERVER["PHP_SELF"].'?mode=memberbycountry">'.$langs->trans("MembersStatisticsByCountries").'</a><br>';
 		print '<br>';
 		print '<a href="'.$_SERVER["PHP_SELF"].'?mode=memberbystate">'.$langs->trans("MembersStatisticsByState").'</a><br>';
+        print '<br>';
+        print '<a href="'.$_SERVER["PHP_SELF"].'?mode=memberbytown">'.$langs->trans("MembersStatisticsByTown").'</a><br>';
 	}
 	print '<br>';
 }
