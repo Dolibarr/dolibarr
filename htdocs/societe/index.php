@@ -89,7 +89,7 @@ if ($result)
     while ($objp = $db->fetch_object($result))
     {
         $found=0;
-        if ($objp->client == 1 || $objp->client == 3) { $found=1; $third['customer']++; }
+        if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && ($objp->client == 1 || $objp->client == 3)) { $found=1; $third['customer']++; }
         if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && ($objp->client == 2 || $objp->client == 3)) { $found=1; $third['prospect']++; }
         if ($conf->fournisseur->enabled && $objp->fournisseur) { $found=1; $third['supplier']++; }
 
@@ -100,7 +100,7 @@ else dol_print_error($db);
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").'</td></tr>';
-if ($conf->use_javascript_ajax)
+if ($conf->use_javascript_ajax && ((round($third['prospect'])?1:0)+(round($third['customer'])?1:0)+(round($third['supplier'])?1:0) >= 2))
 {
     print '<tr><td align="center">';
     $data=array();
