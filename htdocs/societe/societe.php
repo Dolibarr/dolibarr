@@ -176,7 +176,7 @@ if ($_GET['delsoc']) print '<div class="warning">'.$langs->trans("CompanyDeleted
 $title=$langs->trans("ListOfThirdParties");
 
 $sql = "SELECT s.rowid, s.nom as name, s.ville, s.datec, s.datea,";
-$sql.= " st.libelle as stcomm, s.prefix_comm, s.client, s.fournisseur, s.canvas,";
+$sql.= " st.libelle as stcomm, s.prefix_comm, s.client, s.fournisseur, s.canvas, s.status as status,";
 $sql.= " s.siren as idprof1, s.siret as idprof2, ape as idprof3, idprof4 as idprof4";
 // We'll need these fields in order to filter by sale (including the case where the user can only see his prospects)
 if ($search_sale) $sql .= ", sc.fk_soc, sc.fk_user";
@@ -333,6 +333,7 @@ if ($resql)
 	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId3Short"),$textprofid[3],1,0),$_SERVER["PHP_SELF"],"s.ape","",$params,'nowrap="nowrap"',$sortfield,$sortorder);
 	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId4Short"),$textprofid[4],1,0),$_SERVER["PHP_SELF"],"s.idprof4","",$params,'nowrap="nowrap"',$sortfield,$sortorder);
 	print '<td></td>';
+	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"s.status","",$params,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	// Lignes des champs de filtre
@@ -362,7 +363,7 @@ if ($resql)
 	print '<input class="flat" size="8" type="text" name="search_idprof4" value="'.$search_idprof4.'">';
 	print '</td>';
 	// Type (customer/prospect/supplier)
-	print '<td class="liste_titre" align="right">';
+	print '<td colspan="2" class="liste_titre" align="right">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '&nbsp; ';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
@@ -380,6 +381,7 @@ if ($resql)
 		$companystatic->name=$obj->name;
 		$companystatic->canvas=$obj->canvas;
         $companystatic->client=$obj->client;
+        $companystatic->status=$obj->status;
 		print $companystatic->getNomUrl(1,'',24);
 		print "</td>\n";
 		print "<td>".$obj->ville."</td>\n";
@@ -387,7 +389,7 @@ if ($resql)
 		print "<td>".$obj->idprof2."</td>\n";
 		print "<td>".$obj->idprof3."</td>\n";
 		print "<td>".$obj->idprof4."</td>\n";
-		print '<td colspan="2" align="center">';
+		print '<td align="center">';
 		$s='';
 		if (($obj->client==1 || $obj->client==3) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))
 		{
@@ -408,6 +410,8 @@ if ($resql)
 		}
 		print $s;
 		print '</td>';
+        print '<td align="right">'.$companystatic->getLibStatut(3).'</td>';
+
 		print '</tr>'."\n";
 		$i++;
 	}

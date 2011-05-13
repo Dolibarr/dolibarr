@@ -99,9 +99,9 @@ class Prospect extends Societe
 	 *    \param      mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
 	 *    \return     string        Libelle
 	 */
-	function getLibStatut($mode=0)
+	function getLibProspStatut($mode=0)
 	{
-		return $this->LibStatut($this->stcomm_id,$mode);
+		return $this->LibProspStatut($this->stcomm_id,$mode);
 	}
 
 	/**
@@ -110,7 +110,7 @@ class Prospect extends Societe
 	 *    	\param      mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *    	\return     string        	Libelle du statut
 	 */
-	function LibStatut($statut,$mode=0)
+	function LibProspStatut($statut,$mode=0)
 	{
 		global $langs;
 		$langs->load('customers');

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -66,12 +66,13 @@ $search_categ = isset($_GET["search_categ"])?$_GET["search_categ"]:$_POST["searc
  */
 
 $htmlother=new FormOther($db);
+$thirdpartystatic=new Societe($db);
 
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$langs->trans("ThirdParty"),$help_url);
 
-$sql = "SELECT s.rowid as socid, s.nom, s.ville, s.datec, s.datea,  st.libelle as stcomm, s.prefix_comm";
-$sql.= " , code_fournisseur, code_compta_fournisseur";
+$sql = "SELECT s.rowid as socid, s.nom, s.ville, s.datec, s.datea,  st.libelle as stcomm, s.prefix_comm, s.status as status, ";
+$sql.= "code_fournisseur, code_compta_fournisseur";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st";
 if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_fournisseur as cf";
@@ -141,6 +142,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans("SupplierCode"),$_SERVER["PHP_SELF"],"s.code_fournisseur","",$param,'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("AccountancyCode"),$_SERVER["PHP_SELF"],"s.code_compta_fournisseur","",$param,'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"datec","",$param,'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"s.status","",$params,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
@@ -157,6 +159,8 @@ if ($resql)
 	print '<input class="flat" type="text" size="10" name="search_compta_fournisseur" value="'.$search_compta_fournisseur.'">';
 	print '</td>';
 
+	print '<td>&nbsp;</td>';
+
 	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
 
 	print '</tr>';
@@ -168,13 +172,20 @@ if ($resql)
 		$obj = $db->fetch_object($resql);
 		$var=!$var;
 
+        $thirdpartystatic->id=$obj->rowid;
+        $thirdpartystatic->nom=$obj->nom;
+        $thirdpartystatic->status=$obj->status;
+
 		print "<tr ".$bc[$var].">";
-		print '<td><a href="fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").'</a>';
-		print "&nbsp;<a href=\"fiche.php?socid=".$obj->socid."\">".$obj->nom."</a></td>\n";
+		print '<td>';
+        print $thirdpartystatic->getNomUrl(1,'supplier');
+		print "</td>\n";
 		print "<td>".$obj->ville."</td>\n";
 		print '<td align="left">'.$obj->code_fournisseur.'&nbsp;</td>';
 		print '<td align="left">'.$obj->code_compta_fournisseur.'&nbsp;</td>';
-		print '<td align="right">'.dol_print_date($db->jdate($obj->datec),'day').'</td>';
+		print '<td align="right">';
+		print dol_print_date($db->jdate($obj->datec),'day').'</td>';
+		print '<td align="right">'.$thirdpartystatic->getLibStatut(3).'</td>';
 		print "</tr>\n";
 		$i++;
 	}

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -158,7 +158,7 @@ if ($_GET["action"] == 'cstc')
 
 $htmlother=new FormOther($db);
 
-$sql = "SELECT s.rowid, s.nom, s.ville, s.datec, s.datea,";
+$sql = "SELECT s.rowid, s.nom, s.ville, s.datec, s.datea, s.status as status,";
 $sql.= " st.libelle as stcomm, s.prefix_comm, s.fk_stcomm, s.fk_prospectlevel,";
 $sql.= " d.nom as departement";
 // Updated by Matelli (see http://matelli.fr/showcases/patchs-dolibarr/enhance-prospect-searching.html)
@@ -278,19 +278,20 @@ if ($resql)
  	if ($moreforfilter)
 	{
 		print '<tr class="liste_titre">';
-		print '<td class="liste_titre" colspan="9">';
+		print '<td class="liste_titre" colspan="8">';
 	    print $moreforfilter;
 	    print '</td></tr>';
 	}
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Company"),"prospects.php","s.nom","",$param,"valign=\"center\"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Company"),"prospects.php","s.nom","",$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Town"),"prospects.php","s.ville","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("State"),"prospects.php","s.fk_departement","",$param,"align=\"center\"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DateCreation"),"prospects.php","s.datec","",$param,"align=\"center\"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("ProspectLevelShort"),"prospects.php","s.fk_prospectlevel","",$param,"align=\"center\"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),"prospects.php","s.fk_stcomm","",$param,"align=\"center\"",$sortfield,$sortorder);
-	print '<td class="liste_titre" colspan="4">&nbsp;</td>';
+	print_liste_field_titre($langs->trans("State"),"prospects.php","s.fk_departement","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("DateCreation"),"prospects.php","s.datec","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("ProspectLevelShort"),"prospects.php","s.fk_prospectlevel","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("StatusProsp"),"prospects.php","s.fk_stcomm","",$param,'align="center"',$sortfield,$sortorder);
+	print '<td class="liste_titre">&nbsp;</td>';
+    print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"s.status","",$params,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
@@ -335,12 +336,17 @@ if ($resql)
  	print $langs->trans("To").' <select class="flat" name="search_level_to">'.$options_to.'</select>';
 
     print '</td>';
+
     print '<td class="liste_titre" align="center">';
 	print '&nbsp;';
     print '</td>';
 
- 	// Print the search button
-    print '<td colspan="3" class="liste_titre" align="right">';
+    print '<td class="liste_titre" align="center">';
+    print '&nbsp;';
+    print '</td>';
+
+    // Print the search button
+    print '<td class="liste_titre" align="right">';
 	print '<input class="liste_titre" name="button_search" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '</td>';
 
@@ -358,12 +364,13 @@ if ($resql)
 
 		$var=!$var;
 
-		print "<tr $bc[$var]>";
+		print "<tr ".$bc[$var].">";
 		print '<td>';
 		$prospectstatic->id=$obj->rowid;
 		$prospectstatic->nom=$obj->nom;
-		print $prospectstatic->getNomUrl(1);
-		print '</td>';
+        $prospectstatic->status=$obj->status;
+		print $prospectstatic->getNomUrl(1,'prospect');
+        print '</td>';
 		print "<td>".$obj->ville."&nbsp;</td>";
 		print "<td align=\"center\">$obj->departement</td>";
 		// Creation date
@@ -374,11 +381,11 @@ if ($resql)
 		print "</td>";
 		// Statut
 		print '<td align="center" nowrap="nowrap">';
-		print $prospectstatic->LibStatut($obj->fk_stcomm,2);
+		print $prospectstatic->LibProspStatut($obj->fk_stcomm,2);
 		print "</td>";
 
 		//$sts = array(-1,0,1,2,3);
-		print '<td align="right" nowrap>';
+		print '<td align="right" nowrap="nowrap">';
 		foreach ($sts as $key => $value)
 		{
 			if ($value <> $obj->fk_stcomm)
@@ -390,7 +397,11 @@ if ($resql)
 		}
 		print '</td>';
 
-		print "</tr>\n";
+        print '<td align="right">';
+		print $prospectstatic->getLibStatut(3);
+        print '</td>';
+
+        print "</tr>\n";
 		$i++;
 	}
 

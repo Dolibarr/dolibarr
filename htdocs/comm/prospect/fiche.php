@@ -166,7 +166,7 @@ if ($socid > 0)
 	}
 
 	// Status
-	print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">'.$societe->getLibStatut(4).'</td>';
+	print '<tr><td>'.$langs->trans("StatusProsp").'</td><td colspan="2">'.$societe->getLibProspStatut(4).'</td>';
 	print '<td>';
 	if ($societe->stcomm_id != -1) print '<a href="fiche.php?socid='.$societe->id.'&amp;stcomm=-1&amp;action=cstc">'.img_action(0,-1).'</a>';
 	if ($societe->stcomm_id !=  0) print '<a href="fiche.php?socid='.$societe->id.'&amp;stcomm=0&amp;action=cstc">'.img_action(0,0).'</a>';

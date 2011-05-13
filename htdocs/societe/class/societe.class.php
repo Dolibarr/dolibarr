@@ -1405,6 +1405,58 @@ class Societe extends CommonObject
         return $result;
     }
 
+    /**
+     *    Return label of status (activity, closed)
+     *    @param      mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
+     *    @return     string        Libelle
+     */
+    function getLibStatut($mode=0)
+    {
+        return $this->LibStatut($this->status,$mode);
+    }
+
+    /**
+     *      Renvoi le libelle d'un statut donne
+     *      @param      statut          Id statut
+     *      @param      mode            0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+     *      @return     string          Libelle du statut
+     */
+    function LibStatut($statut,$mode=0)
+    {
+        global $langs;
+        $langs->load('companies');
+
+        if ($mode == 0)
+        {
+            if ($statut==0) return $langs->trans("ActivityCeased");
+            if ($statut==1) return $langs->trans("InActivity");
+        }
+        if ($mode == 1)
+        {
+            if ($statut==0) return $langs->trans("ActivityCeased");
+            if ($statut==1) return $langs->trans("InActivity");
+        }
+        if ($mode == 2)
+        {
+            if ($statut==0) return img_picto($langs->trans("ActivityCeased"),'statut9').' '.$langs->trans("ActivityCeased");
+            if ($statut==1) return img_picto($langs->trans("InActivity"),'statut4').' '.$langs->trans("InActivity");
+        }
+        if ($mode == 3)
+        {
+            if ($statut==0) return img_picto($langs->trans("ActivityCeased"),'statut9');
+            if ($statut==1) return img_picto($langs->trans("InActivity"),'statut4');
+        }
+        if ($mode == 4)
+        {
+            if ($statut==0) return img_picto($langs->trans("ActivityCeased"),'statut9').' '.$langs->trans("ActivityCeased");
+            if ($statut==1) return img_picto($langs->trans("InActivity"),'statut4').' '.$langs->trans("InActivity");
+        }
+        if ($mode == 5)
+        {
+            if ($statut==0) return $langs->trans("ActivityCeased").' '.img_picto($langs->trans("ActivityCeased"),'statut9');
+            if ($statut==1) return $langs->trans("InActivity").' '.img_picto($langs->trans("InActivity"),'statut4');
+        }
+    }
 
     /**
      * 	Return full address of third party

@@ -144,7 +144,7 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
  * Last third parties modified
  */
 $max=15;
-$sql = "SELECT s.rowid, s.nom as name, s.client, s.fournisseur, s.canvas, s.tms as datem";
+$sql = "SELECT s.rowid, s.nom as name, s.client, s.fournisseur, s.canvas, s.tms as datem, s.status as status";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 if (! $user->rights->societe->client->voir) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE s.entity = ".$conf->entity;
@@ -170,7 +170,10 @@ if ($result)
 
         print '<table class="noborder" width="100%">';
 
-        print '<tr class="liste_titre"><td colspan="3">'.$transRecordedType.'</td></tr>';
+        print '<tr class="liste_titre"><td colspan="2">'.$transRecordedType.'</td>';
+        print '<td>&nbsp;</td>';
+        print '<td align="right">'.$langs->trans('Status').'</td>';
+        print '</tr>';
 
         $var=True;
 
@@ -187,6 +190,7 @@ if ($result)
             $thirdparty_static->client=$objp->client;
             $thirdparty_static->fournisseur=$objp->fournisseur;
             $thirdparty_static->datem=$db->jdate($objp->datem);
+            $thirdparty_static->status=$objp->status;
             $thirdparty_static->canvas=$objp->canvas;
             print $thirdparty_static->getNomUrl(1,'',16);
             print "</td>\n";
@@ -214,9 +218,9 @@ if ($result)
             print '<td align="right">';
             print dol_print_date($thirdparty_static->datem,'day');
             print "</td>";
-            //          print '<td align="right" nowrap="nowrap">';
-            //            print $product_static->LibStatut($objp->tobuy,5,1);
-            //            print "</td>";
+            print '<td align="right" nowrap="nowrap">';
+            print $thirdparty_static->getLibStatut(3);
+            print "</td>";
             print "</tr>\n";
             $i++;
         }

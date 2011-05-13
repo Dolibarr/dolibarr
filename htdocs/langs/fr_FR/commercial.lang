@@ -85,3 +85,4 @@ FromTo=du %s au %s
 MargeOrder=Marge réalisée (Commandes validées)
 RecapAnnee=Récapitulatif de l'année
 NoData=Aucune donnée
+StatusProsp=Status prospection

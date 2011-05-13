@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -43,7 +43,7 @@ class box_actions extends ModeleBoxes {
 
 
 	/**
-	 *      \brief      Constructeur de la classe
+	 *      Constructor
 	 */
 	function box_actions()
 	{
@@ -54,8 +54,8 @@ class box_actions extends ModeleBoxes {
 	}
 
 	/**
-	 *      \brief      Charge les donnees en memoire pour affichage ulterieur
-	 *      \param      $max        Nombre maximum d'enregistrements a charger
+	 *      Charge les donnees en memoire pour affichage ulterieur
+	 *      @param      $max        Nombre maximum d'enregistrements a charger
 	 */
 	function loadBox($max=5)
 	{
@@ -125,7 +125,7 @@ class box_actions extends ModeleBoxes {
 					'text' => dol_print_date($datelimite, "dayhour"));
 
 					$this->info_box_contents[$i][5] = array('td' => 'align="right"',
-					'text' => $objp->percentage. "%");
+					'text' => ($objp->percentage>= 0?$objp->percentage.'%':''));
 
 					$this->info_box_contents[$i][6] = array('td' => 'align="right" width="18"',
 		          	'text' => $actionstatic->LibStatut($objp->percentage,3));

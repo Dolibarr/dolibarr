@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -107,7 +107,7 @@ class box_prospect extends ModeleBoxes {
  			           'text' => dol_print_date($datem, "day"));
 
 					$this->info_box_contents[$i][3] = array('td' => 'align="right" width="18"',
-     			       'text' => str_replace('img ','img height="14" ',$prospectstatic->LibStatut($objp->fk_stcomm,3)));
+     			       'text' => str_replace('img ','img height="14" ',$prospectstatic->LibProspStatut($objp->fk_stcomm,3)));
 
 					$i++;
 				}
