@@ -1241,7 +1241,21 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie')
     global $conf,$langs;
     if (empty($conf->use_javascript_ajax)) return;
     $jsgraphlib='flot';
+    $datacolor=array("#d18b2c", "#dba255", "#919733");
 
+    $color_file = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/graph-color.php";
+    if (is_readable($color_file))
+    {
+        include_once($color_file);
+        if (isset($theme_datacolor))
+        {
+            $datacolor=array();
+            foreach($theme_datacolor as $val)
+            {
+                $datacolor[]="#".sprintf("%02x",$val[0]).sprintf("%02x",$val[1]).sprintf("%02x",$val[2]);
+            }
+        }
+    }
     print '<div id="'.$htmlid.'" style="width:'.$width.'px;height:'.$height.'px;"></div>';
 
     // We use Flot js lib
@@ -1294,6 +1308,15 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie')
                                 }
                             }
                     } },
+                    colors: [';
+                    $j=0;
+                    foreach($datacolor as $val)
+                    {
+                        print '"'.$val.'"';
+                        if ($j < sizeof($datacolor)) print ',';
+                        $j++;
+                    }
+                    print '],
                     legend: {show: '.($showlegend?'true':'false').'}
                 });
             });
