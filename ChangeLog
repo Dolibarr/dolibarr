@@ -13,6 +13,7 @@ For users:
        - Reduce a step into supplier order workflow to save time. If user
          has permission to approve, order is approved when order is validated.
          (Save 2 clicks).
+- New: First graph using javascripts.
 - New: Can add a discount for third party, during invoice edition (and we 
   saved clicks again).
 - New: Add status for third parties.
@@ -41,7 +42,7 @@ For users:
        or credit note invoice.
 - New: task #10885: Add a week view for calendar    
 - New: task #11018 : Add a status "not applicable" on event
-- New: Add region/country statistics for member module.
+- New: Add country/region/town statistics for member module.
 - New: Can define a proxy for external web access.
 - New: task #11003: checkbox on checks to deposit
 - New: Numbering module for invoice use same number for invoice 

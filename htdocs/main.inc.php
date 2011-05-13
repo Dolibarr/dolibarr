@@ -890,10 +890,9 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             print '<!-- Includes for JQuery (Ajax library) -->'."\n";
             $jquerytheme = 'smoothness';
             if (!empty($conf->global->MAIN_USE_JQUERY_THEME)) $jquerytheme = $conf->global->MAIN_USE_JQUERY_THEME;
-            print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/css/'.$jquerytheme.'/jquery-ui-latest.custom.css" type="text/css" />'."\n";
-            print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/tooltip/jquery.tooltip.css" type="text/css" />'."\n";
-            // jQuery jnotify
-			if (!empty($conf->global->MAIN_USE_JQUERY_JNOTIFY))	print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify.min.css" type="text/css" />'."\n";
+            print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/css/'.$jquerytheme.'/jquery-ui-latest.custom.css" type="text/css" />'."\n";    // JQuery
+            print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/tooltip/jquery.tooltip.css" type="text/css" />'."\n";                  // Tooltip
+            print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify.min.css" type="text/css" />'."\n";                // JNotify
         }
 
         print '<!-- Includes for Dolibarr, modules or specific pages-->'."\n";
@@ -944,7 +943,11 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			}
 			// jQuery jnotify
 			if (!empty($conf->global->MAIN_USE_JQUERY_JNOTIFY))	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify.min.js"></script>'."\n";
-            // CKEditor
+            // Flot
+            print '<!--[if lte IE 8]><script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/flot/excanvas.min.js"></script><![endif]-->'."\n";
+			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/flot/jquery.flot.min.js"></script>'."\n";
+            print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/flot/jquery.flot.pie.min.js"></script>'."\n";
+			// CKEditor
             if (!empty($conf->global->FCKEDITOR_EDITORNAME) && $conf->global->FCKEDITOR_EDITORNAME == 'ckeditor')
             {
                 print '<!-- Includes JS for CKEditor -->'."\n";
@@ -991,7 +994,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		print '<script type="text/javascript">';
 		print 'var tradMonths = '.json_encode($tradMonths).';';
 		print '</script>'."\n";
-		
+
 		// Define tradMonthsMin javascript array (we define this in datapicker AND in parent page to avoid errors with IE8)
 		$tradMonthsMin=array($langs->trans("JanuaryMin"),
 		$langs->trans("FebruaryMin"),
@@ -1009,7 +1012,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		print '<script type="text/javascript">';
 		print 'var tradMonthsMin = '.json_encode($tradMonthsMin).';';
 		print '</script>'."\n";
-		
+
 		// Define tradDays javascript array (we define this in datapicker AND in parent page to avoid errors with IE8)
 		$tradDays=array($langs->trans("Monday"),
 		$langs->trans("Tuesday"),
@@ -1022,7 +1025,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		print '<script type="text/javascript">';
 		print 'var tradDays = '.json_encode($tradDays).';';
 		print '</script>'."\n";
-		
+
 		// Define tradDaysMin javascript array (we define this in datapicker AND in parent page to avoid errors with IE8)
 		$tradDaysMin=array($langs->trans("MondayMin"),
 		$langs->trans("TuesdayMin"),

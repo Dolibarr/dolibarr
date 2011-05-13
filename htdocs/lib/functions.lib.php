@@ -1227,15 +1227,90 @@ function dolibarr_trunc($string,$size=40,$trunc='right',$stringencoding='')
     return dol_trunc($string,$size,$trunc,$stringencoding);
 }
 
+
 /**
- *	\brief      Truncate a string to a particular length adding '...' if string larger than length.
- * 				If length = max length+1, we do no truncate to avoid having just 1 char replaced with '...'.
- *	\param      string				String to truncate
- *	\param      size				Max string size. 0 for no limit.
- *	\param		trunc				Where to trunc: right, left, middle, wrap
- * 	\param		stringencoding		Tell what is source string encoding
- *	\return     string				Truncated string
- *	\remarks	MAIN_DISABLE_TRUNC=1 can disable all truncings
+ *  Show a javascript graph
+ *  @param      htmlid          Html id name
+ *  @param      width           Width in pixel
+ *  @param      height          Height in pixel
+ *  @param      data            Data array
+ *  @param      type            Type of graph
+ */
+function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie')
+{
+    global $conf,$langs;
+    if (empty($conf->use_javascript_ajax)) return;
+    $jsgraphlib='flot';
+
+    print '<div id="'.$htmlid.'" style="width:'.$width.'px;height:'.$height.'px;"></div>';
+
+    // We use Flot js lib
+    if ($jsgraphlib == 'flot')
+    {
+        print '<script type="text/javascript">
+    jQuery(function () {
+        // data
+        /*var data = [
+            { label: "Series1<br>aa",  data: 10},
+            { label: "Series2",  data: 30},
+            { label: "Series3",  data: 90}
+        ];
+        var data = [
+            { label: "Series1",  data: [[1,10]]},
+            { label: "Series2",  data: [[1,30]]},
+            { label: "Series3",  data: [[1,90]]}
+        ];*/
+    ';
+        if ($type == 'pie')
+        {
+            print 'var data = ['."\n";
+            $i=0;
+            foreach($data as $serie)
+            {
+                //print '{ label: "'.($showlegend?$serie['values'][0]:$serie['label'].'<br>'.$serie['values'][0]).'", data: '.$serie['values'][0].' }';
+                print '{ label: "'.($showlegend?$serie['label'].'<br>'.$serie['values'][0]:$serie['label'].'<br>'.$serie['values'][0]).'", data: '.$serie['values'][0].' }';
+                if ($i < sizeof($serie)) print ',';
+                print "\n";
+                $i++;
+            }
+            print '];
+
+            jQuery.plot(jQuery("#'.$htmlid.'"), data,
+                {
+                    series: {pie: {
+                            show: true,
+                            radius: 3/4,
+                            label: {
+                                show: true,
+                                radius: 3/4,
+                                formatter: function(label, series){
+                                    return \'<div style="font-size:8pt;text-align:center;padding:2px;color:white;">\'+label
+                                    /* +\'<br/>\'+Math.round(series.percent)*/
+                                    +\'</div>\';
+                                },
+                                background: {
+                                    opacity: 0.5,
+                                    color: \'#000\'
+                                }
+                            }
+                    } },
+                    legend: {show: '.($showlegend?'true':'false').'}
+                });
+            });
+            </script>';
+        }
+    }
+}
+
+/**
+ *	Truncate a string to a particular length adding '...' if string larger than length.
+ * 	If length = max length+1, we do no truncate to avoid having just 1 char replaced with '...'.
+ *  MAIN_DISABLE_TRUNC=1 can disable all truncings
+ *	@param      string				String to truncate
+ *	@param      size				Max string size. 0 for no limit.
+ *	@param		trunc				Where to trunc: right, left, middle, wrap
+ * 	@param		stringencoding		Tell what is source string encoding
+ *	@return     string				Truncated string
  */
 function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8')
 {

@@ -100,34 +100,29 @@ else dol_print_error($db);
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").'</td></tr>';
-if ($conf->use_javascript_ajax && $conf->societe->enabled && $conf->fournisseur->enabled
-    && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))
+if ($conf->use_javascript_ajax)
 {
     print '<tr><td align="center">';
-    $data=array(
-        array('label'=>$langs->trans("Prospects"),'values'=>array(round($third['prospect']))),
-        array('label'=>$langs->trans("Customers"),'values'=>array(round($third['customer']))),
-        array('label'=>$langs->trans("Suppliers"),'values'=>array(round($third['supplier'])))
-    );
+    $data=array();
+    if ($conf->societe->enabled && empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) $data[]=array('label'=>$langs->trans("Prospects"),'values'=>array(round($third['prospect'])));
+    if ($conf->societe->enabled && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) $data[]=array('label'=>$langs->trans("Customers"),'values'=>array(round($third['customer'])));
+    if ($conf->fournisseur->enabled) $data[]=array('label'=>$langs->trans("Suppliers"),'values'=>array(round($third['supplier'])));
     dol_print_graph('stats',300,180,$data,0,'pie');
     print '</td></tr>';
 }
 else
 {
-    if ($conf->societe->enabled)
+    if ($conf->societe->enabled && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
     {
-        if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
-        {
-            $statstring = "<tr $bc[0]>";
-            $statstring.= '<td><a href="'.DOL_URL_ROOT.'/comm/prospect/prospects.php">'.$langs->trans("Prospects").'</a></td><td align="right">'.round($third['prospect']).'</td>';
-            $statstring.= "</tr>";
-        }
-        if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))
-        {
-            $statstring.= "<tr $bc[1]>";
-            $statstring.= '<td><a href="'.DOL_URL_ROOT.'/comm/clients.php">'.$langs->trans("Customers").'</a></td><td align="right">'.round($third['customer']).'</td>';
-            $statstring.= "</tr>";
-        }
+        $statstring = "<tr $bc[0]>";
+        $statstring.= '<td><a href="'.DOL_URL_ROOT.'/comm/prospect/prospects.php">'.$langs->trans("Prospects").'</a></td><td align="right">'.round($third['prospect']).'</td>';
+        $statstring.= "</tr>";
+    }
+    if ($conf->societe->enabled && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))
+    {
+        $statstring.= "<tr $bc[1]>";
+        $statstring.= '<td><a href="'.DOL_URL_ROOT.'/comm/clients.php">'.$langs->trans("Customers").'</a></td><td align="right">'.round($third['customer']).'</td>';
+        $statstring.= "</tr>";
     }
     if ($conf->fournisseur->enabled)
     {
