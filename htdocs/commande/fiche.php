@@ -716,7 +716,7 @@ if ($action == 'updateligne' && $user->rights->commande->creer && $_POST['save']
         $description,
         $up_ht,
         $_POST['qty'],
-        $_POST['elremise_percent'],
+        $_POST['remise_percent'],
         $vat_rate,
         $localtax1_rate,
         $localtax2_rate,
