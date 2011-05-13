@@ -66,6 +66,8 @@ switch ( $_GET['action'] )
 			$encaisse = $obj_facturation->montant_encaisse();
 
 			$obj_facturation->montant_rendu ( $encaisse - $total );
+
+		
 		} else {
 			$obj_facturation->paiement_le ($_POST['txtDatePaiement']);
 		}
@@ -266,6 +268,18 @@ switch ( $_GET['action'] )
                             $errmsg=$paiement->error;
                             $error++;
                         }
+                    }
+                    
+                    if (! $error)
+                    {
+                    	if ($invoice->total_ttc == $obj_facturation->prix_total_ttc()
+                    		&& $obj_facturation->mode_reglement() != 'DIFF')
+                    	{
+                    		// We set status to payed
+                    		$result=$invoice->set_paid($user);
+                  			//print 'eeeee';exit;
+                    	}
+                    	
                     }
 				}
 				else

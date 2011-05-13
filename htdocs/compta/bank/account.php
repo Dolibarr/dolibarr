@@ -70,7 +70,7 @@ $mesg='';
  */
 $dateop=-1;
 
-if ($_POST["action"] == 'add' && $account && ! isset($_POST["cancel"]) && $user->rights->banque->modifier)
+if ($action == 'add' && $account && ! isset($_POST["cancel"]) && $user->rights->banque->modifier)
 {
 
     if (price2num($_POST["credit"]) > 0)
@@ -99,7 +99,7 @@ if ($_POST["action"] == 'add' && $account && ! isset($_POST["cancel"]) && $user-
         $insertid = $acct->addline($dateop, $operation, $label, $amount, $num_chq, $cat1, $user);
         if ($insertid > 0)
         {
-            Header("Location: account.php?account=" . $account);
+            Header("Location: account.php?account=" . $account."&action=addline");
             exit;
         }
         else
@@ -109,10 +109,10 @@ if ($_POST["action"] == 'add' && $account && ! isset($_POST["cancel"]) && $user-
     }
     else
     {
-        $_GET["action"]='addline';
+        $action='addline';
     }
 }
-if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"]=='yes' && $user->rights->banque->modifier)
+if ($action == 'confirm_delete' && $_POST["confirm"]=='yes' && $user->rights->banque->modifier)
 {
     $accline=new AccountLine($db);
     $accline->fetch($_GET["rowid"]);
@@ -329,7 +329,7 @@ if ($account || $_GET["ref"])
 
 
     // Confirmation delete
-    if ($_GET["action"]=='delete')
+    if ($action == 'delete')
     {
         $text=$langs->trans('ConfirmDeleteTransaction');
         $ret=$html->form_confirm($_SERVER['PHP_SELF'].'?account='.$acct->id.'&amp;rowid='.$_GET["rowid"],$langs->trans('DeleteTransaction'),$text,'confirm_delete');
@@ -340,14 +340,14 @@ if ($account || $_GET["ref"])
     print '<table class="notopnoleftnoright" width="100%">';
 
     // Show title
-    if (! $_GET["action"]=='addline' && ! $_GET["action"]=='delete')
+    if ($action != 'addline' && $action =='delete')
     {
         print '<tr><td colspan="9" align="right">'.$navig.'</td></tr>';
     }
 
 
     // Form to add a transaction with no invoice
-    if ($user->rights->banque->modifier && $_GET["action"]=='addline')
+    if ($user->rights->banque->modifier && $action == 'addline')
     {
         print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -742,10 +742,11 @@ if ($account || $_GET["ref"])
     /*
      *  Boutons actions
      */
-    if ($_GET["action"] != 'addline' && $_GET["action"] != 'delete')
+    
+    if ($action != 'delete')
     {
-        print '<div class="tabsAction">';
-
+	    print '<div class="tabsAction">';
+	
         if ($acct->type != 2 && $acct->rappro)  // If not cash account and can be reconciliate
         {
             if ($user->rights->banque->consolidate)
@@ -757,19 +758,22 @@ if ($account || $_GET["ref"])
                 print "<a class=\"butActionRefused\" title=\"".$langs->trans("NotEnoughPermissions")."\" href=\"#\">".$langs->trans("Conciliate")."</a>";
             }
         }
-
-        if ($user->rights->banque->modifier)
-        {
-            print '<a class="butAction" href="account.php?action=addline&amp;account='.$acct->id.'&amp;page='.$page.'">'.$langs->trans("AddBankRecord").'</a>';
-        }
-        else
-        {
-            print "<a class=\"butActionRefused\" title=\"".$langs->trans("NotEnoughPermissions")."\" href=\"#\">".$langs->trans("AddBankRecord")."</a>";
-        }
-
-        print '</div>';
+	    
+	    if ($action != 'addline')
+	    {
+	        if ($user->rights->banque->modifier)
+		    {
+		        print '<a class="butAction" href="account.php?action=addline&amp;account='.$acct->id.'&amp;page='.$page.'">'.$langs->trans("AddBankRecord").'</a>';
+		    }
+		    else
+		    {
+		        print "<a class=\"butActionRefused\" title=\"".$langs->trans("NotEnoughPermissions")."\" href=\"#\">".$langs->trans("AddBankRecord")."</a>";
+		    }
+	    }
+	    	
+	    print '</div>';
     }
-
+     
     print '<br>';
 
 }
