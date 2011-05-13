@@ -229,7 +229,8 @@ if ($resql)
 	}
 	else
 	{
-		llxHeader();
+        $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+        llxHeader('',$langs->trans("ThirdParty"),$help_url);
 	}
 
 	$param='&amp;stcomm='.$stcomm.'&amp;search_nom='.urlencode($_GET["search_nom"]).'&amp;search_ville='.urlencode($_GET["search_ville"]);

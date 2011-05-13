@@ -57,15 +57,9 @@ $search_compta=GETPOST("search_compta");
 $search_sale = GETPOST("search_sale");
 $search_categ = GETPOST("search_categ");
 
-
 /*
- * view
+ * Actions
  */
-
-$htmlother=new FormOther($db);
-$thirdpartystatic=new Societe($db);
-
-llxHeader();
 
 // Do we click on purge search criteria ?
 if (GETPOST("button_removefilter_x"))
@@ -80,6 +74,18 @@ if (GETPOST("button_removefilter_x"))
     $search_idprof3='';
     $search_idprof4='';
 }
+
+
+
+/*
+ * view
+ */
+
+$htmlother=new FormOther($db);
+$thirdpartystatic=new Societe($db);
+
+$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+llxHeader('',$langs->trans("ThirdParty"),$help_url);
 
 $sql = "SELECT s.rowid, s.nom as name, s.client, s.ville, st.libelle as stcomm, s.prefix_comm, s.code_client, s.code_compta,";
 $sql.= " s.datec, s.datea, s.canvas";
