@@ -67,7 +67,8 @@ $search_categ = isset($_GET["search_categ"])?$_GET["search_categ"]:$_POST["searc
 
 $htmlother=new FormOther($db);
 
-llxHeader();
+$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+llxHeader('',$langs->trans("ThirdParty"),$help_url);
 
 $sql = "SELECT s.rowid as socid, s.nom, s.ville, s.datec, s.datea,  st.libelle as stcomm, s.prefix_comm";
 $sql.= " , code_fournisseur, code_compta_fournisseur";
