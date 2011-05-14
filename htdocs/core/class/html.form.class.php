@@ -2041,7 +2041,8 @@ class Form
         	$autoOpen=true;
         	$dialogconfirm='dialog-confirm';
         	if (! is_int($useajax)) {
-        		list($useajax,$button) = explode(',',$useajax);
+        		$button=$useajax;
+        		$useajax=1;
         		$autoOpen=false;
         		$dialogconfirm.='-'.$button;
         	}
@@ -2049,7 +2050,7 @@ class Form
             $pageno=($useajax == 2?$page.'&confirm=no':'');
 
             // New code using jQuery only
-            $formconfirm.= '<div id="'.$dialogconfirm.'" title="'.dol_escape_htmltag($title).'" style="display: none;>';
+            $formconfirm.= '<div id="'.$dialogconfirm.'" title="'.dol_escape_htmltag($title).'" style="display: none;">';
             if (! empty($more)) $formconfirm.= '<p>'.$more.'</p>';
             $formconfirm.= img_help('','').' '.$question;
             $formconfirm.= '</div>'."\n";

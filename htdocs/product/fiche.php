@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2006      Auguria SARL         <info@auguria.org>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
@@ -1029,9 +1029,9 @@ if ($id || $ref)
 		dol_fiche_head($head, 'card', $titre, 0, $picto);
 
 		// Confirmation de la suppression de la facture
-		if ($action == 'delete')
+		if ($action == 'delete' || ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX))
 		{
-			$ret=$html->form_confirm("fiche.php?id=".$product->id,$langs->trans("DeleteProduct"),$langs->trans("ConfirmDeleteProduct"),"confirm_delete",'',0,2);
+			$ret=$html->form_confirm("fiche.php?id=".$product->id,$langs->trans("DeleteProduct"),$langs->trans("ConfirmDeleteProduct"),"confirm_delete",'',0,"action-delete");
 			if ($ret == 'html') print '<br>';
 		}
 
@@ -1193,7 +1193,7 @@ else if ($action != 'create')
 
 
 // Clone confirmation
-if ($action == 'clone')
+if ($action == 'clone' || ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX) )
 {
 	// Create an array for form
 	$formquestion=array(
@@ -1203,7 +1203,7 @@ if ($action == 'clone')
 	array('type' => 'checkbox', 'name' => 'clone_prices', 'label' => $langs->trans("ClonePricesProduct").' ('.$langs->trans("FeatureNotYetAvailable").')', 'value' => 0, 'disabled' => true)
 	);
 	// Paiement incomplet. On demande si motif = escompte ou autre
-	$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$product->id,$langs->trans('CloneProduct'),$langs->trans('ConfirmCloneProduct',$product->ref),'confirm_clone',$formquestion,'yes',2,230,600);
+	$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$product->id,$langs->trans('CloneProduct'),$langs->trans('ConfirmCloneProduct',$product->ref),'confirm_clone',$formquestion,'yes','action-clone',230,600);
 }
 
 
@@ -1222,8 +1222,13 @@ if ($action == '')
 		if ($product->no_button_edit <> 1)
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$product->id.'">'.$langs->trans("Modify").'</a>';
 
-		if ($product->no_button_copy <> 1)
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=clone&amp;id='.$product->id.'">'.$langs->trans("ToClone").'</a>';
+		if ($product->no_button_copy <> 1) {
+			if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX) {
+				print '<span id="action-clone" class="butAction">'.$langs->trans('ToClone').'</span>'."\n";
+			} else {
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=clone&amp;id='.$product->id.'">'.$langs->trans("ToClone").'</a>';
+			}
+		}
 	}
 
 	$product_is_used = $product->verif_prod_use($product->id);
@@ -1232,7 +1237,14 @@ if ($action == '')
 	{
 		if (! $product_is_used && $product->no_button_delete <> 1)
 		{
-			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;id='.$product->id.'">'.$langs->trans("Delete").'</a>';
+			if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
+			{
+				print '<span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span>'."\n";
+			}
+			else
+			{
+				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;id='.$product->id.'">'.$langs->trans("Delete").'</a>';
+			}
 		}
 		else
 		{

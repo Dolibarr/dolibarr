@@ -955,7 +955,7 @@ span.tabspan {
 
 /* Nouvelle syntaxe a utiliser */
 
-.butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
+.butAction, .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
 	font-family: <?php print $fontlist ?>;
 	font-weight: bold;
 	background: white;
@@ -996,7 +996,7 @@ span.tabspan {
 	cursor: not-allowed;
 }
 
-span.butActionDelete    {
+span.butAction, span.butActionDelete {
 	cursor: pointer;
 }
 
