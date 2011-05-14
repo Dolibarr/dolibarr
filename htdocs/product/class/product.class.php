@@ -579,6 +579,7 @@ class Product extends CommonObject
 			$prod_use = $this->verif_prod_use($id);
 			if ($prod_use == 0)
 			{
+				// TODO possibility to add external module constraint
 				$elements = array('product_price','product_price_min','product_lang','categorie_product');
 
 				foreach($elements as $table)
@@ -588,13 +589,14 @@ class Product extends CommonObject
 					$result = $this->db->query($sql);
 				}
 
-				$sqlz = "DELETE from ".MAIN_DB_PREFIX."product";
+				$sqlz = "DELETE FROM ".MAIN_DB_PREFIX."product";
 				$sqlz.= " WHERE rowid = ".$id;
 				$resultz = $this->db->query($sqlz);
 
-				if ( !$resultz )
+				if ( ! $resultz )
 				{
 					dol_syslog('Product::delete error sqlz='.$sqlz, LOG_ERR);
+					$error++;
 				}
 
 				// Appel des triggers

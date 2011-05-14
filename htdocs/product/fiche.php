@@ -1028,7 +1028,7 @@ if ($id || $ref)
 		$picto=($product->type==1?'service':'product');
 		dol_fiche_head($head, 'card', $titre, 0, $picto);
 
-		// Confirmation de la suppression de la facture
+		// Confirm delete product
 		if ($action == 'delete' || ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX))
 		{
 			$ret=$html->form_confirm("fiche.php?id=".$product->id,$langs->trans("DeleteProduct"),$langs->trans("ConfirmDeleteProduct"),"confirm_delete",'',0,"action-delete");
