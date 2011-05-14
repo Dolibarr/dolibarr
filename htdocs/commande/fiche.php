@@ -694,7 +694,7 @@ if ($action == 'updateligne' && $user->rights->commande->creer && $_POST['save']
         $price_min = $product->price_min;
         if ($conf->global->PRODUIT_MULTIPRICES && $object->client->price_level)	$price_min = $product->multiprices_min[$object->client->price_level];
     }
-    if ($price_min && GETPOST('productid') && (price2num($up_ht)*(1-price2num($_POST['elremise_percent'])/100) < price2num($price_min)))
+    if ($price_min && GETPOST('productid') && (price2num($up_ht)*(1-price2num($_POST['remise_percent'])/100) < price2num($price_min)))
     {
         $mesg = '<div class="error">'.$langs->trans("CantBeLessThanMinPrice",price2num($price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)).'</div>' ;
         $result=-1;
