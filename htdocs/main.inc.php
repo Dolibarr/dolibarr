@@ -152,6 +152,17 @@ function processError($code, $message, $file, $line, $context)
 set_error_handler('processError');
 */
 
+// GET and POST converter
+/*
+foreach($_REQUEST as $key => $value)
+{
+	// For prevent conflict
+	$var = '__'.$key;
+	// Create variable with tested value
+	$$var = GETPOST($key);
+}
+*/
+
 // Activate end of page function
 register_shutdown_function('dol_shutdown');
 
