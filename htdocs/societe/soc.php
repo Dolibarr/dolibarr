@@ -1330,7 +1330,7 @@ else
 		if (GETPOST("action") == 'delete')
 		{
 			$html = new Form($db);
-			$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?socid=".$soc->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete",'',0,2);
+			$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?socid=".$soc->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete",'',0,1);
 			if ($ret == 'html') print '<br>';
 		}
 
@@ -1689,36 +1689,31 @@ else
 		/*
 		 *  Actions
 		 */
-		if ($_GET["action"] == '')
+		print '<div class="tabsAction">';
+		
+		if ($user->rights->societe->creer)
 		{
-			print '<div class="tabsAction">';
-
-			if ($user->rights->societe->creer)
-			{
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$soc->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
-			}
-
-			if ($user->rights->societe->contact->creer)
-			{
-				print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$soc->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
-			}
-
-            if ($conf->projet->enabled && $user->rights->projet->creer)
-            {
-                print '<a class="butAction" href="'.DOL_URL_ROOT.'/projet/fiche.php?socid='.$socid.'&action=create">'.$langs->trans("AddProject").'</a>';
-            }
-
-            if ($user->rights->societe->supprimer)
-			{
-				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$soc->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
-			}
-
-			print '</div>';
-			print '<br>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$soc->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
 		}
 
-
-
+		if ($user->rights->societe->contact->creer)
+		{
+			print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$soc->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
+		}
+		
+		if ($conf->projet->enabled && $user->rights->projet->creer)
+		{
+			print '<a class="butAction" href="'.DOL_URL_ROOT.'/projet/fiche.php?socid='.$socid.'&action=create">'.$langs->trans("AddProject").'</a>';
+		}
+		
+		if ($user->rights->societe->supprimer)
+		{
+			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$soc->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+		}
+		
+		print '</div>';
+		print '<br>';
+		
 		print '<table width="100%"><tr><td valign="top" width="50%">';
 		print '<a name="builddoc"></a>'; // ancre
 
