@@ -2038,19 +2038,28 @@ class Form
 
         if ($useajax && $conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
         {
+        	$autoOpen=true;
+        	$dialogconfirm='dialog-confirm';
+        	if (! is_int($useajax)) {
+        		list($useajax,$button) = explode(',',$useajax);
+        		$autoOpen=false;
+        		$dialogconfirm.='-'.$button;
+        	}
             $pageyes=$page.'&action='.$action.'&confirm=yes';
             $pageno=($useajax == 2?$page.'&confirm=no':'');
 
             // New code using jQuery only
-            $formconfirm.= '<div id="dialog-confirm" title="'.dol_escape_htmltag($title).'">';
+            $formconfirm.= '<div id="'.$dialogconfirm.'" title="'.dol_escape_htmltag($title).'" style="display: none;>';
             if (! empty($more)) $formconfirm.= '<p>'.$more.'</p>';
             $formconfirm.= img_help('','').' '.$question;
             $formconfirm.= '</div>'."\n";
             $formconfirm.= '<script type="text/javascript">
+            $(function() {
                 var choice=\'ko\';
                 var	$inputarray='.json_encode($inputarray).';
-			    jQuery("#dialog-confirm").dialog({
-			        autoOpen: true,
+                
+			    $("#'.$dialogconfirm.'").dialog({
+			        autoOpen: '.($autoOpen?'true':'false').',
 			        resizable: false,
 			        height:'.$height.',
 			        width:'.$width.',
@@ -2073,15 +2082,20 @@ class Form
 		              },
 			        buttons: {
 			            \''.dol_escape_js($langs->transnoentities("Yes")).'\': function() {
-			                 choice=\'ok\';
-			                jQuery(this).dialog(\'close\');
+			                choice=\'ok\';
+			                $(this).dialog(\'close\');
 			            },
 			            \''.dol_escape_js($langs->transnoentities("No")).'\': function() {
-			                 choice=\'ko\';
-			                jQuery(this).dialog(\'close\');
+			            	choice=\'ko\';
+			                $(this).dialog(\'close\');
 			            }
 			        }
 			    });
+			    
+			    $( "#'.$button.'" ).click(function() {
+			    	$( "#'.$dialogconfirm.'" ).dialog( \'open\' );
+				});
+			});
 			</script>';
 
             $formconfirm.= "\n";

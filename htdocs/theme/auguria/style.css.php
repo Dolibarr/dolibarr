@@ -955,7 +955,7 @@ span.tabspan {
 
 /* Nouvelle syntaxe a utiliser */
 
-a.butAction:link, a.butAction:visited, a.butAction:hover, a.butAction:active, a.butActionDelete, a.butActionDelete:link, a.butActionDelete:visited, a.butActionDelete:hover, a.butActionDelete:active {
+.butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
 	font-family: <?php print $fontlist ?>;
 	font-weight: bold;
 	background: white;
@@ -967,19 +967,19 @@ a.butAction:link, a.butAction:visited, a.butAction:hover, a.butAction:active, a.
 	white-space: nowrap;
 }
 
-a.butAction:hover   {
+.butAction:hover   {
 	background: #dee7ec;
 }
 
-a.butActionDelete    {
+.butActionDelete    {
 	border: 1px solid red;
 }
 
-a.butActionDelete:link, a.butActionDelete:visited, a.butActionDelete:hover, a.butActionDelete:active {
+.butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
 	border: 1px solid #997777;
 }
 
-a.butActionDelete:hover {
+.butActionDelete:hover {
 	background: #FFe7ec;
 }
 
@@ -996,6 +996,9 @@ a.butActionDelete:hover {
 	cursor: not-allowed;
 }
 
+span.butActionDelete    {
+	cursor: pointer;
+}
 
 /* ============================================================================== */
 /* Tables                                                                         */

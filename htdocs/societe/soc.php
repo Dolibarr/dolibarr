@@ -1328,10 +1328,10 @@ else
 
 
 		// Confirm delete third party
-		if ($action == 'delete')
+		if ($action == 'delete' || ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX))
 		{
 			$html = new Form($db);
-			$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?socid=".$soc->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete",'',0,1);
+			$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?socid=".$soc->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete",'',0,"1,action-delete");
 			if ($ret == 'html') print '<br>';
 		}
 
@@ -1690,29 +1690,36 @@ else
 		/*
 		 *  Actions
 		 */
-		print '<div class="tabsAction">';
+		print '<div class="tabsAction">'."\n";
 		
 		if ($user->rights->societe->creer)
 		{
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$soc->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$soc->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>'."\n";
 		}
 
 		if ($user->rights->societe->contact->creer)
 		{
-			print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$soc->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
+			print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$soc->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>'."\n";
 		}
 		
 		if ($conf->projet->enabled && $user->rights->projet->creer)
 		{
-			print '<a class="butAction" href="'.DOL_URL_ROOT.'/projet/fiche.php?socid='.$socid.'&action=create">'.$langs->trans("AddProject").'</a>';
+			print '<a class="butAction" href="'.DOL_URL_ROOT.'/projet/fiche.php?socid='.$socid.'&action=create">'.$langs->trans("AddProject").'</a>'."\n";
 		}
 		
 		if ($user->rights->societe->supprimer)
 		{
-			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$soc->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+			if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
+			{
+				print '<span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span>'."\n";
+			}
+			else
+			{
+				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$soc->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>'."\n";
+			}
 		}
 		
-		print '</div>';
+		print '</div>'."\n";
 		print '<br>';
 		
 		print '<table width="100%"><tr><td valign="top" width="50%">';
