@@ -385,8 +385,8 @@ class ActionsCardCommon
         }
 
         $this->tpl['title'] = $this->getTitle($action);
-        $this->tpl['error'] = $this->error;
-        $this->tpl['errors']= $this->errors;
+        
+        $this->tpl['error'] = get_htmloutput_errors($this->object->error,$this->object->errors);
 
         if ($action == 'create')
         {
@@ -410,7 +410,7 @@ class ActionsCardCommon
                 </script>'."\n";
 			}
         }
-
+        
         if ($action == 'create' || $action == 'edit')
         {
         	if ($conf->use_javascript_ajax)
@@ -538,10 +538,9 @@ class ActionsCardCommon
             }
 
         }
-
-        if ($action == 'view')
+        else
         {
-            $this->tpl['showhead']=$this->showHead($action);
+            $this->tpl['showhead']=$this->showHead('view');
 
             $this->tpl['showrefnav'] 		= $form->showrefnav($this->object,'socid','',($user->societe_id?0:1),'rowid','nom');
 

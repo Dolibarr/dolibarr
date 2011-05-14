@@ -250,7 +250,7 @@ else
 				}
 				else
 				{
-					$mesg=$soc->error;
+					$error=$soc->error;
 				}
 
 				if ($result >= 0)
@@ -268,7 +268,7 @@ else
 					$db->rollback();
 
 					$langs->load("errors");
-					$mesg=$langs->trans($soc->error);
+					$error=$langs->trans($soc->error);
 					$action='create';
 				}
 			}
@@ -299,7 +299,7 @@ else
 				{
 					$soc->id = $socid;
 
-					$mesg = $soc->error;
+					$error = $soc->error;
 					$action= "edit";
 				}
 			}
@@ -320,7 +320,7 @@ else
 		else
 		{
 			$langs->load("errors");
-			$mesg=$langs->trans($soc->error);
+			$error=$langs->trans($soc->error);
 			$action='';
 		}
 	}
@@ -333,7 +333,7 @@ else
 	{
 		if (is_numeric(GETPOST('model')))
 		{
-			$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Model"));
+			$error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Model"));
 		}
 		else
 		{
@@ -400,16 +400,16 @@ if (! empty($objcanvas->template_dir))
 	{
     	$objcanvas->fetch($socid);            // Reload object
 		if (! empty($_POST)) {
-			$objcanvas->assign_post();            // Assign POST data
+			$objcanvas->assign_post();        // Assign POST data
 		}
 		$objcanvas->assign_values($action);   // Set value for templates
 		$objcanvas->display_canvas($action);  // Show template
 	}
 	else
 	{
-		$result=$objcanvas->fetch($socid);       // Relaod object
-    	$objcanvas->assign_values('view');   // Assign values
-		$objcanvas->display_canvas('view');  // Show template
+		$result=$objcanvas->fetch($socid);      // Relaod object
+    	$objcanvas->assign_values();   			// Assign values
+		$objcanvas->display_canvas();  			// Show template
 
 		// TODO Move this also into template
 		print '<table width="100%"><tr><td valign="top" width="50%">';
@@ -1335,16 +1335,8 @@ else
 			if ($ret == 'html') print '<br>';
 		}
 
-		// Template
-		if ($mesg)
-		{
-			print '<div class="error">';
-			print $mesg;
-			print '</div>';
-		}
+		dol_htmloutput_errors($error,$errors);
 
-		print '<form name="formsoc" method="post">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<table class="border" width="100%">';
 
 		// Name
@@ -1683,7 +1675,7 @@ else
 		}
 
 		print '</table>';
-		print '</form>';
+		
 		print "</div>\n";
 
 

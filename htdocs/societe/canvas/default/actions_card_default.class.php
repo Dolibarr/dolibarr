@@ -146,13 +146,12 @@ class ActionsCardDefault extends ActionsCardCommon
 				$this->tpl['tva_intra'] = $s;
 			}
 		}
-
-		if ($action == 'view')
+		else
 		{
 			// Confirm delete third party
-			if ($_GET["action"] == 'delete')
+			if ($_GET["action"] == 'delete' || ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX))
 			{
-				$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$this->object->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete",'',0,2);
+				$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$this->object->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete",'',0,"1,action-delete");
 			}
 
 			for ($i=1; $i<=4; $i++)

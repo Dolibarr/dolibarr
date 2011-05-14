@@ -96,13 +96,12 @@ class ActionsCardIndividual extends ActionsCardCommon
 		{
 			$this->tpl['select_civility'] = $formcompany->select_civility($contact->civilite_id);
 		}
-
-		if ($action == 'view')
+		else
 		{
 			// Confirm delete third party
-			if ($_GET["action"] == 'delete')
+			if ($_GET["action"] == 'delete' || ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX))
 			{
-				$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$this->object->id,$langs->trans("DeleteAnIndividual"),$langs->trans("ConfirmDeleteIndividual"),"confirm_delete",'',0,2);
+				$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$this->object->id,$langs->trans("DeleteAnIndividual"),$langs->trans("ConfirmDeleteIndividual"),"confirm_delete",'',0,"1,action-delete");
 			}
 		}
 	}

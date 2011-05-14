@@ -21,16 +21,10 @@
 
 <!-- BEGIN PHP TEMPLATE -->
 
-<?php
-dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']);
-?>
-
+<?php if ($this->control->tpl['error']) echo $this->control->tpl['error']; ?>
 <?php if ($this->control->tpl['action_delete']) echo $this->control->tpl['action_delete']; ?>
 <?php if ($this->control->tpl['js_checkVatPopup']) echo $this->control->tpl['js_checkVatPopup']; ?>
 
-<form name="formsoc" method="POST">
-<input type="hidden" name="canvas" value="<?php echo $canvas ?>">
-<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
 <table class="border" width="100%">
 
 <tr>
@@ -231,7 +225,6 @@ for ($i=1; $i<=4; $i++) {
 <?php } ?>
 
 </table>
-</form>
 
 </div>
 
@@ -245,7 +238,11 @@ for ($i=1; $i<=4; $i++) {
 <?php } ?>
 
 <?php if ($user->rights->societe->supprimer) { ?>
-<a class="butActionDelete" href="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&amp;action=delete&amp;canvas='.$canvas; ?>"><?php echo $langs->trans('Delete'); ?></a>
+	<?php if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX) { ?>
+		<span id="action-delete" class="butActionDelete"><?php echo $langs->trans('Delete'); ?></span>
+	<?php }	else { ?>
+		<a class="butActionDelete" href="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&amp;action=delete&amp;canvas='.$canvas; ?>"><?php echo $langs->trans('Delete'); ?></a>
+	<?php } ?>
 <?php } ?>
 </div>
 

@@ -2057,8 +2057,10 @@ class Form
             $(function() {
                 var choice=\'ko\';
                 var	$inputarray='.json_encode($inputarray).';
+                var button=\''.$button.'\';
+            	var dialogconfirm=\''.$dialogconfirm.'\';
                 
-			    $("#'.$dialogconfirm.'").dialog({
+			    $( "#" + dialogconfirm ).dialog({
 			        autoOpen: '.($autoOpen?'true':'false').',
 			        resizable: false,
 			        height:'.$height.',
@@ -2092,9 +2094,11 @@ class Form
 			        }
 			    });
 			    
-			    $( "#'.$button.'" ).click(function() {
-			    	$( "#'.$dialogconfirm.'" ).dialog( \'open\' );
-				});
+			    if (button.length > 0) {
+			    	$( "#" + button ).click(function() {
+			    		$( "#" + dialogconfirm ).dialog( \'open\' );
+			    	});
+			    }
 			});
 			</script>';
 
