@@ -45,6 +45,7 @@ $langs->load("users");
 if ($conf->notification->enabled) $langs->load("mails");
 
 $action = GETPOST('action');
+$confirm = GETPOST('confirm');
 
 // Security check
 $socid = GETPOST("socid");
@@ -114,12 +115,12 @@ else
 
 	// Add new third party
 	if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
-	&& ($_POST["action"] == 'add' || $_POST["action"] == 'update') && $user->rights->societe->creer)
+	&& ($action == 'add' || $action == 'update') && $user->rights->societe->creer)
 	{
 		require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 		$error=0;
 
-		if ($_POST["action"] == 'update')
+		if ($action == 'update')
 		{
 			// Load properties of company
 			$soc->fetch($socid);
@@ -195,27 +196,27 @@ else
 				$error = 1;
 				$langs->load("errors");
 				$soc->error = $langs->trans("ErrorBadEMail",$soc->email);
-				$_GET["action"] = $_POST["action"]=='add'?'create':'edit';
+				$action = ($action=='add'?'create':'edit');
 			}
 			if (! empty($soc->url) && ! isValidUrl($soc->url))
 			{
 				$error = 1;
 				$langs->load("errors");
 				$soc->error = $langs->trans("ErrorBadUrl",$soc->url);
-				$_GET["action"] = $_POST["action"]=='add'?'create':'edit';
+				$action = ($action=='add'?'create':'edit');
 			}
 			if ($soc->fournisseur && ! $conf->fournisseur->enabled)
 			{
 				$error = 1;
 				$langs->load("errors");
 				$soc->error = $langs->trans("ErrorSupplierModuleNotEnabled");
-				$_GET["action"] = $_POST["action"]=='add'?'create':'edit';
+				$action = ($action=='add'?'create':'edit');
 			}
 		}
 
 		if (! $error)
 		{
-			if ($_POST["action"] == 'add')
+			if ($action == 'add')
 			{
 				$db->begin();
 
@@ -268,11 +269,11 @@ else
 
 					$langs->load("errors");
 					$mesg=$langs->trans($soc->error);
-					$_GET["action"]='create';
+					$action='create';
 				}
 			}
 
-			if ($_POST["action"] == 'update')
+			if ($action == 'update')
 			{
 				if ($_POST["cancel"])
 				{
@@ -299,14 +300,14 @@ else
 					$soc->id = $socid;
 
 					$mesg = $soc->error;
-					$_GET["action"]= "edit";
+					$action= "edit";
 				}
 			}
 		}
 	}
 
 	// Delete third party
-	if (GETPOST("action") == 'confirm_delete' && GETPOST("confirm") == 'yes' && $user->rights->societe->supprimer)
+	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->societe->supprimer)
 	{
 		$soc->fetch($socid);
 		$result = $soc->delete($socid);
@@ -320,7 +321,7 @@ else
 		{
 			$langs->load("errors");
 			$mesg=$langs->trans($soc->error);
-			$_GET["action"]='';
+			$action='';
 		}
 	}
 
@@ -328,7 +329,7 @@ else
 	/*
 	 * Generate document
 	 */
-	if (GETPOST('action') == 'builddoc')  // En get ou en post
+	if ($action == 'builddoc')  // En get ou en post
 	{
 		if (is_numeric(GETPOST('model')))
 		{
@@ -448,7 +449,7 @@ else
 	// -----------------------------------------
 	// When used in standard mode
 	// -----------------------------------------
-	if (GETPOST('action') == 'create')
+	if ($action == 'create')
 	{
 		/*
 		 *  Creation
@@ -896,7 +897,7 @@ else
 		print '</table>'."\n";
 		print '</form>'."\n";
 	}
-	elseif (GETPOST('action') == 'edit')
+	elseif ($action == 'edit')
 	{
 		/*
 		 * Edition
@@ -1327,7 +1328,7 @@ else
 
 
 		// Confirm delete third party
-		if (GETPOST("action") == 'delete')
+		if ($action == 'delete')
 		{
 			$html = new Form($db);
 			$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?socid=".$soc->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete",'',0,1);
