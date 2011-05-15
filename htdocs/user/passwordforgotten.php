@@ -209,7 +209,7 @@ elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.png'))
 
 // Entity combobox
 $select_entity='';
-if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)  && ! $disabled)
+if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)  && empty($conf->global->MULTICOMPANY_HIDE_LOGIN_COMBOBOX) && ! $disabled)
 {
 	$rowspan++;
 	$lastuser='';

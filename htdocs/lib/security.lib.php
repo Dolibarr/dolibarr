@@ -204,7 +204,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 
 	// Entity field
 	$select_entity='';
-	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY))
+	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY) && empty($conf->global->MULTICOMPANY_HIDE_LOGIN_COMBOBOX))
 	{
 		$rowspan++;
 
