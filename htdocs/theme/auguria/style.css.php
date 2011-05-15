@@ -971,11 +971,7 @@ span.tabspan {
 	background: #dee7ec;
 }
 
-.butActionDelete    {
-	border: 1px solid red;
-}
-
-.butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
+.butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
 	border: 1px solid #997777;
 }
 
