@@ -104,17 +104,18 @@ dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
 
 $var=true;
 
-// expedition activation/desactivation
-$var=!$var;
-print "<form method=\"post\" action=\"confexped.php\">";
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Feature").'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="center" width="100">'.$langs->trans("Status").'</td>';
-print "</tr>\n";
-print "<input type=\"hidden\" name=\"action\" value=\"sending\">";
+print '</tr>'."\n";
+
+// expedition activation/desactivation
+$var=!$var;
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="sending">';
 print "<tr ".$bc[$var].">";
 print '<td>'.$langs->trans("SendingsAbility").'</td>';
 print '<td align="center" width="20">';
@@ -132,16 +133,14 @@ else if($conf->global->MAIN_SUBMODULE_EXPEDITION == 1)
 
 print "</td>";
 print '</tr>';
-print '</table>';
 print '</form>';
 
 // Bon de livraison activation/desactivation
 $var=!$var;
-print "<form method=\"post\" action=\"confexped.php\">";
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<table class="noborder" width="100%">';
-print "<input type=\"hidden\" name=\"action\" value=\"delivery\">";
-print "<tr ".$bc[$var].">";
+print '<input type="hidden" name="action" value="delivery">';
+print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("DeliveriesOrderAbility").'</td>';
 print '<td align="center" width="20">';
 print '</td>';
@@ -158,8 +157,8 @@ else if($conf->global->MAIN_SUBMODULE_LIVRAISON == 1)
 
 print "</td>";
 print '</tr>';
-print '</table>';
 print '</form>';
+print '</table>';
 
 print '</div>';
 
