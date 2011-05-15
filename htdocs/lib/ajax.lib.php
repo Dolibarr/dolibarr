@@ -214,6 +214,45 @@ function ajax_combobox($htmlname)
 }
 
 /**
+ * 	On/off button for constant
+ * 	@param		code	Name of constant
+ */
+function ajax_constantonoff($code)
+{
+	global $conf, $langs;
+	
+	$out= '<script type="text/javascript">
+		$(function() {
+			$( "#set_'.$code.'" ).click(function() {
+				$.get( "'.DOL_URL_ROOT.'/core/ajaxconstantonoff.php", {
+					action: \'set\',
+					name: \''.$code.'\'
+				},
+				function() {
+					$( "#set_'.$code.'" ).hide();
+					$( "#del_'.$code.'" ).show();
+				});
+			});
+			$( "#del_'.$code.'" ).click(function() {
+				$.get( "'.DOL_URL_ROOT.'/core/ajaxconstantonoff.php", {
+					action: \'del\',
+					name: \''.$code.'\'
+				},
+				function() {
+					$( "#del_'.$code.'" ).hide();
+					$( "#set_'.$code.'" ).show();
+				});
+			});
+		});
+	</script>';
+	
+	$out.= '<div id="set_'.$code.'" class="linkobject '.($conf->global->$code?'hideobject':'').'">'.img_picto($langs->trans("Disabled"),'off').'</div>';
+	$out.= '<div id="del_'.$code.'" class="linkobject '.($conf->global->$code?'':'hideobject').'">'.img_picto($langs->trans("Enabled"),'on').'</div>';
+	
+	return $out;
+}
+
+/**
  *
  * Enter description here ...
  * @param unknown_type $var

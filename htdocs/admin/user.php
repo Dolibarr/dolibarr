@@ -4,6 +4,7 @@
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,38 +38,35 @@ $langs->load("users");
 if (!$user->admin)
 accessforbidden();
 
-
-$typeconst=array('yesno','texte','chaine');
-
-
-// Action mise a jour ou ajout d'une constante
-if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
+/*
+ * Action
+ */
+if (preg_match('/set_(.*)/',$action,$reg))
 {
-	$result=dolibarr_set_const($db, $_POST["constname"],$_POST["constvalue"],$typeconst[$_POST["consttype"]],0,isset($_POST["constnote"])?$_POST["constnote"]:'',$conf->entity);
-	if ($result < 0)
-	{
-		print $db->error();
-	}
+    $code=$reg[1];
+    if (dolibarr_set_const($db, $code, 1, 'chaine', 0, '', $conf->entity) > 0)
+    {
+        Header("Location: ".$_SERVER["PHP_SELF"]);
+        exit;
+    }
+    else
+    {
+        dol_print_error($db);
+    }
 }
 
-// Action activation d'un sous module du module adherent
-if ($_GET["action"] == 'set')
+if (preg_match('/del_(.*)/',$action,$reg))
 {
-	$result=dolibarr_set_const($db, $_GET["name"],$_GET["value"],'',0,'',$conf->entity);
-	if ($result < 0)
-	{
-		print $db->error();
-	}
-}
-
-// Action desactivation d'un sous module du module adherent
-if ($_GET["action"] == 'unset')
-{
-	$result=dolibarr_del_const($db,$_GET["name"],$conf->entity);
-	if ($result < 0)
-	{
-		print $db->error();
-	}
+    $code=$reg[1];
+    if (dolibarr_del_const($db, $code, $conf->entity) > 0)
+    {
+        Header("Location: ".$_SERVER["PHP_SELF"]);
+        exit;
+    }
+    else
+    {
+        dol_print_error($db);
+    }
 }
 
 
@@ -77,9 +75,6 @@ if ($_GET["action"] == 'unset')
  */
 
 llxHeader();
-
-
-$var=True;
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("UsersSetup"),$linkback,'setup');
@@ -90,25 +85,36 @@ print_fiche_titre($langs->trans("MemberMainOptions"),'','');
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Description").'</td>';
-print '<td>'.$langs->trans("Value").'</td>';
-print '<td align="center">'.$langs->trans("Action").'</td>';
-print "</tr>\n";
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
+print '</tr>';
+
 $var=true;
 $form = new Form($db);
 
 // Mail required for members
 $var=!$var;
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="update">';
-print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-print '<input type="hidden" name="constname" value="USER_MAIL_REQUIRED">';
-print '<tr '.$bc[$var].'><td>'.$langs->trans("UserMailRequired").'</td><td>';
-print $form->selectyesno('constvalue',$conf->global->USER_MAIL_REQUIRED,1);
-print '</td><td align="center" width="80">';
-print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
-print "</td></tr>\n";
-print '</form>';
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("UserMailRequired").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+
+print '<td align="center" width="100">';
+if ($conf->use_javascript_ajax)
+{
+	print ajax_constantonoff('USER_MAIL_REQUIRED');
+}
+else
+{
+	if($conf->global->USER_MAIL_REQUIRED == 0)
+	{
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_USER_MAIL_REQUIRED">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+	}
+	else if($conf->global->USER_MAIL_REQUIRED == 1)
+	{
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_USER_MAIL_REQUIRED">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+	}
+}
+print '</td></tr>';
 
 print '</table>';
 print '<br>';

@@ -165,6 +165,8 @@ div.float
     float:<?php print $left; ?>;
 }
 
+.hideobject { display: none; }
+.linkobject { cursor: pointer; }
 
 /* For dragging lines */
 
