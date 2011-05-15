@@ -572,6 +572,7 @@ class Product extends CommonObject
 	function delete($id)
 	{
 		global $conf,$user,$langs;
+		
 		$error=0;
 
 		if ($user->rights->produit->supprimer)

@@ -343,11 +343,15 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->produit->
 /*
  * Suppression d'un produit/service pas encore affect
  */
-if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->produit->supprimer)
+if ($action == 'confirm_delete' && $confirm == 'yes')
 {
 	$product = new Product($db);
 	$product->fetch($id);
-	$result = $product->delete($id);
+	
+	if ( ($product->type == 0 && $user->rights->produit->supprimer)	|| ($product->type == 1 && $user->rights->service->supprimer) )
+	{
+		$result = $product->delete($id);
+	}
 
 	if ($result == 0)
 	{
