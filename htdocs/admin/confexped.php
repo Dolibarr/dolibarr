@@ -113,9 +113,6 @@ print '</tr>'."\n";
 
 // expedition activation/desactivation
 $var=!$var;
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="sending">';
 print "<tr ".$bc[$var].">";
 print '<td>'.$langs->trans("SendingsAbility").'</td>';
 print '<td align="center" width="20">';
@@ -133,13 +130,9 @@ else if($conf->global->MAIN_SUBMODULE_EXPEDITION == 1)
 
 print "</td>";
 print '</tr>';
-print '</form>';
 
 // Bon de livraison activation/desactivation
 $var=!$var;
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="delivery">';
 print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("DeliveriesOrderAbility").'</td>';
 print '<td align="center" width="20">';
@@ -157,7 +150,6 @@ else if($conf->global->MAIN_SUBMODULE_LIVRAISON == 1)
 
 print "</td>";
 print '</tr>';
-print '</form>';
 print '</table>';
 
 print '</div>';
