@@ -675,7 +675,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 					</script>';
 			}
 			$checked=($_POST["superadmin"]?' checked':'');
-			$disabled=($_POST["superadmin"]?'':' disabled');
+			$disabled=($_POST["superadmin"]?'':'disabled');
 			print '<input type="checkbox" name="superadmin" value="1"'.$checked.$disabled.' /> '.$langs->trans("SuperAdministrator");
 		}
 		print "</td></tr>\n";
