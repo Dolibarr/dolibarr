@@ -113,7 +113,7 @@ function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbort
 			print '</tr>';
 		}
 		print '</table>';
-		print '</form><br>';
+		print '</form>';
 	}
 }
 
@@ -351,6 +351,32 @@ function actions_prepare_head($action)
 	$h++;
 
 	return $head;
+}
+
+
+/**
+ *  Define head array for tabs of agenda setup pages
+ *  @return     Array of head
+ */
+function calendars_prepare_head($param)
+{
+    global $langs, $conf, $user;
+
+    $h = 0;
+    $head = array();
+
+    $head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php'.($param?'?'.$param:'');
+    $head[$h][1] = $langs->trans("Agenda");
+    $head[$h][2] = 'card';
+    $h++;
+
+    // Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
+    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+    // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+    complete_head_from_modules($conf,$langs,$object,$head,$h,'agenda');
+
+    return $head;
 }
 
 ?>

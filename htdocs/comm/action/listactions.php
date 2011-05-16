@@ -44,9 +44,11 @@ $day=GETPOST("day",'int');
 $pid=GETPOST("projectid",'int');
 $status=GETPOST("status",'alpha');
 
+$filter=GETPOST("filter");
 $filtera = GETPOST("userasked","int")?GETPOST("userasked","int"):GETPOST("filtera","int");
 $filtert = GETPOST("usertodo","int")?GETPOST("usertodo","int"):GETPOST("filtert","int");
 $filterd = GETPOST("userdone","int")?GETPOST("userdone","int"):GETPOST("filterd","int");
+$showbirthday = GETPOST("showbirthday","int");
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -117,6 +119,7 @@ if ($filtera) $param.="&filtera=".$filtera;
 if ($filtert) $param.="&filtert=".$filtert;
 if ($filterd) $param.="&filterd=".$filterd;
 if ($socid) $param.="&socid=".$socid;
+if ($showbirthday) $param.="&showbirthday=1";
 if ($pid) $param.="&projectid=".$pid;
 if ($_GET["type"]) $param.="&type=".$_REQUEST["type"];
 
@@ -176,17 +179,33 @@ if ($resql)
 	{
 		$societe = new Societe($db);
 		$societe->fetch($socid);
-
-		print_barre_liste($langs->trans($title).' '.$langs->trans("For").' '.$societe->nom, $page, $_SERVER["PHP_SELF"], $param,$sortfield,$sortorder,'',$num);
+		$newtitle=$langs->trans($title).' '.$langs->trans("For").' '.$societe->nom;
 	}
 	else
 	{
-		print_barre_liste($langs->trans($title), $page, $_SERVER["PHP_SELF"], $param,$sortfield,$sortorder,'',$num);
+		$newtitle=$langs->trans($title);
 	}
 
-	//print '<br>';
 
-	print_actions_filter($form,$canedit,$status,$year,$month,$day,$showborthday,$filtera,$filtert,$filterd,$pid,$socid);
+    $head = calendars_prepare_head('');
+
+    dol_fiche_head($head, 'card', $langs->trans('Events'), 0, 'action');
+    print_actions_filter($form,$canedit,$status,$year,$month,$day,$showborthday,$filtera,$filtert,$filterd,$pid,$socid);
+    dol_fiche_end();
+
+    // Add link to show birthdays
+    $newparam=$param;   // newparam is for birthday links
+    $newparam=preg_replace('/showbirthday=[0-1]/i','showbirthday='.(empty($showbirthday)?1:0),$newparam);
+    if (! preg_match('/showbirthday=/i',$newparam)) $newparam.='&showbirthday=1';
+    $link='<a href="'.$_SERVER['PHP_SELF'];
+    $link.='?'.$newparam;
+    $link.='">';
+    if (empty($showbirthday)) $link.=$langs->trans("AgendaShowBirthdayEvents");
+    else $link.=$langs->trans("AgendaHideBirthdayEvents");
+    $link.='</a>';
+
+    print_barre_liste($newtitle, $page, $_SERVER["PHP_SELF"], $param,$sortfield,$sortorder,$link,$num,0);
+    //print '<br>';
 
 	$i = 0;
 	print "<table class=\"noborder\" width=\"100%\">";
@@ -204,7 +223,7 @@ if ($resql)
 	print "</tr>\n";
 
 	$contactstatic = new Contact($db);
-	$now=gmmktime();
+	$now=dol_now();
 	$delay_warning=$conf->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;
 
 	$var=true;

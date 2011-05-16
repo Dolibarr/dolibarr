@@ -39,7 +39,7 @@ $filter=GETPOST("filter");
 $filtera = GETPOST("userasked","int")?GETPOST("userasked","int"):GETPOST("filtera","int");
 $filtert = GETPOST("usertodo","int")?GETPOST("usertodo","int"):GETPOST("filtert","int");
 $filterd = GETPOST("userdone","int")?GETPOST("userdone","int"):GETPOST("filterd","int");
-$showbirthday = GETPOST("showbirthday","int")?GETPOST("showbirthday","int"):0;
+$showbirthday = GETPOST("showbirthday","int");
 
 $sortfield = GETPOST("sortfield");
 $sortorder = GETPOST("sortorder");
@@ -231,9 +231,32 @@ if ($action=='show_day')
 $param.='&year='.$year.'&month='.$month.($day?'&day='.$day:'');
 //print 'x'.$param;
 
-print_fiche_titre($title,$nav);
 
+
+
+
+
+$head = calendars_prepare_head('');
+
+dol_fiche_head($head, 'card', $langs->trans('Events'), 0, 'action');
 print_actions_filter($form,$canedit,$status,$year,$month,$day,$showborthday,$filtera,$filtert,$filterd,$pid,$socid);
+dol_fiche_end();
+
+// Add link to show birthdays
+$newparam=$param;   // newparam is for birthday links
+$newparam=preg_replace('/showbirthday=[0-1]/i','showbirthday='.(empty($showbirthday)?1:0),$newparam);
+if (! preg_match('/showbirthday=/i',$newparam)) $newparam.='&showbirthday=1';
+$link='<a href="'.$_SERVER['PHP_SELF'];
+$link.='?'.$newparam;
+$link.='">';
+if (empty($showbirthday)) $link.=$langs->trans("AgendaShowBirthdayEvents");
+else $link.=$langs->trans("AgendaHideBirthdayEvents");
+$link.='</a>';
+
+print_fiche_titre($title,$link.' &nbsp; &nbsp; '.$nav);
+//print '<br>';
+
+//print_fiche_titre($link,'','');
 
 
 // Get event in an array
@@ -470,17 +493,6 @@ if (is_readable($color_file))
 }
 if (! is_array($theme_datacolor)) $theme_datacolor=array(array(120,130,150), array(200,160,180), array(190,190,220));
 
-// Add link to show birthdays
-$newparam=$param;   // newparam is for birthday links
-$newparam=preg_replace('/showbirthday=[0-1]/i','showbirthday='.(empty($showbirthday)?1:0),$newparam);
-if (! preg_match('/showbirthday=/i',$newparam)) $newparam.='&showbirthday=1';
-$link='<a href="'.$_SERVER['PHP_SELF'];
-$link.='?'.$newparam;
-$link.='">';
-if (empty($showbirthday)) $link.=$langs->trans("AgendaShowBirthdayEvents");
-else $link.=$langs->trans("AgendaHideBirthdayEvents");
-$link.='</a>';
-print_fiche_titre('',$link);
 
 if (empty($action) || $action == 'show_month')		// View by month
 {
@@ -626,6 +638,19 @@ else	// View by day
 
 $db->close();
 
+/* TODO Add RSS Links
+print '
+<a href="" id="actionagenda_ical_link"><img src="'.DOL_URL_ROOT.'/theme/common/ical.gif"/></a>
+<a href="" id="actionagenda_vcal_link"><img src="'.DOL_URL_ROOT.'/theme/common/vcal.gif"/></a>
+<a href="" id="actionagenda_rss_link"><img src="'.DOL_URL_ROOT.'/theme/common/rss.gif" /></a>
+
+<script>
+$("#actionagenda_rss_link").attr("href","/public/agenda/agendaexport.php?format=rss&type=ActionAgenda&exportkey=dolibarr&token="+getToken()+"&status="+getStatus()+"&userasked="+getUserasked()+"&usertodo="+getUsertodo()+"&userdone="+getUserdone()+"&year="+getYear()+"&month="+getMonth()+"&day="+getDay()+"&showbirthday="+getShowbirthday()+"&action="+getAction()+"&projectid="+getProjectid()+"");
+$("#actionagenda_ical_link").attr("href","/public/agenda/agendaexport.php?format=ical&type=ActionAgenda&exportkey=dolibarr&token="+getToken()+"&status="+getStatus()+"&userasked="+getUserasked()+"&usertodo="+getUsertodo()+"&userdone="+getUserdone()+"&year="+getYear()+"&month="+getMonth()+"&day="+getDay()+"&showbirthday="+getShowbirthday()+"&action="+getAction()+"&projectid="+getProjectid()+"");
+$("#actionagenda_vcal_link").attr("href","/public/agenda/agendaexport.php?format=vcal&type=ActionAgenda&exportkey=dolibarr&token="+getToken()+"&status="+getStatus()+"&userasked="+getUserasked()+"&usertodo="+getUsertodo()+"&userdone="+getUserdone()+"&year="+getYear()+"&month="+getMonth()+"&day="+getDay()+"&showbirthday="+getShowbirthday()+"&action="+getAction()+"&projectid="+getProjectid()+"");
+</script>
+';
+*/
 
 llxFooter('$Date$ - $Revision$');
 
