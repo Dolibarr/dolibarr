@@ -1080,9 +1080,9 @@ class Facture extends CommonObject
     }
 
     /**
-     *	\brief     	Delete invoice
-     *	\param     	rowid      	Id de la facture a supprimer
-     *	\return		int			<0 si ko, >0 si ok
+     *	Delete invoice
+     *	@param     	rowid      	Id of invoice to delete
+     *	@return		int			<0 if KO, >0 if OK
      */
     function delete($rowid=0)
     {
@@ -1103,7 +1103,13 @@ class Facture extends CommonObject
 
         if ($this->db->query($sql))
         {
-            // On met a jour le lien des remises
+        	// If invoice was converted into a discount not yet consumed, we remove discount
+            $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'societe_remise_except';
+            $sql.= ' WHERE fk_facture_source = '.$rowid;
+            $sql.= ' AND fk_facture_line IS NULL';
+            $resql=$this->db->query($sql);
+        	
+            // If invoice has consumned discounts
             $list_rowid_det=array();
             $sql = 'SELECT fd.rowid FROM '.MAIN_DB_PREFIX.'facturedet as fd WHERE fk_facture = '.$rowid;
             $resql=$this->db->query($sql);
@@ -1112,7 +1118,7 @@ class Facture extends CommonObject
                 $list_rowid_det[]=$obj->rowid;
             }
 
-            // On desaffecte de la facture les remises liees
+            // Consumned discounts are freed
             if (sizeof($list_rowid_det))
             {
                 $sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
@@ -1173,10 +1179,10 @@ class Facture extends CommonObject
 
 
     /**
-     \brief      Renvoi une date limite de reglement de facture en fonction des
-     conditions de reglements de la facture et date de facturation
-     \param      cond_reglement_id   Condition de reglement a utiliser, 0=Condition actuelle de la facture
-     \return     date                Date limite de reglement si ok, <0 si ko
+     *	Renvoi une date limite de reglement de facture en fonction des
+     *	conditions de reglements de la facture et date de facturation
+     *	@param      cond_reglement_id   Condition de reglement a utiliser, 0=Condition actuelle de la facture
+     *	@return     date                Date limite de reglement si ok, <0 si ko
      */
     function calculate_date_lim_reglement($cond_reglement_id=0)
     {
