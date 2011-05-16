@@ -1141,7 +1141,7 @@ function dol_print_address($address,$htmlid='gmap',$mode,$id)
              });
              </script>
              '; */
-            print ' <a href="'.$url.'" target="_gmaps"><img id="'.$htmlid.'" src="'.DOL_URL_ROOT.'/theme/common/gmap.png"></a>';
+            print ' <a href="'.$url.'" target="_gmaps"><img id="'.$htmlid.'" border="0" src="'.DOL_URL_ROOT.'/theme/common/gmap.png"></a>';
         }
     }
 }
@@ -1241,8 +1241,9 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie')
     global $conf,$langs;
     if (empty($conf->use_javascript_ajax)) return;
     $jsgraphlib='flot';
-    $datacolor=array("#d18b2c", "#dba255", "#919733");
+    $datacolor=array();
 
+	// Load colors of theme into $datacolor array
     $color_file = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/graph-color.php";
     if (is_readable($color_file))
     {
@@ -1261,23 +1262,11 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie')
     // We use Flot js lib
     if ($jsgraphlib == 'flot')
     {
-        print '<script type="text/javascript">
-    jQuery(function () {
-        // data
-        /*var data = [
-            { label: "Series1<br>aa",  data: 10},
-            { label: "Series2",  data: 30},
-            { label: "Series3",  data: 90}
-        ];
-        var data = [
-            { label: "Series1",  data: [[1,10]]},
-            { label: "Series2",  data: [[1,30]]},
-            { label: "Series3",  data: [[1,90]]}
-        ];*/
-    ';
         if ($type == 'pie')
         {
-            print 'var data = ['."\n";
+        	print '<script type="text/javascript">
+			    jQuery(function () {
+        		var data = ['."\n";
             $i=0;
             foreach($data as $serie)
             {
@@ -1308,16 +1297,20 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie')
                                 }
                             }
                     } },
-                    colors: [';
-                    $j=0;
-                    foreach($datacolor as $val)
-                    {
-                        print '"'.$val.'"';
-                        if ($j < sizeof($datacolor)) print ',';
-                        $j++;
-                    }
-                    print '],
-                    legend: {show: '.($showlegend?'true':'false').'}
+                    ';
+            		if (sizeof($datacolor))
+            		{
+	                    print 'colors: [';
+	                    $j=0;
+	                    foreach($datacolor as $val)
+	                    {
+	                        print '"'.$val.'"';
+	                        if ($j < sizeof($datacolor)) print ',';
+	                        $j++;
+	                    }
+            			print '], ';
+            		}
+                    print 'legend: {show: '.($showlegend?'true':'false').'}
                 });
             });
             </script>';
