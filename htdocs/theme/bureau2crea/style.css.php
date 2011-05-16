@@ -202,6 +202,11 @@ form {
     margin: 0em 0em 0em 0em;
 }
 
+/* For hide object and add pointer cursor */
+
+.hideobject { display: none; }
+.linkobject { cursor: pointer; }
+
 /* For dragging lines */
 
 .dragClass {
