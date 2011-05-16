@@ -106,20 +106,6 @@ class CommActionRapport
 
 		if (file_exists($dir))
 		{
-			// Protection et encryption du pdf
-/*			if ($conf->global->PDF_SECURITY_ENCRYPTION)
-			{
-				$pdf=new FPDI_Protection('P','mm',$this->format);
-				$pdfrights = array('print'); // Ne permet que l'impression du document
-				$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-				$pdfownerpass = NULL; // Mot de passe du proprietaire, cree aleatoirement si pas defini
-				$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
-			}
-			else
-			{
-				$pdf=new FPDI('P','mm',$this->format);
-			}
-*/
             $pdf=pdf_getInstance($this->format);
 
             if (class_exists('TCPDF'))

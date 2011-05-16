@@ -93,7 +93,7 @@ class pdf_oursin extends ModelePDFFactures
 
 		// Defini position des colonnes
 		$this->posxdesc=$this->marge_gauche+1;
-		$this->posxtva=113;
+		$this->posxtva=111;
 		$this->posxup=126;
 		$this->posxqty=145;
 		$this->posxdiscount=162;
@@ -163,21 +163,6 @@ class pdf_oursin extends ModelePDFFactures
 
 			if (file_exists($dir))
 			{
-
-				// Protection et encryption du pdf
-/*				if ($conf->global->PDF_SECURITY_ENCRYPTION)
-				{
-					$pdf=new FPDI_Protection('P','mm',$this->format);
-					$pdfrights = array('print'); // Ne permet que l'impression du document
-					$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-					$pdfownerpass = NULL; // Mot de passe du propri�taire, cr�� al�atoirement si pas d�fini
-					$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
-				}
-				else
-				{
-					$pdf=new FPDI('P','mm',$this->format);
-				}
-*/
                 $pdf=pdf_getInstance($this->format);
 
                 if (class_exists('TCPDF'))

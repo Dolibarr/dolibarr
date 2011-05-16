@@ -83,7 +83,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		// Defini position des colonnes
 		$this->posxdesc=$this->marge_gauche+1;
 		$this->posxcomm=120;
-		$this->posxtva=121;
+		//$this->posxtva=111;
 		$this->posxup=132;
 		$this->posxqty=168;
 		$this->posxdiscount=162;
@@ -140,20 +140,6 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 			if (file_exists($dir))
 			{
-				// Protection et encryption du pdf
-/*				if ($conf->global->PDF_SECURITY_ENCRYPTION)
-				{
-					$pdf=new FPDI_Protection('P','mm',$this->format);
-					$pdfrights = array('print'); // Ne permet que l'impression du document
-					$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-					$pdfownerpass = NULL; // Mot de passe du proprietaire, cree aleatoirement si pas defini
-					$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
-				}
-				else
-				{
-					$pdf=new FPDI('P','mm',$this->format);
-				}
-*/
                 $pdf=pdf_getInstance($this->format);
 
                 if (class_exists('TCPDF'))

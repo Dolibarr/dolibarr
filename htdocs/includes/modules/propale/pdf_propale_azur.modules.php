@@ -87,7 +87,7 @@ class pdf_propale_azur extends ModelePDFPropales
 
 		// Defini position des colonnes
 		$this->posxdesc=$this->marge_gauche+1;
-		$this->posxtva=113;
+		$this->posxtva=111;
 		$this->posxup=126;
 		$this->posxqty=145;
 		$this->posxdiscount=162;

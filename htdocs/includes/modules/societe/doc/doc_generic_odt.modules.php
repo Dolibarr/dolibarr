@@ -158,7 +158,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
         $texte.= '</table>';
 
 		// Scan directories
-		if (sizeof($listofdir)) $texte.=$langs->trans("NumberOfModelFilesFound").': '.sizeof($listoffiles);
+		if (sizeof($listofdir)) $texte.=$langs->trans("NumberOfModelFilesFound").': <b>'.sizeof($listoffiles).'</b>';
 
 		$texte.= '</td>';
 

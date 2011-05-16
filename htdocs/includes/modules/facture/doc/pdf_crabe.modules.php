@@ -92,7 +92,7 @@ class pdf_crabe extends ModelePDFFactures
 
 		// Defini position des colonnes
 		$this->posxdesc=$this->marge_gauche+1;
-		$this->posxtva=113;
+		$this->posxtva=111;
 		$this->posxup=126;
 		$this->posxqty=145;
 		$this->posxdiscount=162;
@@ -165,22 +165,6 @@ class pdf_crabe extends ModelePDFFactures
 			{
 				$nblignes = sizeof($object->lines);
 
-				// Protection et encryption du pdf
-/*				if ($conf->global->PDF_SECURITY_ENCRYPTION)
-				{
-                    if ($conf->global->MAIN_USE_FPDF) $pdf = new FPDI_Protection('P','mm',$this->format);
-                    else $pdf = new FPDI('P','mm',$this->format);
-                    $pdfrights = array('print'); // Ne permet que l'impression du document
-                    if (empty($conf->global->MAIN_USE_FPDF)) $pdfrights[]='assemble';
-                    $pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-                    $pdfownerpass = NULL; // Mot de passe du proprietaire, cree aleatoirement si pas defini
-                    $pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
-				}
-				else
-				{
-					$pdf=new FPDI('P','mm',$this->format);
-				}
-*/
                 $pdf=pdf_getInstance($this->format);
 
                 if (class_exists('TCPDF'))
@@ -242,7 +226,6 @@ class pdf_crabe extends ModelePDFFactures
 					$pdf->SetDrawColor(192,192,192);
 //print $pdf->getStringHeight(200,'SPECIMEN',false,false);
 //print "$this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1";exit;
-
 					$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
 
 					$tab_height = $tab_height - $height_note;

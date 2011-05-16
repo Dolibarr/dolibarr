@@ -40,8 +40,9 @@ $langs->load("errors");
 
 // You can force preselected values of the config step of Dolibarr by adding a file
 // install.forced.php into directory htdocs/install (This is the case with some installer
-// lile DoliWamp, DoliMamp or DoliDeb.
+// lile DoliWamp, DoliMamp or DoliBuntu.
 // We first init "forced values" to nothing.
+if (! isset($force_install_noedit))            $force_install_noedit='';
 if (! isset($force_install_type))              $force_install_type='';
 if (! isset($force_install_port))              $force_install_port='';
 if (! isset($force_install_database))          $force_install_database='';
@@ -121,7 +122,10 @@ if (! empty($force_install_message))
     	}
     	?>
 		<td class="label" valign="top">
-		<input type="text" size="60" value="<?php print $dolibarr_main_document_root; ?>"<?php print (empty($todoforce_install_main_data_root)?'':' disabled="true"'); ?> name="main_dir">
+		<?php 
+		if ($force_install_noedit) print '<input type="hidden" value="'.$dolibarr_main_document_root.'" name="main_dir">'; 
+		print '<input type="text" size="60" value="'.$dolibarr_main_document_root.'"'.(empty($force_install_noedit)?'':' disabled="true"').' name="main_dir'.$force_install_noedit.'">';
+		?>
 		</td>
 		<td class="comment"><?php
 		print $langs->trans("WithNoSlashAtTheEnd")."<br>";

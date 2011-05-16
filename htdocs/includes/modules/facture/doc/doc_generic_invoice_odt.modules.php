@@ -97,23 +97,39 @@ class doc_generic_invoice_odt extends ModelePDFFactures
     {
         global $conf;
 
+        $invoice_source=new Facture($this->db);
+		if ($object->fk_facture_source > 0)
+		{
+        	$invoice_source->fetch($object->fk_facture_source);
+		}
+		$alreadypayed=price($object->getSommePaiement(),'MT');
+		
         return array(
             'object_id'=>$object->id,
             'object_ref'=>$object->ref,
-            'object_ref_customer'=>$object->ref_client,
+            'object_ref_ext'=>$object->ref_ext,
+        	'object_ref_customer'=>$object->ref_client,
             'object_ref_supplier'=>$object->ref_fournisseur,
-            'object_date'=>dol_print_date($object->date,'day'),
-            'object_date_creation'=>dol_print_date($object->date_creation,'dayhour'),
+            'object_source_invoice_ref'=>$invoice_source->ref,
+        	'object_date'=>dol_print_date($object->date,'day'),
+        	'object_date_limit'=>dol_print_date($object->date_lim_reglement,'dayhour'),
+        	'object_date_creation'=>dol_print_date($object->date_creation,'day'),
+            'object_date_modification'=>dol_print_date($object->date_modification,'day'),
             'object_date_validation'=>dol_print_date($object->date_validation,'dayhour'),
-            'object_total_ht'=>price($object->total_ht),
+            'object_payment_mode'=>$object->mode_reglement,
+            'object_payment_term'=>$object->cond_reglement,
+        	'object_total_ht'=>price($object->total_ht),
             'object_total_vat'=>price($object->total_tva),
             'object_total_ttc'=>price($object->total_ttc),
             'object_vatrate'=>vatrate($object->tva),
             'object_note_private'=>$object->note,
-            'object_note'=>$object->note_public
+            'object_note'=>$object->note_public,
+        	// Payments
+            'object_already_payed'=>$alreadypayed,
+            'object_remain_to_pay'=>price($object->total_ttc - $alreadypayed,'MT')
         );
     }
-
+    
     /**
      * Define array with couple substitution key => substitution value
      *
@@ -223,7 +239,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
         $texte.= '</table>';
 
 		// Scan directories
-		if (sizeof($listofdir)) $texte.=$langs->trans("NumberOfModelFilesFound").': '.sizeof($listoffiles);
+		if (sizeof($listofdir)) $texte.=$langs->trans("NumberOfModelFilesFound").': <b>'.sizeof($listoffiles).'</b>';
 
 		$texte.= '</td>';
 
@@ -337,6 +353,23 @@ class doc_generic_invoice_odt extends ModelePDFFactures
                     $socobject=$object->client;
                 }
 
+				// Line of free text
+				$newfreetext='';
+				$paramfreetext='FACTURE_FREE_TEXT';
+			    if (! empty($conf->global->$paramfreetext))
+			    {
+			        // Make substitution
+			        $substitutionarray=array(
+						'__FROM_NAME__' => $this->emetteur->nom,
+						'__FROM_EMAIL__' => $this->emetteur->email,
+						'__TOTAL_TTC__' => $object->total_ttc,
+						'__TOTAL_HT__' => $object->total_ht,
+						'__TOTAL_VAT__' => $object->total_vat
+			        );
+			
+			        $newfreetext=make_substitutions($conf->global->$paramfreetext,$substitutionarray,$outputlangs,$object);
+			    }
+			    
                 // Open and load template
 				require_once(DOL_DOCUMENT_ROOT.'/includes/odtphp/odf.php');
 				$odfHandler = new odf($srctemplatepath, array(
@@ -351,8 +384,18 @@ class doc_generic_invoice_odt extends ModelePDFFactures
                 //print html_entity_decode($odfHandler->__toString());
                 //print exit;
 
-				// Make substitutions
-			    $tmparray=$this->get_substitutionarray_user($user,$outputlangs);
+				
+				// Make substitutions into odt
+				if ($newfreetext)
+				{
+					try {
+						$odfHandler->setVars('free_text', $newfreetext, true, 'UTF-8');
+					}
+					catch(OdfException $e)
+					{
+					}
+				}
+				$tmparray=$this->get_substitutionarray_user($user,$outputlangs);
                 //var_dump($tmparray); exit;
                 foreach($tmparray as $key=>$value)
                 {
@@ -410,7 +453,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 					{
 					}
 				}
-
+				// Replace tags of object
 			    $tmparray=$this->get_substitutionarray_object($object,$outputlangs);
                 foreach($tmparray as $key=>$value)
                 {
@@ -429,7 +472,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
                     {
                     }
                 }
-
+				// Replace tags of lines
                 try
                 {
                     $listlines = $odfHandler->setSegment('lines');
