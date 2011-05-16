@@ -7,7 +7,7 @@
 --
 
 -- V4.1 delete from llx_menu_const where fk_menu in (select rowid from llx_menu where menu_handler=__HANDLER__ and entity=__ENTITY__);
-delete from llx_menu where menu_handler=__HANDLER__;
+delete from llx_menu where menu_handler=__HANDLER__ and entity=__ENTITY__;
 
 -- 
 -- table llx_menu
