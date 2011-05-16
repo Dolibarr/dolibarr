@@ -28,6 +28,7 @@ NoProject=No project defined or owned
 NbOpenTasks=Nb of opened tasks
 NbOfProjects=Nb of projects
 TimeSpent=Time spent
+TimesSpent=Time spent
 RefTask=Ref. task
 LabelTask=Label task
 NewTimeSpent=New time spent

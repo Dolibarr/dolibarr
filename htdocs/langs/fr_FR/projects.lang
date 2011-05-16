@@ -28,6 +28,7 @@ NoProject=Aucun projet défini ou responsable
 NbOpenTasks=Nb Tâches Ouvertes
 NbOfProjects=Nombre de projets
 TimeSpent=Temps consommé
+TimesSpent=Temps consommés
 RefTask=Ref. tâche
 LabelTask=Libellé tâche
 NewTimeSpent=Nouveau consommé
