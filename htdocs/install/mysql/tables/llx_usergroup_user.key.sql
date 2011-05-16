@@ -1,6 +1,5 @@
 -- ============================================================================
--- Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2011 Regis Houssin        <regis@dolibarr.fr>
+-- Copyright (C) 2011 Regis Houssin  <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,11 +18,7 @@
 -- $Id$
 -- ===========================================================================
 
-create table llx_usergroup_user
-(
-  rowid         integer AUTO_INCREMENT PRIMARY KEY,
-  entity        integer DEFAULT 1 NOT NULL,			-- multi company id
-  fk_user       integer NOT NULL,
-  fk_usergroup  integer NOT NULL
+ALTER TABLE llx_usergroup_user ADD UNIQUE INDEX uk_user_group_entity (entity,fk_user,fk_usergroup);
 
-)ENGINE=innodb;
+ALTER TABLE llx_usergroup_user ADD CONSTRAINT fk_usergroup_user_fk_user      FOREIGN KEY (fk_user)         REFERENCES llx_user (rowid);
+ALTER TABLE llx_usergroup_user ADD CONSTRAINT fk_usergroup_user_fk_usergroup FOREIGN KEY (fk_usergroup)    REFERENCES llx_usergroup (rowid);

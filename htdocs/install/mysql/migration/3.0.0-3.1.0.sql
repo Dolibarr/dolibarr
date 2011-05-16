@@ -105,6 +105,12 @@ ALTER TABLE llx_facturedet ADD INDEX idx_facturedet_fk_product (fk_product);
 ALTER TABLE llx_mailing_cibles ADD COLUMN tag varchar(128) NULL AFTER other;
 ALTER TABLE llx_mailing ADD COLUMN tag varchar(128) NULL AFTER email_errorsto;
 
+ALTER TABLE llx_usergroup_user DROP INDEX fk_user;
+ALTER TABLE llx_usergroup_user ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
+ALTER TABLE llx_usergroup_user ADD UNIQUE INDEX uk_usergroup_entity (entity,fk_user,fk_usergroup);
+ALTER TABLE llx_usergroup_user ADD CONSTRAINT fk_usergroup_user_fk_user      FOREIGN KEY (fk_user)         REFERENCES llx_user (rowid);
+ALTER TABLE llx_usergroup_user ADD CONSTRAINT fk_usergroup_user_fk_usergroup FOREIGN KEY (fk_usergroup)    REFERENCES llx_usergroup (rowid);
+
 --Add Chile data (id pays=67)
 -- Regions Chile
 INSERT INTO llx_c_regions (rowid, code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (6701, 6701, 67, NULL, NULL, 'Tarapacá', 1);

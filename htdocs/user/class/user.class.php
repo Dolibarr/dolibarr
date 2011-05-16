@@ -4,7 +4,7 @@
  * Copyright (c) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1465,34 +1465,38 @@ class User extends CommonObject
 
 
 	/**
-	 *    \brief      Add user into a group
-	 *    \param      group       id du groupe
+	 *    Add user into a group
+	 *    @param      group       id du groupe
 	 */
 	function SetInGroup($group)
 	{
+		global $conf;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_user";
-		$sql .= " WHERE fk_user  = ".$this->id;
-		$sql .= " AND fk_usergroup = ".$group;
+		$sql.= " WHERE fk_user  = ".$this->id;
+		$sql.= " AND fk_usergroup = ".$group;
+		$sql.= " AND entity = ".$conf->entity;
 
 		$result = $this->db->query($sql);
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."usergroup_user (fk_user, fk_usergroup)";
-		$sql .= " VALUES (".$this->id.",".$group.")";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."usergroup_user (entity, fk_user, fk_usergroup)";
+		$sql.= " VALUES (".$conf->entity.",".$this->id.",".$group.")";
 
 		$result = $this->db->query($sql);
 	}
 
 	/**
-	 *    \brief      Remove a user from a group
-	 *    \param      group       id du groupe
+	 *    Remove a user from a group
+	 *    @param      group       id du groupe
 	 */
 	function RemoveFromGroup($group)
 	{
+		global $conf;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_user";
-		$sql .= " WHERE fk_user  = ".$this->id;
-		$sql .= " AND fk_usergroup = ".$group;
+		$sql.= " WHERE fk_user  = ".$this->id;
+		$sql.= " AND fk_usergroup = ".$group;
+		$sql.= " AND entity = ".$conf->entity;
 
 		$result = $this->db->query($sql);
 	}

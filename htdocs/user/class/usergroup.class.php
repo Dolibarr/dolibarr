@@ -1,6 +1,7 @@
 <?php
 /* Copyright (c) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (c) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -494,7 +495,7 @@ class UserGroup extends CommonObject
 
 		$now=dol_now();
 
-		$sql = "INSERT into ".MAIN_DB_PREFIX."usergroup (datec, nom, entity)";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."usergroup (datec, nom, entity)";
 		$sql.= " VALUES('".$this->db->idate($now)."','".$this->db->escape($this->nom)."',".$conf->entity.")";
 
 		dol_syslog("UserGroup::Create sql=".$sql, LOG_DEBUG);
