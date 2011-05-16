@@ -376,8 +376,8 @@ TypeContact_facture_fourn_external_BILLING=Contacto proveedor facturación
 TypeContact_facture_fourn_external_SHIPPING=Contacto proveedor entregas
 TypeContact_facture_fourn_external_SERVICE=Contacto proveedor servicios
 # crabe PDF Model
-PDFCrabeDescription=Modelo de factura completo (IVA,  método de pago a mostrar, logotipo...)
+PDFCrabeDescription=Modelo de factura completo (modelo recomendado por defecto)
 # oursin PDF Model
-PDFOursinDescription=Modelo de factura completo (IVA, métodos de pago, entregas, nombre del proyecto, referencias de presupuesto, logotipo...)
+PDFOursinDescription=Modelo de factura completo (modelo alternativo)
 # NumRef Modules
 TerreNumRefModelDesc1=Devuelve el número bajo el formato %syymm-nnnn para las facturas y %syymm-nnnn para los abonos donde yy es el año, mm. el mes y nnnn un contador secuencial sin ruptura y sin permanencia a 0
