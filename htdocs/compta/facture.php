@@ -1898,7 +1898,7 @@ else
                     $savdate=$object->date;
                     if (! empty($conf->global->FAC_FORCE_DATE_VALIDATION))
                     {
-                        $object->date=gmmktime();
+                        $object->date=dol_now();
                         $object->date_lim_reglement=$object->calculate_date_lim_reglement();
                     }
                     $numref = $object->getNextNumRef($soc);
