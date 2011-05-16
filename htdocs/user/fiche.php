@@ -115,7 +115,7 @@ if ($action == 'confirm_enable' && $confirm == "yes" && $candisableuser)
 
 		if (!empty($conf->file->main_limit_users))
 		{
-			$nb = $edituser->getNbOfUsers(1);
+			$nb = $edituser->getNbOfUsers("active");
 			if ($nb >= $conf->file->main_limit_users)
 			{
 				$message='<div class="error">'.$langs->trans("YourQuotaOfUsersIsReached").'</div>';
@@ -168,7 +168,7 @@ if ($_POST["action"] == 'add' && $canadduser)
 
 	if (!empty($conf->file->main_limit_users)) // If option to limit users is set
 	{
-		$nb = $edituser->getNbOfUsers(1);
+		$nb = $edituser->getNbOfUsers("active");
 		if ($nb >= $conf->file->main_limit_users)
 		{
 			$message='<div class="error">'.$langs->trans("YourQuotaOfUsersIsReached").'</div>';
@@ -191,7 +191,8 @@ if ($_POST["action"] == 'add' && $canadduser)
 		$edituser->phenix_pass   = $_POST["phenix_pass"];
 		$edituser->note          = $_POST["note"];
 		$edituser->ldap_sid      = $_POST["ldap_sid"];
-		$edituser->entity        = ($_POST["admin"] && empty($conf->multicompany->enabled))?0:$_POST["entity"];   // If multicompany is off, admin users must all be on entity 0.
+		// If multicompany is off, admin users must all be on entity 0.
+		$edituser->entity        = ( ! empty($_POST["admin"]) && (! empty($_POST["superadmin"]) || empty($conf->multicompany->enabled)) ? 0 : $_POST["entity"]);
 
 		$db->begin();
 
@@ -283,11 +284,11 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
 			$edituser->office_fax    = $_POST["office_fax"];
 			$edituser->user_mobile   = $_POST["user_mobile"];
 			$edituser->email         = $_POST["email"];
-			$edituser->openid         = $_POST["openid"];
+			$edituser->openid        = $_POST["openid"];
 			$edituser->webcal_login  = $_POST["webcal_login"];
 			$edituser->phenix_login  = $_POST["phenix_login"];
 			$edituser->phenix_pass   = $_POST["phenix_pass"];
-			$edituser->entity        = $_POST["entity"];
+			$edituser->entity        = ( (! empty($_POST["superadmin"]) && ! empty($_POST["admin"])) ? 0 : $_POST["entity"]);
 			if (! empty($_FILES['photo']['name'])) $edituser->photo = $_FILES['photo']['name'];
 
 			$ret=$edituser->update($user);
@@ -653,6 +654,30 @@ if (($action == 'create') || ($action == 'adduserldap'))
 		print '<tr><td valign="top">'.$langs->trans("Administrator").'</td>';
 		print '<td>';
 		print $form->selectyesno('admin',$_POST["admin"],1);
+		
+		if (! empty($conf->multicompany->enabled) && ! $user->entity)
+		{
+			if ($conf->use_javascript_ajax)
+			{
+				print '<script type="text/javascript">
+							$(function() {
+								$("select[name=admin]").change(function() {
+									 if ( $(this).val() == 0 ) {
+									 	$("input[name=superadmin]")
+									 		.attr("disabled", true)
+									 		.attr("checked", false);
+									 } else {
+									 	$("input[name=superadmin]")
+									 		.attr("disabled", false);
+									 }
+								});
+							});
+					</script>';
+			}
+			$checked=($_POST["superadmin"]?' checked':'');
+			$disabled=($_POST["superadmin"]?'':' disabled');
+			print '<input type="checkbox" name="superadmin" value="1"'.$checked.$disabled.' /> '.$langs->trans("SuperAdministrator");
+		}
 		print "</td></tr>\n";
 	}
 
@@ -950,22 +975,23 @@ else
             print '</tr>'."\n";
 
 			// Administrator
-			print '<tr><td valign="top">'.$langs->trans("Administrator").'</td>';
-			print '<td>'.yn($fuser->admin);
-			if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY) && $fuser->admin && ! $fuser->entity)
+			print '<tr><td valign="top">'.$langs->trans("Administrator").'</td><td>';
+			if (! empty($conf->multicompany->enabled) && $fuser->admin && ! $fuser->entity)
 			{
-				print ' '.img_redstar($langs->trans("SuperAdministrator"));
+				print $html->textwithpicto(yn($fuser->admin),$langs->trans("SuperAdministratorDesc"),1,"superadmin");
 			}
 			else if ($fuser->admin)
 			{
-				print ' '.img_picto($langs->trans("Administrator"),"star");
+				print $html->textwithpicto(yn($fuser->admin),$langs->trans("AdministratorDesc"),1,"admin");
 			}
-			print '</td>';
-            print '</tr>'."\n";
+			else
+			{
+				print yn($fuser->admin);
+			}
+            print '</td></tr>'."\n";
 
 			// Type
-			print '<tr><td valign="top">'.$langs->trans("Type").'</td>';
-			print '<td>';
+			print '<tr><td valign="top">'.$langs->trans("Type").'</td><td>';
 			if ($fuser->societe_id)
 			{
 				print $html->textwithpicto($langs->trans("External"),$langs->trans("InternalExternalDesc"));
@@ -974,16 +1000,11 @@ else
 			{
 				print $langs->trans("DomainUser",$ldap->domainFQDN);
 			}
-			else if (empty($conf->global->MAIN_MODULE_MULTICOMPANY) || ! empty($fuser->entity))
+			else
 			{
 				print $html->textwithpicto($langs->trans("Internal"),$langs->trans("InternalExternalDesc"));
 			}
-			else
-			{
-				print $html->textwithpicto($langs->trans("SuperAdministrator"),$langs->trans("SuperAdministratorDesc"));
-			}
-			print '</td>';
-            print '</tr>'."\n";
+            print '</td></tr>'."\n";
 
 			// Tel pro
 			print '<tr><td valign="top">'.$langs->trans("PhonePro").'</td>';
@@ -1112,7 +1133,7 @@ else
 			print '<div class="tabsAction">';
 
 			if ($caneditfield &&
-			(empty($conf->global->MAIN_MODULE_MULTICOMPANY) || (($fuser->entity == $conf->entity) || $fuser->entity == $user->entity)) )
+			(empty($conf->multicompany->enabled) || (($fuser->entity == $conf->entity) || $fuser->entity == $user->entity)) )
 			{
 				if (! empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED))
 				{
@@ -1124,7 +1145,7 @@ else
 				}
 			}
 			elseif ($caneditpassword && ! $fuser->ldap_sid &&
-			(empty($conf->global->MAIN_MODULE_MULTICOMPANY) || ($fuser->entity == $conf->entity)) )
+			(empty($conf->multicompany->enabled) || ($fuser->entity == $conf->entity)) )
 			{
 				print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("EditPassword").'</a>';
 			}
@@ -1133,13 +1154,13 @@ else
 			if ($conf->global->USER_PASSWORD_GENERATED != 'none')
 			{
 				if (($user->id != $_GET["id"] && $caneditpassword) && $fuser->login && !$fuser->ldap_sid &&
-				(empty($conf->global->MAIN_MODULE_MULTICOMPANY) || ($fuser->entity == $conf->entity)))
+				(empty($conf->multicompany->enabled) || ($fuser->entity == $conf->entity)))
 				{
 					print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=password">'.$langs->trans("ReinitPassword").'</a>';
 				}
 
 				if (($user->id != $_GET["id"] && $caneditpassword) && $fuser->login && !$fuser->ldap_sid &&
-				(empty($conf->global->MAIN_MODULE_MULTICOMPANY) || ($fuser->entity == $conf->entity)) )
+				(empty($conf->multicompany->enabled) || ($fuser->entity == $conf->entity)) )
 				{
 					if ($fuser->email) print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=passwordsend">'.$langs->trans("SendNewPassword").'</a>';
 					else print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans("SendNewPassword").'</a>';
@@ -1148,19 +1169,19 @@ else
 
 			// Activer
 			if ($user->id <> $_GET["id"] && $candisableuser && $fuser->statut == 0 &&
-			(empty($conf->global->MAIN_MODULE_MULTICOMPANY) || ($fuser->entity == $conf->entity)) )
+			(empty($conf->multicompany->enabled) || ($fuser->entity == $conf->entity)) )
 			{
 				print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=enable">'.$langs->trans("Reactivate").'</a>';
 			}
 			// Desactiver
 			if ($user->id <> $_GET["id"] && $candisableuser && $fuser->statut == 1 &&
-			(empty($conf->global->MAIN_MODULE_MULTICOMPANY) || ($fuser->entity == $conf->entity)) )
+			(empty($conf->multicompany->enabled) || ($fuser->entity == $conf->entity)) )
 			{
 				print '<a class="butActionDelete" href="fiche.php?action=disable&amp;id='.$fuser->id.'">'.$langs->trans("DisableUser").'</a>';
 			}
 			// Delete
 			if ($user->id <> $_GET["id"] && $candisableuser &&
-			(empty($conf->global->MAIN_MODULE_MULTICOMPANY) || ($fuser->entity == $conf->entity)) )
+			(empty($conf->multicompany->enabled) || ($fuser->entity == $conf->entity)) )
 			{
 				print '<a class="butActionDelete" href="fiche.php?action=delete&amp;id='.$fuser->id.'">'.$langs->trans("DeleteUser").'</a>';
 			}
@@ -1293,7 +1314,7 @@ else
 		if ($_GET["action"] == 'edit' && ($canedituser || ($user->id == $fuser->id)))
 		{
 
-			print '<form action="fiche.php?id='.$fuser->id.'" method="post" name="updateuser" enctype="multipart/form-data">';
+			print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$fuser->id.'" method="POST" name="updateuser" enctype="multipart/form-data">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="update">';
 			print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
@@ -1400,15 +1421,47 @@ else
 			else
 			{
 				print '<td>';
-				if ($user->admin && $fuser->entity!=0) // On ne doit pas rétrograder le superadmin
+				// Don't downgrade a superadmin if alone
+				$nbSuperAdmin = $user->getNbOfUsers('superadmin');
+				if ($user->admin && ($fuser->entity > 0 || $nbSuperAdmin > 1) )
 				{
 					print $form->selectyesno('admin',$fuser->admin,1);
+					
+					if (! empty($conf->multicompany->enabled) && ! $user->entity)
+					{
+						if ($conf->use_javascript_ajax)
+						{
+							print '<script type="text/javascript">
+									$(function() {
+										var admin = $("select[name=admin]");
+										if (admin.val() == 0) {
+											$("input[name=superadmin]")
+													.attr("disabled", true)
+													.attr("checked", false);
+										}
+										$("select[name=admin]").change(function() {
+											 if ( $(this).val() == 0 ) {
+											 	$("input[name=superadmin]")
+											 		.attr("disabled", true)
+											 		.attr("checked", false);
+											 } else {
+											 	$("input[name=superadmin]")
+											 		.attr("disabled", false);
+											 }
+										});
+									});
+								</script>';
+						}
+						
+						$checked=(($fuser->admin && ! $fuser->entity) ? ' checked' : '');
+						print '<input type="checkbox" name="superadmin" value="1"'.$checked.' /> '.$langs->trans("SuperAdministrator");
+					}
 				}
 				else
 				{
 					$yn = yn($fuser->admin);
 					print '<input type="hidden" name="admin" value="'.$fuser->admin.'">';
-					if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)) print $html->textwithpicto($yn,$langs->trans("DontChangeSuperAdmin"),1,'warning');
+					if (! empty($conf->multicompany->enabled) && ! $fuser->entity) print $html->textwithpicto($yn,$langs->trans("DontDowngradeSuperAdmin"),1,'warning');
 					else print $yn;
 				}
 				print '</td></tr>';
@@ -1424,11 +1477,6 @@ else
 			else if ($fuser->ldap_sid)
 			{
 				print $langs->trans("DomainUser");
-			}
-			else if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY) && $fuser->admin && !$fuser->entity)
-			{
-				print $langs->trans("SuperAdministrator");
-				print ' '.img_picto($langs->trans("SuperAdministrator"),"redstar");
 			}
 			else
 			{

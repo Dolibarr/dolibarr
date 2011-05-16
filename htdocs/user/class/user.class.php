@@ -1036,7 +1036,7 @@ class User extends CommonObject
 		$sql.= ", note = '".$this->db->escape($this->note)."'";
 		$sql.= ", photo = ".($this->photo?"'".$this->db->escape($this->photo)."'":"null");
 		$sql.= ", openid = ".($this->openid?"'".$this->db->escape($this->openid)."'":"null");
-		//$sql.= ", entity = '".$this->entity."'";
+		$sql.= ", entity = '".$this->entity."'";
 		$sql.= " WHERE rowid = ".$this->id;
 
 		dol_syslog("User::update sql=".$sql, LOG_DEBUG);
@@ -1834,17 +1834,24 @@ class User extends CommonObject
 
 	/**
 	 *    Return number of existing users
-	 *    @param		limitToActive		limit to active users
-	 *    @return       int     			Number of users
+	 *    @param		limitTo		limit to 'active' or 'superadmin' users
+	 *    @return       int     	Number of users
 	 */
-	function getNbOfUsers($limitToActive=0)
+	function getNbOfUsers($limitTo='')
 	{
 		global $conf;
 
 		$sql = "SELECT count(rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user";
-		$sql.= " WHERE entity = ".$conf->entity;
-		if ($limitToActive) $sql.= " AND statut = 1";
+		if ($limitTo == 'superadmin')
+		{
+			$sql.= " WHERE entity = 0";
+		}
+		else
+		{
+			$sql.= " WHERE entity = ".$conf->entity;
+			if ($limitTo == 'active') $sql.= " AND statut = 1";
+		}
 
 		$resql=$this->db->query($sql);
 		if ($resql)

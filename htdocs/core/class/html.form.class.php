@@ -233,6 +233,7 @@ class Form
         if ($type == 'info') 				$img=img_help(0,$alt);
         if ($type == 'help' || $type ==1)	$img=img_help(1,$alt);
         if ($type == 'superadmin') 			$img=img_redstar($alt);
+        if ($type == 'admin')				$img=img_picto($alt,"star");
         // Warnings
         if ($type == 'warning') 			$img=img_warning($alt);
 
