@@ -124,7 +124,7 @@ if (! empty($force_install_message))
 		<td class="label" valign="top">
 		<?php 
 		if ($force_install_noedit) print '<input type="hidden" value="'.$dolibarr_main_document_root.'" name="main_dir">'; 
-		print '<input type="text" size="60" value="'.$dolibarr_main_document_root.'"'.(empty($force_install_noedit)?'':' disabled="true"').' name="main_dir'.$force_install_noedit.'">';
+		print '<input type="text" size="60" value="'.$dolibarr_main_document_root.'"'.(empty($force_install_noedit)?'':' disabled="true"').' name="main_dir'.(empty($force_install_noedit)?'':'_bis').'">';
 		?>
 		</td>
 		<td class="comment"><?php

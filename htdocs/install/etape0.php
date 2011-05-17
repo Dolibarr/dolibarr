@@ -107,7 +107,7 @@ if (empty($_POST["db_user"]))
  */
 if (! $error)
 {
-	$result=include_once($main_dir."/lib/databases/".$_POST["db_type"].".lib.php");
+	$result=@include_once($main_dir."/lib/databases/".$_POST["db_type"].".lib.php");
 	if ($result)
 	{
 		// If we ask database or user creation we need to connect as root
