@@ -77,7 +77,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a,";
 $sql.= " ".MAIN_DB_PREFIX."user as u";
 $sql.= " WHERE a.fk_user_author = u.rowid";
 $sql.= " AND a.entity = ".$conf->entity;
-$sql.= " AND percent = 100";
+//$sql.= " AND percent = 100";
 $sql.= " GROUP BY year, month, df";
 $sql.= " ORDER BY year DESC, month DESC, df DESC";
 $sql.= $db->plimit($limit+1,$offset);
@@ -89,7 +89,7 @@ if ($resql)
 {
 	$num = $db->num_rows($resql);
 
-	print_barre_liste($langs->trans("DoneActions"), $page, "index.php",'',$sortfield,$sortorder,'',$num);
+	print_barre_liste($langs->trans("Actions"), $page, "index.php",'',$sortfield,$sortorder,'',$num);
 
 	if ($mesg) print $mesg.'<br>';
 
