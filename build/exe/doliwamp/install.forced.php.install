@@ -1,4 +1,5 @@
 <?php
+$force_install_noedit=1;
 $force_install_message='KeepDefaultValuesWamp';
 $force_install_main_data_root='WAMPROOT/dolibarr_documents';
 $force_install_type='mysqli';

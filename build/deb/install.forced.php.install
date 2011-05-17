@@ -1,4 +1,5 @@
 <?php
+$force_install_noedit=1;
 $force_install_message='KeepDefaultValuesDeb';
 $force_install_main_data_root='/usr/share/dolibarr/documents';
 $force_install_type='mysqli';
