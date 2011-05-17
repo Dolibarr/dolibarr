@@ -196,7 +196,7 @@ ALTER TABLE llx_element_element ADD INDEX idx_element_element_targetid (targetid
 ALTER  TABLE llx_actioncomm add column fk_user_mod integer after fk_user_author;
 ALTER  TABLE llx_actioncomm add column fk_user_done integer after fk_user_action;
 
-drop table if exists llx_events;
+--drop table if exists llx_events;
 create table llx_events
 (
   rowid          integer AUTO_INCREMENT PRIMARY KEY,
