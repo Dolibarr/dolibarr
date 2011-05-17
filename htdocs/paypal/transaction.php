@@ -174,6 +174,8 @@ dol_htmloutput_errors('',$errors);
 
 print_fiche_titre(' - '.$langs->trans('PaypalTransaction'), '', 'paypal_logo@paypal');
 
+print '<br />';
+
 // Search parameters
 print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';

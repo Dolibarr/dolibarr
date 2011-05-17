@@ -32,6 +32,7 @@ if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
 require('../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
+require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php');
 require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypalfunctions.lib.php");
 
@@ -57,7 +58,7 @@ top_httphead();
 
 dol_syslog(join(',',$_GET));
 
-if (isset($_GET['action']) && ! empty($_GET['action']) && ( (isset($_GET['element']) && ! empty($_GET['element'])) || (isset($_GET['transaction_id']) && ! empty($_GET['transaction_id'])) ) )
+if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transaction_id']) && ! empty($_GET['transaction_id']) )
 {
 	if ($_GET['action'] == 'create')
 	{
@@ -126,6 +127,45 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && ( (isset($_GET['elemen
 				$langs->load("errors");
 				echo $langs->trans($contact->error);
 				echo $langs->trans($soc->error);
+			}
+		}
+		
+		if ($soc->id > 0 && isset($_GET['element']) && ! empty($_GET['element']))
+		{
+			// Parse element/subelement (ex: project_task)
+	        $element = $subelement = $_GET['element'];
+	        if (preg_match('/^([^_]+)_([^_]+)/i',$_GET['element'],$regs))
+	        {
+	            $element = $regs[1];
+	            $subelement = $regs[2];
+	        }
+	        // For compatibility
+            if ($element == 'order') { $element = $subelement = 'commande'; }
+
+            dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
+
+            $classname = ucfirst($subelement);
+            $object = new $classname($db);
+            
+            $object->socid=$soc->id;
+            $object->fetch_thirdparty();
+            
+            $db->begin();
+            
+            $object->date_commande	= dol_now();
+            $object->ref_ext		= $_SESSION[$_GET['transaction_id']]['SHIPTOCITY'];
+            $object->contactid		= $contact->id;
+            
+            $i=0;
+			while (isset($_SESSION[$_GET['transaction_id']]["L_NAME".$i]))
+			{
+				$product = new Product($db);
+				$product->fetch('',$_SESSION[$_GET['transaction_id']]["L_NUMBER".$i]);
+				
+				//$_SESSION[$_GET['transaction_id']]["L_QTY".$i];
+				echo 'ref='.$product->ref.' label='.$product->libelle.'<br>';
+				
+				$i++;
 			}
 		}
 
