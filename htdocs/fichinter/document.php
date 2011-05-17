@@ -4,6 +4,7 @@
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2005      Simon TOSSER          <simon@kornog-computing.com>
+ * Copyright (C) 2011      Juanjo Menent         <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +38,8 @@ $langs->load("other");
 $langs->load("fichinter");
 $langs->load("companies");
 
-$fichinterid = isset($_GET["id"])?$_GET["id"]:'';
+$fichinterid = GETPOST("id");
+$action = GETPOST("action");
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -57,7 +59,7 @@ if (! $sortfield) $sortfield="name";
 
 
 $object = new Fichinter($db);
-$object->fetch($_GET["id"]);
+$object->fetch($fichinterid);
 
 $upload_dir = $conf->ficheinter->dir_output.'/'.dol_sanitizeFileName($object->ref);
 $modulepart='fichinter';
@@ -66,7 +68,7 @@ $modulepart='fichinter';
 /*
  * Action envoie fichier
  */
-if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
+if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
 	require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 
@@ -118,9 +120,9 @@ if ($object->id)
 		echo '<div class="error">'.$error_msg.'</div><br>';
 	}
 
-	if ($_GET["action"] == 'delete')
+	if ($action == 'delete')
 	{
-		$file = $upload_dir . '/' . $_GET['urlfile'];	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+		$file = $upload_dir . '/' . GETPOST("urlfile");	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 		$result=dol_delete_file($file);
 		//if ($result >= 0) $mesg=$langs->trans("FileWasRemoced");
 	}

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +30,8 @@ require_once(DOL_DOCUMENT_ROOT."/lib/fichinter.lib.php");
 
 $langs->load('companies');
 
-$fichinterid = isset($_GET["id"])?$_GET["id"]:'';
+$fichinterid = GETPOST("id");
+$action=GETPOST("action");
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -40,14 +42,14 @@ $result = restrictedArea($user, 'ficheinter', $fichinterid, 'fichinter');
 /*                     Actions                                                */
 /******************************************************************************/
 
-if ($_POST["action"] == 'update_public' && $user->rights->ficheinter->creer)
+if ($action == 'update_public' && $user->rights->ficheinter->creer)
 {
 	$fichinter = new Fichinter($db);
-	$fichinter->fetch($_GET['id']);
+	$fichinter->fetch($fichinterid);
 
 	$db->begin();
 
-	$res=$fichinter->update_note_public($_POST["note_public"],$user);
+	$res=$fichinter->update_note_public(GETPOST("note_public"),$user);
 	if ($res < 0)
 	{
 		$mesg='<div class="error">'.$fichinter->error.'</div>';
@@ -59,14 +61,14 @@ if ($_POST["action"] == 'update_public' && $user->rights->ficheinter->creer)
 	}
 }
 
-if ($_POST['action'] == 'update' && $user->rights->ficheinter->creer)
+if ($action == 'update' && $user->rights->ficheinter->creer)
 {
 	$fichinter = new Fichinter($db);
-	$fichinter->fetch($_GET['id']);
+	$fichinter->fetch($fichinterid);
 
 	$db->begin();
 
-	$res=$fichinter->update_note($_POST["note_private"],$user);
+	$res=$fichinter->update_note(GETPOST("note_private"),$user);
 	if ($res < 0)
 	{
 		$mesg='<div class="error">'.$fichinter->error.'</div>';
@@ -88,12 +90,12 @@ llxHeader();
 
 $html = new Form($db);
 
-if ($_GET['id'])
+if ($fichinterid)
 {
 	if ($mesg) print $mesg;
 
 	$fichinter = new Fichinter($db);
-	if ( $fichinter->fetch($_GET['id']) )
+	if ( $fichinter->fetch($fichinterid) )
 	{
 		$societe = new Societe($db);
 		if ( $societe->fetch($fichinter->socid) )
@@ -111,7 +113,7 @@ if ($_GET['id'])
 			// Note publique
 			print '<tr><td valign="top">'.$langs->trans("NotePublic").' :</td>';
 			print '<td valign="top" colspan="3">';
-			if ($_GET["action"] == 'edit')
+			if ($action == 'edit')
 			{
 				print '<form method="post" action="note.php?id='.$fichinter->id.'">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -131,7 +133,7 @@ if ($_GET['id'])
 			{
 				print '<tr><td valign="top">'.$langs->trans("NotePrivate").' :</td>';
 				print '<td valign="top" colspan="3">';
-				if ($_GET["action"] == 'edit')
+				if ($action == 'edit')
 				{
 					print '<form method="post" action="note.php?id='.$fichinter->id.'">';
 					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -156,7 +158,7 @@ if ($_GET['id'])
 			 */
 
 			print '<div class="tabsAction">';
-			if ($user->rights->ficheinter->creer && $_GET['action'] <> 'edit')
+			if ($user->rights->ficheinter->creer && GETPOST("action") <> 'edit')
 			{
 				print '<a class="butAction" href="note.php?id='.$fichinter->id.'&amp;action=edit">'.$langs->trans('Modify').'</a>';
 			}

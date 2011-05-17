@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005-2009  Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2009-2010  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2011       Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +32,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/fichinter.lib.php");
 
 $langs->load('companies');
 
-$fichinterid = isset($_GET["id"])?$_GET["id"]:'';
+$fichinterid = GETPOST("id");
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -45,7 +46,7 @@ $result = restrictedArea($user, 'ficheinter', $fichinterid, 'fichinter');
 llxHeader();
 
 $fichinter = new Fichinter($db);
-$fichinter->fetch($_GET['id']);
+$fichinter->fetch($fichinterid);
 
 $societe = new Societe($db);
 $societe->fetch($fichinter->socid);

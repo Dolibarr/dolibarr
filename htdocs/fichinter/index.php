@@ -2,6 +2,7 @@
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011 Juanjo Menent		        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,11 +42,11 @@ $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$socid=$_GET["socid"]?$_GET["socid"]:$_POST["socid"];
-$page=$_GET["page"]?$_GET["page"]:$_POST["page"];
+$socid=GETPOST("socid");
+$page=GETPOST("page");
 
 // Security check
-$fichinterid = isset($_GET["id"])?$_GET["id"]:'';
+$fichinterid = GETPOST("id");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'ficheinter', $fichinterid,'fichinter');
 
@@ -58,9 +59,9 @@ $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$search_ref=isset($_GET["search_ref"])?$_GET["search_ref"]:$_POST["search_ref"];
-$search_company=isset($_GET["search_company"])?$_GET["search_company"]:$_POST["search_company"];
-$search_desc=isset($_GET["search_desc"])?$_GET["search_desc"]:$_POST["search_desc"];
+$search_ref=GETPOST("search_ref");
+$search_company=GETPOST("search_company");
+$search_desc=getpost("search_desc");
 
 
 /*
