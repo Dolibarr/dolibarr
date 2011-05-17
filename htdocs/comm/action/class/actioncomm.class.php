@@ -609,7 +609,7 @@ class ActionComm extends CommonObject
 		if ($withpicto)
 		{
             $libelle.=(($this->type_code && $libelle!=$langs->trans("Action".$this->type_code) && $langs->trans("Action".$this->type_code)!="Action".$this->type_code)?' ('.$langs->trans("Action".$this->type_code).')':'');
-		    $result.=$lien.img_object($langs->trans("ShowAction").': '.$libelle,($overwritepicto?$overwritepicto:'task')).$lienfin;
+		    $result.=$lien.img_object($langs->trans("ShowAction").': '.$libelle,($overwritepicto?$overwritepicto:'action')).$lienfin;
 		}
 		if ($withpicto==1) $result.=' ';
 		$result.=$lien.$libelleshort.$lienfin;

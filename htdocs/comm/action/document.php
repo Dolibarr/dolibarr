@@ -138,7 +138,7 @@ if ($objectid > 0)
 		$act->contact=$contact;
 
 		$head=actions_prepare_head($act);
-		dol_fiche_head($head, 'documents', $langs->trans("Action"),0,'task');
+		dol_fiche_head($head, 'documents', $langs->trans("Action"),0,'action');
 
 		// Affichage fiche action en mode visu
 		print '<table class="border" width="100%"';

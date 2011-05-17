@@ -664,7 +664,7 @@ if ($id)
 	 */
 
 	$head=actions_prepare_head($act);
-	dol_fiche_head($head, 'card', $langs->trans("Action"),0,'task');
+	dol_fiche_head($head, 'card', $langs->trans("Action"),0,'action');
 
 	$now=dol_now();
 	$delay_warning=$conf->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;

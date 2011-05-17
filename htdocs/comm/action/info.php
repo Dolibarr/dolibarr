@@ -54,7 +54,7 @@ $act->fetch($_GET["id"]);
 $act->info($_GET["id"]);
 
 $head=actions_prepare_head($act);
-dol_fiche_head($head, 'info', $langs->trans("Action"),0,'task');
+dol_fiche_head($head, 'info', $langs->trans("Action"),0,'action');
 
 
 print '<table width="100%"><tr><td>';

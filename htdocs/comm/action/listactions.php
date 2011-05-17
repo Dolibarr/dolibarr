@@ -189,7 +189,7 @@ if ($resql)
 
     $head = calendars_prepare_head('');
 
-    dol_fiche_head($head, 'card', $langs->trans('Events'), 0, 'action');
+    dol_fiche_head($head, 'card', $langs->trans('Events'), 0, 'list');
     print_actions_filter($form,$canedit,$status,$year,$month,$day,$showborthday,$filtera,$filtert,$filterd,$pid,$socid);
     dol_fiche_end();
 

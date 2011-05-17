@@ -211,6 +211,7 @@ if (empty($action) || $action=='show_month')
     $nav.=" <span id=\"month_name\">".dol_print_date(dol_mktime(0,0,0,$month,1,$year),"%b %Y");
     $nav.=" </span>\n";
     $nav.="<a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;region=".$region.$param."\">".img_next($langs->trans("Next"))."</a>\n";
+    $picto='calendar';
 }
 if ($action=='show_week')
 {
@@ -218,6 +219,7 @@ if ($action=='show_week')
 	$nav.=" <span id=\"month_name\">".dol_print_date(dol_mktime(0,0,0,$month,1,$year),"%Y").", ".$langs->trans("Week")." ".$week;
 	$nav.=" </span>\n";
 	$nav.="<a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;day=".$next_day."&amp;region=".$region.$param."\">".img_next($langs->trans("Next"))."</a>\n";
+	$picto='calendarweek';
 }
 if ($action=='show_day')
 {
@@ -225,6 +227,7 @@ if ($action=='show_day')
     $nav.=" <span id=\"month_name\">".dol_print_date(dol_mktime(0,0,0,$month,$day,$year),"daytextshort");
     $nav.=" </span>\n";
     $nav.="<a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;day=".$next_day."&amp;region=".$region.$param."\">".img_next($langs->trans("Next"))."</a>\n";
+    $picto='calendarday';
 }
 
 // Must be after the nav definition
@@ -238,7 +241,7 @@ $param.='&year='.$year.'&month='.$month.($day?'&day='.$day:'');
 
 $head = calendars_prepare_head('');
 
-dol_fiche_head($head, 'card', $langs->trans('Events'), 0, 'action');
+dol_fiche_head($head, 'card', $langs->trans('Events'), 0, $picto);
 print_actions_filter($form,$canedit,$status,$year,$month,$day,$showborthday,$filtera,$filtert,$filterd,$pid,$socid);
 dol_fiche_end();
 
