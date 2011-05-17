@@ -156,17 +156,27 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
             $object->ref_ext		= $_SESSION[$_GET['transaction_id']]['SHIPTOCITY'];
             $object->contactid		= $contact->id;
             
-            $i=0;
-			while (isset($_SESSION[$_GET['transaction_id']]["L_NAME".$i]))
-			{
-				$product = new Product($db);
-				$product->fetch('',$_SESSION[$_GET['transaction_id']]["L_NUMBER".$i]);
+            $object_id = $object->create($user);
+            if ($object_id > 0)
+            {
+	            $i=0;
+				while (isset($_SESSION[$_GET['transaction_id']]["L_NAME".$i]))
+				{
+					$product = new Product($db);
+					$product->fetch('',$_SESSION[$_GET['transaction_id']]["L_NUMBER".$i]);
+					
+					//$_SESSION[$_GET['transaction_id']]["L_QTY".$i];
+					echo 'ref='.$product->ref.' label='.$product->libelle.'<br>';
+					
+					$i++;
+				}
 				
-				//$_SESSION[$_GET['transaction_id']]["L_QTY".$i];
-				echo 'ref='.$product->ref.' label='.$product->libelle.'<br>';
-				
-				$i++;
-			}
+				$db->commit();
+            }
+            else
+            {
+            	$db->rollback();
+            }
 		}
 
 		echo 'socid='.$soc->id;
