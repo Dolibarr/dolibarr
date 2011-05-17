@@ -128,7 +128,8 @@ class Societe extends CommonObject
     var $default_lang;
 
     var $canvas;
-
+    
+    var $ref_ext;
     var $import_key;
 
     var $logo;
@@ -201,11 +202,12 @@ class Societe extends CommonObject
 
         if ($result >= 0)
         {
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, entity, datec, datea, fk_user_creat, canvas, status)";
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, entity, datec, datea, fk_user_creat, canvas, status, ref_ext)";
             $sql.= " VALUES ('".$this->db->escape($this->name)."', ".$conf->entity.", '".$this->db->idate($now)."', '".$this->db->idate($now)."'";
             $sql.= ", ".($user->id > 0 ? "'".$user->id."'":"null");
             $sql.= ", ".($this->canvas ? "'".$this->canvas."'":"null");
             $sql.= ", ".$this->status;
+            $sql.= ", ".($this->ref_ext ? "'".$this->ref_ext."'":"null");
             $sql.= ")";
 
             dol_syslog("Societe::create sql=".$sql);

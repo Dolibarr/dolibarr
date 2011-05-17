@@ -30,7 +30,8 @@ if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
 
 require('../main.inc.php');
-include_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
+require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
+require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php');
 require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypalfunctions.lib.php");
 
@@ -61,18 +62,82 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && ( (isset($_GET['elemen
 	if ($_GET['action'] == 'create')
 	{
 		$soc = new Societe($db);
-		$socid = $soc->fetchObjectFromImportKey($soc->table_element,$object['PAYERID']);
-		if ($socid < 0)
+		$ret = $soc->fetchObjectFromRefExt($soc->table_element,$_SESSION[$_GET['transaction_id']]['PAYERID']);
+		if ($ret < 0)
 		{
+			// Load object modCodeTiers
+			$module=$conf->global->SOCIETE_CODECLIENT_ADDON;
+			if (! $module) dolibarr_error('',$langs->trans("ErrorModuleThirdPartyCodeInCompanyModuleNotDefined"));
+			if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
+			{
+				$module = substr($module, 0, dol_strlen($module)-4);
+			}
+			require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$module.".php");
+			$modCodeClient = new $module;
+			
 			// Create customer and return rowid
+			$soc->ref_ext			= $_SESSION[$_GET['transaction_id']]['PAYERID'];
+			$soc->name              = empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?trim($_SESSION[$_GET['transaction_id']]['FIRSTNAME'].' '.$_SESSION[$_GET['transaction_id']]['LASTNAME']):trim($_SESSION[$_GET['transaction_id']]['LASTNAME'].' '.$_SESSION[$_GET['transaction_id']]['FIRSTNAME']);
+			$soc->nom_particulier	= $_SESSION[$_GET['transaction_id']]['LASTNAME'];
+			$soc->prenom			= $_SESSION[$_GET['transaction_id']]['FIRSTNAME'];
+			$soc->address			= $_SESSION[$_GET['transaction_id']]['SHIPTOSTREET'];
+			$soc->zip				= $_SESSION[$_GET['transaction_id']]['SHIPTOZIP'];
+			$soc->town				= $_SESSION[$_GET['transaction_id']]['SHIPTOCITY'];
+			//$soc->pays_id			= $_POST["pays_id"];
+			$soc->email				= $_SESSION[$_GET['transaction_id']]['EMAIL'];
+			$soc->code_client		= ($modCodeClient->code_auto ? $modCodeClient->getNextValue($soc,0):'');
+			$soc->tva_assuj			= 1;
+			$soc->client			= 1;
+			$soc->particulier		= 1;
+			
+			$db->begin();
+			$result = $soc->create($user);
+			if ($result >= 0)
+			{
+				if ($soc->particulier)
+				{
+					$contact=new Contact($db);
+					
+					$contact->civilite_id = $soc->civilite_id;
+					$contact->name=$soc->nom_particulier;
+					$contact->firstname=$soc->prenom;
+					$contact->address=$soc->address;
+					$contact->zip=$soc->zip;
+					$contact->cp=$soc->cp;
+					$contact->town=$soc->town;
+					$contact->ville=$soc->ville;
+					$contact->fk_pays=$soc->fk_pays;
+					$contact->socid=$soc->id;
+					$contact->status=1;
+					$contact->email=$soc->email;
+					$contact->priv=0;
+					
+					$result=$contact->create($user);
+				}
+			}
+			
+			if ($result >= 0)
+			{
+				$db->commit();
+			}
+			else
+			{
+				$db->rollback();
+				$langs->load("errors");
+				echo $langs->trans($contact->error);
+				echo $langs->trans($soc->error);
+			}
 		}
+
+		echo 'socid='.$soc->id;
 		
 		// Create element (order or bill)
-		
+		/*
 		foreach ($_SESSION[$_GET['transaction_id']] as $key => $value)
 		{
 			echo $key.': '.$value.'<br />';
 		}
+		*/
 		
 	}
 	else if ($_GET['action'] == 'showdetails')

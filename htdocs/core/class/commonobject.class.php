@@ -547,6 +547,55 @@ class CommonObject
 		$this->$object->fetch($this->origin_id);
 	}
 
+	/**
+	 *    	Load object from import key
+	 *    	@param		table		Table element or element line
+	 *    	@param		key			Import key
+	 *		@return		int			<0 if KO, >0 if OK
+	 */
+	function fetchObjectFromImportKey($table,$key)
+	{
+		global $conf;
+		
+		$result=false;
+		
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$table;
+		$sql.= " WHERE import_key = '".$key."'";
+		$sql.= " AND entity = ".$conf->entity;
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$row = $this->db->fetch_row($resql);
+			$result = $this->fetch($row[0]);
+		}
+		
+		return $result;
+	}
+	
+	/**
+	 *    	Load object from external reference
+	 *    	@param		table		Table element or element line
+	 *    	@param		ref			External reference
+	 *		@return		int			<0 if KO, >0 if OK
+	 */
+	function fetchObjectFromRefExt($table,$ref)
+	{
+		global $conf;
+		
+		$result=false;
+		
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$table;
+		$sql.= " WHERE ref_ext = '".$ref."'";
+		$sql.= " AND entity = ".$conf->entity;
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$row = $this->db->fetch_row($resql);
+			$result = $this->fetch($row[0]);
+		}
+		
+		return $result;
+	}
 
 	/**
 	 *      \brief      Load properties id_previous and id_next
