@@ -200,7 +200,7 @@ if ($canreadperms)
 				print img_picto($langs->trans("GlobalGroup"),'redstar');
 			}
 			print "</td>";
-			print '<td width="80" align="center">'.dol_print_date($db->jdate($obj->datec)).'</td>';
+			print '<td width="80" align="center">'.dol_print_date($db->jdate($obj->datec),'dayhour').'</td>';
 			print "</tr>";
 			$i++;
 		}
