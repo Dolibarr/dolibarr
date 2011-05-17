@@ -135,7 +135,7 @@ llxHeader();
 	});
 </script>
 
-<div id="paypal-details" title="<?php echo $langs->trans('TransactionDetails'); ?>" style="display: none;">
+<div id="paypal-details" title="<?php echo $langs->trans('PaypalTransactionDetails'); ?>" style="display: none;">
 	<div id="paypal_detail_content"></div>
 </div>
 

@@ -3,6 +3,7 @@ CHARSET=UTF-8
 
 PaypalAccount=Paypal account
 PaypalTransaction=Transactions
+PaypalTransactionDetails=Details of the transaction
 PaypalSetup=PayPal module setup
 PaypalDesc=This module offer pages to allow payment on <a href="http://www.paypal.com" target="_blank">PayPal</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
 PaypalOrCBDoPayment=Pay with credit card or Paypal

@@ -64,33 +64,64 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && ( (isset($_GET['nvpStr
 		
 		$soc = new Societe($db);
 		$ret = $soc->fetchObjectFromImportKey($soc->table_element,$object['PAYERID']);
-		echo $ret;
+		//echo $ret;
+		
+		$var=true;
 		
 		echo '<table style="noboardernopading" width="100%">';
-		echo '<tr><td>'.$langs->trans('LastName').': </td><td>'.$object['LASTNAME'].'</td></tr>';
-		echo '<tr><td>'.$langs->trans('FirstName').': </td><td>'.$object['FIRSTNAME'].'</td></tr>';
-		echo '<tr><td>'.$langs->trans('Address').': </td><td>'.$object['SHIPTOSTREET'].'</td></tr>';
-		echo '<tr><td>'.$langs->trans('Zip').' / '.$langs->trans('Town').': </td><td>'.$object['SHIPTOZIP'].' '.$object['SHIPTOCITY'].'</td></tr>';
-		echo '<tr><td>'.$langs->trans('Country').': </td><td>'.$object['SHIPTOCOUNTRYNAME'].'</td></tr>';
-		echo '<tr><td>'.$langs->trans('Email').': </td><td>'.$object['EMAIL'].'</td>';
+		echo '<tr class="liste_titre">';
+		echo '<td colspan="2">'.$langs->trans('CustomerDetails').'</td>';
+		echo '</tr>';
+		
+		$var=!$var;
+		echo '<tr '.$bc[$var].'><td>'.$langs->trans('LastName').': </td><td>'.$object['LASTNAME'].'</td></tr>';
+		$var=!$var;
+		echo '<tr '.$bc[$var].'><td>'.$langs->trans('FirstName').': </td><td>'.$object['FIRSTNAME'].'</td></tr>';
+		$var=!$var;
+		echo '<tr '.$bc[$var].'><td>'.$langs->trans('Address').': </td><td>'.$object['SHIPTOSTREET'].'</td></tr>';
+		$var=!$var;
+		echo '<tr '.$bc[$var].'><td>'.$langs->trans('Zip').' / '.$langs->trans('Town').': </td><td>'.$object['SHIPTOZIP'].' '.$object['SHIPTOCITY'].'</td></tr>';
+		$var=!$var;
+		echo '<tr '.$bc[$var].'><td>'.$langs->trans('Country').': </td><td>'.$object['SHIPTOCOUNTRYNAME'].'</td></tr>';
+		$var=!$var;
+		echo '<tr '.$bc[$var].'><td>'.$langs->trans('Email').': </td><td>'.$object['EMAIL'].'</td>';
+		$var=!$var;
+		echo '<tr '.$bc[$var].'><td>'.$langs->trans('Date').': </td><td>'.dol_print_date(dol_stringtotime($object['ORDERTIME']),'dayhour').'</td>';
+		
 		echo '</table>';
 		
 		$i=0;
 		
+		echo '<table style="noboardernopading" width="100%">';
+		
+		echo '<tr class="liste_titre">';
+		echo '<td>'.$langs->trans('Ref').'</td>';
+		echo '<td>'.$langs->trans('Label').'</td>';
+		echo '<td>'.$langs->trans('Qty').'</td>';
+		echo '</tr>';
+		
 		while (isset($object["L_NAME".$i]))
 		{
-			echo $langs->trans('Ref').': '.$object["L_NUMBER".$i].'<br />';
-			echo $langs->trans('Label').': '.$object["L_NAME".$i].'<br />';
+			$var=!$var;
+			
+			echo '<tr '.$bc[$var].'>';
+			echo '<td>'.$object["L_NUMBER".$i].'</td>';
+			echo '<td>'.$object["L_NAME".$i].'</td>';
+			echo '<td>'.$object["L_QTY".$i].'</td>';
+			echo '</tr>';
 			
 			$i++;
 		}
 		
+		echo '</table>';
+/*		
 		echo '<br />';
 		
 		foreach ($object as $key => $value)
 		{
 			echo $key.': '.$value.'<br />';
 		}
+*/
 	}
 }
 
