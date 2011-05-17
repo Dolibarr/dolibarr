@@ -139,6 +139,7 @@ IfLoginDoesNotExistsCheckCreateUser=Si el login aún no existe, debe seleccionar
 ErrorConnection=El servidor "<b>%s</b>", base de datos "<b>%s</b>", login "<b>%s</b>", o la contraseña de la base de datos pueden ser incorrectos o la versión de PHP muy vieja en comparación con la versión de la base de datos.
 InstallChoiceRecommanded=Opción recomendada para instalar la versión <b>%s</b> sobre su actual versión <b>%s</b>
 InstallChoiceSuggested=<b>Opción sugerida por el instalador</b>.
+MigrateIsDoneStepByStep=La versión de destino (%s) tiene una diferencia de varias versiones, una vez concluida esta migración, el instalador volverá a proponer la siguiente.
 CheckThatDatabasenameIsCorrect=Compruebe que el nombre de la base de datos "<b>%s</b>" es correcto.
 IfAlreadyExistsCheckOption=Si el nombre es correcto y la base de datos no existe, debe seleccionar la opción "Crear la base de datos"
 OpenBaseDir=Parámetro php openbasedir
