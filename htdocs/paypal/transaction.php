@@ -125,7 +125,17 @@ llxHeader();
 					modal: true,
 					width: 500,
 					buttons: {
-						Ok: function() {
+						'<?php echo $langs->transnoentities('Create'); ?>': function() {
+							$.get( "<?php echo DOL_URL_ROOT; ?>/paypal/ajaxtransaction.php", {
+								action: 'create',
+								element: 'order',
+								transaction_id: id_value
+							},
+							function() {
+								$( "div #paypal-details" ).dialog( "close" );
+							});
+						},
+						'<?php echo $langs->transnoentities('Cancel'); ?>': function() {
 							$( this ).dialog( "close" );
 						}
 					}

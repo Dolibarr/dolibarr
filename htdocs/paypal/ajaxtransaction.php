@@ -56,15 +56,32 @@ top_httphead();
 
 dol_syslog(join(',',$_GET));
 
-if (isset($_GET['action']) && ! empty($_GET['action']) && ( (isset($_GET['nvpStr']) && ! empty($_GET['nvpStr'])) || (isset($_GET['transaction_id']) && ! empty($_GET['transaction_id'])) ) )
+if (isset($_GET['action']) && ! empty($_GET['action']) && ( (isset($_GET['element']) && ! empty($_GET['element'])) || (isset($_GET['transaction_id']) && ! empty($_GET['transaction_id'])) ) )
 {
-	if ($_GET['action'] == 'showdetails')
+	if ($_GET['action'] == 'create')
 	{
-		$object = GetTransactionDetails($_GET['transaction_id']);
-		
 		$soc = new Societe($db);
-		$ret = $soc->fetchObjectFromImportKey($soc->table_element,$object['PAYERID']);
-		//echo $ret;
+		$socid = $soc->fetchObjectFromImportKey($soc->table_element,$object['PAYERID']);
+		if ($socid < 0)
+		{
+			// Create customer and return rowid
+		}
+		
+		// Create element (order or bill)
+		
+		foreach ($_SESSION[$_GET['transaction_id']] as $key => $value)
+		{
+			echo $key.': '.$value.'<br />';
+		}
+		
+	}
+	else if ($_GET['action'] == 'showdetails')
+	{
+		// For optimization
+		if (! isset($_SESSION[$_GET['transaction_id']]))
+		{
+			$_SESSION[$_GET['transaction_id']] = GetTransactionDetails($_GET['transaction_id']);
+		}
 		
 		$var=true;
 		
@@ -74,19 +91,19 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && ( (isset($_GET['nvpStr
 		echo '</tr>';
 		
 		$var=!$var;
-		echo '<tr '.$bc[$var].'><td>'.$langs->trans('LastName').': </td><td>'.$object['LASTNAME'].'</td></tr>';
+		echo '<tr '.$bc[$var].'><td>'.$langs->trans('LastName').': </td><td>'.$_SESSION[$_GET['transaction_id']]['LASTNAME'].'</td></tr>';
 		$var=!$var;
-		echo '<tr '.$bc[$var].'><td>'.$langs->trans('FirstName').': </td><td>'.$object['FIRSTNAME'].'</td></tr>';
+		echo '<tr '.$bc[$var].'><td>'.$langs->trans('FirstName').': </td><td>'.$_SESSION[$_GET['transaction_id']]['FIRSTNAME'].'</td></tr>';
 		$var=!$var;
-		echo '<tr '.$bc[$var].'><td>'.$langs->trans('Address').': </td><td>'.$object['SHIPTOSTREET'].'</td></tr>';
+		echo '<tr '.$bc[$var].'><td>'.$langs->trans('Address').': </td><td>'.$_SESSION[$_GET['transaction_id']]['SHIPTOSTREET'].'</td></tr>';
 		$var=!$var;
-		echo '<tr '.$bc[$var].'><td>'.$langs->trans('Zip').' / '.$langs->trans('Town').': </td><td>'.$object['SHIPTOZIP'].' '.$object['SHIPTOCITY'].'</td></tr>';
+		echo '<tr '.$bc[$var].'><td>'.$langs->trans('Zip').' / '.$langs->trans('Town').': </td><td>'.$_SESSION[$_GET['transaction_id']]['SHIPTOZIP'].' '.$_SESSION[$_GET['transaction_id']]['SHIPTOCITY'].'</td></tr>';
 		$var=!$var;
-		echo '<tr '.$bc[$var].'><td>'.$langs->trans('Country').': </td><td>'.$object['SHIPTOCOUNTRYNAME'].'</td></tr>';
+		echo '<tr '.$bc[$var].'><td>'.$langs->trans('Country').': </td><td>'.$_SESSION[$_GET['transaction_id']]['SHIPTOCOUNTRYNAME'].'</td></tr>';
 		$var=!$var;
-		echo '<tr '.$bc[$var].'><td>'.$langs->trans('Email').': </td><td>'.$object['EMAIL'].'</td>';
+		echo '<tr '.$bc[$var].'><td>'.$langs->trans('Email').': </td><td>'.$_SESSION[$_GET['transaction_id']]['EMAIL'].'</td>';
 		$var=!$var;
-		echo '<tr '.$bc[$var].'><td>'.$langs->trans('Date').': </td><td>'.dol_print_date(dol_stringtotime($object['ORDERTIME']),'dayhour').'</td>';
+		echo '<tr '.$bc[$var].'><td>'.$langs->trans('Date').': </td><td>'.dol_print_date(dol_stringtotime($_SESSION[$_GET['transaction_id']]['ORDERTIME']),'dayhour').'</td>';
 		
 		echo '</table>';
 		
@@ -100,14 +117,14 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && ( (isset($_GET['nvpStr
 		echo '<td>'.$langs->trans('Qty').'</td>';
 		echo '</tr>';
 		
-		while (isset($object["L_NAME".$i]))
+		while (isset($_SESSION[$_GET['transaction_id']]["L_NAME".$i]))
 		{
 			$var=!$var;
 			
 			echo '<tr '.$bc[$var].'>';
-			echo '<td>'.$object["L_NUMBER".$i].'</td>';
-			echo '<td>'.$object["L_NAME".$i].'</td>';
-			echo '<td>'.$object["L_QTY".$i].'</td>';
+			echo '<td>'.$_SESSION[$_GET['transaction_id']]["L_NUMBER".$i].'</td>';
+			echo '<td>'.$_SESSION[$_GET['transaction_id']]["L_NAME".$i].'</td>';
+			echo '<td>'.$_SESSION[$_GET['transaction_id']]["L_QTY".$i].'</td>';
 			echo '</tr>';
 			
 			$i++;
@@ -117,7 +134,7 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && ( (isset($_GET['nvpStr
 /*		
 		echo '<br />';
 		
-		foreach ($object as $key => $value)
+		foreach ($_SESSION[$_GET['transaction_id']] as $key => $value)
 		{
 			echo $key.': '.$value.'<br />';
 		}
