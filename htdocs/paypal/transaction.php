@@ -115,7 +115,8 @@ llxHeader();
 			if ($.jnotify) {
 				$.jnotify("<?php echo $langs->trans('PleaseBePatient'); ?>", 2000);
 			}
-			$.get( "<?php echo DOL_URL_ROOT; ?>/paypal/ajaxtransactiondetails.php", {
+			$.get( "<?php echo DOL_URL_ROOT; ?>/paypal/ajaxtransaction.php", {
+				action: 'showdetails',
 				transaction_id: id_value
 			},
 			function(details) {
@@ -146,19 +147,22 @@ if (! empty($nvpStr))
 	$resArray=hash_call("TransactionSearch",$nvpStr);
 	//var_dump($resArray);
 	
-	$reqArray=$_SESSION['nvpReqArray'];
-	
-	$ack = strtoupper($resArray["ACK"]);
-	if($ack!="SUCCESS" && $ack!="SUCCESSWITHWARNING")
+	if (is_array($resArray))
 	{
-		$_SESSION['reshash']=$resArray;
-		$errors = GetApiError();
+		$reqArray=$_SESSION['nvpReqArray'];
+		
+		$ack = strtoupper($resArray["ACK"]);
+		if($ack!="SUCCESS" && $ack!="SUCCESSWITHWARNING")
+		{
+			$_SESSION['reshash']=$resArray;
+			$errors = GetApiError();
+		}
 	}
 }
 
 dol_htmloutput_errors('',$errors);
 
-print_fiche_titre($langs->trans('PaypalTransaction'), '', 'paypal_logo@paypal');
+print_fiche_titre(' - '.$langs->trans('PaypalTransaction'), '', 'paypal_logo@paypal');
 
 // Search parameters
 print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';

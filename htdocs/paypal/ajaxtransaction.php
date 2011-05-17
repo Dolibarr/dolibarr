@@ -1,0 +1,99 @@
+<?php
+/* Copyright (C) 2011 Regis Houssin  <regis@dolibarr.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
+
+/**
+ *       \file       htdocs/paypal/ajaxtransactiondetails.php
+ *       \brief      File to return Ajax response on paypal transaction details
+ *       \version    $Id$
+ */
+
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL',1); // Disables token renewal
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
+if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
+
+require('../main.inc.php');
+include_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
+require_once(DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php');
+require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypalfunctions.lib.php");
+
+$langs->load('main');
+$langs->load('users');
+$langs->load('companies');
+
+
+/*
+ * View
+ */
+
+// Ajout directives pour resoudre bug IE
+//header('Cache-Control: Public, must-revalidate');
+//header('Pragma: public');
+
+//top_htmlhead("", "", 1);  // Replaced with top_httphead. An ajax page does not need html header.
+top_httphead();
+
+//echo '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
+
+//echo '<body class="nocellnopadd">'."\n";
+
+dol_syslog(join(',',$_GET));
+
+if (isset($_GET['action']) && ! empty($_GET['action']) && ( (isset($_GET['nvpStr']) && ! empty($_GET['nvpStr'])) || (isset($_GET['transaction_id']) && ! empty($_GET['transaction_id'])) ) )
+{
+	if ($_GET['action'] == 'showdetails')
+	{
+		$object = GetTransactionDetails($_GET['transaction_id']);
+		
+		$soc = new Societe($db);
+		$ret = $soc->fetchObjectFromImportKey($soc->table_element,$object['PAYERID']);
+		echo $ret;
+		
+		echo '<table style="noboardernopading" width="100%">';
+		echo '<tr><td>'.$langs->trans('LastName').': </td><td>'.$object['LASTNAME'].'</td></tr>';
+		echo '<tr><td>'.$langs->trans('FirstName').': </td><td>'.$object['FIRSTNAME'].'</td></tr>';
+		echo '<tr><td>'.$langs->trans('Address').': </td><td>'.$object['SHIPTOSTREET'].'</td></tr>';
+		echo '<tr><td>'.$langs->trans('Zip').' / '.$langs->trans('Town').': </td><td>'.$object['SHIPTOZIP'].' '.$object['SHIPTOCITY'].'</td></tr>';
+		echo '<tr><td>'.$langs->trans('Country').': </td><td>'.$object['SHIPTOCOUNTRYNAME'].'</td></tr>';
+		echo '<tr><td>'.$langs->trans('Email').': </td><td>'.$object['EMAIL'].'</td>';
+		echo '</table>';
+		
+		$i=0;
+		
+		while (isset($object["L_NAME".$i]))
+		{
+			echo $langs->trans('Ref').': '.$object["L_NUMBER".$i].'<br />';
+			echo $langs->trans('Label').': '.$object["L_NAME".$i].'<br />';
+			
+			$i++;
+		}
+		
+		echo '<br />';
+		
+		foreach ($object as $key => $value)
+		{
+			echo $key.': '.$value.'<br />';
+		}
+	}
+}
+
+//echo "</body>";
+//echo "</html>";
+?>
