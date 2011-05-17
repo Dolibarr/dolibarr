@@ -343,7 +343,7 @@ if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if t
 		</td>
 
 		<td class="label" valign="top"><input type="checkbox"
-			name="db_create_database"
+			id="db_create_database" name="db_create_database"
 			<?php if ($force_install_createdatabase) print ' checked="on"'; ?>></td>
 		<td class="comment"><?php echo $langs->trans("CheckToCreateDatabase"); ?>
 		</td>
@@ -370,7 +370,7 @@ if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if t
 		</td>
 
 		<td class="label" valign="top"><input type="checkbox"
-			name="db_create_user"
+			id="db_create_user" name="db_create_user"
 			<?php if (! empty($force_install_createuser)) print ' checked="on"'; ?>></td>
 		<td class="comment"><?php echo $langs->trans("CheckToCreateUser"); ?>
 		</td>
@@ -387,7 +387,7 @@ if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if t
 
 	<tr>
 		<td class="label" valign="top"><?php echo $langs->trans("Login"); ?></td>
-		<td class="label" valign="top"><input type="text" name="db_user_root"
+		<td class="label" valign="top"><input type="text" name="db_user_root" class="needroot"
 			value="<?php print (! empty($db_user_root))?$db_user_root:$force_install_databaserootlogin; ?>"></td>
 		<td class="label">
 		<div class="comment"><?php echo $langs->trans("DatabaseRootLoginDescription"); ?>
@@ -398,7 +398,7 @@ if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if t
 	<tr>
 		<td class="label" valign="top"><?php echo $langs->trans("Password"); ?>
 		</td>
-		<td class="label" valign="top"><input type="password"
+		<td class="label" valign="top"><input type="password" class="needroot"
 			name="db_pass_root"
 			value="<?php print (! empty($db_pass_root))?$db_pass_root:$force_install_databaserootpass; ?>"></td>
 		<td class="label">
@@ -410,6 +410,27 @@ if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if t
 </table>
 
 <script type="text/javascript" language="javascript">
+jQuery(document).ready(function() {
+	function init_needroot()
+	{
+		/*alert(jQuery("#db_create_database").attr("checked")); */
+		if (jQuery("#db_create_database").attr("checked") || jQuery("#db_create_user").attr("checked"))
+		{ 
+			jQuery(".needroot").removeAttr('disabled');
+		}
+		else
+		{
+			jQuery(".needroot").attr('disabled','disabled');
+		}
+	}
+	init_needroot();
+	jQuery("#db_create_database").click(function() {
+		init_needroot();
+	});
+	jQuery("#db_create_user").click(function() {
+		init_needroot();
+	});
+});
 
 function checkDatabaseName(databasename) {
 	if (databasename.match(/[;\.]/)) { return false; }

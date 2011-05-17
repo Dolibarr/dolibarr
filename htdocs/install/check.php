@@ -334,7 +334,7 @@ else
 		// Array of install choices
 		print '<table width="100%" border="1" cellpadding="2">';
 
-		# Sho first install line
+		# Show first install line
 		print '<tr><td nowrap="nowrap" align="center"><b>'.$langs->trans("FreshInstall").'</b>';
 		print '</td>';
 		print '<td>';
@@ -403,7 +403,12 @@ else
 					{
 						print '<br>';
 						//print $langs->trans("InstallChoiceRecommanded",DOL_VERSION,$conf->global->MAIN_VERSION_LAST_UPGRADE);
-						print '<center><div class="ok">'.$langs->trans("InstallChoiceSuggested").'</div></center>';
+						print '<center><div class="ok">'.$langs->trans("InstallChoiceSuggested").'</div>';
+						if ($count < sizeof($migarray))	// There is other choices after
+						{
+							print $langs->trans("MigrateIsDoneStepByStep",DOL_VERSION);
+						}
+						print '</center>';
 						// <img src="../theme/eldy/img/tick.png" alt="Ok"> ';
 						$foundrecommandedchoice=1;	// To show only once
 					}

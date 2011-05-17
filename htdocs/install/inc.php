@@ -303,6 +303,9 @@ function pHeader($soutitre,$next,$action='set',$param='')
 	print '<head>'."\n";
 	print '<meta http-equiv="content-type" content="text/html; charset='.$conf->file->character_set_client.'">'."\n";
 	print '<link rel="stylesheet" type="text/css" href="./default.css">'."\n";
+	print '<link rel="stylesheet" type="text/css" href="../includes/jquery/css/smoothness/jquery-ui-latest.custom.css" type="text/css">'."\n";
+	print '<script type="text/javascript" src="../includes/jquery/js/jquery-latest.min.js"></script>'."\n";
+	print '<script type="text/javascript" src="../includes/jquery/js/jquery-ui-latest.custom.min.js"></script>'."\n";
 	print '<title>'.$langs->trans("DolibarrSetup").'</title>'."\n";
 	print '</head>'."\n";
 	print '<body>'."\n";
