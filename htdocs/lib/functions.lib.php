@@ -2478,7 +2478,7 @@ function load_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath
 
     $return.= "\n";
     $return.= '<table '.($id?'id="'.$id.'" ':'').'summary="" width="100%" border="0" class="notopnoleftnoright" style="margin-bottom: 2px;"><tr>';
-    if (empty($conf->browser->phone) && $picto && $titre) $return.= '<td class="nobordernopadding" width="40" align="left" valign="middle">'.img_picto('',$picto, 'id="pictotitle"', $pictoisfullpath).'</td>';
+    if (empty($conf->browser->phone) && $picto) $return.= '<td class="nobordernopadding" width="40" align="left" valign="middle">'.img_picto('',$picto, 'id="pictotitle"', $pictoisfullpath).'</td>';
     $return.= '<td class="nobordernopadding" valign="middle">';
     $return.= '<div class="titre">'.$titre.'</div>';
     $return.= '</td>';

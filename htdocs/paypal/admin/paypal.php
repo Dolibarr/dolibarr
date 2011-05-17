@@ -25,6 +25,7 @@
  */
 
 require("../../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypal.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/security.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
@@ -71,11 +72,16 @@ if ($_POST["action"] == 'setvalue' && $user->admin)
 
 $form=new Form($db);
 
-llxHeader();
+llxHeader('',$langs->trans("PaypalSetup"));
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("PaypalSetup"),$linkback,'setup');
+print_fiche_titre(' - '.$langs->trans("ModuleSetup"),$linkback,'paypal_logo@paypal');
+print '<br />';
+
+$head=paypaladmin_prepare_head();
+
+dol_fiche_head($head, 'paypalaccount', $langs->trans("ModuleSetup"));
 
 print $langs->trans("PaypalDesc")."<br>\n";
 

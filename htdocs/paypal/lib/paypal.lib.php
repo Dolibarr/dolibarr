@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,8 +58,6 @@ function llxFooterPaypal()
 	print "</body>\n";
 	print "</html>\n";
 }
-
-
 
 /**
  * Show footer of company in HTML pages
@@ -127,7 +125,29 @@ function html_print_paypal_footer($fromcompany,$langs)
 	print '</font></center>'."\n";
 }
 
+/**
+ *  Define head array for tabs of paypal tools setup pages
+ *  @return			Array of head
+ */
+function paypaladmin_prepare_head()
+{
+	global $langs;
+	
+	$h = 0;
+	$head = array();
 
+	$head[$h][0] = DOL_URL_ROOT."/paypal/admin/paypal.php";
+	$head[$h][1] = $langs->trans("Account");
+	$head[$h][2] = 'paypalaccount';
+	$h++;
+
+    $head[$h][0] = DOL_URL_ROOT."/paypal/admin/import.php";
+    $head[$h][1] = $langs->trans("Import");
+    $head[$h][2] = 'import';
+    $h++;
+
+    return $head;
+}
 
 
 /**
