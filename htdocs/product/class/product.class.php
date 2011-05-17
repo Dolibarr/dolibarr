@@ -2507,6 +2507,7 @@ class Product extends CommonObject
 	 * 		@param		showaction		1=Show icon with action links (resize, delete)
 	 * 		@param		maxheight		Max height of image when size=1
 	 *    	@return     string			Html code to show photo. Number of photos shown is saved in this->nbphoto
+	 *		TODO Move this into html.formproduct.class.php
 	 */
 	function show_photos($sdir,$size=0,$nbmax=0,$nbbyrow=5,$showfilename=0,$showaction=0,$maxheight=120)
 	{
