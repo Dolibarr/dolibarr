@@ -61,7 +61,7 @@ $pagenext = $page + 1;
 
 $search_ref=GETPOST("search_ref");
 $search_company=GETPOST("search_company");
-$search_desc=getpost("search_desc");
+$search_desc=GETPOST("search_desc");
 
 
 /*
