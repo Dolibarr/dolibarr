@@ -49,7 +49,8 @@ For users:
 - New: task #11003: checkbox on checks to deposit
 - New: Numbering module for invoice use same number for invoice 
        and credit note if mask is same.
-- New: Add status into export. Add default language into export.       
+- New: Add status into export. Add default language into export.
+- New: Can remove a project if project has tasks.       
 - Fix: Better Postgresql compatibility.
 
 For developers:

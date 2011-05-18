@@ -27,6 +27,7 @@
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
+require_once(DOL_DOCUMENT_ROOT."/projet/class/task.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/project/modules_project.php");
@@ -364,7 +365,12 @@ else
     // Confirmation delete
     if ($_GET["action"] == 'delete')
     {
-        $ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$project->id,$langs->trans("DeleteAProject"),$langs->trans("ConfirmDeleteAProject"),"confirm_delete",'','',1);
+        $text=$langs->trans("ConfirmDeleteAProject");
+        $task=new Task($db);
+        $taskarray=$task->getTasksArray(0,0,$project->id,0,0);
+        $nboftask=sizeof($taskarray);
+        if ($nboftask) $text.='<br>'.img_warning().' '.$langs->trans("ThisWillAlsoRemoveTasks",$nboftask);
+        $ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$project->id,$langs->trans("DeleteAProject"),$text,"confirm_delete",'','',1);
         if ($ret == 'html') print '<br>';
     }
 

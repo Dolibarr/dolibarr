@@ -281,9 +281,9 @@ class Project extends CommonObject
 	}
 
 	/**
-	 *	\brief		Return list of projects
-	 * 	\param		socid			To filter on a particular third party
-	 * 	\return		array			Liste of projects
+	 *	Return list of projects
+	 * 	@param		socid			To filter on a particular third party
+	 * 	@return		array			Liste of projects
 	 */
 	function liste_array($socid='')
 	{

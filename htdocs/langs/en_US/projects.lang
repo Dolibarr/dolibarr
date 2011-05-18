@@ -83,6 +83,7 @@ NoTasks=No tasks for this project
 LinkedToAnotherCompany=Linked to other third party
 TaskIsNotAffectedToYou=Task not allocated to you
 ErrorTimeSpentIsEmpty=Time spent is empty
+ThisWillAlsoRemoveTasks=This action will also delete all tasks of project (<b>%s</b> tasks at the moment) and all inputs of time spent.
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Project leader
 TypeContact_project_external_PROJECTLEADER=Project leader
