@@ -156,8 +156,14 @@ function print_eldy_menu($db,$atarget,$type_user)
 	}
 
 	// Commercial
-	if ($conf->societe->enabled)
-	{
+	$menuqualified=0;
+    if (! empty($conf->propal->enabled)) $menuqualified++;
+    if (! empty($conf->commande->enabled)) $menuqualified++;
+    if (! empty($conf->fournisseur->enabled)) $menuqualified++;
+    if (! empty($conf->contrat->enabled)) $menuqualified++;
+    if (! empty($conf->ficheinter->enabled)) $menuqualified++;
+    if ($menuqualified)
+    {
 		$langs->load("commercial");
 
 		$classname="";
@@ -1013,7 +1019,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
 
                 $newmenu->add_submenu("/compta/bank/virement.php",$langs->trans("BankTransfers"),1,$user->rights->banque->transfer);
             }
-            
+
             // Paypal
             if ($conf->paypal->enabled)
             {
