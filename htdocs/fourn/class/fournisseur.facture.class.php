@@ -606,10 +606,10 @@ class FactureFournisseur extends Facture
 	}
 
 	/**
-	 *      \brief      Set supplier ref
-	 *      \param      user            User that make change
-	 *      \param      ref_supplier    Supplier ref
-	 *      \return     int             <0 if KO, >0 if OK
+	 *      Set supplier ref
+	 *      @param      user            User that make change
+	 *      @param      ref_supplier    Supplier ref
+	 *      @return     int             <0 if KO, >0 if OK
 	 */
 	function set_ref_supplier($user, $ref_supplier)
 	{
@@ -687,11 +687,11 @@ class FactureFournisseur extends Facture
 
 
 	/**
-	 *      \brief      Tag la facture comme non payee completement + appel trigger BILL_UNPAYED
-	 *				   	Fonction utilisee quand un paiement prelevement est refuse,
-	 * 					ou quand une facture annulee et reouverte.
-	 *      \param      user        Object user that change status
-	 *      \return     int         <0 si ok, >0 si ok
+	 *      Tag la facture comme non payee completement + appel trigger BILL_UNPAYED
+	 *		Fonction utilisee quand un paiement prelevement est refuse,
+	 * 		ou quand une facture annulee et reouverte.
+	 *      @param      user        Object user that change status
+	 *      @return     int         <0 si ok, >0 si ok
 	 */
 	function set_unpaid($user)
 	{
@@ -737,11 +737,12 @@ class FactureFournisseur extends Facture
 	}
 
 	/**
-	 *      Set invoice status as validated
-	 *      @param      user        Object user
-	 *      @return     int         <0 if KO, =0 if nothing to do, >0 if OK
+     *      Tag invoice as validated + call trigger BILL_VALIDATE
+     *      @param      user            Object user that validate
+     *      @param      force_number    Reference to force on invoice
+     *      @return     int             <0 if KO, =0 if nothing to do, >0 if OK
 	 */
-	function validate($user)
+	function validate($user, $force_number='')
 	{
 		global $conf,$langs;
 
@@ -763,7 +764,21 @@ class FactureFournisseur extends Facture
 
 		$this->db->begin();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn";
+        // Define new ref
+        if ($force_number)
+        {
+            $num = $force_number;
+        }
+        else if (preg_match('/^[\(]?PROV/i', $this->ref))
+        {
+            $num = $this->getNextNumRef($this->client);
+        }
+        else
+        {
+            $num = $this->ref;
+        }
+
+        $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn";
 		$sql.= " SET fk_statut = 1, fk_user_valid = ".$user->id;
 		$sql.= " WHERE rowid = ".$this->id;
 
@@ -771,7 +786,7 @@ class FactureFournisseur extends Facture
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			// Si activé on décrémente le produit principal et ses composants à la validation de facture
+			// Si on incrémente le produit principal et ses composants à la validation de facture fournisseur
 			if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL)
 			{
 				require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
@@ -780,10 +795,11 @@ class FactureFournisseur extends Facture
 				{
 					if ($this->lines[$i]->fk_product && $this->lines[$i]->product_type == 0)
 					{
-						$mouvP = new MouvementStock($this->db);
+                        $langs->load("agenda");
+					    $mouvP = new MouvementStock($this->db);
 						// We increase stock for product
 						$entrepot_id = "1"; // TODO ajouter possibilite de choisir l'entrepot
-						$result=$mouvP->reception($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->pu_ht);
+						$result=$mouvP->reception($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->pu_ht, $langs->trans("InvoiceValidatedInDolibarr",$num));
 						if ($result < 0) { $error++; }
 					}
 				}
@@ -820,9 +836,9 @@ class FactureFournisseur extends Facture
 
 
 	/**
-	 *		\brief		Set draft status
-	 *		\param		user		Object user that modify
-	 *		\param		int			<0 if KO, >0 if OK
+	 *		Set draft status
+	 *		@param		user		Object user that modify
+	 *		@param		int			<0 if KO, >0 if OK
 	 */
 	function set_draft($user)
 	{
@@ -845,7 +861,7 @@ class FactureFournisseur extends Facture
 		dol_syslog("FactureFournisseur::set_draft sql=".$sql, LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
-			// Si active on decremente le produit principal et ses composants a la validation de facture
+			// Si on incremente le produit principal et ses composants a la validation de facture fournisseur, on decremente
 			if ($result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL)
 			{
 				require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
@@ -854,10 +870,11 @@ class FactureFournisseur extends Facture
 				{
 					if ($this->lines[$i]->fk_product && $this->lines[$i]->product_type == 0)
 					{
-						$mouvP = new MouvementStock($this->db);
+                        $langs->load("agenda");
+					    $mouvP = new MouvementStock($this->db);
 						// We increase stock for product
 						$entrepot_id = "1"; // TODO ajouter possibilite de choisir l'entrepot
-						$result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->subprice);
+						$result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceBackToDraftInDolibarr",$this->ref));
 					}
 				}
 			}

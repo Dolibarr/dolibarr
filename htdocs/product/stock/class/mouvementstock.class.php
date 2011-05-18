@@ -212,16 +212,16 @@ class MouvementStock
 			// Appel des triggers
 			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 			$interface=new Interfaces($this->db);
-		
+
 			$this->product_id = $fk_product;
 			$this->entrepot_id = $entrepot_id;
 			$this->qty = $qty;
-				
+
 			$result=$interface->run_triggers('STOCK_MOVEMENT',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
 		}
-		
+
 		if (! $error)
 		{
 			$this->db->commit();
@@ -331,8 +331,9 @@ class MouvementStock
 
 
 	/**
-	 *	\brief		Increase stock for product and subproducts
-	 *	\return		int		<0 if KO, >0 if OK
+	 *	Increase stock for product and subproducts
+     *  @param      label       Label of stock movement
+	 *	@return		int		<0 if KO, >0 if OK
 	 */
 	function reception($user, $fk_product, $entrepot_id, $qty, $price=0, $label='')
 	{
@@ -342,7 +343,6 @@ class MouvementStock
 
 	/**
 	 * Return nb of subproducts lines for a product
-	 *
 	 * @param      $id
 	 * @return     int
 	 */

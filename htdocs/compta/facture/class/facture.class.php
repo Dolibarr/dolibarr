@@ -274,7 +274,7 @@ class Facture extends CommonObject
             if (sizeof($this->lines) && is_object($this->lines[0]))
             {
             	$fk_parent_line = 0;
-            	
+
                 dol_syslog("There is ".sizeof($this->lines)." lines that are invoice lines objects");
                 foreach ($this->lines as $i => $val)
                 {
@@ -287,10 +287,10 @@ class Facture extends CommonObject
 						if (($newinvoiceline->product_type != 9 && empty($newinvoiceline->fk_parent_line)) || $newinvoiceline->product_type == 9) {
 							$fk_parent_line = 0;
 						}
-						
+
                     	$newinvoiceline->fk_parent_line=$fk_parent_line;
 						$result=$newinvoiceline->insert();
-                    	
+
                     	// Defined the new fk_parent_line
 						if ($result > 0 && $newinvoiceline->product_type == 9) {
 							$fk_parent_line = $result;
@@ -307,7 +307,7 @@ class Facture extends CommonObject
             else
             {
             	$fk_parent_line = 0;
-            	
+
                 dol_syslog("There is ".sizeof($this->lines)." lines that are array lines");
                 foreach ($this->lines as $i => $val)
                 {
@@ -317,7 +317,7 @@ class Facture extends CommonObject
 						if (($this->lines[$i]->product_type != 9 && empty($this->lines[$i]->fk_parent_line)) || $this->lines[$i]->product_type == 9) {
 							$fk_parent_line = 0;
 						}
-						
+
                         $result = $this->addline(
                         $this->id,
                         $this->lines[$i]->desc,
@@ -349,7 +349,7 @@ class Facture extends CommonObject
                             $this->db->rollback();
                             return -1;
                         }
-                        
+
 	                    // Defined the new fk_parent_line
 						if ($result > 0 && $this->lines[$i]->product_type == 9) {
 							$fk_parent_line = $result;
@@ -514,7 +514,7 @@ class Facture extends CommonObject
         global $conf,$user,$langs;
 
         $error=0;
-        
+
         // Load source object
         $objFrom=new Facture($this->db);
         $objFrom->fetch($fromid);
@@ -1108,7 +1108,7 @@ class Facture extends CommonObject
             $sql.= ' WHERE fk_facture_source = '.$rowid;
             $sql.= ' AND fk_facture_line IS NULL';
             $resql=$this->db->query($sql);
-        	
+
             // If invoice has consumned discounts
             $list_rowid_det=array();
             $sql = 'SELECT fd.rowid FROM '.MAIN_DB_PREFIX.'facturedet as fd WHERE fk_facture = '.$rowid;
@@ -1412,10 +1412,10 @@ class Facture extends CommonObject
     }
 
     /**
-     *      \brief     	Tag la facture comme validee + appel trigger BILL_VALIDATE
-     *      \param     	user            Utilisateur qui valide la facture
-     *      \param     	force_number	Reference a forcer de la facture
-     *	    \return		int				<0 si ko, >0 si ok
+     *      Tag invoice as validated + call trigger BILL_VALIDATE
+     *      @param     	user            Object user that validate
+     *      @param     	force_number	Reference to force on invoice
+     *	    @return		int				<0 if KO, >0 if OK
      */
     function validate($user, $force_number='')
     {
@@ -1493,7 +1493,7 @@ class Facture extends CommonObject
         {
             if (! empty($conf->global->FAC_FORCE_DATE_VALIDATION))	// If option enabled, we force invoice date
             {
-                $this->date=gmmktime();
+                $this->date=dol_now();
                 $this->date_lim_reglement=$this->calculate_date_lim_reglement();
             }
             $num = $this->getNextNumRef($this->client);
@@ -1547,10 +1547,11 @@ class Facture extends CommonObject
                     {
                         if ($this->lines[$i]->fk_product > 0 && $this->lines[$i]->product_type == 0)
                         {
+                            $langs->load("agenda");
                             $mouvP = new MouvementStock($this->db);
                             // We decrease stock for product
                             $entrepot_id = "1"; // TODO ajouter possibilite de choisir l'entrepot
-                            $result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->subprice);
+                            $result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarr",$num));
                             if ($result < 0) { $error++; }
                         }
                     }
@@ -1647,7 +1648,7 @@ class Facture extends CommonObject
         dol_syslog("Facture::set_draft sql=".$sql, LOG_DEBUG);
         if ($this->db->query($sql))
         {
-            // Si active on decremente le produit principal et ses composants a la validation de facture
+            // Si on decremente le produit principal et ses composants a la validation de facture, on réincrement
             if ($result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_BILL)
             {
                 require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
@@ -1656,10 +1657,11 @@ class Facture extends CommonObject
                 {
                     if ($this->lines[$i]->fk_product && $this->lines[$i]->product_type == 0)
                     {
+                        $langs->load("agenda");
                         $mouvP = new MouvementStock($this->db);
                         // We decrease stock for product
                         $entrepot_id = "1"; // TODO ajouter possibilite de choisir l'entrepot
-                        $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->subprice);
+                        $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceBackToDraftInDolibarr",$this->ref));
                     }
                 }
             }
@@ -1825,7 +1827,7 @@ class Facture extends CommonObject
             {
             	// Reorder if child line
 				if (! empty($fk_parent_line)) $this->line_order(true,'DESC');
-				
+
                 // Mise a jour informations denormalisees au niveau de la facture meme
                 $this->id=$facid;	// TODO To move this we must remove parameter facid into this function declaration
                 $result=$this->update_price(1);
@@ -1994,16 +1996,16 @@ class Facture extends CommonObject
             $this->db->rollback();
             return -1;
         }
-        
+
         $line=new FactureLigne($this->db);
-        
+
         // For triggers
         $line->fetch($rowid);
-        
+
         if ($line->delete() > 0)
         {
         	$result=$this->update_price(1);
-        	
+
         	if ($result > 0)
         	{
         		$this->db->commit();
@@ -2442,7 +2444,7 @@ class Facture extends CommonObject
         }
 
         $obj = new $classname();
-        
+
         $numref = "";
         $numref = $obj->getNumRef($soc,$this,$mode);
 
@@ -2623,7 +2625,7 @@ class Facture extends CommonObject
         global $conf;
 
         if (! empty($conf->global->FACTURE_CAN_BE_REMOVED)) return 1;
-        
+
         // on verifie si la facture est en numerotation provisoire
         $facref = substr($this->ref, 1, 4);
 
@@ -3150,7 +3152,7 @@ class FactureLigne
     var $libelle;      		// Product label (deprecated)
     var $product_label;     // Product label
     var $product_desc;  	// Description produit
-    
+
     var $skip_update_total; // Skip update price total for special lines
 
 
@@ -3178,12 +3180,12 @@ class FactureLigne
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet as fd';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON fd.fk_product = p.rowid';
         $sql.= ' WHERE fd.rowid = '.$rowid;
-        
+
         $result = $this->db->query($sql);
         if ($result)
         {
             $objp = $this->db->fetch_object($result);
-            
+
             $this->rowid				= $objp->rowid;
             $this->fk_facture			= $objp->fk_facture;
             $this->fk_parent_line		= $objp->fk_parent_line;
@@ -3457,7 +3459,7 @@ class FactureLigne
             return -2;
         }
     }
-    
+
 	/**
 	 * 	Delete line in database
 	 *	@return	 int  <0 si ko, >0 si ok
@@ -3465,9 +3467,9 @@ class FactureLigne
 	function delete()
 	{
 		global $conf,$langs,$user;
-		
+
 		$this->db->begin();
-		
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet WHERE rowid = ".$this->rowid;
 		dol_syslog("FactureLigne::delete sql=".$sql, LOG_DEBUG);
 		if ($this->db->query($sql) )
@@ -3478,9 +3480,9 @@ class FactureLigne
 			$result = $interface->run_triggers('LINEBILL_DELETE',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
-			
+
 			$this->db->commit();
-			
+
 			return 1;
 		}
 		else
@@ -3500,7 +3502,7 @@ class FactureLigne
     {
         $this->db->begin();
         dol_syslog("FactureLigne::update_total", LOG_DEBUG);
-        
+
         // Clean parameters
 		if (empty($this->total_localtax1)) $this->total_localtax1=0;
 		if (empty($this->total_localtax2)) $this->total_localtax2=0;
@@ -3513,7 +3515,7 @@ class FactureLigne
         $sql.= ",total_localtax2=".price2num($this->total_localtax2)."";
         $sql.= ",total_ttc=".price2num($this->total_ttc)."";
         $sql.= " WHERE rowid = ".$this->rowid;
-        
+
         dol_syslog("PropaleLigne::update_total sql=".$sql, LOG_DEBUG);
 
         $resql=$this->db->query($sql);
