@@ -196,7 +196,13 @@ if ($_GET["id"] || $_GET["ref"])
 		print $product->getLibStatut(2,1);
 		print '</td></tr>';
 
-		// Stock physique
+		// PMP
+		print '<tr><td>'.$langs->trans("AverageUnitPricePMP").'</td>';
+		print '<td>'.price($product->pmp);
+		print '</td>';
+		print '</tr>';
+
+		// Real stock
 		print '<tr><td>'.$langs->trans("PhysicalStock").'</td>';
 		print '<td>'.$product->stock_reel;
 		if ($product->seuil_stock_alerte && ($product->stock_reel < $product->seuil_stock_alerte)) print ' '.img_warning($langs->trans("StockTooLow"));
@@ -458,11 +464,11 @@ if ($resql)
 		print '<tr '.$bc[$var].'>';
 		print '<td>'.$entrepotstatic->getNomUrl(1).'</td>';
 		print '<td align="right">'.$obj->reel.($obj->reel<0?' '.img_warning():'').'</td>';
-		print '<td align="right">'.price2num($obj->pmp,'MU').'</td>';
-		print '<td align="right">'.price(price2num($obj->pmp*$obj->reel,'MT')).'</td>';
+		print '<td align="right">'.price2num(($obj->pmp > 0 ? $obj->pmp : $product->pmp),'MU').'</td>'; // Ditto : Show PMP from movement or from product
+		print '<td align="right">'.price(price2num(($obj->pmp > 0 ? $obj->pmp : $product->pmp)*$obj->reel,'MT')).'</td>'; // Ditto : Show PMP from movement or from product
 		print '</tr>'; ;
 		$total = $total + $obj->reel;
-		$totalvalue = $totalvalue + price2num($obj->pmp*$obj->reel,'MT');
+		$totalvalue = $totalvalue + price2num(($obj->pmp > 0 ? $obj->pmp : $product->pmp)*$obj->reel,'MT'); // Ditto : Show PMP from movement or from product
 		$i++;
 		$var=!$var;
 	}
