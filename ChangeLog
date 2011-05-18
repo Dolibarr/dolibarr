@@ -51,6 +51,7 @@ For users:
        and credit note if mask is same.
 - New: Add status into export. Add default language into export.
 - New: Can remove a project if project has tasks.       
+- New: Can filter on date when building cheque receipts.
 - Fix: Better Postgresql compatibility.
 
 For developers:

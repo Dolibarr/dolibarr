@@ -140,3 +140,5 @@ AllAccounts=All bank/cash accounts
 BackToAccount=Back to account
 ShowAllAccounts=Show for all accounts
 FutureTransaction=Transaction in futur. No way to conciliate.
+SelectChequeTransactionAndGenerate=Select/filter cheques to include into the cheque receipt and click on "Create".
+

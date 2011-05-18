@@ -58,7 +58,8 @@ $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
 $dir=$conf->banque->dir_output.'/bordereau/';
-
+$filterdate=dol_mktime(0,0,0,$_POST['fdmonth'],$_POST['fdday'],$_POST['fdyear']);
+//var_dump($_POST);
 
 /*
  * Actions
@@ -287,11 +288,25 @@ if ($action == 'new')
 	$accounts = array();
 	$lines = array();
 
-	$now=time();
+	$now=dol_now();
 
+	print $langs->trans("SelectChequeTransactionAndGenerate").'<br>';
+	print '<form class="nocellnopadd" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+	print '<input type="hidden" name="action" value="new">';
+    //print '<fieldset><legend>aaa</legend>';
 	print '<table class="border" width="100%">';
-	print '<tr><td width="30%">'.$langs->trans('Date').'</td><td width="70%">'.dol_print_date($now,'day').'</td></tr>';
-	print '</table><br>';
+	//print '<tr><td width="30%">'.$langs->trans('Date').'</td><td width="70%">'.dol_print_date($now,'day').'</td></tr>';
+	// Filter
+	print '<tr><td>'.$langs->trans("Date").'</td><td>';
+	print $html->select_date($filterdate,'fd',0,0,1);
+	print '</td></tr>';
+	print '<tr><td colspan="2" align="center">';
+	print '<input type="submit" class="button" name="filter" value="'.dol_escape_htmltag($langs->trans("ToFilter")).'">';
+	print '</td></tr>';
+	print '</table>';
+    //print '</fieldset>';
+	print '</form>';
+	print '<br>';
 
 	$sql = "SELECT ba.rowid as bid, b.dateo as date, b.rowid as chqid, ";
 	$sql.= " b.amount, ba.label, b.emetteur, b.num_chq, b.banque";
@@ -302,6 +317,7 @@ if ($action == 'new')
 	$sql.= " AND ba.entity = ".$conf->entity;
 	$sql.= " AND b.fk_bordereau = 0";
 	$sql.= " AND b.amount > 0";
+	if ($filterdate) $sql.=" AND b.dateo = '".$db->idate($filterdate)."'";
 	$sql.= $db->order("b.dateo,b.rowid","ASC");
 
 	$resql = $db->query($sql);
@@ -353,7 +369,8 @@ if ($action == 'new')
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td style="min-width: 120px">'.$langs->trans("DateChequeReceived")." &nbsp;</td>\n";
+		print '<td style="min-width: 120px">'.$langs->trans("DateChequeReceived").' ';
+		print "</td>\n";
 		print '<td style="min-width: 120px">'.$langs->trans("ChequeNumber")."</td>\n";
 		print '<td style="min-width: 200px">'.$langs->trans("CheckTransmitter")."</td>\n";
 		print '<td style="min-width: 200px">'.$langs->trans("Bank")."</td>\n";
