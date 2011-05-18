@@ -239,6 +239,7 @@ if (GETPOST("action") == 'confirm_delete' && GETPOST("confirm") == "yes" && $use
     }
     else
     {
+        dol_syslog($project->error,LOG_DEBUG);
         $mesg='<div class="error">'.$langs->trans("CantRemoveProject").'</div>';
     }
 }

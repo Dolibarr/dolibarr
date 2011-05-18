@@ -376,7 +376,7 @@ class Project extends CommonObject
 	 *    Delete a project from database
 	 *    @param       user            User
 	 *    @param       notrigger       Disable triggers
-     *    @return       int             <0 if KO, 0 if not possible, >0 if OK
+     *    @return      int             <0 if KO, 0 if not possible, >0 if OK
 	 */
 	function delete($user, $notrigger=0)
 	{
@@ -400,9 +400,16 @@ class Project extends CommonObject
 			}
 		}
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."projet";
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."projet_task";
+        $sql.= " WHERE fk_projet=".$this->id;
+
+        dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
+        $resql = $this->db->query($sql);
+
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."projet";
 		$sql.= " WHERE rowid=".$this->id;
 
+		dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
