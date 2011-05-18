@@ -3,6 +3,13 @@ $langs->load("main");
 $langs->load("bills");
 $langs->load("cashdesk");
 ?>
+<?php
+/** add Ditto */
+require_once(DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/product/class/product.class.php');
+/** end add Ditto */
+?>
+
 <!--Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
 
 This program is free software; you can redistribute it and/or modify
@@ -34,12 +41,33 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 	if ( $db->num_rows($res) ) {
 
 		$ret=array(); $i=0;
+		
+		/** add Ditto for MultiPrix*/
+		$thirdpartyid = $_SESSION['CASHDESK_ID_THIRDPARTY'];
+		$societe = new Societe($db);
+		$societe->fetch($thirdpartyid);
+		/** end add Ditto */			
+		
 		while ( $tab = $db->fetch_array($res) )
 		{
 			foreach ( $tab as $cle => $valeur )
 			{
 				$ret[$i][$cle] = $valeur;
 			}
+			
+			/** add Ditto for MultiPrix*/
+			if($conf->global->PRODUIT_MULTIPRICES)
+			{
+				$product = new Product($db, $ret[$i]['id']);
+				
+				if(isset($product->multiprices[$societe->price_level]))
+				{
+					$ret[$i]['price'] = $product->multiprices_ttc[$societe->price_level];
+				}
+			}						
+			/** end add Ditto */			
+			
+			
 			$i++;
 		}
 		$tab = $ret;
@@ -62,7 +90,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 				$remise = $tab[$i]['remise'];
 
-				echo ('<p>'.$tab[$i]['qte'].' x '.price2num( $tab[$i]['price'], 'MT').$remise_percent.' = '.price2num($tab[$i]['total_ht'], 'MT').' '.$conf->monnaie.' HT ('.price2num($tab[$i]['total_ttc'], 'MT').' '.$conf->monnaie.' TTC)</p>'."\n");
+				echo ('<p>'.$tab[$i]['qte'].' x '.price2num( $tab[$i]['price'], 'MT').$remise_percent.' = '.price2num($tab[$i]['total_ht'], 'MT').' '.$conf->monnaie.' '.$langs->trans("HT").' ('.price2num($tab[$i]['total_ttc'], 'MT').' '.$conf->monnaie.' '.$langs->trans("TTC").')</p>'."\n");
 			echo ('</div>'."\n");
 
 		}

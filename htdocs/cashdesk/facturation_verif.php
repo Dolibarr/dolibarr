@@ -21,6 +21,11 @@ require('../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php');
 require_once(DOL_DOCUMENT_ROOT.'/cashdesk/class/Facturation.class.php');
 
+/** add Ditto */
+require_once(DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/product/class/product.class.php');
+/** end add Ditto */
+
 $obj_facturation = unserialize ($_SESSION['serObjFacturation']);
 unset ($_SESSION['serObjFacturation']);
 
@@ -59,6 +64,28 @@ switch ( $_GET['action'] )
 						$ret[$key] = $value;
 					}
 
+					/** add Ditto for MultiPrix*/
+					if ($conf->global->PRODUIT_MULTIPRICES)
+					{
+						$thirdpartyid = $_SESSION['CASHDESK_ID_THIRDPARTY'];
+						$productid = $ret['rowid'];
+						
+						$societe = new Societe($db);
+						$societe->fetch($thirdpartyid);
+						
+						$product = new Product($db, $productid);
+						
+						if(isset($product->multiprices[$societe->price_level]))
+						{
+							$ret['price'] = $product->multiprices_ttc[$societe->price_level];
+							// $product->multiprices_min[$societe->price_level];
+							// $product->multiprices_min_ttc[$societe->price_level];
+							// $product->multiprices_base_type[$societe->price_level];
+							$ret['tva_tx'] = $product->multiprices_tva_tx[$societe->price_level];
+						}
+					}						
+					/** end add Ditto */
+					
 					$obj_facturation->id( $ret['rowid'] );
 					$obj_facturation->ref( $ret['ref'] );
 					$obj_facturation->stock( $ret['reel'] );
