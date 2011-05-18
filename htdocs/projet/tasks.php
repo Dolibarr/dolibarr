@@ -55,6 +55,9 @@ if ($_POST["action"] == 'createtask' && $user->rights->projet->creer)
 {
 	$error=0;
 
+	$date_start = dol_mktime(12,0,0,$_POST['dateomonth'],$_POST['dateoday'],$_POST['dateoyear']);
+    $date_end = dol_mktime(12,0,0,$_POST['dateemonth'],$_POST['dateeday'],$_POST['dateeyear']);
+
 	if (empty($_POST["cancel"]))
 	{
 		if (empty($_POST['label']))
@@ -85,8 +88,8 @@ if ($_POST["action"] == 'createtask' && $user->rights->projet->creer)
 			$task->description = $_POST['description'];
 			$task->fk_task_parent = $task_parent;
 			$task->date_c = dol_now();
-			$task->date_start = dol_mktime(12,0,0,$_POST['dateomonth'],$_POST['dateoday'],$_POST['dateoyear']);
-			$task->date_end = dol_mktime(12,0,0,$_POST['dateemonth'],$_POST['dateeday'],$_POST['dateeyear']);
+			$task->date_start = $date_start;
+			$task->date_end = $date_end;
 			$task->progress = $_POST['progress'];
 
 			$taskid = $task->create($user);
@@ -175,12 +178,12 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer && (empty($proje
 
 	// Date start
 	print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-	print $form->select_date('','dateo');
+	print $form->select_date(($date_start?$date_start:''),'dateo',0,0,0,'',1,1);
 	print '</td></tr>';
 
 	// Date end
 	print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-	print $form->select_date(-1,'datee');
+	print $form->select_date(($date_end?$date_end:-1),'datee',0,0,0,'',1,1);
 	print '</td></tr>';
 
 	// Progress
