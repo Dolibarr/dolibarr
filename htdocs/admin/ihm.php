@@ -61,8 +61,8 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 	dolibarr_set_const($db, "MAIN_MULTILANGS",         $_POST["main_multilangs"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_SIZE_LISTE_LIMIT",   $_POST["main_size_liste_limit"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT", $_POST["main_disable_javascript"],'chaine',0,'',$conf->entity);
-	//dolibarr_set_const($db, "MAIN_CONFIRM_AJAX",       $_POST["main_confirm_ajax"],'chaine',0,'',$conf->entity);
-	//dolibarr_set_const($db, "MAIN_POPUP_CALENDAR",     $_POST["main_popup_calendar"],'chaine',0,'',$conf->entity);
+	//dolibarr_set_const($db, "MAIN_CONFIRM_AJAX",       $_POST["MAIN_CONFIRM_AJAX"],'chaine',0,'',$conf->entity);
+	//dolibarr_set_const($db, "MAIN_POPUP_CALENDAR",     $_POST["MAIN_POPUP_CALENDAR"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_USE_PREVIEW_TABS",   $_POST["main_use_preview_tabs"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_START_WEEK",         $_POST["MAIN_START_WEEK"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_SHOW_LOGO",          $_POST["MAIN_SHOW_LOGO"],'chaine',0,'',$conf->entity);
@@ -193,7 +193,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')	// Edit
     // Use Ajax popups for confirmation
 	/*$var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ConfirmAjax").'</td><td>';
-    print $html->selectyesno('main_confirm_ajax',isset($conf->global->MAIN_CONFIRM_AJAX)?$conf->global->MAIN_CONFIRM_AJAX:0,1);
+    print $html->selectyesno('MAIN_CONFIRM_AJAX',isset($conf->global->MAIN_CONFIRM_AJAX)?$conf->global->MAIN_CONFIRM_AJAX:0,1);
     print ' ('.$langs->trans("AvailableOnlyIfJavascriptAndAjaxNotDisabled").')';
     print '</td>';
 	print '<td width="20">';
@@ -211,7 +211,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')	// Edit
 		//'eldy'=>$langs->trans("Yes").' (style eldy)',
 		//'andre'=>$langs->trans("Yes").' (style andre)'
 		);
-    print $html->selectarray('main_popup_calendar',$liste_popup_calendar,$conf->global->MAIN_POPUP_CALENDAR);
+    print $html->selectarray('MAIN_POPUP_CALENDAR',$liste_popup_calendar,$conf->global->MAIN_POPUP_CALENDAR);
     print ' ('.$langs->trans("AvailableOnlyIfJavascriptNotDisabled").')';
     print '</td>';
 	print '<td width="20">&nbsp;</td>';

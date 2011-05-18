@@ -347,7 +347,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')
 {
 	$product = new Product($db);
 	$product->fetch($id);
-	
+
 	if ( ($product->type == 0 && $user->rights->produit->supprimer)	|| ($product->type == 1 && $user->rights->service->supprimer) )
 	{
 		$result = $product->delete($id);
@@ -1033,7 +1033,7 @@ if ($id || $ref)
 		dol_fiche_head($head, 'card', $titre, 0, $picto);
 
 		// Confirm delete product
-		if ($action == 'delete' || ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX))
+		if ($action == 'delete' || $conf->use_javascript_ajax)
 		{
 			$ret=$html->form_confirm("fiche.php?id=".$product->id,$langs->trans("DeleteProduct"),$langs->trans("ConfirmDeleteProduct"),"confirm_delete",'',0,"action-delete");
 			if ($ret == 'html') print '<br>';
@@ -1197,7 +1197,7 @@ else if ($action != 'create')
 
 
 // Clone confirmation
-if ($action == 'clone' || ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX) )
+if ($action == 'clone' || $conf->use_javascript_ajax)
 {
 	// Create an array for form
 	$formquestion=array(
@@ -1227,7 +1227,7 @@ if ($action == '')
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$product->id.'">'.$langs->trans("Modify").'</a>';
 
 		if ($product->no_button_copy <> 1) {
-			if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX) {
+			if ($conf->use_javascript_ajax) {
 				print '<span id="action-clone" class="butAction">'.$langs->trans('ToClone').'</span>'."\n";
 			} else {
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=clone&amp;id='.$product->id.'">'.$langs->trans("ToClone").'</a>';
@@ -1241,7 +1241,7 @@ if ($action == '')
 	{
 		if (! $product_is_used && $product->no_button_delete <> 1)
 		{
-			if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
+			if ($conf->use_javascript_ajax)
 			{
 				print '<span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span>'."\n";
 			}

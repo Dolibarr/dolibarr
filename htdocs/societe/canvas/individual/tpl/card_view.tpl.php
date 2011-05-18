@@ -179,7 +179,7 @@
 <?php } ?>
 
 <?php if ($user->rights->societe->supprimer) { ?>
-	<?php if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX) { ?>
+	<?php if ($conf->use_javascript_ajax) { ?>
 		<span id="action-delete" class="butActionDelete"><?php echo $langs->trans('Delete'); ?></span>
 	<?php }	else { ?>
 		<a class="butActionDelete" href="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&amp;action=delete&amp;canvas='.$canvas; ?>"><?php echo $langs->trans('Delete'); ?></a>

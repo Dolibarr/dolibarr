@@ -1328,7 +1328,7 @@ else
 
 
 		// Confirm delete third party
-		if ($action == 'delete' || ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX))
+		if ($action == 'delete' || $conf->use_javascript_ajax)
 		{
 			$html = new Form($db);
 			$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?socid=".$soc->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete",'',0,"action-delete");
@@ -1675,7 +1675,7 @@ else
 		}
 
 		print '</table>';
-		
+
 		print "</div>\n";
 
 
@@ -1683,7 +1683,7 @@ else
 		 *  Actions
 		 */
 		print '<div class="tabsAction">'."\n";
-		
+
 		if ($user->rights->societe->creer)
 		{
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$soc->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>'."\n";
@@ -1693,15 +1693,15 @@ else
 		{
 			print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$soc->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>'."\n";
 		}
-		
+
 		if ($conf->projet->enabled && $user->rights->projet->creer)
 		{
 			print '<a class="butAction" href="'.DOL_URL_ROOT.'/projet/fiche.php?socid='.$socid.'&action=create">'.$langs->trans("AddProject").'</a>'."\n";
 		}
-		
+
 		if ($user->rights->societe->supprimer)
 		{
-			if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
+			if ($conf->use_javascript_ajax)
 			{
 				print '<span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span>'."\n";
 			}
@@ -1710,10 +1710,10 @@ else
 				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$soc->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>'."\n";
 			}
 		}
-		
+
 		print '</div>'."\n";
 		print '<br>';
-		
+
 		print '<table width="100%"><tr><td valign="top" width="50%">';
 		print '<a name="builddoc"></a>'; // ancre
 

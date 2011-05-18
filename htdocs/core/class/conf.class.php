@@ -314,7 +314,6 @@ class Conf
 		if (! $this->use_javascript_ajax)
 		{
 			$this->global->PRODUIT_USE_SEARCH_TO_SELECT=0;
-			$this->global->MAIN_CONFIRM_AJAX=0;
 		}
 
 		// conf->monnaie

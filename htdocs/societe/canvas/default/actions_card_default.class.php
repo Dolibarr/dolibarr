@@ -149,7 +149,7 @@ class ActionsCardDefault extends ActionsCardCommon
 		else
 		{
 			// Confirm delete third party
-			if ($_GET["action"] == 'delete' || ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX))
+			if ($_GET["action"] == 'delete' || $conf->use_javascript_ajax)
 			{
 				$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$this->object->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete",'',0,"1,action-delete");
 			}

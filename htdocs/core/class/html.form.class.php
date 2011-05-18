@@ -2037,7 +2037,7 @@ class Form
 
         $formconfirm.= "\n<!-- begin form_confirm -->\n";
 
-        if ($useajax && $conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
+        if ($useajax && $conf->use_javascript_ajax)
         {
         	$autoOpen=true;
         	$dialogconfirm='dialog-confirm';

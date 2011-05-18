@@ -42,6 +42,7 @@ DELETE FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_MENU_BARRELEFT';
 DELETE FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_MENUFRONT_BARRELEFT';
 
 DELETE FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_POPUP_CALENDAR' and value in ('1','eldy');
+DELETE FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_CONFIRM_AJAX';
 
 ALTER TABLE llx_facture_fourn ADD COLUMN ref_ext varchar(30) AFTER entity;
 ALTER TABLE llx_commande_fournisseur ADD COLUMN ref_ext varchar(30) AFTER entity;
