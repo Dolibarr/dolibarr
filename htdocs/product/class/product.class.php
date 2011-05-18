@@ -77,7 +77,7 @@ class Product extends CommonObject
 
 	//! Stock
 	var $stock_reel;
-	//! Stock value (PMP)
+	//! Average price value for product entry into stock (PMP)
 	var $pmp;
 
 	var $seuil_stock_alerte;
@@ -572,7 +572,7 @@ class Product extends CommonObject
 	function delete($id)
 	{
 		global $conf,$user,$langs;
-		
+
 		$error=0;
 
 		if ($user->rights->produit->supprimer)
@@ -2337,8 +2337,8 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    \brief      Load information about stock of a product into stock_warehouse[] and stock_reel
-	 *    \return     int             < 0 si erreur, > 0 si ok
+	 *    Load information about stock of a product into stock_warehouse[] and stock_reel
+	 *    @return     int             < 0 si erreur, > 0 si ok
 	 */
 	function load_stock()
 	{
@@ -2364,12 +2364,6 @@ class Product extends CommonObject
 					$this->stock_reel+=$row->reel;
 					$i++;
 				}
-
-				$this->no_stock = 0;
-			}
-			else
-			{
-				$this->no_stock = 1;
 			}
 			$this->db->free($result);
 			return 1;
