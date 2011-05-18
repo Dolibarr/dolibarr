@@ -2224,10 +2224,10 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Return label of status of object
-	 *    	\param      mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 *      \param      type        0=Shell, 1=Buy
-	 *    	\return     string      Label of status
+	 *    	Return label of status of object
+	 *    	@param      mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *      @param      type        0=Shell, 1=Buy
+	 *    	@return     string      Label of status
 	 */
 	function getLibStatut($mode=0, $type=0)
 	{
@@ -2238,11 +2238,11 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *     \brief      Return label of a given status
-	 *     \param      status      Statut
-	 *     \param      mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 *     \param      type        0=Status "to sell", 1=Status "to buy"
-	 *     \return     string      Label of status
+	 *     Return label of a given status
+	 *     @param      status      Statut
+	 *     @param      mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *     @param      type        0=Status "to sell", 1=Status "to buy"
+	 *     @return     string      Label of status
 	 */
 	function LibStatut($status,$mode=0,$type=0)
 	{

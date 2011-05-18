@@ -369,8 +369,7 @@ class Entrepot extends CommonObject
 			$obj = $this->db->fetch_object($result);
 			$ret['nb']=$obj->nb;
 			$ret['value']=$obj->value;
-
-			$this->db->free();
+			$this->db->free($result);
 		}
 		else
 		{
@@ -382,9 +381,10 @@ class Entrepot extends CommonObject
 	}
 
 	/**
-	 *    \brief      Retourne le libell� du statut d'un entrepot (ouvert, ferme)
-	 *    \param      mode          0=libell� long, 1=libell� court, 2=Picto + Libell� court, 3=Picto, 4=Picto + Libell� long
-	 *    \return     string        Libelle
+	 *    	Return label of status of object
+	 *    	@param      mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *      @param      type        0=Closed, 1=Opened
+	 *    	@return     string      Label of status
 	 */
 	function getLibStatut($mode=0)
 	{
@@ -392,10 +392,11 @@ class Entrepot extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Renvoi le libell� d'un statut donn�
-	 *    	\param      statut        	Id statut
-	 *    	\param      mode          	0=libell� long, 1=libell� court, 2=Picto + Libell� court, 3=Picto, 4=Picto + Libell� long, 5=Libell� court + Picto
-	 *    	\return     string        	Libell� du statut
+	 *     Return label of a given status
+	 *     @param      status      Statut
+	 *     @param      mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *     @param      type        0=Status "closed", 1=Status "opened"
+	 *     @return     string      Label of status
 	 */
 	function LibStatut($statut,$mode=0)
 	{
