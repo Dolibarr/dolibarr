@@ -34,14 +34,14 @@
  * @param 		$year
  * @param 		$month
  * @param 		$day
- * @param 		$showborthday
+ * @param 		$showbirthday
  * @param 		$filtera
  * @param 		$filtert
  * @param 		$filterd
  * @param 		$pid
  * @param 		$socid
  */
-function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showborthday,$filtera,$filtert,$filterd,$pid,$socid)
+function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirthday,$filtera,$filtert,$filterd,$pid,$socid)
 {
 	global $conf,$langs;
 

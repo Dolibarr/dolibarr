@@ -242,7 +242,7 @@ $param.='&year='.$year.'&month='.$month.($day?'&day='.$day:'');
 $head = calendars_prepare_head('');
 
 dol_fiche_head($head, 'card', $langs->trans('Events'), 0, $picto);
-print_actions_filter($form,$canedit,$status,$year,$month,$day,$showborthday,$filtera,$filtert,$filterd,$pid,$socid);
+print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirthday,$filtera,$filtert,$filterd,$pid,$socid);
 dol_fiche_end();
 
 // Add link to show birthdays
