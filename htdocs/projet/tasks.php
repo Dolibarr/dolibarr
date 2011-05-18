@@ -46,6 +46,9 @@ $userAccess=0;
 $langs->load("users");
 $langs->load("projects");
 
+$progress=GETPOST('progress');
+$description=GETPOST('description');
+
 
 /*
  * Actions
@@ -188,13 +191,13 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer && (empty($proje
 
 	// Progress
 	print '<tr><td>'.$langs->trans("Progress").'</td><td colspan="3">';
-	print $formother->select_percent($task->progress,'progress');
+	print $formother->select_percent($progress,'progress');
 	print '</td></tr>';
 
 	// Description
 	print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
 	print '<td>';
-	print '<textarea name="description" wrap="soft" cols="80" rows="'.ROWS_3.'"></textarea>';
+	print '<textarea name="description" wrap="soft" cols="80" rows="'.ROWS_3.'">'.$description.'</textarea>';
 	print '</td></tr>';
 
 	print '<tr><td colspan="2" align="center">';
