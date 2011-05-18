@@ -348,7 +348,7 @@ else
 			$totalunit=0;
 			$totalvalue=0;
 
-			$sql = "SELECT p.rowid as rowid, p.ref, p.label as produit, p.fk_product_type as type,";
+			$sql = "SELECT p.rowid as rowid, p.ref, p.label as produit, p.fk_product_type as type, p.pmp as ppmp,";
 			$sql.= " ps.pmp, ps.reel as value";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product_stock ps, ".MAIN_DB_PREFIX."product p";
 			$sql.= " WHERE ps.fk_product = p.rowid";
@@ -395,7 +395,7 @@ else
 
 					$var=!$var;
 					//print '<td>'.dol_print_date($objp->datem).'</td>';
-					print "<tr $bc[$var]>";
+					print "<tr ".$bc[$var].">";
 					print "<td>";
 					$productstatic->id=$objp->rowid;
 					$productstatic->ref=$objp->ref;
@@ -434,7 +434,7 @@ else
 				print '<tr class="liste_total"><td class="liste_total" colspan="2">'.$langs->trans("Total").'</td>';
 				print '<td class="liste_total" align="right">'.$totalunit.'</td>';
 				print '<td class="liste_total">&nbsp;</td>';
-				print '<td class="liste_total" align="right">'.$totalvalue.'</td>';
+				print '<td class="liste_total" align="right">'.price(price2num($totalvalue,'MT')).'</td>';
 				print '<td class="liste_total">&nbsp;</td>';
 				print '<td class="liste_total">&nbsp;</td>';
 				print '</tr>';
