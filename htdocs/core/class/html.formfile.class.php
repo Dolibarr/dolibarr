@@ -174,6 +174,8 @@ class FormFile
 		if ($genallowed)
 		{
 			$modellist=array();
+			$cgvlist=array();
+			
 			if ($modulepart == 'company')
 			{
 				$showempty=1;
@@ -243,6 +245,17 @@ class FormFile
 					include_once(DOL_DOCUMENT_ROOT.'/includes/modules/facture/modules_facture.php');
 					$model=new ModelePDFFactures();
 					$modellist=$model->liste_modeles($this->db);
+
+					// This is to allow to join external files to invoices
+					if (! empty($conf->concatpdf->enabled))
+					{
+					$filescgv=glob($conf->concatpdf->dir_output."/invoices/*.pdf");
+					if ($filescgv) {
+					    foreach ($filescgv as $cgvfilename) {
+					        $cgvlist[] = basename($cgvfilename, ".pdf");
+					    }
+					}
+					}
 				}
 			}
 			elseif ($modulepart == 'project')
@@ -336,6 +349,10 @@ class FormFile
 				print '<td align="center">';
 				print $langs->trans('Model').' ';
 				print $html->selectarray('model',$modellist,$modelselected,$showempty,0,0);
+			    if (sizeof($cgvlist) > 0) 
+			    {
+			        print $html->selectarray('cgv',$cgvlist,"-1",1,0,1);
+			    }
 				print '</td>';
 			}
 			else
