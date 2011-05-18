@@ -34,6 +34,7 @@ require_once(DOL_DOCUMENT_ROOT."/comm/action/class/cactioncomm.class.php");
 require_once(DOL_DOCUMENT_ROOT."/comm/action/class/actioncomm.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
+if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
 
 $langs->load("companies");
 $langs->load("commercial");
