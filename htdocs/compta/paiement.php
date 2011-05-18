@@ -61,64 +61,64 @@ if ($user->societe_id > 0)
  */
 if ($_POST['action'] == 'add_paiement' || ($_POST['action'] == 'confirm_paiement' && $_POST['confirm']=='yes'))
 {
-	$error = 0;
+    $error = 0;
 
-	$datepaye = dol_mktime(12, 0 , 0,
-	$_POST['remonth'],
-	$_POST['reday'],
-	$_POST['reyear']);
-	$paiement_id = 0;
+    $datepaye = dol_mktime(12, 0 , 0,
+    $_POST['remonth'],
+    $_POST['reday'],
+    $_POST['reyear']);
+    $paiement_id = 0;
 
-	// Verifie si des paiements sont superieurs au montant facture
-	foreach ($_POST as $key => $value)
-	{
-		if (substr($key,0,7) == 'amount_')
-		{
-			$cursorfacid = substr($key,7);
-			$amounts[$cursorfacid] = price2num($_POST[$key]);
-			$totalpaiement = $totalpaiement + $amounts[$cursorfacid];
-			$tmpfacture=new Facture($db);
-			$tmpfacture->fetch($cursorfacid);
-			$amountsresttopay[$cursorfacid]=price2num($tmpfacture->total_ttc-$tmpfacture->getSommePaiement());
-			if ($amounts[$cursorfacid] && $amounts[$cursorfacid] > $amountsresttopay[$cursorfacid])
-			{
-				$addwarning=1;
-				$formquestion['text'] = img_warning($langs->trans("PaymentHigherThanReminderToPay")).' '.$langs->trans("HelpPaymentHigherThanReminderToPay");
-			}
+    // Verifie si des paiements sont superieurs au montant facture
+    foreach ($_POST as $key => $value)
+    {
+        if (substr($key,0,7) == 'amount_')
+        {
+            $cursorfacid = substr($key,7);
+            $amounts[$cursorfacid] = price2num($_POST[$key]);
+            $totalpaiement = $totalpaiement + $amounts[$cursorfacid];
+            $tmpfacture=new Facture($db);
+            $tmpfacture->fetch($cursorfacid);
+            $amountsresttopay[$cursorfacid]=price2num($tmpfacture->total_ttc-$tmpfacture->getSommePaiement());
+            if ($amounts[$cursorfacid] && $amounts[$cursorfacid] > $amountsresttopay[$cursorfacid])
+            {
+                $addwarning=1;
+                $formquestion['text'] = img_warning($langs->trans("PaymentHigherThanReminderToPay")).' '.$langs->trans("HelpPaymentHigherThanReminderToPay");
+            }
 
-			$formquestion[$i++]=array('type' => 'hidden','name' => $key,  'value' => $_POST[$key]);
-		}
-	}
+            $formquestion[$i++]=array('type' => 'hidden','name' => $key,  'value' => $_POST[$key]);
+        }
+    }
 
-	// Check parameters
-	if (! GETPOST('paiementcode'))
-	{
-		$fiche_erreur_message = '<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('PaymentMode')).'</div>';
-		$error++;
-	}
+    // Check parameters
+    if (! GETPOST('paiementcode'))
+    {
+        $fiche_erreur_message = '<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('PaymentMode')).'</div>';
+        $error++;
+    }
 
-	if ($conf->banque->enabled)
-	{
-		// Si module bank actif, un compte est obligatoire lors de la saisie
-		// d'un paiement
-		if (! $_POST['accountid'])
-		{
-			$fiche_erreur_message = '<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('AccountToCredit')).'</div>';
-			$error++;
-		}
-	}
+    if ($conf->banque->enabled)
+    {
+        // Si module bank actif, un compte est obligatoire lors de la saisie
+        // d'un paiement
+        if (! $_POST['accountid'])
+        {
+            $fiche_erreur_message = '<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('AccountToCredit')).'</div>';
+            $error++;
+        }
+    }
 
-	if ($totalpaiement == 0)
-	{
-		$fiche_erreur_message = '<div class="error">'.$langs->transnoentities('ErrorFieldRequired',$langs->trans('PaymentAmount')).'</div>';
-		$error++;
-	}
+    if ($totalpaiement == 0)
+    {
+        $fiche_erreur_message = '<div class="error">'.$langs->transnoentities('ErrorFieldRequired',$langs->trans('PaymentAmount')).'</div>';
+        $error++;
+    }
 
-	if (empty($datepaye))
-	{
-		$fiche_erreur_message = '<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('Date')).'</div>';
-		$error++;
-	}
+    if (empty($datepaye))
+    {
+        $fiche_erreur_message = '<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('Date')).'</div>';
+        $error++;
+    }
 }
 
 /*
@@ -126,12 +126,12 @@ if ($_POST['action'] == 'add_paiement' || ($_POST['action'] == 'confirm_paiement
  */
 if ($_POST['action'] == 'add_paiement')
 {
-	if ($error)
-	{
-		$_POST['action']='';
-		$_GET['action'] = 'create';
-	}
-	// Le reste propre a cette action s'affiche en bas de page.
+    if ($error)
+    {
+        $_POST['action']='';
+        $_GET['action'] = 'create';
+    }
+    // Le reste propre a cette action s'affiche en bas de page.
 }
 
 /*
@@ -141,45 +141,45 @@ if ($_POST['action'] == 'confirm_paiement' && $_POST['confirm'] == 'yes')
 {
     $error=0;
 
-	$datepaye = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+    $datepaye = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 
-	$db->begin();
+    $db->begin();
 
-	// Creation of payment line
-	$paiement = new Paiement($db);
-	$paiement->datepaye     = $datepaye;
-	$paiement->amounts      = $amounts;   // Array with all payments dispatching
-	$paiement->paiementid   = dol_getIdFromCode($db,$_POST['paiementcode'],'c_paiement');
-	$paiement->num_paiement = $_POST['num_paiement'];
-	$paiement->note         = $_POST['comment'];
+    // Creation of payment line
+    $paiement = new Paiement($db);
+    $paiement->datepaye     = $datepaye;
+    $paiement->amounts      = $amounts;   // Array with all payments dispatching
+    $paiement->paiementid   = dol_getIdFromCode($db,$_POST['paiementcode'],'c_paiement');
+    $paiement->num_paiement = $_POST['num_paiement'];
+    $paiement->note         = $_POST['comment'];
 
-	if (! $error)
-	{
-		$paiement_id = $paiement->create($user,(GETPOST('closepaidinvoices')=='on'?1:0));
-		if ($paiement_id < 0)
-		{
-		    $errmsg=$paiement->error;
-		    $error++;
-		}
-	}
+    if (! $error)
+    {
+        $paiement_id = $paiement->create($user,(GETPOST('closepaidinvoices')=='on'?1:0));
+        if ($paiement_id < 0)
+        {
+            $errmsg=$paiement->error;
+            $error++;
+        }
+    }
 
-	if (! $error)
-	{
-	    $result=$paiement->addPaymentToBank($user,'payment','(CustomerInvoicePayment)',$_POST['accountid'],$_POST['chqemetteur'],$_POST['chqbank']);
+    if (! $error)
+    {
+        $result=$paiement->addPaymentToBank($user,'payment','(CustomerInvoicePayment)',$_POST['accountid'],$_POST['chqemetteur'],$_POST['chqbank']);
         if ($result < 0)
         {
             $errmsg=$paiement->error;
             $error++;
         }
-	}
+    }
 
-	if (! $error)
-	{
-		$db->commit();
+    if (! $error)
+    {
+        $db->commit();
 
-		// If payment dispatching on more than one invoice, we keep on summary page, otherwise go on invoice card
+        // If payment dispatching on more than one invoice, we keep on summary page, otherwise go on invoice card
         $invoiceid=0;
-		foreach ($paiement->amounts as $key => $amount)
+        foreach ($paiement->amounts as $key => $amount)
         {
             $facid = $key;
             if (is_numeric($amount) && $amount <> 0)
@@ -188,15 +188,15 @@ if ($_POST['action'] == 'confirm_paiement' && $_POST['confirm'] == 'yes')
                 else $invoiceid=$facid;
             }
         }
-		if ($invoiceid > 0) $loc = DOL_URL_ROOT.'/compta/facture.php?facid='.$invoiceid;
-		else $loc = DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$paiement_id;
-		Header('Location: '.$loc);
-		exit;
-	}
-	else
-	{
-		$db->rollback();
-	}
+        if ($invoiceid > 0) $loc = DOL_URL_ROOT.'/compta/facture.php?facid='.$invoiceid;
+        else $loc = DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$paiement_id;
+        Header('Location: '.$loc);
+        exit;
+    }
+    else
+    {
+        $db->rollback();
+    }
 }
 
 
@@ -211,43 +211,43 @@ $html=new Form($db);
 
 if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_POST['action'] == 'add_paiement')
 {
-	$facture = new Facture($db);
-	$result=$facture->fetch($facid);
+    $facture = new Facture($db);
+    $result=$facture->fetch($facid);
 
-	if ($result >= 0)
-	{
-		$facture->fetch_thirdparty();
+    if ($result >= 0)
+    {
+        $facture->fetch_thirdparty();
 
-		$title='';
-		if ($facture->type != 2) $title.=$langs->trans("EnterPaymentReceivedFromCustomer");
-		if ($facture->type == 2) $title.=$langs->trans("EnterPaymentDueToCustomer");
-		print_fiche_titre($title);
+        $title='';
+        if ($facture->type != 2) $title.=$langs->trans("EnterPaymentReceivedFromCustomer");
+        if ($facture->type == 2) $title.=$langs->trans("EnterPaymentDueToCustomer");
+        print_fiche_titre($title);
 
-		if ($errmsg) dol_htmloutput_errors($errmsg);
+        if ($errmsg) dol_htmloutput_errors($errmsg);
 
-		// Bouchon
-		if ($facture->type == 2)
-		{
-			print $langs->trans("FeatureNotYetAvailable");
-			llxFooter();
-			exit;
-		}
+        // Bouchon
+        if ($facture->type == 2)
+        {
+            print $langs->trans("FeatureNotYetAvailable");
+            llxFooter();
+            exit;
+        }
 
-		// Initialize data for confirmation (this is used because data can be change during confirmation)
-		if ($_POST["action"] == 'add_paiement')
-		{
-			$i=0;
+        // Initialize data for confirmation (this is used because data can be change during confirmation)
+        if ($_POST["action"] == 'add_paiement')
+        {
+            $i=0;
 
-			$formquestion[$i++]=array('type' => 'hidden','name' => 'facid', 'value' => $facture->id);
-			$formquestion[$i++]=array('type' => 'hidden','name' => 'socid', 'value' => $facture->socid);
-			$formquestion[$i++]=array('type' => 'hidden','name' => 'type',  'value' => $facture->type);
-		}
+            $formquestion[$i++]=array('type' => 'hidden','name' => 'facid', 'value' => $facture->id);
+            $formquestion[$i++]=array('type' => 'hidden','name' => 'socid', 'value' => $facture->socid);
+            $formquestion[$i++]=array('type' => 'hidden','name' => 'type',  'value' => $facture->type);
+        }
 
         if ($conf->use_javascript_ajax)
         {
             print "\n".'<script type="text/javascript" language="javascript">';
-			print 'jQuery(document).ready(function () {';
-			print 'jQuery("#selectpaiementcode").change(function() {
+            print 'jQuery(document).ready(function () {';
+            print 'jQuery("#selectpaiementcode").change(function() {
                             code=jQuery("#selectpaiementcode option:selected").val();
                             if (code == \'CHQ\')
                             {
@@ -262,242 +262,396 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
                                 jQuery(\'.fieldrequireddyn\').removeClass(\'fieldrequired\');
                             }
                         });';
-    	    print '});';
+            print 'jQuery("#amountpayment").keyup(function() {
+                            alter_amount_payment();
+                        });';
+            print 'jQuery("#amountpayment").change(function() {
+                            alter_amount_payment();
+                        });';
+            print 'alter_amount_payment();';
+            print '});';
+
             print '</script>'."\n";
         }
 
-		print '<form name="add_paiement" action="paiement.php" method="post">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		print '<input type="hidden" name="action" value="add_paiement">';
-		print '<input type="hidden" name="facid" value="'.$facture->id.'">';
-		print '<input type="hidden" name="socid" value="'.$facture->socid.'">';
-		print '<input type="hidden" name="type" value="'.$facture->type.'">';
+        print '<form name="add_paiement" action="paiement.php" method="post">';
+        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="action" value="add_paiement">';
+        print '<input type="hidden" name="facid" value="'.$facture->id.'">';
+        print '<input type="hidden" name="socid" value="'.$facture->socid.'">';
+        print '<input type="hidden" name="type" value="'.$facture->type.'">';
         print '<input type="hidden" name="thirdpartylabel" id="thirdpartylabel" value="'.dol_escape_htmltag($facture->client->name).'">';
 
-		print '<table class="border" width="100%">';
+        print '<table class="border" width="100%">';
 
-		// Third party
-		print '<tr><td><span class="fieldrequired">'.$langs->trans('Company').'</span></td><td colspan="2">'.$facture->client->getNomUrl(4)."</td></tr>\n";
+        // Third party
+        print '<tr><td><span class="fieldrequired">'.$langs->trans('Company').'</span></td><td colspan="2">'.$facture->client->getNomUrl(4)."</td></tr>\n";
 
-		// Date payment
-		print '<tr><td><span class="fieldrequired">'.$langs->trans('Date').'</span></td><td>';
-		$datepayment = dol_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-		$datepayment= ($datepayment == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0) : $datepayment);
-		$html->select_date($datepayment,'','','',0,"add_paiement",1,1);
-		print '</td>';
-		print '<td>'.$langs->trans('Comments').'</td></tr>';
+        // Date payment
+        print '<tr><td><span class="fieldrequired">'.$langs->trans('Date').'</span></td><td>';
+        $datepayment = dol_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+        $datepayment= ($datepayment == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0) : $datepayment);
+        $html->select_date($datepayment,'','','',0,"add_paiement",1,1);
+        print '</td>';
+        print '<td>'.$langs->trans('Comments').'</td></tr>';
 
-		print '<tr><td><span class="fieldrequired">'.$langs->trans('PaymentMode').'</span></td><td>';
-		$html->select_types_paiements(GETPOST('paiementcode'),'paiementcode','',2);
-		print "</td>\n";
+        $rowspan=5;
+        if (! empty($conf->global->MAIN_JS_ON_PAYMENT)) $rowspan++;
 
-		print '<td rowspan="5" valign="top">';
-		print '<textarea name="comment" wrap="soft" cols="60" rows="'.ROWS_4.'">'.(empty($_POST['comment'])?'':$_POST['comment']).'</textarea></td></tr>';
+        // Payment mode
+        print '<tr><td><span class="fieldrequired">'.$langs->trans('PaymentMode').'</span></td><td>';
+        $html->select_types_paiements(GETPOST('paiementcode'),'paiementcode','',2);
+        print "</td>\n";
+        print '<td rowspan="'.$rowspan.'" valign="top">';
+        print '<textarea name="comment" wrap="soft" cols="60" rows="'.ROWS_4.'">'.(empty($_POST['comment'])?'':$_POST['comment']).'</textarea></td>';
+        print '</tr>';
 
-		print '<tr>';
-		if ($conf->banque->enabled)
-		{
-			if ($facture->type != 2) print '<td><span class="fieldrequired">'.$langs->trans('AccountToCredit').'</span></td>';
-			if ($facture->type == 2) print '<td><span class="fieldrequired">'.$langs->trans('AccountToDebit').'</span></td>';
-			print '<td>';
-			$html->select_comptes(GETPOST('accountid'),'accountid',0,'',2);
-			print '</td>';
-		}
-		else
-		{
-			print '<td colspan="2">&nbsp;</td>';
-		}
-		print "</tr>\n";
+        // Payment amount
+        if (! empty($conf->global->MAIN_JS_ON_PAYMENT))
+        {
+            print '<tr><td><span class="fieldrequired">'.$langs->trans('AmountPayment').'</span></td>';
+            print '<td>';
+            if ($_POST["action"] == 'add_paiement')
+            {
+                print '<input id="amountpayment" name="amountpaymenthidden" size="8" type="text" value="'.(empty($_POST['amountpayment'])?'':$_POST['amountpayment']).'" disabled="true">';
+                print '<input name="amountpayment" type="hidden" value="'.(empty($_POST['amountpayment'])?'':$_POST['amountpayment']).'">';
+            }
+            else
+            {
+                print '<input id="amountpayment" name="amountpayment" size="8" type="text" value="'.(empty($_POST['amountpayment'])?'':$_POST['amountpayment']).'">';
+            }
+            print '</td>';
+            print '</tr>';
+        }
 
-		print '<tr><td>'.$langs->trans('Numero');
-		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
-		print '</td>';
-		print '<td><input name="num_paiement" type="text" value="'.GETPOST('num_paiement').'"></td></tr>';
+        print '<tr>';
+        if ($conf->banque->enabled)
+        {
+            if ($facture->type != 2) print '<td><span class="fieldrequired">'.$langs->trans('AccountToCredit').'</span></td>';
+            if ($facture->type == 2) print '<td><span class="fieldrequired">'.$langs->trans('AccountToDebit').'</span></td>';
+            print '<td>';
+            $html->select_comptes(GETPOST('accountid'),'accountid',0,'',2);
+            print '</td>';
+        }
+        else
+        {
+            print '<td colspan="2">&nbsp;</td>';
+        }
+        print "</tr>\n";
 
-		// Check transmitter
-		print '<tr><td class="'.(GETPOST('paiementcode')=='CHQ'?'fieldrequired ':'').'fieldrequireddyn">'.$langs->trans('CheckTransmitter');
-		print ' <em>('.$langs->trans("ChequeMaker").')</em>';
-		print '</td>';
-		print '<td><input id="fieldchqemetteur" name="chqemetteur" size="30" type="text" value="'.GETPOST('chqemetteur').'"></td></tr>';
+        // Cheque number
+        print '<tr><td>'.$langs->trans('Numero');
+        print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
+        print '</td>';
+        print '<td><input name="num_paiement" type="text" value="'.GETPOST('num_paiement').'"></td></tr>';
 
-		print '<tr><td>'.$langs->trans('Bank');
-		print ' <em>('.$langs->trans("ChequeBank").')</em>';
-		print '</td>';
-		print '<td><input name="chqbank" size="30" type="text" value="'.GETPOST('chqbank').'"></td></tr>';
+        // Check transmitter
+        print '<tr><td class="'.(GETPOST('paiementcode')=='CHQ'?'fieldrequired ':'').'fieldrequireddyn">'.$langs->trans('CheckTransmitter');
+        print ' <em>('.$langs->trans("ChequeMaker").')</em>';
+        print '</td>';
+        print '<td><input id="fieldchqemetteur" name="chqemetteur" size="30" type="text" value="'.GETPOST('chqemetteur').'"></td></tr>';
 
-		print '</table>';
+        // Bank name
+        print '<tr><td>'.$langs->trans('Bank');
+        print ' <em>('.$langs->trans("ChequeBank").')</em>';
+        print '</td>';
+        print '<td><input name="chqbank" size="30" type="text" value="'.GETPOST('chqbank').'"></td></tr>';
 
-		/*
-		 * List of unpaid invoices
-		 */
-		$sql = 'SELECT f.rowid as facid, f.facnumber, f.total_ttc, f.type, ';
-		$sql.= ' f.datef as df';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture as f';
-		$sql.= ' WHERE f.fk_soc = '.$facture->socid;
-		$sql.= ' AND f.paye = 0';
-		$sql.= ' AND f.fk_statut = 1'; // Statut=0 => not validated, Statut=2 => canceled
-		if ($facture->type != 2)
-		{
-			$sql .= ' AND type in (0,1,3)';	// Standard invoice, replacement, deposit
-		}
-		else
-		{
-			$sql .= ' AND type = 2';		// If paying back a credit note, we show all credit notes
-		}
+        print '</table>';
 
-		$resql = $db->query($sql);
-		if ($resql)
-		{
-			$num = $db->num_rows($resql);
-			if ($num > 0)
-			{
+        /*
+         * List of unpaid invoices
+         */
+        $sql = 'SELECT f.rowid as facid, f.facnumber, f.total_ttc, f.type, ';
+        $sql.= ' f.datef as df';
+        $sql.= ' FROM '.MAIN_DB_PREFIX.'facture as f';
+        $sql.= ' WHERE f.fk_soc = '.$facture->socid;
+        $sql.= ' AND f.paye = 0';
+        $sql.= ' AND f.fk_statut = 1'; // Statut=0 => not validated, Statut=2 => canceled
+        if ($facture->type != 2)
+        {
+            $sql .= ' AND type in (0,1,3)';	// Standard invoice, replacement, deposit
+        }
+        else
+        {
+            $sql .= ' AND type = 2';		// If paying back a credit note, we show all credit notes
+        }
 
-				$i = 0;
-				//print '<tr><td colspan="3">';
-				print '<br>';
-				print '<table class="noborder" width="100%">';
-				print '<tr class="liste_titre">';
-				print '<td>'.$langs->trans('Invoice').'</td>';
-				print '<td align="center">'.$langs->trans('Date').'</td>';
-				print '<td align="right">'.$langs->trans('AmountTTC').'</td>';
-				print '<td align="right">'.$langs->trans('Received').'</td>';
-				print '<td align="right">'.$langs->trans('RemainderToPay').'</td>';
-				print '<td align="right">'.$langs->trans('PaymentAmount').'</td>';
-				print '<td align="right">&nbsp;</td>';
-				print "</tr>\n";
+        $resql = $db->query($sql);
+        if ($resql)
+        {
+            $num = $db->num_rows($resql);
+            if ($num > 0)
+            {
 
-				$var=True;
-				$total=0;
-				$totalrecu=0;
-				$totalrecucreditnote=0;
-				$totalrecudeposits=0;
+                $i = 0;
+                //print '<tr><td colspan="3">';
+                print '<br>';
+                print '<table class="noborder" width="100%">';
+                print '<tr class="liste_titre">';
+                print '<td>'.$langs->trans('Invoice').'</td>';
+                print '<td align="center">'.$langs->trans('Date').'</td>';
+                print '<td align="right">'.$langs->trans('AmountTTC').'</td>';
+                print '<td align="right">'.$langs->trans('Received').'</td>';
+                print '<td align="right">'.$langs->trans('RemainderToPay').'</td>';
+                print '<td align="right">'.$langs->trans('PaymentAmount').'</td>';
+                print '<td align="right">&nbsp;</td>';
+                print "</tr>\n";
 
-				while ($i < $num)
-				{
-					$objp = $db->fetch_object($resql);
-					$var=!$var;
+                // FIXME Does not work yet because :
+                // - Does not support non , and non . decimal separator.
+                // - Does not use dolibarr param rounding
+                // - Other minor bugs
+                if (! empty($conf->global->MAIN_JS_ON_PAYMENT))
+                {
+                    print '<script type="text/javascript" language="javascript">
 
-					$invoice=new Facture($db);
-					$invoice->fetch($objp->facid);
+    				// This Array is used to get and store Array containing (String format):
+    				//			[0]-> the $namef of the linked text field (in order to get and set ElementsById)
+    				//			[1]-> the linked invoice amount
+    				//			[2]-> the linked amount payed (in order to calculate the remaining payment amount)
+    				var amountInput = new Array();
+
+    				var totalAmount = 0;
+    				var paymentRemaining = 0;
+
+    				// This function is used to round floats to monetary format
+    				function roundNumber(num,dec) {
+    					var result = Math.round(num*Math.pow(10,dec))/Math.pow(10,dec);
+    					return result;
+    				}
+
+    				// This function is used to parse php Strings(floats with coma) to javascript floats (with stops)
+    				function convertFloat(str)
+    				{
+    						return parseFloat(str.replace(/,/, \'.\').split(\' \').join(\'\'));
+    				}
+
+    				// This function is used to convert javascript floats (stored as String) to coma floats (as String too)
+    				function toComaStr(str)
+    				{
+    						return str.replace(/\./, ",");
+    				}
+
+    				// This function is called onclick of the buttons linked to the invoices. It refreshes the linked payed amount
+    				// contained by the corresponding array, and the text field linked to the corresponding invoice
+    				function calcRemind(index)
+    				{
+    						invoiceAmount = convertFloat(amountInput[index][1]);
+    						var payedAmount = amountInput[index][2] != 0 ? convertFloat(amountInput[index][2]) : 0;
+    						paymentRemaining = paymentRemaining + payedAmount;
+    						payedAmount = 0;
+    						if(paymentRemaining - invoiceAmount < 0)
+    						{
+    							payedAmount = paymentRemaining;
+    							paymentRemaining = 0;
+    						}else
+    						{
+    							paymentRemaining -= invoiceAmount;
+    							payedAmount = invoiceAmount;
+    						}
+    						if(payedAmount < 0)
+    						{
+    							paymentRemaining += payedAmount;
+    							payedAmount = 0;
+    						}
+    						amountInput[index][2] = payedAmount.toString();
+    						document.getElementById(amountInput[index][0]).value = toComaStr(roundNumber(payedAmount,2).toString());
+    						changeSumAmount();
+    				}
+
+    				// This function is called when the payment\'s amount is change. It refreshes the array containing
+    				// the amounts payed (from the text fields linked to invoices)
+    				function alter_amount_payment()
+    				{
+    						totalAmount = document.add_paiement.amountpayment.value != 0 ? convertFloat(document.add_paiement.amountpayment.value) : 0;
+    						totalAmount = isNaN(totalAmount) ? 0 : totalAmount;
+    						paymentRemaining = totalAmount;
+    						for(var ii=0; ii<amountInput.length; ii++)
+    						{
+    							if(isNaN(convertFloat(document.getElementById(amountInput[ii][0]).value)))
+    								amountInput[ii][2] = 0;
+    							else
+    								paymentRemaining -= convertFloat(document.getElementById(amountInput[ii][0]).value);
+    						}
+    						changeSumAmount();
+    				}
+
+    				// This function is called when a change occurs on the text fields link to the invoices amount
+    				// to pay
+    				function changeAmount(index)
+    				{
+    						var oldAmount =	amountInput[index][2];
+    						var newAmount = isNaN(document.getElementById(amountInput[index][0]).value) ? 0 : document.getElementById(amountInput[index][0]).value;
+    						paymentRemaining += oldAmount - newAmount ;
+    						amountInput[index][2] = newAmount;
+    						changeSumAmount();
+    				}
+
+    				// This function is called when any change occurs on the amounts objects to print the remaining
+    				// amount of the payment to divide into invoices amount
+    				function changeSumAmount(t)
+    				{
+    						var dispatchRemaining = totalAmount;
+    						for(var ii = 0; ii < amountInput.length; ii++)
+    						{
+    							dispatchRemaining -= amountInput[ii][2] != 0 ? convertFloat(amountInput[ii][2]) : 0;
+    						}
+    						if(dispatchRemaining < 0)
+    							document.getElementById("amount_sum_payment").style.setProperty("color","#ff0000","");
+    						else
+    							document.getElementById("amount_sum_payment").style.removeProperty("color");
+    						document.getElementById("amount_sum_payment").innerHTML= "'.$langs->trans('RemainToDivide').' "+toComaStr(roundNumber(dispatchRemaining,2).toString());
+    				}
+    				</script>';
+                }
+
+                $var=True;
+                $total=0;
+                $totalrecu=0;
+                $totalrecucreditnote=0;
+                $totalrecudeposits=0;
+
+                while ($i < $num)
+                {
+                    $objp = $db->fetch_object($resql);
+                    $var=!$var;
+
+                    $invoice=new Facture($db);
+                    $invoice->fetch($objp->facid);
                     $paiement = $invoice->getSommePaiement();
-					$creditnotes=$invoice->getSumCreditNotesUsed();
-					$deposits=$invoice->getSumDepositsUsed();
+                    $creditnotes=$invoice->getSumCreditNotesUsed();
+                    $deposits=$invoice->getSumDepositsUsed();
                     $alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
                     $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
 
-					print '<tr '.$bc[$var].'>';
+                    print '<tr '.$bc[$var].'>';
 
-					print '<td>';
-					print $invoice->getNomUrl(1,'');
-					print "</td>\n";
+                    print '<td>';
+                    print $invoice->getNomUrl(1,'');
+                    print "</td>\n";
 
-					// Date
-					print '<td align="center">'.dol_print_date($db->jdate($objp->df),'day')."</td>\n";
+                    // Date
+                    print '<td align="center">'.dol_print_date($db->jdate($objp->df),'day')."</td>\n";
 
-					// Prix
-					print '<td align="right">'.price($objp->total_ttc).'</td>';
+                    // Prix
+                    print '<td align="right">'.price($objp->total_ttc).'</td>';
 
-					// Recu
-					print '<td align="right">'.price($paiement);
-					if ($creditnotes) print '+'.price($creditnotes);
-					if ($deposits) print '+'.price($deposits);
-					print '</td>';
+                    // Recu
+                    print '<td align="right">'.price($paiement);
+                    if ($creditnotes) print '+'.price($creditnotes);
+                    if ($deposits) print '+'.price($deposits);
+                    print '</td>';
 
-					// Remain to pay
-					print '<td align="right">'.price($remaintopay).'</td>';
+                    // Remain to pay
+                    print '<td align="right">'.price($remaintopay).'</td>';
+                    $test= price(price2num($objp->total_ttc - $paiement - $creditnotes - $deposits));
 
-					// Amount
-					print '<td align="right">';
-					$namef = 'amount_'.$objp->facid;
-					if ($_POST["action"] != 'add_paiement')
-					{
-						print '<input type="text" size="8" name="'.$namef.'" value="'.$_POST[$namef].'">';
-					}
-					else
-					{
-						print '<input type="text" size="8" name="'.$namef.'_disabled" value="'.$_POST[$namef].'" disabled="true">';
-						print '<input type="hidden" name="'.$namef.'" value="'.$_POST[$namef].'">';
-					}
-					print "</td>";
+                    // Amount
+                    print '<td align="right">';
 
-					// Warning
-					print '<td align="center" width="16">';
-					if ($amounts[$invoice->id] && $amounts[$invoice->id] > $amountsresttopay[$invoice->id])
-					{
-						print ' '.img_warning($langs->trans("PaymentHigherThanReminderToPay"));
-					}
-					print '</td>';
+                    // Add remind amount
+                    $namef = 'amount_'.$objp->facid;
 
+                    $namef = 'amount_'.$objp->facid;
+                    if ($_POST["action"] != 'add_paiement')
+                    {
+                        if (! empty($conf->global->MAIN_JS_ON_PAYMENT))
+                        {
+                            print img_picto($langs->trans('AddRemind'),'rightarrow.png','id="calcRemind'.$i.'" onclick="calcRemind(\''.$i.'\');return false;"');
+                            print '<script type="text/javascript" language="javascript">';
+                            print 'amountInput.push(new Array("'.$namef.'","'.price(price2num($objp->total_ttc - $paiement - $creditnotes - $deposits)).'","0"));'; // Push a new Array into the amountInput Array
+                            print 'jQuery(document).ready(function () {';
+                            print 'jQuery("#'.$namef.'").keyup(function() { changeAmount('.$i.'); });';
+                            print '});</script>';
+                        }
+                        print '<input id="'.$namef.'" type="text" size="8" name="'.$namef.'" value="'.$_POST[$namef].'">';
+                    }
+                    else
+                    {
+                        print '<input type="text" size="8" name="'.$namef.'_disabled" value="'.$_POST[$namef].'" disabled="true">';
+                        print '<input id="'.$namef.'" type="hidden" name="'.$namef.'" value="'.$_POST[$namef].'">';
+                    }
+                    print "</td>";
 
-					print "</tr>\n";
-
-					$total+=$objp->total;
-					$total_ttc+=$objp->total_ttc;
-					$totalrecu+=$paiement;
-					$totalrecucreditnote+=$creditnotes;
-					$totalrecudeposits+=$deposits;
-					$i++;
-				}
-				if ($i > 1)
-				{
-					// Print total
-					print '<tr class="liste_total">';
-					print '<td colspan="2" align="left">'.$langs->trans('TotalTTC').'</td>';
-					print '<td align="right"><b>'.price($total_ttc).'</b></td>';
-					print '<td align="right"><b>'.price($totalrecu);
-					if ($totalrecucreditnote) print '+'.price($totalrecucreditnote);
-					if ($totalrecudeposits) print '+'.price($totalrecudeposits);
-					print '</b></td>';
-					print '<td align="right"><b>'.price(price2num($total_ttc - $totalrecu - $totalrecucreditnote - $totalrecudeposits,'MT')).'</b></td>';
-					print '<td align="center">&nbsp;</td>';
-					print '<td align="center">&nbsp;</td>';
-					print "</tr>\n";
-				}
-				print "</table>";
-				//print "</td></tr>\n";
-			}
-			$db->free($resql);
-		}
-		else
-		{
-			dol_print_error($db);
-		}
+                    // Warning
+                    print '<td align="center" width="16">';
+                    if ($amounts[$invoice->id] && $amounts[$invoice->id] > $amountsresttopay[$invoice->id])
+                    {
+                        print ' '.img_warning($langs->trans("PaymentHigherThanReminderToPay"));
+                    }
+                    print '</td>';
 
 
-		// Bouton Enregistrer
-		if ($_POST["action"] != 'add_paiement')
-		{
-			//			print '<tr><td colspan="3" align="center">';
-			print '<center><br><input type="checkbox" checked="checked" name="closepaidinvoices"> '.$langs->trans("ClosePaidInvoicesAutomatically");
-			print '<br><input type="submit" class="button" value="'.$langs->trans('Save').'"></center>';
-			//			print '</td></tr>';
-		}
+                    print "</tr>\n";
+
+                    $total+=$objp->total;
+                    $total_ttc+=$objp->total_ttc;
+                    $totalrecu+=$paiement;
+                    $totalrecucreditnote+=$creditnotes;
+                    $totalrecudeposits+=$deposits;
+                    $i++;
+                }
+                if ($i > 1)
+                {
+                    // Print total
+                    print '<tr class="liste_total">';
+                    print '<td colspan="2" align="left">'.$langs->trans('TotalTTC').'</td>';
+                    print '<td align="right"><b>'.price($total_ttc).'</b></td>';
+                    print '<td align="right"><b>'.price($totalrecu);
+                    if ($totalrecucreditnote) print '+'.price($totalrecucreditnote);
+                    if ($totalrecudeposits) print '+'.price($totalrecudeposits);
+                    print '</b></td>';
+                    print '<td align="right"><b>'.price(price2num($total_ttc - $totalrecu - $totalrecucreditnote - $totalrecudeposits,'MT')).'</b></td>';
+                    print '<td align="right" id="amount_sum_payment" style="font-weight:bold;"></td>';
+                    print '<td align="center">&nbsp;</td>';
+                    print "</tr>\n";
+                }
+                print "</table>";
+                //print "</td></tr>\n";
+            }
+            $db->free($resql);
+        }
+        else
+        {
+            dol_print_error($db);
+        }
+
+
+        // Bouton Enregistrer
+        if ($_POST["action"] != 'add_paiement')
+        {
+            //			print '<tr><td colspan="3" align="center">';
+            print '<center><br><input type="checkbox" checked="checked" name="closepaidinvoices"> '.$langs->trans("ClosePaidInvoicesAutomatically");
+            print '<br><input type="submit" class="button" value="'.$langs->trans('Save').'"></center>';
+            //			print '</td></tr>';
+        }
 
 
 
-		// Message d'erreur
-		if ($fiche_erreur_message)
-		{
-			print $fiche_erreur_message;
-		}
+        // Message d'erreur
+        if ($fiche_erreur_message)
+        {
+            print $fiche_erreur_message;
+        }
 
-		// Form to confirm payment
-		if ($_POST["action"] == 'add_paiement')
-		{
-			$preselectedchoice=$addwarning?'no':'yes';
+        // Form to confirm payment
+        if ($_POST["action"] == 'add_paiement')
+        {
+            $preselectedchoice=$addwarning?'no':'yes';
 
-			print '<br>';
-			$text=$langs->trans('ConfirmCustomerPayment',$totalpaiement,$langs->trans("Currency".$conf->monnaie));
-			if (GETPOST('closepaidinvoices'))
-			{
-			    $text.='<br>'.$langs->trans("AllCompletelyPayedInvoiceWillBeClosed");
-			    print '<input type="hidden" name="closepaidinvoices" value="'.GETPOST('closepaidinvoices').'">';
-			}
-			$html->form_confirm($_SERVER['PHP_SELF'].'?facid='.$facture->id.'&socid='.$facture->socid.'&type='.$facture->type,$langs->trans('ReceivedCustomersPayments'),$text,'confirm_paiement',$formquestion,$preselectedchoice);
-		}
+            print '<br>';
+            $text=$langs->trans('ConfirmCustomerPayment',$totalpaiement,$langs->trans("Currency".$conf->monnaie));
+            if (GETPOST('closepaidinvoices'))
+            {
+                $text.='<br>'.$langs->trans("AllCompletelyPayedInvoiceWillBeClosed");
+                print '<input type="hidden" name="closepaidinvoices" value="'.GETPOST('closepaidinvoices').'">';
+            }
+            $html->form_confirm($_SERVER['PHP_SELF'].'?facid='.$facture->id.'&socid='.$facture->socid.'&type='.$facture->type,$langs->trans('ReceivedCustomersPayments'),$text,'confirm_paiement',$formquestion,$preselectedchoice);
+        }
 
-		print "</form>\n";
-	}
+        print "</form>\n";
+    }
 }
 
 
@@ -506,56 +660,56 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
  */
 if (! GETPOST('action'))
 {
-	if ($page == -1) $page = 0 ;
-	$limit = $conf->liste_limit;
-	$offset = $limit * $page ;
+    if ($page == -1) $page = 0 ;
+    $limit = $conf->liste_limit;
+    $offset = $limit * $page ;
 
-	if (! $sortorder) $sortorder='DESC';
-	if (! $sortfield) $sortfield='p.datep';
+    if (! $sortorder) $sortorder='DESC';
+    if (! $sortfield) $sortfield='p.datep';
 
-	$sql = 'SELECT p.datep as dp, p.amount, f.amount as fa_amount, f.facnumber';
-	$sql .=', f.rowid as facid, c.libelle as paiement_type, p.num_paiement';
-	$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement as p, '.MAIN_DB_PREFIX.'facture as f, '.MAIN_DB_PREFIX.'c_paiement as c';
-	$sql .= ' WHERE p.fk_facture = f.rowid AND p.fk_paiement = c.id';
-	if ($socid)
-	{
-		$sql .= ' AND f.fk_soc = '.$socid;
-	}
+    $sql = 'SELECT p.datep as dp, p.amount, f.amount as fa_amount, f.facnumber';
+    $sql .=', f.rowid as facid, c.libelle as paiement_type, p.num_paiement';
+    $sql .= ' FROM '.MAIN_DB_PREFIX.'paiement as p, '.MAIN_DB_PREFIX.'facture as f, '.MAIN_DB_PREFIX.'c_paiement as c';
+    $sql .= ' WHERE p.fk_facture = f.rowid AND p.fk_paiement = c.id';
+    if ($socid)
+    {
+        $sql .= ' AND f.fk_soc = '.$socid;
+    }
 
-	$sql .= ' ORDER BY '.$sortfield.' '.$sortorder;
-	$sql .= $db->plimit( $limit +1 ,$offset);
-	$resql = $db->query($sql);
+    $sql .= ' ORDER BY '.$sortfield.' '.$sortorder;
+    $sql .= $db->plimit( $limit +1 ,$offset);
+    $resql = $db->query($sql);
 
-	if ($resql)
-	{
-		$num = $db->num_rows($resql);
-		$i = 0;
-		$var=True;
+    if ($resql)
+    {
+        $num = $db->num_rows($resql);
+        $i = 0;
+        $var=True;
 
-		print_barre_liste($langs->trans('Payments'), $page, 'paiement.php','',$sortfield,$sortorder,'',$num);
-		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre">';
-		print_liste_field_titre($langs->trans('Invoice'),'paiement.php','facnumber','','','',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans('Date'),'paiement.php','dp','','','',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans('Type'),'paiement.php','libelle','','','',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans('Amount'),'paiement.php','fa_amount','','','align="right"',$sortfield,$sortorder);
-		print '<td>&nbsp;</td>';
-		print "</tr>\n";
+        print_barre_liste($langs->trans('Payments'), $page, 'paiement.php','',$sortfield,$sortorder,'',$num);
+        print '<table class="noborder" width="100%">';
+        print '<tr class="liste_titre">';
+        print_liste_field_titre($langs->trans('Invoice'),'paiement.php','facnumber','','','',$sortfield,$sortorder);
+        print_liste_field_titre($langs->trans('Date'),'paiement.php','dp','','','',$sortfield,$sortorder);
+        print_liste_field_titre($langs->trans('Type'),'paiement.php','libelle','','','',$sortfield,$sortorder);
+        print_liste_field_titre($langs->trans('Amount'),'paiement.php','fa_amount','','','align="right"',$sortfield,$sortorder);
+        print '<td>&nbsp;</td>';
+        print "</tr>\n";
 
-		while ($i < min($num,$limit))
-		{
-			$objp = $db->fetch_object($resql);
-			$var=!$var;
-			print '<tr '.$bc[$var].'>';
-			print '<td><a href="facture.php?facid='.$objp->facid.'">'.$objp->facnumber."</a></td>\n";
-			print '<td>'.dol_print_date($db->jdate($objp->dp))."</td>\n";
-			print '<td>'.$objp->paiement_type.' '.$objp->num_paiement."</td>\n";
-			print '<td align="right">'.price($objp->amount).'</td><td>&nbsp;</td>';
-			print '</tr>';
-			$i++;
-		}
-		print '</table>';
-	}
+        while ($i < min($num,$limit))
+        {
+            $objp = $db->fetch_object($resql);
+            $var=!$var;
+            print '<tr '.$bc[$var].'>';
+            print '<td><a href="facture.php?facid='.$objp->facid.'">'.$objp->facnumber."</a></td>\n";
+            print '<td>'.dol_print_date($db->jdate($objp->dp))."</td>\n";
+            print '<td>'.$objp->paiement_type.' '.$objp->num_paiement."</td>\n";
+            print '<td align="right">'.price($objp->amount).'</td><td>&nbsp;</td>';
+            print '</tr>';
+            $i++;
+        }
+        print '</table>';
+    }
 }
 
 $db->close();
