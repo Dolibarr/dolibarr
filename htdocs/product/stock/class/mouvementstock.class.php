@@ -294,13 +294,12 @@ class MouvementStock
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_composition";
 		$sql.= " WHERE fk_product = $fk_product;";
 
-		$all = $this->db->query($sql);
-
-		if ($all)
+		$resql = $this->db->query($sql);
+		if ($resql)
 		{
-			while($item = $this->db->fetch_object($all)	)
+			while ($item = $this->db->fetch_object($resql))
 			{
-				if($item->etat_stock != 0) array_push($products_compo,$item);
+				if ($item->etat_stock != 0) array_push($products_compo,$item);
 			}
 			$this->db->free($resql);
 		}
@@ -358,7 +357,6 @@ class MouvementStock
 			$obj=$this->db->fetch_object($resql);
 			$nbSP=$obj->nb;
 		}
-		$this->db->free($resql);
 		return $nbSP;
 	}
 
