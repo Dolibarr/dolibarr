@@ -229,8 +229,8 @@ class CommonObject
 	}
 
 	/**
-	 *    \brief      Delete all links between an object $this and all its contacts
-	 *    \return     int	>0 if OK, <0 if KO
+	 *    Delete all links between an object $this and all its contacts
+	 *    @return     int	>0 if OK, <0 if KO
 	 */
 	function delete_linked_contact()
 	{
@@ -312,10 +312,10 @@ class CommonObject
 				{
 					$tab[$i]=$obj->id;
 				}
-				
+
 				$i++;
 			}
-			
+
 			return $tab;
 		}
 		else
@@ -556,9 +556,9 @@ class CommonObject
 	function fetchObjectFromImportKey($table,$key)
 	{
 		global $conf;
-		
+
 		$result=false;
-		
+
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$table;
 		$sql.= " WHERE import_key = '".$key."'";
 		$sql.= " AND entity = ".$conf->entity;
@@ -568,10 +568,10 @@ class CommonObject
 			$row = $this->db->fetch_row($resql);
 			$result = $this->fetch($row[0]);
 		}
-		
+
 		return $result;
 	}
-	
+
 	/**
 	 *    	Load object from external reference
 	 *    	@param		table		Table element or element line
@@ -581,9 +581,9 @@ class CommonObject
 	function fetchObjectFromRefExt($table,$ref)
 	{
 		global $conf;
-		
+
 		$result=false;
-		
+
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$table;
 		$sql.= " WHERE ref_ext = '".$ref."'";
 		$sql.= " AND entity = ".$conf->entity;
@@ -593,7 +593,7 @@ class CommonObject
 			$row = $this->db->fetch_row($resql);
 			$result = $this->fetch($row[0]);
 		}
-		
+
 		return $result;
 	}
 
@@ -1210,13 +1210,13 @@ class CommonObject
 	function fetchObjectLinked($sourceid='',$sourcetype='',$targetid='',$targettype='',$clause='OR')
 	{
 		global $conf;
-		
+
 		$this->linkedObjectsIds=array();
 		$this->linkedObjects=array();
-		
+
 		$justsource=false;
 		$justtarget=false;
-		
+
 		if (! empty($sourceid) && ! empty($sourcetype) && empty($targetid) && empty($targettype)) $justsource=true;
 		if (empty($sourceid) && empty($sourcetype) && ! empty($targetid) && ! empty($targettype)) $justtarget=true;
 
@@ -1260,7 +1260,7 @@ class CommonObject
 				}
 				$i++;
 			}
-			
+
 			if (! empty($this->linkedObjectsIds))
 			{
 				foreach($this->linkedObjectsIds as $objecttype => $objectids)
@@ -1272,9 +1272,9 @@ class CommonObject
 						$module = $element = $regs[1];
 						$subelement = $regs[2];
 					}
-					
+
 					$classpath = $element.'/class';
-					
+
 					// To work with non standard path
 					if ($objecttype == 'facture') { $classpath = 'compta/facture/class'; }
 		            if ($objecttype == 'propal')  { $classpath = 'comm/propal/class'; }
@@ -1282,17 +1282,17 @@ class CommonObject
 		            if ($objecttype == 'delivery') { $classpath = 'livraison/class'; $subelement = 'livraison'; $module = 'livraison_bon'; }
 		            if ($objecttype == 'invoice_supplier') { $classpath = 'fourn/class'; }
 		            if ($objecttype == 'order_supplier')   { $classpath = 'fourn/class'; }
-		
+
 		            $classfile = strtolower($subelement); $classname = ucfirst($subelement);
 		            if ($objecttype == 'invoice_supplier') { $classfile = 'fournisseur.facture'; $classname='FactureFournisseur'; }
 		            if ($objecttype == 'order_supplier')   { $classfile = 'fournisseur.commande'; $classname='CommandeFournisseur'; }
-		            
+
 		            if ($conf->$module->enabled && $element != $this->element)
 		            {
 			            dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
-			            
+
 						$num=sizeof($objectids);
-						
+
 						for ($i=0;$i<$num;$i++)
 						{
 							$object = new $classname($this->db);
@@ -1311,7 +1311,7 @@ class CommonObject
 			dol_print_error($this->db);
 		}
 	}
-	
+
 	/**
 	 *      Set statut of an object
 	 *      @param		statut			Statut to set
@@ -1462,7 +1462,7 @@ class CommonObject
 			}
 		}
 	}
-	
+
 	/**
 	 * 	Get special code of line
 	 * 	@param		lineid		Id of line
@@ -1495,7 +1495,7 @@ class CommonObject
     function showLinkedObjectBlock()
     {
         global $langs,$bc;
-        
+
         $this->fetchObjectLinked();
 
         $num = sizeof($this->linkedObjects);
@@ -1503,14 +1503,14 @@ class CommonObject
         foreach($this->linkedObjects as $objecttype => $objects)
         {
         	$tplpath = $element = $subelement = $objecttype;
-            
+
         	if (preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
             {
                 $element = $regs[1];
                 $subelement = $regs[2];
                 $tplpath = $element.'/'.$subelement;
             }
-            
+
         	// To work with non standard path
             if ($objecttype == 'facture') { $tplpath = 'compta/'.$element; }
             if ($objecttype == 'propal')  { $tplpath = 'comm/'.$element; }
@@ -1518,12 +1518,12 @@ class CommonObject
             if ($objecttype == 'delivery') { $tplpath = 'livraison'; }
             if ($objecttype == 'invoice_supplier') { $tplpath = 'fourn/facture'; }
             if ($objecttype == 'order_supplier')   { $tplpath = 'fourn/commande'; }
-            
+
             $this->linkedObjectBlock = $objects;
-            
+
             dol_include_once('/'.$tplpath.'/tpl/linkedobjectblock.tpl.php');
         }
-        
+
         return $num;
     }
 
@@ -1579,7 +1579,7 @@ class CommonObject
 	function printObjectLines($action='viewline',$seller,$buyer,$selected=0,$dateSelector=0)
 	{
 		global $conf,$langs;
-		
+
 		// TODO test using div instead of tables
 /*
 		print '<div class="table" id="tablelines">';
@@ -1612,9 +1612,9 @@ class CommonObject
 		$num = count($this->lines);
 		$var = true;
 		$i	 = 0;
-		
+
 		//print '<div class="tbody">';
-		
+
 		foreach ($this->lines as $line)
 		{
 			$var=!$var;
@@ -1630,7 +1630,7 @@ class CommonObject
 
 			$i++;
 		}
-		
+
 		//print '</div></div>';
 	}
 
