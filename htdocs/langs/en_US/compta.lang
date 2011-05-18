@@ -123,4 +123,5 @@ DescSellsJournal=Sales Journal
 DescPurchasesJournal=Purchases Journal
 InvoiceRef=Invoice ref.
 CodeNotDef=Not defined
-
+AddRemind=Dispatch available amount
+RemainToDivide= Remain to dispatch :

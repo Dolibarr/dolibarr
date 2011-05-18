@@ -136,3 +136,5 @@ COMPTA_SERVICE_SOLD_ACCOUNT=Code comptable par défaut pour services vendus (si 
 COMPTA_VAT_ACCOUNT=Code comptable par défaut pour TVA (si non défini dans dictionnaire "Taux de TVA")
 COMPTA_ACCOUNT_CUSTOMER=Code comptable client par défaut (si non défini sur fiche tiers)
 COMPTA_ACCOUNT_SUPPLIER=Code comptable fournisseur par défaut (si non défini sur fiche tiers)
+AddRemind=Ventiler montant disponible
+RemainToDivide=Reste à répartir :
