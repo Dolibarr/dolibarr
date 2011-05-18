@@ -155,9 +155,11 @@ if ($resql)
 	print '<input type="hidden" name="mode" value="'.$mode.'">';
 	print '<input type="text" class="flat" size="3" name="search_contract" value="'.$search_contract.'">';
 	print '</td>';
+	// Service label
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" size="18" name="search_service" value="'.$search_service.'">';
 	print '</td>';
+	// Third party
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" size="24" name="search_nom" value="'.$search_nom.'">';
 	print '</td>';
