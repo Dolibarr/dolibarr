@@ -175,7 +175,7 @@ class FormFile
 		{
 			$modellist=array();
 			$cgvlist=array();
-			
+
 			if ($modulepart == 'company')
 			{
 				$showempty=1;
@@ -324,8 +324,23 @@ class FormFile
 			}
 			else
 			{
-				dol_print_error($this->db,'Bad value for modulepart');
-				return -1;
+			    // Generic feature, for external modules
+			    $file=dol_buildpath('/includes/modules/'.$modulepart.'/modules_'.$modulepart.'.php',0);
+                if (file_exists($file))
+                {
+                    $res=include_once($file);
+                }
+                $class='Modele'.ucfirst($modulepart);
+                if (class_exists($class))
+                {
+                    $model=new $class();
+                    $modellist=$model->liste_modeles($this->db);
+                }
+                else
+                {
+				    dol_print_error($this->db,'Bad value for modulepart');
+				    return -1;
+                }
 			}
 
 			$headershown=1;
@@ -349,7 +364,7 @@ class FormFile
 				print '<td align="center">';
 				print $langs->trans('Model').' ';
 				print $html->selectarray('model',$modellist,$modelselected,$showempty,0,0);
-			    if (sizeof($cgvlist) > 0) 
+			    if (sizeof($cgvlist) > 0)
 			    {
 			        print $html->selectarray('cgv',$cgvlist,"-1",1,0,1);
 			    }
