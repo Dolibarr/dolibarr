@@ -61,8 +61,8 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 	dolibarr_set_const($db, "MAIN_MULTILANGS",         $_POST["main_multilangs"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_SIZE_LISTE_LIMIT",   $_POST["main_size_liste_limit"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT", $_POST["main_disable_javascript"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_CONFIRM_AJAX",       $_POST["main_confirm_ajax"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_POPUP_CALENDAR",     $_POST["main_popup_calendar"],'chaine',0,'',$conf->entity);
+	//dolibarr_set_const($db, "MAIN_CONFIRM_AJAX",       $_POST["main_confirm_ajax"],'chaine',0,'',$conf->entity);
+	//dolibarr_set_const($db, "MAIN_POPUP_CALENDAR",     $_POST["main_popup_calendar"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_USE_PREVIEW_TABS",   $_POST["main_use_preview_tabs"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_START_WEEK",         $_POST["MAIN_START_WEEK"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_SHOW_LOGO",          $_POST["MAIN_SHOW_LOGO"],'chaine',0,'',$conf->entity);
@@ -191,7 +191,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')	// Edit
 	print '</tr>';
 
     // Use Ajax popups for confirmation
-	$var=!$var;
+	/*$var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ConfirmAjax").'</td><td>';
     print $html->selectyesno('main_confirm_ajax',isset($conf->global->MAIN_CONFIRM_AJAX)?$conf->global->MAIN_CONFIRM_AJAX:0,1);
     print ' ('.$langs->trans("AvailableOnlyIfJavascriptAndAjaxNotDisabled").')';
@@ -200,9 +200,10 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')	// Edit
 	//print $html->textwithpicto('',$langs->trans("FeatureDevelopment"));
 	print '&nbsp;</td>';
 	print '</tr>';
+	*/
 
     // Desactiver le calendrier popup
-    $var=!$var;
+    /*$var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("UsePopupCalendar").'</td><td>';
     $liste_popup_calendar=array(
 		'0'=>$langs->trans("No"),
@@ -215,6 +216,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')	// Edit
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
+    */
 
     // Activate preview tab on element card
     if (class_exists("Imagick"))
@@ -401,21 +403,23 @@ else	// Show
 	print "</tr>";
 
     // Confirm ajax
-    $var=!$var;
+    /*$var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ConfirmAjax").'</td><td>';
     if ($conf->global->MAIN_DISABLE_JAVASCRIPT) print $langs->trans("No").' ('.$langs->trans("JavascriptDisabled").')';
     else print yn(isset($conf->global->MAIN_CONFIRM_AJAX)?$conf->global->MAIN_CONFIRM_AJAX:0)."</td>";
 	print '<td width="20">&nbsp;</td>';
 	print "</tr>";
+	*/
 
     // Calendrier en popup
-    $var=!$var;
+    /*$var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("UsePopupCalendar").'</td><td>';
     if ($conf->global->MAIN_DISABLE_JAVASCRIPT) print $langs->trans("No").' ('.$langs->trans("JavascriptDisabled").')';
     else print ($conf->global->MAIN_POPUP_CALENDAR?$langs->trans("Yes"):$langs->trans("No"));
     print "</td>";
 	print '<td width="20">&nbsp;</td>';
 	print "</tr>";
+	*/
 
     // Activate preview tab on element card
     if (class_exists("Imagick"))

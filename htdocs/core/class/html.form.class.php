@@ -2061,7 +2061,7 @@ class Form
                 var	$inputarray='.json_encode($inputarray).';
                 var button=\''.$button.'\';
             	var dialogconfirm=\''.$dialogconfirm.'\';
-                
+
 			    $( "#" + dialogconfirm ).dialog({
 			        autoOpen: '.($autoOpen?'true':'false').',
 			        resizable: false,
@@ -2095,7 +2095,7 @@ class Form
 			            }
 			        }
 			    });
-			    
+
 			    if (button.length > 0) {
 			    	$( "#" + button ).click(function() {
 			    		$( "#" + dialogconfirm ).dialog( \'open\' );
@@ -2871,7 +2871,7 @@ class Form
         if ($d)
         {
             // Show date with popup
-            if ($conf->use_javascript_ajax && $conf->use_popup_calendar)
+            if ($conf->use_javascript_ajax && (empty($conf->global->MAIN_POPUP_CALENDAR) || $conf->global->MAIN_POPUP_CALENDAR != "none"))
             {
                 //print "e".$set_time." t ".$conf->format_date_short;
                 if (strval($set_time) != '' && $set_time != -1)
@@ -2881,7 +2881,7 @@ class Form
                 }
 
                 // Calendrier popup version eldy
-                if ("$conf->use_popup_calendar" == "eldy")	// Laisser conf->use_popup_calendar entre quote
+                if (empty($conf->global->MAIN_POPUP_CALENDAR) || $conf->global->MAIN_POPUP_CALENDAR == "eldy")
                 {
                     // Zone de saisie manuelle de la date
                     $retstring.='<input id="'.$prefix.'" name="'.$prefix.'" type="text" size="9" maxlength="11" value="'.$formated_date.'"';
@@ -2908,7 +2908,7 @@ class Form
             }
 
             // Show date with combo selects
-            if (! $conf->use_javascript_ajax || ! $conf->use_popup_calendar)
+            if (empty($conf->use_javascript_ajax) || $conf->global->MAIN_POPUP_CALENDAR == "none")
             {
                 // Jour
                 $retstring.='<select'.($disabled?' disabled="true"':'').' class="flat" name="'.$prefix.'day">';
@@ -3031,7 +3031,7 @@ class Form
             $reset_scripts = "";
 
             // Generate the date part, depending on the use or not of the javascript calendar
-            if ($conf->use_popup_calendar)
+            if (empty($conf->global->MAIN_POPUP_CALENDAR) || $conf->global->MAIN_POPUP_CALENDAR == "eldy")
             {
                 $base=DOL_URL_ROOT.'/lib/';
                 $reset_scripts .= 'resetDP(\''.$base.'\',\''.$prefix.'\',\''.$langs->trans("FormatDateShortJava").'\',\''.$langs->defaultlang.'\');';

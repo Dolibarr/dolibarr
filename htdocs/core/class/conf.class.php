@@ -317,10 +317,6 @@ class Conf
 			$this->global->MAIN_CONFIRM_AJAX=0;
 		}
 
-		// conf->use_popup_calendar
-		$this->use_popup_calendar="";	// Pas de date popup par defaut
-		if (isset($this->global->MAIN_POPUP_CALENDAR)) $this->use_popup_calendar=$this->global->MAIN_POPUP_CALENDAR;
-
 		// conf->monnaie
 		if (empty($this->global->MAIN_MONNAIE)) $this->global->MAIN_MONNAIE='EUR';
 		$this->monnaie=$this->global->MAIN_MONNAIE;	// TODO deprecated
