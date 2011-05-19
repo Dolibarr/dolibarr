@@ -56,4 +56,10 @@ AgendaUrlOptions4=<b>logint=%s</b> para restringir inserciones a acciones que af
 AgendaUrlOptions5=<b>logind=%s</b> para restringir inserciones a acciones realizadas por el usuario <b>%s</b>.
 AgendaShowBirthdayEvents=Mostrar cumpleaños de los contactos
 AgendaHideBirthdayEvents=Ocultar cumpleaños de los contactos
+
+# External Sites ical
 ExtSites=Calendarios externos
+ExtSitesEnableThisTool=Mostrar calendarios externos en la agenda
+ExtSitesNbOfAgenda=Número de calendarios
+AgendaExtNb=Calendario nº %s
+ExtSiteUrlAgenda=Url de acceso al archivo .ical

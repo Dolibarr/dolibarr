@@ -58,3 +58,10 @@ AgendaUrlOptions5=<b>logind=%s</b> to restrict output to actions done by user <b
 AgendaShowBirthdayEvents=Show birthday's contacts
 AgendaHideBirthdayEvents=Hide birthday's contacts
 ExtSites=External calendars
+
+# External Sites ical
+ExtSites=External Calendars
+ExtSitesEnableThisTool=how external calendars into agenda
+ExtSitesNbOfAgenda=Number of calendars
+AgendaExtNb=Calendar nb %s
+ExtSiteUrlAgenda=URL to access .ical file

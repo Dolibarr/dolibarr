@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2011 Juanjo Menent  <jmenent@2byte.es>
+/* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2011 	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,31 +26,91 @@
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
+require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/agenda.lib.php");
 
 if (!$user->admin)
     accessforbidden();
 
+$langs->load("agenda");
 $langs->load("admin");
 $langs->load("other");
-$langs->load("agenda");
 
-$action=$_POST["action"];
+$def = array();
+$actiontest=GETPOST("test");
+$actionsave=GETPOST("save");
+
+if (empty($conf->global->AGENDA_EXT_NB)) $conf->global->AGENDA_EXT_NB=5;
+$MAXAGENDA=empty($conf->global->AGENDA_EXT_NB)?5:$conf->global->AGENDA_EXT_NB;
+
+// List of Google colors (A lot of colors are ignored by Google)
+$colorlist=array('29527A','5229A3','A32929','7A367A','B1365F','0D7813');
 
 /*
-*	Actions
-*/
+ * Actions
+ */
+if ($actionsave)
+{
+    $db->begin();
 
+	$res=dolibarr_set_const($db,'ENABLE_AGENDA_EXT'.$i,trim(GETPOST("ENABLE_AGENDA_EXT".$i)),'chaine',0);
+
+	$i=1;
+	$error=0;
+
+	// Save agendas
+	while ($i <= $MAXAGENDA)
+	{
+		$color=trim(GETPOST("agenda_ext_color".$i));
+		if ($color=='-1') $color='';
+
+		//print 'color='.$color;
+		$res=dolibarr_set_const($db,'AGENDA_EXT_NAME'.$i,trim(GETPOST("agenda_ext_name".$i)),'chaine',0);
+		if (! $res > 0) $error++;
+		$res=dolibarr_set_const($db,'AGENDA_EXT_SRC'.$i,trim(GETPOST("agenda_ext_src".$i)),'chaine',0);
+		if (! $res > 0) $error++;
+		$res=dolibarr_set_const($db,'AGENDA_EXT_COLOR'.$i,$color,'chaine',0);
+		if (! $res > 0) $error++;
+		$i++;
+	}
+
+	// Save timezone
+	$timezone=trim(GETPOST("agenda_ext_timezone"));
+	if ($timezone=='-1') $timezone='';
+    $res=dolibarr_set_const($db,'AGENDA_EXT_TIMEZONE',$timezone,'chaine',0);
+	if (! $res > 0) $error++;
+	// Save nb of agenda
+	$res=dolibarr_set_const($db,'AGENDA_EXT_NB',trim(GETPOST("AGENDA_EXT_NB")),'chaine',0);
+	if (! $res > 0) $error++;
+	if (empty($conf->global->AGENDA_EXT_NB)) $conf->global->AGENDA_EXT_NB=5;
+	$MAXAGENDA=empty($conf->global->AGENDA_EXT_NB)?5:$conf->global->AGENDA_EXT_NB;
+
+    if (! $error)
+    {
+        $db->commit();
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    }
+    else
+    {
+        $db->rollback();
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+    }
+}
 
 /*
  * View
  */
 
+$form=new Form($db);
+$formadmin=new FormAdmin($db);
+$formother=new FormOther($db);
+
 llxHeader();
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("AgendaSetup"),$linkback,'setup');
-print "<br>\n";
+print '<br>';
 
 print $langs->trans("AgendaExtSitesDesc")."<br>\n";
 print "<br>\n";
@@ -58,16 +119,86 @@ $head=agenda_prepare_head();
 
 dol_fiche_head($head, 'extsites', $langs->trans("Agenda"));
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="save">';
+print '<form name="extsitesconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 
+print $langs->trans("ExtSitesEnableThisTool").' '.$form->selectyesno("ENABLE_AGENDA_EXT",(GETPOST("ENABLE_AGENDA_EXT"))?GETPOST("ENABLE_AGENDA_EXT"):$conf->global->ENABLE_AGENDA_EXT,1).'<br><br>';
+
+$var=false;
+print "<table class=\"noborder\" width=\"100%\">";
+
+print "<tr class=\"liste_titre\">";
+print '<td width="180">'.$langs->trans("Parameter")."</td>";
+print "<td>".$langs->trans("Value")."</td>";
+print "</tr>";
+
+// Timezone
+print "<tr ".$bc[$var].">";
+print "<td>".$langs->trans("ClientTZ")."</td>";
+print "<td>";
+print $formadmin->select_timezone($conf->global->AGENDA_EXT_TIMEZONE,'agenda_ext_timezone');
+print "</td>";
+print "</tr>";
+
+// Nb of agenda
+$var=!$var;
+print "<tr ".$bc[$var].">";
+print "<td>".$langs->trans("ExtSitesNbOfAgenda")."</td>";
+print "<td>";
+print '<input class="flat" type="text" size="2" name="AGENDA_EXT_NB" value="'.$conf->global->AGENDA_EXT_NB.'">';
+print "</td>";
+print "</tr>";
+
+print "</table>";
+print "<br>";
+
+print "<table class=\"noborder\" width=\"100%\">";
+
+print "<tr class=\"liste_titre\">";
+print "<td>".$langs->trans("Parameter")."</td>";
+print "<td>".$langs->trans("Name")."</td>";
+print "<td>".$langs->trans("ExtSiteUrlAgenda")." (".$langs->trans("Example").': http://yoursite/agenda/agenda.ical)</td>';
+print "<td>".$langs->trans("Color")."</td>";
+print "</tr>";
+
+$i=1;
 $var=true;
+while ($i <= $MAXAGENDA)
+{
+	$key=$i;
+	$var=!$var;
+	print "<tr ".$bc[$var].">";
+	print '<td width="180" nowrap="nowrap">'.$langs->trans("AgendaExtNb",$key)."</td>";
+	$name='AGENDA_EXT_NAME'.$key;
+	$src='AGENDA_EXT_SRC'.$key;
+	$color='AGENDA_EXT_COLOR'.$key;
+	print "<td><input type=\"text\" class=\"flat\" name=\"agenda_ext_name".$key."\" value=\"". $conf->global->$name . "\" size=\"28\"></td>";
+	print "<td><input type=\"text\" class=\"flat\" name=\"agenda_ext_src".$key."\" value=\"". $conf->global->$src . "\" size=\"60\"></td>";
+	print '<td nowrap="nowrap">';
+
+	// Possible colors are limited by Google
+	//print $formadmin->select_colors($conf->global->$color, "google_agenda_color".$key, $colorlist);
+	print $formother->select_color($conf->global->$color, "agenda_ext_color".$key, 'sitextconfig', 1, $colorlist);
+	print '</td>';
+	print "</tr>";
+	$i++;
+}
+
+print '</table>';
+print '<br>';
+
+print '<center>';
+
+print "<input type=\"submit\" name=\"save\" class=\"button\" value=\"".$langs->trans("Save")."\">";
+print "</center>";
 
 print "</form>\n";
 
+dol_fiche_end();
+
 if ($mesg) print "<br>$mesg<br>";
 print "<br>";
+
+$db->close();
 
 llxFooter('$Date$ - $Revision$');
 ?>

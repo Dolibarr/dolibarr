@@ -58,3 +58,10 @@ AgendaUrlOptions5=<b>logind=%s</b> pour limiter l'export aux actions réalisées
 AgendaShowBirthdayEvents=Afficher anniversaires contacts
 AgendaHideBirthdayEvents=Cacher anniversaires contacts
 ExtSites=Calendriers externes
+
+# External Sites ical
+ExtSites=Calendriers extérieures
+ExtSitesEnableThisTool=Afficher les calendriers externes sur l'agenda
+ExtSitesNbOfAgenda=Nombre de calendriers
+AgendaExtNb=Calendrier no %s
+ExtSiteUrlAgenda=Url de acceso al archivo .ical

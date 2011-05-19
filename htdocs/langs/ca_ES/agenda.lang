@@ -57,3 +57,10 @@ AgendaUrlOptions5= <b>logind= %s</b> per a restringir insercions a accions reali
 AgendaShowBirthdayEvents= Mostra aniversari dels contactes
 AgendaHideBirthdayEvents= Amaga aniversari dels contacte
 ExtSites=Calendaris externs
+
+# External Sites ical
+ExtSites=Calendaris externs
+ExtSitesEnableThisTool=Mostrar calendaris externs a l'agenda
+ExtSitesNbOfAgenda=Nombre de calendaris
+AgendaExtNb=Calendari nº %s
+ExtSiteUrlAgenda=Url d'accés a l'arxiu. ical
