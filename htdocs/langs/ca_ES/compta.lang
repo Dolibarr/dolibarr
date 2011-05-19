@@ -135,3 +135,5 @@ COMPTA_SERVICE_SOLD_ACCOUNT=Codi comptable per defecte per als serveis realitzat
 COMPTA_VAT_ACCOUNT=Codi comptable per defecte per l'IVA (si no està definit en el diccionari "Taxes d'IVA")
 COMPTA_ACCOUNT_CUSTOMER=Codi comptable per defecte de clients (si no està definit a la pestanya tercers)
 COMPTA_ACCOUNT_SUPPLIER=Codi comptable per defecte de proveïdors (si no està definit a la pestanya tercers)
+AddRemind=Desglossar import disponible
+RemainToDivide=Resta a repartir :

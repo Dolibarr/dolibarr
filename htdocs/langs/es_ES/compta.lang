@@ -135,3 +135,5 @@ COMPTA_SERVICE_SOLD_ACCOUNT=Código contable por defecto para los servicios pres
 COMPTA_VAT_ACCOUNT=Código contable por defecto para el IVA (si no está definido en el diccionario "Tasas de IVA")
 COMPTA_ACCOUNT_CUSTOMER=Código contable por defecto de clientes (si no está definido en la pestaña terceros)
 COMPTA_ACCOUNT_SUPPLIER=Código contable por defecto de proveedores (si no está definido en la pestaña terceros)
+AddRemind=Desglosar importe disponible
+RemainToDivide=Resto a repartir :
