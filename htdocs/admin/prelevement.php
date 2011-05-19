@@ -128,7 +128,7 @@ print '</td></tr>';
 print '</table>';
 print '<br>';
 
-print '<center><input type="submit" class="button" value="'.$langs->trans("Modify").'"></center>';
+print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"></center>';
 
 print '</form>';
 

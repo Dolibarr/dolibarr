@@ -86,7 +86,6 @@ print '<input type="hidden" name="action" value="set">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
-print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
 $var=!$var;
 print '<tr '.$bc[$var].'><td width=\"50%\">'.$langs->trans("CashDeskThirdPartyForSell").'</td>';
@@ -123,8 +122,10 @@ if ($conf->stock->enabled)
 	print '</td></tr>';
 }
 
-
 print '</table>';
+print '<br>';
+
+print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"></center>';
 
 print "</form>\n";
 
