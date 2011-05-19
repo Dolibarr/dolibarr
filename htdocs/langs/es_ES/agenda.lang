@@ -35,6 +35,7 @@ AgendaExtSitesDesc=Esta página le permite configurar calendarios externos.
 ActionsEvents=Eventos para que Dolibarr cree una acción de forma automática
 PropalValidatedInDolibarr=Presupuesto %s validado
 InvoiceValidatedInDolibarr=Factura %s validada
+InvoiceBackToDraftInDolibarr=Factura %s devuelta a borrador
 OrderValidatedInDolibarr=Pedido %s validado
 InterventionValidatedInDolibarr=Intervención %s validada
 ProposalSentByEMail=Presupuesto %s enviado por e-mail
