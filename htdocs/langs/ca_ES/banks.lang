@@ -141,3 +141,4 @@ AllAccounts=Tots els comptes bancaris/de caixa
 BackToAccount=Tornar al compte
 ShowAllAccounts=Mostra per a tots els comptes
 FutureTransaction=Transacció futura. No és possible conciliar.
+SelectChequeTransactionAndGenerate=Seleccioneu/filtreu els xecs a incloure a la remesa i feu clic a "Crear".
