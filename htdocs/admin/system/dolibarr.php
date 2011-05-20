@@ -131,15 +131,6 @@ $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("LanguageBrowserParameter","HTTP_ACCEPT_LANGUAGE").'</td><td>'.$_SERVER["HTTP_ACCEPT_LANGUAGE"].'</td></tr>'."\n";
 $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("CurrentUserLanguage").'</td><td>'.$langs->getDefaultLang().'</td></tr>'."\n";
-/*$var=!$var;
-print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("LanguageBrowserParameter","LANG")."</td><td>".$_ENV["LANG"]."</td></tr>\n";
-$var=!$var;
-print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("LanguageParameter","PHP LC_ALL")."</td><td>".setlocale(LC_ALL,0)."</td></tr>\n";
-$var=!$var;
-print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("LanguageParameter","PHP LC_NUMERIC")."</td><td>".setlocale(LC_NUMERIC,0)."</td></tr>\n";
-//$var=!$var;
-//print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("LanguageParameter","PHP LC_MONETARY")."</td><td>".setlocale(LC_MONETARY,0)."</td></tr>\n";
-*/
 // Thousands
 $var=!$var;
 $thousand=$langs->trans("SeparatorThousand");
@@ -163,12 +154,9 @@ if (($thousand != ',' && $thousand != '.') || ($thousand != ' '))
 }
 $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">=> price(1234.56)</td><td>'.price(1234.56).'</td>';
-//print '<tr class="liste_titre"><td>'.$langs->trans("TimeZone").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
 // Timezone
-
-$txt =$langs->trans("OSTZ").' (variable system TZ): '.$_ENV["TZ"].'<br>'."\n";
-$txt.=$langs->trans("PHPTZ").' (php.ini date.timezone): '.ini_get("date.timezone").''."\n"; // date.timezone must be in valued defined in http://fr3.php.net/manual/en/timezones.europe.php
-
+$txt =$langs->trans("OSTZ").' (variable system TZ): '.($_ENV["TZ"]?$_ENV["TZ"]:$langs->trans("NotDefined")).'<br>'."\n";
+$txt.=$langs->trans("PHPTZ").' (php.ini date.timezone): '.(ini_get("date.timezone")?ini_get("date.timezone"):$langs->trans("NotDefined")).''."\n"; // date.timezone must be in valued defined in http://fr3.php.net/manual/en/timezones.europe.php
 if (function_exists('date_default_timezone_get'))
 {
 	$var=!$var;
