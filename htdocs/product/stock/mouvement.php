@@ -28,6 +28,7 @@
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/product/stock/class/entrepot.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/stock.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
@@ -73,6 +74,7 @@ $productstatic=new Product($db);
 $warehousestatic=new Entrepot($db);
 $userstatic=new User($db);
 $form=new Form($db);
+$formother=new FormOther($db);
 
 $sql = "SELECT p.rowid, p.label as produit, p.fk_product_type as type,";
 $sql.= " s.label as stock, s.rowid as entrepot_id,";
@@ -264,7 +266,7 @@ if ($resql)
 	print '&nbsp;'.$langs->trans('Year').': ';
 	$max_year = date("Y");
 	$syear = $year;
-	$form->select_year($syear,'year',1, 20, 5);
+	$formother->select_year($syear,'year',1, 20, 5);
 	print '</td>';
 	// Label of movement
 	print '<td class="liste_titre" align="left">';

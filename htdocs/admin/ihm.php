@@ -28,6 +28,7 @@ require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formadmin.class.php");
 
 $langs->load("admin");
@@ -101,6 +102,7 @@ $wikihelp='EN:First_setup|FR:Premiers_param&eacute;trages|ES:Primeras_configurac
 llxHeader('',$langs->trans("Setup"),$wikihelp);
 
 $html=new Form($db);
+$formother=new FormOther($db);
 $formadmin=new FormAdmin($db);
 
 print_fiche_titre($langs->trans("GUISetup"),'','setup');
@@ -232,7 +234,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')	// Edit
     // First day for weeks
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("WeekStartOnDay").'</td><td>';
-    print $html->select_dayofweek((isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:'1'),'MAIN_START_WEEK',0);
+    print $formother->select_dayofweek((isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:'1'),'MAIN_START_WEEK',0);
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';

@@ -28,6 +28,7 @@
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
 
 if (!$user->rights->fournisseur->facture->lire)
@@ -93,6 +94,7 @@ if ($_POST["mode"] == 'search')
 
 $now=gmmktime();
 $html=new Form($db);
+$htmlother=new FormOther($db);
 
 llxHeader('',$langs->trans("SuppliersInvoices"),'EN:Suppliers_Invoices|FR:FactureFournisseur|ES:Facturas_de_proveedores');
 
@@ -206,7 +208,7 @@ if ($resql)
 	//print '&nbsp;'.$langs->trans('Year').': ';
 	$syear = $year;
 	//if ($syear == '') $syear = date("Y");
-	$html->select_year($syear?$syear:-1,'year',1, 20, 5);
+	$htmlother->select_year($syear?$syear:-1,'year',1, 20, 5);
 	print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="left">';

@@ -30,6 +30,7 @@
 
 require('../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/propal.lib.php");
 if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/projet/class/project.class.php');
@@ -107,6 +108,7 @@ $now=gmmktime();
 llxHeader();
 
 $html = new Form($db);
+$htmlother = new FormOther($db);
 $formfile = new FormFile($db);
 $societestatic=new Societe($db);
 $propalstatic=new Propal($db);
@@ -615,7 +617,7 @@ else
 		$syear = $year;
 		if($syear == '')
 		$syear = date("Y");
-		$html->select_year($syear,'year',1, 20, 5);
+		$htmlother->select_year($syear,'year',1, 20, 5);
 		print '</td>';
 		print '<td class="liste_titre" align="right">';
 		print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$_GET['search_montant_ht'].'">';

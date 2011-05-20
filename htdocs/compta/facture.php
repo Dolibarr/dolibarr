@@ -31,6 +31,7 @@
 
 require('../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/includes/modules/facture/modules_facture.php');
 require_once(DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/core/class/discount.class.php');
@@ -1385,6 +1386,7 @@ if (GETPOST('action') == 'builddoc')	// En get ou en post
 llxHeader('',$langs->trans('Bill'),'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes');
 
 $html = new Form($db);
+$htmlother = new FormOther($db);
 $formfile = new FormFile($db);
 $now=dol_now();
 
@@ -3040,7 +3042,7 @@ else
             //print '&nbsp;'.$langs->trans('Year').': ';
             $syear = $year;
             //if ($syear == '') $syear = date("Y");
-            $html->select_year($syear,'year',1, 20, 5);
+            $htmlother->select_year($syear,'year',1, 20, 5);
             print '</td>';
             print '<td class="liste_titre" align="left">&nbsp;</td>';
             print '<td class="liste_titre" align="left">';

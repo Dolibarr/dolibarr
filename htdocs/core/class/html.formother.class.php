@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2006      Marc Barilley/Ocebo  <marc@ocebo.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerker@telenet.be>
@@ -470,6 +470,118 @@ class FormOther
 		ImagePng($image,$file); //renvoie une image sous format png
 		ImageDestroy($image);
 	}
+	
+    /**
+     *    	Return HTML combo list of week
+     *    	@param      selected          Preselected value
+     *    	@param      htmlname          Nom de la zone select
+     *    	@param      useempty          Affiche valeur vide dans liste
+     */
+    function select_dayofweek($selected='',$htmlname='weekid',$useempty=0)
+    {
+        global $langs;
+
+        $week = array(	0=>$langs->trans("Day0"),
+        1=>$langs->trans("Day1"),
+        2=>$langs->trans("Day2"),
+        3=>$langs->trans("Day3"),
+        4=>$langs->trans("Day4"),
+        5=>$langs->trans("Day5"),
+        6=>$langs->trans("Day6"));
+
+        $select_week = '<select class="flat" name="'.$htmlname.'">';
+        if ($useempty)
+        {
+            $select_week .= '<option value="-1">&nbsp;</option>';
+        }
+        foreach ($week as $key => $val)
+        {
+            if ($selected == $key)
+            {
+                $select_week .= '<option value="'.$key.'" selected="selected">';
+            }
+            else
+            {
+                $select_week .= '<option value="'.$key.'">';
+            }
+            $select_week .= $val;
+        }
+        $select_week .= '</select>';
+        return $select_week;
+    }
+
+    /**
+     *    	Return HTML combo list of month
+     *    	@param      selected          Preselected value
+     *    	@param      htmlname          Nom de la zone select
+     *    	@param      useempty          Affiche valeur vide dans liste
+     */
+    function select_month($selected='',$htmlname='monthid',$useempty=0)
+    {
+        $month = monthArrayOrSelected(-1);	// Get array
+
+        $select_month = '<select class="flat" name="'.$htmlname.'">';
+        if ($useempty)
+        {
+            $select_month .= '<option value="0">&nbsp;</option>';
+        }
+        foreach ($month as $key => $val)
+        {
+            if ($selected == $key)
+            {
+                $select_month .= '<option value="'.$key.'" selected="selected">';
+            }
+            else
+            {
+                $select_month .= '<option value="'.$key.'">';
+            }
+            $select_month .= $val;
+        }
+        $select_month .= '</select>';
+        return $select_month;
+    }
+
+    /**
+     *    	Return HTML combo list of years
+     *      @param      selected          Preselected value (''=current year, -1=none, year otherwise)
+     *    	@param      htmlname          Name of HTML select object
+     *    	@param      useempty          Affiche valeur vide dans liste
+     *    	@param      $min_year         Offset of minimum year into list (by default current year -10)
+     *    	@param      $max_year         Offset of maximum year into list (by default current year + 5)
+     */
+	function select_year($selected='',$htmlname='yearid',$useempty=0, $min_year=10, $max_year=5, $offset=0, $invert=0, $option='')
+    {
+        $currentyear = date("Y")+$offset;
+    	$max_year = $currentyear+$max_year;
+        $min_year = $currentyear-$min_year;
+        if(empty($selected)) $selected = $currentyear;
+
+        print '<select class="flat" id="' . $htmlname . '" name="' . $htmlname . '"'.$option.' >';
+        if($useempty)
+        {
+            if ($selected == '') $selected_html = ' selected="selected"';
+            print '<option value=""' . $selected_html . '>&nbsp;</option>';
+        }
+        if (! $invert)
+        {
+	        for ($y = $max_year; $y >= $min_year; $y--)
+	        {
+	            $selected_html='';
+	            if ($selected > 0 && $y == $selected) $selected_html = ' selected="selected"';
+	            print '<option value="'.$y.'"'.$selected_html.' >'.$y.'</option>';
+	        }
+        }
+        else
+        {
+        	for ($y = $min_year; $y <= $max_year; $y++)
+	        {
+	            $selected_html='';
+	            if ($selected > 0 && $y == $selected) $selected_html = ' selected="selected"';
+	            print '<option value="'.$y.'"'.$selected_html.' >'.$y.'</option>';
+	        }
+        }
+        print "</select>\n";
+    }
 
 }
 

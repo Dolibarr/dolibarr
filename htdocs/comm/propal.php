@@ -34,6 +34,7 @@ require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php');
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/propale/modules_propale.php");
 require_once(DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php');
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/propal.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
@@ -991,6 +992,7 @@ if ($action == 'down' && $user->rights->propale->creer)
 llxHeader('',$langs->trans('Proposal'),'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
 
 $html = new Form($db);
+$htmlother = new FormOther($db);
 $formfile = new FormFile($db);
 $companystatic=new Societe($db);
 
@@ -1833,7 +1835,7 @@ else
 		print '&nbsp;'.$langs->trans('Year').': ';
 		$syear = $year;
 		//if($syear == '') $syear = date("Y");
-		$html->select_year($syear,'year',1, 20, 5);
+		$htmlother->select_year($syear,'year',1, 20, 5);
 		print '</td>';
 		print '<td class="liste_titre" colspan="1">&nbsp;</td>';
 		print '<td class="liste_titre" align="right">';
