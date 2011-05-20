@@ -2350,7 +2350,7 @@ class Commande extends CommonObject
 			$clause = " AND";
 		}
 		$sql.= $clause." c.entity = ".$conf->entity;
-		$sql.= " AND ((c.fk_statut BETWEEN 1 AND 2) OR (c.fk_statut = 3 AND c.facture = 0))";
+		$sql.= " AND c.fk_statut IN (1,2,3) AND c.facture = 0";
 		if ($user->societe_id) $sql.=" AND c.fk_soc = ".$user->societe_id;
 
 		$resql=$this->db->query($sql);
@@ -2429,7 +2429,7 @@ class Commande extends CommonObject
 			if ($statut==0) return img_picto($langs->trans('StatusOrderDraftShort'),'statut0').' '.$langs->trans('StatusOrderDraft');
 			if ($statut==1) return img_picto($langs->trans('StatusOrderValidatedShort'),'statut1').' '.$langs->trans('StatusOrderValidated');
 			if ($statut==2) return img_picto($langs->trans('StatusOrderOnProcessShort'),'statut3').' '.$langs->trans('StatusOrderOnProcess');
-			if ($statut==3 && ! $facturee) return img_picto($langs->trans('StatusOrderToBillShort'),'statut4').' '.$langs->trans('StatusOrderToBill');
+			if ($statut==3 && ! $facturee) return img_picto($langs->trans('StatusOrderToBillShort'),'statut7').' '.$langs->trans('StatusOrderToBill');
 			if ($statut==3 && $facturee) return img_picto($langs->trans('StatusOrderProcessedShort'),'statut6').' '.$langs->trans('StatusOrderProcessed');
 		}
 		if ($mode == 3)
@@ -2438,7 +2438,7 @@ class Commande extends CommonObject
 			if ($statut==0) return img_picto($langs->trans('StatusOrderDraft'),'statut0');
 			if ($statut==1) return img_picto($langs->trans('StatusOrderValidated'),'statut1');
 			if ($statut==2) return img_picto($langs->trans('StatusOrderOnProcess'),'statut3');
-			if ($statut==3 && ! $facturee) return img_picto($langs->trans('StatusOrderToBill'),'statut4');
+			if ($statut==3 && ! $facturee) return img_picto($langs->trans('StatusOrderToBill'),'statut7');
 			if ($statut==3 && $facturee) return img_picto($langs->trans('StatusOrderProcessed'),'statut6');
 		}
 		if ($mode == 4)
@@ -2447,7 +2447,7 @@ class Commande extends CommonObject
 			if ($statut==0) return img_picto($langs->trans('StatusOrderDraft'),'statut0').' '.$langs->trans('StatusOrderDraft');
 			if ($statut==1) return img_picto($langs->trans('StatusOrderValidated'),'statut1').' '.$langs->trans('StatusOrderValidated');
 			if ($statut==2) return img_picto($langs->trans('StatusOrderOnProcess'),'statut3').' '.$langs->trans('StatusOrderOnProcess');
-			if ($statut==3 && ! $facturee) return img_picto($langs->trans('StatusOrderToBill'),'statut4').' '.$langs->trans('StatusOrderToBill');
+			if ($statut==3 && ! $facturee) return img_picto($langs->trans('StatusOrderToBill'),'statut7').' '.$langs->trans('StatusOrderToBill');
 			if ($statut==3 && $facturee) return img_picto($langs->trans('StatusOrderProcessed'),'statut6').' '.$langs->trans('StatusOrderProcessed');
 		}
 		if ($mode == 5)
@@ -2456,7 +2456,7 @@ class Commande extends CommonObject
 			if ($statut==0) return $langs->trans('StatusOrderDraftShort').' '.img_picto($langs->trans('StatusOrderDraftShort'),'statut0');
 			if ($statut==1) return $langs->trans('StatusOrderValidatedShort').' '.img_picto($langs->trans('StatusOrderValidatedShort'),'statut1');
 			if ($statut==2) return $langs->trans('StatusOrderOnProcessShort').' '.img_picto($langs->trans('StatusOrderOnProcessShort'),'statut3');
-			if ($statut==3 && ! $facturee) return $langs->trans('StatusOrderToBillShort').' '.img_picto($langs->trans('StatusOrderToBillShort'),'statut4');
+			if ($statut==3 && ! $facturee) return $langs->trans('StatusOrderToBillShort').' '.img_picto($langs->trans('StatusOrderToBillShort'),'statut7');
 			if ($statut==3 && $facturee) return $langs->trans('StatusOrderProcessedShort').' '.img_picto($langs->trans('StatusOrderProcessedShort'),'statut6');
 		}
 	}
