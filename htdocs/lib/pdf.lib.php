@@ -844,6 +844,26 @@ function pdf_getlineref($object,$i,$outputlangs)
 }
 
 /**
+ *	Return line ref_supplier
+ *	@param		object				Object
+ *	@param		$i					Current line number
+ *  @param    	outputlang			Object lang for output
+ */
+function pdf_getlineref_supplier($object,$i,$outputlangs)
+{
+    if (! empty($object->hooks) && ( ($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
+    {
+    	$special_code = $object->lines[$i]->special_code;
+    	if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
+        // TODO add hook function
+    }
+    else
+    {
+        return dol_htmlentitiesbr($object->lines[$i]->ref_supplier);
+    }
+}
+
+/**
  *	Return line vat rate
  *	@param		object				Object
  *	@param		$i					Current line number
