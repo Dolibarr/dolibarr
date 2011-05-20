@@ -167,7 +167,7 @@ class CommandeFournisseur extends Commande
 			if ($this->statut == 0) $this->brouillon = 1;
 
 
-			$sql = "SELECT l.rowid, l.ref as ref_fourn, l.fk_product, l.product_type, l.label, l.description,";
+			$sql = "SELECT l.rowid, l.ref as ref_supplier, l.fk_product, l.product_type, l.label, l.description,";
 			$sql.= " l.qty,";
 			$sql.= " l.tva_tx, l.remise_percent, l.subprice,";
 			$sql.= " l.localtax1_tx, l. localtax2_tx, l.total_localtax1, l.total_localtax2,";
@@ -213,7 +213,8 @@ class CommandeFournisseur extends Commande
 					$line->product_desc        = $objp->product_desc; // Description produit
 
 					$line->ref                 = $objp->ref;          // Reference
-					$line->ref_fourn           = $objp->ref_fourn;    // Reference supplier
+					$line->ref_fourn           = $objp->ref_supplier;    // TODO deprecated
+					$line->ref_supplier        = $objp->ref_supplier;    // Reference supplier
 
 					$this->lines[$i]      = $line;
 
