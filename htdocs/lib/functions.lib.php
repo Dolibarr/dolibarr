@@ -558,27 +558,27 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
     global $conf,$langs;
 
     $to_gmt=false;
-    $offset=0;
+    $offsettz=$offsetdst=0;
     if ($tzoutput)
     {
         $to_gmt=true;	// For backward compatibility
-        $offset=0;
         if (is_string($tzoutput))
         {
             if ($tzoutput == 'tzserver')
             {
                 $to_gmt=false;
-                $offset=0;
+                $offsettz=$offsetdst=0;
             }
             if ($tzoutput == 'tzuser')
             {
                 $to_gmt=true;
-                $offset=(empty($_SESSION['dol_tz'])?0:$_SESSION['dol_tz'])*60*60;
+                $offsettz=(empty($_SESSION['dol_tz'])?0:$_SESSION['dol_tz'])*60*60;
+                $offsetdst=(empty($_SESSION['dol_dst'])?0:$_SESSION['dol_dst'])*60*60;
             }
             if ($tzoutput == 'tzcompany')
             {
                 $to_gmt=false;
-                $offset=0;	// TODO Define this and use it later
+                $offsettz=$offsetdst=0;	// TODO Define this and use it later
             }
         }
     }
@@ -639,14 +639,14 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
         $ssec = $reg[6];
 
         $time=dol_mktime($shour,$smin,$ssec,$smonth,$sday,$syear,true);
-        $ret=adodb_strftime($format,$time+$offset,$to_gmt);
+        $ret=adodb_strftime($format,$time+$offsettz+$offsetdst,$to_gmt);
     }
     else
     {
         // Date is a timestamps
         if ($time < 100000000000)	// Protection against bad date values
         {
-            $ret=adodb_strftime($format,$time+$offset,$to_gmt);
+            $ret=adodb_strftime($format,$time+$offsettz+$offsetdst,$to_gmt);
         }
         else $ret='Bad value '.$time.' for date';
     }
@@ -654,7 +654,7 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
     if (preg_match('/__b__/i',$format))
     {
         // Here ret is string in PHP setup language (strftime was used). Now we convert to $outputlangs.
-        $month=adodb_strftime('%m',$time+$offset);
+        $month=adodb_strftime('%m',$time+$offsettz+$offsetdst);
         if ($encodetooutput)
         {
             $monthtext=$outputlangs->transnoentities('Month'.$month);
@@ -673,7 +673,7 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
     }
     if (preg_match('/__a__/i',$format))
     {
-        $w=adodb_strftime('%w',$time+$offset);
+        $w=adodb_strftime('%w',$time+$offsettz+$offsetdst);
         $dayweek=$outputlangs->transnoentitiesnoconv('Day'.$w);
         $ret=str_replace('__A__',$dayweek,$ret);
         $ret=str_replace('__a__',dol_substr($dayweek,0,3),$ret);

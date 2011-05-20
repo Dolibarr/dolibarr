@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -165,20 +165,27 @@ $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">=> price(1234.56)</td><td>'.price(1234.56).'</td>';
 //print '<tr class="liste_titre"><td>'.$langs->trans("TimeZone").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
 // Timezone
-// PHP server
-$var=!$var;
-print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("OSTZ").' (variable system TZ)</td><td>'.$_ENV["TZ"].'</td></tr>'."\n";
-$var=!$var;
-print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("PHPTZ").' (php.ini date.timezone)</td><td>'.ini_get("date.timezone").'</td></tr>'."\n";	// date.timezone must be in valued defined in http://fr3.php.net/manual/en/timezones.europe.php
+
+$txt =$langs->trans("OSTZ").' (variable system TZ): '.$_ENV["TZ"].'<br>'."\n";
+$txt.=$langs->trans("PHPTZ").' (php.ini date.timezone): '.ini_get("date.timezone").''."\n"; // date.timezone must be in valued defined in http://fr3.php.net/manual/en/timezones.europe.php
+
 if (function_exists('date_default_timezone_get'))
 {
 	$var=!$var;
-	print '<tr '.$bc[$var].'><td width="300">=> '.$langs->trans("CurrentTimeZone").'</td><td>';	// Timezone server PHP
-	print date_default_timezone_get();
+	print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("CurrentTimeZone").'</td><td>';	// Timezone server PHP
+	$a=date_default_timezone_get();
+	$a.=' ('.(-dol_mktime(0,0,0,1,1,1970)>0?'+':'').(-dol_mktime(0,0,0,1,1,1970)).')';
+    print $form->textwithtooltip($a,$txt,2,1,img_info());
 	print '</td></tr>'."\n";	// value defined in http://fr3.php.net/manual/en/timezones.europe.php
 }
-$var=!$var;
-print '<tr '.$bc[$var].'><td width="300">=> '.$langs->trans("PHPServerOffsetWithGreenwich").'</td><td>'.(-dol_mktime(0,0,0,1,1,1970)>0?'+':'').(-dol_mktime(0,0,0,1,1,1970)).'</td></tr>'."\n";
+else
+{
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("PHPServerOffsetWithGreenwich").'</td><td>';
+    $a=(-dol_mktime(0,0,0,1,1,1970)>0?'+':'').(-dol_mktime(0,0,0,1,1,1970));
+    print $form->textwithtooltip($a,$txt,2,1,img_info());
+    print '</td></tr>'."\n";
+}
 $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">=> '.$langs->trans("CurrentHour").'</td><td>'.dol_print_date(dol_now(),'dayhour','tzserver').'</td></tr>'."\n";
 $var=!$var;
@@ -195,9 +202,11 @@ $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">=> '.$langs->trans("CompanyHour").'</td><td>'.$langs->trans("FeatureNotYetAvailable").'</td></tr>'."\n";
 # Client
 $var=!$var;
-print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("ClientTZ").'</td><td>'.($_SESSION['dol_tz']!=''?($_SESSION['dol_tz']>=0?'+':'').$_SESSION['dol_tz']:'').'</td></tr>'."\n";
+print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("ClientTZ").'</td><td>'.($_SESSION['dol_tz']!=''?($_SESSION['dol_tz']>=0?'+':'').$_SESSION['dol_tz']:'').' ('.($_SESSION['dol_tz']>=0?'+':'').($_SESSION['dol_tz']*60*60).')</td></tr>'."\n";
+//$var=!$var;
+//print '<tr '.$bc[$var].'><td width="300">=> '.$langs->trans("ClientOffsetWithGreenwich").'</td><td>'..'</td></tr>'."\n";
 $var=!$var;
-print '<tr '.$bc[$var].'><td width="300">=> '.$langs->trans("ClientOffsetWithGreenwich").'</td><td>'.($_SESSION['dol_tz']>=0?'+':'').($_SESSION['dol_tz']*60*60).'</td></tr>'."\n";
+print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("DaylingSavingTime").'</td><td>'.($_SESSION['dol_dst']>=0?yn(1):yn(0)).' ('.($_SESSION['dol_dst']>=0?'+':'').($_SESSION['dol_dst']*60*60).')</td></tr>'."\n";
 $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">=> '.$langs->trans("ClientHour").'</td><td>'.dol_print_date(dol_now(),'dayhour','tzuser').'</td></tr>'."\n";
 #print "<tr ".$bc[$var]."><td width=\"300\">=> ".$langs->trans("ClientHour")."</td><td>".$langs->trans("FeatureNotYetAvailable")."</td></tr>\n";
