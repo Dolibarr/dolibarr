@@ -147,6 +147,7 @@ $SommeC=0;
 $SommeD=0;
 $dataval=array();
 $datalabels=array();
+$dataseries=array();
 foreach ($AdherentType as $key => $adhtype)
 {
     $datalabels[]=$adhtype->getNomUrl(0,dol_size(16));
@@ -165,7 +166,8 @@ $dataseries[]=array('label'=>$langs->trans("MenuMembersNotUpToDate"),'values'=> 
 $dataseries[]=array('label'=>$langs->trans("MenuMembersUpToDate"),'values'=> $dataval['uptodate']);
 $dataseries[]=array('label'=>$langs->trans("MembersStatusResiliated"),'values'=> $dataval['resiliated']);
 $data=array('series'=>$dataseries,'xlabel'=>$datalabels);
-dol_print_graph('stats',300,180,$data,1,'bar');
+dol_print_graph('stats2',300,180,$data,1,'bar');
+$dataseries=array();
 */
 $dataseries[]=array('label'=>$langs->trans("MenuMembersNotUpToDate"),'values'=>array(round($SommeB)));
 $dataseries[]=array('label'=>$langs->trans("MenuMembersUpToDate"),'values'=>array(round($SommeC)));
@@ -173,6 +175,9 @@ $dataseries[]=array('label'=>$langs->trans("MembersStatusResiliated"),'values'=>
 $dataseries[]=array('label'=>$langs->trans("MembersStatusToValid"),'values'=>array(round($SommeA)));
 $data=array('series'=>$dataseries);
 dol_print_graph('stats',300,180,$data,1,'pie');
+print '</td></tr>';
+print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">';
+print $SommeA+$SommeB+$SommeC+$SommeD;
 print '</td></tr>';
 print '</table>';
 

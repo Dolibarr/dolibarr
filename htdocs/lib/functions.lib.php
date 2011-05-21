@@ -1240,6 +1240,7 @@ function dolibarr_trunc($string,$size=40,$trunc='right',$stringencoding='')
 function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie')
 {
     global $conf,$langs;
+    global $theme_datacolor;    // To have var kept when function is called several times
     if (empty($conf->use_javascript_ajax)) return;
     $jsgraphlib='flot';
     $datacolor=array();
@@ -1285,7 +1286,8 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie')
             function plotWithOptions() {
                 jQuery.plot(jQuery("#'.$htmlid.'"), data,
                 {
-                    series: {pie: {
+                    series: {
+                            pie: {
                             show: true,
                             radius: 3/4,
                             label: {
@@ -1300,10 +1302,16 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie')
                                 },
                                 background: {
                                     opacity: 0.5,
-                                    color: \'#000\'
+                                    color: \'#000000\'
                                 }
                             }
                     } },
+                    zoom: {
+                        interactive: true
+                    },
+                    pan: {
+                        interactive: true
+                    },
                     ';
             		if (sizeof($datacolor))
             		{
@@ -1317,7 +1325,7 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie')
 	                    }
             			print '], ';
             		}
-                    print 'legend: {show: '.($showlegend?'true':'false').'}
+                    print 'legend: {show: '.($showlegend?'true':'false').', position: \'ne\' }
                 });
             }
             plotWithOptions();
@@ -1366,7 +1374,14 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie')
                     series: {
                             stack: stack,
                             lines: { show: lines, fill: true, steps: steps },
-                            bars: { show: bars, barWidth: 0.9, align: \'center\' }
+                            bars: { show: bars, barWidth: 0.9, align: \'center\' },
+                            shadowSize: 5
+                    },
+                    zoom: {
+                        interactive: true
+                    },
+                    pan: {
+                        interactive: true
                     },
                     ';
                     if (sizeof($datacolor))
