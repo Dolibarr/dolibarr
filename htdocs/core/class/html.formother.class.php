@@ -1,6 +1,6 @@
 <?php
 /* Copyright (c) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
@@ -45,8 +45,8 @@ class FormOther
 
 
 	/**
-	 *	\brief     Constructeur
-	 *	\param     DB      handler d'acces base de donnee
+	 *	Constructeur
+	 *	@param     DB      Database handler
 	 */
 	function FormOther($DB)
 	{
@@ -57,11 +57,11 @@ class FormOther
 
 
 	/**
-	 *    \brief      Retourne la liste des modeles d'export
-	 *    \param      selected          Id modele pre-selectionne
-	 *    \param      htmlname          Nom de la zone select
-	 *    \param      type              Type des modeles recherches
-	 *    \param      useempty          Affiche valeur vide dans liste
+     *    Return HTML select list of export models
+	 *    @param      selected          Id modele pre-selectionne
+	 *    @param      htmlname          Nom de la zone select
+	 *    @param      type              Type des modeles recherches
+	 *    @param      useempty          Affiche valeur vide dans liste
 	 */
 	function select_export_model($selected='',$htmlname='exportmodelid',$type='',$useempty=0)
 	{
@@ -104,11 +104,11 @@ class FormOther
 
 
 	/**
-	 *    \brief      Retourne la liste des modeles d'import
-	 *    \param      selected          Id modele pre-selectionne
-	 *    \param      htmlname          Nom de la zone select
-	 *    \param      type              Type des modeles recherches
-	 *    \param      useempty          Affiche valeur vide dans liste
+     *    Return list of export models
+	 *    @param      selected          Id modele pre-selectionne
+	 *    @param      htmlname          Nom de la zone select
+	 *    @param      type              Type des modeles recherches
+	 *    @param      useempty          Affiche valeur vide dans liste
 	 */
 	function select_import_model($selected='',$htmlname='importmodelid',$type='',$useempty=0)
 	{
@@ -151,9 +151,9 @@ class FormOther
 
 
 	/**
-	 *    \brief     Retourne la liste des ecotaxes avec tooltip sur le libelle
-	 *    \param     selected    code ecotaxes pre-selectionne
-	 *    \param     htmlname    nom de la liste deroulante
+	 *    Retourne la liste des ecotaxes avec tooltip sur le libelle
+	 *    @param     selected    code ecotaxes pre-selectionne
+	 *    @param     htmlname    nom de la liste deroulante
 	 */
 	function select_ecotaxes($selected='',$htmlname='ecotaxe_id')
 	{
@@ -203,13 +203,13 @@ class FormOther
 	}
 
 	/**
-	 *    \brief     Retourne une liste de pourcentage
-	 *    \param     selected      pourcentage pre-selectionne
-	 *    \param     htmlname      nom de la liste deroulante
-	 *    \param     increment     increment value
-	 *    \param     start         start value
-	 *    \param     end           end value
-	 *    \return    return        combo
+	 *    Return a HTML select list to select a percent
+	 *    @param     selected      pourcentage pre-selectionne
+	 *    @param     htmlname      nom de la liste deroulante
+	 *    @param     increment     increment value
+	 *    @param     start         start value
+	 *    @param     end           end value
+	 *    @return    return        combo
 	 */
 	function select_percent($selected=0,$htmlname='percent',$disabled=0,$increment=5,$start=0,$end=100)
 	{
@@ -235,11 +235,11 @@ class FormOther
 	}
 
 	/**
-	 *  \brief     	Return select list for categories (to use in form search selectors)
-	 *	\param    	type			Type of categories (0=product, 1=suppliers, 2=customers, 3=members)
-	 *  \param     	selected     	Preselected value
-	 *  \param     	htmlname      	Name of combo list
-	 *  \return    	return        	Html combo list code
+	 *  Return select list for categories (to use in form search selectors)
+	 *	@param    	type			Type of categories (0=product, 1=suppliers, 2=customers, 3=members)
+	 *  @param     	selected     	Preselected value
+	 *  @param     	htmlname      	Name of combo list
+	 *  @return    	return        	Html combo list code
 	 */
 	function select_categories($type,$selected=0,$htmlname='search_categ')
 	{
@@ -327,14 +327,14 @@ class FormOther
 	}
 
 	/**
-	 *	\brief     	Return list of project and tasks
-	 *	\param     	selectedtask   	Pre-selected task
-	 *  \param      projectid       Project id
-	 * 	\param     	htmlname    	Name of html select
-	 * 	\param		modeproject		1 to restrict on projects owned by user
-	 * 	\param		modetask		1 to restrict on tasks associated to user
-	 * 	\param		mode			0=Return list of tasks and their projects, 1=Return projects and tasks if exists
-	 *  \param      useempty        0=Allow empty values
+	 *	Return list of project and tasks
+	 *	@param     	selectedtask   	Pre-selected task
+	 *  @param      projectid       Project id
+	 * 	@param     	htmlname    	Name of html select
+	 * 	@param		modeproject		1 to restrict on projects owned by user
+	 * 	@param		modetask		1 to restrict on tasks associated to user
+	 * 	@param		mode			0=Return list of tasks and their projects, 1=Return projects and tasks if exists
+	 *  @param      useempty        0=Allow empty values
 	 */
 	function selectProjectTasks($selectedtask='', $projectid=0, $htmlname='task_parent', $modeproject=0, $modetask=0, $mode=0, $useempty=0)
 	{
@@ -470,7 +470,7 @@ class FormOther
 		ImagePng($image,$file); //renvoie une image sous format png
 		ImageDestroy($image);
 	}
-	
+
     /**
      *    	Return HTML combo list of week
      *    	@param      selected          Preselected value
@@ -588,7 +588,6 @@ class FormOther
 
 /**
  * Write all lines of a project (if parent = 0)
- *
  * @param 	$inc
  * @param 	$parent
  * @param 	$lines
