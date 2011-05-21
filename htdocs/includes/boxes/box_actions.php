@@ -105,7 +105,7 @@ class box_actions extends ModeleBoxes {
 					$label=($langs->transnoentities("Action".$objp->code)!=("Action".$objp->code) ? $langs->transnoentities("Action".$objp->code) : $objp->label);
 
 					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
-					'logo' => ("task"),
+					'logo' => ("action"),
 					'url' => DOL_URL_ROOT."/comm/action/fiche.php?id=".$objp->id);
 
 					$this->info_box_contents[$i][1] = array('td' => 'align="left" nowrap="1"',
@@ -114,8 +114,8 @@ class box_actions extends ModeleBoxes {
 					'url' => DOL_URL_ROOT."/comm/action/fiche.php?id=".$objp->id);
 
 					$this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
-                    'logo' => 'company',
-                    'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
+                    'logo' => ($objp->socid?'company':''),
+                    'url' => ($objp->socid?DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid:''));
 
 					$this->info_box_contents[$i][3] = array('td' => 'align="left"',
 					'text' => $objp->nom,
