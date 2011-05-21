@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -56,7 +56,7 @@ if (!isset($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_IN
 if (preg_match('/^smartphone/',$conf->smart_menu) && isset($conf->browser->phone))
 {
 	$limitmenuto=GETPOST('limitmenuto')?GETPOST('limitmenuto'):0;
-	$limitmenuto=0;	// A virer
+	$limitmenuto=1;	// A virer
 
     // Load the smartphone menu manager
     $result=@include_once(DOL_DOCUMENT_ROOT ."/includes/menus/smartphone/".$conf->smart_menu);
@@ -111,10 +111,9 @@ if (file_exists(DOL_DOCUMENT_ROOT.'/logo.png'))
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Informations").'</td></tr>';
 print '<tr '.$bc[false].'>';
-$userstring=$user->getFullName($langs);
-print '<td nowrap>'.$langs->trans("User").'</td><td>'.$userstring.'</td></tr>';
+print '<td nowrap="nowrap">'.$langs->trans("User").'</td><td>'.$user->getNomUrl(0).'</td></tr>';
 print '<tr '.$bc[true].'>';
-print '<td nowrap>'.$langs->trans("PreviousConnexion").'</td><td>';
+print '<td nowrap="nowrap">'.$langs->trans("PreviousConnexion").'</td><td>';
 if ($user->datepreviouslogin) print dol_print_date($user->datepreviouslogin,"dayhour");
 else print $langs->trans("Unknown");
 print '</td>';
@@ -143,7 +142,7 @@ if ($user->societe_id == 0)
 
 	// Condition to be checked for each display line dashboard
 	$conditions=array(
-	! empty($conf->societe->enabled) && $user->rights->societe->lire,
+	! empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS),
 	! empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS),
 	! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire,
 	! empty($conf->adherent->enabled) && $user->rights->adherent->lire,
@@ -152,7 +151,6 @@ if ($user->societe_id == 0)
 	! empty($conf->propal->enabled) && $user->rights->propale->lire,
 	! empty($conf->commande->enabled) && $user->rights->commande->lire,
 	! empty($conf->facture->enabled) && $user->rights->facture->lire,
-	! empty($conf->telephonie->enabled) && $user->rights->telephonie->lire,
 	! empty($conf->societe->enabled) && $user->rights->contrat->activer);
 	// Class file containing the method load_state_board for each line
 	$includes=array(DOL_DOCUMENT_ROOT."/societe/class/client.class.php",
@@ -300,7 +298,7 @@ if ($conf->agenda->enabled && $user->rights->agenda->myactions->read)
 	$board->warning_delay=$conf->actions->warning_delay/60/60/24;
 	$board->label=$langs->trans("ActionsToDo");
 	$board->url=DOL_URL_ROOT.'/comm/action/listactions.php?status=todo&mainmenu=agenda';
-    $board->img=img_object($langs->trans("Actions"),"task");
+    $board->img=img_object($langs->trans("Actions"),"action");
     $rowspan++;
     $dashboardlines[]=$board;
 }
