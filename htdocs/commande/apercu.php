@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -110,12 +110,13 @@ if ($id > 0 || ! empty($ref))
 		$filepath = $dir_output . $objectref . "/";
 		$file = $filepath . $objectref . ".pdf";
 		$filedetail = $filepath . $objectref . "-detail.pdf";
-		$relativepath = "${objectref}/${objectref}.pdf";
-		$relativepathdetail = "${objectref}/${objectref}-detail.pdf";
+        $relativepath = $objectref.'/'.$objectref.'.pdf';
+        $relativepathdetail = $objectref.'/'.$objectref.'-detail.pdf';
 
 		// Chemin vers png apercus
 		$fileimage = $file.".png";          // Si PDF d'1 page
-		$fileimagebis = $file.".png.0";     // Si PDF de plus d'1 page
+		$fileimagebis = $file."-0.png";     // Si PDF de plus d'1 page
+        $relativepathimage = $relativepath.'.png';
 
 		$var=true;
 
@@ -209,12 +210,12 @@ if (file_exists($fileimage))
 // Si fichier png PDF de plus d'1 page trouve
 elseif (file_exists($fileimagebis))
 {
-	$multiple = $relativepath . "-";
-	
+	$multiple = preg_replace('/\.png/','',$relativepath) . "-";
+
 	for ($i = 0; $i < 20; $i++)
 	{
 		$preview = $multiple.$i.'.png';
-		
+
 		if (file_exists($dir_output.$preview))
 		{
 			print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercucommande&file='.urlencode($preview).'"><p>';

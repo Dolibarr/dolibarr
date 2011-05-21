@@ -75,10 +75,10 @@ if ($id > 0 || ! empty($ref))
 		 *   Propal
 		 */
 		print '<table class="border" width="100%">';
-		
+
 		// Ref
 		print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="5">'.$object->ref.'</td></tr>';
-		
+
 		// Ref client
 		print '<tr><td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
@@ -89,13 +89,13 @@ if ($id > 0 || ! empty($ref))
 		print $object->ref_client;
 		print '</td>';
 		print '</tr>';
-		
+
 		$rowspan=2;
-		
+
 		// Tiers
 		print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$soc->getNomUrl(1).'</td>';
 		print '</tr>';
-		
+
 		// Ligne info remises tiers
 		print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="5">';
 		if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
@@ -106,16 +106,16 @@ if ($id > 0 || ! empty($ref))
 		else print $langs->trans("CompanyHasNoAbsoluteDiscount");
 		print '.';
 		print '</td></tr>';
-		
+
 		// ligne
 		// partie Gauche
 		print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">';
 		print dol_print_date($object->date,'daytext');
 		print '</td>';
-		
+
 		// partie Droite sur $rowspan lignes
 		print '<td colspan="2" rowspan="'.$rowspan.'" valign="top" width="50%">';
-		
+
 		/*
 		 * Documents
 		 */
@@ -124,43 +124,44 @@ if ($id > 0 || ! empty($ref))
 		$filepath = $dir_output . $objectref . "/";
 		$file = $filepath . $objectref . ".pdf";
 		$filedetail = $filepath . $objectref . "-detail.pdf";
-		$relativepath = "${objectref}/${objectref}.pdf";
-		$relativepathdetail = "${objectref}/${objectref}-detail.pdf";
-		
+        $relativepath = $objectref.'/'.$objectref.'.pdf';
+        $relativepathdetail = $objectref.'/'.$objectref.'-detail.pdf';
+
 		// Chemin vers png apercus
 		$fileimage = $file.".png";          // Si PDF d'1 page
 		$fileimagebis = $file."-0.png";     // Si PDF de plus d'1 page
-		
+        $relativepathimage = $relativepath.'.png';
+
 		$var=true;
-		
+
 		// Si fichier PDF existe
 		if (file_exists($file))
 		{
 			$encfile = urlencode($file);
 			print_titre($langs->trans("Documents"));
 			print '<table class="border" width="100%">';
-			
+
 			print "<tr $bc[$var]><td>".$langs->trans("Propal")." PDF</td>";
-			
+
 			print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=propal&file='.urlencode($relativepath).'">'.$object->ref.'.pdf</a></td>';
-			
+
 			print '<td align="right">'.dol_print_size(dol_filesize($file)).'</td>';
 			print '<td align="right">'.dol_print_date(dol_filemtime($file),'dayhour').'</td>';
 			print '</tr>';
-			
+
 			// Si fichier detail PDF existe
 			// TODO obsolete ?
 			if (file_exists($filedetail))
 			{
 				print "<tr $bc[$var]><td>Propal detaillee</td>";
-				
+
 				print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=propal&file='.urlencode($relativepathdetail).'">'.$object->ref.'-detail.pdf</a></td>';
 				print '<td align="right">'.dol_print_size(dol_filesize($filedetail)).'</td>';
 				print '<td align="right">'.dol_print_date(dol_filemtime($filedetail),'dayhour').'</td>';
 				print '</tr>';
 			}
 			print "</table>\n";
-			
+
 			// Conversion du PDF en image png si fichier png non existant
 			if (! file_exists($fileimage) && ! file_exists($fileimagebis))
 			{
@@ -168,7 +169,7 @@ if ($id > 0 || ! empty($ref))
 				{
 					$ret = dol_convert_file($file);
 					if ($ret < 0) $error++;
-				} 
+				}
 				else
 				{
 					$langs->load("other");
@@ -176,10 +177,10 @@ if ($id > 0 || ! empty($ref))
 				}
 			}
 		}
-		
+
 		print "</td>";
 		print '</tr>';
-		
+
 		print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';
 		print '<td align="right" colspan="2"><b>'.price($object->price).'</b></td>';
 		print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
@@ -200,7 +201,7 @@ if (file_exists($fileimage))
 // Si fichier png PDF de plus d'1 page trouve
 elseif (file_exists($fileimagebis))
 {
-	$multiple = $relativepath . "-";
+	$multiple = preg_replace('/\.png/','',$relativepath) . "-";
 
 	for ($i = 0; $i < 20; $i++)
 	{

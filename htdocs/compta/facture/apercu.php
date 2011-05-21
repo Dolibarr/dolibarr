@@ -38,7 +38,7 @@ $langs->load("bills");
 
 // Security check
 $socid=0;
-$id = GETPOST("id");
+$id = GETPOST("facid");
 $ref = GETPOST("ref");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'facture', $id);
@@ -63,12 +63,12 @@ $html = new Form($db);
 if ($id > 0 || ! empty($ref))
 {
     $object = New Facture($db);
-    
+
     if ($object->fetch($id,$ref) > 0)
     {
         $soc = new Societe($db, $object->socid);
         $soc->fetch($object->socid);
-        
+
         $author = new User($db);
         if ($object->user_author)
         {
@@ -124,12 +124,13 @@ if ($id > 0 || ! empty($ref))
 		$filepath = $dir_output . $objectref . "/";
         $file = $filepath . $objectref . ".pdf";
         $filedetail = $filepath . $objectref . "-detail.pdf";
-        $relativepath = "${objectref}/${objectref}.pdf";
-        $relativepathdetail = "${objectref}/${objectref}-detail.pdf";
+        $relativepath = $objectref.'/'.$objectref.'.pdf';
+        $relativepathdetail = $objectref.'/'.$objectref.'-detail.pdf';
 
         // Chemin vers png apercus
         $fileimage = $file.".png";          // Si PDF d'1 page
         $fileimagebis = $file."-0.png";     // Si PDF de plus d'1 page
+        $relativepathimage = $relativepath.'.png';
 
         $var=true;
 
@@ -210,6 +211,7 @@ if ($id > 0 || ! empty($ref))
 
         print '</table>';
 
+        dol_fiche_end();
     }
     else
     {
@@ -226,12 +228,12 @@ if (file_exists($fileimage))
 // Si fichier png PDF de plus d'1 page trouve
 elseif (file_exists($fileimagebis))
 {
-	$multiple = $relativepath . "-";
-	
+	$multiple = preg_replace('/\.png/','',$relativepath) . "-";
+
 	for ($i = 0; $i < 20; $i++)
 	{
 		$preview = $multiple.$i.'.png';
-		
+
 		if (file_exists($dir_output.$preview))
 		{
 			print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercufacture&file='.urlencode($preview).'"><p>';
@@ -239,7 +241,6 @@ elseif (file_exists($fileimagebis))
 	}
 }
 
-print '</div>';
 
 $db->close();
 
