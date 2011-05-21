@@ -103,10 +103,11 @@ print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").'</
 if ($conf->use_javascript_ajax && ((round($third['prospect'])?1:0)+(round($third['customer'])?1:0)+(round($third['supplier'])?1:0) >= 2))
 {
     print '<tr><td align="center">';
-    $data=array();
-    if ($conf->societe->enabled && empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) $data[]=array('label'=>$langs->trans("Prospects"),'values'=>array(round($third['prospect'])));
-    if ($conf->societe->enabled && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) $data[]=array('label'=>$langs->trans("Customers"),'values'=>array(round($third['customer'])));
-    if ($conf->fournisseur->enabled) $data[]=array('label'=>$langs->trans("Suppliers"),'values'=>array(round($third['supplier'])));
+    $dataseries=array();
+    if ($conf->societe->enabled && empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) $dataseries[]=array('label'=>$langs->trans("Prospects"),'values'=>array(round($third['prospect'])));
+    if ($conf->societe->enabled && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) $dataseries[]=array('label'=>$langs->trans("Customers"),'values'=>array(round($third['customer'])));
+    if ($conf->fournisseur->enabled) $dataseries[]=array('label'=>$langs->trans("Suppliers"),'values'=>array(round($third['supplier'])));
+    $data=array('series'=>$dataseries);
     dol_print_graph('stats',300,180,$data,0,'pie');
     print '</td></tr>';
 }

@@ -137,15 +137,49 @@ print '</td></tr>';
 print "</table></form>";
 
 
-print '</td><td class="notopnoleftnoright" valign="top">';
-
-
-$var=true;
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").'</td></tr>';
+print '<tr><td align="center">';
 
 $SommeA=0;
 $SommeB=0;
 $SommeC=0;
 $SommeD=0;
+$dataval=array();
+$datalabels=array();
+foreach ($AdherentType as $key => $adhtype)
+{
+    $datalabels[]=$adhtype->getNomUrl(0,dol_size(16));
+    $dataval['draft'][]=isset($MemberToValidate[$key])?$MemberToValidate[$key]:0;
+    $dataval['notuptodate'][]=isset($MembersValidated[$key])?$MembersValidated[$key]-$MemberUpToDate[$key]:0;
+    $dataval['uptodate'][]=isset($MemberUpToDate[$key])?$MemberUpToDate[$key]:0;
+    $dataval['resiliated'][]=isset($MembersResiliated[$key])?$MembersResiliated[$key]:0;
+    $SommeA+=isset($MemberToValidate[$key])?$MemberToValidate[$key]:0;
+    $SommeB+=isset($MembersValidated[$key])?$MembersValidated[$key]-$MemberUpToDate[$key]:0;
+    $SommeC+=isset($MemberUpToDate[$key])?$MemberUpToDate[$key]:0;
+    $SommeD+=isset($MembersResiliated[$key])?$MembersResiliated[$key]:0;
+}
+/*
+$dataseries[]=array('label'=>$langs->trans("MembersStatusToValid"),'values'=> $dataval['draft']);
+$dataseries[]=array('label'=>$langs->trans("MenuMembersNotUpToDate"),'values'=> $dataval['notuptodate']);
+$dataseries[]=array('label'=>$langs->trans("MenuMembersUpToDate"),'values'=> $dataval['uptodate']);
+$dataseries[]=array('label'=>$langs->trans("MembersStatusResiliated"),'values'=> $dataval['resiliated']);
+$data=array('series'=>$dataseries,'xlabel'=>$datalabels);
+dol_print_graph('stats',300,180,$data,1,'bar');
+*/
+$dataseries[]=array('label'=>$langs->trans("MenuMembersNotUpToDate"),'values'=>array(round($SommeB)));
+$dataseries[]=array('label'=>$langs->trans("MenuMembersUpToDate"),'values'=>array(round($SommeC)));
+$dataseries[]=array('label'=>$langs->trans("MembersStatusResiliated"),'values'=>array(round($SommeD)));
+$dataseries[]=array('label'=>$langs->trans("MembersStatusToValid"),'values'=>array(round($SommeA)));
+$data=array('series'=>$dataseries);
+dol_print_graph('stats',300,180,$data,1,'pie');
+print '</td></tr>';
+print '</table>';
+
+print '</td><td class="notopnoleftnoright" valign="top">';
+
+
+$var=true;
 
 // Summary of members by type
 print '<table class="noborder" width="100%">';
@@ -167,10 +201,6 @@ foreach ($AdherentType as $key => $adhtype)
 	print '<td align="right">'.(isset($MemberUpToDate[$key]) && $MemberUpToDate[$key] > 0 ? $MemberUpToDate[$key]:'').' '.$staticmember->LibStatut(1,$adhtype->cotisation,gmmktime(),3).'</td>';
 	print '<td align="right">'.(isset($MembersResiliated[$key]) && $MembersResiliated[$key]> 0 ?$MembersResiliated[$key]:'').' '.$staticmember->LibStatut(0,$adhtype->cotisation,0,3).'</td>';
 	print "</tr>\n";
-	$SommeA+=isset($MemberToValidate[$key])?$MemberToValidate[$key]:0;
-	$SommeB+=isset($MembersValidated[$key])?$MembersValidated[$key]-$MemberUpToDate[$key]:0;
-	$SommeC+=isset($MemberUpToDate[$key])?$MemberUpToDate[$key]:0;
-	$SommeD+=isset($MembersResiliated[$key])?$MembersResiliated[$key]:0;
 }
 print '<tr class="liste_total">';
 print '<td class="liste_total">'.$langs->trans("Total").'</td>';

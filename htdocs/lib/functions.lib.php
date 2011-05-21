@@ -1234,7 +1234,8 @@ function dolibarr_trunc($string,$size=40,$trunc='right',$stringencoding='')
  *  @param      width           Width in pixel
  *  @param      height          Height in pixel
  *  @param      data            Data array
- *  @param      type            Type of graph
+ *  @param      showlegend      Show legend
+ *  @param      type            Type of graph (pie, bar, line)
  */
 function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie')
 {
@@ -1264,21 +1265,25 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie')
     {
         if ($type == 'pie')
         {
-        	print '<script type="text/javascript">
-			    jQuery(function () {
-        		var data = ['."\n";
+            // data  is array('series'=>array(0=>serie1,1=>serie2,...));
+            // serie is array('label'=>'label', values=>array(0=>val))
+        	print '
+        	<script type="text/javascript">
+			jQuery(function () {
+        	var data = ['."\n";
             $i=0;
-            foreach($data as $serie)
+            foreach($data['series'] as $serie)
             {
                 //print '{ label: "'.($showlegend?$serie['values'][0]:$serie['label'].'<br>'.$serie['values'][0]).'", data: '.$serie['values'][0].' }';
-                print '{ label: "'.($showlegend?$serie['label'].'<br>'.$serie['values'][0]:$serie['label'].'<br>'.$serie['values'][0]).'", data: '.$serie['values'][0].' }';
-                if ($i < sizeof($serie)) print ',';
+                print '{ label: "'.dol_escape_js($serie['label']).'", data: '.$serie['values'][0].' }';
+                if ($i < sizeof($data['series'])) print ',';
                 print "\n";
                 $i++;
             }
             print '];
 
-            jQuery.plot(jQuery("#'.$htmlid.'"), data,
+            function plotWithOptions() {
+                jQuery.plot(jQuery("#'.$htmlid.'"), data,
                 {
                     series: {pie: {
                             show: true,
@@ -1286,10 +1291,12 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie')
                             label: {
                                 show: true,
                                 radius: 3/4,
-                                formatter: function(label, series){
-                                    return \'<div style="font-size:8pt;text-align:center;padding:2px;color:white;">\'+label
-                                    /* +\'<br/>\'+Math.round(series.percent)*/
-                                    +\'</div>\';
+                                formatter: function(label, series) {
+                                    var percent=Math.round(series.percent);
+                                    var number=series.data[0][1];
+                                    return \'<div style="font-size:8pt;text-align:center;padding:2px;color:white;">\'+'.($showlegend?'number':'label+\'<br/>\'+number');
+                            if (! empty($showpercent)) print '+\'<br/>\'+percent';
+                            print '+\'</div>\';
                                 },
                                 background: {
                                     opacity: 0.5,
@@ -1312,9 +1319,77 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie')
             		}
                     print 'legend: {show: '.($showlegend?'true':'false').'}
                 });
+            }
+            plotWithOptions();
             });
             </script>';
         }
+        else if ($type == 'bar')
+        {
+            // data is  array('series'=>array(0=>serie1,1=>serie2,...),'xlabel'=>array(0=>label1,1=>label2,...));
+            // serie is array('label'=>'label', values=>array(0=>val1,1=>val2,...))
+            print '
+            <script type="text/javascript">
+            jQuery(function () {
+            var data = [';
+            $i=1;
+            foreach($data['series'] as $serie)
+            {
+                print '{label: \''.dol_escape_js($serie['label']).'\', data: [';
+                $j=1;
+                foreach($serie['values'] as $val)
+                {
+                    print '['.$j.','.$val.']';
+                    if ($j < sizeof($serie['values'])) print ', ';
+                    $j++;
+                }
+                print ']}';
+                if ($i < sizeof($data['series'])) print ',';
+                $i++;
+            }
+            print '];
+            var dataticks = [';
+            $i=1;
+            foreach($data['xlabel'] as $label)
+            {
+                print '['.$i.',\''.$label.'\']';
+                if ($i < sizeof($data['xlabel'])) print ',';
+                $i++;
+            }
+            print '];
+
+            var stack = 0, bars = true, lines = false, steps = false;
+
+            function plotWithOptions() {
+                jQuery.plot(jQuery("#'.$htmlid.'"), data,
+                {
+                    series: {
+                            stack: stack,
+                            lines: { show: lines, fill: true, steps: steps },
+                            bars: { show: bars, barWidth: 0.9, align: \'center\' }
+                    },
+                    ';
+                    if (sizeof($datacolor))
+                    {
+                        print 'colors: [';
+                        $j=0;
+                        foreach($datacolor as $val)
+                        {
+                            print '"'.$val.'"';
+                            if ($j < sizeof($datacolor)) print ',';
+                            $j++;
+                        }
+                        print '], ';
+                    }
+                    print 'legend: {show: '.($showlegend?'true':'false').'},
+                    xaxis: {ticks: dataticks},
+                });
+            }
+            plotWithOptions();
+            });
+            </script>';
+        }
+        else print 'BadValueForPArameterType';
     }
 }
 
