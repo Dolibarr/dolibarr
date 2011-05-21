@@ -1381,6 +1381,19 @@ opacity: 1;
 /* ============================================================================== */
 /* Calendar                                                                       */
 /* ============================================================================== */
+
+.ui-datepicker-title {
+    margin: 0 !important;
+    line-height: 28px;
+}
+.ui-datepicker-month {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+.ui-datepicker-header {
+    height: 28px !important;
+}
+
 .bodyline {
 	-moz-border-radius:8px;
 	border: 1px #E4ECEC outset;
