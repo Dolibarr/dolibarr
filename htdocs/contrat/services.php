@@ -31,6 +31,7 @@ require_once (DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 require_once (DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
 
 $langs->load("products");
+$langs->load("contracts");
 $langs->load("companies");
 
 $mode = isset($_GET["mode"])?$_GET["mode"]:$_POST["mode"];
@@ -247,9 +248,7 @@ if ($resql)
 		}
 		else
 		{
-			print '<a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->cid.'&line='.$obj->rowid.'">';
 			print $staticcontratligne->LibStatut($obj->statut,5,($obj->date_fin_validite && $db->jdate($obj->date_fin_validite) < $now)?1:0);
-			print '</a>';
 		}
 		print '</td>';
 		print "</tr>\n";
