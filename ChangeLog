@@ -15,44 +15,47 @@ For users:
          (Save 2 clicks).
        - In commercial main menu, left menu are already opened. This save one click
          to open a proposal or order.
-- New: First graph using javascripts.
-- New: Can add a discount for third party, during invoice edition (and we 
-  saved clicks again).
-- New: Add status for third parties.
+       - Can add a discount for third party, during invoice edition (and we 
+         saved clicks again).
+- New: Add graph using Jquery Flot.
+- New: Usage of Jquery Notify to show result or error messages on action.
+- New: Add status for third parties to disable a third party.
 - New: Can send interventions cards by email.
 - New: Add option MAIN_FIRST_TO_UPPER to force upper case of first 
        letters for names and firstname.
 - New: Can filter of payment type in bank transaction list.
-- New: Status is visible into user list.
+- New: Status of users is visible into user list.
 - New: Support BSB code for bank account in australia.
 - New: Can set date of payment for autocreate invoice/payment when 
        creating a foundation subscription.
 - New: Can edit note of payment.
 - New: Login is not mandatory in member module.
-- New: Add box last members for foundation module.
-- New: A specialized menu is now used when using smartphones.
+- New: Add box for last members for foundation module.
+- New: A specialized menu can now be used when using smartphones.
 - New: Can add information on current user on odt generation
 - New: Prefix on third party is not used by default. Hidden option
        SOCIETE_USEPREFIX can restore old feature.
 - New: Standing orders module use bank account from banks module.
 - New: Ask password when creating a user from a contact.
-- New: task #10577: Use a numbering module for shipment and contract
+- New: task #10577: Use a numbering module for shipment and contract.
+- New: Can create manually order from proposal.
 - New: Add a first workflow module to create automatic action on some
        events (create order on proposal closing).
-- New: Can create manually order from proposal.
 - New: Use autocompletion on invoice select when creating replacement 
        or credit note invoice.
-- New: task #10885: Add a week view for calendar    
-- New: task #11018 : Add a status "not applicable" on event
+- New: task #10885: Add a week view for calendar.
+- New: task #11018: Add a status "not applicable" on events.
 - New: Add country/region/town statistics for member module.
 - New: Can define a proxy for external web access.
 - New: task #11003: checkbox on checks to deposit
-- New: Numbering module for invoice use same number for invoice 
-       and credit note if mask is same.
 - New: Add status into export. Add default language into export.
 - New: Can remove a project if project has tasks.       
 - New: Can filter on date when building cheque receipts.
+- New: Paypal module can show paypal list of transaction and convert one
+       into an order.
 - Fix: Better Postgresql compatibility.
+- Fix: Numbering module for invoices use same number for invoice 
+       and credit note if mask is same.
 
 For developers:
 - New: External modules can add tabs on agenda views.

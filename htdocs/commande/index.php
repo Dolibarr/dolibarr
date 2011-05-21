@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -77,7 +77,82 @@ print "</form></table><br>\n";
 
 
 /*
- * Commandes brouillons
+ * Statistics
+ */
+
+$sql = "SELECT count(cf.rowid), cf.fk_statut, cf.facture";
+$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql.= ", ".MAIN_DB_PREFIX."commande as cf";
+if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql.= " WHERE cf.fk_soc = s.rowid";
+$sql.= " AND s.entity = ".$conf->entity;
+if ($user->societe_id) $sql.=' AND cf.fk_soc = '.$user->societe_id;
+if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+$sql.= " GROUP BY cf.fk_statut, cf.facture";
+$resql = $db->query($sql);
+if ($resql)
+{
+    $num = $db->num_rows($resql);
+    $i = 0;
+
+    $var=True;
+
+    $total=0;
+    $totalinprocess=0;
+    $dataseries=array();
+    $vals=array();
+    // -1=Canceled, 0=Draft, 1=Validated, (2=Accepted/On process not managed for customer orders), 3=Closed (Sent/Received, billed or not)
+    while ($i < $num)
+    {
+        $row = $db->fetch_row($resql);
+        if ($row)
+        {
+            if ($row[1]!=3 || $row[2]!=1)
+            {
+                $vals[$row[1]]=$row[0];
+                $totalinprocess+=$row[0];
+            }
+            $total+=$row[0];
+        }
+        $i++;
+    }
+    $db->free($resql);
+
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").'</td></tr>';
+    print "</tr>\n";
+    foreach (array(1,2,3,-1) as $statut)
+    {
+        $dataseries[]=array('label'=>$commandestatic->LibStatut($statut,0),'values'=>array(0=>(isset($vals[$statut])?$vals[$statut]:0)));
+        if (! $conf->use_javascript_ajax)
+        {
+            $var=!$var;
+            print "<tr ".$bc[$var].">";
+            print '<td>'.$commandestatic->LibStatut($statut,0).'</td>';
+            print '<td align="right"><a href="liste.php?statut='.$statut.'">'.(isset($vals[$statut])?$vals[$statut]:0).'</a></td>';
+            print "</tr>\n";
+        }
+    }
+    if ($conf->use_javascript_ajax)
+    {
+        print '<tr><td align="center" colspan="2">';
+        $data=array('series'=>$dataseries);
+        dol_print_graph('stats',300,180,$data,1,'pie');
+        print '</td></tr>';
+    }
+    //if ($totalinprocess != $total)
+    print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("CustomersOrdersRunning").')</td><td align="right">'.$totalinprocess.'</td></tr>';
+    print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("CustomersOrders").')</td><td align="right">'.$total.'</td></tr>';
+    print "</table><br>";
+}
+else
+{
+    dol_print_error($db);
+}
+
+
+/*
+ * Draft orders
  */
 if ($conf->commande->enabled)
 {
