@@ -964,7 +964,8 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             print '<!--[if lte IE 8]><script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/flot/excanvas.min.js"></script><![endif]-->'."\n";
 			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/flot/jquery.flot.min.js"></script>'."\n";
             print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/flot/jquery.flot.pie.min.js"></script>'."\n";
-			// CKEditor
+            print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/flot/jquery.flot.stack.min.js"></script>'."\n";
+            // CKEditor
             if (!empty($conf->global->FCKEDITOR_EDITORNAME) && $conf->global->FCKEDITOR_EDITORNAME == 'ckeditor')
             {
                 print '<!-- Includes JS for CKEditor -->'."\n";

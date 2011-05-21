@@ -26,7 +26,7 @@
 
 global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;
 $theme_bordercolor = array(235,235,224);
-$theme_datacolor = array(array(160,140,120), array(140,160,130), array(190,190,220));
+$theme_datacolor = array(array(160,140,120), array(140,160,130), array(190,190,220), array(140,170,150));
 $theme_bgcolor = array(hexdec('F4'),hexdec('F4'),hexdec('F4'));
 $theme_bgcoloronglet = array(hexdec('DC'),hexdec('DC'),hexdec('D3'));
 

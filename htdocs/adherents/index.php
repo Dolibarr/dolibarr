@@ -136,7 +136,7 @@ print $langs->trans("Other").':</td><td><input type="text" name="sall" class="fl
 print '</td></tr>';
 print "</table></form>";
 
-
+print '<br>';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").'</td></tr>';
 print '<tr><td align="center">';
