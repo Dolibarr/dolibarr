@@ -24,10 +24,13 @@
  */
 
 require("../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT.'/lib/date.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php');
 require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypalfunctions.lib.php");
 
 $langs->load("paypal");
+$langs->load("paybox");
+$langs->load("companies");
 
 // Security check
 $result=restrictedArea($user,'paypal','','','transaction');
@@ -58,11 +61,13 @@ $errors='';
 
 $nvpStr='';
 
+$now=dol_now();
+
 if(isset($startDateStr) && ! empty($startDateStr)) {
 	$start_date_str = $startDateStr;
 	$start_time 	= dol_stringtotime($start_date_str);
 } else {
-	$start_time 	= dol_now()-2592000; // 30 days
+	$start_time 	= dol_time_plus_duree($now,-1,'m'); // 30 days
 	$start_date_str = dol_print_date($start_time,'day');
 }
 
@@ -71,21 +76,39 @@ $nvpStr.="&STARTDATE=$iso_start";
 
 if(isset($endDateStr) && ! empty($endDateStr)) {
 	$end_date_str 	= $endDateStr;
-	$end_time 		= dol_stringtotime($end_date_str);   
+	$end_time 		= dol_stringtotime($end_date_str);
 } else {
-	$end_time 		= dol_now();
+	$end_time 		= $now;
 	$end_date_str 	= dol_print_date($end_time,'day');
 }
 
 $iso_end = dol_print_date($end_time,'dayhourrfc');
-$nvpStr.="&ENDDATE=$iso_end"; 
+$nvpStr.="&ENDDATE=".$iso_end;
 
 if(isset($transactionID) && ! empty($transactionID)) {
 	$nvpStr.="&TRANSACTIONID=$transactionID";
 }
 
 
+
 llxHeader();
+
+dol_htmloutput_errors('',$errors);
+
+print_fiche_titre(' - '.$langs->trans('PaypalTransaction'), '', 'paypal_logo@paypal');
+
+print '<br />';
+
+if (empty($conf->global->PAYPAL_API_USER) || empty($conf->global->PAYPAL_API_PASSWORD)
+    || empty($conf->global->PAYPAL_API_SIGNATURE))
+{
+    $langs->load("errors");
+    print $langs->trans("ErrorModuleSetupNotComplete");
+
+    llxFooter();
+    exit;
+}
+
 
 ?>
 
@@ -125,7 +148,11 @@ llxHeader();
 					modal: true,
 					width: 500,
 					buttons: {
-						'<?php echo $langs->transnoentities('Create'); ?>': function() {
+						'<?php
+						if ($conf->commande->enabled)
+						{
+						    $langs->load("orders");
+						    echo $langs->transnoentities('CreateOrder'); ?>': function() {
 							$.get( "<?php echo DOL_URL_ROOT; ?>/paypal/ajaxtransaction.php", {
 								action: 'add',
 								element: 'order',
@@ -139,7 +166,9 @@ llxHeader();
 								location.href=elementurl;
 							});
 						},
-						'<?php echo $langs->transnoentities('Cancel'); ?>': function() {
+						'<?php
+						 }
+						 echo $langs->transnoentities('Cancel'); ?>': function() {
 							$( this ).dialog( "close" );
 						}
 					}
@@ -160,11 +189,11 @@ if (! empty($nvpStr))
 {
 	$resArray=hash_call("TransactionSearch",$nvpStr);
 	//var_dump($resArray);
-	
+
 	if (is_array($resArray))
 	{
 		$reqArray=$_SESSION['nvpReqArray'];
-		
+
 		$ack = strtoupper($resArray["ACK"]);
 		if($ack!="SUCCESS" && $ack!="SUCCESSWITHWARNING")
 		{
@@ -174,11 +203,6 @@ if (! empty($nvpStr))
 	}
 }
 
-dol_htmloutput_errors('',$errors);
-
-print_fiche_titre(' - '.$langs->trans('PaypalTransaction'), '', 'paypal_logo@paypal');
-
-print '<br />';
 
 // Search parameters
 print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
@@ -196,7 +220,7 @@ print '<input type="text" id="endDateStr" name="endDateStr" maxlength="20" size=
 print $langs->trans('Ref').': ';
 print '<input type="text" name="transactionID" />&nbsp;';
 
-print '<input type="submit" value="'.$langs->trans('Send').'" />';
+print '<input type="submit" class="button" value="'.$langs->trans('Send').'" />';
 print '</td></tr>';
 
 print '</table>';
@@ -216,7 +240,7 @@ print_liste_field_titre($langs->trans('Status'),$_SERVER['PHP_SELF'],'','',''.$s
 print '</tr>';
 
 $var=true;
-	
+
 if(! isset($resArray["L_TRANSACTIONID0"]))
 {
 	print '<tr '.$bc[$var].'>';
@@ -226,11 +250,11 @@ if(! isset($resArray["L_TRANSACTIONID0"]))
 else
 {
 	$i=0;
-	
+
 	while (isset($resArray["L_TRANSACTIONID".$i]))
 	{
 		$var=!$var;
-		
+
 		$transactionID 	= $resArray["L_TRANSACTIONID".$i];
 		$timeStamp		= dol_stringtotime($resArray["L_TIMESTAMP".$i]);
 		$payerName		= $resArray["L_NAME".$i];
@@ -239,7 +263,7 @@ else
 		$netamount		= $resArray["L_NETAMT".$i];
 		$currency 		= $resArray["L_CURRENCYCODE".$i];
 		$status			= $resArray["L_STATUS".$i];
-		
+
 		print '<tr '.$bc[$var].'>';
 		print '<td><div id="'.$transactionID.'" class="paypal_link" style="font-weight:bold;cursor:pointer;">'.$transactionID.'</div></td>';
 		print '<td align="left">'.$payerName.'</td>';
@@ -249,11 +273,11 @@ else
 		print '<td align="right">'.$netamount.' '.$currency.'</td>';
 		print '<td align="right">'.$status.'</td>';
 		print '</tr>';
-		
+
 		$i++;
 	}
 }
-	
+
 print '</table>';
 
 llxFooter('$Date$ - $Revision$');
