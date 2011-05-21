@@ -89,7 +89,7 @@ class box_actions extends ModeleBoxes {
 			$result = $db->query($sql);
 			if ($result)
 			{
-				$now=gmmktime();
+				$now=dol_now();
 				$delay_warning=$conf->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;
 
 				$num = $db->num_rows($result);

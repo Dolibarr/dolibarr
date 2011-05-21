@@ -67,11 +67,14 @@ class box_prospect extends ModeleBoxes {
 
 		$this->max=$max;
 
+        include_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
+        $thirdpartystatic=new Societe($db);
+
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedProspects",$max));
 
 		if ($user->rights->societe->lire)
 		{
-			$sql = "SELECT s.nom, s.rowid as socid, s.fk_stcomm, s.datec, s.tms";
+			$sql = "SELECT s.nom, s.rowid as socid, s.fk_stcomm, s.datec, s.tms, s.status";
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql.= " WHERE s.client IN (2, 3)";
@@ -109,7 +112,10 @@ class box_prospect extends ModeleBoxes {
 					$this->info_box_contents[$i][3] = array('td' => 'align="right" width="18"',
      			       'text' => str_replace('img ','img height="14" ',$prospectstatic->LibProspStatut($objp->fk_stcomm,3)));
 
-					$i++;
+                    $this->info_box_contents[$i][4] = array('td' => 'align="right" width="18"',
+                    'text' => $thirdpartystatic->LibStatut($objp->status,3));
+
+                    $i++;
 				}
 
 				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedProspects"));

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       htdocs/includes/boxes/box_clients.php
+ *	\file       htdocs/includes/boxes/box_members.php
  *	\ingroup    societes
  *	\brief      Module de generation de l'affichage de la box clients
  *	\version	$Id$
@@ -63,13 +63,18 @@ class box_members extends ModeleBoxes {
 
 		$this->max=$max;
 
+        include_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
+        $memberstatic=new Adherent($db);
+
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedMembers",$max));
 
 		if ($user->rights->societe->lire)
 		{
-			$sql = "SELECT s.rowid, s.nom, s.prenom, s.datec, s.tms";
-			$sql.= " FROM ".MAIN_DB_PREFIX."adherent as s";
+			$sql = "SELECT s.rowid, s.nom, s.prenom, s.datec, s.tms, s.statut as status, s.datefin as date_end_subscription,";
+			$sql.= " t.cotisation";
+			$sql.= " FROM ".MAIN_DB_PREFIX."adherent as s, ".MAIN_DB_PREFIX."adherent_type as t";
 			$sql.= " WHERE s.entity = ".$conf->entity;
+			$sql.= " AND s.fk_adherent_type = t.rowid";
 			$sql.= " ORDER BY s.tms DESC";
 			$sql.= $db->plimit($max, 0);
 
@@ -96,6 +101,9 @@ class box_members extends ModeleBoxes {
 
 					$this->info_box_contents[$i][2] = array('td' => 'align="right"',
 					'text' => dol_print_date($datem, "day"));
+
+					$this->info_box_contents[$i][3] = array('td' => 'align="right" width="18"',
+                    'text' => $memberstatic->LibStatut($objp->status,$objp->cotisation,$db->jdate($objp->date_end_subscription),3));
 
 					$i++;
 				}
