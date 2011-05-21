@@ -2469,24 +2469,27 @@ class Commande extends CommonObject
      *      @param      option          Where point the link
      *      @return     string          String with URL
 	 */
-	function getNomUrl($withpicto=0,$option=0)
+	function getNomUrl($withpicto=0,$option=0,$short=0)
 	{
 		global $conf, $langs;
 
 		$result='';
 
-		$urlOption = '/commande/fiche.php';
-		if ($conf->expedition->enabled && ($option == 1 || $option == 2)) $urlOption = '/expedition/shipment.php';
+		$file = '/commande/fiche.php';
+		if ($conf->expedition->enabled && ($option == 1 || $option == 2)) $file = '/expedition/shipment.php';
+		
+		$url = DOL_URL_ROOT.$file.'?id='.$this->id;
+		if ($short) return $url;
 
-		$lien = '<a href="'.DOL_URL_ROOT.$urlOption.'?id='.$this->id.'">';
-		$lienfin='</a>';
+		$linkstart = '<a href="'.$url.'">';
+		$linkend='</a>';
 
 		$picto='order';
 		$label=$langs->trans("ShowOrder").': '.$this->ref;
 
-		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+		if ($withpicto) $result.=($linkstart.img_object($label,$picto).$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		$result.=$lien.$this->ref.$lienfin;
+		$result.=$linkstart.$this->ref.$linkend;
 		return $result;
 	}
 

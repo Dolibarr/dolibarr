@@ -131,8 +131,12 @@ llxHeader();
 								element: 'order',
 								transaction_id: id_value
 							},
-							function(elementid) {
+							function(elementurl) {
+								if ($.jnotify) {
+									$.jnotify("<?php echo $langs->trans('PleaseBePatient'); ?>", 500);
+								}
 								$( "div #paypal-details" ).dialog( "close" );
+								location.href=elementurl;
 							});
 						},
 						'<?php echo $langs->transnoentities('Cancel'); ?>': function() {

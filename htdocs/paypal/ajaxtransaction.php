@@ -170,7 +170,7 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 				{
 					$product = new Product($db);
 					$ret = $product->fetch('',$_SESSION[$_GET['transaction_id']]["L_NUMBER".$i]);
-					echo 'ref='.$_SESSION[$_GET['transaction_id']]["L_NUMBER".$i].' ret='.$ret."\n";
+
 					if ($ret > 0)
 					{
 						$product_type=($product->product_type?$product->product_type:0);
@@ -205,11 +205,13 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 				}
 				
 				// Insert default contacts
+				/*
 			    if ($contact->id > 0)
 			    {
 			        $result=$object->add_contact($contact->id,'CUSTOMER','external');
 			        if ($result < 0) $error++;
 			    }
+			    */
             }
             else
             {
@@ -227,7 +229,7 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 		}
 
 		// Return element id
-		echo $object_id;
+		echo $object->getNomUrl(0,0,1);
 		
 		/*
 		foreach ($_SESSION[$_GET['transaction_id']] as $key => $value)
