@@ -157,9 +157,8 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
             
             $db->begin();
             
-            $object->date			= dol_now();
-            $object->ref_ext		= $_SESSION[$_GET['transaction_id']]['SHIPTOCITY'];
-            $object->contactid		= $contact->id;
+            $object->date		= dol_now();
+            $object->ref_ext	= $_SESSION[$_GET['transaction_id']]['SHIPTOCITY'];
             
             $object_id = $object->create($user);
             if ($object_id > 0)
@@ -171,7 +170,7 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 				{
 					$product = new Product($db);
 					$ret = $product->fetch('',$_SESSION[$_GET['transaction_id']]["L_NUMBER".$i]);
-					
+					echo 'ref='.$_SESSION[$_GET['transaction_id']]["L_NUMBER".$i].' ret='.$ret."\n";
 					if ($ret > 0)
 					{
 						$product_type=($product->product_type?$product->product_type:0);
@@ -204,6 +203,13 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 					
 					$i++;
 				}
+				
+				// Insert default contacts
+			    if ($contact->id > 0)
+			    {
+			        $result=$object->add_contact($contact->id,'CUSTOMER','external');
+			        if ($result < 0) $error++;
+			    }
             }
             else
             {
@@ -221,7 +227,7 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 		}
 
 		// Return element id
-		echo 'socid='.$soc->id;
+		echo $object_id;
 		
 		/*
 		foreach ($_SESSION[$_GET['transaction_id']] as $key => $value)
@@ -233,11 +239,8 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 	}
 	else if ($_GET['action'] == 'showdetails')
 	{
-		// For optimization
-		if (! isset($_SESSION[$_GET['transaction_id']]))
-		{
-			$_SESSION[$_GET['transaction_id']] = GetTransactionDetails($_GET['transaction_id']);
-		}
+		// For paypal request optimization
+		if (! isset($_SESSION[$_GET['transaction_id']]) ) $_SESSION[$_GET['transaction_id']] = GetTransactionDetails($_GET['transaction_id']);
 		
 		$var=true;
 		

@@ -131,7 +131,7 @@ llxHeader();
 								element: 'order',
 								transaction_id: id_value
 							},
-							function() {
+							function(elementid) {
 								$( "div #paypal-details" ).dialog( "close" );
 							});
 						},

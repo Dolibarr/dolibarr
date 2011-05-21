@@ -1014,130 +1014,137 @@ class Product extends CommonObject
 		else if ($ref) $sql.= " WHERE ref = '".$this->db->escape($ref)."'";
 
 		dol_syslog("Product::fetch sql=".$sql);
-		$result = $this->db->query($sql);
-		if ( $result )
+		$resql = $this->db->query($sql);
+		if ( $resql )
 		{
-			$result = $this->db->fetch_array($result);
-
-			$this->id					= $result["rowid"];
-			$this->ref					= $result["ref"];
-			$this->libelle				= $result["label"];		// TODO deprecated
-			$this->label				= $result["label"];
-			$this->description			= $result["description"];
-			$this->note					= $result["note"];
-            $this->customcode			= $result["customcode"];
-            $this->country_id			= $result["fk_country"];
-            $this->country_code			= getCountry($this->country_id,2,$this->db);
-            $this->price				= $result["price"];
-			$this->price_ttc			= $result["price_ttc"];
-			$this->price_min			= $result["price_min"];
-			$this->price_min_ttc		= $result["price_min_ttc"];
-			$this->price_base_type		= $result["price_base_type"];
-			$this->tva_tx				= $result["tva_tx"];
-			//! French VAT NPR
-			$this->tva_npr				= $result["tva_npr"];
-			//! Spanish local taxes
-			$this->localtax1_tx			= $result["localtax1_tx"];
-			$this->localtax2_tx			= $result["localtax2_tx"];
-
-			$this->type					= $result["fk_product_type"];
-			$this->status				= $result["tosell"];
-			$this->status_buy			= $result["tobuy"];
-			$this->finished				= $result["finished"];
-			$this->hidden				= $result["hidden"];
-			$this->duration				= $result["duration"];
-			$this->duration_value		= substr($result["duration"],0,dol_strlen($result["duration"])-1);
-			$this->duration_unit		= substr($result["duration"],-1);
-			$this->seuil_stock_alerte	= $result["seuil_stock_alerte"];
-			$this->canvas				= $result["canvas"];
-			$this->weight				= $result["weight"];
-			$this->weight_units			= $result["weight_units"];
-			$this->length				= $result["length"];
-			$this->length_units			= $result["length_units"];
-			$this->surface				= $result["surface"];
-			$this->surface_units		= $result["surface_units"];
-			$this->volume				= $result["volume"];
-			$this->volume_units			= $result["volume_units"];
-			$this->barcode				= $result["barcode"];
-			$this->barcode_type			= $result["fk_barcode_type"];
-
-			$this->accountancy_code_buy = $result["accountancy_code_buy"];
-			$this->accountancy_code_sell= $result["accountancy_code_sell"];
-
-			$this->stock_reel         = $result["stock"];
-			$this->pmp                = $result["pmp"];
-
-			$this->import_key         = $result["import_key"];
-
-			$this->db->free();
-
-			// multilangs
-			if ($conf->global->MAIN_MULTILANGS) $this->getMultiLangs();
-
-			// Barcode
-			if ($conf->global->MAIN_MODULE_BARCODE)
+			if ($this->db->num_rows($resql) > 0)
 			{
-				if ($this->barcode_type == 0)
-				{
-					$this->barcode_type = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
-				}
+				$object = $this->db->fetch_object($resql);
 
-				if ($this->barcode_type > 0)
+				$this->id					= $object->rowid;
+				$this->ref					= $object->ref;
+				$this->libelle				= $object->label;		// TODO deprecated
+				$this->label				= $object->label;
+				$this->description			= $object->description;
+				$this->note					= $object->note;
+	            $this->customcode			= $object->customcode;
+	            $this->country_id			= $object->fk_country;
+	            $this->country_code			= getCountry($this->country_id,2,$this->db);
+	            $this->price				= $object->price;
+				$this->price_ttc			= $object->price_ttc;
+				$this->price_min			= $object->price_min;
+				$this->price_min_ttc		= $object->price_min_ttc;
+				$this->price_base_type		= $object->price_base_type;
+				$this->tva_tx				= $object->tva_tx;
+				//! French VAT NPR
+				$this->tva_npr				= $object->tva_npr;
+				//! Spanish local taxes
+				$this->localtax1_tx			= $object->localtax1_tx;
+				$this->localtax2_tx			= $object->localtax2_tx;
+	
+				$this->type					= $object->fk_product_type;
+				$this->status				= $object->tosell;
+				$this->status_buy			= $object->tobuy;
+				$this->finished				= $object->finished;
+				$this->hidden				= $object->hidden;
+				$this->duration				= $object->duration;
+				$this->duration_value		= substr($object->duration,0,dol_strlen($object->duration)-1);
+				$this->duration_unit		= substr($object->duration,-1);
+				$this->seuil_stock_alerte	= $object->seuil_stock_alerte;
+				$this->canvas				= $object->canvas;
+				$this->weight				= $object->weight;
+				$this->weight_units			= $object->weight_units;
+				$this->length				= $object->length;
+				$this->length_units			= $object->length_units;
+				$this->surface				= $object->surface;
+				$this->surface_units		= $object->surface_units;
+				$this->volume				= $object->volume;
+				$this->volume_units			= $object->volume_units;
+				$this->barcode				= $object->barcode;
+				$this->barcode_type			= $object->fk_barcode_type;
+	
+				$this->accountancy_code_buy = $object->accountancy_code_buy;
+				$this->accountancy_code_sell= $object->accountancy_code_sell;
+	
+				$this->stock_reel         = $object->stock;
+				$this->pmp                = $object->pmp;
+	
+				$this->import_key         = $object->import_key;
+	
+				$this->db->free($resql);
+	
+				// multilangs
+				if ($conf->global->MAIN_MULTILANGS) $this->getMultiLangs();
+	
+				// Barcode
+				if ($conf->global->MAIN_MODULE_BARCODE)
 				{
-					$sql = "SELECT code, libelle, coder";
-					$sql.= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
-					$sql.= " WHERE rowid = ".$this->barcode_type;
-					$resql = $this->db->query($sql);
-					if ($resql)
+					if ($this->barcode_type == 0)
 					{
-						$result = $this->db->fetch_array($resql);
-						$this->barcode_type_code = $result["code"];
-						$this->barcode_type_label = $result["libelle"];
-						$this->barcode_type_coder = $result["coder"];
+						$this->barcode_type = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
 					}
-					else
+	
+					if ($this->barcode_type > 0)
 					{
-						dol_print_error($this->db);
-						return -1;
+						$sql = "SELECT code, libelle, coder";
+						$sql.= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
+						$sql.= " WHERE rowid = ".$this->barcode_type;
+						$resql = $this->db->query($sql);
+						if ($resql)
+						{
+							$result = $this->db->fetch_array($resql);
+							$this->barcode_type_code = $result["code"];
+							$this->barcode_type_label = $result["libelle"];
+							$this->barcode_type_coder = $result["coder"];
+						}
+						else
+						{
+							dol_print_error($this->db);
+							return -1;
+						}
 					}
 				}
+	
+				// Load multiprices array
+				if ($conf->global->PRODUIT_MULTIPRICES)
+				{
+					for ($i=1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
+					{
+						$sql = "SELECT price, price_ttc, price_min, price_min_ttc,";
+						$sql.= " price_base_type, tva_tx, tosell";
+						$sql.= " FROM ".MAIN_DB_PREFIX."product_price";
+						$sql.= " where price_level=".$i." and";
+						$sql.= " fk_product = '".$this->id."'";
+						$sql.= " ORDER BY date_price DESC";
+						$sql.= " LIMIT 1";
+						$resql = $this->db->query($sql) ;
+						if ($resql)
+						{
+							$result = $this->db->fetch_array($resql);
+	
+							$this->multiprices[$i]=$result["price"];
+							$this->multiprices_ttc[$i]=$result["price_ttc"];
+							$this->multiprices_min[$i]=$result["price_min"];
+							$this->multiprices_min_ttc[$i]=$result["price_min_ttc"];
+							$this->multiprices_base_type[$i]=$result["price_base_type"];
+							$this->multiprices_tva_tx[$i]=$result["tva_tx"];
+						}
+						else
+						{
+							dol_print_error($this->db);
+							return -1;
+						}
+					}
+				}
+	
+				$res=$this->load_stock();
+	
+				return $res;
 			}
-
-			// Load multiprices array
-			if ($conf->global->PRODUIT_MULTIPRICES)
+			else
 			{
-				for ($i=1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
-				{
-					$sql = "SELECT price, price_ttc, price_min, price_min_ttc,";
-					$sql.= " price_base_type, tva_tx, tosell";
-					$sql.= " FROM ".MAIN_DB_PREFIX."product_price";
-					$sql.= " where price_level=".$i." and";
-					$sql.= " fk_product = '".$this->id."'";
-					$sql.= " ORDER BY date_price DESC";
-					$sql.= " LIMIT 1";
-					$resql = $this->db->query($sql) ;
-					if ($resql)
-					{
-						$result = $this->db->fetch_array($resql);
-
-						$this->multiprices[$i]=$result["price"];
-						$this->multiprices_ttc[$i]=$result["price_ttc"];
-						$this->multiprices_min[$i]=$result["price_min"];
-						$this->multiprices_min_ttc[$i]=$result["price_min_ttc"];
-						$this->multiprices_base_type[$i]=$result["price_base_type"];
-						$this->multiprices_tva_tx[$i]=$result["tva_tx"];
-					}
-					else
-					{
-						dol_print_error($this->db);
-						return -1;
-					}
-				}
+				return 0;
 			}
-
-			$res=$this->load_stock();
-
-			return $res;
 		}
 		else
 		{
