@@ -127,7 +127,7 @@ llxHeader();
 					buttons: {
 						'<?php echo $langs->transnoentities('Create'); ?>': function() {
 							$.get( "<?php echo DOL_URL_ROOT; ?>/paypal/ajaxtransaction.php", {
-								action: 'create',
+								action: 'add',
 								element: 'order',
 								transaction_id: id_value
 							},

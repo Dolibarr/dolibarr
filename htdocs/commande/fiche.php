@@ -351,14 +351,10 @@ if ($action == 'add' && $user->rights->commande->creer)
         {
             $result=$object->add_contact($_POST["contactidp"],'CUSTOMER','external');
 
-            if ($result > 0)
-            {
-                $error=0;
-            }
-            else
+            if ($result < 0)
             {
                 $mesg = '<div class="error">'.$langs->trans("ErrorFailedToAddContact").'</div>';
-                $error=1;
+                $error++;
             }
         }
 

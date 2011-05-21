@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2011 Jean Heimburger           <jean@tiaris.info>
+ * Copyright (C) 2011      Jean Heimburger      <jean@tiaris.info>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU  *General Public License as published by
@@ -582,6 +582,9 @@ class Commande extends CommonObject
 		}
 		if (! $remise) $remise=0;
 		if (! $this->fk_project) $this->fk_project = 0;
+		
+		// $date_commande is deprecated
+		$date = ($this->date_commande ? $this->date_commande : $this->date);
 
 
 		$this->db->begin();
@@ -593,7 +596,7 @@ class Commande extends CommonObject
 		$sql.= ", entity";
 		$sql.= ")";
 		$sql.= " VALUES ('(PROV)',".$this->socid.", ".$this->db->idate(gmmktime()).", ".$user->id.", ".$this->fk_project;
-		$sql.= ", ".$this->db->idate($this->date_commande);
+		$sql.= ", ".$this->db->idate($date);
 		$sql.= ", ".($this->source>=0 && $this->source != '' ?$this->source:'null');
 		$sql.= ", '".$this->db->escape($this->note)."'";
 		$sql.= ", '".$this->db->escape($this->note_public)."'";
@@ -2402,7 +2405,7 @@ class Commande extends CommonObject
 	function LibStatut($statut,$facturee,$mode)
 	{
 		global $langs;
-print 'x'.$statut.'-'.$facturee;
+		//print 'x'.$statut.'-'.$facturee;
 		if ($mode == 0)
 		{
 			if ($statut==-1) return $langs->trans('StatusOrderCanceled');

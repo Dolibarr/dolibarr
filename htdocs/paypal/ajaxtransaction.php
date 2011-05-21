@@ -60,9 +60,11 @@ dol_syslog(join(',',$_GET));
 
 if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transaction_id']) && ! empty($_GET['transaction_id']) )
 {
-	if ($_GET['action'] == 'create')
+	if ($_GET['action'] == 'add')
 	{
 		$soc = new Societe($db);
+		
+		// Create customer if not exists
 		$ret = $soc->fetchObjectFromRefExt($soc->table_element,$_SESSION[$_GET['transaction_id']]['PAYERID']);
 		if ($ret < 0)
 		{
@@ -130,8 +132,11 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 			}
 		}
 		
+		// Add element (order, bill, etc.)
 		if ($soc->id > 0 && isset($_GET['element']) && ! empty($_GET['element']))
 		{
+			$error=0;
+			
 			// Parse element/subelement (ex: project_task)
 	        $element = $subelement = $_GET['element'];
 	        if (preg_match('/^([^_]+)_([^_]+)/i',$_GET['element'],$regs))
@@ -152,7 +157,7 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
             
             $db->begin();
             
-            $object->date_commande	= dol_now();
+            $object->date			= dol_now();
             $object->ref_ext		= $_SESSION[$_GET['transaction_id']]['SHIPTOCITY'];
             $object->contactid		= $contact->id;
             
@@ -160,28 +165,64 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
             if ($object_id > 0)
             {
 	            $i=0;
-				while (isset($_SESSION[$_GET['transaction_id']]["L_NAME".$i]))
+				
+	            // Add element lines
+	            while (isset($_SESSION[$_GET['transaction_id']]["L_NAME".$i]))
 				{
 					$product = new Product($db);
-					$product->fetch('',$_SESSION[$_GET['transaction_id']]["L_NUMBER".$i]);
+					$ret = $product->fetch('',$_SESSION[$_GET['transaction_id']]["L_NUMBER".$i]);
 					
-					//$_SESSION[$_GET['transaction_id']]["L_QTY".$i];
-					echo 'ref='.$product->ref.' label='.$product->libelle.'<br>';
+					if ($ret > 0)
+					{
+						$product_type=($product->product_type?$product->product_type:0);
+						
+						$result = $object->addline(
+								                    $object_id,
+								                    $product->description,
+								                    $product->price,
+								                    $_SESSION[$_GET['transaction_id']]["L_QTY".$i],
+								                    $product->tva_tx,
+								                    $product->localtax1_tx,
+								                    $product->localtax2_tx,
+								                    $product->id,
+								                    0,
+								                    0,
+								                    0,
+								                    'HT',
+								                    0,
+								                    '',
+								                    '',
+								                    $product_type
+								                    );
+	
+	                    if ($result < 0)
+	                    {
+	                        $error++;
+	                        break;
+	                    }
+					}
 					
 					$i++;
 				}
-				
-				$db->commit();
             }
             else
             {
-            	$db->rollback();
+            	$error++;
             }
+            
+            if ($object_id > 0 && ! $error)
+		    {
+		        $db->commit();
+		    }
+		    else
+		    {
+		        $db->rollback();
+		    }
 		}
 
+		// Return element id
 		echo 'socid='.$soc->id;
 		
-		// Create element (order or bill)
 		/*
 		foreach ($_SESSION[$_GET['transaction_id']] as $key => $value)
 		{
