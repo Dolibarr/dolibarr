@@ -352,7 +352,7 @@ if ($result)
 
 		// Function
         print '<td>'.dol_trunc($obj->poste,20).'</td>';
-        
+
         // Company
         if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
         {
@@ -394,7 +394,7 @@ if ($result)
 
 		// Links Add action and Export vcard
         print '<td align="right">';
-        print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;backtopage=1&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->socid.'">'.img_object($langs->trans("AddAction"),"calendar").'</a>';
+        print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;backtopage=1&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->socid.'">'.img_object($langs->trans("AddAction"),"action").'</a>';
         print ' &nbsp; ';
         print '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$obj->cidp.'">';
         print img_picto($langs->trans("VCard"),'vcard.png').' ';
