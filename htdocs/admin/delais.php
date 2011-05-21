@@ -88,7 +88,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit'))
     {
         $var=!$var;
         print '<tr '.$bc[$var].'>';
-        print '<td width="20px">'.img_object('','task').'</td>';
+        print '<td width="20px">'.img_object('','action').'</td>';
         print '<td>'.$langs->trans("DelaysOfToleranceActionsToDo").'</td><td>';
         print '<input size="5" name="ActionsToDo" value="'. ($conf->global->MAIN_DELAY_ACTIONS_TODO+0) . '"> ' . $langs->trans("days") . '</td></tr>';
     }
@@ -214,7 +214,7 @@ else
     if ($conf->agenda->enabled)
     {
         print '<tr '.$bc[$var].'>';
-        print '<td width="20px">'.img_object('','task').'</td>';
+        print '<td width="20px">'.img_object('','action').'</td>';
         print '<td>'.$langs->trans("DelaysOfToleranceActionsToDo").'</td><td>' . ($conf->global->MAIN_DELAY_ACTIONS_TODO+0) . ' ' . $langs->trans("days") . '</td></tr>';
     }
 
