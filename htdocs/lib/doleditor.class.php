@@ -50,16 +50,15 @@ class DolEditor
 
     /**
      *      Create an object to build an HTML area to edit a large string content
-     *
-     *      @param 	htmlname		        Nom formulaire html WYSIWIG
-     *      @param 	content			        Contenu edition WYSIWIG
-     *      @param	width					Largeur en pixel de la zone edition (auto by default)
-     *      @param 	height			        Hauteur en pixel de la zone edition (200px by default)
-     *      @param 	toolbarname		        Nom barre de menu editeur
-     *      @param  toolbarlocation       	Emplacement de la barre de menu :
-     *                                    	'In' chaque fenetre d'edition a la propre barre d'outils
-     *                                    	'Out:nom' partage de la barre d'outils ou 'nom' est le nom du DIV qui affiche la barre
-     *      @param  toolbarstartexpanded  	visible ou non au demarrage
+     *      @param 	htmlname		        HTML name of WYSIWIG form
+     *      @param 	content			        Content of WYSIWIG form
+     *      @param	width					Width in pixel of edit area (auto by default)
+     *      @param 	height			        Height in pixel of edit area (200px by default)
+     *      @param 	toolbarname		        Name of bar set to use ('Full', 'dolibarr_notes', 'dolibarr_details', 'dolibarr_mailings')
+     *      @param  toolbarlocation       	Where bar is stored :
+     *                                    	'In' each window has its own toolbar
+     *                                    	'Out:name' share toolbar into the div called 'name'
+     *      @param  toolbarstartexpanded  	Bar is visible or not at start
 	 *		@param	uselocalbrowser			Enabled to add links to local object with local browser. If false, only external images can be added in content.
 	 *      @param  okforextandededitor     True=Allow usage of extended editor tool (like fckeditor)
      *      @param  rows                    Size of rows for textarea tool
