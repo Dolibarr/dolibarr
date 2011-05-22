@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -304,9 +304,13 @@ if (sizeof($companystatic->SupplierCategories))
 		$categstatic->ref=$label;
 		$categstatic->label=$label;
 		print $categstatic->getNomUrl(1);
-		print '</td><td align="right">';
+		print '</td>'."\n";
+		// TODO this page not exist
+		/*
+		print '<td align="right">';
 		print '<a href="stats.php?cat='.$rowid.'">('.$langs->trans("Stats").')</a>';
 		print "</tr>\n";
+		*/
 	}
 	print "</table>\n";
 	print "<br>\n";
