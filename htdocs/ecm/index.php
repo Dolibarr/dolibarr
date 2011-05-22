@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -812,7 +812,7 @@ if ($module == 'invoice_supplier')  // Auto area for suppliers invoices
 {
     $relativepath='facture';
     $upload_dir = $conf->fournisseur->dir_output.'/'.$relativepath;
-    $filearray=dol_dir_list($upload_dir,"files",1,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
+    $filearray=dol_dir_list($upload_dir,"files",1,'',array('^\.','\.meta$','^temp$','^CVS$'),$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
 
     $param='&amp;module='.$module;
     $textifempty=($section?$langs->trans("NoFileFound"):($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("ECMSelectASection")));
@@ -823,7 +823,7 @@ else    // Manual area
 {
     $relativepath=$ecmdir->getRelativePath();
     $upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
-    $filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
+    $filearray=dol_dir_list($upload_dir,"files",0,'',array('^\.','\.meta$'),$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
 
     $param='&amp;section='.$section;
     $textifempty=($section?$langs->trans("NoFileFound"):($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("ECMSelectASection")));
