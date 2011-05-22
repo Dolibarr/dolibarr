@@ -110,7 +110,8 @@ if ($result)
             print '<td>'.$objp->lieu.'</td>';
             // PMP value
             print '<td align="right">';
-            print price(price2num($objp->estimatedvalue,'MT'));
+            if (price2num($objp->estimatedvalue,'MT')) print price(price2num($objp->estimatedvalue,'MT'));
+            else print '';
             print '</td>';
             // Selling value
             print '<td align="right">';

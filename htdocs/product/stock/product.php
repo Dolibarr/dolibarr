@@ -464,7 +464,8 @@ $resql=$db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
-	$i=0; $total=0; $var=false;
+	$total=$totalwithpmp;
+	$i=0; $var=false;
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($resql);
@@ -474,8 +475,8 @@ if ($resql)
 		print '<td>'.$entrepotstatic->getNomUrl(1).'</td>';
 		print '<td align="right">'.$obj->reel.($obj->reel<0?' '.img_warning():'').'</td>';
 		// PMP
-		print '<td align="right">'.price2num(($obj->pmp > 0 ? $obj->pmp : $product->pmp),'MU').'</td>'; // Ditto : Show PMP from movement or from product
-		print '<td align="right">'.price(price2num(($obj->pmp > 0 ? $obj->pmp : $product->pmp)*$obj->reel,'MT')).'</td>'; // Ditto : Show PMP from movement or from product
+		print '<td align="right">'.(price2num($obj->pmp)?price2num($obj->pmp,'MU'):'').'</td>'; // Ditto : Show PMP from movement or from product
+		print '<td align="right">'.(price2num($obj->pmp)?price(price2num($obj->pmp*$obj->reel,'MT')):'').'</td>'; // Ditto : Show PMP from movement or from product
         // Sell price
 		print '<td align="right">';
         if (empty($conf->global->PRODUIT_MUTLI_PRICES)) print price(price2num($product->price,'MU'));
@@ -485,9 +486,10 @@ if ($resql)
         if (empty($conf->global->PRODUIT_MUTLI_PRICES)) print price(price2num($product->price*$obj->reel,'MT')).'</td>'; // Ditto : Show PMP from movement or from product
         else print $langs->trans("Variable");
 		print '</tr>'; ;
-		$total = $total + $obj->reel;
-		$totalvalue = $totalvalue + price2num(($obj->pmp > 0 ? $obj->pmp : $product->pmp)*$obj->reel,'MT'); // Ditto : Show PMP from movement or from product
-        $totalvaluesell = $totalvaluesell + price2num($product->price*$obj->reel,'MT'); // Ditto : Show PMP from movement or from product
+		$total += $obj->reel;
+		if (price2num($obj->pmp)) $totalwithpmp += $obj->reel;
+		$totalvalue = $totalvalue + price2num($obj->pmp*$obj->reel,'MU'); // Ditto : Show PMP from movement or from product
+        $totalvaluesell = $totalvaluesell + price2num($product->price*$obj->reel,'MU'); // Ditto : Show PMP from movement or from product
 		$i++;
 		$var=!$var;
 	}
@@ -496,17 +498,17 @@ else dol_print_error($db);
 print '<tr class="liste_total"><td align="right" class="liste_total">'.$langs->trans("Total").':</td>';
 print '<td class="liste_total" align="right">'.$total.'</td>';
 print '<td class="liste_total" align="right">';
-print ($total?price($totalvalue/$total):'&nbsp;');
+print ($totalwithpmp?price($totalvalue/$totalwithpmp):'&nbsp;');
 print '</td>';
 print '<td class="liste_total" align="right">';
-print price($totalvalue);
+print price(price2num($totalvalue,'MT'));
 print '</td>';
 print '<td class="liste_total" align="right">';
 if (empty($conf->global->PRODUIT_MUTLI_PRICES)) print ($total?price($totalvaluesell/$total):'&nbsp;');
 else print $langs->trans("Variable");
 print '</td>';
 print '<td class="liste_total" align="right">';
-if (empty($conf->global->PRODUIT_MUTLI_PRICES)) print price($totalvaluesell);
+if (empty($conf->global->PRODUIT_MUTLI_PRICES)) print price(price2num($totalvaluesell,'MT'));
 else print $langs->trans("Variable");
 print '</td>';
 print "</tr>";
