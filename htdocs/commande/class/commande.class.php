@@ -53,6 +53,7 @@ class Commande extends CommonObject
 
 	var $ref;
 	var $ref_client;
+	var $ref_ext;
 	var $contactid;
 	var $fk_project;
 	var $statut;		// -1=Canceled, 0=Draft, 1=Validated, (2=Accepted/On process not managed for customer orders), 3=Closed (Sent/Received, billed or not)
@@ -590,7 +591,7 @@ class Commande extends CommonObject
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande (";
-		$sql.= " ref, fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note, note_public, ref_client";
+		$sql.= " ref, fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note, note_public, ref_client, ref_ext";
 		$sql.= ", model_pdf, fk_cond_reglement, fk_mode_reglement, fk_availability, fk_demand_reason, date_livraison, fk_adresse_livraison";
 		$sql.= ", remise_absolue, remise_percent";
 		$sql.= ", entity";
@@ -600,7 +601,9 @@ class Commande extends CommonObject
 		$sql.= ", ".($this->source>=0 && $this->source != '' ?$this->source:'null');
 		$sql.= ", '".$this->db->escape($this->note)."'";
 		$sql.= ", '".$this->db->escape($this->note_public)."'";
-		$sql.= ", '".$this->db->escape($this->ref_client)."', '".$this->modelpdf."'";
+		$sql.= ", '".$this->db->escape($this->ref_client)."'";
+		$sql.= ", ".($this->ref_ext?"'".$this->db->escape($this->ref_ext)."'":"null");
+		$sql.= ", '".$this->modelpdf."'";
 		$sql.= ", ".($this->cond_reglement_id>0?"'".$this->cond_reglement_id."'":"null");
 		$sql.= ", ".($this->mode_reglement_id>0?"'".$this->mode_reglement_id."'":"null");
 		$sql.= ", ".($this->availability_id>0?"'".$this->availability_id."'":"null");
@@ -1172,7 +1175,7 @@ class Commande extends CommonObject
 		$sql.= ', c.date_commande';
 		$sql.= ', c.date_livraison';
 		$sql.= ', c.fk_projet, c.remise_percent, c.remise, c.remise_absolue, c.source, c.facture as facturee';
-		$sql.= ', c.note, c.note_public, c.ref_client, c.model_pdf, c.fk_adresse_livraison';
+		$sql.= ', c.note, c.note_public, c.ref_client, c.ref_ext, c.model_pdf, c.fk_adresse_livraison';
 		$sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql.= ', cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle, cr.libelle_facture as cond_reglement_libelle_doc';
 		$sql.= ', ca.code as availability_code';
@@ -1198,6 +1201,7 @@ class Commande extends CommonObject
 				$this->id                     = $obj->rowid;
 				$this->ref                    = $obj->ref;
 				$this->ref_client             = $obj->ref_client;
+				$this->ref_ext				  = $obj->ref_ext;
 				$this->socid                  = $obj->fk_soc;
 				$this->statut                 = $obj->fk_statut;
 				$this->user_author_id         = $obj->fk_user_author;

@@ -66,6 +66,7 @@ class Facture extends CommonObject
     var $datem;
     var $ref;
     var $ref_client;
+    var $ref_ext;
     //! 0=Standard invoice, 1=Replacement invoice, 2=Credit note invoice, 3=Deposit invoice, 4=Proforma invoice
     var $type;
     var $amount;
@@ -220,7 +221,7 @@ class Facture extends CommonObject
         $sql.= ", datef";
         $sql.= ", note";
         $sql.= ", note_public";
-        $sql.= ", ref_client";
+        $sql.= ", ref_client, ref_ext";
         $sql.= ", fk_facture_source, fk_user_author, fk_projet";
         $sql.= ", fk_cond_reglement, fk_mode_reglement, date_lim_reglement, model_pdf";
         $sql.= ")";
@@ -237,6 +238,7 @@ class Facture extends CommonObject
         $sql.= ",".($this->note?"'".$this->db->escape($this->note)."'":"null");
         $sql.= ",".($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
         $sql.= ",".($this->ref_client?"'".$this->db->escape($this->ref_client)."'":"null");
+        $sql.= ",".($this->ref_ext?"'".$this->db->escape($this->ref_ext)."'":"null");
         $sql.= ",".($this->fk_facture_source?"'".$this->db->escape($this->fk_facture_source)."'":"null");
         $sql.= ",".($user->id > 0 ? "'".$user->id."'":"null");
         $sql.= ",".($this->fk_project?$this->fk_project:"null");
@@ -682,6 +684,7 @@ class Facture extends CommonObject
                 $this->id                     = $obj->rowid;
                 $this->ref                    = $obj->facnumber;
                 $this->ref_client             = $obj->ref_client;
+                $this->ref_ext				  = $obj->ref_ext;
                 $this->type                   = $obj->type;
                 $this->date                   = $this->db->jdate($obj->df);
                 $this->date_creation          = $this->db->jdate($obj->datec);

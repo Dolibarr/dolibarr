@@ -97,6 +97,7 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 			$soc->particulier		= 1;
 			
 			$db->begin();
+			
 			$result = $soc->create($user);
 			if ($result >= 0)
 			{
@@ -157,10 +158,8 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
             $object->socid=$soc->id;
             $object->fetch_thirdparty();
             
-            $db->begin();
-            
             $object->date		= dol_now();
-            $object->ref_ext	= $_SESSION[$_GET['transaction_id']]['SHIPTOCITY'];
+            $object->ref_ext	= $_SESSION[$_GET['transaction_id']]['TRANSACTIONID'];
             
             $object_id = $object->create($user);
             if ($object_id > 0)
@@ -208,7 +207,7 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 				$error++;
             }
 
-            if ($object_id > 0 && ! $error)
+            if (! $error)
 		    {
 		        $db->commit();
 		        $return_arr['elementurl'] = $object->getNomUrl(0,'',0,1);
@@ -220,13 +219,7 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 		}
 		
 		echo json_encode($return_arr);
-
-/*		
-		foreach ($_SESSION[$_GET['transaction_id']] as $key => $value)
-		{
-			echo $key.': '.$value.'<br />';
-		}
-*/	
+	
 	}
 	else if ($_GET['action'] == 'showdetails')
 	{
@@ -300,8 +293,6 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 
 /*
 		echo '<br />';
-
-
 		foreach ($_SESSION[$_GET['transaction_id']] as $key => $value)
 		{
 			echo $key.': '.$value.'<br />';
