@@ -3673,7 +3673,7 @@ function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
     $out='';
     $divstart=$divend='';
 
-    if (!empty($conf->global->MAIN_DONOT_JQUERY_JNOTIFY) && ! preg_match('/<div class=".*">/i',$out))
+    if (! empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) && ! preg_match('/<div class=".*">/i',$out))
     {
         $divstart='<div class="'.$style.'">';
         $divend='</div>';
@@ -3703,7 +3703,7 @@ function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
 
     if ($out)
     {
-        if (empty($conf->global->MAIN_DONOT_USE_JQUERY_JNOTIFY) && empty($keepembedded))
+        if (empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) && empty($keepembedded))
         {
             $return = '<script type="text/javascript">
     				$(document).ready(function() {
