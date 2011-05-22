@@ -194,6 +194,8 @@ if ($resql)
     dol_fiche_end();
 
     // Add link to show birthdays
+    $link='';
+    /*
     $newparam=$param;   // newparam is for birthday links
     $newparam=preg_replace('/showbirthday=[0-1]/i','showbirthday='.(empty($showbirthday)?1:0),$newparam);
     if (! preg_match('/showbirthday=/i',$newparam)) $newparam.='&showbirthday=1';
@@ -203,6 +205,7 @@ if ($resql)
     if (empty($showbirthday)) $link.=$langs->trans("AgendaShowBirthdayEvents");
     else $link.=$langs->trans("AgendaHideBirthdayEvents");
     $link.='</a>';
+    */
 
     print_barre_liste($newtitle, $page, $_SERVER["PHP_SELF"], $param,$sortfield,$sortorder,$link,$num,0);
     //print '<br>';
