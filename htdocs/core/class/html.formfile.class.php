@@ -503,7 +503,7 @@ class FormFile
 
 	/**
 	 *      Show list of documents in a directory
-	 *      @param      filearray			Array of files loaded by dol_dir_list function
+     *      @param      filearray           Array of files loaded by dol_dir_list function before calling this function
 	 * 		@param		object				Object on which document is linked to
 	 * 		@param		modulepart			Value for modulepart used by download wrapper
 	 * 		@param		param				Parameters on sort links
@@ -579,7 +579,8 @@ class FormFile
 
     /**
      *      Show list of documents in a directory
-     *      @param      filearray           Array of files loaded by dol_dir_list function
+     *      @param      upload_dir          Directory that was scanned
+     *      @param      filearray           Array of files loaded by dol_dir_list function before calling this function
      *      @param      modulepart          Value for modulepart used by download wrapper
      *      @param      param               Parameters on sort links
      *      @param      forcedownload       Force to open dialog box "Save As" when clicking on file
