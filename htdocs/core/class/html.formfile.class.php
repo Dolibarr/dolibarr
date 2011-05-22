@@ -610,6 +610,11 @@ class FormFile
         print_liste_field_titre('','','');
         print '</tr>';
 
+        if ($modulepart == 'invoice')
+        {
+            include_once(DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php');
+            $object_static=new Facture($this->db);
+        }
         if ($modulepart == 'invoice_supplier')
         {
             include_once(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php');
@@ -633,6 +638,14 @@ class FormFile
                 print '<tr '.$bc[$var].'>';
                 print '<td>';
                 $id='';$ref='';
+                if ($modulepart == 'invoice')
+                {
+                    preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);
+                    $ref=$reg[1];
+                    $object_static->fetch('',$ref);
+                    //print $relativefile.'rr'.$id;
+                    print $object_static->getNomUrl(1,'document');
+                }
                 if ($modulepart == 'invoice_supplier')
                 {
                     preg_match('/(\d+)\/[^\/]+$/',$relativefile,$reg);
