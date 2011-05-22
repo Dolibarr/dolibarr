@@ -639,7 +639,7 @@ class FormFile
                     $id=$reg[1];
                     $object_static->fetch($id);
                     //print $relativefile.'rr'.$id;
-                    print $object_static->getNomUrl(1);
+                    print $object_static->getNomUrl(1,'document');
                 }
                 print '</td>';
                 print '<td>';
