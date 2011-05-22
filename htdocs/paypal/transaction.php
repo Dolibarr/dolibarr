@@ -32,6 +32,8 @@ $langs->load("paypal");
 $langs->load("paybox");
 $langs->load("companies");
 
+if (! $conf->global->PAYPAL_ENABLE_TRANSACTION_MANAGEMENT) accessforbidden();
+
 // Security check
 $result=restrictedArea($user,'paypal','','','transaction');
 

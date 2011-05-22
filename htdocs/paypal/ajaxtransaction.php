@@ -133,15 +133,6 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 				$return_arr['error'] = 'Societe::create '.$langs->trans($soc->error);
 				$error++;
 			}
-			
-			if (! $error)
-			{
-				$db->commit();
-			}
-			else
-			{
-				$db->rollback();
-			}
 		}
 		
 		// Add element (order, bill, etc.)
