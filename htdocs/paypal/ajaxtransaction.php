@@ -63,7 +63,7 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 	if ($_GET['action'] == 'add')
 	{
 		$soc = new Societe($db);
-
+		
 		// Create customer if not exists
 		$ret = $soc->fetchObjectFromRefExt($soc->table_element,$_SESSION[$_GET['transaction_id']]['PAYERID']);
 		if ($ret < 0)
@@ -77,7 +77,7 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 			}
 			require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$module.".php");
 			$modCodeClient = new $module;
-
+			
 			// Create customer and return rowid
 			$soc->ref_ext			= $_SESSION[$_GET['transaction_id']]['PAYERID'];
 			$soc->name              = empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?trim($_SESSION[$_GET['transaction_id']]['FIRSTNAME'].' '.$_SESSION[$_GET['transaction_id']]['LASTNAME']):trim($_SESSION[$_GET['transaction_id']]['LASTNAME'].' '.$_SESSION[$_GET['transaction_id']]['FIRSTNAME']);
@@ -92,7 +92,7 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 			$soc->tva_assuj			= 1;
 			$soc->client			= 1;
 			$soc->particulier		= 1;
-
+			
 			$db->begin();
 			$result = $soc->create($user);
 			if ($result >= 0)
@@ -100,7 +100,7 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 				if ($soc->particulier)
 				{
 					$contact=new Contact($db);
-
+					
 					$contact->civilite_id = $soc->civilite_id;
 					$contact->name=$soc->nom_particulier;
 					$contact->firstname=$soc->prenom;
@@ -114,11 +114,11 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 					$contact->status=1;
 					$contact->email=$soc->email;
 					$contact->priv=0;
-
+					
 					$result=$contact->create($user);
 				}
 			}
-
+			
 			if ($result >= 0)
 			{
 				$db->commit();
@@ -131,12 +131,12 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 				echo $langs->trans($soc->error);
 			}
 		}
-
+		
 		// Add element (order, bill, etc.)
 		if ($soc->id > 0 && isset($_GET['element']) && ! empty($_GET['element']))
 		{
 			$error=0;
-
+			
 			// Parse element/subelement (ex: project_task)
 	        $element = $subelement = $_GET['element'];
 	        if (preg_match('/^([^_]+)_([^_]+)/i',$_GET['element'],$regs))
@@ -151,31 +151,30 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 
             $classname = ucfirst($subelement);
             $object = new $classname($db);
-
+            
             $object->socid=$soc->id;
             $object->fetch_thirdparty();
-
+            
             $db->begin();
-
+            
             $object->date		= dol_now();
             $object->ref_ext	= $_SESSION[$_GET['transaction_id']]['SHIPTOCITY'];
-
+            
             $object_id = $object->create($user);
             if ($object_id > 0)
             {
 	            $i=0;
-
+				
 	            // Add element lines
 	            while (isset($_SESSION[$_GET['transaction_id']]["L_NAME".$i]))
 				{
 					$product = new Product($db);
-
 					$ret = $product->fetch('',$_SESSION[$_GET['transaction_id']]["L_NUMBER".$i]);
 
 					if ($ret > 0)
 					{
 						$product_type=($product->product_type?$product->product_type:0);
-
+						
 						$result = $object->addline(
 								                    $object_id,
 								                    $product->description,
@@ -194,17 +193,17 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 								                    '',
 								                    $product_type
 								                    );
-
+	
 	                    if ($result < 0)
 	                    {
 	                        $error++;
 	                        break;
 	                    }
 					}
-
+					
 					$i++;
 				}
-
+				
 				// Insert default contacts
 				/*
 			    if ($contact->id > 0)
@@ -218,7 +217,7 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
             {
             	$error++;
             }
-
+            
             if ($object_id > 0 && ! $error)
 		    {
 		        $db->commit();
@@ -231,70 +230,81 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 
 		// Return element id
 		echo $object->getNomUrl(0,0,1);
-
-		/*
+/*		
 		foreach ($_SESSION[$_GET['transaction_id']] as $key => $value)
 		{
 			echo $key.': '.$value.'<br />';
 		}
-		*/
-
+*/	
 	}
 	else if ($_GET['action'] == 'showdetails')
 	{
+		$langs->load('paypal');
+		
 		// For paypal request optimization
 		if (! isset($_SESSION[$_GET['transaction_id']]) ) $_SESSION[$_GET['transaction_id']] = GetTransactionDetails($_GET['transaction_id']);
-
+		
 		$var=true;
-
+		
 		echo '<table style="noboardernopading" width="100%">';
 		echo '<tr class="liste_titre">';
 		echo '<td colspan="2">'.$langs->trans('ThirdParty').'</td>';
 		echo '</tr>';
-
+		
 		$var=!$var;
-		echo '<tr '.$bc[$var].'><td>'.$langs->trans('LastName').': </td><td>'.$_SESSION[$_GET['transaction_id']]['LASTNAME'].'</td></tr>';
+		echo '<tr '.$bc[$var].'><td>'.$langs->trans('LastName').'</td><td>'.$_SESSION[$_GET['transaction_id']]['LASTNAME'].'</td></tr>';
 		$var=!$var;
-		echo '<tr '.$bc[$var].'><td>'.$langs->trans('FirstName').': </td><td>'.$_SESSION[$_GET['transaction_id']]['FIRSTNAME'].'</td></tr>';
+		echo '<tr '.$bc[$var].'><td>'.$langs->trans('FirstName').'</td><td>'.$_SESSION[$_GET['transaction_id']]['FIRSTNAME'].'</td></tr>';
 		$var=!$var;
-		echo '<tr '.$bc[$var].'><td>'.$langs->trans('Address').': </td><td>'.$_SESSION[$_GET['transaction_id']]['SHIPTOSTREET'].'</td></tr>';
+		echo '<tr '.$bc[$var].'><td>'.$langs->trans('Address').'</td><td>'.$_SESSION[$_GET['transaction_id']]['SHIPTOSTREET'].'</td></tr>';
 		$var=!$var;
-		echo '<tr '.$bc[$var].'><td>'.$langs->trans('Zip').' / '.$langs->trans('Town').': </td><td>'.$_SESSION[$_GET['transaction_id']]['SHIPTOZIP'].' '.$_SESSION[$_GET['transaction_id']]['SHIPTOCITY'].'</td></tr>';
+		echo '<tr '.$bc[$var].'><td>'.$langs->trans('Zip').' / '.$langs->trans('Town').'</td><td>'.$_SESSION[$_GET['transaction_id']]['SHIPTOZIP'].' '.$_SESSION[$_GET['transaction_id']]['SHIPTOCITY'].'</td></tr>';
 		$var=!$var;
-		echo '<tr '.$bc[$var].'><td>'.$langs->trans('Country').': </td><td>'.$_SESSION[$_GET['transaction_id']]['SHIPTOCOUNTRYNAME'].'</td></tr>';
+		echo '<tr '.$bc[$var].'><td>'.$langs->trans('Country').'</td><td>'.$_SESSION[$_GET['transaction_id']]['SHIPTOCOUNTRYNAME'].'</td></tr>';
 		$var=!$var;
-		echo '<tr '.$bc[$var].'><td>'.$langs->trans('Email').': </td><td>'.$_SESSION[$_GET['transaction_id']]['EMAIL'].'</td>';
+		echo '<tr '.$bc[$var].'><td>'.$langs->trans('Email').'</td><td>'.$_SESSION[$_GET['transaction_id']]['EMAIL'].'</td>';
 		$var=!$var;
-		echo '<tr '.$bc[$var].'><td>'.$langs->trans('Date').': </td><td>'.dol_print_date(dol_stringtotime($_SESSION[$_GET['transaction_id']]['ORDERTIME']),'dayhour').'</td>';
-
+		echo '<tr '.$bc[$var].'><td>'.$langs->trans('Date').'</td><td>'.dol_print_date(dol_stringtotime($_SESSION[$_GET['transaction_id']]['ORDERTIME']),'dayhour').'</td>';
+		
+		$var=!$var;
+		echo '<tr '.$bc[$var].'><td>'.$langs->trans('PAYERSTATUS').'</td><td>'.$langs->trans(ucfirst($_SESSION[$_GET['transaction_id']]['PAYERSTATUS'])).'</td>';
+		$var=!$var;
+		echo '<tr '.$bc[$var].'><td>'.$langs->trans('ADDRESSSTATUS').'</td><td>'.$langs->trans(ucfirst($_SESSION[$_GET['transaction_id']]['ADDRESSSTATUS'])).'</td>';
+		
+		$shipamount=($_SESSION[$_GET['transaction_id']]['SHIPPINGAMT']?$_SESSION[$_GET['transaction_id']]['SHIPPINGAMT']:$_SESSION[$_GET['transaction_id']]['SHIPAMOUNT']);
+		$var=!$var;
+		echo '<tr '.$bc[$var].'><td>'.$langs->trans('SHIPAMOUNT').'</td><td>'.price($shipamount).' '.$_SESSION[$_GET['transaction_id']]['CURRENCYCODE'].'</td>';
+		
 		echo '</table>';
-
+		
 		$i=0;
-
+		
 		echo '<table style="noboardernopading" width="100%">';
-
+		
 		echo '<tr class="liste_titre">';
 		echo '<td>'.$langs->trans('Ref').'</td>';
 		echo '<td>'.$langs->trans('Label').'</td>';
 		echo '<td>'.$langs->trans('Qty').'</td>';
 		echo '</tr>';
-
+		
 		while (isset($_SESSION[$_GET['transaction_id']]["L_NAME".$i]))
 		{
 			$var=!$var;
-
+			
 			echo '<tr '.$bc[$var].'>';
 			echo '<td>'.$_SESSION[$_GET['transaction_id']]["L_NUMBER".$i].'</td>';
 			echo '<td>'.$_SESSION[$_GET['transaction_id']]["L_NAME".$i].'</td>';
 			echo '<td>'.$_SESSION[$_GET['transaction_id']]["L_QTY".$i].'</td>';
 			echo '</tr>';
-
+			
 			$i++;
 		}
-
+		
 		echo '</table>';
+
 /*
 		echo '<br />';
+
 
 		foreach ($_SESSION[$_GET['transaction_id']] as $key => $value)
 		{

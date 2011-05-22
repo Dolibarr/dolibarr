@@ -18,18 +18,23 @@ PAYPAL_CSS_URL=Optionnal Url of CSS style sheet on payment page
 ThisIsTransactionId=This is id of transaction: <b>%s</b>
 PaypalTransactionDesc=This options allows you to import Paypal payments in Dolibarr as orders, invoices, etc ...
 PaypalEnableThisTool=Enable this functionnality
+Unverified=Unverified
+Unconfirmed=Unconfirmed
+GrossAmount=Gross amount
+FeeAmount=Fee amount
+NetAmount=Net amount
+CustomerDetails=Customer details
 
 # Paypal transaction fields
-PAYERID=
-PAYERSTATUS=
-ADDRESSSTATUS=
-TRANSACTIONID=
-TRANSACTIONTYPE=
-PAYMENTTYPE=
-AMT=
-FEEAMT=
-TAXAMT=
-PAYMENTSTATUS=
+PAYERID=Payer ID
+PAYERSTATUS=Payer status
+ADDRESSSTATUS=Address status
+TRANSACTIONID=Transaction ID
+TRANSACTIONTYPE=Transaction type
+PAYMENTTYPE=Payment type
+PAYMENTSTATUS=Payment status
+SHIPAMOUNT=Ship amount
+
 PENDINGREASON=
 REASONCODE=
 SHIPPINGMETHOD=
