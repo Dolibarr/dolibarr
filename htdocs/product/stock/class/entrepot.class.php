@@ -53,8 +53,8 @@ class Entrepot extends CommonObject
 	var $pays_id;
 
 	/**
-	 *    \brief      Constructeur de l'objet entrepot
-	 *    \param      DB      Handler d'acc�s � la base de donn�e
+	 *    Constructor
+	 *    @param      DB      Database handler
 	 */
 	function Entrepot($DB)
 	{
@@ -66,8 +66,8 @@ class Entrepot extends CommonObject
 	}
 
 	/**
-	 *    \brief      Creation d'un entrepot en base
-	 *    \param      Objet user qui cree l'entrepot
+	 *    Creation d'un entrepot en base
+	 *    @param      Objet user qui cree l'entrepot
 	 */
 	function create($user)
 	{
