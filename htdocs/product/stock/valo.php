@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 /**
  *	\file       htdocs/product/stock/valo.php
  *  \ingroup    stock
- *  \brief      Page de valorisation des stocks
+ *  \brief      Page with stock values
  *  \version    $Id$
  */
 
@@ -55,97 +55,108 @@ $year = strftime("%Y",time());
 
 // Affichage valorisation par entrepot
 $sql = "SELECT e.rowid as ref, e.label, e.statut, e.lieu,";
-$sql.= " SUM(ps.pmp * ps.reel) as estimatedvalue";
+$sql.= " SUM(ps.pmp * ps.reel) as estimatedvalue, SUM(p.price * ps.reel) as sellvalue";
 $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON e.rowid = ps.fk_entrepot";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON ps.fk_product = p.rowid";
 $sql.= " WHERE e.entity = ".$conf->entity;
 if ($sref)
 {
-	$sql.= " AND e.ref LIKE '%".$sref."%'";
+    $sql.= " AND e.ref LIKE '%".$sref."%'";
 }
 if ($sall)
 {
-	$sql.= " AND (e.label LIKE '%".$db->escape($sall)."%'";
-	$sql.= " OR e.description LIKE '%".$db->escape($sall)."%'";
-	$sql.= " OR e.lieu LIKE '%".$db->escape($sall)."%'";
-	$sql.= " OR e.address LIKE '%".$db->escape($sall)."%'";
-	$sql.= " OR e.ville LIKE '%".$db->escape($sall)."%')";
+    $sql.= " AND (e.label LIKE '%".$db->escape($sall)."%'";
+    $sql.= " OR e.description LIKE '%".$db->escape($sall)."%'";
+    $sql.= " OR e.lieu LIKE '%".$db->escape($sall)."%'";
+    $sql.= " OR e.address LIKE '%".$db->escape($sall)."%'";
+    $sql.= " OR e.ville LIKE '%".$db->escape($sall)."%')";
 }
 $sql.= " GROUP BY e.rowid, e.label, e.statut, e.lieu";
-$sql.= " ORDER BY $sortfield $sortorder ";
+$sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit + 1, $offset);
 
 $result = $db->query($sql) ;
 if ($result)
 {
-	$num = $db->num_rows($result);
+    $num = $db->num_rows($result);
 
-	$i = 0;
+    $i = 0;
 
-	$help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
-	llxHeader("",$langs->trans("EnhancedValueOfWarehouses"),$help_url);
+    $help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
+    llxHeader("",$langs->trans("EnhancedValueOfWarehouses"),$help_url);
 
-	print_barre_liste($langs->trans("EnhancedValueOfWarehouses"), $page, "valo.php", "", $sortfield, $sortorder,'',$num);
+    print_barre_liste($langs->trans("EnhancedValueOfWarehouses"), $page, "valo.php", "", $sortfield, $sortorder,'',$num);
 
-	print '<table class="noborder" width="100%">';
-	print "<tr class=\"liste_titre\">";
-	print_liste_field_titre($langs->trans("Ref"),"valo.php", "e.label","","","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("LocationSummary"),"valo.php", "e.lieu","","","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("EstimatedStockValue"),"valo.php", "e.valo_pmp",'','','align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),"valo.php", "e.statut",'','','align="right"',$sortfield,$sortorder);
-	print "</tr>\n";
+    print '<table class="noborder" width="100%">';
+    print "<tr class=\"liste_titre\">";
+    print_liste_field_titre($langs->trans("Ref"),"valo.php", "e.label","","","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("LocationSummary"),"valo.php", "e.lieu","","","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("EstimatedStockValue"),"valo.php", "e.valo_pmp",'','','align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("EstimatedStockValueSell"),"", "",'','','align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Status"),"valo.php", "e.statut",'','','align="right"',$sortfield,$sortorder);
+    print "</tr>\n";
 
-	if ($num)
-	{
-		$entrepot=new Entrepot($db);
-		$total = 0;
-		$var=false;
-		while ($i < min($num,$limit))
-		{
-			$objp = $db->fetch_object($result);
-			print "<tr $bc[$var]>";
-			print '<td><a href="fiche.php?id='.$objp->ref.'">'.img_object($langs->trans("ShowWarehouse"),'stock').' '.$objp->label.'</a></td>';
-			print '<td>'.$objp->lieu.'</td>';
-			print '<td align="right">';
-			print price(price2num($objp->estimatedvalue,'MT'));
-			print '</td>';
-			print '<td align="right">'.$entrepot->LibStatut($objp->statut,5).'</td>';
-			print "</tr>\n";
-			$total += price2num($objp->estimatedvalue,'MU');
-			$var=!$var;
-			$i++;
-		}
+    if ($num)
+    {
+        $entrepot=new Entrepot($db);
+        $total = $totalsell = 0;
+        $var=false;
+        while ($i < min($num,$limit))
+        {
+            $objp = $db->fetch_object($result);
+            print "<tr $bc[$var]>";
+            print '<td><a href="fiche.php?id='.$objp->ref.'">'.img_object($langs->trans("ShowWarehouse"),'stock').' '.$objp->label.'</a></td>';
+            print '<td>'.$objp->lieu.'</td>';
+            // PMP value
+            print '<td align="right">';
+            print price(price2num($objp->estimatedvalue,'MT'));
+            print '</td>';
+            // Selling value
+            print '<td align="right">';
+            if (empty($conf->global->PRODUIT_MULTIPRICES)) print price(price2num($objp->sellvalue,'MT'));
+            else print $langs->trans("Variable");
+            print '</td>';
+            // Status
+            print '<td align="right">'.$entrepot->LibStatut($objp->statut,5).'</td>';
+            print "</tr>\n";
+            $total += price2num($objp->estimatedvalue,'MU');
+            $totalsell += price2num($objp->sellvalue,'MU');
+            $var=!$var;
+            $i++;
+        }
 
-		print '<tr class="liste_total">';
-		print '<td colspan="2" align="right">'.$langs->trans("Total").'</td>';
-		print '<td align="right">'.price($total).' '.$langs->trans('Currency'.$conf->monnaie).'</td>';
-		print '<td align="right">&nbsp;</td>';
-		print "</tr>\n";
+        print '<tr class="liste_total">';
+        print '<td colspan="2" align="right">'.$langs->trans("Total").'</td>';
+        print '<td align="right">'.price(price2num($total,'MT')).' '.$langs->trans('Currency'.$conf->monnaie).'</td>';
+        print '<td align="right">'.price(price2num($totalsell,'MT')).' '.$langs->trans('Currency'.$conf->monnaie).'</td>';
+        print '<td align="right">&nbsp;</td>';
+        print "</tr>\n";
 
-	}
-	$db->free($result);
-	print "</table>";
+    }
+    $db->free($result);
+    print "</table>";
 
-	print '<br>';
+    print '<br>';
 
-	$file='entrepot-'.$year.'.png';
-	if (file_exists(DOL_DATA_ROOT.'/entrepot/temp/'.$file))
-	{
-		$url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file='.$file;
-		print '<img src="'.$url.'">';
-	}
+    $file='entrepot-'.$year.'.png';
+    if (file_exists(DOL_DATA_ROOT.'/entrepot/temp/'.$file))
+    {
+        $url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file='.$file;
+        print '<img src="'.$url.'">';
+    }
 
-	$file='entrepot-'.($year-1).'.png';
-	if (file_exists(DOL_DATA_ROOT.'/entrepot/temp/'.$file))
-	{
-		$url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file='.$file;
-		print '<br><img src="'.$url.'">';
-	}
+    $file='entrepot-'.($year-1).'.png';
+    if (file_exists(DOL_DATA_ROOT.'/entrepot/temp/'.$file))
+    {
+        $url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file='.$file;
+        print '<br><img src="'.$url.'">';
+    }
 
 }
 else
 {
-	dol_print_error($db);
+    dol_print_error($db);
 }
 
 $db->close();

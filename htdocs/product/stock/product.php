@@ -198,11 +198,18 @@ if ($_GET["id"] || $_GET["ref"])
 
 		// PMP
 		print '<tr><td>'.$langs->trans("AverageUnitPricePMP").'</td>';
-		print '<td>'.price($product->pmp);
-		print '</td>';
+		print '<td>'.price($product->pmp).' '.$langs->trans("HT").'</td>';
 		print '</tr>';
 
-		// Real stock
+        // Sell price
+        print '<tr><td>'.$langs->trans("SellPriceMin").'</td>';
+        print '<td>';
+		if (empty($conf->global->PRODUIT_MULTIPRICES)) print price($product->price).' '.$langs->trans("HT");
+        else print $langs->trans("Variable");
+        print '</td>';
+        print '</tr>';
+
+        // Real stock
 		print '<tr><td>'.$langs->trans("PhysicalStock").'</td>';
 		print '<td>'.$product->stock_reel;
 		if ($product->seuil_stock_alerte && ($product->stock_reel < $product->seuil_stock_alerte)) print ' '.img_warning($langs->trans("StockTooLow"));
@@ -436,11 +443,13 @@ print '<tr class="liste_titre"><td width="40%">'.$langs->trans("Warehouse").'</t
 print '<td align="right">'.$langs->trans("NumberOfUnit").'</td>';
 print '<td align="right">'.$langs->trans("AverageUnitPricePMPShort").'</td>';
 print '<td align="right">'.$langs->trans("EstimatedStockValueShort").'</td>';
+print '<td align="right">'.$langs->trans("SellPriceMin").'</td>';
+print '<td align="right">'.$langs->trans("EstimatedStockValueSellShort").'</td>';
 print '</tr>';
 
 $sql = "SELECT e.rowid, e.label, ps.reel, ps.pmp";
-$sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
-$sql.= ", ".MAIN_DB_PREFIX."product_stock as ps";
+$sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e,";
+$sql.= " ".MAIN_DB_PREFIX."product_stock as ps";
 $sql.= " WHERE ps.reel != 0";
 $sql.= " AND ps.fk_entrepot = e.rowid";
 $sql.= " AND e.entity = ".$conf->entity;
@@ -449,7 +458,7 @@ $sql.= " ORDER BY e.label";
 
 $entrepotstatic=new Entrepot($db);
 $total=0;
-$totalvalue=0;
+$totalvalue=$totalvaluesell=0;
 
 $resql=$db->query($sql);
 if ($resql)
@@ -464,21 +473,42 @@ if ($resql)
 		print '<tr '.$bc[$var].'>';
 		print '<td>'.$entrepotstatic->getNomUrl(1).'</td>';
 		print '<td align="right">'.$obj->reel.($obj->reel<0?' '.img_warning():'').'</td>';
+		// PMP
 		print '<td align="right">'.price2num(($obj->pmp > 0 ? $obj->pmp : $product->pmp),'MU').'</td>'; // Ditto : Show PMP from movement or from product
 		print '<td align="right">'.price(price2num(($obj->pmp > 0 ? $obj->pmp : $product->pmp)*$obj->reel,'MT')).'</td>'; // Ditto : Show PMP from movement or from product
+        // Sell price
+		print '<td align="right">';
+        if (empty($conf->global->PRODUIT_MUTLI_PRICES)) print price(price2num($product->price,'MU'));
+        else print $langs->trans("Variable");
+        print '</td>'; // Ditto : Show PMP from movement or from product
+        print '<td align="right">';
+        if (empty($conf->global->PRODUIT_MUTLI_PRICES)) print price(price2num($product->price*$obj->reel,'MT')).'</td>'; // Ditto : Show PMP from movement or from product
+        else print $langs->trans("Variable");
 		print '</tr>'; ;
 		$total = $total + $obj->reel;
 		$totalvalue = $totalvalue + price2num(($obj->pmp > 0 ? $obj->pmp : $product->pmp)*$obj->reel,'MT'); // Ditto : Show PMP from movement or from product
+        $totalvaluesell = $totalvaluesell + price2num($product->price*$obj->reel,'MT'); // Ditto : Show PMP from movement or from product
 		$i++;
 		$var=!$var;
 	}
 }
+else dol_print_error($db);
 print '<tr class="liste_total"><td align="right" class="liste_total">'.$langs->trans("Total").':</td>';
 print '<td class="liste_total" align="right">'.$total.'</td>';
 print '<td class="liste_total" align="right">';
 print ($total?price($totalvalue/$total):'&nbsp;');
 print '</td>';
-print '<td class="liste_total" align="right">'.price($totalvalue).'</td>';
+print '<td class="liste_total" align="right">';
+print price($totalvalue);
+print '</td>';
+print '<td class="liste_total" align="right">';
+if (empty($conf->global->PRODUIT_MUTLI_PRICES)) print ($total?price($totalvaluesell/$total):'&nbsp;');
+else print $langs->trans("Variable");
+print '</td>';
+print '<td class="liste_total" align="right">';
+if (empty($conf->global->PRODUIT_MUTLI_PRICES)) print price($totalvaluesell);
+else print $langs->trans("Variable");
+print '</td>';
 print "</tr>";
 print "</table>";
 

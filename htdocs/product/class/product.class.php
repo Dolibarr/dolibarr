@@ -1041,7 +1041,7 @@ class Product extends CommonObject
 				//! Spanish local taxes
 				$this->localtax1_tx			= $object->localtax1_tx;
 				$this->localtax2_tx			= $object->localtax2_tx;
-	
+
 				$this->type					= $object->fk_product_type;
 				$this->status				= $object->tosell;
 				$this->status_buy			= $object->tobuy;
@@ -1062,20 +1062,20 @@ class Product extends CommonObject
 				$this->volume_units			= $object->volume_units;
 				$this->barcode				= $object->barcode;
 				$this->barcode_type			= $object->fk_barcode_type;
-	
+
 				$this->accountancy_code_buy = $object->accountancy_code_buy;
 				$this->accountancy_code_sell= $object->accountancy_code_sell;
-	
+
 				$this->stock_reel         = $object->stock;
 				$this->pmp                = $object->pmp;
-	
+
 				$this->import_key         = $object->import_key;
-	
+
 				$this->db->free($resql);
-	
+
 				// multilangs
 				if ($conf->global->MAIN_MULTILANGS) $this->getMultiLangs();
-	
+
 				// Barcode
 				if ($conf->global->MAIN_MODULE_BARCODE)
 				{
@@ -1083,7 +1083,7 @@ class Product extends CommonObject
 					{
 						$this->barcode_type = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
 					}
-	
+
 					if ($this->barcode_type > 0)
 					{
 						$sql = "SELECT code, libelle, coder";
@@ -1104,7 +1104,7 @@ class Product extends CommonObject
 						}
 					}
 				}
-	
+
 				// Load multiprices array
 				if ($conf->global->PRODUIT_MULTIPRICES)
 				{
@@ -1121,7 +1121,7 @@ class Product extends CommonObject
 						if ($resql)
 						{
 							$result = $this->db->fetch_array($resql);
-	
+
 							$this->multiprices[$i]=$result["price"];
 							$this->multiprices_ttc[$i]=$result["price_ttc"];
 							$this->multiprices_min[$i]=$result["price_min"];
@@ -1136,9 +1136,9 @@ class Product extends CommonObject
 						}
 					}
 				}
-	
+
 				$res=$this->load_stock();
-	
+
 				return $res;
 			}
 			else
@@ -2215,6 +2215,11 @@ class Product extends CommonObject
 			$lien = '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$this->id.'">';
 			$lienfin='</a>';
 		}
+        else if ($option == 'stock')
+        {
+            $lien = '<a href="'.DOL_URL_ROOT.'/product/stock/product.php?id='.$this->id.'">';
+            $lienfin='</a>';
+        }
 		else
 		{
 			$lien = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$this->id.'">';
