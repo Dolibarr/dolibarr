@@ -30,7 +30,7 @@
  *  @param		$types        	Can be "directories", "files", or "all"
  *  @param		$recursive		Determines whether subdirectories are searched
  *  @param		$filter        	Regex for include filter
- *  @param		$excludefilter  Regex for exclude filter (example: '\.meta$')
+ *  @param		$excludefilter  Array of Regex for exclude filter (example: array('\.meta$','^\.')
  *  @param		$sortcriteria	Sort criteria ("","name","date","size")
  *  @param		$sortorder		Sort order (SORT_ASC, SORT_DESC)
  *	@param		$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only
@@ -58,9 +58,18 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 
 			$qualified=1;
 
-			// Check if file is qualified
-			if (preg_match('/^\./',$file)) $qualified=0;
-			if ($excludefilter && preg_match('/'.$excludefilter.'/i',$file)) $qualified=0;
+			// Define excludefilterarray
+			$excludefilterarray=array('^\.');
+			if (is_array($excludefilter))
+			{
+			     $excludefilterarray=array_merge($excludefilterarray,$excludefilter);
+			}
+			else if ($excludefilter) $excludefilterarray[]=$excludefilter;
+            // Check if file is qualified
+			foreach($excludefilterarray as $filt)
+		    {
+		         if (preg_match('/'.$filt.'/i',$file)) { $qualified=0; break; }
+		    }
 
 			if ($qualified)
 			{
