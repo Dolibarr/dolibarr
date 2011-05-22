@@ -64,6 +64,9 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 	{
 		$soc = new Societe($db);
 		
+		$error=0;
+		$return_arr = array();
+		
 		// Create customer if not exists
 		$ret = $soc->fetchObjectFromRefExt($soc->table_element,$_SESSION[$_GET['transaction_id']]['PAYERID']);
 		if ($ret < 0)
@@ -116,27 +119,34 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 					$contact->priv=0;
 					
 					$result=$contact->create($user);
+					if ($result < 0)
+					{
+						$langs->load("errors");
+						$return_arr['error'] = 'Contact::create '.$langs->trans($contact->error);
+						$error++;
+					}
 				}
 			}
+			else
+			{
+				$langs->load("errors");
+				$return_arr['error'] = 'Societe::create '.$langs->trans($soc->error);
+				$error++;
+			}
 			
-			if ($result >= 0)
+			if (! $error)
 			{
 				$db->commit();
 			}
 			else
 			{
 				$db->rollback();
-				$langs->load("errors");
-				echo $langs->trans($contact->error);
-				echo $langs->trans($soc->error);
 			}
 		}
 		
 		// Add element (order, bill, etc.)
-		if ($soc->id > 0 && isset($_GET['element']) && ! empty($_GET['element']))
+		if (! $error && $soc->id > 0 && isset($_GET['element']) && ! empty($_GET['element']))
 		{
-			$error=0;
-			
 			// Parse element/subelement (ex: project_task)
 	        $element = $subelement = $_GET['element'];
 	        if (preg_match('/^([^_]+)_([^_]+)/i',$_GET['element'],$regs))
@@ -146,6 +156,7 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 	        }
 	        // For compatibility
             if ($element == 'order') { $element = $subelement = 'commande'; }
+            if ($element == 'invoice') { $element = 'compta/facture'; $subelement = 'facture'; }
 
             dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
 
@@ -173,63 +184,52 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 
 					if ($ret > 0)
 					{
+						$qty=$_SESSION[$_GET['transaction_id']]["L_QTY".$i];
 						$product_type=($product->product_type?$product->product_type:0);
-						
-						$result = $object->addline(
-								                    $object_id,
-								                    $product->description,
-								                    $product->price,
-								                    $_SESSION[$_GET['transaction_id']]["L_QTY".$i],
-								                    $product->tva_tx,
-								                    $product->localtax1_tx,
-								                    $product->localtax2_tx,
-								                    $product->id,
-								                    0,
-								                    0,
-								                    0,
-								                    'HT',
-								                    0,
-								                    '',
-								                    '',
-								                    $product_type
-								                    );
+
+						if ($subelement == 'commande') $fields = array($object_id,$product->description,$product->price,$qty,$product->tva_tx,$product->localtax1_tx,$product->localtax2_tx,$product->id,0,0,0,'HT',0,'','',$product_type);
+						if ($subelement == 'facture') $fields = array($object_id,$product->description,$product->price,$qty,$product->tva_tx,$product->localtax1_tx,$product->localtax2_tx,$product->id,0,'','',0,0,0,'HT',0,$product_type);
+
+						$result = $object->addline($fields[0],$fields[1],$fields[2],$fields[3],$fields[4],$fields[5],$fields[6],$fields[7],$fields[8],$fields[9],$fields[10],$fields[11],$fields[12],$fields[13],$fields[14],$fields[15],$fields[16]);
 	
 	                    if ($result < 0)
 	                    {
 	                        $error++;
+	                        $langs->load("errors");
+	                        $return_arr['error'] = ucfirst($subelement).'::addline '.$langs->trans($object->error);
 	                        break;
 	                    }
+					}
+					else
+					{
+						$error++;
+						$langs->load("errors");
+						$return_arr['error'].= $langs->trans('ErrorProductWithRefNotExist', $_SESSION[$_GET['transaction_id']]["L_NUMBER".$i]).'<br />';
 					}
 					
 					$i++;
 				}
-				
-				// Insert default contacts
-				/*
-			    if ($contact->id > 0)
-			    {
-			        $result=$object->add_contact($contact->id,'CUSTOMER','external');
-			        if ($result < 0) $error++;
-			    }
-			    */
             }
             else
             {
-            	$error++;
+            	$langs->load("errors");
+				$return_arr['error'] = ucfirst($subelement).'::create '.$langs->trans($object->error);
+				$error++;
             }
-            
+
             if ($object_id > 0 && ! $error)
 		    {
 		        $db->commit();
+		        $return_arr['elementurl'] = $object->getNomUrl(0,'',0,1);
 		    }
 		    else
 		    {
 		        $db->rollback();
 		    }
 		}
+		
+		echo json_encode($return_arr);
 
-		// Return element id
-		echo $object->getNomUrl(0,0,1);
 /*		
 		foreach ($_SESSION[$_GET['transaction_id']] as $key => $value)
 		{
@@ -267,9 +267,14 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 		echo '<tr '.$bc[$var].'><td>'.$langs->trans('Date').'</td><td>'.dol_print_date(dol_stringtotime($_SESSION[$_GET['transaction_id']]['ORDERTIME']),'dayhour').'</td>';
 		
 		$var=!$var;
-		echo '<tr '.$bc[$var].'><td>'.$langs->trans('PAYERSTATUS').'</td><td>'.$langs->trans(ucfirst($_SESSION[$_GET['transaction_id']]['PAYERSTATUS'])).'</td>';
+		$payerstatus=strtolower($_SESSION[$_GET['transaction_id']]['PAYERSTATUS']);
+		$img_payerstatus=($payerstatus=='verified' ? img_tick($langs->trans(ucfirst($payerstatus))) : img_warning($langs->trans(ucfirst($payerstatus))) );
+		echo '<tr '.$bc[$var].'><td>'.$langs->trans('PAYERSTATUS').'</td><td>'.$img_payerstatus.'</td>';
+		
 		$var=!$var;
-		echo '<tr '.$bc[$var].'><td>'.$langs->trans('ADDRESSSTATUS').'</td><td>'.$langs->trans(ucfirst($_SESSION[$_GET['transaction_id']]['ADDRESSSTATUS'])).'</td>';
+		$addressstatus=strtolower($_SESSION[$_GET['transaction_id']]['ADDRESSSTATUS']);
+		$img_addressstatus=($addressstatus=='confirmed' ? img_tick($langs->trans(ucfirst($addressstatus))) : img_warning($langs->trans(ucfirst($addressstatus))) );
+		echo '<tr '.$bc[$var].'><td>'.$langs->trans('ADDRESSSTATUS').'</td><td>'.$img_addressstatus.'</td>';
 		
 		$shipamount=($_SESSION[$_GET['transaction_id']]['SHIPPINGAMT']?$_SESSION[$_GET['transaction_id']]['SHIPPINGAMT']:$_SESSION[$_GET['transaction_id']]['SHIPAMOUNT']);
 		$var=!$var;

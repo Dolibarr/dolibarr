@@ -151,6 +151,7 @@ class Facture extends CommonObject
         $this->note=trim($this->note);
         $this->note_public=trim($this->note_public);
         if (! $this->remise) $this->remise = 0;
+        if (! $this->cond_reglement_id) $this->cond_reglement_id = 0;
         if (! $this->mode_reglement_id) $this->mode_reglement_id = 0;
         $this->brouillon = 1;
 
@@ -605,22 +606,19 @@ class Facture extends CommonObject
      *      @param      max             Maxlength of ref
      *      @return     string          String with URL
      */
-    function getNomUrl($withpicto=0,$option='',$max=0)
+    function getNomUrl($withpicto=0,$option='',$max=0,$short=0)
     {
         global $langs;
 
         $result='';
 
-        if ($option == 'withdraw')
-        {
-            $lien = '<a href="'.DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$this->id.'">';
-            $lienfin='</a>';
-        }
-        else
-        {
-            $lien = '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$this->id.'">';
-            $lienfin='</a>';
-        }
+        if ($option == 'withdraw') $url = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$this->id;
+        else $url = DOL_URL_ROOT.'/compta/facture.php?facid='.$this->id;
+        
+        if ($short) return $url;
+        
+        $linkstart='<a href="'.$url.'">';
+        $linkend='</a>';
 
         $picto='bill';
         if ($this->type == 1) $picto.='r';	// Replacement invoice
@@ -632,9 +630,9 @@ class Facture extends CommonObject
         if ($this->type == 2) $label=$langs->trans("ShowInvoiceAvoir").': '.$this->ref;
         if ($this->type == 3) $label=$langs->trans("ShowInvoiceDeposit").': '.$this->ref;
 
-        if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+        if ($withpicto) $result.=($linkstart.img_object($label,$picto).$linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
-        if ($withpicto != 2) $result.=$lien.($max?dol_trunc($this->ref,$max):$this->ref).$lienfin;
+        if ($withpicto != 2) $result.=$linkstart.($max?dol_trunc($this->ref,$max):$this->ref).$linkend;
         return $result;
     }
 

@@ -148,27 +148,53 @@ if (empty($conf->global->PAYPAL_API_USER) || empty($conf->global->PAYPAL_API_PAS
 					modal: true,
 					width: 500,
 					buttons: {
-						'<?php
+						<?php
 						if ($conf->commande->enabled)
 						{
-						    $langs->load("orders");
-						    echo $langs->transnoentities('CreateOrder'); ?>': function() {
-							$.get( "<?php echo DOL_URL_ROOT; ?>/paypal/ajaxtransaction.php", {
+						    $langs->load("orders"); ?>
+						    '<?php echo $langs->transnoentities('CreateOrder'); ?>': function() {
+							$.getJSON( "<?php echo DOL_URL_ROOT; ?>/paypal/ajaxtransaction.php", {
 								action: 'add',
 								element: 'order',
 								transaction_id: id_value
 							},
-							function(elementurl) {
-								if ($.jnotify) {
-									$.jnotify("<?php echo $langs->trans('PleaseBePatient'); ?>", 500);
-								}
-								$( "div #paypal-details" ).dialog( "close" );
-								location.href=elementurl;
+							function(response) {
+								$.each(response, function(key,value) {
+									if (key == 'error') {
+										$.jnotify(value, "error", true);
+									} else {
+										$.jnotify("<?php echo $langs->trans('PleaseBePatient'); ?>", 500);
+										$( "div #paypal-details" ).dialog( "close" );
+										location.href=value;
+									}
+								});
 							});
 						},
-						'<?php
-						 }
-						 echo $langs->transnoentities('Cancel'); ?>': function() {
+						<?php } ?>
+						<?php
+						if ($conf->facture->enabled)
+						{
+						    $langs->load("bills"); ?>
+						    '<?php echo $langs->transnoentities('CreateBill'); ?>': function() {
+							$.getJSON( "<?php echo DOL_URL_ROOT; ?>/paypal/ajaxtransaction.php", {
+								action: 'add',
+								element: 'invoice',
+								transaction_id: id_value
+							},
+							function(response) {
+								$.each(response, function(key,value) {
+									if (key == 'error') {
+										$.jnotify(value, "error", true);
+									} else {
+										$.jnotify("<?php echo $langs->trans('PleaseBePatient'); ?>", 500);
+										$( "div #paypal-details" ).dialog( "close" );
+										location.href=value;
+									}
+								});
+							});
+						},
+						<?php } ?>
+						 '<?php echo $langs->transnoentities('Cancel'); ?>': function() {
 							$( this ).dialog( "close" );
 						}
 					}

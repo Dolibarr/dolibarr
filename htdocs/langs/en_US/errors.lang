@@ -79,3 +79,4 @@ ErrorBadMask=Error on mask
 ErrorBadMaskFailedToLocatePosOfSequence=Error, mask without sequence number
 ErrorBadMaskBadRazMonth=Error, bad reset value
 ErrorSelectAtLeastOne=Error. Select at least one entry.
+ErrorProductWithRefNotExist=Product with reference '<i>%s</i>' don't exist
