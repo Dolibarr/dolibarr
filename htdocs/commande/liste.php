@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville   <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur    <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo  <marc@ocebo.com>
  * Copyright (C) 2005-2011 Regis Houssin          <regis@dolibarr.fr>
  *
@@ -61,6 +61,9 @@ if (! $sortfield) $sortfield='c.rowid';
 if (! $sortorder) $sortorder='DESC';
 $limit = $conf->liste_limit;
 
+$viewstatut=GETPOST('viewstatut');
+
+
 
 /*
  * View
@@ -74,11 +77,8 @@ $companystatic = new Societe($db);
 
 llxHeader();
 
-$viewstatut=$_GET['viewstatut'];
-
-
 $sql = 'SELECT s.nom, s.rowid as socid, s.client, c.rowid, c.ref, c.total_ht, c.ref_client,';
-$sql.= ' c.date_commande, c.date_livraison, c.fk_statut, c.facture as facturee';
+$sql.= ' c.date_valid, c.date_commande, c.date_livraison, c.fk_statut, c.facture as facturee';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql.= ', '.MAIN_DB_PREFIX.'commande as c';
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -115,11 +115,11 @@ if ($viewstatut <> '')
 }
 if ($_GET['ordermonth'] > 0)
 {
-	$sql.= " AND date_format(c.date_commande, '%Y-%m') = '$orderyear-$ordermonth'";
+	$sql.= " AND date_format(c.date_valid, '%Y-%m') = '$orderyear-$ordermonth'";
 }
 if ($_GET['orderyear'] > 0)
 {
-	$sql.= " AND date_format(c.date_commande, '%Y') = $orderyear";
+	$sql.= " AND date_format(c.date_valid, '%Y') = $orderyear";
 }
 if ($_GET['deliverymonth'] > 0)
 {
@@ -215,7 +215,7 @@ if ($resql)
 		print '</td>';
 
 		print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
-		if (($objp->fk_statut > 0) && ($objp->fk_statut < 3) && $db->jdate($objp->date_commande) < ($now - $conf->commande->client->warning_delay)) print img_picto($langs->trans("Late"),"warning");
+		if (($objp->fk_statut > 0) && ($objp->fk_statut < 3) && $db->jdate($objp->date_valid) < ($now - $conf->commande->client->warning_delay)) print img_picto($langs->trans("Late"),"warning");
 		print '</td>';
 
 		print '<td width="16" align="right" class="nobordernopadding">';

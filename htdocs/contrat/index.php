@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -52,7 +52,7 @@ $staticcontratligne=new ContratLigne($db);
  * View
  */
 
-$now = gmmktime();
+$now = dol_now();
 
 llxHeader();
 
@@ -81,16 +81,22 @@ if ($conf->contrat->enabled)
 }
 
 /*
- * Legends / Status
+ * Statistics
  */
+
 $nb=array();
+$total=0;
+$totalinprocess=0;
+$dataseries=array();
+$vals=array();
+
 // Search by status (except expired)
 $sql = "SELECT count(cd.rowid), cd.statut";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."contrat as c";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE cd.fk_contrat = c.rowid AND c.fk_soc = s.rowid";
-$sql.= " AND (cd.statut != 4 OR (cd.statut = 4 AND (cd.date_fin_validite is null or cd.date_fin_validite >= ".$db->idate(dol_now('tzref')).')))';
+$sql.= " AND (cd.statut != 4 OR (cd.statut = 4 AND (cd.date_fin_validite is null or cd.date_fin_validite >= '".$db->idate(dol_now('tzref'))."')))";
 $sql.= " AND s.entity = ".$conf->entity;
 if ($user->societe_id) $sql.=' AND c.fk_soc = '.$user->societe_id;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -100,11 +106,19 @@ if ($resql)
 {
 	$num = $db->num_rows($resql);
 	$i = 0;
-
 	while ($i < $num)
 	{
 		$row = $db->fetch_row($resql);
-		$nb[$row[1]]=$row[0];
+		if ($row)
+		{
+    		$nb[$row[1]]=$row[0];
+            if ($row[1]!=5)
+            {
+                $vals[$row[1]]=$row[0];
+                $totalinprocess+=$row[0];
+            }
+            $total+=$row[0];
+		}
 		$i++;
 	}
 	$db->free($resql);
@@ -119,7 +133,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."contrat as c";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE cd.fk_contrat = c.rowid AND c.fk_soc = s.rowid";
-$sql.= " AND (cd.statut = 4 AND cd.date_fin_validite < ".$db->idate(dol_now('tzref')).')';
+$sql.= " AND (cd.statut = 4 AND cd.date_fin_validite < '".$db->idate(dol_now('tzref'))."')";
 $sql.= " AND s.entity = ".$conf->entity;
 if ($user->societe_id) $sql.=' AND c.fk_soc = '.$user->societe_id;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -128,36 +142,72 @@ $resql = $db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
-	$i = 0;
 
-	while ($i < $num)
-	{
-		$row = $db->fetch_row($resql);
-		$nb[$row[1].true]=$row[0];
-		$i++;
-	}
-	$db->free($resql);
+    // 0 inactive, 4 active, 5 closed
+    $i = 0;
+    while ($i < $num)
+    {
+        $row = $db->fetch_row($resql);
+        if ($row)
+        {
+            $nb[$row[1].true]=$row[0];
+            if ($row[1]!=5)
+            {
+                $vals[$row[1]]=$row[0];
+                $totalinprocess+=$row[0];
+            }
+            $total+=$row[0];
+        }
+        $i++;
+    }
+    $db->free($resql);
 }
 else
 {
 	dol_print_error($db);
 }
-print '<table class="liste" width="100%">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Status").'</td>';
-print '<td align="right">'.$langs->trans("Nb").'</td>';
-print "</tr>\n";
+
+
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Services").'</td></tr>'."\n";
+$var=true;
+$listofstatus=array(0,4,4,5); $bool=false;
+foreach($listofstatus as $status)
+{
+    $dataseries[]=array('label'=>$staticcontratligne->LibStatut($status,0,($bool?1:0)),'values'=>array(0=>($nb[$status.$bool]?$nb[$status.$bool]:0)));
+    if (! $conf->use_javascript_ajax)
+    {
+        $var=!$var;
+        print "<tr ".$bc[$var].">";
+        print '<td>'.$staticcontratligne->LibStatut($status,0,($bool?1:0)).'</td>';
+        print '<td align="right"><a href="services.php?mode='.$status.($bool?'&filter=expired':'').'">'.($nb[$status.$bool]?$nb[$status.$bool]:0).' '.$staticcontratligne->LibStatut($status,3,($bool?1:0)).'</a></td>';
+        print "</tr>\n";
+    }
+    if ($status==4 && $bool==false) $bool=true;
+    else $bool=false;
+}
+if ($conf->use_javascript_ajax)
+{
+    print '<tr><td align="center" colspan="2">';
+    $data=array('series'=>$dataseries);
+    dol_print_graph('stats',300,180,$data,1,'pie');
+    print '</td></tr>';
+}
 $var=true;
 $listofstatus=array(0,4,4,5); $bool=false;
 foreach($listofstatus as $status)
 {
 	$var=!$var;
-	print "<tr $bc[$var]>";
+	print "<tr ".$bc[$var].">";
 	print '<td>'.$staticcontratligne->LibStatut($status,0,($bool?1:0)).'</td>';
 	print '<td align="right"><a href="services.php?mode='.$status.($bool?'&filter=expired':'').'">'.($nb[$status.$bool]?$nb[$status.$bool]:0).' '.$staticcontratligne->LibStatut($status,3,($bool?1:0)).'</a></td>';
 	if ($status==4 && $bool==false) $bool=true;
 	else $bool=false;
+    print "</tr>\n";
 }
-print "</tr>\n";
+//if ($totalinprocess != $total)
+//print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("ServicesRunning").')</td><td align="right">'.$totalinprocess.'</td></tr>';
+print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">'.$total.'</td></tr>';
 print "</table><br>";
 
 /**

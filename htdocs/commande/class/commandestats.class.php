@@ -74,7 +74,7 @@ class CommandeStats extends Stats
 			$this->from = MAIN_DB_PREFIX.$object->table_element." as c";
 			$this->from.= ", ".MAIN_DB_PREFIX."societe as s";
 			$this->field='total_ht';
-			$this->where.= " c.fk_statut >= 3 AND c.date_commande IS NOT NULL";
+			$this->where.= " c.fk_statut > 0";
 		}
 		$this->where.= " AND c.fk_soc = s.rowid AND s.entity = ".$conf->entity;
 
@@ -87,7 +87,7 @@ class CommandeStats extends Stats
 	}
 
 	/**
-	 *    \brief      Renvoie le nombre de commande par mois pour une ann�e donn�e
+	 *    \brief      Renvoie le nombre de commande par mois pour une annee donnee
 	 *
 	 */
 	function getNbByMonth($year)
@@ -95,10 +95,10 @@ class CommandeStats extends Stats
 		global $conf;
 		global $user;
 
-		$sql = "SELECT date_format(c.date_commande,'%m') as dm, count(*) nb";
+		$sql = "SELECT date_format(c.date_valid,'%m') as dm, count(*) nb";
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE date_format(c.date_commande,'%Y') = ".$year;
+		$sql.= " WHERE date_format(c.date_valid,'%Y') = ".$year;
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');
@@ -115,7 +115,7 @@ class CommandeStats extends Stats
 		global $conf;
 		global $user;
 
-		$sql = "SELECT date_format(c.date_commande,'%Y') as dm, count(*), sum(c.".$this->field.")";
+		$sql = "SELECT date_format(c.date_valid,'%Y') as dm, count(*), sum(c.".$this->field.")";
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE ".$this->where;
@@ -134,10 +134,10 @@ class CommandeStats extends Stats
 		global $conf;
 		global $user;
 
-		$sql = "SELECT date_format(c.date_commande,'%m') as dm, sum(c.".$this->field.")";
+		$sql = "SELECT date_format(c.date_valid,'%m') as dm, sum(c.".$this->field.")";
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE date_format(c.date_commande,'%Y') = ".$year;
+		$sql.= " WHERE date_format(c.date_valid,'%Y') = ".$year;
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');
@@ -154,10 +154,10 @@ class CommandeStats extends Stats
 		global $conf;
 		global $user;
 
-		$sql = "SELECT date_format(c.date_commande,'%m') as dm, avg(c.".$this->field.")";
+		$sql = "SELECT date_format(c.date_valid,'%m') as dm, avg(c.".$this->field.")";
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE date_format(c.date_commande,'%Y') = ".$year;
+		$sql.= " WHERE date_format(c.date_valid,'%Y') = ".$year;
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');
@@ -174,7 +174,7 @@ class CommandeStats extends Stats
 	{
 		global $user;
 
-		$sql = "SELECT date_format(c.date_commande,'%Y') as year, count(*) as nb, sum(c.".$this->field.") as total, avg(".$this->field.") as avg";
+		$sql = "SELECT date_format(c.date_valid,'%Y') as year, count(*) as nb, sum(c.".$this->field.") as total, avg(".$this->field.") as avg";
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE ".$this->where;

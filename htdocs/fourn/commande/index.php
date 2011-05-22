@@ -116,9 +116,9 @@ if ($resql)
     $db->free($resql);
 
     print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").'</td></tr>';
+    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("SuppliersOrders").'</td></tr>';
     print "</tr>\n";
-    foreach (array(0,1,2,3,4) as $statut)
+    foreach (array(0,1,2,3,4,5,6) as $statut)
     {
         $dataseries[]=array('label'=>$commandestatic->LibStatut($statut,0),'values'=>array(0=>(isset($vals[$statut])?$vals[$statut]:0)));
         if (! $conf->use_javascript_ajax)
@@ -138,8 +138,8 @@ if ($resql)
         print '</td></tr>';
     }
     //if ($totalinprocess != $total)
-    print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("SuppliersOrdersRunning").')</td><td align="right">'.$totalinprocess.'</td></tr>';
-    print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("SuppliersOrders").')</td><td align="right">'.$total.'</td></tr>';
+    //print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("SuppliersOrdersRunning").')</td><td align="right">'.$totalinprocess.'</td></tr>';
+    print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">'.$total.'</td></tr>';
 
     print "</table><br>";
 }

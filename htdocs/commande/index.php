@@ -95,8 +95,6 @@ if ($resql)
     $num = $db->num_rows($resql);
     $i = 0;
 
-    $var=True;
-
     $total=0;
     $totalinprocess=0;
     $dataseries=array();
@@ -107,7 +105,7 @@ if ($resql)
         $row = $db->fetch_row($resql);
         if ($row)
         {
-            if ($row[1]!=3 || $row[2]!=1)
+            //if ($row[1]!=-1 && ($row[1]!=3 || $row[2]!=1))
             {
                 $vals[$row[1]]=$row[0];
                 $totalinprocess+=$row[0];
@@ -119,19 +117,22 @@ if ($resql)
     $db->free($resql);
 
     print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").'</td></tr>';
-    print "</tr>\n";
-    foreach (array(1,2,3,-1) as $statut)
+    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("CustomersOrders").'</td></tr>'."\n";
+    $var=true;
+    $listofstatus=array(0,1,3,3,-1); $bool=false;
+    foreach ($listofstatus as $status)
     {
-        $dataseries[]=array('label'=>$commandestatic->LibStatut($statut,0),'values'=>array(0=>(isset($vals[$statut])?$vals[$statut]:0)));
+        $dataseries[]=array('label'=>$commandestatic->LibStatut($status,$bool,0),'values'=>array(0=>(isset($vals[$status])?$vals[$status]:0)));
         if (! $conf->use_javascript_ajax)
         {
             $var=!$var;
             print "<tr ".$bc[$var].">";
-            print '<td>'.$commandestatic->LibStatut($statut,0).'</td>';
-            print '<td align="right"><a href="liste.php?statut='.$statut.'">'.(isset($vals[$statut])?$vals[$statut]:0).'</a></td>';
+            print '<td>'.$commandestatic->LibStatut($status,$bool,0).'</td>';
+            print '<td align="right"><a href="liste.php?statut='.$status.'">'.(isset($vals[$status])?$vals[$status]:0).'</a></td>';
             print "</tr>\n";
         }
+        if ($status==3 && $bool==false) $bool=true;
+        else $bool=false;
     }
     if ($conf->use_javascript_ajax)
     {
@@ -141,8 +142,8 @@ if ($resql)
         print '</td></tr>';
     }
     //if ($totalinprocess != $total)
-    print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("CustomersOrdersRunning").')</td><td align="right">'.$totalinprocess.'</td></tr>';
-    print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("CustomersOrders").')</td><td align="right">'.$total.'</td></tr>';
+    //print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("CustomersOrdersRunning").')</td><td align="right">'.$totalinprocess.'</td></tr>';
+    print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">'.$total.'</td></tr>';
     print "</table><br>";
 }
 else

@@ -582,7 +582,7 @@ class Commande extends CommonObject
 		}
 		if (! $remise) $remise=0;
 		if (! $this->fk_project) $this->fk_project = 0;
-		
+
 		// $date_commande is deprecated
 		$date = ($this->date_commande ? $this->date_commande : $this->date);
 
@@ -2396,11 +2396,11 @@ class Commande extends CommonObject
 	}
 
 	/**
-	 *		\brief      Renvoi le libelle d'un statut donne
-	 *    	\param      statut      Id statut
-	 *    	\param      facturee    Si facturee
-	 *    	\param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *    	\return     string		Libelle
+	 *		Renvoi le libelle d'un statut donne
+	 *    	@param      statut      Id statut
+	 *    	@param      facturee    Si facturee
+	 *    	@param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *    	@return     string		Label of status
 	 */
 	function LibStatut($statut,$facturee,$mode)
 	{
@@ -2477,7 +2477,7 @@ class Commande extends CommonObject
 
 		$file = '/commande/fiche.php';
 		if ($conf->expedition->enabled && ($option == 1 || $option == 2)) $file = '/expedition/shipment.php';
-		
+
 		$url = DOL_URL_ROOT.$file.'?id='.$this->id;
 		if ($short) return $url;
 
