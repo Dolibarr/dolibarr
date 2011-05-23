@@ -309,9 +309,9 @@ class Livraison extends CommonObject
 	}
 
 	/**
-	 *        \brief      Valide l'expedition, et met a jour le stock si stock gere
-	 *        \param      user        Objet de l'utilisateur qui valide
-	 *        \return     int
+	 *        Validate object and update stock if option enabled
+     *        @param      user        Object user that validate
+     *        @return     int
 	 */
 	function valid($user)
 	{
@@ -376,49 +376,6 @@ class Livraison extends CommonObject
 					$resql=$this->db->query($sql);
 					if ($resql)
 					{
-						// Si module stock gere et que expedition faite depuis un entrepot
-						if ($conf->stock->enabled && $this->entrepot_id && $conf->global->STOCK_CALCULATE_ON_RECEIVING == 1)
-						{
-
-							//Enregistrement d'un mouvement de stock pour chaque produit de l'expedition
-
-							dol_syslog("livraison.class.php::valid enregistrement des mouvements");
-
-							$sql = "SELECT cd.fk_product, cd.subprice, ld.qty ";
-							$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
-							$sql.= ", ".MAIN_DB_PREFIX."livraisondet as ld";
-							$sql.= " WHERE ld.fk_livraison = ".$this->id;
-							$sql.= " AND cd.rowid = ld.fk_commande_ligne";
-
-							$resql=$this->db->query($sql);
-							if ($resql)
-							{
-								$num = $this->db->num_rows($resql);
-								$i=0;
-								while($i < $num)
-								{
-									dol_syslog("livraison.class.php::valid movement $i");
-
-									$obj = $this->db->fetch_object($resql);
-
-									$mouvS = new MouvementStock($this->db);
-									$entrepot_id = "1"; // TODO ajouter possibilite de choisir l'entrepot
-									$result=$mouvS->livraison($user, $obj->fk_product, $entrepot_id, $obj->qty, $obj->subprice);
-									if ($result < 0) { $error++; break; }
-									$i++;
-								}
-
-							}
-							else
-							{
-								$this->db->rollback();
-								$this->error=$this->db->error()." - sql=$sql";
-								dol_syslog("livraison.class.php::valid ".$this->error, LOG_ERR);
-								return -2;
-
-							}
-						}
-
 						// On efface le repertoire de pdf provisoire
 						$livraisonref = dol_sanitizeFileName($this->ref);
 						if ($conf->expedition->dir_output)

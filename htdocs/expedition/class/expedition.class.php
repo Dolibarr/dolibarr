@@ -382,9 +382,9 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 *        \brief      Validate object and update stock if option enabled
-	 *        \param      user        Objet de l'utilisateur qui valide
-	 *        \return     int
+	 *        Validate object and update stock if option enabled
+	 *        @param      user        Object user that validate
+	 *        @return     int
 	 */
 	function valid($user)
 	{
@@ -451,6 +451,7 @@ class Expedition extends CommonObject
 		if (! $error && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SHIPMENT)
 		{
 			require_once DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php";
+            $langs->load("agenda");
 
 			// Loop on each product line to add a stock movement
 			// TODO possibilite d'expedier a partir d'une propale ou autre origine
@@ -471,15 +472,12 @@ class Expedition extends CommonObject
 					dol_syslog("Expedition::valid movement index ".$i);
 					$obj = $this->db->fetch_object($resql);
 
-					if ($this->lines[$i]->fk_product > 0 && $this->lines[$i]->product_type == 0)
-					{
-						//var_dump($this->lines[$i]);
-						$mouvS = new MouvementStock($this->db);
-						// We decrement stock of product (and sub-products)
-						// We use warehouse selected for each line
-						$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, $obj->subprice);
-						if ($result < 0) { $error++; break; }
-					}
+					//var_dump($this->lines[$i]);
+					$mouvS = new MouvementStock($this->db);
+					// We decrement stock of product (and sub-products)
+					// We use warehouse selected for each line
+					$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, $obj->subprice);
+					if ($result < 0) { $error++; break; }
 
 					$i++;
 				}

@@ -238,11 +238,12 @@ class Commande extends CommonObject
 			if ($result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
 			{
 				require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
+                $langs->load("agenda");
 
 				// Loop on each line
 				for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
 				{
-					if ($this->lines[$i]->fk_product > 0 && $this->lines[$i]->product_type == 0)
+					if ($this->lines[$i]->fk_product > 0)
 					{
 						$mouvP = new MouvementStock($this->db);
 						// We decrement stock of product (and sub-products)
@@ -345,10 +346,11 @@ class Commande extends CommonObject
 			if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
 			{
 				require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
+                $langs->load("agenda");
 
 				for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
 				{
-					if ($this->lines[$i]->fk_product > 0 && $this->lines[$i]->product_type == 0)
+					if ($this->lines[$i]->fk_product > 0)
 					{
 						$mouvP = new MouvementStock($this->db);
 						// We increment stock of product (and sub-products)
@@ -506,8 +508,9 @@ class Commande extends CommonObject
 				if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
 				{
 					require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
+                    $langs->load("agenda");
 
-					if ($this->lines[$i]->fk_product > 0 && $this->lines[$i]->product_type == 0)
+					if ($this->lines[$i]->fk_product > 0)
 					{
 						$mouvP = new MouvementStock($this->db);
 						// We increment stock of product (and sub-products)

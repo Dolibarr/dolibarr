@@ -412,17 +412,17 @@ class CommandeFournisseur extends Commande
 		if ($this->db->query($sql))
 		{
 			// If stock is incremented on validate order, we must redecrement it
-			if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 0)
+			if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER)
 			{
 				require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
 
 				for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
 				{
-					if ($this->lines[$i]->fk_product > 0 && $this->lines[$i]->product_type == 0)
+					if ($this->lines[$i]->fk_product > 0)
 					{
 						$mouvP = new MouvementStock($this->db);
 						// We increment stock of product (and sub-products)
-						$entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
+						$entrepot_id = "1"; // TODO ajouter possibilite de choisir l'entrepot
 						$result=$mouvP->reception($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->subprice);
 						if ($result < 0) { $error++; }
 					}
@@ -633,11 +633,11 @@ class CommandeFournisseur extends Commande
 					for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
 					{
 						// Product with reference
-						if (!empty($this->lines[$i]->fk_product))
+					    if ($this->lines[$i]->fk_product > 0)
 						{
 							$mouvP = new MouvementStock($this->db);
 							// We decrement stock of product (and sub-products)
-							$entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
+							$entrepot_id = "1"; // TODO ajouter possibilite de choisir l'entrepot
 							$result=$mouvP->reception($user, $this->lines[$i]->fk_product, $entrepot_id, $this->lines[$i]->qty, $this->lines[$i]->subprice);
 							if ($result < 0) { $error++; }
 						}
@@ -1058,9 +1058,8 @@ class CommandeFournisseur extends Commande
 
 	/**
 	 * Add a product into a stock warehouse.
-	 *
 	 * @param 	$user		User object making change
-	 * @param 	$product	Product object to dispatch
+	 * @param 	$product	Id of product to dispatch
 	 * @param 	$qty		Qty to dispatch
 	 * @param 	$entrepot	Id of warehouse to add product
 	 * @param 	$price		Price for PMP value calculation
@@ -1098,16 +1097,19 @@ class CommandeFournisseur extends Commande
 				$error++;
 			}
 
-			// Si module stock gere et que expedition faite depuis un entrepot
+			// Si module stock gere et que incrementation faite depuis un dispatching en stock
 			if (!$error && $entrepot > 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)
 			{
 				$mouv = new MouvementStock($this->db);
-				$result=$mouv->reception($user, $product, $entrepot, $qty, $price, $comment);
-				if ($result < 0)
+				if ($product > 0)
 				{
-					$this->error=$mouv->error;
-					dol_syslog("CommandeFournisseur::DispatchProduct ".$this->error, LOG_ERR);
-					$error++;
+    				$result=$mouv->reception($user, $product, $entrepot, $qty, $price, $comment);
+    				if ($result < 0)
+    				{
+    					$this->error=$mouv->error;
+    					dol_syslog("CommandeFournisseur::DispatchProduct ".$this->error, LOG_ERR);
+    					$error++;
+    				}
 				}
 				$i++;
 			}
@@ -1369,7 +1371,7 @@ class CommandeFournisseur extends Commande
 		return $result ;
 	}
 
-	/**     
+	/**
 	 *  Cree la commande depuis une propale existante
 	 *  @param      user            Utilisateur qui cree
 	 *  @param      propale_id      id de la propale qui sert de modele

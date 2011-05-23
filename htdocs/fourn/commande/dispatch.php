@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
@@ -312,7 +312,7 @@ if ($id > 0 || ! empty($ref))
 				print '<input type="text" size="60" maxlength="128" name="comment" value="';
 				print $_POST["comment"]?$_POST["comment"]:$langs->trans("DispatchSupplierOrder",$commande->ref);
 				// print ' / '.$commande->ref_supplier;	// Not yet available
-				print '" class="flat">';
+				print '" class="flat"><br><br>';
 
 				print '<center><input type="submit" class="button" value="'.$langs->trans("DispatchVerb").'"';
 				if (sizeof($listwarehouses) <= 0) print ' disabled="true"';

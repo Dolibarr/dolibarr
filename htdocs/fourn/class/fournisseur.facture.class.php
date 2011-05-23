@@ -790,12 +790,12 @@ class FactureFournisseur extends Facture
             if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL)
             {
                 require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
+                $langs->load("agenda");
 
                 for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
                 {
-                    if ($this->lines[$i]->fk_product && $this->lines[$i]->product_type == 0)
+                    if ($this->lines[$i]->fk_product > 0)
                     {
-                        $langs->load("agenda");
                         $mouvP = new MouvementStock($this->db);
                         // We increase stock for product
                         $entrepot_id = "1"; // TODO ajouter possibilite de choisir l'entrepot
@@ -865,12 +865,12 @@ class FactureFournisseur extends Facture
             if ($result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL)
             {
                 require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
+                $langs->load("agenda");
 
                 for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
                 {
-                    if ($this->lines[$i]->fk_product && $this->lines[$i]->product_type == 0)
+                    if ($this->lines[$i]->fk_product > 0)
                     {
-                        $langs->load("agenda");
                         $mouvP = new MouvementStock($this->db);
                         // We increase stock for product
                         $entrepot_id = "1"; // TODO ajouter possibilite de choisir l'entrepot

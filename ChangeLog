@@ -19,6 +19,8 @@ For users:
          saved clicks again).
 - New: Add graph using Jquery Flot.
 - New: Usage of Jquery Notify to show result or error messages on action.
+- New: If a service contains subproducts, subrpoducts are decrease when service
+       is decrease.
 - New: Add status for third parties to disable a third party.
 - New: Can send interventions cards by email.
 - New: Add option MAIN_FIRST_TO_UPPER to force upper case of first 

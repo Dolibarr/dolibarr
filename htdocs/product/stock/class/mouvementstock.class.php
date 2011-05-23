@@ -32,24 +32,27 @@
  */
 class MouvementStock
 {
-
+    /**
+     * Constructor
+     * @param       DB      Database handler
+     */
 	function MouvementStock($DB)
 	{
 		$this->db = $DB;
 	}
 
 	/**
-	 *      \brief      Add a movement of stock (in one direction only)
-	 * 		\param		user		User object
-	 * 		\param		fk_product	Id of product
-	 * 		\param		entrepot_id	Id of warehouse
-	 * 		\param		qty			Qty of movement (can be <0 or >0)
-	 * 		\param		type		Direction of movement:
+	 *      Add a movement of stock (in one direction only)
+	 * 		@param		user		User object
+	 * 		@param		fk_product	Id of product
+	 * 		@param		entrepot_id	Id of warehouse
+	 * 		@param		qty			Qty of movement (can be <0 or >0)
+	 * 		@param		type		Direction of movement:
 	 * 								0=input (stock increase after stock transfert), 1=output (stock decrease after stock transfer),
 	 * 								2=output (stock decrease), 3=input (stock increase)
-	 * 		\param		price		Unit price HT of product
-	 * 		\param		label		Label of stock movement
-	 *      \return     int     	<0 if KO, >0 if OK
+	 * 		@param		price		Unit price HT of product
+	 * 		@param		label		Label of stock movement
+	 *      @return     int     	<0 if KO, >0 if OK
 	 */
 	function _create($user, $fk_product, $entrepot_id, $qty, $type, $price=0, $label='')
 	{
@@ -70,7 +73,10 @@ class MouvementStock
 			return -1;
 		}
 
-		if (1 == 1)	// Always change stock for current product, change for subproduct is done after
+		$movestock=0;
+		if ($product->type != 1 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES)) $movestock=1;
+
+		if ($movestock)	// Change stock for current product, change for subproduct is done after
 		{
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."stock_mouvement";
 			$sql.= " (datem, fk_product, fk_entrepot, value, type_mouvement, fk_user_author, label, price)";
@@ -195,19 +201,20 @@ class MouvementStock
 			}
 		}
 
-		// Add movement for sub products
+		// Add movement for sub products (recursive call)
 		if (! $error && $conf->global->PRODUIT_SOUSPRODUITS)
 		{
 			$error = $this->_createSubProduct($user, $fk_product, $entrepot_id, $qty, $type, 0, $label);	// pmp is not change for subproduct
 		}
 
-		// composition module (this is a non official external module)
+		// Composition module (this is an external module)
+		/* Removed. This code must be provided by module on trigger STOCK_MOVEMENT
 		if (! $error && $qty < 0 && $conf->global->MAIN_MODULE_COMPOSITION)
 		{
 			$error = $this->_createProductComposition($user, $fk_product, $entrepot_id, $qty, $type, 0, $label);	// pmp is not change for subproduct
-		}
+		}*/
 
-		if (! $error)
+		if ($movestock && ! $error)
 		{
 			// Appel des triggers
 			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
@@ -285,6 +292,7 @@ class MouvementStock
 	 * 		@param 		label		Label of stock movement
 	 * 	 	@return     int     	<0 if KO, 0 if OK
 	 */
+	/* This function is specific to a module. Should be inside the trigger of module instead of core code.
 	function _createProductComposition($user, $fk_product, $entrepot_id, $qty, $type, $price=0, $label='')
 	{
 		dol_syslog("MouvementStock::_createProductComposition $user->id, $fk_product, $entrepot_id, $qty, $type, $price, $label");
@@ -316,7 +324,7 @@ class MouvementStock
 		}
 
 		return 0;
-	}
+	}*/
 
 
 	/**
@@ -333,7 +341,7 @@ class MouvementStock
 	/**
 	 *	Increase stock for product and subproducts
      *  @param      label       Label of stock movement
-	 *	@return		int		<0 if KO, >0 if OK
+	 *	@return		int		    <0 if KO, >0 if OK
 	 */
 	function reception($user, $fk_product, $entrepot_id, $qty, $price=0, $label='')
 	{
