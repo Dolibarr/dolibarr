@@ -160,6 +160,7 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
             
             $object->date		= dol_now();
             $object->ref_ext	= $_SESSION[$_GET['transaction_id']]['TRANSACTIONID'];
+            $shipamount			= ($_SESSION[$_GET['transaction_id']]['SHIPPINGAMT']?$_SESSION[$_GET['transaction_id']]['SHIPPINGAMT']:$_SESSION[$_GET['transaction_id']]['SHIPAMOUNT']);
             
             $object_id = $object->create($user);
             if ($object_id > 0)
@@ -175,10 +176,9 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 					if ($ret > 0)
 					{
 						$qty=$_SESSION[$_GET['transaction_id']]["L_QTY".$i];
-						$product_type=($product->product_type?$product->product_type:0);
 
-						if ($subelement == 'commande') $fields = array($object_id,$product->description,$product->price,$qty,$product->tva_tx,$product->localtax1_tx,$product->localtax2_tx,$product->id,0,0,0,'HT',0,'','',$product_type);
-						if ($subelement == 'facture') $fields = array($object_id,$product->description,$product->price,$qty,$product->tva_tx,$product->localtax1_tx,$product->localtax2_tx,$product->id,0,'','',0,0,0,'HT',0,$product_type);
+						if ($subelement == 'commande') $fields = array($object_id,$product->description,$product->price,$qty,$product->tva_tx,$product->localtax1_tx,$product->localtax2_tx,$product->id,0,0,0,$product->price_base_type,0,'','',$product->product_type);
+						if ($subelement == 'facture') $fields = array($object_id,$product->description,$product->price,$qty,$product->tva_tx,$product->localtax1_tx,$product->localtax2_tx,$product->id,0,'','',0,0,0,$product->price_base_type,0,$product->product_type);
 
 						$result = $object->addline($fields[0],$fields[1],$fields[2],$fields[3],$fields[4],$fields[5],$fields[6],$fields[7],$fields[8],$fields[9],$fields[10],$fields[11],$fields[12],$fields[13],$fields[14],$fields[15],$fields[16]);
 	
@@ -198,6 +198,45 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 					}
 					
 					$i++;
+				}
+				
+				// Add shipping costs
+				if ($shipamount > 0)
+				{
+					if ($conf->global->PAYPAL_PRODUCT_SHIPPING_COSTS)
+					{
+						$product = new Product($db);
+						$ret = $product->fetch($conf->global->PAYPAL_PRODUCT_SHIPPING_COSTS);
+	
+						if ($ret > 0)
+						{
+							$product_type=($product->product_type?$product->product_type:0);
+	
+							if ($subelement == 'commande') $fields = array($object_id,$product->description,'',1,$product->tva_tx,$product->localtax1_tx,$product->localtax2_tx,$product->id,0,0,0,$product->price_base_type,$shipamount,'','',$product_type);
+							if ($subelement == 'facture') $fields = array($object_id,$product->description,'',1,$product->tva_tx,$product->localtax1_tx,$product->localtax2_tx,$product->id,0,'','',0,0,0,$product->price_base_type,$shipamount,$product_type);
+	
+							$result = $object->addline($fields[0],$fields[1],$fields[2],$fields[3],$fields[4],$fields[5],$fields[6],$fields[7],$fields[8],$fields[9],$fields[10],$fields[11],$fields[12],$fields[13],$fields[14],$fields[15],$fields[16]);
+		
+		                    if ($result < 0)
+		                    {
+		                        $error++;
+		                        $langs->load("errors");
+		                        $return_arr['error'] = ucfirst($subelement).'::addline '.$langs->trans($object->error);
+		                        break;
+		                    }
+						}
+						else
+						{
+							$error++;
+							$langs->load("errors");
+							$return_arr['error'].= $langs->trans('ErrorProductWithRefNotExist', $conf->global->PAYPAL_PRODUCT_SHIPPING_COSTS).'<br />';
+						}
+					}
+					else
+					{
+						$error++;
+						$return_arr['error'].= $langs->trans('ErrorUndefinedProductForShippingCost').'<br />';
+					}
 				}
             }
             else

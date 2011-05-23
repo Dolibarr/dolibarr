@@ -33,6 +33,9 @@ if (!$user->admin)
 $langs->load("paypal");
 $langs->load("admin");
 
+$action=GETPOST('action');
+$idprod=GETPOST('idprod');
+
 
 /*
  * Actions
@@ -65,6 +68,18 @@ if (preg_match('/del_(.*)/',$action,$reg))
     }
 }
 
+if ($action == 'setproductshippingcosts')
+{
+	if (dolibarr_set_const($db, 'PAYPAL_PRODUCT_SHIPPING_COSTS', $idprod, 'chaine', 0, '', $conf->entity) > 0)
+    {
+        Header("Location: ".$_SERVER["PHP_SELF"]);
+        exit;
+    }
+    else
+    {
+        dol_print_error($db);
+    }
+}
 
 /*
  * View
@@ -119,6 +134,19 @@ print '<td>'.$langs->trans("Parameters").'</td>'."\n";
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
 print '</tr>';
+
+$var=!$var;
+print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="setproductshippingcosts">';
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("DefaultProductShippingCosts").'</td>';
+print '<td width="60" align="center">';
+$form->select_produits($conf->global->PAYPAL_PRODUCT_SHIPPING_COSTS,'idprod','',$conf->product->limit_size,1,1,1,'',1);
+print '</td>';
+print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+print '</tr>';
+print '</form>';
 
 print '</table>';
 

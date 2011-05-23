@@ -874,15 +874,23 @@ class Form
      *  @param		finished				2=all, 1=finished, 0=raw material
      *  @param		$selected_input_value	Value of preselected input text (with ajax)
      */
-    function select_produits($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$status=1,$finished=2,$selected_input_value='')
+    function select_produits($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$status=1,$finished=2,$selected_input_value='',$hidelabel=0)
     {
         global $langs,$conf;
 
         if ($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
         {
+        	if ($selected && empty($selected_input_value))
+        	{
+        		require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
+        		$product = new Product($this->db);
+        		$product->fetch($selected);
+        		$selected_input_value=$product->ref;
+        	}
             // mode=1 means customers products
             print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajaxproducts.php', 'outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
-            print $langs->trans("RefOrLabel").' : <input type="text" size="20" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'" />';
+            if (! $hidelabel) print $langs->trans("RefOrLabel").' : ';
+            print '<input type="text" size="20" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'" />';
             print '<br>';
         }
         else
