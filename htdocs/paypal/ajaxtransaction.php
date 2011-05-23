@@ -272,33 +272,9 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 		
 		// Check if already import
 		$i=0;
-		$objectArray = array();
 		
-		if ($conf->commande->enabled) {
-			$elementArray[$i] = 'order';
-			$i++;
-		}
-		if ($conf->facture->enabled) {
-			$elementArray[$i] = 'invoice';
-		}
-
-		foreach($elementArray as $element)
-		{
-			if ($element == 'order') { $element = $subelement = 'commande'; }
-            if ($element == 'invoice') { $element = 'compta/facture'; $subelement = 'facture'; }
-
-            dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
-
-            $classname = ucfirst($subelement);
-            $object = new $classname($db);
-            
-            $res = $object->fetchObjectFromRefExt($object->table_element, $_GET['transaction_id']);
-            if ($res > 0)
-            {
-            	$return_arr['element_created'] = true;
-            	$objectArray[$element] = $object;
-            }
-		}
+		$objects = getLinkedObjects($_GET['transaction_id']);
+		if (! empty($objects)) $return_arr['element_created'] = true;
 		
 		$soc = new Societe($db);
 		$ret = $soc->fetchObjectFromRefExt($soc->table_element, $_SESSION[$_GET['transaction_id']]['PAYERID']);

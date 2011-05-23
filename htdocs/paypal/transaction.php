@@ -295,6 +295,8 @@ else
 	while (isset($resArray["L_TRANSACTIONID".$i]))
 	{
 		$var=!$var;
+		
+		$objects = getLinkedObjects($resArray["L_TRANSACTIONID".$i]);
 
 		$transactionID 	= $resArray["L_TRANSACTIONID".$i];
 		$timeStamp		= dol_stringtotime($resArray["L_TIMESTAMP".$i]);

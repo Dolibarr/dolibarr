@@ -149,6 +149,36 @@ function paypaladmin_prepare_head()
     return $head;
 }
 
+function getLinkedObjects($transactionID)
+{
+	global $db, $conf;
+	
+	$objectArray = array();
+	
+	if ($conf->commande->enabled) {
+		$elementArray[$i] = 'order';
+		$i++;
+	}
+	if ($conf->facture->enabled) {
+		$elementArray[$i] = 'invoice';
+	}
+	
+	foreach($elementArray as $element)
+	{
+		if ($element == 'order') { $path = $subelement = 'commande'; }
+		if ($element == 'invoice') { $path = 'compta/facture'; $subelement = 'facture'; }
+		
+		dol_include_once('/'.$path.'/class/'.$subelement.'.class.php');
+		
+		$classname = ucfirst($subelement);
+		$object = new $classname($db);
+		
+		$res = $object->fetchObjectFromRefExt($object->table_element, $transactionID);
+		if ($res > 0) $objectArray[$element] = $object;
+	}
+	
+	return $objectArray;
+}
 
 /**
  * Send redirect to paypal to browser
