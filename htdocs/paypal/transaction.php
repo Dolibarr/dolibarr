@@ -31,6 +31,8 @@ require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypalfunctions.lib.php");
 $langs->load("paypal");
 $langs->load("paybox");
 $langs->load("companies");
+$langs->load("orders");
+$langs->load("bills");
 
 if (! $conf->global->PAYPAL_ENABLE_TRANSACTION_MANAGEMENT) accessforbidden();
 
@@ -137,24 +139,29 @@ if (empty($conf->global->PAYPAL_API_USER) || empty($conf->global->PAYPAL_API_PAS
 		});
 		$( "div.paypal_link" ).click(function() {
 			var id_value = $(this).attr("id");
-			if ($.jnotify) {
-				$.jnotify("<?php echo $langs->trans('PleaseBePatient'); ?>", 1500);
-			}
-			$.get( "<?php echo DOL_URL_ROOT; ?>/paypal/ajaxtransaction.php", {
+			$.jnotify("<?php echo $langs->trans('PleaseBePatient'); ?>", 1500);
+			$.getJSON( "<?php echo DOL_URL_ROOT; ?>/paypal/ajaxtransaction.php", {
 				action: 'showdetails',
 				transaction_id: id_value
 			},
 			function(details) {
-				$( "div #paypal_detail_content" ).html(details);
+				var $order_enabled = <?php echo ($conf->commande->enabled ? 'true' : 'false'); ?>;
+				var $invoice_enabled = <?php echo ($conf->facture->enabled ? 'true' : 'false'); ?>;
+				var $element_created = false;
+				
+				$.each(details, function(key,value) {
+					if (key == 'contents') {
+						$( "div #paypal_detail_content" ).html(value);
+					}
+					if (key == 'element_created' && value == true) {
+						$element_created = true;
+					}
+				});
 				$( "div #paypal-details" ).dialog({
 					modal: true,
 					width: 500,
 					buttons: {
-						<?php
-						if ($conf->commande->enabled)
-						{
-						    $langs->load("orders"); ?>
-						    '<?php echo $langs->transnoentities('CreateOrder'); ?>': function() {
+						'<?php echo $langs->transnoentities('CreateOrder'); ?>': function() {
 							$.getJSON( "<?php echo DOL_URL_ROOT; ?>/paypal/ajaxtransaction.php", {
 								action: 'add',
 								element: 'order',
@@ -172,12 +179,7 @@ if (empty($conf->global->PAYPAL_API_USER) || empty($conf->global->PAYPAL_API_PAS
 								});
 							});
 						},
-						<?php } ?>
-						<?php
-						if ($conf->facture->enabled)
-						{
-						    $langs->load("bills"); ?>
-						    '<?php echo $langs->transnoentities('CreateBill'); ?>': function() {
+						'<?php echo $langs->transnoentities('CreateBill'); ?>': function() {
 							$.getJSON( "<?php echo DOL_URL_ROOT; ?>/paypal/ajaxtransaction.php", {
 								action: 'add',
 								element: 'invoice',
@@ -195,12 +197,23 @@ if (empty($conf->global->PAYPAL_API_USER) || empty($conf->global->PAYPAL_API_PAS
 								});
 							});
 						},
-						<?php } ?>
-						 '<?php echo $langs->transnoentities('Cancel'); ?>': function() {
+						'<?php echo $langs->transnoentities('Cancel'); ?>': function() {
 							$( this ).dialog( "close" );
 						}
 					}
 				});
+				if (! $order_enabled) {
+					$('.ui-dialog-buttonpane button').eq(0).hide();
+				}
+				if ($order_enabled && $element_created) {
+					$('.ui-dialog-buttonpane button').eq(0).button('disable');
+				}
+				if (! $invoice_enabled) {
+					$('.ui-dialog-buttonpane button').eq(1).hide();
+				}
+				if ($invoice_enabled && $element_created) {
+					$('.ui-dialog-buttonpane button').eq(1).button('disable');
+				}
 			});
 		});
 	});

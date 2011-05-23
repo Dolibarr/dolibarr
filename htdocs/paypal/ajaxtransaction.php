@@ -264,79 +264,125 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 	{
 		$langs->load('paypal');
 		
+		$return_arr = array();
+		$return_arr['element_created'] = false;
+		
 		// For paypal request optimization
 		if (! isset($_SESSION[$_GET['transaction_id']]) ) $_SESSION[$_GET['transaction_id']] = GetTransactionDetails($_GET['transaction_id']);
 		
+		// Check if already import
+		$i=0;
+		$objectArray = array();
+		
+		if ($conf->commande->enabled) {
+			$elementArray[$i] = 'order';
+			$i++;
+		}
+		if ($conf->facture->enabled) {
+			$elementArray[$i] = 'invoice';
+		}
+
+		foreach($elementArray as $element)
+		{
+			if ($element == 'order') { $element = $subelement = 'commande'; }
+            if ($element == 'invoice') { $element = 'compta/facture'; $subelement = 'facture'; }
+
+            dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
+
+            $classname = ucfirst($subelement);
+            $object = new $classname($db);
+            
+            $res = $object->fetchObjectFromRefExt($object->table_element, $_GET['transaction_id']);
+            if ($res > 0)
+            {
+            	$return_arr['element_created'] = true;
+            	$objectArray[$element] = $object;
+            }
+		}
+		
+		$soc = new Societe($db);
+		$ret = $soc->fetchObjectFromRefExt($soc->table_element, $_SESSION[$_GET['transaction_id']]['PAYERID']);
+
 		$var=true;
 		
-		echo '<table style="noboardernopading" width="100%">';
-		echo '<tr class="liste_titre">';
-		echo '<td colspan="2">'.$langs->trans('ThirdParty').'</td>';
-		echo '</tr>';
+		$return_arr['contents'] = '<table style="noboardernopading" width="100%">';
+		$return_arr['contents'].= '<tr class="liste_titre">';
+		$return_arr['contents'].= '<td colspan="2">'.$langs->trans('ThirdParty').'</td>';
+		$return_arr['contents'].= '</tr>';
 		
+		if ($ret > 0)
+		{
+			$var=!$var;
+			$return_arr['contents'].= '<tr '.$bc[$var].'><td>'.$langs->trans('ThirdPartyName').'</td><td>'.$soc->getNomUrl(1).'</td></tr>';
+		}
+		else
+		{
+			$var=!$var;
+			$return_arr['contents'].= '<tr '.$bc[$var].'><td>'.$langs->trans('LastName').'</td><td>'.$_SESSION[$_GET['transaction_id']]['LASTNAME'].'</td></tr>';
+			$var=!$var;
+			$return_arr['contents'].= '<tr '.$bc[$var].'><td>'.$langs->trans('FirstName').'</td><td>'.$_SESSION[$_GET['transaction_id']]['FIRSTNAME'].'</td></tr>';
+		}
 		$var=!$var;
-		echo '<tr '.$bc[$var].'><td>'.$langs->trans('LastName').'</td><td>'.$_SESSION[$_GET['transaction_id']]['LASTNAME'].'</td></tr>';
+		$return_arr['contents'].= '<tr '.$bc[$var].'><td>'.$langs->trans('Address').'</td><td>'.$_SESSION[$_GET['transaction_id']]['SHIPTOSTREET'].'</td></tr>';
 		$var=!$var;
-		echo '<tr '.$bc[$var].'><td>'.$langs->trans('FirstName').'</td><td>'.$_SESSION[$_GET['transaction_id']]['FIRSTNAME'].'</td></tr>';
+		$return_arr['contents'].= '<tr '.$bc[$var].'><td>'.$langs->trans('Zip').' / '.$langs->trans('Town').'</td><td>'.$_SESSION[$_GET['transaction_id']]['SHIPTOZIP'].' '.$_SESSION[$_GET['transaction_id']]['SHIPTOCITY'].'</td></tr>';
 		$var=!$var;
-		echo '<tr '.$bc[$var].'><td>'.$langs->trans('Address').'</td><td>'.$_SESSION[$_GET['transaction_id']]['SHIPTOSTREET'].'</td></tr>';
+		$return_arr['contents'].= '<tr '.$bc[$var].'><td>'.$langs->trans('Country').'</td><td>'.$_SESSION[$_GET['transaction_id']]['SHIPTOCOUNTRYNAME'].'</td></tr>';
 		$var=!$var;
-		echo '<tr '.$bc[$var].'><td>'.$langs->trans('Zip').' / '.$langs->trans('Town').'</td><td>'.$_SESSION[$_GET['transaction_id']]['SHIPTOZIP'].' '.$_SESSION[$_GET['transaction_id']]['SHIPTOCITY'].'</td></tr>';
+		$return_arr['contents'].= '<tr '.$bc[$var].'><td>'.$langs->trans('Email').'</td><td>'.$_SESSION[$_GET['transaction_id']]['EMAIL'].'</td>';
 		$var=!$var;
-		echo '<tr '.$bc[$var].'><td>'.$langs->trans('Country').'</td><td>'.$_SESSION[$_GET['transaction_id']]['SHIPTOCOUNTRYNAME'].'</td></tr>';
-		$var=!$var;
-		echo '<tr '.$bc[$var].'><td>'.$langs->trans('Email').'</td><td>'.$_SESSION[$_GET['transaction_id']]['EMAIL'].'</td>';
-		$var=!$var;
-		echo '<tr '.$bc[$var].'><td>'.$langs->trans('Date').'</td><td>'.dol_print_date(dol_stringtotime($_SESSION[$_GET['transaction_id']]['ORDERTIME']),'dayhour').'</td>';
+		$return_arr['contents'].= '<tr '.$bc[$var].'><td>'.$langs->trans('Date').'</td><td>'.dol_print_date(dol_stringtotime($_SESSION[$_GET['transaction_id']]['ORDERTIME']),'dayhour').'</td>';
 		
 		$var=!$var;
 		$payerstatus=strtolower($_SESSION[$_GET['transaction_id']]['PAYERSTATUS']);
 		$img_payerstatus=($payerstatus=='verified' ? img_tick($langs->trans(ucfirst($payerstatus))) : img_warning($langs->trans(ucfirst($payerstatus))) );
-		echo '<tr '.$bc[$var].'><td>'.$langs->trans('PAYERSTATUS').'</td><td>'.$img_payerstatus.'</td>';
+		$return_arr['contents'].= '<tr '.$bc[$var].'><td>'.$langs->trans('PAYERSTATUS').'</td><td>'.$img_payerstatus.'</td>';
 		
 		$var=!$var;
 		$addressstatus=strtolower($_SESSION[$_GET['transaction_id']]['ADDRESSSTATUS']);
 		$img_addressstatus=($addressstatus=='confirmed' ? img_tick($langs->trans(ucfirst($addressstatus))) : img_warning($langs->trans(ucfirst($addressstatus))) );
-		echo '<tr '.$bc[$var].'><td>'.$langs->trans('ADDRESSSTATUS').'</td><td>'.$img_addressstatus.'</td>';
+		$return_arr['contents'].= '<tr '.$bc[$var].'><td>'.$langs->trans('ADDRESSSTATUS').'</td><td>'.$img_addressstatus.'</td>';
 		
 		$shipamount=($_SESSION[$_GET['transaction_id']]['SHIPPINGAMT']?$_SESSION[$_GET['transaction_id']]['SHIPPINGAMT']:$_SESSION[$_GET['transaction_id']]['SHIPAMOUNT']);
 		$var=!$var;
-		echo '<tr '.$bc[$var].'><td>'.$langs->trans('SHIPAMOUNT').'</td><td>'.price($shipamount).' '.$_SESSION[$_GET['transaction_id']]['CURRENCYCODE'].'</td>';
+		$return_arr['contents'].= '<tr '.$bc[$var].'><td>'.$langs->trans('SHIPAMOUNT').'</td><td>'.price($shipamount).' '.$_SESSION[$_GET['transaction_id']]['CURRENCYCODE'].'</td>';
 		
-		echo '</table>';
+		$return_arr['contents'].= '</table>';
 		
 		$i=0;
 		
-		echo '<table style="noboardernopading" width="100%">';
+		$return_arr['contents'].= '<table style="noboardernopading" width="100%">';
 		
-		echo '<tr class="liste_titre">';
-		echo '<td>'.$langs->trans('Ref').'</td>';
-		echo '<td>'.$langs->trans('Label').'</td>';
-		echo '<td>'.$langs->trans('Qty').'</td>';
-		echo '</tr>';
+		$return_arr['contents'].= '<tr class="liste_titre">';
+		$return_arr['contents'].= '<td>'.$langs->trans('Ref').'</td>';
+		$return_arr['contents'].= '<td>'.$langs->trans('Label').'</td>';
+		$return_arr['contents'].= '<td>'.$langs->trans('Qty').'</td>';
+		$return_arr['contents'].= '</tr>';
 		
 		while (isset($_SESSION[$_GET['transaction_id']]["L_NAME".$i]))
 		{
 			$var=!$var;
 			
-			echo '<tr '.$bc[$var].'>';
-			echo '<td>'.$_SESSION[$_GET['transaction_id']]["L_NUMBER".$i].'</td>';
-			echo '<td>'.$_SESSION[$_GET['transaction_id']]["L_NAME".$i].'</td>';
-			echo '<td>'.$_SESSION[$_GET['transaction_id']]["L_QTY".$i].'</td>';
-			echo '</tr>';
+			$return_arr['contents'].= '<tr '.$bc[$var].'>';
+			$return_arr['contents'].= '<td>'.$_SESSION[$_GET['transaction_id']]["L_NUMBER".$i].'</td>';
+			$return_arr['contents'].= '<td>'.$_SESSION[$_GET['transaction_id']]["L_NAME".$i].'</td>';
+			$return_arr['contents'].= '<td>'.$_SESSION[$_GET['transaction_id']]["L_QTY".$i].'</td>';
+			$return_arr['contents'].= '</tr>';
 			
 			$i++;
 		}
 		
-		echo '</table>';
-
-/*
-		echo '<br />';
+		$return_arr['contents'].= '</table>';
+		
+		/*
+		$return_arr['contents'].= '<br />';
 		foreach ($_SESSION[$_GET['transaction_id']] as $key => $value)
 		{
-			echo $key.': '.$value.'<br />';
+			$return_arr['contents'].= $key.': '.$value.'<br />';
 		}
-*/
+		*/
+		
+		echo json_encode($return_arr);
 	}
 }
 
