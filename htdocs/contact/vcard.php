@@ -55,8 +55,8 @@ $v->setPhoneNumber($contact->phone_pro, "PREF;WORK;VOICE");
 $v->setPhoneNumber($contact->phone_mobile, "CELL;VOICE");
 $v->setPhoneNumber($contact->fax, "WORK;FAX");
 
-$v->setLabel("", "", $contact->address, $contact->ville, "", $contact->cp, ($contact->pays_code?$contact->pays:''), "WORK;POSTAL");
 $v->setAddress("", "", $contact->address, $contact->ville, "", $contact->cp, ($contact->pays_code?$contact->pays:''), "WORK;POSTAL");
+$v->setLabel("", "", $contact->address, $contact->ville, "", $contact->cp, ($contact->pays_code?$contact->pays:''), "WORK");
 $v->setEmail($contact->email,'internet,pref');
 $v->setNote($contact->note);
 
