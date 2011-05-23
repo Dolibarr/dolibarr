@@ -26,6 +26,9 @@ GrossAmount=Gross amount
 FeeAmount=Fee amount
 NetAmount=Net amount
 CustomerDetails=Customer details
+NewTransaction=New transaction
+OrderIsCreated=Order created
+InvoiceIsCreated=Invoice created
 
 # Paypal transaction fields
 PAYERID=Payer ID

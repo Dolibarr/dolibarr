@@ -305,7 +305,19 @@ else
 		$feeamount		= $resArray["L_FEEAMT".$i];
 		$netamount		= $resArray["L_NETAMT".$i];
 		$currency 		= $resArray["L_CURRENCYCODE".$i];
-		$status			= $resArray["L_STATUS".$i];
+		
+		$status=-1; $url='';
+		if ($resArray["L_STATUS".$i]=='Completed') $status=0;
+		if (! empty($objects['order']))
+		{
+			$status=1;
+			$url=$objects['order']->getNomUrl(0,'',0,1);
+		}
+		if (! empty($objects['invoice']))
+		{
+			$status=2;
+			$url=$objects['invoice']->getNomUrl(0,'',0,1);
+		}
 
 		print '<tr '.$bc[$var].'>';
 		print '<td><div id="'.$transactionID.'" class="paypal_link" style="font-weight:bold;cursor:pointer;">'.$transactionID.'</div></td>';
@@ -314,7 +326,7 @@ else
 		print '<td align="right">'.$amount.' '.$currency.'</td>';
 		print '<td align="right">'.$feeamount.' '.$currency.'</td>';
 		print '<td align="right">'.$netamount.' '.$currency.'</td>';
-		print '<td align="right">'.$status.'</td>';
+		print '<td align="right">'.getLibStatut($status, 1, $url).'</td>';
 		print '</tr>';
 
 		$i++;

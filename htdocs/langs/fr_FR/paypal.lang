@@ -26,6 +26,9 @@ GrossAmount=Montant brut
 FeeAmount=Frais Paypal
 NetAmount=Montant net
 CustomerDetails=Détail du client
+NewTransaction=Nouveau paiement
+OrderIsCreated=Commande créée
+InvoiceIsCreated=Facture créée
 
 # Paypal transaction fields
 PAYERID=ID du payeur
