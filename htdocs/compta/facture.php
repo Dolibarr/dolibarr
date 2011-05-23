@@ -536,20 +536,21 @@ if ($action == 'add' && $user->rights->facture->creer)
             $result=$object->fetch($_POST['fac_replacement']);
             $object->fetch_thirdparty();
 
-            $object->date           = $datefacture;
-            $object->note_public    = trim($_POST['note_public']);
-            $object->note           = trim($_POST['note']);
-            $object->ref_client     = $_POST['ref_client'];
-            $object->modelpdf       = $_POST['model'];
-            $object->fk_project        = $_POST['projectid'];
-            $object->cond_reglement_id = $_POST['cond_reglement_id'];
-            $object->mode_reglement_id = $_POST['mode_reglement_id'];
-            $object->remise_absolue    = $_POST['remise_absolue'];
-            $object->remise_percent    = $_POST['remise_percent'];
+            $object->date				= $datefacture;
+            $object->note_public		= trim($_POST['note_public']);
+            $object->note				= trim($_POST['note']);
+            $object->ref_client			= $_POST['ref_client'];
+            $object->ref_ext			= $_POST['ref_ext'];
+            $object->modelpdf			= $_POST['model'];
+            $object->fk_project			= $_POST['projectid'];
+            $object->cond_reglement_id	= $_POST['cond_reglement_id'];
+            $object->mode_reglement_id	= $_POST['mode_reglement_id'];
+            $object->remise_absolue		= $_POST['remise_absolue'];
+            $object->remise_percent		= $_POST['remise_percent'];
 
             // Proprietes particulieres a facture de remplacement
-            $object->fk_facture_source = $_POST['fac_replacement'];
-            $object->type              = 1;
+            $object->fk_facture_source	= $_POST['fac_replacement'];
+            $object->type				= 1;
 
             $id=$object->createFromCurrent($user);
             if ($id <= 0) $mesg=$object->error;
@@ -579,22 +580,23 @@ if ($action == 'add' && $user->rights->facture->creer)
 
             //$result=$object->fetch($_POST['fac_avoir']);
 
-            $object->socid 		    = $_POST['socid'];
-            $object->number         = $_POST['facnumber'];
-            $object->date           = $datefacture;
-            $object->note_public    = trim($_POST['note_public']);
-            $object->note           = trim($_POST['note']);
-            $object->ref_client     = $_POST['ref_client'];
-            $object->modelpdf       = $_POST['model'];
-            $object->fk_project        = $_POST['projectid'];
-            $object->cond_reglement_id = 0;
-            $object->mode_reglement_id = $_POST['mode_reglement_id'];
-            $object->remise_absolue    = $_POST['remise_absolue'];
-            $object->remise_percent    = $_POST['remise_percent'];
+            $object->socid				= $_POST['socid'];
+            $object->number				= $_POST['facnumber'];
+            $object->date				= $datefacture;
+            $object->note_public		= trim($_POST['note_public']);
+            $object->note				= trim($_POST['note']);
+            $object->ref_client			= $_POST['ref_client'];
+            $object->ref_ext			= $_POST['ref_ext'];
+            $object->modelpdf			= $_POST['model'];
+            $object->fk_project			= $_POST['projectid'];
+            $object->cond_reglement_id	= 0;
+            $object->mode_reglement_id	= $_POST['mode_reglement_id'];
+            $object->remise_absolue		= $_POST['remise_absolue'];
+            $object->remise_percent		= $_POST['remise_percent'];
 
             // Proprietes particulieres a facture avoir
-            $object->fk_facture_source = $_POST['fac_avoir'];
-            $object->type              = 2;
+            $object->fk_facture_source	= $_POST['fac_avoir'];
+            $object->type				= 2;
 
             $id = $object->create($user);
 
@@ -625,13 +627,14 @@ if ($action == 'add' && $user->rights->facture->creer)
 
         if (! $error)
         {
-            $object->socid 		 = $_POST['socid'];
+            $object->socid			= $_POST['socid'];
             $object->type           = $_POST['type'];
             $object->number         = $_POST['facnumber'];
             $object->date           = $datefacture;
-            $object->note_public    = trim($_POST['note_public']);
+            $object->note_public	= trim($_POST['note_public']);
             $object->note           = trim($_POST['note']);
             $object->ref_client     = $_POST['ref_client'];
+            $object->ref_ext     	= $_POST['ref_ext'];
             $object->modelpdf       = $_POST['model'];
 
             // Source facture
@@ -654,20 +657,21 @@ if ($action == 'add' && $user->rights->facture->creer)
         if (! $error)
         {
             // Si facture standard
-            $object->socid 		 = $_POST['socid'];
-            $object->type           = $_POST['type'];
-            $object->number         = $_POST['facnumber'];
-            $object->date           = $datefacture;
-            $object->note_public    = trim($_POST['note_public']);
-            $object->note           = trim($_POST['note']);
-            $object->ref_client     = $_POST['ref_client'];
-            $object->modelpdf       = $_POST['model'];
-            $object->fk_project        = $_POST['projectid'];
-            $object->cond_reglement_id = ($_POST['type'] == 3?1:$_POST['cond_reglement_id']);
-            $object->mode_reglement_id = $_POST['mode_reglement_id'];
-            $object->amount            = $_POST['amount'];
-            $object->remise_absolue    = $_POST['remise_absolue'];
-            $object->remise_percent    = $_POST['remise_percent'];
+            $object->socid				= $_POST['socid'];
+            $object->type				= $_POST['type'];
+            $object->number				= $_POST['facnumber'];
+            $object->date				= $datefacture;
+            $object->note_public		= trim($_POST['note_public']);
+            $object->note				= trim($_POST['note']);
+            $object->ref_client			= $_POST['ref_client'];
+            $object->ref_ext			= $_POST['ref_ext'];
+            $object->modelpdf			= $_POST['model'];
+            $object->fk_project			= $_POST['projectid'];
+            $object->cond_reglement_id	= ($_POST['type'] == 3?1:$_POST['cond_reglement_id']);
+            $object->mode_reglement_id	= $_POST['mode_reglement_id'];
+            $object->amount				= $_POST['amount'];
+            $object->remise_absolue		= $_POST['remise_absolue'];
+            $object->remise_percent		= $_POST['remise_percent'];
 
             // If creation from another object of another module (Example: origin=propal, originid=1)
             if ($_POST['origin'] && $_POST['originid'])
@@ -1438,6 +1442,7 @@ if ($action == 'create')
 
             $projectid			= (!empty($objectsrc->fk_project)?$object->fk_project:'');
             $ref_client			= (!empty($objectsrc->ref_client)?$object->ref_client:'');
+            $ref_ext			= (!empty($objectsrc->ref_ext)?$object->ref_ext:'');
 
             $soc = $objectsrc->client;
             $cond_reglement_id 	= (!empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(!empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
@@ -1469,6 +1474,8 @@ if ($action == 'create')
     print '<input type="hidden" name="action" value="add">';
     print '<input type="hidden" name="socid" value="'.$soc->id.'">' ."\n";
     print '<input name="facnumber" type="hidden" value="provisoire">';
+    print '<input name="ref_client" type="hidden" value="'.$ref_client.'">';
+    print '<input name="ref_ext" type="hidden" value="'.$ref_ext.'">';
     print '<input type="hidden" name="origin" value="'.GETPOST('origin').'">';
     print '<input type="hidden" name="originid" value="'.GETPOST('originid').'">';
 
