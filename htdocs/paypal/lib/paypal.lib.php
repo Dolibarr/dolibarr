@@ -420,7 +420,9 @@ function GetDetails( $token )
  */
 function GetTransactionDetails($transactionID)
 {
-	global $API_Endpoint, $API_Url, $API_version, $USE_PROXY, $PROXY_HOST, $PROXY_PORT;
+	//declaring of global variables
+    global $conf, $langs;
+    global $API_Endpoint, $API_Url, $API_version, $USE_PROXY, $PROXY_HOST, $PROXY_PORT;
     global $PAYPAL_API_USER, $PAYPAL_API_PASSWORD, $PAYPAL_API_SIGNATURE;
     
     $transactionID=urlencode($transactionID);
@@ -550,6 +552,29 @@ function hash_call($methodName,$nvpStr)
     global $API_Endpoint, $API_Url, $API_version, $USE_PROXY, $PROXY_HOST, $PROXY_PORT, $PROXY_USER, $PROXY_PASS;
     global $PAYPAL_API_USER, $PAYPAL_API_PASSWORD, $PAYPAL_API_SIGNATURE;
 
+    // TODO problem with this global if the request into triggers
+    $API_version="56";
+	if ($conf->global->PAYPAL_API_SANDBOX)
+	{
+	    $API_Endpoint = "https://api-3t.sandbox.paypal.com/nvp";
+	    $API_Url = "https://www.sandbox.paypal.com/webscr?cmd=_express-checkout&token=";
+	}
+	else
+	{
+	    $API_Endpoint = "https://api-3t.paypal.com/nvp";
+	    $API_Url = "https://www.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=";
+	}
+	// Clean parameters
+	$PAYPAL_API_USER="";
+	if ($conf->global->PAYPAL_API_USER) $PAYPAL_API_USER=$conf->global->PAYPAL_API_USER;
+	$PAYPAL_API_PASSWORD="";
+	if ($conf->global->PAYPAL_API_PASSWORD) $PAYPAL_API_PASSWORD=$conf->global->PAYPAL_API_PASSWORD;
+	$PAYPAL_API_SIGNATURE="";
+	if ($conf->global->PAYPAL_API_SIGNATURE) $PAYPAL_API_SIGNATURE=$conf->global->PAYPAL_API_SIGNATURE;
+	$PAYPAL_API_SANDBOX="";
+	if ($conf->global->PAYPAL_API_SANDBOX) $PAYPAL_API_SANDBOX=$conf->global->PAYPAL_API_SANDBOX;
+	// TODO END
+	
     dol_syslog("Paypal API endpoint ".$API_Endpoint);
 
     //setting the curl parameters.

@@ -98,15 +98,41 @@ class InterfacePaypalWorkflow
         // Mettre ici le code a executer en reaction de l'action
         // Les donnees de l'action sont stockees dans $object
 
-    	
         // Add Paypal fee
-        if ($action == 'PAYMENT_ADD_TO_BANK')
+        if ($action == 'PAYMENT_ADD_TO_BANK' && $object->fk_account == $conf->global->PAYPAL_BANK_ACCOUNT)
         {
         	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->rowid);
         	
-        	//var_dump($object);
-        	// use num_paiement and fk_account
+        	require_once(DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php');
+        	require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypalfunctions.lib.php");
+        	require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");
         	
+        	if (! empty($conf->global->PAYPAL_API_USER) && ! empty($conf->global->PAYPAL_API_PASSWORD)
+        	&& ! empty($conf->global->PAYPAL_API_SIGNATURE))
+        	{
+        		$resArray=GetTransactionDetails(trim($object->num_paiement));
+        		if (is_array($resArray))
+        		{
+        			$ack = strtoupper($resArray["ACK"]);
+        			if($ack!="SUCCESS" && $ack!="SUCCESSWITHWARNING")
+        			{
+        				$_SESSION['reshash']=$resArray;
+        				$errors = GetApiError();
+        				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". error=".$errors[0]);
+        				return -2;
+        			}
+        			else
+        			{
+        				$langs->load('paypal');
+        				$acct=new Account($this->db);
+        				$acct->fetch($object->fk_account);
+        				$now=dol_now();
+        				$amount = -$resArray["FEEAMT"]; // get paypal fee amount and convert to negative
+        				$ret = $acct->addline($now, 2, $langs->trans('FeeAmount'), $amount, $object->num_paiement, '', $user,'Paypal','Paypal');
+        				if ($ret < 0) return -1;
+        			}
+        		}
+        	}
         }
 
 		return 0;

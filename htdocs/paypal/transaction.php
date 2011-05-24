@@ -93,7 +93,24 @@ if(isset($transactionID) && ! empty($transactionID)) {
 	$nvpStr.="&TRANSACTIONID=$transactionID";
 }
 
+// Call Paypal API
+if (! empty($nvpStr))
+{
+	$resArray=hash_call("TransactionSearch",$nvpStr);
+	//var_dump($resArray);
 
+	if (is_array($resArray))
+	{
+		$reqArray=$_SESSION['nvpReqArray'];
+
+		$ack = strtoupper($resArray["ACK"]);
+		if($ack!="SUCCESS" && $ack!="SUCCESSWITHWARNING")
+		{
+			$_SESSION['reshash']=$resArray;
+			$errors = GetApiError();
+		}
+	}
+}
 
 llxHeader();
 
@@ -224,26 +241,6 @@ if (empty($conf->global->PAYPAL_API_USER) || empty($conf->global->PAYPAL_API_PAS
 </div>
 
 <?php
-
-// Call Paypal API
-if (! empty($nvpStr))
-{
-	$resArray=hash_call("TransactionSearch",$nvpStr);
-	//var_dump($resArray);
-
-	if (is_array($resArray))
-	{
-		$reqArray=$_SESSION['nvpReqArray'];
-
-		$ack = strtoupper($resArray["ACK"]);
-		if($ack!="SUCCESS" && $ack!="SUCCESSWITHWARNING")
-		{
-			$_SESSION['reshash']=$resArray;
-			$errors = GetApiError();
-		}
-	}
-}
-
 
 // Search parameters
 print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
