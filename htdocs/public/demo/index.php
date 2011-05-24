@@ -66,7 +66,7 @@ $alwaysuncheckedmodules=array('paybox','paypal','filemanager','google','scanner'
 $alwayshiddenmodules=array('accounting','barcode','bookmark','boutique','clicktodial','document','domain','externalrss','externalsite','fckeditor','ftp','geoipmaxmind','gravatar','label','ldap','mantis','memcached','notification',
                             'syslog','user','webservices',
                             // Extended modules
-                            'awstats','bittorrent','cabinetmed','filemanager','monitoring','nltechno','ovh','phenix','phpsysinfo','postnuke','submiteverywhere',
+                            'awstats','bittorrent','cabinetmed','concatpdf','filemanager','monitoring','nltechno','ovh','phenix','phpsysinfo','postnuke','submiteverywhere',
                             'survey','thomsonphonebook','voyage','webcalendar','webmail','zipautofillfr');
 
 // Search modules
@@ -166,9 +166,11 @@ if (GETPOST("action") == 'gotodemo')
 	    if (empty($_POST[$modulekeyname]) && empty($val->always_enabled) && ! in_array($modulekeyname,$alwayscheckedmodules))
 	    {
 	        $disablestring.=$modulekeyname.',';
+	        if ($modulekeyname=='propale') $disablestring.='propal,';
 	    }
 
 	}
+
     // Do redirect to login page
 	if ($disablestring)
 	{
