@@ -66,7 +66,7 @@ $alwaysuncheckedmodules=array('paybox','paypal','filemanager','google','scanner'
 $alwayshiddenmodules=array('accounting','barcode','bookmark','boutique','clicktodial','document','domain','externalrss','externalsite','fckeditor','ftp','geoipmaxmind','gravatar','label','ldap','mantis','memcached','notification',
                             'syslog','user','webservices',
                             // Extended modules
-                            'awstats','bittorrent','cabinetmed','concatpdf','filemanager','monitoring','nltechno','ovh','phenix','phpsysinfo','postnuke','submiteverywhere',
+                            'awstats','bittorrent','cabinetmed','concatpdf','filemanager','monitoring','nltechno','numberwords','ovh','phenix','phpsysinfo','postnuke','submiteverywhere',
                             'survey','thomsonphonebook','voyage','webcalendar','webmail','zipautofillfr');
 
 // Search modules
@@ -277,7 +277,9 @@ foreach ($demoprofiles as $profilarray)
             print '<td><input type="checkbox" class="checkbox" name="'.$modulekeyname.'" value="1"';
             if (in_array($modulekeyname,$alwaysuncheckedmodules)) print ' disabled="true"';
             if (! in_array($modulekeyname,$alwaysuncheckedmodules)  && (! in_array($modulekeyname,$listofdisabledmodules) || in_array($modulekeyname,$alwayscheckedmodules))) print ' checked="true"';
-            print '>'.$val->getName().' &nbsp;</td>';
+            print '>'.$val->getName().' &nbsp;';
+            print '<!-- id='.$val->numero.' -->';
+            print '</td>';
             if ($modulo == ($nbcolsmod - 1)) print '</tr>';
             $j++;
 		}
