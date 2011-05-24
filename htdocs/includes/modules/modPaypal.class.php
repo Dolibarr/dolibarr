@@ -67,6 +67,9 @@ class modPaypal extends DolibarrModules
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory, use this->picto=DOL_URL_ROOT.'/module/img/file.png'
 		$this->picto='paypal@paypal';
+		
+		// Defined if the directory /mymodule/inc/triggers/ contains triggers or not
+		$this->triggers = 1;
 
 		// Data directories to create when module is enabled.
 		$this->dirs = array('/paypal/temp');
