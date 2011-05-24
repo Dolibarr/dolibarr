@@ -333,34 +333,63 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 		$img_addressstatus=($addressstatus=='confirmed' ? img_tick($langs->trans(ucfirst($addressstatus))) : img_warning($langs->trans(ucfirst($addressstatus))) );
 		$return_arr['contents'].= '<tr '.$bc[$var].'><td>'.$langs->trans('ADDRESSSTATUS').'</td><td>'.$img_addressstatus.'</td>';
 		
-		$shipamount=($_SESSION[$_GET['transaction_id']]['SHIPPINGAMT']?$_SESSION[$_GET['transaction_id']]['SHIPPINGAMT']:$_SESSION[$_GET['transaction_id']]['SHIPAMOUNT']);
-		$var=!$var;
-		$return_arr['contents'].= '<tr '.$bc[$var].'><td>'.$langs->trans('SHIPAMOUNT').'</td><td>'.price($shipamount).' '.$_SESSION[$_GET['transaction_id']]['CURRENCYCODE'].'</td>';
-		
 		$return_arr['contents'].= '</table>';
 		
 		$i=0;
+		$total_ht=0;
 		
 		$return_arr['contents'].= '<table style="noboardernopading" width="100%">';
 		
 		$return_arr['contents'].= '<tr class="liste_titre">';
 		$return_arr['contents'].= '<td>'.$langs->trans('Ref').'</td>';
 		$return_arr['contents'].= '<td>'.$langs->trans('Label').'</td>';
-		$return_arr['contents'].= '<td>'.$langs->trans('Qty').'</td>';
+		$return_arr['contents'].= '<td align="right">'.$langs->trans('UnitPriceHT').'</td>';
+		$return_arr['contents'].= '<td align="right">'.$langs->trans('Qty').'</td>';
+		$return_arr['contents'].= '<td align="right">'.$langs->trans('AmountHT').'</td>';
 		$return_arr['contents'].= '</tr>';
 		
 		while (isset($_SESSION[$_GET['transaction_id']]["L_NAME".$i]))
 		{
 			$var=!$var;
 			
+			$qty = $_SESSION[$_GET['transaction_id']]["L_QTY".$i];
+			
+			if ($_SESSION[$_GET['transaction_id']]["L_AMT".$i])
+			{
+				$amount_ht = ($_SESSION[$_GET['transaction_id']]["L_AMT".$i] - $_SESSION[$_GET['transaction_id']]["L_SHIPPINGAMT".$i]);
+				$unitprice_ht = ($amount_ht / $qty);
+			}
+			else
+			{
+				$amount_ht = ($_SESSION[$_GET['transaction_id']]["AMT"] - $_SESSION[$_GET['transaction_id']]["SHIPAMOUNT"] - $_SESSION[$_GET['transaction_id']]["L_TAXAMT".$i]);
+				$unitprice_ht = ($amount_ht / $qty);
+			}
+			
 			$return_arr['contents'].= '<tr '.$bc[$var].'>';
 			$return_arr['contents'].= '<td>'.$_SESSION[$_GET['transaction_id']]["L_NUMBER".$i].'</td>';
 			$return_arr['contents'].= '<td>'.$_SESSION[$_GET['transaction_id']]["L_NAME".$i].'</td>';
-			$return_arr['contents'].= '<td>'.$_SESSION[$_GET['transaction_id']]["L_QTY".$i].'</td>';
+			$return_arr['contents'].= '<td align="right">'.price($unitprice_ht).' '.$_SESSION[$_GET['transaction_id']]['CURRENCYCODE'].'</td>';
+			$return_arr['contents'].= '<td align="right">'.$_SESSION[$_GET['transaction_id']]["L_QTY".$i].'</td>';
+			$return_arr['contents'].= '<td align="right">'.price($amount_ht).' '.$_SESSION[$_GET['transaction_id']]['CURRENCYCODE'].'</td>';
 			$return_arr['contents'].= '</tr>';
+			
+			$total_ht+=$amount_ht;
 			
 			$i++;
 		}
+		
+		$var=!$var;
+		$return_arr['contents'].= '<tr '.$bc[$var].'><td colspan="4" align="right"><strong>'.$langs->trans('TotalHT').'</strong></td><td align="right"><strong>'.price($total_ht).' '.$_SESSION[$_GET['transaction_id']]['CURRENCYCODE'].'</strong></td>';
+		
+		$var=!$var;
+		$return_arr['contents'].= '<tr '.$bc[$var].'><td colspan="4" align="right"><strong>'.$langs->trans('TotalVAT').'</strong></td><td align="right"><strong>'.price($_SESSION[$_GET['transaction_id']]['TAXAMT']).' '.$_SESSION[$_GET['transaction_id']]['CURRENCYCODE'].'</strong></td>';
+		
+		$shipamount=($_SESSION[$_GET['transaction_id']]['SHIPPINGAMT']?$_SESSION[$_GET['transaction_id']]['SHIPPINGAMT']:$_SESSION[$_GET['transaction_id']]['SHIPAMOUNT']);
+		$var=!$var;
+		$return_arr['contents'].= '<tr '.$bc[$var].'><td colspan="4" align="right"><strong>'.$langs->trans('SHIPAMOUNT').'</strong></td><td align="right"><strong>'.price($shipamount).' '.$_SESSION[$_GET['transaction_id']]['CURRENCYCODE'].'</strong></td>';
+		
+		$var=!$var;
+		$return_arr['contents'].= '<tr '.$bc[$var].'><td colspan="4" align="right"><strong>'.$langs->trans('TotalTTC').'</strong></td><td align="right"><strong>'.price($_SESSION[$_GET['transaction_id']]['AMT']).' '.$_SESSION[$_GET['transaction_id']]['CURRENCYCODE'].'</strong></td>';
 		
 		$return_arr['contents'].= '</table>';
 		
@@ -393,7 +422,6 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 			
 			$return_arr['contents'].= '</table>';
 		}
-		
 		
 		/*
 		$return_arr['contents'].= '<br />';
