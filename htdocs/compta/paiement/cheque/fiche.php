@@ -308,7 +308,7 @@ if ($action == 'new')
 	print $html->select_date($filterdate,'fd',0,0,1,'',1,1);
 	print '</td></tr>';
     print '<tr><td>'.$langs->trans("BankAccount").'</td><td>';
-    print $html->select_comptes($filteraccountid,'accountid',0,0,1);
+    print $html->select_comptes($filteraccountid,'accountid',0,'courant <> 2',1);
     print '</td></tr>';
 	print '<tr><td colspan="2" align="center">';
 	print '<input type="submit" class="button" name="filter" value="'.dol_escape_htmltag($langs->trans("ToFilter")).'">';
