@@ -811,6 +811,10 @@ a.butActionDelete:hover    { font-family: helvetica, verdana, arial, sans-serif;
                       text-decoration: none;
                       white-space: nowrap; }
 
+span.butAction, span.butActionDelete {
+    cursor: pointer;
+}
+
 
 /* ============================================================================== */
 /* Tables                                                                         */
