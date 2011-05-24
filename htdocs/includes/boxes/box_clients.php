@@ -85,6 +85,8 @@ class box_clients extends ModeleBoxes {
 			if ($result)
 			{
 				$num = $db->num_rows($result);
+                if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) $url= DOL_URL_ROOT."/comm/fiche.php?socid=";
+                else $url= DOL_URL_ROOT."/societe/soc.php?socid=";
 
 				$i = 0;
 				while ($i < $num)
@@ -95,11 +97,11 @@ class box_clients extends ModeleBoxes {
 
 					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $this->boximg,
-                    'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
+                    'url' => $url.$objp->socid);
 
 					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
                     'text' => $objp->nom,
-                    'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
+                    'url' => $url.$objp->socid);
 
 					$this->info_box_contents[$i][2] = array('td' => 'align="right"',
 					'text' => dol_print_date($datem, "day"));
