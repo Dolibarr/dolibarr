@@ -59,6 +59,7 @@ $offset = $limit * $page ;
 
 $dir=$conf->banque->dir_output.'/bordereau/';
 $filterdate=dol_mktime(0,0,0,$_POST['fdmonth'],$_POST['fdday'],$_POST['fdyear']);
+$filteraccountid=GETPOST('accountid');
 //var_dump($_POST);
 
 /*
@@ -222,6 +223,12 @@ if ($action == 'builddoc' && $user->rights->banque->cheque)
  * View
  */
 
+if (GETPOST('removefilter'))
+{
+    $filterdate='';
+    $filteraccountid=0;
+}
+
 llxHeader();
 
 $html = new Form($db);
@@ -297,11 +304,19 @@ if ($action == 'new')
 	print '<table class="border" width="100%">';
 	//print '<tr><td width="30%">'.$langs->trans('Date').'</td><td width="70%">'.dol_print_date($now,'day').'</td></tr>';
 	// Filter
-	print '<tr><td>'.$langs->trans("Date").'</td><td>';
-	print $html->select_date($filterdate,'fd',0,0,1);
+	print '<tr><td width="200">'.$langs->trans("Date").'</td><td>';
+	print $html->select_date($filterdate,'fd',0,0,1,'',1,1);
 	print '</td></tr>';
+    print '<tr><td>'.$langs->trans("BankAccount").'</td><td>';
+    print $html->select_comptes($filteraccountid,'accountid',0,0,1);
+    print '</td></tr>';
 	print '<tr><td colspan="2" align="center">';
 	print '<input type="submit" class="button" name="filter" value="'.dol_escape_htmltag($langs->trans("ToFilter")).'">';
+    if ($filterdate || $filteraccountid > 0)
+    {
+    	print ' &nbsp; ';
+    	print '<input type="submit" class="button" name="removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+    }
 	print '</td></tr>';
 	print '</table>';
     //print '</fieldset>';
@@ -317,7 +332,8 @@ if ($action == 'new')
 	$sql.= " AND ba.entity = ".$conf->entity;
 	$sql.= " AND b.fk_bordereau = 0";
 	$sql.= " AND b.amount > 0";
-	if ($filterdate) $sql.=" AND b.dateo = '".$db->idate($filterdate)."'";
+	if ($filterdate)      $sql.=" AND b.dateo = '".$db->idate($filterdate)."'";
+    if ($filteraccountid) $sql.=" AND ba.rowid= '".$filteraccountid."'";
 	$sql.= $db->order("b.dateo,b.rowid","ASC");
 
 	$resql = $db->query($sql);
