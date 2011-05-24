@@ -29,6 +29,10 @@ CustomerDetails=Customer details
 NewTransaction=New transaction
 OrderIsCreated=Order created
 InvoiceIsCreated=Invoice created
+PaypalCreateOrderEnabled=Enable the ability to create customer orders
+PaypalCreateInvoiceEnabled=Enable the ability to create customer invoices
+DefaultProductShippingCosts=Select the product to be used for adding shipping costs.
+DefaultPaypalAccount=Select the bank account to be used as a Paypal account, this will deduct the Paypal fee when adding a payment.
 
 # Paypal transaction fields
 PAYERID=Payer ID

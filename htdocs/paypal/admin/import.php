@@ -33,8 +33,9 @@ if (!$user->admin)
 $langs->load("paypal");
 $langs->load("admin");
 
-$action=GETPOST('action');
-$idprod=GETPOST('idprod');
+$action		= GETPOST('action');
+$idprod		= GETPOST('idprod');
+$accountid	= GETPOST('accountid');
 
 
 /*
@@ -71,6 +72,19 @@ if (preg_match('/del_(.*)/',$action,$reg))
 if ($action == 'setproductshippingcosts')
 {
 	if (dolibarr_set_const($db, 'PAYPAL_PRODUCT_SHIPPING_COSTS', $idprod, 'chaine', 0, '', $conf->entity) > 0)
+    {
+        Header("Location: ".$_SERVER["PHP_SELF"]);
+        exit;
+    }
+    else
+    {
+        dol_print_error($db);
+    }
+}
+
+if ($action == 'setpaypalaccount')
+{
+	if (dolibarr_set_const($db, 'PAYPAL_BANK_ACCOUNT', $accountid, 'chaine', 0, '', $conf->entity) > 0)
     {
         Header("Location: ".$_SERVER["PHP_SELF"]);
         exit;
@@ -135,18 +149,90 @@ print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
 print '</tr>';
 
+// Order
+if ($conf->commande->enabled)
+{
+	$var=!$var;
+	print '<tr '.$bc[$var].'>';
+	print '<td>'.$langs->trans("PaypalCreateOrderEnabled").'</td>';
+	print '<td align="center" width="20">&nbsp;</td>';
+	
+	print '<td align="center" width="100">';
+	if ($conf->use_javascript_ajax)
+	{
+		print ajax_constantonoff('PAYPAL_CREATE_ORDER_ENABLED');
+	}
+	else
+	{
+		if($conf->global->PAYPAL_CREATE_ORDER_ENABLED == 0)
+		{
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_PAYPAL_CREATE_ORDER_ENABLED">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+		}
+		else if($conf->global->PAYPAL_CREATE_ORDER_ENABLED == 1)
+		{
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_PAYPAL_CREATE_ORDER_ENABLED">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+		}
+	}
+	print '</td></tr>';
+}
+
+// Invoice
+if ($conf->facture->enabled)
+{
+	$var=!$var;
+	print '<tr '.$bc[$var].'>';
+	print '<td>'.$langs->trans("PaypalCreateInvoiceEnabled").'</td>';
+	print '<td align="center" width="20">&nbsp;</td>';
+	
+	print '<td align="center" width="100">';
+	if ($conf->use_javascript_ajax)
+	{
+		print ajax_constantonoff('PAYPAL_CREATE_INVOICE_ENABLED');
+	}
+	else
+	{
+		if($conf->global->PAYPAL_CREATE_INVOICE_ENABLED == 0)
+		{
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_PAYPAL_CREATE_INVOICE_ENABLED">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+		}
+		else if($conf->global->PAYPAL_CREATE_INVOICE_ENABLED == 1)
+		{
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_PAYPAL_CREATE_INVOICE_ENABLED">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+		}
+	}
+	print '</td></tr>';
+}
+
+// Shipping costs
 $var=!$var;
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="setproductshippingcosts">';
 print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("DefaultProductShippingCosts").'</td>';
-print '<td width="60" align="center">';
+print '<td width="60" align="right">';
 $form->select_produits($conf->global->PAYPAL_PRODUCT_SHIPPING_COSTS,'idprod','',$conf->product->limit_size,1,1,1,'',1);
 print '</td>';
-print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+print '<td align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 print '</tr>';
 print '</form>';
+
+// Bank
+if ($conf->banque->enabled)
+{
+	$var=!$var;
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="setpaypalaccount">';
+	print '<tr '.$bc[$var].'>';
+	print '<td>'.$langs->trans("DefaultPaypalAccount").'</td>';
+	print '<td width="60" align="right">';
+	$form->select_comptes($conf->global->PAYPAL_BANK_ACCOUNT,'accountid',0,'',1);
+	print '</td>';
+	print '<td align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+	print '</tr>';
+	print '</form>';
+}
 
 print '</table>';
 

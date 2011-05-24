@@ -145,8 +145,8 @@ if (empty($conf->global->PAYPAL_API_USER) || empty($conf->global->PAYPAL_API_PAS
 				transaction_id: id_value
 			},
 			function(details) {
-				var $order_enabled = <?php echo ($conf->commande->enabled ? 'true' : 'false'); ?>;
-				var $invoice_enabled = <?php echo ($conf->facture->enabled ? 'true' : 'false'); ?>;
+				var $order_enabled = <?php echo (($conf->commande->enabled && $conf->global->PAYPAL_CREATE_ORDER_ENABLED) ? 'true' : 'false'); ?>;
+				var $invoice_enabled = <?php echo (($conf->facture->enabled && $conf->global->PAYPAL_CREATE_INVOICE_ENABLED) ? 'true' : 'false'); ?>;
 				var $element_created = false;
 				
 				$.each(details, function(key,value) {
