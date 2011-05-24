@@ -51,6 +51,7 @@ class Paiement extends CommonObject
 	var $num_paiement;	// Numero du CHQ, VIR, etc...
 	var $bank_account;	// Id compte bancaire du paiement
 	var $bank_line;     // Id de la ligne d'ecriture bancaire
+	var $fk_account;	// Id of bank account
 	var $note;
 	// fk_paiement dans llx_paiement est l'id du type de paiement (7 pour CHQ, ...)
 	// fk_paiement dans llx_paiement_facture est le rowid du paiement
@@ -334,21 +335,22 @@ class Paiement extends CommonObject
      *      @param      emetteur_banque     Name of bank
      *      @return     int                 <0 if KO, bank_line_id if OK
      */
-    function addPaymentToBank($user,$mode,$label,$accountid,$emetteur_nom,$emetteur_banque)
+    function addPaymentToBank($user,$mode,$label,$accountid,$emetteur_nom,$emetteur_banque,$notrigger=0)
     {
-        global $conf;
+        global $conf,$langs,$user;
 
         $error=0;
         $bank_line_id=0;
+        $this->fk_account=$accountid;
 
         if ($conf->banque->enabled)
         {
             require_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
 
-            dol_syslog("$user->id,$mode,$label,$accountid,$emetteur_nom,$emetteur_banque");
+            dol_syslog("$user->id,$mode,$label,$this->fk_account,$emetteur_nom,$emetteur_banque");
 
             $acc = new Account($this->db);
-            $acc->fetch($accountid);
+            $acc->fetch($this->fk_account);
 
             $totalamount=$this->amount;
             if (empty($totalamount)) $totalamount=$this->total; // For backward compatibility
@@ -428,6 +430,16 @@ class Paiement extends CommonObject
                         }
                     }
                 }
+                
+	            if (! $error && ! $notrigger)
+				{
+					// Appel des triggers
+					include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+					$interface=new Interfaces($this->db);
+					$result=$interface->run_triggers('PAYMENT_ADD_TO_BANK',$this,$user,$langs,$conf);
+					if ($result < 0) { $error++; $this->errors=$interface->errors; }
+					// Fin appel triggers
+				}
             }
             else
             {

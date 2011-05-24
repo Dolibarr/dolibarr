@@ -36,12 +36,15 @@ $langs->load('companies');
 $langs->load('bills');
 $langs->load('banks');
 
-$facid=isset($_GET['facid'])?$_GET['facid']:$_POST['facid'];
-$socname=isset($_GET['socname'])?$_GET['socname']:$_POST['socname'];
+$action		= GETPOST('action');
+$confirm	= GETPOST('confirm');
 
-$sortfield = isset($_GET['sortfield'])?$_GET['sortfield']:$_POST['sortfield'];
-$sortorder = isset($_GET['sortorder'])?$_GET['sortorder']:$_POST['sortorder'];
-$page=isset($_GET['page'])?$_GET['page']:$_POST['page'];
+$facid		= GETPOST('facid');
+$socname	= GETPOST('socname');
+
+$sortfield	= GETPOST('sortfield');
+$sortorder	= GETPOST('sortorder');
+$page		= GETPOST('page');
 
 $amounts=array();
 $amountsresttopay=array();
@@ -59,7 +62,7 @@ if ($user->societe_id > 0)
 /*
  * Action add_paiement et confirm_paiement
  */
-if ($_POST['action'] == 'add_paiement' || ($_POST['action'] == 'confirm_paiement' && $_POST['confirm']=='yes'))
+if ($action == 'add_paiement' || ($action == 'confirm_paiement' && $confirm=='yes'))
 {
     $error = 0;
 
@@ -124,12 +127,11 @@ if ($_POST['action'] == 'add_paiement' || ($_POST['action'] == 'confirm_paiement
 /*
  * Action add_paiement
  */
-if ($_POST['action'] == 'add_paiement')
+if ($action == 'add_paiement')
 {
     if ($error)
     {
-        $_POST['action']='';
-        $_GET['action'] = 'create';
+        $action = 'create';
     }
     // Le reste propre a cette action s'affiche en bas de page.
 }
@@ -137,7 +139,7 @@ if ($_POST['action'] == 'add_paiement')
 /*
  * Action confirm_paiement
  */
-if ($_POST['action'] == 'confirm_paiement' && $_POST['confirm'] == 'yes')
+if ($action == 'confirm_paiement' && $confirm == 'yes')
 {
     $error=0;
 
@@ -209,7 +211,7 @@ llxHeader();
 $html=new Form($db);
 
 
-if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_POST['action'] == 'add_paiement')
+if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paiement')
 {
     $facture = new Facture($db);
     $result=$facture->fetch($facid);
@@ -234,7 +236,7 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
         }
 
         // Initialize data for confirmation (this is used because data can be change during confirmation)
-        if ($_POST["action"] == 'add_paiement')
+        if ($action == 'add_paiement')
         {
             $i=0;
 
@@ -311,7 +313,7 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
         {
             print '<tr><td><span class="fieldrequired">'.$langs->trans('AmountPayment').'</span></td>';
             print '<td>';
-            if ($_POST["action"] == 'add_paiement')
+            if ($action == 'add_paiement')
             {
                 print '<input id="amountpayment" name="amountpaymenthidden" size="8" type="text" value="'.(empty($_POST['amountpayment'])?'':$_POST['amountpayment']).'" disabled="true">';
                 print '<input name="amountpayment" type="hidden" value="'.(empty($_POST['amountpayment'])?'':$_POST['amountpayment']).'">';
@@ -554,7 +556,7 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
                     $namef = 'amount_'.$objp->facid;
 
                     $namef = 'amount_'.$objp->facid;
-                    if ($_POST["action"] != 'add_paiement')
+                    if ($action != 'add_paiement')
                     {
                         if (! empty($conf->global->MAIN_JS_ON_PAYMENT))
                         {
@@ -619,7 +621,7 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 
 
         // Bouton Enregistrer
-        if ($_POST["action"] != 'add_paiement')
+        if ($action != 'add_paiement')
         {
             //			print '<tr><td colspan="3" align="center">';
             print '<center><br><input type="checkbox" checked="checked" name="closepaidinvoices"> '.$langs->trans("ClosePaidInvoicesAutomatically");
@@ -636,7 +638,7 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
         }
 
         // Form to confirm payment
-        if ($_POST["action"] == 'add_paiement')
+        if ($action == 'add_paiement')
         {
             $preselectedchoice=$addwarning?'no':'yes';
 

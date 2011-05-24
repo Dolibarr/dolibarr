@@ -97,8 +97,17 @@ class InterfacePaypalWorkflow
     {	
         // Mettre ici le code a executer en reaction de l'action
         // Les donnees de l'action sont stockees dans $object
-        
+
     	
+        // Add Paypal fee
+        if ($action == 'PAYMENT_ADD_TO_BANK')
+        {
+        	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->rowid);
+        	
+        	//var_dump($object);
+        	// use num_paiement and fk_account
+        	
+        }
 
 		return 0;
     }
