@@ -129,7 +129,7 @@ class Societe extends CommonObject
 
     var $canvas;
 
-    var $ref_ext;
+    var $ref_int;
     var $import_key;
 
     var $logo;
@@ -202,12 +202,12 @@ class Societe extends CommonObject
 
         if ($result >= 0)
         {
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, entity, datec, datea, fk_user_creat, canvas, status, ref_ext)";
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, entity, datec, datea, fk_user_creat, canvas, status, ref_int)";
             $sql.= " VALUES ('".$this->db->escape($this->name)."', ".$conf->entity.", '".$this->db->idate($now)."', '".$this->db->idate($now)."'";
             $sql.= ", ".($user->id > 0 ? "'".$user->id."'":"null");
             $sql.= ", ".($this->canvas ? "'".$this->canvas."'":"null");
             $sql.= ", ".$this->status;
-            $sql.= ", ".($this->ref_ext ? "'".$this->ref_ext."'":"null");
+            $sql.= ", ".($this->ref_int ? "'".$this->ref_int."'":"null");
             $sql.= ")";
 
             dol_syslog("Societe::create sql=".$sql);
@@ -557,20 +557,21 @@ class Societe extends CommonObject
      *    @param      rowid			Id of third party to load
      *    @param      ref			Reference of third party, name (Warning, this can return several records)
      *    @param      ref_ext       External reference of third party (Warning, this information is a free field not provided by Dolibarr)
+     *    @param      ref_int       Internal reference of third party
      *    @param      idprof1		Prof id 1 of third party (Warning, this can return several records)
      *    @param      idprof2		Prof id 2 of third party (Warning, this can return several records)
      *    @param      idprof3		Prof id 3 of third party (Warning, this can return several records)
      *    @param      idprof4		Prof id 4 of third party (Warning, this can return several records)
      *    @return     int			>0 if OK, <0 if KO or if two records found for same ref or idprof.
      */
-    function fetch($rowid, $ref='', $ref_ext='', $idprof1='',$idprof2='',$idprof3='',$idprof4='')
+    function fetch($rowid, $ref='', $ref_ext='', $ref_int='', $idprof1='',$idprof2='',$idprof3='',$idprof4='')
     {
         global $langs;
         global $conf;
 
-        if (empty($rowid) && empty($ref) && empty($ref_ext)) return -1;
+        if (empty($rowid) && empty($ref) && empty($ref_ext) && empty($ref_int)) return -1;
 
-        $sql = 'SELECT s.rowid, s.nom as name, s.entity, s.ref_ext, s.address, s.datec as datec, s.prefix_comm';
+        $sql = 'SELECT s.rowid, s.nom as name, s.entity, s.ref_ext, s.ref_int, s.address, s.datec as datec, s.prefix_comm';
         $sql .= ', s.price_level';
         $sql .= ', s.tms as date_update';
         $sql .= ', s.tel, s.fax, s.email, s.url, s.cp as zip, s.ville as town, s.note, s.client, s.fournisseur';
@@ -600,6 +601,7 @@ class Societe extends CommonObject
         if ($rowid) $sql .= ' WHERE s.rowid = '.$rowid;
         if ($ref)   $sql .= " WHERE s.nom = '".$this->db->escape($ref)."' AND s.entity = ".$conf->entity;
         if ($ref_ext) $sql .= " WHERE s.ref_ext = '".$this->db->escape($ref_ext)."' AND s.entity = ".$conf->entity;
+        if ($ref_int) $sql .= " WHERE s.ref_int = '".$this->db->escape($ref_int)."' AND s.entity = ".$conf->entity;
         if ($idprof1) $sql .= " WHERE s.siren = '".$this->db->escape($siren)."' AND s.entity = ".$conf->entity;
         if ($idprof2) $sql .= " WHERE s.siret = '".$this->db->escape($siret)."' AND s.entity = ".$conf->entity;
         if ($idprof3) $sql .= " WHERE s.ape = '".$this->db->escape($ape)."' AND s.entity = ".$conf->entity;
@@ -627,6 +629,7 @@ class Societe extends CommonObject
                 $this->name 		= $obj->name;
                 $this->nom          = $obj->name; // TODO obsolete
                 $this->ref_ext      = $obj->ref_ext;
+                $this->ref_int      = $obj->ref_int;
 
                 $this->datec = $this->db->jdate($obj->datec);
                 $this->date_update = $this->db->jdate($obj->date_update);

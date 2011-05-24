@@ -174,7 +174,7 @@ if (empty($conf->global->PAYPAL_API_USER) || empty($conf->global->PAYPAL_API_PAS
 									} else {
 										$.jnotify("<?php echo $langs->trans('PleaseBePatient'); ?>", 500);
 										$( "div #paypal-details" ).dialog( "close" );
-										location.href=value;
+										//location.href=value;
 									}
 								});
 							});

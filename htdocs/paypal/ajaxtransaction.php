@@ -68,7 +68,7 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 		$return_arr = array();
 		
 		// Create customer if not exists
-		$ret = $soc->fetchObjectFromRefExt($soc->table_element,$_SESSION[$_GET['transaction_id']]['PAYERID']);
+		$ret = $soc->fetchObjectFrom($soc->table_element,'ref_int',$_SESSION[$_GET['transaction_id']]['PAYERID']);
 		if ($ret < 0)
 		{
 			// Load object modCodeTiers
@@ -82,7 +82,7 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 			$modCodeClient = new $module;
 			
 			// Create customer and return rowid
-			$soc->ref_ext			= $_SESSION[$_GET['transaction_id']]['PAYERID'];
+			$soc->ref_int			= $_SESSION[$_GET['transaction_id']]['PAYERID'];
 			$soc->name              = empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?trim($_SESSION[$_GET['transaction_id']]['FIRSTNAME'].' '.$_SESSION[$_GET['transaction_id']]['LASTNAME']):trim($_SESSION[$_GET['transaction_id']]['LASTNAME'].' '.$_SESSION[$_GET['transaction_id']]['FIRSTNAME']);
 			$soc->nom_particulier	= $_SESSION[$_GET['transaction_id']]['LASTNAME'];
 			$soc->prenom			= $_SESSION[$_GET['transaction_id']]['FIRSTNAME'];
@@ -159,7 +159,7 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
             $object->fetch_thirdparty();
             
             $object->date		= dol_now();
-            $object->ref_ext	= $_SESSION[$_GET['transaction_id']]['TRANSACTIONID'];
+            $object->ref_int	= $_SESSION[$_GET['transaction_id']]['TRANSACTIONID'];
             $shipamount			= ($_SESSION[$_GET['transaction_id']]['SHIPPINGAMT']?$_SESSION[$_GET['transaction_id']]['SHIPPINGAMT']:$_SESSION[$_GET['transaction_id']]['SHIPAMOUNT']);
             
             $object_id = $object->create($user);
@@ -238,6 +238,18 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 						$return_arr['error'].= $langs->trans('ErrorUndefinedProductForShippingCost').'<br />';
 					}
 				}
+				
+				// Add contact customer
+            	if ($contact->id > 0)
+			    {
+			        $result=$object->add_contact($contact->id,'CUSTOMER','external');
+			        if ($result < 0)
+			        {
+			        	$error++;
+			        	$langs->load("errors");
+			        	$return_arr['error'].= $langs->trans('ErrorToAddContactCustomer').'<br />';
+			        }
+			    }
             }
             else
             {
@@ -279,7 +291,7 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 		if (! empty($objects)) $return_arr['element_created'] = true;
 		
 		$soc = new Societe($db);
-		$ret = $soc->fetchObjectFromRefExt($soc->table_element, $_SESSION[$_GET['transaction_id']]['PAYERID']);
+		$ret = $soc->fetchObjectFrom($soc->table_element, 'ref_int', $_SESSION[$_GET['transaction_id']]['PAYERID']);
 
 		$var=true;
 		

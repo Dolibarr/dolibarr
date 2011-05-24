@@ -114,6 +114,10 @@ ALTER TABLE llx_usergroup_user ADD UNIQUE INDEX uk_usergroup_entity (entity,fk_u
 ALTER TABLE llx_usergroup_user ADD CONSTRAINT fk_usergroup_user_fk_user      FOREIGN KEY (fk_user)         REFERENCES llx_user (rowid);
 ALTER TABLE llx_usergroup_user ADD CONSTRAINT fk_usergroup_user_fk_usergroup FOREIGN KEY (fk_usergroup)    REFERENCES llx_usergroup (rowid);
 
+ALTER TABLE llx_commande ADD COLUMN ref_int	varchar(30) AFTER ref_ext;
+ALTER TABLE llx_facture ADD COLUMN ref_int varchar(30) AFTER ref_ext;
+ALTER TABLE llx_societe ADD COLUMN ref_int varchar(60) AFTER ref_ext;
+
 --Add Chile data (id pays=67)
 -- Regions Chile
 INSERT INTO llx_c_regions (rowid, code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (6701, 6701, 67, NULL, NULL, 'Tarapacá', 1);

@@ -35,7 +35,8 @@ create table llx_societe
   nom                      varchar(60),                         		-- company reference name
   entity                   integer DEFAULT 1 NOT NULL,	        		-- multi company id
 
-  ref_ext                  varchar(60),                                 	-- reference into an external system (not used by dolibarr)
+  ref_ext                  varchar(60),                                 -- reference into an external system (not used by dolibarr)
+  ref_int				   varchar(60),									-- reference into an internal system (used by dolibarr)
 
   code_client              varchar(15),                         		-- code client
   code_fournisseur         varchar(15),                         		-- code founisseur

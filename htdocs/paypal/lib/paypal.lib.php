@@ -173,7 +173,7 @@ function getLinkedObjects($transactionID)
 		$classname = ucfirst($subelement);
 		$object = new $classname($db);
 		
-		$res = $object->fetchObjectFromRefExt($object->table_element, $transactionID);
+		$res = $object->fetchObjectFrom($object->table_element, 'ref_int', $transactionID);
 		if ($res > 0) $objectArray[$element] = $object;
 	}
 	

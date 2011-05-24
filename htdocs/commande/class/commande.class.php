@@ -54,6 +54,7 @@ class Commande extends CommonObject
 	var $ref;
 	var $ref_client;
 	var $ref_ext;
+	var $ref_int;
 	var $contactid;
 	var $fk_project;
 	var $statut;		// -1=Canceled, 0=Draft, 1=Validated, (2=Accepted/On process not managed for customer orders), 3=Closed (Sent/Received, billed or not)

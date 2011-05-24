@@ -540,7 +540,7 @@ if ($action == 'add' && $user->rights->facture->creer)
             $object->note_public		= trim($_POST['note_public']);
             $object->note				= trim($_POST['note']);
             $object->ref_client			= $_POST['ref_client'];
-            $object->ref_ext			= $_POST['ref_ext'];
+            $object->ref_int			= $_POST['ref_int'];
             $object->modelpdf			= $_POST['model'];
             $object->fk_project			= $_POST['projectid'];
             $object->cond_reglement_id	= $_POST['cond_reglement_id'];
@@ -586,7 +586,7 @@ if ($action == 'add' && $user->rights->facture->creer)
             $object->note_public		= trim($_POST['note_public']);
             $object->note				= trim($_POST['note']);
             $object->ref_client			= $_POST['ref_client'];
-            $object->ref_ext			= $_POST['ref_ext'];
+            $object->ref_int			= $_POST['ref_int'];
             $object->modelpdf			= $_POST['model'];
             $object->fk_project			= $_POST['projectid'];
             $object->cond_reglement_id	= 0;
@@ -634,7 +634,7 @@ if ($action == 'add' && $user->rights->facture->creer)
             $object->note_public	= trim($_POST['note_public']);
             $object->note           = trim($_POST['note']);
             $object->ref_client     = $_POST['ref_client'];
-            $object->ref_ext     	= $_POST['ref_ext'];
+            $object->ref_int     	= $_POST['ref_int'];
             $object->modelpdf       = $_POST['model'];
 
             // Source facture
@@ -664,7 +664,7 @@ if ($action == 'add' && $user->rights->facture->creer)
             $object->note_public		= trim($_POST['note_public']);
             $object->note				= trim($_POST['note']);
             $object->ref_client			= $_POST['ref_client'];
-            $object->ref_ext			= $_POST['ref_ext'];
+            $object->ref_int			= $_POST['ref_int'];
             $object->modelpdf			= $_POST['model'];
             $object->fk_project			= $_POST['projectid'];
             $object->cond_reglement_id	= ($_POST['type'] == 3?1:$_POST['cond_reglement_id']);
@@ -1442,7 +1442,7 @@ if ($action == 'create')
 
             $projectid			= (!empty($objectsrc->fk_project)?$object->fk_project:'');
             $ref_client			= (!empty($objectsrc->ref_client)?$object->ref_client:'');
-            $ref_ext			= (!empty($objectsrc->ref_ext)?$object->ref_ext:'');
+            $ref_int			= (!empty($objectsrc->ref_int)?$object->ref_int:'');
 
             $soc = $objectsrc->client;
             $cond_reglement_id 	= (!empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(!empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
@@ -1475,7 +1475,7 @@ if ($action == 'create')
     print '<input type="hidden" name="socid" value="'.$soc->id.'">' ."\n";
     print '<input name="facnumber" type="hidden" value="provisoire">';
     print '<input name="ref_client" type="hidden" value="'.$ref_client.'">';
-    print '<input name="ref_ext" type="hidden" value="'.$ref_ext.'">';
+    print '<input name="ref_int" type="hidden" value="'.$ref_int.'">';
     print '<input type="hidden" name="origin" value="'.GETPOST('origin').'">';
     print '<input type="hidden" name="originid" value="'.GETPOST('originid').'">';
 

@@ -67,6 +67,7 @@ class Facture extends CommonObject
     var $ref;
     var $ref_client;
     var $ref_ext;
+    var $ref_int;
     //! 0=Standard invoice, 1=Replacement invoice, 2=Credit note invoice, 3=Deposit invoice, 4=Proforma invoice
     var $type;
     var $amount;
@@ -221,7 +222,7 @@ class Facture extends CommonObject
         $sql.= ", datef";
         $sql.= ", note";
         $sql.= ", note_public";
-        $sql.= ", ref_client, ref_ext";
+        $sql.= ", ref_client, ref_int";
         $sql.= ", fk_facture_source, fk_user_author, fk_projet";
         $sql.= ", fk_cond_reglement, fk_mode_reglement, date_lim_reglement, model_pdf";
         $sql.= ")";
@@ -238,7 +239,7 @@ class Facture extends CommonObject
         $sql.= ",".($this->note?"'".$this->db->escape($this->note)."'":"null");
         $sql.= ",".($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
         $sql.= ",".($this->ref_client?"'".$this->db->escape($this->ref_client)."'":"null");
-        $sql.= ",".($this->ref_ext?"'".$this->db->escape($this->ref_ext)."'":"null");
+        $sql.= ",".($this->ref_int?"'".$this->db->escape($this->ref_int)."'":"null");
         $sql.= ",".($this->fk_facture_source?"'".$this->db->escape($this->fk_facture_source)."'":"null");
         $sql.= ",".($user->id > 0 ? "'".$user->id."'":"null");
         $sql.= ",".($this->fk_project?$this->fk_project:"null");
@@ -646,13 +647,13 @@ class Facture extends CommonObject
      * 	@param		ref			External reference of invoice
      *	@return     int         >0 if OK, <0 if KO
      */
-    function fetch($rowid, $ref='', $ref_ext='')
+    function fetch($rowid, $ref='', $ref_ext='', $ref_int='')
     {
         global $conf;
 
-        if (empty($rowid) && empty($ref) && empty($ref_ext)) return -1;
+        if (empty($rowid) && empty($ref) && empty($ref_ext) && empty($ref_int)) return -1;
 
-        $sql = 'SELECT f.rowid,f.facnumber,f.ref_client,f.type,f.fk_soc,f.amount,f.tva, f.localtax1, f.localtax2, f.total,f.total_ttc,f.remise_percent,f.remise_absolue,f.remise';
+        $sql = 'SELECT f.rowid,f.facnumber,f.ref_client,f.ref_ext,f.ref_int,f.type,f.fk_soc,f.amount,f.tva, f.localtax1, f.localtax2, f.total,f.total_ttc,f.remise_percent,f.remise_absolue,f.remise';
         $sql.= ', f.datef as df';
         $sql.= ', f.date_lim_reglement as dlr';
         $sql.= ', f.datec as datec';
@@ -672,6 +673,7 @@ class Facture extends CommonObject
         if ($rowid)   $sql.= " AND f.rowid=".$rowid;
         if ($ref)     $sql.= " AND f.facnumber='".$this->db->escape($ref)."'";
         if ($ref_ext) $sql.= " AND f.ref_ext='".$this->db->escape($ref_ext)."'";
+        if ($ref_int) $sql.= " AND f.ref_int='".$this->db->escape($ref_int)."'";
 
         dol_syslog("Facture::Fetch sql=".$sql, LOG_DEBUG);
         $result = $this->db->query($sql);
@@ -685,6 +687,7 @@ class Facture extends CommonObject
                 $this->ref                    = $obj->facnumber;
                 $this->ref_client             = $obj->ref_client;
                 $this->ref_ext				  = $obj->ref_ext;
+                $this->ref_int				  = $obj->ref_int;
                 $this->type                   = $obj->type;
                 $this->date                   = $this->db->jdate($obj->df);
                 $this->date_creation          = $this->db->jdate($obj->datec);
