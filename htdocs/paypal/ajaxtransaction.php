@@ -263,6 +263,8 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 	else if ($_GET['action'] == 'showdetails')
 	{
 		$langs->load('paypal');
+		$langs->load('orders');
+		$langs->load('bills');
 		
 		$return_arr = array();
 		$return_arr['element_created'] = false;
@@ -349,6 +351,37 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 		}
 		
 		$return_arr['contents'].= '</table>';
+		
+		if (! empty($objects))
+		{
+			$return_arr['contents'].= '<table style="noboardernopading" width="100%">';
+			
+			$return_arr['contents'].= '<tr class="liste_titre">';
+			$return_arr['contents'].= '<td colspan="3">'.$langs->trans('BuildDocuments').'</td>';
+			$return_arr['contents'].= '</tr>';
+			
+			if (! empty($objects['order']))
+			{
+				$var=!$var;
+				$return_arr['contents'].= '<tr '.$bc[$var].'>';
+				$return_arr['contents'].= '<td>'.$langs->trans('RefOrder').'</td>';
+				$return_arr['contents'].= '<td>'.$objects['order']->getNomUrl(1).'</td>';
+				$return_arr['contents'].= '<td align="center">'.$objects['order']->getLibStatut(3).'</td>';
+				$return_arr['contents'].= '</tr>';
+			}
+			if (! empty($objects['invoice']))
+			{
+				$var=!$var;
+				$return_arr['contents'].= '<tr '.$bc[$var].'>';
+				$return_arr['contents'].= '<td>'.$langs->trans('InvoiceRef').'</td>';
+				$return_arr['contents'].= '<td>'.$objects['invoice']->getNomUrl(1).'</td>';
+				$return_arr['contents'].= '<td align="center">'.$objects['invoice']->getLibStatut(3).'</td>';
+				$return_arr['contents'].= '</tr>';
+			}
+			
+			$return_arr['contents'].= '</table>';
+		}
+		
 		
 		/*
 		$return_arr['contents'].= '<br />';
