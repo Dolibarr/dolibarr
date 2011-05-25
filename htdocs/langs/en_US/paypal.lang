@@ -34,6 +34,7 @@ PaypalCreateInvoiceEnabled=Enable the ability to create customer invoices
 UseThePriceDefinedInPaypal=Use the price defined in Paypal instead of the one defined in Dolibarr
 DefaultProductShippingCosts=Select the product to be used for adding shipping costs.
 DefaultPaypalAccount=Select the bank account to be used as a Paypal account, this will deduct the Paypal fee when adding a payment.
+ErrorProductWithRefNotSamePrice=The price set for the reference "<i>%s</i>" does not match the price Paypal
 
 # Paypal transaction fields
 PAYERID=Payer ID
