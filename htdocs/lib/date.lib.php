@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
  *
@@ -200,35 +200,37 @@ function dol_get_next_month($month, $year)
 }
 
 /**	Return previous week
+ *  @param      day     Day
  * 	@param		week	Week
  *	@param		year	Year
- *	@return		array	Previous year,month,week
+ *	@return		array	Previous year,month,day
  */
 function dol_get_prev_week($day, $week, $month, $year)
 {
 	$tmparray = dol_get_first_day_week($day, $month, $year);
-	
+
 	$time=dol_mktime(12,0,0,$month,$tmparray['first_day'],$year,1,0);
 	$time-=24*60*60*7;
 	$tmparray=dol_getdate($time,true);
 	return array('year' => $tmparray['year'], 'month' => $tmparray['mon'], 'day' => $tmparray['mday']);
 }
- 
+
 /**	Return next week
- *	@param		week	Week
+ *  @param      day     Day
+ *  @param      week    Week
  *	@param		year	Year
- *	@return		array	Next year,month,week
+ *	@return		array	Next year,month,day
  */
-function dol_get_next_week($day,$week, $month, $year)
+function dol_get_next_week($day, $week, $month, $year)
 {
 	$tmparray = dol_get_first_day_week($day, $month, $year);
-	
+
 	$time=dol_mktime(12,0,0,$month,$tmparray['first_day'],$year,1,0);
 	$time+=24*60*60*7;
 	$tmparray=dol_getdate($time,true);
-	
+
 	return array('year' => $tmparray['year'], 'month' => $tmparray['mon'], 'day' => $tmparray['mday']);
-	
+
 }
 
 /**	Return GMT time for first day of a month or year
@@ -277,74 +279,75 @@ function dol_get_last_day($year,$month=12,$gm=false)
  * 	@param		gm			False = Return date to compare with server TZ, True to compare with GM date.
  *	@return		array		year,month, week,first_day,prev_year,prev_month,prev_day
  */
-function dol_get_first_day_week($day,$month,$year,$gm=false) 
+function dol_get_first_day_week($day,$month,$year,$gm=false)
 {
 	global $conf;
-	
+
 	$date = dol_mktime(0,0,0,$month,$day,$year,$gm);
-	
+
 	//Checking conf of start week
 	$start_week = (isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:1);
-	
+
 	$tmparray = dol_getdate($date,true);
- 	
-	//Calculate days to count 
+
+	//Calculate days to count
 	$days = $start_week - $tmparray['wday'];
  	if ($days>=1) $days=7-$days;
  	$days = abs($days);
     $seconds = $days*24*60*60;
-    
+
     //Get first day of week
     $tmpday = date($tmparray[0])-$seconds;
 	$tmpday = date("d",$tmpday);
-	
+
 	//Check first day of week is form this month or not
 	if ($tmpday>$day)
     {
     	$prev_month = $month-1;
 		$prev_year  = $year;
-  
+
     	if ($prev_month==0)
     	{
     		$prev_month = 12;
     		$prev_year  = $year-1;
     	}
     }
-    else 
+    else
     {
     	$prev_month = $month;
 		$prev_year  = $year;
     }
 
-    //Get first day of next week 
+    //Get first day of next week
 	$tmptime=dol_mktime(12,0,0,$month,$tmpday,$year,1,0);
 	$tmptime-=24*60*60*7;
 	$tmparray=dol_getdate($tmptime,true);
     $prev_day   = $tmparray['mday'];
-    
+
     //Check first day of week is form this month or not
 	if ($prev_day>$tmpday)
     {
     	$prev_month = $month-1;
 		$prev_year  = $year;
-  
+
     	if ($prev_month==0)
     	{
     		$prev_month = 12;
     		$prev_year  = $year-1;
     	}
     }
-	
+
     $week = date("W",dol_mktime(0,0,0,$month,$tmpday,$year,$gm));
-    
+
 	return array('year' => $year, 'month' => $month, 'week' => $week, 'first_day' => $tmpday, 'prev_year' => $prev_year, 'prev_month' => $prev_month, 'prev_day' => $prev_day);
 }
 
 /**
  *	Fonction retournant le nombre de jour fieries samedis et dimanches entre 2 dates entrees en timestamp
- *	@remarks	Called by function num_open_day
+ *	Called by function num_open_day
  *	@param	    timestampStart      Timestamp de debut
  *	@param	    timestampEnd        Timestamp de fin
+ *  @param      countrycode         Country code
  *	@return   	nbFerie             Nombre de jours feries
  */
 function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR')

@@ -27,6 +27,7 @@
 
 /**
  *	Get value of an HTML field, do Ajax process and show result
+ *  @param      selected            Preselecte value
  *	@param	    htmlname            HTML name of input field
  *	@param	    url                 Url for request: /chemin/fichier.php
  *  @param		option				More parameters on URL request
@@ -207,9 +208,9 @@ function ajax_combobox($htmlname)
     	$( "#'.$htmlname.'" ).combobox();
     });
 	</script>';
-	
+
     $msg.= "\n";
-    
+
     return $msg;
 }
 
@@ -220,7 +221,7 @@ function ajax_combobox($htmlname)
 function ajax_constantonoff($code)
 {
 	global $conf, $langs;
-	
+
 	$out= '<script type="text/javascript">
 		$(function() {
 			$( "#set_'.$code.'" ).click(function() {
@@ -245,17 +246,17 @@ function ajax_constantonoff($code)
 			});
 		});
 	</script>';
-	
+
 	$out.= '<span id="set_'.$code.'" class="linkobject '.($conf->global->$code?'hideobject':'').'">'.img_picto($langs->trans("Disabled"),'switch_off').'</span>';
 	$out.= '<span id="del_'.$code.'" class="linkobject '.($conf->global->$code?'':'hideobject').'">'.img_picto($langs->trans("Enabled"),'switch_on').'</span>';
-	
+
 	return $out;
 }
 
 /**
- *
- * Enter description here ...
- * @param unknown_type $var
+ * Convert a PHP array into a js array
+ * @param       $var
+ * @return      String with js array or false if error
  */
 function php2js($var)
 {
@@ -277,7 +278,7 @@ function php2js($var)
         return "\"" . addslashes(stripslashes($var)) . "\"";
     }
     // autres cas: objets, on ne les gère pas
-    return FALSE;
+    return false;
 }
 
 

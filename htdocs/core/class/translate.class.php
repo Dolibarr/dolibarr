@@ -141,7 +141,7 @@ class Translate {
 	 *  If data for file already loaded, do nothing.
 	 * 	All data in translation array are stored in UTF-8 format.
      *  tab_loaded is completed with $domain key.
-     *              Value for hash are: 1:Loaded from disk, 2:Not found, 3:Loaded from cache
+     *  Value for hash are: 1:Loaded from disk, 2:Not found, 3:Loaded from cache
 	 *  @param      domain      		File name to load (.lang file). Use file@module if file is in a module directory.
 	 *  @param      alt         		0 (try xx_ZZ then 1), 1 (try xx_XX then 2), 2 (try en_US or fr_FR or es_ES)
 	 * 	@param		stopafterdirection	Stop when the DIRECTION tag is found (optimize)

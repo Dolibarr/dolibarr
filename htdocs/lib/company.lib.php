@@ -330,11 +330,11 @@ function getFormeJuridiqueLabel($code)
 
 
 /**
- * 		\brief		Show html area for list of projects
- *		\param		conf		Object conf
- * 		\param		lang		Object lang
- * 		\param		db			Database handler
- * 		\param		objsoc		Third party object
+ * 		Show html area for list of projects
+ *		@param		conf		Object conf
+ * 		@param		lang		Object lang
+ * 		@param		db			Database handler
+ * 		@param		object		Third party object
  */
 function show_projects($conf,$langs,$db,$object)
 {
@@ -419,11 +419,11 @@ function show_projects($conf,$langs,$db,$object)
 
 
 /**
- * 		\brief		Show html area for list of contacts
- *		\param		conf		Object conf
- * 		\param		lang		Object lang
- * 		\param		db			Database handler
- * 		\param		objsoc		Third party object
+ * 		Show html area for list of contacts
+ *		@param		conf		Object conf
+ * 		@param		lang		Object lang
+ * 		@param		db			Database handler
+ * 		@param		object		Third party object
  */
 function show_contacts($conf,$langs,$db,$object)
 {
@@ -881,7 +881,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
  *		@param		conf		Object conf
  * 		@param		lang		Object lang
  * 		@param		db			Database handler
- * 		@param		objsoc		Third party object
+ * 		@param		object		Third party object
  */
 function show_subsidiaries($conf,$langs,$db,$object)
 {

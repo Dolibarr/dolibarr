@@ -550,6 +550,7 @@ function dolibarr_print_date($time,$format='',$to_gmt=false,$outputlangs='',$enc
  * 								false or 'tzserver'=output string is for local PHP server TZ usage
  * 								'tzuser'=output string is for local browser TZ usage
  *	@param		outputlangs		Object lang that contains language for text translation.
+ *  @param      encodetooutput  false=no convert into output pagecode
  * 	@return     string      	Formated date or '' if time is null
  *  @see        dol_mktime, dol_stringtotime, dol_getdate
  */
@@ -2285,10 +2286,12 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 
 
 /**
- *	Affiche message erreur de type acces interdit et arrete le programme
- *	L'appel a cette fonction termine le code.
- *	@param		message			Force error message
- *	@param		printheader		Affiche avant le header
+ *	Show a message to say access is forbidden and stop program
+ *	Calling this function terminate execution of PHP.
+ *	@param		message			    Force error message
+ *	@param		printheader		    Show header before
+ *  @param      printfooter         Show footer after
+ *  @param      showonlymessage     Show only message parameter. Otherwise add more information.
  */
 function accessforbidden($message='',$printheader=1,$printfooter=1,$showonlymessage=0)
 {
@@ -3369,8 +3372,9 @@ function dol_htmlcleanlastbr($stringtodecode)
 
 /**
  *	This function is called to decode a string with HTML entities (it decodes entities tags)
- * 	@param   	string      stringhtml
- * 	@return  	string	  	decodestring
+ * 	@param   	stringhtml      stringhtml
+ *  @param      pagecodeto      Encoding of input string
+ * 	@return  	string	  	    decodestring
  */
 function dol_entity_decode($stringhtml,$pagecodeto='UTF-8')
 {
@@ -3380,9 +3384,10 @@ function dol_entity_decode($stringhtml,$pagecodeto='UTF-8')
 
 /**
  * Replace html_entity_decode functions to manage errors
- * @param unknown_type $a
- * @param unknown_type $b
- * @param unknown_type $c
+ * @param   a
+ * @param   b
+ * @param   c
+ * @return  string      String decoded
  */
 function dol_html_entity_decode($a,$b,$c)
 {
@@ -3393,9 +3398,10 @@ function dol_html_entity_decode($a,$b,$c)
 
 /**
  * Replace htmlentities functions to manage errors
- * @param unknown_type $a
- * @param unknown_type $b
- * @param unknown_type $c
+ * @param   a
+ * @param   b
+ * @param   c
+ * @return  string      String encoded
  */
 function dol_htmlentities($a,$b,$c)
 {
@@ -3489,7 +3495,7 @@ function dol_microtime_float()
     return ((float)$usec + (float)$sec);
 }
 
-/*
+/**
  *		Return if a text is a html content
  *		@param		msg			Content to check
  *		@param		option		0=Full detection, 1=Fast check
