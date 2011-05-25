@@ -775,7 +775,6 @@ if ($action == 'edit')
 	$adht = new AdherentType($db);
     $adht->fetch($adh->typeid);
 
-
 	// We set pays_id, and pays_code label of the chosen country
 	if (isset($_POST["pays"]) || $adh->pays_id)
 	{
@@ -993,7 +992,6 @@ if ($rowid && $action != 'edit')
     $res=$adht->fetch($adh->typeid);
 	if ($res < 0) dol_print_error($db);
 
-    $html = new Form($db);
 
 	/*
 	 * Affichage onglets
