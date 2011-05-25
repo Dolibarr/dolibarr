@@ -41,6 +41,8 @@ $confirm	= GETPOST('confirm');
 
 $facid		= GETPOST('facid');
 $socname	= GETPOST('socname');
+$accountid	= GETPOST('accountid');
+$paymentnum	= GETPOST('num_paiement');
 
 $sortfield	= GETPOST('sortfield');
 $sortorder	= GETPOST('sortorder');
@@ -244,6 +246,13 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             $formquestion[$i++]=array('type' => 'hidden','name' => 'socid', 'value' => $facture->socid);
             $formquestion[$i++]=array('type' => 'hidden','name' => 'type',  'value' => $facture->type);
         }
+        
+        // Invoice with Paypal transaction
+        if ($conf->paypal->enabled && $conf->global->PAYPAL_ENABLE_TRANSACTION_MANAGEMENT && ! empty($facture->ref_int))
+        {
+        	if (! empty($conf->global->PAYPAL_BANK_ACCOUNT)) $accountid=$conf->global->PAYPAL_BANK_ACCOUNT;
+        	$paymentnum=$facture->ref_int;
+        }
 
         if ($conf->use_javascript_ajax)
         {
@@ -332,7 +341,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             if ($facture->type != 2) print '<td><span class="fieldrequired">'.$langs->trans('AccountToCredit').'</span></td>';
             if ($facture->type == 2) print '<td><span class="fieldrequired">'.$langs->trans('AccountToDebit').'</span></td>';
             print '<td>';
-            $html->select_comptes(GETPOST('accountid'),'accountid',0,'',2);
+            $html->select_comptes($accountid,'accountid',0,'',2);
             print '</td>';
         }
         else
@@ -345,7 +354,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         print '<tr><td>'.$langs->trans('Numero');
         print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
         print '</td>';
-        print '<td><input name="num_paiement" type="text" value="'.GETPOST('num_paiement').'"></td></tr>';
+        print '<td><input name="num_paiement" type="text" value="'.$paymentnum.'"></td></tr>';
 
         // Check transmitter
         print '<tr><td class="'.(GETPOST('paiementcode')=='CHQ'?'fieldrequired ':'').'fieldrequireddyn">'.$langs->trans('CheckTransmitter');
