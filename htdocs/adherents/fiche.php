@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1018,9 +1018,15 @@ if ($rowid && $action != 'edit')
 
 		// Create a form array
 		$formquestion=array(
-		array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login));
-
-		$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?rowid=".$adh->id,$langs->trans("CreateDolibarrLogin"),$langs->trans("ConfirmCreateLogin"),"confirm_create_user",$formquestion,'yes');
+		array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login)
+		);
+        $text=$langs->trans("ConfirmCreateLogin").'<br>';
+        if ($conf->societe->enabled)
+        {
+            if ($adh->fk_soc > 0) $text.=$langs->trans("UserWillBeExternalUser");
+            else $text.=$langs->trans("UserWillBeInternalUser");
+        }
+		$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?rowid=".$adh->id,$langs->trans("CreateDolibarrLogin"),$text,"confirm_create_user",$formquestion,'yes');
 		if ($ret == 'html') print '<br>';
 	}
 

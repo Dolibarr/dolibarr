@@ -767,9 +767,16 @@ else
             // Create a form array
             $formquestion=array(
             array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login),
-            array('label' => $langs->trans("Password"), 'type' => 'text', 'name' => 'password', 'value' => $password));
-
-            $ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("CreateDolibarrLogin"),$langs->trans("ConfirmCreateContact"),"confirm_create_user",$formquestion,'no');
+            array('label' => $langs->trans("Password"), 'type' => 'text', 'name' => 'password', 'value' => $password),
+            //array('label' => $form->textwithpicto($langs->trans("Type"),$langs->trans("InternalExternalDesc")), 'type' => 'select', 'name' => 'intern', 'default' => 1, 'values' => array(0=>$langs->trans('Internal'),1=>$langs->trans('External')))
+            );
+            $text=$langs->trans("ConfirmCreateContact").'<br>';
+            if ($conf->societe->enabled)
+            {
+                if ($object->socid > 0) $text.=$langs->trans("UserWillBeExternalUser");
+                else $text.=$langs->trans("UserWillBeInternalUser");
+            }
+            $ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("CreateDolibarrLogin"),$text,"confirm_create_user",$formquestion,'yes');
             if ($ret == 'html') print '<br>';
         }
 
@@ -805,6 +812,7 @@ else
         print $object->getCivilityLabel();
         print '</td></tr>';
 
+        // Role
         print '<tr><td>'.$langs->trans("PostOrFunction" ).'</td><td colspan="3">'.$object->poste.'</td>';
 
         // Address

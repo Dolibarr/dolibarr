@@ -1998,7 +1998,7 @@ class Form
 	                {
 	                	$more.='<tr><td valign="top">';
 	                	if (! empty($input['label'])) $more.=$input['label'].'</td><td valign="top" colspan="2" align="left">';
-	                    $more.=$this->selectarray($input['name'],$input['values'],'',1);
+	                    $more.=$this->selectarray($input['name'],$input['values'],$input['default'],1);
 	                    $more.='</td></tr>'."\n";
 	                }
 	                else if ($input['type'] == 'checkbox')

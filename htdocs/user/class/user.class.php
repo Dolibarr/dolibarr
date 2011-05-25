@@ -69,6 +69,7 @@ class User extends CommonObject
 
 	var $datec;
 	var $datem;
+    //! If this is defined, it is an external user
 	var $societe_id;
 	var $fk_member;
 
@@ -810,11 +811,11 @@ class User extends CommonObject
 
 
 	/**
-	 *      Cree en base un utilisateur depuis l'objet contact
-	 *      @param    contact     Objet du contact source
-	 * 		@param    login       Login to force
-	 *      @param    password    Password to force
-	 *      @return   int         <0 if error, if OK returns id of created user
+	 *      Create a user from a contact object. User will be internal but if contact is linked to a third party, user will be external.
+	 *      @param    contact      Object for source contact
+	 * 		@param    login        Login to force
+	 *      @param    password     Password to force
+	 *      @return   int          <0 if error, if OK returns id of created user
 	 */
 	function create_from_contact($contact,$login='',$password='')
 	{
@@ -875,10 +876,10 @@ class User extends CommonObject
 	}
 
 	/**
-	 *      \brief      Cree en base un utilisateur depuis l'objet adherent
-	 *      \param      member	Objet adherent source
-	 * 		\param		login	Login to force
-	 *      \return     int		Si erreur <0, si ok renvoie id compte cree
+	 *      Create a user into database from a member object
+	 *      @param      member	Object member source
+	 * 		@param		login	Login to force
+	 *      @return     int		<0 if KO, if OK, return id of created account
 	 */
 	function create_from_member($member,$login='')
 	{
@@ -904,6 +905,7 @@ class User extends CommonObject
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."user";
 			$sql.= " SET fk_member=".$member->id;
+			if ($member->fk_soc) $sql.= ", fk_societe=".$member->fk_soc;
 			$sql.= " WHERE rowid=".$this->id;
 
 			dol_syslog("User::create_from_member sql=".$sql, LOG_DEBUG);
@@ -975,12 +977,12 @@ class User extends CommonObject
 	}
 
 	/**
-	 *  	\brief      Mise e jour en base d'un utilisateur (sauf info mot de passe)
-	 *		\param		user				User qui fait la mise a jour
-	 *    	\param      notrigger			1 ne declenche pas les triggers, 0 sinon
-	 *		\param		nosyncmember		0=Synchronize linked member (standard info), 1=Do not synchronize linked member
-	 *		\param		nosyncmemberpass	0=Synchronize linked member (password), 1=Do not synchronize linked member
-	 *    	\return     int         		<0 si KO, >=0 si OK
+	 *  	Update a user into databse (except password)
+	 *		@param		user				User qui fait la mise a jour
+	 *    	@param      notrigger			1 ne declenche pas les triggers, 0 sinon
+	 *		@param		nosyncmember		0=Synchronize linked member (standard info), 1=Do not synchronize linked member
+	 *		@param		nosyncmemberpass	0=Synchronize linked member (password), 1=Do not synchronize linked member
+	 *    	@return     int         		<0 si KO, >=0 si OK
 	 */
 	function update($user,$notrigger=0,$nosyncmember=0,$nosyncmemberpass=0)
 	{
