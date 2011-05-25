@@ -2008,10 +2008,6 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
         {
             if (! $user->rights->banque->cheque) $readok=0;
         }
-        else if ($feature == 'ecm')
-        {
-            if (! $user->rights->ecm->download) $readok=0;
-        }
         else if ($feature == 'projet')
         {
             if (! $user->rights->projet->lire && ! $user->rights->projet->all->lire) $readok=0;

@@ -3316,13 +3316,13 @@ function migrate_reload_modules($db,$langs,$conf)
         $mod->init();
         }
     }
-    if (! empty($conf->global->MAIN_MODULE_ECM))    // Permission has changed into 3.0
+    if (! empty($conf->global->MAIN_MODULE_ECM))    // Permission has changed into 3.0 and 3.1
     {
         dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module ECM");
         if ($res) {
         $res=@include_once(DOL_DOCUMENT_ROOT.'/includes/modules/modECM.class.php');
         $mod=new modECM($db);
-        //$mod->remove('noboxes');	// We need to remove because a permission id has been removed
+        $mod->remove('noboxes');	// We need to remove because a permission id has been removed
         $mod->init();
         }
     }

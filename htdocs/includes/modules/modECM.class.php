@@ -95,17 +95,10 @@ class modECM extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 2501;
-		$this->rights[$r][1] = 'Consulter les documents';
+		$this->rights[$r][1] = 'Consulter/Télécharger les documents';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'read';
-		
-		$r++;
-		$this->rights[$r][0] = 2502;
-		$this->rights[$r][1] = 'Telecharger les documents';
-		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 1;
-		$this->rights[$r][4] = 'download';
 
 		$r++;
 		$this->rights[$r][0] = 2503;
@@ -136,7 +129,7 @@ class modECM extends DolibarrModules
 							  'url'=>'/ecm/index.php',
 							  'langs'=>'ecm',
 							  'position'=>100,
-							  'perms'=>'$user->rights->ecm->download || $user->rights->ecm->upload || $user->rights->ecm->setup',
+							  'perms'=>'$user->rights->ecm->read || $user->rights->ecm->upload || $user->rights->ecm->setup',
 							  'enabled'=>'$conf->ecm->enabled',
 							  'target'=>'',
 							  'user'=>2);			// 0=Menu for internal users, 1=external users, 2=both
@@ -150,8 +143,8 @@ class modECM extends DolibarrModules
 							  'url'=>'/ecm/index.php',
 							  'langs'=>'ecm',
 							  'position'=>101,
-							  'perms'=>'$user->rights->ecm->download || $user->rights->ecm->upload',
-							  'enabled'=>'$user->rights->ecm->download || $user->rights->ecm->upload',
+							  'perms'=>'$user->rights->ecm->read || $user->rights->ecm->upload',
+							  'enabled'=>'$user->rights->ecm->read || $user->rights->ecm->upload',
 							  'target'=>'',
 							  'user'=>2);			// 0=Menu for internal users, 1=external users, 2=both
 		$r++;
@@ -176,8 +169,8 @@ class modECM extends DolibarrModules
 							  'url'=>'/ecm/index.php?action=file_manager',
 							  'langs'=>'ecm',
 							  'position'=>102,
-							  'perms'=>'$user->rights->ecm->download || $user->rights->ecm->upload',
-							  'enabled'=>'$user->rights->ecm->download || $user->rights->ecm->upload',
+							  'perms'=>'$user->rights->ecm->read || $user->rights->ecm->upload',
+							  'enabled'=>'$user->rights->ecm->read || $user->rights->ecm->upload',
 							  'target'=>'',
 							  'user'=>2);			// 0=Menu for internal users, 1=external users, 2=both
 		$r++;
@@ -189,8 +182,8 @@ class modECM extends DolibarrModules
 							  'url'=>'/ecm/search.php',
 							  'langs'=>'ecm',
 							  'position'=>103,
-							  'perms'=>'$user->rights->ecm->download',
-							  'enabled'=>'$user->rights->ecm->download',
+							  'perms'=>'$user->rights->ecm->read',
+							  'enabled'=>'$user->rights->ecm->read',
 							  'target'=>'',
 							  'user'=>2);			// 0=Menu for internal users, 1=external users, 2=both
 		$r++;

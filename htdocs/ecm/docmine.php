@@ -369,7 +369,7 @@ if ($user->rights->ecm->upload)
 }
 
 // List of document
-if ($user->rights->ecm->download)
+if ($user->rights->ecm->read)
 {
 	$param='&amp;section='.$section;
 	$formfile->list_of_documents($filearray,'','ecm',$param,1,$relativepath,$user->rights->ecm->upload);
