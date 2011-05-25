@@ -19,7 +19,7 @@
 
 /**
  *	\file       htdocs/user/home.php
- *	\brief      Page acceuil de la zone utilisateurs et groupes
+ *	\brief      Home page of users and groups management
  *	\version    $Id$
  */
 
@@ -167,7 +167,7 @@ else
 
 
 /*
- * Derniers groupes crees
+ * Last groups created
  */
 if ($canreadperms)
 {
@@ -200,7 +200,7 @@ if ($canreadperms)
 				print img_picto($langs->trans("GlobalGroup"),'redstar');
 			}
 			print "</td>";
-			print '<td width="80" align="center">'.dol_print_date($db->jdate($obj->datec),'dayhour').'</td>';
+			print '<td nowrap="nowrap" align="right">'.dol_print_date($db->jdate($obj->datec),'dayhour').'</td>';
 			print "</tr>";
 			$i++;
 		}

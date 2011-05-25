@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 /**
  *      \file       htdocs/user/index.php
  * 		\ingroup	core
- *      \brief      Page d'accueil de la gestion des utilisateurs
+ *      \brief      Page of users
  *      \version    $Id$
  */
 
@@ -129,7 +129,7 @@ if ($result)
         print '</td>';
 
         // Date creation
-        print '<td nowrap="nowrap" align="center">'.dol_print_date($db->jdate($obj->datec),"day").'</td>';
+        print '<td nowrap="nowrap" align="center">'.dol_print_date($db->jdate($obj->datec),"dayhour").'</td>';
 
         // Date last login
         print '<td nowrap="nowrap" align="center">'.dol_print_date($db->jdate($obj->datelastlogin),"dayhour").'</td>';
