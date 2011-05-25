@@ -92,7 +92,7 @@ $nvpStr.="&ENDDATE=".$iso_end;
 if(isset($transactionID) && ! empty($transactionID)) {
 	$nvpStr.="&TRANSACTIONID=$transactionID";
 }
-print 'iso_start='.$iso_start.' iso_end='.$iso_end;
+
 // Call Paypal API
 if (! empty($nvpStr))
 {
