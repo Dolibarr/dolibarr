@@ -212,8 +212,8 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 						{
 							$product_type=($product->product_type?$product->product_type:0);
 	
-							if ($subelement == 'commande') $fields = array($object_id,$product->description,'',1,$product->tva_tx,$product->localtax1_tx,$product->localtax2_tx,$product->id,0,0,0,$product->price_base_type,$shipamount,'','',$product_type);
-							if ($subelement == 'facture') $fields = array($object_id,$product->description,'',1,$product->tva_tx,$product->localtax1_tx,$product->localtax2_tx,$product->id,0,'','',0,0,0,$product->price_base_type,$shipamount,$product_type);
+							if ($subelement == 'commande') $fields = array($object_id,$product->description,$shipamount,1,$product->tva_tx,$product->localtax1_tx,$product->localtax2_tx,$product->id,0,0,0,$product->price_base_type,$shipamount,'','',$product_type);
+							if ($subelement == 'facture') $fields = array($object_id,$product->description,$shipamount,1,$product->tva_tx,$product->localtax1_tx,$product->localtax2_tx,$product->id,0,'','',0,0,0,$product->price_base_type,$shipamount,$product_type);
 	
 							$result = $object->addline($fields[0],$fields[1],$fields[2],$fields[3],$fields[4],$fields[5],$fields[6],$fields[7],$fields[8],$fields[9],$fields[10],$fields[11],$fields[12],$fields[13],$fields[14],$fields[15],$fields[16]);
 		

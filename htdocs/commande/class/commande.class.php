@@ -595,7 +595,7 @@ class Commande extends CommonObject
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande (";
-		$sql.= " ref, fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note, note_public, ref_client, ref_ext";
+		$sql.= " ref, fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note, note_public, ref_client, ref_int";
 		$sql.= ", model_pdf, fk_cond_reglement, fk_mode_reglement, fk_availability, fk_demand_reason, date_livraison, fk_adresse_livraison";
 		$sql.= ", remise_absolue, remise_percent";
 		$sql.= ", entity";
@@ -606,7 +606,7 @@ class Commande extends CommonObject
 		$sql.= ", '".$this->db->escape($this->note)."'";
 		$sql.= ", '".$this->db->escape($this->note_public)."'";
 		$sql.= ", '".$this->db->escape($this->ref_client)."'";
-		$sql.= ", ".($this->ref_ext?"'".$this->db->escape($this->ref_ext)."'":"null");
+		$sql.= ", ".($this->ref_int?"'".$this->db->escape($this->ref_int)."'":"null");
 		$sql.= ", '".$this->modelpdf."'";
 		$sql.= ", ".($this->cond_reglement_id>0?"'".$this->cond_reglement_id."'":"null");
 		$sql.= ", ".($this->mode_reglement_id>0?"'".$this->mode_reglement_id."'":"null");
