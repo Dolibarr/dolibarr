@@ -39,17 +39,18 @@ class Stats
 
 	/**
 	 * Return nb of entity by month for several years
-	 *
 	 * @param 	endyear		Start year
 	 * @param 	startyear	End year
 	 * @return 	array		Array of values
 	 */
 	function getNbByMonthWithPrevYear($endyear,$startyear)
 	{
+	    if ($startyear > $endyear) return -1;
+
 		$datay=array();
 
 		$year=$startyear;
-		while($year <= $endyear)
+		while ($year <= $endyear)
 		{
 			$datay[$year] = $this->getNbByMonth($year);
 			$year++;
@@ -81,7 +82,9 @@ class Stats
 	 */
 	function getAmountByMonthWithPrevYear($endyear,$startyear)
 	{
-		$datay=array();
+        if ($startyear > $endyear) return -1;
+
+        $datay=array();
 
 		$year=$startyear;
 		while($year <= $endyear)
@@ -108,9 +111,9 @@ class Stats
 
 
 	/**
-	 * 	\brief  	Return nb of elements by year
-	 *	\param		sql		SQL request
-	 * 	\return		array
+	 * 	Return nb of elements by year
+	 *	@param		sql		SQL request
+	 * 	@return		array
 	 */
 	function _getNbByYear($sql)
 	{

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 /**
  *      \file       htdocs/compta/deplacement/class/deplacement.class.php
  *      \ingroup    deplacement
- *      \brief      Fichier de la classe des deplacements
+ *      \brief      File of class to manage trips
  *      \version    $Id$
  */
 
@@ -42,6 +42,9 @@ class Deplacement extends CommonObject
 	var $ismultientitymanaged = 0;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	var $id;
+
+	var $datec;         // Creation date
+	var $dated;
 	var $fk_user_author;
 	var $fk_user;
 	var $km;
@@ -85,10 +88,13 @@ class Deplacement extends CommonObject
 			return -1;
 		}
 
-		$this->db->begin();
+        $now=dol_now();
+
+        $this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."deplacement (";
 		$sql.= "datec";
+		//$sql.= ", dated";
 		$sql.= ", entity";
 		$sql.= ", fk_user_author";
 		$sql.= ", fk_user";
@@ -98,7 +104,7 @@ class Deplacement extends CommonObject
 		$sql.= ", fk_projet";
 		$sql.= ", fk_soc";
 		$sql.= ") VALUES (";
-		$sql.= $this->db->idate(mktime());
+		$sql.= " '".$this->db->idate($now)."'";
 		$sql.= ", ".$conf->entity;
 		$sql.= ", ".$user->id;
 		$sql.= ", ".$this->fk_user;
@@ -147,7 +153,12 @@ class Deplacement extends CommonObject
 
 		// Check parameters
 		if (! is_numeric($this->km)) $this->km = 0;
-		if (empty($this->type) || $this->type < 0)
+        if (empty($this->date))
+        {
+            $this->error='ErrorBadParameter';
+            return -1;
+        }
+        if (empty($this->type) || $this->type < 0)
 		{
 			$this->error='ErrorBadParameter';
 			return -1;

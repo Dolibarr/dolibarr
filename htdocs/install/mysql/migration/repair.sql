@@ -20,3 +20,5 @@ delete from llx_facture where facnumber = '';
 delete from llx_commande where ref = '';
 -- V4.1 delete from llx_propaldet where fk_propal in (select rowid from llx_propal where ref = '');
 delete from llx_propal where ref = '';
+
+update llx_deplacement set dated='2010-01-01' where dated < '2000-01-01';

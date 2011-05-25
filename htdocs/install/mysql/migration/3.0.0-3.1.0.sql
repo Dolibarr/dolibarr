@@ -10,6 +10,9 @@
 -- To change type of field: ALTER TABLE llx_table MODIFY name varchar(60);
 --
 
+-- Fix correupted data
+update llx_deplacement set dated='2010-01-01' where dated < '2000-01-01';
+
 RENAME TABLE llx_c_methode_commande_fournisseur TO llx_c_input_method;
 
 ALTER TABLE llx_adherent MODIFY login varchar(50);
@@ -122,7 +125,7 @@ ALTER TABLE llx_expedition ADD COLUMN ref_int varchar(30) AFTER ref_ext;
 ALTER TABLE llx_livraison ADD COLUMN ref_ext varchar(30) AFTER fk_soc;
 ALTER TABLE llx_livraison ADD COLUMN ref_int varchar(30) AFTER ref_ext;
 
-INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (4,'LETTREMAX','Lettre max','Courrier suivi et lettre max',0);
+INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (4,'LETTREMAX','Lettre Max','Courrier Suivi et Lettre Max',0);
 
 --Add Chile data (id pays=67)
 -- Regions Chile

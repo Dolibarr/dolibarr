@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -69,18 +69,23 @@ if ($_POST["action"] == 'add' && $user->rights->deplacement->creer)
 	{
 		$error=0;
 
-		$deplacement = new Deplacement($db);
-
-		$deplacement->date = dol_mktime(12, 0, 0,
+        $dated=dol_mktime(12, 0, 0,
 		$_POST["remonth"],
 		$_POST["reday"],
 		$_POST["reyear"]);
 
+        $deplacement = new Deplacement($db);
+		$deplacement->date = $dated;
 		$deplacement->km = $_POST["km"];
 		$deplacement->type = $_POST["type"];
 		$deplacement->socid = $_POST["socid"];
 		$deplacement->fk_user = $_POST["fk_user"];
 
+        if (! $deplacement->date)
+        {
+            $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date"));
+            $error++;
+        }
 		if ($deplacement->type == '-1') 	// Otherwise it is TF_LUNCH,...
 		{
 			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")).'</div>';
@@ -179,7 +184,7 @@ if ($_GET["action"] == 'create')
 {
 	print_fiche_titre($langs->trans("NewTrip"));
 
-	if ($mesg) print $mesg."<br>";
+	if ($mesg) dol_htmloutput_errors($mesg);
 
 	$datec = dol_mktime(12, 0, 0,
 	$_POST["remonth"],

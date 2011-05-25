@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (c) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,6 +66,7 @@ $stats = new DeplacementStats($db, $socid);
 
 // Build graphic number of object
 // $data = array(array('Lib',val1,val2,val3),...)
+//print "$endyear, $startyear";
 $data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
 //var_dump($data);
 
