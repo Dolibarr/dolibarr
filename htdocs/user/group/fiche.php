@@ -98,11 +98,13 @@ if ($_POST["action"] == 'add')
 				$db->commit();
 
 				Header("Location: fiche.php?id=".$editgroup->id);
+				exit;
 			}
 			else
 			{
-				$langs->load("errors");
 				$db->rollback();
+
+				$langs->load("errors");
 				$message='<div class="error">'.$langs->trans("ErrorGroupAlreadyExists",$editgroup->nom).'</div>';
 				$action="create";       // Go back to create page
 			}
@@ -311,7 +313,7 @@ else
 
 			// Note
 			print '<tr><td width="25%" valign="top">'.$langs->trans("Note").'</td>';
-			print '<td class="valeur">'.nl2br($group->note).'&nbsp;</td>';
+			print '<td class="valeur">'.dol_htmlentitiesbr($group->note).'&nbsp;</td>';
 			print "</tr>\n";
 			print "</table>\n";
 
