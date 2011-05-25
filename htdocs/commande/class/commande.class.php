@@ -1162,24 +1162,26 @@ class Commande extends CommonObject
 
 
 	/**
-	 *	\brief      Get object and lines from database
-	 *	\param      id       	Id of object to load
-	 * 	\param		ref			Ref of object
-	 *	\return     int         >0 if OK, <0 if KO
+	 *	Get object and lines from database
+	 *	@param      id       	Id of object to load
+	 * 	@param		ref			Ref of object
+	 * 	@param		ref_ext		External reference of object
+     * 	@param		ref_int		Internal reference of other object
+	 *	@return     int         >0 if OK, <0 if KO
 	 */
-	function fetch($id,$ref='')
+	function fetch($id, $ref='', $ref_ext='', $ref_int='')
 	{
 		global $conf;
 
 		// Check parameters
-		if (empty($id) && empty($ref)) return -1;
+		if (empty($id) && empty($ref) && empty($ref_ext) && empty($ref_int)) return -1;
 
 		$sql = 'SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut';
 		$sql.= ', c.amount_ht, c.total_ht, c.total_ttc, c.tva as total_tva, c.localtax1 as total_localtax1, c.localtax2 as total_localtax2, c.fk_cond_reglement, c.fk_mode_reglement, c.fk_availability, c.fk_demand_reason';
 		$sql.= ', c.date_commande';
 		$sql.= ', c.date_livraison';
 		$sql.= ', c.fk_projet, c.remise_percent, c.remise, c.remise_absolue, c.source, c.facture as facturee';
-		$sql.= ', c.note, c.note_public, c.ref_client, c.ref_ext, c.model_pdf, c.fk_adresse_livraison';
+		$sql.= ', c.note, c.note_public, c.ref_client, c.ref_ext, c.ref_int, c.model_pdf, c.fk_adresse_livraison';
 		$sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql.= ', cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle, cr.libelle_facture as cond_reglement_libelle_doc';
 		$sql.= ', ca.code as availability_code';
@@ -1192,8 +1194,10 @@ class Commande extends CommonObject
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_input_reason as dr ON (c.fk_demand_reason = ca.rowid)';
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = c.rowid AND el.targettype = '".$this->element."'";
 		$sql.= " WHERE c.entity = ".$conf->entity;
-		if ($ref) $sql.= " AND c.ref='".$ref."'";
-		else $sql.= " AND c.rowid=".$id;
+		if ($id)   	  $sql.= " AND c.rowid=".$id;
+        if ($ref)     $sql.= " AND c.ref='".$this->db->escape($ref)."'";
+        if ($ref_ext) $sql.= " AND c.ref_ext='".$this->db->escape($ref_ext)."'";
+        if ($ref_int) $sql.= " AND c.ref_int='".$this->db->escape($ref_int)."'";
 
 		dol_syslog("Commande::fetch sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql) ;
@@ -1206,6 +1210,7 @@ class Commande extends CommonObject
 				$this->ref                    = $obj->ref;
 				$this->ref_client             = $obj->ref_client;
 				$this->ref_ext				  = $obj->ref_ext;
+				$this->ref_int				  = $obj->ref_int;
 				$this->socid                  = $obj->fk_soc;
 				$this->statut                 = $obj->fk_statut;
 				$this->user_author_id         = $obj->fk_user_author;

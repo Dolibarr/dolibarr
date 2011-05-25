@@ -644,7 +644,8 @@ class Facture extends CommonObject
      *	Get object and lines from database
      *	@param      rowid       Id of object to load
      * 	@param		ref			Reference of invoice
-     * 	@param		ref			External reference of invoice
+     * 	@param		ref_ext		External reference of invoice
+     * 	@param		ref_int		Internal reference of other object
      *	@return     int         >0 if OK, <0 if KO
      */
     function fetch($rowid, $ref='', $ref_ext='', $ref_int='')

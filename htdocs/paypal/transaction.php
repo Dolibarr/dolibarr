@@ -274,7 +274,15 @@ print_liste_field_titre($langs->trans('Date'),$_SERVER['PHP_SELF'],'','',''.$soc
 print_liste_field_titre($langs->trans('GrossAmount'),$_SERVER['PHP_SELF'],'','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut, 'align="right"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans('FeeAmount'),$_SERVER['PHP_SELF'],'','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut, 'align="right"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans('NetAmount'),$_SERVER['PHP_SELF'],'','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut, 'align="right"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans('Status'),$_SERVER['PHP_SELF'],'','',''.$socid.'&amp;viewstatut='.$viewstatut,'align="right"',$sortfield,$sortorder);
+print_liste_field_titre(img_object($langs->trans('Paypal'), 'paypal@paypal'),$_SERVER['PHP_SELF'],'','',''.$socid.'&amp;viewstatut='.$viewstatut,'width="30" align="right"',$sortfield,$sortorder);
+if ($conf->commande->enabled && $conf->global->PAYPAL_CREATE_ORDER_ENABLED)
+{
+	print_liste_field_titre(img_object($langs->trans('Order'), 'order'),$_SERVER['PHP_SELF'],'','',''.$socid.'&amp;viewstatut='.$viewstatut,'width="15" align="center"',$sortfield,$sortorder);
+}
+if ($conf->facture->enabled && $conf->global->PAYPAL_CREATE_INVOICE_ENABLED)
+{
+	print_liste_field_titre(img_object($langs->trans('Bill'), 'bill'),$_SERVER['PHP_SELF'],'','',''.$socid.'&amp;viewstatut='.$viewstatut,'width="15" align="center"',$sortfield,$sortorder);
+}
 print '</tr>';
 
 $var=true;
@@ -303,18 +311,8 @@ else
 		$netamount		= $resArray["L_NETAMT".$i];
 		$currency 		= $resArray["L_CURRENCYCODE".$i];
 		
-		$status=-1; $url='';
-		if ($resArray["L_STATUS".$i]=='Completed') $status=0;
-		if (! empty($objects['order']))
-		{
-			$status=1;
-			$url=$objects['order']->getNomUrl(0,'',0,1);
-		}
-		if (! empty($objects['invoice']))
-		{
-			$status=2;
-			$url=$objects['invoice']->getNomUrl(0,'',0,1);
-		}
+		$status=0; $url='';
+		if ($resArray["L_STATUS".$i]=='Completed') $status=1;
 
 		print '<tr '.$bc[$var].'>';
 		print '<td><div id="'.$transactionID.'" class="paypal_link" style="font-weight:bold;cursor:pointer;">'.$transactionID.'</div></td>';
@@ -324,6 +322,20 @@ else
 		print '<td align="right">'.$feeamount.' '.$currency.'</td>';
 		print '<td align="right">'.$netamount.' '.$currency.'</td>';
 		print '<td align="right">'.getLibStatut($status, 1, $url).'</td>';
+		if ($conf->commande->enabled && $conf->global->PAYPAL_CREATE_ORDER_ENABLED)
+		{
+			print '<td align="center">';
+			if (! empty($objects['order']))	print '<a href="'.$objects['order']->getNomUrl(0,'',0,1).'">'.$objects['order']->getLibStatut(3).'</a>';
+			else print '-';
+			print '</td>';
+		}
+		if ($conf->facture->enabled && $conf->global->PAYPAL_CREATE_INVOICE_ENABLED)
+		{
+			print '<td align="center">';
+			if (! empty($objects['invoice'])) print '<a href="'.$objects['invoice']->getNomUrl(0,'',0,1).'">'.$objects['invoice']->getLibStatut(3).'</a>';
+			else print '-';
+			print '</td>';
+		}
 		print '</tr>';
 
 		$i++;

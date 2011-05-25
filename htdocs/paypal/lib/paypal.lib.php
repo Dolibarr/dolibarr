@@ -196,17 +196,13 @@ function getLibStatut($statut,$mode,$url)
 	if ($url) $out.= '<a href="'.$url.'">';
 	if ($mode == 0)
 	{
-		if ($statut==-1) $out.= $langs->trans('Undefined');
-		if ($statut==0) $out.= $langs->trans('NewTransaction');
-		if ($statut==1) $out.= $langs->trans('OrderIsCreated');
-		if ($statut==2) $out.= $langs->trans('InvoiceIsCreated');
+		if ($statut==0) $out.= $langs->trans('Undefined');
+		if ($statut==1) $out.= $langs->trans('NewTransaction');
 	}
 	if ($mode == 1)
 	{
-		if ($statut==-1) $out.= img_picto($langs->trans('Undefined'),'warning');
-		if ($statut==0) $out.= img_picto($langs->trans('NewTransaction'),'statut0');
-		if ($statut==1) $out.= img_picto($langs->trans('OrderIsCreated'),'statut3');
-		if ($statut==2) $out.= img_picto($langs->trans('InvoiceIsCreated'),'statut4');
+		if ($statut==0) $out.= img_picto($langs->trans('Undefined'),'warning');
+		if ($statut==1) $out.= img_picto($langs->trans('TransactionCompleted'),'statut4');
 	}
 	if ($url) $out.= '</a>';
 	
