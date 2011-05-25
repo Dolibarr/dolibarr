@@ -69,6 +69,8 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 		$error=0;
 		$return_arr = array();
 		
+		$db->begin();
+		
 		// Create customer if not exists
 		$ret = $soc->fetchObjectFrom($soc->table_element,'ref_int',$_SESSION[$_GET['transaction_id']]['PAYERID']);
 		if ($ret < 0)
@@ -97,8 +99,6 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 			$soc->tva_assuj			= 1;
 			$soc->client			= 1;
 			$soc->particulier		= 1;
-			
-			$db->begin();
 			
 			$result = $soc->create($user);
 			if ($result >= 0)
