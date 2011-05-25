@@ -160,9 +160,11 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
             $object->socid=$soc->id;
             $object->fetch_thirdparty();
 
-            $object->date		= dol_now();
-            $object->ref_int	= $_SESSION[$_GET['transaction_id']]['TRANSACTIONID'];
-            $shipamount			= ($_SESSION[$_GET['transaction_id']]['SHIPPINGAMT']?$_SESSION[$_GET['transaction_id']]['SHIPPINGAMT']:$_SESSION[$_GET['transaction_id']]['SHIPAMOUNT']);
+            $object->date				= dol_now();
+            $object->mode_reglement_id 	= 6; // Credit card by default
+            $object->cond_reglement_id	= 1;
+            $object->ref_int			= $_SESSION[$_GET['transaction_id']]['TRANSACTIONID'];
+            $shipamount					= ($_SESSION[$_GET['transaction_id']]['SHIPPINGAMT']?$_SESSION[$_GET['transaction_id']]['SHIPPINGAMT']:$_SESSION[$_GET['transaction_id']]['SHIPAMOUNT']);
 
             $object_id = $object->create($user);
             if ($object_id > 0)
