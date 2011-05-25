@@ -191,7 +191,7 @@ if ($_GET["id"])
 
     // Note
     print '<tr><td width="25%" valign="top">'.$langs->trans("Note").'</td>';
-    print '<td class="valeur">'.nl2br($fgroup->note).'</td>';
+    print '<td class="valeur">'.dol_htmlentitiesbr($fgroup->note).'</td>';
     print "</tr>\n";
 
     print '</table><br>';
