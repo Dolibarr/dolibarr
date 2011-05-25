@@ -1109,7 +1109,7 @@ function dol_print_ip($ip,$mode=0)
  *  @param      id          Id of object
  *  @param      address     Address string
  */
-function dol_print_address($address,$htmlid='gmap',$mode,$id)
+function dol_print_address($address, $htmlid='gmap', $mode, $id)
 {
     global $conf,$user,$langs;
 

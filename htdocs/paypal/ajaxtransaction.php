@@ -17,7 +17,7 @@
  */
 
 /**
- *       \file       htdocs/paypal/ajaxtransactiondetails.php
+ *       \file       htdocs/paypal/ajaxtransaction.php
  *       \brief      File to return Ajax response on paypal transaction details
  *       \version    $Id$
  */
@@ -61,16 +61,16 @@ dol_syslog(join(',',$_GET));
 if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transaction_id']) && ! empty($_GET['transaction_id']) )
 {
 	$langs->load("paypal");
-	
+
 	if ($_GET['action'] == 'add')
 	{
 		$soc = new Societe($db);
-		
+
 		$error=0;
 		$return_arr = array();
-		
+
 		$db->begin();
-		
+
 		// Create customer if not exists
 		$ret = $soc->fetchObjectFrom($soc->table_element,'ref_int',$_SESSION[$_GET['transaction_id']]['PAYERID']);
 		if ($ret < 0)
@@ -84,7 +84,7 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 			}
 			require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$module.".php");
 			$modCodeClient = new $module;
-			
+
 			// Create customer and return rowid
 			$soc->ref_int			= $_SESSION[$_GET['transaction_id']]['PAYERID'];
 			$soc->name              = empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?trim($_SESSION[$_GET['transaction_id']]['FIRSTNAME'].' '.$_SESSION[$_GET['transaction_id']]['LASTNAME']):trim($_SESSION[$_GET['transaction_id']]['LASTNAME'].' '.$_SESSION[$_GET['transaction_id']]['FIRSTNAME']);
@@ -99,14 +99,14 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 			$soc->tva_assuj			= 1;
 			$soc->client			= 1;
 			$soc->particulier		= 1;
-			
+
 			$result = $soc->create($user);
 			if ($result >= 0)
 			{
 				if ($soc->particulier)
 				{
 					$contact=new Contact($db);
-					
+
 					$contact->civilite_id = $soc->civilite_id;
 					$contact->name=$soc->nom_particulier;
 					$contact->firstname=$soc->prenom;
@@ -120,7 +120,7 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 					$contact->status=1;
 					$contact->email=$soc->email;
 					$contact->priv=0;
-					
+
 					$result=$contact->create($user);
 					if ($result < 0)
 					{
@@ -137,7 +137,7 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 				$error++;
 			}
 		}
-		
+
 		// Add element (order, bill, etc.)
 		if (! $error && $soc->id > 0 && isset($_GET['element']) && ! empty($_GET['element']))
 		{
@@ -156,19 +156,19 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 
             $classname = ucfirst($subelement);
             $object = new $classname($db);
-            
+
             $object->socid=$soc->id;
             $object->fetch_thirdparty();
-            
+
             $object->date		= dol_now();
             $object->ref_int	= $_SESSION[$_GET['transaction_id']]['TRANSACTIONID'];
             $shipamount			= ($_SESSION[$_GET['transaction_id']]['SHIPPINGAMT']?$_SESSION[$_GET['transaction_id']]['SHIPPINGAMT']:$_SESSION[$_GET['transaction_id']]['SHIPAMOUNT']);
-            
+
             $object_id = $object->create($user);
             if ($object_id > 0)
             {
 	            $i=0;
-				
+
 	            // Add element lines
 	            while (isset($_SESSION[$_GET['transaction_id']]["L_NAME".$i]))
 				{
@@ -181,7 +181,7 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 						if ($_SESSION[$_GET['transaction_id']]["L_AMT".$i]) $amount_ht = ($_SESSION[$_GET['transaction_id']]["L_AMT".$i] - $_SESSION[$_GET['transaction_id']]["L_SHIPPINGAMT".$i]);
 						else $amount_ht = ($_SESSION[$_GET['transaction_id']]["AMT"] - $_SESSION[$_GET['transaction_id']]["SHIPAMOUNT"] - $_SESSION[$_GET['transaction_id']]["L_TAXAMT".$i]);
 						$unitprice_ht = ($amount_ht / $qty);
-						
+
 						if ($conf->global->PAYPAL_USE_PRICE_DEFINED_IN_PAYPAL)
 						{
 							$price=$unitprice_ht;
@@ -201,7 +201,7 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 						if ($subelement == 'facture') $fields = array($object_id,$product->description,$price,$qty,$product->tva_tx,$product->localtax1_tx,$product->localtax2_tx,$product->id,0,'','',0,0,0,$product->price_base_type,0,$product->product_type);
 
 						$result = $object->addline($fields[0],$fields[1],$fields[2],$fields[3],$fields[4],$fields[5],$fields[6],$fields[7],$fields[8],$fields[9],$fields[10],$fields[11],$fields[12],$fields[13],$fields[14],$fields[15],$fields[16]);
-	
+
 	                    if ($result < 0)
 	                    {
 	                        $error++;
@@ -216,10 +216,10 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 						$langs->load("errors");
 						$return_arr['error'].= $langs->trans('ErrorProductWithRefNotExist', $_SESSION[$_GET['transaction_id']]["L_NUMBER".$i]).'<br />';
 					}
-					
+
 					$i++;
 				}
-				
+
 				// Add shipping costs
 				if (! $error && $shipamount > 0)
 				{
@@ -227,16 +227,16 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 					{
 						$product = new Product($db);
 						$ret = $product->fetch($conf->global->PAYPAL_PRODUCT_SHIPPING_COSTS);
-	
+
 						if ($ret > 0)
 						{
 							$product_type=($product->product_type?$product->product_type:0);
-	
+
 							if ($subelement == 'commande') $fields = array($object_id,$product->description,$shipamount,1,$product->tva_tx,$product->localtax1_tx,$product->localtax2_tx,$product->id,0,0,0,$product->price_base_type,$shipamount,'','',$product_type);
 							if ($subelement == 'facture') $fields = array($object_id,$product->description,$shipamount,1,$product->tva_tx,$product->localtax1_tx,$product->localtax2_tx,$product->id,0,'','',0,0,0,$product->price_base_type,$shipamount,$product_type);
-	
+
 							$result = $object->addline($fields[0],$fields[1],$fields[2],$fields[3],$fields[4],$fields[5],$fields[6],$fields[7],$fields[8],$fields[9],$fields[10],$fields[11],$fields[12],$fields[13],$fields[14],$fields[15],$fields[16]);
-		
+
 		                    if ($result < 0)
 		                    {
 		                        $error++;
@@ -258,7 +258,7 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 						$return_arr['error'].= $langs->trans('ErrorUndefinedProductForShippingCost').'<br />';
 					}
 				}
-				
+
 				// Add contact customer
             	if (! $error && $contact->id > 0)
 			    {
@@ -288,37 +288,37 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 		        $db->rollback();
 		    }
 		}
-		
+
 		echo json_encode($return_arr);
-	
+
 	}
 	else if ($_GET['action'] == 'showdetails')
 	{
 		$langs->load('orders');
 		$langs->load('bills');
-		
+
 		$return_arr = array();
 		$return_arr['element_created'] = false;
-		
+
 		// For paypal request optimization
 		if (! isset($_SESSION[$_GET['transaction_id']]) ) $_SESSION[$_GET['transaction_id']] = GetTransactionDetails($_GET['transaction_id']);
-		
+
 		// Check if already import
 		$i=0;
-		
+
 		$objects = getLinkedObjects($_GET['transaction_id']);
 		if (! empty($objects)) $return_arr['element_created'] = true;
-		
+
 		$soc = new Societe($db);
 		$ret = $soc->fetchObjectFrom($soc->table_element, 'ref_int', $_SESSION[$_GET['transaction_id']]['PAYERID']);
 
 		$var=true;
-		
+
 		$return_arr['contents'] = '<table style="noboardernopading" width="100%">';
 		$return_arr['contents'].= '<tr class="liste_titre">';
 		$return_arr['contents'].= '<td colspan="2">'.$langs->trans('ThirdParty').'</td>';
 		$return_arr['contents'].= '</tr>';
-		
+
 		if ($ret > 0)
 		{
 			$var=!$var;
@@ -341,24 +341,24 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 		$return_arr['contents'].= '<tr '.$bc[$var].'><td>'.$langs->trans('Email').'</td><td>'.$_SESSION[$_GET['transaction_id']]['EMAIL'].'</td>';
 		$var=!$var;
 		$return_arr['contents'].= '<tr '.$bc[$var].'><td>'.$langs->trans('Date').'</td><td>'.dol_print_date(dol_stringtotime($_SESSION[$_GET['transaction_id']]['ORDERTIME']),'dayhour').'</td>';
-		
+
 		$var=!$var;
 		$payerstatus=strtolower($_SESSION[$_GET['transaction_id']]['PAYERSTATUS']);
 		$img_payerstatus=($payerstatus=='verified' ? img_tick($langs->trans(ucfirst($payerstatus))) : img_warning($langs->trans(ucfirst($payerstatus))) );
 		$return_arr['contents'].= '<tr '.$bc[$var].'><td>'.$langs->trans('PAYERSTATUS').'</td><td>'.$img_payerstatus.'</td>';
-		
+
 		$var=!$var;
 		$addressstatus=strtolower($_SESSION[$_GET['transaction_id']]['ADDRESSSTATUS']);
 		$img_addressstatus=($addressstatus=='confirmed' ? img_tick($langs->trans(ucfirst($addressstatus))) : img_warning($langs->trans(ucfirst($addressstatus))) );
 		$return_arr['contents'].= '<tr '.$bc[$var].'><td>'.$langs->trans('ADDRESSSTATUS').'</td><td>'.$img_addressstatus.'</td>';
-		
+
 		$return_arr['contents'].= '</table>';
-		
+
 		$i=0;
 		$total_ht=0;
-		
+
 		$return_arr['contents'].= '<table style="noboardernopading" width="100%">';
-		
+
 		$return_arr['contents'].= '<tr class="liste_titre">';
 		$return_arr['contents'].= '<td>'.$langs->trans('Ref').'</td>';
 		$return_arr['contents'].= '<td>'.$langs->trans('Label').'</td>';
@@ -366,13 +366,13 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 		$return_arr['contents'].= '<td align="right">'.$langs->trans('Qty').'</td>';
 		$return_arr['contents'].= '<td align="right">'.$langs->trans('AmountHT').'</td>';
 		$return_arr['contents'].= '</tr>';
-		
+
 		while (isset($_SESSION[$_GET['transaction_id']]["L_NAME".$i]))
 		{
 			$var=!$var;
-			
+
 			$qty = $_SESSION[$_GET['transaction_id']]["L_QTY".$i];
-			
+
 			if ($_SESSION[$_GET['transaction_id']]["L_AMT".$i])
 			{
 				$amount_ht = ($_SESSION[$_GET['transaction_id']]["L_AMT".$i] - $_SESSION[$_GET['transaction_id']]["L_SHIPPINGAMT".$i]);
@@ -381,9 +381,9 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 			{
 				$amount_ht = ($_SESSION[$_GET['transaction_id']]["AMT"] - $_SESSION[$_GET['transaction_id']]["SHIPAMOUNT"] - $_SESSION[$_GET['transaction_id']]["L_TAXAMT".$i]);
 			}
-			
+
 			$unitprice_ht = ($amount_ht / $qty);
-			
+
 			$return_arr['contents'].= '<tr '.$bc[$var].'>';
 			$return_arr['contents'].= '<td>'.$_SESSION[$_GET['transaction_id']]["L_NUMBER".$i].'</td>';
 			$return_arr['contents'].= '<td>'.$_SESSION[$_GET['transaction_id']]["L_NAME".$i].'</td>';
@@ -391,35 +391,35 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 			$return_arr['contents'].= '<td align="right">'.$_SESSION[$_GET['transaction_id']]["L_QTY".$i].'</td>';
 			$return_arr['contents'].= '<td align="right">'.price($amount_ht).' '.$_SESSION[$_GET['transaction_id']]['CURRENCYCODE'].'</td>';
 			$return_arr['contents'].= '</tr>';
-			
+
 			$total_ht+=$amount_ht;
-			
+
 			$i++;
 		}
-		
+
 		$var=!$var;
 		$return_arr['contents'].= '<tr '.$bc[$var].'><td colspan="4" align="right"><strong>'.$langs->trans('TotalHT').'</strong></td><td align="right"><strong>'.price($total_ht).' '.$_SESSION[$_GET['transaction_id']]['CURRENCYCODE'].'</strong></td>';
-		
+
 		$var=!$var;
 		$return_arr['contents'].= '<tr '.$bc[$var].'><td colspan="4" align="right"><strong>'.$langs->trans('TotalVAT').'</strong></td><td align="right"><strong>'.price($_SESSION[$_GET['transaction_id']]['TAXAMT']).' '.$_SESSION[$_GET['transaction_id']]['CURRENCYCODE'].'</strong></td>';
-		
+
 		$shipamount=($_SESSION[$_GET['transaction_id']]['SHIPPINGAMT']?$_SESSION[$_GET['transaction_id']]['SHIPPINGAMT']:$_SESSION[$_GET['transaction_id']]['SHIPAMOUNT']);
 		$var=!$var;
 		$return_arr['contents'].= '<tr '.$bc[$var].'><td colspan="4" align="right"><strong>'.$langs->trans('SHIPAMOUNT').'</strong></td><td align="right"><strong>'.price($shipamount).' '.$_SESSION[$_GET['transaction_id']]['CURRENCYCODE'].'</strong></td>';
-		
+
 		$var=!$var;
 		$return_arr['contents'].= '<tr '.$bc[$var].'><td colspan="4" align="right"><strong>'.$langs->trans('TotalTTC').'</strong></td><td align="right"><strong>'.price($_SESSION[$_GET['transaction_id']]['AMT']).' '.$_SESSION[$_GET['transaction_id']]['CURRENCYCODE'].'</strong></td>';
-		
+
 		$return_arr['contents'].= '</table>';
-		
+
 		if (! empty($objects))
 		{
 			$return_arr['contents'].= '<table style="noboardernopading" width="100%">';
-			
+
 			$return_arr['contents'].= '<tr class="liste_titre">';
 			$return_arr['contents'].= '<td colspan="3">'.$langs->trans('BuildDocuments').'</td>';
 			$return_arr['contents'].= '</tr>';
-			
+
 			if (! empty($objects['order']))
 			{
 				$var=!$var;
@@ -438,10 +438,10 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 				$return_arr['contents'].= '<td align="center">'.$objects['invoice']->getLibStatut(3).'</td>';
 				$return_arr['contents'].= '</tr>';
 			}
-			
+
 			$return_arr['contents'].= '</table>';
 		}
-		
+
 /*
 		$return_arr['contents'].= '<br />';
 		foreach ($_SESSION[$_GET['transaction_id']] as $key => $value)
@@ -449,7 +449,7 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 			$return_arr['contents'].= $key.': '.$value.'<br />';
 		}
 */
-		
+
 		echo json_encode($return_arr);
 	}
 }

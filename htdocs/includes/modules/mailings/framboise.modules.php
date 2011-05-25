@@ -10,7 +10,7 @@
  */
 
 /**
- *	\file       htdocs/includes/modules/mailings/kiwi.modules.php
+ *	\file       htdocs/includes/modules/mailings/framboise.modules.php
  *	\ingroup    mailing
  *	\brief      Example file to provide a list of recipients for mailing module
  *	\version    $Revision$

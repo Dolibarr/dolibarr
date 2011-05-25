@@ -17,7 +17,7 @@
  */
 
 /**
- *   	\file       htdocs/admin/proxyto.php
+ *   	\file       htdocs/admin/proxy.php
  *      \ingroup    core
  *		\brief      Page  setup proxy to use for external web access
  *		\version    $Id$
