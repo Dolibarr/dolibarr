@@ -96,10 +96,11 @@ class Form
      * 	@param		paramkey		Key of parameter (unique if there is several parameter to show)
      * 	@param		perm			Permission to allow button to edit parameter
      * 	@param		typeofdata		Type of data ('string' by default, 'email', 'text', ...)
+     * 	@param		editvalue		Use this value instead $preselected
      *  @return     string          HTML edit field
      *  TODO no GET or POST in class file, use a param
      */
-    function editfieldval($text,$htmlname,$preselected,$paramkey,$paramvalue,$perm,$typeofdata='string')
+    function editfieldval($text,$htmlname,$preselected,$paramkey,$paramvalue,$perm,$typeofdata='string',$editvalue='')
     {
         global $langs;
         $ret='';
@@ -114,11 +115,11 @@ class Form
             $ret.='<tr><td>';
             if (in_array($typeofdata,array('string','email')))
             {
-                $ret.='<input type="text" name="'.$htmlname.'" value="'.$preselected.'">';
+                $ret.='<input type="text" name="'.$htmlname.'" value="'.($editvalue?$editvalue:$preselected).'">';
             }
             else if ($typeofdata == 'text')
             {
-                $ret.='<textarea name="'.$htmlname.'">'.$preselected.'</textarea>';
+                $ret.='<textarea name="'.$htmlname.'">'.($editvalue?$editvalue:$preselected).'</textarea>';
             }
             $ret.='</td>';
             $ret.='<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';

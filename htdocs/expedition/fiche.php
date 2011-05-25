@@ -672,11 +672,6 @@ else
 				$expedition->fetch_origin();
 			}
 
-			if (dol_strlen($expedition->tracking_number))
-			{
-				$expedition->GetUrlTrackingStatus();
-			}
-
 			$soc = new Societe($db);
 			$soc->fetch($expedition->socid);
 
@@ -930,16 +925,10 @@ else
 			print '</tr>';
 
 			// Tracking Number
+			$expedition->GetUrlTrackingStatus($expedition->tracking_number);
 			print '<tr><td>'.$html->editfieldkey("TrackingNumber",'trackingnumber',$expedition->tracking_number,'id',$expedition->id,$user->rights->expedition->creer).'</td><td colspan="3">';
-			print $html->editfieldval("TrackingNumber",'trackingnumber',$expedition->tracking_number,'id',$expedition->id,$user->rights->expedition->creer);
+			print $html->editfieldval("TrackingNumber",'trackingnumber',$expedition->tracking_url,'id',$expedition->id,$user->rights->expedition->creer,'string',$expedition->tracking_number);
 			print '</td></tr>';
-
-			if ($expedition->tracking_url)
-			{
-				print '<tr><td>'.$html->editfieldkey("TrackingUrl",'trackingurl',$expedition->tracking_url,'id',$expedition->id,$user->rights->expedition->creer).'</td><td colspan="3">';
-				print $html->editfieldval("TrackingUrl",'trackingurl',$expedition->tracking_url,'id',$expedition->id,$user->rights->expedition->creer);
-				print '</td></tr>';
-			}
 
 			print "</table>\n";
 

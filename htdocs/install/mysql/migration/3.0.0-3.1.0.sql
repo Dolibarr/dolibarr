@@ -122,6 +122,8 @@ ALTER TABLE llx_expedition ADD COLUMN ref_int varchar(30) AFTER ref_ext;
 ALTER TABLE llx_livraison ADD COLUMN ref_ext varchar(30) AFTER fk_soc;
 ALTER TABLE llx_livraison ADD COLUMN ref_int varchar(30) AFTER ref_ext;
 
+INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (4,'LETTREMAX','Lettre Max','Courrier Suivi et Lettre Max',0);
+
 --Add Chile data (id pays=67)
 -- Regions Chile
 INSERT INTO llx_c_regions (rowid, code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (6701, 6701, 67, NULL, NULL, 'Tarapacá', 1);

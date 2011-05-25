@@ -1054,18 +1054,23 @@ class Expedition extends CommonObject
 	/**
 	 *	Get tracking url status
 	 */
-	function GetUrlTrackingStatus()
+	function GetUrlTrackingStatus($value='')
 	{
-		$sql = "SELECT em.code";
-		$sql.= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
-		$sql.= " WHERE em.rowid = ".$this->expedition_method_id;
-
-		$resql = $this->db->query($sql);
-		if ($resql)
+		$code='';
+		
+		if (! empty($this->expedition_method_id))
 		{
-			if ($obj = $this->db->fetch_object($resql))
+			$sql = "SELECT em.code";
+			$sql.= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
+			$sql.= " WHERE em.rowid = ".$this->expedition_method_id;
+	
+			$resql = $this->db->query($sql);
+			if ($resql)
 			{
-				$code = $obj->code;
+				if ($obj = $this->db->fetch_object($resql))
+				{
+					$code = $obj->code;
+				}
 			}
 		}
 
@@ -1083,16 +1088,16 @@ class Expedition extends CommonObject
 
 			if ($url)
 			{
-				$this->tracking_url = sprintf('<a target="_blank" href="%s">url</a>',$url,$url);
+				$this->tracking_url = sprintf('<a target="_blank" href="%s">'.($value?$value:'url').'</a>',$url,$url);
 			}
 			else
 			{
-				$this->tracking_url = '';
+				$this->tracking_url = $value;
 			}
 		}
 		else
 		{
-			$this->tracking_url = '';
+			$this->tracking_url = $value;
 		}
 	}
 }
