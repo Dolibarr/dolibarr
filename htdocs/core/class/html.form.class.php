@@ -1835,7 +1835,7 @@ class Form
 
 
     /**
-     *    Return list of bank accounts
+     *    Return a HTML select list of bank accounts
      *    @param      selected          Id account pre-selected
      *    @param      htmlname          Name of select zone
      *    @param      statut            Status of searched accounts (0=open, 1=closed)
