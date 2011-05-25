@@ -2841,8 +2841,10 @@ class OrderLine
 			$this->special_code		= $objp->special_code;
 			$this->rang             = $objp->rang;
 
-			$this->ref	            = $objp->product_ref;
-			$this->product_libelle  = $objp->product_libelle;
+			$this->ref					= $objp->product_ref;      // deprecated
+            $this->product_ref			= $objp->product_ref;
+            $this->libelle				= $objp->product_libelle;  // deprecated
+            $this->product_label		= $objp->product_libelle;
 			$this->product_desc     = $objp->product_desc;
 
 			$this->date_start       = $this->db->jdate($objp->date_start);
