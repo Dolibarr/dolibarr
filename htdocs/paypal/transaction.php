@@ -80,7 +80,7 @@ $nvpStr.="&STARTDATE=$iso_start";
 
 if(isset($endDateStr) && ! empty($endDateStr)) {
 	$end_date_str 	= $endDateStr;
-	$end_time 		= dol_stringtotime($end_date_str);
+	$end_time 		= dol_stringtotime($end_date_str)+86400; // For search in current day
 } else {
 	$end_time 		= $now;
 	$end_date_str 	= dol_print_date($end_time,'day');
@@ -92,7 +92,7 @@ $nvpStr.="&ENDDATE=".$iso_end;
 if(isset($transactionID) && ! empty($transactionID)) {
 	$nvpStr.="&TRANSACTIONID=$transactionID";
 }
-
+print 'iso_start='.$iso_start.' iso_end='.$iso_end;
 // Call Paypal API
 if (! empty($nvpStr))
 {
