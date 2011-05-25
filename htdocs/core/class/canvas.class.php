@@ -72,42 +72,33 @@ class Canvas
 
 
 	/**
-	 * 	Initialize properties like ->control, ->control->object, ->template_dir
-	 * 	@param		module		Name of target module (thirdparty, ...)
-	 * 	@param		card	 	Type of card (ex: card, info, ...)
-	 * 	@param		canvas		Name of canvas (ex: mycanvas@mymodule)
+	 * 	Initialize properties: ->targetmodule, ->card, ->canvas
+	 *  and MVC properties:    ->control (Controller), ->control->object (Model), ->template_dir (View)
+	 * 	@param		module		Name of target module (thirdparty, contact, ...)
+	 * 	@param		card	 	Type of card (ex: card, info, contactcard, ...)
+	 * 	@param		canvas		Name of canvas (ex: mycanvas, default, or mycanvas@myexternalmodule)
 	 */
-	function getCanvas($module,$card,$canvas)
+	function getCanvas($module, $card, $canvas)
 	{
 		global $conf, $langs;
 
 		$error='';
-		$this->card = $card;
 
-		// Define this->canvas, this->targetmodule, this->aliasmodule, targetmodule, childmodule
+		// Set properties with value specific to dolibarr core: this->targetmodule, this->card, this->canvas
+        $this->targetmodule = $module;
+        $this->card = $card;
         $this->canvas = $canvas;
-		$this->targetmodule = $this->aliasmodule = $module;
+        $dirmodule = $module;
+        // Correct values if canvas is into an external module
 		if (preg_match('/^([^@]+)@([^@]+)$/i',$canvas,$regs))
 		{
             $this->canvas = $regs[1];
-		    $this->aliasmodule = $regs[2];
+		    $dirmodule = $regs[2];
 		}
-        $targetmodule = $this->targetmodule;
-        $childmodule = $this->aliasmodule;
 		// For compatibility
-        if ($targetmodule == 'thirdparty') { $targetmodule = 'societe'; }
-        if ($childmodule == 'thirdparty')  { $childmodule = 'societe'; $this->aliasmodule = 'societe'; }
-        if ($targetmodule == 'contact')    { $targetmodule = 'societe'; }
-        if ($childmodule == 'contact')     { $childmodule = 'societe'; }
+        if ($dirmodule == 'thirdparty') { $dirmodule = 'societe'; }
 
-		/*print 'canvas='.$this->canvas.'<br>';
-		print 'childmodule='.$childmodule.' targetmodule='.$targetmodule.'<br>';
-		print 'this->aliasmodule='.$this->aliasmodule.' this->targetmodule='.$this->targetmodule.'<br>';
-		print 'childmodule='.$conf->$childmodule->enabled.' targetmodule='.$conf->$targetmodule->enabled.'<br>';*/
-
-		if (! $conf->$childmodule->enabled || ! $conf->$targetmodule->enabled) accessforbidden();
-
-		$controlclassfile = dol_buildpath('/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/actions_'.$this->card.'_'.$this->canvas.'.class.php');
+		$controlclassfile = dol_buildpath('/'.$dirmodule.'/canvas/'.$this->canvas.'/actions_'.$this->card.'_'.$this->canvas.'.class.php');
 		if (file_exists($controlclassfile))
 		{
             // Include actions class (controller)
@@ -119,7 +110,7 @@ class Canvas
 		}
 
 		// TODO Dao should be declared and used by controller or templates when required only
-        $modelclassfile = dol_buildpath('/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/dao_'.$this->targetmodule.'_'.$this->canvas.'.class.php');
+        $modelclassfile = dol_buildpath('/'.$dirmodule.'/canvas/'.$this->canvas.'/dao_'.$this->targetmodule.'_'.$this->canvas.'.class.php');
         if (file_exists($modelclassfile))
         {
             // Include dataservice class (model)
@@ -132,16 +123,16 @@ class Canvas
 
 		// Include specific library
 		// TODO Specific libraries must be included by files that need them only, so by actions and/or dao files.
-		$libfile = dol_buildpath('/'.$this->aliasmodule.'/lib/'.$this->aliasmodule.'.lib.php');
+		$libfile = dol_buildpath('/'.$dirmodule.'/lib/'.$dirmodule.'.lib.php');
 		if (file_exists($libfile)) require_once($libfile);
 
 		// Template dir
-		$this->template_dir = dol_buildpath('/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/tpl/');
+		$this->template_dir = dol_buildpath('/'.$dirmodule.'/canvas/'.$this->canvas.'/tpl/');
         if (! is_dir($this->template_dir))
         {
             $this->template_dir='';
         }
-        //print '/'.$this->aliasmodule.'/canvas/'.$this->canvas.'/tpl/';
+        //print '/'.$dirmodule.'/canvas/'.$this->canvas.'/tpl/';
         //print 'template_dir='.$this->template_dir.'<br>';
 
 		return 1;

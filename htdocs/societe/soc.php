@@ -56,6 +56,8 @@ $soc = new Societe($db);
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 if (!empty($socid)) $soc->getCanvas($socid);
 $canvas = (!empty($soc->canvas)?$soc->canvas:GETPOST("canvas"));
+
+
 if (! empty($canvas))
 {
 	require_once(DOL_DOCUMENT_ROOT."/core/class/canvas.class.php");

@@ -173,9 +173,12 @@ class Societe extends CommonObject
         global $langs,$conf;
 
         // Clean parameters
+        if (empty($this->status)) $this->status=0;
         $this->name=$this->name?trim($this->name):trim($this->nom);
         if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->name=ucwords($this->name);
-        $this->nom=$this->name;     // For backward compatibility
+        $this->nom=$this->name; // For backward compatibility
+        if (empty($this->client))      $this->client=0;
+        if (empty($this->fournisseur)) $this->fournisseur=0;
 
         dol_syslog("Societe::create ".$this->name);
 
@@ -186,16 +189,14 @@ class Societe extends CommonObject
             $this->error = $langs->trans("ErrorBadEMail",$this->email);
             return -1;
         }
-        if (empty($this->client)) $this->client=0;
-        if (empty($this->fournisseur)) $this->fournisseur=0;
+
+        $now=dol_now();
 
         $this->db->begin();
 
         // For automatic creation during create action (not used by Dolibarr GUI, can be used by scripts)
         if ($this->code_client == -1)      $this->get_codeclient($this->prefix_comm,0);
         if ($this->code_fournisseur == -1) $this->get_codefournisseur($this->prefix_comm,1);
-
-        $now=dol_now();
 
         // Check more parameters
         $result = $this->verify();
