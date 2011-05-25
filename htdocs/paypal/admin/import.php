@@ -203,6 +203,33 @@ if ($conf->facture->enabled)
 	print '</td></tr>';
 }
 
+// Invoice
+if ($conf->facture->enabled)
+{
+	$var=!$var;
+	print '<tr '.$bc[$var].'>';
+	print '<td>'.$langs->trans("UseThePriceDefinedInPaypal").'</td>';
+	print '<td align="center" width="20">&nbsp;</td>';
+	
+	print '<td align="center" width="100">';
+	if ($conf->use_javascript_ajax)
+	{
+		print ajax_constantonoff('PAYPAL_USE_PRICE_DEFINED_IN_PAYPAL');
+	}
+	else
+	{
+		if($conf->global->PAYPAL_USE_PRICE_DEFINED_IN_PAYPAL == 0)
+		{
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_PAYPAL_USE_PRICE_DEFINED_IN_PAYPAL">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+		}
+		else if($conf->global->PAYPAL_USE_PRICE_DEFINED_IN_PAYPAL == 1)
+		{
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_PAYPAL_PAYPAL_USE_PRICE_DEFINED_IN_PAYPAL">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+		}
+	}
+	print '</td></tr>';
+}
+
 // Shipping costs
 $var=!$var;
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';

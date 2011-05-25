@@ -176,9 +176,27 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 					if ($ret > 0)
 					{
 						$qty=$_SESSION[$_GET['transaction_id']]["L_QTY".$i];
+						
+						if ($conf->global->PAYPAL_USE_PRICE_DEFINED_IN_PAYPAL)
+						{
+							if ($_SESSION[$_GET['transaction_id']]["L_AMT".$i])
+							{
+								$amount_ht = ($_SESSION[$_GET['transaction_id']]["L_AMT".$i] - $_SESSION[$_GET['transaction_id']]["L_SHIPPINGAMT".$i]);
+							}
+							else
+							{
+								$amount_ht = ($_SESSION[$_GET['transaction_id']]["AMT"] - $_SESSION[$_GET['transaction_id']]["SHIPAMOUNT"] - $_SESSION[$_GET['transaction_id']]["L_TAXAMT".$i]);
+							}
+							
+							$unitprice_ht = ($amount_ht / $qty);
+						}
+						else
+						{
+							$unitprice_ht = $product->price;
+						}
 
-						if ($subelement == 'commande') $fields = array($object_id,$product->description,$product->price,$qty,$product->tva_tx,$product->localtax1_tx,$product->localtax2_tx,$product->id,0,0,0,$product->price_base_type,0,'','',$product->product_type);
-						if ($subelement == 'facture') $fields = array($object_id,$product->description,$product->price,$qty,$product->tva_tx,$product->localtax1_tx,$product->localtax2_tx,$product->id,0,'','',0,0,0,$product->price_base_type,0,$product->product_type);
+						if ($subelement == 'commande') $fields = array($object_id,$product->description,$unitprice_ht,$qty,$product->tva_tx,$product->localtax1_tx,$product->localtax2_tx,$product->id,0,0,0,$product->price_base_type,0,'','',$product->product_type);
+						if ($subelement == 'facture') $fields = array($object_id,$product->description,$unitprice_ht,$qty,$product->tva_tx,$product->localtax1_tx,$product->localtax2_tx,$product->id,0,'','',0,0,0,$product->price_base_type,0,$product->product_type);
 
 						$result = $object->addline($fields[0],$fields[1],$fields[2],$fields[3],$fields[4],$fields[5],$fields[6],$fields[7],$fields[8],$fields[9],$fields[10],$fields[11],$fields[12],$fields[13],$fields[14],$fields[15],$fields[16]);
 	
@@ -357,13 +375,13 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 			if ($_SESSION[$_GET['transaction_id']]["L_AMT".$i])
 			{
 				$amount_ht = ($_SESSION[$_GET['transaction_id']]["L_AMT".$i] - $_SESSION[$_GET['transaction_id']]["L_SHIPPINGAMT".$i]);
-				$unitprice_ht = ($amount_ht / $qty);
 			}
 			else
 			{
 				$amount_ht = ($_SESSION[$_GET['transaction_id']]["AMT"] - $_SESSION[$_GET['transaction_id']]["SHIPAMOUNT"] - $_SESSION[$_GET['transaction_id']]["L_TAXAMT".$i]);
-				$unitprice_ht = ($amount_ht / $qty);
 			}
+			
+			$unitprice_ht = ($amount_ht / $qty);
 			
 			$return_arr['contents'].= '<tr '.$bc[$var].'>';
 			$return_arr['contents'].= '<td>'.$_SESSION[$_GET['transaction_id']]["L_NUMBER".$i].'</td>';
@@ -423,13 +441,13 @@ if (isset($_GET['action']) && ! empty($_GET['action']) && isset($_GET['transacti
 			$return_arr['contents'].= '</table>';
 		}
 		
-		/*
+/*
 		$return_arr['contents'].= '<br />';
 		foreach ($_SESSION[$_GET['transaction_id']] as $key => $value)
 		{
 			$return_arr['contents'].= $key.': '.$value.'<br />';
 		}
-		*/
+*/
 		
 		echo json_encode($return_arr);
 	}

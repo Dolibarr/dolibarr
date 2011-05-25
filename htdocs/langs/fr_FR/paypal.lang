@@ -31,6 +31,7 @@ OrderIsCreated=Commande créée
 InvoiceIsCreated=Facture créée
 PaypalCreateOrderEnabled=Activer la possibilité de créer des commandes clients.
 PaypalCreateInvoiceEnabled=Activer la possibilité de créer des factures clients.
+UseThePriceDefinedInPaypal=Utiliser le prix défini dans Paypal au lieu de celui défini dans Dolibarr
 DefaultProductShippingCosts=Sélectionnez le produit qui sera utilisé pour l'ajout des frais de port.
 DefaultPaypalAccount=Sélectionner le compte bancaire qui sera utilisé comme compte Paypal, ceci permettra de déduire les frais Paypal lors de l'ajout d'un paiement.
 
