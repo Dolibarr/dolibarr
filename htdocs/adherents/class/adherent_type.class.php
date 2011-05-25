@@ -281,7 +281,7 @@ class AdherentType extends CommonObject
     {
         global $conf;
 
-        if (! empty($this->mail_valid))
+        if (! empty($this->mail_valid) && trim(dol_htmlentitiesbr_decode($this->mail_valid)))
         {
             return $this->mail_valid;
         }
@@ -299,7 +299,7 @@ class AdherentType extends CommonObject
     {
         global $conf;
 
-        if (! empty($this->mail_subscription))  // Not yet developped
+        if (! empty($this->mail_subscription) && trim(dol_htmlentitiesbr_decode($this->mail_subscription)))  // Property not yet defined
         {
             return $this->mail_subscription;
         }
@@ -317,7 +317,7 @@ class AdherentType extends CommonObject
     {
         global $conf;
 
-        if (! empty($this->mail_resiliate)) // Not yet developped
+        if (! empty($this->mail_resiliate) && trim(dol_htmlentitiesbr_decode($this->mail_resiliate)))  // Property not yet defined
         {
             return $this->mail_resiliate;
         }
