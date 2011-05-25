@@ -117,6 +117,10 @@ ALTER TABLE llx_usergroup_user ADD CONSTRAINT fk_usergroup_user_fk_usergroup FOR
 ALTER TABLE llx_commande ADD COLUMN ref_int	varchar(30) AFTER ref_ext;
 ALTER TABLE llx_facture ADD COLUMN ref_int varchar(30) AFTER ref_ext;
 ALTER TABLE llx_societe ADD COLUMN ref_int varchar(60) AFTER ref_ext;
+ALTER TABLE llx_expedition ADD COLUMN ref_ext varchar(30) AFTER fk_soc;
+ALTER TABLE llx_expedition ADD COLUMN ref_int varchar(30) AFTER ref_ext;
+ALTER TABLE llx_livraison ADD COLUMN ref_ext varchar(30) AFTER fk_soc;
+ALTER TABLE llx_livraison ADD COLUMN ref_int varchar(30) AFTER ref_ext;
 
 --Add Chile data (id pays=67)
 -- Regions Chile

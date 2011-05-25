@@ -25,8 +25,11 @@ create table llx_expedition
   tms                   timestamp,
   ref                   varchar(30)        NOT NULL,
   entity                integer  DEFAULT 1 NOT NULL,	-- multi company id
-  ref_customer          varchar(30),					-- customer number
   fk_soc                integer            NOT NULL,
+  
+  ref_ext               varchar(30),					-- reference into an external system (not used by dolibarr)
+  ref_int				varchar(30),					-- reference into an internal system (used by dolibarr)
+  ref_customer          varchar(30),					-- customer number
   
   date_creation         datetime,						-- date de creation
   fk_user_author        integer,						-- createur
