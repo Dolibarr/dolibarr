@@ -143,7 +143,7 @@ if ($account || $_GET["ref"])
     }
     else
     {
-        $viewline = 20;
+        $viewline = empty($conf->global->MAIN_SIZE_LISTE_LIMIT)?20:$conf->global->MAIN_SIZE_LISTE_LIMIT;
     }
     $acct = new Account($db);
     if ($account)
@@ -212,7 +212,7 @@ if ($account || $_GET["ref"])
     }
     if ($thirdparty)
     {
-        $sql_rech.=" AND (COALESCE(s.nom,'') LIKE '%".$db->escape($thirdparty)."%')";
+        $sql_rech.=" AND s.nom LIKE '%".$db->escape($thirdparty)."%')";
         $param.='&amp;thirdparty='.urlencode($thirdparty);
         $mode_search = 1;
     }
@@ -273,6 +273,7 @@ if ($account || $_GET["ref"])
         $page = 0;
         $limitsql = $nbline;
     }
+    //print $limitsql.'-'.$page.'-'.$viewline;
 
     // Onglets
     $head=bank_prepare_head($acct);
@@ -307,6 +308,7 @@ if ($account || $_GET["ref"])
     $navig='';
     $navig.='<form action="'.$_SERVER["PHP_SELF"].'" name="newpage" method="GET">';
     $nbpage=floor($total_lines/$viewline)+($total_lines % $viewline > 0?1:0);  // Nombre de page total
+    //print 'nbpage='.$nbpage.' viewline='.$viewline.' limitsql='.$limitsql;
     if ($limitsql > $viewline)
     {
         $navig.='<a href="account.php?'.$param.'&amp;page='.($page+1).'">'.img_previous().'</a>';
@@ -326,7 +328,7 @@ if ($account || $_GET["ref"])
         $navig.= '<a href="account.php?'.$param.'&amp;page='.($page-1).'">'.img_next().'</a>';
     }
     $navig.='</form>';
-
+    //var_dump($navig);
 
     // Confirmation delete
     if ($action == 'delete')
@@ -340,7 +342,7 @@ if ($account || $_GET["ref"])
     print '<table class="notopnoleftnoright" width="100%">';
 
     // Show title
-    if ($action != 'addline' && $action =='delete')
+    if ($action != 'addline' && $action != 'delete')
     {
         print '<tr><td colspan="9" align="right">'.$navig.'</td></tr>';
     }
@@ -742,11 +744,11 @@ if ($account || $_GET["ref"])
     /*
      *  Boutons actions
      */
-    
+
     if ($action != 'delete')
     {
 	    print '<div class="tabsAction">';
-	
+
         if ($acct->type != 2 && $acct->rappro)  // If not cash account and can be reconciliate
         {
             if ($user->rights->banque->consolidate)
@@ -758,7 +760,7 @@ if ($account || $_GET["ref"])
                 print "<a class=\"butActionRefused\" title=\"".$langs->trans("NotEnoughPermissions")."\" href=\"#\">".$langs->trans("Conciliate")."</a>";
             }
         }
-	    
+
 	    if ($action != 'addline')
 	    {
 	        if ($user->rights->banque->modifier)
@@ -770,10 +772,10 @@ if ($account || $_GET["ref"])
 		        print "<a class=\"butActionRefused\" title=\"".$langs->trans("NotEnoughPermissions")."\" href=\"#\">".$langs->trans("AddBankRecord")."</a>";
 		    }
 	    }
-	    	
+
 	    print '</div>';
     }
-     
+
     print '<br>';
 
 }
