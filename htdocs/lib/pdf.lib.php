@@ -824,7 +824,7 @@ function pdf_getlinenum($object,$i,$outputlangs)
 
 
 /**
- *	Return line ref
+ *	Return line product ref
  *	@param		object				Object
  *	@param		$i					Current line number
  *  @param    	outputlang			Object lang for output
@@ -839,7 +839,7 @@ function pdf_getlineref($object,$i,$outputlangs)
     }
     else
     {
-        return dol_htmlentitiesbr($object->lines[$i]->ref);
+        return dol_htmlentitiesbr($object->lines[$i]->product_ref);
     }
 }
 
