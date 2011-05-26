@@ -143,7 +143,7 @@ class ModeleNumRefPropales
  */
 function propale_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 {
-	global $langs;
+	global $conf,$langs;
 	$langs->load("propale");
 
 	$dir = "/includes/modules/propale/";
