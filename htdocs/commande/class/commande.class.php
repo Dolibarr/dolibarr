@@ -1380,7 +1380,7 @@ class Commande extends CommonObject
 		$sql = 'SELECT l.rowid, l.fk_product, l.fk_parent_line, l.product_type, l.fk_commande, l.description, l.price, l.qty, l.tva_tx,';
 		$sql.= ' l.localtax1_tx, l.localtax2_tx, l.fk_remise_except, l.remise_percent, l.subprice, l.marge_tx, l.marque_tx, l.rang, l.info_bits, l.special_code,';
 		$sql.= ' l.total_ht, l.total_ttc, l.total_tva, l.total_localtax1, l.total_localtax2, l.date_start, l.date_end,';
-		$sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label';
+		$sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = l.fk_product)';
 		$sql.= ' WHERE l.fk_commande = '.$this->id;
@@ -1427,9 +1427,10 @@ class Commande extends CommonObject
 				$line->special_code		= $objp->special_code;
 				$line->fk_parent_line	= $objp->fk_parent_line;
 
-				$line->ref              = $objp->product_ref;
-				$line->libelle          = $objp->label;
-				$line->product_label    = $objp->label;
+				$this->ref				= $objp->product_ref;		// TODO deprecated
+				$this->product_ref		= $objp->product_ref;
+				$this->libelle			= $objp->product_label;		// TODO deprecated
+				$this->product_label	= $objp->product_label;
 				$line->product_desc     = $objp->product_desc; 		// Description produit
 				$line->fk_product_type  = $objp->fk_product_type;	// Produit ou service
 
