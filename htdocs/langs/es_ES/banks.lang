@@ -141,4 +141,4 @@ AllAccounts=Todas las cuentas bancarias/de caja
 BackToAccount=Volver a la cuenta
 ShowAllAccounts=Mostrar para todas las cuentas
 FutureTransaction=Transacción futura. No es posible conciliar.
-	 SelectChequeTransactionAndGenerate=Seleccione/filtre los cheques a incluir en la remesa y haga clic en "Crear".
+SelectChequeTransactionAndGenerate=Seleccione/filtre los cheques a incluir en la remesa y haga clic en "Crear".
