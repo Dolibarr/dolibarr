@@ -1250,6 +1250,8 @@ font-family: <?php print $fontlist ?>;
 .warning { color: #887711; }
 .error   { color: #550000; font-weight: bold; }
 
+td.highlights { background: #f9c5c6; }
+
 td.warning {	/* Utilise par Smarty */
   background: #FF99A9;
 }

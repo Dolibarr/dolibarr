@@ -903,6 +903,8 @@ div.leftmenu {
 .warning { color: #777711; }
 .error   { color: #550000; }
 
+td.highlights { background: #f9c5c6; }
+
 div.ok {
   color: #114466;
 }

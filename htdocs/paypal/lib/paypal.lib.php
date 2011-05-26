@@ -140,73 +140,14 @@ function paypaladmin_prepare_head()
 	$head[$h][1] = $langs->trans("Account");
 	$head[$h][2] = 'paypalaccount';
 	$h++;
-
-    $head[$h][0] = DOL_URL_ROOT."/paypal/admin/import.php";
-    $head[$h][1] = $langs->trans("Import");
-    $head[$h][2] = 'import';
-    $h++;
+    
+    // Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
+    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+    // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+    complete_head_from_modules($conf,$langs,$object,$head,$h,'paypaladmin');
 
     return $head;
-}
-
-function getLinkedObjects($transactionID)
-{
-	global $db, $conf;
-	
-	$objectArray = array();
-	
-	if ($conf->commande->enabled) {
-		$elementArray[$i] = 'order';
-		$i++;
-	}
-	if ($conf->facture->enabled) {
-		$elementArray[$i] = 'invoice';
-	}
-	
-	foreach($elementArray as $element)
-	{
-		if ($element == 'order') { $path = $subelement = 'commande'; }
-		if ($element == 'invoice') { $path = 'compta/facture'; $subelement = 'facture'; }
-		
-		dol_include_once('/'.$path.'/class/'.$subelement.'.class.php');
-		
-		$classname = ucfirst($subelement);
-		$object = new $classname($db);
-		
-		$res = $object->fetchObjectFrom($object->table_element, 'ref_int', $transactionID);
-		if ($res > 0) $objectArray[$element] = $object;
-	}
-	
-	return $objectArray;
-}
-
-/**
- *		Renvoi le libelle d'un statut donne
- *    	@param      statut      Id statut
- *    	@param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
- *    	@param		url			Object url
- *    	@return     string		Label of status
- */
-function getLibStatut($statut,$mode,$url)
-{
-	global $langs;
-	
-	$out='';
-	
-	if ($url) $out.= '<a href="'.$url.'">';
-	if ($mode == 0)
-	{
-		if ($statut==0) $out.= $langs->trans('Undefined');
-		if ($statut==1) $out.= $langs->trans('NewTransaction');
-	}
-	if ($mode == 1)
-	{
-		if ($statut==0) $out.= img_picto($langs->trans('Undefined'),'warning');
-		if ($statut==1) $out.= img_picto($langs->trans('TransactionCompleted'),'statut4');
-	}
-	if ($url) $out.= '</a>';
-	
-	return $out;
 }
 
 /**
@@ -410,35 +351,6 @@ function GetDetails( $token )
     return $resArray;
 }
 
-/**
- * 	Get transaction details
- * 	@param		transactionID		Transaction id
- */
-function GetTransactionDetails($transactionID)
-{
-	//declaring of global variables
-    global $conf, $langs;
-    global $API_Endpoint, $API_Url, $API_version, $USE_PROXY, $PROXY_HOST, $PROXY_PORT;
-    global $PAYPAL_API_USER, $PAYPAL_API_PASSWORD, $PAYPAL_API_SIGNATURE;
-    
-    $transactionID=urlencode($transactionID);
-    
-    /* Construct the request string that will be sent to PayPal.
-       The variable $nvpstr contains all the variables and is a
-       name value pair string with & as a delimiter */
-    $nvpStr="&TRANSACTIONID=$transactionID";
-    
-    /* Make the API call to PayPal, using API signature.
-       The API response is stored in an associative array called $resArray */
-    $resArray=hash_call("gettransactionDetails",$nvpStr);
-    
-    /* Next, collect the API request in the associative array $reqArray
-       as well to display back to the browser.
-       Normally you wouldnt not need to do this, but its shown for testing */
-    $reqArray=$_SESSION['nvpReqArray'];
-    
-    return $resArray;
-}
 
 /*
  '-------------------------------------------------------------------------------------------------------------------------------------------
@@ -547,29 +459,6 @@ function hash_call($methodName,$nvpStr)
     global $conf, $langs;
     global $API_Endpoint, $API_Url, $API_version, $USE_PROXY, $PROXY_HOST, $PROXY_PORT, $PROXY_USER, $PROXY_PASS;
     global $PAYPAL_API_USER, $PAYPAL_API_PASSWORD, $PAYPAL_API_SIGNATURE;
-
-    // TODO problem with this global if the request into triggers
-    $API_version="56";
-	if ($conf->global->PAYPAL_API_SANDBOX)
-	{
-	    $API_Endpoint = "https://api-3t.sandbox.paypal.com/nvp";
-	    $API_Url = "https://www.sandbox.paypal.com/webscr?cmd=_express-checkout&token=";
-	}
-	else
-	{
-	    $API_Endpoint = "https://api-3t.paypal.com/nvp";
-	    $API_Url = "https://www.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=";
-	}
-	// Clean parameters
-	$PAYPAL_API_USER="";
-	if ($conf->global->PAYPAL_API_USER) $PAYPAL_API_USER=$conf->global->PAYPAL_API_USER;
-	$PAYPAL_API_PASSWORD="";
-	if ($conf->global->PAYPAL_API_PASSWORD) $PAYPAL_API_PASSWORD=$conf->global->PAYPAL_API_PASSWORD;
-	$PAYPAL_API_SIGNATURE="";
-	if ($conf->global->PAYPAL_API_SIGNATURE) $PAYPAL_API_SIGNATURE=$conf->global->PAYPAL_API_SIGNATURE;
-	$PAYPAL_API_SANDBOX="";
-	if ($conf->global->PAYPAL_API_SANDBOX) $PAYPAL_API_SANDBOX=$conf->global->PAYPAL_API_SANDBOX;
-	// TODO END
 	
     dol_syslog("Paypal API endpoint ".$API_Endpoint);
 

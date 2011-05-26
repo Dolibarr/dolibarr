@@ -1,9 +1,5 @@
 # Dolibarr language file - en_US - paypal
 CHARSET=UTF-8
-
-PaypalAccount=Paypal account
-PaypalTransaction=Transactions
-PaypalTransactionDetails=Details of the transaction
 PaypalSetup=PayPal module setup
 PaypalDesc=This module offer pages to allow payment on <a href="http://www.paypal.com" target="_blank">PayPal</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
 PaypalOrCBDoPayment=Pay with credit card or Paypal
@@ -16,37 +12,3 @@ PAYPAL_API_SIGNATURE=API signature
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Offer payment "integral" (Credit card+Paypal) or "Paypal" only
 PAYPAL_CSS_URL=Optionnal Url of CSS style sheet on payment page
 ThisIsTransactionId=This is id of transaction: <b>%s</b>
-PaypalTransactionDesc=This options allows you to import Paypal payments in Dolibarr as orders, invoices, etc ...
-PaypalEnableThisTool=Enable this functionnality
-Verified=Verified
-Unverified=Unverified
-Confirmed=Confirmed
-Unconfirmed=Unconfirmed
-GrossAmount=Gross amount
-FeeAmount=Fee amount
-NetAmount=Net amount
-CustomerDetails=Customer details
-TransactionCompleted=Transaction completed
-OrderIsCreated=Order created
-InvoiceIsCreated=Invoice created
-PaypalCreateOrderEnabled=Enable the ability to create customer orders
-PaypalCreateInvoiceEnabled=Enable the ability to create customer invoices
-UseThePriceDefinedInPaypal=Use the price defined in Paypal instead of the one defined in Dolibarr
-DefaultProductShippingCosts=Select the product to be used for adding shipping costs.
-DefaultPaypalAccount=Select the bank account to be used as a Paypal account, this will deduct the Paypal fee when adding a payment.
-ErrorProductWithRefNotSamePrice=The price set for the reference "<i>%s</i>" does not match the price Paypal
-
-# Paypal transaction fields
-PAYERID=Payer ID
-PAYERSTATUS=Payer status
-ADDRESSSTATUS=Address status
-TRANSACTIONID=Transaction ID
-TRANSACTIONTYPE=Transaction type
-PAYMENTTYPE=Payment type
-PAYMENTSTATUS=Payment status
-SHIPAMOUNT=Ship amount
-
-PENDINGREASON=
-REASONCODE=
-SHIPPINGMETHOD=
-PROTECTIONELIGIBILITY=

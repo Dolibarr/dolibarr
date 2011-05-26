@@ -1020,13 +1020,6 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                 $newmenu->add_submenu("/compta/bank/virement.php",$langs->trans("BankTransfers"),1,$user->rights->banque->transfer);
             }
 
-            // Paypal
-            if ($conf->paypal->enabled && $conf->global->PAYPAL_ENABLE_TRANSACTION_MANAGEMENT)
-            {
-                $langs->load("paypal");
-            	$newmenu->add("/paypal/transaction.php?leftmenu=paypal&amp;mainmenu=bank",$langs->trans("PaypalAccount"),0,$user->rights->paypal->transaction->read);
-            }
-
             // Prelevements
             if ($conf->prelevement->enabled)
             {

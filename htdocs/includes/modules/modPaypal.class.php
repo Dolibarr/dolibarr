@@ -67,9 +67,6 @@ class modPaypal extends DolibarrModules
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory, use this->picto=DOL_URL_ROOT.'/module/img/file.png'
 		$this->picto='paypal@paypal';
-		
-		// Defined if the directory /mymodule/inc/triggers/ contains triggers or not
-		$this->triggers = 1;
 
 		// Data directories to create when module is enabled.
 		$this->dirs = array('/paypal/temp');
@@ -111,23 +108,7 @@ class modPaypal extends DolibarrModules
 		// Permissions
 		$this->rights = array();		// Permission array used by this module
 		$r=0;
-
-		$this->rights[$r][0] = 50201; // id de la permission
-		$this->rights[$r][1] = 'Read transactions'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
-		$this->rights[$r][4] = 'transaction';
-		$this->rights[$r][5] = 'read';
-		$r++;
 		
-		$this->rights[$r][0] = 50202; // id de la permission
-		$this->rights[$r][1] = 'Import transactions'; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
-		$this->rights[$r][4] = 'transaction';
-		$this->rights[$r][5] = 'import';
-		$r++;
-
 
 		// Main menu entries
 		$this->menus = array();			// List of menus to add

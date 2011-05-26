@@ -1,9 +1,5 @@
-# Dolibarr language file - es_ES - paypal
+# Dolibarr language file - es_ES - paypal 
 CHARSET=UTF-8
-
-PaypalAccount=Cuenta Paypal
-PaypalTransaction=Transacciones
-PaypalTransactionDetails=Detalle de la transacción
 PaypalSetup=Configuración del módulo PayPal
 PaypalDesc=Este módulo ofrece una página  de pago a través del proveedor <a href="http://www.paypal.com" target="_blank">Paypal</a> para realizar cualquier pago o un pago en relación con un objeto Dolibarr (facturas, pedidos ...)
 PaypalOrCBDoPayment=Continuar el pago mediante tarjeta o Paypal
@@ -16,21 +12,3 @@ PAYPAL_API_SIGNATURE=Firma API
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Proponer pago integral (Tarjeta+Paypal) o sólo Paypal
 PAYPAL_CSS_URL=Url opcional de la hoja de estilo CSS de la página de pago
 ThisIsTransactionId=Identificador de la transacción: <b>%s</b> 
-PaypalTransactionDesc=Estas opciones le permiten importar los pagos PayPal a Dolibarr como pedidos, facturas, etc ...
-PaypalEnableThisTool=Activar estas funcionalidades
-
-# Paypal transaction fields
-PAYERID=
-PAYERSTATUS=
-ADDRESSSTATUS=
-TRANSACTIONID=
-TRANSACTIONTYPE=
-PAYMENTTYPE=
-AMT=
-FEEAMT=
-TAXAMT=
-PAYMENTSTATUS=
-PENDINGREASON=
-REASONCODE=
-SHIPPINGMETHOD=
-PROTECTIONELIGIBILITY=
