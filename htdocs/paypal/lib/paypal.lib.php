@@ -131,7 +131,7 @@ function html_print_paypal_footer($fromcompany,$langs)
  */
 function paypaladmin_prepare_head()
 {
-	global $langs;
+	global $langs, $conf;
 	
 	$h = 0;
 	$head = array();
