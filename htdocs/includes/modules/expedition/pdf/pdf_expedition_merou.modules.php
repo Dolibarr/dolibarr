@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -452,7 +452,30 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->SetXY($blSocX-80,$blSocY+23);
 		$pdf->SetFont('','', $default_font_size - 2);
 		$pdf->SetTextColor(0,0,0);
-		$pdf->MultiCell(50, 8, $outputlangs->transnoentities("Deliverer")." ".$outputlangs->convToOutputCharset($this->livreur->getFullName($outputlangs)), '' , 'L');
+		
+		if (! empty($object->tracking_number))
+		{
+			$object->GetUrlTrackingStatus($object->tracking_number);
+			if (! empty($object->tracking_url))
+			{
+				if ($object->expedition_method_id > 0)
+				{
+					// Get code using getLabelFromKey
+					$code=$outputlangs->getLabelFromKey($this->db,$object->expedition_method_id,'c_shipment_mode','rowid','code');
+					$label=$outputlangs->trans("SendingMethod".strtoupper($code))." :";
+				}
+				else
+				{
+					$label=$outputlangs->transnoentities("Deliverer");
+				}
+
+				$pdf->writeHTMLCell(50, 8, '', '', $label." ".$object->tracking_url, '' , 'L');
+			}
+		}
+		else
+		{
+			$pdf->MultiCell(50, 8, $outputlangs->transnoentities("Deliverer")." ".$outputlangs->convToOutputCharset($this->livreur->getFullName($outputlangs)), '' , 'L');
+		}
 
 
 		/**********************************/
