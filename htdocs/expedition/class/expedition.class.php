@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2008 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2010 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2006-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2011      Juanjo Menent		 <jmenent@2byte.es>
@@ -46,6 +46,8 @@ class Expedition extends CommonObject
 	var $id;
 	var $socid;
 	var $ref_customer;
+	var $ref_ext;
+	var $ref_int;
 	var $brouillon;
 	var $entrepot_id;
 	var $modelpdf;
@@ -155,8 +157,9 @@ class Expedition extends CommonObject
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."expedition (";
 		$sql.= "ref";
-		$sql.= ", ref_customer";
 		$sql.= ", entity";
+		$sql.= ", ref_customer";
+		$sql.= ", ref_int";
 		$sql.= ", date_creation";
 		$sql.= ", fk_user_author";
 		$sql.= ", date_expedition";
@@ -173,8 +176,9 @@ class Expedition extends CommonObject
 		$sql.= ", size_units";
 		$sql.= ") VALUES (";
 		$sql.= "'(PROV)'";
-		$sql.= ", '".$this->ref_customer."'";
 		$sql.= ", ".$conf->entity;
+		$sql.= ", ".($this->ref_customer?"'".$this->ref_customer."'":"null");
+		$sql.= ", ".($this->ref_int?"'".$this->ref_int."'":"null");
 		$sql.= ", '".$this->db->idate(gmmktime())."'";
 		$sql.= ", ".$user->id;
 		$sql.= ", ".($this->date_expedition>0?"'".$this->db->idate($this->date_expedition)."'":"null");
@@ -288,25 +292,32 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 *		\brief		Lit une expedition
-	 *		\param		id		Id of object
-	 * 		\param		ref		Ref of object
+	 *	Get object and lines from database
+	 *	@param      id       	Id of object to load
+	 * 	@param		ref			Ref of object
+	 * 	@param		ref_ext		External reference of object
+     * 	@param		ref_int		Internal reference of other object
+	 *	@return     int         >0 if OK, <0 if KO
 	 */
-	function fetch($id,$ref='')
+	function fetch($id, $ref='', $ref_ext='', $ref_int='')
 	{
 		global $conf;
 
-		if (empty($id) && empty($ref)) return -1;
+		// Check parameters
+		if (empty($id) && empty($ref) && empty($ref_ext) && empty($ref_int)) return -1;
 
-		$sql = "SELECT e.rowid, e.ref, e.fk_soc as socid, e.date_creation, e.ref_customer, e.fk_user_author, e.fk_statut";
+		$sql = "SELECT e.rowid, e.ref, e.fk_soc as socid, e.date_creation, e.ref_customer, e.ref_ext, e.ref_int, e.fk_user_author, e.fk_statut";
 		$sql.= ", e.weight, e.weight_units, e.size, e.size_units, e.width, e.height";
 		$sql.= ", e.date_expedition as date_expedition, e.model_pdf, e.fk_address, e.date_delivery";
 		$sql.= ", e.fk_expedition_methode, e.tracking_number";
 		$sql.= ", el.fk_source as origin_id, el.sourcetype as origin";
 		$sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = '".$this->element."'";
-		if ($id) $sql.= " WHERE e.rowid = ".$id;
-		if ($ref) $sql.= " WHERE e.ref = '".$ref."'";
+		$sql.= " WHERE e.entity = ".$conf->entity;
+		if ($id)   	  $sql.= " AND e.rowid=".$id;
+        if ($ref)     $sql.= " AND e.ref='".$this->db->escape($ref)."'";
+        if ($ref_ext) $sql.= " AND e.ref_ext='".$this->db->escape($ref_ext)."'";
+        if ($ref_int) $sql.= " AND e.ref_int='".$this->db->escape($ref_int)."'";
 
 		dol_syslog("Expedition::fetch sql=".$sql);
 		$result = $this->db->query($sql) ;
@@ -320,6 +331,8 @@ class Expedition extends CommonObject
 				$this->ref                  = $obj->ref;
 				$this->socid                = $obj->socid;
 				$this->ref_customer			= $obj->ref_customer;
+				$this->ref_ext				= $obj->ref_ext;
+				$this->ref_int				= $obj->ref_int;
 				$this->statut               = $obj->fk_statut;
 				$this->user_author_id       = $obj->fk_user_author;
 				$this->date_creation        = $this->db->jdate($obj->date_creation);
@@ -863,23 +876,25 @@ class Expedition extends CommonObject
 	 *	\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
 	 *	\return		string			Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0)
+	function getNomUrl($withpicto=0,$option=0,$max=0,$short=0)
 	{
 		global $langs;
 
 		$result='';
-		$urlOption='';
+		
+		$url = DOL_URL_ROOT.'/expedition/fiche.php?id='.$this->id;
+		
+		if ($short) return $url;
 
-
-		$lien = '<a href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$this->id.'">';
-		$lienfin='</a>';
+		$linkstart = '<a href="'.$url.'">';
+		$linkend='</a>';
 
 		$picto='sending';
 		$label=$langs->trans("ShowSending").': '.$this->ref;
 
-		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+		if ($withpicto) $result.=($linkstart.img_object($label,$picto).$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		$result.=$lien.$this->ref.$lienfin;
+		$result.=$linkstart.$this->ref.$linkend;
 		return $result;
 	}
 
@@ -909,13 +924,18 @@ class Expedition extends CommonObject
 		}
 		if ($mode==1)
 		{
-			if ($statut==0) return $langs->trans($this->statuts[$statut]);
-			if ($statut==1) return $langs->trans($this->statuts[$statut]);
+			if ($statut==0) return $langs->trans('StatusSendingDraftShort');
+			if ($statut==1) return $langs->trans('StatusSendingValidatedShort');
+		}
+		if ($mode == 3)
+		{
+			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut0');
+			if ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut4');
 		}
 		if ($mode == 4)
 		{
-			if ($statut==0) return img_picto($this->statuts[$statut],'statut0').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut==1) return img_picto($this->statuts[$statut],'statut4').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
 		}
 		if ($mode == 5)
 		{
