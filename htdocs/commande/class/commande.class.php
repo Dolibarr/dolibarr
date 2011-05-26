@@ -1427,10 +1427,10 @@ class Commande extends CommonObject
 				$line->special_code		= $objp->special_code;
 				$line->fk_parent_line	= $objp->fk_parent_line;
 
-				$this->ref				= $objp->product_ref;		// TODO deprecated
-				$this->product_ref		= $objp->product_ref;
-				$this->libelle			= $objp->product_label;		// TODO deprecated
-				$this->product_label	= $objp->product_label;
+				$line->ref				= $objp->product_ref;		// TODO deprecated
+				$line->product_ref		= $objp->product_ref;
+				$line->libelle			= $objp->product_label;		// TODO deprecated
+				$line->product_label	= $objp->product_label;
 				$line->product_desc     = $objp->product_desc; 		// Description produit
 				$line->fk_product_type  = $objp->fk_product_type;	// Produit ou service
 
