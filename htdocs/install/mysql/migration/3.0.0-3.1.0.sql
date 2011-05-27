@@ -75,8 +75,9 @@ CREATE TABLE llx_c_availability
 	code		varchar(30) NOT NULL,
 	label		varchar(60) NOT NULL,
 	active		tinyint 	DEFAULT 1  NOT NULL
-
 )ENGINE=innodb;
+
+ALTER TABLE llx_c_availability ADD UNIQUE INDEX uk_c_availability(code);
 
 -- Use table name input_reason to match also input_method
 DROP table llx_c_demand_reason;
@@ -87,6 +88,8 @@ CREATE TABLE llx_c_input_reason
 	label		varchar(60) NOT NULL,
 	active		tinyint 	DEFAULT 1  NOT NULL
 )ENGINE=innodb;
+
+ALTER TABLE llx_c_input_reason ADD UNIQUE INDEX uk_c_input_reason(code);
 
 INSERT INTO llx_c_input_reason (rowid,code,label,active) VALUES (1, 'SRC_INTE',       'Web site', 1);
 INSERT INTO llx_c_input_reason (rowid,code,label,active) VALUES (2, 'SRC_CAMP_MAIL',  'Mailing campaign', 1);
