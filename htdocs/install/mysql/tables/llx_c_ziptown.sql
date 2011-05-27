@@ -22,7 +22,8 @@ create table llx_c_ziptown
 (
   rowid				integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
   code				varchar(5) DEFAULT NULL, 		-- ex: code insee pour la France 
-  fk_county			integer NOT NULL,				-- County id in llx_c_departements
+  fk_county			integer,	         			-- State id in llx_c_departements
+  fk_pays           integer NOT NULL DEFAULT 0,     -- Country id in llx_c_pays
   zip	 			varchar(10) NOT NULL,			-- Zip code
   town				varchar(255) NOT NULL,			-- Town name
   active 			tinyint NOT NULL DEFAULT 1

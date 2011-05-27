@@ -63,16 +63,13 @@ if (! empty($_GET['zipcode']) || ! empty($_GET['town']))
 
 	if ($conf->global->MAIN_USE_ZIPTOWN_DICTIONNARY)   // Use zip-town table
 	{
-    	$sql = "SELECT z.rowid, z.zip, z.town, z.fk_county";
+    	$sql = "SELECT z.rowid, z.zip, z.town, z.fk_county, z.fk_country";
     	$sql.= ", p.rowid as fk_country, p.code as country_code, p.libelle as country";
-    	$sql.= ", d.rowid as fk_county, d.code_departement as county_code , d.nom as county";
-    	$sql.= " FROM ".MAIN_DB_PREFIX."c_ziptown as z";
-    	$sql.= ", ".MAIN_DB_PREFIX ."c_departements as d";
-    	$sql.= ", ".MAIN_DB_PREFIX."c_regions as r";
-    	$sql.= ",".MAIN_DB_PREFIX."c_pays as p";
-    	$sql.= " WHERE z.fk_county = d.rowid";
-    	$sql.= " AND d.fk_region = r.code_region";
-    	$sql.= " AND r.fk_pays = p.rowid";
+    	$sql.= ", d.rowid as fk_county, d.code_departement as county_code, d.nom as county";
+    	$sql.= " FROM ".MAIN_DB_PREFIX."c_ziptown as z,".MAIN_DB_PREFIX."c_pays as p";
+    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX ."c_departements as d ON z.fk_county = d.rowid";
+    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_regions as r ON d.fk_region = r.code_region";
+    	$sql.= " WHERE z.fk_pays = p.rowid";
     	$sql.= " AND z.active = 1 AND d.active = 1 AND r.active = 1 AND p.active = 1";
     	if ($zipcode) " AND z.zip LIKE '" . $db->escape($zipcode) . "%'";
     	if ($town) " AND z.town LIKE '%" . $db->escape($town) . "%'";

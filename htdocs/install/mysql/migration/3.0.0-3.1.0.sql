@@ -17,6 +17,9 @@ RENAME TABLE llx_c_methode_commande_fournisseur TO llx_c_input_method;
 
 ALTER TABLE llx_adherent MODIFY login varchar(50);
 
+ALTER TABLE llx_c_ziptown ADD COLUMN fk_pays integer NOT NULL DEFAULT 0 after fk_county; 
+ALTER TABLE llx_c_ziptown MODIFY fk_county integer NULL; 
+
 ALTER TABLE llx_c_actioncomm ADD COLUMN position integer NOT NULL DEFAULT 0;
 ALTER TABLE llx_propal ADD COLUMN fk_demand_reason integer NULL DEFAULT 0;
 ALTER TABLE llx_commande_fournisseur ADD COLUMN fk_cond_reglement integer NULL DEFAULT 0;

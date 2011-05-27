@@ -185,7 +185,7 @@ class DoliDb
     				$line=preg_replace('/,$/','',$line);
     			}
 
-    			// Process case: "CREATE TABLE llx_c_ziptown(rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,code..."
+    			// Process case: "CREATE TABLE llx_mytable(rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,code..."
     			if (preg_match('/[\s\t\(]*(\w*)[\s\t]+int.*auto_increment/i',$line,$reg)) {
     				$newline=preg_replace('/([\s\t\(]*)([a-zA-Z_0-9]*)[\s\t]+int.*auto_increment[^,]*/i','\\1 \\2 SERIAL PRIMARY KEY',$line);
                     //$line = "-- ".$line." replaced by --\n".$newline;
