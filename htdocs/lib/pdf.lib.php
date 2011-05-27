@@ -939,6 +939,60 @@ function pdf_getlineqty($object,$i,$outputlangs,$hidedetails=0)
 }
 
 /**
+ *	Return line quantity asked
+ *	@param		object				Object
+ *	@param		$i					Current line number
+ *  @param    	outputlang			Object lang for output
+ *  @param		hidedetails			Hide value
+ *  								0 = no
+ *  								1 = yes
+ *  								2 = just special lines
+ */
+function pdf_getlineqty_asked($object,$i,$outputlangs,$hidedetails=0)
+{
+    if ($object->lines[$i]->special_code != 3)
+    {
+        if (! empty($object->hooks) && (( $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
+        {
+        	$special_code = $object->lines[$i]->special_code;
+        	if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
+        	return $object->hooks[$special_code]->pdf_getlineqty_asked($object,$i,$outputlangs,$hidedetails);
+        }
+        else
+        {
+            if (empty($hidedetails) || $hidedetails > 1) return $object->lines[$i]->qty_asked;
+        }
+    }
+}
+
+/**
+ *	Return line quantity shipped
+ *	@param		object				Object
+ *	@param		$i					Current line number
+ *  @param    	outputlang			Object lang for output
+ *  @param		hidedetails			Hide value
+ *  								0 = no
+ *  								1 = yes
+ *  								2 = just special lines
+ */
+function pdf_getlineqty_shipped($object,$i,$outputlangs,$hidedetails=0)
+{
+    if ($object->lines[$i]->special_code != 3)
+    {
+        if (! empty($object->hooks) && (( $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
+        {
+        	$special_code = $object->lines[$i]->special_code;
+        	if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
+        	return $object->hooks[$special_code]->pdf_getlineqty_shipped($object,$i,$outputlangs,$hidedetails);
+        }
+        else
+        {
+            if (empty($hidedetails) || $hidedetails > 1) return $object->lines[$i]->qty_shipped;
+        }
+    }
+}
+
+/**
  *	Return line remise percent
  *	@param		object				Object
  *	@param		$i					Current line number
