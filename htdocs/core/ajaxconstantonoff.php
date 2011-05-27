@@ -49,7 +49,7 @@ print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY
 // Registering the location of boxes
 if((isset($_GET['action']) && ! empty($_GET['action'])) && (isset($_GET['name']) && ! empty($_GET['name'])) )
 {
-	if ($user->admin && ! $user->entity)
+	if ($user->admin)
 	{
 		if ($_GET['action'] == 'set')
 		{
