@@ -48,6 +48,7 @@ $result = restrictedArea($user, 'user', $_GET["id"], 'usergroup', 'user');
 
 $action=GETPOST("action");
 $confirm=GETPOST("confirm");
+$userid=GETPOST("user","int");
 
 
 /**
@@ -61,6 +62,7 @@ if ($action == 'confirm_delete' && $confirm == "yes")
 		$editgroup->fetch($_GET["id"]);
 		$editgroup->delete();
 		Header("Location: index.php");
+		exit;
 	}
 	else
 	{
@@ -114,20 +116,21 @@ if ($_POST["action"] == 'add')
 	}
 }
 
-// Add user into group
-if ($_POST["action"] == 'adduser')
+// Add/Remove user into group
+if ($action == 'adduser' || $action =='removeuser')
 {
-	if($caneditperms)
+	if ($caneditperms)
 	{
-		if ($_POST["user"])
+		if ($userid)
 		{
 			$editgroup = new UserGroup($db);
 			$editgroup->fetch($_GET["id"]);
 			$editgroup->oldcopy=dol_clone($editgroup);
 
 			$edituser = new User($db);
-			$edituser->fetch($_POST["user"]);
-			$result=$edituser->SetInGroup($_GET["id"]);
+			$edituser->fetch($userid);
+			if ($action == 'adduser')    $result=$edituser->SetInGroup($_GET["id"]);
+			if ($action == 'removeuser') $result=$edituser->RemoveFromGroup($_GET["id"]);
 
 			// We reload members (list has changed)
 			$editgroup->members=$editgroup->listUsersForGroup();
@@ -146,37 +149,6 @@ if ($_POST["action"] == 'adduser')
 	}
 }
 
-// Remove user from group
-if ($_GET["action"] == 'removeuser')
-{
-	if($caneditperms)
-	{
-		if ($_GET["user"])
-		{
-			$editgroup = new UserGroup($db);
-			$editgroup->fetch($_GET["id"]);
-			$editgroup->oldcopy=dol_clone($editgroup);
-
-			$edituser = new User($db);
-			$edituser->fetch($_GET["user"]);
-			$edituser->RemoveFromGroup($_GET["id"]);
-
-			// We reload members (list has changed)
-			$editgroup->members=$editgroup->listUsersForGroup();
-
-			// We update group to force triggers that update groups content
-			$result=$editgroup->update();
-
-			if ($result > 0)
-			{
-				header("Location: fiche.php?id=".$_GET["id"]);
-				exit;
-			}
-		}
-	}else{
-		$message = '<div class="error">'.$langs->trans('ErrorForbidden').'</div>';
-	}
-}
 
 if ($_POST["action"] == 'update')
 {

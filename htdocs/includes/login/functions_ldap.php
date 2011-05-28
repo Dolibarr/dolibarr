@@ -123,12 +123,16 @@ function check_user_password_ldap($usertotest,$passwordtotest)
 		}
 
 		// Forge LDAP user and password to test with them
-		$ldap->searchUser=$ldapuserattr."=".$usertotest.",".$ldapdn;  // Default dn
+		// If LDAP need a dn with login like "uid=jbloggs,ou=People,dc=foo,dc=com", default dn may work even if previous code with
+		// admin login no exectued.
+        $ldap->searchUser=$ldapuserattr."=".$usertotest.",".$ldapdn;  // Default dn (will work if LDAP accept a dn with login value inside)
+		// But if LDAP need a dn with name like "cn=Jhon Bloggs,ou=People,dc=foo,dc=com", previous part must have been executed to have
+		// dn detected into ldapUserDN.
 		if ($resultFetchLdapUser) $ldap->searchUser = $ldap->ldapUserDN;
         $ldap->searchPassword=$passwordtotest;
 
 		// Test with this->seachUser and this->searchPassword
-        //print $ldap->searchUser.'-'.$ldap->searchPassword;exit;
+        //print $resultFetchLdapUser."-".$ldap->ldapUserDN."-".$ldap->searchUser.'-'.$ldap->searchPassword;exit;
         $result=$ldap->connect_bind();
 		if ($result > 0)
 		{

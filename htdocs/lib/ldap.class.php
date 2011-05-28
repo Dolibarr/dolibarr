@@ -1131,13 +1131,14 @@ class Ldap
 			if ($this->result)
 			{
 				$result = @ldap_get_entries($this->connection, $this->result);
-				dol_syslog("Ldap::fetch search found");
+				if ($result['count'] > 0) dol_syslog('Ldap::fetch search found '.$result['count'].' records');
+				else dol_syslog('Ldap::fetch search returns but found no records');
 				//var_dump($result);exit;
 			}
 			else
 			{
 			    $this->error = ldap_errno($this->connection)." ".ldap_error($this->connection);
-                dol_syslog("Ldap::fetch search not found");
+                dol_syslog("Ldap::fetch search fails");
 			    return -1;
 			}
 
@@ -1186,7 +1187,7 @@ class Ldap
 			$this->domainFQDN = $domain;
 
 			// Set ldapUserDn (each user can have a different dn)
-            //var_dump($result[0]['dn']);exit;
+            //var_dump($result[0]);exit;
 			$this->ldapUserDN=$result[0]['dn'];
 
 			ldap_free_result($this->result);

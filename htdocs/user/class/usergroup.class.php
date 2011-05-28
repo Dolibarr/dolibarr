@@ -525,9 +525,9 @@ class UserGroup extends CommonObject
 
 
 	/**
-	 *		\brief      Update group into database
-	 *      \param      notrigger	    0=trigers enabled, 1=trigers disabled
-	 *    	\return     int				<0 if KO, >=0 if OK
+	 *		Update group into database
+	 *      @param      notrigger	    0=triggers enabled, 1=triggers disabled
+	 *    	@return     int				<0 if KO, >=0 if OK
 	 */
 	function update($notrigger=0)
 	{

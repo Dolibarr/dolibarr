@@ -117,8 +117,8 @@ class ImportCsv extends ModeleImports
 
 
     /**
-	 * 	\brief		Output header of an example file for this format
-	 * 	\param		langs		Output language
+	 * 	Output header of an example file for this format
+	 * 	@param		outputlangs		Output language
 	 */
     function write_header_example($outputlangs)
     {
@@ -126,30 +126,34 @@ class ImportCsv extends ModeleImports
     }
 
     /**
-	 * 	\brief		Output title line of an example file for this format
-	 * 	\param		langs		Output language
+	 * 	Output title line of an example file for this format
+	 * 	@param		outputlangs		Output language
 	 */
     function write_title_example($outputlangs,$headerlinefields)
     {
-    	$s='';
-		$s.=join($this->separator,$headerlinefields);
+        $func = function($value) {
+          return str_replace($this->separator,'/',$value);
+        };
+		$s.=join($this->separator,array_map($headerlinefields));
     	return $s."\n";
     }
 
     /**
-	 * 	\brief		Output record of an example file for this format
-	 * 	\param		langs		Output language
+	 * 	Output record of an example file for this format
+	 * 	@param		outputlangs		Output language
 	 */
     function write_record_example($outputlangs,$contentlinevalues)
     {
-    	$s='';
-		$s.=join($this->separator,$contentlinevalues);
+        $func = function($value) {
+          return str_replace($this->separator,'/',$value);
+        };
+        $s=join($this->separator,array_map($contentlinevalues));
     	return $s."\n";
     }
 
 	/**
-	 * 	\brief		Output footer of an example file for this format
-	 * 	\param		langs		Output language
+	 * 	Output footer of an example file for this format
+	 * 	@param		outputlangs		Output language
 	 */
     function write_footer_example($outputlangs)
     {
@@ -159,9 +163,9 @@ class ImportCsv extends ModeleImports
 
 
     /**
- 	 *	\brief		Open input file
-	 *	\param		file		Path of filename
-	 *	\return		int			<0 if KO, >=0 if OK
+ 	 *	Open input file
+	 *	@param		file		Path of filename
+	 *	@return		int			<0 if KO, >=0 if OK
 	 */
 	function import_open_file($file)
     {

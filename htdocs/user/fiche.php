@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
@@ -23,7 +23,7 @@
 
 /**
  *       \file       htdocs/user/fiche.php
- *       \brief      Onglet user et permissions de la fiche utilisateur
+ *       \brief      Tab of user card
  *       \version    $Id$
  */
 
@@ -59,6 +59,7 @@ if ($_GET["id"])
 }
 
 $action=GETPOST("action");
+$group=GETPOST("group","int",3);
 $confirm=GETPOST("confirm");
 
 // Security check
@@ -222,16 +223,30 @@ if ($_POST["action"] == 'add' && $canadduser)
 }
 
 // Action ajout groupe utilisateur
-if ($_POST["action"] == 'addgroup' && $caneditfield)
+if (($action == 'addgroup' || $action == 'removegroup') && $caneditfield)
 {
-	if ($_POST["group"])
+	if ($group)
 	{
-		$edituser = new User($db);
-		$edituser->fetch($_GET["id"]);
-		$edituser->SetInGroup($_POST["group"]);
+        $editgroup = new UserGroup($db);
+        $editgroup->fetch($group);
+        $editgroup->oldcopy=dol_clone($editgroup);
 
-		Header("Location: fiche.php?id=".$_GET["id"]);
-		exit;
+        $edituser = new User($db);
+        $edituser->fetch($_GET["id"]);
+        if ($action == 'addgroup')    $edituser->SetInGroup($group);
+        if ($action == 'removegroup') $edituser->RemoveFromGroup($group);
+
+        // We reload members (list has changed)
+        $editgroup->members=$editgroup->listUsersForGroup();
+
+        // We update group to force triggers that update groups content
+        $result=$editgroup->update();
+
+        if ($result > 0)
+        {
+            header("Location: fiche.php?id=".$_GET["id"]);
+            exit;
+        }
 	}
 }
 
