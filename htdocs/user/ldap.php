@@ -159,7 +159,7 @@ print '</table>';
 print '</div>';
 
 
-if ($message) { print $message; }
+dol_htmloutput_mesg($message);
 
 
 /*
