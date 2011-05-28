@@ -1,0 +1,36 @@
+/*
+ * Language code: ar_AR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-08-11 13:27:01
+ */
+
+
+// Date 2009-08-11 13:27:01
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Trip=رحلة
+Trips=رحلات
+TripsAndExpenses=ونفقات الرحلات
+TripCard=بطاقة زيارة
+AddTrip=إضافة رحلة
+ListOfTrips=قائمة الرحلات
+ListOfFees=قائمة الرسوم
+NewTrip=رحلة جديدة
+CompanyVisited=الشركة / المؤسسة زارت
+Kilometers=كم
+FeesKilometersOrAmout=كم المبلغ أو
+DeleteTrip=رحلة حذف
+ConfirmDeleteTrip=هل أنت متأكد من أنك تريد حذف هذه الرحلة؟
+TF_OTHER=أخرى
+TF_LUNCH=غداء
+TF_TRIP=رحلة
+ListTripsAndExpenses=قائمة الرحلات والمصاريف
+// Date 2009-08-11 13:27:01
+// STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:16:46).
+// Reference language: en_US
+TripsAndExpensesStatistics=رحلات ونفقات إحصاءات
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:17:48).

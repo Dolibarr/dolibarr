@@ -1,0 +1,190 @@
+/*
+ * Language code: ar_AR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-08-11 13:27:01
+ */
+
+
+// Date 2009-08-11 13:27:01
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+ProductRef=المرجع المنتج.
+ProductLabel=وصف المنتج
+ProductServiceCard=منتجات / خدمات البطاقات
+Products=المنتجات
+Services=الخدمات
+Product=المنتج
+Service=الخدمة
+ProductId=المنتجات / الخدمات معرف
+Create=خلق
+Reference=المرجعية
+NewProduct=منتجات جديدة
+NewService=خدمة جديدة
+ProductCode=رمز المنتج
+ServiceCode=قانون الخدمة
+ProductOrService=المنتج أو الخدمة
+ProductsAndServices=المنتجات والخدمات
+ProductsOrServices=منتجات أو خدمات
+ProductsAndServicesOnSell=المنتجات والخدمات على بيع
+ProductsAndServicesNotOnSell=المنتجات والخدمات من بيع
+ProductsAndServicesStatistics=المنتجات والخدمات والإحصاءات
+ProductsStatistics=المنتجات إحصاءات
+ProductsOnSell=بيع المنتجات
+ProductsNotOnSell=من بيع المنتجات
+ServicesOnSell=خدمات البيع
+ServicesNotOnSell=من بيع الخدمات
+InternalRef=إشارة الداخلية
+LastRecorded=آخر المنتجات والخدمات المسجلة على بيع
+LastModifiedProductsAndServices=آخر تعديل ٪ ق المنتجات / الخدمات
+LastRecordedProducts=آخر المنتجات المسجلة ق ٪
+LastRecordedServices=٪ ق الماضي سجلت الخدمات
+LastProducts=آخر المنتجات
+CardProduct0=منتجات البطاقات
+CardProduct1=بطاقة الخدمة
+CardContract=عقد بطاقة
+Warehouse=مخزن
+Warehouses=المستودعات
+WarehouseOpened=فتح مخزن
+WarehouseClosed=مخزن مغلق
+Stock=الأسهم
+Stocks=الاسهم
+Movement=الحركة
+Movements=حركات
+OnSell=على بيع
+NotOnSell=من بيع
+ProductStatusOnSell=على بيع
+ProductStatusNotOnSell=من بيع
+ProductStatusOnSellShort=على بيع
+ProductStatusNotOnSellShort=من بيع
+UpdatePrice=آخر التطورات في الأسعار
+AppliedPricesFrom=تطبق الأسعار من
+SellingPrice=سعر البيع
+PublicPrice=السعر العام
+CurrentPrice=السعر الحالي
+NewPrice=السعر الجديد
+MinPrice=القطرة. سعر البيع
+CantBeLessThanMinPrice=سعر البيع لا يمكن أن يكون أقل من الحد الأدنى المسموح لهذا المنتج (٪ ق بدون الضرائب)
+ContractStatus=عقد مركز
+ContractStatusClosed=مغلقة
+ContractStatusRunning=على التوالي
+ContractStatusExpired=انتهى
+ContractStatusOnHold=لا تعمل
+ContractNotRunning=هذا العقد لا تعمل
+ErrorProductAlreadyExists=منتج مع الإشارة ٪ ق موجود بالفعل.
+ErrorProductBadRefOrLabel=قيمة خاطئة لإشارة أو علامة.
+Suppliers=الموردين
+SupplierRef=المرجع المورد.
+ShowProduct=وتظهر المنتج
+ShowService=وتظهر الخدمة
+ProductsAndServicesArea=مجال المنتجات والخدمات
+ProductsArea=منتجات المنطقة
+ServicesArea=مجال الخدمات
+AddToMyProposals=أضف الى مقترحاتي
+AddToOtherProposals=إضافة إلى اقتراحات أخرى
+AddToMyBills=أضف إلى الفواتير
+AddToOtherBills=إضافة إلى غيرها من مشاريع القوانين
+CorrectStock=تصحيح الأوراق المالية
+AddPhoto=إضافة الصورة
+ListOfStockMovements=قائمة الحركات الأسهم
+NoPhotoYet=لا صور حتى الان
+BuiingPrice=سعر الشراء
+SupplierCard=بطاقة المورد
+CommercialCard=بطاقة تجارية
+AllWays=الطريق إلى إيجاد منتجك في الأسهم
+NoCat=المنتج ليس في أي فئة من فئات
+PrimaryWay=الطريق الرئيسي
+DeleteFromCat=إزالة من فئة
+PriceRemoved=رفع الأسعار
+BarCode=الباركود
+BarcodeType=نوع الباركود
+SetDefaultBarcodeType=حدد نوع الباركود
+BarcodeValue=قيمة الباركود
+GenbarcodeLocation=باركود الجيل سطر أداة تستخدمها phpbarcode المحرك لبعض أنواع باركود)
+NoteNotVisibleOnBill=علما) على الفواتير غير مرئي ، واقتراحات...)
+CreateCopy=خلق صورة
+ServiceLimitedDuration=إذا كان المنتج هو خدمة لفترة محدودة :
+MultiPricesAbility=تفعيل التعددية الأسعار
+MultiPricesNumPrices=عدد من السعر
+MultiPriceLevelsName=سعر الفئات
+AssociatedProductsAbility=تنشيط المنتجات
+AssociatedProducts=المنتجات
+AssociatedProductsNumber=عدد المنتجات
+EditAssociate=المنتسبون
+Translation=الترجمة
+KeywordFilter=الكلمة الرئيسية فلتر
+CategoryFilter=فئة فلتر
+ProductToAddSearch=إضافة إلى البحث عن المنتج
+AddDel=إضافة / حذف
+Quantity=الكمية
+NoMatchFound=العثور على أي مباراة
+ProductAssociationList=قائمة المنتجات المتعلقة / الخدمات : اسم المنتج / الخدمة (الكمية المتضررة)
+ErrorAssociationIsFatherOfThis=واحد من اختيار المنتج الأم الحالية المنتج
+DeleteProduct=حذف المنتجات / الخدمات
+ConfirmDeleteProduct=هل أنت متأكد من حذف هذه المنتجات / الخدمات؟
+ProductDeleted=المنتجات والخدمات "٪ ل" حذفها من قاعدة البيانات.
+DeletePicture=حذف الصورة
+ConfirmDeletePicture=هل أنت متأكد من أنك تريد حذف هذه الصورة؟
+ExportDataset_produit_1=المنتجات
+ExportDataset_service_1=الخدمات
+DeleteProductLine=حذف خط الإنتاج
+ConfirmDeleteProductLine=هل أنت متأكد من أنك تريد حذف هذا السطر المنتج؟
+NoProductMatching=أي المنتجات / الخدمات تطابق معاييرك
+MatchingProducts=مطابقة المنتجات / الخدمات
+NoStockForThisProduct=لا رصيد لهذا المنتج
+NoStock=اي للاسهم
+Restock=اعادة
+ProductSpecial=خاص
+QtyMin=الحد الأدنى للكمية
+PriceQty=ثمن هذه الكمية
+PriceQtyMin=سعر الكمية دقائق.
+NoPriceDefinedForThisSupplier=لا السعر الكمية المحددة لهذا المورد / المنتج
+NoSupplierPriceDefinedForThisProduct=لا مورد السعر الكمية المحددة لهذا المنتج
+RecordedProducts=المنتجات المسجلة
+RecordedProductsAndServices=المنتجات / الخدمات المسجلة
+GenerateThumb=يولد الإبهام
+ProductCanvasAbility=خاصة استخدام "قماش" addons
+ServiceNb=خدمة ق # ٪
+ListProductByPopularity=قائمة المنتجات / الخدمات شعبية
+Finished=المنتجات المصنعة
+RowMaterial=المادة الأولى
+CloneProduct=استنساخ المنتجات أو الخدمات
+ConfirmCloneProduct=هل أنت متأكد من أن المنتج أو الخدمة استنساخ <b>٪ ق؟</b>
+CloneContentProduct=استنساخ جميع المعلومات الرئيسية من المنتجات / الخدمات
+ClonePricesProduct=استنساخ الرئيسية معلومات والأسعار
+// Date 2009-08-11 13:27:01
+// STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
+// Reference language: en_US
+LastRecordedProductsAndServices=٪ ق الماضي سجلت المنتجات / الخدمات
+ContractStatusToRun=ألف mettre én الخدمة
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:13:51).
+// Reference language: en_US
+ProductAccountancyBuyCode=المحاسبة الرمز (شراء)
+ProductAccountancySellCode=المحاسبة الرمز (بيع)
+SellingPriceHT=سعر البيع (صافي الضرائب)
+SellingPriceTTC=سعر البيع (شركة الضريبية)
+ListProductServiceByPopularity=قائمة المنتجات / الخدمات حسب الشهرة
+ListServiceByPopularity=قائمة الخدمات حسب الشهرة
+ProductIsUsed=ويستخدم هذا المنتج
+NewRefForClone=المرجع. من المنتجات الجديدة / خدمة
+CustomerPrices=أسعار العملاء
+SuppliersPrices=أسعار الموردين
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:14:06).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> ar_AR
+Sell=مبيعات
+Buy=مشتريات
+OnBuy=شراؤها
+ProductStatusOnBuy=متاح
+ProductStatusNotOnBuy=عفا عليها الزمن
+ProductStatusOnBuyShort=متاح
+ProductStatusNotOnBuyShort=عفا عليها الزمن
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:07).

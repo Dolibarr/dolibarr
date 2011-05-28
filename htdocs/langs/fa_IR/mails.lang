@@ -1,0 +1,128 @@
+/*
+ * Language code: ar_AR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-08-11 13:27:01
+ */
+
+
+// Date 2009-08-11 13:27:01
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Mailing=مراسلة
+EMailing=مراسلة
+Mailings=EMailings
+EMailings=EMailings
+AllEMailings=جميع eMailings
+MailCard=بطاقة الإنترنت
+MailTargets=الأهداف
+MailRecipients=المستفيدون
+MailRecipient=المتلقي
+MailTitle=العنوان
+MailFrom=مرسل
+MailErrorsTo=الأخطاء
+MailReply=وردا على
+MailTo=جهاز الاستقبال (ق)
+MailCC=نسخة إلى
+MailCCC=نسخة إلى نسخة
+MailTopic=البريد الإلكتروني الموضوع
+MailText=رسالة
+MailFile=الملفات المرفقة
+MailMessage=هيئة البريد الإلكتروني
+ShowEMailing=وتظهر مراسلة
+ListOfEMailings=قائمة emailings
+NewMailing=مراسلة جديدة
+EditMailing=تحرير مراسلة
+ResetMailing=إعادة إرساله عبر البريد الإلكتروني
+DeleteMailing=حذف البريد الإلكتروني
+DeleteAMailing=حذف البريد الإلكتروني
+PreviewMailing=معاينة مراسلة
+PrepareMailing=إعداد البريد الإلكتروني
+CreateMailing=خلق مراسلة
+MailingDesc=هذه الصفحة يسمح لك بإرسال emailings على مجموعة من الناس.
+MailingResult=ونتيجة لإرسال رسائل البريد الإلكتروني
+TestMailing=تجربة استخدام الإنترنت
+ValidMailing=صحيح مراسلة
+ApproveMailing=الموافقة على استخدام الإنترنت
+MailingStatusDraft=مسودة
+MailingStatusValidated=صادق
+MailingStatusApproved=وافق
+MailingStatusSent=أرسل
+MailingStatusSentPartialy=أرسلت جزئيا
+MailingStatusSentCompletely=أرسلت تماما
+MailingStatusError=خطأ
+MailingStatusNotSent=لم ترسل
+MailSuccessfulySent=أرسل بالبريد الإلكتروني بنجاح (٪ من المستندات ل٪)
+ErrorMailRecipientIsEmpty=البريد الإلكتروني المتلقي فارغة
+WarningNoEMailsAdded=بريد الكتروني جديدة تضاف الى قائمة المتلقي.
+ConfirmValidMailing=هل أنت متأكد أنك تريد إرساله عبر البريد الإلكتروني للتحقق من هذا؟
+ConfirmResetMailing=تحذير ، وإعادة تشغيل البريد الإلكتروني <b>ل ٪</b> ، يسمح لك أن الدمار إرسال هذه الرسالة مرة اخرى. هل أنت متأكد من أنك هذا هو ما تريد أن تفعل؟
+ConfirmDeleteMailing=هل أنت متأكد من أنك تريد حذف هذا emailling؟
+NbOfRecipients=عدد المستفيدين
+NbOfUniqueEMails=ملاحظة : فريد من رسائل البريد الإلكتروني
+NbOfEMails=ملاحظة : رسائل البريد الإلكتروني
+TotalNbOfDistinctRecipients=عدد المستفيدين متميزة
+NoTargetYet=ولم يعرف بعد المستفيدين (الذهاب على تبويبة 'المتلقين)
+AddRecipients=إضافة المتلقين
+RemoveRecipient=إزالة المتلقية
+CommonSubstitutions=عام بدائل
+YouCanAddYourOwnPredefindedListHere=البريد الإلكتروني الخاص بك لإنشاء وحدة منتق ، انظر htdocs / تضم / وحدات / الرسائل / إقرأني.
+EMailTestSubstitutionReplacedByGenericValues=عند استخدام طريقة الاختبار ، واستبدال المتغيرات العامة الاستعاضة عن القيم
+MailingAddFile=يرفق هذا الملف
+NoAttachedFiles=ولا الملفات المرفقة
+BadEMail=قيمة سيئة للبريد الإلكتروني
+CloneEMailing=استنساخ الارسال بالبريد الالكتروني
+ConfirmCloneEMailing=هل أنت متأكد من استنساخ هذا البريد الإلكتروني؟
+CloneContent=استنساخ الرسالة
+CloneReceivers=شبيه المستفيدين
+DateLastSend=تاريخ آخر ارسال
+MailingModuleDescContactCompanies=اتصالات لجميع الأطراف الثالثة (العملاء ، والاحتمال ، والمورد ،...)
+MailingModuleDescDolibarrUsers=Dolibarr جميع مستخدمي البريد الإلكتروني
+MailingModuleDescEmailsFromFile=رسائل البريد الإلكتروني من ملف نصي (البريد الإلكتروني ؛ اسم الشهرة ؛ التعليقات)
+MailingModuleDescContactsCategories=أطراف ثالثة مع رسائل البريد الإلكتروني (حسب الفئة)
+MailingModuleDescDolibarrContractsLinesExpired=أطراف ثالثة مع انتهاء العقد خطوط
+LineInFile=خط المستندات في ملف ٪
+RecipientSelectionModules=حددت لطلبات المستفيدين الاختيار
+MailSelectedRecipients=اختيار المستفيدين
+MailingArea=EMailings المنطقة
+LastMailings=ق emailings الماضي ٪
+TargetsStatistics=أهداف الإحصاءات
+NbOfCompaniesContacts=فريدة من شركات الاتصالات
+MailNoChangePossible=صادق المتلقين للمراسلة لا يمكن تغيير
+SearchAMailing=البحث البريدية
+SendMailing=إرسال البريد الإلكتروني
+SendMail=إرسال بريد إلكتروني
+SentBy=أرسلها
+MailingNeedCommand=أوراق ولإرسال البريد الإلكتروني لا يمكن إلا أن يكون أداؤها من سطر الأوامر. اطلب من مدير لاطلاق التالي لإرسال البريد الإلكتروني لجميع المستفيدين :
+MailingNeedCommand2=ولكن يمكنك إرسالها عبر الإنترنت عن طريق إضافة معلمة MAILING_LIMIT_SENDBYWEB مع قيمة الحد الأقصى لعدد من رسائل البريد الإلكتروني التي تريد إرسالها من خلال هذه الدورة.
+ConfirmSendingEmailing=هل أنت متأكد أنك تريد إرسال البريد؟ <br> على خط ارسال emailings محدودة لأسباب أمنية <b>ل٪ ق</b> المتلقين عن طريق إرسال والخمسين.
+TargetsReset=لائحة واضحة
+ToClearAllRecipientsClickHere=من الواضح أن المستفيدين قائمة لهذا البريد الإلكتروني ، انقر على زر
+ToAddRecipientsChooseHere=إضافة إلى المتلقين ، وتختار في هذه القوائم
+NbOfEMailingsReceived=وتلقى كتلة emailings
+IdRecord=رقم قياسي
+DeliveryReceipt=إيصال استلام
+YouCanUseCommaSeparatorForSeveralRecipients=يمكنك استخدام <b>الفاصلة</b> فاصل لتحديد عدد من المتلقين.
+Notifications=الإخطارات
+NoNotificationsWillBeSent=إشعارات البريد الإلكتروني لا يجري التخطيط لهذا الحدث ، وشركة
+ANotificationsWillBeSent=1 سيتم إرسال الإشعار عن طريق البريد الإلكتروني
+SomeNotificationsWillBeSent=ق ٪ سوف يتم إرسال الإخطارات عبر البريد الإلكتروني
+AddNewNotification=تفعيل جديد طلب إخطار بالبريد الإلكتروني
+ListOfActiveNotifications=قائمة البريد الإلكتروني لجميع طلبات الإخطار
+// Date 2009-08-11 13:27:01
+// STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
+// Reference language: en_US
+MailingModuleDescFundationMembers=مؤسسة البريد الالكتروني للأعضاء
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:13:51).
+// Reference language: en_US
+DateSending=تاريخ إرسال
+SentTo=إرسالها إلى <b>%s</b>
+LimitSendingEmailing=على خط ارسال emailings محدودة لأسباب أمنية ومهلة للمستفيدين عن طريق إرسال <b>%s</b> الدورة.
+ListOfNotificationsDone=أرسلت قائمة جميع اشعارات بالبريد الالكتروني
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:13:55).

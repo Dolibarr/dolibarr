@@ -1,0 +1,140 @@
+/*
+ * Language code: ar_AR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-08-11 13:27:01
+ */
+
+
+// Date 2009-08-11 13:27:01
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Accountancy=المحاسبة
+AccountancyCard=بطاقة المحاسبة
+Treasury=الخزانة
+MenuFinancial=المالية
+OptionMode=الخيار المحاسبة
+OptionModeVirtual=الخيار بين اعتمادات الديون
+OptionModeVirtualDesc=وفي هذا السياق ، فإن أكثر من الدوران يحسب الفواتير (تاريخ التصديق). إذا كانت هذه الفواتير المستحقة ، وعما إذا كانت قد دفعت أم لا ، فهي مدرجة في حجم الانتاج.
+FeatureIsSupportedInInOutModeOnly=الميزة الوحيدة المتاحة في سداد ديون قروض المحاسبة طريقة (انظر التكوين وحدة المحاسبة)
+Param=الإعداد
+AccountsGeneral=الحسابات
+Account=حساب
+Accounts=الحسابات
+BillsForSuppliers=فواتير الموردين
+Income=الدخل
+Outcome=نتائج
+ReportInOut=دخل / نتائج
+ReportTurnover=دوران
+PaymentsNotLinkedToInvoice=المدفوعات ليست مرتبطة بأي الفاتورة ، وذلك ليس مرتبطا بأي طرف ثالث
+PaymentsNotLinkedToUser=المدفوعات ليست مرتبطة بأي مستخدم
+Profit=الأرباح
+Balance=التوازن
+Debit=الخصم
+Credit=الائتمان
+Withdrawal=انسحاب
+Withdrawals=انسحابات
+AmountHTVATRealReceived=جمعت HT
+VATToPay=ضريبة القيمة المضافة وتبيع
+VATReceived=وتلقى الضريبة على القيمة المضافة
+VATToCollect=ضريبة القيمة المضافة مشتريات
+VATSummary=رصيد الضريبة على القيمة المضافة
+VATCollected=جمعت ضريبة القيمة المضافة
+ToPay=دفع
+ToGet=العودة
+TaxAndDividendsArea=ضريبة أرباح الأسهم والمساهمات الاجتماعية ، ومنطقة
+SocialContribution=المساهمة الاجتماعية
+SocialContributions=المساهمات الاجتماعية
+MenuTaxAndDividends=الضرائب وعوائد
+MenuSocialContributions=المساهمات الاجتماعية
+MenuNewSocialContribution=مساهمة جديدة
+NewSocialContribution=المساهمة الاجتماعية الجديدة
+ContributionsToPay=دفع الاشتراكات
+AccountancyTreasuryArea=المحاسبة / الخزانة المنطقة
+AccountancySetup=المحاسبة الإعداد
+NewPayment=دفع جديدة
+Payments=المدفوعات
+PaymentCustomerInvoice=الزبون تسديد الفاتورة
+PaymentSupplierInvoice=دفع فاتورة المورد
+PaymentSocialContribution=دفع المساهمة الاجتماعية
+PaymentVat=دفع ضريبة القيمة المضافة
+ListPayment=قائمة المدفوعات
+ListOfPayments=قائمة المدفوعات
+ListOfCustomerPayments=قائمة مدفوعات العملاء
+ListOfSupplierPayments=قائمة الموردين المدفوعات
+DatePayment=تاريخ الدفع
+NewVATPayment=دفع ضريبة القيمة المضافة الجديدة
+VATPayment=دفع ضريبة القيمة المضافة
+VATPayments=دفع ضريبة القيمة المضافة
+TotalToPay=على دفع ما مجموعه
+TotalVATReceived=تلقى مجموع الضريبة على القيمة المضافة
+CustomerAccountancyCode=قانون محاسبة العملاء
+AccountNumberShort=رقم الحساب
+AccountNumber=رقم الحساب
+NewAccount=حساب جديد
+SalesTurnover=مبيعات
+ByThirdParties=بو أطراف ثالثة
+ByUserAuthorOfInvoice=فاتورة من قبل المؤلف
+AccountancyExport=المحاسبة التصدير
+ErrorWrongAccountancyCodeForCompany=قانون محاسبة العملاء سيئة للق ٪
+SuppliersProductsSellSalesTurnover=وقد ولدت عن طريق الدوران مبيعات الموردين المنتجات.
+CheckReceipt=التحقق من إيداع
+CheckReceiptShort=التحقق من إيداع
+NewCheckReceipt=خصم جديد
+NewCheckDeposit=تأكد من ايداع جديدة
+NewCheckDepositOn=تهيئة لتلقي الودائع على حساب : ٪ ق
+NoWaitingChecks=لم ينتظر إيداع الشيكات.
+DateChequeReceived=استقبال المدخلات تاريخ الشيك
+NbOfCheques=ملاحظة : للشيكات
+PaySocialContribution=دفع المساهمات الاجتماعية
+ConfirmPaySocialContribution=هل أنت متأكد من أن يصنف هذه المساهمة paid الاجتماعية؟
+DeleteSocialContribution=حذف المساهمات الاجتماعية
+ConfirmDeleteSocialContribution=هل أنت متأكد من أنك تريد حذف هذه المساهمة الاجتماعية؟
+ExportDataset_tax_1=المساهمات الاجتماعية والمدفوعات
+AnnualSummaryDueDebtMode=ميزان الإيرادات والمصروفات ، وموجزا سنويا ، طريقة <b>٪ sClaims - ديونها ٪ ق</b> قال <b>الالتزام والمحاسبة.</b>
+RulesResultDue=-- المبالغ المبينة مع كل الضرائب وشملت <br> -- ويشمل الفواتير غير المسددة والنفقات والضريبة على القيمة المضافة المدفوعة سواء كانوا أم لا. <br> -- يقوم على تاريخ المصادقة على الفواتير وضريبة القيمة المضافة وعلى الموعد المقرر لتغطية النفقات.
+RulesResultInOut=-- المبالغ المبينة مع كل الضرائب وشملت <br> -- ويشمل الحقيقية على الفواتير والمدفوعات ، والنفقات ، وضريبة القيمة المضافة. <br> -- يقوم على مواعيد دفع الفواتير ، وضبطت نفقات الضريبة على القيمة المضافة. <br>
+RulesCADue=-- ويشمل العملاء الفواتير المستحقة ما إذا كانت دفعت أم لا. <br> -- يقوم على تاريخ المصادقة على هذه الفواتير. <br>
+RulesCAIn=-- ويشمل جميع الفعال دفع الفواتير الواردة من العملاء. <br> -- يقوم على دفع هذه الفواتير تاريخ <br>
+VATReportByCustomersInInputOutputMode=تقرير من العملاء المجمعة ، وتدفع ضريبة القيمة المضافة (ضريبة القيمة المضافة ورود)
+VATReportByCustomersInDueDebtMode=تقرير من العملاء المجمعة ، وتدفع ضريبة القيمة المضافة (ضريبة القيمة المضافة بمعدل)
+VATReportByQuartersInInputOutputMode=التقرير الفصلي للتجمع ، وتدفع ضريبة القيمة المضافة (ضريبة القيمة المضافة ورود)
+VATReportByQuartersInDueDebtMode=التقرير الفصلي للتجمع ، وتدفع ضريبة القيمة المضافة (ضريبة القيمة المضافة بمعدل)
+SeeVATReportInInputOutputMode=انظر التقرير <b>تغطية sVAT ٪ ق ٪</b> لحساب موحد
+SeeVATReportInDueDebtMode=انظر التقرير <b>عن تدفق sVAT ٪ ق ٪</b> لحساب مع خيار على تدفق
+RulesVATIn=للخدمات ، ويشتمل هذا التقرير على ضريبة القيمة المضافة لوائح وردت فعلا أو على أساس تاريخ الدفع. <br> -- بالنسبة للأصول المادية ، ويشمل فواتير ضريبة القيمة المضافة على أساس التحقق من تاريخ الفاتورة.
+RulesVATDue=للخدمات ، ويتضمن التقرير بسبب فواتير ضريبة القيمة المضافة ، ودفعت أم لا ، على أساس من تاريخ المصادقة على مشاريع القوانين هذه. <br> -- بالنسبة للأصول المادية ، ويشمل فواتير ضريبة القيمة المضافة ، على أساس من تاريخ المصادقة على الفاتورة.
+OptionVatInfoModuleComptabilite=ملاحظة : للحصول على الأصول المادية ، فإنه ينبغي استخدام تاريخ التسليم ليكون أكثر إنصافا.
+PercentOfInvoice=٪ ٪ / الفاتورة
+NotUsedForGoods=لا تستخدم على السلع
+Dispatch=إرسال
+Dispatched=أوفدت
+ToDispatch=إيفاد
+// Date 2009-08-11 13:27:01
+// STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
+// Reference language: en_US
+OptionModeTrue=خيار المدخلات والمخرجات
+OptionModeTrueDesc=وفي هذا السياق ، ويحسب حجم المدفوعات (تاريخ المدفوعات). \ nThe صحة الأرقام مضمونا إلا إذا مسك الدفاتر ومن خلال التدقيق في المدخلات والمخرجات على الحسابات عن طريق الفواتير.
+AmountHTVATRealPaid=HT المدفوعة
+VATPaid=دفع ضريبة القيمة المضافة
+ShowVatPayment=وتظهر دفع ضريبة القيمة المضافة
+SupplierAccountancyCode=مورد قانون المحاسبة
+AlreadyPaid=دفعت بالفعل
+AnnualSummaryInputOutputMode=ميزان الإيرادات والنفقات السنوية وخلاصة طريقة <b>sRevenues - ٪ ق ٪ Expensens</b> قال <b>المحاسبة النقدية.</b>
+AnnualByCompaniesDueDebtMode=ميزان الإيرادات والنفقات ، وبالتفصيل من قبل أطراف ثالثة ، وطريقة سداد <b>ديون sClaims ٪ ٪ ق</b> قال <b>الالتزام والمحاسبة.</b>
+AnnualByCompaniesInputOutputMode=ميزان الإيرادات والنفقات ، وبالتفصيل من قبل أطراف ثالثة ، واسطة بين <b>sRevenues ٪ من مصروفات ٪ ق</b> قال <b>المحاسبة النقدية.</b>
+SeeReportInInputOutputMode=انظر التقرير <b>sIncomes ٪</b> بين <b>المصروفات ٪ ق</b> قال <b>المحاسبة النقدية</b> لحساب المدفوعات الفعلية
+SeeReportInDueDebtMode=انظر التقرير <b>sClaims ٪</b> بين <b>ديونها ٪ ق الالتزام والمحاسبة</b> وقال لحساب فواتير
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:16:46).
+// Reference language: en_US
+TaxModuleSetupToModifyRules=انتقل إلى <a href="%s">وحدة الإعداد</a> لتعديل القواعد لحساب
+VATReportBuildWithOptionDefinedInModule=المبالغ المبينة هنا يتم حسابها باستخدام القواعد التي تحددها وحدة الإعداد الضرائب.
+SocialContributionsPayments=المساهمات الاجتماعية المدفوعات
+ThirdPartyMustBeEditAsCustomer=ويجب تحديد الطرف الثالث كزبون
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:17:37).

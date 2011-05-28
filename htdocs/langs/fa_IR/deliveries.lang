@@ -1,0 +1,33 @@
+/*
+ * Language code: ar_AR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-08-11 13:27:01
+ */
+
+
+// Date 2009-08-11 13:27:01
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Delivery=تسليم
+Deliveries=الولادة
+DeliveryCard=تسليم البطاقة
+DeliveryOrder=من أجل تقديم
+DeliveryOrders=توصيل الطلبات
+DeliveryDate=تاريخ التسليم
+DeliveryDateShort=Deliv. تاريخ
+CreateDeliveryOrder=ومن أجل توليد التسليم
+QtyDelivered=الكمية المسلمة
+SetDeliveryDate=حدد تاريخ الشحن
+ValidateDeliveryReceipt=تحقق من إنجاز ورود
+ValidateDeliveryReceiptConfirm=هل أنت متأكد من أن هذا الإنجاز تحقق من ورود؟
+DeliveryMethod=طريقة التسليم
+TrackingNumber=تتبع عدد
+NameAndSignature=الاسم والتوقيع :
+ToAndDate=To___________________________________ على ____ / _____ / __________
+GoodStatusDeclaration=وتلقى البضائع الواردة أعلاه في حالة جيدة ،
+Deliverer=المنفذ :
+Sender=مرسل
+Recipient=المتلقي
+// Date 2009-08-11 13:27:01
+// STOP - Lines generated via parser

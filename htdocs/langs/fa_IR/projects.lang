@@ -1,0 +1,107 @@
+/*
+ * Language code: ar_AR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-08-11 13:27:01
+ */
+
+
+// Date 2009-08-11 13:27:01
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Project=المشروع
+Projects=المشاريع
+SharedProject=مشاريع مشتركة
+Myprojects=بلدي المشاريع
+ProjectsArea=مشاريع المنطقة
+NewProject=مشروع جديد
+AddProject=يضيف المشروع
+DeleteAProject=حذف مشروع
+DeleteATask=حذف مهمة
+ConfirmDeleteAProject=هل أنت متأكد من أنك تريد حذف هذا المشروع؟
+ConfirmDeleteATask=هل أنت متأكد من أنك تريد حذف هذه المهمة؟
+OfficerProject=ضابط المشروع
+LastProjects=آخر مشاريع ق ٪
+AllProjects=جميع المشاريع
+ProjectsList=قائمة المشاريع
+ShowProject=وتبين للمشروع
+SetProject=وضع المشروع
+NoProject=لا يعرف أو المملوكة للمشروع
+NbOpenTasks=ملاحظة : من مهام فتح
+NbOfProjects=ملاحظة : للمشاريع
+TimeSpent=الوقت الذي تستغرقه
+RefTask=المرجع. مهمة
+LabelTask=علامة مهمة
+NewTimeSpent=جديد الوقت الذي يقضيه
+MyTimeSpent=وقتي قضى
+MyTasks=مهمتي
+Tasks=المهام
+Task=مهمة
+NewTask=مهمة جديدة
+AddTask=إضافة مهمة
+AddDuration=تضاف المدة
+Activity=النشاط
+Activities=المهام والأنشطة
+MyActivity=نشاط بلدي
+MyActivities=بلدي المهام والأنشطة
+DurationEffective=فعالة لمدة
+MyProjects=بلدي المشاريع
+Time=وقت
+ListProposalsAssociatedProject=قائمة المقترحات التجارية المرتبطة بالمشروع.
+ListOrdersAssociatedProject=قائمة الزبائن المرتبطة بالمشروع.
+ListInvoicesAssociatedProject=قائمة العملاء والفواتير المرتبطة بالمشروع
+ListPredefinedInvoicesAssociatedProject=قائمة العملاء مسبقا والفواتير المرتبطة المشروع
+ListSupplierOrdersAssociatedProject=قائمة الموردين الأوامر المرتبطة بالمشروع
+ListSupplierInvoicesAssociatedProject=قائمة الموردين المرتبطة بالمشروع.
+ListContractAssociatedProject=قائمة العقود المرتبطة بالمشروع.
+ActivityOnProjectThisWeek=نشاط المشروع هذا الاسبوع
+ActivityOnProjectThisMonth=نشاط المشروع هذا الشهر
+ActivityOnProjectThisYear=نشاط المشروع هذا العام
+ChildOfTask=طفل من مشروع / مهمة
+NotOwnerOfProject=لا صاحب هذا المشروع من القطاع الخاص
+AffectedTo=إلى المتضررين
+CantRemoveProject=هذا المشروع لا يمكن إزالتها كما هي المرجعية بعض أشياء أخرى (الفاتورة ، أو غيرها من الأوامر). انظر referers تبويبة.
+// Date 2009-08-11 13:27:01
+// STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:13:51).
+// Reference language: en_US
+PrivateProject=اتصالات من المشروع
+MyProjectsDesc=ويقتصر هذا الرأي على المشاريع التي تقوم على الاتصال (كل ما هو نوع).
+ProjectsPublicDesc=هذا الرأي يعرض جميع المشاريع ويسمح لك قراءة.
+ProjectsDesc=ويعرض هذا الرأي جميع المشاريع (أذونات المستخدم الخاص أعطى الصلاحية لعرض كل شيء).
+MyTasksDesc=ويقتصر هذا الرأي على المشروعات أو المهام التي هي الاتصال للحصول على (ما هو نوع).
+TasksPublicDesc=هذا الرأي يعرض جميع المشاريع والمهام ويسمح لك قراءة.
+TasksDesc=هذا الرأي يعرض جميع المشاريع والمهام (أذونات المستخدم الخاص أعطى الصلاحية لعرض كل شيء).
+Progress=تقدم
+ListFichinterAssociatedProject=قائمة التدخلات المرتبطة بالمشروع
+ListTripAssociatedProject=قائمة من الرحلات والنفقات المرتبطة بالمشروع
+ListActionsAssociatedProject=قائمة الإجراءات المرتبطة بالمشروع
+ValidateProject=تحقق من مشروع غابة
+ConfirmValidateProject=هل أنت متأكد أنك تريد التحقق من صحة هذا المشروع؟
+CloseAProject=وثيقة المشروع
+ConfirmCloseAProject=هل أنت متأكد أنك تريد إغلاق هذا المشروع؟
+ReOpenAProject=فتح مشروع
+ConfirmReOpenAProject=هل أنت متأكد أنك تريد إعادة فتح هذا المشروع؟
+ProjectContact=مشروع اتصالات
+ActionsOnProject=الإجراءات على المشروع
+YouAreNotContactOfProject=كنت لا اتصال لهذا المشروع الخاص
+DeleteATimeSpent=قضى الوقت حذف
+ConfirmDeleteATimeSpent=هل أنت متأكد أنك تريد حذف هذا الوقت الذي يقضيه؟
+DoNotShowMyTasksOnly=أنا لم تتأثر وانظر أيضا إلى المهام ط
+ShowMyTasksOnly=أنا تأثرت المهام عرض فقط الأول
+TaskRessourceLinks=ملتقيات
+ProjectsDedicatedToThisThirdParty=مشاريع مخصصة لهذا الطرف الثالث
+NoTasks=أية مهام لهذا المشروع
+LinkedToAnotherCompany=ربط طرف ثالث آخر
+TypeContact_project_internal_PROJECTLEADER=مشروع زعيم
+TypeContact_project_external_PROJECTLEADER=مشروع زعيم
+TypeContact_project_internal_CONTRIBUTOR=مساهم
+TypeContact_project_external_CONTRIBUTOR=مساهم
+TypeContact_project_task_internal_TASKEXECUTIVE=المهمة التنفيذية
+TypeContact_project_task_external_TASKEXECUTIVE=المهمة التنفيذية
+TypeContact_project_task_internal_CONTRIBUTOR=مساهم
+TypeContact_project_task_external_CONTRIBUTOR=مساهم
+DocumentModelBaleine=وهناك مشروع كامل لنموذج التقرير (logo...)
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:14:14).

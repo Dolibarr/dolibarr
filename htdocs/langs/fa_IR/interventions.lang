@@ -1,0 +1,44 @@
+/*
+ * Language code: ar_AR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-08-11 13:27:01
+ */
+
+
+// Date 2009-08-11 13:27:01
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Intervention=التدخل
+Interventions=المداخلات
+InterventionCard=تدخل البطاقة
+NewIntervention=التدخل الجديدة
+AddIntervention=إضافة التدخل
+ListOfInterventions=قائمة التدخلات
+EditIntervention=Editer التدخل
+LastInterventions=آخر تدخلات ٪ ق
+AllInterventions=كل التدخلات
+CreateDraftIntervention=إنشاء مشروع
+CustomerDoesNotHavePrefix=الزبون ليس لديها البادئة
+InterventionContact=التدخل الاتصال
+DeleteIntervention=حذف التدخل
+ValidateIntervention=تحقق من التدخل
+ModifyIntervention=تعديل التدخل
+DeleteInterventionLine=حذف السطر التدخل
+ConfirmDeleteIntervention=هل أنت متأكد من أنك تريد حذف هذا التدخل؟
+ConfirmValidateIntervention=هل أنت متأكد أنك تريد التحقق من صحة هذا التدخل؟
+ConfirmModifyIntervention=هل أنت متأكد من تعديل هذا التدخل؟
+ConfirmDeleteInterventionLine=هل أنت متأكد من أنك تريد حذف هذا السطر التدخل؟
+NameAndSignatureOfInternalContact=الاسم والتوقيع على التدخل :
+NameAndSignatureOfExternalContact=اسم وتوقيع العميل :
+DocumentModelStandard=نموذج وثيقة موحدة للتدخلات
+TypeContact_fichinter_internal_INTERREPFOLL=ممثل متابعة التدخل
+TypeContact_fichinter_internal_INTERVENING=التدخل
+TypeContact_fichinter_external_BILLING=فواتير العملاء الاتصال
+TypeContact_fichinter_external_CUSTOMER=متابعة العملاء الاتصال
+ArcticNumRefModelDesc1=عدد نموذج عامة
+ArcticNumRefModelError=فشل لتفعيل
+PacificNumRefModelDesc1=عودة número مع الشكل nnnn - ٪ syymm فيها السنة هي السنة ، هو شهر ملم وnnnn هو كسر التسلسل وليس هناك عودة لل0
+PacificNumRefModelError=تدخل البطاقة ابتداء من دولار ويوجد بالفعل syymm لا تتفق مع هذا النموذج من التسلسل. إزالة أو تغيير تسميتها لتصبح لتفعيل هذه الوحدة.
+// Date 2009-08-11 13:27:01
+// STOP - Lines generated via parser

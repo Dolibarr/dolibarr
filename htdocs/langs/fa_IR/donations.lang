@@ -1,0 +1,47 @@
+/*
+ * Language code: ar_AR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-08-11 13:27:01
+ */
+
+
+// Date 2009-08-11 13:27:01
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Donation=تبرع
+Donations=التبرعات
+Donor=الجهات المانحة
+Donors=الجهات المانحة
+AddDonation=إضافة تبرع
+NewDonation=منحة جديدة
+DonationPromise=هدية الوعد
+PromisesNotValid=وعود لم يصادق
+PromisesValid=صادق الوعود
+DonationsReceived=تلقى التبرعات
+PublicDonation=تبرع العامة
+DonationsNumber=تبرع عدد
+DonationsArea=التبرعات المنطقة
+DonationStatusPromiseNotValidated=مشروع وعد
+DonationStatusPromiseValidated=صادق الوعد
+DonationStatusPaid=تلقى تبرع
+DonationStatusPromiseNotValidatedShort=مسودة
+DonationStatusPromiseValidatedShort=صادق
+DonationStatusPaidShort=وردت
+ValidPromise=تحقق من وعود
+BuildDonationReceipt=بناء استلام
+DonationsModels=نماذج لوثائق ايصالات للتبرع
+// Date 2009-08-11 13:27:01
+// STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
+// Reference language: en_US
+DonationsPaid=التبرعات المدفوعة
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 11:13:51).
+// Reference language: en_US
+ValidPromess=التحقق من صحة الوعد
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:14:23).
