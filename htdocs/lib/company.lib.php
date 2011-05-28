@@ -536,6 +536,7 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
 {
     global $bc;
 
+    $now=dol_now();
     $out='';
 
     if ($conf->agenda->enabled)
@@ -567,7 +568,8 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
         $sql.= " WHERE u.rowid = a.fk_user_author";
         if ($object->id) $sql.= " AND a.fk_soc = ".$object->id;
         if (is_object($objcon) && $objcon->id) $sql.= " AND a.fk_contact = ".$objcon->id;
-        $sql.= " AND c.id=a.fk_action AND a.percent < 100";
+        $sql.= " AND c.id=a.fk_action";
+        $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";
         $sql.= " ORDER BY a.datep DESC, a.id DESC";
 
         dol_syslog("company.lib::show_actions_todo sql=".$sql);
@@ -594,7 +596,7 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
 
                     // Picto warning
                     $out.='<td width="16">';
-                    if ($datep && $datep < (time()- ($conf->global->MAIN_DELAY_ACTIONS_TODO *60*60*24)) ) $out.=' '.img_warning($langs->trans("Late"));
+                    if ($obj->percent >= 0 && $datep && $datep < ($now - ($conf->global->MAIN_DELAY_ACTIONS_TODO *60*60*24)) ) $out.=' '.img_warning($langs->trans("Late"));
                     else $out.='&nbsp;';
                     $out.='</td>';
 
@@ -678,6 +680,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
     $out='';
     $histo=array();
     $numaction = 0 ;
+    $now=dol_now();
 
     if ($conf->agenda->enabled)
     {
@@ -697,7 +700,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
         if ($object->id) $sql.= " AND a.fk_soc = ".$object->id;
         if (is_object($objcon) && $objcon->id) $sql.= " AND a.fk_contact = ".$objcon->id;
         $sql.= " AND c.id=a.fk_action";
-        $sql.= " AND a.percent = 100";
+        $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep <= '".$db->idate($now)."'))";
         $sql.= " ORDER BY a.datep DESC, a.id DESC";
 
         dol_syslog("company.lib::show_actions_done sql=".$sql, LOG_DEBUG);
