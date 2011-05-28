@@ -389,52 +389,6 @@ class Ldap
 	}
 
 
-
-	/**
-	 * 		\brief		Checks a username and password - does this by logging on to the
-	 * 					server as a user - specified in the DN. There are several reasons why
-	 * 					this login could fail - these are listed below.
-	 *		\return		uname		Username to check
-	 *		\return		pass		Password to check
-	 *		\return		boolean		true=check pass ok, falses=check pass failed
-	 */
-	function checkPass($uname,$pass)
-	{
-		/* Construct the full DN, eg:-
-		 ** "uid=username, ou=People, dc=orgname,dc=com"
-		 */
-		if ($this->serverType == "activedirectory") {
-			// FQDN domain
-			$domain = str_replace('dc=','',$this->domain);
-			$domain = str_replace(',','.',$domain);
-			$checkDn = "$uname@$domain";
-		} else {
-			$checkDn = $this->getUserIdentifier()."=".$uname.", ".$this->setDn(true);
-		}
-		// Try and connect...
-		$this->result = @ldap_bind( $this->connection,$checkDn,$pass);
-		if ( $this->result) {
-			// Connected OK - login credentials are fine!
-			$this->ldapUserDN = $checkDn;
-			return true;
-		} else {
-			/* Login failed. Return false, together with the error code and text from
-			 ** the LDAP server. The common error codes and reasons are listed below :
-			 ** (for iPlanet, other servers may differ)
-			 ** 19 - Account locked out (too many invalid login attempts)
-			 ** 32 - User does not exist
-			 ** 49 - Wrong password
-			 ** 53 - Account inactive (manually locked out by administrator)
-			 */
-			$this->ldapErrorCode = ldap_errno( $this->connection);
-			$this->ldapErrorText = ldap_error( $this->connection);
-			$this->ldapDebugDomain = $domain;
-			$this->ldapDebugDN = $checkDn;
-			return false;
-		}
-	}
-
-
 	/**
 	 * 	\brief		Add a LDAP entry
 	 *	\param		dn			DN entry key
@@ -1166,22 +1120,25 @@ class Ldap
 			$this->bindauth($this->searchUser, $this->searchPassword);
 		}
 
-		$searchDN = $this->people;
+		$searchDN = $this->people;    // TODO Why searching in people then domain ?
 
 		$result = '';
 		$i=0;
 		while ($i <= 2)
 		{
+		    dol_syslog("Ldap::fetch search with searchDN=".$searchDN." filter=".$filter);
 			$this->result = @ldap_search($this->connection, $searchDN, $filter);
 			if ($this->result)
 			{
 				$result = @ldap_get_entries($this->connection, $this->result);
-				//var_dump($result);
+				dol_syslog("Ldap::fetch search found");
+				//var_dump($result);exit;
 			}
 			else
 			{
-				$this->error = ldap_errno($this->connection)." ".ldap_error($this->connection);
-				return -1;
+			    $this->error = ldap_errno($this->connection)." ".ldap_error($this->connection);
+                dol_syslog("Ldap::fetch search not found");
+			    return -1;
 			}
 
 			if (! $result)
@@ -1228,6 +1185,10 @@ class Ldap
 			$domain = str_replace(',','.',$domain);
 			$this->domainFQDN = $domain;
 
+			// Set ldapUserDn (each user can have a different dn)
+            //var_dump($result[0]['dn']);exit;
+			$this->ldapUserDN=$result[0]['dn'];
+
 			ldap_free_result($this->result);
 			return 1;
 		}
@@ -1235,31 +1196,6 @@ class Ldap
 
 
 	// 2.6 helper methods
-
-	/**
-	 * Sets and returns the appropriate dn, based on whether there
-	 * are values in $this->people and $this->groups.
-	 *
-	 * @param boolean specifies whether to build a groups dn or a people dn
-	 * @return string if true ou=$this->people,$this->dn, else ou=$this->groups,$this->dn
-	 */
-	function setDn($peopleOrGroups) {
-
-		if ($peopleOrGroups) {
-			if ( isset($this->people) && (dol_strlen($this->people) > 0) ) {
-				$checkDn = "ou=" .$this->people. ", " .$this->dn;
-			}
-		} else {
-			if ( isset($this->groups) && (dol_strlen($this->groups) > 0) ) {
-				$checkDn = "ou=" .$this->groups. ", " .$this->dn;
-			}
-		}
-
-		if ( !isset($checkDn) ) {
-			$checkDn = $this->dn;
-		}
-		return $checkDn;
-	}
 
 	/**
 	 * Returns the correct user identifier to use, based on the ldap server type

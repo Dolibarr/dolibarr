@@ -305,14 +305,15 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
 				}
 			}
 
+			/* Already included into update function
 			if ($ret >= 0 && ! sizeof($edituser->errors) && isset($_POST["password"]) && $_POST["password"] !='')
 			{
-				$ret=$edituser->setPassword($user,$_POST["password"]);
+				$ret=$edituser->setPassword($user,$_POST["password"],0,1);
 				if ($ret < 0)
 				{
 					$message.='<div class="error">'.$edituser->error.'</div>';
 				}
-			}
+			} */
 
 			if ($ret >=0 && ! sizeof($edituser->errors))
 			{

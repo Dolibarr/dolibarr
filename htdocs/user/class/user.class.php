@@ -977,7 +977,7 @@ class User extends CommonObject
 	}
 
 	/**
-	 *  	Update a user into databse (except password)
+	 *  	Update a user into databse (and also password if this->pass is defined)
 	 *		@param		user				User qui fait la mise a jour
 	 *    	@param      notrigger			1 ne declenche pas les triggers, 0 sinon
 	 *		@param		nosyncmember		0=Synchronize linked member (standard info), 1=Do not synchronize linked member

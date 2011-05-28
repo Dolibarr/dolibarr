@@ -159,6 +159,33 @@ class InterfaceLdapsynchro
         elseif ($action == 'USER_NEW_PASSWORD')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
+            {
+                $ldap=new Ldap();
+                $ldap->connect_bind();
+
+                $oldinfo=$object->oldcopy->_load_ldap_info();
+                $olddn=$object->oldcopy->_load_ldap_dn($oldinfo);
+
+                // Verify if entry exist
+                $container=$object->oldcopy->_load_ldap_dn($oldinfo,1);
+                $search = "(".$object->oldcopy->_load_ldap_dn($oldinfo,2).")";
+                $records=$ldap->search($container,$search);
+                if (sizeof($records) && $records['count'] == 0)
+                {
+                    $olddn = '';
+                }
+
+                $info=$object->_load_ldap_info();
+                $dn=$object->_load_ldap_dn($info);
+
+                $result=$ldap->update($dn,$info,$user,$olddn);
+                if ($result < 0)
+                {
+                    $this->error="ErrorLDAP"." ".$ldap->error;
+                }
+                return $result;
+            }
         }
         elseif ($action == 'USER_ENABLEDISABLE')
         {
