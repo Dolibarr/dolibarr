@@ -27,6 +27,5 @@ CREATE TABLE llx_pos_tmp (
   remise real NOT NULL,
   total_ht double(24,8) NOT NULL,
   total_tva double(24,8) NOT NULL,
-  total_ttc double(24,8) NOT NULL,
-  PRIMARY KEY (id)
+  total_ttc double(24,8) NOT NULL
 ) ENGINE=innodb;
