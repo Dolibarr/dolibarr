@@ -1,9 +1,9 @@
 #/bin/ksh
 #----------------------------------------------------------------------------
-# \file         build/patch/buildpatch.ksh
+# \file         build/patch/buildpatch.sh
 # \brief        Create patch files
 # \version      $Revision$
-# \author       (c)2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+# \author       (c)2009-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
 #----------------------------------------------------------------------------
 # This script can be used to build a patch after a developer has made
 # changes on files in its Dolibarr tree.
@@ -11,13 +11,12 @@
 # with explanation on its goal, for inclusion in main branch.
 #----------------------------------------------------------------------------
 
-# Put here full path of original and new dolibarr directories
-# Example: olddir=/mydirA1/mydirA2/dolibarrold
-# Example: newdir=/mydirB1/mydirB2/dolibarr
-export olddir=original_dir
-export newdir=modified_dir
-
 echo ----- Building patch file mypatch.patch -----
-echo Build patch between \"$olddir\" and \"$newdir\" 
-diff -BNaur --exclude=CVS --exclude="*.patch" --exclude=".#*" --exclude="*~" --exclude="*.rej" --exclude="*.orig" --exclude="*.bak" --exclude=conf.php --exclude=documents  $olddir  $newdir  > mypatch.patch
-
+if [ -z "$1" ] || [ -z "$2" ];
+then 
+    echo Usage:   buildpatch.sh  original_dir_path    modified_dir_path
+    echo Example: buildpatch.sh  /mydirA/dolibarrold  /mydirB/dolibarrnew
+else
+    echo Build patch between \"$1\" and \"$2\" 
+    diff -BNaur --exclude=CVS --exclude="*.patch" --exclude=".#*" --exclude="*~" --exclude="*.rej" --exclude="*.orig" --exclude="*.bak" --exclude=conf.php --exclude=documents  $1  $2  > mypatch.patch
+fi
