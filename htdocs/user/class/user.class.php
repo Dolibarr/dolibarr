@@ -89,7 +89,7 @@ class User extends CommonObject
 	//! Liste des entrepots auquel a acces l'utilisateur
 	var $entrepots;
 
-	var $rights;
+	var $rights;               // Array of permissions user->rights->permx
 	var $all_permissions_are_loaded;         /**< \private all_permissions_are_loaded */
 	var $tab_loaded=array();		// Tableau pour signaler les permissions deja chargees
 
@@ -1157,7 +1157,7 @@ class User extends CommonObject
 	 */
 	function update_last_login_date()
 	{
-		$now=gmmktime();
+		$now=dol_now();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."user SET";
 		$sql.= " datepreviouslogin = datelastlogin,";
@@ -1436,10 +1436,11 @@ class User extends CommonObject
 	}
 
 	/**
-	 *    \brief      Mise e jour des infos de click to dial
+	 *    Update clicktodial info
 	 */
 	function update_clicktodial()
 	{
+        $this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_clicktodial";
 		$sql .= " WHERE fk_user = ".$this->id;
@@ -1457,22 +1458,28 @@ class User extends CommonObject
 
 		if ($result)
 		{
+		    $this->db->commit();
 	  		return 0;
 		}
 		else
 		{
-	  		print $this->db->error();
+		    $this->db->rollback();
+	  		$this->error=$this->db->error();
+	  		return -1;
 		}
 	}
 
 
 	/**
 	 *    Add user into a group
-	 *    @param      group       id du groupe
+	 *    @param       group       id du groupe
 	 */
-	function SetInGroup($group)
+	function SetInGroup($group, $notrigger=0)
 	{
 		global $conf;
+        $error=0;
+
+		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_user";
 		$sql.= " WHERE fk_user  = ".$this->id;
@@ -1485,22 +1492,29 @@ class User extends CommonObject
 		$sql.= " VALUES (".$conf->entity.",".$this->id.",".$group.")";
 
 		$result = $this->db->query($sql);
+
+        $this->db->commit();
 	}
 
 	/**
 	 *    Remove a user from a group
 	 *    @param      group       id du groupe
 	 */
-	function RemoveFromGroup($group)
+	function RemoveFromGroup($group, $notrigger=0)
 	{
 		global $conf;
+        $error=0;
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_user";
+        $this->db->begin();
+
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_user";
 		$sql.= " WHERE fk_user  = ".$this->id;
 		$sql.= " AND fk_usergroup = ".$group;
 		$sql.= " AND entity = ".$conf->entity;
 
 		$result = $this->db->query($sql);
+
+		$this->db->commit();
 	}
 
 	/**

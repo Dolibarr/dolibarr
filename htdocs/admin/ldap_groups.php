@@ -3,7 +3,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005      Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,6 @@ if (!$user->admin)
 if ($_GET["action"] == 'setvalue' && $user->admin)
 {
 	$error=0;
-	if (! dolibarr_set_const($db, 'LDAP_KEY_GROUPS',$_POST["key"],'chaine',0,'',$conf->entity)) $error++;
 
 	if (! dolibarr_set_const($db, 'LDAP_GROUP_DN',$_POST["group"],'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_GROUP_OBJECT_CLASS',$_POST["objectclass"],'chaine',0,'',$conf->entity)) $error++;
@@ -57,6 +56,12 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
 	//if (! dolibarr_set_const($db, 'LDAP_GROUP_FIELD_NAME',$_POST["fieldname"],'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_GROUP_FIELD_DESCRIPTION',$_POST["fielddescription"],'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_GROUP_FIELD_GROUPMEMBERS',$_POST["fieldgroupmembers"],'chaine',0,'',$conf->entity)) $error++;
+
+	// This one must be after the others
+    $valkey='';
+    $key=$_POST["key"];
+    if ($key) $valkey=$conf->global->$key;
+    if (! dolibarr_set_const($db, 'LDAP_KEY_GROUPS',$valkey,'chaine',0,'',$conf->entity)) $error++;
 
 	if ($error)
 	{
@@ -132,20 +137,13 @@ print '<td align="right">'.$langs->trans("LDAPNamingAttribute").'</td>';
 print "</tr>\n";
 
 // Filtre
-/*
-$var=!$var;
-print '<tr '.$bc[$var].'><td><span class="fieldrequired">'.$langs->trans("LDAPFilterConnection").'</span></td><td>';
-print '<input size="38" type="text" name="filterconnection" value="'.$conf->global->LDAP_FILTER_CONNECTION.'">';
-print '</td><td>'.$langs->trans("LDAPFilterConnectionExample").'</td>';
-print '</tr>';
-*/
 
 // Common name
 $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldName").'</td><td>';
 print '<input size="25" type="text" name="fieldfullname" value="'.$conf->global->LDAP_GROUP_FIELD_FULLNAME.'">';
 print '</td><td>'.$langs->trans("LDAPFieldCommonNameExample").'</td>';
-print '<td align="right"><input type="radio" name="key" value="'.$conf->global->LDAP_GROUP_FIELD_FULLNAME.'"'.($conf->global->LDAP_KEY_GROUPS==$conf->global->LDAP_GROUP_FIELD_FULLNAME?' checked="true"':'')."></td>";
+print '<td align="right"><input type="radio" name="key" value="LDAP_GROUP_FIELD_FULLNAME"'.(($conf->global->LDAP_KEY_GROUPS && $conf->global->LDAP_KEY_GROUPS==$conf->global->LDAP_GROUP_FIELD_FULLNAME)?' checked="true"':'')."></td>";
 print '</tr>';
 
 // Name
@@ -162,7 +160,7 @@ $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldDescription").'</td><td>';
 print '<input size="25" type="text" name="fielddescription" value="'.$conf->global->LDAP_GROUP_FIELD_DESCRIPTION.'">';
 print '</td><td>'.$langs->trans("LDAPFieldDescriptionExample").'</td>';
-print '<td align="right"><input type="radio" name="key" value="'.$conf->global->LDAP_GROUP_FIELD_DESCRIPTION.'"'.($conf->global->LDAP_KEY_GROUPS==$conf->global->LDAP_GROUP_FIELD_DESCRIPTION?' checked="true"':'')."></td>";
+print '<td align="right"><input type="radio" name="key" value="LDAP_GROUP_FIELD_DESCRIPTION"'.(($conf->global->LDAP_KEY_GROUPS && $conf->global->LDAP_KEY_GROUPS==$conf->global->LDAP_GROUP_FIELD_DESCRIPTION)?' checked="true"':'')."></td>";
 print '</tr>';
 
 // User group
@@ -170,7 +168,7 @@ $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldGroupMembers").'</td><td>';
 print '<input size="25" type="text" name="fieldgroupmembers" value="'.$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS.'">';
 print '</td><td>'.$langs->trans("LDAPFieldGroupMembersExample").'</td>';
-print '<td align="right"><input type="radio" name="key" value="'.$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS.'"'.($conf->global->LDAP_KEY_GROUPS==$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS?' checked="true"':'')."></td>";
+print '<td align="right"><input type="radio" name="key" value="LDAP_GROUP_FIELD_GROUPMEMBERS"'.(($conf->global->LDAP_KEY_GROUPS && $conf->global->LDAP_KEY_GROUPS==$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS)?' checked="true"':'')."></td>";
 print '</tr>';
 
 

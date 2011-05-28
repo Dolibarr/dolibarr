@@ -1151,11 +1151,13 @@ class Ldap
 
 
 	/**
-	 * 		\brief 		Recupere les attributs de l'utilisateur
-	 * 		\param 		$user		Utilisateur ldap a lire
-	 *		\return		int			>0 if ok, <0 if ko
+	 * 		Load all attribute of a LDAP user
+	 * 		@param 		$user		User to search for. Not used if a filter is provided.
+	 *      @param      filter      Filter for search. Must start with &.
+	 *                              Examples: &(objectClass=inetOrgPerson) &(objectClass=user)(objectCategory=person) &(isMemberOf=cn=Sales,ou=Groups,dc=opencsi,dc=com)
+	 *		@return		int			>0 if ok, <0 if ko
 	 */
-	function fetch($user)
+	function fetch($user,$filter)
 	{
 		// Perform the search and get the entry handles
 
@@ -1163,19 +1165,14 @@ class Ldap
 		if ($this->serverType == "activedirectory") {
 			$this->bindauth($this->searchUser, $this->searchPassword);
 		}
-		$userIdentifier = $this->getUserIdentifier();
 
-		$filter = '('.$this->filter.'('.$userIdentifier.'='.$user.'))';
-
-		$i = 0;
 		$searchDN = $this->people;
 
 		$result = '';
-
+		$i=0;
 		while ($i <= 2)
 		{
 			$this->result = @ldap_search($this->connection, $searchDN, $filter);
-
 			if ($this->result)
 			{
 				$result = @ldap_get_entries($this->connection, $this->result);
@@ -1187,7 +1184,7 @@ class Ldap
 				return -1;
 			}
 
-			if (!$result)
+			if (! $result)
 			{
 				// Si pas de resultat on cherche dans le domaine
 				$searchDN = $this->domain;
@@ -1195,8 +1192,7 @@ class Ldap
 			}
 			else
 			{
-				$i++;
-				$i++;
+				break;
 			}
 		}
 
@@ -1209,7 +1205,7 @@ class Ldap
 		{
 			$this->name       = $this->convToOutputCharset($result[0][$this->attr_name][0],$this->ldapcharset);
 			$this->firstname  = $this->convToOutputCharset($result[0][$this->attr_firstname][0],$this->ldapcharset);
-			$this->login      = $this->convToOutputCharset($result[0][$userIdentifier][0],$this->ldapcharset);
+			$this->login      = $this->convToOutputCharset($result[0][$this->attr_login][0],$this->ldapcharset);
 			$this->phone      = $this->convToOutputCharset($result[0][$this->attr_phone][0],$this->ldapcharset);
 			$this->fax        = $this->convToOutputCharset($result[0][$this->attr_fax][0],$this->ldapcharset);
 			$this->mail       = $this->convToOutputCharset($result[0][$this->attr_mail][0],$this->ldapcharset);

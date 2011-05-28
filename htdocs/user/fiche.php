@@ -654,7 +654,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 		print '<tr><td valign="top">'.$langs->trans("Administrator").'</td>';
 		print '<td>';
 		print $form->selectyesno('admin',$_POST["admin"],1);
-		
+
 		if (! empty($conf->multicompany->enabled) && ! $user->entity)
 		{
 			if ($conf->use_javascript_ajax)
@@ -675,7 +675,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 					</script>';
 			}
 			$checked=($_POST["superadmin"]?' checked':'');
-			$disabled=($_POST["superadmin"]?'':'disabled');
+			$disabled=($_POST["superadmin"]?'':' disabled');
 			print '<input type="checkbox" name="superadmin" value="1"'.$checked.$disabled.' /> '.$langs->trans("SuperAdministrator");
 		}
 		print "</td></tr>\n";
@@ -804,7 +804,8 @@ else
 			$result=$ldap->connect_bind();
 			if ($result > 0)
 			{
-				$entries = $ldap->fetch($fuser->login);
+				$userSearchFilter = '('.$conf->global->LDAP_FILTER_CONNECTION.'('.$this->getUserIdentifier().'='.$fuser->login.'))';
+			    $entries = $ldap->fetch($fuser->login,$userSearchFilter);
 				if (! $entries)
 				{
 					$message .= $ldap->error;
@@ -1426,7 +1427,7 @@ else
 				if ($user->admin && ($fuser->entity > 0 || $nbSuperAdmin > 1) )
 				{
 					print $form->selectyesno('admin',$fuser->admin,1);
-					
+
 					if (! empty($conf->multicompany->enabled) && ! $user->entity)
 					{
 						if ($conf->use_javascript_ajax)
@@ -1452,7 +1453,7 @@ else
 									});
 								</script>';
 						}
-						
+
 						$checked=(($fuser->admin && ! $fuser->entity) ? ' checked' : '');
 						print '<input type="checkbox" name="superadmin" value="1"'.$checked.' /> '.$langs->trans("SuperAdministrator");
 					}

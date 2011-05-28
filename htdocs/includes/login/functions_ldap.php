@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,19 +19,19 @@
  */
 
 /**
-        \file       htdocs/includes/login/functions_ldap.php
-        \ingroup    core
-        \brief      Authentication functions for LDAP
-*/
+ *       \file       htdocs/includes/login/functions_ldap.php
+ *       \ingroup    core
+ *       \brief      Authentication functions for LDAP
+ */
 
 
 /**
-        \brief		Check user and password
-        \param		usertotest		Login
-        \param		passwordtotest	Password
-        \return		string			Login if ok, '' if ko.
-		\remarks	If test is ko, reason must be filled into $_SESSION["dol_loginmesg"]
-*/
+ *       @brief		Check user and password
+ *       @param		usertotest		Login
+ *       @param		passwordtotest	Password
+ *       @return	string			Login if ok, '' if ko.
+ * 	     @remarks	If test is ko, reason must be filled into $_SESSION["dol_loginmesg"]
+ */
 function check_user_password_ldap($usertotest,$passwordtotest)
 {
 	global $_POST,$db,$conf,$langs;
@@ -90,38 +90,45 @@ function check_user_password_ldap($usertotest,$passwordtotest)
 
 		$resultCheckUserDN=false;
 
+		// Define $userSearchFilter
+        $userSearchFilter = "";
+        if (empty($dolibarr_main_auth_ldap_filter)) {
+            $userSearchFilter = "(" . $ldapuserattr . "=" . $usertotest . ")";
+        } else {
+            $userSearchFilter = str_replace('%1%', $usertotest, $dolibarr_main_auth_ldap_filter);
+        }
+
 		// If admin login provided
-		// Code to get user in LDAP from an admin connection (may differ from Dolibarr user)
+		// Code to get user in LDAP from an admin connection (may differ from user connection, done later)
 		if ($ldapadminlogin)
 		{
 			$result=$ldap->connect_bind();
 			if ($result)
 			{
-				$resultFetchLdapUser = $ldap->fetch($_POST["username"]);
+				$resultFetchLdapUser = $ldap->fetch($usertotest,$userSearchFilter);
 				// On stop si le mot de passe ldap doit etre modifie sur le domaine
 				if ($resultFetchLdapUser == 1 && $ldap->pwdlastset == 0)
 				{
-					dol_syslog('functions_ldap::check_user_password_ldap '.$_POST["username"].' must change password next logon');
-					if ($ldapdebug) print "DEBUG: User ".$_POST["username"]." must change password<br>\n";
+					dol_syslog('functions_ldap::check_user_password_ldap '.$usertotest.' must change password next logon');
+					if ($ldapdebug) print "DEBUG: User ".$usertotest." must change password<br>\n";
 					$ldap->close();
 					sleep(1);
 					$langs->load('ldap');
-					$_SESSION["dol_loginmesg"]=$langs->trans("YouMustChangePassNextLogon",$_POST["username"],$ldap->domainFQDN);
+					$_SESSION["dol_loginmesg"]=$langs->trans("YouMustChangePassNextLogon",$usertotest,$ldap->domainFQDN);
 					return '';
 				}
 				else
 				{
-					$resultCheckUserDN = $ldap->checkPass($usertotest,$passwordtotest);
+					$resultCheckUserDN = $ldap->checkPass($usertotest,$passwordtotest); // $ldap->ldapUserDN is defined if ok
 				}
 			}
 			$ldap->close();
 		}
 
-		// Forge LDAP user and password to test from config setup
+		// Forge LDAP user and password to test with them
 		$ldap->searchUser=$ldapuserattr."=".$usertotest.",".$ldapdn;
-		$ldap->searchPassword=$passwordtotest;
-
 		if ($resultCheckUserDN) $ldap->searchUser = $ldap->ldapUserDN;
+        $ldap->searchPassword=$passwordtotest;
 
 		// Test with this->seachUser and this->searchPassword
 		$result=$ldap->connect_bind();
@@ -130,14 +137,14 @@ function check_user_password_ldap($usertotest,$passwordtotest)
 			if ($result == 2)
 			{
 				dol_syslog("functions_ldap::check_user_password_ldap Authentification ok");
-				$login=$_POST["username"];
+				$login=$usertotest;
 
 				// ldap2dolibarr synchronisation
 				if ($login && $conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr')
 				{
 					// On charge les attributs du user ldap
 					if ($ldapdebug) print "DEBUG: login ldap = ".$login."<br>\n";
-					$ldap->fetch($login);
+					$ldap->fetch($login,$userSearchFilter);
 
 					if ($ldapdebug) print "DEBUG: UACF = ".join(',',$ldap->uacf)."<br>\n";
 					if ($ldapdebug) print "DEBUG: pwdLastSet = ".dol_print_date($ldap->pwdlastset,'day')."<br>\n";
@@ -164,7 +171,7 @@ function check_user_password_ldap($usertotest,$passwordtotest)
 			}
 			if ($result == 1)
 			{
-				dol_syslog("functions_ldap::check_user_password_ldap Authentification ko bad user/password for '".$_POST["username"]."'");
+				dol_syslog("functions_ldap::check_user_password_ldap Authentification ko bad user/password for '".$usertotest."'");
 				sleep(1);
 				$langs->load('main');
 				$langs->load('other');
@@ -173,7 +180,7 @@ function check_user_password_ldap($usertotest,$passwordtotest)
 		}
 		else
 		{
-			dol_syslog("functions_ldap::check_user_password_ldap Authentification ko failed to connect to LDAP for '".$_POST["username"]."'");
+			dol_syslog("functions_ldap::check_user_password_ldap Authentification ko failed to connect to LDAP for '".$usertotest."'");
 			sleep(1);
 			$langs->load('main');
 			$langs->load('other');

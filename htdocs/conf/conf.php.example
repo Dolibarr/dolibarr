@@ -179,9 +179,10 @@ $dolibarr_main_authentication='dolibarr';
 # $dolibarr_main_auth_ldap_servertype='openldap';			# openldap, activedirectory or egroupware
 # $dolibarr_main_auth_ldap_login_attribute='loginfield';	# uid or samaccountname for active directory
 # $dolibarr_main_auth_ldap_dn='';							# Ex: ou=users,dc=my-domain,dc=com
+# $dolibarr_main_auth_ldap_filter = ''                      # Ex: &(uid=%1%)(isMemberOf=cn=Sales,ou=Groups,dc=opencsi,dc=com)
 # $dolibarr_main_auth_ldap_admin_login='';					# Required only if anonymous bind disabled
 # $dolibarr_main_auth_ldap_admin_pass='';					# Required only if anonymous bind disabled
-#
+
 # $dolibarr_main_auth_ldap_debug='false';
 
 
