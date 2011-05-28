@@ -1515,4 +1515,5 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 {
     border: 0px solid #FF0000 !important;
 }
+span.cke_skin_kama { padding: 0 ! important; }
 
