@@ -1569,7 +1569,7 @@ background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#FFA82
 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#FFA820', endColorstr='#FFFFFF',GradientType=0 ); /* ie */
 
 background: -o-linear-gradient(top, #FFA820 0%,#FFA820 0%,#FFFFFF 100%); /* opera */
-    
+
 }
 .dp td, .tpHour td, .tpMinute td{padding:2px; font-size:10px;}
 /* Barre titre */
@@ -1578,7 +1578,7 @@ background: -o-linear-gradient(top, #FFA820 0%,#FFA820 0%,#FFFFFF 100%); /* oper
 	color:white;
 	font-size:11px;
 	cursor:auto;
-        
+
 }
 /* Barre navigation */
 .dpButtons,.tpButtons {
@@ -2060,6 +2060,8 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 {
     border: 0px solid #FF0000 !important;
 }
+span.cke_skin_kama { padding: 0 !important; }
+.cke_wrapper { padding: 4px !important; }
 
 #label
 {
