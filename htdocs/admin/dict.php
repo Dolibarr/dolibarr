@@ -47,7 +47,18 @@ $acts[1] = "disable";
 $actl[0] = img_picto($langs->trans("Disabled"),'off');
 $actl[1] = img_picto($langs->trans("Activated"),'on');
 
+$listoffset=GETPOST('listoffset');
+$listlimit=GETPOST('listlimit')>0?GETPOST('listlimit'):1000;
 $active = 1;
+
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if ($page == -1) { $page = 0 ; }
+$offset = $listlimit * $page ;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+
 
 // Cette page est une page d'edition generique des dictionnaires de donnees
 // Mettre ici tous les caracteristiques des dictionnaires
@@ -124,8 +135,8 @@ $tabsql[17]= "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREF
 $tabsql[18]= "SELECT rowid   as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_shipment_mode";
 $tabsql[19]= "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_effectif";
 $tabsql[20]= "SELECT rowid   as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_input_method";
-$tabsql[21]= "SELECT c.rowid  as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_availability AS c";
-$tabsql[22]= "SELECT rowid  as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_input_reason";
+$tabsql[21]= "SELECT c.rowid as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_availability AS c";
+$tabsql[22]= "SELECT rowid   as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_input_reason";
 
 // Critere de tri du dictionnaire
 $tabsqlsort[1] ="pays ASC, code ASC";
@@ -302,14 +313,6 @@ if (GETPOST("id") == 11)
 }
 
 $msg='';
-
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
-if ($page == -1) { $page = 0 ; }
-$offset = $conf->liste_limit * $page ;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
 
 
 /*
@@ -554,12 +557,12 @@ print "<br>\n";
  */
 if ($_GET['action'] == 'delete')
 {
-    $ret=$html->form_confirm($_SERVER["PHP_SELF"].'?sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$_GET["rowid"].'&code='.$_GET["code"].'&id='.$_GET["id"], $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete','',0,1);
+    $ret=$html->form_confirm($_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$_GET["rowid"].'&code='.$_GET["code"].'&id='.$_GET["id"], $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete','',0,1);
     if ($ret == 'html') print '<br>';
 }
 
 /*
- * Affichage d'un dictionnaire particulier
+ * Show a dictionnary
  */
 if ($_GET["id"])
 {
@@ -588,6 +591,7 @@ if ($_GET["id"])
         $sql.=" ORDER BY ";
     }
     $sql.=$tabsqlsort[$_GET["id"]];
+    $sql.=$db->plimit($listlimit+1,$offset);
     //print $sql;
 
     $fieldlist=explode(',',$tabfield[$_GET["id"]]);
@@ -684,7 +688,15 @@ if ($_GET["id"])
         $var=true;
         if ($num)
         {
-            // Ligne de titre
+            // There is several pages
+            if ($num > $listlimit)
+            {
+                print '<tr class="none"><td align="right" colspan="'.(3+sizeof($fieldlist)).'">';
+                print_fleche_navigation($page,$_SERVER["PHP_SELF"],'&id='.GETPOST('id'),($num > $listlimit),$langs->trans("Page").' '.($page+1));
+                print '</td></tr>';
+            }
+
+            // Title of lines
             print '<tr class="liste_titre">';
             foreach ($fieldlist as $field => $value)
             {
@@ -714,10 +726,10 @@ if ($_GET["id"])
                 // Affiche nom du champ
                 if ($showfield)
                 {
-                    print_liste_field_titre($valuetoshow,"dict.php",$fieldlist[$field],"&id=".$_GET["id"],"","",$sortfield,$sortorder);
+                    print_liste_field_titre($valuetoshow,"dict.php",$fieldlist[$field],($page?'page='.$page.'&':'').'&id='.GETPOST("id"),"","",$sortfield,$sortorder);
                 }
             }
-            print_liste_field_titre($langs->trans("Status"),"dict.php","active","&id=".$_GET["id"],"",'align="center"',$sortfield,$sortorder);
+            print_liste_field_titre($langs->trans("Status"),"dict.php","active",($page?'page='.$page.'&':'').'&id='.GETPOST("id"),"",'align="center"',$sortfield,$sortorder);
             print '<td colspan="2"  class="liste_titre">&nbsp;</td>';
             print '</tr>';
 
@@ -727,12 +739,13 @@ if ($_GET["id"])
                 $obj = $db->fetch_object($resql);
                 $var=!$var;
                 //print_r($obj);
-                print "<tr $bc[$var]>";
+                print "<tr ".$bc[$var].">";
                 if ($_GET["action"] == 'modify' && ($_GET["rowid"] == ($obj->rowid?$obj->rowid:$obj->code)))
                 {
                     print '<form action="dict.php" method="post">';
                     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-                    print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
+                    print '<input type="hidden" name="id" value="'.GETPOST("id").'">';
+                    print '<input type="hidden" name="page" value="'.$page.'">';
                     print '<input type="hidden" name="rowid" value="'.$_GET["rowid"].'">';
                     fieldList($fieldlist,$obj);
                     print '<td colspan="3" align="right"><a name="'.($obj->rowid?$obj->rowid:$obj->code).'">&nbsp;</a><input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
@@ -789,7 +802,7 @@ if ($_GET["id"])
                     if ($obj->type && $obj->type == 'system') $iserasable=0;
 
                     if ($iserasable) {
-                        print '<a href="'."dict.php".'?sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.($obj->rowid?$obj->rowid:$obj->code).'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
+                        print '<a href="'.$_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.($obj->rowid?$obj->rowid:$obj->code).'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
                     } else {
                         print $langs->trans("AlwaysActive");
                     }
@@ -797,13 +810,13 @@ if ($_GET["id"])
 
                     // Modify link
                     if ($iserasable) {
-                        print '<td align="center"><a href="dict.php?sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.($obj->rowid?$obj->rowid:$obj->code).'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action=modify#'.($obj->rowid?$obj->rowid:$obj->code).'">'.img_edit().'</a></td>';
+                        print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.($obj->rowid?$obj->rowid:$obj->code).'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action=modify#'.($obj->rowid?$obj->rowid:$obj->code).'">'.img_edit().'</a></td>';
                     } else {
                         print '<td>&nbsp;</td>';
                     }
                     // Delete link
                     if ($iserasable) {
-                        print '<td align="center"><a href="dict.php?sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.($obj->rowid?$obj->rowid:$obj->code).'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action=delete">'.img_delete().'</a></td>';
+                        print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.($obj->rowid?$obj->rowid:$obj->code).'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action=delete">'.img_delete().'</a></td>';
                     } else {
                         print '<td>&nbsp;</td>';
                     }
