@@ -222,12 +222,15 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->adhe
 		$adh->pass        = trim($_POST["pass"]);
 
 		$adh->societe     = trim($_POST["societe"]);
-		$adh->adresse     = trim($_POST["adresse"]);
-		$adh->cp          = trim($_POST["cp"]);
-		$adh->ville       = trim($_POST["ville"]);
+        $adh->adresse     = trim($_POST["address"]);    // deprecated
+		$adh->address     = trim($_POST["address"]);
+        $adh->cp          = trim($_POST["zipcode"]);    // deprecated
+		$adh->zip         = trim($_POST["zipcode"]);
+        $adh->ville       = trim($_POST["town"]);       // deprecated
+        $adh->town        = trim($_POST["town"]);
 
 		$adh->fk_departement = $_POST["departement_id"];
-		$adh->pays_id        = $_POST["pays"];
+		$adh->pays_id        = $_POST["pays_id"];
 
 		$adh->phone       = trim($_POST["phone"]);
 		$adh->phone_perso = trim($_POST["phone_perso"]);
@@ -332,9 +335,9 @@ if ($_POST["action"] == 'add' && $user->rights->adherent->creer)
     $nom=$_POST["nom"];
     $prenom=$_POST["prenom"];
     $societe=$_POST["societe"];
-    $adresse=$_POST["adresse"];
-    $cp=$_POST["cp"];
-    $ville=$_POST["ville"];
+    $address=$_POST["address"];
+    $zip=$_POST["zipcode"];
+    $town=$_POST["town"];
 	$departement_id=$_POST["departement_id"];
     $pays_id=$_POST["pays_id"];
 
@@ -357,10 +360,13 @@ if ($_POST["action"] == 'add' && $user->rights->adherent->creer)
     $adh->prenom      = $prenom;
     $adh->nom         = $nom;
     $adh->societe     = $societe;
-    $adh->adresse     = $adresse;
-    $adh->cp          = $cp;
-    $adh->ville       = $ville;
-	$adh->fk_departement = $departement_id;
+    $adh->adresse     = $address; // deprecated
+    $adh->address     = $address;
+    $adh->cp          = $zip;     // deprecated
+    $adh->zip         = $zip;
+    $adh->ville       = $town;    // deprecated
+    $adh->town        = $town;
+    $adh->fk_departement = $departement_id;
     $adh->pays_id     = $pays_id;
     $adh->phone       = $phone;
     $adh->phone_perso = $phone_perso;
@@ -680,29 +686,37 @@ if ($action == 'create')
 
     // Address
     print '<tr><td valign="top">'.$langs->trans("Address").'</td><td>';
-    print '<textarea name="adresse" wrap="soft" cols="40" rows="2">'.(isset($_POST["adresse"])?$_POST["adresse"]:$adh->adresse).'</textarea></td></tr>';
+    print '<textarea name="address" wrap="soft" cols="40" rows="2">'.(isset($_POST["address"])?$_POST["address"]:$adh->address).'</textarea>';
+    print '</td></tr>';
 
     // Zip / Town
-    print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td><input type="text" name="cp" size="8" value="'.(isset($_POST["cp"])?$_POST["cp"]:$adh->cp).'"> <input type="text" name="ville" size="32" value="'.(isset($_POST["ville"])?$_POST["ville"]:$adh->ville).'"></td></tr>';
+    print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>';
+    print $htmlcompany->select_ziptown((isset($_POST["zipcode"])?$_POST["zipcode"]:$adh->zip),'zipcode',array('town','selectpays_id','departement_id'),6);
+    print ' ';
+    print $htmlcompany->select_ziptown((isset($_POST["town"])?$_POST["town"]:$adh->town),'town',array('zipcode','selectpays_id','departement_id'));
+    print '</td></tr>';
 
     // Country
     $adh->pays_id=$adh->pays_id?$adh->pays_id:$mysoc->pays_id;
-    print '<tr><td>'.$langs->trans("Country").'</td><td>';
+    print '<tr><td width="25%">'.$langs->trans('Country').'</td><td>';
     $html->select_pays(isset($_POST["pays_id"])?$_POST["pays_id"]:$adh->pays_id,'pays_id');
     if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
     print '</td></tr>';
 
     // State
-    print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
-    if ($adh->pays_id)
+    if (empty($conf->global->MEMBER_DISABLE_STATE))
     {
-        $htmlcompany->select_departement(isset($_POST["departement_id"])?$_POST["departement_id"]:$adh->fk_departement,$adh->pays_code);
+        print '<tr><td>'.$langs->trans('State').'</td><td>';
+        if ($adh->pays_id)
+        {
+            $htmlcompany->select_departement(isset($_POST["departement_id"])?$_POST["departement_id"]:$adh->fk_departement,$adh->pays_code);
+        }
+        else
+        {
+            print $countrynotdefined;
+        }
+        print '</td></tr>';
     }
-    else
-    {
-        print $countrynotdefined;
-    }
-    print '</td></tr>';
 
     // Tel pro
     print '<tr><td>'.$langs->trans("PhonePro").'</td><td><input type="text" name="phone" size="20" value="'.(isset($_POST["phone"])?$_POST["phone"]:$adh->phone).'"></td></tr>';
@@ -891,21 +905,30 @@ if ($action == 'edit')
 
 	// Address
 	print '<tr><td>'.$langs->trans("Address").'</td><td>';
-	print '<textarea name="adresse" wrap="soft" cols="40" rows="2">'.(isset($_POST["adresse"])?$_POST["adresse"]:$adh->adresse).'</textarea></td></tr>';
-
-	// Zip / Town
-	print '<tr><td>'.$langs->trans("Zip").'/'.$langs->trans("Town").'</td><td><input type="text" name="cp" size="6" value="'.(isset($_POST["cp"])?$_POST["cp"]:$adh->cp).'"> <input type="text" name="ville" size="32" value="'.(isset($_POST["ville"])?$_POST["ville"]:$adh->ville).'"></td></tr>';
-
-	// Country
-	print '<tr><td>'.$langs->trans("Country").'</td><td>';
-	$html->select_pays(isset($_POST["pays"])?$_POST["pays"]:$adh->pays_id,'pays');
-	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+	print '<textarea name="address" wrap="soft" cols="40" rows="2">'.(isset($_POST["address"])?$_POST["address"]:$adh->address).'</textarea>';
 	print '</td></tr>';
 
-	// State
-	print '<tr><td>'.$langs->trans('State').'</td><td>';
-	$htmlcompany->select_departement($adh->fk_departement,$adh->pays_code);
-	print '</td></tr>';
+    // Zip / Town
+    print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>';
+    print $htmlcompany->select_ziptown((isset($_POST["zipcode"])?$_POST["zipcode"]:$adh->zip),'zipcode',array('town','selectpays_id','departement_id'),6);
+    print ' ';
+    print $htmlcompany->select_ziptown((isset($_POST["town"])?$_POST["town"]:$adh->town),'town',array('zipcode','selectpays_id','departement_id'));
+    print '</td></tr>';
+
+    // Country
+    $adh->pays_id=$adh->pays_id?$adh->pays_id:$mysoc->pays_id;
+    print '<tr><td width="25%">'.$langs->trans('Country').'</td><td>';
+    $html->select_pays(isset($_POST["pays_id"])?$_POST["pays_id"]:$adh->pays_id,'pays_id');
+    if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+    print '</td></tr>';
+
+    // State
+    if (empty($conf->global->MEMBER_DISABLE_STATE))
+    {
+    	print '<tr><td>'.$langs->trans('State').'</td><td>';
+    	$htmlcompany->select_departement($adh->fk_departement,$adh->pays_code);
+    	print '</td></tr>';
+    }
 
 	// Tel
 	print '<tr><td>'.$langs->trans("PhonePro").'</td><td><input type="text" name="phone" size="20" value="'.(isset($_POST["phone"])?$_POST["phone"]:$adh->phone).'"></td></tr>';
@@ -1194,11 +1217,11 @@ if ($rowid && $action != 'edit')
 
     // Address
     print '<tr><td>'.$langs->trans("Address").'</td><td class="valeur">';
-    dol_print_address($adh->adresse,'gmap','member',$adh->id);
+    dol_print_address($adh->address,'gmap','member',$adh->id);
     print '</td></tr>';
 
     // Zip / Town
-    print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td class="valeur">'.$adh->cp.' '.$adh->ville.'</td></tr>';
+    print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td class="valeur">'.$adh->zip.' '.$adh->town.'</td></tr>';
 
 	// Country
     print '<tr><td>'.$langs->trans("Country").'</td><td class="valeur">';

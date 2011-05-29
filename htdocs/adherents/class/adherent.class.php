@@ -934,7 +934,7 @@ class Adherent extends CommonObject
     {
         global $conf, $langs;
 
-        $sql = "SELECT d.rowid, d.civilite, d.prenom as firstname, d.nom as name, d.societe, d.fk_soc, d.statut, d.public, d.adresse, d.cp, d.ville, d.note,";
+        $sql = "SELECT d.rowid, d.civilite, d.prenom as firstname, d.nom as name, d.societe, d.fk_soc, d.statut, d.public, d.adresse as address, d.cp as zip, d.ville as town, d.note,";
         $sql.= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass,";
         $sql.= " d.photo, d.fk_adherent_type, d.morphy,";
         $sql.= " d.datec as datec,";
@@ -977,12 +977,12 @@ class Adherent extends CommonObject
                 $this->pass           = $obj->pass;
                 $this->societe        = $obj->societe;
                 $this->fk_soc         = $obj->fk_soc;
-                $this->adresse        = $obj->adresse;	// TODO deprecated
-                $this->cp             = $obj->cp;		// TODO deprecated
-                $this->ville          = $obj->ville;	// TODO deprecated
-                $this->address        = $obj->adresse;
-                $this->zip            = $obj->cp;
-                $this->town           = $obj->ville;
+                $this->adresse        = $obj->address;	// TODO deprecated
+                $this->address        = $obj->address;
+                $this->cp             = $obj->zip;		// TODO deprecated
+                $this->zip            = $obj->zip;
+                $this->ville          = $obj->town;	    // TODO deprecated
+                $this->town           = $obj->town;
 
                 $this->fk_departement = $obj->fk_departement;
                 $this->departement_code = $obj->fk_departement?$obj->departement_code:'';
@@ -1959,8 +1959,11 @@ class Adherent extends CommonObject
         $this->pass='dolibspec';
         $this->societe = 'Societe ABC';
         $this->adresse = '61 jump street';
+        $this->address = '61 jump street';
         $this->cp = '75000';
+        $this->zip = '75000';
         $this->ville = 'Paris';
+        $this->town = 'Paris';
         $this->pays_id = 1;
         $this->pays_code = 'FR';
         $this->pays = 'France';
