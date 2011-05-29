@@ -166,7 +166,7 @@ class Canvas
      *  @param      param3          Param3
      *  @return     object          Object loaded
      */
-    function getObject($param1, $param2='', $param2='')
+    function getObject($param1, $param2='', $param3='')
     {
         if (is_object($this->control->object) && method_exists($this->control->object,'fetch'))
         {
