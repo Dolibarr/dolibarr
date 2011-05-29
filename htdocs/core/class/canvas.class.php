@@ -160,12 +160,23 @@ class Canvas
     }
 
     /**
-     *  Fetch object values
-     *  @param      id          Element id
+     *  get object
+     *  @param      param1          Param1
+     *  @param      param2          Param2
+     *  @param      param3          Param3
+     *  @return     object          Object loaded
      */
-    function fetch($id)
+    function getObject($param1, $param2='', $param2='')
     {
-        return $this->control->object->fetch($id);
+        if (is_object($this->control->object) && method_exists($this->control->object,'fetch'))
+        {
+            $this->control->object->fetch($param1, $param2, $param3);
+            return $this->control->object;
+        }
+        else
+        {
+            return 0;
+        }
     }
 
 	/**
@@ -194,6 +205,7 @@ class Canvas
      */
     function assign_post()
     {
+        if (empty($_POST)) return;
         if (method_exists($this->control,'assign_post')) $this->control->assign_post();
     }
 

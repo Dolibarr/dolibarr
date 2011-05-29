@@ -398,17 +398,27 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 	}
 	elseif ($action == 'edit')
 	{
-    	$objcanvas->fetch($socid);            // Reload object
-		if (! empty($_POST)) {
-			$objcanvas->assign_post();        // Assign POST data
-		}
+	    $objcanvas->control->object=$objcanvas->getObject($socid);  // Load object
+	    if (empty($objcanvas->control->object))
+	    {
+            $object = new Societe($db);
+            $object->fetch($socid);
+	        $objcanvas->control->object=$object;
+	    }
+		$objcanvas->assign_post();            // Assign POST data
 		$objcanvas->assign_values($action);   // Set value for templates
 		$objcanvas->display_canvas($action);  // Show template
 	}
 	else
 	{
-		$result=$objcanvas->fetch($socid);      // Relaod object
-    	$objcanvas->assign_values();   			// Assign values
+        $objcanvas->control->object=$objcanvas->getObject($socid);  // Load object
+        if (empty($objcanvas->control->object))
+        {
+            $object = new Societe($db);
+            $object->fetch($socid);
+            $objcanvas->control->object=$object;
+        }
+        $objcanvas->assign_values();   			// Assign values
 		$objcanvas->display_canvas();  			// Show template
 
 		// TODO Move this also into template
@@ -937,7 +947,6 @@ else
 			if (! $_POST["nom"])
 			{
 				$soc = new Societe($db);
-				$soc->id = $socid;
 				$soc->fetch($socid);
 			}
 			else
@@ -1312,7 +1321,6 @@ else
 		 * View
 		 */
 		$soc = new Societe($db);
-		$soc->id = $socid;
 		$result=$soc->fetch($socid);
 		if ($result < 0)
 		{

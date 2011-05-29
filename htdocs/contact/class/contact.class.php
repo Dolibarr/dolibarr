@@ -85,12 +85,9 @@ class Contact extends CommonObject
 	 *      @param      DB      Habler d'acces base
 	 *      @param      id      Id contact
 	 */
-	function Contact($DB, $id=0)
+	function Contact($DB)
 	{
 		$this->db = $DB;
-		$this->id = $id;
-
-		return 1;
 	}
 
 	/**
@@ -437,7 +434,7 @@ class Contact extends CommonObject
 	/*
 	 *    \brief      Charge l'objet contact
 	 *    \param      id          id du contact
-	 *    \param      user        Utilisateur abonnes aux alertes si on veut les alertes de ce contact
+	 *    \param      user        Utilisateur (abonnes aux alertes) qui veut les alertes de ce contact
 	 *    \return     int         -1 if KO, 0 if OK but not found, 1 if OK
 	 */
 	function fetch($id, $user=0)

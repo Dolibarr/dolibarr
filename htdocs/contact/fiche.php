@@ -313,16 +313,26 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
     }
     else if ($action == 'edit')
     {
-        $objcanvas->fetch($id);               // Reload object
-        if (! empty($_POST)) {
-        	$objcanvas->assign_post();        // Assign POST data
+        $objcanvas->control->object=$objcanvas->getObject($socid);  // Load object
+        if (empty($objcanvas->control->object))
+        {
+            $object = new Contact($db);
+            $object->fetch($id,$user);
+            $objcanvas->control->object=$object;
         }
+       	$objcanvas->assign_post();            // Assign POST data
         $objcanvas->assign_values($action);   // Set value for templates
         $objcanvas->display_canvas($action);  // Show template
     }
     else
     {
-        $result=$objcanvas->fetch($id);         // Reload object
+        $objcanvas->control->object=$objcanvas->getObject($socid);  // Load object
+        if (empty($objcanvas->control->object))
+        {
+            $object = new Contact($db);
+            $object->fetch($id,$user);
+            $objcanvas->control->object=$object;
+        }
         $objcanvas->assign_values('view');  // Assign values
         $objcanvas->display_canvas('view'); // Show template
     }
@@ -350,7 +360,7 @@ else
     {
         // Si edition contact deja existant
         $object = new Contact($db);
-        $return=$object->fetch(GETPOST("id"), $user);
+        $return=$object->fetch($id, $user);
         if ($return <= 0)
         {
             dol_print_error('',$object->error);
