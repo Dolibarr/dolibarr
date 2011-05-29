@@ -71,10 +71,10 @@ if (! empty($_GET['zipcode']) || ! empty($_GET['town']))
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX ."c_departements as d ON z.fk_county = d.rowid";
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_regions as r ON d.fk_region = r.code_region";
     	$sql.= " WHERE z.fk_pays = p.rowid";
-    	$sql.= " AND z.active = 1 AND d.active = 1 AND r.active = 1 AND p.active = 1";
+    	$sql.= " AND z.active = 1 AND p.active = 1";
     	if ($zipcode) $sql.=" AND z.zip LIKE '" . $db->escape($zipcode) . "%'";
     	if ($town)    $sql.=" AND z.town LIKE '%" . $db->escape($town) . "%'";
-    	$sql.= " ORDER BY p.rowid, z.zip, z.town";
+    	$sql.= " ORDER BY z.zip, z.town";
         $sql.= $db->plimit(50); // Avoid pb with bad criteria
 	}
 	else                                               // Use table of third parties
