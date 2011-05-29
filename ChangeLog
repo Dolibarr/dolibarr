@@ -70,8 +70,11 @@ For developers:
 - New: External modules can show export list with an "enabled" condition.
 - New: Support a backtopage parameter on contact creation page
 - New: Add id on div to show logo
+- New: Dictionnary setup works with very large external dictionnaries (Add 
+       page navigation).
 
 For translators:
+- New: Add fa_IR language.
 - Fix: Move code ar_AR to ar_SA, sv_SV to sv_SE and da_Da to da_DK.
 
 
