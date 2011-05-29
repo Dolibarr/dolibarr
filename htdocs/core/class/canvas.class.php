@@ -35,15 +35,15 @@ class Canvas
 	var $error;
 	var $errors=array();
 
-	var $card;
-	var $canvas;
-	var $object;
-	var $control;
-	var $module;
-	var $targetmodule;      // Module built into dolibarr replaced by canvas (ex: thirdparty, contact, ...)
-	var $aliasmodule;		// Module that provide the canvas
-	var $template_dir;		// Directory with all core and external templates files
-	var $action;
+    var $action;
+
+    var $targetmodule;      // Module built into dolibarr replaced by canvas (ex: thirdparty, contact, ...)
+    var $canvas;            // Name of canvas
+    var $card;              // Tab (sub-canvas)
+
+    var $object;            // Initialized by getCanvas with dao class
+    var $control;           // Initialized by getCanvas with controller class
+    var $template_dir;		// Initialized by getCanvas with templates directory
 
 
    /**
@@ -51,7 +51,7 @@ class Canvas
 	*   @param     DB          Database handler
 	*   @param     action      Action ('create', 'view', 'edit')
 	*/
-	function Canvas($DB,$action='view')
+	function Canvas($DB, $action='view')
 	{
 		$this->db = $DB;
 		$this->action = $action;
@@ -72,7 +72,7 @@ class Canvas
 
 
 	/**
-	 * 	Initialize properties: ->targetmodule, ->card, ->canvas
+	 * 	Initialize properties: ->targetmodule, ->canvas, ->card
 	 *  and MVC properties:    ->control (Controller), ->control->object (Model), ->template_dir (View)
 	 * 	@param		module		Name of target module (thirdparty, contact, ...)
 	 * 	@param		card	 	Type of card (ex: card, info, contactcard, ...)
@@ -86,8 +86,8 @@ class Canvas
 
 		// Set properties with value specific to dolibarr core: this->targetmodule, this->card, this->canvas
         $this->targetmodule = $module;
-        $this->card = $card;
         $this->canvas = $canvas;
+        $this->card = $card;
         $dirmodule = $module;
         // Correct values if canvas is into an external module
 		if (preg_match('/^([^@]+)@([^@]+)$/i',$canvas,$regs))
@@ -122,9 +122,10 @@ class Canvas
         }
 
 		// Include specific library
-		// TODO Specific libraries must be included by files that need them only, so by actions and/or dao files.
+		/* Removed because specific libraries must be included by files that need them only, so by actions and/or dao files.
 		$libfile = dol_buildpath('/'.$dirmodule.'/lib/'.$dirmodule.'.lib.php');
 		if (file_exists($libfile)) require_once($libfile);
+        */
 
 		// Template dir
 		$this->template_dir = dol_buildpath('/'.$dirmodule.'/canvas/'.$this->canvas.'/tpl/');
@@ -132,8 +133,8 @@ class Canvas
         {
             $this->template_dir='';
         }
-        //print '/'.$dirmodule.'/canvas/'.$this->canvas.'/tpl/';
-        //print 'template_dir='.$this->template_dir.'<br>';
+
+        //print 'dimodule='.$dirmodule.' canvas='.$this->canvas.' template_dir='.$this->template_dir.'<br>';
 
 		return 1;
 	}
@@ -186,15 +187,6 @@ class Canvas
 	    else return restrictedArea($user,$features,$objectid,$dbtablename,$feature2,$dbt_keyfield,$dbt_select);
 	}
 
-
-    /**
-     *  Return the head of card (tabs)
-     */
-    function showHead()
-    {
-        if (method_exists($this->control,'showHead')) return $this->control->showHead($this->action);
-        else return '';
-    }
 
     /**
      *    Assigne les valeurs POST dans l'objet
