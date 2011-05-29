@@ -822,7 +822,7 @@ class Expedition extends CommonObject
 
 		$sql = "SELECT cd.rowid, cd.fk_product, cd.description, cd.qty as qty_asked";
 		$sql.= ", ed.qty as qty_shipped, ed.fk_origin_line, ed.fk_entrepot";
-		$sql.= ", p.ref, p.fk_product_type, p.label, p.weight, p.weight_units, p.volume, p.volume_units";
+		$sql.= ", p.ref as product_ref, p.fk_product_type, p.label, p.weight, p.weight_units, p.volume, p.volume_units";
 		$sql.= " FROM (".MAIN_DB_PREFIX."expeditiondet as ed,";
 		$sql.= " ".MAIN_DB_PREFIX."commandedet as cd)";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = cd.fk_product";
@@ -845,7 +845,8 @@ class Expedition extends CommonObject
 				$line->entrepot_id    	= $obj->fk_entrepot;
 				$line->fk_product     	= $obj->fk_product;
 				$line->fk_product_type	= $obj->fk_product_type;
-				$line->ref            	= $obj->ref;
+				$line->ref				= $obj->product_ref;		// TODO deprecated
+                $line->product_ref		= $obj->product_ref;
 				$line->label          	= $obj->label;
 				$line->libelle        	= $obj->label;			// TODO deprecated
 				$line->description    	= $obj->description;
