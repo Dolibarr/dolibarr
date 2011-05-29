@@ -542,7 +542,7 @@ else
 			$soc->pays_code=$obj->code;
 			$soc->pays=$obj->libelle;
 		}
-
+        $soc->forme_juridique_code=$_POST['forme_juridique_code'];
 
 		/* Show create form */
 
