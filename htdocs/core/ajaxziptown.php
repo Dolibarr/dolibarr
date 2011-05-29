@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin  <regis@dolibarr.fr>
+/* Copyright (C) 2010 Regis Houssin      <regis@dolibarr.fr>
+ * Copyright (C) 201 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,8 +49,8 @@ top_httphead();
 
 //print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
 
-dol_syslog(join(',',$_GET));
-
+dol_syslog("GET is ".join(',',$_GET));
+//var_dump($_GET);
 
 // Generation of list of zip-town
 if (! empty($_GET['zipcode']) || ! empty($_GET['town']))
@@ -63,16 +64,16 @@ if (! empty($_GET['zipcode']) || ! empty($_GET['town']))
 
 	if ($conf->global->MAIN_USE_ZIPTOWN_DICTIONNARY)   // Use zip-town table
 	{
-    	$sql = "SELECT z.rowid, z.zip, z.town, z.fk_county, z.fk_country";
+    	$sql = "SELECT z.rowid, z.zip, z.town, z.fk_county, z.fk_pays as fk_country";
     	$sql.= ", p.rowid as fk_country, p.code as country_code, p.libelle as country";
     	$sql.= ", d.rowid as fk_county, d.code_departement as county_code, d.nom as county";
-    	$sql.= " FROM ".MAIN_DB_PREFIX."c_ziptown as z,".MAIN_DB_PREFIX."c_pays as p";
+    	$sql.= " FROM (".MAIN_DB_PREFIX."c_ziptown as z,".MAIN_DB_PREFIX."c_pays as p)";
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX ."c_departements as d ON z.fk_county = d.rowid";
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_regions as r ON d.fk_region = r.code_region";
     	$sql.= " WHERE z.fk_pays = p.rowid";
     	$sql.= " AND z.active = 1 AND d.active = 1 AND r.active = 1 AND p.active = 1";
-    	if ($zipcode) " AND z.zip LIKE '" . $db->escape($zipcode) . "%'";
-    	if ($town) " AND z.town LIKE '%" . $db->escape($town) . "%'";
+    	if ($zipcode) $sql.=" AND z.zip LIKE '" . $db->escape($zipcode) . "%'";
+    	if ($town)    $sql.=" AND z.town LIKE '%" . $db->escape($town) . "%'";
     	$sql.= " ORDER BY p.rowid, z.zip, z.town";
         $sql.= $db->plimit(50); // Avoid pb with bad criteria
 	}
@@ -86,8 +87,9 @@ if (! empty($_GET['zipcode']) || ! empty($_GET['town']))
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.'c_pays as p ON fk_pays = p.rowid';
         $sql.= " WHERE";
         if ($zipcode) $sql.= " s.cp LIKE '".$db->escape($zipcode)."%'";
-        if ($town) $sql.= " s.ville LIKE '%" . $db->escape($town) . "%'";
+        if ($town)    $sql.= " s.ville LIKE '%" . $db->escape($town) . "%'";
         $sql.= " ORDER BY s.fk_pays, s.cp, s.ville";
+        $sql.= $db->plimit(50); // Avoid pb with bad criteria
 	}
 
     //print $sql;
