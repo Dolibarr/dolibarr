@@ -73,7 +73,6 @@ else
 }
 
 
-
 /*
  * Actions
  */
@@ -124,9 +123,9 @@ else
 
 		if ($action == 'update')
 		{
-			// Load properties of company
 			$soc->fetch($socid);
 		}
+        else if ($canvas) $soc->canvas=$canvas;
 
 		if ($_REQUEST["private"] == 1)
 		{
@@ -262,7 +261,7 @@ else
                     $url=$_SERVER["PHP_SELF"]."?socid=".$soc->id;
 					if (($soc->client == 1 || $soc->client == 3) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) $url=DOL_URL_ROOT."/comm/fiche.php?socid=".$soc->id;
 					else if ($soc->fournisseur == 1) $url=DOL_URL_ROOT."/fourn/fiche.php?socid=".$soc->id;
-                    Header("Location: ".$url);
+					Header("Location: ".$url);
 					exit;
 				}
 				else
@@ -386,8 +385,7 @@ $formcompany = new FormCompany($db);
 
 $countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
-
-if (! empty($objcanvas->template_dir))
+if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 {
 	// -----------------------------------------
 	// When used with CANVAS

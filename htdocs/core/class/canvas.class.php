@@ -37,7 +37,7 @@ class Canvas
 
     var $action;
 
-    var $targetmodule;      // Module built into dolibarr replaced by canvas (ex: thirdparty, contact, ...)
+    var $targetmodule;      // Module concerned by canvas (ex: thirdparty, contact, ...)
     var $canvas;            // Name of canvas
     var $card;              // Tab (sub-canvas)
 
@@ -141,7 +141,7 @@ class Canvas
 
     /**
      *  Execute actions
-     *  @param      Id of object (may be empty for creation)
+     *  @param      id      Id of object (may be empty for creation)
      */
     function doActions($id)
     {
@@ -150,7 +150,7 @@ class Canvas
         // If function to do actions is overwritten, we use new one
         if (method_exists($this->control,'doActions'))
         {
-            $out = $this->control->doActions($id);
+            $out = $this->control->doActions($id,$this->targetmodule,$this->canvas,$this->card);
 
             $this->errors = ($this->control->errors?$this->control->errors:$this->control->object->errors);
             $this->error = ($this->control->error?$this->control->error:$this->control->object->error);
@@ -189,7 +189,7 @@ class Canvas
 
 
     /**
-     *    Assigne les valeurs POST dans l'objet
+     *    Assign values into POST into object
      *    // TODO This should be useless. POST is already visible from everywhere.
      */
     function assign_post()
@@ -198,13 +198,27 @@ class Canvas
     }
 
     /**
-	 * 	Shared method for canvas to assign values of templates
-	 * 	@param	action	Type of action
+	 * 	Shared method for canvas to assign values for templates
 	 */
 	function assign_values()
 	{
 	    if (method_exists($this->control,'assign_values')) $this->control->assign_values($this->action);
 	}
+
+    /**
+     *     Return the template to display canvas (if it exists).
+     *     @param       mode        'create', ''='view', 'edit'
+     *     @return      string      Path to display canvas file if it exists, '' otherwise.
+     */
+    function displayCanvasExists($mode='view')
+    {
+        $newmode=$mode;
+        if (empty($newmode)) $newmode='view';
+        if (empty($this->template_dir)) return 0;
+        //print $this->template_dir.$this->card.'_'.$newmode.'.tpl.php';
+        if (file_exists($this->template_dir.$this->card.'_'.$newmode.'.tpl.php')) return 1;
+        else return 0;
+    }
 
 	/**
 	 * 	   Display canvas

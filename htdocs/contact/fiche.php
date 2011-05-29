@@ -151,8 +151,9 @@ else
 
         $db->begin();
 
-        $object->socid			= $_POST["socid"];
+        if ($canvas) $object->canvas=$canvas;
 
+        $object->socid			= $_POST["socid"];
         $object->name			= $_POST["name"];
         $object->firstname		= $_POST["firstname"];
         $object->civilite_id	= $_POST["civilite_id"];
@@ -285,7 +286,8 @@ else
  *	View
  */
 
-llxHeader('',$langs->trans("ContactsAddresses"),'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
+$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+llxHeader('',$langs->trans("ContactsAddresses"),$help_url);
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
@@ -298,13 +300,11 @@ if ($socid > 0)
     $objsoc->fetch($socid);
 }
 
-if (! empty($objcanvas->template_dir))
+if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 {
     // -----------------------------------------
     // When used with CANVAS
     // -----------------------------------------
-    //$objcanvas->doOutput($socid);
-
     if ($action == 'create')
     {
         $objcanvas->assign_post();            // Assign POST data

@@ -32,17 +32,23 @@ include_once(DOL_DOCUMENT_ROOT.'/societe/canvas/actions_card_common.class.php');
 class ActionsCardDefault extends ActionsCardCommon
 {
 	var $db;
-
-	//! Canvas
-	var $canvas;
+    var $targetmodule;
+    var $canvas;
+    var $card;
 
 	/**
-	 *    Constructeur de la classe
-	 *    @param	DB		Handler acces base de donnees
+	 *    Constructor
+     *    @param   DB              Handler acces base de donnees
+     *    @param   targmetmodule   Name of directory of module where canvas is stored
+     *    @param   canvas          Name of canvas
+     *    @param   card            Name of tab (sub-canvas)
 	 */
-	function ActionsCardDefault($DB)
+	function ActionsCardDefault($DB,$targetmodule,$canvas,$card)
 	{
-		$this->db = $DB;
+        $this->db               = $DB;
+        $this->targetmodule     = $targetmodule;
+        $this->canvas           = $canvas;
+        $this->card             = $card;
 	}
 
     /**

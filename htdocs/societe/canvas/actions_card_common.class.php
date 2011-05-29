@@ -30,7 +30,10 @@
  */
 class ActionsCardCommon
 {
-	var $db;
+    var $db;
+    var $targetmodule;
+    var $canvas;
+    var $card;
 
 	//! Numero d'erreur Plage 1280-1535
 	var $errno = 0;
@@ -38,20 +41,24 @@ class ActionsCardCommon
 	var $tpl = array();
 	//! Object container
 	var $object;
-	//! Canvas
-	var $canvas;
 	//! Error string
 	var $error;
 	//! Error array
 	var $errors=array();
 
-	/**
-	 *    Constructeur de la classe
-	 *    @param	DB		Handler acces base de donnees
+    /**
+     *    Constructor
+     *    @param   DB              Handler acces base de donnees
+     *    @param   targmetmodule   Name of directory of module where canvas is stored
+     *    @param   canvas          Name of canvas
+     *    @param   card            Name of tab (sub-canvas)
 	 */
-	function ActionsCardCommon($DB)
+	function ActionsCardCommon($DB,$targetmodule,$canvas,$card)
 	{
-		$this->db = $DB;
+        $this->db               = $DB;
+        $this->targetmodule     = $targetmodule;
+        $this->canvas           = $canvas;
+        $this->card             = $card;
 	}
 
 
@@ -385,7 +392,7 @@ class ActionsCardCommon
         }
 
         $this->tpl['title'] = $this->getTitle($action);
-        
+
         $this->tpl['error'] = get_htmloutput_errors($this->object->error,$this->object->errors);
 
         if ($action == 'create')
@@ -410,7 +417,7 @@ class ActionsCardCommon
                 </script>'."\n";
 			}
         }
-        
+
         if ($action == 'create' || $action == 'edit')
         {
         	if ($conf->use_javascript_ajax)
