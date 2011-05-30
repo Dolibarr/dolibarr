@@ -23,7 +23,7 @@ body {
 	margin: 0;
 	padding: 0;
 	text-align: center;
-	font: 0.7em Arial, Helvetica, sans-serif;
+	font: 0.7em verdana, arial, helvetica;
 }
 
 p {
@@ -274,9 +274,10 @@ p.titre {
 	position: absolute;
 }
 
-/* --------------------- Listes d�roulantes ------------------- */
+/* --------------------- Combo lists ------------------- */
 .select_design {
 	width: 370px;
+	font-size: 12px verdana,arial,helvetica
 	overflow: auto;
 }
 

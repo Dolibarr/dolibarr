@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
- * Copyright (C) 2011	   Juanjo Menent   	<jmenent@2byte.es>
+/* Copyright (C) 2007-2008 Jeremie Ollivier    <jeremie.o@laposte.net>
+ * Copyright (C) 2011	   Juanjo Menent   	   <jmenent@2byte.es>
+ * Copyright (C) 2011      Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +68,7 @@ top_htmlhead('','',0,0,'',$arrayofcss);
 <div class="principal_login">
 <?php if (! empty($_GET["err"])) print $_GET["err"]."<br><br>\n"; ?>
 <fieldset class="cadre_facturation"><legend class="titre1"><?php echo $langs->trans("Identification"); ?></legend>
-<form id="frmLogin" method="post" action="index_verif.php">
+<form id="frmLogin" method="POST" action="index_verif.php">
 	<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
 
 <table>
@@ -87,7 +88,7 @@ print '<td>';
 $disabled=0;
 $langs->load("companies");
 if (! empty($conf->global->CASHDESK_ID_THIRDPARTY)) $disabled=1; // If a particular third party is defined, we disable choice
-$form->select_societes($conf->global->CASHDESK_ID_THIRDPARTY,'socid','s.client=1',!$disabled,$disabled,1);
+$form->select_societes(GETPOST('socid')?GETPOST('socid'):$conf->global->CASHDESK_ID_THIRDPARTY,'socid','s.client=1',!$disabled,$disabled,1);
 //print '<input name="warehouse_id" class="texte_login" type="warehouse_id" value="" />';
 print '</td>';
 print "</tr>\n";
@@ -100,7 +101,7 @@ if ($conf->stock->enabled)
 	print '<td>';
 	$disabled=0;
 	if (! empty($conf->global->CASHDESK_ID_WAREHOUSE)) $disabled=1;	// If a particular stock is defined, we disable choice
-	$formproduct->selectWarehouses($conf->global->CASHDESK_ID_WAREHOUSE,'warehouseid','',!$disabled,$disabled);
+	$formproduct->selectWarehouses(GETPOST('warehouseid')?GETPOST('warehouseid'):$conf->global->CASHDESK_ID_WAREHOUSE,'warehouseid','',!$disabled,$disabled);
 	//print '<input name="warehouse_id" class="texte_login" type="warehouse_id" value="" />';
 	print '</td>';
 	print "</tr>\n";

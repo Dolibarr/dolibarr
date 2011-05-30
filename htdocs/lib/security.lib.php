@@ -26,8 +26,9 @@
 
 
 /**
- *   Return list of login methods provided by external third party modules.
- *   @return	array
+ *   Return a login if login/pass was successfull using an external login method
+ *   @return	string		Login or ''
+ * 	 TODO Provide usertotest, passwordtotest and entitytotest by parameters
  */
 function getLoginMethod()
 {
@@ -56,8 +57,9 @@ function getLoginMethod()
 						// Call function to check user/password
 						$usertotest=$_POST["username"];
 						$passwordtotest=$_POST["password"];
+						$entitytotest=$_POST["entity"];
 						$function='check_user_password_'.$mode;
-						$login=$function($usertotest,$passwordtotest);
+						$login=$function($usertotest,$passwordtotest,$entitytotest);
 						if ($login)
 						{
 							$conf->authmode=$mode;	// This properties is defined only when logged
@@ -543,7 +545,7 @@ function dol_efc_config()
 function getRandomPassword()
 {
 	global $db,$conf,$langs,$user;
-	
+
 	$generated_password='';
 	if ($conf->global->USER_PASSWORD_GENERATED)
 	{

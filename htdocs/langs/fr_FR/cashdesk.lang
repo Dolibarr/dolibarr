@@ -30,4 +30,4 @@ Difference=Difference
 TotalTicket=Total ticket
 Change=Trop perçu
 CalTip=Cliquez pour afficher le calendrier
-CashDeskSetupStock=Le conf. diminue le stock lors la création de factures, mais vous ne spécifiez pas entrepôt .<br>Vous devez modifier la conf. du module de stock, ou vous choisissez un entrepôt 
+CashDeskSetupStock=La configuration du module stock demande une réduction du stock sur facturation, mais vous n'avez pas spécifiez d'entrepôt. Vous devez modifier la configuration du module stock ou choisir un entrepôt.

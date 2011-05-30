@@ -56,102 +56,82 @@ class Auth {
 
 	}
 
-	/**
-	 * Authentification d'un demandeur
-	 * @return (int) 0 = Ok; -1 = login incorrect; -2 = login ok, mais compte desactive; -10 = aucune entree trouvee dans la base
-	 */
-	function verif_utilisateurs () {
+	function verif ($aLogin, $aPasswd)
+	{
+		global $conf,$dolibarr_main_authentication,$langs;
 
-		global $conf;
+		$ret=-1;
 
-		// Verification des informations dans la base
-		$resql = $this->db->query ($this->sqlQuery);
-		if ($resql)
-		{
-			$num = $this->db->num_rows ($resql);
+		$login='';
 
-			if ( $num ) {
+        // Authentication mode
+        if (empty($dolibarr_main_authentication)) $dolibarr_main_authentication='http,dolibarr';
+        // Authentication mode: forceuser
+        if ($dolibarr_main_authentication == 'forceuser' && empty($dolibarr_auto_user)) $dolibarr_auto_user='auto';
 
-				// fetchFirst
-				$ret=array();
-				$tab = $this->db->fetch_array($resql);
-				foreach ( $tab as $cle => $valeur )
-				{
-					$ret[$cle] = $valeur;
-				}
-				$tab=$ret;
+        // Set authmode
+        $authmode=explode(',',$dolibarr_main_authentication);
 
-				if ( ($tab['pass_crypted'] == md5 ($this->passwd)) || (($tab['pass'] == $this->passwd) && ($tab['pass'] != ''))) {
+        // No authentication mode
+        if (! sizeof($authmode) && empty($conf->login_method_modules))
+        {
+            $langs->load('main');
+            dol_print_error('',$langs->trans("ErrorConfigParameterNotDefined",'dolibarr_main_authentication'));
+            exit;
+        }
 
-					// On verifie que le compte soit bien actif
-					if ( $tab['statut'] ) {
 
-						$this->reponse(0);
+        $test=true;
 
-					} else {
+        // Validation of third party module login method
+        if (is_array($conf->login_method_modules) && !empty($conf->login_method_modules))
+        {
+            include_once(DOL_DOCUMENT_ROOT . "/lib/security.lib.php");
+            $login = getLoginMethod();
+            if ($login) $test=false;
+        }
 
-						$this->reponse(-2);
+        // Validation tests user / password
+        // If ok, the variable will be initialized login
+        // If error, we will put error message in session under the name dol_loginmesg
+        $goontestloop=false;
+        if (isset($_SERVER["REMOTE_USER"]) && in_array('http',$authmode)) $goontestloop=true;
+        if (isset($aLogin) || GETPOST('openid_mode','alpha',1)) $goontestloop=true;
 
-					}
+        if ($test && $goontestloop)
+        {
+            foreach($authmode as $mode)
+            {
+                if ($test && $mode && ! $login)
+                {
+                    $authfile=DOL_DOCUMENT_ROOT.'/includes/login/functions_'.$mode.'.php';
+                    $result=include_once($authfile);
+                    if ($result)
+                    {
+                        $this->login ($aLogin);
+                        $this->passwd ($aPasswd);
+                        $entitytotest=$conf->entity;
 
-				} else {
-
-					$this->reponse(-1);
-
-				}
-
-			} else {
-
-				$this->reponse(-10);
-
-			}
-		}
-		else
-		{
-
-		}
-
-	}
-
-	function verif ($aLogin, $aPasswd) {
-		global $conf;
-
-		$this->login ($aLogin);
-		$this->passwd ($aPasswd);
-
-		$this->sqlQuery = "SELECT rowid, pass_crypted, statut";
-		$this->sqlQuery.= " FROM ".MAIN_DB_PREFIX."user";
-		$this->sqlQuery.= " WHERE login = '".$this->login."'";
-		$this->sqlQuery.= " AND entity IN (0,".$conf->entity.")";
-
-		$this->verif_utilisateurs();
-
-		switch ($this->reponse) {
-
-			default:
-				$ret = '-1';
-				break;
-
-			case 0:
-				$ret = '0';
-				break;
-
-			case -1:
-				$ret = '-1';
-				break;
-
-			case -2:
-				$ret = '-2';
-				break;
-
-			case -10:
-				$ret = '-10';
-				break;
-
-		}
+                        $function='check_user_password_'.$mode;
+                        $login=$function($aLogin,$aPasswd,$entitytotest);
+                        if ($login) // Login is successfull
+                        {
+                            $test=false;
+                            $dol_authmode=$mode;    // This properties is defined only when logged to say what mode was successfully used
+                            $ret=0;
+                        }
+                    }
+                    else
+                    {
+                        dol_syslog("Authentification ko - failed to load file '".$authfile."'",LOG_ERR);
+                        sleep(1);
+                        $ret=-1;
+                    }
+                }
+            }
+        }
 
 		return $ret;
-
 	}
 
 }
