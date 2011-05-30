@@ -217,7 +217,7 @@ else
 ?>
 
 div.tmenu {
-<?php if (! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print') {  ?>
+<?php if (GETPOST("optioncss") == 'print') {  ?>
 	display:none;
 <?php } else { ?>
     position: relative;
@@ -487,7 +487,8 @@ img.login, img.printer, img.entity {
 /* Menu gauche                                                                    */
 /* ============================================================================== */
 
-<?php if ((! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print')) { ?>
+<?php if ((GETPOST("optioncss") == 'print')
+|| (! empty($conf->browser->phone) && empty($conf->global->MAIN_SEARCHFORM_WITH_SMARTHPONE) && empty($conf->global->BOOKMARKS_SHOW_WITH_SMARTHPONE))) { ?>
 .vmenu {
 	display: none;
 }
@@ -1422,6 +1423,7 @@ opacity: 1;
 	border: 1px #E4ECEC outset;
 	padding: 0px;
 	margin-bottom: 5px;
+	z-index: 3000;
 }
 table.dp {
     width: 180px;
