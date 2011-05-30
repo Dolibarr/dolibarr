@@ -1122,6 +1122,7 @@ opacity: 1;
 /* Calendar                                                                       */
 /* ============================================================================== */
 .bodyline {
+	z-index: 3000;
 	-moz-border-radius:8px;
 	border: 1px #ECECE4 outset;
 	padding:0px;
