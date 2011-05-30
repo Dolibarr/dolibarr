@@ -401,7 +401,8 @@ class Expedition extends CommonObject
 	 */
 	function valid($user)
 	{
-		global $conf;
+		global $conf, $langs;
+		
         require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 
 		dol_syslog("Expedition::valid");
@@ -464,7 +465,8 @@ class Expedition extends CommonObject
 		if (! $error && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SHIPMENT)
 		{
 			require_once DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php";
-            $langs->load("agenda");
+            
+			$langs->load("agenda");
 
 			// Loop on each product line to add a stock movement
 			// TODO possibilite d'expedier a partir d'une propale ou autre origine

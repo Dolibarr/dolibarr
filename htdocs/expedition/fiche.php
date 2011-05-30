@@ -51,6 +51,7 @@ $langs->load('propal');
 
 
 $action = GETPOST("action");
+$confirm = GETPOST("confirm");
 
 $origin = GETPOST("origin")?GETPOST("origin"):'expedition';   // Example: commande, propal
 $origin_id = GETPOST("id")?GETPOST("id"):'';
@@ -125,7 +126,7 @@ if ($action == 'add')
 		$db->rollback();
 		$mesg='<div class="error">'.$object->error.'</div>';
 		$_GET["commande_id"]=$_POST["commande_id"];
-		$_GET["action"]='create';
+		$action='create';
 	}
 }
 
@@ -134,7 +135,7 @@ if ($action == 'add')
  */
 if ($action == 'create_delivery' && $conf->livraison_bon->enabled && $user->rights->expedition->livraison->creer)
 {
-	$object->fetch($_GET["id"]);
+	$object->fetch($id);
 	$result = $object->create_delivery($user);
 	if ($result > 0)
 	{
@@ -149,7 +150,7 @@ if ($action == 'create_delivery' && $conf->livraison_bon->enabled && $user->righ
 
 if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->expedition->valider)
 {
-	$object->fetch($_GET["id"]);
+	$object->fetch($id);
 	$object->fetch_thirdparty();
 
 	$result = $object->valid($user);
@@ -172,44 +173,38 @@ if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->expedition
 	}
 }
 
-if ($action == 'confirm_delete' && $confirm == 'yes')
+if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expedition->supprimer)
 {
-	if ($user->rights->expedition->supprimer )
+	$object->fetch($id);
+	$result = $object->delete();
+	if ($result > 0)
 	{
-		$object->fetch($_GET["id"]);
-		$result = $object->delete();
-		if ($result > 0)
-		{
-			Header("Location: ".DOL_URL_ROOT.'/expedition/index.php');
-			exit;
-		}
-		else
-		{
-			$mesg = $object->error;
-		}
+		Header("Location: ".DOL_URL_ROOT.'/expedition/index.php');
+		exit;
+	}
+	else
+	{
+		$mesg = $object->error;
 	}
 }
 
-if ($action == 'open')
+if ($action == 'open' && $user->rights->expedition->valider)
 {
-	if ($user->rights->expedition->valider )
+	$object->fetch($id);
+	$result = $object->setStatut(0);
+	if ($result < 0)
 	{
-		$object->fetch($_GET["id"]);
-		$result = $object->setStatut(0);
-		if ($result < 0)
-		{
-			$mesg = $object->error;
-		}
+		$mesg = $object->error;
 	}
 }
 
-if ($_POST['action'] == 'setdate_livraison' && $user->rights->expedition->creer)
+if ($action == 'setdate_livraison' && $user->rights->expedition->creer)
 {
 	//print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
 	$datelivraison=dol_mktime($_POST['liv_hour'], $_POST['liv_min'], 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
 
 	$shipping = new Expedition($db);
-	$shipping->fetch($_GET['id']);
+	$shipping->fetch($id);
 	$result=$shipping->set_date_livraison($user,$datelivraison);
 	if ($result < 0)
 	{
@@ -218,26 +213,26 @@ if ($_POST['action'] == 'setdate_livraison' && $user->rights->expedition->creer)
 }
 
 // Action update description of emailing
-if ($_REQUEST["action"] == 'settrackingnumber' || $_REQUEST["action"] == 'settrackingurl'
-|| $_REQUEST["action"] == 'settrueWeight'
-|| $_REQUEST["action"] == 'settrueWidth'
-|| $_REQUEST["action"] == 'settrueHeight'
-|| $_REQUEST["action"] == 'settrueDepth'
-|| $_REQUEST["action"] == 'setexpedition_method_id')
+if ($action == 'settrackingnumber' || $action == 'settrackingurl'
+|| $action == 'settrueWeight'
+|| $action == 'settrueWidth'
+|| $action == 'settrueHeight'
+|| $action == 'settrueDepth'
+|| $action == 'setexpedition_method_id')
 {
 	$error=0;
 
 	$shipping = new Expedition($db);
-	$result=$shipping->fetch($_REQUEST['id']);
+	$result=$shipping->fetch($id);
 	if ($result < 0) dol_print_error($db,$shipping->error);
 
-	if ($_REQUEST["action"] == 'settrackingnumber')  $shipping->tracking_number = trim($_REQUEST["trackingnumber"]);
-	if ($_REQUEST["action"] == 'settrackingurl')     $shipping->tracking_url = trim($_REQUEST["trackingurl"]);
-	if ($_REQUEST["action"] == 'settrueWeight')      $shipping->trueWeight = trim($_REQUEST["trueWeight"]);
-	if ($_REQUEST["action"] == 'settrueWidth')       $shipping->trueWidth = trim($_REQUEST["trueWidth"]);
-	if ($_REQUEST["action"] == 'settrueHeight')      $shipping->trueHeight = trim($_REQUEST["trueHeight"]);
-	if ($_REQUEST["action"] == 'settrueDepth')       $shipping->trueDepth = trim($_REQUEST["trueDepth"]);
-	if ($_REQUEST["action"] == 'setexpedition_method_id')       $shipping->expedition_method_id = trim($_REQUEST["expedition_method_id"]);
+	if ($action == 'settrackingnumber')			$shipping->tracking_number = trim($_REQUEST["trackingnumber"]);
+	if ($action == 'settrackingurl')			$shipping->tracking_url = trim($_REQUEST["trackingurl"]);
+	if ($action == 'settrueWeight')				$shipping->trueWeight = trim($_REQUEST["trueWeight"]);
+	if ($action == 'settrueWidth')				$shipping->trueWidth = trim($_REQUEST["trueWidth"]);
+	if ($action == 'settrueHeight')				$shipping->trueHeight = trim($_REQUEST["trueHeight"]);
+	if ($action == 'settrueDepth')				$shipping->trueDepth = trim($_REQUEST["trueDepth"]);
+	if ($action == 'setexpedition_method_id')	$shipping->expedition_method_id = trim($_REQUEST["expedition_method_id"]);
 
 	if (! $error)
 	{
@@ -250,21 +245,20 @@ if ($_REQUEST["action"] == 'settrackingnumber' || $_REQUEST["action"] == 'settra
 	}
 
 	$mesg='<div class="error">'.$mesg.'</div>';
-	$_GET["action"]="";
-	$_GET["id"]=$_REQUEST["id"];
+	$action="";
 }
 
 
 /*
  * Build doc
  */
-if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
+if ($action == 'builddoc')	// En get ou en post
 {
 	require_once(DOL_DOCUMENT_ROOT."/includes/modules/expedition/pdf/ModelePdfExpedition.class.php");
 
 	// Sauvegarde le dernier modele choisi pour generer un document
 	$shipment = new Expedition($db);
-	$shipment->fetch($_REQUEST['id']);
+	$shipment->fetch($id);
 	$shipment->fetch_thirdparty();
 
 	if ($_REQUEST['model'])
@@ -306,7 +300,7 @@ $formproduct = new FormProduct($db);
  * Mode creation
  *
  *********************************************************************/
-if ($_GET["action"] == 'create')
+if ($action == 'create')
 {
 	$expe = new Expedition($db);
 
