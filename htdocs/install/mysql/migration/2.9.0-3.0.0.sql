@@ -128,7 +128,7 @@ ALTER TABLE llx_commande ADD COLUMN ref_ext varchar(30) after entity;
 ALTER TABLE llx_propal   ADD COLUMN ref_ext varchar(30) after entity;
 ALTER TABLE llx_user     ADD COLUMN ref_ext varchar(30) after entity;
 ALTER TABLE llx_societe  ADD COLUMN ref_ext varchar(60) after entity;
-ALTER TABLE llx_product  ADD COLUMN ref_ext varchar(32) after entity;
+ALTER TABLE llx_product  ADD COLUMN ref_ext varchar(30) after entity;
 
 
 ALTER TABLE llx_mailing_cibles CHANGE COLUMN url source_url integer;

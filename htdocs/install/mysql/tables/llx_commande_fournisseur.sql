@@ -30,10 +30,10 @@ create table llx_commande_fournisseur
   ref_ext             varchar(30),                  -- reference into an external system (not used by dolibarr)
   ref_supplier        varchar(30),
 
-  tms                 timestamp,
   fk_soc              integer NOT NULL,
-
   fk_projet           integer DEFAULT 0,             -- projet auquel est rattache la commande
+
+  tms                 timestamp,
   date_creation       datetime,                      -- date de creation 
   date_valid          datetime,                      -- date de validation
   date_cloture        datetime,                      -- date de cloture

@@ -23,10 +23,6 @@
 create table llx_commande
 (
   rowid                 integer AUTO_INCREMENT PRIMARY KEY,
-  tms                   timestamp,
-  fk_soc                integer NOT NULL,
-  fk_projet             integer DEFAULT 0,             -- projet auquel est rattache la commande
-
   ref                   varchar(30)       NOT NULL,    -- order reference number
   entity                integer DEFAULT 1 NOT NULL,	   -- multi company id
 
@@ -34,6 +30,10 @@ create table llx_commande
   ref_int				varchar(30),                   -- reference into an internal system (used by dolibarr)
   ref_client            varchar(30),                   -- reference for customer
 
+  fk_soc                integer NOT NULL,
+  fk_projet             integer DEFAULT 0,             -- projet auquel est rattache la commande
+
+  tms                   timestamp,
   date_creation         datetime,                      -- date de creation 
   date_valid            datetime,                      -- date de validation
   date_cloture          datetime,                      -- date de cloture

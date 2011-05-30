@@ -30,6 +30,8 @@ create table llx_adherent
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
   entity           integer DEFAULT 1 NOT NULL,	-- multi company id
+  ref_ext          varchar(30),                 -- reference into an external system (not used by dolibarr)
+
   civilite         varchar(6),
   nom              varchar(50),
   prenom           varchar(50),
