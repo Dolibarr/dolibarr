@@ -277,12 +277,12 @@ p.titre {
 /* --------------------- Combo lists ------------------- */
 .select_design {
 	width: 370px;
-	font-size: 12px verdana,arial,helvetica
 	overflow: auto;
 }
 
 .select_design select {
 	border: 1px solid #6d3f6d;
+    font: 12px verdana,arial,helvetica;
 	background: #fff;
 }
 
