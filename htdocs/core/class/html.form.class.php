@@ -2817,9 +2817,9 @@ class Form
 
 
     /**
-     *		Show a HTML widget to input a date or combo list for daye, month, years and optionnaly hours and minutes
+     *		Show a HTML widget to input a date or combo list for day, month, years and optionnaly hours and minutes
      *      Fields are preselected with :
-     *            	- set_time date (Local PHP server timestamps ou date au format YYYY-MM-DD ou YYYY-MM-DD HH:MM)
+     *            	- set_time date (Local PHP server timestamps or date format YYYY-MM-DD or YYYY-MM-DD HH:MM)
      *            	- local date of PHP server if set_time is ''
      *            	- Empty (fields empty) if set_time is -1 (in this case, parameter empty must also have value 1)
      *		@param	set_time 		Pre-selected date (must be a local PHP server timestamp)
@@ -2848,10 +2848,10 @@ class Form
 
         if (! $set_time && $empty == 0) $set_time = dol_now('tzuser');
 
-        // Analyse de la date de pre-selection
+        // Analysis of the pre-selection date
         if (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?/',$set_time,$reg))
         {
-            // Date au format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
+            // Date format 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS'
             $syear = $reg[1];
             $smonth = $reg[2];
             $sday = $reg[3];
@@ -2919,7 +2919,7 @@ class Form
             // Show date with combo selects
             if (empty($conf->use_javascript_ajax) || $conf->global->MAIN_POPUP_CALENDAR == "none")
             {
-                // Jour
+                // Day
                 $retstring.='<select'.($disabled?' disabled="true"':'').' class="flat" name="'.$prefix.'day">';
 
                 if ($empty || $set_time == -1)
