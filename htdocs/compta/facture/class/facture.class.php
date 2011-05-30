@@ -617,9 +617,9 @@ class Facture extends CommonObject
 
         if ($option == 'withdraw') $url = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$this->id;
         else $url = DOL_URL_ROOT.'/compta/facture.php?facid='.$this->id;
-        
+
         if ($short) return $url;
-        
+
         $linkstart='<a href="'.$url.'">';
         $linkend='</a>';
 
@@ -2965,7 +2965,7 @@ class Facture extends CommonObject
             $line->localtax2_tx=0;
             $line->remise_percent=10;
             $line->total_ht=90;
-            $line->total_ttc=107.64;	// 90 * 1.196
+            $line->total_ttc=107.64;    // 90 * 1.196
             $line->total_tva=17.64;
             $prodid = rand(1, $num_prods);
             $line->fk_product=$prodids[$prodid];
@@ -2974,6 +2974,25 @@ class Facture extends CommonObject
 
             $xnbp++;
         }
+        // Add a line "offered"
+        $line=new FactureLigne($this->db);
+        $line->desc=$langs->trans("Description")." ".$xnbp;
+        $line->qty=1;
+        $line->subprice=100;
+        $line->price=100;
+        $line->tva_tx=19.6;
+        $line->localtax1_tx=0;
+        $line->localtax2_tx=0;
+        $line->remise_percent=100;
+        $line->total_ht=0;
+        $line->total_ttc=0;    // 90 * 1.196
+        $line->total_tva=0;
+        $prodid = rand(1, $num_prods);
+        $line->fk_product=$prodids[$prodid];
+
+        $this->lines[$xnbp]=$line;
+
+        $xnbp++;
 
         $this->amount_ht      = $xnbp*90;
         $this->total_ht       = $xnbp*90;
