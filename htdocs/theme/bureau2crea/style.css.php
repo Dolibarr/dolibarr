@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C)      2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -245,7 +246,7 @@ div.fiche {
 
 
 /* ============================================================================== */
-/* Barre de redmiensionnement menu                                                */
+/* Barre de redimensionnement menu                                                */
 /* ============================================================================== */
 
 .ui-layout-resizer-west-open {
@@ -270,7 +271,7 @@ else
 ?>
 
 div.tmenu {
-<?php if (! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print') {  ?>
+<?php if (GETPOST("optioncss") == 'print') {  ?>
 	display:none;
 <?php } else { ?>
     position: relative;
@@ -321,6 +322,10 @@ div.mainmenu.commercial {
 
 div.mainmenu.accountancy {
 	background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/menus/money.png' ?>);
+}
+
+div.mainmenu.bank {
+    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/menus/bank.png' ?>);
 }
 
 div.mainmenu.project {
@@ -507,7 +512,7 @@ div.login_block table {
 
 div.login {
 	white-space:nowrap;
-	padding: 8px 0px 0px 0px;
+	padding: <?php echo ($conf->browser->phone?'0':'8')?>px 0px 0px 0px;
 	margin: 0px 0px 0px 8px;
 	font-weight: bold;
 }
@@ -520,7 +525,7 @@ div.login a:hover {
 }
 
 img.login, img.printer, img.entity {
-	padding: 8px 0px 0px 0px;
+	padding: <?php echo ($conf->browser->phone?'0':'8')?>px 0px 0px 0px;
 	margin: 0px 0px 0px 8px;
 	text-decoration: none;
 	color: white;
@@ -532,7 +537,7 @@ img.login, img.printer, img.entity {
 /* Menu gauche                                                                    */
 /* ============================================================================== */
 
-<?php if ((! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print')
+<?php if ((GETPOST("optioncss") == 'print')
 || (! empty($conf->browser->phone) && class_exists('Smartphone') && empty($conf->global->MAIN_SEARCHFORM_WITH_SMARTHPONE) && empty($conf->global->BOOKMARKS_SHOW_WITH_SMARTHPONE))) { ?>
 .vmenu {
 	display: none;
@@ -1546,6 +1551,7 @@ opacity: 1;
 	border: 1px #E4ECEC outset;
 	padding: 0px;
 	margin-bottom: 5px;
+	z-index: 3000;
 }
 table.dp {
     width: 180px;
@@ -1691,7 +1697,7 @@ table.cal_event td { border: 0px; padding-<?php print $left; ?>: 0px; padding-<?
 /* ============================================================================== */
 
 .ui-widget { font-family: Verdana,Arial,sans-serif; font-size: 0.9em; }
-.ui-autocomplete-loading { background: white url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/working.gif' ?>) right center no-repeat; }
+.ui-autocomplete-loading { background: white url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/working.gif' ?>) right center no-repeat; }
 
 
 /* ============================================================================== */
@@ -1734,7 +1740,7 @@ form.inplaceeditor-form a { /* The cancel link */
 /* Admin Menu                                                                     */
 /* ============================================================================== */
 
-/* CSS a  appliquer a  l'arbre hierarchique */
+/* CSS for treeview */
 
 /* Lien plier /deplier tout */
 .arbre-switch {
