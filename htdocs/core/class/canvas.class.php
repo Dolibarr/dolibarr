@@ -106,7 +106,7 @@ class Canvas
 
             // Instantiate actions class (controller)
             $controlclassname = 'Actions'.ucfirst($this->card).ucfirst($this->canvas);
-            $this->control = new $controlclassname($this->db);
+            $this->control = new $controlclassname($this->db,$this->targetmodule,$this->canvas,$this->card);
 		}
 
 		// TODO Dao should be declared and used by controller or templates when required only
