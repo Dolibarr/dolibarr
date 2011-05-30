@@ -271,12 +271,12 @@ class pdf_crabe extends ModelePDFFactures
 					$pdf->SetXY ($this->posxqty, $curY);
 					$pdf->MultiCell($this->posxdiscount-$this->posxqty-1, 3, $qty, 0, 'R');	// Enough for 6 chars
 
-					// Remise sur ligne
-					$pdf->SetXY ($this->posxdiscount, $curY);
+					// Discount
 					if ($object->lines[$i]->remise_percent)
 					{
-						$remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails);
-						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 3, $remise_percent, 0, 'R');
+                        $pdf->SetXY ($this->posxdiscount-2, $curY);
+					    $remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails);
+						$pdf->MultiCell($this->postotalht-$this->posxdiscount+2, 3, $remise_percent, 0, 'R');
 					}
 
 					// Total HT ligne
