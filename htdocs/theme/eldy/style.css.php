@@ -1387,6 +1387,7 @@ opacity: 1;
 .ui-datepicker-title {
     margin: 0 !important;
     line-height: 28px;
+    z-index: 3000;
 }
 .ui-datepicker-month {
     margin: 0 !important;
@@ -1400,7 +1401,7 @@ opacity: 1;
 	-moz-border-radius:8px;
 	border: 1px #E4ECEC outset;
 	padding: 0px;
-	margin-bottom: 5px;
+	margin-bottom: 5px;	
 }
 table.dp {
     width: 180px;
