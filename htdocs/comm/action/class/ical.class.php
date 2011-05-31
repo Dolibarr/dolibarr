@@ -81,7 +81,7 @@ class ical
         // read FILE text
         $this->file_text = $this->read_file($uri);
 
-        $this->file_text = split("[\n]", $this->file_text);
+        $this->file_text = preg_split("[\n]", $this->file_text);
         
         // is this text vcalendar standart text ? on line 1 is BEGIN:VCALENDAR
         if (!stristr($this->file_text[0],'BEGIN:VCALENDAR')) return 'error not VCALENDAR';
@@ -223,7 +223,7 @@ class ical
         $ical_date = str_replace('Z', '', $ical_date);
 
         // TIME LIMITED EVENT
-        ereg('([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{0,2})([0-9]{0,2})([0-9]{0,2})', $ical_date, $date);
+        preg_match('/([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{0,2})([0-9]{0,2})([0-9]{0,2})/', $ical_date, $date);
 
         // UNIX timestamps can't deal with pre 1970 dates
         if ($date[1] <= 1970)
@@ -244,15 +244,15 @@ class ical
     {
         $value = $this->ical_date_to_unix($value);
 
-        // zjisteni TZID
+        // Analyse TZID
         $temp = explode(";",$key);
         
-        if (empty($temp[1])) // neni TZID
+        if (empty($temp[1])) // not TZID
         {
-            $data = str_replace('T', '', $data);
+            $value = str_replace('T', '', $value);
             return array($key,$value);
         }
-        // pridani $value a $tzid do pole
+        // adding $value and $tzid 
         $key =     $temp[0];
         $temp = explode("=", $temp[1]);
         $return_value[$temp[0]] = $temp[1];
