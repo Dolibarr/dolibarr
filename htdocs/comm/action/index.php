@@ -504,15 +504,15 @@ if ($conf->global->ENABLE_AGENDA_EXT==1 && $conf->global->AGENDA_EXT_NB>0)
 			{
 				// Create a new object action
 				$event=new ActionComm($db);
-				$event->id=$icalevent->UID;
-				$event->datep=$icalevent->DTSTART;
-				$event->datef=$icalevent->DTEND;
+				$event->id=$icalevent[UID];
+				$event->datep=$icalevent[DTSTART];
+				$event->datef=$icalevent[DTEND];
 				$event->type_code="ICALEVENT";
-				$event->libelle=$icalevent->SUMMARY;
+				$event->libelle='<b>'.$icalevent[SUMMARY].'</b><br>'.dol_nl2br($icalevent[DESCRIPTION],1,false);
 	        	//$event->fulldayevent=$obj->fulldayevent;
 	        	
 				$event->date_start_in_calendar=$event->datep;
-				/*
+				
 				if ($event->datef != '' && $event->datef >= $event->datep) $event->date_end_in_calendar=$event->datef;
 				else $event->date_end_in_calendar=$event->datep;
 			
@@ -531,7 +531,7 @@ if ($conf->global->ENABLE_AGENDA_EXT==1 && $conf->global->AGENDA_EXT_NB>0)
 				{
 					if ($event->date_start_in_calendar < $firstdaytoshow) $event->date_start_in_calendar=$firstdaytoshow;
 					if ($event->date_end_in_calendar > $lastdaytoshow) $event->date_end_in_calendar=$lastdaytoshow;
-	*/
+	
 					// Add an entry in actionarray for each day
 					$daycursor=$event->date_start_in_calendar;
 					$annee = date('Y',$daycursor);
@@ -548,7 +548,7 @@ if ($conf->global->ENABLE_AGENDA_EXT==1 && $conf->global->AGENDA_EXT_NB>0)
 						if ($daykey > $event->date_end_in_calendar) $loop=false;
 					}
 					while ($loop);
-				//}
+				}
 			}
 			       	
 		}
@@ -880,7 +880,8 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                         if ($linerelatedto) print $linerelatedto.'<br>';
 
 						// Show label
-						print $event->getNomUrl(0,$maxnbofchar,'cal_event');
+						if($event->type_code == 'ICALEVENT') print $event->libelle;
+						else print $event->getNomUrl(0,$maxnbofchar,'cal_event');
 					}
 					else	// It's a birthday
 					{
@@ -898,7 +899,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 					print '</td>';
                     // Status - Percent
 					print '<td align="right" nowrap="nowrap">';
-					if ($event->type_code != 'BIRTHDAY') print $event->getLibStatut(3,1);
+					if ($event->type_code != 'BIRTHDAY' && $event->type_code != 'ICALEVENT') print $event->getLibStatut(3,1);
 					else print '&nbsp;';
 					print '</td></tr></table>';
 					$i++;
