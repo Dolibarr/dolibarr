@@ -38,36 +38,43 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 			ORDER BY id';
 	dol_syslog($request);
 	$res = $db->query ($request);
-	if ( $db->num_rows($res) ) {
+	if (! $res)
+	{
+	    dol_print_error($db);
+	    exit;
+	}
+
+	if ( $db->num_rows($res) )
+	{
 
 		$ret=array(); $i=0;
-		
+
 		/** add Ditto for MultiPrix*/
 		$thirdpartyid = $_SESSION['CASHDESK_ID_THIRDPARTY'];
 		$societe = new Societe($db);
 		$societe->fetch($thirdpartyid);
-		/** end add Ditto */			
-		
+		/** end add Ditto */
+
 		while ( $tab = $db->fetch_array($res) )
 		{
 			foreach ( $tab as $cle => $valeur )
 			{
 				$ret[$i][$cle] = $valeur;
 			}
-			
+
 			/** add Ditto for MultiPrix*/
 			if($conf->global->PRODUIT_MULTIPRICES)
 			{
 				$product = new Product($db, $ret[$i]['id']);
-				
+
 				if(isset($product->multiprices[$societe->price_level]))
 				{
 					$ret[$i]['price'] = $product->multiprices_ttc[$societe->price_level];
 				}
-			}						
-			/** end add Ditto */			
-			
-			
+			}
+			/** end add Ditto */
+
+
 			$i++;
 		}
 		$tab = $ret;

@@ -29,7 +29,7 @@ $Id$
 
 <!-- ========================= Cadre "Article" ============================= -->
 <fieldset class="cadre_facturation"><legend class="titre1"><?php echo $langs->trans("Article"); ?></legend>
-	<form id="frmFacturation" class="formulaire1" method="post" action="facturation_verif.php">
+	<form id="frmFacturation" class="formulaire1" method="post" action="facturation_verif.php" autocomplete="off">
 		<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
 
 		<input type="hidden" name="hdnSource" value="NULL" />
@@ -42,12 +42,22 @@ $Id$
 				onchange="javascript: setSource('REF');"
 				onfocus="javascript: this.select(); verifResultat('resultats_dhtml', this.value);"
 				onBlur="javascript: document.getElementById('resultats_dhtml').innerHTML = '';"/>
-				<!--onKeyUp="javascript: verifResultat('resultats_dhtml', this.value);" />-- >
 			</td>
 			<td class="select_design">
-				<select name="selProduit" onchange="javascript: setSource('LISTE');">
-					<option value="0"><?php echo $top_liste_produits; ?></option>
+            <?php /*
+            $selected='';
+            $htmlname='idprod';
+            $status=-1;
+            $rice_level=$company->price_level;
+            print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajaxproducts.php', 'outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
+            if (! $hidelabel) print $langs->trans("RefOrLabel").' : ';
+            print '<input type="text" size="4" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'" />';
+            */
+            ?>
+
+				<select id="selProduit" name="selProduit" onchange="javascript: setSource('LISTE');">
 					<?php
+                        print '<option value="0">'.$top_liste_produits.'</option>'."\n";
 
 						$id = $obj_facturation->id();
 
@@ -93,7 +103,7 @@ $Id$
 				</select>
 			</td>
 			</tr>
-			<tr><td><div id="resultats_dhtml"></div></td></tr>
+			<!--  <tr><td><div id="resultats_dhtml"></div></td></tr> -->
 		</table>
 	</form>
 
