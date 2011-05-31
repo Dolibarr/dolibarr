@@ -37,6 +37,8 @@
  */
 function ajax_autocompleter($selected='',$htmlname,$url,$option='',$minLength=2,$autoselect=0)
 {
+    if (empty($minLength)) $minLength=1;
+
 	$script = '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="'.$selected.'" />';
 
 	$script.= '<script type="text/javascript">';
