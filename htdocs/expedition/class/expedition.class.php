@@ -688,7 +688,7 @@ class Expedition extends CommonObject
 		$sql.= " date_expedition=".(dol_strlen($this->date_expedition)!=0 ? "'".$this->db->idate($this->date_expedition)."'" : 'null').",";
 		$sql.= " date_delivery=".(dol_strlen($this->date_delivery)!=0 ? "'".$this->db->idate($this->date_delivery)."'" : 'null').",";
 		$sql.= " fk_address=".(isset($this->fk_adresse_livraison)?$this->fk_adresse_livraison:"null").",";
-		$sql.= " fk_expedition_methode=".(isset($this->expedition_method_id)?$this->expedition_method_id:"null").",";
+		$sql.= " fk_expedition_methode=".((isset($this->expedition_method_id) && $this->expedition_method_id > 0)?$this->expedition_method_id:"null").",";
 		$sql.= " tracking_number=".(isset($this->tracking_number)?"'".$this->db->escape($this->tracking_number)."'":"null").",";
 		$sql.= " fk_statut=".(isset($this->statut)?$this->statut:"null").",";
 		$sql.= " height=".(isset($this->trueHeight)?$this->trueHeight:"null").",";
@@ -1102,14 +1102,14 @@ class Expedition extends CommonObject
 			$classname = "methode_expedition_".strtolower($code);
 
 			$url='';
-			if (file_exists(DOL_DOCUMENT_ROOT."/includes/modules/expedition/methode_expedition_".strtolower($code).".modules.php"))
+			if (file_exists(DOL_DOCUMENT_ROOT."/includes/modules/expedition/methode_expedition_".strtolower($code).".modules.php") && ! empty($this->tracking_number))
 			{
 				require_once(DOL_DOCUMENT_ROOT."/includes/modules/expedition/methode_expedition_".strtolower($code).".modules.php");
 				$obj = new $classname();
 				$url = $obj->provider_url_status($this->tracking_number);
 			}
 
-			if ($url)
+			if ($url!='')
 			{
 				$this->tracking_url = sprintf('<a target="_blank" href="%s">'.($value?$value:'url').'</a>',$url,$url);
 			}
