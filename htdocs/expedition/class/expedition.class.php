@@ -1109,7 +1109,7 @@ class Expedition extends CommonObject
 				$url = $obj->provider_url_status($this->tracking_number);
 			}
 
-			if ($url!='')
+			if ($url)
 			{
 				$this->tracking_url = sprintf('<a target="_blank" href="%s">'.($value?$value:'url').'</a>',$url,$url);
 			}
