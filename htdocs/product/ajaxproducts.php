@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,7 +64,9 @@ $idprod = $match[0];
 if (! isset($_GET['idprod']) && ! isset($_GET[$idprod]) && ! isset($_GET['idprodfournprice'])) return;
 
 // When used from jQuery, the search term is added as GET param "term".
-$searchkey=($_GET[$idprod]?$_GET[$idprod]:($_GET['idprod']?$_GET['idprod']:$_GET['idprodfournprice']));
+$searchkey=$_GET[$idprod];
+if (empty($searchkey)) $searchkey=$_GET['idprod'];
+if (empty($searchkey)) $searchkey=$_GET['idprodfournprice'];
 $outjson=isset($_GET['outjson'])?$_GET['outjson']:0;
 
 // Get list of product.
@@ -80,7 +82,7 @@ if (empty($_GET['mode']) || $_GET['mode'] == 1)
 }
 if ($_GET['mode'] == 2)
 {
-	$arrayresult=$form->select_produits_fournisseurs_do($_GET["socid"],"",$_GET["htmlname"],$_GET["type"],"",$searchkey,$statut,$outjson);
+	$arrayresult=$form->select_produits_fournisseurs_do($_GET["socid"],"",$_GET["htmlname"],$_GET["type"],"",$searchkey,$status,$outjson);
 }
 
 $db->close();
