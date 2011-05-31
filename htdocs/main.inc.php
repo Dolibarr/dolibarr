@@ -1373,10 +1373,14 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	// Search form hook of thirdparty module
 	if (! empty($object->hooks['searchform']))
 	{
+		$searchform.='<!-- Begin search form hook area -->'."\n";
+		
 		foreach($object->hooks['searchform'] as $module)
 		{
 			$searchform.=$module->printSearchForm();
         }
+        
+        $searchform.="\n".'<!-- End of search form hook area -->'."\n";
     }
 
 	// Define $bookmarks
@@ -1482,19 +1486,23 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	}
 	print "\n";
 	
-	// Left block hook of thirdparty module
-	if (! empty($object->hooks['leftblock']))
-	{
-		foreach($object->hooks['leftblock'] as $module)
-		{
-			$module->printLeftBlock();
-        }
-    }
-	
 	print "</div>\n";
 	print "<!-- End left vertical menu -->\n";
 
 	print "\n";
+	
+	// Left block hook of thirdparty module
+	if (! empty($object->hooks['leftblock']))
+	{
+		print '<!-- Begin left block hook area -->'."\n";
+		
+		foreach($object->hooks['leftblock'] as $module)
+		{
+			$module->printLeftBlock();
+        }
+        
+        print "\n".'<!-- End of left block hook area -->'."\n";
+    }
 
 	if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '</div> <!-- End left layout -->'."\n";
 	else print '</td>';
