@@ -653,11 +653,11 @@ function pdf_writelinedesc(&$pdf,$object,$i,$outputlangs,$w,$h,$posx,$posy,$hide
 {
     global $db, $conf, $langs;
 
-    if (! empty($object->hooks) && ( ($object->lines[$i]->product_type == 9 && ! empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
+    if (! empty($object->hooks['objectcard']) && ( ($object->lines[$i]->product_type == 9 && ! empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
     {
         $special_code = $object->lines[$i]->special_code;
     	if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
-        return $object->hooks[$special_code]->pdf_writelinedesc($pdf,$object,$i,$outputlangs,$w,$h,$posx,$posy,$hideref,$hidedesc,$issupplierline);
+        return $object->hooks['objectcard'][$special_code]->pdf_writelinedesc($pdf,$object,$i,$outputlangs,$w,$h,$posx,$posy,$hideref,$hidedesc,$issupplierline);
     }
     else
     {
@@ -810,7 +810,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
  */
 function pdf_getlinenum($object,$i,$outputlangs)
 {
-    if (! empty($object->hooks) && ( ($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
+    if (! empty($object->hooks['objectcard']) && ( ($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
     {
     	$special_code = $object->lines[$i]->special_code;
     	if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
@@ -831,7 +831,7 @@ function pdf_getlinenum($object,$i,$outputlangs)
  */
 function pdf_getlineref($object,$i,$outputlangs)
 {
-    if (! empty($object->hooks) && ( ($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
+    if (! empty($object->hooks['objectcard']) && ( ($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
     {
     	$special_code = $object->lines[$i]->special_code;
     	if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
@@ -851,7 +851,7 @@ function pdf_getlineref($object,$i,$outputlangs)
  */
 function pdf_getlineref_supplier($object,$i,$outputlangs)
 {
-    if (! empty($object->hooks) && ( ($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
+    if (! empty($object->hooks['objectcard']) && ( ($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
     {
     	$special_code = $object->lines[$i]->special_code;
     	if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
@@ -875,11 +875,11 @@ function pdf_getlineref_supplier($object,$i,$outputlangs)
  */
 function pdf_getlinevatrate($object,$i,$outputlangs,$hidedetails=0)
 {
-    if (! empty($object->hooks) && ( ($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
+    if (! empty($object->hooks['objectcard']) && ( ($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
     {
         $special_code = $object->lines[$i]->special_code;
     	if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
-        return $object->hooks[$special_code]->pdf_getlinevatrate($object,$i,$outputlangs,$hidedetails);
+        return $object->hooks['objectcard'][$special_code]->pdf_getlinevatrate($object,$i,$outputlangs,$hidedetails);
     }
     else
     {
@@ -899,11 +899,11 @@ function pdf_getlinevatrate($object,$i,$outputlangs,$hidedetails=0)
  */
 function pdf_getlineupexcltax($object,$i,$outputlangs,$hidedetails=0)
 {
-    if (! empty($object->hooks) && ( ($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
+    if (! empty($object->hooks['objectcard']) && ( ($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
     {
         $special_code = $object->lines[$i]->special_code;
     	if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
-        return $object->hooks[$special_code]->pdf_getlineupexcltax($object,$i,$outputlangs,$hidedetails);
+        return $object->hooks['objectcard'][$special_code]->pdf_getlineupexcltax($object,$i,$outputlangs,$hidedetails);
     }
     else
     {
@@ -925,11 +925,11 @@ function pdf_getlineqty($object,$i,$outputlangs,$hidedetails=0)
 {
     if ($object->lines[$i]->special_code != 3)
     {
-        if (! empty($object->hooks) && (( $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
+        if (! empty($object->hooks['objectcard']) && (( $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
         {
         	$special_code = $object->lines[$i]->special_code;
         	if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
-        	return $object->hooks[$special_code]->pdf_getlineqty($object,$i,$outputlangs,$hidedetails);
+        	return $object->hooks['objectcard'][$special_code]->pdf_getlineqty($object,$i,$outputlangs,$hidedetails);
         }
         else
         {
@@ -952,11 +952,11 @@ function pdf_getlineqty_asked($object,$i,$outputlangs,$hidedetails=0)
 {
     if ($object->lines[$i]->special_code != 3)
     {
-        if (! empty($object->hooks) && (( $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
+        if (! empty($object->hooks['objectcard']) && (( $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
         {
         	$special_code = $object->lines[$i]->special_code;
         	if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
-        	return $object->hooks[$special_code]->pdf_getlineqty_asked($object,$i,$outputlangs,$hidedetails);
+        	return $object->hooks['objectcard'][$special_code]->pdf_getlineqty_asked($object,$i,$outputlangs,$hidedetails);
         }
         else
         {
@@ -979,11 +979,11 @@ function pdf_getlineqty_shipped($object,$i,$outputlangs,$hidedetails=0)
 {
     if ($object->lines[$i]->special_code != 3)
     {
-        if (! empty($object->hooks) && (( $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
+        if (! empty($object->hooks['objectcard']) && (( $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
         {
         	$special_code = $object->lines[$i]->special_code;
         	if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
-        	return $object->hooks[$special_code]->pdf_getlineqty_shipped($object,$i,$outputlangs,$hidedetails);
+        	return $object->hooks['objectcard'][$special_code]->pdf_getlineqty_shipped($object,$i,$outputlangs,$hidedetails);
         }
         else
         {
@@ -1006,11 +1006,11 @@ function pdf_getlineqty_keeptoship($object,$i,$outputlangs,$hidedetails=0)
 {
     if ($object->lines[$i]->special_code != 3)
     {
-        if (! empty($object->hooks) && (( $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
+        if (! empty($object->hooks['objectcard']) && (( $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
         {
         	$special_code = $object->lines[$i]->special_code;
         	if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
-        	return $object->hooks[$special_code]->pdf_getlineqty_keeptoship($object,$i,$outputlangs,$hidedetails);
+        	return $object->hooks['objectcard'][$special_code]->pdf_getlineqty_keeptoship($object,$i,$outputlangs,$hidedetails);
         }
         else
         {
@@ -1035,11 +1035,11 @@ function pdf_getlineremisepercent($object,$i,$outputlangs,$hidedetails=0)
     
     if ($object->lines[$i]->special_code != 3)
     {
-        if (! empty($object->hooks) && ( ($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
+        if (! empty($object->hooks['objectcard']) && ( ($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
         {
         	$special_code = $object->lines[$i]->special_code;
         	if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
-        	return $object->hooks[$special_code]->pdf_getlineremisepercent($object,$i,$outputlangs,$hidedetails);
+        	return $object->hooks['objectcard'][$special_code]->pdf_getlineremisepercent($object,$i,$outputlangs,$hidedetails);
         }
         else
         {
@@ -1066,11 +1066,11 @@ function pdf_getlinetotalexcltax($object,$i,$outputlangs,$hidedetails=0)
     }
     else
     {
-        if (! empty($object->hooks) && ( ($object->lines[$i]->product_type == 9 && ! empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
+        if (! empty($object->hooks['objectcard']) && ( ($object->lines[$i]->product_type == 9 && ! empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
         {
         	$special_code = $object->lines[$i]->special_code;
         	if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
-        	return $object->hooks[$special_code]->pdf_getlinetotalexcltax($object,$i,$outputlangs,$hidedetails);
+        	return $object->hooks['objectcard'][$special_code]->pdf_getlinetotalexcltax($object,$i,$outputlangs,$hidedetails);
         }
         else
         {
@@ -1099,7 +1099,7 @@ function pdf_getTotalQty($object,$type='',$outputlangs)
 			{
 				$total += $object->lines[$i]->qty;
 			}
-			else if ($type==9 && ! empty($object->hooks) && ( ($object->lines[$i]->product_type == 9 && ! empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
+			else if ($type==9 && ! empty($object->hooks['objectcard']) && ( ($object->lines[$i]->product_type == 9 && ! empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
 			{
 				$special_code = $object->lines[$i]->special_code;
 				if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);

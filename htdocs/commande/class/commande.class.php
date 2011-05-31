@@ -808,9 +808,9 @@ class Commande extends CommonObject
 		if (! $error)
 		{
 			// Hook of thirdparty module
-			if (! empty($object->hooks))
+			if (! empty($object->hooks['objectcard']))
 			{
-				foreach($object->hooks as $module)
+				foreach($object->hooks['objectcard'] as $module)
 				{
 					$result = $module->createfrom($objFrom,$result,$object->element);
 					if ($result < 0) $error++;
@@ -902,9 +902,9 @@ class Commande extends CommonObject
             if ($ret > 0)
             {
                 // Hooks
-                if (! empty($object->hooks))
+                if (! empty($object->hooks['objectcard']))
                 {
-                    foreach($object->hooks as $module)
+                    foreach($object->hooks['objectcard'] as $module)
                     {
                         $result = $module->createfrom($object,$ret,$this->element);
                         if ($result < 0) $error++;

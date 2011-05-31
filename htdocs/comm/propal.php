@@ -93,9 +93,9 @@ if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
 /******************************************************************************/
 
 // Hook of thirdparty module
-if (! empty($object->hooks))
+if (! empty($object->hooks['objectcard']))
 {
-	foreach($object->hooks as $module)
+	foreach($object->hooks['objectcard'] as $module)
 	{
 		$module->doActions($object);
 		$mesg = $module->error;
@@ -1082,9 +1082,9 @@ if ($id > 0 || ! empty($ref))
 	}
 
 	// Hook of thirdparty module
-	if (empty($formconfirm) && ! empty($object->hooks))
+	if (empty($formconfirm) && ! empty($object->hooks['objectcard']))
 	{
-		foreach($object->hooks as $module)
+		foreach($object->hooks['objectcard'] as $module)
 		{
 			if (empty($formconfirm)) $formconfirm = $module->formconfirm($action,$object,$lineid);
 		}
@@ -1491,9 +1491,9 @@ if ($id > 0 || ! empty($ref))
 			}
 
 			// Hook of thirdparty module
-			if (! empty($object->hooks))
+			if (! empty($object->hooks['objectcard']))
 			{
-				foreach($object->hooks as $module)
+				foreach($object->hooks['objectcard'] as $module)
 				{
 					$var=!$var;
 					$module->formAddObject($object);
@@ -1643,7 +1643,7 @@ if ($id > 0 || ! empty($ref))
 
 		$var=true;
 
-		$somethingshown=$formfile->show_documents('propal',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'',0,'',$soc->default_lang,$object->hooks);
+		$somethingshown=$formfile->show_documents('propal',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'',0,'',$soc->default_lang,$object->hooks['objectcard']);
 
 
 		/*

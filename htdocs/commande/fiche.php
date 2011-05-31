@@ -78,9 +78,9 @@ if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
 /******************************************************************************/
 
 // Hook of thirdparty module
-if (! empty($object->hooks))
+if (! empty($object->hooks['objectcard']))
 {
-    foreach($object->hooks as $module)
+    foreach($object->hooks['objectcard'] as $module)
     {
         $module->doActions($object);
         $mesg = $module->error;
@@ -305,9 +305,9 @@ if ($action == 'add' && $user->rights->commande->creer)
                 }
 
                 // Hooks
-                if (! empty($object->hooks))
+                if (! empty($object->hooks['objectcard']))
                 {
-                	foreach($object->hooks as $module)
+                	foreach($object->hooks['objectcard'] as $module)
                 	{
                 		$res = $module->createfrom($srcobject,$object_id,$object->element);
                 		if ($res < 0) $error++;
@@ -1516,9 +1516,9 @@ else
             }
 
             // Hook of thirdparty module
-			if (empty($formconfirm) && ! empty($object->hooks))
+			if (empty($formconfirm) && ! empty($object->hooks['objectcard']))
 			{
-				foreach($object->hooks as $module)
+				foreach($object->hooks['objectcard'] as $module)
 				{
 					if (empty($formconfirm)) $formconfirm = $module->formconfirm($action,$object,$lineid);
 				}
@@ -1874,9 +1874,9 @@ else
                     }
 
                     // Hook of thirdparty module
-                    if (! empty($object->hooks))
+                    if (! empty($object->hooks['objectcard']))
                     {
-                        foreach($object->hooks as $module)
+                        foreach($object->hooks['objectcard'] as $module)
                         {
                             $var=!$var;
                             $module->formAddObject($object);
@@ -2017,7 +2017,7 @@ else
                 $genallowed=$user->rights->commande->creer;
                 $delallowed=$user->rights->commande->supprimer;
 
-                $somethingshown=$formfile->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang,$object->hooks);
+                $somethingshown=$formfile->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang,$object->hooks['objectcard']);
 
                 /*
                  * Linked object block

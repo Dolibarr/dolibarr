@@ -1404,37 +1404,41 @@ class CommonObject
 	 *	Instantiate hooks of thirdparty module
 	 *	@param	$type	Type of hook
 	 */
-	function callHooks($type='objectcard')
+	function callHooks($arraytype)
 	{
 		global $conf;
+		
+		if (! is_array($arraytype)) $arraytype=array($arraytype);
 
 		foreach($conf->hooks_modules as $module => $hooks)
 		{
-			if ($conf->$module->enabled && in_array($type,$hooks))
+			if ($conf->$module->enabled)
 			{
-				$path 		= '/'.$module.'/class/';
-				$actionfile = 'actions_'.$module.'.class.php';
-				$daofile 	= 'dao_'.$module.'.class.php';
-				$pathroot	= '';
-
-				// Include actions class (controller)
-				dol_include_once($path.$actionfile);
-
-				// Include dataservice class (model)
-				dol_include_once($path.$daofile);
-
-				// Instantiate actions class (controller)
-				$controlclassname = 'Actions'.ucfirst($module);
-				$objModule = new $controlclassname($this->db);
-				$this->hooks[$objModule->module_number] = $objModule;
-
-				// Instantiate dataservice class (model)
-				$modelclassname = 'Dao'.ucfirst($module);
-				$this->hooks[$objModule->module_number]->object = new $modelclassname($this->db);
-
-				// We comment this because library must be included into file that need it,
-				// so include should be done into actions_ and/or dao file
-				// dol_include_once('/'.$module.'/lib/'.$module.'.lib.php');
+				foreach($arraytype as $type)
+				{
+					if (in_array($type,$hooks))
+					{
+						$path 		= '/'.$module.'/class/';
+						$actionfile = 'actions_'.$module.'.class.php';
+						$daofile 	= 'dao_'.$module.'.class.php';
+						$pathroot	= '';
+						
+						// Include actions class (controller)
+						dol_include_once($path.$actionfile);
+						
+						// Include dataservice class (model)
+						dol_include_once($path.$daofile);
+						
+						// Instantiate actions class (controller)
+						$controlclassname = 'Actions'.ucfirst($module);
+						$objModule = new $controlclassname($this->db);
+						$this->hooks[$type][$objModule->module_number] = $objModule;
+						
+						// Instantiate dataservice class (model)
+						$modelclassname = 'Dao'.ucfirst($module);
+						$this->hooks[$type][$objModule->module_number]->object = new $modelclassname($this->db);
+					}
+				}	
 			}
 		}
 	}
@@ -1597,7 +1601,7 @@ class CommonObject
 
 			if (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line))
 			{
-				if (empty($line->fk_parent_line)) $this->hooks[$line->special_code]->printObjectLine($action,$this,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected);
+				if (empty($line->fk_parent_line)) $this->hooks['objectcard'][$line->special_code]->printObjectLine($action,$this,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected);
 			}
 			else
 			{
@@ -1715,7 +1719,7 @@ class CommonObject
 
 			if (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line))
 			{
-				if (empty($line->fk_parent_line)) $object->hooks[$line->special_code]->printOriginObjectLine($this,$line,$var,$i);
+				if (empty($line->fk_parent_line)) $object->hooks['objectcard'][$line->special_code]->printOriginObjectLine($this,$line,$var,$i);
 			}
 			else
 			{

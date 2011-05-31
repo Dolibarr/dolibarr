@@ -572,9 +572,9 @@ class Facture extends CommonObject
         if (! $error)
         {
             // Hook of thirdparty module
-            if (! empty($object->hooks))
+            if (! empty($object->hooks['objectcard']))
             {
-                foreach($object->hooks as $module)
+                foreach($object->hooks['objectcard'] as $module)
                 {
                     $result = $module->createfrom($objFrom,$result,$object->element);
                     if ($result < 0) $error++;

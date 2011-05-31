@@ -60,8 +60,8 @@
 
 	if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) echo '<br>';
 	
-	if (! empty($object->hooks)) {
-		foreach($object->hooks as $module) {
+	if (! empty($object->hooks['objectcard'])) {
+		foreach($object->hooks['objectcard'] as $module) {
 			$module->formCreateProductOptions($object);
 		}
 		echo '<br>';

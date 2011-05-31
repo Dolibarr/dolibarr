@@ -48,8 +48,8 @@
 	echo $html->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1);
 	if (($conf->product->enabled && $conf->service->enabled) || (empty($conf->product->enabled) && empty($conf->service->enabled))) echo '<br>';
 	
-	if (! empty($object->hooks)) {
-		foreach($object->hooks as $module) {
+	if (! empty($object->hooks['objectcard'])) {
+		foreach($object->hooks['objectcard'] as $module) {
 			$module->formCreateProductOptions($object);
 		}
 		echo '<br>';

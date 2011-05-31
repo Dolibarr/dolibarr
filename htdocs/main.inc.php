@@ -1331,7 +1331,14 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	else print '<td class="vmenu" valign="top">';
 
 	print "\n";
-
+	
+	// Instantiate hooks of thirdparty module
+	if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
+	{
+		require_once(DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php');
+		$object = new CommonObject($db);
+		$object->callHooks(array('searchform','leftblock'));
+	}
 
 	// Define $searchform
 	if ($conf->societe->enabled && $conf->global->MAIN_SEARCHFORM_SOCIETE && $user->rights->societe->lire)
@@ -1362,6 +1369,15 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 		$searchform.=printSearchForm(DOL_URL_ROOT.'/adherents/liste.php', DOL_URL_ROOT.'/adherents/liste.php',
 		img_object('','user').' '.$langs->trans("Members"), 'member', 'sall');
 	}
+	
+	// Search form hook of thirdparty module
+	if (! empty($object->hooks['searchform']))
+	{
+		foreach($object->hooks['searchform'] as $module)
+		{
+			$searchform.=$module->printSearchForm();
+        }
+    }
 
 	// Define $bookmarks
 	if ($conf->bookmark->enabled && $user->rights->bookmark->lire)
@@ -1371,8 +1387,6 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 
 		$bookmarks=printBookmarksList($db, $langs);
 	}
-
-
 
     $left_menu=isset($conf->browser->phone)?$conf->smart_menu:$conf->top_menu;
     if (GETPOST('menu')) $left_menu=GETPOST('menu');     // menu=eldy_backoffice.php
@@ -1467,6 +1481,16 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 		print '<div class="help"><a class="help" target="_blank" href="'.$bugbaseurl.'">'.$langs->trans("FindBug").'</a></div>';
 	}
 	print "\n";
+	
+	// Left block hook of thirdparty module
+	if (! empty($object->hooks['leftblock']))
+	{
+		foreach($object->hooks['leftblock'] as $module)
+		{
+			$module->printLeftBlock();
+        }
+    }
+	
 	print "</div>\n";
 	print "<!-- End left vertical menu -->\n";
 
