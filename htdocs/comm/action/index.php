@@ -504,7 +504,9 @@ if ($conf->global->ENABLE_AGENDA_EXT==1 && $conf->global->AGENDA_EXT_NB>0)
 			{
 				// Create a new object action
 				$event=new ActionComm($db);
-				$event->id=$icalevent[UID];
+				$paramkey='AGENDA_EXT_NAME'.$i;
+				$namecal = $conf->global->$paramkey;
+				$event->id=$namecal;
 				$event->datep=$icalevent[DTSTART];
 				$event->datef=$icalevent[DTEND];
 				$event->type_code="ICALEVENT";
@@ -841,6 +843,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
     							if ($tmpyearend == $annee && $tmpmonthend == $mois && $tmpdayend == $jour)
     							print dol_print_date($event->date_end_in_calendar,'%H:%M');
     						}
+    						if ($event->type_code == 'ICALEVENT') print '<br>('.$event->id.')'; 
     						print '<br>'."\n";
 					    }
 					    else
