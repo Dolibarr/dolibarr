@@ -194,7 +194,7 @@ class ActionsContactCardCommon
 
         $out='';
 
-        if ($action == 'view' || $action == 'edit') $out.= $langs->trans("Contact");
+        if ($action == 'view' || $action == 'edit') $out.= $langs->trans("ContactsAddresses");
         if ($action == 'create') $out.= $langs->trans("AddContact");
 
         return $out;

@@ -973,7 +973,6 @@ class Form
         $sql.= $db->order("p.ref");
         $sql.= $db->plimit($limit);
 
-
         // Build output string
         $outselect='';
         $outjson=array();

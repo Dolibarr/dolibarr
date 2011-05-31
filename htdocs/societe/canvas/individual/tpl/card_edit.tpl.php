@@ -19,7 +19,7 @@
  */
 ?>
 
-<!-- BEGIN PHP TEMPLATE -->
+<!-- BEGIN PHP TEMPLATE CARD_EDIT.TPL.PHP INDIVIDUAL -->
 
 <?php
 print_fiche_titre($this->control->tpl['title']);

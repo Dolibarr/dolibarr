@@ -54,7 +54,7 @@ dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']
 <table class="border" width="100%">
 
 <tr>
-	<td><span class="fieldrequired"><?php echo $langs->trans('Name'); ?></span></td>
+	<td><span class="fieldrequired"><?php echo $langs->trans('ThirdPartyName'); ?></span></td>
 	<td><input type="text" size="30" maxlength="60" name="nom" value="<?php echo $this->control->tpl['nom']; ?>"></td>
 	<?php if (! empty($conf->global->SOCIETE_USEPREFIX)) { ?>
     <td><?php echo $langs->trans('Prefix'); ?></td>

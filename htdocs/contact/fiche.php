@@ -313,7 +313,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
     }
     else if ($action == 'edit')
     {
-        $objcanvas->control->object=$objcanvas->getObject($socid);  // Load object
+        $objcanvas->control->object=$objcanvas->getObject($id);  // Load object
         if (empty($objcanvas->control->object))
         {
             $object = new Contact($db);
@@ -326,7 +326,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
     }
     else
     {
-        $objcanvas->control->object=$objcanvas->getObject($socid);  // Load object
+        $objcanvas->control->object=$objcanvas->getObject($id);  // Load object
         if (empty($objcanvas->control->object))
         {
             $object = new Contact($db);

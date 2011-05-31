@@ -17,9 +17,12 @@
  *
  * $Id$
  */
+
+$contact = $GLOBALS['objcanvas']->control->object;
+
 ?>
 
-<!-- BEGIN PHP TEMPLATE -->
+<!-- BEGIN PHP TEMPLATE CARD_EDIT.TPL.PHP DEFAULT -->
 
 <?php
 print_fiche_titre($this->control->tpl['title']);
@@ -42,7 +45,7 @@ dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']
 <table class="border" width="100%">
 
 <tr>
-	<td><span class="fieldrequired"><?php echo $langs->trans('Name'); ?></span></td>
+	<td><span class="fieldrequired"><?php echo $langs->trans('ThirdPartyName'); ?></span></td>
 	<td colspan="3"><input type="text" size="40" maxlength="60" name="nom" value="<?php echo $this->control->tpl['nom']; ?>"></td>
 </tr>
 

@@ -418,40 +418,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
             $object->fetch($socid);
             $objcanvas->control->object=$object;
         }
-        $objcanvas->assign_values();   			// Assign values
-		$objcanvas->display_canvas();  			// Show template
-
-		// TODO Move this also into template
-		print '<table width="100%"><tr><td valign="top" width="50%">';
-		print '<a name="builddoc"></a>'; // ancre
-
-		/*
-		 * Documents generes
-		 */
-		$filedir=$conf->societe->dir_output.'/'.$socid;
-		$urlsource=$_SERVER["PHP_SELF"]."?socid=".$socid;
-		$genallowed=$user->rights->societe->creer;
-		$delallowed=$user->rights->societe->supprimer;
-
-		$var=true;
-
-		$somethingshown=$formfile->show_documents('company',$socid,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$objcanvas->control->object->default_lang);
-
-		print '</td>';
-		print '<td></td>';
-		print '</tr>';
-		print '</table>';
-
-		print '<br>';
-
-		// Subsidiaries list
-		$result=show_subsidiaries($conf,$langs,$db,$objcanvas->control->object);
-
-		// Contacts list
-		$result=show_contacts($conf,$langs,$db,$objcanvas->control->object);
-
-		// Projects list
-		$result=show_projects($conf,$langs,$db,$objcanvas->control->object);
+        $objcanvas->assign_values('view');   			// Assign values
+		$objcanvas->display_canvas('view');  			// Show template
 	}
 }
 else
@@ -483,9 +451,6 @@ else
 		require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$module.".php");
 		$modCodeFournisseur = new $module;
 
-		/*
-		 * Company Fact creation mode
-		 */
         //if ($_GET["type"]=='cp') { $soc->client=3; }
         if (GETPOST("type")!='f') $soc->client=3;
 		if (GETPOST("type")=='c')  { $soc->client=1; }
@@ -1684,7 +1649,7 @@ else
 
 		print '</table>';
 
-		print "</div>\n";
+		dol_fiche_end();
 
 
 		/*
@@ -1704,7 +1669,7 @@ else
 
 		if ($conf->projet->enabled && $user->rights->projet->creer)
 		{
-			print '<a class="butAction" href="'.DOL_URL_ROOT.'/projet/fiche.php?socid='.$socid.'&action=create">'.$langs->trans("AddProject").'</a>'."\n";
+			print '<a class="butAction" href="'.DOL_URL_ROOT.'/projet/fiche.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddProject").'</a>'."\n";
 		}
 
 		if ($user->rights->societe->supprimer)

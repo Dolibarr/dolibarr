@@ -17,9 +17,19 @@
  *
  * $Id$
  */
+
+$soc = $GLOBALS['objcanvas']->control->object;
+
 ?>
 
-<!-- BEGIN PHP TEMPLATE -->
+<!-- BEGIN PHP TEMPLATE CARD_VIEW.TPL.PHP INDIVIDUAL -->
+<?php
+
+$head = societe_prepare_head($soc);
+
+dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
+
+?>
 
 <?php if ($this->control->tpl['error']) echo $this->control->tpl['error']; ?>
 <?php if ($this->control->tpl['action_delete']) echo $this->control->tpl['action_delete']; ?>
@@ -167,7 +177,7 @@
 
 </table>
 
-</div>
+<?php dol_fiche_end(); ?>
 
 <div class="tabsAction">
 <?php if ($user->rights->societe->creer) { ?>
@@ -188,5 +198,38 @@
 </div>
 
 <br>
+
+<table width="100%"><tr><td valign="top" width="50%">
+<a name="builddoc"></a>
+
+<?php
+/*
+ * Documents generes
+ */
+$filedir=$conf->societe->dir_output.'/'.$socid;
+$urlsource=$_SERVER["PHP_SELF"]."?socid=".$socid;
+$genallowed=$user->rights->societe->creer;
+$delallowed=$user->rights->societe->supprimer;
+
+$somethingshown=$formfile->show_documents('company',$socid,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$objcanvas->control->object->default_lang);
+?>
+
+</td>
+<td></td>
+</tr>
+</table>
+
+<br>
+
+<?php
+// Subsidiaries list
+$result=show_subsidiaries($conf,$langs,$db,$objcanvas->control->object);
+
+// Contacts list
+$result=show_contacts($conf,$langs,$db,$objcanvas->control->object);
+
+// Projects list
+$result=show_projects($conf,$langs,$db,$objcanvas->control->object);
+?>
 
 <!-- END PHP TEMPLATE -->

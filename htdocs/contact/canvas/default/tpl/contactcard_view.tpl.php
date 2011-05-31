@@ -17,9 +17,12 @@
  *
  * $Id$
  */
+
+$contact = $GLOBALS['objcanvas']->control->object;
+
 ?>
 
-<!-- BEGIN PHP TEMPLATE -->
+<!-- BEGIN PHP TEMPLATE CONTACTCARD_VIEW.TPL.PHP DEFAULT -->
 
 <?php
 dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']);
@@ -103,7 +106,7 @@ dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']
 </tr>
 
 <tr>
-	<td><?php echo $langs->trans("Jabberid"); ?></td>
+	<td><?php echo $langs->trans("IM"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['jabberid']; ?></td>
 </tr>
 
