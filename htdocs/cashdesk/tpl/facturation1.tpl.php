@@ -73,7 +73,7 @@ $Id$
 
 								$label = $tab_designations[$i]['label'];
 
-								print '<option '.$selected.' value="'.$tab_designations[$i]['rowid'].'">'.$tab_designations[$i]['ref'].' - '.dol_trunc($label,28,'middle');
+								print '<option '.$selected.' value="'.$tab_designations[$i]['rowid'].'">'.$tab_designations[$i]['ref'].' - '.dol_trunc($label,45);
 								if ($conf->stock->enabled && !empty($conf_fkentrepot)) print ' ('.$langs->trans("CashDeskStock").': '.$tab_designations[$i]['reel'].')';
 								print '</option>'."\n				";
 
@@ -91,7 +91,7 @@ $Id$
 
 								$label = $tab_designations[$i]['label'];
 
-								print '<option '.$selected.' value="'.$tab_designations[$i]['rowid'].'">'.$tab_designations[$i]['ref'].' - '.dol_trunc($label,28,'middle');
+								print '<option '.$selected.' value="'.$tab_designations[$i]['rowid'].'">'.$tab_designations[$i]['ref'].' - '.dol_trunc($label,45);
 								if ($conf->stock->enabled && !empty($conf_fkentrepot)) print ' ('.$langs->trans("CashDeskStock").': '.(empty($tab_designations[$i]['reel'])?0:$tab_designations[$i]['reel']).')';
 								print '</option>'."\n				";
 
