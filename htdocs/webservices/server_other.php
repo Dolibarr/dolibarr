@@ -116,7 +116,7 @@ function getVersions($authentication)
     $objectresp=array();
     $errorcode='';$errorlabel='';
     $error=0;
-    $fuser=check_authentication($authentication,&$error,&$errorcode,&$errorlabel);
+    $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
     // Check parameters
 
 

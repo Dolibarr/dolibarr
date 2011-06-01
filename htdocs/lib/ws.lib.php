@@ -31,7 +31,7 @@
  *  @param      errorcode
  *  @param      errorlabel
  */
-function check_authentication($authentication,$error,$errorcode,$errorlabel)
+function check_authentication($authentication,&$error,&$errorcode,&$errorlabel)
 {
     global $db,$conf,$langs;
 
