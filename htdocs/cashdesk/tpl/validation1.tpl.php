@@ -33,7 +33,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 			else
 			{
 
-				echo ('<tr><td class="resume_label">'.$langs->trans("TotalVAT").'</td><td>'.$langs->trans("NoVAT").'</td></tr>');
+				echo ('<tr><td class="resume_label">'.$langs->trans("VAT").'</td><td>'.$langs->trans("NoVAT").'</td></tr>');
 
 			}
 		?>
