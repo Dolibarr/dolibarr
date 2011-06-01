@@ -2380,7 +2380,7 @@ else
             else
             {
                 // Sold credit note
-                print '<tr><td colspan="2" align="right">'.$langs->trans('TotalTTCToYourCredit').' :</td>';
+                print '<tr><td colspan="2" align="right">'.$langs->trans('TotalTTC').' :</td>';
                 print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>'.price(abs($object->total_ttc)).'</b></td><td>&nbsp;</td></tr>';
             }
 
