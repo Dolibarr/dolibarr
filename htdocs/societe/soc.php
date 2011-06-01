@@ -52,11 +52,9 @@ $socid = GETPOST("socid");
 if ($user->societe_id) $socid=$user->societe_id;
 
 $soc = new Societe($db);
-
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 if (!empty($socid)) $soc->getCanvas($socid);
 $canvas = (!empty($soc->canvas)?$soc->canvas:GETPOST("canvas"));
-
 
 if (! empty($canvas))
 {
@@ -72,6 +70,8 @@ else
 	$result = restrictedArea($user, 'societe', $socid);
 }
 
+$error=$nuser->error; $errors=$nuser->errors;
+
 
 /*
  * Actions
@@ -85,6 +85,7 @@ if (method_exists($objcanvas->control,'doActions'))
 	// When used with CANVAS
 	// -----------------------------------------
 	$objcanvas->doActions($socid);
+
     if (empty($objcanvas->error) && (empty($objcanvas->errors) || sizeof($objcanvas->errors) == 0))
     {
         if ($action=='add')    { $objcanvas->action='create'; $action='create'; }
@@ -92,6 +93,7 @@ if (method_exists($objcanvas->control,'doActions'))
     }
     else
     {
+        $error=$objcanvas->error; $errors=$objcanvas->errors;
         if ($action=='add')    { $objcanvas->action='create'; $action='create'; }
         if ($action=='update') { $objcanvas->action='edit';   $action='edit'; }
     }
@@ -119,7 +121,6 @@ else
 	&& ($action == 'add' || $action == 'update') && $user->rights->societe->creer)
 	{
 		require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
-		$error=0;
 
 		if ($action == 'update')
 		{
@@ -194,23 +195,20 @@ else
 		{
 			if (! empty($soc->email) && ! isValidEMail($soc->email))
 			{
-				$error = 1;
 				$langs->load("errors");
-				$soc->error = $langs->trans("ErrorBadEMail",$soc->email);
+				$error++; $errors[] = $langs->trans("ErrorBadEMail",$soc->email);
 				$action = ($action=='add'?'create':'edit');
 			}
 			if (! empty($soc->url) && ! isValidUrl($soc->url))
 			{
-				$error = 1;
 				$langs->load("errors");
-				$soc->error = $langs->trans("ErrorBadUrl",$soc->url);
+                $error++; $errors[] = $langs->trans("ErrorBadUrl",$soc->url);
 				$action = ($action=='add'?'create':'edit');
 			}
 			if ($soc->fournisseur && ! $conf->fournisseur->enabled)
 			{
-				$error = 1;
 				$langs->load("errors");
-				$soc->error = $langs->trans("ErrorSupplierModuleNotEnabled");
+                $error++; $errors[] = $langs->trans("ErrorSupplierModuleNotEnabled");
 				$action = ($action=='add'?'create':'edit');
 			}
 		}
@@ -251,7 +249,7 @@ else
 				}
 				else
 				{
-					$error=$soc->error;
+					$error=$soc->error; $errors=$soc->errors;
 				}
 
 				if ($result >= 0)
@@ -565,7 +563,7 @@ else
 		}
 
 
-		dol_htmloutput_errors($soc->error,$soc->errors);
+		dol_htmloutput_errors($error,$errors);
 
 		print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc">';
 
@@ -970,7 +968,7 @@ else
 				}
 			}
 
-			dol_htmloutput_errors($soc->error,$soc->errors);
+			dol_htmloutput_errors($error,errors);
 
 			if ($conf->use_javascript_ajax)
 			{

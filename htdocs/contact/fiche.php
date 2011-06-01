@@ -39,7 +39,7 @@ $langs->load("users");
 $langs->load("other");
 $langs->load("commercial");
 
-$errors = array();
+$error=0; $errors=array();
 
 $action = GETPOST('action');
 
@@ -88,6 +88,7 @@ if (method_exists($objcanvas->control,'doActions'))
     }
     else
     {
+        $error=$objcanvas->error; $errors=$objcanvas->errors;
         if ($action=='add')    { $objcanvas->action='create'; $action='create'; }
         if ($action=='update') { $objcanvas->action='edit';   $action='edit'; }
     }
@@ -121,19 +122,19 @@ else
                 }
                 else
                 {
+                    $error=$nuser->error; $errors=$nuser->errors;
                     $db->rollback();
                 }
             }
             else
             {
-                $msg=$nuser->error;
-
+                $error=$nuser->error; $errors=$nuser->errors;
                 $db->rollback();
             }
         }
         else
         {
-            $msg=$object->error;
+            $error=$object->error; $errors=$object->errors;
         }
     }
 
@@ -147,8 +148,6 @@ else
     // Add contact
     if (GETPOST("action") == 'add' && $user->rights->societe->contact->creer)
     {
-        $error=0;
-
         $db->begin();
 
         if ($canvas) $object->canvas=$canvas;
@@ -178,8 +177,7 @@ else
 
         if (! $_POST["name"])
         {
-            $error++;
-            array_push($errors,$langs->trans("ErrorFieldRequired",$langs->transnoentities("Lastname").' / '.$langs->transnoentities("Label")));
+            $error++; $errors[]=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Lastname").' / '.$langs->transnoentities("Label"));
             $_GET["action"] = $_POST["action"] = 'create';
         }
 
@@ -188,8 +186,7 @@ else
             $id =  $object->create($user);
             if ($id <= 0)
             {
-                $error++;
-                $errors=($object->error?array($object->error):$object->errors);
+                $error++; $errors[]=($object->error?array($object->error):$object->errors);
                 $_GET["action"] = $_POST["action"] = 'create';
             }
         }
@@ -223,7 +220,7 @@ else
         }
         else
         {
-            $mesg=$object->error;
+            $error=$object->error; $errors[]=$object->errors;
         }
     }
 
@@ -231,8 +228,7 @@ else
     {
         if (empty($_POST["name"]))
         {
-            $errors=array($langs->trans("ErrorFieldRequired",$langs->transnoentities("Name").' / '.$langs->transnoentities("Label")));
-            $error++;
+            $error++; $errors=array($langs->trans("ErrorFieldRequired",$langs->transnoentities("Name").' / '.$langs->transnoentities("Label")));
             $_GET["action"] = $_POST["action"] = 'edit';
         }
 
@@ -275,7 +271,7 @@ else
             }
             else
             {
-                $mesg=$object->error;
+                $error=$object->error; $errors=$object->errors;
             }
         }
     }
@@ -405,7 +401,7 @@ else
             print_fiche_titre($langs->trans("AddContact"));
 
             // Affiche les erreurs
-            dol_htmloutput_errors($mesg,$errors);
+            dol_htmloutput_errors($error,$errors);
 
             if ($conf->use_javascript_ajax)
             {
@@ -587,7 +583,7 @@ else
             }
 
             // Affiche les erreurs
-            dol_htmloutput_errors($mesg,$errors);
+            dol_htmloutput_errors($error,$errors);
 
             if ($conf->use_javascript_ajax)
             {
@@ -754,11 +750,8 @@ else
         /*
          * Fiche en mode visualisation
          */
-        if ($msg)
-        {
-            $langs->load("errors");
-            print '<div class="error">'.$langs->trans($msg).'</div>';
-        }
+
+        dol_htmloutput_errors($error,$errors);
 
         if ($_GET["action"] == 'create_user')
         {
