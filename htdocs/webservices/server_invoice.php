@@ -27,7 +27,9 @@ set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
 require_once("../master.inc.php");
 require_once(NUSOAP_PATH.'/nusoap.php');		// Include SOAP
+require_once(DOL_DOCUMENT_ROOT."/lib/ws.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/user/class/user.class.php");
+
 require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 
 
@@ -78,7 +80,6 @@ $server->wsdl->addComplexType(
         'id' => array('name'=>'id','type'=>'xsd:string'),
         'type' => array('name'=>'type','type'=>'xsd:int'),
         'desc' => array('name'=>'desc','type'=>'xsd:string'),
-        'fk_product' => array('name'=>'fk_product','type'=>'xsd:int'),
         'total_net' => array('name'=>'total_net','type'=>'xsd:double'),
     	'total_vat' => array('name'=>'total_vat','type'=>'xsd:double'),
     	'total' => array('name'=>'total','type'=>'xsd:double'),
@@ -87,6 +88,7 @@ $server->wsdl->addComplexType(
         'date_start' => array('name'=>'date_start','type'=>'xsd:date'),
         'date_end' => array('name'=>'date_end','type'=>'xsd:date'),
         // From product
+        'product_id' => array('name'=>'product_id','type'=>'xsd:int'),
         'product_ref' => array('name'=>'product_ref','type'=>'xsd:string'),
         'product_label' => array('name'=>'product_label','type'=>'xsd:string'),
         'product_desc' => array('name'=>'product_desc','type'=>'xsd:string')
@@ -132,9 +134,11 @@ $server->wsdl->addComplexType(
     	'id' => array('name'=>'id','type'=>'xsd:string'),
         'ref' => array('name'=>'ref','type'=>'xsd:string'),
         'ref_ext' => array('name'=>'ref_ext','type'=>'xsd:string'),
+        'thirdparty_id' => array('name'=>'thirdparty_id','type'=>'xsd:int'),
         'fk_user_author' => array('name'=>'fk_user_author','type'=>'xsd:string'),
         'fk_user_valid' => array('name'=>'fk_user_valid','type'=>'xsd:string'),
         'date' => array('name'=>'date','type'=>'xsd:date'),
+        'date_due' => array('name'=>'date_due','type'=>'xsd:date'),
         'date_creation' => array('name'=>'date_creation','type'=>'xsd:dateTime'),
         'date_validation' => array('name'=>'date_validation','type'=>'xsd:dateTime'),
         'date_modification' => array('name'=>'date_modification','type'=>'xsd:dateTime'),
@@ -147,7 +151,8 @@ $server->wsdl->addComplexType(
         'status' => array('name'=>'status','type'=>'xsd:int'),
         'close_code' => array('name'=>'close_code','type'=>'xsd:string'),
         'close_note' => array('name'=>'close_note','type'=>'xsd:string'),
-    	'lines' => array('name'=>'lines','type'=>'tns:LinesArray2')
+        'project_id' => array('name'=>'project_id','type'=>'xsd:string'),
+        'lines' => array('name'=>'lines','type'=>'tns:LinesArray2')
     )
 );
 
@@ -226,7 +231,7 @@ $styleuse,
 );
 $server->register('createInvoice',
 // Entry values
-array('authentication'=>'tns:authentication','idthirdparty'=>'xsd:string','invoice'=>'tns:invoice'),
+array('authentication'=>'tns:authentication','invoice'=>'tns:invoice'),
 // Exit values
 array('result'=>'tns:result','id'=>'xsd:string','ref'=>'xsd:string'),
 $ns,
@@ -248,46 +253,16 @@ function getInvoice($authentication,$id='',$ref='',$ref_ext='')
 
 	if ($authentication['entity']) $conf->entity=$authentication['entity'];
 
-	$objectresp=array();
-	$errorcode='';$errorlabel='';
-	$error=0;
-
-    if (! $error && empty($conf->global->WEBSERVICES_KEY))
-    {
-        $error++;
-        $errorcode='SETUP_NOT_COMPLETE'; $errorlabel='Value for dolibarr security key not yet defined into Webservice module setup';
-    }
-	if (! $error && ($authentication['dolibarrkey'] != $conf->global->WEBSERVICES_KEY))
-	{
-		$error++;
-		$errorcode='BAD_VALUE_FOR_SECURITY_KEY'; $errorlabel='Value provided into dolibarrkey entry field does not match security key defined in Webservice module setup';
-	}
-    if (! $error && ! empty($authentication['entity']) && ! is_numeric($authentication['entity']))
-    {
-        $error++;
-        $errorcode='BAD_PARAMETERS'; $errorlabel="Parameter entity must be empty (or a numeric with id of instance if multicompany module is used).";
-    }
-
+    // Init and check authentication
+    $objectresp=array();
+    $errorcode='';$errorlabel='';
+    $error=0;
+    $fuser=check_authentication($authentication,&$error,&$errorcode,&$errorlabel);
+    // Check parameters
 	if (! $error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext)))
 	{
 		$error++;
 		$errorcode='BAD_PARAMETERS'; $errorlabel="Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
-	}
-
-	if (! $error)
-	{
-		$fuser=new User($db);
-		$result=$fuser->fetch('',$authentication['login'],'',0);
-		if ($result <= 0) $error++;
-
-		// TODO Check password
-
-
-
-		if ($error)
-		{
-			$errorcode='BAD_CREDENTIALS'; $errorlabel='Bad value for login or password';
-		}
 	}
 
 	if (! $error)
@@ -382,16 +357,12 @@ function getInvoicesForThirdParty($authentication,$idthirdparty)
 
 	if ($authentication['entity']) $conf->entity=$authentication['entity'];
 
-	$objectresp=array();
-	$errorcode='';$errorlabel='';
-	$error=0;
-
-	if (! $error && ($authentication['dolibarrkey'] != $conf->global->WEBSERVICES_KEY))
-	{
-		$error++;
-		$errorcode='BAD_VALUE_FOR_SECURITY_KEY'; $errorlabel='Value provided into dolibarrkey entry field does not match security key defined in Webservice module setup';
-	}
-
+    // Init and check authentication
+    $objectresp=array();
+    $errorcode='';$errorlabel='';
+    $error=0;
+    $fuser=check_authentication($authentication,&$error,&$errorcode,&$errorlabel);
+    // Check parameters
 	if (! $error && empty($idthirdparty))
 	{
 		$error++;
@@ -450,7 +421,8 @@ function getInvoicesForThirdParty($authentication,$idthirdparty)
                     'fk_user_author' => $invoice->user_author?$invoice->user_author:'',
                     'fk_user_valid' => $invoice->user_valid?$invoice->user_valid:'',
                     'date' => $invoice->date?dol_print_date($invoice->date,'dayrfc'):'',
-                    'date_creation' => $invoice->date_creation?dol_print_date($invoice->date_creation,'dayhourrfc'):'',
+                    'date_due' => $invoice->date_lim_reglement?dol_print_date($invoice->date_lim_reglement,'dayrfc'):'',
+				    'date_creation' => $invoice->date_creation?dol_print_date($invoice->date_creation,'dayhourrfc'):'',
                     'date_validation' => $invoice->date_validation?dol_print_date($invoice->date_creation,'dayhourrfc'):'',
                     'date_modification' => $invoice->datem?dol_print_date($invoice->datem,'dayhourrfc'):'',
                     'type' => $invoice->type,
@@ -493,35 +465,84 @@ function getInvoicesForThirdParty($authentication,$idthirdparty)
 /**
  * Get list of invoices for third party
  */
-function createInvoice($authentication,$idthirdparty,$invoice)
+function createInvoice($authentication,$invoice)
 {
     global $db,$conf,$langs;
+
+    $now=dol_now();
 
     dol_syslog("Function: createInvoiceForThirdParty login=".$authentication['login']." idthirdparty=".$idthirdparty);
 
     if ($authentication['entity']) $conf->entity=$authentication['entity'];
 
+    // Init and check authentication
     $objectresp=array();
     $errorcode='';$errorlabel='';
     $error=0;
-
-    if (! $error && ($authentication['dolibarrkey'] != $conf->global->WEBSERVICES_KEY))
-    {
-        $error++;
-        $errorcode='BAD_VALUE_FOR_SECURITY_KEY'; $errorlabel='Value provided into dolibarrkey entry field does not match security key defined in Webservice module setup';
-    }
-
-    if (! $error && empty($idthirdparty))
-    {
-        $error++;
-        $errorcode='BAD_PARAMETERS'; $errorlabel='Parameter id is not provided';
-    }
+    $fuser=check_authentication($authentication,&$error,&$errorcode,&$errorlabel);
+    // Check parameters
 
     if (! $error)
     {
+        $newinvoice=new Facture($db);
+        $newinvoice->socid=$invoice['thirdparty_id'];
+        $newinvoice->type=$invoice['type'];
+        $newinvoice->ref_ext=$invoice['ref_ext'];
+        $newinvoice->date=$invoice['date'];
+        $newinvoice->date_lim_reglement=$invoice['date_due'];
+        $newinvoice->note=$invoice['note'];
+        $newinvoice->note_public=$invoice['note_public'];
+        $newinvoice->statut=$invoice['status'];
+        $newinvoice->fk_project=$invoice['project_id'];
+        $newinvoice->date_creation=$now;
+        foreach($invoice['lines'] as $line)
+        {
+            $newline=new FactureLigne($db);
+            $newline->type=$line['type'];
+            $newline->desc=$line['desc'];
+            $newline->fk_product=$line['fk_product'];
+            $newline->total_ht=$line['total_net'];
+            $newline->total_vat=$line['total_vat'];
+            $newline->total_ttc=$line['total'];
+            $newline->vat=$line['vat_rate'];
+            $newline->qty=$line['qty'];
+            $newline->fk_product=$line['product_id'];
+        }
         //var_dump($invoice['ref_ext']);
         //var_dump($invoice['lines'][0]['type']);
 
+        $db->begin();
+
+        $result=$newinvoice->create($user,0,0);
+        if ($result < 0)
+        {
+            $error++;
+        }
+
+        if ($newinvoice->statut == 1)   // We want invoice validated
+        {
+            $newinvoice->validate($user);
+        }
+
+        $result=$newinvoice->create($user,0,0);
+        if ($result < 0)
+        {
+            $error++;
+        }
+
+
+        if (! $error)
+        {
+            $db->commit();
+            $objectresp=array('result'=>array('result_code'=>'OK', 'result_label'=>''),'id'=>$newinvoice->id,'ref'=>$newinvoice->ref);
+        }
+        else
+        {
+            $db->rollback();
+            $error++;
+            $errorcode='KO';
+            $errorlabel=$newinvoice->error;
+        }
 
     }
 

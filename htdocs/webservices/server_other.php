@@ -26,9 +26,11 @@
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
 require_once("../master.inc.php");
+require_once(NUSOAP_PATH.'/nusoap.php');        // Include SOAP
+require_once(DOL_DOCUMENT_ROOT."/lib/ws.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/user/class/user.class.php");
+
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
-require_once(NUSOAP_PATH.'/nusoap.php');		// Include SOAP
 
 
 dol_syslog("Call Dolibarr webservices interfaces");
@@ -110,27 +112,15 @@ function getVersions($authentication)
 
 	if ($authentication['entity']) $conf->entity=$authentication['entity'];
 
-	$objectresp=array();
-	$errorcode='';$errorlabel='';
-	$error=0;
+    // Init and check authentication
+    $objectresp=array();
+    $errorcode='';$errorlabel='';
+    $error=0;
+    $fuser=check_authentication($authentication,&$error,&$errorcode,&$errorlabel);
+    // Check parameters
 
-	if (! $error && empty($conf->global->WEBSERVICES_KEY))
-	{
-        $error++;
-        $errorcode='SETUP_NOT_COMPLETE'; $errorlabel='Value for dolibarr security key not yet defined into Webservice module setup';
-	}
-	if (! $error && $authentication['dolibarrkey'] != $conf->global->WEBSERVICES_KEY)
-	{
-		$error++;
-		$errorcode='BAD_VALUE_FOR_SECURITY_KEY'; $errorlabel='Value provided into dolibarrkey entry field does not match security key defined in Webservice module setup';
-	}
-    if (! $error && ! empty($authentication['entity']) && ! is_numeric($authentication['entity']))
-    {
-        $error++;
-        $errorcode='BAD_PARAMETERS'; $errorlabel="Parameter entity must be empty (or a numeric with id of instance if multicompany module is used).";
-    }
 
-	if (! $error)
+    if (! $error)
 	{
 		$objectresp['result']=array('result_code'=>'OK', 'result_label'=>'');
 		$objectresp['dolibarr']=version_dolibarr();

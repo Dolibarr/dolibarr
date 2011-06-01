@@ -26,8 +26,10 @@
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
 require_once("../master.inc.php");
-require_once(NUSOAP_PATH.'/nusoap.php');		// Include SOAP
+require_once(NUSOAP_PATH.'/nusoap.php');        // Include SOAP
+require_once(DOL_DOCUMENT_ROOT."/lib/ws.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/user/class/user.class.php");
+
 require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
 
 
@@ -146,46 +148,16 @@ function getThirdParty($authentication,$id='',$ref='',$ref_ext='')
 
 	if ($authentication['entity']) $conf->entity=$authentication['entity'];
 
-	$objectresp=array();
-	$errorcode='';$errorlabel='';
-	$error=0;
-
-    if (! $error && empty($conf->global->WEBSERVICES_KEY))
-    {
-        $error++;
-        $errorcode='SETUP_NOT_COMPLETE'; $errorlabel='Value for dolibarr security key not yet defined into Webservice module setup';
-    }
-	if (! $error && ($authentication['dolibarrkey'] != $conf->global->WEBSERVICES_KEY))
-	{
-		$error++;
-		$errorcode='BAD_VALUE_FOR_SECURITY_KEY'; $errorlabel='Value provided into dolibarrkey entry field does not match security key defined in Webservice module setup';
-	}
-
+    // Init and check authentication
+    $objectresp=array();
+    $errorcode='';$errorlabel='';
+    $error=0;
+    $fuser=check_authentication($authentication,&$error,&$errorcode,&$errorlabel);
+    // Check parameters
 	if (! $error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext)))
 	{
 		$error++;
 		$errorcode='BAD_PARAMETERS'; $errorlabel="Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
-	}
-    if (! $error && ! empty($authentication['entity']) && ! is_numeric($authentication['entity']))
-    {
-        $error++;
-        $errorcode='BAD_PARAMETERS'; $errorlabel="Parameter entity must be empty (or a numeric with id of instance if multicompany module is used).";
-    }
-
-	if (! $error)
-	{
-		$fuser=new User($db);
-		$result=$fuser->fetch('',$authentication['login'],'',0);
-		if ($result <= 0) $error++;
-
-		// TODO Check password
-
-
-
-		if ($error)
-		{
-			$errorcode='BAD_CREDENTIALS'; $errorlabel='Bad value for login or password';
-		}
 	}
 
 	if (! $error)
