@@ -28,6 +28,7 @@ Identification=Identificación
 Article=Artículo
 Difference=Diferencia
 TotalTicket=Total ticket
+NoVAT=Sin IVA en esta venta
 Change=Cambio
 CalTip=Haga clic para ver el calendario
 CashDeskSetupStock=La configuración decrementa el stock en la creación de facturas, pero no ha indicado almacén.<br>Cambie la configuración del módulo stock, o escoja un almacén

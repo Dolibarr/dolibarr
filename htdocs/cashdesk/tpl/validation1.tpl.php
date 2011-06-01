@@ -27,36 +27,36 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 			// Affichage de la tva par taux
 			if ( $obj_facturation->montant_tva() ) {
 
-				echo ('<tr><td class="resume_label">'.$langs->trans("TotalVAT").' :</td><td>'.price2num($obj_facturation->montant_tva(),'MT').' '.$conf->monnaie.'</td></tr>');
+				echo ('<tr><td class="resume_label">'.$langs->trans("VAT").'</td><td>'.price2num($obj_facturation->montant_tva(),'MT').' '.$conf->monnaie.'</td></tr>');
 
 			}
 			else
 			{
 
-				echo ('<tr><td class="resume_label">'.$langs->trans("TotalVAT").' :</td><td>Pas de TVA pour cette vente</td></tr>');
+				echo ('<tr><td class="resume_label">'.$langs->trans("TotalVAT").'</td><td>'.$langs->trans("NoVAT").'</td></tr>');
 
 			}
 		?>
-		<tr><td class="resume_label"><?php echo $langs->trans("RemainderToPay"); ?> :</td><td><?php echo price2num($obj_facturation->prix_total_ttc(),'MT').' '.$conf->monnaie; ?></td></tr>
-		<tr><td class="resume_label"><?php echo $langs->trans("PaymentMode"); ?> :</td><td><?php echo $obj_facturation->mode_reglement(); ?></td></tr>
+		<tr><td class="resume_label"><?php echo $langs->trans("TotalTTC"); ?> </td><td><?php echo price2num($obj_facturation->prix_total_ttc(),'MT').' '.$conf->monnaie; ?></td></tr>
+		<tr><td class="resume_label"><?php echo $langs->trans("PaymentMode"); ?> </td><td><?php echo $obj_facturation->mode_reglement(); ?></td></tr>
 
 		<?php
 
 			// Affichage des infos en fonction du mode de paiement
 			if ( $obj_facturation->mode_reglement() == 'DIF' ) {
 
-				echo ('<tr><td class="resume_label">'.$langs->trans("DateEcheance").' :</td><td>'.$obj_facturation->paiement_le().'</td></tr>');
+				echo ('<tr><td class="resume_label">'.$langs->trans("DateEcheance").'</td><td>'.$obj_facturation->paiement_le().'</td></tr>');
 
 			} else {
 
-				echo ('<tr><td class="resume_label">'.$langs->trans("Received").' :</td><td>'.price2num($obj_facturation->montant_encaisse(),'MT').' '.$conf->monnaie.'</td></tr>');
+				echo ('<tr><td class="resume_label">'.$langs->trans("Received").'</td><td>'.price2num($obj_facturation->montant_encaisse(),'MT').' '.$conf->monnaie.'</td></tr>');
 
 			}
 
 			// Affichage du montant rendu (reglement en especes)
 			if ( $obj_facturation->montant_rendu() ) {
 
-				echo ('<tr><td class="resume_label">Rendu :</td><td>'.price2num($obj_facturation->montant_rendu(),'MT').' '.$conf->monnaie.'</td></tr>');
+				echo ('<tr><td class="resume_label">'.$langs->trans("Change").'</td><td>'.price2num($obj_facturation->montant_rendu(),'MT').' '.$conf->monnaie.'</td></tr>');
 
 			}
 
