@@ -24,6 +24,19 @@
  */
 
 /**
+ *  Return user/group account of web server
+ *  @param      $mode       'user' or 'group'
+ *  @return     string
+ */
+function dol_getwebuser($mode)
+{
+    $t='?';
+    if ($mode=='user')  $t=getenv('APACHE_RUN_USER');   // $_ENV['APACHE_RUN_USER'] is empty
+    if ($mode=='group') $t=getenv('APACHE_RUN_GROUP');
+    return $t;
+}
+
+/**
  *  Scan a directory and return a list of files/directories.
  *  Content for string is UTF8 and dir separator is "/".
  *  @param		$path        	Starting path from which to search
