@@ -48,8 +48,8 @@
 	echo ' - '.nl2br($line->product_label);
 	echo '<br>';
 
-	if (! empty($this->hooks)) {
-		foreach($this->hooks as $module) {
+	if (! empty($this->hooks['objectcard'])) {
+		foreach($this->hooks['objectcard'] as $module) {
 			$module->formEditProductOptions($this,$line->fk_parent_line);
 			echo '<br>';
 		}
