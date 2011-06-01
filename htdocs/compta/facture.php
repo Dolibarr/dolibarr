@@ -512,7 +512,8 @@ if ($action == 'add' && $user->rights->facture->creer)
     $object->socid=GETPOST('socid');
 
     $db->begin();
-
+    
+    $error=0;
 
     // Replacement invoice
     if ($_POST['type'] == 1)
@@ -520,13 +521,13 @@ if ($action == 'add' && $user->rights->facture->creer)
         $datefacture = dol_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
         if (empty($datefacture))
         {
-            $error=1;
+            $error++;
             $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Date")).'</div>';
         }
 
         if (! ($_POST['fac_replacement'] > 0))
         {
-            $error=1;
+            $error++;
             $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("ReplaceInvoice")).'</div>';
         }
 
@@ -562,14 +563,14 @@ if ($action == 'add' && $user->rights->facture->creer)
     {
         if (! $_POST['fac_avoir'] > 0)
         {
-            $error=1;
+            $error++;
             $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("CorrectInvoice")).'</div>';
         }
 
         $datefacture = dol_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
         if (empty($datefacture))
         {
-            $error=1;
+            $error++;
             $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Date")).'</div>';
         }
 
@@ -621,7 +622,7 @@ if ($action == 'add' && $user->rights->facture->creer)
         $datefacture = dol_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
         if (empty($datefacture))
         {
-            $error=1;
+            $error++;
             $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Date")).'</div>';
         }
 
@@ -650,7 +651,7 @@ if ($action == 'add' && $user->rights->facture->creer)
         $datefacture = dol_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
         if (empty($datefacture))
         {
-            $error=1;
+            $error++;
             $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Date")).'</div>';
         }
 
@@ -819,7 +820,7 @@ if ($action == 'add' && $user->rights->facture->creer)
     else
     {
         $db->rollback();
-        $_GET["action"]='create';
+        $action='create';
         $_GET["origin"]=$_POST["origin"];
         $_GET["originid"]=$_POST["originid"];
         if (! $mesg) $mesg='<div class="error">'.$object->error.'</div>';
@@ -999,7 +1000,7 @@ if (($action == 'addline' || $action == 'addline_predef') && $user->rights->fact
         if (empty($mesg)) $mesg='<div class="error">'.$object->error.'</div>';
     }
 
-    $_POST["action"]='';
+    $action='';
 }
 
 if ($action == 'updateligne' && $user->rights->facture->creer && $_POST['save'] == $langs->trans('Save'))
@@ -1153,8 +1154,7 @@ if ($_POST['addfile'])
 
     $mesg=dol_add_file_process($upload_dir,0,0);
 
-    $_GET["action"]='presend';
-    $_POST["action"]='presend';
+    $action='presend';
 }
 
 /*
@@ -1170,8 +1170,7 @@ if (! empty($_POST['removedfile']))
 
     $mesg=dol_remove_file_process($_POST['removedfile'],0);
 
-    $_GET["action"]='presend';
-    $_POST["action"]='presend';
+    $action='presend';
 }
 
 /*
