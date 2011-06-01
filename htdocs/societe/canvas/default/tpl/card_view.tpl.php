@@ -282,13 +282,13 @@ $somethingshown=$formfile->show_documents('company',$socid,$filedir,$urlsource,$
 
 <?php
 // Subsidiaries list
-$result=show_subsidiaries($conf,$langs,$db,$objcanvas->control->object);
+$result=show_subsidiaries($conf,$langs,$db,$soc);
 
 // Contacts list
-$result=show_contacts($conf,$langs,$db,$objcanvas->control->object);
+$result=show_contacts($conf,$langs,$db,$soc);
 
 // Projects list
-$result=show_projects($conf,$langs,$db,$objcanvas->control->object);
+$result=show_projects($conf,$langs,$db,$soc);
 ?>
 
 <!-- END PHP TEMPLATE -->

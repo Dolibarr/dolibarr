@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin       <regis@dolibarr.fr>
- * Copyright (C) 2011 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2010-2011	Regis Houssin		<regis@dolibarr.fr>
+ * Copyright (C) 2011 		Laurent Destailleur	<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,12 +121,6 @@ class Canvas
             $this->control->object = new $modelclassname($this->db);
         }
 
-		// Include specific library
-		/* Removed because specific libraries must be included by files that need them only, so by actions and/or dao files.
-		$libfile = dol_buildpath('/'.$dirmodule.'/lib/'.$dirmodule.'.lib.php');
-		if (file_exists($libfile)) require_once($libfile);
-        */
-
 		// Template dir
 		$this->template_dir = dol_buildpath('/'.$dirmodule.'/canvas/'.$this->canvas.'/tpl/');
         if (! is_dir($this->template_dir))
@@ -238,7 +232,8 @@ class Canvas
 	 */
 	function display_canvas($mode='view')
 	{
-		global $conf, $langs, $user, $canvas;
+		global $db, $conf, $langs, $user, $canvas;
+		global $form, $formfile;
 
 		//print $this->template_dir.$this->card.'_'.$mode.'.tpl.php';exit;
 		include($this->template_dir.$this->card.'_'.$mode.'.tpl.php');        // Include native PHP template
