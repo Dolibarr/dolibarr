@@ -519,7 +519,7 @@ class ActionComm extends CommonObject
 	/**
 	 *		Return label of action status
 	 *    	@param      percent         Percent
-	 *    	@param      mode            0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *    	@param      mode            0=Long label, 1=Short label, 2=Picto+Short label, 3=Picto, 4=Picto+Short label, 5=Short label+Picto, 6=Very short label+Picto
      *      @param      hidenastatus    1=Show nothing if status is "Not applicable"
 	 *    	@return     string		    Label
 	 */
@@ -566,8 +566,15 @@ class ActionComm extends CommonObject
         {
             if ($percent==-1 && ! $hidenastatus) return img_picto($langs->trans('StatusNotApplicable'),'statut9');
             if ($percent==0) return '0% '.img_picto($langs->trans('StatusActionToDo'),'statut1');
-        	if ($percent > 0 && $percent < 100) return $percent.'% '.img_picto($langs->trans('StatusActionInProcess'),'statut3');
+        	if ($percent > 0 && $percent < 100) return $percent.'% '.img_picto($langs->trans('StatusActionInProcess').' - '.$percent.'%','statut3');
         	if ($percent >= 100) return $langs->trans('StatusActionDone').' '.img_picto($langs->trans('StatusActionDone'),'statut6');
+        }
+        if ($mode == 6)
+        {
+            if ($percent==-1 && ! $hidenastatus) return img_picto($langs->trans('StatusNotApplicable'),'statut9');
+            if ($percent==0) return '0% '.img_picto($langs->trans('StatusActionToDo'),'statut1');
+            if ($percent > 0 && $percent < 100) return $percent.'% '.img_picto($langs->trans('StatusActionInProcess').' - '.$percent.'%','statut3');
+            if ($percent >= 100) return img_picto($langs->trans('StatusActionDone'),'statut6');
         }
         return '';
 	}

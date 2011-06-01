@@ -243,7 +243,7 @@ if ($resql)
 		$actionstatic->id=$obj->id;
 		$actionstatic->type_code=$obj->acode;
 		$actionstatic->libelle=$obj->label;
-		print $actionstatic->getNomUrl(1,20);
+		print $actionstatic->getNomUrl(1,28);
 		print '</td>';
 
 		// Titre
@@ -272,7 +272,7 @@ if ($resql)
 			$societestatic->id=$obj->socid;
 			$societestatic->client=$obj->client;
 			$societestatic->nom=$obj->societe;
-			print $societestatic->getNomUrl(1,'',6);
+			print $societestatic->getNomUrl(1,'',10);
 		}
 		else print '&nbsp;';
 		print '</td>';
@@ -284,7 +284,7 @@ if ($resql)
 			$contactstatic->name=$obj->name;
 			$contactstatic->firstname=$obj->firstname;
 			$contactstatic->id=$obj->fk_contact;
-			print $contactstatic->getNomUrl(1,'',6);
+			print $contactstatic->getNomUrl(1,'',10);
 		}
 		else
 		{
@@ -329,7 +329,7 @@ if ($resql)
 		print '</td>';
 
 		// Status/Percent
-		print '<td align="right" nowrap="nowrap">'.$actionstatic->LibStatut($obj->percent,5).'</td>';
+		print '<td align="right" nowrap="nowrap">'.$actionstatic->LibStatut($obj->percent,6).'</td>';
 
 		print "</tr>\n";
 		$i++;
