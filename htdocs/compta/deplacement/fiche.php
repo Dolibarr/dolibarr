@@ -323,7 +323,7 @@ else
 				// Ref
 				print "<tr>";
 				print '<td width="20%">'.$langs->trans("Ref").'</td><td>';
-				print $deplacement->ref;
+                print $html->showrefnav($deplacement,'id','',1,'rowid','ref','');
 				print '</td></tr>';
 
 				// Type

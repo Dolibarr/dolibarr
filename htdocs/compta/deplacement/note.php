@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -148,7 +148,7 @@ if ($id > 0 || ! empty($ref))
 	print '</td></tr>';
 
 	// Note publique
-    print '<tr><td valign="top">'.$langs->trans("NotePublic").' :</td>';
+    print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td>';
 	print '<td valign="top" colspan="3">';
     if ($_GET["action"] == 'edit')
     {
@@ -168,7 +168,7 @@ if ($id > 0 || ! empty($ref))
 	// Note privee
 	if (! $user->societe_id)
 	{
-	    print '<tr><td valign="top">'.$langs->trans("NotePrivate").' :</td>';
+	    print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';
 		print '<td valign="top" colspan="3">';
 	    if ($_GET["action"] == 'edit')
 	    {
