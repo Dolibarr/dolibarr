@@ -315,7 +315,7 @@ function agenda_prepare_head()
 	if ($conf->global->MAIN_FEATURES_LEVEL >= 2)   // In dev version only for the moment
 	{
     	$head[$h][0] = DOL_URL_ROOT."/admin/agenda_extsites.php";
-    	$head[$h][1] = $langs->trans("Import");
+    	$head[$h][1] = $langs->trans("ExtSites");
     	$head[$h][2] = 'extsites';
     	$h++;
 	}

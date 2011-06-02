@@ -2,6 +2,7 @@
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,6 +80,10 @@ class ActionComm extends CommonObject
     var $facid;
     var $supplierorderrowid;
     var $supplierinvoicerowid;
+    
+    // Ical 
+    var $icalname;
+    var $icalcolor;
 
 
     /**

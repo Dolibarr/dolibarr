@@ -508,12 +508,13 @@ if ($conf->global->ENABLE_AGENDA_EXT==1 && $conf->global->AGENDA_EXT_NB>0)
 				$namecal = $conf->global->$paramkey;
 				$paramkey='AGENDA_EXT_COLOR'.$i;
 				$colorcal = $conf->global->$paramkey;
-				$event->id=$namecal;
+				$event->id=$icalevent[UID];
+				$event->icalname=$namecal;
+				$event->icalcolor=$colorcal;
 				$event->datep=$icalevent[DTSTART];
 				$event->datef=$icalevent[DTEND];
 				$event->type_code="ICALEVENT";
-				$event->type_id = $colorcal;
-				$event->libelle='<b>'.$icalevent[SUMMARY].'</b><br>'.dol_nl2br($icalevent[DESCRIPTION],1,false);
+				$event->libelle='<b>'.$icalevent[SUMMARY].'</b><br>'.str_replace("\\n", "<br>", "$icalevent[DESCRIPTION]");; 
 	        	//$event->fulldayevent=$obj->fulldayevent;
 	        	
 				$event->date_start_in_calendar=$event->datep;
@@ -801,7 +802,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 					$colorindex=0;
 					if ($event->author->id == $user->id || $event->usertodo->id == $user->id || $event->userdone->id == $user->id) $colorindex=1;
 					if ($event->type_code == 'BIRTHDAY') $colorindex=2;
-					if ($event->type_code == 'ICALEVENT') $color=$event->type_id;
+					if ($event->type_code == 'ICALEVENT') $color=$event->icalcolor;
 					else $color=sprintf("%02x%02x%02x",$theme_datacolor[$colorindex][0],$theme_datacolor[$colorindex][1],$theme_datacolor[$colorindex][2]);
 					//print "x".$color;
 					
@@ -848,7 +849,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
     							if ($tmpyearend == $annee && $tmpmonthend == $mois && $tmpdayend == $jour)
     							print dol_print_date($event->date_end_in_calendar,'%H:%M');
     						}
-    						if ($event->type_code == 'ICALEVENT') print '<br>('.$event->id.')'; 
+    						if ($event->type_code == 'ICALEVENT') print '<br>('.$event->icalname.')'; 
     						print '<br>'."\n";
 					    }
 					    else
