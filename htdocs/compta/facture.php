@@ -1836,7 +1836,7 @@ else
      */
     if ($id > 0 || ! empty($ref))
     {
-        if (preg_match('/class="error"/',$mesg)) dol_htmloutput_error($mesg);
+        if (preg_match('/class="error"/',$mesg)) dol_htmloutput_errors($mesg);
         else dol_htmloutput_mesg($mesg);
 
         $result=$object->fetch($id,$ref);
