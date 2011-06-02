@@ -51,7 +51,7 @@ $langs->load('propal');
 $langs->load('deliveries');
 $langs->load('products');
 
-$id      =(GETPOST("id")?GETPOST("id"):GETPOST("orderid"));
+$id      = (GETPOST("id")?GETPOST("id"):GETPOST("orderid"));
 $ref     = GETPOST('ref');
 $socid   = GETPOST('socid');
 $action  = GETPOST('action');
@@ -928,8 +928,7 @@ if ($_POST['addfile'])
 
     $mesg=dol_add_file_process($upload_dir,0,0);
 
-    $action         ='presend';
-    $_POST["action"]='presend';
+    $action ='presend';
 }
 
 /*
@@ -945,8 +944,7 @@ if (! empty($_POST['removedfile']))
 
     $mesg=dol_remove_file_process($_POST['removedfile'],0);
 
-    $action         ='presend';
-    $_POST["action"]='presend';
+    $action ='presend';
 }
 
 /*
@@ -1098,8 +1096,8 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
     else
     {
         $langs->load("other");
-        $mesg='<div class="error">'.$langs->trans('ErrorFailedToReadEntity',$langs->trans("Invoice")).'</div>';
-        dol_syslog('Impossible de lire les donnees de la facture. Le fichier facture n\'a peut-etre pas ete genere.');
+        $mesg='<div class="error">'.$langs->trans('ErrorFailedToReadEntity',$langs->trans("Order")).'</div>';
+        dol_syslog($langs->trans('ErrorFailedToReadEntity', $langs->trans("Order")));
     }
 }
 

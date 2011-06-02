@@ -133,6 +133,7 @@ ALTER TABLE llx_livraison ADD COLUMN ref_ext varchar(30) AFTER fk_soc;
 ALTER TABLE llx_livraison ADD COLUMN ref_int varchar(30) AFTER ref_ext;
 
 INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (4,'LETTREMAX','Lettre Max','Courrier Suivi et Lettre Max',0);
+INSERT INTO llx_c_actioncomm (id, code, type, libelle, module, position) VALUES ( 10, 'AC_SHIP', 'system', 'Send shipping by email'	,'shipping', 11);
 
 --Add Chile data (id pays=67)
 -- Regions Chile

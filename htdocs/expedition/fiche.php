@@ -49,12 +49,8 @@ $langs->load('stocks');
 $langs->load('other');
 $langs->load('propal');
 
-
-$action = GETPOST("action");
-$confirm = GETPOST("confirm");
-
-$origin = GETPOST("origin")?GETPOST("origin"):'expedition';   // Example: commande, propal
-$origin_id = GETPOST("id")?GETPOST("id"):'';
+$origin		= GETPOST("origin")?GETPOST("origin"):'expedition';   // Example: commande, propal
+$origin_id 	= GETPOST("id")?GETPOST("id"):'';
 if (empty($origin_id)) $origin_id  = GETPOST("origin_id");    // Id of order or propal
 if (empty($origin_id)) $origin_id  = GETPOST("object_id");    // Id of order or propal
 $id = $origin_id;
@@ -62,6 +58,9 @@ $id = $origin_id;
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,$origin,$origin_id);
+
+$action		= GETPOST("action");
+$confirm	= GETPOST("confirm");
 
 $object = new Expedition($db);
 
@@ -188,7 +187,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expeditio
 	}
 }
 
-if ($action == 'open' && $user->rights->expedition->valider)
+if ($action == 'reopen' && $user->rights->expedition->valider)
 {
 	$object->fetch($id);
 	$result = $object->setStatut(0);
@@ -284,6 +283,191 @@ if ($action == 'builddoc')	// En get ou en post
 	}
 }
 
+/*
+ * Add file in email form
+ */
+if ($_POST['addfile'])
+{
+    require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+
+    // Set tmp user directory TODO Use a dedicated directory for temp mails files
+    $vardir=$conf->user->dir_output."/".$user->id;
+    $upload_dir = $vardir.'/temp/';
+
+    $mesg=dol_add_file_process($upload_dir,0,0);
+
+    $action ='presend';
+}
+
+/*
+ * Remove file in email form
+ */
+if (! empty($_POST['removedfile']))
+{
+    require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+
+    // Set tmp user directory
+    $vardir=$conf->user->dir_output."/".$user->id;
+    $upload_dir = $vardir.'/temp/';
+
+    $mesg=dol_remove_file_process($_POST['removedfile'],0);
+
+    $action ='presend';
+}
+
+/*
+ * Send mail
+ */
+if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_POST['cancel'])
+{
+    $langs->load('mails');
+
+    $result=$object->fetch($id);
+    $result=$object->fetch_thirdparty();
+
+    if ($result > 0)
+    {
+        $ref = dol_sanitizeFileName($object->ref);
+        $file = $conf->expedition->dir_output . '/sending/' . $ref . '/' . $ref . '.pdf';
+
+        if (is_readable($file))
+        {
+            if ($_POST['sendto'])
+            {
+                // Le destinataire a ete fourni via le champ libre
+                $sendto = $_POST['sendto'];
+                $sendtoid = 0;
+            }
+            elseif ($_POST['receiver'])
+            {
+                // Le destinataire a ete fourni via la liste deroulante
+                if ($_POST['receiver'] < 0)	// Id du tiers
+                {
+                    $sendto = $object->client->email;
+                    $sendtoid = 0;
+                }
+                else	// Id du contact
+                {
+                    $sendto = $object->client->contact_get_property($_POST['receiver'],'email');
+                    $sendtoid = $_POST['receiver'];
+                }
+            }
+
+            if (dol_strlen($sendto))
+            {
+                $langs->load("commercial");
+
+                $from = $_POST['fromname'] . ' <' . $_POST['frommail'] .'>';
+                $replyto = $_POST['replytoname']. ' <' . $_POST['replytomail'].'>';
+                $message = $_POST['message'];
+                $sendtocc = $_POST['sendtocc'];
+                $deliveryreceipt = $_POST['deliveryreceipt'];
+
+                if ($_POST['action'] == 'send')
+                {
+                    if (dol_strlen($_POST['subject'])) $subject=$_POST['subject'];
+                    else $subject = $langs->transnoentities('Shipping').' '.$object->ref;
+                    $actiontypecode='AC_SHIP';
+                    $actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto.".\n";
+                    if ($message)
+                    {
+                        $actionmsg.=$langs->transnoentities('MailTopic').": ".$subject."\n";
+                        $actionmsg.=$langs->transnoentities('TextUsedInTheMessageBody').":\n";
+                        $actionmsg.=$message;
+                    }
+                    $actionmsg2=$langs->transnoentities('Action'.$actiontypecode);
+                }
+
+                // Create form object
+                include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
+                $formmail = new FormMail($db);
+
+                $attachedfiles=$formmail->get_attached_files();
+                $filepath = $attachedfiles['paths'];
+                $filename = $attachedfiles['names'];
+                $mimetype = $attachedfiles['mimes'];
+
+                // Send mail
+                require_once(DOL_DOCUMENT_ROOT.'/lib/CMailFile.class.php');
+                $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
+                if ($mailfile->error)
+                {
+                    $mesg='<div class="error">'.$mailfile->error.'</div>';
+                }
+                else
+                {
+                    $result=$mailfile->sendfile();
+                    if ($result)
+                    {
+                        $_SESSION['mesg']=$langs->trans('MailSuccessfulySent',$from,$sendto);
+
+                        $error=0;
+
+                        // Initialisation donnees
+                        $object->sendtoid=$sendtoid;
+                        $object->actiontypecode=$actiontypecode;
+                        $object->actionmsg = $actionmsg;
+                        $object->actionmsg2= $actionmsg2;
+                        $object->shippingrowid=$object->id;
+
+                        // Appel des triggers
+                        include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                        $interface=new Interfaces($db);
+                        $result=$interface->run_triggers('SHIPPING_SENTBYMAIL',$object,$user,$langs,$conf);
+                        if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                        // Fin appel triggers
+
+                        if ($error)
+                        {
+                            dol_print_error($db);
+                        }
+                        else
+                        {
+                            // Redirect here
+                            // This avoid sending mail twice if going out and then back to page
+                            Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+                            exit;
+                        }
+                    }
+                    else
+                    {
+                        $langs->load("other");
+                        $mesg='<div class="error">';
+                        if ($mailfile->error)
+                        {
+                            $mesg.=$langs->trans('ErrorFailedToSendMail',$from,$sendto);
+                            $mesg.='<br>'.$mailfile->error;
+                        }
+                        else
+                        {
+                            $mesg.='No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
+                        }
+                        $mesg.='</div>';
+                    }
+                }
+            }
+            else
+            {
+                $langs->load("other");
+                $mesg='<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').' !</div>';
+                $action='presend';
+                dol_syslog('Recipient email is empty');
+            }
+        }
+        else
+        {
+            $langs->load("other");
+            $mesg='<div class="error">'.$langs->trans('ErrorCantReadFile',$file).'</div>';
+            dol_syslog('Failed to read file: '.$file);
+        }
+    }
+    else
+    {
+        $langs->load("other");
+        $mesg='<div class="error">'.$langs->trans('ErrorFailedToReadEntity',$langs->trans("Shipping")).'</div>';
+        dol_syslog($langs->trans('ErrorFailedToReadEntity',$langs->trans("Shipping")));
+    }
+}
 
 /*
  * View
@@ -655,6 +839,8 @@ else
 			{
 				print '<div class="error">'.$mesg.'</div>';
 			}
+			
+			dol_htmloutput_mesg();
 
 			if (!empty($object->origin))
 			{
@@ -1039,44 +1225,60 @@ else
 		{
 			print '<div class="tabsAction">';
 
-			/*if ($object->statut > 0 && $user->rights->expedition->valider)
-			{
-				print '<a class="butAction" href="fiche.php?id='.$object->id.'&amp;action=open">'.$langs->trans("Modify").'</a>';
-			}*/
-
 			if ($object->statut == 0 && $num_prod > 0)
 			{
 				if ($user->rights->expedition->valider)
 				{
-					print '<a class="butAction" href="fiche.php?id='.$object->id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
 				}
 				else
 				{
 					print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Validate").'</a>';
 				}
 			}
+			
+			// TODO add alternative status
+			/* if ($object->statut == 1 && $user->rights->expedition->valider)
+			{
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
+			}*/
+			
+			// Send
+			if ($object->statut == 1)
+			{
+				$ref = dol_sanitizeFileName($object->ref);
+				$file = $conf->expedition->dir_output . '/sending/'.$ref.'/'.$ref.'.pdf';
+				if (file_exists($file))
+				{
+                    if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->expedition->shipping_advance->send)
+                    {
+					   print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
+                    }
+                    else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
+				}
+			}
 
 			if ($conf->livraison_bon->enabled && $object->statut == 1 && $user->rights->expedition->livraison->creer && empty($object->linkedObjectsIds))
 			{
-				print '<a class="butAction" href="fiche.php?id='.$object->id.'&amp;action=create_delivery">'.$langs->trans("DeliveryOrder").'</a>';
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=create_delivery">'.$langs->trans("DeliveryOrder").'</a>';
 			}
 
 			if ($user->rights->expedition->supprimer)
 			{
-				print '<a class="butActionDelete" href="fiche.php?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 			}
 
 			print '</div>';
 		}
 		print "\n";
 
-		print "<table width=\"100%\" cellspacing=2><tr><td width=\"50%\" valign=\"top\">";
+		print '<table width="100%" cellspacing=2><tr><td width="50%" valign="top">';
 
 
 		/*
 		 * Documents generated
 		 */
-		if ($conf->expedition_bon->enabled)
+		if ($action != 'presend')
 		{
 			$objectref = dol_sanitizeFileName($object->ref);
 			$filedir = $conf->expedition->dir_output . "/sending/" .$objectref;
@@ -1090,21 +1292,77 @@ else
 
 			$somethingshown=$formfile->show_documents('expedition',$objectref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
 			if ($genallowed && ! $somethingshown) $somethingshown=1;
+			
+			print '</td><td valign="top" width="50%">';
+			
+			// List of actions on element
+			/*
+			include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php');
+			$formactions=new FormActions($db);
+			$somethingshown=$formactions->showactions($object,'shipping',$socid);
+			*/
+			
+			print '</td></tr></table>';
+		}
+		
+		/*
+		 * Action presend
+		 *
+		 */
+		if ($action == 'presend')
+		{
+			$ref = dol_sanitizeFileName($object->ref);
+			$file = $conf->expedition->dir_output . '/sending/' . $ref . '/' . $ref . '.pdf';
+			
+			print '<br>';
+			print_titre($langs->trans('SendShippingByMail'));
+			
+			// Cree l'objet formulaire mail
+			include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
+			$formmail = new FormMail($db);
+			$formmail->fromtype = 'user';
+			$formmail->fromid   = $user->id;
+			$formmail->fromname = $user->getFullName($langs);
+			$formmail->frommail = $user->email;
+			$formmail->withfrom=1;
+			$formmail->withto=empty($_POST["sendto"])?1:$_POST["sendto"];
+			$formmail->withtosocid=$soc->id;
+			$formmail->withtocc=1;
+			$formmail->withtoccsocid=0;
+			$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
+			$formmail->withtocccsocid=0;
+			$formmail->withtopic=$langs->trans('SendShippingRef','__SHIPPINGREF__');
+			$formmail->withfile=2;
+			$formmail->withbody=1;
+			$formmail->withdeliveryreceipt=1;
+			$formmail->withcancel=1;
+			// Tableau des substitutions
+			$formmail->substit['__SHIPPINGREF__']=$object->ref;
+			// Tableau des parametres complementaires
+			$formmail->param['action']='send';
+			$formmail->param['models']='shipping_send';
+			$formmail->param['shippingid']=$object->id;
+			$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
+			
+			// Init list of files
+			if (! empty($_REQUEST["mode"]) && $_REQUEST["mode"]=='init')
+			{
+				$formmail->clear_attached_files();
+				$formmail->add_attached_files($file,dol_sanitizeFilename($ref.'.pdf'),'application/pdf');
+			}
+			
+			// Show form
+			$formmail->show_form();
+			
+			print '<br>';
 		}
 
-		print '</td><td valign="top" width="50%">';
-
-		// Rien a droite
-
-		print '</td></tr></table>';
-
-		if (!empty($origin) && $object->$origin->id)
+		if ($action != 'presend' && ! empty($origin) && $object->$origin->id)
 		{
 			print '<br>';
 			//show_list_sending_receive($object->origin,$object->origin_id," AND e.rowid <> ".$object->id);
 			show_list_sending_receive($object->origin,$object->origin_id);
 		}
-
 	}
 	else
 	{

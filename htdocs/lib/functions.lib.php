@@ -3674,6 +3674,18 @@ function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
     $ret='';
     $out='';
     $divstart=$divend='';
+    
+    if (isset($_SESSION['mesg']))
+    {
+    	$mesgstring=$_SESSION['mesg'];
+    	unset($_SESSION['mesg']);
+    }
+    
+	if (isset($_SESSION['mesgarray']))
+    {
+    	$mesgarray=$_SESSION['mesgarray'];
+    	unset($_SESSION['mesgarray']);
+    }
 
     if (! empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) && ! preg_match('/<div class=".*">/i',$out))
     {

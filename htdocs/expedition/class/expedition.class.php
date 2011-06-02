@@ -141,7 +141,7 @@ class Expedition extends CommonObject
 	 */
 	function create($user)
 	{
-		global $conf;
+		global $conf, $langs;
 
 		require_once DOL_DOCUMENT_ROOT ."/product/stock/class/mouvementstock.class.php";
 		$error = 0;
@@ -234,6 +234,13 @@ class Expedition extends CommonObject
 
 				if (! $error)
 				{
+					// Appel des triggers
+					include_once(DOL_DOCUMENT_ROOT."/core/class/interfaces.class.php");
+					$interface=new Interfaces($this->db);
+					$result=$interface->run_triggers('SHIPPING_CREATE',$this,$user,$langs,$conf);
+					if ($result < 0) { $error++; $this->errors=$interface->errors; }
+					// Fin appel triggers
+					
 					$this->db->commit();
 					return $this->id;
 				}
@@ -745,6 +752,8 @@ class Expedition extends CommonObject
 	 */
 	function delete()
 	{
+		global $conf, $langs, $user;
+		
         require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 		$this->db->begin();
 
@@ -789,6 +798,14 @@ class Expedition extends CommonObject
 							}
 						}
 					}
+					
+					// Call triggers
+		            include_once(DOL_DOCUMENT_ROOT."/core/class/interfaces.class.php");
+		            $interface=new Interfaces($this->db);
+		            $result=$interface->run_triggers('SHIPPING_DELETE',$this,$user,$langs,$conf);
+		            if ($result < 0) { $error++; $this->errors=$interface->errors; }
+		            // End call triggers
+	            
 					// TODO il faut incrementer le stock si on supprime une expedition validee
 					return 1;
 				}

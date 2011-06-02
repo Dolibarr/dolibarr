@@ -3,7 +3,7 @@
 -- Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
--- Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+-- Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
 -- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -32,14 +32,15 @@
 -- Types action comm
 --
 
-delete from llx_c_actioncomm where id in (1,2,3,4,5,8,9,50);
-insert into llx_c_actioncomm (id, code, type, libelle, module, position) values ( 1, 'AC_TEL',     'system', 'Phone call'        ,NULL, 2);
-insert into llx_c_actioncomm (id, code, type, libelle, module, position) values ( 2, 'AC_FAX',     'system', 'Send Fax'          ,NULL, 3);
-insert into llx_c_actioncomm (id, code, type, libelle, module, position) values ( 3, 'AC_PROP',    'system', 'Send commercial proposal by email','propal',  10);
-insert into llx_c_actioncomm (id, code, type, libelle, module, position) values ( 4, 'AC_EMAIL',   'system', 'Send Email'        ,NULL, 4);
-insert into llx_c_actioncomm (id, code, type, libelle, module, position) values ( 5, 'AC_RDV',     'system', 'Rendez-vous'       ,NULL, 1);
-insert into llx_c_actioncomm (id, code, type, libelle, module, position) values ( 8, 'AC_COM',     'system', 'Send customer order by email'     ,'order',   8);
-insert into llx_c_actioncomm (id, code, type, libelle, module, position) values ( 9, 'AC_FAC',     'system', 'Send customer invoice by email'   ,'invoice', 6);
-insert into llx_c_actioncomm (id, code, type, libelle, module, position) values (30, 'AC_SUP_ORD', 'system', 'Send supplier order by email'     ,'order_supplier',    9);
-insert into llx_c_actioncomm (id, code, type, libelle, module, position) values (31, 'AC_SUP_INV', 'system', 'Send supplier invoice by email'   ,'invoice_supplier', 7);
-insert into llx_c_actioncomm (id, code, type, libelle, module, position) values (50, 'AC_OTH',     'system', 'Other'             ,NULL, 5);
+delete from llx_c_actioncomm where id in (1,2,3,4,5,8,9,10,30,31,50);
+insert into llx_c_actioncomm (id, code, type, libelle, module, position) values ( 1,  'AC_TEL',     'system', 'Phone call'							,NULL, 2);
+insert into llx_c_actioncomm (id, code, type, libelle, module, position) values ( 2,  'AC_FAX',     'system', 'Send Fax'							,NULL, 3);
+insert into llx_c_actioncomm (id, code, type, libelle, module, position) values ( 3,  'AC_PROP',    'system', 'Send commercial proposal by email'	,'propal',  10);
+insert into llx_c_actioncomm (id, code, type, libelle, module, position) values ( 4,  'AC_EMAIL',   'system', 'Send Email'							,NULL, 4);
+insert into llx_c_actioncomm (id, code, type, libelle, module, position) values ( 5,  'AC_RDV',     'system', 'Rendez-vous'							,NULL, 1);
+insert into llx_c_actioncomm (id, code, type, libelle, module, position) values ( 8,  'AC_COM',     'system', 'Send customer order by email'		,'order',   8);
+insert into llx_c_actioncomm (id, code, type, libelle, module, position) values ( 9,  'AC_FAC',     'system', 'Send customer invoice by email'		,'invoice', 6);
+insert into llx_c_actioncomm (id, code, type, libelle, module, position) values ( 10, 'AC_SHIP',    'system', 'Send shipping by email'				,'shipping', 11);
+insert into llx_c_actioncomm (id, code, type, libelle, module, position) values ( 30, 'AC_SUP_ORD', 'system', 'Send supplier order by email'		,'order_supplier',    9);
+insert into llx_c_actioncomm (id, code, type, libelle, module, position) values  (31, 'AC_SUP_INV', 'system', 'Send supplier invoice by email'		,'invoice_supplier', 7);
+insert into llx_c_actioncomm (id, code, type, libelle, module, position) values ( 50, 'AC_OTH',     'system', 'Other'								,NULL, 5);
