@@ -559,7 +559,8 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
         $sql.= " a.datep as dp,";
         $sql.= " a.datea as da,";
         $sql.= " a.percent,";
-        $sql.= " a.propalrowid, a.fk_user_author, a.fk_contact,";
+        $sql.= " a.fk_user_author, a.fk_contact,";
+        $sql.= " a.fk_element, a.elementtype,";
         $sql.= " c.code as acode, c.libelle,";
         $sql.= " u.login, u.rowid,";
         $sql.= " sp.name, sp.firstname";
@@ -600,9 +601,9 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
                     else $out.='&nbsp;';
                     $out.='</td>';
 
-                    if ($obj->propalrowid)
+                    if ($obj->fk_element && $obj->elementtype == "propal")
                     {
-                        $out.='<td width="140"><a href="propal.php?id='.$obj->propalrowid.'">'.img_object($langs->trans("ShowAction"),"task");
+                        $out.='<td width="140"><a href="propal.php?id='.$obj->fk_element.'">'.img_object($langs->trans("ShowAction"),"task");
                         $transcode=$langs->trans("Action".$obj->acode);
                         $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
                         $out.=$libelle;
@@ -689,7 +690,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
         $sql.= " a.datep as dp,";
         $sql.= " a.datep2 as dp2,";
         $sql.= " a.note, a.percent,";
-        $sql.= " a.propalrowid as pid, a.fk_commande as oid, a.fk_facture as fid,";
+        $sql.= " a.fk_element, a.elementtype,";
         $sql.= " a.fk_user_author, a.fk_contact,";
         $sql.= " c.code as acode, c.libelle,";
         $sql.= " u.login, u.rowid as user_id,";
@@ -717,7 +718,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
 				'acode'=>$obj->acode,'libelle'=>$obj->libelle,
 				'userid'=>$obj->user_id,'login'=>$obj->login,
 				'contact_id'=>$obj->fk_contact,'name'=>$obj->name,'firstname'=>$obj->firstname,
-				'pid'=>$obj->pid,'oid'=>$obj->oid,'fid'=>$obj->fid);
+				'fk_element'=>$obj->fk_element,'elementtype'=>$obj->elementtype);
                 $numaction++;
                 $i++;
             }
@@ -777,6 +778,8 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
         $actionstatic=new ActionComm($db);
         $userstatic=new User($db);
         $contactstatic = new Contact($db);
+        
+        // TODO uniformize
         $propalstatic=new Propal($db);
         $orderstatic=new Commande($db);
         $facturestatic=new Facture($db);
@@ -820,23 +823,24 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
             $out.='<td>'.dol_trunc($histo[$key]['note'], 30).'</td>';
 
             // Objet lie
+            // TODO uniformize
             $out.='<td>';
-            if ($histo[$key]['pid'] && $conf->propal->enabled)
+            if ($histo[$key]['elementtype'] == 'propal' && $conf->propal->enabled)
             {
                 $propalstatic->ref=$langs->trans("ProposalShort");
-                $propalstatic->id=$histo[$key]['pid'];
+                $propalstatic->id=$histo[$key]['fk_element'];
                 $out.=$propalstatic->getNomUrl(1);
             }
-            elseif ($histo[$key]['oid'] && $conf->commande->enabled)
+            elseif ($histo[$key]['elementtype'] == 'commande' && $conf->commande->enabled)
             {
                 $orderstatic->ref=$langs->trans("Order");
-                $orderstatic->id=$histo[$key]['oid'];
+                $orderstatic->id=$histo[$key]['fk_element'];
                 $out.=$orderstatic->getNomUrl(1);
             }
-            elseif ($histo[$key]['fid'] && $conf->facture->enabled)
+            elseif ($histo[$key]['elementtype'] == 'facture' && $conf->facture->enabled)
             {
                 $facturestatic->ref=$langs->trans("Invoice");
-                $facturestatic->id=$histo[$key]['fid'];
+                $facturestatic->id=$histo[$key]['fk_element'];
                 $facturestatic->type=$histo[$key]['ftype'];
                 $out.=$facturestatic->getNomUrl(1,'compta');
             }

@@ -109,17 +109,8 @@ class FormActions
         $sql.= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a, '.MAIN_DB_PREFIX.'user as u';
         $sql.= ' WHERE a.fk_user_author = u.rowid';
         if ($socid) $sql .= ' AND a.fk_soc = '.$socid;
-        if ($typeelement == 'invoice') $sql.= ' AND a.fk_facture = '.$object->id;
-        elseif ($typeelement == 'invoice_supplier' || $typeelement == 'supplier_invoice') $sql.= ' AND a.fk_supplier_invoice = '.$object->id;
-        elseif ($typeelement == 'propal')  $sql.= ' AND a.propalrowid = '.$object->id;
-        elseif ($typeelement == 'order')   $sql.= ' AND a.fk_commande = '.$object->id;
-        elseif ($typeelement == 'order_supplier' || $typeelement == 'supplier_order')   $sql.= ' AND a.fk_supplier_order = '.$object->id;
-        elseif ($typeelement == 'project') $sql.= ' AND a.fk_project = '.$object->id;
-        else
-        {
-            dol_print_error('','Bad value for parameter typeelement');
-            return -1;
-        }
+        if ($typeelement == 'project') $sql.= ' AND a.fk_project = '.$object->id;
+        else $sql.= ' AND a.fk_element = '.$object->id.' AND a.elementtype = "'.$typeelement.'"';
 
         dol_syslog("FormActions::showactions sql=".$sql);
         $resql = $this->db->query($sql);

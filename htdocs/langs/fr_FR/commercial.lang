@@ -76,6 +76,7 @@ ActionAC_REL=Relance facture client par mail
 ActionAC_CLO=Clôture
 ActionAC_EMAILING=Envoi mailing masse
 ActionAC_COM=Envoi commande client par mail
+ActionAC_SHIP=Envoi bon d'expédition par mail
 ActionAC_SUP_ORD=Envoi commande fournisseur par mail
 ActionAC_SUP_INV=Envoi facture fournisseur par mail
 ActionAC_OTH=Autre

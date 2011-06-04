@@ -743,11 +743,12 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile']
                         $error=0;
 
                         // Initialisation donnees
-                        $facturefourn->sendtoid=$sendtoid;
-                        $facturefourn->actiontypecode=$actiontypecode;
-                        $facturefourn->actionmsg = $actionmsg;
-                        $facturefourn->actionmsg2= $actionmsg2;
-                        $facturefourn->supplierorderrowid=$facturefourn->id;
+                        $facturefourn->sendtoid			= $sendtoid;
+                        $facturefourn->actiontypecode	= $actiontypecode;
+                        $facturefourn->actionmsg		= $actionmsg;
+                        $facturefourn->actionmsg2		= $actionmsg2;
+                        $facturefourn->fk_element		= $facturefourn->id;
+						$facturefourn->elementtype		= $facturefourn->element;
 
                         // Appel des triggers
                         include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");

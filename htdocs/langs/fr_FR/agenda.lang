@@ -43,6 +43,7 @@ OrderSentByEMail=Commande client %s envoyée par EMail
 InvoiceSentByEMail=Facture client %s envoyée par EMail
 SupplierOrderSentByEMail=Commande fournisseur %s envoyée par EMail
 SupplierInvoiceSentByEMail=Facture fournisseur %s envoyée par EMail
+ShippingSentByEMail=Bon d'expédition %s envoyé par EMail
 NewCompanyToDolibarr=Tiers créé
 DateActionPlannedStart=Date début réalisation prévue
 DateActionPlannedEnd=Date fin réalisation prévue

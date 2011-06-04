@@ -527,11 +527,12 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile']
 						$error=0;
 
 						// Initialisation donnees
-						$object->sendtoid=$sendtoid;
-						$object->actiontypecode=$actiontypecode;
-						$object->actionmsg = $actionmsg;
-						$object->actionmsg2= $actionmsg2;
-						$object->propalrowid=$object->id;
+						$object->sendtoid		= $sendtoid;
+						$object->actiontypecode	= $actiontypecode;
+						$object->actionmsg		= $actionmsg;
+						$object->actionmsg2		= $actionmsg2;
+						$object->fk_element		= $object->id;
+						$object->elementtype	= $object->element;
 
 						// Appel des triggers
 						include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");

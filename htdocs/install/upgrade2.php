@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2010      Juanjo Menent         <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -315,6 +315,8 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
         {
             migrate_directories($db,$langs,$conf,'/rss','/externalrss');
+            
+            migrate_actioncomm_element($db,$langs,$conf);
 
             // Reload modules
             migrate_reload_modules($db,$langs,$conf);
@@ -3074,6 +3076,65 @@ function migrate_shipping_delivery2($db,$langs,$conf)
 	{
 		dol_print_error($db);
 		$db->rollback();
+	}
+
+	print '</td></tr>';
+}
+
+/*
+ * Migrate link stored into fk_xxxx into fk_element and elementtype
+ */
+function migrate_actioncomm_element($db,$langs,$conf)
+{
+	print '<tr><td colspan="4">';
+
+	print '<br>';
+	print '<b>'.$langs->trans('MigrationActioncommElement')."</b><br>\n";
+	
+	$elements = array(	'propal' => 'propalrowid',
+						'commande' => 'fk_commande',
+						'facture' => 'fk_facture',
+						'contrat' => 'fk_contract',
+						'order_supplier' => 'fk_supplier_order',
+						'invoice_supplier' => 'fk_supplier_invoice'
+					);
+	
+	foreach($elements as $type => $field)
+	{
+		$result = $db->DDLDescTable(MAIN_DB_PREFIX."actioncomm",$field);
+		$obj = $db->fetch_object($result);
+		if ($obj)
+		{
+			dolibarr_install_syslog("upgrade2::migrate_actioncomm_element field=".$field);
+	
+			$db->begin();
+	
+			$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm SET ";
+			$sql.= "fk_element = ".$field.", elementtype = '".$type."'";
+			$sql.= " WHERE ".$field." IS NOT NULL";
+			$sql.= " AND fk_element IS NULL";
+			$sql.= " AND elementtype IS NULL";
+	
+			$resql = $db->query($sql);
+			if ($resql)
+			{
+				$db->commit();
+	
+				// DDL commands must not be inside a transaction
+				$sqlDrop = "ALTER TABLE ".MAIN_DB_PREFIX."actioncomm DROP COLUMN ".$field;
+				$db->query($sqlDrop);
+				print ". ";
+			}
+			else
+			{
+				dol_print_error($db);
+				$db->rollback();
+			}
+		}
+		else
+		{
+			print $langs->trans('AlreadyDone')."<br>\n";
+		}
 	}
 
 	print '</td></tr>';

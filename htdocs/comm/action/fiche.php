@@ -809,10 +809,10 @@ if ($id)
 		print '</td></tr>';
 
 		// Object linked
-		if ($act->objet_url)
+		if (! empty($act->fk_element) && ! empty($act->elementtype))
 		{
 			print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
-			print '<td colspan="3">'.$act->objet_url.'</td></tr>';
+			print '<td colspan="3">'.$act->getElementUrl($act->fk_element,$act->elementtype,1).'</td></tr>';
 		}
 
         // Description
@@ -970,11 +970,11 @@ if ($id)
 		print $act->priority;
 		print '</td></tr>';
 
-		// Linked object
-		if ($act->objet_url)
+		// Object linked
+		if (! empty($act->fk_element) && ! empty($act->elementtype))
 		{
 			print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
-			print '<td colspan="3">'.$act->objet_url.'</td></tr>';
+			print '<td colspan="3">'.$act->getElementUrl($act->fk_element,$act->elementtype,1).'</td></tr>';
 		}
 
 		// Description

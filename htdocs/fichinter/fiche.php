@@ -513,11 +513,12 @@ if ($_POST['action'] == 'send' && ! $_POST['cancel'] && (empty($conf->global->MA
                         $error=0;
 
                         // Initialisation donnees
-                        $fichinter->sendtoid=$sendtoid;
-                        $fichinter->actiontypecode=$actiontypecode;
-                        $fichinter->actionmsg = $actionmsg;
-                        $fichinter->actionmsg2= $actionmsg2;
-                        $fichinter->rowid=$fichinter->id;
+                        $fichinter->sendtoid		= $sendtoid;
+                        $fichinter->actiontypecode	= $actiontypecode;
+                        $fichinter->actionmsg 		= $actionmsg;
+                        $fichinter->actionmsg2		= $actionmsg2;
+                        $fichinter->fk_element		= $fichinter->id;
+						$fichinter->elementtype		= $fichinter->element;
 
                         // Appel des triggers
                         include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");

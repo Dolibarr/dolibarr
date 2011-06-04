@@ -96,9 +96,8 @@ class InterfaceActionsAuto
      *      $object->sendtoid (id of contact)
      *      $object->socid
      *      Optionnal:
-     *      $object->facid
-     *      $object->propalrowid
-     *      $object->orderrowid
+     *      $object->fk_element
+     *      $object->elementtype
      *
      *      @param      action      Event code (COMPANY_CREATE, PROPAL_VALIDATE, ...)
      *      @param      object      Object action is done on
@@ -132,7 +131,8 @@ class InterfaceActionsAuto
 
 			$object->sendtoid=0;
 			$object->socid=$object->id;
-			$object->facid=$object->orderrowid=$object->propalrowid=0;
+			$object->fk_element=0;
+			$object->elementtype='';
 			$ok=1;
         }
         elseif ($action == 'CONTRACT_VALIDATE')
@@ -148,7 +148,6 @@ class InterfaceActionsAuto
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
 			$object->sendtoid=0;
-			$object->facid=$object->orderrowid=$object->propalrowid=0;
 			$ok=1;
 		}
 		elseif ($action == 'PROPAL_VALIDATE')
@@ -163,8 +162,6 @@ class InterfaceActionsAuto
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
 			$object->sendtoid=0;
-			$object->propalrowid=$object->id;
-			$object->facid=$object->orderrowid=0;
 			$ok=1;
 		}
         elseif ($action == 'PROPAL_SENTBYMAIL')
@@ -182,8 +179,6 @@ class InterfaceActionsAuto
             }
 
             $object->sendtoid=0;
-            $object->propalrowid=$object->id;
-            $object->orderrowid=$object->facid=0;
 			$ok=1;
 		}
 		elseif ($action == 'PROPAL_CLOSE_SIGNED')
@@ -198,8 +193,6 @@ class InterfaceActionsAuto
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
 			$object->sendtoid=0;
-			$object->propalrowid=$object->id;
-			$object->facid=$object->orderrowid=0;
 			$ok=1;
 		}
 		elseif ($action == 'PROPAL_CLOSE_REFUSED')
@@ -214,8 +207,6 @@ class InterfaceActionsAuto
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
 			$object->sendtoid=0;
-			$object->propalrowid=$object->id;
-			$object->facid=$object->orderrowid=0;
 			$ok=1;
 		}
 		elseif ($action == 'ORDER_VALIDATE')
@@ -230,8 +221,6 @@ class InterfaceActionsAuto
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
 			$object->sendtoid=0;
-			$object->orderrowid=$object->id;
-			$object->propalrowid=$object->facid=0;
 			$ok=1;
 		}
         elseif ($action == 'ORDER_SENTBYMAIL')
@@ -249,8 +238,6 @@ class InterfaceActionsAuto
             }
 
             $object->sendtoid=0;
-            $object->facid=$object->id;
-            $object->orderrowid=$object->propalrowid=0;
             $ok=1;
 
 			// Parameters $object->xxx defined by caller
@@ -268,8 +255,6 @@ class InterfaceActionsAuto
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
 			$object->sendtoid=0;
-			$object->facid=$object->id;
-			$object->orderrowid=$object->propalrowid=0;
 			$ok=1;
 		}
         elseif ($action == 'BILL_SENTBYMAIL')
@@ -287,8 +272,6 @@ class InterfaceActionsAuto
                 $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
             }
 
-            $object->facid=$object->id;
-            $object->orderrowid=$object->propalrowid=0;
             $ok=1;
 
 			// Parameters $object->xxx defined by caller
@@ -306,8 +289,6 @@ class InterfaceActionsAuto
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
 			$object->sendtoid=0;
-			$object->facid=$object->id;
-			$object->orderrowid=$object->propalrowid=0;
 			$ok=1;
 		}
 		elseif ($action == 'BILL_CANCEL')
@@ -323,8 +304,6 @@ class InterfaceActionsAuto
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
 			$object->sendtoid=0;
-			$object->facid=$object->id;
-			$object->orderrowid=$object->propalrowid=0;
 			$ok=1;
 		}
 		elseif ($action == 'FICHEINTER_VALIDATE')
@@ -342,6 +321,25 @@ class InterfaceActionsAuto
 			$object->sendtoid=0;
 			$ok=1;
 		}
+    	elseif ($action == 'SHIPPING_SENTBYMAIL')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("other");
+            $langs->load("sendings");
+            $langs->load("agenda");
+
+            $object->actiontypecode='AC_SHIP';
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("ShippingSentByEMail",$object->ref);
+            if (empty($object->actionmsg))
+            {
+                $object->actionmsg=$langs->transnoentities("ShippingSentByEMail",$object->ref);
+                $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+            }
+
+            $ok=1;
+
+			// Parameters $object->xxx defined by caller
+		}
 		elseif ($action == 'ORDER_SUPPLIER_VALIDATE')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
@@ -354,8 +352,6 @@ class InterfaceActionsAuto
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
 			$object->sendtoid=0;
-            $object->supplierorderrowid=$object->id;
-            $object->supplierinvoicerowid=$object->facid=$object->orderrowid=$object->propalrowid=0;
 			$ok=1;
 		}
         elseif ($action == 'ORDER_SUPPLIER_SENTBYMAIL')
@@ -375,8 +371,6 @@ class InterfaceActionsAuto
             }
 
             $object->sendtoid=0;
-            $object->supplierorderrowid=$object->id;
-            $object->supplierinvoicerowid=$object->facid=$object->orderrowid=$object->propalrowid=0;
             $ok=1;
         }
 		elseif ($action == 'BILL_SUPPLIER_VALIDATE')
@@ -392,8 +386,6 @@ class InterfaceActionsAuto
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
 			$object->sendtoid=0;
-			$object->supplierinvoicerowid=$object->id;
-            $object->supplierorderrowid=$object->facid=$object->orderrowid=$object->propalrowid=0;
 			$ok=1;
 		}
         elseif ($action == 'BILL_SUPPLIER_SENTBYMAIL')
@@ -413,8 +405,6 @@ class InterfaceActionsAuto
             }
 
             $object->sendtoid=0;
-            $object->supplierorderrowid=$object->id;
-            $object->supplierinvoicerowid=$object->facid=$object->orderrowid=$object->propalrowid=0;
             $ok=1;
         }
 		elseif ($action == 'BILL_SUPPLIER_PAYED')
@@ -430,8 +420,6 @@ class InterfaceActionsAuto
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
 			$object->sendtoid=0;
-            $object->supplierinvoicerowid=$object->id;
-			$object->supplierorderrowid=$object->facid=$object->orderrowid=$object->propalrowid=0;
 			$ok=1;
 		}
 		elseif ($action == 'BILL_SUPPLIER_CANCELED')
@@ -447,8 +435,6 @@ class InterfaceActionsAuto
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
 			$object->sendtoid=0;
-			$object->supplierinvoicerowid=$object->id;
-			$object->facid=$object->orderrowid=$object->propalrowid=0;
 			$ok=1;
 		}
 
@@ -468,7 +454,8 @@ class InterfaceActionsAuto
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
 			$object->sendtoid=0;
-			$object->facid=$object->orderrowid=$object->propalrowid=0;
+			$object->fk_element=0;
+			$object->elementtype='';
 			$ok=1;
         }
         elseif ($action == 'MEMBER_SUBSCRIPTION')
@@ -488,7 +475,8 @@ class InterfaceActionsAuto
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
 			$object->sendtoid=0;
-			$object->facid=$object->orderrowid=$object->propalrowid=0;
+			$object->fk_element=0;
+			$object->elementtype='';
 			$ok=1;
         }
         elseif ($action == 'MEMBER_MODIFY')
@@ -510,7 +498,8 @@ class InterfaceActionsAuto
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
 			$object->sendtoid=0;
-			$object->facid=$object->orderrowid=$object->propalrowid=0;
+			$object->fk_element=0;
+			$object->elementtype='';
 			$ok=1;
         }
         elseif ($action == 'MEMBER_DELETE')
@@ -528,7 +517,8 @@ class InterfaceActionsAuto
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
 			$object->sendtoid=0;
-			$object->facid=$object->orderrowid=$object->propalrowid=0;
+			$object->fk_element=0;
+			$object->elementtype='';
 			$ok=1;
         }
 
@@ -564,11 +554,8 @@ class InterfaceActionsAuto
 			//$actioncomm->usertodo  = $user;	// User affected to action
 			$actioncomm->userdone    = $user;	// User doing action
 
-			$actioncomm->facid       = $object->facid;
-			$actioncomm->orderrowid  = $object->orderrowid;
-			$actioncomm->propalrowid = $object->propalrowid;
-            $actioncomm->supplierinvoicerowid = $object->supplierinvoicerowid;
-            $actioncomm->supplierorderrowid   = $object->supplierorderrowid;
+			$actioncomm->fk_element  = $object->fk_element;
+			$actioncomm->elementtype = $object->elementtype;
 
 			$ret=$actioncomm->add($user);       // User qui saisit l'action
 			if ($ret > 0)

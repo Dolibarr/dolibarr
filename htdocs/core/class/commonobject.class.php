@@ -1464,7 +1464,50 @@ class CommonObject
 
     // TODO: All functions here must be redesigned and moved as they are not business functions but output functions
 
-
+	/**
+	 * 
+	 * Enter description here ...
+	 * @param unknown_type $objectid
+	 * @param unknown_type $objecttype
+	 * @param unknown_type $withpicto
+	 * @param unknown_type $option
+	 */
+	function getElementUrl($objectid,$objecttype,$withpicto=0,$option='')
+	{
+		global $conf;
+		
+		// Parse element/subelement (ex: project_task)
+		$module = $element = $subelement = $objecttype;
+		if (preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
+		{
+			$module = $element = $regs[1];
+			$subelement = $regs[2];
+		}
+		
+		$classpath = $element.'/class';
+		
+		// To work with non standard path
+		if ($objecttype == 'facture') { $classpath = 'compta/facture/class'; }
+		if ($objecttype == 'propal')  { $classpath = 'comm/propal/class'; }
+		if ($objecttype == 'shipping') { $classpath = 'expedition/class'; $subelement = 'expedition'; $module = 'expedition_bon'; }
+		if ($objecttype == 'delivery') { $classpath = 'livraison/class'; $subelement = 'livraison'; $module = 'livraison_bon'; }
+		if ($objecttype == 'invoice_supplier') { $classpath = 'fourn/class'; }
+		if ($objecttype == 'order_supplier')   { $classpath = 'fourn/class'; }
+		
+		$classfile = strtolower($subelement); $classname = ucfirst($subelement);
+		if ($objecttype == 'invoice_supplier') { $classfile = 'fournisseur.facture'; $classname='FactureFournisseur'; }
+		if ($objecttype == 'order_supplier')   { $classfile = 'fournisseur.commande'; $classname='CommandeFournisseur'; }
+		
+		if ($conf->$module->enabled)
+		{
+			dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
+			
+			$object = new $classname($this->db);
+			$ret=$object->fetch($objectid);
+			if ($ret > 0) return $object->getNomUrl($withpicto,$option);
+		}
+	}
+	
     /* This is to show linked object block */
 
     /**

@@ -47,6 +47,8 @@ if (isset($_POST["action"]) && preg_match('/upgrade/i',$_POST["action"]))	// If 
 $langs->load("admin");
 $langs->load("install");
 
+$action=GETPOST('action');
+
 $success=0;
 
 // Init "forced values" to nothing. "forced values" are used after an doliwamp install wizard.
@@ -74,7 +76,7 @@ dolibarr_install_syslog("etape5: Entering etape5.php page", LOG_INFO);
  */
 
 // If install, check pass and pass_verif used to create admin account
-if (isset($_POST['action']) && $_POST["action"] == "set")
+if ($action == "set")
 {
 	if ($_POST["pass"] <> $_POST["pass_verif"])
 	{
@@ -110,7 +112,7 @@ if (! GETPOST("versionfrom") && ! GETPOST("versionto") && ! is_writable($conffil
     exit;
 }
 
-if ($_POST["action"] == "set" || preg_match('/upgrade/i',$_POST["action"]))
+if ($action == "set" || preg_match('/upgrade/i',$action))
 {
 	print '<table cellspacing="0" cellpadding="2" width="100%">';
 	$error=0;
@@ -142,7 +144,7 @@ if ($_POST["action"] == "set" || preg_match('/upgrade/i',$_POST["action"]))
 	$ok = 0;
 
 	// If first install
-	if ($_POST["action"] == "set")
+	if ($action == "set")
 	{
 		// Active module user
 		$modName='modUser';
@@ -226,7 +228,7 @@ if ($_POST["action"] == "set" || preg_match('/upgrade/i',$_POST["action"]))
 		}
 	}
 	// If upgrade
-	elseif (preg_match('/upgrade/i',$_POST["action"]))
+	elseif (preg_match('/upgrade/i',$action))
 	{
 		if ($db->connected == 1)
 		{
@@ -281,7 +283,7 @@ print "<br>";
 // Create lock file
 
 // If first install
-if (GETPOST("action") == "set")
+if ($action == "set")
 {
 	if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE) || ($conf->global->MAIN_VERSION_LAST_UPGRADE == DOL_VERSION))
 	{
@@ -331,7 +333,7 @@ if (GETPOST("action") == "set")
 	}
 }
 // If upgrade
-elseif (preg_match('/upgrade/i',GETPOST("action")))
+elseif (preg_match('/upgrade/i',$action))
 {
 	if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE) || ($conf->global->MAIN_VERSION_LAST_UPGRADE == DOL_VERSION))
 	{

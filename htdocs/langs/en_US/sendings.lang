@@ -50,6 +50,8 @@ WarningNoQtyLeftToSend=Warning, no products waiting to be shipped.
 StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated
 DateDeliveryPlanned=Planed date of delivery
 DateReceived=Date delivery received
+SendShippingByEMail=Send shipping by EMail
+SendShippingRef=Send shipping %s
 
 # Sending methods
 SendingMethodCATCH=Catch by customer

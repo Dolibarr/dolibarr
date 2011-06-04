@@ -109,8 +109,6 @@ INSERT INTO llx_c_availability (rowid,code,label,active) VALUES (2, 'AV_1W',  '1
 INSERT INTO llx_c_availability (rowid,code,label,active) VALUES (3, 'AV_2W',  '2 weeks', 1);
 INSERT INTO llx_c_availability (rowid,code,label,active) VALUES (4, 'AV_3W',  '3 weeks', 1);
 
-ALTER TABLE llx_actioncomm ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER id;
-
 ALTER TABLE llx_propaldet ADD INDEX idx_propaldet_fk_product (fk_product);
 ALTER TABLE llx_commandedet ADD INDEX idx_commandedet_fk_product (fk_product);
 ALTER TABLE llx_facturedet ADD INDEX idx_facturedet_fk_product (fk_product);
@@ -134,6 +132,13 @@ ALTER TABLE llx_livraison ADD COLUMN ref_int varchar(30) AFTER ref_ext;
 
 INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (4,'LETTREMAX','Lettre Max','Courrier Suivi et Lettre Max',0);
 INSERT INTO llx_c_actioncomm (id, code, type, libelle, module, position) VALUES ( 10, 'AC_SHIP', 'system', 'Send shipping by email'	,'shipping', 11);
+
+ALTER TABLE llx_actioncomm DROP INDEX idx_actioncomm_fk_facture;
+ALTER TABLE llx_actioncomm DROP INDEX idx_actioncomm_fk_supplier_order;
+ALTER TABLE llx_actioncomm DROP INDEX idx_actioncomm_fk_supplier_invoice;
+ALTER TABLE llx_actioncomm ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER id;
+ALTER TABLE llx_actioncomm ADD COLUMN fk_element integer DEFAULT NULL AFTER note;
+ALTER TABLE llx_actioncomm ADD COLUMN elementtype varchar(16) DEFAULT NULL AFTER fk_element;
 
 --Add Chile data (id pays=67)
 -- Regions Chile

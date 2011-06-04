@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2008-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2010	Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2011		Regis Houssin		<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,28 +40,30 @@ $action=$_POST["action"];
 
 // List of all events supported by triggers
 $eventstolog=array(
-	array('id'=>'COMPANY_CREATE',         'test'=>$conf->societe->enabled),
-	array('id'=>'CONTRACT_VALIDATE',      'test'=>$conf->contrat->enabled),
-	array('id'=>'PROPAL_VALIDATE',        'test'=>$conf->propal->enabled),
-	array('id'=>'PROPAL_SENTBYMAIL',      'test'=>$conf->propal->enabled),
-	array('id'=>'ORDER_VALIDATE',         'test'=>$conf->commande->enabled),
-	array('id'=>'ORDER_SENTBYMAIL',       'test'=>$conf->commande->enabled),
-	array('id'=>'BILL_VALIDATE',          'test'=>$conf->facture->enabled),
-	array('id'=>'BILL_PAYED',             'test'=>$conf->facture->enabled),
-	array('id'=>'BILL_CANCEL',            'test'=>$conf->facture->enabled),
-	array('id'=>'BILL_SENTBYMAIL',        'test'=>$conf->facture->enabled),
-	array('id'=>'FICHEINTER_VALIDATE',    'test'=>$conf->ficheinter->enabled),
-	array('id'=>'ORDER_SUPPLIER_VALIDATE','test'=>$conf->fournisseur->enabled),
+	array('id'=>'COMPANY_CREATE',			'test'=>$conf->societe->enabled),
+	array('id'=>'CONTRACT_VALIDATE',		'test'=>$conf->contrat->enabled),
+	array('id'=>'PROPAL_VALIDATE',			'test'=>$conf->propal->enabled),
+	array('id'=>'PROPAL_SENTBYMAIL',		'test'=>$conf->propal->enabled),
+	array('id'=>'ORDER_VALIDATE',			'test'=>$conf->commande->enabled),
+	array('id'=>'ORDER_SENTBYMAIL',			'test'=>$conf->commande->enabled),
+	array('id'=>'BILL_VALIDATE',			'test'=>$conf->facture->enabled),
+	array('id'=>'BILL_PAYED',				'test'=>$conf->facture->enabled),
+	array('id'=>'BILL_CANCEL',				'test'=>$conf->facture->enabled),
+	array('id'=>'BILL_SENTBYMAIL',			'test'=>$conf->facture->enabled),
+	array('id'=>'FICHEINTER_VALIDATE',		'test'=>$conf->ficheinter->enabled),
+	array('id'=>'ORDER_SUPPLIER_VALIDATE',	'test'=>$conf->fournisseur->enabled),
 	array('id'=>'ORDER_SUPPLIER_SENTBYMAIL','test'=>$conf->fournisseur->enabled),
-	array('id'=>'BILL_SUPPLIER_VALIDATE', 'test'=>$conf->fournisseur->enabled),
-	array('id'=>'BILL_SUPPLIER_PAYED',    'test'=>$conf->fournisseur->enabled),
-	array('id'=>'BILL_SUPPLIER_SENTBYMAIL',    'test'=>$conf->fournisseur->enabled),
-//	array('id'=>'PAYMENT_CUSTOMER_CREATE','test'=>$conf->facture->enabled),
-//	array('id'=>'PAYMENT_SUPPLIER_CREATE','test'=>$conf->fournisseur->enabled),
-	array('id'=>'MEMBER_VALIDATE',        'test'=>$conf->adherent->enabled),
-	array('id'=>'MEMBER_SUBSCRIPTION',    'test'=>$conf->adherent->enabled),
-	array('id'=>'MEMBER_RESILIATE',       'test'=>$conf->adherent->enabled),
-	array('id'=>'MEMBER_DELETE',          'test'=>$conf->adherent->enabled),
+	array('id'=>'BILL_SUPPLIER_VALIDATE',	'test'=>$conf->fournisseur->enabled),
+	array('id'=>'BILL_SUPPLIER_PAYED',		'test'=>$conf->fournisseur->enabled),
+	array('id'=>'BILL_SUPPLIER_SENTBYMAIL',	'test'=>$conf->fournisseur->enabled),
+	array('id'=>'SHIPPING_VALIDATE', 		'test'=>$conf->expedition_bon->enabled),
+	array('id'=>'SHIPPING_SENTBYMAIL',		'test'=>$conf->expedition_bon->enabled),
+//	array('id'=>'PAYMENT_CUSTOMER_CREATE',	'test'=>$conf->facture->enabled),
+//	array('id'=>'PAYMENT_SUPPLIER_CREATE',	'test'=>$conf->fournisseur->enabled),
+	array('id'=>'MEMBER_VALIDATE',			'test'=>$conf->adherent->enabled),
+	array('id'=>'MEMBER_SUBSCRIPTION',		'test'=>$conf->adherent->enabled),
+	array('id'=>'MEMBER_RESILIATE',			'test'=>$conf->adherent->enabled),
+	array('id'=>'MEMBER_DELETE',			'test'=>$conf->adherent->enabled),
 );
 
 

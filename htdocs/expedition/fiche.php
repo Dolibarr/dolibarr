@@ -404,11 +404,12 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
                         $error=0;
 
                         // Initialisation donnees
-                        $object->sendtoid=$sendtoid;
-                        $object->actiontypecode=$actiontypecode;
-                        $object->actionmsg = $actionmsg;
-                        $object->actionmsg2= $actionmsg2;
-                        $object->shippingrowid=$object->id;
+                        $object->sendtoid		= $sendtoid;
+                        $object->actiontypecode	= $actiontypecode;
+                        $object->actionmsg		= $actionmsg;
+                        $object->actionmsg2		= $actionmsg2;
+                        $object->fk_element		= $object->id;
+						$object->elementtype	= $object->element;
 
                         // Appel des triggers
                         include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
@@ -1296,11 +1297,9 @@ else
 			print '</td><td valign="top" width="50%">';
 			
 			// List of actions on element
-			/*
 			include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php');
 			$formactions=new FormActions($db);
 			$somethingshown=$formactions->showactions($object,'shipping',$socid);
-			*/
 			
 			print '</td></tr></table>';
 		}
@@ -1315,7 +1314,7 @@ else
 			$file = $conf->expedition->dir_output . '/sending/' . $ref . '/' . $ref . '.pdf';
 			
 			print '<br>';
-			print_titre($langs->trans('SendShippingByMail'));
+			print_titre($langs->trans('SendShippingByEMail'));
 			
 			// Cree l'objet formulaire mail
 			include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');

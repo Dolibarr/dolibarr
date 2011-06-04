@@ -1277,11 +1277,12 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
                         $error=0;
 
                         // Initialisation donnees
-                        $object->sendtoid=$sendtoid;
-                        $object->actiontypecode=$actiontypecode;
-                        $object->actionmsg = $actionmsg;  // Long text
-                        $object->actionmsg2= $actionmsg2; // Short text
-                        $object->facid=$object->id;
+                        $object->sendtoid		= $sendtoid;
+                        $object->actiontypecode	= $actiontypecode;
+                        $object->actionmsg		= $actionmsg;  // Long text
+                        $object->actionmsg2		= $actionmsg2; // Short text
+                        $object->fk_element		= $object->id;
+						$object->elementtype	= $object->element;
 
                         // Appel des triggers
                         include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");

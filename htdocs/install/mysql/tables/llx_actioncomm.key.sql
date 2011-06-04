@@ -1,5 +1,6 @@
 -- ============================================================================
--- Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2005-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
+-- Copyright (C) 2011		Regis Houssin		<regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,6 +23,3 @@
 ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_datea (datea);
 ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_fk_soc (fk_soc);
 ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_fk_contact (fk_contact);
-ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_fk_facture (fk_facture);
-ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_fk_supplier_order (fk_supplier_order);
-ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_fk_supplier_invoice (fk_supplier_invoice);

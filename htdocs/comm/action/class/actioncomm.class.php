@@ -75,11 +75,8 @@ class ActionComm extends CommonObject
     var $percentage;
 
     // Properties for links to other tables
-    var $orderrowid;
-    var $propalrowid;
-    var $facid;
-    var $supplierorderrowid;
-    var $supplierinvoicerowid;
+    var $fk_element;
+    var $elementtype;
     
     // Ical 
     var $icalname;
@@ -177,11 +174,8 @@ class ActionComm extends CommonObject
 		$sql.= "fk_user_action,";
 		$sql.= "fk_user_done,";
 		$sql.= "label,percent,priority,fulldayevent,location,punctual,";
-        $sql.= "fk_facture,";
-        $sql.= "propalrowid,";
-        $sql.= "fk_commande,";
-        $sql.= "fk_supplier_invoice,";
-        $sql.= "fk_supplier_order,";
+        $sql.= "fk_element,";
+        $sql.= "elementtype,";
         $sql.= "entity";
         $sql.= ") VALUES (";
         $sql.= "'".$this->db->idate($now)."',";
@@ -200,11 +194,8 @@ class ActionComm extends CommonObject
 		$sql.= ($this->usertodo->id > 0?"'".$this->usertodo->id."'":"null").",";
 		$sql.= ($this->userdone->id > 0?"'".$this->userdone->id."'":"null").",";
 		$sql.= "'".$this->db->escape($this->label)."','".$this->percentage."','".$this->priority."','".$this->fulldayevent."','".$this->db->escape($this->location)."','".$this->punctual."',";
-        $sql.= ($this->facid?$this->facid:"null").",";
-        $sql.= ($this->propalrowid?$this->propalrowid:"null").",";
-        $sql.= ($this->orderrowid?$this->orderrowid:"null").",";
-        $sql.= ($this->supplierinvoicerowid?$this->supplierinvoicerowid:"null").",";
-        $sql.= ($this->supplierorderrowid?$this->supplierorderrowid:"null").",";
+        $sql.= ($this->fk_element?$this->fk_element:"null").",";
+        $sql.= ($this->elementtype?"'".$this->elementtype."'":"null").",";
         $sql.= $conf->entity;
         $sql.= ")";
 
@@ -255,7 +246,8 @@ class ActionComm extends CommonObject
 		$sql.= " a.fk_project,";
 		$sql.= " a.fk_user_author, a.fk_user_mod,";
 		$sql.= " a.fk_user_action, a.fk_user_done,";
-		$sql.= " a.fk_contact, a.percent as percentage, a.fk_facture, a.fk_commande, a.propalrowid,";
+		$sql.= " a.fk_contact, a.percent as percentage,";
+		$sql.= " a.fk_element, a.elementtype,";
 		$sql.= " a.priority, a.fulldayevent, a.location,";
 		$sql.= " c.id as type_id, c.code as type_code, c.libelle,";
 		$sql.= " s.nom as socname,";
@@ -289,23 +281,27 @@ class ActionComm extends CommonObject
 				$this->datec   = $this->db->jdate($obj->datec);
 				$this->datem   = $this->db->jdate($obj->datem);
 
-				$this->note =$obj->note;
-				$this->percentage =$obj->percentage;
+				$this->note			= $obj->note;
+				$this->percentage	= $obj->percentage;
 
-				$this->author->id  = $obj->fk_user_author;
-				$this->usermod->id  = $obj->fk_user_mod;
+				$this->author->id	= $obj->fk_user_author;
+				$this->usermod->id	= $obj->fk_user_mod;
 
-				$this->usertodo->id  = $obj->fk_user_action;
-				$this->userdone->id  = $obj->fk_user_done;
-				$this->priority = $obj->priority;
-                $this->fulldayevent = $obj->fulldayevent;
-				$this->location = $obj->location;
+				$this->usertodo->id	= $obj->fk_user_action;
+				$this->userdone->id	= $obj->fk_user_done;
+				$this->priority		= $obj->priority;
+                $this->fulldayevent	= $obj->fulldayevent;
+				$this->location		= $obj->location;
 
-				$this->socid       = $obj->fk_soc;	// To have fetch_thirdparty method working
-				$this->societe->id = $obj->fk_soc;
-				$this->contact->id = $obj->fk_contact;
-				$this->fk_project = $obj->fk_project;
+				$this->socid		= $obj->fk_soc;	// To have fetch_thirdparty method working
+				$this->societe->id	= $obj->fk_soc;
+				$this->contact->id	= $obj->fk_contact;
+				$this->fk_project	= $obj->fk_project;
+				
+				$this->fk_element	= $obj->fk_element;
+				$this->elementtype	= $obj->elementtype;
 
+				/*
 				$this->fk_facture = $obj->fk_facture;
 				if ($this->fk_facture)
 				{
@@ -326,7 +322,7 @@ class ActionComm extends CommonObject
 					$this->objet_url = img_object($langs->trans("ShowOrder"),'order').' '.'<a href="'. DOL_URL_ROOT . '/commande/fiche.php?id='.$this->fk_commande.'">'.$langs->trans("Order").'</a>';
 					$this->objet_url_type = 'order';
 				}
-
+				*/
 			}
 			$this->db->free($resql);
 			return 1;
@@ -694,7 +690,8 @@ class ActionComm extends CommonObject
 			$sql.= " a.fk_soc,";
 			$sql.= " a.fk_user_author, a.fk_user_mod,";
 			$sql.= " a.fk_user_action, a.fk_user_done,";
-			$sql.= " a.fk_contact, a.fk_facture, a.percent as percentage, a.fk_commande,";
+			$sql.= " a.fk_contact, a.percent as percentage,";
+			$sql.= " a.fk_element, a.elementtype,";
 			$sql.= " a.priority, a.fulldayevent, a.location,";
 			$sql.= " u.firstname, u.name,";
 			$sql.= " s.nom as socname,";
