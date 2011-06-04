@@ -140,6 +140,31 @@ ALTER TABLE llx_actioncomm ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER id
 ALTER TABLE llx_actioncomm ADD COLUMN fk_element integer DEFAULT NULL AFTER note;
 ALTER TABLE llx_actioncomm ADD COLUMN elementtype varchar(16) DEFAULT NULL AFTER fk_element;
 
+create table llx_c_action_trigger
+(
+  rowid			integer AUTO_INCREMENT PRIMARY KEY,
+  entity		integer		DEFAULT 1	NOT NULL,
+  code			varchar(32)				NOT NULL,
+  label			varchar(128)			NOT NULL,
+  description	varchar(255),
+  elementtype	varchar(16) 			NOT NULL,
+  active		tinyint		DEFAULT 1 	NOT NULL,
+  rang			integer		DEFAULT 0
+  
+)ENGINE=innodb;
+
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (1,'FICHEINTER_VALIDATE','Validation fiche intervention','Executed when a intervention is validated','ficheinter');
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (2,'BILL_VALIDATE','Validation facture client','Executed when a customer invoice is approved','facture');
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (3,'ORDER_SUPPLIER_APPROVE','Approbation commande fournisseur','Executed when a supplier order is approved','order_supplier');
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (4,'ORDER_SUPPLIER_REFUSE','Refus commande fournisseur','Executed when a supplier order is refused','order_supplier');
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (5,'ORDER_VALIDATE','Validation commande client','Executed when a customer order is validated','order');
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (6,'PROPAL_VALIDATE','Validation proposition client','Executed when a commercial proposal is validated','propal');
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (7,'WITHDRAW_TRANSMIT','Transmission prélèvement','Executed when a withdrawal is transmited','withdraw');
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (8,'WITHDRAW_CREDIT','Créditer prélèvement','Executed when a withdrawal is credited','withdraw');
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (9,'WITHDRAW_EMIT','Emission prélèvement','Executed when a withdrawal is emited','withdraw');
+
+DROP table llx_action_def;
+
 --Add Chile data (id pays=67)
 -- Regions Chile
 INSERT INTO llx_c_regions (rowid, code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (6701, 6701, 67, NULL, NULL, 'Tarapacá', 1);

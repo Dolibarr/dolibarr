@@ -170,8 +170,10 @@ if ( $soc->fetch($soc->id) )
 	if (count($soc->thirdparty_and_contact_email_array()) > 0)
 	{
 		// Load array of notifications type available
-		$sql = "SELECT a.rowid, a.code, a.titre";
-		$sql.= " FROM ".MAIN_DB_PREFIX."action_def as a";
+		$sql = "SELECT a.rowid, a.code, a.label";
+		$sql.= " FROM ".MAIN_DB_PREFIX."c_action_trigger as a";
+		$sql.= " WHERE a.entity = ".$conf->entity;
+		$sql.= " AND a.active = 1";
 
 		$resql=$db->query($sql);
 		if ($resql)
@@ -181,8 +183,8 @@ if ( $soc->fetch($soc->id) )
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
-				$libelle=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->titre);
-				$actions[$obj->rowid] = $libelle;
+				$label=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->label);
+				$actions[$obj->rowid] = $label;
 
 				$i++;
 			}
@@ -235,11 +237,14 @@ if ( $soc->fetch($soc->id) )
 
 	// List of notifications for contacts
 	$sql = "SELECT n.rowid, n.type,";
-	$sql.= " a.code, a.titre,";
-    $sql.= " c.rowid as id, c.name, c.firstname, c.email";
-	$sql.= " FROM ".MAIN_DB_PREFIX."action_def as a, ".MAIN_DB_PREFIX."notify_def as n,";
+	$sql.= " a.code, a.label,";
+    $sql.= " c.rowid as contactid, c.name, c.firstname, c.email";
+	$sql.= " FROM ".MAIN_DB_PREFIX."c_action_trigger as a,";
+	$sql.= " ".MAIN_DB_PREFIX."notify_def as n,";
 	$sql.= " ".MAIN_DB_PREFIX."socpeople c";
-	$sql.= " WHERE a.rowid = n.fk_action AND c.rowid = n.fk_contact AND c.fk_soc = ".$soc->id;
+	$sql.= " WHERE a.rowid = n.fk_action";
+	$sql.= " AND c.rowid = n.fk_contact";
+	$sql.= " AND c.fk_soc = ".$soc->id;
 
 	$resql=$db->query($sql);
 	if ($resql)
@@ -255,7 +260,7 @@ if ( $soc->fetch($soc->id) )
 
 			$obj = $db->fetch_object($resql);
 
-			$contactstatic->id=$obj->id;
+			$contactstatic->id=$obj->contactid;
 			$contactstatic->name=$obj->name;
 			$contactstatic->firstname=$obj->firstname;
 			print '<tr '.$bc[$var].'><td>'.$contactstatic->getNomUrl(1);
@@ -273,8 +278,8 @@ if ( $soc->fetch($soc->id) )
 			}
 			print '</td>';
 			print '<td>';
-			$libelle=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->titre);
-			print $libelle;
+			$label=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->label);
+			print $label;
 			print '</td>';
             print '<td>';
             if ($obj->type == 'email') print $langs->trans("Email");
@@ -307,13 +312,16 @@ if ( $soc->fetch($soc->id) )
 	print_liste_field_titre($langs->trans("Date"),"fiche.php","a.titre",'',"&socid=$socid",'align="right"',$sortfield,$sortorder);
 	print '</tr>';
 
-	// Liste
+	// List
 	$sql = "SELECT n.rowid, n.daten, n.email, n.objet_type, n.objet_id,";
 	$sql.= " c.rowid as id, c.name, c.firstname, c.email,";
-	$sql.= " a.code, a.titre";
-	$sql.= " FROM ".MAIN_DB_PREFIX."action_def as a, ".MAIN_DB_PREFIX."notify as n, ";
+	$sql.= " a.code, a.label";
+	$sql.= " FROM ".MAIN_DB_PREFIX."c_action_trigger as a,";
+	$sql.= " ".MAIN_DB_PREFIX."notify as n, ";
     $sql.= " ".MAIN_DB_PREFIX."socpeople as c";
-    $sql.= " WHERE a.rowid = n.fk_action AND c.rowid = n.fk_contact AND c.fk_soc = ".$soc->id;
+    $sql.= " WHERE a.rowid = n.fk_action";
+    $sql.= " AND c.rowid = n.fk_contact";
+    $sql.= " AND c.fk_soc = ".$soc->id;
 
 	$resql=$db->query($sql);
 	if ($resql)
@@ -336,8 +344,8 @@ if ( $soc->fetch($soc->id) )
 			print $obj->email?' &lt;'.$obj->email.'&gt;':$langs->trans("NoMail");
 			print '</td>';
 			print '<td>';
-			$libelle=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->titre);
-			print $libelle;
+			$label=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->label);
+			print $label;
 			print '</td>';
 			// TODO Add link to object here
 			// print

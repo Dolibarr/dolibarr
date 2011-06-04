@@ -33,8 +33,8 @@ Tools=Työkalut
 Birthday=Syntymäpäivä
 BirthdayDate=Syntymäpäivä
 DateToBirth=Päiväys syntyvyyden
-Notify_NOTIFY_VAL_FICHINTER=Validate interventioelimen
-Notify_NOTIFY_VAL_FAC=Validate bill
+Notify_FICHINTER_VALIDATE=Validate interventioelimen
+Notify_BILL_VALIDATE=Validate bill
 NbOfAttachedFiles=Numero liitettyjen tiedostojen / asiakirjat
 TotalSizeOfAttachedFiles=Kokonaiskoosta liitettyjen tiedostojen / asiakirjat
 MaxSize=Enimmäiskoko
@@ -162,8 +162,8 @@ NewExport=Uusia vientimahdollisuuksia
 // Reference language: en_US
 BirthdayAlertOn=syntymäpäivä hälytys aktiivinen
 BirthdayAlertOff=syntymäpäivä varoituskynnysten inaktiivinen
-Notify_NOTIFY_APP_ORDER_SUPPLIER=Toimittaja jotta hyväksytty
-Notify_NOTIFY_REF_ORDER_SUPPLIER=Toimittaja jotta evätty
+Notify_ORDER_SUPPLIER_APPROVE=Toimittaja jotta hyväksytty
+Notify_ORDER_SUPPLIER_REFUSE=Toimittaja jotta evätty
 DemoDesc=Dolibarr on kompakti ERP / CRM säveltänyt useita toiminnallisia moduuleja. A demo, joka sisältää kaikki moduulit eivät merkitse mitään, koska tämä ei koskaan tapahdu. Joten useita demo profiilit ovat saatavilla.
 DemoCompanyServiceOnly=Hallinnoi freelance toimintaa myymällä palvelua vain
 EMailTextInterventionValidated=Väliintulo %s validoitava
@@ -182,8 +182,8 @@ DemoFundation2=Jäsenten hallinta ja pankkitilille säätiön
 
 // START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
 // Reference language: en_US
-Notify_NOTIFY_VAL_ORDER=Asiakas tilaa validoitu
-Notify_NOTIFY_VAL_PROPAL=Asiakas ehdotus validoidaan
+Notify_ORDER_VALIDATE=Asiakas tilaa validoitu
+Notify_PROPAL_VALIDATE=Asiakas ehdotus validoidaan
 PredefinedMailTest=Tämä on testi postitse. \ NOsoitteen kaksi riviä välissä rivinvaihto.
 PredefinedMailTestHtml=Tämä on <b>testi</b> postitse (sana testi on lihavoitu). <br> Kaksi riviä välissä rivinvaihto.
 CalculatedWeight=Laskettu paino

@@ -1,7 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
--- Copyright (C) 2004 Guillaume Delecourt  <guillaume.delecourt@opensides.be>
+-- Copyright (C) 2011 Regis Houssin	<regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -20,12 +18,15 @@
 -- $Id$
 -- ===================================================================
 
-create table llx_action_def
+create table llx_c_action_trigger
 (
-  rowid           integer NOT NULL PRIMARY KEY,
-  code            varchar(32) UNIQUE NOT NULL,
-  tms             timestamp,
-  titre           varchar(255) NOT NULL,
-  description     text,
-  objet_type      varchar(16) NOT NULL
+  rowid			integer AUTO_INCREMENT PRIMARY KEY,
+  entity		integer		DEFAULT 1	NOT NULL,
+  code			varchar(32)				NOT NULL,
+  label			varchar(128)			NOT NULL,
+  description	varchar(255),
+  elementtype	varchar(16) 			NOT NULL,
+  active		tinyint		DEFAULT 1 	NOT NULL,
+  rang			integer		DEFAULT 0
+  
 )ENGINE=innodb;

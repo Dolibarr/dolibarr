@@ -35,8 +35,8 @@ Tools=Værktøj
 Birthday=Fødselsdag
 BirthdayDate=Fødselsdag
 DateToBirth=Dato for fødsel
-Notify_NOTIFY_VAL_FICHINTER=Valider intervention
-Notify_NOTIFY_VAL_FAC=Valider regningen
+Notify_FICHINTER_VALIDATE=Valider intervention
+Notify_BILL_VALIDATE=Valider regningen
 NbOfAttachedFiles=Antal vedhæftede filer / dokumenter
 TotalSizeOfAttachedFiles=Samlede størrelse på vedhæftede filer / dokumenter
 MaxSize=Maksimumstørrelse
@@ -162,8 +162,8 @@ NewExport=Nye eksportmarkeder
 // Reference language: en_US
 BirthdayAlertOn=fødselsdag alarm aktive
 BirthdayAlertOff=fødselsdag alarm inaktive
-Notify_NOTIFY_APP_ORDER_SUPPLIER=Leverandør for godkendt
-Notify_NOTIFY_REF_ORDER_SUPPLIER=Leverandør For nægtes
+Notify_ORDER_SUPPLIER_APPROVE=Leverandør for godkendt
+Notify_ORDER_SUPPLIER_REFUSE=Leverandør For nægtes
 DemoDesc=Dolibarr er et kompakt ERP / CRM sammensat af flere funktionelle moduler. En demo, som omfatter alle moduler ikke betyder noget, da dette aldrig sker. Så flere demo profiler der er tilgængelige.
 DemoCompanyServiceOnly=Administrer en freelance virksomhed sælger service kun
 SendNewPasswordDesc=Denne form giver dig mulighed for at anmode om en ny adgangskode. Det vil blive sendt til din email-adresse. <br> Ændring vil kun være effektiv, når de har klikket på bekræftelse linket i denne e-mail. <br> Tjek din e-mail reader software.
@@ -183,8 +183,8 @@ DemoFundation2=Administrer medlemmer og bankkonto i en fond
 
 // START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
 // Reference language: en_US
-Notify_NOTIFY_VAL_ORDER=Kundeordre valideret
-Notify_NOTIFY_VAL_PROPAL=Kunde forslag valideret
+Notify_ORDER_VALIDATE=Kundeordre valideret
+Notify_PROPAL_VALIDATE=Kunde forslag valideret
 PredefinedMailTest=Dette er en test mail. \ NDen to linjer er adskilt af et linjeskift.
 PredefinedMailTestHtml=Dette er en <b>test</b> mail (ordet test skal være i fed). <br> De to linjer er adskilt af et linjeskift.
 CalculatedWeight=Beregnet vægt

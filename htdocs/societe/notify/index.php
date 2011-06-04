@@ -59,15 +59,19 @@ $pagenext = $page + 1;
 
 llxHeader();
 
-$sql = "SELECT s.nom, s.rowid as socid, c.name, c.firstname, a.titre,n.rowid FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."action_def as a, ".MAIN_DB_PREFIX."notify_def as n, ".MAIN_DB_PREFIX."societe as s";
-$sql .= " WHERE n.fk_contact = c.rowid AND a.rowid = n.fk_action";
-$sql .= " AND n.fk_soc = s.rowid";
-if ($socid > 0)
-{
-	$sql .= " AND s.rowid = " . $user->societe_id;
-}
-$sql .= $db->order($sortfield,$sortorder);
-$sql .= $db->plimit($conf->liste_limit, $offset);
+$sql = "SELECT s.nom, s.rowid as socid, c.name, c.firstname, a.label, n.rowid";
+$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c,";
+$sql.= " ".MAIN_DB_PREFIX."c_action_trigger as a,";
+$sql.= " ".MAIN_DB_PREFIX."notify_def as n,";
+$sql.= " ".MAIN_DB_PREFIX."societe as s";
+$sql.= " WHERE n.fk_contact = c.rowid";
+$sql.= " AND a.rowid = n.fk_action";
+$sql.= " AND n.fk_soc = s.rowid";
+$sql.= " AND s.entity = ".$conf->entity;
+if ($socid > 0)	$sql.= " AND s.rowid = " . $user->societe_id;
+
+$sql.= $db->order($sortfield,$sortorder);
+$sql.= $db->plimit($conf->liste_limit, $offset);
 
 $result = $db->query($sql);
 if ($result)

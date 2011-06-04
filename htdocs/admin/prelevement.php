@@ -168,9 +168,12 @@ if ($conf->global->MAIN_MODULE_NOTIFICATION)
 		$db->free($resql);
 	}
 	
-	$sql = "SELECT rowid, code, titre";
-    $sql.= " FROM ".MAIN_DB_PREFIX."action_def";
-    $sql.= " WHERE objet_type = 'withdraw'";
+	$sql = "SELECT rowid, code, label";
+    $sql.= " FROM ".MAIN_DB_PREFIX."c_action_trigger";
+    $sql.= " WHERE elementtype = 'withdraw'";
+    $sql.= " AND entity = ".$conf->entity;
+    $sql.= " AND active = 1";
+    
     $resql = $db->query($sql);
     if ($resql)
     {
@@ -180,7 +183,7 @@ if ($conf->global->MAIN_MODULE_NOTIFICATION)
         while ($i < $num)
         {
             $obj = $db->fetch_object($resql);
-            $label=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->titre);
+            $label=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->label);
             $actions[$obj->rowid]=$label;
             $i++;
         }
@@ -209,13 +212,14 @@ if ($conf->global->MAIN_MODULE_NOTIFICATION)
 }
 // List of current notifications for objet_type='withdraw'
 $sql = "SELECT u.name, u.firstname";
-$sql.= ", nd.rowid, ad.code, ad.titre";
+$sql.= ", nd.rowid, ad.code, ad.label";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= ", ".MAIN_DB_PREFIX."notify_def as nd";
-$sql.= ", ".MAIN_DB_PREFIX."action_def as ad";
-$sql.= " WHERE u.rowid = nd.fk_user AND nd.fk_action = ad.rowid";
-$sql.= " AND ad.objet_type = 'withdraw'";
+$sql.= ", ".MAIN_DB_PREFIX."c_action_trigger as ad";
+$sql.= " WHERE u.rowid = nd.fk_user";
+$sql.= " AND nd.fk_action = ad.rowid";
 $sql.= " AND u.entity IN (0,".$conf->entity.")";
+
 $resql = $db->query($sql);
 if ($resql)
 {
@@ -229,7 +233,7 @@ if ($resql)
 
 		print "<tr $bc[$var]>";
 		print '<td>'.$obj->firstname." ".$obj->name.'</td>';
-		$label=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->titre);
+		$label=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->label);
 		print '<td>'.$label.'</td>';
 		print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=deletenotif&amp;notif='.$obj->rowid.'">'.img_delete().'</a></td>';
 		print '</tr>';

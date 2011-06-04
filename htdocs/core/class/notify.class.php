@@ -61,7 +61,7 @@ class Notify
     /**
      *    	\brief      Renvoie le message signalant les notifications qui auront lieu sur
      *					un evenement pour affichage dans texte de confirmation evenement.
-     * 		\param		action		Id of action in llx_action_def
+     * 		\param		action		Id of action in llx_c_action_trigger
      * 		\param		socid		Id of third party
      *		\return		string		Message
      */
@@ -79,20 +79,27 @@ class Notify
 
     /**
      *    	\brief      Return number of notifications activated for action code and third party
-     * 		\param		action		Code of action in llx_action_def (new usage) or Id of action in llx_action_def (old usage)
+     * 		\param		action		Code of action in llx_c_action_trigger (new usage) or Id of action in llx_c_action_trigger (old usage)
      * 		\param		socid		Id of third party
      * 		\return		int			<0 si ko, sinon nombre de notifications definies
      */
 	function countDefinedNotifications($action,$socid)
 	{
+		global $conf;
+		
         $num=-1;
 
-        $sql = "SELECT n.rowid, c.email, c.rowid, c.name, c.firstname, a.code, a.titre, s.nom";
-        $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."action_def as a, ".MAIN_DB_PREFIX."notify_def as n, ".MAIN_DB_PREFIX."societe as s";
-        $sql.= " WHERE n.fk_contact = c.rowid AND a.rowid = n.fk_action";
+        $sql = "SELECT n.rowid";
+        $sql.= " FROM ".MAIN_DB_PREFIX."notify_def as n,";
+        $sql.= " ".MAIN_DB_PREFIX."socpeople as c,";
+        $sql.= " ".MAIN_DB_PREFIX."c_action_trigger as a,";
+        $sql.= " ".MAIN_DB_PREFIX."societe as s";
+        $sql.= " WHERE n.fk_contact = c.rowid";
+        $sql.= " AND a.rowid = n.fk_action";
         $sql.= " AND n.fk_soc = s.rowid";
         if (is_numeric($action)) $sql.= " AND n.fk_action = ".$action;	// Old usage
         else $sql.= " AND a.code = '".$action."'";	// New usage
+        $sql.= " AND a.entity = ".$conf->entity;
         $sql.= " AND s.rowid = ".$socid;
 
 		dol_syslog("Notify.class::countDefinedNotifications $action, $socid");
@@ -114,7 +121,7 @@ class Notify
     /**
      *    	\brief      Check if notification are active for couple action/company.
      * 					If yes, send mail and save trace into llx_notify.
-     * 		\param		action		Code of action in llx_action_def (new usage) or Id of action in llx_action_def (old usage)
+     * 		\param		action		Code of action in llx_c_action_trigger (new usage) or Id of action in llx_c_action_trigger (old usage)
      * 		\param		socid		Id of third party
      * 		\param		texte		Message to send
      * 		\param		objet_type	Type of object the notification deals on (facture, order, propal, order_supplier...). Just for log in llx_notify.
@@ -131,8 +138,11 @@ class Notify
 		dol_syslog("Notify::send action=$action, socid=$socid, texte=$texte, objet_type=$objet_type, objet_id=$objet_id, file=$file");
 
 		$sql = "SELECT s.nom, c.email, c.rowid as cid, c.name, c.firstname,";
-		$sql.= " a.rowid as adid, a.titre, a.code, n.rowid";
-        $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."action_def as a, ".MAIN_DB_PREFIX."notify_def as n, ".MAIN_DB_PREFIX."societe as s";
+		$sql.= " a.rowid as adid, a.label, a.code, n.rowid";
+        $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c,";
+        $sql.= " ".MAIN_DB_PREFIX."c_action_trigger as a,";
+        $sql.= " ".MAIN_DB_PREFIX."notify_def as n,";
+        $sql.= " ".MAIN_DB_PREFIX."societe as s";
         $sql.= " WHERE n.fk_contact = c.rowid AND a.rowid = n.fk_action";
         $sql.= " AND n.fk_soc = s.rowid";
         if (is_numeric($action)) $sql.= " AND n.fk_action = ".$action;	// Old usage

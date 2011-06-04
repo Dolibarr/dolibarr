@@ -23,8 +23,8 @@ AddTrip						     =Aggiungi viaggio
 Tools						     =Strumenti 
 Birthday					     =Compleanno 
 BirthdayDate					     =Data compleanno 
-Notify_NOTIFY_VAL_FICHINTER			     =Convalida scheda intervento 
-Notify_NOTIFY_VAL_FAC				     =Convalida fattura cliente 
+Notify_FICHINTER_VALIDATE			     =Convalida scheda intervento 
+Notify_BILL_VALIDATE				     =Convalida fattura cliente 
 NbOfAttachedFiles				     =Numero di file allegati / documenti 
 TotalSizeOfAttachedFiles			     =Dimensione totale dei file allegati / documenti 
 MaxSize						     =La dimensione massima è 
@@ -162,8 +162,8 @@ MemberSubscriptionAddedInDolibarr=Abbonamento membro %s aggiunto in Dolibarr
 // Reference language: en_US
 BirthdayAlertOn=Attiva avviso compleanno
 BirthdayAlertOff=Avviso compleanno inattivo
-Notify_NOTIFY_APP_ORDER_SUPPLIER=Fornitore fine approvato
-Notify_NOTIFY_REF_ORDER_SUPPLIER=Fornitore rifiutato per
+Notify_ORDER_SUPPLIER_APPROVE=Fornitore fine approvato
+Notify_ORDER_SUPPLIER_REFUSE=Fornitore rifiutato per
 DemoDesc=Dolibarr è una applicazione ERP / CRM, composta da diversi moduli funzionali. Un demo che comprende tutti i moduli non è significativo riguardo al funzionamento. Così, diversi profili demo sono disponibili. 
 DemoCompanyServiceOnly=Gestire un servizio di free-lance di attività di solo vendita
 SendNewPasswordDesc=Questo modulo consente di richiedere una nuova password. Sarà inviata al tuo indirizzo email. <br> Il cambiamento sarà effettivo solo dopo aver fatto clic sul link di conferma all'interno dell'email. <br> Controlla la tua casella e-mail.
@@ -176,8 +176,8 @@ DolibarrNotification=Notifica automatica
 
 // START - Lines generated via autotranslator.php tool (2010-07-17 11:32:28).
 // Reference language: en_US
-Notify_NOTIFY_VAL_ORDER=ordine del cliente convalidato
-Notify_NOTIFY_VAL_PROPAL=proposta del cliente convalidato
+Notify_ORDER_VALIDATE=ordine del cliente convalidato
+Notify_PROPAL_VALIDATE=proposta del cliente convalidato
 PredefinedMailTest=Questa è una mail di prova. \ NIl due linee sono separate da un ritorno a capo.
 PredefinedMailTestHtml=Questa è una mail <b>di test</b> (il test di parola deve essere in grassetto). <br> Le due linee sono separate da un ritorno a capo.
 CalculatedWeight=Calcolo del peso

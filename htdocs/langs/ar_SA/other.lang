@@ -35,10 +35,10 @@ BirthdayDate=عيد ميلاد
 DateToBirth=تاريخ الميلاد
 BirthdayAlertOn=عيد ميلاد النشطة في حالة تأهب
 BirthdayAlertOff=عيد الميلاد فى حالة تأهب الخاملة
-Notify_NOTIFY_VAL_FICHINTER=تدخل المصادق
-Notify_NOTIFY_VAL_FAC=فاتورة مصادق
-Notify_NOTIFY_APP_ORDER_SUPPLIER=من أجل الموافقة على المورد
-Notify_NOTIFY_REF_ORDER_SUPPLIER=من أجل رفض الموردين
+Notify_FICHINTER_VALIDATE=تدخل المصادق
+Notify_BILL_VALIDATE=فاتورة مصادق
+Notify_ORDER_SUPPLIER_APPROVE=من أجل الموافقة على المورد
+Notify_ORDER_SUPPLIER_REFUSE=من أجل رفض الموردين
 NbOfAttachedFiles=عدد الملفات المرفقة / وثائق
 TotalSizeOfAttachedFiles=اجمالى حجم الملفات المرفقة / وثائق
 MaxSize=الحجم الأقصى
@@ -187,8 +187,8 @@ NumberOfUnitsProposals=عدد من الوحدات على مقترحات بشأن
 
 // START - Lines generated via autotranslator.php tool (2010-07-17 11:16:46).
 // Reference language: en_US
-Notify_NOTIFY_VAL_ORDER=التحقق من صحة النظام العميل
-Notify_NOTIFY_VAL_PROPAL=التحقق من صحة اقتراح العملاء
+Notify_ORDER_VALIDATE=التحقق من صحة النظام العميل
+Notify_PROPAL_VALIDATE=التحقق من صحة اقتراح العملاء
 PredefinedMailTest=هذا هو الاختبار الإلكتروني. تكون مفصولة \ nThe سطرين من قبل حرف إرجاع.
 PredefinedMailTestHtml=هذا هو البريد <b>الاختبار</b> (الاختبار يجب أن تكون في كلمة جريئة). <br> وتفصل بين الخطين من قبل حرف إرجاع.
 CalculatedWeight=يحسب الوزن
