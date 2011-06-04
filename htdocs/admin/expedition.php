@@ -240,6 +240,16 @@ if ($_GET["action"] == 'setmodel')
 	dolibarr_set_const($db, "EXPEDITION_ADDON_NUMBER",$_GET["value"],'chaine',0,'',$conf->entity);
 }
 
+if ($_POST["action"] == 'set_SHIPPING_DRAFT_WATERMARK')
+{
+	dolibarr_set_const($db, "SHIPPING_DRAFT_WATERMARK",trim($_POST["SHIPPING_DRAFT_WATERMARK"]),'chaine',0,'',$conf->entity);
+}
+
+if ($_POST["action"] == 'set_SHIPPING_FREE_TEXT')
+{
+	dolibarr_set_const($db, "SHIPPING_FREE_TEXT",$_POST["SHIPPING_FREE_TEXT"],'chaine',0,'',$conf->entity);
+}
+
 
 /*
  * View
@@ -513,7 +523,48 @@ foreach ($conf->file->dol_document_root as $dirroot)
 }
 
 print '</table>';
+print '<br>';
 
+
+/*
+ * Other options
+ *
+ */
+print_titre($langs->trans("OtherOptions"));
+
+$var=true;
+print "<table class=\"noborder\" width=\"100%\">";
+print "<tr class=\"liste_titre\">";
+print "<td>".$langs->trans("Parameter")."</td>\n";
+print '<td width="60" align="center">'.$langs->trans("Value")."</td>\n";
+print "<td>&nbsp;</td>\n";
+print "</tr>";
+
+$var=! $var;
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_SHIPPING_FREE_TEXT">';
+print '<tr '.$bc[$var].'><td colspan="2">';
+print $langs->trans("FreeLegalTextOnShippings").' ('.$langs->trans("AddCRIfTooLong").')<br>';
+print '<textarea name="SHIPPING_FREE_TEXT" class="flat" cols="120">'.$conf->global->SHIPPING_FREE_TEXT.'</textarea>';
+print '</td><td align="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print "</td></tr>\n";
+print '</form>';
+
+$var=!$var;
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_SHIPPING_DRAFT_WATERMARK">';
+print '<tr '.$bc[$var].'><td colspan="2">';
+print $langs->trans("WatermarkOnDraft").'<br>';
+print '<input size="50" class="flat" type="text" name="SHIPPING_DRAFT_WATERMARK" value="'.$conf->global->SHIPPING_DRAFT_WATERMARK.'">';
+print '</td><td align="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print "</td></tr>\n";
+print '</form>';
+
+print '</table>';
 
 $db->close();
 
