@@ -125,6 +125,7 @@ class FormActions
                 if ($typeelement == 'order')   $title=$langs->trans('ActionsOnOrder');
                 if ($typeelement == 'order_supplier' || $typeelement == 'supplier_order')   $title=$langs->trans('ActionsOnOrder');
                 if ($typeelement == 'project') $title=$langs->trans('ActionsOnProject');
+                if ($typeelement == 'shipping') $title=$langs->trans('ActionsOnShipping');
 
                 print_titre($title);
 

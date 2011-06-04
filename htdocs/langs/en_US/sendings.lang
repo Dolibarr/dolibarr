@@ -52,6 +52,7 @@ DateDeliveryPlanned=Planed date of delivery
 DateReceived=Date delivery received
 SendShippingByEMail=Send shipping by EMail
 SendShippingRef=Send shipping %s
+ActionsOnShipping=Acions on shipping
 
 # Sending methods
 SendingMethodCATCH=Catch by customer

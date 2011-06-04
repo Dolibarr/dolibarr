@@ -1270,10 +1270,10 @@ else
 			}
 
 			print '</div>';
+			print "<br>\n";
 		}
-		print "\n";
 
-		print '<table width="100%" cellspacing=2><tr><td width="50%" valign="top">';
+		print '<table width="100%"><tr><td width="50%" valign="top">';
 
 
 		/*
