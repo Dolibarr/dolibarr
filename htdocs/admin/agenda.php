@@ -37,8 +37,37 @@ $langs->load("agenda");
 
 $action=$_POST["action"];
 
+// Load array of notifications type available
+// TODO add function
+$sql = "SELECT a.rowid, a.code, a.label, a.elementtype";
+$sql.= " FROM ".MAIN_DB_PREFIX."c_action_trigger as a";
+$sql.= " WHERE a.entity = ".$conf->entity;
+$sql.= " AND a.active = 1";
+
+$resql=$db->query($sql);
+if ($resql)
+{
+	$num = $db->num_rows($resql);
+	$i = 0;
+	while ($i < $num)
+	{
+		$obj = $db->fetch_object($resql);
+		$triggers[$i]['rowid'] 		= $obj->rowid;
+		$triggers[$i]['code'] 		= $obj->code;
+		$triggers[$i]['element'] 	= $obj->elementtype;
+		$triggers[$i]['label']		= ($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->label);
+		
+		$i++;
+	}
+	$db->free($resql);
+}
+else
+{
+	dol_print_error($db);
+}
 
 // List of all events supported by triggers
+/*
 $eventstolog=array(
 	array('id'=>'COMPANY_CREATE',			'test'=>$conf->societe->enabled),
 	array('id'=>'CONTRACT_VALIDATE',		'test'=>$conf->contrat->enabled),
@@ -65,7 +94,7 @@ $eventstolog=array(
 	array('id'=>'MEMBER_RESILIATE',			'test'=>$conf->adherent->enabled),
 	array('id'=>'MEMBER_DELETE',			'test'=>$conf->adherent->enabled),
 );
-
+*/
 
 /*
 *	Actions
@@ -76,16 +105,16 @@ if ($_POST["action"] == "save" && empty($_POST["cancel"]))
 
     $db->begin();
 
-	foreach ($eventstolog as $key => $arr)
+	foreach ($triggers as $trigger)
 	{
-		$param='MAIN_AGENDA_ACTIONAUTO_'.$arr['id'];
+		$param='MAIN_AGENDA_ACTIONAUTO_'.$trigger['code'];
 		//print "param=".$param." - ".$_POST[$param];
 		if (! empty($_POST[$param])) dolibarr_set_const($db,$param,$_POST[$param],'chaine',0,'',$conf->entity);
 		else dolibarr_del_const($db,$param,$conf->entity);
 	}
 
     $db->commit();
-    $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    $mesg = '<font class="ok">'.$langs->trans("SetupSaved").'</font>';
 }
 
 
@@ -113,26 +142,32 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="save">';
 
 $var=true;
-print "<table class=\"noborder\" width=\"100%\">";
-print "<tr class=\"liste_titre\">";
-print "<td>".$langs->trans("ActionsEvents")."</td>";
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td colspan="2">'.$langs->trans("ActionsEvents").'</td>';
 print '<td><a href="'.$_SERVER["PHP_SELF"].'?action=selectall">'.$langs->trans("All").'</a>/<a href="'.$_SERVER["PHP_SELF"].'?action=selectnone">'.$langs->trans("None").'</a>';
-print "</tr>\n";
-foreach ($eventstolog as $key => $arr)
+print '</tr>'."\n";
+if (! empty($triggers))
 {
-	if ($arr['id'])
+	foreach ($triggers as $trigger)
 	{
-	    $var=!$var;
-	    print '<tr '.$bc[$var].'>';
-	    print '<td>'.$arr['id'];
-	    if (! $arr['test']) print ' ('.$langs->trans("ModuleDisabledSoNoEvent").')';
-	    print '</td>';
-	    print '<td align="right" width="40">';
-	    $key='MAIN_AGENDA_ACTIONAUTO_'.$arr['id'];
-		$value=$conf->global->$key;
-		if ($arr['test']) print '<input '.$bc[$var].' type="checkbox" name="'.$key.'" value="1"'.((($_GET["action"]=='selectall'||$value) && $_GET["action"]!="selectnone")?' checked="true"':'').'>';
-	    else print '<input '.$bc[$var].' type="checkbox" name="'.$key.'" value="0" disabled="true">';
-		print '</td></tr>'."\n";
+		$module = $trigger['element'];
+		if ($module == 'order_supplier' || $module == 'invoice_supplier') $module = 'fournisseur';
+		if ($module == 'shipping') $module = 'expedition_bon';
+		if ($module == 'member') $module = 'adherent';
+		//print 'module='.$module.'<br>';
+		if ($conf->$module->enabled)
+		{
+			$var=!$var;
+			print '<tr '.$bc[$var].'>';
+			print '<td>'.$trigger['code'].'</td>';
+			print '<td>'.$trigger['label'].'</td>';
+			print '<td align="right" width="40">';
+			$key='MAIN_AGENDA_ACTIONAUTO_'.$trigger['code'];
+			$value=$conf->global->$key;
+			print '<input '.$bc[$var].' type="checkbox" name="'.$key.'" value="1"'.((($_GET["action"]=='selectall'||$value) && $_GET["action"]!="selectnone")?' checked="true"':'').'>';
+			print '</td></tr>'."\n";
+		}
 	}
 }
 print '</table>';

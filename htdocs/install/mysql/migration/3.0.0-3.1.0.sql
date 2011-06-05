@@ -140,6 +140,7 @@ ALTER TABLE llx_actioncomm ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER id
 ALTER TABLE llx_actioncomm ADD COLUMN fk_element integer DEFAULT NULL AFTER note;
 ALTER TABLE llx_actioncomm ADD COLUMN elementtype varchar(16) DEFAULT NULL AFTER fk_element;
 
+DROP table llx_c_action_trigger;
 create table llx_c_action_trigger
 (
   rowid			integer AUTO_INCREMENT PRIMARY KEY,
@@ -157,11 +158,29 @@ INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALU
 INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (2,'BILL_VALIDATE','Validation facture client','Executed when a customer invoice is approved','facture');
 INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (3,'ORDER_SUPPLIER_APPROVE','Approbation commande fournisseur','Executed when a supplier order is approved','order_supplier');
 INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (4,'ORDER_SUPPLIER_REFUSE','Refus commande fournisseur','Executed when a supplier order is refused','order_supplier');
-INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (5,'ORDER_VALIDATE','Validation commande client','Executed when a customer order is validated','order');
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (5,'ORDER_VALIDATE','Validation commande client','Executed when a customer order is validated','commande');
 INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (6,'PROPAL_VALIDATE','Validation proposition client','Executed when a commercial proposal is validated','propal');
 INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (7,'WITHDRAW_TRANSMIT','Transmission prélèvement','Executed when a withdrawal is transmited','withdraw');
 INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (8,'WITHDRAW_CREDIT','Créditer prélèvement','Executed when a withdrawal is credited','withdraw');
 INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (9,'WITHDRAW_EMIT','Emission prélèvement','Executed when a withdrawal is emited','withdraw');
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (10,'COMPANY_CREATE','Third party created','Executed when a third party is created','societe');
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (11,'CONTRACT_VALIDATE','Contract validated','Executed when a contract is validated','contrat');
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (12,'PROPAL_SENTBYMAIL','Commercial proposal sent by mail','Executed when a commercial proposal is sent by mail','propal');
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (13,'ORDER_SENTBYMAIL','Customer order sent by mail','Executed when a customer order is sent by mail ','commande');
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (14,'BILL_PAYED','Customer invoice payed','Executed when a customer invoice is payed','facture');
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (15,'BILL_CANCEL','Customer invoice canceled','Executed when a customer invoice is conceled','facture');
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (16,'BILL_SENTBYMAIL','Customer invoice sent by mail','Executed when a customer invoice is sent by mail','facture');
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (17,'ORDER_SUPPLIER_VALIDATE','Supplier order validated','Executed when a supplier order is validated','order_supplier');
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (18,'ORDER_SUPPLIER_SENTBYMAIL','Supplier order sent by mail','Executed when a supplier order is sent by mail','order_supplier');
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (19,'BILL_SUPPLIER_VALIDATE','Supplier invoice validated','Executed when a supplier invoice is validated','invoice_supplier');
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (20,'BILL_SUPPLIER_PAYED','Supplier invoice payed','Executed when a supplier invoice is payed','invoice_supplier');
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (21,'BILL_SUPPLIER_SENTBYMAIL','Supplier invoice sent by mail','Executed when a supplier invoice is sent by mail','invoice_supplier');
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (22,'SHIPPING_VALIDATE','Shipping validated','Executed when a shipping is validated','shipping');
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (23,'SHIPPING_SENTBYMAIL','Shipping sent by mail','Executed when a shipping is sent by mail','shipping');
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (24,'MEMBER_VALIDATE','Member validated','Executed when a member is validated','member');
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (25,'MEMBER_SUBSCRIPTION','Member subscribed','Executed when a member is subscribed','member');
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (26,'MEMBER_RESILIATE','Member resiliated','Executed when a member is resiliated','member');
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (27,'MEMBER_DELETE','Member deleted','Executed when a member is deleted','member');
 
 DROP table llx_action_def;
 
@@ -240,7 +259,7 @@ INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, nc
 
 --Add Mexique data (id pays=154)
 -- Regions Mexique
-insert into llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) values (15401,  154, 15401, '', 0, 'Mexique', 1);
+INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (15401,  154, 15401, '', 0, 'Mexique', 1);
 -- Provinces Mexique
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('DIF', 15401, '', 0, 'DIF', 'Distrito Federal', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('AGS', 15401, '', 0, 'AGS', 'Aguascalientes', 1);
@@ -278,7 +297,7 @@ INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, nc
 
 --Add Colombie data (id pays=70)
 -- Regions Colombie 
-insert into llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) values (7001,  70, 7001, '', 0, 'Colombie', 1);
+INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (7001,  70, 7001, '', 0, 'Colombie', 1);
 -- Provinces Colombie
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('ANT', 7001, '', 0, 'ANT', 'Antioquia', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('BOL', 7001, '', 0, 'BOL', 'Bolívar', 1);
@@ -316,7 +335,7 @@ INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, nc
 
 --Add Honduras data (id pays=114)
 -- Regions Honduras 
-insert into llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) values (11401,  114, 11401, '', 0, 'Honduras', 1);
+INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (11401,  114, 11401, '', 0, 'Honduras', 1);
 -- Provinces Honduras
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('AT', 11401, '', 0, 'AT', 'Atlántida', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('CH', 11401, '', 0, 'CH', 'Choluteca', 1);
@@ -338,7 +357,7 @@ INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, nc
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('YO', 11401, '', 0, 'YO', 'Yoro', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('DC', 11401, '', 0, 'DC', 'Distrito Central', 1);
 -- Currency Honduras
-insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'LH', 'HNL', 1, 'Lempiras');
+INSERT INTO llx_c_currencies ( code, code_iso, active, label ) VALUES ( 'LH', 'HNL', 1, 'Lempiras');
 -- ISV (VAT) Honduras
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1141,114,     '0','0','No ISV',1);
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1142,114,     '12','0','ISV 12%',1);
+INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (1141,114,     '0','0','No ISV',1);
+INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (1142,114,     '12','0','ISV 12%',1);
