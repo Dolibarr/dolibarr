@@ -261,7 +261,7 @@ class ActionsCardCommon
                     $oldsoccanvas->getCanvas('thirdparty','card',$this->object->canvas);
                     $result=$oldsoccanvas->fetch($socid);
 
-                    // To do not set code if third party is not concerned. But if it had values, we keep them.
+                    // To avoid setting code if third party is not concerned. But if it had values, we keep them.
                     if (empty($this->object->client) && empty($oldsoccanvas->control->object->code_client))             $this->object->code_client='';
                     if (empty($this->object->fournisseur)&& empty($oldsoccanvas->control->object->code_fournisseur))    $this->object->code_fournisseur='';                    //var_dump($soccanvas);exit;
 
@@ -276,7 +276,7 @@ class ActionsCardCommon
                         $this->object->id = $socid;
                         $reload = 0;
                         $this->errors = $this->object->errors;
-                        GETPOST("action")= "edit";
+                        $_GET["action"]="edit";
                     }
                 }
             }
@@ -297,7 +297,7 @@ class ActionsCardCommon
             {
                 $reload = 0;
                 $this->errors=$this->object->errors;
-                GETPOST("action")='';
+                $_GET["action"]='';
             }
         }
 
