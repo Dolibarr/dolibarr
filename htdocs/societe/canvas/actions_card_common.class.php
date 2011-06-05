@@ -49,7 +49,7 @@ class ActionsCardCommon
     /**
      *    Constructor
      *    @param   DB              Handler acces base de donnees
-     *    @param   targmetmodule   Name of directory of module where canvas is stored
+     *    @param   targetmodule    Name of directory of module where canvas is stored
      *    @param   canvas          Name of canvas
      *    @param   card            Name of tab (sub-canvas)
 	 */
@@ -261,10 +261,9 @@ class ActionsCardCommon
                     $oldsoccanvas->getCanvas('thirdparty','card',$this->object->canvas);
                     $result=$oldsoccanvas->fetch($socid);
 
-                    // To not set code if third party is not concerned. But if it had values, we keep them.
+                    // To do not set code if third party is not concerned. But if it had values, we keep them.
                     if (empty($this->object->client) && empty($oldsoccanvas->control->object->code_client))             $this->object->code_client='';
-                    if (empty($this->object->fournisseur)&& empty($oldsoccanvas->control->object->code_fournisseur))    $this->object->code_fournisseur='';
-                    //var_dump($soccanvas);exit;
+                    if (empty($this->object->fournisseur)&& empty($oldsoccanvas->control->object->code_fournisseur))    $this->object->code_fournisseur='';                    //var_dump($soccanvas);exit;
 
                     $result = $this->object->update($socid,$user,1,$oldsoccanvas->control->object->codeclient_modifiable(),$oldsoccanvas->control->object->codefournisseur_modifiable());
                     if ($result >= 0)
@@ -277,7 +276,7 @@ class ActionsCardCommon
                         $this->object->id = $socid;
                         $reload = 0;
                         $this->errors = $this->object->errors;
-                        $_GET["action"]= "edit";
+                        GETPOST("action")= "edit";
                     }
                 }
             }
@@ -298,7 +297,7 @@ class ActionsCardCommon
             {
                 $reload = 0;
                 $this->errors=$this->object->errors;
-                $_GET["action"]='';
+                GETPOST("action")='';
             }
         }
 
@@ -536,7 +535,7 @@ class ActionsCardCommon
         }
         else
         {
-            /* TODO dol_fiche_head and dol_fiche_end must return a string and no do a print
+            /* TODO dol_fiche_head and dol_fiche_end must return a string and not do a print
             $head = societe_prepare_head($this->object);
             $title = $this->getTitle($action);
 

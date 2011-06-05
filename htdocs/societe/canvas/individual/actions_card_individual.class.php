@@ -38,7 +38,7 @@ class ActionsCardIndividual extends ActionsCardCommon
     /**
      *    Constructor
      *    @param   DB              Handler acces base de donnees
-     *    @param   targmetmodule   Name of directory of module where canvas is stored
+     *    @param   targetmodule    Name of directory of module where canvas is stored
      *    @param   canvas          Name of canvas
      *    @param   card            Name of tab (sub-canvas)
      */
