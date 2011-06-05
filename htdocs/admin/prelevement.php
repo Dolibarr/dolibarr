@@ -171,8 +171,7 @@ if ($conf->global->MAIN_MODULE_NOTIFICATION)
 	$sql = "SELECT rowid, code, label";
     $sql.= " FROM ".MAIN_DB_PREFIX."c_action_trigger";
     $sql.= " WHERE elementtype = 'withdraw'";
-    $sql.= " AND entity = ".$conf->entity;
-    $sql.= " AND active = 1";
+    $sql.= " ORDER BY rang ASC";
     
     $resql = $db->query($sql);
     if ($resql)

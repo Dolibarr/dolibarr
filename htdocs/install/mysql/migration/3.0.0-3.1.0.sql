@@ -144,43 +144,43 @@ DROP table llx_c_action_trigger;
 create table llx_c_action_trigger
 (
   rowid			integer AUTO_INCREMENT PRIMARY KEY,
-  entity		integer		DEFAULT 1	NOT NULL,
   code			varchar(32)				NOT NULL,
   label			varchar(128)			NOT NULL,
   description	varchar(255),
   elementtype	varchar(16) 			NOT NULL,
-  active		tinyint		DEFAULT 1 	NOT NULL,
   rang			integer		DEFAULT 0
   
 )ENGINE=innodb;
 
-INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (1,'FICHEINTER_VALIDATE','Validation fiche intervention','Executed when a intervention is validated','ficheinter');
-INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (2,'BILL_VALIDATE','Validation facture client','Executed when a customer invoice is approved','facture');
-INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (3,'ORDER_SUPPLIER_APPROVE','Approbation commande fournisseur','Executed when a supplier order is approved','order_supplier');
-INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (4,'ORDER_SUPPLIER_REFUSE','Refus commande fournisseur','Executed when a supplier order is refused','order_supplier');
-INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (5,'ORDER_VALIDATE','Validation commande client','Executed when a customer order is validated','commande');
-INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (6,'PROPAL_VALIDATE','Validation proposition client','Executed when a commercial proposal is validated','propal');
-INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (7,'WITHDRAW_TRANSMIT','Transmission prélèvement','Executed when a withdrawal is transmited','withdraw');
-INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (8,'WITHDRAW_CREDIT','Créditer prélèvement','Executed when a withdrawal is credited','withdraw');
-INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (9,'WITHDRAW_EMIT','Emission prélèvement','Executed when a withdrawal is emited','withdraw');
-INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (10,'COMPANY_CREATE','Third party created','Executed when a third party is created','societe');
-INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (11,'CONTRACT_VALIDATE','Contract validated','Executed when a contract is validated','contrat');
-INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (12,'PROPAL_SENTBYMAIL','Commercial proposal sent by mail','Executed when a commercial proposal is sent by mail','propal');
-INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (13,'ORDER_SENTBYMAIL','Customer order sent by mail','Executed when a customer order is sent by mail ','commande');
-INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (14,'BILL_PAYED','Customer invoice payed','Executed when a customer invoice is payed','facture');
-INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (15,'BILL_CANCEL','Customer invoice canceled','Executed when a customer invoice is conceled','facture');
-INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (16,'BILL_SENTBYMAIL','Customer invoice sent by mail','Executed when a customer invoice is sent by mail','facture');
-INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (17,'ORDER_SUPPLIER_VALIDATE','Supplier order validated','Executed when a supplier order is validated','order_supplier');
-INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (18,'ORDER_SUPPLIER_SENTBYMAIL','Supplier order sent by mail','Executed when a supplier order is sent by mail','order_supplier');
-INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (19,'BILL_SUPPLIER_VALIDATE','Supplier invoice validated','Executed when a supplier invoice is validated','invoice_supplier');
-INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (20,'BILL_SUPPLIER_PAYED','Supplier invoice payed','Executed when a supplier invoice is payed','invoice_supplier');
-INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (21,'BILL_SUPPLIER_SENTBYMAIL','Supplier invoice sent by mail','Executed when a supplier invoice is sent by mail','invoice_supplier');
-INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (22,'SHIPPING_VALIDATE','Shipping validated','Executed when a shipping is validated','shipping');
-INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (23,'SHIPPING_SENTBYMAIL','Shipping sent by mail','Executed when a shipping is sent by mail','shipping');
-INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (24,'MEMBER_VALIDATE','Member validated','Executed when a member is validated','member');
-INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (25,'MEMBER_SUBSCRIPTION','Member subscribed','Executed when a member is subscribed','member');
-INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (26,'MEMBER_RESILIATE','Member resiliated','Executed when a member is resiliated','member');
-INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype) VALUES (27,'MEMBER_DELETE','Member deleted','Executed when a member is deleted','member');
+ALTER TABLE llx_c_action_trigger ADD UNIQUE INDEX uk_action_trigger_code (code);
+
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) VALUES (1,'FICHEINTER_VALIDATE','Validation fiche intervention','Executed when a intervention is validated','ficheinter',18);
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) VALUES (2,'BILL_VALIDATE','Validation facture client','Executed when a customer invoice is approved','facture',6);
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) VALUES (3,'ORDER_SUPPLIER_APPROVE','Approbation commande fournisseur','Executed when a supplier order is approved','order_supplier',11);
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) VALUES (4,'ORDER_SUPPLIER_REFUSE','Refus commande fournisseur','Executed when a supplier order is refused','order_supplier',12);
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) VALUES (5,'ORDER_VALIDATE','Validation commande client','Executed when a customer order is validated','commande',4);
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) VALUES (6,'PROPAL_VALIDATE','Validation proposition client','Executed when a commercial proposal is validated','propal',2);
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) VALUES (7,'WITHDRAW_TRANSMIT','Transmission prélèvement','Executed when a withdrawal is transmited','withdraw',25);
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) VALUES (8,'WITHDRAW_CREDIT','Créditer prélèvement','Executed when a withdrawal is credited','withdraw',26);
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) VALUES (9,'WITHDRAW_EMIT','Emission prélèvement','Executed when a withdrawal is emited','withdraw',27);
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) VALUES (10,'COMPANY_CREATE','Third party created','Executed when a third party is created','societe',1);
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) VALUES (11,'CONTRACT_VALIDATE','Contract validated','Executed when a contract is validated','contrat',17);
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) VALUES (12,'PROPAL_SENTBYMAIL','Commercial proposal sent by mail','Executed when a commercial proposal is sent by mail','propal',3);
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) VALUES (13,'ORDER_SENTBYMAIL','Customer order sent by mail','Executed when a customer order is sent by mail ','commande',5);
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) VALUES (14,'BILL_PAYED','Customer invoice payed','Executed when a customer invoice is payed','facture',7);
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) VALUES (15,'BILL_CANCEL','Customer invoice canceled','Executed when a customer invoice is conceled','facture',8);
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) VALUES (16,'BILL_SENTBYMAIL','Customer invoice sent by mail','Executed when a customer invoice is sent by mail','facture',9);
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) VALUES (17,'ORDER_SUPPLIER_VALIDATE','Supplier order validated','Executed when a supplier order is validated','order_supplier',10);
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) VALUES (18,'ORDER_SUPPLIER_SENTBYMAIL','Supplier order sent by mail','Executed when a supplier order is sent by mail','order_supplier',13);
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) VALUES (19,'BILL_SUPPLIER_VALIDATE','Supplier invoice validated','Executed when a supplier invoice is validated','invoice_supplier',14);
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) VALUES (20,'BILL_SUPPLIER_PAYED','Supplier invoice payed','Executed when a supplier invoice is payed','invoice_supplier',15);
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) VALUES (21,'BILL_SUPPLIER_SENTBYMAIL','Supplier invoice sent by mail','Executed when a supplier invoice is sent by mail','invoice_supplier',16);
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) VALUES (22,'SHIPPING_VALIDATE','Shipping validated','Executed when a shipping is validated','shipping',19);
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) VALUES (23,'SHIPPING_SENTBYMAIL','Shipping sent by mail','Executed when a shipping is sent by mail','shipping',20);
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) VALUES (24,'MEMBER_VALIDATE','Member validated','Executed when a member is validated','member',21);
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) VALUES (25,'MEMBER_SUBSCRIPTION','Member subscribed','Executed when a member is subscribed','member',22);
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) VALUES (26,'MEMBER_RESILIATE','Member resiliated','Executed when a member is resiliated','member',23);
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) VALUES (27,'MEMBER_DELETE','Member deleted','Executed when a member is deleted','member',24);
 
 DROP table llx_action_def;
 

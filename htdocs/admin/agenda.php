@@ -41,8 +41,7 @@ $action=$_POST["action"];
 // TODO add function
 $sql = "SELECT a.rowid, a.code, a.label, a.elementtype";
 $sql.= " FROM ".MAIN_DB_PREFIX."c_action_trigger as a";
-$sql.= " WHERE a.entity = ".$conf->entity;
-$sql.= " AND a.active = 1";
+$sql.= " ORDER BY a.rang ASC";
 
 $resql=$db->query($sql);
 if ($resql)
