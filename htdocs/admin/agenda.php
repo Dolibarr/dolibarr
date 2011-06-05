@@ -37,7 +37,7 @@ $langs->load("agenda");
 
 $action=$_POST["action"];
 
-// Load array of notifications type available
+// Load array of all events supported by triggers
 // TODO add function
 $sql = "SELECT a.rowid, a.code, a.label, a.elementtype";
 $sql.= " FROM ".MAIN_DB_PREFIX."c_action_trigger as a";
@@ -66,35 +66,6 @@ else
 	dol_print_error($db);
 }
 
-// List of all events supported by triggers
-/*
-$eventstolog=array(
-	array('id'=>'COMPANY_CREATE',			'test'=>$conf->societe->enabled),
-	array('id'=>'CONTRACT_VALIDATE',		'test'=>$conf->contrat->enabled),
-	array('id'=>'PROPAL_VALIDATE',			'test'=>$conf->propal->enabled),
-	array('id'=>'PROPAL_SENTBYMAIL',		'test'=>$conf->propal->enabled),
-	array('id'=>'ORDER_VALIDATE',			'test'=>$conf->commande->enabled),
-	array('id'=>'ORDER_SENTBYMAIL',			'test'=>$conf->commande->enabled),
-	array('id'=>'BILL_VALIDATE',			'test'=>$conf->facture->enabled),
-	array('id'=>'BILL_PAYED',				'test'=>$conf->facture->enabled),
-	array('id'=>'BILL_CANCEL',				'test'=>$conf->facture->enabled),
-	array('id'=>'BILL_SENTBYMAIL',			'test'=>$conf->facture->enabled),
-	array('id'=>'FICHEINTER_VALIDATE',		'test'=>$conf->ficheinter->enabled),
-	array('id'=>'ORDER_SUPPLIER_VALIDATE',	'test'=>$conf->fournisseur->enabled),
-	array('id'=>'ORDER_SUPPLIER_SENTBYMAIL','test'=>$conf->fournisseur->enabled),
-	array('id'=>'BILL_SUPPLIER_VALIDATE',	'test'=>$conf->fournisseur->enabled),
-	array('id'=>'BILL_SUPPLIER_PAYED',		'test'=>$conf->fournisseur->enabled),
-	array('id'=>'BILL_SUPPLIER_SENTBYMAIL',	'test'=>$conf->fournisseur->enabled),
-	array('id'=>'SHIPPING_VALIDATE', 		'test'=>$conf->expedition_bon->enabled),
-	array('id'=>'SHIPPING_SENTBYMAIL',		'test'=>$conf->expedition_bon->enabled),
-//	array('id'=>'PAYMENT_CUSTOMER_CREATE',	'test'=>$conf->facture->enabled),
-//	array('id'=>'PAYMENT_SUPPLIER_CREATE',	'test'=>$conf->fournisseur->enabled),
-	array('id'=>'MEMBER_VALIDATE',			'test'=>$conf->adherent->enabled),
-	array('id'=>'MEMBER_SUBSCRIPTION',		'test'=>$conf->adherent->enabled),
-	array('id'=>'MEMBER_RESILIATE',			'test'=>$conf->adherent->enabled),
-	array('id'=>'MEMBER_DELETE',			'test'=>$conf->adherent->enabled),
-);
-*/
 
 /*
 *	Actions
