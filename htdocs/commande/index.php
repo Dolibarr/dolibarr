@@ -100,7 +100,8 @@ if ($resql)
     $totalinprocess=0;
     $dataseries=array();
     $vals=array();
-    // -1=Canceled, 0=Draft, 1=Validated, (2=Accepted/On process not managed for customer orders), 3=Closed (Sent/Received, billed or not)
+    $bool=false;
+    // -1=Canceled, 0=Draft, 1=Validated, 2=Accepted/On process, 3=Closed (Sent/Received, billed or not)
     while ($i < $num)
     {
         $row = $db->fetch_row($resql);
@@ -108,7 +109,8 @@ if ($resql)
         {
             //if ($row[1]!=-1 && ($row[1]!=3 || $row[2]!=1))
             {
-                $vals[$row[1]]=$row[0];
+                $bool=$row[2]?true:false;
+                $vals[$row[1].$bool]+=$row[0];
                 $totalinprocess+=$row[0];
             }
             $total+=$row[0];
@@ -116,22 +118,14 @@ if ($resql)
         $i++;
     }
     $db->free($resql);
-
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("CustomersOrders").'</td></tr>'."\n";
     $var=true;
-    $listofstatus=array(0,1,3,3,-1); $bool=false;
+    $listofstatus=array(0,1,2,3,3,-1);
+    $bool=false;
     foreach ($listofstatus as $status)
     {
-        $dataseries[]=array('label'=>$commandestatic->LibStatut($status,$bool,0),'values'=>array(0=>(isset($vals[$status])?$vals[$status]:0)));
-        if (! $conf->use_javascript_ajax)
-        {
-            $var=!$var;
-            print "<tr ".$bc[$var].">";
-            print '<td>'.$commandestatic->LibStatut($status,$bool,0).'</td>';
-            print '<td align="right"><a href="liste.php?statut='.$status.'">'.(isset($vals[$status])?$vals[$status]:0).'</a></td>';
-            print "</tr>\n";
-        }
+        $dataseries[]=array('label'=>$commandestatic->LibStatut($status,$bool,0),'values'=>array(0=>(isset($vals[$status.$bool])?$vals[$status.$bool]:0)));
         if ($status==3 && $bool==false) $bool=true;
         else $bool=false;
     }
@@ -141,6 +135,23 @@ if ($resql)
         $data=array('series'=>$dataseries);
         dol_print_graph('stats',300,180,$data,1,'pie');
         print '</td></tr>';
+    }
+    $bool=false;
+    foreach ($listofstatus as $status)
+    {
+        if (! $conf->use_javascript_ajax)
+        {
+            $var=!$var;
+            print "<tr ".$bc[$var].">";
+            print '<td>'.$commandestatic->LibStatut($status,$bool,0).'</td>';
+            print '<td align="right"><a href="liste.php?viewstatut='.$status.'">'.(isset($vals[$status.$bool])?$vals[$status.$bool]:0).' ';
+            print $commandestatic->LibStatut($status,$bool,3);
+            print '</a>';
+            print '</td>';
+            print "</tr>\n";
+            if ($status==3 && $bool==false) $bool=true;
+            else $bool=false;
+        }
     }
     //if ($totalinprocess != $total)
     //print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("CustomersOrdersRunning").')</td><td align="right">'.$totalinprocess.'</td></tr>';

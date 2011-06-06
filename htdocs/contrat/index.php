@@ -197,13 +197,16 @@ $var=true;
 $listofstatus=array(0,4,4,5); $bool=false;
 foreach($listofstatus as $status)
 {
-	$var=!$var;
-	print "<tr ".$bc[$var].">";
-	print '<td>'.$staticcontratligne->LibStatut($status,0,($bool?1:0)).'</td>';
-	print '<td align="right"><a href="services.php?mode='.$status.($bool?'&filter=expired':'').'">'.($nb[$status.$bool]?$nb[$status.$bool]:0).' '.$staticcontratligne->LibStatut($status,3,($bool?1:0)).'</a></td>';
-	if ($status==4 && $bool==false) $bool=true;
-	else $bool=false;
-    print "</tr>\n";
+    if (! $conf->use_javascript_ajax)
+    {
+        $var=!$var;
+    	print "<tr ".$bc[$var].">";
+    	print '<td>'.$staticcontratligne->LibStatut($status,0,($bool?1:0)).'</td>';
+    	print '<td align="right"><a href="services.php?mode='.$status.($bool?'&filter=expired':'').'">'.($nb[$status.$bool]?$nb[$status.$bool]:0).' '.$staticcontratligne->LibStatut($status,3,($bool?1:0)).'</a></td>';
+    	if ($status==4 && $bool==false) $bool=true;
+    	else $bool=false;
+        print "</tr>\n";
+    }
 }
 //if ($totalinprocess != $total)
 //print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("ServicesRunning").')</td><td align="right">'.$totalinprocess.'</td></tr>';
