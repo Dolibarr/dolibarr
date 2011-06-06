@@ -1235,7 +1235,7 @@ function dolibarr_trunc($string,$size=40,$trunc='right',$stringencoding='')
  *  @param      width           Width in pixel
  *  @param      height          Height in pixel
  *  @param      data            Data array
- *  @param      showlegend      Show legend
+ *  @param      showlegend      1 to show legend, 0 otherwise
  *  @param      type            Type of graph ('pie', 'barline')
  *  @param      showpercent     Show percent (with type='pie' only)
  *  @param      url             Param to add an url to click values
