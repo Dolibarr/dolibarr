@@ -183,7 +183,7 @@ if ($conf->use_javascript_ajax)
     $dataseries[]=array('label'=>$langs->trans("MembersStatusResiliated"),'values'=>array(round($SommeD)));
     $dataseries[]=array('label'=>$langs->trans("MembersStatusToValid"),'values'=>array(round($SommeA)));
     $data=array('series'=>$dataseries);
-    dol_print_graph('stats',300,180,$data,1,'pie');
+    dol_print_graph('stats',300,180,$data,1,'pie',1);
     print '</td></tr>';
     print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">';
     print $SommeA+$SommeB+$SommeC+$SommeD;

@@ -108,7 +108,7 @@ if ($conf->use_javascript_ajax && ((round($third['prospect'])?1:0)+(round($third
     if ($conf->societe->enabled && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS)) $dataseries[]=array('label'=>$langs->trans("Customers"),'values'=>array(round($third['customer'])));
     if ($conf->fournisseur->enabled && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS)) $dataseries[]=array('label'=>$langs->trans("Suppliers"),'values'=>array(round($third['supplier'])));
     $data=array('series'=>$dataseries);
-    dol_print_graph('stats',300,180,$data,1,'pie');
+    dol_print_graph('stats',300,180,$data,1,'pie',0);
     print '</td></tr>';
 }
 else

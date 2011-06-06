@@ -1236,9 +1236,10 @@ function dolibarr_trunc($string,$size=40,$trunc='right',$stringencoding='')
  *  @param      height          Height in pixel
  *  @param      data            Data array
  *  @param      showlegend      Show legend
- *  @param      type            Type of graph (pie, bar, line)
+ *  @param      type            Type of graph ('pie', 'barline')
+ *  @param      showpercent     Show percent (with type='pie' only)
  */
-function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie')
+function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',$showpercent=0)
 {
     global $conf,$langs;
     global $theme_datacolor;    // To have var kept when function is called several times
@@ -1301,7 +1302,7 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie')
                                     var percent=Math.round(series.percent);
                                     var number=series.data[0][1];
                                     return \'<div style="font-size:8pt;text-align:center;padding:2px;color:white;">\'+'.($showlegend?'number':'label+\'<br/>\'+number');
-                            if (! empty($showpercent)) print '+\'<br/>\'+percent';
+                            if (! empty($showpercent)) print '+\'<br/>\'+percent+\'%\'';
                             print '+\'</div>\';
                                 },
                                 background: {
