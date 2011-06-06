@@ -134,14 +134,13 @@ function show_array_actions_to_do($max=5)
 	$sql = "SELECT a.id, a.label, a.datep as dp, a.fk_user_author, a.percent,";
 	$sql.= " c.code, c.libelle,";
 	$sql.= " s.nom as sname, s.rowid, s.client";
-	$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
+	$sql.= " FROM (".MAIN_DB_PREFIX."actioncomm as a";
 	$sql.= ", ".MAIN_DB_PREFIX."c_actioncomm as c";
-	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql.= ")";
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid AND s.entity IN (0, ".$conf->entity.")";
 	$sql.= " WHERE c.id = a.fk_action";
-    $sql.= " AND ((a.percent >= 0 AND percent < 100) OR (a.percent > -1 AND a.datep2 > '".$db->idate($now)."'))";
-	$sql.= " AND s.rowid = a.fk_soc";
-	$sql.= " AND s.entity = ".$conf->entity;
+    $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep2 > '".$db->idate($now)."'))";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid) $sql.= " AND s.rowid = ".$socid;
 	$sql.= " ORDER BY a.datep DESC, a.id DESC";
@@ -155,7 +154,7 @@ function show_array_actions_to_do($max=5)
 	    {
 	        print '<table class="noborder" width="100%">';
 	        print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("LastActionsToDo",$max).'</td>';
-			print '<td colspan="2" align="right"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?status=todo">'.$langs->trans("FullList").'</a>';
+			print '<td colspan="4" align="right"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?status=todo">'.$langs->trans("FullList").'</a>';
 			print '</tr>';
 	        $var = true;
 	        $i = 0;
@@ -171,16 +170,21 @@ function show_array_actions_to_do($max=5)
 	            print "<tr $bc[$var]>";
 
 	            $staticaction->type_code=$obj->code;
-	            $staticaction->libelle=$obj->libelle;
+	            $staticaction->libelle=$obj->label;
 	            $staticaction->id=$obj->id;
-	            print '<td>'.$staticaction->getNomUrl(1,12).'</td>';
+	            print '<td>'.$staticaction->getNomUrl(1,34).'</td>';
 
-	            print '<td>'.dol_trunc($obj->label,22).'</td>';
+	           // print '<td>'.dol_trunc($obj->label,22).'</td>';
 
-	            $customerstatic->id=$obj->rowid;
-	            $customerstatic->name=$obj->sname;
-	            $customerstatic->client=$obj->client;
-	            print '<td>'.$customerstatic->getNomUrl(1,'',16).'</td>';
+	            print '<td>';
+	            if ($obj->rowid > 0)
+                {
+                    $customerstatic->id=$obj->rowid;
+                    $customerstatic->name=$obj->sname;
+                    $customerstatic->client=$obj->client;
+                    print $customerstatic->getNomUrl(1,'',16);
+                }
+                print '</td>';
 
 	            $datep=$db->jdate($obj->dp);
 	            $datep2=$db->jdate($obj->dp2);
@@ -196,7 +200,7 @@ function show_array_actions_to_do($max=5)
 				print "</td>";
 
 				// Statut
-				print "<td align=\"center\" width=\"14\">".$staticaction->LibStatut($obj->percent,3)."</td>\n";
+				print "<td align=\"right\" width=\"14\">".$staticaction->LibStatut($obj->percent,3)."</td>\n";
 
 				print "</tr>\n";
 
@@ -226,16 +230,15 @@ function show_array_last_actions_done($max=5)
 	$sql = "SELECT a.id, a.percent, a.datep as da, a.datep2 as da2, a.fk_user_author, a.label,";
 	$sql.= " c.code, c.libelle,";
 	$sql.= " s.rowid, s.nom as sname, s.client";
-	$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
+	$sql.= " FROM (".MAIN_DB_PREFIX."actioncomm as a";
 	$sql.= ", ".MAIN_DB_PREFIX."c_actioncomm as c";
-	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql.=")";
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid AND s.entity IN (0, ".$conf->entity.")";
 	$sql.= " WHERE c.id = a.fk_action";
     $sql.= " AND (a.percent >= 100 OR (a.percent = -1 AND a.datep2 <= '".$db->idate($now)."'))";
-	$sql.= " AND s.rowid = a.fk_soc";
-	$sql.= " AND s.entity = ".$conf->entity;
-	if ($socid)	$sql.= " AND s.rowid = ".$socid;
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+    if ($socid) $sql.= " AND s.rowid = ".$socid;
 	$sql .= " ORDER BY a.datep2 DESC";
 	$sql .= $db->plimit($max, 0);
 
@@ -246,7 +249,7 @@ function show_array_last_actions_done($max=5)
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("LastDoneTasks",$max).'</td>';
-		print '<td colspan="2" align="right"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?status=done">'.$langs->trans("FullList").'</a>';
+		print '<td colspan="4" align="right"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?status=done">'.$langs->trans("FullList").'</a>';
 		print '</tr>';
 		$var = true;
 		$i = 0;
@@ -261,24 +264,29 @@ function show_array_last_actions_done($max=5)
 
 			print "<tr $bc[$var]>";
 
-			$staticaction->code=$obj->code;
-			$staticaction->libelle=$obj->libelle;
+			$staticaction->type_code=$obj->code;
+			$staticaction->libelle=$obj->label;
 			$staticaction->id=$obj->id;
-			print '<td>'.$staticaction->getNomUrl(1,12).'</td>';
+			print '<td>'.$staticaction->getNomUrl(1,34).'</td>';
 
-            print '<td>'.dol_trunc($obj->label,24).'</td>';
+            //print '<td>'.dol_trunc($obj->label,24).'</td>';
 
-			$customerstatic->id=$obj->rowid;
-			$customerstatic->name=$obj->sname;
-			$customerstatic->client=$obj->client;
-			print '<td>'.$customerstatic->getNomUrl(1,'',24).'</td>';
+			print '<td>';
+			if ($obj->rowid > 0)
+			{
+                $customerstatic->id=$obj->rowid;
+                $customerstatic->name=$obj->sname;
+                $customerstatic->client=$obj->client;
+			    print $customerstatic->getNomUrl(1,'',24);
+			}
+			print '</td>';
 
 			// Date
 			print '<td width="100" align="right">'.dol_print_date($db->jdate($obj->da2),'day');
 			print "</td>";
 
 			// Statut
-			print "<td align=\"center\" width=\"14\">".$staticaction->LibStatut($obj->percent,3)."</td>\n";
+			print "<td align=\"right\" width=\"14\">".$staticaction->LibStatut($obj->percent,3)."</td>\n";
 
 			print "</tr>\n";
 			$i++;
