@@ -37,6 +37,7 @@ if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/p
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
 if ($conf->contrat->enabled) require_once(DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
 if ($conf->adherent->enabled) require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
+if ($conf->ficheinter->enabled) require_once(DOL_DOCUMENT_ROOT."/fichinter/class/fichinter.class.php");
 if (!empty($conf->global->MAIN_MODULE_CHRONODOCS)) require_once(DOL_DOCUMENT_ROOT."/chronodocs/chronodocs_entries.class.php");
 
 $langs->load("companies");
@@ -621,11 +622,13 @@ if ($socid > 0)
 	{
 		print '<table class="noborder" width="100%">';
 
-		$sql = "SELECT s.nom, s.rowid, f.rowid as id, f.ref, f.datei as di";
+		$sql = "SELECT s.nom, s.rowid, f.rowid as id, f.ref, f.duree as duration, f.datei as startdate";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as f";
 		$sql .= " WHERE f.fk_soc = s.rowid";
 		$sql .= " AND s.rowid = ".$objsoc->id;
 		$sql .= " ORDER BY f.tms DESC";
+
+		$fichinter_static=new Fichinter($db);
 
 		$resql=$db->query($sql);
 		if ($resql)
@@ -642,10 +645,14 @@ if ($socid > 0)
 			$i = 0;
 			while ($i < $num && $i < $MAXLIST)
 			{
+                $fichinter_static->id=$objp->id;
+
 				$objp = $db->fetch_object($resql);
-				print "<tr $bc[$var]>";
-				print '<td nowrap><a href="'.DOL_URL_ROOT.'/fichinter/fiche.php?id='.$objp->id.'">'.img_object($langs->trans("ShowPropal"),"propal").' '.$objp->ref.'</a>'."\n";
-				print '</td><td align="right">'.dol_print_date($db->jdate($objp->di),"day").'</td>'."\n";
+				print "<tr ".$bc[$var].">";
+				print '<td nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/fichinter/fiche.php?id='.$objp->id.'">'.img_object($langs->trans("ShowPropal"),"propal").' '.$objp->ref.'</a></td>'."\n";
+                //print '<td align="right">'.dol_print_date($db->jdate($objp->startdate)).'</td>'."\n";
+				print '<td align="right">'.ConvertSecondToTime($objp->duration).'</td>'."\n";
+				print '<td align="right">'.$fichinter_static->getLibStatut(3).'</td>'."\n";
 				print '</tr>';
 				$var=!$var;
 				$i++;
