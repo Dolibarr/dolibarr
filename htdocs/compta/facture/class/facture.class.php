@@ -136,11 +136,11 @@ class Facture extends CommonObject
 
     /**
      *	Create invoice in database
+     *  Note: this->ref can be set or empty. If empty, we will use "(PROV)"
      *	@param     	user       		Object user that create
      *	@param      notrigger		1=Does not execute triggers, 0 otherwise
      * 	@param		forceduedate	1=Do not recalculate due date from payment condition but force it with value
      *	@return		int				<0 if KO, >0 if OK
-     *	@remarks	this->ref can be set or empty. If empty, we will use "(PROV)"
      */
     function create($user,$notrigger=0,$forceduedate=0)
     {
@@ -600,6 +600,84 @@ class Facture extends CommonObject
             $this->db->rollback();
             return -1;
         }
+    }
+
+    /**
+     *      Load an object from an order and create a new invoice into database
+     *      @param      object          Object source
+     *      @return     int             <0 if KO, 0 if nothing done, 1 if OK
+     */
+    function createFromOrder($object)
+    {
+        global $conf,$user,$langs;
+
+        $error=0;
+
+        // Closed order
+        $this->date = dol_now();
+        $this->source = 0;
+
+        for ($i = 0 ; $i < sizeof($object->lines) ; $i++)
+        {
+            $line = new FactureLigne($this->db);
+
+            $line->libelle           = $object->lines[$i]->libelle;
+            $line->desc              = $object->lines[$i]->desc;
+            $line->price             = $object->lines[$i]->price;
+            $line->subprice          = $object->lines[$i]->subprice;
+            $line->tva_tx            = $object->lines[$i]->tva_tx;
+            $line->localtax1_tx      = $object->lines[$i]->localtax1_tx;
+            $line->localtax2_tx      = $object->lines[$i]->localtax2_tx;
+            $line->qty               = $object->lines[$i]->qty;
+            $line->fk_remise_except  = $object->lines[$i]->fk_remise_except;
+            $line->remise_percent    = $object->lines[$i]->remise_percent;
+            $line->fk_product        = $object->lines[$i]->fk_product;
+            $line->info_bits         = $object->lines[$i]->info_bits;
+            $line->product_type      = $object->lines[$i]->product_type;
+            $line->rang              = $object->lines[$i]->rang;
+            $line->special_code      = $object->lines[$i]->special_code;
+            $line->fk_parent_line    = $object->lines[$i]->fk_parent_line;
+
+            $this->lines[$i] = $line;
+        }
+
+        $this->socid                = $object->socid;
+        $this->fk_project           = $object->fk_project;
+        $this->cond_reglement_id    = $object->cond_reglement_id;
+        $this->mode_reglement_id    = $object->mode_reglement_id;
+        $this->availability_id      = $object->availability_id;
+        $this->demand_reason_id     = $object->demand_reason_id;
+        $this->date_livraison       = $object->date_livraison;
+        $this->fk_delivery_address  = $object->fk_delivery_address;
+        $this->contact_id           = $object->contactid;
+        $this->ref_client           = $object->ref_client;
+        $this->note                 = $object->note;
+        $this->note_public          = $object->note_public;
+
+        $this->origin      = $object->element;
+        $this->origin_id   = $object->id;
+
+        $ret = $this->create($user);
+
+        if ($ret > 0)
+        {
+            // Hooks
+            if (! empty($object->hooks['objectcard']))
+            {
+                foreach($object->hooks['objectcard'] as $module)
+                {
+                    $result = $module->createfrom($object,$ret,$this->element);
+                    if ($result < 0) $error++;
+                }
+            }
+
+            if (! $error)
+            {
+                return 1;
+            }
+            else return -1;
+        }
+        else return -1;
     }
 
     /**

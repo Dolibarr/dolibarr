@@ -4,3 +4,6 @@ WorkflowSetup=Configuration du module workflow
 WorkflowDesc=Ce module vous permet de modifier le comportement d'enchainement automatisé. Par défaut, le workflow est ouvert et non imposé. A vous d'activer les liens automatiques qui vous intéressent.
 ThereIsNoWorkflowToModify=Il n'y a pas de flux workflow modifiable pour les modules que vous avez activés. 
 descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Créer une commande client automatiquement à la signature d'une proposition commerciale
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Créer une facture client automatiquement à la signature d'une proposition commerciale
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Créer une facture client automatiquement à la validation d'un contrat
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Créer une facture client automatiquement à la cloture d'une commande client

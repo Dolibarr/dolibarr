@@ -444,20 +444,25 @@ class Commande extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Cloture la commande
-	 * 		\param      user        Objet utilisateur qui cloture
-	 *		\return		int			<0 if KO, >0 if OK
+	 *    	Close order
+	 * 		@param      user        Objet user that close
+	 *		@return		int			<0 if KO, >0 if OK
 	 */
 	function cloture($user)
 	{
 		global $conf;
+        $error=0;
 
 		if ($user->rights->commande->valider)
 		{
+		    $this->db->begin();
+
+		    $now=dol_now();
+
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
 			$sql.= ' SET fk_statut = 3,';
 			$sql.= ' fk_user_cloture = '.$user->id.',';
-			$sql.= ' date_cloture = '.$this->db->idate(mktime());
+			$sql.= ' date_cloture = '.$this->db->idate($now);
 			$sql.= ' WHERE rowid = '.$this->id.' AND fk_statut > 0';
 
 			if ($this->db->query($sql))
@@ -466,17 +471,26 @@ class Commande extends CommonObject
 				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 				$interface=new Interfaces($this->db);
 				$result=$interface->run_triggers('ORDER_CLOSE',$this,$user,$langs,$conf);
-				if ($result < 0) {
-					$error++; $this->errors=$interface->errors;
-					return -1;
-				}
+				if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// Fin appel triggers
-				return 1;
+
+				if (! $error)
+				{
+                    $this->db->commit();
+                    return 1;
+				}
+				else
+				{
+				    $this->db->rollback();
+				    return -1;
+				}
 			}
 			else
 			{
-				$this->error=$this->db->error();
+			    $this->error=$this->db->lasterror();
 				dol_syslog($this->error, LOG_ERR);
+
+                $this->db->rollback();
 				return -1;
 			}
 		}
@@ -923,6 +937,7 @@ class Commande extends CommonObject
                 }
                 else return -1;
             }
+            else return -1;
         }
         else return 0;
     }

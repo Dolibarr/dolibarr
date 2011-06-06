@@ -95,6 +95,9 @@ clearstatcache();
 
 $workflowcodes=array();
 if ($conf->propal->enabled && $conf->commande->enabled) $workflowcodes['WORKFLOW_PROPAL_AUTOCREATE_ORDER']='WORKFLOW_PROPAL_AUTOCREATE_ORDER';
+//if ($conf->propal->enabled && $conf->facture->enabled)  $workflowcodes['WORKFLOW_PROPAL_AUTOCREATE_INVOICE']='WORKFLOW_PROPAL_AUTOCREATE_INVOICE';
+//if ($conf->contrat->enabled && $conf->facture->enabled)  $workflowcodes['WORKFLOW_CONTRACT_AUTOCREATE_INVOICE']='WORKFLOW_CONTRACT_AUTOCREATE_INVOICE';
+//if ($conf->commande->enabled && $conf->facture->enabled) $workflowcodes['WORKFLOW_ORDER_AUTOCREATE_INVOICE']='WORKFLOW_ORDER_AUTOCREATE_INVOICE';
 
 if (sizeof($workflowcodes) > 0)
 {

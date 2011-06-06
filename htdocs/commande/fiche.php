@@ -779,6 +779,7 @@ if ($action == 'confirm_close' && $confirm == 'yes' && $user->rights->commande->
     $object->fetch($id);		// Load order and lines
 
     $result = $object->cloture($user);
+    if ($result < 0) $mesgs=$object->errors;
 }
 
 if ($action == 'confirm_cancel' && $confirm == 'yes' && $user->rights->commande->valider)
@@ -1123,7 +1124,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 {
     print_fiche_titre($langs->trans('CreateOrder'));
 
-    if ($mesg) print $mesg.'<br>';
+    dol_htmloutput_errors($mesg,$mesgs);
 
     $soc = new Societe($db);
     if ($socid) $res=$soc->fetch($socid);
@@ -1423,7 +1424,7 @@ else
 
     if ($id > 0 || ! empty($ref))
     {
-        if ($mesg) print $mesg.'<br>';
+        dol_htmloutput_errors($mesg,$mesgs);
 
         $product_static=new Product($db);
 

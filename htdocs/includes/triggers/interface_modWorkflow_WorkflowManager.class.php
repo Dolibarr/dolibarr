@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2010  Regis Houssin     <regis@dolibarr.fr>
+/* Copyright (C) 2010 Regis Houssin       <regis@dolibarr.fr>
+ * Copyright (C) 2011 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,11 +105,27 @@ class InterfaceWorkflowManager
             {
                 include_once(DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php');
                 $order = new Commande($this->db);
-                return $order->createFromProposal($object,0);
+                $ret=$order->createFromProposal($object,0);
+                if ($ret < 0) { $this->error=$invoice->error; $this->errors[]=$invoice->error; }
+                return $ret;
             }
         }
 
-		return 0;
+        // Order to invoice
+        if ($action == 'ORDER_CLOSE')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            if (! empty($conf->facture->enabled) && ! empty($conf->global->WORKFLOW_ORDER_AUTOCREATE_INVOICE))
+            {
+                include_once(DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php');
+                $invoice = new Facture($this->db);
+                $ret=$invoice->createFromOrder($object,0);
+                if ($ret < 0) { $this->error=$invoice->error; $this->errors[]=$invoice->error; }
+                return $ret;
+            }
+        }
+
+        return 0;
     }
 
 }

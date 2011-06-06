@@ -4,3 +4,6 @@ WorkflowSetup=Workflow module setup
 WorkflowDesc=This module is desinged to modify the behaviour of automatic actions into application. By default, workflow is opened (you make thing in order you want). You can enabled automatic actions that you are interesting in.
 ThereIsNoWorkflowToModify=There is no workflow you can modify for module you have activated. 
 descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Create a customer order automatically after a commercial proposal is signed
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Create a customer invoice automatically after a commercial proposal is signed
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Create a customer invoice automatically after a contract is validated
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Create a customer invoice automatically after a customer order is closed

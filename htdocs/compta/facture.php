@@ -512,7 +512,7 @@ if ($action == 'add' && $user->rights->facture->creer)
     $object->socid=GETPOST('socid');
 
     $db->begin();
-    
+
     $error=0;
 
     // Replacement invoice
@@ -1148,7 +1148,7 @@ if ($_POST['addfile'])
 {
     require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 
-    // Set tmp user directory TODO Use a dedicated directory for temp mails files
+    // Set tmp user directory
     $vardir=$conf->user->dir_output."/".$user->id;
     $upload_dir = $vardir.'/temp/';
 
