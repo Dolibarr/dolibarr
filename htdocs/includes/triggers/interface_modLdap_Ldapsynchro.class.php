@@ -36,8 +36,8 @@ class InterfaceLdapsynchro
 
 
     /**
-     *   \brief      Constructeur.
-     *   \param      DB      Handler d'acces base
+     *   Constructor.
+     *   @param      DB      Database handler
      */
     function InterfaceLdapsynchro($DB)
     {
@@ -50,8 +50,8 @@ class InterfaceLdapsynchro
     }
 
     /**
-     *   \brief      Renvoi nom du lot de triggers
-     *   \return     string      Nom du lot de triggers
+     *   Return name of trigger file
+     *   @return     string      Name of trigger file
      */
     function getName()
     {
@@ -59,8 +59,8 @@ class InterfaceLdapsynchro
     }
 
     /**
-     *   \brief      Renvoi descriptif du lot de triggers
-     *   \return     string      Descriptif du lot de triggers
+     *   Return description of trigger file
+     *   @return     string      Description of trigger file
      */
     function getDesc()
     {
@@ -68,8 +68,8 @@ class InterfaceLdapsynchro
     }
 
     /**
-     *   \brief      Renvoi version du lot de triggers
-     *   \return     string      Version du lot de triggers
+     *   Return version of trigger file
+     *   @return     string      Version of trigger file
      */
     function getVersion()
     {
@@ -83,21 +83,18 @@ class InterfaceLdapsynchro
     }
 
     /**
-     *      \brief      Fonction appelee lors du declenchement d'un evenement Dolibarr.
-     *                  D'autres fonctions run_trigger peuvent etre presentes dans includes/triggers
-     *      \param      action      Code de l'evenement
-     *      \param      object      Objet concerne
-     *      \param      user        Objet user
-     *      \param      lang        Objet lang
-     *      \param      conf        Objet conf
-     *      \return     int         <0 si ko, 0 si aucune action faite, >0 si ok
+     *      Function called when a Dolibarrr business event is done.
+     *      All functions "run_trigger" are triggered if file is inside directory htdocs/includes/triggers
+     *      @param      action      Event code (COMPANY_CREATE, PROPAL_VALIDATE, ...)
+     *      @param      object      Object action is done on
+     *      @param      user        Object user
+     *      @param      langs       Object langs
+     *      @param      conf        Object conf
+     *      @return     int         <0 if KO, 0 if no action are done, >0 if OK
      */
 	function run_trigger($action,$object,$user,$langs,$conf)
     {
-        // Mettre ici le code a executer en reaction de l'action
-        // Les donnees de l'action sont stockees dans $object
-
-        if (! $conf->ldap->enabled) return 0;     // Module non actif
+        if (empty($conf->ldap->enabled)) return 0;     // Module not active, we do nothing
 
         if (! function_exists('ldap_connect'))
         {

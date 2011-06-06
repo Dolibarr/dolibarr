@@ -34,8 +34,8 @@ class InterfaceWorkflowManager
     var $db;
 
     /**
-     *   \brief      Constructeur.
-     *   \param      DB      Handler d'acces base
+     *   Constructor.
+     *   @param      DB      Database handler
      */
     function InterfaceWorkflowManager($DB)
     {
@@ -49,8 +49,8 @@ class InterfaceWorkflowManager
 
 
     /**
-     *   \brief      Renvoi nom du lot de triggers
-     *   \return     string      Nom du lot de triggers
+     *   Return name of trigger file
+     *   @return     string      Name of trigger file
      */
     function getName()
     {
@@ -58,8 +58,8 @@ class InterfaceWorkflowManager
     }
 
     /**
-     *   \brief      Renvoi descriptif du lot de triggers
-     *   \return     string      Descriptif du lot de triggers
+     *   Return description of trigger file
+     *   @return     string      Description of trigger file
      */
     function getDesc()
     {
@@ -67,8 +67,8 @@ class InterfaceWorkflowManager
     }
 
     /**
-     *   \brief      Renvoi version du lot de triggers
-     *   \return     string      Version du lot de triggers
+     *   Return version of trigger file
+     *   @return     string      Version of trigger file
      */
     function getVersion()
     {
@@ -83,21 +83,20 @@ class InterfaceWorkflowManager
     }
 
     /**
-     *      Fonction appelee lors du declenchement d'un evenement Dolibarr.
-     *                  D'autres fonctions run_trigger peuvent etre presentes dans includes/triggers
-     *      \param      action      Code de l'evenement
-     *      \param      object      Objet concerne
-     *      \param      user        Objet user
-     *      \param      lang        Objet lang
-     *      \param      conf        Objet conf
-     *      \return     int         <0 if fatal error, 0 si nothing done, >0 if ok
+     *      Function called when a Dolibarrr business event is done.
+     *      All functions "run_trigger" are triggered if file is inside directory htdocs/includes/triggers
+     *      @param      action      Event code (COMPANY_CREATE, PROPAL_VALIDATE, ...)
+     *      @param      object      Object action is done on
+     *      @param      user        Object user
+     *      @param      langs       Object langs
+     *      @param      conf        Object conf
+     *      @return     int         <0 if KO, 0 if no action are done, >0 if OK
      */
 	function run_trigger($action,$object,$user,$langs,$conf)
     {
-        // Mettre ici le code a executer en reaction de l'action
-        // Les donnees de l'action sont stockees dans $object
+        if (empty($conf->workflow->enabled)) return 0;     // Module not active, we do nothing
 
-        // Proposals
+        // Proposals to order
         if ($action == 'PROPAL_CLOSE_SIGNED')
         {
         	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);

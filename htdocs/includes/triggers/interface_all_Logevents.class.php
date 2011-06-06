@@ -41,7 +41,7 @@ class InterfaceLogevents
 
     /**
      *   Constructor.
-     *   @param      DB      Database handler access
+     *   @param      DB      Database handler
      */
     function InterfaceLogevents($DB)
     {
@@ -54,8 +54,8 @@ class InterfaceLogevents
     }
 
     /**
-     *   \brief      Renvoi nom du lot de triggers
-     *   \return     string      Nom du lot de triggers
+     *   Return name of trigger file
+     *   @return     string      Name of trigger file
      */
     function getName()
     {
@@ -63,8 +63,8 @@ class InterfaceLogevents
     }
 
     /**
-     *   \brief      Renvoi descriptif du lot de triggers
-     *   \return     string      Descriptif du lot de triggers
+     *   Return description of trigger file
+     *   @return     string      Description of trigger file
      */
     function getDesc()
     {
@@ -72,8 +72,8 @@ class InterfaceLogevents
     }
 
     /**
-     *   \brief      Renvoi version du lot de triggers
-     *   \return     string      Version du lot de triggers
+     *   Return version of trigger file
+     *   @return     string      Version of trigger file
      */
     function getVersion()
     {
@@ -87,15 +87,15 @@ class InterfaceLogevents
     }
 
     /**
-     *      \brief      Fonction appelee lors du declenchement d'un evenement Dolibarr.
-     *                  D'autres fonctions run_trigger peuvent etre presentes dans includes/triggers
-     *      \param      action      Code de l'evenement
-     *      \param      object      Objet concerne
-     *      \param      user        Objet user
-     *      \param      langs       Objet langs
-     *      \param      conf        Objet conf
-     *      \param      entity      Entity
-     *      \return     int         <0 si ko, 0 si aucune action faite, >0 si ok
+     *      Function called when a Dolibarrr business event is done.
+     *      All functions "run_trigger" are triggered if file is inside directory htdocs/includes/triggers
+     *      @param      action      Code de l'evenement
+     *      @param      object      Objet concerne
+     *      @param      user        Objet user
+     *      @param      langs       Objet langs
+     *      @param      conf        Objet conf
+     *      @param      entity      Value for instance of data (Always 1 except if module MultiCompany is installed)
+     *      @return     int         <0 if KO, 0 if no triggered ran, >0 if OK
      */
     function run_trigger($action,$object,$user,$langs,$conf,$entity=1)
     {

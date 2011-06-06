@@ -53,8 +53,8 @@ class InterfaceActionsAuto
     }
 
     /**
-     *   Return name of triggers set
-     *   @return     string      Name of triggers set
+     *   Return name of trigger file
+     *   @return     string      Name of trigger file
      */
     function getName()
     {
@@ -62,8 +62,8 @@ class InterfaceActionsAuto
     }
 
     /**
-     *   Return description of triggers set
-     *   @return     string      Description of triggers set
+     *   Return description of trigger file
+     *   @return     string      Description of trigger file
      */
     function getDesc()
     {
@@ -71,8 +71,8 @@ class InterfaceActionsAuto
     }
 
     /**
-     *   Return version of triggers set
-     *   @return     string      Version of triggers set
+     *   Return version of trigger file
+     *   @return     string      Version of trigger file
      */
     function getVersion()
     {
@@ -87,7 +87,7 @@ class InterfaceActionsAuto
 
     /**
      *      Function called when a Dolibarrr business event is done.
-     *      All functions run_trigger are triggered if file is inside directory includes/triggers
+     *      All functions "run_trigger" are triggered if file is inside directory htdocs/includes/triggers
      *
      *      Following properties must be filled:
      *      $object->actiontypecode (translation action code: AC_OTH, ...)
@@ -109,8 +109,10 @@ class InterfaceActionsAuto
     function run_trigger($action,$object,$user,$langs,$conf)
     {
 		$key='MAIN_AGENDA_ACTIONAUTO_'.$action;
-		//dol_syslog("xxxxxxxxxxx".$key);
-		if (empty($conf->global->$key)) return 0;				// Log events not enabled for this action
+        //dol_syslog("xxxxxxxxxxx".$key);
+
+        if (empty($conf->agenda->enabled)) return 0;     // Module not active, we do nothing
+		if (empty($conf->global->$key)) return 0;	// Log events not enabled for this action
 
 		$ok=0;
 

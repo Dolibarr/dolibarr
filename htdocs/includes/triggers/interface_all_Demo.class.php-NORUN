@@ -41,8 +41,8 @@ class InterfaceDemo
     var $db;
     
     /**
-     *   \brief      Constructeur.
-     *   \param      DB      Handler d'acces base
+     *   Constructor.
+     *   @param      DB      Database handler
      */
     function InterfaceDemo($DB)
     {
@@ -56,8 +56,8 @@ class InterfaceDemo
     
     
     /**
-     *   \brief      Renvoi nom du lot de triggers
-     *   \return     string      Nom du lot de triggers
+     *   Return name of trigger file
+     *   @return     string      Name of trigger file
      */
     function getName()
     {
@@ -65,8 +65,8 @@ class InterfaceDemo
     }
     
     /**
-     *   \brief      Renvoi descriptif du lot de triggers
-     *   \return     string      Descriptif du lot de triggers
+     *   Return description of trigger file
+     *   @return     string      Description of trigger file
      */
     function getDesc()
     {
@@ -74,8 +74,8 @@ class InterfaceDemo
     }
 
     /**
-     *   \brief      Renvoi version du lot de triggers
-     *   \return     string      Version du lot de triggers
+     *   Return version of trigger file
+     *   @return     string      Version of trigger file
      */
     function getVersion()
     {
@@ -90,19 +90,19 @@ class InterfaceDemo
     }
     
     /**
-     *      \brief      Fonction appelee lors du declenchement d'un evenement Dolibarr.
-     *                  D'autres fonctions run_trigger peuvent etre presentes dans includes/triggers
-     *      \param      action      Code de l'evenement
-     *      \param      object      Objet concerne
-     *      \param      user        Objet user
-     *      \param      lang        Objet lang
-     *      \param      conf        Objet conf
-     *      \return     int         <0 if fatal error, 0 si nothing done, >0 if ok
+     *      Function called when a Dolibarrr business event is done.
+     *      All functions "run_trigger" are triggered if file is inside directory htdocs/includes/triggers
+     *      @param      action      Code de l'evenement
+     *      @param      object      Objet concerne
+     *      @param      user        Objet user
+     *      @param      langs       Objet langs
+     *      @param      conf        Objet conf
+     *      @return     int         <0 if KO, 0 if no triggered ran, >0 if OK
      */
 	function run_trigger($action,$object,$user,$langs,$conf)
     {
-        // Mettre ici le code a executer en reaction de l'action
-        // Les donnees de l'action sont stockees dans $object
+        // Put here code you want to execute when a Dolibarr business events occurs.
+        // Data and type of action are stored into $object and $action
     
         // Users
         if     ($action == 'USER_LOGIN')
