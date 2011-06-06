@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,6 +28,7 @@
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
+require_once(DOL_DOCUMENT_ROOT."/includes/triggers/interface_modNotification_Notification.class.php");
 
 $langs->load("companies");
 $langs->load("mails");
@@ -54,6 +55,7 @@ if (! $sortfield) $sortfield="c.name";
  * Action
  */
 
+// Add a notification
 if ($_POST["action"] == 'add')
 {
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
@@ -78,9 +80,7 @@ if ($_POST["action"] == 'add')
 	}
 }
 
-/*
- * Action suppression notification
- */
+// Remove a notification
 if ($_GET["action"] == 'delete')
 {
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def where rowid=".$_GET["actid"].";";
@@ -169,37 +169,23 @@ if ( $soc->fetch($soc->id) )
 	$var=false;
 	if (count($soc->thirdparty_and_contact_email_array()) > 0)
 	{
-		// Load array of notifications type available
-		$sql = "SELECT a.rowid, a.code, a.label";
-		$sql.= " FROM ".MAIN_DB_PREFIX."c_action_trigger as a";
-		$sql.= " ORDER BY a.rang ASC";
+	    $actions=array();
 
-		$resql=$db->query($sql);
-		if ($resql)
-		{
-			$num = $db->num_rows($resql);
-			$i = 0;
-			while ($i < $num)
-			{
-				$obj = $db->fetch_object($resql);
-				$label=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->label);
-				$actions[$obj->rowid] = $label;
+        // Load array of available notifications
+        $notificationtrigger=new InterfaceNotification($db);
+        $listofnotifiedevents=$notificationtrigger->getListOfManagedEvents();
 
-				$i++;
-			}
-			$db->free($resql);
-		}
-		else
-		{
-			dol_print_error($db);
-		}
-
+        foreach($listofnotifiedevents as $notifiedevent)
+        {
+            $label=$langs->trans("Notify_".$notifiedevent['code'])!=$langs->trans("Notify_".$notifiedevent['code'])?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label'];
+            $actions[$notifiedevent['rowid']]=$label;
+        }
 		print '<input type="hidden" name="action" value="add">';
 		print '<tr '.$bc[$var].'><td>';
 		print $html->selectarray("contactid",$soc->thirdparty_and_contact_email_array());
 		print '</td>';
 		print '<td>';
-		print $html->selectarray("actionid",$actions);
+		print $html->selectarray("actionid",$actions,'',1);
 		print '</td>';
         print '<td>';
         $type=array('email'=>$langs->trans("EMail"));

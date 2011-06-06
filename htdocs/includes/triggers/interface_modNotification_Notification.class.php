@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2011      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +32,7 @@
 class InterfaceNotification
 {
     var $db;
-    var $listofnotifiedevents=array('BILL_VALIDATE','ORDER_VALIDATE','PROPAL_VALIDATE',
+    var $listofmanagedevents=array('BILL_VALIDATE','ORDER_VALIDATE','PROPAL_VALIDATE',
                             'FICHEINTER_VALIDATE','ORDER_SUPPLIER_APPROVE','ORDER_SUPPLIER_REFUSE');
 
     /**
@@ -228,7 +229,7 @@ class InterfaceNotification
 
                 $qualified=0;
                 // Check is this event is supported by notification module
-                if (in_array($obj->code,$this->listofnotifiedevents)) $qualified=1;
+                if (in_array($obj->code,$this->listofmanagedevents)) $qualified=1;
                 // Check if module for this event is active
                 if ($qualified)
                 {

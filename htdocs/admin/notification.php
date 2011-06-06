@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.org>
+ * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,12 +20,13 @@
 /**
  *	    \file       htdocs/admin/notification.php
  *		\ingroup    notification
- *		\brief      Page d'administration/configuration du module notification
+ *		\brief      Page to setup notification module
  *		\version    $Id$
  */
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/includes/triggers/interface_modNotification_Notification.class.php");
 
 $langs->load("admin");
 
@@ -33,6 +34,10 @@ $langs->load("admin");
 if (!$user->admin)
   accessforbidden();
 
+
+/*
+ * Actions
+ */
 
 if ($_POST["action"] == 'setvalue' && $user->admin)
 {
@@ -85,6 +90,33 @@ print '<br>';
 print '<center><input type="submit" class="button" value="'.$langs->trans("Modify").'"></center>';
 
 print '</form>';
+print '<br>';
+
+
+print_fiche_titre($langs->trans("ListOfAvailableNotifications"),'','');
+
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Module").'</td>';
+print '<td>'.$langs->trans("Code").'</td>';
+print '<td>'.$langs->trans("Label").'</td>';
+print "</tr>\n";
+
+// Load array of available notifications
+$notificationtrigger=new InterfaceNotification($db);
+$listofnotifiedevents=$notificationtrigger->getListOfManagedEvents();
+
+foreach($listofnotifiedevents as $notifiedevent)
+{
+    $var=!$var;
+    $label=$langs->trans("Notify_".$notifiedevent['code'])!=$langs->trans("Notify_".$notifiedevent['code'])?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label'];
+    print '<tr '.$bc[$var].'>';
+    print '<td>'.$notifiedevent['elementtype'].'</td>';
+    print '<td>'.$notifiedevent['code'].'</td>';
+    print '<td>'.$label.'</td>';
+    print '</tr>';
+}
+print '</table>';
 
 
 $db->close();

@@ -1131,6 +1131,7 @@ MailingEMailError=Return EMail (Errors-to) for emails with errors
 ##### Notification #####
 NotificationSetup=Notification bu email module setup
 NotificationEMailFrom=Sender EMail (From) for emails sent for notifications
+ListOfAvailableNotifications=List of available notifications (This list depends on activated modules)
 ##### Sendings #####
 SendingsSetup=Sending module setup
 SendingsReceiptModel=Sending receipt model
