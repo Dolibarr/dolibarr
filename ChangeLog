@@ -17,6 +17,8 @@ For users:
          to open a proposal or order.
        - Can add a discount for third party, during invoice edition (and we 
          saved clicks again).
+       - When creating a contract, sales representative are preset to user. This save
+         2 clicks.
 - New: Add graph using Jquery Flot.
 - New: Usage of Jquery Notify to show result or error messages on action.
 - New: If a service contains subproducts, subrpoducts are decrease when service
