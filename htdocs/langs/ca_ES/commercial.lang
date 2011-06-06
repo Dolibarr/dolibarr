@@ -76,6 +76,7 @@ ActionAC_REL=Recordatori factura a client per correu
 ActionAC_CLO=Tancament
 ActionAC_EMAILING=Enviament mailing massiu
 ActionAC_COM=Enviament comanda de client per correu
+ActionAC_SHIP=Enviament expedició per correu
 ActionAC_SUP_ORD=Enviament comanda a proveïdor per correu
 ActionAC_SUP_INV=Enviament factura de proveïdor per correu
 ActionAC_OTH=Altra

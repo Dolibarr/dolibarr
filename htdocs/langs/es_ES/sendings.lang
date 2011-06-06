@@ -50,6 +50,8 @@ WarningNoQtyLeftToSend=Alerta, ningún producto en espera de envío.
 StatsOnShipmentsOnlyValidated=Estadísticas realizadas únicamente sobre las expediciones validadas
 DateDeliveryPlanned=Fecha prevista de entrega
 DateReceived=Fecha real de recepción
+SendShippingByEMail=Envío de expedición por e-mail
+SendShippingRef=Envío expedición %s
 # Sending methods
 SendingMethodCATCH=Recogido por el cliente
 SendingMethodTRANS=Transportista

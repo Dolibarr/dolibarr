@@ -76,6 +76,7 @@ ActionAC_REL=Recordatorio factura a cliente por correo
 ActionAC_CLO=Cierre
 ActionAC_EMAILING=Envío mailing masivo
 ActionAC_COM=Envío pedido de cliente por correo
+ActionAC_SHIP=Envío expedición por correo
 ActionAC_SUP_ORD=Envío pedido a proveedor por correo
 ActionAC_SUP_INV=Envío factura de proveedor por correo
 ActionAC_OTH=Otra
