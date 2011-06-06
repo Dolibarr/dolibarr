@@ -28,6 +28,7 @@ SuppliersOrdersToProcess=Supplier's orders to process
 StatusOrderCanceledShort=Canceled
 StatusOrderDraftShort=Draft
 StatusOrderValidatedShort=Validated
+StatusOrderSentShort=Shipment in process
 StatusOrderOnProcessShort=Reception
 StatusOrderProcessedShort=Processed
 StatusOrderToBillShort=To bill

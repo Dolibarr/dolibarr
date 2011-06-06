@@ -29,6 +29,7 @@ StatusOrderCanceledShort=Annulée
 StatusOrderDraftShort=Brouillon
 StatusOrderValidatedShort=Validée
 StatusOrderOnProcessShort=Réception
+StatusOrderSentShort=Expédition en cours
 StatusOrderProcessedShort=Traitée
 StatusOrderToBillShort=À facturer
 StatusOrderApprovedShort=Approuvée
