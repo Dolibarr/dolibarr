@@ -1495,8 +1495,9 @@ class CommonObject
 		if ($objecttype == 'invoice_supplier') { $classpath = 'fourn/class'; }
 		if ($objecttype == 'order_supplier')   { $classpath = 'fourn/class'; }
         if ($objecttype == 'contract') { $classpath = 'contrat/class'; $module='contrat'; $subelement='contrat'; }
+        if ($objecttype == 'member') { $classpath = 'adherents/class'; $module='adherent'; $subelement='adherent'; }
 
-        print "objecttype=".$objecttype." module=".$module." subelement=".$subelement;
+        //print "objecttype=".$objecttype." module=".$module." subelement=".$subelement;
 
         $classfile = strtolower($subelement); $classname = ucfirst($subelement);
 		if ($objecttype == 'invoice_supplier') { $classfile = 'fournisseur.facture'; $classname='FactureFournisseur'; }
