@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,18 +19,20 @@
 /**
  *      \file       htdocs/includes/triggers/interface_modNotification_Notification.class.php
  *      \ingroup    notification
- *      \brief      Fichier de gestion des notifications sur evenement Dolibarr
+ *      \brief      File of class of triggers for notification module
  *		\version	$Id$
  */
 
 
 /**
  *     \class      InterfaceNotification
- *     \brief      Classe des fonctions triggers des actions personalisees du workflow
+ *     \brief      Class of triggers for notification module
  */
 class InterfaceNotification
 {
     var $db;
+    var $listofnotifiedevents=array('BILL_VALIDATE','ORDER_VALIDATE','PROPAL_VALIDATE',
+                            'FICHEINTER_VALIDATE','ORDER_SUPPLIER_APPROVE','ORDER_SUPPLIER_REFUSE');
 
     /**
      *   \brief      Constructeur.
@@ -198,6 +200,60 @@ class InterfaceNotification
         }
 */
 		return 0;
+    }
+
+
+    /**
+     * Return list of events managed by notification module
+     * @return      array       Array of events managed by notification module
+     */
+    function getListOfManagedEvents()
+    {
+        global $conf,$langs;
+
+        $ret=array();
+
+        $sql = "SELECT rowid, code, label, description, elementtype";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_action_trigger";
+        $sql.= $this->db->order("elementtype, code");
+        dol_syslog("Get list of notifications sql=".$sql);
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $num=$this->db->num_rows($resql);
+            $i=0;
+            while ($i < $num)
+            {
+                $obj=$this->db->fetch_object($resql);
+
+                $qualified=0;
+                // Check is this event is supported by notification module
+                if (in_array($obj->code,$this->listofnotifiedevents)) $qualified=1;
+                // Check if module for this event is active
+                if ($qualified)
+                {
+                    //print 'xx'.$obj->code;
+                    $element=$obj->elementtype;
+                    if ($element == 'order_supplier' && empty($conf->fournisseur->enabled)) $qualified=0;
+                    elseif ($element == 'invoice_supplier' && empty($conf->fournisseur->enabled)) $qualified=0;
+                    elseif ($element == 'withdraw' && empty($conf->prelevement->enabled)) $qualified=0;
+                    elseif ($element == 'shipping' && empty($conf->expedition->enabled)) $qualified=0;
+                    elseif ($element == 'member' && empty($conf->adherent->enabled)) $qualified=0;
+                    elseif (! in_array($element,array('order_supplier','invoice_supplier','withdraw','shipping','member'))
+                                 && empty($conf->$element->enabled)) $qualified=0;
+                }
+
+                if ($qualified)
+                {
+                    $ret[]=array('rowid'=>$obj->rowid,'code'=>$obj->code,'label'=>$obj->label,'description'=>$obj->description,'elementtype'=>$obj->elementtype);
+                }
+
+                $i++;
+            }
+        }
+        else dol_print_error($this->db);
+
+        return $ret;
     }
 
 }
