@@ -52,6 +52,7 @@ DateDeliveryPlanned=Data prevista de lliurament
 DateReceived=Data real de recepció
 SendShippingByEMail=Enviament d'expedició per e-mail
 SendShippingRef=Enviament d'expedició %s
+ActionsOnShipping=Events sobre l'expedició
 # Sending methods
 SendingMethodCATCH=Recollit pel client
 SendingMethodTRANS=Transportista
