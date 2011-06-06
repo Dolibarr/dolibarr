@@ -123,7 +123,7 @@ if ($resql)
     $listofstatus=array(0,1,2,3,4);
     foreach ($listofstatus as $status)
     {
-        $dataseries[]=array('label'=>$propal_static->LibStatut($status,0),'values'=>array(0=>(isset($vals[$status])?$vals[$status]:0)));
+        $dataseries[]=array('label'=>$propal_static->LibStatut($status,1),'values'=>array(0=>(isset($vals[$status])?$vals[$status]:0)));
         if (! $conf->use_javascript_ajax)
         {
             $var=!$var;
