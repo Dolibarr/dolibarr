@@ -427,7 +427,7 @@ foreach($mainmenuusedarray as $key => $val)
 	{
 		if (file_exists($dirroot."/".$val."/img/".$val.".png"))
 		{
-			$url=DOL_URL_ROOT.'/'.$val.'/img/'.$val.'.png';
+			$url=dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
 			$found=1;
 			break;
 		}
