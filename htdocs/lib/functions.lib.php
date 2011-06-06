@@ -1267,8 +1267,11 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie')
     {
         if ($type == 'pie')
         {
-            // data  is array('series'=>array(0=>serie1,1=>serie2,...));
-            // serie is array('label'=>'label', values=>array(0=>val))
+            // data is   array('series'=>array(serie1,serie2,...),
+            //                 'seriestype'=>array('bar','line',...),
+            //                 'seriescolor'=>array(0=>'#999999',1=>'#999999',...)
+            //                 'xlabel'=>array(0=>labelx1,1=>labelx2,...));
+            // serieX is array('label'=>'label', values=>array(0=>val))
         	print '
         	<script type="text/javascript">
 			jQuery(function () {
@@ -1314,15 +1317,16 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie')
                         interactive: true
                     },
                     ';
+                    $i=0; $outputserie=0;
             		if (sizeof($datacolor))
             		{
 	                    print 'colors: [';
-	                    $j=0;
 	                    foreach($datacolor as $val)
 	                    {
-	                        print '"'.$val.'"';
-	                        if ($j < sizeof($datacolor)) print ',';
-	                        $j++;
+                            if ($outputserie > 0) print ',';
+	                        print '"'.(empty($data['seriescolor'][$i])?$val:$data['seriescolor'][$i]).'"';
+	                        $outputserie++;
+	                        $i++;
 	                    }
             			print '], ';
             		}
@@ -1333,18 +1337,23 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie')
             });
             </script>';
         }
-        else if ($type == 'bar')
+        else if ($type == 'barline')
         {
-            // data is  array('series'=>array(0=>serie1,1=>serie2,...),'xlabel'=>array(0=>label1,1=>label2,...));
-            // serie is array('label'=>'label', values=>array(0=>val1,1=>val2,...))
+            // data is   array('series'=>array(serie1,serie2,...),
+            //                 'seriestype'=>array('bar','line',...),
+            //                 'seriescolor'=>array(0=>'#999999',1=>'#999999',...)
+            //                 'xlabel'=>array(0=>labelx1,1=>labelx2,...));
+            // serieX is array('label'=>'label', values=>array(0=>y1,1=>y2,...)) with same nb of value than into xlabel
             print '
             <script type="text/javascript">
             jQuery(function () {
             var data = [';
-            $i=1;
+            $i=1; $outputserie=0;
             foreach($data['series'] as $serie)
             {
-                print '{label: \''.dol_escape_js($serie['label']).'\', data: [';
+                if ($data['seriestype'][$i-1]=='line') { $i++; continue; };
+                if ($outputserie > 0) print ',';
+                print '{ bars: { stack: 0, show: true, barWidth: 0.9, align: \'center\' }, label: \''.dol_escape_js($serie['label']).'\', data: [';
                 $j=1;
                 foreach($serie['values'] as $val)
                 {
@@ -1352,8 +1361,28 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie')
                     if ($j < sizeof($serie['values'])) print ', ';
                     $j++;
                 }
-                print ']}';
-                if ($i < sizeof($data['series'])) print ',';
+                print ']}'."\n";
+                $outputserie++;
+                $i++;
+            }
+            if ($outputserie) print ', ';
+            //print '];
+            //var datalines = [';
+            $i=1; $outputserie=0;
+            foreach($data['series'] as $serie)
+            {
+                if (empty($data['seriestype'][$i-1]) || $data['seriestype'][$i-1]=='bar') { $i++; continue; };
+                if ($outputserie > 0) print ',';
+                print '{ lines: { show: true }, label: \''.dol_escape_js($serie['label']).'\', data: [';
+                $j=1;
+                foreach($serie['values'] as $val)
+                {
+                    print '['.$j.','.$val.']';
+                    if ($j < sizeof($serie['values'])) print ', ';
+                    $j++;
+                }
+                print ']}'."\n";
+                $outputserie++;
                 $i++;
             }
             print '];
@@ -1367,16 +1396,11 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie')
             }
             print '];
 
-            var stack = 0, bars = true, lines = false, steps = false;
-
             function plotWithOptions() {
                 jQuery.plot(jQuery("#'.$htmlid.'"), data,
                 {
                     series: {
-                            stack: stack,
-                            lines: { show: lines, fill: true, steps: steps },
-                            bars: { show: bars, barWidth: 0.9, align: \'center\' },
-                            shadowSize: 5
+                            stack: 0
                     },
                     zoom: {
                         interactive: true
@@ -3674,13 +3698,13 @@ function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
     $ret='';
     $out='';
     $divstart=$divend='';
-    
+
     if (isset($_SESSION['mesg']))
     {
     	$mesgstring=$_SESSION['mesg'];
     	unset($_SESSION['mesg']);
     }
-    
+
 	if (isset($_SESSION['mesgarray']))
     {
     	$mesgarray=$_SESSION['mesgarray'];

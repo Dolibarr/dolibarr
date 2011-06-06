@@ -62,7 +62,7 @@ class Propal extends CommonObject
 	var $author;
 	var $ref;
 	var $ref_client;
-	var $statut;					// 0, 1, 2, 3, 4
+	var $statut;					// 0 (draft), 1 (validated), 2 (signed), 3 (not signed), 4 (billed)
 	var $datec;						// Date of creation
 	var $datev;						// Date of validation
 	var $date;						// Date of proposal
@@ -1994,9 +1994,9 @@ class Propal extends CommonObject
 
 
 	/**
-	 *    	\brief      Return label of status of proposal (draft, validated, ...)
-	 *    	\param      mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 *    	\return     string		Label
+	 *    	Return label of status of proposal (draft, validated, ...)
+	 *    	@param      mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *    	@return     string		Label
 	 */
 	function getLibStatut($mode=0)
 	{
@@ -2004,10 +2004,10 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Return label of a status (draft, validated, ...)
-	 *    	\param      statut		id statut
-	 *    	\param      mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 *    	\return     string		Label
+	 *    	Return label of a status (draft, validated, ...)
+	 *    	@param      statut		id statut
+	 *    	@param      mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *    	@return     string		Label
 	 */
 	function LibStatut($statut,$mode=1)
 	{
