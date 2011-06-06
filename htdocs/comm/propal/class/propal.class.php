@@ -773,9 +773,10 @@ class Propal extends CommonObject
 
 
 	/**
-	 *    \brief     Insert en base un objet propal completement definie par ses donnees membres (resultant d'une copie par exemple).
-	 *    \return    int                 l'id du nouvel objet propal en base si ok, <0 si ko
-	 *    \see       create
+	 *    Insert en base un objet propal completement definie par ses donnees membres (resultant d'une copie par exemple).
+	 *    @param     user              Object user making creation
+	 *    @return    int               Id of new created object if OK, <0 if KO
+	 *    @see       create
 	 */
 	function create_from($user)
 	{
@@ -785,10 +786,10 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *		\brief      Load an object from its id and create a new one in database
-	 *		\param      fromid     		Id of object to clone
-	 *		\param		invertdetail	Reverse sign of amounts for lines
-	 * 	 	\return		int				New id of clone
+	 *		Load an object from its id and create a new one in database
+	 *		@param      fromid     		Id of object to clone
+	 *		@param		invertdetail	Reverse sign of amounts for lines
+	 * 	 	@return		int				New id of clone
 	 */
 	function createFromClone($fromid,$invertdetail=0)
 	{
@@ -800,13 +801,13 @@ class Propal extends CommonObject
 
 		$object=new Propal($this->db);
 
+        $this->db->begin();
+
 		// Instantiate hooks of thirdparty module
 		if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
 		{
 			$object->callHooks('objectcard');
 		}
-
-		$this->db->begin();
 
 		// Load source object
 		$object->fetch($fromid);
@@ -885,10 +886,10 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Load a proposal from database and its ligne array
-	 *		\param      rowid       id of object to load
-	 * 		\param		ref			Ref of proposal
-	 *		\return     int         >0 if OK, <0 if KO
+	 *    	Load a proposal from database and its ligne array
+	 *		@param      rowid       id of object to load
+	 * 		@param		ref			Ref of proposal
+	 *		@return     int         >0 if OK, <0 if KO
 	 */
 	function fetch($rowid,$ref='')
 	{
@@ -1062,9 +1063,9 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *      \brief      Passe au statut valider une propale
-	 *      \param      user        Objet utilisateur qui valide
-	 *      \return     int         <0 si ko, >=0 si ok
+	 *      Passe au statut valider une propale
+	 *      @param      user        Objet utilisateur qui valide
+	 *      @return     int         <0 si ko, >=0 si ok
 	 */
 	function valid($user, $notrigger=0)
 	{
@@ -1119,10 +1120,10 @@ class Propal extends CommonObject
 
 
 	/**
-	 *      \brief      Define proposal date
-	 *      \param      user        		Object user that modify
-	 *      \param      date				Date
-	 *      \return     int         		<0 if KO, >0 if OK
+	 *      Define proposal date
+	 *      @param      user        		Object user that modify
+	 *      @param      date				Date
+	 *      @return     int         		<0 if KO, >0 if OK
 	 */
 	function set_date($user, $date)
 	{
