@@ -373,3 +373,5 @@ update llx_actioncomm set elementtype='invoice' where elementtype='facture';
 update llx_actioncomm set elementtype='order' where elementtype='commande';
 update llx_actioncomm set elementtype='contract' where elementtype='contrat';
 
+
+alter table llx_propal add column   tms             timestamp after fk_projet;

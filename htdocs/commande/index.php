@@ -258,7 +258,7 @@ if ($resql)
 			print '</td>';
 
 			print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
-			print '<td>'.dol_print_date($db->jdate($obj->datec)).'</td>';
+			print '<td>'.dol_print_date($db->jdate($obj->datec),'day').'</td>';
 			print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
 			print '</tr>';
 			$i++;
@@ -303,7 +303,7 @@ if ($conf->commande->enabled)
 				$var=!$var;
 				$obj = $db->fetch_object($resql);
 				print "<tr $bc[$var]>";
-				print '<td nowrap="nowrap">';
+				print '<td nowrap="nowrap" width="20%">';
 
 				$commandestatic->id=$obj->rowid;
 				$commandestatic->ref=$obj->ref;

@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010 Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2010-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -783,7 +783,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
             if (! empty($conf->propal->enabled))
             {
                 $langs->load("propal");
-                $newmenu->add("/comm/propal.php?leftmenu=propals", $langs->trans("Prop"), 0 ,$user->rights->propale->lire);
+                $newmenu->add("/comm/propal/index.php?leftmenu=propals", $langs->trans("Prop"), 0 ,$user->rights->propale->lire);
                 $newmenu->add("/societe/societe.php?leftmenu=propals", $langs->trans("NewPropal"), 1, $user->rights->propale->creer);
                 $newmenu->add("/comm/propal.php?leftmenu=propals", $langs->trans("List"), 1, $user->rights->propale->lire);
                 if ($leftmenu=="propals") $newmenu->add("/comm/propal.php?leftmenu=propals&viewstatut=0", $langs->trans("PropalsDraft"), 2, $user->rights->propale->lire);
