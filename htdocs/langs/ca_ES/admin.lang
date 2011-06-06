@@ -1141,17 +1141,19 @@ MailingEMailError=E-mail de resposta (Errors-to) per a les respostes sobre envia
 ##### Notification #####
 NotificationSetup=Configuració del mòdul notificacions
 NotificationEMailFrom=E-Mail emissor (From) dels correus enviats a través de notificacions
+ListOfAvailableNotifications=Llistat de notificacions disponibles (depèn dels mòduls activats)
 ##### Sendings #####
 SendingsSetup=Configuració del mòdul Expedicions
 SendingsReceiptModel=Model de notes de lliurament
 SendingsNumberingModules=Mòduls de numeració de notes de lliurament
 SendingsAbility=Ús de notes de lliurament per als enviaments a clients
 NoNeedForDeliveryReceipts=En la majoria dels casos, les notes de lliurament (llista de productes enviats) també actuen com a notes de recepció i són signades pel client. La gestió de les notes de recepció és per tant redundant i poques vegades s'activarà.
-FreeLegalTextOnDeliveryReceipts=Text lliure a les notes de recepció
+FreeLegalTextOnDeliveryReceipts=Text lliure a les notes de lliurament
 ##### Deliveries #####
 DeliveryOrderNumberingModules=Mòdul de numeració de les notes de recepció
 DeliveryOrderModel=Model de notes de recepció
 DeliveriesOrderAbility=Ús de notes de recepció
+FreeLegalTextOnDeliveryReceipts=Text lliure a les notes de recepció
 ##### FCKeditor #####
 AdvancedEditor=Editor avançat
 ActivateFCKeditor=Activar editor avançat per a :

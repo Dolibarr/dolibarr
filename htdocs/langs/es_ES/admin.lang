@@ -1141,6 +1141,7 @@ MailingEMailError=E-Mail de respuesta (Errors-to) para las respuestas acerca de 
 ##### Notification #####
 NotificationSetup=Configuración del módulo notificaciones
 NotificationEMailFrom=E-Mail emisor (From) de los correos enviados a través de notificaciones
+ListOfAvailableNotifications=Listado de notificaciones disponibles (depende de los módulos activados)
 ##### Sendings #####
 SendingsSetup=Configuración del módulo Expediciones
 SendingsReceiptModel=Modelo de notas de entrega
@@ -1149,9 +1150,10 @@ SendingsAbility=Uso de notas de entrega para los envíos a clientes
 NoNeedForDeliveryReceipts=En la mayoría de los casos, las notas de entrega (lista de productos enviados ) también actúan como notas de recepción y son firmadas por el cliente. La gestión de las notas de recepción es por lo tanto redundante y rara vez se activará.
 FreeLegalTextOnDeliveryReceipts=Texto libre en las notas de recepción
 ##### Deliveries #####
-DeliveryOrderNumberingModules=Módulo de numeración de las notas de recepción
+DeliveryOrderNumberingModules=Módulo de numeración de las notas de entraga
 DeliveryOrderModel=Modelo de notas de recepción
 DeliveriesOrderAbility=Uso de notas de recepción
+FreeLegalTextOnDeliveryReceipts=Texto libre en las notas de recepción
 ##### FCKeditor #####
 AdvancedEditor=Editor avanzado
 ActivateFCKeditor=Activar editor avanzado para :
