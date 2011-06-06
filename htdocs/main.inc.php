@@ -819,6 +819,8 @@ if (!empty($conf->global->MAIN_MODULE_MULTICOMPANY))
  * 	@param   	head			Add optionnal head lines
  *  @param      title   		Title of web page
  * 	@param      help_url		Url links to help page
+ *                              Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage
+ *                                         For other external page: http://server/url
  *  @param      target  		Target to use in menu links
  *	@param		disablejs		Do not output links to js (Ex: qd fonction utilisee par sous formulaire Ajax)
  *	@param		disablehead		Do not output head section
@@ -1331,7 +1333,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	else print '<td class="vmenu" valign="top">';
 
 	print "\n";
-	
+
 	// Instantiate hooks of thirdparty module
 	if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
 	{
@@ -1369,17 +1371,17 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 		$searchform.=printSearchForm(DOL_URL_ROOT.'/adherents/liste.php', DOL_URL_ROOT.'/adherents/liste.php',
 		img_object('','user').' '.$langs->trans("Members"), 'member', 'sall');
 	}
-	
+
 	// Search form hook of thirdparty module
 	if (! empty($object->hooks['searchform']))
 	{
 		$searchform.='<!-- Begin search form hook area -->'."\n";
-		
+
 		foreach($object->hooks['searchform'] as $module)
 		{
 			$searchform.=$module->printSearchForm();
         }
-        
+
         $searchform.="\n".'<!-- End of search form hook area -->'."\n";
     }
 
@@ -1485,22 +1487,22 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 		print '<div class="help"><a class="help" target="_blank" href="'.$bugbaseurl.'">'.$langs->trans("FindBug").'</a></div>';
 	}
 	print "\n";
-	
+
 	print "</div>\n";
 	print "<!-- End left vertical menu -->\n";
 
 	print "\n";
-	
+
 	// Left block hook of thirdparty module
 	if (! empty($object->hooks['leftblock']))
 	{
 		print '<!-- Begin left block hook area -->'."\n";
-		
+
 		foreach($object->hooks['leftblock'] as $module)
 		{
 			$module->printLeftBlock();
         }
-        
+
         print "\n".'<!-- End of left block hook area -->'."\n";
     }
 
