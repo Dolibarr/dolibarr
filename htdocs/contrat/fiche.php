@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
@@ -23,7 +23,7 @@
 /**
  *       \file       htdocs/contrat/fiche.php
  *       \ingroup    contrat
- *       \brief      Fiche contrat
+ *       \brief      Page of a contract
  *       \version    $Id$
  */
 
@@ -42,6 +42,8 @@ $langs->load("companies");
 $langs->load("bills");
 $langs->load("products");
 
+$action=GETPOST('action');
+
 // Security check
 $socid = GETPOST("socid");
 $contratid = GETPOST("id");
@@ -57,7 +59,7 @@ $object = new Contrat($db);
  * Actions
  */
 
-if ($_REQUEST["action"] == 'confirm_active' && $_REQUEST["confirm"] == 'yes' && $user->rights->contrat->activer)
+if ($action == 'confirm_active' && $_REQUEST["confirm"] == 'yes' && $user->rights->contrat->activer)
 {
     $object->fetch($_GET["id"]);
     $result = $object->active_line($user, $_GET["ligne"], $_GET["date"], $_GET["dateend"], $_GET["comment"]);
@@ -72,7 +74,7 @@ if ($_REQUEST["action"] == 'confirm_active' && $_REQUEST["confirm"] == 'yes' && 
     }
 }
 
-if ($_REQUEST["action"] == 'confirm_closeline' && $_REQUEST["confirm"] == 'yes' && $user->rights->contrat->activer)
+if ($action == 'confirm_closeline' && $_REQUEST["confirm"] == 'yes' && $user->rights->contrat->activer)
 {
     $object->fetch($_GET["id"]);
     $result = $object->close_line($user, $_GET["ligne"], $_GET["dateend"], urldecode($_GET["comment"]));
@@ -144,7 +146,7 @@ if ($_POST["remonth"] && $_POST["reday"] && $_POST["reyear"])
 	$datecontrat = dol_mktime($_POST["rehour"], $_POST["remin"], 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 }
 
-if ($_POST["action"] == 'add')
+if ($action == 'add')
 {
     $object->socid         = $_POST["socid"];
     $object->date_contrat   = $datecontrat;
@@ -157,27 +159,38 @@ if ($_POST["action"] == 'add')
     $object->remise_percent = trim($_POST["remise_percent"]);
     $object->ref            = trim($_POST["ref"]);
 
-    $result = $object->create($user,$langs,$conf);
-    if ($result > 0)
+    // Check
+    if (empty($datecontrat))
     {
-        Header("Location: fiche.php?id=".$object->id);
-        exit;
+        $error++;
+        $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")).'</div>';
+        $_GET["socid"]=$_POST["socid"];
+        $action='create';
     }
-    else {
-        $mesg='<div class="error">'.$object->error.'</div>';
+
+    if (! $error)
+    {
+        $result = $object->create($user,$langs,$conf);
+        if ($result > 0)
+        {
+            Header("Location: fiche.php?id=".$object->id);
+            exit;
+        }
+        else {
+            $mesg='<div class="error">'.$object->error.'</div>';
+        }
+        $_GET["socid"]=$_POST["socid"];
+        $action='create';
     }
-    $_GET["socid"]=$_POST["socid"];
-    $_GET["action"]='create';
-    $action = '';
 }
 
-if ($_POST["action"] == 'classin')
+if ($action == 'classin')
 {
     $object->fetch($_GET["id"]);
     $object->setProject($_POST["projectid"]);
 }
 
-if ($_POST["action"] == 'addline' && $user->rights->contrat->creer)
+if ($action == 'addline' && $user->rights->contrat->creer)
 {
     if ($_POST["pqty"] && (($_POST["pu"] != '' && $_POST["desc"]) || $_POST["idprod"]))
     {
@@ -325,7 +338,7 @@ if ($_POST["action"] == 'addline' && $user->rights->contrat->creer)
     }
 }
 
-if ($_POST["action"] == 'updateligne' && $user->rights->contrat->creer && ! $_POST["cancel"])
+if ($action == 'updateligne' && $user->rights->contrat->creer && ! $_POST["cancel"])
 {
     $objectline = new ContratLigne($db);
     if ($objectline->fetch($_POST["elrowid"]))
@@ -371,7 +384,7 @@ if ($_POST["action"] == 'updateligne' && $user->rights->contrat->creer && ! $_PO
     }
 }
 
-if ($_REQUEST["action"] == 'confirm_deleteline' && $_REQUEST["confirm"] == 'yes' && $user->rights->contrat->creer)
+if ($action == 'confirm_deleteline' && $_REQUEST["confirm"] == 'yes' && $user->rights->contrat->creer)
 {
     $object->fetch($_GET["id"]);
     $result = $object->deleteline($_GET["lineid"],$user);
@@ -387,20 +400,20 @@ if ($_REQUEST["action"] == 'confirm_deleteline' && $_REQUEST["confirm"] == 'yes'
 	}
 }
 
-if ($_REQUEST["action"] == 'confirm_valid' && $_REQUEST["confirm"] == 'yes' && $user->rights->contrat->creer)
+if ($action == 'confirm_valid' && $_REQUEST["confirm"] == 'yes' && $user->rights->contrat->creer)
 {
     $object->fetch($_GET["id"]);
     $result = $object->validate($user,$langs,$conf);
 }
 
 // Close all lines
-if ($_REQUEST["action"] == 'confirm_close' && $_REQUEST["confirm"] == 'yes' && $user->rights->contrat->creer)
+if ($action == 'confirm_close' && $_REQUEST["confirm"] == 'yes' && $user->rights->contrat->creer)
 {
     $object->fetch($_GET["id"]);
     $result = $object->cloture($user,$langs,$conf);
 }
 
-if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes')
+if ($action == 'confirm_delete' && $_REQUEST["confirm"] == 'yes')
 {
     if ($user->rights->contrat->supprimer)
     {
@@ -418,7 +431,7 @@ if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes')
     }
 }
 
-if ($_REQUEST["action"] == 'confirm_move' && $_REQUEST["confirm"] == 'yes')
+if ($action == 'confirm_move' && $_REQUEST["confirm"] == 'yes')
 {
     if ($user->rights->contrat->creer)
     {
@@ -463,16 +476,16 @@ $objectlignestatic=new ContratLigne($db);
  * Mode creation
  *
  *********************************************************************/
-if ($_GET["action"] == 'create')
+if ($action == 'create')
 {
     dol_fiche_head($head, $a, $langs->trans("AddContract"), 0, 'contract');
 
-    if ($mesg) print $mesg;
+    dol_htmloutput_errors($mesg);
 
     $soc = new Societe($db);
     $soc->fetch($socid);
 
-	$object->date_contrat = time();
+	$object->date_contrat = dol_now();
 	if ($contratid) $result=$object->fetch($contratid);
 
 	$numct = $object->getNextNumRef($soc);
@@ -506,12 +519,12 @@ if ($_GET["action"] == 'create')
 
     // Commercial suivi
     print '<tr><td width="20%" nowrap><span class="fieldrequired">'.$langs->trans("TypeContact_contrat_internal_SALESREPFOLL").'</span></td><td>';
-    print $form->select_users(GETPOST("commercial_suivi_id"),'commercial_suivi_id',1,'');
+    print $form->select_users(GETPOST("commercial_suivi_id")?GETPOST("commercial_suivi_id"):$user->id,'commercial_suivi_id',1,'');
     print '</td></tr>';
 
     // Commercial signature
     print '<tr><td width="20%" nowrap><span class="fieldrequired">'.$langs->trans("TypeContact_contrat_internal_SALESREPSIGN").'</span></td><td>';
-    print $form->select_users(GETPOST("commercial_signature_id"),'commercial_signature_id',1,'');
+    print $form->select_users(GETPOST("commercial_signature_id")?GETPOST("commercial_signature_id"):$user->id,'commercial_signature_id',1,'');
     print '</td></tr>';
 
     print '<tr><td><span class="fieldrequired">'.$langs->trans("Date").'</span></td><td>';
@@ -570,7 +583,7 @@ else
             exit;
         }
 
-        if ($mesg) print $mesg;
+        dol_htmloutput_errors($mesg);
 
 		$nbofservices=sizeof($object->lines);
 
@@ -593,7 +606,7 @@ else
         /*
          * Confirmation de la suppression du contrat
          */
-        if ($_GET["action"] == 'delete')
+        if ($action == 'delete')
         {
             $ret=$form->form_confirm("fiche.php?id=$id",$langs->trans("DeleteAContract"),$langs->trans("ConfirmDeleteAContract"),"confirm_delete",'',0,1);
 			if ($ret == 'html') print '<br>';
@@ -602,7 +615,7 @@ else
         /*
          * Confirmation de la validation
          */
-        if ($_GET["action"] == 'valid')
+        if ($action == 'valid')
         {
             //$numfa = contrat_get_num($soc);
             $ret=$form->form_confirm("fiche.php?id=$id",$langs->trans("ValidateAContract"),$langs->trans("ConfirmValidateContract"),"confirm_valid",'',0,1);
@@ -612,7 +625,7 @@ else
         /*
          * Confirmation de la fermeture
          */
-        if ($_GET["action"] == 'close')
+        if ($action == 'close')
         {
             $ret=$form->form_confirm("fiche.php?id=$id",$langs->trans("CloseAContract"),$langs->trans("ConfirmCloseContract"),"confirm_close",'',0,1);
 			if ($ret == 'html') print '<br>';
@@ -668,10 +681,10 @@ else
             print '<table width="100%" class="nobordernopadding"><tr><td>';
             print $langs->trans("Project");
             print '</td>';
-            if ($_GET["action"] != "classer" && $user->rights->projet->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classer&amp;id='.$id.'">'.img_edit($langs->trans("SetProject")).'</a></td>';
+            if ($action != "classer" && $user->rights->projet->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classer&amp;id='.$id.'">'.img_edit($langs->trans("SetProject")).'</a></td>';
             print '</tr></table>';
             print '</td><td colspan="3">';
-            if ($_GET["action"] == "classer")
+            if ($action == "classer")
             {
                 $form->form_project("fiche.php?id=$id",$object->socid,$object->fk_project,"projectid");
             }
@@ -745,7 +758,7 @@ else
 
 				$var=!$var;
 
-				if ($_GET["action"] != 'editline' || $_GET["rowid"] != $objp->rowid)
+				if ($action != 'editline' || $_GET["rowid"] != $objp->rowid)
 				{
 					print '<tr '.$bc[$var].' valign="top">';
 					// Libelle
@@ -1259,14 +1272,14 @@ else
             print "</div>";
 			print '<br>';
         }
-        
+
         print '<table width="100%"><tr><td width="50%" valign="top">';
 
 		/*
 		 * Linked object block
 		 */
         $somethingshown=$object->showLinkedObjectBlock();
-        
+
         print '</td><td valign="top" width="50%">';
         print '</td></tr></table>';
     }
