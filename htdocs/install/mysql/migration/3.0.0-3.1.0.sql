@@ -361,6 +361,12 @@ INSERT INTO llx_c_currencies ( code, code_iso, active, label ) VALUES ( 'LH', 'H
 -- ISV (VAT) Honduras
 INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (1141,114,     '0','0','No ISV',1);
 INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (1142,114,     '12','0','ISV 12%',1);
+-- Currency Mexique
+INSERT INTO llx_c_currencies ( code, code_iso, active, label ) VALUES ( 'MX', 'MXP', 1, 'Pesos Mexicanos');
+-- VAT MEXIQUE
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1541,154,     '0','0','No VAT',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1542,154,     '16','0','VAT 16%',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1543,154,     '10','0','VAT Frontero',1);
 
 
 update llx_actioncomm set elementtype='invoice' where elementtype='facture';

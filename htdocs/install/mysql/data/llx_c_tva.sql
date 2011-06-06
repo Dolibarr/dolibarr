@@ -228,3 +228,8 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (15
 -- HONDURAS (id 114)
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1141,114,     '0','0','No ISV',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1142,114,     '12','0','ISV 12%',1);
+
+-- MEXIQUE (id 154)
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1541,154,     '0','0','No VAT',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1542,154,     '16','0','VAT 16%',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1543,154,     '10','0','VAT Frontero',1);
