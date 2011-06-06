@@ -552,7 +552,7 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
 
         $out.='<table width="100%" class="noborder">';
         $out.='<tr class="liste_titre">';
-        $out.='<td colspan="7"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?socid='.$object->id.'&amp;status=todo">'.$langs->trans("ActionsToDoShort").'</a></td><td align="right">&nbsp;</td>';
+        $out.='<td colspan="6"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?socid='.$object->id.'&amp;status=todo">'.$langs->trans("ActionsToDoShort").'</a></td><td align="right">&nbsp;</td>';
         $out.='</tr>';
 
         $sql = "SELECT a.id, a.label,";
@@ -601,23 +601,17 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
                     else $out.='&nbsp;';
                     $out.='</td>';
 
-                    if ($obj->fk_element && $obj->elementtype == "propal")
-                    {
-                        $out.='<td width="140"><a href="propal.php?id='.$obj->fk_element.'">'.img_object($langs->trans("ShowAction"),"task");
-                        $transcode=$langs->trans("Action".$obj->acode);
-                        $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
-                        $out.=$libelle;
-                        $out.='</a></td>';
-                    }
-                    else
-                    {
-                        $actionstatic->type_code=$obj->acode;
-                        $actionstatic->libelle=$obj->libelle;
-                        $actionstatic->id=$obj->id;
-                        $out.='<td width="140">'.$actionstatic->getNomUrl(1,16).'</td>';
-                    }
+                    $actionstatic->type_code=$obj->acode;
+                    $transcode=$langs->trans("Action".$obj->acode);
+                    $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
+                    //$actionstatic->libelle=$libelle;
+                    $actionstatic->libelle=$obj->label;
+                    $actionstatic->id=$obj->id;
+                    //$out.='<td width="140">'.$actionstatic->getNomUrl(1,16).'</td>';
 
-                    $out.='<td colspan="2">'.$obj->label.'</td>';
+                    // Title of event
+                    //$out.='<td colspan="2">'.dol_trunc($obj->label,40).'</td>';
+                    $out.='<td colspan="2">'.$actionstatic->getNomUrl(1,40).'</td>';
 
                     // Contact pour cette action
                     if (! $objcon->id && $obj->fk_contact > 0)
@@ -778,7 +772,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
         $actionstatic=new ActionComm($db);
         $userstatic=new User($db);
         $contactstatic = new Contact($db);
-        
+
         // TODO uniformize
         $propalstatic=new Propal($db);
         $orderstatic=new Commande($db);
@@ -787,7 +781,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
         $out.="\n";
         $out.='<table class="noborder" width="100%">';
         $out.='<tr class="liste_titre">';
-        $out.='<td colspan="8"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?socid='.$object->id.'&amp;status=done">'.$langs->trans("ActionsDoneShort").'</a></td>';
+        $out.='<td colspan="7"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?socid='.$object->id.'&amp;status=done">'.$langs->trans("ActionsDoneShort").'</a></td>';
         $out.='</tr>';
 
         foreach ($histo as $key=>$value)
@@ -802,25 +796,28 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
             $out.='<td width="16">&nbsp;</td>';
 
             // Action
-            $out.='<td width="140">';
+            $out.='<td>';
             if ($histo[$key]['type']=='action')
             {
                 $actionstatic->type_code=$histo[$key]['acode'];
-                $actionstatic->libelle=$histo[$key]['libelle'];
+                $transcode=$langs->trans("Action".$histo[$key]['acode']);
+                $libelle=($transcode!="Action".$histo[$key]['acode']?$transcode:$histo[$key]['libelle']);
+                //$actionstatic->libelle=$libelle;
+                $actionstatic->libelle=$histo[$key]['note'];
                 $actionstatic->id=$histo[$key]['id'];
-                $out.=$actionstatic->getNomUrl(1,16);
+                $out.=$actionstatic->getNomUrl(1,40);
             }
             if ($histo[$key]['type']=='mailing')
             {
                 $out.='<a href="'.DOL_URL_ROOT.'/comm/mailing/fiche.php?id='.$histo[$key]['id'].'">'.img_object($langs->trans("ShowEMailing"),"email").' ';
                 $transcode=$langs->trans("Action".$histo[$key]['acode']);
                 $libelle=($transcode!="Action".$histo[$key]['acode']?$transcode:'Send mass mailing');
-                $out.=dol_trunc($libelle,30);
+                $out.=dol_trunc($libelle,40);
             }
             $out.='</td>';
 
-            // Note
-            $out.='<td>'.dol_trunc($histo[$key]['note'], 30).'</td>';
+            // Title of event
+            //$out.='<td>'.dol_trunc($histo[$key]['note'], 40).'</td>';
 
             // Objet lie
             // TODO uniformize
