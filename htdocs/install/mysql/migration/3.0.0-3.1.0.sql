@@ -10,7 +10,7 @@
 -- To change type of field: ALTER TABLE llx_table MODIFY name varchar(60);
 --
 
--- Fix correupted data
+-- Fix corrupted data
 update llx_deplacement set dated='2010-01-01' where dated < '2000-01-01';
 
 RENAME TABLE llx_c_methode_commande_fournisseur TO llx_c_input_method;
@@ -361,3 +361,9 @@ INSERT INTO llx_c_currencies ( code, code_iso, active, label ) VALUES ( 'LH', 'H
 -- ISV (VAT) Honduras
 INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (1141,114,     '0','0','No ISV',1);
 INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (1142,114,     '12','0','ISV 12%',1);
+
+
+update llx_actioncomm set elementtype='invoice' where elementtype='facture';
+update llx_actioncomm set elementtype='order' where elementtype='commande';
+update llx_actioncomm set elementtype='contract' where elementtype='contrat';
+

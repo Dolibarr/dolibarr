@@ -58,7 +58,7 @@ class ActionComm extends CommonObject
     var $durationp = -1;
     //var $date;			// Date action realise debut (datea)	// deprecated
     //var $dateend; 		// Date action realise fin (datea2)		// deprecated
-    //var $durationa = -1;	// deprecated
+    //var $durationa = -1;	// Duration                             // deprecated
 	var $priority;
 	var $fulldayevent = 0;  // 1=Event on full day
 	var $punctual = 1;
@@ -74,40 +74,29 @@ class ActionComm extends CommonObject
     var $note;
     var $percentage;
 
-    // Properties for links to other tables
-    var $fk_element;
-    var $elementtype;
-    
-    // Ical 
+    // Properties for links to other objects
+    var $fk_element;    // Id of record
+    var $elementtype;   // Type of record. This if property ->element of object linked to.
+
+    // Ical
     var $icalname;
     var $icalcolor;
 
 
     /**
-     *      \brief      Constructeur
-     *      \param      db      Handler d'acces base de donnee
+     *      Constructor
+     *      @param      db      Database handler
      */
     function ActionComm($db)
     {
         $this->db = $db;
-        /*
-        $this->societe = new Societe($db);
-        $this->author = new User($db);
-        $this->usermod = new User($db);
-        $this->usertodo = new User($db);
-        $this->userdone = new User($db);
-        if (class_exists("Contact"))
-        {
-            $this->contact = new Contact($db);
-        }
-		*/
     }
 
     /**
-     *    Add an action into database
-     *    @param      user      	auteur de la creation de l'action
- 	 *    @param      notrigger		1 ne declenche pas les triggers, 0 sinon
-     *    @return     int         	id de l'action creee, < 0 if KO
+     *    Add an action/event into database
+     *    @param      user      	Object user making action
+ 	 *    @param      notrigger		1 = disable triggers, 0 = enable triggers
+     *    @return     int         	Id of created event, < 0 if KO
      */
     function add($user,$notrigger=0)
     {
@@ -130,6 +119,9 @@ class ActionComm extends CommonObject
 		if ($this->datep && $this->datef && $this->datep > $this->datef) $this->datef=$this->datep;
 		if ($this->date  && $this->dateend && $this->date > $this->dateend) $this->dateend=$this->date;
         if ($this->fk_project < 0) $this->fk_project = 0;
+        if ($this->elementtype=='facture')  $this->elementtype='invoice';
+        if ($this->elementtype=='commande') $this->elementtype='order';
+        if ($this->elementtype=='contrat')  $this->elementtype='contract';
 
 		if (! $this->type_id && $this->type_code)
 		{
@@ -297,39 +289,16 @@ class ActionComm extends CommonObject
 				$this->societe->id	= $obj->fk_soc;
 				$this->contact->id	= $obj->fk_contact;
 				$this->fk_project	= $obj->fk_project;
-				
+
 				$this->fk_element	= $obj->fk_element;
 				$this->elementtype	= $obj->elementtype;
-
-				/*
-				$this->fk_facture = $obj->fk_facture;
-				if ($this->fk_facture)
-				{
-					$this->objet_url = img_object($langs->trans("ShowBill"),'bill').' '.'<a href="'. DOL_URL_ROOT . '/compta/facture.php?facid='.$this->fk_facture.'">'.$langs->trans("Bill").'</a>';
-					$this->objet_url_type = 'facture';
-				}
-
-				$this->fk_propal = $obj->propalrowid;
-				if ($this->fk_propal)
-				{
-					$this->objet_url = img_object($langs->trans("ShowPropal"),'propal').' '.'<a href="'. DOL_URL_ROOT . '/comm/propal.php?id='.$this->fk_propal.'">'.$langs->trans("Propal").'</a>';
-					$this->objet_url_type = 'propal';
-				}
-
-				$this->fk_commande = $obj->fk_commande;
-				if ($this->fk_commande)
-				{
-					$this->objet_url = img_object($langs->trans("ShowOrder"),'order').' '.'<a href="'. DOL_URL_ROOT . '/commande/fiche.php?id='.$this->fk_commande.'">'.$langs->trans("Order").'</a>';
-					$this->objet_url_type = 'order';
-				}
-				*/
 			}
 			$this->db->free($resql);
 			return 1;
 		}
 		else
 		{
-			$this->error=$this->db->error();
+			$this->error=$this->db->lasterror();
 			return -1;
 		}
 	}
@@ -350,7 +319,7 @@ class ActionComm extends CommonObject
         }
         else
         {
-        	$this->error=$this->db->error()." sql=".$sql;
+        	$this->error=$this->db->lasterror()." sql=".$sql;
         	return -1;
         }
     }

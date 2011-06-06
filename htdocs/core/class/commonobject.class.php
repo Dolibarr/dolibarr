@@ -1407,7 +1407,7 @@ class CommonObject
 	function callHooks($arraytype)
 	{
 		global $conf;
-		
+
 		if (! is_array($arraytype)) $arraytype=array($arraytype);
 
 		foreach($conf->hooks_modules as $module => $hooks)
@@ -1422,23 +1422,23 @@ class CommonObject
 						$actionfile = 'actions_'.$module.'.class.php';
 						$daofile 	= 'dao_'.$module.'.class.php';
 						$pathroot	= '';
-						
+
 						// Include actions class (controller)
 						dol_include_once($path.$actionfile);
-						
+
 						// Include dataservice class (model)
 						dol_include_once($path.$daofile);
-						
+
 						// Instantiate actions class (controller)
 						$controlclassname = 'Actions'.ucfirst($module);
 						$objModule = new $controlclassname($this->db);
 						$this->hooks[$type][$objModule->module_number] = $objModule;
-						
+
 						// Instantiate dataservice class (model)
 						$modelclassname = 'Dao'.ucfirst($module);
 						$this->hooks[$type][$objModule->module_number]->object = new $modelclassname($this->db);
 					}
-				}	
+				}
 			}
 		}
 	}
@@ -1465,7 +1465,7 @@ class CommonObject
     // TODO: All functions here must be redesigned and moved as they are not business functions but output functions
 
 	/**
-	 * 
+	 *
 	 * Enter description here ...
 	 * @param unknown_type $objectid
 	 * @param unknown_type $objecttype
@@ -1475,7 +1475,7 @@ class CommonObject
 	function getElementUrl($objectid,$objecttype,$withpicto=0,$option='')
 	{
 		global $conf;
-		
+
 		// Parse element/subelement (ex: project_task)
 		$module = $element = $subelement = $objecttype;
 		if (preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
@@ -1483,31 +1483,35 @@ class CommonObject
 			$module = $element = $regs[1];
 			$subelement = $regs[2];
 		}
-		
+
 		$classpath = $element.'/class';
-		
+
 		// To work with non standard path
-		if ($objecttype == 'facture') { $classpath = 'compta/facture/class'; }
+		if ($objecttype == 'facture' || $objecttype == 'invoice') { $classpath = 'compta/facture/class'; $module='facture'; $subelement='facture'; }
+        if ($objecttype == 'commande' || $objecttype == 'order') { $classpath = 'commande/class'; $module='commande'; $subelement='commande'; }
 		if ($objecttype == 'propal')  { $classpath = 'comm/propal/class'; }
 		if ($objecttype == 'shipping') { $classpath = 'expedition/class'; $subelement = 'expedition'; $module = 'expedition_bon'; }
 		if ($objecttype == 'delivery') { $classpath = 'livraison/class'; $subelement = 'livraison'; $module = 'livraison_bon'; }
 		if ($objecttype == 'invoice_supplier') { $classpath = 'fourn/class'; }
 		if ($objecttype == 'order_supplier')   { $classpath = 'fourn/class'; }
-		
-		$classfile = strtolower($subelement); $classname = ucfirst($subelement);
+        if ($objecttype == 'contract') { $classpath = 'contrat/class'; $module='contrat'; $subelement='contrat'; }
+
+        print "objecttype=".$objecttype." module=".$module." subelement=".$subelement;
+
+        $classfile = strtolower($subelement); $classname = ucfirst($subelement);
 		if ($objecttype == 'invoice_supplier') { $classfile = 'fournisseur.facture'; $classname='FactureFournisseur'; }
 		if ($objecttype == 'order_supplier')   { $classfile = 'fournisseur.commande'; $classname='CommandeFournisseur'; }
-		
+
 		if ($conf->$module->enabled)
 		{
 			dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
-			
+
 			$object = new $classname($this->db);
 			$ret=$object->fetch($objectid);
 			if ($ret > 0) return $object->getNomUrl($withpicto,$option);
 		}
 	}
-	
+
     /* This is to show linked object block */
 
     /**

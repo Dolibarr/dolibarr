@@ -315,7 +315,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
         {
             migrate_directories($db,$langs,$conf,'/rss','/externalrss');
-            
+
             migrate_actioncomm_element($db,$langs,$conf);
 
             // Reload modules
@@ -3090,15 +3090,15 @@ function migrate_actioncomm_element($db,$langs,$conf)
 
 	print '<br>';
 	print '<b>'.$langs->trans('MigrationActioncommElement')."</b><br>\n";
-	
+
 	$elements = array(	'propal' => 'propalrowid',
-						'commande' => 'fk_commande',
-						'facture' => 'fk_facture',
-						'contrat' => 'fk_contract',
+						'order' => 'fk_commande',
+						'invoice' => 'fk_facture',
+						'contract' => 'fk_contract',
 						'order_supplier' => 'fk_supplier_order',
 						'invoice_supplier' => 'fk_supplier_invoice'
 					);
-	
+
 	foreach($elements as $type => $field)
 	{
 		$result = $db->DDLDescTable(MAIN_DB_PREFIX."actioncomm",$field);
@@ -3106,24 +3106,25 @@ function migrate_actioncomm_element($db,$langs,$conf)
 		if ($obj)
 		{
 			dolibarr_install_syslog("upgrade2::migrate_actioncomm_element field=".$field);
-	
+
 			$db->begin();
-	
+
 			$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm SET ";
 			$sql.= "fk_element = ".$field.", elementtype = '".$type."'";
 			$sql.= " WHERE ".$field." IS NOT NULL";
 			$sql.= " AND fk_element IS NULL";
 			$sql.= " AND elementtype IS NULL";
-	
+
 			$resql = $db->query($sql);
 			if ($resql)
 			{
 				$db->commit();
-	
+
 				// DDL commands must not be inside a transaction
-				$sqlDrop = "ALTER TABLE ".MAIN_DB_PREFIX."actioncomm DROP COLUMN ".$field;
-				$db->query($sqlDrop);
-				print ". ";
+				// We will drop at next version because a migrate should be runnable several times if it fails.
+				//$sqlDrop = "ALTER TABLE ".MAIN_DB_PREFIX."actioncomm DROP COLUMN ".$field;
+				//$db->query($sqlDrop);
+				//print ". ";
 			}
 			else
 			{

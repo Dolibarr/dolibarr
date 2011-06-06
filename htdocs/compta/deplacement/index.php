@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -27,6 +27,7 @@
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/tva/class/tva.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/deplacement/class/deplacement.class.php");
 
 $langs->load("companies");
 $langs->load("users");
@@ -38,7 +39,13 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'deplacement','','');
 
 
+/*
+ * View
+ */
+
 llxHeader();
+
+$tripandexpense_static=new Deplacement($db);
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -76,12 +83,13 @@ if ($resql)
   $i = 0;
   print '<table class="noborder" width="100%">';
   print "<tr class=\"liste_titre\">";
-  print_liste_field_titre($langs->trans("Ref"),"index.php","d.rowid","","&socid=$socid",'',$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("Type"),"index.php","d.type","","&socid=$socid",'',$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("Date"),"index.php","d.dated","","&socid=$socid",'',$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","&socid=$socid",'',$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("Person"),"index.php","u.name","","&socid=$socid",'',$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("FeesKilometersOrAmout"),"index.php","d.km","","&socid=$socid",'align="right"',$sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"d.rowid","","&socid=$socid",'',$sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"d.type","","&socid=$socid",'',$sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"d.dated","","&socid=$socid",'',$sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&socid=$socid",'',$sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("Person"),$_SERVER["PHP_SELF"],"u.name","","&socid=$socid",'',$sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("FeesKilometersOrAmout"),$_SERVER["PHP_SELF"],"d.km","","&socid=$socid",'align="right"',$sortfield,$sortorder);
+  print_liste_field_titre('',$_SERVER["PHP_SELF"]);
   print "</tr>\n";
 
   $var=true;
@@ -101,6 +109,8 @@ if ($resql)
       else print '<td>&nbsp;</td>';
       print '<td align="left"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.$objp->firstname.' '.$objp->name.'</a></td>';
       print '<td align="right">'.$objp->km.'</td>';
+
+      print '<td align="right">'.$tripandexpense_static->getLibStatut(5).'</td>';
       print "</tr>\n";
 
       $i++;

@@ -133,8 +133,6 @@ class InterfaceActionsAuto
 
 			$object->sendtoid=0;
 			$object->socid=$object->id;
-			$object->fk_element=0;
-			$object->elementtype='';
 			$ok=1;
         }
         elseif ($action == 'CONTRACT_VALIDATE')
@@ -149,7 +147,7 @@ class InterfaceActionsAuto
             $object->actionmsg=$langs->transnoentities("ContractValidatedInDolibarr",$object->ref);
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
-			$object->sendtoid=0;
+            $object->sendtoid=0;
 			$ok=1;
 		}
 		elseif ($action == 'PROPAL_VALIDATE')
@@ -180,8 +178,9 @@ class InterfaceActionsAuto
                 $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
             }
 
-            $object->sendtoid=0;
-			$ok=1;
+            // Parameters $object->sendtoid defined by caller
+            //$object->sendtoid=0;
+            $ok=1;
 		}
 		elseif ($action == 'PROPAL_CLOSE_SIGNED')
         {
@@ -239,10 +238,9 @@ class InterfaceActionsAuto
                 $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
             }
 
-            $object->sendtoid=0;
+            // Parameters $object->sendtoid defined by caller
+            //$object->sendtoid=0;
             $ok=1;
-
-			// Parameters $object->xxx defined by caller
 		}
 		elseif ($action == 'BILL_VALIDATE')
         {
@@ -274,9 +272,9 @@ class InterfaceActionsAuto
                 $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
             }
 
+            // Parameters $object->sendtoid defined by caller
+            //$object->sendtoid=0;
             $ok=1;
-
-			// Parameters $object->xxx defined by caller
 		}
 		elseif ($action == 'BILL_PAYED')
         {
@@ -290,7 +288,7 @@ class InterfaceActionsAuto
             $object->actionmsg=$langs->transnoentities("InvoicePaidInDolibarr",$object->ref);
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
-			$object->sendtoid=0;
+            $object->sendtoid=0;
 			$ok=1;
 		}
 		elseif ($action == 'BILL_CANCEL')
@@ -305,7 +303,7 @@ class InterfaceActionsAuto
             $object->actionmsg=$langs->transnoentities("InvoiceCanceledInDolibarr",$object->ref);
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
-			$object->sendtoid=0;
+            $object->sendtoid=0;
 			$ok=1;
 		}
 		elseif ($action == 'FICHEINTER_VALIDATE')
@@ -320,10 +318,28 @@ class InterfaceActionsAuto
             $object->actionmsg=$langs->transnoentities("InterventionValidatedInDolibarr",$object->ref);
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
-			$object->sendtoid=0;
+            $object->sendtoid=0;
+			$object->fk_element=0;
+			$object->elementtype='';
 			$ok=1;
 		}
-    	elseif ($action == 'SHIPPING_SENTBYMAIL')
+        elseif ($action == 'FICHEINTER_SENTBYMAIL')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("other");
+            $langs->load("interventions");
+            $langs->load("agenda");
+
+            $object->actiontypecode='AC_OTH';
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InterventionValidatedInDolibarr",$object->ref);
+            $object->actionmsg=$langs->transnoentities("InterventionValidatedInDolibarr",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+            // Parameters $object->sendotid defined by caller
+            //$object->sendtoid=0;
+            $ok=1;
+        }
+		elseif ($action == 'SHIPPING_SENTBYMAIL')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
@@ -338,9 +354,9 @@ class InterfaceActionsAuto
                 $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
             }
 
+            // Parameters $object->sendtoid defined by caller
+            //$object->sendtoid=0;
             $ok=1;
-
-			// Parameters $object->xxx defined by caller
 		}
 		elseif ($action == 'ORDER_SUPPLIER_VALIDATE')
         {
@@ -353,8 +369,8 @@ class InterfaceActionsAuto
             $object->actionmsg=$langs->transnoentities("OrderValidatedInDolibarr",$object->ref);
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
-			$object->sendtoid=0;
-			$ok=1;
+            $object->sendtoid=0;
+            $ok=1;
 		}
         elseif ($action == 'ORDER_SUPPLIER_SENTBYMAIL')
         {
@@ -372,7 +388,8 @@ class InterfaceActionsAuto
                 $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
             }
 
-            $object->sendtoid=0;
+            // Parameters $object->sendotid defined by caller
+            //$object->sendtoid=0;
             $ok=1;
         }
 		elseif ($action == 'BILL_SUPPLIER_VALIDATE')
@@ -387,8 +404,8 @@ class InterfaceActionsAuto
             $object->actionmsg=$langs->transnoentities("InvoiceValidatedInDolibarr",$object->ref);
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
-			$object->sendtoid=0;
-			$ok=1;
+            $object->sendtoid=0;
+            $ok=1;
 		}
         elseif ($action == 'BILL_SUPPLIER_SENTBYMAIL')
         {
@@ -406,7 +423,8 @@ class InterfaceActionsAuto
                 $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
             }
 
-            $object->sendtoid=0;
+            // Parameters $object->sendtoid defined by caller
+            //$object->sendtoid=0;
             $ok=1;
         }
 		elseif ($action == 'BILL_SUPPLIER_PAYED')
@@ -456,8 +474,6 @@ class InterfaceActionsAuto
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
 			$object->sendtoid=0;
-			$object->fk_element=0;
-			$object->elementtype='';
 			$ok=1;
         }
         elseif ($action == 'MEMBER_SUBSCRIPTION')
@@ -477,8 +493,6 @@ class InterfaceActionsAuto
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
 			$object->sendtoid=0;
-			$object->fk_element=0;
-			$object->elementtype='';
 			$ok=1;
         }
         elseif ($action == 'MEMBER_MODIFY')
@@ -500,8 +514,6 @@ class InterfaceActionsAuto
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
 			$object->sendtoid=0;
-			$object->fk_element=0;
-			$object->elementtype='';
 			$ok=1;
         }
         elseif ($action == 'MEMBER_DELETE')
@@ -519,8 +531,6 @@ class InterfaceActionsAuto
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
 			$object->sendtoid=0;
-			$object->fk_element=0;
-			$object->elementtype='';
 			$ok=1;
         }
 
@@ -556,8 +566,8 @@ class InterfaceActionsAuto
 			//$actioncomm->usertodo  = $user;	// User affected to action
 			$actioncomm->userdone    = $user;	// User doing action
 
-			$actioncomm->fk_element  = $object->fk_element;
-			$actioncomm->elementtype = $object->elementtype;
+			$actioncomm->fk_element  = $object->id;
+			$actioncomm->elementtype = $object->element;
 
 			$ret=$actioncomm->add($user);       // User qui saisit l'action
 			if ($ret > 0)
