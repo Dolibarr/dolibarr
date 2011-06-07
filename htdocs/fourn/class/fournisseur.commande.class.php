@@ -476,13 +476,24 @@ class CommandeFournisseur extends Commande
 		global $langs;
 		$langs->load('orders');
 
-		if ($mode == 0)
+        // List of language codes for status
+        $statutshort[0] = 'StatusOrderDraftShort';
+        $statutshort[1] = 'StatusOrderValidatedShort';
+        $statutshort[2] = 'StatusOrderApprovedShort';
+        $statutshort[3] = 'StatusOrderOnProcessShort';
+        $statutshort[4] = 'StatusOrderReceivedPartiallyShort';
+        $statutshort[5] = 'StatusOrderReceivedAllShort';
+        $statutshort[6] = 'StatusOrderCanceledShort';
+        $statutshort[7] = 'StatusOrderCanceledShort';
+        $statutshort[9] = 'StatusOrderRefusedShort';
+
+        if ($mode == 0)
 		{
 			return $langs->trans($this->statuts[$statut]);
 		}
 		if ($mode == 1)
 		{
-			return $langs->trans($this->statuts[$statut]);
+			return $langs->trans($statutshort[$statut]);
 		}
 		if ($mode == 2)
 		{
