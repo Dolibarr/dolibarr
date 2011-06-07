@@ -44,8 +44,8 @@ $actionsave=GETPOST("save");
 if (empty($conf->global->AGENDA_EXT_NB)) $conf->global->AGENDA_EXT_NB=5;
 $MAXAGENDA=empty($conf->global->AGENDA_EXT_NB)?5:$conf->global->AGENDA_EXT_NB;
 
-// List of Google colors (A lot of colors are ignored by Google)
-$colorlist=array('29527A','5229A3','A32929','7A367A','B1365F','0D7813');
+// List of aviable colors
+$colorlist=array('BECEDD','DDBECE','BFDDBE','F598B4','F68654','CBF654','9FAF9');
 
 /*
  * Actions

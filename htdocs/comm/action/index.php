@@ -514,7 +514,7 @@ if ($conf->global->ENABLE_AGENDA_EXT==1 && $conf->global->AGENDA_EXT_NB>0)
 				$event->datep=$icalevent[DTSTART];
 				$event->datef=$icalevent[DTEND];
 				$event->type_code="ICALEVENT";
-				$event->libelle='<b>'.$icalevent[SUMMARY].'</b><br>'.str_replace("\\n", "<br>", "$icalevent[DESCRIPTION]");; 
+				$event->libelle='<b>'.$icalevent[SUMMARY].'</b><br>'.str_replace("\\n", "<br>", "$icalevent[DESCRIPTION]"); 
 	        	//$event->fulldayevent=$obj->fulldayevent;
 	        	
 				$event->date_start_in_calendar=$event->datep;
