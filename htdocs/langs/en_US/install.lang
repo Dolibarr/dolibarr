@@ -149,6 +149,7 @@ MigrationCustomerOrderShipping=Migrate shipping for customer orders storage
 MigrationShippingDelivery=Upgrade storage of shipping 
 MigrationShippingDelivery2=Upgrade storage of shipping 2 
 MigrationFinished=Migration finished
+LastStepDesc=<strong>Last step</strong>: Define here login and password you plan to use to connect to software. Do no loose this as it is the account to allow to administer all others.
 
 #########
 # upgrade
