@@ -47,8 +47,8 @@ class User extends CommonObject
 	var $id=0;
 	var $ldap_sid;
 	var $search_sid;
-	var $nom;
-	var $prenom;
+	var $nom;		// TODO deprecated
+	var $prenom;	// TODO deprecated
     var $lastname;
     var $firstname;
 	var $note;
@@ -530,9 +530,15 @@ class User extends CommonObject
 
 		// Maintenant les droits groupes
 		$sql = "SELECT r.module, r.perms, r.subperms";
-		$sql.= " FROM ".MAIN_DB_PREFIX."usergroup_rights as gr, ".MAIN_DB_PREFIX."usergroup_user as gu, ".MAIN_DB_PREFIX."rights_def as r";
-		$sql.= " WHERE r.id = gr.fk_id AND gr.fk_usergroup = gu.fk_usergroup AND gu.fk_user = ".$this->id." AND r.perms IS NOT NULL";
+		$sql.= " FROM ".MAIN_DB_PREFIX."usergroup_rights as gr,";
+		$sql.= " ".MAIN_DB_PREFIX."usergroup_user as gu,";
+		$sql.= " ".MAIN_DB_PREFIX."rights_def as r";
+		$sql.= " WHERE r.id = gr.fk_id";
+		$sql.= " AND gr.fk_usergroup = gu.fk_usergroup";
+		$sql.= " AND gu.fk_user = ".$this->id;
+		$sql.= " AND r.perms IS NOT NULL";
 		$sql.= " AND r.entity = ".$conf->entity;
+		$sql.= " AND gu.entity IN (0,".$conf->entity.")";
 		if ($moduletag) $sql.= " AND r.module = '".$this->db->escape($moduletag)."'";
 
 		dol_syslog('User::getRights sql='.$sql, LOG_DEBUG);
@@ -1474,9 +1480,10 @@ class User extends CommonObject
 	 *    Add user into a group
 	 *    @param       group       id du groupe
 	 */
-	function SetInGroup($group, $notrigger=0)
+	function SetInGroup($group, $entity, $notrigger=0)
 	{
-		global $conf;
+		global $conf, $langs, $user;
+		
         $error=0;
 
 		$this->db->begin();
@@ -1484,25 +1491,56 @@ class User extends CommonObject
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_user";
 		$sql.= " WHERE fk_user  = ".$this->id;
 		$sql.= " AND fk_usergroup = ".$group;
-		$sql.= " AND entity = ".$conf->entity;
+		$sql.= " AND entity = ".$entity;
 
 		$result = $this->db->query($sql);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."usergroup_user (entity, fk_user, fk_usergroup)";
-		$sql.= " VALUES (".$conf->entity.",".$this->id.",".$group.")";
+		$sql.= " VALUES (".$entity.",".$this->id.",".$group.")";
 
 		$result = $this->db->query($sql);
-
-        $this->db->commit();
+		if ($result)
+		{
+			if (! $error && ! $notrigger)
+			{
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers('USER_SETINGROUP',$this,$user,$langs,$conf);
+				if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				// Fin appel triggers
+			}
+			
+			if (! $error)
+			{
+				$this->db->commit();
+				return 1;
+			}
+			else
+			{
+				$this->error=$interface->error;
+				dol_syslog("User::SetInGroup ".$this->error, LOG_ERR);
+				$this->db->rollback();
+				return -2;
+			}
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			dol_syslog("User::SetInGroup ".$this->error, LOG_ERR);
+			$this->db->rollback();
+			return -1;
+		}
 	}
 
 	/**
 	 *    Remove a user from a group
 	 *    @param      group       id du groupe
 	 */
-	function RemoveFromGroup($group, $notrigger=0)
+	function RemoveFromGroup($group, $entity, $notrigger=0)
 	{
-		global $conf;
+		global $conf,$langs,$user;
+		
         $error=0;
 
         $this->db->begin();
@@ -1510,11 +1548,41 @@ class User extends CommonObject
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_user";
 		$sql.= " WHERE fk_user  = ".$this->id;
 		$sql.= " AND fk_usergroup = ".$group;
-		$sql.= " AND entity = ".$conf->entity;
+		$sql.= " AND entity = ".$entity;
 
 		$result = $this->db->query($sql);
+		if ($result)
+		{
+			if (! $error && ! $notrigger)
+			{
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers('USER_REMOVEFROMGROUP',$this,$user,$langs,$conf);
+				if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				// Fin appel triggers
+			}
 
-		$this->db->commit();
+			if (! $error)
+			{
+				$this->db->commit();
+				return 1;
+			}
+			else
+			{
+				$this->error=$interface->error;
+				dol_syslog("User::RemoveFromGroup ".$this->error, LOG_ERR);
+				$this->db->rollback();
+				return -2;
+			}
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			dol_syslog("User::RemoveFromGroup ".$this->error, LOG_ERR);
+			$this->db->rollback();
+			return -1;
+		}
 	}
 
 	/**

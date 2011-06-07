@@ -233,37 +233,22 @@ if (($action == 'addgroup' || $action == 'removegroup') && $caneditfield)
 
         $edituser = new User($db);
         $edituser->fetch($_GET["id"]);
-        if ($action == 'addgroup')    $edituser->SetInGroup($group);
-        if ($action == 'removegroup') $edituser->RemoveFromGroup($group);
-
-        // We reload members (list has changed)
-        $editgroup->members=$editgroup->listUsersForGroup();
-
-        // We update group to force triggers that update groups content
-        $result=$editgroup->update();
+        if ($action == 'addgroup')    $edituser->SetInGroup($group,GETPOST('entity'));
+        if ($action == 'removegroup') $edituser->RemoveFromGroup($group,GETPOST('entity'));
 
         if ($result > 0)
         {
             header("Location: fiche.php?id=".$_GET["id"]);
             exit;
         }
+        else
+		{
+			$message.=$edituser->error;
+		}
 	}
 }
 
-if ($_GET["action"] == 'removegroup' && $caneditfield)
-{
-	if ($_GET["group"])
-	{
-		$edituser = new User($db);
-		$edituser->fetch($_GET["id"]);
-		$edituser->RemoveFromGroup($_GET["group"]);
-
-		Header("Location: fiche.php?id=".$_GET["id"]);
-		exit;
-	}
-}
-
-if ($_POST["action"] == 'update' && ! $_POST["cancel"])
+if ($action == 'update' && ! $_POST["cancel"])
 {
 	require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 
@@ -549,7 +534,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 		}
 	}
 
-	if ($message) { print $message.'<br>'; }
+	dol_htmloutput_errors($message);
 
 	if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr')
 	{
@@ -909,7 +894,8 @@ else
 			$ret=$html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("DeleteAUser"),$langs->trans("ConfirmDeleteUser",$fuser->login),"confirm_delete", '', 0, 1);
 			if ($ret == 'html') print '<br>';
 		}
-
+		
+		dol_htmloutput_errors($message);
 
 		/*
 		 * Fiche en mode visu
@@ -1217,35 +1203,18 @@ else
 				print_fiche_titre($langs->trans("ListOfGroupsForUser"),'','');
 
 				// On selectionne les groupes auquel fait parti le user
-				// TODO move sql query to dao class
-				$grouplistid = array();
-
-				$sql = "SELECT ug.fk_usergroup";
-				$sql.= " FROM ".MAIN_DB_PREFIX."usergroup_user as ug";
-				$sql.= ", ".MAIN_DB_PREFIX."usergroup as u";
-				$sql.= " WHERE ug.fk_user = ".$fuser->id;
-				$sql.= " AND ug.fk_usergroup = u.rowid";
-				$sql.= " AND u.entity IN (0,".$conf->entity.")";
-
-				$result = $db->query($sql);
-				if ($result)
-				{
-					$num = $db->num_rows($result);
-					$i = 0;
-
-					while ($i < $num)
-					{
-						$obj = $db->fetch_object($result);
-
-						$grouplistid[]=$obj->fk_usergroup;
-						$i++;
-					}
-				}
-				else {
-					dol_print_error($db);
-				}
-
-				$db->free($resql);
+				$exclude = array();
+				
+				$usergroup=new UserGroup($db);
+				$groupslist = $usergroup->listGroupsForUser($fuser->id);
+				
+				if (! empty($groupslist))
+	            {
+	            	foreach($groupslist as $groupforuser)
+	            	{
+	            		$exclude[]=$groupforuser->id;
+	            	}
+	            }
 
 				if ($caneditgroup)
 				{
@@ -1253,10 +1222,11 @@ else
 					print '<form action="fiche.php?id='.$_GET["id"].'" method="post">'."\n";
 					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 					print '<input type="hidden" name="action" value="addgroup">';
+					print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 					print '<table class="noborder" width="100%">'."\n";
 					print '<tr class="liste_titre"><td class="liste_titre" width="25%">'.$langs->trans("GroupsToAdd").'</td>'."\n";
 					print '<td>';
-					print $form->select_dolgroups('','group',0,$grouplistid);
+					print $form->select_dolgroups('','group',1,$exclude);
 					print ' &nbsp; ';
 					print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
 					print '</td></tr>'."\n";
@@ -1268,23 +1238,17 @@ else
 				/*
 				 * Groupes affectes
 				 */
-				$usergroup=new UserGroup($db);
-				$listofgroups=$usergroup->listGroupsForUser($fuser);
-				$num=sizeof($listofgroups);
-
 				print '<table class="noborder" width="100%">';
 				print '<tr class="liste_titre">';
 				print '<td class="liste_titre" width="25%">'.$langs->trans("Groups").'</td>';
 				print "<td>&nbsp;</td></tr>\n";
 
-				if ($num > 0)
+				if (! empty($groupslist))
 				{
-					$i = 0;
-
 					$var=true;
-					while ($i < $num)
+					
+					foreach($groupslist as $group)
 					{
-						$group = $listofgroups[$i];
 						$var=!$var;
 
 						print "<tr ".$bc[$var].">";
@@ -1302,7 +1266,7 @@ else
 
 						if ($caneditgroup)
 						{
-							print '<a href="fiche.php?id='.$_GET["id"].'&amp;action=removegroup&amp;group='.$group->id.'">';
+							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$fuser->id.'&amp;action=removegroup&amp;group='.$group->id.'&amp;entity='.$group->usergroup_entity.'">';
 							print img_delete($langs->trans("RemoveFromGroup"));
 						}
 						else
@@ -1310,7 +1274,6 @@ else
 							print "&nbsp;";
 						}
 						print "</td></tr>\n";
-						$i++;
 					}
 				}
 				else

@@ -201,6 +201,7 @@ $sql.= " ".MAIN_DB_PREFIX."usergroup_rights as gr,";
 $sql.= " ".MAIN_DB_PREFIX."usergroup_user as gu";
 $sql.= " WHERE gr.fk_id = r.id";
 $sql.= " AND r.entity = ".$conf->entity;
+$sql.= " AND gu.entity IN (0,".$conf->entity.")";
 $sql.= " AND gr.fk_usergroup = gu.fk_usergroup";
 $sql.= " AND gu.fk_user = ".$fuser->id;
 

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +50,8 @@ $action=GETPOST("action");
 $confirm=GETPOST("confirm");
 $userid=GETPOST("user","int");
 
+$object = new Usergroup($db);
+
 
 /**
  *  Action remove group
@@ -58,9 +60,8 @@ if ($action == 'confirm_delete' && $confirm == "yes")
 {
 	if ($caneditperms)
 	{
-		$editgroup = new Usergroup($db, $_GET["id"]);
-		$editgroup->fetch($_GET["id"]);
-		$editgroup->delete();
+		$object->fetch($_GET["id"]);
+		$object->delete();
 		Header("Location: index.php");
 		exit;
 	}
@@ -86,20 +87,19 @@ if ($_POST["action"] == 'add')
 
 		if (! $message)
 		{
-			$editgroup = new UserGroup($db,0);
-
-			$editgroup->nom    = trim($_POST["nom"]);
-			$editgroup->note   = trim($_POST["note"]);
+			$object->nom			= trim($_POST["nom"]);
+			$object->globalgroup	= $_POST["globalgroup"];
+			$object->note		= trim($_POST["note"]);
 
 			$db->begin();
 
-			$id = $editgroup->create();
+			$id = $object->create();
 
 			if ($id > 0)
 			{
 				$db->commit();
 
-				Header("Location: fiche.php?id=".$editgroup->id);
+				Header("Location: fiche.php?id=".$object->id);
 				exit;
 			}
 			else
@@ -107,11 +107,13 @@ if ($_POST["action"] == 'add')
 				$db->rollback();
 
 				$langs->load("errors");
-				$message='<div class="error">'.$langs->trans("ErrorGroupAlreadyExists",$editgroup->nom).'</div>';
+				$message='<div class="error">'.$langs->trans("ErrorGroupAlreadyExists",$object->nom).'</div>';
 				$action="create";       // Go back to create page
 			}
 		}
-	}else{
+	}
+	else
+	{
 		$message = '<div class="error">'.$langs->trans('ErrorForbidden').'</div>';
 	}
 }
@@ -123,28 +125,27 @@ if ($action == 'adduser' || $action =='removeuser')
 	{
 		if ($userid)
 		{
-			$editgroup = new UserGroup($db);
-			$editgroup->fetch($_GET["id"]);
-			$editgroup->oldcopy=dol_clone($editgroup);
+			$object->fetch($_GET["id"]);
+			$object->oldcopy=dol_clone($object);
 
 			$edituser = new User($db);
 			$edituser->fetch($userid);
-			if ($action == 'adduser')    $result=$edituser->SetInGroup($_GET["id"]);
-			if ($action == 'removeuser') $result=$edituser->RemoveFromGroup($_GET["id"]);
-
-			// We reload members (list has changed)
-			$editgroup->members=$editgroup->listUsersForGroup();
-
-			// We update group to force triggers that update groups content
-			$result=$editgroup->update();
+			if ($action == 'adduser')    $result=$edituser->SetInGroup($object->id,GETPOST('entity'));
+			if ($action == 'removeuser') $result=$edituser->RemoveFromGroup($object->id,GETPOST('entity'));
 
 			if ($result > 0)
 			{
-				header("Location: fiche.php?id=".$_GET["id"]);
+				header("Location: fiche.php?id=".$object->id);
 				exit;
 			}
+			else
+			{
+				$message.=$edituser->error;
+			}
 		}
-	}else{
+	}
+	else
+	{
 		$message = '<div class="error">'.$langs->trans('ErrorForbidden').'</div>';
 	}
 }
@@ -158,24 +159,24 @@ if ($_POST["action"] == 'update')
 
 		$db->begin();
 
-		$editgroup = new Usergroup($db, $_GET["id"]);
-		$editgroup->fetch($_GET["id"]);
+		$object->fetch($_GET["id"]);
 
-		$editgroup->oldcopy=dol_clone($editgroup);
+		$object->oldcopy=dol_clone($object);
 
-		$editgroup->nom           = trim($_POST["group"]);
-		$editgroup->note          = dol_htmlcleanlastbr($_POST["note"]);
+		$object->nom			= trim($_POST["group"]);
+		$object->globalgroup	= $_POST["globalgroup"];
+		$object->note		= dol_htmlcleanlastbr($_POST["note"]);
 
-		$ret=$editgroup->update();
+		$ret=$object->update();
 
-		if ($ret >= 0 && ! sizeof($editgroup->errors))
+		if ($ret >= 0 && ! sizeof($object->errors))
 		{
 			$message.='<div class="ok">'.$langs->trans("GroupModified").'</div>';
 			$db->commit();
 		}
 		else
 		{
-			$message.='<div class="error">'.$editgroup->error.'</div>';
+			$message.='<div class="error">'.$object->error.'</div>';
 			$db->rollback();
 		}
 	}
@@ -193,7 +194,7 @@ if ($_POST["action"] == 'update')
 
 llxHeader('',$langs->trans("GroupCard"));
 
-$html = new Form($db);
+$form = new Form($db);
 $fuserstatic = new User($db);
 
 if ($action == 'create')
@@ -210,6 +211,21 @@ if ($action == 'create')
 
 	print "<tr>".'<td valign="top" class="fieldrequired">'.$langs->trans("Name").'</td>';
 	print '<td class="valeur"><input size="30" type="text" name="nom" value=""></td></tr>';
+	
+	// Global group
+	if ($conf->multicompany->enabled)
+	{
+		if ($conf->entity == 1)
+		{
+			print "<tr>".'<td valign="top">'.$langs->trans("GlobalGroup").'</td>';
+			$checked=(empty($_POST['globalgroup']) ? '' : ' checked');
+			print '<td><input type="checkbox" name="globalgroup" value="1"'.$checked.' /></td>';
+		}
+		else
+		{
+			print '<input type="hidden" name="globalgroup" value="0" />';
+		}
+	}
 
 	print "<tr>".'<td valign="top">'.$langs->trans("Note").'</td><td>';
 	if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_USER)
@@ -240,13 +256,12 @@ else
 {
 	if ($_GET["id"] )
 	{
-		$group = new UserGroup($db);
-		$group->fetch($_GET["id"]);
+		$object->fetch($_GET["id"]);
 
 		/*
 		 * Affichage onglets
 		 */
-		$head = group_prepare_head($group);
+		$head = group_prepare_head($object);
 		$title = $langs->trans("Group");
 		dol_fiche_head($head, 'group', $title, 0, 'group');
 
@@ -255,7 +270,7 @@ else
 		 */
 		if ($action == 'delete')
 		{
-			$ret=$html->form_confirm("fiche.php?id=".$group->id,$langs->trans("DeleteAGroup"),$langs->trans("ConfirmDeleteGroup",$group->name),"confirm_delete", '',0,1);
+			$ret=$form->form_confirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("DeleteAGroup"),$langs->trans("ConfirmDeleteGroup",$object->name),"confirm_delete", '',0,1);
 			if ($ret == 'html') print '<br>';
 		}
 
@@ -270,14 +285,14 @@ else
 			// Ref
 			print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
 			print '<td colspan="2">';
-			print $html->showrefnav($group,'id','',$user->rights->user->user->lire || $user->admin);
+			print $form->showrefnav($object,'id','',$user->rights->user->user->lire || $user->admin);
 			print '</td>';
 			print '</tr>';
 
 			// Name
 			print '<tr><td width="25%" valign="top">'.$langs->trans("Name").'</td>';
-			print '<td width="75%" class="valeur">'.$group->nom;
-			if (!$group->entity)
+			print '<td width="75%" class="valeur">'.$object->nom;
+			if (empty($object->entity))
 			{
 				print img_redstar($langs->trans("GlobalGroup"));
 			}
@@ -285,7 +300,7 @@ else
 
 			// Note
 			print '<tr><td width="25%" valign="top">'.$langs->trans("Note").'</td>';
-			print '<td class="valeur">'.dol_htmlentitiesbr($group->note).'&nbsp;</td>';
+			print '<td class="valeur">'.dol_htmlentitiesbr($object->note).'&nbsp;</td>';
 			print "</tr>\n";
 			print "</table>\n";
 
@@ -298,19 +313,19 @@ else
 
 			if ($caneditperms)
 			{
-				print '<a class="butAction" href="fiche.php?id='.$group->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
+				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
 			}
 
 			if ($candisableperms)
 			{
-				print '<a class="butActionDelete" href="fiche.php?action=delete&amp;id='.$group->id.'">'.$langs->trans("DeleteGroup").'</a>';
+				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&amp;id='.$object->id.'">'.$langs->trans("DeleteGroup").'</a>';
 			}
 
 			print "</div>\n";
 			print "<br>\n";
 
 
-			if ($message) { print $message."<br>"; }
+			dol_htmloutput_errors($message);
 
             /*
              * Liste des utilisateurs dans le groupe
@@ -318,216 +333,131 @@ else
 
             print_fiche_titre($langs->trans("ListOfUsersInGroup"),'','');
 
-            // On salectionne les users qui ne sont pas deja dans le groupe
-            $userlistid = array();
-            $uss = array();
-
-            $sql = "SELECT ug.fk_user";
-            $sql.= " FROM ".MAIN_DB_PREFIX."usergroup_user as ug";
-            $sql.= ", ".MAIN_DB_PREFIX."user as u";
-            $sql.= " WHERE ug.fk_usergroup = ".$group->id;
-            $sql.= " AND ug.fk_user = u.rowid";
-            $sql.= " AND u.entity IN (0,".$conf->entity.")";
-
-            $result = $db->query($sql);
-            if ($result)
+            // On selectionne les users qui ne sont pas deja dans le groupe
+            $exclude = array();
+            
+            $userslist = $object->listUsersForGroup();
+            
+            if (! empty($userslist))
             {
-            	$num = $db->num_rows($result);
-              $i = 0;
-
-              while ($i < $num)
-              {
-              	$obj = $db->fetch_object($result);
-
-              	$userlistid[]=$obj->fk_user;
-              	$i++;
-              }
-            }
-            else {
-                dol_print_error($db);
-            }
-
-            $idList = implode(",",$userlistid);
-
-            if (!empty($idList))
-            {
-            	$sql = "SELECT u.rowid, u.login, u.name, u.firstname, u.admin, u.statut";
-            	$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-            	$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
-            	$sql.= " AND u.rowid NOT IN (".$idList.")";
-            	$sql.= " ORDER BY u.name";
-
-            	$result = $db->query($sql);
-            	if ($result)
+            	foreach($userslist as $useringroup)
             	{
-            		$num = $db->num_rows($result);
-                $i = 0;
-
-                while ($i < $num)
-                {
-                	$obj = $db->fetch_object($result);
-
-                  $uss[$obj->rowid] = ucfirst(stripslashes($obj->name)).' '.ucfirst(stripslashes($obj->firstname));
-                  if ($obj->login) $uss[$obj->rowid].=' ('.$obj->login.')';
-                  $i++;
-                }
-              }
-              else {
-              	dol_print_error($db);
-              }
+            		$exclude[]=$useringroup->id;
+            	}
             }
-            else
-            {
-            	$sql = "SELECT u.rowid, u.login, u.name, u.firstname, u.admin, u.statut";
-            	$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-            	$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
-            	$sql.= " ORDER BY u.name";
-
-            	$result = $db->query($sql);
-            	if ($result)
-            	{
-            		$num = $db->num_rows($result);
-                $i = 0;
-
-                while ($i < $num)
-                {
-                	$obj = $db->fetch_object($result);
-
-                  $uss[$obj->rowid] = ucfirst(stripslashes($obj->name)).' '.ucfirst(stripslashes($obj->firstname));
-                  if ($obj->login) $uss[$obj->rowid].=' ('.$obj->login.')';
-                  $i++;
-                }
-              }
-              else {
-              	dol_print_error($db);
-              }
-            }
-
+            
             if ($caneditperms)
             {
-                $form = new Form($db);
-                print '<form action="fiche.php?id='.$group->id.'" method="post">'."\n";
+                print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST">'."\n";
                 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
                 print '<input type="hidden" name="action" value="adduser">';
+                print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
                 print '<table class="noborder" width="100%">'."\n";
                 print '<tr class="liste_titre"><td class="liste_titre" width="25%">'.$langs->trans("NonAffectedUsers").'</td>'."\n";
-                //print '<tr class="liste_titre"><td class="liste_titre" width="25%">'.$langs->trans("UsersToAdd").'</td>'."\n";
                 print '<td>';
-                print $form->selectarray("user",$uss,'',1);
+                print $form->select_users('','user',1,$exclude);
                 print ' &nbsp; ';
-                print '<input type="submit" class=button value="'.$langs->trans("Add").'">';
+                print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
                 print '</td></tr>'."\n";
                 print '</table></form>'."\n";
                 print '<br>';
             }
 
             /*
-             * Membres du groupe
+             * Group members
              */
-            $sql = "SELECT u.rowid, u.login, u.name, u.firstname, u.admin, u.entity, u.statut";
-            $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-            $sql.= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
-            $sql.= " WHERE ug.fk_user = u.rowid";
-            $sql.= " AND ug.fk_usergroup = ".$group->id;
-            $sql.= " ORDER BY u.name";
+            print '<table class="noborder" width="100%">';
+            print '<tr class="liste_titre">';
+            print '<td class="liste_titre" width="25%">'.$langs->trans("Login").'</td>';
+            print '<td class="liste_titre" width="25%">'.$langs->trans("Lastname").'</td>';
+            print '<td class="liste_titre" width="25%">'.$langs->trans("Firstname").'</td>';
+            print '<td class="liste_titre" align="right">'.$langs->trans("Status").'</td>';
+            print '<td>&nbsp;</td>';
+            print "<td>&nbsp;</td>";
+            print "</tr>\n";
 
-            $result = $db->query($sql);
-            if ($result)
+            if (! empty($userslist))
             {
-                $num = $db->num_rows($result);
-                $i = 0;
-
-                print '<table class="noborder" width="100%">';
-                print '<tr class="liste_titre">';
-                print '<td class="liste_titre" width="25%">'.$langs->trans("Login").'</td>';
-                print '<td class="liste_titre" width="25%">'.$langs->trans("Lastname").'</td>';
-                print '<td class="liste_titre" width="25%">'.$langs->trans("Firstname").'</td>';
-                print '<td class="liste_titre" align="right">'.$langs->trans("Status").'</td>';
-                print '<td>&nbsp;</td>';
-                print "<td>&nbsp;</td>";
-                print "</tr>\n";
-                if ($num) {
-                    $var=True;
-                    while ($i < $num)
-                    {
-                        $obj = $db->fetch_object($result);
-                        $var=!$var;
-
-                        print "<tr $bc[$var]>";
-                        print '<td>';
-                        print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->login.'</a>';
-                        if ($obj->admin  && !$obj->entity)
-                        {
-                        	print img_redstar($langs->trans("SuperAdministrator"));
-                        }
-                        else if ($obj->admin)
-                        {
-                        	print img_picto($langs->trans("Administrator"),'star');
-                        }
-                        print '</td>';
-                        print '<td>'.ucfirst(stripslashes($obj->name)).'</td>';
-                        print '<td>'.ucfirst(stripslashes($obj->firstname)).'</td>';
-                        $fuserstatic->id=$obj->id;
-                        $fuserstatic->statut=$obj->statut;
-                        print '<td align="right">'.$fuserstatic->getLibStatut(5).'</td>';
-                        print '<td>&nbsp;</td>';
-                        print '<td align="right">';
-                        if ($user->admin)
-                        {
-                            print '<a href="fiche.php?id='.$group->id.'&amp;action=removeuser&amp;user='.$obj->rowid.'">';
-                            print img_delete($langs->trans("RemoveFromGroup"));
-                        }
-                        else
-                        {
-                            print "-";
-                        }
-                        print "</td></tr>\n";
-                        $i++;
-                    }
-                }
-                else
-                {
-                    print '<tr><td colspan=2>'.$langs->trans("None").'</td></tr>';
-                }
-                print "</table>";
-                print "<br>";
-                $db->free($result);
+            	$var=True;
+            	
+            	foreach($userslist as $useringroup)
+            	{
+            		$var=!$var;
+            		
+            		print "<tr $bc[$var]>";
+            		print '<td>';
+            		print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$useringroup->id.'">'.img_object($langs->trans("ShowUser"),"user").' '.$useringroup->login.'</a>';
+            		if ($useringroup->admin  && ! $useringroup->entity) print img_redstar($langs->trans("SuperAdministrator"));
+            		else if ($useringroup->admin) print img_picto($langs->trans("Administrator"),'star');
+            		print '</td>';
+            		print '<td>'.ucfirst(stripslashes($useringroup->lastname)).'</td>';
+            		print '<td>'.ucfirst(stripslashes($useringroup->firstname)).'</td>';
+            		print '<td align="right">'.$useringroup->getLibStatut(5).'</td>';
+            		print '<td>&nbsp;</td>';
+            		print '<td align="right">';
+            		if ($user->admin)
+            		{
+            			print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=removeuser&amp;user='.$useringroup->id.'&amp;entity='.$useringroup->usergroup_entity.'">';
+            			print img_delete($langs->trans("RemoveFromGroup"));
+            		}
+            		else
+            		{
+            			print "-";
+            		}
+            		print "</td></tr>\n";
+            	}
             }
-            else {
-                dol_print_error($db);
+            else
+            {
+            	print '<tr><td colspan=2>'.$langs->trans("None").'</td></tr>';
             }
+            print "</table>";
+            print "<br>";
         }
 
         /*
          * Fiche en mode edition
          */
-        if ($_GET["action"] == 'edit' && $caneditperms)
+        if ($action == 'edit' && $caneditperms)
         {
-            print '<form action="fiche.php?id='.$group->id.'" method="post" name="updategroup" enctype="multipart/form-data">';
+            print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post" name="updategroup" enctype="multipart/form-data">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="update">';
 
             print '<table class="border" width="100%">';
             print '<tr><td width="25%" valign="top" class="fieldrequired">'.$langs->trans("Name").'</td>';
-            print '<td width="75%" class="valeur"><input size="15" type="text" name="group" value="'.$group->nom.'">';
-            if (!$group->entity)
-            {
-            	print img_redstar($langs->trans("GlobalGroup"));
-            }
+            print '<td width="75%" class="valeur"><input size="15" type="text" name="group" value="'.$object->nom.'">';
             print "</td></tr>\n";
-            print '<tr><td width="25%" valign="top">'.$langs->trans("Note").'</td>';
+            
+            // Global group
+            if ($conf->multicompany->enabled)
+            {
+            	if ($conf->entity == 1)
+            	{
+            		print "<tr>".'<td valign="top">'.$langs->trans("GlobalGroup").'</td>';
+		            $checked=(empty($object->entity) ? ' checked' : '');
+					print '<td><input type="checkbox" name="globalgroup" value="1"'.$checked.' /></td>';
+            	}
+            	else
+            	{
+            		$value=(empty($object->entity) ? 1 : 0);
+            		print '<input type="hidden" name="globalgroup" value="'.$value.'" />';
+            	}
+            }
+            
+			print '<tr><td width="25%" valign="top">'.$langs->trans("Note").'</td>';
             print '<td class="valeur">';
 
 			if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_USER)
 			{
 				require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-				$doleditor=new DolEditor('note',$group->note,'',240,'dolibarr_notes','',true);
+				$doleditor=new DolEditor('note',$object->note,'',240,'dolibarr_notes','',true);
 				$doleditor->Create();
 			}
 			else
 			{
 				print '<textarea class="flat" name="note" rows="'.ROWS_8.'" cols="90">';
-				print dol_htmlentitiesbr_decode($group->note);
+				print dol_htmlentitiesbr_decode($object->note);
 				print '</textarea>';
 			}
 			print '</td>';

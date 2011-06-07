@@ -117,8 +117,9 @@ ALTER TABLE llx_mailing_cibles ADD COLUMN tag varchar(128) NULL AFTER other;
 ALTER TABLE llx_mailing ADD COLUMN tag varchar(128) NULL AFTER email_errorsto;
 
 ALTER TABLE llx_usergroup_user DROP INDEX fk_user;
+ALTER TABLE llx_usergroup_user DROP INDEX uk_user_group_entity;
 ALTER TABLE llx_usergroup_user ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
-ALTER TABLE llx_usergroup_user ADD UNIQUE INDEX uk_usergroup_entity (entity,fk_user,fk_usergroup);
+ALTER TABLE llx_usergroup_user ADD UNIQUE INDEX uk_usergroup_user (entity,fk_user,fk_usergroup);
 ALTER TABLE llx_usergroup_user ADD CONSTRAINT fk_usergroup_user_fk_user      FOREIGN KEY (fk_user)         REFERENCES llx_user (rowid);
 ALTER TABLE llx_usergroup_user ADD CONSTRAINT fk_usergroup_user_fk_usergroup FOREIGN KEY (fk_usergroup)    REFERENCES llx_usergroup (rowid);
 

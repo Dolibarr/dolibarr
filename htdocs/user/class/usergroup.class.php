@@ -45,6 +45,7 @@ class UserGroup extends CommonObject
 	var $id;			// Group id
 	var $entity;		// Entity of group
 	var $nom;			// Name of group
+	var $globalgroup;	// Global group
 	var $note;			// Note on group
 	var $datec;			// Creation date of group
 	var $datem;			// Modification date of group
@@ -58,10 +59,9 @@ class UserGroup extends CommonObject
 	 *    \param  DB         Handler acces base de donnees
 	 *    \param  id         Id du groupe (0 par defaut)
 	 */
-	function UserGroup($DB, $id=0)
+	function UserGroup($DB)
 	{
 		$this->db = $DB;
-		$this->id = $id;
 
 		return 0;
 	}
@@ -116,19 +116,22 @@ class UserGroup extends CommonObject
 
 
 	/**
-	 * 	\brief		Return array of groups objects for a particular user
-	 *	\param		usertosearch
-	 * 	\return		array of groups objects
+	 * 	Return array of groups objects for a particular user
+	 *	@param		usertosearch
+	 * 	@return		array of groups objects
 	 */
-	function listGroupsForUser($usertosearch)
+	function listGroupsForUser($userid)
 	{
+		global $conf;
+		
 		$ret=array();
 
-		$sql = "SELECT g.rowid, g.nom, g.note, g.datec, g.tms as datem";
+		$sql = "SELECT g.rowid, ug.entity as usergroup_entity";
 		$sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g,";
 		$sql.= " ".MAIN_DB_PREFIX."usergroup_user as ug";
 		$sql.= " WHERE ug.fk_usergroup = g.rowid";
-		$sql.= " AND ug.fk_user = ".$usertosearch->id;
+		$sql.= " AND ug.fk_user = ".$userid;
+		$sql.= " AND ug.entity IN (0,".$conf->entity.")";
 		$sql.= " ORDER BY g.nom";
 
 		dol_syslog("UserGroup::listGroupsForUser sql=".$sql,LOG_DEBUG);
@@ -138,15 +141,15 @@ class UserGroup extends CommonObject
 			while ($obj = $this->db->fetch_object($result))
 			{
 				$group=new UserGroup($this->db);
-				$group->id=$obj->rowid;
-				$group->nom=$obj->nom;
-				$group->note=$obj->note;
-				$group->datec = $obj->datec;
-				$group->datem = $obj->datem;
-
+				$group->fetch($obj->rowid);
+				$group->usergroup_entity = $obj->usergroup_entity;
+				
 				$ret[]=$group;
 			}
+			
 			$this->db->free($result);
+			
+			return $ret;
 		}
 		else
 		{
@@ -154,22 +157,24 @@ class UserGroup extends CommonObject
 			dol_syslog("UserGroup::listGroupsForUser ".$this->error, LOG_ERR);
 			return -1;
 		}
-		return $ret;
 	}
 
 	/**
-	 * 	\brief		Return array of users id for group
-	 * 	\return		array of users id
+	 * 	Return array of users id for group
+	 * 	@return		array of users
 	 */
 	function listUsersForGroup()
 	{
+		global $conf;
+		
 		$ret=array();
 
-		$sql = "SELECT u.rowid, u.login, u.name, u.firstname";
+		$sql = "SELECT u.rowid, ug.entity as usergroup_entity";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u,";
 		$sql.= " ".MAIN_DB_PREFIX."usergroup_user as ug";
 		$sql.= " WHERE ug.fk_user = u.rowid";
 		$sql.= " AND ug.fk_usergroup = ".$this->id;
+		$sql.= " AND u.entity IN (0,".$conf->entity.")";
 
 		dol_syslog("UserGroup::listUsersForGroup sql=".$sql,LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -177,9 +182,16 @@ class UserGroup extends CommonObject
 		{
 			while ($obj = $this->db->fetch_object($result))
 			{
-				$ret[]=$obj->rowid;
+				$user=new User($this->db);
+				$user->fetch($obj->rowid);
+				$user->usergroup_entity = $obj->usergroup_entity;
+
+				$ret[]=$user;
 			}
+			
 			$this->db->free($result);
+			
+			return $ret;
 		}
 		else
 		{
@@ -187,7 +199,6 @@ class UserGroup extends CommonObject
 			dol_syslog("UserGroup::listUsersForGroup ".$this->error, LOG_ERR);
 			return -1;
 		}
-		return $ret;
 	}
 
 	/**
@@ -486,17 +497,25 @@ class UserGroup extends CommonObject
 	}
 
 	/**
-	 *        \brief      Cree un groupe en base
-	 *        \return     si erreur <0, si ok renvoie id groupe cr
+	 *	Create group into database
+	 *	@param		notrigger	0=triggers enabled, 1=triggers disabled
+	 *	@return     int			<0 if KO, >=0 if OK
 	 */
-	function create()
+	function create($notrigger=0)
 	{
 		global $user, $conf, $langs;
 
 		$now=dol_now();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."usergroup (datec, nom, entity)";
-		$sql.= " VALUES('".$this->db->idate($now)."','".$this->db->escape($this->nom)."',".$conf->entity.")";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."usergroup (";
+		$sql.= "datec";
+		$sql.= ", nom";
+		$sql.= ", entity";
+		$sql.= ") VALUES (";
+		$sql.= "'".$this->db->idate($now)."'";
+		$sql.= ",'".$this->db->escape($this->nom)."'";
+		$sql.= ",".($this->globalgroup ? 0 : $conf->entity);
+		$sql.= ")";
 
 		dol_syslog("UserGroup::Create sql=".$sql, LOG_DEBUG);
 		$result=$this->db->query($sql);
@@ -505,13 +524,16 @@ class UserGroup extends CommonObject
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."usergroup");
 
 			if ($this->update(1) < 0) return -2;
-
-			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('GROUP_CREATE',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// Fin appel triggers
+			
+			if (! $notrigger)
+			{
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers('GROUP_CREATE',$this,$user,$langs,$conf);
+				if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				// Fin appel triggers
+			}
 
 			return $this->id;
 		}
@@ -522,7 +544,6 @@ class UserGroup extends CommonObject
 			return -1;
 		}
 	}
-
 
 	/**
 	 *		Update group into database
@@ -536,15 +557,16 @@ class UserGroup extends CommonObject
 		$error=0;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."usergroup SET ";
-		$sql .= " nom = '".$this->db->escape($this->nom)."',";
-		$sql .= " note = '".$this->db->escape($this->note)."'";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql.= " nom = '".$this->db->escape($this->nom)."'";
+		$sql.= ", entity = ".(empty($this->globalgroup) ? $conf->entity : 0);
+		$sql.= ", note = '".$this->db->escape($this->note)."'";
+		$sql.= " WHERE rowid = ".$this->id;
 
 		dol_syslog("Usergroup::update sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			if (!$error && ! $notrigger)
+			if (! $notrigger)
 			{
 				// Appel des triggers
 				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
