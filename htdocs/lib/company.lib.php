@@ -114,6 +114,7 @@ function societe_prepare_head($object)
         $head[$h][2] = 'notify';
         $h++;
     }
+
     // Log
     if ($user->societe_id == 0)
     {

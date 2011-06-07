@@ -487,8 +487,12 @@ function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto
         print '</a>';
     }
 
-    // Affichage onglets
-    for ($i = 0 ; $i < sizeof($links) ; $i++)
+    // Define max of key (max may be higher than sizeof becaus of hole due to module disabling some tabs).
+    $keys=array_keys($links);
+    $maxkey=max($keys);
+
+    // Show tabs
+    for ($i = 0 ; $i <= $maxkey ; $i++)
     {
         if ($links[$i][2] == 'image')
         {

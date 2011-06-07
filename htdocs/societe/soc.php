@@ -183,6 +183,7 @@ else
 		{
 			$soc->typent_id             = $_POST["typent_id"];
 		}
+
 		$soc->client                = $_POST["client"];
 		$soc->fournisseur           = $_POST["fournisseur"];
 		$soc->fournisseur_categorie = $_POST["fournisseur_categorie"];
