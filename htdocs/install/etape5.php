@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien DiCintio   <sdicintio@ressource-toi.org>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
@@ -30,6 +30,7 @@
 include_once("./inc.php");
 if (file_exists($conffile)) include_once($conffile);
 require_once($dolibarr_main_document_root . "/lib/databases/".$dolibarr_main_db_type.".lib.php");
+require_once($dolibarr_main_document_root . "/lib/admin.lib.php");
 
 
 $setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:'auto');
@@ -213,6 +214,20 @@ if ($action == "set" || preg_match('/upgrade/i',$action))
 					$resql=$db->query("INSERT INTO llx_const(name,value,type,visible,note,entity) values(".$db->encrypt('MAIN_REMOVE_INSTALL_WARNING',1).",".$db->encrypt(1,1).",'chaine',1,'Disable install warnings',0)");
 					if (! $resql) dol_print_error($db,'Error in setup program');
 					$conf->global->MAIN_REMOVE_INSTALL_WARNING=1;
+				}
+
+				// If we ask to force some modules to be enabled
+				if (! empty($force_install_module))
+				{
+					$tmparray=explode(',',$force_install_module);
+					foreach ($tmparray as $modtoactivate)
+					{
+						$modtoactivatenew=preg_replace('/\.class\.php$/i','',$modtoactivate);
+						dolibarr_install_syslog('install/etape5.php Activate module '.$modtoactivatenew);
+						$result=Activate($modtoactivatenew);
+    					$mesg='';
+    					if ($result) $mesg=$result;
+					}
 				}
 
 				dolibarr_install_syslog('install/etape5.php Remove MAIN_NOT_INSTALLED const', LOG_DEBUG);

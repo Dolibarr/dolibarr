@@ -1,4 +1,6 @@
 <?php
+// This file must be presen into htdocs/install directory
+// to force values of install wizard.
 $force_install_noedit=1;
 $force_install_message='KeepDefaultValuesWamp';
 $force_install_main_data_root='WAMPROOT/dolibarr_documents';
@@ -14,4 +16,6 @@ $force_install_databaserootpass='WAMPMYSQLNEWPASSWORD';
 $force_install_dolibarrlogin='admin';
 $force_install_nophpinfo='1';
 $force_install_lockinstall='644';
+
+$force_install_module='';
 ?>
