@@ -100,7 +100,11 @@ if (empty($_POST["db_user"]))
 	print '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Login")).'</div>';
 	$error++;
 }
-
+if (! empty($_POST["db_port"]) && ! is_numeric($_POST["db_port"]))
+{
+    print '<div class="error">'.$langs->trans("ErrorBadValueForParameter",$_POST["db_port"],$langs->transnoentities("Port")).'</div>';
+    $error++;
+}
 
 /**
  * 	Tentative de connexion a la base

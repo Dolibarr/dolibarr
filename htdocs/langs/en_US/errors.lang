@@ -28,6 +28,7 @@ ErrorBadSupplierCodeSyntax=Bad syntax for supplier code
 ErrorSupplierCodeRequired=Supplier code required
 ErrorSupplierCodeAlreadyUsed=Supplier code already used
 ErrorBadParameters=Bad parameters
+ErrorBadValueForParameter=Wrong value '%s' for parameter incorrect '%s'
 ErrorFailedToWriteInDir=Failed to write in directory %s
 ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=%s)
 ErrorUserCannotBeDelete=User can not be deleted. May be it is associated on Dolibarr entities.

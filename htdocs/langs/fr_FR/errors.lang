@@ -29,6 +29,7 @@ ErrorBadSupplierCodeSyntax=La syntaxe du code fournisseur est incorrecte
 ErrorSupplierCodeRequired=Code fournisseur obligatoire
 ErrorSupplierCodeAlreadyUsed=Code fournisseur déjà utilisé
 ErrorBadParameters=Paramètres incorrects
+ErrorBadValueForParameter=Valeur '%s' incorrecte pour le paramètre '%s'
 ErrorFailedToWriteInDir=Impossible d'écrire dans le répertoire %s
 ErrorFoundBadEmailInFile=Syntaxe de mail incorrecte trouvée pour %s lignes dans le fichier (exemple ligne %s avec email=%s)
 ErrorUserCannotBeDelete=L'utilisateur ne peut pas être supprimé. Peut-être est-il associé à des éléments de Dolibarr.
