@@ -73,6 +73,7 @@ For developers:
 - New: External modules can show export list with an "enabled" condition.
 - New: Support a backtopage parameter on contact creation page
 - New: Add id on div to show logo
+- New: Install wizard can activate a module during install.
 - New: Dictionnary setup works with very large external dictionnaries (Add 
        page navigation).
 

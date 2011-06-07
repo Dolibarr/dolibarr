@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -618,6 +618,7 @@ function Activate($value,$withdeps=1)
         $file = $modName . ".class.php";
 
         // Loop on each directory
+        $found=false;
         foreach ($conf->file->dol_document_root as $dol_document_root)
         {
             $dir = $dol_document_root."/includes/modules/";
@@ -706,6 +707,7 @@ function UnActivate($value,$requiredby=1)
         $file = $modName . ".class.php";
 
         // Loop on each directory
+		$found=false;
         foreach ($conf->file->dol_document_root as $dol_document_root)
         {
             $dir = $dol_document_root."/includes/modules/";
