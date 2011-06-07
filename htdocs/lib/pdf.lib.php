@@ -431,9 +431,9 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0)
         $pdf->MultiCell(90, 3, $outputlangs->transnoentities("Residence").': ' . $outputlangs->convToOutputCharset($account->domiciliation), 0, 'L', 0);
     }
 
-    $pdf->SetXY ($curx, $cury+11);
+    $pdf->SetXY ($curx, $cury+5);
     $pdf->MultiCell(90, 3, $outputlangs->transnoentities($ibankey).': ' . $outputlangs->convToOutputCharset($account->iban), 0, 'L', 0);
-    $pdf->SetXY ($curx, $cury+14);
+    $pdf->SetXY ($curx, $cury+8);
     $pdf->MultiCell(90, 3, $outputlangs->transnoentities($bickey).': ' . $outputlangs->convToOutputCharset($account->bic), 0, 'L', 0);
 
     return $pdf->getY();
