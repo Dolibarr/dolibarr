@@ -41,7 +41,7 @@ $langs->load("companies");
  */
 
 $transAreaType = $langs->trans("ThirdPartiesArea");
-$helpurl='EN:Module_ThirdParty|FR:Module_Tiers|ES:M&oacute;dulo_Tierceros';
+$helpurl='EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Tierceros';
 
 llxHeader("",$langs->trans("ThirdParties"),$helpurl);
 
