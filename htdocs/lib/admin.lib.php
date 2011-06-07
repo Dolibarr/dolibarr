@@ -631,7 +631,7 @@ function Activate($value,$withdeps=1)
 
         // Test if PHP version ok
         $verphp=versionphparray();
-        $vermin=$objMod->phpmin;
+        $vermin=isset($objMod->phpmin)?$objMod->phpmin:0;
         if (is_array($vermin) && versioncompare($verphp,$vermin) < 0)
         {
             return $langs->trans("ErrorModuleRequirePHPVersion",versiontostring($vermin));
@@ -639,7 +639,7 @@ function Activate($value,$withdeps=1)
 
         // Test if Dolibarr version ok
         $verdol=versiondolibarrarray();
-        $vermin=$objMod->need_dolibarr_version;
+        $vermin=isset($objMod->need_dolibarr_version)?$objMod->need_dolibarr_version:0;
         //print 'eee'.versioncompare($verdol,$vermin).join(',',$verdol).' - '.join(',',$vermin);exit;
         if (is_array($vermin) && versioncompare($verdol,$vermin) < 0)
         {
@@ -670,7 +670,7 @@ function Activate($value,$withdeps=1)
             }
         }
 
-        if (is_array($objMod->conflictwith) && !empty($objMod->conflictwith))
+        if (isset($objMod->conflictwith) && is_array($objMod->conflictwith))
         {
             // Desactivation des modules qui entrent en conflit
             for ($i = 0; $i < sizeof($objMod->conflictwith); $i++)
