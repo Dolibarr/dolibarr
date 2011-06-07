@@ -49,11 +49,12 @@ class FormCompany
 
 
 	/**
-	 *    	\brief      Renvoie la liste des libelles traduits des types actifs de societes
-	 *		\param		mode		0=renvoi id+libelle, 1=renvoi code+libelle
-	 *    	\return     array      	tableau des types
+	 *    	Return list of labels (translated) of third parties type
+	 *		@param		mode		0=Return id+label, 1=Return code+label
+	 *      @param      filter      Add a SQL filter to select
+	 *    	@return     array      	Array of types
 	 */
-	function typent_array($mode=0)
+	function typent_array($mode=0, $filter='')
 	{
 		global $langs;
 
@@ -62,6 +63,7 @@ class FormCompany
 		$sql = "SELECT id, code, libelle";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_typent";
 		$sql.= " WHERE active = 1";
+		if ($filter) $sql.=" ".$filter;
 		$sql.= " ORDER by id";
 		dol_syslog('Form::typent_array sql='.$sql,LOG_DEBUG);
 		$resql=$this->db->query($sql);
@@ -403,23 +405,25 @@ class FormCompany
 	}
 
 	/**
-	 *    \brief      Retourne la liste deroulante des formes juridiques tous pays confondus ou pour un pays donne.
-	 *    \remarks    Dans le cas d'une liste tous pays confondu, on affiche une rupture sur le pays
-	 *    \param      selected        Code forme juridique a pre-selectionne
-	 *    \param      pays_code       0=liste tous pays confondus, sinon code du pays a afficher
+	 *    Retourne la liste deroulante des formes juridiques tous pays confondus ou pour un pays donne.
+	 *    Dans le cas d'une liste tous pays confondu, on affiche une rupture sur le pays
+	 *    @param       selected        Code forme juridique a pre-selectionne
+	 *    @param       pays_code       0=liste tous pays confondus, sinon code du pays a afficher
+	 *    @param       filter          Add a SQL filter on list
 	 */
-	function select_forme_juridique($selected='',$pays_code=0)
+	function select_forme_juridique($selected='', $pays_code=0, $filter='')
 	{
-		print $this->select_juridicalstatus($selected,$pays_code);
+		print $this->select_juridicalstatus($selected, $pays_code, $filter);
 	}
 
 	/**
-	 *    \brief      Retourne la liste deroulante des formes juridiques tous pays confondus ou pour un pays donne.
-	 *    \remarks    Dans le cas d'une liste tous pays confondu, on affiche une rupture sur le pays
-	 *    \param      selected        Code forme juridique a pre-selectionne
-	 *    \param      pays_code       0=liste tous pays confondus, sinon code du pays a afficher
+	 *    Retourne la liste deroulante des formes juridiques tous pays confondus ou pour un pays donne.
+	 *    Dans le cas d'une liste tous pays confondu, on affiche une rupture sur le pays
+	 *    @param      selected        Code forme juridique a pre-selectionne
+	 *    @param      pays_code       0=liste tous pays confondus, sinon code du pays a afficher
+     *    @param      filter          Add a SQL filter on list
 	 */
-	function select_juridicalstatus($selected='',$pays_code=0)
+	function select_juridicalstatus($selected='', $pays_code=0, $filter='')
 	{
 		global $conf,$langs,$user;
 		$langs->load("dict");
@@ -432,6 +436,7 @@ class FormCompany
 		$sql .= " WHERE f.fk_pays=p.rowid";
 		$sql .= " AND f.active = 1 AND p.active = 1";
 		if ($pays_code) $sql .= " AND p.code = '".$pays_code."'";
+		if ($filter) $sql .= " ".$filter;
 		$sql .= " ORDER BY p.code, f.code";
 
 		dol_syslog("Form::select_forme_juridique sql=".$sql);
