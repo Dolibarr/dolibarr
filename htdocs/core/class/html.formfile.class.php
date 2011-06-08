@@ -408,12 +408,13 @@ class FormFile
 
 			print '</tr>';
 
-			// Hook of thirdparty module
+			// Execute hooks
+			// $hooks must be array('key'=>$instanceofclass)
 			if (! empty($hooks) && is_array($hooks))
 			{
 				foreach($hooks as $module)
 				{
-					$module->formBuilddocOptions();
+				    if (method_exists($module,'formBuilddocOptions')) $module->formBuilddocOptions();
 				}
 			}
 		}
