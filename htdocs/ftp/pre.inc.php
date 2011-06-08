@@ -45,7 +45,7 @@ function llxHeader($head = '', $title='', $help_url='', $morehtml='')
 		//print $paramkey;
 		if (! empty($conf->global->$paramkey))
 		{
-			$link=DOL_URL_ROOT."/ftp/index.php?idmenu=".$_SESSION["idmenu"]."&numero_ftp=".$i;
+			$link="/ftp/index.php?idmenu=".$_SESSION["idmenu"]."&numero_ftp=".$i;
 
 			$menu->add($link, dol_trunc($conf->global->$paramkey,24));
 		}
