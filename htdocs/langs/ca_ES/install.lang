@@ -150,6 +150,7 @@ MigrationCustomerOrderShipping=Actualització de les dades de expedicions de com
 MigrationShippingDelivery=Actualització de les dades de expedicions
 MigrationShippingDelivery2=Actualització de les dades expedicions 2
 MigrationFinished=Acabada l'actualització
+LastStepDesc=<strong>Últim pas</strong>: Indiqueu aquí el compte i la contrasenya del primer usuari que fareu servir per connectar-se a l'aplicació. No perdi aquests identificadors, és el compte que permet administrar la resta.
 #########
 # upgrade
 MigrationFixData=Correcció de dades desnormalitzades
@@ -212,3 +213,5 @@ MigrationProjectTaskActors=Migració de la taula llx_projet_task_actors
 MigrationProjectUserResp=Migració del camp fk_user_resp de llx_projet a llx_element_contact
 # Migration project task time 
 MigrationProjectTaskTime=Actualització de temps dedicat en segons
+# Migration Acctioncom
+MigrationActioncommElement=Actualització de les dades de accions sobre elements
