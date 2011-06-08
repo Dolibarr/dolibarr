@@ -1,4 +1,4 @@
-# Dolibarr language file - fr_FR - ecm== 
+# Dolibarr language file - fr_FR - ecm
 CHARSET=UTF-8
 MenuECM=Documents
 DocsMine=Els meus documents
@@ -37,7 +37,7 @@ ECMSectionOfDocuments=Carpetes de documents
 ECMTypeManual=Manual
 ECMTypeAuto=Automàtic
 ECMDocsByThirdParties=Documents associats a tercers
-ECMDocsByProposals=Documents asoicados a pressupostos
+ECMDocsByProposals=Documents associats a pressupostos
 ECMDocsByOrders=Documents associats a comandes
 ECMDocsByContracts=Documents associats a contractes
 ECMDocsByInvoices=Documents associats a factures
