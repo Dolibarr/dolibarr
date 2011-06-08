@@ -502,48 +502,40 @@ class DolibarrModules
 				$dir = $dirroot.$reldir;
 				$ok = 0;
 
-				// Run llx_mytable.sql files
 				$handle=@opendir($dir);			// Dir may not exists
 				if (is_resource($handle))
 				{
 					while (($file = readdir($handle))!==false)
 					{
+						// Run llx_mytable.sql files
 						if (preg_match('/\.sql$/i',$file) && ! preg_match('/\.key\.sql$/i',$file) && substr($file,0,4) == 'llx_' && substr($file,0,4) != 'data')
 						{
 							$result=run_sql($dir.$file,1,'',1);
 							if ($result <= 0) $error++;
 						}
-					}
-					closedir($handle);
-				}
-
-				// Run llx_mytable.key.sql files
-				$handle=@opendir($dir);			// Dir may not exist
-				if (is_resource($handle))
-				{
-					while (($file = readdir($handle))!==false)
-					{
-						if (preg_match('/\.key\.sql$/i',$file) && substr($file,0,4) == 'llx_' && substr($file,0,4) != 'data')
+						
+						// Run llx_mytable.key.sql files
+						else if (preg_match('/\.key\.sql$/i',$file) && substr($file,0,4) == 'llx_' && substr($file,0,4) != 'data')
+						{
+							$result=run_sql($dir.$file,1,'',1);
+                            if ($result <= 0) $error++;
+						}
+						
+						// Run data_xxx.sql files
+						else if (preg_match('/\.sql$/i',$file) && ! preg_match('/\.key\.sql$/i',$file) && substr($file,0,4) == 'data')
+						{
+							$result=run_sql($dir.$file,1,'',1);
+                            if ($result <= 0) $error++;
+						}
+						
+						// Run update_xxx.sql files
+						else if (preg_match('/\.sql$/i',$file) && ! preg_match('/\.key\.sql$/i',$file) && substr($file,0,6) == 'update')
 						{
 							$result=run_sql($dir.$file,1,'',1);
                             if ($result <= 0) $error++;
 						}
 					}
-					closedir($handle);
-				}
-
-				// Run data_xxx.sql files
-				$handle=@opendir($dir);			// Dir may not exist
-				if (is_resource($handle))
-				{
-					while (($file = readdir($handle))!==false)
-					{
-						if (preg_match('/\.sql$/i',$file) && ! preg_match('/\.key\.sql$/i',$file) && substr($file,0,4) == 'data')
-						{
-							$result=run_sql($dir.$file,1,'',1);
-                            if ($result <= 0) $error++;
-						}
-					}
+					
 					closedir($handle);
 				}
 
