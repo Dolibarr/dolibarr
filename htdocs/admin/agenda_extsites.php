@@ -126,7 +126,6 @@ print "<td>".$langs->trans("Value")."</td>";
 print "</tr>";
 
 // Nb of agenda
-$var=!$var;
 print "<tr ".$bc[$var].">";
 print "<td>".$langs->trans("ExtSitesNbOfAgenda")."</td>";
 print "<td>";
@@ -142,7 +141,7 @@ print "<table class=\"noborder\" width=\"100%\">";
 print "<tr class=\"liste_titre\">";
 print "<td>".$langs->trans("Parameter")."</td>";
 print "<td>".$langs->trans("Name")."</td>";
-print "<td>".$langs->trans("ExtSiteUrlAgenda")." (".$langs->trans("Example").': http://yoursite/agenda/agenda.ical)</td>';
+print "<td>".$langs->trans("ExtSiteUrlAgenda")." (".$langs->trans("Example").': http://yoursite/agenda/agenda.ics)</td>';
 print "<td>".$langs->trans("Color")."</td>";
 print "</tr>";
 
