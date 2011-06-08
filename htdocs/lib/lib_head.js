@@ -522,7 +522,10 @@ function getIntegerInString(str,i,minlength,maxlength)
  * ==================================================================
  */
 function urlencode(s) {
-	return s.replace(/\+/gi,'%2B');
+	news=s;
+	news=news.replace(/\+/gi,'%2B');
+	news=news.replace(/&/gi,'%26');
+	return news;
 }
 
 
