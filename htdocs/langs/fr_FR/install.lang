@@ -9,6 +9,7 @@ ConfFileDoesNotExistsAndCouldNotBeCreated=Le fichier de configuration <b>%s</b> 
 ConfFileCouldBeCreated=Le fichier de configuration <b>%s</b> a pu être créé.
 ConfFileIsNotWritable=Le fichier <b>%s</b> n'est pas modifiable. Pour une première installation, modifiez ses permissions. Le serveur Web doit avoir le droit d'écrire dans ce fichier le temps de la configuration ("chmod 666" par exemple sur un OS compatible Unix).
 ConfFileIsWritable=Le fichier <b>%s</b> est modifiable.
+ConfFileReload=Rechargement des informations depuis le fichier de configuration.
 PHPSupportSessions=Ce PHP supporte les sessions.
 PHPSupportPOSTGETOk=Ce PHP supporte bien les variables POST et GET.
 PHPSupportPOSTGETKo=Il est possible que ce PHP ne supporte pas les variables POST et/ou GET. Vérifier le paramètre <b>variables_order</b> du php.ini.
@@ -95,7 +96,7 @@ DirectoryRecommendation=Il est recommandé de mettre ce répertoire en dehors du
 LoginAlreadyExists=Existe déjà
 DolibarrAdminLogin=Login de l'utilisateur administrateur de Dolibarr
 FailedToCreateAdminLogin=Echec de la création du compte administrateur Dolibarr.
-AdminLoginAlreadyExists=Compte administrateur Dolibarr '<b>%s</b>' déjà existant.
+AdminLoginAlreadyExists=Compte administrateur Dolibarr '<b>%s</b>' déjà existant. Revenez en arrière si vous voulez en créer un autre.
 WarningRemoveInstallDir=Attention, pour des raisons de sécurité, une fois l'installation terminée, il est conseillé de supprimer manuellement le répertoire <b>install</b>, ou de placer dans le répertoire racine de Dolibarr un fichier nommé <b>install.lock</b> en lecture seule.
 ThisPHPDoesNotSupportTypeBase=Le système PHP ne supporte pas les interfaces d'accès pour les bases %s
 FunctionNotAvailableInThisPHP=Non disponible sur ce PHP
@@ -150,7 +151,7 @@ MigrationCustomerOrderShipping=Mise à jour stockage des expéditions des comman
 MigrationShippingDelivery=Mise à jour stockage des expéditions 
 MigrationShippingDelivery2=Mise à jour stockage des expéditions 2 
 MigrationFinished=Migration terminée
-LastStepDesc=<strong>Dernière étape</strong>: Définissez ici le compte et mot de passe du premier utilisateur que vous allez utiliser pour vous pour vous connecter à l'application. Ne perdez pas ces identifiants, il s'agit du compte permettant d'administrer les autres.
+LastStepDesc=<strong>Dernière étape</strong>: Définissez ici le compte et mot de passe du premier utilisateur que vous allez utiliser pour vous connecter à l'application. Ne perdez pas ces identifiants, il s'agit du compte permettant d'administrer les autres.
  
 
 #########

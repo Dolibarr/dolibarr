@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
@@ -205,10 +205,10 @@ if ($_POST["action"] == "set")
 
 	// Force https
 	$main_force_https = ( (GETPOST("main_force_https") && ( GETPOST("main_force_https") == "on" || GETPOST("main_force_https") == 1) ) ? '1' : '0');
-	
+
 	// Use alternative directory
 	$main_use_alt_dir = ( (GETPOST("main_use_alt_dir") && ( GETPOST("main_use_alt_dir") == "on" || GETPOST("main_use_alt_dir") == 1) ) ? '' : '#');
-	
+
 	// Alternative root directory name
 	$main_alt_dir_name = ( (GETPOST("main_alt_dir_name") && GETPOST("main_alt_dir_name") != '') ? GETPOST("main_alt_dir_name") : 'custom');
 
@@ -234,7 +234,14 @@ if ($_POST["action"] == "set")
 	 */
 	if (! $error)
 	{
+	    // We reload configuration file
 		conf($dolibarr_main_document_root);
+
+        print '<tr><td>';
+        print $langs->trans("ConfFileReload");
+        print '</td>';
+        print '<td>'.$langs->trans("OK").'</td></tr>';
+
 
 		$userroot=isset($_POST["db_user_root"])?$_POST["db_user_root"]:"";
 		$passroot=isset($_POST["db_pass_root"])?$_POST["db_pass_root"]:"";
@@ -398,7 +405,7 @@ if ($_POST["action"] == "set")
 
 
 		/*
-		 * On test maintenant l'acces par le user admin dolibarr
+		 * We testOn test maintenant l'acces par le user base dolibarr
 		 */
 		if (! $error)
 		{
@@ -606,6 +613,7 @@ function write_conf_file($conffile)
 
 			print "<tr><td>";
 			print $langs->trans("SaveConfigurationFile");
+			print ' <strong>'.$conffile.'</strong>';
 			print "</td><td>";
 			print $langs->trans("OK");
 			print "</td></tr>";

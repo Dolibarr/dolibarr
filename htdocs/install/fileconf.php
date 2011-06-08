@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien DiCintio   <sdicintio@ressource-toi.org>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
@@ -122,8 +122,8 @@ if (! empty($force_install_message))
     	}
     	?>
 		<td class="label" valign="top">
-		<?php 
-		if ($force_install_noedit) print '<input type="hidden" value="'.$dolibarr_main_document_root.'" name="main_dir">'; 
+		<?php
+		if ($force_install_noedit) print '<input type="hidden" value="'.$dolibarr_main_document_root.'" name="main_dir">';
 		print '<input type="text" size="60" value="'.$dolibarr_main_document_root.'"'.(empty($force_install_noedit)?'':' disabled="true"').' name="main_dir'.(empty($force_install_noedit)?'':'_bis').'">';
 		?>
 		</td>
@@ -285,7 +285,7 @@ if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if t
     		        if ($defaultype=='mysqli' && !function_exists('mysqli_connect')) $defaultype = 'mysql';
 
     		        // Affiche ligne dans liste
-    		        $option.='<option value="'.$type.'"'.($defaultype == $type?' selected':'');
+    		        $option.='<option value="'.$type.'"'.($defaultype == $type?' selected="selected"':'');
     		        if (! function_exists($testfunction)) $option.=' disabled="disabled"';
     		        $option.='>';
     		        $option.=$type.'&nbsp; &nbsp;';
@@ -300,10 +300,12 @@ if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if t
     		}
         }
 
-		?> <select name='db_type'>
-		<?php echo $option ?>
-		</select> &nbsp;</td>
+        if ($force_install_noedit && $force_install_type) print '<input id="db_type" type="hidden" value="'.$force_install_type.'" name="db_type">';
+        print '<select id="db_type" name="db_type'.(empty($force_install_noedit) || empty($force_install_type)?'':'_bis').'"'.($force_install_noedit && $force_install_type?' disabled="true"':'').'>';
+		print $option;
+		print '</select> &nbsp;</td>';
 
+		?>
 		<td class="comment"><?php echo $langs->trans("DatabaseType"); ?></td>
 
 	</tr>
@@ -415,7 +417,7 @@ jQuery(document).ready(function() {
 	{
 		/*alert(jQuery("#db_create_database").attr("checked")); */
 		if (jQuery("#db_create_database").attr("checked") || jQuery("#db_create_user").attr("checked"))
-		{ 
+		{
 			jQuery(".needroot").removeAttr('disabled');
 		}
 		else
