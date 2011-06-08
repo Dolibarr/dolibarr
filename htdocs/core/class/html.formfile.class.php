@@ -354,14 +354,14 @@ class FormFile
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 			print_titre($langs->trans("Documents"));
-			print '<table class="border" summary="listofdocumentstable" width="100%">';
+			print '<table class="border formdoc" summary="listofdocumentstable" width="100%">';
 
 			print '<tr '.$bc[$var].'>';
 
 			// Model
 			if (! empty($modellist))
 			{
-				print '<td align="center">';
+				print '<td align="center" class="formdoc">';
 				print $langs->trans('Model').' ';
 				print $html->selectarray('model',$modellist,$modelselected,$showempty,0,0);
 			    if (sizeof($cgvlist) > 0)
@@ -372,13 +372,13 @@ class FormFile
 			}
 			else
 			{
-				print '<td align="left">';
+				print '<td align="left" class="formdoc">';
 				print $langs->trans("Files");
 				print '</td>';
 			}
 
 			// Language code (if multilang)
-			print '<td align="center">';
+			print '<td align="center" class="formdoc">';
 			if (($allowgenifempty || (is_array($modellist) && sizeof($modellist) > 0)) && $conf->global->MAIN_MULTILANGS && ! $forcenomultilang)
 			{
 				include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php');
@@ -393,7 +393,7 @@ class FormFile
 			print '</td>';
 
 			// Button
-			print '<td align="center" colspan="'.($delallowed?'2':'1').'">';
+			print '<td align="center" colspan="'.($delallowed?'2':'1').'" class="formdocbutton">';
 			print '<input class="button" ';
 			//print ((is_array($modellist) && sizeof($modellist))?'':' disabled="true"') // Always allow button "Generate" (even if no model activated)
 			print ' type="submit" value="'.$buttonlabel.'"';

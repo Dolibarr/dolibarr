@@ -1001,11 +1001,12 @@ function version_webserver()
 
 /**
  * 	Return list of activated modules usable for document generation.
- * 	@param		$db				Database handler
- * 	@param		$type			Type of models (company, invoice, ...)
- * 	@return		int or array	0 if no module is activated, or array(key=>label). For modules that need directory scan, key is completed with ":filename".
+ * 	@param		$db				    Database handler
+ * 	@param		$type			    Type of models (company, invoice, ...)
+ *  @param      $maxfilenamelength  Max length of value to show
+ * 	@return		int or array	    0 if no module is activated, or array(key=>label). For modules that need directory scan, key is completed with ":filename".
  */
-function getListOfModels($db,$type)
+function getListOfModels($db,$type,$maxfilenamelength=0)
 {
     global $conf,$langs;
     $liste=array();
@@ -1057,7 +1058,8 @@ function getListOfModels($db,$type)
                 {
                     foreach($listoffiles as $record)
                     {
-                        $liste[$obj->id.':'.$record['fullname']]=dol_trunc($record['name'],24,'middle');
+                        $max=($maxfilenamelength?$maxfilenamelength:28);
+                        $liste[$obj->id.':'.$record['fullname']]=dol_trunc($record['name'],$max,'middle');
                     }
                 }
                 else

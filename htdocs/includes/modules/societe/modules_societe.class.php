@@ -38,10 +38,11 @@ class ModeleThirdPartyDoc extends CommonDocGenerator
 	var $error='';
 
 	/**
-	 *      \brief      Return list of active generation modules
-	 * 		\param		$db		Database handler
+	 *     Return list of active generation modules
+	 * 	   @param      $db                 Database handler
+	 *     @param      $maxfilenamelength  Max length of value to show
 	 */
-	function liste_modeles($db)
+	function liste_modeles($db,$maxfilenamelength=0)
 	{
 		global $conf;
 
@@ -49,7 +50,7 @@ class ModeleThirdPartyDoc extends CommonDocGenerator
 		$liste=array();
 
 		include_once(DOL_DOCUMENT_ROOT.'/lib/functions2.lib.php');
-		$liste=getListOfModels($db,$type);
+		$liste=getListOfModels($db,$type,$maxfilenamelength);
 
 		return $liste;
 	}
