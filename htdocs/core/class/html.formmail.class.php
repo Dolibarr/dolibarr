@@ -412,7 +412,7 @@ class FormMail
 		// Topic
 		if ($this->withtopic)
 		{
-			$this->withtopic=make_substitutions($this->withtopic,$this->substit,$langs);
+			$this->withtopic=make_substitutions($this->withtopic,$this->substit);
 
 			print "<tr>";
 			print "<td width=\"180\">".$langs->trans("MailTopic")."</td>";
@@ -473,7 +473,7 @@ class FormMail
 			if ($this->param["models"]=='order_send') 		{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendOrder"); }
 			if ($this->param["models"]=='order_supplier_send')   { $defaultmessage=$langs->transnoentities("PredefinedMailContentSendSupplierOrder"); }
 			if ($this->param["models"]=='invoice_supplier_send') { $defaultmessage=$langs->transnoentities("PredefinedMailContentSendSupplierInvoice"); }
-			$defaultmessage=make_substitutions($defaultmessage,$this->substit,$langs);
+			$defaultmessage=make_substitutions($defaultmessage,$this->substit);
 			if (isset($_POST["message"])) $defaultmessage=$_POST["message"];
 			$defaultmessage=str_replace('\n',"\n",$defaultmessage);
 

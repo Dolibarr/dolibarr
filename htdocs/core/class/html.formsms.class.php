@@ -238,38 +238,11 @@ function limitChars(textarea, limit, infodiv)
 			print "</td></tr>\n";
 		}
 
-		// Topic
-		/*
-		if ($this->withtopic)
-		{
-			$this->withtopic=make_substitutions($this->withtopic,$this->substit,$langs);
-
-			print "<tr>";
-			print "<td width=\"180\">".$langs->trans("MailTopic")."</td>";
-			print "<td>";
-			if ($this->withtopicreadonly)
-			{
-				print $this->withtopic;
-				print "<input type=\"hidden\" size=\"60\" name=\"subject\" value=\"".$this->withtopic."\">";
-			}
-			else
-			{
-				print "<input type=\"text\" size=\"60\" name=\"subject\" value=\"". (isset($_POST["subject"])?$_POST["subject"]:$this->withtopic) ."\">";
-			}
-			print "</td></tr>\n";
-		}*/
-
 		// Message
 		if ($this->withbody)
 		{
 			$defaultmessage='';
 			if ($this->param["models"]=='body') 			{ $defaultmessage=$this->withbody; }
-			/*if ($this->param["models"]=='facture_send')    	{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendInvoice"); }
-			if ($this->param["models"]=='facture_relance') 	{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendInvoiceReminder"); }
-			if ($this->param["models"]=='propal_send') 		{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendProposal"); }
-			if ($this->param["models"]=='order_send') 		{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendOrder"); }
-			if ($this->param["models"]=='order_supplier_send')   { $defaultmessage=$langs->transnoentities("PredefinedMailContentSendSupplierOrder"); }
-			if ($this->param["models"]=='invoice_supplier_send') { $defaultmessage=$langs->transnoentities("PredefinedMailContentSendSupplierInvoice"); } */
 			$defaultmessage=make_substitutions($defaultmessage,$this->substit,$langs);
 			if (isset($_POST["message"])) $defaultmessage=$_POST["message"];
 			$defaultmessage=str_replace('\n',"\n",$defaultmessage);

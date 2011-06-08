@@ -199,7 +199,7 @@ class Adherent extends CommonObject
         $infos.= $langs->transnoentities("Public").": ".yn($this->public);
 
         // Substitutions
-        $substit=array(
+        $substitutionarray=array(
                '%DOL_MAIN_URL_ROOT%'=>DOL_MAIN_URL_ROOT,
                '%INFOS%'=>$msgishtml?dol_htmlentitiesbr($infos):$infos,
                '%CIVILITE%'=>$this->getCivilityLabel($msgishtml?0:1),
@@ -217,7 +217,9 @@ class Adherent extends CommonObject
                '%PASSWORD%'=>$msgishtml?dol_htmlentitiesbr($this->pass):$this->pass
         );
 
-       return make_substitutions($text,$substit,$langs);
+        $substitutionarray=complete_substitutions_array($substitutionarray, $langs);
+
+        return make_substitutions($text,$substitutionarray);
     }
 
 

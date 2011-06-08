@@ -138,15 +138,15 @@ else
             '%MONTH%'=>$month,
             '%DAY%'=>$day
             );
-
+            complete_substitutions_array($substitutionarray, $langs);
 
             // For business cards
             if (empty($mode) || $mode=='card' || $mode=='cardlogin')
             {
-                $textleft=make_substitutions($conf->global->ADHERENT_CARD_TEXT, $substitutionarray, $langs);
-                $textheader=make_substitutions($conf->global->ADHERENT_CARD_HEADER_TEXT, $substitutionarray, $langs);
-                $textfooter=make_substitutions($conf->global->ADHERENT_CARD_FOOTER_TEXT, $substitutionarray, $langs);
-                $textright=make_substitutions($conf->global->ADHERENT_CARD_TEXT_RIGHT, $substitutionarray, $langs);
+                $textleft=make_substitutions($conf->global->ADHERENT_CARD_TEXT, $substitutionarray);
+                $textheader=make_substitutions($conf->global->ADHERENT_CARD_HEADER_TEXT, $substitutionarray);
+                $textfooter=make_substitutions($conf->global->ADHERENT_CARD_FOOTER_TEXT, $substitutionarray);
+                $textright=make_substitutions($conf->global->ADHERENT_CARD_TEXT_RIGHT, $substitutionarray);
 
                 if (is_numeric($foruserid) || $foruserlogin)
                 {
@@ -175,7 +175,7 @@ else
             if ($mode == 'label')
             {
                 $conf->global->ADHERENT_ETIQUETTE_TEXT="%PRENOM% %NOM%\n%ADRESSE%\n%CP% %VILLE%\n%PAYS%";
-                $textleft=make_substitutions($conf->global->ADHERENT_ETIQUETTE_TEXT, $substitutionarray, $langs);
+                $textleft=make_substitutions($conf->global->ADHERENT_ETIQUETTE_TEXT, $substitutionarray);
                 $textheader='';
                 $textfooter='';
                 $textright='';

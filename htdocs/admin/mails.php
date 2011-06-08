@@ -38,11 +38,13 @@ if (!$user->admin)
 accessforbidden();
 
 $substitutionarrayfortest=array(
+'__LOGIN__' => $user->login,
 '__ID__' => 'TESTIdRecord',
 '__EMAIL__' => 'TESTEMail',
 '__LASTNAME__' => 'TESTLastname',
 '__FIRSTNAME__' => 'TESTFirstname'
 );
+complete_substitutions_array($substitutionarrayfortest, $langs);
 
 
 /*
@@ -204,8 +206,8 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'sendhtml')
 		if ($_POST['action'] == 'sendhtml') $msgishtml=1;	// Force message to HTML
 
 		// Pratique les substitutions sur le sujet et message
-		$subject=make_substitutions($subject,$substitutionarrayfortest,$langs);
-		$body=make_substitutions($body,$substitutionarrayfortest,$langs);
+		$subject=make_substitutions($subject,$substitutionarrayfortest);
+		$body=make_substitutions($body,$substitutionarrayfortest);
 
 		require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
 		$mailfile = new CMailFile($subject,$sendto,$email_from,$body,
@@ -716,6 +718,7 @@ else
 		$formmail->withtopicreadonly=0;
 		$formmail->withfile=2;
 		$formmail->withbody=(isset($_POST['message'])?$_POST['message']:$langs->trans("PredefinedMailTestHtml"));
+		//$formmail->withbody='Test <b>aaa</b> __LOGIN__';
 		$formmail->withbodyreadonly=0;
 		$formmail->withcancel=1;
 		$formmail->withdeliveryreceipt=1;

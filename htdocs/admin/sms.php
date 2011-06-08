@@ -108,7 +108,8 @@ if ($action == 'send' && ! $_POST['cancel'])
 	if (! $error)
 	{
 		// Make substitutions into message
-		$body=make_substitutions($body,$substitutionarrayfortest,$langs);
+        complete_substitutions_array($substitutionarrayfortest, $langs);
+	    $body=make_substitutions($body,$substitutionarrayfortest);
 
 		require_once(DOL_DOCUMENT_ROOT."/lib/CSMSFile.class.php");
 

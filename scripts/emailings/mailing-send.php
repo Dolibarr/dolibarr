@@ -146,11 +146,13 @@ if ($resql)
 				'__OTHER5__' => $other5
 			);
 
-			$substitutionisok=true;
-			$newsubject=make_substitutions($subject,$substitutionarray,$langs);
-			$newmessage=make_substitutions($message,$substitutionarray,$langs);
+			$substitutionarray=complete_substitutions_array($substitutionarray,$langs);
+			$newsubject=make_substitutions($subject,$substitutionarray);
+			$newmessage=make_substitutions($message,$substitutionarray);
 
-			// Fabrication du mail
+            $substitutionisok=true;
+
+            // Fabrication du mail
 			$mail = new CMailFile($newsubject, $sendto, $from, $newmessage,
 			array(), array(), array(),
             						'', '', 0, $msgishtml, $errorsto);

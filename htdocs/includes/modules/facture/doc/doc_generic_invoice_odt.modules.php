@@ -103,7 +103,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
         	$invoice_source->fetch($object->fk_facture_source);
 		}
 		$alreadypayed=price($object->getSommePaiement(),'MT');
-		
+
         return array(
             'object_id'=>$object->id,
             'object_ref'=>$object->ref,
@@ -129,7 +129,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
             'object_remain_to_pay'=>price($object->total_ttc - $alreadypayed,'MT')
         );
     }
-    
+
     /**
      * Define array with couple substitution key => substitution value
      *
@@ -353,23 +353,24 @@ class doc_generic_invoice_odt extends ModelePDFFactures
                     $socobject=$object->client;
                 }
 
+                // Make substitution
+                $substitutionarray=array(
+                    '__FROM_NAME__' => $this->emetteur->nom,
+                    '__FROM_EMAIL__' => $this->emetteur->email,
+                    '__TOTAL_TTC__' => $object->total_ttc,
+                    '__TOTAL_HT__' => $object->total_ht,
+                    '__TOTAL_VAT__' => $object->total_vat
+                );
+                complete_substitutions_array($substitutionarray, $langs, $object);
+
 				// Line of free text
 				$newfreetext='';
 				$paramfreetext='FACTURE_FREE_TEXT';
 			    if (! empty($conf->global->$paramfreetext))
 			    {
-			        // Make substitution
-			        $substitutionarray=array(
-						'__FROM_NAME__' => $this->emetteur->nom,
-						'__FROM_EMAIL__' => $this->emetteur->email,
-						'__TOTAL_TTC__' => $object->total_ttc,
-						'__TOTAL_HT__' => $object->total_ht,
-						'__TOTAL_VAT__' => $object->total_vat
-			        );
-			
-			        $newfreetext=make_substitutions($conf->global->$paramfreetext,$substitutionarray,$outputlangs,$object);
+			        $newfreetext=make_substitutions($conf->global->$paramfreetext,$substitutionarray);
 			    }
-			    
+
                 // Open and load template
 				require_once(DOL_DOCUMENT_ROOT.'/includes/odtphp/odf.php');
 				$odfHandler = new odf($srctemplatepath, array(
@@ -384,7 +385,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
                 //print html_entity_decode($odfHandler->__toString());
                 //print exit;
 
-				
+
 				// Make substitutions into odt
 				if ($newfreetext)
 				{

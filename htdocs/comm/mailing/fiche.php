@@ -191,8 +191,9 @@ if ($_REQUEST["action"] == 'sendallconfirmed' && $_REQUEST['confirm'] == 'yes')
 					);
 
 					$substitutionisok=true;
-					$newsubject=make_substitutions($subject,$substitutionarray,$langs);
-					$newmessage=make_substitutions($message,$substitutionarray,$langs);
+                    complete_substitutions_array($substitutionarray, $langs);
+					$newsubject=make_substitutions($subject,$substitutionarray);
+					$newmessage=make_substitutions($message,$substitutionarray);
 
 					$arr_file = array();
 					$arr_mime = array();

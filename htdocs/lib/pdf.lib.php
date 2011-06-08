@@ -470,8 +470,8 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 			'__TOTAL_HT__' => $object->total_ht,
 			'__TOTAL_VAT__' => $object->total_vat
         );
-
-        $newfreetext=make_substitutions($conf->global->$paramfreetext,$substitutionarray,$outputlangs,$object);
+        complete_substitutions_array($substitutionarray,$outputlangs,$object);
+        $newfreetext=make_substitutions($conf->global->$paramfreetext,$substitutionarray);
         $line.=$outputlangs->convToOutputCharset($newfreetext);
     }
 
@@ -1032,7 +1032,7 @@ function pdf_getlineqty_keeptoship($object,$i,$outputlangs,$hidedetails=0)
 function pdf_getlineremisepercent($object,$i,$outputlangs,$hidedetails=0)
 {
     include_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
-    
+
     if ($object->lines[$i]->special_code != 3)
     {
         if (! empty($object->hooks['objectcard']) && ( ($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )

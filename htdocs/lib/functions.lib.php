@@ -1051,7 +1051,7 @@ function dol_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$separ=
 			               		'__PHONETO__'=>urlencode($phone),
 						   		'__LOGIN__'=>urlencode($user->clicktodial_login),
 			               		'__PASS__'=>urlencode($user->clicktodial_password));
-            $url = make_substitutions($url, $substitarray, $langs);
+            $url = make_substitutions($url, $substitarray);
             $newphonesav=$newphone;
             $newphone ='<a href="'.$url.'"';
             if (! empty($conf->global->CLICKTODIAL_FORCENEWTARGET)) $newphone.=' target="_blank"';
@@ -3571,16 +3571,11 @@ function dol_textishtml($msg,$option=0)
  * 		- From $substitutionarray (oldval=>newval)
  * 		- From special constants (__XXX__=>f(objet->xxx)) by substitutions modules
  *    	@param      chaine      			Source string in which we must do substitution
- *    	@param      substitutionarray		Array substitution old value => new value value
- * 		@param		outputlangs				If we want substitution from special constants, we provide a language
- * 		@param		object					If we want substitution from special constants, we provide data in a source object
  *    	@return     string      			Output string after subsitutions
  */
-function make_substitutions($chaine,$substitutionarray,$outputlangs,$object='')
+function make_substitutions($chaine,$substitutionarray)
 {
-    global $conf,$user;
-
-    complete_substitutions_array($substitutionarray,$outputlangs,$object);
+    if (! is_array($substitutionarray)) return 'ErrorBadParametersCalling_make_substitutions';
 
     // Make substitition
     foreach ($substitutionarray as $key => $value)
