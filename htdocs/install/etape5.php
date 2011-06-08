@@ -69,7 +69,7 @@ if (file_exists("./install.forced.php"))
 	include_once("./install.forced.php");
 }
 
-dolibarr_install_syslog("etape5: Entering etape5.php page", LOG_INFO);
+dolibarr_install_syslog("--- etape5: Entering etape5.php page", LOG_INFO);
 
 
 /*
@@ -153,7 +153,8 @@ if ($action == "set" || preg_match('/upgrade/i',$action))
 		dolibarr_install_syslog('install/etape5.php Load module user '.DOL_DOCUMENT_ROOT ."/includes/modules/".$file, LOG_INFO);
 		include_once(DOL_DOCUMENT_ROOT ."/includes/modules/".$file);
 		$objMod = new $modName($db);
-		$objMod->init();
+		$result=$objMod->init();
+        if (! $result) print 'ERROR in activating module file='.$file;
 
 		if ($db->connected == 1)
 		{
@@ -217,16 +218,19 @@ if ($action == "set" || preg_match('/upgrade/i',$action))
 				}
 
 				// If we ask to force some modules to be enabled
+				// This works only for module store into root directory. Does not work for alternate modules.
 				if (! empty($force_install_module))
 				{
 					$tmparray=explode(',',$force_install_module);
 					foreach ($tmparray as $modtoactivate)
 					{
 						$modtoactivatenew=preg_replace('/\.class\.php$/i','',$modtoactivate);
-						dolibarr_install_syslog('install/etape5.php Activate module '.$modtoactivatenew);
-						$result=Activate($modtoactivatenew);
-    					$mesg='';
-    					if ($result) $mesg=$result;
+                        $file=$modtoactivatenew.'.class.php';
+						dolibarr_install_syslog('install/etape5.php Activate module file='.$file);
+                        include_once(DOL_DOCUMENT_ROOT ."/includes/modules/".$file);
+                        $objMod = new $modtoactivatenew($db);
+                        $result=$objMod->init();
+                        if (! $result) print 'ERROR in activating module file='.$file;
 					}
 				}
 
@@ -406,7 +410,7 @@ else
 clearstatcache();
 
 
-dolibarr_install_syslog("install/etape5.php Dolibarr setup finished", LOG_INFO);
+dolibarr_install_syslog("--- install/etape5.php Dolibarr setup finished", LOG_INFO);
 
 pFooter(1,$setuplang);
 ?>

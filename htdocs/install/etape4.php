@@ -43,7 +43,7 @@ $langs->load("install");
 if (! isset($force_install_dolibarrlogin))     $force_install_dolibarrlogin='';
 if (file_exists("./install.forced.php")) include_once("./install.forced.php");
 
-dolibarr_install_syslog("etape4: Entering etape4.php page");
+dolibarr_install_syslog("--- etape4: Entering etape4.php page");
 
 $err=0;
 $ok = 0;
@@ -107,6 +107,8 @@ if ($db->ok == 1)
 }
 
 $db->close();
+
+dolibarr_install_syslog("--- install/etape4.php end", LOG_INFO);
 
 pFooter($err,$setuplang);
 ?>

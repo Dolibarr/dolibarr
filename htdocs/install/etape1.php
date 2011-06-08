@@ -39,7 +39,7 @@ $langs->load("install");
 // Init "forced values" to nothing. "forced values" are used after an doliwamp install wizard.
 if (file_exists("./install.forced.php")) include_once("./install.forced.php");
 
-dolibarr_install_syslog("etape1: Entering etape1.php page");
+dolibarr_install_syslog("--- etape1: Entering etape1.php page");
 
 
 /*
@@ -507,6 +507,8 @@ function jsinfo()
 </script>
 
 <?php
+
+dolibarr_install_syslog("--- install/etape1.php end", LOG_INFO);
 
 pFooter($error,$setuplang,'jsinfo');
 

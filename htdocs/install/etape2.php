@@ -55,7 +55,7 @@ if ($dolibarr_main_db_type == "mssql")  $choix=3;
 // Init "forced values" to nothing. "forced values" are used after a Doliwamp install wizard.
 if (file_exists("./install.forced.php")) include_once("./install.forced.php");
 
-dolibarr_install_syslog("etape2: Entering etape2.php page");
+dolibarr_install_syslog("--- etape2: Entering etape2.php page");
 
 
 /*
@@ -575,6 +575,8 @@ if ($_POST["action"] == "set")
 
 	$db->close();
 }
+
+dolibarr_install_syslog("--- install/etape2.php end", LOG_INFO);
 
 pFooter(!$ok,$setuplang);
 ?>

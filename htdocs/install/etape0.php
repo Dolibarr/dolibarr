@@ -51,7 +51,7 @@ $main_dir=isset($_POST["main_dir"])?trim($_POST["main_dir"]):'';
 // Init "forced values" to nothing. "forced values" are used after an doliwamp install wizard.
 if (file_exists("./install.forced.php")) include_once("./install.forced.php");
 
-dolibarr_install_syslog("etape0: Entering etape0.php page");
+dolibarr_install_syslog("--- etape0: Entering etape0.php page");
 
 
 /*
@@ -357,6 +357,7 @@ if (! $error && $db->connected)
 <?php
 }
 
+dolibarr_install_syslog("--- install/etape0.php end", LOG_INFO);
 
 pFooter($error,$setuplang);
 ?>

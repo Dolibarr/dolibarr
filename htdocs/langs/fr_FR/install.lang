@@ -233,4 +233,4 @@ MigrationProjectUserResp=Migration du champ fk_user_resp de llx_projet vers llx_
 MigrationProjectTaskTime=Mise à jour du temps consommé en secondes
 
 # Migration Acctioncom
-MigrationActioncommElement=Mise à jour du données des actions des éléments
+MigrationActioncommElement=Mise à jour des données des actions des éléments

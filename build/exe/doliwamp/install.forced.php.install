@@ -1,6 +1,11 @@
 <?php
-// This file must be presen into htdocs/install directory
-// to force values of install wizard.
+// File to force Dolibarr wizard installer choices.
+//
+// This file must be present into htdocs/install directory
+// during install process to be used.
+//
+// $Id$
+//
 $force_install_noedit=1;
 $force_install_message='KeepDefaultValuesWamp';
 $force_install_main_data_root='WAMPROOT/dolibarr_documents';
