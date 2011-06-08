@@ -69,8 +69,6 @@ $courrier_dir = $conf->societe->dir_output . "/courrier/" . get_exdir($socid) ;
 // Envoie fichier
 if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
-	require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
-
 	if (create_exdir($upload_dir) >= 0)
 	{
 		$resupload=dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0,0,$_FILES['userfile']['error']);
@@ -206,7 +204,7 @@ if ($socid > 0)
 
 		// Affiche formulaire upload
 		$formfile=new FormFile($db);
-		$formfile->form_attach_new_file(DOL_URL_ROOT.'/societe/document.php?socid='.$socid,'',0,0,$user->rights->societe->creer);
+		$formfile->form_attach_new_file($_SERVER["PHP_SELF"].'?socid='.$socid,'',0,0,$user->rights->societe->creer);
 
 
 		// List of document
@@ -220,7 +218,7 @@ if ($socid > 0)
 		// Les courriers sont des documents speciaux generes par des scripts
 		// situes dans scripts/courrier.
 		// Voir Rodo
-		if ($conf->global->MAIN_MODULE_EDITEUR)
+		if (! empty($conf->global->MAIN_MODULE_EDITEUR))
 		{
 			$filearray=array();
 			$errorlevel=error_reporting();
