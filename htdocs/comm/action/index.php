@@ -511,8 +511,9 @@ if ($conf->global->ENABLE_AGENDA_EXT==1 && $conf->global->AGENDA_EXT_NB>0)
 				$event->id=$icalevent[UID];
 				$event->icalname=$namecal;
 				$event->icalcolor=$colorcal;
-				$event->datep=$icalevent[DTSTART];
-				$event->datef=$icalevent[DTEND];
+				$usertime=($_SESSION['dol_tz']*60*60)+($_SESSION['dol_dst']*60*60);
+				$event->datep=$icalevent[DTSTART]+$usertime;
+				$event->datef=$icalevent[DTEND]+$usertime;
 				$event->type_code="ICALEVENT";
 				$event->libelle='<b>'.$icalevent[SUMMARY].'</b><br>'.str_replace("\\n", "<br>", "$icalevent[DESCRIPTION]"); 
 	        	//$event->fulldayevent=$obj->fulldayevent;

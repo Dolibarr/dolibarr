@@ -74,12 +74,6 @@ if ($actionsave)
 		if (! $res > 0) $error++;
 		$i++;
 	}
-
-	// Save timezone
-	$timezone=trim(GETPOST("agenda_ext_timezone"));
-	if ($timezone=='-1') $timezone='';
-    $res=dolibarr_set_const($db,'AGENDA_EXT_TIMEZONE',$timezone,'chaine',0);
-	if (! $res > 0) $error++;
 	// Save nb of agenda
 	$res=dolibarr_set_const($db,'AGENDA_EXT_NB',trim(GETPOST("AGENDA_EXT_NB")),'chaine',0);
 	if (! $res > 0) $error++;
@@ -129,14 +123,6 @@ print "<table class=\"noborder\" width=\"100%\">";
 print "<tr class=\"liste_titre\">";
 print '<td width="180">'.$langs->trans("Parameter")."</td>";
 print "<td>".$langs->trans("Value")."</td>";
-print "</tr>";
-
-// Timezone
-print "<tr ".$bc[$var].">";
-print "<td>".$langs->trans("ClientTZ")."</td>";
-print "<td>";
-print $formadmin->select_timezone($conf->global->AGENDA_EXT_TIMEZONE,'agenda_ext_timezone');
-print "</td>";
 print "</tr>";
 
 // Nb of agenda
