@@ -30,6 +30,8 @@
 define('DONOTLOADCONF',1);	// To avoid loading conf by file inc.php
 
 include("./inc.php");
+
+$action=GETPOST('action');
 $setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:'auto');
 $langs->setDefaultLang($setuplang);
 
@@ -78,7 +80,7 @@ $main_data_dir=isset($_POST["main_data_dir"])?$_POST["main_data_dir"]:'';
 if (! $main_data_dir) { $main_data_dir="$main_dir/documents"; }
 
 
-if ($_POST["action"] == "set")
+if ($action == "set")
 {
 	umask(0);
 	foreach($_POST as $cle=>$valeur)

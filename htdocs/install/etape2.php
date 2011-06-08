@@ -41,6 +41,7 @@ error_reporting(0);		// Disable all errors
 @set_time_limit(300);	// Need more than 240 on Windows 7/64
 error_reporting($err);
 
+$action=GETPOST('action');
 $setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:'auto');
 $langs->setDefaultLang($setuplang);
 
@@ -72,7 +73,7 @@ if (! is_writable($conffile))
     exit;
 }
 
-if ($_POST["action"] == "set")
+if ($action == "set")
 {
 	print '<h3>'.$langs->trans("Database").'</h3>';
 
