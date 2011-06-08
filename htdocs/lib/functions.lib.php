@@ -3580,24 +3580,7 @@ function make_substitutions($chaine,$substitutionarray,$outputlangs,$object='')
 {
     global $conf,$user;
 
-    $listfonc=array('numberwords'); // For the moment only one substitution module to search
-    foreach($listfonc as $fonc)
-    {
-        // Check if there is external substitution to do asked by plugins
-        // We look files into the includes/modules/substitutions directory
-        // By default, there is no such external plugins.
-        foreach ($conf->file->dol_document_root as $dirroot)
-        {
-            // If module enabled and complete
-            if (! empty($conf->$fonc->enabled) && file_exists($dirroot.'/includes/modules/substitutions/functions_'.$fonc.'.lib.php'))
-            {
-                dol_syslog("Library functions_".$fonc.".lib.php found into ".$dirroot);
-                require_once($dirroot."/includes/modules/substitutions/functions_".$fonc.".lib.php");
-                numberwords_completesubstitutionarray($substitutionarray,$outputlangs,$object);
-                break;
-            }
-        }
-    }
+    complete_substitutions_array($substitutionarray,$outputlangs,$object);
 
     // Make substitition
     foreach ($substitutionarray as $key => $value)
@@ -3605,6 +3588,44 @@ function make_substitutions($chaine,$substitutionarray,$outputlangs,$object='')
         $chaine=str_replace("$key","$value",$chaine);	// We must keep the " to work when value is 123.5 for example
     }
     return $chaine;
+}
+
+/**
+ *      Complete the $substitutionarray with more entries
+ *      @param      substitutionarray       Array substitution old value => new value value
+ *      @param      outputlangs             If we want substitution from special constants, we provide a language
+ *      @param      object                  If we want substitution from special constants, we provide data in a source object
+ */
+function complete_substitutions_array(&$substitutionarray,$outputlangs,$object='')
+{
+    global $conf,$user;
+
+    require_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
+
+    // Check if there is external substitution to do asked by plugins
+    // We look files into the includes/modules/substitutions directory
+    // By default, there is no such external plugins.
+    foreach ($conf->file->dol_document_root as $dirroot)
+    {
+        $substitfiles=dol_dir_list($dirroot.'/includes/modules/substitutions','files',0,'functions_');
+        foreach($substitfiles as $substitfile)
+        {
+            if (preg_match('/functions_(.*)\.lib\.php/i',$substitfile['name'],$reg))
+            {
+                $module=$reg[1];
+                if (! empty($conf->$module->enabled))   // If module enabled and complete
+                {
+                    dol_syslog("Library functions_".$module.".lib.php found into ".$dirroot);
+                    require_once($dirroot."/includes/modules/substitutions/functions_".$module.".lib.php");
+                    $function_name=$module."_completesubstitutionarray";
+                    $function_name($substitutionarray,$outputlangs,$object);
+                    //$res=call_user_func_array($module."_completesubstitutionarray", array($substitutionarray,$outputlangs,$object));
+                    //print $res;
+                    //numberwords_completesubstitutionarray($substitutionarray,$outputlangs,$object);
+                }
+            }
+        }
+    }
 }
 
 /**
