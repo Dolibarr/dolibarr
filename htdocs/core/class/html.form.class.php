@@ -3284,7 +3284,7 @@ class Form
         $ret='';
 
         //print "$paramid,$morehtml,$shownav,$fieldid,$fieldref,$morehtmlref,$moreparam";
-        $object->load_previous_next_ref($object->next_prev_filter,$fieldid);
+        $object->load_previous_next_ref((isset($object->next_prev_filter)?$object->next_prev_filter:''),$fieldid);
         $previous_ref = $object->ref_previous?'<a href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_previous).$moreparam.'">'.img_previous().'</a>':'';
         $next_ref     = $object->ref_next?'<a href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_next).$moreparam.'">'.img_next().'</a>':'';
 

@@ -495,7 +495,7 @@ function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto
     // Show tabs
     for ($i = 0 ; $i <= $maxkey ; $i++)
     {
-        if ($links[$i][2] == 'image')
+        if (isset($links[$i][2]) && $links[$i][2] == 'image')
         {
             if (!empty($links[$i][0]))
             {

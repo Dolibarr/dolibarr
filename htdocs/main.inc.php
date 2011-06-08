@@ -1660,7 +1660,7 @@ if (! function_exists("llxFooter"))
 
 
 		print "\n".'</td></tr></table> <!-- end right area -->'."\n";
-		if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '</div></div> <!-- end main layout -->'."\n";
+		if ($conf->use_javascript_ajax && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print '</div></div> <!-- end main layout -->'."\n";
 
         print "\n";
         if ($foot) print '<!-- '.$foot.' -->'."\n";

@@ -1,6 +1,6 @@
 <?PHP
-/* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010 Juanjo Menent			    <jmenent@2byte.es>
+/* Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,7 +94,7 @@ class FormSms
 		$langs->load("mails");
 		$langs->load("sms");
 
-		$form=new Form($DB);
+		$form=new Form($this->db);
         $soc=new Societe($this->db);
 		if ($this->withtosocid > 0)
         {
@@ -176,8 +176,15 @@ function limitChars(textarea, limit, infodiv)
                     dol_include_once('/ovh/class/ovhsms.class.php');
                     try
                     {
-                        $sms = new OvhSms($db);
-                        $resultsender = $sms->SmsSenderList($conf->global->OVHSMS_ACCOUNT);
+                        $sms = new OvhSms($this->db);
+                        if (empty($conf->global->OVHSMS_ACCOUNT))
+                        {
+                            $resultsender = 'ErrorOVHSMS_ACCOUNT not defined';
+                        }
+                        else
+                        {
+                            $resultsender = $sms->SmsSenderList($conf->global->OVHSMS_ACCOUNT);
+                        }
                     }
                     catch(Exception $e)
                     {
@@ -221,7 +228,7 @@ function limitChars(textarea, limit, infodiv)
 			else
 			{
 			    print "<input size=\"16\" name=\"sendto\" value=\"".(! is_array($this->withto) && $this->withto != '1'? (isset($_REQUEST["sendto"])?$_REQUEST["sendto"]:$this->withto):"+")."\">";
-				if ($this->withtosocid > 0)
+				if (! empty($this->withtosocid) && $this->withtosocid > 0)
 				{
 					$liste=array();
 					$liste[0]='&nbsp;';

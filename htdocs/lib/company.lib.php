@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
@@ -45,28 +45,29 @@ function societe_prepare_head($object)
     $h++;
 
     // TODO Remove tests on object->object. Functions must be called with a company object directly
-    if (($object->client==2 || $object->client==3 || $object->object->client==2 || $object->object->client==3) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
+    if (($object->client==2 || $object->client==3
+    || (isset($object->object) && $object->object->client==2) || (isset($object->object) && $object->object->client==3)) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
     {
         $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("Prospect");
         $head[$h][2] = 'prospect';
         $h++;
     }
-    if ($object->client==1 || $object->client==3 || $object->object->client==1 || $object->object->client==3)
+    if ($object->client==1 || $object->client==3 || (is_object($object->object) && $object->object->client==1) || (is_object($object->object) && $object->object->client==3))
     {
         $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("Customer");
         $head[$h][2] = 'customer';
         $h++;
     }
-    if ($conf->fournisseur->enabled && ($object->fournisseur || $object->object->fournisseur))
+    if (! empty($conf->fournisseur->enabled) && ($object->fournisseur || (isset($object->object) && $object->object->fournisseur)))
     {
         $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("Supplier");
         $head[$h][2] = 'supplier';
         $h++;
     }
-    if ($conf->agenda->enabled)
+    if (! empty($conf->agenda->enabled))
     {
     	$head[$h][0] = DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id;
     	$head[$h][1] = $langs->trans("Agenda");
@@ -74,7 +75,7 @@ function societe_prepare_head($object)
     	$h++;
     }
     //show categorie tab
-    if ($conf->categorie->enabled)
+    if (! empty($conf->categorie->enabled))
     {
         $type = 2;
         if ($object->fournisseur) $type = 1;
@@ -107,7 +108,7 @@ function societe_prepare_head($object)
         $h++;
     }
     // Notifications
-    if ($conf->notification->enabled && $user->societe_id == 0)
+    if (! empty($conf->notification->enabled) && $user->societe_id == 0)
     {
         $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("Notifications");

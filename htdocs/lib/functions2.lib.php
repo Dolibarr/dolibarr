@@ -643,7 +643,7 @@ function check_value($mask,$value)
 
     // Extract value for mask counter, mask raz and mask offset
     if (! preg_match('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i',$mask,$reg)) return 'ErrorBadMask';
-    $masktri=$reg[1].$reg[2].$reg[3];
+    $masktri=$reg[1].(isset($reg[2])?$reg[2]:'').(isset($reg[3])?$reg[3]:'');
     $maskcounter=$reg[1];
     $maskraz=-1;
     $maskoffset=0;
@@ -1128,12 +1128,12 @@ function getSoapParams()
     global $conf;
 
     $params=array();
-    $proxyuse=($conf->global->MAIN_PROXY_USE?true:false);
-    $proxyhost=($conf->global->MAIN_PROXY_USE?$conf->global->MAIN_PROXY_HOST:false);
-    $proxyport=($conf->global->MAIN_PROXY_USE?$conf->global->MAIN_PROXY_PORT:false);
-    $proxyuser=($conf->global->MAIN_PROXY_USE?$conf->global->MAIN_PROXY_USER:false);
-    $proxypass=($conf->global->MAIN_PROXY_USE?$conf->global->MAIN_PROXY_PASS:false);
-    $timeout=(empty($conf->global->MAIN_USE_CONNECT_TIMEOUT)?10:$conf->global->MAIN_USE_CONNECT_TIMEOUT);               // Connection timeout
+    $proxyuse =(empty($conf->global->MAIN_PROXY_USE)?false:true);
+    $proxyhost=(empty($conf->global->MAIN_PROXY_USE)?false:$conf->global->MAIN_PROXY_HOST);
+    $proxyport=(empty($conf->global->MAIN_PROXY_USE)?false:$conf->global->MAIN_PROXY_PORT);
+    $proxyuser=(empty($conf->global->MAIN_PROXY_USE)?false:$conf->global->MAIN_PROXY_USER);
+    $proxypass=(empty($conf->global->MAIN_PROXY_USE)?false:$conf->global->MAIN_PROXY_PASS);
+    $timeout  =(empty($conf->global->MAIN_USE_CONNECT_TIMEOUT)?10:$conf->global->MAIN_USE_CONNECT_TIMEOUT);               // Connection timeout
     $response_timeout=(empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT)?30:$conf->global->MAIN_USE_RESPONSE_TIMEOUT);    // Response timeout
     //print extension_loaded('soap');
     if ($proxyuse)
