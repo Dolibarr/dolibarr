@@ -489,7 +489,8 @@ function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto
 
     // Define max of key (max may be higher than sizeof becaus of hole due to module disabling some tabs).
     $keys=array_keys($links);
-    $maxkey=max($keys);
+    if (sizeof($keys)) $maxkey=max($keys);
+    else $maxkey=-1;
 
     // Show tabs
     for ($i = 0 ; $i <= $maxkey ; $i++)
