@@ -966,7 +966,12 @@ if (($action == 'addline' || $action == 'addline_predef') && $user->rights->fact
 				'',
                 $price_base_type,
                 $pu_ttc,
-                $type
+                $type,
+                -1,
+                0,
+                '',
+                0,
+                GETPOST('fk_parent_line')
                 );
             }
         }
