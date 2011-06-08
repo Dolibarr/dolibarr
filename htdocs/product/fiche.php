@@ -760,23 +760,6 @@ if ($action == 'create' && ($user->rights->produit->creer || $user->rights->serv
         if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
         print '</td></tr>';
 
-        // Hidden
-		/*
-		if (($_GET["type"] != 1 && $user->rights->produit->hidden)
-		|| ($_GET["type"] == 1 && $user->rights->service->hidden))
-		{
-			print '<tr><td>'.$langs->trans("Hidden").'</td><td>';
-			print $html->selectyesno('hidden',$product->hidden);
-			print '</td></tr>';
-		}
-		else
-		{
-			print '<tr><td>'.$langs->trans("Hidden").'</td><td>';
-			print yn("No");
-			print '</td></tr>';
-		}
-        */
-
 		// Note (invisible sur facture, propales...)
 		print '<tr><td valign="top">'.$langs->trans("NoteNotVisibleOnBill").'</td><td>';
 		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");

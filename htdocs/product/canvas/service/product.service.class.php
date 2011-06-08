@@ -152,7 +152,6 @@ class ProductService extends Product
 		}
 		$sql.= " WHERE p.entity = ".$conf->entity;
 		if ($search_categ) $sql.= " AND p.rowid = cp.fk_product";	// Join for the needed table to filter by categ
-		if (!$user->rights->service->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
 		if ($sall)
 		{
 			$sql.= " AND (p.ref like '%".$this->db->escape($sall)."%' OR p.label like '%".$this->db->escape($sall)."%' OR p.description like '%".$this->db->escape($sall)."%' OR p.note like '%".$this->db->escape($sall)."%')";

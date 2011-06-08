@@ -356,15 +356,6 @@ else
 			$sql.= " WHERE ps.fk_product = p.rowid";
 			$sql.= " AND ps.reel <> 0";	// We do not show if stock is 0 (no product in this warehouse)
 			$sql.= " AND ps.fk_entrepot = ".$entrepot->id;
-			if (!$user->rights->produit->hidden && !$user->rights->service->hidden)
-			{
-				$sql.=' AND p.hidden=0';
-			}
-			else
-			{
-				if (!$user->rights->produit->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
-				if (!$user->rights->service->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
-			}
 			$sql.= $db->order($sortfield,$sortorder);
 
 			dol_syslog('List products sql='.$sql);

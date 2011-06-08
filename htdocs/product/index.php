@@ -168,12 +168,6 @@ $sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.tosell, p.
 $sql.= " p.tms as datem";
 $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 $sql.= " WHERE p.entity IN (0,".(! empty($conf->entities['product']) ? $conf->entities['product'] : $conf->entity).")";
-if (empty($user->rights->produit->hidden) && empty($user->rights->service->hidden)) $sql.=' AND p.hidden=0';
-else
-{
-	if (!$user->rights->produit->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
-	if (!$user->rights->service->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
-}
 if ($type != '') $sql.= " AND p.fk_product_type = ".$type;
 $sql.= $db->order("p.tms","DESC");
 $sql.= $db->plimit($max,0);

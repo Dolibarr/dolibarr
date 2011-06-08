@@ -67,8 +67,6 @@ class Service extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 		$sql.= " WHERE p.fk_product_type = 1";
 		$sql.= " AND p.entity = ".$conf->entity;
-		if (!$user->rights->produit->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
-		if (!$user->rights->service->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
 
 		$resql=$this->db->query($sql);
 		if ($resql)

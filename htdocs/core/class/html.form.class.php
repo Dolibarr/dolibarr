@@ -931,12 +931,6 @@ class Form
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND pl.lang='". $langs->getDefaultLang() ."'";
         }
         $sql.= ' WHERE p.entity IN (0,'.(! empty($conf->entities['product']) ? $conf->entities['product'] : $conf->entity).')';
-        if (empty($user->rights->produit->hidden) && empty($user->rights->service->hidden)) $sql.=' AND p.hidden=0';
-        else
-        {
-            if (empty($user->rights->produit->hidden)) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
-            if (empty($user->rights->service->hidden)) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
-        }
         if($finished == 0)
         {
             $sql.= " AND p.finished = ".$finished;

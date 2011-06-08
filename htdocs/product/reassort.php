@@ -107,15 +107,6 @@ if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_product as cp";
 $sql.= ') LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as s on p.rowid = s.fk_product';
 $sql.= " WHERE p.entity = ".$conf->entity;
 if ($search_categ) $sql.= " AND p.rowid = cp.fk_product";	// Join for the needed table to filter by categ
-if (!$user->rights->produit->hidden && !$user->rights->service->hidden)
-{
-	$sql.=' AND p.hidden=0';
-}
-else
-{
-	if (!$user->rights->produit->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
-	if (!$user->rights->service->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
-}
 if ($sall)
 {
 	$sql.= " AND (p.ref like '%".$db->escape($sall)."%' OR p.label like '%".$db->escape($sall)."%' OR p.description like '%".$db->escape($sall)."%' OR p.note like '%".$db->escape($sall)."%')";

@@ -150,15 +150,6 @@ if ($_GET["fourn_id"] > 0)  // The DISTINCT is used to avoid duplicate from this
 }
 $sql.= ' WHERE p.entity IN (0,'.(! empty($conf->entities['product']) ? $conf->entities['product'] : $conf->entity).')';
 if ($search_categ) $sql.= " AND p.rowid = cp.fk_product";	// Join for the needed table to filter by categ
-if (!$user->rights->produit->hidden && !$user->rights->service->hidden)
-{
-    $sql.=' AND p.hidden=0';
-}
-else
-{
-    if (!$user->rights->produit->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
-    if (!$user->rights->service->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
-}
 if ($sall)
 {
 	$sql.= " AND (p.ref LIKE '%".$db->escape($sall)."%' OR p.label LIKE '%".$db->escape($sall)."%' OR p.description LIKE '%".$db->escape($sall)."%' OR p.note LIKE '%".$db->escape($sall)."%')";
