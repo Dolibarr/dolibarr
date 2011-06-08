@@ -41,7 +41,6 @@ if (!$user->admin)
 accessforbidden();
 
 $typeconst=array('yesno','texte','chaine');
-$dir = DOL_DOCUMENT_ROOT."/includes/modules/facture/";
 
 
 /*
@@ -232,6 +231,7 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 print_fiche_titre($langs->trans("BillsSetup"),$linkback,'setup');
 print '<br>';
 
+/*
 $h = 0;
 
 $head[$h][0] = DOL_URL_ROOT."/admin/facture.php";
@@ -240,6 +240,7 @@ $hselected=$h;
 $h++;
 
 dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
+*/
 
 
 /*
@@ -452,14 +453,14 @@ foreach ($conf->file->dol_document_root as $dirroot)
                     	{
                     		$name = substr($file, 4, dol_strlen($file) -16);
 	                        $classname = substr($file, 0, dol_strlen($file) -12);
-	
+
 	                        require_once($dir.'/'.$file);
 	                        $module = new $classname($db);
-	
+
 	                        $modulequalified=1;
 	                        if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified=0;
 	                        if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified=0;
-	
+
 	                        if ($modulequalified)
 	                        {
 	                            $var = !$var;
@@ -469,7 +470,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 	                            if (method_exists($module,'info')) print $module->info($langs);
 	                            else print $module->description;
 	                            print '</td>';
-	
+
 	                            // Active
 	                            if (in_array($name, $def))
 	                            {
@@ -492,7 +493,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 	                                print "</td>";
 	                            }
-	
+
 	                            // Defaut
 	                            print "<td align=\"center\">";
 	                            if ($conf->global->FACTURE_ADDON_PDF == "$name")
@@ -504,7 +505,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 	                            }
 	                            print '</td>';
-	
+
 	                            // Info
 	                            $htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
 	                            $htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
@@ -520,12 +521,12 @@ foreach ($conf->file->dol_document_root as $dirroot)
 	                            $htmltooltip.='<br>'.$langs->trans("CreditNote").': '.yn($module->option_credit_note,1,1);
 	                            $htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang,1,1);
 	                            $htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftInvoices").': '.yn($module->option_draft_watermark,1,1);
-	
-	
+
+
 	                            print '<td align="center">';
 	                            print $html->textwithpicto('',$htmltooltip,1,0);
 	                            print '</td>';
-	
+
 	                            // Preview
 	                            print '<td align="center">';
 	                            if ($module->type == 'pdf')
@@ -537,7 +538,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 	                                print img_object($langs->trans("PreviewNotAvailable"),'generic');
 	                            }
 	                            print '</td>';
-	
+
 	                            print "</tr>\n";
 	                        }
                     	}
@@ -713,7 +714,7 @@ print "<tr ".$bc[false].">\n  <td width=\"140\">".$langs->trans("PathDirectory")
 print "</table>\n";
 
 
-dol_fiche_end();
+//dol_fiche_end();
 
 
 $db->close();
