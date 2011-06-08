@@ -30,6 +30,7 @@ ErrorBadSupplierCodeSyntax=La sintaxi del codi proveïdor és incorrecta
 ErrorSupplierCodeRequired=Codi proveïdor obligatori
 ErrorSupplierCodeAlreadyUsed=Codi de proveïdor ja utilitzat
 ErrorBadParameters=Paràmetres incorrectes
+ErrorBadValueForParameter=Valor '%s' incorrecte per al paràmetre '%s'
 ErrorFailedToWriteInDir=No es pot escriure a la carpeta %s
 ErrorFoundBadEmailInFile=Trobada sintaxi incorrecta en email a %s línies en fitxer (exemple linia %s amb email=%s)
 ErrorUserCannotBeDelete=L'usuari no pot ser eliminat. Potser estigui associat a elements de Dolibarr.
