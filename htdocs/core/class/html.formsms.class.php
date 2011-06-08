@@ -199,11 +199,9 @@ function limitChars(textarea, limit, infodiv)
                 if (sizeof($resultsender) > 0)
                 {
                     print '<select name="fromsms" id="valid" class="flat">';
-                    $i=0;
-                    while($resultsender[$i])
+                    foreach($resultsender as $obj)
                     {
-                        print '<option value="'.$resultsender[$i]->number.'">'.$resultsender[$i]->number.'</option>';
-                        $i++;
+                        print '<option value="'.$obj->number.'">'.$obj->number.'</option>';
                     }
                     print '</select>';
                 }
