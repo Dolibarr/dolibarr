@@ -811,7 +811,8 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 					print '<td nowrap="nowrap">';
 					if ($event->type_code != 'BIRTHDAY')
 					{
-                        if ($showinfo)
+						
+                        if ($showinfo && $event->type_code != 'ICALEVENT')
                         {
                             print $event->getNomUrl(2).' ';
                         }
