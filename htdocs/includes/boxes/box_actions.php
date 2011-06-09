@@ -102,24 +102,25 @@ class box_actions extends ModeleBoxes {
 
 					if ($datelimite  < ($now - $delay_warning)) $late=img_warning($langs->trans("Late"));
 
-					$label=($langs->transnoentities("Action".$objp->code)!=("Action".$objp->code) ? $langs->transnoentities("Action".$objp->code) : $objp->label);
+					//($langs->transnoentities("Action".$objp->code)!=("Action".$objp->code) ? $langs->transnoentities("Action".$objp->code) : $objp->label)
+					$label=$objp->label;
 
 					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
 					'logo' => ("action"),
 					'url' => DOL_URL_ROOT."/comm/action/fiche.php?id=".$objp->id);
 
 					$this->info_box_contents[$i][1] = array('td' => 'align="left" nowrap="1"',
-					'text' => dol_trunc($label,18),
+					'text' => dol_trunc($label,32),
 					'text2'=> $late,
 					'url' => DOL_URL_ROOT."/comm/action/fiche.php?id=".$objp->id);
 
 					$this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
                     'logo' => ($objp->socid?'company':''),
-                    'url' => ($objp->socid?DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid:''));
+                    'url' => ($objp->socid?DOL_URL_ROOT."/societe/soc.php?socid=".$objp->socid:''));
 
 					$this->info_box_contents[$i][3] = array('td' => 'align="left"',
 					'text' => $objp->nom,
-					'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
+					'url' => DOL_URL_ROOT."/societe/soc.php?socid=".$objp->socid);
 
 					$this->info_box_contents[$i][4] = array('td' => 'align="left" nowrap="nowrap"',
 					'text' => dol_print_date($datelimite, "dayhour"));
