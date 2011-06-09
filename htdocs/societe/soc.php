@@ -70,7 +70,7 @@ else
 	$result = restrictedArea($user, 'societe', $socid);
 }
 
-$error=$nuser->error; $errors=$nuser->errors;
+$error=0; $errors=array();
 
 
 /*
@@ -287,7 +287,7 @@ else
 				// To not set code if third party is not concerned. But if it had values, we keep them.
 				if (empty($soc->client) && empty($oldsoc->code_client))          $soc->code_client='';
 				if (empty($soc->fournisseur)&& empty($oldsoc->code_fournisseur)) $soc->code_fournisseur='';
-				//var_dump($soc);exit;
+                //var_dump($soc);exit;
 
 				$result = $soc->update($socid,$user,1,$oldsoc->codeclient_modifiable(),$oldsoc->codefournisseur_modifiable());
 				if ($result >= 0)
@@ -298,8 +298,7 @@ else
 				else
 				{
 					$soc->id = $socid;
-
-					$error = $soc->error;
+					$error = $langs->trans($soc->error); $errors = $soc->errors;
 					$action= "edit";
 				}
 			}
@@ -320,7 +319,7 @@ else
 		else
 		{
 			$langs->load("errors");
-			$error=$langs->trans($soc->error);
+			$error=$langs->trans($soc->error); $errors = $soc->errors;
 			$action='';
 		}
 	}
@@ -969,7 +968,7 @@ else
 				}
 			}
 
-			dol_htmloutput_errors($error,errors);
+			dol_htmloutput_errors($error,$errors);
 
 			if ($conf->use_javascript_ajax)
 			{

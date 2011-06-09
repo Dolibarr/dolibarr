@@ -199,6 +199,7 @@ class Societe extends CommonObject
         if ($this->code_fournisseur == -1) $this->get_codefournisseur($this->prefix_comm,1);
 
         // Check more parameters
+        // If error, this->errors[] is filled
         $result = $this->verify();
 
         if ($result >= 0)
@@ -250,7 +251,7 @@ class Societe extends CommonObject
                 }
                 else
                 {
-                    dol_syslog("Societe::Create echec update ".$this->error);
+                    dol_syslog("Societe::Create echec update ".$this->error, LOG_ERR);
                     $this->db->rollback();
                     return -3;
                 }
@@ -261,22 +262,24 @@ class Societe extends CommonObject
                 {
 
                     $this->error=$langs->trans("ErrorCompanyNameAlreadyExists",$this->name);
+                    $result=-1;
                 }
                 else
                 {
                     $this->error=$this->db->lasterror();
-                    dol_syslog("Societe::Create echec insert sql=".$sql);
+                    dol_syslog("Societe::Create fails insert sql=".$sql, LOG_ERR);
+                    $result=-2;
                 }
                 $this->db->rollback();
-                return -2;
+                return $result;
             }
 
         }
         else
         {
             $this->db->rollback();
-            dol_syslog("Societe::Create echec verify ".join(',',$this->errors));
-            return -1;
+            dol_syslog("Societe::Create fails verify ".join(',',$this->errors), LOG_WARNING);
+            return -3;
         }
     }
 
@@ -432,6 +435,8 @@ class Societe extends CommonObject
             return -1;
         }
 
+        $this->db->begin();
+
         // Check name is required and codes are ok or unique.
         // If error, this->errors[] is filled
         $result = $this->verify();
@@ -529,7 +534,9 @@ class Societe extends CommonObject
                     // Fin appel triggers
                 }
 
-                $result = 1;
+                dol_syslog("Societe::Update success");
+                $this->db->commit();
+                return 1;
             }
             else
             {
@@ -543,14 +550,19 @@ class Societe extends CommonObject
                 {
 
                     $this->error = $langs->trans("Error sql=".$sql);
-                    dol_syslog("Societe::Update echec sql=".$sql);
+                    dol_syslog("Societe::Update fails update sql=".$sql, LOG_ERR);
                     $result =  -2;
                 }
+                $this->db->rollback();
+                return $result;
             }
         }
-
-        return $result;
-
+        else
+        {
+            $this->db->rollback();
+            dol_syslog("Societe::Update fails verify ".join(',',$this->errors), LOG_WARNING);
+            return -3;
+        }
     }
 
     /**
