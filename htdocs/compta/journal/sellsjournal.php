@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007-2010 Jean Heimburger  <jean@tiaris.info>
+ * Copyright (C) 2011	   Juanjo Menent    <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -145,7 +146,7 @@ print "<tr class=\"liste_titre\">";
 //print "<td>".$langs->trans("JournalNum")."</td>";
 print "<td>".$langs->trans("Date")."</td><td>".$langs->trans("Piece").' ('.$langs->trans("InvoiceRef").")</td>";
 print "<td>".$langs->trans("Account")."</td>";
-print "<t><td>".$langs->trans("Type")."</td><td>".$langs->trans("Debit")."</td><td>".$langs->trans("Credit")."</td>";
+print "<t><td>".$langs->trans("Type")."</td><td align='right'>".$langs->trans("Debit")."</td><td align='right'>".$langs->trans("Credit")."</td>";
 print "</tr>\n";
 
 $var=true;
@@ -166,7 +167,7 @@ foreach ($tabfac as $key => $val)
 	print "<td>".$invoicestatic->getNomUrl(1)."</td>";
 	foreach ($tabttc[$key] as $k => $mt)
 	{
-		print "<td>".$k."</td><td>".$langs->trans("ThirdParty")."</td><td>".($mt>=0?$mt:'')."</td><td>".($mt<0?-$mt:'')."</td>";
+		print "<td>".$k."</td><td>".$langs->trans("ThirdParty")."</td><td align='right'>".($mt>=0?price($mt):'')."</td><td align='right'>".($mt<0?price(-$mt):'')."</td>";
 	}
 	print "</tr>";
 	// product
@@ -178,7 +179,7 @@ foreach ($tabfac as $key => $val)
 			//print "<td>".$conf->global->COMPTA_JOURNAL_SELL."</td>";
 			print "<td>".$val["date"]."</td>";
 			print "<td>".$invoicestatic->getNomUrl(1)."</td>";
-			print "<td>".$k."</td><td>".$langs->trans("Products")."</td><td>".($mt<0?-$mt:'')."</td><td>".($mt>=0?$mt:'')."</td></tr>";
+			print "<td>".$k."</td><td>".$langs->trans("Products")."</td><td align='right'>".($mt<0?price(-$mt):'')."</td><td align='right'>".($mt>=0?price($mt):'')."</td></tr>";
 		}
 	}
 	// vat
@@ -191,7 +192,7 @@ foreach ($tabfac as $key => $val)
     		//print "<td>".$conf->global->COMPTA_JOURNAL_SELL."</td>";
     		print "<td>".$val["date"]."</td>";
     		print "<td>".$invoicestatic->getNomUrl(1)."</td>";
-    		print "<td>".$k."</td><td>".$langs->trans("VAT")." ".$key."</td><td>".($mt<0?-$mt:'')."</td><td>".($mt>=0?$mt:'')."</td></tr>";
+    		print "<td>".$k."</td><td>".$langs->trans("VAT")." ".$key."</td><td align='right'>".($mt<0?price(-$mt):'')."</td><td align='right'>".($mt>=0?price($mt):'')."</td></tr>";
 	    }
 	}
 
