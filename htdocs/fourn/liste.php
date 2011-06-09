@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,11 +33,12 @@ $langs->load("suppliers");
 $langs->load("orders");
 $langs->load("companies");
 
-$socname = GETPOST("socname");
-$search_nom = GETPOST("search_nom");
-$search_ville = GETPOST("search_ville");
-$search_code_fournisseur=GETPOST("search_code_fournisseur");
-$search_compta_fournisseur=GETPOST("search_compta_fournisseur");
+$socname                   = GETPOST("socname");
+$search_nom                = GETPOST("search_nom");
+$search_ville              = GETPOST("search_ville");
+$search_code_fournisseur   = GETPOST("search_code_fournisseur");
+$search_compta_fournisseur = GETPOST("search_compta_fournisseur");
+$search_datec              = GETPOST("search_datec");
 
 $langs->load("suppliers");
 $langs->load("orders");
@@ -91,6 +93,8 @@ if ($search_ville) $sql .= " AND s.ville LIKE '%".$db->escape($search_ville)."%'
 if ($search_nom)   $sql .= " AND s.nom LIKE '%".$db->escape($search_nom)."%'";
 if ($search_code_fournisseur)   $sql .= " AND s.code_fournisseur LIKE '%".$db->escape($search_code_fournisseur)."%'";
 if ($search_compta_fournisseur) $sql .= " AND s.code_compta_fournisseur LIKE '%".$db->escape($search_compta_fournisseur)."%'";
+if ($search_datec)   $sql .= " AND s.datec LIKE '%".$db->escape($search_datec)."%'";
+
 // Insert categ filter
 if ($search_categ)
 {
@@ -131,7 +135,7 @@ if ($resql)
 	if ($moreforfilter)
 	{
 		print '<tr class="liste_titre">';
-		print '<td class="liste_titre" colspan="5">';
+		print '<td class="liste_titre" colspan="6">';
 		print $moreforfilter;
 		print '</td></tr>';
 	}
@@ -141,7 +145,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.ville","",$param,'valign="middle"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("SupplierCode"),$_SERVER["PHP_SELF"],"s.code_fournisseur","",$param,'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("AccountancyCode"),$_SERVER["PHP_SELF"],"s.code_compta_fournisseur","",$param,'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"datec","",$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"s.datec","",$param,'align="right"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"s.status","",$params,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
@@ -159,7 +163,9 @@ if ($resql)
 	print '<input class="flat" type="text" size="10" name="search_compta_fournisseur" value="'.$search_compta_fournisseur.'">';
 	print '</td>';
 
-	print '<td>&nbsp;</td>';
+	print '<td align="right" class="liste_titre">';
+	print '<input class="flat" type="text" size="10" name="search_datec" value="'.$search_datec.'">';
+	print '</td>';
 
 	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
 
