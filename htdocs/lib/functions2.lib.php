@@ -26,6 +26,7 @@
  */
 
 
+
 /**
  *  Output content of a file $filename in version of current language (otherwise may use an alternate language)
  *  @param      langs           Object language to use for output
@@ -425,16 +426,16 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
         // Define posy, posm and reg
         if ($maskraz > 1)
         {
-        	 if (! preg_match('/^(.*)\{(y+)\}\{(m+)\}/i',$maskwithonlyymcode)
-        	 	&& ! preg_match('/^(.*)\{(m+)\}\{(y+)\}/i',$maskwithonlyymcode)) return 'ErrorCantUseRazInStartedYearIfNoYearMonthInMask';
-        	 if (preg_match('/^(.*)\{(y+)\}\{(m+)\}/i',$maskwithonlyymcode,$reg)) { $posy=2; $posm=3; }
-        	 elseif (preg_match('/^(.*)\{(m+)\}\{(y+)\}/i',$maskwithonlyymcode,$reg)) { $posy=3; $posm=2; }
-        	 if (dol_strlen($reg[$posy]) < 2) return 'ErrorCantUseRazWithYearOnOneDigit';
+            if (! preg_match('/^(.*)\{(y+)\}\{(m+)\}/i',$maskwithonlyymcode)
+            && ! preg_match('/^(.*)\{(m+)\}\{(y+)\}/i',$maskwithonlyymcode)) return 'ErrorCantUseRazInStartedYearIfNoYearMonthInMask';
+            if (preg_match('/^(.*)\{(y+)\}\{(m+)\}/i',$maskwithonlyymcode,$reg)) { $posy=2; $posm=3; }
+            elseif (preg_match('/^(.*)\{(m+)\}\{(y+)\}/i',$maskwithonlyymcode,$reg)) { $posy=3; $posm=2; }
+            if (dol_strlen($reg[$posy]) < 2) return 'ErrorCantUseRazWithYearOnOneDigit';
         }
         else
         {
-        	if (! preg_match('/^(.*)\{(y+)\}/i',$maskwithonlyymcode)) return 'ErrorCantUseRazIfNoYearInMask';
-        	if (preg_match('/^(.*)\{(y+)\}/i',$maskwithonlyymcode,$reg)) { $posy=2; $posm=0; }
+            if (! preg_match('/^(.*)\{(y+)\}/i',$maskwithonlyymcode)) return 'ErrorCantUseRazIfNoYearInMask';
+            if (preg_match('/^(.*)\{(y+)\}/i',$maskwithonlyymcode,$reg)) { $posy=2; $posm=0; }
         }
         //print "x".$maskwithonlyymcode." ".$maskraz." ".$posy." ".$posm;
 
@@ -450,10 +451,10 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
         $sqlwhere.='( (SUBSTRING('.$field.', '.(dol_strlen($reg[1])+1).', '.dol_strlen($reg[2]).') >= '.$yearcomp;
         if ($monthcomp > 1)	// Test useless if monthcomp = 1 (or 0 is same as 1)
         {
-        	if (dol_strlen($reg[$posy]) == 4) $yearcomp1=sprintf("%04d",date("Y",$date)+$yearoffset+1);
-        	if (dol_strlen($reg[$posy]) == 2) $yearcomp1=sprintf("%02d",date("y",$date)+$yearoffset+1);
-        	// FIXME If mask is {mm}{yy}, sqlwhere is wrong here
-        	$sqlwhere.=' AND SUBSTRING('.$field.', '.(dol_strlen($reg[1])+dol_strlen($reg[2])+1).', '.dol_strlen($reg[3]).') >= '.$monthcomp.')';
+            if (dol_strlen($reg[$posy]) == 4) $yearcomp1=sprintf("%04d",date("Y",$date)+$yearoffset+1);
+            if (dol_strlen($reg[$posy]) == 2) $yearcomp1=sprintf("%02d",date("y",$date)+$yearoffset+1);
+            // FIXME If mask is {mm}{yy}, sqlwhere is wrong here
+            $sqlwhere.=' AND SUBSTRING('.$field.', '.(dol_strlen($reg[1])+dol_strlen($reg[2])+1).', '.dol_strlen($reg[3]).') >= '.$monthcomp.')';
             $sqlwhere.=' OR SUBSTRING('.$field.', '.(dol_strlen($reg[1])+1).', '.dol_strlen($reg[2]).') >= '.$yearcomp1.' )';
         }
         else
@@ -1110,11 +1111,11 @@ function is_ip($ip)
  */
 function dol_buildlogin($lastname,$firstname)
 {
-	$login=strtolower(dol_string_unaccent($firstname));
-	$login.=($login?'.':'');
-	$login.=strtolower(dol_string_unaccent($lastname));
-	$login=dol_string_nospecial($login,''); // For special names
-	return $login;
+    $login=strtolower(dol_string_unaccent($firstname));
+    $login.=($login?'.':'');
+    $login.=strtolower(dol_string_unaccent($lastname));
+    $login=dol_string_nospecial($login,''); // For special names
+    return $login;
 }
 
 
@@ -1145,7 +1146,7 @@ function getSoapParams()
                       'proxy_port'     => $proxyport,
                       'proxy_login'    => $proxyuser,
                       'proxy_password' => $proxypass
-                );
+        );
     }
     else
     {
@@ -1156,7 +1157,7 @@ function getSoapParams()
                       'proxy_port'     => false,
                       'proxy_login'    => false,
                       'proxy_password' => false
-                 );
+        );
     }
     return $params;
 }
