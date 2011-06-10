@@ -41,11 +41,11 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile)
 
 	if (empty($outputfile)) return -1;
 
-	// Note: A cal file is an UTF8 encoded file
+    // Note: A cal file is an UTF8 encoded file
 	$calfileh=fopen($outputfile,'w');
 	if ($calfileh)
 	{
-		$now=mktime();
+		$now=dol_now();
 
 		$encoding='';
 		if ($format == 'vcal') $encoding='ENCODING=QUOTED-PRINTABLE:';
@@ -58,8 +58,13 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile)
 		fwrite($calfileh,"PRODID:-//DOLIBARR ".DOL_VERSION."\n");
 		fwrite($calfileh,"CALSCALE:GREGORIAN\n");
 		fwrite($calfileh,"X-WR-CALNAME:".$encoding.format_cal($format,$title)."\n");
-		fwrite($calfileh,"X-WR-CALDESC:".$encoding.format_cal($format,$desc)."\n");
-		//fwrite($calfileh,"X-WR-TIMEZONE:Europe/Paris\n");
+        fwrite($calfileh,"X-WR-CALDESC:".$encoding.format_cal($format,$desc)."\n");
+        $hh=ConvertSecondToTime($conf->global->MAIN_AGENDA_EXPORT_CACHE,'hour');
+        $mm=ConvertSecondToTime($conf->global->MAIN_AGENDA_EXPORT_CACHE,'min');
+        $ss=ConvertSecondToTime($conf->global->MAIN_AGENDA_EXPORT_CACHE,'sec');
+        //fwrite($calfileh,"X-WR-TIMEZONE:Europe/Paris\n");
+        if (! empty($conf->global->MAIN_AGENDA_EXPORT_CACHE)
+        && $conf->global->MAIN_AGENDA_EXPORT_CACHE > 60) fwrite($calfileh,"X-PUBLISHED-TTL: "."P".$hh."H".$mm."M".$ss."S\n");
 
 		foreach ($events_array as $date => $event)
 		{
@@ -149,31 +154,31 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile)
                     if ($modified) fwrite($calfileh,"LAST-MODIFIED:".dol_print_date($modified,'dayhourxcard',true)."\n");
                     fwrite($calfileh,"SUMMARY:".$encoding.$summary."\n");
 					fwrite($calfileh,"DESCRIPTION:".$encoding.$description."\n");
-					/*
+
+					/* Other keys:
 					// Status values for a "VEVENT"
 					statvalue  = "TENTATIVE"           ;Indicates event is
 				                                        ;tentative.
 				                / "CONFIRMED"           ;Indicates event is
 				                                        ;definite.
 				                / "CANCELLED"           ;Indicates event was
-				                                        ;cancelled.
-				        ;
-
                     // Status values for "VTODO".
                     statvalue  =/ "NEEDS-ACTION"       ;Indicates to-do needs action.
 				                / "COMPLETED"           ;Indicates to-do completed.
 				                / "IN-PROCESS"          ;Indicates to-do in process of
 				                / "CANCELLED"           ;Indicates to-do was cancelled.
-
-
                     // Status values for "VJOURNAL".
 				    statvalue  =/ "DRAFT"              ;Indicates journal is draft.
 				                / "FINAL"               ;Indicates journal is final.
 				                / "CANCELLED"           ;Indicates journal is removed.
-
 					*/
-					if (! empty($location)) fwrite($calfileh,"LOCATION:".$encoding.$location."\n");
 					//fwrite($calfileh,"CLASS:PUBLIC\n");				// PUBLIC, PRIVATE, CONFIDENTIAL
+                    //fwrite($calfileh,"X-MICROSOFT-CDO-BUSYSTATUS:1\n");
+                    //ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=ACCEPTED;CN=Laurent Destailleur;X-NUM-GUESTS=0:mailto:eldy10@gmail.com
+
+                    if (! empty($location)) fwrite($calfileh,"LOCATION:".$encoding.$location."\n");
+					if ($fulldayevent) fwrite($calfileh,"X-FUNAMBOL-ALLDAY:1\n");
+                    if ($fulldayevent) fwrite($calfileh,"X-MICROSOFT-CDO-ALLDAYEVENT:1\n");
 
 					// Date must be GMT dates
 					// Current date

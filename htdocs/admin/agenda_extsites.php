@@ -29,6 +29,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/agenda.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
 
 if (!$user->admin)
     accessforbidden();
@@ -54,7 +55,9 @@ if ($actionsave)
 {
     $db->begin();
 
-	$res=dolibarr_set_const($db,'ENABLE_AGENDA_EXT'.$i,trim(GETPOST("ENABLE_AGENDA_EXT".$i)),'chaine',0);
+    $disableext=GETPOST("AGENDA_DISABLE_EXT");
+    if ($disableext) $disableext=0; else $disableext=1;
+	$res=dolibarr_set_const($db,'AGENDA_DISABLE_EXT',$disableext,'chaine',0);
 
 	$i=1;
 	$error=0;
@@ -115,7 +118,9 @@ dol_fiche_head($head, 'extsites', $langs->trans("Agenda"));
 
 print '<form name="extsitesconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 
-print $langs->trans("ExtSitesEnableThisTool").' '.$form->selectyesno("ENABLE_AGENDA_EXT",(GETPOST("ENABLE_AGENDA_EXT"))?GETPOST("ENABLE_AGENDA_EXT"):$conf->global->ENABLE_AGENDA_EXT,1).'<br><br>';
+$selectedvalue=(GETPOST("AGENDA_DISABLE_AGENDA"))?GETPOST("AGENDA_DISABLE_EXT"):$conf->global->AGENDA_DISABLE_EXT;
+if ($selectedvalue==1) $selectedvalue=0; else $selectedvalue=1;
+print $langs->trans("ExtSitesEnableThisTool").' '.$form->selectyesno("AGENDA_DISABLE_EXT",$selectedvalue,1).'<br><br>';
 
 $var=false;
 print "<table class=\"noborder\" width=\"100%\">";

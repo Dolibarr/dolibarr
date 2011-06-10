@@ -30,7 +30,7 @@ class ical
     var $event_count; // Number of Events
     var $todo_count; // Number of TODOs
     var $last_key; //Help variable save last key (multiline string)
- 
+
     /**
      * Read text file, icalender text file
      *
@@ -40,9 +40,9 @@ class ical
     function read_file($file)
     {
         $this->file = $file;
-        $file_text = join ("", file ($file)); //load file   
+        $file_text = join ("", file ($file)); //load file
         $file_text = preg_replace("/[\r\n]{1,} ([:;])/","\\1",$file_text);
-        
+
         return $file_text; // return all text
     }
 
@@ -55,7 +55,7 @@ class ical
     {
         return $this->event_count;
     }
-    
+
     /**
      * Returns the number of ToDo
      *
@@ -65,7 +65,7 @@ class ical
     {
         return $this->todo_count;
     }
-    
+
     /**
      * Translate Calendar
      *
@@ -76,16 +76,17 @@ class ical
     {
         $this->cal = array(); // new empty array
 
-        $this->event_count = -1; 
+        $this->event_count = -1;
 
         // read FILE text
         $this->file_text = $this->read_file($uri);
 
         $this->file_text = preg_split("[\n]", $this->file_text);
-        
+
         // is this text vcalendar standart text ? on line 1 is BEGIN:VCALENDAR
         if (!stristr($this->file_text[0],'BEGIN:VCALENDAR')) return 'error not VCALENDAR';
 
+        $insidealarm=0;
         foreach ($this->file_text as $text)
         {
             $text = trim($text); // trim one line
@@ -93,7 +94,7 @@ class ical
             {
                 // get Key and Value VCALENDAR:Begin -> Key = VCALENDAR, Value = begin
                 list($key, $value) = $this->retun_key_value($text);
-                
+
                 switch ($text) // search special string
                 {
                     case "BEGIN:VTODO":
@@ -106,6 +107,11 @@ class ical
                         $type = "VEVENT";
                         break;
 
+                    case "BEGIN:VFREEBUSY":
+                        $this->freebusy_count = $this->freebusy_count+1; // new event begin
+                        $type = "VFREEBUSY";
+                        break;
+
                     case "BEGIN:VCALENDAR": // all other special string
                     case "BEGIN:DAYLIGHT":
                     case "BEGIN:VTIMEZONE":
@@ -115,6 +121,7 @@ class ical
 
                     case "END:VTODO": // end special text - goto VCALENDAR key
                     case "END:VEVENT":
+                    case "END:VFREEBUSY":
 
                     case "END:VCALENDAR":
                     case "END:DAYLIGHT":
@@ -123,17 +130,25 @@ class ical
                         $type = "VCALENDAR";
                         break;
 
+                    // Manage VALARM that are inside a VEVENT to avoid fields of VALARM to overwrites fields of VEVENT
+                    case "BEGIN:VALARM":
+                        $insidealarm=1;
+                        break;
+                    case "END:VALARM":
+                        $insidealarm=0;
+                        break;
+
                     default: // no special string
-                        $this->add_to_array($type, $key, $value); // add to array
+                        if (! $insidealarm) $this->add_to_array($type, $key, $value); // add to array
                         break;
                 }
             }
         }
         return $this->cal;
     }
-    
+
     /**
-     * Add to $this->ical array one value and key. Type is VTODO, VEVENT, VCALENDAR ... .
+     * Add to $this->ical array one value and key. Type is VTODO, VEVENT, VFREEBUSY, VCALENDAR ... .
      *
      * @param string $type
      * @param string $key
@@ -141,12 +156,16 @@ class ical
      */
     function add_to_array($type, $key, $value)
     {
+
+        //print 'type='.$type.' key='.$key.' value='.$value.'<br>'."\n";
+
         if ($key == false)
         {
             $key = $this->last_key;
             switch ($type)
             {
                 case 'VEVENT': $value = $this->cal[$type][$this->event_count][$key].$value;break;
+                case 'VFREEBUSY': $value = $this->cal[$type][$this->freebusy_count][$key].$value;break;
                 case 'VTODO': $value = $this->cal[$type][$this->todo_count][$key].$value;break;
             }
         }
@@ -154,12 +173,16 @@ class ical
         if (($key == "DTSTAMP") or ($key == "LAST-MODIFIED") or ($key == "CREATED")) $value = $this->ical_date_to_unix($value);
         if ($key == "RRULE" ) $value = $this->ical_rrule($value);
 
-        if (stristr($key,"DTSTART") or stristr($key,"DTEND") or stristr($key,"DTSTART;VALUE=DATE") or stristr($key,"DTEND;VALUE=DATE")) 
+        if (stristr($key,"DTSTART") or stristr($key,"DTEND") or stristr($key,"DTSTART;VALUE=DATE") or stristr($key,"DTEND;VALUE=DATE"))
         {
         	if (stristr($key,"DTSTART;VALUE=DATE") or stristr($key,"DTEND;VALUE=DATE"))
+        	{
         		list($key,$value) = array($key,$value);
+        	}
         	else
+        	{
         		list($key,$value) = $this->ical_dt_date($key,$value);
+        	}
         }
 
         switch ($type)
@@ -172,15 +195,19 @@ class ical
                 $this->cal[$type][$this->event_count][$key] = $value;
                 break;
 
+            case "VFREEBUSY":
+                $this->cal[$type][$this->freebusy_count][$key] = $value;
+                break;
+
             default:
                 $this->cal[$type][$key] = $value;
                 break;
         }
         $this->last_key = $key;
     }
-    
+
     /**
-     * Parse text "XXXX:value text some with : " and return array($key = "XXXX", $value="value"); 
+     * Parse text "XXXX:value text some with : " and return array($key = "XXXX", $value="value");
      *
      * @param string $text
      * @return array
@@ -188,19 +215,19 @@ class ical
     function retun_key_value($text)
     {
         preg_match("/([^:]+)[:]([\w\W]+)/", $text, $matches);
-        
+
         if (empty($matches))
         {
             return array(false,$text);
-        } 
-        else  
+        }
+        else
         {
             $matches = array_splice($matches, 1, 2);
             return $matches;
         }
 
     }
-    
+
     /**
      * Parse RRULE  return array
      *
@@ -210,7 +237,7 @@ class ical
     function ical_rrule($value)
     {
         $rrule = explode(';',$value);
-        foreach ($rrule as $line) 
+        foreach ($rrule as $line)
         {
             $rcontent = explode('=', $line);
             $result[$rcontent[0]] = $rcontent[1];
@@ -228,17 +255,16 @@ class ical
         $ical_date = str_replace('T', '', $ical_date);
         $ical_date = str_replace('Z', '', $ical_date);
 
+        $ntime=0;
         // TIME LIMITED EVENT
-        preg_match('/([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{0,2})([0-9]{0,2})([0-9]{0,2})/', $ical_date, $date);
+        if (preg_match('/([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{0,2})([0-9]{0,2})([0-9]{0,2})/', $ical_date, $date))
+            $ntime=dol_mktime($date[4], $date[5], $date[6], $date[2],$date[3], $date[1], true);
 
-        // UNIX timestamps can't deal with pre 1970 dates
-        if ($date[1] <= 1970)
-        {
-            $date[1] = 1971;
-        }
-        return  mktime($date[4], $date[5], $date[6], $date[2],$date[3], $date[1]);
+        //if (empty($date[4])) print 'Error bad date: '.$ical_date.' - date1='.$date[1];
+        //print dol_print_date($ntime,'dayhour');exit;
+        return $ntime;      // ntime is a GTM time
     }
-    
+
     /**
      * Return unix date from iCal date format
      *
@@ -252,21 +278,21 @@ class ical
 
         // Analyse TZID
         $temp = explode(";",$key);
-        
+
         if (empty($temp[1])) // not TZID
         {
             $value = str_replace('T', '', $value);
             return array($key,$value);
         }
-        // adding $value and $tzid 
+        // adding $value and $tzid
         $key =     $temp[0];
         $temp = explode("=", $temp[1]);
         $return_value[$temp[0]] = $temp[1];
         $return_value['unixtime'] = $value;
-        
+
         return array($key,$return_value);
     }
-    
+
     /**
      * Return sorted eventlist as array or false if calenar is empty
      *
@@ -279,12 +305,12 @@ class ical
         {
             usort($temp, array(&$this, "ical_dtstart_compare"));
             return $temp;
-        } else 
+        } else
         {
             return false;
         }
     }
-    
+
     /**
      * Compare two unix timestamp
      *
@@ -294,9 +320,9 @@ class ical
      */
     function ical_dtstart_compare($a, $b)
     {
-        return strnatcasecmp($a['DTSTART']['unixtime'], $b['DTSTART']['unixtime']);    
+        return strnatcasecmp($a['DTSTART']['unixtime'], $b['DTSTART']['unixtime']);
     }
-    
+
     /**
      * Return eventlist array (not sort eventlist array)
      *
@@ -306,7 +332,17 @@ class ical
     {
         return $this->cal['VEVENT'];
     }
-    
+
+    /**
+     * Return eventlist array (not sort eventlist array)
+     *
+     * @return array
+     */
+    function get_freebusy_list()
+    {
+        return $this->cal['VFREEBUSY'];
+    }
+
     /**
      * Return todo array (not sort todo array)
      *
@@ -316,7 +352,7 @@ class ical
     {
         return $this->cal['VTODO'];
     }
-    
+
     /**
      * Return base calendar data
      *
@@ -326,7 +362,7 @@ class ical
     {
         return $this->cal['VCALENDAR'];
     }
-    
+
     /**
      * Return array with all data
      *
@@ -337,4 +373,4 @@ class ical
         return $this->cal;
     }
 }
-?> 
+?>

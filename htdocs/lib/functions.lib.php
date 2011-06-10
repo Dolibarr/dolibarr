@@ -551,9 +551,9 @@ function dolibarr_print_date($time,$format='',$to_gmt=false,$outputlangs='',$enc
  *								"%d/%m/%Y %H:%M",
  *								"%d/%m/%Y %H:%M:%S",
  *								"day", "daytext", "dayhour", "dayhourldap", "dayhourtext"
- * 	@param		tzoutput		true=output string is for Greenwich location
- * 								false or 'tzserver'=output string is for local PHP server TZ usage
- * 								'tzuser'=output string is for local browser TZ usage
+ * 	@param		tzoutput		true=output or 'gmt' => string is for Greenwich location
+ * 								false or 'tzserver' => output string is for local PHP server TZ usage
+ * 								'tzuser' => output string is for local browser TZ usage
  *	@param		outputlangs		Object lang that contains language for text translation.
  *  @param      encodetooutput  false=no convert into output pagecode
  * 	@return     string      	Formated date or '' if time is null
@@ -806,7 +806,7 @@ function dolibarr_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$chec
  *	@return		timestamp		Date as a timestamp, '' if error
  * 	@see 		dol_print_date, dol_stringtotime
  */
-function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
+function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1,$isdst=true)
 {
     //print "- ".$hour.",".$minute.",".$second.",".$month.",".$day.",".$year.",".$_SERVER["WINDIR"]." -";
 
@@ -841,7 +841,7 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
          $date=strtotime($string);
          print "- ".$string." ".$date." -";
          */
-        $date=adodb_mktime($hour,$minute,$second,$month,$day,$year,0,$gm);
+        $date=adodb_mktime($hour,$minute,$second,$month,$day,$year,$isdst,$gm);
     }
     else
     {
