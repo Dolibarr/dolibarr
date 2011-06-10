@@ -503,22 +503,40 @@ if ($conf->global->ENABLE_AGENDA_EXT==1 && $conf->global->AGENDA_EXT_NB>0)
 			foreach($icalevents as $icalevent)
 			{
 				// Create a new object action
-				if(!is_array($icalevent[DTSTART])) //non-repeatable and not fullday event
+				$event=new ActionComm($db);
+				$addevent = false;
+				if($icalevent['DTSTART;VALUE=DATE']) //fullday event
 				{
-					$event=new ActionComm($db);
+					$datestart=$db->jdate($icalevent['DTSTART;VALUE=DATE']);
+					$dateend=$db->jdate($icalevent['DTEND;VALUE=DATE']);
+					$event->fulldayevent=true;
+					$addevent=true;
+				}
+				elseif (is_array($icalevent['RRULE'])) //repeatable event
+				{
+					$addevent=false; //TODO: a faire
+				}
+				elseif(!is_array($icalevent['DTSTART'])) //non-repeatable and not fullday event
+				{
+					$datestart=$icalevent['DTSTART'];
+					$dateend=$icalevent['DTEND'];
+					$addevent=true;
+				}
+				
+				if($addevent)
+				{
 					$paramkey='AGENDA_EXT_NAME'.$i;
 					$namecal = $conf->global->$paramkey;
 					$paramkey='AGENDA_EXT_COLOR'.$i;
 					$colorcal = $conf->global->$paramkey;
-					$event->id=$icalevent[UID];
+					$event->id=$icalevent['UID'];
 					$event->icalname=$namecal;
 					$event->icalcolor=$colorcal;
 					$usertime=($_SESSION['dol_tz']*60*60)+($_SESSION['dol_dst']*60*60);
-					$event->datep=$icalevent[DTSTART]+$usertime;
-					$event->datef=$icalevent[DTEND]+$usertime;
+					$event->datep=$datestart+$usertime;
+					$event->datef=$dateend+$usertime;
 					$event->type_code="ICALEVENT";
-					$event->libelle='<b>'.$icalevent[SUMMARY].'</b><br>'.str_replace("\\n", "<br>", "$icalevent[DESCRIPTION]"); 
-		        	//$event->fulldayevent=$obj->fulldayevent;
+					$event->libelle='<b>'.$icalevent['SUMMARY'].'</b><br>'.str_replace("\\n", "<br>", $icalevent['DESCRIPTION']); 
 		        	
 					$event->date_start_in_calendar=$event->datep;
 					
@@ -559,12 +577,7 @@ if ($conf->global->ENABLE_AGENDA_EXT==1 && $conf->global->AGENDA_EXT_NB>0)
 						while ($loop);
 					}
 				}
-				else //repeatable or fullday event
-				{
-					
-				}
-			}
-			       	
+			}			       	
 		}
 		$i++;
 	}
@@ -898,7 +911,11 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                         if ($linerelatedto) print $linerelatedto.'<br>';
 
 						// Show label
-						if($event->type_code == 'ICALEVENT') print $event->libelle;
+						if($event->type_code == 'ICALEVENT') 
+						{ 
+							if ($event->fulldayevent) print '('.$event->icalname.')<br>';
+							print $event->libelle;
+						}
 						else print $event->getNomUrl(0,$maxnbofchar,'cal_event');
 					}
 					else	// It's a birthday
