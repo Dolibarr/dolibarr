@@ -53,6 +53,7 @@ DateReceived=Date delivery received
 SendShippingByEMail=Send shipping by EMail
 SendShippingRef=Send shipping %s
 ActionsOnShipping=Acions on shipping
+LinkToTrackYourPackage=Link to track your package
 
 # Sending methods
 SendingMethodCATCH=Catch by customer

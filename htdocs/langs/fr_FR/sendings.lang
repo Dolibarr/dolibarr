@@ -53,6 +53,7 @@ DateReceived=Date réception réelle
 SendShippingByEMail=Envoi bon d'expédition par EMail
 SendShippingRef=Envoi bon d'expédition %s
 ActionsOnShipping=Événements sur l'expédition
+LinkToTrackYourPackage=Lien pour suivi de votre colis
 
 # Sending methods
 SendingMethodCATCH=Enlèvement par le client

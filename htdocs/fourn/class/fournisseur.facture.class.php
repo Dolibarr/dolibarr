@@ -47,7 +47,8 @@ class FactureFournisseur extends Facture
     var $fk_element='fk_facture_fourn';
     var $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
-    var $ref;
+    var $ref;		 // TODO deprecated
+    var $product_ref;
     var $ref_supplier;
     var $socid;
     //! 0=Standard invoice, 1=Replacement invoice, 2=Credit note invoice, 3=Deposit invoice, 4=Proforma invoice
@@ -382,7 +383,7 @@ class FactureFournisseur extends Facture
         $sql = 'SELECT f.rowid, f.description, f.pu_ht, f.pu_ttc, f.qty, f.tva_tx, f.tva';
         $sql.= ', f.localtax1_tx, f.localtax2_tx, f.total_localtax1, f.total_localtax2 ';
         $sql.= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_product, f.product_type';
-        $sql.= ', p.rowid as product_id, p.ref, p.label as label, p.description as product_desc';
+        $sql.= ', p.rowid as product_id, p.ref as product_ref, p.label as label, p.description as product_desc';
         //$sql.= ', pf.ref_fourn';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn_det as f';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON f.fk_product = p.rowid';
@@ -402,7 +403,8 @@ class FactureFournisseur extends Facture
                     $obj = $this->db->fetch_object($resql_rows);
                     $this->lines[$i]->rowid            = $obj->rowid;
                     $this->lines[$i]->description      = $obj->description;
-                    $this->lines[$i]->ref              = $obj->ref;             // Reference interne du produit
+                    $this->lines[$i]->ref              = $obj->product_ref;       // TODO deprecated
+                    $this->lines[$i]->product_ref      = $obj->product_ref;       // Internal reference
                     //$this->lines[$i]->ref_fourn        = $obj->ref_fourn;       // Reference fournisseur du produit
                     $this->lines[$i]->libelle          = $obj->label;           // Label du produit
                     $this->lines[$i]->product_desc     = $obj->product_desc;    // Description du produit

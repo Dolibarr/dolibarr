@@ -48,7 +48,9 @@ class CommandeFournisseur extends Commande
 	var $fk_element = 'fk_commande';
 	var $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
-	var $ref;
+	var $ref;		 // TODO deprecated
+    var $product_ref;
+    var $ref_supplier;
 	var $brouillon;
 	var $statut;			// 0=Draft -> 1=Validated -> 2=Approved -> 3=Process runing -> 4=Received partially -> 5=Received totally -> (reopen) 4=Received partially
 	//                                                          -> 7=Canceled/Never received -> (reopen) 3=Process runing
@@ -172,7 +174,7 @@ class CommandeFournisseur extends Commande
 			$sql.= " l.tva_tx, l.remise_percent, l.subprice,";
 			$sql.= " l.localtax1_tx, l. localtax2_tx, l.total_localtax1, l.total_localtax2,";
 			$sql.= " l.total_ht, l.total_tva, l.total_ttc,";
-			$sql.= " p.rowid as product_id, p.ref, p.label as label, p.description as product_desc";
+			$sql.= " p.rowid as product_id, p.ref as product_ref, p.label as label, p.description as product_desc";
 			$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet	as l";
 			$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
 			$sql.= " WHERE l.fk_commande = ".$this->id;
@@ -212,7 +214,8 @@ class CommandeFournisseur extends Commande
 					$line->libelle             = $objp->label;        // Label produit
 					$line->product_desc        = $objp->product_desc; // Description produit
 
-					$line->ref                 = $objp->ref;          // Reference
+					$line->ref                 = $objp->product_ref;     // TODO deprecated
+					$line->product_ref         = $objp->product_ref;     // Internal reference
 					$line->ref_fourn           = $objp->ref_supplier;    // TODO deprecated
 					$line->ref_supplier        = $objp->ref_supplier;    // Reference supplier
 
