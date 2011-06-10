@@ -503,58 +503,65 @@ if ($conf->global->ENABLE_AGENDA_EXT==1 && $conf->global->AGENDA_EXT_NB>0)
 			foreach($icalevents as $icalevent)
 			{
 				// Create a new object action
-				$event=new ActionComm($db);
-				$paramkey='AGENDA_EXT_NAME'.$i;
-				$namecal = $conf->global->$paramkey;
-				$paramkey='AGENDA_EXT_COLOR'.$i;
-				$colorcal = $conf->global->$paramkey;
-				$event->id=$icalevent[UID];
-				$event->icalname=$namecal;
-				$event->icalcolor=$colorcal;
-				$usertime=($_SESSION['dol_tz']*60*60)+($_SESSION['dol_dst']*60*60);
-				$event->datep=$icalevent[DTSTART]+$usertime;
-				$event->datef=$icalevent[DTEND]+$usertime;
-				$event->type_code="ICALEVENT";
-				$event->libelle='<b>'.$icalevent[SUMMARY].'</b><br>'.str_replace("\\n", "<br>", "$icalevent[DESCRIPTION]"); 
-	        	//$event->fulldayevent=$obj->fulldayevent;
-	        	
-				$event->date_start_in_calendar=$event->datep;
+				if(!is_array($icalevent[DTSTART])) //non-repeatable and not fullday event
+				{
+					$event=new ActionComm($db);
+					$paramkey='AGENDA_EXT_NAME'.$i;
+					$namecal = $conf->global->$paramkey;
+					$paramkey='AGENDA_EXT_COLOR'.$i;
+					$colorcal = $conf->global->$paramkey;
+					$event->id=$icalevent[UID];
+					$event->icalname=$namecal;
+					$event->icalcolor=$colorcal;
+					$usertime=($_SESSION['dol_tz']*60*60)+($_SESSION['dol_dst']*60*60);
+					$event->datep=$icalevent[DTSTART]+$usertime;
+					$event->datef=$icalevent[DTEND]+$usertime;
+					$event->type_code="ICALEVENT";
+					$event->libelle='<b>'.$icalevent[SUMMARY].'</b><br>'.str_replace("\\n", "<br>", "$icalevent[DESCRIPTION]"); 
+		        	//$event->fulldayevent=$obj->fulldayevent;
+		        	
+					$event->date_start_in_calendar=$event->datep;
+					
+					if ($event->datef != '' && $event->datef >= $event->datep) $event->date_end_in_calendar=$event->datef;
+					else $event->date_end_in_calendar=$event->datep;
 				
-				if ($event->datef != '' && $event->datef >= $event->datep) $event->date_end_in_calendar=$event->datef;
-				else $event->date_end_in_calendar=$event->datep;
-			
-				// Define ponctual property
-				if ($event->date_start_in_calendar == $event->date_end_in_calendar)
-				{
-					$event->ponctuel=1;
-				}
-	
-				// Check values
-				if ($event->date_end_in_calendar < $firstdaytoshow || $event->date_start_in_calendar > $lastdaytoshow)
-				{
-					// This record is out of visible range
-				}
-				else
-				{
-					if ($event->date_start_in_calendar < $firstdaytoshow) $event->date_start_in_calendar=$firstdaytoshow;
-					if ($event->date_end_in_calendar > $lastdaytoshow) $event->date_end_in_calendar=$lastdaytoshow;
-	
-					// Add an entry in actionarray for each day
-					$daycursor=$event->date_start_in_calendar;
-					$annee = date('Y',$daycursor);
-					$mois = date('m',$daycursor);
-					$jour = date('d',$daycursor);
-	
-					// Loop on each day covered by action to prepare an index to show on calendar
-					$loop=true; $j=0;
-					$daykey=dol_mktime(0,0,0,$mois,$jour,$annee);
-					do
+					// Define ponctual property
+					if ($event->date_start_in_calendar == $event->date_end_in_calendar)
 					{
-						$eventarray[$daykey][]=$event;
-						$daykey+=60*60*24;
-						if ($daykey > $event->date_end_in_calendar) $loop=false;
+						$event->ponctuel=1;
 					}
-					while ($loop);
+		
+					// Check values
+					if ($event->date_end_in_calendar < $firstdaytoshow || $event->date_start_in_calendar > $lastdaytoshow)
+					{
+						// This record is out of visible range
+					}
+					else
+					{
+						if ($event->date_start_in_calendar < $firstdaytoshow) $event->date_start_in_calendar=$firstdaytoshow;
+						if ($event->date_end_in_calendar > $lastdaytoshow) $event->date_end_in_calendar=$lastdaytoshow;
+		
+						// Add an entry in actionarray for each day
+						$daycursor=$event->date_start_in_calendar;
+						$annee = date('Y',$daycursor);
+						$mois = date('m',$daycursor);
+						$jour = date('d',$daycursor);
+		
+						// Loop on each day covered by action to prepare an index to show on calendar
+						$loop=true; $j=0;
+						$daykey=dol_mktime(0,0,0,$mois,$jour,$annee);
+						do
+						{
+							$eventarray[$daykey][]=$event;
+							$daykey+=60*60*24;
+							if ($daykey > $event->date_end_in_calendar) $loop=false;
+						}
+						while ($loop);
+					}
+				}
+				else //repeatable or fullday event
+				{
+					
 				}
 			}
 			       	
