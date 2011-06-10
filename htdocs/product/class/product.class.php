@@ -3,9 +3,8 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2007      Jean Heimburger      <jean@tiaris.info>
+ * Copyright (C) 2007-2011 Jean Heimburger      <jean@tiaris.info>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2011      Jean Heimburger      <jean@tiaris.info>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -166,8 +165,8 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    \brief      Check that ref and label are ok
-	 *    \return     int         >1 if OK, <=0 if KO
+	 *    Check that ref and label are ok
+	 *    @return     int         >1 if OK, <=0 if KO
 	 */
 	function check()
 	{
@@ -394,10 +393,10 @@ class Product extends CommonObject
 	}
 
 	/**
-	 \brief      Positionne le numero d'erreur
-	 \param      func Nom de la fonction
-	 \param      num Numero de l'erreur
-	 \param		error string
+	 *  Positionne le numero d'erreur
+	 *  @param      func Nom de la fonction
+	 *  @param      num  Numero de l'erreur
+	 *  @param		error string
 	 */
 	function _setErrNo($func, $num, $error='')
 	{
@@ -406,7 +405,7 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *	\brief      Retourne le texte de l'erreur
+	 *	Retourne le texte de l'erreur
 	 */
 	function error()
 	{
@@ -527,8 +526,8 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    \brief      Verification de l'utilisation du produit en base
-	 *    \param      id          id du produit
+	 *  Verification de l'utilisation du produit en base
+	 *  @param      id          id du produit
 	 */
 	function verif_prod_use($id)
 	{
@@ -625,7 +624,7 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *		\brief   update ou cree les traductions des infos produits
+	 *	update ou cree les traductions des infos produits
 	 */
 	function setMultiLangs()
 	{
@@ -690,7 +689,7 @@ class Product extends CommonObject
 
 
 	/**
-	 *		\brief 	Load array this->multilangs
+	 *	Load array this->multilangs
 	 */
 	function getMultiLangs()
 	{
@@ -708,7 +707,7 @@ class Product extends CommonObject
 			while ( $obj = $this->db->fetch_object($result) )
 			{
 				//print 'lang='.$obj->lang.' current='.$current_lang.'<br>';
-				if( $obj->lang == $current_lang ) // si on a les traduct. dans la langue courant on les charge en infos principales.
+				if( $obj->lang == $current_lang ) // si on a les traduct. dans la langue courante on les charge en infos principales.
 				{
 					$this->libelle		= $obj->label;
 					$this->description	= $obj->description;
@@ -730,9 +729,9 @@ class Product extends CommonObject
 
 
 	/**
-	 *   	\brief  	Ajoute un changement de prix en base dans l'historique des prix
-	 *		\param  	user        Objet utilisateur qui modifie le prix
-	 *		\return		int			<0 si KO, >0 si OK
+	 *  Ajoute un changement de prix en base dans l'historique des prix
+	 *	@param  	user        Objet utilisateur qui modifie le prix
+	 *	@return		int			<0 si KO, >0 si OK
 	 */
 	function _log_price($user,$level=0)
 	{
@@ -761,10 +760,10 @@ class Product extends CommonObject
 
 
 	/**
-	 *   	\brief  	Delete a price line
-	 * 		\param		user	Object user
-	 * 		\param		rowid	Line id to delete
-	 * 		\return		int		<0 if KO, >0 if OK
+	 *  Delete a price line
+	 * 	@param		user	Object user
+	 * 	@param		rowid	Line id to delete
+	 * 	@return		int		<0 if KO, >0 if OK
 	 */
 	function log_price_delete($user,$rowid)
 	{
@@ -787,13 +786,13 @@ class Product extends CommonObject
 
 
 	/**
-	 *    	\brief		Lit le prix pratique par un fournisseur
-	 *					On renseigne le couple prodfournprice/qty ou le triplet qty/product_id/fourn_ref)
-	 *    	\param     	prodfournprice      Id du tarif = rowid table product_fournisseur_price
-	 *    	\param     	qty                 Quantity asked
-	 *		\param		product_id			Filter on a particular product id
-	 * 		\param		fourn_ref			Filter on a supplier ref
-	 *    	\return    	int 				<-1 if KO, -1 if qty not enough, 0 si ok mais rien trouve, id_product si ok et trouve
+	 *	Lit le prix pratique par un fournisseur
+	 *				On renseigne le couple prodfournprice/qty ou le triplet qty/product_id/fourn_ref)
+	 *  @param     	prodfournprice      Id du tarif = rowid table product_fournisseur_price
+	 *  @param     	qty                 Quantity asked
+	 *	@param		product_id			Filter on a particular product id
+	 * 	@param		fourn_ref			Filter on a supplier ref
+	 *  @return    	int 				<-1 if KO, -1 if qty not enough, 0 si ok mais rien trouve, id_product si ok et trouve
 	 */
 	function get_buyprice($prodfournprice,$qty,$product_id=0,$fourn_ref=0)
 	{
@@ -868,16 +867,16 @@ class Product extends CommonObject
 
 
 	/**
-	 *	\brief  	Modify price of a product/Service
-	 *	\param  	id          	Id of product/service to change
-	 *	\param  	newprice		New price
-	 *	\param  	newpricebase	HT or TTC
-	 *	\param  	user        	Object user that make change
-	 *	\param  	newvat			New VAT Rate
-	 *  \param		newminprice		New price min
-	 *  \param		level			0=standard, >0 = level if multilevel prices
-	 *  \param     newnpr          0=Standard vat rate, 1=Special vat rate for French NPR VAT
-	 * 	\return		int				<0 if KO, >0 if OK
+	 *	Modify price of a product/Service
+	 *	@param  	id          	Id of product/service to change
+	 *	@param  	newprice		New price
+	 *	@param  	newpricebase	HT or TTC
+	 *	@param  	user        	Object user that make change
+	 *	@param  	newvat			New VAT Rate
+	 *  @param		newminprice		New price min
+	 *  @param		level			0=standard, >0 = level if multilevel prices
+	 *  @param     newnpr          0=Standard vat rate, 1=Special vat rate for French NPR VAT
+	 * 	@return		int				<0 if KO, >0 if OK
 	 */
 	function update_price($id, $newprice, $newpricebase, $user, $newvat='',$newminprice='', $level=0, $newnpr=0)
 	{
@@ -939,8 +938,8 @@ class Product extends CommonObject
 			if (empty($localtax1)) $localtax1=0;	// If = '' then = 0
 			if (empty($localtax2)) $localtax2=0;	// If = '' then = 0
 
-			// Ne pas mettre de quote sur le numeriques decimaux.
-			// Ceci provoque des stockage avec arrondis en base au lieu des valeurs exactes.
+			// Ne pas mettre de quote sur les numeriques decimaux.
+			// Ceci provoque des stockages avec arrondis en base au lieu des valeurs exactes.
 			$sql = "UPDATE ".MAIN_DB_PREFIX."product SET";
 			$sql.= " price_base_type='".$newpricebase."',";
 			$sql.= " price=".$price.",";
@@ -981,10 +980,10 @@ class Product extends CommonObject
 
 
 	/**
-	 *      Load a product in memory from database
-	 *      @param      id      Id of product/service to load
-	 *      @param      ref     Ref of product/service to load
-	 *      @return     int     <0 if KO, >0 if OK
+	 *  Load a product in memory from database
+	 *  @param      id      Id of product/service to load
+	 *  @param      ref     Ref of product/service to load
+	 *  @return     int     <0 if KO, >0 if OK
 	 */
 	function fetch($id='',$ref='')
 	{
@@ -1155,9 +1154,9 @@ class Product extends CommonObject
 
 
 	/**
-	 *    \brief    Charge tableau des stats propale pour le produit/service
-	 *    \param    socid       Id societe
-	 *    \return   array       Tableau des stats
+	 *  Charge tableau des stats propale pour le produit/service
+	 *  @param    socid       Id societe
+	 *  @return   array       Tableau des stats
 	 */
 	function load_stats_propale($socid=0)
 	{
@@ -1197,10 +1196,10 @@ class Product extends CommonObject
 
 
 	/**
-	 *    \brief    Charge tableau des stats commande client pour le produit/service
-	 *    \param    socid       	Id societe pour filtrer sur une societe
-	 *    \param    filtrestatut    Id statut pour filtrer sur un statut
-	 *    \return   array       	Tableau des stats
+	 *  Charge tableau des stats commande client pour le produit/service
+	 *  @param    socid       	Id societe pour filtrer sur une societe
+	 *  @param    filtrestatut  Id statut pour filtrer sur un statut
+	 *  @return   array       	Tableau des stats
 	 */
 	function load_stats_commande($socid=0,$filtrestatut='')
 	{
@@ -1238,10 +1237,10 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    \brief    Charge tableau des stats commande fournisseur pour le produit/service
-	 *    \param    socid       	Id societe pour filtrer sur une soci�t�
-	 *    \param    filtrestatut    Id des statuts pour filtrer sur des statuts
-	 *    \return   array       	Tableau des stats
+	 *  Charge tableau des stats commande fournisseur pour le produit/service
+	 *  @param    socid       	Id societe pour filtrer sur une societe
+	 *  @param    filtrestatut  Id des statuts pour filtrer sur des statuts
+	 *  @return   array       	Tableau des stats
 	 */
 	function load_stats_commande_fournisseur($socid=0,$filtrestatut='')
 	{
@@ -1279,10 +1278,10 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    \brief    Charge tableau des stats expedition client pour le produit/service
-	 *    \param    socid       	Id societe pour filtrer sur une societe
-	 *    \param    filtrestatut    Id statut pour filtrer sur un statut
-	 *    \return   array       	Tableau des stats
+	 *  Charge tableau des stats expedition client pour le produit/service
+	 *  @param    socid       	Id societe pour filtrer sur une societe
+	 *  @param    filtrestatut  Id statut pour filtrer sur un statut
+	 *  @return   array       	Tableau des stats
 	 */
 	function load_stats_sending($socid=0,$filtrestatut='')
 	{
@@ -1322,9 +1321,9 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    \brief    Charge tableau des stats contrat pour le produit/service
-	 *    \param    socid       Id societe
-	 *    \return   array       Tableau des stats
+	 *  Charge tableau des stats contrat pour le produit/service
+	 *  @param    socid       Id societe
+	 *  @return   array       Tableau des stats
 	 */
 	function load_stats_contrat($socid=0)
 	{
@@ -1363,9 +1362,9 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    \brief    Charge tableau des stats facture pour le produit/service
-	 *    \param    socid       Id societe
-	 *    \return   array       Tableau des stats
+	 *  Charge tableau des stats facture pour le produit/service
+	 *  @param    socid       Id societe
+	 *  @return   array       Tableau des stats
 	 */
 	function load_stats_facture($socid=0)
 	{
@@ -1404,9 +1403,9 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    \brief    Charge tableau des stats facture pour le produit/service
-	 *    \param    socid       Id societe
-	 *    \return   array       Tableau des stats
+	 *  Charge tableau des stats facture pour le produit/service
+	 *  @param    socid       Id societe
+	 *  @return   array       Tableau des stats
 	 */
 	function load_stats_facture_fournisseur($socid=0)
 	{
@@ -1445,10 +1444,10 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    	\brief    	Return an array formated for showing graphs
-	 *    	\param		sql         Request to execute
-	 * 		\param		mode		'byunit'=number of unit, 'bynumber'=nb of entities
-	 * 		\return   	array       <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
+	 *  Return an array formated for showing graphs
+	 *  @param		sql         Request to execute
+	 *  @param		mode		'byunit'=number of unit, 'bynumber'=nb of entities
+	 *  @return   	array       <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
 	function _get_stats($sql,$mode)
 	{
@@ -1500,10 +1499,10 @@ class Product extends CommonObject
 
 
 	/**
-	 *    	\brief  	Return nb of units or customers invoices in which product is included
-	 *    	\param  	socid       Limit count on a particular third party id
-	 * 		\param		mode		'byunit'=number of unit, 'bynumber'=nb of entities
-	 * 		\return   	array       <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
+	 *  Return nb of units or customers invoices in which product is included
+	 *  @param  	socid       Limit count on a particular third party id
+	 *  @param		mode		'byunit'=number of unit, 'bynumber'=nb of entities
+	 * 	@return   	array       <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
 	function get_nb_vente($socid=0,$mode)
 	{
@@ -1528,10 +1527,10 @@ class Product extends CommonObject
 
 
 	/**
-	 *    	\brief  	Return nb of units or supplier invoices in which product is included
-	 *    	\param  	socid       Limit count on a particular third party id
-	 * 		\param		mode		'byunit'=number of unit, 'bynumber'=nb of entities
-	 * 		\return   	array       <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
+	 *  Return nb of units or supplier invoices in which product is included
+	 *  @param  	socid       Limit count on a particular third party id
+	 * 	@param		mode		'byunit'=number of unit, 'bynumber'=nb of entities
+	 * 	@return   	array       <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
 	function get_nb_achat($socid=0,$mode)
 	{
@@ -1556,10 +1555,10 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    	\brief  	Return nb of units or proposals in which product is included
-	 *    	\param  	socid       Limit count on a particular third party id
-	 * 		\param		mode		'byunit'=number of unit, 'bynumber'=nb of entities
-	 * 		\return   	array       <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
+	 *  Return nb of units or proposals in which product is included
+	 *  @param  	socid       Limit count on a particular third party id
+	 * 	@param		mode		'byunit'=number of unit, 'bynumber'=nb of entities
+	 * 	@return   	array       <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
 	function get_nb_propal($socid=0,$mode)
 	{
@@ -1583,10 +1582,10 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    	\brief  	Return nb of units or orders in which product is included
-	 *    	\param  	socid       Limit count on a particular third party id
-	 * 		\param		mode		'byunit'=number of unit, 'bynumber'=nb of entities
-	 * 		\return   	array       <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
+	 *  Return nb of units or orders in which product is included
+	 *  @param  	socid       Limit count on a particular third party id
+	 *  @param		mode		'byunit'=number of unit, 'bynumber'=nb of entities
+	 * 	@return   	array       <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
 	function get_nb_order($socid=0,$mode)
 	{
@@ -1609,10 +1608,10 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    \brief      Lie un produit associe au produit/service
-	 *    \param      id_pere    Id du produit auquel sera lie le produit a lier
-	 *    \param      id_fils    Id du produit a lier
-	 *    \return     int        < 0 if KO, > 0 if OK
+	 *  Lie un produit associe au produit/service
+	 *  @param      id_pere    Id du produit auquel sera lie le produit a lier
+	 *  @param      id_fils    Id du produit a lier
+	 *  @return     int        < 0 if KO, > 0 if OK
 	 */
 	function add_sousproduit($id_pere, $id_fils,$qty)
 	{
@@ -1663,10 +1662,10 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    \brief      Retire le lien entre un sousproduit et un produit/service
-	 *    \param      fk_parent		Id du produit auquel ne sera plus lie le produit lie
-	 *    \param      fk_child		Id du produit a ne plus lie
-	 *    \return     int			< 0 si erreur, > 0 si ok
+	 *  Retire le lien entre un sousproduit et un produit/service
+	 *  @param      fk_parent		Id du produit auquel ne sera plus lie le produit lie
+	 *  @param      fk_child		Id du produit a ne plus lie
+	 *  @return     int			    < 0 si erreur, > 0 si ok
 	 */
 	function del_sousproduit($fk_parent, $fk_child)
 	{
@@ -1684,10 +1683,10 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    \brief      Verifie si c'est un sous-produit
-	 *    \param      fk_parent		Id du produit auquel le produit est lie
-	 *    \param      fk_child		Id du produit lie
-	 *    \return     int			< 0 si erreur, > 0 si ok
+	 *  Verifie si c'est un sous-produit
+	 *  @param      fk_parent		Id du produit auquel le produit est lie
+	 *  @param      fk_child		Id du produit lie
+	 *  @return     int			    < 0 si erreur, > 0 si ok
 	 */
 	function is_sousproduit($fk_parent, $fk_child)
 	{
@@ -1722,9 +1721,9 @@ class Product extends CommonObject
 
 
 	/**
-	 *    	\brief      Remplit le tableau des sous-produits
-	 *    	\return     int        < 0 si erreur, > 0 si ok
-	 * 		\remark		Not used. Used by module droitpret only.
+	 *  Remplit le tableau des sous-produits
+	 *  @return     int        < 0 si erreur, > 0 si ok
+	 *  @remark		Not used. Used by module droitpret only.
 	 */
 	/* Deprecated. Is not used
 	function load_subproduct()
@@ -1754,10 +1753,10 @@ class Product extends CommonObject
     */
 
 	/**
-	 *    	\brief      Lie un sous produit au produit/service
-	 *    	\param      id_sub     Id du produit a lier
-	 *    	\return     int        < 0 si erreur, > 0 si ok
-	 * 		\remark		Not used. Used by module droitpret only.
+	 *  Lie un sous produit au produit/service
+	 *  @param      id_sub     Id du produit a lier
+	 *  @return     int        < 0 si erreur, > 0 si ok
+	 *  @remark		Not used. Used by module droitpret only.
 	 */
     /* Deprecated. Is not used
 	function add_subproduct($id_sub)
@@ -1784,11 +1783,11 @@ class Product extends CommonObject
     */
 
 	/**
-	 *    \brief      Add a supplier reference for the product
-	 *    \param      user        User that make link
-	 *    \param      id_fourn    Supplier id
-	 *    \param      ref_fourn   Supplier ref
-	 *    \return     int         < 0 if KO, 0 if link already exists for this product, > 0 if OK
+	 *  Add a supplier reference for the product
+	 *  @param      user        User that make link
+	 *  @param      id_fourn    Supplier id
+	 *  @param      ref_fourn   Supplier ref
+	 *  @return     int         < 0 if KO, 0 if link already exists for this product, > 0 if OK
 	 */
 	function add_fournisseur($user, $id_fourn, $ref_fourn)
 	{
@@ -1862,8 +1861,8 @@ class Product extends CommonObject
 
 
 	/**
-	 *    \brief  	Renvoie la liste des fournisseurs du produit/service
-	 *    \return 	array		Tableau des id de fournisseur
+	 *  Renvoie la liste des fournisseurs du produit/service
+	 *  @return 	array		Tableau des id de fournisseur
 	 */
 	function list_suppliers()
 	{
@@ -1893,9 +1892,9 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *		\brief		Saisie une commande fournisseur
-	 *		\param		user		Objet user de celui qui demande
-	 *		\return		int			<0 si ko, >0 si ok
+	 *  Saisie une commande fournisseur
+	 *	@param		user		Objet user de celui qui demande
+	 *	@return		int			<0 si ko, >0 si ok
 	 */
 	function fastappro($user)
 	{
@@ -1914,10 +1913,10 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    \brief    Recopie les prix d'un produit/service sur un autre
-	 *    \param    fromId      Id produit source
-	 *    \param    toId        Id produit cible
-	 *    \return   int         < 0 si erreur, > 0 si ok
+	 *  Recopie les prix d'un produit/service sur un autre
+	 *  @param    fromId      Id produit source
+	 *  @param    toId        Id produit cible
+	 *  @return   int         < 0 si erreur, > 0 si ok
 	 */
 	function clone_price($fromId, $toId)
 	{
@@ -1940,10 +1939,10 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    \brief    Recopie les fournisseurs et prix fournisseurs d'un produit/service sur un autre
-	 *    \param    fromId      Id produit source
-	 *    \param    toId        Id produit cible
-	 *    \return   int         < 0 si erreur, > 0 si ok
+	 *  Recopie les fournisseurs et prix fournisseurs d'un produit/service sur un autre
+	 *  @param    fromId      Id produit source
+	 *  @param    toId        Id produit cible
+	 *  @return   int         < 0 si erreur, > 0 si ok
 	 */
 	function clone_fournisseurs($fromId, $toId)
 	{
@@ -1979,10 +1978,10 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *  \brief 		Fonction recursive uniquement utilisee par get_arbo_each_prod, recompose l'arborescence des sousproduits
-	 * 	\remarks	Define value of this->res
-	 *	\param		multiply	Because each sublevel must be multiplicated by parent nb
-	 *  \return 	void
+	 *  Fonction recursive uniquement utilisee par get_arbo_each_prod, recompose l'arborescence des sousproduits
+	 * 	@remarks	Define value of this->res
+	 *	@param		multiply	Because each sublevel must be multiplicated by parent nb
+	 *  @return 	void
 	 */
 	function fetch_prod_arbo($prod, $compl_path="", $multiply=1, $level=1)
 	{
@@ -2046,13 +2045,11 @@ class Product extends CommonObject
 				$this ->fetch_prod_arbo($desc_pere, $nom_pere." -> ", $desc_pere[1]*$multiply, $level+1);
 			}
 		}
-
-		//if ($level == 1) var_dump($this->res);
 	}
 
 	/**
-	 *   \brief fonction recursive uniquement utilisee par get_each_prod, ajoute chaque sousproduits dans le tableau res
-	 *   \return void
+	 *  fonction recursive uniquement utilisee par get_each_prod, ajoute chaque sousproduits dans le tableau res
+	 *  @return void
 	 */
 	function fetch_prods($prod)
 	{
@@ -2070,8 +2067,8 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *   \brief 	reconstruit l'arborescence des categorie sous la forme d'un tableau
-	 *   \return 	array 	$this->res
+	 *  reconstruit l'arborescence des categories sous la forme d'un tableau
+	 *  @return 	array 	$this->res
 	 */
 	function get_arbo_each_prod($multiply=1)
 	{
@@ -2088,8 +2085,8 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *   \brief renvoie tous les sousproduits dans le tableau res, chaque ligne de res contient : id -> qty
-	 *   \return array $this->res
+	 *  renvoie tous les sousproduits dans le tableau res, chaque ligne de res contient : id -> qty
+	 *  @return array $this->res
 	 */
 	function get_each_prod()
 	{
@@ -2108,8 +2105,8 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *   \brief 	Return all parent products fo current product
-	 *   \return 	array prod
+	 *  Return all parent products fo current product
+	 *  @return 	array prod
 	 */
 	function getParent()
 	{
@@ -2138,9 +2135,9 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *  \brief 		Return childs of prodcut with if fk_parent
-	 * 	\param		fk_parent	Id of product to search childs of
-	 *  \return     array       Prod
+	 *  Return childs of prodcut with if fk_parent
+	 * 	@param		fk_parent	Id of product to search childs of
+	 *  @return     array       Prod
 	 */
 	function getChildsArbo($fk_parent)
 	{
@@ -2164,7 +2161,7 @@ class Product extends CommonObject
 					$prods[$this->db->escape($rec['label'])][$keyChild] = $valueChild;
 				}
 			}
-			//var_dump($prods);
+			
 			return $prods;
 		}
 		else
@@ -2175,9 +2172,9 @@ class Product extends CommonObject
 	}
 
 	/**
-	 * 	\brief 		Return tree of all subproducts for product. Tree contains id, name and quantity.
-	 * 	\remarks	Set this->sousprods
-	 *  \return    	void
+	 * 	Return tree of all subproducts for product. Tree contains id, name and quantity.
+	 * 	@remarks	Set this->sousprods
+	 *  @return    	void
 	 */
 	function get_sousproduits_arbo()
 	{
@@ -2189,8 +2186,6 @@ class Product extends CommonObject
 				$parent[$key][$keyChild] = $valueChild;
 			}
 		}
-		//var_dump($parent);
-		// concatenation
 		foreach($parent as $key => $value)
 		{
 			$this->sousprods[$key] = $value;
@@ -2297,8 +2292,8 @@ class Product extends CommonObject
 
 
 	/**
-	 *    	\brief      Retourne le libelle du finished du produit
-	 *    	\return     string		Libelle
+	 *  Retourne le libelle du finished du produit
+	 *  @return     string		Libelle
 	 */
 	function getLibFinished()
 	{
@@ -2312,14 +2307,14 @@ class Product extends CommonObject
 
 
 	/**
-	 *  \brief  	Adjust stock in a warehouse for product
-	 *  \param  	user            user asking change
-	 *  \param  	id_entrepot     id of warehouse
-	 *  \param  	nbpiece         nb of units
-	 *  \param  	movement       	0 = add, 1 = remove
-	 * 	\param		label			Label of stock movement
-	 * 	\param		price			Price to use for stock eval
-	 * 	\return     int     		<0 if KO, >0 if OK
+	 *  Adjust stock in a warehouse for product
+	 *  @param  	user            user asking change
+	 *  @param  	id_entrepot     id of warehouse
+	 *  @param  	nbpiece         nb of units
+	 *  @param  	movement       	0 = add, 1 = remove
+	 * 	@param		label			Label of stock movement
+	 * 	@param		price			Price to use for stock eval
+	 * 	@return     int     		<0 if KO, >0 if OK
 	 */
 	function correct_stock($user, $id_entrepot, $nbpiece, $movement, $label='', $price=0)
 	{
@@ -2390,11 +2385,11 @@ class Product extends CommonObject
 
 
 	/**
-	 *    \brief      Deplace fichier uploade sous le nom $files dans le repertoire sdir
-	 *    \param      sdir        Repertoire destination finale
-	 *    \param      $file       Nom du fichier uploade
-	 *    \param      maxWidth    Largeur maximum que dois faire la miniature (160 par defaut)
-	 *    \param      maxHeight   Hauteur maximum que dois faire la miniature (120 par defaut)
+	 *  Deplace fichier uploade sous le nom $files dans le repertoire sdir
+	 *  @param      sdir        Repertoire destination finale
+	 *  @param      $file       Nom du fichier uploade
+	 *  @param      maxWidth    Largeur maximum que dois faire la miniature (160 par defaut)
+	 *  @param      maxHeight   Hauteur maximum que dois faire la miniature (120 par defaut)
 	 */
 	function add_photo($sdir, $file, $maxWidth = 160, $maxHeight = 120)
 	{
@@ -2421,11 +2416,11 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    \brief      Build thumb
-	 *    \param      sdir           Repertoire destination finale
-	 *    \param      file           Chemin du fichier d'origine
-	 *    \param      maxWidth       Largeur maximum que dois faire la miniature (160 par defaut)
-	 *    \param      maxHeight      Hauteur maximum que dois faire la miniature (120 par defaut)
+	 *  Build thumb
+	 *  @param      sdir           Repertoire destination finale
+	 *  @param      file           Chemin du fichier d'origine
+	 *  @param      maxWidth       Largeur maximum que dois faire la miniature (160 par defaut)
+	 *  @param      maxHeight      Hauteur maximum que dois faire la miniature (120 par defaut)
 	 */
 	function add_thumb($file, $maxWidth = 160, $maxHeight = 120)
 	{
@@ -2439,10 +2434,10 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    \brief      Deplace fichier recupere sur internet (utilise pour interface avec OSC)
-	 *    \param      sdir        		Repertoire destination finale
-	 *    \param      $files      		url de l'image
-	 *	  \author	  Jean Heimburger	june 2007
+	 *  Deplace fichier recupere sur internet (utilise pour interface avec OSC)
+	 *  @param      sdir        		Repertoire destination finale
+	 *  @param      $files      		url de l'image
+	 *	@author	  Jean Heimburger	june 2007
 	 */
 	function add_photo_web($sdir, $file)
 	{
@@ -2474,9 +2469,9 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    \brief      Affiche la premiere photo du produit
-	 *    \param      sdir        Repertoire a scanner
-	 *    \return     boolean     true si photo dispo, false sinon
+	 *  Affiche la premiere photo du produit
+	 *  @param      sdir        Repertoire a scanner
+	 *  @return     boolean     true si photo dispo, false sinon
 	 */
 	function is_photo_available($sdir)
 	{
@@ -2672,10 +2667,10 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    \brief      Retourne tableau de toutes les photos du produit
-	 *    \param      dir         Repertoire a scanner
-	 *    \param      nbmax       Nombre maximum de photos (0=pas de max)
-	 *    \return     array       Tableau de photos
+	 *  Retourne tableau de toutes les photos du produit
+	 *  @param      dir         Repertoire a scanner
+	 *  @param      nbmax       Nombre maximum de photos (0=pas de max)
+	 *  @return     array       Tableau de photos
 	 */
 	function liste_photos($dir,$nbmax=0)
 	{
@@ -2725,8 +2720,8 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    \brief      Efface la photo du produit et sa vignette
-	 *    \param      file        Chemin de l'image
+	 *  Efface la photo du produit et sa vignette
+	 *  @param      file        Chemin de l'image
 	 */
 	function delete_photo($file)
 	{
@@ -2751,8 +2746,8 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    \brief      Load size of image file
-	 *    \param      file        Path to file
+	 *  Load size of image file
+	 *  @param      file        Path to file
 	 */
 	function get_image_size($file)
 	{
@@ -2763,8 +2758,8 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *      \brief      Charge indicateurs this->nb de tableau de bord
-	 *      \return     int         <0 si ko, >0 si ok
+	 *  Charge indicateurs this->nb de tableau de bord
+	 *  @return     int         <0 si ko, >0 si ok
 	 */
 	function load_state_board()
 	{
@@ -2795,8 +2790,8 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    \brief      Mise a jour du code barre
-	 *    \param      user        Utilisateur qui fait la modification
+	 *  Mise a jour du code barre
+	 *  @param      user    Utilisateur qui fait la modification
 	 */
 	function update_barcode($user)
 	{
@@ -2818,8 +2813,8 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    \brief      Mise a jour du type de code barre
-	 *    \param      user        Utilisateur qui fait la modification
+	 *  Mise a jour du type de code barre
+	 *  @param      user     Utilisateur qui fait la modification
 	 */
 	function update_barcode_type($user)
 	{
@@ -2843,7 +2838,7 @@ class Product extends CommonObject
 
 
 	/**
-	 *  \brief 		Affecte les valeurs communes
+	 *  Affecte les valeurs communes
 	 */
 	function assign_values($action='')
 	{
