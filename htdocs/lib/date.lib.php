@@ -27,6 +27,42 @@
 
 
 /**
+ *  Return an array with timezone values
+ *  @return     array   Array with timezone values
+ */
+function get_tz_array()
+{
+    $tzarray=array( -11=>"Pacific/Midway",
+                    -10=>"Pacific/Fakaofo",
+                    -9=>"America/Anchorage",
+                    -8=>"America/Los_Angeles",
+                    -7=>"America/Dawson_Creek",
+                    -6=>"America/Chicago",
+                    -5=>"America/Bogota",
+                    -4=>"America/Anguilla",
+                    -3=>"America/Araguaina",
+                    -2=>"America/Noronha",
+                    -1=>"Atlantic/Azores",
+                    0=>"Africa/Abidjan",
+                    1=>"Europe/Paris",
+                    2=>"Europe/Helsinki",
+                    3=>"Europe/Moscow",
+                    4=>"Asia/Dubai",
+                    5=>"Asia/Karachi",
+                    6=>"Indian/Chagos",
+                    7=>"Asia/Jakarta",
+                    8=>"Asia/Hong_Kong",
+                    9=>"Asia/Tokyo",
+                    10=>"Australia/Sydney",
+                    11=>"Pacific/Noumea",
+                    12=>"Pacific/Auckland",
+                    13=>"Pacific/Enderbury"
+                    );
+    return $tzarray;
+}
+
+
+/**
  *  Add a delay to a date
  *  @param      time                Date timestamp (or string with format YYYY-MM-DD)
  *  @param      duration_value      Value of delay to add
@@ -60,7 +96,7 @@ function ConvertTime2Seconds($iHours=0,$iMinutes=0,$iSeconds=0)
 
 /**	  	Return, in clear text, value of a number of seconds in days, hours and minutes
  *    	@param      iSecond		    Number of seconds
- *    	@param      format		    Output format (all: complete display, hour: displays only hours, min: displays only minutes)
+ *    	@param      format		    Output format (all: complete display, hour: displays only hours, min: displays only minutes, sec: displays only seconds)
  *      @param      lengthOfDay     Length of day (default 86400 seconds for 1 day, 28800 for 8 hour)
  *      @param      lengthOfWeek    Length of week (default 7)
  *    	@return     sTime		    Formated text of duration
@@ -127,6 +163,10 @@ function ConvertSecondToTime($iSecond,$format='all',$lengthOfDay=86400,$lengthOf
 	{
 		$sTime=dol_print_date($iSecond,'%M',true);
 	}
+    else if ($format == 'sec')
+    {
+        $sTime=dol_print_date($iSecond,'%S',true);
+    }
 	return trim($sTime);
 }
 
