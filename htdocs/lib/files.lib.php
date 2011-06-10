@@ -386,7 +386,7 @@ function dol_filesize($pathoffile)
 function dol_filemtime($pathoffile)
 {
 	$newpathoffile=dol_osencode($pathoffile);
-	return filemtime($newpathoffile);
+	return @filemtime($newpathoffile); // @Is to avoid errors if files does not exists
 }
 
 /**
