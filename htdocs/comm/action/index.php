@@ -714,10 +714,11 @@ elseif ($action == 'show_week') // View by week
             // Show days of the current week
             $curtime = dol_mktime (0, 0, 0, $month, $tmpday, $year);
 
-            if($curtime == $now)
-                $style='cal_today';
-            else
-                $style='cal_current_month';
+            $style='cal_current_month';
+            $today=0;
+            $todayarray=dol_getdate($now,'fast');
+            if ($todayarray['mday']==$tmpday && $todayarray['mon']==$month && $todayarray['year']==$year) $today=1;
+            if ($today) $style='cal_today';
 
             echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
             show_day_events($db, $tmpday, $month, $year, $month, $style, $eventarray, 0, $maxlength, $newparam, 1, 300);
@@ -746,6 +747,11 @@ else    // View by day
     $newparam=preg_replace('/year=[0-9]+&?/i','',$newparam);
     // Code to show just one day
     $style='cal_current_month';
+    $today=0;
+    $todayarray=dol_getdate($now,'fast');
+    if ($todayarray['mday']==$day && $todayarray['mon']==$month && $todayarray['year']==$year) $today=1;
+    if ($today) $style='cal_today';
+
     $timestamp=dol_mktime(12,0,0,$month,$day,$year);
     $arraytimestamp=adodb_getdate(dol_mktime(12,0,0,$month,$day,$year));
     echo '<table width="100%" class="nocellnopadd">';
