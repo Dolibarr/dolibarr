@@ -3315,7 +3315,7 @@ class Form
 
     /**
      *    	Return HTML code to output a photo
-     *    	@param      modulepart		Id to define module concerned
+     *    	@param      modulepart		Key to define module concerned ('societe', 'userphoto', 'memberphoto')
      *     	@param      object			Object containing data to retrieve file name
      * 		@param		width			Width of photo
      * 	  	@return     string    		HTML code to output photo
@@ -3333,14 +3333,14 @@ class Form
             $smallfile=preg_replace('/(\.png|\.gif|\.jpg|\.jpeg|\.bmp)/i','_small\\1',$smallfile);
             $file=$object->id.'/logos/thumbs/'.$smallfile;
         }
-        if ($modulepart=='userphoto')
+        else if ($modulepart=='userphoto')
         {
             $dir=$conf->user->dir_output;
             $file=get_exdir($object->id,2).$object->photo;
             $altfile=$object->id.".jpg";	// For backward compatibility
             $email=$object->email;
         }
-        if ($modulepart=='memberphoto')
+        else if ($modulepart=='memberphoto')
         {
             $dir=$conf->adherent->dir_output;
             $file=get_exdir($object->id,2).'photos/'.$object->photo;
@@ -3352,11 +3352,11 @@ class Form
         {
             if (file_exists($dir."/".$file))
             {
-                $ret.='<img alt="Photo" width="'.$width.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($file).'">';
+                $ret.='<img alt="Photo" class="photologo" width="'.$width.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($file).'">';
             }
             else if ($altfile && file_exists($dir."/".$altfile))
             {
-                $ret.='<img alt="Photo" width="'.$width.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($altfile).'">';
+                $ret.='<img alt="Photo" class="photologo" width="'.$width.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($altfile).'">';
             }
             else
             {
@@ -3364,18 +3364,15 @@ class Form
                 {
                     global $dolibarr_main_url_root;
                     $ret.='<!-- Put link to gravatar -->';
-                    $ret.='<img alt="Photo found on Gravatar" title="Photo Gravatar.com - email '.$email.'" width="'.$width.'" src="http://www.gravatar.com/avatar/'.md5($email).'?s='.$width.'&d='.urlencode( dol_buildpath('/theme/common/nophoto.jpg',2) ).'">';
+                    $ret.='<img alt="Photo found on Gravatar" class="photologo" title="Photo Gravatar.com - email '.$email.'" width="'.$width.'" src="http://www.gravatar.com/avatar/'.md5($email).'?s='.$width.'&d='.urlencode( dol_buildpath('/theme/common/nophoto.jpg',2) ).'">';
                 }
                 else
                 {
-                    $ret.='<img alt="No photo" width="'.$width.'" src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
+                    $ret.='<img alt="No photo" class="photologo" width="'.$width.'" src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
                 }
             }
         }
-        else
-        {
-            dol_print_error('','Call to showrefnav with wrong parameters');
-        }
+        else dol_print_error('','Call of showphoto with wrong parameters');
 
         return $ret;
     }
