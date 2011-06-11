@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -152,7 +152,7 @@ if ($resql)
 			print '<td>';
 			$companystatic->nom=$obj->nom;
 			$companystatic->id=$obj->socid;
-			print $companystatic->getNomUrl(1,'customer');
+			print $companystatic->getNomUrl(1,'customer',32);
 			print '</td></tr>';
 			$i++;
 		}
