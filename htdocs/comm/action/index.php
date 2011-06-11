@@ -558,7 +558,8 @@ if (sizeof($listofextcals))
                     $event->datep=$datestart+$usertime;
                     $event->datef=$dateend+$usertime;
                     $event->type_code="ICALEVENT";
-                    $event->libelle='<b>'.$icalevent['SUMMARY'].'</b><br>'.str_replace("\\n", "<br>", $icalevent['DESCRIPTION']);
+                    $event->libelle=$icalevent['SUMMARY'];
+                    if ($icalevent['DESCRIPTION']) $event->libelle.='<br>'.dol_nl2br($icalevent['DESCRIPTION'],1);
 
                     $event->date_start_in_calendar=$event->datep;
 
@@ -607,7 +608,7 @@ if (sizeof($listofextcals))
     }
 }
 
-$maxlength=18;
+$maxnbofchar=18;
 $cachethirdparties=array();
 $cachecontacts=array();
 
@@ -651,7 +652,7 @@ if (empty($action) || $action == 'show_month')      // View by month
             {
                 $style='cal_other_month';
                 echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
-                show_day_events ($db, $max_day_in_prev_month + $tmpday, $prev_month, $prev_year, $month, $style, $eventarray, $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW, $maxlength, $newparam);
+                show_day_events ($db, $max_day_in_prev_month + $tmpday, $prev_month, $prev_year, $month, $style, $eventarray, $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW, $maxnbofchar, $newparam);
                 echo "  </td>\n";
             }
             /* Show days of the current month */
@@ -666,7 +667,7 @@ if (empty($action) || $action == 'show_month')      // View by month
                 if ($today) $style='cal_today';
 
                 echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
-                show_day_events($db, $tmpday, $month, $year, $month, $style, $eventarray, $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW, $maxlength, $newparam);
+                show_day_events($db, $tmpday, $month, $year, $month, $style, $eventarray, $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW, $maxnbofchar, $newparam);
                 echo "  </td>\n";
             }
             /* Show days after the current month (next month) */
@@ -674,7 +675,7 @@ if (empty($action) || $action == 'show_month')      // View by month
             {
                 $style='cal_other_month';
                 echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
-                show_day_events($db, $tmpday - $max_day_in_month, $next_month, $next_year, $month, $style, $eventarray, $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW, $maxlength, $newparam);
+                show_day_events($db, $tmpday - $max_day_in_month, $next_month, $next_year, $month, $style, $eventarray, $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW, $maxnbofchar, $newparam);
                 echo "</td>\n";
             }
             $tmpday++;
@@ -721,14 +722,14 @@ elseif ($action == 'show_week') // View by week
             if ($today) $style='cal_today';
 
             echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
-            show_day_events($db, $tmpday, $month, $year, $month, $style, $eventarray, 0, $maxlength, $newparam, 1, 300);
+            show_day_events($db, $tmpday, $month, $year, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300);
             echo "  </td>\n";
         }
         else
         {
             $style='cal_current_month';
             echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
-            show_day_events($db, $tmpday - $max_day_in_month, $next_month, $next_year, $month, $style, $eventarray, 0, $maxlength, $newparam, 1, 300);
+            show_day_events($db, $tmpday - $max_day_in_month, $next_month, $next_year, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300);
             echo "</td>\n";
         }
         $tmpday++;
@@ -760,7 +761,8 @@ else    // View by day
     echo " </tr>\n";
     echo " <tr>\n";
     echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
-    show_day_events ($db, $day, $month, $year, $month, $style, $eventarray, 0, 80, $newparam, 1, 300);
+    $maxnbofchar=80;
+    show_day_events ($db, $day, $month, $year, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300);
     echo "</td>\n";
     echo " </tr>\n";
     echo '</table>';
@@ -867,14 +869,15 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     if ($event->type_code != 'BIRTHDAY')
                     {
                         // Picto
-                        if ($showinfo && $event->type_code != 'ICALEVENT')
+                        if (empty($event->fulldayevent))
                         {
-                            print $event->getNomUrl(2).' ';
+                            //print $event->getNomUrl(2).' ';
                         }
 
                         // Date
                         if (empty($event->fulldayevent))
                         {
+                            //print '<strong>';
                             $daterange='';
 
                             // Show hours (start ... end)
@@ -909,7 +912,6 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                                 if ($tmpyearend == $annee && $tmpmonthend == $mois && $tmpdayend == $jour)
                                 $daterange.=dol_print_date($event->date_end_in_calendar,'%H:%M');
                             }
-                            if ($event->type_code == 'ICALEVENT') $daterange.='<br>('.$event->icalname.')';
                             //print $daterange;
                             if ($event->type_code != 'ICALEVENT')
                             {
@@ -922,23 +924,22 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                             {
                                 print $daterange;
                             }
-                            print '<br>'."\n";
+                            //print '</strong> ';
+                            print "<br>\n";
                         }
                         else
                         {
                            if ($showinfo)
                            {
-                                print $langs->trans("EventOnFullDay").'<br>'."\n";
+                                print $langs->trans("EventOnFullDay")."<br>\n";
                            }
                         }
 
-                        // Show label
-                        if ($event->type_code == 'ICALEVENT')
-                        {
-                            if ($event->fulldayevent) print '('.$event->icalname.')<br>';
-                            print $event->libelle;
-                        }
+                        // Show title
+                        if ($event->type_code == 'ICALEVENT') print $event->libelle;
                         else print $event->getNomUrl(0,$maxnbofchar,'cal_event');
+
+                        if ($event->type_code == 'ICALEVENT') print '<br>('.$event->icalname.')';
 
                         // If action related to company / contact
                         $linerelatedto='';$length=16;
@@ -967,7 +968,6 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                             $linerelatedto.=$contact->getNomUrl(1,'',$length);
                         }
                         if ($linerelatedto) print '<br>'.$linerelatedto;
-
                     }
 
                     // Show location
