@@ -659,12 +659,11 @@ if (empty($action) || $action == 'show_month')      // View by month
             {
                 $curtime = dol_mktime (0, 0, 0, $month, $tmpday, $year);
 
-                if ($curtime < $now)
                 $style='cal_current_month';
-                else if($curtime == $now)
-                $style='cal_today';
-                else
-                $style='cal_current_month';
+                $today=0;
+                $todayarray=dol_getdate($now,'fast');
+                if ($todayarray['mday']==$tmpday && $todayarray['mon']==$month && $todayarray['year']==$year) $today=1;
+                if ($today) $style='cal_today';
 
                 echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
                 show_day_events($db, $tmpday, $month, $year, $month, $style, $eventarray, $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW, $maxlength, $newparam);
@@ -764,11 +763,11 @@ else    // View by day
 
 $db->close();
 
-/* TODO Add RSS Links
+/* TODO Export
 print '
-<a href="" id="actionagenda_ical_link"><img src="'.DOL_URL_ROOT.'/theme/common/ical.gif"/></a>
-<a href="" id="actionagenda_vcal_link"><img src="'.DOL_URL_ROOT.'/theme/common/vcal.gif"/></a>
-<a href="" id="actionagenda_rss_link"><img src="'.DOL_URL_ROOT.'/theme/common/rss.gif" /></a>
+<a href="" id="actionagenda_ical_link"><img src="'.DOL_URL_ROOT.'/theme/common/ical.gif" border="0"/></a>
+<a href="" id="actionagenda_vcal_link"><img src="'.DOL_URL_ROOT.'/theme/common/vcal.gif" border="0"/></a>
+<a href="" id="actionagenda_rss_link"><img src="'.DOL_URL_ROOT.'/theme/common/rss.gif"  border="0"/></a>
 
 <script>
 $("#actionagenda_rss_link").attr("href","/public/agenda/agendaexport.php?format=rss&type=ActionAgenda&exportkey=dolibarr&token="+getToken()+"&status="+getStatus()+"&userasked="+getUserasked()+"&usertodo="+getUsertodo()+"&userdone="+getUserdone()+"&year="+getYear()+"&month="+getMonth()+"&day="+getDay()+"&showbirthday="+getShowbirthday()+"&action="+getAction()+"&projectid="+getProjectid()+"");
@@ -805,6 +804,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 
     if ($_GET["maxprint"] == 'on') $maxPrint=0;   // Force to remove limits
 
+    print '<div class="dayevent">'."\n";
     $curtime = dol_mktime (0, 0, 0, $month, $day, $year);
     print '<table class="nobordernopadding" width="100%">';
     print '<tr style="background: #EEEEEE"><td align="left" nowrap="nowrap">';
@@ -1001,6 +1001,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
     if (! $i) print '&nbsp;';
     print '</td></tr>';
     print '</table>';
+    print '</div>'."\n";
 }
 
 ?>
