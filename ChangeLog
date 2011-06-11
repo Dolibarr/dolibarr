@@ -19,6 +19,7 @@ For users:
          saved clicks again).
        - When creating a contract, sales representative are preset to user. This save
          2 clicks.
+       - Can edit several fields in bank transaction line page into one update. 
 - New: Add graph using Jquery Flot.
 - New: Usage of Jquery Notify to show result or error messages on action.
 - New: If a service contains subproducts, subrpoducts are decrease when service
@@ -58,6 +59,8 @@ For users:
 - New: Can filter on date when building cheque receipts.
 - New: Paypal module can show paypal list of transaction and convert one
        into an order.
+- New: task #10958 : Add link to cheque receipts into bank transaction 
+       line if exists
 - Fix: Better Postgresql compatibility.
 - Fix: Numbering module for invoices use same number for invoice 
        and credit note if mask is same.

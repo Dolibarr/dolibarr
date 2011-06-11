@@ -120,6 +120,7 @@ DeleteCheckReceipt=Supprimer ce bordereau de remise ?
 ConfirmDeleteCheckReceipt=Êtes-vous sûr de vouloir supprimer ce bordereau ?
 BankChecks=Chèques
 BankChecksToReceipt=Chèques à déposer
+ShowCheckReceipt=Afficher bordereau remise chèque
 NumberOfCheques=Nb de chèques
 DeleteTransaction=Supprimer l'écriture
 ConfirmDeleteTransaction=Êtes-vous sûr de vouloir supprimer cette écriture ?

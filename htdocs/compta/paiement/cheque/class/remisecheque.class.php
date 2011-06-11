@@ -209,7 +209,7 @@ class RemiseCheque extends CommonObject
 			}
 
 			if ($this->id > 0 && $this->errno == 0)
-			{		
+			{
 				foreach ($lines as $lineid)
 				{
 					$checkremise=false;
@@ -217,7 +217,7 @@ class RemiseCheque extends CommonObject
 					{
 						if($linetoremise==$lineid) $checkremise=true;
 					}
-					
+
 					if($checkremise==true)
 					{
 						$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
@@ -713,21 +713,21 @@ class RemiseCheque extends CommonObject
 
 
 	/**
-	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
-	 *		\param		withpicto		Inclut le picto dans le lien
-	 *		\param		option			Sur quoi pointe le lien
-	 *		\return		string			Chaine avec URL
+	 *    	Renvoie nom clicable (avec eventuellement le picto)
+	 *		@param		withpicto		Inclut le picto dans le lien
+	 *		@param		option			Sur quoi pointe le lien
+	 *		@return		string			Chaine avec URL
 	 */
 	function getNomUrl($withpicto=0,$option='')
 	{
-		global $langs;	// TODO Renvoyer le libelle anglais et faire traduction a affichage
+		global $langs;
 
 		$result='';
 
-		$number=$this->number;
-		if ($this->statut == 0) $number='(PROV'.$this->rowid.')';
+		$number=$this->ref;
+		if ($this->statut == 0) $number='(PROV'.$this->id.')';
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/fiche.php?id='.$this->rowid.'">';
+		$lien = '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/fiche.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
 		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCheckReceipt"),'payment').$lienfin.' ');

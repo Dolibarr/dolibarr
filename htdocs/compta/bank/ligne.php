@@ -37,9 +37,12 @@ $langs->load("bills");
 $langs->load("categories");
 if ($conf->adherent->enabled) $langs->load("members");
 
-$rowid=isset($_GET["rowid"])?$_GET["rowid"]:$_POST["rowid"];
-$ref=isset($_GET["ref"])?$_GET["ref"]:$_POST["ref"];
-$orig_account=isset($_GET["orig_account"])?$_GET["orig_account"]:$_POST["orig_account"];
+$action=GETPOST('action');
+$rowid=GETPOST("rowid");
+$ref=GETPOST("ref");
+$orig_account=GETPOST("orig_account");
+$accountid=GETPOST('accountid');
+$confirm=GETPOST('confirm');
 
 $html = new Form($db);
 
@@ -59,18 +62,18 @@ if ($user->rights->banque->consolidate && $_GET["action"] == 'dvprev')
     $ac->datev_previous($_GET["rowid"]);
 }
 
-if ($_POST["action"] == 'confirm_delete_categ' && $_POST["confirm"] == "yes")
+if ($action == 'confirm_delete_categ' && $confirm == "yes" && $user->rights->banque->modifier)
 {
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid = $rowid AND fk_categ = ".$_GET["cat1"];
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid = ".$rowid." AND fk_categ = ".GETPOST("cat1");
     if (! $db->query($sql))
     {
         dol_print_error($db);
     }
 }
 
-if ($_POST["action"] == 'class')
+if ($action == 'class')
 {
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid = $rowid AND fk_categ = ".$_POST["cat1"];
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid = ".$rowid." AND fk_categ = ".$_POST["cat1"];
     if (! $db->query($sql))
     {
         dol_print_error($db);
@@ -83,16 +86,16 @@ if ($_POST["action"] == 'class')
     }
 }
 
-if ($_POST["action"] == "update")
+if ($action == "update")
 {
     // Avant de modifier la date ou le montant, on controle si ce n'est pas encore rapproche
+    $conciliated=0;
     $sql = "SELECT b.rappro FROM ".MAIN_DB_PREFIX."bank as b WHERE rowid=".$rowid;
     $result = $db->query($sql);
     if ($result)
     {
         $objp = $db->fetch_object($result);
-        if ($objp->rappro)
-        die ("Conciliation of a line already conciliated is not possible");
+        $conciliated=$objp->rappro;
     }
 
     $db->begin();
@@ -101,15 +104,27 @@ if ($_POST["action"] == "update")
     $dateop = dol_mktime(12,0,0,$_POST["dateomonth"],$_POST["dateoday"],$_POST["dateoyear"]);
     $dateval= dol_mktime(12,0,0,$_POST["datevmonth"],$_POST["datevday"],$_POST["datevyear"]);
     $sql = "UPDATE ".MAIN_DB_PREFIX."bank";
-    $sql.= " SET label='".$db->escape($_POST["label"])."',";
-    if (isset($_POST['amount'])) $sql.=" amount='$amount',";
-    $sql.= " dateo = '".$db->idate($dateop)."', datev = '".$db->idate($dateval)."',";
-    $sql.= " fk_account = ".$_POST['accountid'];
+    $sql.= " SET ";
+    // Always opened
+    if (isset($_POST['value']))      $sql.=" fk_type='".$db->escape($_POST['value'])."',";
+    if (isset($_POST['num_chq']))    $sql.=" num_chq='".$db->escape($_POST["num_chq"])."',";
+    if (isset($_POST['banque']))     $sql.=" banque='".$db->escape($_POST["banque"])."',";
+    if (isset($_POST['emetteur']))   $sql.=" emetteur='".$db->escape($_POST["emetteur"])."',";
+    // Blocked when conciliated
+    if (! $conciliated)
+    {
+        if (isset($_POST['label']))      $sql.=" label='".$db->escape($_POST["label"])."',";
+        if (isset($_POST['amount']))     $sql.=" amount='".$amount."',";
+        if (isset($_POST['dateomonth'])) $sql.=" dateo = '".$db->idate($dateop)."',";
+        if (isset($_POST['datevmonth'])) $sql.=" datev = '".$db->idate($dateval)."',";
+    }
+    $sql.= " fk_account = ".$accountid;
     $sql.= " WHERE rowid = ".$rowid;
 
     $result = $db->query($sql);
     if ($result)
     {
+        $mesg=$langs->trans("RecordSaved");
         $db->commit();
     }
     else
@@ -119,26 +134,8 @@ if ($_POST["action"] == "update")
     }
 }
 
-if ($_POST["action"] == 'type')
-{
-    $sql = "UPDATE ".MAIN_DB_PREFIX."bank set fk_type='".$_POST["value"]."', num_chq='".$_POST["num_chq"]."' WHERE rowid = $rowid;";
-    $result = $db->query($sql);
-}
-
-if ($_POST["action"] == 'banque')
-{
-    $sql = "UPDATE ".MAIN_DB_PREFIX."bank set banque='".$db->escape($_POST["banque"])."' WHERE rowid = $rowid;";
-    $result = $db->query($sql);
-}
-
-if ($_POST["action"] == 'emetteur')
-{
-    $sql = "UPDATE ".MAIN_DB_PREFIX."bank set emetteur='".$db->escape($_POST["emetteur"])."' WHERE rowid = $rowid;";
-    $result = $db->query($sql);
-}
-
 // Reconcile
-if ($user->rights->banque->consolidate && ($_POST["action"] == 'num_releve' || $_POST["action"] == 'setreconcile'))
+if ($user->rights->banque->consolidate && ($action == 'num_releve' || $action == 'setreconcile'))
 {
     $num_rel=trim($_POST["num_rel"]);
     $rappro=$_POST['reconciled']?1:0;
@@ -164,6 +161,7 @@ if ($user->rights->banque->consolidate && ($_POST["action"] == 'num_releve' || $
         $result = $db->query($sql);
         if ($result)
         {
+            $mesg=$langs->trans("RecordSaved");
             $db->commit();
         }
         else
@@ -217,11 +215,12 @@ $h++;
 
 dol_fiche_head($head, $hselected, $langs->trans('LineRecord'),0,'account');
 
-if ($mesg) print '<div class="error">'.$mesg.'</div><br>';
+if (! preg_match('/class="error"/i',$mesg)) dol_htmloutput_mesg($mesg);
+else dol_htmloutput_errors($mesg);
 
 $sql = "SELECT b.rowid,b.dateo as do,b.datev as dv, b.amount, b.label, b.rappro,";
-$sql.= " b.num_releve, b.fk_user_author, b.num_chq, b.fk_type, b.fk_account";
-$sql.= ",b.emetteur,b.banque";
+$sql.= " b.num_releve, b.fk_user_author, b.num_chq, b.fk_type, b.fk_account, b.fk_bordereau as receiptid,";
+$sql.= " b.emetteur,b.banque";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 $sql.= " WHERE rowid=".$rowid;
 $sql.= " ORDER BY dateo ASC";
@@ -231,17 +230,8 @@ if ($result)
     $i = 0; $total = 0;
     if ($db->num_rows($result))
     {
-
-        // Confirmations
-        if ($_GET["action"] == 'delete_categ')
-        {
-            $ret=$html->form_confirm("ligne.php?rowid=".$_GET["rowid"]."&amp;cat1=".$_GET["fk_categ"]."&amp;orig_account=".$orig_account,$langs->trans("RemoveFromRubrique"),$langs->trans("RemoveFromRubriqueConfirm"),"confirm_delete_categ");
-            if ($ret == 'html') print '<br>';
-        }
-
-        print '<table class="border" width="100%">';
-
         $objp = $db->fetch_object($result);
+
         $total = $total + $objp->amount;
 
         $acct=new Account($db);
@@ -253,6 +243,21 @@ if ($result)
 
         $links=$acct->get_url($rowid);
         $bankline->load_previous_next_ref('','rowid');
+
+        // Confirmations
+        if ($action == 'delete_categ')
+        {
+            $ret=$html->form_confirm("ligne.php?rowid=".$rowid."&cat1=".GETPOST("fk_categ")."&orig_account=".$orig_account, $langs->trans("RemoveFromRubrique"), $langs->trans("RemoveFromRubriqueConfirm"), "confirm_delete_categ", '', 'yes', 1);
+            if ($ret == 'html') print '<br>';
+        }
+
+        print '<form name="update" method="post" action="ligne.php?rowid='.$rowid.'">';
+        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="action" value="update">';
+        print '<input type="hidden" name="orig_account" value="'.$orig_account.'">';
+        print '<input type="hidden" name="accountid" value="'.$acct->id.'">';
+
+        print '<table class="border" width="100%">';
 
         // Ref
         print '<tr><td width="20%">'.$langs->trans("Ref")."</td>";
@@ -329,6 +334,7 @@ if ($result)
                 }
                 else {
                     print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
+                    print img_object('','generic').' ';
                     print $links[$key]['label'];
                     print '</a>';
                 }
@@ -336,66 +342,65 @@ if ($result)
             print '</td></tr>';
         }
 
+        $rowspan=0;
+
+        //$user->rights->banque->modifier=false;
+        //$user->rights->banque->consolidate=true;
+
         // Type of payment / Number
-        print "<tr><td>".$langs->trans("Type")." / ".$langs->trans("Numero")."</td><td colspan=\"3\">";
+        print "<tr><td>".$langs->trans("Type")." / ".$langs->trans("Numero");
+        print "</td>";
         if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
         {
-            print "<form method=\"post\" action=\"ligne.php?rowid=$objp->rowid\">";
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-            print '<input type="hidden" name="action" value="type">';
-            print "<input type=\"hidden\" name=\"orig_account\" value=\"".$orig_account."\">";
+            print '<td colspan="3">';
             print $html->select_types_paiements($objp->fk_type,"value",'',2);
             print '<input type="text" class="flat" name="num_chq" value="'.(empty($objp->num_chq) ? '' : $objp->num_chq).'">';
-            print '</td><td align="center" width="20%"><input type="submit" class="button" value="'.$langs->trans("Update").'">';
-            print "</form>";
+            if ($objp->receiptid)
+            {
+                include_once(DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php');
+                $receipt=new RemiseCheque($db);
+                $receipt->fetch($objp->receiptid);
+                print ' &nbsp; &nbsp; '.$langs->trans("CheckReceipt").': '.$receipt->getNomUrl(2);
+
+            }
+            print '</td>';
+            $rowspan=7;
+            print '<td align="center" rowspan="'.$rowspan.'" width="20%"><input type="submit" class="button" value="'.$langs->trans("Update").'">';
+            print '</td>';
         }
         else
         {
-            print $objp->fk_type.' '.$objp->num_chq.'</td><td>&nbsp;</td>';
+            print '<td colspan="4">'.$objp->fk_type.' '.$objp->num_chq.'</td>';
         }
-        print "</td></tr>";
+        print "</tr>";
 
         // Bank of cheque
-        print "<tr><td>".$langs->trans("Bank")."</td><td colspan=\"3\">";
-        if ($user->rights->banque->modifier)
-        {
-            print "<form method=\"post\" action=\"ligne.php?rowid=$objp->rowid\">";
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-            print '<input type="hidden" name="action" value="banque">';
-            print "<input type=\"hidden\" name=\"orig_account\" value=\"".$orig_account."\">";
-            print '<input type="text" class="flat" size="40" name="banque" value="'.(empty($objp->banque) ? '' : $objp->banque).'">';
-            print '</td><td align="center" width="20%"><input type="submit" class="button" value="'.$langs->trans("Update").'">';
-            print "</form>";
-        }
-        else
-        {
-            print $objp->banque.'&nbsp;</td><td>&nbsp;</td>';
-        }
-        print "</td></tr>";
-
-        // Transmitter
-        print "<tr><td>".$langs->trans("CheckTransmitter")."</td><td colspan=\"3\">";
+        print "<tr><td>".$langs->trans("Bank")."</td>";
         if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
         {
-            print "<form method=\"post\" action=\"ligne.php?rowid=$objp->rowid\">";
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-            print '<input type="hidden" name="action" value="emetteur">';
-            print "<input type=\"hidden\" name=\"orig_account\" value=\"".$orig_account."\">";
-            print '<input type="text" class="flat" size="40" name="emetteur" value="'.(empty($objp->emetteur) ? '' : stripslashes($objp->emetteur)).'">';
-            print '</td><td align="center" width="20%"><input type="submit" class="button" value="'.$langs->trans("Update").'">';
-            print "</form>";
+            print '<td colspan="3">';
+            print '<input type="text" class="flat" size="40" name="banque" value="'.(empty($objp->banque) ? '' : $objp->banque).'">';
+            print '</td>';
         }
         else
         {
-            print $objp->emetteur.'&nbsp;</td><td>&nbsp;</td>';
+            print '<td colspan="'.($rowspan?'3':'4').'">'.$objp->banque.'</td>';
         }
-        print "</td></tr>";
+        print "</tr>";
 
-        print '<form name="update" method="post" action="ligne.php?rowid='.$objp->rowid.'">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-        print "<input type=\"hidden\" name=\"action\" value=\"update\">";
-        print "<input type=\"hidden\" name=\"orig_account\" value=\"".$orig_account."\">";
-        print '<input type="hidden" name="accountid" value="'.$acct->id.'">';
+        // Transmitter
+        print "<tr><td>".$langs->trans("CheckTransmitter")."</td>";
+        if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
+        {
+            print '<td colspan="3">';
+            print '<input type="text" class="flat" size="40" name="emetteur" value="'.(empty($objp->emetteur) ? '' : stripslashes($objp->emetteur)).'">';
+            print '</td>';
+        }
+        else
+        {
+            print '<td colspan="'.($rowspan?'3':'4').'">'.$objp->emetteur.'</td>';
+        }
+        print "</tr>";
 
         // Date ope
         print '<tr><td>'.$langs->trans("DateOperation").'</td>';
@@ -403,14 +408,15 @@ if ($result)
         {
             print '<td colspan="3">';
             print $html->select_date($db->jdate($objp->do),'dateo','','','','update',1,0,1,$objp->rappro);
-            print '</td><td align="center" rowspan="4" width="20%"><input type="submit" class="button" value="'.$langs->trans("Update").'"'.($objp->rappro?' disabled="true"':'').'></td>';
+            print '</td>';
         }
         else
         {
-            print '<td colspan="4">';
+            print '<td colspan="'.($rowspan?'3':'4').'">';
             print dol_print_date($db->jdate($objp->do),"day");
+            print '</td>';
         }
-        print '</td></tr>';
+        print '</tr>';
 
         // Value date
         print "<tr><td>".$langs->trans("DateValue")."</td>";
@@ -426,10 +432,11 @@ if ($result)
                 print '<a href="'.$_SERVER['PHP_SELF'].'?action=dvnext&amp;account='.$_GET["account"].'&amp;rowid='.$objp->rowid.'">';
                 print img_edit_add() ."</a>";
             }
+            print '</td>';
         }
         else
         {
-            print '<td colspan="4">';
+            print '<td colspan="'.($rowspan?'3':'4').'">';
             print dol_print_date($db->jdate($objp->dv),"day");
             print '</td>';
         }
@@ -451,10 +458,11 @@ if ($result)
                 print $objp->label;
             }
             print '" size="50">';
+            print '</td>';
         }
         else
         {
-            print '<td colspan="4">';
+            print '<td colspan="'.($rowspan?'3':'4').'">';
             if (preg_match('/^\((.*)\)$/i',$objp->label,$reg))
             {
                 // Label generique car entre parentheses. On l'affiche en le traduisant
@@ -464,12 +472,13 @@ if ($result)
             {
                 print $objp->label;
             }
+            print '</td>';
         }
-        print '</td></tr>';
+        print '</tr>';
 
         // Amount
         print "<tr><td>".$langs->trans("Amount")."</td>";
-        if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
+        if ($user->rights->banque->modifier)
         {
             print '<td colspan="3">';
             print '<input name="amount" class="flat" size="10" '.($objp->rappro?' disabled="true"':'').' value="'.price($objp->amount).'"> '.$langs->trans("Currency".$conf->monnaie);
@@ -477,13 +486,14 @@ if ($result)
         }
         else
         {
-            print '<td colspan="4">';
+            print '<td colspan="'.($rowspan?'3':'4').'">';
             print price($objp->amount);
+            print '</td>';
         }
-        print "</td></tr>";
+        print "</tr>";
 
-        print "</form>";
         print "</table>";
+        print "</form>";
 
         // Releve rappro
         if ($acct->canBeConciliated() > 0)  // Si compte rapprochable
@@ -539,6 +549,7 @@ if ($result)
 
     $db->free($result);
 }
+else dol_print_error($db);
 print '</div>';
 
 
@@ -573,11 +584,14 @@ if ($result)
         $objp = $db->fetch_object($result);
 
         $var=!$var;
-        print "<tr $bc[$var]>";
+        print "<tr ".$bc[$var].">";
 
-        print "<td>$objp->label</td>";
-        print "<td align=\"center\"><a href=\"budget.php?bid=$objp->rowid\">".$langs->trans("ListBankTransactions")."</a></td>";
-        print "<td align=\"right\"><a href=\"ligne.php?action=delete_categ&amp;rowid=$rowid&amp;fk_categ=$objp->rowid\">".img_delete($langs->trans("Remove"))."</a></td>";
+        print "<td>".$objp->label."</td>";
+        print "<td align=\"center\"><a href=\"budget.php?bid=".$objp->rowid."\">".$langs->trans("ListBankTransactions")."</a></td>";
+        if ($user->rights->banque->modifier)
+        {
+            print "<td align=\"right\"><a href=\"ligne.php?action=delete_categ&amp;rowid=".$rowid."&amp;fk_categ=$objp->rowid\">".img_delete($langs->trans("Remove"))."</a></td>";
+        }
         print "</tr>";
 
         $i++;
