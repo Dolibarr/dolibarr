@@ -103,7 +103,12 @@ $form=new Form($db);
 $formadmin=new FormAdmin($db);
 $formother=new FormOther($db);
 
-llxHeader();
+//$arrayofjs=array('/includes/jquery/plugins/colorpicker/jquery.colorpicker.js');
+//$arrayofcss=array('/includes/jquery/plugins/colorpicker/jquery.colorpicker.css');
+$arrayofjs=array();
+$arrayofcss=array();
+
+llxHeader('',$langs->trans("AgendaSetup"),'','',0,0,$arrayofjs,$arrayofcss);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("AgendaSetup"),$linkback,'setup');
@@ -147,7 +152,7 @@ print "<tr class=\"liste_titre\">";
 print "<td>".$langs->trans("Parameter")."</td>";
 print "<td>".$langs->trans("Name")."</td>";
 print "<td>".$langs->trans("ExtSiteUrlAgenda")." (".$langs->trans("Example").': http://yoursite/agenda/agenda.ics)</td>';
-print "<td>".$langs->trans("Color")."</td>";
+print '<td align="center">'.$langs->trans("Color").'</td>';
 print "</tr>";
 
 $i=1;
@@ -163,11 +168,10 @@ while ($i <= $MAXAGENDA)
 	$color='AGENDA_EXT_COLOR'.$key;
 	print "<td><input type=\"text\" class=\"flat\" name=\"agenda_ext_name".$key."\" value=\"". $conf->global->$name . "\" size=\"28\"></td>";
 	print "<td><input type=\"text\" class=\"flat\" name=\"agenda_ext_src".$key."\" value=\"". $conf->global->$src . "\" size=\"60\"></td>";
-	print '<td nowrap="nowrap">';
-
+	print '<td nowrap="nowrap" align="center">';
 	// Possible colors are limited by Google
 	//print $formadmin->select_colors($conf->global->$color, "google_agenda_color".$key, $colorlist);
-	print $formother->select_color($conf->global->$color, "agenda_ext_color".$key, 'sitextconfig', 1, $colorlist);
+	print $formother->select_color($conf->global->$color, "agenda_ext_color".$key, 'extsitesconfig', 1, '');
 	print '</td>';
 	print "</tr>";
 	$i++;
@@ -185,8 +189,7 @@ print "</form>\n";
 
 dol_fiche_end();
 
-if ($mesg) print "<br>$mesg<br>";
-print "<br>";
+dol_htmloutput_mesg($mesg);
 
 $db->close();
 

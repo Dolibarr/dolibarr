@@ -256,7 +256,7 @@ if (empty($showbirthday)) $link.=$langs->trans("AgendaShowBirthdayEvents");
 else $link.=$langs->trans("AgendaHideBirthdayEvents");
 $link.='</a>';
 
-print_fiche_titre($title,$link.' &nbsp; &nbsp; '.$nav);
+print_fiche_titre($title,$link.' &nbsp; &nbsp; '.$nav, '');
 //print '<br>';
 
 //print_fiche_titre($link,'','');

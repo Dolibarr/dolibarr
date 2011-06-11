@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@uers.sourceforge.net>
+ * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@uers.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -316,10 +316,6 @@ if ($_POST["action"] == 'send' && empty($_POST["cancel"]))
 
 	if (! $error)
 	{
-		// Ajout CSS
-		if (!empty($mil->bgcolor)) $arr_css['bgcolor'] = $mil->bgcolor;
-		if (!empty($mil->bgimage)) $arr_css['bgimage'] = $mil->bgimage;
-
 		// Le message est-il en html
 		$msgishtml=-1;	// Inconnu par defaut
 		if (preg_match('/[\s\t]*<html>/i',$message)) $msgishtml=1;
@@ -333,7 +329,11 @@ if ($_POST["action"] == 'send' && empty($_POST["cancel"]))
 		$arr_name = array();
 		$arr_css  = array();
 
-		// Attached files
+        // Ajout CSS
+        if (!empty($mil->bgcolor)) $arr_css['bgcolor'] = (preg_match('/^#/',$mil->bgcolor)?'':'#').$mil->bgcolor;
+        if (!empty($mil->bgimage)) $arr_css['bgimage'] = $mil->bgimage;
+
+        // Attached files
 		$listofpaths=dol_dir_list($upload_dir,'all',0,'','','name',SORT_ASC,0);
 		if (sizeof($listofpaths))
 		{
@@ -901,7 +901,7 @@ else
 			// Subject
 			print '<tr><td width="25%">'.$langs->trans("MailTopic").'</td><td colspan="3">'.$mil->sujet.'</td></tr>';
 
-			// Mails
+			// Joined files
 			$i='';
 			//$i=0;
 			//while ($i < 4)
@@ -926,9 +926,14 @@ else
 				print '</td></tr>';
 			//}
 
-			// Message
+            // Background color
+            /*print '<tr><td width="25%">'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
+            $htmlother->select_color($mil->bgcolor,'bgcolor','edit_mailing',0);
+            print '</td></tr>';*/
+
+		    // Message
 			print '<tr><td valign="top">'.$langs->trans("MailMessage").'</td>';
-			print '<td colspan="3" bgcolor="'.($mil->bgcolor?$mil->bgcolor:'white').'">';
+			print '<td colspan="3" bgcolor="'.($mil->bgcolor?(preg_match('/^#/',$mil->bgcolor)?'':'#').$mil->bgcolor:'white').'">';
 			print dol_htmlentitiesbr($mil->body);
 			print '</td>';
 			print '</tr>';
@@ -984,9 +989,10 @@ else
 			print_fiche_titre($langs->trans("EMail"),'','');
 			print '<table class="border" width="100%">';
 
+			// Subject
 			print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("MailTopic").'</td><td colspan="3"><input class="flat" type="text" size=60 name="sujet" value="'.$mil->sujet.'"></td></tr>';
 
-			// Add joined files
+			// Joined files
 			$i='';
 			//$i=0;
 			//while ($i < 4)
@@ -1021,9 +1027,12 @@ else
 				print '</td></tr>';
 			//}
 
+		    // Background color
 			print '<tr><td width="25%">'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
 			$htmlother->select_color($mil->bgcolor,'bgcolor','edit_mailing',0);
 			print '</td></tr>';
+
+			// Message
 			print '<tr><td width="25%" valign="top">'.$langs->trans("MailMessage").'<br>';
 			print '<br><i>'.$langs->trans("CommonSubstitutions").':<br>';
 			print '__ID__ = '.$langs->trans("IdRecord").'<br>';

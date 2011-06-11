@@ -209,7 +209,7 @@ if ($resql)
     $link.='</a>';
     */
 
-    print_barre_liste($newtitle, $page, $_SERVER["PHP_SELF"], $param,$sortfield,$sortorder,$link,$num,0);
+    print_barre_liste($newtitle, $page, $_SERVER["PHP_SELF"], $param,$sortfield,$sortorder,$link,$num,0,'');
     //print '<br>';
 
 	$i = 0;

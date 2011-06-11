@@ -371,8 +371,51 @@ class FormOther
 	 */
 	function select_color($set_color='', $prefix='f_color', $form_name='objForm', $showcolorbox=1, $arrayofcolors='')
 	{
+	    global $langs;
 		if (! is_array($arrayofcolors) || sizeof($arrayofcolors) < 1)
 		{
+		    print '<link rel="stylesheet" media="screen" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/css/jPicker-1.1.6.css" />';
+            print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/jpicker-1.1.6.js"></script>';
+            print '<script type="text/javascript">
+             jQuery(document).ready(function(){
+                $(\'#colorpicker'.$prefix.'\').jPicker( {
+                window: {
+                  title: \''.dol_escape_js($langs->trans("SelectAColor")).'\', /* any title for the jPicker window itself - displays "Drag Markers To Pick A Color" if left null */
+                  effects:
+                    {
+                    type: \'show\', /* effect used to show/hide an expandable picker. Acceptable values "slide", "show", "fade" */
+                    speed:
+                    {
+                      show: \'fast\', /* duration of "show" effect. Acceptable values are "fast", "slow", or time in ms */
+                      hide: \'fast\' /* duration of "hide" effect. Acceptable values are "fast", "slow", or time in ms */
+                    }
+                    },
+                  position:
+                    {
+                    x: \'screenCenter\', /* acceptable values "left", "center", "right", "screenCenter", or relative px value */
+                    y: \'center\' /* acceptable values "top", "bottom", "center", or relative px value */
+                    },
+                },
+                images: {
+                    clientPath: \''.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/images/\',
+                    picker: { file: \'../../../../../theme/common/colorpicker.png\', width: 14, height: 14 }
+          		},
+                localization: // alter these to change the text presented by the picker (e.g. different language)
+                  {
+                    text:
+                    {
+                      title: \''.dol_escape_js($langs->trans("SelectAColor")).'\',
+                      newColor: \''.dol_escape_js($langs->trans("New")).'\',
+                      currentColor: \''.dol_escape_js($langs->trans("Current")).'\',
+                      ok: \''.dol_escape_js($langs->trans("Change")).'\',
+                      cancel: \''.dol_escape_js($langs->trans("Cancel")).'\'
+                    }
+                  }
+		        } ); });
+             </script>';
+            print '<input id="colorpicker'.$prefix.'" name="'.$prefix.'" size="6" maxlength="7" class="flat" type="text" value="'.$set_color.'" />';
+
+            /*
 			// No list of colors forced, we can suggest any color
 			print "\n".'<table class="nobordernopadding"><tr><td valign="middle">';
 			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_colorpicker.js"></script>'."\n";
@@ -406,14 +449,24 @@ class FormOther
 			}
 
 			print '</tr></table>';
+			*/
 		}
-		else
+		else  // In most cases, this is not used. We used instead function with no specific list of colors
 		{
-			// List of colors is forced
-			if ($showcolorbox) print '<table class="nobordernopadding"><tr valign="middle" class="nobordernopadding"><td class="nobordernopadding">';
+            print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/colorpicker/jquery.colorpicker.css" type="text/css" media="screen" />';
+            print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/colorpicker/jquery.colorpicker.js" type="text/javascript"></script>';
+		    print '<script type="text/javascript">
+             jQuery(document).ready(function(){
+                 jQuery(\'#colorpicker'.$prefix.'\').colorpicker({
+                     size: 14,
+                     label: \'\',
+                     hide: true
+                 });
+             });
+             </script>';
 
-			print '<select class="flat" name="'.$prefix.'">';
-			print '<option value="-1">&nbsp;</option>';
+			print '<select id="colorpicker'.$prefix.'" class="flat" name="'.$prefix.'">';
+			//print '<option value="-1">&nbsp;</option>';
 			foreach ($arrayofcolors as $val)
 			{
 				print '<option value="'.$val.'"';
@@ -421,16 +474,6 @@ class FormOther
 				print '>'.$val.'</option>';
 			}
 			print '</select>';
-
-			if ($showcolorbox)
-			{
-				print '</td><td style="padding-left: 4px" nowrap="nowrap">';
-				print '<!-- Box color '.$set_color.' -->';
-				print '<table style="border-collapse: collapse; margin:0px; padding: 0px; border: 1px solid #888888; background: #'.(preg_replace('/#/','',$set_color)).';" width="12" height="10">';
-				print '<tr class="nocellnopadd"><td></td></tr>';
-				print '</table>';
-				print '</td></tr></table>';
-			}
 		}
 	}
 

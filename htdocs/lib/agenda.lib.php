@@ -55,7 +55,7 @@ function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirt
 		print '<input type="hidden" name="month" value="'.$month.'">';
 		print '<input type="hidden" name="day" value="'.$day.'">';
 		print '<input type="hidden" name="showbirthday" value="'.$showbirthday.'">';
-		print '<table class="border" width="100%">';
+		print '<table class="nobordernopadding" width="100%">';
 		if ($canedit || $conf->projet->enabled)
 		{
 			print '<tr><td nowrap="nowrap">';
