@@ -10,3 +10,4 @@ document
 documents
 DEBIAN
 install.lock
+*.patch
