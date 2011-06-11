@@ -1166,7 +1166,7 @@ if ($rowid && $action != 'edit')
         if ($ret == 'html') print '<br>';
     }
 
-    $rowspan=18+sizeof($adho->attribute_label);
+    $rowspan=19+sizeof($adho->attribute_label);
     if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) $rowspan+=1;
     if ($conf->societe->enabled) $rowspan++;
 
@@ -1178,18 +1178,21 @@ if ($rowid && $action != 'edit')
 	print $html->showrefnav($adh,'rowid');
 	print '</td></tr>';
 
+    $showphoto='<td rowspan="'.$rowspan.'" align="center" valign="middle" width="25%">';
+    $showphoto.=$html->showphoto('memberphoto',$adh);
+    $showphoto.='</td>';
+
     // Login
     if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
     {
-        print '<tr><td>'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur" colspan="2">'.$adh->login.'&nbsp;</td>';
+        print '<tr><td>'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$adh->login.'&nbsp;</td>';
+        print $showphoto; $showphoto='';
         print '</tr>';
     }
 
 	// Morphy
     print '<tr><td>'.$langs->trans("Nature").'</td><td class="valeur" >'.$adh->getmorphylib().'</td>';
-    print '<td rowspan="'.$rowspan.'" align="center" valign="middle" width="25%">';
-    print $html->showphoto('memberphoto',$adh);
-    print '</td>';
+    print $showphoto; $showphoto='';
     print '</tr>';
 
     // Type
@@ -1221,7 +1224,7 @@ if ($rowid && $action != 'edit')
     print '</td></tr>';
 
     // Zip / Town
-    print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td class="valeur">'.$adh->zip.' '.$adh->town.'</td></tr>';
+    print '<tr><td nowrap="nowrap">'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td class="valeur">'.$adh->zip.(($adh->zip && $adh->town)?' / ':'').$adh->town.'</td></tr>';
 
 	// Country
     print '<tr><td>'.$langs->trans("Country").'</td><td class="valeur">';

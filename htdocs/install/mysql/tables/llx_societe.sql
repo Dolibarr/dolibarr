@@ -85,6 +85,7 @@ create table llx_societe
   gencod                   varchar(255),                        		-- barcode
   price_level              integer NULL,                        		-- level of price for multiprices
   default_lang             varchar(6),									-- default language
+  logo                     varchar(255),
   canvas				   varchar(32),			                        -- type of canvas if used (null by default)
   import_key               varchar(14)                          		-- import key
 )ENGINE=innodb;

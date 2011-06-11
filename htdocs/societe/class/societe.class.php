@@ -488,7 +488,7 @@ class Societe extends CommonObject
             $sql .= ",fournisseur = " . ($this->fournisseur?$this->fournisseur:0);
             $sql .= ",gencod = ".($this->gencod?"'".$this->gencod."'":"null");
             $sql .= ",default_lang = ".($this->default_lang?"'".$this->default_lang."'":"null");
-
+            $sql .= ",logo = ".($this->logo?"'".$this->logo."'":"null");
 
             if ($allowmodcodeclient)
             {
@@ -585,6 +585,7 @@ class Societe extends CommonObject
         if (empty($rowid) && empty($ref) && empty($ref_ext) && empty($ref_int)) return -1;
 
         $sql = 'SELECT s.rowid, s.nom as name, s.entity, s.ref_ext, s.ref_int, s.address, s.datec as datec, s.prefix_comm';
+        $sql .= ', s.status';
         $sql .= ', s.price_level';
         $sql .= ', s.tms as date_update';
         $sql .= ', s.tel, s.fax, s.email, s.url, s.cp as zip, s.ville as town, s.note, s.client, s.fournisseur';
@@ -595,9 +596,8 @@ class Societe extends CommonObject
         $sql .= ', s.fk_forme_juridique as forme_juridique_code';
         $sql .= ', s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.parent, s.gencod';
         $sql .= ', s.fk_departement, s.fk_pays, s.fk_stcomm, s.remise_client, s.mode_reglement, s.cond_reglement, s.tva_assuj';
-        $sql .= ', s.localtax1_assuj, s.localtax2_assuj, s.fk_prospectlevel, s.default_lang';
+        $sql .= ', s.localtax1_assuj, s.localtax2_assuj, s.fk_prospectlevel, s.default_lang, s.logo';
         $sql .= ', s.import_key';
-        $sql .= ', s.status';
         $sql .= ', fj.libelle as forme_juridique';
         $sql .= ', e.libelle as effectif';
         $sql .= ', p.code as pays_code, p.libelle as pays';
@@ -730,6 +730,7 @@ class Societe extends CommonObject
 
                 $this->note = $obj->note;
                 $this->default_lang = $obj->default_lang;
+                $this->logo = $obj->logo;
 
                 // multiprix
                 $this->price_level = $obj->price_level;

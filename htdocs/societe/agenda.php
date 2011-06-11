@@ -140,13 +140,6 @@ if ($_GET["socid"])
 	print dol_print_url($soc->url);
 	print '</td></tr>';
 
-	// Assujeti a TVA ou pas
-	print '<tr>';
-	print '<td nowrap="nowrap">'.$langs->trans('VATIsUsed').'</td><td colspan="3">';
-	print yn($soc->tva_assuj);
-	print '</td>';
-	print '</tr>';
-
 	print '</table>';
 
 	print '</div>';

@@ -77,11 +77,9 @@ class FormCompany
 				$objp = $this->db->fetch_object($resql);
 				if (! $mode) $key=$objp->id;
 				else $key=$objp->code;
-
-				if ($langs->trans($objp->code) != $objp->code)
-				$effs[$key] = $langs->trans($objp->code);
-				else
-				$effs[$key] = $objp->libelle!='-'?$objp->libelle:'';
+				if ($langs->trans($objp->code) != $objp->code) $effs[$key] = $langs->trans($objp->code);
+				else $effs[$key] = $objp->libelle;
+				if ($effs[$key]=='-') $effs[$key]='';
 				$i++;
 			}
 			$this->db->free($resql);

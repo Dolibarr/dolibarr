@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
@@ -125,8 +125,8 @@ if ( $societe->fetch($socid) )
 	print '</td></tr>';
 
 	// Zip / Town
-	print '<tr><td>'.$langs->trans("Zip").'</td><td>'.$societe->cp.'</td>';
-	print '<td>'.$langs->trans("Town").'</td><td>'.$societe->ville.'</td></tr>';
+	print '<tr><td nowrap="nowrap">'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3">'.$societe->cp.(($societe->cp && $societe->ville)?' / ':'').$societe->ville.'</td>';
+	print '</tr>';
 
 	// Country
 	print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
@@ -136,10 +136,10 @@ if ( $societe->fetch($socid) )
 	print '</td></tr>';
 
 	// Phone
-	print '<tr><td>'.$langs->trans("Phone").'</td><td>'.dol_print_phone($societe->tel,$societe->pays_code,0,$societe->id,'AC_TEL').'</td>';
+	print '<tr><td>'.$langs->trans("Phone").'</td><td style="min-width: 25%;">'.dol_print_phone($societe->tel,$societe->pays_code,0,$societe->id,'AC_TEL').'</td>';
 
 	// Fax
-	print '<td>'.$langs->trans("Fax").'</td><td>'.dol_print_phone($societe->fax,$societe->pays_code,0,$societe->id,'AC_FAX').'</td></tr>';
+	print '<td>'.$langs->trans("Fax").'</td><td style="min-width: 25%;">'.dol_print_phone($societe->fax,$societe->pays_code,0,$societe->id,'AC_FAX').'</td></tr>';
 
     // EMail
 	print '<td>'.$langs->trans('EMail').'</td><td colspan="3">'.dol_print_email($societe->email,0,$societe->id,'AC_EMAIL').'</td></tr>';

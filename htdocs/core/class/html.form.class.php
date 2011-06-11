@@ -3326,6 +3326,13 @@ class Form
 
         $ret='';$dir='';$file='';$email='';
 
+        if ($modulepart=='societe')
+        {
+            $dir=$conf->societe->dir_output;
+            $smallfile=$object->logo;
+            $smallfile=preg_replace('/(\.png|\.gif|\.jpg|\.jpeg|\.bmp)/i','_small\\1',$smallfile);
+            $file=$object->id.'/logos/thumbs/'.$smallfile;
+        }
         if ($modulepart=='userphoto')
         {
             $dir=$conf->user->dir_output;
@@ -3347,13 +3354,13 @@ class Form
             {
                 $ret.='<img alt="Photo" width="'.$width.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($file).'">';
             }
-            else if (file_exists($dir."/".$altfile))
+            else if ($altfile && file_exists($dir."/".$altfile))
             {
                 $ret.='<img alt="Photo" width="'.$width.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($altfile).'">';
             }
             else
             {
-                if ($conf->gravatar->enabled)
+                if ($conf->gravatar->enabled && $email)
                 {
                     global $dolibarr_main_url_root;
                     $ret.='<!-- Put link to gravatar -->';

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -99,7 +99,7 @@ if ($socid > 0)
 	print '<tr><td valign="top" width="50%" class="notopnoleft">';
 
 	print '<table class="border" width="100%">';
-	print '<tr><td width="25%">'.$langs->trans("ThirdPartyName").'</td><td width="80%" colspan="3">';
+	print '<tr><td width="25%">'.$langs->trans("ThirdPartyName").'</td><td colspan="3">';
 	$societe->next_prev_filter="te.client in (2,3)";
 	print $form->showrefnav($societe,'socid','',($user->societe_id?0:1),'rowid','nom','','');
 	print '</td></tr>';
@@ -110,8 +110,8 @@ if ($socid > 0)
 	print "</td></tr>";
 
 	// Zip / Town
-	print '<tr><td>'.$langs->trans('Zip').'</td><td>'.$societe->cp.'</td>';
-	print '<td>'.$langs->trans('Town').'</td><td>'.$societe->ville.'</td></tr>';
+	print '<tr><td nowrap="nowrap">'.$langs->trans('Zip').' / '.$langs->trans("Town").'</td><td colspan="3">'.$societe->cp.(($societe->cp && $societe->ville)?' / ':'').$societe->ville.'</td>';
+	print '</tr>';
 
 	// Country
 	print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
@@ -121,7 +121,8 @@ if ($socid > 0)
 	print '</td></tr>';
 
 	// Phone
-	print '<tr><td>'.$langs->trans("Phone").'</td><td>'.dol_print_phone($societe->tel,$societe->pays_code,0,$societe->id,'AC_TEL').'</td><td>'.$langs->trans("Fax").'</td><td>'.dol_print_phone($societe->fax,$societe->pays_code).'</td></tr>';
+	print '<tr><td>'.$langs->trans("Phone").'</td><td style="min-width: 25%;">'.dol_print_phone($societe->tel,$societe->pays_code,0,$societe->id,'AC_TEL').'</td>';
+	print '<td>'.$langs->trans("Fax").'</td><td style="min-width: 25%;">'.dol_print_phone($societe->fax,$societe->pays_code).'</td></tr>';
 
 	// EMail
 	print '<td>'.$langs->trans('EMail').'</td><td colspan="3">'.dol_print_email($societe->email,0,$societe->id,'AC_EMAIL').'</td></tr>';

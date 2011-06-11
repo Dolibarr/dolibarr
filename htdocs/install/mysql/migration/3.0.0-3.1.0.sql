@@ -60,8 +60,8 @@ ALTER TABLE llx_facturedet DROP INDEX uk_fk_remise_except;
 ALTER TABLE llx_facturedet ADD UNIQUE INDEX uk_fk_remise_except (fk_remise_except, fk_facture);
 
 ALTER TABLE llx_societe ADD COLUMN fk_currency integer DEFAULT 0 AFTER fk_forme_juridique;
-
 ALTER TABLE llx_societe ADD COLUMN status tinyint DEFAULT 1;
+ALTER TABLE llx_societe ADD COLUMN logo varchar(255);
 
 ALTER TABLE llx_societe_remise MODIFY remise_client double(6,3) DEFAULT 0 NOT NULL;
 

@@ -1047,7 +1047,7 @@ if ($id || $ref)
 			if ($isphoto)
 			{
 				// Photo
-				print '<td valign="middle" align="center" width="30%" rowspan="'.$nblignes.'">';
+				print '<td valign="middle" align="center" width="25%" rowspan="'.$nblignes.'">';
 				print $product->show_photos($conf->product->dir_output,1,1,0,0,0,80);
 				print '</td>';
 			}

@@ -227,8 +227,8 @@ if ($socid > 0)
 	print "</td></tr>";
 
 	// Zip / Town
-	print '<tr><td>'.$langs->trans('Zip').'</td><td>'.$objsoc->cp."</td>";
-	print '<td>'.$langs->trans('Town').'</td><td>'.$objsoc->ville."</td></tr>";
+	print '<tr><td nowrap="nowrap">'.$langs->trans('Zip').' / '.$langs->trans('Town').'</td><td colspan="3">'.$objsoc->cp.(($objsoc->cp && $objsoc->ville)?' / ':'').$objsoc->ville."</td>";
+	print '</tr>';
 
 	// Country
 	print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
@@ -238,10 +238,10 @@ if ($socid > 0)
 	print '</td></tr>';
 
 	// Phone
-	print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dol_print_phone($objsoc->tel,$objsoc->pays_code,0,$objsoc->id,'AC_TEL').'</td>';
+	print '<tr><td>'.$langs->trans('Phone').'</td><td style="min-width: 25%;">'.dol_print_phone($objsoc->tel,$objsoc->pays_code,0,$objsoc->id,'AC_TEL').'</td>';
 
 	// Fax
-	print '<td>'.$langs->trans('Fax').'</td><td>'.dol_print_phone($objsoc->fax,$objsoc->pays_code,0,$objsoc->id,'AC_FAX').'</td></tr>';
+	print '<td>'.$langs->trans('Fax').'</td><td style="min-width: 25%;">'.dol_print_phone($objsoc->fax,$objsoc->pays_code,0,$objsoc->id,'AC_FAX').'</td></tr>';
 
 	// EMail
 	print '<td>'.$langs->trans('EMail').'</td><td colspan="3">'.dol_print_email($objsoc->email,0,$objsoc->id,'AC_EMAIL').'</td></tr>';

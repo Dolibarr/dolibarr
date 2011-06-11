@@ -894,7 +894,7 @@ else
 			$ret=$html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("DeleteAUser"),$langs->trans("ConfirmDeleteUser",$fuser->login),"confirm_delete", '', 0, 1);
 			if ($ret == 'html') print '<br>';
 		}
-		
+
 		dol_htmloutput_errors($message);
 
 		/*
@@ -911,21 +911,27 @@ else
 			print '</td>';
 			print '</tr>'."\n";
 
+            $rowspan=13;
+            if ($conf->societe->enabled) $rowspan++;
+            if ($conf->adherent->enabled) $rowspan++;
+            if ($conf->webcalendar->enabled) $rowspan++;
+            if ($conf->phenix->enabled) $rowspan+=2;
+
 			// Lastname
 			print '<tr><td valign="top">'.$langs->trans("Lastname").'</td>';
-			print '<td colspan="2">'.$fuser->nom.'</td>';
+			print '<td>'.$fuser->nom.'</td>';
+
+            // Photo
+            print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
+            print $html->showphoto('userphoto',$fuser,100);
+            print '</td>';
+
             print '</tr>'."\n";
 
 			// Firstname
 			print '<tr><td valign="top">'.$langs->trans("Firstname").'</td>';
-			print '<td colspan="2">'.$fuser->prenom.'</td>';
+			print '<td>'.$fuser->prenom.'</td>';
             print '</tr>'."\n";
-
-			$rowspan=11;
-			if ($conf->societe->enabled) $rowspan++;
-			if ($conf->adherent->enabled) $rowspan++;
-			if ($conf->webcalendar->enabled) $rowspan++;
-			if ($conf->phenix->enabled) $rowspan+=2;
 
 			// Login
 			print '<tr><td valign="top">'.$langs->trans("Login").'</td>';
@@ -937,10 +943,6 @@ else
 			{
 				print '<td>'.$fuser->login.'</td>';
 			}
-			// Photo
-			print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
-			print $html->showphoto('userphoto',$fuser,100,1);
-			print '</td>';
 			print '</tr>'."\n";
 
 			// Password
@@ -1204,10 +1206,10 @@ else
 
 				// On selectionne les groupes auquel fait parti le user
 				$exclude = array();
-				
+
 				$usergroup=new UserGroup($db);
 				$groupslist = $usergroup->listGroupsForUser($fuser->id);
-				
+
 				if (! empty($groupslist))
 	            {
 	            	foreach($groupslist as $groupforuser)
@@ -1246,7 +1248,7 @@ else
 				if (! empty($groupslist))
 				{
 					$var=true;
-					
+
 					foreach($groupslist as $group)
 					{
 						$var=!$var;
@@ -1300,11 +1302,11 @@ else
 			print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 			print '<table width="100%" class="border">';
 
-			$rowspan=9;
-			if ($conf->societe->enabled) $rowspan++;
-			if ($conf->adherent->enabled) $rowspan++;
-			if ($conf->webcalendar->enabled) $rowspan++;
-			if ($conf->phenix->enabled) $rowspan+=2;
+            $rowspan=11;
+            if ($conf->societe->enabled) $rowspan++;
+            if ($conf->adherent->enabled) $rowspan++;
+            if ($conf->webcalendar->enabled) $rowspan++;
+            if ($conf->phenix->enabled) $rowspan+=2;
 
 			print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
 			print '<td colspan="2">';
@@ -1312,9 +1314,10 @@ else
 			print '</td>';
 			print '</tr>';
 
-			// Nom
-			print "<tr>".'<td valign="top" class="fieldrequired">'.$langs->trans("Lastname").'</span></td>';
-			print '<td colspan="2">';
+			// Lastname
+			print "<tr>";
+			print '<td valign="top" class="fieldrequired">'.$langs->trans("Lastname").'</td>';
+			print '<td>';
 			if ($caneditfield && !$fuser->ldap_sid)
 			{
 				print '<input size="30" type="text" class="flat" name="nom" value="'.$fuser->nom.'">';
@@ -1324,11 +1327,23 @@ else
 				print '<input type="hidden" name="nom" value="'.$fuser->nom.'">';
 				print $fuser->nom;
 			}
-			print '</td></tr>';
+			print '</td>';
+            // Photo
+            print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
+            print $html->showphoto('userphoto',$fuser);
+            if ($caneditfield)
+            {
+                print '<br><br><table class="nobordernopadding"><tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
+                print '<tr><td>';
+                print '<input type="file" class="flat" name="photo">';
+                print '</td></tr></table>';
+            }
+            print '</td>';
+			print '</tr>';
 
-			// Prenom
+			// Firstname
 			print "<tr>".'<td valign="top">'.$langs->trans("Firstname").'</td>';
-			print '<td colspan="2">';
+			print '<td>';
 			if ($caneditfield && !$fuser->ldap_sid)
 			{
 				print '<input size="30" type="text" class="flat" name="prenom" value="'.$fuser->prenom.'">';
@@ -1351,18 +1366,6 @@ else
 			{
 				print '<input type="hidden" name="login" value="'.$fuser->login.'">';
 				print $fuser->login;
-			}
-			print '</td>';
-
-			// Photo
-			print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
-			print $html->showphoto('userphoto',$fuser);
-			if ($caneditfield)
-			{
-				print '<br><br><table class="nobordernopadding"><tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
-				print '<tr><td>';
-				print '<input type="file" class="flat" name="photo">';
-				print '</td></tr></table>';
 			}
 			print '</td>';
 			print '</tr>';
@@ -1401,9 +1404,11 @@ else
 			else
 			{
 				print '<td>';
-				// Don't downgrade a superadmin if alone
 				$nbSuperAdmin = $user->getNbOfUsers('superadmin');
-				if ($user->admin && ($fuser->entity > 0 || $nbSuperAdmin > 1) )
+				if ($user->admin
+				    && ($user->id != $fuser->id)                    // Don't downgrade ourself
+				    && ($fuser->entity > 0 || $nbSuperAdmin > 1)    // Don't downgrade a superadmin if alone
+				)
 				{
 					print $form->selectyesno('admin',$fuser->admin,1);
 
@@ -1618,13 +1623,14 @@ else
 				print "</tr>\n";
 			}
 
-			print '<tr><td align="center" colspan="3">';
+            print '</table>';
+
+            print '<br><center>';
 			print '<input value="'.$langs->trans("Save").'" class="button" type="submit" name="save">';
 			print ' &nbsp; ';
 			print '<input value="'.$langs->trans("Cancel").'" class="button" type="submit" name="cancel">';
-			print '</td></tr>';
+			print '</center>';
 
-			print '</table>';
 			print '</form>';
 
 			print '</div>';
