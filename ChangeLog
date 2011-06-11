@@ -8,8 +8,8 @@ For users:
 - New: War against number of clicks:
        - When adding a free bank transaction, form to add next one is still
          visible (save one click).
-       - task #10969 : Add checkbox to close automatically invoice
-         if payment is complete (save 3 clicks).
+       - task #10969 : Add checkbox to close automatically invoice if
+         payment is complete (save 3 clicks).
        - Reduce a step into supplier order workflow to save time. If user
          has permission to approve, order is approved when order is validated.
          (Save 2 clicks).
@@ -18,9 +18,8 @@ For users:
        - Can add a discount for third party, during invoice edition (and we 
          saved clicks again).
        - When creating a contract, sales representative are preset to user. This save
-         2 clicks.
+         4 clicks.
        - Can edit several fields in bank transaction line page into one update. 
-- New: Add graph using Jquery Flot.
 - New: Usage of Jquery Notify to show result or error messages on action.
 - New: If a service contains subproducts, subrpoducts are decrease when service
        is decrease.
@@ -53,14 +52,17 @@ For users:
 - New: task #11018: Add a status "not applicable" on events.
 - New: Add country/region/town statistics for member module.
 - New: Can define a proxy for external web access.
-- New: task #11003: checkbox on checks to deposit
+- New: task #11003: checkbox on checks for deposit.
 - New: Add status into export. Add default language into export.
 - New: Can remove a project if project has tasks.       
-- New: Can filter on date when building cheque receipts.
+- New: Can filter on date and bank account when building check receipts.
 - New: Paypal module can show paypal list of transaction and convert one
        into an order.
 - New: task #10958 : Add link to cheque receipts into bank transaction 
        line if exists
+- New: Can import external ical url into dolibarr agenda view.
+- New: Minor look enhancements into agenda view.
+- New: Can add a logo on third parties card. 
 - Fix: Better Postgresql compatibility.
 - Fix: Numbering module for invoices use same number for invoice 
        and credit note if mask is same.
@@ -79,10 +81,12 @@ For developers:
 - New: Install wizard can activate a module during install.
 - New: Dictionnary setup works with very large external dictionnaries (Add 
        page navigation).
+- New: Add function to draw graphics with javascript (using Jquery Flot).
+
 
 For translators:
 - New: Add fa_IR language.
-- Fix: Move code ar_AR to ar_SA, sv_SV to sv_SE and da_Da to da_DK.
+- Fix: Move language ar_AR to ar_SA, sv_SV to sv_SE and da_Da to da_DK.
 
 
 
