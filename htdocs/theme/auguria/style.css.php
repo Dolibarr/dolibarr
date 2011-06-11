@@ -1005,6 +1005,9 @@ span.butAction, span.butActionDelete {
 /* Tables                                                                         */
 /* ============================================================================== */
 
+#undertopmenu {
+    margin-top: 4px;
+}
 /*
 #undertopmenu {
 background-image: url("<?php echo DOL_URL_ROOT.'/theme/auguria/img/gradient.gif' ?>");
