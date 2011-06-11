@@ -244,7 +244,8 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->adhe
 
 		$adh->amount      = $_POST["amount"];
 
-		$adh->photo       = ($_FILES['photo']['name']?$_FILES['photo']['name']:$adh->oldcopy->photo);
+        if (GETPOST('deletephoto')) $adh->photo='';
+		$adh->photo       = ($_FILES['photo']['name']?dol_sanitizeFileName($_FILES['photo']['name']):$adh->oldcopy->photo);
 
 		// Get status and public property
 		$adh->statut      = $_POST["statut"];
@@ -277,7 +278,15 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->adhe
 		$result=$adh->update($user,0,$nosyncuser,$nosyncuserpass);
 		if ($result >= 0 && ! sizeof($adh->errors))
 		{
-			if (!empty($_FILES['photo']['tmp_name']) && trim($_FILES['photo']['tmp_name']))
+            if (GETPOST('deletephoto') && $adh->photo)
+            {
+                $fileimg=$conf->adherent->dir_output.'/'.get_exdir($adh->id,2,0,1).'/photos/'.$adh->photo;
+                $dirthumbs=$conf->adherent->dir_output.'/'.get_exdir($adh->id,2,0,1).'/photos/thumbs';
+                dol_delete_file($fileimg);
+                dol_delete_dir_recursive($dirthumbs);
+            }
+
+		    if (!empty($_FILES['photo']['tmp_name']) && trim($_FILES['photo']['tmp_name']))
 			{
 				$dir= $conf->adherent->dir_output . '/' . get_exdir($adh->id,2,0,1).'/photos/';
 
@@ -285,7 +294,7 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->adhe
 
 				if (@is_dir($dir))
 				{
-					$newfile=$dir.'/'.$_FILES['photo']['name'];
+					$newfile=$dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
 					if (! dol_move_uploaded_file($_FILES['photo']['tmp_name'],$newfile,1,0,$_FILES['photo']['error']) > 0)
 					{
 						$message .= '<div class="error">'.$langs->trans("ErrorFailedToSaveFile").'</div>';
@@ -860,10 +869,12 @@ if ($action == 'edit')
     print $html->showphoto('memberphoto',$adh)."\n";
     if ($caneditfieldmember)
     {
-        print '<br><br><table class="nobordernopadding"><tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
-        print '<tr><td>';
-        print '<input type="file" class="flat" name="photo">';
-        print '</td></tr></table>';
+        if ($adh->photo) print "<br>\n";
+        print '<table class="nobordernopadding">';
+        if ($adh->photo) print '<tr><td align="center"><input type="checkbox" class="flat" name="deletephoto" id="photodelete"> '.$langs->trans("Delete").'<br><br></td></tr>';
+        print '<tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
+        print '<tr><td><input type="file" class="flat" name="photo" id="photoinput"></td></tr>';
+        print '</table>';
     }
     print '</td>';
 

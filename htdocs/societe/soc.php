@@ -156,7 +156,7 @@ else
         $soc->tel                   = $_POST["tel"];
         $soc->fax                   = $_POST["fax"];
         $soc->email                 = trim($_POST["email"]);
-        $soc->url                   = $_POST["url"];
+        $soc->url                   = trim($_POST["url"]);
         $soc->siren                 = $_POST["idprof1"];
         $soc->siret                 = $_POST["idprof2"];
         $soc->ape                   = $_POST["idprof3"];
@@ -169,7 +169,7 @@ else
 
         $soc->tva_intra             = $_POST["tva_intra"];
         $soc->tva_assuj             = $_POST["assujtva_value"];
-        $soc->status        = $_POST["status"];
+        $soc->status                = $_POST["status"];
 
         // Local Taxes
         $soc->localtax1_assuj       = $_POST["localtax1assuj_value"];
@@ -193,7 +193,8 @@ else
         $soc->commercial_id         = $_POST["commercial_id"];
         $soc->default_lang          = $_POST["default_lang"];
 
-        $soc->logo = dol_sanitizeFileName($_FILES['logo']['name']);
+        if (GETPOST('deletephoto')) $soc->logo = '';
+        $soc->logo = dol_sanitizeFileName($_FILES['photo']['name']);
 
         // Check parameters
         if (empty($_POST["cancel"]))
@@ -258,17 +259,17 @@ else
 
                     ### Gestion du logo de la société
                     $dir     = $conf->societe->dir_output."/".$soc->id."/logos/";
-                    $file_OK = is_uploaded_file($_FILES['logo']['tmp_name']);
+                    $file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
                     if ($file_OK)
                     {
-                        if (image_format_supported($_FILES['logo']['name']))
+                        if (image_format_supported($_FILES['photo']['name']))
                         {
                             create_exdir($dir);
 
                             if (@is_dir($dir))
                             {
-                                $newfile=$dir.'/'.dol_sanitizeFileName($_FILES['logo']['name']);
-                                $result = dol_move_uploaded_file($_FILES['logo']['tmp_name'], $newfile, 1);
+                                $newfile=$dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
+                                $result = dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1);
 
                                 if (! $result > 0)
                                 {
@@ -328,24 +329,32 @@ else
                 //var_dump($soc);exit;
 
                 $result = $soc->update($socid,$user,1,$oldsoc->codeclient_modifiable(),$oldsoc->codefournisseur_modifiable());
-                if ($result < 0)
+                if ($result <=  0)
                 {
                     $error = $soc->error; $errors = $soc->errors;
                 }
 
                 ### Gestion du logo de la société
                 $dir     = $conf->societe->dir_output."/".$soc->id."/logos/";
-                $file_OK = is_uploaded_file($_FILES['logo']['tmp_name']);
+                $file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
                 if ($file_OK)
                 {
-                    if (image_format_supported($_FILES['logo']['name']))
+                    if (GETPOST('deletephoto') && $soc->logo)
+                    {
+                        $fileimg=$conf->societe->dir_output.'/'.$soc->id.'/logos/'.$soc->logo;
+                        $dirthumbs=$conf->societe->dir_output.'/'.$soc->id.'/logos/thumbs';
+                        dol_delete_file($fileimg);
+                        dol_delete_dir_recursive($dirthumbs);
+                    }
+
+                    if (image_format_supported($_FILES['photo']['name']))
                     {
                         create_exdir($dir);
 
                         if (@is_dir($dir))
                         {
-                            $newfile=$dir.'/'.dol_sanitizeFileName($_FILES['logo']['name']);
-                            $result = dol_move_uploaded_file($_FILES['logo']['tmp_name'], $newfile, 1);
+                            $newfile=$dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
+                            $result = dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1);
 
                             if (! $result > 0)
                             {
@@ -366,7 +375,7 @@ else
                 }
                 ### Gestion du logo de la société
 
-                if ($result >= 0)
+                if (! $error && ! sizeof($errors))
                 {
 
                     Header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$socid);
@@ -570,21 +579,21 @@ else
         $soc->commercial_id=$_POST["commercial_id"];
         $soc->default_lang=$_POST["default_lang"];
 
-        $soc->logo = dol_sanitizeFileName($_FILES['logo']['name']);
+        $soc->logo = dol_sanitizeFileName($_FILES['photo']['name']);
 
         ### Gestion du logo de la société
-        $dir     = $conf->societe->dir_output."/".$soc->id."/logos/";
-        $file_OK = is_uploaded_file($_FILES['logo']['tmp_name']);
+        $dir     = $conf->societe->dir_output."/".$soc->id."/logos";
+        $file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
         if ($file_OK)
         {
-            if (image_format_supported($_FILES['logo']['name']))
+            if (image_format_supported($_FILES['photo']['name']))
             {
                 create_exdir($dir);
 
                 if (@is_dir($dir))
                 {
-                    $newfile=$dir.'/'.dol_sanitizeFileName($_FILES['logo']['name']);
-                    $result = dol_move_uploaded_file($_FILES['logo']['tmp_name'], $newfile, 1);
+                    $newfile=$dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
+                    $result = dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1);
 
                     if (! $result > 0)
                     {
@@ -823,9 +832,6 @@ else
         print '<tr><td>'.$langs->trans('EMail').($conf->global->SOCIETE_MAIL_REQUIRED?'*':'').'</td><td><input type="text" name="email" size="32" value="'.$soc->email.'"></td>';
         print '<td>'.$langs->trans('Web').'</td><td><input type="text" name="url" size="32" value="'.$soc->url.'"></td></tr>';
 
-        print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
-
-
         print '<tr>';
         // IdProf1 (SIREN for France)
         $idprof=$langs->transcountry('ProfId1',$soc->pays_code);
@@ -867,37 +873,6 @@ else
         else print '<td>&nbsp;</td><td>&nbsp;</td>';
         print '</tr>';
 
-        // Legal Form
-        print '<tr><td>'.$langs->trans('JuridicalStatus').'</td>';
-        print '<td colspan="3">';
-        if ($soc->pays_id)
-        {
-            $formcompany->select_forme_juridique($soc->forme_juridique_code,$soc->pays_code);
-        }
-        else
-        {
-            print $countrynotdefined;
-        }
-        print '</td></tr>';
-
-        // Type
-        print '<tr><td>'.$langs->trans("ThirdPartyType").'</td><td>'."\n";
-        print $form->selectarray("typent_id",$formcompany->typent_array(0), $soc->typent_id);
-        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
-        print '</td>';
-        print '<td>'.$langs->trans("Staff").'</td><td>';
-        print $form->selectarray("effectif_id",$formcompany->effectif_array(0), $soc->effectif_id);
-        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
-        print '</td></tr>';
-
-        if ($conf->global->MAIN_MULTILANGS)
-        {
-            print '<tr><td>'.$langs->trans("DefaultLang").'</td><td colspan="3">'."\n";
-            print $formadmin->select_language(($soc->default_lang?$soc->default_lang:$conf->global->MAIN_LANG_DEFAULT),'default_lang',0,0,1);
-            print '</td>';
-            print '</tr>';
-        }
-
         // Assujeti TVA
         $html = new Form($db);
         print '<tr><td>'.$langs->trans('VATIsUsed').'</td>';
@@ -929,11 +904,35 @@ else
                 $s.='<a href="'.$langs->transcountry("VATIntraCheckURL",$soc->id_pays).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
             }
         }
-
         print $s;
         print '</td>';
-
         print '</tr>';
+
+        // Type - Size
+        print '<tr><td>'.$langs->trans("ThirdPartyType").'</td><td>'."\n";
+        print $form->selectarray("typent_id",$formcompany->typent_array(0), $soc->typent_id);
+        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+        print '</td>';
+        print '<td>'.$langs->trans("Staff").'</td><td>';
+        print $form->selectarray("effectif_id",$formcompany->effectif_array(0), $soc->effectif_id);
+        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+        print '</td></tr>';
+
+        // Legal Form
+        print '<tr><td>'.$langs->trans('JuridicalStatus').'</td>';
+        print '<td colspan="3">';
+        if ($soc->pays_id)
+        {
+            $formcompany->select_forme_juridique($soc->forme_juridique_code,$soc->pays_code);
+        }
+        else
+        {
+            print $countrynotdefined;
+        }
+        print '</td></tr>';
+
+        // Capital
+        print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
         // Local Taxes
         // TODO add specific function by country
@@ -962,6 +961,14 @@ else
             }
         }
 
+        if ($conf->global->MAIN_MULTILANGS)
+        {
+            print '<tr><td>'.$langs->trans("DefaultLang").'</td><td colspan="3">'."\n";
+            print $formadmin->select_language(($soc->default_lang?$soc->default_lang:$conf->global->MAIN_LANG_DEFAULT),'default_lang',0,0,1);
+            print '</td>';
+            print '</tr>';
+        }
+
         if ($user->rights->societe->client->voir)
         {
             // Assign a Name
@@ -976,7 +983,7 @@ else
         print '<tr>';
         print '<td>'.$langs->trans("Logo").'</td>';
         print '<td colspan="3">';
-        print '<input class="flat" type="file" name="logo" />';
+        print '<input class="flat" type="file" name="photo" id="photoinput" />';
         print '</td>';
         print '</tr>';
 
@@ -1326,9 +1333,7 @@ else
                     $s.='<a href="'.$langs->transcountry("VATIntraCheckURL",$soc->id_pays).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
                 }
             }
-
             print $s;
-
             print '</td>';
             print '</tr>';
 
@@ -1360,12 +1365,7 @@ else
                 }
             }
 
-            print '<tr><td>'.$langs->trans("Capital").'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
-
-            print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">';
-            $formcompany->select_forme_juridique($soc->forme_juridique_code,$soc->pays_code);
-            print '</td></tr>';
-
+            // Type - Size
             print '<tr><td>'.$langs->trans("ThirdPartyType").'</td><td>';
             print $form->selectarray("typent_id",$formcompany->typent_array(0), $soc->typent_id);
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
@@ -1374,6 +1374,13 @@ else
             print $form->selectarray("effectif_id",$formcompany->effectif_array(0), $soc->effectif_id);
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
             print '</td></tr>';
+
+            print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">';
+            $formcompany->select_forme_juridique($soc->forme_juridique_code,$soc->pays_code);
+            print '</td></tr>';
+
+            // Capital
+            print '<tr><td>'.$langs->trans("Capital").'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
             // Default language
             if ($conf->global->MAIN_MULTILANGS)
@@ -1387,7 +1394,19 @@ else
             // Logo
             print '<tr>';
             print '<td>'.$langs->trans("Logo").'</span></td>';
-            print '<td colspan="3"><input type="file" name="logo" /></td>';
+            print '<td colspan="3">';
+            if ($soc->logo) print $form->showphoto('societe',$soc,50);
+            $caneditfield=1;
+            if ($caneditfield)
+            {
+                if ($soc->logo) print "<br>\n";
+                print '<table class="nobordernopadding">';
+                if ($soc->logo) print '<tr><td><input type="checkbox" class="flat" name="deletephoto" id="photodelete"> '.$langs->trans("Delete").'<br><br></td></tr>';
+                //print '<tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
+                print '<tr><td><input type="file" class="flat" name="photo" id="photoinput"></td></tr>';
+                print '</table>';
+            }
+            print '</td>';
             print '</tr>';
 
             print '</table>';
@@ -1644,7 +1663,6 @@ else
             print '&nbsp;';
         }
         print '</td>';
-
         print '</tr>';
 
         // Local Taxes
@@ -1674,19 +1692,19 @@ else
             }
         }
 
+        // Type + Staff
+        $arr = $formcompany->typent_array(1);
+        $soc->typent= $arr[$soc->typent_code];
+        print '<tr><td>'.$langs->trans("ThirdPartyType").'</td><td>'.$soc->typent.'</td><td>'.$langs->trans("Staff").'</td><td>'.$soc->effectif.'</td></tr>';
+
+        // Legal
+        print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">'.$soc->forme_juridique.'</td></tr>';
+
         // Capital
         print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3">';
         if ($soc->capital) print $soc->capital.' '.$langs->trans("Currency".$conf->monnaie);
         else print '&nbsp;';
         print '</td></tr>';
-
-        // Legal
-        print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">'.$soc->forme_juridique.'</td></tr>';
-
-        // Type + Staff
-        $arr = $formcompany->typent_array(1);
-        $soc->typent= $arr[$soc->typent_code];
-        print '<tr><td>'.$langs->trans("ThirdPartyType").'</td><td>'.$soc->typent.'</td><td>'.$langs->trans("Staff").'</td><td>'.$soc->effectif.'</td></tr>';
 
         // Default language
         if ($conf->global->MAIN_MULTILANGS)

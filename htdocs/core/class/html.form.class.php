@@ -3324,39 +3324,39 @@ class Form
     {
         global $conf;
 
-        $ret='';$dir='';$file='';$email='';
+        $ret='';$dir='';$file='';$altfile='';$email='';
 
         if ($modulepart=='societe')
         {
             $dir=$conf->societe->dir_output;
             $smallfile=$object->logo;
             $smallfile=preg_replace('/(\.png|\.gif|\.jpg|\.jpeg|\.bmp)/i','_small\\1',$smallfile);
-            $file=$object->id.'/logos/thumbs/'.$smallfile;
+            if ($object->logo) $file=$object->id.'/logos/thumbs/'.$smallfile;
         }
         else if ($modulepart=='userphoto')
         {
             $dir=$conf->user->dir_output;
-            $file=get_exdir($object->id,2).$object->photo;
-            $altfile=$object->id.".jpg";	// For backward compatibility
+            if ($object->photo) $file=get_exdir($object->id,2).$object->photo;
+            if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
             $email=$object->email;
         }
         else if ($modulepart=='memberphoto')
         {
             $dir=$conf->adherent->dir_output;
-            $file=get_exdir($object->id,2).'photos/'.$object->photo;
-            $altfile=$object->id.".jpg";	// For backward compatibility
+            if ($object->photo) $file=get_exdir($object->id,2).'photos/'.$object->photo;
+            if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
             $email=$object->email;
         }
 
-        if ($dir && $file)
+        if ($dir)
         {
-            if (file_exists($dir."/".$file))
+            if ($file && file_exists($dir."/".$file))
             {
                 $ret.='<img alt="Photo" class="photologo" width="'.$width.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($file).'">';
             }
             else if ($altfile && file_exists($dir."/".$altfile))
             {
-                $ret.='<img alt="Photo" class="photologo" width="'.$width.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($altfile).'">';
+                $ret.='<img alt="Photo alt" class="photologo" width="'.$width.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($altfile).'">';
             }
             else
             {

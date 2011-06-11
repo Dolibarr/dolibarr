@@ -289,7 +289,8 @@ if ($action == 'update' && ! $_POST["cancel"])
 			$edituser->phenix_login  = $_POST["phenix_login"];
 			$edituser->phenix_pass   = $_POST["phenix_pass"];
 			$edituser->entity        = ( (! empty($_POST["superadmin"]) && ! empty($_POST["admin"])) ? 0 : $_POST["entity"]);
-			if (! empty($_FILES['photo']['name'])) $edituser->photo = $_FILES['photo']['name'];
+            if (GETPOST('deletephoto')) $edituser->photo='';
+			if (! empty($_FILES['photo']['name'])) $edituser->photo = dol_sanitizeFileName($_FILES['photo']['name']);
 
 			$ret=$edituser->update($user);
 			if ($ret < 0)
@@ -305,19 +306,17 @@ if ($action == 'update' && ! $_POST["cancel"])
 				}
 			}
 
-			/* Already included into update function
-			if ($ret >= 0 && ! sizeof($edituser->errors) && isset($_POST["password"]) && $_POST["password"] !='')
-			{
-				$ret=$edituser->setPassword($user,$_POST["password"],0,1);
-				if ($ret < 0)
-				{
-					$message.='<div class="error">'.$edituser->error.'</div>';
-				}
-			} */
-
 			if ($ret >=0 && ! sizeof($edituser->errors))
 			{
-				if (isset($_FILES['photo']['tmp_name']) && trim($_FILES['photo']['tmp_name']))
+				if (GETPOST('deletephoto') && $edituser->photo)
+                {
+                    $fileimg=$conf->user->dir_output.'/'.get_exdir($edituser->id,2,0,1).'/logos/'.$edituser->photo;
+                    $dirthumbs=$conf->user->dir_output.'/'.get_exdir($edituser->id,2,0,1).'/logos/thumbs';
+                    dol_delete_file($fileimg);
+                    dol_delete_dir_recursive($dirthumbs);
+                }
+
+			    if (isset($_FILES['photo']['tmp_name']) && trim($_FILES['photo']['tmp_name']))
 				{
 					$dir= $conf->user->dir_output . '/' . get_exdir($edituser->id,2,0,1);
 
@@ -325,7 +324,7 @@ if ($action == 'update' && ! $_POST["cancel"])
 
 					if (@is_dir($dir))
 					{
-						$newfile=$dir.'/'.$_FILES['photo']['name'];
+						$newfile=$dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
 						$result=dol_move_uploaded_file($_FILES['photo']['tmp_name'],$newfile,1,0,$_FILES['photo']['error']);
 
 						if (! $result > 0)
@@ -895,7 +894,8 @@ else
 			if ($ret == 'html') print '<br>';
 		}
 
-		dol_htmloutput_errors($message);
+		if (! preg_match('/class="error"/',$message)) dol_htmloutput_mesg($message);
+		else dol_htmloutput_errors($message);
 
 		/*
 		 * Fiche en mode visu
@@ -1128,8 +1128,6 @@ else
 
 			print "</div>\n";
 
-			if ($message) { print $message; }
-
 
 			/*
 			 * Barre d'actions
@@ -1333,10 +1331,12 @@ else
             print $html->showphoto('userphoto',$fuser);
             if ($caneditfield)
             {
-                print '<br><br><table class="nobordernopadding"><tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
-                print '<tr><td>';
-                print '<input type="file" class="flat" name="photo">';
-                print '</td></tr></table>';
+                if ($fuser->photo) print "<br>\n";
+                print '<table class="nobordernopadding">';
+                if ($fuser->photo) print '<tr><td align="center"><input type="checkbox" class="flat" name="deletephoto" id="photodelete"> '.$langs->trans("Delete").'<br><br></td></tr>';
+                print '<tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
+                print '<tr><td><input type="file" class="flat" name="photo" id="photoinput"></td></tr>';
+                print '</table>';
             }
             print '</td>';
 			print '</tr>';
