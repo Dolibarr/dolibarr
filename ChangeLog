@@ -62,7 +62,8 @@ For users:
        line if exists
 - New: Can import external ical url into dolibarr agenda view.
 - New: Minor look enhancements into agenda view.
-- New: Can add a logo on third parties card. 
+- New: Can add a logo on third parties card.
+- New: task #11194 : Can delete uploaded photos 
 - Fix: Better Postgresql compatibility.
 - Fix: Numbering module for invoices use same number for invoice 
        and credit note if mask is same.
