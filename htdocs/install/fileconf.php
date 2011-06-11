@@ -313,9 +313,11 @@ if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if t
 	<tr>
 		<td valign="top" class="label"><b> <?php echo $langs->trans("Server"); ?>
 		</b></td>
-		<td valign="top" class="label"><input type="text" name="db_host"
+		<td valign="top" class="label"><input type="text" name="db_host<?php print (!empty($force_install_noedit))?'_bis':''; ?>"
+			<?php if (!empty($force_install_noedit)) print ' disabled="disabled"'; ?>
 			value="<?php print (! empty($dolibarr_main_db_host))?$dolibarr_main_db_host:'localhost'; ?>">
-		<input type="hidden" name="base" value=""></td>
+		<?php if (!empty($force_install_noedit)) print '<input type="hidden" name="db_host" value="'.((! empty($dolibarr_main_db_host))?$dolibarr_main_db_host:'localhost').'">'; ?>
+		</td>
 		<td class="comment"><?php echo $langs->trans("ServerAddressDescription"); ?>
 		</td>
 
@@ -323,17 +325,18 @@ if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if t
 
 	<tr>
 		<td valign="top" class="label"><?php echo $langs->trans("Port"); ?></td>
-		<td valign="top" class="label"><input type="text" name="db_port"
+		<td valign="top" class="label"><input type="text" name="db_port<?php print (!empty($force_install_noedit) && $force_install_port)?'_bis':''; ?>"
+			<?php if (!empty($force_install_noedit) && $force_install_port) print ' disabled="disabled"'; ?>
 			value="<?php print (! empty($dolibarr_main_db_port))?$dolibarr_main_db_port:$force_install_port; ?>">
-		<input type="hidden" name="base" value=""></td>
+		<?php if (!empty($force_install_noedit) && $force_install_port) print '<input type="hidden" name="db_port" value="'.((! empty($dolibarr_main_db_port))?$dolibarr_main_db_port:$force_install_port).'">'; ?>
+		</td>
 		<td class="comment"><?php echo $langs->trans("ServerPortDescription"); ?>
 		</td>
 
 	</tr>
 
 	<tr>
-		<td class="label" valign="top"><b> <?php echo $langs->trans("DatabaseName"); ?>
-		</b></td>
+		<td class="label" valign="top"><b> <?php echo $langs->trans("DatabaseName"); ?>	</b></td>
 
 		<td class="label" valign="top"><input type="text" name="db_name"
 			value="<?php echo (! empty($dolibarr_main_db_name))?$dolibarr_main_db_name:$force_install_database; ?>"></td>
