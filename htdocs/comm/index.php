@@ -298,12 +298,12 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 
 		$i = 0;
 		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><td colspan="6">'.$langs->trans("LastModifiedProposals",$NBMAX).'</td></tr>';
+		print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("LastModifiedProposals",$NBMAX).'</td></tr>';
 		$var=False;
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($resql);
-			print "<tr $bc[$var]>";
+			print '<tr '.$bc[$var].'>';
 
 			// Ref
 			print '<td nowrap="nowrap" width="140">';
@@ -580,7 +580,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 			{
 				$obj = $db->fetch_object($result);
 				$var=!$var;
-				print "<tr $bc[$var]>";
+				print '<tr '.$bc[$var].'>';
 
 				// Ref
 				print '<td nowrap="nowrap" width="140">';
