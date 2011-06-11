@@ -1,6 +1,6 @@
 # Dolibarr language file - pt_BR rev. 0.0 - orders
 CHARSET=UTF-8
-OrdersArea=Area de Pedidos de clientes
+OrdersArea=Area de Pedidos de Clientes
 SuppliersOrdersArea=√Årea de Pedidos a Fornecedores
 OrderCard=Ficha Pedido
 Order=Pedido
@@ -23,6 +23,12 @@ OrdersToValid=Pedidos a Confirmar
 OrdersToBill=Pedidos por Faturar
 OrdersInProcess=Pedidos em Processo
 OrdersToProcess=Pedidos a Processar
+
+
+## Fazer a programaÁ„o da NFE dentro do mÛdulo de Pedidos. Ë o jeito indo pelos status. Ir pesquisando no src code pelo status Processado (StatusOrderProcessedShort)
+## Incluir o src code da NFE como os pedidos e propostasanexas na negociaÁ„o.
+
+StatusOrderNFEProcessed=Nota Fiscal Emitida
 StatusOrderCanceledShort=Anulado
 StatusOrderDraftShort=Rascunho
 StatusOrderValidatedShort=Validado
@@ -76,7 +82,7 @@ NumberOfOrdersByMonth=N√∫mero de Pedidos por M√™s
 AmountOfOrdersByMonthHT=Valor total de pedidos por m√™s (sem ICMS)
 ListOfOrders=Lista de Pedidos
 CloseOrder=Fechar Pedido
-ConfirmCloseOrder=Tem certeza de que deseja fechar este pedido? Quando uma pedido √© fechada, ela s√≥ pode ser cobrada.
+ConfirmCloseOrder=Tem certeza de que deseja fechar este pedido? Quando um pedido √© fechado, ele s√≥ pode ser cobrado.
 ConfirmCloseOrderIfSending=Tem certeza de que deseja fechar este pedido? Veve fechar no somente quando todos os transfretes mar√≠timos s√£o feitos.
 ConfirmDeleteOrder=? Tem certeza que quer eliminar este pedido?
 ConfirmValidateOrder=? Tem certeza que quer Confirmar este pedido sobre a referencia <b>%s</b> ?

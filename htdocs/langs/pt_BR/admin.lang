@@ -232,6 +232,12 @@ ErrorCantUseRazInStartedYearIfNoYearMonthInMask=Erro, não se pode usar opção 
 UMask=Parâmetro UMask de novos arquivos em Unix/Linux/BSD.
 UMaskExplanation=Este parâmetro determina os direitos dos arquivos criados não servidor do ERP (durante o carregamento, por Exemplo).<br>Este deve ter o valor octal (por Exemplo, 0666 significa leitura / escrita para todos).<br>Este parâmetro não tem nenhum efeito sobre um servidor Windows.
 SeeWikiForAllTeam=Veja o wiki para mais detalhes de todos os autores e da sua organização
+AntiVirusCommand=Caminho completo para o comando de antivírus
+AntiVirusCommandExample=Exemplo de Comando: c: \ Program Files (x86) \ ClamWin \ bin \ clamscan.exe <br> Exemplo de Mexilhão: / usr / bin / clamscan
+AntiVirusParam=Mais informações sobre parâmetros de linha de comando
+AntiVirusParamExample=Exemplo de Parametro de Comando: - database = &quot;C: \ Program Files (x86) \ lib ClamWin \&quot;
+
+
 # Modules=
 Module0Name=Usuários e Grupos
 Module0Desc=Administração de Usuários e Grupos
@@ -399,9 +405,9 @@ Permission162=Criar/Modificar contratos de serviço
 Permission163=Ativar os serviços de um contrato
 Permission164=Desativar os serviços de um contrato
 Permission165=Eliminar contratos
-Permission171=Ler Deslocamento
-Permission172=Criar/Modificar Deslocamento
-Permission173=Eliminar Deslocamento
+Permission170=Ler Deslocamento
+Permission171=Criar/Modificar Deslocamento
+Permission172=Eliminar Deslocamento
 Permission178=Exportar Deslocamento
 Permission180=Consultar Fornecedores
 Permission181=Consultar pedidos a Fornecedores
@@ -469,9 +475,9 @@ Permission401=Consultar ativos
 Permission402=Criar/Modificar ativos
 Permission403=Confirmar ativos
 Permission404=Eliminar ativos
-Permission701=Consultar Bolsas
-Permission702=Criar/Modificar Bolsas
-Permission703=Eliminar Bolsas
+Permission700=Consultar Bolsas
+Permission701=Criar/Modificar Bolsas
+Permission702=Eliminar Bolsas
 Permission1001=Consultar estoques
 Permission1002=Criar/Modificar estoques
 Permission1003=Eliminar estoques
@@ -502,9 +508,20 @@ Permission2401=Ler ações (eventos ou tarefas) vinculadas na sua conta
 Permission2402=Criar/Modificar/Eliminar ações (eventos ou tarefas) vinculadas na sua conta
 Permission2403=Consultar ações (acontecimientos ou tarefas) de outros
 Permission2405=Criar/Modificar/Eliminar ações (eventos ou tarefas) de outros
-Permission2501=Consultar documentos
-Permission2502=Enviar ou eliminar documentos
+Permission2500=Consultar documentos
+Permission2501=Enviar ou eliminar documentos
 Permission2515=Configuração de diretorios de documentos
+
+# Permissoes esepcificas para a NFe - a programar nos objetos. Adicionado em 22/03/2011:
+Permission2516=Consultar notas fiscais de clientes
+Permission2517=Criar/Modificar notas fiscais de clientes
+Permission2518=Confirmar notas fiscais de clientes
+Permission2519=Enviar notas fiscais de clientes
+Permission2520=Fechar notas fiscais de clientes
+Permission2521=Anular notas fiscais de clientes
+Permission2522=Eliminar notas fiscais de clientes
+Permission4421=Exportar Nfes de clientes e atributos
+
 DictionnaryCompanyType=Tipos de empresa
 DictionnaryCompanyJuridicalType=Formas jurídicas
 DictionnaryProspectLevel=Perspectiva ao nível de cliente potencial
@@ -754,6 +771,14 @@ HideTreadedOrders=Ocultar os pedidos processados ou anulados do listado
 ValidOrderAfterPropalClosed=Confirmar o pedido depois de fechar o orçamento, permite não passar por um pedido provisório
 FreeLegalTextOnOrders=Texto livre em pedidos
 WatermarkOnDraftOrders=Marca de água em pedidos rascunho (em caso destar vazio)
+
+##### NFE #####=
+NfesSetup=configuração do módulo de Notas Fiscais
+NfesNumberingModules=Módulos de numeração das Notas Fiscais
+NfesModelModule=Modelos de documentos de Notas Fiscais
+
+
+
 ##### Fiche inter #####=
 FicheinterNumberingModules=Módulos de numeração das fichas de intervenção
 TemplatePDFInterventions=Modelo de documentos das fichas de intervenção

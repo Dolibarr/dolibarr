@@ -55,3 +55,12 @@ DocumentModelSirocco=Modelo de Documento Sirocco
 DocumentModelTyphon=Modelo de Documento Typhon
 
 
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> pt_PT
+Shipments=Envios
+StatusSendingCanceled=Cancelado
+StatusSendingCanceledShort=Cancelado
+DocumentModelMerou=Mérou modelo A5
+DateDeliveryPlanned=Data de entrega
+DateReceived=Data da entrega recebida
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:28).

@@ -40,6 +40,7 @@ ECMTypeAuto=Automático
 ECMDocsByThirdParties=Documentos Associados a Fornecedores
 ECMDocsByProposals=Documentos Assoicados a Orçamentos
 ECMDocsByOrders=Documentos Associados a Pedidos
+ECMDocsByNfes=Documentos Associados a Notas Fiscais
 ECMDocsByContracts=Documentos Associados a Contratos
 ECMDocsByInvoices=Documentos Associados a Faturas
 ECMDocsByProducts=Documentos ligados a produtos
