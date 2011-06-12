@@ -40,10 +40,6 @@ $search_code_fournisseur   = GETPOST("search_code_fournisseur");
 $search_compta_fournisseur = GETPOST("search_compta_fournisseur");
 $search_datec              = GETPOST("search_datec");
 
-$langs->load("suppliers");
-$langs->load("orders");
-$langs->load("companies");
-
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
