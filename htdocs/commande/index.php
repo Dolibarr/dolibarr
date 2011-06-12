@@ -215,10 +215,10 @@ $max=5;
  * Last modified orders
  */
 
-$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, s.nom, s.rowid as socid,";
-$sql.= " date_cloture as datec";
-$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
-$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, c.date_cloture as datec, c.tms as datem,";
+$sql.= " s.nom, s.rowid as socid";
+$sql.= " FROM ".MAIN_DB_PREFIX."commande as c,";
+$sql.= " ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE c.fk_soc = s.rowid";
 $sql.= " AND c.entity = ".$conf->entity;
@@ -270,7 +270,7 @@ if ($resql)
 			print '</td>';
 
 			print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
-			print '<td>'.dol_print_date($db->jdate($obj->datec),'day').'</td>';
+			print '<td>'.dol_print_date($db->jdate($obj->datem),'day').'</td>';
 			print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
 			print '</tr>';
 			$i++;
