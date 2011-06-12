@@ -86,7 +86,6 @@ if ($socname) {
 }
 if ($search_nom)   $sql .= " AND s.nom LIKE '%".$db->escape($search_nom)."%'";
 if ($search_ville) $sql .= " AND s.ville LIKE '%".$db->escape($search_ville)."%'";
-if ($search_nom)   $sql .= " AND s.nom LIKE '%".$db->escape($search_nom)."%'";
 if ($search_code_fournisseur)   $sql .= " AND s.code_fournisseur LIKE '%".$db->escape($search_code_fournisseur)."%'";
 if ($search_compta_fournisseur) $sql .= " AND s.code_compta_fournisseur LIKE '%".$db->escape($search_compta_fournisseur)."%'";
 if ($search_datec)   $sql .= " AND s.datec LIKE '%".$db->escape($search_datec)."%'";
