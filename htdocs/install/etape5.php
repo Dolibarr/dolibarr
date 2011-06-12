@@ -221,15 +221,21 @@ if ($action == "set" || preg_match('/upgrade/i',$action))
 				// This works only for module store into root directory. Does not work for alternate modules.
 				if (! empty($force_install_module))
 				{
+					if (! defined('DOL_DOCUMENT_ROOT') && ! empty($dolibarr_main_document_root)) define('DOL_DOCUMENT_ROOT',$dolibarr_main_document_root);
+					if (! defined('DOL_DOCUMENT_ROOT_ALT') && ! empty($dolibarr_main_document_root_alt)) define('DOL_DOCUMENT_ROOT_ALT',$dolibarr_main_document_root_alt);
+
 					$tmparray=explode(',',$force_install_module);
 					foreach ($tmparray as $modtoactivate)
 					{
 						$modtoactivatenew=preg_replace('/\.class\.php$/i','',$modtoactivate);
                         $file=$modtoactivatenew.'.class.php';
 						dolibarr_install_syslog('install/etape5.php Activate module file='.$file);
-                        include_once(DOL_DOCUMENT_ROOT ."/includes/modules/".$file);
-                        $objMod = new $modtoactivatenew($db);
-                        $result=$objMod->init();
+                        $res=dol_include_once("/includes/modules/".$file);
+                        //print 'x'.dol_buildpath("/includes/modules/".$file);exit;
+
+                        $res=Activate($modtoactivatenew,1);
+                        //$objMod = new $modtoactivatenew($db);
+                        //$result=$objMod->init();
                         if (! $result) print 'ERROR in activating module file='.$file;
 					}
 				}
