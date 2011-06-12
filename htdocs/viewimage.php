@@ -21,8 +21,8 @@
 
 /**
  *		\file       htdocs/viewimage.php
- *		\brief      Wrapper permettant l'affichage de fichiers images Dolibarr
- *      \remarks    Call to wrapper is '<img src="'.DOL_URL_ROOT.'/viewimage.php?file=pathrelatifdufichier&modulepart=repfichierconcerne">'
+ *		\brief      Wrapper to show images into Dolibarr screens
+ *      \remarks    Call to wrapper is '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=diroffile&file=relativepathofofile&cache=0">'
  *		\version    $Id$
  */
 

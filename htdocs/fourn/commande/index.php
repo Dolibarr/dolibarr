@@ -286,7 +286,7 @@ if ($resql)
             $commandestatic->ref=$obj->ref;
 
             print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-            print '<td width="94" class="nobordernopadding" nowrap="nowrap">';
+            print '<td width="96" class="nobordernopadding" nowrap="nowrap">';
             print $commandestatic->getNomUrl(1);
             print '</td>';
 
@@ -354,7 +354,7 @@ else dol_print_error($db);
  $commandestatic->ref=$obj->ref;
 
  print '<table class="nobordernopadding"><tr class="nocellnopadd">';
- print '<td width="94" class="nobordernopadding" nowrap="nowrap">';
+ print '<td width="96" class="nobordernopadding" nowrap="nowrap">';
  print $commandestatic->getNomUrl(1);
  print '</td>';
 

@@ -21,7 +21,7 @@
 /**
  *	\file       htdocs/commande/index.php
  *	\ingroup    commande
- *	\brief      Page acceuil espace commandes
+ *	\brief      Home page of customer order module
  *	\version    $Id$
  */
 
@@ -252,7 +252,7 @@ if ($resql)
 			$commandestatic->ref=$obj->ref;
 
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-			print '<td width="94" class="nobordernopadding" nowrap="nowrap">';
+			print '<td width="96" class="nobordernopadding" nowrap="nowrap">';
 			print $commandestatic->getNomUrl(1);
 			print '</td>';
 
@@ -321,7 +321,7 @@ if ($conf->commande->enabled)
 				$commandestatic->ref=$obj->ref;
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-				print '<td width="94" class="nobordernopadding" nowrap="nowrap">';
+				print '<td width="96" class="nobordernopadding" nowrap="nowrap">';
 				print $commandestatic->getNomUrl(1);
 				print '</td>';
 
@@ -392,7 +392,7 @@ if ($conf->commande->enabled)
 				$commandestatic->ref=$obj->ref;
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-				print '<td width="94" class="nobordernopadding" nowrap="nowrap">';
+				print '<td width="96" class="nobordernopadding" nowrap="nowrap">';
 				print $commandestatic->getNomUrl(1);
 				print '</td>';
 

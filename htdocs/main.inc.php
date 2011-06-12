@@ -906,7 +906,8 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             if (!empty($conf->global->MAIN_USE_JQUERY_THEME)) $jquerytheme = $conf->global->MAIN_USE_JQUERY_THEME;
             print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/css/'.$jquerytheme.'/jquery-ui-latest.custom.css" type="text/css" />'."\n";    // JQuery
             print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/tooltip/jquery.tooltip.css" type="text/css" />'."\n";                  // Tooltip
-            print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify.min.css" type="text/css" />'."\n";                // JNotify
+            print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify.min.css" type="text/css" />'."\n";              // JNotify
+            //print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/lightbox/css/jquery.lightbox-0.5.css" media="screen" />'."\n";          // Lightbox
         }
 
         print '<!-- Includes for Dolibarr, modules or specific pages-->'."\n";
@@ -950,13 +951,14 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			$ext='.js';
 			if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x01)) { $ext='.jgz'; }	// mini='_mini', ext='.gz'
 
-			// JQuery. Must be before other includes (prototype/scriptaculous/...)
+			// JQuery. Must be before other includes
 			print '<!-- Includes JS for JQuery -->'."\n";
             print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-latest.min'.$ext.'"></script>'."\n";
 			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-ui-latest.custom.min'.$ext.'"></script>'."\n";
 			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tablednd/jquery.tablednd_0_5'.$ext.'"></script>'."\n";
-			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tooltip/jquery.tooltip.min'.$ext.'"></script>'."\n";
-			// jQuery Layout
+            print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tooltip/jquery.tooltip.min'.$ext.'"></script>'."\n";
+            //print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/lightbox/js/jquery.lightbox-0.5.min'.$ext.'"></script>'."\n";
+            // jQuery Layout
 			if (!empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) || defined('REQUIRE_JQUERY_LAYOUT'))
 			{
 				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/layout/jquery.layout-latest.min'.$ext.'"></script>'."\n";

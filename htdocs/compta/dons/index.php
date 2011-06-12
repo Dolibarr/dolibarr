@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 /**
  *	    \file       htdocs/compta/dons/index.php
  *		\ingroup    don
- *		\brief      Page accueil espace don
+ *		\brief      Home page of donation module
  *		\version    $Id$
  */
 
@@ -56,17 +56,17 @@ $result = $db->query($sql);
 
 if ($result)
 {
-  $num = $db->num_rows($result);
-  $i = 0;
-  while ($i < $num)
+    $num = $db->num_rows($result);
+    $i = 0;
+    while ($i < $num)
     {
-      $objp = $db->fetch_object($result);
+        $objp = $db->fetch_object($result);
 
-      $somme[$objp->fk_statut] = $objp->somme;
-      $nb[$objp->fk_statut] = $objp->nb;
-      $i++;
+        $somme[$objp->fk_statut] = $objp->somme;
+        $nb[$objp->fk_statut] = $objp->nb;
+        $i++;
     }
-  $db->free($result);
+    $db->free($result);
 } else {
     dol_print_error($db);
 }
@@ -109,15 +109,15 @@ print '</tr>';
 $var=true;
 foreach ($listofstatus as $status)
 {
-  $var=!$var;
-  print "<tr ".$bc[$var].">";
-  print '<td><a href="liste.php?statut='.$status.'">'.$donstatic->LibStatut($status,4).'</a></td>';
-  print '<td align="right">'.$nb[$status].'</td>';
-  print '<td align="right">'.($nb[$status]?price($somme[$status],'MT'):'&nbsp;').'</td>';
-  print '<td align="right">'.($nb[$status]?price(price2num($somme[$status]/$nb[$status],'MT')):'&nbsp;').'</td>';
-  $totalnb += $nb[$status];
-  $total += $somme[$status];
-  print "</tr>";
+    $var=!$var;
+    print "<tr ".$bc[$var].">";
+    print '<td><a href="liste.php?statut='.$status.'">'.$donstatic->LibStatut($status,4).'</a></td>';
+    print '<td align="right">'.$nb[$status].'</td>';
+    print '<td align="right">'.($nb[$status]?price($somme[$status],'MT'):'&nbsp;').'</td>';
+    print '<td align="right">'.($nb[$status]?price(price2num($somme[$status]/$nb[$status],'MT')):'&nbsp;').'</td>';
+    $totalnb += $nb[$status];
+    $total += $somme[$status];
+    print "</tr>";
 }
 
 print '<tr class="liste_total">';
@@ -170,7 +170,7 @@ if ($resql)
             $donation_static->id=$obj->rowid;
             $donation_static->ref=$obj->ref?$obj->ref:$obj->rowid;
 
-            print '<td width="94" class="nobordernopadding" nowrap="nowrap">';
+            print '<td width="96" class="nobordernopadding" nowrap="nowrap">';
             print $donation_static->getNomUrl(1);
             print '</td>';
 
@@ -185,7 +185,7 @@ if ($resql)
             print '</td>';
 
             // Date
-            print '<td>'.dol_print_date($db->jdate($obj->datec),'day').'</td>';
+            print '<td align="center">'.dol_print_date($db->jdate($obj->datem),'day').'</td>';
 
             print '<td align="right">'.$donation_static->LibStatut($obj->fk_statut,5).'</td>';
 

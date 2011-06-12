@@ -239,7 +239,7 @@ if ($resql)
 			$propal_static->ref=$obj->ref;
 
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-			print '<td width="94" class="nobordernopadding" nowrap="nowrap">';
+			print '<td width="96" class="nobordernopadding" nowrap="nowrap">';
 			print $propal_static->getNomUrl(1);
 			print '</td>';
 
@@ -309,7 +309,7 @@ if ($conf->propal->enabled)
 				$propal_static->ref=$obj->ref;
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-				print '<td width="94" class="nobordernopadding" nowrap="nowrap">';
+				print '<td width="96" class="nobordernopadding" nowrap="nowrap">';
 				print $propal_static->getNomUrl(1);
 				print '</td>';
 
@@ -381,7 +381,7 @@ if ($conf->propal->enabled)
 				$propal_static->ref=$obj->ref;
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-				print '<td width="94" class="nobordernopadding" nowrap="nowrap">';
+				print '<td width="96" class="nobordernopadding" nowrap="nowrap">';
 				print $propal_static->getNomUrl(1);
 				print '</td>';
 

@@ -3350,13 +3350,19 @@ class Form
 
         if ($dir)
         {
+            $cache='0';
             if ($file && file_exists($dir."/".$file))
             {
-                $ret.='<img alt="Photo" class="photologo" width="'.$width.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($file).'">';
+                // TODO Link to large image
+                $ret.='<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($file).'&cache='.$cache.'">';
+                $ret.='<img alt="Photo" id="photologo'.(preg_replace('/[^a-z]/i','_',$file)).'" class="photologo" border="0" width="'.$width.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($file).'&cache='.$cache.'">';
+                $ret.='</a>';
             }
             else if ($altfile && file_exists($dir."/".$altfile))
             {
-                $ret.='<img alt="Photo alt" class="photologo" width="'.$width.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($altfile).'">';
+                $ret.='<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($file).'&cache='.$cache.'">';
+                $ret.='<img alt="Photo alt" id="photologo'.(preg_replace('/[^a-z]/i','_',$file)).'" class="photologo" border="0" width="'.$width.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($altfile).'&cache='.$cache.'">';
+                $ret.='</a>';
             }
             else
             {
@@ -3364,15 +3370,39 @@ class Form
                 {
                     global $dolibarr_main_url_root;
                     $ret.='<!-- Put link to gravatar -->';
-                    $ret.='<img alt="Photo found on Gravatar" class="photologo" title="Photo Gravatar.com - email '.$email.'" width="'.$width.'" src="http://www.gravatar.com/avatar/'.md5($email).'?s='.$width.'&d='.urlencode( dol_buildpath('/theme/common/nophoto.jpg',2) ).'">';
+                    $ret.='<img alt="Photo found on Gravatar" title="Photo Gravatar.com - email '.$email.'" border="0" width="'.$width.'" src="http://www.gravatar.com/avatar/'.md5($email).'?s='.$width.'&d='.urlencode( dol_buildpath('/theme/common/nophoto.jpg',2) ).'">';
                 }
                 else
                 {
-                    $ret.='<img alt="No photo" class="photologo" width="'.$width.'" src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
+                    $ret.='<img alt="No photo" border="0" width="'.$width.'" src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
                 }
             }
         }
         else dol_print_error('','Call of showphoto with wrong parameters');
+
+        /* Disabled. lightbox seems to not work. I don't know why.
+        $ret.="\n<script type=\"text/javascript\">
+              jQuery(function() {
+                     jQuery('.photologo').lightBox();
+              });
+              </script>\n";
+
+        $ret.="\n<script type=\"text/javascript\">
+              jQuery(function() {
+                     jQuery('.photologo').lightBox({
+                        overlayBgColor: '#FFF',
+                        overlayOpacity: 0.6,
+                        imageLoading: '".DOL_URL_ROOT."/includes/jquery/plugins/lightbox/images/lightbox-ico-loading.gif',
+                        imageBtnClose: '".DOL_URL_ROOT."/includes/jquery/plugins/lightbox/images/lightbox-btn-close.gif',
+                        imageBtnPrev: '".DOL_URL_ROOT."/includes/jquery/plugins/lightbox/images/lightbox-btn-prev.gif',
+                        imageBtnNext: '".DOL_URL_ROOT."/includes/jquery/plugins/lightbox/images/lightbox-btn-next.gif',
+                        containerResizeSpeed: 350,
+                        txtImage: 'Imagem',
+                        txtOf: 'de'
+                     });
+              });
+              </script>\n";
+        */
 
         return $ret;
     }
