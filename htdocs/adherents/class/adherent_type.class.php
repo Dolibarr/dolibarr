@@ -62,19 +62,6 @@ class AdherentType extends CommonObject
 
 
     /**
-     *  \brief print_error_list
-     */
-    function print_error_list()
-    {
-        $num = sizeof($this->error);
-        for ($i = 0 ; $i < $num ; $i++)
-        {
-            print "<li>" . $this->error[$i];
-        }
-    }
-
-
-    /**
      *  \brief      Fonction qui permet de creer le status de l'adherent
      *  \param      userid			userid de l'adherent
      *  \return     > 0 si ok, < 0 si ko

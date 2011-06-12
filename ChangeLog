@@ -20,6 +20,7 @@ For users:
        - When creating a contract, sales representative are preset to user. This save
          4 clicks.
        - Can edit several fields in bank transaction line page into one update. 
+- New: Enhance donation module. Add a status "canceled".
 - New: Usage of Jquery Notify to show result or error messages on action.
 - New: If a service contains subproducts, subrpoducts are decrease when service
        is decrease.

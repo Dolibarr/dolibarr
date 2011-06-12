@@ -224,19 +224,6 @@ class Adherent extends CommonObject
 
 
     /**
-     *	Print list of errors
-     */
-    function print_error_list()
-    {
-        $num = sizeof($this->error);
-        for ($i = 0 ; $i < $num ; $i++)
-        {
-            print "<li>" . $this->error[$i];
-        }
-    }
-
-
-    /**
      *	Renvoie le libelle traduit de la nature d'un adherent (physique ou morale)
      *	@param	    morphy		Nature physique ou morale de l'adherent
      */

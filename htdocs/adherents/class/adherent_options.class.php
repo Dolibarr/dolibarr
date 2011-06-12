@@ -65,18 +65,6 @@ class AdherentOptions
 	}
 
 	/**
-	 *  \brief fonction qui imprime un liste d'erreurs
-	 */
-	function print_error_list()
-	{
-		$num = sizeof($this->error);
-		for ($i = 0 ; $i < $num ; $i++)
-		{
-			print "<li>" . $this->error[$i];
-		}
-	}
-
-	/**
 	 *	Add a new optionnal attribute
 	 *	@param	attrname			code of attribute
 	 *  @param	type				Type of attribute ('int', 'text', 'varchar', 'date', 'datehour')
@@ -95,7 +83,7 @@ class AdherentOptions
 			else
 			{
 				$this->error=$this->db->lasterror();
-				return -1;	
+				return -1;
 			}
 		}
 		else
@@ -225,7 +213,7 @@ class AdherentOptions
 			else
 			{
 				$this->error=$this->db->lasterror();
-				return -1;	
+				return -1;
 			}
 		}
 		else

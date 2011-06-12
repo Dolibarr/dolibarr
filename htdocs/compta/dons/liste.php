@@ -74,31 +74,33 @@ if ($result)
 	$num = $db->num_rows($result);
 	$i = 0;
 
+	$param="&statut=$statut&sortorder=$sortorder&sortfield=$sortfield";
+
 	if ($statut >= 0)
 	{
 	    $donationstatic->statut=$statut;
 	    $label=$donationstatic->getLibStatut(0);
-		print_barre_liste($label, $page, "liste.php", "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield");
+		print_barre_liste($label, $page, $_SERVER["PHP_SELF"], $param, '', '', '', $num);
 	}
 	else
 	{
-		print_barre_liste($langs->trans("Donations"), $page, "liste.php", "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield");
+		print_barre_liste($langs->trans("Donations"), $page, $_SERVER["PHP_SELF"], $param, '', '', '', $num);
 	}
-	print "<table class=\"noborder\" width=\"100%\">";
 
+
+	print "<table class=\"noborder\" width=\"100%\">";
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Ref"),"liste.php","d.rowid","&page=$page&statut=$statut","","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Firstname"),"liste.php","d.prenom","&page=$page&statut=$statut","","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Name"),"liste.php","d.nom","&page=$page&statut=$statut","","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Company"),"liste.php","d.societe","&page=$page&statut=$statut","","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Date"),"liste.php","d.datedon","&page=$page&statut=$statut","",'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"d.rowid","&page=$page&statut=$statut","","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"d.societe","&page=$page&statut=$statut","","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Name"),$_SERVER["PHP_SELF"],"d.nom","&page=$page&statut=$statut","","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"d.datedon","&page=$page&statut=$statut","",'align="center"',$sortfield,$sortorder);
 	if ($conf->projet->enabled)
 	{
 		$langs->load("projects");
-		print_liste_field_titre($langs->trans("Project"),"liste.php","projet","&page=$page&statut=$statut","","",$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Project"),$_SERVER["PHP_SELF"],"fk_don_projet","&page=$page&statut=$statut","","",$sortfield,$sortorder);
 	}
-	print_liste_field_titre($langs->trans("Amount"),"liste.php","d.amount","&page=$page&statut=$statut","",'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),"liste.php","d.statut","&page=$page&statut=$statut","",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"d.amount","&page=$page&statut=$statut","",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"d.fk_statut","&page=$page&statut=$statut","",'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	$var=True;
@@ -109,11 +111,12 @@ if ($result)
 		print "<tr $bc[$var]>";
 		$donationstatic->id=$objp->rowid;
 		$donationstatic->ref=$objp->rowid;
+		$donationstatic->nom=$objp->nom;
+		$donationstatic->prenom=$objp->prenom;
 		print "<td>".$donationstatic->getNomUrl(1)."</td>\n";
-		print "<td>".$objp->prenom."</td>\n";
-		print "<td>".$objp->nom."</td>\n";
-		print "<td>".$objp->societe."</td>\n";
-		print '<td align="center">'.dol_print_date($db->jdate($objp->datedon)).'</td>';
+        print "<td>".$objp->societe."</td>\n";
+		print "<td>".$donationstatic->getFullName($langs)."</td>\n";
+		print '<td align="center">'.dol_print_date($db->jdate($objp->datedon),'day').'</td>';
 		if ($conf->projet->enabled)
 		{
 			print "<td>";

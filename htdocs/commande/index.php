@@ -120,7 +120,6 @@ if ($resql)
     $db->free($resql);
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("CustomersOrders").'</td></tr>'."\n";
-    $var=true;
     $listofstatus=array(0,1,2,3,3,-1);
     $bool=false;
     foreach ($listofstatus as $status)
@@ -136,6 +135,7 @@ if ($resql)
         dol_print_graph('stats',300,180,$data,1,'pie',1);
         print '</td></tr>';
     }
+    $var=true;
     $bool=false;
     foreach ($listofstatus as $status)
     {

@@ -29,6 +29,15 @@ require_once(DOL_DOCUMENT_ROOT."/compta/dons/class/don.class.php");
 
 $langs->load("donations");
 
+$donation_static=new Don($db);
+
+
+/*
+ * Actions
+ */
+
+
+
 
 /*
  * View
@@ -67,29 +76,47 @@ print_fiche_titre($langs->trans("DonationsArea"));
 
 print '<table width="100%" class="notopnoleftnoright">';
 
-print '<tr><td class="notopnoleft">';
+// Left area
+print '<tr><td class="notopnoleft" width="30%" valign="top">';
 
 
-print '<table class="noborder" width="50%">';
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td colspan="4">'.$langs->trans("Statistics").'</td>';
+print "</tr>\n";
+
+$listofstatus=array(0,1,-1,2);
+foreach ($listofstatus as $status)
+{
+    $dataseries[]=array('label'=>$donstatic->LibStatut($status,1),'values'=>array(0=>(isset($nb[$status])?$nb[$status]:0)));
+}
+
+if ($conf->use_javascript_ajax)
+{
+    print '<tr><td align="center" colspan="4">';
+    $data=array('series'=>$dataseries);
+    dol_print_graph('stats',300,180,$data,1,'pie',1);
+    print '</td></tr>';
+}
+
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Status").'</td>';
 print '<td align="right">'.$langs->trans("Number").'</td>';
-print '<td align="right">'.$langs->trans("AmountTotal").'</td>';
+print '<td align="right">'.$langs->trans("Total").'</td>';
 print '<td align="right">'.$langs->trans("Average").'</td>';
-print "</tr>\n";
+print '</tr>';
 
-$var=True;
-
-for ($i = 0 ; $i < 3 ; $i++)
+$var=true;
+foreach ($listofstatus as $status)
 {
   $var=!$var;
-  print "<tr $bc[$var]>";
-  print '<td><a href="liste.php?statut='.$i.'">'.$donstatic->LibStatut($i,4).'</a></td>';
-  print '<td align="right">'.$nb[$i].'</td>';
-  print '<td align="right">'.($nb[$i]?price($somme[$i],'MT'):'&nbsp;').'</td>';
-  print '<td align="right">'.($nb[$i]?price(price2num($somme[$i]/$nb[$i],'MT')):'&nbsp;').'</td>';
-  $totalnb += $nb[$i];
-  $total += $somme[$i];
+  print "<tr ".$bc[$var].">";
+  print '<td><a href="liste.php?statut='.$status.'">'.$donstatic->LibStatut($status,4).'</a></td>';
+  print '<td align="right">'.$nb[$status].'</td>';
+  print '<td align="right">'.($nb[$status]?price($somme[$status],'MT'):'&nbsp;').'</td>';
+  print '<td align="right">'.($nb[$status]?price(price2num($somme[$status]/$nb[$status],'MT')):'&nbsp;').'</td>';
+  $totalnb += $nb[$status];
+  $total += $somme[$status];
   print "</tr>";
 }
 
@@ -100,6 +127,75 @@ print '<td align="right">'.price($total,'MT').'</td>';
 print '<td align="right">'.($totalnb?price(price2num($total/$totalnb,'MT')):'&nbsp;').'</td>';
 print '</tr>';
 print "</table>";
+
+
+// Right area
+print '</td><td valign="top">';
+
+
+
+$max=5;
+
+/*
+ * Last modified proposals
+ */
+
+$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.societe, c.nom,";
+$sql.= " tms as datem, amount";
+$sql.= " FROM ".MAIN_DB_PREFIX."don as c";
+$sql.= " WHERE c.entity = ".$conf->entity;
+//$sql.= " AND c.fk_statut > 2";
+$sql.= " ORDER BY c.tms DESC";
+$sql.= $db->plimit($max, 0);
+
+$resql=$db->query($sql);
+if ($resql)
+{
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<td colspan="5">'.$langs->trans("LastModifiedDonations",$max).'</td></tr>';
+
+    $num = $db->num_rows($resql);
+    if ($num)
+    {
+        $i = 0;
+        $var = True;
+        while ($i < $num)
+        {
+            $var=!$var;
+            $obj = $db->fetch_object($resql);
+
+            print "<tr ".$bc[$var].">";
+
+            $donation_static->id=$obj->rowid;
+            $donation_static->ref=$obj->ref?$obj->ref:$obj->rowid;
+
+            print '<td width="94" class="nobordernopadding" nowrap="nowrap">';
+            print $donation_static->getNomUrl(1);
+            print '</td>';
+
+            print '<td class="nobordernopadding">';
+            print $obj->societe;
+            print ($obj->societe && $obj->nom?' / ':'');
+            print $obj->nom;
+            print '</td>';
+
+            print '<td width="16" align="right" class="nobordernopadding">';
+            print price($obj->amount);
+            print '</td>';
+
+            // Date
+            print '<td>'.dol_print_date($db->jdate($obj->datec),'day').'</td>';
+
+            print '<td align="right">'.$donation_static->LibStatut($obj->fk_statut,5).'</td>';
+
+            print '</tr>';
+            $i++;
+        }
+    }
+    print "</table><br>";
+}
+else dol_print_error($db);
 
 
 print '</td></tr></table>';
