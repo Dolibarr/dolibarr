@@ -10,6 +10,8 @@
 -- To change type of field: ALTER TABLE llx_table MODIFY name varchar(60);
 --
 
+DROP table llx_prelevement_notifications;
+
 -- Fix corrupted data
 update llx_deplacement set dated='2010-01-01' where dated < '2000-01-01';
 
@@ -376,3 +378,4 @@ update llx_actioncomm set elementtype='contract' where elementtype='contrat';
 
 
 alter table llx_propal add column   tms             timestamp after fk_projet;
+

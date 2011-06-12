@@ -44,7 +44,7 @@ $result = restrictedArea($user, 'prelevement','','','bons');
 
 llxHeader('',$langs->trans("WithdrawStatistics"));
 
-print_fiche_titre($langs->trans("WithdrawStatistics"));
+print_fiche_titre($langs->trans("Statistics"));
 
 // Define total and nbtotal
 $sql = "SELECT sum(pl.amount), count(pl.amount)";
@@ -70,6 +70,10 @@ if ($resql)
 /*
  * Stats
  */
+
+print '<br>';
+print_titre($langs->trans("WithdrawStatistics"));
+
 $ligne=new LignePrelevement($db,$user);
 
 $sql = "SELECT sum(pl.amount), count(pl.amount), pl.statut";
@@ -139,6 +143,7 @@ else
  */
 print '<br>';
 print_titre($langs->trans("WithdrawRejectStatistics"));
+
 
 // Define total and nbtotal
 $sql = "SELECT sum(pl.amount), count(pl.amount)";

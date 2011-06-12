@@ -86,18 +86,15 @@ function prelevement_prepare_head($object)
 
 /**
  *	Check need data to create standigns orders receipt file
- *	@return    	int		-1 if ko 0 if ok             
+ *	@return    	int		-1 if ko 0 if ok
  */
 function prelevement_check_config()
 {
 	global $conf;
-	if(empty($conf->global->PRELEVEMENT_ID_BANKACCOUNT)) return -1; 
-	if(empty($conf->global->PRELEVEMENT_CODE_BANQUE)) return -1;
-	if(empty($conf->global->PRELEVEMENT_CODE_GUICHET)) return -1;
-	if(empty($conf->global->PRELEVEMENT_NUMERO_COMPTE)) return -1;
-	if(empty($conf->global->PRELEVEMENT_NUMBER_KEY)) return -1;
-	if(empty($conf->global->PRELEVEMENT_RAISON_SOCIALE)) return -1;
+    if(empty($conf->global->PRELEVEMENT_USER)) return -1;
+	if(empty($conf->global->PRELEVEMENT_ID_BANKACCOUNT)) return -1;
 	if(empty($conf->global->PRELEVEMENT_NUMERO_NATIONAL_EMETTEUR)) return -1;
-	return 0;	
+	return 0;
 }
+
 ?>

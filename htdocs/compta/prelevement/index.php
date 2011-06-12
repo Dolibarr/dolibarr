@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011      Juanjo Menent		<jmenent@2byte.es>
  *
@@ -76,7 +76,9 @@ print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").'</
 $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("NbOfInvoiceToWithdraw").'</td>';
 print '<td align="right">';
+print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/demandes.php?status=0&mainmenu=bank">';
 print $bprev->NbFactureAPrelever();
+print '</a>';
 print '</td></tr>';
 $var=!$var;
 print '<tr class="liste_total"><td>'.$langs->trans("AmountToWithdraw").'</td>';
@@ -85,6 +87,57 @@ print price($bprev->SommeAPrelever());
 print '</td></tr></table><br>';
 
 print '</td><td valign="top" width="70%">';
+
+
+
+/*
+ * Withdraw receipts
+ */
+$limit=5;
+$sql = "SELECT p.rowid, p.ref, p.amount, p.datec";
+$sql .= " ,p.statut ";
+$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
+$sql .= " ORDER BY datec DESC LIMIT ".$limit;
+
+$result = $db->query($sql);
+if ($result)
+{
+    $num = $db->num_rows($result);
+    $i = 0;
+    $var=True;
+
+    print"\n<!-- debut table -->\n";
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td>'.$langs->trans("LastWithdrawalReceipt",$limit).'</td>';
+    print '<td>'.$langs->trans("Date").'</td>';
+    print '<td align="right">'.$langs->trans("Amount").'</td>';
+    print '</tr>';
+
+    while ($i < min($num,$limit))
+    {
+        $obj = $db->fetch_object($result);
+        $var=!$var;
+
+        print "<tr $bc[$var]><td>";
+
+        print '<img border="0" src="./img/statut'.$obj->statut.'.png"></a>&nbsp;';
+
+        print '<a href="fiche.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
+
+        print '<td>'.dol_print_date($db->jdate($obj->datec),"dayhour")."</td>\n";
+
+        print '<td align="right">'.price($obj->amount)."</td>\n";
+
+        print "</tr>\n";
+        $i++;
+    }
+    print "</table><br>";
+    $db->free($result);
+}
+else
+{
+    dol_print_error($db);
+}
 
 /*
  * Invoices waiting for withdraw
@@ -162,56 +215,6 @@ else
     dol_print_error($db);
 }
 
-
-
-/*
- * Withdraw receipts
- */
-$limit=5;
-$sql = "SELECT p.rowid, p.ref, p.amount, p.datec";
-$sql .= " ,p.statut ";
-$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
-$sql .= " ORDER BY datec DESC LIMIT ".$limit;
-
-$result = $db->query($sql);
-if ($result)
-{
-    $num = $db->num_rows($result);
-    $i = 0;
-    $var=True;
-
-    print"\n<!-- debut table -->\n";
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td>'.$langs->trans("LastWithdrawalReceipt",$limit).'</td>';
-    print '<td>'.$langs->trans("Date").'</td>';
-    print '<td align="right">'.$langs->trans("Amount").'</td>';
-    print '</tr>';
-
-    while ($i < min($num,$limit))
-    {
-        $obj = $db->fetch_object($result);
-        $var=!$var;
-
-        print "<tr $bc[$var]><td>";
-
-        print '<img border="0" src="./img/statut'.$obj->statut.'.png"></a>&nbsp;';
-
-        print '<a href="fiche.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
-
-        print '<td>'.dol_print_date($db->jdate($obj->datec),"dayhour")."</td>\n";
-
-        print '<td align="right">'.price($obj->amount)."</td>\n";
-
-        print "</tr>\n";
-        $i++;
-    }
-    print "</table>";
-    $db->free($result);
-}
-else
-{
-    dol_print_error($db);
-}
 
 print '</td></tr></table>';
 

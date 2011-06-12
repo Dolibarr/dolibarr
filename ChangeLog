@@ -68,6 +68,7 @@ For users:
 - Fix: Better Postgresql compatibility.
 - Fix: Numbering module for invoices use same number for invoice 
        and credit note if mask is same.
+- Fix: Debug and clean withdraw module.
 
 For developers:
 - New: External modules can add tabs on agenda views.

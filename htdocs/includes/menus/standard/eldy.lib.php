@@ -1025,11 +1025,10 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
             {
                 $newmenu->add("/compta/prelevement/index.php?leftmenu=withdraw&amp;mainmenu=bank",$langs->trans("StandingOrders"),0,$user->rights->prelevement->bons->lire);
 
+                //if ($leftmenu=="withdraw") $newmenu->add("/compta/prelevement/demandes.php?status=0&amp;mainmenu=bank",$langs->trans("StandingOrderToProcess"),1,$user->rights->prelevement->bons->lire);
+
                 if ($leftmenu=="withdraw") $newmenu->add("/compta/prelevement/create.php?mainmenu=bank",$langs->trans("NewStandingOrder"),1,$user->rights->prelevement->bons->creer);
 
-                //if ($leftmenu=="withdraw") $newmenu->add("/compta/prelevement/demandes.php",$langs->trans("StandingOrder"),1,$user->rights->prelevement->bons->lire);
-                if ($leftmenu=="withdraw") $newmenu->add("/compta/prelevement/demandes.php?status=0&amp;mainmenu=bank",$langs->trans("StandingOrderToProcess"),1,$user->rights->prelevement->bons->lire);
-                //if ($leftmenu=="withdraw") $newmenu->add("/compta/prelevement/demandes.php?status=1",$langs->trans("StandingOrderProcessed"),2,$user->rights->prelevement->bons->lire);
 
                 if ($leftmenu=="withdraw") $newmenu->add("/compta/prelevement/bons.php?mainmenu=bank",$langs->trans("WithdrawalsReceipts"),1,$user->rights->prelevement->bons->lire);
                 if ($leftmenu=="withdraw") $newmenu->add("/compta/prelevement/liste.php?mainmenu=bank",$langs->trans("WithdrawalsLines"),1,$user->rights->prelevement->bons->lire);

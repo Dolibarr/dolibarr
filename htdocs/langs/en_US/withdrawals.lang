@@ -79,6 +79,8 @@ BankToReceiveWithdraw=Bank account to receive withdraws
 CreditDate=Credit on
 WithdrawalFileNotCapable=Unable to generate withdrawal receipt file for your country
 ShowWithdraw=Show Withdraw
+IfInvoiceNeedOnWithdrawPaymentWontBeClosed=However, if invoice has at least one withdrawal payment not yet processed, it won't be set as payed to allow to manage withdrawal before.
+DoStandingOrdersBeforePayments=This tabs allows you to request for a standing order. Once it will be finished, you can type the payment to close the invoice.
 
 ### Notifications 
 InfoCreditSubject=Payment of standing order %s by the bank

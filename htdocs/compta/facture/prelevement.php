@@ -400,6 +400,7 @@ if ($_REQUEST["facid"] > 0 || $_REQUEST["ref"])
         dol_fiche_end();
 
 
+
         /*
          * Withdrawal request
          */
@@ -441,6 +442,9 @@ if ($_REQUEST["facid"] > 0 || $_REQUEST["ref"])
         }
 
         print "</div><br>\n";
+
+
+        print $langs->trans("DoStandingOrdersBeforePayments").'<br>';
 
 
         /*

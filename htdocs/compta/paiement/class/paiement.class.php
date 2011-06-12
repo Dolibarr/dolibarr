@@ -185,12 +185,25 @@ class Paiement extends CommonObject
                             $deposits=$invoice->getSumDepositsUsed();
                             $alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
                             $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
-
-                            if ($remaintopay == 0)
+                            // If there is withdrawals request to do and not done yet, we wait before closing.
+                            $mustwait=0;
+                            $listofpayments=$invoice->getListOfPayments();
+                            foreach($listofpayments as $paym)
                             {
-    					        $result=$invoice->set_paid($user,'','');
+                                // This payment might be this one or a previous one
+                                if ($paym['type']=='PRE')
+                                {
+                                    if ($conf->prelevement->enabled)
+                                    {
+                                        // TODO Check if this payment has a withdraw request
+                                        // if not, $mustwait++;      // This will disable automatic close on invoice to allow to process
+                                    }
+                                }
                             }
-                            else dol_syslog("Remain to pay for invoice ".$facid." not null. We do nothing.");
+
+                            if ($remaintopay) dol_syslog("Remain to pay for invoice ".$facid." not null. We do nothing more.");
+                            else if ($mustwait) dol_syslog("There is ".$mustwait." differed payment to process, we do nothing more.");
+                            else $result=$invoice->set_paid($user,'','');
 					    }
 					}
 					else
@@ -282,7 +295,7 @@ class Paiement extends CommonObject
 			}
 		}
 
-		// Efface la ligne de paiement (dans paiement_facture et paiement)
+		// Delete payment (into paiement_facture and paiement)
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'paiement_facture';
 		$sql.= ' WHERE fk_paiement = '.$this->id;
 		$result = $this->db->query($sql);
@@ -430,7 +443,7 @@ class Paiement extends CommonObject
                         }
                     }
                 }
-                
+
 	            if (! $error && ! $notrigger)
 				{
 					// Appel des triggers

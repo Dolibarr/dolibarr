@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2010 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
@@ -246,7 +246,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             $formquestion[$i++]=array('type' => 'hidden','name' => 'socid', 'value' => $facture->socid);
             $formquestion[$i++]=array('type' => 'hidden','name' => 'type',  'value' => $facture->type);
         }
-        
+
         // Invoice with Paypal transaction
         if ($conf->paypalplus->enabled && $conf->global->PAYPAL_ENABLE_TRANSACTION_MANAGEMENT && ! empty($facture->ref_int))
         {
@@ -285,7 +285,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             print '</script>'."\n";
         }
 
-        print '<form name="add_paiement" action="paiement.php" method="post">';
+        print '<form name="add_paiement" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="add_paiement">';
         print '<input type="hidden" name="facid" value="'.$facture->id.'">';
@@ -634,6 +634,11 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         {
             //			print '<tr><td colspan="3" align="center">';
             print '<center><br><input type="checkbox" checked="checked" name="closepaidinvoices"> '.$langs->trans("ClosePaidInvoicesAutomatically");
+            /*if ($conf->prelevement->enabled)
+            {
+                $langs->load("withdrawals");
+                if ($conf->global->WITHDRAW_DISABLE_AUTOCREATE_ONPAYMENTS) print '<br>'.$langs->trans("IfInvoiceNeedOnWithdrawPaymentWontBeClosed");
+            }*/
             print '<br><input type="submit" class="button" value="'.$langs->trans('Save').'"></center>';
             //			print '</td></tr>';
         }

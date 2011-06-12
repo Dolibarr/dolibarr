@@ -2207,14 +2207,65 @@ class Facture extends CommonObject
         }
         else
         {
-            $this->error=$this->lasterror();
+            $this->error=$this->db->lasterror();
             return -1;
         }
     }
 
     /**
-     *    	\brief      Return amount (with tax) of all credit notes and deposits invoices used by invoice
-     *		\return		int			<0 if KO, Sum of credit notes and deposits amount otherwise
+     *  Return list of payments
+     *  @return     Array with list of payments
+     */
+    function getListOfPayments($filtertype='')
+    {
+        $retarray=array();
+
+        $table='paiement_facture';
+        $table2='paiement';
+        $field='fk_facture';
+        $field2='fk_paiement';
+        if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier')
+        {
+            $table='paiementfourn_facturefourn';
+            $table2='paiementfourn';
+            $field='fk_facturefourn';
+            $field2='fk_paiementfourn';
+        }
+
+        $sql = 'SELECT pf.amount, p.fk_paiement, p.datep, t.code';
+        $sql.= ' FROM '.MAIN_DB_PREFIX.$table.' as pf, '.MAIN_DB_PREFIX.$table2.' as p, '.MAIN_DB_PREFIX.'c_paiement as t';
+        $sql.= ' WHERE pf.'.$field.' = '.$this->id;
+        $sql.= ' AND pf.'.$field2.' = p.rowid';
+        $sql.= ' AND p.fk_paiement = t.rowid';
+        if ($filtertype) $sql.=" AND t.code='PRE'";
+
+        dol_syslog("Facture::getListOfPayments sql=".$sql, LOG_DEBUG);
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $num = $this->db->num_rows($resql);
+            $i=0;
+            while ($i < $num)
+            {
+                $obj = $this->db->fetch_object($resql);
+                $retarray[]=array('amount'=>$obj->amount,'type'=>$obj->code, 'date'=>$obj->datep);
+                $i++;
+            }
+            $this->db->free($resql);
+            return $retarray;
+        }
+        else
+        {
+            $this->error=$this->db->lasterror();
+            dol_print_error($this->db);
+            return array();
+        }
+    }
+
+
+    /**
+     *    	Return amount (with tax) of all credit notes and deposits invoices used by invoice
+     *		@return		int			<0 if KO, Sum of credit notes and deposits amount otherwise
      */
     function getSumCreditNotesUsed()
     {
@@ -2234,8 +2285,8 @@ class Facture extends CommonObject
     }
 
     /**
-     *    	\brief      Return amount (with tax) of all deposits invoices used by invoice
-     *		\return		int			<0 if KO, Sum of deposits amount otherwise
+     *    	Return amount (with tax) of all deposits invoices used by invoice
+     *		@return		int			<0 if KO, Sum of deposits amount otherwise
      */
     function getSumDepositsUsed()
     {
@@ -2902,9 +2953,9 @@ class Facture extends CommonObject
     }
 
     /**
-     * \brief     Supprime une demande de prelevement
-     * \param     user         utilisateur creant la demande
-     * \param     did          id de la demande a supprimer
+     *  Supprime une demande de prelevement
+     *  @param     user         utilisateur creant la demande
+     *  @param     did          id de la demande a supprimer
      */
     function demande_prelevement_delete($user, $did)
     {

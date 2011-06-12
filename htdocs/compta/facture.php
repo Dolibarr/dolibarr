@@ -2463,7 +2463,7 @@ else
             }
             print '</td></tr>';
 
-            // Montants
+            // Amount
             print '<tr><td>'.$langs->trans('AmountHT').'</td>';
             print '<td align="right" colspan="2" nowrap>'.price($object->total_ht).'</td>';
             print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
