@@ -1272,12 +1272,12 @@ td.liste_titre {
     background-image: none;
 }
 
-tr.liste_titre select.flat {
+/*tr.liste_titre select.flat {
 	float: left;
     width: 200px;
     position: relative;
     margin: 30px 10px 10px 0px;
-}
+}*/
 
 tr.liste_titre input.button {
 	float: left;
