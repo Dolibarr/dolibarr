@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,12 +38,16 @@ $socid = GETPOST("socid",'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe',$socid,'');
 
-$socname=GETPOST("socname",'alpha');
-$stcomm=GETPOST("stcomm",'int');
+$socname            = GETPOST("socname",'alpha');
+$stcomm             = GETPOST("stcomm",'int');
+$search_nom         = GETPOST("search_nom");
+$search_ville       = GETPOST("search_ville");
+$search_departement = GETPOST("search_departement");
+$search_datec       = GETPOST("search_datec");
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$page      = GETPOST("page",'int');
 if ($page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -51,7 +56,7 @@ if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="s.nom";
 
 $search_level_from = GETPOST("search_level_from","alpha");
-$search_level_to = GETPOST("search_level_to","alpha");
+$search_level_to   = GETPOST("search_level_to","alpha");
 
 // If both parameters are set, search for everything BETWEEN them
 if ($search_level_from != '' && $search_level_to != '')
@@ -161,7 +166,7 @@ $htmlother=new FormOther($db);
 $sql = "SELECT s.rowid, s.nom, s.ville, s.datec, s.datea, s.status as status,";
 $sql.= " st.libelle as stcomm, s.prefix_comm, s.fk_stcomm, s.fk_prospectlevel,";
 $sql.= " d.nom as departement";
-// Updated by Matelli (see http://matelli.fr/showcases/patchs-dolibarr/enhance-prospect-searching.html)
+// Updated by Matelli 
 // We'll need these fields in order to filter by sale (including the case where the user can only see his prospects)
 if ($search_sale) $sql .= ", sc.fk_soc, sc.fk_user";
 // We'll need these fields in order to filter by categ
@@ -181,8 +186,10 @@ if ($search_sale) $sql.= " AND s.rowid = sc.fk_soc";		// Join for the needed tab
 if ($search_categ) $sql.= " AND s.rowid = cs.fk_societe";	// Join for the needed table to filter by categ
 if (isset($stcomm) && $stcomm != '') $sql.= " AND s.fk_stcomm=".$stcomm;
 
-if ($_GET["search_nom"])   $sql .= " AND s.nom like '%".$db->escape(strtolower($_GET["search_nom"]))."%'";
-if ($_GET["search_ville"]) $sql .= " AND s.ville like '%".$db->escape(strtolower($_GET["search_ville"]))."%'";
+if ($search_nom)   $sql .= " AND s.nom like '%".$db->escape(strtolower($search_nom))."%'";
+if ($search_ville) $sql .= " AND s.ville like '%".$db->escape(strtolower($search_ville))."%'";
+if ($search_departement) $sql .= " AND d.nom like '%".$db->escape(strtolower($search_departement))."%'";
+if ($search_datec) $sql .= " AND s.datec LIKE '%".$db->escape($search_datec)."%'";
 // Insert levels filters
 if ($search_levels)
 {
@@ -233,8 +240,8 @@ if ($resql)
         llxHeader('',$langs->trans("ThirdParty"),$help_url);
 	}
 
-	$param='&amp;stcomm='.$stcomm.'&amp;search_nom='.urlencode($_GET["search_nom"]).'&amp;search_ville='.urlencode($_GET["search_ville"]);
- 	// Added by Matelli (see http://matelli.fr/showcases/patchs-dolibarr/enhance-prospect-searching.html)
+	$param='&amp;stcomm='.$stcomm.'&amp;search_nom='.urlencode($search_nom).'&amp;search_ville='.urlencode($search_ville);
+ 	// Added by Matelli 
  	// Store the status filter in the URL
  	if (isSet($search_cstc))
  	{
@@ -296,18 +303,18 @@ if ($resql)
 
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_nom" size="10" value="'.$_GET["search_nom"].'">';
+	print '<input type="text" class="flat" name="search_nom" size="10" value="'.$search_nom.'">';
 	print '</td><td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_ville" size="8" value="'.$_GET["search_ville"].'">';
+	print '<input type="text" class="flat" name="search_ville" size="10" value="'.$search_ville.'">';
 	print '</td>';
- 	print '<td class="liste_titre">';
-    print '&nbsp;';
+ 	print '<td class="liste_titre" align="center">';
+    print '<input type="text" class="flat" name="search_departement" size="10" value="'.$search_departement.'">';
     print '</td>';
-    print '<td class="liste_titre">';
-    print '&nbsp;';
+    print '<td align="center" class="liste_titre">';
+	print '<input class="flat" type="text" size="10" name="search_datec" value="'.$search_datec.'">';
     print '</td>';
 
- 	// Added by Matelli (see http://matelli.fr/showcases/patchs-dolibarr/enhance-prospect-searching.html)
+ 	// Added by Matelli 
  	print '<td class="liste_titre" align="center">';
  	// Generate in $options_from the list of each option sorted
  	$options_from = '<option value="">&nbsp;</option>';
@@ -364,7 +371,7 @@ if ($resql)
 
 		$var=!$var;
 
-		print "<tr ".$bc[$var].">";
+		print '<tr '.$bc[$var].'>';
 		print '<td>';
 		$prospectstatic->id=$obj->rowid;
 		$prospectstatic->nom=$obj->nom;
