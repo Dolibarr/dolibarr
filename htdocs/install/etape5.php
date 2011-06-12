@@ -231,11 +231,8 @@ if ($action == "set" || preg_match('/upgrade/i',$action))
                         $file=$modtoactivatenew.'.class.php';
 						dolibarr_install_syslog('install/etape5.php Activate module file='.$file);
                         $res=dol_include_once("/includes/modules/".$file);
-                        //print 'x'.dol_buildpath("/includes/modules/".$file);exit;
 
                         $res=Activate($modtoactivatenew,1);
-                        //$objMod = new $modtoactivatenew($db);
-                        //$result=$objMod->init();
                         if (! $result) print 'ERROR in activating module file='.$file;
 					}
 				}
