@@ -42,10 +42,10 @@ $langs->load("commercial");
 $error=0; $errors=array();
 
 $action = GETPOST('action');
-
-// Security check
 $socid = GETPOST("socid");
 $id = GETPOST("id");
+
+// Security check
 if ($user->societe_id) $socid=$user->societe_id;
 
 $object = new Contact($db);
@@ -601,6 +601,7 @@ else
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="id" value="'.GETPOST("id").'">';
             print '<input type="hidden" name="action" value="update">';
+            print '<input type="hidden" name="backtopage" value="'.GETPOST('backtopage').'">';
             print '<input type="hidden" name="contactid" value="'.$object->id.'">';
             print '<input type="hidden" name="old_name" value="'.$object->name.'">';
             print '<input type="hidden" name="old_firstname" value="'.$object->firstname.'">';
