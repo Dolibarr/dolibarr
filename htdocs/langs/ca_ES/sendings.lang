@@ -53,6 +53,7 @@ DateReceived=Data real de recepció
 SendShippingByEMail=Enviament d'expedició per e-mail
 SendShippingRef=Enviament d'expedició %s
 ActionsOnShipping=Events sobre l'expedició
+LinkToTrackYourPackage=Enllaç per al seguiment del seu paquet
 # Sending methods
 SendingMethodCATCH=Recollit pel client
 SendingMethodTRANS=Transportista
