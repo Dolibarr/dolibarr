@@ -38,11 +38,12 @@ if ($page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
+if (! $sortorder) $sortorder="DESC";
+if (! $sortfield) $sortfield="d.datedon";
+$limit = $conf->liste_limit;
 
 $statut=isset($_GET["statut"])?$_GET["statut"]:"-1";
 
-if (! $sortorder) {  $sortorder="DESC"; }
-if (! $sortfield) {  $sortfield="d.datedon"; }
 
 
 /*
@@ -66,7 +67,7 @@ if ($statut >= 0)
 	$sql .= " AND d.fk_statut = ".$statut;
 }
 $sql.= $db->order($sortfield,$sortorder);
-$sql.= $db->plimit($conf->liste_limit, $offset);
+$sql.= $db->plimit($limit+1, $offset);
 
 $result = $db->query($sql);
 if ($result)
@@ -104,7 +105,7 @@ if ($result)
 	print "</tr>\n";
 
 	$var=True;
-	while ($i < $num)
+	while ($i < min($num,$limit))
 	{
 		$objp = $db->fetch_object($result);
 		$var=!$var;

@@ -20,10 +20,10 @@
  */
 
 /**
-	    \file       htdocs/compta/deplacement/index.php
-		\brief      Page liste des deplacements
-		\version	$Id$
-*/
+ \file       htdocs/compta/deplacement/index.php
+ \brief      Page liste des deplacements
+ \version	$Id$
+ */
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/tva/class/tva.class.php");
@@ -38,15 +38,6 @@ $socid = $_GET["socid"]?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'deplacement','','');
 
-
-/*
- * View
- */
-
-llxHeader();
-
-$tripandexpense_static=new Deplacement($db);
-
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -59,6 +50,14 @@ if (! $sortfield) $sortfield="d.dated";
 $limit = $conf->liste_limit;
 
 
+/*
+ * View
+ */
+
+$tripandexpense_static=new Deplacement($db);
+
+llxHeader();
+
 $sql = "SELECT s.nom, s.rowid as socid,";				// Ou
 $sql.= " d.rowid, d.type, d.dated as dd, d.km, ";		// Comment
 $sql.= " u.name, u.firstname";							// Qui
@@ -70,58 +69,59 @@ $sql.= " WHERE d.fk_user = u.rowid";
 $sql.= " AND d.entity = ".$conf->entity;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND sc.fk_user = " .$user->id;
 if ($socid) $sql.= " AND s.rowid = ".$socid;
-$sql.= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit + 1 ,$offset);
+$sql.= $db->order($sortfield,$sortorder);
+$sql.= $db->plimit($limit + 1 ,$offset);
 
 //print $sql;
 $resql=$db->query($sql);
 if ($resql)
 {
-  $num = $db->num_rows($resql);
+    $num = $db->num_rows($resql);
 
-  print_barre_liste($langs->trans("ListOfFees"), $page, "index.php","&socid=$socid",$sortfield,$sortorder,'',$num);
+    print_barre_liste($langs->trans("ListOfFees"), $page, "index.php","&socid=$socid",$sortfield,$sortorder,'',$num);
 
-  $i = 0;
-  print '<table class="noborder" width="100%">';
-  print "<tr class=\"liste_titre\">";
-  print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"d.rowid","","&socid=$socid",'',$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"d.type","","&socid=$socid",'',$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"d.dated","","&socid=$socid",'',$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&socid=$socid",'',$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("Person"),$_SERVER["PHP_SELF"],"u.name","","&socid=$socid",'',$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("FeesKilometersOrAmout"),$_SERVER["PHP_SELF"],"d.km","","&socid=$socid",'align="right"',$sortfield,$sortorder);
-  print_liste_field_titre('',$_SERVER["PHP_SELF"]);
-  print "</tr>\n";
+    $i = 0;
+    print '<table class="noborder" width="100%">';
+    print "<tr class=\"liste_titre\">";
+    print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"d.rowid","","&socid=$socid",'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"d.type","","&socid=$socid",'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"d.dated","","&socid=$socid",'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&socid=$socid",'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Person"),$_SERVER["PHP_SELF"],"u.name","","&socid=$socid",'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("FeesKilometersOrAmout"),$_SERVER["PHP_SELF"],"d.km","","&socid=$socid",'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre('',$_SERVER["PHP_SELF"], '');
+    print "</tr>\n";
 
-  $var=true;
-  while ($i < $num)
+    $var=true;
+    while ($i < min($num,$limit))
     {
-      $objp = $db->fetch_object($resql);
+        $objp = $db->fetch_object($resql);
 
-      $soc = new Societe($db);
-      if ($objp->socid) $soc->fetch($objp->socid);
+        $soc = new Societe($db);
+        if ($objp->socid) $soc->fetch($objp->socid);
 
-      $var=!$var;
-      print "<tr $bc[$var]>";
-      print '<td><a href="fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowTrip"),"trip").' '.$objp->rowid.'</a></td>';
-      print '<td>'.$langs->trans($objp->type).'</td>';
-      print '<td>'.dol_print_date($db->jdate($objp->dd),'day').'</td>';
-      if ($objp->socid) print '<td>'.$soc->getNomUrl(1).'</td>';
-      else print '<td>&nbsp;</td>';
-      print '<td align="left"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.$objp->firstname.' '.$objp->name.'</a></td>';
-      print '<td align="right">'.$objp->km.'</td>';
+        $var=!$var;
+        print "<tr $bc[$var]>";
+        print '<td><a href="fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowTrip"),"trip").' '.$objp->rowid.'</a></td>';
+        print '<td>'.$langs->trans($objp->type).'</td>';
+        print '<td>'.dol_print_date($db->jdate($objp->dd),'day').'</td>';
+        if ($objp->socid) print '<td>'.$soc->getNomUrl(1).'</td>';
+        else print '<td>&nbsp;</td>';
+        print '<td align="left"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.$objp->firstname.' '.$objp->name.'</a></td>';
+        print '<td align="right">'.$objp->km.'</td>';
 
-      print '<td align="right">'.$tripandexpense_static->getLibStatut(5).'</td>';
-      print "</tr>\n";
+        print '<td align="right">'.$tripandexpense_static->getLibStatut(5).'</td>';
+        print "</tr>\n";
 
-      $i++;
+        $i++;
     }
 
-  print "</table>";
-  $db->free($resql);
+    print "</table>";
+    $db->free($resql);
 }
 else
 {
-  dol_print_error($db);
+    dol_print_error($db);
 }
 $db->close();
 
