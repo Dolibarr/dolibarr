@@ -3611,15 +3611,12 @@ function complete_substitutions_array(&$substitutionarray,$outputlangs,$object='
             if (preg_match('/functions_(.*)\.lib\.php/i',$substitfile['name'],$reg))
             {
                 $module=$reg[1];
-                if (! empty($conf->$module->enabled))   // If module enabled and complete
+                if (! empty($conf->$module->enabled))   // If module enabled
                 {
                     dol_syslog("Library functions_".$module.".lib.php found into ".$dirroot);
                     require_once($dirroot."/includes/modules/substitutions/functions_".$module.".lib.php");
                     $function_name=$module."_completesubstitutionarray";
                     $function_name($substitutionarray,$outputlangs,$object);
-                    //$res=call_user_func_array($module."_completesubstitutionarray", array($substitutionarray,$outputlangs,$object));
-                    //print $res;
-                    //numberwords_completesubstitutionarray($substitutionarray,$outputlangs,$object);
                 }
             }
         }
