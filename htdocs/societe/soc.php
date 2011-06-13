@@ -1864,27 +1864,30 @@ else
         print '</div>'."\n";
         print '<br>';
 
-        print '<table width="100%"><tr><td valign="top" width="50%">';
-        print '<a name="builddoc"></a>'; // ancre
+        if (empty($conf->global->SOCIETE_DISABLE_BUILDDOC))
+        {
+            print '<table width="100%"><tr><td valign="top" width="50%">';
+            print '<a name="builddoc"></a>'; // ancre
 
-        /*
-         * Documents generes
-         */
-        $filedir=$conf->societe->dir_output.'/'.$soc->id;
-        $urlsource=$_SERVER["PHP_SELF"]."?socid=".$soc->id;
-        $genallowed=$user->rights->societe->creer;
-        $delallowed=$user->rights->societe->supprimer;
+            /*
+             * Documents generes
+             */
+            $filedir=$conf->societe->dir_output.'/'.$soc->id;
+            $urlsource=$_SERVER["PHP_SELF"]."?socid=".$soc->id;
+            $genallowed=$user->rights->societe->creer;
+            $delallowed=$user->rights->societe->supprimer;
 
-        $var=true;
+            $var=true;
 
-        $somethingshown=$formfile->show_documents('company',$soc->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$soc->default_lang);
+            $somethingshown=$formfile->show_documents('company',$soc->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$soc->default_lang);
 
-        print '</td>';
-        print '<td></td>';
-        print '</tr>';
-        print '</table>';
+            print '</td>';
+            print '<td></td>';
+            print '</tr>';
+            print '</table>';
 
-        print '<br>';
+            print '<br>';
+        }
 
         // Subsidiaries list
         $result=show_subsidiaries($conf,$langs,$db,$soc);
