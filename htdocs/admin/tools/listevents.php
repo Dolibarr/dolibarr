@@ -51,6 +51,11 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="dateevent";
 
+$search_code = GETPOST("search_code");
+$search_ip   = GETPOST("search_ip");
+$search_user = GETPOST("search_user");
+$search_desc = GETPOST("search_desc");
+$search_ua   = GETPOST("search_ua");
 
 /*
  * Actions
@@ -87,11 +92,11 @@ $sql.= " u.login";
 $sql.= " FROM ".MAIN_DB_PREFIX."events as e";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = e.fk_user";
 $sql.= " WHERE e.entity = ".$conf->entity;
-if ($_GET["search_code"]) { $usefilter++; $sql.=" AND e.type like '%".$_GET["search_code"]."%'"; }
-if ($_GET["search_ip"])   { $usefilter++; $sql.=" AND e.ip like '%".$_GET["search_ip"]."%'"; }
-if ($_GET["search_user"]) { $usefilter++; $sql.=" AND u.login like '%".$_GET["search_user"]."%'"; }
-if ($_GET["search_desc"]) { $usefilter++; $sql.=" AND e.description like '%".$_GET["search_desc"]."%'"; }
-if ($_GET["search_ua"])   { $usefilter++; $sql.=" AND e.user_agent like '%".$_GET["search_ua"]."%'"; }
+if ($search_code) { $usefilter++; $sql.=" AND e.type like '%".$search_code."%'"; }
+if ($search_ip)   { $usefilter++; $sql.=" AND e.ip like '%".$search_ip."%'"; }
+if ($search_user) { $usefilter++; $sql.=" AND u.login like '%".$search_user."%'"; }
+if ($search_desc) { $usefilter++; $sql.=" AND e.description like '%".$search_desc."%'"; }
+if ($search_ua)   { $usefilter++; $sql.=" AND e.user_agent like '%".$search_ua."%'"; }
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
 //print $sql;
@@ -121,27 +126,27 @@ if ($result)
 	print "</tr>\n";
 
 
-	// Lignes des champs de filtre
+	// Lignes des champs de filtres
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<tr class="liste_titre">';
 
 	print '<td class="liste_titre">&nbsp;</td>';
 
 	print '<td align="left" class="liste_titre">';
-	print '<input class="flat" type="text" size="10" name="search_code" value="'.$_GET["search_code"].'">';
+	print '<input class="flat" type="text" size="10" name="search_code" value="'.$search_code.'">';
 	print '</td>';
 
 	// IP
 	print '<td align="left" class="liste_titre">';
-	print '<input class="flat" type="text" size="10" name="search_ip" value="'.$_GET["search_ip"].'">';
+	print '<input class="flat" type="text" size="10" name="search_ip" value="'.$search_ip.'">';
 	print '</td>';
 
 	print '<td align="left" class="liste_titre">';
-	print '<input class="flat" type="text" size="10" name="search_user" value="'.$_GET["search_user"].'">';
+	print '<input class="flat" type="text" size="10" name="search_user" value="'.$search_user.'">';
 	print '</td>';
 
 	print '<td align="left" class="liste_titre">';
-	print '<input class="flat" type="text" size="10" name="search_desc" value="'.$_GET["search_desc"].'">';
+	print '<input class="flat" type="text" size="10" name="search_desc" value="'.$search_desc.'">';
 	print '</td>';
 
 	print '<td align="right" class="liste_titre">';
@@ -159,7 +164,7 @@ if ($result)
 
 		$var=!$var;
 
-		print "<tr $bc[$var]>";
+		print '<tr '.$bc[$var].'>';
 
 		// Date
 		print '<td align="left" nowrap="nowrap">'.dol_print_date($db->jdate($obj->dateevent),'%Y-%m-%d %H:%M:%S').'</td>';
