@@ -179,7 +179,7 @@ else {
     dol_print_error($db);
 }
 
-// On ajoute les paiements anciennes version, non lies par paiement_facture
+// On ajoute les paiements ancienne version, non lies par paiement_facture donc sans user
 if ($modecompta != 'CREANCES-DETTES')
 {
     $sql = "SELECT -1 as rowidx, '' as name, '' as firstname, sum(p.amount) as amount_ttc";
@@ -221,7 +221,7 @@ print "<tr class=\"liste_titre\">";
 print_liste_field_titre($langs->trans("User"),$_SERVER["PHP_SELF"],"name","",'&amp;year='.($year).'&modecompta='.$modecompta,"",$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"amount_ttc","",'&amp;year='.($year).'&modecompta='.$modecompta,'align="right"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("Percentage"),$_SERVER["PHP_SELF"],"amount_ttc","",'&amp;year='.($year).'&modecompta='.$modecompta,'align="right"',$sortfield,$sortorder);
-if ($conf->commande->enabled && $conf->global->MAIN_FEATURES_LEVEL == 2) print_liste_field_titre($langs->trans("OrderStats"),$_SERVER["PHP_SELF"],"","","",'align="center" width="20%"');
+if ($conf->global->MAIN_FEATURES_LEVEL == 2) print_liste_field_titre($langs->trans("OtherStatistics"),$_SERVER["PHP_SELF"],"","","",'align="center" width="20%"');
 print "</tr>\n";
 $var=true;
 
@@ -250,8 +250,9 @@ if (sizeof($amount))
     foreach($arrayforsort as $key => $value)
     {
         $var=!$var;
-        print "<tr $bc[$var]>";
+        print "<tr ".$bc[$var].">";
 
+        // Third party
         $fullname=$name[$key];
         if ($key >= 0) {
             $linkname='<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$key.'">'.img_object($langs->trans("ShowUser"),'user').' '.$fullname.'</a>';
@@ -260,16 +261,35 @@ if (sizeof($amount))
             $linkname=$langs->trans("PaymentsNotLinkedToUser");
         }
         print "<td>".$linkname."</td>\n";
-        print '<td align="right">'.price($amount[$key]).'</td>';
-        print '<td align="right">'.($catotal > 0 ? round(100 * $amount[$key] / $catotal,2).'%' : '&nbsp;').'</td>';
-        if ($conf->commande->enabled && $conf->global->MAIN_FEATURES_LEVEL == 2)
+
+        // Amount
+        print '<td align="right">';
+        if ($modecompta != 'CREANCES-DETTES')
         {
-        	if($key>0){
-           		print '<td align="center"><a href="'.DOL_URL_ROOT.'/commande/stats/index.php?id='.$key.'">'.img_picto($langs->trans("Show"),"stats").'</a></td>';
-        	} else {
-        		print '<td> &nbsp; </td>' ;
-        	}
+            if ($key > 0) print '<a href="'.DOL_URL_ROOT.'/compta/paiement/liste.php?userid='.$key.'">';
+            else print '<a href="'.DOL_URL_ROOT.'/compta/paiement/liste.php?userid=-1">';
         }
+        else
+        {
+            if ($key > 0) print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?userid='.$key.'">';
+            else print '<a href="#">';
+        }
+        print price($amount[$key]);
+        print '</td>';
+
+        // Percent
+        print '<td align="right">'.($catotal > 0 ? round(100 * $amount[$key] / $catotal,2).'%' : '&nbsp;').'</td>';
+
+        // Other stats
+        if ($conf->global->MAIN_FEATURES_LEVEL == 2)
+        {
+            print '<td align="center">';
+            if ($conf->commande->enabled && $key>0) print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/stats/index.php?userid='.$key.'">'.img_picto($langs->trans("OrderStats"),"stats").'</a>&nbsp;';
+            if ($conf->facture->enabled && $key>0) print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?userid='.$key.'">'.img_picto($langs->trans("InvoiceStats"),"stats").'</a>&nbsp;';
+            if ($conf->propal->enabled && $key>0) print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/propal/stats/index.php?userid='.$key.'">'.img_picto($langs->trans("ProposalStats"),"stats").'</a>&nbsp;';
+            print '</td>';
+        }
+
         print "</tr>\n";
         $i++;
     }

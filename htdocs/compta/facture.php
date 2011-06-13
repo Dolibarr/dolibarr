@@ -60,6 +60,7 @@ $socid=GETPOST('socid');
 $action=GETPOST('action');
 $confirm=GETPOST('confirm');
 $lineid=GETPOST('lineid');
+$userid=GETPOST('userid');
 
 // Security check
 $fieldid = isset($_GET["ref"])?'facnumber':'rowid';
@@ -1098,10 +1099,7 @@ if ($action == 'updateligne' && $user->rights->facture->creer && $_POST['cancel'
 }
 
 
-/*
- * Ordonnancement des lignes
- */
-
+// Modify line position (up)
 if ($action == 'up' && $user->rights->facture->creer)
 {
     $object->fetch($id);
@@ -1123,7 +1121,7 @@ if ($action == 'up' && $user->rights->facture->creer)
     Header ('Location: '.$_SERVER["PHP_SELF"].'?facid='.$object->id.'#'.$_GET['rowid']);
     exit;
 }
-
+// Modify line position (down)
 if ($action == 'down' && $user->rights->facture->creer)
 {
     $object->fetch($id);
@@ -2926,19 +2924,17 @@ else
         $page = GETPOST("page",'int');
         if ($page == -1) { $page = 0; }
         $offset = $conf->liste_limit * $page;
+        if (! $sortorder) $sortorder='DESC';
+        if (! $sortfield) $sortfield='f.datef';
+        $limit = $conf->liste_limit;
+
         $pageprev = $page - 1;
         $pagenext = $page + 1;
 
         $month    =GETPOST('month','int');
         $year     =GETPOST('year','int');
 
-        $limit = $conf->liste_limit;
-        if (! $sortorder) $sortorder='DESC';
-        if (! $sortfield) $sortfield='f.datef';
-
         $facturestatic=new Facture($db);
-
-        if ($page == -1) $page = 0 ;
 
         $sql = 'SELECT ';
         $sql.= ' f.rowid as facid, f.facnumber, f.type, f.increment, f.total, f.total_ttc,';
@@ -2955,6 +2951,11 @@ else
         $sql.= " AND f.entity = ".$conf->entity;
         if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
         if ($socid) $sql.= ' AND s.rowid = '.$socid;
+        if ($userid)
+        {
+            if ($userid == -1) $sql.=' AND f.fk_user_author IS NULL';
+            else $sql.=' AND f.fk_user_author = '.$user->id;
+        }
         if ($_GET['filtre'])
         {
             $filtrearr = explode(',', $_GET['filtre']);

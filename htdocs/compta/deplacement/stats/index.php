@@ -33,6 +33,8 @@ $langs->load("trips");
 $WIDTH=500;
 $HEIGHT=200;
 
+$userid=GETPOST('userid');
+$socid=GETPOST('socid');
 // Securite acces client
 if ($user->societe_id > 0)
 {

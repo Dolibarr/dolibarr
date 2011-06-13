@@ -309,7 +309,7 @@ if ($socid > 0)
         }
     }
 
-    print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$societe->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
+    //print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$societe->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
 
 	print '</div>';
 
@@ -318,6 +318,7 @@ if ($socid > 0)
 
     if (! empty($conf->global->MAIN_REPEATCONTACTONEACHTAB))
     {
+        print '<br>';
         // List of contacts
         show_contacts($conf,$langs,$db,$societe);
     }

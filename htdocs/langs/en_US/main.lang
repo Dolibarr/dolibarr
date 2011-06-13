@@ -305,6 +305,7 @@ Option=Option
 List=List
 FullList=Full list
 Statistics=Statistics
+OtherStatistics=Other statistics
 Status=Status
 Ref=Ref.
 RefSupplier=Ref. supplier

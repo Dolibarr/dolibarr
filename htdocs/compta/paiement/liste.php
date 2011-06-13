@@ -32,8 +32,9 @@ require_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
 $langs->load("bills");
 
 // Security check
-$facid = GETPOST("facid");
-$socid = GETPOST("socid");
+$facid =GETPOST("facid");
+$socid =GETPOST("socid");
+$userid=GETPOST('userid');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'facture',$facid,'');
 
@@ -102,6 +103,11 @@ else
         $sql.= " AND sc.fk_user = " .$user->id;
     }
     if ($socid > 0) $sql.= " AND f.fk_soc = ".$socid;
+    if ($userid)
+    {
+        if ($userid == -1) $sql.= " AND f.fk_user_author IS NULL";
+        else  $sql.= " AND f.fk_user_author = ".$userid;
+    }
     // Search criteria
     if ($_REQUEST["search_ref"])         $sql .=" AND p.rowid=".$_REQUEST["search_ref"];
     if ($_REQUEST["search_account"])     $sql .=" AND b.fk_account=".$_REQUEST["search_account"];

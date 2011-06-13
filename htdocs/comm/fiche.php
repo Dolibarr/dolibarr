@@ -848,21 +848,17 @@ if ($socid > 0)
 		}
 	}
 
-	if ($user->rights->societe->contact->creer)
+	/*if ($user->rights->societe->contact->creer)
 	{
 		print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
-	}
-
-	if(!empty($conf->global->MAIN_MODULE_CHRONODOCS) && $user->rights->chronodocs->entries->write)
-	{
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/chronodocs/fiche.php?socid='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddChronodoc").'</a>';
-	}
+	}*/
 
 	print '</div>';
 	print "<br>\n";
 
 	if (! empty($conf->global->MAIN_REPEATCONTACTONEACHTAB))
 	{
+	    print '<br>';
 		// List of contacts
 		show_contacts($conf,$langs,$db,$objsoc);
 	}

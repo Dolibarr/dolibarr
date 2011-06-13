@@ -379,16 +379,17 @@ if ( $societe->fetch($socid) )
         }
     }
 
-	if ($user->rights->societe->contact->creer)
+	/*if ($user->rights->societe->contact->creer)
 	{
 		print "<a class=\"butAction\" href=\"".DOL_URL_ROOT.'/contact/fiche.php?socid='.$socid."&amp;action=create\">".$langs->trans("AddContact")."</a>";
-	}
+	}*/
 
 	print '</div>';
 	print '<br>';
 
     if (! empty($conf->global->MAIN_REPEATCONTACTONEACHTAB))
     {
+        print '<br>';
         // List of contacts
         show_contacts($conf,$langs,$db,$societe);
     }

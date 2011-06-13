@@ -1838,15 +1838,16 @@ else
             print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$soc->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>'."\n";
         }
 
-        if ($user->rights->societe->contact->creer)
+        /*if ($user->rights->societe->contact->creer)
         {
             print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$soc->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>'."\n";
         }
+        */
 
-        if ($conf->projet->enabled && $user->rights->projet->creer)
+        /*if ($conf->projet->enabled && $user->rights->projet->creer)
         {
             print '<a class="butAction" href="'.DOL_URL_ROOT.'/projet/fiche.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddProject").'</a>'."\n";
-        }
+        }*/
 
         if ($user->rights->societe->supprimer)
         {
@@ -1879,8 +1880,7 @@ else
         $somethingshown=$formfile->show_documents('company',$soc->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$soc->default_lang);
 
         print '</td>';
-        print '<td>';
-        print '</td>';
+        print '<td></td>';
         print '</tr>';
         print '</table>';
 
@@ -1892,11 +1892,11 @@ else
         // Contacts list
         if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
         {
-            $result=show_contacts($conf,$langs,$db,$soc);
+            $result=show_contacts($conf,$langs,$db,$soc,$_SERVER["PHP_SELF"].'?socid='.$soc->id);
         }
 
         // Projects list
-        $result=show_projects($conf,$langs,$db,$soc);
+        $result=show_projects($conf,$langs,$db,$soc,$_SERVER["PHP_SELF"].'?socid='.$soc->id);
     }
 
 }

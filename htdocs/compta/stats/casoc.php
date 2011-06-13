@@ -227,6 +227,7 @@ print "<tr class=\"liste_titre\">";
 print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"nom","",'&amp;year='.($year).'&modecompta='.$modecompta,"",$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"amount_ttc","",'&amp;year='.($year).'&modecompta='.$modecompta,'align="right"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("Percentage"),$_SERVER["PHP_SELF"],"amount_ttc","",'&amp;year='.($year).'&modecompta='.$modecompta,'align="right"',$sortfield,$sortorder);
+if ($conf->global->MAIN_FEATURES_LEVEL == 2) print_liste_field_titre($langs->trans("OtherStatistics"),$_SERVER["PHP_SELF"],"","","",'align="center" width="20%"');
 print "</tr>\n";
 $var=true;
 
@@ -255,8 +256,9 @@ if (sizeof($amount))
 	foreach($arrayforsort as $key=>$value)
 	{
 		$var=!$var;
-		print "<tr $bc[$var]>";
+		print "<tr ".$bc[$var].">";
 
+		// Third party
 		$fullname=$name[$key];
 		if ($key > 0) {
 			$linkname='<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$key.'">'.img_object($langs->trans("ShowCompany"),'company').' '.$fullname.'</a>';
@@ -265,19 +267,44 @@ if (sizeof($amount))
 			$linkname=$langs->trans("PaymentsNotLinkedToInvoice");
 		}
 		print "<td>".$linkname."</td>\n";
+
+		// Amount
 		print '<td align="right">';
-		if ($key > 0) print '<a href="'.DOL_URL_ROOT.'/compta/paiement/liste.php?socid='.$key.'">';
-		else print '<a href="'.DOL_URL_ROOT.'/compta/paiement/liste.php?orphelins=1">';
+		if ($modecompta != 'CREANCES-DETTES')
+		{
+    		if ($key > 0) print '<a href="'.DOL_URL_ROOT.'/compta/paiement/liste.php?socid='.$key.'">';
+    		else print '<a href="'.DOL_URL_ROOT.'/compta/paiement/liste.php?orphelins=1">';
+		}
+		else
+		{
+            if ($key > 0) print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?socid='.$key.'">';
+            else print '<a href="#">';
+		}
 		print price($amount[$key]);
 		print '</a>';
 		print '</td>';
+
+		// Percent;
 		print '<td align="right">'.($catotal > 0 ? round(100 * $amount[$key] / $catotal, 2).'%' : '&nbsp;').'</td>';
+
+        // Other stats
+        if ($conf->global->MAIN_FEATURES_LEVEL == 2)
+        {
+            print '<td align="center">';
+            if ($conf->commande->enabled && $key>0) print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/stats/index.php?userid='.$key.'">'.img_picto($langs->trans("OrderStats"),"stats").'</a>&nbsp;';
+            if ($conf->facture->enabled && $key>0) print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?userid='.$key.'">'.img_picto($langs->trans("InvoiceStats"),"stats").'</a>&nbsp;';
+            if ($conf->propal->enabled && $key>0) print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/propal/stats/index.php?userid='.$key.'">'.img_picto($langs->trans("ProposalStats"),"stats").'</a>&nbsp;';
+            print '</td>';
+        }
+
 		print "</tr>\n";
 		$i++;
 	}
 
 	// Total
-	print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">'.price($catotal).'</td><td>&nbsp;</td></tr>';
+	print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">'.price($catotal).'</td><td>&nbsp;</td>';
+	if ($conf->global->MAIN_FEATURES_LEVEL == 2) print '<td>&nbsp;</td>';
+	print '</tr>';
 
 	$db->free($result);
 }

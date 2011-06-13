@@ -39,8 +39,9 @@ else {
     $year_end=$year_start + ($nbofyear-1);
 }
 
+$userid=GETPOST('userid');
+$socid=GETPOST('socid');
 // Security check
-$socid = isset($_REQUEST["socid"])?$_REQUEST["socid"]:'';
 if ($user->societe_id > 0) $socid = $user->societe_id;
 if (!$user->rights->compta->resultat->lire && !$user->rights->accounting->comptarapport->lire)
 accessforbidden();

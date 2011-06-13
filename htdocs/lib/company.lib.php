@@ -337,8 +337,9 @@ function getFormeJuridiqueLabel($code)
  * 		@param		lang		Object lang
  * 		@param		db			Database handler
  * 		@param		object		Third party object
+ *      @param      backtopage  Url to go once contact is created
  */
-function show_projects($conf,$langs,$db,$object)
+function show_projects($conf,$langs,$db,$object,$backtopage='')
 {
     global $user;
 
@@ -348,8 +349,14 @@ function show_projects($conf,$langs,$db,$object)
     {
         $langs->load("projects");
 
+        $buttoncreate='';
+        if ($conf->projet->enabled && $user->rights->projet->creer)
+        {
+            $buttoncreate='<a class="butAction" href="'.DOL_URL_ROOT.'/projet/fiche.php?socid='.$object->id.'&action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject").'</a>';
+        }
+
         print "\n";
-        print_titre($langs->trans("ProjectsDedicatedToThisThirdParty"));
+        print_fiche_titre($langs->trans("ProjectsDedicatedToThisThirdParty"),$buttoncreate,'');
         print "\n".'<table class="noborder" width=100%>';
 
         $sql  = "SELECT p.rowid,p.title,p.ref,p.public, p.dateo as do, p.datee as de";
@@ -426,8 +433,9 @@ function show_projects($conf,$langs,$db,$object)
  * 		@param		lang		Object lang
  * 		@param		db			Database handler
  * 		@param		object		Third party object
+ *      @param      backtopage  Url to go once contact is created
  */
-function show_contacts($conf,$langs,$db,$object)
+function show_contacts($conf,$langs,$db,$object,$backtopage='')
 {
     global $user;
     global $bc;
@@ -441,8 +449,15 @@ function show_contacts($conf,$langs,$db,$object)
         $user->fetch_clicktodial(); // lecture des infos de clicktodial
     }
 
+    $buttoncreate='';
+    if ($user->rights->societe->contact->creer)
+    {
+        $buttoncreate='<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddContact").'</a>'."\n";
+    }
+
     print "\n";
-    print_titre($langs->trans("ContactsForCompany"));
+    print_fiche_titre($langs->trans("ContactsForCompany"),$buttoncreate,'');
+
     print "\n".'<table class="noborder" width="100%">'."\n";
 
     print '<tr class="liste_titre"><td>'.$langs->trans("Name").'</td>';
@@ -496,13 +511,13 @@ function show_contacts($conf,$langs,$db,$object)
             print '</td>';
 
             print '<td align="center">';
-            print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?action=edit&amp;id='.$obj->rowid.'">';
+            print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?action=edit&amp;id='.$obj->rowid.'&amp;backtopage='.urlencode($backtopage).'">';
             print img_edit();
             print '</a></td>';
 
             if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
             {
-                print '<td align="center"><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&backtopage=1&actioncode=AC_RDV&contactid='.$obj->rowid.'&socid='.$object->id.'">';
+                print '<td align="center"><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_RDV&contactid='.$obj->rowid.'&socid='.$object->id.'&backtopage='.urlencode($backtourl).'">';
                 print img_object($langs->trans("Rendez-Vous"),"action");
                 print '</a></td>';
             }
