@@ -293,8 +293,10 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
     print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td><td><input size="30" type="text" name="title" value="'.$_POST["title"].'"></td></tr>';
 
     // Customer
-    print '<tr><td>'.$langs->trans("Company").'</td><td>';
-    print $html->select_societes(GETPOST("socid"),'socid','',1,1);
+    print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
+    $text=$html->select_company(GETPOST("socid"),'socid','',1,1);
+    $texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
+    print $html->textwithtooltip($text.' '.img_help(),$texthelp,1);
     print '</td></tr>';
 
     // Public
