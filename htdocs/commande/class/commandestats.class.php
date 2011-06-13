@@ -38,27 +38,31 @@ class CommandeStats extends Stats
 	var $db ;
 
 	var $socid;
-	var $where;
+    var $userid;
 
 	var $table_element;
+    var $from;
 	var $field;
+    var $where;
 
 
 	/**
 	 * Constructor
 	 *
-	 * @param 	$DB		Database handler
-	 * @param 	$socid	Id third party
-	 * @param 	$mode	Option
+	 * @param 	$DB		   Database handler
+	 * @param 	$socid	   Id third party for filter
+	 * @param 	$mode	   Option
+	 * @param   $userid    Id user for filter
 	 * @return 	CommandeStats
 	 */
-	function CommandeStats($DB, $socid=0, $mode)
+	function CommandeStats($DB, $socid=0, $mode, $userid=0)
 	{
 		global $user, $conf;
 
 		$this->db = $DB;
 
 		$this->socid = $socid;
+        $this->userid = $userid;
 
 		if ($mode == 'customer')
 		{
@@ -83,7 +87,7 @@ class CommandeStats extends Stats
 		{
 			$this->where .= " AND c.fk_soc = ".$this->socid;
 		}
-
+        if ($this->userid > 0) $this->where.=' AND c.fk_user_author = '.$this->userid;
 	}
 
 	/**

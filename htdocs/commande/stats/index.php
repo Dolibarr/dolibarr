@@ -50,6 +50,7 @@ $year = strftime("%Y", time());
 $startyear=$year-2;
 $endyear=$year;
 
+$langs->load("orders");
 
 
 /*
@@ -73,7 +74,7 @@ print_fiche_titre($title, $mesg);
 
 create_exdir($dir);
 
-$stats = new CommandeStats($db, $socid, $mode);
+$stats = new CommandeStats($db, $socid, $mode, $userid);
 
 // Build graphic number of object
 $data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);

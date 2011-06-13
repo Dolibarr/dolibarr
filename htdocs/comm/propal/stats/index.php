@@ -60,7 +60,7 @@ $dir=$conf->propale->dir_temp;
 
 create_exdir($dir);
 
-$stats = new PropaleStats($db, $socid);
+$stats = new PropaleStats($db, $socid, $userid);
 
 // Build graphic number of object
 $data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);

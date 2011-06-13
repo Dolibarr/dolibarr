@@ -35,27 +35,32 @@ include_once DOL_DOCUMENT_ROOT . "/comm/propal/class/propal.class.php";
  */
 class PropaleStats extends Stats
 {
-	var $db ;
+	var $db;
 
-	var $socid;
-	var $where;
+    var $socid;
+    var $userid;
 
-	var $table_element;
-	var $field;
+    var $table_element;
+    var $from;
+    var $field;
+    var $where;
 
 
 	/**
 	 * Constructor
 	 *
-	 * @param 	$DB		Database handler
-	 * @param 	$socid	Id third party
+	 * @param 	$DB		   Database handler
+	 * @param 	$socid	   Id third party
+     * @param   $userid    Id user for filter
 	 * @return 	PropaleStats
 	 */
-	function PropaleStats($DB, $socid=0)
+	function PropaleStats($DB, $socid=0, $userid=0)
 	{
 		global $user, $conf;
 
 		$this->db = $DB;
+        $this->socid = $socid;
+        $this->userid = $userid;
 
 		$object=new Propal($this->db);
 
@@ -64,7 +69,6 @@ class PropaleStats extends Stats
 
 		$this->field='total';
 
-		$this->socid = $socid;
 		$this->where.= " fk_statut > 0";
 		$this->where.= " AND p.fk_soc = s.rowid AND s.entity = ".$conf->entity;
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $this->where .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -72,6 +76,7 @@ class PropaleStats extends Stats
 		{
 			$this->where .= " AND p.fk_soc = ".$this->socid;
 		}
+        if ($this->userid > 0) $this->where.=' AND fk_user_author = '.$this->userid;
 	}
 
 

@@ -31,11 +31,13 @@ require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facturestats.class.php");
 $WIDTH=500;
 $HEIGHT=200;
 
-// Securite acces client
+$userid=GETPOST('userid');
+$socid=GETPOST('socid');
+// Security check
 if ($user->societe_id > 0)
 {
-	$action = '';
-	$socid = $user->societe_id;
+    $action = '';
+    $socid = $user->societe_id;
 }
 
 $year = strftime("%Y", time());
@@ -67,7 +69,7 @@ print_fiche_titre($title, $mesg);
 
 create_exdir($dir);
 
-$stats = new FactureStats($db, $socid, $mode);
+$stats = new FactureStats($db, $socid, $mode, $userid);
 
 
 // Build graphic number of object

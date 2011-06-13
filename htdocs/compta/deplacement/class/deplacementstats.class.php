@@ -33,38 +33,43 @@ include_once DOL_DOCUMENT_ROOT . "/compta/deplacement/class/deplacement.class.ph
  */
 class DeplacementStats extends Stats
 {
-	var $db ;
+    var $db;
 
-	var $socid;
-	var $where;
+    var $socid;
+    var $userid;
 
-	var $table_element;
-	var $field;
+    var $table_element;
+    var $from;
+    var $field;
+    var $where;
 
 	/**
 	 * Constructor
 	 *
-	 * @param 	$DB		Database handler
-	 * @param 	$socid	Id third party
+	 * @param 	$DB		   Database handler
+	 * @param 	$socid	   Id third party
+     * @param   $userid    Id user for filter
 	 * @return  DeplacementStats
 	 */
-	function DeplacementStats($DB, $socid=0)
+	function DeplacementStats($DB, $socid=0, $userid=0)
 	{
 		global $conf;
 
 		$this->db = $DB;
+        $this->socid = $socid;
+        $this->userid = $userid;
 
 		$object=new Deplacement($this->db);
 		$this->from = MAIN_DB_PREFIX.$object->table_element;
 		$this->field='km';
 
-		$this->socid = $socid;
 		$this->where = " fk_statut > 0";
 		$this->where.= " AND entity = ".$conf->entity;
 		if ($this->socid)
 		{
 			$this->where.=" AND fk_soc = ".$this->socid;
 		}
+        if ($this->userid > 0) $this->where.=' AND fk_user_author = '.$this->userid;
 	}
 
 

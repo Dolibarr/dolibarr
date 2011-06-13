@@ -35,27 +35,34 @@ include_once DOL_DOCUMENT_ROOT . "/lib/date.lib.php";
  */
 class FactureStats extends Stats
 {
-	var $db ;
+	var $db;
 
-	var $socid;
-	var $where;
+    var $socid;
+    var $userid;
 
-	var $table_element;
-	var $field;
+    var $table_element;
+    var $from;
+    var $field;
+    var $where;
+
 
 	/**
 	 * Constructor
 	 *
-	 * @param 	$DB		Database handler
-	 * @param 	$socid	Id third party
-	 * @param 	$mode	Option
+	 * @param 	$DB		   Database handler
+	 * @param 	$socid	   Id third party
+	 * @param 	$mode	   Option
+     * @param   $userid    Id user for filter
 	 * @return FactureStats
 	 */
-	function FactureStats($DB, $socid=0, $mode)
+	function FactureStats($DB, $socid=0, $mode, $userid=0)
 	{
 		global $conf;
 
 		$this->db = $DB;
+        $this->socid = $socid;
+        $this->userid = $userid;
+
 		if ($mode == 'customer')
 		{
 			$object=new Facture($this->db);
@@ -69,7 +76,6 @@ class FactureStats extends Stats
 			$this->field='total_ht';
 		}
 
-		$this->socid = $socid;
 		$this->where = " fk_statut > 0";
 		$this->where.= " AND entity = ".$conf->entity;
 		if ($mode == 'customer') $this->where.=" AND (fk_statut != 3 OR close_code != 'replaced')";	// Exclude replaced invoices as they are duplicated (we count closed invoices for other reasons)
@@ -77,7 +83,7 @@ class FactureStats extends Stats
 		{
 			$this->where.=" AND fk_soc = ".$this->socid;
 		}
-
+        if ($this->userid > 0) $this->where.=' AND fk_user_author = '.$this->userid;
 	}
 
 

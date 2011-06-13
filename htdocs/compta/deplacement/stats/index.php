@@ -63,7 +63,7 @@ print_fiche_titre($title, $mesg);
 
 create_exdir($dir);
 
-$stats = new DeplacementStats($db, $socid);
+$stats = new DeplacementStats($db, $socid, $userid);
 
 
 // Build graphic number of object
