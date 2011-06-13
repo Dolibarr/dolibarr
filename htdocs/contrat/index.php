@@ -178,7 +178,7 @@ foreach($listofstatus as $status)
     if (! $conf->use_javascript_ajax)
     {
         $var=!$var;
-        print "<tr ".$bc[$var].">";
+        print '<tr '.$bc[$var].'>';
         print '<td>'.$staticcontratligne->LibStatut($status,0,($bool?1:0)).'</td>';
         print '<td align="right"><a href="services.php?mode='.$status.($bool?'&filter=expired':'').'">'.($nb[$status.$bool]?$nb[$status.$bool]:0).' '.$staticcontratligne->LibStatut($status,3,($bool?1:0)).'</a></td>';
         print "</tr>\n";
@@ -200,7 +200,7 @@ foreach($listofstatus as $status)
     if (! $conf->use_javascript_ajax)
     {
         $var=!$var;
-    	print "<tr ".$bc[$var].">";
+    	print '<tr '.$bc[$var].'>';
     	print '<td>'.$staticcontratligne->LibStatut($status,0,($bool?1:0)).'</td>';
     	print '<td align="right"><a href="services.php?mode='.$status.($bool?'&filter=expired':'').'">'.($nb[$status.$bool]?$nb[$status.$bool]:0).' '.$staticcontratligne->LibStatut($status,3,($bool?1:0)).'</a></td>';
     	if ($status==4 && $bool==false) $bool=true;
@@ -314,7 +314,7 @@ if ($result)
 	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastContracts",5).'</td>';
 	print '<td align="center">'.$langs->trans("DateModification").'</td>';
 	//print '<td align="left">'.$langs->trans("Status").'</td>';
-	print '<td align="right" width="80" colspan="4">'.$langs->trans("Services").'</td>';
+	print '<td align="center" width="80" colspan="4">'.$langs->trans("Services").'</td>';
 	print "</tr>\n";
 
 	$var=True;
@@ -323,8 +323,8 @@ if ($result)
 		$obj = $db->fetch_object($result);
 		$var=!$var;
 
-		print "<tr $bc[$var]>";
-		print '<td width="80" nowrap="nowrap">';
+		print '<tr '.$bc[$var].'>';
+		print '<td width="100" nowrap="nowrap">';
 		$staticcontrat->ref=($obj->ref?$obj->ref:$obj->cid);
 		$staticcontrat->id=$obj->cid;
 		print $staticcontrat->getNomUrl(1,16);
@@ -388,9 +388,9 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 		$var=!$var;
-		print "<tr $bc[$var]>";
+		print '<tr '.$bc[$var].'>';
 
-		print '<td width="80" nowrap="nowrap">';
+		print '<td width="100" nowrap="nowrap">';
 		$staticcontrat->ref=($obj->ref?$obj->ref:$obj->fk_contrat);
 		$staticcontrat->id=$obj->fk_contrat;
 		print $staticcontrat->getNomUrl(1,16);
@@ -455,8 +455,8 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 		$var=!$var;
-		print "<tr $bc[$var]>";
-		print '<td width="80" nowrap="nowrap">';
+		print '<tr '.$bc[$var].'>';
+		print '<td width="100" nowrap="nowrap">';
 		$staticcontrat->ref=($obj->ref?$obj->ref:$obj->fk_contrat);
 		$staticcontrat->id=$obj->fk_contrat;
 		print $staticcontrat->getNomUrl(1,16);
