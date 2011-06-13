@@ -79,6 +79,8 @@ BankToReceiveWithdraw=Compte bancari receptor de les domiciliacions
 CreditDate=Abonada el
 WithdrawalFileNotCapable=No es possible generar fitxer bancari de domiciliacio per al seu pais
 ShowWithdraw=Veure domiciliació
+IfInvoiceNeedOnWithdrawPaymentWontBeClosed=No obstant això, si la factura té pendent algun pagament per domiciliació, no serà tancada per a permetre la gestió de la domiciliació.
+DoStandingOrdersBeforePayments=Aquesta pestanya us permet realitzar una petició de domiciliació. Un cop, podeu ingressar el pagament a la factura per procedir al seu tancament.
 
 ### Notifications 
 InfoCreditSubject=Abonament de domiciliació %s pel banc
