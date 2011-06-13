@@ -67,7 +67,7 @@ if ($conf->propal->enabled)
 }
 
 /*
- * Prospects par status
+ * Prospects par statut
  *
  */
 
@@ -98,7 +98,8 @@ if ($resql)
 		{
 			$obj = $db->fetch_object($resql);
 			$var=!$var;
-			print "<tr $bc[$var]><td><a href=\"prospects.php?page=0&amp;stcomm=".$obj->id."\">";
+			print '<tr '.$bc[$var].'><td>';
+			print '<a href="prospects.php?page=0&amp;stcomm='.$obj->id.'">';
 			print img_action($langs->trans("Show"),$obj->id).' ';
 			print $langs->trans("StatusProspect".$obj->id);
 			print '</a></td><td align="right">'.$obj->cc.'</td></tr>';
@@ -205,7 +206,8 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 			{
 				$obj = $db->fetch_object($resql);
 				$var=!$var;
-				print "<tr $bc[$var]><td><a href=\"../propal.php?id=".$obj->propalid."\">";
+				print '<tr '.$bc[$var].'><td>';
+				print '<a href="../propal.php?id='.$obj->propalid.'">';
 				print img_object($langs->trans("ShowPropal"),"propal").' '.$obj->ref.'</a></td>';
 
 				print "<td>";
@@ -256,13 +258,13 @@ if ($resql)
 		$var=true;
 
 		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("ProspectToContact").'</td></tr>';
+		print '<tr class="liste_titre"><td>'.$langs->trans("ProspectToContact").'</td></tr>';
 
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
 			$var=!$var;
-			print "<tr $bc[$var]><td width=\"12%\">";
+			print '<tr '.$bc[$var].'><td width="12%">';
             $companystatic->id=$obj->socid;
             $companystatic->name=$obj->name;
             $companystatic->client=$obj->client;
