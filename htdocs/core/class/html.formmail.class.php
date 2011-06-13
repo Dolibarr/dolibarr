@@ -466,13 +466,14 @@ class FormMail
 			$defaultmessage="";
 
 			// TODO    A partir du type, proposer liste de messages dans table llx_models
-			if ($this->param["models"]=='body') 			{ $defaultmessage=$this->withbody; }
-			if ($this->param["models"]=='facture_send')    	{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendInvoice"); }
-			if ($this->param["models"]=='facture_relance') 	{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendInvoiceReminder"); }
-			if ($this->param["models"]=='propal_send') 		{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendProposal"); }
-			if ($this->param["models"]=='order_send') 		{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendOrder"); }
-			if ($this->param["models"]=='order_supplier_send')   { $defaultmessage=$langs->transnoentities("PredefinedMailContentSendSupplierOrder"); }
-			if ($this->param["models"]=='invoice_supplier_send') { $defaultmessage=$langs->transnoentities("PredefinedMailContentSendSupplierInvoice"); }
+			if ($this->param["models"]=='body')						{ $defaultmessage=$this->withbody; }
+			if ($this->param["models"]=='facture_send')				{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendInvoice"); }
+			if ($this->param["models"]=='facture_relance')			{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendInvoiceReminder"); }
+			if ($this->param["models"]=='propal_send')				{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendProposal"); }
+			if ($this->param["models"]=='order_send')				{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendOrder"); }
+			if ($this->param["models"]=='order_supplier_send')		{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendSupplierOrder"); }
+			if ($this->param["models"]=='invoice_supplier_send')	{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendSupplierInvoice"); }
+			if ($this->param["models"]=='shipping_send')			{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendShipping"); }
 			$defaultmessage=make_substitutions($defaultmessage,$this->substit);
 			if (isset($_POST["message"])) $defaultmessage=$_POST["message"];
 			$defaultmessage=str_replace('\n',"\n",$defaultmessage);
