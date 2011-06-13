@@ -1434,6 +1434,7 @@ if ($action == 'create')
             if ($element == 'order' || $element == 'commande')    { $element = $subelement = 'commande'; }
             if ($element == 'propal')   { $element = 'comm/propal'; $subelement = 'propal'; }
             if ($element == 'contract') { $element = $subelement = 'contrat'; }
+            if ($element == 'shipping') { $element = $subelement = 'expedition'; }
 
             dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
 

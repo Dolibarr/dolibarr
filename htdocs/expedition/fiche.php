@@ -1258,6 +1258,23 @@ else
                     else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
 				}
 			}
+			
+			// Create bill and Classify billed
+			if ($conf->facture->enabled && $object->statut > 0  && ! $object->billed)
+			{
+				if ($user->rights->facture->creer)
+				{
+					// TODO until the module is autonomous
+					//print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$object->origin.'&amp;originid='.$object->origin_id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
+				}
+				
+				// TODO add alternative status
+				if ($user->rights->expedition->creer && $object->statut > 2)
+				{
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
+				}
+			}
 
 			if ($conf->livraison_bon->enabled && $object->statut == 1 && $user->rights->expedition->livraison->creer && empty($object->linkedObjectsIds))
 			{
