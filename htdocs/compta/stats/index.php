@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -30,12 +30,13 @@ require_once(DOL_DOCUMENT_ROOT."/lib/report.lib.php");
 
 $year_start=isset($_GET["year_start"])?$_GET["year_start"]:$_POST["year_start"];
 $year_current = strftime("%Y",time());
+$nbofyear=4;
 if (! $year_start) {
-	$year_start = $year_current - 4;
-	$year_end = $year_current;
+    $year_start = $year_current - ($nbofyear-1);
+    $year_end = $year_current;
 }
 else {
-	$year_end=$year_start + 4;
+    $year_end=$year_start + ($nbofyear-1);
 }
 
 // Security check
@@ -164,12 +165,20 @@ if ($modecompta != 'CREANCES-DETTES') {
 }
 
 
+/*
+ * Show result array
+ */
+
 print '<table width="100%" class="noborder">';
 print '<tr class="liste_titre"><td rowspan="2">'.$langs->trans("Month").'</td>';
 
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-	print '<td align="center" width="10%" colspan="2"><a href="casoc.php?year='.$annee.'">'.$annee.'</a></td>';
+	print '<td align="center" width="10%" colspan="2">';
+	print '<a href="casoc.php?year='.$annee.'">';
+	print $annee;
+    if ($conf->global->SOCIETE_FISCAL_MONTH_START > 1) print '-'.($annee+1);
+	print '</a></td>';
 	if ($annee != $year_end) print '<td width="15">&nbsp;</td>';
 }
 print '</tr>';

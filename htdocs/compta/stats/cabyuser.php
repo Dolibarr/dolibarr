@@ -71,7 +71,7 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 		$month_end=$month_start;
 		if (! GETPOST("month"))	// If month not forced
 		{
-			if ($month_start > $month_current)
+			if (! GETPOST('year') && $month_start > $month_current)
 			{
 				$year_start--;
 				$year_end--;
@@ -265,7 +265,7 @@ if (sizeof($amount))
         if ($conf->commande->enabled && $conf->global->MAIN_FEATURES_LEVEL == 2)
         {
         	if($key>0){
-           		print '<td align="center"><a href="'.DOL_URL_ROOT.'/commande/stats/index.php?id='.$key.'">'.img_picto($langs->trans("Show"),"vcard").'</a></td>';
+           		print '<td align="center"><a href="'.DOL_URL_ROOT.'/commande/stats/index.php?id='.$key.'">'.img_picto($langs->trans("Show"),"stats").'</a></td>';
         	} else {
         		print '<td> &nbsp; </td>' ;
         	}

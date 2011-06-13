@@ -74,7 +74,7 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 		$month_end=$month_start;
 		if (! GETPOST("month"))	// If month not forced
 		{
-			if ($month_start > $month_current)
+			if (! GETPOST('year') && $month_start > $month_current)
 			{
 				$year_start--;
 				$year_end--;
@@ -265,7 +265,12 @@ if (sizeof($amount))
 			$linkname=$langs->trans("PaymentsNotLinkedToInvoice");
 		}
 		print "<td>".$linkname."</td>\n";
-		print '<td align="right">'.price($amount[$key]).'</td>';
+		print '<td align="right">';
+		if ($key > 0) print '<a href="'.DOL_URL_ROOT.'/compta/paiement/liste.php?socid='.$key.'">';
+		else print '<a href="'.DOL_URL_ROOT.'/compta/paiement/liste.php?orphelins=1">';
+		print price($amount[$key]);
+		print '</a>';
+		print '</td>';
 		print '<td align="right">'.($catotal > 0 ? round(100 * $amount[$key] / $catotal, 2).'%' : '&nbsp;').'</td>';
 		print "</tr>\n";
 		$i++;

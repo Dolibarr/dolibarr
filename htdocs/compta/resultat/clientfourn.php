@@ -65,7 +65,7 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
         $month_start=GETPOST("month")?GETPOST("month"):($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
         if (! GETPOST('month'))
         {
-            if ($month_start > $month_current)
+            if (! GETPOST("year") &&  $month_start > $month_current)
             {
                 $year_start--;
                 $year_end--;

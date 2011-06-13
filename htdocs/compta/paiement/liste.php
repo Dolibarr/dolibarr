@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,7 +32,8 @@ require_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
 $langs->load("bills");
 
 // Security check
-$facid = isset($_GET["facid"])?$_GET["facid"]:'';
+$facid = GETPOST("facid");
+$socid = GETPOST("socid");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'facture',$facid,'');
 
@@ -62,70 +63,51 @@ llxHeader('',$langs->trans("ListPayment"));
 
 $form=new Form($db);
 
-$sql = "SELECT DISTINCT p.rowid, p.datep as dp, p.amount,";
-$sql.= " p.statut, p.num_paiement,";
-//$sql.= " c.libelle as paiement_type,";
-$sql.= " c.code as paiement_code,";
-$sql.= " ba.rowid as bid, ba.label,";
-$sql.= " s.rowid as socid, s.nom";
-//$sql.= " f.facnumber";
-$sql.= " FROM ".MAIN_DB_PREFIX."c_paiement as c, ".MAIN_DB_PREFIX."paiement as p";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON p.fk_bank = b.rowid";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON pf.fk_facture = f.rowid";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
-if (!$user->rights->societe->client->voir && !$socid)
-{
-    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
-}
-$sql.= " WHERE p.fk_paiement = c.id";
-$sql.= " AND s.entity = ".$conf->entity;
-if (!$user->rights->societe->client->voir && !$socid)
-{
-    $sql.= " AND sc.fk_user = " .$user->id;
-}
-if ($socid)
-{
-    $sql.= " AND f.fk_soc = ".$socid;
-}
-// Search criteria
-if ($_REQUEST["search_ref"])
-{
-    $sql .=" AND p.rowid=".$_REQUEST["search_ref"];
-}
-if ($_REQUEST["search_account"])
-{
-    $sql .=" AND b.fk_account=".$_REQUEST["search_account"];
-}
-if ($_REQUEST["search_paymenttype"])
-{
-    $sql .=" AND c.code='".$_REQUEST["search_paymenttype"]."'";
-}
-if ($_REQUEST["search_amount"])
-{
-    $sql .=" AND p.amount=".price2num($_REQUEST["search_amount"]);
-}
-if ($_REQUEST["search_company"])
-{
-    $sql .=" AND s.nom LIKE '%".$db->escape($_REQUEST["search_company"])."%'";
-}
-
-if ($_GET["orphelins"])     // Option for debugging purpose only
+if (GETPOST("orphelins"))
 {
     // Paiements lies a aucune facture (pour aide au diagnostic)
     $sql = "SELECT p.rowid, p.datep as dp, p.amount,";
     $sql.= " p.statut, p.num_paiement,";
     //$sql.= " c.libelle as paiement_type";
-    $sql.= " c.code as paiement_code,";
-    $sql.= " s.rowid as socid, s.nom";
-    $sql.= " FROM ".MAIN_DB_PREFIX."paiement as p,";
-    $sql.= " ".MAIN_DB_PREFIX."c_paiement as c";
+    $sql.= " c.code as paiement_code";
+    $sql.= " FROM (".MAIN_DB_PREFIX."paiement as p,";
+    $sql.= " ".MAIN_DB_PREFIX."c_paiement as c)";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
+    $sql.= " WHERE p.fk_paiement = c.id";
+    $sql.= " AND pf.fk_facture IS NULL";
+}
+else
+{
+    $sql = "SELECT DISTINCT p.rowid, p.datep as dp, p.amount,"; // DISTINCT is to avoid duplicate when there is a link to sales representatives
+    $sql.= " p.statut, p.num_paiement,";
+    //$sql.= " c.libelle as paiement_type,";
+    $sql.= " c.code as paiement_code,";
+    $sql.= " ba.rowid as bid, ba.label,";
+    $sql.= " s.rowid as socid, s.nom";
+    //$sql.= " f.facnumber";
+    $sql.= " FROM (".MAIN_DB_PREFIX."c_paiement as c, ".MAIN_DB_PREFIX."paiement as p)";
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON p.fk_bank = b.rowid";
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON pf.fk_facture = f.rowid";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
+    if (!$user->rights->societe->client->voir && !$socid)
+    {
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
+    }
     $sql.= " WHERE p.fk_paiement = c.id";
     $sql.= " AND s.entity = ".$conf->entity;
-    $sql.= " AND pf.rowid IS NULL";
+    if (!$user->rights->societe->client->voir && !$socid)
+    {
+        $sql.= " AND sc.fk_user = " .$user->id;
+    }
+    if ($socid > 0) $sql.= " AND f.fk_soc = ".$socid;
+    // Search criteria
+    if ($_REQUEST["search_ref"])         $sql .=" AND p.rowid=".$_REQUEST["search_ref"];
+    if ($_REQUEST["search_account"])     $sql .=" AND b.fk_account=".$_REQUEST["search_account"];
+    if ($_REQUEST["search_paymenttype"]) $sql .=" AND c.code='".$_REQUEST["search_paymenttype"]."'";
+    if ($_REQUEST["search_amount"])      $sql .=" AND p.amount=".price2num($_REQUEST["search_amount"]);
+    if ($_REQUEST["search_company"])     $sql .=" AND s.nom LIKE '%".$db->escape($_REQUEST["search_company"])."%'";
 }
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit( $limit+1 ,$offset);
@@ -139,26 +121,26 @@ if ($resql)
     $i = 0;
 
     $paramlist='';
-    $paramlist.=($_REQUEST["orphelins"]?"&orphelins=1":"");
+    $paramlist.=(GETPOST("orphelins")?"&orphelins=1":"");
     $paramlist.=($_REQUEST["search_ref"]?"&search_ref=".$_REQUEST["search_ref"]:"");
     $paramlist.=($_REQUEST["search_company"]?"&search_company=".$_REQUEST["search_company"]:"");
     $paramlist.=($_REQUEST["search_amount"]?"&search_amount=".$_REQUEST["search_amount"]:"");
 
-    print_barre_liste($langs->trans("ReceivedCustomersPayments"), $page, "liste.php",$paramlist,$sortfield,$sortorder,'',$num);
+    print_barre_liste($langs->trans("ReceivedCustomersPayments"), $page, $_SERVER["PHP_SELF"],$paramlist,$sortfield,$sortorder,'',$num);
 
     print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("RefPayment"),"liste.php","p.rowid","",$paramlist,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Date"),"liste.php","dp","",$paramlist,'align="center"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("ThirdParty"),"liste.php","s.nom","",$paramlist,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Type"),"liste.php","c.libelle","",$paramlist,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Account"),"liste.php","ba.label","",$paramlist,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Amount"),"liste.php","p.amount","",$paramlist,'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("RefPayment"),$_SERVER["PHP_SELF"],"p.rowid","",$paramlist,"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"dp","",$paramlist,'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom","",$paramlist,"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"c.libelle","",$paramlist,"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Account"),$_SERVER["PHP_SELF"],"ba.label","",$paramlist,"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"p.amount","",$paramlist,'align="right"',$sortfield,$sortorder);
     //print_liste_field_titre($langs->trans("Invoices"),"","","",$paramlist,'align="left"',$sortfield,$sortorder);
     if ($conf->global->BILL_ADD_PAYMENT_VALIDATION)
     {
-        print_liste_field_titre($langs->trans("Status"),"liste.php","p.statut","",$paramlist,'align="right"',$sortfield,$sortorder);
+        print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"p.statut","",$paramlist,'align="right"',$sortfield,$sortorder);
     }
     print "</tr>\n";
 
