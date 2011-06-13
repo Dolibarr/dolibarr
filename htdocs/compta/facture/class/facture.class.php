@@ -160,7 +160,7 @@ class Facture extends CommonObject
         dol_syslog("Facture::Create user=".$user->id);
 
         // Check parameters
-        if (empty($date) || empty($user->id))
+        if (empty($this->date) || empty($user->id))
         {
             $this->error="ErrorBadParameter";
             dol_syslog("Facture::create Try to create an invoice with an empty parameter (user, date, ...)", LOG_ERR);

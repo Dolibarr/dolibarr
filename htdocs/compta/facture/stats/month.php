@@ -49,6 +49,8 @@ if (isset($_GET["mode"])) $mode=$_GET["mode"];
  * View
  */
 
+$langs->load("bills");
+
 llxHeader();
 
 if ($mode == 'customer')

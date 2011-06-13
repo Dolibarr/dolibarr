@@ -947,7 +947,7 @@ if ($_GET['action'] == 'create')
 	print '<tr><td>'.$langs->trans('Ref').'</td><td>'.$langs->trans('Draft').'</td></tr>';
 
 	// Third party
-    print '<tr><td class="fieldrequired">'.$langs->trans('Company').'</td>';
+    print '<tr><td class="fieldrequired">'.$langs->trans('ThirdParty').'</td>';
     print '<td>';
 
     if ($_REQUEST['socid'] > 0)

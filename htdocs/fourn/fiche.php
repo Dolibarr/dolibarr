@@ -256,11 +256,18 @@ if ( $societe->fetch($socid) )
 			$i = 0 ;
 			$num = $db->num_rows($resql);
 			print '<table class="noborder" width="100%">';
-			print '<tr class="liste_titre">';
-			print '<td colspan="3">';
-			print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans("LastOrders",($num<$MAXLIST?"":$MAXLIST)).'</td>';
-			print '<td align="right"><a href="commande/liste.php?socid='.$societe->id.'">'.$langs->trans("AllOrders").' ('.$num.')</td></tr></table>';
-			print '</td></tr>';
+
+			if ($num > 0)
+			{
+    			print '<tr class="liste_titre">';
+    			print '<td colspan="3">';
+    			print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans("LastOrders",($num<$MAXLIST?"":$MAXLIST)).'</td>';
+    			print '<td align="right"><a href="commande/liste.php?socid='.$societe->id.'">'.$langs->trans("AllOrders").' ('.$num.')</td>';
+                print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/commande/stats/index.php?mode=supplier&socid='.$societe->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
+    			print '</tr></table>';
+    			print '</td></tr>';
+			}
+
 			while ($i < $num && $i <= $MAXLIST)
 			{
 				$obj = $db->fetch_object($resql);
@@ -314,10 +321,15 @@ if ( $societe->fetch($socid) )
 			$i = 0 ;
 			$num = $db->num_rows($resql);
 			print '<table class="noborder" width="100%">';
-			print '<tr class="liste_titre">';
-			print '<td colspan="4">';
-			print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans('LastSuppliersBills',($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="facture/index.php?socid='.$societe->id.'">'.$langs->trans('AllBills').' ('.$num.')</td></tr></table>';
-			print '</td></tr>';
+			if ($num > 0)
+			{
+    			print '<tr class="liste_titre">';
+    			print '<td colspan="4">';
+    			print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans('LastSuppliersBills',($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="facture/index.php?socid='.$societe->id.'">'.$langs->trans('AllBills').' ('.$num.')</td>';
+                print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?mode=supplier&socid='.$societe->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
+    			print '</tr></table>';
+    			print '</td></tr>';
+			}
 			while ($i < min($num,$MAXLIST))
 			{
 				$obj = $db->fetch_object($resql);
@@ -391,7 +403,7 @@ if ( $societe->fetch($socid) )
     {
         print '<br>';
         // List of contacts
-        show_contacts($conf,$langs,$db,$societe);
+        show_contacts($conf,$langs,$db,$societe,$_SERVER["PHP_SELF"].'?socid='.$societe->id);
     }
 
     if (! empty($conf->global->MAIN_REPEATTASKONEACHTAB))

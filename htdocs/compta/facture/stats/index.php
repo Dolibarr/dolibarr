@@ -51,6 +51,8 @@ $mode=GETPOST("mode")?GETPOST("mode"):'customer';
  * View
  */
 
+$langs->load("bills");
+
 $form=new Form($db);
 
 llxHeader();

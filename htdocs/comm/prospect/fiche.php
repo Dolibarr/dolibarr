@@ -74,6 +74,8 @@ if ($_POST["action"] == 'setprospectlevel' && $user->rights->societe->creer)
 
 llxHeader();
 
+$now = dol_now();
+
 $form=new Form($db);
 $formcompany=new FormCompany($db);
 
@@ -202,7 +204,7 @@ if ($socid > 0)
 
 
 	print "</td>\n";
-	print '<td valign="top" width="50%" class="notopnoleft">';
+	print '<td valign="top" width="50%" class="notopnoleftnoright">';
 
 	// Nbre max d'elements des petites listes
 	$MAXLIST=5;
@@ -221,7 +223,7 @@ if ($socid > 0)
 	/*
 	 * Last proposals
 	 */
-	if ($conf->propal->enabled)
+	if ($conf->propal->enabled && $user->rights->propale->lire)
 	{
 		$propal_static=new Propal($db);
 
@@ -244,15 +246,15 @@ if ($socid > 0)
 			$var=true;
 			$i = 0;
 			$num = $db->num_rows($resql);
+
 			if ($num > 0)
 			{
-				$tableaushown=1;
-				print '<tr class="liste_titre">';
-				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastPropals",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/comm/propal.php?socid='.$societe->id.'">'.$langs->trans("AllPropals").' ('.$num.')</a></td></tr></table></td>';
-				print '</tr>';
+    			print '<tr class="liste_titre">';
+    			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastPropals",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/comm/propal.php?socid='.$societe->id.'">'.$langs->trans("AllPropals").' ('.$num.')</a></td>';
+    			print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/comm/propal/stats/index.php?socid='.$societe->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
+    			print '</tr></table></td>';
+    			print '</tr>';
 			}
-
-			$now = dol_now();
 
 			while ($i < $num && $i < $MAXLIST)
 			{
@@ -282,8 +284,9 @@ if ($socid > 0)
 	}
 
 	print "</td></tr>";
-	print "</table>\n</div>\n";
+	print "</table>\n";
 
+    dol_fiche_end();
 
 	/*
 	 * Barre d'action
@@ -320,7 +323,7 @@ if ($socid > 0)
     {
         print '<br>';
         // List of contacts
-        show_contacts($conf,$langs,$db,$societe);
+        show_contacts($conf,$langs,$db,$societe,$_SERVER["PHP_SELF"].'?socid='.$societe->id);
     }
 
     if (! empty($conf->global->MAIN_REPEATTASKONEACHTAB))
