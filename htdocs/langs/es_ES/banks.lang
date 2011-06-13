@@ -120,6 +120,7 @@ DeleteCheckReceipt=¿Eliminar esta remesa?
 ConfirmDeleteCheckReceipt=¿Está seguro de querer eliminar esta remesa?
 BankChecks=Cheques
 BankChecksToReceipt=Cheques a depositar
+ShowCheckReceipt=Mostrar remesa
 NumberOfCheques=Nº de cheques
 DeleteTransaction=Eliminar la transacción
 ConfirmDeleteTransaction=¿Está seguro de querer eliminar esta transacción?

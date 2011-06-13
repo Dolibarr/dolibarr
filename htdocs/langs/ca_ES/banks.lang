@@ -120,6 +120,7 @@ DeleteCheckReceipt=Voleu suprimir aquesta remesa?
 ConfirmDeleteCheckReceipt=Esteu segur de voler eliminar aquesta remesa?
 BankChecks=Xecs
 BankChecksToReceipt=Xecs a dipositar
+ShowCheckReceipt=Mostrar remesa
 NumberOfCheques=N º de xecs
 DeleteTransaction=Eliminar la transacció
 ConfirmDeleteTransaction=Esteu segur de voler eliminar aquesta transacció?
