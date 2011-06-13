@@ -230,7 +230,7 @@ div.tmenu {
     border-<?php print $right; ?>: 0px solid #555555;
     border-bottom: 1px solid #ABB9B9;
     padding: 0px 0px 0px 0px;	/* t r b l */
-    margin: 0px 0px 5px 0px;	/* t r b l */
+    margin: 0px 0px 7px 0px;	/* t r b l */
     font-weight: normal;
     height: <?php print $heightmenu; ?>px;
 /*    background: #b3c5cc; */
@@ -1401,7 +1401,7 @@ opacity: 1;
 	-moz-border-radius:8px;
 	border: 1px #E4ECEC outset;
 	padding: 0px;
-	margin-bottom: 5px;	
+	margin-bottom: 5px;
 }
 table.dp {
     width: 180px;
