@@ -101,7 +101,7 @@ if ($resql)
         if ($objp->socid) $soc->fetch($objp->socid);
 
         $var=!$var;
-        print "<tr $bc[$var]>";
+        print '<tr '.$bc[$var].'>';
         print '<td><a href="fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowTrip"),"trip").' '.$objp->rowid.'</a></td>';
         print '<td>'.$langs->trans($objp->type).'</td>';
         print '<td>'.dol_print_date($db->jdate($objp->dd),'day').'</td>';
