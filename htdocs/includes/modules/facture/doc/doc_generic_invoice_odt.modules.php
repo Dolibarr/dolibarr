@@ -386,7 +386,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
                 //print exit;
 
 
-				// Make substitutions into odt
+				// Make substitutions into odt of freetext
 				if ($newfreetext)
 				{
 					try {
@@ -396,6 +396,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 					{
 					}
 				}
+                // Make substitutions into odt of user info
 				$tmparray=$this->get_substitutionarray_user($user,$outputlangs);
                 //var_dump($tmparray); exit;
                 foreach($tmparray as $key=>$value)
@@ -416,6 +417,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
                     {
                     }
                 }
+                // Make substitutions into odt of mysoc
                 $tmparray=$this->get_substitutionarray_mysoc($mysoc,$outputlangs);
 				//var_dump($tmparray); exit;
 				foreach($tmparray as $key=>$value)
@@ -436,6 +438,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 					{
 					}
 				}
+                // Make substitutions into odt of thirdparty
 				$tmparray=$this->get_substitutionarray_thirdparty($socobject,$outputlangs);
 				foreach($tmparray as $key=>$value)
 				{

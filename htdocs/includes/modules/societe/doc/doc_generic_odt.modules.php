@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010 Laurent Destailleur <ely@users.sourceforge.net>
+/* Copyright (C) 2010-2011 Laurent Destailleur <ely@users.sourceforge.net>
 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -259,7 +259,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 
 				//print $odfHandler->__toString()."\n";
 
-				// Make substitutions
+				// Make substitutions into odt of user info
 			    $tmparray=$this->get_substitutionarray_user($user,$outputlangs);
                 //var_dump($tmparray); exit;
                 foreach($tmparray as $key=>$value)
@@ -281,7 +281,8 @@ class doc_generic_odt extends ModeleThirdPartyDoc
                     {
                     }
                 }
-				$tmparray=$this->get_substitutionarray_mysoc($mysoc,$outputlangs);
+                // Make substitutions into odt of mysoc info
+                $tmparray=$this->get_substitutionarray_mysoc($mysoc,$outputlangs);
 				//var_dump($tmparray); exit;
 				foreach($tmparray as $key=>$value)
 				{
@@ -301,7 +302,10 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 					{
 					}
 				}
+                // Make substitutions into odt of thirdparty + external modules
 				$tmparray=$this->get_substitutionarray_thirdparty($object,$outputlangs);
+                complete_substitutions_array($tmparray, $langs, $object);
+                //var_dump($object->id); exit;
 				foreach($tmparray as $key=>$value)
 				{
 					try {
