@@ -35,8 +35,7 @@ if (!$user->rights->commande->lire) accessforbidden();
 $langs->load("orders");
 
 // Security check
-$socid='';
-if ($_GET["socid"]) { $socid=$_GET["socid"]; }
+$socid=GETPOST('socid');
 if ($user->societe_id > 0)
 {
 	$action = '';

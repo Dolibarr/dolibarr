@@ -32,8 +32,8 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/dolgraph.class.php");
 $WIDTH=500;
 $HEIGHT=200;
 
-$userid=GETPOST('userid');
-$socid=GETPOST('socid');
+$userid=GETPOST('userid'); if ($userid < 0) $userid=0;
+$socid=GETPOST('socid'); if ($socid < 0) $socid=0;
 // Security check
 if ($user->societe_id > 0)
 {
@@ -49,6 +49,8 @@ $endyear=$year;
 /*
  * View
  */
+
+$form=new Form($db);
 
 $langs->load("propal");
 
@@ -151,6 +153,22 @@ if (! $mesg)
 
 print '<table class="notopnoleftnopadd" width="100%"><tr>';
 print '<td align="center" valign="top">';
+
+// Show filter box
+print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<table class="border" width="100%">';
+print '<tr><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
+print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
+$filter='s.client in (1,2,3)';
+print $form->select_company($socid,'socid',$filter,1);
+print '</td></tr>';
+print '<tr><td>'.$langs->trans("User").'</td><td>';
+print $form->select_users($userid,'userid',1);
+print '</td></tr>';
+print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
+print '</table>';
+print '</form>';
+print '<br><br>';
 
 // Show array
 $data = $stats->getAllByYear();

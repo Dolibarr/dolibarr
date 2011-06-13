@@ -521,7 +521,7 @@ class FormCompany
 		$sql .= " ORDER BY nom ASC";
 
 		//print $sql;
-		$resql = $object->db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT)
@@ -564,13 +564,13 @@ class FormCompany
 			{
 				$javaScript = "window.location='./contact.php?".$var_id."=".$object->id."&amp;".$htmlname."=' + form.".$htmlname.".options[form.".$htmlname.".selectedIndex].value;";
 				print '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'" onChange="'.$javaScript.'">';
-				$num = $object->db->num_rows($resql);
+				$num = $this->db->num_rows($resql);
 				$i = 0;
 				if ($num)
 				{
 					while ($i < $num)
 					{
-						$obj = $object->db->fetch_object($resql);
+						$obj = $this->db->fetch_object($resql);
 						if ($i == 0) $firstCompany = $obj->rowid;
 						$disabled=0;
 						if (is_array($limitto) && sizeof($limitto) && ! in_array($obj->rowid,$limitto)) $disabled=1;
@@ -596,7 +596,7 @@ class FormCompany
 		}
 		else
 		{
-			dol_print_error($object->db);
+			dol_print_error($this->db);
 		}
 	}
 
