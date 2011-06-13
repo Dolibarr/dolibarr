@@ -119,7 +119,7 @@ class box_actions extends ModeleBoxes {
                     'url' => ($objp->socid?DOL_URL_ROOT."/societe/soc.php?socid=".$objp->socid:''));
 
 					$this->info_box_contents[$i][3] = array('td' => 'align="left"',
-					'text' => $objp->nom,
+					'text' => dol_trunc($objp->nom,24),
 					'url' => DOL_URL_ROOT."/societe/soc.php?socid=".$objp->socid);
 
 					$this->info_box_contents[$i][4] = array('td' => 'align="left" nowrap="nowrap"',
