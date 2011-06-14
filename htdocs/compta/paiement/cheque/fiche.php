@@ -332,7 +332,7 @@ if ($action == 'new')
 	$sql.= " AND ba.entity = ".$conf->entity;
 	$sql.= " AND b.fk_bordereau = 0";
 	$sql.= " AND b.amount > 0";
-	if ($filterdate)      $sql.=" AND b.datec = '".$db->idate($filterdate)."'";
+	if ($filterdate)      $sql.=" AND b.dateo = '".$db->idate($filterdate)."'";
     if ($filteraccountid) $sql.=" AND ba.rowid= '".$filteraccountid."'";
 	$sql.= $db->order("b.datec,b.rowid","ASC");
 
@@ -343,7 +343,7 @@ if ($action == 'new')
 		while ( $obj = $db->fetch_object($resql) )
 		{
 			$accounts[$obj->bid] = $obj->label;
-			$lines[$obj->bid][$i]["date"] = $db->jdate($obj->datec);
+			$lines[$obj->bid][$i]["date"] = $db->jdate($obj->date);
 			$lines[$obj->bid][$i]["amount"] = $obj->amount;
 			$lines[$obj->bid][$i]["emetteur"] = $obj->emetteur;
 			$lines[$obj->bid][$i]["numero"] = $obj->num_chq;
@@ -555,7 +555,7 @@ else
 				print '&nbsp;';
 			}
 			print '</td>';
-			print '<td align="center">'.dol_print_date($db->jdate($objp->datec),'day').'</td>';
+			print '<td align="center">'.dol_print_date($db->jdate($objp->date),'day').'</td>';
 			if($remisecheque->statut == 0)
 			{
 				print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?id='.$remisecheque->id.'&amp;action=remove&amp;lineid='.$objp->rowid.'">'.img_delete().'</a></td>';
