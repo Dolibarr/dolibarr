@@ -84,6 +84,7 @@ LinkedToAnotherCompany=Enlazado a otra empresa
 TaskIsNotAffectedToYou=Tarea que no le afecta
 ErrorTimeSpentIsEmpty=No se ha establecido el tiempo consumido
 ThisWillAlsoRemoveTasks=Esta operación también destruirá las tareas del proyecto (<b>%s</b> tareas) y sus tiempos dedicados.
+IfNeedToUseOhterObjectKeepEmpty=Si los elementos (factura, pedido, ...) pertenecen a un tercero que no és el seleccionado, debiendo estos estar ligados al proyecto a crear, déjelo vacío para permitir el proyecto a multi-terceros.
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Jefe de proyecto
 TypeContact_project_external_PROJECTLEADER=Jefe de proyecto
