@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -91,7 +91,7 @@ else
 print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 
 
-$sql = "SELECT bc.rowid, bc.date_bordereau as db, bc.amount, bc.number";
+$sql = "SELECT bc.rowid, bc.date_bordereau as db, bc.amount, bc.number as ref";
 $sql.= ", bc.statut, bc.nbcheque";
 $sql.= ", ba.label, ba.rowid as bid";
 $sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc";
@@ -118,9 +118,9 @@ if ($resql)
 	$var=true;
 	while ( $objp = $db->fetch_object($resql) )
 	{
-		$checkdepositstatic->statut=$objp->statut;
-		$checkdepositstatic->rowid=$objp->rowid;
-		$checkdepositstatic->number=$objp->number;
+        $checkdepositstatic->id=$objp->rowid;
+        $checkdepositstatic->ref=($objp->ref?$objp->ref:$objp->rowid);
+	    $checkdepositstatic->statut=$objp->statut;
 
 		$accountstatic->id=$objp->bid;
 		$accountstatic->label=$objp->label;

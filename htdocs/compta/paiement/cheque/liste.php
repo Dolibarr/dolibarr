@@ -114,10 +114,9 @@ if ($resql)
 
 		// Num ref cheque
 		print '<td width="80">';
-		$checkdepositstatic->rowid=$objp->rowid;
+		$checkdepositstatic->id=$objp->rowid;
 		$checkdepositstatic->ref=($objp->ref?$objp->ref:$objp->rowid);
 		$checkdepositstatic->statut=$objp->statut;
-		$checkdepositstatic->number=$objp->ref;
 		print $checkdepositstatic->getNomUrl(1);
 		print '</td>';
 
