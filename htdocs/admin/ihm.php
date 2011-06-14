@@ -465,13 +465,13 @@ else	// Show
     // Message login
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageLogin").'</td><td colspan="2">';
-    print nl2br($conf->global->MAIN_HOME);
+    print dol_htmlcleanlastbr($conf->global->MAIN_HOME);
     print '</td></tr>'."\n";
 
     // Message of the day
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageOfDay").'</td><td colspan="2">';
-    print nl2br($conf->global->MAIN_MOTD);
+    print dol_htmlcleanlastbr($conf->global->MAIN_MOTD);
     print '</td></tr>'."\n";
 
     /*
