@@ -323,18 +323,18 @@ if ($action == 'new')
 	print '</form>';
 	print '<br>';
 
-	$sql = "SELECT ba.rowid as bid, b.dateo as date, b.rowid as chqid, ";
+	$sql = "SELECT ba.rowid as bid, b.datec as datec, b.dateo as date, b.rowid as chqid, ";
 	$sql.= " b.amount, ba.label, b.emetteur, b.num_chq, b.banque";
-	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b ";
-	$sql.= ",".MAIN_DB_PREFIX."bank_account as ba ";
+	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b,";
+	$sql.= " ".MAIN_DB_PREFIX."bank_account as ba";
 	$sql.= " WHERE b.fk_type = 'CHQ'";
 	$sql.= " AND b.fk_account = ba.rowid";
 	$sql.= " AND ba.entity = ".$conf->entity;
 	$sql.= " AND b.fk_bordereau = 0";
 	$sql.= " AND b.amount > 0";
-	if ($filterdate)      $sql.=" AND b.dateo = '".$db->idate($filterdate)."'";
+	if ($filterdate)      $sql.=" AND b.datec = '".$db->idate($filterdate)."'";
     if ($filteraccountid) $sql.=" AND ba.rowid= '".$filteraccountid."'";
-	$sql.= $db->order("b.dateo,b.rowid","ASC");
+	$sql.= $db->order("b.datec,b.rowid","ASC");
 
 	$resql = $db->query($sql);
 	if ($resql)
@@ -343,7 +343,7 @@ if ($action == 'new')
 		while ( $obj = $db->fetch_object($resql) )
 		{
 			$accounts[$obj->bid] = $obj->label;
-			$lines[$obj->bid][$i]["date"] = $db->jdate($obj->date);
+			$lines[$obj->bid][$i]["date"] = $db->jdate($obj->datec);
 			$lines[$obj->bid][$i]["amount"] = $obj->amount;
 			$lines[$obj->bid][$i]["emetteur"] = $obj->emetteur;
 			$lines[$obj->bid][$i]["numero"] = $obj->num_chq;
