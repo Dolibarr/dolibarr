@@ -812,7 +812,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 
     if ($_GET["maxprint"] == 'on') $maxPrint=0;   // Force to remove limits
 
-    print '<div class="dayevent">'."\n";
+    print '<div id="dayevent_'.sprintf("%04d",$year).sprintf("%02d",$month).sprintf("%02d",$day).'" class="dayevent">'."\n";
     $curtime = dol_mktime (0, 0, 0, $month, $day, $year);
     print '<table class="nobordernopadding" width="100%">';
     print '<tr style="background: #EEEEEE"><td align="left" nowrap="nowrap">';
@@ -859,7 +859,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     else $color=sprintf("%02x%02x%02x",$theme_datacolor[$colorindex][0],$theme_datacolor[$colorindex][1],$theme_datacolor[$colorindex][2]);
                     //print "x".$color;
 
-                    print '<div class="event">';
+                    print '<div id="event_'.sprintf("%04d",$annee).sprintf("%02d",$mois).sprintf("%02d",$jour).'_'.$i.'" class="event">';
                     print '<table class="cal_event" style="background: #'.$color.'; -moz-border-radius:4px; " width="100%"><tr>';
                     print '<td nowrap="nowrap">';
                     if ($event->type_code == 'BIRTHDAY') // It's a birthday
