@@ -67,6 +67,7 @@ For users:
 - New: Minor look enhancements into agenda view.
 - New: Can add a logo on third parties card.
 - New: task #11194 : Can delete uploaded photos 
+- New: task #9744 : Add the barcode to select products on Point of Sale module
 - Fix: Better Postgresql compatibility.
 - Fix: Numbering module for invoices use same number for invoice 
        and credit note if mask is same.
