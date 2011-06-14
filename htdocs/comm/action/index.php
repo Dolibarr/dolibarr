@@ -559,7 +559,9 @@ if (sizeof($listofextcals))
                     $event->datef=$dateend+$usertime;
                     $event->type_code="ICALEVENT";
                     $event->libelle=$icalevent['SUMMARY'];
-                    if ($icalevent['DESCRIPTION']) $event->libelle.='<br>'.dol_nl2br($icalevent['DESCRIPTION'],1);
+                    
+                    //if showing with dol_trunc is not necessary to add a Description
+                    //if ($icalevent['DESCRIPTION']) $event->libelle.='<br>'.dol_nl2br($icalevent['DESCRIPTION'],1);
 
                     $event->date_start_in_calendar=$event->datep;
 
