@@ -178,3 +178,5 @@ MembersByTownDesc=Cet écran vous présente une vue statistique du nombre d'adh�
 MembersStatisticsDesc=Choisissez les statistiques que vous désirez consulter...
 MenuMembersStats=Statistiques
 LastMemberDate=Date dernier adhérent
+Nature=Nature
+Public=Public

@@ -177,3 +177,5 @@ MembersByTownDesc=Aquesta pantalla presenta una estadística del nombre de membr
 MembersStatisticsDesc=Trieu les estadístiques que voleu consultar...
 MenuMembersStats=Estadístiques
 LastMemberDate=Data últim membre
+Nature=Naturalesa
+Public=Públic

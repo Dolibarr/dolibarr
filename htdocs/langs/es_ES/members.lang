@@ -177,3 +177,5 @@ MembersByTownDesc=Esta pantalla presenta una estadística del número de miembro
 MembersStatisticsDesc=Elija las estadísticas que desea consultar...
 MenuMembersStats=Estadísticas
 LastMemberDate=Fecha último miembro
+Nature=Naturaleza
+Public=Público

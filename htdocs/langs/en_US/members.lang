@@ -177,3 +177,5 @@ MembersByTownDesc=This screen show you statistics on members by town.
 MembersStatisticsDesc=Choose statistics you want to read...
 MenuMembersStats=Statistics
 LastMemberDate=Last member date
+Nature=Nature
+Public=Public
