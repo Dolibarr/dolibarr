@@ -304,7 +304,7 @@ if ($action == 'new')
 	print '<table class="border" width="100%">';
 	//print '<tr><td width="30%">'.$langs->trans('Date').'</td><td width="70%">'.dol_print_date($now,'day').'</td></tr>';
 	// Filter
-	print '<tr><td width="200">'.$langs->trans("Date").'</td><td>';
+	print '<tr><td width="200">'.$langs->trans("DateChequeReceived").'</td><td>';
 	print $html->select_date($filterdate,'fd',0,0,1,'',1,1);
 	print '</td></tr>';
     print '<tr><td>'.$langs->trans("BankAccount").'</td><td>';
@@ -334,7 +334,7 @@ if ($action == 'new')
 	$sql.= " AND b.amount > 0";
 	if ($filterdate)      $sql.=" AND b.dateo = '".$db->idate($filterdate)."'";
     if ($filteraccountid) $sql.=" AND ba.rowid= '".$filteraccountid."'";
-	$sql.= $db->order("b.datec,b.rowid","ASC");
+	$sql.= $db->order("b.dateo,b.rowid","ASC");
 
 	$resql = $db->query($sql);
 	if ($resql)
@@ -528,7 +528,7 @@ else
 		print_liste_field_titre($langs->trans("Bank"),$_SERVER["PHP_SELF"],"b.banque", "",$param,"",$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"b.amount", "",$param,'align="right"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("LineRecord"),$_SERVER["PHP_SELF"],"b.rowid", "",$param,'align="center"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("DateChequeReceived"),$_SERVER["PHP_SELF"],"b.datec", "",$param,'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("DateChequeReceived"),$_SERVER["PHP_SELF"],"b.dateo", "",$param,'align="center"',$sortfield,$sortorder);
 		print_liste_field_titre('','','');
 		print "</tr>\n";
 		$i=1;
