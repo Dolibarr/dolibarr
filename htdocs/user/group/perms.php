@@ -55,14 +55,16 @@ if (! $canreadperms) accessforbidden();
  */
 if ($_GET["action"] == 'addrights' && $caneditperms)
 {
-    $editgroup = new Usergroup($db,$_GET["id"]);
-    $editgroup->addrights($_GET["rights"],$module);
+    $editgroup = new Usergroup($db);
+    $result=$editgroup->fetch($_GET["id"]);
+    if ($result > 0) $editgroup->addrights($_GET["rights"],$module);
 }
 
 if ($_GET["action"] == 'delrights' && $caneditperms)
 {
-    $editgroup = new Usergroup($db,$_GET["id"]);
-    $editgroup->delrights($_GET["rights"],$module);
+    $editgroup = new Usergroup($db);
+    $result=$editgroup->fetch($_GET["id"]);
+    if ($result > 0) $editgroup->delrights($_GET["rights"],$module);
 }
 
 
@@ -78,7 +80,7 @@ llxHeader('',$langs->trans("Permissions"));
 
 if ($_GET["id"])
 {
-    $fgroup = new Usergroup($db, $_GET["id"]);
+    $fgroup = new Usergroup($db);
     $fgroup->fetch($_GET["id"]);
     $fgroup->getrights();
 
