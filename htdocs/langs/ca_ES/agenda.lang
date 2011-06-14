@@ -66,3 +66,4 @@ ExtSitesEnableThisTool=Mostrar calendaris externs a l'agenda
 ExtSitesNbOfAgenda=Nombre de calendaris
 AgendaExtNb=Calendari nº %s
 ExtSiteUrlAgenda=Url d'accés a l'arxiu. ical
+ExtSiteNoLabel=Sense descripció

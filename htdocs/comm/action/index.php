@@ -558,12 +558,12 @@ if (sizeof($listofextcals))
                     $event->datep=$datestart+$usertime;
                     $event->datef=$dateend+$usertime;
                     $event->type_code="ICALEVENT";
-                    $event->libelle=$icalevent['SUMMARY'];
                     
-                    //if showing with dol_trunc is not necessary to add a Description
-                    //if ($icalevent['DESCRIPTION']) $event->libelle.='<br>'.dol_nl2br($icalevent['DESCRIPTION'],1);
-
-                    $event->date_start_in_calendar=$event->datep;
+                    if($icalevent['SUMMARY']) $event->libelle=$icalevent['SUMMARY'];
+                    elseif($icalevent['DESCRIPTION']) $event->libelle=dol_nl2br($icalevent['DESCRIPTION'],1);
+					else $event->libelle = $langs->trans("ExtSiteNoLabel");
+                    
+					$event->date_start_in_calendar=$event->datep;
 
                     if ($event->datef != '' && $event->datef >= $event->datep) $event->date_end_in_calendar=$event->datef;
                     else $event->date_end_in_calendar=$event->datep;
