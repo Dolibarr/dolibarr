@@ -200,14 +200,13 @@ if ($action == 'reopen' && $user->rights->expedition->valider)
 if ($action == 'setdate_livraison' && $user->rights->expedition->creer)
 {
 	//print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
-	$datelivraison=dol_mktime($_POST['liv_hour'], $_POST['liv_min'], 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
+	$datedelivery=dol_mktime($_POST['liv_hour'], $_POST['liv_min'], 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
 
-	$shipping = new Expedition($db);
-	$shipping->fetch($id);
-	$result=$shipping->set_date_livraison($user,$datelivraison);
+	$object->fetch($id);
+	$result=$object->set_date_livraison($user,$datedelivery);
 	if ($result < 0)
 	{
-		$mesg='<div class="error">'.$shipping->error.'</div>';
+		$mesg='<div class="error">'.$object->error.'</div>';
 	}
 }
 

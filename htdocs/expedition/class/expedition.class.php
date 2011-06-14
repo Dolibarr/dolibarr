@@ -54,7 +54,8 @@ class Expedition extends CommonObject
 	var $origin;
 	var $origin_id;
 	var $lines=array();
-	var $expedition_method_id;
+	var $expedition_method_id; // TODO deprecated
+	var $shipping_method_id;
 	var $statut;
 
 	var $trueWeight;
