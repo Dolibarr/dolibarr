@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -153,7 +153,7 @@ if ($_GET["msg"])
 			</div>
 			<label for="select_sql_compat"> <?php echo $langs->trans("ExportCompatibility"); ?></label>
 
-			<select name="sql_compat" id="select_sql_compat">
+			<select name="sql_compat" id="select_sql_compat" class="flat">
 				<option value="NONE" selected="selected">NONE</option>
 				<option value="ANSI">ANSI</option>
 				<option value="DB2">DB2</option>
