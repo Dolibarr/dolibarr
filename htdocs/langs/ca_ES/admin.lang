@@ -141,6 +141,7 @@ GenerateBackup=Generar còpia
 Backup=Còpia
 Restore=Restauració
 RunCommandSummary=La còpia serà realitzada per la comanda següent
+RunCommandSummaryToLaunch=La còpia pot ser realitzada per la comanda següent
 WebServerMustHavePermissionForCommand=El seu servidor web ha de tenir els drets d'executar aquesta ordre
 BackupResult=Resultat de la còpia
 BackupFileSuccessfullyCreated=Arxiu de còpia generat correctament
