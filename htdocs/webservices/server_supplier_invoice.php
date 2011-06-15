@@ -223,7 +223,7 @@ function getSupplierInvoice($authentication,$id='',$ref='',$ref_ext='')
     $objectresp=array();
     $errorcode='';$errorlabel='';
     $error=0;
-    $fuser=check_authentication($authentication,&$error,&$errorcode,&$errorlabel);
+    $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
     // Check parameters
 	if (! $error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext)))
 	{
@@ -311,7 +311,7 @@ function getSupplierInvoicesForThirdParty($authentication,$idthirdparty)
     $objectresp=array();
     $errorcode='';$errorlabel='';
     $error=0;
-    $fuser=check_authentication($authentication,&$error,&$errorcode,&$errorlabel);
+    $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
     // Check parameters
 	if (! $error && empty($idthirdparty))
 	{
