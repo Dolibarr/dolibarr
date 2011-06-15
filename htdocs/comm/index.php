@@ -404,7 +404,6 @@ if ($conf->societe->enabled && $user->rights->societe->lire)
 				$var=!$var;
 
 			}
-			print "</table><br>";
 
 			$db->free($resql);
 		}
@@ -412,6 +411,7 @@ if ($conf->societe->enabled && $user->rights->societe->lire)
 		{
 			print '<tr '.$bc[$var].'><td colspan="3">'.$langs->trans("None").'</td></tr>';
 		}
+		print "</table><br>";
 	}
 }
 
