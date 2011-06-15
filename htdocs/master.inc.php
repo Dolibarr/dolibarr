@@ -8,6 +8,7 @@
  * Copyright (C) 2005 	   Simon Tosser         <simon@kornog-computing.com>
  * Copyright (C) 2006 	   Andre Cianfarani     <andre.cianfarani@acdeveloppement.net>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -261,6 +262,7 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 	$mysoc->idprof3=empty($conf->global->MAIN_INFO_APE)?'':$conf->global->MAIN_INFO_APE;
 	$mysoc->idprof4=empty($conf->global->MAIN_INFO_RCS)?'':$conf->global->MAIN_INFO_RCS;
 	$mysoc->tva_intra=$conf->global->MAIN_INFO_TVAINTRA;	// VAT number, not necessarly INTRA.
+	$mysoc->idtrainer=empty($conf->global->MAIN_INFO_TRAINER)?'':$conf->global->MAIN_INFO_TRAINER;
 	$mysoc->capital=$conf->global->MAIN_INFO_CAPITAL;
 	$mysoc->forme_juridique_code=$conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE;
 	$mysoc->email=$conf->global->MAIN_INFO_SOCIETE_MAIL;

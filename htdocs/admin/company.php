@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -136,6 +137,7 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update' && empty($_POST["c
     dolibarr_set_const($db, "MAIN_INFO_APE",$_POST["ape"],'chaine',0,'',$conf->entity);
     dolibarr_set_const($db, "MAIN_INFO_RCS",$_POST["rcs"],'chaine',0,'',$conf->entity);
     dolibarr_set_const($db, "MAIN_INFO_TVAINTRA",$_POST["tva"],'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "MAIN_INFO_TRAINER",$_POST["trainer"],'chaine',0,'',$conf->entity);
 
     dolibarr_set_const($db, "SOCIETE_FISCAL_MONTH_START",$_POST["fiscalmonthstart"],'chaine',0,'',$conf->entity);
 
@@ -476,6 +478,12 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
     print '</td></tr>';
 
     print '</table>';
+    
+    // Trainer accreditation
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("TrainerId").'</td><td>';
+    print '<input name="trainer" size="20" value="' . $conf->global->MAIN_INFO_TRAINER . '">';
+    print '</td></tr>';
 
 
     /*
@@ -786,6 +794,10 @@ else
         }
         print '</td></tr>';
     }
+    
+    // Trainer accreditation
+	$var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("TrainerId").'</td><td>' . $conf->global->MAIN_INFO_TRAINER . '</td></tr>';
 
     // TVA
     $var=!$var;
