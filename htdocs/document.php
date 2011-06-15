@@ -53,6 +53,9 @@ $original_file = GETPOST("file");	// Do not use urldecode here ($_GET are alread
 $modulepart = GETPOST("modulepart");
 $urlsource = GETPOST("urlsource");
 
+// Security check
+if (empty($modulepart)) accessforbidden('Bad value for parameter modulepart');
+
 
 /*
  * Action
@@ -112,7 +115,6 @@ $original_file = str_replace("../","/", $original_file);
 $refname=basename(dirname($original_file)."/");
 
 // Security check
-if (empty($modulepart)) accessforbidden('Bad value for modulepart');
 $accessallowed=0;
 $sqlprotectagainstexternals='';
 if ($modulepart)

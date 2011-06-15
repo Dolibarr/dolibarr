@@ -44,7 +44,6 @@ if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 // Pour autre que companylogo, on charge environnement + info issus de logon comme le user
 if (($modulepart == 'companylogo') && ! defined("NOLOGIN")) define("NOLOGIN",'1');
 
-
 // C'est un wrapper, donc header vierge
 function llxHeader() { }
 
@@ -52,6 +51,21 @@ function llxHeader() { }
 require("./main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
 
+// Security check
+if (empty($modulepart)) accessforbidden('Bad value for parameter modulepart');
+
+
+/*
+ * Actions
+ */
+
+// None
+
+
+
+/*
+ * View
+ */
 
 if (GETPOST("cache"))
 {
@@ -75,7 +89,6 @@ else $type=dol_mimetype($original_file);
 $original_file = str_replace("../","/", $original_file);
 
 // Security check
-if (empty($modulepart)) accessforbidden('Bad value for modulepart');
 $accessallowed=0;
 if ($modulepart)
 {
