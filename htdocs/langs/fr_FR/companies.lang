@@ -97,6 +97,7 @@ ProfId1=Id professionnel 1
 ProfId2=Id professionnel 2
 ProfId3=Id professionnel 3
 ProfId4=Id professionnel 4
+TrainerId=N° d'accréditation formation
 ProfId1AR=Id prof. 1 (CUIT/CUIL)
 ProfId2AR=Id prof. 2 (Revenu brutes)
 ProfId3AR=-
