@@ -2242,7 +2242,7 @@ class Facture extends CommonObject
         $sql.= ' FROM '.MAIN_DB_PREFIX.$table.' as pf, '.MAIN_DB_PREFIX.$table2.' as p, '.MAIN_DB_PREFIX.'c_paiement as t';
         $sql.= ' WHERE pf.'.$field.' = '.$this->id;
         $sql.= ' AND pf.'.$field2.' = p.rowid';
-        $sql.= ' AND p.fk_paiement = t.rowid';
+        $sql.= ' AND p.fk_paiement = t.id';
         if ($filtertype) $sql.=" AND t.code='PRE'";
 
         dol_syslog("Facture::getListOfPayments sql=".$sql, LOG_DEBUG);
