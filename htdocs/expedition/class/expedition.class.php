@@ -443,18 +443,18 @@ class Expedition extends CommonObject
 		// Define new ref
 		if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref)))
 		{
-			$num = $this->getNextNumRef($soc);
+			$numref = $this->getNextNumRef($soc);
 		}
 		else
 		{
-			$num = "EXP".$this->id;
+			$numref = "EXP".$this->id;
 		}
 
 		$now=dol_now();
 
 		// Validate
 		$sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET";
-		$sql.= " ref='".$num."'";
+		$sql.= " ref='".$numref."'";
 		$sql.= ", fk_statut = 1";
 		$sql.= ", date_valid = '".$this->db->idate($now)."'";
 		$sql.= ", fk_user_valid = ".$user->id;
@@ -542,7 +542,7 @@ class Expedition extends CommonObject
 		// Set new ref
 		if (! $error)
 		{
-			$this->ref = $num;
+			$this->ref = $numref;
 		}
 
 		if (! $error)

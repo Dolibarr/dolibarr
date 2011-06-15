@@ -569,12 +569,12 @@ class Commande extends CommonObject
 	}
 
 	/**
-	 *  	\brief		Create order
-	 *		\param		user 	Objet user that make creation
-	 * 		\return 	int		<0 if KO, >0 if OK
-	 *		\remarks	this->ref can be set or empty. If empty, we will use "(PROV)"
+	 *  	Create order
+	 *		@param		user 	Objet user that make creation
+	 * 		@return 	int		<0 if KO, >0 if OK
+	 *		remarks	this->ref can be set or empty. If empty, we will use "(PROV)"
 	 */
-	function create($user)
+	function create($user, $notrigger=0)
 	{
 		global $conf,$langs,$mysoc;
 		$error=0;
@@ -728,13 +728,16 @@ class Commande extends CommonObject
 							}
 						}
 					}
-
-					// Appel des triggers
-					include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
-					$interface=new Interfaces($this->db);
-					$result=$interface->run_triggers('ORDER_CREATE',$this,$user,$langs,$conf);
-					if ($result < 0) { $error++; $this->errors=$interface->errors; }
-					// Fin appel triggers
+					
+					if (! $notrigger)
+					{
+						// Appel des triggers
+						include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+						$interface=new Interfaces($this->db);
+						$result=$interface->run_triggers('ORDER_CREATE',$this,$user,$langs,$conf);
+						if ($result < 0) { $error++; $this->errors=$interface->errors; }
+						// Fin appel triggers
+					}
 
 					$this->db->commit();
 					return $this->id;
