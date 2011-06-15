@@ -363,6 +363,11 @@ class FormFile
 			{
 				print '<td align="center" class="formdoc">';
 				print $langs->trans('Model').' ';
+				if (is_array($modellist) && sizeof($modellist) == 1)    // If there is only one element
+				{
+				    $arraykeys=array_keys($modellist);
+				    $modelselected=$arraykeys[0];
+				}
 				print $html->selectarray('model',$modellist,$modelselected,$showempty,0,0);
 			    if (sizeof($cgvlist) > 0)
 			    {

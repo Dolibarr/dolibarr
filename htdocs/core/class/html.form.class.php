@@ -3141,7 +3141,7 @@ class Form
 
         if (is_array($array))
         {
-            while (list($key, $value) = each ($array))
+            foreach($array as $key => $value)
             {
                 $out.='<option value="'.($value_as_key?$value:$key).'"';
                 // Si il faut pre-selectionner une valeur
