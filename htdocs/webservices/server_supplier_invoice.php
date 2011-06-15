@@ -118,8 +118,9 @@ $server->wsdl->addComplexType(
         'ref' => array('name'=>'ref','type'=>'xsd:string'),
         'ref_ext' => array('name'=>'ref_ext','type'=>'xsd:string'),
         'ref_supplier' => array('name'=>'ref_supplier','type'=>'xsd:string'),
-        'fk_user_author' => array('name'=>'fk_user_author','type'=>'xsd:string'),
-        'fk_user_valid' => array('name'=>'fk_user_valid','type'=>'xsd:string'),
+        'fk_user_author' => array('name'=>'fk_user_author','type'=>'xsd:int'),
+        'fk_user_valid' => array('name'=>'fk_user_valid','type'=>'xsd:int'),
+        'fk_thirdparty' => array('name'=>'fk_thirdparty','type'=>'xsd:int'),
         'date_creation' => array('name'=>'date_creation','type'=>'xsd:dateTime'),
         'date_validation' => array('name'=>'date_validation','type'=>'xsd:dateTime'),
         'date_modification' => array('name'=>'date_modification','type'=>'xsd:dateTime'),
@@ -264,11 +265,28 @@ function getSupplierInvoice($authentication,$id='',$ref='',$ref_ext='')
 			        'invoice'=>array(
 				    	'id' => $invoice->id,
 			   			'ref' => $invoice->ref,
-			   			'ref_ext' => $invoice->ref_ext,
-			            'status'=>$invoice->statut,
+                        'ref_supplier'=>$invoice->ref_supplier,
+			            'ref_ext' => $invoice->ref_ext,
 			            'fk_user_author' => $invoice->fk_user_author,
 			            'fk_user_valid' => $invoice->fk_user_valid,
-			    		'lines' => $linesresp
+                        'fk_thirdparty' => $invoice->fk_soc,
+                        'type'=>$invoice->type,
+                        'status'=>$invoice->statut,
+                        'total_net'=>$invoice->total_ht,
+                        'total_vat'=>$invoice->total_tva,
+                        'total'=>$invoice->total_ttc,
+                        'date_creation'=>dol_print_date($invoice->datec,'dayhourrfc'),
+                        'date_modification'=>dol_print_date($invoice->tms,'dayhourrfc'),
+                        'date_invoice'=>dol_print_date($invoice->date,'dayhourrfc'),
+                        'date_term'=>dol_print_date($invoice->date_echeance,'dayhourrfc'),
+                        'label'=>$invoice->libelle,
+                        'paid'=>$invoice->paye,
+                        'note'=>$invoice->note,
+                        'note_public'=>$invoice->note_public,
+                        'close_code'=>$invoice->close_code,
+                        'close_note'=>$invoice->close_note,
+
+                        'lines' => $linesresp
 //					        'lines' => array('0'=>array('id'=>222,'type'=>1),
 //				        				 '1'=>array('id'=>333,'type'=>1))
 
@@ -329,8 +347,8 @@ function getSupplierInvoicesForThirdParty($authentication,$idthirdparty)
 		//$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product = p.rowid';
 		//$sql.=" WHERE f.fk_soc = s.rowid AND nom = '".$db->escape($idthirdparty)."'";
 		//$sql.=" WHERE f.fk_soc = s.rowid AND nom = '".$db->escape($idthirdparty)."'";
-		$sql.=" WHERE f.fk_soc = ".$db->escape($idthirdparty);
-		$sql.=" AND f.entity = ".$conf->entity;
+        $sql.=" WHERE f.entity = ".$conf->entity;
+		if ($idthirdparty != 'all') $sql.=" AND f.fk_soc = ".$db->escape($idthirdparty);
 
 		$resql=$db->query($sql);
 		if ($resql)
@@ -370,6 +388,9 @@ function getSupplierInvoicesForThirdParty($authentication,$idthirdparty)
 				    'ref'=>$invoice->ref,
 				    'ref_supplier'=>$invoice->ref_supplier,
 				    'ref_ext'=>$invoice->ref_ext,
+                    'fk_user_author' => $invoice->fk_user_author,
+                    'fk_user_valid' => $invoice->fk_user_valid,
+                    'fk_thirdparty' => $invoice->fk_soc,
 				    'type'=>$invoice->type,
                     'status'=>$invoice->statut,
 				    'total_net'=>$invoice->total_ht,
