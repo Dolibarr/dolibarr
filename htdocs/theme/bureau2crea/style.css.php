@@ -1087,7 +1087,7 @@ span.tabspan {
 
 /* Nouvelle syntaxe a utiliser */
 
-a.butAction:link, a.butAction:visited, a.butAction:hover, a.butAction:active, a.butActionDelete, a.butActionDelete:link, a.butActionDelete:visited, a.butActionDelete:hover, a.butActionDelete:active {
+.butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
 	font-family:"Trebuchet MS",Arial,Helvetica,sans-serif;
 	font-weight: bold;
 	background: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_btnBlue.jpg' ?>) repeat-x;
@@ -1104,19 +1104,19 @@ a.butAction:link, a.butAction:visited, a.butAction:hover, a.butAction:active, a.
     cursor: pointer;
 }
 
-a.butAction:hover   {
+.butAction:hover   {
 	background: #dee7ec;
 }
 
-a.butActionDelete    {
+.butActionDelete    {
 	border: 1px solid red;
 }
 
-a.butActionDelete:link, a.butActionDelete:visited, a.butActionDelete:hover, a.butActionDelete:active {
+.butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
 	border: 1px solid #997777;
 }
 
-a.butActionDelete:hover {
+.butActionDelete:hover {
 	background: #FFe7ec;
 }
 
@@ -1131,6 +1131,10 @@ a.butActionDelete:hover {
 	text-decoration: none !important;
 	white-space: nowrap !important;
 	cursor: not-allowed;
+}
+
+span.butAction, span.butActionDelete {
+	cursor: pointer;
 }
 
 
@@ -2012,3 +2016,5 @@ div.leftContent {
 {
     border: 0px solid #FF0000 !important;
 }
+span.cke_skin_kama { padding: 0 !important; }
+.cke_wrapper { padding: 4px !important; }

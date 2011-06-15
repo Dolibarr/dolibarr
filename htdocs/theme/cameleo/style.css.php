@@ -1092,7 +1092,7 @@ span.tabspan {
 
 /* Nouvelle syntaxe a utiliser */
 
-a.butAction:link, a.butAction:visited, a.butAction:hover, a.butAction:active, a.butActionDelete,a.butActionRefused, a.butActionDelete:link, a.butActionDelete:visited, a.butActionDelete:hover, a.butActionDelete:active {
+.butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionRefused, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
 	font-family:"Trebuchet MS",Arial,Helvetica,sans-serif;
 	font-weight: bold;
 	/*background: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_btnBlue.jpg' ?>) repeat-x;*/
@@ -1115,27 +1115,31 @@ a.butAction:link, a.butAction:visited, a.butAction:hover, a.butAction:active, a.
     cursor: pointer;
 }
 
-a.butAction:hover   {
+.butAction:hover   {
 	background: #FFe7ec;
         color: #961400;
 }
 
-a.butActionDelete    {
+.butActionDelete    {
 	border: 1px solid red;
 }
 
-a.butActionDelete:link, a.butActionDelete:visited, a.butActionDelete:hover, a.butActionDelete:active {
+.butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
 	border: 2px solid red;
 }
 
-a.butActionDelete:hover {
+.butActionDelete:hover {
 	background: #FFe7ec;
-        color: #961400;
+    color: #961400;
 }
 
-a.butActionRefused {
-        background: #FFe7ec;
+.butActionRefused {
+    background: #FFe7ec;
 	color: #666;
+}
+
+span.butAction, span.butActionDelete {
+	cursor: pointer;
 }
 
 
