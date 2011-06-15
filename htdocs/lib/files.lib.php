@@ -567,9 +567,10 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
  *  Remove a file or several files with a mask
  *  @param      file            File to delete or mask of file to delete
  *  @param      disableglob     Disable usage of glob like *
+ *  @param      nophperrors     Disable all PHP output errors
  *  @return     boolean         True if file is deleted, False if error
  */
-function dol_delete_file($file,$disableglob=0)
+function dol_delete_file($file,$disableglob=0,$nophperrors=0)
 {
     //print "x".$file." ".$disableglob;
     $ok=true;
@@ -578,14 +579,16 @@ function dol_delete_file($file,$disableglob=0)
     {
         foreach (glob($file_osencoded) as $filename)
         {
-            $ok=unlink($filename);  // The unlink encapsulated by dolibarr
+            if ($nophperrors) $ok=@unlink($filename);  // The unlink encapsulated by dolibarr
+            else $ok=unlink($filename);  // The unlink encapsulated by dolibarr
             if ($ok) dol_syslog("Removed file ".$filename,LOG_DEBUG);
             else dol_syslog("Failed to remove file ".$filename,LOG_WARNING);
         }
     }
     else
     {
-        $ok=unlink($file_osencoded);        // The unlink encapsulated by dolibarr
+        if ($nophperrors) $ok=@unlink($file_osencoded);        // The unlink encapsulated by dolibarr
+        else $ok=unlink($file_osencoded);        // The unlink encapsulated by dolibarr
         if ($ok) dol_syslog("Removed file ".$file_osencoded,LOG_DEBUG);
         else dol_syslog("Failed to remove file ".$file_osencoded,LOG_WARNING);
     }
@@ -596,21 +599,23 @@ function dol_delete_file($file,$disableglob=0)
  *  Remove a directory (not recursive, so content must be empty).
  *  If directory is not empty, return false
  *  @param      dir             Directory to delete
+ *  @param      nophperrors     Disable all PHP output errors
  *  @return     boolean         True if success, false if error
  */
-function dol_delete_dir($dir)
+function dol_delete_dir($dir,$nophperrors=0)
 {
     $dir_osencoded=dol_osencode($dir);
-    return rmdir($dir_osencoded);
+    return ($nophperrors?@rmdir($dir_osencoded):rmdir($dir_osencoded));
 }
 
 /**
  *  Remove a directory $dir and its subdirectories
  *  @param      dir             Dir to delete
  *  @param      count           Counter to count nb of deleted elements
+ *  @param      nophperrors     Disable all PHP output errors
  *  @return     int             Number of files and directory removed
  */
-function dol_delete_dir_recursive($dir,$count=0)
+function dol_delete_dir_recursive($dir,$count=0,$nophperrors=0)
 {
     dol_syslog("functions.lib:dol_delete_dir_recursive ".$dir,LOG_DEBUG);
     $dir_osencoded=dol_osencode($dir);
@@ -624,18 +629,18 @@ function dol_delete_dir_recursive($dir,$count=0)
             {
                 if (is_dir(dol_osencode("$dir/$item")))
                 {
-                    $count=dol_delete_dir_recursive("$dir/$item",$count);
+                    $count=dol_delete_dir_recursive("$dir/$item",$count,$nophperrors);
                 }
                 else
                 {
-                    dol_delete_file("$dir/$item",1);
+                    dol_delete_file("$dir/$item",1,$nophperrors);
                     $count++;
                     //echo " removing $dir/$item<br>\n";
                 }
             }
         }
         closedir($handle);
-        dol_delete_dir($dir);
+        dol_delete_dir($dir,$nophperrors);
         $count++;
         //echo "removing $dir<br>\n";
     }
