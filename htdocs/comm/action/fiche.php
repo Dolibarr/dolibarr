@@ -856,7 +856,7 @@ if ($id)
 		else print dol_print_date($act->datep,'day');
 		if ($act->percentage == 0 && $act->datep && $act->datep < ($now - $delay_warning)) print img_warning($langs->trans("Late"));
 		print '</td>';
-		print '<td rowspan="3" align="center" valign="middle" width="140">'."\n";
+		print '<td rowspan="3" align="center" valign="middle" width="180">'."\n";
         print '<form name="listactionsfiltermonth" action="'.DOL_URL_ROOT.'/comm/action/index.php" method="POST">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="show_month">';
