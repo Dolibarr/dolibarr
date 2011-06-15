@@ -100,7 +100,7 @@ if ($what == 'mysql')
 	if ($compression == 'gz') $outputfile.='.gz';
 	if ($compression == 'bz') $outputfile.='.bz2';
 	$outputerror = $outputfile.'.err';
-	create_exdir($conf->admin->dir_output.'/backup');
+	dol_mkdir($conf->admin->dir_output.'/backup');
 
 	// Parameteres execution
 	$command=$cmddump;
@@ -154,7 +154,7 @@ if ($what == 'mysql')
 
 	$errormsg='';
 
-	$result=create_exdir($outputdir);
+	$result=dol_mkdir($outputdir);
 
 	// Debut appel methode execution
 	$fullcommandcrypted=$command." ".$paramcrypted." 2>&1";
@@ -231,7 +231,7 @@ if ($what == 'postgresql')
 	if ($compression == 'gz') $outputfile.='.gz';
 	if ($compression == 'bz') $outputfile.='.bz2';
 	$outputerror = $outputfile.'.err';
-	create_exdir($conf->admin->dir_output.'/backup');
+	dol_mkdir($conf->admin->dir_output.'/backup');
 
 	// Parameteres execution
 	$command=$cmddump;
@@ -267,7 +267,7 @@ if ($what == 'postgresql')
 	$paramcrypted.=" -w ".$dolibarr_main_db_name;
 	$paramclear.=" -w ".$dolibarr_main_db_name;
 
-	print $langs->trans("RunCommandSummary").':<br>'."\n";
+	print $langs->trans("RunCommandSummaryToLaunch").':<br>'."\n";
 	print '<textarea rows="'.ROWS_3.'" cols="120">'.$command." ".$paramcrypted.'</textarea><br>'."\n";
 
 	print '<br>';

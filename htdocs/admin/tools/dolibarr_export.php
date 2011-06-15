@@ -226,7 +226,7 @@ if ($_GET["msg"])
 			<br>
 			<fieldset><legend><?php echo $langs->trans("ExportOptions"); ?></legend>
 			<label for="select_sql_compat"> <?php echo $langs->trans("ExportCompatibility"); ?></label>
-			<select name="sql_compat" id="select_sql_compat">
+			<select name="sql_compat" id="select_sql_compat" class="flat">
 				<option value="POSTGRESQL" selected="selected">POSTGRESQL</option>
 				<option value="ANSI">ANSI</option>
 			</select><br>

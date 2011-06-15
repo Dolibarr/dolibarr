@@ -141,6 +141,7 @@ GenerateBackup= Générer sauvegarde
 Backup= Sauvegarde
 Restore= Restauration
 RunCommandSummary= La sauvegarde sera exécutée par la commande suivante
+RunCommandSummaryToLaunch=La sauvegarde peut etre exécutée par la commande suivante
 WebServerMustHavePermissionForCommand= Votre serveur web doit avoir les droits pour exécuter une telle commande
 BackupResult= Résultat sauvegarde
 BackupFileSuccessfullyCreated= Fichier backup généré avec succès
