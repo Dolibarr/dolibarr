@@ -93,8 +93,7 @@ if ($mode == 'search') {
 
 
 /*
- * Mode Liste
- *
+ * Mode List
  */
 
 $sql = "SELECT s.rowid, s.nom, s.client, s.ville, s.datec, s.datea";
@@ -102,49 +101,41 @@ $sql.= ", st.libelle as stcomm, s.prefix_comm, s.code_client, s.code_compta ";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk_user ";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= " WHERE s.fk_stcomm = st.id AND s.client=1";
+$sql.= " WHERE s.fk_stcomm = st.id AND s.client in (1, 3)";
 $sql.= " AND s.entity = ".$conf->entity;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-
 if (dol_strlen($stcomm))
 {
 	$sql.= " AND s.fk_stcomm=$stcomm";
 }
-
 if ($socname)
 {
 	$sql.= " AND s.nom like '%".$db->escape(strtolower($socname))."%'";
 	$sortfield = "s.nom";
 	$sortorder = "ASC";
 }
-
 if ($_GET["search_nom"])
 {
 	$sql.= " AND s.nom like '%".$db->escape(strtolower($_GET["search_nom"]))."%'";
 }
-
 if ($_GET["search_compta"])
 {
 	$sql.= " AND s.code_compta like '%".$db->escape($_GET["search_compta"])."%'";
 }
-
 if ($_GET["search_code_client"])
 {
 	$sql.= " AND s.code_client like '%".$db->escape($_GET["search_code_client"])."%'";
 }
-
 if (dol_strlen($begin))
 {
 	$sql.= " AND s.nom like '".$db->escape($begin)."'";
 }
-
 if ($socid)
 {
 	$sql.= " AND s.rowid = ".$socid;
 }
-
 $sql.= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
-
+print $sql;
 $resql = $db->query($sql);
 if ($resql)
 {
