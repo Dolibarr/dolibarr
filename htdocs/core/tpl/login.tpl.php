@@ -78,7 +78,7 @@ jQuery(document).ready(function () {
 	    dst = "0"; // daylight savings time is NOT observed
 	} else {
 	    dst = "1"; // daylight savings time is observed
-	}	
+	}
 	jQuery('#tz').val(std_time_offset);   				  // returns TZ
 	jQuery('#dst').val(dst);   							  // returns DST
 	// Detect and save screen resolution

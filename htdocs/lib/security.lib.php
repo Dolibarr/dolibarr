@@ -254,7 +254,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 			$i++;
 		}
 	}
-	$main_home=nl2br($conf->global->MAIN_HOME);
+	$main_home=dol_htmlcleanlastbr($conf->global->MAIN_HOME);
 
 	// Google AD
 	$main_google_ad_client = ((! empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && ! empty($conf->global->MAIN_GOOGLE_AD_SLOT))?1:0);
