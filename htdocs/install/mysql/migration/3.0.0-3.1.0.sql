@@ -5,6 +5,7 @@
 -- This file must be loaded by calling /install/index.php page
 -- when current version is 2.8.0 or higher. 
 --
+-- To rename a table:       ALTER TABLE llx_table RENAME TO llx_table_new;
 -- To add a column:         ALTER TABLE llx_table ADD COLUMN newcol varchar(60) NOT NULL DEFAULT '0' AFTER existingcol;
 -- To rename a column:      ALTER TABLE llx_table CHANGE COLUMN oldname newname varchar(60);
 -- To change type of field: ALTER TABLE llx_table MODIFY name varchar(60);
@@ -15,7 +16,7 @@ DROP table llx_prelevement_notifications;
 -- Fix corrupted data
 update llx_deplacement set dated='2010-01-01' where dated < '2000-01-01';
 
-RENAME TABLE llx_c_methode_commande_fournisseur TO llx_c_input_method;
+ALTER TABLE llx_c_methode_commande_fournisseur RENAME TO llx_c_input_method;
 
 ALTER TABLE llx_adherent MODIFY login varchar(50);
 
@@ -56,7 +57,7 @@ ALTER TABLE llx_facture_fourn ADD COLUMN ref_ext varchar(30) AFTER entity;
 ALTER TABLE llx_commande_fournisseur ADD COLUMN ref_ext varchar(30) AFTER entity;
 ALTER TABLE llx_adherent ADD COLUMN ref_ext varchar(30) after entity;
 
-ALTER TABLE llx_commande ADD COLUMN fk_demand_reason int(11) AFTER fk_availability;
+ALTER TABLE llx_commande ADD COLUMN fk_demand_reason integer AFTER fk_availability;
 
 ALTER TABLE llx_facturedet DROP INDEX uk_fk_remise_except;
 ALTER TABLE llx_facturedet ADD UNIQUE INDEX uk_fk_remise_except (fk_remise_except, fk_facture);
