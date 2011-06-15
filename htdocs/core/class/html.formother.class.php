@@ -374,6 +374,7 @@ class FormOther
 	    global $langs;
 		if (! is_array($arrayofcolors) || sizeof($arrayofcolors) < 1)
 		{
+			$langs->load("other");
 		    print '<link rel="stylesheet" media="screen" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/css/jPicker-1.1.6.css" />';
             print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/jpicker-1.1.6.js"></script>';
             print '<script type="text/javascript">
