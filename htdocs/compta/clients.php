@@ -29,6 +29,8 @@ require('../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/comm/action/class/actioncomm.class.php");
 
+$action=GETPOST('action');
+
 // Secrutiy check
 if ($user->societe_id > 0)
 {
@@ -135,19 +137,15 @@ if ($socid)
 	$sql.= " AND s.rowid = ".$socid;
 }
 $sql.= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
-print $sql;
+//print $sql;
+
 $resql = $db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	if ($action == 'facturer') {
-		print_barre_liste("Liste des clients facturables", $page, "clients.php","",$sortfield,$sortorder,'',$num);
-	}
-	else {
-		print_barre_liste($langs->trans("ListOfCustomers"), $page, "clients.php","",$sortfield,$sortorder,'',$num);
-	}
+	print_barre_liste($langs->trans("ListOfCustomers"), $page, $_SERVER["PHP_SELF"],"",$sortfield,$sortorder,'',$num);
 
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 
