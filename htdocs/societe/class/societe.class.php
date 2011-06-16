@@ -7,7 +7,6 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2008      Patrick Raguin       <patrick.raguin@auguria.net>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,7 +79,6 @@ class Societe extends CommonObject
     var $idprof2;	// IdProf2
     var $idprof3;	// IdProf3
     var $idprof4;	// IdProf4
-    var $idtrainer; // Trainer accreditation
 
     var $prefix_comm;
 
@@ -403,7 +401,6 @@ class Societe extends CommonObject
         $this->siret=trim($this->siret);
         $this->ape=trim($this->ape);
         $this->idprof4=trim($this->idprof4);
-        $this->idtrainer=trim($this->idtrainer);
         $this->prefix_comm=trim($this->prefix_comm);
 
         $this->tva_assuj=trim($this->tva_assuj);
@@ -468,7 +465,6 @@ class Societe extends CommonObject
             $sql .= ",siret   = '". $this->db->escape($this->siret)   ."'";
             $sql .= ",ape     = '". $this->db->escape($this->ape)     ."'";
             $sql .= ",idprof4 = '". $this->db->escape($this->idprof4) ."'";
-            $sql .= ",idtrainer = '". $this->db->escape($this->idtrainer) ."'";
 
             $sql .= ",tva_assuj = ".($this->tva_assuj!=''?"'".$this->tva_assuj."'":"null");
             $sql .= ",tva_intra = '" . $this->db->escape($this->tva_intra) ."'";
@@ -579,10 +575,9 @@ class Societe extends CommonObject
      *    @param      idprof2		Prof id 2 of third party (Warning, this can return several records)
      *    @param      idprof3		Prof id 3 of third party (Warning, this can return several records)
      *    @param      idprof4		Prof id 4 of third party (Warning, this can return several records)
-     *    @param      idtrainer		Prof idtrainer of third party (Warning, this can return several records)
      *    @return     int			>0 if OK, <0 if KO or if two records found for same ref or idprof.
      */
-    function fetch($rowid, $ref='', $ref_ext='', $ref_int='', $idprof1='',$idprof2='',$idprof3='',$idprof4='',$idtrainer='')
+    function fetch($rowid, $ref='', $ref_ext='', $ref_int='', $idprof1='',$idprof2='',$idprof3='',$idprof4='')
     {
         global $langs;
         global $conf;
@@ -594,7 +589,7 @@ class Societe extends CommonObject
         $sql .= ', s.price_level';
         $sql .= ', s.tms as date_update';
         $sql .= ', s.tel, s.fax, s.email, s.url, s.cp as zip, s.ville as town, s.note, s.client, s.fournisseur';
-        $sql .= ', s.siren, s.siret, s.ape, s.idprof4, s.idtrainer';
+        $sql .= ', s.siren, s.siret, s.ape, s.idprof4';
         $sql .= ', s.capital, s.tva_intra';
         $sql .= ', s.fk_typent as typent_id';
         $sql .= ', s.fk_effectif as effectif_id';
@@ -624,7 +619,6 @@ class Societe extends CommonObject
         if ($idprof2) $sql .= " WHERE s.siret = '".$this->db->escape($siret)."' AND s.entity = ".$conf->entity;
         if ($idprof3) $sql .= " WHERE s.ape = '".$this->db->escape($ape)."' AND s.entity = ".$conf->entity;
         if ($idprof4) $sql .= " WHERE s.idprof4 = '".$this->db->escape($idprof4)."' AND s.entity = ".$conf->entity;
-        if ($idtrainer) $sql .= " WHERE s.idtrainer = '".$this->db->escape($idtrainer)."' AND s.entity = ".$conf->entity;
 
         $resql=$this->db->query($sql);
         dol_syslog("Societe::fetch ".$sql);
@@ -691,7 +685,6 @@ class Societe extends CommonObject
                 $this->ape			= $obj->ape; // TODO obsolete
                 $this->idprof3		= $obj->ape;
                 $this->idprof4		= $obj->idprof4;
-                $this->idtrainer	= $obj->idtrainer;
 
                 $this->capital   = $obj->capital;
 

@@ -4,7 +4,6 @@
  * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2010-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -567,10 +566,6 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
         $field=$outputlangs->transcountrynoentities("ProfId4",$fromcompany->pays_code);
         if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
         $line4.=($line4?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof4);
-    }
-	// Trainer accreditation
-	{
-        $line4.=($line4?" - ":"").$outputlangs->transnoentities("TrainerId").": ".$outputlangs->convToOutputCharset($fromcompany->idtrainer);
     }
     // IntraCommunautary VAT
     if ($fromcompany->tva_intra != '')
