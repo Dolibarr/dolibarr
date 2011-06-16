@@ -217,7 +217,7 @@ class Adherent extends CommonObject
                '%PASSWORD%'=>$msgishtml?dol_htmlentitiesbr($this->pass):$this->pass
         );
 
-        $substitutionarray=complete_substitutions_array($substitutionarray, $langs);
+        complete_substitutions_array($substitutionarray, $langs);
 
         return make_substitutions($text,$substitutionarray);
     }

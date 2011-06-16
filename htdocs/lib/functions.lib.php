@@ -3578,7 +3578,7 @@ function dol_textishtml($msg,$option=0)
  */
 function make_substitutions($chaine,$substitutionarray)
 {
-    if (! is_array($substitutionarray)) return 'ErrorBadParametersCalling_make_substitutions';
+    if (! is_array($substitutionarray)) return 'ErrorBadParameterSubstitutionArrayWhenCalling_make_substitutions';
 
     // Make substitition
     foreach ($substitutionarray as $key => $value)

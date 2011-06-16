@@ -146,7 +146,7 @@ if ($resql)
 				'__OTHER5__' => $other5
 			);
 
-			$substitutionarray=complete_substitutions_array($substitutionarray,$langs);
+			complete_substitutions_array($substitutionarray,$langs);
 			$newsubject=make_substitutions($subject,$substitutionarray);
 			$newmessage=make_substitutions($message,$substitutionarray);
 

@@ -484,17 +484,19 @@ if ($rowid)
     print $html->showrefnav($adh,'rowid');
     print '</td></tr>';
 
+    $showphoto='<td rowspan="'.$rowspan.'" align="center" valign="middle" width="25%">'.$html->showphoto('memberphoto',$adh).'</td>';
+
     // Login
     if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
     {
-        print '<tr><td>'.$langs->trans("Login").'</td><td class="valeur" colspan="2">'.$adh->login.'&nbsp;</td></tr>';
+        print '<tr><td>'.$langs->trans("Login").'</td><td class="valeur">'.$adh->login.'&nbsp;</td>';
+        print $showphoto; $showphoto='';
+        print '</tr>';
     }
 
     // Morphy
     print '<tr><td>'.$langs->trans("Nature").'</td><td class="valeur" >'.$adh->getmorphylib().'</td>';
-    print '<td rowspan="'.$rowspan.'" align="center" valign="middle" width="25%">';
-    print $html->showphoto('memberphoto',$adh);
-    print '</td>';
+    print $showphoto; $showphoto='';
     print '</tr>';
 
     // Type
