@@ -3,6 +3,7 @@
  * Copyright (C)      2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007-2010 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -171,6 +172,7 @@ input.button[type=submit] {
     color: #FFFFFF;
     cursor: pointer;
     font-size: 10px;
+    display: inline;
 }
 
 .button {
@@ -279,7 +281,7 @@ div.tmenu {
     white-space: nowrap;
     border-left: 0px;
     padding: 0px;
-    margin: 10px 20px 10px 20px;
+    margin: 10px 0px 10px 0px;
     font-size: 13px;
     background-image : url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_tmenu.jpg' ?>) ;
     height: 22px;
@@ -442,20 +444,24 @@ li.tmenu {
     background-image : url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_tmenu_btnD.jpg' ?>);
     background-position: right;
     }
+.tmenuimage {
+margin: 0 !important;
+padding: 0 !important;
+}
 
 li.tmenu a {
 	position: relative;
 	display: block;
-    width: 100%;
     height: 22px;
     background-image : url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_tmenu_btnG.jpg' ?>);
-    background-position: left;
+    background-position: left center;
 	background-repeat: no-repeat;
     font-size: 12px;
     font-family: Geneva, Verdana, sans-serif;
     line-height: 25px;
     color: #FFF;
     font-weight: normal;
+    float: left;
     }
 
 li.tmenu a:hover {
@@ -480,6 +486,7 @@ li.tmenusel a.tmenusel {
     line-height: 25px;
     color: #303030;
     font-weight: normal;
+    float: left;
     }
 
 li.tmenusel a:hover {
@@ -536,7 +543,11 @@ img.login, img.printer, img.entity {
 /* ============================================================================== */
 /* Menu gauche                                                                    */
 /* ============================================================================== */
-
+.vmenu{
+margin: 0;
+position: relative;
+width: 210px;
+}
 <?php if ((GETPOST("optioncss") == 'print')
 || (! empty($conf->browser->phone) && class_exists('Smartphone') && empty($conf->global->MAIN_SEARCHFORM_WITH_SMARTHPONE) && empty($conf->global->BOOKMARKS_SHOW_WITH_SMARTHPONE))) { ?>
 .vmenu {
