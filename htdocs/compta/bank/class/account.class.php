@@ -1061,7 +1061,7 @@ class AccountLine extends CommonObject
         $sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
         $sql.= " WHERE b.fk_account = ba.rowid";
         $sql.= " AND ba.entity = ".$conf->entity;
-        if ($ref) $sql.= " AND b.rowid='".$ref."'";
+        if ($ref) $sql.= " AND b.num_chq='".$ref."'";
         else $sql.= " AND b.rowid=".$rowid;
 
         dol_syslog("AccountLine::fetch sql=".$sql);
@@ -1071,29 +1071,29 @@ class AccountLine extends CommonObject
             $obj = $this->db->fetch_object($result);
             if ($obj)
             {
-                $this->id            = $obj->rowid;
-                $this->rowid         = $obj->rowid;
-                $this->ref           = $obj->rowid;
+                $this->id				= $obj->rowid;
+                $this->rowid			= $obj->rowid;
+                $this->ref				= $obj->rowid;
 
-                $this->datec         = $obj->datec;
-                $this->datev         = $obj->datev;
-                $this->dateo         = $obj->dateo;
-                $this->amount        = $obj->amount;
-                $this->label         = $obj->label;
-                $this->note          = $obj->note;
+                $this->datec			= $obj->datec;
+                $this->datev			= $obj->datev;
+                $this->dateo			= $obj->dateo;
+                $this->amount			= $obj->amount;
+                $this->label			= $obj->label;
+                $this->note				= $obj->note;
 
-                $this->fk_user_author = $obj->fk_user_author;
-                $this->fk_user_rappro = $obj->fk_user_rappro;
+                $this->fk_user_author	= $obj->fk_user_author;
+                $this->fk_user_rappro	= $obj->fk_user_rappro;
 
-                $this->fk_type        = $obj->fk_type;      // Type of transaction
-                $this->rappro         = $obj->rappro;
-                $this->num_releve     = $obj->num_releve;
+                $this->fk_type			= $obj->fk_type;      // Type of transaction
+                $this->rappro			= $obj->rappro;
+                $this->num_releve		= $obj->num_releve;
 
-                $this->num_chq        = $obj->num_chq;
-                $this->bank_chq       = $obj->bank_chq;
-                $this->fk_bordereau   = $obj->fk_bordereau;
+                $this->num_chq			= $obj->num_chq;
+                $this->bank_chq			= $obj->bank_chq;
+                $this->fk_bordereau		= $obj->fk_bordereau;
 
-                $this->fk_account    = $obj->fk_account;
+                $this->fk_account		= $obj->fk_account;
                 $this->bank_account_label = $obj->bank_account_label;
             }
             $this->db->free($result);
