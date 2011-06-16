@@ -946,23 +946,20 @@ class Form
         }
         if (strval($filtertype) != '') $sql.=" AND p.fk_product_type=".$filtertype;
         // Add criteria on ref/label
-        if (! empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE))   // Can use index
+        if ($filterkey && $filterkey != '')
         {
-            if ($filterkey && $filterkey != '')
-            {
-                $sql.=" AND (p.ref LIKE '".$filterkey."%' OR p.label LIKE '".$filterkey."%'";
-                if ($conf->global->MAIN_MULTILANGS) $sql.=" OR pl.label LIKE '".$filterkey."%'";
-                $sql.=")";
-            }
-        }
-        else
-        {
-            if ($filterkey && $filterkey != '')
-            {
-                $sql.=" AND (p.ref LIKE '%".$filterkey."%' OR p.label LIKE '%".$filterkey."%'";
-                if ($conf->global->MAIN_MULTILANGS) $sql.=" OR pl.label LIKE '%".$filterkey."%'";
-                $sql.=")";
-            }
+	        if (! empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE))   // Can use index
+	        {
+	            $sql.=" AND (p.ref LIKE '".$filterkey."%' OR p.label LIKE '".$filterkey."%'";
+	            if ($conf->global->MAIN_MULTILANGS) $sql.=" OR pl.label LIKE '".$filterkey."%'";
+	            $sql.=")";
+	        }
+	        else
+	        {
+	            $sql.=" AND (p.ref LIKE '%".$filterkey."%' OR p.label LIKE '%".$filterkey."%'";
+	            if ($conf->global->MAIN_MULTILANGS) $sql.=" OR pl.label LIKE '%".$filterkey."%'";
+	            $sql.=")";
+	        }
         }
         $sql.= $db->order("p.ref");
         $sql.= $db->plimit($limit);
@@ -1175,13 +1172,16 @@ class Form
         if (strval($filtertype) != '') $sql.=" AND p.fk_product_type=".$filtertype;
         if (! empty($filtre)) $sql.=" ".$filtre;
         // Add criteria on ref/label
-        if (! empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE))
+        if ($filterkey && $filterkey != '')
         {
-            if ($filterkey && $filterkey != '') $sql.=" AND (pf.ref_fourn like '%".$filterkey."%' OR p.ref like '%".$filterkey."%' OR p.label like '%".$filterkey."%')";
-        }
-        else
-        {
-            if ($filterkey && $filterkey != '') $sql.=" AND (pf.ref_fourn like '".$filterkey."%' OR p.ref like '".$filterkey."%' OR p.label like '".$filterkey."%')";
+	        if (! empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE))
+	        {
+	            $sql.=" AND (pf.ref_fourn LIKE '".$filterkey."%' OR p.ref LIKE '".$filterkey."%' OR p.label LIKE '".$filterkey."%')";
+	        }
+	        else
+	        {
+	            $sql.=" AND (pf.ref_fourn LIKE '%".$filterkey."%' OR p.ref LIKE '%".$filterkey."%' OR p.label LIKE '%".$filterkey."%')";
+	        }
         }
         $sql.= " ORDER BY pf.ref_fourn DESC";
 
