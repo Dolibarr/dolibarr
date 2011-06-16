@@ -130,7 +130,7 @@ if ($mode)
                             'label_en'=>(($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code)!="Country".$obj->code)?$langsen->transnoentitiesnoconv("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
 							'code'=>$obj->code,
 							'nb'=>$obj->nb,
-							'lastdate'=>$obj->lastdate
+							'lastdate'=>$db->jdate($obj->lastdate)
 				);
 			}
 			if ($mode == 'memberbystate')
@@ -139,7 +139,7 @@ if ($mode)
                             'label_en'=>(($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code)!="Country".$obj->code)?$langsen->transnoentitiesnoconv("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
 				            'label2'=>($obj->label2?$obj->label2:$langs->trans("Unknown")),
 							'nb'=>$obj->nb,
-							'lastdate'=>$obj->lastdate
+							'lastdate'=>$db->jdate($obj->lastdate)
 				);
 			}
             if ($mode == 'memberbytown')
@@ -148,7 +148,7 @@ if ($mode)
                             'label_en'=>(($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code)!="Country".$obj->code)?$langsen->transnoentitiesnoconv("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
                             'label2'=>($obj->label2?$obj->label2:$langs->trans("Unknown")),
                             'nb'=>$obj->nb,
-                            'lastdate'=>$obj->lastdate
+                            'lastdate'=>$db->jdate($obj->lastdate)
                 );
             }
 
