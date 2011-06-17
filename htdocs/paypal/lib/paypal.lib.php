@@ -162,7 +162,7 @@ function getPaymentUrl($source='',$ref='',$amount=0,$freetag='')
 	if (! empty($source) && ! empty($ref))
 	{
 		$token='';
-		if (! empty($conf->global->PAYPAL_SECURITY_TOKEN)) $token='&securekey='.dol_hash($conf->global->PAYPAL_SECURITY_TOKEN.$ref, 2);
+		if (! empty($conf->global->PAYPAL_SECURITY_TOKEN)) $token='&securekey='.dol_hash($conf->global->PAYPAL_SECURITY_TOKEN.$source.$ref, 2);
 		
 		if ($source == 'commande')	$source = 'order';
 		if ($source == 'facture')	$source = 'invoice';
