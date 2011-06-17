@@ -195,7 +195,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'added')
 	}
 	else
 	{
-		llxHeaderVierge("New member form");
+		llxHeaderVierge($langs->trans("NewMemberForm"));
 
 		// Si on a pas ete redirige
 		print '<br>';

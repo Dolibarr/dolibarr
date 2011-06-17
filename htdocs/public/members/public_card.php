@@ -40,6 +40,7 @@ if (empty($conf->adherent->enabled)) accessforbidden('',1,1,1);
 $langs->load("main");
 $langs->load("members");
 $langs->load("companies");
+$langs->load("other");
 
 
 $rowid=$_GET["id"];
@@ -75,9 +76,9 @@ if ($rowid > 0)
 
 		print '<tr><td>'.$langs->trans("Person").'</td><td class="valeur">'.$adh->morphy.'</td></tr>';
 
-		print '<tr><td>'.$langs->trans("Surname").'</td><td class="valeur" width="35%">'.$adh->prenom.'&nbsp;</td></tr>';
+		print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur" width="35%">'.$adh->prenom.'&nbsp;</td></tr>';
 
-		print '<tr><td>'.$langs->trans("Name").'</td><td class="valeur">'.$adh->nom.'&nbsp;</td></tr>';
+		print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur">'.$adh->nom.'&nbsp;</td></tr>';
 
 		print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$adh->societe.'&nbsp;</td></tr>';
 
