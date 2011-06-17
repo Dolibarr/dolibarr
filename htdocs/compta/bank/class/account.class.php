@@ -1041,15 +1041,16 @@ class AccountLine extends CommonObject
     /**
      *  Load into memory content of a bank transaction line
      *  @param      id      Id of bank transaction to load
-     *  @param      ref     Ref of bank transation to load
+     *  @param      ref     Ref of bank transaction to load
+     *  @param      num     External num to load (ex: num of transaction for paypal fee)
      *	@return		int		<0 if KO, >0 if OK
      */
-    function fetch($rowid,$ref='')
+    function fetch($rowid,$ref='',$num='')
     {
         global $conf;
 
         // Check parameters
-        if (empty($rowid) && empty($ref)) return -1;
+        if (empty($rowid) && empty($ref) && empty($num)) return -1;
 
         $sql = "SELECT b.rowid, b.datec, b.datev, b.dateo, b.amount, b.label as label, b.fk_account,";
         $sql.= " b.fk_user_author, b.fk_user_rappro,";
@@ -1061,7 +1062,8 @@ class AccountLine extends CommonObject
         $sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
         $sql.= " WHERE b.fk_account = ba.rowid";
         $sql.= " AND ba.entity = ".$conf->entity;
-        if ($ref) $sql.= " AND b.rowid='".$ref."'";	// For the moment rowid = ref because there is no ref field. We must keep rowid because all records should have 2 id: technical id=rowid, ref=user id. num_chq can't be used as it is not a unique value and not a mandatory value.
+        if ($num) $sql.= " AND b.num_chq='".$num."'";
+        else if ($ref) $sql.= " AND b.rowid='".$ref."'";
         else $sql.= " AND b.rowid=".$rowid;
 
         dol_syslog("AccountLine::fetch sql=".$sql);
