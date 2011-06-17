@@ -38,8 +38,8 @@ include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 class modCategorie extends DolibarrModules
 {
 	/**
-	 *		\brief	Constructeur. d�finit les noms, constantes et bo�tes
-	 * 		\param	DB	handler d'acc�s base
+	 *		\brief	Constructor
+	 * 		\param	DB	Database handler
 	 */
 	function modCategorie ($DB)
 	{
