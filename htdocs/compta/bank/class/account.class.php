@@ -1061,7 +1061,7 @@ class AccountLine extends CommonObject
         $sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
         $sql.= " WHERE b.fk_account = ba.rowid";
         $sql.= " AND ba.entity = ".$conf->entity;
-        if ($ref) $sql.= " AND b.num_chq='".$ref."'";
+        if ($ref) $sql.= " AND b.rowid='".$ref."'";	// For the moment rowid = ref because there is no ref field. We must keep rowid because all records should have 2 id: technical id=rowid, ref=user id. num_chq can't be used as it is not a unique value and not a mandatory value.
         else $sql.= " AND b.rowid=".$rowid;
 
         dol_syslog("AccountLine::fetch sql=".$sql);
