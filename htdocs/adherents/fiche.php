@@ -622,7 +622,7 @@ if ($action == 'create')
 
     print_fiche_titre($langs->trans("NewMember"));
 
-    dol_htmloutput_errors($errmsg,$errmsgs);
+    dol_htmloutput_mesg($errmsg,$errmsgs,'error');
     dol_htmloutput_mesg($mesg,$mesgs);
 
     if ($conf->use_javascript_ajax)

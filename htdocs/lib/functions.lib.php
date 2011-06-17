@@ -102,7 +102,7 @@ function dol_getprefix()
  *  To link to a module file from a module file, use include('./mymodulefile');
  *  To link to a module file from a core file, then this function can be used.
  * 	@param			relpath		Relative path to file (Ie: mydir/myfile, ../myfile, ...)
- *  @return         int			Result
+ *  @return         int			false if include fails.
  */
 function dol_include_once($relpath)
 {
@@ -3711,11 +3711,11 @@ function monthArrayOrSelected($selected=0)
 
 /**
  *	Get formated messages to output (Used to show messages on html output)
- *	@param		mesgstring		Message
+ *	@param		mesgstring		Message string
  *	@param		mesgarray       Messages array
- *  @param      style           Style of message output
+ *  @param      style           Style of message output ('ok' or 'error')
+ *  @param      keepembedded    Set to 1 in error message must be kept embedded into its html place (this disable jnotify)
  *	@return		string			Return html output
- *  @return     $keepembedded   Set to 1 in error message must be kept embedded into its html place (this disable jnotify)
  *  @see        dol_print_error
  *  @see        dol_htmloutput_errors
  */
@@ -3727,12 +3727,12 @@ function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
     $out='';
     $divstart=$divend='';
 
+    // Use session mesg
     if (isset($_SESSION['mesg']))
     {
     	$mesgstring=$_SESSION['mesg'];
     	unset($_SESSION['mesg']);
     }
-
 	if (isset($_SESSION['mesgarray']))
     {
     	$mesgarray=$_SESSION['mesgarray'];
@@ -3790,7 +3790,7 @@ function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
  *  Get formated error messages to output (Used to show messages on html output)
  *  @param      mesgstring          Error message
  *  @param      mesgarray           Error messages array
- *  @return     keepembedded        Set to 1 in error message must be kept embedded into its html place (this disable jnotify)
+ *  @param      keepembedded        Set to 1 in error message must be kept embedded into its html place (this disable jnotify)
  *  @return     html                Return html output
  *  @see        dol_print_error
  *  @see        dol_htmloutput_mesg
@@ -3801,18 +3801,24 @@ function get_htmloutput_errors($mesgstring='', $mesgarray='', $keepembedded=0)
 }
 
 /**
- *	print formated messages to output (Used to show messages on html output)
+ *	Print formated messages to output (Used to show messages on html output)
  *	@param		mesgstring		Message
  *	@param		mesgarray       Messages array
- *  @param      style           Style of message output
- *	@return		string			Return html output
- *  @return     $keepembedded   Set to 1 in error message must be kept embedded into its html place (this disable jnotify)
+ *  @param      style           Which style to use ('ok', 'error')
+ *  @param      keepembedded    Set to 1 in error message must be kept embedded into its html place (this disable jnotify)
  *  @see        dol_print_error
  *  @see        dol_htmloutput_errors
  */
 function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepembedded=0)
 {
-	print get_htmloutput_mesg($mesgstring,$mesgarray,$style,$keepembedded);
+    if (empty($mesgstring) && (! is_array($mesgarray) || sizeof($mesgarray) == 0)) return;
+
+    $iserror=0;
+    if (preg_match('/class="error"/i',$mesgstring)) $iserror++;
+    if ($style=='error') $iserror++;
+
+    if ($iserror) print get_htmloutput_mesg($mesgstring,$mesgarray,'error',$keepembedded);
+    else print get_htmloutput_mesg($mesgstring,$mesgarray,'ok',$keepembedded);
 }
 
 /**
@@ -3820,13 +3826,12 @@ function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
  *  @param      mesgstring          Error message
  *  @param      mesgarray           Error messages array
  *  @return     keepembedded        Set to 1 in error message must be kept embedded into its html place (this disable jnotify)
- *  @return     html                Return html output
  *  @see        dol_print_error
  *  @see        dol_htmloutput_mesg
  */
 function dol_htmloutput_errors($mesgstring='', $mesgarray='', $keepembedded=0)
 {
-    print get_htmloutput_errors($mesgstring, $mesgarray,$keepembedded);
+    dol_htmloutput_mesg($mesgstring, $mesgarray, 'error', $keepembedded);
 }
 
 /**

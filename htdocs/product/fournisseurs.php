@@ -235,8 +235,8 @@ if ($_GET["id"] || $_GET["ref"])
 
 			print "</div>\n";
 
-			if (preg_match('/class="error"/',$mesg)) dol_htmloutput_errors($mesg);
-			else dol_htmloutput_mesg($mesg);
+
+			dol_htmloutput_mesg($mesg);
 
 
 			// Form to add or update a price

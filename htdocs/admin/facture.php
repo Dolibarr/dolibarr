@@ -365,7 +365,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 
                             if ($conf->global->FACTURE_ADDON.'.php' == $file)  // If module is the one used, we show existing errors
                             {
-                                if (! empty($module->error)) dol_htmloutput_errors($module->error,'',1);
+                                if (! empty($module->error)) dol_htmloutput_mesg($module->error,'','error',1);
                             }
 
                             print '</td>';

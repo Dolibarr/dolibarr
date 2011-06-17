@@ -227,7 +227,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         if ($facture->type == 2) $title.=$langs->trans("EnterPaymentDueToCustomer");
         print_fiche_titre($title);
 
-        if ($errmsg) dol_htmloutput_errors($errmsg);
+        dol_htmloutput_errors($errmsg);
 
         // Bouchon
         if ($facture->type == 2)

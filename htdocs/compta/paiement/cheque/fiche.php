@@ -286,7 +286,7 @@ else
 	}
 }
 
-//if ($mesg) print $mesg.'<br>';
+
 dol_htmloutput_errors($mesg);
 
 

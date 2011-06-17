@@ -215,8 +215,7 @@ $h++;
 
 dol_fiche_head($head, $hselected, $langs->trans('LineRecord'),0,'account');
 
-if (! preg_match('/class="error"/i',$mesg)) dol_htmloutput_mesg($mesg);
-else dol_htmloutput_errors($mesg);
+dol_htmloutput_mesg($mesg);
 
 $sql = "SELECT b.rowid,b.dateo as do,b.datev as dv, b.amount, b.label, b.rappro,";
 $sql.= " b.num_releve, b.fk_user_author, b.num_chq, b.fk_type, b.fk_account, b.fk_bordereau as receiptid,";

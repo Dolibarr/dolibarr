@@ -835,12 +835,7 @@ else
 
 		if ($object->id > 0)
 		{
-			if ($mesg)
-			{
-				print '<div class="error">'.$mesg.'</div>';
-			}
-			
-			dol_htmloutput_mesg();
+			dol_htmloutput_mesg($mesg);
 
 			if (!empty($object->origin))
 			{
@@ -1236,13 +1231,13 @@ else
 					print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Validate").'</a>';
 				}
 			}
-			
+
 			// TODO add alternative status
 			/* if ($object->statut == 1 && $user->rights->expedition->valider)
 			{
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
 			}*/
-			
+
 			// Send
 			if ($object->statut == 1)
 			{
@@ -1257,7 +1252,7 @@ else
                     else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
 				}
 			}
-			
+
 			// Create bill and Classify billed
 			if ($conf->facture->enabled && $object->statut > 0  && ! $object->billed)
 			{
@@ -1267,7 +1262,7 @@ else
 					//print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$object->origin.'&amp;originid='.$object->origin_id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
 				}
-				
+
 				// TODO add alternative status
 				if ($user->rights->expedition->creer && $object->statut > 2)
 				{
@@ -1309,17 +1304,17 @@ else
 
 			$somethingshown=$formfile->show_documents('expedition',$objectref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
 			if ($genallowed && ! $somethingshown) $somethingshown=1;
-			
+
 			print '</td><td valign="top" width="50%">';
-			
+
 			// List of actions on element
 			include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php');
 			$formactions=new FormActions($db);
 			$somethingshown=$formactions->showactions($object,'shipping',$socid);
-			
+
 			print '</td></tr></table>';
 		}
-		
+
 		/*
 		 * Action presend
 		 *
@@ -1328,10 +1323,10 @@ else
 		{
 			$ref = dol_sanitizeFileName($object->ref);
 			$file = $conf->expedition->dir_output . '/sending/' . $ref . '/' . $ref . '.pdf';
-			
+
 			print '<br>';
 			print_titre($langs->trans('SendShippingByEMail'));
-			
+
 			// Cree l'objet formulaire mail
 			include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
 			$formmail = new FormMail($db);
@@ -1358,17 +1353,17 @@ else
 			$formmail->param['models']='shipping_send';
 			$formmail->param['shippingid']=$object->id;
 			$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
-			
+
 			// Init list of files
 			if (! empty($_REQUEST["mode"]) && $_REQUEST["mode"]=='init')
 			{
 				$formmail->clear_attached_files();
 				$formmail->add_attached_files($file,dol_sanitizeFilename($ref.'.pdf'),'application/pdf');
 			}
-			
+
 			// Show form
 			$formmail->show_form();
-			
+
 			print '<br>';
 		}
 

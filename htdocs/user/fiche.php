@@ -894,8 +894,7 @@ else
 			if ($ret == 'html') print '<br>';
 		}
 
-		if (! preg_match('/class="error"/',$message)) dol_htmloutput_mesg($message);
-		else dol_htmloutput_errors($message);
+		dol_htmloutput_mesg($message);
 
 		/*
 		 * Fiche en mode visu

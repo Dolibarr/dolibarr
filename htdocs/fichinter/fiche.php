@@ -702,7 +702,9 @@ elseif ($fichinterid)
     $societe=new Societe($db);
     $societe->fetch($fichinter->socid);
 
-    if ($mesg) dol_htmloutput_errors($mesg)."<br>";
+
+    dol_htmloutput_errors($mesg);
+
 
     $head = fichinter_prepare_head($fichinter);
 

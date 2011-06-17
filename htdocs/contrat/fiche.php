@@ -480,7 +480,7 @@ if ($action == 'create')
 {
     dol_fiche_head($head, $a, $langs->trans("AddContract"), 0, 'contract');
 
-    dol_htmloutput_errors($mesg);
+    dol_htmloutput_errors($mesg,'');
 
     $soc = new Societe($db);
     $soc->fetch($socid);
@@ -583,7 +583,7 @@ else
             exit;
         }
 
-        dol_htmloutput_errors($mesg);
+        dol_htmloutput_errors($mesg,'');
 
 		$nbofservices=sizeof($object->lines);
 

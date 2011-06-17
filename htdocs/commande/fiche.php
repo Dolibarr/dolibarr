@@ -104,7 +104,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes')
         }
         else
         {
-            $mesg=$object->error;
+            $mesg='<div class="error">'.$object->error.'</div>';
             $action='';
         }
     }
@@ -124,7 +124,7 @@ if ($action == 'reopen' && $user->rights->commande->creer)
         }
         else
         {
-            $mesg='<div class="error">'.$fac->error.'</div>';
+            $mesg='<div class="error">'.$object->error.'</div>';
         }
     }
 }
@@ -143,7 +143,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')
         }
         else
         {
-            $mesg=$object->error;
+            $mesg='<div class="error">'.$object->error.'</div>';
         }
     }
 }
@@ -173,7 +173,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes')
         }
         else
         {
-            print $object->error;
+            $mesg='<div class="error">'.$object->error.'</div>';
         }
     }
     Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
@@ -1124,7 +1124,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 {
     print_fiche_titre($langs->trans('CreateOrder'));
 
-    dol_htmloutput_errors($mesg,$mesgs);
+    dol_htmloutput_mesg($mesg,$mesgs,'error');
 
     $soc = new Societe($db);
     if ($socid) $res=$soc->fetch($socid);
@@ -1424,7 +1424,7 @@ else
 
     if ($id > 0 || ! empty($ref))
     {
-        dol_htmloutput_errors($mesg,$mesgs);
+        dol_htmloutput_mesg($mesg,$mesgs);
 
         $product_static=new Product($db);
 

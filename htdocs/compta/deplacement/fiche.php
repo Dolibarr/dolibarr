@@ -184,7 +184,7 @@ if ($_GET["action"] == 'create')
 {
 	print_fiche_titre($langs->trans("NewTrip"));
 
-	if ($mesg) dol_htmloutput_errors($mesg);
+	dol_htmloutput_errors($mesg);
 
 	$datec = dol_mktime(12, 0, 0,
 	$_POST["remonth"],

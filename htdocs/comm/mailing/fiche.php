@@ -612,9 +612,8 @@ if ($_GET["action"] == 'create')
 
 	print_fiche_titre($langs->trans("NewMailing"));
 
-	if (preg_match('/class="error"/i',$message)) dol_htmloutput_errors($message);
-	else dol_htmloutput_mesg($message);
-	
+	dol_htmloutput_mesg($message);
+
 	print '<table class="border" width="100%">';
 	print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("MailTitle").'</td><td><input class="flat" name="titre" size="40" value="'.$_POST['titre'].'"></td></tr>';
 	print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("MailFrom").'</td><td><input class="flat" name="from" size="40" value="'.$conf->global->MAILING_EMAIL_FROM.'"></td></tr>';
