@@ -39,7 +39,7 @@ class box_external_rss extends ModeleBoxes {
 
 	var $db;
 	var $param;
-	
+
     var $info_box_head = array();
     var $info_box_contents = array();
 
@@ -53,7 +53,7 @@ class box_external_rss extends ModeleBoxes {
 
 		$this->db=$DB;
 		$this->param=$param;
-		
+
         $this->boxlabel=$langs->trans("BoxLastRssInfos");
     }
 
@@ -67,7 +67,7 @@ class box_external_rss extends ModeleBoxes {
         $langs->load("boxes");
 
 		$this->max=$max;
-        
+
 		// On recupere numero de param de la boite
 		preg_match('/^([0-9]+) /',$this->param,$reg);
 		$site=$reg[1];
@@ -76,7 +76,7 @@ class box_external_rss extends ModeleBoxes {
 		// documents/rss is created by module activation
 		// documents/rss/tmp is created by magpie
 		//$result=create_exdir($conf->externalrss->dir_temp);
-		
+
 		// Recupere flux RSS definie dans EXTERNAL_RSS_URLRSS_$site
         $url=@constant("EXTERNAL_RSS_URLRSS_".$site);
         //define('MAGPIE_DEBUG',1);
@@ -87,7 +87,7 @@ class box_external_rss extends ModeleBoxes {
         	dol_syslog("FETCH_RSS url=".$url);
         	return -1;
         }
-        
+
 		// INFO sur le channel
 		$description=$rss->channel['tagline'];
 		$link=$rss->channel['link'];
@@ -100,7 +100,7 @@ class box_external_rss extends ModeleBoxes {
             $this->info_box_head = array('text' => $title,'limit' => 0);
         }
         else
-        {         
+        {
         	$this->info_box_head = array('text' => $title,
         		'sublink' => $link, 'subtext'=>$langs->trans("LastRefreshDate").': '.(isset($rss->date)?dol_print_date($rss->date,"dayhourtext"):$langs->trans("Unknown")), 'subpicto'=>'object_bookmark');
 		}
@@ -130,10 +130,10 @@ class box_external_rss extends ModeleBoxes {
 				//$item['atom_content']
 			}
 			if (is_numeric($date)) $date=dol_print_date($date,"dayhour");
-			
+
 			$isutf8 = utf8_check($title);
-	        if (! $isutf8 && $conf->file->character_set_client == 'UTF-8') $title=utf8_encode($title); 
-	        elseif ($isutf8 && $conf->file->character_set_client == 'ISO-8859-1') $title=utf8_decode($title); 
+	        if (! $isutf8 && $conf->file->character_set_client == 'UTF-8') $title=utf8_encode($title);
+	        elseif ($isutf8 && $conf->file->character_set_client == 'ISO-8859-1') $title=utf8_decode($title);
 
 	        $title=preg_replace("/([[:alnum:]])\?([[:alnum:]])/","\\1'\\2",$title);   // Gere probleme des apostrophes mal codee/decodee par utf8
             $title=preg_replace("/^\s+/","",$title);                                  // Supprime espaces de debut
@@ -143,7 +143,7 @@ class box_external_rss extends ModeleBoxes {
             'logo' => $this->boximg,
             'url' => $href,
             'target' => 'newrss');
-            
+
             $this->info_box_contents[$i][1] = array('td' => 'align="left"',
             'text' => $title,
             'url' => $href,
@@ -154,9 +154,9 @@ class box_external_rss extends ModeleBoxes {
             'text' => $date);
         }
     }
-    
 
-    function showBox()
+
+    function showBox($head = null, $contents = null)
     {
         parent::showBox($this->info_box_head, $this->info_box_contents);
     }

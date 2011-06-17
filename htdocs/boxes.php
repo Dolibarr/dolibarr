@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 
 /**
  *	\file       htdocs/boxes.php
- *	\brief      Fichier de la classe boxes
+ *	\brief      File of class to manage widget boxes
  *	\author     Rodolphe Qiedeville
  *	\author	    Laurent Destailleur
  *	\version    $Id$
@@ -228,7 +228,7 @@ class InfoBox
 					}
 
 					include_once($sourcefile);
-					$box=new $boxname($db,$obj->note);
+					$box=new $boxname($this->db,$obj->note);
 
 					$box->rowid=$obj->rowid;
 					$box->box_id=$obj->box_id;

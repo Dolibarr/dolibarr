@@ -57,7 +57,7 @@ class box_bookmarks extends ModeleBoxes {
 	{
 		global $user, $langs, $db;
 		$langs->load("boxes");
-				
+
 		$this->max=$max;
 
 		$this->info_box_head = array('text' => $langs->trans("BoxMyLastBookmarks",$max),
@@ -123,7 +123,7 @@ class box_bookmarks extends ModeleBoxes {
 		}
 	}
 
-	function showBox()
+	function showBox($head = null, $contents = null)
 	{
 		parent::showBox($this->info_box_head, $this->info_box_contents);
 	}

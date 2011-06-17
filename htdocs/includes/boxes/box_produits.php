@@ -87,7 +87,7 @@ class box_produits extends ModeleBoxes {
 				while ($i < $num)
 				{
 					$objp = $db->fetch_object($result);
-					$datem=$db->jdate($obj->tms);
+					$datem=$db->jdate($objp->tms);
 
 					// Multilangs
 					if ($conf->global->MAIN_MULTILANGS) // si l'option est active
@@ -156,7 +156,7 @@ class box_produits extends ModeleBoxes {
 		}
 	}
 
-	function showBox()
+	function showBox($head = null, $contents = null)
 	{
 		parent::showBox($this->info_box_head, $this->info_box_contents);
 	}

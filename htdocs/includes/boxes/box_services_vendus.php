@@ -161,7 +161,7 @@ class box_services_vendus extends ModeleBoxes {
 
 	}
 
-	function showBox()
+	function showBox($head = null, $contents = null)
 	{
 		parent::showBox($this->info_box_head, $this->info_box_contents);
 	}

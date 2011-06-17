@@ -147,7 +147,7 @@ class box_factures_imp extends ModeleBoxes {
 		}
 	}
 
-	function showBox()
+	function showBox($head = null, $contents = null)
 	{
 		parent::showBox($this->info_box_head, $this->info_box_contents);
 	}

@@ -205,13 +205,13 @@ class ModeleBoxes
 						if (! empty($contents[$i][$j]['maxlength'])) $maxlength=$contents[$i][$j]['maxlength'];
 
 						if ($maxlength) $textewithnotags=dol_trunc($textewithnotags,$maxlength);
-						if (preg_match('/^<img/i',$texte) || $contents[$i][$j]['asis']) print $texte;	// show text with no html cleaning
+						if (preg_match('/^<img/i',$texte) || ! empty($contents[$i][$j]['asis'])) print $texte;	// show text with no html cleaning
 						else print $textewithnotags;				// show text with html cleaning
 
 						// End Url
 						if (! empty($contents[$i][$j]['url'])) print '</a>';
 
-						if (preg_match('/^<img/i',$texte2 || $contents[$i][$j]['asis2'])) print $texte2;	// show text with no html cleaning
+						if (preg_match('/^<img/i',$texte2) || ! empty($contents[$i][$j]['asis2'])) print $texte2;	// show text with no html cleaning
 						else print $texte2withnotags;				// show text with html cleaning
 
 						print "</td>";
