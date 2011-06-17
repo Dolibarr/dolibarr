@@ -374,8 +374,8 @@ class ImportCsv extends ModeleImports
 										}
 									}
 
-									// Now we check in cache
-									if (! in_array($newval,$this->cachefieldtable[$field.'@'.$table]))
+									// Now we check cache is not empty (should not) and key is into cache
+									if (! is_array($this->cachefieldtable[$field.'@'.$table]) || ! in_array($newval,$this->cachefieldtable[$field.'@'.$table]))
 									{
 										$this->errors[$error]['lib']=$langs->trans('ErrorFieldValueNotIn',$key,$newval,$field,$table);
 										$this->errors[$error]['type']='FOREIGNKEY';
@@ -463,7 +463,7 @@ class ImportCsv extends ModeleImports
 /**
  *	Clean a string from separator
  */
-function cleansep($value) 
+function cleansep($value)
 {
 	return str_replace(',','/',$value);
 };
