@@ -134,11 +134,12 @@ class DolEditor
     /**
      *		Output edit area inside the HTML stream
      */
-    function Create()
+    function Create($noprint=0)
     {
     	global $conf;
 
         $found=0;
+        $out='';
 
         if ($this->tool == 'fckeditor')
         {
@@ -148,9 +149,9 @@ class DolEditor
         if (in_array($this->tool,array('textarea','ckeditor')))
         {
             $found=1;
-            print '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" rows="'.$this->rows.'" cols="'.$this->cols.'" class="flat">';
-            print $this->content;
-            print '</textarea>';
+            $out.= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" rows="'.$this->rows.'" cols="'.$this->cols.'" class="flat">';
+            $out.= $this->content;
+            $out.= '</textarea>';
 
             if ($this->tool == 'ckeditor')
             {
@@ -161,7 +162,7 @@ class DolEditor
             	//$skin='v2';
             	$skin='kama';
 
-            	print '<script type="text/javascript">
+            	$out.= '<script type="text/javascript">
             			jQuery(document).ready(function () {
             				CKEDITOR.replace(\''.$this->htmlname.'\',
             					{
@@ -188,27 +189,27 @@ class DolEditor
                                             }';
             	if ($this->uselocalbrowser)
             	{
-                    print ','."\n";
+                    $out.= ','."\n";
                     // To use filemanager with old fckeditor (GPL)
-                    print '    filebrowserBrowseUrl : \''.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanagerdol/browser/default/browser.html?Connector='.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanagerdol/connectors/php/connector.php\',';
-                    //print '    filebrowserUploadUrl : \''.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanagerdol/connectors/php/upload.php?Type=File\',';
-                    print '    filebrowserImageBrowseUrl : \''.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanagerdol/browser/default/browser.html?Type=Image&Connector='.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanagerdol/connectors/php/connector.php\',';
+                    $out.= '    filebrowserBrowseUrl : \''.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanagerdol/browser/default/browser.html?Connector='.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanagerdol/connectors/php/connector.php\',';
+                    //$out.= '    filebrowserUploadUrl : \''.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanagerdol/connectors/php/upload.php?Type=File\',';
+                    $out.= '    filebrowserImageBrowseUrl : \''.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanagerdol/browser/default/browser.html?Type=Image&Connector='.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanagerdol/connectors/php/connector.php\',';
                     //print '    filebrowserImageUploadUrl : \''.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanagerdol/connectors/php/upload.php?Type=Image\',';
-                    print "\n";
+                    $out.= "\n";
                     // To use filemanager with ckfinder (Non free) and ckfinder directory is inside htdocs/includes
-/*                  print '    filebrowserBrowseUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/ckfinder.html\',
+/*                  $out.= '    filebrowserBrowseUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/ckfinder.html\',
                                filebrowserImageBrowseUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/ckfinder.html?Type=Images\',
                                filebrowserFlashBrowseUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/ckfinder.html?Type=Flash\',
                                filebrowserUploadUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files\',
                                filebrowserImageUploadUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images\',
                                filebrowserFlashUploadUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Flash\','."\n";
 */
-                    print '    filebrowserWindowWidth : \'900\',
+                    $out.= '    filebrowserWindowWidth : \'900\',
                                filebrowserWindowHeight : \'500\',
                                filebrowserImageWindowWidth : \'900\',
                                filebrowserImageWindowHeight : \'500\'';
             	}
-            	print '
+            	$out.= '
             					});
 
             			});
@@ -218,8 +219,11 @@ class DolEditor
 
         if (empty($found))
         {
-            print 'Error, unknown value for tool '.$this->tool.' in DolEditor Create function.';
+            $out.= 'Error, unknown value for tool '.$this->tool.' in DolEditor Create function.';
         }
+        
+        if ($noprint) return $out;
+        else print $out;
     }
 
 }
