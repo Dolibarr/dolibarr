@@ -51,6 +51,7 @@ class Livraison extends CommonObject
 	var $origin_id;
 	var $socid;
 	var $ref_customer;
+	var $statut;
 
 	var $expedition_id;
 
@@ -398,6 +399,13 @@ class Livraison extends CommonObject
 									return 0;
 								}
 							}
+						}
+						
+						// Set new ref and current status
+						if (! $error)
+						{
+							$this->ref = $numref;
+							$this->statut = 1;
 						}
 
 						dol_syslog("livraison.class.php::valid ok");

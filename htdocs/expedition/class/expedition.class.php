@@ -539,10 +539,11 @@ class Expedition extends CommonObject
 			}
 		}
 
-		// Set new ref
+		// Set new ref and current status
 		if (! $error)
 		{
 			$this->ref = $numref;
+			$this->statut = 1;
 		}
 
 		if (! $error)
