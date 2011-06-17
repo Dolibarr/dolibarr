@@ -200,7 +200,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'added')
 		// Si on a pas ete redirige
 		print '<br>';
 		print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
-		print "<tr><td><FONT COLOR=\"blue\">Nouvel Adherent ajoute. En attente de validation</FONT></td></tr>\n";
+		print "<tr><td><FONT COLOR=\"blue\">".$langs->trans("NewMemberbyWeb")."</FONT></td></tr>\n";
 		print '</table>';
 
 		llxFooterVierge('$Date$ - $Revision$');
@@ -262,9 +262,9 @@ print $html->selectarray("morphy",  $morphys);
 print "</td>\n";
 print '</tr>';
 
-print '<tr><td><FONT COLOR="red">*</FONT> <FONT COLOR="blue">**</FONT> '.$langs->trans("Name").'</td><td><input type="text" name="nom" size="40" value="'.dol_escape_htmltag(GETPOST('nom')).'"></td></tr>'."\n";
-print '<tr><td><FONT COLOR="red">*</FONT> <FONT COLOR="blue">**</FONT> '.$langs->trans("Surname").'</td><td><input type="text" name="prenom" size="40" value="'.dol_escape_htmltag(GETPOST('prenom')).'"></td></tr>'."\n";
-print '<tr><td>'.$langs->trans("ThirdParty").'</td><td><input type="text" name="societe" size="40" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
+print '<tr><td><FONT COLOR="red">*</FONT> <FONT COLOR="blue">**</FONT> '.$langs->trans("Lastname").'</td><td><input type="text" name="nom" size="40" value="'.dol_escape_htmltag(GETPOST('nom')).'"></td></tr>'."\n";
+print '<tr><td><FONT COLOR="red">*</FONT> <FONT COLOR="blue">**</FONT> '.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40" value="'.dol_escape_htmltag(GETPOST('prenom')).'"></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
 print '<tr><td>'.$langs->trans("Address").'</td><td>'."\n";
 print '<textarea name="adresse" wrap="soft" cols="40" rows="3">'.dol_escape_htmltag(GETPOST('adresse')).'</textarea></td></tr>'."\n";
 print '<tr><td>'.$langs->trans("Zip").'/'.$langs->trans("Town").'</td><td><input type="text" name="cp" size="8" value="'.dol_escape_htmltag(GETPOST('cp')).'"> <input type="text" name="ville" size="40" value="'.dol_escape_htmltag(GETPOST('ville')).'"></td></tr>'."\n";
