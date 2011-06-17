@@ -151,6 +151,27 @@ function paypaladmin_prepare_head()
 }
 
 /**
+ * 
+ */
+function getPaymentUrl($source='',$ref='',$amount=0,$freetag='')
+{
+	global $conf;
+	
+	if (! empty($source) && ! empty($ref))
+	{
+		$token='';
+		if (! empty($conf->global->PAYPAL_SECURITY_TOKEN)) $token='&securekey='.dol_hash($conf->global->PAYPAL_SECURITY_TOKEN.$ref, 2);
+		
+		if ($source == 'commande')	$source = 'order';
+		if ($source == 'facture')	$source = 'invoice';
+		
+		$url = DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?source='.$source.'&ref='.$ref.$token;
+		
+		return $url;
+	}
+}
+
+/**
  * Send redirect to paypal to browser
  *
  * @param       $paymentAmount

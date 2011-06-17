@@ -474,6 +474,26 @@ class FormMail
 			if ($this->param["models"]=='order_supplier_send')		{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendSupplierOrder"); }
 			if ($this->param["models"]=='invoice_supplier_send')	{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendSupplierInvoice"); }
 			if ($this->param["models"]=='shipping_send')			{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendShipping"); }
+			
+			if ($conf->paypal->enabled && $conf->global->PAYPAL_ADD_PAYMENT_URL)
+			{
+				require_once(DOL_DOCUMENT_ROOT."/lib/security.lib.php");
+				require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypal.lib.php");
+				
+				$langs->load('paypal');
+				
+				if ($this->param["models"]=='order_send')
+				{
+					$url=getPaymentUrl('order',$this->substit['__ORDERREF__']);
+					$defaultmessage=$langs->transnoentities("PredefinedMailContentSendOrderWithPaypalLink",$url);
+				}
+				if ($this->param["models"]=='facture_send')
+				{
+					$url=getPaymentUrl('invoice',$this->substit['__FACREF__']);
+					$defaultmessage=$langs->transnoentities("PredefinedMailContentSendInvoiceWithPaypalLink",$url);
+				}
+			}
+			
 			$defaultmessage=make_substitutions($defaultmessage,$this->substit);
 			if (isset($_POST["message"])) $defaultmessage=$_POST["message"];
 			$defaultmessage=str_replace('\n',"\n",$defaultmessage);
