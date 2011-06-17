@@ -48,6 +48,7 @@ class FormMail
 	var $withsubstit;			// Show substitution array
 	var $withfrom;
 	var $withto;
+	var $withtofree;
 	var $withtocc;
 	var $withtopic;
 	var $withfile;				// 0=No attaches files, 1=Show attached files, 2=Can add new attached files
@@ -79,6 +80,7 @@ class FormMail
 
 		$this->withfrom=1;
 		$this->withto=1;
+		$this->withtofree=1;
 		$this->withtocc=1;
 		$this->withtoccc=0;
 		$this->witherrorsto=0;
@@ -332,7 +334,10 @@ class FormMail
 			}
 			else
 			{
-				$out.= '<input size="'.(is_array($this->withto)?"30":"60").'" id="sendto" name="sendto" value="'.(! is_array($this->withto) && ! is_numeric($this->withto)? (isset($_REQUEST["sendto"])?$_REQUEST["sendto"]:$this->withto) :"").'" />';
+				if ($this->withtofree)
+				{
+					$out.= '<input size="'.(is_array($this->withto)?"30":"60").'" id="sendto" name="sendto" value="'.(! is_array($this->withto) && ! is_numeric($this->withto)? (isset($_REQUEST["sendto"])?$_REQUEST["sendto"]:$this->withto) :"").'" />';
+				}
 				if ($this->withtosocid > 0)
 				{
 					$liste=array();
@@ -343,7 +348,7 @@ class FormMail
 					{
 						$liste[$key]=$value;
 					}
-					$out.= " ".$langs->trans("or")." ";
+					if ($this->withtofree) $out.= " ".$langs->trans("or")." ";
 					//var_dump($_REQUEST);exit;
 					$out.= $form->selectarray("receiver", $liste, isset($_REQUEST["receiver"])?$_REQUEST["receiver"]:0);
 				}
