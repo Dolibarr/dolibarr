@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
@@ -63,6 +63,10 @@ if ($id || $ref)
 }
 
 
+/*
+ * Actions
+ */
+
 // Action association d'un sousproduit
 if ($action == 'add_prod' &&
 $cancel <> $langs->trans("Cancel") &&
@@ -107,27 +111,6 @@ $cancel <> $langs->trans("Cancel") &&
 	}
 }
 
-// action recherche des produits par mot-cle et/ou par categorie
-if($action == 'search' )
-{
-	$sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.price, p.fk_product_type as type';
-	$sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
-	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON p.rowid = cp.fk_product';
-	$sql.= " WHERE p.entity = ".$conf->entity;
-	if($key != "")
-	{
-		$sql.= " AND (p.ref like '%".$key."%'";
-		$sql.= " OR p.label like '%".$key."%')";
-	}
-	if ($conf->categorie->enabled && $catMere != -1 and $catMere)
-	{
-		$sql.= " AND cp.fk_categorie ='".$db->escape($catMere)."'";
-	}
-	$sql.= " ORDER BY p.ref ASC";
-
-	$resql = $db->query($sql) ;
-}
-
 if ($cancel == $langs->trans("Cancel"))
 {
 	$action = '';
@@ -140,6 +123,40 @@ if ($cancel == $langs->trans("Cancel"))
  * View
  */
 
+// action recherche des produits par mot-cle et/ou par categorie
+if($action == 'search' )
+{
+	$current_lang = $langs->getDefaultLang();
+
+	$sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.price, p.fk_product_type as type';
+	if ($conf->global->MAIN_MULTILANGS) $sql.= ', pl.label as labelm, pl.description as descriptionm';
+	$sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
+	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON p.rowid = cp.fk_product';
+	if ($conf->global->MAIN_MULTILANGS) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND lang='".($current_lang)."'";
+	$sql.= " WHERE p.entity = ".$conf->entity;
+	if($key != "")
+	{
+		if ($conf->global->MAIN_MULTILANGS) 
+		{
+			$sql.= " AND (p.ref like '%".$key."%'";
+			$sql.= " OR pl.label like '%".$key."%')";
+		}
+		else
+		{
+			$sql.= " AND (p.ref like '%".$key."%'";
+			$sql.= " OR p.label like '%".$key."%')";
+		}
+	}
+	if ($conf->categorie->enabled && $catMere != -1 and $catMere)
+	{
+		$sql.= " AND cp.fk_categorie ='".$db->escape($catMere)."'";
+	}
+	$sql.= " ORDER BY p.ref ASC";
+
+	$resql = $db->query($sql) ;
+}
+//print $sql;
+
 $productstatic = new Product($db);
 $html = new Form($db);
 
@@ -147,23 +164,19 @@ llxHeader("","",$langs->trans("CardProduct".$product->type));
 $html = new Form($db);
 
 
-if ($mesg) {
-	print '<br><div class="error">'.$mesg.'</div><br>';
-}
+dol_htmloutput_errors($mesg);
+
 
 $head=product_prepare_head($product, $user);
 $titre=$langs->trans("CardProduct".$product->type);
 $picto=($product->type==1?'service':'product');
 dol_fiche_head($head, 'subproduct', $titre, 0, $picto);
 
-/*
- * Fiche produit
- */
+
 if ($id || $ref)
 {
 	if ( $result )
 	{
-
 		if ($action <> 'edit' &&$action <> 'search' && $action <> 're-edit')
 		{
 			/*
@@ -191,6 +204,9 @@ if ($id || $ref)
 			$product->get_sousproduits_arbo ();
 			print '<tr><td>'.$langs->trans("AssociatedProductsNumber").'</td><td>'.sizeof($product->get_arbo_each_prod()).'</td>';
 
+			dol_fiche_end();
+			
+			
 			// List of subproducts
 			$prods_arbo = $product->get_arbo_each_prod();
 			if(sizeof($prods_arbo) > 0)
@@ -218,6 +234,7 @@ if ($id || $ref)
 
 			print "</table>\n";
 
+			dol_fiche_end();
 		}
 	}
 
@@ -278,6 +295,8 @@ if ($id || $ref)
 
 		print '</table>';
 
+		dol_fiche_end();
+		
 		print '<br>';
 
 		print '<form action="'.DOL_URL_ROOT.'/product/composition/fiche.php?id='.$id.'" method="post">';
@@ -307,8 +326,8 @@ if ($id || $ref)
 			print '<br>';
 			print '<form action="'.DOL_URL_ROOT.'/product/composition/fiche.php?id='.$id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input type="hidden" name="action" value="add_prod"';
-			print '<input type="hidden" name="id" value="'.$id.'"';
+			print '<input type="hidden" name="action" value="add_prod">';
+			print '<input type="hidden" name="id" value="'.$id.'">';
 			print '<table class="nobordernopadding" width="100%">';
 			print '<tr class="liste_titre">';
 			print '<td class="liste_titre">'.$langs->trans("Ref").'</td>';
@@ -361,7 +380,10 @@ if ($id || $ref)
 						$productstatic->type=$objp->type;
 
 						print '<td>'.$productstatic->getNomUrl(1,'',24).'</td>';
-						print '<td>'.$objp->label.'</td>';
+						$labeltoshow=$objp->label;
+						if ($conf->global->MAIN_MULTILANGS && $objp->labelm) $labeltoshow=$objp->labelm;
+
+						print '<td>'.$labeltoshow.'</td>';
 						if($product->is_sousproduit($id, $objp->rowid))
 						{
 							$addchecked = ' checked="true"';
@@ -375,7 +397,6 @@ if ($id || $ref)
 						print '<td align="center"><input type="hidden" name="prod_id_'.$i.'" value="'.$objp->rowid.'">';
 						print '<input type="checkbox" '.$addchecked.'name="prod_id_chk'.$i.'" value="'.$objp->rowid.'"></td>';
 						print '<td align="right"><input type="text" size="3" name="prod_qty_'.$i.'" value="'.$qty.'"></td>';
-						print '</td>';
 						print '</tr>';
 					}
 					$i++;
@@ -386,9 +407,9 @@ if ($id || $ref)
 			{
 				dol_print_error($db);
 			}
-			print '<input type="hidden" name="max_prod" value="'.$i.'">';
 			print '</table>';
-
+			print '<input type="hidden" name="max_prod" value="'.$i.'">';
+			
 			if($num > 0)
 			{
 				print '<br><center><input type="submit" class="button" value="'.$langs->trans("Add").'/'.$langs->trans("Update").'">';
@@ -402,7 +423,6 @@ if ($id || $ref)
 	}
 }
 
-print "</div>\n";
 
 
 /* ************************************************************************** */
