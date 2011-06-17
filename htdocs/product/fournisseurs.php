@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
@@ -23,7 +23,7 @@
 /**
  *  \file       htdocs/product/fournisseurs.php
  *  \ingroup    product
- *  \brief      Page de l'onglet fournisseur de produits
+ *  \brief      Page of tab suppliers for products
  *  \version    $Id$
  */
 
@@ -92,7 +92,7 @@ if ($_POST["action"] == 'updateprice' && $_POST["cancel"] <> $langs->trans("Canc
     $id_fourn=GETPOST("id_fourn");
     if (empty($id_fourn)) $id_fourn=GETPOST("search_id_fourn");
     $ref_fourn=GETPOST("ref_fourn");
-    if (empty($ref_fourn)) $id_fourn=GETPOST("search_ref_fourn");
+    if (empty($ref_fourn)) $ref_fourn=GETPOST("search_ref_fourn");
 
 	$product = new ProductFournisseur($db);
 	$result=$product->fetch(GETPOST("id"));
@@ -104,7 +104,7 @@ if ($_POST["action"] == 'updateprice' && $_POST["cancel"] <> $langs->trans("Canc
 		if (! $ref_fourn)
 		{
 			$error++;
-			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref")).'</div>';
+			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("RefSupplier")).'</div>';
 		}
 		if ($id_fourn <= 0)
 		{
@@ -235,7 +235,8 @@ if ($_GET["id"] || $_GET["ref"])
 
 			print "</div>\n";
 
-			if ($mesg) print($mesg);
+			if (preg_match('/class="error"/',$mesg)) dol_htmloutput_errors($mesg);
+			else dol_htmloutput_mesg($mesg);
 
 
 			// Form to add or update a price
