@@ -2865,7 +2865,7 @@ else
                 }
 
                 print '<br>';
-                print_titre($langs->trans($titre));
+                print_titre($langs->trans($titreform));
 
                 // Cree l'objet formulaire mail
                 include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
