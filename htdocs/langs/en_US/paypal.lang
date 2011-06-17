@@ -12,3 +12,6 @@ PAYPAL_API_SIGNATURE=API signature
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Offer payment "integral" (Credit card+Paypal) or "Paypal" only
 PAYPAL_CSS_URL=Optionnal Url of CSS style sheet on payment page
 ThisIsTransactionId=This is id of transaction: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Add the url of Paypal payment when you send a document by mail
+PredefinedMailContentSendOrderWithPaypalLink=You will find here the order __ORDERREF__\n\nYou can click on the secure link below to make your payment via PayPal\n\n%s\n\nSincerely\n\n
+PredefinedMailContentSendInvoiceWithPaypalLink=You will find here the invoice __FACREF__\n\nYou can click on the secure link below to make your payment via PayPal\n\n%s\n\nSincerely\n\n

@@ -52,6 +52,7 @@ if ($_POST["action"] == 'setvalue' && $user->admin)
     $result=dolibarr_set_const($db, "PAYPAL_API_INTEGRAL_OR_PAYPALONLY",$_POST["PAYPAL_API_INTEGRAL_OR_PAYPALONLY"],'chaine',0,'',$conf->entity);
     $result=dolibarr_set_const($db, "PAYPAL_CSS_URL",$_POST["PAYPAL_CSS_URL"],'chaine',0,'',$conf->entity);
     $result=dolibarr_set_const($db, "PAYPAL_SECURITY_TOKEN",$_POST["PAYPAL_SECURITY_TOKEN"],'chaine',0,'',$conf->entity);
+    $result=dolibarr_set_const($db, "PAYPAL_ADD_PAYMENT_URL",$_POST["PAYPAL_ADD_PAYMENT_URL"],'chaine',0,'',$conf->entity);
     $result=dolibarr_set_const($db, "PAYPAL_MESSAGE_OK",$_POST["PAYPAL_MESSAGE_OK"],'chaine',0,'',$conf->entity);
     $result=dolibarr_set_const($db, "PAYPAL_MESSAGE_KO",$_POST["PAYPAL_MESSAGE_KO"],'chaine',0,'',$conf->entity);
 
@@ -177,6 +178,12 @@ $var=!$var;
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("SecurityToken").'</td><td>';
 print '<input size="64" type="text" name="PAYPAL_SECURITY_TOKEN" value="'.$conf->global->PAYPAL_SECURITY_TOKEN.'">';
+print '</td></tr>';
+
+$var=!$var;
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("PAYPAL_ADD_PAYMENT_URL").'</td><td>';
+print $form->selectyesno("PAYPAL_ADD_PAYMENT_URL",$conf->global->PAYPAL_ADD_PAYMENT_URL,1);
 print '</td></tr>';
 
 $var=!$var;

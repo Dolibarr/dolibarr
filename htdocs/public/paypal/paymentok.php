@@ -96,6 +96,8 @@ llxHeaderPaypal($langs->trans("PaymentForm"));
 print '<span id="dolpaymentspan"></span>'."\n";
 print '<div id="dolpaymentdiv" align="center">'."\n";
 
+$source=GETPOST('source');
+$ref=GETPOST('ref');
 $PAYPALTOKEN=GETPOST('TOKEN');
 if (empty($PAYPALTOKEN)) $PAYPALTOKEN=GETPOST('token');
 $PAYPALPAYERID=GETPOST('PAYERID');
@@ -129,6 +131,14 @@ if ($PAYPALTOKEN)
         $ack = strtoupper($resArray["ACK"]);
         if($ack=="SUCCESS" || $ack=="SUCCESSWITHWARNING")
         {
+        	$object=array();
+        	
+        	$object['source']=$source;
+        	$object['ref']=$ref;
+        	$object['payerID']=$payerID;
+        	$object['fulltag']=$fulltag;
+        	$object['resArray']=$resArray;
+        	
             // resArray was built from a string like that
             // TOKEN=EC%2d1NJ057703V9359028&TIMESTAMP=2010%2d11%2d01T11%3a40%3a13Z&CORRELATIONID=1efa8c6a36bd8&ACK=Success&VERSION=56&BUILD=1553277&TRANSACTIONID=9B994597K9921420R&TRANSACTIONTYPE=expresscheckout&PAYMENTTYPE=instant&ORDERTIME=2010%2d11%2d01T11%3a40%3a12Z&AMT=155%2e57&FEEAMT=5%2e54&TAXAMT=0%2e00&CURRENCYCODE=EUR&PAYMENTSTATUS=Completed&PENDINGREASON=None&REASONCODE=None
             $PAYMENTSTATUS=urldecode($resArray["PAYMENTSTATUS"]);   // Should contains 'Completed'
@@ -138,6 +148,13 @@ if ($PAYPALTOKEN)
             print $langs->trans("YourPaymentHasBeenRecorded")."<br>\n";
             print $langs->trans("ThisIsTransactionId",$TRANSACTIONID)."<br>\n";
             if (! empty($conf->global->PAYPAL_MESSAGE_OK)) print $conf->global->PAYPAL_MESSAGE_OK;
+            
+            // Appel des triggers
+            include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+            $interface=new Interfaces($db);
+            $result=$interface->run_triggers('PAYPAL_PAYMENT_OK',$object,$user,$langs,$conf);
+            if ($result < 0) { $error++; $this->errors=$interface->errors; }
+            // Fin appel triggers
         }
         else
         {

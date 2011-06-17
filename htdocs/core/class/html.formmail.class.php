@@ -477,7 +477,6 @@ class FormMail
 			
 			if ($conf->paypal->enabled && $conf->global->PAYPAL_ADD_PAYMENT_URL)
 			{
-				require_once(DOL_DOCUMENT_ROOT."/lib/security.lib.php");
 				require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypal.lib.php");
 				
 				$langs->load('paypal');

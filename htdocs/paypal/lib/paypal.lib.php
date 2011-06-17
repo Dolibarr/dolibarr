@@ -157,6 +157,8 @@ function getPaymentUrl($source='',$ref='',$amount=0,$freetag='')
 {
 	global $conf;
 	
+	require_once(DOL_DOCUMENT_ROOT."/lib/security.lib.php");
+	
 	if (! empty($source) && ! empty($ref))
 	{
 		$token='';
