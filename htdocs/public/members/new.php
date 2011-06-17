@@ -42,6 +42,7 @@ $langs->load("main");
 $langs->load("members");
 $langs->load("companies");
 $langs->load("install");
+$langs->load("other");
 
 // Function for page HTML header
 function llxHeaderVierge($title, $head = "")
