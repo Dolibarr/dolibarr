@@ -1424,19 +1424,25 @@ class CommonObject
 						$pathroot	= '';
 
 						// Include actions class (controller)
-						dol_include_once($path.$actionfile);
+						$resaction=dol_include_once($path.$actionfile);
 
 						// Include dataservice class (model)
-						dol_include_once($path.$daofile);
+						$resdao=dol_include_once($path.$daofile);
 
 						// Instantiate actions class (controller)
-						$controlclassname = 'Actions'.ucfirst($module);
-						$objModule = new $controlclassname($this->db);
-						$this->hooks[$type][$objModule->module_number] = $objModule;
+						if ($resaction)
+						{
+    						$controlclassname = 'Actions'.ucfirst($module);
+    						$objModule = new $controlclassname($this->db);
+    						$this->hooks[$type][$objModule->module_number] = $objModule;
+						}
 
-						// Instantiate dataservice class (model)
-						$modelclassname = 'Dao'.ucfirst($module);
-						$this->hooks[$type][$objModule->module_number]->object = new $modelclassname($this->db);
+                        if ($resdao)
+                        {
+    						// Instantiate dataservice class (model)
+    						$modelclassname = 'Dao'.ucfirst($module);
+    						$this->hooks[$type][$objModule->module_number]->object = new $modelclassname($this->db);
+                        }
 					}
 				}
 			}
