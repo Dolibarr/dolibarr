@@ -380,3 +380,15 @@ update llx_actioncomm set elementtype='contract' where elementtype='contrat';
 
 alter table llx_propal add column   tms             timestamp after fk_projet;
 
+
+create table llx_societe_extrafields
+(
+  rowid                     integer PRIMARY KEY
+) ENGINE=innodb;
+
+create table llx_product_extrafields
+(
+  rowid                     integer PRIMARY KEY
+) ENGINE=innodb;
+
+
