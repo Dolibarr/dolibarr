@@ -273,12 +273,12 @@ if ($nboftargetok) {
         print "\nBuild package for target $target\n";
 
     	if ($target eq 'SNAPSHOT') {
+    		print "Remove target $FILENAMESNAPSHOT.tgz...\n";
+    		unlink("$DESTI/$FILENAMESNAPSHOT.tgz");
+
     		print "Copy $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMESNAPSHOT\n";
     		$cmd="cp -pr \"$BUILDROOT/$PROJECT\" \"$BUILDROOT/$FILENAMESNAPSHOT\"";
             $ret=`$cmd`;
-
-    		print "Remove target $FILENAMESNAPSHOT.tgz...\n";
-    		unlink("$DESTI/$FILENAMESNAPSHOT.tgz");
 
     		print "Compress $BUILDROOT into $FILENAMESNAPSHOT.tgz...\n";
    		    #$cmd="tar --exclude \"$BUILDROOT/tgz/tar_exclude.txt\" --exclude .cache --exclude .settings --exclude conf.php --directory \"$BUILDROOT\" -czvf \"$FILENAMESNAPSHOT.tgz\" $FILENAMESNAPSHOT";
@@ -299,12 +299,12 @@ if ($nboftargetok) {
     	}
 
     	if ($target eq 'TGZ') {
+    		print "Remove target $FILENAMETGZ.tgz...\n";
+    		unlink("$FILENAMETGZ.tgz");
+
     		print "Copy $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMETGZ\n";
     		$cmd="cp -pr \"$BUILDROOT/$PROJECT\" \"$BUILDROOT/$FILENAMETGZ\"";
             $ret=`$cmd`;
-
-    		print "Remove target $FILENAMETGZ.tgz...\n";
-    		unlink("$FILENAMETGZ.tgz");
 
     		print "Compress $FILENAMETGZ into $FILENAMETGZ.tgz...\n";
    		    $cmd="tar --exclude-vcs --exclude-from \"$DESTI/tgz/tar_exclude.txt\" --directory \"$BUILDROOT\" --mode=go-w --group=500 --owner=500 -czvf \"$FILENAMETGZ.tgz\" $FILENAMETGZ";
@@ -323,12 +323,12 @@ if ($nboftargetok) {
     	}
 
     	if ($target eq 'ZIP') {
+    		print "Remove target $FILENAMEZIP.zip...\n";
+    		unlink("$DESTI/$FILENAMEZIP.zip");
+
     		print "Copy $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMEZIP\n";
     		$cmd="cp -pr \"$BUILDROOT/$PROJECT\" \"$BUILDROOT/$FILENAMEZIP\"";
             $ret=`$cmd`;
-
-    		print "Remove target $FILENAMEZIP.zip...\n";
-    		unlink("$DESTI/$FILENAMEZIP.zip");
 
     		print "Compress $FILENAMEZIP into $FILENAMEZIP.zip...\n";
  
@@ -354,10 +354,8 @@ if ($nboftargetok) {
     	}
     
     	if ($target eq 'RPM') {                 # Linux only
-			if ($RPMDIR eq "")
-			{
-				$RPMDIR=$ENV{'HOME'}."/rpmbuild";
-			}
+    		$ARCH='i386';
+			if ($RPMDIR eq "") { $RPMDIR=$ENV{'HOME'}."/rpmbuild"; }
            	$newbuild = $BUILD;
             $newbuild =~ s/(dev|alpha)/0/gi;				# dev
             $newbuild =~ s/beta/1/gi;						# beta
@@ -365,21 +363,18 @@ if ($nboftargetok) {
             if ($newbuild !~ /-/) { $newbuild.='-3'; }		# finale
             # now newbuild is 0-0 or 0-3 for example
             $REL1 = $newbuild; $REL1 =~ s/-.*$//gi;
-            if ($RPMSUBVERSION eq 'auto')
-            {
-              	$RPMSUBVERSION = $newbuild; $RPMSUBVERSION =~ s/^.*-//gi;
-            }
+            if ($RPMSUBVERSION eq 'auto') { $RPMSUBVERSION = $newbuild; $RPMSUBVERSION =~ s/^.*-//gi; }
             $FILENAMETGZ2="$PROJECT-$MAJOR.$MINOR.$REL1";
 			
+    		print "Remove target ".$FILENAMETGZ2."-".$RPMSUBVERSION.".".$ARCH.".rpm...\n";
+    		unlink("$DESTI/$FILENAMETGZ2.tgz");
+
     		print "Copy $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMETGZ2\n";
     		$cmd="cp -pr \"$BUILDROOT/$PROJECT\" \"$BUILDROOT/$FILENAMETGZ2\"";
             $ret=`$cmd`;
 
  			print "Remove other files\n";
 		    $ret=`rm -f $BUILDROOT/$FILENAMETGZ2/*.dll $BUILDROOT/$FILENAMETGZ2/*/*.dll $BUILDROOT/$FILENAMETGZ2/*/*/*.dll $BUILDROOT/$FILENAMETGZ2/*/*/*/*.dll $BUILDROOT/$FILENAMETGZ2/*/*/*/*/*.dll $BUILDROOT/$FILENAMETGZ2/*/*/*/*/*/*.dll $BUILDROOT/$FILENAMETGZ2/*/*/*/*/*/*/*.dll`;
-
-    		print "Remove target $FILENAMETGZ2.tgz...\n";
-    		unlink("$DESTI/$FILENAMETGZ2.tgz");
 
     		print "Compress $FILENAMETGZ2 into $FILENAMETGZ2.tgz...\n";
     		$ret=`tar --exclude-from "$SOURCE/build/tgz/tar_exclude.txt" --directory "$BUILDROOT" -czvf "$BUILDROOT/$FILENAMETGZ2.tgz" $FILENAMETGZ2`;
@@ -402,12 +397,12 @@ if ($nboftargetok) {
             close SPECTO;
     
     		print "Launch RPM build (rpmbuild --clean -ba $BUILDROOT/${BUILDFIC})\n";
-    		$ret=`rpmbuild -vvvv --clean -ba $BUILDROOT/${BUILDFIC}`;
+    		#$ret=`rpmbuild -vvvv --clean -ba $BUILDROOT/${BUILDFIC}`;
+    		$ret=`rpmbuild --clean -ba $BUILDROOT/${BUILDFIC}`;
     	
-    		$ARCH='i386';
-   		    print "Move $RPMDIR/".$ARCH."/".$FILENAMETGZ2."-".$RPMSUBVERSION."-".$ARCH.".rpm into $DESTI/${FILENAMERPM}.".$ARCH.".rpm\n";
-   		    $cmd="mv \"$RPMDIR/RPMS/".$ARCH."/".$FILENAMETGZ2."-".$RPMSUBVERSION."-".$ARCH.".rpm\" \"$DESTI/${FILENAMERPM}.".$ARCH.".rpm\"";
-    		$ret=`$cmd`;
+   		    print "Move $RPMDIR/RPMS/".$ARCH."/".$FILENAMETGZ2."-".$RPMSUBVERSION.".".$ARCH.".rpm into $DESTI/".$FILENAMETGZ2."-".$RPMSUBVERSION.".".$ARCH.".rpm\n";
+   		    $cmd="mv \"$RPMDIR/RPMS/".$ARCH."/".$FILENAMETGZ2."-".$RPMSUBVERSION.".".$ARCH.".rpm\" \"$DESTI/".$FILENAMETGZ2."-".$RPMSUBVERSION.".".$ARCH.".rpm\"";
+#    		$ret=`$cmd`;
     		next;
     	}
     	
