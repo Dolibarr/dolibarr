@@ -110,7 +110,7 @@ class FormActions
         $sql.= ' WHERE a.fk_user_author = u.rowid';
         if ($socid) $sql .= ' AND a.fk_soc = '.$socid;
         if ($typeelement == 'project') $sql.= ' AND a.fk_project = '.$object->id;
-        else $sql.= ' AND a.fk_element = '.$object->id.' AND a.elementtype = "'.$typeelement.'"';
+        else $sql.= " AND a.fk_element = ".$object->id." AND a.elementtype = '".$typeelement."'";
 
         dol_syslog("FormActions::showactions sql=".$sql);
         $resql = $this->db->query($sql);
