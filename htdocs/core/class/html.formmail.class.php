@@ -326,11 +326,37 @@ class FormMail
 		if ($this->withto || is_array($this->withto))
 		{
 			$out.= '<tr><td width="180">';
-			$out.= $form->textwithpicto($langs->trans("MailTo"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
+			if ($this->withtofree) $out.= $form->textwithpicto($langs->trans("MailTo"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
+			else $out.= $langs->trans("MailTo");
 			$out.= '</td><td>';
 			if ($this->withtoreadonly)
 			{
-				$out.= (! is_array($this->withto) && ! is_numeric($this->withto))?$this->withto:"";
+				if (! empty($this->toname) && ! empty($this->tomail))
+				{
+					$out.= '<input type="hidden" id="toname" name="toname" value="'.$this->toname.'" />';
+					$out.= '<input type="hidden" id="tomail" name="tomail" value="'.$this->tomail.'" />';
+					if ($this->totype == 'thirdparty')
+					{
+						$soc=new Societe($this->db);
+						$soc->fetch($this->toid);
+						$out.= $soc->getNomUrl(1);
+					}
+					if ($this->totype == 'contact')
+					{
+						$contact=new Contact($this->db);
+						$contact->fetch($this->toid);
+						$out.= $contact->getNomUrl(1);
+					}
+					else
+					{
+						$out.= $this->toname;
+					}
+					$out.= ' &lt;'.$this->tomail.'&gt;';
+				} 
+				else
+				{
+					$out.= (! is_array($this->withto) && ! is_numeric($this->withto))?$this->withto:"";
+				}
 			}
 			else
 			{
