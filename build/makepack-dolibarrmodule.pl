@@ -8,7 +8,6 @@
 
 use Cwd;
 
-$PROJECT="mymodule";
 
 @LISTETARGET=("TGZ");   # Possible packages
 %REQUIREMENTTARGET=(    # Tool requirement for each package
