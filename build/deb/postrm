@@ -40,6 +40,7 @@ esac
 export includefile=/etc/dolibarr/apache.conf
 
 case "$1" in
+    # Call when we uninstall and purge
 	purge)
 		echo "postrm purge webservers=$webservers includefile=$includefile"
 
@@ -148,27 +149,38 @@ case "$1" in
 	
 		# Remove include files
 		for server in $webservers ; do
-			export error=""		
-			export conffile="/etc/$server/httpd.conf"
-			echo "postrm conffile=$conffile" 
-			if [ -f $conffile ] ;
-			then
-				if [ -s $conffile ] ;
-				then
-                    echo postrm remove dolibarr include from /etc/dolibarr/apache.conf
-					# We disable set -e to avoid premature end of script if error
-					set +e
-				    GREP="Include[[:space:]]\+$includefile\b"
-				    if grep -e "$GREP" $conffile > /dev/null 2>&1; then
-					log="${log}Include of $includefile found in $conffile file, purging."
-					status=purge
-					grep -v -e "$GREP" < $conffile > $conffile.purg
-					mv $conffile.purg $conffile
-					fi
-					# We restore blocking errors
-					set -e
-				fi
-			fi
+            
+            # Old usage
+			#export conffile="/etc/$server/httpd.conf"
+            #export error=""     
+			#echo "postrm conffile=$conffile" 
+			#if [ -f $conffile ] ;
+			#then
+			#	if [ -s $conffile ] ;
+			#	then
+            #        echo postrm remove dolibarr include from /etc/dolibarr/apache.conf
+			#		# We disable set -e to avoid premature end of script if error
+			#		set +e
+			#	    GREP="Include[[:space:]]\+$includefile\b"
+			#	    if grep -e "$GREP" $conffile > /dev/null 2>&1; then
+			#		log="${log}Include of $includefile found in $conffile file, purging."
+			#		status=purge
+			#		grep -v -e "$GREP" < $conffile > $conffile.purg
+			#		mv $conffile.purg $conffile
+			#		fi
+			#		# We restore blocking errors
+			#		set -e
+			#	fi
+			#fi
+			
+			# New usage
+			export conffile="/etc/$server/conf.d/dolibarr.conf"
+            if [ -f $conffile ] ;
+            then
+	           rm $conffile
+	           status=purge
+		    fi
+			
 			if [ "$status" = "purge" ] ;
 				then restart="$restart $server"
 			fi
@@ -217,9 +229,13 @@ case "$1" in
 		db_purge
 	;;
 
+    # Call when we uninstall
 	remove)
 		echo "postrm Force remove of /usr/share/dolibarr/htdocs/install"
 		rm -fr /usr/share/dolibarr/htdocs/install
+
+        echo "postrm Force remove of /usr/share/dolibarr/htdocs/conf"
+        rm -fr /usr/share/dolibarr/htdocs/conf
 
 		#echo "postrm Remove menu entry and image"
 		#fileorig="/usr/share/applications/dolibarr.desktop"

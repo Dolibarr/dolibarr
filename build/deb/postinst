@@ -26,13 +26,13 @@ echo Run the dolibarr postinst script
 case "$1" in
 	configure)
 
-		# Copy include for apache.conf
+		# Copy apache.conf file into target directory
 		fileorig="/usr/share/dolibarr/build/deb/apache.conf"
 		config="/etc/dolibarr/apache.conf"
 		mkdir -p /etc/dolibarr
 		cp -p $fileorig $config
 
-		# Create install.forced.php
+		# Create install.forced.php into Dolibarr install directory
 		fileorig="/usr/share/dolibarr/build/deb/install.forced.php.install"
 		config="/usr/share/dolibarr/htdocs/install/install.forced.php"
 		superuserlogin=''
@@ -55,7 +55,7 @@ case "$1" in
         chmod -R 775 /var/lib/dolibarr/documents;
         chmod -R g+s /var/lib/dolibarr/documents;
 
-		# Create empty conf.php
+		# Create an empty conf.php with permission to web server
 		if [ ! -f /usr/share/dolibarr/htdocs/conf/conf.php ]
 		then 
 			echo Create empty file /usr/share/dolibarr/htdocs/conf/conf.php		
@@ -113,10 +113,14 @@ case "$1" in
 			#
 			chown -R $webuser.$webgroup /usr/share/dolibarr
 
-			includefile="/etc/dolibarr/apache.conf"
-			#echo "$includefile $server" 
-			. /usr/share/dolibarr/build/deb/apache-include_all.sh
-			test "$status" = "uncomment" -o "$status" = "include" && restart="$server $restart"
+            # Put contet of conf file into apache httpd.conf main file (/etc/apache2/httpd.conf)
+			#includefile="/etc/dolibarr/apache.conf"
+			#. /usr/share/dolibarr/build/deb/apache-include_all.sh
+			#test "$status" = "uncomment" -o "$status" = "include" && restart="$server $restart"
+			
+			# Add link to config file
+            echo Setup web server $webservers to add dolibarr config file
+			ln -fs /etc/dolibarr/apache.conf /etc/apache2/conf.d
 			
 			# (useless)
 			#for index in index.php; do
@@ -155,10 +159,12 @@ case "$1" in
 		servers="apache2-ssl apache2 mysql"
 		if [ -f /usr/share/wwwconfig-common/restart.sh ] ;
 		then
+            echo Restart web servers running /usr/share/wwwconfig-common/restart.sh
 			. /usr/share/wwwconfig-common/restart.sh
 		else
 			# Another way to restart
 			for server in $servers ; do
+			    echo Restart web server $server
         		if [ -x /usr/sbin/invoke-rc.d ]; then
         		    # This on works with Debian (5.05,...) and Ubuntu (9.10,10.04,...)
         	    	invoke-rc.d $server reload || true
@@ -168,7 +174,9 @@ case "$1" in
 			done
 		fi
 		
-		echo "Launch Dolibarr on page http://localhost/dolibarr/ to complete the installation and use Dolibarr."
+		echo ----------
+		echo "Call Dolibarr page http://localhost/dolibarr/ to complete the installation and use Dolibarr."
+		echo ----------
 	;;
 
 	abort-upgrade|abort-remove|abort-deconfigure)

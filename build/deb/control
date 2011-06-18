@@ -16,7 +16,8 @@ Description: Dolibarr ERP & CRM
  Relationship Management (CRM) but also other features for different
  activities.
  .
- Dolibarr features are activated by modules. Most common modules are
+ Dolibarr features are activated by modules. Most common modules are:
+ .
  * Products and services catalog
  * Stock management
  * Bank accounts management
