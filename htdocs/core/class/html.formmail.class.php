@@ -341,7 +341,7 @@ class FormMail
 						$soc->fetch($this->toid);
 						$out.= $soc->getNomUrl(1);
 					}
-					if ($this->totype == 'contact')
+					else if ($this->totype == 'contact')
 					{
 						$contact=new Contact($this->db);
 						$contact->fetch($this->toid);
