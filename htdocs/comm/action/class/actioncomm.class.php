@@ -599,7 +599,7 @@ class ActionComm extends CommonObject
 
 	/**
 	 *    	Renvoie nom clicable (avec eventuellement le picto)
-	 *      Utilise $this->id, $this->code et $this->libelle
+	 *      Utilise $this->id, $this->code et $this->label
 	 * 		@param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
 	 *		@param		maxlength		Nombre de caracteres max dans libelle
 	 *		@param		class			Force style class on a link
@@ -620,15 +620,15 @@ class ActionComm extends CommonObject
             $libelle=$langs->trans("Action".$this->type_code);
             $libelleshort='';
         }
-        else if (empty($this->libelle))
+        else if (empty($this->label))
         {
         	$libelle=$langs->trans("Action".$this->type_code);
         	$libelleshort=$langs->trans("Action".$this->type_code,'','','','',$maxlength);
         }
         else
         {
-        	$libelle=$this->libelle;
-        	$libelleshort=dol_trunc($this->libelle,$maxlength);
+        	$libelle=$this->label;
+        	$libelleshort=dol_trunc($this->label,$maxlength);
         }
 
 		if ($withpicto)
