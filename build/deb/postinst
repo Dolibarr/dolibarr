@@ -119,7 +119,7 @@ case "$1" in
 			#test "$status" = "uncomment" -o "$status" = "include" && restart="$server $restart"
 			
 			# Add link to config file
-            echo Setup web server $webservers to add dolibarr config file
+            echo Setup web server $server to add dolibarr config file
 			ln -fs /etc/dolibarr/apache.conf /etc/apache2/conf.d
 			
 			# (useless)
