@@ -221,10 +221,10 @@ class Project extends CommonObject
 
 
 	/**
-	 *	\brief      Get object and lines from database
-	 *	\param      rowid       id of object to load
-	 * 	\param		ref			Ref of project
-	 *	\return     int         >0 if OK, <0 if KO
+	 *	Get object and lines from database
+	 *	@param      rowid       id of object to load
+	 * 	@param		ref			Ref of project
+	 *	@return     int         >0 if OK, 0 if not found, <0 if KO
 	 */
 	function fetch($id,$ref='')
 	{
@@ -269,14 +269,14 @@ class Project extends CommonObject
 			}
 			else
 			{
-				return -1;
+				return 0;
 			}
 		}
 		else
 		{
 			$this->error=$this->db->lasterror();
 			dol_syslog("Project::fetch ".$this->error, LOG_ERR);
-			return -2;
+			return -1;
 		}
 	}
 
