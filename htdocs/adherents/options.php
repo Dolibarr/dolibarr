@@ -26,11 +26,11 @@
  */
 
 require("../main.inc.php");
-require(DOL_DOCUMENT_ROOT."/adherents/class/adherent_options.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php");
 
 $langs->load("members");
 
-$adho = new AdherentOptions($db);
+$adho = new ExtraFields($db);
 $form = new Form($db);
 
 /*

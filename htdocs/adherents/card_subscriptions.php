@@ -30,9 +30,9 @@ require_once(DOL_DOCUMENT_ROOT."/lib/member.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php");
-require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent_options.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/cotisation.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php");
 
 $langs->load("companies");
 $langs->load("bills");
@@ -45,7 +45,7 @@ $langs->load("mails");
 if (! $user->rights->adherent->cotisation->lire) accessforbidden();
 
 $adh = new Adherent($db);
-$adho = new AdherentOptions($db);
+$adho = new ExtraFields($db);
 $adht = new AdherentType($db);
 $errmsg='';
 

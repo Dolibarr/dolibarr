@@ -31,8 +31,7 @@ define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php");
-require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent_options.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.form.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php");
 
 // Security check
 if (empty($conf->adherent->enabled)) accessforbidden('',1,1,1);
@@ -217,7 +216,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'added')
 $html = new Form($db);
 
 $adht = new AdherentType($db);
-$adho = new AdherentOptions($db);
+$adho = new ExtraFields($db);
 
 llxHeaderVierge($langs->trans("NewSubscription"));
 

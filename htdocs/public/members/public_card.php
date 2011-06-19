@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo <jlb@j1b.org>
- * Copyright (C) 2007-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php");
-require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent_options.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php");
 
 // Security check
 if (empty($conf->adherent->enabled)) accessforbidden('',1,1,1);
@@ -42,9 +42,15 @@ $langs->load("members");
 $langs->load("companies");
 $langs->load("other");
 
-
 $rowid=$_GET["id"];
-$adho = new AdherentOptions($db);
+$adho = new ExtraFields($db);
+
+
+/*
+ * Actions
+ */
+
+// None
 
 
 /*

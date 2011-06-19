@@ -3,7 +3,7 @@
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier	    <benoit.mortier@opensides.be>
- * Copyright (C) 2009      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2009-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,19 +22,18 @@
  */
 
 /**
- * 	\file 		htdocs/adherents/class/adherent_options.class.php
- *	\ingroup    member
- *	\brief      File of class to manage optionnal fields
+ * 	\file 		htdocs/core/class/extrafields.class.php
+ *	\ingroup    core
+ *	\brief      File of class to manage extra fields
  *	\version    $Id$
  */
 
 /**
- * 	\class 		AdherentOptions
- *	\brief      Class to manage table of optionnal fields
+ * 	\class 		ExtraFields
+ *	\brief      Class to manage standard extra fields
  */
-class AdherentOptions
+class ExtraFields
 {
-	var $id;
 	var $db;
 	// Tableau contenant le nom des champs en clef et la definition de ces champs
 	var $attribute_type;
@@ -44,24 +43,20 @@ class AdherentOptions
 	var $attribute_size;
 
 	var $error;
-	/*
-	 * Constructor
-	 *
-	 */
+
 
 	/**
-	 *  \brief AdherentOptions
-	 *  \param DB			base de donnees
-	 *  \param id			id de l'adherent
+	 *  Constructor
+	 *  @param DB			base de donnees
 	 */
-	function AdherentOptions($DB, $id='')
+	function ExtraFields($DB)
 	{
 		$this->db = $DB ;
-		$this->id = $id;
 		$this->error = array();
 		$this->attribute_type = array();
 		$this->attribute_label = array();
 		$this->attribute_size = array();
+		$this->attribute_elementtype = array();
 	}
 
 	/**
@@ -69,13 +64,26 @@ class AdherentOptions
 	 *	@param	attrname			code of attribute
 	 *  @param	type				Type of attribute ('int', 'text', 'varchar', 'date', 'datehour')
 	 *  @param	length				Size/length of attribute
+     *  @param  elementtype         Element type ('member', 'product', 'company', ...)
+     *  @return int                 <=0 if KO, >0 if OK
 	 */
-	function create($attrname,$type='varchar',$length=255) {
+	function create($attrname,$type='varchar',$length=255,$elementtype='member')
+	{
+        $table='';
+        if ($elementtype == 'member')  $table='adherent_extrafields';
+        if ($elementtype == 'company') $table='societe_extrafields';
+        if ($elementtype == 'contact') $table='socpeople_extrafields';
+        if ($elementtype == 'product') $table='product_extrafields';
+        if (empty($table))
+        {
+            print 'ErrorBarValueForParameters';
+            return -1;
+        }
 
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
 			$field_desc = array('type'=>$type, 'value'=>$length);
-			$result=$this->db->DDLAddField(MAIN_DB_PREFIX.'adherent_extrafields', $attrname, $field_desc);
+			$result=$this->db->DDLAddField(MAIN_DB_PREFIX.$table, $attrname, $field_desc);
 			if ($result > 0)
 			{
 				return 1;
@@ -99,7 +107,7 @@ class AdherentOptions
 	 *  @param	type				Type of attribute ('int', 'text', 'varchar', 'date', 'datehour')
 	 *  @param	pos					Position of attribute
 	 *  @param	size				Size/length of attribute
-	 *  @param  elementtype         Element type ('member', 'product', ...)
+	 *  @param  elementtype         Element type ('member', 'product', 'company', ...)
 	 *  @return	int					<=0 if KO, >0 if OK
 	 */
 	function create_label($attrname,$label='',$type='',$pos=0,$size=0, $elementtype='member')
@@ -118,11 +126,11 @@ class AdherentOptions
 			$sql.= " '".$type."',";
 			$sql.= " '".$pos."',";
 			$sql.= " '".$size."',";
-			$sql.= " ".$conf->entity;
-            $sql.= ", '".$elementtype."'";
+			$sql.= " ".$conf->entity.",";
+            $sql.= " '".$elementtype."'";
 			$sql.=')';
 
-			dol_syslog("AdherentOptions::create_label sql=".$sql);
+			dol_syslog(get_class($this)."::create_label sql=".$sql);
 			if ($this->db->query($sql))
 			{
 				return 1;
@@ -137,18 +145,30 @@ class AdherentOptions
 
 	/**
 	 *	Delete an optionnal attribute
-	 *	@param	attrname			Code of attribute to delete
-	 *  TODO This does not work with multicompany module
+	 *	@param	   attrname			Code of attribute to delete
+	 *  @param     elementtype      Element type ('member', 'product', 'company', ...)
+	 *  @return    int              < 0 if KO, 0 if nothing is done, 1 if OK
 	 */
-	function delete($attrname)
+	function delete($attrname,$elementtype='member')
 	{
+	    $table='';
+	    if ($elementtype == 'member')  $table='adherent_extrafields';
+        if ($elementtype == 'company') $table='societe_extrafields';
+        if ($elementtype == 'contact') $table='socpeople_extrafields';
+        if ($elementtype == 'product') $table='product_extrafields';
+        if (empty($table))
+        {
+            print 'ErrorBarValueForParameters';
+            return -1;
+        }
+
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
-			$result=$this->db->DDLDropField(MAIN_DB_PREFIX."adherent_extrafields",$attrname);
+			$result=$this->db->DDLDropField(MAIN_DB_PREFIX.$table,$attrname);
 			if ($result < 0)
 			{
 				$this->error=$this->db->lasterror();
-				dol_syslog("AdherentOption::delete ".$this->error, LOG_ERR);
+				dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
 			}
 
 			$result=$this->delete_label($attrname);
@@ -165,18 +185,21 @@ class AdherentOptions
 	/**
 	 *	Delete description of an optionnal attribute
 	 *	@param	attrname			Code of attribute to delete
+     *  @param  elementtype         Element type ('member', 'product', 'company', ...)
+     *  @return    int              < 0 if KO, 0 if nothing is done, 1 if OK
 	 */
-	function delete_label($attrname)
+	function delete_label($attrname,$elementtype='member')
 	{
 		global $conf;
 
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."extrafields";
-			$sql.= " WHERE name = '$attrname'";
+			$sql.= " WHERE name = '".$attrname."'";
 			$sql.= " AND entity = ".$conf->entity;
+            $sql.= " AND elementtype = '".$elementtype."'";
 
-			dol_syslog("AdherentOptions::delete_label sql=".$sql);
+			dol_syslog(get_class($this)."::delete_label sql=".$sql);
 			if ( $this->db->query( $sql) )
 			{
 				return 1;
@@ -184,7 +207,7 @@ class AdherentOptions
 			else
 			{
 				print dol_print_error($this->db);
-				return 0;
+				return -1;
 			}
 		}
 		else
@@ -199,15 +222,26 @@ class AdherentOptions
 	 *  @param		attrname			name of attribute
 	 *  @param		type				type of attribute
 	 *  @param		length				length of attribute
+     *  @param      elementtype         Element type ('member', 'product', 'company', ...)
 	 * 	@return		int					>0 if OK, <=0 if KO
-	 *  TODO This does not works with mutlicompany module
 	 */
-	function update($attrname,$type='varchar',$length=255)
+	function update($attrname,$type='varchar',$length=255,$elementtype='member')
 	{
-		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
+        $table='';
+        if ($elementtype == 'member')  $table='adherent_extrafields';
+        if ($elementtype == 'company') $table='societe_extrafields';
+        if ($elementtype == 'contact') $table='socpeople_extrafields';
+        if ($elementtype == 'product') $table='product_extrafields';
+        if (empty($table))
+        {
+            print 'ErrorBarValueForParameters';
+            return -1;
+        }
+
+        if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
 			$field_desc = array('type'=>$type, 'value'=>$length);
-			$result=$this->db->DDLUpdateField(MAIN_DB_PREFIX.'extrafields', $attrname, $field_desc);
+			$result=$this->db->DDLUpdateField(MAIN_DB_PREFIX.$table, $attrname, $field_desc);
 			if ($result > 0)
 			{
 				return 1;
@@ -226,17 +260,17 @@ class AdherentOptions
 	}
 
 	/**
-	 *  Modify description of an optionnal attribute
-	 *  @param	attrname			nom de l'atribut
-	 *  @param	label				nom du label
-	 *  @param	type				type
-	 *  @param	size				size
-	 *  @param  elementtype         Element type ('member', 'product', ...)
-	 */
+	 *  Modify description of personalized attribute
+	 *  @param	    attrname			name of attribute
+	 *  @param	    label				label of attribute
+     *  @param      type                type of attribute
+     *  @param      length              length of attribute
+     *  @param      elementtype         Element type ('member', 'product', 'company', ...)
+     */
 	function update_label($attrname,$label,$type,$size,$elementtype='member')
 	{
 		global $conf;
-		dol_syslog("AdherentOptions::update_label $attrname,$label,$type,$size");
+		dol_syslog(get_class($this)."::update_label $attrname,$label,$type,$size");
 
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
@@ -246,7 +280,7 @@ class AdherentOptions
 			$sql_del.= " WHERE name = '".$attrname."'";
 			$sql_del.= " AND entity = ".$conf->entity;
 			$sql_del.= " AND elementtype = '".$elementtype."'";
-			dol_syslog("AdherentOptions::update_label sql=".$sql_del);
+			dol_syslog(get_class($this)."::update_label sql=".$sql_del);
 			$resql1=$this->db->query($sql_del);
 
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."extrafields(";
@@ -254,7 +288,8 @@ class AdherentOptions
 			$sql.= " entity,";
 			$sql.= " label,";
 			$sql.= " type,";
-			$sql.= " size";
+			$sql.= " size,";
+			$sql.= " elementtype";
 			$sql.= ") VALUES (";
 			$sql.= "'".$attrname."',";
 			$sql.= " ".$conf->entity.",";
@@ -263,7 +298,7 @@ class AdherentOptions
 			$sql.= " '".$size."',";
             $sql.= " '".$elementtype."'";
 			$sql.= ")";
-			dol_syslog("AdherentOptions::update_label sql=".$sql);
+			dol_syslog(get_class($this)."::update_label sql=".$sql);
 			$resql2=$this->db->query($sql);
 
 			if ($resql1 && $resql2)
@@ -287,7 +322,7 @@ class AdherentOptions
 
 
 	/**
-	 *  \brief fonction qui modifie un label
+	 *  Load array of labels
 	 */
 	function fetch_optionals()
 	{
@@ -296,7 +331,7 @@ class AdherentOptions
 
 
 	/**
-	 * 	\brief 	Load array this->attribute_label
+	 * 	Load array this->attribute_label
 	 */
 	function fetch_name_optionals_label($elementtype='member')
 	{
@@ -310,7 +345,7 @@ class AdherentOptions
 		if ($elementtype) $sql.= " AND elementtype = '".$elementtype."'";
 		$sql.= " ORDER BY pos";
 
-		dol_syslog("Adherent_options::fetch_name_optionals_label sql=".$sql);
+		dol_syslog(get_class($this)."::fetch_name_optionals_label sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

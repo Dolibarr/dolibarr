@@ -33,7 +33,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/images.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php");
-require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent_options.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/cotisation.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formcompany.class.php");
@@ -47,7 +47,7 @@ $langs->load("users");
 if (! $user->rights->adherent->lire) accessforbidden();
 
 $adh = new Adherent($db);
-$adho = new AdherentOptions($db);
+$adho = new ExtraFields($db);
 $errmsg='';
 
 $action=GETPOST("action");
@@ -796,7 +796,7 @@ if ($action == 'edit')
 	 *
 	 ********************************************/
 
-	$adho = new AdherentOptions($db);
+	$adho = new ExtraFields($db);
 	$adh = new Adherent($db);
 	$adh->id = $rowid;
 	$adh->fetch($rowid);
