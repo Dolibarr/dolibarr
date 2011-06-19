@@ -79,7 +79,10 @@ class SocieteTest extends PHPUnit_Framework_TestCase
   	public static function setUpBeforeClass()
     {
     	global $conf,$user,$langs,$db;
-		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+
+        if ($conf->global->SOCIETE_CODECLIENT_ADDON != 'mod_codeclient_monkey') { print __METHOD__." third party ref checker must be setup to 'mod_codeclient_monkey' not to '".$conf->global->SOCIETE_CODECLIENT_ADDON."'.\n"; die(); }
+
+        $db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
     	print __METHOD__."\n";
     }

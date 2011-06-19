@@ -36,8 +36,8 @@ require_once dirname(__FILE__).'/../../htdocs/expedition/class/expedition.class.
 require_once dirname(__FILE__).'/../../htdocs/projet/class/project.class.php';
 require_once dirname(__FILE__).'/../../htdocs/projet/class/task.class.php';
 require_once dirname(__FILE__).'/../../htdocs/lib/pdf.lib.php';
-require_once dirname(__FILE__).'/../../htdocs/includes/modules/facture/pdf_crabe.modules.php';
-require_once dirname(__FILE__).'/../../htdocs/includes/modules/facture/pdf_oursin.modules.php';
+require_once dirname(__FILE__).'/../../htdocs/includes/modules/facture/doc/pdf_crabe.modules.php';
+require_once dirname(__FILE__).'/../../htdocs/includes/modules/facture/doc/pdf_oursin.modules.php';
 require_once dirname(__FILE__).'/../../htdocs/includes/modules/commande/pdf_edison.modules.php';
 require_once dirname(__FILE__).'/../../htdocs/includes/modules/commande/pdf_einstein.modules.php';
 require_once dirname(__FILE__).'/../../htdocs/includes/modules/propale/pdf_propale_azur.modules.php';
