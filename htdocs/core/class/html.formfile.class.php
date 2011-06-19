@@ -33,6 +33,8 @@ class FormFile
 {
 	var $db;
 	var $error;
+	
+	var $numoffiles;
 
 
 	/**
@@ -42,6 +44,8 @@ class FormFile
 	function FormFile($DB)
 	{
 		$this->db = $DB;
+		
+		$this->numoffiles=0;
 
 		return 1;
 	}
@@ -124,7 +128,6 @@ class FormFile
 		return 1;
 	}
 
-
 	/**
 	 *      Show the box with list of available documents for object
 	 *      @param      modulepart          propal, facture, facture_fourn, ...
@@ -148,10 +151,39 @@ class FormFile
 	 */
 	function show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='',$codelang='',$hooks='')
 	{
+		print $this->showdocuments($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed,$modelselected,$allowgenifempty,$forcenomultilang,$iconPDF,$maxfilenamelength,$noform,$param,$title,$buttonlabel,$codelang,$hooks);
+	}
+
+	/**
+	 *      Show the box with list of available documents for object
+	 *      @param      modulepart          propal, facture, facture_fourn, ...
+	 *      @param      filename            Sub dir to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if filedir already complete)
+	 *      @param      filedir             Dir to scan
+	 *      @param      urlsource           Url of origin page (for return)
+	 *      @param      genallowed          Generation is allowed (1/0 or array of formats)
+	 *      @param      delallowed          Remove is allowed (1/0)
+	 *      @param      modelselected       Model to preselect by default
+	 *      @param      allowgenifempty		Show warning if no model activated
+	 *      @param      forcenomultilang	Do not show language option (even if MAIN_MULTILANGS defined)
+	 *      @param      iconPDF             Show only PDF icon with link (1/0)
+	 * 		@param		maxfilenamelength	Max length for filename shown
+	 * 		@param		noform				Do not output html form tags
+	 * 		@param		param				More param on http links
+	 * 		@param		title				Title to show on top of form
+	 * 		@param		buttonlabel			Label on submit button
+	 * 		@param		codelang			Default language code to use on lang combo box if multilang is enabled
+	 * 		@param		hooks				Object hook of external modules
+	 * 		@return		int					<0 if KO, number of shown files if OK
+	 */
+	function showdocuments($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='',$codelang='',$hooks='')
+	{
 		// filedir = conf->...dir_ouput."/".get_exdir(id)
 		include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
 
 		global $langs,$bc,$conf;
+		
+		$out='';
+		
 		$var=true;
 
 		if ($iconPDF == 1)
@@ -167,7 +199,7 @@ class FormFile
 		$showempty=0;
 		$i=0;
 
-		print "\n".'<!-- Start show_document -->'."\n";
+		$out.= "\n".'<!-- Start show_document -->'."\n";
 		//print 'filedir='.$filedir;
 
 		// Affiche en-tete tableau
@@ -349,69 +381,69 @@ class FormFile
 			$buttonlabeltoshow=$buttonlabel;
 			if (empty($buttonlabel)) $buttonlabel=$langs->trans('Generate');
 
-			if (empty($noform)) print '<form action="'.$urlsource.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc').'" method="post">';
-			print '<input type="hidden" name="action" value="builddoc">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			if (empty($noform)) $out.= '<form action="'.$urlsource.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc').'" method="post">';
+			$out.= '<input type="hidden" name="action" value="builddoc">';
+			$out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-			print_titre($langs->trans("Documents"));
-			print '<table class="border formdoc" summary="listofdocumentstable" width="100%">';
+			$out.= load_fiche_titre($langs->trans("Documents"));
+			$out.= '<table class="border formdoc" summary="listofdocumentstable" width="100%">';
 
-			print '<tr '.$bc[$var].'>';
+			$out.= '<tr '.$bc[$var].'>';
 
 			// Model
 			if (! empty($modellist))
 			{
-				print '<td align="center" class="formdoc">';
-				print $langs->trans('Model').' ';
+				$out.= '<td align="center" class="formdoc">';
+				$out.= $langs->trans('Model').' ';
 				if (is_array($modellist) && sizeof($modellist) == 1)    // If there is only one element
 				{
 				    $arraykeys=array_keys($modellist);
 				    $modelselected=$arraykeys[0];
 				}
-				print $html->selectarray('model',$modellist,$modelselected,$showempty,0,0);
+				$out.= $html->selectarray('model',$modellist,$modelselected,$showempty,0,0);
 			    if (sizeof($cgvlist) > 0)
 			    {
-			        print $html->selectarray('cgv',$cgvlist,"-1",1,0,1);
+			        $out.= $html->selectarray('cgv',$cgvlist,"-1",1,0,1);
 			    }
-				print '</td>';
+				$out.= '</td>';
 			}
 			else
 			{
-				print '<td align="left" class="formdoc">';
-				print $langs->trans("Files");
-				print '</td>';
+				$out.= '<td align="left" class="formdoc">';
+				$out.= $langs->trans("Files");
+				$out.= '</td>';
 			}
 
 			// Language code (if multilang)
-			print '<td align="center" class="formdoc">';
+			$out.= '<td align="center" class="formdoc">';
 			if (($allowgenifempty || (is_array($modellist) && sizeof($modellist) > 0)) && $conf->global->MAIN_MULTILANGS && ! $forcenomultilang)
 			{
 				include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php');
 				$formadmin=new FormAdmin($this->db);
 				$defaultlang=$codelang?$codelang:$langs->getDefaultLang();
-				print $formadmin->select_language($defaultlang);
+				$out.= $formadmin->select_language($defaultlang);
 			}
 			else
 			{
-				print '&nbsp;';
+				$out.= '&nbsp;';
 			}
-			print '</td>';
+			$out.= '</td>';
 
 			// Button
-			print '<td align="center" colspan="'.($delallowed?'2':'1').'" class="formdocbutton">';
-			print '<input class="button" ';
+			$out.= '<td align="center" colspan="'.($delallowed?'2':'1').'" class="formdocbutton">';
+			$out.= '<input class="button" ';
 			//print ((is_array($modellist) && sizeof($modellist))?'':' disabled="true"') // Always allow button "Generate" (even if no model activated)
-			print ' type="submit" value="'.$buttonlabel.'"';
+			$out.= ' type="submit" value="'.$buttonlabel.'"';
 			if (! $allowgenifempty && ! is_array($modellist) && empty($modellist)) print ' disabled="true"';
-			print '>';
+			$out.= '>';
 			if ($allowgenifempty && ! is_array($modellist) && empty($modellist) && $modulepart != 'unpaid')
 			{
 				$langs->load("errors");
 				print ' '.img_warning($langs->trans("WarningNoDocumentModelActivated"));
 			}
-			print '</td>';
+			$out.= '</td>';
 
-			print '</tr>';
+			$out.= '</tr>';
 
 			// Execute hooks
 			// $hooks must be array('key'=>$instanceofclass)
@@ -441,11 +473,11 @@ class FormFile
 			$titletoshow=$langs->trans("Documents");
 			if (! empty($title)) $titletoshow=$title;
 			print_titre($titletoshow);
-			print '<table class="border" summary="listofdocumentstable" width="100%">';
+			$out.= '<table class="border" summary="listofdocumentstable" width="100%">';
 		}
 
 		// Loop on each file found
-		foreach($file_list as $i => $file)
+		foreach($file_list as $file)
 		{
 			$var=!$var;
 
@@ -456,54 +488,55 @@ class FormFile
 			if ($modulepart == 'donation')            { $relativepath = get_exdir($filename,2).$file["name"]; }
 			if ($modulepart == 'export')              { $relativepath = $file["name"]; }
 
-			if (!$iconPDF) print "<tr ".$bc[$var].">";
+			if (!$iconPDF) $out.= "<tr ".$bc[$var].">";
 
 			// Show file name with link to download
-			if (!$iconPDF) print '<td nowrap="nowrap">';
-			print '<a href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'"';
+			if (!$iconPDF) $out.= '<td nowrap="nowrap">';
+			$out.= '<a href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'"';
 			$mime=dol_mimetype($relativepath,'',0);
-			if (preg_match('/text/',$mime)) print ' target="_blank"';
-			print '>';
+			if (preg_match('/text/',$mime)) $out.= ' target="_blank"';
+			$out.= '>';
 			if (!$iconPDF)
 			{
-				print img_mime($file["name"],$langs->trans("File").': '.$file["name"]).' '.dol_trunc($file["name"],$maxfilenamelength);
+				$out.= img_mime($file["name"],$langs->trans("File").': '.$file["name"]).' '.dol_trunc($file["name"],$maxfilenamelength);
 			}
 			else
 			{
-				print img_pdf($file["name"],2);
+				$out.= img_pdf($file["name"],2);
 			}
-			print '</a>';
-			if (!$iconPDF) print '</td>';
+			$out.= '</a>';
+			if (!$iconPDF) $out.= '</td>';
 			// Affiche taille fichier
-			if (!$iconPDF) print '<td align="right" nowrap="nowrap">'.dol_print_size(dol_filesize($filedir."/".$file["name"])).'</td>';
+			if (!$iconPDF) $out.= '<td align="right" nowrap="nowrap">'.dol_print_size(dol_filesize($filedir."/".$file["name"])).'</td>';
 			// Affiche date fichier
-			if (!$iconPDF) print '<td align="right" nowrap="nowrap">'.dol_print_date(dol_filemtime($filedir."/".$file["name"]),'dayhour').'</td>';
+			if (!$iconPDF) $out.= '<td align="right" nowrap="nowrap">'.dol_print_date(dol_filemtime($filedir."/".$file["name"]),'dayhour').'</td>';
 
 			if ($delallowed)
 			{
-				print '<td align="right"><a href="'.DOL_URL_ROOT.'/document.php?action=remove_file&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath);
-				print ($param?'&amp;'.$param:'');
-				print '&amp;urlsource='.urlencode($urlsource);
-				print '">'.img_delete().'</a></td>';
+				$out.= '<td align="right"><a href="'.DOL_URL_ROOT.'/document.php?action=remove_file&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath);
+				$out.= ($param?'&amp;'.$param:'');
+				$out.= '&amp;urlsource='.urlencode($urlsource);
+				$out.= '">'.img_delete().'</a></td>';
 			}
 
-			if (!$iconPDF) print '</tr>';
+			if (!$iconPDF) $out.= '</tr>';
 
-			$i++;
+			$this->numoffiles++;
 		}
 
 
 		if ($headershown)
 		{
 			// Affiche pied du tableau
-			print "</table>\n";
+			$out.= "</table>\n";
 			if ($genallowed)
 			{
-				if (empty($noform)) print '</form>'."\n";
+				if (empty($noform)) $out.= '</form>'."\n";
 			}
 		}
-		print '<!-- End show_document -->'."\n";
-		return ($i?$i:$headershown);
+		$out.= '<!-- End show_document -->'."\n";
+		//return ($i?$i:$headershown);
+		return $out;
 	}
 
 
