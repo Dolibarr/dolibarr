@@ -189,8 +189,8 @@ class modAdherent extends DolibarrModules
         $this->export_permission[$r]=array(array("adherent","export"));
         $this->export_fields_array[$r]=array('a.rowid'=>'Id','a.civilite'=>"UserTitle",'a.nom'=>"Lastname",'a.prenom'=>"Firstname",'a.login'=>"Login",'a.morphy'=>'MorPhy','a.societe'=>'Company','a.adresse'=>"Address",'a.cp'=>"Zip",'a.ville'=>"Town",'a.pays'=>"Country",'a.phone'=>"PhonePro",'a.phone_perso'=>"PhonePerso",'a.phone_mobile'=>"PhoneMobile",'a.email'=>"Email",'a.naiss'=>"Birthday",'a.statut'=>"Status",'a.photo'=>"Photo",'a.note'=>"Note",'a.datec'=>'DateCreation','a.datevalid'=>'DateValidation','a.tms'=>'DateLastModification','a.datefin'=>'DateEndSubscription','ta.rowid'=>'MemberTypeId','ta.libelle'=>'MemberTypeLabel','c.rowid'=>'SubscriptionId','c.dateadh'=>'DateSubscription','c.cotisation'=>'Amount');
 		$this->export_entities_array[$r]=array('a.rowid'=>'member','a.civilite'=>"member",'a.nom'=>"member",'a.prenom'=>"member",'a.login'=>"member",'a.morphy'=>'member','a.societe'=>'member','a.adresse'=>"member",'a.cp'=>"member",'a.ville'=>"member",'a.pays'=>"member",'a.phone'=>"member",'a.phone_perso'=>"member",'a.phone_mobile'=>"member",'a.email'=>"member",'a.naiss'=>"member",'a.statut'=>"member",'a.photo'=>"member",'a.note'=>"member",'a.datec'=>'member','a.datevalid'=>'member','a.tms'=>'member','a.datefin'=>'member','ta.rowid'=>'member_type','ta.libelle'=>'member_type','c.rowid'=>'subscription','c.dateadh'=>'subscription','c.cotisation'=>'subscription');
-		// On complete avec champs options
-		$sql='SELECT name, label FROM '.MAIN_DB_PREFIX.'adherent_options_label';
+		// TODO Use generic method
+		$sql="SELECT name, label FROM ".MAIN_DB_PREFIX."extrafields AND elementtype = 'member'";
 		$resql=$this->db->query($sql);
 		while ($obj=$this->db->fetch_object($resql))
 		{
@@ -202,7 +202,7 @@ class modAdherent extends DolibarrModules
 		// Fin complement
         $this->export_sql_start[$r]='SELECT DISTINCT ';
         $this->export_sql_end[$r]  =' FROM ('.MAIN_DB_PREFIX.'adherent_type as ta, '.MAIN_DB_PREFIX.'adherent as a)';
-        $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'adherent_options as ao ON a.rowid = ao.fk_member';
+        $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'adherent_extrafields as ao ON a.rowid = ao.fk_member';
         $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'cotisation as c ON c.fk_adherent = a.rowid';
         $this->export_sql_end[$r] .=' WHERE a.fk_adherent_type = ta.rowid';
 

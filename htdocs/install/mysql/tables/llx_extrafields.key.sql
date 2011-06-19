@@ -1,6 +1,4 @@
 -- ===================================================================
--- Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
 -- Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -20,9 +18,5 @@
 -- $Id$
 -- ===================================================================
 
-create table llx_adherent_options
-(
-  rowid            integer AUTO_INCREMENT PRIMARY KEY,
-  tms              timestamp,
-  fk_member        integer NOT NULL     -- member id 
-)ENGINE=innodb;
+
+ALTER TABLE llx_extrafields ADD UNIQUE INDEX uk_extrafields_name (name, entity, elementtype);

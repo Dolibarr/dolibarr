@@ -1,4 +1,6 @@
 -- ===================================================================
+-- Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
 -- Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -18,5 +20,15 @@
 -- $Id$
 -- ===================================================================
 
-
-ALTER TABLE llx_adherent_options_label ADD UNIQUE INDEX uk_adherent_options_label_name (name, entity);
+create table llx_extrafields
+(
+	rowid           integer AUTO_INCREMENT PRIMARY KEY,
+	name            varchar(64) NOT NULL,       -- nom de l'attribut
+	entity          integer DEFAULT 1 NOT NULL,	-- multi company id
+    elementtype     varchar(64) NOT NULL DEFAULT 'member',
+	tms             timestamp,
+	label           varchar(255) NOT NULL,      -- label correspondant a l'attribut
+	type            varchar(8),
+	size            integer DEFAULT 0,
+	pos             integer DEFAULT 0
+)ENGINE=innodb;

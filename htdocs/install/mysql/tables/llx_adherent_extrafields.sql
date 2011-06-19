@@ -20,14 +20,9 @@
 -- $Id$
 -- ===================================================================
 
-create table llx_adherent_options_label
+create table llx_adherent_extrafields
 (
-	rowid           integer AUTO_INCREMENT PRIMARY KEY,
-	name            varchar(64) NOT NULL,       -- nom de l'attribut
-	entity          integer DEFAULT 1 NOT NULL,	-- multi company id
-	tms             timestamp,
-	label           varchar(255) NOT NULL,      -- label correspondant a l'attribut
-	type            varchar(8),
-	size            integer DEFAULT 0,
-	pos             integer DEFAULT 0
+  rowid            integer AUTO_INCREMENT PRIMARY KEY,
+  tms              timestamp,
+  fk_member        integer NOT NULL     -- member id 
 )ENGINE=innodb;

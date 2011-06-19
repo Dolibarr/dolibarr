@@ -251,13 +251,12 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->adhe
 		$adh->statut      = $_POST["statut"];
 		$adh->public      = $_POST["public"];
 
+		// Get extra fields
 		foreach($_POST as $key => $value)
 		{
 			if (preg_match("/^options_/",$key))
 			{
-				//escape values from POST, at least with $db->escape, to avoid obvious SQL injections
-				//(array_options is directly input in the DB in adherent.class.php::update())
-				$adh->array_options[$key]=$db->escape($_POST[$key]);
+				$adh->array_options[$key]=$_POST[$key];
 			}
 		}
 
@@ -391,6 +390,17 @@ if ($_POST["action"] == 'add' && $user->rights->adherent->creer)
     $adh->user_id     = $userid;
     $adh->fk_soc      = $socid;
     $adh->public      = $public;
+
+    // Get extra fields
+    foreach($_POST as $key => $value)
+    {
+        if (preg_match("/^options_/",$key))
+        {
+            //escape values from POST, at least with $db->escape, to avoid obvious SQL injections
+            //(array_options is directly input in the DB in adherent.class.php::update())
+            $adh->array_options[$key]=$_POST[$key];
+        }
+    }
 
     // Check parameters
     if (empty($morphy) || $morphy == "-1") {

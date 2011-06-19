@@ -75,7 +75,7 @@ class AdherentOptions
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
 			$field_desc = array('type'=>$type, 'value'=>$length);
-			$result=$this->db->DDLAddField(MAIN_DB_PREFIX.'adherent_options', $attrname, $field_desc);
+			$result=$this->db->DDLAddField(MAIN_DB_PREFIX.'adherent_extrafields', $attrname, $field_desc);
 			if ($result > 0)
 			{
 				return 1;
@@ -99,9 +99,10 @@ class AdherentOptions
 	 *  @param	type				Type of attribute ('int', 'text', 'varchar', 'date', 'datehour')
 	 *  @param	pos					Position of attribute
 	 *  @param	size				Size/length of attribute
+	 *  @param  elementtype         Element type ('member', 'product', ...)
 	 *  @return	int					<=0 if KO, >0 if OK
 	 */
-	function create_label($attrname,$label='',$type='',$pos=0,$size=0)
+	function create_label($attrname,$label='',$type='',$pos=0,$size=0, $elementtype='member')
 	{
 		global $conf;
 
@@ -111,13 +112,14 @@ class AdherentOptions
 
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_options_label(name, label, type, pos, size, entity)";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."extrafields(name, label, type, pos, size, entity, elementtype)";
 			$sql.= " VALUES('".$attrname."',";
 			$sql.= " '".$this->db->escape($label)."',";
 			$sql.= " '".$type."',";
 			$sql.= " '".$pos."',";
 			$sql.= " '".$size."',";
 			$sql.= " ".$conf->entity;
+            $sql.= ", '".$elementtype."'";
 			$sql.=')';
 
 			dol_syslog("AdherentOptions::create_label sql=".$sql);
@@ -142,7 +144,7 @@ class AdherentOptions
 	{
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
-			$result=$this->db->DDLDropField(MAIN_DB_PREFIX."adherent_options",$attrname);
+			$result=$this->db->DDLDropField(MAIN_DB_PREFIX."adherent_extrafields",$attrname);
 			if ($result < 0)
 			{
 				$this->error=$this->db->lasterror();
@@ -170,7 +172,7 @@ class AdherentOptions
 
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_options_label";
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."extrafields";
 			$sql.= " WHERE name = '$attrname'";
 			$sql.= " AND entity = ".$conf->entity;
 
@@ -205,7 +207,7 @@ class AdherentOptions
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
 			$field_desc = array('type'=>$type, 'value'=>$length);
-			$result=$this->db->DDLUpdateField(MAIN_DB_PREFIX.'adherent_options', $attrname, $field_desc);
+			$result=$this->db->DDLUpdateField(MAIN_DB_PREFIX.'extrafields', $attrname, $field_desc);
 			if ($result > 0)
 			{
 				return 1;
@@ -229,8 +231,9 @@ class AdherentOptions
 	 *  @param	label				nom du label
 	 *  @param	type				type
 	 *  @param	size				size
+	 *  @param  elementtype         Element type ('member', 'product', ...)
 	 */
-	function update_label($attrname,$label,$type,$size)
+	function update_label($attrname,$label,$type,$size,$elementtype='member')
 	{
 		global $conf;
 		dol_syslog("AdherentOptions::update_label $attrname,$label,$type,$size");
@@ -239,13 +242,14 @@ class AdherentOptions
 		{
 			$this->db->begin();
 
-			$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."adherent_options_label";
+			$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."extrafields";
 			$sql_del.= " WHERE name = '".$attrname."'";
 			$sql_del.= " AND entity = ".$conf->entity;
+			$sql_del.= " AND elementtype = '".$elementtype."'";
 			dol_syslog("AdherentOptions::update_label sql=".$sql_del);
 			$resql1=$this->db->query($sql_del);
 
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_options_label(";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."extrafields(";
 			$sql.= " name,";		// This is code
 			$sql.= " entity,";
 			$sql.= " label,";
@@ -256,9 +260,9 @@ class AdherentOptions
 			$sql.= " ".$conf->entity.",";
 			$sql.= " '".$this->db->escape($label)."',";
 			$sql.= " '".$type."',";
-			$sql.= " '".$size."'";
+			$sql.= " '".$size."',";
+            $sql.= " '".$elementtype."'";
 			$sql.= ")";
-			//$sql = "REPLACE INTO ".MAIN_DB_PREFIX."adherent_options_label SET name='$attrname',label='$escaped_label'";
 			dol_syslog("AdherentOptions::update_label sql=".$sql);
 			$resql2=$this->db->query($sql);
 
@@ -294,15 +298,16 @@ class AdherentOptions
 	/**
 	 * 	\brief 	Load array this->attribute_label
 	 */
-	function fetch_name_optionals_label()
+	function fetch_name_optionals_label($elementtype='member')
 	{
 		global $conf;
 
 		$array_name_label=array();
 
-		$sql = "SELECT name,label,type,size";
-		$sql.= " FROM ".MAIN_DB_PREFIX."adherent_options_label";
+		$sql = "SELECT rowid,name,label,type,size,elementtype";
+		$sql.= " FROM ".MAIN_DB_PREFIX."extrafields";
 		$sql.= " WHERE entity = ".$conf->entity;
+		if ($elementtype) $sql.= " AND elementtype = '".$elementtype."'";
 		$sql.= " ORDER BY pos";
 
 		dol_syslog("Adherent_options::fetch_name_optionals_label sql=".$sql);
@@ -318,6 +323,7 @@ class AdherentOptions
 					$this->attribute_type[$tab->name]=$tab->type;
 					$this->attribute_label[$tab->name]=$tab->label;
 					$this->attribute_size[$tab->name]=$tab->size;
+                    $this->attribute_elementtype[$tab->name]=$tab->elementtype;
 				}
 			}
 			return $array_name_label;

@@ -392,3 +392,13 @@ create table llx_product_extrafields
 ) ENGINE=innodb;
 
 
+alter table llx_adherent_options_label drop index uk_adherent_options_label_name;
+alter table llx_adherent_options_label rename to llx_extrafields; 
+ALTER TABLE llx_extrafields ADD COLUMN elementtype varchar(64) NOT NULL DEFAULT 'member' AFTER entity;
+ALTER TABLE llx_extrafields ADD UNIQUE INDEX uk_extrafields_name (name, entity, elementtype);
+ALTER TABLE llx_adherent_options rename to llx_adherent_extrafields;
+
+-- drop tables renamed into llx_advanced_extra_xxx
+drop table llx_extra_fields_options;
+drop table llx_extra_fields_values;
+drop table llx_extra_fields;
