@@ -276,8 +276,9 @@ if ($nboftargetok) {
     		print "Remove target $FILENAMESNAPSHOT.tgz...\n";
     		unlink("$DESTI/$FILENAMESNAPSHOT.tgz");
 
-            mkdir "$BUILDROOT/$FILENAMESNAPSHOT" or die $!;
-    		print "Copy $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMESNAPSHOT\n";
+            #rmdir "$BUILDROOT/$FILENAMESNAPSHOT";
+    		$ret=`rm -fr $BUILDROOT/$FILENAMESNAPSHOT`;
+            print "Copy $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMESNAPSHOT\n";
     		$cmd="cp -pr \"$BUILDROOT/$PROJECT\" \"$BUILDROOT/$FILENAMESNAPSHOT\"";
             $ret=`$cmd`;
 
@@ -303,8 +304,9 @@ if ($nboftargetok) {
     		print "Remove target $FILENAMETGZ.tgz...\n";
     		unlink("$DESTI/$FILENAMETGZ.tgz");
 
-            rmdir "$BUILDROOT/$FILENAMETGZ";
-    		print "Copy $BUILDROOT/$PROJECT/ to $BUILDROOT/$FILENAMETGZ\n";
+            #rmdir "$BUILDROOT/$FILENAMETGZ";
+    		$ret=`rm -fr $BUILDROOT/$FILENAMETGZ`;
+            print "Copy $BUILDROOT/$PROJECT/ to $BUILDROOT/$FILENAMETGZ\n";
     		$cmd="cp -pr \"$BUILDROOT/$PROJECT/\" \"$BUILDROOT/$FILENAMETGZ\"";
             $ret=`$cmd`;
 
@@ -328,8 +330,9 @@ if ($nboftargetok) {
     		print "Remove target $FILENAMEZIP.zip...\n";
     		unlink("$DESTI/$FILENAMEZIP.zip");
 
-            rmdir "$BUILDROOT/$FILENAMEZIP";
-    		print "Copy $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMEZIP\n";
+            #rmdir "$BUILDROOT/$FILENAMEZIP";
+    		$ret=`rm -fr $BUILDROOT/$FILENAMEZIP`;
+            print "Copy $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMEZIP\n";
     		$cmd="cp -pr \"$BUILDROOT/$PROJECT\" \"$BUILDROOT/$FILENAMEZIP\"";
             $ret=`$cmd`;
 
@@ -372,8 +375,9 @@ if ($nboftargetok) {
     		print "Remove target ".$FILENAMETGZ2."-".$RPMSUBVERSION.".".$ARCH.".rpm...\n";
     		unlink("$DESTI/".$FILENAMETGZ2."-".$RPMSUBVERSION.".".$ARCH.".rpm");
 
-            rmdir "$BUILDROOT/$FILENAMETGZ2";
-    		print "Copy $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMETGZ2\n";
+            #rmdir "$BUILDROOT/$FILENAMETGZ2";
+    		$ret=`rm -fr $BUILDROOT/$FILENAMETGZ2`;
+            print "Copy $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMETGZ2\n";
     		$cmd="cp -pr \"$BUILDROOT/$PROJECT\" \"$BUILDROOT/$FILENAMETGZ2\"";
             $ret=`$cmd`;
 
@@ -414,7 +418,8 @@ if ($nboftargetok) {
     		print "Remove target $FILENAMEDEB.deb...\n";
     		unlink("$DESTI/$FILENAMEDEB.deb");
 			
-            rmdir "$BUILDROOT/$PROJECT.tmp";
+            #rmdir "$BUILDROOT/$PROJECT.tmp";
+    		$ret=`rm -fr $BUILDROOT/$PROJECT.tmp`;
     		print "Create directory $BUILDROOT/$PROJECT.tmp/usr/share\n";
     		$ret=`mkdir -p "$BUILDROOT/$PROJECT.tmp/usr/share"`;
     		print "Copy $BUILDROOT/$PROJECT to $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT\n";
