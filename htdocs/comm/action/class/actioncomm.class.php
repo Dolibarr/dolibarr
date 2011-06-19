@@ -401,15 +401,15 @@ class ActionComm extends CommonObject
 		$sql = "SELECT a.id";
 		$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
 		$sql.= " WHERE a.entity = ".$conf->entity;
-		if ($socid) $sql.= " AND a.fk_soc = ".$socid;
-		if ($elementtype!='')
+		if (! empty($socid)) $sql.= " AND a.fk_soc = ".$socid;
+		if (! empty($elementtype))
 		{
 			if ($elementtype == 'project') $sql.= ' AND a.fk_project = '.$fk_element;
 			else $sql.= " AND a.fk_element = ".$fk_element." AND a.elementtype = '".$elementtype."'";
 		}
-		if ($filter) $sql.= $filter;
+		if (! empty($filter)) $sql.= $filter;
 
-		dol_syslog("ActionComm::fetchAll sql=".$sql);
+		dol_syslog("ActionComm::getActions sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
