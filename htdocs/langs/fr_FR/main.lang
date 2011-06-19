@@ -595,6 +595,10 @@ After=Après
 IPAddress=Adresse IP
 Frequency=Fréquence
 IM=Messagerie instantannée
+NewAttribute=Nouvel attribut
+AttributeCode=Code de l'attribut
+OptionalFieldsSetup=Configuration des attributs complémentaires
+
 # Week day
 Monday=Lundi
 Tuesday=Mardi

@@ -4,7 +4,6 @@
  * Generation date 2010-11-12 18:09:12
  */
 
-
 CHARSET=UTF-8
 DIRECTION=ltr
 SeparatorDecimal=,
@@ -600,3 +599,6 @@ Hidden=Versteckt
 Resources=Ressourcen
 Source=Quelle
 Prefix=Präfix
+NewAttribute=Neues Attribut
+AttributeCode=Attribut-Code
+OptionalFieldsSetup=Optionale Felder einrichten

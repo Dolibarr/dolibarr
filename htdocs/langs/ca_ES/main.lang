@@ -593,6 +593,10 @@ After=Després
 IPAddress=Adreça IP
 Frequency=Freqüència
 IM=Missatgeria instantània
+NewAttribute=Nou atribut
+AttributeCode=Codi atribut
+OptionalFieldsSetup=Configuració dels atributs opcionals
+
 # Week day
 Monday=Dilluns
 Tuesday=Dimarts

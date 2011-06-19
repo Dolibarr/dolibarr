@@ -595,6 +595,10 @@ After=After
 IPAddress=IP address
 Frequency=Frequency
 IM=Instant messaging
+NewAttribute=New attribute
+AttributeCode=Attribute code
+OptionalFieldsSetup=Extra attributes setup
+
 # Week day
 Monday=Monday
 Tuesday=Tuesday
