@@ -3,7 +3,7 @@
 # \file         build/makepack-dolibarr.pl
 # \brief        Dolibarr package builder (tgz, zip, rpm, deb, exe)
 # \version      $Id$
-# \author       (c)2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+# \author       (c)2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
 #----------------------------------------------------------------------------
 
 use Cwd;
@@ -276,6 +276,7 @@ if ($nboftargetok) {
     		print "Remove target $FILENAMESNAPSHOT.tgz...\n";
     		unlink("$DESTI/$FILENAMESNAPSHOT.tgz");
 
+            mkdir "$BUILDROOT/$FILENAMESNAPSHOT" or die $!;
     		print "Copy $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMESNAPSHOT\n";
     		$cmd="cp -pr \"$BUILDROOT/$PROJECT\" \"$BUILDROOT/$FILENAMESNAPSHOT\"";
             $ret=`$cmd`;
@@ -302,8 +303,9 @@ if ($nboftargetok) {
     		print "Remove target $FILENAMETGZ.tgz...\n";
     		unlink("$FILENAMETGZ.tgz");
 
-    		print "Copy $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMETGZ\n";
-    		$cmd="cp -pr \"$BUILDROOT/$PROJECT\" \"$BUILDROOT/$FILENAMETGZ\"";
+            rmdir "$BUILDROOT/$FILENAMETGZ";
+    		print "Copy $BUILDROOT/$PROJECT/ to $BUILDROOT/$FILENAMETGZ\n";
+    		$cmd="cp -pr \"$BUILDROOT/$PROJECT/\" \"$BUILDROOT/$FILENAMETGZ\"";
             $ret=`$cmd`;
 
     		print "Compress $FILENAMETGZ into $FILENAMETGZ.tgz...\n";
@@ -326,6 +328,7 @@ if ($nboftargetok) {
     		print "Remove target $FILENAMEZIP.zip...\n";
     		unlink("$DESTI/$FILENAMEZIP.zip");
 
+            rmdir "$BUILDROOT/$FILENAMEZIP";
     		print "Copy $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMEZIP\n";
     		$cmd="cp -pr \"$BUILDROOT/$PROJECT\" \"$BUILDROOT/$FILENAMEZIP\"";
             $ret=`$cmd`;
@@ -369,6 +372,7 @@ if ($nboftargetok) {
     		print "Remove target ".$FILENAMETGZ2."-".$RPMSUBVERSION.".".$ARCH.".rpm...\n";
     		unlink("$DESTI/$FILENAMETGZ2.tgz");
 
+            mkdir "$BUILDROOT/$FILENAMETGZ2" or die $!;
     		print "Copy $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMETGZ2\n";
     		$cmd="cp -pr \"$BUILDROOT/$PROJECT\" \"$BUILDROOT/$FILENAMETGZ2\"";
             $ret=`$cmd`;
@@ -413,6 +417,7 @@ if ($nboftargetok) {
     		print "Create directory $BUILDROOT/$PROJECT.tmp/usr/share\n";
     		$ret=`mkdir -p "$BUILDROOT/$PROJECT.tmp/usr/share"`;
 
+            mkdir "$BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT" or die $!;
     		print "Copy $BUILDROOT/$PROJECT to $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT\n";
     		$cmd="cp -pr \"$BUILDROOT/$PROJECT\" \"$BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT\"";
             $ret=`$cmd`;
