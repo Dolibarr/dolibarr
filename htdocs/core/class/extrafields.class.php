@@ -59,6 +59,34 @@ class ExtraFields
 		$this->attribute_elementtype = array();
 	}
 
+    /**
+     *  Add a new extra field parameter
+     *  @param  attrname            code of attribute
+     *  @param  label               label of attribute
+     *  @param  type                Type of attribute ('int', 'text', 'varchar', 'date', 'datehour')
+     *  @param  pos                 Position of attribute
+     *  @param  size                Size/length of attribute
+     *  @param  elementtype         Element type ('member', 'product', 'company', ...)
+     *  @return int                 <=0 if KO, >0 if OK
+     */
+    function addExtraField($attrname,$label,$type='',$pos=0,$size=0, $elementtype='member')
+	{
+        if (empty($attrname)) return -1;
+        if (empty($label)) return -1;
+
+        $result=$this->create($attrname,$type,$size);
+        if ($result > 0)
+        {
+            $result2=$this->create_label($attrname,$label,$type,$pos,$size,$elementtype);
+            if ($result2 > 0) return 1;
+            else return -2;
+        }
+        else
+        {
+            return -1;
+        }
+	}
+
 	/**
 	 *	Add a new optionnal attribute
 	 *	@param	attrname			code of attribute

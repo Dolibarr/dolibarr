@@ -916,55 +916,64 @@ class DoliDb
 	}
 
 	/**
-	 *	\brief      decrit une table dans une database.
-	 *	\param	    table	Nom de la table
-	 *	\param	    field	Optionnel : Nom du champ si l'on veut la desc d'un champ
-	 *	\return	    resource
+     *  Return a pointer on fields describing table
+     *  @param      table   Nom de la table
+     *  @param      field   Optionnel : Nom du champ si l'on veut la desc d'un champ
+     *  @return     resource
 	 */
 	function DDLDescTable($table,$field="")
 	{
 		$sql="DESC ".$table." ".$field;
 
-		dol_syslog($sql,LOG_DEBUG);
+		dol_syslog(get_class($this)."::DDLDescTable ".$sql,LOG_DEBUG);
 		$this->results = $this->query($sql);
 		return $this->results;
 	}
 
-	/**
-	 *	\brief      Insert a new field in table
-	 *	\param	    table 			Nom de la table
-	 *	\param		field_name 		Nom du champ a inserer
-	 *	\param	    field_desc 		Tableau associatif de description du champ a inserer[nom du parametre][valeur du parametre]
-	 *	\param	    field_position 	Optionnel ex.: "after champtruc"
-	 *	\return	    int				<0 si KO, >0 si OK
-	 */
-	function DDLAddField($table,$field_name,$field_desc,$field_position="")
-	{
-		// cles recherchees dans le tableau des descriptions (field_desc) : type,value,attribute,null,default,extra
-		// ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
-		$sql= "ALTER TABLE ".$table." ADD ".$field_name." ";
-		$sql .= $field_desc['type'];
-		if( preg_match("/^[^\s]/i",$field_desc['value']))
-		$sql  .= "(".$field_desc['value'].")";
-		if( preg_match("/^[^\s]/i",$field_desc['attribute']))
-		$sql  .= " ".$field_desc['attribute'];
-		if( preg_match("/^[^\s]/i",$field_desc['null']))
-		$sql  .= " ".$field_desc['null'];
-		if( preg_match("/^[^\s]/i",$field_desc['default']))
-		if(preg_match("/null/i",$field_desc['default']))
-		$sql  .= " default ".$field_desc['default'];
-		else
-		$sql  .= " default '".$field_desc['default']."'";
-		if( preg_match("/^[^\s]/i",$field_desc['extra']))
-		$sql  .= " ".$field_desc['extra'];
-		$sql .= " ".$field_position;
+    /**
+     *  Insert a new field in table
+     *  @param      table           Table name
+     *  @param      field_name      Name of field
+     *  @param      field_desc      Array with properties describing new field
+     *  @param      field_position  Optionnal ie.: "after fielddummy"
+     *  @return     int             <0 if KO, >0 if OK
+     */
+    function DDLAddField($table,$field_name,$field_desc,$field_position="")
+    {
+        // cles recherchees dans le tableau des descriptions (field_desc) : type,value,attribute,null,default,extra
+        // ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
+        $sql= "ALTER TABLE ".$table." ADD ".$field_name." ";
+        $sql.= $field_desc['type'];
+        if(preg_match("/^[^\s]/i",$field_desc['value']))
+        if (! in_array($field_desc['type'],array('date','datetime')))
+        {
+            $sql.= "(".$field_desc['value'].")";
+        }
+        if(preg_match("/^[^\s]/i",$field_desc['attribute']))
+        $sql.= " ".$field_desc['attribute'];
+        if(preg_match("/^[^\s]/i",$field_desc['null']))
+        $sql.= " ".$field_desc['null'];
+        if(preg_match("/^[^\s]/i",$field_desc['default']))
+        {
+            if(preg_match("/null/i",$field_desc['default']))
+            $sql.= " default ".$field_desc['default'];
+            else
+            $sql.= " default '".$field_desc['default']."'";
+        }
+        if(preg_match("/^[^\s]/i",$field_desc['extra']))
+        $sql.= " ".$field_desc['extra'];
+        $sql.= " ".$field_position;
 
-		dol_syslog($sql,LOG_DEBUG);
-		if(! $this -> query($sql))
-		return -1;
-		else
-		return 1;
-	}
+        dol_syslog(get_class($this)."::DDLAddField ".$sql,LOG_DEBUG);
+        if(! $this->query($sql))
+        {
+            return -1;
+        }
+        else
+        {
+            return 1;
+        }
+    }
 
 	/**
 	 *	Update format of a field into a table
@@ -979,7 +988,7 @@ class DoliDb
 		$sql .= " MODIFY COLUMN ".$field_name." ".$field_desc['type'];
 		if ($field_desc['type'] == 'int' || $field_desc['type'] == 'varchar') $sql.="(".$field_desc['value'].")";
 
-		dol_syslog($sql,LOG_DEBUG);
+		dol_syslog(get_class($this)."::DDLUpdateField ".$sql,LOG_DEBUG);
 		if (! $this->query($sql))
 		return -1;
 		else
@@ -987,15 +996,15 @@ class DoliDb
 	}
 
 	/**
-	 *	\brief      Drop a field in table
-	 *	\param	    table 			Nom de la table
-	 *	\param		field_name 		Nom du champ a inserer
-	 *	\return	    int				<0 si KO, >0 si OK
+	 *	Drop a field in table
+	 *	@param	    table 			Nom de la table
+	 *	@param		field_name 		Nom du champ a inserer
+	 *	@return	    int				<0 si KO, >0 si OK
 	 */
 	function DDLDropField($table,$field_name)
 	{
 		$sql= "ALTER TABLE ".$table." DROP COLUMN `".$field_name."`";
-		dol_syslog($sql,LOG_DEBUG);
+		dol_syslog(get_class($this)."::DDLDropField ".$sql,LOG_DEBUG);
 		if (! $this->query($sql))
 		{
 			$this->error=$this->lasterror();

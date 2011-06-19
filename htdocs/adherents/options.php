@@ -44,13 +44,9 @@ if ($_POST["action"] == 'add' && $user->rights->adherent->configurer)
 		// Type et taille non encore pris en compte => varchar(255)
 		if (isset($_POST["attrname"]) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$_POST['attrname']))
 		{
-			$result=$adho->create($_POST['attrname'],$_POST['type'],$_POST['size']);
+            $result=$adho->addExtraField($_POST['attrname'],$_POST['label'],$_POST['type'],$_POST['pos'],$_POST['size'],'member');
 			if ($result > 0)
 			{
-				if (isset($_POST['label']))
-				{
-					$adho->create_label($_POST['attrname'],$_POST['label'],$_POST['type'],$_POST['pos'],$_POST['size']);
-				}
 				Header("Location: ".$_SERVER["PHP_SELF"]);
 				exit;
 			}
