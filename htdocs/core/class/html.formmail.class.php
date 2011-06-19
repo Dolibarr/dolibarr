@@ -59,6 +59,7 @@ class FormMail
 	var $withtoreadonly;
 	var $withtoccreadonly;
 	var $withtopicreadonly;
+	var $withfilereadonly;
 	var $withdeliveryreceipt;
 	var $withcancel;
 
@@ -94,6 +95,7 @@ class FormMail
 		$this->withtoccreadonly=0;
 		$this->witherrorstoreadonly=0;
 		$this->withtopicreadonly=0;
+		$this->withfilereadonly=0;
 		$this->withbodyreadonly=0;
 		$this->withdeliveryreceiptreadonly=0;
 
@@ -492,7 +494,7 @@ class FormMail
 				foreach($listofpaths as $key => $val)
 				{
 					$out.= img_mime($listofnames[$key]).' '.$listofnames[$key];
-					$out.= ' <input type="image" style="border: 0px;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" value="'.($key+1).'" id="removedfile" name="removedfile" />';
+					if (! $this->withfilereadonly) $out.= ' <input type="image" style="border: 0px;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" value="'.($key+1).'" id="removedfile" name="removedfile" />';
 					$out.= '<br>';
 				}
 			}

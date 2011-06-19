@@ -1097,7 +1097,6 @@ else
 			print '</tr>';
 
 			// Tracking Number
-			$object->GetUrlTrackingStatus($object->tracking_number);
 			print '<tr><td>'.$html->editfieldkey("TrackingNumber",'trackingnumber',$object->tracking_number,'id',$object->id,$user->rights->expedition->creer).'</td><td colspan="3">';
 			print $html->editfieldval("TrackingNumber",'trackingnumber',$object->tracking_url,'id',$object->id,$user->rights->expedition->creer,'string',$object->tracking_number);
 			print '</td></tr>';

@@ -56,6 +56,8 @@ class Expedition extends CommonObject
 	var $lines=array();
 	var $expedition_method_id; // TODO deprecated
 	var $shipping_method_id;
+	var $tracking_number;
+	var $tracking_url;
 	var $statut;
 
 	var $trueWeight;
@@ -350,7 +352,8 @@ class Expedition extends CommonObject
 				$this->date_delivery        = $this->db->jdate($obj->date_delivery);	// Date planed
 				$this->fk_delivery_address  = $obj->fk_address;
 				$this->modelpdf             = $obj->model_pdf;
-				$this->expedition_method_id = $obj->fk_expedition_methode;
+				$this->expedition_method_id = $obj->fk_expedition_methode; // TODO deprecated
+				$this->shipping_method_id	= $obj->fk_expedition_methode;
 				$this->tracking_number      = $obj->tracking_number;
 				$this->origin               = ($obj->origin?$obj->origin:'commande'); // For compatibility
 				$this->origin_id            = $obj->origin_id;
@@ -375,6 +378,9 @@ class Expedition extends CommonObject
 
 				$file = $conf->expedition->dir_output . "/" .get_exdir($expedition->id,2) . "/" . $this->id.".pdf";
 				$this->pdf_filename = $file;
+				
+				// Tracking url
+				$this->GetUrlTrackingStatus($obj->tracking_number);
 
 				/*
 				 * Lines
@@ -1099,13 +1105,13 @@ class Expedition extends CommonObject
 	function GetUrlTrackingStatus($value='')
 	{
 		$code='';
-		
+
 		if (! empty($this->expedition_method_id))
 		{
 			$sql = "SELECT em.code";
 			$sql.= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
 			$sql.= " WHERE em.rowid = ".$this->expedition_method_id;
-	
+
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
@@ -1124,8 +1130,8 @@ class Expedition extends CommonObject
 			if (file_exists(DOL_DOCUMENT_ROOT."/includes/modules/expedition/methode_expedition_".strtolower($code).".modules.php") && ! empty($this->tracking_number))
 			{
 				require_once(DOL_DOCUMENT_ROOT."/includes/modules/expedition/methode_expedition_".strtolower($code).".modules.php");
-				$obj = new $classname();
-				$url = $obj->provider_url_status($this->tracking_number);
+				$shipmethod = new $classname();
+				$url = $shipmethod->provider_url_status($this->tracking_number);
 			}
 
 			if ($url)
