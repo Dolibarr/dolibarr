@@ -372,7 +372,7 @@ if ($nboftargetok) {
     		print "Remove target ".$FILENAMETGZ2."-".$RPMSUBVERSION.".".$ARCH.".rpm...\n";
     		unlink("$DESTI/$FILENAMETGZ2.tgz");
 
-            mkdir "$BUILDROOT/$FILENAMETGZ2" or die $!;
+            rmdir "$BUILDROOT/$FILENAMETGZ2";
     		print "Copy $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMETGZ2\n";
     		$cmd="cp -pr \"$BUILDROOT/$PROJECT\" \"$BUILDROOT/$FILENAMETGZ2\"";
             $ret=`$cmd`;
@@ -406,7 +406,7 @@ if ($nboftargetok) {
     	
    		    print "Move $RPMDIR/RPMS/".$ARCH."/".$FILENAMETGZ2."-".$RPMSUBVERSION.".".$ARCH.".rpm into $DESTI/".$FILENAMETGZ2."-".$RPMSUBVERSION.".".$ARCH.".rpm\n";
    		    $cmd="mv \"$RPMDIR/RPMS/".$ARCH."/".$FILENAMETGZ2."-".$RPMSUBVERSION.".".$ARCH.".rpm\" \"$DESTI/".$FILENAMETGZ2."-".$RPMSUBVERSION.".".$ARCH.".rpm\"";
-#    		$ret=`$cmd`;
+    		$ret=`$cmd`;
     		next;
     	}
     	
