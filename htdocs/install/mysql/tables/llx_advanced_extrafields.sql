@@ -18,14 +18,18 @@
 -- $Id$
 -- ===================================================================
 
-create table llx_extra_fields_options
+create table llx_advanced_extrafields
 (
   rowid                 integer AUTO_INCREMENT PRIMARY KEY,
   tms                   timestamp,
+  entity                integer  DEFAULT 1 NOT NULL,	-- multi company id
   
-  fk_extra_fields 		integer NOT NULL,
-  value 				varchar(255) NOT NULL,
-  
-  rank 					integer
-  
+  elementtype			varchar(64) NOT NULL,           -- type of link 'invoice', 'order', 'proposal', 'invoice_supplier', 'order_supplier'
+  name 					varchar(64) NOT NULL,           -- code name of field
+  label					varchar(64) NOT NULL,
+  format				varchar(8) 	NOT NULL,           -- date, string, integer, float
+  fieldsize 			integer,
+  maxlength 			integer,
+  options 				varchar(255),
+  rang 					integer
 )ENGINE=innodb;

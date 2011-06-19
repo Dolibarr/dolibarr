@@ -18,7 +18,7 @@
 -- $Id$
 -- ===================================================================
 
-create table llx_extra_fields_values
+create table llx_advanced_extrafields_values
 (
   rowid                 integer AUTO_INCREMENT PRIMARY KEY,
   tms                   timestamp,
@@ -26,8 +26,8 @@ create table llx_extra_fields_values
   
   datec					datetime,
   datem					datetime,
-  fk_object 			integer NOT NULL,                -- id of object (rowid of proposal, order, invoice...)
-  fk_extra_fields		integer NOT NULL,                -- key to attribute definition
+  fk_element 			integer NOT NULL,                -- id of object (rowid of proposal, order, invoice...)
+  fk_extrafields		integer NOT NULL,                -- key to attribute definition
   value					varchar(255),                    -- value of attribute
 
   fk_user_create 		integer,

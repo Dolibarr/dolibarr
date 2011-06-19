@@ -19,4 +19,6 @@
 -- ============================================================================
 
 
-ALTER TABLE llx_extra_fields ADD UNIQUE INDEX idx_extra_fields_name (object, entity, name);
+ALTER TABLE llx_advanced_extrafields_values ADD INDEX idx_advanced_extrafields_values_fk_advanced_extrafields (fk_extrafields, entity);
+
+ALTER TABLE llx_advanced_extrafields_values ADD CONSTRAINT fk_advanced_extrafields_values_fk_advanced_extrafields FOREIGN KEY (fk_extrafields) REFERENCES llx_advanced_extrafields (rowid);
