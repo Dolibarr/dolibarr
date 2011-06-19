@@ -33,7 +33,7 @@ class FormFile
 {
 	var $db;
 	var $error;
-	
+
 	var $numoffiles;
 
 
@@ -44,7 +44,7 @@ class FormFile
 	function FormFile($DB)
 	{
 		$this->db = $DB;
-		
+
 		$this->numoffiles=0;
 
 		return 1;
@@ -181,9 +181,9 @@ class FormFile
 		include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
 
 		global $langs,$bc,$conf;
-		
+
 		$out='';
-		
+
 		$var=true;
 
 		if ($iconPDF == 1)
@@ -385,7 +385,8 @@ class FormFile
 			$out.= '<input type="hidden" name="action" value="builddoc">';
 			$out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-			$out.= load_fiche_titre($langs->trans("Documents"));
+			//$out.= load_fiche_titre($langs->trans("Documents"),'','');
+			$out.= '<div class="titre">'.$langs->trans("Documents").'</div>';
 			$out.= '<table class="border formdoc" summary="listofdocumentstable" width="100%">';
 
 			$out.= '<tr '.$bc[$var].'>';
