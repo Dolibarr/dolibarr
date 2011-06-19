@@ -301,7 +301,7 @@ if ($nboftargetok) {
 
     	if ($target eq 'TGZ') {
     		print "Remove target $FILENAMETGZ.tgz...\n";
-    		unlink("$FILENAMETGZ.tgz");
+    		unlink("$DESTI/$FILENAMETGZ.tgz");
 
             rmdir "$BUILDROOT/$FILENAMETGZ";
     		print "Copy $BUILDROOT/$PROJECT/ to $BUILDROOT/$FILENAMETGZ\n";
@@ -370,7 +370,7 @@ if ($nboftargetok) {
             $FILENAMETGZ2="$PROJECT-$MAJOR.$MINOR.$REL1";
 			
     		print "Remove target ".$FILENAMETGZ2."-".$RPMSUBVERSION.".".$ARCH.".rpm...\n";
-    		unlink("$DESTI/$FILENAMETGZ2.tgz");
+    		unlink("$DESTI/".$FILENAMETGZ2."-".$RPMSUBVERSION.".".$ARCH.".rpm");
 
             rmdir "$BUILDROOT/$FILENAMETGZ2";
     		print "Copy $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMETGZ2\n";
@@ -414,10 +414,9 @@ if ($nboftargetok) {
     		print "Remove target $FILENAMEDEB.deb...\n";
     		unlink("$DESTI/$FILENAMEDEB.deb");
 			
+            rmdir "$BUILDROOT/$PROJECT.tmp";
     		print "Create directory $BUILDROOT/$PROJECT.tmp/usr/share\n";
     		$ret=`mkdir -p "$BUILDROOT/$PROJECT.tmp/usr/share"`;
-
-            mkdir "$BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT" or die $!;
     		print "Copy $BUILDROOT/$PROJECT to $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT\n";
     		$cmd="cp -pr \"$BUILDROOT/$PROJECT\" \"$BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT\"";
             $ret=`$cmd`;
