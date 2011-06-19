@@ -327,6 +327,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0)
     // Get format of bank id according to country of $account
     $usedetailedbban=$account->useDetailedBBAN();
 
+    //$onlynumber=0; $usedetailedbban=0; // For tests
     if ($usedetailedbban)
     {
         $savcurx=$curx;
@@ -401,6 +402,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0)
         }
 
         $curx=$savcurx;
+        $cury+=10;
     }
     else
     {
@@ -412,9 +414,8 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0)
         $pdf->SetFont('','B',6);
         $pdf->SetXY ($curx, $cury);
         $pdf->MultiCell(90, 3, $outputlangs->transnoentities("BankAccountNumber").': ' . $outputlangs->convToOutputCharset($account->number), 0, 'L', 0);
-        $cury-=7;
+        $cury+=3;
     }
-    $pdf->SetXY ($curx, $cury+1);
 
     // Use correct name of bank id according to country
     $ibankey="IBANNumber";
@@ -426,14 +427,18 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0)
 
     if (empty($onlynumber))
     {
-        $cury+=10;
         $pdf->SetXY ($curx, $cury);
-        $pdf->MultiCell(90, 3, $outputlangs->transnoentities("Residence").': ' . $outputlangs->convToOutputCharset($account->domiciliation), 0, 'L', 0);
+        $val=$outputlangs->transnoentities("Residence").': ' . $outputlangs->convToOutputCharset($account->domiciliation);
+        $pdf->MultiCell(90, 3, $val, 0, 'L', 0);
+        $nboflines=dol_nboflines_bis($val,120);
+        //print $nboflines;exit;
+        $cury+=($nboflines*2)+2;
     }
+    else if (! $usedetailedbban) $cury+=1;
 
-    $pdf->SetXY ($curx, $cury+5);
+    $pdf->SetXY ($curx, $cury);
     $pdf->MultiCell(90, 3, $outputlangs->transnoentities($ibankey).': ' . $outputlangs->convToOutputCharset($account->iban), 0, 'L', 0);
-    $pdf->SetXY ($curx, $cury+8);
+    $pdf->SetXY ($curx, $cury+3);
     $pdf->MultiCell(90, 3, $outputlangs->transnoentities($bickey).': ' . $outputlangs->convToOutputCharset($account->bic), 0, 'L', 0);
 
     return $pdf->getY();
