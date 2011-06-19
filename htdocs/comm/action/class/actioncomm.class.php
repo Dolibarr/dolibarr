@@ -81,6 +81,8 @@ class ActionComm extends CommonObject
     // Ical
     var $icalname;
     var $icalcolor;
+    
+    var $actions=array();
 
 
     /**
@@ -243,7 +245,7 @@ class ActionComm extends CommonObject
 		$sql.= " a.priority, a.fulldayevent, a.location,";
 		$sql.= " c.id as type_id, c.code as type_code, c.libelle,";
 		$sql.= " s.nom as socname,";
-		$sql.= " u.firstname, u.name";
+		$sql.= " u.firstname, u.name as lastname";
 		$sql.= " FROM (".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."actioncomm as a)";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_author";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = a.fk_soc";
@@ -266,32 +268,34 @@ class ActionComm extends CommonObject
 				$type_libelle=($transcode!="Action".$obj->type_code?$transcode:$obj->libelle);
 				$this->type    = $type_libelle;
 
-				$this->label   = $obj->label;
-				$this->datep   = $this->db->jdate($obj->datep);
-				$this->datef   = $this->db->jdate($obj->datep2);
+				$this->label				= $obj->label;
+				$this->datep				= $this->db->jdate($obj->datep);
+				$this->datef				= $this->db->jdate($obj->datep2);
 
-				$this->datec   = $this->db->jdate($obj->datec);
-				$this->datem   = $this->db->jdate($obj->datem);
+				$this->datec   				= $this->db->jdate($obj->datec);
+				$this->datem   				= $this->db->jdate($obj->datem);
 
-				$this->note			= $obj->note;
-				$this->percentage	= $obj->percentage;
+				$this->note					= $obj->note;
+				$this->percentage			= $obj->percentage;
 
-				$this->author->id	= $obj->fk_user_author;
-				$this->usermod->id	= $obj->fk_user_mod;
+				$this->author->id			= $obj->fk_user_author;
+				$this->author->firstname	= $obj->firstname;
+				$this->author->lastname		= $obj->lastname;
+				$this->usermod->id			= $obj->fk_user_mod;
 
-				$this->usertodo->id	= $obj->fk_user_action;
-				$this->userdone->id	= $obj->fk_user_done;
-				$this->priority		= $obj->priority;
-                $this->fulldayevent	= $obj->fulldayevent;
-				$this->location		= $obj->location;
+				$this->usertodo->id			= $obj->fk_user_action;
+				$this->userdone->id			= $obj->fk_user_done;
+				$this->priority				= $obj->priority;
+                $this->fulldayevent			= $obj->fulldayevent;
+				$this->location				= $obj->location;
 
-				$this->socid		= $obj->fk_soc;	// To have fetch_thirdparty method working
-				$this->societe->id	= $obj->fk_soc;
-				$this->contact->id	= $obj->fk_contact;
-				$this->fk_project	= $obj->fk_project;
+				$this->socid				= $obj->fk_soc;	// To have fetch_thirdparty method working
+				$this->societe->id			= $obj->fk_soc;
+				$this->contact->id			= $obj->fk_contact;
+				$this->fk_project			= $obj->fk_project;
 
-				$this->fk_element	= $obj->fk_element;
-				$this->elementtype	= $obj->elementtype;
+				$this->fk_element			= $obj->fk_element;
+				$this->elementtype			= $obj->elementtype;
 			}
 			$this->db->free($resql);
 			return 1;
@@ -385,6 +389,50 @@ class ActionComm extends CommonObject
     	}
     }
 
+	/**
+	*    Load all objects with filters
+	*    @param		socid		Filter by thirdparty
+	*    @param		filter		Other filter
+	*/
+	function getActions($socid=0, $fk_element=0, $elementtype='', $filter='')
+	{
+		global $conf, $langs;
+
+		$sql = "SELECT a.id";
+		$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
+		$sql.= " WHERE a.entity = ".$conf->entity;
+		if ($socid) $sql.= " AND a.fk_soc = ".$socid;
+		if ($elementtype!='')
+		{
+			if ($elementtype == 'project') $sql.= ' AND a.fk_project = '.$fk_element;
+			else $sql.= " AND a.fk_element = ".$fk_element." AND a.elementtype = '".$elementtype."'";
+		}
+		if ($filter) $sql.= $filter;
+
+		dol_syslog("ActionComm::fetchAll sql=".$sql);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			
+			if ($num)
+			{
+				for($i=0;$i<$num;$i++)
+                {
+                	$obj = $this->db->fetch_object($resql);
+                	$this->fetch($obj->id);
+                	$this->actions[$i] = $this;
+                }
+			}
+			$this->db->free($resql);
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			return -1;
+		}
+	}
 
     /**
      *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)

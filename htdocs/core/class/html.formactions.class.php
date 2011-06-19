@@ -103,59 +103,48 @@ class FormActions
     {
         global $langs,$conf,$user;
         global $bc;
-
-        $sql = 'SELECT a.id, a.datep as da, a.label, a.note,';
-        $sql.= ' u.login';
-        $sql.= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a, '.MAIN_DB_PREFIX.'user as u';
-        $sql.= ' WHERE a.fk_user_author = u.rowid';
-        if ($socid) $sql .= ' AND a.fk_soc = '.$socid;
-        if ($typeelement == 'project') $sql.= ' AND a.fk_project = '.$object->id;
-        else $sql.= " AND a.fk_element = ".$object->id." AND a.elementtype = '".$typeelement."'";
-
-        dol_syslog("FormActions::showactions sql=".$sql);
-        $resql = $this->db->query($sql);
-        if ($resql)
+        
+        require_once(DOL_DOCUMENT_ROOT."/comm/action/class/actioncomm.class.php");
+        
+        $actioncomm = new ActionComm($this->db);
+        $actioncomm->getActions($socid, $object->id, $typeelement);
+        
+        $num = count($actioncomm->actions);
+        if ($num)
         {
-            $num = $this->db->num_rows($resql);
-            if ($num)
-            {
-                if ($typeelement == 'invoice') $title=$langs->trans('ActionsOnBill');
-                if ($typeelement == 'invoice_supplier' || $typeelement == 'supplier_invoice') $title=$langs->trans('ActionsOnBill');
-                if ($typeelement == 'propal')  $title=$langs->trans('ActionsOnPropal');
-                if ($typeelement == 'order')   $title=$langs->trans('ActionsOnOrder');
-                if ($typeelement == 'order_supplier' || $typeelement == 'supplier_order')   $title=$langs->trans('ActionsOnOrder');
-                if ($typeelement == 'project') $title=$langs->trans('ActionsOnProject');
-                if ($typeelement == 'shipping') $title=$langs->trans('ActionsOnShipping');
-
-                print_titre($title);
-
-                $i = 0; $total = 0;	$var=true;
-                print '<table class="border" width="100%">';
-                print '<tr '.$bc[$var].'><td>'.$langs->trans('Ref').'</td><td>'.$langs->trans('Date').'</td><td>'.$langs->trans('Action').'</td><td>'.$langs->trans('By').'</td></tr>';
-                print "\n";
-
-                while ($i < $num)
-                {
-                    $objp = $this->db->fetch_object($resql);
-                    $var=!$var;
-                    print '<tr '.$bc[$var].'>';
-                    print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$objp->id.'">'.img_object($langs->trans('ShowTask'),'task').' '.$objp->id.'</a></td>';
-                    print '<td>'.dol_print_date($this->db->jdate($objp->da),'day').'</td>';
-                    print '<td title="'.dol_escape_htmltag($objp->label).'">'.dol_trunc($objp->label,32).'</td>';
-                    print '<td>'.$objp->login.'</td>';
-                    print '</tr>';
-                    $i++;
-                }
-                print '</table>';
-            }
-
-            return $num;
+        	if ($typeelement == 'invoice') $title=$langs->trans('ActionsOnBill');
+        	if ($typeelement == 'invoice_supplier' || $typeelement == 'supplier_invoice') $title=$langs->trans('ActionsOnBill');
+        	if ($typeelement == 'propal')  $title=$langs->trans('ActionsOnPropal');
+        	if ($typeelement == 'order')   $title=$langs->trans('ActionsOnOrder');
+        	if ($typeelement == 'order_supplier' || $typeelement == 'supplier_order')   $title=$langs->trans('ActionsOnOrder');
+        	if ($typeelement == 'project') $title=$langs->trans('ActionsOnProject');
+        	if ($typeelement == 'shipping') $title=$langs->trans('ActionsOnShipping');
+        	
+        	print_titre($title);
+        	
+        	$total = 0;	$var=true;
+        	print '<table class="border" width="100%">';
+        	print '<tr '.$bc[$var].'><td>'.$langs->trans('Ref').'</td><td>'.$langs->trans('Date').'</td><td>'.$langs->trans('Action').'</td><td>'.$langs->trans('By').'</td></tr>';
+        	print "\n";
+        	
+        	foreach($actioncomm->actions as $action)
+        	{
+        		$var=!$var;
+        		print '<tr '.$bc[$var].'>';
+        		print '<td>'.$action->getNomUrl(1).'</td>';
+        		print '<td>'.dol_print_date($action->datep,'day').'</td>';
+        		print '<td title="'.dol_escape_htmltag($action->label).'">'.dol_trunc($action->label,32).'</td>';
+        		$userstatic = new User($this->db);
+        		$userstatic->id = $action->author->id;
+        		$userstatic->prenom = $action->author->firstname;
+        		$userstatic->nom = $action->author->lastname;
+        		print '<td>'.$userstatic->getNomUrl(1).'</td>';
+        		print '</tr>';
+        	}
+        	print '</table>';
         }
-        else
-        {
-            dol_print_error($this->db);
-            return -1;
-        }
+        
+        return $num;
     }
 
 
