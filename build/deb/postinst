@@ -113,7 +113,7 @@ case "$1" in
 			#
 			chown -R $webuser.$webgroup /usr/share/dolibarr
 
-            # Put contet of conf file into apache httpd.conf main file (/etc/apache2/httpd.conf)
+            # Put content of conf file into apache httpd.conf main file (/etc/apache2/httpd.conf)
 			#includefile="/etc/dolibarr/apache.conf"
 			#. /usr/share/dolibarr/build/deb/apache-include_all.sh
 			#test "$status" = "uncomment" -o "$status" = "include" && restart="$server $restart"
