@@ -208,7 +208,7 @@ if ($action == 'add' && $user->rights->commande->creer)
     $object->cond_reglement_id    = $_POST['cond_reglement_id'];
     $object->mode_reglement_id    = $_POST['mode_reglement_id'];
     $object->availability_id      = $_POST['availability_id'];
-	$object->demand_reason_id     = $_POST['demand_reason_id'];
+    $object->demand_reason_id     = $_POST['demand_reason_id'];
     $object->date_livraison       = $datelivraison;
     $object->fk_delivery_address  = $_POST['fk_address'];
     $object->contactid            = $_POST['contactidp'];
@@ -249,7 +249,7 @@ if ($action == 'add' && $user->rights->commande->creer)
                 if (empty($lines) && method_exists($srcobject,'fetch_lines'))  $lines = $srcobject->fetch_lines();
 
                 $fk_parent_line=0;
-				$num=sizeof($lines);
+                $num=sizeof($lines);
 
                 for ($i=0;$i<$num;$i++)
                 {
@@ -267,7 +267,7 @@ if ($action == 'add' && $user->rights->commande->creer)
 
                     // Reset fk_parent_line for no child products and special product
                     if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
-                    	$fk_parent_line = 0;
+                        $fk_parent_line = 0;
                     }
 
                     $result = $object->addline(
@@ -300,18 +300,18 @@ if ($action == 'add' && $user->rights->commande->creer)
 
                     // Defined the new fk_parent_line
                     if ($result > 0 && $lines[$i]->product_type == 9) {
-                    	$fk_parent_line = $result;
+                        $fk_parent_line = $result;
                     }
                 }
 
                 // Hooks
                 if (! empty($object->hooks['objectcard']))
                 {
-                	foreach($object->hooks['objectcard'] as $module)
-                	{
-                		$res = $module->createfrom($srcobject,$object_id,$object->element);
-                		if ($res < 0) $error++;
-                	}
+                    foreach($object->hooks['objectcard'] as $module)
+                    {
+                        $res = $module->createfrom($srcobject,$object_id,$object->element);
+                        if ($res < 0) $error++;
+                    }
                 }
             }
             else
@@ -1042,7 +1042,7 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
                         $object->actionmsg		= $actionmsg;
                         $object->actionmsg2		= $actionmsg2;
                         $object->fk_element		= $object->id;
-						$object->elementtype	= $object->element;
+                        $object->elementtype	= $object->element;
 
                         // Appel des triggers
                         include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
@@ -1165,7 +1165,7 @@ if ($action == 'create' && $user->rights->commande->creer)
             $cond_reglement_id  = (!empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(!empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
             $mode_reglement_id  = (!empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(!empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
             $availability_id  = (!empty($objectsrc->availability_id)?$objectsrc->availability_id:(!empty($soc->availability_id)?$soc->availability_id:0));
-			$demand_reason_id  = (!empty($objectsrc->demand_reason_id)?$objectsrc->demand_reason_id:(!empty($soc->demand_reason_id)?$soc->demand_reason_id:0));
+            $demand_reason_id  = (!empty($objectsrc->demand_reason_id)?$objectsrc->demand_reason_id:(!empty($soc->demand_reason_id)?$soc->demand_reason_id:0));
             $remise_percent     = (!empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
             $remise_absolue     = (!empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(!empty($soc->remise_absolue)?$soc->remise_absolue:0));
             $dateinvoice        = empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
@@ -1179,7 +1179,7 @@ if ($action == 'create' && $user->rights->commande->creer)
         $cond_reglement_id  = $soc->cond_reglement_id;
         $mode_reglement_id  = $soc->mode_reglement_id;
         $availability_id    = $soc->availability_id;
-		$demand_reason_id   = $soc->demand_reason_id;
+        $demand_reason_id   = $soc->demand_reason_id;
         $remise_percent     = $soc->remise_percent;
         $remise_absolue     = 0;
         $dateinvoice        = empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
@@ -1268,12 +1268,12 @@ if ($action == 'create' && $user->rights->commande->creer)
     $html->select_types_paiements($soc->mode_reglement,'mode_reglement_id');
     print '</td></tr>';
 
-	// delai de livraison
+    // delai de livraison
     print '<tr><td>'.$langs->trans('AvailabilityPeriod').'</td><td colspan="2">';
     $html->select_availability($propal->availability,'availability_id');
     print '</td></tr>';
 
-	// What trigger creation
+    // What trigger creation
     print '<tr><td>'.$langs->trans('Source').'</td><td colspan="2">';
     $html->select_demand_reason((GETPOST("origin")=='propal'?'SRC_COMM':''),'demand_reason_id','',1);
     print '</td></tr>';
@@ -1516,16 +1516,16 @@ else
             }
 
             // Hook of thirdparty module
-			if (empty($formconfirm) && ! empty($object->hooks['objectcard']))
-			{
-				foreach($object->hooks['objectcard'] as $module)
-				{
-					if (empty($formconfirm)) $formconfirm = $module->formconfirm($action,$object,$lineid);
-				}
-			}
+            if (empty($formconfirm) && ! empty($object->hooks['objectcard']))
+            {
+                foreach($object->hooks['objectcard'] as $module)
+                {
+                    if (empty($formconfirm)) $formconfirm = $module->formconfirm($action,$object,$lineid);
+                }
+            }
 
-			// Print form confirm
-			print $formconfirm;
+            // Print form confirm
+            print $formconfirm;
 
             /*
              *   Commande
@@ -1668,7 +1668,7 @@ else
             }
             print '</td>';
             print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans('NotePublic').' :<br>';
-            print nl2br($object->note_public);
+            print dol_htmlcleanlastbr($object->note_public);
             print '</td>';
             print '</tr>';
 
@@ -1752,8 +1752,8 @@ else
             }
             print '</td></tr>';
 
-			// Origine de la demande
-           print '<tr><td height="10">';
+            // Origine de la demande
+            print '<tr><td height="10">';
             print '<table class="nobordernopadding" width="100%"><tr><td>';
             print $langs->trans('Source');
             print '</td>';
@@ -1928,7 +1928,7 @@ else
                     $numshipping=0;
                     if ($conf->expedition->enabled)
                     {
-                    	$numshipping = $object->nb_expedition();
+                        $numshipping = $object->nb_expedition();
 
                         if ($object->statut > 0 && $object->statut < 3 && $object->getNbOfProductsLines() > 0)
                         {
@@ -1984,14 +1984,14 @@ else
                     // Delete order
                     if ($user->rights->commande->supprimer)
                     {
-                    	if ($numshipping == 0)
-                    	{
-                    		print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
-                    	}
-                    	else
-                    	{
-                    		print '<a class="butActionRefused" href="#" title="'.$langs->trans("ShippingExist").'">'.$langs->trans("Delete").'</a>';
-                    	}
+                        if ($numshipping == 0)
+                        {
+                            print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+                        }
+                        else
+                        {
+                            print '<a class="butActionRefused" href="#" title="'.$langs->trans("ShippingExist").'">'.$langs->trans("Delete").'</a>';
+                        }
                     }
 
                     print '</div>';
