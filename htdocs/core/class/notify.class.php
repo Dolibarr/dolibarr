@@ -19,8 +19,8 @@
 
 /**
  *      \file       htdocs/core/class/notify.class.php
- *      \ingroup    core
- *      \brief      Fichier de la classe de gestion des notifications
+ *      \ingroup    notification
+ *      \brief      File of class to manage notifications
  *      \version    $Id$
  */
 require_once(DOL_DOCUMENT_ROOT ."/lib/CMailFile.class.php");
@@ -86,7 +86,7 @@ class Notify
 	function countDefinedNotifications($action,$socid)
 	{
 		global $conf;
-		
+
         $num=-1;
 
         $sql = "SELECT n.rowid";

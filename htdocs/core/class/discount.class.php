@@ -19,8 +19,8 @@
 
 /**
  *		\file       htdocs/core/class/discount.class.php
- * 		\ingroup    propal facture commande
- *		\brief      Fichier de la classe de gestion des remises
+ * 		\ingroup    core propal facture commande
+ *		\brief      File of class to manage absolute discounts
  *		\version    $Id$
  */
 

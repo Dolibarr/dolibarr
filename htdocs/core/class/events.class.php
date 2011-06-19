@@ -20,10 +20,9 @@
 /**
  *      \file       htdocs/core/class/events.class.php
  *      \ingroup    core
- *		\brief      Events class file.
+ *		\brief      File of class to manage security events.
  *		\version    $Id$
  *		\author		Laurent Destailleur
- *		\remarks	An event is when status of an object change.
  */
 
 // Put here all includes required by your class file

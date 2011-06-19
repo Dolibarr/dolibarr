@@ -17,17 +17,17 @@
  */
 
 /**
-        \file       htdocs/core/class/commonobjectline.class.php
-        \ingroup    core
-        \brief      File of the superclass of classes of lines of business objects (invoice, contract, PROPAL, commands, etc. ...)
-        \version    $Id$
-*/
+ *       \file       htdocs/core/class/commonobjectline.class.php
+ *       \ingroup    core
+ *       \brief      File of the superclass of classes of lines of business objects (invoice, contract, PROPAL, commands, etc. ...)
+ *       \version    $Id$
+ */
 
 
 /**
-		\class 		CommonObjectLine
-        \brief 		Superclass for class inheritance lines of business objects
-*/
+ *		\class 		CommonObjectLine
+ *       \brief 		Superclass for class inheritance lines of business objects
+ */
 
 class CommonObjectLine
 {
