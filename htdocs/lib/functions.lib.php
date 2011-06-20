@@ -3814,7 +3814,14 @@ function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
     if (empty($mesgstring) && (! is_array($mesgarray) || sizeof($mesgarray) == 0)) return;
 
     $iserror=0;
-    if (preg_match('/class="error"/i',$mesgstring)) $iserror++;
+    if (is_array($mesg_array))
+    {
+        foreach($mesg_array as $val)
+        {
+            if ($val && preg_match('/class="error"/i',$val)) { $iserror++; break; }
+        }
+    }
+    else if ($mesgstring && preg_match('/class="error"/i',$mesgstring)) $iserror++;
     if ($style=='error') $iserror++;
 
     if ($iserror) print get_htmloutput_mesg($mesgstring,$mesgarray,'error',$keepembedded);
