@@ -102,7 +102,27 @@ class InterfacePaypalWorkflow
         {
         	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". source=".$object['source']." ref=".$object['ref']);
         	
-        	
+        	// Parse element/subelement (ex: project_task)
+	        $element = $path = $filename = $_GET['element'];
+	        if (preg_match('/^([^_]+)_([^_]+)/i',$_GET['element'],$regs))
+	        {
+	            $element = $path = $regs[1];
+	            $filename = $regs[2];
+	        }
+	        // For compatibility
+            if ($element == 'order') { $path = $filename = 'commande'; }
+            if ($element == 'invoice') { $path = 'compta/facture'; $filename = 'facture'; }
+
+            dol_include_once('/'.$path.'/class/'.$filename.'.class.php');
+
+            $classname = ucfirst($filename);
+            $obj = new $classname($db);
+            
+            $ret = $obj->fetch('',$object['ref']);
+            if ($ret < 0) return -1;
+            
+            $obj->updateObjectField($obj->table_element,$obj->id,'ref_int',$object['resArray']["TRANSACTIONID"]);
+            
         }
 
 		return 0;
