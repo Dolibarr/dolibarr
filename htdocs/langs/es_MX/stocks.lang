@@ -1,0 +1,4 @@
+# Dolibarr language file - es_MX - stocks
+CHARSET=UTF-8
+DeStockOnBill=Decrementar los stocks físicos sobre las facturas/notas de crédito a clientes (atención, en esta versión, todavía se realiza el ajuste sobre el almacén número 1)
+ReStockOnBill=Incrementar los stocks físicos sobre las facturas/notas de crédito de proveedores (atención, en esta versión, todavía se realiza el ajuste sobre el almacén número 1)

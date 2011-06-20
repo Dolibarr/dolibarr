@@ -1,0 +1,9 @@
+# Dolibarr language file - es_MX - admin 
+CHARSET=UTF-8
+Module30Name=Facturas y notas de crédito
+Module30Desc=Gestión de facturas y notas de crédito a clientes. Gestión facturas de proveedores
+BillsNumberingModule=Módulo de numeración de facturas y notas de crédito
+CreditNoteSetup=Configuración del módulo notas de crédito
+CreditNotePDFModules=Modelo de documento de notas de crédito
+CreditNote=Nota de crédito
+CreditNotes=Notas de crédito
