@@ -385,7 +385,6 @@ class FormFile
 			$out.= '<input type="hidden" name="action" value="builddoc">';
 			$out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-			//$out.= load_fiche_titre($langs->trans("Documents"),'','');
 			$out.= '<div class="titre">'.$langs->trans("Documents").'</div>';
 			$out.= '<table class="border formdoc" summary="listofdocumentstable" width="100%">';
 
@@ -435,12 +434,12 @@ class FormFile
 			$out.= '<input class="button" ';
 			//print ((is_array($modellist) && sizeof($modellist))?'':' disabled="true"') // Always allow button "Generate" (even if no model activated)
 			$out.= ' type="submit" value="'.$buttonlabel.'"';
-			if (! $allowgenifempty && ! is_array($modellist) && empty($modellist)) print ' disabled="true"';
+			if (! $allowgenifempty && ! is_array($modellist) && empty($modellist)) $out.= ' disabled="true"';
 			$out.= '>';
 			if ($allowgenifempty && ! is_array($modellist) && empty($modellist) && $modulepart != 'unpaid')
 			{
 				$langs->load("errors");
-				print ' '.img_warning($langs->trans("WarningNoDocumentModelActivated"));
+				$out.= ' '.img_warning($langs->trans("WarningNoDocumentModelActivated"));
 			}
 			$out.= '</td>';
 
@@ -452,7 +451,7 @@ class FormFile
 			{
 				foreach($hooks as $module)
 				{
-				    if (method_exists($module,'formBuilddocOptions')) $module->formBuilddocOptions();
+				    if (method_exists($module,'formBuilddocOptions')) $out.= $module->formBuilddocOptions();
 				}
 			}
 		}
@@ -473,7 +472,7 @@ class FormFile
 			$headershown=1;
 			$titletoshow=$langs->trans("Documents");
 			if (! empty($title)) $titletoshow=$title;
-			print_titre($titletoshow);
+			$out.= '<div class="titre">'.$titletoshow.'</div>';
 			$out.= '<table class="border" summary="listofdocumentstable" width="100%">';
 		}
 
