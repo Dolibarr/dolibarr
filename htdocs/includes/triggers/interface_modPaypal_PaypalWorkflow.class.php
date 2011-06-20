@@ -98,13 +98,13 @@ class InterfacePaypalWorkflow
         // Mettre ici le code a executer en reaction de l'action
         // Les donnees de l'action sont stockees dans $object
 
-        if ($action == 'PAYMENT_PAYMENT_OK')
+        if ($action == 'PAYPAL_PAYMENT_OK')
         {
-        	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". source=".$object['source']." ref=".$object['ref']);
+        	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". source=".$object->source." ref=".$object->ref);
         	
         	// Parse element/subelement (ex: project_task)
-	        $element = $path = $filename = $_GET['element'];
-	        if (preg_match('/^([^_]+)_([^_]+)/i',$_GET['element'],$regs))
+	        $element = $path = $filename = $object->source;
+	        if (preg_match('/^([^_]+)_([^_]+)/i',$object->source,$regs))
 	        {
 	            $element = $path = $regs[1];
 	            $filename = $regs[2];
@@ -116,12 +116,12 @@ class InterfacePaypalWorkflow
             dol_include_once('/'.$path.'/class/'.$filename.'.class.php');
 
             $classname = ucfirst($filename);
-            $obj = new $classname($db);
+            $obj = new $classname($this->db);
             
-            $ret = $obj->fetch('',$object['ref']);
+            $ret = $obj->fetch('',$object->ref);
             if ($ret < 0) return -1;
             
-            $obj->updateObjectField($obj->table_element,$obj->id,'ref_int',$object['resArray']["TRANSACTIONID"]);
+            $obj->updateObjectField($obj->table_element,$obj->id,'ref_int',$object->resArray["TRANSACTIONID"]);
             
         }
 

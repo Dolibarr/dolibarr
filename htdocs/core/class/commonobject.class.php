@@ -590,6 +590,8 @@ class CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$table." SET ";
 		$sql.= $field." = '".$value."'";
 		$sql.= " WHERE rowid = ".$id;
+		
+		dol_syslog("CommonObject::updateObjectField sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql) dol_print_error($this->db);
 	}

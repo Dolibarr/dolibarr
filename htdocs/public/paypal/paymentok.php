@@ -82,8 +82,6 @@ if (empty($PAYPAL_API_SIGNATURE))
 
 
 
-
-
 /*
  * View
  */
@@ -131,14 +129,14 @@ if ($PAYPALTOKEN)
         $ack = strtoupper($resArray["ACK"]);
         if($ack=="SUCCESS" || $ack=="SUCCESSWITHWARNING")
         {
-        	$object=array();
+        	$object = (object) 'paypal';
         	
-        	$object['source']=$source;
-        	$object['ref']=$ref;
-        	$object['payerID']=$payerID;
-        	$object['fulltag']=$fulltag;
-        	$object['resArray']=$resArray;
-        	
+        	$object->source		= $source;
+        	$object->ref		= $ref;
+        	$object->payerID	= $payerID;
+        	$object->fulltag	= $fulltag;
+        	$object->resArray	= $resArray;
+
             // resArray was built from a string like that
             // TOKEN=EC%2d1NJ057703V9359028&TIMESTAMP=2010%2d11%2d01T11%3a40%3a13Z&CORRELATIONID=1efa8c6a36bd8&ACK=Success&VERSION=56&BUILD=1553277&TRANSACTIONID=9B994597K9921420R&TRANSACTIONTYPE=expresscheckout&PAYMENTTYPE=instant&ORDERTIME=2010%2d11%2d01T11%3a40%3a12Z&AMT=155%2e57&FEEAMT=5%2e54&TAXAMT=0%2e00&CURRENCYCODE=EUR&PAYMENTSTATUS=Completed&PENDINGREASON=None&REASONCODE=None
             $PAYMENTSTATUS=urldecode($resArray["PAYMENTSTATUS"]);   // Should contains 'Completed'
