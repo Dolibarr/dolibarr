@@ -572,6 +572,27 @@ class CommonObject
 
 		return $result;
 	}
+	
+	/**
+	 *    	Update a specific field from an object
+	 *    	@param		table		Table element or element line
+	 *    	@param		id			Object id
+	 *    	@param		field		Field to update
+	 *    	@param		value		New value
+	 *		@return		int			<0 if KO, >0 if OK
+	 */
+	function updateObjectField($table,$id,$field,$value)
+	{
+		global $conf;
+
+		$result=false;
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$table." SET ";
+		$sql.= $field." = '".$value."'";
+		$sql.= " WHERE rowid = ".$id;
+		$resql = $this->db->query($sql);
+		if (! $resql) dol_print_error($this->db);
+	}
 
 	/**
 	 *      \brief      Load properties id_previous and id_next
