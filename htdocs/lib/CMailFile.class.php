@@ -207,13 +207,15 @@ class CMailFile
 
 			// Define body in text_body
 			$text_body = $this->write_body($msg);
-			if (! empty($conf->global->MAIN_MAIL_EMAIL_INLINE_IMAGES)) $text_body.= "--" . $this->alternative_boundary . "--" . $this->eol;
 
 			// Encode images
 			if ($this->atleastoneimage)
 			{
 				$images_encoded = $this->write_images($this->images_encoded);
-				if (! empty($conf->global->MAIN_MAIL_EMAIL_INLINE_IMAGES)) $images_encoded.= "--" . $this->related_boundary . "--" . $this->eol;
+				// always end related and end alternative after inline images
+				$images_encoded.= "--" . $this->related_boundary . "--" . $this->eol;
+				$images_encoded.= $this->eol . "--" . $this->alternative_boundary . "--" . $this->eol;
+				$images_encoded.= $this->eol;
 			}
 
 			// Add attachments to text_encoded
@@ -603,25 +605,6 @@ class CMailFile
 		$out.= "Content-Type: multipart/mixed; boundary=\"".$this->mixed_boundary."\"".$this->eol;
 		$out.= "Content-Transfer-Encoding: 8bit".$this->eol;
 		
-		if (! empty($conf->global->MAIN_MAIL_EMAIL_INLINE_IMAGES))
-		{
-			if ($this->atleastoneimage)
-			{
-				$out.= "--" . $this->mixed_boundary . $this->eol;
-				$out.= "Content-Type: multipart/related; boundary=\"".$this->related_boundary."\"".$this->eol;
-				$out.= $this->eol;
-				$out.= "--" . $this->related_boundary . $this->eol;
-			}
-			else
-			{
-				$out.= "--" . $this->mixed_boundary . $this->eol;
-			}
-
-			$out.= "Content-Type: multipart/alternative; boundary=\"".$this->alternative_boundary."\"".$this->eol;
-			$out.= $this->eol;
-		}
-		
-		//$out.=$this->eol;	// Comment this to try to solve pb of hidden attached files. New line must be after the X-attachments
 		dol_syslog("CMailFile::write_smtpheaders smtp_header=\n".$out);
 		return $out;
 	}
@@ -666,21 +649,19 @@ class CMailFile
 		global $conf;
 
 		$out='';
-
-		if ($this->msgishtml)
+		
+		if ($this->atleastoneimage)
 		{
-			if (! empty($conf->global->MAIN_MAIL_EMAIL_INLINE_IMAGES)) $out.= "--" . $this->alternative_boundary . $this->eol;
-			else $out.= "--" . $this->mixed_boundary . $this->eol;
-			$out.= "Content-Type: text/html; charset=".$conf->file->character_set_client.$this->eol;
+			$out.= "--" . $this->mixed_boundary . $this->eol;
+			$out.= "Content-Type: multipart/alternative; boundary=\"".$this->alternative_boundary."\"".$this->eol;
+			$out.= $this->eol;
+			$out.= "--" . $this->alternative_boundary . $this->eol;
 		}
 		else
 		{
-			if (! empty($conf->global->MAIN_MAIL_EMAIL_INLINE_IMAGES)) $out.= "--" . $this->alternative_boundary . $this->eol;
-			else $out.= "--" . $this->mixed_boundary . $this->eol;
-			$out.= "Content-Type: text/plain; charset=".$conf->file->character_set_client.$this->eol;
+			$out.= "--" . $this->mixed_boundary . $this->eol;
 		}
-		$out.= $this->eol;
-
+		
 		if ($this->msgishtml)
 		{
 			// Check if html header already in message
@@ -697,8 +678,28 @@ class CMailFile
         //$strContent = rtrim(chunk_split($strContent));    // Function chunck_split seems bugged
         $strContent = rtrim(wordwrap($strContent));
 
-		$out.= $strContent.$this->eol;
-		if (! empty($conf->global->MAIN_MAIL_EMAIL_INLINE_IMAGES)) $out.= $this->eol;
+		if ($this->msgishtml)
+		{
+			if ($this->atleastoneimage) 
+			{
+				$out.= "Content-Type: text/plain; charset=".$conf->file->character_set_client.$this->eol;
+				$out.= $this->eol.strip_tags($strContent).$this->eol; // Add plain text message
+				$out.= "--" . $this->alternative_boundary . $this->eol;
+				$out.= "Content-Type: multipart/related; boundary=\"".$this->related_boundary."\"".$this->eol;
+				$out.= $this->eol;
+				$out.= "--" . $this->related_boundary . $this->eol;
+			}
+			$out.= "Content-Type: text/html; charset=".$conf->file->character_set_client.$this->eol;
+			$out.= $this->eol.$strContent.$this->eol;
+		}
+		else
+		{
+			$out.= "--" . $this->mixed_boundary . $this->eol;
+			$out.= "Content-Type: text/plain; charset=".$conf->file->character_set_client.$this->eol;
+			$out.= $strContent.$this->eol;
+		}
+		
+		$out.= $this->eol;
 
 		return $out;
 	}
@@ -764,8 +765,7 @@ class CMailFile
 			{
 				dol_syslog("CMailFile::write_images: i=$i");
 
-				if (! empty($conf->global->MAIN_MAIL_EMAIL_INLINE_IMAGES)) $out.= "--" . $this->related_boundary . $this->eol;
-				else $out.= "--" . $this->mixed_boundary . $this->eol;
+				$out.= "--" . $this->related_boundary . $this->eol; // always related for an inline image
 				$out.= "Content-Type: " . $img["content_type"] . "; name=\"".$img["name"]."\"".$this->eol;
 				$out.= "Content-Transfer-Encoding: base64".$this->eol;
 				$out.= "Content-Disposition: inline; filename=\"".$img["name"]."\"".$this->eol;
