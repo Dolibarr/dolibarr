@@ -354,6 +354,10 @@ class FormMail
 						$out.= $this->toname;
 					}
 					$out.= ' &lt;'.$this->tomail.'&gt;';
+					if ($this->withtofree)
+					{
+						$out.= '<br />'.$langs->trans("or").' <input size="'.(is_array($this->withto)?"30":"60").'" id="sendto" name="sendto" value="'.(! is_array($this->withto) && ! is_numeric($this->withto)? (isset($_REQUEST["sendto"])?$_REQUEST["sendto"]:$this->withto) :"").'" />';
+					}
 				} 
 				else
 				{
