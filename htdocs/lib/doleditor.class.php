@@ -164,6 +164,9 @@ class DolEditor
 
             	$out.= '<script type="text/javascript">
             			jQuery(document).ready(function () {
+            				if (CKEDITOR.instances[\''.$this->htmlname.'\']) {
+            					CKEDITOR.remove(CKEDITOR.instances[\''.$this->htmlname.'\']);
+            				}
             				CKEDITOR.replace(\''.$this->htmlname.'\',
             					{
             						customConfig : \''.dol_buildpath('/theme/'.$conf->theme.'/ckeditor/config.js',1).'\',
