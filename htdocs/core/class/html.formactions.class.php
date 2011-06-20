@@ -126,7 +126,7 @@ class FormActions
         	print '<table class="border" width="100%">';
         	print '<tr '.$bc[$var].'><td>'.$langs->trans('Ref').'</td><td>'.$langs->trans('Date').'</td><td>'.$langs->trans('Action').'</td><td>'.$langs->trans('By').'</td></tr>';
         	print "\n";
-        	
+
         	foreach($actioncomm->actions as $action)
         	{
         		$var=!$var;

@@ -420,8 +420,9 @@ class ActionComm extends CommonObject
 				for($i=0;$i<$num;$i++)
                 {
                 	$obj = $this->db->fetch_object($resql);
-                	$this->fetch($obj->id);
-                	$this->actions[$i] = $this;
+                	$actioncommstatic = new ActionComm($this->db);
+                	$actioncommstatic->fetch($obj->id);
+                	$this->actions[$i] = $actioncommstatic;
                 }
 			}
 			$this->db->free($resql);
@@ -620,15 +621,15 @@ class ActionComm extends CommonObject
             $libelle=$langs->trans("Action".$this->type_code);
             $libelleshort='';
         }
-        else if (empty($this->label))
+        else if (empty($this->libelle))
         {
         	$libelle=$langs->trans("Action".$this->type_code);
         	$libelleshort=$langs->trans("Action".$this->type_code,'','','','',$maxlength);
         }
         else
         {
-        	$libelle=$this->label;
-        	$libelleshort=dol_trunc($this->label,$maxlength);
+        	$libelle=$this->libelle;
+        	$libelleshort=dol_trunc($this->libelle,$maxlength);
         }
 
 		if ($withpicto)
