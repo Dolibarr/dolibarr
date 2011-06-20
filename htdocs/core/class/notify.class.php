@@ -183,7 +183,7 @@ class Notify
 						    $link=DOL_URL_ROOT.'/comm/propal.php?id='.$objet_id;
     						break;
     					case 'facture':
-						    $link=DOL_URL_ROOT.'/facture/fiche.php?facid='.$objet_id;
+						    $link=DOL_URL_ROOT.'/compta/facture.php?facid='.$objet_id;
     						break;
                     	case 'order':
 						    $link=DOL_URL_ROOT.'/commande/fiche.php?facid='.$objet_id;
