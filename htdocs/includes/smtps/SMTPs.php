@@ -2029,7 +2029,8 @@ class SMTPs
                             $content .= 'Content-MD5: ' . $_data['md5'] . "\r\n";
 
                         $content .= "\r\n"
-                                 .  $_data['data'] . "\r\n";
+                                 .  $_data['data'] . "\r\n"
+                                 . "\r\n";
                     }
                 }
                 // DOL_CHANGE LDR
@@ -2050,7 +2051,7 @@ class SMTPs
                             $content .= 'Content-MD5: ' . $_data['md5'] . "\r\n";
 
                         $content .= "\r\n"
-                                 .  $_data['data'] . "\r\n";
+                                 . $_data['data'] . "\r\n";
                     }
                 }
                 else
@@ -2074,7 +2075,8 @@ class SMTPs
                         $content .= 'Content-MD5: ' . $_content['md5'] . "\r\n";
 
                     $content .= "\r\n"
-                             . $_content['data'] . "\r\n";
+                             . $_content['data'] . "\r\n"
+                             . "\r\n";
                 }
             }
 
@@ -2519,6 +2521,9 @@ class SMTPs
 
  /**
   * $Log$
+  * Revision 1.14  2011/06/20 23:17:50  hregis
+  * Fix: use best structure of mail
+  *
   * Revision 1.13  2010/04/13 20:58:37  eldy
   * Fix: Can provide ip address on smtps. Better error reporting.
   *
