@@ -121,6 +121,10 @@ class InterfacePaypalWorkflow
             $ret = $obj->fetch('',$object->ref);
             if ($ret < 0) return -1;
             
+            // Add payer id
+            $soc->updateObjectField('societe', $obj->socid, 'ref_int', $object->payerID);
+            
+            // Add transaction id
             $obj->updateObjectField($obj->table_element,$obj->id,'ref_int',$object->resArray["TRANSACTIONID"]);
             
         }
