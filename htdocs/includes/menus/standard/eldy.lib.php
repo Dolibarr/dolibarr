@@ -1049,7 +1049,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
        }
 
         /*
-         * Menu PRODUITS-SERVICES
+         * Menu PRODUCTS-SERVICES
          */
         if ($mainmenu == 'products')
         {
@@ -1123,7 +1123,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
 
 
         /*
-         * Menu FOURNISSEURS
+         * Menu SUPPLIERS
          */
         if ($mainmenu == 'suppliers')
         {
@@ -1212,7 +1212,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
 
 
         /*
-         * Menu OUTILS
+         * Menu TOOLS
          */
         if ($mainmenu == 'tools')
         {
@@ -1247,6 +1247,15 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                 $newmenu->add("/domain/index.php?leftmenu=export",$langs->trans("DomainNames"),0, $user->rights->domain->read);
                 $newmenu->add("/domain/fiche.php?action=create&leftmenu=export",$langs->trans("NewDomain"),1, $user->rights->domain->create);
                 $newmenu->add("/domain/index.php?leftmenu=export",$langs->trans("List"),1, $user->rights->domain->read);
+            }
+
+            if (! empty($conf->submiteverywhere->enabled))
+            {
+                $langs->load("submiteverywhere@submiteverywhere");
+
+                $newmenu->add("/submiteverywhere/index.php?leftmenu=submiteverywhere", $langs->trans("News"), 0, $user->rights->submiteverywhere->read);
+                $newmenu->add("/submiteverywhere/fiche.php?leftmenu=submiteverywhere&amp;action=create", $langs->trans("NewNews"), 1, $user->rights->submiteverywhere->create);
+                $newmenu->add("/submiteverywhere/liste.php?leftmenu=submiteverywhere", $langs->trans("List"), 1, $user->rights->submiteverywhere->read);
             }
         }
 
