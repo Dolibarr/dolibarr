@@ -29,9 +29,9 @@ create table llx_facture
   facnumber           varchar(30)        NOT NULL,  -- invoice reference number
   entity              integer  DEFAULT 1 NOT NULL,	-- multi company id
 
-  ref_ext             varchar(30),                  -- reference into an external system (not used by dolibarr)
-  ref_int			  varchar(30),                  -- reference into an internal system (used by dolibarr)
-  ref_client          varchar(30),                  -- reference for customer
+  ref_ext             varchar(50),                  -- reference into an external system (not used by dolibarr)
+  ref_int			  varchar(50),                  -- reference into an internal system (used by dolibarr)
+  ref_client          varchar(50),                  -- reference for customer
 
   type                smallint DEFAULT 0 NOT NULL,  -- type of invoice
   increment           varchar(10),

@@ -19,4 +19,4 @@
 -- ============================================================================
 
 
-ALTER TABLE llx_advanced_extrafields ADD UNIQUE INDEX idx_advanced_extrafields_name (object, entity, name);
+ALTER TABLE llx_advanced_extrafields ADD UNIQUE INDEX idx_advanced_extrafields_name (elementtype, entity, name);

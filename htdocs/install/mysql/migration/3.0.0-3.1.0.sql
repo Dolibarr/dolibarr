@@ -402,3 +402,13 @@ ALTER TABLE llx_adherent_options rename to llx_adherent_extrafields;
 drop table llx_extra_fields_options;
 drop table llx_extra_fields_values;
 drop table llx_extra_fields;
+
+ALTER TABLE llx_commande MODIFY ref_int varchar(50);
+ALTER TABLE llx_commande MODIFY ref_ext varchar(50);
+ALTER TABLE llx_commande MODIFY ref_client varchar(50);
+ALTER TABLE llx_facture MODIFY ref_int varchar(50);
+ALTER TABLE llx_facture MODIFY ref_ext varchar(50);
+ALTER TABLE llx_facture MODIFY ref_client varchar(50);
+ALTER TABLE llx_propal MODIFY ref_ext varchar(50);
+ALTER TABLE llx_propal MODIFY ref_client varchar(50);
+ALTER TABLE llx_propal ADD COLUMN ref_int varchar(50) AFTER ref_ext;

@@ -26,9 +26,9 @@ create table llx_commande
   ref                   varchar(30)       NOT NULL,    -- order reference number
   entity                integer DEFAULT 1 NOT NULL,	   -- multi company id
 
-  ref_ext               varchar(30),                   -- reference into an external system (not used by dolibarr)
-  ref_int				varchar(30),                   -- reference into an internal system (used by dolibarr)
-  ref_client            varchar(30),                   -- reference for customer
+  ref_ext               varchar(50),                   -- reference into an external system (not used by dolibarr)
+  ref_int				varchar(50),                   -- reference into an internal system (used by dolibarr)
+  ref_client            varchar(50),                   -- reference for customer
 
   fk_soc                integer NOT NULL,
   fk_projet             integer DEFAULT 0,             -- projet auquel est rattache la commande
