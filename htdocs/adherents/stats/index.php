@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,247 +21,210 @@
 /**
  *	    \file       htdocs/adherents/stats/index.php
  *      \ingroup    member
- *		\brief      Page des stats
+ *		\brief      Page of subscription members statistics
  *		\version    $Id$
-*/
+ */
 
 require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
-require_once(DOL_DOCUMENT_ROOT."/commande/class/commandestats.class.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherentstats.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/dolgraph.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/member.lib.php");
 
-$graphwidth = 700;
-$mapratio = 0.5;
-$graphheight = round($graphwidth * $mapratio);
+$WIDTH=500;
+$HEIGHT=200;
 
-$mode=GETPOST('mode')?GETPOST('mode'):'';
-
-
+$userid=GETPOST('userid'); if ($userid < 0) $userid=0;
+$socid=GETPOST('socid'); if ($socid < 0) $socid=0;
 // Security check
 if ($user->societe_id > 0)
 {
-  $action = '';
-  $socid = $user->societe_id;
+    $action = '';
+    $socid = $user->societe_id;
 }
-if (! $user->rights->adherent->cotisation->lire)
-accessforbidden();
 
 $year = strftime("%Y", time());
 $startyear=$year-2;
 $endyear=$year;
 
 
-
 /*
  * View
  */
 
+$form=new Form($db);
 
-llxHeader('','','','',0,0,array('http://www.google.com/jsapi'));
+$langs->load("propal");
 
-$title=$langs->trans("Statistics");
-if ($mode == 'memberbycountry') $title=$langs->trans("MembersStatisticsByCountries");
-if ($mode == 'memberbystate') $title=$langs->trans("MembersStatisticsByState");
-if ($mode == 'memberbytown') $title=$langs->trans("MembersStatisticsByTown");
+llxHeader();
 
-print_fiche_titre($title, $mesg);
+print_fiche_titre($langs->trans("SubscriptionsStatistics"), $mesg);
+
+$dir=$conf->adherent->dir_temp;
 
 create_exdir($dir);
 
-if ($mode)
+$stats = new AdherentStats($db, $socid, $userid);
+
+// Build graphic number of object
+$data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
+//var_dump($data);
+// $data = array(array('Lib',val1,val2,val3),...)
+
+
+$filenamenb = $dir.'/subscriptionsnbinyear-'.$year.'.png';
+$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=memberstats&file=subscriptionsnbinyear-'.$year.'.png';
+
+
+$px = new DolGraph();
+$mesg = $px->isGraphKo();
+if (! $mesg)
 {
-	// Define sql
-	if ($mode == 'memberbycountry')
-	{
-		$label=$langs->trans("Country");
-
-		$data = array();
-		$sql.="SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, c.code, c.libelle as label";
-		$sql.=" FROM ".MAIN_DB_PREFIX."adherent as d LEFT JOIN ".MAIN_DB_PREFIX."c_pays as c on d.pays = c.rowid";
-		$sql.=" WHERE d.statut = 1";
-		$sql.=" GROUP BY c.libelle, c.code";
-		//print $sql;
-	}
-	if ($mode == 'memberbystate')
-	{
-        $label=$langs->trans("Country");
-	    $label2=$langs->trans("State");
-
-		$data = array();
-		$sql.="SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, p.code, p.libelle as label, c.nom as label2";
-		$sql.=" FROM ".MAIN_DB_PREFIX."adherent as d LEFT JOIN ".MAIN_DB_PREFIX."c_departements as c on d.fk_departement = c.rowid";
-        $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_regions as r on c.fk_region = r.code_region";
-        $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p on d.pays = p.rowid";
-        $sql.=" WHERE d.statut = 1";
-		$sql.=" GROUP BY p.libelle, p.code, c.nom";
-		//print $sql;
-	}
-    if ($mode == 'memberbytown')
+    $px->SetData($data);
+    $px->SetPrecisionY(0);
+    $i=$startyear;
+    while ($i <= $endyear)
     {
-        $label=$langs->trans("Country");
-        $label2=$langs->trans("Town");
-
-        $data = array();
-        $sql.="SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, p.code, p.libelle as label, d.ville as label2";
-        $sql.=" FROM ".MAIN_DB_PREFIX."adherent as d";
-        $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p on d.pays = p.rowid";
-        $sql.=" WHERE d.statut = 1";
-        $sql.=" GROUP BY p.libelle, p.code, d.ville";
-        //print $sql;
+        $legend[]=$i;
+        $i++;
     }
+    $px->SetLegend($legend);
+    $px->SetMaxValue($px->GetCeilMaxValue());
+    $px->SetMinValue(min(0,$px->GetFloorMinValue()));
+    $px->SetWidth($WIDTH);
+    $px->SetHeight($HEIGHT);
+    $px->SetYLabel($langs->trans("NbOfSubscriptions"));
+    $px->SetShading(3);
+    $px->SetHorizTickIncrement(1);
+    $px->SetPrecisionY(0);
+    $px->mode='depth';
+    $px->SetTitle($langs->trans("NbOfSubscriptions"));
 
-	$langsen=new Translate('',$conf);
-    $langsen->setDefaultLang('en_US');
-    $langsen->load("dict");
-    //print $langsen->trans("Country"."FI");exit;
-
-	// Define $data array
-	dol_syslog("Count member sql=".$sql);
-	$resql=$db->query($sql);
-	if ($resql)
-	{
-		$num=$db->num_rows($resql);
-		$i=0;
-		while ($i < $num)
-		{
-			$obj=$db->fetch_object($resql);
-			if ($mode == 'memberbycountry')
-			{
-				$data[]=array('label'=>(($obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code)?$langs->trans("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
-                            'label_en'=>(($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code)!="Country".$obj->code)?$langsen->transnoentitiesnoconv("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
-							'code'=>$obj->code,
-							'nb'=>$obj->nb,
-							'lastdate'=>$db->jdate($obj->lastdate)
-				);
-			}
-			if ($mode == 'memberbystate')
-			{
-				$data[]=array('label'=>(($obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code)?$langs->trans("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
-                            'label_en'=>(($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code)!="Country".$obj->code)?$langsen->transnoentitiesnoconv("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
-				            'label2'=>($obj->label2?$obj->label2:$langs->trans("Unknown")),
-							'nb'=>$obj->nb,
-							'lastdate'=>$db->jdate($obj->lastdate)
-				);
-			}
-            if ($mode == 'memberbytown')
-            {
-                $data[]=array('label'=>(($obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code)?$langs->trans("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
-                            'label_en'=>(($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code)!="Country".$obj->code)?$langsen->transnoentitiesnoconv("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
-                            'label2'=>($obj->label2?$obj->label2:$langs->trans("Unknown")),
-                            'nb'=>$obj->nb,
-                            'lastdate'=>$db->jdate($obj->lastdate)
-                );
-            }
-
-			$i++;
-		}
-		$db->free($resql);
-	}
-	else
-	{
-		dol_print_error($db);
-	}
+    $px->draw($filenamenb);
 }
 
-// Print title
-if ($mode && ! sizeof($data))
+// Build graphic amount of object
+$data = $stats->getAmountByMonthWithPrevYear($endyear,$startyear);
+//var_dump($data);
+// $data = array(array('Lib',val1,val2,val3),...)
+
+$filenameamount = $dir.'/subscriptionsamountinyear-'.$year.'.png';
+$fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=memberstats&file=subscriptionsamountinyear-'.$year.'.png';
+
+$px = new DolGraph();
+$mesg = $px->isGraphKo();
+if (! $mesg)
 {
-	print $langs->trans("NoValidatedMemberYet").'<br>';
-	print '<br>';
+    $px->SetData($data);
+    $px->SetPrecisionY(0);
+    $i=$startyear;
+    while ($i <= $endyear)
+    {
+        $legend[]=$i;
+        $i++;
+    }
+    $px->SetLegend($legend);
+    $px->SetMaxValue($px->GetCeilMaxValue());
+    $px->SetMinValue(min(0,$px->GetFloorMinValue()));
+    $px->SetWidth($WIDTH);
+    $px->SetHeight($HEIGHT);
+    $px->SetYLabel($langs->trans("AmountOfSubscriptions"));
+    $px->SetShading(3);
+    $px->SetHorizTickIncrement(1);
+    $px->SetPrecisionY(0);
+    $px->mode='depth';
+    $px->SetTitle($langs->trans("AmountOfSubscriptions"));
+
+    $px->draw($filenameamount);
 }
-else
+
+
+$head = member_stats_prepare_head($adh);
+
+dol_fiche_head($head, 'statssubscription', $langs->trans("Statistics"), 0, 'user');
+
+
+print '<table class="notopnoleftnopadd" width="100%"><tr>';
+print '<td align="center" valign="top">';
+
+// Show filter box
+/*print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<table class="border" width="100%">';
+print '<tr><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
+print '<tr><td>'.$langs->trans("Member").'</td><td>';
+$filter='s.client in (1,2,3)';
+print $form->select_company($id,'memberid',$filter,1);
+print '</td></tr>';
+print '<tr><td>'.$langs->trans("User").'</td><td>';
+print $form->select_users($userid,'userid',1);
+print '</td></tr>';
+print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
+print '</table>';
+print '</form>';
+print '<br><br>';
+*/
+
+// Show array
+$data = $stats->getAllByYear();
+
+print '<table class="border" width="100%">';
+print '<tr height="24">';
+print '<td align="center">'.$langs->trans("Year").'</td>';
+print '<td align="center">'.$langs->trans("NbOfSubscriptions").'</td>';
+print '<td align="center">'.$langs->trans("AmountTotal").'</td>';
+print '<td align="center">'.$langs->trans("AmountAverage").'</td>';
+print '</tr>';
+
+$oldyear=0;
+foreach ($data as $val)
 {
-	if ($mode == 'memberbycountry') print $langs->trans("MembersByCountryDesc").'<br>';
-	else if ($mode == 'memberbystate') print $langs->trans("MembersByStateDesc").'<br>';
-    else if ($mode == 'memberbytown') print $langs->trans("MembersByTownDesc").'<br>';
-	else
-	{
-		print $langs->trans("MembersStatisticsDesc").'<br>';
-		print '<br>';
-		print '<a href="'.$_SERVER["PHP_SELF"].'?mode=memberbycountry">'.$langs->trans("MembersStatisticsByCountries").'</a><br>';
-		print '<br>';
-		print '<a href="'.$_SERVER["PHP_SELF"].'?mode=memberbystate">'.$langs->trans("MembersStatisticsByState").'</a><br>';
-        print '<br>';
-        print '<a href="'.$_SERVER["PHP_SELF"].'?mode=memberbytown">'.$langs->trans("MembersStatisticsByTown").'</a><br>';
-	}
-	print '<br>';
+    $year = $val['year'];
+    print $avg;
+    while ($oldyear > $year+1)
+    {	// If we have empty year
+        $oldyear--;
+        print '<tr height="24">';
+        print '<td align="center">';
+        print '<a href="month.php?year='.$oldyear.'&amp;mode='.$mode.'">';
+        print $oldyear;
+        print '</a>';
+        print '</td>';
+        print '<td align="right">0</td>';
+        print '<td align="right">0</td>';
+        print '<td align="right">0</td>';
+        print '</tr>';
+    }
+    print '<tr height="24">';
+    print '<td align="center">';
+    //print '<a href="month.php?year='.$year.'">';
+    print $year;
+    //print '</a>';
+    print '</td>';
+    print '<td align="right">'.$val['nb'].'</td>';
+    print '<td align="right">'.price(price2num($val['total'],'MT'),1).'</td>';
+    print '<td align="right">'.price(price2num($val['avg'],'MT'),1).'</td>';
+    print '</tr>';
+    $oldyear=$year;
 }
 
+print '</table>';
 
-// Show graphics
-if ($mode == 'memberbycountry')
-{
-	// Assume we've already included the proper headers so just call our script inline
-	print "\n<script type='text/javascript'>\n";
-	print "google.load('visualization', '1', {'packages': ['geomap']});\n";
-	print "google.setOnLoadCallback(drawMap);\n";
-	print "function drawMap() {\n\tvar data = new google.visualization.DataTable();\n";
 
-	// Get the total number of rows
-	print "\tdata.addRows(".sizeof($data).");\n";
-	print "\tdata.addColumn('string', 'Country');\n";
-	print "\tdata.addColumn('number', 'Number');\n";
+print '</td>';
+print '<td align="center" valign="top">';
 
-	// loop and dump
-	$i=0;
-	foreach($data as $val)
-	{
-	    //$valcountry=ucfirst($val['code']);
-	    $valcountry=ucfirst($val['label_en']);
-        // fix case of uk
-	    if ($valcountry == 'Great Britain') { $valcountry = 'United Kingdom'; }
-	    print "\tdata.setValue(".$i.", 0, \"".$valcountry."\");\n";
-	    print "\tdata.setValue(".$i.", 1, ".$val['nb'].");\n";
-	    // Google's Geomap only supports up to 400 entries
-	    if ($i >= 400){ break; }
-		$i++;
-	}
-
-	print "\tvar options = {};\n";
-    print "\toptions['dataMode'] = 'regions';\n";
-    print "\toptions['showZoomOut'] = false;\n";
-    //print "\toptions['zoomOutLabel'] = '".dol_escape_js($langs->transnoentitiesnoconv("Numbers"))."';\n";
-	print "\toptions['width'] = ".$graphwidth.";\n";
-	print "\toptions['height'] = ".$graphheight.";\n";
-	print "\tvar container = document.getElementById('".$mode."');\n";
-	print "\tvar geomap = new google.visualization.GeoMap(container);\n";
-	print "\tgeomap.draw(data, options);\n";
-	print "};\n";
-	print "</script>\n";
-
-	// print the div tag that will contain the map
-	print '<div align="center" id="'.$mode.'"></div>'."\n";
-	print '<br>';
+// Show graphs
+print '<table class="border" width="100%"><tr valign="top"><td align="center">';
+if ($mesg) { print $mesg; }
+else {
+    print '<img src="'.$fileurlnb.'" title="'.$langs->trans("NbOfSubscriptions").'" alt="'.$langs->trans("NbOfSubscriptions").'">';
+    print "<br>\n";
+    print '<img src="'.$fileurlamount.'" title="'.$langs->trans("AmountTotal").'" alt="'.$langs->trans("AmountTotal").'">';
 }
+print '</td></tr></table>';
 
-if ($mode)
-{
-	// Print array
-	print '<table class="border" width="100%">';
-	print '<tr class="liste_titre">';
-	print '<td align="center">'.$label.'</td>';
-    if ($label2) print '<td align="center">'.$label2.'</td>';
-	print '<td align="center">'.$langs->trans("NbOfMembers").'</td>';
-	print '<td align="center">'.$langs->trans("LastMemberDate").'</td>';
-	print '</tr>';
+print '</td></tr></table>';
 
-	$oldyear=0;
-	$var=true;
-	foreach ($data as $val)
-	{
-		$year = $val['year'];
-		$var=!$var;
-		print '<tr '.$bc[$var].'>';
-	    print '<td align="center">'.$val['label'].'</td>';
-        if ($label2) print '<td align="center">'.$val['label2'].'</td>';
-	    print '<td align="right">'.$val['nb'].'</td>';
-		print '<td align="right">'.dol_print_date($val['lastdate'],'dayhour').'</td>';
-		print '</tr>';
-		$oldyear=$year;
-	}
-
-	print '</table>';
-}
+dol_fiche_end();
 
 $db->close();
 

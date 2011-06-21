@@ -25,6 +25,11 @@
  *		Ensemble de fonctions de base de dolibarr sous forme d'include
  */
 
+/**
+ *  Return array head with list of tabs to view object informations
+ *  @param      object          Member
+ *  @return     array           head
+ */
 function member_prepare_head($object)
 {
 	global $langs, $conf, $user;
@@ -88,4 +93,46 @@ function member_prepare_head($object)
 	return $head;
 }
 
+
+
+/**
+ *  Return array head with list of tabs to view object stats informations
+ *  @param      object          Member
+ *  @return     array           head
+ */
+function member_stats_prepare_head($object)
+{
+    global $langs, $conf, $user;
+
+    $h = 0;
+    $head = array();
+
+    $head[$h][0] = DOL_URL_ROOT.'/adherents/stats/index.php';
+    $head[$h][1] = $langs->trans("Subscriptions");
+    $head[$h][2] = 'statssubscription';
+    $h++;
+
+    $head[$h][0] = DOL_URL_ROOT.'/adherents/stats/geo.php?mode=memberbycountry';
+    $head[$h][1] = $langs->trans("Country");
+    $head[$h][2] = 'statscountry';
+    $h++;
+
+    $head[$h][0] = DOL_URL_ROOT.'/adherents/stats/geo.php?mode=memberbystate';
+    $head[$h][1] = $langs->trans("State");
+    $head[$h][2] = 'statsstate';
+    $h++;
+
+    $head[$h][0] = DOL_URL_ROOT.'/adherents/stats/geo.php?mode=memberbytown';
+    $head[$h][1] = $langs->trans('Town');
+    $head[$h][2] = 'statstown';
+    $h++;
+
+    // Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
+    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+    // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+    complete_head_from_modules($conf,$langs,$object,$head,$h,'member_stats');
+
+    return $head;
+}
 ?>

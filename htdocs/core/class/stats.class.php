@@ -228,6 +228,7 @@ class Stats
 		$result = array();
 
 		dol_syslog("Stats::_getAmountByMonth sql=".$sql);
+
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -242,6 +243,7 @@ class Stats
 		  	}
 		  	$this->db->free($resql);
 		}
+        else dol_print_error($this->db);
 
 		for ($i = 1 ; $i < 13 ; $i++)
 		{
@@ -284,6 +286,7 @@ class Stats
 		  	}
 		  	$this->db->free($resql);
 		}
+        else dol_print_error($this->db);
 
 		for ($i = 1 ; $i < 13 ; $i++)
 		{

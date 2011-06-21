@@ -60,7 +60,7 @@ class modAdherent extends DolibarrModules
         $this->picto='user';
 
         // Data directories to create when module is enabled
-        $this->dirs = array("/adherents/temp");
+        $this->dirs = array("/adherent/temp");
 
         // Config pages
         //-------------

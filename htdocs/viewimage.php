@@ -228,6 +228,16 @@ if ($modulepart)
         $original_file=$conf->deplacement->dir_temp.'/'.$original_file;
     }
 
+    // Wrapping pour les images des stats expeditions
+    elseif ($modulepart == 'memberstats')
+    {
+        if ($user->rights->adherent->lire)
+        {
+            $accessallowed=1;
+        }
+        $original_file=$conf->adherent->dir_temp.'/'.$original_file;
+    }
+
     // Wrapping pour les images des stats produits
     elseif (preg_match('/^productstats_/i',$modulepart))
     {

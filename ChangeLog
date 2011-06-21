@@ -54,7 +54,7 @@ For users:
        or credit note invoice.
 - New: task #10885: Add a week view for calendar.
 - New: task #11018: Add a status "not applicable" on events.
-- New: Add country/region/town statistics for member module.
+- New: Add subscriptions/country/region/town statistics for member module.
 - New: Can define a proxy for external web access.
 - New: task #11003: checkbox on checks for deposit.
 - New: Add status into export. Add default language into export.
