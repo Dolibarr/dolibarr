@@ -29,7 +29,7 @@ Group: Networking/WWW
 # For all other distrib
 Group: Applications/Internet
 
-#Requires=perl
+Requires=httpd
 AutoReqProv: yes
 
 
@@ -45,6 +45,7 @@ et bien d'autres choses dans une interface pensée pour la simplicité.
 
 #---- prep
 %prep
+echo Building %{name}-%{version}-%{release}
 %setup -q
 
 
@@ -57,6 +58,7 @@ et bien d'autres choses dans une interface pensée pour la simplicité.
 %install
 rm -rf $RPM_BUILD_ROOT
 
+mkdir -p $RPM_BUILD_ROOT/usr/local/dolibarr/build
 mkdir -p $RPM_BUILD_ROOT/usr/local/dolibarr/doc
 mkdir -p $RPM_BUILD_ROOT/usr/local/dolibarr/htdocs
 mkdir -p $RPM_BUILD_ROOT/usr/local/dolibarr/scripts
@@ -65,6 +67,7 @@ mkdir -p $RPM_BUILD_ROOT/usr/local/dolibarr/scripts
 
 install -m 444 README  $RPM_BUILD_ROOT/usr/local/dolibarr/README
 install -m 444 COPYRIGHT  $RPM_BUILD_ROOT/usr/local/dolibarr/COPYRIGHT
+cp -pr build $RPM_BUILD_ROOT/usr/local/dolibarr
 cp -pr doc $RPM_BUILD_ROOT/usr/local/dolibarr
 cp -pr htdocs $RPM_BUILD_ROOT/usr/local/dolibarr
 cp -pr scripts $RPM_BUILD_ROOT/usr/local/dolibarr
@@ -82,8 +85,10 @@ rm -rf $RPM_BUILD_ROOT
 %doc COPYRIGHT
 %doc /usr/local/dolibarr/doc/*
 #%config /usr/local/dolibarr/htdocs/conf/conf.php
+%dir /usr/local/dolibarr/build
 %dir /usr/local/dolibarr/htdocs
 %dir /usr/local/dolibarr/scripts
+/usr/local/dolibarr/build/*
 /usr/local/dolibarr/htdocs/*
 /usr/local/dolibarr/scripts/*
 /usr/local/dolibarr/README
@@ -93,14 +98,17 @@ rm -rf $RPM_BUILD_ROOT
 %post
 
 # Create a config file
-#if [ 1 -eq 1 ]; then
-#  if [ ! -f /%{_sysconfdir}/dolibarr/dolibarr.`hostname`.conf ]; then
-#    /bin/cat /%{_sysconfdir}/dolibarr/dolibarr.model.conf | \
-#      /usr/bin/perl -p -e 's|^SiteDomain=.*$|SiteDomain="'`hostname`'"|;
-#                       s|^HostAliases=.*$|HostAliases="REGEX[^.*'${HOSTNAME//./\\\\.}'\$]"|;
-#                      ' > /%{_sysconfdir}/dolibarr/dolibarr.`hostname`.conf || :
-#  fi
-#fi
+if [ 1 -eq 1 ]; then
+  if [ ! -f /%{_sysconfdir}/httpd/conf.d/dolibarr.conf ]; then
+  	 echo Create dolibarr web server config file
+     cp /usr/local/dolibarr/httpd-dolibarr.conf /%{_sysconfdir}/httpd/conf.d/dolibarr.conf
+  fi
+fi
+# /%{_sysconfdir}/dolibarr/dolibarr.`hostname`.conf || :
+
+# Restart web server
+echo Restart web server
+echo TODO
 
 # Show result
 echo
