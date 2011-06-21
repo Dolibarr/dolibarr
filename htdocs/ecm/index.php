@@ -462,7 +462,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 
 	print '<table width="100%" class="nobordernopadding">';
 
-	print '<tr class="liste_titre"';
+	print '<tr class="liste_titre">';
     print '<td class="liste_titre" align="left" colspan="6">';
     print '&nbsp;'.$langs->trans("ECMSections");
 	print '</td></tr>';
