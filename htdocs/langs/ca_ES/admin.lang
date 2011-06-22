@@ -852,6 +852,8 @@ MAIN_PROXY_PORT=Port del servidor proxy
 MAIN_PROXY_USER=Login del servidor proxy
 MAIN_PROXY_PASS=Contrasenya del servidor proxy
 DefineHereComplementaryAttributes=Definiu aquí la llista d'atributs addicionals, no disponibles a estàndard, i que vol gestionar per %s.
+ExtraFields=Atributs addicionals
+
 ##### Module password generation
 PasswordGenerationStandard=Retorna una contrasenya generada per l'algoritme intern Dolibarr: 8 caràcters, números i caràcters en minúscules barrejades.
 PasswordGenerationNone=No ofereix contrasenyes. La contrasenya s'introdueix manualment.
