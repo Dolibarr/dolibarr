@@ -205,6 +205,23 @@ if ($conf->global->ADHERENT_USE_MAILMAN)
 		    'ADHERENT_MAILMAN_UNSUB_URL'
 		    );
 		    print_fiche_titre("Mailman mailing list system",$lien,'');
+
+		    // JQuery activity
+            print '<script type="text/javascript">
+            var i1=0;
+            var i2=0;
+            jQuery(document).ready(function(){
+                jQuery("#exampleclick1").click(function(event){
+                    if (i1 == 0) { jQuery("#example1").show(); i1=1; }
+                    else if (i1 == 1)  { jQuery("#example1").hide(); i1=0; }
+                    });
+                jQuery("#exampleclick2").click(function(){
+                    if (i2 == 0) { jQuery("#example2").show(); i2=1; }
+                    else if (i2 == 1)  { jQuery("#example2").hide(); i2=0; }
+                    });
+            });
+            </script>';
+
 		    form_constantes($constantes);
 		    print '<br>';
 }
@@ -371,14 +388,18 @@ function form_constantes($tableau)
 
             if ($const=='ADHERENT_MAILMAN_URL')
             {
-                print '. '.$langs->trans("Example").':<br>';
+                print '. '.$langs->trans("Example").': <a href="#" id="exampleclick1">'.img_down().'</a><br>';
                 //print 'http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members?adminpw=%MAILMAN_ADMINPW%&subscribees=%EMAIL%&send_welcome_msg_to_this_batch=1';
+                print '<div id="example1" class="hidden">';
                 print 'http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members/add?subscribees_upload=%EMAIL%&adminpw=%MAILMAN_ADMINPW%&subscribe_or_invite=0&send_welcome_msg_to_this_batch=0&notification_to_list_owner=0';
+                print '</div>';
             }
             if ($const=='ADHERENT_MAILMAN_UNSUB_URL')
             {
-                print '. '.$langs->trans("Example").':<br>';
+                print '. '.$langs->trans("Example").': <a href="#" id="exampleclick2">'.img_down().'</a><br>';
+                print '<div id="example2" class="hidden">';
                 print 'http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members/remove?unsubscribees_upload=%EMAIL%&adminpw=%MAILMAN_ADMINPW%&send_unsub_ack_to_this_batch=0&send_unsub_notifications_to_list_owner=0';
+                print '</div>';
                 //print 'http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members/remove?adminpw=%MAILMAN_ADMINPW%&unsubscribees=%EMAIL%';
             }
 
