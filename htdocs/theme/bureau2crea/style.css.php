@@ -255,9 +255,6 @@ div.fiche {
 	/*left: 240px !important;*/
 }
 
-.ui-layout-north {
-        height: 57px !important;
-}
 
 /* ============================================================================== */
 /* Menu top et 1ere ligne tableau                                                 */
