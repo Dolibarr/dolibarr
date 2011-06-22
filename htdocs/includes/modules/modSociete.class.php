@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
@@ -204,9 +204,20 @@ class modSociete extends DolibarrModules
 		$this->export_permission[$r]=array(array("societe","export"));
 		$this->export_fields_array[$r]=array('s.rowid'=>"Id",'s.nom'=>"Name",'s.status'=>"Status",'s.client'=>"Customer",'s.fournisseur'=>"Supplier",'s.datec'=>"DateCreation",'s.tms'=>"DateLastModification",'s.code_client'=>"CustomerCode",'s.code_fournisseur'=>"SupplierCode",'s.address'=>"Address",'s.cp'=>"Zip",'s.ville'=>"Town",'p.libelle'=>"Country",'p.code'=>"CountryCode",'s.tel'=>"Phone",'s.fax'=>"Fax",'s.url'=>"Url",'s.email'=>"Email",'s.default_lang'=>"DefaultLang",'s.siret'=>"IdProf1",'s.siren'=>"IdProf2",'s.ape'=>"IdProf3",'s.idprof4'=>"IdProf4",'s.tva_intra'=>"VATIntraShort",'s.capital'=>"Capital",'s.note'=>"Note",'t.libelle'=>"ThirdPartyType",'ce.code'=>"Effectif","cfj.libelle"=>"JuridicalStatus",'s.fk_prospectlevel'=>'ProspectLevel','s.fk_stcomm'=>'ProspectStatus','d.nom'=>'State');
 		$this->export_entities_array[$r]=array();	// We define here only fields that use another picto
-
+        // Add extra fields
+        $sql="SELECT name, label FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'company'";
+        $resql=$this->db->query($sql);
+        while ($obj=$this->db->fetch_object($resql))
+        {
+            $fieldname='extra.'.$obj->name;
+            $fieldlabel=ucfirst($obj->label);
+            $this->export_fields_array[$r][$fieldname]=$fieldlabel;
+            $this->export_entities_array[$r][$fieldname]='company';
+        }
+        // End add axtra fields
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'societe as s';
+        $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe_extrafields as extra ON s.rowid = extra.fk_object';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as t ON s.fk_typent = t.id';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as p ON s.fk_pays = p.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_effectif as ce ON s.fk_effectif = ce.id';
@@ -227,7 +238,18 @@ class modSociete extends DolibarrModules
             unset($this->export_fields_array[$r]['s.code_fournisseur']);
             unset($this->export_entities_array[$r]['s.code_fournisseur']);
         }
-		$this->export_sql_start[$r]='SELECT DISTINCT ';
+        // Add extra fields
+        $sql="SELECT name, label FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'contact'";
+        $resql=$this->db->query($sql);
+        while ($obj=$this->db->fetch_object($resql))
+        {
+            $fieldname='extra.'.$obj->name;
+            $fieldlabel=ucfirst($obj->label);
+            $this->export_fields_array[$r][$fieldname]=$fieldlabel;
+            $this->export_entities_array[$r][$fieldname]='contact';
+        }
+        // End add axtra fields
+        $this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'socpeople as c';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON c.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as p ON c.fk_pays = p.rowid';

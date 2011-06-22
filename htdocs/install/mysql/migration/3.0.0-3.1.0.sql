@@ -381,6 +381,12 @@ update llx_actioncomm set elementtype='contract' where elementtype='contrat';
 alter table llx_propal add column   tms             timestamp after fk_projet;
 
 
+create table llx_product_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL
+) ENGINE=innodb;
 create table llx_societe_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
@@ -388,13 +394,8 @@ create table llx_societe_extrafields
   fk_object                 integer NOT NULL
 ) ENGINE=innodb;
 
-create table llx_product_extrafields
-(
-  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
-  fk_object                 integer NOT NULL
-) ENGINE=innodb;
-
+ALTER TABLE llx_product_extrafields ADD INDEX idx_product_extrafields (fk_object);
+ALTER TABLE llx_societe_extrafields ADD INDEX idx_societe_extrafields (fk_object);
 
 alter table llx_adherent_options_label drop index uk_adherent_options_label_name;
 alter table llx_adherent_options_label rename to llx_extrafields; 
