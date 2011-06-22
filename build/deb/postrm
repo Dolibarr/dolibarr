@@ -177,7 +177,7 @@ case "$1" in
 			export conffile="/etc/$server/conf.d/dolibarr.conf"
             if [ -f $conffile ] ;
             then
-	           rm $conffile
+	           rm -f $conffile
 	           status=purge
 		    fi
 			
