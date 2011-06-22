@@ -82,16 +82,19 @@ if ($_POST["action"] == 'add')
 {
 	// test si le login existe deja
 	$login=$_POST["login"];
-	if(!isset($_POST["login"]) || $_POST["login"]='')
+	if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
 	{
-		$error+=1;
-		$errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Login"))."<br>\n";
-	}
-	$sql = "SELECT login FROM ".MAIN_DB_PREFIX."adherent WHERE login='".$login."';";
-	$result = $db->query($sql);
-	if ($result)
-	{
-		$num = $db->num_rows($result);
+		if(!isset($_POST["login"]) || $_POST["login"]='')
+		{
+			$error+=1;
+			$errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Login"))."<br>\n";
+		}
+		$sql = "SELECT login FROM ".MAIN_DB_PREFIX."adherent WHERE login='".$login."';";
+		$result = $db->query($sql);
+		if ($result)
+		{
+			$num = $db->num_rows($result);
+		}
 	}
 	if (!isset($_POST["nom"]) || !isset($_POST["prenom"]) || $_POST["prenom"]=='' || $_POST["nom"]=='')
 	{
@@ -103,16 +106,18 @@ if ($_POST["action"] == 'add')
 		$error+=1;
 		$errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("EMail"))."<br>\n";
 	}
-	if ($num !=0)
 	{
-		$error+=1;
-		$errmsg .= $langs->trans("ErrorLoginAlreadyExists")."<br>\n";
-	}
-	if (!isset($_POST["pass1"]) || !isset($_POST["pass2"]) || $_POST["pass1"] == '' || $_POST["pass2"] == '' || $_POST["pass1"]!=$_POST["pass2"])
-	{
-		$error+=1;
-		$langs->load("errors");
-		$errmsg .= $langs->trans("ErrorPasswordsMustMatch")."<br>\n";
+		if ($num !=0)
+		{
+			$error+=1;
+			$errmsg .= $langs->trans("ErrorLoginAlreadyExists")."<br>\n";
+		}
+		if (!isset($_POST["pass1"]) || !isset($_POST["pass2"]) || $_POST["pass1"] == '' || $_POST["pass2"] == '' || $_POST["pass1"]!=$_POST["pass2"])
+		{
+			$error+=1;
+			$langs->load("errors");
+			$errmsg .= $langs->trans("ErrorPasswordsMustMatch")."<br>\n";
+		}
 	}
 	if (isset($_POST["naiss"]) && $_POST["naiss"] !='')
 	{
@@ -142,8 +147,11 @@ if ($_POST["action"] == 'add')
 		$adh->cp          = $_POST["cp"];
 		$adh->ville       = $_POST["ville"];
 		$adh->email       = $_POST["email"];
-		$adh->login       = $login;
-		$adh->pass        = $_POST["pass1"];
+		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
+		{
+			$adh->login       = $login;
+			$adh->pass        = $_POST["pass1"];
+		}
 		$adh->photo       = $_POST["photo"];
 		$adh->note        = $_POST["note"];
 		$adh->pays        = $_POST["pays"];
@@ -269,9 +277,12 @@ print '<textarea name="adresse" wrap="soft" cols="40" rows="3">'.dol_escape_html
 print '<tr><td>'.$langs->trans("Zip").'/'.$langs->trans("Town").'</td><td><input type="text" name="cp" size="8" value="'.dol_escape_htmltag(GETPOST('cp')).'"> <input type="text" name="ville" size="40" value="'.dol_escape_htmltag(GETPOST('ville')).'"></td></tr>'."\n";
 print '<tr><td>'.$langs->trans("Country").'</td><td><input type="text" name="pays" size="40" value="'.$pays.'"></td></tr>'."\n";
 print '<tr><td><FONT COLOR="red">*</FONT> <FONT COLOR="blue">**</FONT> Email</td><td><input type="text" name="email" size="40" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
-print '<tr><td><FONT COLOR="red">*</FONT> '.$langs->trans("Login").'</td><td><input type="text" name="login" size="40" value="'.dol_escape_htmltag(GETPOST('login')).'"></td></tr>'."\n";
-print '<tr><td><FONT COLOR="red">*</FONT> '.$langs->trans("Password").'</td><td><input type="password" name="pass1" size="40"></td></tr>'."\n";
-print '<tr><td><FONT COLOR="red">*</FONT> '.$langs->trans("PasswordAgain").'</td><td><input type="password" name="pass2" size="40"></td></tr>'."\n";
+if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
+{
+	print '<tr><td><FONT COLOR="red">*</FONT> '.$langs->trans("Login").'</td><td><input type="text" name="login" size="40" value="'.dol_escape_htmltag(GETPOST('login')).'"></td></tr>'."\n";
+	print '<tr><td><FONT COLOR="red">*</FONT> '.$langs->trans("Password").'</td><td><input type="password" name="pass1" size="40"></td></tr>'."\n";
+	print '<tr><td><FONT COLOR="red">*</FONT> '.$langs->trans("PasswordAgain").'</td><td><input type="password" name="pass2" size="40"></td></tr>'."\n";
+}
 print '<tr><td>'.$langs->trans("Birthday").'<BR>Format AAAA-MM-JJ</td><td><input type="text" name="naiss" size="40" value="'.dol_escape_htmltag(GETPOST('naiss')).'"></td></tr>'."\n";
 print '<tr><td><FONT COLOR="blue">**</FONT> URL Photo</td><td><input type="text" name="photo" size="40" value="'.dol_escape_htmltag(GETPOST('photo')).'"></td></tr>'."\n";
 print '<tr><td>'.$langs->trans("Public").' ?</td><td><input type="checkbox" name="public" value="1" checked></td></tr>'."\n";
