@@ -109,7 +109,7 @@ $DESTI="$SOURCE/build";
 
 # Choose package targets
 #-----------------------
-$target="TGZ";    # Les themes sont au format tgz
+$target="ZIP";    # Packages uses this format
 if ($target) {
     $CHOOSEDTARGET{uc($target)}=1;
 }

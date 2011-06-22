@@ -1,4 +1,5 @@
-build
+build/exe
+build/html
 dev/dbmodel
 dev/fpdf
 dev/initdemo
