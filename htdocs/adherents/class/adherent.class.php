@@ -45,6 +45,7 @@ class Adherent extends CommonObject
     var $errors=array();
     var $element='member';
     var $table_element='adherent';
+    var $ismultientitymanaged = 1;  // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
     var $id;
     var $ref;

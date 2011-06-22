@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ function member_prepare_head($object)
 	$head[$h][2] = 'general';
 	$h++;
 
-	if ($conf->ldap->enabled && $conf->global->LDAP_MEMBER_ACTIVE)
+	if (! empty($conf->ldap->enabled) && ! empty($conf->global->LDAP_MEMBER_ACTIVE))
 	{
 		$langs->load("ldap");
 
@@ -52,7 +52,7 @@ function member_prepare_head($object)
 		$h++;
 	}
 
-    if ($user->rights->adherent->cotisation->lire)
+    if (! empty($user->rights->adherent->cotisation->lire))
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/adherents/card_subscriptions.php?rowid='.$object->id;
 		$head[$h][1] = $langs->trans("Subscriptions");
@@ -61,7 +61,7 @@ function member_prepare_head($object)
 	}
 
 	// Show category tab
-	if ($conf->categorie->enabled && $user->rights->categorie->lire)
+	if (! empty($conf->categorie->enabled) && ! empty($user->rights->categorie->lire))
 	{
 		$head[$h][0] = DOL_URL_ROOT."/categories/categorie.php?id=".$object->id.'&type=3';
 		$head[$h][1] = $langs->trans('Categories');

@@ -572,7 +572,7 @@ class CommonObject
 
 		return $result;
 	}
-	
+
 	/**
 	 *    	Update a specific field from an object
 	 *    	@param		table		Table element or element line
@@ -590,7 +590,7 @@ class CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$table." SET ";
 		$sql.= $field." = '".$value."'";
 		$sql.= " WHERE rowid = ".$id;
-		
+
 		dol_syslog("CommonObject::updateObjectField sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql) dol_print_error($this->db);
@@ -619,7 +619,7 @@ class CommonObject
 
 		$sql = "SELECT MAX(te.".$fieldid.")";
 		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as te";
-		if ($this->ismultientitymanaged == 2 || ($this->element != 'societe' && !$this->isnolinkedbythird && !$user->rights->societe->client->voir)) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to entity
+		if ($this->ismultientitymanaged == 2 || ($this->element != 'societe' && empty($this->isnolinkedbythird) && empty($user->rights->societe->client->voir))) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to entity
 		if (empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$alias.".rowid = sc.fk_soc";
 		$sql.= " WHERE te.".$fieldid." < '".$this->db->escape($this->ref)."'";
 		if (empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir) $sql.= " AND sc.fk_user = " .$user->id;

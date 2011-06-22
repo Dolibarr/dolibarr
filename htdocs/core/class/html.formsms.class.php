@@ -96,7 +96,7 @@ class FormSms
 
 		$form=new Form($this->db);
         $soc=new Societe($this->db);
-		if ($this->withtosocid > 0)
+		if (!empty($this->withtosocid) && $this->withtosocid > 0)
         {
             $soc->fetch($this->withtosocid);
         }
