@@ -397,5 +397,66 @@ class ExtraFields
 		}
 	}
 
+
+	/**
+	 *     Return HTML string to put an input field into a page
+	 *     @param      key             Key of attribute
+	 *     @param      value           Value to show
+	 *     @param      moreparam       To add more parametes on html input tag
+	 */
+	function showInputField($key,$value,$moreparam='')
+	{
+        $label=$this->attribute_label[$key];
+	    $type=$this->attribute_type[$key];
+        $size=$this->attribute_size[$key];
+        $elementtype=$this->attribute_elementtype[$key];
+        if ($type == 'date')
+        {
+            $showsize=10;
+        }
+        elseif ($type == 'int')
+        {
+            $showsize=10;
+        }
+        else
+        {
+            $showsize=round($size);
+            if ($showsize > 48) $showsize=48;
+        }
+	    //print $type.'-'.$size;
+        $out='<input type="text" name="options_'.$key.'" size="'.$showsize.'" maxlength="'.$size.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
+	    if ($type == 'date') $out.=' (YYYY-MM-DD)';
+        return $out;
+	}
+
+    /**
+     *     Return HTML string to put an output field into a page
+     *     @param      key             Key of attribute
+     *     @param      value           Value to show
+     */
+    function showOutputField($key,$value,$moreparam='')
+    {
+        $label=$this->attribute_label[$key];
+        $type=$this->attribute_type[$key];
+        $size=$this->attribute_size[$key];
+        $elementtype=$this->attribute_elementtype[$key];
+        if ($type == 'date')
+        {
+            $showsize=10;
+        }
+        elseif ($type == 'int')
+        {
+            $showsize=10;
+        }
+        else
+        {
+            $showsize=round($size);
+            if ($showsize > 48) $showsize=48;
+        }
+        //print $type.'-'.$size;
+        $out=$value;
+        return $out;
+    }
+
 }
 ?>

@@ -982,10 +982,13 @@ else
             print '</td></tr>';
         }
 
-        // Attribut optionnels
-        foreach($extrafields->attribute_label as $key=>$value)
+        // Other attributes
+        foreach($extrafields->attribute_label as $key=>$label)
         {
-            print "<tr><td>".$value.'</td><td colspan="3"><input type="text" name="options_'.$key.'" size="40" value="'.(isset($_POST["options_".$key])?$_POST["options_".$key]:'').'"></td></tr>'."\n";
+            $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:'');
+            print "<tr><td>".$label.'</td><td colspan="3">';
+            print $extrafields->showInputField($key,$value);
+            print '</td></tr>'."\n";
         }
 
         // Ajout du logo
@@ -1130,7 +1133,7 @@ else
             print '<table class="border" width="100%">';
 
             // Name
-            print '<tr><td><span class="fieldrequired">'.$langs->trans('ThirdPartyName').'</span></td><td colspan="3"><input type="text" size="40" maxlength="60" name="nom" value="'.$soc->nom.'"></td></tr>';
+            print '<tr><td><span class="fieldrequired">'.$langs->trans('ThirdPartyName').'</span></td><td colspan="3"><input type="text" size="40" maxlength="60" name="nom" value="'.$soc->name.'"></td></tr>';
 
             // Prefix
             if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
@@ -1407,9 +1410,12 @@ else
             }
 
             // Other attributes
-            foreach($extrafields->attribute_label as $key=>$value)
+            foreach($extrafields->attribute_label as $key=>$label)
             {
-                print "<tr><td>".$value."</td><td colspan=\"3\"><input type=\"text\" name=\"options_".$key."\" size=\"40\" value=\"".$soc->array_options["options_$key"]."\"></td></tr>\n";
+                $value=(isset($_POST["options_$key"])?$_POST["options_$key"]:$soc->array_options["options_$key"]);
+                print "<tr><td>".$label."</td><td colspan=\"3\">";
+                print $extrafields->showInputField($key,$value);
+                print "</td></tr>\n";
             }
 
             // Logo
@@ -1740,9 +1746,12 @@ else
         }
 
         // Other attributes
-        foreach($extrafields->attribute_label as $key=>$value)
+        foreach($extrafields->attribute_label as $key=>$label)
         {
-            print "<tr><td>".$value."</td><td>".$soc->array_options["options_$key"]."&nbsp;</td></tr>\n";
+            $value=$soc->array_options["options_$key"];
+            print "<tr><td>".$label."</td><td>";
+            print $extrafields->showOutputField($key,$value);
+            print "</td></tr>\n";
         }
 
         // Ban

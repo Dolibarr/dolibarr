@@ -769,9 +769,12 @@ if ($action == 'create')
     print "</td></tr>\n";
 
     // Attribut optionnels
-    foreach($extrafields->attribute_label as $key=>$value)
+    foreach($extrafields->attribute_label as $key=>$label)
     {
-        print "<tr><td>".$value.'</td><td><input type="text" name="options_'.$key.'" size="40" value="'.(isset($_POST["options_".$key])?$_POST["options_".$key]:'').'"></td></tr>'."\n";
+        $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:'');
+        print "<tr><td>".$label.'</td><td>';
+        print $extrafields->showInputField($key,$value);
+        print '</td></tr>'."\n";
     }
 
 /*
@@ -980,9 +983,12 @@ if ($action == 'edit')
     print "</td></tr>\n";
 
 	// Other attributes
-	foreach($extrafields->attribute_label as $key=>$value)
+	foreach($extrafields->attribute_label as $key=>$label)
 	{
-		print "<tr><td>".$value."</td><td><input type=\"text\" name=\"options_".$key."\" size=\"40\" value=\"".$adh->array_options["options_$key"]."\"></td></tr>\n";
+	    $value=(isset($_POST["options_$key"])?$_POST["options_$key"]:$adh->array_options["options_$key"]);
+		print "<tr><td>".$label."</td><td>";
+        print $extrafields->showInputField($key,$value);
+		print "</td></tr>\n";
 	}
 
 	// Third party Dolibarr
@@ -1285,9 +1291,12 @@ if ($rowid && $action != 'edit')
     print '<tr><td>'.$langs->trans("Status").'</td><td class="valeur">'.$adh->getLibStatut(4).'</td></tr>';
 
     // Other attributes
-    foreach($extrafields->attribute_label as $key=>$value)
+    foreach($extrafields->attribute_label as $key=>$label)
     {
-        print "<tr><td>".$value."</td><td>".$adh->array_options["options_$key"]."&nbsp;</td></tr>\n";
+        $value=$adh->array_options["options_$key"];
+        print "<tr><td>".$label."</td><td>";
+        print $extrafields->showOutputField($key,$value);
+        print "</td></tr>\n";
     }
 
 	// Third party Dolibarr
