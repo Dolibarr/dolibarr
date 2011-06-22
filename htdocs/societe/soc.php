@@ -194,7 +194,7 @@ else
         $soc->default_lang          = $_POST["default_lang"];
 
         if (GETPOST('deletephoto')) $soc->logo = '';
-        $soc->logo = dol_sanitizeFileName($_FILES['photo']['name']);
+        else if (! empty($_FILES['photo']['name'])) $soc->logo = dol_sanitizeFileName($_FILES['photo']['name']);
 
         // Check parameters
         if (empty($_POST["cancel"]))
@@ -320,26 +320,25 @@ else
                     exit;
                 }
 
-                $oldsoc=new Societe($db);
-                $result=$oldsoc->fetch($socid);
+                $soc->oldcopy=dol_clone($soc);
 
                 // To not set code if third party is not concerned. But if it had values, we keep them.
-                if (empty($soc->client) && empty($oldsoc->code_client))          $soc->code_client='';
-                if (empty($soc->fournisseur)&& empty($oldsoc->code_fournisseur)) $soc->code_fournisseur='';
+                if (empty($soc->client) && empty($soc->oldcopy->code_client))          $soc->code_client='';
+                if (empty($soc->fournisseur)&& empty($soc->oldcopy->code_fournisseur)) $soc->code_fournisseur='';
                 //var_dump($soc);exit;
 
-                $result = $soc->update($socid,$user,1,$oldsoc->codeclient_modifiable(),$oldsoc->codefournisseur_modifiable());
+                $result = $soc->update($socid,$user,1,$soc->oldcopy->codeclient_modifiable(),$soc->oldcopy->codefournisseur_modifiable());
                 if ($result <=  0)
                 {
                     $error = $soc->error; $errors = $soc->errors;
                 }
 
                 ### Gestion du logo de la société
-                $dir     = $conf->societe->dir_output."/".$soc->id."/logos/";
+                $dir     = $conf->societe->dir_output."/".$soc->id."/logos";
                 $file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
                 if ($file_OK)
                 {
-                    if (GETPOST('deletephoto') && $soc->logo)
+                    if (GETPOST('deletephoto'))
                     {
                         $fileimg=$conf->societe->dir_output.'/'.$soc->id.'/logos/'.$soc->logo;
                         $dirthumbs=$conf->societe->dir_output.'/'.$soc->id.'/logos/thumbs';
@@ -347,9 +346,9 @@ else
                         dol_delete_dir_recursive($dirthumbs);
                     }
 
-                    if (image_format_supported($_FILES['photo']['name']))
+                    if (image_format_supported($_FILES['photo']['name']) > 0)
                     {
-                        create_exdir($dir);
+                        dol_mkdir($dir);
 
                         if (@is_dir($dir))
                         {
@@ -371,6 +370,10 @@ else
                                 $imgThumbMini = vignette($newfile, $maxwidthmini, $maxheightmini, '_mini', $quality);
                             }
                         }
+                    }
+                    else
+                    {
+                        $errors[] = "ErrorBadImageFormat";
                     }
                 }
                 ### Gestion du logo de la société

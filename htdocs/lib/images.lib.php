@@ -302,7 +302,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 
 	global $conf,$langs;
 
-	dol_syslog("vignette file=".$file." extName=".$extName." maxWidth=".$maxWidth." maxHeight=".$maxHeight." quality=".$quality." targetformat=".$targetformat);
+	dol_syslog("vignette file=".$file." extName=".$extName." maxWidth=".$maxWidth." maxHeight=".$maxHeight." quality=".$quality." outdir=".$outdir." targetformat=".$targetformat);
 
 	// Clean parameters
 	$file=trim($file);
@@ -311,24 +311,28 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 	if (! $file)
 	{
 		// Si le fichier n'a pas ete indique
-		return 'Bad parameter file';
+		return 'ErrorBadParameters';
 	}
 	elseif (! file_exists($file))
 	{
 		// Si le fichier passe en parametre n'existe pas
-		return $langs->trans("ErrorFileNotFound",$file);
+        dol_syslog($langs->trans("ErrorFileNotFound",$file),LOG_ERR);
+	    return $langs->trans("ErrorFileNotFound",$file);
 	}
 	elseif(image_format_supported($file) < 0)
 	{
-		return 'This file '.$file.' does not seem to be an image format file name.';
+        dol_syslog('This file '.$file.' does not seem to be an image format file name.',LOG_WARNING);
+	    return 'ErrorBadImageFormat';
 	}
 	elseif(!is_numeric($maxWidth) || empty($maxWidth) || $maxWidth < -1){
 		// Si la largeur max est incorrecte (n'est pas numerique, est vide, ou est inferieure a 0)
-		return 'Wrong value for parameter maxWidth';
+        dol_syslog('Wrong value for parameter maxWidth',LOG_ERR);
+	    return 'Wrong value for parameter maxWidth';
 	}
 	elseif(!is_numeric($maxHeight) || empty($maxHeight) || $maxHeight < -1){
 		// Si la hauteur max est incorrecte (n'est pas numerique, est vide, ou est inferieure a 0)
-		return 'Wrong value for parameter maxHeight';
+        dol_syslog('Wrong value for parameter maxHeight',LOG_ERR);
+	    return 'Wrong value for parameter maxHeight';
 	}
 
 	$fichier = realpath($file); 	// Chemin canonique absolu de l'image

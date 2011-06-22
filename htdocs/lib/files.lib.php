@@ -618,31 +618,34 @@ function dol_delete_dir($dir,$nophperrors=0)
 function dol_delete_dir_recursive($dir,$count=0,$nophperrors=0)
 {
     dol_syslog("functions.lib:dol_delete_dir_recursive ".$dir,LOG_DEBUG);
-    $dir_osencoded=dol_osencode($dir);
-    if ($handle = opendir("$dir_osencoded"))
+    if (dol_is_dir($dir))
     {
-        while (false !== ($item = readdir($handle)))
+        $dir_osencoded=dol_osencode($dir);
+        if ($handle = opendir("$dir_osencoded"))
         {
-            if (! utf8_check($item)) $item=utf8_encode($item);  // should be useless
-
-            if ($item != "." && $item != "..")
+            while (false !== ($item = readdir($handle)))
             {
-                if (is_dir(dol_osencode("$dir/$item")))
+                if (! utf8_check($item)) $item=utf8_encode($item);  // should be useless
+
+                if ($item != "." && $item != "..")
                 {
-                    $count=dol_delete_dir_recursive("$dir/$item",$count,$nophperrors);
-                }
-                else
-                {
-                    dol_delete_file("$dir/$item",1,$nophperrors);
-                    $count++;
-                    //echo " removing $dir/$item<br>\n";
+                    if (is_dir(dol_osencode("$dir/$item")))
+                    {
+                        $count=dol_delete_dir_recursive("$dir/$item",$count,$nophperrors);
+                    }
+                    else
+                    {
+                        dol_delete_file("$dir/$item",1,$nophperrors);
+                        $count++;
+                        //echo " removing $dir/$item<br>\n";
+                    }
                 }
             }
+            closedir($handle);
+            dol_delete_dir($dir,$nophperrors);
+            $count++;
+            //echo "removing $dir<br>\n";
         }
-        closedir($handle);
-        dol_delete_dir($dir,$nophperrors);
-        $count++;
-        //echo "removing $dir<br>\n";
     }
 
     //echo "return=".$count;
