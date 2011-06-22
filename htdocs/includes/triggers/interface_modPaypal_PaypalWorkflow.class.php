@@ -102,6 +102,10 @@ class InterfacePaypalWorkflow
         {
         	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". source=".$object->source." ref=".$object->ref);
         	
+        	require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
+        	
+        	$soc = new Societe($this->db);
+        	
         	// Parse element/subelement (ex: project_task)
 	        $element = $path = $filename = $object->source;
 	        if (preg_match('/^([^_]+)_([^_]+)/i',$object->source,$regs))
