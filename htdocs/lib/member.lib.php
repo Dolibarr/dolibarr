@@ -111,7 +111,7 @@ function member_admin_prepare_head($object)
     $head[$h][2] = 'general';
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/adherents/options.php';
+    $head[$h][0] = DOL_URL_ROOT.'/adherents/admin/adherent_extrafields.php';
     $head[$h][1] = $langs->trans("ExtraFields");
     $head[$h][2] = 'attributes';
     $h++;

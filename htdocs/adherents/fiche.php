@@ -404,8 +404,6 @@ if ($_POST["action"] == 'add' && $user->rights->adherent->creer)
     {
         if (preg_match("/^options_/",$key))
         {
-            //escape values from POST, at least with $db->escape, to avoid obvious SQL injections
-            //(array_options is directly input in the DB in adherent.class.php::update())
             $adh->array_options[$key]=$_POST[$key];
         }
     }

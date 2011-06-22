@@ -74,7 +74,7 @@ class ExtraFields
         if (empty($attrname)) return -1;
         if (empty($label)) return -1;
 
-        $result=$this->create($attrname,$type,$size);
+        $result=$this->create($attrname,$type,$size,$elementtype);
         if ($result > 0)
         {
             $result2=$this->create_label($attrname,$label,$type,$pos,$size,$elementtype);
@@ -190,16 +190,16 @@ class ExtraFields
             return -1;
         }
 
-		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
+		if (! empty($attrname) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
-			$result=$this->db->DDLDropField(MAIN_DB_PREFIX.$table,$attrname);
+		    $result=$this->db->DDLDropField(MAIN_DB_PREFIX.$table,$attrname);
 			if ($result < 0)
 			{
 				$this->error=$this->db->lasterror();
 				dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
 			}
 
-			$result=$this->delete_label($attrname);
+			$result=$this->delete_label($attrname,$elementtype);
 
 			return $result;
 		}

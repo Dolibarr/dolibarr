@@ -196,6 +196,15 @@ else
         $soc->commercial_id         = $_POST["commercial_id"];
         $soc->default_lang          = $_POST["default_lang"];
 
+        // Get extra fields
+        foreach($_POST as $key => $value)
+        {
+            if (preg_match("/^options_/",$key))
+            {
+                $soc->array_options[$key]=$_POST[$key];
+            }
+        }
+
         if (GETPOST('deletephoto')) $soc->logo = '';
         else if (! empty($_FILES['photo']['name'])) $soc->logo = dol_sanitizeFileName($_FILES['photo']['name']);
 
@@ -1749,7 +1758,7 @@ else
         foreach($extrafields->attribute_label as $key=>$label)
         {
             $value=$soc->array_options["options_$key"];
-            print "<tr><td>".$label."</td><td>";
+            print "<tr><td>".$label.'</td><td colspan="3">';
             print $extrafields->showOutputField($key,$value);
             print "</td></tr>\n";
         }

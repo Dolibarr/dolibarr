@@ -173,6 +173,40 @@ function societe_prepare_head2($object)
 }
 
 
+
+/**
+ *  Return array head with list of tabs to view object informations
+ *  @param      object          Thirdparty
+ *  @return     array           head
+ */
+function societe_admin_prepare_head($object)
+{
+    global $langs, $conf, $user;
+
+    $h = 0;
+    $head = array();
+
+    $head[$h][0] = DOL_URL_ROOT.'/admin/societe.php';
+    $head[$h][1] = $langs->trans("Miscellanous");
+    $head[$h][2] = 'general';
+    $h++;
+
+    $head[$h][0] = DOL_URL_ROOT.'/admin/societe_extrafields.php';
+    $head[$h][1] = $langs->trans("ExtraFields");
+    $head[$h][2] = 'attributes';
+    $h++;
+
+    // Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
+    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+    // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+    complete_head_from_modules($conf,$langs,$object,$head,$h,'company_admin');
+
+    return $head;
+}
+
+
+
 /**
  *    Return country translated from an id or a code
  *    @param      id            Id or code of country

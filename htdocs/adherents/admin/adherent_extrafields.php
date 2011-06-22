@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,13 +19,13 @@
  */
 
 /**
- *      \file       htdocs/adherents/options.php
+ *      \file       htdocs/adherents/admin/adherent_extrafields.php
  *		\ingroup    member
- *		\brief      Page de configuratin des champs optionnels
+ *		\brief      Page to setup extra fields of members
  *		\version    $Id$
  */
 
-require("../main.inc.php");
+require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/member.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php");
 
@@ -47,12 +47,15 @@ $type2label=array(
 $action=GETPOST("action");
 $elementtype='member';
 
+if (!$user->admin)
+accessforbidden();
+
 
 /*
  * Actions
  */
 
-if ($action == 'add' && $user->rights->adherent->configurer)
+if ($action == 'add')
 {
 	if ($_POST["button"] != $langs->trans("Cancel"))
 	{
@@ -94,7 +97,7 @@ if ($action == 'add' && $user->rights->adherent->configurer)
 }
 
 // Rename field
-if ($action == 'update' && $user->rights->adherent->configurer)
+if ($action == 'update')
 {
 	if ($_POST["button"] != $langs->trans("Cancel"))
 	{
@@ -138,13 +141,17 @@ if ($action == 'update' && $user->rights->adherent->configurer)
 }
 
 # Suppression attribut
-if ($action == 'delete' && $user->rights->adherent->configurer)
+if ($action == 'delete')
 {
 	if(isset($_GET["attrname"]) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$_GET["attrname"]))
 	{
-		$extrafields->delete($_GET["attrname"],$elementtype);
-		Header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
+        $result=$extrafields->delete($_GET["attrname"],$elementtype);
+        if ($result >= 0)
+        {
+            Header("Location: ".$_SERVER["PHP_SELF"]);
+            exit;
+        }
+        else $mesg=$extrafields->error;
 	}
 	else
 	{
@@ -180,7 +187,7 @@ print '<br>';
 dol_htmloutput_errors($mesg);
 
 // Load attribute_label
-$extrafields->fetch_name_optionals_label();
+$extrafields->fetch_name_optionals_label($elementtype);
 
 print "<table summary=\"listofattributes\" class=\"noborder\" width=\"100%\">";
 
@@ -201,8 +208,8 @@ foreach($extrafields->attribute_type as $key => $value)
 	print "<td>".$key."</td>\n";
 	print "<td>".$type2label[$extrafields->attribute_type[$key]]."</td>\n";
 	print '<td align="right">'.$extrafields->attribute_size[$key]."</td>\n";
-	print '<td align="right"><a href="options.php?action=edit&attrname='.$key.'">'.img_edit().'</a>';
-	print "&nbsp; <a href=\"options.php?action=delete&attrname=$key\">".img_delete()."</a></td>\n";
+	print '<td align="right"><a href="".$_SERVER["PHP_SELF"]."?action=edit&attrname='.$key.'">'.img_edit().'</a>';
+	print "&nbsp; <a href=\"".$_SERVER["PHP_SELF"]."?action=delete&attrname=$key\">".img_delete()."</a></td>\n";
 	print "</tr>";
 	//      $i++;
 }
@@ -218,7 +225,7 @@ dol_fiche_end();
 if ($action != 'create' && $action != 'edit')
 {
 	print '<div class="tabsAction">';
-	print "<a class=\"butAction\" href=\"options.php?action=create\">".$langs->trans("NewAttribute")."</a>";
+	print "<a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?action=create\">".$langs->trans("NewAttribute")."</a>";
 	print "</div>";
 }
 
@@ -234,7 +241,7 @@ if ($action == 'create')
 	print "<br>";
 	print_titre($langs->trans('NewAttribute'));
 
-	print '<form action="options.php" method="post">';
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<table summary="listofattributes" class="border" width="100%">';
 
@@ -270,7 +277,7 @@ if ($_GET["attrname"] && $action == 'edit')
 	/*
 	 * formulaire d'edition
 	 */
-	print '<form method="post" action="options.php?attrname='.$_GET["attrname"].'">';
+	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?attrname='.$_GET["attrname"].'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="attrname" value="'.$_GET["attrname"].'">';
 	print '<input type="hidden" name="action" value="update">';

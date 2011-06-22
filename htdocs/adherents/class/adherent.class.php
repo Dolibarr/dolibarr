@@ -421,6 +421,8 @@ class Adherent extends CommonObject
         {
             $nbrowsaffected+=$this->db->affected_rows($resql);
 
+            // Add/Update extra fields
+            // TODO Run a method into commonobject
             if (sizeof($this->array_options) > 0)
             {
                 $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."adherent_extrafields WHERE fk_object = ".$this->id;
@@ -450,11 +452,7 @@ class Adherent extends CommonObject
 
                 dol_syslog(get_class($this)."::update update option sql=".$sql);
                 $resql = $this->db->query($sql);
-                if ($resql)
-                {
-                    $nbrowsaffected+=1;
-                }
-                else
+                if (! $resql)
                 {
                     $this->error=$this->db->error();
                     dol_syslog(get_class($this)."::update ".$this->error,LOG_ERR);

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,6 +28,7 @@
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 $langs->load("admin");
 
@@ -171,7 +172,10 @@ llxHeader('',$langs->trans("CompanySetup"),'EN:Module Third Parties setup|FR:Par
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("CompanySetup"),$linkback,'setup');
 
-print "<br>";
+
+$head = societe_admin_prepare_head($soc);
+
+dol_fiche_head($head, 'general', $langs->trans("ThirdParty"), 0, 'company');
 
 
 // Choix du module de gestion des codes clients / fournisseurs
@@ -489,6 +493,9 @@ print '</tr>';
 print '</form>';
 
 print '</table>';
+
+
+dol_fiche_end();
 
 $db->close();
 

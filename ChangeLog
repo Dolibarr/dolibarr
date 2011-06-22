@@ -71,6 +71,7 @@ For users:
 - New: task #9744 : Add the barcode to select products on Point of Sale module
 - New: Subscription/Unsubscription to mailman mailing-list can be done on 
        validate/resiliate in foundation module.
+- New: Can use extrafields on third parties.
 - Fix: Better Postgresql compatibility.
 - Fix: Numbering module for invoices use same number for invoice 
        and credit note if mask is same.

@@ -524,6 +524,46 @@ class Societe extends CommonObject
                 // Si le fournisseur est classe on l'ajoute
                 $this->AddFournisseurInCategory($this->fournisseur_categorie);
 
+                // Add/Update extra fields
+                // TODO Run a method into commonobject
+                if (sizeof($this->array_options) > 0)
+                {
+                    $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."societe_extrafields WHERE fk_object = ".$this->id;
+                    dol_syslog(get_class($this)."::update sql=".$sql_del);
+                    $this->db->query($sql_del);
+
+                    $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_extrafields (fk_object";
+                    foreach($this->array_options as $key => $value)
+                    {
+                        // Add field of attribut
+                        $sql.=",".substr($key,8);   // Remove 'options_' prefix
+                    }
+                    $sql .= ") VALUES (".$this->id;
+                    foreach($this->array_options as $key => $value)
+                    {
+                        // Add field o fattribut
+                        if ($this->array_options[$key] != '')
+                        {
+                            $sql.=",'".$this->array_options[$key]."'";
+                        }
+                        else
+                        {
+                            $sql.=",null";
+                        }
+                    }
+                    $sql.=")";
+
+                    dol_syslog(get_class($this)."::update update option sql=".$sql);
+                    $resql = $this->db->query($sql);
+                    if (! $resql)
+                    {
+                        $this->error=$this->db->error();
+                        dol_syslog(get_class($this)."::update ".$this->error,LOG_ERR);
+                        $this->db->rollback();
+                        return -2;
+                    }
+                }
+
                 if ($call_trigger)
                 {
                     // Appel des triggers
@@ -832,25 +872,25 @@ class Societe extends CommonObject
         $haschild=0;
         foreach($listtable as $table)
         {
-	        // Check if third party can be deleted
-	        $nb=0;
-	        $sql = "SELECT COUNT(*) as nb from ".MAIN_DB_PREFIX.$table;
-	        $sql.= " WHERE fk_soc = " . $id;
-	        $resql=$this->db->query($sql);
-	        if ($resql)
-	        {
-	            $obj=$this->db->fetch_object($resql);
-	            if ($obj->nb > 0)
-	            {
-	            	$haschild+=$obj->nb;
-	            }
-	        }
-	        else
-	        {
-	            $this->error .= $this->db->lasterror();
-	            dol_syslog("Societe::Delete erreur -1 ".$this->error, LOG_ERR);
-	            return -1;
-	        }
+            // Check if third party can be deleted
+            $nb=0;
+            $sql = "SELECT COUNT(*) as nb from ".MAIN_DB_PREFIX.$table;
+            $sql.= " WHERE fk_soc = " . $id;
+            $resql=$this->db->query($sql);
+            if ($resql)
+            {
+                $obj=$this->db->fetch_object($resql);
+                if ($obj->nb > 0)
+                {
+                    $haschild+=$obj->nb;
+                }
+            }
+            else
+            {
+                $this->error .= $this->db->lasterror();
+                dol_syslog("Societe::Delete erreur -1 ".$this->error, LOG_ERR);
+                return -1;
+            }
         }
         if ($haschild > 0)
         {
@@ -1294,7 +1334,7 @@ class Societe extends CommonObject
             dol_print_error($this->db);
             return -1;
         }
-}
+    }
 
     /**
      * Set the price level
@@ -1488,15 +1528,15 @@ class Societe extends CommonObject
         $ret='';
         if (in_array($this->country,array('us')))
         {
-	        $ret.=($this->address?$this->address.$sep:'');
-	        $ret.=trim($this->zip.' '.$this->town);
-	        if ($withcountry) $ret.=($this->country?$sep.$this->country:'');
+            $ret.=($this->address?$this->address.$sep:'');
+            $ret.=trim($this->zip.' '.$this->town);
+            if ($withcountry) $ret.=($this->country?$sep.$this->country:'');
         }
         else
         {
-	        $ret.=($this->address?$this->address.$sep:'');
-	        $ret.=trim($this->zip.' '.$this->town);
-	        if ($withcountry) $ret.=($this->country?$sep.$this->country:'');
+            $ret.=($this->address?$this->address.$sep:'');
+            $ret.=trim($this->zip.' '.$this->town);
+            if ($withcountry) $ret.=($this->country?$sep.$this->country:'');
         }
         return trim($ret);
     }
@@ -1513,9 +1553,9 @@ class Societe extends CommonObject
         $contact_email = $this->contact_property_array('email');
         if ($this->email)
         {
-        	if (empty($this->name)) $this->name=$this->nom;
-        	// TODO: Tester si email non deja present dans tableau contact
-        	$contact_email[-1]=$langs->trans("ThirdParty").': '.dol_trunc($this->name,16)." &lt;".$this->email."&gt;";
+            if (empty($this->name)) $this->name=$this->nom;
+            // TODO: Tester si email non deja present dans tableau contact
+            $contact_email[-1]=$langs->trans("ThirdParty").': '.dol_trunc($this->name,16)." &lt;".$this->email."&gt;";
         }
         return $contact_email;
     }
@@ -1988,52 +2028,52 @@ class Societe extends CommonObject
             $string = strtoupper($string);
 
             for ($i = 0; $i < 9; $i ++)
-                $num[$i] = substr($string, $i, 1);
+            $num[$i] = substr($string, $i, 1);
 
             //Check format
             if (!preg_match('/((^[A-Z]{1}[0-9]{7}[A-Z0-9]{1}$|^[T]{1}[A-Z0-9]{8}$)|^[0-9]{8}[A-Z]{1}$)/', $string))
-                return 0;
+            return 0;
 
             //Check NIF
             if (preg_match('/(^[0-9]{8}[A-Z]{1}$)/', $string))
-                if ($num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', substr($string, 0, 8) % 23, 1))
-                    return 1;
-                else
-                    return -1;
+            if ($num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', substr($string, 0, 8) % 23, 1))
+            return 1;
+            else
+            return -1;
 
             //algorithm checking type code CIF
             $sum = $num[2] + $num[4] + $num[6];
             for ($i = 1; $i < 8; $i += 2)
-                $sum += substr((2 * $num[$i]),0,1) + substr((2 * $num[$i]),1,1);
+            $sum += substr((2 * $num[$i]),0,1) + substr((2 * $num[$i]),1,1);
             $n = 10 - substr($sum, strlen($sum) - 1, 1);
 
             //Chek special NIF
             if (preg_match('/^[KLM]{1}/', $string))
-                if ($num[8] == chr(64 + $n) || $num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', substr($string, 1, 8) % 23, 1))
-                    return 1;
-                else
-                    return -1;
+            if ($num[8] == chr(64 + $n) || $num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', substr($string, 1, 8) % 23, 1))
+            return 1;
+            else
+            return -1;
 
             //Check CIF
             if (preg_match('/^[ABCDEFGHJNPQRSUVW]{1}/', $string))
-                if ($num[8] == chr(64 + $n) || $num[8] == substr($n, strlen($n) - 1, 1))
-                    return 2;
-                else
-                    return -2;
+            if ($num[8] == chr(64 + $n) || $num[8] == substr($n, strlen($n) - 1, 1))
+            return 2;
+            else
+            return -2;
 
             //Check NIE T
             if (preg_match('/^[T]{1}/', $string))
-                if ($num[8] == preg_match('/^[T]{1}[A-Z0-9]{8}$/', $string))
-                    return 3;
-                else
-                    return -3;
+            if ($num[8] == preg_match('/^[T]{1}[A-Z0-9]{8}$/', $string))
+            return 3;
+            else
+            return -3;
 
             //Check NIE XYZ
             if (preg_match('/^[XYZ]{1}/', $string))
-                if ($num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', substr(str_replace(array('X','Y','Z'), array('0','1','2'), $string), 0, 8) % 23, 1))
-                    return 3;
-                else
-                    return -3;
+            if ($num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', substr(str_replace(array('X','Y','Z'), array('0','1','2'), $string), 0, 8) % 23, 1))
+            return 3;
+            else
+            return -3;
 
             //Can not be verified
             return -4;
@@ -2196,14 +2236,14 @@ class Societe extends CommonObject
 			'LV',	// Latvia
 			'MC',	// Monaco 		Seems to use same IntraVAT than France (http://www.gouv.mc/devwww/wwwnew.nsf/c3241c4782f528bdc1256d52004f970b/9e370807042516a5c1256f81003f5bb3!OpenDocument)
 			'MT',	// Malta
-        	//'NO',	// Norway
+        //'NO',	// Norway
 			'PL',	// Poland
 			'PT',	// Portugal
 			'RO',	// Romania
 			'SE',	// Sweden
 			'SK',	// Slovakia
 			'SI',	// Slovenia
-        	//'CH',	// Switzerland - No. Swizerland in not in EEC
+        //'CH',	// Switzerland - No. Swizerland in not in EEC
         );
         //print "dd".$this->pays_code;
         return in_array($this->pays_code,$country_code_in_EEC);
