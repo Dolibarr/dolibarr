@@ -21,14 +21,14 @@
 /**
  *	\file       htdocs/core/class/commonobject.class.php
  *	\ingroup    core
- *	\brief      Fichier de la classe mere des classes metiers (facture, contrat, propal, commande, etc...)
+ *	\brief      File of parent class of all other business classes (invoices, contracts, proposals, orders, ...)
  *	\version    $Id$
  */
 
 
 /**
  *	\class 		CommonObject
- *	\brief 		Classe mere pour heritage des classes metiers
+ *	\brief 		Class of all other business classes (invoices, contracts, proposals, orders, ...)
  */
 
 class CommonObject
@@ -1489,9 +1489,64 @@ class CommonObject
 	}
 
 
+    /**
+     *  Function to get extra fields of a member into $this->array_options
+     *  @param      rowid
+     *  @param      optionsArray    Array resulting of call of extrafields->fetch_name_optionals_label()
+     */
+    function fetch_optionals($rowid,$optionsArray='')
+    {
+        if (! is_array($optionsArray))
+        {
+            // optionsArray not already loaded, so we load it
+            require_once(DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php");
+            $extrafields = new ExtraFields($this->db);
+            $optionsArray = $extrafields->fetch_name_optionals_label();
+        }
+
+        // Request to get complementary values
+        if (sizeof($optionsArray) > 0)
+        {
+            $sql = "SELECT rowid";
+            foreach ($optionsArray as $name => $label)
+            {
+                $sql.= ", ".$name;
+            }
+            $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element."_extrafields";
+            $sql.= " WHERE fk_object = ".$rowid;
+
+            dol_syslog(get_class($this)."::fetch_optionals sql=".$sql, LOG_DEBUG);
+            $resql=$this->db->query( $sql);
+            if ($resql)
+            {
+                if ($this->db->num_rows($resql))
+                {
+                    $tab = $this->db->fetch_array($resql);
+
+                    foreach ($tab as $key => $value)
+                    {
+                        if ($key != 'rowid' && $key != 'tms' && $key != 'fk_member')
+                        {
+                            // we can add this attribute to adherent object
+                            $this->array_options["options_$key"]=$value;
+                        }
+                    }
+                }
+                $this->db->free($resql);
+            }
+            else
+            {
+                dol_print_error($this->db);
+            }
+        }
+    }
 
 
+
+    // --------------------
     // TODO: All functions here must be redesigned and moved as they are not business functions but output functions
+    // --------------------
+
 
 	/**
 	 *
@@ -1547,7 +1602,7 @@ class CommonObject
     /**
      *  Show linked object block
      *  TODO Move this into html.class.php
-     *  But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
+     *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
      */
     function showLinkedObjectBlock()
     {

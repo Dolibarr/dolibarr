@@ -383,12 +383,16 @@ alter table llx_propal add column   tms             timestamp after fk_projet;
 
 create table llx_societe_extrafields
 (
-  rowid                     integer PRIMARY KEY
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL
 ) ENGINE=innodb;
 
 create table llx_product_extrafields
 (
-  rowid                     integer PRIMARY KEY
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL
 ) ENGINE=innodb;
 
 
@@ -397,6 +401,7 @@ alter table llx_adherent_options_label rename to llx_extrafields;
 ALTER TABLE llx_extrafields ADD COLUMN elementtype varchar(64) NOT NULL DEFAULT 'member' AFTER entity;
 ALTER TABLE llx_extrafields ADD UNIQUE INDEX uk_extrafields_name (name, entity, elementtype);
 ALTER TABLE llx_adherent_options rename to llx_adherent_extrafields;
+ALTER TABLE llx_adherent_extrafields CHANGE COLUMN fk_member fk_object integer NOT NULL;
 
 -- drop tables renamed into llx_advanced_extra_xxx
 drop table llx_extra_fields_options;

@@ -20,6 +20,8 @@
 
 create table llx_societe_extrafields
 (
-  rowid                     integer PRIMARY KEY
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL
 ) ENGINE=innodb;
 

@@ -423,11 +423,11 @@ class Adherent extends CommonObject
 
             if (sizeof($this->array_options) > 0)
             {
-                $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."adherent_extrafields WHERE fk_member = ".$this->id;
+                $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."adherent_extrafields WHERE fk_object = ".$this->id;
                 dol_syslog(get_class($this)."::update sql=".$sql_del);
                 $this->db->query($sql_del);
 
-                $sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_extrafields (fk_member";
+                $sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_extrafields (fk_object";
                 foreach($this->array_options as $key => $value)
                 {
                     // Add field of attribut
@@ -643,7 +643,7 @@ class Adherent extends CommonObject
         $this->db->begin();
 
         // Suppression options
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_extrafields WHERE fk_member = ".$rowid;
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_extrafields WHERE fk_object = ".$rowid;
 
         dol_syslog(get_class($this)."::delete sql=".$sql);
         $resql=$this->db->query($sql);
@@ -1089,54 +1089,6 @@ class Adherent extends CommonObject
             $this->error=$this->db->error().' sql='.$sql;
             return -1;
         }
-    }
-
-
-    /**
-     *	Function to get extra fields of a member into $this->array_options
-     *	@param	    rowid
-     *  TODO Move this function into ExtraField class
-     *  TODO rename field fk_member into fk_element
-     */
-    function fetch_optionals($rowid)
-    {
-        require_once(DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php");
-        $options = new ExtraFields($this->db);
-        $optionsArray = $options->fetch_name_optionals_label();
-
-        $tab=array();
-
-        $sql = "SELECT rowid";
-        foreach ($optionsArray as $name => $label)
-        {
-            $sql.= ", ".$name;
-        }
-        $sql.= " FROM ".MAIN_DB_PREFIX."adherent_extrafields";
-        $sql.= " WHERE fk_member=".$rowid;
-
-        dol_syslog(get_class($this)."::fetch_optionals sql=".$sql, LOG_DEBUG);
-        $result=$this->db->query( $sql);
-        if ($result)
-        {
-            if ($this->db->num_rows($result))
-            {
-                $tab = $this->db->fetch_array($result);
-
-                foreach ($tab as $key => $value)
-                {
-                    if ($key != 'rowid' && $key != 'tms' && $key != 'fk_member')
-                    {
-                        // we can add this attribute to adherent object
-                        $this->array_options["options_$key"]=$value;
-                    }
-                }
-            }
-        }
-        else
-        {
-            dol_print_error($this->db);
-        }
-
     }
 
 

@@ -47,8 +47,9 @@ $langs->load("users");
 if (! $user->rights->adherent->lire) accessforbidden();
 
 $adh = new Adherent($db);
-$adho = new ExtraFields($db);
-$errmsg='';
+$extrafields = new ExtraFields($db);
+
+$errmsg=''; $errmsgs=array();
 
 $action=GETPOST("action");
 $rowid=GETPOST("rowid");
@@ -595,13 +596,14 @@ if ($user->rights->adherent->creer && $_POST["action"] == 'confirm_add_spip' && 
  * View
  */
 
-llxHeader('',$langs->trans("Member"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label('member');
+
+$help_url='EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
+llxHeader('',$langs->trans("Member"),$help_url);
 
 $html = new Form($db);
 $htmlcompany = new FormCompany($db);
-
-// fetch optionals attributes and labels
-$adho->fetch_name_optionals_label();
 
 $countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
@@ -692,11 +694,11 @@ if ($action == 'create')
     print $htmlcompany->select_civilite(isset($_POST["civilite_id"])?$_POST["civilite_id"]:$adh->civilite_id,'civilite_id').'</td>';
     print '</tr>';
 
-    // Nom
+    // Lastname
     print '<tr><td><span class="fieldrequired">'.$langs->trans("Lastname").'</span></td><td><input type="text" name="nom" value="'.(isset($_POST["nom"])?$_POST["nom"]:$adh->nom).'" size="40"></td>';
     print '</tr>';
 
-    // Prenom
+    // Firstname
     print '<tr><td>'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40" value="'.(isset($_POST["prenom"])?$_POST["prenom"]:$adh->prenom).'"></td>';
     print '</tr>';
 
@@ -756,7 +758,7 @@ if ($action == 'create')
     // EMail
     print '<tr><td>'.($conf->global->ADHERENT_MAIL_REQUIRED?'<span class="fieldrequired">':'').$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED?'</span>':'').'</td><td><input type="text" name="member_email" size="40" value="'.(isset($_POST["member_email"])?$_POST["member_email"]:$adh->email).'"></td></tr>';
 
-    // Date naissance
+    // Birthday
     print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
     $html->select_date(($adh->naiss ? $adh->naiss : -1),'naiss','','',1,'formsoc');
     print "</td></tr>\n";
@@ -767,7 +769,7 @@ if ($action == 'create')
     print "</td></tr>\n";
 
     // Attribut optionnels
-    foreach($adho->attribute_label as $key=>$value)
+    foreach($extrafields->attribute_label as $key=>$value)
     {
         print "<tr><td>".$value.'</td><td><input type="text" name="options_'.$key.'" size="40" value="'.(isset($_POST["options_".$key])?$_POST["options_".$key]:'').'"></td></tr>'."\n";
     }
@@ -803,14 +805,11 @@ if ($action == 'edit')
 	 *
 	 ********************************************/
 
-	$adho = new ExtraFields($db);
 	$adh = new Adherent($db);
-	$adh->id = $rowid;
-	$adh->fetch($rowid);
-	// fetch optionals value
-	$adh->fetch_optionals($rowid);
-	// fetch optionals attributes and labels
-	$adho->fetch_name_optionals_label();
+    $res=$adh->fetch($rowid);
+    if ($res < 0) { dol_print_error($db,$adh->error); exit; }
+    $res=$adh->fetch_optionals($rowid,$extralabels);
+    if ($res < 0) { dol_print_error($db); exit; }
 
 	$adht = new AdherentType($db);
     $adht->fetch($adh->typeid);
@@ -855,7 +854,7 @@ if ($action == 'edit')
 
 	$rowspan=17;
     if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) $rowspan+=1;
-	$rowspan+=sizeof($adho->attribute_label);
+	$rowspan+=sizeof($extrafields->attribute_label);
 	if ($conf->societe->enabled) $rowspan++;
 
 	print '<form name="formsoc" action="'.$_SERVER["PHP_SELF"].'" method="post" enctype="multipart/form-data">';
@@ -980,10 +979,10 @@ if ($action == 'edit')
     print $html->selectyesno("public",(isset($_POST["public"])?$_POST["public"]:$adh->public),1);
     print "</td></tr>\n";
 
-	// Attributs supplementaires
-	foreach($adho->attribute_label as $key=>$value)
+	// Other attributes
+	foreach($extrafields->attribute_label as $key=>$value)
 	{
-		print "<tr><td>$value</td><td><input type=\"text\" name=\"options_$key\" size=\"40\" value=\"".$adh->array_options["options_$key"]."\"></td></tr>\n";
+		print "<tr><td>".$value."</td><td><input type=\"text\" name=\"options_".$key."\" size=\"40\" value=\"".$adh->array_options["options_$key"]."\"></td></tr>\n";
 	}
 
 	// Third party Dolibarr
@@ -1035,13 +1034,13 @@ if ($rowid && $action != 'edit')
 
     $adh = new Adherent($db);
     $res=$adh->fetch($rowid);
-    if ($res < 0) dol_print_error($db);
-    $res=$adh->fetch_optionals($rowid);
-	if ($res < 0) dol_print_error($db);
+    if ($res < 0) { dol_print_error($db,$adh->error); exit; }
+    $res=$adh->fetch_optionals($rowid,$extralabels);
+	if ($res < 0) { dol_print_error($db); exit; }
 
     $adht = new AdherentType($db);
     $res=$adht->fetch($adh->typeid);
-	if ($res < 0) dol_print_error($db);
+	if ($res < 0) { dol_print_error($db); exit; }
 
 
 	/*
@@ -1194,7 +1193,7 @@ if ($rowid && $action != 'edit')
         if ($ret == 'html') print '<br>';
     }
 
-    $rowspan=19+sizeof($adho->attribute_label);
+    $rowspan=19+sizeof($extrafields->attribute_label);
     if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) $rowspan+=1;
     if ($conf->societe->enabled) $rowspan++;
 
@@ -1285,10 +1284,10 @@ if ($rowid && $action != 'edit')
     // Status
     print '<tr><td>'.$langs->trans("Status").'</td><td class="valeur">'.$adh->getLibStatut(4).'</td></tr>';
 
-    // Other attributs
-    foreach($adho->attribute_label as $key=>$value)
+    // Other attributes
+    foreach($extrafields->attribute_label as $key=>$value)
     {
-        print "<tr><td>$value</td><td>".$adh->array_options["options_$key"]."&nbsp;</td></tr>\n";
+        print "<tr><td>".$value."</td><td>".$adh->array_options["options_$key"]."&nbsp;</td></tr>\n";
     }
 
 	// Third party Dolibarr

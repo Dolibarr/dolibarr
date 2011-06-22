@@ -36,6 +36,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formadmin.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formcompany.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 if ($conf->adherent->enabled) require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
 
@@ -73,6 +74,8 @@ else
 }
 
 $error=0; $errors=array();
+
+$extrafields = new ExtraFields($db);
 
 
 /*
@@ -461,6 +464,9 @@ else
  *  View
  */
 
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label('company');
+
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$langs->trans("ThirdParty"),$help_url);
 
@@ -817,14 +823,8 @@ else
         if (empty($conf->global->SOCIETE_DISABLE_STATE))
         {
             print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
-            if ($soc->pays_id)
-            {
-                $formcompany->select_departement($soc->departement_id,$soc->pays_code);
-            }
-            else
-            {
-                print $countrynotdefined;
-            }
+            if ($soc->pays_id) $formcompany->select_departement($soc->departement_id,$soc->pays_code);
+            else print $countrynotdefined;
             print '</td></tr>';
         }
 
@@ -982,6 +982,12 @@ else
             print '</td></tr>';
         }
 
+        // Attribut optionnels
+        foreach($extrafields->attribute_label as $key=>$value)
+        {
+            print "<tr><td>".$value.'</td><td colspan="3"><input type="text" name="options_'.$key.'" size="40" value="'.(isset($_POST["options_".$key])?$_POST["options_".$key]:'').'"></td></tr>'."\n";
+        }
+
         // Ajout du logo
         print '<tr>';
         print '<td>'.$langs->trans("Logo").'</td>';
@@ -1006,6 +1012,12 @@ else
 
         if ($socid)
         {
+            $soc = new Societe($db);
+            $res=$soc->fetch($socid);
+            if ($res < 0) { dol_print_error($db,$soc->error); exit; }
+            $res=$soc->fetch_optionals($socid,$extralabels);
+            if ($res < 0) { dol_print_error($db); exit; }
+
             // Load object modCodeTiers
             $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
             if (! $module) dolibarr_error('',$langs->trans("ErrorModuleThirdPartyCodeInCompanyModuleNotDefined"));
@@ -1034,14 +1046,14 @@ else
                 $prefixSupplierIsUsed = $modCodeFournisseur->verif_prefixIsUsed();
             }
 
-            if (! $_POST["nom"])
-            {
-                $soc = new Societe($db);
-                $soc->fetch($socid);
-            }
-            else
-            {
-                $soc->id=$_POST["socid"];
+//            if (! $_POST["nom"])
+//            {
+//                $soc->fetch($socid);
+//                $soc->fetch_optionals($socid,$extralabels);
+//            }
+//            else
+//            {
+//                $soc->id=$_POST["socid"];
                 $soc->nom=$_POST["nom"];
                 $soc->prefix_comm=$_POST["prefix_comm"];
                 $soc->client=$_POST["client"];
@@ -1093,7 +1105,7 @@ else
                     $soc->pays_code=$obj->code;
                     $soc->pays=$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->libelle;
                 }
-            }
+//            }
 
             dol_htmloutput_errors($error,$errors);
 
@@ -1394,9 +1406,15 @@ else
                 print '</tr>';
             }
 
+            // Other attributes
+            foreach($extrafields->attribute_label as $key=>$value)
+            {
+                print "<tr><td>".$value."</td><td colspan=\"3\"><input type=\"text\" name=\"options_".$key."\" size=\"40\" value=\"".$soc->array_options["options_$key"]."\"></td></tr>\n";
+            }
+
             // Logo
             print '<tr>';
-            print '<td>'.$langs->trans("Logo").'</span></td>';
+            print '<td>'.$langs->trans("Logo").'</td>';
             print '<td colspan="3">';
             if ($soc->logo) print $form->showphoto('societe',$soc,50);
             $caneditfield=1;
@@ -1430,12 +1448,11 @@ else
          * View
          */
         $soc = new Societe($db);
-        $result=$soc->fetch($socid);
-        if ($result < 0)
-        {
-            dol_print_error($db,$soc->error);
-            exit;
-        }
+        $res=$soc->fetch($socid);
+        if ($res < 0) { dol_print_error($db,$soc->error); exit; }
+        $res=$soc->fetch_optionals($socid,$extralabels);
+        if ($res < 0) { dol_print_error($db); exit; }
+
 
         $head = societe_prepare_head($soc);
 
@@ -1720,6 +1737,12 @@ else
             $labellang = ($soc->default_lang?$langs->trans('Language_'.$soc->default_lang):'');
             print $labellang;
             print '</td></tr>';
+        }
+
+        // Other attributes
+        foreach($extrafields->attribute_label as $key=>$value)
+        {
+            print "<tr><td>".$value."</td><td>".$soc->array_options["options_$key"]."&nbsp;</td></tr>\n";
         }
 
         // Ban
