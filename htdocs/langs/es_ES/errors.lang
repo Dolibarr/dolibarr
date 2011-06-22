@@ -30,6 +30,7 @@ ErrorSupplierCodeRequired=Código proveedor obligatorio
 ErrorSupplierCodeAlreadyUsed=Código de proveedor ya utilizado
 ErrorBadParameters=Parámetros incorrectos
 ErrorBadValueForParameter=Valor '%s' incorrecto para el parámetro '%s'
+ErrorBadImageFormat=La imagen no tiene un formato reconocido
 ErrorFailedToWriteInDir=Imposible escribir en el directorio %s
 ErrorFoundBadEmailInFile=Encontrada sintaxis incorrecta en email en %s líneas en archivo (ejemplo linea %s con email=%s)
 ErrorUserCannotBeDelete=El usuario no puede ser eliminado. Quizá esté asociado a elementos de Dolibarr.
