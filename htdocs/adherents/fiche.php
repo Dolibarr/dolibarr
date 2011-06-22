@@ -522,10 +522,10 @@ if ($user->rights->adherent->creer && $_POST["action"] == 'confirm_valid' && $_P
 		}
 
 	    // Rajoute l'utilisateur dans les divers abonnements (mailman, spip, etc...)
-	    if ($adh->add_to_abo($adht) < 0)
+	    if ($adh->add_to_abo() < 0)
 	    {
 	        // error
-	        $errmsg.="Echec du rajout de l'utilisateur aux abonnements mailman: ".$adh->error."<BR>\n";
+	        $errmsg.= $langs->trans("FaildToAddToMailmanList").': '.$adh->error."<br>\n";
 	    }
 	}
 	else
@@ -538,14 +538,14 @@ if ($user->rights->adherent->creer && $_POST["action"] == 'confirm_valid' && $_P
 
 if ($user->rights->adherent->supprimer && $_POST["action"] == 'confirm_resign' && $_POST["confirm"] == 'yes')
 {
-    $result=$adh->resiliate($user);
-
     $adht = new AdherentType($db);
     $adht->fetch($adh->typeid);
 
-	if ($result >= 0 && ! sizeof($adh->errors))
+    $result=$adh->resiliate($user);
+
+    if ($result >= 0 && ! sizeof($adh->errors))
 	{
-		if ($adh->email && $_POST["send_mail"])
+	    if ($adh->email && $_POST["send_mail"])
 		{
 			$result=$adh->send_an_email($adht->getMailOnResiliate(),$conf->global->ADHERENT_MAIL_RESIL_SUBJECT,array(),array(),array(),"","",0,-1);
 		}
@@ -555,10 +555,10 @@ if ($user->rights->adherent->supprimer && $_POST["action"] == 'confirm_resign' &
 		}
 
 	    // supprime l'utilisateur des divers abonnements ..
-	    if (! $adh->del_to_abo($adht))
+	    if ($adh->del_to_abo() < 0)
 	    {
 	        // error
-	        $errmsg.="Echec de la suppression de l'utilisateur aux abonnements mailman: ".$adh->error."<BR>\n";
+	        $errmsg.=$langs->trans("FaildToRemoveFromMailmanList").': '.$adh->error."<br>\n";
 	    }
 	}
 	else

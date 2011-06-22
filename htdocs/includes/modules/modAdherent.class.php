@@ -82,7 +82,7 @@ class modAdherent extends DolibarrModules
         $this->const[6]  = array("ADHERENT_MAIL_RESIL_SUBJECT","chaine","Résiliation de votre adhésion","Sujet du mail de résiliation");
         $this->const[10] = array("ADHERENT_MAILMAN_UNSUB_URL","chaine","http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members?adminpw=%MAILMAN_ADMINPW%&user=%EMAIL%","Url de désinscription aux listes mailman");
         $this->const[11] = array("ADHERENT_MAILMAN_URL","chaine","http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members?adminpw=%MAILMAN_ADMINPW%&send_welcome_msg_to_this_batch=1&subscribees=%EMAIL%","Url pour les inscriptions mailman");
-        $this->const[12] = array("ADHERENT_MAILMAN_LISTS","chaine","","Listes auxquelles les nouveaux adhérents sont inscrits");
+        $this->const[12] = array("ADHERENT_MAILMAN_LISTS","chaine","","Mailing-list to subscribe new members to");
         $this->const[16] = array("ADHERENT_USE_SPIP_AUTO","yesno","","Utilisation de SPIP automatiquement");
         $this->const[17] = array("ADHERENT_SPIP_USER","chaine","","Utilisateur de connexion à la base spip");
         $this->const[18] = array("ADHERENT_SPIP_PASS","chaine","","Mot de passe de connexion à la base spip");
@@ -95,8 +95,6 @@ class modAdherent extends DolibarrModules
         $this->const[26] = array("ADHERENT_CARD_FOOTER_TEXT","chaine","Association AZERTY","Texte imprimé sur le bas de la carte adhérent");
         $this->const[27] = array("ADHERENT_CARD_TEXT","texte","%PRENOM% %NOM%\r\nMembre ne %ID%\r\n%EMAIL%\r\n%ADRESSE%\r\n%CP% %VILLE%\r\n%PAYS%","Texte imprimé sur la carte adhérent");
         $this->const[28] = array("ADHERENT_MAILMAN_ADMINPW","chaine","","Mot de passe Admin des liste mailman");
-        $this->const[29] = array("ADHERENT_MAILMAN_SERVER","chaine","","Serveur hébergeant les interfaces d'Admin des listes mailman");
-        $this->const[30] = array("ADHERENT_MAILMAN_LISTS_COTISANT","chaine","","Liste(s) auxquelles les nouveaux cotisants sont inscrits automatiquement");
         $this->const[31] = array("ADHERENT_BANK_USE_AUTO","yesno","","Insertion automatique des cotisations dans le compte banquaire");
         $this->const[32] = array("ADHERENT_BANK_ACCOUNT","chaine","","ID du Compte banquaire utilise");
         $this->const[33] = array("ADHERENT_BANK_CATEGORIE","chaine","","ID de la catégorie banquaire des cotisations");

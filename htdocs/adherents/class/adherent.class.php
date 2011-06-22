@@ -1142,12 +1142,6 @@ class Adherent extends CommonObject
             $result=$this->update_end_date($user);
             if ($result > 0)
             {
-                // Rajout du nouveau cotisant dans les listes qui vont bien
-                if ($conf->global->ADHERENT_MAILMAN_LISTS_COTISANT && ! $this->datefin)
-                {
-                    $result=$this->add_to_mailman($conf->global->ADHERENT_MAILMAN_LISTS_COTISANT);
-                }
-
                 // Change properties of object (used by triggers)
                 $this->last_subscription_date=$dateop;
                 $this->last_subscription_amount=$montant;
@@ -1280,17 +1274,16 @@ class Adherent extends CommonObject
     /**
      *  Fonction qui ajoute l'adherent au abonnements automatiques
      *  mailing-list, spip, etc...
-     *  @param		adht
-     *  @return		int		<0 si KO, >=0 si OK
+     *  @return		int		<0 if KO, >0 if OK
      */
-    function add_to_abo($adht)
+    function add_to_abo()
     {
         global $conf;
 
         $err=0;
 
         // mailman
-        if ($conf->global->ADHERENT_USE_MAILMAN)
+        if (! empty($conf->global->ADHERENT_USE_MAILMAN))
         {
             $result=$this->add_to_mailman();
             if ($result < 0)
@@ -1303,7 +1296,7 @@ class Adherent extends CommonObject
         if ($conf->global->ADHERENT_USE_SPIP && $conf->global->ADHERENT_USE_SPIP_AUTO)
         {
             $result=$this->add_to_spip();
-            if(!$result)
+            if ($result < 0)
             {
                 $err+=1;
             }
@@ -1323,29 +1316,38 @@ class Adherent extends CommonObject
     /**
      *  Fonction qui supprime l'adherent des abonnements automatiques
      *  mailing-list, spip, etc...
-     *  @param	    adht
+     *  @return     int     <0 if KO, >0 if OK
      */
-    function del_to_abo($adht)
+    function del_to_abo()
     {
+        global $conf;
+
         $err=0;
         // mailman
-        if ($conf->global->ADHERENT_USE_MAILMAN)
+        if (! empty($conf->global->ADHERENT_USE_MAILMAN))
         {
-            if(!$this->del_to_mailman()){
+            $result=$this->del_to_mailman();
+            if ($result < 0)
+            {
                 $err+=1;
             }
         }
 
         if ($conf->global->ADHERENT_USE_SPIP && $conf->global->ADHERENT_USE_SPIP_AUTO)
         {
-            if(!$this->del_to_spip()){
+            $result=$this->del_to_spip();
+            if ($result < 0)
+            {
                 $err+=1;
             }
         }
-        if ($err>0){
+        if ($err)
+        {
             // error
-            return 0;
-        }else{
+            return -$err;
+        }
+        else
+        {
             return 1;
         }
     }
@@ -1464,12 +1466,13 @@ class Adherent extends CommonObject
     }
 
     /**
-     *  Fonction qui rajoute l'utilisateur dans mailman
-     *  @return		int		<0 si KO, >0 si OK
+     *  Subscribe an email to all mailing-lists
+     *  @param      listes    To force mailing-list (string separated with ,)
+     *  @return		int		  <=0 if KO, >0 if OK
      */
     function add_to_mailman($listes='')
     {
-        global $conf,$langs;
+        global $conf,$langs,$user;
 
         dol_syslog(get_class($this)."::add_to_mailman");
 
@@ -1480,11 +1483,11 @@ class Adherent extends CommonObject
             return -1;
         }
 
-        if (defined("ADHERENT_MAILMAN_URL") && ADHERENT_MAILMAN_URL != '' && defined("ADHERENT_MAILMAN_LISTS") && ADHERENT_MAILMAN_LISTS != '')
+        if (! empty($conf->global->ADHERENT_MAILMAN_URL))
         {
-            if ($listes =='')
+            if ($listes == '' && ! empty($conf->global->ADHERENT_MAILMAN_LISTS))
             {
-                $lists=explode(',',ADHERENT_MAILMAN_LISTS);
+                $lists=explode(',',$conf->global->ADHERENT_MAILMAN_LISTS);
             }
             else
             {
@@ -1508,6 +1511,7 @@ class Adherent extends CommonObject
 				);
 				$curl_url = preg_replace ($patterns, $replace, $conf->global->ADHERENT_MAILMAN_URL);
 
+                dol_syslog("Call URL to subscribe : ".$curl_url);
 				$ch = curl_init();
 				curl_setopt($ch, CURLOPT_URL,"$curl_url");
 				//curl_setopt($ch, CURLOPT_URL,"http://www.j1b.org/");
@@ -1526,7 +1530,7 @@ class Adherent extends CommonObject
 				if (curl_error($ch) > 0)
 				{
 				    // error
-				    return 0;
+				    return -2;
 				}
 				curl_close ($ch);
 
@@ -1535,27 +1539,29 @@ class Adherent extends CommonObject
         }
         else
         {
-            $this->error="Constantes de connexion non definies";
+            $this->error="ADHERENT_MAILMAN_URL not defined";
             return -1;
         }
     }
 
     /**
-     *  Fonction qui desinscrit l'utilisateur de toutes les mailing list mailman
-     *  Utilise lors de la resiliation d'adhesion
+     *  Unsubscribe an email from all mailing-lists
+     *  Used when a user is resiliated
+     *  @param      listes      To force mailing-list (string separated with ,)
+     *  @return     int         <=0 if KO, >0 if OK
      */
     function del_to_mailman($listes='')
     {
-        global $conf;
+        global $conf,$langs,$user;
 
-        if (defined("ADHERENT_MAILMAN_UNSUB_URL") && ADHERENT_MAILMAN_UNSUB_URL != '' && defined("ADHERENT_MAILMAN_LISTS") && ADHERENT_MAILMAN_LISTS != '')
+        if (! empty($conf->global->ADHERENT_MAILMAN_UNSUB_URL))
         {
-            if ($listes==''){
-                $lists=explode(',',ADHERENT_MAILMAN_LISTS);
-                if (defined("ADHERENT_MAILMAN_LISTS_COTISANT") && ADHERENT_MAILMAN_LISTS_COTISANT !=''){
-                    $lists=array_merge ($lists,explode(',',ADHERENT_MAILMAN_LISTS_COTISANT));
-                }
-            }else{
+            if ($listes=='' && ! empty($conf->global->ADHERENT_MAILMAN_LISTS))
+            {
+                $lists=explode(',',$conf->global->ADHERENT_MAILMAN_LISTS);
+            }
+            else
+            {
                 $lists=explode(',',$listes);
             }
             foreach ($lists as $list)
@@ -1569,13 +1575,14 @@ class Adherent extends CommonObject
 				'/%MAILMAN_ADMINPW%/'
 				);
 				$replace = array (
-				$list,
+				trim($list),
 				$this->email,
 				$this->pass,
 				$conf->global->ADHERENT_MAILMAN_ADMINPW
 				);
 				$curl_url = preg_replace ($patterns, $replace, $conf->global->ADHERENT_MAILMAN_UNSUB_URL);
 
+                dol_syslog("Call URL to unsubscribe : ".$curl_url);
 				$ch = curl_init();
 				curl_setopt($ch, CURLOPT_URL,"$curl_url");
 				//curl_setopt($ch, CURLOPT_URL,"http://www.j1b.org/");
@@ -1594,9 +1601,9 @@ class Adherent extends CommonObject
 				$rescode=curl_error($ch);
 				if ($rescode > 0)
 				{
-				    dol_syslog("Error using CURL : ".$rescode);
+				    dol_syslog("Error using CURL : ".$rescode, LOG_ERR);
 				    // error
-				    return 0;
+				    return -2;
 				}
 				curl_close ($ch);
 
@@ -1605,8 +1612,8 @@ class Adherent extends CommonObject
         }
         else
         {
-            $this->error="Constantes de connexion non definies";
-            return 0;
+            $this->error="ADHERENT_MAILMAN_UNSUB_URL not defined";
+            return -1;
         }
     }
 

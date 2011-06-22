@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
@@ -45,44 +45,44 @@ $typeconst=array('yesno','texte','chaine');
 // Action mise a jour ou ajout d'une constante
 if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
 {
-	if (($_POST["constname"]=='ADHERENT_CARD_TYPE' || $_POST["constname"]=='ADHERENT_ETIQUETTE_TYPE')
-		&& $_POST["constvalue"] == -1) $_POST["constvalue"]='';
+    if (($_POST["constname"]=='ADHERENT_CARD_TYPE' || $_POST["constname"]=='ADHERENT_ETIQUETTE_TYPE')
+    && $_POST["constvalue"] == -1) $_POST["constvalue"]='';
     if ($_POST["constname"]=='ADHERENT_LOGIN_NOT_REQUIRED') // Invert choice
     {
         if ($_POST["constvalue"]) $_POST["constvalue"]=0;
         else $_POST["constvalue"]=1;
     }
 
-	$const=$_POST["constname"];
-	$value=$_POST["constvalue"];
-	if (in_array($const,array('ADHERENT_MAIL_VALID','ADHERENT_MAIL_COTIS','ADHERENT_MAIL_RESIL'))) $value=$_POST["constvalue".$const];
-	$type=$_POST["consttype"];
-	$constnote=isset($_POST["constnote"])?$_POST["constnote"]:'';
-	$result=dolibarr_set_const($db,$const,$value,$typeconst[$type],0,$constnote,$conf->entity);
-	if ($result < 0)
-	{
-		print $db->error();
-	}
+    $const=$_POST["constname"];
+    $value=$_POST["constvalue"];
+    if (in_array($const,array('ADHERENT_MAIL_VALID','ADHERENT_MAIL_COTIS','ADHERENT_MAIL_RESIL'))) $value=$_POST["constvalue".$const];
+    $type=$_POST["consttype"];
+    $constnote=isset($_POST["constnote"])?$_POST["constnote"]:'';
+    $result=dolibarr_set_const($db,$const,$value,$typeconst[$type],0,$constnote,$conf->entity);
+    if ($result < 0)
+    {
+        print $db->error();
+    }
 }
 
 // Action activation d'un sous module du module adherent
 if ($_GET["action"] == 'set')
 {
-	$result=dolibarr_set_const($db, $_GET["name"],$_GET["value"],'',0,'',$conf->entity);
-	if ($result < 0)
-	{
-		print $db->error();
-	}
+    $result=dolibarr_set_const($db, $_GET["name"],$_GET["value"],'',0,'',$conf->entity);
+    if ($result < 0)
+    {
+        print $db->error();
+    }
 }
 
 // Action desactivation d'un sous module du module adherent
 if ($_GET["action"] == 'unset')
 {
-	$result=dolibarr_del_const($db,$_GET["name"],$conf->entity);
-	if ($result < 0)
-	{
-		print $db->error();
-	}
+    $result=dolibarr_del_const($db,$_GET["name"],$conf->entity);
+    if ($result < 0)
+    {
+        print $db->error();
+    }
 }
 
 
@@ -166,17 +166,17 @@ print '<input type="hidden" name="constname" value="ADHERENT_BANK_USE">';
 print '<tr '.$bc[$var].'><td>'.$langs->trans("AddSubscriptionIntoAccount").'</td>';
 if ($conf->banque->enabled)
 {
-	print '<td>';
-	print $form->selectyesno('constvalue',$conf->global->ADHERENT_BANK_USE,1);
-	print '</td><td align="center" width="80">';
-	print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
-	print '</td>';
+    print '<td>';
+    print $form->selectyesno('constvalue',$conf->global->ADHERENT_BANK_USE,1);
+    print '</td><td align="center" width="80">';
+    print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
+    print '</td>';
 }
 else
 {
-	print '<td align="right" colspan="2">';
-	print $langs->trans("WarningModuleNotActive",$langs->transnoentities("Module85Name")).' '.img_warning("","");
-	print '</td>';
+    print '<td align="right" colspan="2">';
+    print $langs->trans("WarningModuleNotActive",$langs->transnoentities("Module85Name")).' '.img_warning("","");
+    print '</td>';
 }
 print "</tr>\n";
 print '</form>';
@@ -188,32 +188,28 @@ print '<br>';
 /*
  * Mailman
  */
-if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
+$var=!$var;
+if ($conf->global->ADHERENT_USE_MAILMAN)
 {
-	$var=!$var;
-	if ($conf->global->ADHERENT_USE_MAILMAN)
-	{
-		$lien=img_tick().' ';
-		$lien.='<a href="adherent.php?action=unset&value=0&name=ADHERENT_USE_MAILMAN">'.$langs->trans("Disable").'</a>';
-		// Edition des varibales globales rattache au theme Mailman
-		$constantes=array('ADHERENT_MAILMAN_LISTS',
-			    'ADHERENT_MAILMAN_LISTS_COTISANT',
-			    'ADHERENT_MAILMAN_ADMINPW',
-			    'ADHERENT_MAILMAN_SERVER',
-			    'ADHERENT_MAILMAN_URL',
-			    'ADHERENT_MAILMAN_UNSUB_URL'
-			    );
-			    print_fiche_titre("Mailman mailing list system",$lien,'');
-			    form_constantes($constantes);
-	}
-	else
-	{
-		$lien='<a href="'.$_SERVER["PHP_SELF"].'?action=set&value=1&name=ADHERENT_USE_MAILMAN">'.$langs->trans("Activate").'</a>';
-		print_fiche_titre("Mailman mailing list system",$lien,'');
-	}
-
-	print "<hr>\n";
+    $lien=img_tick().' ';
+    $lien.='<a href="'.$_SERVER["PHP_SELF"].'?action=unset&value=0&name=ADHERENT_USE_MAILMAN">'.$langs->trans("Disable").'</a>';
+    // Edition des varibales globales
+    $constantes=array('ADHERENT_MAILMAN_LISTS',
+		    'ADHERENT_MAILMAN_ADMINPW',
+		    'ADHERENT_MAILMAN_URL',
+		    'ADHERENT_MAILMAN_UNSUB_URL'
+		    );
+		    print_fiche_titre("Mailman mailing list system",$lien,'');
+		    form_constantes($constantes);
+		    print '<br>';
 }
+else
+{
+    $lien='<a href="'.$_SERVER["PHP_SELF"].'?action=set&value=1&name=ADHERENT_USE_MAILMAN">'.$langs->trans("Activate").'</a>';
+    print_fiche_titre("Mailman mailing list system",$lien,'');
+    print "<hr>\n";
+}
+
 
 /*
  * Spip
@@ -221,10 +217,10 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
 $var=!$var;
 if ($conf->global->ADHERENT_USE_SPIP)
 {
-	$lien=img_tick().' ';
-	$lien.='<a href="'.$_SERVER["PHP_SELF"].'?action=unset&value=0&name=ADHERENT_USE_SPIP">'.$langs->trans("Disable").'</a>';
-	// Edition des varibales globales rattache au theme Mailman
-	$constantes=array('ADHERENT_USE_SPIP_AUTO',
+    $lien=img_tick().' ';
+    $lien.='<a href="'.$_SERVER["PHP_SELF"].'?action=unset&value=0&name=ADHERENT_USE_SPIP">'.$langs->trans("Disable").'</a>';
+    // Edition des varibales globales
+    $constantes=array('ADHERENT_USE_SPIP_AUTO',
 		    'ADHERENT_SPIP_SERVEUR',
 		    'ADHERENT_SPIP_DB',
 		    'ADHERENT_SPIP_USER',
@@ -232,14 +228,15 @@ if ($conf->global->ADHERENT_USE_SPIP)
 		    );
 		    print_fiche_titre("SPIP CMS",$lien,'');
 		    form_constantes($constantes);
+		    print '<br>';
 }
 else
 {
-	$lien='<a href="'.$_SERVER["PHP_SELF"].'?action=set&value=1&name=ADHERENT_USE_SPIP">'.$langs->trans("Activate").'</a>';
-	print_fiche_titre("SPIP - CMS",$lien,'');
+    $lien='<a href="'.$_SERVER["PHP_SELF"].'?action=set&value=1&name=ADHERENT_USE_SPIP">'.$langs->trans("Activate").'</a>';
+    print_fiche_titre("SPIP - CMS",$lien,'');
+    print "<hr>\n";
 }
 
-print "<hr>\n";
 
 /*
  * Edition info modele document
@@ -252,37 +249,37 @@ $constantes=array(
 		'ADHERENT_CARD_TEXT_RIGHT',
 		'ADHERENT_CARD_FOOTER_TEXT'
 		);
-print_fiche_titre($langs->trans("MembersCards"),'','');
+		print_fiche_titre($langs->trans("MembersCards"),'','');
 
-form_constantes($constantes);
+		form_constantes($constantes);
 
-print '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
-print '%DOL_MAIN_URL_ROOT%, %ID%, %PRENOM%, %NOM%, %LOGIN%, %PASSWORD%, ';
-print '%SOCIETE%, %ADRESSE%, %CP%, %VILLE%, %PAYS%, %EMAIL%, %NAISS%, %PHOTO%, %TYPE%, ';
-print '%YEAR%, %MONTH%, %DAY%';
-//print '%INFOS%'; Deprecated
-print '<br>';
+		print '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
+		print '%DOL_MAIN_URL_ROOT%, %ID%, %PRENOM%, %NOM%, %LOGIN%, %PASSWORD%, ';
+		print '%SOCIETE%, %ADRESSE%, %CP%, %VILLE%, %PAYS%, %EMAIL%, %NAISS%, %PHOTO%, %TYPE%, ';
+		print '%YEAR%, %MONTH%, %DAY%';
+		//print '%INFOS%'; Deprecated
+		print '<br>';
 
-print '<br>';
+		print '<br>';
 
 
-/*
- * Edition info modele document
- */
-$constantes=array(
+		/*
+		 * Edition info modele document
+		 */
+		$constantes=array(
 		'ADHERENT_ETIQUETTE_TYPE'
 		);
-print_fiche_titre($langs->trans("MembersTickets"),'','');
+		print_fiche_titre($langs->trans("MembersTickets"),'','');
 
-form_constantes($constantes);
+		form_constantes($constantes);
 
-print '<br>';
+		print '<br>';
 
 
-/*
- * Edition des variables globales non rattache a un theme specifique
- */
-$constantes=array(
+		/*
+		 * Edition des variables globales non rattache a un theme specifique
+		 */
+		$constantes=array(
 		'ADHERENT_AUTOREGISTER_MAIL_SUBJECT',
 		'ADHERENT_AUTOREGISTER_MAIL',
 		'ADHERENT_MAIL_VALID_SUBJECT',
@@ -294,137 +291,152 @@ $constantes=array(
 		'ADHERENT_MAIL_FROM',
 
 		);
-print_fiche_titre($langs->trans("Other"),'','');
+		print_fiche_titre($langs->trans("Other"),'','');
 
-form_constantes($constantes);
+		form_constantes($constantes);
 
-print '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
-print '%DOL_MAIN_URL_ROOT%, %ID%, %PRENOM%, %NOM%, %LOGIN%, %PASSWORD%,';
-print '%SOCIETE%, %ADRESSE%, %CP%, %VILLE%, %PAYS%, %EMAIL%, %NAISS%, %PHOTO%, %TYPE%';
-//print '%YEAR%, %MONTH%, %DAY%';	// Not supported
-//print '%INFOS%'; Deprecated
-print '<br>';
-
-
-$db->close();
-
-print '<br>';
-
-llxFooter('$Date$ - $Revision$');
+		print '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
+		print '%DOL_MAIN_URL_ROOT%, %ID%, %PRENOM%, %NOM%, %LOGIN%, %PASSWORD%,';
+		print '%SOCIETE%, %ADRESSE%, %CP%, %VILLE%, %PAYS%, %EMAIL%, %NAISS%, %PHOTO%, %TYPE%';
+		//print '%YEAR%, %MONTH%, %DAY%';	// Not supported
+		//print '%INFOS%'; Deprecated
+		print '<br>';
 
 
+		$db->close();
 
-function form_constantes($tableau)
-{
-	global $db,$bc,$langs,$conf,$_Avery_Labels;
+		print '<br>';
 
-	$form = new Form($db);
+		llxFooter('$Date$ - $Revision$');
 
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Description").'</td>';
-	print '<td>'.$langs->trans("Value").'*</td>';
-	print '<td>&nbsp;</td>';
-	print '<td align="center" width="80">'.$langs->trans("Action").'</td>';
-	print "</tr>\n";
-	$var=true;
 
-	$listofparam=array();
-	foreach($tableau as $const)	// Loop on each param
-	{
-		$sql = "SELECT ";
-		$sql.= "rowid";
-		$sql.= ", ".$db->decrypt('name')." as name";
-		$sql.= ", ".$db->decrypt('value')." as value";
-		$sql.= ", type";
-		$sql.= ", note";
-		$sql.= " FROM ".MAIN_DB_PREFIX."const";
-		$sql.= " WHERE ".$db->decrypt('name')." = '".$const."'";
-		$sql.= " AND entity in (0, ".$conf->entity.")";
-		$sql.= " ORDER BY name ASC, entity DESC";
-		$result = $db->query($sql);
 
-		dol_syslog("List params sql=".$sql);
-		if ($result)
+		function form_constantes($tableau)
 		{
-			$obj = $db->fetch_object($result);	// Take first result of select
-			$var=!$var;
+		    global $db,$bc,$langs,$conf,$_Avery_Labels;
 
-			print "\n".'<form action="adherent.php" method="POST">';
+		    $form = new Form($db);
 
-			print "<tr ".$bc[$var].">";
+		    print '<table class="noborder" width="100%">';
+		    print '<tr class="liste_titre">';
+		    print '<td>'.$langs->trans("Description").'</td>';
+		    print '<td>'.$langs->trans("Value").'*</td>';
+		    print '<td>&nbsp;</td>';
+		    print '<td align="center" width="80">'.$langs->trans("Action").'</td>';
+		    print "</tr>\n";
+		    $var=true;
 
-			// Affiche nom constante
-			print '<td>';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input type="hidden" name="action" value="update">';
-			print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-			print '<input type="hidden" name="constname" value="'.$const.'">';
-			print '<input type="hidden" name="constnote" value="'.nl2br($obj->note).'">';
+		    $listofparam=array();
+		    foreach($tableau as $const)	// Loop on each param
+		    {
+		        $sql = "SELECT ";
+		        $sql.= "rowid";
+		        $sql.= ", ".$db->decrypt('name')." as name";
+		        $sql.= ", ".$db->decrypt('value')." as value";
+		        $sql.= ", type";
+		        $sql.= ", note";
+		        $sql.= " FROM ".MAIN_DB_PREFIX."const";
+		        $sql.= " WHERE ".$db->decrypt('name')." = '".$const."'";
+		        $sql.= " AND entity in (0, ".$conf->entity.")";
+		        $sql.= " ORDER BY name ASC, entity DESC";
+		        $result = $db->query($sql);
 
-			print $langs->trans("Desc".$const) != ("Desc".$const) ? $langs->trans("Desc".$const) : ($obj->note?$obj->note:$const);
-			print "</td>\n";
+		        dol_syslog("List params sql=".$sql);
+		        if ($result)
+		        {
+		            $obj = $db->fetch_object($result);	// Take first result of select
+		            $var=!$var;
 
-			if ($const == 'ADHERENT_CARD_TYPE' || $const == 'ADHERENT_ETIQUETTE_TYPE')
-			{
-				print '<td>';
-				// List of possible labels (defined into $_Avery_Labels variable set into format_cards.lib.php)
-				require_once(DOL_DOCUMENT_ROOT.'/lib/format_cards.lib.php');
-				$arrayoflabels=array();
-				foreach(array_keys($_Avery_Labels) as $codecards)
-				{
-					$arrayoflabels[$codecards]=$_Avery_Labels[$codecards]['name'];
-				}
-				print $form->selectarray('constvalue',$arrayoflabels,($obj->value?$obj->value:'CARD'),1,0,0);
-				print '</td><td>';
-				print '<input type="hidden" name="consttype" value="yesno">';
-				print '</td>';
-			}
-			else
-			{
-				print '<td>';
-				//print 'aa'.$const;
-				if (in_array($const,array('ADHERENT_CARD_TEXT','ADHERENT_CARD_TEXT_RIGHT')))
-				{
-					print '<textarea class="flat" name="constvalue" cols="35" rows="5" wrap="soft">'."\n";
-					print $obj->value;
-					print "</textarea>\n";
-					print '</td><td>';
-					print '<input type="hidden" name="consttype" value="texte">';
-				}
-				else if (in_array($const,array('ADHERENT_AUTOREGISTER_MAIL','ADHERENT_MAIL_VALID','ADHERENT_MAIL_COTIS','ADHERENT_MAIL_RESIL')))
-				{
-                    require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-				    $doleditor=new DolEditor('constvalue'.$const,$obj->value,'',160,'dolibarr_notes','',false,false,$conf->fckeditor->enabled,5,60);
-                    $doleditor->Create();
+		            print "\n".'<form action="adherent.php" method="POST">';
 
-					print '</td><td>';
-					print '<input type="hidden" name="consttype" value="texte">';
-				}
-				else if ($obj->type == 'yesno')
-				{
-					print $form->selectyesno('constvalue',$obj->value,1);
-					print '</td><td>';
-					print '<input type="hidden" name="consttype" value="yesno">';
-				}
-				else
-				{
-					print '<input type="text" class="flat" size="30" name="constvalue" value="'.$obj->value.'">';
-					print '</td><td>';
-					print '<input type="hidden" name="consttype" value="chaine">';
-				}
-				print '</td>';
-			}
-			print '<td align="center">';
-			print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button"> &nbsp;';
-			// print '<a href="adherent.php?name='.$const.'&action=unset">'.img_delete().'</a>';
-			print "</td>";
-			print "</tr>\n";
-			print "</form>\n";
-			$i++;
+		            print "<tr ".$bc[$var].">";
+
+		            // Affiche nom constante
+		            print '<td>';
+		            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		            print '<input type="hidden" name="action" value="update">';
+		            print '<input type="hidden" name="rowid" value="'.$rowid.'">';
+		            print '<input type="hidden" name="constname" value="'.$const.'">';
+		            print '<input type="hidden" name="constnote" value="'.nl2br($obj->note).'">';
+
+		            print $langs->trans("Desc".$const) != ("Desc".$const) ? $langs->trans("Desc".$const) : ($obj->note?$obj->note:$const);
+
+		            if ($const=='ADHERENT_MAILMAN_URL')
+		            {
+                        print '. '.$langs->trans("Example").':<br>';
+                        //print 'http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members?adminpw=%MAILMAN_ADMINPW%&subscribees=%EMAIL%&send_welcome_msg_to_this_batch=1';
+                        print 'http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members/add?subscribees_upload=%EMAIL%&adminpw=%MAILMAN_ADMINPW%&subscribe_or_invite=0&send_welcome_msg_to_this_batch=0&notification_to_list_owner=0';
+		            }
+                    if ($const=='ADHERENT_MAILMAN_UNSUB_URL')
+                    {
+                        print '. '.$langs->trans("Example").':<br>';
+                        print 'http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members/remove?unsubscribees_upload=%EMAIL%&adminpw=%MAILMAN_ADMINPW%&send_unsub_ack_to_this_batch=0&send_unsub_notifications_to_list_owner=0';
+                        //print 'http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members/remove?adminpw=%MAILMAN_ADMINPW%&unsubscribees=%EMAIL%';
+                    }
+
+
+		            print "</td>\n";
+
+		            if ($const == 'ADHERENT_CARD_TYPE' || $const == 'ADHERENT_ETIQUETTE_TYPE')
+		            {
+		                print '<td>';
+		                // List of possible labels (defined into $_Avery_Labels variable set into format_cards.lib.php)
+		                require_once(DOL_DOCUMENT_ROOT.'/lib/format_cards.lib.php');
+		                $arrayoflabels=array();
+		                foreach(array_keys($_Avery_Labels) as $codecards)
+		                {
+		                    $arrayoflabels[$codecards]=$_Avery_Labels[$codecards]['name'];
+		                }
+		                print $form->selectarray('constvalue',$arrayoflabels,($obj->value?$obj->value:'CARD'),1,0,0);
+		                print '</td><td>';
+		                print '<input type="hidden" name="consttype" value="yesno">';
+		                print '</td>';
+		            }
+		            else
+		            {
+		                print '<td>';
+		                //print 'aa'.$const;
+		                if (in_array($const,array('ADHERENT_CARD_TEXT','ADHERENT_CARD_TEXT_RIGHT')))
+		                {
+		                    print '<textarea class="flat" name="constvalue" cols="35" rows="5" wrap="soft">'."\n";
+		                    print $obj->value;
+		                    print "</textarea>\n";
+		                    print '</td><td>';
+		                    print '<input type="hidden" name="consttype" value="texte">';
+		                }
+		                else if (in_array($const,array('ADHERENT_AUTOREGISTER_MAIL','ADHERENT_MAIL_VALID','ADHERENT_MAIL_COTIS','ADHERENT_MAIL_RESIL')))
+		                {
+		                    require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+		                    $doleditor=new DolEditor('constvalue'.$const,$obj->value,'',160,'dolibarr_notes','',false,false,$conf->fckeditor->enabled,5,60);
+		                    $doleditor->Create();
+
+		                    print '</td><td>';
+		                    print '<input type="hidden" name="consttype" value="texte">';
+		                }
+		                else if ($obj->type == 'yesno')
+		                {
+		                    print $form->selectyesno('constvalue',$obj->value,1);
+		                    print '</td><td>';
+		                    print '<input type="hidden" name="consttype" value="yesno">';
+		                }
+		                else
+		                {
+		                    print '<input type="text" class="flat" size="48" name="constvalue" value="'.$obj->value.'">';
+		                    print '</td><td>';
+		                    print '<input type="hidden" name="consttype" value="chaine">';
+		                }
+		                print '</td>';
+		            }
+		            print '<td align="center">';
+		            print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button"> &nbsp;';
+		            // print '<a href="adherent.php?name='.$const.'&action=unset">'.img_delete().'</a>';
+		            print "</td>";
+		            print "</tr>\n";
+		            print "</form>\n";
+		            $i++;
+		        }
+		    }
+		    print '</table>';
 		}
-	}
-	print '</table>';
-}
 
-?>
+		?>
