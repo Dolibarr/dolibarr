@@ -414,6 +414,10 @@ class ExtraFields
         {
             $showsize=10;
         }
+        elseif ($type == 'datetime')
+        {
+            $showsize=19;
+        }
         elseif ($type == 'int')
         {
             $showsize=10;
@@ -426,7 +430,8 @@ class ExtraFields
 	    //print $type.'-'.$size;
         $out='<input type="text" name="options_'.$key.'" size="'.$showsize.'" maxlength="'.$size.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
 	    if ($type == 'date') $out.=' (YYYY-MM-DD)';
-        return $out;
+        if ($type == 'datetime') $out.=' (YYYY-MM-DD HH:MM:SS)';
+	    return $out;
 	}
 
     /**
@@ -443,6 +448,10 @@ class ExtraFields
         if ($type == 'date')
         {
             $showsize=10;
+        }
+        elseif ($type == 'datetime')
+        {
+            $showsize=19;
         }
         elseif ($type == 'int')
         {
