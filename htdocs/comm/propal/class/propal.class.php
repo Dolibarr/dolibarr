@@ -140,16 +140,16 @@ class Propal extends CommonObject
 		$this->duree_validite=$conf->global->PROPALE_VALIDITY_DURATION;
 
 		$langs->load("propal");
-		$this->labelstatut[0]=$langs->trans("PropalStatusDraft");
-		$this->labelstatut[1]=$langs->trans("PropalStatusValidated");
+		$this->labelstatut[0]=($conf->global->PROPAL_STATUS_DRAFT_LABEL ? $conf->global->PROPAL_STATUS_DRAFT_LABEL : $langs->trans("PropalStatusDraft"));
+		$this->labelstatut[1]=($conf->global->PROPAL_STATUS_VALIDATED_LABEL ? $conf->global->PROPAL_STATUS_VALIDATED_LABEL : $langs->trans("PropalStatusValidated"));
 		$this->labelstatut[2]=($conf->global->PROPAL_STATUS_SIGNED_LABEL ? $conf->global->PROPAL_STATUS_SIGNED_LABEL : $langs->trans("PropalStatusSigned"));
 		$this->labelstatut[3]=($conf->global->PROPAL_STATUS_NOTSIGNED_LABEL ? $conf->global->PROPAL_STATUS_NOTSIGNED_LABEL : $langs->trans("PropalStatusNotSigned"));
-		$this->labelstatut[4]=$langs->trans("PropalStatusBilled");
-		$this->labelstatut_short[0]=$langs->trans("PropalStatusDraftShort");
-		$this->labelstatut_short[1]=$langs->trans("Opened");
-		$this->labelstatut_short[2]=$langs->trans("PropalStatusSignedShort");
-		$this->labelstatut_short[3]=$langs->trans("PropalStatusNotSignedShort");
-		$this->labelstatut_short[4]=$langs->trans("PropalStatusBilledShort");
+		$this->labelstatut[4]=($conf->global->PROPAL_STATUS_BILLED_LABEL ? $conf->global->PROPAL_STATUS_BILLED_LABEL : $langs->trans("PropalStatusBilled"));
+		$this->labelstatut_short[0]=($conf->global->PROPAL_STATUS_DRAFTSHORT_LABEL ? $conf->global->PROPAL_STATUS_DRAFTSHORT_LABEL : $langs->trans("PropalStatusDraftShort"));
+		$this->labelstatut_short[1]=($conf->global->PROPAL_STATUS_VALIDATEDSHORT_LABEL ? $conf->global->PROPAL_STATUS_VALIDATEDSHORT_LABEL : $langs->trans("Opened"));
+		$this->labelstatut_short[2]=($conf->global->PROPAL_STATUS_SIGNEDSHORT_LABEL ? $conf->global->PROPAL_STATUS_SIGNEDSHORT_LABEL : $langs->trans("PropalStatusSignedShort"));
+		$this->labelstatut_short[3]=($conf->global->PROPAL_STATUS_NOTSIGNEDSHORT_LABEL ? $conf->global->PROPAL_STATUS_NOTSIGNEDSHORT_LABEL : $langs->trans("PropalStatusNotSignedShort"));
+		$this->labelstatut_short[4]=($conf->global->PROPAL_STATUS_BILLEDSHORT_LABEL ? $conf->global->PROPAL_STATUS_BILLEDSHORT_LABEL : $langs->trans("PropalStatusBilledShort"));
 	}
 
 
