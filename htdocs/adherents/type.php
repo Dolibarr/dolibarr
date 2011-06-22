@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -138,7 +138,7 @@ $form=new Form($db);
 if (! $rowid && $_GET["action"] != 'create' && $_GET["action"] != 'edit')
 {
 
-	print_fiche_titre($langs->trans("MembersTypeSetup"));
+	print_fiche_titre($langs->trans("MembersTypes"));
 
 
 	$sql = "SELECT d.rowid, d.libelle, d.cotisation, d.vote";
@@ -165,12 +165,12 @@ if (! $rowid && $_GET["action"] != 'create' && $_GET["action"] != 'edit')
 		{
 			$objp = $db->fetch_object($result);
 			$var=!$var;
-			print "<tr $bc[$var]>";
-			print '<td><a href="type.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowType"),'group').' '.$objp->rowid.'</a></td>';
+			print "<tr ".$bc[$var].">";
+			print '<td><a href="'.$_SERVER["PHP_SELF"].'?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowType"),'group').' '.$objp->rowid.'</a></td>';
 			print '<td>'.$objp->libelle.'</td>';
 			print '<td align="center">'.yn($objp->cotisation).'</td>';
 			print '<td align="center">'.yn($objp->vote).'</td>';
-			print '<td><a href="type.php?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
+			print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
 			print "</tr>";
 			$i++;
 		}

@@ -841,6 +841,7 @@ MAIN_PROXY_PORT=Port of proxy server
 MAIN_PROXY_USER=Login to use the proxy server
 MAIN_PROXY_PASS=Password to use the proxy server
 DefineHereComplementaryAttributes=Define here all atributes, not already available by default, and that you want to be supported for %s.
+ExtraFields=Complementary attributes
 
 ##### Module password generation
 PasswordGenerationStandard=Return a password generated according to internal Dolibarr algorithm: 8 characters containing shared numbers and characters in lowercase.

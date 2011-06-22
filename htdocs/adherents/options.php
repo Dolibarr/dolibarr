@@ -26,6 +26,7 @@
  */
 
 require("../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/member.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php");
 
 $langs->load("members");
@@ -162,10 +163,16 @@ if ($action == 'delete' && $user->rights->adherent->configurer)
 $textobject=$langs->transnoentitiesnoconv("Members");
 
 $help_url='EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
-llxHeader('',$langs->trans("OptionalFieldsSetup"),$help_url);
+llxHeader('',$langs->trans("MembersSetup"),$help_url);
 
 
 print_fiche_titre($langs->trans("OptionalFieldsSetup"));
+
+
+$head = member_admin_prepare_head($adh);
+
+dol_fiche_head($head, 'attributes', $langs->trans("Member"), 0, 'user');
+
 
 print $langs->trans("DefineHereComplementaryAttributes",$textobject).'<br>'."\n";
 print '<br>';
@@ -201,6 +208,8 @@ foreach($extrafields->attribute_type as $key => $value)
 }
 
 print "</table>";
+
+dol_fiche_end();
 
 /*
  * Barre d'actions
