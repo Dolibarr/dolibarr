@@ -466,12 +466,21 @@ li.tmenu a {
     }
 
 li.tmenu a:hover {
-	color: #842F00;
+	color: #a1ad23;
     }
     
 li.tmenu .tmenusel {
-	color: #7F0A29;
-	font-weight: bold;
+	color: #FFF;
+ 	padding: 0px 10px 0px 10px;
+	-moz-border-radius-topleft:4px;
+    -moz-border-radius-topright:4px;
+    border-top-left-radius:4px;
+    border-top-right-radius:4px;
+    border-right: 1px solid #555555;
+    border-bottom: 0px solid #555555;
+    border-left: 1px solid #D0D0D0;
+    border-top: 1px solid #D8D8D8;
+    background: #606060; 
 	}
 
 
