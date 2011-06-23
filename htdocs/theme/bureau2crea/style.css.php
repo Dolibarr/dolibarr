@@ -468,6 +468,12 @@ li.tmenu a {
 li.tmenu a:hover {
 	color: #842F00;
     }
+    
+li.tmenu .tmenusel {
+	color: #7F0A29;
+	font-weight: bold;
+	}
+
 
 li.tmenusel {
     background-image : url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_tmenusel_btnD.jpg' ?>);
@@ -497,6 +503,7 @@ li.tmenusel a:hover {
 li.tmenu a.tmenudisabled {
 	color: #CCC;
     }
+    
 /* --- end nav --- */
 
 
