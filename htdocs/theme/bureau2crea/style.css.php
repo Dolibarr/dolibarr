@@ -1365,12 +1365,12 @@ background: #eaeaea;
 font-family: <?php print $fontlist ?>;
 border: 0px;
 }
-/*
+
 .impair:hover {
-background: #EFEFEF;
+background: #c0c4c7;
 border: 0px;
 }
-*/
+
 
 .pair	{
 /* background: #e6ebed; */
@@ -1382,12 +1382,12 @@ border: 0px;
 .pair td, .impair td {
 	padding: 3px !important;
 }
-/*
+
 .pair:hover {
 background: #c0c4c7;
 border: 0px;
 }
-*/
+
 
 
 /*
