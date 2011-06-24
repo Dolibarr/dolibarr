@@ -27,6 +27,7 @@ ALTER TABLE llx_c_actioncomm ADD COLUMN position integer NOT NULL DEFAULT 0;
 ALTER TABLE llx_propal ADD COLUMN fk_demand_reason integer NULL DEFAULT 0;
 ALTER TABLE llx_commande_fournisseur ADD COLUMN fk_cond_reglement integer NULL DEFAULT 0;
 ALTER TABLE llx_commande_fournisseur ADD COLUMN fk_mode_reglement integer NULL DEFAULT 0;
+ALTER TABLE llx_c_currencies ADD COLUMN symbole varchar(3) NOT NULL ;
 
 ALTER TABLE llx_commande_fournisseur MODIFY model_pdf varchar(255);
 ALTER TABLE llx_commande MODIFY model_pdf varchar(255);
