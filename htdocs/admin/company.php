@@ -23,7 +23,7 @@
  *	\file       htdocs/admin/company.php
  *	\ingroup    company
  *	\brief      Setup page to configure company/foundation
- *	\version    $Id$
+ *	\version    $Id: company.php,v 1.92 2011/06/24 19:57:45 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -136,8 +136,9 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update' && empty($_POST["c
     dolibarr_set_const($db, "MAIN_INFO_SIRET",$_POST["siret"],'chaine',0,'',$conf->entity);
     dolibarr_set_const($db, "MAIN_INFO_APE",$_POST["ape"],'chaine',0,'',$conf->entity);
     dolibarr_set_const($db, "MAIN_INFO_RCS",$_POST["rcs"],'chaine',0,'',$conf->entity);
-    dolibarr_set_const($db, "MAIN_INFO_TVAINTRA",$_POST["tva"],'chaine',0,'',$conf->entity);
     dolibarr_set_const($db, "MAIN_INFO_TRAINER",$_POST["trainer"],'chaine',0,'',$conf->entity);
+
+    dolibarr_set_const($db, "MAIN_INFO_TVAINTRA",$_POST["tva"],'chaine',0,'',$conf->entity);
 
     dolibarr_set_const($db, "SOCIETE_FISCAL_MONTH_START",$_POST["fiscalmonthstart"],'chaine',0,'',$conf->entity);
 
@@ -471,6 +472,22 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
         print '</td></tr>';
     }
 
+    // ProfId5
+    if ($langs->transcountry("ProfId5",$pays_code) != '-')
+    {
+        $var=!$var;
+        print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId5",$pays_code).'</td><td>';
+        if ($pays_code)
+        {
+            print '<input name="trainer" size="20" value="' . $conf->global->MAIN_INFO_TRAINER . '">';
+        }
+        else
+        {
+            print $countrynotdefined;
+        }
+        print '</td></tr>';
+    }
+
     // TVA Intra
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("VATIntra").'</td><td>';
@@ -478,12 +495,6 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
     print '</td></tr>';
 
     print '</table>';
-    
-    // Trainer accreditation
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("TrainerId").'</td><td>';
-    print '<input name="trainer" size="20" value="' . $conf->global->MAIN_INFO_TRAINER . '">';
-    print '</td></tr>';
 
 
     /*
@@ -794,10 +805,18 @@ else
         }
         print '</td></tr>';
     }
-    
-    // Trainer accreditation
-	$var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("TrainerId").'</td><td>' . $conf->global->MAIN_INFO_TRAINER . '</td></tr>';
+
+    // ProfId5
+    if ($langs->transcountry("ProfId5",$pays_code) != '-')
+    {
+        $var=!$var;
+        print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId5",$pays_code).'</td><td>';
+        if ($langs->transcountry("ProfId5",$pays_code) != '-')
+        {
+            print $conf->global->MAIN_INFO_TRAINER;
+        }
+        print '</td></tr>';
+    }
 
     // TVA
     $var=!$var;
@@ -964,6 +983,6 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/06/24 19:57:45 $ - $Revision: 1.92 $');
 
 ?>
