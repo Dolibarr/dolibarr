@@ -365,7 +365,7 @@ class Societe extends CommonObject
      *      @param      call_trigger    			0=non, 1=oui
      *		@param		allowmodcodeclient			Inclut modif code client et code compta
      *		@param		allowmodcodefournisseur		Inclut modif code fournisseur et code compta fournisseur
-     *      @return     int             			<0 si ko, >=0 si ok
+     *      @return     int             			<0 if KO, >=0 if OK
      */
     function update($id, $user='', $call_trigger=1, $allowmodcodeclient=0, $allowmodcodefournisseur=0)
     {
@@ -517,54 +517,20 @@ class Societe extends CommonObject
             $sql .= " WHERE rowid = '" . $id ."'";
 
 
-            dol_syslog("Societe::update sql=".$sql);
+            dol_syslog(get_class($this)."::Update sql=".$sql);
             $resql=$this->db->query($sql);
             if ($resql)
             {
                 // Si le fournisseur est classe on l'ajoute
                 $this->AddFournisseurInCategory($this->fournisseur_categorie);
 
-                // Add/Update extra fields
-                // TODO Run a method into commonobject
-                if (sizeof($this->array_options) > 0)
+                $result=$this->insertExtraFields();
+                if ($result < 0)
                 {
-                    $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."societe_extrafields WHERE fk_object = ".$this->id;
-                    dol_syslog(get_class($this)."::update sql=".$sql_del);
-                    $this->db->query($sql_del);
-
-                    $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_extrafields (fk_object";
-                    foreach($this->array_options as $key => $value)
-                    {
-                        // Add field of attribut
-                        $sql.=",".substr($key,8);   // Remove 'options_' prefix
-                    }
-                    $sql .= ") VALUES (".$this->id;
-                    foreach($this->array_options as $key => $value)
-                    {
-                        // Add field o fattribut
-                        if ($this->array_options[$key] != '')
-                        {
-                            $sql.=",'".$this->array_options[$key]."'";
-                        }
-                        else
-                        {
-                            $sql.=",null";
-                        }
-                    }
-                    $sql.=")";
-
-                    dol_syslog(get_class($this)."::update update option sql=".$sql);
-                    $resql = $this->db->query($sql);
-                    if (! $resql)
-                    {
-                        $this->error=$this->db->error();
-                        dol_syslog(get_class($this)."::update ".$this->error,LOG_ERR);
-                        $this->db->rollback();
-                        return -2;
-                    }
+                    $error++;
                 }
 
-                if ($call_trigger)
+                if (! $error && $call_trigger)
                 {
                     // Appel des triggers
                     include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
@@ -574,9 +540,17 @@ class Societe extends CommonObject
                     // Fin appel triggers
                 }
 
-                dol_syslog("Societe::Update success");
-                $this->db->commit();
-                return 1;
+                if (! $error)
+                {
+                    dol_syslog(get_class($this)."::Update success");
+                    $this->db->commit();
+                    return 1;
+                }
+                else
+                {
+                    $this->db->rollback();
+                    return -1;
+                }
             }
             else
             {
@@ -590,7 +564,7 @@ class Societe extends CommonObject
                 {
 
                     $this->error = $langs->trans("Error sql=".$sql);
-                    dol_syslog("Societe::Update fails update sql=".$sql, LOG_ERR);
+                    dol_syslog(get_class($this)."::Update fails update sql=".$sql, LOG_ERR);
                     $result =  -2;
                 }
                 $this->db->rollback();
@@ -600,7 +574,7 @@ class Societe extends CommonObject
         else
         {
             $this->db->rollback();
-            dol_syslog("Societe::Update fails verify ".join(',',$this->errors), LOG_WARNING);
+            dol_syslog(get_class($this)."::Update fails verify ".join(',',$this->errors), LOG_WARNING);
             return -3;
         }
     }
