@@ -150,21 +150,22 @@ echo Set permission on $docdir
 chown -R apache.apache $docdir
 chmod -R o-w $docdir
 
-if [ -s /usr/bin/chcon ]; then
-    echo Set SELinux permissions 
-    chcon -R -h -t httpd_sys_content_t $targetdir
-    chcon -R -h -t httpd_sys_content_t $docdir
-    chcon -R -h -t httpd_sys_script_rw_t $targetdir
-    chcon -R -h -t httpd_sys_script_rw_t $docdir
-    chcon -R -h -t httpd_sys_script_exec_t $targetdir
-fi
-
 # Create empty conf.php file for web installer
 if [ ! -s $targetdir/htdocs/conf/conf.php ]; then
     echo Create empty Dolibarr conf.php file
     touch $targetdir/htdocs/conf/conf.php
     chown apache.apache $targetdir/htdocs/conf/conf.php
     chmod ug+rw $targetdir/htdocs/conf/conf.php
+fi
+
+if [ -s /usr/bin/chcon ]; then
+    echo Set SELinux permissions
+    # Warning: chcon seems not cumulative 
+    #chcon -R -h -t httpd_sys_content_t $targetdir
+    #chcon -R -h -t httpd_sys_content_t $docdir
+    chcon -R -h -t httpd_sys_script_rw_t $targetdir
+    chcon -R -h -t httpd_sys_script_rw_t $docdir
+    #chcon -R -h -t httpd_sys_script_exec_t $targetdir
 fi
 
 # Restart web server
@@ -187,6 +188,11 @@ echo
 #---- postun (after uninstall)
 %postun
 
+# Dolibarr files are stored into /var/www
+export targetdir='/var/www/dolibarr'
+# Dolibarr uploaded files and generated documents are stored into /usr/share/dolibarr/documents 
+export docdir='/usr/share/dolibarr/documents'
+
 export conffile="%{_sysconfdir}/httpd/conf.d/dolibarr.conf"
 if [ -f $conffile ] ;
 then
@@ -205,6 +211,8 @@ then
 fi
 
 rm -rf /etc/dolibarr
+rm -rf $targetdir/htdocs/conf
+rm -rf $targetdir/htdocs/install
 
 
 %changelog
