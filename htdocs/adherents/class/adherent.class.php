@@ -421,48 +421,14 @@ class Adherent extends CommonObject
         {
             $nbrowsaffected+=$this->db->affected_rows($resql);
 
-            // Add/Update extra fields
-            // TODO Run a method into commonobject
-            if (sizeof($this->array_options) > 0)
+            $result=$this->insertExtraFields();
+            if ($result < 0)
             {
-                $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."adherent_extrafields WHERE fk_object = ".$this->id;
-                dol_syslog(get_class($this)."::update sql=".$sql_del);
-                $this->db->query($sql_del);
-
-                $sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_extrafields (fk_object";
-                foreach($this->array_options as $key => $value)
-                {
-                    // Add field of attribut
-                    $sql.=",".substr($key,8);	// Remove 'options_' prefix
-                }
-                $sql .= ") VALUES (".$this->id;
-                foreach($this->array_options as $key => $value)
-                {
-                    // Add field o fattribut
-                    if ($this->array_options[$key] != '')
-                    {
-                        $sql.=",'".$this->array_options[$key]."'";
-                    }
-                    else
-                    {
-                        $sql.=",null";
-                    }
-                }
-                $sql.=")";
-
-                dol_syslog(get_class($this)."::update update option sql=".$sql);
-                $resql = $this->db->query($sql);
-                if (! $resql)
-                {
-                    $this->error=$this->db->error();
-                    dol_syslog(get_class($this)."::update ".$this->error,LOG_ERR);
-                    $this->db->rollback();
-                    return -2;
-                }
+                $error++;
             }
 
             // Update password
-            if ($this->pass)
+            if (! $error && $this->pass)
             {
                 dol_syslog(get_class($this)."::update update password");
                 if ($this->pass != $this->pass_indatabase && $this->pass != $this->pass_indatabase_crypted)
@@ -474,21 +440,24 @@ class Adherent extends CommonObject
             }
 
             // Remove link to user
-            dol_syslog(get_class($this)."::update update link to user");
-            $sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = NULL WHERE fk_member = ".$this->id;
-            dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
-            $resql = $this->db->query($sql);
-            if (! $resql) { $this->error=$this->db->error(); $this->db->rollback(); return -5; }
-            // If there is a user linked to this member
-            if ($this->user_id > 0)
+            if (! $error)
             {
-                $sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = ".$this->id." WHERE rowid = ".$this->user_id;
+                dol_syslog(get_class($this)."::update update link to user");
+                $sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = NULL WHERE fk_member = ".$this->id;
                 dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
                 $resql = $this->db->query($sql);
                 if (! $resql) { $this->error=$this->db->error(); $this->db->rollback(); return -5; }
+                // If there is a user linked to this member
+                if ($this->user_id > 0)
+                {
+                    $sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = ".$this->id." WHERE rowid = ".$this->user_id;
+                    dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+                    $resql = $this->db->query($sql);
+                    if (! $resql) { $this->error=$this->db->error(); $this->db->rollback(); return -5; }
+                }
             }
 
-            if ($nbrowsaffected)	// If something has change in data
+            if (! $error && $nbrowsaffected)	// If something has change in main data
             {
                 if ($this->user_id > 0 && ! $nosyncuser)
                 {
@@ -549,21 +518,20 @@ class Adherent extends CommonObject
             if (! $error)
             {
                 $this->db->commit();
+                return $nbrowsaffected;
             }
             else
             {
                 $this->db->rollback();
+                return -1;
             }
-
-            return $nbrowsaffected;
         }
         else
         {
             $this->db->rollback();
-
             $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::update ".$this->error,LOG_ERR);
-            return -1;
+            dol_syslog(get_class($this)."::Update ".$this->error,LOG_ERR);
+            return -2;
         }
     }
 

@@ -40,8 +40,8 @@ $type2label=array(
 'varchar'=>$langs->trans('String'),
 'text'=>$langs->trans('Text'),
 'int'=>$langs->trans('Int'),
-'date'=>$langs->trans('Date'),
-'datetime'=>$langs->trans('DateAndTime')
+//'date'=>$langs->trans('Date'),
+//'datetime'=>$langs->trans('DateAndTime')
 );
 
 $action=GETPOST("action");
