@@ -694,9 +694,8 @@ class CMailFile
 		}
 		else
 		{
-			$out.= "--" . $this->mixed_boundary . $this->eol;
 			$out.= "Content-Type: text/plain; charset=".$conf->file->character_set_client.$this->eol;
-			$out.= $strContent.$this->eol;
+			$out.= $this->eol.$strContent.$this->eol;
 		}
 		
 		$out.= $this->eol;
