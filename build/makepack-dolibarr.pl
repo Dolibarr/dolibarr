@@ -1,8 +1,8 @@
 #!/usr/bin/perl
 #----------------------------------------------------------------------------
 # \file         build/makepack-dolibarr.pl
-# \brief        Dolibarr package builder (tgz, zip, rpm, deb, exe)
-# \version      $Id: makepack-dolibarr.pl,v 1.103 2011/06/24 23:10:52 eldy Exp $
+# \brief        Dolibarr package builder (tgz, zip, rpm, deb, exe, aps)
+# \version      $Id: makepack-dolibarr.pl,v 1.104 2011/06/25 19:41:36 eldy Exp $
 # \author       (c)2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
 #----------------------------------------------------------------------------
 
@@ -48,7 +48,7 @@ if (-d "/usr/src/RPM") {
 
 
 use vars qw/ $REVISION $VERSION /;
-$REVISION='$Revision: 1.103 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
+$REVISION='$Revision: 1.104 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
 $VERSION="1.0 (build $REVISION)";
 
 
@@ -171,14 +171,18 @@ foreach my $target (keys %CHOOSEDTARGET) {
     foreach my $req (split(/[,\s]/,$REQUIREMENTTARGET{$target})) {
         # Test    
         print "Test requirement for target $target: Search '$req'... ";
-        $ret=`"$req" 2>&1`;
+        $newreq=$req; $newparam='';
+        if ($newreq eq 'zip') { $newparam.='-h'; }
+        $cmd="\"$newreq\" $newparam 2>&1";
+        print "Test command ".$cmd."... ";
+        $ret=`$cmd`;
         $coderetour=$?; $coderetour2=$coderetour>>8;
         if ($coderetour != 0 && (($coderetour2 == 1 && $OS =~ /windows/ && $ret !~ /Usage/i) || ($coderetour2 == 127 && $OS !~ /windows/)) && $PROGPATH) { 
             # Not found error, we try in PROGPATH
             $ret=`"$PROGPATH/$ALTERNATEPATH{$req}/$req\" 2>&1`;
             $coderetour=$?; $coderetour2=$coderetour>>8;
             $REQUIREMENTTARGET{$target}="$PROGPATH/$ALTERNATEPATH{$req}/$req";
-        }    
+        } 
 
         if ($coderetour != 0 && (($coderetour2 == 1 && $OS =~ /windows/ && $ret !~ /Usage/i) || ($coderetour2 == 127 && $OS !~ /windows/))) {
             # Not found error
@@ -240,11 +244,25 @@ if ($nboftargetok) {
 	    	$ret=`cp -pr "$SOURCE" "$BUILDROOT/$PROJECT"`;
 	    }
 	    print "Clean $BUILDROOT\n";
+        $ret=`rm -f  $BUILDROOT/$PROJECT/index.php`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/.cache`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/.project`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/.settings`;
-	    $ret=`rm -fr $BUILDROOT/$PROJECT/index.php`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/build/html`;
+
+        $ret=`rm -f  $BUILDROOT/$PROJECT/build/DoliWamp-*`;
+        $ret=`rm -f  $BUILDROOT/$PROJECT/build/DoliMamp-*`;
+        $ret=`rm -f  $BUILDROOT/$PROJECT/build/dolibarr-*.deb`;
+        $ret=`rm -f  $BUILDROOT/$PROJECT/build/dolibarr-*.rpm`;
+        $ret=`rm -f  $BUILDROOT/$PROJECT/build/dolibarr-*.tar`;
+        $ret=`rm -f  $BUILDROOT/$PROJECT/build/dolibarr-*.tgz`;
+        $ret=`rm -f  $BUILDROOT/$PROJECT/build/dolibarr-*.zip`;
+        $ret=`rm -f  $BUILDROOT/$PROJECT/build/doxygen/doxygen_warnings.log`;
+        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf.php.mysql`;
+        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf.php.old`;
+        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf.php.postgres`;
+        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf*sav*`;
+	    
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/documents`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/document`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/conf/conf.php`;
@@ -370,6 +388,8 @@ if ($nboftargetok) {
             # now newbuild is 0-0 or 0-3 for example
             $REL1 = $newbuild; $REL1 =~ s/-.*$//gi;
             if ($RPMSUBVERSION eq 'auto') { $RPMSUBVERSION = $newbuild; $RPMSUBVERSION =~ s/^.*-//gi; }
+            print "Version is $MAJOR.$MINOR.$REL1-$RPMSUBVERSION\n";
+
             $FILENAMETGZ2="$PROJECT-$MAJOR.$MINOR.$REL1";
 			
     		print "Remove target ".$FILENAMETGZ2."-".$RPMSUBVERSION.".".$ARCH.".rpm...\n";
@@ -415,6 +435,14 @@ if ($nboftargetok) {
     	}
     	
     	if ($target eq 'DEB') {
+            $newbuild = $BUILD;
+            $newbuild =~ s/(dev|alpha)/0/gi;                # dev
+            $newbuild =~ s/beta/1/gi;                       # beta
+            $newbuild =~ s/rc./2/gi;                        # rc
+            if ($newbuild !~ /-/) { $newbuild.='-3'; }      # finale
+            # now newbuild is 0-0 or 0-3 for example
+            print "Version is $MAJOR.$MINOR.$newbuild\n";
+    		
     		print "Remove target $FILENAMEDEB.deb...\n";
     		unlink("$DESTI/$FILENAMEDEB.deb");
 			
@@ -433,14 +461,6 @@ if ($nboftargetok) {
 		    $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/DEBIAN/CVS`;
  
  			print "Remove other files\n";
-		    $ret=`rm -f $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/build/DoliWamp-*`;
-		    $ret=`rm -f $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/build/DoliMamp-*`;
-		    $ret=`rm -f $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/build/dolibarr-*.tar`;
-		    $ret=`rm -f $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/build/dolibarr-*.tgz`;
-		    $ret=`rm -f $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/build/dolibarr-*.zip`;
-		    $ret=`rm -f $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/build/dolibarr-*.deb`;
-		    $ret=`rm -f $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/build/doxygen/doxygen_warnings.log`;
-		    $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/build/html`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/dev/dbmodel`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/dev/fpdf`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/dev/initdata`;
@@ -454,10 +474,6 @@ if ($nboftargetok) {
 		    $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/doc/font`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/doc/tshirt`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/doc/rollup`;
-		    $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/conf/conf.php.mysql`;
-		    $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/conf/conf.php.old`;
-		    $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/conf/conf.php.postgres`;
-		    $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/conf/conf*sav*`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/test`;
             # To remove once stable
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/htdocs/theme/bureau2crea`;
@@ -466,12 +482,6 @@ if ($nboftargetok) {
             open (SPECFROM,"<$SOURCE/build/deb/control") || die "Error";
             open (SPECTO,">$BUILDROOT/$PROJECT.tmp/DEBIAN/control") || die "Error";
             while (<SPECFROM>) {
-            	$newbuild = $BUILD;
-                $newbuild =~ s/(dev|alpha)/0/gi;				# dev
-                $newbuild =~ s/beta/1/gi;						# beta
-                $newbuild =~ s/rc./2/gi;						# rc
-                if ($newbuild !~ /-/) { $newbuild.='-3'; }		# finale
-                # now newbuild is 0-0 or 0-3 for example
                 $_ =~ s/__VERSION__/$MAJOR.$MINOR.$newbuild/;
                 print SPECTO $_;
             }
@@ -489,20 +499,11 @@ if ($nboftargetok) {
     		print "Copy pixmap file into $BUILDROOT/$PROJECT.tmp/usr/share/pixmaps/dolibarr.xpm\n";
     		$ret=`cp "$SOURCE/doc/images/dolibarr.xpm" "$BUILDROOT/$PROJECT.tmp/usr/share/pixmaps/dolibarr.xpm"`;
 
-    		#print "Create directory $BUILDROOT/$PROJECT/etc/$PROJECT\n";
-    		#$ret=`mkdir -p "$BUILDROOT/$PROJECT/etc/$PROJECT"`;
-
-    		#print "Copy changelog file into $BUILDROOT/$PROJECT/DEBIAN\n";
-    		#$ret=`cp "$SOURCE/ChangeLog" "$BUILDROOT/$PROJECT/DEBIAN/changelog"`;
-
     		print "Copy README file into $BUILDROOT/$PROJECT.tmp/DEBIAN\n";
     		$ret=`cp "$SOURCE/README" "$BUILDROOT/$PROJECT.tmp/DEBIAN/README"`;
 
     		print "Copy copyright file into $BUILDROOT/$PROJECT.tmp/DEBIAN\n";
     		$ret=`cp "$SOURCE/COPYRIGHT" "$BUILDROOT/$PROJECT.tmp/DEBIAN/copyright"`;
-
-    		#print "Copy apache conf file into $BUILDROOT/$PROJECT/etc/$PROJECT\n";
-    		#$ret=`cp "$SOURCE/build/deb/apache.conf" "$BUILDROOT/$PROJECT/etc/$PROJECT"`;
 
     		print "Create directory $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/documents\n";
     		$ret=`mkdir -p "$BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/documents"`;
@@ -539,6 +540,16 @@ if ($nboftargetok) {
         }
         
     	if ($target eq 'APS') {
+            $newbuild = $BUILD;
+            $newbuild =~ s/(dev|alpha)/0/gi;                # dev
+            $newbuild =~ s/beta/1/gi;                       # beta
+            $newbuild =~ s/rc./2/gi;                        # rc
+            if ($newbuild !~ /-/) { $newbuild.='-3'; }      # finale
+            # now newbuild is 0-0 or 0-3 for example
+            $REL1 = $newbuild; $REL1 =~ s/-.*$//gi;
+            if ($RPMSUBVERSION eq 'auto') { $RPMSUBVERSION = $newbuild; $RPMSUBVERSION =~ s/^.*-//gi; }
+            print "Version is $MAJOR.$MINOR.$REL1-$RPMSUBVERSION\n";
+    		
      		print "Remove target $FILENAMEAPS.zip...\n";
     		unlink "$DESTI/$FILENAMEAPS.zip";
  
@@ -551,63 +562,70 @@ if ($nboftargetok) {
             $ret=`$cmd`;
 
             print "Remove other files\n";
-            $ret=`rm -f $BUILDROOT/$PROJECT.tmp/build/DoliWamp-*`;
-            $ret=`rm -f $BUILDROOT/$PROJECT.tmp/build/DoliMamp-*`;
-            $ret=`rm -f $BUILDROOT/$PROJECT.tmp/build/dolibarr-*.tar`;
-            $ret=`rm -f $BUILDROOT/$PROJECT.tmp/build/dolibarr-*.tgz`;
-            $ret=`rm -f $BUILDROOT/$PROJECT.tmp/build/dolibarr-*.zip`;
-            $ret=`rm -f $BUILDROOT/$PROJECT.tmp/build/dolibarr-*.deb`;
-            $ret=`rm -f $BUILDROOT/$PROJECT.tmp/build/doxygen/doxygen_warnings.log`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/build/html`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/dev/dbmodel`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/dev/fpdf`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/dev/initdata`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/dev/iso-normes`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/dev/phpcheckstyle`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/dev/phpunit`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/dev/spec`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/dev/uml`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/dev/xdebug`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/doc/flyer`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/doc/font`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/doc/tshirt`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/doc/rollup`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/conf/conf.php.mysql`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/conf/conf.php.old`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/conf/conf.php.postgres`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/conf/conf*sav*`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/test`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/dev/dbmodel`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/dev/fpdf`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/dev/initdata`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/dev/iso-normes`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/dev/phpcheckstyle`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/dev/phpunit`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/dev/spec`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/dev/uml`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/dev/xdebug`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/doc/flyer`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/doc/font`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/doc/tshirt`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/doc/rollup`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/test`;
 
-            print "Create APS files\n";
-            $cmd="cp -pr \"$BUILDROOT/$PROJECT/build/aps/APP-META.xml\" \"$BUILDROOT/$PROJECT.tmp/$PROJECT/APP-META.xml\"";
-            $ret=`$cmd`;
+            $APSVERSION="1.1";
+            print "Create APS files $BUILDROOT/$PROJECT.tmp/$PROJECT/APP-META.xml\n";
+            open (SPECFROM,"<$BUILDROOT/$PROJECT/build/aps/APP-META-$APSVERSION.xml") || die "Error";
+            open (SPECTO,">$BUILDROOT/$PROJECT.tmp/$PROJECT/APP-META.xml") || die "Error";
+            while (<SPECFROM>) {
+                $newbuild = $BUILD;
+                $newbuild =~ s/(dev|alpha)/0/gi;                # dev
+                $newbuild =~ s/beta/1/gi;                       # beta
+                $newbuild =~ s/rc./2/gi;                        # rc
+                if ($newbuild !~ /-/) { $newbuild.='-3'; }      # finale
+                # now newbuild is 0-0 or 0-3 for example
+                $_ =~ s/__VERSION__/$MAJOR.$MINOR.$REL1/;
+                $_ =~ s/__RELEASE__/$RPMSUBVERSION/;
+                print SPECTO $_;
+            }
+            close SPECFROM;
+            close SPECTO;
+            print "Version set to $MAJOR.$MINOR.$newbuild\n";
             $cmd="cp -pr \"$BUILDROOT/$PROJECT/build/aps/configure\" \"$BUILDROOT/$PROJECT.tmp/$PROJECT/scripts/configure\"";
+            $ret=`$cmd`;
+            $cmd="cp -pr \"$BUILDROOT/$PROJECT/build/aps/configure.php\" \"$BUILDROOT/$PROJECT.tmp/$PROJECT/scripts/configure.php\"";
             $ret=`$cmd`;
             $cmd="cp -pr \"$BUILDROOT/$PROJECT/doc/images\" \"$BUILDROOT/$PROJECT.tmp/$PROJECT/images\"";
             $ret=`$cmd`;
  
+            print "Remove other files\n";
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/dev`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/doc`;
             
+            print "Build APP-LIST.xml files\n";
+            
             print "Compress $BUILDROOT/$PROJECT.tmp/$PROJECT into $FILENAMEAPS.zip...\n";
  
-            print "Go to directory $BUILDROOT/$PROJECT.tmp\n";
+            print "Go to directory $BUILDROOT/$PROJECT.tmp\/$PROJECT\n";
             $olddir=getcwd();
-            chdir("$BUILDROOT\/$PROJECT.tmp");
-            #$cmd= "7z a -r -tzip -xr\@\"$BUILDROOT\/$PROJECT.tmp\/$PROJECT\/build\/zip\/zip_exclude.txt\" -mx $BUILDROOT/$FILENAMEAPS.zip $BUILDROOT/$PROJECT.tmp/$PROJECT\\*";
-            $cmd= "zip -9 -r $BUILDROOT/$FILENAMEAPS.zip $PROJECT\\*";
+            chdir("$BUILDROOT\/$PROJECT.tmp\/$PROJECT");
+            $cmd= "zip -9 -r $BUILDROOT/$FILENAMEAPS.zip \*";
             print $cmd."\n";
             $ret= `$cmd`;
             chdir("$olddir");
                         
             if ($OS =~ /windows/i)
             {
-                print "Move $FILENAMEAPS.zip to $DESTI/$FILENAMEAPS.zip\n";
+                print "Move $BUILDROOT/$FILENAMEAPS.zip to $DESTI/$FILENAMEAPS.zip\n";
                 $ret=`mv "$BUILDROOT/$FILENAMEAPS.zip" "$DESTI/$FILENAMEAPS.zip"`;
             }
             else
             {
-                print "Move $FILENAMEAPS.zip to $DESTI/$FILENAMEAPS.zip\n";
+                print "Move $BUILDROOT/$FILENAMEAPS.zip to $DESTI/$FILENAMEAPS.zip\n";
                 $ret=`mv "$BUILDROOT/$FILENAMEAPS.zip" "$DESTI/$FILENAMEAPS.zip"`;
             }
             next;
