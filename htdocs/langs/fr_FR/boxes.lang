@@ -51,6 +51,7 @@ LastRefreshDate=Date dernier rafraichissement
 NoRecordedBookmarks=Pas de bookmarks personnels.
 ClickToAdd=Cliquer ici pour ajouter.
 NoRecordedCustomers=Pas de client enregistré
+NoRecordedContacts=Pas de contact enregistré
 BoxTitleLastActionsToDo=Les %s derniers événements à réaliser
 BoxTitleLastContracts=Les %s derniers contrats
 NoActionsToDo=Pas d'événements à réaliser

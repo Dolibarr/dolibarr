@@ -2,7 +2,7 @@
 #----------------------------------------------------------------------------
 # \file         build/makepack-dolibarr.pl
 # \brief        Dolibarr package builder (tgz, zip, rpm, deb, exe)
-# \version      $Id$
+# \version      $Id: makepack-dolibarr.pl,v 1.103 2011/06/24 23:10:52 eldy Exp $
 # \author       (c)2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
 #----------------------------------------------------------------------------
 
@@ -14,14 +14,14 @@ $MINOR="1";
 $BUILD="0-dev";		# Mettre x pour release, x-dev pour dev, x-beta pour beta, x-rc pour release candidate
 $RPMSUBVERSION="auto";	# auto use value found into BUILD
 
-@LISTETARGET=("TGZ","ZIP","RPM","DEB","EXE","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
+@LISTETARGET=("TGZ","ZIP","RPM","DEB","APS","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
 %REQUIREMENTTARGET=(                            # Tool requirement for each package
 "SNAPSHOT"=>"tar",
 "TGZ"=>"tar",
 "ZIP"=>"7z",
 "RPM"=>"rpmbuild",
 "DEB"=>"dpkg",
-"EXE"=>"makensis.exe",
+"APS"=>"zip",
 "EXEDOLIWAMP"=>"iscc.exe"
 );
 %ALTERNATEPATH=(
@@ -35,7 +35,7 @@ $FILENAMETGZ="$PROJECT-$MAJOR.$MINOR.$BUILD";
 $FILENAMEZIP="$PROJECT-$MAJOR.$MINOR.$BUILD";
 $FILENAMERPM="$PROJECT-$MAJOR.$MINOR.$BUILD-$RPMSUBVERSION";
 $FILENAMEDEB="$PROJECT-$MAJOR.$MINOR.$BUILD";
-$FILENAMEEXE="$PROJECT-$MAJOR.$MINOR.$BUILD";
+$FILENAMEAPS="$PROJECT-$MAJOR.$MINOR.$BUILD.app";
 $FILENAMEEXEDOLIWAMP="$PROJECT-$MAJOR.$MINOR.$BUILD";
 if (-d "/usr/src/redhat") {
     # redhat
@@ -48,7 +48,7 @@ if (-d "/usr/src/RPM") {
 
 
 use vars qw/ $REVISION $VERSION /;
-$REVISION='$Revision$'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
+$REVISION='$Revision: 1.103 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
 $VERSION="1.0 (build $REVISION)";
 
 
@@ -460,7 +460,6 @@ if ($nboftargetok) {
 		    $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/conf/conf*sav*`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/test`;
             # To remove once stable
-            $ret=`rm -f $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/incluces/modules/facture/doc/doc_generic_invoice_odt.modules.php`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/htdocs/theme/bureau2crea`;
 
  			print "Edit version in file $BUILDROOT/$PROJECT.tmp/DEBIAN/control\n";
@@ -539,19 +538,81 @@ if ($nboftargetok) {
         	next;
         }
         
-    	if ($target eq 'EXE') {
-     		print "Remove target $FILENAMEEXE.exe...\n";
-    		unlink "$DESTI/$FILENAMEEXE.exe";
+    	if ($target eq 'APS') {
+     		print "Remove target $FILENAMEAPS.zip...\n";
+    		unlink "$DESTI/$FILENAMEAPS.zip";
  
-    		print "Compress into $FILENAMEEXE.exe by $FILENAMEEXE.nsi...\n";
-    		$cmd="\"$REQUIREMENTTARGET{$target}\" /DMUI_VERSION_DOT=$MAJOR.$MINOR.$BUILD /X\"SetCompressor bzip2\" \"$SOURCE\\build\\exe\\$FILENAME.nsi\"";
-            print "$cmd\n";
-    		$ret=`$cmd`;
-    		print "Move $FILENAMEEXE.exe to $DESTI\n";
-    		rename("$SOURCE\\build\\exe\\$FILENAMEEXE.exe","$DESTI/$FILENAMEEXE.exe");
-    		next;
+            #rmdir "$BUILDROOT/$PROJECT.tmp";
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp`;
+            print "Create directory $BUILDROOT/$PROJECT.tmp\n";
+            $ret=`mkdir -p "$BUILDROOT/$PROJECT.tmp"`;
+            print "Copy $BUILDROOT/$PROJECT to $BUILDROOT/$PROJECT.tmp\n";
+            $cmd="cp -pr \"$BUILDROOT/$PROJECT\" \"$BUILDROOT/$PROJECT.tmp\"";
+            $ret=`$cmd`;
+
+            print "Remove other files\n";
+            $ret=`rm -f $BUILDROOT/$PROJECT.tmp/build/DoliWamp-*`;
+            $ret=`rm -f $BUILDROOT/$PROJECT.tmp/build/DoliMamp-*`;
+            $ret=`rm -f $BUILDROOT/$PROJECT.tmp/build/dolibarr-*.tar`;
+            $ret=`rm -f $BUILDROOT/$PROJECT.tmp/build/dolibarr-*.tgz`;
+            $ret=`rm -f $BUILDROOT/$PROJECT.tmp/build/dolibarr-*.zip`;
+            $ret=`rm -f $BUILDROOT/$PROJECT.tmp/build/dolibarr-*.deb`;
+            $ret=`rm -f $BUILDROOT/$PROJECT.tmp/build/doxygen/doxygen_warnings.log`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/build/html`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/dev/dbmodel`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/dev/fpdf`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/dev/initdata`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/dev/iso-normes`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/dev/phpcheckstyle`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/dev/phpunit`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/dev/spec`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/dev/uml`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/dev/xdebug`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/doc/flyer`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/doc/font`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/doc/tshirt`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/doc/rollup`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/conf/conf.php.mysql`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/conf/conf.php.old`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/conf/conf.php.postgres`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/conf/conf*sav*`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/test`;
+
+            print "Create APS files\n";
+            $cmd="cp -pr \"$BUILDROOT/$PROJECT/build/aps/APP-META.xml\" \"$BUILDROOT/$PROJECT.tmp/$PROJECT/APP-META.xml\"";
+            $ret=`$cmd`;
+            $cmd="cp -pr \"$BUILDROOT/$PROJECT/build/aps/configure\" \"$BUILDROOT/$PROJECT.tmp/$PROJECT/scripts/configure\"";
+            $ret=`$cmd`;
+            $cmd="cp -pr \"$BUILDROOT/$PROJECT/doc/images\" \"$BUILDROOT/$PROJECT.tmp/$PROJECT/images\"";
+            $ret=`$cmd`;
+ 
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/dev`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/doc`;
+            
+            print "Compress $BUILDROOT/$PROJECT.tmp/$PROJECT into $FILENAMEAPS.zip...\n";
+ 
+            print "Go to directory $BUILDROOT/$PROJECT.tmp\n";
+            $olddir=getcwd();
+            chdir("$BUILDROOT\/$PROJECT.tmp");
+            #$cmd= "7z a -r -tzip -xr\@\"$BUILDROOT\/$PROJECT.tmp\/$PROJECT\/build\/zip\/zip_exclude.txt\" -mx $BUILDROOT/$FILENAMEAPS.zip $BUILDROOT/$PROJECT.tmp/$PROJECT\\*";
+            $cmd= "zip -9 -r $BUILDROOT/$FILENAMEAPS.zip $PROJECT\\*";
+            print $cmd."\n";
+            $ret= `$cmd`;
+            chdir("$olddir");
+                        
+            if ($OS =~ /windows/i)
+            {
+                print "Move $FILENAMEAPS.zip to $DESTI/$FILENAMEAPS.zip\n";
+                $ret=`mv "$BUILDROOT/$FILENAMEAPS.zip" "$DESTI/$FILENAMEAPS.zip"`;
+            }
+            else
+            {
+                print "Move $FILENAMEAPS.zip to $DESTI/$FILENAMEAPS.zip\n";
+                $ret=`mv "$BUILDROOT/$FILENAMEAPS.zip" "$DESTI/$FILENAMEAPS.zip"`;
+            }
+            next;
     	}
-   
+
     	if ($target eq 'EXEDOLIWAMP')
     	{
      		print "Remove target $FILENAMEEXEDOLIWAMP.exe...\n";

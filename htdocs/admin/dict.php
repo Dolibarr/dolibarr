@@ -25,7 +25,7 @@
  *	    \file       htdocs/admin/dict.php
  *		\ingroup    setup
  *		\brief      Page to administer data tables
- *		\version    $Id$
+ *		\version    $Id: dict.php,v 1.145 2011/06/25 09:50:56 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -123,7 +123,8 @@ $tabsql[5] = "SELECT c.rowid as rowid, c.code as code, c.civilite AS libelle, c.
 $tabsql[6] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.type, a.active, a.module, a.position FROM ".MAIN_DB_PREFIX."c_actioncomm AS a";
 $tabsql[7] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.deductible, p.code as pays_code, p.libelle as pays, a.fk_pays as pays_id, a.active FROM ".MAIN_DB_PREFIX."c_chargesociales AS a, ".MAIN_DB_PREFIX."c_pays as p WHERE a.fk_pays=p.rowid and p.active=1";
 $tabsql[8] = "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_typent";
-$tabsql[9] = "SELECT code, code_iso, label as libelle, symbole, active FROM ".MAIN_DB_PREFIX."c_currencies";
+//$tabsql[9] = "SELECT code, code_iso, label as libelle, symbole, active FROM ".MAIN_DB_PREFIX."c_currencies";
+$tabsql[9] = "SELECT code, code_iso, label as libelle, active FROM ".MAIN_DB_PREFIX."c_currencies";
 $tabsql[10]= "SELECT t.rowid, t.taux, t.localtax1, t.localtax2, p.libelle as pays, p.code as pays_code, t.fk_pays as pays_id, t.recuperableonly, t.note, t.active FROM ".MAIN_DB_PREFIX."c_tva as t, llx_c_pays as p WHERE t.fk_pays=p.rowid";
 $tabsql[11]= "SELECT t.rowid as rowid, element, source, code, libelle, active FROM ".MAIN_DB_PREFIX."c_type_contact AS t";
 $tabsql[12]= "SELECT c.rowid as rowid, code, sortorder, c.libelle, c.libelle_facture, nbjour, fdm, decalage, active FROM ".MAIN_DB_PREFIX.'c_payment_term AS c';
@@ -171,7 +172,8 @@ $tabfield[5] = "code,libelle";
 $tabfield[6] = "code,libelle,type,position";
 $tabfield[7] = "code,libelle,pays_id,pays,deductible";
 $tabfield[8] = "code,libelle";
-$tabfield[9] = "code,code_iso,libelle,symbole";
+//$tabfield[9] = "code,code_iso,libelle,symbole";
+$tabfield[9] = "code,code_iso,libelle";
 $tabfield[10]= "pays_id,pays,taux,recuperableonly,localtax1,localtax2,note";
 $tabfield[11]= "element,source,code,libelle";
 $tabfield[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage";
@@ -195,7 +197,8 @@ $tabfieldvalue[5] = "code,libelle";
 $tabfieldvalue[6] = "code,libelle,type,position";
 $tabfieldvalue[7] = "code,libelle,pays,deductible";
 $tabfieldvalue[8] = "code,libelle";
-$tabfieldvalue[9] = "code,code_iso,libelle,symbole";
+//$tabfieldvalue[9] = "code,code_iso,libelle,symbole";
+$tabfieldvalue[9] = "code,code_iso,libelle";
 $tabfieldvalue[10]= "pays,taux,recuperableonly,localtax1,localtax2,note";
 $tabfieldvalue[11]= "element,source,code,libelle";
 $tabfieldvalue[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage";
@@ -219,7 +222,8 @@ $tabfieldinsert[5] = "code,civilite";
 $tabfieldinsert[6] = "code,libelle,type,position";
 $tabfieldinsert[7] = "code,libelle,fk_pays,deductible";
 $tabfieldinsert[8] = "code,libelle";
-$tabfieldinsert[9] = "code,code_iso,label,symbole";
+//$tabfieldinsert[9] = "code,code_iso,label,symbole";
+$tabfieldinsert[9] = "code,code_iso,label";
 $tabfieldinsert[10]= "fk_pays,taux,recuperableonly,localtax1,localtax2,note";
 $tabfieldinsert[11]= "element,source,code,libelle";
 $tabfieldinsert[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage";
@@ -893,7 +897,7 @@ print '<br>';
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/06/25 09:50:56 $ - $Revision: 1.145 $');
 
 
 /**
