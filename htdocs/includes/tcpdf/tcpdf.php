@@ -12089,10 +12089,7 @@ class TCPDF {
 		}
 		$seed .= uniqid('', true);
 		$seed .= rand();
-		// DOLCHANGE RH
-		//$seed .= getmypid();
-		$seed .= mt_rand();
-		// END DOLCHANGE
+		$seed .= getmypid();
 		$seed .= __FILE__;
 		$seed .= $this->bufferlen;
 		if (isset($_SERVER['REMOTE_ADDR'])) {
