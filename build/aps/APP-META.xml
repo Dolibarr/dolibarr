@@ -21,26 +21,14 @@
 Dolibarr is a free modular software (you see only
 features you need) to manage small and medium companies, freelancers
 or foundations.
-This Opensource software is designed to provide all features you need to
+This OpenSource software is designed to provide all features you need to
 manage information on many aspects of your business
 into an intuitive and user-friendly graphical interface
 It's an OpenSource software you can install on a web server or as a
-standalone software. Dolibarr is designed to provide simplicity:
-* Simple to use (any module can be disabled to removed not required
-features, only the permissions features can not be disabled).
-* Simple to install (with DoliWamp the auto-installer for Windows,
-DoliBuntu, the auto-installer for Ubuntu/Debian or DoliMamp the
-auto-installer for Mac OS X, for those who do not know how to install
-an Apache server, MySQL, PHP. A web assistant is available for
-others, no additional components required, no Java, no Python, no
-Perl, no PEARL PHP modules, no other exotic library).
-* Simple for development (no heavy frameworks). Dolibarr, developed in
-PHP object, incorporates its own natural code, allowing every
-developer to be immediately operational, with no other knowledge than
-PHP).
+standalone software. Dolibarr is designed to provide simplicity to end-user.
         </description>
         <icon path="images/appicon_64.png" />
-        <screenshot path="images/dolibarr_screenshot1.png">
+        <screenshot path="images/dolibarr_screenshot1_640x480.png">
             <description>Screenshot 1</description>
         </screenshot>
         <changelog>
@@ -74,6 +62,7 @@ PHP).
         </license>
         <presentation>
             <name>Dolibarr instance</name>
+            <summary>Dolibarr services</summary>
             <entry-points>
                 <entry class="frontpage" dst="/">
                     <label>Application entry point</label>
@@ -126,7 +115,7 @@ Please make sure the text you entered starts with a letter and continues with ei
             <configuration-script name="configure.php">
                 <configuration-script-language>php</configuration-script-language>
                 <status-control/>
-			</configuration-script>
+            </configuration-script>
         </provision>
     </service>
 </application>

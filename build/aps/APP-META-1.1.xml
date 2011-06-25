@@ -28,7 +28,7 @@ It's an OpenSource software you can install on a web server or as a
 standalone software. Dolibarr is designed to provide simplicity to end-user.
         </description>
 		<icon path="images/appicon_64.png" />
-		<screenshot path="images/dolibarr_screenshot1.png">
+		<screenshot path="images/dolibarr_screenshot1_640x480.png">
 			<description>Screenshot 1</description>
 		</screenshot>
 		<changelog>
