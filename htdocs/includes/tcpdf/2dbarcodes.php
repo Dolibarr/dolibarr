@@ -1,13 +1,13 @@
 <?php
 //============================================================+
 // File name   : 2dbarcodes.php
-// Version     : 1.0.007
+// Version     : 1.0.009
 // Begin       : 2009-04-07
-// Last Update : 2010-12-16
+// Last Update : 2011-06-01
 // Author      : Nicola Asuni - Tecnick.com S.r.l - Via Della Pace, 11 - 09044 - Quartucciu (CA) - ITALY - www.tecnick.com - info@tecnick.com
 // License     : GNU-LGPL v3 (http://www.gnu.org/copyleft/lesser.html)
 // -------------------------------------------------------------------
-// Copyright (C) 2009-2010  Nicola Asuni - Tecnick.com S.r.l.
+// Copyright (C) 2009-2011  Nicola Asuni - Tecnick.com S.r.l.
 //
 // This file is part of TCPDF software library.
 //
@@ -37,14 +37,14 @@
  * PHP class to creates array representations for 2D barcodes to be used with TCPDF.
  * @package com.tecnick.tcpdf
  * @author Nicola Asuni
- * @version 1.0.007
+ * @version 1.0.009
  */
 
 /**
  * @class TCPDF2DBarcode
  * PHP class to creates array representations for 2D barcodes to be used with TCPDF (http://www.tcpdf.org).
  * @package com.tecnick.tcpdf
- * @version 1.0.007
+ * @version 1.0.009
  * @author Nicola Asuni
  */
 class TCPDF2DBarcode {
@@ -78,6 +78,63 @@ class TCPDF2DBarcode {
 	}
 
 	/**
+	 * Send barcode as SVG image object to the standard output.
+	 * @param $w (int) Width of a single rectangle element in user units.
+	 * @param $h (int) Height of a single rectangle element in user units.
+	 * @param $color (string) Foreground color (in SVG format) for bar elements (background is transparent).
+ 	 * @public
+	 */
+	public function getBarcodeSVG($w=2, $h=3, $color='black') {
+		// send XML headers
+		$code = $this->getBarcodeSVGcode($w, $h, $color);
+		header('Content-Type: application/svg+xml');
+		header('Cache-Control: public, must-revalidate, max-age=0'); // HTTP/1.1
+		header('Pragma: public');
+		header('Expires: Sat, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+		header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
+		header('Content-Disposition: inline; filename="'.md5($code).'.svg";');
+		//header('Content-Length: '.strlen($code));
+		echo $code;
+	}
+
+	/**
+	 * Return a SVG string representation of barcode.
+	 * @param $w (int) Width of a single rectangle element in user units.
+	 * @param $h (int) Height of a single rectangle element in user units.
+	 * @param $color (string) Foreground color (in SVG format) for bar elements (background is transparent).
+ 	 * @return string SVG code.
+ 	 * @public
+	 */
+	public function getBarcodeSVGcode($w=3, $h=3, $color='black') {
+		// replace table for special characters
+		$repstr = array("\0" => '', '&' => '&amp;', '<' => '&lt;', '>' => '&gt;');
+		$svg = '<'.'?'.'xml version="1.0" standalone="no"'.'?'.'>'."\n";
+		$svg .= '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">'."\n";
+		$svg .= '<svg width="'.round(($this->barcode_array['num_cols'] * $w), 3).'" height="'.round(($this->barcode_array['num_rows'] * $h), 3).'" version="1.1" xmlns="http://www.w3.org/2000/svg">'."\n";
+		$svg .= "\t".'<desc>'.strtr($this->barcode_array['code'], $repstr).'</desc>'."\n";
+		$svg .= "\t".'<g id="elements" fill="'.$color.'" stroke="none">'."\n";
+		// print barcode elements
+		$xstart = 0;
+		$y = 0;
+		// for each row
+		for ($r = 0; $r < $this->barcode_array['num_rows']; ++$r) {
+			$x = $xstart;
+			// for each column
+			for ($c = 0; $c < $this->barcode_array['num_cols']; ++$c) {
+				if ($this->barcode_array['bcode'][$r][$c] == 1) {
+					// draw a single barcode cell
+					$svg .= "\t\t".'<rect x="'.$x.'" y="'.$y.'" width="'.$w.'" height="'.$h.'" />'."\n";
+				}
+				$x += $w;
+			}
+			$y += $h;
+		}
+		$svg .= "\t".'</g>'."\n";
+		$svg .= '</svg>'."\n";
+		return $svg;
+	}
+
+	/**
 	 * Set the barcode.
 	 * @param $code (string) code to print
  	 * @param $type (string) type of barcode: <ul><li>RAW: raw mode - comma-separad list of array rows</li><li>RAW2: raw mode - array rows are surrounded by square parenthesis.</li><li>QRCODE : QR-CODE Low error correction</li><li>QRCODE,L : QR-CODE Low error correction</li><li>QRCODE,M : QR-CODE Medium error correction</li><li>QRCODE,Q : QR-CODE Better error correction</li><li>QRCODE,H : QR-CODE Best error correction</li><li>PDF417 : PDF417 (ISO/IEC 15438:2006)</li><li>PDF417,a,e,t,s,f,o0,o1,o2,o3,o4,o5,o6 : PDF417 with parameters: a = aspect ratio (width/height); e = error correction level (0-8); t = total number of macro segments; s = macro segment index (0-99998); f = file ID; o0 = File Name (text); o1 = Segment Count (numeric); o2 = Time Stamp (numeric); o3 = Sender (text); o4 = Addressee (text); o5 = File Size (numeric); o6 = Checksum (numeric). NOTES: Parameters t, s and f are required for a Macro Control Block, all other parametrs are optional. To use a comma character ',' on text options, replace it with the character 255: "\xff".</li></ul>
@@ -94,6 +151,7 @@ class TCPDF2DBarcode {
 				}
 				$qrcode = new QRcode($code, strtoupper($mode[1]));
 				$this->barcode_array = $qrcode->getBarcodeArray();
+				$this->barcode_array['code'] = $code;
 				break;
 			}
 			case 'PDF417': { // PDF417 (ISO/IEC 15438:2006)
@@ -124,6 +182,7 @@ class TCPDF2DBarcode {
 				}
 				$qrcode = new PDF417($code, $ecl, $aspectratio, $macro);
 				$this->barcode_array = $qrcode->getBarcodeArray();
+				$this->barcode_array['code'] = $code;
 				break;
 			}
 			case 'RAW':
@@ -147,6 +206,7 @@ class TCPDF2DBarcode {
 				foreach ($rows as $r) {
 					$this->barcode_array['bcode'][] = str_split($r, 1);
 				}
+				$this->barcode_array['code'] = $code;
 				break;
 			}
 			case 'TEST': { // TEST MODE
@@ -158,6 +218,7 @@ class TCPDF2DBarcode {
 					array(0,1,0,0,1,1,0,0,1,1,1,0,0,1,0),
 					array(0,1,0,0,1,0,0,0,0,0,1,0,0,1,0),
 					array(0,1,0,0,1,1,1,0,1,1,1,0,0,1,0));
+				$this->barcode_array['code'] = $code;
 				break;
 			}
 			default: {

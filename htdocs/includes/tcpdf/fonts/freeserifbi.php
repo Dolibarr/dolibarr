@@ -1,7 +1,7 @@
 <?php
 $type='TrueTypeUnicode';
 $name='FreeSerifBoldItalic';
-$desc=array('Ascent'=>900,'Descent'=>-300,'CapHeight'=>-24,'Flags'=>96,'FontBBox'=>'[-831 -1120 1678 1571]','ItalicAngle'=>-16.3,'StemV'=>120,'MissingWidth'=>600);
+$desc=array('Ascent'=>900,'Descent'=>-300,'CapHeight'=>-24,'Flags'=>96,'FontBBox'=>'[-787 -300 1678 924]','ItalicAngle'=>-16.3,'StemV'=>120,'MissingWidth'=>600);
 $up=-125;
 $ut=50;
 $dw=600;
