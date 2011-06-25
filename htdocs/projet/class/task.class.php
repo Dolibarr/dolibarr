@@ -21,7 +21,7 @@
  *      \file       htdocs/projet/class/task.class.php
  *      \ingroup    project
  *      \brief      This file is a CRUD class file for Task (Create/Read/Update/Delete)
- *		\version    $Id$
+ *		\version    $Id: task.class.php,v 1.11 2011/06/25 10:55:11 eldy Exp $
  *		\remarks	Initialy built by build_class_from_table on 2008-09-10 12:41
  */
 
@@ -469,7 +469,7 @@ class Task extends CommonObject
 
 		// List of tasks (does not care about permissions. Filtering will be done later)
 		$sql = "SELECT p.rowid as projectid, p.ref, p.title as plabel, p.public,";
-		$sql.= " t.rowid as taskid, t.label, t.fk_task_parent, t.duration_effective, t.progress,";
+		$sql.= " t.rowid as taskid, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress,";
 		$sql.= " t.dateo as date_start, t.datee as date_end";
 		if ($mode == 0)
 		{
