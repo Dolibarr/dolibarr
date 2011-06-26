@@ -22,7 +22,7 @@
  *	\file       htdocs/public/members/new.php
  *	\ingroup    member
  *	\brief      Example of form to add a new member
- *	\version    $Id: new.php,v 1.27 2011/06/26 18:54:23 eldy Exp $
+ *	\version    $Id: new.php,v 1.26 2011/06/26 18:53:17 eldy Exp $
  */
 
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
@@ -243,7 +243,7 @@ if ($action == 'added')
     print $langs->trans("NewMemberbyWeb");
     print '</center>';
 
-    llxFooterVierge('$Date: 2011/06/26 18:54:23 $ - $Revision: 1.27 $');
+    llxFooterVierge('$Date: 2011/06/26 18:53:17 $ - $Revision: 1.26 $');
     exit;
 }
 
@@ -390,7 +390,7 @@ print '<td valign="top"><textarea name="comment" wrap="soft" cols="60" rows="'.R
 print '</tr>'."\n";
 
 // Add specific fields used by Dolibarr foundation for example
-if (! empty($conf->global->MEMBER_DOLIBARR))
+if (empty($conf->global->MEMBER_DOLIBARR))
 {
     $arraybudget=array('50'=>'<= 100 000','100'=>'<= 200 000','200'=>'<= 500 000','400'=>'<= 1 500 000','750'=>'<= 3 000 000','1500'=>'<= 5 000 000','2000'=>'5 000 000+');
     print '<tr id="trbudget"><td>'.$langs->trans("TurnoverOrBudget").'</td><td>';
@@ -443,5 +443,5 @@ print "<br></form>\n";
 
 $db->close();
 
-llxFooterVierge('$Date: 2011/06/26 18:54:23 $ - $Revision: 1.27 $');
+llxFooterVierge('$Date: 2011/06/26 18:53:17 $ - $Revision: 1.26 $');
 ?>
