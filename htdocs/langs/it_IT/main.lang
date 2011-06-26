@@ -614,3 +614,46 @@ Resources=Risorse
 Source=Fonte
 Prefix=Prefisso
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:34:40).
+
+
+// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
+// Reference language: en_US -> it_IT
+FormatDateShortJQuery=dd/mm/yy
+AddLink=Aggiungi il link
+Of=di
+AmountByMonth=Importo per mese
+DatePayment=Data di pagamento
+TeraBytes=Terabyte
+Tb=Tb
+OtherStatistics=Altre statistiche
+ActionNotApplicable=Non applicabile
+JanuaryMin=Jan
+FebruaryMin=Febbraio
+MarchMin=Mar
+AprilMin=Aprile
+MayMin=Maggio
+JuneMin=Giugno
+JulyMin=Luglio
+AugustMin=Agosto
+SeptemberMin=Settembre
+OctoberMin=Ottobre
+NovemberMin=Novembre
+DecemberMin=Dicembre
+CoreErrorTitle=Errore di sistema
+CoreErrorMessage=È stato riscontrato un errore. Controllare i registri o contattare l&#39;amministratore di sistema.
+Before=Prima
+After=Dopo
+IPAddress=Indirizzo IP
+Frequency=Frequenza
+IM=Instant messaging
+NewAttribute=Nuovo attributo
+AttributeCode=Attributo codice
+OptionalFieldsSetup=Extra attributi di impostazione
+MondayMin=Momento
+TuesdayMin=Tu
+WednesdayMin=Noi
+ThursdayMin=Th
+FridayMin=Fr
+SaturdayMin=Sa
+SundayMin=Su
+// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:56).

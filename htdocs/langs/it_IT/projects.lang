@@ -106,3 +106,13 @@ TypeContact_project_task_external_TASKEXECUTIVE=Compito dell'esecutivo
 TypeContact_project_task_internal_CONTRIBUTOR=Contributore
 TypeContact_project_task_external_CONTRIBUTOR=Contributore
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:32:44).
+
+
+// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
+// Reference language: en_US -> it_IT
+TimesSpent=Il tempo trascorso
+TaskIsNotAffectedToYou=Compito non è assegnato a voi
+ErrorTimeSpentIsEmpty=Il tempo trascorso è vuoto
+ThisWillAlsoRemoveTasks=Questa azione anche eliminare tutte le attività del progetto (compiti <b>%s</b> al momento) e tutti gli ingressi del tempo trascorso.
+IfNeedToUseOhterObjectKeepEmpty=Se alcuni oggetti (fattura, ordine, ...), appartenente ad un altro di terze parti, deve essere collegato al progetto di creare, mantenere questo vuoto di avere il progetto di essere multi terzi.
+// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:28).

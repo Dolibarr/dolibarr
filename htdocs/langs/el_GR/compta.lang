@@ -117,3 +117,16 @@ Dispatch=Dispatching
 Dispatched=Dispatched
 ToDispatch=To dispatch
 ThirdPartyMustBeEditAsCustomer=Το στοιχείο πρέπει να ορισθεί ως πελάτης
+
+
+// START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
+// Reference language: en_US -> el_GR
+SellsJournal=Ημερολόγιο πωλήσεων
+PurchasesJournal=Αγορές Εφημερίδα
+DescSellsJournal=Ημερολόγιο πωλήσεων
+DescPurchasesJournal=Αγορές Εφημερίδα
+InvoiceRef=Τιμολόγιο ref.
+CodeNotDef=Δεν προσδιορίζεται
+AddRemind=Αποστολή διαθέσιμο ποσό
+RemainToDivide=Παραμείνετε από την αποστολή:
+// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:37:22).

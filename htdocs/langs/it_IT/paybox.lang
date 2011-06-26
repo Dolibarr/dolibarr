@@ -36,3 +36,18 @@ SetupPayBoxToHavePaymentCreatedAutomatically=Imposta il tuo Paybox con <b>url %s
 // Reference language: en_US
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL di offrire una interfaccia online %s pagamento utente per un abbonamento membro
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:32:28).
+
+
+// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
+// Reference language: en_US -> it_IT
+YourPaymentHasBeenRecorded=Questa pagina conferma che il pagamento è stato registrato. Grazie.
+YourPaymentHasNotBeenRecorded=Tu pagamento non è stato registrato e transazione è stata annullata. Grazie.
+AccountParameter=Conto di parametri
+UsageParameter=Uso dei parametri
+InformationToFindParameters=Aiutare a trovare le tue informazioni account %s
+PAYBOX_CGI_URL_V2=URL del modulo Paybox CGI per il pagamento
+VendorName=Nome del venditore
+CSSUrlForPaymentForm=Foglio di stile CSS url per il modulo di pagamento
+MessageOK=Messaggio sulla pagina di pagamento convalidate ritorno
+MessageKO=Messaggio sulla pagina di pagamento annullato ritorno
+// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:53:05).

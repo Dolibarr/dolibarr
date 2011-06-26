@@ -21,3 +21,18 @@ NoProductFound=No article found
 ProductFound=product found
 ProductsFound=products found
 NoArticle=No article
+
+// START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
+// Reference language: en_US -> el_GR
+CashDeskProducts=Προϊόντα
+CashDeskStock=Χρηματιστήριο
+CashDeskOn=επί
+Identification=Αναγνώριση
+Article=Άρθρο
+Difference=Διαφορά
+TotalTicket=Σύνολο εισιτηρίων
+NoVAT=Δεν ΦΠΑ για την πώληση αυτή
+Change=Περίσσεια λάβει
+CalTip=Κάντε κλικ για να δείτε το ημερολόγιο
+CashDeskSetupStock=Ρωτάτε για να μειώσετε απόθεμα στο τιμολόγιο δημιουργία αποθήκης αλλά για αυτό είναι δεν ορίζεται <br> Αλλαγή απόθεμα εγκατάστασης μονάδας, ή επιλέξτε μια αποθήκη
+// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:36:58).

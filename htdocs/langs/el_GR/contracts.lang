@@ -85,9 +85,8 @@ ConfirmMoveToAnotherContractQuestion=Choose in which existing contract (of same 
 PaymentRenewContractId=Renew contract line (number %s)
 ExpiredSince=Expiration date
 RelatedContracts=Σχετιζόμενα συμβόλαια
-##### Types de contacts #####
-TypeContact_contrat_internal_SALESREPSIGN=Sales representative signing contract
-TypeContact_contrat_internal_SALESREPFOLL=Sales representative following-up contract
-TypeContact_contrat_external_BILLING=Billing customer contact
-TypeContact_contrat_external_CUSTOMER=Follow-up customer contact
-TypeContact_contrat_external_SALESREPSIGN=Signing contract customer contact
+
+// START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
+// Reference language: en_US -> el_GR
+Error_CONTRACT_ADDON_NotDefined=Σταθερή CONTRACT_ADDON δεν ορίζεται
+// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:37:23).

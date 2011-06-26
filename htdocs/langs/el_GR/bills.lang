@@ -415,3 +415,20 @@ TitanNumRefModelDesc3=Define the variable SOCIETE_FISCAL_MONTH_START with the mo
 TitanNumRefModelDesc4=In this example, we shall have on the 1st September 2006 an invoice named FA0700001
 # pluton
 PlutonNumRefModelDesc1=Return a customizable invoice number according to a defined mask.
+
+
+// START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
+// Reference language: en_US -> el_GR
+BillsCustomer=Τιμολόγιο του Πελάτη
+BillsSuppliersUnpaidForCompany=Απλήρωτα τιμολόγια προμηθευτή για sssss
+BillsLate=Η καθυστέρηση των πληρωμών
+DisabledBecauseNotErasable=Άτομα με ειδικές ανάγκες, επειδή δεν μπορούν να διαγραφούν
+NumberOfBillsByMonth=Nb των τιμολογίων ανά μήνα
+AmountOfBillsByMonthHT=Ποσό των τιμολογίων ανά μήνα (μετά από φόρους)
+AddDiscount=Δημιουργία απόλυτη έκπτωση
+AddCreditNote=Δημιουργία πιστωτικό σημείωμα
+InvoiceNotChecked=Δεν έχει επιλεγεί τιμολόγιο
+ShowUnpaidAll=Εμφάνιση όλων των απλήρωτων τιμολογίων
+ClosePaidInvoicesAutomatically=Ταξινομήστε &quot;Πληρωμένες» όλα τα τιμολόγια entierely payed.
+AllCompletelyPayedInvoiceWillBeClosed=Όλα τιμολόγιο χωρίς παραμένουν να πληρώσουν θα κλείσει αυτόματα σε κατάσταση &quot;Πληρωμένες».
+// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:36:46).

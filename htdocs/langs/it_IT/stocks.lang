@@ -95,3 +95,11 @@ ConfirmDeleteWarehouse=Sei sicuro di voler cancellare il <b>%s</b> magazzino?
 PersonalStock=%s scorta personale
 ThisWarehouseIsPersonalStock=Questo deposito rappresenta riserva personale di %s %s
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:32:35).
+
+
+// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
+// Reference language: en_US -> it_IT
+SellPriceMin=Prezzo di vendita unitario
+EstimatedStockValueSellShort=Valore da vendere
+EstimatedStockValueSell=Valore da vendere
+// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:36).

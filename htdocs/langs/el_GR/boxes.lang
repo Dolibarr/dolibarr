@@ -60,3 +60,14 @@ NoRecordedProducts=Δεν υπάρχουν καταχωρημένα προϊόν
 NoRecordedProspects=Δεν υπάρχουν προοπτικές
 NoContractedProducts=Δεν υπάρχουν καταχωρημένα συμβόλαια με προϊόντα/υπηρεσίες
 NoRecordedContracts=Δεν υπάρχουν καταχωρημένα συμβόλαια
+
+
+// START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
+// Reference language: en_US -> el_GR
+BoxLastContacts=Derniers επαφές / διευθύνσεις
+BoxLastMembers=Τελευταία μέλη
+BoxTitleLastModifiedMembers=Τελευταία sssss τροποποίηση των μελών
+BoxTitleLastModifiedContacts=Τελευταία sssss τροποποίηση επαφές / διευθύνσεις
+ClickToAdd=Πατήστε εδώ για προσθήκη.
+NoRecordedContacts=Δεν καταγράφονται επαφές
+// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:36:52).

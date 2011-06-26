@@ -127,3 +127,14 @@ Inherited=Ereditato
 YourRole=Il tuo ruolo
 YourQuotaOfUsersIsReached=La tua quota di utenti attivi è raggiunto!
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:32:33).
+
+
+// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
+// Reference language: en_US -> it_IT
+AdministratorDesc=Entità dell&#39;amministratore
+UserWillBeInternalUser=Utente creato sarà un utente interno (in quanto non collegata a un particolare partito terzo)
+UserWillBeExternalUser=Utente creato sarà un utente esterno (perché legato ad un particolare partito terzo)
+UserLogoff=%s logout dell&#39;utente
+NbOfUsers=Nb di utenti
+DontDowngradeSuperAdmin=Solo un superadmin può declassare un superadmin
+// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:38).

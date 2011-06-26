@@ -145,3 +145,15 @@ PDFQuevedoDescription=Un modello di ordine completo con lo spagnolo RE e IRPF
 // Reference language: en_US -> it_IT
 DispatchSupplierOrder=Ricezione ordine fornitore %s
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:34:05).
+
+
+// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
+// Reference language: en_US -> it_IT
+SuppliersOrdersToProcess=Fornitore ordini di processo
+StatusOrderSentShort=Spedizione in corso
+OrderByMail=Posta
+OrderByFax=Fax
+OrderByEMail=EMail
+OrderByWWW=Online
+OrderByPhone=Telefono
+// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:53:01).

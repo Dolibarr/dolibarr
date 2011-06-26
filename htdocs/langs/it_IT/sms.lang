@@ -1,0 +1,62 @@
+/*
+ * Language code: it_IT
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2011-06-26 15:51:22
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
+// Reference language: en_US -> it_IT
+CHARSET=UTF-8
+Sms=Sms
+SmsSetup=Sms setup
+SmsDesc=Questa pagina consente di definire le opzioni globali per le funzioni SMS
+SmsCard=SMS Card
+AllSms=Tutti gli SMS campagne
+SmsTargets=Obiettivi
+SmsRecipients=Obiettivi
+SmsRecipient=Obiettivo
+SmsTitle=Descrizione
+SmsFrom=Mittente
+SmsTo=Obiettivo
+SmsTopic=Argomento di SMS
+SmsText=Messaggio
+SmsMessage=Messaggio SMS
+ShowSms=Mostra Sms
+ListOfSms=Lista degli SMS campagne
+NewSms=Nuova campagna SMS
+EditSms=Modifica Sms
+ResetSms=Invio di nuovi
+DeleteSms=Cancellare Sms campagna
+DeleteASms=Rimuovere una campagna di Sms
+PreviewSms=Previuw Sms
+PrepareSms=Preparare Sms
+CreateSms=Crea Sms
+SmsResult=Risultato di invio di Sms
+TestSms=Test Sms
+ValidSms=Convalidare Sms
+ApproveSms=Approvare Sms
+SmsStatusDraft=Bozza
+SmsStatusValidated=Convalidato
+SmsStatusApproved=Approvato
+SmsStatusSent=Inviati
+SmsStatusSentPartialy=Inviato parzialmente
+SmsStatusSentCompletely=Inviati in modo completo
+SmsStatusError=Errore
+SmsStatusNotSent=Non inviato
+SmsSuccessfulySent=Sms correttamente inviato (da %s a %s)
+ErrorSmsRecipientIsEmpty=Numero di destinazione è vuota
+WarningNoSmsAdded=Nessun nuovo numero di telefono da aggiungere alla lista target
+ConfirmValidSms=Lei conferma la convalida di questa campagna?
+ConfirmResetMailing=Attenzione, se si effettua una reinit <b>%s</b> campagna di Sms, vi permetterà di fare un invio di massa di una seconda volta. E &#39;davvero quello che wan fare?
+ConfirmDeleteMailing=Avete confermare la rimozione di campagna?
+NbOfRecipients=Numero di obiettivi
+NbOfUniqueSms=Nb i numeri di telefono unico dof
+NbOfSms=Nbre di numeri phon
+ThisIsATestMessage=Questo è un messaggio di prova
+SendSms=Invia SMS
+SmsInfoCharRemain=Numero di caratteri rimanenti
+SmsInfoNumero=(Cioè formato internazionale: 33899701761)
+DelayBeforeSending=Ritardo prima di inviare (minuti)
+SmsNoPossibleRecipientFound=Nessun obiettivo disponibile. Controllare l&#39;impostazione del provider di SMS.
+// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:36).

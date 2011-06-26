@@ -73,3 +73,13 @@ DocumentModelMerou=Merou modello A5
 DateDeliveryPlanned=data di consegna piallato
 DateReceived=Data di consegna ricevuto
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:32:45).
+
+
+// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
+// Reference language: en_US -> it_IT
+SendShippingByEMail=Invia spedizione via EMail
+SendShippingRef=Invia %s spedizione
+ActionsOnShipping=Acions sulla spedizione
+LinkToTrackYourPackage=Link a monitorare il tuo pacchetto
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER costante non definita
+// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:29).

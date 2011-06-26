@@ -61,7 +61,6 @@ ErrorRecordHasChildren=Çünkü bazı oğul olan kayıtları silinemedi.
 WarningConfFileMustBeReadOnly=Uyarı için yapılandırma dosyası <b>(htdocs / conf</b> web sunucusu tarafından üzerine olabilir <b>/ conf.php).</b> Bu ciddi bir güvenlik açığı olduğunu. Dosya izinlerini değiştirin işletim sistemi kullanıcı Web sunucusu tarafından kullanılan sadece okuma modu olmak. Windows ve disk için FAT biçimini kullanıyorsanız, bu dosya sistemi dosya izinleri eklemek izin vermez, bu nedenle tamamen güvenli olamaz bilmeniz gerekir.
 ErrorModuleRequireJavascript=Javascript bu özelliği çalışma için devre dışı olmamalıdır. Etkinleştirmek / devre dışı bırakmak için Javascript menüsü Go Home-> Kur-> Ekran.
 ErrorPasswordsMustMatch=Her iki yazdığınız şifreler birbiriyle eşleşmesi gerekir
-ErrorContactEMail=Teknik bir hata oluştu. Lütfen, en hata <b>kodu% email%</b> folowwing sağlamak için iletişim yöneticisi mesajınızı, hatta bu sayfanın bir ekran kopyasını ekleyerek daha iyi <b>s.</b>
 ErrorWrongValueForField=Alan <b>numarası%</b> için yanlış değer <b>'ler)</b> regex <b>kural%</b> uymuyor <b>s (değeri' %s </b>
 ErrorsOnXLines=<b>%s</b> Doğum Hatalar kaynak hatları <b>var</b>
 WarningsOnXLines=<b>%s</b> Uyarıları kaynak hatları <b>var</b>

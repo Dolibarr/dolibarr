@@ -58,3 +58,26 @@ AgendaHideBirthdayEvents=Nascondi i compleanni dei contatti
 // Reference language: en_US
 InterventionValidatedInDolibarr=%s intervento convalidato
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:32:44).
+
+
+// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
+// Reference language: en_US -> it_IT
+EventOnFullDay=Evento in giornata
+ViewDay=Vista Giorno
+ViewWeek=Settimana vista
+AgendaExtSitesDesc=Questa pagina consente di configurare calendari esterni.
+InvoiceBackToDraftInDolibarr=%s fattura tornare allo stato di progetto
+ProposalSentByEMail=%s proposta commerciale inviata per email
+OrderSentByEMail=Cliente %s ordine inviata per email
+InvoiceSentByEMail=Cliente %s fattura inviata per email
+SupplierOrderSentByEMail=Fornitore %s ordine inviata per email
+SupplierInvoiceSentByEMail=Fornitore %s fattura inviata per email
+ShippingSentByEMail=%s spedizione inviata per email
+ExtSites=Calendari esterni
+ExtSites=Calendari esterni
+ExtSitesEnableThisTool=come calendari esterni in agenda
+ExtSitesNbOfAgenda=Numero di calendari
+AgendaExtNb=Calendario nb %s
+ExtSiteUrlAgenda=URL per accedere. ICal file
+ExtSiteNoLabel=Nessuna descrizione
+// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:04).

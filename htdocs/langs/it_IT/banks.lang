@@ -161,3 +161,13 @@ CHARSET=UTF-8
 // Reference language: en_US
 BankAccountCountry=Conto paese
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:32:45).
+
+
+// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
+// Reference language: en_US -> it_IT
+WithdrawalPayment=Ritiro pagamento
+ShowCheckReceipt=Controllo Mostra ricevuta di versamento
+Graph=Grafica
+FutureTransaction=Transazione in futur. Non c&#39;è modo di conciliare.
+SelectChequeTransactionAndGenerate=Seleziona / filtro controlli per includere nella ricevuta di versamento di controllo e cliccate su &quot;Crea&quot;.
+// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:05).

@@ -72,7 +72,6 @@ WarningSafeModeOnCheckExecDir=Atenção, PHP <b>safe_mode</b> opção está no m
 WarningConfFileMustBeReadOnly=Atenção, seu arquivo de configuração <b>(htdocs / conf / conf.php)</b> pode ser substituído pelo servidor web. Esta é uma falha de segurança grave. Modificar permissões no arquivo a ser em modo de leitura apenas para usuário do sistema operacional usado pelo servidor web. Se você usa Windows e no formato FAT para o seu disco, você deve saber que este sistema de arquivos não permite adicionar permissões em arquivo, por isso não pode ser completamente seguro.
 ErrorModuleRequireJavascript=Javascript não deve ser desativado para que este recurso de trabalho. Para ativar / desativar o JavaScript, vá ao menu Home-&gt; Configuração-&gt; Mostrar.
 ErrorPasswordsMustMatch=Ambas as senhas digitadas devem corresponder entre si
-ErrorContactEMail=Um erro técnico ocorrido. Por favor, contacte o administrador para folowwing <b>%s</b> e-mail en fornecer o código <b>%s</b> erro na sua mensagem, ou ainda melhor, adicionando uma cópia de tela da página.
 ErrorWrongValueForField=valor errado para o número <b>%s</b> campo (valor <b>&quot;%s&quot;</b> não coincide com <b>%s</b> regra regex)
 ErrorsOnXLines=<b>%s</b> sobre as linhas das fontes de erros
 WarningsOnXLines=<b>%s</b> em linhas de código Avisos

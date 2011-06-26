@@ -327,3 +327,38 @@ ListSuppliersShort=Elenco dei fornitori
 ListProspectsShort=Elenco delle prospettive
 ListCustomersShort=Elenco dei clienti
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:32:52).
+
+
+// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
+// Reference language: en_US -> it_IT
+SelectThirdParty=Seleziona una terza parte
+Subsidiary=Filiale
+Subsidiaries=Società controllate
+NoSubsidiary=Alcuna controllata
+ProfId1CL=Prof Id 1 (RUT)
+ProfId2CL=-
+ProfId3CL=-
+ProfId4CL=-
+ProfId1HN=Id prof. 1 (RTN)
+ProfId2HN=-
+ProfId3HN=-
+ProfId4HN=-
+ProfId1MA=Id prof. 1 (RC)
+ProfId2MA=Id prof. 2 (Patente)
+ProfId3MA=Id prof. 3 (SE)
+ProfId4MA=Id prof. 4 (CNSS)
+ProfId1MX=Prof Id 1 (RFC).
+ProfId2MX=Id prof 2 (R.. P. IMSS)
+ProfId3MX=Id prof 3 (Profesional Carta)
+ProfId4MX=-
+ProfId1SN=RC
+ProfId2SN=Ninea
+ContactsAddresses=Contatti / Indirizzi
+ImportDataset_company_1=Terzi (aziende / fondazioni) e le proprietà
+ThirdPartiesArea=Terzi dell&#39;area
+LastModifiedThirdParties=%s Ultima modifica terzi
+UniqueThirdParties=Totale di unico terzi
+InActivity=Aperto
+ActivityCeased=Chiuso
+ActivityStateFilter=Attività dello stato
+// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:19).

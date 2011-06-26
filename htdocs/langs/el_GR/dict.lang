@@ -287,3 +287,15 @@ CurrencyXOF=CFA Francs BCEAO
 CurrencySingXOF=CFA Franc BCEAO
 CurrencyXPF=CFP Francs
 CurrencySingXPF=CFP Franc
+
+
+// START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
+// Reference language: en_US -> el_GR
+DemandReasonTypeSRC_INTE=Internet
+DemandReasonTypeSRC_CAMP_MAIL=Εκστρατεία για τις Ταχυδρομικές
+DemandReasonTypeSRC_CAMP_EMAIL=Στέλνοντας εκστρατεία
+DemandReasonTypeSRC_CAMP_PHO=Εκστρατεία Τηλέφωνο
+DemandReasonTypeSRC_CAMP_FAX=Εκστρατεία Fax
+DemandReasonTypeSRC_COMM=Εμπορική επικοινωνία
+DemandReasonTypeSRC_SHOP=Shop Επικοινωνία
+// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:37:31).

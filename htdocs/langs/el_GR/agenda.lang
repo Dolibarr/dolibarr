@@ -53,3 +53,20 @@ AgendaUrlOptions4=<b>logint=%s</b> για να περιορίσετε τα απ�
 AgendaUrlOptions5=<b>logind=%s</b> για να περιορίσετε τα αποτελέσματα σε ενέργειες που έγιναν από τον χρήστη <b>%s</b>.
 AgendaShowBirthdayEvents=Εμφάνιση γενεθλίων των προσώπων επικοινωνίας
 AgendaHideBirthdayEvents=Απόκρυψη γενεθλίων των προσώπων επικοινωνίας
+
+
+// START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
+// Reference language: en_US -> el_GR
+ViewDay=Προβολή ημέρας
+ViewWeek=Προβολή εβδομάδας
+AgendaExtSitesDesc=Αυτή η σελίδα σας επιτρέπει να ρυθμίσετε εξωτερικά ημερολόγια.
+InvoiceBackToDraftInDolibarr=Τιμολόγιο sssss να επιστρέψετε στην κατάσταση του σχεδίου
+ShippingSentByEMail=Αποστολές sssss αποστέλλονται με ηλεκτρονικό ταχυδρομείο
+ExtSites=Εξωτερικές ημερολόγια
+ExtSites=Εξωτερικές Ημερολόγια
+ExtSitesEnableThisTool=πώς εξωτερικά ημερολόγια σε ημερήσια διάταξη
+ExtSitesNbOfAgenda=Αριθμός των ημερολογίων
+AgendaExtNb=Ημερολόγιο nb sssss
+ExtSiteUrlAgenda=URL για να αποκτήσετε πρόσβαση. ICal αρχείο
+ExtSiteNoLabel=Χωρίς Περιγραφή
+// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:36:34).

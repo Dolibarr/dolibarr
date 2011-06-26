@@ -94,3 +94,17 @@ DocModelJauneDescription                   =Modello di proposta Jaune
 // Reference language: en_US
 DocModelRoigDescription=Un modello di proposta completa con la tassa RE spagnolo e IRPF
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:33:08).
+
+
+// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
+// Reference language: en_US -> it_IT
+ProposalCard=Proposta di carta
+AvailabilityPeriod=Disponibilità ritardo
+SetAvailability=Imposta la disponibilità di ritardo
+AfterOrder=dopo la fine
+AvailabilityTypeAV_NOW=Immediato
+AvailabilityTypeAV_1W=1 settimana
+AvailabilityTypeAV_2W=2 settimane
+AvailabilityTypeAV_3W=3 settimane
+AvailabilityTypeAV_1M=1 mese
+// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:29).
