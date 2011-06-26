@@ -26,7 +26,7 @@
  *  \file       htdocs/societe/soc.php
  *  \ingroup    societe
  *  \brief      Third party card page
- *  \version    $Id$
+ *  \version    $Id: soc.php,v 1.111 2011/06/25 19:55:36 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -1058,14 +1058,9 @@ else
                 $prefixSupplierIsUsed = $modCodeFournisseur->verif_prefixIsUsed();
             }
 
-//            if (! $_POST["nom"])
-//            {
-//                $soc->fetch($socid);
-//                $soc->fetch_optionals($socid,$extralabels);
-//            }
-//            else
-//            {
-//                $soc->id=$_POST["socid"];
+            if (! empty($_POST["nom"]))
+            {
+                // We overwrite with values if posted
                 $soc->nom=$_POST["nom"];
                 $soc->prefix_comm=$_POST["prefix_comm"];
                 $soc->client=$_POST["client"];
@@ -1117,7 +1112,7 @@ else
                     $soc->pays_code=$obj->code;
                     $soc->pays=$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->libelle;
                 }
-//            }
+            }
 
             dol_htmloutput_errors($error,$errors);
 
@@ -1951,5 +1946,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/06/25 19:55:36 $ - $Revision: 1.111 $');
 ?>

@@ -26,7 +26,7 @@
  *	\file       htdocs/main.inc.php
  *	\ingroup	core
  *	\brief      File that defines environment for Dolibarr pages only (variables not required by scripts)
- *	\version    $Id$
+ *	\version    $Id: main.inc.php,v 1.744 2011/06/26 00:42:06 eldy Exp $
  */
 
 @ini_set('memory_limit', '64M');	// This may be useless if memory is hard limited by your PHP
@@ -906,7 +906,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             if (!empty($conf->global->MAIN_USE_JQUERY_THEME)) $jquerytheme = $conf->global->MAIN_USE_JQUERY_THEME;
             print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/css/'.$jquerytheme.'/jquery-ui-latest.custom.css" type="text/css" />'."\n";    // JQuery
             print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/tooltip/jquery.tooltip.css" type="text/css" />'."\n";                  // Tooltip
-            print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify.min.css" type="text/css" />'."\n";              // JNotify
+            print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify-alt.min.css" type="text/css" />'."\n";              // JNotify
             //print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/lightbox/css/jquery.lightbox-0.5.css" media="screen" />'."\n";          // Lightbox
         }
 

@@ -7,7 +7,7 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- *
+ *e
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -23,7 +23,7 @@
  *		\ingroup    paypal
  *		\brief      File to offer a way to make a payment for a particular Dolibarr entity
  *		\author	    Laurent Destailleur
- *		\version    $Id$
+ *		\version    $Id: newpayment.php,v 1.21 2011/06/26 12:34:54 eldy Exp $
  */
 
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
@@ -147,7 +147,7 @@ if (empty($PAYPAL_API_SIGNATURE))
 if (GETPOST("action") == 'dopayment')
 {
 	$PAYPAL_API_PRICE=price2num(GETPOST("newamount"),'MT');
-	$EMAIL=GETPOST("EMAIL");
+	//$EMAIL=GETPOST("EMAIL");
     $PAYPAL_PAYMENT_TYPE='Sale';
 
     $shipToName=GETPOST("shipToName");
@@ -161,8 +161,8 @@ if (GETPOST("action") == 'dopayment')
 
 	$mesg='';
 	if (empty($PAYPAL_API_PRICE) || ! is_numeric($PAYPAL_API_PRICE))   $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Amount"));
-	elseif (empty($EMAIL))          $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("YourEMail"));
-	elseif (! isValidEMail($EMAIL)) $mesg=$langs->trans("ErrorBadEMail",$EMAIL);
+	//elseif (empty($EMAIL))          $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("YourEMail"));
+	//elseif (! isValidEMail($EMAIL)) $mesg=$langs->trans("ErrorBadEMail",$EMAIL);
 	elseif (empty($FULLTAG))        $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("PaymentCode"));
 
     //var_dump($_POST);
@@ -339,10 +339,11 @@ if (! GETPOST("source"))
 	print '</td></tr>'."\n";
 
 	// EMail
-	$var=!$var;
+	/*$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("YourEMail");
 	print ' ('.$langs->trans("ToComplete").')';
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.GETPOST("EMAIL").'"></td></tr>'."\n";
+    */
 
     // We do not add fields shipToName, shipToStreet, shipToCity, shipToState, shipToCountryCode, shipToZip, shipToStreet2, phoneNum
     // as they don't exists (buyer is unknown, tag is free).
@@ -424,12 +425,13 @@ if (GETPOST("source") == 'order' && $valid)
 	print '</td></tr>'."\n";
 
 	// EMail
-	$var=!$var;
+	/*$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("YourEMail");
 	print ' ('.$langs->trans("ToComplete").')';
 	$email=$order->client->email;
 	$email=(GETPOST("EMAIL")?GETPOST("EMAIL"):(isValidEmail($email)?$email:''));
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$email.'"></td></tr>'."\n";
+    */
 
 	// Shipping address
 	$shipToName=$order->client->nom;
@@ -533,12 +535,13 @@ if (GETPOST("source") == 'invoice' && $valid)
 	print '</td></tr>'."\n";
 
 	// EMail
-	$var=!$var;
+	/*$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("YourEMail");
 	print ' ('.$langs->trans("ToComplete").')';
     $email=$invoice->client->email;
     $email=(GETPOST("EMAIL")?GETPOST("EMAIL"):(isValidEmail($email)?$email:''));
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$email.'"></td></tr>'."\n";
+    */
 
     // Shipping address
     $shipToName=$invoice->client->nom;
@@ -730,12 +733,13 @@ if (GETPOST("source") == 'contractline' && $valid)
 	print '</td></tr>'."\n";
 
 	// EMail
-	$var=!$var;
+	/*$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("YourEMail");
 	print ' ('.$langs->trans("ToComplete").')';
     $email=$contract->client->email;
     $email=(GETPOST("EMAIL")?GETPOST("EMAIL"):(isValidEmail($email)?$email:''));
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$email.'"></td></tr>'."\n";
+    */
 
     // Shipping address
     $shipToName=$contract->client->nom;
@@ -856,12 +860,13 @@ if (GETPOST("source") == 'membersubscription' && $valid)
 	print '</td></tr>'."\n";
 
 	// EMail
-	$var=!$var;
+	/*$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("YourEMail");
 	print ' ('.$langs->trans("ToComplete").')';
     $email=$member->email;
     $email=(GETPOST("EMAIL")?GETPOST("EMAIL"):(isValidEmail($email)?$email:''));
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$email.'"></td></tr>'."\n";
+    */
 
     // Shipping address
     $shipToName=$member->getFullName($langs);
@@ -929,5 +934,5 @@ html_print_paypal_footer($mysoc,$langs);
 
 $db->close();
 
-llxFooterPaypal('$Date$ - $Revision$');
+llxFooterPaypal('$Date: 2011/06/26 12:34:54 $ - $Revision: 1.21 $');
 ?>

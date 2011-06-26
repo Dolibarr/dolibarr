@@ -24,7 +24,7 @@
  *       \file      htdocs/install/etape5.php
  *	 	 \ingroup	install
  *       \brief     Last page of upgrade or install process
- *       \version   $Id$
+ *       \version   $Id: etape5.php,v 1.101 2011/06/26 12:56:31 eldy Exp $
  */
 
 include_once("./inc.php");
@@ -54,6 +54,7 @@ $success=0;
 
 // Init "forced values" to nothing. "forced values" are used after an doliwamp install wizard.
 if (! isset($force_install_type))              $force_install_type='';
+if (! isset($force_install_dbserver))          $force_install_dbserver='';
 if (! isset($force_install_port))              $force_install_port='';
 if (! isset($force_install_database))          $force_install_database='';
 if (! isset($force_install_createdatabase))    $force_install_createdatabase='';
@@ -218,7 +219,7 @@ if ($action == "set" || preg_match('/upgrade/i',$action))
 				}
 
 				// If we ask to force some modules to be enabled
-				// This works only for module store into root directory. Does not work for alternate modules.
+				// This works only for module stored into root directory. Does not work for alternate modules.
 				if (! empty($force_install_module))
 				{
 					if (! defined('DOL_DOCUMENT_ROOT') && ! empty($dolibarr_main_document_root)) define('DOL_DOCUMENT_ROOT',$dolibarr_main_document_root);

@@ -8,8 +8,8 @@ http://sourceforge.net/donate/index.php?group_id=128076
 ------------------------------------------------------------
 
 Name: TCPDF
-Version: 5.9.060
-Release date: 2011-03-08
+Version: 5.9.098
+Release date: 2011-06-23
 Author:	Nicola Asuni
 
 Copyright (c) 2002-2011:
@@ -45,7 +45,7 @@ Main Features:
     * text rendering modes (fill, stroke and clipping);
     * multiple columns mode;
     * no-write page regions;
-    * bookmarks and table of content;
+    * bookmarks, named destinations and table of content;
     * text hyphenation;
     * text stretching and spacing (tracking/kerning);
     * automatic page break, line break and text alignments including justification;
@@ -64,7 +64,7 @@ Source Code Documentation:
 	http://www.tcpdf.org/doc/
 
 For Additional Documentation:
-	http:  www.tcpdf.org
+	http://www.tcpdf.org
 
 License
 	Copyright (C) 2002-2011  Nicola Asuni - Tecnick.com S.r.l.
@@ -72,8 +72,8 @@ License
 	TCPDF is free software: you can redistribute it and/or modify it
 	under the terms of the GNU Lesser General Public License as
 	published by the Free Software Foundation, either version 3 of the
-	License, or (at your option) any later version. Additionally, 
-	YOU CAN'T REMOVE ANY TCPDF COPYRIGHT NOTICE OR LINK FROM THE 
+	License, or (at your option) any later version. Additionally,
+	YOU CAN'T REMOVE ANY TCPDF COPYRIGHT NOTICE OR LINK FROM THE
 	GENERATED PDF DOCUMENTS.
 
 	TCPDF is distributed in the hope that it will be useful, but

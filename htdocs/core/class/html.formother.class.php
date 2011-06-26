@@ -29,7 +29,7 @@
  *	\file       htdocs/core/class/html.formother.class.php
  *  \ingroup    core
  *	\brief      Fichier de la classe des fonctions predefinie de composants html autre
- *	\version	$Id$
+ *	\version	$Id: html.formother.class.php,v 1.16 2011/06/26 09:32:13 hregis Exp $
  */
 
 
@@ -595,16 +595,31 @@ class FormOther
      */
 	function select_year($selected='',$htmlname='yearid',$useempty=0, $min_year=10, $max_year=5, $offset=0, $invert=0, $option='')
     {
+    	print $this->selectyear($selected,$htmlname,$useempty,$min_year,$max_year,$offset,$invert,$option);
+    }
+    
+    /**
+     *    	Return HTML combo list of years
+     *      @param      selected          Preselected value (''=current year, -1=none, year otherwise)
+     *    	@param      htmlname          Name of HTML select object
+     *    	@param      useempty          Affiche valeur vide dans liste
+     *    	@param      $min_year         Offset of minimum year into list (by default current year -10)
+     *    	@param      $max_year         Offset of maximum year into list (by default current year + 5)
+     */
+	function selectyear($selected='',$htmlname='yearid',$useempty=0, $min_year=10, $max_year=5, $offset=0, $invert=0, $option='')
+    {
+    	$out='';
+    	
         $currentyear = date("Y")+$offset;
     	$max_year = $currentyear+$max_year;
         $min_year = $currentyear-$min_year;
         if(empty($selected)) $selected = $currentyear;
 
-        print '<select class="flat" id="' . $htmlname . '" name="' . $htmlname . '"'.$option.' >';
+        $out.= '<select class="flat" id="' . $htmlname . '" name="' . $htmlname . '"'.$option.' >';
         if($useempty)
         {
             if ($selected == '') $selected_html = ' selected="selected"';
-            print '<option value=""' . $selected_html . '>&nbsp;</option>';
+            $out.= '<option value=""' . $selected_html . '>&nbsp;</option>';
         }
         if (! $invert)
         {
@@ -612,7 +627,7 @@ class FormOther
 	        {
 	            $selected_html='';
 	            if ($selected > 0 && $y == $selected) $selected_html = ' selected="selected"';
-	            print '<option value="'.$y.'"'.$selected_html.' >'.$y.'</option>';
+	            $out.= '<option value="'.$y.'"'.$selected_html.' >'.$y.'</option>';
 	        }
         }
         else
@@ -621,10 +636,12 @@ class FormOther
 	        {
 	            $selected_html='';
 	            if ($selected > 0 && $y == $selected) $selected_html = ' selected="selected"';
-	            print '<option value="'.$y.'"'.$selected_html.' >'.$y.'</option>';
+	            $out.= '<option value="'.$y.'"'.$selected_html.' >'.$y.'</option>';
 	        }
         }
-        print "</select>\n";
+        $out.= "</select>\n";
+        
+        return $out;
     }
 
 }

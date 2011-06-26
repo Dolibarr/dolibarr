@@ -30,7 +30,7 @@ The PDF Core (standard) fonts are:
 
 Setting up a font for usage with TCPDF requires the following steps:
 
-   1. Convert all font filenames to lowercase and rename using the following schema:
+   1. Convert all font filenames to lowercase, remove all spaces and special characters and rename them using the following schema:
           * [basic-font-name-in-lowercase].ttf for regular font
           * [basic-font-name-in-lowercase]b.ttf for bold variation
           * [basic-font-name-in-lowercase]i.ttf for oblique variation
@@ -127,9 +127,4 @@ Setting up a font for usage with TCPDF requires the following steps:
                         include(dirname(__FILE__).'/uni2cid_aj16.php');
 
                 o copy the .php file to the TCPDF fonts directory.
-   5. Rename php font files variations using the following schema:
-          * [basic-font-name-in-lowercase].php for regular font
-          * [basic-font-name-in-lowercase]b.php for bold variation
-          * [basic-font-name-in-lowercase]i.php for oblique variation
-          * [basic-font-name-in-lowercase]bi.php for bold oblique variation
 

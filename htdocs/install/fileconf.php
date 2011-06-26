@@ -25,7 +25,7 @@
  *       \file       htdocs/install/fileconf.php
  *       \ingroup    install
  *       \brief      Ask all informations required to build Dolibarr htdocs/conf/conf.php file (will be wrote on disk on next page)
- *       \version    $Id$
+ *       \version    $Id: fileconf.php,v 1.91 2011/06/26 01:52:59 eldy Exp $
  */
 include_once("./inc.php");
 
@@ -44,6 +44,7 @@ $langs->load("errors");
 // We first init "forced values" to nothing.
 if (! isset($force_install_noedit))            $force_install_noedit='';
 if (! isset($force_install_type))              $force_install_type='';
+if (! isset($force_install_dbserver))          $force_install_dbserver='';
 if (! isset($force_install_port))              $force_install_port='';
 if (! isset($force_install_database))          $force_install_database='';
 if (! isset($force_install_createdatabase))    $force_install_createdatabase='';
@@ -313,10 +314,10 @@ if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if t
 	<tr>
 		<td valign="top" class="label"><b> <?php echo $langs->trans("Server"); ?>
 		</b></td>
-		<td valign="top" class="label"><input type="text" name="db_host<?php print (!empty($force_install_noedit))?'_bis':''; ?>"
-			<?php if (!empty($force_install_noedit)) print ' disabled="disabled"'; ?>
-			value="<?php print (! empty($dolibarr_main_db_host))?$dolibarr_main_db_host:'localhost'; ?>">
-		<?php if (!empty($force_install_noedit)) print '<input type="hidden" name="db_host" value="'.((! empty($dolibarr_main_db_host))?$dolibarr_main_db_host:'localhost').'">'; ?>
+		<td valign="top" class="label"><input type="text" name="db_host<?php print (!empty($force_install_noedit) && $force_install_dbserver)?'_bis':''; ?>"
+			<?php if (!empty($force_install_noedit) && $force_install_dbserver) print ' disabled="disabled"'; ?>
+			value="<?php print (! empty($dolibarr_main_db_host))?$dolibarr_main_db_host:(empty($force_install_dbserver)?'localhost':$force_install_dbserver); ?>">
+		<?php if (!empty($force_install_noedit) && $force_install_dbserver) print '<input type="hidden" name="db_host" value="'.((! empty($dolibarr_main_db_host))?$dolibarr_main_db_host:$force_install_dbserver).'">'; ?>
 		</td>
 		<td class="comment"><?php echo $langs->trans("ServerAddressDescription"); ?>
 		</td>

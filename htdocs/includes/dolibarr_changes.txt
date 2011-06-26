@@ -40,11 +40,18 @@ FPDFI and FPDF_TPL:
 
 TCPDF:
 ------
-To be compatible with FPDF, replace line
+* To be compatible with FPDF, replace line
 public function MultiCell($w, $h, $txt, $border=0, $align='J', $fill=false, $ln=1, $x='', $y='', $reseth=true, $stretch=0, $ishtml=false, $autopadding=true, $maxh=0, $valign='T', $fitcell=false) {
 by
 public function MultiCell($w, $h, $txt, $border=0, $align='J', $fill=false, $ln=1, $x='', $y='', $reseth=true, $stretch=0, $ishtml=false, $autopadding=false, $maxh=0, $valign='T', $fitcell=false) {
 
+* Open /tcpdf/config/tcpdf_config.php and add this function :
+
+if (! function_exists('getmypid')) {
+	function getmypid() {
+		return rand(1,32768);
+	}
+}
 
 
 JSGANTT:
