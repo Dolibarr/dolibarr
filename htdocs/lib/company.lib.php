@@ -24,7 +24,7 @@
  *	\file       htdocs/lib/company.lib.php
  *	\brief      Ensemble de fonctions de base pour le module societe
  *	\ingroup    societe
- *	\version    $Id$
+ *	\version    $Id: company.lib.php,v 1.119 2011/06/26 18:53:16 eldy Exp $
  */
 
 /**
@@ -208,7 +208,7 @@ function societe_admin_prepare_head($object)
 
 
 /**
- *    Return country translated from an id or a code
+ *    Return country label, code or id from an id or a code
  *    @param      id            Id or code of country
  *    @param      withcode      0=Return label, 1=Return code + label, 2=Return code from id
  *    @param      dbtouse       Database handler (using in global way may fail because of conflicts with some autoload features)
