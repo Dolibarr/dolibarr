@@ -1,7 +1,7 @@
 <!-- Application namespaces and APS version (step 9) -->
 <application xmlns="http://apstandard.com/ns/1" version="1.1">
 	<!-- Application common properties (step 9) -->
-	<name>Dolibarr</name>
+	<name>Dolibarr ERP-CRM</name>
 	<version>__VERSION__</version>
 	<release>__RELEASE__</release>
 	<homepage>http://www.dolibarr.org/</homepage>
@@ -13,10 +13,10 @@
 	<packager>
 		<name>Laurent Destailleur</name>
 		<homepage>http://www.nltechno.com</homepage>
-		<uri>uuid:714f0a7b-85d6-4eb8-b68e-40f9acbb3103</uri>
+		<uri>uuid:e743ee30-9fe8-11e0-a32e-0025115d642c</uri>
 	</packager>
 	<presentation>
-		<summary>Dolibarr ERP - CRM, the easy to use software to manage small or medium companies, freelancers or foundations</summary>
+		<summary>Dolibarr ERP-CRM, the easy to use software to manage small or medium companies, freelancers or foundations</summary>
 		<description>
 Dolibarr is a free modular software (you see only
 features you need) to manage small and medium companies, freelancers
@@ -71,6 +71,7 @@ standalone software. Dolibarr is designed to provide simplicity to end-user.
 		</presentation>
 		<!-- Service settings (step 7) -->
 		<settings>
+		      <!-- 
 			<group>
 				<name>Administrator's preferences</name>
 				<setting id="admin_name" type="string" default-value="admin"
@@ -84,6 +85,7 @@ Please make sure the text you entered starts with a	letter and continues with ei
 					<name>Password</name>
 				</setting>
 			</group>
+			-->
 		</settings>
 		<!-- Service used technologies (step 6) -->
 		<requirements xmlns:php="http://apstandard.com/ns/1/php"

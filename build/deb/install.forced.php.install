@@ -1,4 +1,11 @@
 <?php
+// File to force Dolibarr wizard installer choices.
+//
+// This file must be present into htdocs/install directory
+// during install process to be used.
+//
+// $Id: install.forced.php.install,v 1.5 2011/06/26 11:41:50 eldy Exp $
+//
 $force_install_noedit=1;
 $force_install_message='KeepDefaultValuesDeb';
 $force_install_main_data_root='/usr/share/dolibarr/documents';
