@@ -29,7 +29,7 @@
  *	\file			htdocs/lib/functions.lib.php
  *	\brief			A set of functions for Dolibarr
  *					This file contains all frequently used functions.
- *	\version		$Id$
+ *	\version		$Id: functions.lib.php,v 1.532 2011/06/26 00:42:23 eldy Exp $
  */
 
 // For compatibility during upgrade
@@ -3772,8 +3772,26 @@ function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
         if (empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) && empty($keepembedded))
         {
             $return = '<script type="text/javascript">
-    				$(document).ready(function() {
-    					$.jnotify("'.dol_escape_js($out).'", "'.($style=="ok" ? 3000 : $style).'", '.($style=="ok" ? "false" : "true").');
+    				jQuery(document).ready(function() {
+    					jQuery.jnotify("'.dol_escape_js($out).'",
+    					"'.($style=="ok" ? 3000 : $style).'",
+    					'.($style=="ok" ? "false" : "true").',
+                        {
+                          closeLabel: "&times;"                     // the HTML to use for the "Close" link
+                          , showClose: true                           // determines if the "Close" link should be shown if notification is also sticky
+                          , fadeSpeed: 1000                           // the speed to fade messages out (in milliseconds)
+                          , slideSpeed: 250                           // the speed used to slide messages out (in milliseconds)
+                          , classContainer: "jnotify-container"
+                          , classNotification: "jnotify-notification"
+                          , classBackground: "jnotify-background"
+                          , classClose: "jnotify-close"
+                          , classMessage: "jnotify-message"
+                          , init: null                                // callback that occurs when the main jnotify container is created
+                          , create: null                              // callback that occurs when when the note is created (occurs just before
+                                                                      // appearing in DOM)
+                          , beforeRemove: null                        // callback that occurs when before the notification starts to fade away
+                        },
+    					{ remove: function (){} } );
     				});
     			</script>';
         }
