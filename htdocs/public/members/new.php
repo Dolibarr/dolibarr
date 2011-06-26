@@ -22,7 +22,17 @@
  *	\file       htdocs/public/members/new.php
  *	\ingroup    member
  *	\brief      Example of form to add a new member
- *	\version    $Id: new.php,v 1.26 2011/06/26 18:53:17 eldy Exp $
+ *	\version    $Id: new.php,v 1.28 2011/06/26 19:29:39 eldy Exp $
+ *
+ *  Note that you can add following constant to change behaviour of page
+ *  MEMBER_NEWFORM_EDITAMOUNT
+ *  MEMBER_NEWFORM_PAYONLINE
+ *  MEMBER_NEWFORM_DOLIBARRTURNOVER
+ *  MEMBER_URL_REDIRECT_SUBSCRIPTION
+ *  MEMBER_NEWFORM_FORCETYPE
+ *  MEMBER_NEWFORM_FORCEMORPHY
+ *  MEMBER_NEWFORM_FORCECOUNTRYCODE
+ *
  */
 
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
@@ -134,6 +144,16 @@ if ($action == 'add')
             $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("EMail"))."<br>\n";
         }
     }
+    if (GETPOST('type') <= 0)
+    {
+        $error+=1;
+        $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type"))."<br>\n";
+    }
+    if (! in_array(GETPOST('morphy'),array('mor','phy')))
+    {
+        $error+=1;
+        $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("MorPhy"))."<br>\n";
+    }
     if (!isset($_POST["nom"]) || !isset($_POST["prenom"]) || $_POST["prenom"]=='' || $_POST["nom"]=='')
     {
         $error+=1;
@@ -243,7 +263,7 @@ if ($action == 'added')
     print $langs->trans("NewMemberbyWeb");
     print '</center>';
 
-    llxFooterVierge('$Date: 2011/06/26 18:53:17 $ - $Revision: 1.26 $');
+    llxFooterVierge('$Date: 2011/06/26 19:29:39 $ - $Revision: 1.28 $');
     exit;
 }
 
@@ -275,19 +295,24 @@ print $langs->trans("FieldsWithIsForPublic",'**').'<br>';
 print '<script type="text/javascript">
 jQuery(document).ready(function () {
     jQuery(document).ready(function () {
-         jQuery("#morphy").click(function() {
-            if (jQuery("#morphy").val()==\'phy\') {
-                jQuery("#trcompany").hide();
-            }
-            if (jQuery("#morphy").val()==\'mor\') {
-                jQuery("#trcompany").show();
-            }
+        function initmorphy()
+        {
+                if (jQuery("#morphy").val()==\'phy\') {
+                    jQuery("#trcompany").hide();
+                }
+                if (jQuery("#morphy").val()==\'mor\') {
+                    jQuery("#trcompany").show();
+                }
+        };
+        initmorphy();
+        jQuery("#morphy").click(function() {
+            initmorphy();
+        });
+        jQuery("#selectpays_id").change(function() {
+           document.newmember.action.value="create";
+           document.newmember.submit();
         });
     });
-    jQuery("#selectpays_id").change(function() {
-       document.newmember.action.value="create";
-       document.newmember.submit();
-     });
 });
 </script>';
 
@@ -390,7 +415,7 @@ print '<td valign="top"><textarea name="comment" wrap="soft" cols="60" rows="'.R
 print '</tr>'."\n";
 
 // Add specific fields used by Dolibarr foundation for example
-if (empty($conf->global->MEMBER_DOLIBARR))
+if (! empty($conf->global->MEMBER_NEWFORM_DOLIBARRTURNOVER))
 {
     $arraybudget=array('50'=>'<= 100 000','100'=>'<= 200 000','200'=>'<= 500 000','400'=>'<= 1 500 000','750'=>'<= 3 000 000','1500'=>'<= 5 000 000','2000'=>'5 000 000+');
     print '<tr id="trbudget"><td>'.$langs->trans("TurnoverOrBudget").'</td><td>';
@@ -404,7 +429,8 @@ if (empty($conf->global->MEMBER_DOLIBARR))
             initturnover();
         });
         jQuery("#budget").change(function() {
-            jQuery("#amount").val(jQuery("#budget").val());
+                if (jQuery("#budget").val() > 0) { jQuery("#amount").val(jQuery("#budget").val()); }
+                else { jQuery("#budget").val(\'\'); }
         });
         function initturnover() {
             if (jQuery("#morphy").val()==\'phy\') {
@@ -415,19 +441,40 @@ if (empty($conf->global->MEMBER_DOLIBARR))
             if (jQuery("#morphy").val()==\'mor\') {
                 jQuery("#trbudget").show();
                 jQuery("#trcompany").show();
-                jQuery("#amount").val(0);
+                if (jQuery("#budget").val() > 0) { jQuery("#amount").val(jQuery("#budget").val()); }
+                else { jQuery("#budget").val(\'\'); }
             }
         }
     });
     </script>';
     print '</td></tr>'."\n";
-
-    print '<tr><td>'.$langs->trans("AmountOfSubscriptions").'</td><td>';
-    print '<input type="text" name="amount" id="amount" class="flat" size="6" value="'.GETPOST("amount").'">';
-    print ' € or $';
-    print '</td></tr>';
 }
-
+if (! empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)
+|| ! empty($conf->global->MEMBER_NEWFORM_PAYONLINE))
+{
+    // $conf->global->MEMBER_NEWFORM_SHOWAMOUNT is an amount
+    $amount=0;
+    if (! empty($conf->global->MEMBER_NEWFORM_PAYONLINE))
+    {
+        $amount=GETPOST('amount')?GETPOST('amount'):$conf->global->MEMBER_NEWFORM_EDITAMOUNT;
+    }
+    // $conf->global->MEMBER_NEWFORM_PAYONLINE is 'paypal' or 'paybox'
+    if (! empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT))
+    {
+        print '<tr><td>'.$langs->trans("Subscription").'</td><td>';
+        print '<input type="text" name="amount" id="amount" class="flat" size="6" value="'.$amount.'">';
+        print ' € or $';
+        print '</td></tr>';
+    }
+    else
+    {
+        print '<tr><td>'.$langs->trans("Subscription").'</td><td>';
+        print $amount;
+        print '<input type="hidden" name="amount" id="amount" class="flat" size="6" value="'.$amount.'">';
+        print ' € or $';
+        print '</td></tr>';
+    }
+}
 print "</table>\n";
 
 // Save
@@ -443,5 +490,5 @@ print "<br></form>\n";
 
 $db->close();
 
-llxFooterVierge('$Date: 2011/06/26 18:53:17 $ - $Revision: 1.26 $');
+llxFooterVierge('$Date: 2011/06/26 19:29:39 $ - $Revision: 1.28 $');
 ?>
