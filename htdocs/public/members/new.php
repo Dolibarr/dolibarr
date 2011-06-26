@@ -22,17 +22,17 @@
  *	\file       htdocs/public/members/new.php
  *	\ingroup    member
  *	\brief      Example of form to add a new member
- *	\version    $Id: new.php,v 1.28 2011/06/26 19:29:39 eldy Exp $
+ *	\version    $Id: new.php,v 1.29 2011/06/26 21:51:34 eldy Exp $
  *
  *  Note that you can add following constant to change behaviour of page
- *  MEMBER_NEWFORM_EDITAMOUNT
- *  MEMBER_NEWFORM_PAYONLINE
- *  MEMBER_NEWFORM_DOLIBARRTURNOVER
- *  MEMBER_URL_REDIRECT_SUBSCRIPTION
- *  MEMBER_NEWFORM_FORCETYPE
- *  MEMBER_NEWFORM_FORCEMORPHY
- *  MEMBER_NEWFORM_FORCECOUNTRYCODE
- *
+ *  MEMBER_NEWFORM_AMOUNT               Default amount for autosubscribe form
+ *  MEMBER_NEWFORM_EDITAMOUNT           Amount can be edited
+ *  MEMBER_NEWFORM_PAYONLINE            Suggest paypemt with paypal of paybox
+ *  MEMBER_NEWFORM_DOLIBARRTURNOVER     Show field turnover (specific for dolibarr foundation)
+ *  MEMBER_URL_REDIRECT_SUBSCRIPTION    Url to redirect once subscribe submitted
+ *  MEMBER_NEWFORM_FORCETYPE            Force type of member
+ *  MEMBER_NEWFORM_FORCEMORPHY          Force nature of member (mor/phy)
+ *  MEMBER_NEWFORM_FORCECOUNTRYCODE     Force country
  */
 
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
@@ -263,7 +263,7 @@ if ($action == 'added')
     print $langs->trans("NewMemberbyWeb");
     print '</center>';
 
-    llxFooterVierge('$Date: 2011/06/26 19:29:39 $ - $Revision: 1.28 $');
+    llxFooterVierge('$Date: 2011/06/26 21:51:34 $ - $Revision: 1.29 $');
     exit;
 }
 
@@ -364,9 +364,9 @@ print '<tr><td>'.$langs->trans("Address").'</td><td>'."\n";
 print '<textarea name="address" id="address" wrap="soft" cols="40" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('address')).'</textarea></td></tr>'."\n";
 // Zip / Town
 print '<tr><td>'.$langs->trans('Zip').' / '.$langs->trans('Town').'</td><td>';
-print $formcompany->select_ziptown(GETPOST('zipcode'),'zipcode',array('town','selectpays_id','departement_id'),6);
+print $formcompany->select_ziptown(GETPOST('zipcode'), 'zipcode', array('town','selectpays_id','departement_id'), 6, 1);
 print ' / ';
-print $formcompany->select_ziptown(GETPOST('town'),'town',array('zipcode','selectpays_id','departement_id'));
+print $formcompany->select_ziptown(GETPOST('town'), 'town', array('zipcode','selectpays_id','departement_id'), 0, 1);
 print '</td></tr>';
 // Country
 print '<tr><td width="25%">'.$langs->trans('Country').'</td><td>';
@@ -449,14 +449,14 @@ if (! empty($conf->global->MEMBER_NEWFORM_DOLIBARRTURNOVER))
     </script>';
     print '</td></tr>'."\n";
 }
-if (! empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)
+if (! empty($conf->global->MEMBER_NEWFORM_AMOUNT)
 || ! empty($conf->global->MEMBER_NEWFORM_PAYONLINE))
 {
     // $conf->global->MEMBER_NEWFORM_SHOWAMOUNT is an amount
     $amount=0;
     if (! empty($conf->global->MEMBER_NEWFORM_PAYONLINE))
     {
-        $amount=GETPOST('amount')?GETPOST('amount'):$conf->global->MEMBER_NEWFORM_EDITAMOUNT;
+        $amount=GETPOST('amount')?GETPOST('amount'):$conf->global->MEMBER_NEWFORM_AMOUNT;
     }
     // $conf->global->MEMBER_NEWFORM_PAYONLINE is 'paypal' or 'paybox'
     if (! empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT))
@@ -490,5 +490,5 @@ print "<br></form>\n";
 
 $db->close();
 
-llxFooterVierge('$Date: 2011/06/26 19:29:39 $ - $Revision: 1.28 $');
+llxFooterVierge('$Date: 2011/06/26 21:51:34 $ - $Revision: 1.29 $');
 ?>
