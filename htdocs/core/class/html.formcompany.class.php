@@ -20,7 +20,7 @@
  *	\file       htdocs/core/class/html.formcompany.class.php
  *  \ingroup    core
  *	\brief      File of class to build HTML component for third parties management
- *	\version	$Id$
+ *	\version	$Id: html.formcompany.class.php,v 1.33 2011/06/26 21:51:56 eldy Exp $
  */
 
 
@@ -627,8 +627,9 @@ class FormCompany
 	 *    @param       htmlname
 	 *    @param       fields
 	 *    @param       fieldsize
+	 *    @param       disableautocomplete     1 To disable autocomplete features
 	 */
-	function select_ziptown($selected='',$htmlname='zipcode',$fields='',$fieldsize=0)
+	function select_ziptown($selected='', $htmlname='zipcode', $fields='', $fieldsize=0, $disableautocomplete=0)
 	{
 		global $conf;
 
@@ -637,7 +638,7 @@ class FormCompany
 		$size='';
 		if (!empty($fieldsize)) $size='size="'.$fieldsize.'"';
 
-		if ($conf->use_javascript_ajax)	$out.= ajax_multiautocompleter($htmlname,$fields,DOL_URL_ROOT.'/core/ajaxziptown.php')."\n";
+		if ($conf->use_javascript_ajax && empty($disableautocomplete))	$out.= ajax_multiautocompleter($htmlname,$fields,DOL_URL_ROOT.'/core/ajaxziptown.php')."\n";
 		$out.= '<input id="'.$htmlname.'" type="text" name="'.$htmlname.'" '.$size.' value="'.$selected.'">'."\n";
 
 		return $out;
