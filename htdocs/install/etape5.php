@@ -24,7 +24,7 @@
  *       \file      htdocs/install/etape5.php
  *	 	 \ingroup	install
  *       \brief     Last page of upgrade or install process
- *       \version   $Id$
+ *       \version   $Id: etape5.php,v 1.100 2011/06/26 01:53:00 eldy Exp $
  */
 
 include_once("./inc.php");
@@ -54,6 +54,7 @@ $success=0;
 
 // Init "forced values" to nothing. "forced values" are used after an doliwamp install wizard.
 if (! isset($force_install_type))              $force_install_type='';
+if (! isset($force_install_dbserver))          $force_install_dbserver='';
 if (! isset($force_install_port))              $force_install_port='';
 if (! isset($force_install_database))          $force_install_database='';
 if (! isset($force_install_createdatabase))    $force_install_createdatabase='';

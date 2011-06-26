@@ -2,6 +2,7 @@
 $force_install_message='KeepDefaultValuesMamp';
 $force_install_main_data_root='/Applications/MAMP/dolibarr_documents';
 $force_install_type='mysqli';
+$force_install_dbserver='localhost';
 $force_install_port='8889';
 $force_install_database='dolibarr';
 $force_install_createdatabase='1';

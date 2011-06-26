@@ -4,12 +4,13 @@
 // This file must be present into htdocs/install directory
 // during install process to be used.
 //
-// $Id$
+// $Id: install.forced.php.install,v 1.15 2011/06/26 01:52:59 eldy Exp $
 //
 $force_install_noedit=1;
 $force_install_message='KeepDefaultValuesWamp';
 $force_install_main_data_root='WAMPROOT/dolibarr_documents';
 $force_install_type='mysqli';
+$force_install_dbserver='localhost';
 $force_install_port='WAMPMYSQLPORT';
 $force_install_database='dolibarr';
 $force_install_createdatabase='1';
