@@ -298,3 +298,15 @@ CurrencySingXOF=Franco CFA BCEAO
 CurrencyXPF=CFP Franchi
 CurrencySingXPF=Franco CFP
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:33:13).
+
+
+// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
+// Reference language: en_US -> it_IT
+DemandReasonTypeSRC_INTE=Internet
+DemandReasonTypeSRC_CAMP_MAIL=Mailing campagna
+DemandReasonTypeSRC_CAMP_EMAIL=Emailing campagna
+DemandReasonTypeSRC_CAMP_PHO=Telefono campagna
+DemandReasonTypeSRC_CAMP_FAX=Fax campagna
+DemandReasonTypeSRC_COMM=Contatto commerciale
+DemandReasonTypeSRC_SHOP=Negozio di contatto
+// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:23).

@@ -218,3 +218,24 @@ SizeUnitinch=pollice
 SizeUnitfoot=piede
 ImageEditor=Image Editor
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:57:00).
+
+
+// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
+// Reference language: en_US -> it_IT
+ToolsDesc=Quest&#39;area è dedicata agli strumenti di gruppo non disponibili in varie voci di menu. <br><br> Questi strumenti può essere raggiunta da menu sul lato.
+Notify_WITHDRAW_TRANSMIT=Trasmissione ritiro
+Notify_WITHDRAW_CREDIT=Credito ritiro
+Notify_WITHDRAW_EMIT=Isue ritiro
+PredefinedMailContentSendSupplierInvoice=Troverete qui la fattura __FACREF__ \ n \ nSincerely \ n \ n
+PredefinedMailContentSendShipping=Troverete qui la spedizione __SHIPPINGREF__ \ n \ nSincerely \ n \ n
+Top=Top
+Bottom=Fondo
+Left=Sinistra
+Right=Destra
+ThisIsListOfModules=Questa è una lista dei moduli preselezionati da questo profilo demo (solo i moduli più comuni sono visibili in questa demo). Modifica questo per avere una demo più personalizzata e fare clic su &quot;Start&quot;.
+ClickHere=Clicca qui
+UseAdvancedPerms=Utilizzare le autorizzazioni avanzate diritti in moduli
+FileFormat=Formato di file
+SelectAColor=Scegli un colore
+Export=Esportazione
+// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:53:03).

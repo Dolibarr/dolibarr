@@ -72,18 +72,15 @@ ErrorPropalNotFound=Propal %s not found
 Estimate=Estimate :
 EstimateShort=Estimate
 OtherPropals=Άλλες προτάσεις
-CopyPropalFrom=Create commercial proposal by copying existing proposal
-CreateEmptyPropal=Create empty commercial proposals vierge or from list of products/services
-DefaultProposalDurationValidity=Default commercial proposal validity duration (in days)
-UseCustomerContactAsPropalRecipientIfExist=Use customer contact address if defined instead of third party address as proposal recipient address
-ClonePropal=Clone commercial proposal
-ConfirmClonePropal=Are you sure you want to clone this commercial proposal <b>%s</b> ?
-ProposalsAndProposalsLines=Commercial proposal and lines
-ProposalLine=Proposal line
-##### Types de contacts #####
-TypeContact_propal_internal_SALESREPFOLL=Representative following-up proposal
-TypeContact_propal_external_BILLING=Customer invoice contact
-TypeContact_propal_external_CUSTOMER=Customer contact following-up proposal
-# Document models
-DocModelAzurDescription=A complete proposal model (logo...)
-DocModelJauneDescription=Jaune proposal model
+
+// START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
+// Reference language: en_US -> el_GR
+AvailabilityPeriod=Καθυστέρηση Διαθεσιμότητα
+SetAvailability=Ορισμός καθυστέρηση διαθεσιμότητα
+AfterOrder=μετά την παραγγελία
+AvailabilityTypeAV_NOW=Άμεση
+AvailabilityTypeAV_1W=1 εβδομάδα
+AvailabilityTypeAV_2W=2 εβδομάδες
+AvailabilityTypeAV_3W=3 εβδομάδες
+AvailabilityTypeAV_1M=1 μήνα
+// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:39:12).

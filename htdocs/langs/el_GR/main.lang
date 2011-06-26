@@ -1,7 +1,9 @@
 # Dolibarr language file - el_GR - main
 CHARSET=UTF-8
 DIRECTION=ltr
-FONTFORPDF=Freemono
+#FONTFORPDF=Freemono
+FONTFORPDF=DejaVuSans
+FONTSIZEFORPDF=9
 SeparatorDecimal=.
 SeparatorThousand=,
 FormatDateShort=%d/%m/%Y
@@ -586,3 +588,51 @@ ShortFriday=Π
 ShortSaturday=Σ
 ShortSunday=Κ
 
+
+
+// START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
+// Reference language: en_US -> el_GR
+FormatDateShortJQuery=dd/mm/yy
+AddLink=Προσθήκη συνδέσμου
+Of=του
+AmountByMonth=Ποσό ανά μήνα
+DatePayment=Ημερομηνία πληρωμής
+TeraBytes=Terabytes
+Tb=Tb
+OtherStatistics=Οι άλλες στατιστικές
+ActionNotApplicable=Δεν ισχύει
+JanuaryMin=Jan
+FebruaryMin=Φεβρουάριος
+MarchMin=Mar
+AprilMin=Απρίλιος
+MayMin=Μάιος
+JuneMin=Ιούνιος
+JulyMin=Ιούλιος
+AugustMin=Αύγουστος
+SeptemberMin=Σεπτέμβριος
+OctoberMin=Οκτώβριος
+NovemberMin=Νοέμβριος
+DecemberMin=Δεκέμβριος
+Before=Προτού
+After=Μετά
+IPAddress=Η διεύθυνση IP
+Frequency=Συχνότητα
+IM=Άμεσων μηνυμάτων
+NewAttribute=Νέο χαρακτηριστικό
+AttributeCode=Κωδικός Ιδιότητα
+OptionalFieldsSetup=Extra setup χαρακτηριστικά
+Monday=Δευτέρα
+Tuesday=Τρίτη
+Wednesday=Τετάρτη
+Thursday=Πέμπτη
+Friday=Παρασκευή
+Saturday=Σάββατο
+Sunday=Κυριακή
+MondayMin=Mo
+TuesdayMin=Tu
+WednesdayMin=Εμείς
+ThursdayMin=Θ.
+FridayMin=Fr
+SaturdayMin=Sa
+SundayMin=Su
+// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:41:16).

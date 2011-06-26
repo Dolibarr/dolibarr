@@ -138,3 +138,12 @@ AllAccounts=Όλοι οι Λογαριασμοί
 BackToAccount=Επιστροφή στον λογαριασμό
 ShowAllAccounts=Εμφάνιση Όλων των Λογαριασμών
 FutureTransaction=Συναλλαγή στο μέλλον. Δεν υπάρχει τρόπος συμβιβασμού.
+
+
+// START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
+// Reference language: en_US -> el_GR
+WithdrawalPayment=Ανάκληση πληρωμής
+ShowCheckReceipt=Ελέγχου Εμφάνιση απόδειξη κατάθεσης
+Graph=Γραφικά
+SelectChequeTransactionAndGenerate=Επιλογή / φίλτρο ελέγχους για να συμπεριληφθεί στην απόδειξη κατάθεσης ελέγχου και κάντε κλικ στο &quot;Create&quot;.
+// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:36:37).

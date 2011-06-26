@@ -137,3 +137,16 @@ NotUsedForGoods=Non utilizzati per le merci
 SocialContributionsPayments=Contributi sociali pagamenti
 ThirdPartyMustBeEditAsCustomer=terzo deve essere definito come un cliente
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:34:01).
+
+
+// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
+// Reference language: en_US -> it_IT
+SellsJournal=Vendita Journal
+PurchasesJournal=Acquisti Gazzetta
+DescSellsJournal=Vendita Journal
+DescPurchasesJournal=Acquisti Gazzetta
+InvoiceRef=Rif fattura.
+CodeNotDef=Non definito
+AddRemind=Spedizione importo disponibile
+RemainToDivide=Rimanere alla spedizione:
+// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:20).

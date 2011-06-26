@@ -427,3 +427,19 @@ ExpectedToPay=Il pagamento previsto
 PayedByThisPayment=Pagato da questo pagamento
 PDFLinceDescription=Un modello di fattura completa con lo spagnolo RE e IRPF
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:33:01).
+
+
+// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
+// Reference language: en_US -> it_IT
+BillsCustomer=Fattura del cliente
+BillsSuppliersUnpaidForCompany=Fornitore di fatture non pagate per %s
+BillsLate=Ritardi nei pagamenti
+DisabledBecauseNotErasable=Disabili perché non possono essere cancellati
+AmountOfBillsByMonthHT=Importo delle fatture per mese (al netto delle imposte)
+AddDiscount=Creare sconto assoluto
+AddCreditNote=Crea nota di credito
+InvoiceNotChecked=Fattura non selezionati
+ShowUnpaidAll=Mostra tutte le fatture non pagate
+ClosePaidInvoicesAutomatically=Classificare &quot;Pagata&quot; tutte le fatture entierely pagato.
+AllCompletelyPayedInvoiceWillBeClosed=Tutte le fatture senza rimanere a pagare saranno automaticamente chiuse allo stato &quot;Pagato&quot;.
+// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:09).

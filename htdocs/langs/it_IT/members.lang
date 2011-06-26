@@ -182,3 +182,34 @@ DocForAllMembersCards=biglietti da visita generare per tutti i membri (di format
 DocForOneMemberCards=biglietti da visita per generare un particolare membro (formato per l&#39;output effettivamente installazione: <b>%s)</b>
 DocForLabels=Generare fogli di indirizzo (formato per l&#39;output effettivamente installazione: <b>%s)</b>
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:59).
+
+
+// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
+// Reference language: en_US -> it_IT
+MembersWithSubscriptionToReceive=Utenti con abbonamento per ricevere
+ImportDataset_member_1=Membri
+GlobalConfigUsedIfNotDefined=Testo definito nella configurazione del modulo Fondazione sarà utilizzato se non definiti qui
+MayBeOverwrited=Questo testo può essere sovrascritto dal valore definito per il tipo di utente
+SubscriptionPayment=Abbonamento pagamento
+LastSubscriptionDate=Ultima data di sottoscrizione
+LastSubscriptionAmount=Abbonamento ultimo importo
+MembersStatisticsByCountries=Membri statistiche per paese
+MembersStatisticsByState=Statistiche membri per stato / provincia
+MembersStatisticsByTowne=Statistiche membri per città
+NbOfMembers=Numero di membri
+NoValidatedMemberYet=Nessun membro convalidato trovato
+MembersByCountryDesc=Questa schermata mostra le statistiche sui membri da parte dei paesi. Grafica dipende tuttavia servizio di Google grafico online ed è disponibile solo se una connessione ad Internet è funziona.
+MembersByStateDesc=Questa schermata mostra le statistiche sui membri per stato / provincia / Cantone.
+MembersByTownDesc=Questa schermata mostra le statistiche sui membri per comune.
+MembersStatisticsDesc=Scegliere le statistiche che si desidera leggere ...
+MenuMembersStats=Statistica
+LastMemberDate=Membro ultima data
+Nature=Natura
+Public=Pubblico
+Exports=Esportazioni
+NewMemberbyWeb=Nuovo membro aggiunto. In attesa di approvazione
+NewMemberForm=Membro nuova forma
+SubscriptionsStatistics=Le statistiche sugli abbonamenti
+NbOfSubscriptions=Numero di abbonamenti
+AmountOfSubscriptions=Importo pari alle sottoscrizioni
+// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:53:00).

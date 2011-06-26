@@ -83,7 +83,6 @@ ErrorRefAlreadyExists=Rif. utilizzati per la creazione esiste già.
 WarningConfFileMustBeReadOnly=Attenzione, il file di configurazione <b>(htdocs / conf / conf.php)</b> può essere sovrascritto dal server web. Questo è un grave buco di sicurezza. Modificare le autorizzazioni per file di essere in modalità di sola lettura per l'utente del sistema operativo utilizzato dal server web. Se si utilizza Windows e il formato FAT per il disco, dovete sapere che questo sistema fascicolo non consentono di aggiungere le autorizzazioni sul file, quindi non può essere completamente sicuro.
 ErrorModuleRequireJavascript=Javascript non deve essere disattivato per avere questa caratteristica di lavoro. Per abilitare / disabilitare Javascript, andare al menù Home-> Setup-> Schermo.
 ErrorPasswordsMustMatch=Entrambe le password digitata deve corrispondere a vicenda
-ErrorContactEMail=Un errore tecnico si era verificato. Si prega di contattare l'amministratore di folowwing <b>email%</b> en <b>%s</b> fornire il codice di errore nel messaggio, o meglio ancora con l'aggiunta di una copia dello schermo di questa pagina.
 ErrorWrongValueForField=Valore errato per <b>%s</b> numero del campo (valore <b>'%s'</b> non corrisponde <b>%s</b> regola regex)
 ErrorsOnXLines=Errori sul fonte <b>%s</b> linee
 WarningsOnXLines=Avvertenze sui fonte <b>%s</b> linee
@@ -99,3 +98,19 @@ ErrorNumRefModel=Esiste un riferimento nel database (%s) e non è compatibile co
 // Reference language: en_US -> it_IT
 ErrorQtyTooLowForThisSupplier=Quantità troppo basso per un fornitore o nessun prezzo definito su questo prodotto per questo fornitore
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:41:56).
+
+
+// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
+// Reference language: en_US -> it_IT
+ErrorFailToRenameFile=Impossibile rinominare il file <b>&#39;%s&#39;</b> in <b>&#39;%s&#39;.</b>
+ErrorBadValueForParameter=Valore errato &#39;%s&#39; per il parametro non corretto &#39;%s&#39;
+ErrorBadImageFormat=File di immagine non ha un formato supportato
+ErrorContactEMail=Un errore tecnico si è verificato. Si prega di contattare l&#39;amministratore di seguito <b>%s</b> email it <b>%s</b> fornire il codice di errore nel tuo messaggio, o meglio ancora con l&#39;aggiunta di una copia dello schermo di questa pagina.
+ErrorFieldValueNotIn=Valore errato per <b>%s</b> numero del campo <b>(&#39;%s&#39;</b> valore non è un valore disponibile in <b>%s %s</b> campo della tabella)
+ErrorModuleSetupNotComplete=Installazione del modulo sembra essere incompleti. Vai su Setup - Moduli per il completamento.
+ErrorBadMask=Errore su maschera
+ErrorBadMaskFailedToLocatePosOfSequence=Errore, maschera senza numero di sequenza
+ErrorBadMaskBadRazMonth=Errore, valore di reset male
+ErrorSelectAtLeastOne=Errore. Selezionare almeno una voce.
+ErrorProductWithRefNotExist=Prodotto con <i>&#39;%s&#39;</i> di riferimento non esistono
+// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:25).

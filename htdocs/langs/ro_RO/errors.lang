@@ -82,7 +82,6 @@ WarningSafeModeOnCheckExecDir=Atenţie, PHP <b>safe_mode</b> opţiune este pe at
 WarningConfFileMustBeReadOnly=Atenţie, fişierul de configurare dvs. <b>(htdocs / conf / conf.php)</b> poate fi suprascrise de către serverul de web. Aceasta este o gaura de securitate grave. Modificare permisiuni pe fişier pentru a fi citit în modul doar pentru utilizatorul sistemului de operare folosit de server Web. Dacă utilizaţi Windows şi formatul FAT pentru discul dvs., vă trebuie să ştiţi că acest sistem de fişier nu se permite to adăuga permisiuni la dosar, deci nu poate fi complet safe.
 ErrorModuleRequireJavascript=Javascript nu trebuie să fie dezactivate pentru a avea această facilitate de lucru. Pentru a activa / dezactiva Javascript, du-te la meniul Home-> Configurare-> Display.
 ErrorPasswordsMustMatch=Ambele parolele tastate trebuie să se potrivească reciproc
-ErrorContactEMail=Apărut o eroare tehnică. Vă rugăm, contactaţi administratorul de la folowwing <b>email%</b> en furniza <b>%s</b> codul de eroare în mesajul dvs., sau chiar mai bine prin adăugarea de o copie de ecran a acestei pagini.
 ErrorWrongValueForField=Valoarea greşit pentru <b>%s</b> numărul de câmp (valoarea <b>"%s"</b> nu se potriveste cu regula <b>%s</b> regex)
 ErrorsOnXLines=Erori pe liniile sursă <b>%s</b>
 WarningsOnXLines=Avertismentele privind sursa <b>%s</b> linii

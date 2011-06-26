@@ -67,7 +67,6 @@ ErrorRecordHasChildren=Kunne ikke slette poster siden den har noen Childs.
 WarningConfFileMustBeReadOnly=Advarsel, config <b>(htdocs / conf / conf.php)</b> kan du bli overkjørt av webserveren. Dette er et alvorlig sikkerhetshull. Endre tillatelser på filen for å være i skrivebeskyttet modus for operativsystem bruker brukes av web-server. Hvis du bruker Windows og FAT format for disken din, må du vite at dette filsystemet ikke tillater å legge til tillatelser på filen, så kan ikke være helt sikker.
 ErrorModuleRequireJavascript=Javascript må ikke deaktiveres å ha denne funksjonen fungerer. For å aktivere / deaktivere Javascript, gå til menyen Home-> Setup-> Display.
 ErrorPasswordsMustMatch=Begge har skrevet passord må samsvare med hverandre
-ErrorContactEMail=En teknisk feil oppstod. Vennligst administrator å kontakte folowwing <b>e%</b> no oppgi feilkoden <b>%s</b> i meldingen, eller enda bedre ved å legge en skjerm kopi av denne siden.
 ErrorWrongValueForField=Feil verdi for feltet tall <b>%s</b> (verdien <b>«%s"</b> samsvarer ikke med regex regel <b>%s)</b>
 ErrorsOnXLines=Feil på <b>%s</b> kilde linjer
 WarningsOnXLines=Advarsler på <b>%s</b> kilde linjer

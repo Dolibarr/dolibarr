@@ -70,7 +70,6 @@ ErrorRecordHasChildren=Misslyckades med att radera poster eftersom det har någr
 WarningConfFileMustBeReadOnly=Varning, konfigurationsfilen <b>(htdocs / conf / conf.php)</b> kan din skrivas över av den webbserver. Detta är ett allvarligt säkerhetshål. Ändra behörigheter på fil för att vara i skrivskyddat läge för operativsystem som användare som används av webbservern. Om du använder Windows och FAT format för din disk, måste du veta att det här filsystemet inte är möjligt att lägga till behörigheter för filen, så kan inte vara helt säker.
 ErrorModuleRequireJavascript=Javascript måste inte avaktiveras att ha denna funktion fungerar. Aktivera / inaktivera Javascript, gå till menyn Hem-&gt; Inställningar-&gt; Display.
 ErrorPasswordsMustMatch=Båda skrivit lösenord måste matcha varandra
-ErrorContactEMail=Ett tekniskt fel uppstod. Vänligen administratören att kontakta folowwing e <b>%s</b> sv Ange kod <b>%s</b> fel i ditt meddelande, eller ännu bättre genom att lägga till en skärm kopia av denna sida.
 ErrorWrongValueForField=Felaktigt värde för antalet <b>%s</b> området (värde <b>&quot;%s&quot;</b> inte matchar regex regel <b>%s)</b>
 ErrorsOnXLines=Fel på <b>%s</b> källrader
 WarningsOnXLines=Varningar om <b>%s</b> källrader
