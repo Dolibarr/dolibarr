@@ -80,3 +80,28 @@ NotifyEmision=Ritiro delle emissioni
 NotifyCredit=Ritiro di credito
 NumeroNationalEmetter=Numero nazionale del trasmettitore
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:35:04).
+
+
+// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
+// Reference language: en_US -> it_IT
+NbOfInvoiceToWithdrawWithInfo=Numero di fattura con richiesta di ritirare i clienti aver definito informazioni bancarie
+StatusTrans=Trasmesse
+PleaseSelectCustomerBankBANToWithdraw=Selezionare le informazioni su account cliente banca per ritirare
+WithBankUsingRIB=Per i conti correnti bancari utilizzando RIB
+WithBankUsingBANBIC=Per i conti correnti bancari utilizzando IBAN / BIC / SWIFT
+BankToReceiveWithdraw=Conto corrente bancario per ricevere ritira
+CreditDate=Di credito
+WithdrawalFileNotCapable=In grado di generare file di ricevuta di ritiro per il vostro paese
+ShowWithdraw=Mostra Prelevare
+IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Tuttavia, se fattura non ha almeno un versamento ritiro Ancora da elaborare, non sarà impostato come pagato per consentire di gestire ritiro prima.
+DoStandingOrdersBeforePayments=Questo schede consente di richiedere un ordine permanente. Una volta che sarà finito, è possibile digitare il pagamento per chiudere la fattura.
+InfoCreditSubject=Il pagamento della %s ordine permanente da parte della banca
+InfoCreditMessage=Il %s ordine permanente è stato pagato dalla banca <br> Dati di pagamento: %s
+InfoTransSubject=Trasmissione di %s ordine permanente a banca
+InfoTransMessage=Il %s ordine permanente è stato transmited alla banca da %s %s. <br><br>
+InfoTransData=Importo: %s <br> Metode: %s <br> Data: %s
+InfoFoot=Questo è un messaggio automatico inviato da Dolibarr
+InfoRejectSubject=Ordine permanente rifiutato
+InfoRejectMessage=Ciao, <br><br> l&#39;ordine di standig %s fattura relativa alla %s società, con un importo di %s è stata rifiutata dalla banca. <br><br> - <br> % $
+ModeWarning=Opzione per la modalità reale non è stato impostato, ci fermiamo dopo questa simulazione
+// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:42).

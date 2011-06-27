@@ -1,0 +1,62 @@
+/*
+ * Language code: el_GR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2011-06-26 15:35:22
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
+// Reference language: en_US -> el_GR
+CHARSET=UTF-8
+Sms=Sms
+SmsSetup=Sms setup
+SmsDesc=Αυτή η σελίδα σας επιτρέπει να ορίσετε επιλογές globals σε SMS χαρακτηριστικά
+SmsCard=SMS Κάρτα
+AllSms=Όλες οι καμπάνιες SMS
+SmsTargets=Στόχοι
+SmsRecipients=Στόχοι
+SmsRecipient=Στόχος
+SmsTitle=Περιγραφή
+SmsFrom=Αποστολέας
+SmsTo=Στόχος
+SmsTopic=Θέμα του SMS
+SmsText=Μήνυμα
+SmsMessage=Μήνυμα SMS
+ShowSms=Εμφάνιση Sms
+ListOfSms=Λίστα καμπάνιες SMS
+NewSms=Νέα καμπάνια SMS
+EditSms=Επεξεργασία Sms
+ResetSms=Νέα αποστολή
+DeleteSms=Διαγραφή Sms εκστρατεία
+DeleteASms=Αφαιρέστε μια εκστρατεία Sms
+PreviewSms=Previuw Sms
+PrepareSms=Ετοιμάστε Sms
+CreateSms=Δημιουργία Sms
+SmsResult=Αποτέλεσμα της αποστολής sms
+TestSms=Δοκιμή Sms
+ValidSms=Επικύρωση Sms
+ApproveSms=Έγκριση Sms
+SmsStatusDraft=Σχέδιο
+SmsStatusValidated=Επικυρωμένη
+SmsStatusApproved=Εγκεκριμένο
+SmsStatusSent=Εστάλη
+SmsStatusSentPartialy=Απεσταλμένα μερικώς
+SmsStatusSentCompletely=Απεσταλμένα εντελώς
+SmsStatusError=Σφάλμα
+SmsStatusNotSent=Δεν αποστέλλεται
+SmsSuccessfulySent=Sms σωστά έστειλε (από sssss να sssss)
+ErrorSmsRecipientIsEmpty=Αριθμός στόχος είναι άδειο
+WarningNoSmsAdded=Κανένα νέο αριθμό τηλεφώνου για να προσθέσετε στη λίστα στόχων
+ConfirmValidSms=Έχετε επιβεβαιώσει την επικύρωση αυτής της εκστρατείας;
+ConfirmResetMailing=Προσοχή, αν κάνετε μια reinit των SMS <b>sssss</b> εκστρατείας, θα επιτρέψει να κάνει μια μαζική αποστολή της για δεύτερη φορά. Είναι πραγματικά αυτό που wan να κάνετε;
+ConfirmDeleteMailing=Έχετε επιβεβαιώσει την αφαίρεση της καμπάνιας;
+NbOfRecipients=Αριθμός των στόχων
+NbOfUniqueSms=Nb DOF μοναδικούς αριθμούς τηλεφώνου
+NbOfSms=Nbre του phon αριθμούς
+ThisIsATestMessage=Αυτό είναι ένα δοκιμαστικό μήνυμα
+SendSms=Αποστολή SMS
+SmsInfoCharRemain=Αρ. υπόλοιπους χαρακτήρες
+SmsInfoNumero=(Μορφή διεθνούς δηλαδή: 33899701761)
+DelayBeforeSending=Καθυστέρηση πριν από την αποστολή (λεπτά)
+SmsNoPossibleRecipientFound=Δεν στόχος διαθέσιμα. Ελέγξτε την εγκατάσταση του SMS τον παροχέα σας.
+// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:40:29).

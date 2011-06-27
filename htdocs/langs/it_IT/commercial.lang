@@ -89,3 +89,14 @@ Rendez-Vous=Appuntantamenti
 ActionAC_SUP_ORD=Inviare ordine fornitore tramite e-mail
 ActionAC_SUP_INV=Inviare fattura fornitore tramite e-mail
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:34:02).
+
+
+// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
+// Reference language: en_US -> it_IT
+StatusNotApplicable=Non applicabile
+ActionAC_SHIP=Invia spedizione per posta
+ActionAC_OTH=Altro
+StatusProsp=Prospettiva dello stato
+DraftPropals=Progetti di proposte commerciali
+SearchPropal=Cerca una proposta commerciale
+// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:15).

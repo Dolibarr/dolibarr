@@ -23,7 +23,7 @@
  *      \file       htdocs/adherents/type.php
  *      \ingroup    member
  *		\brief      Page de configuration des types d'adherents
- *		\version    $Id$
+ *		\version    $Id: type.php,v 1.69 2011/06/26 21:03:44 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -32,7 +32,17 @@ require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php");
 
 $langs->load("members");
 
-$rowid=isset($_GET["rowid"])?$_GET["rowid"]:$_POST["rowid"];
+$rowid=GETPOST("rowid");
+
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if ($page == -1) { $page = 0 ; }
+$offset = $conf->liste_limit * $page ;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+if (! $sortorder) {  $sortorder="DESC"; }
+if (! $sortfield) {  $sortfield="d.nom"; }
 
 // Security check
 if (! $user->rights->adherent->lire) accessforbidden();
@@ -414,13 +424,12 @@ if ($rowid > 0)
 				$titre.=" (".$membertype->libelle.")";
 		    }
 
-		    $param="";
+		    $param="&rowid=".$rowid;
 		    if (isset($_GET["statut"]))       $param.="&statut=".$_GET["statut"];
 		    if (isset($_GET["search_nom"]))   $param.="&search_nom=".$_GET["search_nom"];
 		    if (isset($_GET["search_login"])) $param.="&search_login=".$_GET["search_login"];
 		    if (isset($_GET["search_email"])) $param.="&search_email=".$_GET["search_email"];
 		    if (isset($_GET["filter"]))       $param.="&filter=".$_GET["filter"];
-		    print_barre_liste('',$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 
 		    if ($sall)
 		    {
@@ -428,16 +437,17 @@ if ($rowid > 0)
 		    }
 
 		    print '<br>';
+            print_barre_liste('',$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 		    print "<table class=\"noborder\" width=\"100%\">";
 
 		    print '<tr class="liste_titre">';
-		    print_liste_field_titre($langs->trans("Name")." / ".$langs->trans("Company"),"liste.php","d.nom",$param,"","",$sortfield,$sortorder);
-		    print_liste_field_titre($langs->trans("Login"),"liste.php","d.login",$param,"","",$sortfield,$sortorder);
-		    print_liste_field_titre($langs->trans("Person"),"liste.php","d.morphy",$param,"","",$sortfield,$sortorder);
-		    print_liste_field_titre($langs->trans("EMail"),"liste.php","d.email",$param,"","",$sortfield,$sortorder);
-		    print_liste_field_titre($langs->trans("Status"),"liste.php","d.statut,d.datefin",$param,"","",$sortfield,$sortorder);
-		    print_liste_field_titre($langs->trans("EndSubscription"),"liste.php","d.datefin",$param,"",'align="center"',$sortfield,$sortorder);
-		    print_liste_field_titre($langs->trans("Action"),"liste.php","",$param,"",'width="60" align="center"',$sortfield,$sortorder);
+		    print_liste_field_titre($langs->trans("Name")." / ".$langs->trans("Company"),$_SERVER["PHP_SELF"],"d.nom",$param,"","",$sortfield,$sortorder);
+		    print_liste_field_titre($langs->trans("Login"),$_SERVER["PHP_SELF"],"d.login",$param,"","",$sortfield,$sortorder);
+		    print_liste_field_titre($langs->trans("Person"),$_SERVER["PHP_SELF"],"d.morphy",$param,"","",$sortfield,$sortorder);
+		    print_liste_field_titre($langs->trans("EMail"),$_SERVER["PHP_SELF"],"d.email",$param,"","",$sortfield,$sortorder);
+		    print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"d.statut,d.datefin",$param,"","",$sortfield,$sortorder);
+		    print_liste_field_titre($langs->trans("EndSubscription"),$_SERVER["PHP_SELF"],"d.datefin",$param,"",'align="center"',$sortfield,$sortorder);
+		    print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"",$param,"",'width="60" align="center"',$sortfield,$sortorder);
 		    print "</tr>\n";
 
 			// Lignes des champs de filtre
@@ -627,5 +637,5 @@ if ($rowid > 0)
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/06/26 21:03:44 $ - $Revision: 1.69 $');
 ?>

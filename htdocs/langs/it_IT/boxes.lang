@@ -85,3 +85,14 @@ BoxTitleLastModifiedSuppliers=%s Ultima modifica fornitori
 BoxTitleLastModifiedCustomers=%s Ultima modifica clienti
 BoxTitleLastModifiedProspects=%s Ultima modifica le prospettive di
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:36).
+
+
+// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
+// Reference language: en_US -> it_IT
+BoxLastContacts=Derniers contatti / indirizzi
+BoxLastMembers=Ultimi membri
+BoxTitleLastModifiedMembers=%s ultima modifica membri
+BoxTitleLastModifiedContacts=%s Ultima modifica contatti / indirizzi
+ClickToAdd=Clicca qui per aggiungere.
+NoRecordedContacts=Nessun contatto registrato
+// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:10).

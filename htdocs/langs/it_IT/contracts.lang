@@ -109,3 +109,9 @@ ExpiredSince=Data di scadenza
 // Reference language: en_US
 RelatedContracts=relativi contratti
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:32:46).
+
+
+// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
+// Reference language: en_US -> it_IT
+Error_CONTRACT_ADDON_NotDefined=CONTRACT_ADDON costante non definita
+// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:20).

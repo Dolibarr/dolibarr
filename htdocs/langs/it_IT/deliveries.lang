@@ -38,3 +38,11 @@ TrackingNumber=Numero di tracking
 // Reference language: en_US
 CHARSET=UTF-8
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
+
+
+// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
+// Reference language: en_US -> it_IT
+DeleteDeliveryReceipt=Eliminare ricevuta di consegna
+DeleteDeliveryReceiptConfirm=Sei sicuro di voler cancellare <b>%s</b> ricevuta di consegna?
+DeliveryNotValidated=Consegna non convalidato
+// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:21).

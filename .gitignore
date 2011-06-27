@@ -1,5 +1,4 @@
 htdocs/conf/conf.php
 documents
 nbproject
-htdocs/install
-/.settings/
+.settings

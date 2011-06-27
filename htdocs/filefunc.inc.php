@@ -28,7 +28,7 @@
  *	\file       htdocs/filefunc.inc.php
  * 	\ingroup	core
  *  \brief      File that include conf.php file and functions.lib.php
- *  \version    $Id$
+ *  \version    $Id: filefunc.inc.php,v 1.16 2011/06/26 18:53:16 eldy Exp $
  */
 
 define('DOL_VERSION','3.1.0-alpha');	// Also defined in htdocs/install/inc.php (Ex: x.y.z-alpha, x.y.z)
@@ -125,9 +125,9 @@ $real_dolibarr_main_document_root=str_replace('\\','/',realpath($dolibarr_main_d
 $pathroot=$_SERVER["DOCUMENT_ROOT"];
 $paths=explode('/',str_replace('\\','/',$_SERVER["SCRIPT_NAME"]));
 $concatpath='';
-foreach($paths as $path)
+foreach($paths as $tmppath)
 {
-    if ($path) $concatpath.='/'.$path;
+    if ($tmppath) $concatpath.='/'.$tmppath;
     //print $real_$dolibarr_main_document_root.'-'.realpath($pathroot.$concatpath).'<br>';
     if ($real_dolibarr_main_document_root == realpath($pathroot.$concatpath))
     {

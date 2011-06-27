@@ -1,0 +1,43 @@
+/*
+ * Language code: it_IT
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2011-06-26 15:51:22
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
+// Reference language: en_US -> it_IT
+CHARSET=UTF-8
+CashDeskMenu=Punto di vendita
+CashDesk=Punto di vendita
+CashDesks=Punti vendita
+CashDeskBank=Conto corrente bancario
+CashDeskBankCash=Conto corrente bancario (cassa)
+CashDeskBankCB=Conto corrente bancario (scheda)
+CashDeskBankCheque=Conto corrente bancario (check)
+CashDeskWarehouse=Magazzino
+CashDeskProducts=Prodotti
+CashDeskStock=Stock
+CashDeskOn=su
+CashDeskThirdParty=Terza parte
+ShoppingCart=Carrello della spesa
+NewSell=Vendita nuovo
+BackOffice=Back office
+AddThisArticle=Aggiungi questo articolo
+RestartSelling=Tornare in vendita
+SellFinished=Vendi finito
+PrintTicket=Stampa biglietto
+NoResults=Nessun risultato
+NoProductFound=Nessun articolo trovato
+ProductFound=prodotto trovato
+ProductsFound=prodotti trovati
+NoArticle=Nessun articolo
+Identification=Identificazione
+Article=Articolo
+Difference=Differenza
+TotalTicket=Totale del biglietto
+NoVAT=L&#39;IVA non per questo in vendita
+Change=Eccesso ricevuto
+CalTip=Clicca per visualizzare il calendario
+CashDeskSetupStock=Vi chiediamo di diminuire sulla creazione di stock di magazzino fattura, ma per questo non è stato definito <br> Cambia modulo di configurazione stock, o scegliere un magazzino
+// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:14).

@@ -45,3 +45,19 @@ Language_is_IS=Islandese
 // Reference language: en_US -> it_IT
 Language_sv_SV=Svedese
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:40:15).
+
+
+// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
+// Reference language: en_US -> it_IT
+Language_ar_SA=Arabo
+Language_da_DK=Danese
+Language_de_AT=Tedesco (Austria)
+Language_el_GR=Greco
+Language_en_NZ=Inglese (Nuova Zelanda)
+Language_es_HN=Spagnolo (Honduras)
+Language_es_MX=Spagnolo (Messico)
+Language_es_PR=Spagnolo (Portorico)
+Language_fa_IR=Persiano
+Language_hu_HU=Ungherese
+Language_sv_SE=Svedese
+// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:46).

@@ -137,3 +137,14 @@ AddDeliveryCostLine=Add a delivery cost line indicating the weight of the order
 # Documents models
 PDFEinsteinDescription=Ολοκληρωμένο πρότυπο παραγγελίας (λογότυπο...)
 PDFEdisonDescription=Απλό πρότυπο παραγγελίας
+
+
+// START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
+// Reference language: en_US -> el_GR
+StatusOrderSentShort=Αποστολή στη διαδικασία
+OrderByMail=Ταχυδρομείο
+OrderByFax=Φαξ
+OrderByEMail=EMail
+OrderByWWW=Online
+OrderByPhone=Τηλέφωνο
+// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:41:22).

@@ -1,14 +1,26 @@
-# Dolibarr language file - en_US - paypal
+/*
+ * Language code: el_GR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2011-06-26 15:35:22
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
+// Reference language: en_US -> el_GR
 CHARSET=UTF-8
-PaypalSetup=PayPal module setup
-PaypalDesc=This module offer pages to allow payment on <a href="http://www.paypal.com" target="_blank">PayPal</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
-PaypalOrCBDoPayment=Pay with credit card or Paypal
-PaypalDoPayment=Pay with Paypal
-PaypalCBDoPayment=Pay with credit card
-PAYPAL_API_SANDBOX=Mode test/sandbox
-PAYPAL_API_USER=API username
-PAYPAL_API_PASSWORD=API password
-PAYPAL_API_SIGNATURE=API signature
-PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Offer payment "integral" (Credit card+Paypal) or "Paypal" only
-PAYPAL_CSS_URL=Optionnal Url of CSS style sheet on payment page
-ThisIsTransactionId=This is id of transaction: <b>%s</b>
+PaypalSetup=Άμεση εγκατάσταση μονάδας
+PaypalDesc=Αυτή η ενότητα σελίδες προσφέρουν να επιτρέψει πληρωμής <a href="http://www.paypal.com" target="_blank">PayPal</a> από τους πελάτες. Αυτό μπορεί να χρησιμοποιηθεί για μια ελεύθερη πληρωμής ή πληρωμή σε ένα συγκεκριμένο αντικείμενο Dolibarr (τιμολόγιο, ώστε, ...)
+PaypalOrCBDoPayment=Πληρωμή με πιστωτική κάρτα ή Paypal
+PaypalDoPayment=Πληρώστε με Paypal
+PaypalCBDoPayment=Πληρωμή με πιστωτική κάρτα
+PAYPAL_API_SANDBOX=Λειτουργία δοκιμής / sandbox
+PAYPAL_API_USER=API όνομα χρήστη
+PAYPAL_API_PASSWORD=API κωδικό πρόσβασης
+PAYPAL_API_SIGNATURE=API υπογραφή
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Προσφορά πληρωμής &quot;αναπόσπαστο&quot; (Πιστωτική κάρτα + Paypal) ή &quot;Paypal&quot; μόνο
+PAYPAL_CSS_URL=Optionnal url του φύλλου στυλ CSS στη σελίδα πληρωμής
+ThisIsTransactionId=Αυτό είναι id της συναλλαγής: <b>sssss</b>
+PAYPAL_ADD_PAYMENT_URL=Προσθέστε το url του Paypal πληρωμής όταν στέλνετε ένα έγγραφο με το ταχυδρομείο
+PredefinedMailContentSendOrderWithPaypalLink=Θα βρείτε εδώ τη σειρά __ORDERREF__ \ n \ nΜπορείτε να κάνετε κλικ στο ασφαλές παρακάτω σύνδεσμο για να κάνετε την πληρωμή σας μέσω PayPal \ n \ n%s \ n \ nSincerely \ n \ n
+PredefinedMailContentSendInvoiceWithPaypalLink=Θα βρείτε εδώ το τιμολόγιο __FACREF__ \ n \ nΜπορείτε να κάνετε κλικ στο ασφαλές παρακάτω σύνδεσμο για να κάνετε την πληρωμή σας μέσω PayPal \ n \ n%s \ n \ nSincerely \ n \ n
+// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:35:33).

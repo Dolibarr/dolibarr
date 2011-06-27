@@ -70,7 +70,6 @@ ErrorRecordHasChildren=删除记录失败，因为它有一些儿童。
 WarningConfFileMustBeReadOnly=警告，你的配置文件<b>（conf.php htdocs中/ conf /中</b> ），可覆盖由Web服务器。这是一个严重的安全漏洞。在文件修改权限在阅读作业系统由Web服务器使用的用户只模式。如果您的磁盘使用Windows和FAT格式的，你要知道，这个文件系统不允许添加文件的权限，因此不能完全安全的。
 ErrorModuleRequireJavascript=不能禁用JavaScript必须有此功能的工作。要启用/禁用JavaScript，进入菜单首页->安装->“显示。
 ErrorPasswordsMustMatch=这两种类型的密码必须相互匹配
-ErrorContactEMail=一个技术错误。请联系管理员folowwing电子邮件<b>％</b>恩提供的错误代码<b>％是个</b>屏幕拷贝本页面您的留言，通过增加或什至更好。
 ErrorWrongValueForField=<b>s'</b>的领域的一些错误值<b>的％s（</b>价值<b>'％</b>不匹配正则表达式规则<b>％s）</b>
 ErrorsOnXLines=<b>％</b>误差<b>的</b>源上线
 WarningsOnXLines=<b>％S上</b>的源代码行警告

@@ -20,7 +20,7 @@
  *      \file       dev/translation/autotranslator.php
  *		\ingroup    mymodule othermodule1 othermodule2
  *      \brief      This file is an example for a command line script
- *      \version    $Id$
+ *      \version    $Id: autotranslator.php,v 1.11 2011/06/26 18:52:49 eldy Exp $
  * 		\author		Put author name here
  *		\remarks	Put here some comments
  */
@@ -36,15 +36,15 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 // Include Dolibarr environment
-require_once($path."../../htdocs/master.inc.php");
-require_once($path."../../htdocs/lib/files.lib.php");
+require_once($path.'../../htdocs/master.inc.php');
+require_once($path.'../../htdocs/lib/files.lib.php');
 // After this $db is an opened handler to database. We close it at end of file.
 
 // Load main language strings
 $langs->load("main");
 
 // Global variables
-$version='$Revision$';
+$version='$Revision: 1.11 $';
 $error=0;
 
 

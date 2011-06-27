@@ -206,3 +206,17 @@ NewExport=New export
 ##### External sites #####
 ExternalSites=External sites
 FONTFORPDF=Freemono
+
+
+// START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
+// Reference language: en_US -> el_GR
+ToolsDesc=Αυτή η περιοχή είναι αφιερωμένη στην ομάδα διάφορα εργαλεία που είναι διαθέσιμα δεν σε άλλες καταχωρήσεις μενού. <br><br> Αυτά τα εργαλεία είναι προσβάσιμα από το μενού στο πλάι.
+PredefinedMailContentSendShipping=Θα βρείτε εδώ τη ναυτιλία __SHIPPINGREF__ \ n \ nSincerely \ n \ n
+Top=Κορυφή
+Bottom=Κάτω μέρος
+Left=Αριστερά
+Right=Δικαίωμα
+FileFormat=Μορφή αρχείου
+SelectAColor=Επιλέξτε ένα χρώμα
+Export=Εξαγωγή
+// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:41:23).

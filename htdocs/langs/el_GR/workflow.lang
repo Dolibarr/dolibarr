@@ -1,0 +1,18 @@
+/*
+ * Language code: el_GR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2011-06-26 15:35:22
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
+// Reference language: en_US -> el_GR
+CHARSET=UTF-8
+WorkflowSetup=Workflow εγκατάσταση μονάδας
+WorkflowDesc=Αυτή η ενότητα Σχεδιασμός για την τροποποίηση της συμπεριφοράς των αυτόματων ενεργειών σε εφαρμογή. Από προεπιλογή, η ροή εργασίας έχει ανοίξει (πράγμα που κάνετε στη σειρά που θέλετε). Μπορείτε να ενεργοποιήσει την αυτόματη ενέργειες που σας ενδιαφέρει in.
+ThereIsNoWorkflowToModify=Δεν υπάρχει καμία ροή εργασίας, μπορείτε να τροποποιήσετε για την ενότητα που έχετε ενεργοποιήσει.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Δημιουργήστε μια παραγγελία του πελάτη αυτόματα μετά από μια εμπορική πρόταση υπογράφεται
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Δημιουργήστε ένα τιμολόγιο πελάτη αυτόματα μετά από μια εμπορική πρόταση υπογράφεται
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Δημιουργήστε ένα τιμολόγιο πελάτη αυτόματα μετά από μια σύμβαση έχει επικυρωθεί
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Δημιουργήστε ένα τιμολόγιο πελάτη αυτόματα μετά από παραγγελία του πελάτη είναι κλειστό
+// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:41:00).

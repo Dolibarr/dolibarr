@@ -110,3 +110,11 @@ SomeNotificationsWillBeSent=%s notifications will be sent by email
 AddNewNotification=Activate a new email notification request
 ListOfActiveNotifications=List all active email notification requests
 ListOfNotificationsDone=List all email notifications sent
+
+
+// START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
+// Reference language: en_US -> el_GR
+MailingModuleDescContactsByCompanyCategory=Επαφές των τρίτων (από τρίτη κατηγορία μέρη)
+MailingModuleDescMembersCategories=Τα ιδρυτικά μέλη (ανά κατηγορία)
+MailingModuleDescContactsByFunction=Επαφές των τρίτων (από τη θέση / λειτουργία)
+// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:41:07).

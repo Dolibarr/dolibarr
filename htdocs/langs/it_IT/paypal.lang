@@ -1,0 +1,26 @@
+/*
+ * Language code: it_IT
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2011-06-26 15:51:22
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
+// Reference language: en_US -> it_IT
+CHARSET=UTF-8
+PaypalSetup=PayPal modulo di configurazione
+PaypalDesc=Questo modulo pagine offrono per consentire il versamento su <a href="http://www.paypal.com" target="_blank">PayPal</a> da parte dei clienti. Questo può essere usato per un pagamento o gratuito per un pagamento su un particolare oggetto Dolibarr (fattura, ordine, ...)
+PaypalOrCBDoPayment=Paga con carta di credito o Paypal
+PaypalDoPayment=Paga con Paypal
+PaypalCBDoPayment=Paga con carta di credito
+PAYPAL_API_SANDBOX=Modalità di test / sandbox
+PAYPAL_API_USER=API nome utente
+PAYPAL_API_PASSWORD=API password
+PAYPAL_API_SIGNATURE=API firma
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Offerta di pagamento &quot;integrale&quot; (Carta di credito Paypal +) o &quot;Paypal&quot; solo
+PAYPAL_CSS_URL=Url Optionnal del foglio di stile CSS alla pagina di pagamento
+ThisIsTransactionId=Questo è id di transazione: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Aggiungere l&#39;url di pagamento Paypal quando si invia un documento per posta
+PredefinedMailContentSendOrderWithPaypalLink=Troverete qui l&#39;ordine __ORDERREF__ \ n \ nÈ possibile fare clic sul link sottostante per rendere sicuro il pagamento tramite PayPal \ n \ n%s \ n \ nSincerely \ n \ n
+PredefinedMailContentSendInvoiceWithPaypalLink=Troverete qui la fattura __FACREF__ \ n \ nÈ possibile fare clic sul link sottostante per rendere sicuro il pagamento tramite PayPal \ n \ n%s \ n \ nSincerely \ n \ n
+// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:51:26).
