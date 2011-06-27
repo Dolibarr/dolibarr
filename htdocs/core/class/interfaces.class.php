@@ -22,7 +22,7 @@
  *   \file		    htdocs/core/class/interfaces.class.php
  *   \ingroup		core
  *   \brief			Fichier de la classe de gestion des triggers
- *   \version		$Id$
+ *   \version		$Id: interfaces.class.php,v 1.7 2011/06/27 10:41:31 hregis Exp $
  */
 
 
@@ -184,7 +184,7 @@ class Interfaces
 	{
 		global $conf, $langs;
 
-		$html = new Form($db);
+		$html = new Form($this->db);
 
 		$files = array();
 		$modules = array();
@@ -212,7 +212,7 @@ class Interfaces
     					{
     						$langs->load("errors");
     						print '<div class="error">'.$langs->trans("Error").' : '.$langs->trans("ErrorDuplicateTrigger",$modName,"/htdocs/includes/triggers/").'</div>';
-    						$objMod = new $modName($db);
+    						$objMod = new $modName($this->db);
 
     						$modules[$i] = $modName;
     						$files[$i] = $file;
@@ -222,7 +222,7 @@ class Interfaces
     					else
     					{
     						include_once($dir.'/'.$file);
-    						$objMod = new $modName($db);
+    						$objMod = new $modName($this->db);
 
     						$modules[$i] = $modName;
     						$files[$i] = $file;
@@ -246,7 +246,7 @@ class Interfaces
 			$modName = $modules[$key];
 			if ($modName)
 			{
-				$objMod = new $modName($db);
+				$objMod = new $modName($this->db);
 				// Bypass if workflow module is enabled and if the trigger is compatible
 				if ($workflow && ! empty($objMod->disabled_if_workflow)) continue;
 			}
