@@ -511,6 +511,7 @@ class Menubase
         $sql = "SELECT m.rowid, m.type, m.fk_menu, m.url, m.titre, m.langs, m.perms, m.enabled, m.target, m.mainmenu, m.leftmenu";
         $sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
         $sql.= " WHERE m.entity = ".$conf->entity;
+        //$sql.= " WHERE m.entity = 1";
         $sql.= " AND m.menu_handler in('".$menu_handler."','all')";
         if ($type_user == 0) $sql.= " AND m.usertype in (0,2)";
         if ($type_user == 1) $sql.= " AND m.usertype in (1,2)";
