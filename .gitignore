@@ -1,4 +1,5 @@
 htdocs/conf/conf.php
 documents
 nbproject
-.settings/
+.settings
+htdocs/multicompany
