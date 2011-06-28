@@ -24,7 +24,7 @@
 -- Libelle est un texte decrivant le type de contact.
 -- active precise si cette valeur est 'active' ou 'archive'.
 --
--- $Id$
+-- $Id: llx_c_type_contact.sql,v 1.4 2011/06/28 07:12:41 eldy Exp $
 -- ========================================================================
 
 
@@ -35,5 +35,6 @@ create table llx_c_type_contact
   source        varchar(8)  DEFAULT 'external' NOT NULL,
   code          varchar(16) NOT NULL,
   libelle 	    varchar(64)	NOT NULL,
-  active  	    tinyint DEFAULT 1  NOT NULL
+  active  	    tinyint DEFAULT 1  NOT NULL,
+  module        varchar(32) NULL
 )ENGINE=innodb;

@@ -1,5 +1,5 @@
 --
--- $Id: 3.0.0-3.1.0.sql,v 1.73 2011/06/25 09:50:56 eldy Exp $
+-- $Id: 3.0.0-3.1.0.sql,v 1.74 2011/06/28 07:12:41 eldy Exp $
 --
 -- Be carefull to requests order.
 -- This file must be loaded by calling /install/index.php page
@@ -419,3 +419,9 @@ ALTER TABLE llx_facture MODIFY ref_client varchar(50);
 ALTER TABLE llx_propal MODIFY ref_ext varchar(50);
 ALTER TABLE llx_propal MODIFY ref_client varchar(50);
 ALTER TABLE llx_propal ADD COLUMN ref_int varchar(50) AFTER ref_ext;
+
+-- Add module field to allow external modules to set their name when they add a new record during init/remove.
+ALTER TABLE llx_c_type_contact    ADD COLUMN module        varchar(32) NULL;
+ALTER TABLE llx_c_typeent         ADD COLUMN module        varchar(32) NULL;
+ALTER TABLE llx_c_effectif        ADD COLUMN module        varchar(32) NULL;
+ALTER TABLE llx_c_forme_juridique ADD COLUMN module        varchar(32) NULL;

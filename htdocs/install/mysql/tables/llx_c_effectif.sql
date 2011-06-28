@@ -16,7 +16,7 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- $Id$
+-- $Id: llx_c_effectif.sql,v 1.3 2011/06/28 07:12:41 eldy Exp $
 -- ========================================================================
 
 create table llx_c_effectif
@@ -24,6 +24,7 @@ create table llx_c_effectif
   id      integer     PRIMARY KEY,
   code    varchar(12) UNIQUE NOT NULL,
   libelle varchar(30),
-  active  tinyint DEFAULT 1  NOT NULL
+  active  tinyint DEFAULT 1  NOT NULL,
+  module  varchar(32) NULL
 )ENGINE=innodb;
 
