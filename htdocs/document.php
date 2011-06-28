@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon Tosser         <simon@kornog-computing.com>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010	   Pierre Morin         <pierre.morin@auguria.net>
  * Copyright (C) 2010	   Juanjo Menent        <jmenent@2byte.es>
  *
@@ -25,7 +25,7 @@
 /**
  *	\file       htdocs/document.php
  *  \brief      Wrapper to download data files
- *  \version    $Id$
+ *  \version    $Id: document.php,v 1.121 2011/06/28 13:42:06 hregis Exp $
  *  \remarks    Call of this wrapper is made with URL:
  * 				document.php?modulepart=repfichierconcerne&file=pathrelatifdufichier
  */
