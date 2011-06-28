@@ -25,7 +25,7 @@
  *	\file       htdocs/categories/class/categorie.class.php
  *	\ingroup    categorie
  *	\brief      File of class to manage categories
- *	\version	$Id$
+ *	\version	$Id: categorie.class.php,v 1.16 2011/06/28 09:25:57 cdelambert Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
@@ -50,6 +50,7 @@ class Categorie
 	var $description;
 	var $socid;
 	var $type;					// 0=Product, 1=Supplier, 2=Customer/Prospect, 3=Member
+	var $parentId;
 
 	var $cats=array();			// Tableau en memoire des categories
 	var $motherof = array();	// Tableau des correspondances id_fille -> id_mere
@@ -109,6 +110,7 @@ class Categorie
 		{
 			$res = $this->db->fetch_array($resql);
 			$this->id_mere = $res['fk_categorie_mere'];
+			$this->parentId = $res['fk_categorie_mere'] ? $res['fk_categorie_mere'] : 0;
 			return $this->id;
 		}
 		else
@@ -131,6 +133,7 @@ class Categorie
 
 		// Clean parameters
 		if (empty($this->visible)) $this->visible=0;
+		$this->parentId = ($this->id_mere) != "" ? intval($this->id_mere) : 0;		 
 
 		if ($this->already_exists())
 		{
@@ -144,13 +147,13 @@ class Categorie
 		{
 			$sql.= "fk_soc,";
 		}
-		$sql.=  "visible, type) ";
+		$sql.=  "visible, type, fk_parent_id) ";
 		$sql.= "VALUES ('".$this->db->escape($this->label)."', '".$this->db->escape($this->description)."',";
 		if ($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)
 		{
 			$sql.= ($this->socid != -1 ? $this->socid : 'null').",";
 		}
-		$sql.= "'".$this->visible."',".$this->type.")";
+		$sql.= "'".$this->visible."',".$this->type.",".$this->parentId .")";
 
 
 		$res  = $this->db->query ($sql);
@@ -199,12 +202,20 @@ class Categorie
 	 */
 	function update()
 	{
-		global $conf;
+		global $conf, $langs;
 
 		// Clean parameters
 		$this->label=trim($this->label);
 		$this->description=trim($this->description);
+		$this->parentId = ($this->id_mere) != "" ? intval($this->id_mere) : 0;
 
+		if ($this->already_exists())
+		{
+			$this->error=$langs->trans("ImpossibleUpdateCat");
+			$this->error.=" : ".$langs->trans("CategoryExistsAtSameLevel");
+			return -1;
+		}	
+			
 		$this->db->begin();
 
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'categorie_association';
@@ -243,6 +254,7 @@ class Categorie
 			$sql .= ", fk_soc = ".($this->socid != -1 ? $this->socid : 'null');
 		}
 		$sql .= ", visible = '".$this->visible."'";
+		$sql .= ", fk_parent_id = ".$this->parentId;
 		$sql .= " WHERE rowid = ".$this->id;
 
 		dol_syslog("Categorie::update sql=".$sql);
@@ -803,21 +815,51 @@ class Categorie
 	}
 
 	/**
-	 * 	\brief		Check if no category with same label already exists
+	 * 	\brief		Check if no category with same label already exists for this cat's parent or root and for this cat's type
 	 * 	\return		boolean		1 if already exist, 0 otherwise, -1 if error
 	 */
 	function already_exists()
 	{
-		$sql = "SELECT count(c.rowid)";
-		$sql.= " FROM ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_association as ca";
-		$sql.= " WHERE c.label = '".$this->db->escape($this -> label)."' AND type=".$this->type;
+		if($this->id_mere != "")					// mother_id defined
+		{
+			/* We have to select any rowid from llx_categorie which category's mother and label
+			 * are equals to those of the calling category
+			 */
+			$sql = "SELECT c.rowid";
+			$sql.= " FROM ".MAIN_DB_PREFIX."categorie as c ";
+			$sql.= " JOIN ".MAIN_DB_PREFIX."categorie_association as ca";
+			$sql.= " ON c.rowid=ca.fk_categorie_fille";
+			$sql.= " WHERE ca.fk_categorie_mere=".$this->id_mere;
+			$sql.= " AND c.label='".$this->label."'";	
+		}
+		else 										// mother_id undefined (so it's root)
+		{
+			/* We have to select any rowid from llx_categorie which which category's type and label
+			 * are equals to those of the calling category, AND which doesn't exist in categorie association
+			 * as children (rowid != fk_categorie_fille)
+			 */
+			$sql = "SELECT c.rowid";
+			$sql.= " FROM ".MAIN_DB_PREFIX."categorie as c ";
+			$sql.= " JOIN ".MAIN_DB_PREFIX."categorie_association as ca";
+			$sql.= " ON c.rowid!=ca.fk_categorie_fille";
+			$sql.= " WHERE c.type=".$this->type;
+			$sql.= " AND c.label='".$this->label."'";		
+		}
 		dol_syslog("Categorie::already_exists sql=".$sql);
 		$res  = $this->db->query($sql);
 		if ($res)
-		{
-			$obj = $this->db->fetch_array($res);
-			if($obj[0] > 0) return 1;
-			else return 0;
+		{			
+			if($this->db->num_rows($resql) > 0)						// Checking for empty resql
+			{				
+				$obj = $this->db->fetch_array($res);
+				/* If object called create, obj cannot have is id.
+				 * If object called update, he mustn't have the same label as an other category for this mother.
+				 * So if the result have the same id, update is not for label, and if result have an other one,
+				 * update may be for label.
+				 */
+				if($obj[0] > 0 && $obj[0] != $this->id) return 1;
+			}				
+			return 0;
 		}
 		else
 		{
