@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2005 	   Simon Tosser         <simon@kornog-computing.com>
  * Copyright (C) 2006 	   Andre Cianfarani     <andre.cianfarani@acdeveloppement.net>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
@@ -28,7 +28,7 @@
  *	\file       htdocs/filefunc.inc.php
  * 	\ingroup	core
  *  \brief      File that include conf.php file and functions.lib.php
- *  \version    $Id: filefunc.inc.php,v 1.16 2011/06/26 18:53:16 eldy Exp $
+ *  \version    $Id: filefunc.inc.php,v 1.17 2011/06/28 12:25:43 hregis Exp $
  */
 
 define('DOL_VERSION','3.1.0-alpha');	// Also defined in htdocs/install/inc.php (Ex: x.y.z-alpha, x.y.z)
