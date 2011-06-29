@@ -23,7 +23,7 @@
  *	\brief      File of class to manage widget boxes
  *	\author     Rodolphe Qiedeville
  *	\author	    Laurent Destailleur
- *	\version    $Id$
+ *	\version    $Id: boxes.php,v 1.52 2011/06/28 15:05:44 hregis Exp $
  */
 
 

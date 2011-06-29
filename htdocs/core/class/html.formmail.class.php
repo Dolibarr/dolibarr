@@ -21,7 +21,7 @@
  *       \file       htdocs/core/class/html.formmail.class.php
  *       \ingroup    core
  *       \brief      Fichier de la classe permettant la generation du formulaire html d'envoi de mail unitaire
- *       \version    $Id$
+ *       \version    $Id: html.formmail.class.php,v 1.26 2011/06/29 10:23:33 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT ."/core/class/html.form.class.php");
 
@@ -34,620 +34,630 @@ require_once(DOL_DOCUMENT_ROOT ."/core/class/html.form.class.php");
  */
 class FormMail
 {
-	var $db;
-	
-	var $withform;
+    var $db;
 
-	var $fromname;
-	var $frommail;
-	var $replytoname;
-	var $replytomail;
-	var $toname;
-	var $tomail;
+    var $withform;
 
-	var $withsubstit;			// Show substitution array
-	var $withfrom;
-	var $withto;
-	var $withtofree;
-	var $withtocc;
-	var $withtopic;
-	var $withfile;				// 0=No attaches files, 1=Show attached files, 2=Can add new attached files
-	var $withbody;
+    var $fromname;
+    var $frommail;
+    var $replytoname;
+    var $replytomail;
+    var $toname;
+    var $tomail;
 
-	var $withfromreadonly;
-	var $withreplytoreadonly;
-	var $withtoreadonly;
-	var $withtoccreadonly;
-	var $withtopicreadonly;
-	var $withfilereadonly;
-	var $withdeliveryreceipt;
-	var $withcancel;
+    var $withsubstit;			// Show substitution array
+    var $withfrom;
+    var $withto;
+    var $withtofree;
+    var $withtocc;
+    var $withtopic;
+    var $withfile;				// 0=No attaches files, 1=Show attached files, 2=Can add new attached files
+    var $withbody;
 
-	var $substit=array();
-	var $param=array();
+    var $withfromreadonly;
+    var $withreplytoreadonly;
+    var $withtoreadonly;
+    var $withtoccreadonly;
+    var $withtopicreadonly;
+    var $withfilereadonly;
+    var $withdeliveryreceipt;
+    var $withcancel;
 
-	var $error;
+    var $substit=array();
+    var $param=array();
+
+    var $error;
 
 
-	/**
-	 *	\brief     Constructeur
-	 *  \param     DB      handler d'acces base de donnee
-	 */
-	function FormMail($DB)
-	{
-		$this->db = $DB;
-		
-		$this->withform=1;
+    /**
+     *	\brief     Constructeur
+     *  \param     DB      handler d'acces base de donnee
+     */
+    function FormMail($DB)
+    {
+        $this->db = $DB;
 
-		$this->withfrom=1;
-		$this->withto=1;
-		$this->withtofree=1;
-		$this->withtocc=1;
-		$this->withtoccc=0;
-		$this->witherrorsto=0;
-		$this->withtopic=1;
-		$this->withfile=0;
-		$this->withbody=1;
+        $this->withform=1;
 
-		$this->withfromreadonly=1;
-		$this->withreplytoreadonly=1;
-		$this->withtoreadonly=0;
-		$this->withtoccreadonly=0;
-		$this->witherrorstoreadonly=0;
-		$this->withtopicreadonly=0;
-		$this->withfilereadonly=0;
-		$this->withbodyreadonly=0;
-		$this->withdeliveryreceiptreadonly=0;
+        $this->withfrom=1;
+        $this->withto=1;
+        $this->withtofree=1;
+        $this->withtocc=1;
+        $this->withtoccc=0;
+        $this->witherrorsto=0;
+        $this->withtopic=1;
+        $this->withfile=0;
+        $this->withbody=1;
 
-		return 1;
-	}
+        $this->withfromreadonly=1;
+        $this->withreplytoreadonly=1;
+        $this->withtoreadonly=0;
+        $this->withtoccreadonly=0;
+        $this->witherrorstoreadonly=0;
+        $this->withtopicreadonly=0;
+        $this->withfilereadonly=0;
+        $this->withbodyreadonly=0;
+        $this->withdeliveryreceiptreadonly=0;
 
-	/**
-	 * Clear list of attached files in send mail form (stored in session)
-	 */
-	function clear_attached_files()
-	{
-		global $conf,$user;
+        return 1;
+    }
+
+    /**
+     * Clear list of attached files in send mail form (stored in session)
+     */
+    function clear_attached_files()
+    {
+        global $conf,$user;
         require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 
-		// Set tmp user directory
-		$vardir=$conf->user->dir_output."/".$user->id;
-		$upload_dir = $vardir.'/temp/';
-		if (is_dir($upload_dir)) dol_delete_dir_recursive($upload_dir);
+        // Set tmp user directory
+        $vardir=$conf->user->dir_output."/".$user->id;
+        $upload_dir = $vardir.'/temp/';
+        if (is_dir($upload_dir)) dol_delete_dir_recursive($upload_dir);
 
-		unset($_SESSION["listofpaths"]);
-		unset($_SESSION["listofnames"]);
-		unset($_SESSION["listofmimes"]);
-	}
+        unset($_SESSION["listofpaths"]);
+        unset($_SESSION["listofnames"]);
+        unset($_SESSION["listofmimes"]);
+    }
 
-	/**
-	 * Add a file into the list of attached files (stored in SECTION array)
-	 *
-	 * @param 	$path
-	 * @param 	$file
-	 * @param 	$type
-	 */
-	function add_attached_files($path,$file,$type)
-	{
-		$listofpaths=array();
-		$listofnames=array();
-		$listofmimes=array();
-		if (! empty($_SESSION["listofpaths"])) $listofpaths=explode(';',$_SESSION["listofpaths"]);
-		if (! empty($_SESSION["listofnames"])) $listofnames=explode(';',$_SESSION["listofnames"]);
-		if (! empty($_SESSION["listofmimes"])) $listofmimes=explode(';',$_SESSION["listofmimes"]);
-		if (! in_array($file,$listofnames))
-		{
-			$listofpaths[]=$path;
-			$listofnames[]=$file;
-			$listofmimes[]=$type;
-			$_SESSION["listofpaths"]=join(';',$listofpaths);
-			$_SESSION["listofnames"]=join(';',$listofnames);
-			$_SESSION["listofmimes"]=join(';',$listofmimes);
-		}
-	}
+    /**
+     * Add a file into the list of attached files (stored in SECTION array)
+     *
+     * @param 	$path
+     * @param 	$file
+     * @param 	$type
+     */
+    function add_attached_files($path,$file,$type)
+    {
+        $listofpaths=array();
+        $listofnames=array();
+        $listofmimes=array();
+        if (! empty($_SESSION["listofpaths"])) $listofpaths=explode(';',$_SESSION["listofpaths"]);
+        if (! empty($_SESSION["listofnames"])) $listofnames=explode(';',$_SESSION["listofnames"]);
+        if (! empty($_SESSION["listofmimes"])) $listofmimes=explode(';',$_SESSION["listofmimes"]);
+        if (! in_array($file,$listofnames))
+        {
+            $listofpaths[]=$path;
+            $listofnames[]=$file;
+            $listofmimes[]=$type;
+            $_SESSION["listofpaths"]=join(';',$listofpaths);
+            $_SESSION["listofnames"]=join(';',$listofnames);
+            $_SESSION["listofmimes"]=join(';',$listofmimes);
+        }
+    }
 
-	/**
-	 * Remove a file from the list of attached files (stored in SECTION array)
-	 *
-	 * @param  $keytodelete     Key in file array
-	 */
-	function remove_attached_files($keytodelete)
-	{
-		$listofpaths=array();
-		$listofnames=array();
-		$listofmimes=array();
-		if (! empty($_SESSION["listofpaths"])) $listofpaths=explode(';',$_SESSION["listofpaths"]);
-		if (! empty($_SESSION["listofnames"])) $listofnames=explode(';',$_SESSION["listofnames"]);
-		if (! empty($_SESSION["listofmimes"])) $listofmimes=explode(';',$_SESSION["listofmimes"]);
-		if ($keytodelete >= 0)
-		{
-			unset ($listofpaths[$keytodelete]);
-			unset ($listofnames[$keytodelete]);
-			unset ($listofmimes[$keytodelete]);
-			$_SESSION["listofpaths"]=join(';',$listofpaths);
-			$_SESSION["listofnames"]=join(';',$listofnames);
-			$_SESSION["listofmimes"]=join(';',$listofmimes);
-			//var_dump($_SESSION['listofpaths']);
-		}
-	}
+    /**
+     * Remove a file from the list of attached files (stored in SECTION array)
+     *
+     * @param  $keytodelete     Key in file array
+     */
+    function remove_attached_files($keytodelete)
+    {
+        $listofpaths=array();
+        $listofnames=array();
+        $listofmimes=array();
+        if (! empty($_SESSION["listofpaths"])) $listofpaths=explode(';',$_SESSION["listofpaths"]);
+        if (! empty($_SESSION["listofnames"])) $listofnames=explode(';',$_SESSION["listofnames"]);
+        if (! empty($_SESSION["listofmimes"])) $listofmimes=explode(';',$_SESSION["listofmimes"]);
+        if ($keytodelete >= 0)
+        {
+            unset ($listofpaths[$keytodelete]);
+            unset ($listofnames[$keytodelete]);
+            unset ($listofmimes[$keytodelete]);
+            $_SESSION["listofpaths"]=join(';',$listofpaths);
+            $_SESSION["listofnames"]=join(';',$listofnames);
+            $_SESSION["listofmimes"]=join(';',$listofmimes);
+            //var_dump($_SESSION['listofpaths']);
+        }
+    }
 
-	/**
-	 * Return list of attached files (stored in SECTION array)
-	 *
-	 * @return	array       array('paths'=> ,'names'=>, 'mimes'=> )
-	 */
-	function get_attached_files()
-	{
-		$listofpaths=array();
-		$listofnames=array();
-		$listofmimes=array();
-		if (! empty($_SESSION["listofpaths"])) $listofpaths=explode(';',$_SESSION["listofpaths"]);
-		if (! empty($_SESSION["listofnames"])) $listofnames=explode(';',$_SESSION["listofnames"]);
-		if (! empty($_SESSION["listofmimes"])) $listofmimes=explode(';',$_SESSION["listofmimes"]);
-		return array('paths'=>$listofpaths, 'names'=>$listofnames, 'mimes'=>$listofmimes);
-	}
-	
-	/**
-	 *	Show the form to input an email
+    /**
+     * Return list of attached files (stored in SECTION array)
+     *
+     * @return	array       array('paths'=> ,'names'=>, 'mimes'=> )
+     */
+    function get_attached_files()
+    {
+        $listofpaths=array();
+        $listofnames=array();
+        $listofmimes=array();
+        if (! empty($_SESSION["listofpaths"])) $listofpaths=explode(';',$_SESSION["listofpaths"]);
+        if (! empty($_SESSION["listofnames"])) $listofnames=explode(';',$_SESSION["listofnames"]);
+        if (! empty($_SESSION["listofmimes"])) $listofmimes=explode(';',$_SESSION["listofmimes"]);
+        return array('paths'=>$listofpaths, 'names'=>$listofnames, 'mimes'=>$listofmimes);
+    }
+
+    /**
+     *	Show the form to input an email
      *  this->withfile: 0=No attaches files, 1=Show attached files, 2=Can add new attached files
-	 *	@param			addfileaction		Name of action when posting file attachments
-	 *	@param			removefileaction	Name of action when removing file attachments
-	 */
-	function show_form($addfileaction='addfile',$removefileaction='removefile')
-	{
-		print $this->get_form($addfileaction,$removefileaction);
-	}
+     *	@param			addfileaction		Name of action when posting file attachments
+     *	@param			removefileaction	Name of action when removing file attachments
+     */
+    function show_form($addfileaction='addfile',$removefileaction='removefile')
+    {
+        print $this->get_form($addfileaction,$removefileaction);
+    }
 
-	/**
-	 *	Get the form to input an email
+    /**
+     *	Get the form to input an email
      *  this->withfile: 0=No attaches files, 1=Show attached files, 2=Can add new attached files
-	 *	@param			addfileaction		Name of action when posting file attachments
-	 *	@param			removefileaction	Name of action when removing file attachments
-	 */
-	function get_form($addfileaction='addfile',$removefileaction='removefile')
-	{
-		global $conf, $langs, $user;
+     *	@param			addfileaction		Name of action when posting file attachments
+     *	@param			removefileaction	Name of action when removing file attachments
+     */
+    function get_form($addfileaction='addfile',$removefileaction='removefile')
+    {
+        global $conf, $langs, $user;
 
-		$langs->load("other");
-		$langs->load("mails");
-		
-		$out='';
+        $langs->load("other");
+        $langs->load("mails");
 
-		// Define list of attached files
-		$listofpaths=array();
-		$listofnames=array();
-		$listofmimes=array();
-		if (! empty($_SESSION["listofpaths"])) $listofpaths=explode(';',$_SESSION["listofpaths"]);
-		if (! empty($_SESSION["listofnames"])) $listofnames=explode(';',$_SESSION["listofnames"]);
-		if (! empty($_SESSION["listofmimes"])) $listofmimes=explode(';',$_SESSION["listofmimes"]);
+        $out='';
 
-
-		$form=new Form($DB);
-
-		$out.= "\n<!-- Debut form mail -->\n";
-		if ($this->withform)
-		{
-			$out.= '<form method="POST" name="mailform" enctype="multipart/form-data" action="'.$this->param["returnurl"].'">'."\n";
-			$out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
-		}
-		foreach ($this->param as $key=>$value)
-		{
-			$out.= '<input type="hidden" id="'.$key.'" name="'.$key.'" value="'.$value.'" />'."\n";
-		}
-		$out.= '<table class="border" width="100%">'."\n";
-
-		// Substitution array
-		if ($this->withsubstit)
-		{
-			$out.= '<tr><td colspan="2">';
-			$help="";
-			foreach($this->substit as $key => $val)
-			{
-				$help.=$key.' -> '.$langs->trans($val).'<br>';
-			}
-			$out.= $form->textwithpicto($langs->trans("EMailTestSubstitutionReplacedByGenericValues"),$help);
-			$out.= "</td></tr>\n";
-		}
-
-		// From
-		if ($this->withfrom)
-		{
-			if ($this->withfromreadonly)
-			{
-				$out.= '<input type="hidden" id="fromname" name="fromname" value="'.$this->fromname.'" />';
-				$out.= '<input type="hidden" id="frommail" name="frommail" value="'.$this->frommail.'" />';
-				$out.= '<tr><td width="180">'.$langs->trans("MailFrom").'</td><td>';
-				if ($this->fromtype == 'user')
-				{
-					$langs->load("users");
-					$fuser=new User($this->db);
-					$fuser->fetch($this->fromid);
-					$out.= $fuser->getNomUrl(1);
-				}
-				else
-				{
-					$out.= $this->fromname;
-				}
-				if ($this->frommail)
-				{
-					$out.= " &lt;".$this->frommail."&gt;";
-				}
-				else
-				{
-					if ($this->fromtype)
-					{
-						$langs->load("errors");
-						$out.= '<font class="warning"> &lt;'.$langs->trans("ErrorNoMailDefinedForThisUser").'&gt; </font>';
-					}
-				}
-				$out.= "</td></tr>\n";
-				$out.= "</td></tr>\n";
-			}
-			else
-			{
-				$out.= "<tr><td>".$langs->trans("MailFrom")."</td><td>";
-				$out.= $langs->trans("Name").':<input type="text" id="fromname" name="fromname" size="32" value="'.$this->fromname.'" />';
-				$out.= '&nbsp; &nbsp; ';
-				$out.= $langs->trans("EMail").':&lt;<input type="text" id="frommail" name="frommail" size="32" value="'.$this->frommail.'" />&gt;';
-				$out.= "</td></tr>\n";
-			}
-		}
-
-		// Replyto
-		if ($this->withreplyto)
-		{
-			if ($this->withreplytoreadonly)
-			{
-				$out.= '<input type="hidden" id="replyname" name="replyname" value="'.$this->replytoname.'" />';
-				$out.= '<input type="hidden" id="replymail" name="replymail" value="'.$this->replytomail.'" />';
-				$out.= "<tr><td>".$langs->trans("MailReply")."</td><td>".$this->replytoname.($this->replytomail?(" &lt;".$this->replytomail."&gt;"):"");
-				$out.= "</td></tr>\n";
-			}
-		}
-
-		// Errorsto
-		if ($this->witherrorsto)
-		{
-			//if (! $this->errorstomail) $this->errorstomail=$this->frommail;
-			if ($this->witherrorstoreadonly)
-			{
-				$out.= '<input type="hidden" id="errorstomail" name="errorstomail" value="'.$this->errorstomail.'" />';
-				$out.= '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td>';
-				$out.= $this->errorstomail;
-				$out.= "</td></tr>\n";
-			}
-			else
-			{
-				$out.= '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td>';
-				$out.= '<input size="30" id="errorstomail" name="errorstomail" value="'.$this->errorstomail.'" />';
-				$out.= "</td></tr>\n";
-			}
-		}
-
-		// To
-		if ($this->withto || is_array($this->withto))
-		{
-			$out.= '<tr><td width="180">';
-			if ($this->withtofree) $out.= $form->textwithpicto($langs->trans("MailTo"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
-			else $out.= $langs->trans("MailTo");
-			$out.= '</td><td>';
-			if ($this->withtoreadonly)
-			{
-				if (! empty($this->toname) && ! empty($this->tomail))
-				{
-					$out.= '<input type="hidden" id="toname" name="toname" value="'.$this->toname.'" />';
-					$out.= '<input type="hidden" id="tomail" name="tomail" value="'.$this->tomail.'" />';
-					if ($this->totype == 'thirdparty')
-					{
-						$soc=new Societe($this->db);
-						$soc->fetch($this->toid);
-						$out.= $soc->getNomUrl(1);
-					}
-					else if ($this->totype == 'contact')
-					{
-						$contact=new Contact($this->db);
-						$contact->fetch($this->toid);
-						$out.= $contact->getNomUrl(1);
-					}
-					else
-					{
-						$out.= $this->toname;
-					}
-					$out.= ' &lt;'.$this->tomail.'&gt;';
-					if ($this->withtofree)
-					{
-						$out.= '<br />'.$langs->trans("or").' <input size="'.(is_array($this->withto)?"30":"60").'" id="sendto" name="sendto" value="'.(! is_array($this->withto) && ! is_numeric($this->withto)? (isset($_REQUEST["sendto"])?$_REQUEST["sendto"]:$this->withto) :"").'" />';
-					}
-				} 
-				else
-				{
-					$out.= (! is_array($this->withto) && ! is_numeric($this->withto))?$this->withto:"";
-				}
-			}
-			else
-			{
-				if ($this->withtofree)
-				{
-					$out.= '<input size="'.(is_array($this->withto)?"30":"60").'" id="sendto" name="sendto" value="'.(! is_array($this->withto) && ! is_numeric($this->withto)? (isset($_REQUEST["sendto"])?$_REQUEST["sendto"]:$this->withto) :"").'" />';
-				}
-				if ($this->withtosocid > 0)
-				{
-					$liste=array();
-					$liste[0]='&nbsp;';
-					$soc=new Societe($this->db);
-					$soc->fetch($this->withtosocid);
-					foreach ($soc->thirdparty_and_contact_email_array() as $key=>$value)
-					{
-						$liste[$key]=$value;
-					}
-					if ($this->withtofree) $out.= " ".$langs->trans("or")." ";
-					//var_dump($_REQUEST);exit;
-					$out.= $form->selectarray("receiver", $liste, isset($_REQUEST["receiver"])?$_REQUEST["receiver"]:0);
-				}
-			}
-			$out.= "</td></tr>\n";
-		}
-
-		// CC
-		if ($this->withtocc || is_array($this->withtocc))
-		{
-			$out.= '<tr><td width="180">';
-			$out.= $form->textwithpicto($langs->trans("MailCC"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
-			$out.= '</td><td>';
-			if ($this->withtoccreadonly)
-			{
-				$out.= (! is_array($this->withtocc) && ! is_numeric($this->withtocc))?$this->withtocc:"";
-			}
-			else
-			{
-				$out.= '<input size="'.(is_array($this->withtocc)?"30":"60").'" id="sendtocc" name="sendtocc" value="'.((! is_array($this->withtocc) && ! is_numeric($this->withtocc))? (isset($_POST["sendtocc"])?$_POST["sendtocc"]:$this->withtocc) : (isset($_POST["sendtocc"])?$_POST["sendtocc"]:"") ).'" />';
-				if ($this->withtoccsocid > 0)
-				{
-					$liste=array();
-					$liste[0]='&nbsp;';
-					$soc=new Societe($this->db);
-					$soc->fetch($this->withtoccsocid);
-					foreach ($soc->thirdparty_and_contact_email_array() as $key=>$value)
-					{
-						$liste[$key]=$value;
-					}
-					$out.= " ".$langs->trans("or")." ";
-					$out.= $form->selectarray("receivercc", $liste, isset($_REQUEST["receivercc"])?$_REQUEST["receivercc"]:0);
-				}
-			}
-			$out.= "</td></tr>\n";
-		}
-
-		// CCC
-		if ($this->withtoccc || is_array($this->withtoccc))
-		{
-			$out.= '<tr><td width="180">';
-			$out.= $form->textwithpicto($langs->trans("MailCCC"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
-			$out.= '</td><td>';
-			if ($this->withtocccreadonly)
-			{
-				$out.= (! is_array($this->withtoccc) && ! is_numeric($this->withtoccc))?$this->withtoccc:"";
-			}
-			else
-			{
-				$out.= '<input size="'.(is_array($this->withtoccc)?"30":"60").'" id="sendtoccc" name="sendtoccc" value="'.((! is_array($this->withtoccc) && ! is_numeric($this->withtoccc))? (isset($_POST["sendtoccc"])?$_POST["sendtoccc"]:$this->withtoccc) : (isset($_POST["sendtoccc"])?$_POST["sendtoccc"]:"") ).'" />';
-				if ($this->withtocccsocid > 0)
-				{
-					$liste=array();
-					$liste[0]='&nbsp;';
-					$soc=new Societe($this->db);
-					$soc->fetch($this->withtosocid);
-					foreach ($soc->thirdparty_and_contact_email_array() as $key=>$value)
-					{
-						$liste[$key]=$value;
-					}
-					$out.= " ".$langs->trans("or")." ";
-					$out.= $form->selectarray("receiverccc", $liste, isset($_REQUEST["receiverccc"])?$_REQUEST["receiverccc"]:0);
-				}
-			}
-			//if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_TO)) print ' '.info_admin("+ ".$conf->global->MAIN_MAIL_AUTOCOPY_TO,1);
-			$out.= "</td></tr>\n";
-		}
-
-		// Ask delivery receipt
-		if ($this->withdeliveryreceipt)
-		{
-			$out.= '<tr><td width="180">'.$langs->trans("DeliveryReceipt").'</td><td>';
-
-			if ($this->withdeliveryreceiptreadonly)
-			{
-				$out.= yn($this->withdeliveryreceipt);
-			}
-			else
-			{
-				$out.= $form->selectyesno('deliveryreceipt', (isset($_POST["deliveryreceipt"])?$_POST["deliveryreceipt"]:0) ,1);
-			}
-
-			$out.= "</td></tr>\n";
-		}
-
-		// Topic
-		if ($this->withtopic)
-		{
-			$this->withtopic=make_substitutions($this->withtopic,$this->substit);
-
-			$out.= '<tr>';
-			$out.= '<td width="180">'.$langs->trans("MailTopic").'</td>';
-			$out.= '<td>';
-			if ($this->withtopicreadonly)
-			{
-				$out.= $this->withtopic;
-				$out.= '<input type="hidden" size="60" id="subject" name="subject" value="'.$this->withtopic.'" />';
-			}
-			else
-			{
-				$out.= '<input type="text" size="60" id="subject" name="subject" value="'. (isset($_POST["subject"])?$_POST["subject"]:$this->withtopic) .'" />';
-			}
-			$out.= "</td></tr>\n";
-		}
-
-		// Attached files
-		if ($this->withfile)
-		{
-			$out.= '<tr>';
-			$out.= '<td width="180">'.$langs->trans("MailFile").'</td>';
-			$out.= '<td>';
-			//print '<table class="nobordernopadding" width="100%"><tr><td>';
-			if (sizeof($listofpaths))
-			{
-				foreach($listofpaths as $key => $val)
-				{
-					$out.= img_mime($listofnames[$key]).' '.$listofnames[$key];
-					if (! $this->withfilereadonly) $out.= ' <input type="image" style="border: 0px;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" value="'.($key+1).'" id="removedfile" name="removedfile" />';
-					$out.= '<br>';
-				}
-			}
-			else
-			{
-				$out.= $langs->trans("NoAttachedFiles").'<br>';
-			}
-			if ($this->withfile == 2)	// Can add other files
-			{
-				//print '<td><td align="right">';
-				$out.= '<input type="file" class="flat" id="addedfile" name="addedfile" value="'.$langs->trans("Upload").'" />';
-				$out.= ' ';
-				$out.= '<input type="submit" class="button" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
-				//print '</td></tr></table>';
-			}
-			$out.= "</td></tr>\n";
-		}
-
-		// Message
-		if ($this->withbody)
-		{
-			$defaultmessage="";
-
-			// TODO    A partir du type, proposer liste de messages dans table llx_models
-			if ($this->param["models"]=='body')						{ $defaultmessage=$this->withbody; }
-			if ($this->param["models"]=='facture_send')				{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendInvoice"); }
-			if ($this->param["models"]=='facture_relance')			{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendInvoiceReminder"); }
-			if ($this->param["models"]=='propal_send')				{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendProposal"); }
-			if ($this->param["models"]=='order_send')				{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendOrder"); }
-			if ($this->param["models"]=='order_supplier_send')		{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendSupplierOrder"); }
-			if ($this->param["models"]=='invoice_supplier_send')	{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendSupplierInvoice"); }
-			if ($this->param["models"]=='shipping_send')			{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendShipping"); }
-			
-			if ($conf->paypal->enabled && $conf->global->PAYPAL_ADD_PAYMENT_URL)
-			{
-				require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypal.lib.php");
-				
-				$langs->load('paypal');
-				
-				if ($this->param["models"]=='order_send')
-				{
-					$url=getPaymentUrl('order',$this->substit['__ORDERREF__']);
-					$defaultmessage=$langs->transnoentities("PredefinedMailContentSendOrderWithPaypalLink",$url);
-				}
-				if ($this->param["models"]=='facture_send')
-				{
-					$url=getPaymentUrl('invoice',$this->substit['__FACREF__']);
-					$defaultmessage=$langs->transnoentities("PredefinedMailContentSendInvoiceWithPaypalLink",$url);
-				}
-			}
-			
-			$defaultmessage=make_substitutions($defaultmessage,$this->substit);
-			if (isset($_POST["message"])) $defaultmessage=$_POST["message"];
-			$defaultmessage=str_replace('\n',"\n",$defaultmessage);
-
-			$out.= '<tr>';
-			$out.= '<td width="180" valign="top">'.$langs->trans("MailText").'</td>';
-			$out.= '<td>';
-			if ($this->withbodyreadonly)
-			{
-				$out.= nl2br($defaultmessage);
-				$out.= '<input type="hidden" id="message" name="message" value="'.$defaultmessage.'" />';
-			}
-			else
-			{
-				// Editeur wysiwyg
-				require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-				$doleditor=new DolEditor('message',$defaultmessage,'',280,'dolibarr_notes','In',true,false,$this->withfckeditor,8,72);
-				$out.= $doleditor->Create(1);
-			}
-			$out.= "</td></tr>\n";
-		}
-		
-		if ($this->withform)
-		{
-			$out.= '<tr><td align="center" colspan="2"><center>';
-			$out.= '<input class="button" type="submit" id="sendmail" name="sendmail" value="'.$langs->trans("SendMail").'"';
-			// Add a javascript test to avoid to forget to submit file before sending email
-			if ($this->withfile == 2 && $conf->use_javascript_ajax)
-			{
-				$out.= ' onClick="if (document.mailform.addedfile.value != \'\') { alert(\''.dol_escape_js($langs->trans("FileWasNotUploaded")).'\'); return false; } else { return true; }"';
-			}
-			$out.= ' />';
-			if ($this->withcancel)
-			{
-				$out.= ' &nbsp; &nbsp; ';
-				$out.= '<input class="button" type="submit" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'" />';
-			}
-			$out.= '</center></td></tr>'."\n";
-		}
-		
-		$out.= '</table>'."\n";
-
-		if ($this->withform) $out.= '</form>'."\n";
-		$out.= "<!-- Fin form mail -->\n";
-		
-		return $out;
-	}
+        // Define list of attached files
+        $listofpaths=array();
+        $listofnames=array();
+        $listofmimes=array();
+        if (! empty($_SESSION["listofpaths"])) $listofpaths=explode(';',$_SESSION["listofpaths"]);
+        if (! empty($_SESSION["listofnames"])) $listofnames=explode(';',$_SESSION["listofnames"]);
+        if (! empty($_SESSION["listofmimes"])) $listofmimes=explode(';',$_SESSION["listofmimes"]);
 
 
-	/**
-	 *    \brief  Affiche la partie de formulaire pour saisie d'un mail
-	 *    \param  withtopic   1 pour proposer a la saisie le sujet
-	 *    \param  withbody    1 pour proposer a la saisie le corps du message
-	 *    \param  withfile    1 pour proposer a la saisie l'ajout d'un fichier joint
-	 *    \todo   Fonction a virer quand fichier /comm/mailing.php vire (= quand ecran dans /comm/mailing prets)
-	 */
-	function mail_topicmessagefile($withtopic=1,$withbody=1,$withfile=1,$defaultbody)
-	{
-		global $langs;
+        $form=new Form($DB);
 
-		$langs->load("other");
+        $out.= "\n<!-- Debut form mail -->\n";
+        if ($this->withform)
+        {
+            $out.= '<form method="POST" name="mailform" enctype="multipart/form-data" action="'.$this->param["returnurl"].'">'."\n";
+            $out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+        }
+        foreach ($this->param as $key=>$value)
+        {
+            $out.= '<input type="hidden" id="'.$key.'" name="'.$key.'" value="'.$value.'" />'."\n";
+        }
+        $out.= '<table class="border" width="100%">'."\n";
 
-		print "<table class=\"border\" width=\"100%\">";
+        // Substitution array
+        if ($this->withsubstit)
+        {
+            $out.= '<tr><td colspan="2">';
+            $help="";
+            foreach($this->substit as $key => $val)
+            {
+                $help.=$key.' -> '.$langs->trans($val).'<br>';
+            }
+            $out.= $form->textwithpicto($langs->trans("EMailTestSubstitutionReplacedByGenericValues"),$help);
+            $out.= "</td></tr>\n";
+        }
 
-		// Topic
-		if ($withtopic)
-		{
-			print "<tr>";
-			print "<td width=\"180\">".$langs->trans("MailTopic")."</td>";
-			print "<td>";
-			print "<input type=\"text\" size=\"60\" name=\"subject\" value=\"\">";
-			print "</td></tr>";
-		}
+        // From
+        if ($this->withfrom)
+        {
+            if ($this->withfromreadonly)
+            {
+                $out.= '<input type="hidden" id="fromname" name="fromname" value="'.$this->fromname.'" />';
+                $out.= '<input type="hidden" id="frommail" name="frommail" value="'.$this->frommail.'" />';
+                $out.= '<tr><td width="180">'.$langs->trans("MailFrom").'</td><td>';
+                if ($this->fromtype == 'user' && $this->fromid > 0)
+                {
+                    $langs->load("users");
+                    $fuser=new User($this->db);
+                    $fuser->fetch($this->fromid);
+                    $out.= $fuser->getNomUrl(1);
+                }
+                else
+                {
+                    $out.= $this->fromname;
+                }
+                if ($this->frommail)
+                {
+                    $out.= " &lt;".$this->frommail."&gt;";
+                }
+                else
+                {
+                    if ($this->fromtype)
+                    {
+                        $langs->load("errors");
+                        $out.= '<font class="warning"> &lt;'.$langs->trans("ErrorNoMailDefinedForThisUser").'&gt; </font>';
+                    }
+                }
+                $out.= "</td></tr>\n";
+                $out.= "</td></tr>\n";
+            }
+            else
+            {
+                $out.= "<tr><td>".$langs->trans("MailFrom")."</td><td>";
+                $out.= $langs->trans("Name").':<input type="text" id="fromname" name="fromname" size="32" value="'.$this->fromname.'" />';
+                $out.= '&nbsp; &nbsp; ';
+                $out.= $langs->trans("EMail").':&lt;<input type="text" id="frommail" name="frommail" size="32" value="'.$this->frommail.'" />&gt;';
+                $out.= "</td></tr>\n";
+            }
+        }
 
-		// Message
-		if ($withbody)
-		{
-			print "<tr>";
-			print "<td width=\"180\" valign=\"top\">".$langs->trans("MailText")."</td>";
-			print "<td>";
-			print "<textarea rows=\"8\" cols=\"72\" name=\"message\">";
-			print $defaultbody;
-			print "</textarea>";
-			print "</td></tr>";
-		}
+        // Replyto
+        if ($this->withreplyto)
+        {
+            if ($this->withreplytoreadonly)
+            {
+                $out.= '<input type="hidden" id="replyname" name="replyname" value="'.$this->replytoname.'" />';
+                $out.= '<input type="hidden" id="replymail" name="replymail" value="'.$this->replytomail.'" />';
+                $out.= "<tr><td>".$langs->trans("MailReply")."</td><td>".$this->replytoname.($this->replytomail?(" &lt;".$this->replytomail."&gt;"):"");
+                $out.= "</td></tr>\n";
+            }
+        }
 
-		// Si fichier joint
-		if ($withfile)
-		{
-			print "<tr>";
-			print "<td width=\"180\">".$langs->trans("MailFile")."</td>";
-			print "<td>";
-			print "<input type=\"file\" name=\"addedfile\" value=\"".$langs->trans("Upload")."\"/>";
-			print "</td></tr>";
-		}
+        // Errorsto
+        if ($this->witherrorsto)
+        {
+            //if (! $this->errorstomail) $this->errorstomail=$this->frommail;
+            if ($this->witherrorstoreadonly)
+            {
+                $out.= '<input type="hidden" id="errorstomail" name="errorstomail" value="'.$this->errorstomail.'" />';
+                $out.= '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td>';
+                $out.= $this->errorstomail;
+                $out.= "</td></tr>\n";
+            }
+            else
+            {
+                $out.= '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td>';
+                $out.= '<input size="30" id="errorstomail" name="errorstomail" value="'.$this->errorstomail.'" />';
+                $out.= "</td></tr>\n";
+            }
+        }
 
-		print "</table>";
-	}
+        // To
+        if ($this->withto || is_array($this->withto))
+        {
+            $out.= '<tr><td width="180">';
+            if ($this->withtofree) $out.= $form->textwithpicto($langs->trans("MailTo"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
+            else $out.= $langs->trans("MailTo");
+            $out.= '</td><td>';
+            if ($this->withtoreadonly)
+            {
+                if (! empty($this->toname) && ! empty($this->tomail))
+                {
+                    $out.= '<input type="hidden" id="toname" name="toname" value="'.$this->toname.'" />';
+                    $out.= '<input type="hidden" id="tomail" name="tomail" value="'.$this->tomail.'" />';
+                    if ($this->totype == 'thirdparty')
+                    {
+                        $soc=new Societe($this->db);
+                        $soc->fetch($this->toid);
+                        $out.= $soc->getNomUrl(1);
+                    }
+                    else if ($this->totype == 'contact')
+                    {
+                        $contact=new Contact($this->db);
+                        $contact->fetch($this->toid);
+                        $out.= $contact->getNomUrl(1);
+                    }
+                    else
+                    {
+                        $out.= $this->toname;
+                    }
+                    $out.= ' &lt;'.$this->tomail.'&gt;';
+                    if ($this->withtofree)
+                    {
+                        $out.= '<br />'.$langs->trans("or").' <input size="'.(is_array($this->withto)?"30":"60").'" id="sendto" name="sendto" value="'.(! is_array($this->withto) && ! is_numeric($this->withto)? (isset($_REQUEST["sendto"])?$_REQUEST["sendto"]:$this->withto) :"").'" />';
+                    }
+                }
+                else
+                {
+                    $out.= (! is_array($this->withto) && ! is_numeric($this->withto))?$this->withto:"";
+                }
+            }
+            else
+            {
+                if ($this->withtofree)
+                {
+                    $out.= '<input size="'.(is_array($this->withto)?"30":"60").'" id="sendto" name="sendto" value="'.(! is_array($this->withto) && ! is_numeric($this->withto)? (isset($_REQUEST["sendto"])?$_REQUEST["sendto"]:$this->withto) :"").'" />';
+                }
+                if ($this->withtosocid > 0)
+                {
+                    $liste=array();
+                    $liste[0]='&nbsp;';
+                    $soc=new Societe($this->db);
+                    $soc->fetch($this->withtosocid);
+                    foreach ($soc->thirdparty_and_contact_email_array() as $key=>$value)
+                    {
+                        $liste[$key]=$value;
+                    }
+                    if ($this->withtofree) $out.= " ".$langs->trans("or")." ";
+                    //var_dump($_REQUEST);exit;
+                    $out.= $form->selectarray("receiver", $liste, isset($_REQUEST["receiver"])?$_REQUEST["receiver"]:0);
+                }
+            }
+            $out.= "</td></tr>\n";
+        }
+
+        // CC
+        if ($this->withtocc || is_array($this->withtocc))
+        {
+            $out.= '<tr><td width="180">';
+            $out.= $form->textwithpicto($langs->trans("MailCC"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
+            $out.= '</td><td>';
+            if ($this->withtoccreadonly)
+            {
+                $out.= (! is_array($this->withtocc) && ! is_numeric($this->withtocc))?$this->withtocc:"";
+            }
+            else
+            {
+                $out.= '<input size="'.(is_array($this->withtocc)?"30":"60").'" id="sendtocc" name="sendtocc" value="'.((! is_array($this->withtocc) && ! is_numeric($this->withtocc))? (isset($_POST["sendtocc"])?$_POST["sendtocc"]:$this->withtocc) : (isset($_POST["sendtocc"])?$_POST["sendtocc"]:"") ).'" />';
+                if ($this->withtoccsocid > 0)
+                {
+                    $liste=array();
+                    $liste[0]='&nbsp;';
+                    $soc=new Societe($this->db);
+                    $soc->fetch($this->withtoccsocid);
+                    foreach ($soc->thirdparty_and_contact_email_array() as $key=>$value)
+                    {
+                        $liste[$key]=$value;
+                    }
+                    $out.= " ".$langs->trans("or")." ";
+                    $out.= $form->selectarray("receivercc", $liste, isset($_REQUEST["receivercc"])?$_REQUEST["receivercc"]:0);
+                }
+            }
+            $out.= "</td></tr>\n";
+        }
+
+        // CCC
+        if ($this->withtoccc || is_array($this->withtoccc))
+        {
+            $out.= '<tr><td width="180">';
+            $out.= $form->textwithpicto($langs->trans("MailCCC"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
+            $out.= '</td><td>';
+            if ($this->withtocccreadonly)
+            {
+                $out.= (! is_array($this->withtoccc) && ! is_numeric($this->withtoccc))?$this->withtoccc:"";
+            }
+            else
+            {
+                $out.= '<input size="'.(is_array($this->withtoccc)?"30":"60").'" id="sendtoccc" name="sendtoccc" value="'.((! is_array($this->withtoccc) && ! is_numeric($this->withtoccc))? (isset($_POST["sendtoccc"])?$_POST["sendtoccc"]:$this->withtoccc) : (isset($_POST["sendtoccc"])?$_POST["sendtoccc"]:"") ).'" />';
+                if ($this->withtocccsocid > 0)
+                {
+                    $liste=array();
+                    $liste[0]='&nbsp;';
+                    $soc=new Societe($this->db);
+                    $soc->fetch($this->withtosocid);
+                    foreach ($soc->thirdparty_and_contact_email_array() as $key=>$value)
+                    {
+                        $liste[$key]=$value;
+                    }
+                    $out.= " ".$langs->trans("or")." ";
+                    $out.= $form->selectarray("receiverccc", $liste, isset($_REQUEST["receiverccc"])?$_REQUEST["receiverccc"]:0);
+                }
+            }
+            //if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_TO)) print ' '.info_admin("+ ".$conf->global->MAIN_MAIL_AUTOCOPY_TO,1);
+            $out.= "</td></tr>\n";
+        }
+
+        // Ask delivery receipt
+        if ($this->withdeliveryreceipt)
+        {
+            $out.= '<tr><td width="180">'.$langs->trans("DeliveryReceipt").'</td><td>';
+
+            if ($this->withdeliveryreceiptreadonly)
+            {
+                $out.= yn($this->withdeliveryreceipt);
+            }
+            else
+            {
+                $out.= $form->selectyesno('deliveryreceipt', (isset($_POST["deliveryreceipt"])?$_POST["deliveryreceipt"]:0) ,1);
+            }
+
+            $out.= "</td></tr>\n";
+        }
+
+        // Topic
+        if ($this->withtopic)
+        {
+            $this->withtopic=make_substitutions($this->withtopic,$this->substit);
+
+            $out.= '<tr>';
+            $out.= '<td width="180">'.$langs->trans("MailTopic").'</td>';
+            $out.= '<td>';
+            if ($this->withtopicreadonly)
+            {
+                $out.= $this->withtopic;
+                $out.= '<input type="hidden" size="60" id="subject" name="subject" value="'.$this->withtopic.'" />';
+            }
+            else
+            {
+                $out.= '<input type="text" size="60" id="subject" name="subject" value="'. (isset($_POST["subject"])?$_POST["subject"]:$this->withtopic) .'" />';
+            }
+            $out.= "</td></tr>\n";
+        }
+
+        // Attached files
+        if ($this->withfile)
+        {
+            $out.= '<tr>';
+            $out.= '<td width="180">'.$langs->trans("MailFile").'</td>';
+            $out.= '<td>';
+            //print '<table class="nobordernopadding" width="100%"><tr><td>';
+            if (sizeof($listofpaths))
+            {
+                foreach($listofpaths as $key => $val)
+                {
+                    $out.= img_mime($listofnames[$key]).' '.$listofnames[$key];
+                    if (! $this->withfilereadonly) $out.= ' <input type="image" style="border: 0px;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" value="'.($key+1).'" id="removedfile" name="removedfile" />';
+                    $out.= '<br>';
+                }
+            }
+            else
+            {
+                $out.= $langs->trans("NoAttachedFiles").'<br>';
+            }
+            if ($this->withfile == 2)	// Can add other files
+            {
+                //print '<td><td align="right">';
+                $out.= '<input type="file" class="flat" id="addedfile" name="addedfile" value="'.$langs->trans("Upload").'" />';
+                $out.= ' ';
+                $out.= '<input type="submit" class="button" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
+                //print '</td></tr></table>';
+            }
+            $out.= "</td></tr>\n";
+        }
+
+        // Message
+        if ($this->withbody)
+        {
+            $defaultmessage="";
+
+            // TODO    A partir du type, proposer liste de messages dans table llx_models
+            if ($this->param["models"]=='body')						{ $defaultmessage=$this->withbody; }
+            if ($this->param["models"]=='facture_send')				{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendInvoice"); }
+            if ($this->param["models"]=='facture_relance')			{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendInvoiceReminder"); }
+            if ($this->param["models"]=='propal_send')				{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendProposal"); }
+            if ($this->param["models"]=='order_send')				{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendOrder"); }
+            if ($this->param["models"]=='order_supplier_send')		{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendSupplierOrder"); }
+            if ($this->param["models"]=='invoice_supplier_send')	{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendSupplierInvoice"); }
+            if ($this->param["models"]=='shipping_send')			{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendShipping"); }
+
+            if ($conf->paypal->enabled && $conf->global->PAYPAL_ADD_PAYMENT_URL)
+            {
+                require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypal.lib.php");
+
+                $langs->load('paypal');
+
+                if ($this->param["models"]=='order_send')
+                {
+                    $url=getPaymentUrl('order',$this->substit['__ORDERREF__']);
+                    $defaultmessage=$langs->transnoentities("PredefinedMailContentSendOrderWithPaypalLink",$url);
+                }
+                if ($this->param["models"]=='facture_send')
+                {
+                    $url=getPaymentUrl('invoice',$this->substit['__FACREF__']);
+                    $defaultmessage=$langs->transnoentities("PredefinedMailContentSendInvoiceWithPaypalLink",$url);
+                }
+            }
+
+            $defaultmessage=make_substitutions($defaultmessage,$this->substit);
+            if (isset($_POST["message"])) $defaultmessage=$_POST["message"];
+            $defaultmessage=str_replace('\n',"\n",$defaultmessage);
+
+            $out.= '<tr>';
+            $out.= '<td width="180" valign="top">'.$langs->trans("MailText").'</td>';
+            $out.= '<td>';
+            if ($this->withbodyreadonly)
+            {
+                $out.= nl2br($defaultmessage);
+                $out.= '<input type="hidden" id="message" name="message" value="'.$defaultmessage.'" />';
+            }
+            else
+            {
+                if(! empty($conf->global->MAIL_USE_SIGN) && $this->fromid > 0)
+                {
+                    $fuser=new User($this->db);
+                    $fuser->fetch($this->fromid);
+
+                    if(!empty($fuser->signature)) {
+                        $defaultmessage.=dol_htmlentitiesbr_decode($fuser->signature);
+                    }
+                }
+
+                // Editor wysiwyg
+                require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+                $doleditor=new DolEditor('message',$defaultmessage,'',280,'dolibarr_notes','In',true,false,$this->withfckeditor,8,72);
+                $out.= $doleditor->Create(1);
+            }
+            $out.= "</td></tr>\n";
+        }
+
+        if ($this->withform)
+        {
+            $out.= '<tr><td align="center" colspan="2"><center>';
+            $out.= '<input class="button" type="submit" id="sendmail" name="sendmail" value="'.$langs->trans("SendMail").'"';
+            // Add a javascript test to avoid to forget to submit file before sending email
+            if ($this->withfile == 2 && $conf->use_javascript_ajax)
+            {
+                $out.= ' onClick="if (document.mailform.addedfile.value != \'\') { alert(\''.dol_escape_js($langs->trans("FileWasNotUploaded")).'\'); return false; } else { return true; }"';
+            }
+            $out.= ' />';
+            if ($this->withcancel)
+            {
+                $out.= ' &nbsp; &nbsp; ';
+                $out.= '<input class="button" type="submit" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'" />';
+            }
+            $out.= '</center></td></tr>'."\n";
+        }
+
+        $out.= '</table>'."\n";
+
+        if ($this->withform) $out.= '</form>'."\n";
+        $out.= "<!-- Fin form mail -->\n";
+
+        return $out;
+    }
+
+
+    /**
+     *    \brief  Affiche la partie de formulaire pour saisie d'un mail
+     *    \param  withtopic   1 pour proposer a la saisie le sujet
+     *    \param  withbody    1 pour proposer a la saisie le corps du message
+     *    \param  withfile    1 pour proposer a la saisie l'ajout d'un fichier joint
+     *    \todo   Fonction a virer quand fichier /comm/mailing.php vire (= quand ecran dans /comm/mailing prets)
+     */
+    function mail_topicmessagefile($withtopic=1,$withbody=1,$withfile=1,$defaultbody)
+    {
+        global $langs;
+
+        $langs->load("other");
+
+        print "<table class=\"border\" width=\"100%\">";
+
+        // Topic
+        if ($withtopic)
+        {
+            print "<tr>";
+            print "<td width=\"180\">".$langs->trans("MailTopic")."</td>";
+            print "<td>";
+            print "<input type=\"text\" size=\"60\" name=\"subject\" value=\"\">";
+            print "</td></tr>";
+        }
+
+        // Message
+        if ($withbody)
+        {
+            print "<tr>";
+            print "<td width=\"180\" valign=\"top\">".$langs->trans("MailText")."</td>";
+            print "<td>";
+            print "<textarea rows=\"8\" cols=\"72\" name=\"message\">";
+            print $defaultbody;
+            print "</textarea>";
+            print "</td></tr>";
+        }
+
+        // Si fichier joint
+        if ($withfile)
+        {
+            print "<tr>";
+            print "<td width=\"180\">".$langs->trans("MailFile")."</td>";
+            print "<td>";
+            print "<input type=\"file\" name=\"addedfile\" value=\"".$langs->trans("Upload")."\"/>";
+            print "</td></tr>";
+        }
+
+        print "</table>";
+    }
 
 }
 

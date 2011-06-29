@@ -24,7 +24,7 @@
 /**
  *  \file           htdocs/includes/modules/DolibarrModules.class.php
  *  \brief          Fichier de description et activation des modules Dolibarr
- *  \version        $Id$
+ *  \version        $Id: DolibarrModules.class.php,v 1.159 2011/06/28 20:31:23 eldy Exp $
  */
 
 
@@ -240,9 +240,9 @@ class DolibarrModules
 
 
     /**
-     *  \brief      Retourne le nom traduit du module si la traduction existe dans admin.lang,
-     *              sinon le nom defini par defaut dans le module.
-     *  \return     string      Nom du module traduit
+     *  Retourne le nom traduit du module si la traduction existe dans admin.lang,
+     *  sinon le nom defini par defaut dans le module.
+     *  @return     string      Nom du module traduit
      */
     function getName()
     {
@@ -263,9 +263,9 @@ class DolibarrModules
 
 
     /**
-     *  \brief      Retourne la description traduite du module si la traduction existe dans admin.lang,
-     *              sinon la description definie par defaut dans le module.
-     *  \return     string      Nom du module traduit
+     *  Retourne la description traduite du module si la traduction existe dans admin.lang,
+     *  sinon la description definie par defaut dans le module.
+     *  @return     string      Nom du module traduit
      */
     function getDesc()
     {
@@ -286,11 +286,11 @@ class DolibarrModules
 
 
     /**
-     *  \brief      Retourne la version du module.
-     *              Pour les modules a l'etat 'experimental', retourne la traduction de 'experimental'
-     *              Pour les modules 'dolibarr', retourne la version de Dolibarr
-     *              Pour les autres modules, retourne la version du module
-     *  \return     string      Version du module
+     *  Retourne la version du module.
+     *  Pour les modules a l'etat 'experimental', retourne la traduction de 'experimental'
+     *  Pour les modules 'dolibarr', retourne la version de Dolibarr
+     *  Pour les autres modules, retourne la version du module
+     *  @return     string      Version du module
      */
     function getVersion()
     {
@@ -359,9 +359,9 @@ class DolibarrModules
     }
 
     /**
-     *  \brief      Insert line in dolibarr_modules table.
-     *  \return     int     Nb of errors (0 if OK)
-     *  \remarks    Storage is made for information only, table is not required for Dolibarr usage.
+     *  Insert line in dolibarr_modules table.
+     *  Storage is made for information only, table is not required for Dolibarr usage.
+     *  @return     int     Nb of errors (0 if OK)
      */
     function _dbactive()
     {
@@ -399,9 +399,9 @@ class DolibarrModules
 
 
     /**
-     *  \brief      Remove line in dolibarr_modules table
-     *  \return     int     Nb of errors (0 if OK)
-     *  \remarks    Storage is made for information only, table is not required for Dolibarr usage.
+     *  Remove line in dolibarr_modules table
+     *  Storage is made for information only, table is not required for Dolibarr usage.
+     *  @return     int     Nb of errors (0 if OK)
      */
     function _dbunactive()
     {
@@ -574,8 +574,8 @@ class DolibarrModules
 
 
     /**
-     *  \brief      Insere les boites associees au module dans llx_boxes_def
-     *  \return     int     Nombre d'erreurs (0 si ok)
+     *  Insert boxes into llx_boxes_def
+     *  @return     int     Nb of errors (0 if OK)
      */
     function insert_boxes()
     {
@@ -630,8 +630,8 @@ class DolibarrModules
 
 
     /**
-     *  \brief      Supprime les boites
-     *  \return     int     Nombre d'erreurs (0 si ok)
+     *  Delete boxes
+     *  @return     int     Nb of errors (0 if OK)
      */
     function delete_boxes()
     {
@@ -681,8 +681,8 @@ class DolibarrModules
     }
 
     /**
-     *  \brief      Desactive feuille de style du module par suppression ligne dans llx_const
-     *  \return     int     Nombre d'erreurs (0 si ok)
+     *  Desactive feuille de style du module par suppression ligne dans llx_const
+     *  @return     int     Nb of errors (0 if OK)
      */
     function delete_style_sheet()
     {
@@ -709,8 +709,8 @@ class DolibarrModules
     }
 
     /**
-     *  \brief      Remove links to new module page present in llx_const
-     *  \return     int     Nombre d'erreurs (0 si ok)
+     *  Remove links to new module page present in llx_const
+     *  @return     int     Nb of errors (0 if OK)
      */
     function delete_tabs()
     {
@@ -734,8 +734,8 @@ class DolibarrModules
     }
 
     /**
-     *  \brief      Active la feuille de style associee au module par insertion ligne dans llx_const
-     *  \return     int     Nombre d'erreurs (0 si ok)
+     *  Active la feuille de style associee au module par insertion ligne dans llx_const
+     *  @return     int     Nb of errors (0 if OK)
      */
     function insert_style_sheet()
     {
@@ -776,8 +776,8 @@ class DolibarrModules
     }
 
     /**
-     *  \brief      Add links of new pages from modules in llx_const
-     *  \return     int     Number of errors (0 if ok)
+     *  Add links of new pages from modules in llx_const
+     *  @return     int     Number of errors (0 if ok)
      */
     function insert_tabs()
     {
@@ -925,9 +925,9 @@ class DolibarrModules
     }
 
     /**
-     *  \brief      Insert permissions definitions related to the module into llx_rights_def
-     *  \param      $reinitadminperms   If 1, we also grant them to admin user
-     *  \return     int                 Number of error (0 if OK)
+     *  Insert permissions definitions related to the module into llx_rights_def
+     *  @param      $reinitadminperms   If 1, we also grant them to admin user
+     *  @return     int                 Number of error (0 if OK)
      */
     function insert_permissions($reinitadminperms=0)
     {
@@ -1026,8 +1026,8 @@ class DolibarrModules
 
 
     /**
-     * \brief      Supprime les permissions
-     * \return     int     Nombre d'erreurs (0 si ok)
+     * Delete permissions
+     * @return     int     Nb of errors (0 if OK)
      */
     function delete_permissions()
     {
@@ -1148,8 +1148,8 @@ class DolibarrModules
 
 
     /**
-     *  \brief      Remove menus entries
-     *  \return     int     Nombre d'erreurs (0 si ok)
+     *  Remove menus entries
+     *  @return     int     Nb of errors (0 if OK)
      */
     function delete_menus()
     {
@@ -1174,8 +1174,8 @@ class DolibarrModules
     }
 
     /**
-     *  \brief      Create directories required by module
-     *  \return     int     Number of errors (0 if OK)
+     *  Create directories required by module
+     *  @return     int     Nb of errors (0 if OK)
      */
     function create_dirs()
     {
@@ -1231,8 +1231,8 @@ class DolibarrModules
 
 
     /**
-     *  \brief      Insert directories in llx_const
-     *  \return     int     Number of errors (0 if OK)
+     *  Insert directories in llx_const
+     *  @return     int     Nb of errors (0 if OK)
      */
     function insert_dirs($name,$dir)
     {
@@ -1272,8 +1272,8 @@ class DolibarrModules
 
 
     /**
-     *  \brief      Remove directory entries
-     *  \return     int     Number of errors (0 if OK)
+     *  Remove directory entries
+     *  @return     int     Nb of errors (0 if OK)
      */
     function delete_dirs()
     {
@@ -1297,8 +1297,8 @@ class DolibarrModules
     }
 
     /**
-     *  \brief      Insert activation triggers from modules in llx_const
-     *  \return     int             Number of errors (0 if ok)
+     *  Insert activation triggers from modules in llx_const
+     *  @return     int     Nb of errors (0 if OK)
      */
     function insert_triggers()
     {
@@ -1337,8 +1337,8 @@ class DolibarrModules
     }
 
     /**
-     *  \brief      Remove activation triggers from modules in llx_const
-     *  \return     int     Nombre d'erreurs (0 si ok)
+     *  Remove activation triggers from modules in llx_const
+     *  @return     int     Nb of errors (0 if OK)
      */
     function delete_triggers()
     {

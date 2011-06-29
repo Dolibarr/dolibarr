@@ -30,7 +30,7 @@
  * 	\ingroup	core
  *  \brief      File that defines environment for all Dolibarr process (pages or scripts)
  * 				This script reads the conf.php file, init $lang, $db and empty $user
- *  \version    $Id$
+ *  \version    $Id: master.inc.php,v 1.349 2011/06/28 15:06:26 hregis Exp $
  */
 
 

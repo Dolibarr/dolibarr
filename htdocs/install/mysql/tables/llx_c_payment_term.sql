@@ -15,7 +15,7 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- $Id$
+-- $Id: llx_c_payment_term.sql,v 1.4 2011/06/29 11:22:35 eldy Exp $
 -- ============================================================================
 
 create table llx_c_payment_term
@@ -28,5 +28,6 @@ create table llx_c_payment_term
   libelle_facture text,
   fdm             tinyint,    -- reglement fin de mois
   nbjour          smallint,
-  decalage		  smallint
+  decalage		  smallint,
+  module          varchar(32) NULL
 )ENGINE=innodb;
