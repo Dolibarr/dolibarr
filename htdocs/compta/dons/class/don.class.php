@@ -22,7 +22,7 @@
  *   	\file       htdocs/compta/dons/class/don.class.php
  *		\ingroup    don
  *		\brief      Fichier de la classe des dons
- *		\version    $Id$
+ *		\version    $Id: don.class.php,v 1.10 2011/06/29 17:55:34 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
@@ -310,6 +310,8 @@ class Don extends CommonObject
         $sql.= ", fk_user_valid";
         $sql.= ", datedon";
         $sql.= ", email";
+        $sql.= ", phone";
+        $sql.= ", phone_mobile";
         $sql.= ") VALUES (";
         $sql.= " '".$this->db->idate($now)."'";
         $sql.= ", ".$conf->entity;
@@ -328,7 +330,9 @@ class Don extends CommonObject
         $sql.= ", ".$user->id;
         $sql.= ", null";
         $sql.= ", '".$this->db->idate($this->date)."'";
-        $sql.= ", '".$this->email."'";
+        $sql.= ", '".$this->db->escape($this->email)."'";
+        $sql.= ", '".$this->db->escape($this->phone)."'";
+        $sql.= ", '".$this->db->escape($this->phone_mobile)."'";
         $sql.= ")";
 
         dol_syslog("Don::create sql=".$sql, LOG_DEBUG);
@@ -367,6 +371,8 @@ class Don extends CommonObject
         $sql .= ",note='".$this->db->escape($this->note)."'";
         $sql .= ",datedon='".$this->db->idate($this->date)."'";
         $sql .= ",email='".$this->email."'";
+        $sql .= ",phone='".$this->phone."'";
+        $sql .= ",phone_mobile='".$this->phone_mobile."'";
         $sql .= ",fk_statut=".$this->statut;
         $sql .= " WHERE rowid = $this->id";
 
@@ -383,9 +389,9 @@ class Don extends CommonObject
         }
     }
 
-    /*
-     *    Suppression du don de la base
-     *    @param  rowid   id du don a supprimer
+    /**
+     *    Delete a donation
+     *    @param  rowid     Id of donation to delete
      */
     function delete($rowid)
     {
@@ -413,7 +419,8 @@ class Don extends CommonObject
 
     /**
      *      Load donation from database
-     *      @param      rowid       Id of donation toload
+     *      @param      rowid       Id of donation to load
+     *      @param      ref         Ref of donation to load
      *      @return     int         <0 if KO, >0 if OK
      */
     function fetch($rowid,$ref='')
@@ -421,7 +428,7 @@ class Don extends CommonObject
         global $conf;
 
         $sql = "SELECT d.rowid, d.datec, d.tms as datem, d.datedon,";
-        $sql.= " d.prenom, d.nom, d.societe, d.amount, d.fk_statut, d.adresse, d.cp, d.ville, d.pays, d.public, d.amount, d.fk_paiement, d.note, cp.libelle, d.email, d.fk_don_projet,";
+        $sql.= " d.prenom, d.nom, d.societe, d.amount, d.fk_statut, d.adresse, d.cp, d.ville, d.pays, d.public, d.amount, d.fk_paiement, d.note, cp.libelle, d.email, d.phone, d.phone_mobile, d.fk_don_projet,";
         $sql.= " p.title as project_label";
         $sql.= " FROM ".MAIN_DB_PREFIX."don as d";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = d.fk_don_projet";
@@ -451,6 +458,8 @@ class Don extends CommonObject
                 $this->zip            = $obj->cp;
                 $this->town           = $obj->ville;
                 $this->email          = $obj->email;
+                $this->phone          = $obj->phone;
+                $this->phone_mobile   = $obj->phone_mobile;
                 $this->pays           = $obj->pays;
                 $this->projet         = $obj->project_label;
                 $this->fk_project     = $obj->fk_don_projet;
