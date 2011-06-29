@@ -26,7 +26,7 @@
  *	\file       htdocs/compta/facture.php
  *	\ingroup    facture
  *	\brief      Page to create/see an invoice
- *	\version    $Id: facture.php,v 1.839 2011/06/29 15:48:02 grandoc Exp $
+ *	\version    $Id: facture.php,v 1.840 2011/06/29 22:29:50 eldy Exp $
  */
 
 require('../main.inc.php');
@@ -77,7 +77,7 @@ $object=new Facture($db);
 // Instantiate hooks of thirdparty module
 if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
 {
-    $object->callHooks('objectcard');
+    $object->callHooks('invoicecard');
 }
 
 
@@ -86,13 +86,18 @@ if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
 /*                     Actions                                                */
 /******************************************************************************/
 
-// Hook of thirdparty module
-if (! empty($object->hooks['objectcard']))
+// Hook of actions
+if (! empty($object->hooks['invoicecard']))
 {
-    foreach($object->hooks['objectcard'] as $module)
+    foreach($object->hooks['invoicecard'] as $module)
     {
-        $module->doActions($object);
-        $mesg = $module->error;
+        $reshook+=$module->doActions($object);
+        if (! empty($module->error) || (! empty($module->errors) && sizeof($module->errors) > 0))
+        {
+            $error=$module->error; $errors[]=$module->errors;
+            if ($action=='add')    $action='create';
+            if ($action=='update') $action='edit';
+        }
     }
 }
 
@@ -3196,5 +3201,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/06/29 15:48:02 $ - $Revision: 1.839 $');
+llxFooter('$Date: 2011/06/29 22:29:50 $ - $Revision: 1.840 $');
 ?>

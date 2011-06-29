@@ -27,7 +27,7 @@
  *	\file       	htdocs/comm/propal.php
  *	\ingroup    	propale
  *	\brief      	Page of commercial proposals card and list
- *	\version		$Id$
+ *	\version		$Id: propal.php,v 1.605 2011/06/29 22:29:51 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -59,6 +59,11 @@ $mesg=(GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
 $year=GETPOST("year");
 $month=GETPOST("month");
 
+// Nombre de ligne pour choix de produit/service predefinis
+$NBLINES=4;
+
+$object = new Propal($db);
+
 // Security check
 $module='propale';
 if (isset($socid))
@@ -76,15 +81,10 @@ else if (isset($id) &&  $id > 0)
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, $module, $objectid, $dbtable);
 
-// Nombre de ligne pour choix de produit/service predefinis
-$NBLINES=4;
-
-$object = new Propal($db);
-
 // Instantiate hooks of thirdparty module
 if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
 {
-	$object->callHooks('objectcard');
+	$object->callHooks('propalcard');
 }
 
 
@@ -93,12 +93,17 @@ if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
 /******************************************************************************/
 
 // Hook of thirdparty module
-if (! empty($object->hooks['objectcard']))
+if (! empty($object->hooks['propalcard']))
 {
-	foreach($object->hooks['objectcard'] as $module)
+	foreach($object->hooks['propalcard'] as $module)
 	{
-		$module->doActions($object);
-		$mesg = $module->error;
+        $reshook+=$module->doActions($object);
+        if (! empty($module->error) || (! empty($module->errors) && sizeof($module->errors) > 0))
+        {
+            $error=$module->error; $errors[]=$module->errors;
+            if ($action=='add')    $action='create';
+            if ($action=='update') $action='edit';
+        }
 	}
 }
 
@@ -1950,6 +1955,6 @@ else
 }
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/06/29 22:29:51 $ - $Revision: 1.605 $');
 
 ?>

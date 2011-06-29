@@ -24,7 +24,7 @@
  *       \file       htdocs/contact/fiche.php
  *       \ingroup    societe
  *       \brief      Card of a contact
- *       \version    $Id$
+ *       \version    $Id: fiche.php,v 1.214 2011/06/29 22:29:51 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -45,10 +45,10 @@ $action = GETPOST('action');
 $socid = GETPOST("socid");
 $id = GETPOST("id");
 
+$object = new Contact($db);
+
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-
-$object = new Contact($db);
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 if (!empty($id)) $object->getCanvas($id);
@@ -68,63 +68,53 @@ else
     $result = restrictedArea($user, 'contact', $id, 'socpeople'); // If we create a contact with no company (shared contacts), no check on write permission
 }
 
+// Instantiate hooks of thirdparty module
+if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
+{
+    $object->callHooks('contactcard');
+}
+
+
 
 /*
  *	Actions
  */
 
-// If canvas actions are defined, because on url, or because contact was created with canvas feature on, we use the canvas feature.
-// If canvas actions are not defined, we use standard feature.
-if (method_exists($objcanvas->control,'doActions'))
+// Hook of actions
+if (! empty($object->hooks['contactcard']))
 {
-    // -----------------------------------------
-    // When used with CANVAS
-    // -----------------------------------------
-    $objcanvas->doActions($id);
-    if (empty($objcanvas->error) && (empty($objcanvas->errors) || sizeof($objcanvas->errors) == 0))
+    foreach($object->hooks['contactcard'] as $module)
     {
-        if ($action=='add')    { $objcanvas->action='create'; $action='create'; }
-        if ($action=='update') { $objcanvas->action='view';   $action='view'; }
-    }
-    else
-    {
-        $error=$objcanvas->error; $errors=$objcanvas->errors;
-        if ($action=='add')    { $objcanvas->action='create'; $action='create'; }
-        if ($action=='update') { $objcanvas->action='edit';   $action='edit'; }
+        $reshook+=$module->doActions($object);
+        if (! empty($module->error) || (! empty($module->errors) && sizeof($module->errors) > 0))
+        {
+            $error=$module->error; $errors[]=$module->errors;
+            if ($action=='add')    $action='create';
+            if ($action=='update') $action='edit';
+        }
     }
 }
-else
-{
-    // -----------------------------------------
-    // When used in standard mode
-    // -----------------------------------------
 
-    // Creation utilisateur depuis contact
-    if ($_POST["action"] == 'confirm_create_user' && $_POST["confirm"] == 'yes' && $user->rights->user->user->creer)
+// Creation utilisateur depuis contact
+if ($_POST["action"] == 'confirm_create_user' && $_POST["confirm"] == 'yes' && $user->rights->user->user->creer)
+{
+    // Recuperation contact actuel
+    $result = $object->fetch($_GET["id"]);
+
+    if ($result > 0)
     {
-        // Recuperation contact actuel
-        $result = $object->fetch($_GET["id"]);
+        $db->begin();
+
+        // Creation user
+        $nuser = new User($db);
+        $result=$nuser->create_from_contact($object,$_POST["login"]);
 
         if ($result > 0)
         {
-            $db->begin();
-
-            // Creation user
-            $nuser = new User($db);
-            $result=$nuser->create_from_contact($object,$_POST["login"]);
-
-            if ($result > 0)
+            $result2=$nuser->setPassword($user,$_POST["password"],0,1,1);
+            if ($result2)
             {
-                $result2=$nuser->setPassword($user,$_POST["password"],0,1,1);
-                if ($result2)
-                {
-                    $db->commit();
-                }
-                else
-                {
-                    $error=$nuser->error; $errors=$nuser->errors;
-                    $db->rollback();
-                }
+                $db->commit();
             }
             else
             {
@@ -134,34 +124,131 @@ else
         }
         else
         {
-            $error=$object->error; $errors=$object->errors;
+            $error=$nuser->error; $errors=$nuser->errors;
+            $db->rollback();
+        }
+    }
+    else
+    {
+        $error=$object->error; $errors=$object->errors;
+    }
+}
+
+// Cancel
+if (GETPOST("cancel") && GETPOST('backtopage'))
+{
+    header("Location: ".GETPOST('backtopage'));
+    exit;
+}
+
+// Add contact
+if (GETPOST("action") == 'add' && $user->rights->societe->contact->creer)
+{
+    $db->begin();
+
+    if ($canvas) $object->canvas=$canvas;
+
+    $object->socid			= $_POST["socid"];
+    $object->name			= $_POST["name"];
+    $object->firstname		= $_POST["firstname"];
+    $object->civilite_id	= $_POST["civilite_id"];
+    $object->poste			= $_POST["poste"];
+    $object->address		= $_POST["address"];
+    $object->zip			= $_POST["zipcode"];
+    $object->town			= $_POST["town"];
+    $object->fk_pays		= $_POST["pays_id"];
+    $object->fk_departement = $_POST["departement_id"];
+    $object->email			= $_POST["email"];
+    $object->phone_pro		= $_POST["phone_pro"];
+    $object->phone_perso	= $_POST["phone_perso"];
+    $object->phone_mobile	= $_POST["phone_mobile"];
+    $object->fax			= $_POST["fax"];
+    $object->jabberid		= $_POST["jabberid"];
+    $object->priv			= $_POST["priv"];
+    $object->note			= $_POST["note"];
+
+    // Note: Correct date should be completed with location to have exact GM time of birth.
+    $object->birthday = dol_mktime(0,0,0,$_POST["birthdaymonth"],$_POST["birthdayday"],$_POST["birthdayyear"]);
+    $object->birthday_alert = $_POST["birthday_alert"];
+
+    if (! $_POST["name"])
+    {
+        $error++; $errors[]=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Lastname").' / '.$langs->transnoentities("Label"));
+        $_GET["action"] = $_POST["action"] = 'create';
+    }
+
+    if ($_POST["name"])
+    {
+        $id =  $object->create($user);
+        if ($id <= 0)
+        {
+            $error++; $errors[]=($object->error?array($object->error):$object->errors);
+            $_GET["action"] = $_POST["action"] = 'create';
         }
     }
 
-    // Cancel
-    if (GETPOST("cancel") && GETPOST('backtopage'))
+    if (! $error && $id > 0)
     {
-        header("Location: ".GETPOST('backtopage'));
+        $db->commit();
+        if (GETPOST('backtopage')) $url=GETPOST('backtopage');
+        else $url='fiche.php?id='.$id;
+        Header("Location: ".$url);
         exit;
     }
-
-    // Add contact
-    if (GETPOST("action") == 'add' && $user->rights->societe->contact->creer)
+    else
     {
-        $db->begin();
+        $db->rollback();
+    }
+}
 
-        if ($canvas) $object->canvas=$canvas;
+if (GETPOST("action") == 'confirm_delete' && GETPOST("confirm") == 'yes' && $user->rights->societe->contact->supprimer)
+{
+    $result=$object->fetch($_GET["id"]);
+
+    $object->old_name      = $_POST["old_name"];
+    $object->old_firstname = $_POST["old_firstname"];
+
+    $result = $object->delete();
+    if ($result > 0)
+    {
+        Header("Location: index.php");
+        exit;
+    }
+    else
+    {
+        $error=$object->error; $errors[]=$object->errors;
+    }
+}
+
+if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->societe->contact->creer)
+{
+    if (empty($_POST["name"]))
+    {
+        $error++; $errors=array($langs->trans("ErrorFieldRequired",$langs->transnoentities("Name").' / '.$langs->transnoentities("Label")));
+        $_GET["action"] = $_POST["action"] = 'edit';
+    }
+
+    if (! sizeof($errors))
+    {
+        $object->fetch($_POST["contactid"]);
+
+        $object->oldcopy=dol_clone($object);
+
+        $object->old_name		= $_POST["old_name"];
+        $object->old_firstname	= $_POST["old_firstname"];
 
         $object->socid			= $_POST["socid"];
         $object->name			= $_POST["name"];
         $object->firstname		= $_POST["firstname"];
         $object->civilite_id	= $_POST["civilite_id"];
         $object->poste			= $_POST["poste"];
+
         $object->address		= $_POST["address"];
         $object->zip			= $_POST["zipcode"];
         $object->town			= $_POST["town"];
+        $object->fk_departement	= $_POST["departement_id"];
         $object->fk_pays		= $_POST["pays_id"];
-        $object->fk_departement = $_POST["departement_id"];
+
         $object->email			= $_POST["email"];
         $object->phone_pro		= $_POST["phone_pro"];
         $object->phone_perso	= $_POST["phone_perso"];
@@ -171,108 +258,16 @@ else
         $object->priv			= $_POST["priv"];
         $object->note			= $_POST["note"];
 
-        // Note: Correct date should be completed with location to have exact GM time of birth.
-        $object->birthday = dol_mktime(0,0,0,$_POST["birthdaymonth"],$_POST["birthdayday"],$_POST["birthdayyear"]);
-        $object->birthday_alert = $_POST["birthday_alert"];
+        $result = $object->update($_POST["contactid"], $user);
 
-        if (! $_POST["name"])
-        {
-            $error++; $errors[]=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Lastname").' / '.$langs->transnoentities("Label"));
-            $_GET["action"] = $_POST["action"] = 'create';
-        }
-
-        if ($_POST["name"])
-        {
-            $id =  $object->create($user);
-            if ($id <= 0)
-            {
-                $error++; $errors[]=($object->error?array($object->error):$object->errors);
-                $_GET["action"] = $_POST["action"] = 'create';
-            }
-        }
-
-        if (! $error && $id > 0)
-        {
-            $db->commit();
-            if (GETPOST('backtopage')) $url=GETPOST('backtopage');
-            else $url='fiche.php?id='.$id;
-            Header("Location: ".$url);
-            exit;
-        }
-        else
-        {
-            $db->rollback();
-        }
-    }
-
-    if (GETPOST("action") == 'confirm_delete' && GETPOST("confirm") == 'yes' && $user->rights->societe->contact->supprimer)
-    {
-        $result=$object->fetch($_GET["id"]);
-
-        $object->old_name      = $_POST["old_name"];
-        $object->old_firstname = $_POST["old_firstname"];
-
-        $result = $object->delete();
         if ($result > 0)
         {
-            Header("Location: index.php");
-            exit;
+            $object->old_name='';
+            $object->old_firstname='';
         }
         else
         {
-            $error=$object->error; $errors[]=$object->errors;
-        }
-    }
-
-    if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->societe->contact->creer)
-    {
-        if (empty($_POST["name"]))
-        {
-            $error++; $errors=array($langs->trans("ErrorFieldRequired",$langs->transnoentities("Name").' / '.$langs->transnoentities("Label")));
-            $_GET["action"] = $_POST["action"] = 'edit';
-        }
-
-        if (! sizeof($errors))
-        {
-            $object->fetch($_POST["contactid"]);
-
-            $object->oldcopy=dol_clone($object);
-
-            $object->old_name		= $_POST["old_name"];
-            $object->old_firstname	= $_POST["old_firstname"];
-
-            $object->socid			= $_POST["socid"];
-            $object->name			= $_POST["name"];
-            $object->firstname		= $_POST["firstname"];
-            $object->civilite_id	= $_POST["civilite_id"];
-            $object->poste			= $_POST["poste"];
-
-            $object->address		= $_POST["address"];
-            $object->zip			= $_POST["zipcode"];
-            $object->town			= $_POST["town"];
-            $object->fk_departement	= $_POST["departement_id"];
-            $object->fk_pays		= $_POST["pays_id"];
-
-            $object->email			= $_POST["email"];
-            $object->phone_pro		= $_POST["phone_pro"];
-            $object->phone_perso	= $_POST["phone_perso"];
-            $object->phone_mobile	= $_POST["phone_mobile"];
-            $object->fax			= $_POST["fax"];
-            $object->jabberid		= $_POST["jabberid"];
-            $object->priv			= $_POST["priv"];
-            $object->note			= $_POST["note"];
-
-            $result = $object->update($_POST["contactid"], $user);
-
-            if ($result > 0)
-            {
-                $object->old_name='';
-                $object->old_firstname='';
-            }
-            else
-            {
-                $error=$object->error; $errors=$object->errors;
-            }
+            $error=$object->error; $errors=$object->errors;
         }
     }
 }
@@ -950,5 +945,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/06/29 22:29:51 $ - $Revision: 1.214 $');
 ?>
