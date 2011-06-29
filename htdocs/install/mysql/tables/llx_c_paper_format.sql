@@ -15,7 +15,7 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- $Id$
+-- $Id: llx_c_paper_format.sql,v 1.3 2011/06/29 11:22:35 eldy Exp $
 -- ========================================================================
 
 create table llx_c_paper_format
@@ -25,8 +25,9 @@ create table llx_c_paper_format
   label    varchar(50)                      NOT NULL,
   width    float(6,2)                       DEFAULT 0,  -- Largeur du papier
   height   float(6,2)                       DEFAULT 0,  -- Hauteur du papier
-  unit     varchar(5)                       NOT NULL,   -- Unit� de mesure
-  active   tinyint DEFAULT 1                NOT NULL
+  unit     varchar(5)                       NOT NULL,   -- Mesure unit
+  active   tinyint DEFAULT 1                NOT NULL,
+  module  varchar(32) NULL
 )ENGINE=innodb;
 
 -- 

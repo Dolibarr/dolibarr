@@ -16,7 +16,7 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- $Id$
+-- $Id: llx_c_chargesociales.sql,v 1.4 2011/06/29 11:22:36 eldy Exp $
 -- ========================================================================
 
 create table llx_c_chargesociales
@@ -26,7 +26,8 @@ create table llx_c_chargesociales
   deductible   smallint DEFAULT 0 NOT NULL,
   active       tinyint DEFAULT 1  NOT NULL,
   code         varchar(12) NOT NULL,
-  fk_pays      integer DEFAULT 1 NOT NULL
+  fk_pays      integer DEFAULT 1 NOT NULL,
+  module       varchar(32) NULL
 )ENGINE=innodb;
 
 

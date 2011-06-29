@@ -15,7 +15,7 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- $Id$
+-- $Id: llx_c_shipment_mode.sql,v 1.3 2011/06/29 11:22:35 eldy Exp $
 -- ===================================================================
 
 create table llx_c_shipment_mode
@@ -25,5 +25,6 @@ create table llx_c_shipment_mode
   code             varchar(30) NOT NULL,
   libelle          varchar(50) NOT NULL,
   description      text,
-  active           tinyint DEFAULT 0
+  active           tinyint DEFAULT 0,
+  module           varchar(32) NULL
 )ENGINE=innodb;

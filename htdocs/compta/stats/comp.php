@@ -21,7 +21,7 @@
 /**
  *      \file       htdocs/compta/stats/comp.php
  *      \ingroup    commercial
- *  	\version	$Id$
+ *  	\version	$Id: comp.php,v 1.43 2011/06/29 11:22:36 eldy Exp $
  * 		TODO	Remove or add page in menus
  */
 
@@ -40,19 +40,16 @@ function propals ($db, $year, $month)
 {
 	global $bc,$langs,$conf;
 
-	$sql = "SELECT s.nom, s.rowid as socid, p.rowid as propalid, p.price, p.ref, p.datep as dp, c.label as statut, c.id as statutid";
+	$sql = "SELECT s.nom, s.rowid as socid, p.rowid as propalid, p.price, p.ref, p.datep as dp, p.fk_statut as statutid, c.label as statut";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql.= ", ".MAIN_DB_PREFIX."propal as p";
 	$sql.= ", ".MAIN_DB_PREFIX."c_propalst as c";
-	$sql.= " WHERE p.fk_soc = s.rowid";
+	$sql.= " WHERE p.fk_soc = s.rowid AND p.fk_statut = c.id";
 	$sql.= " AND p.entity = ".$conf->entity;
-	$sql.= " AND p.fk_statut = c.id";
-	$sql.= " AND c.id in (1,2,4)";
+	$sql.= " AND p.fk_statut in (1,2,4)";
 	$sql.= " AND date_format(p.datep, '%Y') = ".$year;
 	$sql.= " AND round(date_format(p.datep, '%m')) = ".$month;
-
-
-	$sql .= " ORDER BY p.fk_statut";
+	$sql.= " ORDER BY p.fk_statut";
 
 	$result = $db->query($sql);
 	$num = $db->num_rows($result);
@@ -77,7 +74,7 @@ function propals ($db, $year, $month)
 			print "<tr class=\"liste_titre\">";
 			print "<td>Societe</td>";
 			print "<td>".$langs->trans("Ref")."</td>";
-			print "<td align=\"right\">Date</td>";
+			print "<td align=\"right\">".$langs->trans("Date")."</td>";
 			print "<td align=\"right\">".$langs->trans("Price")."</td>";
 			print "<td align=\"center\">".$langs->trans("Status")."</td>";
 			print "</tr>\n";
@@ -353,5 +350,5 @@ if ($details == 1)
 $db->close();
 
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/06/29 11:22:36 $ - $Revision: 1.43 $');
 ?>

@@ -15,7 +15,7 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- $Id$
+-- $Id: llx_c_prospectlevel.sql,v 1.3 2011/06/29 11:22:36 eldy Exp $
 -- ===================================================================
 
 create table llx_c_prospectlevel
@@ -23,6 +23,7 @@ create table llx_c_prospectlevel
   code            varchar(12) PRIMARY KEY,
   label           varchar(30),
   sortorder       smallint,
-  active          smallint    DEFAULT 1 NOT NULL
+  active          smallint    DEFAULT 1 NOT NULL,
+  module          varchar(32) NULL
 ) ENGINE=innodb;
 
