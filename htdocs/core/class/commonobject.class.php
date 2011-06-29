@@ -22,7 +22,7 @@
  *	\file       htdocs/core/class/commonobject.class.php
  *	\ingroup    core
  *	\brief      File of parent class of all other business classes (invoices, contracts, proposals, orders, ...)
- *	\version    $Id$
+ *	\version    $Id: commonobject.class.php,v 1.139 2011/06/29 19:29:27 hregis Exp $
  */
 
 
@@ -585,15 +585,21 @@ class CommonObject
 	{
 		global $conf;
 
-		$result=false;
-
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$table." SET ";
 		$sql.= $field." = '".$value."'";
 		$sql.= " WHERE rowid = ".$id;
 
 		dol_syslog("CommonObject::updateObjectField sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (! $resql) dol_print_error($this->db);
+		if ($resql)
+		{
+			return 1;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			return -1;
+		}
 	}
 
 	/**
@@ -1899,7 +1905,7 @@ class CommonObject
 			$this->tpl['label'].= $productstatic->getNomUrl(1);
 			$this->tpl['label'].= $line->label?' - '.$line->label:'';
 			// Dates
-			if ($date_start || $date_end)
+			if ($line->product_type == 1 && ($date_start || $date_end))
 			{
 				$this->tpl['label'].= get_date_range($date_start,$date_end);
 			}
@@ -1909,7 +1915,7 @@ class CommonObject
 			$this->tpl['label'].= ($line->product_type == -1 ? '&nbsp;' : ($line->product_type == 1 ? img_object($langs->trans(''),'service') : img_object($langs->trans(''),'product')));
 			$this->tpl['label'].= ($line->label ? '&nbsp;'.$line->label : '');
 			// Dates
-			if ($date_start || $date_end)
+			if ($line->product_type == 1 && ($date_start || $date_end))
 			{
 				$this->tpl['label'].= get_date_range($date_start,$date_end);
 			}
