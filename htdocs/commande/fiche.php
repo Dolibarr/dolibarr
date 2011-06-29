@@ -26,7 +26,7 @@
  *	\file       htdocs/commande/fiche.php
  *	\ingroup    commande
  *	\brief      Page to show customer order
- *	\version    $Id$
+ *	\version    $Id: fiche.php,v 1.520 2011/06/29 22:29:51 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -57,19 +57,18 @@ $socid   = GETPOST('socid');
 $action  = GETPOST('action');
 $confirm = GETPOST('confirm');
 $lineid  = GETPOST('lineid');
+$mesg    = GETPOST('mesg');
+
+$object = new Commande($db);
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'commande',$id,'');
 
-$mesg=isset($_GET['mesg'])?$_GET['mesg']:'';
-
-$object = new Commande($db);
-
 // Instantiate hooks of thirdparty module
 if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
 {
-    $object->callHooks('objectcard');
+    $object->callHooks('ordercard');
 }
 
 
@@ -77,13 +76,18 @@ if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
 /*                     Actions                                                */
 /******************************************************************************/
 
-// Hook of thirdparty module
-if (! empty($object->hooks['objectcard']))
+// Hook of actions
+if (! empty($object->hooks['ordercard']))
 {
-    foreach($object->hooks['objectcard'] as $module)
+    foreach($object->hooks['ordercard'] as $module)
     {
-        $module->doActions($object);
-        $mesg = $module->error;
+        $reshook+=$module->doActions($object);
+        if (! empty($module->error) || (! empty($module->errors) && sizeof($module->errors) > 0))
+        {
+            $error=$module->error; $errors[]=$module->errors;
+            if ($action=='add')    $action='create';
+            if ($action=='update') $action='edit';
+        }
     }
 }
 
@@ -2097,5 +2101,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/06/29 22:29:51 $ - $Revision: 1.520 $');
 ?>
