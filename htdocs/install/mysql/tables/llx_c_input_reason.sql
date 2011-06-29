@@ -16,7 +16,7 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- $Id$
+-- $Id: llx_c_input_reason.sql,v 1.2 2011/06/29 11:22:36 eldy Exp $
 -- ========================================================================
 
 create table llx_c_input_reason
@@ -24,7 +24,7 @@ create table llx_c_input_reason
   rowid		integer AUTO_INCREMENT PRIMARY KEY,
   code		varchar(30),
   label		varchar(60),
-  active	tinyint default 1  NOT NULL
-  
+  active	tinyint default 1  NOT NULL,
+  module    varchar(32) NULL
 )ENGINE=innodb;
 

@@ -31,7 +31,7 @@
  *	\file       htdocs/core/class/html.form.class.php
  *  \ingroup    core
  *	\brief      File of class with all html predefined components
- *	\version	$Id$
+ *	\version	$Id: html.form.class.php,v 1.183 2011/06/29 11:22:36 eldy Exp $
  */
 
 
@@ -1814,7 +1814,7 @@ class Form
                     {
                         print '<option value="'.$obj->id.'">';
                     }
-                    print $obj->label;
+                    print ($langs->trans("PropalStatus".$obj->code)!="PropalStatus".$obj->code)?$langs->trans("PropalStatus".$obj->code):$obj->label;
                     print '</option>';
                     $i++;
                 }
