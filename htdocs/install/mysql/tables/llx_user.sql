@@ -1,6 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2007-2009 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- $Id$
+-- $Id: llx_user.sql,v 1.8 2011/06/29 10:23:33 eldy Exp $
 -- ===========================================================================
 
 create table llx_user
@@ -39,6 +39,7 @@ create table llx_user
   office_fax        varchar(20),
   user_mobile       varchar(20),
   email             varchar(255),
+  signature         text DEFAULT NULL,
   admin             smallint DEFAULT 0,
   webcal_login      varchar(25),			-- TODO move to an extra table (ex: llx_extra_fields)
   phenix_login      varchar(25),			-- TODO move to an extra table (ex: llx_extra_fields)

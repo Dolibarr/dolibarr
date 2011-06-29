@@ -25,7 +25,7 @@
 /**
  *  \file       htdocs/user/class/user.class.php
  *  \brief      Fichier de la classe utilisateur
- *  \version    $Id$
+ *  \version    $Id: user.class.php,v 1.43 2011/06/29 10:23:32 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
@@ -53,6 +53,7 @@ class User extends CommonObject
     var $firstname;
 	var $note;
 	var $email;
+	var $signature;
 	var $office_phone;
 	var $office_fax;
 	var $user_mobile;
@@ -116,7 +117,7 @@ class User extends CommonObject
 	}
 
 	/**
-	 *	Charge un objet user avec toutes ces caracteristiques depuis un id ou login
+	 *	Load a user from database with its id or ref (login)
 	 *	@param      id		       		Si defini, id a utiliser pour recherche
 	 * 	@param      login       		Si defini, login a utiliser pour recherche
 	 *	@param      sid					Si defini, sid a utiliser pour recherche
@@ -127,11 +128,11 @@ class User extends CommonObject
 	{
 		global $conf;
 
-		// Nettoyage parametres
+		// Clean parameters
 		$login=trim($login);
 
-		// Recupere utilisateur
-		$sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.office_phone, u.office_fax, u.user_mobile,";
+		// Get user
+        $sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.signature, u.office_phone, u.office_fax, u.user_mobile,";
 		$sql.= " u.admin, u.login, u.webcal_login, u.phenix_login, u.phenix_pass, u.note,";
 		$sql.= " u.pass, u.pass_crypted, u.pass_temp,";
 		$sql.= " u.fk_societe, u.fk_socpeople, u.fk_member, u.ldap_sid,";
@@ -184,6 +185,7 @@ class User extends CommonObject
 				$this->office_fax   = $obj->office_fax;
 				$this->user_mobile  = $obj->user_mobile;
 				$this->email = $obj->email;
+                $this->signature = $obj->signature;
 				$this->admin = $obj->admin;
 				$this->note = $obj->note;
 				$this->statut = $obj->statut;
@@ -1008,6 +1010,7 @@ class User extends CommonObject
 		$this->office_fax   = trim($this->office_fax);
 		$this->user_mobile  = trim($this->user_mobile);
 		$this->email        = trim($this->email);
+        $this->signature    = trim($this->signature);
 		$this->note         = trim($this->note);
 		$this->openid       = trim(empty($this->openid)?'':$this->openid);    // Avoid warning
 		$this->webcal_login = trim($this->webcal_login);
@@ -1038,6 +1041,7 @@ class User extends CommonObject
 		$sql.= ", office_fax = '".$this->db->escape($this->office_fax)."'";
 		$sql.= ", user_mobile = '".$this->db->escape($this->user_mobile)."'";
 		$sql.= ", email = '".$this->db->escape($this->email)."'";
+        $sql.= ", signature = '".addslashes($this->signature)."'";
 		$sql.= ", webcal_login = '".$this->db->escape($this->webcal_login)."'";
 		$sql.= ", phenix_login = '".$this->db->escape($this->phenix_login)."'";
 		$sql.= ", phenix_pass = '".$this->db->escape($this->phenix_pass)."'";
@@ -1483,7 +1487,7 @@ class User extends CommonObject
 	function SetInGroup($group, $entity, $notrigger=0)
 	{
 		global $conf, $langs, $user;
-		
+
         $error=0;
 
 		$this->db->begin();
@@ -1510,7 +1514,7 @@ class User extends CommonObject
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// Fin appel triggers
 			}
-			
+
 			if (! $error)
 			{
 				$this->db->commit();
@@ -1540,7 +1544,7 @@ class User extends CommonObject
 	function RemoveFromGroup($group, $entity, $notrigger=0)
 	{
 		global $conf,$langs,$user;
-		
+
         $error=0;
 
         $this->db->begin();

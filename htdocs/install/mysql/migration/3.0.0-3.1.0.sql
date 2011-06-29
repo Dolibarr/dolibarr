@@ -1,5 +1,5 @@
 --
--- $Id: 3.0.0-3.1.0.sql,v 1.75 2011/06/28 07:47:10 eldy Exp $
+-- $Id: 3.0.0-3.1.0.sql,v 1.76 2011/06/29 10:23:33 eldy Exp $
 --
 -- Be carefull to requests order.
 -- This file must be loaded by calling /install/index.php page
@@ -425,3 +425,6 @@ ALTER TABLE llx_c_type_contact    ADD COLUMN module        varchar(32) NULL;
 ALTER TABLE llx_c_typent          ADD COLUMN module        varchar(32) NULL;
 ALTER TABLE llx_c_effectif        ADD COLUMN module        varchar(32) NULL;
 ALTER TABLE llx_c_forme_juridique ADD COLUMN module        varchar(32) NULL;
+
+ALTER TABLE llx_user ADD signature text DEFAULT NULL AFTER email;
+
