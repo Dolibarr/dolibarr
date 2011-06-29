@@ -21,7 +21,7 @@
 /**
  *  \file		htdocs/includes/menus/standard/eldy.lib.php
  *  \brief		Library for file eldy menus
- *  \version	$Id: eldy.lib.php,v 1.52 2011/06/29 17:55:33 eldy Exp $
+ *  \version	$Id: eldy.lib.php,v 1.53 2011/06/29 22:41:49 eldy Exp $
  */
 
 
@@ -468,6 +468,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 					}
 					$url.="idmenu=".$newTabMenu[$i]['rowid'];
 				}
+				$url=preg_replace('/__LOGIN__/',$user->login,$url);
 
 				// Define the class (top menu selected or not)
 				if (! empty($_SESSION['idmenu']) && $newTabMenu[$i]['rowid'] == $_SESSION['idmenu']) $classname='class="tmenusel"';
