@@ -26,7 +26,7 @@
  *	\file       htdocs/compta/facture.php
  *	\ingroup    facture
  *	\brief      Page to create/see an invoice
- *	\version    $Id$
+ *	\version    $Id: facture.php,v 1.839 2011/06/29 15:48:02 grandoc Exp $
  */
 
 require('../main.inc.php');
@@ -230,6 +230,14 @@ if ($action == 'valid')
             $action='';
         }
     }
+}
+
+if ($action == 'set_thirdparty')
+{
+    $object->updateObjectField('facture',$id,'fk_soc',$socid); 
+	
+        Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id);
+        exit;
 }
 
 if ($action == 'classin')
@@ -2063,10 +2071,24 @@ else
             print '</td></tr>';
 
             // Third party
+			print '<tr><td>';
+            print '<table class="nobordernopadding" width="100%">';
             print '<tr><td>'.$langs->trans('Company').'</td>';
-            print '<td colspan="5">'.$soc->getNomUrl(1,'compta');
-            print ' &nbsp; (<a href="'.DOL_URL_ROOT.'/compta/facture.php?socid='.$object->socid.'">'.$langs->trans('OtherBills').'</a>)</td>';
-            print '</tr>';
+			print '</td><td colspan="5">';
+			if ($conf->global->FACTURE_CHANGE_THIRDPARTY && $action != 'editthirdparty' && $object->brouillon && $user->rights->facture->creer)
+            print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editthirdparty&amp;facid='.$object->id.'">'.img_edit($langs->trans('SetLinkToThirdParty'),1).'</a></td>';
+            print '</tr></table>';
+            print '</td><td colspan="5">';
+			if ($action == 'editthirdparty')
+            {
+                $html->form_thirdparty($_SERVER['PHP_SELF'].'?facid='.$object->id,$object->socid,'socid');
+            }
+			else
+			{
+			print ' &nbsp;'.$soc->getNomUrl(1,'compta');
+            print ' &nbsp; (<a href="'.DOL_URL_ROOT.'/compta/facture.php?socid='.$object->socid.'">'.$langs->trans('OtherBills').'</a>)';
+			}
+			print '</tr>';
 
             // Type
             print '<tr><td>'.$langs->trans('Type').'</td><td colspan="5">';
@@ -3174,5 +3196,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/06/29 15:48:02 $ - $Revision: 1.839 $');
 ?>
