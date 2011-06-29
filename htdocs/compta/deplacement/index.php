@@ -20,9 +20,9 @@
  */
 
 /**
- \file       htdocs/compta/deplacement/index.php
- \brief      Page liste des deplacements
- \version	$Id$
+ *  \file       htdocs/compta/deplacement/index.php
+ *  \brief      Page list of expenses
+ *  \version	$Id: index.php,v 1.44 2011/06/29 17:55:33 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -56,74 +56,143 @@ $limit = $conf->liste_limit;
 
 $tripandexpense_static=new Deplacement($db);
 
-llxHeader();
+//$help_url='EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Subvenciones';
+$help_url='';
+llxHeader('',$langs->trans("ListOfFees"),$help_url);
 
-$sql = "SELECT s.nom, s.rowid as socid,";				// Ou
-$sql.= " d.rowid, d.type, d.dated as dd, d.km, ";		// Comment
-$sql.= " u.name, u.firstname";							// Qui
-$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-$sql.= ", ".MAIN_DB_PREFIX."deplacement as d";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON d.fk_soc = s.rowid";
-if (!$user->rights->societe->client->voir && !$socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
-$sql.= " WHERE d.fk_user = u.rowid";
-$sql.= " AND d.entity = ".$conf->entity;
-if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND sc.fk_user = " .$user->id;
-if ($socid) $sql.= " AND s.rowid = ".$socid;
-$sql.= $db->order($sortfield,$sortorder);
-$sql.= $db->plimit($limit + 1 ,$offset);
 
-//print $sql;
-$resql=$db->query($sql);
-if ($resql)
+
+
+$totalnb=0;
+$sql = "SELECT count(d.rowid) as nb, sum(d.km) as km, d.type";
+$sql.= " FROM ".MAIN_DB_PREFIX."deplacement as d";
+$sql.= " GROUP BY d.type";
+$sql.= " ORDER BY d.type";
+
+$result = $db->query($sql);
+if ($result)
 {
-    $num = $db->num_rows($resql);
-
-    print_barre_liste($langs->trans("ListOfFees"), $page, "index.php","&socid=$socid",$sortfield,$sortorder,'',$num);
-
+    $num = $db->num_rows($result);
     $i = 0;
-    print '<table class="noborder" width="100%">';
-    print "<tr class=\"liste_titre\">";
-    print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"d.rowid","","&socid=$socid",'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"d.type","","&socid=$socid",'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"d.dated","","&socid=$socid",'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&socid=$socid",'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Person"),$_SERVER["PHP_SELF"],"u.name","","&socid=$socid",'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("FeesKilometersOrAmout"),$_SERVER["PHP_SELF"],"d.km","","&socid=$socid",'align="right"',$sortfield,$sortorder);
-    print_liste_field_titre('',$_SERVER["PHP_SELF"], '');
-    print "</tr>\n";
-
-    $var=true;
-    while ($i < min($num,$limit))
+    while ($i < $num)
     {
-        $objp = $db->fetch_object($resql);
+        $objp = $db->fetch_object($result);
 
-        $soc = new Societe($db);
-        if ($objp->socid) $soc->fetch($objp->socid);
-
-        $var=!$var;
-        print '<tr '.$bc[$var].'>';
-        print '<td><a href="fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowTrip"),"trip").' '.$objp->rowid.'</a></td>';
-        print '<td>'.$langs->trans($objp->type).'</td>';
-        print '<td>'.dol_print_date($db->jdate($objp->dd),'day').'</td>';
-        if ($objp->socid) print '<td>'.$soc->getNomUrl(1).'</td>';
-        else print '<td>&nbsp;</td>';
-        print '<td align="left"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.$objp->firstname.' '.$objp->name.'</a></td>';
-        print '<td align="right">'.$objp->km.'</td>';
-
-        print '<td align="right">'.$tripandexpense_static->getLibStatut(5).'</td>';
-        print "</tr>\n";
-
+        $somme[$objp->type] = $objp->km;
+        $nb[$objp->type] = $objp->nb;
+        $totalnb += $objp->nb;
         $i++;
     }
-
-    print "</table>";
-    $db->free($resql);
-}
-else
-{
+    $db->free($result);
+} else {
     dol_print_error($db);
 }
+
+
+print_fiche_titre($langs->trans("ExpensesArea"));
+
+print '<table width="100%" class="notopnoleftnoright">';
+
+// Left area
+print '<tr><td class="notopnoleft" width="30%" valign="top">';
+
+
+
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td colspan="4">'.$langs->trans("Statistics").'</td>';
+print "</tr>\n";
+
+$listoftype=$tripandexpense_static->listOfTypes();
+foreach ($listoftype as $typefee)
+{
+    $dataseries[]=array('label'=>$typefee['label'],'values'=>array(0=>(isset($nb[$typefee['code']])?$nb[$typefee['code']]:0)));
+}
+
+if ($conf->use_javascript_ajax)
+{
+    print '<tr><td align="center" colspan="4">';
+    $data=array('series'=>$dataseries);
+    dol_print_graph('stats',300,180,$data,1,'pie',1);
+    print '</td></tr>';
+}
+
+print '<tr class="liste_total">';
+print '<td>'.$langs->trans("Total").'</td>';
+print '<td align="right">'.$totalnb.'</td>';
+print '</tr>';
+
+print '</table>';
+
+
+// Right area
+print '</td><td valign="top">';
+
+$max=10;
+
+$langs->load("boxes");
+
+$sql = "SELECT u.rowid as uid, u.name, u.firstname, d.rowid, d.dated as date, d.tms as dm, d.km";
+$sql.= " FROM ".MAIN_DB_PREFIX."deplacement as d, ".MAIN_DB_PREFIX."user as u";
+if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql.= " WHERE u.rowid = d.fk_user";
+$sql.= " AND d.entity = ".$conf->entity;
+if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND d.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+if ($socid) $sql.= " AND d.fk_soc = ".$socid;
+$sql.= $db->order("d.tms","DESC");
+$sql.= $db->plimit($max, 0);
+
+$result = $db->query($sql);
+if ($result)
+{
+    $var=false;
+    $num = $db->num_rows($result);
+
+    $i = 0;
+
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<td colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses",min($max,$num)).'</td>';
+    print '<td align="right">'.$langs->trans("FeesKilometersOrAmout").'</td>';
+    print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
+    print '<td width="16">&nbsp;</td>';
+    print '</tr>';
+    if ($num)
+    {
+        $total_ttc = $totalam = $total = 0;
+
+        $deplacementstatic=new Deplacement($db);
+        $userstatic=new User($db);
+        while ($i < $num && $i < $max)
+        {
+            $objp = $db->fetch_object($result);
+            $deplacementstatic->ref=$objp->rowid;
+            $deplacementstatic->id=$objp->rowid;
+            $userstatic->id=$objp->uid;
+            $userstatic->nom=$objp->name;
+            $userstatic->prenom=$objp->firstname;
+            print '<tr '.$bc[$var].'>';
+            print '<td>'.$deplacementstatic->getNomUrl(1).'</td>';
+            print '<td>'.$userstatic->getNomUrl(1).'</td>';
+            print '<td align="right">'.$objp->km.'</td>';
+            print '<td align="right">'.dol_print_date($db->jdate($objp->dm),'day').'</td>';
+            print '<td>'.$deplacementstatic->LibStatut($objp->fk_statut,3).'</td>';
+            print '</tr>';
+            $var=!$var;
+            $i++;
+        }
+
+    }
+    else
+    {
+        print '<tr '.$bc[$var].'><td colspan="2">'.$langs->trans("None").'</td></tr>';
+    }
+    print '</table><br>';
+}
+else dol_print_error($db);
+
+
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/06/29 17:55:33 $ - $Revision: 1.44 $');
 ?>
