@@ -26,7 +26,7 @@
  *  \file       htdocs/societe/soc.php
  *  \ingroup    societe
  *  \brief      Third party card page
- *  \version    $Id: soc.php,v 1.113 2011/06/30 13:25:33 hregis Exp $
+ *  \version    $Id: soc.php,v 1.114 2011/06/30 22:38:07 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -47,18 +47,21 @@ $langs->load("banks");
 $langs->load("users");
 if ($conf->notification->enabled) $langs->load("mails");
 
+$error=0; $errors=array();
+
 $action = GETPOST('action');
 $confirm = GETPOST('confirm');
+
+$soc = new Societe($db);
+$extrafields = new ExtraFields($db);
 
 // Security check
 $socid = GETPOST("socid");
 if ($user->societe_id) $socid=$user->societe_id;
 
-$soc = new Societe($db);
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 if (!empty($socid)) $soc->getCanvas($socid);
 $canvas = (!empty($soc->canvas)?$soc->canvas:GETPOST("canvas"));
-
 if (! empty($canvas))
 {
     require_once(DOL_DOCUMENT_ROOT."/core/class/canvas.class.php");
@@ -73,14 +76,41 @@ else
     $result = restrictedArea($user, 'societe', $socid);
 }
 
-$error=0; $errors=array();
+// Instantiate hooks of thirdparty module
+if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
+{
+    $object->callHooks('companycard');
+}
 
-$extrafields = new ExtraFields($db);
 
 
 /*
  * Actions
  */
+
+// Hook of actions
+if (! empty($object->hooks))
+{
+    foreach($object->hooks as $hook)
+    {
+        if (! empty($hook['modules']))
+        {
+            foreach($hook['modules'] as $module)
+            {
+                if (method_exists($module,'doActions'))
+                {
+                    $reshook+=$module->doActions($object);
+                    if (! empty($module->error) || (! empty($module->errors) && sizeof($module->errors) > 0))
+                    {
+                        $mesg=$module->error; $mesgs[]=$module->errors;
+                        if ($action=='add')    $action='create';
+                        if ($action=='update') $action='edit';
+                    }
+                }
+            }
+        }
+    }
+}
 
 // If canvas actions are defined, because on url, or because contact was created with canvas feature on, we use the canvas feature.
 // If canvas actions are not defined, we use standard feature.
@@ -91,12 +121,7 @@ if (method_exists($objcanvas->control,'doActions'))
     // -----------------------------------------
     $objcanvas->doActions($socid);
 
-    if (empty($objcanvas->error) && (empty($objcanvas->errors) || sizeof($objcanvas->errors) == 0))
-    {
-        if ($action=='add')    { $objcanvas->action='create'; $action='create'; }
-        if ($action=='update') { $objcanvas->action='view';   $action='view'; }
-    }
-    else
+    if (! empty($objcanvas->error) || (! empty($objcanvas->errors) && sizeof($objcanvas->errors) > 0))
     {
         $error=$objcanvas->error; $errors=$objcanvas->errors;
         if ($action=='add')    { $objcanvas->action='create'; $action='create'; }
@@ -1946,5 +1971,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/06/30 13:25:33 $ - $Revision: 1.113 $');
+llxFooter('$Date: 2011/06/30 22:38:07 $ - $Revision: 1.114 $');
 ?>
