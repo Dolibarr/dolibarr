@@ -28,7 +28,7 @@
  *	\file       htdocs/compta/facture/class/facture.class.php
  *	\ingroup    facture
  *	\brief      Fichier de la classe des factures clients
- *	\version    $Id$
+ *	\version    $Id: facture.class.php,v 1.122 2011/06/30 13:27:20 hregis Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
@@ -534,9 +534,9 @@ class Facture extends CommonObject
         $object->fetch($fromid);
 
         // Instantiate hooks of thirdparty module
-        if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
+        if (is_array($conf->hooks_modules) && ! empty($conf->hooks_modules))
         {
-            $object->callHooks('objectcard');
+            $object->callHooks('invoicecard');
         }
 
         $this->db->begin();
@@ -577,14 +577,23 @@ class Facture extends CommonObject
 
         if (! $error)
         {
-            // Hook of thirdparty module
-            if (! empty($object->hooks['objectcard']))
+            // Hook for external modules
+            if (! empty($object->hooks))
             {
-                foreach($object->hooks['objectcard'] as $module)
-                {
-                    $result = $module->createfrom($objFrom,$result,$object->element);
-                    if ($result < 0) $error++;
-                }
+            	foreach($object->hooks as $hook)
+            	{
+            		if (! empty($hook['modules']))
+            		{
+            			foreach($hook['modules'] as $module)
+            			{
+            				if (method_exists($module,'createfrom'))
+            				{
+            					$result = $module->createfrom($objFrom,$result,$object->element);
+            					if ($result < 0) $error++;
+            				}
+            			}
+            		}
+            	}
             }
 
             // Appel des triggers
@@ -667,14 +676,23 @@ class Facture extends CommonObject
 
         if ($ret > 0)
         {
-            // Hooks
-            if (! empty($object->hooks['objectcard']))
+        	// Hook for external modules
+            if (! empty($object->hooks))
             {
-                foreach($object->hooks['objectcard'] as $module)
-                {
-                    $result = $module->createfrom($object,$ret,$this->element);
-                    if ($result < 0) $error++;
-                }
+            	foreach($object->hooks as $hook)
+            	{
+            		if (! empty($hook['modules']))
+            		{
+            			foreach($hook['modules'] as $module)
+            			{
+            				if (method_exists($module,'createfrom'))
+            				{
+            					$result = $module->createfrom($objFrom,$result,$object->element);
+            					if ($result < 0) $error++;
+            				}
+            			}
+            		}
+            	}
             }
 
             if (! $error)
@@ -2002,9 +2020,13 @@ class Facture extends CommonObject
 
             // Update line into database
             $this->line=new FactureLigne($this->db);
-            $this->line->rowid=$rowid;
-            $this->line->fetch($rowid);
-
+            
+            // Stock previous line records
+			$staticline=new FactureLigne($this->db);
+			$staticline->fetch($rowid);
+			$this->line->oldline = $staticline;
+			
+            $this->line->rowid				= $rowid;
             $this->line->desc				= $desc;
             $this->line->qty				= $qty;
             $this->line->tva_tx				= $txtva;
@@ -3250,6 +3272,8 @@ class FactureLigne
 {
     var $db;
     var $error;
+    
+    var $oldline;
 
     //! From llx_facturedet
     var $rowid;

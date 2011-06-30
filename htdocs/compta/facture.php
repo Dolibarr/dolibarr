@@ -26,7 +26,7 @@
  *	\file       htdocs/compta/facture.php
  *	\ingroup    facture
  *	\brief      Page to create/see an invoice
- *	\version    $Id: facture.php,v 1.840 2011/06/29 22:29:50 eldy Exp $
+ *	\version    $Id: facture.php,v 1.841 2011/06/30 13:27:21 hregis Exp $
  */
 
 require('../main.inc.php');
@@ -87,18 +87,27 @@ if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
 /******************************************************************************/
 
 // Hook of actions
-if (! empty($object->hooks['invoicecard']))
+if (! empty($object->hooks))
 {
-    foreach($object->hooks['invoicecard'] as $module)
-    {
-        $reshook+=$module->doActions($object);
-        if (! empty($module->error) || (! empty($module->errors) && sizeof($module->errors) > 0))
-        {
-            $error=$module->error; $errors[]=$module->errors;
-            if ($action=='add')    $action='create';
-            if ($action=='update') $action='edit';
-        }
-    }
+	foreach($object->hooks as $hook)
+	{
+		if (! empty($hook['modules']))
+		{
+			foreach($hook['modules'] as $module)
+			{
+				if (method_exists($module,'doActions'))
+				{
+					$reshook+=$module->doActions($object);
+			        if (! empty($module->error) || (! empty($module->errors) && sizeof($module->errors) > 0))
+			        {
+			            $mesg=$module->error; $mesgs[]=$module->errors;
+			            if ($action=='add')    $action='create';
+			            if ($action=='update') $action='edit';
+			        }
+				}
+			}
+		}
+	}
 }
 
 // Action clone object
@@ -783,13 +792,22 @@ if ($action == 'add' && $user->rights->facture->creer)
                         }
 
                         // Hooks
-                        if (! empty($object->hooks['objectcard']))
+                        if (! empty($object->hooks))
                         {
-                            foreach($object->hooks['objectcard'] as $module)
-                            {
-                                $res = $module->createfrom($srcobject,$id,$object->element);
-                                if ($res < 0) $error++;
-                            }
+                        	foreach($object->hooks as $hook)
+                        	{
+                        		if (! empty($hook['modules']))
+                        		{
+                        			foreach($hook['modules'] as $module)
+                        			{
+                        				if (method_exists($module,'createfrom'))
+                        				{
+                        					$res = $module->createfrom($srcobject,$id,$object->element);
+                        					if ($res < 0) $error++;
+                        				}
+                        			}
+                        		}
+                        	}
                         }
                     }
                     else
@@ -2041,13 +2059,19 @@ else
                 $formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id,$langs->trans('CloneInvoice'),$langs->trans('ConfirmCloneInvoice',$object->ref),'confirm_clone',$formquestion,'yes',1);
             }
 
-            // Hook of thirdparty module
-            if (empty($formconfirm) && ! empty($object->hooks['objectcard']))
+            // Hook for external modules
+            if (empty($formconfirm) && ! empty($object->hooks))
             {
-                foreach($object->hooks['objectcard'] as $module)
-                {
-                    if (empty($formconfirm)) $formconfirm = $module->formconfirm($action,$object,$lineid);
-                }
+            	foreach($object->hooks as $hook)
+            	{
+            		if (! empty($hook['modules']))
+            		{
+            			 foreach($hook['modules'] as $module)
+            			 {
+            			 	if (empty($formconfirm) && method_exists($module,'formconfirm')) $formconfirm = $module->formconfirm($action,$object,$lineid);
+            			 }
+            		}
+            	}
             }
 
             // Print form confirm
@@ -2584,14 +2608,23 @@ else
                     $object->formAddPredefinedProduct(1,$mysoc,$soc);
                 }
 
-                // Hook of thirdparty module
-                if (! empty($object->hooks['objectcard']))
+                // Hook for external modules
+                if (! empty($object->hooks))
                 {
-                    foreach($object->hooks['objectcard'] as $module)
-                    {
-                        $var=!$var;
-                        $module->formAddObject($object);
-                    }
+                	foreach($object->hooks as $hook)
+                	{
+                		if (! empty($hook['modules']))
+                		{
+                			foreach($hook['modules'] as $module)
+                			{
+                				if (method_exists($module,'formAddObject'))
+                				{
+                					$var=!$var;
+                					$module->formAddObject($object);
+                				}
+                			}
+                		}
+                	}
                 }
             }
 
@@ -2828,7 +2861,7 @@ else
                 $delallowed=$user->rights->facture->supprimer;
 
                 print '<br>';
-                $somethingshown=$formfile->show_documents('facture',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang,$object->hooks['objectcard']);
+                $somethingshown=$formfile->show_documents('facture',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang,$object->hooks);
 
                 /*
                  * Linked object block
@@ -3201,5 +3234,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/06/29 22:29:50 $ - $Revision: 1.840 $');
+llxFooter('$Date: 2011/06/30 13:27:21 $ - $Revision: 1.841 $');
 ?>
