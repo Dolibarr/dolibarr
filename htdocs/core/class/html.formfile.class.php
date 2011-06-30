@@ -1,6 +1,7 @@
 <?php
-/* Copyright (c) 2008-2010 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (c) 2010      Juanjo Menent       <jmenent@2byte.es>
+/* Copyright (c) 2008-2010 Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2011 Regis Houssin		<regis@dolibarr.fr>
+ * Copyright (c) 2010      Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@
  *	\file       htdocs/core/class/html.formfile.class.php
  *  \ingroup    core
  *	\brief      File of class to offer components to list and upload files
- *	\version	$Id$
+ *	\version	$Id: html.formfile.class.php,v 1.34 2011/06/30 13:27:20 hregis Exp $
  */
 
 
@@ -446,12 +447,17 @@ class FormFile
 			$out.= '</tr>';
 
 			// Execute hooks
-			// $hooks must be array('key'=>$instanceofclass)
 			if (! empty($hooks) && is_array($hooks))
 			{
-				foreach($hooks as $module)
+				foreach($hooks as $hook)
 				{
-				    if (method_exists($module,'formBuilddocOptions')) $out.= $module->formBuilddocOptions();
+					if (! empty($hook['modules']))
+					{
+						foreach($hook['modules'] as $module)
+						{
+							if (method_exists($module,'formBuilddocOptions')) $out.= $module->formBuilddocOptions();
+						}
+					}
 				}
 			}
 		}

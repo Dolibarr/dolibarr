@@ -26,7 +26,7 @@
  *	\file       htdocs/commande/fiche.php
  *	\ingroup    commande
  *	\brief      Page to show customer order
- *	\version    $Id$
+ *	\version    $Id: fiche.php,v 1.521 2011/06/30 13:27:21 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -57,19 +57,18 @@ $socid   = GETPOST('socid');
 $action  = GETPOST('action');
 $confirm = GETPOST('confirm');
 $lineid  = GETPOST('lineid');
+$mesg    = GETPOST('mesg');
+
+$object = new Commande($db);
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'commande',$id,'');
 
-$mesg=isset($_GET['mesg'])?$_GET['mesg']:'';
-
-$object = new Commande($db);
-
 // Instantiate hooks of thirdparty module
 if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
 {
-    $object->callHooks('objectcard');
+    $object->callHooks('ordercard');
 }
 
 
@@ -77,14 +76,28 @@ if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
 /*                     Actions                                                */
 /******************************************************************************/
 
-// Hook of thirdparty module
-if (! empty($object->hooks['objectcard']))
+// Hook of actions
+if (! empty($object->hooks))
 {
-    foreach($object->hooks['objectcard'] as $module)
-    {
-        $module->doActions($object);
-        $mesg = $module->error;
-    }
+	foreach($object->hooks as $hook)
+	{
+		if (! empty($hook['modules']))
+		{
+			foreach($hook['modules'] as $module)
+			{
+				if (method_exists($module,'doActions'))
+				{
+					$reshook+=$module->doActions($object);
+			        if (! empty($module->error) || (! empty($module->errors) && sizeof($module->errors) > 0))
+			        {
+			            $mesg=$module->error; $mesgs[]=$module->errors;
+			            if ($action=='add')    $action='create';
+			            if ($action=='update') $action='edit';
+			        }
+				}
+			}
+		}
+	}
 }
 
 // Action clone object
@@ -305,13 +318,22 @@ if ($action == 'add' && $user->rights->commande->creer)
                 }
 
                 // Hooks
-                if (! empty($object->hooks['objectcard']))
+                if (! empty($object->hooks))
                 {
-                    foreach($object->hooks['objectcard'] as $module)
-                    {
-                        $res = $module->createfrom($srcobject,$object_id,$object->element);
-                        if ($res < 0) $error++;
-                    }
+                	foreach($object->hooks as $hook)
+                	{
+                		if (! empty($hook['modules']))
+                		{
+                			foreach($hook['modules'] as $module)
+                			{
+                				if (method_exists($module,'createfrom'))
+                				{
+                					$res = $module->createfrom($srcobject,$object_id,$object->element);
+                					if ($res < 0) $error++;
+                				}
+                			}
+                		}
+                	}
                 }
             }
             else
@@ -1407,7 +1429,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 
         print '<table class="noborder" width="100%">';
 
-        $objectsrc->printOriginLinesList($object);
+        $objectsrc->printOriginLinesList();
 
         print '</table>';
     }
@@ -1515,13 +1537,19 @@ else
                 $formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneOrder'),$langs->trans('ConfirmCloneOrder',$object->ref),'confirm_clone',$formquestion,'yes',1);
             }
 
-            // Hook of thirdparty module
-            if (empty($formconfirm) && ! empty($object->hooks['objectcard']))
+            // Hook for external modules
+            if (empty($formconfirm) && ! empty($object->hooks))
             {
-                foreach($object->hooks['objectcard'] as $module)
-                {
-                    if (empty($formconfirm)) $formconfirm = $module->formconfirm($action,$object,$lineid);
-                }
+            	foreach($object->hooks as $hook)
+            	{
+            		if (! empty($hook['modules']))
+            		{
+            			foreach($hook['modules'] as $module)
+            			{
+            				if (empty($formconfirm) && method_exists($module,'formconfirm')) $formconfirm = $module->formconfirm($action,$object,$lineid);
+            			}
+            		}
+            	}
             }
 
             // Print form confirm
@@ -1873,14 +1901,23 @@ else
                         $object->formAddPredefinedProduct(1,$mysoc,$soc);
                     }
 
-                    // Hook of thirdparty module
-                    if (! empty($object->hooks['objectcard']))
+                    // Hook for external modules
+                    if (! empty($object->hooks))
                     {
-                        foreach($object->hooks['objectcard'] as $module)
-                        {
-                            $var=!$var;
-                            $module->formAddObject($object);
-                        }
+                    	foreach($object->hooks as $hook)
+                    	{
+                    		if (! empty($hook['modules']))
+                    		{
+                    			foreach($hook['modules'] as $module)
+                    			{
+                    				if (method_exists($module,'formAddObject'))
+                    				{
+                    					$var=!$var;
+                    					$module->formAddObject($object);
+                    				}
+                    			}
+                    		}
+                    	}
                     }
                 }
             }
@@ -2017,7 +2054,7 @@ else
                 $genallowed=$user->rights->commande->creer;
                 $delallowed=$user->rights->commande->supprimer;
 
-                $somethingshown=$formfile->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang,$object->hooks['objectcard']);
+                $somethingshown=$formfile->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang,$object->hooks);
 
                 /*
                  * Linked object block
@@ -2097,5 +2134,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/06/30 13:27:21 $ - $Revision: 1.521 $');
 ?>

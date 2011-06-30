@@ -23,7 +23,7 @@
  *       \file       htdocs/comm/action/class/actioncomm.class.php
  *       \ingroup    commercial
  *       \brief      File of class to manage agenda events (actions)
- *       \version    $Id$
+ *       \version    $Id: actioncomm.class.php,v 1.41 2011/06/30 07:52:43 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php');
@@ -81,7 +81,7 @@ class ActionComm extends CommonObject
     // Ical
     var $icalname;
     var $icalcolor;
-    
+
     var $actions=array();
 
 
@@ -414,7 +414,7 @@ class ActionComm extends CommonObject
 		if ($resql)
 		{
 			$num = $this->db->num_rows($resql);
-			
+
 			if ($num)
 			{
 				for($i=0;$i<$num;$i++)
@@ -675,7 +675,6 @@ class ActionComm extends CommonObject
 		// Create dir and define output file (definitive and temporary)
 		$result=create_exdir($conf->agenda->dir_temp);
 		$outputfile=$conf->agenda->dir_temp.'/'.$filename;
-		$outputfiletmp=tempnam($conf->agenda->dir_temp,'tmp');	// Temporary file (allow call of function by different threads
 
 		$result=0;
 
@@ -697,7 +696,7 @@ class ActionComm extends CommonObject
 
 		if ($buildfile)
 		{
-			// Build event array
+            // Build event array
 			$eventarray=array();
 
 			$sql = "SELECT a.id,";
@@ -835,7 +834,11 @@ class ActionComm extends CommonObject
 				$desc.=$langs->convToOutputCharset(' ('.$mysoc->name.' - built by Dolibarr)');
 			}
 
-			// Write file
+			// Create temp file
+            $outputfiletmp=tempnam($conf->agenda->dir_temp,'tmp');  // Temporary file (allow call of function by different threads
+            @chmod($outputfiletmp, octdec($conf->global->MAIN_UMASK));
+
+            // Write file
             if ($format == 'vcal') $result=build_calfile($format,$title,$desc,$eventarray,$outputfiletmp);
 			if ($format == 'ical') $result=build_calfile($format,$title,$desc,$eventarray,$outputfiletmp);
 			if ($format == 'rss')  $result=build_rssfile($format,$title,$desc,$eventarray,$outputfiletmp);
@@ -843,10 +846,17 @@ class ActionComm extends CommonObject
 			if ($result >= 0)
 			{
 				if (rename($outputfiletmp,$outputfile)) $result=1;
-				else $result=-1;
+				else
+				{
+				    dol_syslog("ActionComm::build_exportfile failed to rename ".$outputfiletmp." to ".$outputfile, LOG_ERR);
+                    dol_delete_file($outputfiletmp,0,1);
+				    $result=-1;
+				}
 			}
 			else
 			{
+                dol_syslog("ActionComm::build_exportfile build_xxxfile function fails to for format=".$format." outputfiletmp=".$outputfile, LOG_ERR);
+			    dol_delete_file($outputfiletmp,0,1);
 				$langs->load("errors");
 				$this->error=$langs->trans("ErrorFailToCreateFile",$outputfile);
 			}

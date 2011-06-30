@@ -21,7 +21,7 @@
  *	\file       htdocs/societe/canvas/actions_card_common.class.php
  *	\ingroup    thirdparty
  *	\brief      Fichier de la classe Thirdparty card controller (common)
- *	\version    $Id$
+ *	\version    $Id: actions_card_common.class.php,v 1.22 2011/06/30 13:25:32 hregis Exp $
  */
 
 /**
@@ -259,7 +259,7 @@ class ActionsCardCommon
 
                     $oldsoccanvas = new Canvas($this->db);
                     $oldsoccanvas->getCanvas('thirdparty','card',$this->object->canvas);
-                    $result=$oldsoccanvas->fetch($socid);
+                    $result=$oldsoccanvas->control->object->fetch($socid);
 
                     // To avoid setting code if third party is not concerned. But if it had values, we keep them.
                     if (empty($this->object->client) && empty($oldsoccanvas->control->object->code_client))             $this->object->code_client='';

@@ -22,7 +22,7 @@
  *	\file       htdocs/core/class/commonobject.class.php
  *	\ingroup    core
  *	\brief      File of parent class of all other business classes (invoices, contracts, proposals, orders, ...)
- *	\version    $Id$
+ *	\version    $Id: commonobject.class.php,v 1.140 2011/06/30 13:27:20 hregis Exp $
  */
 
 
@@ -585,15 +585,21 @@ class CommonObject
 	{
 		global $conf;
 
-		$result=false;
-
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$table." SET ";
 		$sql.= $field." = '".$value."'";
 		$sql.= " WHERE rowid = ".$id;
 
 		dol_syslog("CommonObject::updateObjectField sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (! $resql) dol_print_error($this->db);
+		if ($resql)
+		{
+			return 1;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			return -1;
+		}
 	}
 
 	/**
@@ -1432,6 +1438,8 @@ class CommonObject
 		global $conf;
 
 		if (! is_array($arraytype)) $arraytype=array($arraytype);
+		
+		$i=0;
 
 		foreach($conf->hooks_modules as $module => $hooks)
 		{
@@ -1445,6 +1453,8 @@ class CommonObject
 						$actionfile = 'actions_'.$module.'.class.php';
 						$daofile 	= 'dao_'.$module.'.class.php';
 						$pathroot	= '';
+						
+						$this->hooks[$i]['type']=$type;
 
 						// Include actions class (controller)
 						$resaction=dol_include_once($path.$actionfile);
@@ -1457,15 +1467,17 @@ class CommonObject
 						{
     						$controlclassname = 'Actions'.ucfirst($module);
     						$objModule = new $controlclassname($this->db);
-    						$this->hooks[$type][$objModule->module_number] = $objModule;
+    						$this->hooks[$i]['modules'][$objModule->module_number] = $objModule;
 						}
 
                         if ($resdao)
                         {
     						// Instantiate dataservice class (model)
     						$modelclassname = 'Dao'.ucfirst($module);
-    						$this->hooks[$type][$objModule->module_number]->object = new $modelclassname($this->db);
+    						$this->hooks[$i]['modules'][$objModule->module_number]->object = new $modelclassname($this->db);
                         }
+                        
+                        $i++;
 					}
 				}
 			}
@@ -1731,9 +1743,18 @@ class CommonObject
 		{
 			$var=!$var;
 
-			if (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line))
+			if (! empty($this->hooks) && ( ($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line) ) )
 			{
-				if (empty($line->fk_parent_line)) $this->hooks['objectcard'][$line->special_code]->printObjectLine($action,$this,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected);
+				if (empty($line->fk_parent_line))
+				{
+					foreach($this->hooks as $hook)
+					{
+						if (method_exists($hook['modules'][$line->special_code],'printObjectLine'))
+						{
+							$hook['modules'][$line->special_code]->printObjectLine($action,$this,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected);
+						}
+					}
+				}
 			}
 			else
 			{
@@ -1829,7 +1850,7 @@ class CommonObject
      *  If lines are into a template, title must also be into a template
      *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
 	 */
-	function printOriginLinesList($object)
+	function printOriginLinesList()
 	{
 		global $langs;
 
@@ -1849,9 +1870,15 @@ class CommonObject
 		{
 			$var=!$var;
 
-			if (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line))
+			if (! empty($this->hooks) && ( ($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line) ) )
 			{
-				if (empty($line->fk_parent_line)) $object->hooks['objectcard'][$line->special_code]->printOriginObjectLine($this,$line,$var,$i);
+				if (empty($line->fk_parent_line))
+				{
+					foreach($this->hooks as $hook)
+					{
+						if (method_exists($hook['modules'][$line->special_code],'printOriginObjectLine')) $hook['modules'][$line->special_code]->printOriginObjectLine($this,$line,$var,$i);
+					}
+				}
 			}
 			else
 			{
@@ -1899,7 +1926,7 @@ class CommonObject
 			$this->tpl['label'].= $productstatic->getNomUrl(1);
 			$this->tpl['label'].= $line->label?' - '.$line->label:'';
 			// Dates
-			if ($date_start || $date_end)
+			if ($line->product_type == 1 && ($date_start || $date_end))
 			{
 				$this->tpl['label'].= get_date_range($date_start,$date_end);
 			}
@@ -1909,7 +1936,7 @@ class CommonObject
 			$this->tpl['label'].= ($line->product_type == -1 ? '&nbsp;' : ($line->product_type == 1 ? img_object($langs->trans(''),'service') : img_object($langs->trans(''),'product')));
 			$this->tpl['label'].= ($line->label ? '&nbsp;'.$line->label : '');
 			// Dates
-			if ($date_start || $date_end)
+			if ($line->product_type == 1 && ($date_start || $date_end))
 			{
 				$this->tpl['label'].= get_date_range($date_start,$date_end);
 			}

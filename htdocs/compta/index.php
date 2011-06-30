@@ -22,7 +22,7 @@
  *	\file       htdocs/compta/index.php
  *	\ingroup    compta
  *	\brief      Main page of accountancy area
- *	\version    $Id$
+ *	\version    $Id: index.php,v 1.181 2011/06/29 17:55:34 eldy Exp $
  */
 
 require('../main.inc.php');
@@ -474,20 +474,17 @@ if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
 
 
 
-// Last customers
-if ($conf->societe->enabled && $user->rights->societe->lire)
+// Last donations
+if ($conf->don->enabled && $user->rights->societe->lire)
 {
-	include_once(DOL_DOCUMENT_ROOT.'/societe/class/client.class.php');
+	include_once(DOL_DOCUMENT_ROOT.'/compta/dons/class/don.class.php');
 
 	$langs->load("boxes");
+    $donationstatic=new Don($db);
 
-	$sql = "SELECT s.nom, s.rowid, s.datec as dc, s.tms as dm";
-	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= " WHERE s.client IN (1, 3)";
-	$sql.= " AND s.entity = ".$conf->entity;
-	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-	if ($socid)	$sql.= " AND s.rowid = ".$socid;
+	$sql = "SELECT s.rowid, s.nom, s.prenom, s.societe, s.datedon as date, s.tms as dm, s.amount, s.fk_statut";
+	$sql.= " FROM ".MAIN_DB_PREFIX."don as s";
+	$sql.= " WHERE s.entity = ".$conf->entity;
 	$sql.= $db->order("s.tms","DESC");
 	$sql.= $db->plimit($max, 0);
 
@@ -500,25 +497,32 @@ if ($conf->societe->enabled && $user->rights->societe->lire)
 		$i = 0;
 
 		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><td>'.$langs->trans("BoxTitleLastModifiedCustomers",min($max,$num)).'</td>';
+		print '<tr class="liste_titre"><td>'.$langs->trans("BoxTitleLastModifiedDonations",min($max,$num)).'</td>';
+        print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
 		print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
+        print '<td width="16">&nbsp;</td>';
 		print '</tr>';
 		if ($num)
 		{
 			$var = True;
 			$total_ttc = $totalam = $total = 0;
 
-			$customerstatic=new Client($db);
 			$var=true;
 			while ($i < $num && $i < $max)
 			{
 				$objp = $db->fetch_object($result);
-				$customerstatic->id=$objp->rowid;
-				$customerstatic->nom=$objp->nom;
 				$var=!$var;
 				print '<tr '.$bc[$var].'>';
-				print '<td>'.$customerstatic->getNomUrl(1).'</td>';
+				$donationstatic->id=$objp->rowid;
+				$donationstatic->nom=$objp->nom;
+				$donationstatic->prenom=$objp->prenom;
+				$label=$donationstatic->getFullName($langs);
+				if ($objp->societe) $label.=($label?' - ':'').$objp->societe;
+				$donationstatic->ref=$label;
+				print '<td>'.$donationstatic->getNomUrl(1).'</td>';
+                print '<td align="right">'.price($objp->amount).'</td>';
 				print '<td align="right">'.dol_print_date($db->jdate($objp->dm),'day').'</td>';
+                print '<td>'.$donationstatic->LibStatut($objp->fk_statut,3).'</td>';
 				print '</tr>';
 
 				$i++;
@@ -531,22 +535,25 @@ if ($conf->societe->enabled && $user->rights->societe->lire)
 		}
 		print '</table><br>';
 	}
+	else dol_print_error($db);
 }
 
 
-// Last suppliers
-if ($conf->fournisseur->enabled && $user->rights->societe->lire)
+// Last trips and expenses
+if ($conf->deplacement->enabled && $user->rights->deplacement->lire)
 {
-	$langs->load("boxes");
+    include_once(DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php');
 
-	$sql = "SELECT s.nom, s.rowid, s.datec as dc, s.tms as dm";
-	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= " WHERE s.fournisseur = 1";
-	$sql.= " AND s.entity = ".$conf->entity;
-	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-	if ($socid)	$sql.= " AND s.rowid = ".$socid;
-	$sql.= $db->order("s.tms","DESC");
+    $langs->load("boxes");
+
+	$sql = "SELECT u.rowid as uid, u.name, u.firstname, d.rowid, d.dated as date, d.tms as dm, d.km";
+	$sql.= " FROM ".MAIN_DB_PREFIX."deplacement as d, ".MAIN_DB_PREFIX."user as u";
+	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql.= " WHERE u.rowid = d.fk_user";
+	$sql.= " AND d.entity = ".$conf->entity;
+	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND d.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+	if ($socid)	$sql.= " AND d.fk_soc = ".$socid;
+	$sql.= $db->order("d.tms","DESC");
 	$sql.= $db->plimit($max, 0);
 
 	$result = $db->query($sql);
@@ -558,22 +565,32 @@ if ($conf->fournisseur->enabled && $user->rights->societe->lire)
 		$i = 0;
 
 		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><td>'.$langs->trans("BoxTitleLastModifiedSuppliers",min($max,$num)).'</td>';
+		print '<tr class="liste_titre">';
+		print '<td colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses",min($max,$num)).'</td>';
+        print '<td align="right">'.$langs->trans("FeesKilometersOrAmout").'</td>';
 		print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
+        print '<td width="16">&nbsp;</td>';
 		print '</tr>';
 		if ($num)
 		{
 			$total_ttc = $totalam = $total = 0;
 
-			$customerstatic=new Client($db);
+			$deplacementstatic=new Deplacement($db);
+			$userstatic=new User($db);
 			while ($i < $num && $i < $max)
 			{
 				$objp = $db->fetch_object($result);
-				$customerstatic->id=$objp->rowid;
-				$customerstatic->nom=$objp->nom;
+				$deplacementstatic->ref=$objp->rowid;
+				$deplacementstatic->id=$objp->rowid;
+				$userstatic->id=$objp->uid;
+				$userstatic->nom=$objp->name;
+				$userstatic->prenom=$objp->firstname;
 				print '<tr '.$bc[$var].'>';
-				print '<td>'.$customerstatic->getNomUrl(1).'</td>';
+                print '<td>'.$deplacementstatic->getNomUrl(1).'</td>';
+				print '<td>'.$userstatic->getNomUrl(1).'</td>';
+                print '<td align="right">'.$objp->km.'</td>';
 				print '<td align="right">'.dol_print_date($db->jdate($objp->dm),'day').'</td>';
+                print '<td>'.$deplacementstatic->LibStatut($objp->fk_statut,3).'</td>';
 				print '</tr>';
 				$var=!$var;
 				$i++;
@@ -586,6 +603,7 @@ if ($conf->fournisseur->enabled && $user->rights->societe->lire)
 		}
 		print '</table><br>';
 	}
+    else dol_print_error($db);
 }
 
 
@@ -991,5 +1009,5 @@ print '</table>';
 $db->close();
 
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/06/29 17:55:34 $ - $Revision: 1.181 $');
 ?>
