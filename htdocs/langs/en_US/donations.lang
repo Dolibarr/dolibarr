@@ -24,3 +24,4 @@ ValidPromess=Validate promise
 BuildDonationReceipt=Build receipt
 DonationsModels=Documents models for donation receipts
 LastModifiedDonations=Last %s modified donations
+SearchADonation=Search a donation

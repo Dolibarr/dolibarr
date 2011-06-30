@@ -19,3 +19,4 @@ TF_LUNCH=Lunch
 TF_TRIP=Trip
 ListTripsAndExpenses=List of trips and expenses
 ExpensesArea=Trips and exepenses area
+SearchATripAndExpense=Search a trip and expense

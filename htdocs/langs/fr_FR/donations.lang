@@ -24,3 +24,4 @@ ValidPromess=Valider promesse
 BuildDonationReceipt=Créer reçu
 DonationsModels=Modèle de document de bon de réception de dons
 LastModifiedDonations=Les %s derniers dons modifiés
+SearchADonation=Rechercher un don
