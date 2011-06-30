@@ -24,7 +24,7 @@
  *       \file       htdocs/contact/fiche.php
  *       \ingroup    societe
  *       \brief      Card of a contact
- *       \version    $Id: fiche.php,v 1.215 2011/06/30 13:25:32 hregis Exp $
+ *       \version    $Id: fiche.php,v 1.216 2011/06/30 22:38:06 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -68,25 +68,28 @@ else
     $result = restrictedArea($user, 'contact', $id, 'socpeople'); // If we create a contact with no company (shared contacts), no check on write permission
 }
 
+// Instantiate hooks of thirdparty module
+if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
+{
+    $object->callHooks('contactcard');
+}
+
 
 /*
  *	Actions
  */
 
+
 // If canvas actions are defined, because on url, or because contact was created with canvas feature on, we use the canvas feature.
 // If canvas actions are not defined, we use standard feature.
+// TODO DO not use this but hooks instead
 if (method_exists($objcanvas->control,'doActions'))
 {
     // -----------------------------------------
     // When used with CANVAS
     // -----------------------------------------
     $objcanvas->doActions($id);
-    if (empty($objcanvas->error) && (empty($objcanvas->errors) || sizeof($objcanvas->errors) == 0))
-    {
-        if ($action=='add')    { $objcanvas->action='create'; $action='create'; }
-        if ($action=='update') { $objcanvas->action='view';   $action='view'; }
-    }
-    else
+    if (! empty($objcanvas->error) || (! empty($objcanvas->errors) && sizeof($objcanvas->errors) > 0))
     {
         $error=$objcanvas->error; $errors=$objcanvas->errors;
         if ($action=='add')    { $objcanvas->action='create'; $action='create'; }
@@ -950,5 +953,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/06/30 13:25:32 $ - $Revision: 1.215 $');
+llxFooter('$Date: 2011/06/30 22:38:06 $ - $Revision: 1.216 $');
 ?>
