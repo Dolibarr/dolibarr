@@ -26,7 +26,7 @@
  *  \file       htdocs/societe/soc.php
  *  \ingroup    societe
  *  \brief      Third party card page
- *  \version    $Id: soc.php,v 1.114 2011/06/30 22:38:07 eldy Exp $
+ *  \version    $Id: soc.php,v 1.115 2011/06/30 22:47:04 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -53,6 +53,7 @@ $action = GETPOST('action');
 $confirm = GETPOST('confirm');
 
 $soc = new Societe($db);
+$object = new Societe($db);
 $extrafields = new ExtraFields($db);
 
 // Security check
@@ -1971,5 +1972,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/06/30 22:38:07 $ - $Revision: 1.114 $');
+llxFooter('$Date: 2011/06/30 22:47:04 $ - $Revision: 1.115 $');
 ?>
