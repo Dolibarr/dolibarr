@@ -23,7 +23,7 @@
  *       \file       htdocs/comm/action/class/actioncomm.class.php
  *       \ingroup    commercial
  *       \brief      File of class to manage agenda events (actions)
- *       \version    $Id: actioncomm.class.php,v 1.40 2011/06/30 07:49:26 eldy Exp $
+ *       \version    $Id: actioncomm.class.php,v 1.41 2011/06/30 07:52:43 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php');
@@ -848,12 +848,14 @@ class ActionComm extends CommonObject
 				if (rename($outputfiletmp,$outputfile)) $result=1;
 				else
 				{
+				    dol_syslog("ActionComm::build_exportfile failed to rename ".$outputfiletmp." to ".$outputfile, LOG_ERR);
                     dol_delete_file($outputfiletmp,0,1);
 				    $result=-1;
 				}
 			}
 			else
 			{
+                dol_syslog("ActionComm::build_exportfile build_xxxfile function fails to for format=".$format." outputfiletmp=".$outputfile, LOG_ERR);
 			    dol_delete_file($outputfiletmp,0,1);
 				$langs->load("errors");
 				$this->error=$langs->trans("ErrorFailToCreateFile",$outputfile);
