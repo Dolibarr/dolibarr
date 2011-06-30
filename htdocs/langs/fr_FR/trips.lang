@@ -20,3 +20,4 @@ TF_LUNCH=Repas
 TF_TRIP=Déplacement
 ListTripsAndExpenses=Liste des notes de frais
 ExpensesArea=Espace Notes de frais
+SearchATripAndExpense=Rechercher une note de frais

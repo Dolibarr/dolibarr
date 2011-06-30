@@ -21,7 +21,7 @@
  *	\file       htdocs/compta/dons/liste.php
  *	\ingroup    don
  *	\brief      Page de liste des dons
- *	\version    $Id$
+ *	\version    $Id: liste.php,v 1.34 2011/06/30 21:53:02 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -43,6 +43,9 @@ if (! $sortfield) $sortfield="d.datedon";
 $limit = $conf->liste_limit;
 
 $statut=isset($_GET["statut"])?$_GET["statut"]:"-1";
+$search_ref=GETPOST('search_ref');
+$search_company=GETPOST('search_company');
+$search_name=GETPOST('search_name');
 
 
 
@@ -65,6 +68,18 @@ $sql.= " ON p.rowid = d.fk_don_projet WHERE 1 = 1";
 if ($statut >= 0)
 {
 	$sql .= " AND d.fk_statut = ".$statut;
+}
+if (trim($search_ref) != '')
+{
+    $sql.= ' AND d.rowid LIKE \'%'.$db->escape(trim($search_ref)) . '%\'';
+}
+if (trim($search_company) != '')
+{
+    $sql.= ' AND d.societe LIKE \'%'.$db->escape(trim($search_company)) . '%\'';
+}
+if (trim($search_name) != '')
+{
+    $sql.= ' AND d.nom LIKE \'%'.$db->escape(trim($search_name)) . '%\' OR d.prenom LIKE \'%'.$db->escape(trim($search_name)) . '%\'';
 }
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit+1, $offset);
@@ -89,6 +104,7 @@ if ($result)
 	}
 
 
+    print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 	print "<table class=\"noborder\" width=\"100%\">";
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"d.rowid","&page=$page&statut=$statut","","",$sortfield,$sortorder);
@@ -104,12 +120,38 @@ if ($result)
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"d.fk_statut","&page=$page&statut=$statut","",'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
+    // Filters lines
+    print '<tr class="liste_titre">';
+    print '<td class="liste_titre">';
+    print '<input class="flat" size="10" type="text" name="search_ref" value="'.$search_ref.'">';
+    print '</td>';
+    print '<td class="liste_titre">';
+    print '<input class="flat" size="10" type="text" name="search_company" value="'.$search_company.'">';
+    print '</td>';
+    print '<td class="liste_titre">';
+    print '<input class="flat" size="10" type="text" name="search_name" value="'.$search_name.'">';
+    print '</td>';
+    print '<td class="liste_titre" align="left">';
+    print '&nbsp;';
+    print '</td>';
+    if ($conf->projet->enabled)
+    {
+        print '<td class="liste_titre" align="right">';
+        print '&nbsp;';
+        print '</td>';
+    }
+    print '<td class="liste_titre" align="right">';
+    print '&nbsp;';
+    print '</td>';
+    print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+    print "</td></tr>\n";
+
 	$var=True;
 	while ($i < min($num,$limit))
 	{
 		$objp = $db->fetch_object($result);
 		$var=!$var;
-		print "<tr $bc[$var]>";
+		print "<tr ".$bc[$var].">";
 		$donationstatic->id=$objp->rowid;
 		$donationstatic->ref=$objp->rowid;
 		$donationstatic->nom=$objp->nom;
@@ -140,6 +182,8 @@ if ($result)
 		$i++;
 	}
 	print "</table>";
+    print "</form>\n";
+    $db->free($resql);
 }
 else
 {
@@ -149,5 +193,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/06/30 21:53:02 $ - $Revision: 1.34 $');
 ?>

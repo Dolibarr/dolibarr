@@ -26,7 +26,7 @@
  *	\file       htdocs/compta/facture.php
  *	\ingroup    facture
  *	\brief      Page to create/see an invoice
- *	\version    $Id: facture.php,v 1.841 2011/06/30 13:27:21 hregis Exp $
+ *	\version    $Id: facture.php,v 1.842 2011/06/30 21:53:02 eldy Exp $
  */
 
 require('../main.inc.php');
@@ -61,6 +61,7 @@ $action=GETPOST('action');
 $confirm=GETPOST('confirm');
 $lineid=GETPOST('lineid');
 $userid=GETPOST('userid');
+$search_ref=GETPOST('sf_ref')?GETPOST('sf_ref'):GETPOST('search_ref');
 
 // Security check
 $fieldid = isset($_GET["ref"])?'facnumber':'rowid';
@@ -248,8 +249,8 @@ if ($action == 'valid')
 
 if ($action == 'set_thirdparty')
 {
-    $object->updateObjectField('facture',$id,'fk_soc',$socid); 
-	
+    $object->updateObjectField('facture',$id,'fk_soc',$socid);
+
         Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id);
         exit;
 }
@@ -3052,9 +3053,9 @@ else
         {
             $sql.= " AND f.datef BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
         }
-        if ($_POST['sf_ref'])
+        if (trim($search_ref) != '')
         {
-            $sql.= ' AND f.facnumber LIKE \'%'.$db->escape(trim($_POST['sf_ref'])) . '%\'';
+            $sql.= ' AND f.facnumber LIKE \'%'.$db->escape(trim($search_ref)) . '%\'';
         }
         if ($sall)
         {
@@ -3106,17 +3107,17 @@ else
             //print '<td class="liste_titre">&nbsp;</td>';
             print '</tr>';
 
-            // Lignes des champs de filtre
-
+            // Filters lines
             print '<tr class="liste_titre">';
             print '<td class="liste_titre" align="left">';
-            print '<input class="flat" size="10" type="text" name="search_ref" value="'.$_GET['search_ref'].'">';
-            print '<td class="liste_titre" colspan="1" align="center">';
+            print '<input class="flat" size="10" type="text" name="search_ref" value="'.$search_ref.'">';
+            print '</td>';
+            print '<td class="liste_titre" align="center">';
             print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
-            //print '&nbsp;'.$langs->trans('Year').': ';
-            $syear = $year;
+            //print '&nbsp;'.$langs->trans('Year').': '.$syear;
+            //print 'xx'.$syear.'zz';
             //if ($syear == '') $syear = date("Y");
-            $htmlother->select_year($syear,'year',1, 20, 5);
+            $htmlother->select_year($syear?$syear:-1,'year',1, 20, 5);
             print '</td>';
             print '<td class="liste_titre" align="left">&nbsp;</td>';
             print '<td class="liste_titre" align="left">';
@@ -3234,5 +3235,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/06/30 13:27:21 $ - $Revision: 1.841 $');
+llxFooter('$Date: 2011/06/30 21:53:02 $ - $Revision: 1.842 $');
 ?>

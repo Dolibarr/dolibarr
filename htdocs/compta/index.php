@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,7 +22,7 @@
  *	\file       htdocs/compta/index.php
  *	\ingroup    compta
  *	\brief      Main page of accountancy area
- *	\version    $Id: index.php,v 1.181 2011/06/29 17:55:34 eldy Exp $
+ *	\version    $Id: index.php,v 1.182 2011/06/30 21:53:02 eldy Exp $
  */
 
 require('../main.inc.php');
@@ -111,7 +111,7 @@ $max=3;
 
 
 /*
- * Find invoices
+ * Search invoices
  */
 if ($conf->facture->enabled && $user->rights->facture->lire)
 {
@@ -127,6 +127,9 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 	print "</table></form><br>";
 }
 
+/*
+ * Search supplier invoices
+ */
 if ($conf->fournisseur->enabled && $user->rights->fournisseur->lire)
 {
 	print '<form method="post" action="'.DOL_URL_ROOT.'/fourn/facture/index.php">';
@@ -141,6 +144,39 @@ if ($conf->fournisseur->enabled && $user->rights->fournisseur->lire)
 	print "</table></form><br>";
 }
 
+/*
+ * Search donations
+ */
+if ($conf->don->enabled && $user->rights->don->lire)
+{
+    print '<form method="post" action="'.DOL_URL_ROOT.'/compta/dons/liste.php">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchADonation").'</td></tr>';
+    print "<tr ".$bc[0].">";
+    print "<td>".$langs->trans("Ref").':</td><td><input type="text" name="search_ref" class="flat" size="18"></td>';
+    print '<td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+    //print "<tr ".$bc[0]."><td>".$langs->trans("Other").':</td><td><input type="text" name="sall" class="flat" size="18"></td>';
+    print '</tr>';
+    print "</table></form><br>";
+}
+
+/*
+ * Search expenses
+ */
+if ($conf->deplacement->enabled && $user->rights->deplacement->lire)
+{
+    print '<form method="post" action="'.DOL_URL_ROOT.'/compta/deplacement/list.php">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchATripAndExpense").'</td></tr>';
+    print "<tr ".$bc[0].">";
+    print "<td>".$langs->trans("Ref").':</td><td><input type="text" name="search_ref" class="flat" size="18"></td>';
+    print '<td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+    //print "<tr ".$bc[0]."><td>".$langs->trans("Other").':</td><td><input type="text" name="sall" class="flat" size="18"></td>';
+    print '</tr>';
+    print "</table></form><br>";
+}
 
 /**
  * Draft customers invoices
@@ -1009,5 +1045,5 @@ print '</table>';
 $db->close();
 
 
-llxFooter('$Date: 2011/06/29 17:55:34 $ - $Revision: 1.181 $');
+llxFooter('$Date: 2011/06/30 21:53:02 $ - $Revision: 1.182 $');
 ?>
