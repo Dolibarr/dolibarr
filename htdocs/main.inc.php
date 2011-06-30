@@ -26,7 +26,7 @@
  *	\file       htdocs/main.inc.php
  *	\ingroup	core
  *	\brief      File that defines environment for Dolibarr pages only (variables not required by scripts)
- *	\version    $Id: main.inc.php,v 1.744 2011/06/26 00:42:06 eldy Exp $
+ *	\version    $Id: main.inc.php,v 1.745 2011/06/30 13:40:34 hregis Exp $
  */
 
 @ini_set('memory_limit', '64M');	// This may be useless if memory is hard limited by your PHP
@@ -1374,15 +1374,21 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 		img_object('','user').' '.$langs->trans("Members"), 'member', 'sall');
 	}
 
-	// Search form hook of thirdparty module
-	if (! empty($object->hooks['searchform']))
+	// Search form hook for external modules
+	if (! empty($object->hooks))
 	{
 		$searchform.='<!-- Begin search form hook area -->'."\n";
-
-		foreach($object->hooks['searchform'] as $module)
+		
+		foreach($object->hooks as $hook)
 		{
-			$searchform.=$module->printSearchForm();
-        }
+			if ($hook['type'] == 'searchform' && ! empty($hook['modules']))
+			{
+				foreach($hook['modules'] as $module)
+				{
+					if (method_exists($module,'printSearchForm')) $searchform.=$module->printSearchForm();
+				}
+			}
+		}
 
         $searchform.="\n".'<!-- End of search form hook area -->'."\n";
     }
@@ -1495,15 +1501,21 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 
 	print "\n";
 
-	// Left block hook of thirdparty module
-	if (! empty($object->hooks['leftblock']))
+	// Left block hook for external modules
+	if (! empty($object->hooks))
 	{
 		print '<!-- Begin left block hook area -->'."\n";
-
-		foreach($object->hooks['leftblock'] as $module)
+		
+		foreach($object->hooks as $hook)
 		{
-			$module->printLeftBlock();
-        }
+			if ($hook['type'] == 'leftblock' && ! empty($hook['modules']))
+			{
+				foreach($hook['modules'] as $module)
+				{
+					if (method_exists($module,'printLeftBlock')) $module->printLeftBlock();
+				}
+			}
+		}
 
         print "\n".'<!-- End of left block hook area -->'."\n";
     }
