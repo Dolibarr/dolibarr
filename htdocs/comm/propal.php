@@ -27,7 +27,7 @@
  *	\file       	htdocs/comm/propal.php
  *	\ingroup    	propale
  *	\brief      	Page of commercial proposals card and list
- *	\version		$Id: propal.php,v 1.605 2011/06/29 22:29:51 eldy Exp $
+ *	\version		$Id: propal.php,v 1.606 2011/06/30 13:27:21 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -82,7 +82,7 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, $module, $objectid, $dbtable);
 
 // Instantiate hooks of thirdparty module
-if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
+if (is_array($conf->hooks_modules) && ! empty($conf->hooks_modules))
 {
 	$object->callHooks('propalcard');
 }
@@ -92,18 +92,27 @@ if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
 /*                     Actions                                                */
 /******************************************************************************/
 
-// Hook of thirdparty module
-if (! empty($object->hooks['propalcard']))
+// Hook of actions
+if (! empty($object->hooks))
 {
-	foreach($object->hooks['propalcard'] as $module)
+	foreach($object->hooks as $hook)
 	{
-        $reshook+=$module->doActions($object);
-        if (! empty($module->error) || (! empty($module->errors) && sizeof($module->errors) > 0))
-        {
-            $error=$module->error; $errors[]=$module->errors;
-            if ($action=='add')    $action='create';
-            if ($action=='update') $action='edit';
-        }
+		if (! empty($hook['modules']))
+		{
+			foreach($hook['modules'] as $module)
+			{
+				if (method_exists($module,'doActions'))
+				{
+					$reshook+=$module->doActions($object);
+			        if (! empty($module->error) || (! empty($module->errors) && sizeof($module->errors) > 0))
+			        {
+			            $mesg=$module->error; $mesgs[]=$module->errors;
+			            if ($action=='add')    $action='create';
+			            if ($action=='update') $action='edit';
+			        }
+				}
+			}
+		}
 	}
 }
 
@@ -1012,12 +1021,8 @@ if ($id > 0 || ! empty($ref))
 	/*
 	 * Show object in view mode
 	 */
-
-	if ($mesg)
-	{
-		if (! preg_match('/div class=/',$mesg)) print '<div class="ok">'.$mesg.'</div><br>';
-		else print $mesg."<br>";
-	}
+	
+	dol_htmloutput_mesg($mesg,$mesgs);
 
 	$object->fetch($id,$ref);
 
@@ -1087,12 +1092,21 @@ if ($id > 0 || ! empty($ref))
 		$formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateProp'), $text, 'confirm_validate','',0,1);
 	}
 
-	// Hook of thirdparty module
-	if (empty($formconfirm) && ! empty($object->hooks['objectcard']))
+	// Hook for external modules
+	if (empty($formconfirm) && ! empty($object->hooks))
 	{
-		foreach($object->hooks['objectcard'] as $module)
+		foreach($object->hooks as $hook)
 		{
-			if (empty($formconfirm)) $formconfirm = $module->formconfirm($action,$object,$lineid);
+			if (! empty($hook['modules']))
+			{
+				foreach($hook['modules'] as $module)
+				{
+					if (empty($formconfirm) && method_exists($module,'formconfirm'))
+					{
+						$formconfirm = $module->formconfirm($action,$object,$lineid);
+					}
+				}
+			}
 		}
 	}
 
@@ -1496,13 +1510,19 @@ if ($id > 0 || ! empty($ref))
 				$object->formAddPredefinedProduct(0,$mysoc,$soc);
 			}
 
-			// Hook of thirdparty module
-			if (! empty($object->hooks['objectcard']))
+			// Hook for external modules
+			foreach($object->hooks as $hook)
 			{
-				foreach($object->hooks['objectcard'] as $module)
+				if (! empty($hook['modules']))
 				{
-					$var=!$var;
-					$module->formAddObject($object);
+					foreach($hook['modules'] as $module)
+					{
+						if (method_exists($module,'formAddObject'))
+						{
+							$var=!$var;
+							$module->formAddObject($object);
+						}
+					}
 				}
 			}
 		}
@@ -1649,7 +1669,7 @@ if ($id > 0 || ! empty($ref))
 
 		$var=true;
 
-		$somethingshown=$formfile->show_documents('propal',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'',0,'',$soc->default_lang,$object->hooks['objectcard']);
+		$somethingshown=$formfile->show_documents('propal',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'',0,'',$soc->default_lang,$object->hooks);
 
 
 		/*
@@ -1955,6 +1975,6 @@ else
 }
 $db->close();
 
-llxFooter('$Date: 2011/06/29 22:29:51 $ - $Revision: 1.605 $');
+llxFooter('$Date: 2011/06/30 13:27:21 $ - $Revision: 1.606 $');
 
 ?>

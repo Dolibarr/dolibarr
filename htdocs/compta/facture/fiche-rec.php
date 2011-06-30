@@ -22,7 +22,7 @@
  *	\file       htdocs/compta/facture/fiche-rec.php
  *	\ingroup    facture
  *	\brief      Page to show predefined invoice
- *	\version    $Id$
+ *	\version    $Id: fiche-rec.php,v 1.74 2011/06/30 13:27:21 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -113,7 +113,7 @@ if ($_GET["action"] == 'create')
 	// Instantiate hooks of thirdparty module
 	if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
 	{
-		$facture->callHooks('objectcard');
+		$facture->callHooks('invoicecard');
 	}
 
 	if ($facture->fetch($_GET["facid"]) > 0)
@@ -576,5 +576,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/06/30 13:27:21 $ - $Revision: 1.74 $');
 ?>

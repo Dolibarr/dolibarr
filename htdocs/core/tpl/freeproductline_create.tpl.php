@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id$
+ * $Id: freeproductline_create.tpl.php,v 1.14 2011/06/30 13:27:20 hregis Exp $
  *
  * Need to have following variables defined:
  * $conf
@@ -48,11 +48,17 @@
 	echo $html->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1);
 	if (($conf->product->enabled && $conf->service->enabled) || (empty($conf->product->enabled) && empty($conf->service->enabled))) echo '<br>';
 	
-	if (! empty($object->hooks['objectcard'])) {
-		foreach($object->hooks['objectcard'] as $module) {
-			$module->formCreateProductOptions($object);
+	if (! empty($this->hooks)) {
+		foreach($this->hooks as $hook) {
+			if (! empty($hook['modules'])) {
+				foreach($hook['modules'] as $module) {
+					if (method_exists($module,'formCreateProductOptions')) {
+						$module->formCreateProductOptions($object);
+						echo '<br>';
+					}
+				}
+			}
 		}
-		echo '<br>';
 	}
 	
 	// Editor wysiwyg
