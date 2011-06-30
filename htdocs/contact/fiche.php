@@ -24,7 +24,7 @@
  *       \file       htdocs/contact/fiche.php
  *       \ingroup    societe
  *       \brief      Card of a contact
- *       \version    $Id$
+ *       \version    $Id: fiche.php,v 1.215 2011/06/30 13:25:32 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -950,5 +950,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/06/30 13:25:32 $ - $Revision: 1.215 $');
 ?>

@@ -30,7 +30,7 @@
  *	\author     Rodolphe Qiedeville
  *	\author	    Eric Seigne
  *	\author	    Laurent Destailleur
- *	\version    $Id$
+ *	\version    $Id: propal.class.php,v 1.109 2011/06/30 13:27:21 hregis Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
@@ -838,7 +838,7 @@ class Propal extends CommonObject
 		// Instantiate hooks of thirdparty module
 		if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
 		{
-			$object->callHooks('objectcard');
+			$object->callHooks('propalcard');
 		}
 
 		$this->db->begin();
@@ -905,15 +905,24 @@ class Propal extends CommonObject
 
 		if (! $error)
 		{
-			// Hook of thirdparty module
-			if (! empty($object->hooks['objectcard']))
-			{
-				foreach($object->hooks['objectcard'] as $module)
-				{
-					$result = $module->createfrom($objFrom,$result,$object->element);
-					if ($result < 0) $error++;
-				}
-			}
+			// Hook for external modules
+            if (! empty($object->hooks))
+            {
+            	foreach($object->hooks as $hook)
+            	{
+            		if (! empty($hook['modules']))
+            		{
+            			foreach($hook['modules'] as $module)
+            			{
+            				if (method_exists($module,'createfrom'))
+            				{
+            					$result = $module->createfrom($objFrom,$result,$object->element);
+            					if ($result < 0) $error++;
+            				}
+            			}
+            		}
+            	}
+            }
 
 			// Appel des triggers
 			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");

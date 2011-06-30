@@ -1,6 +1,7 @@
 -- ===================================================================
 -- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
+-- Copyright (C) 2011      Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,7 +17,7 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- $Id$
+-- $Id: llx_don.sql,v 1.5 2011/06/29 17:55:34 eldy Exp $
 -- ===================================================================
 
 
@@ -39,6 +40,8 @@ create table llx_don
   ville           varchar(50),
   pays            varchar(50),
   email           varchar(255),
+  phone           varchar(24),
+  phone_mobile    varchar(24),
   public          smallint DEFAULT 1 NOT NULL,   -- le don est-il public (0,1)
   fk_don_projet   integer NULL,                  -- projet auquel est fait le don
   fk_user_author  integer NOT NULL,

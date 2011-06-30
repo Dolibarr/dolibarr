@@ -31,7 +31,7 @@
  *	\file       htdocs/core/class/html.form.class.php
  *  \ingroup    core
  *	\brief      File of class with all html predefined components
- *	\version	$Id: html.form.class.php,v 1.183 2011/06/29 11:22:36 eldy Exp $
+ *	\version	$Id: html.form.class.php,v 1.184 2011/06/29 15:48:03 grandoc Exp $
  */
 
 
@@ -2506,6 +2506,42 @@ class Form
                 $contact=new Contact($this->db);
                 $contact->fetch($selected);
                 print $contact->getFullName($langs);
+            } else {
+                print "&nbsp;";
+            }
+        }
+    }
+    
+/**
+     *    \brief      Affiche formulaire de selection des tiers
+     *    \param      page        Page
+     *    \param      selected    Id contact pre-selectionne
+     *    \param      htmlname    Nom du formulaire select
+     */
+    function form_thirdparty($page, $selected='', $htmlname='socid')
+    {
+        global $langs;
+
+        if ($htmlname != "none")
+        {
+            print '<form method="post" action="'.$page.'">';
+            print '<input type="hidden" name="action" value="set_thirdparty">';
+            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+            print '<tr><td>';
+            $num=$this->select_societes($selected , $htmlname);
+            print '</td>';
+            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+            print '</tr></table></form>';
+        }
+        else
+        {
+            if ($selected)
+            {
+                require_once(DOL_DOCUMENT_ROOT ."/societe/class/societe.class.php");
+                $soc = new Societe($this->db);
+                $soc->fetch($selected);
+                print $soc->getNomUrl($langs);
             } else {
                 print "&nbsp;";
             }

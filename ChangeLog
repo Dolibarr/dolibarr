@@ -1,6 +1,6 @@
 --------------------------------------------------------------
 English Dolibarr ChangeLog
-$Id$
+$Id: ChangeLog,v 1.420 2011/06/29 22:42:42 eldy Exp $
 --------------------------------------------------------------
 
 ***** ChangeLog for 3.1 compared to 3.0 *****
@@ -92,7 +92,7 @@ For developers:
 - New: Dictionnary setup works with very large external dictionnaries (Add 
        page navigation).
 - New: Add function to draw graphics with javascript (using Jquery Flot).
-
+- New: Can add user login into menu urls added by modules.
 
 For translators:
 - New: Add fa_IR language.

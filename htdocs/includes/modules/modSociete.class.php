@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 /**
  *	\defgroup   societe     Module societe
  *	\brief      Module to manage third parties (customers, prospects)
- *	\version	$Id$
+ *	\version	$Id: modSociete.class.php,v 1.117 2011/06/30 13:27:21 hregis Exp $
  */
 
 /**
@@ -105,6 +105,15 @@ class modSociete extends DolibarrModules
 		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/thirdparties";
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
+		$r++;
+		
+		$this->const[$r][0] = "MAIN_MODULE_SOCIETE_HOOKS";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "thirdpartycard:contactcard";
+		$this->const[$r][3] = "";
+		$this->const[$r][4] = 0;
+		$this->const[$r][4] = 'current';
+		$this->const[$r][4] = 1;
 		$r++;
 
 		// Boxes

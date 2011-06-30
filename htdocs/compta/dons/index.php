@@ -21,7 +21,7 @@
  *	    \file       htdocs/compta/dons/index.php
  *		\ingroup    don
  *		\brief      Home page of donation module
- *		\version    $Id$
+ *		\version    $Id: index.php,v 1.28 2011/06/29 17:55:33 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -43,9 +43,10 @@ $donation_static=new Don($db);
  * View
  */
 
-llxHeader('',$langs->trans("Donations"),'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Subvenciones');
-
 $donstatic=new Don($db);
+
+$help_url='EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Subvenciones';
+llxHeader('',$langs->trans("Donations"),$help_url);
 
 $sql = "SELECT count(d.rowid) as nb, sum(d.amount) as somme , d.fk_statut";
 $sql.= " FROM ".MAIN_DB_PREFIX."don as d";
@@ -133,8 +134,7 @@ print "</table>";
 print '</td><td valign="top">';
 
 
-
-$max=5;
+$max=10;
 
 /*
  * Last modified proposals
@@ -202,5 +202,5 @@ print '</td></tr></table>';
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/06/29 17:55:33 $ - $Revision: 1.28 $');
 ?>

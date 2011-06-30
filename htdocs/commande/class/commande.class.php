@@ -25,7 +25,7 @@
  *  \file       htdocs/commande/class/commande.class.php
  *  \ingroup    commande
  *  \brief      Fichier des classes de commandes
- *  \version    $Id$
+ *  \version    $Id: commande.class.php,v 1.116 2011/06/30 13:27:20 hregis Exp $
  */
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
@@ -776,7 +776,7 @@ class Commande extends CommonObject
 		// Instantiate hooks of thirdparty module
 		if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
 		{
-			$object->callHooks('objectcard');
+			$object->callHooks('ordercard');
 		}
 
 		$this->db->begin();
@@ -825,14 +825,23 @@ class Commande extends CommonObject
 		if (! $error)
 		{
 			// Hook of thirdparty module
-			if (! empty($object->hooks['objectcard']))
-			{
-				foreach($object->hooks['objectcard'] as $module)
-				{
-					$result = $module->createfrom($objFrom,$result,$object->element);
-					if ($result < 0) $error++;
-				}
-			}
+            if (! empty($object->hooks))
+            {
+            	foreach($object->hooks as $hook)
+            	{
+            		if (! empty($hook['modules']))
+            		{
+            			foreach($hook['modules'] as $module)
+            			{
+            				if (method_exists($module,'createfrom'))
+            				{
+            					$result = $module->createfrom($objFrom,$result,$object->element);
+            					if ($result < 0) $error++;
+            				}
+            			}
+            		}
+            	}
+            }
 
 			// Appel des triggers
 			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
@@ -918,15 +927,24 @@ class Commande extends CommonObject
 
             if ($ret > 0)
             {
-                // Hooks
-                if (! empty($object->hooks['objectcard']))
-                {
-                    foreach($object->hooks['objectcard'] as $module)
-                    {
-                        $result = $module->createfrom($object,$ret,$this->element);
-                        if ($result < 0) $error++;
-                    }
-                }
+	            // Hook of thirdparty module
+	            if (! empty($object->hooks))
+	            {
+	            	foreach($object->hooks as $hook)
+	            	{
+	            		if (! empty($hook['modules']))
+	            		{
+	            			foreach($hook['modules'] as $module)
+	            			{
+	            				if (method_exists($module,'createfrom'))
+	            				{
+	            					$result = $module->createfrom($object,$ret,$this->element);
+	            					if ($result < 0) $error++;
+	            				}
+	            			}
+	            		}
+	            	}
+	            }
 
                 if (! $error)
                 {
@@ -2770,6 +2788,8 @@ class OrderLine
 {
 	var $db;
 	var $error;
+	
+	var $oldline;
 
 	// From llx_commandedet
 	var $rowid;

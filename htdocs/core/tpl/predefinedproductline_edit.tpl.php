@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id$
+ * $Id: predefinedproductline_edit.tpl.php,v 1.13 2011/06/30 13:27:20 hregis Exp $
  *
  * Need to have following variables defined:
  * $conf
@@ -48,10 +48,16 @@
 	echo ' - '.nl2br($line->product_label);
 	echo '<br>';
 
-	if (! empty($this->hooks['objectcard'])) {
-		foreach($this->hooks['objectcard'] as $module) {
-			$module->formEditProductOptions($this,$line->fk_parent_line);
-			echo '<br>';
+	if (! empty($this->hooks)) {
+		foreach($this->hooks as $hook) {
+			if (! empty($hook['modules'])) {
+				foreach($hook['modules'] as $module) {
+					if (method_exists($module,'formEditProductOptions')) {
+						$module->formEditProductOptions($this,$line->fk_parent_line);
+						echo '<br>';
+					}
+				}
+			}
 		}
 	}
 
