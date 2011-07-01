@@ -23,7 +23,7 @@
 /**
  *	\defgroup   societe     Module societe
  *	\brief      Module to manage third parties (customers, prospects)
- *	\version	$Id: modSociete.class.php,v 1.117 2011/06/30 13:27:21 hregis Exp $
+ *	\version	$Id: modSociete.class.php,v 1.118 2011/07/01 23:07:26 eldy Exp $
  */
 
 /**
@@ -106,7 +106,8 @@ class modSociete extends DolibarrModules
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 		$r++;
-		
+
+        /* Disabled (no hook by default). A module that wants to hook thirdparty or contact actions must add its own constant MAIN_MODULE_MYMODULE_HOOKS=thirdpartycard:contactcard)
 		$this->const[$r][0] = "MAIN_MODULE_SOCIETE_HOOKS";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "thirdpartycard:contactcard";
@@ -114,7 +115,7 @@ class modSociete extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$this->const[$r][4] = 'current';
 		$this->const[$r][4] = 1;
-		$r++;
+		$r++; */
 
 		// Boxes
 		$this->boxes = array();
