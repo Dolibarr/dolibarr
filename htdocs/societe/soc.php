@@ -26,7 +26,7 @@
  *  \file       htdocs/societe/soc.php
  *  \ingroup    societe
  *  \brief      Third party card page
- *  \version    $Id: soc.php,v 1.115 2011/06/30 22:47:04 eldy Exp $
+ *  \version    $Id: soc.php,v 1.116 2011/07/01 23:11:30 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -77,10 +77,10 @@ else
     $result = restrictedArea($user, 'societe', $socid);
 }
 
-// Instantiate hooks of thirdparty module
+// Instantiate hooks of thirdparty module. Note that conf->hooks_modules contains array array
 if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
 {
-    $object->callHooks('companycard');
+    $object->callHooks('thirdpartycard');
 }
 
 
@@ -89,7 +89,9 @@ if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
  * Actions
  */
 
-// Hook of actions
+$reshook=0;
+
+// Hook of actions. After that reshook is 0 if we need to process standard actions, >0 otherwise.
 if (! empty($object->hooks))
 {
     foreach($object->hooks as $hook)
@@ -100,26 +102,25 @@ if (! empty($object->hooks))
             {
                 if (method_exists($module,'doActions'))
                 {
-                    $reshook+=$module->doActions($object);
-                    if (! empty($module->error) || (! empty($module->errors) && sizeof($module->errors) > 0))
+                    $resaction+=$module->doActions($object,$action);
+                    if ($resaction < 0 || ! empty($module->error) || (! empty($module->errors) && sizeof($module->errors) > 0))
                     {
                         $mesg=$module->error; $mesgs[]=$module->errors;
                         if ($action=='add')    $action='create';
                         if ($action=='update') $action='edit';
                     }
+                    else $reshook+=$resaction;
                 }
             }
         }
     }
 }
 
+// ---------- start deprecated. Use hook to hook actions.
 // If canvas actions are defined, because on url, or because contact was created with canvas feature on, we use the canvas feature.
 // If canvas actions are not defined, we use standard feature.
 if (method_exists($objcanvas->control,'doActions'))
 {
-    // -----------------------------------------
-    // When used with CANVAS
-    // -----------------------------------------
     $objcanvas->doActions($socid);
 
     if (! empty($objcanvas->error) || (! empty($objcanvas->errors) && sizeof($objcanvas->errors) > 0))
@@ -129,12 +130,10 @@ if (method_exists($objcanvas->control,'doActions'))
         if ($action=='update') { $objcanvas->action='edit';   $action='edit'; }
     }
 }
-else
-{
-    // -----------------------------------------
-    // When used in standard mode
-    // -----------------------------------------
+// ---------- end deprecated.
 
+if (empty($reshook))
+{
     if ($_POST["getcustomercode"])
     {
         // We defined value code_client
@@ -1972,5 +1971,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/06/30 22:47:04 $ - $Revision: 1.115 $');
+llxFooter('$Date: 2011/07/01 23:11:30 $ - $Revision: 1.116 $');
 ?>
