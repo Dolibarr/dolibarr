@@ -24,7 +24,7 @@
 
 require('../main.inc.php');
 
-print_r($_POST);
+//print_r($_POST);
 
 // Getting the posted keys=>values, sanitize the ones who are from text inputs
 // from text inputs : total amount
