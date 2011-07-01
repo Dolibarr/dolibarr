@@ -21,7 +21,7 @@
 /**
  *		\file       htdocs/theme/eldy/style.css.php
  *		\brief      Fichier de style CSS du theme Eldy
- *		\version    $Id$
+ *		\version    $Id: style.css.php,v 1.80 2011/07/01 23:08:25 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -962,7 +962,7 @@ span.tabspan {
 	border: 1px solid #997777;
 }
 
-a.butActionDelete:hover {
+.butActionDelete:hover {
 	background: #FFe7ec;
 }
 
@@ -1275,6 +1275,7 @@ div.error {
   margin: 0.5em 0em 0.5em 0em;
   border: 1px solid #8C9CAB;
   -moz-border-radius:6px;
+  background: #efefa4;
 }
 
 /* Info admin */
