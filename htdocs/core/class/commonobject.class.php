@@ -22,7 +22,7 @@
  *	\file       htdocs/core/class/commonobject.class.php
  *	\ingroup    core
  *	\brief      File of parent class of all other business classes (invoices, contracts, proposals, orders, ...)
- *	\version    $Id: commonobject.class.php,v 1.141 2011/07/01 16:24:45 simnandez Exp $
+ *	\version    $Id: commonobject.class.php,v 1.142 2011/07/01 16:58:09 hregis Exp $
  */
 
 
@@ -1281,13 +1281,13 @@ class CommonObject
 					$classpath = $element.'/class';
 
 					// To work with non standard path
-					if ($objecttype == 'facture') { $classpath = 'compta/facture/class'; }
-		            if ($objecttype == 'propal')  { $classpath = 'comm/propal/class'; }
-		            if ($objecttype == 'shipping') { $classpath = 'expedition/class'; $subelement = 'expedition'; $module = 'expedition_bon'; }
-		            if ($objecttype == 'delivery') { $classpath = 'livraison/class'; $subelement = 'livraison'; $module = 'livraison_bon'; }
-		            if ($objecttype == 'invoice_supplier') { $classpath = 'fourn/class'; }
-		            if ($objecttype == 'order_supplier')   { $classpath = 'fourn/class'; }
-		            if ($objecttype == 'fichinter') {$classpatch = 'fichinter/class'; $subelement ='fichinter'; $module ='ficheinter';}                
+					if ($objecttype == 'facture')			{ $classpath = 'compta/facture/class'; }
+		            if ($objecttype == 'propal')			{ $classpath = 'comm/propal/class'; }
+		            if ($objecttype == 'shipping')			{ $classpath = 'expedition/class'; $subelement = 'expedition'; $module = 'expedition_bon'; }
+		            if ($objecttype == 'delivery')			{ $classpath = 'livraison/class'; $subelement = 'livraison'; $module = 'livraison_bon'; }
+		            if ($objecttype == 'invoice_supplier')	{ $classpath = 'fourn/class'; }
+		            if ($objecttype == 'order_supplier')	{ $classpath = 'fourn/class'; }
+		            if ($objecttype == 'fichinter')			{ $classpath = 'fichinter/class'; $subelement ='fichinter'; $module ='ficheinter'; }                
 
 		            $classfile = strtolower($subelement); $classname = ucfirst($subelement);
 		            if ($objecttype == 'invoice_supplier') { $classfile = 'fournisseur.facture'; $classname='FactureFournisseur'; }
