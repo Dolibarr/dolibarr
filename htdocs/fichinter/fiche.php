@@ -2,6 +2,7 @@
 /* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +23,7 @@
  *	\file       htdocs/fichinter/fiche.php
  *	\brief      Fichier fiche intervention
  *	\ingroup    ficheinter
- *	\version    $Id$
+ *	\version    $Id: fiche.php,v 1.163 2011/07/01 16:24:44 simnandez Exp $
  */
 
 require("../main.inc.php");
@@ -70,7 +71,7 @@ $result = restrictedArea($user, 'ficheinter', $fichinterid, 'fichinter');
  * Actions
  */
 
-if ($_REQUEST["action"] != 'create' && $_REQUEST["action"] != 'add' && ! ($_REQUEST["id"] > 0) && empty($_REQUEST["ref"]))
+if ($_REQUEST["action"] != 'create' && $_REQUEST["action"] != 'add'  && $_REQUEST["action"] != 'classifybilled' && ! ($_REQUEST["id"] > 0) && empty($_REQUEST["ref"]))
 {
     Header("Location: index.php");
     return;
@@ -279,6 +280,12 @@ if ($_POST['action'] == "addline" && $user->rights->ficheinter->creer)
         Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$_POST['fichinterid']);
         exit;
     }
+}
+
+// Classify Billed
+if ($_GET['action'] == 'classifybilled')
+{
+	$fichinter->setBilled();
 }
 
 /*
@@ -1029,7 +1036,7 @@ elseif ($fichinterid)
             }
 
             // Send
-            if ($fichinter->statut == 1)
+            if ($fichinter->statut > 0)
             {
                 $ficheinterref = dol_sanitizeFileName($fichinter->ref);
                 $file = $conf->ficheinter->dir_output . '/'.$ficheinterref.'/'.$ficheinterref.'.pdf';
@@ -1042,6 +1049,25 @@ elseif ($fichinterid)
                     else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
                 }
             }
+            
+        	//Invoicing
+            if ($conf->global->MAIN_FEATURES_LEVEL>=2)
+            {
+				if ($conf->facture->enabled && $fichinter->statut > 0)
+	            {
+					$langs->load("bills");
+	                if ($fichinter->statut < 2)
+	                {
+						if ($user->rights->facture->creer) print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$fichinter->element.'&amp;originid='.$fichinter->id.'&amp;socid='.$fichinter->socid.'">'.$langs->trans("CreateBill").'</a>';
+						else print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("CreateBill").'</a>';
+	                }
+	           	 	
+	            	if ($fichinter->statut != 2)
+					{
+						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$fichinter->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
+					}
+	            }				
+            }
 
             // Delete
             if (($fichinter->statut == 0 && $user->rights->ficheinter->creer) || $user->rights->ficheinter->supprimer)
@@ -1049,6 +1075,7 @@ elseif ($fichinterid)
                 print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$fichinter->id.'&amp;action=delete"';
                 print '>'.$langs->trans('Delete').'</a>';
             }
+            
         }
     }
 
@@ -1124,6 +1151,10 @@ elseif ($fichinterid)
     print "<br>\n";
     $somethingshown=$formfile->show_documents('ficheinter',$filename,$filedir,$urlsource,$genallowed,$delallowed,$fichinter->modelpdf,1,0,0,28,0,'','','',$societe->default_lang);
 
+	/*
+	* Linked object block
+	*/
+	$somethingshown=$fichinter->showLinkedObjectBlock();
     print "</td><td>";
     print "&nbsp;</td>";
     print "</tr></table>\n";
@@ -1132,5 +1163,5 @@ elseif ($fichinterid)
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/01 16:24:44 $ - $Revision: 1.163 $');
 ?>

@@ -2,6 +2,7 @@
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@
 /**	    \file       htdocs/fichinter/class/fichinter.class.php
  *		\ingroup    ficheinter
  *		\brief      Fichier de la classe des gestion des fiches interventions
- *		\version    $Id$
+ *		\version    $Id: fichinter.class.php,v 1.17 2011/07/01 16:24:44 simnandez Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
@@ -50,7 +51,7 @@ class Fichinter extends CommonObject
 	var $datev;
 	var $datem;
 	var $duree;
-	var $statut;		// 0=draft, 1=validated
+	var $statut;		// 0=draft, 1=validated, 2=invoiced
 	var $description;
 	var $note_private;
 	var $note_public;
@@ -75,8 +76,10 @@ class Fichinter extends CommonObject
 		// List of language codes for status
 		$this->statuts[0]='Draft';
 		$this->statuts[1]='Validated';
+		$this->statuts[2]='Invoiced';
 		$this->statuts_short[0]='Draft';
 		$this->statuts_short[1]='Validated';
+		$this->statuts_short[2]='Invoiced';
 	}
 
 
@@ -236,7 +239,15 @@ class Fichinter extends CommonObject
 				$this->modelpdf     = $obj->model_pdf;
 
 				if ($this->statut == 0) $this->brouillon = 1;
-
+				
+				/*
+				 * Lines
+				 */
+				$result=$this->fetch_lines();
+				if ($result < 0)
+				{
+					return -3;
+				}
 				$this->db->free($resql);
 				return 1;
 			}
@@ -337,6 +348,31 @@ class Fichinter extends CommonObject
 			}
 		}
 	}
+	
+	/**
+	 * 	set intervetnion as billed
+	 *  @return int     <0 si ko, >0 si ok
+	 */
+	function setBilled()
+	{
+		global $conf;
+
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'fichinter SET fk_statut = 2';
+		$sql.= ' WHERE rowid = '.$this->id;
+		$sql.= " AND entity = ".$conf->entity;
+		$sql.= " AND fk_statut = 1";
+		
+		if ($this->db->query($sql) )
+		{
+			return 1;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
+	
 
 	/**
 	 *    \brief      Retourne le libelle du statut
@@ -370,21 +406,25 @@ class Fichinter extends CommonObject
 		{
 			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts_short[$statut]);
 			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts_short[$statut]);
+			if ($statut==2) return img_picto($langs->trans('StatusInterInvoiced'),'statut6').' '.$langs->trans('StatusOrderProcessed');
 		}
 		if ($mode == 3)
 		{
 			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
 			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
+			if ($statut==2) return img_picto($langs->trans('StatusInterInvoiced'),'statut6');
 		}
 		if ($mode == 4)
 		{
 			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
 			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut==2) return img_picto($langs->trans('StatusInterInvoiced'),'statut6').' '.$langs->trans('StatusInterInvoiced');
 		}
 		if ($mode == 5)
 		{
 			if ($statut==0) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
 			if ($statut==1) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
+			if ($statut==2) return $langs->trans('StatusInterInvoiced').' '.img_picto($langs->trans('StatusInterInvoiced'),'statut6');
 		}
 	}
 
@@ -522,18 +562,30 @@ class Fichinter extends CommonObject
 		$error=0;
 
 		$this->db->begin();
-
-		if (! $error)
+		
+		// Delete linked object
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_element";
+		$sql.= " WHERE fk_target = ".$this->id;
+		$sql.= " AND targettype = '".$this->element."'";
+		dol_syslog("Fichinter::delete sql=".$sql);
+		if (! $this->db->query($sql) )
 		{
-			// Delete linked contacts
-			$res = $this->delete_linked_contact();
-			if ($res < 0)
-			{
-				$this->error='ErrorFailToDeleteLinkedContact';
-				//$error++;
-				$this->db->rollback();
-				return 0;
-			}
+			dol_syslog("Fichinter::delete error", LOG_ERR);
+			$error++;
+		}
+		
+		// Delete linked contacts
+		$res = $this->delete_linked_contact();
+		if ($res < 0)
+		{
+			$this->error='ErrorFailToDeleteLinkedContact';
+			$error++;
+		}
+		
+		if ($err > 0)
+		{
+			$this->db->rollback();
+			return -1;
 		}
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinterdet";
@@ -767,7 +819,7 @@ class Fichinter extends CommonObject
 	 */
 	function fetch_lines()
 	{
-		$sql = 'SELECT rowid';
+		$sql = 'SELECT rowid, description, duree, date, rang';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'fichinterdet';
 		$sql.= ' where fk_fichinter = '.$this->id;
 
@@ -775,21 +827,25 @@ class Fichinter extends CommonObject
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			$num = $this->db->num_rows($result);
+			$num = $this->db->num_rows($resql);
 			$i = 0;
 			while ($i < $num)
 			{
-				$objp = $this->db->fetch_object($result);
+				$objp = $this->db->fetch_object($resql);
 
 				$line = new FichinterLigne($this->db);
 				$line->id = $objp->rowid;
-				//...
+				$line->desc = $objp->description;
+				//For invoicing we calculing hours
+				$line->qty = round($objp->duree/3600,2);
+				$line->date	= $this->db->jdate($objp->date);
+				$line->rang	= $objp->rang;
 
 				$this->lines[$i] = $line;
 
 				$i++;
 			}
-			$this->db->free($result);
+			$this->db->free($resql);
 
 			return 1;
 		}
