@@ -19,3 +19,5 @@ TF_OTHER=Otro
 TF_LUNCH=Dieta
 TF_TRIP=Viaje
 ListTripsAndExpenses=Listado notas de honorarios
+ExpensesArea=Área de Notas de honorarios
+SearchATripAndExpense=Buscar un honorario
