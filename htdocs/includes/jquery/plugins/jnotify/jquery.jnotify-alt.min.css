@@ -48,7 +48,6 @@
     padding: 0 5px;
     font: bold 1.4em Arial,Helvetica,sans-serif;
     line-height: 1em;
-    color: #fff;
     text-decoration: none;
     z-index: 3;
     cursor: pointer;
@@ -59,7 +58,7 @@
     z-index: 2; 
     padding: 20px;
     text-align: left;
-    color: #222222;
+    color: #446548;    
     font: bold 1.2em verdana, arial, helvetica;
     line-height: 1.2em; 
 }
