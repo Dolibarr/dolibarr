@@ -19,8 +19,19 @@
 /**
  *       \file       htdocs/compta/ajaxpayment.php
  *       \brief      File to return Ajax response on payment breakdown process
- *       \version    ajaxpayment.php,v 1.0 
+ *       \version    ajaxpayment.php,v 1.0
  */
+
+if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
+if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
+//if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
+if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1'); // If there is no menu to show
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1'); // If we don't need to load the html.form.class.php
+//if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
+//if (! defined("NOLOGIN"))        define("NOLOGIN",'1');       // If this page is public (can be called outside logged session)
 
 require('../main.inc.php');
 
@@ -33,14 +44,14 @@ $amountPayment = is_numeric($amountPayment)? $amountPayment : 0;					// is a val
 // from text inputs : invoice amount payment
 $amounts = $_POST['amounts'];														// is an array (need a foreach)
 foreach ($amounts as $key => $value)
-{	
+{
 	$value = price2num($value);
-	if (!is_numeric($value)) unset($amounts[$key]); 
-}																	
+	if (!is_numeric($value)) unset($amounts[$key]);
+}
 // from dolibarr's object (no need to check)
 $remains = $_POST['remains'];
 // from DOM elements : imgId (equals invoice id)
-$currentInvId = $_POST['imgClicked'];	
+$currentInvId = $_POST['imgClicked'];
 
 
 // Treatment
@@ -51,13 +62,13 @@ if($currentInvId)																	// Here to breakdown
 	// Get the current amount (from form) and the corresponding remainToPay (from invoice)
 	$currentAmount = $amounts['amount_'.$currentInvId];
 	$currentRemain = $remains['remain_'.$currentInvId];
-	
+
 	// Reset the substraction for this amount
-	$result += price2num($currentAmount);		
-	$currentAmount = 0;								
+	$result += price2num($currentAmount);
+	$currentAmount = 0;
 	if($result >= 0)			// then we need to calculate the amount to breakdown
 	{
-		$amountToBreakdown = ($result - $currentRemain >= 0 ? 
+		$amountToBreakdown = ($result - $currentRemain >= 0 ?
 									$currentRemain : 								// Remain can be fully paid
 									$currentRemain + ($result - $currentRemain));	// Remain can only partially be paid
 		$currentAmount = $amountToBreakdown;						// In both cases, amount will take breakdown value
@@ -66,7 +77,7 @@ if($currentInvId)																	// Here to breakdown
 	$toJsonArray['amount_'.$currentInvId] = price2num($currentAmount)."";			// Param will exist only if an img has been clicked
 }
 // Encode to JSON to return
-$toJsonArray['result'] = price2num($result)."";					
+$toJsonArray['result'] = price2num($result)."";
 echo json_encode($toJsonArray);										// Printing the call's result
 
 ?>
