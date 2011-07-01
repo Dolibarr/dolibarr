@@ -25,7 +25,7 @@
  *	\ingroup		core
  *  \brief      	Fichier de la classe de stockage de la config courante
  *  \remarks		La config est stockee dans le fichier conf/conf.php
- *  \version    	$Id$
+ *  \version    	$Id: conf.class.php,v 1.59 2011/07/01 23:06:06 eldy Exp $
  */
 
 
@@ -153,7 +153,7 @@ class Conf
 							$modulename = strtolower($reg[1]);
 							$this->login_method_modules[] = DOL_DOCUMENT_ROOT.'/'.$modulename.'/inc/login/';
 						}
-						// If this is constant for hook activated by a module
+						// If this is constant for hook activated by a module. Value is list of hooked tabs separated with :
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_HOOKS$/i',$key,$reg))
 						{
 							$modulename = strtolower($reg[1]);
