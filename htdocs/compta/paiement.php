@@ -24,7 +24,7 @@
  *	\file       htdocs/compta/paiement.php
  *	\ingroup    compta
  *	\brief      Page to create a payment
- *	\version    $Id: paiement.php,v 1.107 2011/07/01 15:19:32 cdelambert Exp $
+ *	\version    $Id: paiement.php,v 1.108 2011/07/01 16:18:10 hregis Exp $
  */
 
 require('../main.inc.php');
@@ -272,6 +272,14 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                                 jQuery(\'.fieldrequireddyn\').removeClass(\'fieldrequired\');
                             }
                         });
+                    });
+                  </script>'."\n";
+        }
+        
+        if (! empty($conf->global->MAIN_JS_ON_PAYMENT))
+        {
+        	print "\n".'<script type="text/javascript" language="javascript">';
+        	print 'jQuery(document).ready(function () {
         			function elemToJson(selector)
             		{
             			var subJson = {};
@@ -299,17 +307,15 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             				            				
             				for(var key in json)
             				{
-            					if(key == "result")
-            					{
+            					if(key == "result")	{
             						jQuery("#"+key).text(json[key]);
-            						if(json[key] < 0)
-            									jQuery("#"+key).css("color", "red");
-            						else
-            									jQuery("#"+key).removeAttr("style");
-            					}else
-            					{            					
-            						form.find("input[name*=\""+key+"\"]").each(function()
-            						{
+            						if(json[key] < 0) {
+            							jQuery("#"+key).css("color", "red");
+            						} else {
+            							jQuery("#"+key).removeAttr("style");
+            						}
+            					} else {            					
+            						form.find("input[name*=\""+key+"\"]").each(function() {
             							jQuery(this).attr("value", json[key]);
             						});
             					}          				
@@ -317,32 +323,26 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             			});
             			
             		}  
-            		function callToBreakdown(imgSelector)
-            		{        			
+            		function callToBreakdown(imgSelector) {        			
 		            	var form = jQuery("#payment_form"), imgId;
 		            	
 		            	imgId =  imgSelector.attr("id");
 		            	callForResult(imgId);
-            		}          		
-            		jQuery(document).ready(function () 
-            		{              			  
-            			
-            			jQuery("#payment_form").find("img").click(function() 
-            			{  
+            		}
+
+            		jQuery("#payment_form").find("img").click(function() {
             				callToBreakdown(jQuery(this));
                     	}); 
                     	
-            			jQuery("#payment_form").find("input[name*=\"amount_\"]").change(function() 
-            			{  
+            			jQuery("#payment_form").find("input[name*=\"amount_\"]").change(function() {  
             				callForResult();
                     	}); 
                     	            		
-            			jQuery("#amountpayment").change(function() 
-            			{  
+            			jQuery("#amountpayment").change(function() {  
             				callForResult();
                     	});
-             		});
-             	</script>'."\n";
+             	});
+             </script>'."\n";
         }
 
         print '<form name="add_paiement" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -367,18 +367,18 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         print '<td>'.$langs->trans('Comments').'</td></tr>';
 
         $rowspan=5;
-        if ($conf->use_javascript_ajax) $rowspan++;
+        if (! empty($conf->global->MAIN_JS_ON_PAYMENT)) $rowspan++;
 
         // Payment mode
         print '<tr><td><span class="fieldrequired">'.$langs->trans('PaymentMode').'</span></td><td>';
         $html->select_types_paiements((GETPOST('paiementcode')?GETPOST('paiementcode'):$facture->mode_reglement_code),'paiementcode','',2);
         print "</td>\n";
         print '<td rowspan="'.$rowspan.'" valign="top">';
-        print '<textarea name="comment" wrap="soft" cols="60" rows="'.ROWS_4.'">'.(empty($_POST['comment'])?'':$_POST['comment']).'</textarea></td>';
+        print '<textarea name="comment" wrap="soft" cols="60" rows="'.ROWS_5.'">'.(empty($_POST['comment'])?'':$_POST['comment']).'</textarea></td>';
         print '</tr>';
 
         // Payment amount
-        if ($conf->use_javascript_ajax)
+        if (! empty($conf->global->MAIN_JS_ON_PAYMENT))
         {
             print '<tr><td><span class="fieldrequired">'.$langs->trans('AmountPayment').'</span></td>';
             print '<td>';
@@ -682,5 +682,5 @@ if (! GETPOST('action'))
 
 $db->close();
 
-llxFooter('$Date: 2011/07/01 15:19:32 $ - $Revision: 1.107 $');
+llxFooter('$Date: 2011/07/01 16:18:10 $ - $Revision: 1.108 $');
 ?>

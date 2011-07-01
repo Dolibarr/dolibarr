@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011      Auguria     			<anthony.poiret@auguria.net>
+/* Copyright (C) 2011 Auguria <anthony.poiret@auguria.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,20 +24,22 @@
 
 require('../main.inc.php');
 
+print_r($_POST);
+
 // Getting the posted keys=>values, sanitize the ones who are from text inputs
-	// from text inputs : total amount
+// from text inputs : total amount
 $amountPayment = price2num($_POST['amountPayment']);
 $amountPayment = is_numeric($amountPayment)? $amountPayment : 0;					// is a value
-	// from text inputs : invoice amount payment
+// from text inputs : invoice amount payment
 $amounts = $_POST['amounts'];														// is an array (need a foreach)
-foreach ($amounts as $key => &$value)
+foreach ($amounts as $key => $value)
 {	
 	$value = price2num($value);
-	if(!is_numeric($value))unset($amounts[$key]); 
+	if (!is_numeric($value)) unset($amounts[$key]); 
 }																	
-	// from dolibarr's object (no need to check)
+// from dolibarr's object (no need to check)
 $remains = $_POST['remains'];
-	// from DOM elements : imgId (equals invoice id)
+// from DOM elements : imgId (equals invoice id)
 $currentInvId = $_POST['imgClicked'];	
 
 
