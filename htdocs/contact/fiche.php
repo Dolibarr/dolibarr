@@ -24,7 +24,7 @@
  *       \file       htdocs/contact/fiche.php
  *       \ingroup    societe
  *       \brief      Card of a contact
- *       \version    $Id: fiche.php,v 1.216 2011/06/30 22:38:06 eldy Exp $
+ *       \version    $Id: fiche.php,v 1.217 2011/07/01 23:11:12 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -79,15 +79,38 @@ if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
  *	Actions
  */
 
+$reshook=0;
 
+// Hook of actions. After that reshook is 0 if we need to process standard actions, >0 otherwise.
+if (! empty($object->hooks))
+{
+    foreach($object->hooks as $hook)
+    {
+        if (! empty($hook['modules']))
+        {
+            foreach($hook['modules'] as $module)
+            {
+                if (method_exists($module,'doActions'))
+                {
+                    $resaction+=$module->doActions($object,$action);
+                    if ($resaction < 0 || ! empty($module->error) || (! empty($module->errors) && sizeof($module->errors) > 0))
+                    {
+                        $mesg=$module->error; $mesgs[]=$module->errors;
+                        if ($action=='add')    $action='create';
+                        if ($action=='update') $action='edit';
+                    }
+                    else $reshook+=$resaction;
+                }
+            }
+        }
+    }
+}
+
+// ---------- start deprecated. Use hook to hook actions.
 // If canvas actions are defined, because on url, or because contact was created with canvas feature on, we use the canvas feature.
 // If canvas actions are not defined, we use standard feature.
-// TODO DO not use this but hooks instead
 if (method_exists($objcanvas->control,'doActions'))
 {
-    // -----------------------------------------
-    // When used with CANVAS
-    // -----------------------------------------
     $objcanvas->doActions($id);
     if (! empty($objcanvas->error) || (! empty($objcanvas->errors) && sizeof($objcanvas->errors) > 0))
     {
@@ -96,12 +119,10 @@ if (method_exists($objcanvas->control,'doActions'))
         if ($action=='update') { $objcanvas->action='edit';   $action='edit'; }
     }
 }
-else
-{
-    // -----------------------------------------
-    // When used in standard mode
-    // -----------------------------------------
+// ---------- end deprecated.
 
+if (empty($reshook))
+{
     // Creation utilisateur depuis contact
     if ($_POST["action"] == 'confirm_create_user' && $_POST["confirm"] == 'yes' && $user->rights->user->user->creer)
     {
@@ -953,5 +974,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/06/30 22:38:06 $ - $Revision: 1.216 $');
+llxFooter('$Date: 2011/07/01 23:11:12 $ - $Revision: 1.217 $');
 ?>
