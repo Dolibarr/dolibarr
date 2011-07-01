@@ -22,7 +22,7 @@
  *	\file       htdocs/core/class/commonobject.class.php
  *	\ingroup    core
  *	\brief      File of parent class of all other business classes (invoices, contracts, proposals, orders, ...)
- *	\version    $Id: commonobject.class.php,v 1.140 2011/06/30 13:27:20 hregis Exp $
+ *	\version    $Id: commonobject.class.php,v 1.141 2011/07/01 16:24:45 simnandez Exp $
  */
 
 
@@ -1287,6 +1287,7 @@ class CommonObject
 		            if ($objecttype == 'delivery') { $classpath = 'livraison/class'; $subelement = 'livraison'; $module = 'livraison_bon'; }
 		            if ($objecttype == 'invoice_supplier') { $classpath = 'fourn/class'; }
 		            if ($objecttype == 'order_supplier')   { $classpath = 'fourn/class'; }
+		            if ($objecttype == 'fichinter') {$classpatch = 'fichinter/class'; $subelement ='fichinter'; $module ='ficheinter';}                
 
 		            $classfile = strtolower($subelement); $classname = ucfirst($subelement);
 		            if ($objecttype == 'invoice_supplier') { $classfile = 'fournisseur.facture'; $classname='FactureFournisseur'; }
