@@ -23,7 +23,7 @@
 /**
  *		\file       htdocs/theme/bureau2crea/style.css.php
  *		\brief      Fichier de style CSS du theme bureau2crea
- *		\version    $Id$
+ *		\version    $Id: style.css.php,v 1.36 2011/07/01 14:01:46 simnandez Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -240,7 +240,7 @@ div.vmenu {
 }
 
 div.fiche {
-	margin: 0px 20px 20px 40px;
+	margin: 0px 10px 10px 10px;
     padding: 0px;
     position: relative;
     height: auto;
