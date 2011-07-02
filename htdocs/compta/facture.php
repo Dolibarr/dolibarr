@@ -26,7 +26,7 @@
  *	\file       htdocs/compta/facture.php
  *	\ingroup    facture
  *	\brief      Page to create/see an invoice
- *	\version    $Id: facture.php,v 1.844 2011/07/02 16:48:32 eldy Exp $
+ *	\version    $Id: facture.php,v 1.845 2011/07/02 17:02:00 eldy Exp $
  */
 
 require('../main.inc.php');
@@ -713,6 +713,7 @@ if ($action == 'add' && $user->rights->facture->creer)
                 if ($element == 'order')    { $element = $subelement = 'commande'; }
                 if ($element == 'propal')   { $element = 'comm/propal'; $subelement = 'propal'; }
                 if ($element == 'contract') { $element = $subelement = 'contrat'; }
+                if ($element == 'inter')    { $element = $subelement = 'ficheinter'; }
 
                 $object->origin    = $_POST['origin'];
                 $object->origin_id = $_POST['originid'];
@@ -1441,7 +1442,7 @@ if ($action == 'create')
 
     print_fiche_titre($langs->trans('NewBill'));
 
-    if ($mesg) print $mesg;
+    dol_htmloutput_mesg($mesg);
 
     $soc = new Societe($db);
     if ($socid) $res=$soc->fetch($socid);
@@ -3235,5 +3236,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/02 16:48:32 $ - $Revision: 1.844 $');
+llxFooter('$Date: 2011/07/02 17:02:00 $ - $Revision: 1.845 $');
 ?>

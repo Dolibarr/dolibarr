@@ -22,7 +22,7 @@
 /**	    \file       htdocs/fichinter/class/fichinter.class.php
  *		\ingroup    ficheinter
  *		\brief      Fichier de la classe des gestion des fiches interventions
- *		\version    $Id: fichinter.class.php,v 1.18 2011/07/02 16:48:32 eldy Exp $
+ *		\version    $Id: fichinter.class.php,v 1.19 2011/07/02 17:02:00 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
@@ -813,9 +813,9 @@ class Fichinter extends CommonObject
 	}
 
 	/**
-	 *		\brief		Initialise la fiche intervention avec valeurs fictives aleatoire
-	 *					Sert a generer une fiche intervention pour l'aperu des modeles ou demo
-	 * 		\return		int		<0 OK,	>0 KO
+	 *		Initialise la fiche intervention avec valeurs fictives aleatoire
+	 *		Sert a generer une fiche intervention pour l'aperu des modeles ou demo
+	 * 		@return		int		<0 OK,	>0 KO
 	 */
 	function fetch_lines()
 	{
@@ -840,6 +840,7 @@ class Fichinter extends CommonObject
 				$line->qty = round($objp->duree/3600,2);
 				$line->date	= $this->db->jdate($objp->date);
 				$line->rang	= $objp->rang;
+				$line->product_type = 1;
 
 				$this->lines[$i] = $line;
 
