@@ -26,7 +26,7 @@
  *  \file       htdocs/societe/soc.php
  *  \ingroup    societe
  *  \brief      Third party card page
- *  \version    $Id: soc.php,v 1.119 2011/07/02 14:35:22 eldy Exp $
+ *  \version    $Id: soc.php,v 1.120 2011/07/02 14:51:27 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -519,34 +519,34 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
     // -----------------------------------------
     if ($action == 'create')
     {
-        $objcanvas->assign_post();            // Assign POST data
-        $objcanvas->assign_values($action);   // Set value for templates
-        $objcanvas->display_canvas($action);  // Show template
+        $objcanvas->assign_post();              // TODO: Put code of assign_post into assign_values to keep only assign_values
+        $objcanvas->assign_values($action);     // Set value for templates
+        $objcanvas->display_canvas($action,0);  // Show template
     }
     elseif ($action == 'edit')
     {
-        $objcanvas->control->object=$objcanvas->getObject($socid);  // Load object
+        $objcanvas->control->object=$objcanvas->getObject($socid);  // TODO: Getting and storing object should be done into assign_values (for template with no code) or into tpl
         if (empty($objcanvas->control->object))
         {
             $object = new Societe($db);
             $object->fetch($socid);
             $objcanvas->control->object=$object;
         }
-        $objcanvas->assign_post();            // Assign POST data
-        $objcanvas->assign_values($action);   // Set value for templates
-        $objcanvas->display_canvas($action);  // Show template
+        $objcanvas->assign_post();              // TODO: Put code of assign_post into assign_values to keep only assign_values
+        $objcanvas->assign_values($action);     // Set value for templates
+        $objcanvas->display_canvas($action);    // Show template
     }
     else
     {
-        $objcanvas->control->object=$objcanvas->getObject($socid);  // Load object
+        $objcanvas->control->object=$objcanvas->getObject($socid);  // TODO: Getting and storing object should be done into assign_values (for template with no code) or into tpl
         if (empty($objcanvas->control->object))
         {
             $object = new Societe($db);
             $object->fetch($socid);
             $objcanvas->control->object=$object;
         }
-        $objcanvas->assign_values('view');   			// Assign values
-        $objcanvas->display_canvas('view');  			// Show template
+        $objcanvas->assign_values('view');
+        $objcanvas->display_canvas('view');  	// Show template
     }
 }
 else
@@ -1972,5 +1972,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/02 14:35:22 $ - $Revision: 1.119 $');
+llxFooter('$Date: 2011/07/02 14:51:27 $ - $Revision: 1.120 $');
 ?>
