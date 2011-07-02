@@ -21,7 +21,7 @@
  *   \file			htdocs/core/class/canvas.class.php
  *   \ingroup		core
  *   \brief			File of class to manage canvas
- *   \version		$Id: canvas.class.php,v 1.43 2011/07/02 13:09:52 eldy Exp $
+ *   \version		$Id: canvas.class.php,v 1.44 2011/07/02 14:51:26 eldy Exp $
  */
 
 
@@ -230,11 +230,12 @@ class Canvas
 	/**
 	 * 	   Display canvas
 	 *     @param      mode        'create', 'view', 'edit'
+	 *     @param      id          Id of object to show
 	 */
-	function display_canvas($mode='view')
+	function display_canvas($mode='view',$id=0)
 	{
 		global $db, $conf, $langs, $user, $canvas;
-		global $form, $formfile;
+		global $id, $form, $formfile;
 
 		//print $this->template_dir.$this->card.'_'.$mode.'.tpl.php';exit;
 		include($this->template_dir.$this->card.'_'.$mode.'.tpl.php');        // Include native PHP template

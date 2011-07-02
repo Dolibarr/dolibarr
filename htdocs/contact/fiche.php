@@ -24,7 +24,7 @@
  *       \file       htdocs/contact/fiche.php
  *       \ingroup    societe
  *       \brief      Card of a contact
- *       \version    $Id: fiche.php,v 1.219 2011/07/02 14:35:22 eldy Exp $
+ *       \version    $Id: fiche.php,v 1.220 2011/07/02 14:53:42 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -327,26 +327,26 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
     // -----------------------------------------
     if ($action == 'create')
     {
-        $objcanvas->assign_post();            // Assign POST data
+        $objcanvas->assign_post();            // TODO: Put code of assign_post into assign_values to keep only assign_values
         $objcanvas->assign_values($action);   // Set value for templates
         $objcanvas->display_canvas($action);  // Show template
     }
     else if ($action == 'edit')
     {
-        $objcanvas->control->object=$objcanvas->getObject($id);  // Load object
+        $objcanvas->control->object=$objcanvas->getObject($id);  // TODO: Getting and storing object should be done into assign_values (for template with no code) or into tpl
         if (empty($objcanvas->control->object))
         {
             $object = new Contact($db);
             $object->fetch($id,$user);
             $objcanvas->control->object=$object;
         }
-       	$objcanvas->assign_post();            // Assign POST data
+       	$objcanvas->assign_post();            // TODO: Put code of assign_post into assign_values to keep only assign_values
         $objcanvas->assign_values($action);   // Set value for templates
         $objcanvas->display_canvas($action);  // Show template
     }
     else
     {
-        $objcanvas->control->object=$objcanvas->getObject($id);  // Load object
+        $objcanvas->control->object=$objcanvas->getObject($id);  // TODO: Getting and storing object should be done into assign_values (for template with no code) or into tpl
         if (empty($objcanvas->control->object))
         {
             $object = new Contact($db);
@@ -974,5 +974,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/02 14:35:22 $ - $Revision: 1.219 $');
+llxFooter('$Date: 2011/07/02 14:53:42 $ - $Revision: 1.220 $');
 ?>
