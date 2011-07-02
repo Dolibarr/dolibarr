@@ -20,7 +20,7 @@
 /**
  *       \file       htdocs/admin/mails.php
  *       \brief      Page to setup emails sending
- *       \version    $Id$
+ *       \version    $Id: mails.php,v 1.70 2011/07/02 16:48:31 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -218,7 +218,7 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'sendhtml')
 
 		if ($result)
 		{
-			$message='<div class="ok">'.$langs->trans("MailSuccessfulySent",$email_from,$sendto).'</div>';
+			$message='<div class="ok">'.$langs->trans("MailSuccessfulySent",$mailfile->getValidAddress($email_from,2),$mailfile->getValidAddress($sendto,2)).'</div>';
 		}
 		else
 		{
@@ -746,5 +746,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/02 16:48:31 $ - $Revision: 1.70 $');
 ?>

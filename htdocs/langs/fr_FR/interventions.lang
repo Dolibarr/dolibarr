@@ -35,6 +35,10 @@ InterLineDate=Date ligne
 InterLineDuration=Durée ligne
 InterLineDesc=Description ligne
 DocumentModelStandard=Modèle de fiche d'intervention standard
+ClassifyBilled=Classer "Facturée"
+StatusInterInvoiced=Facturée
+RelatedInterventions=Interventions rattachées
+ShowIntervention=Afficher intervention
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Responsable suivi de l'intervention
 TypeContact_fichinter_internal_INTERVENING=Intervenant

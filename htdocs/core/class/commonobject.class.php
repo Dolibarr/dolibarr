@@ -22,7 +22,7 @@
  *	\file       htdocs/core/class/commonobject.class.php
  *	\ingroup    core
  *	\brief      File of parent class of all other business classes (invoices, contracts, proposals, orders, ...)
- *	\version    $Id: commonobject.class.php,v 1.140 2011/06/30 13:27:20 hregis Exp $
+ *	\version    $Id: commonobject.class.php,v 1.143 2011/07/01 23:05:39 eldy Exp $
  */
 
 
@@ -1281,12 +1281,13 @@ class CommonObject
 					$classpath = $element.'/class';
 
 					// To work with non standard path
-					if ($objecttype == 'facture') { $classpath = 'compta/facture/class'; }
-		            if ($objecttype == 'propal')  { $classpath = 'comm/propal/class'; }
-		            if ($objecttype == 'shipping') { $classpath = 'expedition/class'; $subelement = 'expedition'; $module = 'expedition_bon'; }
-		            if ($objecttype == 'delivery') { $classpath = 'livraison/class'; $subelement = 'livraison'; $module = 'livraison_bon'; }
-		            if ($objecttype == 'invoice_supplier') { $classpath = 'fourn/class'; }
-		            if ($objecttype == 'order_supplier')   { $classpath = 'fourn/class'; }
+					if ($objecttype == 'facture')			{ $classpath = 'compta/facture/class'; }
+		            if ($objecttype == 'propal')			{ $classpath = 'comm/propal/class'; }
+		            if ($objecttype == 'shipping')			{ $classpath = 'expedition/class'; $subelement = 'expedition'; $module = 'expedition_bon'; }
+		            if ($objecttype == 'delivery')			{ $classpath = 'livraison/class'; $subelement = 'livraison'; $module = 'livraison_bon'; }
+		            if ($objecttype == 'invoice_supplier')	{ $classpath = 'fourn/class'; }
+		            if ($objecttype == 'order_supplier')	{ $classpath = 'fourn/class'; }
+		            if ($objecttype == 'fichinter')			{ $classpath = 'fichinter/class'; $subelement ='fichinter'; $module ='ficheinter'; }
 
 		            $classfile = strtolower($subelement); $classname = ucfirst($subelement);
 		            if ($objecttype == 'invoice_supplier') { $classfile = 'fournisseur.facture'; $classname='FactureFournisseur'; }
@@ -1430,15 +1431,15 @@ class CommonObject
 
 
 	/**
-	 *	Instantiate hooks of thirdparty module
-	 *	@param	$type	Type of hook
+	 *	Init array this->hooks with instantiated controler and/or dao
+	 *	@param	     arraytype	      Array list of hooked tab/features. For example: thirdpartytab, ...
 	 */
 	function callHooks($arraytype)
 	{
 		global $conf;
 
 		if (! is_array($arraytype)) $arraytype=array($arraytype);
-		
+
 		$i=0;
 
 		foreach($conf->hooks_modules as $module => $hooks)
@@ -1453,13 +1454,15 @@ class CommonObject
 						$actionfile = 'actions_'.$module.'.class.php';
 						$daofile 	= 'dao_'.$module.'.class.php';
 						$pathroot	= '';
-						
+
 						$this->hooks[$i]['type']=$type;
 
 						// Include actions class (controller)
+                        //print 'include '.$path.$actionfile."\n";
 						$resaction=dol_include_once($path.$actionfile);
 
 						// Include dataservice class (model)
+                        //print 'include '.$path.$daofile."\n";
 						$resdao=dol_include_once($path.$daofile);
 
 						// Instantiate actions class (controller)
@@ -1470,13 +1473,14 @@ class CommonObject
     						$this->hooks[$i]['modules'][$objModule->module_number] = $objModule;
 						}
 
+						// FIXME storing dao is useless here. It's goal of controller to known which dao to manage
                         if ($resdao)
                         {
     						// Instantiate dataservice class (model)
     						$modelclassname = 'Dao'.ucfirst($module);
     						$this->hooks[$i]['modules'][$objModule->module_number]->object = new $modelclassname($this->db);
                         }
-                        
+
                         $i++;
 					}
 				}

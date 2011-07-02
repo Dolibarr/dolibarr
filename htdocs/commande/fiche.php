@@ -26,7 +26,7 @@
  *	\file       htdocs/commande/fiche.php
  *	\ingroup    commande
  *	\brief      Page to show customer order
- *	\version    $Id: fiche.php,v 1.521 2011/06/30 13:27:21 hregis Exp $
+ *	\version    $Id: fiche.php,v 1.523 2011/07/02 16:48:32 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -90,7 +90,7 @@ if (! empty($object->hooks))
 					$reshook+=$module->doActions($object);
 			        if (! empty($module->error) || (! empty($module->errors) && sizeof($module->errors) > 0))
 			        {
-			            $mesg=$module->error; $mesgs[]=$module->errors;
+			            $mesg=$module->error; $mesgs=$module->errors;
 			            if ($action=='add')    $action='create';
 			            if ($action=='update') $action='edit';
 			        }
@@ -1054,7 +1054,7 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
                     $result=$mailfile->sendfile();
                     if ($result)
                     {
-                        $mesg=$langs->trans('MailSuccessfulySent',$from,$sendto);	// Must not contains "
+                        $mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));	// Must not contains "
 
                         $error=0;
 
@@ -2134,5 +2134,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/06/30 13:27:21 $ - $Revision: 1.521 $');
+llxFooter('$Date: 2011/07/02 16:48:32 $ - $Revision: 1.523 $');
 ?>

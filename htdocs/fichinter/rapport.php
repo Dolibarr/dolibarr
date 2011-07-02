@@ -17,11 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id$
+ * $Id: rapport.php,v 1.25 2011/07/02 17:33:24 eldy Exp $
  */
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
+
+$langs->load("interventions");
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -142,5 +144,5 @@ else
 }
 $db->close();
 
-llxFooter("$Date$ - $Revision$");
+llxFooter("$Date: 2011/07/02 17:33:24 $ - $Revision: 1.25 $");
 ?>

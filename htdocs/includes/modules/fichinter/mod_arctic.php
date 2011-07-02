@@ -23,8 +23,8 @@
 /**
  *	\file       htdocs/includes/modules/fichinter/mod_arctic.php
  *	\ingroup    fiche intervention
- *	\brief      Fichier contenant la classe du mod�le de num�rotation de r�f�rence de fiche intervention Arctic
- *	\version    $Id$
+ *	\brief      File with Arctic numbering module for interventions
+ *	\version    $Id: mod_arctic.php,v 1.18 2011/07/02 15:46:02 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/modules_fichinter.php");
 
@@ -45,7 +45,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 		$this->nom = "arctic";
 	}
 
-    /**     \brief      Renvoi la description du modele de num�rotation
+    /**     \brief      Renvoi la description du modele de numerotation
      *      \return     string      Texte descripif
      */
 	function info()
@@ -83,7 +83,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 		return $texte;
     }
 
-    /**     \brief      Renvoi un exemple de num�rotation
+    /**     \brief      Renvoi un exemple de numerotation
      *      \return     string      Example
      */
     function getExample()
@@ -102,12 +102,12 @@ class mod_arctic extends ModeleNumRefFicheinter
 		return $numExample;
     }
 
-	/**		\brief      Renvoi prochaine valeur attribu�e
-	*      	\param      objsoc      Objet soci�t�
+	/**		\brief      Renvoi prochaine valeur attribuee
+	*      	\param      objsoc      Objet societe
 	*      	\param      ficheinter	Object ficheinter
 	*      	\return     string      Valeur
 	*/
-    function getNextValue($objsoc=0,$ficheinter='')
+    function getNextValue($objsoc=0,$object='')
     {
 		global $db,$conf;
 
@@ -122,7 +122,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 			return 0;
 		}
 
-		$numFinal=get_next_value($db,$mask,'fichinter','ref','',$objsoc->code_client,$ficheinter->date);
+		$numFinal=get_next_value($db,$mask,'fichinter','ref','',$objsoc->code_client,$object->date);
 
 		return  $numFinal;
   }

@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2011 Juanjo Menent		        <jmenent@2byte.es>
+ * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
  *	\file       htdocs/fichinter/index.php
  *	\brief      List of all interventions
  *	\ingroup    ficheinter
- *	\version    $Id$
+ *	\version    $Id: index.php,v 1.65 2011/07/02 16:48:32 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -117,10 +117,11 @@ if ($result)
 	print '<input type="text" class="flat" name="search_ref" value="'.$search_ref.'" size="8">';
 	print '</td><td class="liste_titre">';
 	print '<input type="text" class="flat" name="search_company" value="'.$search_company.'" size="10">';
-	print '</td><td class="liste_titre" colspan="2">';
-	print '<input type="text" class="flat" name="search_desc" value="'.$search_desc.'" size="24">';
+	print '</td><td class="liste_titre">';
+	print '<input type="text" class="flat" name="search_desc" value="'.$search_desc.'" size="12">';
 	print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
+    print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
 	print "</tr>\n";
@@ -145,7 +146,8 @@ if ($result)
 		$companystatic->id=$objp->socid;
 		$companystatic->client=$objp->client;
 		print $companystatic->getNomUrl(1,'',44);
-		print '<td>'.dol_htmlentitiesbr(dol_trunc($objp->description,20)).'</td>';
+		print '</td>';
+        print '<td>'.dol_htmlentitiesbr(dol_trunc($objp->description,20)).'</td>';
 		print '<td>'.dol_htmlentitiesbr(dol_trunc($objp->descriptiondetail,20)).'</td>';
 		print '<td align="center">'.dol_print_date($db->jdate($objp->dp),'dayhour')."</td>\n";
 		print '<td align="right">'.ConvertSecondToTime($objp->duree).'</td>';
@@ -171,5 +173,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/02 16:48:32 $ - $Revision: 1.65 $');
 ?>

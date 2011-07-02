@@ -34,6 +34,10 @@ InterLineId=Id línea detalle
 InterLineDate=Fecha línea
 InterLineDuration=Duración línea
 InterLineDesc=Descripción linea
+ClassifyBilled=Clasificar "Facturado"
+StatusInterInvoiced=Facturado
+RelatedInterventions=Intervenciones adjuntas
+ShowIntervention=Mostrar intervención
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Responsable seguimiento de la intervención
 TypeContact_fichinter_internal_INTERVENING=Interventor

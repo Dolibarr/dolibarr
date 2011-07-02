@@ -21,7 +21,7 @@
  *	\file       htdocs/fichinter/note.php
  *	\ingroup    fichinter
  *	\brief      Fiche d'information sur une fiche d'intervention
- *	\version    $Id$
+ *	\version    $Id: note.php,v 1.18 2011/07/02 17:33:24 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -29,6 +29,7 @@ require_once(DOL_DOCUMENT_ROOT."/fichinter/class/fichinter.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/fichinter.lib.php");
 
 $langs->load('companies');
+$langs->load("interventions");
 
 $fichinterid = GETPOST("id");
 $action=GETPOST("action");
@@ -167,5 +168,5 @@ if ($fichinterid)
 	}
 }
 $db->close();
-llxFooter('$Date$ - $Revision: 1.15 ');
+llxFooter('$Date: 2011/07/02 17:33:24 $ - $Revision: 1.15 ');
 ?>

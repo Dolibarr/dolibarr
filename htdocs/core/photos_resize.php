@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009 Meos
+/* Copyright (C) 2010-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2009      Meos
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -125,7 +125,7 @@ if ($_POST["action"] == 'confirm_crop')
  * View
  */
 
-llxHeader($head, $langs->trans("Image"), '', '', 0, 0, array('/includes/jcrop/js/jquery.Jcrop.min.js','/lib/lib_photosresize.js'), array('/includes/jcrop/css/jquery.Jcrop.css'));
+llxHeader($head, $langs->trans("Image"), '', '', 0, 0, array('/includes/jquery/plugins/jcrop/js/jquery.Jcrop.min.js','/lib/lib_photosresize.js'), array('/includes/jquery/plugins/jcrop/css/jquery.Jcrop.css'));
 
 
 print_fiche_titre($langs->trans("ImageEditor"));
@@ -201,5 +201,5 @@ print '</fieldset>';
 }
 
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/02 01:26:30 $ - $Revision: 1.13 $');
 ?>

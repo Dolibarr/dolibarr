@@ -24,7 +24,7 @@
  *       \file       htdocs/contact/fiche.php
  *       \ingroup    societe
  *       \brief      Card of a contact
- *       \version    $Id: fiche.php,v 1.215 2011/06/30 13:25:32 hregis Exp $
+ *       \version    $Id: fiche.php,v 1.220 2011/07/02 14:53:42 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -68,37 +68,61 @@ else
     $result = restrictedArea($user, 'contact', $id, 'socpeople'); // If we create a contact with no company (shared contacts), no check on write permission
 }
 
+// Instantiate hooks of thirdparty module
+if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
+{
+    $object->callHooks('contactcard');
+}
+
 
 /*
  *	Actions
  */
 
+$reshook=0;
+
+// Hook of actions. After that, reshook is 0 if we need to process standard actions, >0 otherwise.
+if (! empty($object->hooks))
+{
+    foreach($object->hooks as $hook)
+    {
+        if (! empty($hook['modules']))
+        {
+            foreach($hook['modules'] as $module)
+            {
+                if (method_exists($module,'doActions'))
+                {
+                    $resaction+=$module->doActions($object,$action,$id); // object is deprecated, action can be changed by method (to go back to other action for example), id can be changed/set by method (during creation for example)
+                    if ($resaction < 0 || ! empty($module->error) || (! empty($module->errors) && sizeof($module->errors) > 0))
+                    {
+                        $error=$module->error; $errors=$module->errors;
+                        if ($action=='add')    $action='create';
+                        if ($action=='update') $action='edit';
+                    }
+                    else $reshook+=$resaction;
+                }
+            }
+        }
+    }
+}
+
+// ---------- start deprecated. Use hook to hook actions.
 // If canvas actions are defined, because on url, or because contact was created with canvas feature on, we use the canvas feature.
 // If canvas actions are not defined, we use standard feature.
 if (method_exists($objcanvas->control,'doActions'))
 {
-    // -----------------------------------------
-    // When used with CANVAS
-    // -----------------------------------------
     $objcanvas->doActions($id);
-    if (empty($objcanvas->error) && (empty($objcanvas->errors) || sizeof($objcanvas->errors) == 0))
-    {
-        if ($action=='add')    { $objcanvas->action='create'; $action='create'; }
-        if ($action=='update') { $objcanvas->action='view';   $action='view'; }
-    }
-    else
+    if (! empty($objcanvas->error) || (! empty($objcanvas->errors) && sizeof($objcanvas->errors) > 0))
     {
         $error=$objcanvas->error; $errors=$objcanvas->errors;
         if ($action=='add')    { $objcanvas->action='create'; $action='create'; }
         if ($action=='update') { $objcanvas->action='edit';   $action='edit'; }
     }
 }
-else
-{
-    // -----------------------------------------
-    // When used in standard mode
-    // -----------------------------------------
+// ---------- end deprecated.
 
+if (empty($reshook))
+{
     // Creation utilisateur depuis contact
     if ($_POST["action"] == 'confirm_create_user' && $_POST["confirm"] == 'yes' && $user->rights->user->user->creer)
     {
@@ -303,26 +327,26 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
     // -----------------------------------------
     if ($action == 'create')
     {
-        $objcanvas->assign_post();            // Assign POST data
+        $objcanvas->assign_post();            // TODO: Put code of assign_post into assign_values to keep only assign_values
         $objcanvas->assign_values($action);   // Set value for templates
         $objcanvas->display_canvas($action);  // Show template
     }
     else if ($action == 'edit')
     {
-        $objcanvas->control->object=$objcanvas->getObject($id);  // Load object
+        $objcanvas->control->object=$objcanvas->getObject($id);  // TODO: Getting and storing object should be done into assign_values (for template with no code) or into tpl
         if (empty($objcanvas->control->object))
         {
             $object = new Contact($db);
             $object->fetch($id,$user);
             $objcanvas->control->object=$object;
         }
-       	$objcanvas->assign_post();            // Assign POST data
+       	$objcanvas->assign_post();            // TODO: Put code of assign_post into assign_values to keep only assign_values
         $objcanvas->assign_values($action);   // Set value for templates
         $objcanvas->display_canvas($action);  // Show template
     }
     else
     {
-        $objcanvas->control->object=$objcanvas->getObject($id);  // Load object
+        $objcanvas->control->object=$objcanvas->getObject($id);  // TODO: Getting and storing object should be done into assign_values (for template with no code) or into tpl
         if (empty($objcanvas->control->object))
         {
             $object = new Contact($db);
@@ -950,5 +974,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/06/30 13:25:32 $ - $Revision: 1.215 $');
+llxFooter('$Date: 2011/07/02 14:53:42 $ - $Revision: 1.220 $');
 ?>

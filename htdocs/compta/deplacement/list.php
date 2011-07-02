@@ -22,7 +22,7 @@
 /**
  *  \file       htdocs/compta/deplacement/list.php
  *  \brief      Page list of expenses
- *  \version	$Id: list.php,v 1.1 2011/06/29 17:55:33 eldy Exp $
+ *  \version	$Id: list.php,v 1.2 2011/06/30 21:53:02 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -49,6 +49,8 @@ if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="d.dated";
 $limit = $conf->liste_limit;
 
+$search_ref=GETPOST('search_ref');
+
 
 /*
  * View
@@ -59,7 +61,7 @@ $tripandexpense_static=new Deplacement($db);
 llxHeader();
 
 $sql = "SELECT s.nom, s.rowid as socid,";				// Ou
-$sql.= " d.rowid, d.type, d.dated as dd, d.km, ";		// Comment
+$sql.= " d.rowid, d.type, d.dated as dd, d.km,";		// Comment
 $sql.= " u.name, u.firstname";							// Qui
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= ", ".MAIN_DB_PREFIX."deplacement as d";
@@ -69,6 +71,10 @@ $sql.= " WHERE d.fk_user = u.rowid";
 $sql.= " AND d.entity = ".$conf->entity;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND sc.fk_user = " .$user->id;
 if ($socid) $sql.= " AND s.rowid = ".$socid;
+if (trim($search_ref) != '')
+{
+    $sql.= ' AND d.rowid LIKE \'%'.$db->escape(trim($search_ref)) . '%\'';
+}
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit + 1 ,$offset);
 
@@ -81,6 +87,7 @@ if ($resql)
     print_barre_liste($langs->trans("ListOfFees"), $page, $_SERVER["PHP_SELF"],"&socid=$socid",$sortfield,$sortorder,'',$num);
 
     $i = 0;
+    print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     print '<table class="noborder" width="100%">';
     print "<tr class=\"liste_titre\">";
     print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"d.rowid","","&socid=$socid",'',$sortfield,$sortorder);
@@ -91,6 +98,29 @@ if ($resql)
     print_liste_field_titre($langs->trans("FeesKilometersOrAmout"),$_SERVER["PHP_SELF"],"d.km","","&socid=$socid",'align="right"',$sortfield,$sortorder);
     print_liste_field_titre('',$_SERVER["PHP_SELF"], '');
     print "</tr>\n";
+
+    // Filters lines
+    print '<tr class="liste_titre">';
+    print '<td class="liste_titre">';
+    print '<input class="flat" size="10" type="text" name="search_ref" value="'.$search_ref.'">';
+    print '</td>';
+    print '<td class="liste_titre">';
+    //print '<input class="flat" size="10" type="text" name="search_company" value="'.$search_company.'">';
+    print '</td>';
+    print '<td class="liste_titre">';
+    //print '<input class="flat" size="10" type="text" name="search_name" value="'.$search_name.'">';
+    print '</td>';
+    print '<td class="liste_titre" align="left">';
+    print '&nbsp;';
+    print '</td>';
+    print '<td class="liste_titre" align="right">';
+    print '&nbsp;';
+    print '</td>';
+    print '<td class="liste_titre" align="right">';
+    print '&nbsp;';
+    print '</td>';
+    print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+    print "</td></tr>\n";
 
     $var=true;
     while ($i < min($num,$limit))
@@ -117,6 +147,7 @@ if ($resql)
     }
 
     print "</table>";
+    print "</form>\n";
     $db->free($resql);
 }
 else
@@ -125,5 +156,5 @@ else
 }
 $db->close();
 
-llxFooter('$Date: 2011/06/29 17:55:33 $ - $Revision: 1.1 $');
+llxFooter('$Date: 2011/06/30 21:53:02 $ - $Revision: 1.2 $');
 ?>

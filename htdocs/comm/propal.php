@@ -27,7 +27,7 @@
  *	\file       	htdocs/comm/propal.php
  *	\ingroup    	propale
  *	\brief      	Page of commercial proposals card and list
- *	\version		$Id: propal.php,v 1.606 2011/06/30 13:27:21 hregis Exp $
+ *	\version		$Id: propal.php,v 1.607 2011/07/02 16:48:32 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -536,7 +536,7 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile']
 					$result=$mailfile->sendfile();
 					if ($result)
 					{
-						$mesg=$langs->trans('MailSuccessfulySent',$from,$sendto);	// Must not contain "
+						$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));	// Must not contain "
 
 						$error=0;
 
@@ -1021,7 +1021,7 @@ if ($id > 0 || ! empty($ref))
 	/*
 	 * Show object in view mode
 	 */
-	
+
 	dol_htmloutput_mesg($mesg,$mesgs);
 
 	$object->fetch($id,$ref);
@@ -1975,6 +1975,6 @@ else
 }
 $db->close();
 
-llxFooter('$Date: 2011/06/30 13:27:21 $ - $Revision: 1.606 $');
+llxFooter('$Date: 2011/07/02 16:48:32 $ - $Revision: 1.607 $');
 
 ?>
