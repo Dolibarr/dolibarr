@@ -26,7 +26,7 @@
  *	\file       htdocs/commande/fiche.php
  *	\ingroup    commande
  *	\brief      Page to show customer order
- *	\version    $Id: fiche.php,v 1.521 2011/06/30 13:27:21 hregis Exp $
+ *	\version    $Id: fiche.php,v 1.522 2011/07/02 13:09:52 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -90,7 +90,7 @@ if (! empty($object->hooks))
 					$reshook+=$module->doActions($object);
 			        if (! empty($module->error) || (! empty($module->errors) && sizeof($module->errors) > 0))
 			        {
-			            $mesg=$module->error; $mesgs[]=$module->errors;
+			            $mesg=$module->error; $mesgs=$module->errors;
 			            if ($action=='add')    $action='create';
 			            if ($action=='update') $action='edit';
 			        }
@@ -2134,5 +2134,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/06/30 13:27:21 $ - $Revision: 1.521 $');
+llxFooter('$Date: 2011/07/02 13:09:52 $ - $Revision: 1.522 $');
 ?>

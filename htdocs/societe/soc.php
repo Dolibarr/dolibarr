@@ -26,7 +26,7 @@
  *  \file       htdocs/societe/soc.php
  *  \ingroup    societe
  *  \brief      Third party card page
- *  \version    $Id: soc.php,v 1.116 2011/07/01 23:11:30 eldy Exp $
+ *  \version    $Id: soc.php,v 1.117 2011/07/02 13:09:53 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -105,7 +105,7 @@ if (! empty($object->hooks))
                     $resaction+=$module->doActions($object,$action);
                     if ($resaction < 0 || ! empty($module->error) || (! empty($module->errors) && sizeof($module->errors) > 0))
                     {
-                        $mesg=$module->error; $mesgs[]=$module->errors;
+                        $error=$module->error; $errors=$module->errors;
                         if ($action=='add')    $action='create';
                         if ($action=='update') $action='edit';
                     }
@@ -1971,5 +1971,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/01 23:11:30 $ - $Revision: 1.116 $');
+llxFooter('$Date: 2011/07/02 13:09:53 $ - $Revision: 1.117 $');
 ?>

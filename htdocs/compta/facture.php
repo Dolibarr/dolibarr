@@ -26,7 +26,7 @@
  *	\file       htdocs/compta/facture.php
  *	\ingroup    facture
  *	\brief      Page to create/see an invoice
- *	\version    $Id: facture.php,v 1.842 2011/06/30 21:53:02 eldy Exp $
+ *	\version    $Id: facture.php,v 1.843 2011/07/02 13:09:52 eldy Exp $
  */
 
 require('../main.inc.php');
@@ -101,7 +101,7 @@ if (! empty($object->hooks))
 					$reshook+=$module->doActions($object);
 			        if (! empty($module->error) || (! empty($module->errors) && sizeof($module->errors) > 0))
 			        {
-			            $mesg=$module->error; $mesgs[]=$module->errors;
+			            $mesg=$module->error; $mesgs=$module->errors;
 			            if ($action=='add')    $action='create';
 			            if ($action=='update') $action='edit';
 			        }
@@ -3235,5 +3235,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/06/30 21:53:02 $ - $Revision: 1.842 $');
+llxFooter('$Date: 2011/07/02 13:09:52 $ - $Revision: 1.843 $');
 ?>

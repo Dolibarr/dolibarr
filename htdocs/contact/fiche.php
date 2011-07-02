@@ -24,7 +24,7 @@
  *       \file       htdocs/contact/fiche.php
  *       \ingroup    societe
  *       \brief      Card of a contact
- *       \version    $Id: fiche.php,v 1.217 2011/07/01 23:11:12 eldy Exp $
+ *       \version    $Id: fiche.php,v 1.218 2011/07/02 13:09:52 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -95,7 +95,7 @@ if (! empty($object->hooks))
                     $resaction+=$module->doActions($object,$action);
                     if ($resaction < 0 || ! empty($module->error) || (! empty($module->errors) && sizeof($module->errors) > 0))
                     {
-                        $mesg=$module->error; $mesgs[]=$module->errors;
+                        $error=$module->error; $errors=$module->errors;
                         if ($action=='add')    $action='create';
                         if ($action=='update') $action='edit';
                     }
@@ -974,5 +974,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/01 23:11:12 $ - $Revision: 1.217 $');
+llxFooter('$Date: 2011/07/02 13:09:52 $ - $Revision: 1.218 $');
 ?>

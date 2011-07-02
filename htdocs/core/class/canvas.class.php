@@ -21,7 +21,7 @@
  *   \file			htdocs/core/class/canvas.class.php
  *   \ingroup		core
  *   \brief			File of class to manage canvas
- *   \version		$Id$
+ *   \version		$Id: canvas.class.php,v 1.43 2011/07/02 13:09:52 eldy Exp $
  */
 
 
@@ -135,7 +135,8 @@ class Canvas
 
     /**
      *  Execute actions
-     *  @param      id      Id of object (may be empty for creation)
+     *  @param          id      Id of object (may be empty for creation)
+     *  @deprecated     Use actions with hooks instead
      */
     function doActions($id)
     {
