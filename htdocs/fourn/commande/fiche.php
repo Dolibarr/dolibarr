@@ -25,7 +25,7 @@
  *	\file		htdocs/fourn/commande/fiche.php
  *	\ingroup	supplier, order
  *	\brief		Card supplier order
- *	\version	$Id$
+ *	\version	$Id: fiche.php,v 1.230 2011/07/02 16:48:32 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -559,7 +559,7 @@ if ($action	== 'create')
 		}
 
 		$id=$orderid;
-		
+
 		$db->commit();
 	}
 	else
@@ -685,7 +685,7 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
 					$result=$mailfile->sendfile();
 					if ($result)
 					{
-						$mesg=$langs->trans('MailSuccessfulySent',$from,$sendto);		// Must not contain "
+						$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));		// Must not contain "
 
 						$error=0;
 
@@ -1545,5 +1545,5 @@ if ($id > 0 || ! empty($ref))
 
 $db->close();
 
-llxFooter('$Date$	- $Revision$');
+llxFooter('$Date: 2011/07/02 16:48:32 $	- $Revision: 1.230 $');
 ?>

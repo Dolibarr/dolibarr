@@ -25,7 +25,7 @@
  *	\file       htdocs/fourn/facture/fiche.php
  *	\ingroup    facture, fournisseur
  *	\brief      Page for supplier invoice card (view, edit, validate)
- *	\version    $Id$
+ *	\version    $Id: fiche.php,v 1.259 2011/07/02 16:48:32 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -738,7 +738,7 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile']
                     $result=$mailfile->sendfile();
                     if ($result)
                     {
-                        $mesg=$langs->trans('MailSuccessfulySent',$from,$sendto);		// Must not contain "
+                        $mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));		// Must not contain "
 
                         $error=0;
 
@@ -1916,5 +1916,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/02 16:48:32 $ - $Revision: 1.259 $');
 ?>

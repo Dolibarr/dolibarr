@@ -26,7 +26,7 @@
  *	\file       htdocs/compta/facture.php
  *	\ingroup    facture
  *	\brief      Page to create/see an invoice
- *	\version    $Id: facture.php,v 1.843 2011/07/02 13:09:52 eldy Exp $
+ *	\version    $Id: facture.php,v 1.844 2011/07/02 16:48:32 eldy Exp $
  */
 
 require('../main.inc.php');
@@ -1307,7 +1307,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
                     $result=$mailfile->sendfile();
                     if ($result)
                     {
-                        $mesg=$langs->trans('MailSuccessfulySent',$from,$sendto);		// Must not contain "
+                        $mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));		// Must not contain "
 
                         $error=0;
 
@@ -3235,5 +3235,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/02 13:09:52 $ - $Revision: 1.843 $');
+llxFooter('$Date: 2011/07/02 16:48:32 $ - $Revision: 1.844 $');
 ?>

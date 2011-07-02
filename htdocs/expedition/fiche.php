@@ -25,7 +25,7 @@
  *	\file       htdocs/expedition/fiche.php
  *	\ingroup    expedition
  *	\brief      Fiche descriptive d'une expedition
- *	\version    $Id$
+ *	\version    $Id: fiche.php,v 1.208 2011/07/02 16:48:32 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -398,7 +398,7 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
                     $result=$mailfile->sendfile();
                     if ($result)
                     {
-                        $_SESSION['mesg']=$langs->trans('MailSuccessfulySent',$from,$sendto);
+                        $_SESSION['mesg']=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));
 
                         $error=0;
 
@@ -1381,5 +1381,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/02 16:48:32 $ - $Revision: 1.208 $');
 ?>
