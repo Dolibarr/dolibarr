@@ -26,7 +26,7 @@
  *	\file       htdocs/main.inc.php
  *	\ingroup	core
  *	\brief      File that defines environment for Dolibarr pages only (variables not required by scripts)
- *	\version    $Id: main.inc.php,v 1.745 2011/06/30 13:40:34 hregis Exp $
+ *	\version    $Id: main.inc.php,v 1.746 2011/07/02 01:27:07 eldy Exp $
  */
 
 @ini_set('memory_limit', '64M');	// This may be useless if memory is hard limited by your PHP
@@ -905,7 +905,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             $jquerytheme = 'smoothness';
             if (!empty($conf->global->MAIN_USE_JQUERY_THEME)) $jquerytheme = $conf->global->MAIN_USE_JQUERY_THEME;
             print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/css/'.$jquerytheme.'/jquery-ui-latest.custom.css" type="text/css" />'."\n";    // JQuery
-            print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/tooltip/jquery.tooltip.css" type="text/css" />'."\n";                  // Tooltip
+            print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/tiptip/tipTip.css" type="text/css" />'."\n";                  // Tooltip
             print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify-alt.min.css" type="text/css" />'."\n";              // JNotify
             //print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/lightbox/css/jquery.lightbox-0.5.css" media="screen" />'."\n";          // Lightbox
         }
@@ -956,7 +956,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-latest.min'.$ext.'"></script>'."\n";
 			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-ui-latest.custom.min'.$ext.'"></script>'."\n";
 			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tablednd/jquery.tablednd_0_5'.$ext.'"></script>'."\n";
-            print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tooltip/jquery.tooltip.min'.$ext.'"></script>'."\n";
+            print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tiptip/jquery.tipTip'.$ext.'"></script>'."\n";
             //print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/lightbox/js/jquery.lightbox-0.5.min'.$ext.'"></script>'."\n";
             // jQuery Layout
 			if (!empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) || defined('REQUIRE_JQUERY_LAYOUT'))
@@ -1167,20 +1167,12 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
     	// Wrapper to show tooltips
     	print "\n".'<script type="text/javascript">
-                jQuery(function() {
-                    jQuery(".classfortooltip").tooltip({
-                        track: true,
-                        delay: 0,
-                        showURL: false,
-                        //extraClass: "pretty fancy",
-                        //fixPNG: true,
-                        positionLeft: false,
-                        bodyHandler: function() {
-                        //console.log(jQuery(this).attr("tooltipText"));
-                        return jQuery(this).attr("tooltipText"); }
+                    jQuery(document).ready(function () {
+                    	jQuery(function() {
+                        	$(".classfortooltip").tipTip({maxWidth: "600px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50});
+                        });
                     });
-                });
-    	</script>';
+                </script>';
 	}
 
 	/*
@@ -1378,7 +1370,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	if (! empty($object->hooks))
 	{
 		$searchform.='<!-- Begin search form hook area -->'."\n";
-		
+
 		foreach($object->hooks as $hook)
 		{
 			if ($hook['type'] == 'searchform' && ! empty($hook['modules']))
@@ -1505,7 +1497,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	if (! empty($object->hooks))
 	{
 		print '<!-- Begin left block hook area -->'."\n";
-		
+
 		foreach($object->hooks as $hook)
 		{
 			if ($hook['type'] == 'leftblock' && ! empty($hook['modules']))
