@@ -26,7 +26,7 @@
  *  \file       htdocs/societe/soc.php
  *  \ingroup    societe
  *  \brief      Third party card page
- *  \version    $Id: soc.php,v 1.118 2011/07/02 14:12:44 eldy Exp $
+ *  \version    $Id: soc.php,v 1.119 2011/07/02 14:35:22 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -90,7 +90,7 @@ if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
 
 $reshook=0;
 
-// Hook of actions. After that reshook is 0 if we need to process standard actions, >0 otherwise.
+// Hook of actions. After that, reshook is 0 if we need to process standard actions, >0 otherwise.
 if (! empty($object->hooks))
 {
     foreach($object->hooks as $hook)
@@ -101,16 +101,15 @@ if (! empty($object->hooks))
             {
                 if (method_exists($module,'doActions'))
                 {
-                    $resaction+=$module->doActions($object,$action);
+                    $resaction+=$module->doActions($object,$action,$socid); // object is deprecated, action can be changed by method (to go back to other action for example), socid can be changed/set by method (during creation for example)
                     if ($resaction < 0 || ! empty($module->error) || (! empty($module->errors) && sizeof($module->errors) > 0))
                     {
                         $error=$module->error; $errors=$module->errors;
-                        if ($action=='add')    $action='create';
-                        if ($action=='update') $action='edit';
+                        if ($action=='add')    $action='create';    // TODO this chnage must be inside the doActions
+                        if ($action=='update') $action='edit';      // TODO this chnage must be inside the doActions
                     }
                     else
                     {
-                        if ($action=='add')
                         $reshook+=$resaction;
                     }
                 }
@@ -1973,5 +1972,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/02 14:12:44 $ - $Revision: 1.118 $');
+llxFooter('$Date: 2011/07/02 14:35:22 $ - $Revision: 1.119 $');
 ?>

@@ -24,7 +24,7 @@
  *       \file       htdocs/contact/fiche.php
  *       \ingroup    societe
  *       \brief      Card of a contact
- *       \version    $Id: fiche.php,v 1.218 2011/07/02 13:09:52 eldy Exp $
+ *       \version    $Id: fiche.php,v 1.219 2011/07/02 14:35:22 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -81,7 +81,7 @@ if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
 
 $reshook=0;
 
-// Hook of actions. After that reshook is 0 if we need to process standard actions, >0 otherwise.
+// Hook of actions. After that, reshook is 0 if we need to process standard actions, >0 otherwise.
 if (! empty($object->hooks))
 {
     foreach($object->hooks as $hook)
@@ -92,7 +92,7 @@ if (! empty($object->hooks))
             {
                 if (method_exists($module,'doActions'))
                 {
-                    $resaction+=$module->doActions($object,$action);
+                    $resaction+=$module->doActions($object,$action,$id); // object is deprecated, action can be changed by method (to go back to other action for example), id can be changed/set by method (during creation for example)
                     if ($resaction < 0 || ! empty($module->error) || (! empty($module->errors) && sizeof($module->errors) > 0))
                     {
                         $error=$module->error; $errors=$module->errors;
@@ -974,5 +974,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/02 13:09:52 $ - $Revision: 1.218 $');
+llxFooter('$Date: 2011/07/02 14:35:22 $ - $Revision: 1.219 $');
 ?>
