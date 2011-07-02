@@ -25,7 +25,7 @@
  *       \file       htdocs/fichinter/document.php
  *       \ingroup    fichinter
  *       \brief      Page des documents joints sur les contrats
- *       \version    $Id$
+ *       \version    $Id: document.php,v 1.20 2011/07/02 17:33:24 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -37,6 +37,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 $langs->load("other");
 $langs->load("fichinter");
 $langs->load("companies");
+$langs->load("interventions");
 
 $fichinterid = GETPOST("id");
 $action = GETPOST("action");
@@ -173,5 +174,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/02 17:33:24 $ - $Revision: 1.20 $');
 ?>
