@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
  *
@@ -23,7 +23,7 @@
  *	\file       htdocs/fichinter/fiche.php
  *	\brief      Fichier fiche intervention
  *	\ingroup    ficheinter
- *	\version    $Id: fiche.php,v 1.163 2011/07/01 16:24:44 simnandez Exp $
+ *	\version    $Id: fiche.php,v 1.164 2011/07/02 16:48:32 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -45,12 +45,16 @@ if (! empty($conf->global->FICHEINTER_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."
 $langs->load("companies");
 $langs->load("interventions");
 
+$id=GETPOST('id');
+$action=GETPOST("action");
+$mesg=GETPOST("msg");
+
 // Load object if defined
 $fichinterid=0;
 $fichinter = new Fichinter($db);
-if ($_GET["id"] > 0 || ! empty($_GET["ref"]))
+if ($id > 0 || ! empty($_GET["ref"]))
 {
-    $result=$fichinter->fetch($_GET["id"],$_GET["ref"]);
+    $result=$fichinter->fetch($id,$_GET["ref"]);
     if (! $result > 0)
     {
         dol_print_error($db);
@@ -58,8 +62,6 @@ if ($_GET["id"] > 0 || ! empty($_GET["ref"]))
     }
     $fichinterid=$fichinter->id;
 }
-
-$mesg=GETPOST("msg");
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -71,16 +73,16 @@ $result = restrictedArea($user, 'ficheinter', $fichinterid, 'fichinter');
  * Actions
  */
 
-if ($_REQUEST["action"] != 'create' && $_REQUEST["action"] != 'add'  && $_REQUEST["action"] != 'classifybilled' && ! ($_REQUEST["id"] > 0) && empty($_REQUEST["ref"]))
+if ($action != 'create' && $action != 'add'  && $action != 'classifybilled' && ! ($_REQUEST["id"] > 0) && empty($_REQUEST["ref"]))
 {
     Header("Location: index.php");
-    return;
+    exit;
 }
 
-if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes')
+if ($action == 'confirm_validate' && $_REQUEST['confirm'] == 'yes')
 {
     $fichinter = new Fichinter($db);
-    $fichinter->fetch($_GET["id"]);
+    $fichinter->fetch($id);
     $fichinter->fetch_thirdparty();
 
     $result = $fichinter->setValid($user, $conf->fichinter->outputdir);
@@ -106,10 +108,10 @@ if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes')
     }
 }
 
-if ($_REQUEST['action'] == 'confirm_modify' && $_REQUEST['confirm'] == 'yes')
+if ($action == 'confirm_modify' && $_REQUEST['confirm'] == 'yes')
 {
     $fichinter = new Fichinter($db);
-    $fichinter->fetch($_GET["id"]);
+    $fichinter->fetch($id);
     $fichinter->fetch_thirdparty();
 
     $result = $fichinter->setDraft($user);
@@ -152,27 +154,28 @@ if ($_POST["action"] == 'add')
         $result = $fichinter->create();
         if ($result > 0)
         {
-            $_GET["id"]=$result;      // Force raffraichissement sur fiche venant d'etre cree
+            $id=$result;      // Force raffraichissement sur fiche venant d'etre cree
             $fichinterid=$result;
         }
         else
         {
             $langs->load("errors");
             $mesg='<div class="error">'.$langs->trans($fichinter->error).'</div>';
-            $_GET["action"] = 'create';
+            $action = 'create';
             $_GET["socid"] = $_POST["socid"];
         }
     }
     else
     {
         $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("ThirdParty")).'</div>';
-        $_GET["action"] = 'create';
+        $action = 'create';
     }
 }
 
 if ($_POST["action"] == 'update')
 {
     $fichinter = new Fichinter($db);
+    $fichinter->fetch($id);
 
     $fichinter->socid 		= $_POST["socid"];
     $fichinter->fk_project 	= $_POST["projectid"];
@@ -180,17 +183,16 @@ if ($_POST["action"] == 'update')
     $fichinter->description = $_POST["description"];
     $fichinter->ref 		= $_POST["ref"];
 
-    $fichinter->update($_POST["id"]);
-    $_GET["id"]=$_POST["id"];      // Force raffraichissement sur fiche venant d'etre creee
+    $fichinter->update($user);
 }
 
 /*
  * Build doc
  */
-if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
+if ($action == 'builddoc')	// En get ou en post
 {
     $fichinter = new Fichinter($db);
-    $fichinter->fetch($_GET['id']);
+    $fichinter->fetch($id);
     $fichinter->fetch_thirdparty();
     $fichinter->fetch_lines();
 
@@ -218,36 +220,36 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 }
 
 // Set into a project
-if ($_POST['action'] == 'classin')
+if ($action == 'classin')
 {
     $fichinter = new Fichinter($db);
-    $fichinter->fetch($_GET['id']);
+    $fichinter->fetch($id);
     $result=$fichinter->setProject($_POST['projectid']);
     if ($result < 0) dol_print_error($db,$fichinter->error);
 }
 
-if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes')
+if ($action == 'confirm_delete' && $_REQUEST['confirm'] == 'yes')
 {
     if ($user->rights->ficheinter->supprimer)
     {
         $fichinter = new Fichinter($db);
-        $fichinter->fetch($_GET['id']);
+        $fichinter->fetch($id);
         $fichinter->delete($user);
     }
     Header('Location: index.php?leftmenu=ficheinter');
     exit;
 }
 
-if ($_POST['action'] == 'setdescription')
+if ($action == 'setdescription')
 {
     $fichinter = new Fichinter($db);
-    $fichinter->fetch($_GET['id']);
+    $fichinter->fetch($id);
     $result=$fichinter->set_description($user,$_POST['description']);
     if ($result < 0) dol_print_error($db,$fichinter->error);
 }
 
 // Add line
-if ($_POST['action'] == "addline" && $user->rights->ficheinter->creer)
+if ($action == "addline" && $user->rights->ficheinter->creer)
 {
     if ($_POST['np_desc'] && ($_POST['durationhour'] || $_POST['durationmin']))
     {
@@ -283,15 +285,26 @@ if ($_POST['action'] == "addline" && $user->rights->ficheinter->creer)
 }
 
 // Classify Billed
-if ($_GET['action'] == 'classifybilled')
+if ($action == 'classifybilled')
 {
-	$fichinter->setBilled();
+    $fichinter = new Fichinter($db);
+    $fichinter->fetch($id);
+	$result=$fichinter->setBilled();
+	if ($result > 0)
+	{
+        Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$_POST['fichinterid']);
+        exit;
+	}
+	else
+	{
+        $mesg='<div class="error">'.$fichinter->error.'</div>';
+	}
 }
 
 /*
  *  Mise a jour d'une ligne d'intervention
  */
-if ($_POST['action'] == 'updateligne' && $user->rights->ficheinter->creer && $_POST["save"] == $langs->trans("Save"))
+if ($action == 'updateligne' && $user->rights->ficheinter->creer && $_POST["save"] == $langs->trans("Save"))
 {
     $fichinterline = new FichinterLigne($db);
     if ($fichinterline->fetch($_POST['ligne']) <= 0)
@@ -349,7 +362,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->ficheinter->creer && $_P
 /*
  *  Supprime une ligne d'intervention AVEC confirmation
  */
-if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes')
+if ($action == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes')
 {
     if ($user->rights->ficheinter->creer)
     {
@@ -379,7 +392,7 @@ if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes'
         }
         fichinter_create($db, $fichinter, $fichinter->modelpdf, $outputlangs);
     }
-    Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$_GET['id']);
+    Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
     exit;
 }
 
@@ -387,10 +400,10 @@ if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes'
  * Ordonnancement des lignes
  */
 
-if ($_GET['action'] == 'up' && $user->rights->ficheinter->creer)
+if ($action == 'up' && $user->rights->ficheinter->creer)
 {
     $fichinter = new Fichinter($db);
-    $fichinter->fetch($_GET['id']);
+    $fichinter->fetch($id);
     $fichinter->fetch_thirdparty();
     $fichinter->line_up($_GET['rowid']);
 
@@ -405,14 +418,14 @@ if ($_GET['action'] == 'up' && $user->rights->ficheinter->creer)
         $outputlangs->setDefaultLang($newlang);
     }
     fichinter_create($db, $fichinter, $fichinter->modelpdf, $outputlangs);
-    Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'#'.$_GET['rowid']);
+    Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.'#'.$_GET['rowid']);
     exit;
 }
 
-if ($_GET['action'] == 'down' && $user->rights->ficheinter->creer)
+if ($action == 'down' && $user->rights->ficheinter->creer)
 {
     $fichinter = new Fichinter($db);
-    $fichinter->fetch($_GET['id']);
+    $fichinter->fetch($id);
     $fichinter->fetch_thirdparty();
     $fichinter->line_down($_GET['rowid']);
 
@@ -427,14 +440,14 @@ if ($_GET['action'] == 'down' && $user->rights->ficheinter->creer)
         $outputlangs->setDefaultLang($newlang);
     }
     fichinter_create($db, $fichinter, $fichinter->modelpdf, $outputlangs);
-    Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'#'.$_GET['rowid']);
+    Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.'#'.$_GET['rowid']);
     exit;
 }
 
 /*
  * Send mail
  */
-if ($_POST['action'] == 'send' && ! $_POST['cancel'] && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->ficheinter->ficheinter_advance->send))
+if ($action == 'send' && ! $_POST['cancel'] && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->ficheinter->ficheinter_advance->send))
 {
     $langs->load('mails');
 
@@ -479,7 +492,7 @@ if ($_POST['action'] == 'send' && ! $_POST['cancel'] && (empty($conf->global->MA
                 $sendtocc = $_POST['sendtocc'];
                 $deliveryreceipt = $_POST['deliveryreceipt'];
 
-                if ($_POST['action'] == 'send')
+                if ($action == 'send')
                 {
                     if (strlen($_POST['subject'])) $subject = $_POST['subject'];
                     else $subject = $langs->transnoentities('Intervention').' '.$fichinter->ref;
@@ -515,7 +528,7 @@ if ($_POST['action'] == 'send' && ! $_POST['cancel'] && (empty($conf->global->MA
                     $result=$mailfile->sendfile();
                     if ($result)
                     {
-                        $mesg='<div class="ok">'.$langs->trans('MailSuccessfulySent',$from,$sendto).'.</div>';
+                        $mesg='<div class="ok">'.$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2)).'.</div>';
 
                         $error=0;
 
@@ -583,6 +596,8 @@ if ($_POST['action'] == 'send' && ! $_POST['cancel'] && (empty($conf->global->MA
         $mesg='<div class="error">'.$langs->trans('ErrorFailedToReadEntity',$langs->trans("Intervention")).'</div>';
         dol_syslog('Impossible de lire les donnees de l\'intervention. Le fichier intervention n\'a peut-etre pas ete genere.');
     }
+
+    $action='presend';
 }
 
 
@@ -595,7 +610,7 @@ $formfile = new FormFile($db);
 
 llxHeader();
 
-if ($_GET["action"] == 'create')
+if ($action == 'create')
 {
     /*
      * Mode creation
@@ -610,7 +625,7 @@ if ($_GET["action"] == 'create')
 
     print_fiche_titre($langs->trans("AddIntervention"));
 
-    if ($mesg) print $mesg.'<br>';
+    dol_htmloutput_mesg($mesg);
 
     if (! $conf->global->FICHEINTER_ADDON)
     {
@@ -710,7 +725,7 @@ elseif ($fichinterid)
     $societe->fetch($fichinter->socid);
 
 
-    dol_htmloutput_errors($mesg);
+    dol_htmloutput_mesg($mesg);
 
 
     $head = fichinter_prepare_head($fichinter);
@@ -718,28 +733,28 @@ elseif ($fichinterid)
     dol_fiche_head($head, 'card', $langs->trans("InterventionCard"), 0, 'intervention');
 
     // Confirmation de la suppression de la fiche d'intervention
-    if ($_GET['action'] == 'delete')
+    if ($action == 'delete')
     {
         $ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$fichinter->id, $langs->trans('DeleteIntervention'), $langs->trans('ConfirmDeleteIntervention'), 'confirm_delete','',0,1);
         if ($ret == 'html') print '<br>';
     }
 
     // Confirmation validation
-    if ($_GET['action'] == 'validate')
+    if ($action == 'validate')
     {
         $ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$fichinter->id, $langs->trans('ValidateIntervention'), $langs->trans('ConfirmValidateIntervention'), 'confirm_validate','',0,1);
         if ($ret == 'html') print '<br>';
     }
 
     // Confirmation de la validation de la fiche d'intervention
-    if ($_GET['action'] == 'modify')
+    if ($action == 'modify')
     {
         $ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$fichinter->id, $langs->trans('ModifyIntervention'), $langs->trans('ConfirmModifyIntervention'), 'confirm_modify','',0,1);
         if ($ret == 'html') print '<br>';
     }
 
     // Confirmation de la suppression d'une ligne d'intervention
-    if ($_GET['action'] == 'ask_deleteline')
+    if ($action == 'ask_deleteline')
     {
         $ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$fichinter->id.'&ligne='.$_GET["ligne"], $langs->trans('DeleteInterventionLine'), $langs->trans('ConfirmDeleteInterventionLine'), 'confirm_deleteline','',0,1);
         if ($ret == 'html') print '<br>';
@@ -767,10 +782,10 @@ elseif ($fichinterid)
     print '<table class="nobordernopadding" width="100%"><tr><td>';
     print $langs->trans('Description');
     print '</td>';
-    if ($_GET['action'] != 'editdescription' && $fichinter->statut == 0) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdescription&amp;id='.$fichinter->id.'">'.img_edit($langs->trans('Modify'),1).'</a></td>';
+    if ($action != 'editdescription' && $fichinter->statut == 0) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdescription&amp;id='.$fichinter->id.'">'.img_edit($langs->trans('Modify'),1).'</a></td>';
     print '</tr></table>';
     print '</td><td colspan="3">';
-    if ($_GET['action'] == 'editdescription')
+    if ($action == 'editdescription')
     {
         print '<form name="editdescription" action="'.$_SERVER["PHP_SELF"].'?id='.$fichinter->id.'" method="post">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -781,7 +796,7 @@ elseif ($fichinterid)
     }
     else
     {
-        print nl2br($fichinter->description);
+        print dol_nl2br($fichinter->description);
     }
     print '</td>';
     print '</tr>';
@@ -796,7 +811,7 @@ elseif ($fichinterid)
         print '<table class="nobordernopadding" width="100%"><tr><td>';
         print $langs->trans('Project');
         print '</td>';
-        if ($_GET['action'] != 'classin')
+        if ($action != 'classin')
         {
             print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classin&amp;id='.$fichinter->id.'">';
             print img_edit($langs->trans('SetProject'),1);
@@ -804,7 +819,7 @@ elseif ($fichinterid)
         }
         print '</tr></table>';
         print '</td><td colspan="3">';
-        if ($_GET['action'] == 'classin')
+        if ($action == 'classin')
         {
             $html->form_project($_SERVER['PHP_SELF'].'?id='.$fichinter->id, $fichinter->socid, $fichinter->fk_project,'projectid');
         }
@@ -854,7 +869,7 @@ elseif ($fichinterid)
             $var=!$var;
 
             // Ligne en mode visu
-            if ($_GET['action'] != 'editline' || $_GET['ligne'] != $objp->rowid)
+            if ($action != 'editline' || $_GET['ligne'] != $objp->rowid)
             {
                 print '<tr '.$bc[$var].'>';
                 print '<td>';
@@ -909,7 +924,7 @@ elseif ($fichinterid)
             }
 
             // Ligne en mode update
-            if ($fichinter->statut == 0 && $_GET["action"] == 'editline' && $user->rights->ficheinter->creer && $_GET["ligne"] == $objp->rowid)
+            if ($fichinter->statut == 0 && $action == 'editline' && $user->rights->ficheinter->creer && $_GET["ligne"] == $objp->rowid)
             {
                 print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$fichinter->id.'#'.$objp->rowid.'" method="post">';
                 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -951,7 +966,7 @@ elseif ($fichinterid)
         /*
          * Ajouter une ligne
          */
-        if ($fichinter->statut == 0 && $user->rights->ficheinter->creer && $_GET["action"] <> 'editline')
+        if ($fichinter->statut == 0 && $user->rights->ficheinter->creer && $action <> 'editline')
         {
             if (! $num) print '<br><table class="noborder" width="100%">';
 
@@ -1019,19 +1034,19 @@ elseif ($fichinterid)
 
     if ($user->societe_id == 0)
     {
-        if ($_GET['action'] != 'editdescription')
+        if ($action != 'editdescription')
         {
             // Validate
             if ($fichinter->statut == 0 && $user->rights->ficheinter->creer)
             {
-                print '<a class="butAction" href="fiche.php?id='.$_GET["id"].'&action=validate"';
+                print '<a class="butAction" href="fiche.php?id='.$id.'&action=validate"';
                 print '>'.$langs->trans("Valid").'</a>';
             }
 
             // Modify
             if ($fichinter->statut == 1 && $user->rights->ficheinter->creer)
             {
-                print '<a class="butAction" href="fiche.php?id='.$_GET["id"].'&action=modify"';
+                print '<a class="butAction" href="fiche.php?id='.$id.'&action=modify"';
                 print '>'.$langs->trans("Modify").'</a>';
             }
 
@@ -1044,38 +1059,38 @@ elseif ($fichinterid)
                 {
                     if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->ficheinter->ficheinter_advance->send)
                     {
-                        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$fichinter->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
+                        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
                     }
                     else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
                 }
             }
-            
-        	//Invoicing
-            if ($conf->global->MAIN_FEATURES_LEVEL>=2)
+
+        	// Invoicing
+			if ($conf->facture->enabled && $fichinter->statut > 0)
             {
-				if ($conf->facture->enabled && $fichinter->statut > 0)
-	            {
-					$langs->load("bills");
-	                if ($fichinter->statut < 2)
-	                {
-						if ($user->rights->facture->creer) print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$fichinter->element.'&amp;originid='.$fichinter->id.'&amp;socid='.$fichinter->socid.'">'.$langs->trans("CreateBill").'</a>';
-						else print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("CreateBill").'</a>';
-	                }
-	           	 	
-	            	if ($fichinter->statut != 2)
+				$langs->load("bills");
+                if ($fichinter->statut < 2)
+                {
+					if ($user->rights->facture->creer) print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$fichinter->element.'&amp;originid='.$fichinter->id.'&amp;socid='.$fichinter->socid.'">'.$langs->trans("CreateBill").'</a>';
+					else print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("CreateBill").'</a>';
+                }
+
+                if (! empty($conf->global->FICHEINTER_CLASSIFY_BILLED))
+                {
+	                if ($fichinter->statut != 2)
 					{
-						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$fichinter->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
+						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
 					}
-	            }				
+	            }
             }
 
             // Delete
             if (($fichinter->statut == 0 && $user->rights->ficheinter->creer) || $user->rights->ficheinter->supprimer)
             {
-                print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$fichinter->id.'&amp;action=delete"';
+                print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=delete"';
                 print '>'.$langs->trans('Delete').'</a>';
             }
-            
+
         }
     }
 
@@ -1085,7 +1100,7 @@ elseif ($fichinterid)
     /*
      * Action presend
      */
-    if ($_GET['action'] == 'presend')
+    if ($action == 'presend')
     {
         $ref = dol_sanitizeFileName($fichinter->ref);
         $file = $conf->ficheinter->dir_output . '/' . $ref . '/' . $ref . '.pdf';
@@ -1163,5 +1178,5 @@ elseif ($fichinterid)
 
 $db->close();
 
-llxFooter('$Date: 2011/07/01 16:24:44 $ - $Revision: 1.163 $');
+llxFooter('$Date: 2011/07/02 16:48:32 $ - $Revision: 1.164 $');
 ?>

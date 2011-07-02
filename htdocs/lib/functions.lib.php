@@ -29,7 +29,7 @@
  *	\file			htdocs/lib/functions.lib.php
  *	\brief			A set of functions for Dolibarr
  *					This file contains all frequently used functions.
- *	\version		$Id: functions.lib.php,v 1.532 2011/06/26 00:42:23 eldy Exp $
+ *	\version		$Id: functions.lib.php,v 1.533 2011/07/02 16:48:31 eldy Exp $
  */
 
 // For compatibility during upgrade
@@ -3842,7 +3842,12 @@ function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
     else if ($mesgstring && preg_match('/class="error"/i',$mesgstring)) $iserror++;
     if ($style=='error') $iserror++;
 
-    if ($iserror) print get_htmloutput_mesg($mesgstring,$mesgarray,'error',$keepembedded);
+    if ($iserror)
+    {
+        $mesgstring=preg_replace('/<div class="error">/','',$mesgstring);
+        $mesgstring=preg_replace('/<\/div>/','',$mesgstring);
+        print get_htmloutput_mesg($mesgstring,$mesgarray,'error',$keepembedded);
+    }
     else print get_htmloutput_mesg($mesgstring,$mesgarray,'ok',$keepembedded);
 }
 

@@ -25,7 +25,7 @@
 /**
  *      \file       htdocs/lib/CMailFile.class.php
  *      \brief      File of class to send emails (with attachments or not)
- *		\version    $Id$
+ *		\version    $Id: CMailFile.class.php,v 1.142 2011/07/02 16:48:31 eldy Exp $
  *      \author     Dan Potter.
  *      \author	    Eric Seigne
  *      \author	    Laurent Destailleur.
@@ -416,7 +416,7 @@ class CMailFile
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					$res=false;
 				}
-				
+
 				if ($res)
 				{
 					if (! empty($conf->global->MAIN_MAIL_DEBUG)) $this->smtps->setDebug(true);
@@ -604,7 +604,7 @@ class CMailFile
 
 		$out.= "Content-Type: multipart/mixed; boundary=\"".$this->mixed_boundary."\"".$this->eol;
 		$out.= "Content-Transfer-Encoding: 8bit".$this->eol;
-		
+
 		dol_syslog("CMailFile::write_smtpheaders smtp_header=\n".$out);
 		return $out;
 	}
@@ -649,7 +649,7 @@ class CMailFile
 		global $conf;
 
 		$out='';
-		
+
 		if ($this->atleastoneimage)
 		{
 			$out.= "--" . $this->mixed_boundary . $this->eol;
@@ -661,7 +661,7 @@ class CMailFile
 		{
 			$out.= "--" . $this->mixed_boundary . $this->eol;
 		}
-		
+
 		if ($this->msgishtml)
 		{
 			// Check if html header already in message
@@ -680,7 +680,7 @@ class CMailFile
 
 		if ($this->msgishtml)
 		{
-			if ($this->atleastoneimage) 
+			if ($this->atleastoneimage)
 			{
 				$out.= "Content-Type: text/plain; charset=".$conf->file->character_set_client.$this->eol;
 				$out.= $this->eol.strip_tags($strContent).$this->eol; // Add plain text message
@@ -697,7 +697,7 @@ class CMailFile
 			$out.= "Content-Type: text/plain; charset=".$conf->file->character_set_client.$this->eol;
 			$out.= $this->eol.$strContent.$this->eol;
 		}
-		
+
 		$out.= $this->eol;
 
 		return $out;
@@ -940,7 +940,7 @@ class CMailFile
 	/**
 	 * Return an address for SMTP protocol
 	 *
-	 * @param      adresses		Example: 'John Doe <john@doe.com>' or 'john@doe.com'
+	 * @param       adresses		Example: 'John Doe <john@doe.com>' or 'john@doe.com'
 	 * @param		format			0=Auto, 1=emails with <>, 2=emails without <>
 	 * @param		encode			1=Encode name to RFC2822
 	 * @return	    string			If format 1: '<john@doe.com>' or 'John Doe <john@doe.com>'
