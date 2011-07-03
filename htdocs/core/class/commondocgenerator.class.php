@@ -24,7 +24,7 @@
  *	    \file       htdocs/core/class/commondocgenerator.class.php
  *		\ingroup    core
  *		\brief      File of parent class for documents generators
- *		\version    $Id$
+ *		\version    $Id: commondocgenerator.class.php,v 1.6 2011/07/03 21:59:53 eldy Exp $
  */
 
 
@@ -86,7 +86,8 @@ class CommonDocGenerator
             'mycompany_address'=>$mysoc->address,
             'mycompany_zip'=>$mysoc->zip,
             'mycompany_town'=>$mysoc->town,
-            'mycompany_country'=>$mysoc->country,
+            'mycompany_country'=>$outputlangs->transnoentitiesnoconv("Country".$mysoc->pays_code),
+            'mycompany_country_code'=>$mysoc->pays_code,
             'mycompany_web'=>$mysoc->url,
             'mycompany_juridicalstatus'=>$mysoc->forme_juridique,
             'mycompany_capital'=>$mysoc->capital,
