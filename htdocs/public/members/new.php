@@ -22,7 +22,7 @@
  *	\file       htdocs/public/members/new.php
  *	\ingroup    member
  *	\brief      Example of form to add a new member
- *	\version    $Id: new.php,v 1.35 2011/07/03 17:45:33 eldy Exp $
+ *	\version    $Id: new.php,v 1.36 2011/07/03 17:46:16 eldy Exp $
  *
  *  Note that you can add following constant to change behaviour of page
  *  MEMBER_NEWFORM_AMOUNT               Default amount for autosubscribe form
@@ -273,7 +273,7 @@ if ($action == 'added')
     print $langs->trans("NewMemberbyWeb");
     print '</center>';
 
-    llxFooterVierge('$Date: 2011/07/03 17:45:33 $ - $Revision: 1.35 $');
+    llxFooterVierge('$Date: 2011/07/03 17:46:16 $ - $Revision: 1.36 $');
     exit;
 }
 
@@ -448,7 +448,7 @@ if (! empty($conf->global->MEMBER_NEWFORM_DOLIBARRTURNOVER))
                 else { jQuery("#budget").val(\'\'); }
         });
         jQuery("#type").change(function() {
-            if (jQuery("#type").val()==1) { jQuery("#morphy").val(\'phy\'); }
+            if (jQuery("#type").val()==1) { jQuery("#morphy").val(\'mor\'); }
             if (jQuery("#type").val()==2) { jQuery("#morphy").val(\'phy\'); }
             if (jQuery("#type").val()==3) { jQuery("#morphy").val(\'mor\'); }
             if (jQuery("#type").val()==4) { jQuery("#morphy").val(\'mor\'); }
@@ -510,5 +510,5 @@ print "<br></form>\n";
 
 $db->close();
 
-llxFooterVierge('$Date: 2011/07/03 17:45:33 $ - $Revision: 1.35 $');
+llxFooterVierge('$Date: 2011/07/03 17:46:16 $ - $Revision: 1.36 $');
 ?>
