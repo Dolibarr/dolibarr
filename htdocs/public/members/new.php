@@ -22,7 +22,7 @@
  *	\file       htdocs/public/members/new.php
  *	\ingroup    member
  *	\brief      Example of form to add a new member
- *	\version    $Id: new.php,v 1.33 2011/07/03 17:24:54 eldy Exp $
+ *	\version    $Id: new.php,v 1.34 2011/07/03 17:38:52 eldy Exp $
  *
  *  Note that you can add following constant to change behaviour of page
  *  MEMBER_NEWFORM_AMOUNT               Default amount for autosubscribe form
@@ -273,7 +273,7 @@ if ($action == 'added')
     print $langs->trans("NewMemberbyWeb");
     print '</center>';
 
-    llxFooterVierge('$Date: 2011/07/03 17:24:54 $ - $Revision: 1.33 $');
+    llxFooterVierge('$Date: 2011/07/03 17:38:52 $ - $Revision: 1.34 $');
     exit;
 }
 
@@ -451,19 +451,20 @@ if (! empty($conf->global->MEMBER_NEWFORM_DOLIBARRTURNOVER))
             initturnover();
         });
         jQuery("#budget").change(function() {
-                if (jQuery("#budget").val() > 0) { jQuery("#amount").val(jQuery("#budget").val()); }
+                if (jQuery("#budget").val() > 0) { jQuery(".amount").val(jQuery("#budget").val()); }
                 else { jQuery("#budget").val(\'\'); }
         });
         function initturnover() {
             if (jQuery("#morphy").val()==\'phy\') {
-                jQuery("#amount").val(20);
+                jQuery(".amount").val(20);
                 jQuery("#trbudget").hide();
                 jQuery("#trcompany").hide();
             }
             if (jQuery("#morphy").val()==\'mor\') {
+                jQuery(".amount").val(\'\');
                 jQuery("#trbudget").show();
                 jQuery("#trcompany").show();
-                if (jQuery("#budget").val() > 0) { jQuery("#amount").val(jQuery("#budget").val()); }
+                if (jQuery("#budget").val() > 0) { jQuery(".amount").val(jQuery("#budget").val()); }
                 else { jQuery("#budget").val(\'\'); }
             }
         }
@@ -481,15 +482,15 @@ if (! empty($conf->global->MEMBER_NEWFORM_AMOUNT)
         $amount=GETPOST('amount')?GETPOST('amount'):$conf->global->MEMBER_NEWFORM_AMOUNT;
     }
     // $conf->global->MEMBER_NEWFORM_PAYONLINE is 'paypal' or 'paybox'
-    print '<tr><td>'.$langs->trans("Subscription").'</td><td>';
+    print '<tr><td>'.$langs->trans("Subscription").'</td><td nowrap="nowrap">';
     if (! empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT))
     {
-        print '<input type="text" name="amount" id="amount" class="flat" size="6" value="'.$amount.'">';
+        print '<input type="text" name="amount" id="amount" class="flat amount" size="6" value="'.$amount.'">';
     }
     else
     {
-        print $amount;
-        print '<input type="hidden" name="amount" id="amount" class="flat" size="6" value="'.$amount.'">';
+        print '<input type="text" name="amount" id="amounthidden" class="flat amount" disabled="disabled" size="6" value="'.$amount.'">';
+        print '<input type="hidden" name="amount" id="amount" class="flat amount" size="6" value="'.$amount.'">';
     }
     print ' '.$langs->trans("Currency".$conf->monnaie);
     print '</td></tr>';
@@ -509,5 +510,5 @@ print "<br></form>\n";
 
 $db->close();
 
-llxFooterVierge('$Date: 2011/07/03 17:24:54 $ - $Revision: 1.33 $');
+llxFooterVierge('$Date: 2011/07/03 17:38:52 $ - $Revision: 1.34 $');
 ?>
