@@ -22,7 +22,7 @@
  *	\file       htdocs/public/members/new.php
  *	\ingroup    member
  *	\brief      Example of form to add a new member
- *	\version    $Id: new.php,v 1.34 2011/07/03 17:38:52 eldy Exp $
+ *	\version    $Id: new.php,v 1.35 2011/07/03 17:45:33 eldy Exp $
  *
  *  Note that you can add following constant to change behaviour of page
  *  MEMBER_NEWFORM_AMOUNT               Default amount for autosubscribe form
@@ -273,7 +273,7 @@ if ($action == 'added')
     print $langs->trans("NewMemberbyWeb");
     print '</center>';
 
-    llxFooterVierge('$Date: 2011/07/03 17:38:52 $ - $Revision: 1.34 $');
+    llxFooterVierge('$Date: 2011/07/03 17:45:33 $ - $Revision: 1.35 $');
     exit;
 }
 
@@ -315,13 +315,6 @@ jQuery(document).ready(function () {
                 }
         };
         initmorphy();
-        jQuery("#type").change(function() {
-            if (jQuery("#type").val()==1) { jQuery("#morphy").val(\'mor\'); jQuery(".trcompany").show(); }
-            if (jQuery("#type").val()==2) { jQuery("#morphy").val(\'phy\'); jQuery(".trcompany").hide(); }
-            if (jQuery("#type").val()==3) { jQuery("#morphy").val(\'mor\'); jQuery(".trcompany").show(); }
-            if (jQuery("#type").val()==4) { jQuery("#morphy").val(\'mor\'); jQuery(".trcompany").show(); }
-            initmorphy();
-        });
         jQuery("#morphy").click(function() {
             initmorphy();
         });
@@ -454,6 +447,13 @@ if (! empty($conf->global->MEMBER_NEWFORM_DOLIBARRTURNOVER))
                 if (jQuery("#budget").val() > 0) { jQuery(".amount").val(jQuery("#budget").val()); }
                 else { jQuery("#budget").val(\'\'); }
         });
+        jQuery("#type").change(function() {
+            if (jQuery("#type").val()==1) { jQuery("#morphy").val(\'phy\'); }
+            if (jQuery("#type").val()==2) { jQuery("#morphy").val(\'phy\'); }
+            if (jQuery("#type").val()==3) { jQuery("#morphy").val(\'mor\'); }
+            if (jQuery("#type").val()==4) { jQuery("#morphy").val(\'mor\'); }
+            initturnover();
+        });
         function initturnover() {
             if (jQuery("#morphy").val()==\'phy\') {
                 jQuery(".amount").val(20);
@@ -510,5 +510,5 @@ print "<br></form>\n";
 
 $db->close();
 
-llxFooterVierge('$Date: 2011/07/03 17:38:52 $ - $Revision: 1.34 $');
+llxFooterVierge('$Date: 2011/07/03 17:45:33 $ - $Revision: 1.35 $');
 ?>
