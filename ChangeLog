@@ -1,6 +1,6 @@
 --------------------------------------------------------------
 English Dolibarr ChangeLog
-$Id: ChangeLog,v 1.421 2011/07/02 11:28:03 eldy Exp $
+$Id: ChangeLog,v 1.422 2011/07/03 13:44:02 eldy Exp $
 --------------------------------------------------------------
 
 ***** ChangeLog for 3.1 compared to 3.0 *****
@@ -59,8 +59,6 @@ For users:
 - New: task #11003: checkbox on checks for deposit.
 - New: Add status into export. Add third party default language into export.
 - New: Can filter on date and bank account when building check receipts.
-- New: Paypal module can show paypal list of transaction and convert one
-       into an order.
 - New: task #10958 : Add link to cheque receipts into bank transaction 
        line if exists
 - New: Can import external ical url into dolibarr agenda view.
