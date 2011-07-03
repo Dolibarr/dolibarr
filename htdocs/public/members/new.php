@@ -22,7 +22,7 @@
  *	\file       htdocs/public/members/new.php
  *	\ingroup    member
  *	\brief      Example of form to add a new member
- *	\version    $Id: new.php,v 1.30 2011/07/03 16:00:19 eldy Exp $
+ *	\version    $Id: new.php,v 1.31 2011/07/03 16:55:31 eldy Exp $
  *
  *  Note that you can add following constant to change behaviour of page
  *  MEMBER_NEWFORM_AMOUNT               Default amount for autosubscribe form
@@ -110,15 +110,14 @@ function llxFooterVierge()
 
 
 
-
 /*
  * Actions
  */
 
-// Action called when submited page
+// Action called when page is submited
 if ($action == 'add')
 {
-    // test si le login existe deja
+    // test if login already exists
     if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
     {
         if(! GETPOST('login'))
@@ -221,33 +220,38 @@ if ($action == 'add')
         $result=$adh->create($user->id);
         if ($result > 0)
         {
-            if ($cotisation > 0)
-            {
-                $adh->cotisation(dol_mktime(12, 0 , 0, $remonth, $reday, $reyear), $cotisation);
-            }
-
             // Send email to say it has been created and will be validated soon...
-            if ($conf->global->ADHERENT_AUTOREGISTER_MAIL && $conf->global->ADHERENT_AUTOREGISTER_MAIL_SUBJECT)
+            if (! empty($conf->global->ADHERENT_AUTOREGISTER_MAIL) && ! empty($conf->global->ADHERENT_AUTOREGISTER_MAIL_SUBJECT))
             {
                 $result=$adh->send_an_email($conf->global->ADHERENT_AUTOREGISTER_MAIL,$conf->global->ADHERENT_AUTOREGISTER_MAIL_SUBJECT,array(),array(),array(),"","",0,-1);
             }
 
-            if ($backtopage)
+            if ($backtopage) $urlback=$backtopage;
+            else if ($conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION) $urlback=$conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION;
+            else $urlback=$_SERVER["PHP_SELF"]."?action=added";
+
+            if (! empty($conf->global->MEMBER_NEWFORM_PAYONLINE))
             {
-                Header("Location: ".$backtopage);
-                exit;
+                if ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paybox')
+                {
+                    $urlback=DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?source=membersubscription&ref='.$adh->ref;
+                    if (price2num(GETPOST('amount'))) $urlback.='&amount='.price2num(GETPOST('amount'));
+                }
+                else if ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paypal')
+                {
+                    $urlback=DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?source=membersubscription&ref='.$adh->ref;
+                    if (price2num(GETPOST('amount'))) $urlback.='&amount='.price2num(GETPOST('amount'));
+                }
+                else
+                {
+                    dol_print_error('',"Autosubscribe form is setup to ask an online payment for a not managed online payment");
+                    exit;
+                }
             }
-            else if ($conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION)
-            {
-                // Si conf->global->MEMBER_URL_REDIRECT_SBUSCRIPTION defini, faire redirect sur page.
-                Header("Location: ".$conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION);
-                exit;
-            }
-            else
-            {
-                Header("Location: ".$_SERVER["PHP_SELF"]."?action=added");
-                exit;
-            }
+
+            dol_syslog("member ".$adh->ref." was created, we redirect to ".$urlback);
+            Header("Location: ".$urlback);
+            exit;
         }
         else
         {
@@ -269,7 +273,7 @@ if ($action == 'added')
     print $langs->trans("NewMemberbyWeb");
     print '</center>';
 
-    llxFooterVierge('$Date: 2011/07/03 16:00:19 $ - $Revision: 1.30 $');
+    llxFooterVierge('$Date: 2011/07/03 16:55:31 $ - $Revision: 1.31 $');
     exit;
 }
 
@@ -344,7 +348,7 @@ if (empty($conf->global->MEMBER_NEWFORM_FORCETYPE))
 else
 {
     $adht->fetch($conf->global->MEMBER_NEWFORM_FORCETYPE);
-    print $adht->libelle;
+    //print $adht->libelle;
     print '<input type="hidden" id="type" name="type" value="'.$conf->global->MEMBER_NEWFORM_FORCETYPE.'">';
 }
 // Moral/Physic attribute
@@ -498,5 +502,5 @@ print "<br></form>\n";
 
 $db->close();
 
-llxFooterVierge('$Date: 2011/07/03 16:00:19 $ - $Revision: 1.30 $');
+llxFooterVierge('$Date: 2011/07/03 16:55:31 $ - $Revision: 1.31 $');
 ?>
