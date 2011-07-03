@@ -22,7 +22,7 @@
  *	\file       htdocs/core/class/html.formfile.class.php
  *  \ingroup    core
  *	\brief      File of class to offer components to list and upload files
- *	\version	$Id: html.formfile.class.php,v 1.35 2011/07/03 13:16:46 hregis Exp $
+ *	\version	$Id: html.formfile.class.php,v 1.36 2011/07/03 14:43:12 hregis Exp $
  */
 
 
