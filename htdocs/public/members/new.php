@@ -22,7 +22,7 @@
  *	\file       htdocs/public/members/new.php
  *	\ingroup    member
  *	\brief      Example of form to add a new member
- *	\version    $Id: new.php,v 1.31 2011/07/03 16:55:31 eldy Exp $
+ *	\version    $Id: new.php,v 1.32 2011/07/03 17:23:12 eldy Exp $
  *
  *  Note that you can add following constant to change behaviour of page
  *  MEMBER_NEWFORM_AMOUNT               Default amount for autosubscribe form
@@ -273,7 +273,7 @@ if ($action == 'added')
     print $langs->trans("NewMemberbyWeb");
     print '</center>';
 
-    llxFooterVierge('$Date: 2011/07/03 16:55:31 $ - $Revision: 1.31 $');
+    llxFooterVierge('$Date: 2011/07/03 17:23:12 $ - $Revision: 1.32 $');
     exit;
 }
 
@@ -315,6 +315,13 @@ jQuery(document).ready(function () {
                 }
         };
         initmorphy();
+        jQuery("#type").change(function() {
+            if (jQuery("#type").val()==1) { jQuery("#morphy").val(\'phy\'); jQuery(".trcompany").hide(); }
+            if (jQuery("#type").val()==2) { jQuery("#morphy").val(\'phy\'); jQuery(".trcompany").hide(); }
+            if (jQuery("#type").val()==3) { jQuery("#morphy").val(\'mor\'); jQuery(".trcompany").show(); }
+            if (jQuery("#type").val()==4) { jQuery("#morphy").val(\'mor\'); jQuery(".trcompany").show(); }
+            initmorphy();
+        });
         jQuery("#morphy").click(function() {
             initmorphy();
         });
@@ -373,7 +380,7 @@ print '<tr><td>'.$langs->trans("Lastname").' <FONT COLOR="red">*</FONT></td><td>
 // Firstname
 print '<tr><td>'.$langs->trans("Firstname").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="prenom" size="40" value="'.dol_escape_htmltag(GETPOST('prenom')).'"></td></tr>'."\n";
 // Company
-print '<tr id="trcompany"><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
+print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
 // Address
 print '<tr><td>'.$langs->trans("Address").'</td><td>'."\n";
 print '<textarea name="address" id="address" wrap="soft" cols="40" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('address')).'</textarea></td></tr>'."\n";
@@ -433,7 +440,7 @@ print '</tr>'."\n";
 if (! empty($conf->global->MEMBER_NEWFORM_DOLIBARRTURNOVER))
 {
     $arraybudget=array('50'=>'<= 100 000','100'=>'<= 200 000','200'=>'<= 500 000','400'=>'<= 1 500 000','750'=>'<= 3 000 000','1500'=>'<= 5 000 000','2000'=>'5 000 000+');
-    print '<tr id="trbudget"><td>'.$langs->trans("TurnoverOrBudget").'</td><td>';
+    print '<tr id="trbudget" class="trcompany"><td>'.$langs->trans("TurnoverOrBudget").'</td><td>';
     print $html->select_array('budget', $arraybudget, GETPOST('budget'), 1);
     print ' € or $';
 
@@ -502,5 +509,5 @@ print "<br></form>\n";
 
 $db->close();
 
-llxFooterVierge('$Date: 2011/07/03 16:55:31 $ - $Revision: 1.31 $');
+llxFooterVierge('$Date: 2011/07/03 17:23:12 $ - $Revision: 1.32 $');
 ?>
