@@ -102,7 +102,7 @@ class UploadHandler
                 }
             }
             $file->delete_url = $this->options['script_url']
-                .'?file='.rawurlencode($file->name).'fk_element='.$this->fk_elment.'&element='.$this->element;
+                .'?file='.rawurlencode($file->name).'&fk_element='.$this->fk_element.'&element='.$this->element;
             $file->delete_type = 'DELETE';
             return $file;
         }

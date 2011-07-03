@@ -15,15 +15,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: ajaxfileupload.tpl.php,v 1.1 2011/07/03 13:16:46 hregis Exp $
+ * $Id: ajaxfileupload.tpl.php,v 1.2 2011/07/03 13:26:45 hregis Exp $
  */
 ?>
 
 <!-- START TEMPLATE FILE UPLOAD -->
 <script id="template-upload" type="text/x-jquery-tmpl">
 	<tr class="template-upload{{if error}} ui-state-error{{/if}}">
-		<td class="preview"></td>
 		<td class="name">${name}</td>
+		<td class="preview"></td>
 		<td class="size">${sizef}</td>
 		{{if error}}
 			<td class="error" colspan="2">Error:
