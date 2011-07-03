@@ -27,7 +27,7 @@
  *	\file       htdocs/societe/class/societe.class.php
  *	\ingroup    societe
  *	\brief      File for third party class
- *	\version    $Id$
+ *	\version    $Id: societe.class.php,v 1.88 2011/07/03 22:07:24 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 
@@ -63,6 +63,8 @@ class Societe extends CommonObject
     var $pays_id;
     var $pays_code;
     var $pays;	// TODO obsolete
+    var $country_id;
+    var $country_code;
     var $country;
 
     var $tel;

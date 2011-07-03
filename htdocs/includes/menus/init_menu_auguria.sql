@@ -1,6 +1,6 @@
 --
--- $Id: init_menu_auguria.sql,v 1.118 2011/06/29 17:55:34 eldy Exp $
--- $Revision: 1.118 $
+-- $Id: init_menu_auguria.sql,v 1.119 2011/07/03 16:00:20 eldy Exp $
+-- $Revision: 1.119 $
 --
 -- Menu base entries
 -- This file is loaded when a menu handler base is activated (auguria, etc..)
@@ -263,7 +263,6 @@ insert into llx_menu (enabled, menu_handler, type, rowid, mainmenu, leftmenu, fk
 insert into llx_menu (enabled, menu_handler, type, rowid, mainmenu, leftmenu, fk_menu, url, titre, level, langs, perms, target, usertype, position, entity) values ('$conf->adherent->enabled && $conf->export->enabled', __HANDLER__, 'left', 4501__+MAX_llx_menu__, 'members', '', 4500__+MAX_llx_menu__, '/exports/index.php?leftmenu=export', 'Datas', 1, 'members', '$user->rights->adherent->export', '', 2, 0, __ENTITY__);
 insert into llx_menu (enabled, menu_handler, type, rowid, mainmenu, leftmenu, fk_menu, url, titre, level, langs, perms, target, usertype, position, entity) values ('$conf->adherent->enabled', __HANDLER__, 'left', 4502__+MAX_llx_menu__, 'members', '', 4500__+MAX_llx_menu__, '/adherents/htpasswd.php?leftmenu=export', 'Filehtpasswd', 1, 'members', '$user->rights->adherent->export', '', 2, 1, __ENTITY__);
 insert into llx_menu (enabled, menu_handler, type, rowid, mainmenu, leftmenu, fk_menu, url, titre, level, langs, perms, target, usertype, position, entity) values ('$conf->adherent->enabled', __HANDLER__, 'left', 4503__+MAX_llx_menu__, 'members', '', 4500__+MAX_llx_menu__, '/adherents/cartes/carte.php?leftmenu=export', 'MembersCards', 1, 'members', '$user->rights->adherent->export', '', 2, 2, __ENTITY__);
-insert into llx_menu (enabled, menu_handler, type, rowid, mainmenu, leftmenu, fk_menu, url, titre, level, langs, perms, target, usertype, position, entity) values ('$conf->adherent->enabled', __HANDLER__, 'left', 4600__+MAX_llx_menu__, 'members', '', 13__+MAX_llx_menu__, '/adherents/public.php?leftmenu=member_public', 'MemberPublicLinks', 0, 'members', '$user->rights->adherent->export', '', 2, 4, __ENTITY__);
 insert into llx_menu (enabled, menu_handler, type, rowid, mainmenu, leftmenu, fk_menu, url, titre, level, langs, perms, target, usertype, position, entity) values ('$conf->adherent->enabled', __HANDLER__, 'left', 4700__+MAX_llx_menu__, 'members', '', 13__+MAX_llx_menu__, '/adherents/type.php?leftmenu=setup&amp;mainmenu=members', 'MembersType', 0, 'members', '$user->rights->adherent->configurer', '', 2, 5, __ENTITY__);
 insert into llx_menu (enabled, menu_handler, type, rowid, mainmenu, leftmenu, fk_menu, url, titre, level, langs, perms, target, usertype, position, entity) values ('$conf->adherent->enabled', __HANDLER__, 'left', 4701__+MAX_llx_menu__, 'members', '', 4700__+MAX_llx_menu__, '/adherents/type.php?leftmenu=setup&amp;mainmenu=members&amp;action=create', 'New', 1, 'members', '$user->rights->adherent->configurer', '', 2, 0, __ENTITY__);
 insert into llx_menu (enabled, menu_handler, type, rowid, mainmenu, leftmenu, fk_menu, url, titre, level, langs, perms, target, usertype, position, entity) values ('$conf->adherent->enabled', __HANDLER__, 'left', 4702__+MAX_llx_menu__, 'members', '', 4700__+MAX_llx_menu__, '/adherents/type.php?leftmenu=setup&amp;mainmenu=members', 'List', 1, 'members', '$user->rights->adherent->configurer', '', 2, 1, __ENTITY__);

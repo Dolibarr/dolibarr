@@ -24,7 +24,7 @@
  *	\file       htdocs/lib/company.lib.php
  *	\brief      Ensemble de fonctions de base pour le module societe
  *	\ingroup    societe
- *	\version    $Id: company.lib.php,v 1.119 2011/06/26 18:53:16 eldy Exp $
+ *	\version    $Id: company.lib.php,v 1.120 2011/07/03 18:32:08 eldy Exp $
  */
 
 /**
@@ -210,7 +210,7 @@ function societe_admin_prepare_head($object)
 /**
  *    Return country label, code or id from an id or a code
  *    @param      id            Id or code of country
- *    @param      withcode      0=Return label, 1=Return code + label, 2=Return code from id
+ *    @param      withcode      0=Return label, 1=Return code + label, 2=Return code from id, 3=Return id from code
  *    @param      dbtouse       Database handler (using in global way may fail because of conflicts with some autoload features)
  *    @param      outputlangs   Lang object for output translation
  *    @param      entconv       0=Return value without entities and not converted to output charset
@@ -243,6 +243,7 @@ function getCountry($id,$withcode=0,$dbtouse=0,$outputlangs='',$entconv=1)
             }
             if ($withcode == 1) return $label?"$obj->code - $label":"$obj->code";
             else if ($withcode == 2) return $obj->code;
+            else if ($withcode == 3) return $obj->rowid;
             else return $label;
         }
         else

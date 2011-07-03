@@ -80,7 +80,7 @@ CreditDate=Crédité le
 WithdrawalFileNotCapable=Impossible de generer fichier de bon de prelevements pour votre pays
 ShowWithdraw=Voir prélèvement
 IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Toutefois, si la facture a au moins un paiement par prélèvement non traité, elle ne le sera pas afin de permettre la gestion du prélèvement d'abord.
-DoStandingOrdersBeforePayments=Cet onglet permet de faire une demande de pélèvement bancaire. Une fois terminé, vous pourrez saisir le payement sur la facture pour la clore.
+DoStandingOrdersBeforePayments=Cet onglet permet de faire une demande de pélèvement bancaire. Une fois réalisé, vous pourrez saisir le paiement sur la facture pour la clore.
 
 ### Notifications 
 InfoCreditSubject=Credit prélèvement %s a la banque

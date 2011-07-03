@@ -22,7 +22,7 @@
  *	\file       htdocs/public/members/new.php
  *	\ingroup    member
  *	\brief      Example of form to add a new member
- *	\version    $Id: new.php,v 1.29 2011/06/26 21:51:34 eldy Exp $
+ *	\version    $Id: new.php,v 1.37 2011/07/03 18:30:48 eldy Exp $
  *
  *  Note that you can add following constant to change behaviour of page
  *  MEMBER_NEWFORM_AMOUNT               Default amount for autosubscribe form
@@ -45,8 +45,12 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formcompany.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
-// Security check
-if (empty($conf->adherent->enabled)) accessforbidden('',1,1,1);
+// Init vars
+$errmsg='';
+$num=0;
+$error=0;
+$backtopage=GETPOST('backtopage');
+$action=GETPOST('action');
 
 // Load translation files
 $langs->load("main");
@@ -55,12 +59,14 @@ $langs->load("companies");
 $langs->load("install");
 $langs->load("other");
 
-// Init vars
-$errmsg='';
-$num=0;
-$error=0;
-$backtopage=GETPOST('backtopage');
-$action=GETPOST('action');
+// Security check
+if (empty($conf->adherent->enabled)) accessforbidden('',1,1,1);
+
+if (empty($conf->global->MEMBER_ENABLE_PUBLIC))
+{
+    print $langs->trans("Auto subscription form for public visitors has no be enabled");
+    exit;
+}
 
 
 // Function for page HTML header
@@ -104,15 +110,14 @@ function llxFooterVierge()
 
 
 
-
 /*
  * Actions
  */
 
-// Action called when submited page
+// Action called when page is submited
 if ($action == 'add')
 {
-    // test si le login existe deja
+    // test if login already exists
     if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
     {
         if(! GETPOST('login'))
@@ -215,33 +220,38 @@ if ($action == 'add')
         $result=$adh->create($user->id);
         if ($result > 0)
         {
-            if ($cotisation > 0)
-            {
-                $adh->cotisation(dol_mktime(12, 0 , 0, $remonth, $reday, $reyear), $cotisation);
-            }
-
             // Send email to say it has been created and will be validated soon...
-            if ($conf->global->ADHERENT_AUTOREGISTER_MAIL && $conf->global->ADHERENT_AUTOREGISTER_MAIL_SUBJECT)
+            if (! empty($conf->global->ADHERENT_AUTOREGISTER_MAIL) && ! empty($conf->global->ADHERENT_AUTOREGISTER_MAIL_SUBJECT))
             {
                 $result=$adh->send_an_email($conf->global->ADHERENT_AUTOREGISTER_MAIL,$conf->global->ADHERENT_AUTOREGISTER_MAIL_SUBJECT,array(),array(),array(),"","",0,-1);
             }
 
-            if ($backtopage)
+            if ($backtopage) $urlback=$backtopage;
+            else if ($conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION) $urlback=$conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION;
+            else $urlback=$_SERVER["PHP_SELF"]."?action=added";
+
+            if (! empty($conf->global->MEMBER_NEWFORM_PAYONLINE))
             {
-                Header("Location: ".$backtopage);
-                exit;
+                if ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paybox')
+                {
+                    $urlback=DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?source=membersubscription&ref='.$adh->ref;
+                    if (price2num(GETPOST('amount'))) $urlback.='&amount='.price2num(GETPOST('amount'));
+                }
+                else if ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paypal')
+                {
+                    $urlback=DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?source=membersubscription&ref='.$adh->ref;
+                    if (price2num(GETPOST('amount'))) $urlback.='&amount='.price2num(GETPOST('amount'));
+                }
+                else
+                {
+                    dol_print_error('',"Autosubscribe form is setup to ask an online payment for a not managed online payment");
+                    exit;
+                }
             }
-            else if ($conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION)
-            {
-                // Si conf->global->MEMBER_URL_REDIRECT_SBUSCRIPTION defini, faire redirect sur page.
-                Header("Location: ".$conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION);
-                exit;
-            }
-            else
-            {
-                Header("Location: ".$_SERVER["PHP_SELF"]."?action=added");
-                exit;
-            }
+
+            dol_syslog("member ".$adh->ref." was created, we redirect to ".$urlback);
+            Header("Location: ".$urlback);
+            exit;
         }
         else
         {
@@ -263,7 +273,7 @@ if ($action == 'added')
     print $langs->trans("NewMemberbyWeb");
     print '</center>';
 
-    llxFooterVierge('$Date: 2011/06/26 21:51:34 $ - $Revision: 1.29 $');
+    llxFooterVierge('$Date: 2011/07/03 18:30:48 $ - $Revision: 1.37 $');
     exit;
 }
 
@@ -290,7 +300,7 @@ if (! empty($conf->global->MEMBER_NEWFORM_TEXT)) print $langs->trans($conf->glob
 dol_htmloutput_errors($errmsg);
 
 print '<br>'.$langs->trans("FieldsWithAreMandatory",'*').'<br>';
-print $langs->trans("FieldsWithIsForPublic",'**').'<br>';
+//print $langs->trans("FieldsWithIsForPublic",'**').'<br>';
 
 print '<script type="text/javascript">
 jQuery(document).ready(function () {
@@ -326,14 +336,19 @@ print '<table class="border">'."\n";
 // Type
 if (empty($conf->global->MEMBER_NEWFORM_FORCETYPE))
 {
-    print '<tr><td width="15%">'.$langs->trans("Type").' <FONT COLOR="red">*</FONT> <FONT COLOR="blue">**</FONT></td><td width="35%">';
-    print $html->selectarray("type",  $adht->liste_array(), GETPOST('type'), 1);
+    $listoftype=$adht->liste_array();
+    $tmp=array_keys($listoftype);
+    $defaulttype='';
+    $isempty=1;
+    if (sizeof($listoftype)==1) { $defaulttype=$tmp[0]; $isempty=0; }
+    print '<tr><td width="15%">'.$langs->trans("Type").' <FONT COLOR="red">*</FONT></td><td width="35%">';
+    print $html->selectarray("type",  $adht->liste_array(), GETPOST('type')?GETPOST('type'):$defaulttype, $isempty);
     print '</td></tr>'."\n";
 }
 else
 {
     $adht->fetch($conf->global->MEMBER_NEWFORM_FORCETYPE);
-    print $adht->libelle;
+    //print $adht->libelle;
     print '<input type="hidden" id="type" name="type" value="'.$conf->global->MEMBER_NEWFORM_FORCETYPE.'">';
 }
 // Moral/Physic attribute
@@ -341,7 +356,7 @@ $morphys["phy"] = $langs->trans("Physical");
 $morphys["mor"] = $langs->trans("Moral");
 if (empty($conf->global->MEMBER_NEWFORM_FORCEMORPHY))
 {
-    print '<tr><td>'.$langs->trans("MorPhy").' <FONT COLOR="red">*</FONT> <FONT COLOR="blue">**</FONT> </td><td>'."\n";
+    print '<tr><td>'.$langs->trans("MorPhy").' <FONT COLOR="red">*</FONT></td><td>'."\n";
     print $html->selectarray("morphy",  $morphys, GETPOST('morphy'), 1);
     print '</td></tr>'."\n";
 }
@@ -354,11 +369,11 @@ else
 print '<tr><td>'.$langs->trans("Civility").'</td><td>';
 print $formcompany->select_civilite(GETPOST('civilite_id'),'civilite_id').'</td></tr>'."\n";
 // Lastname
-print '<tr><td>'.$langs->trans("Lastname").' <FONT COLOR="red">*</FONT> <FONT COLOR="blue">**</FONT></td><td><input type="text" name="nom" size="40" value="'.dol_escape_htmltag(GETPOST('nom')).'"></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Lastname").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="nom" size="40" value="'.dol_escape_htmltag(GETPOST('nom')).'"></td></tr>'."\n";
 // Firstname
-print '<tr><td>'.$langs->trans("Firstname").' <FONT COLOR="red">*</FONT> <FONT COLOR="blue">**</FONT></td><td><input type="text" name="prenom" size="40" value="'.dol_escape_htmltag(GETPOST('prenom')).'"></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Firstname").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="prenom" size="40" value="'.dol_escape_htmltag(GETPOST('prenom')).'"></td></tr>'."\n";
 // Company
-print '<tr id="trcompany"><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
+print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
 // Address
 print '<tr><td>'.$langs->trans("Address").'</td><td>'."\n";
 print '<textarea name="address" id="address" wrap="soft" cols="40" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('address')).'</textarea></td></tr>'."\n";
@@ -371,8 +386,18 @@ print '</td></tr>';
 // Country
 print '<tr><td width="25%">'.$langs->trans('Country').'</td><td>';
 $pays_id=GETPOST('pays_id');
-if (! GETPOST('pays_id') && ! empty($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE)) $pays_id=getCountry($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE,2,$db,$langs);
-if (! GETPOST('pays_id') && ! empty($conf->geoip->enabled)) $pays_id=$pays_id;  // TODO
+if (! $pays_id && ! empty($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE)) $pays_id=getCountry($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE,2,$db,$langs);
+if (! $pays_id && ! empty($conf->geoipmaxmind->enabled))
+{
+    $pays_code=dol_user_country();
+    //print $pays_code;
+    if ($pays_code)
+    {
+        $new_pays_id=getCountry($pays_code,3,$db,$langs);
+        //print 'xxx'.$pays_code.' - '.$new_pays_id;
+        if ($new_pays_id) $pays_id=$new_pays_id;
+    }
+}
 $pays_code=getCountry($pays_id,2,$db,$langs);
 print $html->select_country($pays_id,'pays_id');
 print '</td></tr>';
@@ -380,12 +405,12 @@ print '</td></tr>';
 if (empty($conf->global->SOCIETE_DISABLE_STATE))
 {
     print '<tr><td>'.$langs->trans('State').'</td><td>';
-    if ($pays_id) print $formcompany->select_state(GETPOST("departement_id"),$pays_code);
+    if ($pays_code) print $formcompany->select_state(GETPOST("departement_id"),$pays_code);
     else print '';
     print '</td></tr>';
 }
 // EMail
-print '<tr><td>'.$langs->trans("Email").' <FONT COLOR="red">*</FONT> <FONT COLOR="blue">**</FONT></td><td><input type="text" name="email" size="40" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Email").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="email" size="40" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
 // Login
 if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
 {
@@ -398,9 +423,9 @@ print '<tr><td>'.$langs->trans("Birthday").'</td><td>';
 print $html->select_date($birthday,'birth',0,0,1,"newmember");
 print '</td></tr>'."\n";
 // Photo
-print '<tr><td>'.$langs->trans("URLPhoto").' <FONT COLOR="blue">**</FONT></td><td><input type="text" name="photo" size="40" value="'.dol_escape_htmltag(GETPOST('photo')).'"></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("URLPhoto").'</td><td><input type="text" name="photo" size="40" value="'.dol_escape_htmltag(GETPOST('photo')).'"></td></tr>'."\n";
 // Public
-print '<tr><td>'.$langs->trans("Public").' ?</td><td><input type="checkbox" name="public" value="1" checked></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Public").'</td><td><input type="checkbox" name="public" value="1" checked></td></tr>'."\n";
 // Extrafields
 foreach($extrafields->attribute_label as $key=>$value)
 {
@@ -418,7 +443,7 @@ print '</tr>'."\n";
 if (! empty($conf->global->MEMBER_NEWFORM_DOLIBARRTURNOVER))
 {
     $arraybudget=array('50'=>'<= 100 000','100'=>'<= 200 000','200'=>'<= 500 000','400'=>'<= 1 500 000','750'=>'<= 3 000 000','1500'=>'<= 5 000 000','2000'=>'5 000 000+');
-    print '<tr id="trbudget"><td>'.$langs->trans("TurnoverOrBudget").'</td><td>';
+    print '<tr id="trbudget" class="trcompany"><td>'.$langs->trans("TurnoverOrBudget").'</td><td>';
     print $html->select_array('budget', $arraybudget, GETPOST('budget'), 1);
     print ' € or $';
 
@@ -429,19 +454,27 @@ if (! empty($conf->global->MEMBER_NEWFORM_DOLIBARRTURNOVER))
             initturnover();
         });
         jQuery("#budget").change(function() {
-                if (jQuery("#budget").val() > 0) { jQuery("#amount").val(jQuery("#budget").val()); }
+                if (jQuery("#budget").val() > 0) { jQuery(".amount").val(jQuery("#budget").val()); }
                 else { jQuery("#budget").val(\'\'); }
+        });
+        jQuery("#type").change(function() {
+            if (jQuery("#type").val()==1) { jQuery("#morphy").val(\'mor\'); }
+            if (jQuery("#type").val()==2) { jQuery("#morphy").val(\'phy\'); }
+            if (jQuery("#type").val()==3) { jQuery("#morphy").val(\'mor\'); }
+            if (jQuery("#type").val()==4) { jQuery("#morphy").val(\'mor\'); }
+            initturnover();
         });
         function initturnover() {
             if (jQuery("#morphy").val()==\'phy\') {
-                jQuery("#amount").val(20);
+                jQuery(".amount").val(20);
                 jQuery("#trbudget").hide();
                 jQuery("#trcompany").hide();
             }
             if (jQuery("#morphy").val()==\'mor\') {
+                jQuery(".amount").val(\'\');
                 jQuery("#trbudget").show();
                 jQuery("#trcompany").show();
-                if (jQuery("#budget").val() > 0) { jQuery("#amount").val(jQuery("#budget").val()); }
+                if (jQuery("#budget").val() > 0) { jQuery(".amount").val(jQuery("#budget").val()); }
                 else { jQuery("#budget").val(\'\'); }
             }
         }
@@ -459,21 +492,18 @@ if (! empty($conf->global->MEMBER_NEWFORM_AMOUNT)
         $amount=GETPOST('amount')?GETPOST('amount'):$conf->global->MEMBER_NEWFORM_AMOUNT;
     }
     // $conf->global->MEMBER_NEWFORM_PAYONLINE is 'paypal' or 'paybox'
+    print '<tr><td>'.$langs->trans("Subscription").'</td><td nowrap="nowrap">';
     if (! empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT))
     {
-        print '<tr><td>'.$langs->trans("Subscription").'</td><td>';
-        print '<input type="text" name="amount" id="amount" class="flat" size="6" value="'.$amount.'">';
-        print ' € or $';
-        print '</td></tr>';
+        print '<input type="text" name="amount" id="amount" class="flat amount" size="6" value="'.$amount.'">';
     }
     else
     {
-        print '<tr><td>'.$langs->trans("Subscription").'</td><td>';
-        print $amount;
-        print '<input type="hidden" name="amount" id="amount" class="flat" size="6" value="'.$amount.'">';
-        print ' € or $';
-        print '</td></tr>';
+        print '<input type="text" name="amount" id="amounthidden" class="flat amount" disabled="disabled" size="6" value="'.$amount.'">';
+        print '<input type="hidden" name="amount" id="amount" class="flat amount" size="6" value="'.$amount.'">';
     }
+    print ' '.$langs->trans("Currency".$conf->monnaie);
+    print '</td></tr>';
 }
 print "</table>\n";
 
@@ -490,5 +520,5 @@ print "<br></form>\n";
 
 $db->close();
 
-llxFooterVierge('$Date: 2011/06/26 21:51:34 $ - $Revision: 1.29 $');
+llxFooterVierge('$Date: 2011/07/03 18:30:48 $ - $Revision: 1.37 $');
 ?>

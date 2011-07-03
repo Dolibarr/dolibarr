@@ -21,7 +21,7 @@
 /**	    \file       htdocs/paypal/admin/paypal.php
  *		\ingroup    paypal
  *		\brief      Page to setup paypal module
- *		\version    $Id$
+ *		\version    $Id: paypal.php,v 1.19 2011/07/03 16:55:04 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -177,7 +177,7 @@ print '</td></tr>';
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("SecurityToken").'</td><td>';
-print '<input size="64" type="text" name="PAYPAL_SECURITY_TOKEN" value="'.$conf->global->PAYPAL_SECURITY_TOKEN.'">';
+print '<input size="16" type="text" name="PAYPAL_SECURITY_TOKEN" value="'.$conf->global->PAYPAL_SECURITY_TOKEN.'">';
 print '</td></tr>';
 
 $var=!$var;
@@ -262,5 +262,5 @@ print info_admin($langs->trans("YouCanAddTagOnUrl"));
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/03 16:55:04 $ - $Revision: 1.19 $');
 ?>

@@ -23,7 +23,7 @@
  *  \file       htdocs/societe/document.php
  *  \brief      Tab for documents linked to third party
  *  \ingroup    societe
- *  \version    $Id$
+ *  \version    $Id: document.php,v 1.31 2011/07/03 13:16:46 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -38,7 +38,7 @@ $langs->load('other');
 $mesg = "";
 
 // Security check
-$socid = isset($_GET["socid"])?$_GET["socid"]:(! empty($_GET["id"])?$_GET["id"]:'');
+$socid = (GETPOST('socid') ? GETPOST('socid') : GETPOST('id'));
 if ($user->societe_id > 0)
 {
 	unset($_GET["action"]);
@@ -61,6 +61,7 @@ if (! $sortfield) $sortfield="name";
 $upload_dir = $conf->societe->dir_output . "/" . $socid ;
 $courrier_dir = $conf->societe->dir_output . "/courrier/" . get_exdir($socid) ;
 
+$object = new Societe($db);
 
 /*
  * Actions
@@ -125,14 +126,13 @@ llxHeader('',$langs->trans("ThirdParty").' - '.$langs->trans("Files"),$help_url)
 
 if ($socid > 0)
 {
-	$societe = new Societe($db);
-	if ($societe->fetch($socid))
+	if ($object->fetch($socid))
 	{
 		/*
 		 * Affichage onglets
 		 */
 		if ($conf->notification->enabled) $langs->load("mails");
-		$head = societe_prepare_head($societe);
+		$head = societe_prepare_head($object);
 
 		$html=new Form($db);
 
@@ -153,30 +153,30 @@ if ($socid > 0)
 		// Ref
 		print '<tr><td width="30%">'.$langs->trans("ThirdPartyName").'</td>';
 		print '<td colspan="3">';
-		print $form->showrefnav($societe,'socid','',($user->societe_id?0:1),'rowid','nom');
+		print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom');
 		print '</td></tr>';
 
 		// Prefix
         if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
         {
-            print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$societe->prefix_comm.'</td></tr>';
+            print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
         }
 
-	    if ($societe->client)
+	    if ($object->client)
 	    {
 	        print '<tr><td>';
 	        print $langs->trans('CustomerCode').'</td><td colspan="3">';
-	        print $societe->code_client;
-	        if ($societe->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+	        print $object->code_client;
+	        if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
 	        print '</td></tr>';
 	    }
 
-	    if ($societe->fournisseur)
+	    if ($object->fournisseur)
 	    {
 	        print '<tr><td>';
 	        print $langs->trans('SupplierCode').'</td><td colspan="3">';
-	        print $societe->code_fournisseur;
-	        if ($societe->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+	        print $object->code_fournisseur;
+	        if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
 	        print '</td></tr>';
 	    }
 
@@ -190,7 +190,7 @@ if ($socid > 0)
 
 		print '</div>';
 
-		if ($mesg) { print "$mesg<br>"; }
+		dol_htmloutput_mesg($mesg,$mesgs);
 
 		/*
 		 * Confirmation suppression fichier
@@ -200,17 +200,23 @@ if ($socid > 0)
 			$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?socid='.$_GET["id"].'&urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
 			if ($ret == 'html') print '<br>';
 		}
-
-
-		// Affiche formulaire upload
+		
 		$formfile=new FormFile($db);
-		$formfile->form_attach_new_file($_SERVER["PHP_SELF"].'?socid='.$socid,'',0,0,$user->rights->societe->creer);
-
-
-		// List of document
-		$param='&socid='.$societe->id;
-		$formfile->list_of_documents($filearray,$societe,'societe',$param);
-
+		
+		if ($conf->global->MAIN_USE_JQUERY_FILEUPLOAD)
+		{
+			$formfile->form_ajaxfileupload($object);
+		}
+		else
+		{
+			// Affiche formulaire upload
+			$formfile->form_attach_new_file($_SERVER["PHP_SELF"].'?socid='.$socid,'',0,0,$user->rights->societe->creer);
+	
+	
+			// List of document
+			$param='&socid='.$object->id;
+			$formfile->list_of_documents($filearray,$object,'societe',$param);
+		}
 
 		print "<br><br>";
 
@@ -268,12 +274,12 @@ if ($socid > 0)
 }
 else
 {
-	dol_print_error();
+	accessforbidden('',0,0);
 }
 
 $db->close();
 
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/03 13:16:46 $ - $Revision: 1.31 $');
 
 ?>
