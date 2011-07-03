@@ -21,8 +21,8 @@
 /**
  *	\file       htdocs/includes/boxes/box_actions.php
  *	\ingroup    actions
- *	\brief      Module de generation de l'affichage de la box actions
- *	\version	$Id$
+ *	\brief      Module to build boxe for events
+ *	\version	$Id: box_actions.php,v 1.47 2011/07/03 12:53:37 eldy Exp $
  */
 
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
@@ -100,7 +100,7 @@ class box_actions extends ModeleBoxes {
 					$objp = $db->fetch_object($result);
 					$datelimite=$db->jdate($objp->dp);
 
-					if ($datelimite  < ($now - $delay_warning)) $late=img_warning($langs->trans("Late"));
+					if ($objp->percentage >= 0 && $objp->percentage < 100 && $datelimite  < ($now - $delay_warning)) $late=img_warning($langs->trans("Late"));
 
 					//($langs->transnoentities("Action".$objp->code)!=("Action".$objp->code) ? $langs->transnoentities("Action".$objp->code) : $objp->label)
 					$label=$objp->label;
