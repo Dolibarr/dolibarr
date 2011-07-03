@@ -23,7 +23,7 @@
  *  \file       htdocs/societe/document.php
  *  \brief      Tab for documents linked to third party
  *  \ingroup    societe
- *  \version    $Id: document.php,v 1.30 2011/07/03 08:55:46 hregis Exp $
+ *  \version    $Id: document.php,v 1.31 2011/07/03 13:16:46 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -200,17 +200,23 @@ if ($socid > 0)
 			$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?socid='.$_GET["id"].'&urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
 			if ($ret == 'html') print '<br>';
 		}
-
-
-		// Affiche formulaire upload
+		
 		$formfile=new FormFile($db);
-		$formfile->form_attach_new_file($_SERVER["PHP_SELF"].'?socid='.$socid,'',0,0,$user->rights->societe->creer);
-
-
-		// List of document
-		$param='&socid='.$object->id;
-		$formfile->list_of_documents($filearray,$object,'societe',$param);
-
+		
+		if ($conf->global->MAIN_USE_JQUERY_FILEUPLOAD)
+		{
+			$formfile->form_ajaxfileupload($object);
+		}
+		else
+		{
+			// Affiche formulaire upload
+			$formfile->form_attach_new_file($_SERVER["PHP_SELF"].'?socid='.$socid,'',0,0,$user->rights->societe->creer);
+	
+	
+			// List of document
+			$param='&socid='.$object->id;
+			$formfile->list_of_documents($filearray,$object,'societe',$param);
+		}
 
 		print "<br><br>";
 
@@ -274,6 +280,6 @@ else
 $db->close();
 
 
-llxFooter('$Date: 2011/07/03 08:55:46 $ - $Revision: 1.30 $');
+llxFooter('$Date: 2011/07/03 13:16:46 $ - $Revision: 1.31 $');
 
 ?>

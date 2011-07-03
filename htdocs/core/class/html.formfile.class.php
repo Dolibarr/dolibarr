@@ -22,7 +22,7 @@
  *	\file       htdocs/core/class/html.formfile.class.php
  *  \ingroup    core
  *	\brief      File of class to offer components to list and upload files
- *	\version	$Id: html.formfile.class.php,v 1.34 2011/06/30 13:27:20 hregis Exp $
+ *	\version	$Id: html.formfile.class.php,v 1.35 2011/07/03 13:16:46 hregis Exp $
  */
 
 
@@ -732,6 +732,89 @@ class FormFile
         // Fin de zone
     }
 
+    /**
+	 *    	Show form to upload a new file with jquery fileupload
+	 */
+	function form_ajaxfileupload($object)
+	{
+		global $langs;
+		
+		print '<script type="text/javascript">
+				$(function () {
+					\'use strict\';
+					
+					// Initialize the jQuery File Upload widget:
+					$("#fileupload").fileupload();
+					
+					// Load existing files:
+					$.getJSON($("#fileupload form").prop("action"), { fk_element: "'.$object->id.'", element: "'.$object->element.'"}, function (files) {
+						var fu = $("#fileupload").data("fileupload");
+						fu._adjustMaxNumberOfFiles(-files.length);
+						fu._renderDownload(files)
+							.appendTo($("#fileupload .files"))
+							.fadeIn(function () {
+								// Fix for IE7 and lower:
+								$(this).show();
+							});
+					});
+					
+					// Open download dialogs via iframes,
+					// to prevent aborting current uploads:
+					$("#fileupload .files a:not([target^=_blank])").live("click", function (e) {
+						e.preventDefault();
+						$(\'<iframe style="display:none;"></iframe>\')
+							.prop("src", this.href)
+							.appendTo("body");
+					});
+					
+					// Confirm delete file
+					$("#fileupload").fileupload({
+						destroy: function (e, data) {
+							var that = $(this).data("fileupload"); 
+							if ( confirm("Delete this file ?") == true ) {
+					            if (data.url) {
+					                $.ajax(data)
+					                    .success(function () {
+					                        that._adjustMaxNumberOfFiles(1);
+					                        $(this).fadeOut(function () {
+					                            $(this).remove();
+					                        });
+					                    });
+					            } else {
+					                data.context.fadeOut(function () {
+					                    $(this).remove();
+					                });
+					            }
+					        }
+					    }
+					});
+				});
+				</script>';
+		
+		print '<div id="fileupload">';
+		print '<form action="'.DOL_URL_ROOT.'/core/ajaxfileupload.php" method="POST" enctype="multipart/form-data">';
+		print '<input type="hidden" name="fk_element" value="'.$object->id.'">';
+		print '<input type="hidden" name="element" value="'.$object->element.'">';
+		print '<div class="fileupload-buttonbar">';
+		print '<input type="hidden" name="protocol" value="http">';
+		print '<label class="fileinput-button">';
+		print '<span>'.$langs->trans('AddFiles').'</span>';
+		print '<input type="file" name="files[]" multiple>';
+		print '</label>';
+		print '<button type="submit" class="start">'.$langs->trans('StartUpload').'</button>';
+		print '<button type="reset" class="cancel">'.$langs->trans('CancelUpload').'</button>';
+		print '</div></form>';
+		print '<div class="fileupload-content">';
+		print '<table width="100%" class="files">';
+		print '</table>';
+		print '<div class="fileupload-progressbar"></div>';
+		print '</div>';
+		print '</div>';
+		
+		// Include template
+		include(DOL_DOCUMENT_ROOT.'/core/tpl/ajaxfileupload.tpl.php');
+
+	}
 
 }
 
