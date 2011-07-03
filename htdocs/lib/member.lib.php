@@ -20,7 +20,7 @@
 /**
  *	    \file       htdocs/lib/member.lib.php
  *		\brief      Ensemble de fonctions de base pour les adherents
- *		\version    $Id$
+ *		\version    $Id: member.lib.php,v 1.24 2011/07/03 16:00:19 eldy Exp $
  *
  *		Ensemble de fonctions de base de dolibarr sous forme d'include
  */
@@ -114,6 +114,11 @@ function member_admin_prepare_head($object)
     $head[$h][0] = DOL_URL_ROOT.'/adherents/admin/adherent_extrafields.php';
     $head[$h][1] = $langs->trans("ExtraFields");
     $head[$h][2] = 'attributes';
+    $h++;
+
+    $head[$h][0] = DOL_URL_ROOT.'/adherents/admin/public.php';
+    $head[$h][1] = $langs->trans("BlankSubscriptionForm");
+    $head[$h][2] = 'public';
     $h++;
 
     // Show more tabs from modules
