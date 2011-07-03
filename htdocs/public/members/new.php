@@ -22,7 +22,7 @@
  *	\file       htdocs/public/members/new.php
  *	\ingroup    member
  *	\brief      Example of form to add a new member
- *	\version    $Id: new.php,v 1.36 2011/07/03 17:46:16 eldy Exp $
+ *	\version    $Id: new.php,v 1.37 2011/07/03 18:30:48 eldy Exp $
  *
  *  Note that you can add following constant to change behaviour of page
  *  MEMBER_NEWFORM_AMOUNT               Default amount for autosubscribe form
@@ -273,7 +273,7 @@ if ($action == 'added')
     print $langs->trans("NewMemberbyWeb");
     print '</center>';
 
-    llxFooterVierge('$Date: 2011/07/03 17:46:16 $ - $Revision: 1.36 $');
+    llxFooterVierge('$Date: 2011/07/03 18:30:48 $ - $Revision: 1.37 $');
     exit;
 }
 
@@ -386,8 +386,18 @@ print '</td></tr>';
 // Country
 print '<tr><td width="25%">'.$langs->trans('Country').'</td><td>';
 $pays_id=GETPOST('pays_id');
-if (! GETPOST('pays_id') && ! empty($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE)) $pays_id=getCountry($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE,2,$db,$langs);
-if (! GETPOST('pays_id') && ! empty($conf->geoip->enabled)) $pays_id=$pays_id;  // TODO
+if (! $pays_id && ! empty($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE)) $pays_id=getCountry($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE,2,$db,$langs);
+if (! $pays_id && ! empty($conf->geoipmaxmind->enabled))
+{
+    $pays_code=dol_user_country();
+    //print $pays_code;
+    if ($pays_code)
+    {
+        $new_pays_id=getCountry($pays_code,3,$db,$langs);
+        //print 'xxx'.$pays_code.' - '.$new_pays_id;
+        if ($new_pays_id) $pays_id=$new_pays_id;
+    }
+}
 $pays_code=getCountry($pays_id,2,$db,$langs);
 print $html->select_country($pays_id,'pays_id');
 print '</td></tr>';
@@ -510,5 +520,5 @@ print "<br></form>\n";
 
 $db->close();
 
-llxFooterVierge('$Date: 2011/07/03 17:46:16 $ - $Revision: 1.36 $');
+llxFooterVierge('$Date: 2011/07/03 18:30:48 $ - $Revision: 1.37 $');
 ?>
