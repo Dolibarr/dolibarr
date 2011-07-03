@@ -25,7 +25,7 @@
  *	\file       htdocs/adherents/class/adherent.class.php
  *	\ingroup    member
  *	\brief      File of class to manage members of a foundation
- *	\version    $Id$
+ *	\version    $Id: adherent.class.php,v 1.44 2011/07/03 16:55:31 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
@@ -274,7 +274,7 @@ class Adherent extends CommonObject
         $sql.= " VALUES (";
         $sql.= " '".$this->db->idate($this->datec)."'";
         $sql.= ", ".($this->login?"'".$this->db->escape($this->login)."'":"null");
-        $sql.= ", ".($user->id>0?$user->id:"null");	// Can be null because member can be create by a guest or a script
+        $sql.= ", ".($user->id>0?$user->id:"null");	// Can be null because member can be createb by a guest or a script
         $sql.= ", null, null, '".$this->morphy."'";
         $sql.= ", '".$this->typeid."'";
         $sql.= ", ".$conf->entity;
@@ -288,6 +288,7 @@ class Adherent extends CommonObject
             if ($id > 0)
             {
                 $this->id=$id;
+                $this->ref=$id;
 
                 // Update minor fields
                 $result=$this->update($user,1,1); // nosync is 1 to avoid update data of user
