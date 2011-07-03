@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: ajaxfileupload.tpl.php,v 1.3 2011/07/03 13:45:32 hregis Exp $
+ * $Id: ajaxfileupload.tpl.php,v 1.4 2011/07/03 14:43:12 hregis Exp $
  */
 ?>
 
