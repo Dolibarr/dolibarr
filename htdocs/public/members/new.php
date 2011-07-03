@@ -22,7 +22,7 @@
  *	\file       htdocs/public/members/new.php
  *	\ingroup    member
  *	\brief      Example of form to add a new member
- *	\version    $Id: new.php,v 1.29 2011/06/26 21:51:34 eldy Exp $
+ *	\version    $Id: new.php,v 1.30 2011/07/03 16:00:19 eldy Exp $
  *
  *  Note that you can add following constant to change behaviour of page
  *  MEMBER_NEWFORM_AMOUNT               Default amount for autosubscribe form
@@ -45,8 +45,12 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formcompany.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
-// Security check
-if (empty($conf->adherent->enabled)) accessforbidden('',1,1,1);
+// Init vars
+$errmsg='';
+$num=0;
+$error=0;
+$backtopage=GETPOST('backtopage');
+$action=GETPOST('action');
 
 // Load translation files
 $langs->load("main");
@@ -55,12 +59,14 @@ $langs->load("companies");
 $langs->load("install");
 $langs->load("other");
 
-// Init vars
-$errmsg='';
-$num=0;
-$error=0;
-$backtopage=GETPOST('backtopage');
-$action=GETPOST('action');
+// Security check
+if (empty($conf->adherent->enabled)) accessforbidden('',1,1,1);
+
+if (empty($conf->global->MEMBER_ENABLE_PUBLIC))
+{
+    print $langs->trans("Auto subscription form for public visitors has no be enabled");
+    exit;
+}
 
 
 // Function for page HTML header
@@ -263,7 +269,7 @@ if ($action == 'added')
     print $langs->trans("NewMemberbyWeb");
     print '</center>';
 
-    llxFooterVierge('$Date: 2011/06/26 21:51:34 $ - $Revision: 1.29 $');
+    llxFooterVierge('$Date: 2011/07/03 16:00:19 $ - $Revision: 1.30 $');
     exit;
 }
 
@@ -290,7 +296,7 @@ if (! empty($conf->global->MEMBER_NEWFORM_TEXT)) print $langs->trans($conf->glob
 dol_htmloutput_errors($errmsg);
 
 print '<br>'.$langs->trans("FieldsWithAreMandatory",'*').'<br>';
-print $langs->trans("FieldsWithIsForPublic",'**').'<br>';
+//print $langs->trans("FieldsWithIsForPublic",'**').'<br>';
 
 print '<script type="text/javascript">
 jQuery(document).ready(function () {
@@ -326,8 +332,13 @@ print '<table class="border">'."\n";
 // Type
 if (empty($conf->global->MEMBER_NEWFORM_FORCETYPE))
 {
-    print '<tr><td width="15%">'.$langs->trans("Type").' <FONT COLOR="red">*</FONT> <FONT COLOR="blue">**</FONT></td><td width="35%">';
-    print $html->selectarray("type",  $adht->liste_array(), GETPOST('type'), 1);
+    $listoftype=$adht->liste_array();
+    $tmp=array_keys($listoftype);
+    $defaulttype='';
+    $isempty=1;
+    if (sizeof($listoftype)==1) { $defaulttype=$tmp[0]; $isempty=0; }
+    print '<tr><td width="15%">'.$langs->trans("Type").' <FONT COLOR="red">*</FONT></td><td width="35%">';
+    print $html->selectarray("type",  $adht->liste_array(), GETPOST('type')?GETPOST('type'):$defaulttype, $isempty);
     print '</td></tr>'."\n";
 }
 else
@@ -341,7 +352,7 @@ $morphys["phy"] = $langs->trans("Physical");
 $morphys["mor"] = $langs->trans("Moral");
 if (empty($conf->global->MEMBER_NEWFORM_FORCEMORPHY))
 {
-    print '<tr><td>'.$langs->trans("MorPhy").' <FONT COLOR="red">*</FONT> <FONT COLOR="blue">**</FONT> </td><td>'."\n";
+    print '<tr><td>'.$langs->trans("MorPhy").' <FONT COLOR="red">*</FONT></td><td>'."\n";
     print $html->selectarray("morphy",  $morphys, GETPOST('morphy'), 1);
     print '</td></tr>'."\n";
 }
@@ -354,9 +365,9 @@ else
 print '<tr><td>'.$langs->trans("Civility").'</td><td>';
 print $formcompany->select_civilite(GETPOST('civilite_id'),'civilite_id').'</td></tr>'."\n";
 // Lastname
-print '<tr><td>'.$langs->trans("Lastname").' <FONT COLOR="red">*</FONT> <FONT COLOR="blue">**</FONT></td><td><input type="text" name="nom" size="40" value="'.dol_escape_htmltag(GETPOST('nom')).'"></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Lastname").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="nom" size="40" value="'.dol_escape_htmltag(GETPOST('nom')).'"></td></tr>'."\n";
 // Firstname
-print '<tr><td>'.$langs->trans("Firstname").' <FONT COLOR="red">*</FONT> <FONT COLOR="blue">**</FONT></td><td><input type="text" name="prenom" size="40" value="'.dol_escape_htmltag(GETPOST('prenom')).'"></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Firstname").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="prenom" size="40" value="'.dol_escape_htmltag(GETPOST('prenom')).'"></td></tr>'."\n";
 // Company
 print '<tr id="trcompany"><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
 // Address
@@ -380,12 +391,12 @@ print '</td></tr>';
 if (empty($conf->global->SOCIETE_DISABLE_STATE))
 {
     print '<tr><td>'.$langs->trans('State').'</td><td>';
-    if ($pays_id) print $formcompany->select_state(GETPOST("departement_id"),$pays_code);
+    if ($pays_code) print $formcompany->select_state(GETPOST("departement_id"),$pays_code);
     else print '';
     print '</td></tr>';
 }
 // EMail
-print '<tr><td>'.$langs->trans("Email").' <FONT COLOR="red">*</FONT> <FONT COLOR="blue">**</FONT></td><td><input type="text" name="email" size="40" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Email").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="email" size="40" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
 // Login
 if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
 {
@@ -398,9 +409,9 @@ print '<tr><td>'.$langs->trans("Birthday").'</td><td>';
 print $html->select_date($birthday,'birth',0,0,1,"newmember");
 print '</td></tr>'."\n";
 // Photo
-print '<tr><td>'.$langs->trans("URLPhoto").' <FONT COLOR="blue">**</FONT></td><td><input type="text" name="photo" size="40" value="'.dol_escape_htmltag(GETPOST('photo')).'"></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("URLPhoto").'</td><td><input type="text" name="photo" size="40" value="'.dol_escape_htmltag(GETPOST('photo')).'"></td></tr>'."\n";
 // Public
-print '<tr><td>'.$langs->trans("Public").' ?</td><td><input type="checkbox" name="public" value="1" checked></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Public").'</td><td><input type="checkbox" name="public" value="1" checked></td></tr>'."\n";
 // Extrafields
 foreach($extrafields->attribute_label as $key=>$value)
 {
@@ -459,21 +470,18 @@ if (! empty($conf->global->MEMBER_NEWFORM_AMOUNT)
         $amount=GETPOST('amount')?GETPOST('amount'):$conf->global->MEMBER_NEWFORM_AMOUNT;
     }
     // $conf->global->MEMBER_NEWFORM_PAYONLINE is 'paypal' or 'paybox'
+    print '<tr><td>'.$langs->trans("Subscription").'</td><td>';
     if (! empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT))
     {
-        print '<tr><td>'.$langs->trans("Subscription").'</td><td>';
         print '<input type="text" name="amount" id="amount" class="flat" size="6" value="'.$amount.'">';
-        print ' € or $';
-        print '</td></tr>';
     }
     else
     {
-        print '<tr><td>'.$langs->trans("Subscription").'</td><td>';
         print $amount;
         print '<input type="hidden" name="amount" id="amount" class="flat" size="6" value="'.$amount.'">';
-        print ' € or $';
-        print '</td></tr>';
     }
+    print ' '.$langs->trans("Currency".$conf->monnaie);
+    print '</td></tr>';
 }
 print "</table>\n";
 
@@ -490,5 +498,5 @@ print "<br></form>\n";
 
 $db->close();
 
-llxFooterVierge('$Date: 2011/06/26 21:51:34 $ - $Revision: 1.29 $');
+llxFooterVierge('$Date: 2011/07/03 16:00:19 $ - $Revision: 1.30 $');
 ?>
