@@ -243,7 +243,7 @@ class UploadHandler
             }
             $file->size = $file_size;
             $file->delete_url = $this->options['script_url']
-                .'?file='.rawurlencode($file->name);
+                .'?file='.rawurlencode($file->name).'&fk_element='.$this->fk_element.'&element='.$this->element;
             $file->delete_type = 'DELETE';
         } else {
             $file->error = $error;
