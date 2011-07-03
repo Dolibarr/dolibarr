@@ -22,7 +22,7 @@
  *	\file       htdocs/core/class/html.formfile.class.php
  *  \ingroup    core
  *	\brief      File of class to offer components to list and upload files
- *	\version	$Id: html.formfile.class.php,v 1.36 2011/07/03 14:43:12 hregis Exp $
+ *	\version	$Id: html.formfile.class.php,v 1.37 2011/07/03 15:04:18 hregis Exp $
  */
 
 
@@ -806,6 +806,12 @@ class FormFile
 		print '</div></form>';
 		print '<div class="fileupload-content">';
 		print '<table width="100%" class="files">';
+		print '<tr class="liste_titre">';
+		print '<td>'.$langs->trans("Documents2").'</td>';
+		print '<td>'.$langs->trans("Preview").'</td>';
+		print '<td align="right">'.$langs->trans("Size").'</td>';
+		print '<td colspan="3"></td>';
+		print '</tr>';
 		print '</table>';
 		print '<div class="fileupload-progressbar"></div>';
 		print '</div>';
