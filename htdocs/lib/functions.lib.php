@@ -29,7 +29,7 @@
  *	\file			htdocs/lib/functions.lib.php
  *	\brief			A set of functions for Dolibarr
  *					This file contains all frequently used functions.
- *	\version		$Id: functions.lib.php,v 1.533 2011/07/02 16:48:31 eldy Exp $
+ *	\version		$Id: functions.lib.php,v 1.534 2011/07/03 18:31:13 eldy Exp $
  */
 
 // For compatibility during upgrade
@@ -1092,10 +1092,12 @@ function dol_print_ip($ip,$mode=0)
     {
         $datafile=$conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE;
         //$ip='24.24.24.24';
-        //$datafile='E:\Mes Sites\Web\Admin1\awstats\maxmind\GeoIP.dat';
+        //$datafile='E:\Mes Sites\Web\Admin1\awstats\maxmind\GeoIP.dat';    Note that this must be downloaded datafile (not same than datafile provided with ubuntu packages)
 
         include_once(DOL_DOCUMENT_ROOT.'/lib/dolgeoip.class.php');
         $geoip=new DolGeoIP('country',$datafile);
+        //print 'ip='.$ip.' databaseType='.$geoip->gi->databaseType." GEOIP_CITY_EDITION_REV1=".GEOIP_CITY_EDITION_REV1."\n";
+        //print "geoip_country_id_by_addr=".geoip_country_id_by_addr($geoip->gi,$ip)."\n";
         $countrycode=$geoip->getCountryCodeFromIP($ip);
         if ($countrycode)	// If success, countrycode is us, fr, ...
         {
@@ -1107,6 +1109,31 @@ function dol_print_ip($ip,$mode=0)
         }
     }
 
+    return $ret;
+}
+
+/**
+ *  Return country code for current user.
+ *  If software is used inside a local network, detection may fails (we need a public ip)
+ *  @return     string      country code (fr, es, it, us, ...)
+ */
+function dol_user_country()
+{
+    global $conf,$langs,$user;
+
+    //$ret=$user->xxx;
+    $ret='';
+    if (! empty($conf->geoipmaxmind->enabled))
+    {
+        $ip=$_SERVER["REMOTE_ADDR"];
+        $datafile=$conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE;
+        //$ip='24.24.24.24';
+        //$datafile='E:\Mes Sites\Web\Admin1\awstats\maxmind\GeoIP.dat';
+        include_once(DOL_DOCUMENT_ROOT.'/lib/dolgeoip.class.php');
+        $geoip=new DolGeoIP('country',$datafile);
+        $countrycode=$geoip->getCountryCodeFromIP($ip);
+        $ret=$countrycode;
+    }
     return $ret;
 }
 
