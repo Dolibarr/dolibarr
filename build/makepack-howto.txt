@@ -17,17 +17,14 @@ beta version of Dolibarr, step by step.
 - Update version number with x.x.x-y in htdocs/install/inc.php
 - Commit all changes.
 - Add a CVS Tag (DOLIBARR_x_y_BETA)
-- If it's a new branch (Vx.y), create a branch (DOLIBARR_x_y_BRANCH).
+- Create a branch (DOLIBARR_x_y_BRANCH).
 
-- Build Dolibarr and DoliWamp with makepack-dolibarr.pl
-- Check content of built packages.
-- Move build files (tgz+exe+deb), ChangeLog and PAD/DOAP files into the
-  Dolibarr web site repository /home/dolibarr/wwwroot/files.
-- Update and upload NLTechno web page with DoliWamp version.
+- Update the CVS on server that build automatically the tgz beta package
+  or build Dolibarr and DoliWamp with makepack-dolibarr.pl
+- Enable entries on joomla web site www.dolibarr.org with links
+  that point to that file ("Dolibarr CVS snapshot of current beta").
 
-- Add/Update entries on joomla web site www.dolibarr.org with links
-  to files http://www.dolibarr.org/files/XXX.
-
+- Post a news on dolibarr.org/dolibarr.fr
 - Send mail on mailings-list
 
 
