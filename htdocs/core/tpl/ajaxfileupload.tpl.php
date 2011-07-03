@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: ajaxfileupload.tpl.php,v 1.2 2011/07/03 13:26:45 hregis Exp $
+ * $Id: ajaxfileupload.tpl.php,v 1.3 2011/07/03 13:45:32 hregis Exp $
  */
 ?>
 
@@ -78,7 +78,7 @@
             <td class="size">${sizef}</td>
             <td colspan="2"></td>
         {{/if}}
-        <td class="delete">
+        <td align="right" class="delete">
             <button data-type="${delete_type}" data-url="${delete_url}"><?php echo $langs->trans('Delete'); ?></button>
         </td>
     </tr>
