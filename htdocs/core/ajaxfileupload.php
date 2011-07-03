@@ -198,6 +198,7 @@ class UploadHandler
     private function handle_file_upload($uploaded_file, $name, $size, $type, $error) {
         $file = new stdClass();
         $file->name = basename(stripslashes($name));
+        $file->mime = dol_mimetype($file->name,'',2);
         $file->size = intval($size);
         $file->type = $type;
         $error = $this->has_error($uploaded_file, $file, $error);
