@@ -23,7 +23,7 @@
  *		\file       htdocs/categories/fiche.php
  *		\ingroup    category
  *		\brief      Page to create a new category
- *		\version	$Id$
+ *		\version	$Id: fiche.php,v 1.84 2011/07/04 09:54:02 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -131,7 +131,7 @@ if ($action == 'add' && $user->rights->categorie->creer)
 }
 
 // Confirm action
-if ($action == 'add' && $user->rights->categorie->creer)
+if (($action == 'add' || $action == 'confirmed') && $user->rights->categorie->creer)
 {
 	// Action confirmation de creation categorie
 	if ($action == 'confirmed')
@@ -235,5 +235,5 @@ if ($user->rights->categorie->creer)
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/04 09:54:02 $ - $Revision: 1.84 $');
 ?>
