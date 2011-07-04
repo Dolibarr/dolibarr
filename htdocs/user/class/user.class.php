@@ -25,7 +25,7 @@
 /**
  *  \file       htdocs/user/class/user.class.php
  *  \brief      Fichier de la classe utilisateur
- *  \version    $Id: user.class.php,v 1.43 2011/06/29 10:23:32 eldy Exp $
+ *  \version    $Id: user.class.php,v 1.44 2011/07/04 11:41:02 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
@@ -1482,7 +1482,10 @@ class User extends CommonObject
 
 	/**
 	 *    Add user into a group
-	 *    @param       group       id du groupe
+	 *    @param       group       Id of group
+	 *    @param       entity      Entity
+	 *    @param       notrigger   Disable triggers
+	 *    @return      int         <0 if KO, >0 if OK
 	 */
 	function SetInGroup($group, $entity, $notrigger=0)
 	{
@@ -1539,7 +1542,10 @@ class User extends CommonObject
 
 	/**
 	 *    Remove a user from a group
-	 *    @param      group       id du groupe
+     *    @param       group       Id of group
+     *    @param       entity      Entity
+     *    @param       notrigger   Disable triggers
+     *    @return      int         <0 if KO, >0 if OK
 	 */
 	function RemoveFromGroup($group, $entity, $notrigger=0)
 	{
