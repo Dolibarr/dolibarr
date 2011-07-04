@@ -26,7 +26,7 @@
  *  \ingroup		commande
  *  \brief			Fichier contenant la classe mere de generation des commandes en PDF
  *  				et la classe mere de numerotation des commandes
- *  \version    	$Id$
+ *  \version    	$Id: modules_commande.php,v 1.47 2011/07/04 10:35:49 hregis Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
@@ -146,7 +146,7 @@ class ModeleNumRefCommandes
  */
 function commande_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 {
-	global $conf,$langs;
+	global $conf,$user,$langs;
 	$langs->load("orders");
 
 	$dir = "/includes/modules/commande/";
@@ -198,6 +198,14 @@ function commande_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0
 			$outputlangs->charset_output=$sav_charset_output;
 			// on supprime l'image correspondant au preview
 			commande_delete_preview($db, $object->id);
+			
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			$interface=new Interfaces($db);
+			$result=$interface->run_triggers('ORDER_BUILDDOC',$object,$user,$langs,$conf);
+			if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			// Fin appel triggers
+			
 			return 1;
 		}
 		else
