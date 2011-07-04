@@ -23,7 +23,7 @@
  *	\file       htdocs/admin/societe.php
  *	\ingroup    company
  *	\brief      Third party module setup page
- *	\version    $Id$
+ *	\version    $Id: societe.php,v 1.60 2011/07/04 07:38:22 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -166,8 +166,8 @@ if ($_GET["action"] == 'setdoc')
 
 $form=new Form($db);
 
-
-llxHeader('',$langs->trans("CompanySetup"),'EN:Module Third Parties setup|FR:Paramétrage_du_module_Tiers');
+$help_url='EN:Module Third Parties setup|FR:Paramétrage_du_module_Tiers';
+llxHeader('',$langs->trans("CompanySetup"),$help_url);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("CompanySetup"),$linkback,'setup');
@@ -499,5 +499,5 @@ dol_fiche_end();
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/04 07:38:22 $ - $Revision: 1.60 $');
 ?>
