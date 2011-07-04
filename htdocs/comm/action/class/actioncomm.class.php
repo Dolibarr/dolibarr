@@ -23,7 +23,7 @@
  *       \file       htdocs/comm/action/class/actioncomm.class.php
  *       \ingroup    commercial
  *       \brief      File of class to manage agenda events (actions)
- *       \version    $Id: actioncomm.class.php,v 1.41 2011/06/30 07:52:43 eldy Exp $
+ *       \version    $Id: actioncomm.class.php,v 1.42 2011/07/04 09:36:29 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php');
@@ -391,8 +391,10 @@ class ActionComm extends CommonObject
 
 	/**
 	*    Load all objects with filters
-	*    @param		socid		Filter by thirdparty
-	*    @param		filter		Other filter
+	*    @param		socid			Filter by thirdparty
+	* 	 @param		fk_element		Id of element action is linked to
+ 	*  	 @param		elementtype		Type of element action is linked to
+	*    @param		filter			Other filter
 	*/
 	function getActions($socid=0, $fk_element=0, $elementtype='', $filter='')
 	{
@@ -603,7 +605,7 @@ class ActionComm extends CommonObject
 	 *      Utilise $this->id, $this->code et $this->label
 	 * 		@param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
 	 *		@param		maxlength		Nombre de caracteres max dans libelle
-	 *		@param		class			Force style class on a link
+	 *		@param		classname		Force style class on a link
 	 * 		@param		option			''=Link to action,'birthday'=Link to contact
 	 *		@return		string			Chaine avec URL
 	 */

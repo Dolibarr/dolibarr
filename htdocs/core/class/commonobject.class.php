@@ -22,7 +22,7 @@
  *	\file       htdocs/core/class/commonobject.class.php
  *	\ingroup    core
  *	\brief      File of parent class of all other business classes (invoices, contracts, proposals, orders, ...)
- *	\version    $Id: commonobject.class.php,v 1.143 2011/07/01 23:05:39 eldy Exp $
+ *	\version    $Id: commonobject.class.php,v 1.144 2011/07/04 09:36:29 eldy Exp $
  */
 
 
@@ -78,11 +78,12 @@ class CommonObject
 	}
 
 	/**
-	 *      \brief      Add a link between element $this->element and a contact
-	 *      \param      fk_socpeople        Id of contact to link
-	 *   	\param 		type_contact 		Type of contact (code or id)
-	 *      \param      source              external=Contact extern (llx_socpeople), internal=Contact intern (llx_user)
-	 *      \return     int                 <0 if KO, >0 if OK
+	 *      Add a link between element $this->element and a contact
+	 *      @param      fk_socpeople        Id of contact to link
+	 *   	@param 		type_contact 		Type of contact (code or id)
+	 *      @param      source              external=Contact extern (llx_socpeople), internal=Contact intern (llx_user)
+	 *      @param      notrigger			Disable all triggers
+	 *      @return     int                 <0 if KO, >0 if OK
 	 */
 	function add_contact($fk_socpeople, $type_contact, $source='external',$notrigger=0)
 	{
@@ -168,11 +169,11 @@ class CommonObject
 	}
 
 	/**
-	 *      \brief      Update a link to contact line
-	 *      \param      rowid               Id of line contact-element
-	 * 		\param		statut	            New status of link
-	 *      \param      type_contact_id     Id of contact type
-	 *      \return     int                 <0 if KO, >= 0 if OK
+	 *      Update a link to contact line
+	 *      @param      rowid               Id of line contact-element
+	 * 		@param		statut	            New status of link
+	 *      @param      type_contact_id     Id of contact type
+	 *      @return     int                 <0 if KO, >= 0 if OK
 	 */
 	function update_contact($rowid, $statut, $type_contact_id)
 	{
@@ -194,9 +195,10 @@ class CommonObject
 	}
 
 	/**
-	 *    \brief      Delete a link to contact line
-	 *    \param      rowid			Id of link line to delete
-	 *    \return     statur        >0 si ok, <0 si ko
+	 *    Delete a link to contact line
+	 *    @param      	rowid			Id of contact link line to delete
+	 *    @param		notrigger		Disable all triggers
+	 *    @return     	int				>0 if OK, <0 if KO
 	 */
 	function delete_contact($rowid,$notrigger=0)
 	{
@@ -1321,8 +1323,8 @@ class CommonObject
 	/**
 	 *      Set statut of an object
 	 *      @param		statut			Statut to set
-	 *      @param		elementid		Id of element to force (use this->id by default)
-	 *      @param		elementtype		Type of element to force (use ->this->element by default)
+	 *      @param		elementId		Id of element to force (use this->id by default)
+	 *      @param		elementType		Type of element to force (use ->this->element by default)
 	 *      @return     int				<0 if ko, >0 if ok
 	 */
 	function setStatut($statut,$elementId='',$elementType='')
@@ -1664,6 +1666,8 @@ class CommonObject
      *  TODO Edit templates to use global variables and include them directly in controller call
 	 *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
      *  @param          $dateSelector       1=Show also date range input fields
+     *  @param			$seller				Object thirdparty who sell
+     *  @param			$buyer				Object thirdparty who buy
 	 */
 	function formAddPredefinedProduct($dateSelector,$seller,$buyer)
 	{
@@ -1699,10 +1703,11 @@ class CommonObject
      *  TODO Move this into an output class file (htmlline.class.php)
      *  If lines are into a template, title must also be into a template
      *  But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
-     *  @param      $seller            Object of seller third party
-     *  @param      $buyer             Object of buyer third party
-     *  @param		$selected		   Object line selected
-     *  @param      $dateSelector      1=Show also date range input fields
+     *  @param      $action				Action code
+     *  @param      $seller            	Object of seller third party
+     *  @param      $buyer             	Object of buyer third party
+     *  @param		$selected		   	Object line selected
+     *  @param      $dateSelector      	1=Show also date range input fields
 	 */
 	function printObjectLines($action='viewline',$seller,$buyer,$selected=0,$dateSelector=0)
 	{

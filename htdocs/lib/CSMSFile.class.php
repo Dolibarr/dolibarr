@@ -25,7 +25,7 @@
 /**
  *      \file       htdocs/lib/CSMSFile.class.php
  *      \brief      File of class to send sms
- *		\version    $Id$
+ *		\version    $Id: CSMSFile.class.php,v 1.4 2011/07/04 09:36:29 eldy Exp $
  *      \author	    Laurent Destailleur.
  */
 
@@ -54,6 +54,9 @@ class CSMSFile
 	 *	@param 	from                Sender SMS
 	 *	@param 	msg                 Message
 	 *	@param 	deliveryreceipt		Ask a delivery receipt
+	 *	@param 	deferred			Deferred or not
+	 *	@param 	priority			Priority
+	 *	@param 	class				Class
 	 */
 	function CSMSFile($to,$from,$msg,$deliveryreceipt=0,$deferred=0,$priority=3,$class=1)
 	{

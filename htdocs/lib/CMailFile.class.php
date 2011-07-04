@@ -25,7 +25,7 @@
 /**
  *      \file       htdocs/lib/CMailFile.class.php
  *      \brief      File of class to send emails (with attachments or not)
- *		\version    $Id: CMailFile.class.php,v 1.142 2011/07/02 16:48:31 eldy Exp $
+ *		\version    $Id: CMailFile.class.php,v 1.143 2011/07/04 09:36:29 eldy Exp $
  *      \author     Dan Potter.
  *      \author	    Eric Seigne
  *      \author	    Laurent Destailleur.
@@ -86,20 +86,20 @@ class CMailFile
 
 
 	/**
-	 *	\brief 	CMailFile
-	 *	\param 	subject             Topic/Subject of mail
-	 *	\param 	to                  Recipients emails (RFC 2822: "Nom prenom <email>[, ...]" ou "email[, ...]" ou "<email>[, ...]")
-	 *	\param 	from                Sender email      (RFC 2822: "Nom prenom <email>[, ...]" ou "email[, ...]" ou "<email>[, ...]")
-	 *	\param 	msg                 Message
-	 *	\param 	filename_list       List of files to attach (full path of filename on file system)
-	 *	\param 	mimetype_list       List of MIME type of attached files
-	 *	\param 	mimefilename_list   List of attached file name in message
-	 *	\param 	addr_cc             Email cc
-	 *	\param 	addr_bcc            Email bcc
-	 *	\param 	deliveryreceipt		  Ask a delivery receipt
-	 *	\param 	msgishtml       		1=String IS already html, 0=String IS NOT html, -1=Unknown need autodetection
-	 *	\param 	error_to        		Email errors
-	 *	\param	css			            Css option
+	 *	CMailFile
+	 *	@param 	subject             Topic/Subject of mail
+	 *	@param 	to                  Recipients emails (RFC 2822: "Nom prenom <email>[, ...]" ou "email[, ...]" ou "<email>[, ...]")
+	 *	@param 	from                Sender email      (RFC 2822: "Nom prenom <email>[, ...]" ou "email[, ...]" ou "<email>[, ...]")
+	 *	@param 	msg                 Message
+	 *	@param 	filename_list       List of files to attach (full path of filename on file system)
+	 *	@param 	mimetype_list       List of MIME type of attached files
+	 *	@param 	mimefilename_list   List of attached file name in message
+	 *	@param 	addr_cc             Email cc
+	 *	@param 	addr_bcc            Email bcc
+	 *	@param 	deliveryreceipt		Ask a delivery receipt
+	 *	@param 	msgishtml       	1=String IS already html, 0=String IS NOT html, -1=Unknown need autodetection
+	 *	@param 	errors_to      		Email errors
+	 *	@param	css			        Css option
 	 */
 	function CMailFile($subject,$to,$from,$msg,
 	$filename_list=array(),$mimetype_list=array(),$mimefilename_list=array(),
@@ -781,9 +781,8 @@ class CMailFile
 
 	/**
 	 * Try to create a socket connection
-	 *
-	 * @param 		$host. Add ssl:// for SSL/TLS.
-	 * @param 		$port. Example: 25, 465
+	 * @param 		$host		Add ssl:// for SSL/TLS.
+	 * @param 		$port		Example: 25, 465
 	 * @return 		Socket id if ok, 0 if KO
 	 */
 	function check_server_port($host,$port)
@@ -939,7 +938,6 @@ class CMailFile
 
 	/**
 	 * Return an address for SMTP protocol
-	 *
 	 * @param       adresses		Example: 'John Doe <john@doe.com>' or 'john@doe.com'
 	 * @param		format			0=Auto, 1=emails with <>, 2=emails without <>
 	 * @param		encode			1=Encode name to RFC2822

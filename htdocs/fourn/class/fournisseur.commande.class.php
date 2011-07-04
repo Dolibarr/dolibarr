@@ -25,7 +25,7 @@
  *	\file       htdocs/fourn/class/fournisseur.commande.class.php
  *	\ingroup    fournisseur,commande
  *	\brief      File of class to manage suppliers orders
- *	\version    $Id$
+ *	\version    $Id: fournisseur.commande.class.php,v 1.47 2011/07/04 09:36:29 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
@@ -49,27 +49,27 @@ class CommandeFournisseur extends Commande
 	var $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	var $ref;		 // TODO deprecated
-    var $product_ref;
-    var $ref_supplier;
+	var $product_ref;
+	var $ref_supplier;
 	var $brouillon;
 	var $statut;			// 0=Draft -> 1=Validated -> 2=Approved -> 3=Process runing -> 4=Received partially -> 5=Received totally -> (reopen) 4=Received partially
 	//                                                          -> 7=Canceled/Never received -> (reopen) 3=Process runing
 	//										-> 6=Canceled -> (reopen) 2=Approved
 	//  		              -> 9=Refused  -> (reopen) 1=Validated
-    var $socid;
-    var $fourn_id;
+	var $socid;
+	var $fourn_id;
 	var $date;
-    var $date_commande;
-    var $total_ht;
-    var $total_tva;
+	var $date_commande;
+	var $total_ht;
+	var $total_tva;
 	var $total_localtax1;   // Total Local tax 1
 	var $total_localtax2;   // Total Local tax 2
-    var $total_ttc;
-    var $source;
-    var $note;
-    var $note_public;
-    var $model_pdf;
-    var $fk_project;
+	var $total_ttc;
+	var $source;
+	var $note;
+	var $note_public;
+	var $model_pdf;
+	var $fk_project;
 	var $cond_reglement_id;
 	var $cond_reglement_code;
 	var $mode_reglement_id;
@@ -247,7 +247,7 @@ class CommandeFournisseur extends Commande
 	 *   @param      user        User making action
 	 *   @param      statut      Status of order
 	 *   @param      datelog     Date of change
-	 * 	 @param		 comment		Comment
+	 * 	 @param		 comment	 Comment
 	 *   @return     int         <0 if KO, >0 if OK
 	 */
 	function log($user, $statut, $datelog, $comment='')
@@ -278,7 +278,7 @@ class CommandeFournisseur extends Commande
 	function valid($user)
 	{
 		global $langs,$conf;
-        require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+		require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 
 		$error=0;
 
@@ -479,18 +479,18 @@ class CommandeFournisseur extends Commande
 		global $langs;
 		$langs->load('orders');
 
-        // List of language codes for status
-        $statutshort[0] = 'StatusOrderDraftShort';
-        $statutshort[1] = 'StatusOrderValidatedShort';
-        $statutshort[2] = 'StatusOrderApprovedShort';
-        $statutshort[3] = 'StatusOrderOnProcessShort';
-        $statutshort[4] = 'StatusOrderReceivedPartiallyShort';
-        $statutshort[5] = 'StatusOrderReceivedAllShort';
-        $statutshort[6] = 'StatusOrderCanceledShort';
-        $statutshort[7] = 'StatusOrderCanceledShort';
-        $statutshort[9] = 'StatusOrderRefusedShort';
+		// List of language codes for status
+		$statutshort[0] = 'StatusOrderDraftShort';
+		$statutshort[1] = 'StatusOrderValidatedShort';
+		$statutshort[2] = 'StatusOrderApprovedShort';
+		$statutshort[3] = 'StatusOrderOnProcessShort';
+		$statutshort[4] = 'StatusOrderReceivedPartiallyShort';
+		$statutshort[5] = 'StatusOrderReceivedAllShort';
+		$statutshort[6] = 'StatusOrderCanceledShort';
+		$statutshort[7] = 'StatusOrderCanceledShort';
+		$statutshort[9] = 'StatusOrderRefusedShort';
 
-        if ($mode == 0)
+		if ($mode == 0)
 		{
 			return $langs->trans($this->statuts[$statut]);
 		}
@@ -618,6 +618,7 @@ class CommandeFournisseur extends Commande
 	/**
 	 * 	Accept an order
 	 *	@param		user		Object user
+	 *	@return		int			<0 if KO, >0 if OK
 	 */
 	function approve($user)
 	{
@@ -647,7 +648,7 @@ class CommandeFournisseur extends Commande
 					for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
 					{
 						// Product with reference
-					    if ($this->lines[$i]->fk_product > 0)
+						if ($this->lines[$i]->fk_product > 0)
 						{
 							$mouvP = new MouvementStock($this->db);
 							// We decrement stock of product (and sub-products)
@@ -739,9 +740,9 @@ class CommandeFournisseur extends Commande
 	}
 
 	/**
-	 * 	Cancel an approved order
+	 * 	Cancel an approved order.
+	 *	L'annulation se fait apres l'approbation
 	 * 	@param		user		User making action
-	 *	@remarks	L'annulation se fait apres l'approbation
 	 */
 	function Cancel($user)
 	{
@@ -800,6 +801,11 @@ class CommandeFournisseur extends Commande
 
 	/**
 	 * 	Send a supplier order to supplier
+	 * 	@param		user		User making change
+	 * 	@param		date		Date
+	 * 	@param		methode		Method
+	 * 	@param		comment		Comment
+	 * 	@return		int			<0 if KO, >0 if OK
 	 */
 	function commande($user, $date, $methode, $comment='')
 	{
@@ -912,14 +918,14 @@ class CommandeFournisseur extends Commande
 	/**
 	 *	Add order line
 	 *	@param      desc            	Description
-	 *	@param      pu              	Unit price
+	 *	@param      pu_ht              	Unit price
 	 *	@param      qty             	Quantity
 	 *	@param      txtva           	Taux tva
 	 *	@param      txlocaltax1        	Localtax1 tax
 	 *  @param      txlocaltax2        	Localtax2 tax
 	 *	@param      fk_product      	Id produit
 	 *  @param      fk_prod_fourn_price	Id supplier price
-	 *  @param      fournref			Supplier reference
+	 *  @param      fourn_ref			Supplier reference
 	 *	@param      remise_percent  	Remise
 	 *	@param      price_base_type		HT or TTC
 	 *	@param		pu_ttc				Unit price TTC
@@ -1117,13 +1123,13 @@ class CommandeFournisseur extends Commande
 				$mouv = new MouvementStock($this->db);
 				if ($product > 0)
 				{
-    				$result=$mouv->reception($user, $product, $entrepot, $qty, $price, $comment);
-    				if ($result < 0)
-    				{
-    					$this->error=$mouv->error;
-    					dol_syslog("CommandeFournisseur::DispatchProduct ".$this->error, LOG_ERR);
-    					$error++;
-    				}
+					$result=$mouv->reception($user, $product, $entrepot, $qty, $price, $comment);
+					if ($result < 0)
+					{
+						$this->error=$mouv->error;
+						dol_syslog("CommandeFournisseur::DispatchProduct ".$this->error, LOG_ERR);
+						$error++;
+					}
 				}
 				$i++;
 			}
@@ -1159,15 +1165,15 @@ class CommandeFournisseur extends Commande
 
 			dol_syslog("Fournisseur.commande.class::deleteline sql=".$sql);
 			if ($resql)
-	  {
-	  	$result=$this->update_price();
-	  	return 0;
-	  }
-	  else
-	  {
-	  	$this->error=$this->db->error();
-	  	return -1;
-	  }
+			{
+				$result=$this->update_price();
+				return 0;
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				return -1;
+			}
 		}
 		else
 		{
@@ -1176,8 +1182,8 @@ class CommandeFournisseur extends Commande
 	}
 
 	/**
-	 * 		\brief		Delete an order
-	 *		\return		int		<0 if KO, >0 if OK
+	 * 		Delete an order
+	 *		@return		int		<0 if KO, >0 if OK
 	 */
 	function delete()
 	{
@@ -1229,8 +1235,7 @@ class CommandeFournisseur extends Commande
 	}
 
 	/**
-	 *
-	 *
+	 *	Return list of order methods
 	 */
 	function get_methodes_commande()
 	{
@@ -1295,8 +1300,8 @@ class CommandeFournisseur extends Commande
 
 	/**
 	 *  Change le mode de reglement
-	 *  @param      mode        Id du nouveau mode
-	 *  @return     int         >0 si ok, <0 si ko
+	 *  @param      mode_reglement_id        Id du nouveau mode
+	 *  @return     int         			>0 if OK, <0 if KO
 	 */
 	function mode_reglement($mode_reglement_id)
 	{
@@ -1331,6 +1336,7 @@ class CommandeFournisseur extends Commande
 	 *	@param		user		User that input data
 	 *	@param		date		Date of reception
 	 *	@param		type		Type of receipt
+	 *	@param		comment		Comment
 	 */
 	function Livraison($user, $date, $type, $comment)
 	{
@@ -1388,7 +1394,8 @@ class CommandeFournisseur extends Commande
 	/**
 	 *  Cree la commande depuis une propale existante
 	 *  @param      user            Utilisateur qui cree
-	 *  @param      propale_id      id de la propale qui sert de modele
+	 *  @param      idc				Id de la propale qui sert de modele
+	 *  @param		comclientid		Id thirdparty
 	 */
 	function updateFromCommandeClient($user, $idc, $comclientid)
 	{
@@ -1425,8 +1432,12 @@ class CommandeFournisseur extends Commande
 
 
 	/**
-	 *	Met a jour les notes
-	 *	@return		int			<0 si ko, >=0 si ok
+	 *	Update notes
+	 *	@param		user
+	 *	@param		note
+	 *	@param		note_public
+	 *	@return		int			<0 if KO, >=0 if OK
+	 *	TODO Use instead update_note_public and update_note
 	 */
 	function UpdateNote($user, $note, $note_public)
 	{
@@ -1457,10 +1468,8 @@ class CommandeFournisseur extends Commande
 		return $result ;
 	}
 
-	/*
-	 *
-	 *
-	 *
+	/**
+	 *	Get list of user that can approve an order
 	 */
 	function ReadApprobators()
 	{
@@ -1500,6 +1509,7 @@ class CommandeFournisseur extends Commande
 	/**
 	 *  Tag order with a particular status
 	 *  @param      user        Object user that change status
+	 *  @param      status		New status
 	 *  @return     int         <0 if KO, >0 if OK
 	 */
 	function setStatus($user,$status)
@@ -1688,7 +1698,7 @@ class CommandeFournisseur extends Commande
 		$this->specimen=1;
 		$this->socid = 1;
 		$this->date = time();
-        $this->date_commande = time();
+		$this->date_commande = time();
 		$this->date_lim_reglement=$this->date+3600*24*30;
 		$this->cond_reglement_code = 'RECEP';
 		$this->mode_reglement_code = 'CHQ';
@@ -1703,14 +1713,14 @@ class CommandeFournisseur extends Commande
 			$line->desc=$langs->trans("Description")." ".$xnbp;
 			$line->qty=1;
 			$line->subprice=100;
-            $line->price=100;
-            $line->tva_tx=19.6;
-            $line->localtax1_tx=0;
-            $line->localtax2_tx=0;
-            $line->remise_percent=10;
-            $line->total_ht=90;
-            $line->total_ttc=107.64;    // 90 * 1.196
-            $line->total_tva=17.64;
+			$line->price=100;
+			$line->tva_tx=19.6;
+			$line->localtax1_tx=0;
+			$line->localtax2_tx=0;
+			$line->remise_percent=10;
+			$line->total_ht=90;
+			$line->total_ttc=107.64;    // 90 * 1.196
+			$line->total_tva=17.64;
 			$line->ref_fourn='SUPPLIER_REF_'.$xnbp;
 			$prodid = rand(1, $num_prods);
 			$line->fk_product=$prodids[$prodid];
@@ -1726,48 +1736,48 @@ class CommandeFournisseur extends Commande
 		$this->total_ttc      = $xnbp*119.6;
 	}
 
-    /**
-     *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
-     *      @param          user    Objet user
-     *      @return         int     <0 if KO, >0 if OK
-     */
-    function load_board($user)
-    {
-        global $conf, $user;
+	/**
+	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
+	 *      @param          user    Objet user
+	 *      @return         int     <0 if KO, >0 if OK
+	 */
+	function load_board($user)
+	{
+		global $conf, $user;
 
-        $now=gmmktime();
+		$now=gmmktime();
 
-        $this->nbtodo=$this->nbtodolate=0;
-        $clause = " WHERE";
+		$this->nbtodo=$this->nbtodolate=0;
+		$clause = " WHERE";
 
-        $sql = "SELECT c.rowid, c.date_creation as datec, c.fk_statut";
-        $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
-        if (!$user->rights->societe->client->voir && !$user->societe_id)
-        {
-            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc";
-            $sql.= " WHERE sc.fk_user = " .$user->id;
-            $clause = " AND";
-        }
-        $sql.= $clause." c.entity = ".$conf->entity;
-        $sql.= " AND (c.fk_statut BETWEEN 1 AND 2)";
-        if ($user->societe_id) $sql.=" AND c.fk_soc = ".$user->societe_id;
+		$sql = "SELECT c.rowid, c.date_creation as datec, c.fk_statut";
+		$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
+		if (!$user->rights->societe->client->voir && !$user->societe_id)
+		{
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc";
+			$sql.= " WHERE sc.fk_user = " .$user->id;
+			$clause = " AND";
+		}
+		$sql.= $clause." c.entity = ".$conf->entity;
+		$sql.= " AND (c.fk_statut BETWEEN 1 AND 2)";
+		if ($user->societe_id) $sql.=" AND c.fk_soc = ".$user->societe_id;
 
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            while ($obj=$this->db->fetch_object($resql))
-            {
-                $this->nbtodo++;
-                if ($obj->fk_statut != 3 && $this->db->jdate($obj->datec) < ($now - $conf->commande->fournisseur->warning_delay)) $this->nbtodolate++;
-            }
-            return 1;
-        }
-        else
-        {
-            $this->error=$this->db->error();
-            return -1;
-        }
-    }
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			while ($obj=$this->db->fetch_object($resql))
+			{
+				$this->nbtodo++;
+				if ($obj->fk_statut != 3 && $this->db->jdate($obj->datec) < ($now - $conf->commande->fournisseur->warning_delay)) $this->nbtodolate++;
+			}
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			return -1;
+		}
+	}
 }
 
 
