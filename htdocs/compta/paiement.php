@@ -24,7 +24,7 @@
  *	\file       htdocs/compta/paiement.php
  *	\ingroup    compta
  *	\brief      Page to create a payment
- *	\version    $Id: paiement.php,v 1.108 2011/07/01 16:18:10 hregis Exp $
+ *	\version    $Id: paiement.php,v 1.109 2011/07/04 16:39:48 cdelambert Exp $
  */
 
 require('../main.inc.php');
@@ -521,19 +521,15 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                     {
                         if (! empty($conf->global->MAIN_JS_ON_PAYMENT))
                         {
-                            print img_picto($langs->trans('AddRemind'),'rightarrow.png','id="calcRemind'.$i.'" onclick="calcRemind(\''.$i.'\');return false;"');
-                            print '<script type="text/javascript" language="javascript">';
-                            print 'amountInput.push(new Array("'.$namef.'","'.price(price2num($objp->total_ttc - $paiement - $creditnotes - $deposits)).'","0"));'; // Push a new Array into the amountInput Array
-                            print 'jQuery(document).ready(function () {';
-                            print 'jQuery("#'.$namef.'").keyup(function() { changeAmount('.$i.'); });';
-                            print '});</script>';
+                            print img_picto($langs->trans('AddRemind'),'rightarrow.png','id="'.$objp->facid.'" "');
                         }
-                        print '<input id="'.$namef.'" type="text" size="8" name="'.$namef.'" value="'.$_POST[$namef].'">';
+                        print '<input type=hidden name="'.$nameRemain.'" value="'.$remaintopay.'">';
+                        print '<input type="text" size="8" name="'.$namef.'" value="'.$_POST[$namef].'">';
                     }
                     else
                     {
                         print '<input type="text" size="8" name="'.$namef.'_disabled" value="'.$_POST[$namef].'" disabled="true">';
-                        print '<input id="'.$namef.'" type="hidden" name="'.$namef.'" value="'.$_POST[$namef].'">';
+                        print '<input type="hidden" name="'.$namef.'" value="'.$_POST[$namef].'">';
                     }
                     print "</td>";
 
@@ -682,5 +678,5 @@ if (! GETPOST('action'))
 
 $db->close();
 
-llxFooter('$Date: 2011/07/01 16:18:10 $ - $Revision: 1.108 $');
+llxFooter('$Date: 2011/07/04 16:39:48 $ - $Revision: 1.109 $');
 ?>
