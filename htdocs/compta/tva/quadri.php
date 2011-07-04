@@ -24,7 +24,7 @@
 	    \file       htdocs/compta/tva/quadri.php
         \ingroup    tax
 		\brief      Trimestrial page
-		\version    $Id$
+		\version    $Id: quadri.php,v 1.14 2011/07/04 09:01:38 eldy Exp $
 		\todo 		Deal with recurrent invoices as well
 */
 
@@ -49,13 +49,12 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 /**
  * Gets VAT to collect for the given month of the given year
- *
  * The function gets the VAT in split results, as the VAT declaration asks
  * to report the amounts for different VAT rates as different lines.
  * This function also accounts recurrent invoices
- * @param		object		Database handler object
- * @param		integer		Year
- * @param		integer		Year quarter (1-4)
+ * @param		db		Database handler
+ * @param		y		Year
+ * @param		q		Year quarter (1-4)
  */
 function tva_coll($db,$y,$q)
 {
@@ -116,12 +115,11 @@ function tva_coll($db,$y,$q)
 
 /**
  * Gets VAT to pay for the given month of the given year
- *
  * The function gets the VAT in split results, as the VAT declaration asks
  * to report the amounts for different VAT rates as different lines.
  * @param		object		Database handler object
- * @param		integer		Year
- * @param		integer		Year quarter (1-4)
+ * @param		y			Year
+ * @param		q			Year quarter (1-4)
  */
 function tva_paye($db, $y,$q)
 {
@@ -317,5 +315,5 @@ echo '</table>';
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/04 09:01:38 $ - $Revision: 1.14 $');
 ?>

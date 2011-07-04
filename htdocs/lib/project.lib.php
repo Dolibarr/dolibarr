@@ -22,7 +22,7 @@
  *	    \file       htdocs/lib/project.lib.php
  *		\brief      Functions used by project module
  *      \ingroup    project
- *      \version    $Id$
+ *      \version    $Id: project.lib.php,v 1.68 2011/07/04 09:01:38 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
 
@@ -98,7 +98,7 @@ function project_prepare_head($object)
  *	    \file       htdocs/lib/project.lib.php
  *		\brief      Ensemble de fonctions de base pour le module projet
  *      \ingroup    societe
- *      \version    $Id$
+ *      \version    $Id: project.lib.php,v 1.68 2011/07/04 09:01:38 eldy Exp $
  */
 function task_prepare_head($object)
 {
@@ -239,14 +239,14 @@ function select_projects($socid=-1, $selected='', $htmlname='projectid')
 
 
 /**
- * Enter description here...
- *
+ * Output a task line
  * @param   $inc
  * @param   $parent
  * @param   $lines
  * @param   $level
  * @param   $projectsrole
- * @param   $mytask         0 or 1 to enable only if task is a task i am affected to
+ * @param   $tasksrole
+ * @param   $mytask			0 or 1 to enable only if task is a task i am affected to
  * @return  $inc
  */
 function PLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mytask=0)

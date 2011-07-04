@@ -24,7 +24,7 @@
  *	\file       htdocs/compta/bank/class/account.class.php
  *	\ingroup    banque
  *	\brief      File of class to manage bank accounts
- *	\version    $Id$
+ *	\version    $Id: account.class.php,v 1.31 2011/07/04 09:01:38 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
@@ -1040,7 +1040,7 @@ class AccountLine extends CommonObject
 
     /**
      *  Load into memory content of a bank transaction line
-     *  @param      id      Id of bank transaction to load
+     *  @param      rowid   Id of bank transaction to load
      *  @param      ref     Ref of bank transaction to load
      *  @param      num     External num to load (ex: num of transaction for paypal fee)
      *	@return		int		<0 if KO, >0 if OK
@@ -1159,7 +1159,7 @@ class AccountLine extends CommonObject
      *		Update bank account record in database
      *		@param 		user			Object user making update
      *		@param 		notrigger		0=Disable all triggers
-     *		@param		int				<0 if KO, >0 if OK
+     *		@return		int				<0 if KO, >0 if OK
      */
     function update($user,$notrigger=0)
     {
@@ -1192,7 +1192,7 @@ class AccountLine extends CommonObject
      *		Update conciliation field
      *		@param 		user			Objet user making update
      *		@param 		cat				Category id
-     *		@param		int				<0 if KO, >0 if OK
+     *		@return		int				<0 if KO, >0 if OK
      */
     function update_conciliation($user,$cat)
     {
@@ -1237,8 +1237,8 @@ class AccountLine extends CommonObject
     }
 
     /**
-     *      Charge les informations d'ordre info dans l'objet facture
-     *      @param     id       Id de la facture a charger
+     *      Charge les informations d'ordre info dans l'objet
+     *      @param     rowid       Id of object
      */
     function info($rowid)
     {

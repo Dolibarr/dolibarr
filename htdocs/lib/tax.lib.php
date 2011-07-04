@@ -21,19 +21,20 @@
  *      \file       htdocs/lib/tax.lib.php
  *      \ingroup    tax
  *      \brief      Library for tax module
- *      \version    $Id$
+ *      \version    $Id: tax.lib.php,v 1.20 2011/07/04 09:01:37 eldy Exp $
  */
 
 
 /**
- *  \brief      Look for collectable VAT clients in the chosen year (and month)
- *  \param      db          Database handle
- *  \param      y           Year
- *  \param      date_start  Start date
- *  \param      date_end    End date
- *  \param      modetax     0 or 1 (option vat on debit)
- *  \param      direction   'sell' or 'buy'
- *  \return     array       List of customers third parties with vat, -1 if no accountancy module, -2 if not yet developped, -3 if error
+ *  Look for collectable VAT clients in the chosen year (and month)
+ *  @param      db          Database handle
+ *  @param      y           Year
+ *  @param      date_start  Start date
+ *  @param      date_end    End date
+ *  @param      modetax     0 or 1 (option vat on debit)
+ *  @param      direction   'sell' or 'buy'
+ *  @param      m			Month
+ *  @return     array       List of customers third parties with vat, -1 if no accountancy module, -2 if not yet developped, -3 if error
  */
 function vat_by_thirdparty($db, $y, $date_start, $date_end, $modetax, $direction, $m=0)
 {
