@@ -21,7 +21,7 @@
  *  \file       htdocs/core/class/menu.class.php
  *  \ingroup    core
  *  \brief      Fichier de la classe de gestion du menu gauche
- *  \version    $Id$
+ *  \version    $Id: menu.class.php,v 1.4 2011/07/04 11:33:22 eldy Exp $
  */
 
 
@@ -74,20 +74,6 @@ class Menu {
     function remove_last()
     {
     	if (sizeof($this->liste) > 1) array_pop($this->liste);
-    }
-
-    /**
-     *  \brief      Add a menu entry
-     *  \param      url         Url to follown on click
-     *  \param      titre       Menu label to show
-     *  \param      level       Level of menu to show (0=First level, 1=Second...)
-     *  \param      enabled     Menu active or not
-     *  \param      target		Target lien
-     * 	\deprecated
-     */
-    function add_submenu($url, $titre, $level=1, $enabled=1, $target='')
-    {
-        $this->add($url, $titre, $level, $enabled, $target);
     }
 
 }

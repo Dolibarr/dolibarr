@@ -31,7 +31,7 @@
  *	\file       htdocs/core/class/html.form.class.php
  *  \ingroup    core
  *	\brief      File of class with all html predefined components
- *	\version	$Id: html.form.class.php,v 1.185 2011/07/04 07:28:11 eldy Exp $
+ *	\version	$Id: html.form.class.php,v 1.186 2011/07/04 11:33:22 eldy Exp $
  */
 
 
@@ -132,15 +132,6 @@ class Form
             else $ret.=$preselected;
         }
         return $ret;
-    }
-
-    /**
-     *	Old version of textwithtooltip. Kept for backward compatibility with modules for 2.6.
-     *	@deprecated
-     */
-    function textwithhelp($text,$htmltext,$tooltipon=1)
-    {
-        return $this->textwithtooltip($text,$htmltext,$tooltipon);
     }
 
     /**
@@ -2507,7 +2498,7 @@ class Form
             }
         }
     }
-    
+
 /**
      *    \brief      Affiche formulaire de selection des tiers
      *    \param      page        Page

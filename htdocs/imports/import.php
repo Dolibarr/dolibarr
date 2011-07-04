@@ -21,7 +21,7 @@
  *      \file       htdocs/imports/import.php
  *      \ingroup    import
  *      \brief      Pages of import Wizard
- *      \version    $Id: import.php,v 1.66 2011/07/04 08:53:01 eldy Exp $
+ *      \version    $Id: import.php,v 1.67 2011/07/04 11:33:23 eldy Exp $
  */
 
 require_once("../main.inc.php");
@@ -195,8 +195,8 @@ if ($step == 3 && $datatoimport)
 
 	if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	{
-		create_exdir($conf->import->dir_temp);
-		$nowyearmonth=dol_date('YmdHis',dol_now(),0);
+		dol_mkdir($conf->import->dir_temp);
+		$nowyearmonth=dol_print_date(dol_now(),'%Y%m%d%H%M%S');
 
 		$fullpath=$conf->import->dir_temp . "/" . $nowyearmonth . '-'.$_FILES['userfile']['name'];
 		if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $fullpath,1) > 0)
@@ -1669,7 +1669,7 @@ print '<br>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/04 08:53:01 $ - $Revision: 1.66 $');
+llxFooter('$Date: 2011/07/04 11:33:23 $ - $Revision: 1.67 $');
 
 
 /*
