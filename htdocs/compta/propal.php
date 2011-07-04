@@ -25,7 +25,7 @@
  *	\file       htdocs/compta/propal.php
  *	\ingroup    propale
  *	\brief      Page liste des propales (vision compta)
- *	\version	$Id$
+ *	\version	$Id: propal.php,v 1.193 2011/07/04 10:30:00 eldy Exp $
  */
 
 require('../main.inc.php');
@@ -561,11 +561,11 @@ else
 	if ($month > 0)
 	{
 		if ($year > 0)
-		$sql.= " AND date_format(p.datep, '%Y-%m') = '$year-$month'";
+		$sql.= " AND date_format(p.datep, '%Y-%m') = '".$year."-".$month."'";
 		else
-		$sql.= " AND date_format(p.datep, '%m') = '$month'";
+		$sql.= " AND date_format(p.datep, '%m') = '".$month."'";
 	}
-	if ($year > 0)         $sql .= " AND date_format(p.datep, '%Y') = $year";
+	if ($year > 0)         $sql .= " AND date_format(p.datep, '%Y') = '".$year."'";
 	if (!empty($_GET['search_ref']))
 	{
 		$sql.= " AND p.ref LIKE '%".$db->escape($_GET['search_ref'])."%'";
@@ -702,6 +702,6 @@ else
 $db->close();
 
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/04 10:30:00 $ - $Revision: 1.193 $');
 
 ?>

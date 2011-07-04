@@ -22,7 +22,7 @@
  *       \file       htdocs/compta/facture/class/facturestats.class.php
  *       \ingroup    factures
  *       \brief      Fichier de la classe de gestion des stats des factures
- *       \version    $Id$
+ *       \version    $Id: facturestats.class.php,v 1.6 2011/07/04 10:30:01 eldy Exp $
  */
 include_once DOL_DOCUMENT_ROOT . "/core/class/stats.class.php";
 include_once DOL_DOCUMENT_ROOT . "/compta/facture/class/facture.class.php";
@@ -78,7 +78,7 @@ class FactureStats extends Stats
 
 		$this->where = " fk_statut > 0";
 		$this->where.= " AND entity = ".$conf->entity;
-		if ($mode == 'customer') $this->where.=" AND (fk_statut != 3 OR close_code != 'replaced')";	// Exclude replaced invoices as they are duplicated (we count closed invoices for other reasons)
+		if ($mode == 'customer') $this->where.=" AND (fk_statut <> 3 OR close_code <> 'replaced')";	// Exclude replaced invoices as they are duplicated (we count closed invoices for other reasons)
 		if ($this->socid)
 		{
 			$this->where.=" AND fk_soc = ".$this->socid;
@@ -132,7 +132,7 @@ class FactureStats extends Stats
 	{
 		$sql = "SELECT date_format(datef,'%m') as dm, SUM(".$this->field.")";
 		$sql.= " FROM ".$this->from;
-		$sql.= " WHERE date_format(datef,'%Y') = ".$year;
+		$sql.= " WHERE date_format(datef,'%Y') = '".$year."'";
 		$sql.= " AND ".$this->where;
         $sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');

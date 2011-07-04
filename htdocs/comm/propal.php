@@ -27,7 +27,7 @@
  *	\file       	htdocs/comm/propal.php
  *	\ingroup    	propale
  *	\brief      	Page of commercial proposals card and list
- *	\version		$Id: propal.php,v 1.607 2011/07/02 16:48:32 eldy Exp $
+ *	\version		$Id: propal.php,v 1.608 2011/07/04 10:30:02 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -1805,13 +1805,13 @@ else
 	if ($month > 0)
 	{
 		if ($year > 0)
-		$sql.= " AND date_format(p.datep, '%Y-%m') = '$year-$month'";
+		$sql.= " AND date_format(p.datep, '%Y-%m') = '".$year."-".$month."'";
 		else
-		$sql.= " AND date_format(p.datep, '%m') = '$month'";
+		$sql.= " AND date_format(p.datep, '%m') = '".$month."'";
 	}
 	if ($year > 0)
 	{
-		$sql.= " AND date_format(p.datep, '%Y') = $year";
+		$sql.= " AND date_format(p.datep, '%Y') = '".$year."'";
 	}
 	if (dol_strlen($_POST['sf_ref']) > 0)
 	{
@@ -1975,6 +1975,6 @@ else
 }
 $db->close();
 
-llxFooter('$Date: 2011/07/02 16:48:32 $ - $Revision: 1.607 $');
+llxFooter('$Date: 2011/07/04 10:30:02 $ - $Revision: 1.608 $');
 
 ?>
