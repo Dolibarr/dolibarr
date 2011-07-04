@@ -24,7 +24,7 @@
 /**
  *	\file       htdocs/lib/databases/pgsql.lib.php
  *	\brief      Fichier de la classe permettant de gerer une base pgsql
- *	\version	$Id$
+ *	\version	$Id: pgsql.lib.php,v 1.109 2011/07/04 07:36:30 eldy Exp $
  */
 // For compatibility during upgrade
 if (! defined('DOL_DOCUMENT_ROOT'))	 define('DOL_DOCUMENT_ROOT', '../..');
@@ -1104,19 +1104,19 @@ class DoliDb
 		// ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
 		$sql= "ALTER TABLE ".$table." ADD ".$field_name." ";
 		$sql .= $field_desc['type'];
-		if( preg_match("/^[^\s]/i",$field_desc['value']))
-		$sql  .= "(".$field_desc['value'].")";
-		if( preg_match("/^[^\s]/i",$field_desc['attribute']))
-		$sql  .= " ".$field_desc['attribute'];
-		if( preg_match("/^[^\s]/i",$field_desc['null']))
-		$sql  .= " ".$field_desc['null'];
-		if( preg_match("/^[^\s]/i",$field_desc['default']))
-		if(preg_match("/null/i",$field_desc['default']))
-		$sql  .= " default ".$field_desc['default'];
+		if ($field_desc['type'] != 'int' && preg_match("/^[^\s]/i",$field_desc['value']))
+		$sql .= "(".$field_desc['value'].")";
+		if (preg_match("/^[^\s]/i",$field_desc['attribute']))
+		$sql .= " ".$field_desc['attribute'];
+		if (preg_match("/^[^\s]/i",$field_desc['null']))
+		$sql .= " ".$field_desc['null'];
+		if (preg_match("/^[^\s]/i",$field_desc['default']))
+		if (preg_match("/null/i",$field_desc['default']))
+		$sql .= " default ".$field_desc['default'];
 		else
-		$sql  .= " default '".$field_desc['default']."'";
-		if( preg_match("/^[^\s]/i",$field_desc['extra']))
-		$sql  .= " ".$field_desc['extra'];
+		$sql .= " default '".$field_desc['default']."'";
+		if (preg_match("/^[^\s]/i",$field_desc['extra']))
+		$sql .= " ".$field_desc['extra'];
 		$sql .= " ".$field_position;
 
 		dol_syslog($sql,LOG_DEBUG);
