@@ -25,7 +25,7 @@
  *	\file       htdocs/contact/class/contact.class.php
  *	\ingroup    societe
  *	\brief      File of contacts class
- *	\version    $Id$
+ *	\version    $Id: contact.class.php,v 1.30 2011/07/04 09:36:29 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
 
@@ -83,7 +83,6 @@ class Contact extends CommonObject
 	/**
 	 *      Constructor of class Contact
 	 *      @param      DB      Habler d'acces base
-	 *      @param      id      Id contact
 	 */
 	function Contact($DB)
 	{
@@ -583,7 +582,7 @@ class Contact extends CommonObject
 	}
 
 
-	/*
+	/**
 	 *    \brief        Charge le nombre d'elements auquel est lie ce contact
 	 *                  ref_facturation
 	 *                  ref_contrat
@@ -626,9 +625,10 @@ class Contact extends CommonObject
 		}
 	}
 
-	/*
-	 *   \brief      Efface le contact de la base
-	 *	\return		int		<0 si ko, >0 si ok
+	/**
+	 *   	Efface le contact de la base
+	 *   	@param		notrigger	Disable all trigger
+	 *		@return		int			<0 if KO, >0 if OK
 	 */
 	function delete($notrigger=0)
 	{
