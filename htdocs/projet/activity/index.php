@@ -22,7 +22,7 @@
  *	\file       htdocs/projet/activity/index.php
  *	\ingroup    projet
  *	\brief      Page activite perso du module projet
- *	\version    $Id$
+ *	\version    $Id: index.php,v 1.35 2011/07/04 10:56:12 eldy Exp $
  */
 
 require ("../../main.inc.php");
@@ -88,7 +88,7 @@ $sql.= " WHERE t.fk_projet = p.rowid";
 $sql.= " AND p.entity = ".$conf->entity;
 $sql.= " AND tt.fk_task = t.rowid";
 $sql.= " AND tt.fk_user = ".$user->id;
-$sql.= " AND date_format(task_date,'%d%m%y') = ".strftime("%d%m%y",time());
+$sql.= " AND date_format(task_date,'%y-%m-%d') = '".strftime("%y-%m-%d",$now)."'";
 $sql.= " AND p.rowid in (".$projectsListId.")";
 $sql.= " GROUP BY p.rowid, p.ref, p.title";
 
@@ -124,6 +124,10 @@ print '<td align="right">'.ConvertSecondToTime($total).'</td>';
 print "</tr>\n";
 print "</table>";
 
+// TODO Do not use date_add function to be compatible with all database
+if ($db->type != 'pgsql')
+{
+	
 /* Affichage de la liste des projets d'hier */
 print '<br><table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -139,9 +143,9 @@ $sql.= " WHERE t.fk_projet = p.rowid";
 $sql.= " AND p.entity = ".$conf->entity;
 $sql.= " AND tt.fk_task = t.rowid";
 $sql.= " AND tt.fk_user = ".$user->id;
-$sql.= " AND date_format(date_add(task_date, INTERVAL 1 DAY),'%d%m%y') = ".strftime("%d%m%y",time());
+$sql.= " AND date_format(date_add(task_date, INTERVAL 1 DAY),'%y-%m-%d') = '".strftime("%y-%m-%d",$now)."'";
 $sql.= " AND p.rowid in (".$projectsListId.")";
-$sql.= " GROUP BY p.rowid";
+$sql.= " GROUP BY p.rowid, p.ref, p.title";
 
 $resql = $db->query($sql);
 if ( $resql )
@@ -175,7 +179,14 @@ print '<td align="right">'.ConvertSecondToTime($total).'</td>';
 print "</tr>\n";
 print "</table>";
 
+}
+
+
 print '</td><td width="70%" valign="top" class="notopnoleft">';
+
+// TODO Do not use week function to be compatible with all database
+if ($db->type != 'pgsql')
+{
 
 /* Affichage de la liste des projets de la semaine */
 print '<table class="noborder" width="100%">';
@@ -192,9 +203,9 @@ $sql.= " WHERE t.fk_projet = p.rowid";
 $sql.= " AND p.entity = ".$conf->entity;
 $sql.= " AND tt.fk_task = t.rowid";
 $sql.= " AND tt.fk_user = ".$user->id;
-$sql.= " AND week(task_date) = ".strftime("%W",time());
+$sql.= " AND week(task_date) = '".strftime("%W",time())."'";
 $sql.= " AND p.rowid in (".$projectsListId.")";
-$sql.= " GROUP BY p.rowid";
+$sql.= " GROUP BY p.rowid, p.ref, p.title";
 
 $resql = $db->query($sql);
 if ( $resql )
@@ -228,6 +239,8 @@ print '<td align="right">'.ConvertSecondToTime($total).'</td>';
 print "</tr>\n";
 print "</table><br>";
 
+}
+
 /* Affichage de la liste des projets du mois */
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -243,9 +256,9 @@ $sql.= " WHERE t.fk_projet = p.rowid";
 $sql.= " AND p.entity = ".$conf->entity;
 $sql.= " AND tt.fk_task = t.rowid";
 $sql.= " AND tt.fk_user = ".$user->id;
-$sql.= " AND month(task_date) = ".strftime("%m",$now);
+$sql.= " AND date_format(task_date,'%y-%m') = '".strftime("%y-%m",$now)."'";
 $sql.= " AND p.rowid in (".$projectsListId.")";
-$sql.= " GROUP BY p.rowid";
+$sql.= " GROUP BY p.rowid, p.ref, p.title";
 
 $resql = $db->query($sql);
 if ( $resql )
@@ -287,9 +300,9 @@ $sql.= " WHERE t.fk_projet = p.rowid";
 $sql.= " AND p.entity = ".$conf->entity;
 $sql.= " AND tt.fk_task = t.rowid";
 $sql.= " AND tt.fk_user = ".$user->id;
-$sql.= " AND YEAR(task_date) = ".strftime("%Y",$now);
+$sql.= " AND YEAR(task_date) = '".strftime("%Y",$now)."'";
 $sql.= " AND p.rowid in (".$projectsListId.")";
-$sql.= " GROUP BY p.rowid";
+$sql.= " GROUP BY p.rowid, p.ref, p.title";
 
 $var=false;
 $resql = $db->query($sql);
@@ -319,5 +332,5 @@ print '</td></tr></table>';
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/04 10:56:12 $ - $Revision: 1.35 $');
 ?>
