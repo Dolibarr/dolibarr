@@ -29,7 +29,7 @@
  *	\file			htdocs/lib/functions.lib.php
  *	\brief			A set of functions for Dolibarr
  *					This file contains all frequently used functions.
- *	\version		$Id: functions.lib.php,v 1.536 2011/07/04 08:38:51 eldy Exp $
+ *	\version		$Id: functions.lib.php,v 1.537 2011/07/04 08:53:01 eldy Exp $
  */
 
 // For compatibility during upgrade
@@ -2766,7 +2766,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
  *	@param	file				Lien
  *	@param	options         	Autres parametres d'url a propager dans les liens ("" par defaut)
  *	@param	nextpage	    	Faut-il une page suivante
- *	@param	betweenarraows		HTML Content to show between arrows
+ *	@param	betweenarrows		HTML Content to show between arrows
  */
 function print_fleche_navigation($page,$file,$options='',$nextpage,$betweenarrows='')
 {
@@ -3523,7 +3523,7 @@ function dol_nboflines($s,$maxchar=0)
 
 /**
  *	Return nb of lines of a formated text with \n and <br>
- *	@param	   	texte      		Text
+ *	@param	   	text      		Text
  *	@param	   	maxlinesize  	Largeur de ligne en caracteres (ou 0 si pas de limite - defaut)
  * 	@param		charset			Give the charset used to encode the $text variable in memory.
  *	@return    	int				Number of lines
@@ -3905,11 +3905,11 @@ function dol_htmloutput_errors($mesgstring='', $mesgarray='', $keepembedded=0)
  *	ascending (default) or descending output and uses optionally
  *	natural case insensitive sorting (which can be optionally case
  *	sensitive as well).
- *  @param      array           Array to sort
+ *  @param      array           	Array to sort
  *  @param      index
  *  @param      order
  *  @param      natsort
- *  @param      cas_sensitive
+ *  @param      case_sensitive		Sort is case sensitive
  *  @return     Sorted array
  */
 function dol_sort_array(&$array, $index, $order='asc', $natsort, $case_sensitive)

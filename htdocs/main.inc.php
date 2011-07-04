@@ -26,7 +26,7 @@
  *	\file       htdocs/main.inc.php
  *	\ingroup	core
  *	\brief      File that defines environment for Dolibarr pages only (variables not required by scripts)
- *	\version    $Id: main.inc.php,v 1.748 2011/07/03 13:16:46 hregis Exp $
+ *	\version    $Id: main.inc.php,v 1.749 2011/07/04 08:53:01 eldy Exp $
  */
 
 @ini_set('memory_limit', '64M');	// This may be useless if memory is hard limited by your PHP
@@ -814,22 +814,22 @@ if (!empty($conf->global->MAIN_MODULE_MULTICOMPANY))
 
 // Functions
 
-/**
- *	Show HTML header HTML + BODY + Top menu + left menu + DIV
- * 	@param   	head			Add optionnal head lines
- *  @param      title   		Title of web page
- * 	@param      help_url		Url links to help page
- *                              Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage
- *                                         For other external page: http://server/url
- *  @param      target  		Target to use in menu links
- *	@param		disablejs		Do not output links to js (Ex: qd fonction utilisee par sous formulaire Ajax)
- *	@param		disablehead		Do not output head section
- *	@param		arrayofjs		Array of js files to add in header
- *	@param		arrayofcss		Array of css files to add in header
- *  @param		morequerystring Query string to add to the link "print" to get same parameters (use only if autodetect fails)
- */
 if (! function_exists("llxHeader"))
 {
+	/**
+	 *	Show HTML header HTML + BODY + Top menu + left menu + DIV
+	 * 	@param   	head			Add optionnal head lines
+	 *  @param      title   		Title of web page
+	 * 	@param      help_url		Url links to help page
+	 *                              Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage
+	 *                                         For other external page: http://server/url
+	 *  @param      target  		Target to use in menu links
+	 *	@param		disablejs		Do not output links to js (Ex: qd fonction utilisee par sous formulaire Ajax)
+	 *	@param		disablehead		Do not output head section
+	 *	@param		arrayofjs		Array of js files to add in header
+	 *	@param		arrayofcss		Array of css files to add in header
+	 *  @param		morequerystring Query string to add to the link "print" to get same parameters (use only if autodetect fails)
+	 */
 	function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $morequerystring='')
 	{
 		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);	// Show html headers

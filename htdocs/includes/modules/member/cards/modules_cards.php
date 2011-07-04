@@ -24,7 +24,7 @@
  *	\file       htdocs/includes/modules/member/cards/modules_cards.php
  *	\ingroup    member
  *	\brief      File of parent class of document generator for members cards.
- *	\version    $Id$
+ *	\version    $Id: modules_cards.php,v 1.10 2011/07/04 08:53:01 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
@@ -61,13 +61,12 @@ class ModelePDFCards
 
 
 /**
- *	\brief   	Cree un fichier de cartes de visites en fonction du modele de ADHERENT_CARDS_ADDON_PDF
- *	\param   	db  			objet base de donnee
- *	\param   	id				id de la facture a creer
- *	\param	    message			message
- *	\param	    modele			force le modele a utiliser ('' to not force)
- *	\param		outputlangs		objet lang a utiliser pour traduction
- *	\return  	int        		<0 if KO, >0 if OK
+ *	Cree un fichier de cartes de visites en fonction du modele de ADHERENT_CARDS_ADDON_PDF
+ *	@param   	db  			Database handler
+ *	@param   	arrayofmembers	Array of members
+ *	@param	    modele			Force modele to use ('' to not force)
+ *	@param		outputlangs		Objet langs to use for translation
+ *	@return  	int        		<0 if KO, >0 if OK
  */
 function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs)
 {

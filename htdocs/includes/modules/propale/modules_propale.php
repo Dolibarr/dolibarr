@@ -24,7 +24,7 @@
  *  \ingroup    propale
  *  \brief      Fichier contenant la classe mere de generation des propales en PDF
  *  			et la classe mere de numerotation des propales
- *	\version    $Id$
+ *	\version    $Id: modules_propale.php,v 1.61 2011/07/04 08:53:01 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
@@ -132,10 +132,10 @@ class ModeleNumRefPropales
 
 /**
  * 	Cree une propale sur disque en fonction du modele de PROPALE_ADDON_PDF
- * 	@param	    db  			objet base de donnee
- * 	@param	    id				id de la propale a creer
- * 	@param	    modele			force le modele a utiliser ('' to not force)
- * 	@param		outputlangs		objet lang a utiliser pour traduction
+ * 	@param	    db  			Database handler
+ * 	@param	    object			Object proposal
+ * 	@param	    modele			Force model to use ('' to not force)
+ * 	@param		outputlangs		Object langs to use for output
  *  @param      hidedetails     Hide details of lines
  *  @param      hidedesc        Hide description
  *  @param      hideref         Hide ref

@@ -21,7 +21,7 @@
  *      \file       htdocs/imports/import.php
  *      \ingroup    import
  *      \brief      Pages of import Wizard
- *      \version    $Id$
+ *      \version    $Id: import.php,v 1.66 2011/07/04 08:53:01 eldy Exp $
  */
 
 require_once("../main.inc.php");
@@ -1669,7 +1669,7 @@ print '<br>';
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/04 08:53:01 $ - $Revision: 1.66 $');
 
 
 /*
@@ -1729,8 +1729,8 @@ function show_elem($fieldssource,$i,$pos,$key,$var,$nostyle='')
 
 /**
  * Return not used field number
- *
- * @param 	$listofkey
+ * @param 	$fieldssource
+ * @param	$listofkey
  * @return
  */
 function getnewkey(&$fieldssource,&$listofkey)
