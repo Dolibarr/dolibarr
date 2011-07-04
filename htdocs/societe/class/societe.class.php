@@ -27,7 +27,7 @@
  *	\file       htdocs/societe/class/societe.class.php
  *	\ingroup    societe
  *	\brief      File for third party class
- *	\version    $Id: societe.class.php,v 1.88 2011/07/03 22:07:24 eldy Exp $
+ *	\version    $Id: societe.class.php,v 1.89 2011/07/04 11:41:05 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 
@@ -2105,6 +2105,13 @@ class Societe extends CommonObject
     }
 
 
+    /**
+     * Add permissions
+     * @param   user_id
+     * @param   read
+     * @param   write
+     * @param   perms
+     */
     function AddPerms($user_id, $read, $write, $perms)
     {
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_perms";
@@ -2120,7 +2127,7 @@ class Societe extends CommonObject
 
     /**
      *       Charge les informations d'ordre info dans l'objet societe
-     *       @param     id     id de la societe a charger
+     *       @param     id     Id de la societe a charger
      */
     function info($id)
     {
@@ -2183,7 +2190,7 @@ class Societe extends CommonObject
 
     /**
      *       Return if a country is inside the EEC (European Economic Community)
-     *       @param     boolean		true = pays inside EEC, false= pays outside EEC
+     *       @return     boolean		true = pays inside EEC, false= pays outside EEC
      */
     function isInEEC()
     {
