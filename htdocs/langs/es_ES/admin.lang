@@ -307,7 +307,7 @@ ConnectionTimeout=Timeout de conexión
 ResponseTimeout=Timeout de respuesta
 SmsTestMessage=Mensaje de prueba de __PHONEFROM__ para __PHONETO__
 ModuleMustBeEnabledFirst=Para usar esta función debe estar activado el módulo <b>%s</b>.
-SecurityToken=Token de seguridad
+SecurityToken=Clave para encriptar urls
 # Modules
 Module0Name=Usuarios y grupos
 Module0Desc=Gestión de usuarios y grupos
