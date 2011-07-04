@@ -23,7 +23,7 @@
  *	\file       htdocs/commande/liste.php
  *	\ingroup    commande
  *	\brief      Page to list orders
- *	\version    $Id$
+ *	\version    $Id: liste.php,v 1.77 2011/07/04 10:30:02 eldy Exp $
  */
 
 
@@ -115,19 +115,19 @@ if ($viewstatut <> '')
 }
 if ($_GET['ordermonth'] > 0)
 {
-	$sql.= " AND date_format(c.date_valid, '%Y-%m') = '$orderyear-$ordermonth'";
+	$sql.= " AND date_format(c.date_valid, '%Y-%m') = '".$orderyear."-".$ordermonth."'";
 }
 if ($_GET['orderyear'] > 0)
 {
-	$sql.= " AND date_format(c.date_valid, '%Y') = $orderyear";
+	$sql.= " AND date_format(c.date_valid, '%Y') = '".$orderyear."'";
 }
 if ($_GET['deliverymonth'] > 0)
 {
-	$sql.= " AND date_format(c.date_livraison, '%Y-%m') = '$deliveryyear-$deliverymonth'";
+	$sql.= " AND date_format(c.date_livraison, '%Y-%m') = '".$deliveryyear."-".$deliverymonth."'";
 }
 if ($_GET['deliveryyear'] > 0)
 {
-	$sql.= " AND date_format(c.date_livraison, '%Y') = $deliveryyear";
+	$sql.= " AND date_format(c.date_livraison, '%Y') = '".$deliveryyear."'";
 }
 if (!empty($snom))
 {
@@ -278,5 +278,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/04 10:30:02 $ - $Revision: 1.77 $');
 ?>

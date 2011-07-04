@@ -24,7 +24,7 @@
 	    \file       htdocs/compta/tva/quadri.php
         \ingroup    tax
 		\brief      Trimestrial page
-		\version    $Id: quadri.php,v 1.14 2011/07/04 09:01:38 eldy Exp $
+		\version    $Id: quadri.php,v 1.15 2011/07/04 10:30:00 eldy Exp $
 		\todo 		Deal with recurrent invoices as well
 */
 
@@ -70,9 +70,9 @@ function tva_coll($db,$y,$q)
         $sql.= " AND s.entity = ".$conf->entity;
         $sql.= " AND f.fk_statut in (1,2)";
         $sql.= " AND f.rowid = d.fk_facture ";
-        $sql.= " AND date_format(f.datef,'%Y') = ".$y;
-        $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3);
-        $sql.= " AND date_format(f.datef,'%m') <= ".($q*3).")";
+        $sql.= " AND date_format(f.datef,'%Y') = '".$y."'";
+        $sql.= " AND (round(date_format(f.datef,'%m') > ".(($q-1)*3);
+        $sql.= " AND round(date_format(f.datef,'%m')) <= ".($q*3).")";
         $sql.= " ORDER BY rate, facid";
 
     }
@@ -136,9 +136,9 @@ function tva_paye($db, $y,$q)
         $sql.= " AND s.entity = ".$conf->entity;
         $sql.= " AND f.fk_statut = 1 ";
         $sql.= " AND f.rowid = d.fk_facture_fourn ";
-        $sql.= " AND date_format(f.datef,'%Y') = ".$y;
-        $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3);
-        $sql.= " AND date_format(f.datef,'%m') <= ".($q*3).")";
+        $sql.= " AND date_format(f.datef,'%Y') = '".$y."'";
+        $sql.= " AND (round(date_format(f.datef,'%m')) > ".(($q-1)*3);
+        $sql.= " AND round(date_format(f.datef,'%m')) <= ".($q*3).")";
         $sql.= " ORDER BY rate, facid ";
     }
     else
@@ -315,5 +315,5 @@ echo '</table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/04 09:01:38 $ - $Revision: 1.14 $');
+llxFooter('$Date: 2011/07/04 10:30:00 $ - $Revision: 1.15 $');
 ?>

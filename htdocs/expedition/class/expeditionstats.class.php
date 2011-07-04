@@ -21,7 +21,7 @@
  *  \file       htdocs/expedition/class/expeditionstats.class.php
  *  \ingroup    expedition
  *  \brief      Fichier des classes expedition
- *  \version    $Id$
+ *  \version    $Id: expeditionstats.class.php,v 1.4 2011/07/04 10:30:01 eldy Exp $
  */
 
 /**
@@ -78,7 +78,7 @@ class ExpeditionStats
     $result = array();
     $sql = "SELECT count(*), date_format(date_expedition,'%m') as dm";
     $sql.= " FROM ".MAIN_DB_PREFIX."expedition";
-    $sql.= " WHERE date_format(date_expedition,'%Y') = ".$year;
+    $sql.= " WHERE date_format(date_expedition,'%Y') = '".$year."'";
     $sql.= " AND fk_statut > 0";
     $sql.= " AND entity = ".$conf->entity;
     $sql.= " GROUP BY dm DESC";
