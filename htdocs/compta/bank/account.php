@@ -25,7 +25,7 @@
  *	    \file       htdocs/compta/bank/account.php
  *		\ingroup    banque
  *		\brief      List of details of bank transactions for an account
- *		\version    $Id$
+ *		\version    $Id: account.php,v 1.154 2011/07/04 11:33:22 eldy Exp $
  */
 
 require("./pre.inc.php");	// We use pre.inc.php to have a dynamic menu
@@ -491,7 +491,7 @@ if ($account || $_GET["ref"])
     if ($result)
     {
         $now=dol_now();
-        $nows=dol_date('Ymd',$now);
+        $nows=dol_print_date($now,'%Y%m%d');
 
         //$html->load_cache_types_paiements();
         //$html->cache_types_paiements
@@ -510,7 +510,7 @@ if ($account || $_GET["ref"])
                 $var=!$var;
 
                 // Is it a transaction in future ?
-                $dos=dol_date('Ymd',$db->jdate($objp->do));
+                $dos=dol_print_date($db->jdate($objp->do),'%Y%m%d');
                 //print "dos=".$dos." nows=".$nows;
                 if ($dos > $nows && !$sep)		// Yes, we show a subtotal
                 {
@@ -786,5 +786,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/04 11:33:22 $ - $Revision: 1.154 $');
 ?>
