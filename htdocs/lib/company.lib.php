@@ -24,7 +24,7 @@
  *	\file       htdocs/lib/company.lib.php
  *	\brief      Ensemble de fonctions de base pour le module societe
  *	\ingroup    societe
- *	\version    $Id: company.lib.php,v 1.120 2011/07/03 18:32:08 eldy Exp $
+ *	\version    $Id: company.lib.php,v 1.121 2011/07/04 08:00:52 eldy Exp $
  */
 
 /**
@@ -331,9 +331,9 @@ function currency_name($code_iso,$withcode=0)
 }
 
 /**
- *    \brief      Retourne le nom traduit de la forme juridique
- *    \param      code        Code de la forme juridique
- *    \return     string      Nom traduit du pays
+ *    Retourne le nom traduit de la forme juridique
+ *    @param      code        Code de la forme juridique
+ *    @return     string      Nom traduit du pays
  */
 function getFormeJuridiqueLabel($code)
 {
@@ -387,7 +387,8 @@ function show_projects($conf,$langs,$db,$object,$backtopage='')
         $buttoncreate='';
         if ($conf->projet->enabled && $user->rights->projet->creer)
         {
-            $buttoncreate='<a class="butAction" href="'.DOL_URL_ROOT.'/projet/fiche.php?socid='.$object->id.'&action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject").'</a>';
+            //$buttoncreate='<a class="butAction" href="'.DOL_URL_ROOT.'/projet/fiche.php?socid='.$object->id.'&action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject").'</a>';
+			$buttoncreate='<a class="addnewrecord" href="'.DOL_URL_ROOT.'/projet/fiche.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject").' '.img_picto($langs->trans("AddProject"),'filenew').'</a>'."\n";
         }
 
         print "\n";
@@ -487,7 +488,8 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     $buttoncreate='';
     if ($user->rights->societe->contact->creer)
     {
-        $buttoncreate='<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddContact").'</a>'."\n";
+        //$buttoncreate='<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddContact").'</a>'."\n";
+		$buttoncreate='<a class="addnewrecord" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddContact").' '.img_picto($langs->trans("AddContact"),'filenew').'</a>'."\n";
     }
 
     print "\n";
