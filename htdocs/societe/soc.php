@@ -26,7 +26,7 @@
  *  \file       htdocs/societe/soc.php
  *  \ingroup    societe
  *  \brief      Third party card page
- *  \version    $Id: soc.php,v 1.120 2011/07/02 14:51:27 eldy Exp $
+ *  \version    $Id: soc.php,v 1.121 2011/07/04 08:00:53 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -1903,17 +1903,6 @@ else
             print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>'."\n";
         }
 
-        /*if ($user->rights->societe->contact->creer)
-        {
-            print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>'."\n";
-        }
-        */
-
-        /*if ($conf->projet->enabled && $user->rights->projet->creer)
-        {
-            print '<a class="butAction" href="'.DOL_URL_ROOT.'/projet/fiche.php?socid='.$object->id.'&action=create">'.$langs->trans("AddProject").'</a>'."\n";
-        }*/
-
         if ($user->rights->societe->supprimer)
         {
             if ($conf->use_javascript_ajax)
@@ -1972,5 +1961,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/02 14:51:27 $ - $Revision: 1.120 $');
+llxFooter('$Date: 2011/07/04 08:00:53 $ - $Revision: 1.121 $');
 ?>
