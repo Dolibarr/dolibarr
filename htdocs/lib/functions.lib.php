@@ -29,7 +29,7 @@
  *	\file			htdocs/lib/functions.lib.php
  *	\brief			A set of functions for Dolibarr
  *					This file contains all frequently used functions.
- *	\version		$Id: functions.lib.php,v 1.534 2011/07/03 18:31:13 eldy Exp $
+ *	\version		$Id: functions.lib.php,v 1.535 2011/07/04 07:28:36 eldy Exp $
  */
 
 // For compatibility during upgrade
@@ -319,18 +319,19 @@ function dol_escape_js($stringtoescape)
 
 
 /**
- *  \brief       Returns text escaped for inclusion in HTML alt or title tags
- *  \param       $stringtoescape	String to escape
- *  \return      string      		Escaped string
+ *  Returns text escaped for inclusion in HTML alt or title tags
+ *  @param      $stringtoescape		String to escape
+ *  @param		$keepb				Do not clean <b> tags
+ *  @return     string      		Escaped string
  */
-function dol_escape_htmltag($stringtoescape)
+function dol_escape_htmltag($stringtoescape,$keepb=0)
 {
     // escape quotes and backslashes, newlines, etc.
     $tmp=dol_html_entity_decode($stringtoescape,ENT_COMPAT,'UTF-8');
-    $tmp=strtr($tmp, array('"'=>'',"\r"=>'\\r',"\n"=>'\\n',"<b>"=>'','</b>'=>''));
+    if ($keepb) $tmp=strtr($tmp, array('"'=>'',"\r"=>'\\r',"\n"=>'\\n'));
+    else $tmp=strtr($tmp, array('"'=>'',"\r"=>'\\r',"\n"=>'\\n',"<b>"=>'','</b>'=>''));
     return dol_htmlentities($tmp,ENT_COMPAT,'UTF-8');
 }
-
 
 /* For backward compatiblity */
 function dolibarr_syslog($message, $level=LOG_INFO)
