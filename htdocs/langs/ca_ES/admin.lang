@@ -307,7 +307,7 @@ ConnectionTimeout=Timeout de connexió
 ResponseTimeout=Timeout de resposta
 SmsTestMessage=Missatge de prova de __PHONEFROM__ per __PHONETO__
 ModuleMustBeEnabledFirst=Per utilitzar aquesta funció ha d'estar activat el mòdul <b>%s</b>.
-SecurityToken=Token de seguretat
+SecurityToken=Clau per encriptar urls
 # Modules
 Module0Name=Usuaris y grups
 Module0Desc=Gestió d'usuaris i grups
