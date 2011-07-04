@@ -119,50 +119,57 @@ class UploadHandler
     private function create_scaled_image($file_name, $options) {
         $file_path = $this->options['upload_dir'].$file_name;
         $new_file_path = $options['upload_dir'].$file_name;
-        list($img_width, $img_height) = @getimagesize($file_path);
-        if (!$img_width || !$img_height) {
-            return false;
+        if (create_exdir($options['upload_dir']) >= 0)
+        {
+        	list($img_width, $img_height) = @getimagesize($file_path);
+	        if (!$img_width || !$img_height) {
+	            return false;
+	        }
+	        $scale = min(
+	            $options['max_width'] / $img_width,
+	            $options['max_height'] / $img_height
+	        );
+	        if ($scale > 1) {
+	            $scale = 1;
+	        }
+	        $new_width = $img_width * $scale;
+	        $new_height = $img_height * $scale;
+	        $new_img = @imagecreatetruecolor($new_width, $new_height);
+	        switch (strtolower(substr(strrchr($file_name, '.'), 1))) {
+	            case 'jpg':
+	            case 'jpeg':
+	                $src_img = @imagecreatefromjpeg($file_path);
+	                $write_image = 'imagejpeg';
+	                break;
+	            case 'gif':
+	                $src_img = @imagecreatefromgif($file_path);
+	                $write_image = 'imagegif';
+	                break;
+	            case 'png':
+	                $src_img = @imagecreatefrompng($file_path);
+	                $write_image = 'imagepng';
+	                break;
+	            default:
+	                $src_img = $image_method = null;
+	        }
+	        $success = $src_img && @imagecopyresampled(
+	            $new_img,
+	            $src_img,
+	            0, 0, 0, 0,
+	            $new_width,
+	            $new_height,
+	            $img_width,
+	            $img_height
+	        ) && $write_image($new_img, $new_file_path);
+	        // Free up memory (imagedestroy does not delete files):
+	        @imagedestroy($src_img);
+	        @imagedestroy($new_img);
+	        return $success;
         }
-        $scale = min(
-            $options['max_width'] / $img_width,
-            $options['max_height'] / $img_height
-        );
-        if ($scale > 1) {
-            $scale = 1;
+        else
+        {
+        	return false;
         }
-        $new_width = $img_width * $scale;
-        $new_height = $img_height * $scale;
-        $new_img = @imagecreatetruecolor($new_width, $new_height);
-        switch (strtolower(substr(strrchr($file_name, '.'), 1))) {
-            case 'jpg':
-            case 'jpeg':
-                $src_img = @imagecreatefromjpeg($file_path);
-                $write_image = 'imagejpeg';
-                break;
-            case 'gif':
-                $src_img = @imagecreatefromgif($file_path);
-                $write_image = 'imagegif';
-                break;
-            case 'png':
-                $src_img = @imagecreatefrompng($file_path);
-                $write_image = 'imagepng';
-                break;
-            default:
-                $src_img = $image_method = null;
-        }
-        $success = $src_img && @imagecopyresampled(
-            $new_img,
-            $src_img,
-            0, 0, 0, 0,
-            $new_width,
-            $new_height,
-            $img_width,
-            $img_height
-        ) && $write_image($new_img, $new_file_path);
-        // Free up memory (imagedestroy does not delete files):
-        @imagedestroy($src_img);
-        @imagedestroy($new_img);
-        return $success;
     }
     
     private function has_error($uploaded_file, $file, $error) {
@@ -202,7 +209,7 @@ class UploadHandler
         $file->size = intval($size);
         $file->type = $type;
         $error = $this->has_error($uploaded_file, $file, $error);
-        if (!$error && $file->name) {
+        if (!$error && $file->name && create_exdir($this->options['upload_dir']) >= 0) {
             if ($file->name[0] === '.') {
                 $file->name = substr($file->name, 1);
             }
