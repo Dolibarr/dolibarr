@@ -24,7 +24,7 @@
  *	\file       htdocs/compta/bank/class/account.class.php
  *	\ingroup    banque
  *	\brief      File of class to manage bank accounts
- *	\version    $Id: account.class.php,v 1.31 2011/07/04 09:01:38 eldy Exp $
+ *	\version    $Id: account.class.php,v 1.32 2011/07/04 10:44:36 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
@@ -769,51 +769,54 @@ class Account extends CommonObject
     }
 
     /**
-     *
+     *	@param	rowid
+     *	@param	sign	1 or -1
+     */
+    function datev_change($rowid,$sign=1)
+    {
+        $sql = "SELECT datev FROM ".MAIN_DB_PREFIX."bank WHERE rowid = ".$rowid;
+        $resql = $this->db->query($sql);
+        if ($resql)
+        {
+        	$obj=$this->db->fetch_object($resql);
+        	$newdate=$this->db->jdate($obj->datev)+(3600*24*$sign);
+        	
+	    	$sql = "UPDATE ".MAIN_DB_PREFIX."bank SET ";
+	        $sql.= " datev = '".$this->db->idate($newdate)."'";
+	        $sql.= " WHERE rowid = ".$rowid;
+	
+	        $result = $this->db->query($sql);
+	        if ($result)
+	        {
+	            if ($this->db->affected_rows($result))
+	            {
+	                return 1;
+	            }
+	        }
+	        else
+	        {
+	            dol_print_error($this->db);
+	            return 0;
+	        }
+        }
+        else dol_print_error($this->db);
+		return 0;
+    }
+    
+    /**
+     *	@param	rowid
      */
     function datev_next($rowid)
     {
-        $sql = "UPDATE ".MAIN_DB_PREFIX."bank SET ";
-        $sql.= " datev = adddate(datev, interval 1 day)";
-        $sql.= " WHERE rowid = ".$rowid;
-
-        $result = $this->db->query($sql);
-        if ($result)
-        {
-            if ($this->db->affected_rows($result))
-            {
-                return 1;
-            }
-        }
-        else
-        {
-            dol_print_error($this->db);
-            return 0;
-        }
+    	return $this->datev_change($rowid,1);
     }
 
     /**
-     *
+     *	@param	rowid
      */
     function datev_previous($rowid)
     {
-        $sql = "UPDATE ".MAIN_DB_PREFIX."bank SET ";
-        $sql.= " datev = adddate(datev, interval -1 day)";
-        $sql.= " WHERE rowid = ".$rowid;
-
-        $result = $this->db->query($sql);
-        if ($result)
-        {
-            if ($this->db->affected_rows($result))
-            {
-                return 1;
-            }
-        }
-        else
-        {
-            dol_print_error($this->db);
-            return 0;
-        }
+    	return $this->datev_change($rowid,-1);
     }
 
     /**
