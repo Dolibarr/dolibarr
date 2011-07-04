@@ -29,7 +29,7 @@
  *	\file			htdocs/lib/functions.lib.php
  *	\brief			A set of functions for Dolibarr
  *					This file contains all frequently used functions.
- *	\version		$Id: functions.lib.php,v 1.535 2011/07/04 07:28:36 eldy Exp $
+ *	\version		$Id: functions.lib.php,v 1.536 2011/07/04 08:38:51 eldy Exp $
  */
 
 // For compatibility during upgrade
@@ -321,7 +321,7 @@ function dol_escape_js($stringtoescape)
 /**
  *  Returns text escaped for inclusion in HTML alt or title tags
  *  @param      $stringtoescape		String to escape
- *  @param		$keepb				Do not clean <b> tags
+ *  @param		$keepb				Do not clean b tags
  *  @return     string      		Escaped string
  */
 function dol_escape_htmltag($stringtoescape,$keepb=0)
@@ -807,6 +807,7 @@ function dolibarr_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$chec
  *	@param		year			Year
  *	@param		gm				1=Input informations are GMT values, otherwise local to server TZ
  *	@param		check			0=No check on parameters (Can use day 32, etc...)
+ *  @param		isdst			Dayling saving time		
  *	@return		timestamp		Date as a timestamp, '' if error
  * 	@see 		dol_print_date, dol_stringtotime
  */
@@ -921,11 +922,11 @@ function dol_print_size($size,$shortvalue=0,$shortunit=0)
 }
 
 /**
- * \brief		Show Url link
- * \param		url			Url to show
- * \param		target		Target for link
- * \param		max			Max number of characters to show
- * \return		string		HTML Link
+ * Show Url link
+ * @param		url			Url to show
+ * @param		target		Target for link
+ * @param		max			Max number of characters to show
+ * @return		string		HTML Link
  */
 function dol_print_url($url,$target='_blank',$max=32)
 {
@@ -942,14 +943,14 @@ function dol_print_url($url,$target='_blank',$max=32)
 }
 
 /**
- * \brief		Show EMail link
- * \param		email		EMail to show (only email, without <Name of recipient>)
- * \param 		cid 		Id of contact if known
- * \param 		socid 		Id of third party if known
- * \param 		addlink		0=no link to create action
- * \param		max			Max number of characters to show
- * \param		showinvalid	Show warning if syntax email is wrong
- * \return		string		HTML Link
+ * Show EMail link
+ * @param		email		EMail to show (only email, without 'Name of recipient' before)
+ * @param 		cid 		Id of contact if known
+ * @param 		socid 		Id of third party if known
+ * @param 		addlink		0=no link to create action
+ * @param		max			Max number of characters to show
+ * @param		showinvalid	Show warning if syntax email is wrong
+ * @return		string		HTML Link
  */
 function dol_print_email($email,$cid=0,$socid=0,$addlink=0,$max=64,$showinvalid=1)
 {
@@ -1539,7 +1540,7 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8')
 
 
 /**
- *	Show a picto according to module/object (generic function)
+ *	Show a picto according to module or object (generic function)
  *	@param      alt         Text of alt on image
  *	@param      object      Objet pour lequel il faut afficher le logo (example: user, group, action, bill, contract, propal, product, ...)
  *							Pour les modules externe utiliser nomimage@mymodule pour rechercher dans le repertoire "img" du module
@@ -1720,6 +1721,7 @@ function img_edit_remove($alt = "default")
  *	Affiche logo editer/modifier fiche
  *	@param      alt         Texte sur le alt de l'image
  *	@param      float       Si il faut y mettre le style "float: right"
+ *	@param      other		Add more attributes on img
  *	@return     string      Retourne tag img
  */
 function img_edit($alt = "default", $float=0, $other='')
@@ -1737,6 +1739,7 @@ function img_edit($alt = "default", $float=0, $other='')
  *	Affiche logo voir fiche
  *	@param      alt         Texte sur le alt de l'image
  *	@param      float       Si il faut y mettre le style "float: right"
+ *	@param      other		Add more attributes on img
  *	@return     string      Retourne tag img
  */
 function img_view($alt = "default", $float=0, $other='')
@@ -1957,6 +1960,7 @@ function img_tick($alt = "default")
 /**
  *	Affiche le logo tick si allow
  *	@param      allow       Authorise ou non
+ *	@param      alt			Alt text for img
  *	@return     string      Retourne tag img
  */
 function img_allow($allow,$alt='default')
@@ -2000,20 +2004,20 @@ function img_mime($file,$alt='')
  *	@param      infoonimgalt	Info is shown only on alt of star picto, otherwise it is show on output after the star picto
  *	@return		string			String with info text
  */
-function info_admin($texte,$infoonimgalt=0)
+function info_admin($text,$infoonimgalt=0)
 {
     global $conf,$langs;
     $s='';
     if ($infoonimgalt)
     {
-        $s.=img_picto($texte,'star');
+        $s.=img_picto($text,'star');
     }
     else
     {
         $s.='<div class="info">';
         $s.=img_picto($langs->trans("InfoAdmin"),'star');
         $s.=' ';
-        $s.=$texte;
+        $s.=$text;
         $s.='</div>';
     }
     return $s;
@@ -2783,7 +2787,7 @@ function print_fleche_navigation($page,$file,$options='',$nextpage,$betweenarrow
  *	Fonction qui retourne un taux de tva formate pour visualisation
  *	Utilisee dans les pdf et les pages html
  *	@param	    rate			Rate value to format (19.6 19,6 19.6% 19,6%,...)
- *  @param		foundpercent	Add a percent % sign in output
+ *  @param		addpercent		Add a percent % sign in output
  *	@param		info_bits		Miscellanous information on vat
  *  @return		string			Chaine avec montant formate (19,6 ou 19,6% ou 8.5% *)
  */
@@ -3356,7 +3360,7 @@ function dol_string_nohtmltag($StringHtml,$removelinefeed=1)
 
 /**
  *	Replace CRLF in string with a HTML BR tag.
- *	@param		string2encode		String to encode
+ *	@param		stringtoencode		String to encode
  *	@param		nl2brmode			0=Adding br before \n, 1=Replacing \n by br
  *  @param      forxml              false=Use <br>, true=Use <br />
  *	@return		string				String encoded
@@ -3416,6 +3420,7 @@ function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0,$pagecodefrom='UTF-8')
 /**
  *	This function is called to decode a HTML string (it decodes entities and br tags)
  *	@param		stringtodecode		String to decode
+ *	@param		pagecodeto			Page code for result
  */
 function dol_htmlentitiesbr_decode($stringtodecode,$pagecodeto='UTF-8')
 {
@@ -3520,17 +3525,17 @@ function dol_nboflines($s,$maxchar=0)
  *	Return nb of lines of a formated text with \n and <br>
  *	@param	   	texte      		Text
  *	@param	   	maxlinesize  	Largeur de ligne en caracteres (ou 0 si pas de limite - defaut)
- * 	@param		charset			Give the charset used to encode the $texte variable in memory.
+ * 	@param		charset			Give the charset used to encode the $text variable in memory.
  *	@return    	int				Number of lines
  */
-function dol_nboflines_bis($texte,$maxlinesize=0,$charset='UTF-8')
+function dol_nboflines_bis($text,$maxlinesize=0,$charset='UTF-8')
 {
-    //print $texte;
+    //print $text;
     $repTable = array("\t" => " ", "\n" => "<br>", "\r" => " ", "\0" => " ", "\x0B" => " ");
-    $texte = strtr($texte, $repTable);
+    $text = strtr($text, $repTable);
     if ($charset == 'UTF-8') { $pattern = '/(<[^>]+>)/Uu'; }	// /U is to have UNGREEDY regex to limit to one html tag. /u is for UTF8 support
     else $pattern = '/(<[^>]+>)/U';								// /U is to have UNGREEDY regex to limit to one html tag.
-    $a = preg_split($pattern, $texte, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+    $a = preg_split($pattern, $text, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
     $nblines = floor((count($a)+1)/2);
     // count possible auto line breaks
     if($maxlinesize)
@@ -3602,6 +3607,7 @@ function dol_textishtml($msg,$option=0)
  * 		- From $substitutionarray (oldval=>newval)
  * 		- From special constants (__XXX__=>f(objet->xxx)) by substitutions modules
  *    	@param      chaine      			Source string in which we must do substitution
+ *    	@param      substitutionarray		Array with key->val to substitute
  *    	@return     string      			Output string after subsitutions
  */
 function make_substitutions($chaine,$substitutionarray)
@@ -3656,6 +3662,7 @@ function complete_substitutions_array(&$substitutionarray,$outputlangs,$object='
  *    @param      	date_start    Start date
  *    @param      	date_end      End date
  *    @param      	format        Output format
+ *    @param		outputlangs   Output language
  */
 function print_date_range($date_start,$date_end,$format = '',$outputlangs='')
 {
@@ -3667,6 +3674,7 @@ function print_date_range($date_start,$date_end,$format = '',$outputlangs='')
  *    @param      	date_start    Start date
  *    @param      	date_end      End date
  *    @param      	format        Output format
+ *    @param		outputlangs   Output language
  */
 function get_date_range($date_start,$date_end,$format = '',$outputlangs='')
 {
@@ -3883,7 +3891,7 @@ function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
  *  Print formated error messages to output (Used to show messages on html output)
  *  @param      mesgstring          Error message
  *  @param      mesgarray           Error messages array
- *  @return     keepembedded        Set to 1 in error message must be kept embedded into its html place (this disable jnotify)
+ *  @param      keepembedded        Set to 1 in error message must be kept embedded into its html place (this disable jnotify)
  *  @see        dol_print_error
  *  @see        dol_htmloutput_mesg
  */
@@ -3927,7 +3935,7 @@ function dol_sort_array(&$array, $index, $order='asc', $natsort, $case_sensitive
 
 /**
  *      Check if a string is in UTF8
- *      @param      $Str        String to check
+ *      @param      $str        String to check
  * 		@return		boolean		True if string is UTF8 or ISO compatible with UTF8, False if not (ISO with special char or Binary)
  */
 function utf8_check($str)
