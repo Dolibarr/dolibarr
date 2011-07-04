@@ -22,7 +22,7 @@
  *		\file       htdocs/compta/bank/virement.php
  *		\ingroup    banque
  *		\brief      Page de saisie d'un virement
- *		\version    $Id: virement.php,v 1.47 2011/07/04 10:33:56 eldy Exp $
+ *		\version    $Id: virement.php,v 1.48 2011/07/04 10:34:56 eldy Exp $
  */
 
 require("./pre.inc.php");
@@ -49,7 +49,7 @@ if ($_POST["action"] == 'add')
 	if (! $label)
 	{
 		$error=1;
-		$mesg.="<div class=\"error\">".$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label"))."</div>";
+		$mesg.="<div class=\"error\">".$langs->trans("ErrorFieldRequired",$langs->transnoentities("Description"))."</div>";
 	}
 	if (! $amount)
 	{
@@ -176,5 +176,5 @@ print "</form>";
 
 $db->close();
 
-llxFooter('$Date: 2011/07/04 10:33:56 $ - $Revision: 1.47 $');
+llxFooter('$Date: 2011/07/04 10:34:56 $ - $Revision: 1.48 $');
 ?>
