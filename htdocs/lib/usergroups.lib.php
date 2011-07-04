@@ -22,7 +22,7 @@
 /**
  *	    \file       htdocs/lib/usergroups.lib.php
  *		\brief      Ensemble de fonctions de base pour la gestion des utilisaterus et groupes
- *		\version    $Id$
+ *		\version    $Id: usergroups.lib.php,v 1.28 2011/07/04 09:01:38 eldy Exp $
  */
 function user_prepare_head($object)
 {
@@ -144,8 +144,9 @@ function group_prepare_head($object)
 
 /**
  * 		Show list of themes. Show all thumbs of themes
- * 		@param		fuser		User concerned or '' for global theme
- * 		@param		edit		1 to add edit form
+ * 		@param		fuser				User concerned or '' for global theme
+ * 		@param		edit				1 to add edit form
+ * 		@param		foruserprofile		Show for user profile view
  */
 function show_theme($fuser,$edit=0,$foruserprofile=false)
 {

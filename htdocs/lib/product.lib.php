@@ -23,7 +23,7 @@
  *	\file       htdocs/lib/product.lib.php
  *	\brief      Ensemble de fonctions de base pour le module produit et service
  * 	\ingroup	product
- *	\version    $Id$
+ *	\version    $Id: product.lib.php,v 1.43 2011/07/04 09:01:38 eldy Exp $
  *
  * 	Ensemble de fonctions de base de dolibarr sous forme d'include
  */
@@ -262,9 +262,9 @@ function show_stats_for_company($product,$socid)
 
 /**
  *	Return translation label of a unit key
- *	@param  int                 Unit key (-3,0,3,98,99...)
- *	@param  measuring_style     Style of unit: weight, volume,...
- *	@return	string	             Unit string
+ *	@param  	unit                Unit key (-3,0,3,98,99...)
+ *	@param  	measuring_style     Style of unit: weight, volume,...
+ *	@return		string	            Unit string
  * 	@see	load_measuring_units
  */
 function measuring_units_string($unit,$measuring_style='')

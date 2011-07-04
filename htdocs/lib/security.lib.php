@@ -21,7 +21,7 @@
 /**
  *  \file			htdocs/lib/security.lib.php
  *  \brief			Set of function used for dolibarr security
- *  \version		$Id$
+ *  \version		$Id: security.lib.php,v 1.123 2011/07/04 09:01:38 eldy Exp $
  */
 
 
@@ -398,7 +398,7 @@ function encodedecode_dbpassconf($level=0)
 
 /**
  *	Encode a string
- *	@param   chaine			chaine de caracteres a encoder
+ *	@param   chain			chaine de caracteres a encoder
  *	@return  string_coded  	chaine de caracteres encodee
  */
 function dol_encode($chain)
