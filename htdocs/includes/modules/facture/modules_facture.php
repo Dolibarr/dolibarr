@@ -25,7 +25,7 @@
  *	\ingroup    facture
  *	\brief      Fichier contenant la classe mere de generation des factures en PDF
  * 				et la classe mere de numerotation des factures
- *	\version    $Id$
+ *	\version    $Id: modules_facture.php,v 1.92 2011/07/04 10:35:48 hregis Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
@@ -147,7 +147,8 @@ class ModeleNumRefFactures
  */
 function facture_pdf_create($db, $object, $message, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 {
-	global $conf,$langs;
+	global $conf,$user,$langs;
+	
 	$langs->load("bills");
 
 	// Increase limit for PDF build
@@ -218,6 +219,14 @@ function facture_pdf_create($db, $object, $message, $modele, $outputlangs, $hide
 			facture_delete_preview($db, $object->id);
 
 			$outputlangs->charset_output=$sav_charset_output;
+			
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			$interface=new Interfaces($db);
+			$result=$interface->run_triggers('BILL_BUILDDOC',$object,$user,$langs,$conf);
+			if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			// Fin appel triggers
+			
 			return 1;
 		}
 		else

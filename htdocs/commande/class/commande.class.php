@@ -25,7 +25,7 @@
  *  \file       htdocs/commande/class/commande.class.php
  *  \ingroup    commande
  *  \brief      Fichier des classes de commandes
- *  \version    $Id: commande.class.php,v 1.117 2011/07/04 09:36:29 eldy Exp $
+ *  \version    $Id: commande.class.php,v 1.118 2011/07/04 10:35:49 hregis Exp $
  */
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
@@ -258,6 +258,8 @@ class Commande extends CommonObject
 
 		if (! $error)
 		{
+			$this->oldref='';
+			
 			// Rename directory if dir was a temporary ref
 			if (preg_match('/^[\(]?PROV/i', $this->ref))
 			{
@@ -273,6 +275,8 @@ class Commande extends CommonObject
 
 					if (@rename($dirsource, $dirdest))
 					{
+						$this->oldref = $comref;
+						
 						dol_syslog("Rename ok");
 						// Suppression ancien fichier PDF dans nouveau rep
 						dol_delete_file($conf->commande->dir_output.'/'.$snum.'/'.$comref.'.*');

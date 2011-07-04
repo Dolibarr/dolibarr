@@ -28,7 +28,7 @@
  *	\file       htdocs/compta/facture/class/facture.class.php
  *	\ingroup    facture
  *	\brief      Fichier de la classe des factures clients
- *	\version    $Id: facture.class.php,v 1.122 2011/06/30 13:27:20 hregis Exp $
+ *	\version    $Id: facture.class.php,v 1.123 2011/07/04 10:35:48 hregis Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
@@ -1664,6 +1664,8 @@ class Facture extends CommonObject
 
             if (! $error)
             {
+            	$this->oldref = '';
+            	
                 // Rename directory if dir was a temporary ref
                 if (preg_match('/^[\(]?PROV/i', $this->ref))
                 {
@@ -1679,6 +1681,8 @@ class Facture extends CommonObject
 
                         if (@rename($dirsource, $dirdest))
                         {
+                        	$this->oldref = $facref;
+                        	
                             dol_syslog("Rename ok");
                             // Suppression ancien fichier PDF dans nouveau rep
                             dol_delete_file($conf->facture->dir_output.'/'.$snumfa.'/'.$facref.'.*');
@@ -1690,7 +1694,7 @@ class Facture extends CommonObject
             // Set new ref and define current statut
             if (! $error)
             {
-                $this->ref = $num;
+            	$this->ref = $num;
                 $this->facnumber=$num;
                 $this->statut=1;
             }
