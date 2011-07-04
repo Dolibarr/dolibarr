@@ -27,17 +27,17 @@ include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 class Facturation {
 
 	/**
-		* Attributs "volatiles" : reinitialises apres chaque traitement d'un article
-		* <p>Attributs "volatiles" : reinitialises apres chaque traitement d'un article</p>
-		* @var int $id			=> 'rowid' du produit dans llx_product
-		* @var string $ref		=> 'ref' du produit dans llx_product
-		* @var int $qte			=> Quantite pour le produit en cours de traitement
-		* @var int $stock		=> Stock theorique pour le produit en cours de traitement
-		* @var int $remise_percent	=> Remise en pourcent sur le produit en cours
-		* @var int $montant_remise	=> Remise en pourcent sur le produit en cours
-		* @var int $prix		=> Prix HT du produit en cours
-		* @var int $tva			=> 'rowid' du taux de tva dans llx_c_tva
-		*/
+	 * Attributs "volatiles" : reinitialises apres chaque traitement d'un article
+	 * <p>Attributs "volatiles" : reinitialises apres chaque traitement d'un article</p>
+	 * int $id			=> 'rowid' du produit dans llx_product
+	 * string $ref		=> 'ref' du produit dans llx_product
+	 * int $qte			=> Quantite pour le produit en cours de traitement
+	 * int $stock		=> Stock theorique pour le produit en cours de traitement
+	 * int $remise_percent	=> Remise en pourcent sur le produit en cours
+	 * int $montant_remise	=> Remise en pourcent sur le produit en cours
+	 * int $prix		=> Prix HT du produit en cours
+	 * int $tva			=> 'rowid' du taux de tva dans llx_c_tva
+	 */
 	var $id;
 	protected $ref;
 	protected $qte;
@@ -48,17 +48,17 @@ class Facturation {
 	protected $tva;
 
 	/**
-		* Attributs persistants : utilises pour toute la duree de la vente (jusqu'a validation ou annulation)
-		* @var string $num_facture	=> Numero de la facture (de la forme FAYYMM-XXXX)
-		* @var string $mode_reglement	=> Mode de reglement (ESP, CB ou CHQ)
-		* @var int $montant_encaisse	=> Montant encaisse en cas de reglement en especes
-		* @var int $montant_rendu	=> Monnaie rendue en cas de reglement en especes
-		* @var int $paiement_le		=> Date de paiement en cas de paiement differe
-		*
-		* @var int $prix_total_ht	=> Prix total hors taxes
-		* @var int $montant_tva		=> Montant total de la TVA, tous taux confondus
-		* @var int $prix_total_ttc	=> Prix total TTC
-		*/
+	 * Attributs persistants : utilises pour toute la duree de la vente (jusqu'a validation ou annulation)
+	 * string $num_facture	=> Numero de la facture (de la forme FAYYMM-XXXX)
+	 * string $mode_reglement	=> Mode de reglement (ESP, CB ou CHQ)
+	 * int $montant_encaisse	=> Montant encaisse en cas de reglement en especes
+	 * int $montant_rendu	=> Monnaie rendue en cas de reglement en especes
+	 * int $paiement_le		=> Date de paiement en cas de paiement differe
+	 *
+	 * int $prix_total_ht	=> Prix total hors taxes
+	 * int $montant_tva		=> Montant total de la TVA, tous taux confondus
+	 * int $prix_total_ttc	=> Prix total TTC
+	 */
 	protected $num_facture;
 	protected $mode_reglement;
 	protected $montant_encaisse;
@@ -82,9 +82,9 @@ class Facturation {
 
 	// Methodes de traitement des donnees
 
-   /**
-	*  \brief    Ajout d'un article au panier
-	*/
+	/**
+	 *  Ajout d'un article au panier
+	 */
 	public function ajoutArticle()
 	{
 		global $db;
@@ -96,7 +96,7 @@ class Facturation {
 		dol_syslog("ajoutArticle sql=".$sql);
 		$resql = $db->query($sql);
 
-	    if ($resql)
+		if ($resql)
 		{
 			$obj = $db->fetch_object($resql);
 			$vat_rate=$obj->taux;
@@ -156,10 +156,10 @@ class Facturation {
 
 	}
 
-   /**
-	*  Suppression du panier d'un article identifie par son id dans la table llx_pos_tmp
-	*  @param      aArticle
-	*/
+	/**
+	 *  Suppression du panier d'un article identifie par son id dans la table llx_pos_tmp
+	 *  @param      aArticle
+	 */
 	public function supprArticle($aArticle)
 	{
 		global $db;
@@ -172,9 +172,9 @@ class Facturation {
 
 	}
 
-   /**
-	*  \brief    Calcul du total HT, total TTC et montants TVA
-	*/
+	/**
+	 *  \brief    Calcul du total HT, total TTC et montants TVA
+	 */
 	public function calculTotaux()
 	{
 		global $db;
@@ -234,7 +234,7 @@ class Facturation {
 	}
 
 	/**
- 	 * Reinitialisation des attributs persistants
+	 * Reinitialisation des attributs persistants
 	 */
 	public function raz_pers ()
 	{
@@ -300,10 +300,10 @@ class Facturation {
 	}
 
 	/**
-     * Getter for qte
-     * @param $aQte
-     * @return
-     */
+	 * Getter for qte
+	 * @param $aQte
+	 * @return
+	 */
 	public function qte ( $aQte=null ) {
 
 		if ( !$aQte ) {
@@ -322,11 +322,11 @@ class Facturation {
 
 	}
 
-    /**
-     * Getter for stock
-     * @param      aStock
-     * @return
-     */
+	/**
+	 * Getter for stock
+	 * @param      aStock
+	 * @return
+	 */
 	public function stock ( $aStock=null )
 	{
 
@@ -347,10 +347,10 @@ class Facturation {
 	}
 
 	/**
-     * Getter for remise_percent
-     * @param      aRemisePercent
-     * @return
-     */
+	 * Getter for remise_percent
+	 * @param      aRemisePercent
+	 * @return
+	 */
 	public function remise_percent ( $aRemisePercent=null )
 	{
 
@@ -371,10 +371,10 @@ class Facturation {
 	}
 
 	/**
-     * Getter for montant_remise
-     * @param      aMontantRemise
-     * @return
-     */
+	 * Getter for montant_remise
+	 * @param      aMontantRemise
+	 * @return
+	 */
 	public function montant_remise ( $aMontantRemise=null ) {
 
 		if ( !$aMontantRemise ) {
@@ -394,10 +394,10 @@ class Facturation {
 	}
 
 	/**
-     * Getter for prix
-     * @param      aPrix
-     * @return
-     */
+	 * Getter for prix
+	 * @param      aPrix
+	 * @return
+	 */
 	public function prix ( $aPrix=null )
 	{
 
@@ -417,11 +417,11 @@ class Facturation {
 
 	}
 
-    /**
-     * Getter for tva
-     * @param      aTva
-     * @return
-     */
+	/**
+	 * Getter for tva
+	 * @param      aTva
+	 * @return
+	 */
 	public function tva ( $aTva=null )
 	{
 

@@ -22,7 +22,7 @@
  *	\file			htdocs/lib/functions2.lib.php
  *	\brief			A set of functions for Dolibarr
  *					This file contains all rare functions.
- *	\version		$Id$
+ *	\version		$Id: functions2.lib.php,v 1.75 2011/07/04 08:38:51 eldy Exp $
  */
 
 
@@ -632,10 +632,8 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
 
 /**
  * Check value
- *
- * @param 	$db			Database handler
  * @param 	$mask		Mask to use
- * @param 	$value
+ * @param 	$value		Value
  * @return	int         <0 if KO, 0 if OK
  */
 function check_value($mask,$value)
@@ -723,11 +721,11 @@ function check_value($mask,$value)
 
 
 /**
- *	\brief   Convert a binary data to string that represent hexadecimal value
- *	\param   bin		Value to convert
- *	\param   pad      	Add 0
- *	\param   upper		Convert to tupper
- *	\return  string		x
+ *	Convert a binary data to string that represent hexadecimal value
+ *	@param   bin		Value to convert
+ *	@param   pad      	Add 0
+ *	@param   upper		Convert to tupper
+ *	@return  string		x
  */
 function binhex($bin, $pad=false, $upper=false)
 {
@@ -741,9 +739,9 @@ function binhex($bin, $pad=false, $upper=false)
 
 
 /**
- *	\brief   Convertir de l'hexadecimal en binaire
- *	\param   string     hexa
- *	\return  string	    bin
+ *	Convert an hexadecimal string into a binary string
+ *	@param   hexa		Hexadecimal string to convert (example: 'FF')
+ *	@return  string	    bin
  */
 function hexbin($hexa)
 {
@@ -757,9 +755,9 @@ function hexbin($hexa)
 
 
 /**
- *	\brief   Retourne le numero de la semaine par rapport a une date
- *	\param   time   	Date au format 'timestamp'
- *	\return  int		Numero de semaine
+ *	Retourne le numero de la semaine par rapport a une date
+ *	@param   time   	Date au format 'timestamp'
+ *	@return  int		Numero de semaine
  */
 function numero_semaine($time)
 {
@@ -838,11 +836,11 @@ function numero_semaine($time)
 
 
 /**
- *	\brief   Convertit une masse d'une unite vers une autre unite
- *	\param   weight    float	Masse a convertir
- *	\param   from_unit int     Unite originale en puissance de 10
- *	\param   to_unit   int     Nouvelle unite  en puissance de 10
- *	\return  float	        Masse convertie
+ *	Convertit une masse d'une unite vers une autre unite
+ *	@param   weight    float	Masse a convertir
+ *	@param   from_unit int     Unite originale en puissance de 10
+ *	@param   to_unit   int     Nouvelle unite  en puissance de 10
+ *	@return  float	        Masse convertie
  */
 function weight_convert($weight,&$from_unit,$to_unit)
 {
@@ -872,11 +870,12 @@ function weight_convert($weight,&$from_unit,$to_unit)
 
 
 /**
- *	\brief      Save personnal parameter
- *	\param	    db          Handler database
- *	\param	    user        Object user
- *	\param	    tab         Tableau (cle=>valeur) des parametres a sauvegarder
- *	\return     int         <0 if KO, >0 if OK
+ *	Save personnal parameter
+ *	@param	    db          Handler database
+ *	@param	    conf		Object conf
+ *	@param	    user        Object user
+ *	@param	    tab         Tableau (cle=>valeur) des parametres a sauvegarder
+ *	@return     int         <0 if KO, >0 if OK
  */
 function dol_set_user_param($db, $conf, &$user, $tab)
 {
@@ -936,9 +935,10 @@ function dol_set_user_param($db, $conf, &$user, $tab)
 
 
 /**
- *	\brief  	Returns formated reduction
- *	\param		reduction		Reduction percentage
- *	\return		string			Formated reduction
+ *	Returns formated reduction
+ *	@param		reduction		Reduction percentage
+ *	@param		langs			Output language
+ *	@return		string			Formated reduction
  */
 function dol_print_reduction($reduction=0,$langs)
 {

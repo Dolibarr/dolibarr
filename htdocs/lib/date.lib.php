@@ -22,7 +22,7 @@
 /**
  *  \file		htdocs/lib/date.lib.php
  *  \brief		Set of function to manipulate dates
- *  \version	$Id$
+ *  \version	$Id: date.lib.php,v 1.32 2011/07/04 08:38:51 eldy Exp $
  */
 
 
@@ -242,6 +242,7 @@ function dol_get_next_month($month, $year)
 /**	Return previous week
  *  @param      day     Day
  * 	@param		week	Week
+ * 	@param		month	Month
  *	@param		year	Year
  *	@return		array	Previous year,month,day
  */
@@ -258,6 +259,7 @@ function dol_get_prev_week($day, $week, $month, $year)
 /**	Return next week
  *  @param      day     Day
  *  @param      week    Week
+ *  @param      month   Month
  *	@param		year	Year
  *	@return		array	Next year,month,day
  */

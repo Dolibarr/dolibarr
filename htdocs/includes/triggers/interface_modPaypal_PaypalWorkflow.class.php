@@ -17,10 +17,10 @@
  */
 
 /**
- *      \file       /paypal/inc/triggers/interface_modPaypal_PaypalWorkflow.class.php
+ *      \file       /htdocs/includes/triggers/interface_modPaypal_PaypalWorkflow.class.php
  *      \ingroup    paypal
  *      \brief      Trigger file for paypal workflow
- *      \version	$Id$
+ *      \version	$Id: interface_modPaypal_PaypalWorkflow.class.php,v 1.6 2011/07/04 08:38:51 eldy Exp $
  */
 
 
