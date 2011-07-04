@@ -22,7 +22,7 @@
  *		\file       htdocs/compta/bank/virement.php
  *		\ingroup    banque
  *		\brief      Page de saisie d'un virement
- *		\version    $Id$
+ *		\version    $Id: virement.php,v 1.47 2011/07/04 10:33:56 eldy Exp $
  */
 
 require("./pre.inc.php");
@@ -138,9 +138,7 @@ $html=new Form($db);
 
 print_fiche_titre($langs->trans("BankTransfer"));
 
-if ($mesg) {
-    print "$mesg<br>";
-}
+dol_htmloutput_mesg($mesg);
 
 print $langs->trans("TransferDesc");
 print "<br><br>";
@@ -178,5 +176,5 @@ print "</form>";
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/04 10:33:56 $ - $Revision: 1.47 $');
 ?>
