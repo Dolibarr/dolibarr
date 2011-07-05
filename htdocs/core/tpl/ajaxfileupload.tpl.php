@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: ajaxfileupload.tpl.php,v 1.4 2011/07/03 14:43:12 hregis Exp $
+ * $Id: ajaxfileupload.tpl.php,v 1.5 2011/07/05 09:14:26 hregis Exp $
  */
 ?>
 
@@ -36,9 +36,9 @@
 			</td>
 		{{else}}
 			<td class="progress"><div></div></td>
-			<td class="start"><button><?php echo $langs->trans('Start'); ?></button></td>
+			<td align="right" class="start"><button><?php echo $langs->trans('Start'); ?></button></td>
 		{{/if}}
-		<td class="cancel"><button><?php echo $langs->trans('Cancel'); ?></button></td>
+		<td align="right" class="cancel"><button><?php echo $langs->trans('Cancel'); ?></button></td>
 	</tr>
 </script>
 
