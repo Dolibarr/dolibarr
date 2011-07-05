@@ -28,7 +28,7 @@
  *                  - Le nom de la classe doit etre InterfaceMytrigger
  *                  - Le nom de la methode constructeur doit etre InterfaceMytrigger
  *                  - Le nom de la propriete name doit etre Mytrigger
- *		\version	$Id: interface_all_Demo.class.php-NORUN,v 1.26 2011/07/04 10:35:49 hregis Exp $
+ *		\version	$Id: interface_all_Demo.class.php-NORUN,v 1.27 2011/07/05 16:10:56 hregis Exp $
  */
 
 
@@ -502,6 +502,16 @@ class InterfaceDemo
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
         elseif ($action == 'SHIPPINGL_DELETE')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
+        
+        // File
+        elseif ($action == 'FILE_UPLOAD')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
+        elseif ($action == 'FILE_DELETE')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
