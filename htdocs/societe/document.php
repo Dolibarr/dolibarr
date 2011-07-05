@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
  *  \file       htdocs/societe/document.php
  *  \brief      Tab for documents linked to third party
  *  \ingroup    societe
- *  \version    $Id: document.php,v 1.32 2011/07/05 16:10:56 hregis Exp $
+ *  \version    $Id: document.php,v 1.33 2011/07/05 17:21:19 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -212,7 +212,7 @@ if ($socid > 0)
 		
 		$formfile=new FormFile($db);
 		
-		if (1==2 && $conf->global->MAIN_USE_JQUERY_FILEUPLOAD)
+		if ($conf->global->MAIN_USE_JQUERY_FILEUPLOAD)
 		{
 			$formfile->form_ajaxfileupload($object);
 		}
@@ -289,6 +289,6 @@ else
 $db->close();
 
 
-llxFooter('$Date: 2011/07/05 16:10:56 $ - $Revision: 1.32 $');
+llxFooter('$Date: 2011/07/05 17:21:19 $ - $Revision: 1.33 $');
 
 ?>
