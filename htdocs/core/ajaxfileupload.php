@@ -72,18 +72,14 @@ class UploadHandler
                 // uploaded images. You can also add additional versions with
                 // their own upload directories:
                 /*
-                'large' => array(
+                'small' => array(
                     'upload_dir' => dirname(__FILE__).'/files/',
-                    'upload_url' => dirname($_SERVER['PHP_SELF']).'/files/',
-                    'max_width' => 1920,
-                    'max_height' => 1200
+                    'upload_url' => dirname($_SERVER['PHP_SELF']).'/files/'
                 ),
                 */
-                'thumbnail' => array(
+                'thumbs' => array(
                     'upload_dir' => $conf->$element->dir_output . '/' . $fk_element . '/thumbs/',
-                    'upload_url' => DOL_URL_ROOT.'/document.php?modulepart='.$element.'&attachment=1&file=/'.$fk_element.'/thumbs/',
-                    'max_width' => 40,
-                    'max_height' => 40
+                    'upload_url' => DOL_URL_ROOT.'/document.php?modulepart='.$element.'&attachment=1&file=/'.$fk_element.'/thumbs/'
                 )
             )
         );
@@ -126,6 +122,7 @@ class UploadHandler
      *  options is array('max_width', 'max_height')
      */
     private function create_scaled_image($file_name, $options) {
+        global $maxwidthmini, $maxheightmini;
         $file_path = $this->options['upload_dir'].$file_name;
         $new_file_path = $options['upload_dir'].$file_name;
 
@@ -135,51 +132,8 @@ class UploadHandler
 	        if (!$img_width || !$img_height) {
 	            return false;
 	        }
-	        $scale = min(
-	            $options['max_width'] / $img_width,
-	            $options['max_height'] / $img_height
-	        );
-	        if ($scale > 1) {
-	            $scale = 1;
-	        }
-	        $new_width = $img_width * $scale;
-	        $new_height = $img_height * $scale;
 
-
-	        $res=true;
-	        $res=vignette($file_path,$options['max_width'],$options['max_height'],'_mini');
-            /* Replaced with more efficient function vignette
-	        $new_img = @imagecreatetruecolor($new_width, $new_height);
-	        switch (strtolower(substr(strrchr($file_name, '.'), 1))) {
-	            case 'jpg':
-	            case 'jpeg':
-	                $src_img = @imagecreatefromjpeg($file_path);
-	                $write_image = 'imagejpeg';
-	                break;
-	            case 'gif':
-	                $src_img = @imagecreatefromgif($file_path);
-	                $write_image = 'imagegif';
-	                break;
-	            case 'png':
-	                $src_img = @imagecreatefrompng($file_path);
-	                $write_image = 'imagepng';
-	                break;
-	            default:
-	                $src_img = $image_method = null;
-	        }
-	        $success = $src_img && @imagecopyresampled(
-	            $new_img,
-	            $src_img,
-	            0, 0, 0, 0,
-	            $new_width,
-	            $new_height,
-	            $img_width,
-	            $img_height
-	        ) && $write_image($new_img, $new_file_path);
-	        // Free up memory (imagedestroy does not delete files):
-	        @imagedestroy($src_img);
-	        @imagedestroy($new_img);
-            */
+	        $res=vignette($file_path,$maxwidthmini,$maxheightmini,'_mini');
 
 	        //return $success;
 	        if (preg_match('/error/i',$res)) return false;

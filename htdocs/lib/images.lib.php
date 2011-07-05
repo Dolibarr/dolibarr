@@ -21,7 +21,7 @@
 /**
  *  \file		htdocs/lib/images.lib.php
  *  \brief		Set of function for manipulating images
- * 	\version	$Id: images.lib.php,v 1.22 2011/07/05 22:40:36 eldy Exp $
+ * 	\version	$Id: images.lib.php,v 1.23 2011/07/05 22:51:24 eldy Exp $
  */
 
 // Define size of logo small and mini
@@ -275,7 +275,8 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x=0, $s
 	// Set permissions on file
 	if (! empty($conf->global->MAIN_UMASK)) @chmod($imgThumbName, octdec($conf->global->MAIN_UMASK));
 
-	// Free memory
+	// Free memory. This does not delete image.
+    imagedestroy($img);
 	imagedestroy($imgThumb);
 
 	clearstatcache();	// File was replaced by a modified one, so we clear file caches.
@@ -510,8 +511,9 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 	// Set permissions on file
 	if (! empty($conf->global->MAIN_UMASK)) @chmod($imgThumbName, octdec($conf->global->MAIN_UMASK));
 
-	// Free memory
-	imagedestroy($imgThumb);
+    // Free memory. This does not delete image.
+    imagedestroy($img);
+    imagedestroy($imgThumb);
 
 	return $imgThumbName;
 }
