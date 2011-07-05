@@ -22,7 +22,7 @@
  *	\file       htdocs/comm/propal/class/propalestats.class.php
  *	\ingroup    propales
  *	\brief      Fichier de la classe de gestion des stats des propales
- *	\version    $Id$
+ *	\version    $Id: propalestats.class.php,v 1.5 2011/07/04 10:30:03 eldy Exp $
  */
 
 include_once DOL_DOCUMENT_ROOT . "/core/class/stats.class.php";
@@ -91,7 +91,7 @@ class PropaleStats extends Stats
 		$sql = "SELECT date_format(p.datep,'%m') as dm, count(*)";
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE date_format(p.datep,'%Y') = ".$year;
+		$sql.= " WHERE date_format(p.datep,'%Y') = '".$year."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');
@@ -127,7 +127,7 @@ class PropaleStats extends Stats
 		$sql = "SELECT date_format(p.datep,'%m') as dm, sum(p.".$this->field.")";
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE date_format(p.datep,'%Y') = ".$year;
+		$sql.= " WHERE date_format(p.datep,'%Y') = '".$year."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');
@@ -145,7 +145,7 @@ class PropaleStats extends Stats
 		$sql = "SELECT date_format(p.datep,'%m') as dm, avg(p.".$this->field.")";
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE date_format(p.datep,'%Y') = ".$year;
+		$sql.= " WHERE date_format(p.datep,'%Y') = '".$year."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');

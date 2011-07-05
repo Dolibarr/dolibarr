@@ -22,7 +22,7 @@
  *	\file       htdocs/core/class/html.formfile.class.php
  *  \ingroup    core
  *	\brief      File of class to offer components to list and upload files
- *	\version	$Id: html.formfile.class.php,v 1.37 2011/07/03 15:04:18 hregis Exp $
+ *	\version	$Id: html.formfile.class.php,v 1.38 2011/07/05 09:14:27 hregis Exp $
  */
 
 
@@ -739,12 +739,27 @@ class FormFile
 	{
 		global $langs;
 		
+		// PHP post_max_size
+		$post_max_size				= ini_get('post_max_size');
+		$mul_post_max_size			= substr($post_max_size, -1);
+		$mul_post_max_size			= ($mul_post_max_size == 'M' ? 1048576 : ($mul_post_max_size == 'K' ? 1024 : ($mul_post_max_size == 'G' ? 1073741824 : 1)));
+		$post_max_size				= $mul_post_max_size*(int)$post_max_size;
+		// PHP upload_max_filesize
+    	$upload_max_filesize		= ini_get('upload_max_filesize');
+    	$mul_upload_max_filesize	= substr($upload_max_filesize, -1);
+		$mul_upload_max_filesize	= ($mul_upload_max_filesize == 'M' ? 1048576 : ($mul_upload_max_filesize == 'K' ? 1024 : ($mul_upload_max_filesize == 'G' ? 1073741824 : 1)));
+		$upload_max_filesize		= $mul_upload_max_filesize*(int)$upload_max_filesize;
+		// Max file size
+    	$max_file_size 				= (($post_max_size < $upload_max_filesize) ? $post_max_size : $upload_max_filesize);
+		
 		print '<script type="text/javascript">
 				$(function () {
 					\'use strict\';
 					
+					var max_file_size = \''.$max_file_size.'\';
+					
 					// Initialize the jQuery File Upload widget:
-					$("#fileupload").fileupload();
+					$("#fileupload").fileupload( { maxFileSize: max_file_size} );
 					
 					// Load existing files:
 					$.getJSON($("#fileupload form").prop("action"), { fk_element: "'.$object->id.'", element: "'.$object->element.'"}, function (files) {

@@ -22,7 +22,7 @@
  *   	\file       htdocs/compta/sociales/index.php
  *		\ingroup    tax
  *		\brief      Page to list all social contributions
- *		\version    $Id$
+ *		\version    $Id: index.php,v 1.65 2011/07/04 10:30:01 eldy Exp $
  */
 
 require('../../main.inc.php');
@@ -86,8 +86,8 @@ if ($year > 0)
     $sql .= " AND (";
     // Si period renseignee on l'utilise comme critere de date, sinon on prend date echeance,
     // ceci afin d'etre compatible avec les cas ou la periode n'etait pas obligatoire
-    $sql .= "   (s.periode is not null and date_format(s.periode, '%Y') = ".$year.") ";
-    $sql .= "or (s.periode is null     and date_format(s.date_ech, '%Y') = ".$year.")";
+    $sql .= "   (s.periode is not null and date_format(s.periode, '%Y') = '".$year."') ";
+    $sql .= "or (s.periode is null     and date_format(s.date_ech, '%Y') = '".$year."')";
     $sql .= ")";
 }
 if ($filtre) {
@@ -229,5 +229,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/04 10:30:01 $ - $Revision: 1.65 $');
 ?>

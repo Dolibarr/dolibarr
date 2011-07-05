@@ -22,7 +22,7 @@
  *	\file       htdocs/comm/propal/index.php
  *	\ingroup    propal
  *	\brief      Home page of proposal area
- *	\version    $Id$
+ *	\version    $Id: index.php,v 1.6 2011/07/04 10:35:49 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -249,7 +249,7 @@ if ($resql)
 
 			print '<td width="16" align="right" class="nobordernopadding">';
 			$filename=dol_sanitizeFileName($obj->ref);
-			$filedir=$conf->propal->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+			$filedir=$conf->propale->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 			$formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','',1,'',1);
 			print '</td></tr></table>';
@@ -416,6 +416,6 @@ print '</td></tr></table>';
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/04 10:35:49 $ - $Revision: 1.6 $');
 
 ?>

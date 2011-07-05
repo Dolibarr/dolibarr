@@ -22,7 +22,7 @@
  *       \file       htdocs/compta/deplacement/class/deplacementstats.class.php
  *       \ingroup    factures
  *       \brief      Fichier de la classe de gestion des stats des deplacement et notes de frais
- *       \version    $Id$
+ *       \version    $Id: deplacementstats.class.php,v 1.5 2011/07/04 10:30:02 eldy Exp $
  */
 include_once DOL_DOCUMENT_ROOT . "/core/class/stats.class.php";
 include_once DOL_DOCUMENT_ROOT . "/compta/deplacement/class/deplacement.class.php";
@@ -117,7 +117,7 @@ class DeplacementStats extends Stats
 	{
 		$sql = "SELECT date_format(dated,'%m') as dm, sum(".$this->field.")";
 		$sql.= " FROM ".$this->from;
-		$sql.= " WHERE date_format(dated,'%Y') = ".$year;
+		$sql.= " WHERE date_format(dated,'%Y') = '".$year."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
 		$sql.= $this->db->order('dm','DESC');
@@ -136,7 +136,7 @@ class DeplacementStats extends Stats
 	{
 		$sql = "SELECT date_format(dated,'%m') as dm, avg(".$this->field.")";
 		$sql.= " FROM ".$this->from;
-		$sql.= " WHERE date_format(dated,'%Y') = ".$year;
+		$sql.= " WHERE date_format(dated,'%Y') = '".$year."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');

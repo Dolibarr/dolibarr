@@ -24,7 +24,7 @@
  *  \ingroup    propale
  *  \brief      Fichier contenant la classe mere de generation des propales en PDF
  *  			et la classe mere de numerotation des propales
- *	\version    $Id$
+ *	\version    $Id: modules_propale.php,v 1.62 2011/07/04 10:35:49 hregis Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
@@ -132,10 +132,10 @@ class ModeleNumRefPropales
 
 /**
  * 	Cree une propale sur disque en fonction du modele de PROPALE_ADDON_PDF
- * 	@param	    db  			objet base de donnee
- * 	@param	    id				id de la propale a creer
- * 	@param	    modele			force le modele a utiliser ('' to not force)
- * 	@param		outputlangs		objet lang a utiliser pour traduction
+ * 	@param	    db  			Database handler
+ * 	@param	    object			Object proposal
+ * 	@param	    modele			Force model to use ('' to not force)
+ * 	@param		outputlangs		Object langs to use for output
  *  @param      hidedetails     Hide details of lines
  *  @param      hidedesc        Hide description
  *  @param      hideref         Hide ref
@@ -143,7 +143,7 @@ class ModeleNumRefPropales
  */
 function propale_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 {
-	global $conf,$langs;
+	global $conf,$user,$langs;
 	$langs->load("propale");
 
 	$dir = "/includes/modules/propale/";
@@ -197,6 +197,14 @@ function propale_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0,
 			$outputlangs->charset_output=$sav_charset_output;
 			// on supprime l'image correspondant au preview
 			propale_delete_preview($db, $object->id);
+			
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			$interface=new Interfaces($db);
+			$result=$interface->run_triggers('PROPAL_BUILDDOC',$object,$user,$langs,$conf);
+			if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			// Fin appel triggers
+			
 			return 1;
 		}
 		else

@@ -24,7 +24,7 @@
  *	\file       htdocs/lib/company.lib.php
  *	\brief      Ensemble de fonctions de base pour le module societe
  *	\ingroup    societe
- *	\version    $Id: company.lib.php,v 1.120 2011/07/03 18:32:08 eldy Exp $
+ *	\version    $Id: company.lib.php,v 1.122 2011/07/04 08:38:51 eldy Exp $
  */
 
 /**
@@ -212,7 +212,7 @@ function societe_admin_prepare_head($object)
  *    @param      id            Id or code of country
  *    @param      withcode      0=Return label, 1=Return code + label, 2=Return code from id, 3=Return id from code
  *    @param      dbtouse       Database handler (using in global way may fail because of conflicts with some autoload features)
- *    @param      outputlangs   Lang object for output translation
+ *    @param      outputlangs   Langs object for output translation
  *    @param      entconv       0=Return value without entities and not converted to output charset
  *    @return     string        String with country code or translated country name
  */
@@ -331,9 +331,9 @@ function currency_name($code_iso,$withcode=0)
 }
 
 /**
- *    \brief      Retourne le nom traduit de la forme juridique
- *    \param      code        Code de la forme juridique
- *    \return     string      Nom traduit du pays
+ *    Retourne le nom traduit de la forme juridique
+ *    @param      code        Code de la forme juridique
+ *    @return     string      Nom traduit du pays
  */
 function getFormeJuridiqueLabel($code)
 {
@@ -369,7 +369,7 @@ function getFormeJuridiqueLabel($code)
 /**
  * 		Show html area for list of projects
  *		@param		conf		Object conf
- * 		@param		lang		Object lang
+ * 		@param		langs		Object langs
  * 		@param		db			Database handler
  * 		@param		object		Third party object
  *      @param      backtopage  Url to go once contact is created
@@ -387,7 +387,8 @@ function show_projects($conf,$langs,$db,$object,$backtopage='')
         $buttoncreate='';
         if ($conf->projet->enabled && $user->rights->projet->creer)
         {
-            $buttoncreate='<a class="butAction" href="'.DOL_URL_ROOT.'/projet/fiche.php?socid='.$object->id.'&action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject").'</a>';
+            //$buttoncreate='<a class="butAction" href="'.DOL_URL_ROOT.'/projet/fiche.php?socid='.$object->id.'&action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject").'</a>';
+			$buttoncreate='<a class="addnewrecord" href="'.DOL_URL_ROOT.'/projet/fiche.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject").' '.img_picto($langs->trans("AddProject"),'filenew').'</a>'."\n";
         }
 
         print "\n";
@@ -465,7 +466,7 @@ function show_projects($conf,$langs,$db,$object,$backtopage='')
 /**
  * 		Show html area for list of contacts
  *		@param		conf		Object conf
- * 		@param		lang		Object lang
+ * 		@param		langs		Object langs
  * 		@param		db			Database handler
  * 		@param		object		Third party object
  *      @param      backtopage  Url to go once contact is created
@@ -487,7 +488,8 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     $buttoncreate='';
     if ($user->rights->societe->contact->creer)
     {
-        $buttoncreate='<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddContact").'</a>'."\n";
+        //$buttoncreate='<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddContact").'</a>'."\n";
+		$buttoncreate='<a class="addnewrecord" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddContact").' '.img_picto($langs->trans("AddContact"),'filenew').'</a>'."\n";
     }
 
     print "\n";
@@ -938,7 +940,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
 /**
  * 		Show html area for list of subsidiaries
  *		@param		conf		Object conf
- * 		@param		lang		Object lang
+ * 		@param		langs		Object langs
  * 		@param		db			Database handler
  * 		@param		object		Third party object
  */

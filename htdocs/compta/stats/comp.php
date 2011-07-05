@@ -21,7 +21,7 @@
 /**
  *      \file       htdocs/compta/stats/comp.php
  *      \ingroup    commercial
- *  	\version	$Id: comp.php,v 1.43 2011/06/29 11:22:36 eldy Exp $
+ *  	\version	$Id: comp.php,v 1.44 2011/07/04 10:30:01 eldy Exp $
  * 		TODO	Remove or add page in menus
  */
 
@@ -47,8 +47,9 @@ function propals ($db, $year, $month)
 	$sql.= " WHERE p.fk_soc = s.rowid AND p.fk_statut = c.id";
 	$sql.= " AND p.entity = ".$conf->entity;
 	$sql.= " AND p.fk_statut in (1,2,4)";
-	$sql.= " AND date_format(p.datep, '%Y') = ".$year;
-	$sql.= " AND round(date_format(p.datep, '%m')) = ".$month;
+	// TODO Use between instead of date_format
+	$sql.= " AND date_format(p.datep, '%Y') = '".$year."'";
+	$sql.= " AND round(date_format(p.datep, '%m')) = '".$month."'";
 	$sql.= " ORDER BY p.fk_statut";
 
 	$result = $db->query($sql);
@@ -121,7 +122,7 @@ function factures ($db, $year, $month, $paye)
 	$sql.= " AND f.entity = ".$conf->entity;
 	if ($conf->compta->mode != 'CREANCES-DETTES')	$sql.= " AND f.paye = ".$paye;
 	$sql.= " AND f.fk_soc = s.rowid";
-	$sql.= " AND date_format(f.datef, '%Y') = ".$year;
+	$sql.= " AND date_format(f.datef, '%Y') = '".$year."'";
 	$sql.= " AND round(date_format(f.datef, '%m')) = ".$month;
 	$sql.= " ORDER BY f.datef DESC ";
 
@@ -271,7 +272,7 @@ function ppt ($db, $year, $socid)
 	$sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
 	$sql.= " WHERE p.fk_statut in (1,2,4)";
 	$sql.= " AND p.entity = ".$conf->entity;
-	$sql.= " AND date_format(p.datep,'%Y') = ".$year;
+	$sql.= " AND date_format(p.datep,'%Y') = '".$year."'";
 	if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
 	$sql.= " GROUP BY dm";
 
@@ -284,7 +285,7 @@ function ppt ($db, $year, $socid)
 	$sql.= " WHERE f.fk_statut in (1,2)";
 	$sql.= " AND f.entity = ".$conf->entity;
 	if ($conf->compta->mode != 'CREANCES-DETTES')	$sql.= " AND f.paye = 1";
-	$sql.= " AND date_format(f.datef,'%Y') = ".$year;
+	$sql.= " AND date_format(f.datef,'%Y') = '".$year."'";
 	if ($socid)	$sql.= " AND f.fk_soc = ".$socid;
 	$sql.= " GROUP BY dm";
 
@@ -350,5 +351,5 @@ if ($details == 1)
 $db->close();
 
 
-llxFooter('$Date: 2011/06/29 11:22:36 $ - $Revision: 1.43 $');
+llxFooter('$Date: 2011/07/04 10:30:01 $ - $Revision: 1.44 $');
 ?>

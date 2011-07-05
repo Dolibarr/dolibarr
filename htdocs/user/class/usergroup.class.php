@@ -22,7 +22,7 @@
  *	 \file       htdocs/user/class/usergroup.class.php
  *	 \brief      Fichier de la classe des groupes d'utilisateur
  *	 \author     Rodolphe Qiedeville
- *	 \version    $Id$
+ *	 \version    $Id: usergroup.class.php,v 1.10 2011/07/04 11:41:04 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
@@ -55,9 +55,8 @@ class UserGroup extends CommonObject
 
 
 	/**
-	 *    \brief Constructeur de la classe
-	 *    \param  DB         Handler acces base de donnees
-	 *    \param  id         Id du groupe (0 par defaut)
+	 *    Constructor
+	 *    @param  DB         Handler acces base de donnees
 	 */
 	function UserGroup($DB)
 	{
@@ -68,9 +67,9 @@ class UserGroup extends CommonObject
 
 
 	/**
-	 *	\brief      Charge un objet group avec toutes ces caracteristiques (excpet ->members array)
-	 *	\param      id      id du groupe a charger
-	 *	\return		int		<0 si KO, >0 si OK
+	 *	Charge un objet group avec toutes ces caracteristiques (excpet ->members array)
+	 *	@param      id      id du groupe a charger
+	 *	@return		int		<0 si KO, >0 si OK
 	 */
 	function fetch($id)
 	{
@@ -117,13 +116,13 @@ class UserGroup extends CommonObject
 
 	/**
 	 * 	Return array of groups objects for a particular user
-	 *	@param		usertosearch
-	 * 	@return		array of groups objects
+	 *	@param		userid    User id to search
+	 * 	@return		array     Array of groups objects
 	 */
 	function listGroupsForUser($userid)
 	{
 		global $conf;
-		
+
 		$ret=array();
 
 		$sql = "SELECT g.rowid, ug.entity as usergroup_entity";
@@ -143,12 +142,12 @@ class UserGroup extends CommonObject
 				$group=new UserGroup($this->db);
 				$group->fetch($obj->rowid);
 				$group->usergroup_entity = $obj->usergroup_entity;
-				
+
 				$ret[]=$group;
 			}
-			
+
 			$this->db->free($result);
-			
+
 			return $ret;
 		}
 		else
@@ -166,7 +165,7 @@ class UserGroup extends CommonObject
 	function listUsersForGroup()
 	{
 		global $conf;
-		
+
 		$ret=array();
 
 		$sql = "SELECT u.rowid, ug.entity as usergroup_entity";
@@ -188,9 +187,9 @@ class UserGroup extends CommonObject
 
 				$ret[]=$user;
 			}
-			
+
 			$this->db->free($result);
-			
+
 			return $ret;
 		}
 		else
@@ -524,7 +523,7 @@ class UserGroup extends CommonObject
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."usergroup");
 
 			if ($this->update(1) < 0) return -2;
-			
+
 			if (! $notrigger)
 			{
 				// Appel des triggers

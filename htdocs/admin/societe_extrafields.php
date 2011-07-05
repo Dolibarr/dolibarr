@@ -22,7 +22,7 @@
  *      \file       htdocs/admin/societe_extrafields.php
  *		\ingroup    societe
  *		\brief      Page to setup extra fields of third party
- *		\version    $Id$
+ *		\version    $Id: societe_extrafields.php,v 1.4 2011/07/04 07:38:22 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -169,7 +169,7 @@ if ($action == 'delete')
 
 $textobject=$langs->transnoentitiesnoconv("ThirdParty");
 
-$help_url='EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
+$help_url='EN:Module Third Parties setup|FR:Paramétrage_du_module_Tiers';
 llxHeader('',$langs->trans("CompanySetup"),$help_url);
 
 
@@ -312,5 +312,5 @@ if ($_GET["attrname"] && $action == 'edit')
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/04 07:38:22 $ - $Revision: 1.4 $');
 ?>

@@ -31,7 +31,7 @@
  *	\file       htdocs/core/class/html.form.class.php
  *  \ingroup    core
  *	\brief      File of class with all html predefined components
- *	\version	$Id: html.form.class.php,v 1.184 2011/06/29 15:48:03 grandoc Exp $
+ *	\version	$Id: html.form.class.php,v 1.186 2011/07/04 11:33:22 eldy Exp $
  */
 
 
@@ -135,15 +135,6 @@ class Form
     }
 
     /**
-     *	Old version of textwithtooltip. Kept for backward compatibility with modules for 2.6.
-     *	@deprecated
-     */
-    function textwithhelp($text,$htmltext,$tooltipon=1)
-    {
-        return $this->textwithtooltip($text,$htmltext,$tooltipon);
-    }
-
-    /**
      *	Show a text and picto with tooltip on text or picto
      *	@param  text				Text to show
      *	@param  htmltext	    	Content html of tooltip, coded into HTML/UTF8
@@ -163,19 +154,14 @@ class Form
         if ($incbefore) $text = $incbefore.$text;
         if (! $htmltext) return $text;
 
-        $paramfortooltip ='';
-
         // Sanitize tooltip
         $htmltext=str_replace("\\","\\\\",$htmltext);
-        //$htmltext=str_replace("'","\'",$htmltext);
-        //$htmltext=str_replace("&#039;","\'",$htmltext);
         $htmltext=str_replace("\r","",$htmltext);
-        $htmltext=str_replace("<br>\n","<br>",$htmltext);
         $htmltext=str_replace("\n","",$htmltext);
 
        	$htmltext=str_replace('"',"&quot;",$htmltext);
-       	$extracss = (!empty($extracss) ? ' '.$extracss : '');
-       	$paramfortooltip.=' class="classfortooltip'.$extracss.'" title="'.$htmltext.'"'; // Attribut to put on td tag to store tooltip
+       	$paramfortooltipimg=' class="classfortooltip'.($extracss?' '.$extracss:'').'" title="'.dol_escape_htmltag($htmltext,1).'"'; // Attribut to put on td img tag to store tooltip
+       	$paramfortooltiptd =($extracss?' class="'.$extracss.'"':''); // Attribut to put on td text tag
 
        	$s="";
         if (empty($notabs)) $s.='<table class="nobordernopadding" summary=""><tr>';
@@ -183,18 +169,18 @@ class Form
         {
         	if ($text != '')
         	{
-        		$s.='<td'.$paramfortooltip.'>'.$text;
+        		$s.='<td'.$paramfortooltiptd.'>'.$text;
 				if ($direction) $s.='&nbsp;';
 				$s.='</td>';
 			}
-			if ($direction) $s.='<td'.$paramfortooltip.' valign="top" width="14">'.$img.'</td>';
+			if ($direction) $s.='<td'.$paramfortooltipimg.' valign="top" width="14">'.$img.'</td>';
 		}
 		else
 		{
-			if ($direction) $s.='<td'.$paramfortooltip.' valign="top" width="14">'.$img.'</td>';
+			if ($direction) $s.='<td'.$paramfortooltipimg.' valign="top" width="14">'.$img.'</td>';
 			if ($text != '')
 			{
-				$s.='<td'.$paramfortooltip.'>';
+				$s.='<td'.$paramfortooltiptd.'>';
 				if ($direction) $s.='&nbsp;';
 				$s.=$text.'</td>';
 			}
@@ -210,6 +196,7 @@ class Form
      *	@param   	htmltooltip     	Content of tooltip
      *	@param		direction			1=Icon is after text, -1=Icon is before text
      * 	@param		type				Type of picto (info, help, warning, superadmin...)
+     *  @param  	extracss            Add a CSS style to td tags
      * 	@return		string				HTML code of text, picto, tooltip
      */
     function textwithpicto($text,$htmltext,$direction=1,$type='help',$extracss='')
@@ -2511,7 +2498,7 @@ class Form
             }
         }
     }
-    
+
 /**
      *    \brief      Affiche formulaire de selection des tiers
      *    \param      page        Page

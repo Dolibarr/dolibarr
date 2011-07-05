@@ -21,17 +21,16 @@
  *	\file			htdocs/lib/functions_ch.lib.php
  *	\brief			A set of swiss functions for Dolibarr
  *					This file contains rare functions.
- *	\version		$Id$
+ *	\version		$Id: functions_ch.lib.php,v 1.3 2011/07/04 08:38:51 eldy Exp $
  */
 
 
 /**
  * Return if a BVRB number is valid or not (For switzerland)
- *
- * @param 		string		BVRB number
+ * @param 		bvrb		BVRB number
  * @return 		bool		True if OK, false if KO
  */
-function dol_ch_controle_bvrb ($bvrb)
+function dol_ch_controle_bvrb($bvrb)
 {
 	// Init array for control
 	$tableau[0][0]=0;

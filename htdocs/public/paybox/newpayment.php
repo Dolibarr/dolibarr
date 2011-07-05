@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
  *		\ingroup    paybox
  *		\brief      File to offer a way to make a payment for a particular Dolibarr entity
  *		\author	    Laurent Destailleur
- *		\version    $Id$
+ *		\version    $Id: newpayment.php,v 1.56 2011/07/05 08:29:53 eldy Exp $
  */
 
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
@@ -105,19 +105,19 @@ $urlko=preg_replace('/&$/','',$urlko);  // Remove last &
 if (GETPOST("action") == 'dopayment')
 {
     $PRICE=price2num(GETPOST("newamount"),'MT');
-    $EMAIL=GETPOST("EMAIL");
+    $email=GETPOST("email");
 
 	$mesg='';
 	if (empty($PRICE) || ! is_numeric($PRICE)) $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Amount"));
-	elseif (empty($EMAIL))          $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("YourEMail"));
-	elseif (! isValidEMail($EMAIL)) $mesg=$langs->trans("ErrorBadEMail",$EMAIL);
+	elseif (empty($email))          $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("YourEMail"));
+	elseif (! isValidEMail($email)) $mesg=$langs->trans("ErrorBadEMail",$email);
 	elseif (empty($FULLTAG))        $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("PaymentCode"));
 
 	if (empty($mesg))
 	{
 		dol_syslog("newpayment.php call paybox api and do redirect", LOG_DEBUG);
 
-		print_paybox_redirect($PRICE, $conf->monnaie, $EMAIL, $urlok, $urlko, $FULLTAG);
+		print_paybox_redirect($PRICE, $conf->monnaie, $email, $urlok, $urlko, $FULLTAG);
 
 		session_destroy();
 		exit;
@@ -243,7 +243,7 @@ if (! GETPOST("source"))
 	$var=!$var;
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("YourEMail");
 	print ' ('.$langs->trans("ToComplete").')';
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.GETPOST("EMAIL").'"></td></tr>'."\n";
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="email" size="48" value="'.GETPOST("email").'"></td></tr>'."\n";
 }
 
 
@@ -325,8 +325,8 @@ if (GETPOST("source") == 'order')
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("YourEMail");
 	print ' ('.$langs->trans("ToComplete").')';
 	$email=$order->client->email;
-	$email=(GETPOST("EMAIL")?GETPOST("EMAIL"):(isValidEmail($email)?$email:''));
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$email.'"></td></tr>'."\n";
+	$email=(GETPOST("email")?GETPOST("email"):(isValidEmail($email)?$email:''));
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="email" size="48" value="'.$email.'"></td></tr>'."\n";
 }
 
 
@@ -408,8 +408,8 @@ if (GETPOST("source") == 'invoice')
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("YourEMail");
 	print ' ('.$langs->trans("ToComplete").')';
     $email=$invoice->client->email;
-    $email=(GETPOST("EMAIL")?GETPOST("EMAIL"):(isValidEmail($email)?$email:''));
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$email.'"></td></tr>'."\n";
+    $email=(GETPOST("email")?GETPOST("email"):(isValidEmail($email)?$email:''));
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="email" size="48" value="'.$email.'"></td></tr>'."\n";
 }
 
 // Payment on contract line
@@ -579,8 +579,8 @@ if (GETPOST("source") == 'contractline')
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("YourEMail");
 	print ' ('.$langs->trans("ToComplete").')';
     $email=$contract->client->email;
-    $email=(GETPOST("EMAIL")?GETPOST("EMAIL"):(isValidEmail($email)?$email:''));
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$email.'"></td></tr>'."\n";
+    $email=(GETPOST("email")?GETPOST("email"):(isValidEmail($email)?$email:''));
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="email" size="48" value="'.$email.'"></td></tr>'."\n";
 
 }
 
@@ -680,8 +680,8 @@ if (GETPOST("source") == 'membersubscription')
 	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("YourEMail");
 	print ' ('.$langs->trans("ToComplete").')';
     $email=$member->client->email;
-    $email=(GETPOST("EMAIL")?GETPOST("EMAIL"):(isValidEmail($email)?$email:''));
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="EMAIL" size="48" value="'.$email.'"></td></tr>'."\n";
+    $email=(GETPOST("email")?GETPOST("email"):(isValidEmail($email)?$email:''));
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><input class="flat" type="text" name="email" size="48" value="'.$email.'"></td></tr>'."\n";
 }
 
 
@@ -716,5 +716,5 @@ html_print_paybox_footer($mysoc,$langs);
 
 $db->close();
 
-llxFooterPayBox('$Date$ - $Revision$');
+llxFooterPayBox('$Date: 2011/07/05 08:29:53 $ - $Revision: 1.56 $');
 ?>

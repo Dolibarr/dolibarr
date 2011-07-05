@@ -21,7 +21,7 @@
  *  \file       htdocs/lib/treeview.lib.php
  *  \ingroup    core
  *  \brief      Libraries for tree views
- *  \version    $Id$
+ *  \version    $Id: treeview.lib.php,v 1.12 2011/07/04 09:01:38 eldy Exp $
  */
 
 
@@ -75,9 +75,9 @@ function is_in_subtree($fulltree,$parentid,$childid)
 
 /**
  * Show picto of a tree view
- *
  * @param 	fulltree	Array of entries in correct order
  * @param 	key			Key of value to show picto
+ * @param 	selected	Selected value
  * @return	array		(0 or 1 if at least one of this level after, 0 or 1 if at least one of higher level after)
  */
 function tree_showpad(&$fulltree,$key,$selected=0)

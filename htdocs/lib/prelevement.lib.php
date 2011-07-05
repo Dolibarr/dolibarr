@@ -23,7 +23,7 @@
  *	\file       htdocs/lib/prelevement.lib.php
  *	\brief      Ensemble de fonctions de base pour le module prelevement
  *	\ingroup    propal
- *	\version    $Id$
+ *	\version    $Id: prelevement.lib.php,v 1.8 2011/07/04 09:01:38 eldy Exp $
  *
  * 	Ensemble de fonctions de base de dolibarr sous forme d'include
  */
@@ -31,8 +31,8 @@
 
 /**
  *	Prepare head for prelevement screen and return it
- *	@param	    prelevement         class BonPrelevement
- *	@return    	array               head
+ *	@param	    object		Object BonPrelevement
+ *	@return    	array       head
  */
 function prelevement_prepare_head($object)
 {

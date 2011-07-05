@@ -22,7 +22,7 @@
  *	\file       htdocs/public/members/new.php
  *	\ingroup    member
  *	\brief      Example of form to add a new member
- *	\version    $Id: new.php,v 1.37 2011/07/03 18:30:48 eldy Exp $
+ *	\version    $Id: new.php,v 1.39 2011/07/05 08:33:34 eldy Exp $
  *
  *  Note that you can add following constant to change behaviour of page
  *  MEMBER_NEWFORM_AMOUNT               Default amount for autosubscribe form
@@ -64,7 +64,7 @@ if (empty($conf->adherent->enabled)) accessforbidden('',1,1,1);
 
 if (empty($conf->global->MEMBER_ENABLE_PUBLIC))
 {
-    print $langs->trans("Auto subscription form for public visitors has no be enabled");
+    print $langs->trans("Auto subscription form for public visitors has no been enabled");
     exit;
 }
 
@@ -159,10 +159,15 @@ if ($action == 'add')
         $error+=1;
         $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("MorPhy"))."<br>\n";
     }
-    if (!isset($_POST["nom"]) || !isset($_POST["prenom"]) || $_POST["prenom"]=='' || $_POST["nom"]=='')
+    if (empty($_POST["nom"]))
     {
         $error+=1;
-        $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Name"))."<br>\n";
+        $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Lastname"))."<br>\n";
+    }
+    if (empty($_POST["prenom"]))
+    {
+        $error+=1;
+        $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Firstname"))."<br>\n";
     }
     if (GETPOST("email") && ! isValidEmail(GETPOST("email")))
     {
@@ -236,11 +241,13 @@ if ($action == 'add')
                 {
                     $urlback=DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?source=membersubscription&ref='.$adh->ref;
                     if (price2num(GETPOST('amount'))) $urlback.='&amount='.price2num(GETPOST('amount'));
+                    if (GETPOST('email')) $urlback.='&email='.urlencode(GETPOST('email'));
                 }
                 else if ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paypal')
                 {
                     $urlback=DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?source=membersubscription&ref='.$adh->ref;
                     if (price2num(GETPOST('amount'))) $urlback.='&amount='.price2num(GETPOST('amount'));
+                    if (GETPOST('email')) $urlback.='&email='.urlencode(GETPOST('email'));
                 }
                 else
                 {
@@ -273,7 +280,7 @@ if ($action == 'added')
     print $langs->trans("NewMemberbyWeb");
     print '</center>';
 
-    llxFooterVierge('$Date: 2011/07/03 18:30:48 $ - $Revision: 1.37 $');
+    llxFooterVierge('$Date: 2011/07/05 08:33:34 $ - $Revision: 1.39 $');
     exit;
 }
 
@@ -356,7 +363,7 @@ $morphys["phy"] = $langs->trans("Physical");
 $morphys["mor"] = $langs->trans("Moral");
 if (empty($conf->global->MEMBER_NEWFORM_FORCEMORPHY))
 {
-    print '<tr><td>'.$langs->trans("MorPhy").' <FONT COLOR="red">*</FONT></td><td>'."\n";
+    print '<tr class="morphy"><td>'.$langs->trans("MorPhy").' <FONT COLOR="red">*</FONT></td><td>'."\n";
     print $html->selectarray("morphy",  $morphys, GETPOST('morphy'), 1);
     print '</td></tr>'."\n";
 }
@@ -450,6 +457,7 @@ if (! empty($conf->global->MEMBER_NEWFORM_DOLIBARRTURNOVER))
     print '<script type="text/javascript">
     jQuery(document).ready(function () {
         initturnover();
+        jQuery(".morphy").hide();
         jQuery("#morphy").click(function() {
             initturnover();
         });
@@ -520,5 +528,5 @@ print "<br></form>\n";
 
 $db->close();
 
-llxFooterVierge('$Date: 2011/07/03 18:30:48 $ - $Revision: 1.37 $');
+llxFooterVierge('$Date: 2011/07/05 08:33:34 $ - $Revision: 1.39 $');
 ?>

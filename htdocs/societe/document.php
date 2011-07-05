@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
  *  \file       htdocs/societe/document.php
  *  \brief      Tab for documents linked to third party
  *  \ingroup    societe
- *  \version    $Id: document.php,v 1.31 2011/07/03 13:16:46 hregis Exp $
+ *  \version    $Id: document.php,v 1.33 2011/07/05 17:21:19 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -35,10 +35,13 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 $langs->load("companies");
 $langs->load('other');
 
-$mesg = "";
+$mesg='';
+
+$action		= GETPOST('action');
+$confirm	= GETPOST('confirm');
+$socid		= (GETPOST('socid') ? GETPOST('socid') : GETPOST('id'));
 
 // Security check
-$socid = (GETPOST('socid') ? GETPOST('socid') : GETPOST('id'));
 if ($user->societe_id > 0)
 {
 	unset($_GET["action"]);
@@ -70,48 +73,54 @@ $object = new Societe($db);
 // Envoie fichier
 if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
-	if (create_exdir($upload_dir) >= 0)
+	if ($object->fetch($socid))
 	{
-		$resupload=dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0,0,$_FILES['userfile']['error']);
-		if (is_numeric($resupload) && $resupload > 0)
+		if (create_exdir($upload_dir) >= 0)
 		{
-		    if (image_format_supported($upload_dir . "/" . $_FILES['userfile']['name']) == 1)
-		    {
-                // Create small thumbs for company (Ratio is near 16/9)
-                // Used on logon for example
-                $imgThumbSmall = vignette($upload_dir . "/" . $_FILES['userfile']['name'], $maxwidthsmall, $maxheightsmall, '_small', $quality, "thumbs");
-
-                // Create mini thumbs for company (Ratio is near 16/9)
-                // Used on menu or for setup page for example
-                $imgThumbMini = vignette($upload_dir . "/" . $_FILES['userfile']['name'], $maxwidthmini, $maxheightmini, '_mini', $quality, "thumbs");
-		    }
-			$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
-		}
-		else
-		{
-			$langs->load("errors");
-			if (is_numeric($resupload) && $resupload < 0)	// Unknown error
+			$resupload=dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0,0,$_FILES['userfile']['error']);
+			if (is_numeric($resupload) && $resupload > 0)
 			{
-				$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+			    if (image_format_supported($upload_dir . "/" . $_FILES['userfile']['name']) == 1)
+			    {
+	                // Create small thumbs for company (Ratio is near 16/9)
+	                // Used on logon for example
+	                $imgThumbSmall = vignette($upload_dir . "/" . $_FILES['userfile']['name'], $maxwidthsmall, $maxheightsmall, '_small', $quality, "thumbs");
+	
+	                // Create mini thumbs for company (Ratio is near 16/9)
+	                // Used on menu or for setup page for example
+	                $imgThumbMini = vignette($upload_dir . "/" . $_FILES['userfile']['name'], $maxwidthmini, $maxheightmini, '_mini', $quality, "thumbs");
+			    }
+				$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
 			}
-			else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
+			else
 			{
-				$mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
-			}
-			else	// Known error
-			{
-				$mesg = '<div class="error">'.$langs->trans($resupload).'</div>';
+				$langs->load("errors");
+				if (is_numeric($resupload) && $resupload < 0)	// Unknown error
+				{
+					$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+				}
+				else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
+				{
+					$mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
+				}
+				else	// Known error
+				{
+					$mesg = '<div class="error">'.$langs->trans($resupload).'</div>';
+				}
 			}
 		}
 	}
 }
 
 // Suppression fichier
-if ($_REQUEST['action'] == 'confirm_deletefile' && $_REQUEST['confirm'] == 'yes')
+if ($action == 'confirm_deletefile' && $confirm == 'yes')
 {
-	$file = $upload_dir . "/" . $_GET['urlfile'];	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-	dol_delete_file($file);
-	$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
+	if ($object->fetch($socid))
+	{
+		$file = $upload_dir . "/" . $_GET['urlfile'];	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+		dol_delete_file($file);
+		$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
+	}
 }
 
 
@@ -195,9 +204,9 @@ if ($socid > 0)
 		/*
 		 * Confirmation suppression fichier
 		 */
-		if ($_GET['action'] == 'delete')
+		if ($action == 'delete')
 		{
-			$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?socid='.$_GET["id"].'&urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
+			$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?socid='.$socid.'&urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
 			if ($ret == 'html') print '<br>';
 		}
 		
@@ -280,6 +289,6 @@ else
 $db->close();
 
 
-llxFooter('$Date: 2011/07/03 13:16:46 $ - $Revision: 1.31 $');
+llxFooter('$Date: 2011/07/05 17:21:19 $ - $Revision: 1.33 $');
 
 ?>

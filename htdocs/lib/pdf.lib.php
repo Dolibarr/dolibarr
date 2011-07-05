@@ -25,7 +25,7 @@
  *	\file       htdocs/lib/pdf.lib.php
  *	\brief      Set of functions used for PDF generation
  *	\ingroup    core
- *	\version    $Id: pdf.lib.php,v 1.95 2011/06/30 13:27:21 hregis Exp $
+ *	\version    $Id: pdf.lib.php,v 1.96 2011/07/04 08:53:01 eldy Exp $
  */
 
 
@@ -682,7 +682,7 @@ function pdf_writelinedesc(&$pdf,$object,$i,$outputlangs,$w,$h,$posx,$posy,$hide
  *  Return line description translated in outputlangs and encoded in UTF8
  *  @param      object              Object
  *  @param      i                   Current line number
- *  @param      outputlang          Object lang for output
+ *  @param      outputlangs         Object langs for output
  *  @param      hideref             Hide reference
  *  @param      hidedesc            Hide description
  *  @param      issupplierline      Is it a line for a supplier object ?
@@ -814,7 +814,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
  *	Return line num
  *	@param		object				Object
  *	@param		$i					Current line number
- *  @param    	outputlang			Object lang for output
+ *  @param    	outputlangs			Object langs for output
  */
 function pdf_getlinenum($object,$i,$outputlangs)
 {
@@ -854,8 +854,8 @@ function pdf_getlineref($object,$i,$outputlangs)
 /**
  *	Return line ref_supplier
  *	@param		object				Object
- *	@param		$i					Current line number
- *  @param    	outputlang			Object lang for output
+ *	@param		i					Current line number
+ *  @param    	outputlangs			Object langs for output
  */
 function pdf_getlineref_supplier($object,$i,$outputlangs)
 {
@@ -874,8 +874,8 @@ function pdf_getlineref_supplier($object,$i,$outputlangs)
 /**
  *	Return line vat rate
  *	@param		object				Object
- *	@param		$i					Current line number
- *  @param    	outputlang			Object lang for output
+ *	@param		i					Current line number
+ *  @param    	outputlangs			Object langs for output
  *  @param		hidedetails			Hide value
  *  								0 = no
  *  								1 = yes
@@ -901,8 +901,8 @@ function pdf_getlinevatrate($object,$i,$outputlangs,$hidedetails=0)
 /**
  *	Return line unit price excluding tax
  *	@param		object				Object
- *	@param		$i					Current line number
- *  @param    	outputlang			Object lang for output
+ *	@param		i					Current line number
+ *  @param    	outputlangs			Object langs for output
  *  @param		hidedetails			Hide value
  *  								0 = no
  *  								1 = yes
@@ -928,8 +928,8 @@ function pdf_getlineupexcltax($object,$i,$outputlangs,$hidedetails=0)
 /**
  *	Return line quantity
  *	@param		object				Object
- *	@param		$i					Current line number
- *  @param    	outputlang			Object lang for output
+ *	@param		i					Current line number
+ *  @param    	outputlangs			Object langs for output
  *  @param		hidedetails			Hide value
  *  								0 = no
  *  								1 = yes
@@ -958,8 +958,8 @@ function pdf_getlineqty($object,$i,$outputlangs,$hidedetails=0)
 /**
  *	Return line quantity asked
  *	@param		object				Object
- *	@param		$i					Current line number
- *  @param    	outputlang			Object lang for output
+ *	@param		i					Current line number
+ *  @param    	outputlangs			Object langs for output
  *  @param		hidedetails			Hide value
  *  								0 = no
  *  								1 = yes
@@ -988,8 +988,8 @@ function pdf_getlineqty_asked($object,$i,$outputlangs,$hidedetails=0)
 /**
  *	Return line quantity shipped
  *	@param		object				Object
- *	@param		$i					Current line number
- *  @param    	outputlang			Object lang for output
+ *	@param		i					Current line number
+ *  @param    	outputlangs			Object langs for output
  *  @param		hidedetails			Hide value
  *  								0 = no
  *  								1 = yes
@@ -1018,8 +1018,8 @@ function pdf_getlineqty_shipped($object,$i,$outputlangs,$hidedetails=0)
 /**
  *	Return line keep to ship quantity
  *	@param		object				Object
- *	@param		$i					Current line number
- *  @param    	outputlang			Object lang for output
+ *	@param		i					Current line number
+ *  @param    	outputlangs			Object langs for output
  *  @param		hidedetails			Hide value
  *  								0 = no
  *  								1 = yes
@@ -1048,8 +1048,8 @@ function pdf_getlineqty_keeptoship($object,$i,$outputlangs,$hidedetails=0)
 /**
  *	Return line remise percent
  *	@param		object				Object
- *	@param		$i					Current line number
- *  @param    	outputlang			Object lang for output
+ *	@param		i					Current line number
+ *  @param    	outputlangs			Object langs for output
  *  @param		hidedetails			Hide value
  *  								0 = no
  *  								1 = yes
@@ -1080,8 +1080,8 @@ function pdf_getlineremisepercent($object,$i,$outputlangs,$hidedetails=0)
 /**
  *	Return line total excluding tax
  *	@param		object				Object
- *	@param		$i					Current line number
- *  @param    	outputlang			Object lang for output
+ *	@param		i					Current line number
+ *  @param    	outputlangs			Object langs for output
  *  @param		hidedetails			Hide value
  *  								0 = no
  *  								1 = yes
@@ -1115,7 +1115,7 @@ function pdf_getlinetotalexcltax($object,$i,$outputlangs,$hidedetails=0)
  *	Return total quantity of products and/or services
  *	@param		object				Object
  *	@param		type				Type of line (all=all, 0=product, 1=service, 9=other)
- *  @param    	outputlang			Object lang for output
+ *  @param    	outputlangs			Object langs for output
  */
 function pdf_getTotalQty($object,$type='',$outputlangs)
 {

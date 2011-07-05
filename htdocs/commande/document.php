@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin         <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
  *	\file       htdocs/commande/document.php
  *	\ingroup    order
  *	\brief      Page de gestion des documents attachees a une commande
- *	\version    $Id$
+ *	\version    $Id: document.php,v 1.33 2011/07/05 16:10:56 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -32,20 +32,22 @@ require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT ."/commande/class/commande.class.php");
 
-if (!$user->rights->commande->lire) accessforbidden();
 
 $langs->load('companies');
-//$langs->load("bills");
 $langs->load('other');
 
-$id=empty($_GET['id']) ? 0 : intVal($_GET['id']);
-$action=empty($_GET['action']) ? (empty($_POST['action']) ? '' : $_POST['action']) : $_GET['action'];
+$action		= GETPOST('action');
+$confirm	= GETPOST('confirm');
+$id			= GETPOST('id');
+$ref		= GETPOST('ref');
 
 // Security check
-$socid=0;
-$comid = isset($_GET["id"])?$_GET["id"]:'';
-if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'commande',$comid,'');
+if ($user->societe_id)
+{
+	$action='';
+	$socid = $user->societe_id;
+}
+$result=restrictedArea($user,'commande',$id,'');
 
 // Get parameters
 $sortfield = GETPOST("sortfield",'alpha');
@@ -59,13 +61,7 @@ if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="name";
 
 
-$id = GETPOST('id','int');
-$ref= $_GET['ref'];
-$commande = new Commande($db);
-if (! $commande->fetch($_GET['id'],$_GET['ref']) > 0)
-{
-	dol_print_error($db);
-}
+$object = new Commande($db);
 
 
 /*
@@ -75,43 +71,51 @@ if (! $commande->fetch($_GET['id'],$_GET['ref']) > 0)
 // Envoi fichier
 if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
-	require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
-
-	$upload_dir = $conf->commande->dir_output . "/" . dol_sanitizeFileName($commande->ref);
-
-	if (create_exdir($upload_dir) >= 0)
-	{
-		$resupload=dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0,0,$_FILES['userfile']['error']);
-		if (is_numeric($resupload) && $resupload > 0)
+	if ($object->fetch($id))
+    {
+        $object->fetch_thirdparty();
+        
+	    $upload_dir = $conf->commande->dir_output . "/" . dol_sanitizeFileName($object->ref);
+	
+		if (create_exdir($upload_dir) >= 0)
 		{
-			$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
+			$resupload=dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0,0,$_FILES['userfile']['error']);
+			if (is_numeric($resupload) && $resupload > 0)
+			{
+				$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
+			}
+			else
+			{
+				$langs->load("errors");
+				if ($resupload < 0)	// Unknown error
+				{
+					$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+				}
+				else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
+				{
+					$mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
+				}
+				else	// Known error
+				{
+					$mesg = '<div class="error">'.$langs->trans($resupload).'</div>';
+				}
+			}
 		}
-		else
-		{
-			$langs->load("errors");
-			if ($resupload < 0)	// Unknown error
-			{
-				$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
-			}
-			else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
-			{
-				$mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
-			}
-			else	// Known error
-			{
-				$mesg = '<div class="error">'.$langs->trans($resupload).'</div>';
-			}
-		}
-	}
+    }
 }
 
 // Delete
-if ($action=='delete')
+if ($action == 'confirm_deletefile' && $confirm == 'yes')
 {
-	$upload_dir = $conf->commande->dir_output . "/" . dol_sanitizeFileName($commande->ref);
-	$file = $upload_dir . '/' . $_GET['urlfile'];	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-	dol_delete_file($file);
-	$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
+	if ($object->fetch($id))
+    {
+    	$object->fetch_thirdparty();
+    	
+    	$upload_dir = $conf->commande->dir_output . "/" . dol_sanitizeFileName($object->ref);
+    	$file = $upload_dir . '/' . $_GET['urlfile'];	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+    	dol_delete_file($file);
+    	$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
+    }
 }
 
 
@@ -125,49 +129,62 @@ $html = new Form($db);
 
 if ($id > 0 || ! empty($ref))
 {
-	$upload_dir = $conf->commande->dir_output.'/'.dol_sanitizeFileName($commande->ref);
+	if ($object->fetch($id, $ref))
+    {
+    	$object->fetch_thirdparty();
+    	
+    	$upload_dir = $conf->commande->dir_output.'/'.dol_sanitizeFileName($object->ref);
 
-	$societe = new Societe($db);
-	$societe->fetch($commande->socid);
-
-	$head = commande_prepare_head($commande);
-	dol_fiche_head($head, 'documents', $langs->trans('CustomerOrder'), 0, 'order');
-
-
-	// Construit liste des fichiers
-	$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
-	$totalsize=0;
-	foreach($filearray as $key => $file)
-	{
-		$totalsize+=$file['size'];
+		$head = commande_prepare_head($object);
+		dol_fiche_head($head, 'documents', $langs->trans('CustomerOrder'), 0, 'order');
+	
+	
+		// Construit liste des fichiers
+		$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
+		$totalsize=0;
+		foreach($filearray as $key => $file)
+		{
+			$totalsize+=$file['size'];
+		}
+	
+	
+		print '<table class="border"width="100%">';
+	
+		// Ref
+		print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">';
+		print $html->showrefnav($object,'ref','',1,'ref','ref');
+		print '</td></tr>';
+	
+		print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">'.$object->thirdparty->getNomUrl(1).'</td></tr>';
+		print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
+		print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+		print "</table>\n";
+		print "</div>\n";
+	
+    	dol_htmloutput_mesg($mesg,$mesgs);
+        
+    	/*
+		 * Confirmation suppression fichier
+		 */
+		if ($action == 'delete')
+		{
+			$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id.'&urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
+			if ($ret == 'html') print '<br>';
+		}
+	
+		// Affiche formulaire upload
+		$formfile=new FormFile($db);
+		$formfile->form_attach_new_file(DOL_URL_ROOT.'/commande/document.php?id='.$object->id,'',0,0,$user->rights->commande->creer);
+	
+	
+		// List of document
+		$param='&id='.$object->id;
+		$formfile->list_of_documents($filearray,$object,'commande',$param);
 	}
-
-
-	print '<table class="border"width="100%">';
-
-	// Ref
-	print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">';
-	print $html->showrefnav($commande,'ref','',1,'ref','ref');
-	print '</td></tr>';
-
-	print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">'.$societe->getNomUrl(1).'</td></tr>';
-	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
-	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
-	print "</table>\n";
-	print "</div>\n";
-
-	if ($mesg) { print $mesg."<br>"; }
-
-
-	// Affiche formulaire upload
-	$formfile=new FormFile($db);
-	$formfile->form_attach_new_file(DOL_URL_ROOT.'/commande/document.php?id='.$commande->id,'',0,0,$user->rights->commande->creer);
-
-
-	// List of document
-	$param='&id='.$commande->id;
-	$formfile->list_of_documents($filearray,$commande,'commande',$param);
-
+	else
+	{
+		dol_print_error($db);
+	}
 }
 else
 {
@@ -176,5 +193,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/05 16:10:56 $ - $Revision: 1.33 $');
 ?>

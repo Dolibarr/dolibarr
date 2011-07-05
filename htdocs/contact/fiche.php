@@ -24,7 +24,7 @@
  *       \file       htdocs/contact/fiche.php
  *       \ingroup    societe
  *       \brief      Card of a contact
- *       \version    $Id: fiche.php,v 1.220 2011/07/02 14:53:42 eldy Exp $
+ *       \version    $Id: fiche.php,v 1.221 2011/07/04 08:00:52 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -123,7 +123,14 @@ if (method_exists($objcanvas->control,'doActions'))
 
 if (empty($reshook))
 {
-    // Creation utilisateur depuis contact
+    // Cancel
+    if (GETPOST("cancel") && GETPOST('backtopage'))
+    {
+        header("Location: ".GETPOST('backtopage'));
+        exit;
+    }
+
+	// Creation utilisateur depuis contact
     if ($_POST["action"] == 'confirm_create_user' && $_POST["confirm"] == 'yes' && $user->rights->user->user->creer)
     {
         // Recuperation contact actuel
@@ -160,13 +167,6 @@ if (empty($reshook))
         {
             $error=$object->error; $errors=$object->errors;
         }
-    }
-
-    // Cancel
-    if (GETPOST("cancel") && GETPOST('backtopage'))
-    {
-        header("Location: ".GETPOST('backtopage'));
-        exit;
     }
 
     // Add contact
@@ -974,5 +974,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/02 14:53:42 $ - $Revision: 1.220 $');
+llxFooter('$Date: 2011/07/04 08:00:52 $ - $Revision: 1.221 $');
 ?>

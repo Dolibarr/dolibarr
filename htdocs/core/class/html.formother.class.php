@@ -29,7 +29,7 @@
  *	\file       htdocs/core/class/html.formother.class.php
  *  \ingroup    core
  *	\brief      Fichier de la classe des fonctions predefinie de composants html autre
- *	\version	$Id: html.formother.class.php,v 1.16 2011/06/26 09:32:13 hregis Exp $
+ *	\version	$Id: html.formother.class.php,v 1.17 2011/07/04 08:53:01 eldy Exp $
  */
 
 
@@ -653,7 +653,8 @@ class FormOther
  * @param 	$parent
  * @param 	$lines
  * @param 	$level
- * @param 	$selected
+ * @param 	$selectedtask
+ * @param 	$selectedproject
  */
 function PLineSelect(&$inc, $parent, $lines, $level=0, $selectedtask=0, $selectedproject=0)
 {

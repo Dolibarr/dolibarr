@@ -3,7 +3,7 @@
  * Copyright (C) 2005      Davoleau Brice       <brice.davoleau@gmail.com>
  * Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2008 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin	  	<patrick.raguin@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,7 +25,7 @@
  *	\file       htdocs/categories/class/categorie.class.php
  *	\ingroup    categorie
  *	\brief      File of class to manage categories
- *	\version	$Id: categorie.class.php,v 1.16 2011/06/28 09:25:57 cdelambert Exp $
+ *	\version	$Id: categorie.class.php,v 1.17 2011/07/04 09:54:02 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
@@ -70,8 +70,8 @@ class Categorie
 	}
 
 	/**
-	 * 	Charge la categorie
-	 * 	@param	id		id de la categorie a charger
+	 * 	Load category into memory from database
+	 * 	@param		id		id of category
 	 */
 	function fetch($id)
 	{
@@ -121,7 +121,7 @@ class Categorie
 	}
 
 	/**
-	 * Ajoute la categorie dans la base de donnees
+	 * 	Add category into database
 	 * 	@return	int 	-1 : erreur SQL
 	 *          		-2 : nouvel ID inconnu
 	 *          		-3 : categorie invalide
@@ -147,14 +147,18 @@ class Categorie
 		{
 			$sql.= "fk_soc,";
 		}
-		$sql.=  "visible, type, fk_parent_id) ";
-		$sql.= "VALUES ('".$this->db->escape($this->label)."', '".$this->db->escape($this->description)."',";
+		$sql.= " visible,";
+		$sql.= " type";
+		//$sql.= ", fk_parent_id";
+		$sql.= ")";
+		$sql.= " VALUES ('".$this->db->escape($this->label)."', '".$this->db->escape($this->description)."',";
 		if ($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)
 		{
 			$sql.= ($this->socid != -1 ? $this->socid : 'null').",";
 		}
-		$sql.= "'".$this->visible."',".$this->type.",".$this->parentId .")";
-
+		$sql.= "'".$this->visible."',".$this->type;
+		//$sql.= ",".$this->parentId;
+		$sql.= ")";
 
 		$res  = $this->db->query ($sql);
 		if ($res)
@@ -254,7 +258,7 @@ class Categorie
 			$sql .= ", fk_soc = ".($this->socid != -1 ? $this->socid : 'null');
 		}
 		$sql .= ", visible = '".$this->visible."'";
-		$sql .= ", fk_parent_id = ".$this->parentId;
+		//$sql .= ", fk_parent_id = ".$this->parentId;
 		$sql .= " WHERE rowid = ".$this->id;
 
 		dol_syslog("Categorie::update sql=".$sql);
@@ -815,8 +819,8 @@ class Categorie
 	}
 
 	/**
-	 * 	\brief		Check if no category with same label already exists for this cat's parent or root and for this cat's type
-	 * 	\return		boolean		1 if already exist, 0 otherwise, -1 if error
+	 * 	Check if no category with same label already exists for this cat's parent or root and for this cat's type
+	 * 	@return		boolean		1 if already exist, 0 otherwise, -1 if error
 	 */
 	function already_exists()
 	{
@@ -830,7 +834,7 @@ class Categorie
 			$sql.= " JOIN ".MAIN_DB_PREFIX."categorie_association as ca";
 			$sql.= " ON c.rowid=ca.fk_categorie_fille";
 			$sql.= " WHERE ca.fk_categorie_mere=".$this->id_mere;
-			$sql.= " AND c.label='".$this->label."'";	
+			$sql.= " AND c.label='".$this->db->escape($this->label)."'";	
 		}
 		else 										// mother_id undefined (so it's root)
 		{
@@ -843,7 +847,7 @@ class Categorie
 			$sql.= " JOIN ".MAIN_DB_PREFIX."categorie_association as ca";
 			$sql.= " ON c.rowid!=ca.fk_categorie_fille";
 			$sql.= " WHERE c.type=".$this->type;
-			$sql.= " AND c.label='".$this->label."'";		
+			$sql.= " AND c.label='".$this->db->escape($this->label)."'";		
 		}
 		dol_syslog("Categorie::already_exists sql=".$sql);
 		$res  = $this->db->query($sql);
