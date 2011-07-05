@@ -23,7 +23,7 @@
  *	\ingroup    member
  *	\brief      File of class to manage members types
  *	\author     Rodolphe Quiedeville
- *	\version    $Id$
+ *	\version    $Id: adherent_type.class.php,v 1.11 2011/07/05 08:08:16 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
@@ -195,12 +195,12 @@ class AdherentType extends CommonObject
     }
 
     /**
-     *  \brief      Return list of members' type
-     *  \return 	array	List of types
+     *  Return list of members' type
+     *  @return 	array	List of types of members
      */
     function liste_array()
     {
-        global $conf;
+        global $conf,$langs;
 
         $projets = array();
 
@@ -220,7 +220,7 @@ class AdherentType extends CommonObject
                 {
                     $obj = $this->db->fetch_object($resql);
 
-                    $projets[$obj->rowid] = $obj->libelle;
+                    $projets[$obj->rowid] = $langs->trans($obj->libelle);
                     $i++;
                 }
             }
