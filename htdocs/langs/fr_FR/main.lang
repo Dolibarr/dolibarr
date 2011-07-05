@@ -598,6 +598,7 @@ IM=Messagerie instantannée
 NewAttribute=Nouvel attribut
 AttributeCode=Code de l'attribut
 OptionalFieldsSetup=Configuration des attributs complémentaires
+URLPhoto=Url vers photo/logo
 
 # Week day
 Monday=Lundi
