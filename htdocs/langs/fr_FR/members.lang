@@ -190,3 +190,7 @@ TurnoverOrBudget=Chiffre affaire (pour société) ou Budget (asso ou collectivit
 DefaultAmount=Montant par défaut de la cotisation
 CanEditAmount=Le visiteur peut modifier/choisir le montant de sa cotisation
 MEMBER_NEWFORM_PAYONLINE=Débrancher sur la page intégrée de paiement en ligne
+Associations=Associations
+Collectivités=Collectivités
+Particuliers=Particuliers
+Entreprises=Entreprises
