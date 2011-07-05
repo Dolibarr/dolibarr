@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005      Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin         <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
  *	\file       htdocs/compta/facture/document.php
  *	\ingroup    facture
  *	\brief      Page for attached files on invoices
- *	\version    $Id$
+ *	\version    $Id: document.php,v 1.43 2011/07/05 16:10:56 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -38,19 +38,19 @@ $langs->load('compta');
 $langs->load('other');
 $langs->load("bills");
 
-if (!$user->rights->facture->lire)
-accessforbidden();
 
-$facid=empty($_GET['facid']) ? 0 : intVal($_GET['facid']);
-$action=empty($_GET['action']) ? (empty($_POST['action']) ? '' : $_POST['action']) : $_GET['action'];
+$action		= GETPOST('action');
+$confirm	= GETPOST('confirm');
+$id			= GETPOST('facid');
+$ref		= GETPOST('ref');
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->societe_id)
 {
-	unset($_GET["action"]);
 	$action='';
 	$socid = $user->societe_id;
 }
+$result=restrictedArea($user,'facture',$id,'');
 
 // Get parameters
 $sortfield = GETPOST("sortfield",'alpha');
@@ -63,6 +63,8 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="name";
 
+$object = new Facture($db);
+
 
 /*
  * Actions
@@ -71,12 +73,11 @@ if (! $sortfield) $sortfield="name";
 // Envoi fichier
 if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
-	require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
-
-	$facture = new Facture($db);
-	if ($facture->fetch($facid))
+	if ($object->fetch($id))
 	{
-		$upload_dir = $conf->facture->dir_output . "/" . dol_sanitizeFileName($facture->ref);
+		$object->fetch_thirdparty();
+		
+		$upload_dir = $conf->facture->dir_output . "/" . dol_sanitizeFileName($object->ref);
 
 		if (create_exdir($upload_dir) >= 0)
 		{
@@ -106,15 +107,13 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 }
 
 // Delete
-if ($action=='delete')
+if ($action == 'confirm_deletefile' && $confirm == 'yes')
 {
-    require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
-    $facture = new Facture($db);
-
-	$facid=$_GET["id"];
-	if ($facture->fetch($facid))
+	if ($object->fetch($id))
 	{
-		$upload_dir = $conf->facture->dir_output . "/" . dol_sanitizeFileName($facture->ref);
+		$object->fetch_thirdparty();
+		
+		$upload_dir = $conf->facture->dir_output . "/" . dol_sanitizeFileName($object->ref);
 		$file = $upload_dir . '/' . $_GET['urlfile'];	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 		dol_delete_file($file);
 		$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
@@ -133,15 +132,13 @@ $id = $_GET['facid']?$_GET['facid']:$_GET['id'];
 $ref= $_GET['ref'];
 if ($id > 0 || ! empty($ref))
 {
-	$facture = new Facture($db);
-	if ($facture->fetch($id,$ref) > 0)
+	if ($object->fetch($id,$ref) > 0)
 	{
-		$upload_dir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($facture->ref);
+		$object->fetch_thirdparty();
+		
+		$upload_dir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($object->ref);
 
-		$societe = new Societe($db);
-		$societe->fetch($facture->socid);
-
-		$head = facture_prepare_head($facture);
+		$head = facture_prepare_head($object);
 		dol_fiche_head($head, 'documents', $langs->trans('InvoiceCustomer'), 0, 'bill');
 
 
@@ -162,7 +159,7 @@ if ($id > 0 || ! empty($ref))
 		print '<td colspan="3">';
 		$morehtmlref='';
 		$discount=new DiscountAbsolute($db);
-		$result=$discount->fetch(0,$facture->id);
+		$result=$discount->fetch(0,$object->id);
 		if ($result > 0)
 		{
 			$morehtmlref=' ('.$langs->trans("CreditNoteConvertedIntoDiscount",$discount->getNomUrl(1,'discount')).')';
@@ -171,28 +168,37 @@ if ($id > 0 || ! empty($ref))
 		{
 			dol_print_error('',$discount->error);
 		}
-		print $html->showrefnav($facture,'ref','',1,'facnumber','ref',$morehtmlref);
+		print $html->showrefnav($object,'ref','',1,'facnumber','ref',$morehtmlref);
 		print '</td></tr>';
 
 		// Company
-		print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">'.$societe->getNomUrl(1).'</td></tr>';
+		print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">'.$object->thirdparty->getNomUrl(1).'</td></tr>';
 
 		print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
 		print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
 		print "</table>\n";
 		print "</div>\n";
 
-		if ($mesg) { print $mesg."<br>"; }
+		dol_htmloutput_mesg($mesg,$mesgs);
+        
+    	/*
+		 * Confirmation suppression fichier
+		 */
+		if ($action == 'delete')
+		{
+			$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$id.'&urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
+			if ($ret == 'html') print '<br>';
+		}
 
 
 		// Affiche formulaire upload
 		$formfile=new FormFile($db);
-		$formfile->form_attach_new_file(DOL_URL_ROOT.'/compta/facture/document.php?facid='.$facture->id,'',0,0,$user->rights->facture->creer);
+		$formfile->form_attach_new_file(DOL_URL_ROOT.'/compta/facture/document.php?facid='.$object->id,'',0,0,$user->rights->facture->creer);
 
 
 		// List of document
-		$param='&facid='.$facture->id;
-		$formfile->list_of_documents($filearray,$facture,'facture',$param);
+		$param='&facid='.$object->id;
+		$formfile->list_of_documents($filearray,$object,'facture',$param);
 
 	}
 	else
@@ -207,5 +213,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/05 16:10:56 $ - $Revision: 1.43 $');
 ?>

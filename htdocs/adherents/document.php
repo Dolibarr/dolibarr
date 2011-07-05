@@ -23,7 +23,7 @@
  *  \file       htdocs/adherents/document.php
  *  \brief      Tab for documents linked to third party
  *  \ingroup    societe
- *  \version    $Id$
+ *  \version    $Id: document.php,v 1.7 2011/07/05 16:10:56 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -194,7 +194,7 @@ if ($id > 0)
 
 		print '</div>';
 
-		if ($mesg) { print "$mesg<br>"; }
+		dol_htmloutput_mesg($mesg,$mesgs);
 
 		/*
 		 * Confirmation suppression fichier
@@ -231,6 +231,6 @@ else
 $db->close();
 
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/05 16:10:56 $ - $Revision: 1.7 $');
 
 ?>

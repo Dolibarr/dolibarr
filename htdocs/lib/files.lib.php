@@ -20,7 +20,7 @@
 /**
  *  \file		htdocs/lib/files.lib.php
  *  \brief		Library for file managing functions
- *  \version	$Id$
+ *  \version	$Id: files.lib.php,v 1.64 2011/07/05 16:10:57 hregis Exp $
  */
 
 /**
@@ -454,11 +454,13 @@ function dol_move($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
  * 	@param	allowoverwrite		1=Overwrite target file if it already exists
  * 	@param	disablevirusscan	1=Disable virus scan
  * 	@param	uploaderrorcode		Value of upload error code ($_FILES['field']['error'])
+ * 	@param	notrigger			Disable all triggers
  *	@return int         		>0 if OK, <0 or string if KO
  */
-function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disablevirusscan=0, $uploaderrorcode=0)
+function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disablevirusscan=0, $uploaderrorcode=0, $notrigger=0)
 {
-	global $conf;
+	global $conf, $user, $langs;
+	global $object;
 
 	$file_name = $dest_file;
 	// If an upload error has been reported
@@ -552,6 +554,19 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 	{
 		if (! empty($conf->global->MAIN_UMASK)) @chmod($file_name_osencoded, octdec($conf->global->MAIN_UMASK));
 		dol_syslog("Functions.lib::dol_move_uploaded_file Success to move ".$src_file." to ".$file_name." - Umask=".$conf->global->MAIN_UMASK, LOG_DEBUG);
+		
+		if (! $notrigger)
+		{
+			$object->src_file=$dest_file;
+
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			$interface=new Interfaces($db);
+			$result=$interface->run_triggers('FILE_UPLOAD',$object,$user,$langs,$conf);
+			if ($result < 0) { $error++; $errors=$interface->errors; }
+			// Fin appel triggers
+		}
+		
 		return 1;	// Success
 	}
 	else
@@ -568,10 +583,14 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
  *  @param      file            File to delete or mask of file to delete
  *  @param      disableglob     Disable usage of glob like *
  *  @param      nophperrors     Disable all PHP output errors
+ *  @param		notrigger		Disable all triggers
  *  @return     boolean         True if file is deleted, False if error
  */
-function dol_delete_file($file,$disableglob=0,$nophperrors=0)
+function dol_delete_file($file,$disableglob=0,$nophperrors=0,$notrigger=0)
 {
+	global $conf, $user, $langs;
+	global $object;
+	
     //print "x".$file." ".$disableglob;
     $ok=true;
     $file_osencoded=dol_osencode($file);    // New filename encoded in OS filesystem encoding charset
@@ -581,7 +600,21 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0)
         {
             if ($nophperrors) $ok=@unlink($filename);  // The unlink encapsulated by dolibarr
             else $ok=unlink($filename);  // The unlink encapsulated by dolibarr
-            if ($ok) dol_syslog("Removed file ".$filename,LOG_DEBUG);
+            if ($ok)
+            {
+            	dol_syslog("Removed file ".$filename,LOG_DEBUG);
+            	if (! $notrigger)
+            	{
+            		$object->src_file=$file;
+            		
+            		// Appel des triggers
+            		include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+            		$interface=new Interfaces($db);
+            		$result=$interface->run_triggers('FILE_DELETE',$object,$user,$langs,$conf);
+            		if ($result < 0) { $error++; $errors=$interface->errors; }
+            		// Fin appel triggers
+            	}
+            }
             else dol_syslog("Failed to remove file ".$filename,LOG_WARNING);
         }
     }
