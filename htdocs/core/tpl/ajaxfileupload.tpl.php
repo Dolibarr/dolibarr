@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: ajaxfileupload.tpl.php,v 1.5 2011/07/05 09:14:26 hregis Exp $
+ * $Id: ajaxfileupload.tpl.php,v 1.6 2011/07/05 09:30:11 hregis Exp $
  */
 ?>
 
@@ -26,8 +26,8 @@
 		<td class="preview"></td>
 		<td class="size">${sizef}</td>
 		{{if error}}
-			<td class="error" colspan="2">Error:
-				{{if error === 'maxFileSize'}}File is too big
+			<td class="error" colspan="2"><?php echo $langs->trans('Error'); ?>:
+				{{if error === 'maxFileSize'}}<?php echo $langs->trans('FileIsTooBig'); ?>
 				{{else error === 'minFileSize'}}File is too small
 				{{else error === 'acceptFileTypes'}}Filetype not allowed
 				{{else error === 'maxNumberOfFiles'}}Max number of files exceeded
@@ -48,7 +48,7 @@
             <td></td>
             <td class="name">${name}</td>
             <td class="size">${sizef}</td>
-            <td class="error" colspan="2">Error:
+            <td class="error" colspan="2"><?php echo $langs->trans('Error'); ?>:
                 {{if error === 1}}File exceeds upload_max_filesize (php.ini directive)
                 {{else error === 2}}File exceeds MAX_FILE_SIZE (HTML form directive)
                 {{else error === 3}}File was only partially uploaded
@@ -56,7 +56,7 @@
                 {{else error === 5}}Missing a temporary folder
                 {{else error === 6}}Failed to write file to disk
                 {{else error === 7}}File upload stopped by extension
-                {{else error === 'maxFileSize'}}File is too big
+                {{else error === 'maxFileSize'}}<?php echo $langs->trans('FileIsTooBig'); ?>
                 {{else error === 'minFileSize'}}File is too small
                 {{else error === 'acceptFileTypes'}}Filetype not allowed
                 {{else error === 'maxNumberOfFiles'}}Max number of files exceeded

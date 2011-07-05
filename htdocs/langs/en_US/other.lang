@@ -158,6 +158,10 @@ ClickHere=Click here
 UseAdvancedPerms=Use the advanced rights permissions in modules
 FileFormat=File format
 SelectAColor=Choose a color
+AddFiles=Add Files
+StartUpload=Start upload
+CancelUpload=Cancel upload
+FileIsTooBig=Files is too big
 
 ##### Bookmark #####
 Bookmark=Bookmark
