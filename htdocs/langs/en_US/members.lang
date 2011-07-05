@@ -189,3 +189,7 @@ TurnoverOrBudget=Turnover (for a company) or Budget (for a foundation)
 DefaultAmount=Default amount of subscription
 CanEditAmount=Visitor can choose/edit amount of its subscription
 MEMBER_NEWFORM_PAYONLINE=Jump on integrated online payment page
+Associations=Foundations
+Collectivités=Organizations
+Particuliers=Personal
+Entreprises=Companies
