@@ -22,7 +22,7 @@
  *      \file       htdocs/admin/societe_extrafields.php
  *		\ingroup    societe
  *		\brief      Page to setup extra fields of third party
- *		\version    $Id: societe_extrafields.php,v 1.4 2011/07/04 07:38:22 eldy Exp $
+ *		\version    $Id: societe_extrafields.php,v 1.5 2011/07/05 20:43:25 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -174,7 +174,7 @@ llxHeader('',$langs->trans("CompanySetup"),$help_url);
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("OptionalFieldsSetup"),$linkback,'setup');
+print_fiche_titre($langs->trans("CompanySetup"),$linkback,'setup');
 
 
 $head = societe_admin_prepare_head($adh);
@@ -312,5 +312,5 @@ if ($_GET["attrname"] && $action == 'edit')
 
 $db->close();
 
-llxFooter('$Date: 2011/07/04 07:38:22 $ - $Revision: 1.4 $');
+llxFooter('$Date: 2011/07/05 20:43:25 $ - $Revision: 1.5 $');
 ?>

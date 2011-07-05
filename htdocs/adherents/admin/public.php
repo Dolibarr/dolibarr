@@ -22,13 +22,16 @@
  *		\ingroup    member
  *		\brief      File of main public page for member module
  *		\author	    Laurent Destailleur
- *		\version    $Id: public.php,v 1.1 2011/07/03 16:00:19 eldy Exp $
+ *		\version    $Id: public.php,v 1.2 2011/07/05 20:39:36 eldy Exp $
  */
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/member.lib.php");
+
+$langs->load("members");
+$langs->load("admin");
 
 $action=GETPOST('action');
 
@@ -184,5 +187,5 @@ print '</table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/03 16:00:19 $ - $Revision: 1.1 $');
+llxFooter('$Date: 2011/07/05 20:39:36 $ - $Revision: 1.2 $');
 ?>

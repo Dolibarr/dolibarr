@@ -22,7 +22,7 @@
  *      \file       htdocs/adherents/admin/adherent_extrafields.php
  *		\ingroup    member
  *		\brief      Page to setup extra fields of members
- *		\version    $Id$
+ *		\version    $Id: adherent_extrafields.php,v 1.3 2011/07/05 20:39:36 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -174,7 +174,7 @@ llxHeader('',$langs->trans("MembersSetup"),$help_url);
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("OptionalFieldsSetup"),$linkback,'setup');
+print_fiche_titre($langs->trans("MembersSetup"),$linkback,'setup');
 
 
 $head = member_admin_prepare_head($adh);
@@ -312,5 +312,5 @@ if ($_GET["attrname"] && $action == 'edit')
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/05 20:39:36 $ - $Revision: 1.3 $');
 ?>
