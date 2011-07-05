@@ -23,7 +23,7 @@
  *  \file       htdocs/societe/document.php
  *  \brief      Tab for documents linked to third party
  *  \ingroup    societe
- *  \version    $Id: document.php,v 1.33 2011/07/05 17:21:19 hregis Exp $
+ *  \version    $Id: document.php,v 1.34 2011/07/05 22:40:35 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -85,7 +85,7 @@ if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	                // Create small thumbs for company (Ratio is near 16/9)
 	                // Used on logon for example
 	                $imgThumbSmall = vignette($upload_dir . "/" . $_FILES['userfile']['name'], $maxwidthsmall, $maxheightsmall, '_small', $quality, "thumbs");
-	
+
 	                // Create mini thumbs for company (Ratio is near 16/9)
 	                // Used on menu or for setup page for example
 	                $imgThumbMini = vignette($upload_dir . "/" . $_FILES['userfile']['name'], $maxwidthmini, $maxheightmini, '_mini', $quality, "thumbs");
@@ -209,23 +209,22 @@ if ($socid > 0)
 			$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?socid='.$socid.'&urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
 			if ($ret == 'html') print '<br>';
 		}
-		
+
 		$formfile=new FormFile($db);
-		
+
+        // Show upload form
 		if ($conf->global->MAIN_USE_JQUERY_FILEUPLOAD)
 		{
 			$formfile->form_ajaxfileupload($object);
 		}
 		else
 		{
-			// Affiche formulaire upload
 			$formfile->form_attach_new_file($_SERVER["PHP_SELF"].'?socid='.$socid,'',0,0,$user->rights->societe->creer);
-	
-	
-			// List of document
-			$param='&socid='.$object->id;
-			$formfile->list_of_documents($filearray,$object,'societe',$param);
-		}
+        }
+
+		// List of document
+		$param='&socid='.$object->id;
+		$formfile->list_of_documents($filearray,$object,'societe',$param);
 
 		print "<br><br>";
 
@@ -289,6 +288,6 @@ else
 $db->close();
 
 
-llxFooter('$Date: 2011/07/05 17:21:19 $ - $Revision: 1.33 $');
+llxFooter('$Date: 2011/07/05 22:40:35 $ - $Revision: 1.34 $');
 
 ?>
