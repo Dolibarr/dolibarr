@@ -598,6 +598,7 @@ IM=Instant messaging
 NewAttribute=New attribute
 AttributeCode=Attribute code
 OptionalFieldsSetup=Extra attributes setup
+URLPhoto=Url of photo/logo
 
 # Week day
 Monday=Monday
