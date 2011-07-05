@@ -22,11 +22,12 @@ if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1'); // If we don't nee
 //if (! defined("NOLOGIN"))        define("NOLOGIN",'1');       // If this page is public (can be called outside logged session)
 
 
-$res=@include("../../main.inc.php");								// For "custom" directory
-if (! $res) $res=@include("../main.inc.php");						// For root directory
+$res=@include("../main.inc.php");								    // For "root" directory
+if (! $res) $res=@include("../../main.inc.php");					// For "custom" directory
 if (! $res) @include("../../../../dolibarr/htdocs/main.inc.php");	// Used on dev env only
 
 require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/images.lib.php");
 
 error_reporting(E_ALL | E_STRICT);
 
@@ -37,19 +38,23 @@ error_reporting(E_ALL | E_STRICT);
 $fk_element = GETPOST('fk_element');
 $element = GETPOST('element');
 
+
+/**
+ *
+ */
 class UploadHandler
 {
     private $options;
     private $fk_elment;
     private $element;
-    
+
     function __construct($options=null,$fk_element=null,$element=null) {
-    	
+
     	global $conf;
-    	
+
     	$this->fk_element=$fk_element;
     	$this->element=$element;
-    	
+
         $this->options = array(
             'script_url' => $_SERVER['PHP_SELF'],
             'upload_dir' => $conf->$element->dir_output . '/' . $fk_element . '/',
@@ -86,7 +91,7 @@ class UploadHandler
             $this->options = array_merge_recursive($this->options, $options);
         }
     }
-    
+
     private function get_file_object($file_name) {
         $file_path = $this->options['upload_dir'].$file_name;
         if (is_file($file_path) && $file_name[0] !== '.') {
@@ -97,8 +102,8 @@ class UploadHandler
             $file->url = $this->options['upload_url'].rawurlencode($file->name);
             foreach($this->options['image_versions'] as $version => $options) {
                 if (is_file($options['upload_dir'].$file_name)) {
-                    $file->{$version.'_url'} = $options['upload_url']
-                        .rawurlencode($file->name);
+                    $tmp=explode('.',$file->name);
+                    $file->{$version.'_url'} = $options['upload_url'].rawurlencode($tmp[0].'_mini.'.$tmp[1]);
                 }
             }
             $file->delete_url = $this->options['script_url']
@@ -108,7 +113,7 @@ class UploadHandler
         }
         return null;
     }
-    
+
     private function get_file_objects() {
         return array_values(array_filter(array_map(
             array($this, 'get_file_object'),
@@ -116,9 +121,14 @@ class UploadHandler
         )));
     }
 
+    /**
+     *  Create thumbs
+     *  options is array('max_width', 'max_height')
+     */
     private function create_scaled_image($file_name, $options) {
         $file_path = $this->options['upload_dir'].$file_name;
         $new_file_path = $options['upload_dir'].$file_name;
+
         if (create_exdir($options['upload_dir']) >= 0)
         {
         	list($img_width, $img_height) = @getimagesize($file_path);
@@ -134,6 +144,11 @@ class UploadHandler
 	        }
 	        $new_width = $img_width * $scale;
 	        $new_height = $img_height * $scale;
+
+
+	        $res=true;
+	        $res=vignette($file_path,$options['max_width'],$options['max_height'],'_mini');
+            /* Replaced with more efficient function vignette
 	        $new_img = @imagecreatetruecolor($new_width, $new_height);
 	        switch (strtolower(substr(strrchr($file_name, '.'), 1))) {
 	            case 'jpg':
@@ -164,14 +179,18 @@ class UploadHandler
 	        // Free up memory (imagedestroy does not delete files):
 	        @imagedestroy($src_img);
 	        @imagedestroy($new_img);
-	        return $success;
+            */
+
+	        //return $success;
+	        if (preg_match('/error/i',$res)) return false;
+	        return true;
         }
         else
         {
         	return false;
         }
     }
-    
+
     private function has_error($uploaded_file, $file, $error) {
         if ($error) {
             return $error;
@@ -201,7 +220,7 @@ class UploadHandler
         }
         return $error;
     }
-    
+
     private function handle_file_upload($uploaded_file, $name, $size, $type, $error) {
         $file = new stdClass();
         $file->name = basename(stripslashes($name));
@@ -238,10 +257,12 @@ class UploadHandler
             $file_size = filesize($file_path);
             if ($file_size === $file->size) {
                 $file->url = $this->options['upload_url'].rawurlencode($file->name);
-                foreach($this->options['image_versions'] as $version => $options) {
-                    if ($this->create_scaled_image($file->name, $options)) {
-                        $file->{$version.'_url'} = $options['upload_url']
-                            .rawurlencode($file->name);
+                foreach($this->options['image_versions'] as $version => $options)
+                {
+                    if ($this->create_scaled_image($file->name, $options))
+                    {
+                        $tmp=explode('.',$file->name);
+                        $file->{$version.'_url'} = $options['upload_url'].rawurlencode($tmp[0].'_mini.'.$tmp[1]);
                     }
                 }
             } else if ($this->options['discard_aborted_uploads']) {
@@ -257,10 +278,10 @@ class UploadHandler
         }
         return $file;
     }
-    
+
     public function get() {
         $file_name = isset($_REQUEST['file']) ?
-            basename(stripslashes($_REQUEST['file'])) : null; 
+            basename(stripslashes($_REQUEST['file'])) : null;
         if ($file_name) {
             $info = $this->get_file_object($file_name);
         } else {
@@ -269,7 +290,7 @@ class UploadHandler
         header('Content-type: application/json');
         echo json_encode($info);
     }
-    
+
     public function post() {
         $upload = isset($_FILES[$this->options['param_name']]) ?
             $_FILES[$this->options['param_name']] : array(
@@ -314,7 +335,7 @@ class UploadHandler
         }
         echo json_encode($info);
     }
-    
+
     public function delete() {
         $file_name = isset($_REQUEST['file']) ?
             basename(stripslashes($_REQUEST['file'])) : null;
@@ -332,6 +353,12 @@ class UploadHandler
         echo json_encode($success);
     }
 }
+
+
+
+/*
+ * View
+ */
 
 $upload_handler = new UploadHandler(null,$fk_element,$element);
 
@@ -352,5 +379,10 @@ switch ($_SERVER['REQUEST_METHOD']) {
         break;
     default:
         header('HTTP/1.0 405 Method Not Allowed');
+        exit;
 }
+
+
+$db->close();
+
 ?>

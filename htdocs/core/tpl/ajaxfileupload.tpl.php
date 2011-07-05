@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: ajaxfileupload.tpl.php,v 1.6 2011/07/05 09:30:11 hregis Exp $
+ * $Id: ajaxfileupload.tpl.php,v 1.7 2011/07/05 22:40:35 eldy Exp $
  */
 ?>
 
@@ -65,22 +65,12 @@
                 {{else}}${error}
                 {{/if}}
             </td>
-        {{else}}
-            <td class="name">
-				<img src="<?php echo DOL_URL_ROOT; ?>/theme/common/mime/${mime}" border="0">
-                <a href="${url}"{{if thumbnail_url}} target="_blank"{{/if}}>${name}</a>
+            <td align="right" class="delete">
+                <button data-type="${delete_type}" data-url="${delete_url}"><?php echo $langs->trans('Delete'); ?></button>
             </td>
-			<td class="preview">
-                {{if thumbnail_url}}
-                    <a href="${url}" target="_blank"><img src="${thumbnail_url}"></a>
-                {{/if}}
-            </td>
-            <td class="size">${sizef}</td>
-            <td colspan="2"></td>
         {{/if}}
-        <td align="right" class="delete">
-            <button data-type="${delete_type}" data-url="${delete_url}"><?php echo $langs->trans('Delete'); ?></button>
-        </td>
     </tr>
 </script>
+
+<br>
 <!-- END PHP TEMPLATE -->

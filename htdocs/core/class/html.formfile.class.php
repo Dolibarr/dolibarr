@@ -22,7 +22,7 @@
  *	\file       htdocs/core/class/html.formfile.class.php
  *  \ingroup    core
  *	\brief      File of class to offer components to list and upload files
- *	\version	$Id: html.formfile.class.php,v 1.38 2011/07/05 09:14:27 hregis Exp $
+ *	\version	$Id: html.formfile.class.php,v 1.39 2011/07/05 22:40:36 eldy Exp $
  */
 
 
@@ -738,7 +738,7 @@ class FormFile
 	function form_ajaxfileupload($object)
 	{
 		global $langs;
-		
+
 		// PHP post_max_size
 		$post_max_size				= ini_get('post_max_size');
 		$mul_post_max_size			= substr($post_max_size, -1);
@@ -751,16 +751,16 @@ class FormFile
 		$upload_max_filesize		= $mul_upload_max_filesize*(int)$upload_max_filesize;
 		// Max file size
     	$max_file_size 				= (($post_max_size < $upload_max_filesize) ? $post_max_size : $upload_max_filesize);
-		
+
 		print '<script type="text/javascript">
 				$(function () {
 					\'use strict\';
-					
+
 					var max_file_size = \''.$max_file_size.'\';
-					
+
 					// Initialize the jQuery File Upload widget:
 					$("#fileupload").fileupload( { maxFileSize: max_file_size} );
-					
+
 					// Load existing files:
 					$.getJSON($("#fileupload form").prop("action"), { fk_element: "'.$object->id.'", element: "'.$object->element.'"}, function (files) {
 						var fu = $("#fileupload").data("fileupload");
@@ -772,7 +772,7 @@ class FormFile
 								$(this).show();
 							});
 					});
-					
+
 					// Open download dialogs via iframes,
 					// to prevent aborting current uploads:
 					$("#fileupload .files a:not([target^=_blank])").live("click", function (e) {
@@ -781,11 +781,11 @@ class FormFile
 							.prop("src", this.href)
 							.appendTo("body");
 					});
-					
+
 					// Confirm delete file
 					$("#fileupload").fileupload({
 						destroy: function (e, data) {
-							var that = $(this).data("fileupload"); 
+							var that = $(this).data("fileupload");
 							if ( confirm("Delete this file ?") == true ) {
 					            if (data.url) {
 					                $.ajax(data)
@@ -805,7 +805,7 @@ class FormFile
 					});
 				});
 				</script>';
-		
+
 		print '<div id="fileupload">';
 		print '<form action="'.DOL_URL_ROOT.'/core/ajaxfileupload.php" method="POST" enctype="multipart/form-data">';
 		print '<input type="hidden" name="fk_element" value="'.$object->id.'">';
@@ -820,6 +820,7 @@ class FormFile
 		print '<button type="reset" class="cancel">'.$langs->trans('CancelUpload').'</button>';
 		print '</div></form>';
 		print '<div class="fileupload-content">';
+
 		print '<table width="100%" class="files">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Documents2").'</td>';
@@ -828,10 +829,12 @@ class FormFile
 		print '<td colspan="3"></td>';
 		print '</tr>';
 		print '</table>';
+
 		print '<div class="fileupload-progressbar"></div>';
+
 		print '</div>';
 		print '</div>';
-		
+
 		// Include template
 		include(DOL_DOCUMENT_ROOT.'/core/tpl/ajaxfileupload.tpl.php');
 
