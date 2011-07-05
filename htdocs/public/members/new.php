@@ -22,7 +22,7 @@
  *	\file       htdocs/public/members/new.php
  *	\ingroup    member
  *	\brief      Example of form to add a new member
- *	\version    $Id: new.php,v 1.38 2011/07/05 08:29:53 eldy Exp $
+ *	\version    $Id: new.php,v 1.39 2011/07/05 08:33:34 eldy Exp $
  *
  *  Note that you can add following constant to change behaviour of page
  *  MEMBER_NEWFORM_AMOUNT               Default amount for autosubscribe form
@@ -159,10 +159,15 @@ if ($action == 'add')
         $error+=1;
         $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("MorPhy"))."<br>\n";
     }
-    if (!isset($_POST["nom"]) || !isset($_POST["prenom"]) || $_POST["prenom"]=='' || $_POST["nom"]=='')
+    if (empty($_POST["nom"]))
     {
         $error+=1;
-        $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Name"))."<br>\n";
+        $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Lastname"))."<br>\n";
+    }
+    if (empty($_POST["prenom"]))
+    {
+        $error+=1;
+        $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Firstname"))."<br>\n";
     }
     if (GETPOST("email") && ! isValidEmail(GETPOST("email")))
     {
@@ -275,7 +280,7 @@ if ($action == 'added')
     print $langs->trans("NewMemberbyWeb");
     print '</center>';
 
-    llxFooterVierge('$Date: 2011/07/05 08:29:53 $ - $Revision: 1.38 $');
+    llxFooterVierge('$Date: 2011/07/05 08:33:34 $ - $Revision: 1.39 $');
     exit;
 }
 
@@ -523,5 +528,5 @@ print "<br></form>\n";
 
 $db->close();
 
-llxFooterVierge('$Date: 2011/07/05 08:29:53 $ - $Revision: 1.38 $');
+llxFooterVierge('$Date: 2011/07/05 08:33:34 $ - $Revision: 1.39 $');
 ?>
