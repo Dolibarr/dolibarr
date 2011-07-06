@@ -22,7 +22,7 @@
  *	\file       htdocs/core/class/html.formfile.class.php
  *  \ingroup    core
  *	\brief      File of class to offer components to list and upload files
- *	\version	$Id: html.formfile.class.php,v 1.45 2011/07/06 17:44:56 eldy Exp $
+ *	\version	$Id: html.formfile.class.php,v 1.46 2011/07/06 21:12:34 eldy Exp $
  */
 
 
@@ -623,8 +623,8 @@ class FormFile
                 }
 				// Delete or view link
 				print '<td align="right">';
-				if (! empty($useinecm)) print '<a href="'.DOL_URL_ROOT.'/ecm/docfile.php?section='.$_REQUEST["section"].'&urlfile='.urlencode($file['name']).'">'.img_view().'</a> &nbsp; ';
-				if ($permtodelete) print '<a href="'.$url.'?id='.$object->id.'&section='.$_REQUEST["section"].'&action=delete&urlfile='.urlencode($file['name']).'">'.img_delete().'</a>';
+				if (! empty($useinecm)) print '<a href="'.DOL_URL_ROOT.'/ecm/docfile.php?urlfile='.urlencode($file['name']).$param.'">'.img_view().'</a> &nbsp; ';
+				if ($permtodelete) print '<a href="'.$url.'?id='.$object->id.'&action=delete&urlfile='.urlencode($file['name']).$param.'">'.img_delete().'</a>';
 				else print '&nbsp;';
 				print "</td>";
 				print "</tr>\n";

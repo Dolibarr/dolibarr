@@ -21,7 +21,7 @@
  *	\file       htdocs/ecm/index.php
  *	\ingroup    ecm
  *	\brief      Main page for ECM section area
- *	\version    $Id: index.php,v 1.100 2011/07/06 20:56:49 eldy Exp $
+ *	\version    $Id: index.php,v 1.101 2011/07/06 21:12:34 eldy Exp $
  *	\author		Laurent Destailleur
  */
 
@@ -800,6 +800,8 @@ else
 
 $formfile=new FormFile($db);
 
+$param=($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'');
+
 // Right area
 if ($module == 'invoice_supplier')  // Auto area for suppliers invoices
 {
@@ -807,7 +809,7 @@ if ($module == 'invoice_supplier')  // Auto area for suppliers invoices
     $upload_dir = $conf->fournisseur->dir_output.'/'.$relativepath;
     $filearray=dol_dir_list($upload_dir,"files",1,'',array('^SPECIMEN\.pdf$','^\.','\.meta$','^temp$','^CVS$'),$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 
-    $param='&amp;module='.$module;
+    $param.='&module='.$module;
     $textifempty=($section?$langs->trans("NoFileFound"):($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("ECMSelectASection")));
 
     $formfile->list_of_autoecmfiles($upload_dir,$filearray,$module,$param,1,'',$user->rights->ecm->upload,1,$textifempty,40);
@@ -817,7 +819,7 @@ else if ($module == 'invoice')  // Auto area for suppliers invoices
     $upload_dir = $conf->facture->dir_output;
     $filearray=dol_dir_list($upload_dir,"files",1,'',array('^SPECIMEN\.pdf$','^\.','\.meta$','^temp$','^payments$','^CVS$'),$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 
-    $param='&amp;module='.$module;
+    $param.='&module='.$module;
     $textifempty=($section?$langs->trans("NoFileFound"):($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("ECMSelectASection")));
 
     $formfile->list_of_autoecmfiles($upload_dir,$filearray,$module,$param,1,'',$user->rights->ecm->upload,1,$textifempty,40);
@@ -828,7 +830,7 @@ else    // Manual area
     $upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
     $filearray=dol_dir_list($upload_dir,"files",0,'',array('^\.','\.meta$'),$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 
-    $param='&amp;section='.$section;
+    $param.='&section='.$section;
     $textifempty=($section?$langs->trans("NoFileFound"):($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("ECMSelectASection")));
 
     $formfile->list_of_documents($filearray,'','ecm',$param,1,$relativepath,$user->rights->ecm->upload,1,$textifempty,40);
@@ -887,5 +889,5 @@ else
 // End of page
 $db->close();
 
-llxFooter('$Date: 2011/07/06 20:56:49 $ - $Revision: 1.100 $');
+llxFooter('$Date: 2011/07/06 21:12:34 $ - $Revision: 1.101 $');
 ?>

@@ -29,7 +29,7 @@
  *	\file			htdocs/lib/functions.lib.php
  *	\brief			A set of functions for Dolibarr
  *					This file contains all frequently used functions.
- *	\version		$Id: functions.lib.php,v 1.540 2011/07/06 17:43:33 eldy Exp $
+ *	\version		$Id: functions.lib.php,v 1.541 2011/07/06 21:12:33 eldy Exp $
  */
 
 // For compatibility during upgrade
@@ -2542,12 +2542,12 @@ function dol_print_error_email()
  *	@param	    file        Url used when we click on sort picto
  *	@param	    field       Field to use for new sorting
  *	@param	    begin       ("" by defaut)
- *	@param	    options     ("" by defaut)
+ *	@param	    moreparam   Add more parameters on sort url links ("" by default)
  *	@param      td          Options of attribute td ("" by defaut)
  *	@param      sortfield   Current field used to sort
  *	@param      sortorder   Current sort order
  */
-function print_liste_field_titre($name, $file="", $field="", $begin="", $options="", $td="", $sortfield="", $sortorder="")
+function print_liste_field_titre($name, $file="", $field="", $begin="", $moreparam="", $td="", $sortfield="", $sortorder="")
 {
     global $conf;
     //print "$name, $file, $field, $begin, $options, $td, $sortfield, $sortorder<br>\n";
@@ -2567,29 +2567,34 @@ function print_liste_field_titre($name, $file="", $field="", $begin="", $options
     // If this is a sort field
     if ($field)
     {
+        $options=preg_replace('/sortfield=([a-zA-Z0-9,\s\.]+)/i','',$moreparam);
+        $options=preg_replace('/sortorder=([a-zA-Z0-9,\s\.]+)/i','',$options);
+        $options=preg_replace('/&+/i','&',$options);
+        if (! preg_match('/^&/',$options)) $options='&'.$options;
+
         //print "&nbsp;";
         print '<img width="2" src="'.DOL_URL_ROOT.'/theme/common/transparent.png" alt="">';
         if (! $sortorder)
         {
-            print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=asc&amp;begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
-            print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=desc&amp;begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
+            print '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
+            print '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
         }
         else
         {
             if ($field != $sortfield)
             {
-                print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=asc&amp;begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
-                print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=desc&amp;begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
+                print '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
+                print '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
             }
             else {
                 $sortorder=strtoupper($sortorder);
                 if ($sortorder == 'DESC' ) {
-                    print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=asc&amp;begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
-                    print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=desc&amp;begin='.$begin.$options.'">'.img_up("Z-A",1).'</a>';
+                    print '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
+                    print '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",1).'</a>';
                 }
                 if ($sortorder == 'ASC' ) {
-                    print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=asc&amp;begin='.$begin.$options.'">'.img_down("A-Z",1).'</a>';
-                    print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=desc&amp;begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
+                    print '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",1).'</a>';
+                    print '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
                 }
             }
         }
