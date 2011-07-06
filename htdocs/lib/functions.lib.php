@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2000-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
@@ -29,7 +29,7 @@
  *	\file			htdocs/lib/functions.lib.php
  *	\brief			A set of functions for Dolibarr
  *					This file contains all frequently used functions.
- *	\version		$Id: functions.lib.php,v 1.541 2011/07/06 21:12:33 eldy Exp $
+ *	\version		$Id: functions.lib.php,v 1.542 2011/07/06 22:42:34 eldy Exp $
  */
 
 // For compatibility during upgrade
@@ -1546,6 +1546,7 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8')
  *							Pour les modules externe utiliser nomimage@mymodule pour rechercher dans le repertoire "img" du module
  *  @param      options     Add more attribute on img tag
  *	@return     string      Return img tag
+ *  @see        img_picto, img_picto_common
  */
 function img_object($alt, $object, $options='')
 {
@@ -1574,7 +1575,8 @@ function img_object($alt, $object, $options='')
  *                                  Example: /mydir/mysubdir/picto.png  if picto.png is stored into htdocs/mydir/mysubdir (pictoisfullpath must be set to 1)
  *	@param		options				Add more attribute on img tag
  *	@param		pictoisfullpath		If 1, image path is a full path
- *	@return     string      		Retourne tag img
+ *  @return     string              Return img tag
+ *  @see        img_object, img_picto_common
  */
 function img_picto($alt, $picto, $options='', $pictoisfullpath=0)
 {
@@ -1603,7 +1605,8 @@ function img_picto($alt, $picto, $options='', $pictoisfullpath=0)
  *	@param      picto       		Name of image file to show (If no extension provided, we use '.png'). Image must be stored into htdocs/theme/common directory.
  *	@param		options				Add more attribute on img tag
  *	@param		pictoisfullpath		If 1, image path is a full path
- *	@return     string      		Retourne tag img
+ *	@return     string      		Return img tag
+ *  @see        img_object, img_picto
  */
 function img_picto_common($alt, $picto, $options='', $pictoisfullpath=0)
 {
