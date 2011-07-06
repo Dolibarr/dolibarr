@@ -1,13 +1,26 @@
 <?php
-/*
- * jQuery File Upload Plugin PHP Example 5.2.2
- * https://github.com/blueimp/jQuery-File-Upload
+/* Copyright (C) 2011 Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2011 Laurent Destailleur	<eldy@users.sourceforge.net>
  *
- * Copyright 2010, Sebastian Tschan
- * https://blueimp.net
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- * Licensed under the MIT license:
- * http://creativecommons.org/licenses/MIT/
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
+
+/**
+ *       \file       htdocs/core/ajaxfileupload.php
+ *       \brief      File to return Ajax response on file upload
+ *       \version    $Id: ajaxfileupload.php,v 1.8 2011/07/06 06:21:51 hregis Exp $
  */
 
 //if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
@@ -22,9 +35,7 @@ if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1'); // If we don't nee
 //if (! defined("NOLOGIN"))        define("NOLOGIN",'1');       // If this page is public (can be called outside logged session)
 
 
-$res=@include("../main.inc.php");								    // For "root" directory
-if (! $res) $res=@include("../../main.inc.php");					// For "custom" directory
-if (! $res) @include("../../../../dolibarr/htdocs/main.inc.php");	// Used on dev env only
+require("../main.inc.php");
 
 require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/images.lib.php");

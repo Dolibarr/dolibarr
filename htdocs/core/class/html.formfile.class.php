@@ -1,5 +1,5 @@
 <?php
-/* Copyright (c) 2008-2010 Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (c) 2008-2011 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2011 Regis Houssin		<regis@dolibarr.fr>
  * Copyright (c) 2010      Juanjo Menent		<jmenent@2byte.es>
  *
@@ -22,7 +22,7 @@
  *	\file       htdocs/core/class/html.formfile.class.php
  *  \ingroup    core
  *	\brief      File of class to offer components to list and upload files
- *	\version	$Id: html.formfile.class.php,v 1.39 2011/07/05 22:40:36 eldy Exp $
+ *	\version	$Id: html.formfile.class.php,v 1.40 2011/07/06 06:21:52 hregis Exp $
  */
 
 
@@ -759,19 +759,46 @@ class FormFile
 					var max_file_size = \''.$max_file_size.'\';
 
 					// Initialize the jQuery File Upload widget:
-					$("#fileupload").fileupload( { maxFileSize: max_file_size} );
+					$("#fileupload").fileupload({ 
+						maxFileSize: max_file_size,
+						done: function (e, data) {
+							$.ajax(data).success(function () {
+								location.href=\''.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].'\';
+							});	
+						},
+						destroy: function (e, data) {
+							var that = $(this).data("fileupload");
+							if ( confirm("Delete this file ?") == true ) {
+								if (data.url) {
+									$.ajax(data).success(function () {
+											that._adjustMaxNumberOfFiles(1);
+						                    $(this).fadeOut(function () {
+						                    	$(this).remove();
+						                    });
+						                });
+						        } else {
+						        	data.context.fadeOut(function () {
+						        		$(this).remove();
+						            });
+						        }
+							}
+						}
+					});
 
 					// Load existing files:
-					$.getJSON($("#fileupload form").prop("action"), { fk_element: "'.$object->id.'", element: "'.$object->element.'"}, function (files) {
-						var fu = $("#fileupload").data("fileupload");
-						fu._adjustMaxNumberOfFiles(-files.length);
-						fu._renderDownload(files)
-							.appendTo($("#fileupload .files"))
-							.fadeIn(function () {
-								// Fix for IE7 and lower:
-								$(this).show();
-							});
-					});
+					// TODO do not delete
+					if (1 == 2) {
+						$.getJSON($("#fileupload form").prop("action"), { fk_element: "'.$object->id.'", element: "'.$object->element.'"}, function (files) {
+							var fu = $("#fileupload").data("fileupload");
+							fu._adjustMaxNumberOfFiles(-files.length);
+							fu._renderDownload(files)
+								.appendTo($("#fileupload .files"))
+								.fadeIn(function () {
+									// Fix for IE7 and lower:
+									$(this).show();
+								});
+						});
+					}
 
 					// Open download dialogs via iframes,
 					// to prevent aborting current uploads:
@@ -782,27 +809,6 @@ class FormFile
 							.appendTo("body");
 					});
 
-					// Confirm delete file
-					$("#fileupload").fileupload({
-						destroy: function (e, data) {
-							var that = $(this).data("fileupload");
-							if ( confirm("Delete this file ?") == true ) {
-					            if (data.url) {
-					                $.ajax(data)
-					                    .success(function () {
-					                        that._adjustMaxNumberOfFiles(1);
-					                        $(this).fadeOut(function () {
-					                            $(this).remove();
-					                        });
-					                    });
-					            } else {
-					                data.context.fadeOut(function () {
-					                    $(this).remove();
-					                });
-					            }
-					        }
-					    }
-					});
 				});
 				</script>';
 
