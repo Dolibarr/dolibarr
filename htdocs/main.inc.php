@@ -26,7 +26,7 @@
  *	\file       htdocs/main.inc.php
  *	\ingroup	core
  *	\brief      File that defines environment for Dolibarr pages only (variables not required by scripts)
- *	\version    $Id: main.inc.php,v 1.751 2011/07/06 12:09:19 eldy Exp $
+ *	\version    $Id: main.inc.php,v 1.752 2011/07/06 12:58:34 eldy Exp $
  */
 
 @ini_set('memory_limit', '64M');	// This may be useless if memory is hard limited by your PHP
@@ -979,7 +979,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             {
                 print '<!-- Includes JS for CKEditor -->'."\n";
                 print '<script type="text/javascript">var CKEDITOR_BASEPATH = \''.DOL_URL_ROOT.'/includes/ckeditor/\';</script>'."\n";
-                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/ckeditor/ckeditor'.$ext.'"></script>'."\n";
+                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/ckeditor/ckeditor_basic.js"></script>'."\n";
             }
             // File Upload
             if (! empty($conf->global->MAIN_USE_JQUERY_FILEUPLOAD))
