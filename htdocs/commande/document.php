@@ -23,7 +23,7 @@
  *	\file       htdocs/commande/document.php
  *	\ingroup    order
  *	\brief      Page de gestion des documents attachees a une commande
- *	\version    $Id: document.php,v 1.33 2011/07/05 16:10:56 hregis Exp $
+ *	\version    $Id: document.php,v 1.34 2011/07/06 20:56:49 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -74,9 +74,9 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	if ($object->fetch($id))
     {
         $object->fetch_thirdparty();
-        
+
 	    $upload_dir = $conf->commande->dir_output . "/" . dol_sanitizeFileName($object->ref);
-	
+
 		if (create_exdir($upload_dir) >= 0)
 		{
 			$resupload=dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0,0,$_FILES['userfile']['error']);
@@ -110,7 +110,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
 	if ($object->fetch($id))
     {
     	$object->fetch_thirdparty();
-    	
+
     	$upload_dir = $conf->commande->dir_output . "/" . dol_sanitizeFileName($object->ref);
     	$file = $upload_dir . '/' . $_GET['urlfile'];	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
     	dol_delete_file($file);
@@ -132,37 +132,37 @@ if ($id > 0 || ! empty($ref))
 	if ($object->fetch($id, $ref))
     {
     	$object->fetch_thirdparty();
-    	
+
     	$upload_dir = $conf->commande->dir_output.'/'.dol_sanitizeFileName($object->ref);
 
 		$head = commande_prepare_head($object);
 		dol_fiche_head($head, 'documents', $langs->trans('CustomerOrder'), 0, 'order');
-	
-	
+
+
 		// Construit liste des fichiers
-		$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
+		$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 		$totalsize=0;
 		foreach($filearray as $key => $file)
 		{
 			$totalsize+=$file['size'];
 		}
-	
-	
+
+
 		print '<table class="border"width="100%">';
-	
+
 		// Ref
 		print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">';
 		print $html->showrefnav($object,'ref','',1,'ref','ref');
 		print '</td></tr>';
-	
+
 		print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">'.$object->thirdparty->getNomUrl(1).'</td></tr>';
 		print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
 		print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
 		print "</table>\n";
 		print "</div>\n";
-	
+
     	dol_htmloutput_mesg($mesg,$mesgs);
-        
+
     	/*
 		 * Confirmation suppression fichier
 		 */
@@ -171,12 +171,12 @@ if ($id > 0 || ! empty($ref))
 			$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id.'&urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
 			if ($ret == 'html') print '<br>';
 		}
-	
+
 		// Affiche formulaire upload
 		$formfile=new FormFile($db);
 		$formfile->form_attach_new_file(DOL_URL_ROOT.'/commande/document.php?id='.$object->id,'',0,0,$user->rights->commande->creer);
-	
-	
+
+
 		// List of document
 		$param='&id='.$object->id;
 		$formfile->list_of_documents($filearray,$object,'commande',$param);
@@ -193,5 +193,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/05 16:10:56 $ - $Revision: 1.33 $');
+llxFooter('$Date: 2011/07/06 20:56:49 $ - $Revision: 1.34 $');
 ?>

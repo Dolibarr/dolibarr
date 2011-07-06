@@ -23,7 +23,7 @@
  *  \file       htdocs/societe/document.php
  *  \brief      Tab for documents linked to third party
  *  \ingroup    societe
- *  \version    $Id: document.php,v 1.36 2011/07/06 18:20:49 eldy Exp $
+ *  \version    $Id: document.php,v 1.37 2011/07/06 20:56:49 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -149,7 +149,7 @@ if ($socid > 0)
 
 
 		// Construit liste des fichiers
-		$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
+		$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 		$totalsize=0;
 		foreach($filearray as $key => $file)
 		{
@@ -241,6 +241,6 @@ else
 $db->close();
 
 
-llxFooter('$Date: 2011/07/06 18:20:49 $ - $Revision: 1.36 $');
+llxFooter('$Date: 2011/07/06 20:56:49 $ - $Revision: 1.37 $');
 
 ?>

@@ -21,7 +21,7 @@
  *	\file       htdocs/ecm/index.php
  *	\ingroup    ecm
  *	\brief      Main page for ECM section area
- *	\version    $Id: index.php,v 1.99 2011/07/06 11:40:21 eldy Exp $
+ *	\version    $Id: index.php,v 1.100 2011/07/06 20:56:49 eldy Exp $
  *	\author		Laurent Destailleur
  */
 
@@ -805,7 +805,7 @@ if ($module == 'invoice_supplier')  // Auto area for suppliers invoices
 {
     $relativepath='facture';
     $upload_dir = $conf->fournisseur->dir_output.'/'.$relativepath;
-    $filearray=dol_dir_list($upload_dir,"files",1,'',array('^SPECIMEN\.pdf$','^\.','\.meta$','^temp$','^CVS$'),$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
+    $filearray=dol_dir_list($upload_dir,"files",1,'',array('^SPECIMEN\.pdf$','^\.','\.meta$','^temp$','^CVS$'),$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 
     $param='&amp;module='.$module;
     $textifempty=($section?$langs->trans("NoFileFound"):($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("ECMSelectASection")));
@@ -815,7 +815,7 @@ if ($module == 'invoice_supplier')  // Auto area for suppliers invoices
 else if ($module == 'invoice')  // Auto area for suppliers invoices
 {
     $upload_dir = $conf->facture->dir_output;
-    $filearray=dol_dir_list($upload_dir,"files",1,'',array('^SPECIMEN\.pdf$','^\.','\.meta$','^temp$','^payments$','^CVS$'),$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
+    $filearray=dol_dir_list($upload_dir,"files",1,'',array('^SPECIMEN\.pdf$','^\.','\.meta$','^temp$','^payments$','^CVS$'),$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 
     $param='&amp;module='.$module;
     $textifempty=($section?$langs->trans("NoFileFound"):($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("ECMSelectASection")));
@@ -826,7 +826,7 @@ else    // Manual area
 {
     $relativepath=$ecmdir->getRelativePath();
     $upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
-    $filearray=dol_dir_list($upload_dir,"files",0,'',array('^\.','\.meta$'),$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
+    $filearray=dol_dir_list($upload_dir,"files",0,'',array('^\.','\.meta$'),$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 
     $param='&amp;section='.$section;
     $textifempty=($section?$langs->trans("NoFileFound"):($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("ECMSelectASection")));
@@ -887,5 +887,5 @@ else
 // End of page
 $db->close();
 
-llxFooter('$Date: 2011/07/06 11:40:21 $ - $Revision: 1.99 $');
+llxFooter('$Date: 2011/07/06 20:56:49 $ - $Revision: 1.100 $');
 ?>

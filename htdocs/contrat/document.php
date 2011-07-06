@@ -24,7 +24,7 @@
  *       \file       htdocs/contrat/document.php
  *       \ingroup    contrat
  *       \brief      Page des documents joints sur les contrats
- *       \version    $Id$
+ *       \version    $Id: document.php,v 1.24 2011/07/06 20:56:50 eldy Exp $
  */
 
 require ("../main.inc.php");
@@ -132,7 +132,7 @@ if ($contrat->id)
 
 
 	// Construit liste des fichiers
-	$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
+	$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 	$totalsize=0;
 	foreach($filearray as $key => $file)
 	{
@@ -173,5 +173,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/06 20:56:50 $ - $Revision: 1.24 $');
 ?>
