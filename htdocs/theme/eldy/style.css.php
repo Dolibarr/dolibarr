@@ -21,7 +21,7 @@
 /**
  *		\file       htdocs/theme/eldy/style.css.php
  *		\brief      Fichier de style CSS du theme Eldy
- *		\version    $Id: style.css.php,v 1.82 2011/07/06 09:42:55 eldy Exp $
+ *		\version    $Id: style.css.php,v 1.83 2011/07/06 10:22:56 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -653,7 +653,7 @@ td.photo {
 /* ============================================================================== */
 
 .toolbar {
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tmenu2.png' ?>) !important;
+    background-image: url(<?php echo DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tmenu2.jpg' ?>) !important;
     background-repeat: repeat-x !important;
 }
 
@@ -1071,7 +1071,7 @@ border-right-style: solid;
 border-left-width: 1px;
 border-left-color: #BBBBBB;
 border-left-style: solid;
-height: 16px;
+height: 18px;
 }
 
 table.noborder td {
@@ -1114,7 +1114,7 @@ padding-right: 2px;
 }
 
 tr.liste_titre {
-height: 18px;
+height: 20px !important;
 background: #7699A9;
 background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre2.png' ?>);
 background-repeat: repeat-x;
@@ -1212,6 +1212,7 @@ padding-bottom: 4px;
 }
 
 tr.box_titre {
+height: 20px;
 background: #7699A9;
 background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre2.png' ?>);
 background-repeat: repeat-x;
@@ -1568,7 +1569,7 @@ table.cal_event td { border: 0px; padding-<?php print $left; ?>: 0px; padding-<?
 	       display:block;
 	       margin:0;
 	       padding:2px;
-	       height:16px;
+	       height:18px;
 	       cursor:pointer;
 	     }
 
