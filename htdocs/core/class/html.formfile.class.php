@@ -22,7 +22,7 @@
  *	\file       htdocs/core/class/html.formfile.class.php
  *  \ingroup    core
  *	\brief      File of class to offer components to list and upload files
- *	\version	$Id: html.formfile.class.php,v 1.44 2011/07/06 13:15:24 eldy Exp $
+ *	\version	$Id: html.formfile.class.php,v 1.45 2011/07/06 17:44:56 eldy Exp $
  */
 
 
@@ -186,9 +186,9 @@ class FormFile
 		global $langs,$bc,$conf;
 
 		$out='';
-
 		$var=true;
 
+		// Clean paramaters
 		if ($iconPDF == 1)
 		{
 			$genallowed = '';
@@ -196,13 +196,15 @@ class FormFile
 			$modelselected = '';
 			$forcenomultilang=0;
 		}
-
 		//$filename = dol_sanitizeFileName($filename);    //Must be sanitized before calling show_documents
 		$headershown=0;
 		$showempty=0;
 		$i=0;
 
-		$out.= "\n".'<!-- Start show_document -->'."\n";
+        $titletoshow=$langs->trans("Documents");
+        if (! empty($title)) $titletoshow=$title;
+
+        $out.= "\n".'<!-- Start show_document -->'."\n";
 		//print 'filedir='.$filedir;
 
 		// Affiche en-tete tableau
@@ -388,7 +390,7 @@ class FormFile
 			$out.= '<input type="hidden" name="action" value="builddoc">';
 			$out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-			$out.= '<div class="titre">'.$langs->trans("Documents").'</div>';
+			$out.= '<div class="titre">'.$titletoshow.'</div>';
 			$out.= '<table class="border formdoc" summary="listofdocumentstable" width="100%">';
 
 			$out.= '<tr '.$bc[$var].'>';
@@ -465,73 +467,73 @@ class FormFile
 		}
 
 		// Get list of files
-		$png = '';
-		$filter = '';
-		if ($iconPDF==1)
+		if ($filedir)
 		{
-			$png = '\.png$';
-			$filter = $filename.'.pdf';
+    		$png = '';
+    		$filter = '';
+    		if ($iconPDF==1)
+    		{
+    			$png = '\.png$';
+    			$filter = $filename.'.pdf';
+    		}
+    		$file_list=dol_dir_list($filedir,'files',0,$filter,'\.meta$'.($png?'|'.$png:''),'date',SORT_DESC);
+
+    		// Affiche en-tete tableau si non deja affiche
+    		if (sizeof($file_list) && ! $headershown && !$iconPDF)
+    		{
+    			$headershown=1;
+    			$out.= '<div class="titre">'.$titletoshow.'</div>';
+    			$out.= '<table class="border" summary="listofdocumentstable" width="100%">';
+    		}
+
+    		// Loop on each file found
+    		foreach($file_list as $file)
+    		{
+    			$var=!$var;
+
+    			// Define relative path for download link (depends on module)
+    			$relativepath=$file["name"];								// Cas general
+    			if ($filename) $relativepath=$filename."/".$file["name"];	// Cas propal, facture...
+    			// Autre cas
+    			if ($modulepart == 'donation')            { $relativepath = get_exdir($filename,2).$file["name"]; }
+    			if ($modulepart == 'export')              { $relativepath = $file["name"]; }
+
+    			if (!$iconPDF) $out.= "<tr ".$bc[$var].">";
+
+    			// Show file name with link to download
+    			if (!$iconPDF) $out.= '<td nowrap="nowrap">';
+    			$out.= '<a href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'"';
+    			$mime=dol_mimetype($relativepath,'',0);
+    			if (preg_match('/text/',$mime)) $out.= ' target="_blank"';
+    			$out.= '>';
+    			if (!$iconPDF)
+    			{
+    				$out.= img_mime($file["name"],$langs->trans("File").': '.$file["name"]).' '.dol_trunc($file["name"],$maxfilenamelength);
+    			}
+    			else
+    			{
+    				$out.= img_pdf($file["name"],2);
+    			}
+    			$out.= '</a>';
+    			if (!$iconPDF) $out.= '</td>';
+    			// Affiche taille fichier
+    			if (!$iconPDF) $out.= '<td align="right" nowrap="nowrap">'.dol_print_size(dol_filesize($filedir."/".$file["name"])).'</td>';
+    			// Affiche date fichier
+    			if (!$iconPDF) $out.= '<td align="right" nowrap="nowrap">'.dol_print_date(dol_filemtime($filedir."/".$file["name"]),'dayhour').'</td>';
+
+    			if ($delallowed)
+    			{
+    				$out.= '<td align="right"><a href="'.DOL_URL_ROOT.'/document.php?action=remove_file&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath);
+    				$out.= ($param?'&amp;'.$param:'');
+    				$out.= '&amp;urlsource='.urlencode($urlsource);
+    				$out.= '">'.img_delete().'</a></td>';
+    			}
+
+    			if (!$iconPDF) $out.= '</tr>';
+
+    			$this->numoffiles++;
+    		}
 		}
-		$file_list=dol_dir_list($filedir,'files',0,$filter,'\.meta$'.($png?'|'.$png:''),'date',SORT_DESC);
-
-		// Affiche en-tete tableau si non deja affiche
-		if (sizeof($file_list) && ! $headershown && !$iconPDF)
-		{
-			$headershown=1;
-			$titletoshow=$langs->trans("Documents");
-			if (! empty($title)) $titletoshow=$title;
-			$out.= '<div class="titre">'.$titletoshow.'</div>';
-			$out.= '<table class="border" summary="listofdocumentstable" width="100%">';
-		}
-
-		// Loop on each file found
-		foreach($file_list as $file)
-		{
-			$var=!$var;
-
-			// Define relative path for download link (depends on module)
-			$relativepath=$file["name"];								// Cas general
-			if ($filename) $relativepath=$filename."/".$file["name"];	// Cas propal, facture...
-			// Autre cas
-			if ($modulepart == 'donation')            { $relativepath = get_exdir($filename,2).$file["name"]; }
-			if ($modulepart == 'export')              { $relativepath = $file["name"]; }
-
-			if (!$iconPDF) $out.= "<tr ".$bc[$var].">";
-
-			// Show file name with link to download
-			if (!$iconPDF) $out.= '<td nowrap="nowrap">';
-			$out.= '<a href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'"';
-			$mime=dol_mimetype($relativepath,'',0);
-			if (preg_match('/text/',$mime)) $out.= ' target="_blank"';
-			$out.= '>';
-			if (!$iconPDF)
-			{
-				$out.= img_mime($file["name"],$langs->trans("File").': '.$file["name"]).' '.dol_trunc($file["name"],$maxfilenamelength);
-			}
-			else
-			{
-				$out.= img_pdf($file["name"],2);
-			}
-			$out.= '</a>';
-			if (!$iconPDF) $out.= '</td>';
-			// Affiche taille fichier
-			if (!$iconPDF) $out.= '<td align="right" nowrap="nowrap">'.dol_print_size(dol_filesize($filedir."/".$file["name"])).'</td>';
-			// Affiche date fichier
-			if (!$iconPDF) $out.= '<td align="right" nowrap="nowrap">'.dol_print_date(dol_filemtime($filedir."/".$file["name"]),'dayhour').'</td>';
-
-			if ($delallowed)
-			{
-				$out.= '<td align="right"><a href="'.DOL_URL_ROOT.'/document.php?action=remove_file&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath);
-				$out.= ($param?'&amp;'.$param:'');
-				$out.= '&amp;urlsource='.urlencode($urlsource);
-				$out.= '">'.img_delete().'</a></td>';
-			}
-
-			if (!$iconPDF) $out.= '</tr>';
-
-			$this->numoffiles++;
-		}
-
 
 		if ($headershown)
 		{
