@@ -23,7 +23,7 @@
  *	\file       htdocs/fichinter/fiche.php
  *	\brief      Fichier fiche intervention
  *	\ingroup    ficheinter
- *	\version    $Id: fiche.php,v 1.165 2011/07/02 17:14:58 eldy Exp $
+ *	\version    $Id: fiche.php,v 1.166 2011/07/06 09:39:04 simnandez Exp $
  */
 
 require("../main.inc.php");
@@ -1037,7 +1037,7 @@ elseif ($fichinterid)
         if ($action != 'editdescription')
         {
             // Validate
-            if ($object->statut == 0 && $user->rights->ficheinter->creer)
+            if ($object->statut == 0 && $user->rights->ficheinter->creer && sizeof($object->lines) > 0)
             {
                 print '<a class="butAction" href="fiche.php?id='.$id.'&action=validate"';
                 print '>'.$langs->trans("Valid").'</a>';
@@ -1178,5 +1178,5 @@ elseif ($fichinterid)
 
 $db->close();
 
-llxFooter('$Date: 2011/07/02 17:14:58 $ - $Revision: 1.165 $');
+llxFooter('$Date: 2011/07/06 09:39:04 $ - $Revision: 1.166 $');
 ?>
