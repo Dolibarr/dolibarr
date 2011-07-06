@@ -27,7 +27,7 @@
  *	\file       htdocs/societe/class/societe.class.php
  *	\ingroup    societe
  *	\brief      File for third party class
- *	\version    $Id: societe.class.php,v 1.89 2011/07/04 11:41:05 eldy Exp $
+ *	\version    $Id: societe.class.php,v 1.90 2011/07/06 05:08:52 hregis Exp $
  */
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 
@@ -377,6 +377,14 @@ class Societe extends CommonObject
 
         dol_syslog("Societe::Update id=".$id." call_trigger=".$call_trigger." allowmodcodeclient=".$allowmodcodeclient." allowmodcodefournisseur=".$allowmodcodefournisseur);
 
+        // For triggers
+        if ($call_trigger)
+        {
+        	$objectstatic=new Societe($this->db);
+        	$objectstatic->fetch($id);
+        	$this->oldobject = $objectstatic;
+        }
+        
         $now=dol_now();
 
         // Clean parameters
@@ -919,7 +927,7 @@ class Societe extends CommonObject
 
             // Update link in member table
             $sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
-            $sql.= " SET fk_soc = NULL where fk_soc = " . $id;
+            $sql.= " SET fk_soc = NULL WHERE fk_soc = " . $id;
             dol_syslog("Societe::Delete sql=".$sql, LOG_DEBUG);
             if ($this->db->query($sql))
             {
