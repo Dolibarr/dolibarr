@@ -23,7 +23,7 @@
  *  \file       htdocs/societe/document.php
  *  \brief      Tab for documents linked to third party
  *  \ingroup    societe
- *  \version    $Id: document.php,v 1.35 2011/07/06 09:25:06 eldy Exp $
+ *  \version    $Id: document.php,v 1.36 2011/07/06 18:20:49 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -70,7 +70,7 @@ $object = new Societe($db);
  * Actions
  */
 
-// Envoie fichier
+// Post file
 if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
 	if ($object->fetch($socid))
@@ -112,7 +112,7 @@ if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	}
 }
 
-// Suppression fichier
+// Delete file
 if ($action == 'confirm_deletefile' && $confirm == 'yes')
 {
 	if ($object->fetch($socid))
@@ -241,6 +241,6 @@ else
 $db->close();
 
 
-llxFooter('$Date: 2011/07/06 09:25:06 $ - $Revision: 1.35 $');
+llxFooter('$Date: 2011/07/06 18:20:49 $ - $Revision: 1.36 $');
 
 ?>
