@@ -22,7 +22,7 @@
  *	\file       htdocs/core/class/html.formfile.class.php
  *  \ingroup    core
  *	\brief      File of class to offer components to list and upload files
- *	\version	$Id: html.formfile.class.php,v 1.41 2011/07/06 09:25:06 eldy Exp $
+ *	\version	$Id: html.formfile.class.php,v 1.42 2011/07/06 09:42:55 eldy Exp $
  */
 
 
@@ -611,8 +611,9 @@ class FormFile
                 if (empty($useinecm))
                 {
                     print '<td align="center">';
-                    $pdirthumb='thumbs/';
-                    if (image_format_supported($file['name']) > 0) print '<img border="0" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($pdirthumb.$file['name']).'" title="">';
+                    $tmp=explode('.',$file['name']);
+                    $minifile=$tmp[0].'_mini.'.$tmp[1];
+                    if (image_format_supported($file['name']) > 0) print '<img border="0" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($relativepath.'thumbs/'.$minifile).'" title="">';
                     else print '&nbsp;';
                     print '</td>';
                 }
@@ -774,12 +775,12 @@ class FormFile
 					var max_file_size = \''.$max_file_size.'\';
 
 					// Initialize the jQuery File Upload widget:
-					$("#fileupload").fileupload({ 
+					$("#fileupload").fileupload({
 						maxFileSize: max_file_size,
 						done: function (e, data) {
 							$.ajax(data).success(function () {
 								location.href=\''.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].'\';
-							});	
+							});
 						},
 						destroy: function (e, data) {
 							var that = $(this).data("fileupload");

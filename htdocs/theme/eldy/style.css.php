@@ -21,7 +21,7 @@
 /**
  *		\file       htdocs/theme/eldy/style.css.php
  *		\brief      Fichier de style CSS du theme Eldy
- *		\version    $Id: style.css.php,v 1.81 2011/07/06 09:25:06 eldy Exp $
+ *		\version    $Id: style.css.php,v 1.82 2011/07/06 09:42:55 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -1886,28 +1886,9 @@ span.cke_skin_kama { padding: 0 !important; }
 
 
 /* ============================================================================== */
-/*  CKEditor                                                                      */
+/*  File upload                                                                   */
 /* ============================================================================== */
 
-.fileupload-content
-{
-    padding: 0 !important;
-}
-.ui-corner-br
-{
-    border-bottom-right-radius: 0 !important;
-}
-.ui-corner-bl
-{
-    border-bottom-left-radius: 0 !important;
-}
-.files td {
-    height: 18px !important;
-    padding: 0;
-}
-.files {
-    margin: 0px;
-}
 .template-upload {
     height: 72px !important;
 }
