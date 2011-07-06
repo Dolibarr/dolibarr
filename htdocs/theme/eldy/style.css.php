@@ -21,7 +21,7 @@
 /**
  *		\file       htdocs/theme/eldy/style.css.php
  *		\brief      Fichier de style CSS du theme Eldy
- *		\version    $Id: style.css.php,v 1.83 2011/07/06 10:22:56 eldy Exp $
+ *		\version    $Id: style.css.php,v 1.84 2011/07/06 11:40:22 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -655,6 +655,7 @@ td.photo {
 .toolbar {
     background-image: url(<?php echo DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tmenu2.jpg' ?>) !important;
     background-repeat: repeat-x !important;
+    border: 1px solid #BBB !important;
 }
 
 .toolbarbutton {
@@ -783,13 +784,13 @@ td.photo {
         padding-bottom: 0.35ex; /* to 'vertically center' text inside text-span */
     }
 
-.ui-in-layout-center {
+.ecm-in-layout-center {
     border-left: 0px !important;
     border-right: 0px !important;
     border-top: 0px !important;
 }
 
-.ui-in-layout-south {
+.ecm-in-layout-south {
     border-left: 0px !important;
     border-right: 0px !important;
     border-bottom: 0px !important;

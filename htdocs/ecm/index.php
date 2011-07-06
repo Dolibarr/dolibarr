@@ -21,7 +21,7 @@
  *	\file       htdocs/ecm/index.php
  *	\ingroup    ecm
  *	\brief      Main page for ECM section area
- *	\version    $Id$
+ *	\version    $Id: index.php,v 1.99 2011/07/06 11:40:21 eldy Exp $
  *	\author		Laurent Destailleur
  */
 
@@ -298,27 +298,19 @@ if (GETPOST("action") == 'refreshmanual')
 //print "xx".$_SESSION["dol_screenheight"];
 $maxheightwin=(isset($_SESSION["dol_screenheight"]) && $_SESSION["dol_screenheight"] > 500)?($_SESSION["dol_screenheight"]-166):660;
 
-$morehead="<style type=\"text/css\">
-html, body {
-        width:      100%;
-        height:     100%;
-        padding:    0;
-        margin:     0;
-        overflow:   auto; /* when page gets too small */
-    }
+$morecss="
+<!-- dol_screenheight=".$_SESSION["dol_screenheight"]." -->
+<style type=\"text/css\">
     #containerlayout {
-        background: #999;
         height:     ".$maxheightwin."px;
         margin:     0 auto;
         width:      100%;
         min-width:  700px;
         _width:     700px; /* min-width for IE6 */
     }
-    .pane {
-        display:    none; /* will appear when layout inits */
-    }
-</style>
-<SCRIPT type=\"text/javascript\">
+</style>";
+$morejs="
+<script type=\"text/javascript\">
     jQuery(document).ready(function () {
         jQuery('#containerlayout').layout({
         	name: \"ecmlayout\"
@@ -346,9 +338,10 @@ html, body {
         ,   south__closable:    false
             });
     });
-</SCRIPT>";
+</script>";
 
-llxHeader($morehead,$langs->trans("ECM"),'','','','','','',0,0);
+llxHeader($morecss.$morejs,$langs->trans("ECM"),'','','','','','',0,0);
+
 
 // Ajout rubriques automatiques
 $rowspan=0;
@@ -382,7 +375,7 @@ if (GETPOST('action') == 'delete')
 if ($mesg) { print $mesg."<br>"; }
 
 // Toolbar
-$head = ecm_prepare_head_fm($fac);
+//$head = ecm_prepare_head_fm($fac);
 //dol_fiche_head($head, 'file_manager', '', 1);
 
 
@@ -393,7 +386,7 @@ if ($conf->use_javascript_ajax)
 {
 ?>
 <div id="containerlayout"> <!-- begin div id="containerlayout" -->
-    <div id="ecm-layout-north" class="pane toolbar">
+    <div id="ecm-layout-north" class="toolbar">
 <?php
 }
 else
@@ -433,7 +426,7 @@ if ($conf->use_javascript_ajax)
 ?>
    </div>
 
-    <div id="ecm-layout-west" class="pane">
+    <div id="ecm-layout-west" class="hidden">
 <?php
 }
 else
@@ -795,7 +788,7 @@ if ($conf->use_javascript_ajax)
 ?>
     </div>
 
-    <div id="ecm-layout-center" class="pane layout-with-no-border">
+    <div id="ecm-layout-center" class="hidden">
 
         <div class="pane-in ecm-in-layout-center">
 <?php
@@ -878,10 +871,6 @@ if ($conf->use_javascript_ajax)
         </div>
     </div>
 
-<!--    <div id="ecm-layout-east" class="pane"></div> -->
-
-<!--    <div id="ecm-layout-south" class="pane"></div> -->
-
 </div> <!-- end div id="containerlayout" -->
 
 
@@ -898,5 +887,5 @@ else
 // End of page
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/06 11:40:21 $ - $Revision: 1.99 $');
 ?>
