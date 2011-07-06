@@ -20,7 +20,7 @@
 /**
  *  \file		htdocs/lib/files.lib.php
  *  \brief		Library for file managing functions
- *  \version	$Id: files.lib.php,v 1.65 2011/07/06 09:25:06 eldy Exp $
+ *  \version	$Id: files.lib.php,v 1.66 2011/07/06 16:56:01 eldy Exp $
  */
 
 /**
@@ -260,7 +260,12 @@ function dol_mimetype($file,$default='application/octet-stream',$mode=0)
 	// Audio
 	if (preg_match('/\.(mp3|ogg|au|wav|wma|mid)$/i',$tmpfile)) { $mime='audio'; $imgmime='audio.png'; }
 	// Video
-	if (preg_match('/\.(avi|divx|xvid|wmv|mpg|mpeg)$/i',$tmpfile))        { $mime='video'; $imgmime='video.png'; }
+    if (preg_match('/\.ogv$/i',$tmpfile))                      { $mime='video/ogg'; $imgmime='video.png'; }
+    if (preg_match('/\.webm$/i',$tmpfile))                     { $mime='video/webm'; $imgmime='video.png'; }
+    if (preg_match('/\.avi$/i',$tmpfile))                      { $mime='video/x-msvideo'; $imgmime='video.png'; }
+    if (preg_match('/\.divx$/i',$tmpfile))                     { $mime='video/divx'; $imgmime='video.png'; }
+    if (preg_match('/\.xvid$/i',$tmpfile))                     { $mime='video/xvid'; $imgmime='video.png'; }
+    if (preg_match('/\.(wmv|mpg|mpeg)$/i',$tmpfile))           { $mime='video'; $imgmime='video.png'; }
 	// Archive
 	if (preg_match('/\.(zip|rar|gz|tgz|z|cab|bz2|7z|tar|lzh)$/i',$tmpfile))   { $mime='archive'; $imgmime='archive.png'; }    // application/xxx where zzz is zip, ...
 	// Exe
