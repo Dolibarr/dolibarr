@@ -23,7 +23,7 @@
 /**
  *		\file       htdocs/theme/bureau2crea/style.css.php
  *		\brief      Fichier de style CSS du theme bureau2crea
- *		\version    $Id: style.css.php,v 1.37 2011/07/06 09:42:55 eldy Exp $
+ *		\version    $Id: style.css.php,v 1.38 2011/07/06 11:40:21 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -788,6 +788,7 @@ td.photo {
 .toolbar {
     background-image: url(<?php echo DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tmenu2.png' ?>) !important;
     background-repeat: repeat-x !important;
+    border: 1px solid #BBB !important;
 }
 
 .toolbarbutton {
@@ -803,6 +804,15 @@ td.photo {
 /* ============================================================================== */
 /* Panes for ECM or Filemanager                                                   */
 /* ============================================================================== */
+
+#containerlayout .layout-with-no-border {
+    border: 0 !important;
+    border-width: 0 !important;
+}
+
+#containerlayout .layout-padding {
+    padding: 2px !important;
+}
 
 /*
  *  PANES and CONTENT-DIVs
