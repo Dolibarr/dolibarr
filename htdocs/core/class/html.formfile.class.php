@@ -22,7 +22,7 @@
  *	\file       htdocs/core/class/html.formfile.class.php
  *  \ingroup    core
  *	\brief      File of class to offer components to list and upload files
- *	\version	$Id: html.formfile.class.php,v 1.42 2011/07/06 09:42:55 eldy Exp $
+ *	\version	$Id: html.formfile.class.php,v 1.43 2011/07/06 09:57:12 simnandez Exp $
  */
 
 
@@ -62,7 +62,7 @@ class FormFile
 	 *      @param      size            Length of input file area
 	 * 		@return		int				<0 ij KO, >0 if OK
 	 */
-	function form_attach_new_file($url, $title='', $addcancel=0, $sectionid=0, $perm=1, $size=60)
+	function form_attach_new_file($url, $title='', $addcancel=0, $sectionid=0, $perm=1, $size=50)
 	{
 		global $conf,$langs;
 
