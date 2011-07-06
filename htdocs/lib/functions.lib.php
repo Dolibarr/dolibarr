@@ -29,7 +29,7 @@
  *	\file			htdocs/lib/functions.lib.php
  *	\brief			A set of functions for Dolibarr
  *					This file contains all frequently used functions.
- *	\version		$Id: functions.lib.php,v 1.538 2011/07/04 10:33:56 eldy Exp $
+ *	\version		$Id: functions.lib.php,v 1.539 2011/07/06 09:25:05 eldy Exp $
  */
 
 // For compatibility during upgrade
@@ -807,7 +807,7 @@ function dolibarr_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$chec
  *	@param		year			Year
  *	@param		gm				1=Input informations are GMT values, otherwise local to server TZ
  *	@param		check			0=No check on parameters (Can use day 32, etc...)
- *  @param		isdst			Dayling saving time		
+ *  @param		isdst			Dayling saving time
  *	@return		timestamp		Date as a timestamp, '' if error
  * 	@see 		dol_print_date, dol_stringtotime
  */
@@ -2538,16 +2538,16 @@ function dol_print_error_email()
 
 /**
  *	Show title line of an array
- *	@param	    name        libelle champ
- *	@param	    file        url pour clic sur tri
- *	@param	    field       champ de tri
- *	@param	    begin       ("" par defaut)
- *	@param	    options     ("" par defaut)
- *	@param      td          options de l'attribut td ("" par defaut)
- *	@param      sortfield   field currently used to sort
- *	@param      sortorder   ordre du tri
+ *	@param	    name        Label of field
+ *	@param	    file        Url used when we click on sort picto
+ *	@param	    field       Field to use for new sorting
+ *	@param	    begin       ("" by defaut)
+ *	@param	    options     ("" by defaut)
+ *	@param      td          Options of attribute td ("" by defaut)
+ *	@param      sortfield   Current field used to sort
+ *	@param      sortorder   Current sort order
  */
-function print_liste_field_titre($name, $file, $field, $begin="", $options="", $td="", $sortfield="", $sortorder="")
+function print_liste_field_titre($name, $file="", $field="", $begin="", $options="", $td="", $sortfield="", $sortorder="")
 {
     global $conf;
     //print "$name, $file, $field, $begin, $options, $td, $sortfield, $sortorder<br>\n";

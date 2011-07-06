@@ -21,7 +21,7 @@
 /**
  *		\file       htdocs/theme/eldy/style.css.php
  *		\brief      Fichier de style CSS du theme Eldy
- *		\version    $Id: style.css.php,v 1.80 2011/07/01 23:08:25 eldy Exp $
+ *		\version    $Id: style.css.php,v 1.81 2011/07/06 09:25:06 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -1114,7 +1114,7 @@ padding-right: 2px;
 }
 
 tr.liste_titre {
-height: 16px;
+height: 18px;
 background: #7699A9;
 background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre2.png' ?>);
 background-repeat: repeat-x;
@@ -1883,3 +1883,31 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 }
 span.cke_skin_kama { padding: 0 !important; }
 .cke_wrapper { padding: 4px !important; }
+
+
+/* ============================================================================== */
+/*  CKEditor                                                                      */
+/* ============================================================================== */
+
+.fileupload-content
+{
+    padding: 0 !important;
+}
+.ui-corner-br
+{
+    border-bottom-right-radius: 0 !important;
+}
+.ui-corner-bl
+{
+    border-bottom-left-radius: 0 !important;
+}
+.files td {
+    height: 18px !important;
+    padding: 0;
+}
+.files {
+    margin: 0px;
+}
+.template-upload {
+    height: 72px !important;
+}

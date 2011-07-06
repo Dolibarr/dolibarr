@@ -20,7 +20,7 @@
 /**
  *  \file		htdocs/lib/files.lib.php
  *  \brief		Library for file managing functions
- *  \version	$Id: files.lib.php,v 1.64 2011/07/05 16:10:57 hregis Exp $
+ *  \version	$Id: files.lib.php,v 1.65 2011/07/06 09:25:06 eldy Exp $
  */
 
 /**
@@ -192,6 +192,7 @@ function dol_compare_file($a, $b)
  * 	@param		mode    	0=Return full mime, 1=otherwise short mime string, 2=image for mime type, 3=source language
  *	@return     string     	Return a mime type family
  *                          (text/xxx, application/xxx, image/xxx, audio, video, archive)
+ *  @see        image_format_supported (images.lib.php)
  */
 function dol_mimetype($file,$default='application/octet-stream',$mode=0)
 {
@@ -459,7 +460,7 @@ function dol_move($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
  */
 function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disablevirusscan=0, $uploaderrorcode=0, $notrigger=0)
 {
-	global $conf, $user, $langs;
+	global $conf, $user, $langs, $db;
 	global $object;
 
 	$file_name = $dest_file;
@@ -492,7 +493,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 	}
 
 	// If we need to make a virus scan
-	if (empty($disablevirusscan) && file_exists($src_file) && $conf->global->MAIN_ANTIVIRUS_COMMAND)
+	if (empty($disablevirusscan) && file_exists($src_file) && ! empty($conf->global->MAIN_ANTIVIRUS_COMMAND))
 	{
 		require_once(DOL_DOCUMENT_ROOT.'/lib/security.lib.php');
 		require_once(DOL_DOCUMENT_ROOT.'/lib/antivir.class.php');
@@ -554,9 +555,10 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 	{
 		if (! empty($conf->global->MAIN_UMASK)) @chmod($file_name_osencoded, octdec($conf->global->MAIN_UMASK));
 		dol_syslog("Functions.lib::dol_move_uploaded_file Success to move ".$src_file." to ".$file_name." - Umask=".$conf->global->MAIN_UMASK, LOG_DEBUG);
-		
+
 		if (! $notrigger)
 		{
+		    if (! is_object($object)) $object=(object) 'dummy';
 			$object->src_file=$dest_file;
 
 			// Appel des triggers
@@ -566,7 +568,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 			if ($result < 0) { $error++; $errors=$interface->errors; }
 			// Fin appel triggers
 		}
-		
+
 		return 1;	// Success
 	}
 	else
@@ -590,7 +592,7 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$notrigger=0)
 {
 	global $conf, $user, $langs;
 	global $object;
-	
+
     //print "x".$file." ".$disableglob;
     $ok=true;
     $file_osencoded=dol_osencode($file);    // New filename encoded in OS filesystem encoding charset
@@ -606,7 +608,7 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$notrigger=0)
             	if (! $notrigger)
             	{
             		$object->src_file=$file;
-            		
+
             		// Appel des triggers
             		include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
             		$interface=new Interfaces($db);

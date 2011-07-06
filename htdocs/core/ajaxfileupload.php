@@ -20,7 +20,7 @@
 /**
  *       \file       htdocs/core/ajaxfileupload.php
  *       \brief      File to return Ajax response on file upload
- *       \version    $Id: ajaxfileupload.php,v 1.8 2011/07/06 06:21:51 hregis Exp $
+ *       \version    $Id: ajaxfileupload.php,v 1.9 2011/07/06 09:25:06 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
@@ -209,7 +209,7 @@ class UploadHandler
                         FILE_APPEND
                     );
                 } else {
-                    move_uploaded_file($uploaded_file, $file_path);
+                    dol_move_uploaded_file($uploaded_file, $file_path, 1);
                 }
             } else {
                 // Non-multipart uploads (PUT method support)

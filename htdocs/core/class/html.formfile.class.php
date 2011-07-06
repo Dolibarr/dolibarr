@@ -22,7 +22,7 @@
  *	\file       htdocs/core/class/html.formfile.class.php
  *  \ingroup    core
  *	\brief      File of class to offer components to list and upload files
- *	\version	$Id: html.formfile.class.php,v 1.40 2011/07/06 06:21:52 hregis Exp $
+ *	\version	$Id: html.formfile.class.php,v 1.41 2011/07/06 09:25:06 eldy Exp $
  */
 
 
@@ -548,9 +548,9 @@ class FormFile
 
 	/**
 	 *      Show list of documents in a directory
-     *      @param      filearray           Array of files loaded by dol_dir_list function before calling this function
+     *      @param      filearray           Array of files loaded by dol_dir_list('files') function before calling this
 	 * 		@param		object				Object on which document is linked to
-	 * 		@param		modulepart			Value for modulepart used by download wrapper
+	 * 		@param		modulepart			Value for modulepart used by download or viewimage wrapper
 	 * 		@param		param				Parameters on sort links
 	 * 		@param		forcedownload		Force to open dialog box "Save As" when clicking on file
 	 * 		@param		relativepath		Relative path of docs (autodefined if not provided)
@@ -566,7 +566,7 @@ class FormFile
 		global $bc;
 		global $sortfield, $sortorder;
 
-		// Affiche liste des documents existant
+		// Show list of existing files
 		if (empty($useinecm)) print_titre($langs->trans("AttachedFiles"));
 		//else { $bc[true]=''; $bc[false]=''; };
 		$url=$_SERVER["PHP_SELF"];
@@ -575,14 +575,18 @@ class FormFile
 		print_liste_field_titre($langs->trans("Documents2"),$_SERVER["PHP_SELF"],"name","",$param,'align="left"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Size"),$_SERVER["PHP_SELF"],"size","",$param,'align="right"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"date","",$param,'align="center"',$sortfield,$sortorder);
+        if (empty($useinecm)) print_liste_field_titre('',$_SERVER["PHP_SELF"],"","",$param,'align="center"');
 		print_liste_field_titre('','','');
 		print '</tr>';
 
+		$nboffiles=sizeof($filearray);
+
+		if ($nboffiles > 0) include_once(DOL_DOCUMENT_ROOT.'/lib/images.lib.php');
+
 		$var=true;
-		foreach($filearray as $key => $file)
+		foreach($filearray as $key => $file)      // filearray must be only files here
 		{
-			if (!is_dir($dir.$file['name'])
-			&& $file['name'] != '.'
+			if ($file['name'] != '.'
 			&& $file['name'] != '..'
 			&& $file['name'] != 'CVS'
 			&& ! preg_match('/\.meta$/i',$file['name']))
@@ -603,14 +607,25 @@ class FormFile
 				print "</td>\n";
 				print '<td align="right">'.dol_print_size($file['size'],1,1).'</td>';
 				print '<td align="center">'.dol_print_date($file['date'],"dayhour").'</td>';
+                // Preview
+                if (empty($useinecm))
+                {
+                    print '<td align="center">';
+                    $pdirthumb='thumbs/';
+                    if (image_format_supported($file['name']) > 0) print '<img border="0" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($pdirthumb.$file['name']).'" title="">';
+                    else print '&nbsp;';
+                    print '</td>';
+                }
+				// Delete or view link
 				print '<td align="right">';
-				if (! empty($useinecm))  print '<a href="'.DOL_URL_ROOT.'/ecm/docfile.php?section='.$_REQUEST["section"].'&urlfile='.urlencode($file['name']).'">'.img_view().'</a> &nbsp; ';
+				if (! empty($useinecm)) print '<a href="'.DOL_URL_ROOT.'/ecm/docfile.php?section='.$_REQUEST["section"].'&urlfile='.urlencode($file['name']).'">'.img_view().'</a> &nbsp; ';
 				if ($permtodelete) print '<a href="'.$url.'?id='.$object->id.'&section='.$_REQUEST["section"].'&action=delete&urlfile='.urlencode($file['name']).'">'.img_delete().'</a>';
 				else print '&nbsp;';
-				print "</td></tr>\n";
+				print "</td>";
+				print "</tr>\n";
 			}
 		}
-		if (sizeof($filearray) == 0)
+		if ($nboffiles == 0)
 		{
 			print '<tr '.$bc[$var].'><td colspan="4">';
 			if (empty($textifempty)) print $langs->trans("NoFileFound");
@@ -669,7 +684,7 @@ class FormFile
         $var=true;
         foreach($filearray as $key => $file)
         {
-            if (!is_dir($dir.$file['name'])
+            if (!is_dir($file['name'])
             && $file['name'] != '.'
             && $file['name'] != '..'
             && $file['name'] != 'CVS'
@@ -828,15 +843,16 @@ class FormFile
 		print '<div class="fileupload-content">';
 
 		print '<table width="100%" class="files">';
-		print '<tr class="liste_titre">';
+		/*print '<tr>';
 		print '<td>'.$langs->trans("Documents2").'</td>';
 		print '<td>'.$langs->trans("Preview").'</td>';
 		print '<td align="right">'.$langs->trans("Size").'</td>';
 		print '<td colspan="3"></td>';
-		print '</tr>';
+		print '</tr>';*/
 		print '</table>';
 
-		print '<div class="fileupload-progressbar"></div>';
+		// We remove this because there is already individual bars.
+		//print '<div class="fileupload-progressbar"></div>';
 
 		print '</div>';
 		print '</div>';
