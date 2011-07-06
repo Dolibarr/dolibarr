@@ -20,7 +20,7 @@
 /**
  *       \file       htdocs/lib/doleditor.class.php
  *       \brief      Class to manage a WYSIWYG editor
- *       \version    $Id$
+ *       \version    $Id: doleditor.class.php,v 1.44 2011/07/06 12:45:36 eldy Exp $
  */
 
 /**
@@ -133,6 +133,7 @@ class DolEditor
 
     /**
      *		Output edit area inside the HTML stream
+     *      @param      noprint     1=Return HTML string instead of printing it to output
      */
     function Create($noprint=0)
     {
@@ -164,10 +165,8 @@ class DolEditor
 
             	$out.= '<script type="text/javascript">
             			jQuery(document).ready(function () {
-            				if (CKEDITOR.instances[\''.$this->htmlname.'\']) {
-            					CKEDITOR.remove(CKEDITOR.instances[\''.$this->htmlname.'\']);
-            				}
-            				CKEDITOR.replace(\''.$this->htmlname.'\',
+                            /* if (CKEDITOR.loadFullCore) CKEDITOR.loadFullCore(); */
+                            CKEDITOR.replace(\''.$this->htmlname.'\',
             					{
             						customConfig : \''.dol_buildpath('/theme/'.$conf->theme.'/ckeditor/config.js',1).'\',
             						toolbar: \''.$this->toolbarname.'\',
@@ -224,7 +223,7 @@ class DolEditor
         {
             $out.= 'Error, unknown value for tool '.$this->tool.' in DolEditor Create function.';
         }
-        
+
         if ($noprint) return $out;
         else print $out;
     }
