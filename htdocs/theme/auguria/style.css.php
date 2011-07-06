@@ -21,7 +21,7 @@
 /**
  *		\file       htdocs/theme/auguria/style.css.php
  *		\brief      Fichier de style CSS du theme auguria
- *		\version    $Id$
+ *		\version    $Id: style.css.php,v 1.86 2011/07/06 09:42:55 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -1888,6 +1888,15 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 }
 span.cke_skin_kama { padding: 0 ! important; }
 
+
+
+/* ============================================================================== */
+/*  File upload                                                                   */
+/* ============================================================================== */
+
+.template-upload {
+    height: 72px !important;
+}
 
 
 /* ============================================================================== */
