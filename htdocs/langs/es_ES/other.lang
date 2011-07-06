@@ -158,6 +158,10 @@ ClickHere=Haga clic aquí
 UseAdvancedPerms=Usar los derechos avanzados en los permisos de los módulos
 FileFormat=Formato de archivo
 SelectAColor=Elija un color
+AddFiles=Añadir archivos
+StartUpload=Transferir
+CancelUpload=Cancelar la transferencia
+FileIsTooBig=El archivo es demasiado grande
 ##### Bookmark #####
 Bookmark=Marcador
 Bookmarks=Marcadores

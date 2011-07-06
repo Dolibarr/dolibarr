@@ -158,6 +158,10 @@ ClickHere=Cliqueu aquí
 UseAdvancedPerms=Usar els drets avançats en els permisos dels mòduls
 FileFormat=Format d'arxiu
 SelectAColor=Trie un color
+AddFiles=Afegir arxius
+StartUpload=Transferir
+CancelUpload=Cancel·lar transferència
+FileIsTooBig=L'arxiu és massa gran
 ##### Bookmark #####
 Bookmark=Marcador
 Bookmarks=Marcadors
