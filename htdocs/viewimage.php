@@ -23,7 +23,7 @@
  *		\file       htdocs/viewimage.php
  *		\brief      Wrapper to show images into Dolibarr screens
  *      \remarks    Call to wrapper is '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=diroffile&file=relativepathofofile&cache=0">'
- *		\version    $Id: viewimage.php,v 1.93 2011/06/28 14:20:22 hregis Exp $
+ *		\version    $Id: viewimage.php,v 1.94 2011/07/06 16:56:01 eldy Exp $
  */
 
 // Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
@@ -88,7 +88,8 @@ else $type=dol_mimetype($original_file);
 // Suppression de la chaine de caractere ../ dans $original_file
 $original_file = str_replace("../","/", $original_file);
 
-// Security check
+// Security checks
+if (empty($modulepart)) accessforbidden('Bad value for parameter modulepart');
 $accessallowed=0;
 if ($modulepart)
 {
@@ -376,8 +377,7 @@ if (! $accessallowed)
 }
 
 // Security:
-// On interdit les remontees de repertoire ainsi que les pipe dans
-// les noms de fichiers.
+// On interdit les remontees de repertoire ainsi que les pipe dans les noms de fichiers.
 if (preg_match('/\.\./',$original_file) || preg_match('/[<>|]/',$original_file))
 {
     dol_syslog("Refused to deliver file ".$original_file, LOG_WARNING);
@@ -420,19 +420,23 @@ else					// Open and return file
     $original_file_osencoded=dol_osencode($original_file);
 
     // This test if file exists should be useless. We keep it to find bug more easily
-    if (! file_exists($original_file_osencoded))
+	if (! dol_is_file($original_file_osencoded))
     {
-        dol_print_error(0,'Error: File '.$_GET["file"].' does not exists');
+        $error='Error: File '.$_GET["file"].' does not exists or filesystems permissions are not allowed';
+        dol_print_error(0,$error);
+        print $error;
         exit;
     }
 
     // Les drois sont ok et fichier trouve
     if ($type)
     {
+        header('Content-Disposition: inline; filename="'.basename($original_file).'"');
         header('Content-type: '.$type);
     }
     else
     {
+        header('Content-Disposition: inline; filename="'.basename($original_file).'"');
         header('Content-type: image/png');
     }
 
