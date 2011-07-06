@@ -22,7 +22,7 @@
  *	\file       htdocs/core/class/html.formfile.class.php
  *  \ingroup    core
  *	\brief      File of class to offer components to list and upload files
- *	\version	$Id: html.formfile.class.php,v 1.43 2011/07/06 09:57:12 simnandez Exp $
+ *	\version	$Id: html.formfile.class.php,v 1.44 2011/07/06 13:15:24 eldy Exp $
  */
 
 
@@ -153,10 +153,12 @@ class FormFile
 	function show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='',$codelang='',$hooks='')
 	{
 		print $this->showdocuments($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed,$modelselected,$allowgenifempty,$forcenomultilang,$iconPDF,$maxfilenamelength,$noform,$param,$title,$buttonlabel,$codelang,$hooks);
+		return $this->numoffiles;
 	}
 
 	/**
-	 *      Show the box with list of available documents for object
+	 *      Return a string to show the box with list of available documents for object.
+	 *      This also set the property $this->numoffiles.
 	 *      @param      modulepart          propal, facture, facture_fourn, ...
 	 *      @param      filename            Sub dir to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if filedir already complete)
 	 *      @param      filedir             Dir to scan
@@ -174,7 +176,7 @@ class FormFile
 	 * 		@param		buttonlabel			Label on submit button
 	 * 		@param		codelang			Default language code to use on lang combo box if multilang is enabled
 	 * 		@param		hooks				Object hook of external modules
-	 * 		@return		int					<0 if KO, number of shown files if OK
+	 * 		@return		string              Output string.
 	 */
 	function showdocuments($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='',$codelang='',$hooks='')
 	{
