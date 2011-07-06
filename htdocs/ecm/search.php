@@ -21,7 +21,7 @@
  *	\file       htdocs/ecm/index.php
  *	\ingroup    ecm
  *	\brief      Main page for ECM section area
- *	\version    $Id$
+ *	\version    $Id: search.php,v 1.18 2011/07/06 20:56:50 eldy Exp $
  *	\author		Laurent Destailleur
  */
 
@@ -191,7 +191,7 @@ print '</td><td valign="top">';
 // Right area
 $relativepath=$ecmdir->getRelativePath();
 $upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
-$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
+$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 
 $formfile=new FormFile($db);
 $param='&amp;section='.$section;
@@ -214,5 +214,5 @@ print '<br>';
 // End of page
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/06 20:56:50 $ - $Revision: 1.18 $');
 ?>

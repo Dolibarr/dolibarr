@@ -23,7 +23,7 @@
  *  \file       htdocs/adherents/document.php
  *  \brief      Tab for documents linked to third party
  *  \ingroup    societe
- *  \version    $Id: document.php,v 1.7 2011/07/05 16:10:56 hregis Exp $
+ *  \version    $Id: document.php,v 1.8 2011/07/06 20:56:50 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -134,7 +134,7 @@ if ($id > 0)
 
 
 		// Construit liste des fichiers
-		$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
+		$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 		$totalsize=0;
 		foreach($filearray as $key => $file)
 		{
@@ -231,6 +231,6 @@ else
 $db->close();
 
 
-llxFooter('$Date: 2011/07/05 16:10:56 $ - $Revision: 1.7 $');
+llxFooter('$Date: 2011/07/06 20:56:50 $ - $Revision: 1.8 $');
 
 ?>

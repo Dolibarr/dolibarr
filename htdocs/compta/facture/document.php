@@ -23,7 +23,7 @@
  *	\file       htdocs/compta/facture/document.php
  *	\ingroup    facture
  *	\brief      Page for attached files on invoices
- *	\version    $Id: document.php,v 1.43 2011/07/05 16:10:56 hregis Exp $
+ *	\version    $Id: document.php,v 1.44 2011/07/06 20:56:49 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -76,7 +76,7 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	if ($object->fetch($id))
 	{
 		$object->fetch_thirdparty();
-		
+
 		$upload_dir = $conf->facture->dir_output . "/" . dol_sanitizeFileName($object->ref);
 
 		if (create_exdir($upload_dir) >= 0)
@@ -112,7 +112,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
 	if ($object->fetch($id))
 	{
 		$object->fetch_thirdparty();
-		
+
 		$upload_dir = $conf->facture->dir_output . "/" . dol_sanitizeFileName($object->ref);
 		$file = $upload_dir . '/' . $_GET['urlfile'];	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 		dol_delete_file($file);
@@ -135,7 +135,7 @@ if ($id > 0 || ! empty($ref))
 	if ($object->fetch($id,$ref) > 0)
 	{
 		$object->fetch_thirdparty();
-		
+
 		$upload_dir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($object->ref);
 
 		$head = facture_prepare_head($object);
@@ -143,7 +143,7 @@ if ($id > 0 || ! empty($ref))
 
 
 		// Construit liste des fichiers
-		$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
+		$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 		$totalsize=0;
 		foreach($filearray as $key => $file)
 		{
@@ -180,7 +180,7 @@ if ($id > 0 || ! empty($ref))
 		print "</div>\n";
 
 		dol_htmloutput_mesg($mesg,$mesgs);
-        
+
     	/*
 		 * Confirmation suppression fichier
 		 */
@@ -213,5 +213,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/05 16:10:56 $ - $Revision: 1.43 $');
+llxFooter('$Date: 2011/07/06 20:56:49 $ - $Revision: 1.44 $');
 ?>
