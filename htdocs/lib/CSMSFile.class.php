@@ -25,7 +25,7 @@
 /**
  *      \file       htdocs/lib/CSMSFile.class.php
  *      \brief      File of class to send sms
- *		\version    $Id: CSMSFile.class.php,v 1.4 2011/07/04 09:36:29 eldy Exp $
+ *		\version    $Id: CSMSFile.class.php,v 1.5 2011/07/07 22:17:21 eldy Exp $
  *      \author	    Laurent Destailleur.
  */
 
@@ -140,7 +140,7 @@ class CSMSFile
 				if ($res <= 0)
 				{
 					$this->error=$ovhsms->error;
-					dol_syslog("CSMSFile::sendfile: sms send error=".$this->error, LOG_ERROR);
+					dol_syslog("CSMSFile::sendfile: sms send error=".$this->error, LOG_ERR);
 				}
 				else
 				{
