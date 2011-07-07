@@ -23,7 +23,7 @@
  *	\file       htdocs/fichinter/fiche.php
  *	\brief      Fichier fiche intervention
  *	\ingroup    ficheinter
- *	\version    $Id: fiche.php,v 1.166 2011/07/06 09:39:04 simnandez Exp $
+ *	\version    $Id: fiche.php,v 1.167 2011/07/07 09:18:27 simnandez Exp $
  */
 
 require("../main.inc.php");
@@ -1163,13 +1163,19 @@ elseif ($fichinterid)
 
     $var=true;
 
-    print "<br>\n";
+    //print "<br>\n";
     $somethingshown=$formfile->show_documents('ficheinter',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$societe->default_lang);
 
 	/*
 	* Linked object block
 	*/
 	$somethingshown=$object->showLinkedObjectBlock();
+	
+	print '</td><td valign="top" width="50%">';
+	// List of actions on element
+	include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php');
+	$formactions=new FormActions($db);
+	$somethingshown=$formactions->showactions($object,'fichinter',$socid);
     print "</td><td>";
     print "&nbsp;</td>";
     print "</tr></table>\n";
@@ -1178,5 +1184,5 @@ elseif ($fichinterid)
 
 $db->close();
 
-llxFooter('$Date: 2011/07/06 09:39:04 $ - $Revision: 1.166 $');
+llxFooter('$Date: 2011/07/07 09:18:27 $ - $Revision: 1.167 $');
 ?>

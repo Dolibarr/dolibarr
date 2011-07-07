@@ -1,5 +1,7 @@
 <?php
 /* Copyright (c) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +22,7 @@
  *      \file       htdocs/core/class/html.formactions.class.php
  *      \ingroup    core
  *      \brief      Fichier de la classe des fonctions predefinie de composants html actions
- *		\version	$Id$
+ *		\version	$Id: html.formactions.class.php,v 1.19 2011/07/07 09:18:27 simnandez Exp $
  */
 
 
@@ -95,7 +97,7 @@ class FormActions
     /**
      *    	Show list of actions for element
      *    	@param      object			Object
-     *    	@param      typeelement		'invoice','propal','order','invoice_supplier','order_supplier'
+     *    	@param      typeelement		'invoice','propal','order','invoice_supplier','order_supplier','fichinter'
      *		@param		socid			socid of user
      *		@return		int				<0 if KO, >=0 if OK
      */
@@ -119,6 +121,7 @@ class FormActions
         	if ($typeelement == 'order_supplier' || $typeelement == 'supplier_order')   $title=$langs->trans('ActionsOnOrder');
         	if ($typeelement == 'project') $title=$langs->trans('ActionsOnProject');
         	if ($typeelement == 'shipping') $title=$langs->trans('ActionsOnShipping');
+        	if ($typeelement == 'fichinter') $title=$langs->trans('ActionsOnFicheInter');
         	
         	print_titre($title);
         	
