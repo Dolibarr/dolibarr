@@ -22,7 +22,7 @@
  *      \file       htdocs/core/class/html.formactions.class.php
  *      \ingroup    core
  *      \brief      Fichier de la classe des fonctions predefinie de composants html actions
- *		\version	$Id: html.formactions.class.php,v 1.19 2011/07/07 09:18:27 simnandez Exp $
+ *		\version	$Id: html.formactions.class.php,v 1.20 2011/07/07 21:56:20 eldy Exp $
  */
 
 
@@ -105,26 +105,27 @@ class FormActions
     {
         global $langs,$conf,$user;
         global $bc;
-        
+
         require_once(DOL_DOCUMENT_ROOT."/comm/action/class/actioncomm.class.php");
-        
+
         $actioncomm = new ActionComm($this->db);
         $actioncomm->getActions($socid, $object->id, $typeelement);
-        
+
         $num = count($actioncomm->actions);
         if ($num)
         {
-        	if ($typeelement == 'invoice') $title=$langs->trans('ActionsOnBill');
-        	if ($typeelement == 'invoice_supplier' || $typeelement == 'supplier_invoice') $title=$langs->trans('ActionsOnBill');
-        	if ($typeelement == 'propal')  $title=$langs->trans('ActionsOnPropal');
-        	if ($typeelement == 'order')   $title=$langs->trans('ActionsOnOrder');
-        	if ($typeelement == 'order_supplier' || $typeelement == 'supplier_order')   $title=$langs->trans('ActionsOnOrder');
-        	if ($typeelement == 'project') $title=$langs->trans('ActionsOnProject');
-        	if ($typeelement == 'shipping') $title=$langs->trans('ActionsOnShipping');
-        	if ($typeelement == 'fichinter') $title=$langs->trans('ActionsOnFicheInter');
-        	
+        	if ($typeelement == 'invoice')   $title=$langs->trans('ActionsOnBill');
+        	elseif ($typeelement == 'invoice_supplier' || $typeelement == 'supplier_invoice') $title=$langs->trans('ActionsOnBill');
+        	elseif ($typeelement == 'propal')    $title=$langs->trans('ActionsOnPropal');
+        	elseif ($typeelement == 'order')     $title=$langs->trans('ActionsOnOrder');
+        	elseif ($typeelement == 'order_supplier' || $typeelement == 'supplier_order')   $title=$langs->trans('ActionsOnOrder');
+        	elseif ($typeelement == 'project')   $title=$langs->trans('ActionsOnProject');
+        	elseif ($typeelement == 'shipping')  $title=$langs->trans('ActionsOnShipping');
+            elseif ($typeelement == 'fichinter') $title=$langs->trans('ActionsOnFicheInter');
+        	else $title=$langs->trans("Actions");
+
         	print_titre($title);
-        	
+
         	$total = 0;	$var=true;
         	print '<table class="border" width="100%">';
         	print '<tr '.$bc[$var].'><td>'.$langs->trans('Ref').'</td><td>'.$langs->trans('Date').'</td><td>'.$langs->trans('Action').'</td><td>'.$langs->trans('By').'</td></tr>';
@@ -146,7 +147,7 @@ class FormActions
         	}
         	print '</table>';
         }
-        
+
         return $num;
     }
 
