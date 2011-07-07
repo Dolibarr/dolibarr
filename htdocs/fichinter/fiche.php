@@ -23,7 +23,7 @@
  *	\file       htdocs/fichinter/fiche.php
  *	\brief      Fichier fiche intervention
  *	\ingroup    ficheinter
- *	\version    $Id: fiche.php,v 1.168 2011/07/07 15:54:02 simnandez Exp $
+ *	\version    $Id: fiche.php,v 1.169 2011/07/07 21:32:20 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -467,10 +467,10 @@ if ($action == 'send' && ! $_POST['cancel'] && (empty($conf->global->MAIN_USE_AD
                 $sendto = $_POST['sendto'];
                 $sendtoid = 0;
             }
-            elseif ($_POST['receiver'])
+            elseif ($_POST['receiver'] != '-1')
             {
-                // Le destinataire a ete fourni via la liste deroulante
-                if ($_POST['receiver'] < 0) // Id du tiers
+                // Recipient was provided from combo list
+                if ($_POST['receiver'] == 'thirdparty') // Id of third party
                 {
                     $sendto = $object->client->email;
                     $sendtoid = 0;
@@ -482,7 +482,7 @@ if ($action == 'send' && ! $_POST['cancel'] && (empty($conf->global->MAIN_USE_AD
                 }
             }
 
-            if (strlen($sendto))
+            if (dol_strlen($sendto))
             {
                 $langs->load("commercial");
 
@@ -1170,7 +1170,7 @@ elseif ($fichinterid)
 	* Linked object block
 	*/
 	$somethingshown=$object->showLinkedObjectBlock();
-	
+
 	print '</td><td valign="top" width="50%">';
 	// List of actions on element
 	include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php');
@@ -1184,5 +1184,5 @@ elseif ($fichinterid)
 
 $db->close();
 
-llxFooter('$Date: 2011/07/07 15:54:02 $ - $Revision: 1.168 $');
+llxFooter('$Date: 2011/07/07 21:32:20 $ - $Revision: 1.169 $');
 ?>

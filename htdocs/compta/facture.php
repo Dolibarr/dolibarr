@@ -26,7 +26,7 @@
  *	\file       htdocs/compta/facture.php
  *	\ingroup    facture
  *	\brief      Page to create/see an invoice
- *	\version    $Id: facture.php,v 1.845 2011/07/02 17:02:00 eldy Exp $
+ *	\version    $Id: facture.php,v 1.846 2011/07/07 21:32:20 eldy Exp $
  */
 
 require('../main.inc.php');
@@ -1234,10 +1234,10 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
                 $sendto = $_POST['sendto'];
                 $sendtoid = 0;
             }
-            elseif ($_POST['receiver'])
+            elseif ($_POST['receiver'] != '-1')
             {
-                // Le destinataire a ete fourni via la liste deroulante
-                if ($_POST['receiver'] < 0)	// Id du tiers
+                // Recipient was provided from combo list
+                if ($_POST['receiver'] == 'thirdparty') // Id of third party
                 {
                     $sendto = $object->client->email;
                     $sendtoid = 0;
@@ -3236,5 +3236,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/02 17:02:00 $ - $Revision: 1.845 $');
+llxFooter('$Date: 2011/07/07 21:32:20 $ - $Revision: 1.846 $');
 ?>
