@@ -21,7 +21,7 @@
  *       \file       htdocs/core/class/html.formmail.class.php
  *       \ingroup    core
  *       \brief      Fichier de la classe permettant la generation du formulaire html d'envoi de mail unitaire
- *       \version    $Id$
+ *       \version    $Id: html.formsms.class.php,v 1.12 2011/07/07 21:38:19 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT ."/core/class/html.form.class.php");
 
@@ -229,14 +229,13 @@ function limitChars(textarea, limit, infodiv)
 				if (! empty($this->withtosocid) && $this->withtosocid > 0)
 				{
 					$liste=array();
-					$liste[0]='&nbsp;';
 					foreach ($soc->thirdparty_and_contact_phone_array() as $key=>$value)
 					{
 						$liste[$key]=$value;
 					}
 					print " ".$langs->trans("or")." ";
 					//var_dump($_REQUEST);exit;
-					print $form->selectarray("receiver", $liste, isset($_REQUEST["receiver"])?$_REQUEST["receiver"]:0);
+					print $form->selectarray("receiver", $liste, GETPOST("receiver"), 1);
 				}
 				print ' '.$langs->trans("SmsInfoNumero");
 			}
