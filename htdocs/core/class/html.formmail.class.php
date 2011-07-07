@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010 Juanjo Menent			    <jmenent@2byte.es>
+ * Copyright (C) 2010-2011 Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *       \file       htdocs/core/class/html.formmail.class.php
  *       \ingroup    core
  *       \brief      Fichier de la classe permettant la generation du formulaire html d'envoi de mail unitaire
- *       \version    $Id: html.formmail.class.php,v 1.27 2011/07/06 22:38:52 eldy Exp $
+ *       \version    $Id: html.formmail.class.php,v 1.28 2011/07/07 15:54:03 simnandez Exp $
  */
 require_once(DOL_DOCUMENT_ROOT ."/core/class/html.form.class.php");
 
@@ -542,7 +542,8 @@ class FormMail
             if ($this->param["models"]=='order_supplier_send')		{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendSupplierOrder"); }
             if ($this->param["models"]=='invoice_supplier_send')	{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendSupplierInvoice"); }
             if ($this->param["models"]=='shipping_send')			{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendShipping"); }
-
+			if ($this->param["models"]=='fichinter_send')			{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendFichInter"); }
+            
             if ($conf->paypal->enabled && $conf->global->PAYPAL_ADD_PAYMENT_URL)
             {
                 require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypal.lib.php");
