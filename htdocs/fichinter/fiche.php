@@ -23,7 +23,7 @@
  *	\file       htdocs/fichinter/fiche.php
  *	\brief      Fichier fiche intervention
  *	\ingroup    ficheinter
- *	\version    $Id: fiche.php,v 1.169 2011/07/07 21:32:20 eldy Exp $
+ *	\version    $Id: fiche.php,v 1.170 2011/07/07 22:02:48 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -1097,6 +1097,41 @@ elseif ($fichinterid)
     print '</div>';
 
 
+    if ($action != 'presend')
+    {
+        print '<table width="100%"><tr><td width="50%" valign="top">';
+        /*
+         * Built documents
+         */
+        $filename=dol_sanitizeFileName($object->ref);
+        $filedir=$conf->ficheinter->dir_output . "/".$object->ref;
+        $urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
+        $genallowed=$user->rights->ficheinter->creer;
+        $delallowed=$user->rights->ficheinter->supprimer;
+        $genallowed=1;
+        $delallowed=1;
+
+        $var=true;
+
+        //print "<br>\n";
+        $somethingshown=$formfile->show_documents('ficheinter',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$societe->default_lang);
+
+    	/*
+    	* Linked object block
+    	*/
+    	$somethingshown=$object->showLinkedObjectBlock();
+
+    	print '</td><td valign="top" width="50%">';
+    	// List of actions on element
+    	include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php');
+    	$formactions=new FormActions($db);
+    	$somethingshown=$formactions->showactions($object,'fichinter',$socid);
+        print "</td><td>";
+        print "&nbsp;</td>";
+        print "</tr></table>\n";
+    }
+
+
     /*
      * Action presend
      */
@@ -1147,42 +1182,9 @@ elseif ($fichinterid)
 
         print '<br>';
     }
-
-
-    print '<table width="100%"><tr><td width="50%" valign="top">';
-    /*
-     * Built documents
-     */
-    $filename=dol_sanitizeFileName($object->ref);
-    $filedir=$conf->ficheinter->dir_output . "/".$object->ref;
-    $urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
-    $genallowed=$user->rights->ficheinter->creer;
-    $delallowed=$user->rights->ficheinter->supprimer;
-    $genallowed=1;
-    $delallowed=1;
-
-    $var=true;
-
-    //print "<br>\n";
-    $somethingshown=$formfile->show_documents('ficheinter',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$societe->default_lang);
-
-	/*
-	* Linked object block
-	*/
-	$somethingshown=$object->showLinkedObjectBlock();
-
-	print '</td><td valign="top" width="50%">';
-	// List of actions on element
-	include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php');
-	$formactions=new FormActions($db);
-	$somethingshown=$formactions->showactions($object,'fichinter',$socid);
-    print "</td><td>";
-    print "&nbsp;</td>";
-    print "</tr></table>\n";
-
 }
 
 $db->close();
 
-llxFooter('$Date: 2011/07/07 21:32:20 $ - $Revision: 1.169 $');
+llxFooter('$Date: 2011/07/07 22:02:48 $ - $Revision: 1.170 $');
 ?>
