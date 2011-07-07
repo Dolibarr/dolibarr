@@ -29,7 +29,7 @@
  *	\file			htdocs/lib/functions.lib.php
  *	\brief			A set of functions for Dolibarr
  *					This file contains all frequently used functions.
- *	\version		$Id: functions.lib.php,v 1.542 2011/07/06 22:42:34 eldy Exp $
+ *	\version		$Id: functions.lib.php,v 1.543 2011/07/07 21:32:18 eldy Exp $
  */
 
 // For compatibility during upgrade
@@ -3893,15 +3893,18 @@ function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
         $mesgstring=preg_replace('/<div class="error">/','',$mesgstring);
         $mesgstring=preg_replace('/<\/div>/','',$mesgstring);
         // Remove div from texts array
-        $newmesgarray=array();
-        foreach($mesgarray as $val)
+        if (is_array($mesgarray))
         {
-            $tmpmesgstring=preg_replace('/<\/div><div class="error">/','<br>',$val);
-            $tmpmesgstring=preg_replace('/<div class="error">/','',$tmpmesgstring);
-            $tmpmesgstring=preg_replace('/<\/div>/','',$tmpmesgstring);
-            $newmesgarray[]=$tmpmesgstring;
+            $newmesgarray=array();
+            foreach($mesgarray as $val)
+            {
+                $tmpmesgstring=preg_replace('/<\/div><div class="error">/','<br>',$val);
+                $tmpmesgstring=preg_replace('/<div class="error">/','',$tmpmesgstring);
+                $tmpmesgstring=preg_replace('/<\/div>/','',$tmpmesgstring);
+                $newmesgarray[]=$tmpmesgstring;
+            }
+            $mesgarray=$newmesgarray;
         }
-        $mesgarray=$newmesgarray;
         print get_htmloutput_mesg($mesgstring,$mesgarray,'error',$keepembedded);
     }
     else print get_htmloutput_mesg($mesgstring,$mesgarray,'ok',$keepembedded);

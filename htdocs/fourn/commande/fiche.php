@@ -25,7 +25,7 @@
  *	\file		htdocs/fourn/commande/fiche.php
  *	\ingroup	supplier, order
  *	\brief		Card supplier order
- *	\version	$Id: fiche.php,v 1.230 2011/07/02 16:48:32 eldy Exp $
+ *	\version	$Id: fiche.php,v 1.231 2011/07/07 21:32:21 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -624,10 +624,10 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
 				$sendto = $_POST['sendto'];
 				$sendtoid = 0;
 			}
-			elseif ($_POST['receiver'])
-			{
-				// Le destinataire a ete fourni via la liste deroulante
-				if ($_POST['receiver'] < 0)	// Id du tiers
+            elseif ($_POST['receiver'] != '-1')
+            {
+                // Recipient was provided from combo list
+                if ($_POST['receiver'] == 'thirdparty') // Id of third party
 				{
 					$sendto = $object->client->email;
 					$sendtoid = 0;
@@ -1545,5 +1545,5 @@ if ($id > 0 || ! empty($ref))
 
 $db->close();
 
-llxFooter('$Date: 2011/07/02 16:48:32 $	- $Revision: 1.230 $');
+llxFooter('$Date: 2011/07/07 21:32:21 $	- $Revision: 1.231 $');
 ?>

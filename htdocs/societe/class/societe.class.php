@@ -27,7 +27,7 @@
  *	\file       htdocs/societe/class/societe.class.php
  *	\ingroup    societe
  *	\brief      File for third party class
- *	\version    $Id: societe.class.php,v 1.90 2011/07/06 05:08:52 hregis Exp $
+ *	\version    $Id: societe.class.php,v 1.91 2011/07/07 21:32:21 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 
@@ -384,7 +384,7 @@ class Societe extends CommonObject
         	$objectstatic->fetch($id);
         	$this->oldobject = $objectstatic;
         }
-        
+
         $now=dol_now();
 
         // Clean parameters
@@ -1534,14 +1534,14 @@ class Societe extends CommonObject
     {
         global $langs;
 
-        $contact_email = $this->contact_property_array('email');
+        $contact_emails = $this->contact_property_array('email');
         if ($this->email)
         {
             if (empty($this->name)) $this->name=$this->nom;
             // TODO: Tester si email non deja present dans tableau contact
-            $contact_email[-1]=$langs->trans("ThirdParty").': '.dol_trunc($this->name,16)." &lt;".$this->email."&gt;";
+            $contact_emails['thirdparty']=$langs->trans("ThirdParty").': '.dol_trunc($this->name,16)." &lt;".$this->email."&gt;";
         }
-        return $contact_email;
+        return $contact_emails;
     }
 
     /**
@@ -1557,7 +1557,7 @@ class Societe extends CommonObject
         {
             if (empty($this->name)) $this->name=$this->nom;
             // TODO: Tester si tel non deja present dans tableau contact
-            $contact_phone[-1]=$langs->trans("ThirdParty").': '.dol_trunc($this->name,16)." &lt;".$this->tel."&gt;";
+            $contact_phone['thirdparty']=$langs->trans("ThirdParty").': '.dol_trunc($this->name,16)." &lt;".$this->tel."&gt;";
         }
         return $contact_phone;
     }

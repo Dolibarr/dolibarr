@@ -25,7 +25,7 @@
  *	\file       htdocs/expedition/fiche.php
  *	\ingroup    expedition
  *	\brief      Fiche descriptive d'une expedition
- *	\version    $Id: fiche.php,v 1.208 2011/07/02 16:48:32 eldy Exp $
+ *	\version    $Id: fiche.php,v 1.209 2011/07/07 21:32:19 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -337,10 +337,10 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
                 $sendto = $_POST['sendto'];
                 $sendtoid = 0;
             }
-            elseif ($_POST['receiver'])
+            elseif ($_POST['receiver'] != '-1')
             {
-                // Le destinataire a ete fourni via la liste deroulante
-                if ($_POST['receiver'] < 0)	// Id du tiers
+                // Recipient was provided from combo list
+                if ($_POST['receiver'] == 'thirdparty') // Id of third party
                 {
                     $sendto = $object->client->email;
                     $sendtoid = 0;
@@ -1381,5 +1381,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/02 16:48:32 $ - $Revision: 1.208 $');
+llxFooter('$Date: 2011/07/07 21:32:19 $ - $Revision: 1.209 $');
 ?>
