@@ -23,7 +23,7 @@
  *	\file       htdocs/fichinter/fiche.php
  *	\brief      Fichier fiche intervention
  *	\ingroup    ficheinter
- *	\version    $Id: fiche.php,v 1.167 2011/07/07 09:18:27 simnandez Exp $
+ *	\version    $Id: fiche.php,v 1.168 2011/07/07 15:54:02 simnandez Exp $
  */
 
 require("../main.inc.php");
@@ -1122,14 +1122,14 @@ elseif ($fichinterid)
         $formmail->withtoccsocid=0;
         $formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
         $formmail->withtocccsocid=0;
-        $formmail->withtopic=$langs->trans('SendInterventionRef','__FICHREF__');
+        $formmail->withtopic=$langs->trans('SendInterventionRef','__FICHINTERREF__');
         $formmail->withfile=1;
         $formmail->withbody=1;
         $formmail->withdeliveryreceipt=1;
         $formmail->withcancel=1;
 
         // Tableau des substitutions
-        $formmail->substit['__FICHREF__']=$object->ref;
+        $formmail->substit['__FICHINTERREF__']=$object->ref;
         // Tableau des parametres complementaires
         $formmail->param['action']='send';
         $formmail->param['models']='fichinter_send';
@@ -1184,5 +1184,5 @@ elseif ($fichinterid)
 
 $db->close();
 
-llxFooter('$Date: 2011/07/07 09:18:27 $ - $Revision: 1.167 $');
+llxFooter('$Date: 2011/07/07 15:54:02 $ - $Revision: 1.168 $');
 ?>

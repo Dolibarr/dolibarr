@@ -53,6 +53,7 @@ PredefinedMailContentSendOrder=Veuillez trouver ci-joint la commande __ORDERREF_
 PredefinedMailContentSendSupplierOrder=Veuillez trouver ci-joint notre commande __ORDERREF__\n\nCordialement\n\n
 PredefinedMailContentSendSupplierInvoice=Veuillez trouver ci-joint la facture __FACREF__\n\nCordialement\n\n
 PredefinedMailContentSendShipping=Veuillez trouver ci-joint le bon d'expédition __SHIPPINGREF__\n\nCordialement\n\n
+PredefinedMailContentSendFichInter=Veuillez trouver ci-joint le intervention __FICHINTERREF__\n\nCordialement\n\n
 DemoDesc=Dolibarr est un logiciel de gestion d'activité (professionnelle ou associative) composé de modules fonctionnels indépendants et optionnels. Une démonstration qui inclut tous ces modules n'a pas de sens car les modules ne sont jamais tous utilisés en même temps. Aussi, plusieurs profils type de démo sont disponibles.
 ChooseYourDemoProfil=Veuillez choisir le profil de démo qui correspond le mieux à votre activité...
 DemoFundation=Gestion des adhérents d'une association
