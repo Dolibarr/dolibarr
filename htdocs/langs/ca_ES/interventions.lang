@@ -7,6 +7,7 @@ NewIntervention=Nova itervenció
 AddIntervention=Crear intervenció
 ListOfInterventions=Llista d'intervencions
 EditIntervention=Editar
+ActionsOnFicheInter=Esdeveniments sobre l'intervenció
 LastInterventions=Les %s darreres intervencions
 AllInterventions=Totes les intervencions
 CreateDraftIntervention=Crear esborrany

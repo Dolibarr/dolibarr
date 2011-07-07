@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2009-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +22,7 @@
  *	\file       htdocs/includes/triggers/interface_modAgenda_ActionsAuto.class.php
  *  \ingroup    agenda
  *  \brief      Trigger file for agenda module
- *	\version	$Id$
+ *	\version	$Id: interface_modAgenda_ActionsAuto.class.php,v 1.33 2011/07/07 09:18:27 simnandez Exp $
  */
 
 
@@ -330,9 +332,9 @@ class InterfaceActionsAuto
             $langs->load("interventions");
             $langs->load("agenda");
 
-            $object->actiontypecode='AC_OTH';
-            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InterventionValidatedInDolibarr",$object->ref);
-            $object->actionmsg=$langs->transnoentities("InterventionValidatedInDolibarr",$object->ref);
+            $object->actiontypecode='AC_EMAIL';
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InterventionSentByEMail",$object->ref);
+            $object->actionmsg=$langs->transnoentities("InterventionSentByEMail",$object->ref);
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
             // Parameters $object->sendotid defined by caller
