@@ -26,7 +26,7 @@
  *	\file       htdocs/compta/facture.php
  *	\ingroup    facture
  *	\brief      Page to create/see an invoice
- *	\version    $Id: facture.php,v 1.846 2011/07/07 21:32:20 eldy Exp $
+ *	\version    $Id: facture.php,v 1.847 2011/07/08 10:22:14 hregis Exp $
  */
 
 require('../main.inc.php');
@@ -742,12 +742,17 @@ if ($action == 'add' && $user->rights->facture->creer)
                             $desc=($lines[$i]->desc?$lines[$i]->desc:$lines[$i]->libelle);
                             $product_type=($lines[$i]->product_type?$lines[$i]->product_type:0);
 
-                            // Dates
+                            // Date start
                             // TODO mutualiser
-                            $date_start=$lines[$i]->date_debut_prevue;
+                            $date_start=false;
+                            if ($lines[$i]->date_debut_prevue) $date_start=$lines[$i]->date_debut_prevue;
                             if ($lines[$i]->date_debut_reel) $date_start=$lines[$i]->date_debut_reel;
                             if ($lines[$i]->date_start) $date_start=$lines[$i]->date_start;
-                            $date_end=$lines[$i]->date_fin_prevue;
+
+                            //Date end
+                            // TODO mutualiser
+                            $date_end=false;
+                            if ($lines[$i]->date_fin_prevue) $date_end=$lines[$i]->date_fin_prevue;
                             if ($lines[$i]->date_fin_reel) $date_end=$lines[$i]->date_fin_reel;
                             if ($lines[$i]->date_end) $date_end=$lines[$i]->date_end;
 
@@ -3236,5 +3241,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/07 21:32:20 $ - $Revision: 1.846 $');
+llxFooter('$Date: 2011/07/08 10:22:14 $ - $Revision: 1.847 $');
 ?>
