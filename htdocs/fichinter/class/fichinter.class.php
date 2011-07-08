@@ -22,7 +22,7 @@
 /**	    \file       htdocs/fichinter/class/fichinter.class.php
  *		\ingroup    ficheinter
  *		\brief      Fichier de la classe des gestion des fiches interventions
- *		\version    $Id: fichinter.class.php,v 1.19 2011/07/02 17:02:00 eldy Exp $
+ *		\version    $Id: fichinter.class.php,v 1.20 2011/07/08 09:18:54 simnandez Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
@@ -61,9 +61,9 @@ class Fichinter extends CommonObject
 	var $lines = array();
 
 	/**
-	 *    \brief      Constructeur de la classe
-	 *    \param      DB            Handler acces base de donnees
-	 *    \param      socid			Id societe
+	 *	Class constructor
+	 *	@param      DB		Data base handler access
+	 *	@param      socid	Id society
 	 */
 	function Fichinter($DB, $socid="")
 	{
@@ -83,9 +83,9 @@ class Fichinter extends CommonObject
 	}
 
 
-	/*
-	 *    	\brief      Cree une fiche intervention en base
-	 *		\return		int		<0 if KO, >0 if OK
+	/**
+	 *	Create a intervention into data base
+	 *	@return		int		<0 if KO, >0 if OK
 	 */
 	function create()
 	{
@@ -168,8 +168,8 @@ class Fichinter extends CommonObject
 
 	}
 
-	/*
-	 *	Met a jour une intervention
+	/**
+	 *	Update a intervention
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
 	function update($user)
@@ -201,9 +201,10 @@ class Fichinter extends CommonObject
 	}
 
 	/**
-	 *		\brief		Charge en memoire la fiche intervention
-	 *		\param		rowid		Id de la fiche a charger
-	 *		\return		int			<0 si ko, >0 si ok
+	 *	Fetch a intervention
+	 *	@param		rowid		Id of intervention
+	 *	@param		ref			Ref of intervention
+	 *	@return		int			<0 if ko, >0 if ok
 	 */
 	function fetch($rowid,$ref='')
 	{
@@ -261,8 +262,8 @@ class Fichinter extends CommonObject
 	}
 
 	/**
-	 *		\brief		Set status to draft
-	 *		\return		int			<0 if KO, >0 if OK
+	 *	Set status to draft
+	 *	@return		int			<0 if KO, >0 if OK
 	 */
 	function setDraft($user)
 	{
@@ -295,9 +296,10 @@ class Fichinter extends CommonObject
 	}
 
 	/**
-	 *		\brief		Valide une fiche intervention
-	 *		\param		user		User qui valide
-	 *		\return		int			<0 if KO, >0 if OK
+	 *	Validate a intervention
+	 *	@param		user		User that validate
+	 *	@param		outputdir	
+	 *	@return		int			<0 if KO, >0 if OK
 	 */
 	function setValid($user, $outputdir)
 	{
@@ -350,7 +352,7 @@ class Fichinter extends CommonObject
 	}
 
 	/**
-	 * 	set intervetnion as billed
+	 * 	Set intervetnion as billed
 	 *  @return int     <0 si ko, >0 si ok
 	 */
 	function setBilled()
@@ -375,9 +377,9 @@ class Fichinter extends CommonObject
 
 
 	/**
-	 *    \brief      Retourne le libelle du statut
-	 *    \param      mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 * 	  \return     string      Libelle
+	 *	Returns the label status
+	 *	@param      mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *	@return     string      Label
 	 */
 	function getLibStatut($mode=0)
 	{
@@ -385,10 +387,10 @@ class Fichinter extends CommonObject
 	}
 
 	/**
-	 *    \brief      Renvoi le libelle d'un statut donne
-	 *    \param      statut      id statut
-	 *    \param      mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 *    \return     string      Libelle
+	 *	Returns the label of a statut
+	 *	@param      statut      id statut
+	 *	@param      mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *	@return     string      Label
 	 */
 	function LibStatut($statut,$mode=0)
 	{
@@ -429,9 +431,9 @@ class Fichinter extends CommonObject
 	}
 
 	/**
-	 *	\brief      Return clicable name (with picto eventually)
-	 *	\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-	 *	\return		string			Chaine avec URL
+	 *	Return clicable name (with picto eventually)
+	 *	@param		withpicto		0=_No picto, 1=Includes the picto in the linkn, 2=Picto only
+	 *	@return		string			String with URL
 	 */
 	function getNomUrl($withpicto=0)
 	{
@@ -454,10 +456,10 @@ class Fichinter extends CommonObject
 
 
 	/**
-	 *      \brief      Renvoie la reference de fiche intervention suivante non utilisee en fonction du module
-	 *                  de numerotation actif defini dans FICHEINTER_ADDON
-	 *      \param	    soc  		            objet societe
-	 *      \return     string              reference libre pour la fiche intervention
+	 *	Returns the next non used reference of intervention
+	 *	depending on the module numbering assets within FICHEINTER_ADDON
+	 *	@param	    soc		Object society
+	 *	@return     string	Free reference for intervention
 	 */
 	function getNextNumRef($soc)
 	{
@@ -502,8 +504,8 @@ class Fichinter extends CommonObject
 	}
 
 	/**
-	 *      \brief      Information sur l'objet fiche intervention
-	 *      \param      id      id de la fiche d'intervention
+	 * 	Information sur l'objet fiche intervention
+	 *	@param      id      id de la fiche d'intervention
 	 */
 	function info($id)
 	{
@@ -551,8 +553,8 @@ class Fichinter extends CommonObject
 	}
 
 	/**
-	 *    \brief      Efface fiche intervention
-	 *    \param      user        Objet du user qui efface
+	 *	Delete intervetnion
+	 *	@param      user	Object user who deletes
 	 */
 	function delete($user)
 	{
@@ -647,10 +649,10 @@ class Fichinter extends CommonObject
 	}
 
 	/**
-	 *      \brief      Definit une date de livraison du bon d'intervention
-	 *      \param      user        		Objet utilisateur qui modifie
-	 *      \param      date_creation   date de livraison
-	 *      \return     int         		<0 si ko, >0 si ok
+	 *	Defines a delivery date of intervention
+	 *	@param      user			Object user who define
+	 *	@param      date_delivery   date of delivery
+	 *	@return     int				<0 if ko, >0 if ok
 	 */
 	function set_date_delivery($user, $date_delivery)
 	{
@@ -679,10 +681,10 @@ class Fichinter extends CommonObject
 	}
 
 	/**
-	 *      \brief      Definit le label de l'intervention
-	 *      \param      user        		Objet utilisateur qui modifie
-	 *      \param      description     description
-	 *      \return     int         		<0 si ko, >0 si ok
+	 *	Define the label of the intervention
+	 *	@param      user			Object user who modify
+	 *	@param      description     description
+	 *	@return     int				<0 if ko, >0 if ok
 	 */
 	function set_description($user, $description)
 	{
@@ -711,12 +713,12 @@ class Fichinter extends CommonObject
 	}
 
 	/**
-	 *  	\brief     	Ajout d'une ligne d'intervention, en base
-	 * 		\param    	fichinterid      	  Id de la fiche d'intervention
-	 * 		\param    	desc            	  Description de la ligne
-	 *    \param      date_intervention   Date de l'intervention
-	 *    \param      duration            Duree de l'intervention
-	 *    	\return    	int             	>0 si ok, <0 si ko
+	 *	Adding a line of intervention into data base
+	 *	@param    	fichinterid			Id of intervention
+	 *	@param    	desc				Line description
+	 *	@param      date_intervention  	Intervention date
+	 *	@param      duration            Intervention duration
+	 *	@return    	int             	>0 if ok, <0 if ko
 	 */
 	function addline($fichinterid, $desc, $date_intervention, $duration)
 	{
@@ -752,8 +754,8 @@ class Fichinter extends CommonObject
 
 
 	/**
-	 *		\brief		Initialise la fiche intervention avec valeurs fictives aleatoire
-	 *					Sert a generer une fiche intervention pour l'aperu des modeles ou demo
+	 *	Initializes the intervention with random values
+	 *	Used to generate a intervention for the preview or demo models
 	 */
 	function initAsSpecimen()
 	{
@@ -813,9 +815,8 @@ class Fichinter extends CommonObject
 	}
 
 	/**
-	 *		Initialise la fiche intervention avec valeurs fictives aleatoire
-	 *		Sert a generer une fiche intervention pour l'aperu des modeles ou demo
-	 * 		@return		int		<0 OK,	>0 KO
+	 *	Load array lines
+	 *	@return		int		<0 if Ko,	>0 if OK
 	 */
 	function fetch_lines()
 	{
@@ -886,8 +887,8 @@ class FichinterLigne
 	}
 
 	/**
-	 *      \brief     Recupere l'objet ligne d'intervention
-	 *      \param     rowid           id de la ligne
+	 *	Retrieve the line of intervention
+	 *	@param     rowid	line id
 	 */
 	function fetch($rowid)
 	{
@@ -920,8 +921,8 @@ class FichinterLigne
 	}
 
 	/**
-	 *      \brief     	Insere l'objet ligne d'intervention en base
-	 *		\return		int		<0 si ko, >0 si ok
+	 *	Insert the line into database
+	 *	@return		int		<0 if ko, >0 if ok
 	 */
 	function insert()
 	{
@@ -987,8 +988,8 @@ class FichinterLigne
 
 
 	/**
-	 *      \brief     	Mise a jour de l'objet ligne d'intervention en base
-	 *		\return		int		<0 si ko, >0 si ok
+	 *	Update intervention into database
+	 *	@return		int		<0 if ko, >0 if ok
 	 */
 	function update()
 	{
@@ -1030,8 +1031,8 @@ class FichinterLigne
 	}
 
 	/**
-	 *      \brief     	Mise a jour duree total dans table llx_fichinter
-	 *		\return		int		<0 si ko, >0 si ok
+	 *	Update total duration into llx_fichinter
+	 *	@return		int		<0 si ko, >0 si ok
 	 */
 	function update_total()
 	{
@@ -1081,8 +1082,8 @@ class FichinterLigne
 	}
 
 	/**
-	 *      \brief      Supprime une ligne d'intervention
-	 *      \return     int         >0 si ok, <0 si ko
+	 *	Delete a intervention line
+	 *	@return     int		>0 if ok, <0 if ko
 	 */
 	function deleteline()
 	{
