@@ -176,7 +176,10 @@
 	<rule ref="PEAR.WhiteSpace.ObjectOperatorIndent" />
 
 	<rule ref="PEAR.WhiteSpace.ScopeClosingBrace" />
-
+    <rule ref="PEAR.WhiteSpace.ScopeClosingBrace.Line">
+        <severity>0</severity>
+    </rule>
+    
     <!-- Already found as a Generic rule -->
 	<!-- <rule ref="PEAR.WhiteSpace.ScopeIndent" /> -->
 

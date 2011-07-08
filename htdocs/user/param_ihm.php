@@ -20,7 +20,7 @@
 /**
  *       \file       htdocs/user/param_ihm.php
  *       \brief      Page to show user setup for display
- *       \version    $Id$
+ *       \version    $Id: param_ihm.php,v 1.52 2011/07/08 18:49:17 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -39,9 +39,9 @@ $canreaduser=($user->admin || $user->rights->user->user->lire);
 
 if ($_REQUEST["id"])
 {
-  // $user est le user qui edite, $_REQUEST["id"] est l'id de l'utilisateur edite
-  $caneditfield=( (($user->id == $_REQUEST["id"]) && $user->rights->user->self->creer)
-		  || (($user->id != $_REQUEST["id"]) && $user->rights->user->user->creer));
+    // $user est le user qui edite, $_REQUEST["id"] est l'id de l'utilisateur edite
+    $caneditfield=( (($user->id == $_REQUEST["id"]) && $user->rights->user->self->creer)
+    || (($user->id != $_REQUEST["id"]) && $user->rights->user->user->creer));
 }
 
 // Security check
@@ -50,8 +50,8 @@ if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
 if ($user->id == $_REQUEST["id"])	// A user can always read its own card
 {
-	$feature2='';
-	$canreaduser=1;
+    $feature2='';
+    $canreaduser=1;
 }
 $result = restrictedArea($user, 'user', $_REQUEST["id"], '', $feature2);
 if ($user->id <> $_REQUEST["id"] && ! $canreaduser) accessforbidden();
@@ -237,21 +237,21 @@ else
     print '</div>';
 
     print '<div class="tabsAction">';
-	if (! empty($dolibarr_main_demo))
-	{
-		print "<a class=\"butActionRefused\" title=\"".$langs->trans("FeatureDisabledInDemo")."\" href=\"#\">".$langs->trans("Modify")."</a>";
-	}
-	else
-	{
-		if ($user->id == $fuser->id || $user->admin)       // Si utilisateur edite = utilisateur courant (pas besoin de droits particulier car il s'agit d'une page de modif d'output et non de données) ou si admin
-	    {
-	        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$fuser->id.'">'.$langs->trans("Modify").'</a>';
-	    }
-	   	else
-		{
-			print "<a class=\"butActionRefused\" title=\"".$langs->trans("NotEnoughPermissions")."\" href=\"#\">".$langs->trans("Modify")."</a>";
-		}
-	}
+    if (! empty($dolibarr_main_demo))
+    {
+        print "<a class=\"butActionRefused\" title=\"".$langs->trans("FeatureDisabledInDemo")."\" href=\"#\">".$langs->trans("Modify")."</a>";
+    }
+    else
+    {
+        if ($user->id == $fuser->id || $user->admin)       // Si utilisateur edite = utilisateur courant (pas besoin de droits particulier car il s'agit d'une page de modif d'output et non de données) ou si admin
+        {
+            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$fuser->id.'">'.$langs->trans("Modify").'</a>';
+        }
+        else
+        {
+            print "<a class=\"butActionRefused\" title=\"".$langs->trans("NotEnoughPermissions")."\" href=\"#\">".$langs->trans("Modify")."</a>";
+        }
+    }
 
     print '</div>';
 
@@ -259,5 +259,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/08 18:49:17 $ - $Revision: 1.52 $');
 ?>

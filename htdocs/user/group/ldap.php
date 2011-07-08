@@ -21,7 +21,7 @@
  *       \file       htdocs/user/group/ldap.php
  *       \ingroup    ldap
  *       \brief      Page fiche LDAP groupe
- *       \version    $Id$
+ *       \version    $Id: ldap.php,v 1.25 2011/07/08 18:49:17 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -186,7 +186,7 @@ if ($result > 0)
 	//var_dump($records);
 
 	// Affichage arbre
-	if (sizeof($records) && (! isset($records['count']) || $records['count'] > 0))
+	if (count($records) && (! isset($records['count']) || $records['count'] > 0))
 	{
 		if (! is_array($records))
 		{
@@ -216,5 +216,5 @@ print '</table>';
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/08 18:49:17 $ - $Revision: 1.25 $');
 ?>
