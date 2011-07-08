@@ -20,7 +20,7 @@
  *      \file       test/phpunit/AllTest.php
  *		\ingroup    test
  *      \brief      This file is a test suite to run all unit tests
- *      \version    $Id$
+ *      \version    $Id: AllTests.php,v 1.3 2011/07/08 11:18:00 eldy Exp $
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 print "PHP Version: ".phpversion()."\n";
@@ -95,6 +95,9 @@ class AllTests
 
         require_once dirname(__FILE__).'/CategorieTest.php';
         $suite->addTestSuite('CategorieTest');
+
+        require_once dirname(__FILE__).'/WebservicesTest.php';  // At end because it's the longer
+        $suite->addTestSuite('WebservicesTest');
 
         require_once dirname(__FILE__).'/ModulesTest.php';  // At end because it's the longer
         $suite->addTestSuite('ModulesTest');
