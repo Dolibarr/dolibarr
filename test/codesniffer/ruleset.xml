@@ -1,62 +1,156 @@
 <?xml version="1.0"?>
 <ruleset name="Dolibarr">
- <description>Dolibarr coding standard.</description>
+	<description>Dolibarr coding standard.</description>
 
- <!-- Include some specific sniffs -->
- <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter"/>
- <rule ref="Generic.Commenting.Todo"/>
- <rule ref="Generic.ControlStructures.InlineControlStructure"/>
- <rule ref="Generic.Formatting.DisallowMultipleStatements"/>
- <rule ref="Generic.Formatting.SpaceAfterCast"/>
- <rule ref="Generic.Functions.FunctionCallArgumentSpacing"/>
- <rule ref="Generic.NamingConventions.ConstructorName"/>
- <rule ref="Generic.NamingConventions.UpperCaseConstantName"/>
- <rule ref="Generic.PHP.DisallowShortOpenTag"/>
- <rule ref="Generic.Strings.UnnecessaryStringConcat"/>
- <rule ref="Generic.WhiteSpace.DisallowTabIndent"/>
- <rule ref="Generic.WhiteSpace.ScopeIndent"/>
- <rule ref="PEAR.ControlStructures.MultiLineCondition"/>
- <rule ref="PEAR.Files.IncludingFile"/>
- <rule ref="PEAR.Formatting.MultiLineAssignment"/>
- <rule ref="PEAR.Functions.FunctionCallSignature"/>
- <rule ref="Zend.Debug.CodeAnalyzer"/>
+	<!-- List of all tests -->
 
- <!-- Lines can be 85 chars long, but never show errors -->
- <rule ref="Generic.Files.LineLength">
-  <properties>
-   <property name="lineLimit" value="85"/>
-   <property name="absoluteLineLimit" value="0"/>
-  </properties>
- </rule>
+    <rule ref="Generic.CodeAnalysis.EmptyStatement" />
 
- <!-- Use Unix newlines -->
- <rule ref="Generic.Files.LineEndings">
-  <properties>
-   <property name="eolChar" value="\n"/>
-  </properties>
- </rule>
+    <!-- <rule ref="Generic.CodeAnalysis.ForLoopShouldBeWhileLoop" /> -->
 
- <!-- Have 8 chars padding maximum and always show as errors -->
- <rule ref="Generic.Formatting.MultipleStatementAlignment">
-  <properties>
-   <property name="maxPadding" value="8"/>
-   <property name="ignoreMultiLine" value="true"/>
-   <property name="error" value="true"/>
-  </properties>
- </rule>
+    <rule ref="Generic.CodeAnalysis.ForLoopWithTestFunctionCall" />
 
- <!-- Tweaks to metrics -->
- <rule ref="Generic.Metrics.CyclomaticComplexity">
-  <properties>
-   <property name="complexity" value="10"/>
-   <property name="absoluteComplexity" value="100"/>
-  </properties>
- </rule>
- <rule ref="Generic.Metrics.NestingLevel">
-  <properties>
-   <property name="nestingLevel" value="5"/>
-   <property name="absoluteNestingLevel" value="50"/>
-  </properties>
- </rule>
+    <rule ref="Generic.CodeAnalysis.JumbledIncrementer" />
+
+    <rule ref="Generic.CodeAnalysis.UnconditionalIfStatement" />
+
+    <rule ref="Generic.CodeAnalysis.UnnecessaryFinalModifier" />
+
+    <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter" />
+
+    <rule ref="Generic.CodeAnalysis.UselessOverridingMethod" />
+
+    <rule ref="Generic.Commenting.Todo" />
+
+	<!-- Warning if action on same line than if -->
+	<!--
+		<rule ref="Generic.ControlStructures.InlineControlStructure">
+		<properties> <property name="error" value="false"/> </properties>
+		</rule>
+	-->
+
+	<!-- Lines can be 85 chars long, but never show errors -->
+	<rule ref="Generic.Files.LineLength">
+		<properties>
+			<property name="lineLimit" value="320" />
+			<property name="absoluteLineLimit" value="0" />
+		</properties>
+	</rule>
+
+	<!-- Use Unix newlines -->
+	<rule ref="Generic.Files.LineEndings">
+		<properties>
+			<property name="eolChar" value="\n" />
+		</properties>
+	</rule>
+
+	<rule ref="Generic.Formatting.DisallowMultipleStatements" />
+
+	<!-- Have 2 chars padding maximum and always show as errors -->
+	<!--
+		<rule ref="Generic.Formatting.MultipleStatementAlignment">
+		<properties> <property name="maxPadding" value="2"/> <property
+		name="ignoreMultiLine" value="true"/> </properties> </rule>
+	-->
+
+	<rule ref="Generic.Formatting.SpaceAfterCast" />
+
+    <rule ref="Generic.Functions.CallTimePassByReference" />
+
+	<rule ref="Generic.Functions.FunctionCallArgumentSpacing" />
+	<rule ref="Generic.Functions.FunctionCallArgumentSpacing.NoSpaceAfterComma">
+		<severity>0</severity>
+	</rule>
+	<rule
+		ref="Generic.Functions.FunctionCallArgumentSpacing.TooMuchSpaceAfterComma">
+		<severity>0</severity>
+	</rule>
+
+    <!-- Tweaks to metrics -->
+    <rule ref="Generic.Metrics.CyclomaticComplexity">
+        <properties>
+            <property name="complexity" value="10" />
+            <property name="absoluteComplexity" value="100" />
+        </properties>
+    </rule>
+    <rule ref="Generic.Metrics.NestingLevel">
+        <properties>
+            <property name="nestingLevel" value="5" />
+            <property name="absoluteNestingLevel" value="50" />
+        </properties>
+    </rule>
+
+	<rule ref="Generic.NamingConventions.ConstructorName" />
+
+	<rule ref="Generic.NamingConventions.UpperCaseConstantName" />
+
+    <rule ref="Generic.PHP.DeprecatedFunctions" />
+
+	<rule ref="Generic.PHP.DisallowShortOpenTag" />
+
+    <rule ref="Generic.PHP.ForbiddenFunctions" />
+
+    <rule ref="Generic.PHP.NoSilencedErrors" />
+
+	<rule ref="Generic.PHP.UpperCaseConstant" />
+
+	<rule ref="Generic.Strings.UnnecessaryStringConcat" />
+
+    <rule ref="Generic.VersionControl.SubversionProperties" />
+
+	<rule ref="Generic.WhiteSpace.DisallowTabIndent" />
+
+	<rule ref="Generic.WhiteSpace.ScopeIndent" />
+
+	<rule ref="PEAR.Classes.ClassDeclaration" />
+
+    <!-- Check for duplicate class names -->
+    <!-- <rule ref="Generic.Classes.DuplicateClassName" /> -->
+
+    <rule ref="PEAR.Commenting.ClassComment" />
+
+    <!-- 
+    <rule ref="PEAR.Commenting.FileComment" />
+    <rule ref="PEAR.Commenting.FileComment.WrongStyle">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.FileComment.MissingVersion">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.FileComment.MissingTag">
+        <severity>0</severity>
+    </rule>
+    -->
+    
+    <rule ref="PEAR.Commenting.FunctionComment" />
+
+    <rule ref="PEAR.Commenting.InlineComment" />
+
+	<!-- <rule ref="PEAR.ControlStructures.ControlSignature" /> -->
+
+	<!-- <rule ref="PEAR.ControlStructures.MultiLineCondition" /> -->
+
+	<!-- Test if () are removed for includes -->
+	<!-- <rule ref="PEAR.Files.IncludingFile"/> -->
+
+	<rule ref="PEAR.Formatting.MultiLineAssignment" />
+
+	<rule ref="PEAR.Functions.FunctionCallSignature" />
+
+	<rule ref="PEAR.Functions.ValidDefaultValue" />
+
+	<rule ref="PEAR.NamingConventions.ValidClassName" />
+
+	<rule ref="PEAR.NamingConventions.ValidFunctionName" />
+
+	<rule ref="PEAR.NamingConventions.ValidVariableName" />
+
+	<rule ref="PEAR.WhiteSpace.ObjectOperatorIndent" />
+
+	<rule ref="PEAR.WhiteSpace.ScopeClosingBrace" />
+
+	<rule ref="PEAR.WhiteSpace.ScopeIndent" />
+
+
 
 </ruleset>
