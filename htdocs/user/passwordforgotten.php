@@ -19,8 +19,8 @@
 
 /**
  *       \file       htdocs/user/passwordforgotten.php
- *       \brief      Page demande nouveau mot de passe
- *       \version    $Id$
+ *       \brief      Page to ask a new password
+ *       \version    $Id: passwordforgotten.php,v 1.74 2011/07/08 15:52:24 eldy Exp $
  */
 
 define("NOLOGIN",1);	// This means this output page does not require to be logged.
@@ -55,7 +55,7 @@ $conf->entity 	= ( GETPOST('entity') ? GETPOST('entity') : 1 );
  * Actions
  */
 
-// Action modif mot de passe
+// Validate new password
 if ($action == 'validatenewpassword' && $username && $passwordmd5)
 {
     $edituser = new User($db);
@@ -139,9 +139,10 @@ if ($action == 'buildnewpassword' && $username)
 }
 
 
-/*
- * Affichage page
+/**
+ * View
  */
+
 $php_self = $_SERVER['PHP_SELF'];
 $php_self.= $_SERVER["QUERY_STRING"]?'?'.$_SERVER["QUERY_STRING"]:'';
 

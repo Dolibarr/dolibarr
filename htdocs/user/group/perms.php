@@ -23,7 +23,7 @@
 /**
  *       \file       htdocs/user/group/perms.php
  *       \brief      Onglet user et permissions de la fiche utilisateur
- *       \version    $Id$
+ *       \version    $Id: perms.php,v 1.38 2011/07/08 15:50:28 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -42,9 +42,9 @@ $caneditperms=($user->admin || $user->rights->user->user->creer);
 $advancedpermsactive=false;
 if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 {
-	$advancedpermsactive=true;
-	$canreadperms=($user->admin || ($user->rights->user->group_advance->read && $user->rights->user->group_advance->readperms));
-	$caneditperms=($user->admin || $user->rights->user->group_advance->write);
+    $advancedpermsactive=true;
+    $canreadperms=($user->admin || ($user->rights->user->group_advance->read && $user->rights->user->group_advance->readperms));
+    $caneditperms=($user->admin || $user->rights->user->group_advance->write);
 }
 
 if (! $canreadperms) accessforbidden();
@@ -68,11 +68,9 @@ if ($_GET["action"] == 'delrights' && $caneditperms)
 }
 
 
-/* ************************************************************************** */
-/*                                                                            */
-/* Visu et edition                                                            */
-/*                                                                            */
-/* ************************************************************************** */
+/**
+ * View
+ */
 
 $form = new Form($db);
 
@@ -84,12 +82,12 @@ if ($_GET["id"])
     $fgroup->fetch($_GET["id"]);
     $fgroup->getrights();
 
-	/*
-	 * Affichage onglets
-	 */
-	$head = group_prepare_head($fgroup);
-	$title = $langs->trans("Group");
-	dol_fiche_head($head, 'rights', $title, 0, 'group');
+    /*
+     * Affichage onglets
+     */
+    $head = group_prepare_head($fgroup);
+    $title = $langs->trans("Group");
+    dol_fiche_head($head, 'rights', $title, 0, 'group');
 
 
     $db->begin();
@@ -97,45 +95,45 @@ if ($_GET["id"])
     // Charge les modules soumis a permissions
     $modules = array();
     foreach ($conf->file->dol_document_root as $dirroot)
-	{
-		$dir = $dirroot . "/includes/modules/";
+    {
+        $dir = $dirroot . "/includes/modules/";
 
-		// Load modules attributes in arrays (name, numero, orders) from dir directory
-		//print $dir."\n<br>";
-		$handle=@opendir($dir);
-		if (is_resource($handle))
-		{
-		    while (($file = readdir($handle))!==false)
-		    {
-		        if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod'  && substr($file, dol_strlen($file) - 10) == '.class.php')
-		        {
-		            $modName = substr($file, 0, dol_strlen($file) - 10);
+        // Load modules attributes in arrays (name, numero, orders) from dir directory
+        //print $dir."\n<br>";
+        $handle=@opendir($dir);
+        if (is_resource($handle))
+        {
+            while (($file = readdir($handle))!==false)
+            {
+                if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod'  && substr($file, dol_strlen($file) - 10) == '.class.php')
+                {
+                    $modName = substr($file, 0, dol_strlen($file) - 10);
 
-		            if ($modName)
-		            {
-		                include_once($dir."/".$file);
-		                $objMod = new $modName($db);
-		                // Load all lang files of module
-		                if (isset($objMod->langfiles) && is_array($objMod->langfiles))
-		                {
-		                	foreach($objMod->langfiles as $domain)
-		                	{
-		                		$langs->load($domain);
-		                	}
-		                }
-		                // Load all permissions
-		                if ($objMod->rights_class) {
+                    if ($modName)
+                    {
+                        include_once($dir."/".$file);
+                        $objMod = new $modName($db);
+                        // Load all lang files of module
+                        if (isset($objMod->langfiles) && is_array($objMod->langfiles))
+                        {
+                            foreach($objMod->langfiles as $domain)
+                            {
+                                $langs->load($domain);
+                            }
+                        }
+                        // Load all permissions
+                        if ($objMod->rights_class) {
 
-		                    $ret=$objMod->insert_permissions(0);
+                            $ret=$objMod->insert_permissions(0);
 
-		                    $modules[$objMod->rights_class]=$objMod;
-		                    //print "modules[".$objMod->rights_class."]=$objMod;";
-		                }
-		            }
-		        }
-		    }
-		}
-	}
+                            $modules[$objMod->rights_class]=$objMod;
+                            //print "modules[".$objMod->rights_class."]=$objMod;";
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     $db->commit();
 
@@ -187,7 +185,7 @@ if ($_GET["id"])
     print '<td colspan="2">'.$fgroup->nom.'';
     if (! $fgroup->entity)
     {
-    	print img_redstar($langs->trans("GlobalGroup"));
+        print img_redstar($langs->trans("GlobalGroup"));
     }
     print "</td></tr>\n";
 
@@ -243,22 +241,22 @@ if ($_GET["id"])
 
                 if ($caneditperms)
                 {
-                   print '<tr '. $bc[$var].'>';
-                   print '<td nowrap="nowrap">'.img_object('',$picto).' '.$objMod->getName();
-                   print '<a name="'.$objMod->getName().'">&nbsp;</a></td>';
-                   print '<td align="center" nowrap="nowrap">';
-                   print '<a title='.$langs->trans("All").' alt='.$langs->trans("All").' href="perms.php?id='.$fgroup->id.'&amp;action=addrights&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("All")."</a>";
-                   print '/';
-                   print '<a title='.$langs->trans("None").' alt='.$langs->trans("None").' href="perms.php?id='.$fgroup->id.'&amp;action=delrights&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("None")."</a>";
-                   print '</td>';
-                   print '<td colspan="2">&nbsp;</td>';
-                   print '</tr>';
+                    print '<tr '. $bc[$var].'>';
+                    print '<td nowrap="nowrap">'.img_object('',$picto).' '.$objMod->getName();
+                    print '<a name="'.$objMod->getName().'">&nbsp;</a></td>';
+                    print '<td align="center" nowrap="nowrap">';
+                    print '<a title='.$langs->trans("All").' alt='.$langs->trans("All").' href="perms.php?id='.$fgroup->id.'&amp;action=addrights&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("All")."</a>";
+                    print '/';
+                    print '<a title='.$langs->trans("None").' alt='.$langs->trans("None").' href="perms.php?id='.$fgroup->id.'&amp;action=delrights&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("None")."</a>";
+                    print '</td>';
+                    print '<td colspan="2">&nbsp;</td>';
+                    print '</tr>';
                 }
             }
 
             print '<tr '. $bc[$var].'>';
 
-			// Module
+            // Module
             print '<td nowrap="nowrap">'.img_object('',$picto).' '.$objMod->getName().'</td>';
 
             if (in_array($obj->id, $permsgroup))
@@ -295,5 +293,5 @@ if ($_GET["id"])
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/08 15:50:28 $ - $Revision: 1.38 $');
 ?>
