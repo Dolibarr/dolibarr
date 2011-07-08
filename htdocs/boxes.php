@@ -23,16 +23,17 @@
  *	\brief      File of class to manage widget boxes
  *	\author     Rodolphe Qiedeville
  *	\author	    Laurent Destailleur
- *	\version    $Id: boxes.php,v 1.52 2011/06/28 15:05:44 hregis Exp $
+ *	\version    $Id: boxes.php,v 1.53 2011/07/08 17:59:55 eldy Exp $
  */
 
 
 
 /**
- * 		\brief	Show a HTML Tab with boxes of a particular area including personalized choices of user
- * 		\param	user		User
- * 		\param	areacode	Code of area for pages (0=value for Home page)
- * 		\return	int			<0 if KO, Nb of boxes shown of OK (0 to n)
+ * 		Show a HTML Tab with boxes of a particular area including personalized choices of user
+ *
+ * 		@param	   User         $user		 Object User
+ * 		@param	   String       $areacode    Code of area for pages (0=value for Home page)
+ * 		@return    int                       <0 if KO, Nb of boxes shown of OK (0 to n)
  */
 function printBoxesArea($user,$areacode)
 {
@@ -43,7 +44,7 @@ function printBoxesArea($user,$areacode)
 
 	//$boxid_left = array();
 	//$boxid_right = array();
-	if (sizeof($boxarray))
+	if (count($boxarray))
 	{
 		print_fiche_titre($langs->trans("OtherInformationsBoxes"),'','','','otherboxes');
 		print '<table width="100%" class="notopnoleftnoright">';
@@ -157,22 +158,22 @@ function printBoxesArea($user,$areacode)
 		}
 	}
 
-	return sizeof($boxarray);
+	return count($boxarray);
 }
 
 
 
 /**
- *	\class      InfoBox
- *	\brief      Classe permettant la gestion des boxes sur une page
+ *	Class to manage boxes on pages
  */
 class InfoBox
 {
 	var $db;
 
 	/**
-	 *      \brief      Constructeur de la classe
-	 *      \param      $DB         Handler d'acc�s base
+	 *      Constructor
+	 *
+	 *      @param      DoliDb     $DB        Database handler
 	 */
 	function InfoBox($DB)
 	{
@@ -181,10 +182,11 @@ class InfoBox
 
 
 	/**
-	 *      \brief      Retourne tableau des boites elligibles pour la zone et le user
-	 *      \param      $zone       ID de la zone (0 pour la Homepage, ...)
-	 *      \param      $user		Objet user
-	 *      \return     array       Tableau d'objet box
+	 *      Return array of boxes qualified for area and user
+	 *
+	 *      @param      string     $zone      Name or area (0 for Homepage, ...)
+	 *      @param      User       $user	  Objet user
+	 *      @return     array                 Array of boxes
 	 */
 	function listBoxes($zone,$user)
 	{
@@ -236,7 +238,7 @@ class InfoBox
 					$box->box_order=$obj->box_order;
 					$box->fk_user=$obj->fk_user;
 					$enabled=true;
-					if ($box->depends && sizeof($box->depends) > 0)
+					if ($box->depends && count($box->depends) > 0)
 					{
 						foreach($box->depends as $module)
 						{
@@ -302,7 +304,7 @@ class InfoBox
 					}
 					$box->fk_user=$obj->fk_user;
 					$enabled=true;
-					if ($box->depends && sizeof($box->depends) > 0)
+					if ($box->depends && count($box->depends) > 0)
 					{
 						foreach($box->depends as $module)
 						{
@@ -325,13 +327,15 @@ class InfoBox
 	}
 
 
-	/**
-	 *      \brief      Sauvegarde sequencement des boites pour la zone et le user
-	 *      \param      $zone       ID de la zone (0 pour la Homepage, ...)
-	 *      \param      $boxorder   Liste des boites dans le bon ordre 'A:123,456,...-B:789,321...'
-	 *      \param      $userid     Id du user
-	 *      \return     int         <0 si ko, >= 0 si ok
-	 */
+
+    /**
+     *      Save order of boxes for area and user
+     *
+     *      @param      string     $zone       Name of area (0 for Homepage, ...)
+     *      @param      string     $boxorder   List of boxes with correct order 'A:123,456,...-B:789,321...'
+     *      @param      int        $userid     Id of user
+     *      @return     int                    <0 if KO, >= 0 if OK
+     */
 	function saveboxorder($zone,$boxorder,$userid=0)
 	{
 		global $conf;
@@ -382,7 +386,7 @@ class InfoBox
 				{
 					if (is_numeric($id))
 					{
-						//dol_syslog("aaaaa".sizeof($listarray));
+						//dol_syslog("aaaaa".count($listarray));
 						$i++;
 						$ii=sprintf('%02d',$i);
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes";
@@ -426,8 +430,5 @@ class InfoBox
 	}
 
 }
-
-
-
 
 ?>

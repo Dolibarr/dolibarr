@@ -70,7 +70,7 @@
     <!-- Tweaks to metrics -->
     <rule ref="Generic.Metrics.CyclomaticComplexity">
         <properties>
-            <property name="complexity" value="10" />
+            <property name="complexity" value="20" />
             <property name="absoluteComplexity" value="100" />
         </properties>
     </rule>
@@ -82,6 +82,10 @@
     </rule>
 
 	<rule ref="Generic.NamingConventions.ConstructorName" />
+	<!-- Check if we use PHP4 constructor instead of __construct() -->
+	<rule ref="Generic.NamingConventions.ConstructorName.OldStyle">
+        <severity>0</severity>
+	</rule>
 
 	<rule ref="Generic.NamingConventions.UpperCaseConstantName" />
 
@@ -104,7 +108,9 @@
 	<!-- Disallow usage of tab -->
 	<!--  <rule ref="Generic.WhiteSpace.DisallowTabIndent" /> -->
 
-	<rule ref="Generic.WhiteSpace.ScopeIndent" />
+	<!-- Check indent are done with spaces and wiht correct number -->
+	<!-- Disabled as this does not support tab -->
+	<!-- <rule ref="Generic.WhiteSpace.ScopeIndent" /> -->
 
 	<rule ref="PEAR.Classes.ClassDeclaration" />
 
@@ -112,7 +118,10 @@
     <!-- <rule ref="Generic.Classes.DuplicateClassName" /> -->
 
     <rule ref="PEAR.Commenting.ClassComment" />
-
+    <rule ref="PEAR.Commenting.ClassComment.MissingTag">
+        <severity>0</severity>
+    </rule>
+    
     <!-- 
     <rule ref="PEAR.Commenting.FileComment" />
     <rule ref="PEAR.Commenting.FileComment.WrongStyle">
@@ -137,6 +146,9 @@
         <severity>0</severity>
     </rule>
     <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParams">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.FunctionComment.ParameterCommentsNotAligned">
         <severity>0</severity>
     </rule>
 
