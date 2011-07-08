@@ -44,7 +44,8 @@
 		</properties>
 	</rule>
 
-	<rule ref="Generic.Formatting.DisallowMultipleStatements" />
+    <!-- To disallow several statements on same line -->
+	<!-- <rule ref="Generic.Formatting.DisallowMultipleStatements" /> -->
 
 	<!-- Have 2 chars padding maximum and always show as errors -->
 	<!--
@@ -90,15 +91,18 @@
 
     <rule ref="Generic.PHP.ForbiddenFunctions" />
 
-    <rule ref="Generic.PHP.NoSilencedErrors" />
+    <!-- Warning when using @ before functions -->
+    <!-- <rule ref="Generic.PHP.NoSilencedErrors" /> -->
 
-	<rule ref="Generic.PHP.UpperCaseConstant" />
+	<!-- Say if null, true, false must be uppercase -->
+	<!-- <rule ref="Generic.PHP.UpperCaseConstant" /> -->
 
 	<rule ref="Generic.Strings.UnnecessaryStringConcat" />
 
     <rule ref="Generic.VersionControl.SubversionProperties" />
 
-	<rule ref="Generic.WhiteSpace.DisallowTabIndent" />
+	<!-- Disallow usage of tab -->
+	<!--  <rule ref="Generic.WhiteSpace.DisallowTabIndent" /> -->
 
 	<rule ref="Generic.WhiteSpace.ScopeIndent" />
 
@@ -123,6 +127,18 @@
     -->
     
     <rule ref="PEAR.Commenting.FunctionComment" />
+    <rule ref="PEAR.Commenting.FunctionComment.SpacingBeforeParamType">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterLongType">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterLongName">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParams">
+        <severity>0</severity>
+    </rule>
 
     <rule ref="PEAR.Commenting.InlineComment" />
 
@@ -149,8 +165,7 @@
 
 	<rule ref="PEAR.WhiteSpace.ScopeClosingBrace" />
 
-	<rule ref="PEAR.WhiteSpace.ScopeIndent" />
-
-
+    <!-- Already found as a Generic rule -->
+	<!-- <rule ref="PEAR.WhiteSpace.ScopeIndent" /> -->
 
 </ruleset>
