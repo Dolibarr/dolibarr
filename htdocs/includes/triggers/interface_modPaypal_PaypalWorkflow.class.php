@@ -20,19 +20,18 @@
  *      \file       /htdocs/includes/triggers/interface_modPaypal_PaypalWorkflow.class.php
  *      \ingroup    paypal
  *      \brief      Trigger file for paypal workflow
- *      \version	$Id: interface_modPaypal_PaypalWorkflow.class.php,v 1.6 2011/07/04 08:38:51 eldy Exp $
+ *      \version	$Id: interface_modPaypal_PaypalWorkflow.class.php,v 1.7 2011/07/08 15:43:54 eldy Exp $
  */
 
 
 /**
  *      \class      InterfacePaypalWorkflow
- *      \brief      Classe des fonctions triggers des actions personalisees du module paypal
+ *      \brief      Class of triggers for paypal module
  */
-
 class InterfacePaypalWorkflow
 {
     var $db;
-    
+
     /**
      *   Constructor
      *   @param      DB      Database handler
@@ -40,15 +39,15 @@ class InterfacePaypalWorkflow
     function InterfacePaypalWorkflow($DB)
     {
         $this->db = $DB ;
-    
+
         $this->name = preg_replace('/^Interface/i','',get_class($this));
         $this->family = "paypal";
         $this->description = "Triggers of this module allows to manage paypal workflow";
         $this->version = 'dolibarr';            // 'development', 'experimental', 'dolibarr' or version
         $this->picto = 'paypal@paypal';
     }
-    
-    
+
+
     /**
      *   \brief      Renvoi nom du lot de triggers
      *   \return     string      Nom du lot de triggers
@@ -57,7 +56,7 @@ class InterfacePaypalWorkflow
     {
         return $this->name;
     }
-    
+
     /**
      *   \brief      Renvoi descriptif du lot de triggers
      *   \return     string      Descriptif du lot de triggers
@@ -82,7 +81,7 @@ class InterfacePaypalWorkflow
         elseif ($this->version) return $this->version;
         else return $langs->trans("Unknown");
     }
-    
+
     /**
      *      \brief      Fonction appelee lors du declenchement d'un evenement Dolibarr.
      *                  D'autres fonctions run_trigger peuvent etre presentes dans includes/triggers
@@ -94,18 +93,18 @@ class InterfacePaypalWorkflow
      *      \return     int         <0 if fatal error, 0 si nothing done, >0 if ok
      */
 	function run_trigger($action,$object,$user,$langs,$conf)
-    {	
+    {
         // Mettre ici le code a executer en reaction de l'action
         // Les donnees de l'action sont stockees dans $object
 
         if ($action == 'PAYPAL_PAYMENT_OK')
         {
         	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". source=".$object->source." ref=".$object->ref);
-        	
+
         	require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
-        	
+
         	$soc = new Societe($this->db);
-        	
+
         	// Parse element/subelement (ex: project_task)
 	        $element = $path = $filename = $object->source;
 	        if (preg_match('/^([^_]+)_([^_]+)/i',$object->source,$regs))
@@ -121,16 +120,16 @@ class InterfacePaypalWorkflow
 
             $classname = ucfirst($filename);
             $obj = new $classname($this->db);
-            
+
             $ret = $obj->fetch('',$object->ref);
             if ($ret < 0) return -1;
-            
+
             // Add payer id
             $soc->updateObjectField('societe', $obj->socid, 'ref_int', $object->payerID);
-            
+
             // Add transaction id
             $obj->updateObjectField($obj->table_element,$obj->id,'ref_int',$object->resArray["TRANSACTIONID"]);
-            
+
         }
 
 		return 0;
