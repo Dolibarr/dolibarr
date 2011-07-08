@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id$
+ * $Id: contactcard_view.tpl.php,v 1.9 2011/07/08 13:07:45 eldy Exp $
  */
 
 $contact = $GLOBALS['objcanvas']->control->object;
@@ -23,6 +23,7 @@ $contact = $GLOBALS['objcanvas']->control->object;
 ?>
 
 <!-- BEGIN PHP TEMPLATE CONTACTCARD_VIEW.TPL.PHP DEFAULT -->
+<?php echo $this->control->tpl['showhead']; ?>
 
 <?php
 dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']);
@@ -134,7 +135,7 @@ dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']
 
 </table>
 
-</div>
+<?php echo $this->control->tpl['showend']; ?>
 
 <?php if (! $user->societe_id) { ?>
 <div class="tabsAction">

@@ -21,7 +21,7 @@
  *	\file       htdocs/societe/canvas/actions_card_common.class.php
  *	\ingroup    thirdparty
  *	\brief      Fichier de la classe Thirdparty card controller (common)
- *	\version    $Id: actions_card_common.class.php,v 1.22 2011/06/30 13:25:32 hregis Exp $
+ *	\version    $Id: actions_card_common.class.php,v 1.23 2011/07/08 13:07:45 eldy Exp $
  */
 
 /**
@@ -535,13 +535,11 @@ class ActionsCardCommon
         }
         else
         {
-            /* TODO dol_fiche_head and dol_fiche_end must return a string and not do a print
             $head = societe_prepare_head($this->object);
             $title = $this->getTitle($action);
 
-            $this->tpl['showhead']=dol_fiche_head($head, 'card', $title, 0, 'company');
-            $this->tpl['showend']=dol_fiche_end();
-            */
+            $this->tpl['showhead']=dol_get_fiche_head($head, 'card', $title, 0, 'company');
+            $this->tpl['showend']=dol_get_fiche_end();
 
             $this->tpl['showrefnav'] 		= $form->showrefnav($this->object,'socid','',($user->societe_id?0:1),'rowid','nom');
 
