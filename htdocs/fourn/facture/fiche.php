@@ -25,7 +25,7 @@
  *	\file       htdocs/fourn/facture/fiche.php
  *	\ingroup    facture, fournisseur
  *	\brief      Page for supplier invoice card (view, edit, validate)
- *	\version    $Id: fiche.php,v 1.259 2011/07/02 16:48:32 eldy Exp $
+ *	\version    $Id: fiche.php,v 1.260 2011/07/07 21:32:19 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -677,10 +677,10 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile']
                 $sendto = $_POST['sendto'];
                 $sendtoid = 0;
             }
-            elseif ($_POST['receiver'])
+            elseif ($_POST['receiver'] != '-1')
             {
-                // Le destinataire a ete fourni via la liste deroulante
-                if ($_POST['receiver'] < 0)	// Id du tiers
+                // Recipient was provided from combo list
+                if ($_POST['receiver'] == 'thirdparty') // Id of third party
                 {
                     $sendto = $facturefourn->client->email;
                     $sendtoid = 0;
@@ -1916,5 +1916,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/02 16:48:32 $ - $Revision: 1.259 $');
+llxFooter('$Date: 2011/07/07 21:32:19 $ - $Revision: 1.260 $');
 ?>

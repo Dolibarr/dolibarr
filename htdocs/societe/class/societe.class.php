@@ -27,7 +27,7 @@
  *	\file       htdocs/societe/class/societe.class.php
  *	\ingroup    societe
  *	\brief      File for third party class
- *	\version    $Id: societe.class.php,v 1.89 2011/07/04 11:41:05 eldy Exp $
+ *	\version    $Id: societe.class.php,v 1.91 2011/07/07 21:32:21 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 
@@ -376,6 +376,14 @@ class Societe extends CommonObject
         global $langs,$conf;
 
         dol_syslog("Societe::Update id=".$id." call_trigger=".$call_trigger." allowmodcodeclient=".$allowmodcodeclient." allowmodcodefournisseur=".$allowmodcodefournisseur);
+
+        // For triggers
+        if ($call_trigger)
+        {
+        	$objectstatic=new Societe($this->db);
+        	$objectstatic->fetch($id);
+        	$this->oldobject = $objectstatic;
+        }
 
         $now=dol_now();
 
@@ -919,7 +927,7 @@ class Societe extends CommonObject
 
             // Update link in member table
             $sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
-            $sql.= " SET fk_soc = NULL where fk_soc = " . $id;
+            $sql.= " SET fk_soc = NULL WHERE fk_soc = " . $id;
             dol_syslog("Societe::Delete sql=".$sql, LOG_DEBUG);
             if ($this->db->query($sql))
             {
@@ -1526,14 +1534,14 @@ class Societe extends CommonObject
     {
         global $langs;
 
-        $contact_email = $this->contact_property_array('email');
+        $contact_emails = $this->contact_property_array('email');
         if ($this->email)
         {
             if (empty($this->name)) $this->name=$this->nom;
             // TODO: Tester si email non deja present dans tableau contact
-            $contact_email[-1]=$langs->trans("ThirdParty").': '.dol_trunc($this->name,16)." &lt;".$this->email."&gt;";
+            $contact_emails['thirdparty']=$langs->trans("ThirdParty").': '.dol_trunc($this->name,16)." &lt;".$this->email."&gt;";
         }
-        return $contact_email;
+        return $contact_emails;
     }
 
     /**
@@ -1549,7 +1557,7 @@ class Societe extends CommonObject
         {
             if (empty($this->name)) $this->name=$this->nom;
             // TODO: Tester si tel non deja present dans tableau contact
-            $contact_phone[-1]=$langs->trans("ThirdParty").': '.dol_trunc($this->name,16)." &lt;".$this->tel."&gt;";
+            $contact_phone['thirdparty']=$langs->trans("ThirdParty").': '.dol_trunc($this->name,16)." &lt;".$this->tel."&gt;";
         }
         return $contact_phone;
     }

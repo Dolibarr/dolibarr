@@ -21,13 +21,13 @@
  *      \file       htdocs/includes/triggers/interface_modWorkflow_WorkflowManager.class.php
  *      \ingroup    core
  *      \brief      Trigger file for workflows
- *      \version	$Id$
+ *      \version	$Id: interface_modWorkflow_WorkflowManager.class.php,v 1.6 2011/07/08 15:43:54 eldy Exp $
  */
 
 
 /**
- *      \class      InterfaceWorkflow
- *      \brief      Classe des fonctions triggers des actions personalisees du workflow
+ *      \class      InterfaceWorkflowManager
+ *      \brief      Class of triggers for workflow module
  */
 
 class InterfaceWorkflowManager

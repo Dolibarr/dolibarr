@@ -7,6 +7,7 @@ NewIntervention=Nouvelle intervention
 AddIntervention=Créer intervention
 ListOfInterventions=Liste des interventions
 EditIntervention=Editer
+ActionsOnFicheInter=Événements sur l'intervention
 LastInterventions=Les %s dernières interventions
 AllInterventions=Toutes les interventions
 CreateDraftIntervention=Créer brouillon

@@ -1,13 +1,26 @@
 <?php
-/*
- * jQuery File Upload Plugin PHP Example 5.2.2
- * https://github.com/blueimp/jQuery-File-Upload
+/* Copyright (C) 2011 Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2011 Laurent Destailleur	<eldy@users.sourceforge.net>
  *
- * Copyright 2010, Sebastian Tschan
- * https://blueimp.net
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- * Licensed under the MIT license:
- * http://creativecommons.org/licenses/MIT/
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
+
+/**
+ *       \file       htdocs/core/ajaxfileupload.php
+ *       \brief      File to return Ajax response on file upload
+ *       \version    $Id: ajaxfileupload.php,v 1.10 2011/07/06 10:34:30 hregis Exp $
  */
 
 //if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
@@ -22,11 +35,10 @@ if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1'); // If we don't nee
 //if (! defined("NOLOGIN"))        define("NOLOGIN",'1');       // If this page is public (can be called outside logged session)
 
 
-$res=@include("../../main.inc.php");								// For "custom" directory
-if (! $res) $res=@include("../main.inc.php");						// For root directory
-if (! $res) @include("../../../../dolibarr/htdocs/main.inc.php");	// Used on dev env only
+require("../main.inc.php");
 
 require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/images.lib.php");
 
 error_reporting(E_ALL | E_STRICT);
 
@@ -37,19 +49,23 @@ error_reporting(E_ALL | E_STRICT);
 $fk_element = GETPOST('fk_element');
 $element = GETPOST('element');
 
+
+/**
+ *
+ */
 class UploadHandler
 {
     private $options;
     private $fk_elment;
     private $element;
-    
+
     function __construct($options=null,$fk_element=null,$element=null) {
-    	
+
     	global $conf;
-    	
+
     	$this->fk_element=$fk_element;
     	$this->element=$element;
-    	
+
         $this->options = array(
             'script_url' => $_SERVER['PHP_SELF'],
             'upload_dir' => $conf->$element->dir_output . '/' . $fk_element . '/',
@@ -67,18 +83,14 @@ class UploadHandler
                 // uploaded images. You can also add additional versions with
                 // their own upload directories:
                 /*
-                'large' => array(
+                'small' => array(
                     'upload_dir' => dirname(__FILE__).'/files/',
-                    'upload_url' => dirname($_SERVER['PHP_SELF']).'/files/',
-                    'max_width' => 1920,
-                    'max_height' => 1200
+                    'upload_url' => dirname($_SERVER['PHP_SELF']).'/files/'
                 ),
                 */
-                'thumbnail' => array(
+                'thumbs' => array(
                     'upload_dir' => $conf->$element->dir_output . '/' . $fk_element . '/thumbs/',
-                    'upload_url' => DOL_URL_ROOT.'/document.php?modulepart='.$element.'&attachment=1&file=/'.$fk_element.'/thumbs/',
-                    'max_width' => 40,
-                    'max_height' => 40
+                    'upload_url' => DOL_URL_ROOT.'/document.php?modulepart='.$element.'&attachment=1&file=/'.$fk_element.'/thumbs/'
                 )
             )
         );
@@ -86,7 +98,7 @@ class UploadHandler
             $this->options = array_merge_recursive($this->options, $options);
         }
     }
-    
+
     private function get_file_object($file_name) {
         $file_path = $this->options['upload_dir'].$file_name;
         if (is_file($file_path) && $file_name[0] !== '.') {
@@ -97,8 +109,8 @@ class UploadHandler
             $file->url = $this->options['upload_url'].rawurlencode($file->name);
             foreach($this->options['image_versions'] as $version => $options) {
                 if (is_file($options['upload_dir'].$file_name)) {
-                    $file->{$version.'_url'} = $options['upload_url']
-                        .rawurlencode($file->name);
+                    $tmp=explode('.',$file->name);
+                    $file->{$version.'_url'} = $options['upload_url'].rawurlencode($tmp[0].'_mini.'.$tmp[1]);
                 }
             }
             $file->delete_url = $this->options['script_url']
@@ -108,7 +120,7 @@ class UploadHandler
         }
         return null;
     }
-    
+
     private function get_file_objects() {
         return array_values(array_filter(array_map(
             array($this, 'get_file_object'),
@@ -116,62 +128,34 @@ class UploadHandler
         )));
     }
 
+    /**
+     *  Create thumbs
+     *  options is array('max_width', 'max_height')
+     */
     private function create_scaled_image($file_name, $options) {
+        global $maxwidthmini, $maxheightmini;
         $file_path = $this->options['upload_dir'].$file_name;
         $new_file_path = $options['upload_dir'].$file_name;
+
         if (create_exdir($options['upload_dir']) >= 0)
         {
         	list($img_width, $img_height) = @getimagesize($file_path);
 	        if (!$img_width || !$img_height) {
 	            return false;
 	        }
-	        $scale = min(
-	            $options['max_width'] / $img_width,
-	            $options['max_height'] / $img_height
-	        );
-	        if ($scale > 1) {
-	            $scale = 1;
-	        }
-	        $new_width = $img_width * $scale;
-	        $new_height = $img_height * $scale;
-	        $new_img = @imagecreatetruecolor($new_width, $new_height);
-	        switch (strtolower(substr(strrchr($file_name, '.'), 1))) {
-	            case 'jpg':
-	            case 'jpeg':
-	                $src_img = @imagecreatefromjpeg($file_path);
-	                $write_image = 'imagejpeg';
-	                break;
-	            case 'gif':
-	                $src_img = @imagecreatefromgif($file_path);
-	                $write_image = 'imagegif';
-	                break;
-	            case 'png':
-	                $src_img = @imagecreatefrompng($file_path);
-	                $write_image = 'imagepng';
-	                break;
-	            default:
-	                $src_img = $image_method = null;
-	        }
-	        $success = $src_img && @imagecopyresampled(
-	            $new_img,
-	            $src_img,
-	            0, 0, 0, 0,
-	            $new_width,
-	            $new_height,
-	            $img_width,
-	            $img_height
-	        ) && $write_image($new_img, $new_file_path);
-	        // Free up memory (imagedestroy does not delete files):
-	        @imagedestroy($src_img);
-	        @imagedestroy($new_img);
-	        return $success;
+
+	        $res=vignette($file_path,$maxwidthmini,$maxheightmini,'_mini');
+
+	        //return $success;
+	        if (preg_match('/error/i',$res)) return false;
+	        return true;
         }
         else
         {
         	return false;
         }
     }
-    
+
     private function has_error($uploaded_file, $file, $error) {
         if ($error) {
             return $error;
@@ -201,7 +185,7 @@ class UploadHandler
         }
         return $error;
     }
-    
+
     private function handle_file_upload($uploaded_file, $name, $size, $type, $error) {
         $file = new stdClass();
         $file->name = basename(stripslashes($name));
@@ -225,7 +209,8 @@ class UploadHandler
                         FILE_APPEND
                     );
                 } else {
-                    move_uploaded_file($uploaded_file, $file_path);
+                    // FIXME problem with trigger
+                	dol_move_uploaded_file($uploaded_file, $file_path, 1, 0, 0, 1);
                 }
             } else {
                 // Non-multipart uploads (PUT method support)
@@ -238,10 +223,12 @@ class UploadHandler
             $file_size = filesize($file_path);
             if ($file_size === $file->size) {
                 $file->url = $this->options['upload_url'].rawurlencode($file->name);
-                foreach($this->options['image_versions'] as $version => $options) {
-                    if ($this->create_scaled_image($file->name, $options)) {
-                        $file->{$version.'_url'} = $options['upload_url']
-                            .rawurlencode($file->name);
+                foreach($this->options['image_versions'] as $version => $options)
+                {
+                    if ($this->create_scaled_image($file->name, $options))
+                    {
+                        $tmp=explode('.',$file->name);
+                        $file->{$version.'_url'} = $options['upload_url'].rawurlencode($tmp[0].'_mini.'.$tmp[1]);
                     }
                 }
             } else if ($this->options['discard_aborted_uploads']) {
@@ -257,10 +244,10 @@ class UploadHandler
         }
         return $file;
     }
-    
+
     public function get() {
         $file_name = isset($_REQUEST['file']) ?
-            basename(stripslashes($_REQUEST['file'])) : null; 
+            basename(stripslashes($_REQUEST['file'])) : null;
         if ($file_name) {
             $info = $this->get_file_object($file_name);
         } else {
@@ -269,7 +256,7 @@ class UploadHandler
         header('Content-type: application/json');
         echo json_encode($info);
     }
-    
+
     public function post() {
         $upload = isset($_FILES[$this->options['param_name']]) ?
             $_FILES[$this->options['param_name']] : array(
@@ -314,7 +301,7 @@ class UploadHandler
         }
         echo json_encode($info);
     }
-    
+
     public function delete() {
         $file_name = isset($_REQUEST['file']) ?
             basename(stripslashes($_REQUEST['file'])) : null;
@@ -332,6 +319,12 @@ class UploadHandler
         echo json_encode($success);
     }
 }
+
+
+
+/*
+ * View
+ */
 
 $upload_handler = new UploadHandler(null,$fk_element,$element);
 
@@ -352,5 +345,10 @@ switch ($_SERVER['REQUEST_METHOD']) {
         break;
     default:
         header('HTTP/1.0 405 Method Not Allowed');
+        exit;
 }
+
+
+$db->close();
+
 ?>

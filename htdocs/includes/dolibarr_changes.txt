@@ -2,15 +2,11 @@
 This file describe changes made on external library after beeing included
 in Dolibarr root.
 
+
 ALL:
 ----
 Replace "& new" by "new"
 
-
-CKEDITOR:
----------
-Remove border and padding into style .cke_skin_kama
-into file includes/ckeditor/skins/kama/editor.css
 
 
 NUSOAP:
@@ -23,13 +19,6 @@ By
 
 * In file nusoap.php, to avoid a warning,
 Replace call to serialize_val with no bugged value
-
-
-FPDF:
------
-* All changes were added in fpdf.php file and marked with tag DOLCHANGE or DOL_CHANGE
-Example:
-$tmp=tempnam('.','gif') into $tmp=tempnam(DOL_DATA_ROOT,'gif') to avoid creating files out of the htdocs directory.
 
 
 FPDFI and FPDF_TPL:

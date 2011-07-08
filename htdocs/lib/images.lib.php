@@ -21,7 +21,7 @@
 /**
  *  \file		htdocs/lib/images.lib.php
  *  \brief		Set of function for manipulating images
- * 	\version	$Id$
+ * 	\version	$Id: images.lib.php,v 1.23 2011/07/05 22:51:24 eldy Exp $
  */
 
 // Define size of logo small and mini
@@ -275,7 +275,8 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x=0, $s
 	// Set permissions on file
 	if (! empty($conf->global->MAIN_UMASK)) @chmod($imgThumbName, octdec($conf->global->MAIN_UMASK));
 
-	// Free memory
+	// Free memory. This does not delete image.
+    imagedestroy($img);
 	imagedestroy($imgThumb);
 
 	clearstatcache();	// File was replaced by a modified one, so we clear file caches.
@@ -287,10 +288,10 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x=0, $s
 /**
  *    	Create a thumbnail from an image file (Supported extensions are gif, jpg, png and bmp).
  *      If file is myfile.jpg, new file may be myfile_small.jpg
- *    	@param     file           	PAth of file to resize
+ *    	@param     file           	Path of source file to resize
  *    	@param     maxWidth       	Largeur maximum que dois faire la miniature (-1=unchanged, 160 by default)
  *    	@param     maxHeight      	Hauteur maximum que dois faire l'image (-1=unchanged, 120 by default)
- *    	@param     extName        	Extension to differenciate thumb file name
+ *    	@param     extName        	Extension to differenciate thumb file name ('_small', '_mini')
  *    	@param     quality        	Quality of compression (0=worst, 100=best)
  *      @param     outdir           Directory where to store thumb
  *      @param     targetformat     New format of target (1,2,3,4 or 0 to keep old format)
@@ -327,12 +328,12 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 	elseif(!is_numeric($maxWidth) || empty($maxWidth) || $maxWidth < -1){
 		// Si la largeur max est incorrecte (n'est pas numerique, est vide, ou est inferieure a 0)
         dol_syslog('Wrong value for parameter maxWidth',LOG_ERR);
-	    return 'Wrong value for parameter maxWidth';
+	    return 'Error: Wrong value for parameter maxWidth';
 	}
 	elseif(!is_numeric($maxHeight) || empty($maxHeight) || $maxHeight < -1){
 		// Si la hauteur max est incorrecte (n'est pas numerique, est vide, ou est inferieure a 0)
         dol_syslog('Wrong value for parameter maxHeight',LOG_ERR);
-	    return 'Wrong value for parameter maxHeight';
+	    return 'Error: Wrong value for parameter maxHeight';
 	}
 
 	$fichier = realpath($file); 	// Chemin canonique absolu de l'image
@@ -374,7 +375,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 		if (! function_exists($imgfonction))
 		{
 			// Fonctions de conversion non presente dans ce PHP
-			return 'Creation de vignette impossible. Ce PHP ne supporte pas les fonctions du module GD '.$imgfonction;
+			return 'Error: Creation of thumbs not possible. This PHP does not support GD function '.$imgfonction;
 		}
 	}
 
@@ -510,8 +511,9 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 	// Set permissions on file
 	if (! empty($conf->global->MAIN_UMASK)) @chmod($imgThumbName, octdec($conf->global->MAIN_UMASK));
 
-	// Free memory
-	imagedestroy($imgThumb);
+    // Free memory. This does not delete image.
+    imagedestroy($img);
+    imagedestroy($imgThumb);
 
 	return $imgThumbName;
 }

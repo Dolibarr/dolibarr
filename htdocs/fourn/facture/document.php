@@ -23,7 +23,7 @@
  *       \file       htdocs/fourn/facture/document.php
  *       \ingroup    facture, fournisseur
  *       \brief      Page de gestion des documents attachees a une facture fournisseur
- *       \version    $Id$
+ *       \version    $Id: document.php,v 1.45 2011/07/06 20:56:48 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -140,7 +140,7 @@ if ($facid > 0)
 
 
 		// Construit liste des fichiers
-		$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
+		$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 		$totalsize=0;
 		foreach($filearray as $key => $file)
 		{
@@ -196,5 +196,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/06 20:56:48 $ - $Revision: 1.45 $');
 ?>

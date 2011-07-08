@@ -7,6 +7,7 @@ NewIntervention=New intervention
 AddIntervention=Add intervention
 ListOfInterventions=List of interventions
 EditIntervention=Edit intervention
+ActionsOnFicheInter=Actions on intervention
 LastInterventions=Last %s interventions
 AllInterventions=All interventions
 CreateDraftIntervention=Create draft

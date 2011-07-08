@@ -25,7 +25,7 @@
 /**
  *      \file       htdocs/lib/CMailFile.class.php
  *      \brief      File of class to send emails (with attachments or not)
- *		\version    $Id: CMailFile.class.php,v 1.143 2011/07/04 09:36:29 eldy Exp $
+ *		\version    $Id: CMailFile.class.php,v 1.144 2011/07/08 17:33:00 hregis Exp $
  *      \author     Dan Potter.
  *      \author	    Eric Seigne
  *      \author	    Laurent Destailleur.
@@ -349,7 +349,7 @@ class CMailFile
 						// le return-path dans les header ne fonctionne pas avec tous les MTA
 						// Le passage par -f est donc possible si la constante MAIN_MAIL_ALLOW_SENDMAIL_F est definie.
 						// La variable definie pose des pb avec certains sendmail securisee (option -f refusee car dangereuse)
-						$bounce = $this->addr_from != '' ? "-f {$this->addr_from}" : "";
+						$bounce = $this->addr_from != '' ? '-f' . $this->addr_from : '';
 					}
 
 					$this->message=stripslashes($this->message);

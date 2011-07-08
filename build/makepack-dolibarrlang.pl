@@ -2,7 +2,7 @@
 #----------------------------------------------------------------------------
 # \file         build/makepack-dolibarrlang.pl
 # \brief        Package builder (tgz, zip, rpm, deb, exe)
-# \version      $Revision$
+# \version      $Revision: 1.9 $
 # \author       (c)2005 Laurent Destailleur  <eldy@users.sourceforge.net>
 #----------------------------------------------------------------------------
 
@@ -22,7 +22,7 @@ $PROJECT = "dolibarr";
 );
 
 use vars qw/ $REVISION $VERSION /;
-$REVISION = '$Revision$';
+$REVISION = '$Revision: 1.9 $';
 $REVISION =~ /\s(.*)\s/;
 $REVISION = $1;
 $VERSION  = "1.0 (build $REVISION)";
@@ -84,7 +84,6 @@ print "Enter language code to package (en_US, fr_FR, ...) : ";
 $PROJECT = <STDIN>;
 chomp($PROJECT);
 
-# TODO Autodetect version
 # Ask and set version $MAJOR and $MINOR
 print "Enter value for version: ";
 $PROJVERSION = <STDIN>;

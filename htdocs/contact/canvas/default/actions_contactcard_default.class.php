@@ -21,7 +21,7 @@
  *	\file       htdocs/contact/canvas/default/actions_contactcard_default.class.php
  *	\ingroup    thirdparty
  *	\brief      Fichier de la classe Thirdparty contact card controller (default canvas)
- *	\version    $Id$
+ *	\version    $Id: actions_contactcard_default.class.php,v 1.9 2011/07/08 13:07:45 eldy Exp $
  */
 include_once(DOL_DOCUMENT_ROOT.'/contact/canvas/actions_contactcard_common.class.php');
 
@@ -71,17 +71,6 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 	}
 
 	/**
-	 * 	Return the head of card (tabs)
-	 */
-	function showHead($action)
-	{
-		$head = contact_prepare_head($this->object);
-		$title = $this->getTitle($action);
-
-		return dol_fiche_head($head, 'card', $title, 0, 'contact');
-	}
-
-	/**
      *    Assigne les valeurs POST dans l'objet
      */
     function assign_post()
@@ -107,7 +96,11 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 		if ($action == 'view')
 		{
             // Card header
-            $this->tpl['showhead']=$this->showHead($action);
+            $head = contact_prepare_head($this->object);
+            $title = $this->getTitle($action);
+
+		    $this->tpl['showhead']=dol_get_fiche_head($head, 'card', $title, 0, 'contact');
+		    $this->tpl['showend']=dol_get_fiche_end();
 
 			// Confirm delete contact
         	if ($user->rights->societe->contact->supprimer)
@@ -121,9 +114,9 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
         	$objsoc = new Societe($db);
             $objsoc->fetch($this->object->fk_soc);
 
-            $this->tpl['actionstodo']=show_actions_todo($conf,$langs,$db,$objsoc,$this->control->object,1);
+            $this->tpl['actionstodo']=show_actions_todo($conf,$langs,$db,$objsoc,$this->object,1);
 
-            $this->tpl['actionsdone']=show_actions_done($conf,$langs,$db,$objsoc,$this->control->object,1);
+            $this->tpl['actionsdone']=show_actions_done($conf,$langs,$db,$objsoc,$this->object,1);
 		}
 	}
 

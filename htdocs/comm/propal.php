@@ -27,7 +27,7 @@
  *	\file       	htdocs/comm/propal.php
  *	\ingroup    	propale
  *	\brief      	Page of commercial proposals card and list
- *	\version		$Id: propal.php,v 1.608 2011/07/04 10:30:02 eldy Exp $
+ *	\version		$Id: propal.php,v 1.609 2011/07/07 21:32:22 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -475,10 +475,10 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile']
 				$sendto = $_POST['sendto'];
 				$sendtoid = 0;
 			}
-			elseif ($_POST['receiver'])
+			elseif ($_POST['receiver'] != '-1')
 			{
-				// Le destinataire a ete fourni via la liste deroulante
-				if ($_POST['receiver'] < 0)	// Id du tiers
+				// Recipient was provided from combo list
+				if ($_POST['receiver'] == 'thirdparty')	// Id of third party
 				{
 					$sendto = $object->client->email;
 					$sendtoid = 0;
@@ -1975,6 +1975,6 @@ else
 }
 $db->close();
 
-llxFooter('$Date: 2011/07/04 10:30:02 $ - $Revision: 1.608 $');
+llxFooter('$Date: 2011/07/07 21:32:22 $ - $Revision: 1.609 $');
 
 ?>

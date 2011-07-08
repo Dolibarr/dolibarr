@@ -26,7 +26,7 @@
  *	\file       htdocs/main.inc.php
  *	\ingroup	core
  *	\brief      File that defines environment for Dolibarr pages only (variables not required by scripts)
- *	\version    $Id: main.inc.php,v 1.749 2011/07/04 08:53:01 eldy Exp $
+ *	\version    $Id: main.inc.php,v 1.753 2011/07/08 11:26:40 eldy Exp $
  */
 
 @ini_set('memory_limit', '64M');	// This may be useless if memory is hard limited by your PHP
@@ -904,12 +904,11 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             print '<!-- Includes for JQuery (Ajax library) -->'."\n";
             $jquerytheme = 'smoothness';
             if (!empty($conf->global->MAIN_USE_JQUERY_THEME)) $jquerytheme = $conf->global->MAIN_USE_JQUERY_THEME;
-            print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/css/'.$jquerytheme.'/jquery-ui-latest.custom.css" type="text/css" />'."\n";    // JQuery
-            print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/tiptip/tipTip.css" type="text/css" />'."\n";                  // Tooltip
-            print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify-alt.min.css" type="text/css" />'."\n";              // JNotify
-            //print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/lightbox/css/jquery.lightbox-0.5.css" media="screen" />'."\n";          // Lightbox
-            // jQuery fileupload
-            if (! empty($conf->global->MAIN_USE_JQUERY_FILEUPLOAD))
+            print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/css/'.$jquerytheme.'/jquery-ui-latest.custom.css" />'."\n";    // JQuery
+            print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/tiptip/tipTip.css" />'."\n";                           // Tooltip
+            print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify-alt.min.css" />'."\n";          // JNotify
+            //print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/lightbox/css/jquery.lightbox-0.5.css" media="screen" />'."\n";       // Lightbox
+            if (! empty($conf->global->MAIN_USE_JQUERY_FILEUPLOAD))     // jQuery fileupload
             {
             	print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/jquery.fileupload-ui.css" type="text/css" />'."\n";
             }
@@ -966,21 +965,21 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             // jQuery Layout
 			if (!empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) || defined('REQUIRE_JQUERY_LAYOUT'))
 			{
-				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/layout/jquery.layout-latest.min'.$ext.'"></script>'."\n";
+                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/layout/jquery.layout-latest'.$ext.'"></script>'."\n";
 			}
 			// jQuery jnotify
 			if (empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY))	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify.min.js"></script>'."\n";
             // Flot
-            print '<!--[if lte IE 8]><script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/flot/excanvas.min.js"></script><![endif]-->'."\n";
-			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/flot/jquery.flot.min.js"></script>'."\n";
-            print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/flot/jquery.flot.pie.min.js"></script>'."\n";
-            print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/flot/jquery.flot.stack.min.js"></script>'."\n";
+            print '<!--[if lte IE 8]><script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/excanvas.min.js"></script><![endif]-->'."\n";
+			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.min.js"></script>'."\n";
+            print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.pie.min.js"></script>'."\n";
+            print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.stack.min.js"></script>'."\n";
             // CKEditor
             if (!empty($conf->fckeditor->enabled) && !empty($conf->global->FCKEDITOR_EDITORNAME) && $conf->global->FCKEDITOR_EDITORNAME == 'ckeditor')
             {
                 print '<!-- Includes JS for CKEditor -->'."\n";
                 print '<script type="text/javascript">var CKEDITOR_BASEPATH = \''.DOL_URL_ROOT.'/includes/ckeditor/\';</script>'."\n";
-                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/ckeditor/ckeditor'.$ext.'"></script>'."\n";
+                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/ckeditor/ckeditor_basic.js"></script>'."\n";
             }
             // File Upload
             if (! empty($conf->global->MAIN_USE_JQUERY_FILEUPLOAD))
@@ -1014,6 +1013,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		}
 
 		// Define tradMonths javascript array (we define this in datapicker AND in parent page to avoid errors with IE8)
+        print '<script type="text/javascript">'."\n";
 		$tradMonths=array($langs->trans("January"),
 		$langs->trans("February"),
 		$langs->trans("March"),
@@ -1027,9 +1027,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		$langs->trans("November"),
 		$langs->trans("December")
 		);
-		print '<script type="text/javascript">';
-		print 'var tradMonths = '.json_encode($tradMonths).';';
-		print '</script>'."\n";
+		print 'var tradMonths = '.json_encode($tradMonths).';'."\n";
 
 		// Define tradMonthsMin javascript array (we define this in datapicker AND in parent page to avoid errors with IE8)
 		$tradMonthsMin=array($langs->trans("JanuaryMin"),
@@ -1045,9 +1043,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		$langs->trans("NovemberMin"),
 		$langs->trans("DecemberMin")
 		);
-		print '<script type="text/javascript">';
-		print 'var tradMonthsMin = '.json_encode($tradMonthsMin).';';
-		print '</script>'."\n";
+		print 'var tradMonthsMin = '.json_encode($tradMonthsMin).';'."\n";
 
 		// Define tradDays javascript array (we define this in datapicker AND in parent page to avoid errors with IE8)
 		$tradDays=array($langs->trans("Monday"),
@@ -1058,9 +1054,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		$langs->trans("Saturday"),
 		$langs->trans("Sunday")
 		);
-		print '<script type="text/javascript">';
-		print 'var tradDays = '.json_encode($tradDays).';';
-		print '</script>'."\n";
+		print 'var tradDays = '.json_encode($tradDays).';'."\n";
 
 		// Define tradDaysMin javascript array (we define this in datapicker AND in parent page to avoid errors with IE8)
 		$tradDaysMin=array($langs->trans("MondayMin"),
@@ -1071,8 +1065,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		$langs->trans("SaturdayMin"),
 		$langs->trans("SundayMin")
 		);
-		print '<script type="text/javascript">';
-		print 'var tradDaysMin = '.json_encode($tradDaysMin).';';
+		print 'var tradDaysMin = '.json_encode($tradDaysMin).';'."\n";
 		print '</script>'."\n";
 
 		if (! empty($head)) print $head."\n";

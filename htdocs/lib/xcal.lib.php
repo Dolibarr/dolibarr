@@ -20,7 +20,7 @@
 /**
  *  \file       htdocs/lib/xcal.lib.php
  *  \brief      Function to manage calendar files (vcal/ical/...)
- *  \version    $Id$
+ *  \version    $Id: xcal.lib.php,v 1.39 2011/07/08 17:12:03 eldy Exp $
  */
 
 /**
@@ -45,6 +45,7 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile)
 	$calfileh=fopen($outputfile,'w');
 	if ($calfileh)
 	{
+	    include_once(DOL_DOCUMENT_ROOT.'/lib/date.lib.php');
 		$now=dol_now();
 
 		$encoding='';

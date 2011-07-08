@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin <regis@dolibarr.fr>
+/* Copyright (C) 2010-2011 Regis Houssin <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id$
+ * $Id: card_create.tpl.php,v 1.9 2011/07/06 08:09:28 hregis Exp $
  */
 ?>
 

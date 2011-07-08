@@ -24,7 +24,7 @@
  *       \file       htdocs/product/document.php
  *       \ingroup    product
  *       \brief      Page des documents joints sur les produits
- *       \version    $Id$
+ *       \version    $Id: document.php,v 1.68 2011/07/06 20:56:49 eldy Exp $
  */
 
 require('../main.inc.php');
@@ -135,7 +135,7 @@ if ($product->id)
 
 
 	// Construit liste des fichiers
-	$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
+	$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 	$totalsize=0;
 	foreach($filearray as $key => $file)
 	{
@@ -189,5 +189,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/06 20:56:49 $ - $Revision: 1.68 $');
 ?>

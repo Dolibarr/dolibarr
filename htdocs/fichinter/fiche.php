@@ -23,7 +23,7 @@
  *	\file       htdocs/fichinter/fiche.php
  *	\brief      Fichier fiche intervention
  *	\ingroup    ficheinter
- *	\version    $Id: fiche.php,v 1.165 2011/07/02 17:14:58 eldy Exp $
+ *	\version    $Id: fiche.php,v 1.170 2011/07/07 22:02:48 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -467,10 +467,10 @@ if ($action == 'send' && ! $_POST['cancel'] && (empty($conf->global->MAIN_USE_AD
                 $sendto = $_POST['sendto'];
                 $sendtoid = 0;
             }
-            elseif ($_POST['receiver'])
+            elseif ($_POST['receiver'] != '-1')
             {
-                // Le destinataire a ete fourni via la liste deroulante
-                if ($_POST['receiver'] < 0) // Id du tiers
+                // Recipient was provided from combo list
+                if ($_POST['receiver'] == 'thirdparty') // Id of third party
                 {
                     $sendto = $object->client->email;
                     $sendtoid = 0;
@@ -482,7 +482,7 @@ if ($action == 'send' && ! $_POST['cancel'] && (empty($conf->global->MAIN_USE_AD
                 }
             }
 
-            if (strlen($sendto))
+            if (dol_strlen($sendto))
             {
                 $langs->load("commercial");
 
@@ -1037,7 +1037,7 @@ elseif ($fichinterid)
         if ($action != 'editdescription')
         {
             // Validate
-            if ($object->statut == 0 && $user->rights->ficheinter->creer)
+            if ($object->statut == 0 && $user->rights->ficheinter->creer && sizeof($object->lines) > 0)
             {
                 print '<a class="butAction" href="fiche.php?id='.$id.'&action=validate"';
                 print '>'.$langs->trans("Valid").'</a>';
@@ -1097,6 +1097,41 @@ elseif ($fichinterid)
     print '</div>';
 
 
+    if ($action != 'presend')
+    {
+        print '<table width="100%"><tr><td width="50%" valign="top">';
+        /*
+         * Built documents
+         */
+        $filename=dol_sanitizeFileName($object->ref);
+        $filedir=$conf->ficheinter->dir_output . "/".$object->ref;
+        $urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
+        $genallowed=$user->rights->ficheinter->creer;
+        $delallowed=$user->rights->ficheinter->supprimer;
+        $genallowed=1;
+        $delallowed=1;
+
+        $var=true;
+
+        //print "<br>\n";
+        $somethingshown=$formfile->show_documents('ficheinter',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$societe->default_lang);
+
+    	/*
+    	* Linked object block
+    	*/
+    	$somethingshown=$object->showLinkedObjectBlock();
+
+    	print '</td><td valign="top" width="50%">';
+    	// List of actions on element
+    	include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php');
+    	$formactions=new FormActions($db);
+    	$somethingshown=$formactions->showactions($object,'fichinter',$socid);
+        print "</td><td>";
+        print "&nbsp;</td>";
+        print "</tr></table>\n";
+    }
+
+
     /*
      * Action presend
      */
@@ -1122,14 +1157,14 @@ elseif ($fichinterid)
         $formmail->withtoccsocid=0;
         $formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
         $formmail->withtocccsocid=0;
-        $formmail->withtopic=$langs->trans('SendInterventionRef','__FICHREF__');
+        $formmail->withtopic=$langs->trans('SendInterventionRef','__FICHINTERREF__');
         $formmail->withfile=1;
         $formmail->withbody=1;
         $formmail->withdeliveryreceipt=1;
         $formmail->withcancel=1;
 
         // Tableau des substitutions
-        $formmail->substit['__FICHREF__']=$object->ref;
+        $formmail->substit['__FICHINTERREF__']=$object->ref;
         // Tableau des parametres complementaires
         $formmail->param['action']='send';
         $formmail->param['models']='fichinter_send';
@@ -1147,36 +1182,9 @@ elseif ($fichinterid)
 
         print '<br>';
     }
-
-
-    print '<table width="100%"><tr><td width="50%" valign="top">';
-    /*
-     * Built documents
-     */
-    $filename=dol_sanitizeFileName($object->ref);
-    $filedir=$conf->ficheinter->dir_output . "/".$object->ref;
-    $urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
-    $genallowed=$user->rights->ficheinter->creer;
-    $delallowed=$user->rights->ficheinter->supprimer;
-    $genallowed=1;
-    $delallowed=1;
-
-    $var=true;
-
-    print "<br>\n";
-    $somethingshown=$formfile->show_documents('ficheinter',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$societe->default_lang);
-
-	/*
-	* Linked object block
-	*/
-	$somethingshown=$object->showLinkedObjectBlock();
-    print "</td><td>";
-    print "&nbsp;</td>";
-    print "</tr></table>\n";
-
 }
 
 $db->close();
 
-llxFooter('$Date: 2011/07/02 17:14:58 $ - $Revision: 1.165 $');
+llxFooter('$Date: 2011/07/07 22:02:48 $ - $Revision: 1.170 $');
 ?>

@@ -22,7 +22,7 @@
  *	 \file       htdocs/user/class/usergroup.class.php
  *	 \brief      Fichier de la classe des groupes d'utilisateur
  *	 \author     Rodolphe Qiedeville
- *	 \version    $Id: usergroup.class.php,v 1.10 2011/07/04 11:41:04 eldy Exp $
+ *	 \version    $Id: usergroup.class.php,v 1.11 2011/07/08 18:49:16 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
@@ -55,8 +55,8 @@ class UserGroup extends CommonObject
 
 
 	/**
-	 *    Constructor
-	 *    @param  DB         Handler acces base de donnees
+     *    Constructor de la classe
+     *    @param   DoliDb  $DB     Database handler
 	 */
 	function UserGroup($DB)
 	{

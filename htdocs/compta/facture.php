@@ -26,7 +26,7 @@
  *	\file       htdocs/compta/facture.php
  *	\ingroup    facture
  *	\brief      Page to create/see an invoice
- *	\version    $Id: facture.php,v 1.845 2011/07/02 17:02:00 eldy Exp $
+ *	\version    $Id: facture.php,v 1.847 2011/07/08 10:22:14 hregis Exp $
  */
 
 require('../main.inc.php');
@@ -742,12 +742,17 @@ if ($action == 'add' && $user->rights->facture->creer)
                             $desc=($lines[$i]->desc?$lines[$i]->desc:$lines[$i]->libelle);
                             $product_type=($lines[$i]->product_type?$lines[$i]->product_type:0);
 
-                            // Dates
+                            // Date start
                             // TODO mutualiser
-                            $date_start=$lines[$i]->date_debut_prevue;
+                            $date_start=false;
+                            if ($lines[$i]->date_debut_prevue) $date_start=$lines[$i]->date_debut_prevue;
                             if ($lines[$i]->date_debut_reel) $date_start=$lines[$i]->date_debut_reel;
                             if ($lines[$i]->date_start) $date_start=$lines[$i]->date_start;
-                            $date_end=$lines[$i]->date_fin_prevue;
+
+                            //Date end
+                            // TODO mutualiser
+                            $date_end=false;
+                            if ($lines[$i]->date_fin_prevue) $date_end=$lines[$i]->date_fin_prevue;
                             if ($lines[$i]->date_fin_reel) $date_end=$lines[$i]->date_fin_reel;
                             if ($lines[$i]->date_end) $date_end=$lines[$i]->date_end;
 
@@ -1234,10 +1239,10 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
                 $sendto = $_POST['sendto'];
                 $sendtoid = 0;
             }
-            elseif ($_POST['receiver'])
+            elseif ($_POST['receiver'] != '-1')
             {
-                // Le destinataire a ete fourni via la liste deroulante
-                if ($_POST['receiver'] < 0)	// Id du tiers
+                // Recipient was provided from combo list
+                if ($_POST['receiver'] == 'thirdparty') // Id of third party
                 {
                     $sendto = $object->client->email;
                     $sendtoid = 0;
@@ -3236,5 +3241,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/02 17:02:00 $ - $Revision: 1.845 $');
+llxFooter('$Date: 2011/07/08 10:22:14 $ - $Revision: 1.847 $');
 ?>

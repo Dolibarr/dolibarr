@@ -21,7 +21,7 @@
  *      \file       htdocs/user/ldap.php
  *      \ingroup    ldap
  *      \brief      Page fiche LDAP utilisateur
- *      \version    $Id$
+ *      \version    $Id: ldap.php,v 1.30 2011/07/08 18:49:17 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -43,7 +43,7 @@ if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
 if ($user->id == $_GET["id"])	// A user can always read its own card
 {
-	$feature2='';
+    $feature2='';
 }
 $result = restrictedArea($user, 'user', $_GET["id"], '', $feature2);
 
@@ -53,34 +53,34 @@ $fuser->getrights();
 
 
 /*
-* Actions
-*/
+ * Actions
+ */
 
 if ($_GET["action"] == 'dolibarr2ldap')
 {
-	$message="";
+    $message="";
 
-	$db->begin();
+    $db->begin();
 
-	$ldap=new Ldap();
-	$result=$ldap->connect_bind();
+    $ldap=new Ldap();
+    $result=$ldap->connect_bind();
 
-	$info=$fuser->_load_ldap_info();
-	$dn=$fuser->_load_ldap_dn($info);
-	$olddn=$dn;	// We can say that old dn = dn as we force synchro
+    $info=$fuser->_load_ldap_info();
+    $dn=$fuser->_load_ldap_dn($info);
+    $olddn=$dn;	// We can say that old dn = dn as we force synchro
 
-	$result=$ldap->update($dn,$info,$user,$olddn);
+    $result=$ldap->update($dn,$info,$user,$olddn);
 
-	if ($result >= 0)
-	{
-		$message.='<div class="ok">'.$langs->trans("UserSynchronized").'</div>';
-		$db->commit();
-	}
-	else
-	{
-		$message.='<div class="error">'.$ldap->error.'</div>';
-		$db->rollback();
-	}
+    if ($result >= 0)
+    {
+        $message.='<div class="ok">'.$langs->trans("UserSynchronized").'</div>';
+        $db->commit();
+    }
+    else
+    {
+        $message.='<div class="error">'.$ldap->error.'</div>';
+        $db->rollback();
+    }
 }
 
 
@@ -120,25 +120,25 @@ print "</tr>\n";
 print '<tr><td width="25%" valign="top">'.$langs->trans("Login").'</td>';
 if ($fuser->ldap_sid)
 {
-	print '<td class="warning">'.$langs->trans("LoginAccountDisableInDolibarr").'</td>';
+    print '<td class="warning">'.$langs->trans("LoginAccountDisableInDolibarr").'</td>';
 }
 else
 {
-	print '<td>'.$fuser->login.'</td>';
+    print '<td>'.$fuser->login.'</td>';
 }
 print '</tr>';
 
 if ($conf->global->LDAP_SERVER_TYPE == "activedirectory")
 {
-	$ldap = new Ldap();
-	$result = $ldap->connect_bind();
-	if ($result > 0)
-  {
-    $userSID = $ldap->getObjectSid($fuser->login);
-  }
-  print '<tr><td width="25%" valign="top">'.$langs->trans("SID").'</td>';
-  print '<td>'.$userSID.'</td>';
-  print "</tr>\n";
+    $ldap = new Ldap();
+    $result = $ldap->connect_bind();
+    if ($result > 0)
+    {
+        $userSID = $ldap->getObjectSid($fuser->login);
+    }
+    print '<tr><td width="25%" valign="top">'.$langs->trans("SID").'</td>';
+    print '<td>'.$userSID.'</td>';
+    print "</tr>\n";
 }
 
 // LDAP DN
@@ -170,7 +170,7 @@ print '<div class="tabsAction">';
 
 if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
 {
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$fuser->id.'&amp;action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a>';
+    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$fuser->id.'&amp;action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a>';
 }
 
 print "</div>\n";
@@ -194,36 +194,36 @@ $ldap=new Ldap();
 $result=$ldap->connect_bind();
 if ($result > 0)
 {
-	$info=$fuser->_load_ldap_info();
-	$dn=$fuser->_load_ldap_dn($info,1);
-	$search = "(".$fuser->_load_ldap_dn($info,2).")";
-	$records=$ldap->getAttribute($dn,$search);
+    $info=$fuser->_load_ldap_info();
+    $dn=$fuser->_load_ldap_dn($info,1);
+    $search = "(".$fuser->_load_ldap_dn($info,2).")";
+    $records=$ldap->getAttribute($dn,$search);
 
-	//print_r($records);
+    //print_r($records);
 
-	// Affichage arbre
-	if (sizeof($records) && $records != false && (! isset($records['count']) || $records['count'] > 0))
-	{
-		if (! is_array($records))
-		{
-			print '<tr '.$bc[false].'><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
-		}
-		else
-		{
-			$result=show_ldap_content($records,0,$records['count'],true);
-		}
-	}
-	else
-	{
-		print '<tr '.$bc[false].'><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
-	}
+    // Affichage arbre
+    if (count($records) && $records != false && (! isset($records['count']) || $records['count'] > 0))
+    {
+        if (! is_array($records))
+        {
+            print '<tr '.$bc[false].'><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
+        }
+        else
+        {
+            $result=show_ldap_content($records,0,$records['count'],true);
+        }
+    }
+    else
+    {
+        print '<tr '.$bc[false].'><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
+    }
 
-	$ldap->unbind();
-	$ldap->close();
+    $ldap->unbind();
+    $ldap->close();
 }
 else
 {
-	dol_print_error('',$ldap->error);
+    dol_print_error('',$ldap->error);
 }
 
 print '</table>';
@@ -233,5 +233,5 @@ print '</table>';
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/08 18:49:17 $ - $Revision: 1.30 $');
 ?>

@@ -21,7 +21,7 @@
 /**
  *		\file       htdocs/theme/eldy/style.css.php
  *		\brief      Fichier de style CSS du theme Eldy
- *		\version    $Id: style.css.php,v 1.80 2011/07/01 23:08:25 eldy Exp $
+ *		\version    $Id: style.css.php,v 1.84 2011/07/06 11:40:22 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -653,8 +653,9 @@ td.photo {
 /* ============================================================================== */
 
 .toolbar {
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tmenu2.png' ?>) !important;
+    background-image: url(<?php echo DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tmenu2.jpg' ?>) !important;
     background-repeat: repeat-x !important;
+    border: 1px solid #BBB !important;
 }
 
 .toolbarbutton {
@@ -783,13 +784,13 @@ td.photo {
         padding-bottom: 0.35ex; /* to 'vertically center' text inside text-span */
     }
 
-.ui-in-layout-center {
+.ecm-in-layout-center {
     border-left: 0px !important;
     border-right: 0px !important;
     border-top: 0px !important;
 }
 
-.ui-in-layout-south {
+.ecm-in-layout-south {
     border-left: 0px !important;
     border-right: 0px !important;
     border-bottom: 0px !important;
@@ -1071,7 +1072,7 @@ border-right-style: solid;
 border-left-width: 1px;
 border-left-color: #BBBBBB;
 border-left-style: solid;
-height: 16px;
+height: 18px;
 }
 
 table.noborder td {
@@ -1114,7 +1115,7 @@ padding-right: 2px;
 }
 
 tr.liste_titre {
-height: 16px;
+height: 20px !important;
 background: #7699A9;
 background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre2.png' ?>);
 background-repeat: repeat-x;
@@ -1212,6 +1213,7 @@ padding-bottom: 4px;
 }
 
 tr.box_titre {
+height: 20px;
 background: #7699A9;
 background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre2.png' ?>);
 background-repeat: repeat-x;
@@ -1568,7 +1570,7 @@ table.cal_event td { border: 0px; padding-<?php print $left; ?>: 0px; padding-<?
 	       display:block;
 	       margin:0;
 	       padding:2px;
-	       height:16px;
+	       height:18px;
 	       cursor:pointer;
 	     }
 
@@ -1883,3 +1885,12 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 }
 span.cke_skin_kama { padding: 0 !important; }
 .cke_wrapper { padding: 4px !important; }
+
+
+/* ============================================================================== */
+/*  File upload                                                                   */
+/* ============================================================================== */
+
+.template-upload {
+    height: 72px !important;
+}

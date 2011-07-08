@@ -189,3 +189,7 @@ TurnoverOrBudget=Volumen de ventas (empresa) o Presupuesto (asociación o colect
 DefaultAmount=Importe por defecto cotización
 CanEditAmount=El visitante puede elegir/modificar el importe de su cotización
 MEMBER_NEWFORM_PAYONLINE=Ir a la página integrada de pago en línea
+Associations=Asociaciones
+Collectivités=Colectividades
+Particuliers=Particulares
+Entreprises=Empresas

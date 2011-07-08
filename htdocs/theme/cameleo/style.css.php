@@ -23,7 +23,7 @@
 /**
  *		\file       htdocs/theme/eldy/style.css.php
  *		\brief      Fichier de style CSS du theme Cameleo
- *		\version    $Id$
+ *		\version    $Id: style.css.php,v 1.6 2011/07/06 11:40:22 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -809,6 +809,7 @@ td.photo {
 .toolbar {
     background-image: url(<?php echo DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tmenu2.png' ?>) !important;
     background-repeat: repeat-x !important;
+    border: 1px solid #BBB !important;
 }
 
 .toolbarbutton {
@@ -937,13 +938,13 @@ td.photo {
         padding-bottom: 0.35ex; /* to 'vertically center' text inside text-span */
     }
 
-.ui-in-layout-center {
+.ecm-in-layout-center {
     border-left: 0px !important;
     border-right: 0px !important;
     border-top: 0px !important;
 }
 
-.ui-in-layout-south {
+.ecm-in-layout-south {
     border-left: 0px !important;
     border-right: 0px !important;
     border-bottom: 0px !important;
@@ -2068,14 +2069,11 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 span.cke_skin_kama { padding: 0 !important; }
 .cke_wrapper { padding: 4px !important; }
 
-#label
-{
-    text-align: right;
-    color: #666;
-}
 
-#value
-{
-    font-weight: bold;
-    padding: 0 0px 0 10px;
+/* ============================================================================== */
+/*  File upload                                                                   */
+/* ============================================================================== */
+
+.template-upload {
+    height: 72px !important;
 }

@@ -2,7 +2,7 @@
 #-----------------------------------------------------------------------------
 # \file         build/makepack-dolibarrtheme.pl
 # \brief        Script to build a theme Package for Dolibarr
-# \version      $Revision$
+# \version      $Revision: 1.10 $
 # \author       (c)2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
 #-----------------------------------------------------------------------------
 
@@ -25,7 +25,7 @@ $PROJECT="dolibarr";
 
 
 use vars qw/ $REVISION $VERSION /;
-$REVISION='$Revision$'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
+$REVISION='$Revision: 1.10 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
 $VERSION="1.0 (build $REVISION)";
 
 
@@ -78,7 +78,7 @@ print "Makepack theme version $VERSION\n";
 print "Enter name of theme to package: ";
 $PROJECT=<STDIN>;
 chomp($PROJECT);
-# TODO Autodetect version
+
 # Ask and set version $MAJOR and $MINOR
 print "Enter value for version: ";
 $PROJVERSION=<STDIN>;

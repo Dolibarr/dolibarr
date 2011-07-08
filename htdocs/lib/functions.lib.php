@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2000-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
@@ -29,7 +29,7 @@
  *	\file			htdocs/lib/functions.lib.php
  *	\brief			A set of functions for Dolibarr
  *					This file contains all frequently used functions.
- *	\version		$Id: functions.lib.php,v 1.538 2011/07/04 10:33:56 eldy Exp $
+ *	\version		$Id: functions.lib.php,v 1.545 2011/07/08 13:07:44 eldy Exp $
  */
 
 // For compatibility during upgrade
@@ -460,12 +460,6 @@ function dol_syslog($message, $level=LOG_INFO)
 }
 
 
-/* For backward compatibility */
-function dolibarr_fiche_head($links, $active='0', $title='', $notab=0)
-{
-    return dol_fiche_head($links, $active, $title, $notab);
-}
-
 /**
  *	Show tab header of a card
  *	@param	    links		Array of tabs
@@ -476,16 +470,29 @@ function dolibarr_fiche_head($links, $active='0', $title='', $notab=0)
  */
 function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto='')
 {
-    print "\n".'<div class="tabs">'."\n";
+    print dol_get_fiche_head($links, $active, $title, $notab, $picto);
+}
+
+/**
+ *  Show tab header of a card
+ *  @param      links       Array of tabs
+ *  @param      active      Active tab name
+ *  @param      title       Title
+ *  @param      notab       0=Add tab header, 1=no tab header
+ *  @param      picto       Add a picto on tab title
+ */
+function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto='')
+{
+    $out="\n".'<div class="tabs">'."\n";
 
     // Affichage titre
     if ($title)
     {
         $limittitle=30;
-        print '<a class="tabTitle">';
-        if ($picto) print img_object('',$picto).' ';
-        print dol_trunc($title,$limittitle);
-        print '</a>';
+        $out.='<a class="tabTitle">';
+        if ($picto) $out.=img_object('',$picto).' ';
+        $out.=dol_trunc($title,$limittitle);
+        $out.='</a>';
     }
 
     // Define max of key (max may be higher than sizeof because of hole due to module disabling some tabs).
@@ -503,11 +510,11 @@ function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto
         {
             if (!empty($links[$i][0]))
             {
-                print '<a class="tabimage" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+                $out.='<a class="tabimage" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
             }
             else
             {
-                print '<span class="tabspan">'.$links[$i][1].'</span>'."\n";
+                $out.='<span class="tabspan">'.$links[$i][1].'</span>'."\n";
             }
         }
         else if (! empty($links[$i][1]))
@@ -516,27 +523,39 @@ function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto
             if ((is_numeric($active) && $i == $active)
             || (! is_numeric($active) && $active == $links[$i][2]))
             {
-                print '<a id="active" class="tab" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+                $out.='<a id="active" class="tab" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
             }
             else
             {
-                print '<a id="'.$links[$i][2].'" class="tab" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+                $out.='<a id="'.$links[$i][2].'" class="tab" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
             }
         }
     }
 
-    print "</div>\n";
+    $out.="</div>\n";
 
-    if (! $notab) print "\n".'<div class="tabBar">'."\n";
+    if (! $notab) $out.="\n".'<div class="tabBar">'."\n";
+
+    return $out;
 }
 
 /**
- *	Show tab footer of a card
- *	@param      notab		0=Add tab footer, 1=no tab footer
+ *  Show tab footer of a card
+ *  @param      notab       0=Add tab footer, 1=no tab footer
  */
 function dol_fiche_end($notab=0)
 {
-    if (! $notab) print "\n</div>\n";
+    print dol_get_fiche_end($notab);
+}
+
+/**
+ *	Return tab footer of a card
+ *	@param      notab		0=Add tab footer, 1=no tab footer
+ */
+function dol_get_fiche_end($notab=0)
+{
+    if (! $notab) return "\n</div>\n";
+    else return '';
 }
 
 
@@ -807,7 +826,7 @@ function dolibarr_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$chec
  *	@param		year			Year
  *	@param		gm				1=Input informations are GMT values, otherwise local to server TZ
  *	@param		check			0=No check on parameters (Can use day 32, etc...)
- *  @param		isdst			Dayling saving time		
+ *  @param		isdst			Dayling saving time
  *	@return		timestamp		Date as a timestamp, '' if error
  * 	@see 		dol_print_date, dol_stringtotime
  */
@@ -1546,6 +1565,7 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8')
  *							Pour les modules externe utiliser nomimage@mymodule pour rechercher dans le repertoire "img" du module
  *  @param      options     Add more attribute on img tag
  *	@return     string      Return img tag
+ *  @see        img_picto, img_picto_common
  */
 function img_object($alt, $object, $options='')
 {
@@ -1574,7 +1594,8 @@ function img_object($alt, $object, $options='')
  *                                  Example: /mydir/mysubdir/picto.png  if picto.png is stored into htdocs/mydir/mysubdir (pictoisfullpath must be set to 1)
  *	@param		options				Add more attribute on img tag
  *	@param		pictoisfullpath		If 1, image path is a full path
- *	@return     string      		Retourne tag img
+ *  @return     string              Return img tag
+ *  @see        img_object, img_picto_common
  */
 function img_picto($alt, $picto, $options='', $pictoisfullpath=0)
 {
@@ -1603,7 +1624,8 @@ function img_picto($alt, $picto, $options='', $pictoisfullpath=0)
  *	@param      picto       		Name of image file to show (If no extension provided, we use '.png'). Image must be stored into htdocs/theme/common directory.
  *	@param		options				Add more attribute on img tag
  *	@param		pictoisfullpath		If 1, image path is a full path
- *	@return     string      		Retourne tag img
+ *	@return     string      		Return img tag
+ *  @see        img_object, img_picto
  */
 function img_picto_common($alt, $picto, $options='', $pictoisfullpath=0)
 {
@@ -2538,16 +2560,16 @@ function dol_print_error_email()
 
 /**
  *	Show title line of an array
- *	@param	    name        libelle champ
- *	@param	    file        url pour clic sur tri
- *	@param	    field       champ de tri
- *	@param	    begin       ("" par defaut)
- *	@param	    options     ("" par defaut)
- *	@param      td          options de l'attribut td ("" par defaut)
- *	@param      sortfield   field currently used to sort
- *	@param      sortorder   ordre du tri
+ *	@param	    name        Label of field
+ *	@param	    file        Url used when we click on sort picto
+ *	@param	    field       Field to use for new sorting
+ *	@param	    begin       ("" by defaut)
+ *	@param	    moreparam   Add more parameters on sort url links ("" by default)
+ *	@param      td          Options of attribute td ("" by defaut)
+ *	@param      sortfield   Current field used to sort
+ *	@param      sortorder   Current sort order
  */
-function print_liste_field_titre($name, $file, $field, $begin="", $options="", $td="", $sortfield="", $sortorder="")
+function print_liste_field_titre($name, $file="", $field="", $begin="", $moreparam="", $td="", $sortfield="", $sortorder="")
 {
     global $conf;
     //print "$name, $file, $field, $begin, $options, $td, $sortfield, $sortorder<br>\n";
@@ -2567,29 +2589,34 @@ function print_liste_field_titre($name, $file, $field, $begin="", $options="", $
     // If this is a sort field
     if ($field)
     {
+        $options=preg_replace('/sortfield=([a-zA-Z0-9,\s\.]+)/i','',$moreparam);
+        $options=preg_replace('/sortorder=([a-zA-Z0-9,\s\.]+)/i','',$options);
+        $options=preg_replace('/&+/i','&',$options);
+        if (! preg_match('/^&/',$options)) $options='&'.$options;
+
         //print "&nbsp;";
         print '<img width="2" src="'.DOL_URL_ROOT.'/theme/common/transparent.png" alt="">';
         if (! $sortorder)
         {
-            print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=asc&amp;begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
-            print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=desc&amp;begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
+            print '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
+            print '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
         }
         else
         {
             if ($field != $sortfield)
             {
-                print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=asc&amp;begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
-                print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=desc&amp;begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
+                print '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
+                print '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
             }
             else {
                 $sortorder=strtoupper($sortorder);
                 if ($sortorder == 'DESC' ) {
-                    print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=asc&amp;begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
-                    print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=desc&amp;begin='.$begin.$options.'">'.img_up("Z-A",1).'</a>';
+                    print '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
+                    print '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",1).'</a>';
                 }
                 if ($sortorder == 'ASC' ) {
-                    print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=asc&amp;begin='.$begin.$options.'">'.img_down("A-Z",1).'</a>';
-                    print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=desc&amp;begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
+                    print '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",1).'</a>';
+                    print '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
                 }
             }
         }
@@ -3868,9 +3895,9 @@ function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
     if (empty($mesgstring) && (! is_array($mesgarray) || sizeof($mesgarray) == 0)) return;
 
     $iserror=0;
-    if (is_array($mesg_array))
+    if (is_array($mesgarray))
     {
-        foreach($mesg_array as $val)
+        foreach($mesgarray as $val)
         {
             if ($val && preg_match('/class="error"/i',$val)) { $iserror++; break; }
         }
@@ -3880,9 +3907,23 @@ function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
 
     if ($iserror)
     {
+        // Remove div from texts
         $mesgstring=preg_replace('/<\/div><div class="error">/','<br>',$mesgstring);
         $mesgstring=preg_replace('/<div class="error">/','',$mesgstring);
         $mesgstring=preg_replace('/<\/div>/','',$mesgstring);
+        // Remove div from texts array
+        if (is_array($mesgarray))
+        {
+            $newmesgarray=array();
+            foreach($mesgarray as $val)
+            {
+                $tmpmesgstring=preg_replace('/<\/div><div class="error">/','<br>',$val);
+                $tmpmesgstring=preg_replace('/<div class="error">/','',$tmpmesgstring);
+                $tmpmesgstring=preg_replace('/<\/div>/','',$tmpmesgstring);
+                $newmesgarray[]=$tmpmesgstring;
+            }
+            $mesgarray=$newmesgarray;
+        }
         print get_htmloutput_mesg($mesgstring,$mesgarray,'error',$keepembedded);
     }
     else print get_htmloutput_mesg($mesgstring,$mesgarray,'ok',$keepembedded);

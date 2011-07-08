@@ -23,7 +23,7 @@
 /**
  *		\file       htdocs/theme/bureau2crea/style.css.php
  *		\brief      Fichier de style CSS du theme bureau2crea
- *		\version    $Id: style.css.php,v 1.36 2011/07/01 14:01:46 simnandez Exp $
+ *		\version    $Id: style.css.php,v 1.38 2011/07/06 11:40:21 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -468,7 +468,7 @@ li.tmenu a {
 li.tmenu a:hover {
 	color: #a1ad23;
     }
-    
+
 li.tmenu .tmenusel {
 	color: #FFF;
  	padding: 0px 10px 0px 10px;
@@ -480,7 +480,7 @@ li.tmenu .tmenusel {
     border-bottom: 0px solid #555555;
     border-left: 1px solid #D0D0D0;
     border-top: 1px solid #D8D8D8;
-    background: #606060; 
+    background: #606060;
 	}
 
 
@@ -512,7 +512,7 @@ li.tmenusel a:hover {
 li.tmenu a.tmenudisabled {
 	color: #CCC;
     }
-    
+
 /* --- end nav --- */
 
 
@@ -788,6 +788,7 @@ td.photo {
 .toolbar {
     background-image: url(<?php echo DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tmenu2.png' ?>) !important;
     background-repeat: repeat-x !important;
+    border: 1px solid #BBB !important;
 }
 
 .toolbarbutton {
@@ -803,6 +804,15 @@ td.photo {
 /* ============================================================================== */
 /* Panes for ECM or Filemanager                                                   */
 /* ============================================================================== */
+
+#containerlayout .layout-with-no-border {
+    border: 0 !important;
+    border-width: 0 !important;
+}
+
+#containerlayout .layout-padding {
+    padding: 2px !important;
+}
 
 /*
  *  PANES and CONTENT-DIVs
@@ -2046,3 +2056,13 @@ div.leftContent {
 }
 span.cke_skin_kama { padding: 0 !important; }
 .cke_wrapper { padding: 4px !important; }
+
+
+
+/* ============================================================================== */
+/*  File upload                                                                   */
+/* ============================================================================== */
+
+.template-upload {
+    height: 72px !important;
+}

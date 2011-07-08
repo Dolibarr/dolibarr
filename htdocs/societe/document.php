@@ -23,7 +23,7 @@
  *  \file       htdocs/societe/document.php
  *  \brief      Tab for documents linked to third party
  *  \ingroup    societe
- *  \version    $Id: document.php,v 1.33 2011/07/05 17:21:19 hregis Exp $
+ *  \version    $Id: document.php,v 1.37 2011/07/06 20:56:49 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -70,7 +70,7 @@ $object = new Societe($db);
  * Actions
  */
 
-// Envoie fichier
+// Post file
 if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
 	if ($object->fetch($socid))
@@ -85,7 +85,7 @@ if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	                // Create small thumbs for company (Ratio is near 16/9)
 	                // Used on logon for example
 	                $imgThumbSmall = vignette($upload_dir . "/" . $_FILES['userfile']['name'], $maxwidthsmall, $maxheightsmall, '_small', $quality, "thumbs");
-	
+
 	                // Create mini thumbs for company (Ratio is near 16/9)
 	                // Used on menu or for setup page for example
 	                $imgThumbMini = vignette($upload_dir . "/" . $_FILES['userfile']['name'], $maxwidthmini, $maxheightmini, '_mini', $quality, "thumbs");
@@ -112,7 +112,7 @@ if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	}
 }
 
-// Suppression fichier
+// Delete file
 if ($action == 'confirm_deletefile' && $confirm == 'yes')
 {
 	if ($object->fetch($socid))
@@ -149,7 +149,7 @@ if ($socid > 0)
 
 
 		// Construit liste des fichiers
-		$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
+		$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 		$totalsize=0;
 		foreach($filearray as $key => $file)
 		{
@@ -209,72 +209,24 @@ if ($socid > 0)
 			$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?socid='.$socid.'&urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
 			if ($ret == 'html') print '<br>';
 		}
-		
+
 		$formfile=new FormFile($db);
-		
+
+        // Show upload form
 		if ($conf->global->MAIN_USE_JQUERY_FILEUPLOAD)
 		{
 			$formfile->form_ajaxfileupload($object);
 		}
 		else
 		{
-			// Affiche formulaire upload
 			$formfile->form_attach_new_file($_SERVER["PHP_SELF"].'?socid='.$socid,'',0,0,$user->rights->societe->creer);
-	
-	
-			// List of document
-			$param='&socid='.$object->id;
-			$formfile->list_of_documents($filearray,$object,'societe',$param);
-		}
+        }
+
+		// List of document
+		$param='&socid='.$object->id;
+		$formfile->list_of_documents($filearray,$object,'societe',$param);
 
 		print "<br><br>";
-
-		// Courriers
-		// Les courriers sont des documents speciaux generes par des scripts
-		// situes dans scripts/courrier.
-		// Voir Rodo
-		if (! empty($conf->global->MAIN_MODULE_EDITEUR))
-		{
-			$filearray=array();
-			$errorlevel=error_reporting();
-			error_reporting(0);
-			$handle=opendir($courrier_dir);
-			error_reporting($errorlevel);
-			if (is_resource($handle))
-			{
-				$i=0;
-				while (($file = readdir($handle))!==false)
-				{
-					if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-					{
-						$filearray[$i]=$file;
-						$i++;
-					}
-				}
-				closedir($handle);
-			}
-
-			print '<table width="100%" class="noborder">';
-			print '<tr class="liste_titre"><td>'.$langs->trans("Courriers").'</td><td align="right">'.$langs->trans("Size").'</td><td align="center">'.$langs->trans("Date").'</td></tr>';
-
-			$var=true;
-			foreach($filearray as $key => $file)
-			{
-				if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-				{
-					$var=!$var;
-					print "<tr $bc[$var]><td>";
-					$loc = "courrier/".get_exdir($socid);
-					echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=societe&attachment=1&file='.urlencode($loc.'/'.$file).'">'.$file.'</a>';
-					print "</td>\n";
-
-					print '<td align="right">'.dol_print_size(dol_filesize($courrier_dir."/".$file)).'</td>';
-					print '<td align="center">'.dol_print_date(dol_filemtime($courrier_dir."/".$file),'dayhour').'</td>';
-					print "</tr>\n";
-				}
-			}
-			print "</table>";
-		}
 	}
 	else
 	{
@@ -289,6 +241,6 @@ else
 $db->close();
 
 
-llxFooter('$Date: 2011/07/05 17:21:19 $ - $Revision: 1.33 $');
+llxFooter('$Date: 2011/07/06 20:56:49 $ - $Revision: 1.37 $');
 
 ?>
