@@ -20,14 +20,14 @@
  *      \file       htdocs/includes/triggers/interface_modLdap_Ldapsynchro.class.php
  *      \ingroup    core
  *      \brief      Fichier de gestion des triggers LDAP
- *		\version	$Id$
+ *		\version	$Id: interface_modLdap_Ldapsynchro.class.php,v 1.18 2011/07/08 15:43:54 eldy Exp $
  */
 require_once (DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 
 
 /**
  *       \class      InterfaceLdapsynchro
- *       \brief      Classe des fonctions triggers des actions de synchro LDAP
+ *       \brief      Class of triggers for ldap module
  */
 class InterfaceLdapsynchro
 {

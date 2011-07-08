@@ -21,13 +21,13 @@
  *      \file       htdocs/includes/triggers/interface_all_Logevents.class.php
  *      \ingroup    core
  *      \brief      Trigger file for
- *		\version	$Id$
+ *		\version	$Id: interface_all_Logevents.class.php,v 1.21 2011/07/08 15:43:54 eldy Exp $
  */
 
 
 /**
  *      \class      InterfaceLogevents
- *      \brief      Classe des fonctions triggers des actions agenda
+ *      \brief      Class of triggers for security events
  */
 class InterfaceLogevents
 {

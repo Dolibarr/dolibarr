@@ -28,13 +28,13 @@
  *                  - Le nom de la classe doit etre InterfaceMytrigger
  *                  - Le nom de la methode constructeur doit etre InterfaceMytrigger
  *                  - Le nom de la propriete name doit etre Mytrigger
- *		\version	$Id: interface_all_Demo.class.php-NORUN,v 1.27 2011/07/05 16:10:56 hregis Exp $
+ *		\version	$Id: interface_all_Demo.class.php-NORUN,v 1.28 2011/07/08 15:43:54 eldy Exp $
  */
 
 
 /**
  *      \class      InterfaceDemo
- *      \brief      Classe des fonctions triggers des actions personalisees du workflow
+ *      \brief      Class of triggers for demo module
  */
 class InterfaceDemo
 {
