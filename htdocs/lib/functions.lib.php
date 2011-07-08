@@ -29,7 +29,7 @@
  *	\file			htdocs/lib/functions.lib.php
  *	\brief			A set of functions for Dolibarr
  *					This file contains all frequently used functions.
- *	\version		$Id: functions.lib.php,v 1.544 2011/07/07 22:19:53 eldy Exp $
+ *	\version		$Id: functions.lib.php,v 1.545 2011/07/08 13:07:44 eldy Exp $
  */
 
 // For compatibility during upgrade
@@ -460,12 +460,6 @@ function dol_syslog($message, $level=LOG_INFO)
 }
 
 
-/* For backward compatibility */
-function dolibarr_fiche_head($links, $active='0', $title='', $notab=0)
-{
-    return dol_fiche_head($links, $active, $title, $notab);
-}
-
 /**
  *	Show tab header of a card
  *	@param	    links		Array of tabs
@@ -476,16 +470,29 @@ function dolibarr_fiche_head($links, $active='0', $title='', $notab=0)
  */
 function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto='')
 {
-    print "\n".'<div class="tabs">'."\n";
+    print dol_get_fiche_head($links, $active, $title, $notab, $picto);
+}
+
+/**
+ *  Show tab header of a card
+ *  @param      links       Array of tabs
+ *  @param      active      Active tab name
+ *  @param      title       Title
+ *  @param      notab       0=Add tab header, 1=no tab header
+ *  @param      picto       Add a picto on tab title
+ */
+function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto='')
+{
+    $out="\n".'<div class="tabs">'."\n";
 
     // Affichage titre
     if ($title)
     {
         $limittitle=30;
-        print '<a class="tabTitle">';
-        if ($picto) print img_object('',$picto).' ';
-        print dol_trunc($title,$limittitle);
-        print '</a>';
+        $out.='<a class="tabTitle">';
+        if ($picto) $out.=img_object('',$picto).' ';
+        $out.=dol_trunc($title,$limittitle);
+        $out.='</a>';
     }
 
     // Define max of key (max may be higher than sizeof because of hole due to module disabling some tabs).
@@ -503,11 +510,11 @@ function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto
         {
             if (!empty($links[$i][0]))
             {
-                print '<a class="tabimage" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+                $out.='<a class="tabimage" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
             }
             else
             {
-                print '<span class="tabspan">'.$links[$i][1].'</span>'."\n";
+                $out.='<span class="tabspan">'.$links[$i][1].'</span>'."\n";
             }
         }
         else if (! empty($links[$i][1]))
@@ -516,27 +523,39 @@ function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto
             if ((is_numeric($active) && $i == $active)
             || (! is_numeric($active) && $active == $links[$i][2]))
             {
-                print '<a id="active" class="tab" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+                $out.='<a id="active" class="tab" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
             }
             else
             {
-                print '<a id="'.$links[$i][2].'" class="tab" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+                $out.='<a id="'.$links[$i][2].'" class="tab" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
             }
         }
     }
 
-    print "</div>\n";
+    $out.="</div>\n";
 
-    if (! $notab) print "\n".'<div class="tabBar">'."\n";
+    if (! $notab) $out.="\n".'<div class="tabBar">'."\n";
+
+    return $out;
 }
 
 /**
- *	Show tab footer of a card
- *	@param      notab		0=Add tab footer, 1=no tab footer
+ *  Show tab footer of a card
+ *  @param      notab       0=Add tab footer, 1=no tab footer
  */
 function dol_fiche_end($notab=0)
 {
-    if (! $notab) print "\n</div>\n";
+    print dol_get_fiche_end($notab);
+}
+
+/**
+ *	Return tab footer of a card
+ *	@param      notab		0=Add tab footer, 1=no tab footer
+ */
+function dol_get_fiche_end($notab=0)
+{
+    if (! $notab) return "\n</div>\n";
+    else return '';
 }
 
 
