@@ -25,7 +25,7 @@
 /**
  *  \file       htdocs/user/class/user.class.php
  *  \brief      Fichier de la classe utilisateur
- *  \version    $Id: user.class.php,v 1.44 2011/07/04 11:41:02 eldy Exp $
+ *  \version    $Id: user.class.php,v 1.45 2011/07/08 18:49:16 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
@@ -99,8 +99,8 @@ class User extends CommonObject
 
 
 	/**
-	 *    Constructeur de la classe
-	 *    @param  DB         Handler acces base de donnees
+	 *    Constructor de la classe
+	 *    @param   DoliDb  $DB     Database handler
 	 */
 	function User($DB)
 	{

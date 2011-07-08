@@ -24,7 +24,7 @@
 /**
  *       \file       htdocs/user/fiche.php
  *       \brief      Tab of user card
- *       \version    $Id: fiche.php,v 1.273 2011/06/29 10:23:33 eldy Exp $
+ *       \version    $Id: fiche.php,v 1.274 2011/07/08 18:49:17 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -215,7 +215,7 @@ if ($_POST["action"] == 'add' && $canadduser)
         {
             $langs->load("errors");
             $db->rollback();
-            if (is_array($edituser->errors) && sizeof($edituser->errors)) $message='<div class="error">'.join('<br>',$langs->trans($edituser->errors)).'</div>';
+            if (is_array($edituser->errors) && count($edituser->errors)) $message='<div class="error">'.join('<br>',$langs->trans($edituser->errors)).'</div>';
             else $message='<div class="error">'.$langs->trans($edituser->error).'</div>';
             $action="create";       // Go back to create page
         }
@@ -308,7 +308,7 @@ if ($action == 'update' && ! $_POST["cancel"])
                 }
             }
 
-            if ($ret >=0 && ! sizeof($edituser->errors))
+            if ($ret >=0 && ! count($edituser->errors))
             {
                 if (GETPOST('deletephoto') && $edituser->photo)
                 {
@@ -347,7 +347,7 @@ if ($action == 'update' && ! $_POST["cancel"])
                 }
             }
 
-            if ($ret >= 0 && ! sizeof($edituser->errors))
+            if ($ret >= 0 && ! count($edituser->errors))
             {
                 $message.='<div class="ok">'.$langs->trans("UserModified").'</div>';
                 $db->commit();
@@ -825,7 +825,7 @@ else
                 $statutUACF = '';
 
                 //On verifie les options du compte
-                if (sizeof($ldap->uacf) > 0)
+                if (count($ldap->uacf) > 0)
                 {
                     foreach ($ldap->uacf as $key => $statut)
                     {
@@ -1609,7 +1609,7 @@ else
                     {
                         $contact = new Contact($db);
                         $contact->fetch($fuser->contact_id);
-                        print ' / '.'<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$fuser->contact_id.'">'.img_object($langs->trans("ShowContact"),'contact').' '.dol_trunc($contact->getFullName($langs),32).'</a>';
+                        print ' / <a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$fuser->contact_id.'">'.img_object($langs->trans("ShowContact"),'contact').' '.dol_trunc($contact->getFullName($langs),32).'</a>';
                     }
                 }
                 else
@@ -1660,9 +1660,18 @@ else
 
 $db->close();
 
-function dolValidElement($element) {
+llxFooter('$Date: 2011/07/08 18:49:17 $ - $Revision: 1.274 $');
+
+
+
+/**
+ * Return if var element is ok
+ * @param   string      $element    Variable to check
+ * @return  boolean                 Return true of variable is not empty
+ */
+function dolValidElement($element)
+{
     return (trim($element) != '');
 }
 
-llxFooter('$Date: 2011/06/29 10:23:33 $ - $Revision: 1.273 $');
 ?>
