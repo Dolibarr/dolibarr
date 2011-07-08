@@ -22,7 +22,7 @@
  *	    \file       htdocs/comm/remx.php
  *      \ingroup    societe
  *		\brief      Page to edit absolute discounts for a customer
- *		\version    $Id$
+ *		\version    $Id: remx.php,v 1.50 2011/07/08 18:39:14 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -483,9 +483,9 @@ if ($_socid > 0)
 			$tab_sqlobjOrder[]= $db->jdate($sqlobj->dc);
 		}
 		$db->free($resql2);
-		array_multisort ($tab_sqlobjOrder,SORT_DESC,$tab_sqlobj);
+		array_multisort($tab_sqlobjOrder,SORT_DESC,$tab_sqlobj);
 
-		$num = sizeOf($tab_sqlobj);
+		$num = count($tab_sqlobj);
 		$i = 0 ;
 		while ($i < $num )
 		{
@@ -539,5 +539,5 @@ if ($_socid > 0)
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/08 18:39:14 $ - $Revision: 1.50 $');
 ?>
