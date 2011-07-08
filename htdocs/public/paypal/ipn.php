@@ -23,7 +23,7 @@
  *					Send an e-mail when the seller has received a Paypal payment.
  *					If the transaction is OK, PayPal has the script connects and sends data, then the script sends an e-mail summarizing the seller.
  *					Add the URL of the script during the creation of a Paypal button or the preferences of his Paypal account was: Preferences Instant Payment Notification.
- *		\version    $Id: ipn.php,v 1.1 2011/07/08 08:30:50 hregis Exp $
+ *		\version    $Id: ipn.php,v 1.2 2011/07/08 18:08:28 hregis Exp $
  */
 
 if (! defined('NOLOGIN'))			define("NOLOGIN",1);		// This means this output page does not require to be logged.
@@ -44,11 +44,6 @@ if (! empty($conf->paypal->enabled) && ! empty($conf->global->PAYPAL_IPN_MAIL_AD
 	$langs->load("main");
 	$langs->load("other");
 	
-	// From
-	$from = $conf->global->PAYPAL_IPN_MAIL_ADDRESS;
-	
-	// To
-	$sendto = $conf->global->PAYPAL_IPN_MAIL_ADDRESS;
 	
 	// read the post from PayPal system and add 'cmd'
 	$req = 'cmd=_notify-validate';
@@ -70,9 +65,19 @@ if (! empty($conf->paypal->enabled) && ! empty($conf->global->PAYPAL_IPN_MAIL_AD
 		// HTTP ERROR
 	} else {
 		fputs ($fp, $header . $req);
-		while (!feof($fp)) {
+		while (!feof($fp))
+		{
 			$res = fgets ($fp, 1024);
-			if (strcmp ($res, "VERIFIED") == 0) {
+			if (strcmp ($res, "VERIFIED") == 0)
+			{
+				// From
+				$from = GETPOST('receiver_email','',2);
+				
+				// To
+				$sendto = GETPOST('payer_email','',2);
+				
+				// CC
+				$sendtocc = GETPOST('receiver_email','',2);
 				
 				// Send mail
 				// TODO add translation
@@ -135,7 +140,13 @@ if (! empty($conf->paypal->enabled) && ! empty($conf->global->PAYPAL_IPN_MAIL_AD
 				if (! $mail->error) $result=$mail->sendfile();
 			}
 			else if (strcmp ($res, "INVALID") == 0)
-			{	
+			{
+				// From
+				$from = GETPOST('receiver_email','',2);
+				
+				// To
+				$sendto = GETPOST('receiver_email','',2);
+				
 				// Envoi d'un mail si invalide
 				$subject = "[PAYPAL] Paiement PAYPAL NON VALIDE";
 				
