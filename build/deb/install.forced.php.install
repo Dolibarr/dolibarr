@@ -4,12 +4,13 @@
 // This file must be present into htdocs/install directory
 // during install process to be used.
 //
-// $Id: install.forced.php.install,v 1.6 2011/07/09 14:11:40 eldy Exp $
+// $Id: install.forced.php.install,v 1.7 2011/07/09 15:48:19 eldy Exp $
 //
+
 $force_install_noedit=1;
 $force_install_message='KeepDefaultValuesDeb';
-#$force_install_main_data_root='/usr/share/dolibarr/documents';
-$force_install_main_data_root='/var/lib/dolibarr';
+$force_install_main_data_root='/usr/share/dolibarr/documents';
+#$force_install_main_data_root='/var/lib/dolibarr';
 $force_install_type='mysqli';
 $force_install_dbserver='localhost';
 $force_install_port='3306';
