@@ -108,12 +108,6 @@ case "$1" in
 			
 		done
 
-		# Copy icon file
-		#echo "Copy icon file"
-		#fileorig="/usr/share/dolibarr/doc/images/dolibarr.xpm"
-		#target="/usr/share/pixmaps/"
-		#cp -f $fileorig $target
-
 		#echo "Install menu entry"
 		# This one is for Gnome ubuntu
 		#fileorig="/usr/share/dolibarr/build/deb/dolibarr.desktop"
