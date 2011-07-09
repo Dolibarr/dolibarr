@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2011	   Herve Prot           <herve.prot@symeos.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,12 +65,16 @@ class ActionComm extends CommonObject
 	var $punctual = 1;
     var $location;
 
+    var $istask;                 // 1=RDV, 2=TASK
+
     var $usertodo;		// Object user that must do action
     var $userdone;	 	// Object user that did action
 
     var $societe;		// Company linked to action (optionnal)
     var $contact;		// Contact linked tot action (optionnal)
     var $fk_project;	// Id of project (optionnal)
+    var $fk_lead;	// Id of lead (optionnal)
+    var $fk_task;       // Id of mother task (optionnal)
 
     var $note;
     var $percentage;
@@ -116,16 +121,21 @@ class ActionComm extends CommonObject
         if (empty($this->punctual))     $this->punctual = 0;
         if ($this->percentage > 100) $this->percentage = 100;
         if ($this->percentage == 100 && ! $this->dateend) $this->dateend = $this->date;
-        if ($this->datep && $this->datef)   $this->durationp=($this->datef - $this->datep);
+        if ($this->datep && $this->datef && $this->istask==1)   $this->durationp=($this->datef - $this->datep);
 		if ($this->date  && $this->dateend) $this->durationa=($this->dateend - $this->date);
 		if ($this->datep && $this->datef && $this->datep > $this->datef) $this->datef=$this->datep;
 		if ($this->date  && $this->dateend && $this->date > $this->dateend) $this->dateend=$this->date;
         if ($this->fk_project < 0) $this->fk_project = 0;
+		if ($this->fk_lead < 0) $this->fk_lead = 0;
+        if ($this->fk_task < 0) $this->fk_task = 0;
         if ($this->elementtype=='facture')  $this->elementtype='invoice';
         if ($this->elementtype=='commande') $this->elementtype='order';
         if ($this->elementtype=='contrat')  $this->elementtype='contract';
 
-		if (! $this->type_id && $this->type_code)
+        if($this->istask==2 && $this->percentage==100) //ACTION
+                $this->datef=dol_now();
+
+	if (! $this->type_id && $this->type_code)
 		{
 			# Get id from code
 			$cactioncomm=new CActionComm($this->db);
@@ -148,6 +158,10 @@ class ActionComm extends CommonObject
 			return -1;
 		}
 
+                if ($this->percentage == 100 && !$this->userdone->id > 0)
+                {
+                    $this->userdone->id=$user->id;
+                }
 
 		$this->db->begin("ActionComm::add");
 
@@ -162,6 +176,8 @@ class ActionComm extends CommonObject
         $sql.= "fk_action,";
         $sql.= "fk_soc,";
         $sql.= "fk_project,";
+        $sql.= "fk_lead,";
+        $sql.= "fk_task,";
         $sql.= "note,";
 		$sql.= "fk_contact,";
 		$sql.= "fk_user_author,";
@@ -182,7 +198,9 @@ class ActionComm extends CommonObject
         $sql.= " '".$this->type_id."',";
         $sql.= ($this->societe->id>0?" '".$this->societe->id."'":"null").",";
         $sql.= ($this->fk_project>0?" '".$this->fk_project."'":"null").",";
-        $sql.= " '".$this->db->escape($this->note)."',";
+        $sql.= ($this->fk_lead>0?" '".$this->fk_lead."'":"null").",";
+        $sql.= ($this->fk_task>0?" '".$this->fk_task."'":"null").",";
+        $sql.= " '".addslashes($this->note)."',";
         $sql.= ($this->contact->id > 0?"'".$this->contact->id."'":"null").",";
         $sql.= ($user->id > 0 ? "'".$user->id."'":"null").",";
 		$sql.= ($this->usertodo->id > 0?"'".$this->usertodo->id."'":"null").",";
@@ -238,8 +256,10 @@ class ActionComm extends CommonObject
 		$sql.= " a.note, a.label, a.fk_action as type_id,";
 		$sql.= " a.fk_soc,";
 		$sql.= " a.fk_project,";
+                $sql.= " a.fk_lead,";
 		$sql.= " a.fk_user_author, a.fk_user_mod,";
 		$sql.= " a.fk_user_action, a.fk_user_done,";
+		 $sql.= " a.fk_task,";
 		$sql.= " a.fk_contact, a.percent as percentage,";
 		$sql.= " a.fk_element, a.elementtype,";
 		$sql.= " a.priority, a.fulldayevent, a.location,";
@@ -288,11 +308,15 @@ class ActionComm extends CommonObject
 				$this->priority				= $obj->priority;
                 $this->fulldayevent			= $obj->fulldayevent;
 				$this->location				= $obj->location;
+				$this->durationp = $obj->durationp;
 
-				$this->socid				= $obj->fk_soc;	// To have fetch_thirdparty method working
-				$this->societe->id			= $obj->fk_soc;
-				$this->contact->id			= $obj->fk_contact;
-				$this->fk_project			= $obj->fk_project;
+				$this->socid       = $obj->fk_soc;	// To have fetch_thirdparty method working
+				$this->societe->id = $obj->fk_soc;
+				$this->contact->id = $obj->fk_contact;
+				$this->fk_project = $obj->fk_project;
+                $this->fk_lead = $obj->fk_lead;
+                $this->fk_task = $obj->fk_task;
+                $this->istask = $obj->type;
 
 				$this->fk_element			= $obj->fk_element;
 				$this->elementtype			= $obj->elementtype;
@@ -319,7 +343,15 @@ class ActionComm extends CommonObject
         dol_syslog("ActionComm::delete sql=".$sql, LOG_DEBUG);
         if ($this->db->query($sql))
         {
-            return 1;
+            $sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm";
+            $sql.= " SET fk_task='' WHERE fk_task=".$this->id;
+            if ($this->db->query($sql))
+                return 1;
+            else
+            {
+                $this->error=$this->db->error()." sql=".$sql;
+        	return -1;
+            }
         }
         else
         {
@@ -328,6 +360,36 @@ class ActionComm extends CommonObject
         }
     }
 
+    /**
+	*    Cloture l'action : pourcentage = 100
+	*    @return     int     <0 si ko, >0 si ok
+	*/
+    function close()
+    {
+        global $user;
+
+        if($this->istask==2) //ACTION
+        {
+            $sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm";
+            $sql.= " SET percent=100, fk_user_done=".$user->id.", datep2=".$this->db->idate(dol_now())." WHERE id=".$this->id;
+        }
+        else
+        {
+            $sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm";
+            $sql.= " SET percent=100, fk_user_done=".$user->id." WHERE id=".$this->id;
+        }
+
+        dol_syslog("ActionComm::close sql=".$sql, LOG_DEBUG);
+        if ($this->db->query($sql))
+        {
+                return 1;
+        }
+        else
+        {
+        	$this->error=$this->db->error()." sql=".$sql;
+        	return -1;
+        }
+    }
 	/**
  	 *    Met a jour l'action en base.
  	 *	  Si percentage = 100, on met a jour date 100%
@@ -335,6 +397,8 @@ class ActionComm extends CommonObject
 	 */
     function update($user)
     {
+        global $user;
+
         // Clean parameters
 		$this->label=trim($this->label);
         $this->note=trim($this->note);
@@ -348,6 +412,15 @@ class ActionComm extends CommonObject
 		if ($this->datep && $this->datef && $this->datep > $this->datef) $this->datef=$this->datep;
 		if ($this->date  && $this->dateend && $this->date > $this->dateend) $this->dateend=$this->date;
         if ($this->fk_project < 0) $this->fk_project = 0;
+        if ($this->fk_lead < 0) $this->fk_lead = 0;
+        if ($this->fk_task < 0) $this->fk_task = 0;
+
+        if(empty($this->label))
+                $this->label=$cact->libelle;
+
+        if($this->istask==2 && $this->percentage==100) //ACTION
+                $this->datef=dol_now();
+        
 
 		// Check parameters
 		if ($this->percentage == 0 && $this->userdone->id > 0)
@@ -355,6 +428,10 @@ class ActionComm extends CommonObject
 			$this->error="ErrorCantSaveADoneUserWithZeroPercentage";
 			return -1;
 		}
+                if ($this->percentage == 100 && !$this->userdone->id > 0)
+                {
+                    $this->userdone->id=$user->id;
+                }
 
 		//print 'eeea'.$this->datep.'-'.(strval($this->datep) != '').'-'.$this->db->idate($this->datep);
 		$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm ";
@@ -364,9 +441,12 @@ class ActionComm extends CommonObject
         $sql.= ", datep2 = ".(strval($this->datef)!='' ? "'".$this->db->idate($this->datef)."'" : 'null');
         //$sql.= ", datea = ".(strval($this->date)!='' ? "'".$this->db->idate($this->date)."'" : 'null');
         //$sql.= ", datea2 = ".(strval($this->dateend)!='' ? "'".$this->db->idate($this->dateend)."'" : 'null');
+		$sql.= ", durationp = ".($this->durationp ? "'".$this->durationp."'" : 'null');
         $sql.= ", note = ".($this->note ? "'".$this->db->escape($this->note)."'":"null");
         $sql.= ", fk_soc =". ($this->societe->id > 0 ? "'".$this->societe->id."'":"null");
         $sql.= ", fk_project =". ($this->fk_project > 0 ? "'".$this->fk_project."'":"null");
+        $sql.= ", fk_lead =". ($this->fk_lead > 0 ? "'".$this->fk_lead."'":"null");
+        $sql.= ", fk_task =". ($this->fk_task > 0 ? "'".$this->fk_task."'":"null");
         $sql.= ", fk_contact =". ($this->contact->id > 0 ? "'".$this->contact->id."'":"null");
         $sql.= ", priority = '".$this->priority."'";
         $sql.= ", fulldayevent = '".$this->fulldayevent."'";
@@ -643,6 +723,34 @@ class ActionComm extends CommonObject
 		$result.=$lien.$libelleshort.$lienfin;
 		return $result;
 	}
+
+        /*
+         * Ajouter une tache automatisé suite a une action. Exemple validation d'une facture, création d'une commande, ...
+         * param    type
+         * param
+         *
+         */
+
+        function addAutoTask($type,$label,$socid,$leadid,$projetid,$contactid='')
+        {
+            global $user;
+
+            $now=dol_now();
+
+            $this->fk_lead = $leadid;
+            $this->fk_project = $projectid;
+            $this->label = $label;
+            $this->type_code = $type;
+            $this->datep=$now;
+            $this->datef=$now;
+            $this->societe->id=$socid;
+            $this->contact=$contactid;
+            $this->percentage=100;
+            $this->userdone=$user;
+            $this->istask=2;
+
+            $this->add($user);
+        }
 
 
     /**

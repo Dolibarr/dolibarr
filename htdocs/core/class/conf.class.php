@@ -53,7 +53,7 @@ class Conf
 	var $smart_menu;
 
 	//! Used to store instance for multi-company (default 1)
-	var $entity=1;
+	var $entity=0;
 
 	var $css_modules			= array();
 	var $tabs_modules			= array();
@@ -237,7 +237,7 @@ class Conf
 		$rootfordata = DOL_DATA_ROOT;
 		$rootforuser = DOL_DATA_ROOT;
 		// If multicompany module is enabled, we redefine the root of data
-		if (! empty($this->global->MAIN_MODULE_MULTICOMPANY) && ! empty($this->entity) && $this->entity > 1) $rootfordata.='/'.$this->entity;
+		if (! empty($this->global->MAIN_MODULE_MULTICOMPANY) && ! empty($this->entity) && $this->entity > 0) $rootfordata.='/'.$this->entity;
 
 		// For backward compatibility
 		// TODO Replace this->xxx->enabled by this->modulename->enabled to remove this code

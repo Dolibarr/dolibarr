@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,7 +65,7 @@ $pagenext = $page + 1;
 // Mettre ici tous les caracteristiques des dictionnaires
 
 // Ordres d'affichage des dictionnaires (0 pour espace)
-$taborder=array(9,0,4,3,2,0,1,8,19,16,0,5,11,0,6,0,10,12,13,0,14,0,7,17,0,22,20,18,21,0,15);
+$taborder=array(9,0,4,3,2,0,1,8,19,0,28,16,26,27,0,5,11,0,6,0,10,12,13,0,14,0,7,17,0,22,20,18,21,0,15);
 
 // Nom des tables des dictionnaires
 $tabname[1] = MAIN_DB_PREFIX."c_forme_juridique";
@@ -89,6 +90,9 @@ $tabname[19]= MAIN_DB_PREFIX."c_effectif";
 $tabname[20]= MAIN_DB_PREFIX."c_input_method";
 $tabname[21]= MAIN_DB_PREFIX."c_availability";
 $tabname[22]= MAIN_DB_PREFIX."c_input_reason";
+$tabname[26]= MAIN_DB_PREFIX."c_lead_ca_level";
+$tabname[27]= MAIN_DB_PREFIX."c_leadlevel";
+$tabname[28]= MAIN_DB_PREFIX."c_stcomm";
 
 // Dictionary labels
 $tablib[1] = "DictionnaryCompanyJuridicalType";
@@ -113,6 +117,9 @@ $tablib[19]= "DictionnaryStaff";
 $tablib[20]= "DictionnaryOrderMethods";
 $tablib[21]= "DictionnaryAvailability";
 $tablib[22]= "DictionnarySource";
+$tablib[26]= $langs->trans("DictionnaryCAlevel");
+$tablib[27]= $langs->trans("DictionnaryLeadlevel");
+$tablib[28]= $langs->trans("DictionnaryProspectStatus");
 
 // Requete pour extraction des donnees des dictionnaires
 $tabsql[1] = "SELECT f.rowid as rowid, f.code, f.libelle, p.code as pays_code, p.libelle as pays, f.active FROM ".MAIN_DB_PREFIX."c_forme_juridique as f, ".MAIN_DB_PREFIX."c_pays as p WHERE f.fk_pays=p.rowid";
@@ -138,6 +145,10 @@ $tabsql[19]= "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREF
 $tabsql[20]= "SELECT rowid   as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_input_method";
 $tabsql[21]= "SELECT c.rowid as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_availability AS c";
 $tabsql[22]= "SELECT rowid   as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_input_reason";
+$tabsql[26]= "SELECT id   as rowid, code, libelle, active FROM ".$tabname[26];
+$tabsql[27]= "SELECT id   as rowid, code, picto, libelle, type, active FROM ".$tabname[27];
+$tabsql[28]= "SELECT id   as rowid, code, libelle, active, isclient FROM ".$tabname[28];
+
 
 // Critere de tri du dictionnaire
 $tabsqlsort[1] ="pays ASC, code ASC";
@@ -162,6 +173,9 @@ $tabsqlsort[19]="id ASC";
 $tabsqlsort[20]="code ASC, libelle ASC";
 $tabsqlsort[21]="code ASC, label ASC";
 $tabsqlsort[22]="code ASC, label ASC";
+$tabsqlsort[26]="id ASC";
+$tabsqlsort[27]="id ASC";
+$tabsqlsort[28]="id ASC";
 
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield[1] = "code,libelle,pays";
@@ -169,7 +183,7 @@ $tabfield[2] = "code,libelle,region_id,region,pays";   // "code,libelle,region,p
 $tabfield[3] = "code,libelle,pays_id,pays";
 $tabfield[4] = "code,libelle";
 $tabfield[5] = "code,libelle";
-$tabfield[6] = "code,libelle,type,position";
+$tabfield[6] = "code,libelle,priority,type,position";
 $tabfield[7] = "code,libelle,pays_id,pays,deductible";
 $tabfield[8] = "code,libelle";
 //$tabfield[9] = "code,code_iso,libelle,symbole";
@@ -187,6 +201,9 @@ $tabfield[19]= "code,libelle";
 $tabfield[20]= "code,libelle";
 $tabfield[21]= "code,label";
 $tabfield[22]= "code,label";
+$tabfield[26]= "code,libelle";
+$tabfield[27]= "code,libelle,picto";
+$tabfield[28]= "code,libelle,isclient";
 
 // Nom des champs d'edition pour modification d'un enregistrement
 $tabfieldvalue[1] = "code,libelle,pays";
@@ -194,7 +211,7 @@ $tabfieldvalue[2] = "code,libelle,region";   // "code,libelle,region"
 $tabfieldvalue[3] = "code,libelle,pays";
 $tabfieldvalue[4] = "code,libelle";
 $tabfieldvalue[5] = "code,libelle";
-$tabfieldvalue[6] = "code,libelle,type,position";
+$tabfieldvalue[6] = "code,libelle,priority,type,position";
 $tabfieldvalue[7] = "code,libelle,pays,deductible";
 $tabfieldvalue[8] = "code,libelle";
 //$tabfieldvalue[9] = "code,code_iso,libelle,symbole";
@@ -212,6 +229,9 @@ $tabfieldvalue[19]= "code,libelle";
 $tabfieldvalue[20]= "code,libelle";
 $tabfieldvalue[21]= "code,label";
 $tabfieldvalue[22]= "code,label";
+$tabfieldvalue[26]= "code,libelle";
+$tabfieldvalue[27]= "code,libelle,picto";
+$tabfieldvalue[28]= "code,libelle,isclient";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert[1] = "code,libelle,fk_pays";
@@ -219,7 +239,7 @@ $tabfieldinsert[2] = "code_departement,nom,fk_region";
 $tabfieldinsert[3] = "code_region,nom,fk_pays";
 $tabfieldinsert[4] = "code,libelle";
 $tabfieldinsert[5] = "code,civilite";
-$tabfieldinsert[6] = "code,libelle,type,position";
+$tabfieldinsert[6] = "code,libelle,priority,type,position";
 $tabfieldinsert[7] = "code,libelle,fk_pays,deductible";
 $tabfieldinsert[8] = "code,libelle";
 //$tabfieldinsert[9] = "code,code_iso,label,symbole";
@@ -237,6 +257,9 @@ $tabfieldinsert[19]= "code,libelle";
 $tabfieldinsert[20]= "code,libelle";
 $tabfieldinsert[21]= "code,label";
 $tabfieldinsert[22]= "code,label";
+$tabfieldinsert[26]= "code,libelle";
+$tabfieldinsert[27]= "code,libelle,picto";
+$tabfieldinsert[28]= "code, libelle,isclient";
 
 // Nom du rowid si le champ n'est pas de type autoincrement
 // Example: "" if id field is "rowid" and has autoincrement on
@@ -263,6 +286,9 @@ $tabrowid[19]= "id";
 $tabrowid[20]= "";
 $tabrowid[21]= "rowid";
 $tabrowid[22]= "rowid";
+$tabrowid[26]= "id";
+$tabrowid[27]= "id";
+$tabrowid[28]= "id";
 
 // Condition to show dictionnary in setup page
 $tabcond[1] = true;
@@ -287,6 +313,9 @@ $tabcond[19]= $conf->societe->enabled;
 $tabcond[20]= $conf->fournisseur->enabled;
 $tabcond[21]= $conf->propale->enabled;
 $tabcond[22]= $conf->commande->enabled||$conf->propale->enabled;
+$tabcond[26]= $conf->lead->enabled;
+$tabcond[27]= $conf->lead->enabled;
+$tabcond[28]= $conf->societe->enabled;;
 
 
 complete_dictionnary_with_modules($taborder,$tabname,$tablib,$tabsql,$tabsqlsort,$tabfield,$tabfieldvalue,$tabfieldinsert,$tabrowid,$tabcond);
@@ -299,6 +328,7 @@ if (GETPOST("id") == 11)
     $langs->load("orders");
     $langs->load("contracts");
     $langs->load("projects");
+	$langs->load("lead");
     $langs->load("propal");
     $langs->load("bills");
     $langs->load("interventions");
@@ -306,6 +336,7 @@ if (GETPOST("id") == 11)
     "order_supplier"=>$langs->trans("SupplierOrder"),
     "contrat"=>$langs->trans("Contract"),
     "project"=>$langs->trans("Project"),
+	"lead"=>$langs->trans("Lead"),
     "project_task"=>$langs->trans("Task"),
     "propal"=>$langs->trans("Propal"),
     "facture"=>$langs->trans("Bill"),
@@ -794,6 +825,9 @@ if ($_GET["id"])
                         else if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='pays_id') {
                             $showfield=0;
                         }
+						else if ($fieldlist[$field]=='priority') {
+							$valuetoshow=$obj->priority;
+						}
                         if ($showfield) print '<td>'.$valuetoshow.'</td>';
                     }
 
@@ -942,6 +976,12 @@ function fieldList($fieldlist,$obj='')
             print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT,'lang');
             print '</td>';
         }
+		if ($fieldlist[$field] == 'priority') {
+                        $priority=array(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15);
+			print '<td>';
+                        print $html->selectarray("priority",$priority,$obj->priority);
+			print '</td>';
+		}
         // Le type de l'element (pour les type de contact).'
         elseif ($fieldlist[$field] == 'element')
         {

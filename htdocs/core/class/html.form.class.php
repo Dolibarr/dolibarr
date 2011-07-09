@@ -11,6 +11,7 @@
  * Copyright (C) 2007      Patrick Raguin        <patrick.raguin@gmail.com>
  * Copyright (C) 2010      Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2010      Philippe Grand        <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011      Herve Prot            <herve.prot@symeos.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -791,8 +792,16 @@ class Form
 
         // On recherche les utilisateurs
         $sql = "SELECT u.rowid, u.name, u.firstname, u.login, u.admin";
+        if($conf->entity==0)
+            $sql.=" ,e.label";
         $sql.= " FROM ".MAIN_DB_PREFIX ."user as u";
-        $sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+        if($conf->entity==0)
+        {
+            $sql.=" LEFT JOIN ".MAIN_DB_PREFIX ."entity as e on e.rowid=u.entity";
+            $sql.=" WHERE u.entity IS NOT NULL";
+        }
+        else
+            $sql.= " WHERE u.entity IN (0,".$conf->entity.")";
         if (is_array($exclude) && $excludeUsers) $sql.= " AND u.rowid NOT IN ('".$excludeUsers."')";
         if (is_array($include) && $includeUsers) $sql.= " AND u.rowid IN ('".$includeUsers."')";
         $sql.= " ORDER BY u.name ASC";
@@ -833,6 +842,8 @@ class Form
                         $out.= '>';
                     }
                     $out.= $userstatic->getFullName($langs);
+                    if($conf->entity==0 && !$conf->global->MULTICOMPANY_MODE_TRANVERSAL)
+                        $out.=" (".$obj->label.")";
 
                     //if ($obj->admin) $out.= ' *';
                     if ($conf->global->MAIN_SHOW_LOGIN) $out.= ' ('.$obj->login.')';
@@ -3453,9 +3464,17 @@ class Form
 
         // On recherche les groupes
         $sql = "SELECT ug.rowid, ug.nom ";
-		$sql.= " FROM ".MAIN_DB_PREFIX."usergroup as ug ";
-		$sql.= " WHERE ug.entity IN (0,".$conf->entity.")";
-		if (is_array($exclude) && $excludeGroups) $sql.= " AND ug.rowid NOT IN ('".$excludeGroups."')";
+        if($conf->entity==0)
+            $sql.= ", e.label";
+        $sql.= " FROM ".MAIN_DB_PREFIX."usergroup as ug ";
+        if($conf->entity==0)
+        {
+            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."entity as e on e.rowid=ug.entity";
+            $sql.= " WHERE ug.entity IS NOT NULL";
+        }
+        else
+             $sql.= " WHERE ug.entity IN (0,".$conf->entity.")";
+	if (is_array($exclude) && $excludeGroups) $sql.= " AND ug.rowid NOT IN ('".$excludeGroups."')";
         if (is_array($include) && $includeGroups) $sql.= " AND ug.rowid IN ('".$includeGroups."')";
 		$sql.= " ORDER BY ug.nom ASC";
 
@@ -3484,6 +3503,8 @@ class Form
                     $out.= '>';
 
                     $out.= $obj->nom;
+                    if($conf->entity==0 && !$conf->global->MULTICOMPANY_MODE_TRANVERSAL)
+                        $out.= " (".$obj->label.")";
 
                     $out.= '</option>';
                     $i++;
@@ -3498,7 +3519,7 @@ class Form
 
         return $out;
     }
-
+    
 }
 
 ?>

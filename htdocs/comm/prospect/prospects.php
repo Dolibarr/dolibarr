@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 
 $langs->load("propal");
 $langs->load("companies");
+$langs->load("commercial");
 
 // Security check
 $socid = GETPOST("socid",'int');
@@ -57,6 +59,8 @@ if (! $sortfield) $sortfield="s.nom";
 
 $search_level_from = GETPOST("search_level_from","alpha");
 $search_level_to   = GETPOST("search_level_to","alpha");
+
+$search_cp=trim($_REQUEST['search_cp']);
 
 // If both parameters are set, search for everything BETWEEN them
 if ($search_level_from != '' && $search_level_to != '')
@@ -143,9 +147,6 @@ $search_categ = isset($_GET["search_categ"])?$_GET["search_categ"]:$_POST["searc
 // If the user must only see his prospect, force searching by him
 if (!$user->rights->societe->client->voir && !$socid) $search_sale = $user->id;
 
-// List of avaible states; we'll need that for each lines (quick changing prospect states) and for search bar (filter by prospect state)
-$sts = array(-1,0,1,2,3);
-
 /*
  * Actions
  */
@@ -165,21 +166,23 @@ $htmlother=new FormOther($db);
 
 $sql = "SELECT s.rowid, s.nom, s.ville, s.datec, s.datea, s.status as status,";
 $sql.= " st.libelle as stcomm, s.prefix_comm, s.fk_stcomm, s.fk_prospectlevel,";
-$sql.= " d.nom as departement";
+$sql.= " d.nom as departement, s.cp as cp";
 // Updated by Matelli 
 // We'll need these fields in order to filter by sale (including the case where the user can only see his prospects)
 if ($search_sale) $sql .= ", sc.fk_soc, sc.fk_user";
 // We'll need these fields in order to filter by categ
 if ($search_categ) $sql .= ", cs.fk_categorie, cs.fk_societe";
-$sql .= " FROM ".MAIN_DB_PREFIX."c_stcomm as st";
+$sql .= " FROM (".MAIN_DB_PREFIX."societe as s";
 // We'll need this table joined to the select in order to filter by sale
 if ($search_sale || !$user->rights->societe->client->voir) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 // We'll need this table joined to the select in order to filter by categ
 if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_societe as cs";
-$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+$sql.= " ) ";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d on (d.rowid = s.fk_departement)";
-$sql.= " WHERE s.fk_stcomm = st.id";
-$sql.= " AND s.client in (2, 3)";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_stcomm as st ON st.id = s.fk_stcomm";
+$sql.= " WHERE s.client in (2, 3)";
+if(isset($_GET["isclient"]))
+    $sql.= " AND st.isclient=".$_GET["isclient"];
 $sql.= " AND s.entity = ".$conf->entity;
 if ($user->societe_id) $sql.= " AND s.rowid = " .$user->societe_id;
 if ($search_sale) $sql.= " AND s.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
@@ -204,6 +207,10 @@ if ($search_sale)
 if ($search_categ)
 {
 	$sql .= " AND cs.fk_categorie = ".$db->escape($search_categ);
+}
+if ($search_cp)
+{
+        $sql .= " AND s.cp LIKE '".$db->escape($search_cp)."%'";
 }
 if ($socname)
 {
@@ -240,7 +247,7 @@ if ($resql)
         llxHeader('',$langs->trans("ThirdParty"),$help_url);
 	}
 
-	$param='&amp;stcomm='.$stcomm.'&amp;search_nom='.urlencode($search_nom).'&amp;search_ville='.urlencode($search_ville);
+	$param='&amp;search_nom='.urlencode($search_nom).'&amp;search_ville='.urlencode($search_ville);
  	// Added by Matelli 
  	// Store the status filter in the URL
  	if (isSet($search_cstc))
@@ -285,7 +292,7 @@ if ($resql)
  	if ($moreforfilter)
 	{
 		print '<tr class="liste_titre">';
-		print '<td class="liste_titre" colspan="8">';
+		print '<td class="liste_titre" colspan="9">';
 	    print $moreforfilter;
 	    print '</td></tr>';
 	}
@@ -294,6 +301,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Company"),"prospects.php","s.nom","",$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Town"),"prospects.php","s.ville","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("State"),"prospects.php","s.fk_departement","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Postalcode"),"prospects.php","cp","",$param,"align=\"left\"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateCreation"),"prospects.php","s.datec","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("ProspectLevelShort"),"prospects.php","s.fk_prospectlevel","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("StatusProsp"),"prospects.php","s.fk_stcomm","",$param,'align="center"',$sortfield,$sortorder);
@@ -309,6 +317,9 @@ if ($resql)
 	print '</td>';
  	print '<td class="liste_titre" align="center">';
     print '<input type="text" class="flat" name="search_departement" size="10" value="'.$search_departement.'">';
+    print '</td>';
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat" name="search_cp" size="8" value="'.$_GET["search_cp"].'">';
     print '</td>';
     print '<td align="center" class="liste_titre">';
 	print '<input class="flat" type="text" size="10" name="search_datec" value="'.$search_datec.'">';
@@ -345,7 +356,7 @@ if ($resql)
     print '</td>';
 
     print '<td class="liste_titre" align="center">';
-	print '&nbsp;';
+    print '&nbsp;';
     print '</td>';
 
     print '<td class="liste_titre" align="center">';
@@ -354,10 +365,10 @@ if ($resql)
 
     // Print the search button
     print '<td class="liste_titre" align="right">';
-	print '<input class="liste_titre" name="button_search" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '</td>';
+    print '<input class="liste_titre" name="button_search" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+    print '</td>';
 
-	print "</tr>\n";
+    print "</tr>\n";
 
 	$i = 0;
 	$var=true;
@@ -380,6 +391,7 @@ if ($resql)
         print '</td>';
 		print "<td>".$obj->ville."&nbsp;</td>";
 		print "<td align=\"center\">$obj->departement</td>";
+		print "<td align=\"left\">$obj->cp</td>";
 		// Creation date
 		print "<td align=\"center\">".dol_print_date($db->jdate($obj->datec))."</td>";
 		// Level
@@ -391,17 +403,10 @@ if ($resql)
 		print $prospectstatic->LibProspStatut($obj->fk_stcomm,2);
 		print "</td>";
 
-		//$sts = array(-1,0,1,2,3);
-		print '<td align="right" nowrap="nowrap">';
-		foreach ($sts as $key => $value)
-		{
-			if ($value <> $obj->fk_stcomm)
-			{
-				print '<a href="prospects.php?socid='.$obj->rowid.'&amp;pstcomm='.$value.'&amp;action=cstc&amp;'.$param.($page?'&amp;page='.$page:'').'">';
-				print img_action(0,$value);
-				print '</a>&nbsp;';
-			}
-		}
+		// icone action
+		print '<td align="center" nowrap>';
+        $prospectstatic->stcomm_id=$obj->fk_stcomm;
+        print $prospectstatic->getIconList("prospects.php?socid=".$obj->rowid.'&amp;pstcomm='.$value.'&amp;action=cstc&amp;'.$param.($page?'&amp;page='.$page:''));
 		print '</td>';
 
         print '<td align="right">';

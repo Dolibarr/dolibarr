@@ -130,7 +130,10 @@ class UserGroup extends CommonObject
 		$sql.= " ".MAIN_DB_PREFIX."usergroup_user as ug";
 		$sql.= " WHERE ug.fk_usergroup = g.rowid";
 		$sql.= " AND ug.fk_user = ".$userid;
-		$sql.= " AND ug.entity IN (0,".$conf->entity.")";
+                if($conf->entity==0)
+                    $sql.= " AND ug.entity IS NOT NULL";
+                else
+                    $sql.= " AND ug.entity IN (0,".$conf->entity.")";
 		$sql.= " ORDER BY g.nom";
 
 		dol_syslog("UserGroup::listGroupsForUser sql=".$sql,LOG_DEBUG);
@@ -173,7 +176,10 @@ class UserGroup extends CommonObject
 		$sql.= " ".MAIN_DB_PREFIX."usergroup_user as ug";
 		$sql.= " WHERE ug.fk_user = u.rowid";
 		$sql.= " AND ug.fk_usergroup = ".$this->id;
-		$sql.= " AND u.entity IN (0,".$conf->entity.")";
+                if($conf->entity==0)
+                    $sql.= " AND u.entity IS NOT NULL";
+                else
+                    $sql.= " AND u.entity IN (0,".$conf->entity.")";
 
 		dol_syslog("UserGroup::listUsersForGroup sql=".$sql,LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -513,7 +519,7 @@ class UserGroup extends CommonObject
 		$sql.= ") VALUES (";
 		$sql.= "'".$this->db->idate($now)."'";
 		$sql.= ",'".$this->db->escape($this->nom)."'";
-		$sql.= ",".($this->globalgroup ? 0 : $conf->entity);
+		$sql.= ",".($conf->entity==0 ? $this->entity : $conf->entity);
 		$sql.= ")";
 
 		dol_syslog("UserGroup::Create sql=".$sql, LOG_DEBUG);
@@ -557,7 +563,7 @@ class UserGroup extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."usergroup SET ";
 		$sql.= " nom = '".$this->db->escape($this->nom)."'";
-		$sql.= ", entity = ".(empty($this->globalgroup) ? $conf->entity : 0);
+		$sql.= ", entity = ".($conf->entity==0 ? $this->entity : $conf->entity);
 		$sql.= ", note = '".$this->db->escape($this->note)."'";
 		$sql.= " WHERE rowid = ".$this->id;
 

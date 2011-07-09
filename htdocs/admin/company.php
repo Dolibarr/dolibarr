@@ -37,8 +37,8 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/html.formcompany.class.php");
 $langs->load("admin");
 $langs->load("companies");
 
-if (!$user->admin)
-accessforbidden();
+if (!$user->admin && !$user->rights->multicompany->read)
+    accessforbidden();
 
 
 /*
@@ -49,6 +49,9 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update' && empty($_POST["c
 || (isset($_POST["action"]) && $_POST["action"] == 'updateedit') )
 {
     require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+    
+    if (!$user->admin && !$user->rights->multicompany->write)
+        accessforbidden();
 
     $new_pays_id=$_POST["pays_id"];
     $new_pays_code=getCountry($new_pays_id,2);
@@ -975,7 +978,8 @@ else
 
     // Actions buttons
     print '<div class="tabsAction">';
-    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
+    if ($user->admin || $user->rights->multicompany->write)
+        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
     print '</div>';
 
     print '<br>';

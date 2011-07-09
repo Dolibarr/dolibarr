@@ -1,7 +1,9 @@
 <?php
-/* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +28,7 @@
  */
 
 require("../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/comm/prospect/class/prospect.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 
 $langs->load("companies");
@@ -34,95 +37,185 @@ $langs->load("suppliers");
 $langs->load("commercial");
 
 // Security check
-$socid = GETPOST("socid");
+$socid = GETPOST("socid",'int');
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user,'societe',$socid,'');
+$result = restrictedArea($user, 'societe',$socid,'');
 
-$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
-$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
-$page=isset($_GET["page"])?$_GET["page"]:$_POST["page"];
-if ($page == -1) { $page = 0 ; }
+$socname            = GETPOST("socname",'alpha');
+$stcomm             = GETPOST("stcomm",'int');
+$search_nom         = GETPOST("search_nom");
+$search_ville       = GETPOST("search_ville");
+$search_departement = GETPOST("search_departement");
+$search_datec       = GETPOST("search_datec");
+
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page      = GETPOST("page",'int');
+if ($page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="s.nom";
 
-$search_nom=GETPOST("search_nom");
-$search_ville=GETPOST("search_ville");
-$search_code=GETPOST("search_code");
-$search_compta=GETPOST("search_compta");
+$search_level_from = GETPOST("search_level_from","alpha");
+$search_level_to   = GETPOST("search_level_to","alpha");
+
+$search_cp=trim($_REQUEST['search_cp']);
+
+// If both parameters are set, search for everything BETWEEN them
+if ($search_level_from != '' && $search_level_to != '')
+{
+	// Ensure that these parameters are numbers
+	$search_level_from = (int) $search_level_from;
+	$search_level_to = (int) $search_level_to;
+
+	// If from is greater than to, reverse orders
+	if ($search_level_from > $search_level_to)
+	{
+		$tmp = $search_level_to;
+		$search_level_to = $search_level_from;
+		$search_level_from = $tmp;
+	}
+
+	// Generate the SQL request
+	$sortwhere = '(sortorder BETWEEN '.$search_level_from.' AND '.$search_level_to.') AS is_in_range';
+}
+// If only "from" parameter is set, search for everything GREATER THAN it
+else if ($search_level_from != '')
+{
+	// Ensure that this parameter is a number
+	$search_level_from = (int) $search_level_from;
+
+	// Generate the SQL request
+	$sortwhere = '(sortorder >= '.$search_level_from.') AS is_in_range';
+}
+// If only "to" parameter is set, search for everything LOWER THAN it
+else if ($search_level_to != '')
+{
+	// Ensure that this parameter is a number
+	$search_level_to = (int) $search_level_to;
+
+	// Generate the SQL request
+	$sortwhere = '(sortorder <= '.$search_level_to.') AS is_in_range';
+}
+// If no parameters are set, dont search for anything
+else
+{
+	$sortwhere = '0 as is_in_range';
+}
+
+// Select every potentiels, and note each potentiels which fit in search parameters
+dol_syslog('prospects::prospects_prospect_level',LOG_DEBUG);
+$sql = "SELECT code, label, sortorder, ".$sortwhere;
+$sql.= " FROM ".MAIN_DB_PREFIX."c_prospectlevel";
+$sql.= " WHERE active > 0";
+$sql.= " ORDER BY sortorder";
+
+$resql = $db->query($sql);
+if ($resql)
+{
+	$tab_level = array();
+	$search_levels = array();
+
+	while ($obj = $db->fetch_object($resql))
+	{
+		// Compute level text
+		$level=$langs->trans($obj->code);
+		if ($level == $obj->code) $level=$langs->trans($obj->label);
+
+		// Put it in the array sorted by sortorder
+		$tab_level[$obj->sortorder] = $level;
+
+		// If this potentiel fit in parameters, add its code to the $search_levels array
+		if ($obj->is_in_range == 1)
+		{
+			$search_levels[] = '"'.preg_replace('[^A-Za-z0-9_-]', '', $obj->code).'"';
+		}
+
+		$i++;
+	}
+
+	// Implode the $search_levels array so that it can be use in a "IN (...)" where clause.
+	// If no paramters was set, $search_levels will be empty
+	$search_levels = implode(',', $search_levels);
+}
+else dol_print_error($db);
 
 // Load sale and categ filters
-$search_sale = GETPOST("search_sale");
-$search_categ = GETPOST("search_categ");
+$search_sale = isset($_GET["search_sale"])?$_GET["search_sale"]:$_POST["search_sale"];
+$search_categ = isset($_GET["search_categ"])?$_GET["search_categ"]:$_POST["search_categ"];
+// If the user must only see his prospect, force searching by him
+if (!$user->rights->societe->client->voir && !$socid) $search_sale = $user->id;
 
 /*
  * Actions
  */
-
-// Do we click on purge search criteria ?
-if (GETPOST("button_removefilter_x"))
+if ($_GET["action"] == 'cstc')
 {
-    $search_categ='';
-    $search_sale='';
-    $socname="";
-    $search_nom="";
-    $search_ville="";
-    $search_idprof1='';
-    $search_idprof2='';
-    $search_idprof3='';
-    $search_idprof4='';
+	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm = ".$_GET["pstcomm"];
+	$sql .= " WHERE rowid = ".$_GET["socid"];
+	$result=$db->query($sql);
 }
 
 
-
 /*
- * view
+ * View
  */
 
 $htmlother=new FormOther($db);
-$thirdpartystatic=new Societe($db);
 
-$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('',$langs->trans("ThirdParty"),$help_url);
-
-$sql = "SELECT s.rowid, s.nom as name, s.client, s.ville, st.libelle as stcomm, s.prefix_comm, s.code_client, s.code_compta, s.status as status,";
-$sql.= " s.datec, s.datea, s.canvas";
+$sql = "SELECT s.rowid, s.nom, s.ville, s.datec, s.datea, s.status as status,";
+$sql.= " st.libelle as stcomm, s.prefix_comm, s.fk_stcomm, s.fk_prospectlevel,";
+$sql.= " d.nom as departement, s.cp as cp";
+// Updated by Matelli 
 // We'll need these fields in order to filter by sale (including the case where the user can only see his prospects)
 if ($search_sale) $sql .= ", sc.fk_soc, sc.fk_user";
 // We'll need these fields in order to filter by categ
 if ($search_categ) $sql .= ", cs.fk_categorie, cs.fk_societe";
-$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,";
-$sql.= " ".MAIN_DB_PREFIX."c_stcomm as st";
+$sql .= " FROM (".MAIN_DB_PREFIX."societe as s";
 // We'll need this table joined to the select in order to filter by sale
 if ($search_sale || !$user->rights->societe->client->voir) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 // We'll need this table joined to the select in order to filter by categ
 if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_societe as cs";
-$sql.= " WHERE s.fk_stcomm = st.id";
-$sql.= " AND s.client IN (1, 3)";
+$sql.= " ) ";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d on (d.rowid = s.fk_departement)";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_stcomm as st ON st.id = s.fk_stcomm";
+$sql.= " WHERE s.client in (1,3)";
+if(isset($_GET["isclient"]))
+    $sql.= " AND st.isclient=".$_GET["isclient"];
 $sql.= " AND s.entity = ".$conf->entity;
-if (!$user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-if ($socid) $sql.= " AND s.rowid = ".$socid;
+if ($user->societe_id) $sql.= " AND s.rowid = " .$user->societe_id;
 if ($search_sale) $sql.= " AND s.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
 if ($search_categ) $sql.= " AND s.rowid = cs.fk_societe";	// Join for the needed table to filter by categ
-if ($search_nom)   $sql.= " AND s.nom like '%".$db->escape(strtolower($search_nom))."%'";
-if ($search_ville) $sql.= " AND s.ville like '%".$db->escape(strtolower($search_ville))."%'";
-if ($search_code)  $sql.= " AND s.code_client like '%".$db->escape(strtolower($search_code))."%'";
-if ($search_compta) $sql .= " AND s.code_compta LIKE '%".$db->escape($search_compta)."%'";
+if (isset($stcomm) && $stcomm != '') $sql.= " AND s.fk_stcomm=".$stcomm;
+
+if ($search_nom)   $sql .= " AND s.nom like '%".$db->escape(strtolower($search_nom))."%'";
+if ($search_ville) $sql .= " AND s.ville like '%".$db->escape(strtolower($search_ville))."%'";
+if ($search_departement) $sql .= " AND d.nom like '%".$db->escape(strtolower($search_departement))."%'";
+if ($search_datec) $sql .= " AND s.datec LIKE '%".$db->escape($search_datec)."%'";
+// Insert levels filters
+if ($search_levels)
+{
+	$sql .= " AND s.fk_prospectlevel IN (".$search_levels.')';
+}
 // Insert sale filter
 if ($search_sale)
 {
-	$sql .= " AND sc.fk_user = ".$search_sale;
+	$sql .= " AND sc.fk_user = ".$db->escape($search_sale);
 }
 // Insert categ filter
 if ($search_categ)
 {
-	$sql .= " AND cs.fk_categorie = ".$search_categ;
+	$sql .= " AND cs.fk_categorie = ".$db->escape($search_categ);
+}
+if ($search_cp)
+{
+        $sql .= " AND s.cp LIKE '".$db->escape($search_cp)."%'";
 }
 if ($socname)
 {
-	$sql.= " AND s.nom like '%".$db->escape(strtolower($socname))."%'";
+	$sql .= " AND s.nom like '%".$db->escape($socname)."%'";
 	$sortfield = "s.nom";
 	$sortorder = "ASC";
 }
@@ -135,24 +228,53 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	$nbtotalofrecords = $db->num_rows($result);
 }
 
-$sql.= $db->order($sortfield,$sortorder);
-$sql.= $db->plimit($conf->liste_limit +1, $offset);
+$sql.= " ORDER BY $sortfield $sortorder, s.nom ASC";
+$sql.= $db->plimit($conf->liste_limit+1, $offset);
 
-$result = $db->query($sql);
-if ($result)
+$resql = $db->query($sql);
+if ($resql)
 {
-	$num = $db->num_rows($result);
+	$num = $db->num_rows($resql);
 
-	$param = "&amp;search_nom=".$search_nom."&amp;search_code=".$search_code."&amp;search_ville=".$search_ville;
+	if ($num == 1 && $socname)
+	{
+		$obj = $db->fetch_object($resql);
+		Header("Location: clients.php?socid=".$obj->rowid);
+		exit;
+	}
+	else
+	{
+        $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+        llxHeader('',$langs->trans("ThirdParty"),$help_url);
+	}
+
+	$param='&amp;search_nom='.urlencode($search_nom).'&amp;search_ville='.urlencode($search_ville);
+ 	// Added by Matelli 
+ 	// Store the status filter in the URL
+ 	if (isSet($search_cstc))
+ 	{
+ 		foreach ($search_cstc as $key => $value)
+ 		{
+ 			if ($value == 'true')
+ 				$param.='&amp;search_cstc['.((int) $key).']=true';
+ 			else
+ 				$param.='&amp;search_cstc['.((int) $key).']=false';
+ 		}
+ 	}
+ 	if ($search_level_from != '') $param.='&amp;search_level_from='.$search_level_from;
+ 	if ($search_level_to != '') $param.='&amp;search_level_to='.$search_level_to;
  	if ($search_categ != '') $param.='&amp;search_categ='.$search_categ;
- 	if ($search_sale != '')	$param.='&amp;search_sale='.$search_sale;
+ 	if ($search_sale != '') $param.='&amp;search_sale='.$search_sale;
+ 	// $param and $urladd should have the same value
+ 	$urladd = $param;
 
 	print_barre_liste($langs->trans("ListOfCustomers"), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 
-	$i = 0;
 
-	print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-	print '<table class="liste" width="100%">'."\n";
+ 	// Print the search-by-sale and search-by-categ filters
+ 	print '<form method="get" action="clients.php" id="formulaire_recherche">';
+
+	print '<table class="liste" width="100%">';
 
 	// Filter on categories
  	$moreforfilter='';
@@ -171,77 +293,139 @@ if ($result)
  	if ($moreforfilter)
 	{
 		print '<tr class="liste_titre">';
-		print '<td class="liste_titre" colspan="6">';
+		print '<td class="liste_titre" colspan="9">';
 	    print $moreforfilter;
 	    print '</td></tr>';
 	}
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.ville","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client","",$param,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("AccountancyCode"),$_SERVER["PHP_SELF"],"s.code_compta","",$param,'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"datec","",$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Company"),"prospects.php","s.nom","",$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Town"),"prospects.php","s.ville","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("State"),"prospects.php","s.fk_departement","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Postalcode"),"prospects.php","cp","",$param,"align=\"left\"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("DateCreation"),"prospects.php","s.datec","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("ProspectLevelShort"),"prospects.php","s.fk_prospectlevel","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("StatusProsp"),"prospects.php","s.fk_stcomm","",$param,'align="center"',$sortfield,$sortorder);
+	print '<td class="liste_titre">&nbsp;</td>';
     print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"s.status","",$params,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
-
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_nom" value="'.$search_nom.'" size="10">';
+	print '<input type="text" class="flat" name="search_nom" size="10" value="'.$search_nom.'">';
+	print '</td><td class="liste_titre">';
+	print '<input type="text" class="flat" name="search_ville" size="10" value="'.$search_ville.'">';
 	print '</td>';
-
+ 	print '<td class="liste_titre" align="center">';
+    print '<input type="text" class="flat" name="search_departement" size="10" value="'.$search_departement.'">';
+    print '</td>';
 	print '<td class="liste_titre">';
-    print '<input type="text" class="flat" name="search_ville" value="'.$search_ville.'" size="10">';
+	print '<input type="text" class="flat" name="search_cp" size="8" value="'.$_GET["search_cp"].'">';
+    print '</td>';
+    print '<td align="center" class="liste_titre">';
+	print '<input class="flat" type="text" size="10" name="search_datec" value="'.$search_datec.'">';
     print '</td>';
 
-    print '<td class="liste_titre">';
-    print '<input type="text" class="flat" name="search_code" value="'.$search_code.'" size="10">';
+ 	// Added by Matelli 
+ 	print '<td class="liste_titre" align="center">';
+ 	// Generate in $options_from the list of each option sorted
+ 	$options_from = '<option value="">&nbsp;</option>';
+ 	foreach ($tab_level as $tab_level_sortorder => $tab_level_label)
+ 	{
+ 		$options_from .= '<option value="'.$tab_level_sortorder.'"'.($search_level_from == $tab_level_sortorder ? ' selected="selected"':'').'>';
+ 		$options_from .= $langs->trans($tab_level_label);
+ 		$options_from .= '</option>';
+ 	}
+
+ 	// Reverse the list
+ 	array_reverse($tab_level, true);
+
+ 	// Generate in $options_to the list of each option sorted in the reversed order
+ 	$options_to = '<option value="">&nbsp;</option>';
+ 	foreach ($tab_level as $tab_level_sortorder => $tab_level_label)
+ 	{
+ 		$options_to .= '<option value="'.$tab_level_sortorder.'"'.($search_level_to == $tab_level_sortorder ? ' selected="selected"':'').'>';
+ 		$options_to .= $langs->trans($tab_level_label);
+ 		$options_to .= '</option>';
+ 	}
+
+ 	// Print these two select
+ 	print $langs->trans("From").' <select class="flat" name="search_level_from">'.$options_from.'</select>';
+ 	print ' ';
+ 	print $langs->trans("To").' <select class="flat" name="search_level_to">'.$options_to.'</select>';
+
     print '</td>';
 
-    print '<td align="left" class="liste_titre">';
-    print '<input type="text" class="flat" name="search_compta" value="'.$search_compta.'" size="10">';
+    print '<td class="liste_titre" align="center">';
+    print '&nbsp;';
     print '</td>';
 
-    print '</td><td>&nbsp;</td>';
+    print '<td class="liste_titre" align="center">';
+    print '&nbsp;';
+    print '</td>';
 
-    print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-    print '&nbsp; ';
-    print '<input type="image" class="liste_titre" name="button_removefilter" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+    // Print the search button
+    print '<td class="liste_titre" align="right">';
+    print '<input class="liste_titre" name="button_search" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
     print '</td>';
 
     print "</tr>\n";
 
-	$var=True;
+	$i = 0;
+	$var=true;
+
+	$prospectstatic=new Prospect($db);
+	$prospectstatic->client=2;
 
 	while ($i < min($num,$conf->liste_limit))
 	{
-		$obj = $db->fetch_object($result);
+		$obj = $db->fetch_object($resql);
 
 		$var=!$var;
 
-		print "<tr $bc[$var]>";
+		print '<tr '.$bc[$var].'>';
 		print '<td>';
-		$thirdpartystatic->id=$obj->rowid;
-        $thirdpartystatic->name=$obj->name;
-        $thirdpartystatic->client=$obj->client;
-        $thirdpartystatic->canvas=$obj->canvas;
-        $thirdpartystatic->status=$obj->status;
-        print $thirdpartystatic->getNomUrl(1);
-		print '</td>';
-        print '<td>'.$obj->ville.'</td>';
-        print '<td>'.$obj->code_client.'</td>';
-        print '<td>'.$obj->code_compta.'</td>';
-        print '<td align="right">'.dol_print_date($db->jdate($obj->datec),'day').'</td>';
-        print '<td align="right">'.$thirdpartystatic->getLibStatut(3);
+		$prospectstatic->id=$obj->rowid;
+		$prospectstatic->nom=$obj->nom;
+        $prospectstatic->status=$obj->status;
+		print $prospectstatic->getNomUrl(1,'prospect');
         print '</td>';
+		print "<td>".$obj->ville."&nbsp;</td>";
+		print "<td align=\"center\">$obj->departement</td>";
+		print "<td align=\"left\">$obj->cp</td>";
+		// Creation date
+		print "<td align=\"center\">".dol_print_date($db->jdate($obj->datec))."</td>";
+		// Level
+		print "<td align=\"center\">";
+		print $prospectstatic->LibLevel($obj->fk_prospectlevel);
+		print "</td>";
+		// Statut
+		print '<td align="center" nowrap="nowrap">';
+		print $prospectstatic->LibProspStatut($obj->fk_stcomm,2);
+		print "</td>";
+
+		// icone action
+		print '<td align="center" nowrap>';
+        $prospectstatic->stcomm_id=$obj->fk_stcomm;
+		$prospectstatic->client=$obj->client;
+        print $prospectstatic->getIconList("clients.php?socid=".$obj->rowid.'&amp;pstcomm='.$value.'&amp;action=cstc&amp;'.$param.($page?'&amp;page='.$page:''));
+		print '</td>';
+
+        print '<td align="right">';
+		print $prospectstatic->getLibStatut(3);
+        print '</td>';
+
         print "</tr>\n";
 		$i++;
 	}
-	//print_barre_liste($langs->trans("ListOfCustomers"), $page, $_SERVER["PHP_SELF"],'',$sortfield,$sortorder,'',$num);
-	print "</table>\n";
-	print "</form>\n";
-	$db->free($result);
+
+	if ($num > $conf->liste_limit || $page > 0) print_barre_liste('', $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
+
+	print "</table>";
+
+	print "</form>";
+
+	$db->free($resql);
 }
 else
 {

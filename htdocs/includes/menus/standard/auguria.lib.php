@@ -21,7 +21,7 @@
 /**
  *  \file		htdocs/includes/menus/standard/auguria.lib.php
  *  \brief		Library for file auguria menus
- *  \version	$Id$
+ *  \version	$Id: auguria.lib.php,v 1.18 2011/04/13 11:19:19 eldy Exp $
  */
 
 
@@ -200,13 +200,43 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after)
             $urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=companylogo&amp;file='.urlencode('thumbs/'.$mysoc->logo_mini);
             print "\n".'<!-- Show logo on menu -->'."\n";
             print '<div class="blockvmenuimpair">'."\n";
-            print '<div class="menu_titre" id="menu_titre_logo"></div>';
+            if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY))
+            {	
+			$res=@dol_include_once('/multicompany/class/actions_multicompany.class.php');
+
+			if ($res)
+			{
+				$mc = new ActionsMulticompany($db);
+                                $mc->getInfo($conf->entity);
+                                $company=$mc->label;
+                                print '<div class="menu_titre" id="menu_titre_logo"><a class="vmenu" href="'.DOL_MAIN_URL_ROOT.'/admin/company.php">'.$company.'</a></div>';
+			}
+            }
+            else
+                 print '<div class="menu_titre" id="menu_titre_logo"></div>';
             print '<div class="menu_top" id="menu_top_logo"></div>';
             print '<div class="menu_contenu" id="menu_contenu_logo">';
             print '<center><img title="'.$title.'" src="'.$urllogo.'"></center>'."\n";
             print '</div>';
             print '<div class="menu_end" id="menu_end_logo"></div>';
             print '</div>'."\n";
+        }
+        else
+        {
+        
+            if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY))
+            {	
+                $res=@dol_include_once('/multicompany/class/actions_multicompany.class.php');
+                if ($res)
+                {
+                    $mc = new ActionsMulticompany($db);
+                    $mc->getInfo($conf->entity);
+                    $company=$mc->label;
+                    print '<div class="blockvmenuimpair">'."\n";
+                    print '<div class="menu_titre" id="menu_titre_logo"><a class="vmenu" href="'.DOL_MAIN_URL_ROOT.'/admin/company.php">'.$company.'</a></div>';
+                    print '</div>'."\n";
+                }
+            }
         }
     }
 
