@@ -20,7 +20,7 @@
 /**
  *       \file       htdocs/admin/mails.php
  *       \brief      Page to setup emails sending
- *       \version    $Id: mails.php,v 1.71 2011/07/09 05:28:41 hregis Exp $
+ *       \version    $Id: mails.php,v 1.72 2011/07/09 06:10:06 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -63,6 +63,7 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update' && empty($_POST["can
 	if (isset($_POST["MAIN_MAIL_EMAIL_TLS"])) dolibarr_set_const($db, "MAIN_MAIL_EMAIL_TLS", $_POST["MAIN_MAIL_EMAIL_TLS"],'chaine',0,'',0);
 
 	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_FROM",     $_POST["MAIN_MAIL_EMAIL_FROM"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_ERRORS_TO",		$_POST["MAIN_MAIL_ERRORS_TO"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_MAIL_AUTOCOPY_TO",    $_POST["MAIN_MAIL_AUTOCOPY_TO"],'chaine',0,'',$conf->entity);
 
 	Header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
@@ -467,6 +468,12 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_FROM",ini_get('sendmail_from')?ini_get('sendmail_from'):$langs->transnoentities("Undefined")).'</td>';
 	print '<td><input class="flat" name="MAIN_MAIL_EMAIL_FROM" size="32" value="' . $conf->global->MAIN_MAIL_EMAIL_FROM;
 	print '"></td></tr>';
+	
+	// From
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_ERRORS_TO").'</td>';
+	print '<td><input class="flat" name="MAIN_MAIL_ERRORS_TO" size="32" value="' . $conf->global->MAIN_MAIL_ERRORS_TO;
+	print '"></td></tr>';
 
 	// Autocopy to
 	$var=!$var;
@@ -566,6 +573,13 @@ else
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_FROM",ini_get('sendmail_from')?ini_get('sendmail_from'):$langs->transnoentities("Undefined")).'</td>';
 	print '<td>'.$conf->global->MAIN_MAIL_EMAIL_FROM;
 	if (!empty($conf->global->MAIN_MAIL_EMAIL_FROM) && ! isValidEmail($conf->global->MAIN_MAIL_EMAIL_FROM)) print img_warning($langs->trans("ErrorBadEMail"));
+	print '</td></tr>';
+	
+	// Errors To
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_ERRORS_TO").'</td>';
+	print '<td>'.$conf->global->MAIN_MAIL_ERRORS_TO;
+	if (!empty($conf->global->MAIN_MAIL_ERRORS_TO) && ! isValidEmail($conf->global->MAIN_MAIL_ERRORS_TO)) print img_warning($langs->trans("ErrorBadEMail"));
 	print '</td></tr>';
 
 	// Autocopy to
@@ -723,5 +737,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/09 05:28:41 $ - $Revision: 1.71 $');
+llxFooter('$Date: 2011/07/09 06:10:06 $ - $Revision: 1.72 $');
 ?>
