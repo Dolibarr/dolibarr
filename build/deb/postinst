@@ -49,21 +49,19 @@ case "$1" in
 			cat $fileorig | sed -e 's/__SUPERUSERLOGIN__/'$superuserlogin'/g' | sed -e 's/__SUPERUSERPASSWORD__/'$superuserpassword'/g' > $config
 		fi
 		
-        # Create document directory
-        #docdir='/var/lib/dolibarr/documents'
-        docdir='/usr/share/dolibarr/documents'
-        mkdir -p $docdir
-        chown -R www-data:www-data $docdir
-        chmod -R 775 $docdir
-        chmod -R g+s $docdir
+        # Create /var/lib/dolibarr/documents
+        mkdir -p /var/lib/dolibarr/documents
+        chown -R www-data:www-data /var/lib/dolibarr/documents;
+        chmod -R 775 /var/lib/dolibarr/documents;
+        chmod -R g+s /var/lib/dolibarr/documents;
 
 		# Create an empty conf.php with permission to web server
 		if [ ! -f /usr/share/dolibarr/htdocs/conf/conf.php ]
 		then 
 			echo Create empty file /usr/share/dolibarr/htdocs/conf/conf.php		
 			touch /usr/share/dolibarr/htdocs/conf/conf.php
-			chown -R www-data:www-data /usr/share/dolibarr/htdocs/conf/conf.php
-	    	chmod -R 750 /usr/share/dolibarr/htdocs/conf/conf.php
+			chown -R www-data:www-data /usr/share/dolibarr/htdocs/conf/conf.php;
+	    	chmod -R 750 /usr/share/dolibarr/htdocs/conf/conf.php;
 		fi
 
 		#db_reset "dolibarr/webserver"
@@ -107,6 +105,12 @@ case "$1" in
 			ln -fs /etc/dolibarr/apache.conf /etc/apache2/conf.d/dolibarr.conf
 			
 		done
+
+		# Copy icon file
+		#echo "Copy icon file"
+		#fileorig="/usr/share/dolibarr/doc/images/dolibarr.xpm"
+		#target="/usr/share/pixmaps/"
+		#cp -f $fileorig $target
 
 		#echo "Install menu entry"
 		# This one is for Gnome ubuntu
