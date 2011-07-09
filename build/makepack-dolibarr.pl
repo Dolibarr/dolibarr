@@ -2,7 +2,7 @@
 #----------------------------------------------------------------------------
 # \file         build/makepack-dolibarr.pl
 # \brief        Dolibarr package builder (tgz, zip, rpm, deb, exe, aps)
-# \version      $Id: makepack-dolibarr.pl,v 1.108 2011/07/09 18:29:46 eldy Exp $
+# \version      $Id: makepack-dolibarr.pl,v 1.107 2011/07/09 15:48:19 eldy Exp $
 # \author       (c)2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
 #----------------------------------------------------------------------------
 
@@ -48,7 +48,7 @@ if (-d "/usr/src/RPM") {
 
 
 use vars qw/ $REVISION $VERSION /;
-$REVISION='$Revision: 1.108 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
+$REVISION='$Revision: 1.107 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
 $VERSION="1.0 (build $REVISION)";
 
 
@@ -529,8 +529,8 @@ if ($nboftargetok) {
             $ret=`chmod 644 $BUILDROOT/$PROJECT.tmp/DEBIAN/templates`;
             $cmd="find $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/build -name *.php -type f -exec chmod 755 {} \\; ";
             $ret=`$cmd`;
-            #$cmd="find $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/build -name *.pl -type f -exec chmod 755 {} \\; ";
-            #$ret=`$cmd`;
+            $cmd="find $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/build -name *.pl -type f -exec chmod 755 {} \\; ";
+            $ret=`$cmd`;
             $cmd="find $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/dev -name *.php -type f -exec chmod 755 {} \\; ";
             $ret=`$cmd`;
             $cmd="find $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/scripts -name *.php -type f -exec chmod 755 {} \\; ";
