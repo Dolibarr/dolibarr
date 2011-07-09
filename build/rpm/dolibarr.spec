@@ -43,11 +43,33 @@ Management (CRM) but also for different other activities.
 Dolibarr was designed to provide only features you need and be easy to 
 use.
 
+%description -l es
+Dolibarr ERP/CRM es un software completamente modular (sólo activaremos las funciones
+que deseemos) para gestión de PYMES, profesionales independientes, auto emprendedores
+ó asociaciones. En términos más técnicos, es un ERP y CRM. Es un proyecto OpenSource
+que se ejecuta en el seno de un servidor Web, siendo pues accesible desde cualquier
+lugar disponiendo de una conexión a Internet.
+Dolibarr viene a completar la oferta de numerosas aplicaciones de esta categoría,
+pero desmarcándose por el hecho de que se hace todo lo posible para proporcionar simplicidad:
+Simple de instalar (con instaladores para los que ignoran como instalar un servidor Web).
+Simple de usar (funciones modulares para no sobrecargar los menús, informaciones claras y concisas).
+Simple de desarrollar (sin frameworks pesados). 
+    
 %description -l fr
 Dolibarr ERP & CRM est un logiciel de gestion de PME/PMI, autoentrepreneurs, 
 artisans ou associations. Il permet de gérer vos clients, prospect, 
 fournisseurs, devis, factures, comptes bancaires, agenda, campagne emailings
 et bien d'autres choses dans une interface pensée pour la simplicité.
+
+%description -l it
+Dolibarr è un programma gestionale open source e gratuito per piccole e medie
+imprese, fondazioni e liberi professionisti. Include varie funzionalità per
+Enterprise Resource Planning e gestione dei clienti (CRM), ma anche ulteriori
+attività. Dolibar è progettato per poter fornire solo ciò di cui hai bisogno 
+ed essere facile da usare.
+Dolibar è completamente web-based, progettato per poter fornire solo ciò di 
+cui hai bisogno ed essere facile da usare.
+
 
 
 #---- prep
