@@ -359,11 +359,14 @@ else
 
             $userslist = $object->listUsersForGroup();
             
-            if (! empty($userslist) && !$conf->global->MULTICOMPANY_MODE_TRANVERSAL)
+            if (! empty($userslist))
             {
-                foreach($userslist as $useringroup)
+                if( !($conf->multicompany->enabled && $conf->global->MULTICOMPANY_MODE_TRANVERSAL))
                 {
-                    $exclude[]=$useringroup->id;
+                    foreach($userslist as $useringroup)
+                    {
+                        $exclude[]=$useringroup->id;
+                    }
                 }
             }
 
@@ -405,7 +408,7 @@ else
             print '<table class="noborder" width="100%">';
             print '<tr class="liste_titre">';
             print '<td class="liste_titre" width="25%">'.$langs->trans("Login").'</td>';
-            if($conf->entity==0)
+            if($conf->multicompany->enabled && $conf->entity==0)
                 print '<td class="liste_titre" width="25%">'.$langs->trans("Entity").'</td>';
             print '<td class="liste_titre" width="25%">'.$langs->trans("Lastname").'</td>';
             print '<td class="liste_titre" width="25%">'.$langs->trans("Firstname").'</td>';
@@ -428,7 +431,7 @@ else
             		if ($useringroup->admin  && ! $useringroup->entity) print img_redstar($langs->trans("SuperAdministrator"));
             		else if ($useringroup->admin) print img_picto($langs->trans("Administrator"),'star');
             		print '</td>';
-                        if($conf->entity==0)
+                        if($conf->multicompany->enabled && $conf->entity==0)
                         {
                             $mc = new ActionsMulticompany($db);
                             $mc->getInfo($useringroup->usergroup_entity);

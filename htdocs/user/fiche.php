@@ -1258,11 +1258,14 @@ else
                 $usergroup=new UserGroup($db);
                 $groupslist = $usergroup->listGroupsForUser($fuser->id);
 
-                if (! empty($groupslist) && !$conf->global->MULTICOMPANY_MODE_TRANVERSAL)
+                if (! empty($groupslist))
                 {
-                    foreach($groupslist as $groupforuser)
+                    if( !($conf->multicompany->enabled && $conf->global->MULTICOMPANY_MODE_TRANVERSAL))
                     {
-                        $exclude[]=$groupforuser->id;
+                        foreach($groupslist as $groupforuser)
+                        {
+                            $exclude[]=$groupforuser->id;
+                        }
                     }
                 }
 
@@ -1306,7 +1309,7 @@ else
                 print '<table class="noborder" width="100%">';
                 print '<tr class="liste_titre">';
                 print '<td class="liste_titre" width="25%">'.$langs->trans("Groups").'</td>';
-                if($conf->entity==0)
+                if($conf->multicompany->enabled && $conf->entity==0)
                     print '<td class="liste_titre" width="25%">'.$langs->trans("Entity").'</td>';
                 print "<td>&nbsp;</td></tr>\n";
 
@@ -1329,7 +1332,7 @@ else
                             print img_object($langs->trans("ShowGroup"),"group").' '.$group->nom;
                         }
                         print '</td>';
-                        if($conf->entity==0)
+                        if($conf->multicompany->enabled && $conf->entity==0)
                         {
                             $mc = new ActionsMulticompany($db);
                             $mc->getInfo($group->usergroup_entity);

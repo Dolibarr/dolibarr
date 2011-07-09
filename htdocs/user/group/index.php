@@ -84,7 +84,7 @@ if ($resql)
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Group"),$_SERVER["PHP_SELF"],"g.nom",$param,"","",$sortfield,$sortorder);
     //multicompany
-    if($conf->entity==0)
+    if($conf->multicompany->enabled && $conf->entity==0)
         print_liste_field_titre($langs->trans("Entity"),$_SERVER["PHP_SELF"],"g.entity",$param,"",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("NbOfUsers"),$_SERVER["PHP_SELF"],"g.nb",$param,"",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"g.datec",$param,"",'align="right"',$sortfield,$sortorder);
