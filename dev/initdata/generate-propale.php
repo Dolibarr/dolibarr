@@ -1,4 +1,5 @@
-<?PHP
+#!/usr/bin/php
+<?php
 /* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -22,7 +23,7 @@
 /**
  *	    \file       htdocs/dev/generate-propale.php
  *		\brief      Script de generation de donnees aleatoires pour les propales
- *		\version    $Id$
+ *		\version    $Id: generate-propale.php,v 1.15 2011/07/09 14:11:40 eldy Exp $
  */
 
 // Test si mode batch

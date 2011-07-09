@@ -1,4 +1,5 @@
-<?PHP
+#!/usr/bin/php
+<?php
 /**
  * Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
@@ -22,7 +23,7 @@
  *      \file       scripts/company/sync_contacts_dolibarr2ldap.php
  *      \ingroup    ldap company
  *      \brief      Script to update all contacts from Dolibarr into a LDAP database
- *		\version	$Id$
+ *		\version	$Id: sync_contacts_dolibarr2ldap.php,v 1.23 2011/07/09 14:11:42 eldy Exp $
  */
 
 $sapi_type = php_sapi_name();
@@ -42,7 +43,7 @@ if (! isset($argv[1]) || ! $argv[1]) {
 $now=$argv[1];
 
 // Recupere env dolibarr
-$version='$Revision$';
+$version='$Revision: 1.23 $';
 
 require_once($path."../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
