@@ -36,7 +36,12 @@ AutoReqProv: yes
 
 
 %description
-Dolibarr ERP & CRM
+Dolibarr ERP & CRM is an easy to use open source/free software for small  
+and medium companies, foundations or freelances. It includes different 
+features for Enterprise Resource Planning (ERP) and Customer Relationship 
+Management (CRM) but also for different other activities.
+Dolibarr was designed to provide only features you need and be easy to 
+use.
 
 %description -l fr
 Dolibarr ERP & CRM est un logiciel de gestion de PME/PMI, autoentrepreneurs, 
@@ -67,12 +72,28 @@ mkdir -p $RPM_BUILD_ROOT/var/www/dolibarr/scripts
 #mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/dolibarr
 #mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/cron.daily
 
+mkdir -p $RPM_BUILD_ROOT%{_datadir}/pixmaps
+cp doc/images/dolibarr_48x48.png $RPM_BUILD_ROOT%{_datadir}/pixmaps/dolibarr.png
+mkdir -p $RPM_BUILD_ROOT%{_datadir}/applications
+cp build/rpm/dolibarr.desktop $RPM_BUILD_ROOT/%{_datadir}/applications/dolibarr.desktop
+
 install -m 444 README  $RPM_BUILD_ROOT/var/www/dolibarr/README
 install -m 444 COPYRIGHT  $RPM_BUILD_ROOT/var/www/dolibarr/COPYRIGHT
 cp -pr build $RPM_BUILD_ROOT/var/www/dolibarr
 cp -pr doc $RPM_BUILD_ROOT/var/www/dolibarr
 cp -pr htdocs $RPM_BUILD_ROOT/var/www/dolibarr
 cp -pr scripts $RPM_BUILD_ROOT/var/www/dolibarr
+
+# menu
+#%{__install} -d $RPM_BUILD_ROOT%{_menudir}
+#%{__cat} <<EOF >$RPM_BUILD_ROOT%{_menudir}/%{name}
+#?package(%{name}):\
+#command="Dolibarr" \
+#section="Office" \
+#title="Dolibarr" \
+#icon="dolibarr_48x48.png" \
+#longtitle="Dolibarr ERP & CRM"
+#EOF
 
 
 #---- clean
@@ -89,6 +110,8 @@ rm -rf $RPM_BUILD_ROOT
 %dir /var/www/dolibarr/build
 %dir /var/www/dolibarr/htdocs
 %dir /var/www/dolibarr/scripts
+%_datadir/pixmaps/*
+%_datadir/applications/%{name}.desktop
 /var/www/dolibarr/build/*
 /var/www/dolibarr/htdocs/*
 /var/www/dolibarr/scripts/*
@@ -96,8 +119,10 @@ rm -rf $RPM_BUILD_ROOT
 /var/www/dolibarr/COPYRIGHT
 #%config /var/www/dolibarr/htdocs/conf/conf.php
 
+
 #---- post (after install)
 %post
+%update_menus
 
 # Dolibarr files are stored into /var/www
 export targetdir='/var/www/dolibarr'
@@ -187,6 +212,7 @@ echo
 
 #---- postun (after uninstall)
 %postun
+%clean_menus
 
 # Dolibarr files are stored into /var/www
 export targetdir='/var/www/dolibarr'

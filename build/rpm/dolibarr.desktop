@@ -12,7 +12,7 @@ Comment[fr]=L'ERP & CRM simple pour la gestion des PME et associations
 # For Fedora: xdg-open 
 # For Debian/Ubuntu: x-www-browser
 # (exo-open for xfde, gnome-open for gnome, ...)
-Exec=x-www-browser http://localhost/dolibarr
+Exec=xdg-open http://localhost/dolibarr
 Icon=dolibarr
 Terminal=false
 Type=Application

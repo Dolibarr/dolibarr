@@ -6,3 +6,10 @@ RPM Package tools
 This directory contains files used by makepack-dolibarr.pl
 script to build a package, ready to be distributed,
 with format RPM (for Redhat, Mandriva, ...).
+
+
+# This is standard command to work on Debian packaging:
+#
+# yum install dolibarr      To remove package   
+# yum erase dolibarr        To remove package   
+#
