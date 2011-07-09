@@ -35,10 +35,10 @@ Remove all files into dolibarr root found with "find . | grep CVS\/Base\/ | grep
 > cd test
 > phpunit -d memory_limit=-1 -d max_execution_time=0 --configuration ./phpunit/phpunittest.xml --coverage-html ./report --coverage-clover ./report/logs/phpunit.coverage.xml --log-junit ./report/logs/phpunit.xml phpunit/AllTests.php
 
-If there is a fu... timeout before end, try this: 
+If there is a timeout before end, try this: 
 > cd test
 > php -d max_input_time=0 -d max_execution_time=0 /usr/bin/phpunit -d memory_limit=-1 -d max_input_time=0 -d max_execution_time=0 --configuration ./phpunit/phpunittest.xml --coverage-html ./report phpunit/AllTests.php
-puis renice -11 du process php
+puis renice -10 du process php
 
 
 
@@ -48,7 +48,7 @@ PHP-CODESNIFFER
 
 * Launch PHP-Codesniffer:
 > cd test
-> phpcs --debug -d memory_limit=-1 --configuration=./phpunit/phpunittest.xml --phpunit-xml=./report/logs/pdepend.xml --summary-xml=./report/logs/summary.xml --jdepend-chart=./report/logs/jdepend.svg --overview-pyramid=./report/logs/pyramid.svg --ignore=custom,custom2,adodbtime,artichow,ckeditor,efc_xfss,fckeditor,fpdf,geoip,magpierss,nusoap,odtphp,phpexcel,php_writeexcel,smarty,smtps,tcpdf,vcard ../htdocs
+> /usr/bin/php5 -c ./codesniffer/php.ini /usr/bin/phpcs --report=xml --standard=./codesniffer ../htdocs/test.php
 
 
 
