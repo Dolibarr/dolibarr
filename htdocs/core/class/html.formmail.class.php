@@ -1,5 +1,6 @@
 <?PHP
-/* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2011 Regis Houssin		<regis@dolibarr.fr>
  * Copyright (C) 2010-2011 Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,7 +22,7 @@
  *       \file       htdocs/core/class/html.formmail.class.php
  *       \ingroup    core
  *       \brief      Fichier de la classe permettant la generation du formulaire html d'envoi de mail unitaire
- *       \version    $Id: html.formmail.class.php,v 1.29 2011/07/09 06:10:07 hregis Exp $
+ *       \version    $Id: html.formmail.class.php,v 1.30 2011/07/09 10:26:19 hregis Exp $
  */
 require_once(DOL_DOCUMENT_ROOT ."/core/class/html.form.class.php");
 
@@ -509,9 +510,10 @@ class FormMail
             {
                 foreach($listofpaths as $key => $val)
                 {
-                    $out.= img_mime($listofnames[$key]).' '.$listofnames[$key];
-                    if (! $this->withfilereadonly) $out.= ' <input type="image" style="border: 0px;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" value="'.($key+1).'" id="removedfile" name="removedfile" />';
-                    $out.= '<br>';
+                    $out.= '<div id="attachfile_'.$key.'">';
+                	$out.= img_mime($listofnames[$key]).' '.$listofnames[$key];
+                    if (! $this->withfilereadonly) $out.= ' <input type="image" style="border: 0px;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" value="'.($key+1).'" class="removedfile" id="removedfile_'.$key.'" name="removedfile_'.$key.'" />';
+                    $out.= '<br /></div>';
                 }
             }
             else
