@@ -51,7 +51,7 @@ case "$1" in
 		
         # Create /var/lib/dolibarr/documents
         mkdir -p /var/lib/dolibarr/documents
-        chown -R www-data.www-data /var/lib/dolibarr/documents;
+        chown -R www-data:www-data /var/lib/dolibarr/documents;
         chmod -R 775 /var/lib/dolibarr/documents;
         chmod -R g+s /var/lib/dolibarr/documents;
 
@@ -60,15 +60,15 @@ case "$1" in
 		then 
 			echo Create empty file /usr/share/dolibarr/htdocs/conf/conf.php		
 			touch /usr/share/dolibarr/htdocs/conf/conf.php
-			chown -R www-data.www-data /usr/share/dolibarr/htdocs/conf/conf.php;
+			chown -R www-data:www-data /usr/share/dolibarr/htdocs/conf/conf.php;
 	    	chmod -R 750 /usr/share/dolibarr/htdocs/conf/conf.php;
 		fi
 
 		#db_reset "dolibarr/webserver"
 
 		# Get the web server type (use db_get for interactive mode).
-#		db_get "dolibarr/webserver"		# Read value for webserver.
-#		webserver="$RET"
+		#db_get "dolibarr/webserver"		# Read value for webserver.
+		#webserver="$RET"
 
 		case $webserver in
 			Apache)		webservers="apache2" ;;
@@ -81,22 +81,9 @@ case "$1" in
 		for server in $webservers ; do
 			echo Complete config of server $server
 			
-			# Add info for PHP (obsolete)
-			#typestr='application/x-httpd-php'
-			#extension='.php'
-			#. /usr/share/wwwconfig-common/apache-addtype_all.sh
-			
-			# Enable PHP module (obsolete)
-			#. /usr/share/wwwconfig-common/apache-php.sh
-			#echo Result of enabling PHP modules: $status
-			
 			# Detect webuser and webgroup
 			webuser=
 			webgroup=
-
-			# Search in httpd.conf (obsolete)
-			#. /usr/share/wwwconfig-common/apache-run.get
-			#echo Web user.group found is $webuser.$webgroup
 
 			if [ -z "$webuser" ] ; then
 				webuser=www-data
@@ -111,22 +98,12 @@ case "$1" in
 			# That may lead to problems if apache & apache-ssl do
 			# not have the same user/group.
 			#
-			chown -R $webuser.$webgroup /usr/share/dolibarr
+			chown -R $webuser:$webgroup /usr/share/dolibarr
 
-            # Put content of conf file into apache httpd.conf main file (/etc/apache2/httpd.conf)
-			#includefile="/etc/dolibarr/apache.conf"
-			#. /usr/share/dolibarr/build/deb/apache-include_all.sh
-			#test "$status" = "uncomment" -o "$status" = "include" && restart="$server $restart"
-			
 			# Add link to config file
             echo Setup web server $server to add dolibarr config file
-			ln -fs /etc/dolibarr/apache.conf /etc/apache2/conf.d
+			ln -fs /etc/dolibarr/apache.conf /etc/apache2/conf.d/dolibarr.conf
 			
-			# (useless)
-			#for index in index.php; do
-			#	. /usr/share/wwwconfig-common/apache-index_all.sh
-			#	test "$status" = "added" && restart="$server $restart"
-			#done
 		done
 
 		# Copy icon file
@@ -157,22 +134,17 @@ case "$1" in
 
 		# Restart servers
 		servers="apache2-ssl apache2 mysql"
-		if [ -f /usr/share/wwwconfig-common/restart.sh ] ;
-		then
-            echo Restart web servers running /usr/share/wwwconfig-common/restart.sh
-			. /usr/share/wwwconfig-common/restart.sh
-		else
-			# Another way to restart
-			for server in $servers ; do
-			    echo Restart web server $server
-        		if [ -x /usr/sbin/invoke-rc.d ]; then
-        		    # This on works with Debian (5.05,...) and Ubuntu (9.10,10.04,...)
-        	    	invoke-rc.d $server reload || true
-        		else
-        	    	/etc/init.d/$server reload || true
-        		fi
-			done
-		fi
+		# Another way to restart
+		for server in $servers ; do
+    		if [ -x /usr/sbin/invoke-rc.d ]; then
+                echo Restart web server $server using invoke-rc.d
+    		    # This works with Debian (5.05,...) and Ubuntu (9.10,10.04,...)
+    	    	invoke-rc.d $server reload || true
+    		else
+                echo Restart web server $server using $server reload
+    	    	/etc/init.d/$server reload || true
+    		fi
+		done
 		
 		echo ----------
 		echo "Call Dolibarr page http://localhost/dolibarr/ to complete the installation and use Dolibarr."
