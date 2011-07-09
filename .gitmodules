@@ -1,0 +1,3 @@
+[submodule "htdocs/multicompany"]
+	path = htdocs/multicompany
+	url = https://herve@git.symeos.com/module-multicompany.git
