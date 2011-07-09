@@ -1250,7 +1250,6 @@ ImportPostgreSqlCommand=%s %s mybackupfile.sql
 FullPathToPostgreSQLdumpCommand=Percorso completo pg_dump comando
 CurrentMenuHandler=Menu gestore corrente
 CurrentSmartphoneMenuHandler=Attuale gestore menu smartphone
-MAIN_MAIL_EMAIL_INLINE_IMAGES=Capacità di integrare le immagini nelle e-mail
 MAIN_DISABLE_ALL_SMS=Disabilitare tutti spedizioni SMS (per scopi di test o demo)
 MAIN_SMS_SENDMODE=Metodo da utilizzare per inviare SMS
 MAIN_MAIL_SMS_FROM=Predefinito numero di telefono del mittente per l&#39;invio di Sms
