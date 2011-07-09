@@ -2,7 +2,7 @@
 #----------------------------------------------------------------------------
 # \file         build/makepack-dolibarr.pl
 # \brief        Dolibarr package builder (tgz, zip, rpm, deb, exe, aps)
-# \version      $Id: makepack-dolibarr.pl,v 1.106 2011/07/09 02:41:37 eldy Exp $
+# \version      $Id: makepack-dolibarr.pl,v 1.107 2011/07/09 15:48:19 eldy Exp $
 # \author       (c)2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
 #----------------------------------------------------------------------------
 
@@ -48,7 +48,7 @@ if (-d "/usr/src/RPM") {
 
 
 use vars qw/ $REVISION $VERSION /;
-$REVISION='$Revision: 1.106 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
+$REVISION='$Revision: 1.107 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
 $VERSION="1.0 (build $REVISION)";
 
 
@@ -98,7 +98,7 @@ if (! $TEMP || ! -d $TEMP) {
 $BUILDROOT="$TEMP/buildroot";
 
 
-my $copyalreadydone=0;
+my $copyalreadydone=0;      # Use - before number of choice to avoid copy
 my $batch=0;
 
 for (0..@ARGV-1) {
@@ -457,7 +457,6 @@ if ($nboftargetok) {
     		print "Copy $BUILDROOT/$PROJECT to $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT\n";
     		$cmd="cp -pr \"$BUILDROOT/$PROJECT\" \"$BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT\"";
             $ret=`$cmd`;
-
     		print "Create directory $BUILDROOT/$PROJECT.tmp/DEBIAN\n";
     		$ret=`mkdir "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
     		print "Copy $SOURCE/build/deb/* to $BUILDROOT/$PROJECT.tmp/DEBIAN\n";
@@ -498,13 +497,11 @@ if ($nboftargetok) {
     		$ret=`mkdir -p "$BUILDROOT/$PROJECT.tmp/usr/share/applications"`;
     		print "Copy desktop file into $BUILDROOT/$PROJECT.tmp/usr/share/applications/dolibarr.desktop\n";
     		$ret=`cp "$SOURCE/build/deb/dolibarr.desktop" "$BUILDROOT/$PROJECT.tmp/usr/share/applications/dolibarr.desktop"`;
-            $ret=`chmod 444 $BUILDROOT/$PROJECT.tmp/usr/share/applications/dolibarr.desktop`;
             
 	   		print "Create directory $BUILDROOT/$PROJECT.tmp/usr/share/pixmaps\n";
     		$ret=`mkdir -p "$BUILDROOT/$PROJECT.tmp/usr/share/pixmaps"`;
     		print "Copy pixmap file into $BUILDROOT/$PROJECT.tmp/usr/share/pixmaps/dolibarr.xpm\n";
     		$ret=`cp "$SOURCE/doc/images/dolibarr.xpm" "$BUILDROOT/$PROJECT.tmp/usr/share/pixmaps/dolibarr.xpm"`;
-            $ret=`chmod 444 $BUILDROOT/$PROJECT.tmp/usr/share/pixmaps/dolibarr.xpm`;
 
             print "Create directory $BUILDROOT/$PROJECT.tmp/usr/share/doc/$PROJECT\n";
             $ret=`mkdir -p "$BUILDROOT/$PROJECT.tmp/usr/share/doc/$PROJECT"`;
@@ -516,20 +513,28 @@ if ($nboftargetok) {
     		print "Copy copyright file into $BUILDROOT/$PROJECT.tmp/usr/share/doc/$PROJECT/copyright\n";
             $ret=`cp "$BUILDROOT/$PROJECT.tmp/DEBIAN/copyright" "$BUILDROOT/$PROJECT.tmp/usr/share/doc/$PROJECT/copyright"`;
 
-            $ret=`gzip -c $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/ChangeLog > $BUILDROOT/$PROJECT.tmp/usr/share/doc/$PROJECT/changelog.Debian.gz`;
+            #$ret=`gzip -9 -c $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/ChangeLog > $BUILDROOT/$PROJECT.tmp/usr/share/doc/$PROJECT/changelog.Debian.gz`;
+            $ret=`gzip -9 -c $BUILDROOT/$PROJECT.tmp/DEBIAN/changelog > $BUILDROOT/$PROJECT.tmp/usr/share/doc/$PROJECT/changelog.Debian.gz`;
 
-    		print "Create directory $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/documents\n";
-    		$ret=`mkdir -p "$BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/documents"`;
-
-			print "Set permissions/owners on files/dir\n";
+            print "Set owners on files/dir\n";
 		    $ret=`chown -R root.root $BUILDROOT/$PROJECT.tmp`;
-		    $ret=`chown -R www-data.www-data $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/documents`;
-		    $ret=`chmod -R 555 $BUILDROOT/$PROJECT.tmp`;
-		    $ret=`chmod 755 $BUILDROOT/$PROJECT.tmp`;
-		    $ret=`chmod -R 755 $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/documents`;
-            $ret=`chmod -R 755 $BUILDROOT/$PROJECT.tmp/DEBIAN`;
+
+            print "Set permissions on files/dir\n";
+		    $ret=`chmod -R 755 $BUILDROOT/$PROJECT.tmp`;
+		    $cmd="find $BUILDROOT/$PROJECT.tmp -type f -exec chmod 644 {} \\; ";
+            $ret=`$cmd`;
+            $cmd="find $BUILDROOT/$PROJECT.tmp/DEBIAN -type f -exec chmod 755 {} \\; ";
+            $ret=`$cmd`;
             $ret=`chmod 644 $BUILDROOT/$PROJECT.tmp/DEBIAN/control`;
             $ret=`chmod 644 $BUILDROOT/$PROJECT.tmp/DEBIAN/templates`;
+            $cmd="find $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/build -name *.php -type f -exec chmod 755 {} \\; ";
+            $ret=`$cmd`;
+            $cmd="find $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/build -name *.pl -type f -exec chmod 755 {} \\; ";
+            $ret=`$cmd`;
+            $cmd="find $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/dev -name *.php -type f -exec chmod 755 {} \\; ";
+            $ret=`$cmd`;
+            $cmd="find $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/scripts -name *.php -type f -exec chmod 755 {} \\; ";
+            $ret=`$cmd`;
             
      		print "Go to directory $BUILDROOT\n";
             $olddir=getcwd();
