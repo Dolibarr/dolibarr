@@ -20,7 +20,7 @@
 /**
  *       \file       htdocs/admin/mails.php
  *       \brief      Page to setup emails sending
- *       \version    $Id: mails.php,v 1.73 2011/07/10 20:03:39 eldy Exp $
+ *       \version    $Id: mails.php,v 1.71 2011/07/09 05:28:41 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -63,7 +63,6 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update' && empty($_POST["can
 	if (isset($_POST["MAIN_MAIL_EMAIL_TLS"])) dolibarr_set_const($db, "MAIN_MAIL_EMAIL_TLS", $_POST["MAIN_MAIL_EMAIL_TLS"],'chaine',0,'',0);
 
 	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_FROM",     $_POST["MAIN_MAIL_EMAIL_FROM"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MAIL_ERRORS_TO",		$_POST["MAIN_MAIL_ERRORS_TO"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_MAIL_AUTOCOPY_TO",    $_POST["MAIN_MAIL_AUTOCOPY_TO"],'chaine',0,'',$conf->entity);
 
 	Header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
@@ -80,7 +79,7 @@ if ($_POST['addfile'] || $_POST['addfilehtml'])
 
 	// Set tmp user directory
 	$vardir=$conf->user->dir_output."/".$user->id;
-	$upload_dir = $vardir.'/temp';
+	$upload_dir = $vardir.'/temp/';
 
 	if (create_exdir($upload_dir) >= 0)
 	{
@@ -127,7 +126,7 @@ if (! empty($_POST['removedfile']) || ! empty($_POST['removedfilehtml']))
 {
 	// Set tmp user directory
 	$vardir=$conf->user->dir_output."/".$user->id;
-	$upload_dir = $vardir.'/temp';
+	$upload_dir = $vardir.'/temp/';
 
 	$keytodelete=isset($_POST['removedfile'])?$_POST['removedfile']:$_POST['removedfilehtml'];
 	$keytodelete--;
@@ -469,12 +468,6 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	print '<td><input class="flat" name="MAIN_MAIL_EMAIL_FROM" size="32" value="' . $conf->global->MAIN_MAIL_EMAIL_FROM;
 	print '"></td></tr>';
 
-	// From
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_ERRORS_TO").'</td>';
-	print '<td><input class="flat" name="MAIN_MAIL_ERRORS_TO" size="32" value="' . $conf->global->MAIN_MAIL_ERRORS_TO;
-	print '"></td></tr>';
-
 	// Autocopy to
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_AUTOCOPY_TO").'</td>';
@@ -573,13 +566,6 @@ else
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_FROM",ini_get('sendmail_from')?ini_get('sendmail_from'):$langs->transnoentities("Undefined")).'</td>';
 	print '<td>'.$conf->global->MAIN_MAIL_EMAIL_FROM;
 	if (!empty($conf->global->MAIN_MAIL_EMAIL_FROM) && ! isValidEmail($conf->global->MAIN_MAIL_EMAIL_FROM)) print img_warning($langs->trans("ErrorBadEMail"));
-	print '</td></tr>';
-
-	// Errors To
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_ERRORS_TO").'</td>';
-	print '<td>'.$conf->global->MAIN_MAIL_ERRORS_TO;
-	if (!empty($conf->global->MAIN_MAIL_ERRORS_TO) && ! isValidEmail($conf->global->MAIN_MAIL_ERRORS_TO)) print img_warning($langs->trans("ErrorBadEMail"));
 	print '</td></tr>';
 
 	// Autocopy to
@@ -737,5 +723,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/10 20:03:39 $ - $Revision: 1.73 $');
+llxFooter('$Date: 2011/07/09 05:28:41 $ - $Revision: 1.71 $');
 ?>
