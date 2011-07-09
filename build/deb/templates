@@ -15,7 +15,7 @@ Description: Package configuration note
 Template: dolibarr/webserver
 Type: select
 Choices: Apache, Apache-ssl, Both, None
-Description: Which Web Server are you running ?
+Description: Which Web Server are you running?
  Dolibarr supports any web server with PHP capabilities, but this
  configuration process only supports Apache and Apache-SSL.
 
@@ -91,15 +91,6 @@ Template: dolibarr/postrm
 Type: boolean
 Default: true
 Description: Delete database ?
- Delete the Dolibarr MySQL database and all its datas (datas related
- to this quetion are the Dolibarr DBMS account and all
+ Answer yes if you want to delete also the Dolibarr MySQL database and all 
+ its datas (datas subjected to this quetion are the Dolibarr DBMS account and all
  Dolibarr tables) ?
-
-Template: dolibarr/postrmfile
-Type: boolean
-Default: true
-Description: Delete attached files ?
- Delete also all uploaded and generated files (datas related
- to this quetion are all files found into /usr/share/dolibarr/documents,
- uploaded or generated when using Dolibarr) ?
- 
