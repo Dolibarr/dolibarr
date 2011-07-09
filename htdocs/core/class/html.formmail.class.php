@@ -21,7 +21,7 @@
  *       \file       htdocs/core/class/html.formmail.class.php
  *       \ingroup    core
  *       \brief      Fichier de la classe permettant la generation du formulaire html d'envoi de mail unitaire
- *       \version    $Id: html.formmail.class.php,v 1.28 2011/07/07 15:54:03 simnandez Exp $
+ *       \version    $Id: html.formmail.class.php,v 1.29 2011/07/09 06:10:07 hregis Exp $
  */
 require_once(DOL_DOCUMENT_ROOT ."/core/class/html.form.class.php");
 
@@ -309,17 +309,18 @@ class FormMail
         if ($this->witherrorsto)
         {
             //if (! $this->errorstomail) $this->errorstomail=$this->frommail;
+            $errorstomail = (! empty($conf->global->MAIN_MAIL_ERRORS_TO) ? $conf->global->MAIN_MAIL_ERRORS_TO : $this->errorstomail);
             if ($this->witherrorstoreadonly)
             {
-                $out.= '<input type="hidden" id="errorstomail" name="errorstomail" value="'.$this->errorstomail.'" />';
+                $out.= '<input type="hidden" id="errorstomail" name="errorstomail" value="'.$errorstomail.'" />';
                 $out.= '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td>';
-                $out.= $this->errorstomail;
+                $out.= $errorstomail;
                 $out.= "</td></tr>\n";
             }
             else
             {
                 $out.= '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td>';
-                $out.= '<input size="30" id="errorstomail" name="errorstomail" value="'.$this->errorstomail.'" />';
+                $out.= '<input size="30" id="errorstomail" name="errorstomail" value="'.$errorstomail.'" />';
                 $out.= "</td></tr>\n";
             }
         }
