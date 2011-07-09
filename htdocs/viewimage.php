@@ -23,7 +23,7 @@
  *		\file       htdocs/viewimage.php
  *		\brief      Wrapper to show images into Dolibarr screens
  *      \remarks    Call to wrapper is '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=diroffile&file=relativepathofofile&cache=0">'
- *		\version    $Id: viewimage.php,v 1.94 2011/07/06 16:56:01 eldy Exp $
+ *		\version    $Id: viewimage.php,v 1.95 2011/07/09 00:15:16 eldy Exp $
  */
 
 // Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
@@ -44,7 +44,11 @@ if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 // Pour autre que companylogo, on charge environnement + info issus de logon comme le user
 if (($modulepart == 'companylogo') && ! defined("NOLOGIN")) define("NOLOGIN",'1');
 
-// C'est un wrapper, donc header vierge
+/**
+ * Wrapper, donc header vierge
+ *
+ * @return  null
+ */
 function llxHeader() { }
 
 
