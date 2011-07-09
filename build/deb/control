@@ -4,17 +4,16 @@ Architecture: all
 Maintainer: Laurent Destailleur <eldy@users.sourceforge.net>
 Essential: no
 Installed-Size: 31200
-Depends: apache2, libapache2-mod-php5, php5, php5-cgi, php5-curl, php5-gd, php5-ldap, php5-mysql, mysql-server, perl
+Depends: apache2, libapache2-mod-php5, php5, php5-cli, php5-cgi, php5-curl, php5-gd, php5-ldap, php5-mysql, mysql-server, perl
 Section: web
 Priority: optional
 Recommends: mozilla | netscape
 Homepage: http://www.dolibarr.org
-Description: Dolibarr ERP & CRM
- Dolibarr ERP/CRM is an open source/free software for
- small and medium companies, foundations or freelances. It includes
- different features for Enterprise Resource Planning (ERP) and Customer
- Relationship Management (CRM) but also other features for different
- activities.
+Description: An ERP & CRM software to manage your activity.
+ Dolibarr ERP & CRM is an easy to use open source/free software for small 
+ and medium companies, foundations or freelances. It includes different 
+ features for Enterprise Resource Planning (ERP) and Customer Relationship
+ Management (CRM) but also other features for different activities.
  .
  Dolibarr features are activated by modules. Most common modules are:
  .
