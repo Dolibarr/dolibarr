@@ -1,6 +1,8 @@
 #!/bin/sh
 # Debian install package run: config, preinst, prerm, postinst, postrm
 #
+# lintian package   To test a package   
+#
 # dpkg -l list all packages
 # dpkg -b is to build package
 # dpkg -c package.deb list content of package
