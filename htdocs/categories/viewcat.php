@@ -3,6 +3,7 @@
  * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin	  	  <patrick.raguin@gmail.com>
  * Copyright (C) 2005-2009 Regis Houssin	  	  <regis@dolibarr.fr>
+ * Copyright (C) 2010-2011 Herve Prot   	  	  <herve.prot@symeos.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,8 @@ require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/categories.lib.php");
 
 $langs->load("categories");
+$langs->load("products");
+$langs->load("contacts");
 
 // Security check
 if (! $user->rights->categorie->lire) accessforbidden();
@@ -94,6 +97,8 @@ if ($type == 0) $title=$langs->trans("ProductsCategoryShort");
 elseif ($type == 1) $title=$langs->trans("SuppliersCategoryShort");
 elseif ($type == 2) $title=$langs->trans("CustomersCategoryShort");
 elseif ($type == 3) $title=$langs->trans("MembersCategoryShort");
+elseif ($type == 4) $title=$langs->trans("ProductsCategoryShort");
+elseif ($type == 5) $title=$langs->trans("ContactsCategoryShort");
 else $title=$langs->trans("Category");
 
 $head = categories_prepare_head($object,$type);
@@ -108,8 +113,8 @@ if ($action == 'delete')
 	$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;type='.$type,$langs->trans('DeleteCategory'),$langs->trans('ConfirmDeleteCategory'),'confirm_delete');
 	if ($ret == 'html') print '<br>';
 }
-
-print '<table border="0" width="100%" class="border">';
+$var=false;
+print '<table border="0" width="100%" class="noborder">';
 
 // Path of category
 print '<tr><td width="20%" class="notopnoleft">';
@@ -123,9 +128,16 @@ foreach ($ways as $way)
 print '</td></tr>';
 
 // Description
-print '<tr><td width="20%" class="notopnoleft">';
-print $langs->trans("Description").'</td><td>';
+print '<tr  '.$bc[$var].'><td width="20%" id="label">';
+print $langs->trans("Description").'</td><td id="value">';
 print nl2br($object->description);
+print '</td></tr>';
+$var=!$var;
+
+// Priorité
+print '<tr  '.$bc[$var].'><td width="20%" id="label">';
+print $langs->trans("Priority").'</td><td id="value">';
+print $object->priority;
 print '</td></tr>';
 
 print '</table>';
@@ -362,6 +374,45 @@ if ($object->type == 3)
 	}
 }
 
+if ($object->type == 5)
+{
+        require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
+
+        $prods = $object->get_type("contact","Contact");
+        if ($prods < 0)
+        {
+                dol_print_error($db,$c->error);
+        }
+        else
+        {
+                print "<br>";
+                print "<table class='noborder' width='100%'>\n";
+                print "<tr class='liste_titre'><td colspan='3'>".$langs->trans("Contacts")."</td></tr>\n";
+
+                if (sizeof ($prods) > 0)
+                {
+                        $i = 0;
+                        $var=true;
+                        foreach ($prods as $key => $member)
+                        {
+                                $i++;
+                                $var=!$var;
+                                print "\t<tr ".$bc[$var].">\n";
+                                print '<td nowrap="nowrap" valign="top">';
+                                print $member->getNomUrl(1);
+                                print "</td>\n";
+                                print '<td valign="top">'.$member->nom."</td>\n";
+                                print '<td valign="top">'.$member->prenom."</td>\n";
+                                print "</tr>\n";
+                        }
+                }
+                else
+                {
+                        print "<tr><td>".$langs->trans("ThisCategoryHasNoContact")."</td></tr>";
+                }
+                print "</table>\n";
+        }
+}
 $db->close();
 
 llxFooter('$Date$ - $Revision$');

@@ -29,6 +29,7 @@ create table llx_categorie
 	description 	text,                               -- description of the category
 	fk_soc          integer DEFAULT NULL,					-- attribution of the category has a company (for product only)
 	visible         tinyint DEFAULT 1 NOT NULL,           -- determine if the products are visible or not
+        priority        integer     DEFAULT 0;              -- priority value for the category
     import_key      varchar(14)                  -- Import key
 )ENGINE=innodb;
 

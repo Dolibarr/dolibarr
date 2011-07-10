@@ -5,6 +5,7 @@
  * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin  		<patrick.raguin@gmail.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2011 Herve Prot           <herve.prot@symeos.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,7 @@
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
+require_once(DOL_DOCUMENT_ROOT."/comm/action/class/actioncomm.class.php");
 
 $langs->load("categories");
 $langs->load("products");
@@ -75,6 +77,20 @@ if ($_REQUEST["id"] || $_REQUEST["ref"])
 		$dbtablename = 'adherent';
 		$fieldid = isset($_REQUEST["ref"])?'ref':'rowid';
 	}
+        if ($_REQUEST["type"] == 4) {
+		$type = 'lead';
+		$objecttype = 'lead&categorie';
+		$objectid = isset($_REQUEST["id"])?$_REQUEST["id"]:(isset($_REQUEST["ref"])?$_REQUEST["ref"]:'');
+		$dbtablename = 'lead';
+		$fieldid = isset($_REQUEST["ref"])?'ref':'rowid';
+	}
+	if ($_REQUEST["type"] == 5) {
+        $type = 'contact';
+        $objecttype = 'contact&categorie';
+        $objectid = isset($_REQUEST["id"])?$_REQUEST["id"]:(isset($_REQUEST["ref"])?$_REQUEST["ref"]:'');
+        $dbtablename = 'socpeople';
+        $fieldid = isset($_REQUEST["ref"])?'ref':'rowid';
+    }
 }
 
 // Security check
@@ -111,6 +127,18 @@ if ($_REQUEST["removecat"])
 	{
 		require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
 		$object = new Adherent($db);
+		$result = $object->fetch($objectid);
+	}
+        if ($_REQUEST["type"] == 4 && $user->rights->lead->creer)
+	{
+		require_once(DOL_DOCUMENT_ROOT."/lead/class/lead.class.php");
+		$object = new lead($db);
+		$result = $object->fetch($objectid);
+	}
+        if ($_REQUEST["type"] == 5 && $user->rights->societe->creer)
+	{
+		require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
+		$object = new Contact($db);
 		$result = $object->fetch($objectid);
 	}
 	$cat = new Categorie($db);
@@ -152,6 +180,19 @@ if (isset($_REQUEST["catMere"]) && $_REQUEST["catMere"]>=0)
 		$result = $object->fetch($objectid);
 		$type = 'member';
 	}
+        if ($_REQUEST["type"] == 4 && $user->rights->lead->creer)
+	{
+		require_once(DOL_DOCUMENT_ROOT."/lead/class/lead.class.php");
+		$object = new lead($db);
+		$result = $object->fetch($objectid);
+                $type='lead';
+	}
+        if ($_REQUEST["type"] == 5 && $user->rights->societe->creer)
+	{
+		require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
+		$object = new Contact($db);
+		$result = $object->fetch($objectid);
+	}
 	$cat = new Categorie($db);
 	$result=$cat->fetch($_REQUEST["catMere"]);
 
@@ -159,6 +200,16 @@ if (isset($_REQUEST["catMere"]) && $_REQUEST["catMere"]>=0)
 	if ($result >= 0)
 	{
 		$mesg='<div class="ok">'.$langs->trans("WasAddedSuccessfully",$cat->label).'</div>';
+                if($_REQUEST["type"]==2)
+                {
+                    $actioncomm = new ActionComm($db);
+                    $actioncomm->addAutoTask('AC_QUALIF',"Qualification prospect/client/contact : ".$cat->label,$_GET["socid"],'','');
+                }
+                if($_REQUEST["type"]==5)
+                {
+                    $actioncomm = new ActionComm($db);
+                    $actioncomm->addAutoTask('AC_QUALIF',"Qualification prospect/client/contact : ".$cat->label,$object->socid,'','',$object->id);
+                }
 	}
 	else
 	{
@@ -201,78 +252,109 @@ if ($_GET["socid"])
 
 	dol_fiche_head($head, 'category', $langs->trans("ThirdParty"),0,'company');
 
-	print '<table class="border" width="100%">';
+        $var=false;
+        print '<table width="100%"><tr><td valign="top" width="50%">';
 
-	print '<tr><td width="25%">'.$langs->trans("Name").'</td><td colspan="3">';
-	print $html->showrefnav($soc,'socid','',($user->societe_id?0:1),'rowid','nom');
+	print '<table class="noborder" width="100%">';
+
+	print '<tr class="liste_titre"><td colspan="4">';
+	print $html->showrefnav($soc,'socid','',($user->societe_id?0:1),'rowid','nom','','&type=2');
 	print '</td></tr>';
+
+	// Name
+	print '<tr '.$bc[$var].'><td id="label" width="20%">'.$langs->trans('Name').'</td>';
+	print '<td colspan="1" id="value" width="30%">';
+	print $soc->getNomUrl(1);
+	print '</td>';
 
     if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
 	{
-	   print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$soc->prefix_comm.'</td></tr>';
+		print '<td width="20%" id="label">'.$langs->trans('Prefix').'</td><td colspan="1"  id="value">'.$soc->prefix_comm.'</td></tr>';
+		$var=!$var;
+	}
+	else
+	{
+		print '<td width="20%" id="label"></td><td colspan="1"  id="value"></td></tr>';
+		$var=!$var;
 	}
 
 	if ($soc->client)
 	{
-		print '<tr><td>';
-		print $langs->trans('CustomerCode').'</td><td colspan="3">';
+		print '<tr '.$bc[$var].'><td  colspan="3" id="label">';
+		print $langs->trans('CustomerCode').'</td><td id="value">';
 		print $soc->code_client;
 		if ($soc->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
 		print '</td></tr>';
+        $var=!$var;
 	}
 
 	if ($soc->fournisseur)
 	{
-		print '<tr><td>';
-		print $langs->trans('SupplierCode').'</td><td colspan="3">';
+		print '<tr '.$bc[$var].'><td colspan="3" id="label">';
+		print $langs->trans('SupplierCode').'</td><td  id="value">';
 		print $soc->code_fournisseur;
 		if ($soc->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
 		print '</td></tr>';
+        $var=!$var;
 	}
 
 	if ($conf->global->MAIN_MODULE_BARCODE)
 	{
-		print '<tr><td>'.$langs->trans('Gencod').'</td><td colspan="3">'.$soc->gencod.'</td></tr>';
+		print '<tr '.$bc[$var].'><td id="label">'.$langs->trans('Gencod').'</td><td colspan="3" id="value">'.$soc->gencod.'</td></tr>';
+        $var=!$var;
 	}
 
 	// Address
-	print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($soc->address)."</td></tr>";
+	print "<tr ".$bc[$var]."><td valign=\"top\" id=\"label\">".$langs->trans('Address')."</td><td colspan=\"3\" id=\"value\">".nl2br($soc->address)."</td></tr>";
+    $var=!$var;
 
 	// Zip / Town
-	print '<tr><td width="25%">'.$langs->trans('Zip').'</td><td width="25%">'.$soc->cp."</td>";
-	print '<td width="25%">'.$langs->trans('Town').'</td><td width="25%">'.$soc->ville."</td></tr>";
+	print '<tr '.$bc[$var].'><td width="20%" id="label">'.$langs->trans('Zip').'</td><td width="30%" id="value">'.$soc->cp."</td>";
+	print '<td width="20%" id="label">'.$langs->trans('Town').'</td><td width="30%" id="value">'.$soc->ville."</td></tr>";
+    $var=!$var;
 
 	// Country
 	if ($soc->pays) {
-		print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
+		print '<tr '.$bc[$var].'><td id="label">'.$langs->trans('Country').'</td><td colspan="3" id="value">';
 		$img=picto_from_langcode($soc->pays_code);
 		print ($img?$img.' ':'');
 		print $soc->pays;
 		print '</td></tr>';
+        $var=!$var;
 	}
 
 	// Phone
-	print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dol_print_phone($soc->tel,$soc->pays_code,0,$soc->id,'AC_TEL').'</td>';
-	print '<td>'.$langs->trans('Fax').'</td><td>'.dol_print_phone($soc->fax,$soc->pays_code,0,$soc->id,'AC_FAX').'</td></tr>';
+	print '<tr '.$bc[$var].'><td id="label">'.$langs->trans('Phone').'</td><td id="value">'.dol_print_phone($soc->tel,$soc->pays_code,0,$soc->id,'AC_TEL').'</td>';
+	print '<td id="label">'.$langs->trans('Fax').'</td><td id="value">'.dol_print_phone($soc->fax,$soc->pays_code,0,$soc->id,'AC_FAX').'</td></tr>';
+    $var=!$var;
 
 	// EMail
-	print '<tr><td>'.$langs->trans('EMail').'</td><td>';
+	print '<tr '.$bc[$var].'><td id="label">'.$langs->trans('EMail').'</td><td id="value">';
 	print dol_print_email($soc->email,0,$soc->id,'AC_EMAIL');
 	print '</td>';
 
 	// Web
-	print '<td>'.$langs->trans('Web').'</td><td>';
+	print '<td id="label">'.$langs->trans('Web').'</td><td id="value">';
 	print dol_print_url($soc->url);
 	print '</td></tr>';
+    $var=!$var;
 
 	// Assujeti a TVA ou pas
-	print '<tr>';
-	print '<td nowrap="nowrap">'.$langs->trans('VATIsUsed').'</td><td colspan="3">';
+	print '<tr '.$bc[$var].'>';
+	print '<td nowrap="nowrap" id="label">'.$langs->trans('VATIsUsed').'</td><td colspan="3" id="value">';
 	print yn($soc->tva_assuj);
 	print '</td>';
 	print '</tr>';
+    $var=!$var;
 
 	print '</table>';
+        print '</td>';
+        print '<td valign="top" width="50%">';
+
+        print '</td>';
+        print '<td>';
+        print '</tr>';
+        print '</table>';
 
 	print '</div>';
 
@@ -423,6 +505,252 @@ else if ($_GET["id"] || $_GET["ref"])
 
 		formCategory($db,$member,3);
 	}
+        if ($_GET["type"] == 4)
+	{
+            $langs->load("lead");
+
+		/*
+		 * Fiche categorie produit lié à une affaire
+		 */
+
+            require_once(DOL_DOCUMENT_ROOT."/lib/lead.lib.php");
+            require_once(DOL_DOCUMENT_ROOT."/lead/class/lead.class.php");
+
+            llxHeader('',$langs->trans('Product'),'EN:Commercial_Products|FR:Liste_des_produits|ES:Presupuestos');
+
+            $id = GETPOST('id');
+            $ref= GETPOST('ref');
+
+            if ($id > 0 || ! empty($ref))
+            {
+                /*
+                * Show object in view mode
+                */
+
+                if ($mesg)
+                {
+                	if (! preg_match('/div class=/',$mesg)) print '<div class="ok">'.$mesg.'</div><br>';
+                        else print $mesg."<br>";
+                }
+
+                $object = new Lead($db);
+
+                $object->fetch($id,$ref);
+
+                $soc = new Societe($db);
+                $soc->fetch($object->socid);
+
+                $head = lead_prepare_head($object);
+                dol_fiche_head($head, 'category', $langs->trans('Products'), 0, 'lead');
+
+                /*
+                * Fiche Affaire
+                *
+                */
+
+                print '<table class="border" width="100%">';
+
+                $linkback="<a href=\"product.php?page=$page&socid=$socid&viewstatut=$viewstatut&sortfield=$sortfield&$sortorder\">".$langs->trans("BackToList")."</a>";
+
+                // Ref
+                print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="5">';
+                print $html->showrefnav($object,'ref','',1,'ref','ref','');
+                print '</td></tr>';
+
+                $rowspan=9;
+
+                // Company
+                print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$soc->getNomUrl(1).'</td>';
+                print '</tr>';
+
+                // Date of proposal
+                print '<tr>';
+                print '<td>';
+                print '<table class="nobordernopadding" width="100%"><tr><td>';
+                print $langs->trans('DateStart');
+                print '</td>';
+                if ($_GET['action'] != 'editdate' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDate'),1).'</a></td>';
+                print '</tr></table>';
+                print '</td><td colspan="3">';
+                if ($object->brouillon && $_GET['action'] == 'editdate')
+                {
+                    print '<form name="editdate" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
+                    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                    print '<input type="hidden" name="action" value="setdate">';
+                    $html->select_date($object->date,'re','','',0,"editdate");
+                    print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+                    print '</form>';
+                }
+                else
+                {
+                    if ($object->date_start)
+                    {
+			print dol_print_date($object->date_start,'daytext');
+                    }
+                    else
+                    {
+			print '&nbsp;';
+                    }
+                }
+                print '</td>';
+
+                // Notes
+                print '<td valign="top" colspan="2" width="50%" rowspan="'.$rowspan.'">'.$langs->trans('Note').' :<br>'. nl2br($object->description).'</td>';
+                print '</tr>';
+
+                // Date fin Lead
+                print '<tr>';
+                print '<td>';
+                print '<table class="nobordernopadding" width="100%"><tr><td>';
+                print $langs->trans('DateEnd');
+                print '</td>';
+                if ($_GET['action'] != 'editecheance' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editecheance&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+                print '</tr></table>';
+                print '</td><td colspan="3">';
+                if ($object->brouillon && $_GET['action'] == 'editecheance')
+                {
+                    print '<form name="editecheance" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
+                    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                    print '<input type="hidden" name="action" value="setecheance">';
+                    $html->select_date($object->fin_validite,'ech','','','',"editecheance");
+                    print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+                    print '</form>';
+                }
+                else
+                {
+                    if ($object->fin_validite)
+                    {
+			print dol_print_date($object->fin_validite,'daytext');
+			if ($object->statut == 1 && $object->fin_validite < ($now - $conf->Lead->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+                    }
+                    else
+                    {
+			print '&nbsp;';
+                    }
+                }
+                print '</td>';
+                print '</tr>';
+
+                // Amount HT
+                print '<tr><td height="10">'.$langs->trans('CAHT').'</td>';
+                print '<td align="right" colspan="2" nowrap>'.$object->getCALevel().'</td>';
+                print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+
+                // Statut
+                print '<tr><td height="10">'.$langs->trans('Status').'</td><td align="left" colspan="3">'.$object->getLibStatut(4).'</td></tr>';
+                print '</table><br>';
+
+                print '</div>';
+                print "\n";
+
+                print '<table class="noborder" width="100%">';
+
+                formCategory($db,$object,4);
+
+                print "</table>";
+
+            }
+            else
+            {
+                dol_print_error($db);
+            }
+        }
+        if ($_GET["type"] == 5)
+	{
+		$langs->load("contact");
+
+		/*
+		 * Fiche categorie Contact
+		 */
+		require_once(DOL_DOCUMENT_ROOT."/lib/contact.lib.php");
+		require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
+
+                // Produit
+		$contact = new Contact($db);
+		$objsoc = new Societe($db);
+		if ($_GET["ref"]) $result = $contact->fetch('',$_GET["ref"]);
+		if ($_GET["id"]) $result = $contact->fetch($_GET["id"]);
+
+                llxHeader('',$langs->trans("ContactsAddresses"),'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
+
+		$head = contact_prepare_head($contact);
+
+		dol_fiche_head($head, 'category', $langs->trans("ContactsAddresses"), 0, 'contact');
+
+		print '<table class="border" width="100%">';
+
+        	// Name
+	        print '<tr><td width="20%">'.$langs->trans("Lastname").'</td><td width="30%">'.$contact->name.'</td>';
+	        print '<td width="25%">'.$langs->trans("Firstname").'</td><td width="25%">'.$contact->firstname.'</td></tr>';
+
+	        // Company
+	        print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">';
+	        if ($contact->socid > 0)
+        	{
+                	$objsoc->fetch($contact->socid);
+	                print $objsoc->getNomUrl(1);
+	        }
+	        else
+	        {
+	                print $langs->trans("ContactNotLinkedToCompany");
+	        }
+	        print '</td></tr>';
+
+	        // Civility
+	        print '<tr><td width="15%">'.$langs->trans("UserTitle").'</td><td colspan="3">';
+	        print $contact->getCivilityLabel();
+	        print '</td></tr>';
+
+	        print '<tr><td>'.$langs->trans("PostOrFunction" ).'</td><td colspan="3">'.$contact->poste.'</td>';
+
+	        // Address
+	        print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3">'.nl2br($contact->address).'</td></tr>';
+
+	        // Zip Town
+	        print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3">';
+	        print $contact->cp;
+	        if ($contact->cp) print '&nbsp;';
+	        print $contact->ville.'</td></tr>';
+
+	        // Country
+	        print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
+	        $img=picto_from_langcode($contact->pays_code);
+	        if ($img) print $img.' ';
+	        print $contact->pays;
+	        print '</td></tr>';
+
+	        // Department
+	        print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">'.$contact->departement.'</td>';
+
+	        // Phone
+	        print '<tr><td>'.$langs->trans("PhonePro").'</td><td>'.dol_print_phone($contact->phone_pro,$contact->pays_code,$contact->id,$contact->socid,'AC_TEL').'</td>';
+	        print '<td>'.$langs->trans("PhonePerso").'</td><td>'.dol_print_phone($contact->phone_perso,$contact->pays_code,$contact->id,$contact->socid,'AC_TEL').'</td></tr>';
+
+	        print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td>'.dol_print_phone($contact->phone_mobile,$contact->pays_code,$contact->id,$contact->socid,'AC_TEL').'</td>';
+	        print '<td>'.$langs->trans("Fax").'</td><td>'.dol_print_phone($contact->fax,$contact->pays_code,$contact->id,$contact->socid,'AC_FAX').'</td></tr>';
+
+	        // Email
+	        print '<tr><td>'.$langs->trans("EMail").'</td><td>'.dol_print_email($contact->email,$contact->id,$contact->socid,'AC_EMAIL').'</td>';
+	        if ($conf->mailing->enabled)
+	        {
+        	        $langs->load("mails");
+	                print '<td nowrap>'.$langs->trans("NbOfEMailingsReceived").'</td>';
+	                print '<td><a href="'.DOL_URL_ROOT.'/comm/mailing/liste.php?filteremail='.urlencode($contact->email).'">'.$contact->getNbOfEMailings().'</a></td>';
+	        }
+	        else
+	        {
+	                print '<td colspan="2">&nbsp;</td>';
+	        }
+	        print '</tr>';
+
+		print '</table>';
+
+		print '</div>';
+
+		if ($mesg) print($mesg);
+
+		formCategory($db,$contact,5);
+	}
 }
 
 
@@ -437,6 +765,8 @@ function formCategory($db,$object,$typeid)
 	if ($typeid == 1) $title = $langs->trans("SuppliersCategoriesShort");
 	if ($typeid == 2) $title = $langs->trans("CustomersProspectsCategoriesShort");
 	if ($typeid == 3) $title = $langs->trans("MembersCategoriesShort");
+        if ($typeid == 4) $title = $langs->trans("ProductsCategoriesShort");
+        if ($typeid == 5) $title = $langs->trans("ContactsCategoriesShort");
 
 	// Formulaire ajout dans une categorie
 	print '<br>';
@@ -447,10 +777,11 @@ function formCategory($db,$object,$typeid)
 	print '<input type="hidden" name="type" value="'.$typeid.'">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td width="40%">';
-	print $langs->trans("ClassifyInCategory");
-	print $html->select_all_categories($typeid);
-	print '</td><td>';
+	print '<tr class="liste_titre"><td class="liste_titre" width="25%">';
+	print $langs->trans("ClassifyInCategory").'</td><td>';
+        if($typeid==4) print $html->select_all_categories(0);
+        else
+            print $html->select_all_categories($typeid);
 	print '<input type="submit" class="button" value="'.$langs->trans("Classify").'"></td>';
 	if ($user->rights->categorie->creer)
 	{
@@ -475,6 +806,8 @@ function formCategory($db,$object,$typeid)
 		if ($typeid == 1) $title=$langs->trans("CompanyIsInSuppliersCategories");
 		if ($typeid == 2) $title=$langs->trans("CompanyIsInCustomersCategories");
 		if ($typeid == 3) $title=$langs->trans("MemberIsInCategories");
+                if ($typeid == 4) $title=$langs->trans("LeadProductIsInCategories");
+		if ($typeid == 5) $title=$langs->trans("ContactIsInCategories");;
 		print "\n";
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre"><td colspan="2">'.$title.':</td></tr>';
@@ -501,6 +834,8 @@ function formCategory($db,$object,$typeid)
 				if ($typeid == 1) $permission=$user->rights->societe->creer;
 				if ($typeid == 2) $permission=$user->rights->societe->creer;
 				if ($typeid == 3) $permission=$user->rights->adherent->creer;
+                                if ($typeid == 4) $permission=$user->rights->lead->creer;
+				if ($typeid == 5) $permission=$user->rights->societe->creer;
 				if ($permission)
 				{
 					print "<a href= '".DOL_URL_ROOT."/categories/categorie.php?".(empty($_REQUEST["socid"])?'id':'socid')."=".$object->id.(empty($_REQUEST["socid"])?"&amp;type=".$typeid."&amp;typeid=".$typeid:'')."&amp;removecat=".$cat->id."'>";
@@ -528,6 +863,8 @@ function formCategory($db,$object,$typeid)
 		if ($typeid == 1) $title=$langs->trans("CompanyHasNoCategory");
 		if ($typeid == 2) $title=$langs->trans("CompanyHasNoCategory");
 		if ($typeid == 3) $title=$langs->trans("MemberHasNoCategory");
+                if ($typeid == 4) $title=$langs->trans("LeadHasNoCategory");
+		if ($typeid == 5) $title=$langs->trans("ContactHasNoCategory");
 		print $title;
 		print "<br/>";
 	}
