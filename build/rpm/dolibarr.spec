@@ -44,16 +44,13 @@ Dolibarr was designed to provide only features you need and be easy to
 use.
 
 %description -l es
-Dolibarr ERP/CRM es un software completamente modular (sólo activaremos las funciones
-que deseemos) para gestión de PYMES, profesionales independientes, auto emprendedores
-ó asociaciones. En términos más técnicos, es un ERP y CRM. Es un proyecto OpenSource
-que se ejecuta en el seno de un servidor Web, siendo pues accesible desde cualquier
-lugar disponiendo de una conexión a Internet.
-Dolibarr viene a completar la oferta de numerosas aplicaciones de esta categoría,
-pero desmarcándose por el hecho de que se hace todo lo posible para proporcionar simplicidad:
-Simple de instalar (con instaladores para los que ignoran como instalar un servidor Web).
-Simple de usar (funciones modulares para no sobrecargar los menús, informaciones claras y concisas).
-Simple de desarrollar (sin frameworks pesados). 
+Dolibarr ERP y CRM es un software open source/gratis para pequeñas y
+medianas empresas, asociaciones o autónomos. Incluye diferentes
+funcionalidades para la Planificación de Recursos Empresariales (ERP) y
+Gestión de la Relación con los Clientes (CRM) así como para para otras
+diferentes actividades. Dolibarr ha sido diseñado para suministrarle
+solamente las funcionalidades que necesita y haciendo hincapié en su
+facilidad de uso.
     
 %description -l fr
 Dolibarr ERP & CRM est un logiciel de gestion de PME/PMI, autoentrepreneurs, 
@@ -182,19 +179,35 @@ if [ ! -f %{_sysconfdir}/dolibarr/apache.conf ]; then
      chmod go-w %{_sysconfdir}/dolibarr/apache.conf
 fi
 
-# Create a config link %{_sysconfdir}/httpd/conf.d/dolibarr.conf
-if [ ! -f %{_sysconfdir}/httpd/conf.d/dolibarr.conf ]; then
-     echo Create dolibarr web server config link %{_sysconfdir}/httpd/conf.d/dolibarr.conf
-     ln -fs /etc/dolibarr/apache.conf %{_sysconfdir}/httpd/conf.d/dolibarr.conf
+
+# Detect OS
+os='fedora';
+if [ -d %{_sysconfdir}/httpd/conf.d ]; then
+    export os='fedora';
+    export conffile="%{_sysconfdir}/httpd/conf.d/dolibarr.conf"
+    apacheuser='apache';
+    apachegroup='apache';
+fi
+if [ -d %{_sysconfdir}/apache2/conf.d ]; then
+    export os='opensuse';
+    export conffile="%{_sysconfdir}/apache2/conf.d/dolibarr.conf"
+    apacheuser='wwwrun';
+    apachegroup='wwwrun';
+fi
+
+# Create a config link dolibarr.conf for Fedora or Redhat
+if [ ! -f $conffile ]; then
+    echo Create dolibarr web server config link $conffile
+    ln -fs /etc/dolibarr/apache.conf $conffile
 fi
 
 # Set permissions
-echo Set permission on $targetdir
-chown -R apache.apache $targetdir
+echo Set permission to $apacheuser:$apachegroup on $targetdir
+chown -R $apacheuser:$apachegroup $targetdir
 chmod -R a-w $targetdir
 
-echo Set permission on $docdir
-chown -R apache.apache $docdir
+echo Set permission to $apacheuser:$apachegroup on $docdir
+chown -R $apacheuser:$apachegroup $docdir
 chmod -R o-w $docdir
 
 # Create empty conf.php file for web installer
@@ -205,7 +218,7 @@ if [ ! -s $targetdir/htdocs/conf/conf.php ]; then
     chmod ug+rw $targetdir/htdocs/conf/conf.php
 fi
 
-if [ -s /usr/bin/chcon ]; then
+if [ "x$os" = "xfedora" -a -s /usr/bin/chcon ]; then
     echo Set SELinux permissions
     # Warning: chcon seems not cumulative 
     #chcon -R -h -t httpd_sys_content_t $targetdir
@@ -219,6 +232,9 @@ fi
 echo Restart web server
 if [ -f %{_sysconfdir}/init.d/httpd ]; then
     %{_sysconfdir}/init.d/httpd restart
+fi
+if [ -f %{_sysconfdir}/init.d/apache2 ]; then
+    %{_sysconfdir}/init.d/apache2 restart
 fi
 
 # Show result
@@ -236,12 +252,23 @@ echo
 %postun
 %clean_menus
 
+# Detect OS
+os='fedora';
+if [ -d %{_sysconfdir}/httpd/conf.d ]; then
+    export os='fedora';
+    export conffile="%{_sysconfdir}/httpd/conf.d/dolibarr.conf"
+fi
+if [ -d %{_sysconfdir}/apache2/conf.d ]; then
+    export os='opensuse';
+    export conffile="%{_sysconfdir}/apache2/conf.d/dolibarr.conf"
+fi
+
+
 # Dolibarr files are stored into /var/www
 export targetdir='/var/www/dolibarr'
 # Dolibarr uploaded files and generated documents are stored into /usr/share/dolibarr/documents 
 export docdir='/usr/share/dolibarr/documents'
 
-export conffile="%{_sysconfdir}/httpd/conf.d/dolibarr.conf"
 if [ -f $conffile ] ;
 then
     echo Delete apache config file for Dolibarr
@@ -255,6 +282,9 @@ then
     echo Restart web server
     if [ -f %{_sysconfdir}/init.d/httpd ]; then
         %{_sysconfdir}/init.d/httpd restart
+    fi
+    if [ -f %{_sysconfdir}/init.d/apache2 ]; then
+        %{_sysconfdir}/init.d/apache2 restart
     fi
 fi
 
