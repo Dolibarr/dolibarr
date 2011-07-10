@@ -22,7 +22,7 @@
  *       \file       htdocs/core/class/html.formmail.class.php
  *       \ingroup    core
  *       \brief      Fichier de la classe permettant la generation du formulaire html d'envoi de mail unitaire
- *       \version    $Id: html.formmail.class.php,v 1.30 2011/07/09 10:26:19 hregis Exp $
+ *       \version    $Id: html.formmail.class.php,v 1.31 2011/07/10 20:03:41 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT ."/core/class/html.form.class.php");
 
@@ -124,9 +124,9 @@ class FormMail
     /**
      * Add a file into the list of attached files (stored in SECTION array)
      *
-     * @param 	$path
-     * @param 	$file
-     * @param 	$type
+     * @param 	string   $path   Full absolute path on filesystem of file, including file name
+     * @param 	string   $file   Only filename
+     * @param 	string   $type   Mime type
      */
     function add_attached_files($path,$file,$type)
     {
@@ -505,14 +505,26 @@ class FormMail
             $out.= '<tr>';
             $out.= '<td width="180">'.$langs->trans("MailFile").'</td>';
             $out.= '<td>';
-            //print '<table class="nobordernopadding" width="100%"><tr><td>';
+            // FIXME Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
+            $out.= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
+            $out.= '<script type="text/javascript" language="javascript">';
+            $out.= 'jQuery(document).ready(function () {';
+            $out.= '    jQuery(".removedfile").click(function() {';
+            $out.= '        jQuery(".removedfilehidden").val(jQuery(this).val());';
+            $out.= '    });';
+            $out.= '})';
+            $out.= '</script>'."\n";
             if (sizeof($listofpaths))
             {
                 foreach($listofpaths as $key => $val)
                 {
                     $out.= '<div id="attachfile_'.$key.'">';
                 	$out.= img_mime($listofnames[$key]).' '.$listofnames[$key];
-                    if (! $this->withfilereadonly) $out.= ' <input type="image" style="border: 0px;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" value="'.($key+1).'" class="removedfile" id="removedfile_'.$key.'" name="removedfile_'.$key.'" />';
+                    if (! $this->withfilereadonly)
+                    {
+                        $out.= ' <input type="image" style="border: 0px;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" value="'.($key+1).'" class="removedfile" id="removedfile_'.$key.'" name="removedfile_'.$key.'" />';
+                        //$out.= ' <a href="'.$_SERVER["PHP_SELF"].'?removedfile='.($key+1).' id="removedfile_'.$key.'">'.img_delete($langs->trans("Delete").'</a>';
+                    }
                     $out.= '<br /></div>';
                 }
             }
@@ -522,11 +534,9 @@ class FormMail
             }
             if ($this->withfile == 2)	// Can add other files
             {
-                //print '<td><td align="right">';
                 $out.= '<input type="file" class="flat" id="addedfile" name="addedfile" value="'.$langs->trans("Upload").'" />';
                 $out.= ' ';
                 $out.= '<input type="submit" class="button" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
-                //print '</td></tr></table>';
             }
             $out.= "</td></tr>\n";
         }
@@ -546,7 +556,7 @@ class FormMail
             if ($this->param["models"]=='invoice_supplier_send')	{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendSupplierInvoice"); }
             if ($this->param["models"]=='shipping_send')			{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendShipping"); }
 			if ($this->param["models"]=='fichinter_send')			{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendFichInter"); }
-            
+
             if ($conf->paypal->enabled && $conf->global->PAYPAL_ADD_PAYMENT_URL)
             {
                 require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypal.lib.php");
