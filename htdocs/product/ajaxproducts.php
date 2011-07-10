@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 /**
  *       \file       htdocs/product/ajaxproducts.php
  *       \brief      File to return Ajax response on product list request
- *       \version    $Id$
+ *       \version    $Id: ajaxproducts.php,v 1.36 2011/07/10 17:28:10 hregis Exp $
  */
 
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL',1); // Disables token renewal
@@ -55,34 +55,34 @@ top_httphead();
 //print '<body class="nocellnopadd">'."\n";
 
 dol_syslog(join(',',$_GET));
+//print_r($_GET);
 
-$match = preg_grep('/(idprod[0-9]+)/',array_keys($_GET));
+if (! isset($_GET['htmlname'])) return;
+
+$htmlname = $_GET['htmlname'];
+$match = preg_grep('/('.$htmlname.'[0-9]+)/',array_keys($_GET));
 sort($match);
 $idprod = $match[0];
-//print $_GET[$idprod];
 
-if (! isset($_GET['idprod']) && ! isset($_GET[$idprod]) && ! isset($_GET['idprodfournprice'])) return;
+if (! isset($_GET[$htmlname]) && ! isset($_GET[$idprod])) return;
 
 // When used from jQuery, the search term is added as GET param "term".
 $searchkey=$_GET[$idprod];
-if (empty($searchkey)) $searchkey=$_GET['idprod'];
-if (empty($searchkey)) $searchkey=$_GET['idprodfournprice'];
+if (empty($searchkey)) $searchkey=$_GET[$htmlname];
 $outjson=isset($_GET['outjson'])?$_GET['outjson']:0;
 
 // Get list of product.
-//var_dump($_GET); exit;
-//print $_GET["price_level"]; exit;
 $status=-1;
 if (isset($_GET['status'])) $status=$_GET['status'];
 
 $form = new Form($db);
 if (empty($_GET['mode']) || $_GET['mode'] == 1)
 {
-	$arrayresult=$form->select_produits_do("",$_GET["htmlname"],$_GET["type"],"",$_GET["price_level"],$searchkey,$status,2,$outjson);
+	$arrayresult=$form->select_produits_do("",$htmlname,$_GET["type"],"",$_GET["price_level"],$searchkey,$status,2,$outjson);
 }
 if ($_GET['mode'] == 2)
 {
-	$arrayresult=$form->select_produits_fournisseurs_do($_GET["socid"],"",$_GET["htmlname"],$_GET["type"],"",$searchkey,$status,$outjson);
+	$arrayresult=$form->select_produits_fournisseurs_do($_GET["socid"],"",$htmlname,$_GET["type"],"",$searchkey,$status,$outjson);
 }
 
 $db->close();
