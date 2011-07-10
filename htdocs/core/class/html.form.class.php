@@ -31,7 +31,7 @@
  *	\file       htdocs/core/class/html.form.class.php
  *  \ingroup    core
  *	\brief      File of class with all html predefined components
- *	\version	$Id: html.form.class.php,v 1.186 2011/07/04 11:33:22 eldy Exp $
+ *	\version	$Id: html.form.class.php,v 1.187 2011/07/10 16:50:40 eldy Exp $
  */
 
 
@@ -3146,7 +3146,7 @@ class Form
      *	@param	key_in_label    1 pour afficher la key dans la valeur "[key] value"
      *	@param	value_as_key    1 to use value as key
      *	@param  option          Valeur de l'option en fonction du type choisi
-     *	@param  translate       Traduire la valeur
+     *	@param  translate       Translate and encode value
      * 	@param	maxlen			Length maximum for labels
      * 	@param	disabled		Html select box is disabled
      * 	@return	string			HTML select string
@@ -3178,13 +3178,13 @@ class Form
                 if ($key_in_label)
                 {
                     $newval=($translate?$langs->trans($value):$value);
-                    $selectOptionValue = $key.' - '.($maxlen?dol_trunc($newval,$maxlen):$newval);
+                    $selectOptionValue = dol_htmlentitiesbr($key.' - '.($maxlen?dol_trunc($newval,$maxlen):$newval));
                     $out.=$selectOptionValue;
                 }
                 else
                 {
                     $newval=($translate?$langs->trans($value):$value);
-                    $selectOptionValue = ($maxlen?dol_trunc($newval,$maxlen):$newval);
+                    $selectOptionValue = dol_htmlentitiesbr($maxlen?dol_trunc($newval,$maxlen):$newval);
                     if ($value == '' || $value == '-') { $selectOptionValue='&nbsp;'; }
                     $out.=$selectOptionValue;
                 }
