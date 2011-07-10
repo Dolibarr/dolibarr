@@ -15,11 +15,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: ajaxfileupload.tpl.php,v 1.9 2011/07/08 14:00:08 hregis Exp $
+ * $Id: ajaxfileupload.tpl.php,v 1.10 2011/07/10 13:39:34 eldy Exp $
  */
 ?>
 
 <!-- START TEMPLATE FILE UPLOAD -->
+<!-- Warning id on script is not W3C compliant and is reported as error by phpcs but it is required by jfilepload plugin -->
 <script id="template-upload" type="text/x-jquery-tmpl">
 	<tr class="template-upload{{if error}} ui-state-error{{/if}}">
 		<td class="name">${name}</td>
