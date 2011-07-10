@@ -20,7 +20,7 @@
 /**
  *  \file		htdocs/lib/files.lib.php
  *  \brief		Library for file managing functions
- *  \version	$Id: files.lib.php,v 1.68 2011/07/11 06:23:22 hregis Exp $
+ *  \version	$Id: files.lib.php,v 1.67 2011/07/10 20:03:41 eldy Exp $
  */
 
 /**
@@ -561,8 +561,9 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 		if (! empty($conf->global->MAIN_UMASK)) @chmod($file_name_osencoded, octdec($conf->global->MAIN_UMASK));
 		dol_syslog("Functions.lib::dol_move_uploaded_file Success to move ".$src_file." to ".$file_name." - Umask=".$conf->global->MAIN_UMASK, LOG_DEBUG);
 
-		if (! $notrigger && is_object($object))
+		if (! $notrigger)
 		{
+		    if (! is_object($object)) $object=(object) 'dummy';
 			$object->src_file=$dest_file;
 
 			// Appel des triggers
