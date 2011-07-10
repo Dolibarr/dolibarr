@@ -22,7 +22,7 @@
  *	\file       htdocs/core/class/html.formfile.class.php
  *  \ingroup    core
  *	\brief      File of class to offer components to list and upload files
- *	\version	$Id: html.formfile.class.php,v 1.46 2011/07/06 21:12:34 eldy Exp $
+ *	\version	$Id: html.formfile.class.php,v 1.47 2011/07/10 21:17:14 eldy Exp $
  */
 
 
@@ -185,6 +185,7 @@ class FormFile
 
 		global $langs,$bc,$conf;
 
+		$forname='builddoc';
 		$out='';
 		$var=true;
 
@@ -386,7 +387,7 @@ class FormFile
 			$buttonlabeltoshow=$buttonlabel;
 			if (empty($buttonlabel)) $buttonlabel=$langs->trans('Generate');
 
-			if (empty($noform)) $out.= '<form action="'.$urlsource.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc').'" method="post">';
+			if (empty($noform)) $out.= '<form action="'.$urlsource.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc').'" name="'.$forname.'" method="post">';
 			$out.= '<input type="hidden" name="action" value="builddoc">';
 			$out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
@@ -436,8 +437,7 @@ class FormFile
 
 			// Button
 			$out.= '<td align="center" colspan="'.($delallowed?'2':'1').'" class="formdocbutton">';
-			$out.= '<input class="button" ';
-			//print ((is_array($modellist) && sizeof($modellist))?'':' disabled="true"') // Always allow button "Generate" (even if no model activated)
+			$out.= '<input class="button" id="'.$forname.'_generatebutton"';
 			$out.= ' type="submit" value="'.$buttonlabel.'"';
 			if (! $allowgenifempty && ! is_array($modellist) && empty($modellist)) $out.= ' disabled="true"';
 			$out.= '>';
