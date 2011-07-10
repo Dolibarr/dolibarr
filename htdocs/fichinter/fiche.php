@@ -23,7 +23,7 @@
  *	\file       htdocs/fichinter/fiche.php
  *	\brief      Fichier fiche intervention
  *	\ingroup    ficheinter
- *	\version    $Id: fiche.php,v 1.170 2011/07/07 22:02:48 eldy Exp $
+ *	\version    $Id: fiche.php,v 1.171 2011/07/10 20:03:39 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -442,6 +442,39 @@ if ($action == 'down' && $user->rights->ficheinter->creer)
     fichinter_create($db, $object, $object->modelpdf, $outputlangs);
     Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.'#'.$_GET['rowid']);
     exit;
+}
+
+
+/*
+ * Add file in email form
+ */
+if ($_POST['addfile'])
+{
+    require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+
+    // Set tmp user directory TODO Use a dedicated directory for temp mails files
+    $vardir=$conf->user->dir_output."/".$user->id;
+    $upload_dir_tmp = $vardir.'/temp';
+
+    $mesg=dol_add_file_process($upload_dir_tmp,0,0);
+
+    $action='presend';
+}
+
+/*
+ * Remove file in email form
+ */
+if (! empty($_POST['removedfile']))
+{
+    require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+
+    // Set tmp user directory
+    $vardir=$conf->user->dir_output."/".$user->id;
+    $upload_dir_tmp = $vardir.'/temp';
+
+    $mesg=dol_remove_file_process($_POST['removedfile'],0);
+
+    $action='presend';
 }
 
 /*
@@ -1148,7 +1181,7 @@ elseif ($fichinterid)
         $formmail = new FormMail($db);
         $formmail->fromtype = 'user';
         $formmail->fromid   = $user->id;
-        $formmail->fromname = $user->fullname;
+        $formmail->fromname = $user->getFullName($langs);
         $formmail->frommail = $user->email;
         $formmail->withfrom=1;
         $formmail->withto=empty($_POST["sendto"])?1:$_POST["sendto"];
@@ -1158,7 +1191,7 @@ elseif ($fichinterid)
         $formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
         $formmail->withtocccsocid=0;
         $formmail->withtopic=$langs->trans('SendInterventionRef','__FICHINTERREF__');
-        $formmail->withfile=1;
+        $formmail->withfile=2;
         $formmail->withbody=1;
         $formmail->withdeliveryreceipt=1;
         $formmail->withcancel=1;
@@ -1186,5 +1219,5 @@ elseif ($fichinterid)
 
 $db->close();
 
-llxFooter('$Date: 2011/07/07 22:02:48 $ - $Revision: 1.170 $');
+llxFooter('$Date: 2011/07/10 20:03:39 $ - $Revision: 1.171 $');
 ?>

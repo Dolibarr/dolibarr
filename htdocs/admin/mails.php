@@ -20,7 +20,7 @@
 /**
  *       \file       htdocs/admin/mails.php
  *       \brief      Page to setup emails sending
- *       \version    $Id: mails.php,v 1.72 2011/07/09 06:10:06 hregis Exp $
+ *       \version    $Id: mails.php,v 1.73 2011/07/10 20:03:39 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -80,7 +80,7 @@ if ($_POST['addfile'] || $_POST['addfilehtml'])
 
 	// Set tmp user directory
 	$vardir=$conf->user->dir_output."/".$user->id;
-	$upload_dir = $vardir.'/temp/';
+	$upload_dir = $vardir.'/temp';
 
 	if (create_exdir($upload_dir) >= 0)
 	{
@@ -127,7 +127,7 @@ if (! empty($_POST['removedfile']) || ! empty($_POST['removedfilehtml']))
 {
 	// Set tmp user directory
 	$vardir=$conf->user->dir_output."/".$user->id;
-	$upload_dir = $vardir.'/temp/';
+	$upload_dir = $vardir.'/temp';
 
 	$keytodelete=isset($_POST['removedfile'])?$_POST['removedfile']:$_POST['removedfilehtml'];
 	$keytodelete--;
@@ -468,7 +468,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_FROM",ini_get('sendmail_from')?ini_get('sendmail_from'):$langs->transnoentities("Undefined")).'</td>';
 	print '<td><input class="flat" name="MAIN_MAIL_EMAIL_FROM" size="32" value="' . $conf->global->MAIN_MAIL_EMAIL_FROM;
 	print '"></td></tr>';
-	
+
 	// From
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_ERRORS_TO").'</td>';
@@ -574,7 +574,7 @@ else
 	print '<td>'.$conf->global->MAIN_MAIL_EMAIL_FROM;
 	if (!empty($conf->global->MAIN_MAIL_EMAIL_FROM) && ! isValidEmail($conf->global->MAIN_MAIL_EMAIL_FROM)) print img_warning($langs->trans("ErrorBadEMail"));
 	print '</td></tr>';
-	
+
 	// Errors To
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_ERRORS_TO").'</td>';
@@ -737,5 +737,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/09 06:10:06 $ - $Revision: 1.72 $');
+llxFooter('$Date: 2011/07/10 20:03:39 $ - $Revision: 1.73 $');
 ?>
