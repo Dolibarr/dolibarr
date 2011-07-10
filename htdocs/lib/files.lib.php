@@ -20,7 +20,7 @@
 /**
  *  \file		htdocs/lib/files.lib.php
  *  \brief		Library for file managing functions
- *  \version	$Id: files.lib.php,v 1.66 2011/07/06 16:56:01 eldy Exp $
+ *  \version	$Id: files.lib.php,v 1.67 2011/07/10 20:03:41 eldy Exp $
  */
 
 /**
@@ -709,7 +709,7 @@ function dol_add_file_process($upload_dir,$allowoverwrite=0,$donotupdatesession=
 
 	if (! empty($_FILES['addedfile']['tmp_name']))
 	{
-		if (create_exdir($upload_dir) >= 0)
+		if (dol_mkdir($upload_dir) >= 0)
 		{
 			$resupload = dol_move_uploaded_file($_FILES['addedfile']['tmp_name'], $upload_dir . "/" . $_FILES['addedfile']['name'],$allowoverwrite,0, $_FILES['addedfile']['error']);
 			if (is_numeric($resupload) && $resupload > 0)
@@ -755,10 +755,11 @@ function dol_add_file_process($upload_dir,$allowoverwrite=0,$donotupdatesession=
  * Remove an uploaded file (for example after submitting a new file a mail form).
  * All information used are in db, conf, langs, user and _FILES.
  * @param	filenb					File nb to delete
- * @param	donotupdatesession		1=Do no edit _SESSION variable
+ * @param	donotupdatesession		1=Do not edit _SESSION variable
+ * @param   donotdeletefile         1=Do not delete physically file
  * @return	string					Message with result of upload and store.
  */
-function dol_remove_file_process($filenb,$donotupdatesession=0)
+function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=0)
 {
 	global $db,$user,$conf,$langs,$_FILES;
 
@@ -778,14 +779,16 @@ function dol_remove_file_process($filenb,$donotupdatesession=0)
 	{
 		$pathtodelete=$listofpaths[$keytodelete];
 		$filetodelete=$listofnames[$keytodelete];
-		$result = dol_delete_file($pathtodelete,1);
+		if (empty($donotdeletefile)) $result = dol_delete_file($pathtodelete,1);
+		else $result=0;
 		if ($result >= 0)
 		{
-			$langs->load("other");
-
-			$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved",$filetodelete).'</div>';
-			//print_r($_FILES);
-
+			if (empty($donotdeletefile))
+			{
+			    $langs->load("other");
+			    $mesg = '<div class="ok">'.$langs->trans("FileWasRemoved",$filetodelete).'</div>';
+    			//print_r($_FILES);
+			}
 			if (empty($donotupdatesession))
 			{
 				include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
