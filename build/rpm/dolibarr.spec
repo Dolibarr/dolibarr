@@ -32,7 +32,8 @@ Group: Networking/WWW
 Group: Applications/Internet
 
 Requires: mysql-server mysql httpd php php-cli php-gd php-ldap php-imap php-mysql 
-AutoReqProv: yes
+# Set yes to build test package, no for release (this disable need of /usr/bin/php not found by OpenSuse)
+AutoReqProv: no
 
 
 %description
@@ -103,17 +104,6 @@ cp -pr doc $RPM_BUILD_ROOT/var/www/dolibarr
 cp -pr htdocs $RPM_BUILD_ROOT/var/www/dolibarr
 cp -pr scripts $RPM_BUILD_ROOT/var/www/dolibarr
 
-# menu
-#%{__install} -d $RPM_BUILD_ROOT%{_menudir}
-#%{__cat} <<EOF >$RPM_BUILD_ROOT%{_menudir}/%{name}
-#?package(%{name}):\
-#command="Dolibarr" \
-#section="Office" \
-#title="Dolibarr" \
-#icon="dolibarr_48x48.png" \
-#longtitle="Dolibarr ERP & CRM"
-#EOF
-
 
 #---- clean
 %clean
@@ -181,19 +171,26 @@ fi
 
 
 # Detect OS
-os='fedora';
+os='fedora-redhat';
 if [ -d %{_sysconfdir}/httpd/conf.d ]; then
-    export os='fedora';
+    export os='fedora-redhat';
     export conffile="%{_sysconfdir}/httpd/conf.d/dolibarr.conf"
-    apacheuser='apache';
-    apachegroup='apache';
+    export apacheuser='apache';
+    export apachegroup='apache';
 fi
-if [ -d %{_sysconfdir}/apache2/conf.d ]; then
+if [ -d %{_sysconfdir}/apache2/conf.d -a `grep wwwrun /etc/passwd` ]; then
     export os='opensuse';
     export conffile="%{_sysconfdir}/apache2/conf.d/dolibarr.conf"
-    apacheuser='wwwrun';
-    apachegroup='wwwrun';
+    export apacheuser='wwwrun';
+    export apachegroup='wwwrun';
 fi
+if [ -d %{_sysconfdir}/apache2/conf.d -a `grep www-data /etc/passwd` ]; then
+    export os='ubuntu-debian';
+    export conffile="%{_sysconfdir}/apache2/conf.d/dolibarr.conf"
+    export apacheuser='www-data';
+    export apachegroup='www-data';
+fi
+echo OS detected: $os
 
 # Create a config link dolibarr.conf for Fedora or Redhat
 if [ ! -f $conffile ]; then
@@ -214,11 +211,11 @@ chmod -R o-w $docdir
 if [ ! -s $targetdir/htdocs/conf/conf.php ]; then
     echo Create empty Dolibarr conf.php file
     touch $targetdir/htdocs/conf/conf.php
-    chown apache.apache $targetdir/htdocs/conf/conf.php
+    chown $apacheuser:$apachegroup $targetdir/htdocs/conf/conf.php
     chmod ug+rw $targetdir/htdocs/conf/conf.php
 fi
 
-if [ "x$os" = "xfedora" -a -s /usr/bin/chcon ]; then
+if [ "x$os" = "xfedora-redhat" -a -s /usr/bin/chcon ]; then
     echo Set SELinux permissions
     # Warning: chcon seems not cumulative 
     #chcon -R -h -t httpd_sys_content_t $targetdir
@@ -253,16 +250,26 @@ echo
 %clean_menus
 
 # Detect OS
-os='fedora';
+os='fedora-redhat';
 if [ -d %{_sysconfdir}/httpd/conf.d ]; then
-    export os='fedora';
+    export os='fedora-redhat';
     export conffile="%{_sysconfdir}/httpd/conf.d/dolibarr.conf"
+    export apacheuser='apache';
+    export apachegroup='apache';
 fi
-if [ -d %{_sysconfdir}/apache2/conf.d ]; then
+if [ -d %{_sysconfdir}/apache2/conf.d -a `grep wwwrun /etc/passwd` ]; then
     export os='opensuse';
     export conffile="%{_sysconfdir}/apache2/conf.d/dolibarr.conf"
+    export apacheuser='wwwrun';
+    export apachegroup='wwwrun';
 fi
-
+if [ -d %{_sysconfdir}/apache2/conf.d -a `grep www-data /etc/passwd` ]; then
+    export os='ubuntu-debian';
+    export conffile="%{_sysconfdir}/apache2/conf.d/dolibarr.conf"
+    export apacheuser='www-data';
+    export apachegroup='www-data';
+fi
+echo OS detected: $os
 
 # Dolibarr files are stored into /var/www
 export targetdir='/var/www/dolibarr'
