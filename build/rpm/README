@@ -18,6 +18,6 @@ with format RPM (for Redhat, Mandriva, ...).
 # yast --install dolibarr-...rpm    To install package and dependencies
 # yast --remove  dolibarr           To remove package
 #
-# On Mageia
+# On Mageia (after su - root)
 # urpmi dolibarr-...rpm             To install package and dependencies
 # urpme dolibarr                    To remove package  
