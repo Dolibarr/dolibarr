@@ -31,7 +31,13 @@ Group: Networking/WWW
 # For all other distrib
 Group: Applications/Internet
 
+# Requires for Fedora-Redhat
 Requires: mysql-server mysql httpd php php-cli php-gd php-ldap php-imap php-mysql 
+# Requires for OpenSuse
+#Requires: mysql-community-server mysql-community-server-client apache2 apache2-mod_php5 php5 php5-gd php5-ldap php5-imap php5-mysql php5-openssl 
+# Requires for Mageia
+#Requires: mysql mysql-client apache-base apache-mod_php php-cgi php-cli php-bz2 php-gd php-ldap php-imap php-mysqli php-openssl 
+
 # Set yes to build test package, no for release (this disable need of /usr/bin/php not found by OpenSuse)
 AutoReqProv: no
 
@@ -182,7 +188,7 @@ if [ -d %{_sysconfdir}/apache2/conf.d -a `grep ^wwwrun /etc/passwd | wc -l` -ge 
     export os='opensuse';
     export conffile="%{_sysconfdir}/apache2/conf.d/dolibarr.conf"
     export apacheuser='wwwrun';
-    export apachegroup='wwwrun';
+    export apachegroup='www';
 fi
 if [ -d %{_sysconfdir}/httpd/conf.d -a `grep -i "^mageia\|mandriva" /etc/issue | wc -l` -ge 1 ]; then
     export os='mageia-mandriva';
@@ -267,7 +273,7 @@ if [ -d %{_sysconfdir}/apache2/conf.d -a `grep ^wwwrun /etc/passwd | wc -l` -ge 
     export os='opensuse';
     export conffile="%{_sysconfdir}/apache2/conf.d/dolibarr.conf"
     export apacheuser='wwwrun';
-    export apachegroup='wwwrun';
+    export apachegroup='www';
 fi
 if [ -d %{_sysconfdir}/httpd/conf.d -a `grep -i "^mageia\|mandriva" /etc/issue | wc -l` -ge 1 ]; then
     export os='mageia-mandriva';
@@ -307,9 +313,12 @@ then
     fi
 fi
 
+# Removed dirs after apache restart
+echo Removed remaining dirs
 rm -rf /etc/dolibarr
 rm -rf $targetdir/htdocs/conf
 rm -rf $targetdir/htdocs/install
-
+rmdir $targetdir/doc >/dev/null 2>&1
+rmdir $targetdir/htdocs >/dev/null 2>&1
 
 %changelog
