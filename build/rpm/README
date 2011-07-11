@@ -11,6 +11,7 @@ with format RPM (for Redhat, Mandriva, ...).
 # This is standard command to work on Debian packaging:
 #
 # On Fedora
+# rpm -i --test dolibarr-...rpm     To list dependencies of RPM   
 # yum install dolibarr-...rpm       To install package and dependencies   
 # yum erase dolibarr                To remove package   
 #
