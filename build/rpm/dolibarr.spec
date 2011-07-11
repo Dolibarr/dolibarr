@@ -171,20 +171,26 @@ fi
 
 
 # Detect OS
-os='fedora-redhat';
+os='unknown';
 if [ -d %{_sysconfdir}/httpd/conf.d ]; then
     export os='fedora-redhat';
     export conffile="%{_sysconfdir}/httpd/conf.d/dolibarr.conf"
     export apacheuser='apache';
     export apachegroup='apache';
 fi
-if [ -d %{_sysconfdir}/apache2/conf.d -a `grep wwwrun /etc/passwd` ]; then
+if [ -d %{_sysconfdir}/apache2/conf.d -a `grep ^wwwrun /etc/passwd | wc -l` -ge 1 ]; then
     export os='opensuse';
     export conffile="%{_sysconfdir}/apache2/conf.d/dolibarr.conf"
     export apacheuser='wwwrun';
     export apachegroup='wwwrun';
 fi
-if [ -d %{_sysconfdir}/apache2/conf.d -a `grep www-data /etc/passwd` ]; then
+if [ -d %{_sysconfdir}/httpd/conf.d -a `grep -i "^mageia\|mandriva" /etc/issue | wc -l` -ge 1 ]; then
+    export os='mageia-mandriva';
+    export conffile="%{_sysconfdir}/httpd/conf.d/dolibarr.conf"
+    export apacheuser='apache';
+    export apachegroup='apache';
+fi
+if [ -d %{_sysconfdir}/apache2/conf.d -a `grep ^www-data /etc/passwd | wc -l` -ge 1 ]; then
     export os='ubuntu-debian';
     export conffile="%{_sysconfdir}/apache2/conf.d/dolibarr.conf"
     export apacheuser='www-data';
@@ -250,20 +256,26 @@ echo
 %clean_menus
 
 # Detect OS
-os='fedora-redhat';
+os='unknown';
 if [ -d %{_sysconfdir}/httpd/conf.d ]; then
     export os='fedora-redhat';
     export conffile="%{_sysconfdir}/httpd/conf.d/dolibarr.conf"
     export apacheuser='apache';
     export apachegroup='apache';
 fi
-if [ -d %{_sysconfdir}/apache2/conf.d -a `grep wwwrun /etc/passwd` ]; then
+if [ -d %{_sysconfdir}/apache2/conf.d -a `grep ^wwwrun /etc/passwd | wc -l` -ge 1 ]; then
     export os='opensuse';
     export conffile="%{_sysconfdir}/apache2/conf.d/dolibarr.conf"
     export apacheuser='wwwrun';
     export apachegroup='wwwrun';
 fi
-if [ -d %{_sysconfdir}/apache2/conf.d -a `grep www-data /etc/passwd` ]; then
+if [ -d %{_sysconfdir}/httpd/conf.d -a `grep -i "^mageia\|mandriva" /etc/issue | wc -l` -ge 1 ]; then
+    export os='mageia-mandriva';
+    export conffile="%{_sysconfdir}/httpd/conf.d/dolibarr.conf"
+    export apacheuser='apache';
+    export apachegroup='apache';
+fi
+if [ -d %{_sysconfdir}/apache2/conf.d -a `grep ^www-data /etc/passwd | wc -l` -ge 1 ]; then
     export os='ubuntu-debian';
     export conffile="%{_sysconfdir}/apache2/conf.d/dolibarr.conf"
     export apacheuser='www-data';
