@@ -230,6 +230,7 @@ MAIN_MAIL_SMTP_SERVER=Nombre host o ip del servidor SMTP (Por defecto en php.ini
 MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike=Puerto del servidor SMTP (No definido en PHP en sistemas de tipo Unix)
 MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike=Nombre servidor o ip del servidor SMTP (No definido en PHP en sistemas de tipo Unix)
 MAIN_MAIL_EMAIL_FROM=E-Mail del emisor para envíos E-Mail automáticos (Por defecto en php.ini: <b>%s</b>)
+MAIN_MAIL_ERRORS_TO=E-Mail usado para los retornos de error de los e-mails enviados
 MAIN_MAIL_AUTOCOPY_TO=Enviar automáticamente copia oculta de los e-mails enviados a
 MAIN_DISABLE_ALL_MAILS=Desactivar globalmente todo envío de correos electrónicos (para modo de pruebas o demo)
 MAIN_MAIL_SENDMODE=Método de envío de e-mails
