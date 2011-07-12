@@ -22,7 +22,7 @@
 /**	    \file       htdocs/install/inc.php
  * 		\ingroup	core
  *		\brief      File that define environment for install pages
- *		\version    $Id$
+ *		\version    $Id: inc.php,v 1.134 2011/07/11 10:53:37 eldy Exp $
  */
 
 define('DOL_VERSION','3.1.0-alpha');	// Also defined in htdocs/master.inc.php (Ex: x.y.z-alpha, x.y.z)
@@ -159,18 +159,31 @@ if (! empty($dolibarr_main_document_root_alt))
 // Security check
 if (preg_match('/install.lock/i',$_SERVER["SCRIPT_FILENAME"]))
 {
-	print 'Install pages have been disabled for security reason (directory renamed with .lock).';
-	print '<a href="'.$dolibarr_main_url_root .'/admin/index.php?mainmenu=home&leftmenu=setup'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
-	print 'Click here to go to Dolibarr';
-	print '</a>';
+	print 'Install pages have been disabled for security reason (directory renamed with .lock suffix).';
+    if (! empty($dolibarr_main_url_root))
+    {
+       print 'Click on following link. ';
+       print '<a href="'.$dolibarr_main_url_root .'/admin/index.php?mainmenu=home&leftmenu=setup'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
+	   print 'Click here to go to Dolibarr';
+	   print '</a>';
+    }
 	exit;
 }
 if (file_exists('../../install.lock'))
 {
-	print 'Install pages have been disabled for security reason (by lock file install.lock in dolibarr root directory. Remove it manually if following link loops to this page).<br>';
-	print '<a href="'.$dolibarr_main_url_root .'/admin/index.php?mainmenu=home&leftmenu=setup'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
-	print 'Click here to go to Dolibarr';
-	print '</a>';
+	print 'Install pages have been disabled for security reason (by lock file install.lock into dolibarr root directory).<br>';
+	if (! empty($dolibarr_main_url_root))
+	{
+	    print 'Click on following link. ';
+	    print 'If you always reach this page, you must remove install.lock file manually.<br>';
+    	print '<a href="'.$dolibarr_main_url_root .'/admin/index.php?mainmenu=home&leftmenu=setup'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
+    	print 'Click here to go to Dolibarr';
+    	print '</a>';
+	}
+    else
+    {
+        print 'If you always reach this page, you must remove install.lock file manually.<br>';
+    }
 	exit;
 }
 

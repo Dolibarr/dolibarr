@@ -23,7 +23,7 @@
  *	\file       htdocs/install/check.php
  *	\ingroup    install
  *	\brief      Test if file conf can be modified and if does not exists, test if install process can create it
- *	\version    $Id$
+ *	\version    $Id: check.php,v 1.84 2011/07/12 20:52:41 eldy Exp $
  */
 include_once("./inc.php");
 
@@ -385,10 +385,15 @@ else
 		foreach ($migrationscript as $migarray)
 		{
 			$count++;
-			$versionfrom=$migarray['from'];
-			$versionto=$migarray['to'];
-		    $newversionfrom=preg_replace('/(\.[0-9]+)$/i','.*',$versionfrom);
-		    $newversionto=preg_replace('/(\.[0-9]+)$/i','.*',$versionto);
+            $versionfrom=$migarray['from'];
+            $versionto=$migarray['to'];
+            $newversionfrom=preg_replace('/(\.[0-9]+)$/i','.*',$versionfrom);
+            $newversionto=preg_replace('/(\.[0-9]+)$/i','.*',$versionto);
+            $dolibarrversionfromarray=preg_split('/[\.-]/',$versionfrom);
+            $dolibarrversiontoarray=preg_split('/[\.-]/',$versionto);
+            $version=preg_split('/[\.-]/',DOL_VERSION);
+            $newversionfrombis='';
+            if (versioncompare($dolibarrversiontoarray,$version) < -2) $newversionfrombis='/'.$versionto;
 			print '<tr><td nowrap="nowrap" align="center"><b>'.$langs->trans("Upgrade").'<br>'.$newversionfrom.' -> '.$newversionto.'</b></td>';
 			print '<td>';
 			print $langs->trans("UpgradeDesc");
@@ -396,8 +401,6 @@ else
 			{
 				if (sizeof($dolibarrlastupgradeversionarray) >= 2)	// If a database access is available and a version x.y already available
 				{
-					$dolibarrversionfromarray=preg_split('/[\.-]/',$versionfrom);
-					$dolibarrversiontoarray=preg_split('/[\.-]/',$versionto);
 					// Now we check if this is the first qualified choice
 					if ($allowupgrade && empty($foundrecommandedchoice) && versioncompare($dolibarrversiontoarray,$dolibarrlastupgradeversionarray) > 0)
 					{

@@ -27,7 +27,7 @@
  *	\file       	htdocs/comm/propal.php
  *	\ingroup    	propale
  *	\brief      	Page of commercial proposals card and list
- *	\version		$Id: propal.php,v 1.609 2011/07/07 21:32:22 eldy Exp $
+ *	\version		$Id: propal.php,v 1.610 2011/07/10 20:03:41 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -427,9 +427,9 @@ if ($_POST['addfile'])
 
 	// Set tmp user directory TODO Use a dedicated directory for temp mails files
 	$vardir=$conf->user->dir_output."/".$user->id;
-	$upload_dir = $vardir.'/temp/';
+	$upload_dir_tmp = $vardir.'/temp';
 
-	$mesg=dol_add_file_process($upload_dir,0,0);
+	$mesg=dol_add_file_process($upload_dir_tmp,0,0);
 
 	$action='presend';
 	$_POST["action"]='presend';
@@ -444,7 +444,7 @@ if (! empty($_POST['removedfile']))
 
 	// Set tmp user directory
 	$vardir=$conf->user->dir_output."/".$user->id;
-	$upload_dir = $vardir.'/temp/';
+	$upload_dir_tmp = $vardir.'/temp';
 
 	$mesg=dol_remove_file_process($_POST['removedfile'],0);
 
@@ -1291,7 +1291,7 @@ if ($id > 0 || ! empty($ref))
 	print '</td>';
 	print '</tr>';
 
-	// adresse de livraison
+	// Delivery address (deprecated)
 	if ($conf->global->PROPALE_ADD_DELIVERY_ADDRESS)
 	{
 		print '<tr><td>';
@@ -1335,7 +1335,7 @@ if ($id > 0 || ! empty($ref))
 	print '</td>';
 	print '</tr>';
 
-	// Origine de la demande
+	// Origin of demand
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('Source');
@@ -1975,6 +1975,6 @@ else
 }
 $db->close();
 
-llxFooter('$Date: 2011/07/07 21:32:22 $ - $Revision: 1.609 $');
+llxFooter('$Date: 2011/07/10 20:03:41 $ - $Revision: 1.610 $');
 
 ?>

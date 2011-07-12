@@ -29,7 +29,7 @@
  *	\file			htdocs/lib/functions.lib.php
  *	\brief			A set of functions for Dolibarr
  *					This file contains all frequently used functions.
- *	\version		$Id: functions.lib.php,v 1.545 2011/07/08 13:07:44 eldy Exp $
+ *	\version		$Id: functions.lib.php,v 1.546 2011/07/09 11:24:32 eldy Exp $
  */
 
 // For compatibility during upgrade
@@ -3326,7 +3326,7 @@ function dol_mkdir($dir)
                 umask(0);
                 $dirmaskdec=octdec('0755');
                 if (! empty($conf->global->MAIN_UMASK)) $dirmaskdec=octdec($conf->global->MAIN_UMASK);
-                $dirmaskdec |= octdec('0110');
+                $dirmaskdec |= octdec('0111');  // Set x bit required for directories
                 if (! @mkdir($ccdir_osencoded, $dirmaskdec))
                 {
                     // Si le is_dir a renvoye une fausse info, alors on passe ici.

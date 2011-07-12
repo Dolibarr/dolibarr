@@ -1,5 +1,6 @@
+#!/usr/bin/php
 <?php
-/* Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,7 +22,7 @@
  *      \file       dev/skeletons/skeleton_script.php
  *		\ingroup    mymodule othermodule1 othermodule2
  *      \brief      This file is an example for a command line script
- *      \version    $Id$
+ *      \version    $Id: skeleton_script.php,v 1.27 2011/07/09 14:11:41 eldy Exp $
  *		\author		Put author name here
  *		\remarks	Put here some comments
  */
@@ -37,7 +38,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 // Global variables
-$version='$Revision$';
+$version='$Revision: 1.27 $';
 $error=0;
 
 

@@ -22,7 +22,7 @@
  *	\file       htdocs/core/class/commonobject.class.php
  *	\ingroup    core
  *	\brief      File of parent class of all other business classes (invoices, contracts, proposals, orders, ...)
- *	\version    $Id: commonobject.class.php,v 1.144 2011/07/04 09:36:29 eldy Exp $
+ *	\version    $Id: commonobject.class.php,v 1.145 2011/07/10 16:50:40 eldy Exp $
  */
 
 
@@ -264,10 +264,10 @@ class CommonObject
 
 	/**
 	 *    Get array of all contacts for an object
-	 *    @param		statut		Status of lines to get (-1=all)
-	 *    @param		source		Source of contact: external or thirdparty (llx_socpeople) or internal (llx_user)
-	 *    @param		list		0:all, 1:just id
-	 *    @return		array		Array of contacts
+	 *    @param		statut		int          Status of lines to get (-1=all)
+	 *    @param		source		string       Source of contact: external or thirdparty (llx_socpeople) or internal (llx_user)
+	 *    @param		int         list         0:Return array contains all properties, 1:Return array contains just id
+	 *    @return		array		             Array of contacts
 	 */
 	function liste_contact($statut=-1,$source='external',$list=0)
 	{
@@ -278,7 +278,7 @@ class CommonObject
 		$sql = "SELECT ec.rowid, ec.statut, ec.fk_socpeople as id";
 		if ($source == 'internal') $sql.=", '-1' as socid";
 		if ($source == 'external' || $source == 'thirdparty') $sql.=", t.fk_soc as socid";
-		$sql.= ", t.name as nom, t.firstname";
+		$sql.= ", t.civilite as civility, t.name as lastname, t.firstname, t.email";
 		$sql.= ", tc.source, tc.element, tc.code, tc.libelle";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact tc";
 		$sql.= ", ".MAIN_DB_PREFIX."element_contact ec";
@@ -307,7 +307,9 @@ class CommonObject
 				{
 					$transkey="TypeContact_".$obj->element."_".$obj->source."_".$obj->code;
 					$libelle_type=($langs->trans($transkey)!=$transkey ? $langs->trans($transkey) : $obj->libelle);
-					$tab[$i]=array('source'=>$obj->source,'socid'=>$obj->socid,'id'=>$obj->id,'nom'=>$obj->nom, 'firstname'=>$obj->firstname,
+					$tab[$i]=array('source'=>$obj->source,'socid'=>$obj->socid,'id'=>$obj->id,
+					               'nom'=>$obj->lastname,      // For backward compatibility
+					               'civility'=>$obj->civility, 'lastname'=>$obj->lastname, 'firstname'=>$obj->firstname, 'email'=>$obj->email,
 					               'rowid'=>$obj->rowid,'code'=>$obj->code,'libelle'=>$libelle_type,'status'=>$obj->statut);
 				}
 				else
@@ -329,9 +331,10 @@ class CommonObject
 	}
 
 	/**
-	 *    \brief      Le detail d'un contact
-	 *    \param      rowid      L'identifiant du contact
-	 *    \return     object     L'objet construit par DoliDb.fetch_object
+	 *    Return fetch cursor of a contact
+	 *    FIXME We should never return an open db cursor
+	 *    @param      rowid      L'identifiant du contact
+	 *    @return     object     L'objet construit par DoliDb.fetch_object
 	 */
 	function detail_contact($rowid)
 	{

@@ -1,4 +1,5 @@
-<?PHP
+#!/usr/bin/php
+<?php
 /**
  * Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
@@ -22,7 +23,7 @@
  *      \file       scripts/members/sync_members_ldap2dolibarr.php
  *      \ingroup    ldap member
  *      \brief      Script de mise a jour des adherents dans Dolibarr depuis LDAP
- * 		\version	$Id$
+ * 		\version	$Id: sync_members_ldap2dolibarr.php,v 1.12 2011/07/09 14:11:41 eldy Exp $
  */
 
 $sapi_type = php_sapi_name();
@@ -36,7 +37,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 // Main
-$version='$Revision$';
+$version='$Revision: 1.12 $';
 @set_time_limit(0);
 $error=0;
 $forcecommit=0;

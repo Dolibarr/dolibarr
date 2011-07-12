@@ -21,7 +21,7 @@
  *       \file       htdocs/comm/mailing/fiche.php
  *       \ingroup    mailing
  *       \brief      Fiche mailing, onglet general
- *       \version    $Id: fiche.php,v 1.121 2011/07/02 16:48:32 eldy Exp $
+ *       \version    $Id: fiche.php,v 1.122 2011/07/10 13:33:53 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -617,7 +617,7 @@ if ($_GET["action"] == 'create')
 	print '<table class="border" width="100%">';
 	print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("MailTitle").'</td><td><input class="flat" name="titre" size="40" value="'.$_POST['titre'].'"></td></tr>';
 	print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("MailFrom").'</td><td><input class="flat" name="from" size="40" value="'.$conf->global->MAILING_EMAIL_FROM.'"></td></tr>';
-	print '<tr><td width="25%">'.$langs->trans("MailErrorsTo").'</td><td><input class="flat" name="errorsto" size="40" value="'.$conf->global->MAILING_EMAIL_ERRORSTO.'"></td></tr>';
+	print '<tr><td width="25%">'.$langs->trans("MailErrorsTo").'</td><td><input class="flat" name="errorsto" size="40" value="'.(!empty($conf->global->MAILING_EMAIL_ERRORSTO)?$conf->global->MAILING_EMAIL_ERRORSTO:$conf->global->MAIN_MAIL_ERRORS_TO).'"></td></tr>';
 	print '</table>';
 	print '</br><br>';
 
@@ -1073,5 +1073,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/02 16:48:32 $ - $Revision: 1.121 $');
+llxFooter('$Date: 2011/07/10 13:33:53 $ - $Revision: 1.122 $');
 ?>

@@ -1,4 +1,5 @@
-<?PHP
+#!/usr/bin/php
+<?php
 /* Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,7 +20,7 @@
 /**
  *      \file       dev/samples/manage_order.php
  *      \brief      This file is an example for a command line script
- *      \version    $Id$
+ *      \version    $Id: create_invoice.php,v 1.5 2011/07/09 14:11:41 eldy Exp $
  *		\author		Put author name here
  *		\remarks	Put here some comments
  */
@@ -35,7 +36,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 // Global variables
-$version='$Revision$';
+$version='$Revision: 1.5 $';
 $error=0;
 
 

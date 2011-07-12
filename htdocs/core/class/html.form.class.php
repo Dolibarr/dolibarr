@@ -31,7 +31,7 @@
  *	\file       htdocs/core/class/html.form.class.php
  *  \ingroup    core
  *	\brief      File of class with all html predefined components
- *	\version	$Id: html.form.class.php,v 1.186 2011/07/04 11:33:22 eldy Exp $
+ *	\version	$Id: html.form.class.php,v 1.188 2011/07/10 17:28:09 hregis Exp $
  */
 
 
@@ -876,7 +876,7 @@ class Form
         		$selected_input_value=$product->ref;
         	}
             // mode=1 means customers products
-            print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajaxproducts.php', 'outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
+            print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajaxproducts.php', 'htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
             if (! $hidelabel) print $langs->trans("RefOrLabel").' : ';
             print '<input type="text" size="20" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'" />';
             print '<br>';
@@ -1117,7 +1117,7 @@ class Form
         if ($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
         {
             // mode=2 means suppliers products
-            print ajax_autocompleter('', $htmlname, DOL_URL_ROOT.'/product/ajaxproducts.php', 'outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=2&status='.$status.'&finished='.$finished, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
+            print ajax_autocompleter('', $htmlname, DOL_URL_ROOT.'/product/ajaxproducts.php', 'htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=2&status='.$status.'&finished='.$finished, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
             print $langs->trans("RefOrLabel").' : <input type="text" size="16" name="search_'.$htmlname.'" id="search_'.$htmlname.'">';
             print '<br>';
         }
@@ -3146,7 +3146,7 @@ class Form
      *	@param	key_in_label    1 pour afficher la key dans la valeur "[key] value"
      *	@param	value_as_key    1 to use value as key
      *	@param  option          Valeur de l'option en fonction du type choisi
-     *	@param  translate       Traduire la valeur
+     *	@param  translate       Translate and encode value
      * 	@param	maxlen			Length maximum for labels
      * 	@param	disabled		Html select box is disabled
      * 	@return	string			HTML select string
@@ -3178,13 +3178,13 @@ class Form
                 if ($key_in_label)
                 {
                     $newval=($translate?$langs->trans($value):$value);
-                    $selectOptionValue = $key.' - '.($maxlen?dol_trunc($newval,$maxlen):$newval);
+                    $selectOptionValue = dol_htmlentitiesbr($key.' - '.($maxlen?dol_trunc($newval,$maxlen):$newval));
                     $out.=$selectOptionValue;
                 }
                 else
                 {
                     $newval=($translate?$langs->trans($value):$value);
-                    $selectOptionValue = ($maxlen?dol_trunc($newval,$maxlen):$newval);
+                    $selectOptionValue = dol_htmlentitiesbr($maxlen?dol_trunc($newval,$maxlen):$newval);
                     if ($value == '' || $value == '-') { $selectOptionValue='&nbsp;'; }
                     $out.=$selectOptionValue;
                 }

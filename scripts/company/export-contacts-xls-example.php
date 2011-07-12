@@ -1,4 +1,5 @@
-<?PHP
+#!/usr/bin/php
+<?php
 /**
  * Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
@@ -22,7 +23,7 @@
  *      \file       scripts/company/export-contacts-xls-example.php
  *      \ingroup    company
  *      \brief      Export third parties' contacts with emails
- *		\version	$Id$
+ *		\version	$Id: export-contacts-xls-example.php,v 1.7 2011/07/09 14:11:42 eldy Exp $
  */
 
 $sapi_type = php_sapi_name();
@@ -42,7 +43,7 @@ if (! isset($argv[1]) || ! $argv[1]) {
 $now=$argv[1];
 
 // Recupere env dolibarr
-$version='$Revision$';
+$version='$Revision: 1.7 $';
 
 require_once("../../htdocs/master.inc.php");
 require_once(PHP_WRITEEXCEL_PATH."/class.writeexcel_workbook.inc.php");

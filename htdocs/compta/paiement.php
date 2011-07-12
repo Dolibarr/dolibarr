@@ -24,7 +24,7 @@
  *	\file       htdocs/compta/paiement.php
  *	\ingroup    compta
  *	\brief      Page to create a payment
- *	\version    $Id: paiement.php,v 1.109 2011/07/04 16:39:48 cdelambert Exp $
+ *	\version    $Id: paiement.php,v 1.110 2011/07/11 09:32:35 cdelambert Exp $
  */
 
 require('../main.inc.php');
@@ -272,14 +272,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                                 jQuery(\'.fieldrequireddyn\').removeClass(\'fieldrequired\');
                             }
                         });
-                    });
-                  </script>'."\n";
-        }
-        
-        if (! empty($conf->global->MAIN_JS_ON_PAYMENT))
-        {
-        	print "\n".'<script type="text/javascript" language="javascript">';
-        	print 'jQuery(document).ready(function () {
+        			
         			function elemToJson(selector)
             		{
             			var subJson = {};
@@ -345,7 +338,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
              </script>'."\n";
         }
 
-        print '<form name="add_paiement" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+        print '<form id="payment_form" name="add_paiement" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="add_paiement">';
         print '<input type="hidden" name="facid" value="'.$facture->id.'">';
@@ -367,18 +360,18 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         print '<td>'.$langs->trans('Comments').'</td></tr>';
 
         $rowspan=5;
-        if (! empty($conf->global->MAIN_JS_ON_PAYMENT)) $rowspan++;
+        if ($conf->use_javascript_ajax) $rowspan++;
 
         // Payment mode
         print '<tr><td><span class="fieldrequired">'.$langs->trans('PaymentMode').'</span></td><td>';
         $html->select_types_paiements((GETPOST('paiementcode')?GETPOST('paiementcode'):$facture->mode_reglement_code),'paiementcode','',2);
         print "</td>\n";
         print '<td rowspan="'.$rowspan.'" valign="top">';
-        print '<textarea name="comment" wrap="soft" cols="60" rows="'.ROWS_5.'">'.(empty($_POST['comment'])?'':$_POST['comment']).'</textarea></td>';
+        print '<textarea name="comment" wrap="soft" cols="60" rows="'.ROWS_4.'">'.(empty($_POST['comment'])?'':$_POST['comment']).'</textarea></td>';
         print '</tr>';
 
         // Payment amount
-        if (! empty($conf->global->MAIN_JS_ON_PAYMENT))
+        if ($conf->use_javascript_ajax)
         {
             print '<tr><td><span class="fieldrequired">'.$langs->trans('AmountPayment').'</span></td>';
             print '<td>';
@@ -519,7 +512,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
                     if ($action != 'add_paiement')
                     {
-                        if (! empty($conf->global->MAIN_JS_ON_PAYMENT))
+                        if ($conf->use_javascript_ajax)
                         {
                             print img_picto($langs->trans('AddRemind'),'rightarrow.png','id="'.$objp->facid.'" "');
                         }
@@ -678,5 +671,5 @@ if (! GETPOST('action'))
 
 $db->close();
 
-llxFooter('$Date: 2011/07/04 16:39:48 $ - $Revision: 1.109 $');
+llxFooter('$Date: 2011/07/11 09:32:35 $ - $Revision: 1.110 $');
 ?>
