@@ -3,6 +3,7 @@
  * Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2010-2011 Herve Prot           <herve.prot@symeos.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,6 +124,14 @@ function societe_prepare_head($object)
         $head[$h][1] = $langs->trans("Info");
         $head[$h][2] = 'info';
         $h++;
+    }
+
+	if ($conf->map->enabled && $user->societe_id == 0 && $object->lat && $object->lng)
+    {
+	$head[$h][0] = DOL_URL_ROOT.'/map/map.php?socid='.$object->id;
+	$head[$h][1] = $langs->trans("Map");
+	$head[$h][2] = 'map';
+	$h++;
     }
 
     complete_head_from_modules($conf,$langs,$object,$head,$h,'thirdparty','remove');

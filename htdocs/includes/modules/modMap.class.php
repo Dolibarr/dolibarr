@@ -72,7 +72,7 @@ class modMap extends DolibarrModules
         // Constantes
         //-----------
         $this->const = array();
-        
+        $this->const[0]  = array("MAP_SYSTEM","texte","openlayer");
 
         // Boites
         //-------

@@ -25,21 +25,21 @@ if($conf->map->enabled)
     {
         //microsoft
         $arrayjs[0]= 'https://dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=6';
-        $arrayjs[1]= '/includes/map/lib/mxn.js?(microsoft)';
+        $arrayjs[1]= '/map/lib/mxn.js?(microsoft)';
     }
 
     if($conf->global->MAP_SYSTEM=='google')
     {
         //google
         $arrayjs[0]= 'https://maps.google.com/maps?file=api&amp;v=3&amp;sensor=false&amp;key='.$conf->global->GOOGLE_KEY;
-        $arrayjs[1]= '/includes/map/lib/mxn.js?(google)';
+        $arrayjs[1]= '/map/lib/mxn.js?(google)';
     }
 
     if($conf->global->MAP_SYSTEM=='openlayers')
     {
         //open street map
         $arrayjs[0]= 'http://www.openlayers.org/api/OpenLayers.js';
-        $arrayjs[1]= '/includes/map/lib/mxn.js?(openlayers)';
+        $arrayjs[1]= '/map/lib/mxn.js?(openlayers)';
     }
                 
 }
