@@ -1544,7 +1544,8 @@ else
         }
 
         dol_htmloutput_errors($error,$errors);
-
+        
+        $var=true;
         print '<table class="noborder" width="50%">';
 
         // Ref
@@ -1561,12 +1562,6 @@ else
         print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom');
         print '</td>';
         print '</tr>';
-        
-        // Name
-	print '<tr '.$bc[$var].'><td id="label" width="20%">'.$langs->trans('ThirdPartyName').'</td>';
-	print '<td colspan="1" id="value">';
-	print $object->getNomUrl(1);
-	print '</td>';
 
         // Logo
         $rowspan=4;
@@ -1582,96 +1577,118 @@ else
             $showlogo.=$html->showphoto('societe',$object,50);
             $showlogo.='</td>';
         }
+        
+         // Name
+	print '<tr '.$bc[$var].'><td id="label" width="20%">'.$langs->trans('ThirdPartyName').'</td>';
+	print '<td colspan="'.(2+($object->logo?0:1)).'" id="value">';
+	print $object->getNomUrl(1);
+	print '</td>';
+        print $showlogo; $showlogo='';
+        print '</tr>';
+        $var=!$var;
 
         if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
         {
-            print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="'.(2+($object->logo?0:1)).'">'.$object->prefix_comm.'</td>';
+            print '<tr '.$bc[$var].'><td id="label">'.$langs->trans('Prefix').'</td><td id="value" colspan="'.(2+($object->logo?0:1)).'">'.$object->prefix_comm.'</td>';
             print $showlogo; $showlogo='';
             print '</tr>';
+            $var=!$var;
         }
 
         if ($object->client)
         {
-            print '<tr><td>';
-            print $langs->trans('CustomerCode').'</td><td colspan="'.(2+($object->logo?0:1)).'">';
+            print '<tr '.$bc[$var].'><td id="label">';
+            print $langs->trans('CustomerCode').'</td><td id="value" colspan="'.(2+($object->logo?0:1)).'">';
             print $object->code_client;
             if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
             print '</td>';
             print $showlogo; $showlogo='';
             print '</tr>';
+            $var=!$var;
         }
 
         if ($conf->fournisseur->enabled && $object->fournisseur)
         {
-            print '<tr><td>';
-            print $langs->trans('SupplierCode').'</td><td colspan="'.(2+($object->logo?0:1)).'">';
+            print '<tr '.$bc[$var].'><td id="label">';
+            print $langs->trans('SupplierCode').'</td><td id="value" colspan="'.(2+($object->logo?0:1)).'">';
             print $object->code_fournisseur;
             if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
             print '</td>';
             print $showlogo; $showlogo='';
             print '</tr>';
+            $var=!$var;
         }
 
         // Status
-        print '<tr><td>'.$langs->trans("Status").'</td>';
-        print '<td colspan="'.(2+($object->logo?0:1)).'">';
+        print '<tr '.$bc[$var].'><td id="label">'.$langs->trans("Status").'</td>';
+        print '<td id="value" colspan="'.(2+($object->logo?0:1)).'">';
         print $object->getLibStatut(2);
         print '</td>';
         print $showlogo; $showlogo='';
         print '</tr>';
+        $var=!$var;
 
         // Barcode
         if ($conf->global->MAIN_MODULE_BARCODE)
         {
-            print '<tr><td>'.$langs->trans('Gencod').'</td><td colspan="'.(2+($object->logo?0:1)).'">'.$object->gencod.'</td></tr>';
+            print '<tr '.$bc[$var].'><td id="label">'.$langs->trans('Gencod').'</td><td id="value" colspan="'.(2+($object->logo?0:1)).'">'.$object->gencod.'</td></tr>';
         }
         
         // MAP GPS
         if($conf->map->enabled)
-            print '<tr><td id="label">GPS</td><td id="value" colspan="'.(2+($object->logo?0:1)).'">'.img_picto(($object->lat.','.$object->lng),(($object->lat && $object->lng)?"statut4":"statut1")).'</td></tr>';
+            print '<tr '.$bc[$var].'><td id="label">GPS</td><td id="value" colspan="'.(2+($object->logo?0:1)).'">'.img_picto(($object->lat.','.$object->lng),(($object->lat && $object->lng)?"statut4":"statut1")).'</td></tr>';
         else
             print '<td id="label"></td><td id="value"></td></tr>';
         $var=!$var;
 
         // Address
-        print "<tr><td valign=\"top\">".$langs->trans('Address').'</td><td colspan="'.(2+($object->logo?0:1)).'">';
+        print '<tr '.$bc[$var].'><td id="label" valign=\"top\">'.$langs->trans('Address').'</td><td id="value" colspan="'.(2+($object->logo?0:1)).'">';
         dol_print_address($object->address,'gmap','thirdparty',$object->id);
         print "</td></tr>";
+        $var=!$var;
 
         // Zip / Town
-        print '<tr><td width="25%">'.$langs->trans('Zip').' / '.$langs->trans("Town").'</td><td colspan="'.(2+($object->logo?0:1)).'">';
+        print '<tr '.$bc[$var].'><td id="label" width="25%">'.$langs->trans('Zip').' / '.$langs->trans("Town").'</td><td id="value" colspan="'.(2+($object->logo?0:1)).'">';
         print $object->cp.($object->cp && $object->ville?" / ":"").$object->ville;
         print "</td>";
         print '</tr>';
+        $var=!$var;
 
         // Country
-        print '<tr><td>'.$langs->trans("Country").'</td><td colspan="'.(2+($object->logo?0:1)).'" nowrap="nowrap">';
+        print '<tr '.$bc[$var].'><td id="label">'.$langs->trans("Country").'</td><td id="value" colspan="'.(2+($object->logo?0:1)).'" nowrap="nowrap">';
         $img=picto_from_langcode($object->pays_code);
         if ($object->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$object->pays,$langs->trans("CountryIsInEEC"),1,0);
         else print ($img?$img.' ':'').$object->pays;
         print '</td></tr>';
+        $var=!$var;
 
         // State
-        if (empty($conf->global->SOCIETE_DISABLE_STATE)) print '<tr><td>'.$langs->trans('State').'</td><td colspan="'.(2+($object->logo?0:1)).'">'.$object->departement.'</td>';
+        if (empty($conf->global->SOCIETE_DISABLE_STATE))
+        {
+            print '<tr  '.$bc[$var].'><td id="label">'.$langs->trans('State').'</td><td id="value" colspan="'.(2+($object->logo?0:1)).'">'.$object->departement.'</td></tr>';
+            $var=!$var;
+        }
 
-        print '<tr><td>'.$langs->trans('Phone').'</td><td style="min-width: 25%;">'.dol_print_phone($object->tel,$object->pays_code,0,$object->id,'AC_TEL').'</td>';
-        print '<td>'.$langs->trans('Fax').'</td><td style="min-width: 25%;">'.dol_print_phone($object->fax,$object->pays_code,0,$object->id,'AC_FAX').'</td></tr>';
+        print '<tr '.$bc[$var].'><td id="label">'.$langs->trans('Phone').'</td><td id="value" style="min-width: 25%;">'.dol_print_phone($object->tel,$object->pays_code,0,$object->id,'AC_TEL').'</td>';
+        print '<td>'.$langs->trans('Fax').'</td><td id="value" style="min-width: 25%;">'.dol_print_phone($object->fax,$object->pays_code,0,$object->id,'AC_FAX').'</td></tr>';
+        $var=!$var;
 
         // EMail
-        print '<tr><td>'.$langs->trans('EMail').'</td><td width="25%">';
+        print '<tr '.$bc[$var].'><td id="label">'.$langs->trans('EMail').'</td><td id="value" width="25%">';
         print dol_print_email($object->email,0,$object->id,'AC_EMAIL');
         print '</td>';
 
         // Web
-        print '<td>'.$langs->trans('Web').'</td><td>';
+        print '<td id="label">'.$langs->trans('Web').'</td><td id="value">';
         print dol_print_url($object->url);
         print '</td></tr>';
+        $var=!$var;
 
         // ProfId1 (SIREN for France)
         $profid=$langs->transcountry('ProfId1',$object->pays_code);
         if ($profid!='-')
         {
-            print '<tr><td>'.$profid.'</td><td>';
+            print '<tr '.$bc[$var].'><td id="label">'.$profid.'</td><td id="value">';
             print $object->siren;
             if ($object->siren)
             {
@@ -1680,12 +1697,12 @@ else
             }
             print '</td>';
         }
-        else print '<tr><td>&nbsp;</td><td>&nbsp;</td>';
+        else print '<tr '.$bc[$var].'><td id="label">&nbsp;</td><td>&nbsp;</td>';
         // ProfId2 (SIRET for France)
         $profid=$langs->transcountry('ProfId2',$object->pays_code);
         if ($profid!='-')
         {
-            print '<td>'.$profid.'</td><td>';
+            print '<td>'.$profid.'</td><td id="value">';
             print $object->siret;
             if ($object->siret)
             {
@@ -1695,12 +1712,13 @@ else
             print '</td></tr>';
         }
         else print '<td>&nbsp;</td><td>&nbsp;</td></tr>';
+        $var=!$var;
 
         // ProfId3 (APE for France)
         $profid=$langs->transcountry('ProfId3',$object->pays_code);
         if ($profid!='-')
         {
-            print '<tr><td>'.$profid.'</td><td>';
+            print '<tr '.$bc[$var].'><td id="label">'.$profid.'</td><td id="value">';
             print $object->ape;
             if ($object->ape)
             {
@@ -1709,12 +1727,12 @@ else
             }
             print '</td>';
         }
-        else print '<tr><td>&nbsp;</td><td>&nbsp;</td>';
+        else print '<tr '.$bc[$var].'><td id="label">&nbsp;</td><td>&nbsp;</td>';
         // ProfId4 (NU for France)
         $profid=$langs->transcountry('ProfId4',$object->pays_code);
         if ($profid!='-')
         {
-            print '<td>'.$profid.'</td><td>';
+            print '<td id="label">'.$profid.'</td><td id="value">';
             print $object->idprof4;
             if ($object->idprof4)
             {
@@ -1723,18 +1741,19 @@ else
             }
             print '</td></tr>';
         }
-        else print '<td>&nbsp;</td><td>&nbsp;</td></tr>';
+        else print '<td id="label">&nbsp;</td><td id="value">&nbsp;</td></tr>';
+        $var=!$var;
 
         // VAT payers
         $html = new Form($db);
-        print '<tr><td>';
+        print '<tr '.$bc[$var].'><td id="label">';
         print $langs->trans('VATIsUsed');
-        print '</td><td>';
+        print '</td><td id="value">';
         print yn($object->tva_assuj);
         print '</td>';
 
         // VAT Code
-        print '<td nowrap="nowrpa">'.$langs->trans('VATIntra').'</td><td>';
+        print '<td id="label" nowrap="nowrpa">'.$langs->trans('VATIntra').'</td><td id="value">';
         if ($object->tva_intra)
         {
             $s='';
@@ -1770,6 +1789,7 @@ else
         }
         print '</td>';
         print '</tr>';
+        $var=!$var;
 
         // Local Taxes
         // TODO add specific function by country
@@ -1777,70 +1797,76 @@ else
         {
             if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
             {
-                print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td>';
+                print '<tr '.$bc[$var].'><td id="label">'.$langs->trans("LocalTax1IsUsedES").'</td><td id="value">';
                 print yn($object->localtax1_assuj);
-                print '</td><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td>';
+                print '</td><td id="label">'.$langs->trans("LocalTax2IsUsedES").'</td><td  id="value">';
                 print yn($object->localtax2_assuj);
                 print '</td></tr>';
 
             }
             elseif($mysoc->localtax1_assuj=="1")
             {
-                print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td colspan="3">';
+                print '<tr '.$bc[$var].'><td id="label">'.$langs->trans("LocalTax1IsUsedES").'</td><td id="value" colspan="3">';
                 print yn($object->localtax1_assuj);
                 print '</td><tr>';
             }
             elseif($mysoc->localtax2_assuj=="1")
             {
-                print '<tr><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td colspan="3">';
+                print '<tr '.$bc[$var].'><td id="label">'.$langs->trans("LocalTax2IsUsedES").'</td><td id="value" colspan="3">';
                 print yn($object->localtax2_assuj);
                 print '</td><tr>';
             }
+            $var=!$var;
         }
 
         // Type + Staff
         $arr = $formcompany->typent_array(1);
         $object->typent= $arr[$object->typent_code];
-        print '<tr><td>'.$langs->trans("ThirdPartyType").'</td><td>'.$object->typent.'</td><td>'.$langs->trans("Staff").'</td><td>'.$object->effectif.'</td></tr>';
+        print '<tr '.$bc[$var].'><td id="label">'.$langs->trans("ThirdPartyType").'</td><td id="value">'.$object->typent.'</td><td id="label">'.$langs->trans("Staff").'</td><td id="value">'.$object->effectif.'</td></tr>';
+        $var=!$var;
 
         // Legal
-        print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">'.$object->forme_juridique.'</td></tr>';
+        print '<tr '.$bc[$var].'><td id="label">'.$langs->trans('JuridicalStatus').'</td><td id="value" colspan="3">'.$object->forme_juridique.'</td></tr>';
+        $var=!$var;
 
         // Capital
-        print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3">';
+        print '<tr '.$bc[$var].'><td id="label">'.$langs->trans('Capital').'</td><td id="value" colspan="3">';
         if ($object->capital) print $object->capital.' '.$langs->trans("Currency".$conf->monnaie);
         else print '&nbsp;';
         print '</td></tr>';
+        $var=!$var;
 
         // Default language
         if ($conf->global->MAIN_MULTILANGS)
         {
             require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
-            print '<tr><td>'.$langs->trans("DefaultLang").'</td><td colspan="3">';
+            print '<tr '.$bc[$var].'><td id="label">'.$langs->trans("DefaultLang").'</td><td id="value" colspan="3">';
             //$s=picto_from_langcode($object->default_lang);
             //print ($s?$s.' ':'');
             $langs->load("languages");
             $labellang = ($object->default_lang?$langs->trans('Language_'.$object->default_lang):'');
             print $labellang;
             print '</td></tr>';
+            $var=!$var;
         }
 
         // Other attributes
         foreach($extrafields->attribute_label as $key=>$label)
         {
             $value=$object->array_options["options_$key"];
-            print "<tr><td>".$label.'</td><td colspan="3">';
+            print '<tr '.$bc[$var].'><td id="label">'.$label.'</td><td id="value" colspan="3">';
             print $extrafields->showOutputField($key,$value);
             print "</td></tr>\n";
+            $var=!$var;
         }
 
         // Ban
         if (empty($conf->global->SOCIETE_DISABLE_BANKACCOUNT))
         {
-            print '<tr><td>';
-            print '<table width="100%" class="nobordernopadding"><tr><td>';
+            print '<tr '.$bc[$var].'><td>';
+            print '<table width="100%" class="nobordernopadding"><tr><td id="label">';
             print $langs->trans('RIB');
-            print '<td><td align="right">';
+            print '<td><td id="value" align="right">';
             if ($user->rights->societe->creer)
             print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$object->id.'">'.img_edit().'</a>';
             else
@@ -1850,15 +1876,16 @@ else
             print '<td colspan="3">';
             print $object->display_rib();
             print '</td></tr>';
+            $var=!$var;
         }
 
         // Parent company
         if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY))
         {
-            print '<tr><td>';
-            print '<table width="100%" class="nobordernopadding"><tr><td>';
+            print '<tr '.$bc[$var].'><td>';
+            print '<table width="100%" class="nobordernopadding"><tr><td id="label">';
             print $langs->trans('ParentCompany');
-            print '<td><td align="right">';
+            print '<td><td id="value" align="right">';
             if ($user->rights->societe->creer)
             print '<a href="'.DOL_URL_ROOT.'/societe/lien.php?socid='.$object->id.'">'.img_edit() .'</a>';
             else
@@ -1877,13 +1904,14 @@ else
                 print $langs->trans("NoParentCompany");
             }
             print '</td></tr>';
+            $var=!$var;
         }
 
         // Commercial
-        print '<tr><td>';
-        print '<table width="100%" class="nobordernopadding"><tr><td>';
+        print '<tr '.$bc[$var].'><td>';
+        print '<table width="100%" class="nobordernopadding"><tr><td id="label">';
         print $langs->trans('SalesRepresentatives');
-        print '<td><td align="right">';
+        print '<td><td  id="value" align="right">';
         if ($user->rights->societe->creer)
         print '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$object->id.'">'.img_edit().'</a>';
         else
@@ -1916,13 +1944,14 @@ else
         }
         else print $langs->trans("NoSalesRepresentativeAffected");
         print '</td></tr>';
+        $var=!$var;
 
         // Module Adherent
         if ($conf->adherent->enabled)
         {
             $langs->load("members");
-            print '<tr><td width="25%" valign="top">'.$langs->trans("LinkedToDolibarrMember").'</td>';
-            print '<td colspan="3">';
+            print '<tr '.$bc[$var].'><td id="label" width="25%" valign="top">'.$langs->trans("LinkedToDolibarrMember").'</td>';
+            print '<td id="value" colspan="3">';
             $adh=new Adherent($db);
             $result=$adh->fetch('','',$object->id);
             if ($result > 0)
@@ -1936,6 +1965,7 @@ else
             }
             print '</td>';
             print "</tr>\n";
+            $var=!$var;
         }
 
         print '</table>';
