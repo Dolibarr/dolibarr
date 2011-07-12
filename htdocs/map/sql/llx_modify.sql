@@ -20,6 +20,6 @@
 -- $Id: llx_modify.sql,v 1.7 2010/02/03 22:36:08 herve Exp $
 -- ===========================================================================
 
-alter table llx_societe add latitude       double     DEFAULT NULL;		-- coordonnées GPS
-alter table llx_societe add longitude       double     DEFAULT NULL;		-- coordonnées GPS
+alter table llx_societe add latitude       double     DEFAULT 0;		-- coordonnées GPS
+alter table llx_societe add longitude       double     DEFAULT 0;		-- coordonnées GPS
 

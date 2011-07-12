@@ -7,6 +7,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2008      Patrick Raguin       <patrick.raguin@auguria.net>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2011 Herve Prot           <herve.prot@symeos.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -134,6 +135,11 @@ class Societe extends CommonObject
     var $ref_int;
     var $import_key;
 
+    //begin Symeos MAP
+    var $lat; // latitude
+    var $lng; // longitude
+    //end Symeos
+
     var $logo;
     var $logo_small;
     var $logo_mini;
@@ -160,6 +166,11 @@ class Societe extends CommonObject
         $this->prefixSupplierIsRequired = 0;
         $this->tva_assuj = 1;
         $this->status = 1;
+
+        //begin Symeos
+	$this->lat = 0;
+	$this->lng = 0;
+	//end symeos
 
         return 1;
     }
@@ -500,6 +511,12 @@ class Societe extends CommonObject
             $sql .= ",default_lang = ".($this->default_lang?"'".$this->default_lang."'":"null");
             $sql .= ",logo = ".($this->logo?"'".$this->logo."'":"null");
 
+            //begin Symeos
+            $sql .= ",latitude = " . $this->lat;
+            $sql .= ",longitude = " . $this->lng;
+            //end Symeos
+
+
             if ($allowmodcodeclient)
             {
                 //$this->check_codeclient();
@@ -622,6 +639,10 @@ class Societe extends CommonObject
         $sql .= ', s.fk_departement, s.fk_pays, s.fk_stcomm, s.remise_client, s.mode_reglement, s.cond_reglement, s.tva_assuj';
         $sql .= ', s.localtax1_assuj, s.localtax2_assuj, s.fk_prospectlevel, s.default_lang, s.logo';
         $sql .= ', s.import_key';
+        // Begin Symeos
+	$sql .= ', s.latitude';
+	$sql .= ', s.longitude';
+	// End Symeos
         $sql .= ', fj.libelle as forme_juridique';
         $sql .= ', e.libelle as effectif';
         $sql .= ', p.code as pays_code, p.libelle as pays';
@@ -760,6 +781,11 @@ class Societe extends CommonObject
                 $this->price_level = $obj->price_level;
 
                 $this->import_key = $obj->import_key;
+
+                //begin Symeos
+		$this->lat = $obj->latitude;
+		$this->lng = $obj->longitude;
+		//End Symeos
 
                 $result = 1;
             }

@@ -6,6 +6,7 @@
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2008	   Patrick Raguin       <patrick.raguin@auguria.net>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2011 Herve Prot           <herve.prot@symeos.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +40,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 if ($conf->adherent->enabled) require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
+if ($conf->highcharts->enabled) require_once(DOL_DOCUMENT_ROOT."/highCharts/class/highCharts.class.php");
 
 $langs->load("companies");
 $langs->load("commercial");
@@ -231,6 +233,23 @@ if (empty($reshook))
                 $object->array_options[$key]=$_POST[$key];
             }
         }
+        
+        if($conf->map->enabled)
+        {
+            $apiUrl = "http://maps.googleapis.com/maps/api/geocode/json?sensor=false&address=".urlencode ($_POST["adresse"].",".$_POST["zipcode"].",".$_POST["town"]);
+            $c = curl_init();
+            curl_setopt($c, CURLOPT_URL, $apiUrl);
+            curl_setopt($c, CURLOPT_HEADER, false);
+            curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
+            // make the call
+            $json = curl_exec($c);
+            $response = json_decode($json);
+            curl_close($c);
+            if($response->status == "OK"){
+                $object->lat = $response->results[0]->geometry->location->lat;
+                $object->lng = $response->results[0]->geometry->location->lng;
+            }
+        }
 
         if (GETPOST('deletephoto')) $object->logo = '';
         else if (! empty($_FILES['photo']['name'])) $object->logo = dol_sanitizeFileName($_FILES['photo']['name']);
@@ -360,6 +379,26 @@ if (empty($reshook))
                 }
 
                 $object->oldcopy=dol_clone($object);
+                
+                ### Calcul des coordonnées GPS
+                if($conf->map->enabled)
+                {
+                    $apiUrl = "http://maps.googleapis.com/maps/api/geocode/json?sensor=false&address=".urlencode ($_POST["adresse"].",".$_POST["zipcode"].",".$_POST["town"]);
+                    $c = curl_init();
+                    curl_setopt($c, CURLOPT_URL, $apiUrl);
+                    curl_setopt($c, CURLOPT_HEADER, false);
+                    curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
+                    // make the call
+                    $json = curl_exec($c);
+                    $response = json_decode($json);
+                    curl_close($c);
+                    if($response->status == "OK")
+                    {
+                        $object->lat = $response->results[0]->geometry->location->lat;
+                        $object->lng = $response->results[0]->geometry->location->lng;
+                    }
+                    
+                }
 
                 // To not set code if third party is not concerned. But if it had values, we keep them.
                 if (empty($object->client) && empty($object->oldcopy->code_client))          $object->code_client='';
@@ -1496,7 +1535,6 @@ else
 
         $html = new Form($db);
 
-
         // Confirm delete third party
         if ($action == 'delete' || $conf->use_javascript_ajax)
         {
@@ -1507,7 +1545,7 @@ else
 
         dol_htmloutput_errors($error,$errors);
 
-        print '<table class="border" width="100%">';
+        print '<table class="noborder" width="50%">';
 
         // Ref
         /*
@@ -1517,13 +1555,18 @@ else
         print '</td>';
         print '</tr>';
         */
-
+        
         // Name
-        print '<tr><td width="20%">'.$langs->trans('ThirdPartyName').'</td>';
-        print '<td colspan="3">';
+        print '<tr class="liste_titre"><td colspan="4">';
         print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom');
         print '</td>';
         print '</tr>';
+        
+        // Name
+	print '<tr '.$bc[$var].'><td id="label" width="20%">'.$langs->trans('ThirdPartyName').'</td>';
+	print '<td colspan="1" id="value">';
+	print $object->getNomUrl(1);
+	print '</td>';
 
         // Logo
         $rowspan=4;
@@ -1582,6 +1625,13 @@ else
         {
             print '<tr><td>'.$langs->trans('Gencod').'</td><td colspan="'.(2+($object->logo?0:1)).'">'.$object->gencod.'</td></tr>';
         }
+        
+        // MAP GPS
+        if($conf->map->enabled)
+            print '<tr><td id="label">GPS</td><td id="value" colspan="'.(2+($object->logo?0:1)).'">'.img_picto(($object->lat.','.$object->lng),(($object->lat && $object->lng)?"statut4":"statut1")).'</td></tr>';
+        else
+            print '<td id="label"></td><td id="value"></td></tr>';
+        $var=!$var;
 
         // Address
         print "<tr><td valign=\"top\">".$langs->trans('Address').'</td><td colspan="'.(2+($object->logo?0:1)).'">';
