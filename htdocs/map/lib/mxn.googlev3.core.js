@@ -1,3 +1,15 @@
+/*
+Copyright (c) 2011 Tom Carden, Steve Coast, Mikel Maron, Andrew Turner, Henri Bergius, Rob Moran, Derek Fowler
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+ * Neither the name of the Mapstraction nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
 mxn.register('googlev3', {	
 
 Mapstraction: {
@@ -12,32 +24,45 @@ Mapstraction: {
 				mapTypeControl: false,
 				mapTypeControlOptions: null,
 				navigationControl: false,
-			        navigationControlOptions: null,
+				navigationControlOptions: null,
 				scrollwheel: false
 			};
 
-		    // find controls
-		    if (!this.addControlsArgs && loadoptions.addControlsArgs) {
-		    	this.addControlsArgs = loadoptions.addControlsArgs;
-		    }
-		    if (this.addControlsArgs) {
-			    if (this.addControlsArgs.zoom) {
-			    	myOptions.navigationControl = true;
-			    	if (this.addControlsArgs.zoom == 'small') {
-			    		myOptions.navigationControlOptions = {style: google.maps.NavigationControlStyle.SMALL};
-			    	}
-			    	if (this.addControlsArgs.zoom == 'large') {
-			    		myOptions.navigationControlOptions = {style: google.maps.NavigationControlStyle.ZOOM_PAN};
-			    	}
-			    }
-			    if (this.addControlsArgs.map_type) {
+			// find controls
+			if (!this.addControlsArgs && loadoptions.addControlsArgs) {
+				this.addControlsArgs = loadoptions.addControlsArgs;
+			}
+			if (this.addControlsArgs) {
+				if (this.addControlsArgs.zoom) {
+					myOptions.navigationControl = true;
+					if (this.addControlsArgs.zoom == 'small') {
+						myOptions.navigationControlOptions = {style: google.maps.NavigationControlStyle.SMALL};
+					}
+					if (this.addControlsArgs.zoom == 'large') {
+						myOptions.navigationControlOptions = {style: google.maps.NavigationControlStyle.ZOOM_PAN};
+					}
+				}
+				if (this.addControlsArgs.map_type) {
 					myOptions.mapTypeControl = true;
 					myOptions.mapTypeControlOptions = {style: google.maps.MapTypeControlStyle.DEFAULT};
-			    }
-		    }
+				}
+			}
 		
 			var map = new google.maps.Map(element, myOptions);
-				
+			
+			var fireOnNextIdle = [];
+			
+			google.maps.event.addListener(map, 'idle', function() {
+				var fireListCount = fireOnNextIdle.length;
+				if(fireListCount > 0) {
+					var fireList = fireOnNextIdle.splice(0, fireListCount);
+					var handler;
+					while((handler = fireList.shift())){
+						handler();
+					}
+				}
+			});
+			
 			// deal with click
 			google.maps.event.addListener(map, 'click', function(location){
 				me.click.fire({'location': 
@@ -47,18 +72,26 @@ Mapstraction: {
 
 			// deal with zoom change
 			google.maps.event.addListener(map, 'zoom_changed', function(){
-				me.changeZoom.fire();
+				// zoom_changed fires before the zooming has finished so we 
+				// wait for the next idle event before firing our changezoom
+				// so that method calls report the correct values
+				fireOnNextIdle.push(function() {
+					me.changeZoom.fire();
+				});
 			});
+
 			// deal with map movement
-			google.maps.event.addListener(map, 'dragend', function(){
+			google.maps.event.addListener(map, 'center_changed', function(){
 				me.moveendHandler(me);
 				me.endPan.fire();
 			});
+			
 			// deal with initial tile loading
 			var loadListener = google.maps.event.addListener(map, 'tilesloaded', function(){
 				me.load.fire();
 				google.maps.event.removeListener( loadListener );
-			});
+			});			
+			
 			this.maps[api] = map;
 			this.loaded[api] = true;
 		}
@@ -107,7 +140,7 @@ Mapstraction: {
 			this.addControlsArgs.scale = true;
 		}
 		if (args.map_type){
-		    this.addMapTypeControls();
+			this.addMapTypeControls();
 		}
 	},
 
@@ -524,17 +557,17 @@ Marker: {
 Polyline: {
 
 	toProprietary: function() {
-		var points =[];
+		var points = [];
 		for(var i =0, length = this.points.length; i < length; i++) {
 			points.push(this.points[i].toProprietary('googlev3'));
 		}
-
+		
 		var polyOptions = {
 			path: points,
 			strokeColor: this.color || '#000000',
-			strokeOpacity: 1.0,
-			strokeWeight: 3
-	    };
+			strokeOpacity: this.opacity || 1.0, 
+			strokeWeight: this.width || 3
+		};
 
 		var polyline = new google.maps.Polyline(polyOptions);
 
