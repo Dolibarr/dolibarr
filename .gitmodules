@@ -1,3 +1,3 @@
 [submodule "htdocs/multicompany"]
 	path = htdocs/multicompany
-	url = git+ssh://hepr@scm.doliforge.org/gitroot/regisperso/regisperso.git
+	url = git+ssh://scm.doliforge.org/gitroot/regisperso/regisperso.git
