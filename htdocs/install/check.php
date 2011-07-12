@@ -23,7 +23,7 @@
  *	\file       htdocs/install/check.php
  *	\ingroup    install
  *	\brief      Test if file conf can be modified and if does not exists, test if install process can create it
- *	\version    $Id: check.php,v 1.83 2011/07/12 20:48:08 eldy Exp $
+ *	\version    $Id: check.php,v 1.84 2011/07/12 20:52:41 eldy Exp $
  */
 include_once("./inc.php");
 
@@ -393,7 +393,7 @@ else
             $dolibarrversiontoarray=preg_split('/[\.-]/',$versionto);
             $version=preg_split('/[\.-]/',DOL_VERSION);
             $newversionfrombis='';
-            if (versioncompare($dolibarrversiontoarray,$version) < 2) $newversionfrombis='/'.$versionto;
+            if (versioncompare($dolibarrversiontoarray,$version) < -2) $newversionfrombis='/'.$versionto;
 			print '<tr><td nowrap="nowrap" align="center"><b>'.$langs->trans("Upgrade").'<br>'.$newversionfrom.' -> '.$newversionto.'</b></td>';
 			print '<td>';
 			print $langs->trans("UpgradeDesc");
