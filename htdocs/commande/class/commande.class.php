@@ -25,7 +25,7 @@
  *  \file       htdocs/commande/class/commande.class.php
  *  \ingroup    commande
  *  \brief      Fichier des classes de commandes
- *  \version    $Id: commande.class.php,v 1.118 2011/07/04 10:35:49 hregis Exp $
+ *  \version    $Id: commande.class.php,v 1.119 2011/07/12 07:17:11 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
@@ -259,7 +259,7 @@ class Commande extends CommonObject
 		if (! $error)
 		{
 			$this->oldref='';
-			
+
 			// Rename directory if dir was a temporary ref
 			if (preg_match('/^[\(]?PROV/i', $this->ref))
 			{
@@ -276,7 +276,7 @@ class Commande extends CommonObject
 					if (@rename($dirsource, $dirdest))
 					{
 						$this->oldref = $comref;
-						
+
 						dol_syslog("Rename ok");
 						// Suppression ancien fichier PDF dans nouveau rep
 						dol_delete_file($conf->commande->dir_output.'/'.$snum.'/'.$comref.'.*');
@@ -733,7 +733,7 @@ class Commande extends CommonObject
 							}
 						}
 					}
-						
+
 					if (! $notrigger)
 					{
 						// Appel des triggers
@@ -3050,6 +3050,7 @@ class OrderLine
 		if (empty($this->tva_tx)) $this->tva_tx=0;
 		if (empty($this->localtax1_tx)) $this->localtax1_tx=0;
 		if (empty($this->localtax2_tx)) $this->localtax2_tx=0;
+        if (empty($this->qty)) $this->qty=0;
 		if (empty($this->total_localtax1)) $this->total_localtax1=0;
 		if (empty($this->total_localtax2)) $this->total_localtax2=0;
 		if (empty($this->marque_tx)) $this->marque_tx=0;
@@ -3065,10 +3066,10 @@ class OrderLine
 		// Mise a jour ligne en base
 		$sql = "UPDATE ".MAIN_DB_PREFIX."commandedet SET";
 		$sql.= " description='".$this->db->escape($this->desc)."'";
-		$sql.= " , tva_tx='".price2num($this->tva_tx)."'";
+		$sql.= " , tva_tx=".price2num($this->tva_tx);
 		$sql.= " , localtax1_tx=".price2num($this->localtax1_tx);
 		$sql.= " , localtax2_tx=".price2num($this->localtax2_tx);
-		$sql.= " , qty='".price2num($this->qty)."'";
+		$sql.= " , qty=".price2num($this->qty);
 		$sql.= " , subprice=".price2num($this->subprice)."";
 		$sql.= " , remise_percent=".price2num($this->remise_percent)."";
 		$sql.= " , price=".price2num($this->price)."";					// TODO A virer
@@ -3080,8 +3081,8 @@ class OrderLine
 			$sql.= " , total_tva=".price2num($this->total_tva)."";
 			$sql.= " , total_ttc=".price2num($this->total_ttc)."";
 		}
-		$sql.= " , total_localtax1='".price2num($this->total_localtax1)."'";
-		$sql.= " , total_localtax2='".price2num($this->total_localtax2)."'";
+		$sql.= " , total_localtax1=".price2num($this->total_localtax1);
+		$sql.= " , total_localtax2=".price2num($this->total_localtax2);
 		$sql.= " , info_bits=".$this->info_bits;
 		if ($this->date_start) { $sql.= " , date_start='".$this->db->idate($this->date_start)."'"; }
 		else { $sql.=' , date_start=null'; }
