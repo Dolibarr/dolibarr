@@ -19,30 +19,19 @@ Packager: Laurent Destailleur (Eldy) <eldy@users.sourceforge.net>
 Vendor: Dolibarr dev team
 
 URL: http://www.%{name}.org
+#Source: http://sourceforge.net/projects/%{name}/files/Dolibarr%20ERP-CRM/%{version}/%{name}-%{version}.tgz/download
 Source: /usr/src/RPM/SOURCES/%{name}-%{version}.tgz
 #BuildArch: noarch
 #BuildArchitectures: noarch
 BuildRoot: /tmp/%{name}-buildroot
 #Icon: dolibarr_logo1.gif
 
-# For Mandriva-Mageia
+# For Mandrake
 Group: Networking/WWW
 # For all other distrib
 Group: Applications/Internet
 
-# Requires can use lua to be defined dynamically (but still at build time) 
-# %{lua: if posix.access("/aaa") then print("Requires: bidon1 mysql-server mysql httpd php php-cli php-gd php-ldap php-imap php-mysql") end }
-
-# Requires for Fedora-Redhat
 Requires: mysql-server mysql httpd php php-cli php-gd php-ldap php-imap php-mysql 
-# Requires for OpenSuse
-#Requires: mysql-community-server mysql-community-server-client apache2 apache2-mod_php5 php5 php5-gd php5-ldap php5-imap php5-mysql php5-openssl 
-# Requires for Mandriva-Mageia
-#Requires: mysql mysql-client apache-base apache-mod_php php-cgi php-cli php-bz2 php-gd php-ldap php-imap php-mysqli php-openssl 
-
-#Requires(pre):
-#Requires(postun):
-
 # Set yes to build test package, no for release (this disable need of /usr/bin/php not found by OpenSuse)
 AutoReqProv: no
 
@@ -100,17 +89,19 @@ mkdir -p $RPM_BUILD_ROOT/var/www/dolibarr/build
 mkdir -p $RPM_BUILD_ROOT/var/www/dolibarr/doc
 mkdir -p $RPM_BUILD_ROOT/var/www/dolibarr/htdocs
 mkdir -p $RPM_BUILD_ROOT/var/www/dolibarr/scripts
+#mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/dolibarr
+#mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/cron.daily
 
 mkdir -p $RPM_BUILD_ROOT%{_datadir}/pixmaps
 cp doc/images/dolibarr_48x48.png $RPM_BUILD_ROOT%{_datadir}/pixmaps/dolibarr.png
 mkdir -p $RPM_BUILD_ROOT%{_datadir}/applications
-cp build/rpm/dolibarr.desktop    $RPM_BUILD_ROOT/%{_datadir}/applications/dolibarr.desktop
+cp build/rpm/dolibarr.desktop $RPM_BUILD_ROOT/%{_datadir}/applications/dolibarr.desktop
 
-install -m 444 README     $RPM_BUILD_ROOT/var/www/dolibarr/README
+install -m 444 README  $RPM_BUILD_ROOT/var/www/dolibarr/README
 install -m 444 COPYRIGHT  $RPM_BUILD_ROOT/var/www/dolibarr/COPYRIGHT
-cp -pr build   $RPM_BUILD_ROOT/var/www/dolibarr
-cp -pr doc     $RPM_BUILD_ROOT/var/www/dolibarr
-cp -pr htdocs  $RPM_BUILD_ROOT/var/www/dolibarr
+cp -pr build $RPM_BUILD_ROOT/var/www/dolibarr
+cp -pr doc $RPM_BUILD_ROOT/var/www/dolibarr
+cp -pr htdocs $RPM_BUILD_ROOT/var/www/dolibarr
 cp -pr scripts $RPM_BUILD_ROOT/var/www/dolibarr
 
 
@@ -191,7 +182,7 @@ if [ -d %{_sysconfdir}/apache2/conf.d -a `grep ^wwwrun /etc/passwd | wc -l` -ge 
     export os='opensuse';
     export conffile="%{_sysconfdir}/apache2/conf.d/dolibarr.conf"
     export apacheuser='wwwrun';
-    export apachegroup='www';
+    export apachegroup='wwwrun';
 fi
 if [ -d %{_sysconfdir}/httpd/conf.d -a `grep -i "^mageia\|mandriva" /etc/issue | wc -l` -ge 1 ]; then
     export os='mageia-mandriva';
@@ -276,7 +267,7 @@ if [ -d %{_sysconfdir}/apache2/conf.d -a `grep ^wwwrun /etc/passwd | wc -l` -ge 
     export os='opensuse';
     export conffile="%{_sysconfdir}/apache2/conf.d/dolibarr.conf"
     export apacheuser='wwwrun';
-    export apachegroup='www';
+    export apachegroup='wwwrun';
 fi
 if [ -d %{_sysconfdir}/httpd/conf.d -a `grep -i "^mageia\|mandriva" /etc/issue | wc -l` -ge 1 ]; then
     export os='mageia-mandriva';
@@ -316,12 +307,9 @@ then
     fi
 fi
 
-# Removed dirs after apache restart
-echo Removed remaining dirs
 rm -rf /etc/dolibarr
 rm -rf $targetdir/htdocs/conf
 rm -rf $targetdir/htdocs/install
-rmdir $targetdir/doc >/dev/null 2>&1
-rmdir $targetdir/htdocs >/dev/null 2>&1
+
 
 %changelog
