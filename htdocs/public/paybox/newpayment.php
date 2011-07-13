@@ -23,7 +23,7 @@
  *		\ingroup    paybox
  *		\brief      File to offer a way to make a payment for a particular Dolibarr entity
  *		\author	    Laurent Destailleur
- *		\version    $Id: newpayment.php,v 1.57 2011/07/13 11:14:43 eldy Exp $
+ *		\version    $Id: newpayment.php,v 1.59 2011/07/13 12:00:18 eldy Exp $
  */
 
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
@@ -188,7 +188,12 @@ if ($urllogo)
 
 // Output introduction text
 $text='';
-if (! empty($conf->global->PAYBOX_NEWMEMBER_TEXT)) $text.=$langs->trans($conf->global->PAYBOX_NEWMEMBER_TEXT)."<br>\n";
+if (! empty($conf->global->PAYBOX_NEWFORM_TEXT))
+{
+    $langs->load("members");
+    if (preg_match('/^\((.*)\)$/',$conf->global->PAYBOX_NEWFORM_TEXT,$reg)) $text.=$langs->trans($reg[1])."<br>\n";
+    else $text.=$conf->global->PAYBOX_NEWFORM_TEXT."<br>\n";
+}
 if (empty($text))
 {
     $text.='<tr><td align="center"><br>'.$langs->trans("WelcomeOnPaymentPage").'<br></td></tr>'."\n";
@@ -723,5 +728,5 @@ html_print_paybox_footer($mysoc,$langs);
 
 $db->close();
 
-llxFooterPayBox('$Date: 2011/07/13 11:14:43 $ - $Revision: 1.57 $');
+llxFooterPayBox('$Date: 2011/07/13 12:00:18 $ - $Revision: 1.59 $');
 ?>
