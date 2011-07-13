@@ -22,7 +22,7 @@
  *       \file       htdocs/core/class/html.formmail.class.php
  *       \ingroup    core
  *       \brief      Fichier de la classe permettant la generation du formulaire html d'envoi de mail unitaire
- *       \version    $Id: html.formmail.class.php,v 1.32 2011/07/13 16:55:25 eldy Exp $
+ *       \version    $Id: html.formmail.class.php,v 1.31 2011/07/10 20:03:41 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT ."/core/class/html.form.class.php");
 
@@ -519,7 +519,7 @@ class FormMail
                 foreach($listofpaths as $key => $val)
                 {
                     $out.= '<div id="attachfile_'.$key.'">';
-                    $out.= img_mime($listofnames[$key]).' '.$listofnames[$key];
+                	$out.= img_mime($listofnames[$key]).' '.$listofnames[$key];
                     if (! $this->withfilereadonly)
                     {
                         $out.= ' <input type="image" style="border: 0px;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" value="'.($key+1).'" class="removedfile" id="removedfile_'.$key.'" name="removedfile_'.$key.'" />';
@@ -547,15 +547,15 @@ class FormMail
             $defaultmessage="";
 
             // TODO    A partir du type, proposer liste de messages dans table llx_models
-            if     ($this->param["models"]=='facture_send')	            { $defaultmessage=$langs->transnoentities("PredefinedMailContentSendInvoice"); }
-            elseif ($this->param["models"]=='facture_relance')			{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendInvoiceReminder"); }
-            elseif ($this->param["models"]=='propal_send')				{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendProposal"); }
-            elseif ($this->param["models"]=='order_send')				{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendOrder"); }
-            elseif ($this->param["models"]=='order_supplier_send')		{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendSupplierOrder"); }
-            elseif ($this->param["models"]=='invoice_supplier_send')	{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendSupplierInvoice"); }
-            elseif ($this->param["models"]=='shipping_send')			{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendShipping"); }
-            elseif ($this->param["models"]=='fichinter_send')			{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendFichInter"); }
-            elseif (! is_numeric($this->withbody))                      { $defaultmessage=$this->withbody; }
+            if ($this->param["models"]=='body')						{ $defaultmessage=$this->withbody; }
+            if ($this->param["models"]=='facture_send')				{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendInvoice"); }
+            if ($this->param["models"]=='facture_relance')			{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendInvoiceReminder"); }
+            if ($this->param["models"]=='propal_send')				{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendProposal"); }
+            if ($this->param["models"]=='order_send')				{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendOrder"); }
+            if ($this->param["models"]=='order_supplier_send')		{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendSupplierOrder"); }
+            if ($this->param["models"]=='invoice_supplier_send')	{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendSupplierInvoice"); }
+            if ($this->param["models"]=='shipping_send')			{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendShipping"); }
+			if ($this->param["models"]=='fichinter_send')			{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendFichInter"); }
 
             if ($conf->paypal->enabled && $conf->global->PAYPAL_ADD_PAYMENT_URL)
             {
@@ -565,12 +565,12 @@ class FormMail
 
                 if ($this->param["models"]=='order_send')
                 {
-                    $url=getPaypalPaymentUrl('order',$this->substit['__ORDERREF__']);
+                    $url=getPaymentUrl('order',$this->substit['__ORDERREF__']);
                     $defaultmessage=$langs->transnoentities("PredefinedMailContentSendOrderWithPaypalLink",$url);
                 }
                 if ($this->param["models"]=='facture_send')
                 {
-                    $url=getPaypalPaymentUrl('invoice',$this->substit['__FACREF__']);
+                    $url=getPaymentUrl('invoice',$this->substit['__FACREF__']);
                     $defaultmessage=$langs->transnoentities("PredefinedMailContentSendInvoiceWithPaypalLink",$url);
                 }
             }

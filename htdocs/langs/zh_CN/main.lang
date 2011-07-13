@@ -9,8 +9,8 @@
 // Reference language: en_US
 CHARSET=UTF-8
 DIRECTION=ltr
-#FONTFORPDF=chinese
-FONTFORPDF=stsongstdlight
+FONTFORPDF=chinese
+#FONTFORPDF=stsongstdlight
 #FONTSIZEFORPDF=9
 SeparatorDecimal=.
 SeparatorThousand=None
