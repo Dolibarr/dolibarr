@@ -22,7 +22,7 @@
  *	\file       htdocs/core/class/html.formfile.class.php
  *  \ingroup    core
  *	\brief      File of class to offer components to list and upload files
- *	\version	$Id: html.formfile.class.php,v 1.48 2011/07/13 07:38:11 hregis Exp $
+ *	\version	$Id: html.formfile.class.php,v 1.49 2011/07/13 14:41:03 eldy Exp $
  */
 
 
@@ -152,6 +152,7 @@ class FormFile
 	 */
 	function show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='',$codelang='',$hooks='')
 	{
+	    $this->numoffiles=0;
 		print $this->showdocuments($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed,$modelselected,$allowgenifempty,$forcenomultilang,$iconPDF,$maxfilenamelength,$noform,$param,$title,$buttonlabel,$codelang,$hooks);
 		return $this->numoffiles;
 	}
@@ -845,12 +846,12 @@ class FormFile
 		print '<button type="submit" class="start">'.$langs->trans('StartUpload').'</button>';
 		print '<button type="reset" class="cancel">'.$langs->trans('CancelUpload').'</button>';
 		print '</div></form>';
-		
+
 		print '</div><!-- end div fileupload -->';
-		
+
 		print '<div id="fileupload-view">';
 		print '<div class="fileupload-content">';
-		
+
 		print '<table width="100%" class="files">';
 		/*print '<tr>';
 		print '<td>'.$langs->trans("Documents2").'</td>';

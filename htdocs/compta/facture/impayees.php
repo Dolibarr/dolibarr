@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
  *		\file       htdocs/compta/facture/impayees.php
  *		\ingroup    facture
  *		\brief      Page to list and build liste of unpaid invoices
- *		\version    $Revision$
+ *		\version    $Revision: 1.83 $
  */
 
 require("../../main.inc.php");
@@ -268,7 +268,7 @@ if ($result)
 	print_fiche_titre($titre,$link);
 	//print_barre_liste($titre,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',0);	// We don't want pagination on this page
 
-	if ($mesg) print $mesg;
+	dol_htmloutput_mesg($mesg);
 
 	$i = 0;
 	print '<table class="liste" width="100%">';
@@ -351,10 +351,10 @@ if ($result)
 
 			// PDF Picto
 			print '<td width="16" align="right" class="nobordernopadding">';
-			$filename=dol_sanitizeFileName($objp->facnumber);
+            $filename=dol_sanitizeFileName($objp->facnumber);
 			$filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($objp->facnumber);
 			$foundpdf=$formfile->show_documents('facture',$filename,$filedir,$urlsource,'','','',1,'',1,$param);
-			print '</td>';
+            print '</td>';
 
 			print '</tr></table>';
 
@@ -425,5 +425,5 @@ if ($result)
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/13 14:41:02 $ - $Revision: 1.83 $');
 ?>
