@@ -22,7 +22,7 @@
  *       \file       htdocs/core/class/html.formmail.class.php
  *       \ingroup    core
  *       \brief      Fichier de la classe permettant la generation du formulaire html d'envoi de mail unitaire
- *       \version    $Id: html.formmail.class.php,v 1.33 2011/07/13 22:18:12 eldy Exp $
+ *       \version    $Id: html.formmail.class.php,v 1.32 2011/07/13 16:55:25 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT ."/core/class/html.form.class.php");
 
@@ -505,7 +505,7 @@ class FormMail
             $out.= '<tr>';
             $out.= '<td width="180">'.$langs->trans("MailFile").'</td>';
             $out.= '<td>';
-            // TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
+            // FIXME Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
             $out.= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
             $out.= '<script type="text/javascript" language="javascript">';
             $out.= 'jQuery(document).ready(function () {';
