@@ -1,6 +1,6 @@
 --
--- $Id: init_menu_auguria.sql,v 1.121 2011/07/13 11:26:17 eldy Exp $
--- $Revision: 1.121 $
+-- $Id: init_menu_auguria.sql,v 1.119 2011/07/03 16:00:20 eldy Exp $
+-- $Revision: 1.119 $
 --
 -- Menu base entries
 -- This file is loaded when a menu handler base is activated (auguria, etc..)

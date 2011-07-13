@@ -22,7 +22,7 @@
  *	\file       htdocs/public/members/new.php
  *	\ingroup    member
  *	\brief      Example of form to add a new member
- *	\version    $Id: new.php,v 1.41 2011/07/13 11:14:43 eldy Exp $
+ *	\version    $Id: new.php,v 1.40 2011/07/13 10:22:54 eldy Exp $
  *
  *  Note that you can add following constant to change behaviour of page
  *  MEMBER_NEWFORM_AMOUNT               Default amount for autosubscribe form
@@ -182,17 +182,12 @@ if ($action == 'add')
         $langs->load("errors");
         $errmsg .= $langs->trans("ErrorBadDateFormat")."<br>\n";
     }
-    if (! empty($conf->global->MEMBER_NEWFORM_DOLIBARRTURNOVER))
+    if (isset($public))
     {
-        if (GETPOST('budget') <= 0)
-        {
-            $error+=1;
-            $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("TurnoverOrBudget"))."<br>\n";
-        }
+        $public=1;
+    }else{
+        $public=0;
     }
-
-    if (isset($public)) $public=1;
-    else $public=0;
 
     if (! $error)
     {
@@ -237,24 +232,20 @@ if ($action == 'add')
             }
 
             if ($backtopage) $urlback=$backtopage;
-            else if ($conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION)
-            {
-                $urlback=$conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION;
-                // TODO Make replacement of __AMOUNT__, etc...
-            }
+            else if ($conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION) $urlback=$conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION;
             else $urlback=$_SERVER["PHP_SELF"]."?action=added";
 
             if (! empty($conf->global->MEMBER_NEWFORM_PAYONLINE))
             {
                 if ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paybox')
                 {
-                    $urlback=DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?from=membernewform&source=membersubscription&ref='.$adh->ref;
+                    $urlback=DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?source=membersubscription&ref='.$adh->ref;
                     if (price2num(GETPOST('amount'))) $urlback.='&amount='.price2num(GETPOST('amount'));
                     if (GETPOST('email')) $urlback.='&email='.urlencode(GETPOST('email'));
                 }
                 else if ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paypal')
                 {
-                    $urlback=DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?from=membernewform&source=membersubscription&ref='.$adh->ref;
+                    $urlback=DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?source=membersubscription&ref='.$adh->ref;
                     if (price2num(GETPOST('amount'))) $urlback.='&amount='.price2num(GETPOST('amount'));
                     if (GETPOST('email')) $urlback.='&email='.urlencode(GETPOST('email'));
                 }
@@ -289,7 +280,7 @@ if ($action == 'added')
     print $langs->trans("NewMemberbyWeb");
     print '</center>';
 
-    llxFooterVierge('$Date: 2011/07/13 11:14:43 $ - $Revision: 1.41 $');
+    llxFooterVierge('$Date: 2011/07/13 10:22:54 $ - $Revision: 1.40 $');
     exit;
 }
 
@@ -459,7 +450,7 @@ print '</tr>'."\n";
 if (! empty($conf->global->MEMBER_NEWFORM_DOLIBARRTURNOVER))
 {
     $arraybudget=array('50'=>'<= 100 000','100'=>'<= 200 000','200'=>'<= 500 000','400'=>'<= 1 500 000','750'=>'<= 3 000 000','1500'=>'<= 5 000 000','2000'=>'5 000 000+');
-    print '<tr id="trbudget" class="trcompany"><td>'.$langs->trans("TurnoverOrBudget").' <FONT COLOR="red">*</FONT></td><td>';
+    print '<tr id="trbudget" class="trcompany"><td>'.$langs->trans("TurnoverOrBudget").'</td><td>';
     print $html->select_array('budget', $arraybudget, GETPOST('budget'), 1);
     print ' € or $';
 
@@ -537,5 +528,5 @@ print "<br></form>\n";
 
 $db->close();
 
-llxFooterVierge('$Date: 2011/07/13 11:14:43 $ - $Revision: 1.41 $');
+llxFooterVierge('$Date: 2011/07/13 10:22:54 $ - $Revision: 1.40 $');
 ?>
