@@ -24,7 +24,7 @@
  *	\file       htdocs/compta/paiement.php
  *	\ingroup    compta
  *	\brief      Page to create a payment
- *	\version    $Id: paiement.php,v 1.110 2011/07/11 09:32:35 cdelambert Exp $
+ *	\version    $Id: paiement.php,v 1.111 2011/07/13 08:57:21 eldy Exp $
  */
 
 require('../main.inc.php');
@@ -253,7 +253,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         	if (! empty($conf->global->PAYPAL_BANK_ACCOUNT)) $accountid=$conf->global->PAYPAL_BANK_ACCOUNT;
         	$paymentnum=$facture->ref_int;
         }
-        if ($conf->use_javascript_ajax)
+        if ($conf->use_javascript_ajax && !empty($conf->global->MAIN_JS_ON_PAYMENT))
         {
             print "\n".'<script type="text/javascript" language="javascript">';
             print 'jQuery(document).ready(function () {';
@@ -272,32 +272,32 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                                 jQuery(\'.fieldrequireddyn\').removeClass(\'fieldrequired\');
                             }
                         });
-        			
+
         			function elemToJson(selector)
             		{
             			var subJson = {};
             			jQuery.map(selector.serializeArray(), function(n,i)
             			{
             				subJson[n["name"]] = n["value"];
-            			}); 
-            			return subJson;        			
+            			});
+            			return subJson;
             		}
             		function callForResult(imgId)
             		{
             		    var json = {};
 		            	var form = jQuery("#payment_form");
-		            	
-		            	json["amountPayment"] = jQuery("#amountpayment").attr("value");            			
+
+		            	json["amountPayment"] = jQuery("#amountpayment").attr("value");
 		            	json["amounts"] = elemToJson(form.find("input[name*=\"amount_\"]"));
-		            	json["remains"] = elemToJson(form.find("input[name*=\"remain_\"]")); 
+		            	json["remains"] = elemToJson(form.find("input[name*=\"remain_\"]"));
 		            	if(imgId != null)json["imgClicked"] = imgId;
-		            	           				
+
             			jQuery.post("ajaxpayment.php", json, function(data)
             			{
-            				json = jQuery.parseJSON(data); 
-            				
+            				json = jQuery.parseJSON(data);
+
             				form.data(json);
-            				            				
+
             				for(var key in json)
             				{
             					if(key == "result")	{
@@ -307,31 +307,31 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             						} else {
             							jQuery("#"+key).removeAttr("style");
             						}
-            					} else {            					
+            					} else {
             						form.find("input[name*=\""+key+"\"]").each(function() {
             							jQuery(this).attr("value", json[key]);
             						});
-            					}          				
-            				}            				
+            					}
+            				}
             			});
-            			
-            		}  
-            		function callToBreakdown(imgSelector) {        			
+
+            		}
+            		function callToBreakdown(imgSelector) {
 		            	var form = jQuery("#payment_form"), imgId;
-		            	
+
 		            	imgId =  imgSelector.attr("id");
 		            	callForResult(imgId);
             		}
 
             		jQuery("#payment_form").find("img").click(function() {
             				callToBreakdown(jQuery(this));
-                    	}); 
-                    	
-            			jQuery("#payment_form").find("input[name*=\"amount_\"]").change(function() {  
+                    	});
+
+            			jQuery("#payment_form").find("input[name*=\"amount_\"]").change(function() {
             				callForResult();
-                    	}); 
-                    	            		
-            			jQuery("#amountpayment").change(function() {  
+                    	});
+
+            			jQuery("#amountpayment").change(function() {
             				callForResult();
                     	});
              	});
@@ -371,7 +371,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         print '</tr>';
 
         // Payment amount
-        if ($conf->use_javascript_ajax)
+        if ($conf->use_javascript_ajax && !empty($conf->global->MAIN_JS_ON_PAYMENT))
         {
             print '<tr><td><span class="fieldrequired">'.$langs->trans('AmountPayment').'</span></td>';
             print '<td>';
@@ -460,7 +460,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                 print '<td align="right">'.$langs->trans('RemainderToPay').'</td>';
                 print '<td align="right">'.$langs->trans('PaymentAmount').'</td>';
                 print '<td align="right">&nbsp;</td>';
-                print "</tr>\n";  
+                print "</tr>\n";
 
                 $var=True;
                 $total=0;
@@ -512,7 +512,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
                     if ($action != 'add_paiement')
                     {
-                        if ($conf->use_javascript_ajax)
+                        if ($conf->use_javascript_ajax && !empty($conf->global->MAIN_JS_ON_PAYMENT))
                         {
                             print img_picto($langs->trans('AddRemind'),'rightarrow.png','id="'.$objp->facid.'" "');
                         }
@@ -671,5 +671,5 @@ if (! GETPOST('action'))
 
 $db->close();
 
-llxFooter('$Date: 2011/07/11 09:32:35 $ - $Revision: 1.110 $');
+llxFooter('$Date: 2011/07/13 08:57:21 $ - $Revision: 1.111 $');
 ?>
