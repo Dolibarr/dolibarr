@@ -25,7 +25,7 @@
  *	\ingroup		core
  *  \brief      	Fichier de la classe de stockage de la config courante
  *  \remarks		La config est stockee dans le fichier conf/conf.php
- *  \version    	$Id: conf.class.php,v 1.61 2011/07/13 18:04:25 eldy Exp $
+ *  \version    	$Id: conf.class.php,v 1.60 2011/07/09 05:28:42 hregis Exp $
  */
 
 
@@ -145,13 +145,13 @@ class Conf
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_TRIGGERS$/i',$key,$reg))
 						{
 							$modulename = strtolower($reg[1]);
-							$this->triggers_modules[] = '/'.$modulename.'/inc/triggers/';    // TODO Replace inc by includes to have same path than standard
+							$this->triggers_modules[] = '/'.$modulename.'/inc/triggers/';
 						}
 						// If this is constant for login method activated by a module
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_LOGIN_METHOD$/i',$key,$reg))
 						{
 							$modulename = strtolower($reg[1]);
-							$this->login_method_modules[] = DOL_DOCUMENT_ROOT.'/'.$modulename.'/inc/login/'; // TODO Replace inc by includes to have same path than standard
+							$this->login_method_modules[] = DOL_DOCUMENT_ROOT.'/'.$modulename.'/inc/login/';
 						}
 						// If this is constant for hook activated by a module. Value is list of hooked tabs separated with :
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_HOOKS$/i',$key,$reg))
