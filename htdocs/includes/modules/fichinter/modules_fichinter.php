@@ -24,7 +24,7 @@
  *  \ingroup    ficheinter
  *  \brief      Fichier contenant la classe mere de generation des fiches interventions en PDF
  *   et la classe mere de numerotation des fiches interventions
- *   \version    $Id$
+ *   \version    $Id: modules_fichinter.php,v 1.41 2011/07/10 13:48:25 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
@@ -172,10 +172,10 @@ function fichinter_create($db, $object, $modele='', $outputlangs='')
 
 	// Charge le modele
 	$file = "pdf_".$modele.".modules.php";
-	
+
 	// On verifie l'emplacement du modele
 	$file = dol_buildpath($dir.$file);
-	
+
 	if (file_exists($file))
 	{
 		$classname = "pdf_".$modele;
@@ -220,7 +220,7 @@ function fichinter_delete_preview($db, $fichinterid, $fichinterref='')
 
 	if (!$fichinterref)
 	{
-		$fichinter = new Fichinter($db,"",$fichinterid);
+		$fichinter = new Fichinter($db);
 		$fichinter->fetch($fichinterid);
 		$fichinterref = $fichinter->ref;
 	}

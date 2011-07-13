@@ -26,7 +26,7 @@
  *	\file       htdocs/commande/fiche.php
  *	\ingroup    commande
  *	\brief      Page to show customer order
- *	\version    $Id: fiche.php,v 1.524 2011/07/07 21:32:21 eldy Exp $
+ *	\version    $Id: fiche.php,v 1.525 2011/07/10 20:03:41 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -931,7 +931,7 @@ if ($action == 'remove_file')
     {
         require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 
-        $upload_dir = $conf->commande->dir_output . "/";
+        $upload_dir = $conf->commande->dir_output;
         $file = $upload_dir . '/' . $_GET['file'];
         dol_delete_file($file);
         $mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
@@ -947,9 +947,9 @@ if ($_POST['addfile'])
 
     // Set tmp user directory TODO Use a dedicated directory for temp mails files
     $vardir=$conf->user->dir_output."/".$user->id;
-    $upload_dir = $vardir.'/temp/';
+    $upload_dir_tmp = $vardir.'/temp';
 
-    $mesg=dol_add_file_process($upload_dir,0,0);
+    $mesg=dol_add_file_process($upload_dir_tmp,0,0);
 
     $action ='presend';
 }
@@ -963,7 +963,7 @@ if (! empty($_POST['removedfile']))
 
     // Set tmp user directory
     $vardir=$conf->user->dir_output."/".$user->id;
-    $upload_dir = $vardir.'/temp/';
+    $upload_dir_tmp = $vardir.'/temp';
 
     $mesg=dol_remove_file_process($_POST['removedfile'],0);
 
@@ -2134,5 +2134,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/07 21:32:21 $ - $Revision: 1.524 $');
+llxFooter('$Date: 2011/07/10 20:03:41 $ - $Revision: 1.525 $');
 ?>

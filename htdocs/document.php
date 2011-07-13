@@ -25,7 +25,7 @@
 /**
  *	\file       htdocs/document.php
  *  \brief      Wrapper to download data files
- *  \version    $Id: document.php,v 1.121 2011/06/28 13:42:06 hregis Exp $
+ *  \version    $Id: document.php,v 1.122 2011/07/09 00:15:16 eldy Exp $
  *  \remarks    Call of this wrapper is made with URL:
  * 				document.php?modulepart=repfichierconcerne&file=pathrelatifdufichier
  */
@@ -41,7 +41,11 @@ if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
 
-// C'est un wrapper, donc header vierge
+/**
+ * Wrapper, donc header vierge
+ *
+ * @return  null
+ */
 function llxHeader() { }
 
 require("./main.inc.php");	// Load $user and permissions

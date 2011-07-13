@@ -1,5 +1,5 @@
 #!/usr/bin/php
-<?PHP
+<?php
 /**
  * Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
@@ -24,7 +24,7 @@
  *		\ingroup    	banque
  *		\brief      	Script to build graph of sold for each bank account
  *		\deprecated		Ce script n'est plus utilise car les graphiques sont generes dynamiquement maintenant.
- *		\version		$Id: build-graph-sold-example.php,v 1.9 2011/07/08 14:54:35 eldy Exp $
+ *		\version		$Id: build-graph-sold-example.php,v 1.10 2011/07/09 14:11:41 eldy Exp $
  */
 
 $sapi_type = php_sapi_name();

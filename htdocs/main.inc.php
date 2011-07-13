@@ -26,7 +26,7 @@
  *	\file       htdocs/main.inc.php
  *	\ingroup	core
  *	\brief      File that defines environment for Dolibarr pages only (variables not required by scripts)
- *	\version    $Id: main.inc.php,v 1.753 2011/07/08 11:26:40 eldy Exp $
+ *	\version    $Id: main.inc.php,v 1.754 2011/07/12 20:16:03 eldy Exp $
  */
 
 @ini_set('memory_limit', '64M');	// This may be useless if memory is hard limited by your PHP
@@ -254,12 +254,14 @@ if (! empty($conf->global->MAIN_NOT_INSTALLED) || ! empty($conf->global->MAIN_NO
 if ((! empty($conf->global->MAIN_VERSION_LAST_UPGRADE) && ($conf->global->MAIN_VERSION_LAST_UPGRADE != DOL_VERSION))
 || (empty($conf->global->MAIN_VERSION_LAST_UPGRADE) && ! empty($conf->global->MAIN_VERSION_LAST_INSTALL) && ($conf->global->MAIN_VERSION_LAST_INSTALL != DOL_VERSION)))
 {
-	require_once(DOL_DOCUMENT_ROOT ."/lib/admin.lib.php");
-	$dolibarrversionlastupgrade=preg_split('/[.-]/',$conf->global->MAIN_VERSION_LAST_UPGRADE);
+    $versiontocompare=empty($conf->global->MAIN_VERSION_LAST_UPGRADE)?$conf->global->MAIN_VERSION_LAST_INSTALL:$conf->global->MAIN_VERSION_LAST_UPGRADE;
+    require_once(DOL_DOCUMENT_ROOT ."/lib/admin.lib.php");
+	$dolibarrversionlastupgrade=preg_split('/[.-]/',$versiontocompare);
 	$dolibarrversionprogram=preg_split('/[.-]/',DOL_VERSION);
-	if (versioncompare($dolibarrversionprogram,$dolibarrversionlastupgrade) > 0)	// Programs have a version higher than database
+    $rescomp=versioncompare($dolibarrversionprogram,$dolibarrversionlastupgrade);
+    if ($rescomp > 0)   // Programs have a version higher than database. We did not add "&& $rescomp < 3" because we want upgrade process for build upgrades
 	{
-		dol_syslog("main.inc: database version ".$conf->global->MAIN_VERSION_LAST_UPGRADE." is lower than programs version ".DOL_VERSION.". Redirect to install page.", LOG_WARNING);
+		dol_syslog("main.inc: database version ".$versiontocompare." is lower than programs version ".DOL_VERSION.". Redirect to install page.", LOG_WARNING);
 		Header("Location: ".DOL_URL_ROOT."/install/index.php");
 		exit;
 	}

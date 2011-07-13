@@ -1,4 +1,5 @@
-<?PHP
+#!/usr/bin/php
+<?php
 /**
  * Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
@@ -22,7 +23,7 @@
  *      \file       scripts/withdrawals/build_withdrawal_file.php
  *      \ingroup    prelevement
  *      \brief      Script de prelevement
- * 		\version	$Id$
+ * 		\version	$Id: build_withdrawal_file.php,v 1.4 2011/07/09 14:11:41 eldy Exp $
  */
 
 $sapi_type = php_sapi_name();
@@ -36,7 +37,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 // Recupere env dolibarr
-$version='$Revision$';
+$version='$Revision: 1.4 $';
 
 require_once($path."../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/bon-prelevement.class.php");

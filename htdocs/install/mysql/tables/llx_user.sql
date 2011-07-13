@@ -17,7 +17,7 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- $Id: llx_user.sql,v 1.8 2011/06/29 10:23:33 eldy Exp $
+-- $Id: llx_user.sql,v 1.9 2011/07/12 22:03:44 eldy Exp $
 -- ===========================================================================
 
 create table llx_user
@@ -33,6 +33,7 @@ create table llx_user
   pass              varchar(32),
   pass_crypted      varchar(128),
   pass_temp         varchar(32),			    -- temporary password when asked for forget password
+  civilite          varchar(6),
   name              varchar(50),
   firstname         varchar(50),
   office_phone      varchar(20),
