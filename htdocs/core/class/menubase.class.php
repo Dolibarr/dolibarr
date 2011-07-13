@@ -20,7 +20,7 @@
 /**
  *  \file       htdocs/core/class/menubase.class.php
  *  \ingroup    core
- *  \version	$Id: menubase.class.php,v 1.25 2011/07/13 22:18:48 eldy Exp $
+ *  \version	$Id$
  *  \brief      File of class to manage dynamic menu entries
  *  \remarks	Initialy built by build_class_from_table on 2008-01-12 14:19
  */
@@ -78,7 +78,7 @@ class Menubase
      *      @param      user        User that create
      *      @return     int         <0 if KO, Id of record if OK
      */
-    function create($user=0)
+    function create($user)
     {
         global $conf, $langs;
 
