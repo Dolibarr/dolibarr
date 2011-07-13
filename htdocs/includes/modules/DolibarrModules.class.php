@@ -24,7 +24,7 @@
 /**
  *  \file           htdocs/includes/modules/DolibarrModules.class.php
  *  \brief          Fichier de description et activation des modules Dolibarr
- *  \version        $Id: DolibarrModules.class.php,v 1.161 2011/07/13 22:15:19 eldy Exp $
+ *  \version        $Id: DolibarrModules.class.php,v 1.160 2011/07/13 21:54:07 eldy Exp $
  */
 
 
@@ -926,7 +926,7 @@ class DolibarrModules
 
     /**
      *  Insert permissions definitions related to the module into llx_rights_def
-     *  @param      $reinitadminperms   If 1, we also grant them to all admin users
+     *  @param      $reinitadminperms   If 1, we also grant them to admin user
      *  @return     int                 Number of error (0 if OK)
      */
     function insert_permissions($reinitadminperms=0)
@@ -1004,15 +1004,12 @@ class DolibarrModules
                     }
 
                     // If we are into a logged session and we are an admin user, we take permission of new activated module
-                    if ($reinitadminperms)
+                    if ($reinitadminperms && ! empty($user->admin))
                     {
-                        if (! empty($user->admin))  // FIXME. We must loop on each admin records and make grant on each fuser object. We must removed global $user.
-                        {
-                            $user->addrights($r_id);
-                            // We reload permissions
-                            $user->clearrights();
-                            $user->getrights();
-                        }
+                        $user->addrights($r_id);
+                        // We reload permissions
+                        $user->clearrights();
+                        $user->getrights();
                     }
                 }
             }
@@ -1059,6 +1056,8 @@ class DolibarrModules
      */
     function insert_menus()
     {
+        global $user;
+
         require_once(DOL_DOCUMENT_ROOT."/core/class/menubase.class.php");
 
         $err=0;
@@ -1119,7 +1118,7 @@ class DolibarrModules
 
             if (! $err)
             {
-                $result=$menu->create();
+                $result=$menu->create($user);
                 if ($result > 0)
                 {
                     $this->menu[$key]['rowid']=$result;
