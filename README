@@ -53,13 +53,20 @@ To upgrade Dolibarr from an old version to this one:
   
 - If you came from a beta version or from any version x.y.z to any
   other where x or y number differs, you must call the Dolibarr "install/"
-  page in your browser (this should be done automatically at first dolibarr
-  access).
-  This URL should looks like:
+  page in your browser.
+  Url might be for example:
    http://localhost/dolibarr/htdocs/install/
   or
    http://yourdolibarrhost/install/index.php
 
+  To know what is exactly correct URL for "install/" page, take URL you use
+  to go on login page. It it ends with "index.php", remove it. Then add
+  "install/" at the end.
+  For example, if your login page is: 
+  http://yourdolibarrhost/something/index.php
+  Then, your "install/" pages will be 
+  http://yourdolibarrhost/something/install/
+  
   Then choose the "update" option according to your case.
   Note: Migrate process can be ran safely several times.
   
