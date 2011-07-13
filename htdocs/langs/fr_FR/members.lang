@@ -197,4 +197,4 @@ Associations=Associations
 Collectivités=Collectivités
 Particuliers=Particuliers
 Entreprises=Entreprises
-DOLIBARRFOUNDATION_PAYMENT_FORM=Pour réaliser le paiement de votre cotisation par virement bancaire ou par chèque, consulter la page <a href="http://wiki.dolibarr.org/index.php/Adh%C3%A9rer#Pour_une_adh.C3.A9sion_par_ch.C3.A8que">http://wiki.dolibarr.org/index.php/Adhérer</a>.<br>Pour payer dès maintenant par Carte Bancaire ou Paypal, cliquer sur le bouton au bas de cette page.<br><br>
+DOLIBARRFOUNDATION_PAYMENT_FORM=Pour réaliser le paiement de votre cotisation par virement bancaire ou par chèque, consulter la page <a target="_blank" href="http://wiki.dolibarr.org/index.php/Adh%C3%A9rer#Pour_une_adh.C3.A9sion_par_ch.C3.A8que">http://wiki.dolibarr.org/index.php/Adhérer</a>.<br>Pour payer dès maintenant par Carte Bancaire ou Paypal, cliquer sur le bouton au bas de cette page.<br>

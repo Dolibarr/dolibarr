@@ -193,4 +193,4 @@ Associations=Foundations
 Collectivités=Organizations
 Particuliers=Personal
 Entreprises=Companies
-DOLIBARRFOUNDATION_PAYMENT_FORM=To make your subscription payment using a bank transfer, see page <a href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a>.<br>To pay using a Credit Card or Paypal, click on button at bottom of this page.<br><br> 
+DOLIBARRFOUNDATION_PAYMENT_FORM=To make your subscription payment using a bank transfer, see page <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a>.<br>To pay using a Credit Card or Paypal, click on button at bottom of this page.<br> 
