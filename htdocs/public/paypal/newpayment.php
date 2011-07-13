@@ -23,7 +23,7 @@
  *		\ingroup    paypal
  *		\brief      File to offer a way to make a payment for a particular Dolibarr entity
  *		\author	    Laurent Destailleur
- *		\version    $Id: newpayment.php,v 1.24 2011/07/13 12:00:18 eldy Exp $
+ *		\version    $Id: newpayment.php,v 1.23 2011/07/13 11:42:39 eldy Exp $
  */
 
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
@@ -282,11 +282,11 @@ if ($urllogo)
 
 // Output introduction text
 $text='';
-if (! empty($conf->global->PAYPAL_NEWFORM_TEXT))
+if (! empty($conf->global->PAYBOX_NEWMEMBER_TEXT))
 {
     $langs->load("members");
-    if (preg_match('/^\((.*)\)$/',$conf->global->PAYPAL_NEWFORM_TEXT,$reg)) $text.=$langs->trans($reg[1])."<br>\n";
-    else $text.=$conf->global->PAYPAL_NEWFORM_TEXT."<br>\n";
+    if (preg_match('/^\((.*)\)$/',$conf->global->PAYBOX_NEWMEMBER_TEXT,$reg)) $text.=$langs->trans($reg[1])."<br>\n";
+    else $text.=$conf->global->PAYBOX_NEWMEMBER_TEXT."<br>\n";
 }
 if (empty($text))
 {
@@ -946,5 +946,5 @@ html_print_paypal_footer($mysoc,$langs);
 
 $db->close();
 
-llxFooterPaypal('$Date: 2011/07/13 12:00:18 $ - $Revision: 1.24 $');
+llxFooterPaypal('$Date: 2011/07/13 11:42:39 $ - $Revision: 1.23 $');
 ?>

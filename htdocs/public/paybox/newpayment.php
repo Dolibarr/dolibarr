@@ -23,7 +23,7 @@
  *		\ingroup    paybox
  *		\brief      File to offer a way to make a payment for a particular Dolibarr entity
  *		\author	    Laurent Destailleur
- *		\version    $Id: newpayment.php,v 1.60 2011/07/13 12:03:30 eldy Exp $
+ *		\version    $Id: newpayment.php,v 1.58 2011/07/13 11:42:39 eldy Exp $
  */
 
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
@@ -188,12 +188,11 @@ if ($urllogo)
 
 // Output introduction text
 $text='';
-if (! empty($conf->global->PAYBOX_NEWFORM_TEXT))
+if (! empty($conf->global->PAYBOX_NEWMEMBER_TEXT))
 {
     $langs->load("members");
-    if (preg_match('/^\((.*)\)$/',$conf->global->PAYBOX_NEWFORM_TEXT,$reg)) $text.=$langs->trans($reg[1])."<br>\n";
-    else $text.=$conf->global->PAYBOX_NEWFORM_TEXT."<br>\n";
-    $text='<tr><td align="center"><br>'.$text.'<br></td></tr>'."\n";
+    if (preg_match('/^\((.*)\)$/',$conf->global->PAYBOX_NEWMEMBER_TEXT,$reg)) $text.=$langs->trans($reg[1])."<br>\n";
+    else $text.=$conf->global->PAYBOX_NEWMEMBER_TEXT."<br>\n";
 }
 if (empty($text))
 {
@@ -729,5 +728,5 @@ html_print_paybox_footer($mysoc,$langs);
 
 $db->close();
 
-llxFooterPayBox('$Date: 2011/07/13 12:03:30 $ - $Revision: 1.60 $');
+llxFooterPayBox('$Date: 2011/07/13 11:42:39 $ - $Revision: 1.58 $');
 ?>
