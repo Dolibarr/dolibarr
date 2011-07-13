@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,7 +22,7 @@
  *       \file       htdocs/fourn/facture/index.php
  *       \ingroup    fournisseur,facture
  *       \brief      List of suppliers invoices
- *       \version    $Id$
+ *       \version    $Id: index.php,v 1.84 2011/07/13 13:10:51 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -35,6 +35,7 @@ if (!$user->rights->fournisseur->facture->lire)
 accessforbidden();
 
 $langs->load("companies");
+$langs->load("bills");
 
 $socid = $_GET["socid"];
 
@@ -292,5 +293,5 @@ else
 $db->close();
 
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/13 13:10:51 $ - $Revision: 1.84 $');
 ?>
