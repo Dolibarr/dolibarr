@@ -24,7 +24,7 @@
 /**
  *  \file           htdocs/includes/modules/DolibarrModules.class.php
  *  \brief          Fichier de description et activation des modules Dolibarr
- *  \version        $Id: DolibarrModules.class.php,v 1.159 2011/06/28 20:31:23 eldy Exp $
+ *  \version        $Id: DolibarrModules.class.php,v 1.161 2011/07/13 22:15:19 eldy Exp $
  */
 
 
@@ -926,7 +926,7 @@ class DolibarrModules
 
     /**
      *  Insert permissions definitions related to the module into llx_rights_def
-     *  @param      $reinitadminperms   If 1, we also grant them to admin user
+     *  @param      $reinitadminperms   If 1, we also grant them to all admin users
      *  @return     int                 Number of error (0 if OK)
      */
     function insert_permissions($reinitadminperms=0)
@@ -955,7 +955,7 @@ class DolibarrModules
                 {
                     $r_id       = $this->rights[$key][0];
                     $r_desc     = $this->rights[$key][1];
-                    $r_type     = $this->rights[$key][2];
+                    $r_type     = isset($this->rights[$key][2])?$this->rights[$key][2]:'';
                     $r_def      = $this->rights[$key][3];
                     $r_perms    = $this->rights[$key][4];
                     $r_subperms = isset($this->rights[$key][5])?$this->rights[$key][5]:'';
@@ -1004,12 +1004,15 @@ class DolibarrModules
                     }
 
                     // If we are into a logged session and we are an admin user, we take permission of new activated module
-                    if ($reinitadminperms && ! empty($user->admin))
+                    if ($reinitadminperms)
                     {
-                        $user->addrights($r_id);
-                        // We reload permissions
-                        $user->clearrights();
-                        $user->getrights();
+                        if (! empty($user->admin))  // FIXME. We must loop on each admin records and make grant on each fuser object. We must removed global $user.
+                        {
+                            $user->addrights($r_id);
+                            // We reload permissions
+                            $user->clearrights();
+                            $user->getrights();
+                        }
                     }
                 }
             }
@@ -1056,8 +1059,6 @@ class DolibarrModules
      */
     function insert_menus()
     {
-        global $user;
-
         require_once(DOL_DOCUMENT_ROOT."/core/class/menubase.class.php");
 
         $err=0;
@@ -1118,7 +1119,7 @@ class DolibarrModules
 
             if (! $err)
             {
-                $result=$menu->create($user);
+                $result=$menu->create();
                 if ($result > 0)
                 {
                     $this->menu[$key]['rowid']=$result;
