@@ -22,7 +22,7 @@
  *	\file       htdocs/public/members/new.php
  *	\ingroup    member
  *	\brief      Example of form to add a new member
- *	\version    $Id: new.php,v 1.42 2011/07/13 11:56:36 eldy Exp $
+ *	\version    $Id: new.php,v 1.41 2011/07/13 11:14:43 eldy Exp $
  *
  *  Note that you can add following constant to change behaviour of page
  *  MEMBER_NEWFORM_AMOUNT               Default amount for autosubscribe form
@@ -184,7 +184,7 @@ if ($action == 'add')
     }
     if (! empty($conf->global->MEMBER_NEWFORM_DOLIBARRTURNOVER))
     {
-        if (GETPOST("morphy") == 'mor' && GETPOST('budget') <= 0)
+        if (GETPOST('budget') <= 0)
         {
             $error+=1;
             $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("TurnoverOrBudget"))."<br>\n";
@@ -289,7 +289,7 @@ if ($action == 'added')
     print $langs->trans("NewMemberbyWeb");
     print '</center>';
 
-    llxFooterVierge('$Date: 2011/07/13 11:56:36 $ - $Revision: 1.42 $');
+    llxFooterVierge('$Date: 2011/07/13 11:14:43 $ - $Revision: 1.41 $');
     exit;
 }
 
@@ -537,5 +537,5 @@ print "<br></form>\n";
 
 $db->close();
 
-llxFooterVierge('$Date: 2011/07/13 11:56:36 $ - $Revision: 1.42 $');
+llxFooterVierge('$Date: 2011/07/13 11:14:43 $ - $Revision: 1.41 $');
 ?>
