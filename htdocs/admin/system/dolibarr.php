@@ -20,7 +20,7 @@
 /**
  *  \file       htdocs/admin/system/dolibarr.php
  *  \brief      Page to show Dolibarr informations
- *  \version    $Id: dolibarr.php,v 1.58 2011/07/13 13:15:17 eldy Exp $
+ *  \version    $Id$
  */
 
 require("../../main.inc.php");
@@ -163,7 +163,7 @@ if (function_exists('date_default_timezone_get'))
 	print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("CurrentTimeZone").'</td><td>';	// Timezone server PHP
 	$a=date_default_timezone_get();
 	$a.=' ('.(-dol_mktime(0,0,0,1,1,1970)>0?'+':'').(-dol_mktime(0,0,0,1,1,1970)).')';
-    print $form->textwithtooltip($a,$txt,2,1,img_info(''));
+    print $form->textwithtooltip($a,$txt,2,1,img_info());
 	print '</td></tr>'."\n";	// value defined in http://fr3.php.net/manual/en/timezones.europe.php
 }
 else
@@ -171,7 +171,7 @@ else
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("PHPServerOffsetWithGreenwich").'</td><td>';
     $a=(-dol_mktime(0,0,0,1,1,1970)>0?'+':'').(-dol_mktime(0,0,0,1,1,1970));
-    print $form->textwithtooltip($a,$txt,2,1,img_info(''));
+    print $form->textwithtooltip($a,$txt,2,1,img_info());
     print '</td></tr>'."\n";
 }
 $var=!$var;
@@ -213,5 +213,5 @@ print '<tr '.$bc[$var].'><td width="300">=> '.$langs->trans("File encoding").'</
 print '</table>';
 print '<br>';
 
-llxFooter('$Date: 2011/07/13 13:15:17 $ - $Revision: 1.58 $');
+llxFooter('$Date$ - $Revision$');
 ?>
