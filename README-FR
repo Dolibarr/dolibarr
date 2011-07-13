@@ -53,12 +53,18 @@ Pour mettre a jour Dolibarr depuis une vieille version vers celle ci:
   il n'y a pas besoin de migration de données.
   
 - Si vous venez d'une beta ou d'un version x.y.z vers une autre ou les numeros x
-  ou y varient, vous devez appelez la page "install/" de migration dans votre 
-  navigateur (ceci doit se faire automatiquement au premier accès de l'application).
-  Ce sera une URL du genre:
+  ou y varient, vous devez appelez la page de migration dans votre navigateur:
    http://localhost/dolibarr/htdocs/install/index.php
   ou
    http://yourdolibarrhost/install/index.php
+
+  Pour savoir quelle est l'URL exactement de la page "install/", prenez l'URL que
+  vous utilisez pour vous loguer. Si elle se termine par "index.php", enlevez le.
+  Dans tous les cas, ajouter ensuite "install/" à la fin.
+  Par exemple, si votre page de connexion est: 
+  http://yourdolibarrhost/something/index.php
+  Alors la page "install/" sera 
+  http://yourdolibarrhost/something/install/
 
   Ensuite, choisir l'option de "mise a jour" en rapport avec votre cas.
   Note: Le processus de migration peut etre lance plusieurs fois sans risque.
