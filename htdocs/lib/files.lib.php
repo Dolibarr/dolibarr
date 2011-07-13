@@ -20,7 +20,7 @@
 /**
  *  \file		htdocs/lib/files.lib.php
  *  \brief		Library for file managing functions
- *  \version	$Id: files.lib.php,v 1.69 2011/07/13 21:33:38 eldy Exp $
+ *  \version	$Id: files.lib.php,v 1.68 2011/07/11 06:23:22 hregis Exp $
  */
 
 /**
@@ -590,13 +590,12 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
  *  @param      disableglob     Disable usage of glob like *
  *  @param      nophperrors     Disable all PHP output errors
  *  @param		notrigger		Disable all triggers
- *  @param      triggercode     Code of trigger
- *  @param      object          Object for trigger
  *  @return     boolean         True if file is deleted, False if error
  */
-function dol_delete_file($file,$disableglob=0,$nophperrors=0,$notrigger=0,$triggercode='FILE_DELETE',$object=null)
+function dol_delete_file($file,$disableglob=0,$nophperrors=0,$notrigger=0)
 {
-	global $db, $conf, $user, $langs;
+	global $conf, $user, $langs;
+	global $object;
 
     //print "x".$file." ".$disableglob;
     $ok=true;
@@ -612,13 +611,12 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$notrigger=0,$trigg
             	dol_syslog("Removed file ".$filename,LOG_DEBUG);
             	if (! $notrigger)
             	{
-                    if (! is_object($object)) $object=(object) 'dummy';
             		$object->src_file=$file;
 
             		// Appel des triggers
             		include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
             		$interface=new Interfaces($db);
-            		$result=$interface->run_triggers($triggercode,$object,$user,$langs,$conf);
+            		$result=$interface->run_triggers('FILE_DELETE',$object,$user,$langs,$conf);
             		if ($result < 0) { $error++; $errors=$interface->errors; }
             		// Fin appel triggers
             	}
