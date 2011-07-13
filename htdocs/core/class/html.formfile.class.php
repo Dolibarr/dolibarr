@@ -22,7 +22,7 @@
  *	\file       htdocs/core/class/html.formfile.class.php
  *  \ingroup    core
  *	\brief      File of class to offer components to list and upload files
- *	\version	$Id: html.formfile.class.php,v 1.47 2011/07/10 21:17:14 eldy Exp $
+ *	\version	$Id: html.formfile.class.php,v 1.48 2011/07/13 07:38:11 hregis Exp $
  */
 
 
@@ -845,8 +845,12 @@ class FormFile
 		print '<button type="submit" class="start">'.$langs->trans('StartUpload').'</button>';
 		print '<button type="reset" class="cancel">'.$langs->trans('CancelUpload').'</button>';
 		print '</div></form>';
+		
+		print '</div><!-- end div fileupload -->';
+		
+		print '<div id="fileupload-view">';
 		print '<div class="fileupload-content">';
-
+		
 		print '<table width="100%" class="files">';
 		/*print '<tr>';
 		print '<td>'.$langs->trans("Documents2").'</td>';
@@ -859,8 +863,8 @@ class FormFile
 		// We remove this because there is already individual bars.
 		//print '<div class="fileupload-progressbar"></div>';
 
-		print '</div>';
-		print '</div>';
+		print '</div><!-- end div fileupload-content -->';
+		print '</div><!-- end div fileupload-view -->';
 
 		// Include template
 		include(DOL_DOCUMENT_ROOT.'/core/tpl/ajaxfileupload.tpl.php');
