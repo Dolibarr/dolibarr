@@ -23,7 +23,7 @@
  *	\file       htdocs/includes/modules/fichinter/pdf_soleil.modules.php
  *	\ingroup    ficheinter
  *	\brief      Fichier de la classe permettant de generer les fiches d'intervention au modele Soleil
- *	\version    $Id$
+ *	\version    $Id: pdf_soleil.modules.php,v 1.101 2011/07/13 14:09:35 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/fichinter/modules_fichinter.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
@@ -105,7 +105,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				$result=$fichinter->fetch($id);
 				if ($result < 0)
 				{
-					dol_print_error($db,$fichinter->error);
+					dol_print_error($this->db,$fichinter->error);
 				}
 			}
 
