@@ -22,7 +22,7 @@
  *	\file       htdocs/includes/triggers/interface_modAgenda_ActionsAuto.class.php
  *  \ingroup    agenda
  *  \brief      Trigger file for agenda module
- *	\version	$Id: interface_modAgenda_ActionsAuto.class.php,v 1.33 2011/07/07 09:18:27 simnandez Exp $
+ *	\version	$Id: interface_modAgenda_ActionsAuto.class.php,v 1.34 2011/07/13 18:05:27 eldy Exp $
  */
 
 
@@ -550,8 +550,14 @@ class InterfaceActionsAuto
         {
 			$now=dol_now();
 
+            require_once(DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php');
+            require_once(DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php');
+			$contactforaction=new Contact($this->db);
+            $societeforaction=new Societe($this->db);
+            if ($object->sendtoid > 0) $contactforaction->fetch($object->sendtoid);
+            if ($object->socid > 0)    $societeforaction->fetch($object->socid);
+
 			// Insertion action
-			require_once(DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php');
 			require_once(DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php');
 			$actioncomm = new ActionComm($this->db);
 			$actioncomm->type_code   = $object->actiontypecode;
@@ -562,8 +568,8 @@ class InterfaceActionsAuto
 			$actioncomm->durationp   = 0;
 			$actioncomm->punctual    = 1;
 			$actioncomm->percentage  = -1;   // Not applicable
-			$actioncomm->contact     = new Contact($this->db,$object->sendtoid);
-			$actioncomm->societe     = new Societe($this->db,$object->socid);
+			$actioncomm->contact     = $contactforaction;
+			$actioncomm->societe     = $societeforaction;
 			$actioncomm->author      = $user;   // User saving action
 			//$actioncomm->usertodo  = $user;	// User affected to action
 			$actioncomm->userdone    = $user;	// User doing action

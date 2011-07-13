@@ -23,7 +23,7 @@
  *       \file       htdocs/adherents/fiche.php
  *       \ingroup    member
  *       \brief      Page of member
- *       \version    $Id$
+ *       \version    $Id: fiche.php,v 1.237 2011/07/13 11:50:33 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -944,7 +944,7 @@ if ($action == 'edit')
     print '</td></tr>';
 
     // Country
-    $adh->pays_id=$adh->pays_id?$adh->pays_id:$mysoc->pays_id;
+    //$adh->pays_id=$adh->pays_id?$adh->pays_id:$mysoc->pays_id;    // In edit mode we don't force to company country if not defined
     print '<tr><td width="25%">'.$langs->trans('Country').'</td><td>';
     $html->select_pays(isset($_POST["pays_id"])?$_POST["pays_id"]:$adh->pays_id,'pays_id');
     if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
@@ -1505,5 +1505,5 @@ if ($rowid && $action != 'edit')
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/13 11:50:33 $ - $Revision: 1.237 $');
 ?>

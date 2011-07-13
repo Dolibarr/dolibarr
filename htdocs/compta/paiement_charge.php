@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  *	    \file       htdocs/compta/paiement_charge.php
  *		\ingroup    tax
  *		\brief      Page to add payment of a tax
- *		\version    $Id$
+ *		\version    $Id: paiement_charge.php,v 1.52 2011/07/13 14:25:49 eldy Exp $
  */
 
 require('../main.inc.php');
@@ -42,8 +42,9 @@ if ($user->societe_id > 0)
 
 
 /*
- * Actions add payment
+ * Actions
  */
+
 if ($_POST["action"] == 'add_payment')
 {
 	$error=0;
@@ -145,7 +146,7 @@ if ($_POST["action"] == 'add_payment')
 
 
 /*
- * Affichage
+ * View
  */
 
 llxHeader();
@@ -153,9 +154,7 @@ llxHeader();
 $html=new Form($db);
 
 
-/*
- * Formulaire de creation d'un paiement de charge
- */
+// Formulaire de creation d'un paiement de charge
 if ($_GET["action"] == 'create')
 {
 
@@ -223,7 +222,7 @@ if ($_GET["action"] == 'create')
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
 	print '<td>';
-	$html->select_comptes(isset($_POST["accountid"])?$_POST["accountid"]:$charge->accountid, "accountid", 0, "courant=1",1);  // Affiche liste des comptes courant
+	$html->select_comptes(isset($_POST["accountid"])?$_POST["accountid"]:$charge->accountid, "accountid", 0, '',1);  // Show opend bank account list
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans('Numero');
@@ -335,5 +334,5 @@ if ($_GET["action"] == 'create')
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/13 14:25:49 $ - $Revision: 1.52 $');
 ?>
