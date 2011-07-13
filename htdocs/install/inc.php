@@ -22,10 +22,10 @@
 /**	    \file       htdocs/install/inc.php
  * 		\ingroup	core
  *		\brief      File that define environment for install pages
- *		\version    $Id: inc.php,v 1.134 2011/07/11 10:53:37 eldy Exp $
+ *		\version    $Id: inc.php,v 1.135 2011/07/13 21:19:58 eldy Exp $
  */
 
-define('DOL_VERSION','3.1.0-alpha');	// Also defined in htdocs/master.inc.php (Ex: x.y.z-alpha, x.y.z)
+define('DOL_VERSION','3.1.0-beta');	// Also defined in htdocs/master.inc.php (Ex: x.y.z-alpha, x.y.z)
 
 require_once('../core/class/translate.class.php');
 require_once('../lib/functions.lib.php');

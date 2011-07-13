@@ -24,7 +24,7 @@
 /**
  *  \file           htdocs/includes/modules/DolibarrModules.class.php
  *  \brief          Fichier de description et activation des modules Dolibarr
- *  \version        $Id: DolibarrModules.class.php,v 1.159 2011/06/28 20:31:23 eldy Exp $
+ *  \version        $Id: DolibarrModules.class.php,v 1.160 2011/07/13 21:54:07 eldy Exp $
  */
 
 
@@ -955,7 +955,7 @@ class DolibarrModules
                 {
                     $r_id       = $this->rights[$key][0];
                     $r_desc     = $this->rights[$key][1];
-                    $r_type     = $this->rights[$key][2];
+                    $r_type     = isset($this->rights[$key][2])?$this->rights[$key][2]:'';
                     $r_def      = $this->rights[$key][3];
                     $r_perms    = $this->rights[$key][4];
                     $r_subperms = isset($this->rights[$key][5])?$this->rights[$key][5]:'';
