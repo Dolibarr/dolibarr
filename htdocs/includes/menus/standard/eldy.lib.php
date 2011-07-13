@@ -21,7 +21,7 @@
 /**
  *  \file		htdocs/includes/menus/standard/eldy.lib.php
  *  \brief		Library for file eldy menus
- *  \version	$Id: eldy.lib.php,v 1.56 2011/07/13 11:23:52 eldy Exp $
+ *  \version	$Id: eldy.lib.php,v 1.57 2011/07/13 11:26:17 eldy Exp $
  */
 
 
@@ -629,19 +629,19 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                 $langs->load("help");
 
                 $newmenu->add("/admin/index.php?leftmenu=setup", $langs->trans("Setup"));
-                $newmenu->add("/admin/company.php", $langs->trans("MenuCompanySetup"),1);
-                $newmenu->add("/admin/modules.php", $langs->trans("Modules"),1);
-                $newmenu->add("/admin/menus.php", $langs->trans("Menus"),1);
-                $newmenu->add("/admin/ihm.php", $langs->trans("GUISetup"),1);
-                $newmenu->add("/admin/boxes.php", $langs->trans("Boxes"),1);
-                $newmenu->add("/admin/delais.php",$langs->trans("Alerts"),1);
+                if ($leftmenu=="setup") $newmenu->add("/admin/company.php", $langs->trans("MenuCompanySetup"),1);
+                if ($leftmenu=="setup") $newmenu->add("/admin/modules.php", $langs->trans("Modules"),1);
+                if ($leftmenu=="setup") $newmenu->add("/admin/menus.php", $langs->trans("Menus"),1);
+                if ($leftmenu=="setup") $newmenu->add("/admin/ihm.php", $langs->trans("GUISetup"),1);
+                if ($leftmenu=="setup") $newmenu->add("/admin/boxes.php", $langs->trans("Boxes"),1);
+                if ($leftmenu=="setup") $newmenu->add("/admin/delais.php",$langs->trans("Alerts"),1);
 
-                $newmenu->add("/admin/proxy.php", $langs->trans("Security"),1);
-                $newmenu->add("/admin/limits.php", $langs->trans("MenuLimits"),1);
-                $newmenu->add("/admin/mails.php", $langs->trans("Emails"),1);
-                if ($conf->global->MAIN_FEATURES_LEVEL) $newmenu->add("/admin/sms.php", $langs->trans("Sms"),1);
-                $newmenu->add("/admin/dict.php", $langs->trans("DictionnarySetup"),1);
-                $newmenu->add("/admin/const.php", $langs->trans("OtherSetup"),1);
+                if ($leftmenu=="setup") $newmenu->add("/admin/proxy.php", $langs->trans("Security"),1);
+                if ($leftmenu=="setup") $newmenu->add("/admin/limits.php", $langs->trans("MenuLimits"),1);
+                if ($leftmenu=="setup") $newmenu->add("/admin/mails.php", $langs->trans("Emails"),1);
+                if ($leftmenu=="setup" && $conf->global->MAIN_FEATURES_LEVEL) $newmenu->add("/admin/sms.php", $langs->trans("Sms"),1);
+                if ($leftmenu=="setup") $newmenu->add("/admin/dict.php", $langs->trans("DictionnarySetup"),1);
+                if ($leftmenu=="setup") $newmenu->add("/admin/const.php", $langs->trans("OtherSetup"),1);
 
                 $newmenu->add("/admin/system/index.php?leftmenu=system", $langs->trans("SystemInfo"));
                 if ($leftmenu=="system") $newmenu->add("/admin/system/dolibarr.php", $langs->trans("Dolibarr"),1);
