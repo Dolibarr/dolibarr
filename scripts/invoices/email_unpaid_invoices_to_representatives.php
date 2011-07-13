@@ -1,5 +1,5 @@
 #!/usr/bin/php
-<?PHP
+<?php
 /**
  * Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
@@ -23,7 +23,7 @@
  *      \file       scripts/invoices/email_unpaid_invoices_to_representatives.php
  *      \ingroup    facture
  *      \brief      Script to send a mail to dolibarr users linked to companies with unpaid invoices
- *		\version	$Id$
+ *		\version	$Id: email_unpaid_invoices_to_representatives.php,v 1.9 2011/07/09 14:11:41 eldy Exp $
  */
 
 $sapi_type = php_sapi_name();

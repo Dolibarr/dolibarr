@@ -1,3 +1,4 @@
+#!/usr/bin/php
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
@@ -22,7 +23,7 @@
 /**
 	    \file       htdocs/dev/generate-commande.php
 		\brief      Script de generation de donnees aleatoires pour les commandes
-		\version    $Id$
+		\version    $Id: generate-commande.php,v 1.17 2011/07/09 14:11:40 eldy Exp $
 */
 
 // Test si mode batch

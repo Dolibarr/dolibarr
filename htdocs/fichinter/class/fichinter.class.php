@@ -22,7 +22,7 @@
 /**	    \file       htdocs/fichinter/class/fichinter.class.php
  *		\ingroup    ficheinter
  *		\brief      Fichier de la classe des gestion des fiches interventions
- *		\version    $Id: fichinter.class.php,v 1.20 2011/07/08 09:18:54 simnandez Exp $
+ *		\version    $Id: fichinter.class.php,v 1.21 2011/07/10 13:48:25 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
@@ -63,12 +63,10 @@ class Fichinter extends CommonObject
 	/**
 	 *	Class constructor
 	 *	@param      DB		Data base handler access
-	 *	@param      socid	Id society
 	 */
-	function Fichinter($DB, $socid="")
+	function Fichinter($DB)
 	{
 		$this->db = $DB ;
-		$this->socid = $socid;
 		$this->products = array();
 		$this->fk_project = 0;
 		$this->statut = 0;
@@ -298,7 +296,7 @@ class Fichinter extends CommonObject
 	/**
 	 *	Validate a intervention
 	 *	@param		user		User that validate
-	 *	@param		outputdir	
+	 *	@param		outputdir
 	 *	@return		int			<0 if KO, >0 if OK
 	 */
 	function setValid($user, $outputdir)

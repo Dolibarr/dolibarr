@@ -25,7 +25,7 @@
  *	\ingroup		core
  *  \brief      	Fichier de la classe de stockage de la config courante
  *  \remarks		La config est stockee dans le fichier conf/conf.php
- *  \version    	$Id: conf.class.php,v 1.59 2011/07/01 23:06:06 eldy Exp $
+ *  \version    	$Id: conf.class.php,v 1.60 2011/07/09 05:28:42 hregis Exp $
  */
 
 
@@ -363,7 +363,6 @@ class Conf
 		// Defini MAIN_GRAPH_LIBRARY
 		if (empty($this->global->MAIN_GRAPH_LIBRARY)) $this->global->MAIN_GRAPH_LIBRARY = 'artichow';
 
-        if (! isset($this->global->MAIN_MAIL_EMAIL_INLINE_IMAGES)) $this->global->MAIN_MAIL_EMAIL_INLINE_IMAGES=1;
         if (! isset($this->global->FCKEDITOR_EDITORNAME)) $this->global->FCKEDITOR_EDITORNAME='ckeditor';  // fckeditor to switch
 
         // Format for date (used by default when not found or searched in lang)

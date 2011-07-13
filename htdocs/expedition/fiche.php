@@ -25,7 +25,7 @@
  *	\file       htdocs/expedition/fiche.php
  *	\ingroup    expedition
  *	\brief      Fiche descriptive d'une expedition
- *	\version    $Id: fiche.php,v 1.209 2011/07/07 21:32:19 eldy Exp $
+ *	\version    $Id: fiche.php,v 1.210 2011/07/10 20:03:39 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -291,9 +291,9 @@ if ($_POST['addfile'])
 
     // Set tmp user directory TODO Use a dedicated directory for temp mails files
     $vardir=$conf->user->dir_output."/".$user->id;
-    $upload_dir = $vardir.'/temp/';
+    $upload_dir_tmp = $vardir.'/temp';
 
-    $mesg=dol_add_file_process($upload_dir,0,0);
+    $mesg=dol_add_file_process($upload_dir_tmp,0,0);
 
     $action ='presend';
 }
@@ -307,7 +307,7 @@ if (! empty($_POST['removedfile']))
 
     // Set tmp user directory
     $vardir=$conf->user->dir_output."/".$user->id;
-    $upload_dir = $vardir.'/temp/';
+    $upload_dir_tmp = $vardir.'/temp';
 
     $mesg=dol_remove_file_process($_POST['removedfile'],0);
 
@@ -1381,5 +1381,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/07 21:32:19 $ - $Revision: 1.209 $');
+llxFooter('$Date: 2011/07/10 20:03:39 $ - $Revision: 1.210 $');
 ?>

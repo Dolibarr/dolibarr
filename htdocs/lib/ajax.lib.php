@@ -21,7 +21,7 @@
 /**
  *  \file		htdocs/lib/ajax.lib.php
  *  \brief		Page called by Ajax request for produts
- *  \version	$Id$
+ *  \version	$Id: ajax.lib.php,v 1.58 2011/07/10 18:24:18 hregis Exp $
  */
 
 
@@ -219,13 +219,18 @@ function ajax_combobox($htmlname)
 /**
  * 	On/off button for constant
  * 	@param		code	Name of constant
+ * 	@param		input	Input element
+ * 	TODO add different method for other input (show/hide, disable, ..)
  */
-function ajax_constantonoff($code)
+function ajax_constantonoff($code,$input=array())
 {
 	global $conf, $langs;
 
 	$out= '<script type="text/javascript">
 		$(function() {
+			var input='.json_encode($input).';
+			
+			// Set constant
 			$( "#set_'.$code.'" ).click(function() {
 				$.get( "'.DOL_URL_ROOT.'/core/ajaxconstantonoff.php", {
 					action: \'set\',
@@ -234,8 +239,16 @@ function ajax_constantonoff($code)
 				function() {
 					$( "#set_'.$code.'" ).hide();
 					$( "#del_'.$code.'" ).show();
+					// Enable another object
+					if (input.length > 0) {
+						$.each(input, function(key,value) {
+							$( "#" + value).removeAttr("disabled");
+						});
+					}		
 				});
 			});
+			
+			// Del constant
 			$( "#del_'.$code.'" ).click(function() {
 				$.get( "'.DOL_URL_ROOT.'/core/ajaxconstantonoff.php", {
 					action: \'del\',
@@ -244,6 +257,12 @@ function ajax_constantonoff($code)
 				function() {
 					$( "#del_'.$code.'" ).hide();
 					$( "#set_'.$code.'" ).show();
+					// Disable another object
+					if (input.length > 0) {
+						$.each(input, function(key,value) {
+							$( "#" + value).attr("disabled", true);
+						});
+					}
 				});
 			});
 		});

@@ -6,3 +6,16 @@ DEB Package tools
 This directory contains files used by makepack-dolibarr.pl
 script to build a package, ready to be distributed,
 with format .DEB (for Debian, Ubuntu, ...).
+
+# This is standard command to work on Debian packaging:
+#
+# lintian package       To test a package   
+#
+# dpkg -l               List all packages
+# dpkg -b               To build package
+# dpkg -c package.deb   List content of package
+# dpkg -I package.deb   Give informations on package
+# dpkg -i package.deb   Install a package
+#
+# dpkg -L packagename   List content of installed package 
+# dpkg --purge          Remove config files and interactive saved answers

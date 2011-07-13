@@ -1,6 +1,6 @@
 Template: dolibarr/configuration/note
 Type: note
-Description: Package configuration note.
+Description: Package configuration note
  Dolibarr can be and should be configured entirely via web, so, in the
  following configuration steps, I'm going to prompt you for the passwords that
  Dolibarr uses for web configuration and some default values for the
@@ -15,19 +15,13 @@ Description: Package configuration note.
 Template: dolibarr/webserver
 Type: select
 Choices: Apache, Apache-ssl, Both, None
-Description: Which Web Server are you running?
+Description: Which Web Server are you running ?
  Dolibarr supports any web server with PHP capabilities, but this
  configuration process only supports Apache and Apache-SSL.
 
-Template: dolibarr/db/setup/skip
-Type: boolean
-Default: false
-Description: DB setup skipped.
- DB setup will be skipped.
-
 Template: dolibarr/db
 Type: text
-Description: Dolibarr DB setup NOTE.
+Description: Dolibarr DB setup note
  Now you should specify the DBMS settings. You must provide the host name on
  which the DBMS server is installed, the type (i.e.  MySql), the DB name, the DBMS administrator user-name, etc.
 
@@ -71,7 +65,7 @@ Description: Please, retype the password to access the DB:
 
 Template: dolibarr/db/user/password/mismatch
 Type: text
-Description: Passwords mismatch.
+Description: Passwords mismatch
  The DB access passwords you inserted mismatch. Please, try again.
 
 Template: dolibarr/db/admin/name
@@ -97,6 +91,15 @@ Template: dolibarr/postrm
 Type: boolean
 Default: true
 Description: Delete database ?
- Do I have to delete also the Dolibarr MySQL database and all its datas
- (datas subjected to this quetion are the Dolibarr DBMS account and all
+ Delete the Dolibarr MySQL database and all its datas (datas related
+ to this quetion are the Dolibarr DBMS account and all
  Dolibarr tables) ?
+
+Template: dolibarr/postrmfile
+Type: boolean
+Default: true
+Description: Delete attached files ?
+ Delete also all uploaded and generated files (datas related
+ to this quetion are all files found into /usr/share/dolibarr/documents,
+ uploaded or generated when using Dolibarr) ?
+ 

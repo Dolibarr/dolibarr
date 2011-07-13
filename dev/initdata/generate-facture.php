@@ -1,4 +1,5 @@
-<?PHP
+#!/usr/bin/php
+<?php
 /* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,7 +22,7 @@
 /**
  *	    \file       htdocs/dev/generate-facture.php
  *		\brief      Script de generation de donnees aleatoires pour les factures
- *		\version    $Id$
+ *		\version    $Id: generate-facture.php,v 1.14 2011/07/09 14:11:40 eldy Exp $
  */
 
 // Test si mode batch

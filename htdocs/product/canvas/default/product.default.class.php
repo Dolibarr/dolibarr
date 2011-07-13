@@ -20,8 +20,9 @@
  *	\file       htdocs/product/canvas/default/product.default.class.php
  *	\ingroup    produit
  *	\brief      Fichier de la classe des produits par defaut
- *	\version    $Id$
+ *	\version    $Id: product.default.class.php,v 1.40 2011/07/08 21:52:07 eldy Exp $
  */
+include_once(DOL_DOCUMENT_ROOT.'/product/class/product.class.php');
 
 /**
  *	\class      ProductDefault

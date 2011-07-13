@@ -25,7 +25,7 @@
  *	\file       htdocs/contact/class/contact.class.php
  *	\ingroup    societe
  *	\brief      File of contacts class
- *	\version    $Id: contact.class.php,v 1.30 2011/07/04 09:36:29 eldy Exp $
+ *	\version    $Id: contact.class.php,v 1.31 2011/07/10 16:50:40 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
 
@@ -42,15 +42,16 @@ class Contact extends CommonObject
 	var $table_element='socpeople';
 
 	var $id;
-	var $civilite_id;
-	var $name;
-	var $nom;
+	var $civilite_id;  // In fact we stor civility_code
+    var $lastname;
+	var $name;         // TODO deprecated
+	var $nom;          // TODO deprecated
 	var $firstname;
-	var $prenom;
+	var $prenom;       // TODO deprecated
 	var $address;
-	var $cp;	// TODO deprecated
+	var $cp;	       // TODO deprecated
 	var $zip;
-	var $ville;	// TODO deprecated
+	var $ville;	       // TODO deprecated
 	var $town;
 
 	var $fk_departement;		// Id of department

@@ -1,4 +1,5 @@
-<?PHP
+#!/usr/bin/php
+<?php
 /* Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,7 +21,7 @@
  *      \file       dev/translation/autotranslator.php
  *		\ingroup    mymodule othermodule1 othermodule2
  *      \brief      This file is an example for a command line script
- *      \version    $Id: autotranslator.php,v 1.11 2011/06/26 18:52:49 eldy Exp $
+ *      \version    $Id: autotranslator.php,v 1.12 2011/07/09 14:11:41 eldy Exp $
  * 		\author		Put author name here
  *		\remarks	Put here some comments
  */
@@ -44,7 +45,7 @@ require_once($path.'../../htdocs/lib/files.lib.php');
 $langs->load("main");
 
 // Global variables
-$version='$Revision: 1.11 $';
+$version='$Revision: 1.12 $';
 $error=0;
 
 
