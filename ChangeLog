@@ -1,10 +1,9 @@
 --------------------------------------------------------------
 English Dolibarr ChangeLog
-$Id: ChangeLog,v 1.424 2011/07/13 14:16:39 eldy Exp $
+$Id: ChangeLog,v 1.423 2011/07/07 16:03:53 simnandez Exp $
 --------------------------------------------------------------
 
 ***** ChangeLog for 3.1 compared to 3.0 *****
-WARNING: IE6 browser is no more supported in this version.
 For users:
 - New: War against number of clicks:
      - When adding a free bank transaction, form to add next one is still
