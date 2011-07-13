@@ -22,7 +22,7 @@
  *	\file			htdocs/paypal/lib/paypal.lib.php
  *  \ingroup		paypal
  *  \brief			Library for common paypal functions
- *  \version		$Id: paypal.lib.php,v 1.25 2011/07/13 16:55:34 eldy Exp $
+ *  \version		$Id$
  */
 function llxHeaderPaypal($title, $head = "")
 {
@@ -132,7 +132,7 @@ function html_print_paypal_footer($fromcompany,$langs)
 function paypaladmin_prepare_head()
 {
 	global $langs, $conf;
-
+	
 	$h = 0;
 	$head = array();
 
@@ -140,7 +140,7 @@ function paypaladmin_prepare_head()
 	$head[$h][1] = $langs->trans("Account");
 	$head[$h][2] = 'paypalaccount';
 	$h++;
-
+    
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
@@ -151,24 +151,24 @@ function paypaladmin_prepare_head()
 }
 
 /**
- *
+ * 
  */
-function getPaypalPaymentUrl($source='',$ref='',$amount=0,$freetag='')
+function getPaymentUrl($source='',$ref='',$amount=0,$freetag='')
 {
 	global $conf;
-
+	
 	require_once(DOL_DOCUMENT_ROOT."/lib/security.lib.php");
-
+	
 	if (! empty($source) && ! empty($ref))
 	{
 		$token='';
 		if (! empty($conf->global->PAYPAL_SECURITY_TOKEN)) $token='&securekey='.dol_hash($conf->global->PAYPAL_SECURITY_TOKEN.$source.$ref, 2);
-
+		
 		if ($source == 'commande')	$source = 'order';
 		if ($source == 'facture')	$source = 'invoice';
-
+		
 		$url = DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?source='.$source.'&ref='.$ref.$token;
-
+		
 		return $url;
 	}
 }
@@ -482,7 +482,7 @@ function hash_call($methodName,$nvpStr)
     global $conf, $langs;
     global $API_Endpoint, $API_Url, $API_version, $USE_PROXY, $PROXY_HOST, $PROXY_PORT, $PROXY_USER, $PROXY_PASS;
     global $PAYPAL_API_USER, $PAYPAL_API_PASSWORD, $PAYPAL_API_SIGNATURE;
-
+    
     // TODO problem with triggers
     $API_version="56";
 	if ($conf->global->PAYPAL_API_SANDBOX)
@@ -495,7 +495,7 @@ function hash_call($methodName,$nvpStr)
 	    $API_Endpoint = "https://api-3t.paypal.com/nvp";
 	    $API_Url = "https://www.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=";
 	}
-
+	
 	// Clean parameters
 	$PAYPAL_API_USER="";
 	if ($conf->global->PAYPAL_API_USER) $PAYPAL_API_USER=$conf->global->PAYPAL_API_USER;
@@ -506,7 +506,7 @@ function hash_call($methodName,$nvpStr)
 	$PAYPAL_API_SANDBOX="";
 	if ($conf->global->PAYPAL_API_SANDBOX) $PAYPAL_API_SANDBOX=$conf->global->PAYPAL_API_SANDBOX;
 	// TODO END problem with triggers
-
+	
     dol_syslog("Paypal API endpoint ".$API_Endpoint);
 
     //setting the curl parameters.
@@ -580,19 +580,19 @@ function hash_call($methodName,$nvpStr)
 function GetApiError()
 {
 	$errors=array();
-
+	
 	$resArray=$_SESSION['reshash'];
-
+	
 	if(isset($_SESSION['curl_error_no']))
 	{
 		$errors[] = $_SESSION['curl_error_no'].'-'.$_SESSION['curl_error_msg'];
 	}
-
+	
 	foreach($resArray as $key => $value)
 	{
 		$errors[] = $key.'-'.$value;
 	}
-
+	
 	return $errors;
 }
 
