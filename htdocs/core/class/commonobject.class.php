@@ -22,7 +22,7 @@
  *	\file       htdocs/core/class/commonobject.class.php
  *	\ingroup    core
  *	\brief      File of parent class of all other business classes (invoices, contracts, proposals, orders, ...)
- *	\version    $Id: commonobject.class.php,v 1.145 2011/07/10 16:50:40 eldy Exp $
+ *	\version    $Id: commonobject.class.php,v 1.146 2011/07/13 16:55:25 eldy Exp $
  */
 
 
@@ -365,9 +365,10 @@ class CommonObject
 	 *      Return array with list of possible values for type of contacts
 	 *      @param      source      internal, external or all if not defined
 	 *      @param		order		Sort order by : code or rowid
-	 *      @return     array       List of type of contacts
+	 *      @param      option      0=Return array id->label, 1=Return array code->label
+	 *      @return     array       Array list of type of contacts (id->label if option=0, code->label if option=1)
 	 */
-	function liste_type_contact($source='internal', $order='code')
+	function liste_type_contact($source='internal', $order='code', $option=0)
 	{
 		global $langs;
 
@@ -390,7 +391,8 @@ class CommonObject
 
 				$transkey="TypeContact_".$this->element."_".$source."_".$obj->code;
 				$libelle_type=($langs->trans($transkey)!=$transkey ? $langs->trans($transkey) : $obj->libelle);
-				$tab[$obj->rowid]=$libelle_type;
+				if (empty($option)) $tab[$obj->rowid]=$libelle_type;
+				else $tab[$obj->code]=$libelle_type;
 				$i++;
 			}
 			return $tab;
