@@ -23,7 +23,7 @@
  *		\ingroup    paypal
  *		\brief      File to offer a way to make a payment for a particular Dolibarr entity
  *		\author	    Laurent Destailleur
- *		\version    $Id: newpayment.php,v 1.21 2011/06/26 12:34:54 eldy Exp $
+ *		\version    $Id: newpayment.php,v 1.24 2011/07/13 12:00:18 eldy Exp $
  */
 
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
@@ -280,10 +280,22 @@ if ($urllogo)
 	print '</tr>'."\n";
 }
 
-print '<tr><td align="center"><br>'.$langs->trans("WelcomeOnPaymentPage").'<br></td></tr>'."\n";
+// Output introduction text
+$text='';
+if (! empty($conf->global->PAYPAL_NEWFORM_TEXT))
+{
+    $langs->load("members");
+    if (preg_match('/^\((.*)\)$/',$conf->global->PAYPAL_NEWFORM_TEXT,$reg)) $text.=$langs->trans($reg[1])."<br>\n";
+    else $text.=$conf->global->PAYPAL_NEWFORM_TEXT."<br>\n";
+}
+if (empty($text))
+{
+    $text.='<tr><td align="center"><br>'.$langs->trans("WelcomeOnPaymentPage").'<br></td></tr>'."\n";
+    $text.='<tr><td align="center"><br>'.$langs->trans("ThisScreenAllowsYouToPay",$creditor).'<br><br></td></tr>'."\n";
+}
+print $text;
 
-print '<tr><td align="center"><br>'.$langs->trans("ThisScreenAllowsYouToPay",$creditor).'<br><br></td></tr>'."\n";
-
+// Output payment summary form
 print '<tr><td align="center">';
 print '<table with="100%">';
 print '<tr class="liste_total"><td align="left" colspan="2">'.$langs->trans("ThisIsInformationOnPayment").' :</td></tr>'."\n";
@@ -934,5 +946,5 @@ html_print_paypal_footer($mysoc,$langs);
 
 $db->close();
 
-llxFooterPaypal('$Date: 2011/06/26 12:34:54 $ - $Revision: 1.21 $');
+llxFooterPaypal('$Date: 2011/07/13 12:00:18 $ - $Revision: 1.24 $');
 ?>

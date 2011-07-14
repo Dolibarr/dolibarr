@@ -32,7 +32,7 @@
  *	\file       htdocs/core/class/html.form.class.php
  *  \ingroup    core
  *	\brief      File of class with all html predefined components
- *	\version	$Id: html.form.class.php,v 1.188 2011/07/10 17:28:09 hregis Exp $
+ *	\version	$Id: html.form.class.php,v 1.189 2011/07/13 14:03:15 eldy Exp $
  */
 
 
@@ -1782,12 +1782,14 @@ class Form
     }
 
     /**
-     *    \brief      Retourne la liste deroulante des differents etats d'une propal.
-     *                Les valeurs de la liste sont les id de la table c_propalst
-     *    \param      selected    etat pre-selectionne
+     *    Return combo list of differents status of a proposal
+     *    Values are id of table c_propalst
+     *    @param      selected    etat pre-selectionne
      */
     function select_propal_statut($selected='')
     {
+        global $langs;
+
         $sql = "SELECT id, code, label, active FROM ".MAIN_DB_PREFIX."c_propalst";
         $sql .= " WHERE active = 1";
 
