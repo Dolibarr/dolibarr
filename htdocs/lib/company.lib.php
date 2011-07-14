@@ -126,8 +126,10 @@ function societe_prepare_head($object)
         $h++;
     }
 
-	if ($conf->map->enabled && $user->societe_id == 0 && $object->lat && $object->lng)
+    //Map module
+    if ($conf->map->enabled && $user->societe_id == 0 && $object->lat && $object->lng)
     {
+        $langs->load("map@map");
 	$head[$h][0] = DOL_URL_ROOT.'/map/map.php?socid='.$object->id;
 	$head[$h][1] = $langs->trans("Map");
 	$head[$h][2] = 'map';

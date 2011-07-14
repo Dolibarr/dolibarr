@@ -1,0 +1,8 @@
+# Dolibarr language file - fr_FR - highcharts
+CHARSET=UTF-8
+MapChartsSetup=Configuration du module Map
+MapMainOptions=Options principales
+MapSolution=Solution de cartographie
+GoogleKey=Clé de license Google Map
+MapSetup=Configuration du module cartographie
+Map=Carte
