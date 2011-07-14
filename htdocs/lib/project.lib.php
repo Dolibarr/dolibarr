@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +23,7 @@
  *	    \file       htdocs/lib/project.lib.php
  *		\brief      Functions used by project module
  *      \ingroup    project
- *      \version    $Id: project.lib.php,v 1.68 2011/07/04 09:01:38 eldy Exp $
+ *      \version    $Id: project.lib.php,v 1.69 2011/07/14 15:37:37 simnandez Exp $
  */
 require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
 
@@ -98,7 +99,7 @@ function project_prepare_head($object)
  *	    \file       htdocs/lib/project.lib.php
  *		\brief      Ensemble de fonctions de base pour le module projet
  *      \ingroup    societe
- *      \version    $Id: project.lib.php,v 1.68 2011/07/04 09:01:38 eldy Exp $
+ *      \version    $Id: project.lib.php,v 1.69 2011/07/14 15:37:37 simnandez Exp $
  */
 function task_prepare_head($object)
 {
@@ -375,6 +376,9 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole
 	$projectsArrayId=explode(',',$projectsListId);
 
 	$numlines=sizeof($lines);
+	
+	$total=0;
+	
 	for ($i = 0 ; $i < $numlines ; $i++)
 	{
 		if ($parent == 0) $level = 0;
@@ -485,6 +489,7 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole
 				$level++;
 				if ($lines[$i]->id) PLines($inc, $lines[$i]->id, $lines, $level, $var, $showproject, $taskrole, $projectsListId);
 				$level--;
+				$total += $lines[$i]->duration;
 			}
 		}
 		else
@@ -493,6 +498,14 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole
 		}
 	}
 
+	if ($total>0)
+	{
+		print '<tr class="liste_total"><td class="liste_total">'.$langs->trans("Total").'</td>';
+		print '<td></td>';
+		print '<td></td>';
+		print '<td align="right" nowrap="nowrap" class="liste_total">'.ConvertSecondToTime($total).'</td></tr>';
+	}
+	
 	return $inc;
 }
 

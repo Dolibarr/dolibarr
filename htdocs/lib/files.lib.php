@@ -20,7 +20,7 @@
 /**
  *  \file		htdocs/lib/files.lib.php
  *  \brief		Library for file managing functions
- *  \version	$Id: files.lib.php,v 1.69 2011/07/13 21:33:38 eldy Exp $
+ *  \version	$Id: files.lib.php,v 1.70 2011/07/14 05:21:53 hregis Exp $
  */
 
 /**
@@ -590,7 +590,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
  *  @param      disableglob     Disable usage of glob like *
  *  @param      nophperrors     Disable all PHP output errors
  *  @param		notrigger		Disable all triggers
- *  @param      triggercode     Code of trigger
+ *  @param      triggercode     Code of trigger TODO ???? why ?
  *  @param      object          Object for trigger
  *  @return     boolean         True if file is deleted, False if error
  */
