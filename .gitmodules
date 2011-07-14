@@ -1,3 +1,6 @@
 [submodule "htdocs/multicompany"]
 	path = htdocs/multicompany
 	url = git+ssh://scm.doliforge.org/gitroot/regisperso/regisperso.git
+[submodule "htdocs/highCharts"]
+	path = htdocs/highCharts
+	url = https://git.symeos.com/module-highCharts.git
