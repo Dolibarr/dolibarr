@@ -2,6 +2,7 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +23,7 @@
  *	\file       htdocs/projet/tasks/time.php
  *	\ingroup    projet
  *	\brief      Page to add new time spent on a task
- *	\version    $Id$
+ *	\version    $Id: time.php,v 1.32 2011/07/14 15:37:37 simnandez Exp $
  */
 
 require("../../main.inc.php");
@@ -307,7 +308,8 @@ if ($_GET["id"] > 0)
 		print '<td align="right">'.$langs->trans("Duration").'</td>';
 		print '<td>&nbsp;</td>';
 		print "</tr>\n";
-
+		
+		$total = 0;
 		foreach ($tasks as $task_time)
 		{
 			$var=!$var;
@@ -389,8 +391,12 @@ if ($_GET["id"] > 0)
 			print '</td>';
 
 			print "</tr>\n";
+			$total += $task_time->task_duration;
 		}
-
+		print '<tr class="liste_total"><td colspan="3" class="liste_total">'.$langs->trans("Total").'</td>';
+		print '<td align="right" nowrap="nowrap" class="liste_total">'.ConvertSecondToTime($total).'</td><td>&nbsp;</td>';
+		print '</tr>';
+		
 		print "</table>";
 		print "</form>";
 	}
@@ -398,5 +404,5 @@ if ($_GET["id"] > 0)
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/14 15:37:37 $ - $Revision: 1.32 $');
 ?>
