@@ -67,7 +67,7 @@ class modMap extends DolibarrModules
         //------------
         $this->depends = array();
         $this->requiredby = array();
-        $this->langfiles = array("map","companies");
+        $this->langfiles = array("map@map","companies");
 
         // Constantes
         //-----------
