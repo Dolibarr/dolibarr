@@ -76,7 +76,7 @@ EditMember=Edit member
 SubscriptionEndDate=Subscription's end date
 MembersTypeSetup=Members type setup
 NewSubscription=New subscription
-NewSubscriptionDesc=This form allows you to record your subscription as a new member of the foundation. If you want to renew your subscription (if already a member), please contact foundation board instead. 
+NewSubscriptionDesc=This form allows you to record your subscription as a new member of the foundation. If you want to renew your subscription (if already a member), please contact foundation board instead by email %s. 
 Subscription=Subscription
 Subscriptions=Subscriptions
 SubscriptionLate=Late
@@ -193,3 +193,4 @@ Associations=Foundations
 Collectivités=Organizations
 Particuliers=Personal
 Entreprises=Companies
+DOLIBARRFOUNDATION_PAYMENT_FORM=To make your subscription payment using a bank transfer, see page <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a>.<br>To pay using a Credit Card or Paypal, click on button at bottom of this page.<br> 

@@ -20,7 +20,7 @@
 /**
  *  \file		htdocs/lib/files.lib.php
  *  \brief		Library for file managing functions
- *  \version	$Id: files.lib.php,v 1.66 2011/07/06 16:56:01 eldy Exp $
+ *  \version	$Id: files.lib.php,v 1.70 2011/07/14 05:21:53 hregis Exp $
  */
 
 /**
@@ -561,9 +561,8 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 		if (! empty($conf->global->MAIN_UMASK)) @chmod($file_name_osencoded, octdec($conf->global->MAIN_UMASK));
 		dol_syslog("Functions.lib::dol_move_uploaded_file Success to move ".$src_file." to ".$file_name." - Umask=".$conf->global->MAIN_UMASK, LOG_DEBUG);
 
-		if (! $notrigger)
+		if (! $notrigger && is_object($object))
 		{
-		    if (! is_object($object)) $object=(object) 'dummy';
 			$object->src_file=$dest_file;
 
 			// Appel des triggers
@@ -591,12 +590,13 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
  *  @param      disableglob     Disable usage of glob like *
  *  @param      nophperrors     Disable all PHP output errors
  *  @param		notrigger		Disable all triggers
+ *  @param      triggercode     Code of trigger TODO ???? why ?
+ *  @param      object          Object for trigger
  *  @return     boolean         True if file is deleted, False if error
  */
-function dol_delete_file($file,$disableglob=0,$nophperrors=0,$notrigger=0)
+function dol_delete_file($file,$disableglob=0,$nophperrors=0,$notrigger=0,$triggercode='FILE_DELETE',$object=null)
 {
-	global $conf, $user, $langs;
-	global $object;
+	global $db, $conf, $user, $langs;
 
     //print "x".$file." ".$disableglob;
     $ok=true;
@@ -612,12 +612,13 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$notrigger=0)
             	dol_syslog("Removed file ".$filename,LOG_DEBUG);
             	if (! $notrigger)
             	{
+                    if (! is_object($object)) $object=(object) 'dummy';
             		$object->src_file=$file;
 
             		// Appel des triggers
             		include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
             		$interface=new Interfaces($db);
-            		$result=$interface->run_triggers('FILE_DELETE',$object,$user,$langs,$conf);
+            		$result=$interface->run_triggers($triggercode,$object,$user,$langs,$conf);
             		if ($result < 0) { $error++; $errors=$interface->errors; }
             		// Fin appel triggers
             	}
@@ -709,7 +710,7 @@ function dol_add_file_process($upload_dir,$allowoverwrite=0,$donotupdatesession=
 
 	if (! empty($_FILES['addedfile']['tmp_name']))
 	{
-		if (create_exdir($upload_dir) >= 0)
+		if (dol_mkdir($upload_dir) >= 0)
 		{
 			$resupload = dol_move_uploaded_file($_FILES['addedfile']['tmp_name'], $upload_dir . "/" . $_FILES['addedfile']['name'],$allowoverwrite,0, $_FILES['addedfile']['error']);
 			if (is_numeric($resupload) && $resupload > 0)
@@ -755,10 +756,11 @@ function dol_add_file_process($upload_dir,$allowoverwrite=0,$donotupdatesession=
  * Remove an uploaded file (for example after submitting a new file a mail form).
  * All information used are in db, conf, langs, user and _FILES.
  * @param	filenb					File nb to delete
- * @param	donotupdatesession		1=Do no edit _SESSION variable
+ * @param	donotupdatesession		1=Do not edit _SESSION variable
+ * @param   donotdeletefile         1=Do not delete physically file
  * @return	string					Message with result of upload and store.
  */
-function dol_remove_file_process($filenb,$donotupdatesession=0)
+function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=0)
 {
 	global $db,$user,$conf,$langs,$_FILES;
 
@@ -778,14 +780,16 @@ function dol_remove_file_process($filenb,$donotupdatesession=0)
 	{
 		$pathtodelete=$listofpaths[$keytodelete];
 		$filetodelete=$listofnames[$keytodelete];
-		$result = dol_delete_file($pathtodelete,1);
+		if (empty($donotdeletefile)) $result = dol_delete_file($pathtodelete,1);
+		else $result=0;
 		if ($result >= 0)
 		{
-			$langs->load("other");
-
-			$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved",$filetodelete).'</div>';
-			//print_r($_FILES);
-
+			if (empty($donotdeletefile))
+			{
+			    $langs->load("other");
+			    $mesg = '<div class="ok">'.$langs->trans("FileWasRemoved",$filetodelete).'</div>';
+    			//print_r($_FILES);
+			}
 			if (empty($donotupdatesession))
 			{
 				include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');

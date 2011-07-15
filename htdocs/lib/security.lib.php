@@ -21,7 +21,7 @@
 /**
  *  \file			htdocs/lib/security.lib.php
  *  \brief			Set of function used for dolibarr security
- *  \version		$Id: security.lib.php,v 1.123 2011/07/04 09:01:38 eldy Exp $
+ *  \version		$Id: security.lib.php,v 1.124 2011/07/09 08:05:08 hregis Exp $
  */
 
 
@@ -540,14 +540,16 @@ function dol_efc_config()
 
 /**
  * Return a generated password using default module
+ * @param		generic		Create generic password
  * @return		string		New value for password
  */
-function getRandomPassword()
+function getRandomPassword($generic=false)
 {
 	global $db,$conf,$langs,$user;
 
 	$generated_password='';
-	if ($conf->global->USER_PASSWORD_GENERATED)
+	if ($generic) $generated_password=dol_hash(mt_rand());
+	else if ($conf->global->USER_PASSWORD_GENERATED)
 	{
 		$nomclass="modGeneratePass".ucfirst($conf->global->USER_PASSWORD_GENERATED);
 		$nomfichier=$nomclass.".class.php";
@@ -557,6 +559,7 @@ function getRandomPassword()
 		$generated_password=$genhandler->getNewGeneratedPassword();
 		unset($genhandler);
 	}
+
 	return $generated_password;
 }
 

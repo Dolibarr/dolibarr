@@ -17,7 +17,7 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- $Id$
+-- $Id: llx_paiementfourn_facturefourn.sql,v 1.5 2011/07/12 21:07:24 eldy Exp $
 -- ===========================================================================
 
 create table llx_paiementfourn_facturefourn
@@ -25,5 +25,5 @@ create table llx_paiementfourn_facturefourn
   rowid integer AUTO_INCREMENT PRIMARY KEY,
   fk_paiementfourn INTEGER DEFAULT NULL,
   fk_facturefourn  INTEGER DEFAULT NULL,
-  amount DOUBLE DEFAULT '0'
+  amount double(24,8) DEFAULT 0
 )ENGINE=innodb;

@@ -1,3 +1,4 @@
+#!/usr/bin/php
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
@@ -22,7 +23,7 @@
 /**
  *      \file       htdocs/dev/generate-societe.php
  *		\brief      Script de generation de donnees aleatoires pour les societes
- *		\version    $Id$
+ *		\version    $Id: generate-societe.php,v 1.16 2011/07/09 14:11:40 eldy Exp $
  */
 
 // Test si mode batch

@@ -1,5 +1,5 @@
 #!/usr/bin/php
-<?PHP
+<?php
 /**
  * Copyright (C) 2009-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -22,7 +22,7 @@
  *      \file       scripts/invoices/rebuild_merge_pdf.php
  *      \ingroup    facture
  *      \brief      Script to rebuild PDF and merge PDF files into one
- *		\version	$Id$
+ *		\version	$Id: rebuild_merge_pdf.php,v 1.20 2011/07/09 14:11:41 eldy Exp $
  */
 
 $sapi_type = php_sapi_name();
@@ -49,7 +49,7 @@ require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 $langs->load("main");
 
 // Global variables
-$version='$Revision$';
+$version='$Revision: 1.20 $';
 $error=0;
 
 

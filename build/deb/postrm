@@ -72,10 +72,6 @@ case "$1" in
 			echo postrm Mysql superuser found to use is $superuserlogin
 			dbadmin="$superuserlogin"
 			dbadmpass="$superuserpassword"
-			#db_get "dolibarr/db/admin/name"
-			#dbadmin="$RET"
-			#db_get "dolibarr/db/admin/password"
-			#dbadmpass="$RET"
 			dbtype="mysql"
 			
 			# To delete a mysql user (disabled)
@@ -149,30 +145,6 @@ case "$1" in
 	
 		# Remove include files
 		for server in $webservers ; do
-            
-            # Old usage
-			#export conffile="/etc/$server/httpd.conf"
-            #export error=""     
-			#echo "postrm conffile=$conffile" 
-			#if [ -f $conffile ] ;
-			#then
-			#	if [ -s $conffile ] ;
-			#	then
-            #        echo postrm remove dolibarr include from /etc/dolibarr/apache.conf
-			#		# We disable set -e to avoid premature end of script if error
-			#		set +e
-			#	    GREP="Include[[:space:]]\+$includefile\b"
-			#	    if grep -e "$GREP" $conffile > /dev/null 2>&1; then
-			#		log="${log}Include of $includefile found in $conffile file, purging."
-			#		status=purge
-			#		grep -v -e "$GREP" < $conffile > $conffile.purg
-			#		mv $conffile.purg $conffile
-			#		fi
-			#		# We restore blocking errors
-			#		set -e
-			#	fi
-			#fi
-			
 			# New usage
 			export conffile="/etc/$server/conf.d/dolibarr.conf"
             if [ -f $conffile ] ;
@@ -189,25 +161,18 @@ case "$1" in
 		rm -rf /etc/dolibarr
 
 		# Restart servers
-		servers="apache2-ssl apache2 mysql"
-		if [ -f /usr/share/wwwconfig-common/restart.sh ] ;
-		then
-			. /usr/share/wwwconfig-common/restart.sh
-		else
-			# Another way to restart
-			for server in $servers ; do
-                # We disable blocking errors
-                set +e
-                echo "Restart server $server if exists"
-        		if [ -x /usr/sbin/invoke-rc.d ]; then
-        		     invoke-rc.d $server reload || true
-        		else
-        		     /etc/init.d/$server reload || true
-        		fi
-        		# We restore blocking errors
-        		set -e
-			done
-		fi
+		for server in $servers ; do
+            # We disable blocking errors
+            set +e
+            echo "Restart server $server if exists"
+    		if [ -x /usr/sbin/invoke-rc.d ]; then
+    		     invoke-rc.d $server reload || true
+    		else
+    		     /etc/init.d/$server reload || true
+    		fi
+    		# We restore blocking errors
+    		set -e
+		done
 		
 		# Remove file and conf file
 		for dir in /usr/share/dolibarr ; do

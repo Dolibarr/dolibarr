@@ -6,3 +6,19 @@ RPM Package tools
 This directory contains files used by makepack-dolibarr.pl
 script to build a package, ready to be distributed,
 with format RPM (for Redhat, Mandriva, ...).
+
+
+# This is standard command to work on Debian packaging:
+#
+# On Fedora
+# rpm -i --test dolibarr-...rpm     To list dependencies of RPM   
+# yum install dolibarr-...rpm       To install package and dependencies   
+# yum erase dolibarr                To remove package   
+#
+# On OpenSuse
+# yast --install dolibarr-...rpm    To install package and dependencies
+# yast --remove  dolibarr           To remove package
+#
+# On Mageia (after su - root)
+# urpmi dolibarr-...rpm             To install package and dependencies
+# urpme dolibarr                    To remove package  

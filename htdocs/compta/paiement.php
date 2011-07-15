@@ -24,7 +24,7 @@
  *	\file       htdocs/compta/paiement.php
  *	\ingroup    compta
  *	\brief      Page to create a payment
- *	\version    $Id: paiement.php,v 1.109 2011/07/04 16:39:48 cdelambert Exp $
+ *	\version    $Id: paiement.php,v 1.111 2011/07/13 08:57:21 eldy Exp $
  */
 
 require('../main.inc.php');
@@ -253,7 +253,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         	if (! empty($conf->global->PAYPAL_BANK_ACCOUNT)) $accountid=$conf->global->PAYPAL_BANK_ACCOUNT;
         	$paymentnum=$facture->ref_int;
         }
-        if ($conf->use_javascript_ajax)
+        if ($conf->use_javascript_ajax && !empty($conf->global->MAIN_JS_ON_PAYMENT))
         {
             print "\n".'<script type="text/javascript" language="javascript">';
             print 'jQuery(document).ready(function () {';
@@ -272,39 +272,32 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                                 jQuery(\'.fieldrequireddyn\').removeClass(\'fieldrequired\');
                             }
                         });
-                    });
-                  </script>'."\n";
-        }
-        
-        if (! empty($conf->global->MAIN_JS_ON_PAYMENT))
-        {
-        	print "\n".'<script type="text/javascript" language="javascript">';
-        	print 'jQuery(document).ready(function () {
+
         			function elemToJson(selector)
             		{
             			var subJson = {};
             			jQuery.map(selector.serializeArray(), function(n,i)
             			{
             				subJson[n["name"]] = n["value"];
-            			}); 
-            			return subJson;        			
+            			});
+            			return subJson;
             		}
             		function callForResult(imgId)
             		{
             		    var json = {};
 		            	var form = jQuery("#payment_form");
-		            	
-		            	json["amountPayment"] = jQuery("#amountpayment").attr("value");            			
+
+		            	json["amountPayment"] = jQuery("#amountpayment").attr("value");
 		            	json["amounts"] = elemToJson(form.find("input[name*=\"amount_\"]"));
-		            	json["remains"] = elemToJson(form.find("input[name*=\"remain_\"]")); 
+		            	json["remains"] = elemToJson(form.find("input[name*=\"remain_\"]"));
 		            	if(imgId != null)json["imgClicked"] = imgId;
-		            	           				
+
             			jQuery.post("ajaxpayment.php", json, function(data)
             			{
-            				json = jQuery.parseJSON(data); 
-            				
+            				json = jQuery.parseJSON(data);
+
             				form.data(json);
-            				            				
+
             				for(var key in json)
             				{
             					if(key == "result")	{
@@ -314,38 +307,38 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             						} else {
             							jQuery("#"+key).removeAttr("style");
             						}
-            					} else {            					
+            					} else {
             						form.find("input[name*=\""+key+"\"]").each(function() {
             							jQuery(this).attr("value", json[key]);
             						});
-            					}          				
-            				}            				
+            					}
+            				}
             			});
-            			
-            		}  
-            		function callToBreakdown(imgSelector) {        			
+
+            		}
+            		function callToBreakdown(imgSelector) {
 		            	var form = jQuery("#payment_form"), imgId;
-		            	
+
 		            	imgId =  imgSelector.attr("id");
 		            	callForResult(imgId);
             		}
 
             		jQuery("#payment_form").find("img").click(function() {
             				callToBreakdown(jQuery(this));
-                    	}); 
-                    	
-            			jQuery("#payment_form").find("input[name*=\"amount_\"]").change(function() {  
+                    	});
+
+            			jQuery("#payment_form").find("input[name*=\"amount_\"]").change(function() {
             				callForResult();
-                    	}); 
-                    	            		
-            			jQuery("#amountpayment").change(function() {  
+                    	});
+
+            			jQuery("#amountpayment").change(function() {
             				callForResult();
                     	});
              	});
              </script>'."\n";
         }
 
-        print '<form name="add_paiement" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+        print '<form id="payment_form" name="add_paiement" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="add_paiement">';
         print '<input type="hidden" name="facid" value="'.$facture->id.'">';
@@ -367,18 +360,18 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         print '<td>'.$langs->trans('Comments').'</td></tr>';
 
         $rowspan=5;
-        if (! empty($conf->global->MAIN_JS_ON_PAYMENT)) $rowspan++;
+        if ($conf->use_javascript_ajax) $rowspan++;
 
         // Payment mode
         print '<tr><td><span class="fieldrequired">'.$langs->trans('PaymentMode').'</span></td><td>';
         $html->select_types_paiements((GETPOST('paiementcode')?GETPOST('paiementcode'):$facture->mode_reglement_code),'paiementcode','',2);
         print "</td>\n";
         print '<td rowspan="'.$rowspan.'" valign="top">';
-        print '<textarea name="comment" wrap="soft" cols="60" rows="'.ROWS_5.'">'.(empty($_POST['comment'])?'':$_POST['comment']).'</textarea></td>';
+        print '<textarea name="comment" wrap="soft" cols="60" rows="'.ROWS_4.'">'.(empty($_POST['comment'])?'':$_POST['comment']).'</textarea></td>';
         print '</tr>';
 
         // Payment amount
-        if (! empty($conf->global->MAIN_JS_ON_PAYMENT))
+        if ($conf->use_javascript_ajax && !empty($conf->global->MAIN_JS_ON_PAYMENT))
         {
             print '<tr><td><span class="fieldrequired">'.$langs->trans('AmountPayment').'</span></td>';
             print '<td>';
@@ -467,7 +460,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                 print '<td align="right">'.$langs->trans('RemainderToPay').'</td>';
                 print '<td align="right">'.$langs->trans('PaymentAmount').'</td>';
                 print '<td align="right">&nbsp;</td>';
-                print "</tr>\n";  
+                print "</tr>\n";
 
                 $var=True;
                 $total=0;
@@ -519,7 +512,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
                     if ($action != 'add_paiement')
                     {
-                        if (! empty($conf->global->MAIN_JS_ON_PAYMENT))
+                        if ($conf->use_javascript_ajax && !empty($conf->global->MAIN_JS_ON_PAYMENT))
                         {
                             print img_picto($langs->trans('AddRemind'),'rightarrow.png','id="'.$objp->facid.'" "');
                         }
@@ -678,5 +671,5 @@ if (! GETPOST('action'))
 
 $db->close();
 
-llxFooter('$Date: 2011/07/04 16:39:48 $ - $Revision: 1.109 $');
+llxFooter('$Date: 2011/07/13 08:57:21 $ - $Revision: 1.111 $');
 ?>

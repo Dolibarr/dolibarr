@@ -1,3 +1,4 @@
+#!/usr/bin/php
 <?php
 /* Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -20,7 +21,7 @@
  *	\file       dev/skeletons/build_webservice_from_class.php
  *  \ingroup    core
  *  \brief      Create a complete webservice file from CRUD functions of a PHP class
- *  \version    $Id$
+ *  \version    $Id: build_webservice_from_class.php,v 1.6 2011/07/09 14:11:40 eldy Exp $
  */
 
 $sapi_type = php_sapi_name();
@@ -38,7 +39,7 @@ require_once($path."../../htdocs/master.inc.php");
 // After this $db is a defined handler to database.
 
 // Main
-$version='$Revision$';
+$version='$Revision: 1.6 $';
 @set_time_limit(0);
 $error=0;
 
