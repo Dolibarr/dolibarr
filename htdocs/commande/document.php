@@ -23,7 +23,7 @@
  *	\file       htdocs/commande/document.php
  *	\ingroup    order
  *	\brief      Page de gestion des documents attachees a une commande
- *	\version    $Id: document.php,v 1.34 2011/07/06 20:56:49 eldy Exp $
+ *	\version    $Id: document.php,v 1.35 2011/07/14 05:21:53 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -113,7 +113,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
 
     	$upload_dir = $conf->commande->dir_output . "/" . dol_sanitizeFileName($object->ref);
     	$file = $upload_dir . '/' . $_GET['urlfile'];	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-    	dol_delete_file($file);
+    	dol_delete_file($file,0,0,0,'FILE_DELETE',$object);
     	$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
     }
 }
@@ -193,5 +193,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/06 20:56:49 $ - $Revision: 1.34 $');
+llxFooter('$Date: 2011/07/14 05:21:53 $ - $Revision: 1.35 $');
 ?>

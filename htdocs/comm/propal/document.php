@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005      Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin         <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
  *       \file       htdocs/comm/propal/document.php
  *       \ingroup    propale
  *       \brief      Page de gestion des documents attaches a une proposition commerciale
- *       \version    $Id: document.php,v 1.66 2011/07/06 20:56:49 eldy Exp $
+ *       \version    $Id: document.php,v 1.67 2011/07/14 05:21:53 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -110,7 +110,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
 
         $upload_dir = $conf->propale->dir_output . "/" . dol_sanitizeFileName($object->ref);
     	$file = $upload_dir . '/' . $_GET['urlfile'];	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-    	dol_delete_file($file);
+    	dol_delete_file($file,0,0,0,'FILE_DELETE',$object);
         $mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
     }
 }
@@ -209,5 +209,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/06 20:56:49 $ - $Revision: 1.66 $');
+llxFooter('$Date: 2011/07/14 05:21:53 $ - $Revision: 1.67 $');
 ?>
