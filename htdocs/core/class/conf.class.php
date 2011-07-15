@@ -25,7 +25,7 @@
  *	\ingroup		core
  *  \brief      	Fichier de la classe de stockage de la config courante
  *  \remarks		La config est stockee dans le fichier conf/conf.php
- *  \version    	$Id: conf.class.php,v 1.59 2011/07/01 23:06:06 eldy Exp $
+ *  \version    	$Id: conf.class.php,v 1.61 2011/07/13 18:04:25 eldy Exp $
  */
 
 
@@ -145,13 +145,13 @@ class Conf
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_TRIGGERS$/i',$key,$reg))
 						{
 							$modulename = strtolower($reg[1]);
-							$this->triggers_modules[] = '/'.$modulename.'/inc/triggers/';
+							$this->triggers_modules[] = '/'.$modulename.'/inc/triggers/';    // TODO Replace inc by includes to have same path than standard
 						}
 						// If this is constant for login method activated by a module
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_LOGIN_METHOD$/i',$key,$reg))
 						{
 							$modulename = strtolower($reg[1]);
-							$this->login_method_modules[] = DOL_DOCUMENT_ROOT.'/'.$modulename.'/inc/login/';
+							$this->login_method_modules[] = DOL_DOCUMENT_ROOT.'/'.$modulename.'/inc/login/'; // TODO Replace inc by includes to have same path than standard
 						}
 						// If this is constant for hook activated by a module. Value is list of hooked tabs separated with :
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_HOOKS$/i',$key,$reg))
@@ -363,7 +363,6 @@ class Conf
 		// Defini MAIN_GRAPH_LIBRARY
 		if (empty($this->global->MAIN_GRAPH_LIBRARY)) $this->global->MAIN_GRAPH_LIBRARY = 'artichow';
 
-        if (! isset($this->global->MAIN_MAIL_EMAIL_INLINE_IMAGES)) $this->global->MAIN_MAIL_EMAIL_INLINE_IMAGES=1;
         if (! isset($this->global->FCKEDITOR_EDITORNAME)) $this->global->FCKEDITOR_EDITORNAME='ckeditor';  // fckeditor to switch
 
         // Format for date (used by default when not found or searched in lang)

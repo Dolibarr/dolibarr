@@ -65,7 +65,9 @@
                 data.isAdjusted = true;
                 data.isValidated = that._validate(data.files);
                 data.context = that._renderUpload(data.files)
-                    .appendTo($(this).find('.files')).fadeIn(function () {
+                    // DOL_CHANGE
+                	//.appendTo($(this).find('.files')).fadeIn(function () {
+                    .appendTo($('#fileupload-view').find('.files')).fadeIn(function () {
                         // Fix for IE7 and lower:
                         $(this).show();
                     }).data('data', data);
@@ -119,7 +121,9 @@
                 } else {
                     that._renderDownload(data.result)
                         .css('display', 'none')
-                        .appendTo($(this).find('.files'))
+                        // DOL_CHANGE
+                        //.appendTo($(this).find('.files'))
+                        .appendTo($('#fileupload-view').find('.files'))
                         .fadeIn(function () {
                             // Fix for IE7 and lower:
                             $(this).show();
@@ -153,7 +157,9 @@
                     that._adjustMaxNumberOfFiles(-data.files.length);
                     data.context = that._renderUpload(data.files)
                         .css('display', 'none')
-                        .appendTo($(this).find('.files'))
+                        // DOL_CHANGE
+                        //.appendTo($(this).find('.files'))
+                        .appendTo($('#fileupload-view').find('.files'))
                         .fadeIn(function () {
                             // Fix for IE7 and lower:
                             $(this).show();
@@ -487,7 +493,9 @@
         
         _initEventHandlers: function () {
             $.blueimp.fileupload.prototype._initEventHandlers.call(this);
-            var filesList = this.element.find('.files'),
+            // DOL_CHANGE
+            //var filesList = this.element.find('.files'),
+            var filesList = $('#fileupload-view').find('.files'),
                 eventData = {fileupload: this};
             filesList.find('.start button')
                 .live(
@@ -510,7 +518,9 @@
         },
         
         _destroyEventHandlers: function () {
-            var filesList = this.element.find('.files');
+        	// DOL_CHANGE
+            //var filesList = this.element.find('.files'),
+            var filesList = $('#fileupload-view').find('.files');
             filesList.find('.start button')
                 .die('click.' + this.options.namespace);
             filesList.find('.cancel button')
@@ -522,7 +532,9 @@
 
         _initFileUploadButtonBar: function () {
             var fileUploadButtonBar = this.element.find('.fileupload-buttonbar'),
-                filesList = this.element.find('.files'),
+            	// DOL_CHANGE
+            	//filesList = this.element.find('.files'),
+            	filesList = $('#fileupload-view').find('.files'),
                 ns = this.options.namespace;
             fileUploadButtonBar
                 .addClass('ui-widget-header ui-corner-top');
@@ -607,16 +619,24 @@
             this.element
                 .addClass('ui-widget');
             this._initFileUploadButtonBar();
-            this.element.find('.fileupload-content')
+            // DOL_CHANGE
+            //this.element.find('.fileupload-content')
+            $('#fileupload-view').find('.fileupload-content')
                 .addClass('ui-widget-content ui-corner-bottom');
-            this.element.find('.fileupload-progressbar')
+            // DOL_CHANGE
+            //this.element.find('.fileupload-progressbar')
+            $('#fileupload-view').find('.fileupload-progressbar')
                 .hide().progressbar();
         },
         
         destroy: function () {
-            this.element.find('.fileupload-progressbar')
+        	// DOL_CHANGE
+            //this.element.find('.fileupload-progressbar')
+        	$('#fileupload-view').find('.fileupload-progressbar')
                 .progressbar('destroy');
-            this.element.find('.fileupload-content')
+        	// DOL_CHANGE
+            //this.element.find('.fileupload-content')
+        	$('#fileupload-view').find('.fileupload-content')
                 .removeClass('ui-widget-content ui-corner-bottom');
             this._destroyFileUploadButtonBar();
             this.element.removeClass('ui-widget');

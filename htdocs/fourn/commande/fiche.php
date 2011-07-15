@@ -25,7 +25,7 @@
  *	\file		htdocs/fourn/commande/fiche.php
  *	\ingroup	supplier, order
  *	\brief		Card supplier order
- *	\version	$Id: fiche.php,v 1.231 2011/07/07 21:32:21 eldy Exp $
+ *	\version	$Id: fiche.php,v 1.232 2011/07/10 20:03:40 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -578,9 +578,9 @@ if ($_POST['addfile'])
 
 	// Set tmp user directory TODO Use a dedicated directory for temp mails files
 	$vardir=$conf->user->dir_output."/".$user->id;
-	$upload_dir = $vardir.'/temp/';
+	$upload_dir_tmp = $vardir.'/temp';
 
-	$mesg=dol_add_file_process($upload_dir,0,0);
+	$mesg=dol_add_file_process($upload_dir_tmp,0,0);
 
 	$action='presend';
 }
@@ -594,7 +594,7 @@ if (! empty($_POST['removedfile']))
 
 	// Set tmp user directory
 	$vardir=$conf->user->dir_output."/".$user->id;
-	$upload_dir = $vardir.'/temp/';
+	$upload_dir_tmp = $vardir.'/temp';
 
 	$mesg=dol_remove_file_process($_POST['removedfile'],0);
 
@@ -1545,5 +1545,5 @@ if ($id > 0 || ! empty($ref))
 
 $db->close();
 
-llxFooter('$Date: 2011/07/07 21:32:21 $	- $Revision: 1.231 $');
+llxFooter('$Date: 2011/07/10 20:03:40 $	- $Revision: 1.232 $');
 ?>

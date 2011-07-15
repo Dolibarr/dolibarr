@@ -22,7 +22,7 @@
  *	\file       htdocs/core/class/html.formfile.class.php
  *  \ingroup    core
  *	\brief      File of class to offer components to list and upload files
- *	\version	$Id: html.formfile.class.php,v 1.46 2011/07/06 21:12:34 eldy Exp $
+ *	\version	$Id: html.formfile.class.php,v 1.49 2011/07/13 14:41:03 eldy Exp $
  */
 
 
@@ -152,6 +152,7 @@ class FormFile
 	 */
 	function show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='',$codelang='',$hooks='')
 	{
+	    $this->numoffiles=0;
 		print $this->showdocuments($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed,$modelselected,$allowgenifempty,$forcenomultilang,$iconPDF,$maxfilenamelength,$noform,$param,$title,$buttonlabel,$codelang,$hooks);
 		return $this->numoffiles;
 	}
@@ -185,6 +186,7 @@ class FormFile
 
 		global $langs,$bc,$conf;
 
+		$forname='builddoc';
 		$out='';
 		$var=true;
 
@@ -386,7 +388,7 @@ class FormFile
 			$buttonlabeltoshow=$buttonlabel;
 			if (empty($buttonlabel)) $buttonlabel=$langs->trans('Generate');
 
-			if (empty($noform)) $out.= '<form action="'.$urlsource.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc').'" method="post">';
+			if (empty($noform)) $out.= '<form action="'.$urlsource.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc').'" name="'.$forname.'" method="post">';
 			$out.= '<input type="hidden" name="action" value="builddoc">';
 			$out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
@@ -436,8 +438,7 @@ class FormFile
 
 			// Button
 			$out.= '<td align="center" colspan="'.($delallowed?'2':'1').'" class="formdocbutton">';
-			$out.= '<input class="button" ';
-			//print ((is_array($modellist) && sizeof($modellist))?'':' disabled="true"') // Always allow button "Generate" (even if no model activated)
+			$out.= '<input class="button" id="'.$forname.'_generatebutton"';
 			$out.= ' type="submit" value="'.$buttonlabel.'"';
 			if (! $allowgenifempty && ! is_array($modellist) && empty($modellist)) $out.= ' disabled="true"';
 			$out.= '>';
@@ -845,6 +846,10 @@ class FormFile
 		print '<button type="submit" class="start">'.$langs->trans('StartUpload').'</button>';
 		print '<button type="reset" class="cancel">'.$langs->trans('CancelUpload').'</button>';
 		print '</div></form>';
+
+		print '</div><!-- end div fileupload -->';
+
+		print '<div id="fileupload-view">';
 		print '<div class="fileupload-content">';
 
 		print '<table width="100%" class="files">';
@@ -859,8 +864,8 @@ class FormFile
 		// We remove this because there is already individual bars.
 		//print '<div class="fileupload-progressbar"></div>';
 
-		print '</div>';
-		print '</div>';
+		print '</div><!-- end div fileupload-content -->';
+		print '</div><!-- end div fileupload-view -->';
 
 		// Include template
 		include(DOL_DOCUMENT_ROOT.'/core/tpl/ajaxfileupload.tpl.php');
