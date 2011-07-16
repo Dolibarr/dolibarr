@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2010-2011 Herve Prot           <herve.prot@symeos.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,6 +72,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 	{
 		$langs->load("companies");
 		$langs->load("suppliers");
+        $langs->load("commercial");
 
 		$classname="";
 		if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "companies")
@@ -799,6 +801,13 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                     }
                 }
                 //if ($leftmenu=="cat") $newmenu->add("/categories/liste.php", $langs->trans("List"), 1, $user->rights->categorie->lire);
+
+				//Symeos
+				$newmenu->add("/categories/index.php?leftmenu=cat&amp;type=5", "Cat&eacute;gories Contacts", 0, $user->rights->categorie->lire);
+                                if ($user->societe_id == 0)
+                                {
+                                        $newmenu->add("/categories/fiche.php?action=create&amp;type=5", "Nouvelle Cat&eacute;gorie", 1, $user->rights->categorie->creer);
+                                }
             }
 
         }

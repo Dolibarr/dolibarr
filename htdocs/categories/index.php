@@ -4,6 +4,7 @@
  * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2010-2011 Herve Prot           <herve.prot@symeos.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -129,8 +130,8 @@ $fulltree=$cate_arbo;
 
 
 
-print '<table class="nobordernopadding" width="100%">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Categories").'</td><td colspan="3">'.$langs->trans("Description").'</td></tr>';
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Categories").'</td><td align="center">'.$langs->trans("Priority").'</td><td colspan="2">'.$langs->trans("Description").'</td></tr>';
 
 
 $section=isset($_GET["section"])?$_GET["section"]:$_POST['section'];
@@ -144,7 +145,7 @@ if (! $section) $section=0;
 
 
 // Root title line
-print '<tr><td>';
+print '<tr><td colspan="2">';
 print '<table class="nobordernopadding"><tr class="nobordernopadding">';
 print '<td align="left" width="24">';
 print img_picto_common('','treemenu/base.gif');
@@ -232,7 +233,7 @@ foreach($fulltree as $key => $val)
         print "<tr ".$bc[$var].">";
 
 		// Show tree graph pictos
-		print '<td align="left">';
+		print '<td align="left" colspan="2">';
 		print '<table class="nobordernopadding"><tr class="nobordernopadding"><td>';
 		$resarray=tree_showpad($fulltree,$key);
 		$a=$resarray[0];
@@ -259,17 +260,22 @@ foreach($fulltree as $key => $val)
 		// Show link
 		print '<td valign="middle">';
 		//if ($section == $val['id']) print ' <u>';
-		// We don't want a link ... why ?
+		/* We don't want a link ... why ?
 		$categstatic->id=$val['id'];
 		$categstatic->ref=$val['label'];
 		$categstatic->type=$type;
-		print ' &nbsp;'.$categstatic->getNomUrl(0,'',28);
-		
-		//print ' &nbsp;'.dol_trunc($val['label'],28);
+		print $categstatic->getNomUrl(0,'',28);
+		*/
+		print ' &nbsp;'.'<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.$type.'">'.dol_trunc($val['label'],28).'</a>';
 		//if ($section == $val['id']) print '</u>';
 		print '</td>';
 		print '</tr></table>';
 		print "</td>\n";
+
+                // Priority
+		print '<td align="center">';
+		print $val['priority'];
+		print '</td>';
 
 		// Description
 		print '<td>';
@@ -309,7 +315,36 @@ if ($nbofentries == 0)
 // ----- End of section -----
 // --------------------------
 
-print "</table>";
+print "</table><br>";
+
+/* Print Graph */
+
+
+    if($conf->highcharts->enabled && $user->rights->highcharts->read && $conf->societe->enabled)
+    {
+        require_once(DOL_DOCUMENT_ROOT."/highCharts/class/highCharts.class.php");
+        $langs->load("highcharts");
+
+        $graph=new HighCharts($db);
+        $graph->width="100%";
+        $graph->height="300px";
+        $graph->name="graphPriority";
+
+        if($user->rights->highcharts->all && $user->rights->societe->client->voir)
+            $graph->mine=0;
+
+        if($_GET["type"]==2)
+        {
+            $graph->label=$langs->trans("graphPriorityTiers");
+            $graph->graphPriorityTiers();
+        }
+        if($_GET["type"]==5)
+        {
+            $graph->label=$langs->trans("graphPriorityContacts");
+            $graph->graphPriorityContacts();
+        }
+    }
+
 
 $db->close();
 

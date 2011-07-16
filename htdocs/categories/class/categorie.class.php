@@ -5,6 +5,7 @@
  * Copyright (C) 2006-2008 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin	  	<patrick.raguin@gmail.com>
+ * Copyright (C) 2010-2011 Herve Prot   	  	<herve.prot@symeos.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,7 @@
 
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.class.php");
+require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 
 
 /**
@@ -49,7 +51,8 @@ class Categorie
 	var $label;
 	var $description;
 	var $socid;
-	var $type;					// 0=Product, 1=Supplier, 2=Customer/Prospect, 3=Member
+	var $type;					// 0=Product, 1=Supplier, 2=Customer/Prospect, 3=Member, 5=Contact
+	var $priority;
 	var $parentId;
 
 	var $cats=array();			// Tableau en memoire des categories
@@ -65,6 +68,7 @@ class Categorie
 	{
 		$this->db = $DB;
 		$this->id = $id;
+                $this->priority = 0;
 
 		if ($id != -1) $this->fetch ($this->id);
 	}
@@ -75,7 +79,7 @@ class Categorie
 	 */
 	function fetch($id)
 	{
-		$sql = "SELECT rowid, label, description, fk_soc, visible, type";
+		$sql = "SELECT rowid, label, description, fk_soc, visible, type, priority";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
 		$sql.= " WHERE rowid = ".$id;
 
@@ -91,6 +95,7 @@ class Categorie
 			$this->socid       = $res['fk_soc'];
 			$this->visible     = $res['visible'];
 			$this->type        = $res['type'];
+                        $this->priority    =$res['priority'];
 
 			$this->db->free($resql);
 		}
@@ -148,7 +153,8 @@ class Categorie
 			$sql.= "fk_soc,";
 		}
 		$sql.= " visible,";
-		$sql.= " type";
+		$sql.= " type,";
+		$sql.= " priority";
 		//$sql.= ", fk_parent_id";
 		$sql.= ")";
 		$sql.= " VALUES ('".$this->db->escape($this->label)."', '".$this->db->escape($this->description)."',";
@@ -156,7 +162,7 @@ class Categorie
 		{
 			$sql.= ($this->socid != -1 ? $this->socid : 'null').",";
 		}
-		$sql.= "'".$this->visible."',".$this->type;
+		$sql.= "'".$this->visible."','".$this->type."','".$this->priority."'";
 		//$sql.= ",".$this->parentId;
 		$sql.= ")";
 
@@ -258,6 +264,7 @@ class Categorie
 			$sql .= ", fk_soc = ".($this->socid != -1 ? $this->socid : 'null');
 		}
 		$sql .= ", visible = '".$this->visible."'";
+		$sql .= ", priority = '".$this->priority."'";
 		//$sql .= ", fk_parent_id = ".$this->parentId;
 		$sql .= " WHERE rowid = ".$this->id;
 
@@ -633,7 +640,7 @@ class Categorie
 		}
 
 		// Init $this->cats array
-		$sql = "SELECT DISTINCT c.rowid, c.label as label, ca.fk_categorie_fille as rowid_fille";	// Distinct reduce pb with old tables with duplicates
+		$sql = "SELECT DISTINCT c.rowid, c.label as label, ca.fk_categorie_fille as rowid_fille, c.priority";	// Distinct reduce pb with old tables with duplicates
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie as c";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_association as ca";
 		$sql.= " ON c.rowid=ca.fk_categorie_mere";
@@ -650,6 +657,7 @@ class Categorie
 				$this->cats[$obj->rowid]['id'] = $obj->rowid;
 				if (isset($this->motherof[$obj->rowid])) $this->cats[$obj->rowid]['id_mere'] = $this->motherof[$obj->rowid];
 				$this->cats[$obj->rowid]['label'] = $obj->label;
+                $this->cats[$obj->rowid]['priority'] = $obj->priority;
 
 				if ($obj->rowid_fille)
 				{
@@ -1043,6 +1051,8 @@ class Categorie
 		if ($typeid == 1)  { $table='societe'; $type='fournisseur'; }
 		if ($typeid == 2)  { $table='societe'; $type='societe'; }
 		if ($typeid == 3)  { $table='member'; $type='member'; }
+        if ($typeid == 4)  { $table='lead'; $type='lead'; }
+		if ($typeid == 5)  { $table='contact'; $type='contact'; }
 
 		$sql = "SELECT ct.fk_categorie";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_".$type." as ct";

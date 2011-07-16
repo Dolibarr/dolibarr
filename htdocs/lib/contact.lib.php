@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin		<regis@dolibarr.fr>
+ * Copyright (C) 2010-2011 Herve Prot       	<herve.prot@symeos.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,6 +59,11 @@ function contact_prepare_head($object)
 	$head[$h][1] = $langs->trans("PersonalInformations");
 	$head[$h][2] = 'perso';
 	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/categories/categorie.php?id='.$_GET["id"].'&type=5';
+    $head[$h][1] = $langs->trans("Categories");
+    $head[$h][2] = 'category';
+    $h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/contact/exportimport.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("ExportImport");
