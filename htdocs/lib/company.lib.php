@@ -101,7 +101,7 @@ function societe_prepare_head($object)
         $h++;
     }
     // Attached files
-    if ($user->societe_id == 0)
+    if ($conf->ecm->enabled && $user->societe_id == 0)
     {
         $head[$h][0] = DOL_URL_ROOT.'/societe/document.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("Documents");
