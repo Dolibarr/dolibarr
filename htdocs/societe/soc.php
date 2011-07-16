@@ -378,6 +378,9 @@ if (empty($reshook))
                     exit;
                 }
 
+				$backtopage='';
+                if (! empty($_POST["backtopage"])) $backtopage=$_POST["backtopage"];
+
                 $object->oldcopy=dol_clone($object);
                 
                 ### Calcul des coordonnées GPS
@@ -1633,13 +1636,6 @@ else
         {
             print '<tr '.$bc[$var].'><td id="label">'.$langs->trans('Gencod').'</td><td id="value" colspan="'.(2+($object->logo?0:1)).'">'.$object->gencod.'</td></tr>';
         }
-        
-        // MAP GPS
-        if($conf->map->enabled)
-            print '<tr '.$bc[$var].'><td id="label">GPS</td><td id="value" colspan="'.(2+($object->logo?0:1)).'">'.img_picto(($object->lat.','.$object->lng),(($object->lat && $object->lng)?"statut4":"statut1")).'</td></tr>';
-        else
-            print '<td id="label"></td><td id="value"></td></tr>';
-        $var=!$var;
 
         // Address
         print '<tr '.$bc[$var].'><td id="label" valign=\"top\">'.$langs->trans('Address').'</td><td id="value" colspan="'.(2+($object->logo?0:1)).'">';
@@ -1655,11 +1651,17 @@ else
         $var=!$var;
 
         // Country
-        print '<tr '.$bc[$var].'><td id="label">'.$langs->trans("Country").'</td><td id="value" colspan="'.(2+($object->logo?0:1)).'" nowrap="nowrap">';
+        print '<tr '.$bc[$var].'><td id="label">'.$langs->trans("Country").'</td><td id="value" nowrap="nowrap">';
         $img=picto_from_langcode($object->pays_code);
         if ($object->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$object->pays,$langs->trans("CountryIsInEEC"),1,0);
         else print ($img?$img.' ':'').$object->pays;
-        print '</td></tr>';
+        print '</td>';
+        
+        // MAP GPS
+        if($conf->map->enabled)
+            print '<td id="label" colspan="'.(1+($object->logo?0:1)).'">GPS '.img_picto(($object->lat.','.$object->lng),(($object->lat && $object->lng)?"statut4":"statut1")).'</td></tr>';
+        else
+            print '<td id="label" colspan="'.(1+($object->logo?0:1)).'"></td></tr>';
         $var=!$var;
 
         // State
@@ -1669,6 +1671,7 @@ else
             $var=!$var;
         }
 
+        // Phone
         print '<tr '.$bc[$var].'><td id="label">'.$langs->trans('Phone').'</td><td id="value" style="min-width: 25%;">'.dol_print_phone($object->tel,$object->pays_code,0,$object->id,'AC_TEL').'</td>';
         print '<td>'.$langs->trans('Fax').'</td><td id="value" style="min-width: 25%;">'.dol_print_phone($object->fax,$object->pays_code,0,$object->id,'AC_FAX').'</td></tr>';
         $var=!$var;
@@ -1861,6 +1864,7 @@ else
         }
 
         // Ban
+        /*
         if (empty($conf->global->SOCIETE_DISABLE_BANKACCOUNT))
         {
             print '<tr '.$bc[$var].'><td>';
@@ -1877,7 +1881,7 @@ else
             print $object->display_rib();
             print '</td></tr>';
             $var=!$var;
-        }
+        }*/
 
         // Parent company
         if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY))
@@ -1908,6 +1912,7 @@ else
         }
 
         // Commercial
+        /*
         print '<tr '.$bc[$var].'><td>';
         print '<table width="100%" class="nobordernopadding"><tr><td id="label">';
         print $langs->trans('SalesRepresentatives');
@@ -1944,7 +1949,7 @@ else
         }
         else print $langs->trans("NoSalesRepresentativeAffected");
         print '</td></tr>';
-        $var=!$var;
+        $var=!$var;*/
 
         // Module Adherent
         if ($conf->adherent->enabled)
@@ -1968,21 +1973,21 @@ else
             $var=!$var;
         }
 
-		// Affichage des notes
+	// Affichage des notes
         print '<tr '.$bc[$var].'><td valign="top">';
         print '<table width="100%" class="nobordernopadding"><tr><td id="label">';
-		print $langs->trans("Note");
-		print '</td><td align="right">';
-		if ($user->rights->societe->creer)
-                    print '<a href="'.DOL_URL_ROOT.'/societe/socnote.php?socid='.$soc->id.'&action=edit&backtopage='.DOL_URL_ROOT.'/societe/soc.php?socid='.$soc->id.'">'.img_edit() .'</a>';
-		else
-                    print '&nbsp;';
-		print '</td></tr></table>';
-                print '</td>';
-                print '<td colspan="3" id="value">';
-                print nl2br($soc->note);
-                print "</td></tr>";
-                $var=!$var;
+	print $langs->trans("Note");
+	print '</td><td align="right">';
+	if ($user->rights->societe->creer)
+                print '<a href="'.DOL_URL_ROOT.'/societe/socnote.php?socid='.$object->id.'&action=edit&backtopage='.DOL_URL_ROOT.'/societe/soc.php?socid='.$object->id.'">'.img_edit() .'</a>';
+	else
+                print '&nbsp;';
+	print '</td></tr></table>';
+        print '</td>';
+        print '<td colspan="3" id="value">';
+        print nl2br($object->note);
+        print "</td></tr>";
+        $var=!$var;
 
         print '</table>';
 
@@ -2014,7 +2019,7 @@ else
         print '</div>'."\n";
         print '<br>';
 
-        if (empty($conf->global->SOCIETE_DISABLE_BUILDDOC))
+        if ($conf->ecm->enabled && empty($conf->global->SOCIETE_DISABLE_BUILDDOC))
         {
             print '<table width="100%"><tr><td valign="top" width="50%">';
             print '<a name="builddoc"></a>'; // ancre
@@ -2039,6 +2044,8 @@ else
             print '<br>';
         }
 
+		print '<table width="100%"><tr><td valign="top" width="50%">';
+
         // Subsidiaries list
         $result=show_subsidiaries($conf,$langs,$db,$object);
 
@@ -2046,10 +2053,15 @@ else
         if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
         {
             $result=show_contacts($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
+			print '</td>';
+			print '<td>';
         }
 
         // Projects list
         $result=show_projects($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
+		print '</td>';
+		print '</tr>';
+		print '</table>';
     }
 
 }
