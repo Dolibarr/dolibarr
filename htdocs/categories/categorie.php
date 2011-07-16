@@ -309,19 +309,25 @@ if ($_GET["socid"])
     $var=!$var;
 
 	// Zip / Town
-	print '<tr '.$bc[$var].'><td width="20%" id="label">'.$langs->trans('Zip').'</td><td width="30%" id="value">'.$soc->cp."</td>";
-	print '<td width="20%" id="label">'.$langs->trans('Town').'</td><td width="30%" id="value">'.$soc->ville."</td></tr>";
-    $var=!$var;
-
-	// Country
-	if ($soc->pays) {
-		print '<tr '.$bc[$var].'><td id="label">'.$langs->trans('Country').'</td><td colspan="3" id="value">';
-		$img=picto_from_langcode($soc->pays_code);
-		print ($img?$img.' ':'');
-		print $soc->pays;
-		print '</td></tr>';
+        print '<tr '.$bc[$var].'><td id="label" width="25%">'.$langs->trans('Zip').' / '.$langs->trans("Town").'</td><td id="value" colspan="'.(2+($object->logo?0:1)).'">';
+        print $soc->cp.($soc->cp && $soc->ville?" / ":"").$soc->ville;
+        print "</td>";
+        print '</tr>';
         $var=!$var;
-	}
+
+        // Country
+        print '<tr '.$bc[$var].'><td id="label">'.$langs->trans("Country").'</td><td id="value" nowrap="nowrap">';
+        $img=picto_from_langcode($soc->pays_code);
+        if ($soc->isInEEC()) print $html->textwithpicto(($img?$img.' ':'').$soc->pays,$langs->trans("CountryIsInEEC"),1,0);
+        else print ($img?$img.' ':'').$soc->pays;
+        print '</td>';
+        
+        // MAP GPS
+        if($conf->map->enabled)
+            print '<td id="label" colspan="2">GPS '.img_picto(($soc->lat.','.$soc->lng),(($soc->lat && $soc->lng)?"statut4":"statut1")).'</td></tr>';
+        else
+            print '<td id="label" colspan="2"></td></tr>';
+        $var=!$var;
 
 	// Phone
 	print '<tr '.$bc[$var].'><td id="label">'.$langs->trans('Phone').'</td><td id="value">'.dol_print_phone($soc->tel,$soc->pays_code,0,$soc->id,'AC_TEL').'</td>';
