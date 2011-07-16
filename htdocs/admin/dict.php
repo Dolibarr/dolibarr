@@ -147,7 +147,7 @@ $tabsql[21]= "SELECT c.rowid as rowid, code, label, active FROM ".MAIN_DB_PREFIX
 $tabsql[22]= "SELECT rowid   as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_input_reason";
 $tabsql[26]= "SELECT id   as rowid, code, libelle, active FROM ".$tabname[26];
 $tabsql[27]= "SELECT id   as rowid, code, picto, libelle, type, active FROM ".$tabname[27];
-$tabsql[28]= "SELECT id   as rowid, code, libelle, active, isclient FROM ".$tabname[28];
+$tabsql[28]= "SELECT id   as rowid, code, libelle, active, type FROM ".$tabname[28];
 
 
 // Critere de tri du dictionnaire
@@ -203,7 +203,7 @@ $tabfield[21]= "code,label";
 $tabfield[22]= "code,label";
 $tabfield[26]= "code,libelle";
 $tabfield[27]= "code,libelle,picto";
-$tabfield[28]= "code,libelle,isclient";
+$tabfield[28]= "code,libelle,type";
 
 // Nom des champs d'edition pour modification d'un enregistrement
 $tabfieldvalue[1] = "code,libelle,pays";
@@ -231,7 +231,7 @@ $tabfieldvalue[21]= "code,label";
 $tabfieldvalue[22]= "code,label";
 $tabfieldvalue[26]= "code,libelle";
 $tabfieldvalue[27]= "code,libelle,picto";
-$tabfieldvalue[28]= "code,libelle,isclient";
+$tabfieldvalue[28]= "code,libelle,type";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert[1] = "code,libelle,fk_pays";
@@ -259,7 +259,7 @@ $tabfieldinsert[21]= "code,label";
 $tabfieldinsert[22]= "code,label";
 $tabfieldinsert[26]= "code,libelle";
 $tabfieldinsert[27]= "code,libelle,picto";
-$tabfieldinsert[28]= "code, libelle,isclient";
+$tabfieldinsert[28]= "code, libelle,type";
 
 // Nom du rowid si le champ n'est pas de type autoincrement
 // Example: "" if id field is "rowid" and has autoincrement on
