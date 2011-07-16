@@ -406,14 +406,14 @@ if ($resql)
 
 		// icone action
 		print '<td align="center" nowrap>';
-        $prospectstatic->stcomm_id=$obj->fk_stcomm;
+                $prospectstatic->stcomm_id=$obj->fk_stcomm;
 		$prospectstatic->client=$obj->client;
-        print $prospectstatic->getIconList("clients.php?socid=".$obj->rowid.'&amp;pstcomm='.$value.'&amp;action=cstc&amp;'.$param.($page?'&amp;page='.$page:''));
+                print $prospectstatic->getIconList("clients.php?socid=".$obj->rowid.'&amp;pstcomm='.$value.'&amp;action=cstc&amp;'.$param.($page?'&amp;page='.$page:''));
 		print '</td>';
 
-        print '<td align="right">';
+                print '<td align="right">';
 		print $prospectstatic->getLibStatut(3);
-        print '</td>';
+                print '</td>';
 
         print "</tr>\n";
 		$i++;
