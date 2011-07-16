@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2010-2011 Herve Prot           <herve.prot@symeos.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,8 +78,9 @@ print "</table></form><br>";
 $third = array();
 $total=0;
 
-$sql = "SELECT s.rowid, s.client, s.fournisseur";
+$sql = "SELECT s.rowid, s.client, s.fournisseur, st.isclient";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_stcomm as st ON st.id = s.fk_stcomm";
 if (! $user->rights->societe->client->voir) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE s.entity = ".$conf->entity;
 if (! $user->rights->societe->client->voir) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -89,8 +91,8 @@ if ($result)
     while ($objp = $db->fetch_object($result))
     {
         $found=0;
-        if ($conf->societe->enabled && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS) && ($objp->client == 1 || $objp->client == 3)) { $found=1; $third['customer']++; }
-        if ($conf->societe->enabled && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS) && ($objp->client == 2 || $objp->client == 3)) { $found=1; $third['prospect']++; }
+        if ($conf->societe->enabled && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS) && ($objp->client == 1 || $objp->client == 3) && $objp->isclient==1) { $found=1; $third['customer']++; }
+        if ($conf->societe->enabled && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS) && ($objp->client == 2 || $objp->client == 3) && $objp->isclient==0) { $found=1; $third['prospect']++; }
         if ($conf->fournisseur->enabled && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS) && $objp->fournisseur) { $found=1; $third['supplier']++; }
 
         if ($found) $total++;
@@ -228,7 +230,24 @@ if ($result)
 
         $db->free();
 
-        print "</table>";
+		print "</table><br>";
+                /* Print Graph */
+                if($conf->highcharts->enabled && $user->rights->highcharts->read && $conf->societe->enabled)
+                {
+                    require_once(DOL_DOCUMENT_ROOT."/highCharts/class/highCharts.class.php");
+                    $langs->load("highcharts");
+
+                    $graph=new HighCharts($db);
+                    $graph->width="100%";
+                    $graph->height="300px";
+                    $graph->name="graphPriority";
+                    $graph->label=$langs->trans("graphPriorityTiers");
+
+                    if($user->rights->highcharts->all && $user->rights->societe->client->voir)
+                        $graph->mine=0;
+
+                    $graph->graphPriorityTiers();
+                }
     }
 }
 else
