@@ -174,10 +174,10 @@ if ($user->societe_id == 0)
                    'Adherent',
                    'Product',
                    'Service',
-				   'Propal',
+		   'Propal',
                    'Lead',
-				   'Commande',
-				   'Facture',
+		   'Commande',
+		   'Facture',
                    'Contrat');
     // Cle array returned by the method load_state_board for each line
     $keys=array('customers',
@@ -186,11 +186,11 @@ if ($user->societe_id == 0)
                 'members',
                 'products',
                 'services',
-				'proposals',
+		'proposals',
                 'leads',
-				'orders',
-				'invoices',
-				'Contracts');
+		'orders',
+		'invoices',
+		'Contracts');
     // Dashboard Icon lines
     $icons=array('company',
                  'company',
@@ -198,11 +198,11 @@ if ($user->societe_id == 0)
                  'user',
                  'product',
                  'service',
-				 'propal',
+		 'propal',
                  'lead',
-				 'order',
-				 'bill',
-				 'order');
+		 'order',
+		 'bill',
+		 'order');
     // Translation keyword
     $titres=array("Customers",
                   "Prospects",
@@ -223,7 +223,7 @@ if ($user->societe_id == 0)
 	DOL_URL_ROOT.'/product/liste.php?type=0&amp;mainmenu=products',
 	DOL_URL_ROOT.'/product/liste.php?type=1&amp;mainmenu=products',
 	DOL_URL_ROOT.'/comm/propal.php?mainmenu=commercial',
-    DOL_URL_ROOT.'/lead/liste.php',
+        DOL_URL_ROOT.'/lead/liste.php',
 	DOL_URL_ROOT.'/commande/liste.php?mainmenu=commercial',
 	DOL_URL_ROOT.'/compta/facture.php?mainmenu=accountancy',
 	DOL_URL_ROOT.'/contrat/liste.php');
@@ -238,7 +238,7 @@ if ($user->societe_id == 0)
                     "lead",
                     "orders",
                     "bills",
-					"Contracts");
+		    "Contracts");
 
 	//print memory_get_usage()."<br>";
 

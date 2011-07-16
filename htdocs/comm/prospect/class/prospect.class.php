@@ -75,7 +75,7 @@ class Prospect extends Societe
         }
         $sql.= " ".$clause." s.client in (1,2,3)";
         $sql.= " AND s.entity = ".$conf->entity;
-        $sql.= " AND st.isclient = 0";
+        $sql.= " AND st.type = 0";
         $sql.= " GROUP BY s.client";
 
         $resql=$this->db->query($sql);
@@ -107,7 +107,7 @@ class Prospect extends Societe
         $sql.= " FROM " .MAIN_DB_PREFIX."c_stcomm";
         $sql.= " WHERE id != ".$this->stcomm_id;
         $sql.= " AND active=1";
-        $sql.= " AND ( isclient=".($this->client==2?0:1);
+        $sql.= " AND ( type=".($this->client==2?0:1);
         if($this->client==3 || $this->stcomm_id==-1)
             $sql.= " OR id IS NOT NULL ";
         if($this->client==2)
@@ -212,7 +212,7 @@ class Prospect extends Societe
         {
             global $user, $conf, $langs, $bc;
 
-            $sql = "SELECT count(s.rowid) as cc,st.libelle,st.isclient,st.id";
+            $sql = "SELECT count(s.rowid) as cc,st.libelle,st.type,st.id";
             $sql.= " FROM ".MAIN_DB_PREFIX."c_stcomm as st";
             //if (!$user->rights->societe->client->voir)
             //{
@@ -252,7 +252,7 @@ class Prospect extends Societe
                     $element['id']=$obj->id;
                     $element['count']=$obj->cc;
                     $element['libelle']=$obj->libelle;
-                    $element['isclient']=$obj->isclient;
+                    $element['type']=$obj->type;
                     $total+=$obj->cc;
 
                     $array[$i]=$element;
@@ -269,7 +269,7 @@ class Prospect extends Societe
 
                 for($i=0, $size=sizeof($array); $i < $size; $i++)
                 {
-                    if($array[$i]['isclient'])
+                    if($array[$i]['type'])
                         print '<tr '.$bc[$var].'><td><a href='.DOL_URL_ROOT.'/comm/clients.php?page=0&amp;stcomm='.$array[$i]['id'].'>';
                     else
                         print '<tr '.$bc[$var].'><td><a href='.DOL_URL_ROOT.'/comm/prospect/prospects.php?page=0&amp;stcomm='.$array[$i]['id'].'>';

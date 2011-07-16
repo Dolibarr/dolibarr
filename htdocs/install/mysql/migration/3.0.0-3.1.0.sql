@@ -45,6 +45,8 @@ ALTER TABLE llx_societe MODIFY siret varchar(32);
 ALTER TABLE llx_societe MODIFY ape varchar(32);
 ALTER TABLE llx_societe MODIFY idprof4 varchar(32);
 
+ALTER TABLE llx_c_stcomm add type smallint DEFAULT 0;
+
 -- Delete old constants
 DELETE FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_MENU_BARRETOP';
 DELETE FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_MENUFRONT_BARRETOP';
