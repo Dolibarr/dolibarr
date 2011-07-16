@@ -6,6 +6,7 @@ Agenda=Agenda
 Agendas=Agendas
 Calendar=Calendrier
 Calendars=Calendriers
+Activities=Tâches/activités
 AffectedTo=Affecté à
 DoneBy=Réalisé par
 Events=Événements
@@ -52,6 +53,7 @@ DateActionDoneStart=Date début réalisation réelle
 DateActionDoneEnd=Date fin réalisation réelle
 DateActionStart=Date début
 DateActionEnd=Date fin
+DateEchAction=Date d'échéance
 AgendaUrlOptions1=Vous pouvez aussi ajouter les paramètres suivants pour filtrer les réponses:
 AgendaUrlOptions2=<b>login=%s</b> pour limiter l'export aux actions créées, affectées ou réalisées par l'utilisateur <b>%s</b>.
 AgendaUrlOptions3=<b>logina=%s</b> pour limiter l'export aux actions créées par l'utilisateur <b>%s</b>.

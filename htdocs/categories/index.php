@@ -323,7 +323,7 @@ print "</table><br>";
     if($conf->highcharts->enabled && $user->rights->highcharts->read && $conf->societe->enabled)
     {
         require_once(DOL_DOCUMENT_ROOT."/highCharts/class/highCharts.class.php");
-        $langs->load("highcharts");
+        $langs->load("highcharts@highCharts");
 
         $graph=new HighCharts($db);
         $graph->width="100%";

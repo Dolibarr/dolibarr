@@ -71,7 +71,7 @@ function societe_prepare_head($object)
     if (! empty($conf->agenda->enabled))
     {
     	$head[$h][0] = DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id;
-    	$head[$h][1] = $langs->trans("Agenda");
+    	$head[$h][1] = $langs->trans("Activities");
     	$head[$h][2] = 'agenda';
     	$h++;
     }
