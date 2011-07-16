@@ -102,7 +102,7 @@ else dol_print_error($db);
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").'</td></tr>';
-if ($conf->use_javascript_ajax && ((round($third['prospect'])?1:0)+(round($third['customer'])?1:0)+(round($third['supplier'])?1:0) >= 2))
+if ($conf->use_javascript_ajax && empty($conf->global->DISABLE_NATIVE_CHARTS) && ((round($third['prospect'])?1:0)+(round($third['customer'])?1:0)+(round($third['supplier'])?1:0) >= 2))
 {
     print '<tr><td align="center">';
     $dataseries=array();
@@ -235,7 +235,7 @@ if ($result)
                 if($conf->highcharts->enabled && $user->rights->highcharts->read && $conf->societe->enabled)
                 {
                     require_once(DOL_DOCUMENT_ROOT."/highCharts/class/highCharts.class.php");
-                    $langs->load("highcharts");
+                    $langs->load("highcharts@highCharts");
 
                     $graph=new HighCharts($db);
                     $graph->width="100%";
