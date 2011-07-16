@@ -93,13 +93,13 @@ function societe_prepare_head($object)
     complete_head_from_modules($conf,$langs,$object,$head,$h,'thirdparty');
 
     // Notes
-    if ($user->societe_id == 0)
+    /*if ($user->societe_id == 0)
     {
         $head[$h][0] = DOL_URL_ROOT.'/societe/socnote.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("Note");
         $head[$h][2] = 'note';
         $h++;
-    }
+    }*/
     // Attached files
     if ($conf->ecm->enabled && $user->societe_id == 0)
     {
