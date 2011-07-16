@@ -1968,6 +1968,22 @@ else
             $var=!$var;
         }
 
+		// Affichage des notes
+        print '<tr '.$bc[$var].'><td valign="top">';
+        print '<table width="100%" class="nobordernopadding"><tr><td id="label">';
+		print $langs->trans("Note");
+		print '</td><td align="right">';
+		if ($user->rights->societe->creer)
+                    print '<a href="'.DOL_URL_ROOT.'/societe/socnote.php?socid='.$soc->id.'&action=edit&backtopage='.DOL_URL_ROOT.'/societe/soc.php?socid='.$soc->id.'">'.img_edit() .'</a>';
+		else
+                    print '&nbsp;';
+		print '</td></tr></table>';
+                print '</td>';
+                print '<td colspan="3" id="value">';
+                print nl2br($soc->note);
+                print "</td></tr>";
+                $var=!$var;
+
         print '</table>';
 
         dol_fiche_end();
