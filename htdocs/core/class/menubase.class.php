@@ -20,7 +20,7 @@
 /**
  *  \file       htdocs/core/class/menubase.class.php
  *  \ingroup    core
- *  \version	$Id: menubase.class.php,v 1.25 2011/07/13 22:18:48 eldy Exp $
+ *  \version	$Id: menubase.class.php,v 1.26 2011/07/17 19:56:51 hregis Exp $
  *  \brief      File of class to manage dynamic menu entries
  *  \remarks	Initialy built by build_class_from_table on 2008-01-12 14:19
  */
@@ -577,11 +577,12 @@ class Menubase
                 $tabMenu[$b][0] = $menu['rowid'];
                 $tabMenu[$b][1] = $menu['fk_menu'];
                 $tabMenu[$b][2] = $menu['url'];
-                if (! preg_match("/^(http:\/\/|https:\/\/)/i",$tabMenu[$b][2]))
+                // FIXME idmenu is already added in auguria.lib.php
+                /*if (! preg_match("/^(http:\/\/|https:\/\/)/i",$tabMenu[$b][2]))
                 {
                     if (preg_match('/\?/',$tabMenu[$b][2])) $tabMenu[$b][2].='&amp;idmenu='.$menu['rowid'];
                     else $tabMenu[$b][2].='?idmenu='.$menu['rowid'];
-                }
+                }*/
                 $tabMenu[$b][3] = $chaine;
                 $tabMenu[$b][5] = $menu['target'];
                 $tabMenu[$b][6] = $menu['leftmenu'];
