@@ -34,9 +34,10 @@ require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/comm/action/class/actioncomm.class.php");
 if ($conf->adherent->enabled) require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
 if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
+if ($conf->lead->enabled) require_once(DOL_DOCUMENT_ROOT."/lead/lib/lead.lib.php");
 
 $langs->load('companies');
-$langs->load('lead');
+$langs->load('lead@lead');
 $langs->load('projects');
 $langs->load('propal');
 $langs->load('commercial');

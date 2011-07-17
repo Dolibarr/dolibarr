@@ -1,9 +1,5 @@
 <?php
-/* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2010-2011 Herve Prot           <herve.prot@symeos.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,6 +65,7 @@ class modLead extends DolibarrModules
 		// Dependancies
 		$this->depends = array();
 		$this->requiredby = array();
+                $this->langfiles = array("lead@lead","companies");
 
 		// Constants
 		$this->const = array();
@@ -114,7 +111,7 @@ class modLead extends DolibarrModules
 			'titre'=>'Leads',
 			'mainmenu'=>'commercial',
 			'url'=>'/lead/index.php?mode=mine',
-			'langs'=>'lead',
+			'langs'=>'lead@lead',
 			'position'=>1,
 			'enabled'=>'1',
 			'perms'=>'$user->rights->lead->lire',
@@ -126,7 +123,7 @@ class modLead extends DolibarrModules
 			'titre'=>'AddLead',
 			'mainmenu'=>'commercial',
 			'url'=>'/lead/fiche.php?action=create',
-			'langs'=>'lead',
+			'langs'=>'lead@lead',
 			'position'=>2,
 			'enabled'=>'1',
 			'perms'=>'$user->rights->lead->creer',
@@ -138,7 +135,7 @@ class modLead extends DolibarrModules
 			'titre'=>'List',
 			'mainmenu'=>'commercial',
 			'url'=>'/lead/liste.php',
-			'langs'=>'lead',
+			'langs'=>'lead@lead',
 			'position'=>5,
 			'enabled'=>'1',
 			'perms'=>'$user->rights->lead->all',

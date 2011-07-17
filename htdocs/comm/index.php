@@ -34,7 +34,7 @@ require_once(DOL_DOCUMENT_ROOT."/comm/action/class/actioncomm.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/agenda.lib.php");
 if ($conf->contrat->enabled) require_once(DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
 if ($conf->propal->enabled)  require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
-if ($conf->lead->enabled)  require_once(DOL_DOCUMENT_ROOT."/lib/lead.lib.php");
+if ($conf->lead->enabled)  require_once(DOL_DOCUMENT_ROOT."/lead/lib/lead.lib.php");
 
 if (!$user->rights->societe->lire)
 accessforbidden();

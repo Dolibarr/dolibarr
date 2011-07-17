@@ -164,7 +164,7 @@ function print_eldy_menu($db,$atarget,$type_user)
     if (! empty($conf->fournisseur->enabled)) $menuqualified++;
     if (! empty($conf->contrat->enabled)) $menuqualified++;
     if (! empty($conf->ficheinter->enabled)) $menuqualified++;
-    if ($menuqualified)
+    if ($menuqualified && !$conf->lead->enabled)
     {
 		$langs->load("commercial");
 
