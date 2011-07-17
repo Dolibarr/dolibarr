@@ -1,7 +1,8 @@
 -- ============================================================================
 -- Copyright (C) 2005      Brice Davoleau    <e1davole@iu-vannes.fr>
 -- Copyright (C) 2005      Matthieu Valleton <mv@seeschloss.org>
--- Copyright (C) 2005-2009 Regis Houssin     <regis@dolibarr.fr>		
+-- Copyright (C) 2005-2009 Regis Houssin     <regis@dolibarr.fr>
+-- Copyright (C) 2010-2011 Herve Prot        <herve.prot@symeos.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by

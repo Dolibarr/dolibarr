@@ -63,7 +63,7 @@ create table llx_societe
   tva_intra                varchar(20),                         		-- tva
   capital                  real,                                		-- capital de la societe
   description              text,                                		--
-  fk_stcomm                smallint       DEFAULT 0,            		-- commercial statut
+  fk_stcomm                smallint       DEFAULT 0 NOT null,          		-- commercial statut
   note                     text,                                		--
   services                 tinyint        DEFAULT 0,            		--
   prefix_comm              varchar(5),                          		-- prefix commercial
