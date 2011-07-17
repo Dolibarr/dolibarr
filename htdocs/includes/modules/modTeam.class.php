@@ -1,9 +1,5 @@
 <?php
-/* Copyright (C) 2003,2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+/* Copyright (C) 2010-2011 Herve Prot           <herve.prot@symeos.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,15 +17,15 @@
  */
 
 /**
- *       \defgroup   member     Module foundation
- *       \brief      Module to manage members of a foundation
+ *       \defgroup   member     Module team
+ *       \brief      Module to manage members of a company
  */
 
 /**
- *		\file       htdocs/includes/modules/modAdherent.class.php
+ *		\file       htdocs/includes/modules/modTeam.class.php
  *      \ingroup    member
  *      \brief      File descriptor or module Member
- *		\version	$Id: modHr.class.php,v 1.76 2010/10/01 23:37:37 eldy Exp $
+ *		\version	$Id: modTeam.class.php,v 1.76 2010/10/01 23:37:37 Exp $
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
@@ -38,29 +34,29 @@ include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
  *       \class      modAdherent
  *       \brief      Classe de description et activation du module Adherent
  */
-class modHr extends DolibarrModules
+class modTeam extends DolibarrModules
 {
 
     /**
      *   \brief      Constructeur. Definit les noms, constantes et boites
      *   \param      DB      Database handler
      */
-    function modHr($DB)
+    function modTeam($DB)
     {
         $this->db = $DB;
         $this->numero = 430 ;
 
         $this->family = "hr";
-		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
-        $this->description = "Gestion prévisionnelle des emplois et des compétences";
+	// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+	$this->name = preg_replace('/^mod/i','',get_class($this));
+        $this->description = "Gestion d'équipes et suivi d'objectifs";
         $this->version = 'development';                        // 'experimental' or 'dolibarr' or version
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         $this->special = 0;
         $this->picto='user';
 
         // Data directories to create when module is enabled
-        $this->dirs = array("/hr/temp");
+        $this->dirs = array("/team/temp");
 
         // Config pages
         //-------------
@@ -87,7 +83,7 @@ class modHr extends DolibarrModules
         // Permissions
         //------------
         $this->rights = array();
-        $this->rights_class = 'hr';
+        $this->rights_class = 'team';
         $r=0;
 
         // $this->rights[$r][0]     Id permission (unique tous modules confondus)
@@ -193,7 +189,7 @@ class modHr extends DolibarrModules
 	*/
 	function load_tables()
 	{
-		return $this->_load_tables('/hr/sql/');
+		return $this->_load_tables('/team/sql/');
 	}
 
 }

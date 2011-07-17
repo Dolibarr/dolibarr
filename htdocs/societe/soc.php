@@ -1667,7 +1667,7 @@ else
         // State
         if (empty($conf->global->SOCIETE_DISABLE_STATE))
         {
-            print '<tr  '.$bc[$var].'><td id="label">'.$langs->trans('State').'</td><td id="value" colspan="'.(2+($object->logo?0:1)).'">'.$object->departement.'</td></tr>';
+            print '<tr  '.$bc[$var].'><td id="label">'.$langs->trans('State').'</td><td id="value" colspan="3">'.$object->departement.'</td></tr>';
             $var=!$var;
         }
 

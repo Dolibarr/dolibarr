@@ -129,7 +129,6 @@ print "</table>\n";
 $langs->load("commercial");
 $langs->load("bills");
 $langs->load("orders");
-$langs->load("lead");
 
 if ($user->societe_id == 0)
 {
@@ -163,7 +162,7 @@ if ($user->societe_id == 0)
 	DOL_DOCUMENT_ROOT."/product/class/product.class.php",
 	DOL_DOCUMENT_ROOT."/product/class/service.class.php",
 	DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php",
-    DOL_DOCUMENT_ROOT."/lead/class/lead.class.php",
+        DOL_DOCUMENT_ROOT."/lead/class/lead.class.php",
 	DOL_DOCUMENT_ROOT."/commande/class/commande.class.php",
 	DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php",
 	DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
@@ -235,7 +234,7 @@ if ($user->societe_id == 0)
                     "products",
                     "produts",
                     "propal",
-                    "lead",
+                    "lead@lead",
                     "orders",
                     "bills",
 		    "Contracts");
@@ -541,7 +540,7 @@ print '<br>';
 if ($conf->agenda->enabled && $user->rights->agenda->myactions->read && $conf->highcharts->enabled && $user->rights->highcharts->read)
 {
     require_once(DOL_DOCUMENT_ROOT."/highCharts/class/highCharts.class.php");
-    $langs->load("highcharts");
+    $langs->load("highcharts@highCharts");
 
     $graph=new HighCharts($db);
     $graph->width="100%";
