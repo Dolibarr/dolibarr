@@ -22,7 +22,7 @@
  *	    \file       htdocs/comm/remx.php
  *      \ingroup    societe
  *		\brief      Page to edit absolute discounts for a customer
- *		\version    $Id: remx.php,v 1.50 2011/07/08 18:39:14 eldy Exp $
+ *		\version    $Id: remx.php,v 1.51 2011/07/17 20:02:10 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -210,7 +210,7 @@ llxHeader();
 
 if ($_socid > 0)
 {
-	if ($mesg) print $mesg."<br>";
+	dol_htmloutput_mesg($mesg);
 
 	// On recupere les donnees societes par l'objet
 	$objsoc = new Societe($db);
@@ -539,5 +539,5 @@ if ($_socid > 0)
 
 $db->close();
 
-llxFooter('$Date: 2011/07/08 18:39:14 $ - $Revision: 1.50 $');
+llxFooter('$Date: 2011/07/17 20:02:10 $ - $Revision: 1.51 $');
 ?>
