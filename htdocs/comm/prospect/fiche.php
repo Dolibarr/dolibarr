@@ -34,9 +34,10 @@ require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/comm/action/class/actioncomm.class.php");
 if ($conf->adherent->enabled) require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
 if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
+if ($conf->lead->enabled) require_once(DOL_DOCUMENT_ROOT."/lead/lib/lead.lib.php");
 
 $langs->load('companies');
-$langs->load('lead');
+$langs->load('lead@lead');
 $langs->load('projects');
 $langs->load('propal');
 $langs->load('commercial');
@@ -179,26 +180,28 @@ if ($socid > 0)
                 $var=!$var;
 	}
 
-	print '<tr '.$bc[$var].'><td valign="top" id="label">'.$langs->trans("Address").'</td><td colspan="1" id="value">'.nl2br($societe->address)."</td>";
-        // Symeos
-        if($conf->map->enabled)
-            print '<td id="label">GPS</td><td id="value">'.img_picto(($societe->lat.','.$societe->lng),(($societe->lat && $societe->lng)?"statut4":"statut1")).'</td></tr>';
-        else
-            print '<td id="label"></td><td id="value"></td></tr>';
-        //end Symeos
+	print '<tr '.$bc[$var].'><td valign="top" id="label">'.$langs->trans("Address").'</td><td colspan="3" id="value">'.nl2br($societe->address)."</td></tr>";
         $var=!$var;
 
 	// Zip / Town
-	print '<tr '.$bc[$var].'><td id="label">'.$langs->trans('Zip').'</td><td id="value">'.$societe->cp.'</td>';
-	print '<td id="label">'.$langs->trans('Town').'</td><td id="value">'.$societe->ville.'</td></tr>';
+        print '<tr '.$bc[$var].'><td id="label" width="25%">'.$langs->trans('Zip').' / '.$langs->trans("Town").'</td><td id="value" colspan="3">';
+        print $societe->cp.($societe->cp && $societe->ville?" / ":"").$societe->ville;
+        print "</td>";
+        print '</tr>';
         $var=!$var;
 
 	// Country
-	print '<tr '.$bc[$var].'><td id="label">'.$langs->trans("Country").'</td><td colspan="3" id="value">';
-	$img=picto_from_langcode($societe->pays_code);
-	if ($societe->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$societe->pays,$langs->trans("CountryIsInEEC"),1,0);
-	else print ($img?$img.' ':'').$societe->pays;
-	print '</td></tr>';
+        print '<tr '.$bc[$var].'><td id="label">'.$langs->trans("Country").'</td><td id="value" nowrap="nowrap">';
+        $img=picto_from_langcode($societe->pays_code);
+        if ($societe->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$societe->pays,$langs->trans("CountryIsInEEC"),1,0);
+        else print ($img?$img.' ':'').$societe->pays;
+        print '</td>';
+        
+        // MAP GPS
+        if($conf->map->enabled)
+            print '<td id="label" colspan="2">GPS '.img_picto(($societe->lat.','.$societe->lng),(($societe->lat && $societe->lng)?"statut4":"statut1")).'</td></tr>';
+        else
+            print '<td id="label" colspan="2"></td></tr>';
         $var=!$var;
 
 	// Phone
@@ -285,67 +288,62 @@ if ($socid > 0)
         print "</tr>\n";
     }
 
-// Commercial
-print '<tr '.$bc[$var].'><td>';
-print '<table width="100%" class="nobordernopadding"><tr><td id="label">';
-print $langs->trans('SalesRepresentatives');
-print '<td><td align="right">';
-if ($user->rights->societe->creer)
-	print '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$societe->id.'">'.img_edit().'</a>';
-else
-	print '&nbsp;';
-print '</td></tr></table>';
-print '</td>';
-print '<td colspan="3" id="value">';
+    // Commercial
+    print '<tr '.$bc[$var].'><td>';
+    print '<table width="100%" class="nobordernopadding"><tr><td id="label">';
+    print $langs->trans('SalesRepresentatives');
+    print '<td><td  id="value" align="right">';
+    if ($user->rights->societe->creer)
+        print '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$societe->id.'">'.img_edit().'</a>';
+    else
+        print '&nbsp;';
+        print '</td></tr></table>';
+        print '</td>';
+        print '<td colspan="3">';
 
-$sql = "SELECT u.name, u.firstname";
-		$sql.= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-                $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid=sc.fk_user";
-		$sql.= " WHERE sc.fk_soc =".$societe->id;
+        $listsalesrepresentatives=$societe->getSalesRepresentatives($user);
+        $nbofsalesrepresentative=sizeof($listsalesrepresentatives);
+        if ($nbofsalesrepresentative > 3)   // We print only number
+        {
+            print '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$societe->id.'">';
+            print $nbofsalesrepresentative;
+            print '</a>';
+        }
+        else if ($nbofsalesrepresentative > 0)
+        {
+            $userstatic=new User($db);
+            $i=0;
+            foreach($listsalesrepresentatives as $val)
+            {
+                $userstatic->id=$val['id'];
+                $userstatic->nom=$val['name'];
+                $userstatic->prenom=$val['firstname'];
+                print $userstatic->getNomUrl(1);
+                $i++;
+                if ($i < $nbofsalesrepresentative) print ', ';
+            }
+        }
+        else print $langs->trans("NoSalesRepresentativeAffected");
+    print '</td></tr>';
+    $var=!$var;
+         
+    // Affichage des notes
+    print '<tr '.$bc[$var].'><td valign="top">';
+    print '<table width="100%" class="nobordernopadding"><tr><td id="label">';
+    print $langs->trans("Note");
+    print '</td><td align="right">';
+    if ($user->rights->societe->creer)
+        print '<a href="'.DOL_URL_ROOT.'/societe/socnote.php?socid='.$societe->id.'&action=edit&backtopage='.DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$societe->id.'">'.img_edit() .'</a>';
+    else
+        print '&nbsp;';
+    print '</td></tr></table>';
+    print '</td>';
+    print '<td colspan="3" id="value">';
+    print nl2br($societe->note);
+    print "</td></tr>";
+    $var=!$var;
 
-		$resql = $db->query($sql);
-		if ($resql)
-		{
-			$num = $db->num_rows($resql);
-                        $i=0;
-                        if($num>0)
-                        {
-                            while($i<$num)
-                            {
-                                $obj = $db->fetch_object($resql);
-                                print '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$societe->id.'">';
-                                print $obj->firstname." ".$obj->name;
-                                print '</a>';
-                                if($i+1!=$num)
-                                    print '<br>';
-                                $i++;
-                            }
-                        }
-			else print $langs->trans("NoSalesRepresentativeAffected");
-		}
-		else {
-			dol_print_error($db);
-		}
-		print '</td></tr>';
-                $var=!$var;
-
-        // Affichage des notes
-                print '<tr '.$bc[$var].'><td valign="top">';
-                print '<table width="100%" class="nobordernopadding"><tr><td id="label">';
-		print $langs->trans("Note");
-		print '</td><td align="right">';
-		if ($user->rights->societe->creer)
-                    print '<a href="'.DOL_URL_ROOT.'/societe/socnote.php?socid='.$societe->id.'&action=edit&backtopage='.DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$societe->id.'">'.img_edit() .'</a>';
-		else
-                    print '&nbsp;';
-		print '</td></tr></table>';
-                print '</td>';
-                print '<td colspan="3" id="value">';
-                print nl2br($societe->note);
-                print "</td></tr>";
-                $var=!$var;
-
-	print '</table>';
+    print '</table>';
 
 
 	print "</td>\n";
@@ -469,7 +467,7 @@ $sql = "SELECT u.name, u.firstname";
         }
         else
         {
-            print '<a class="butAction" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddAction").'</a>';
+            print '<a class="butActionRefused" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddAction").'</a>';
         }
     }
 
@@ -482,18 +480,23 @@ $sql = "SELECT u.name, u.firstname";
 
     if (! empty($conf->global->MAIN_REPEATCONTACTONEACHTAB))
     {
-        print '<br>';
+        print '<table width="100%" class="notopnoleftnoright">';
+		print '<tr><td valign="top" width="50%" class="notopnoleft">';
         // List of contacts
         show_contacts($conf,$langs,$db,$societe,$_SERVER["PHP_SELF"].'?socid='.$societe->id);
-    }
+    
 
-    if (! empty($conf->global->MAIN_REPEATTASKONEACHTAB))
-    {
+        print "</td>\n";
+		print '<td valign="top" width="50%" class="notopnoleft">';
         // List of todo actions
         show_actions_todo($conf,$langs,$db,$societe);
 
         // List of done actions
-        show_actions_done($conf,$langs,$db,$societe);
+        //show_actions_done($conf,$langs,$db,$societe);
+        print "</td>\n";
+        print "</tr>\n";
+        print "</table>\n";
+        
     }
     if ($conf->lead->enabled)
     {
