@@ -54,7 +54,7 @@ $result = restrictedArea($user, 'societe',$socid,'');
 
 if ($_GET["action"] == 'cstc')
 {
-        $sql= "SELECT libelle, isclient FROM ".MAIN_DB_PREFIX."c_stcomm";
+        $sql= "SELECT libelle, type FROM ".MAIN_DB_PREFIX."c_stcomm";
         $sql.= " WHERE id=".$_GET["stcomm"];
         
         $resql=$db->query($sql);
@@ -80,7 +80,7 @@ if ($_GET["action"] == 'cstc')
             dol_print_error($db);
 	}
 
-	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm = ".$_GET["stcomm"].", client=".($obj->isclient?"1":"2");
+	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm = ".$_GET["stcomm"].", client=".($obj->type?"1":"2");
 	$sql .= " WHERE rowid = ".$_GET["socid"];
 	$db->query($sql);
 

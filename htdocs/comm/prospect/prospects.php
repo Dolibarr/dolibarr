@@ -181,8 +181,8 @@ $sql.= " ) ";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d on (d.rowid = s.fk_departement)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_stcomm as st ON st.id = s.fk_stcomm";
 $sql.= " WHERE s.client in (2, 3)";
-if(isset($_GET["isclient"]))
-    $sql.= " AND st.isclient=".$_GET["isclient"];
+if(isset($_GET["type"]))
+    $sql.= " AND st.type=".$_GET["type"];
 $sql.= " AND s.entity = ".$conf->entity;
 if ($user->societe_id) $sql.= " AND s.rowid = " .$user->societe_id;
 if ($search_sale) $sql.= " AND s.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
