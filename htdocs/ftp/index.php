@@ -21,7 +21,7 @@
  *	\file       htdocs/ftp/index.php
  *	\ingroup    ftp
  *	\brief      Main page for FTP section area
- *	\version    $Id$
+ *	\version    $Id: index.php,v 1.21 2011/07/17 23:59:39 eldy Exp $
  *	\author		Laurent Destailleur
  */
 
@@ -46,7 +46,7 @@ $user->getrights('ftp');
 $action = isset($_GET["action"])?$_GET["action"]:$_POST['action'];
 $section=isset($_GET["section"])?$_GET["section"]:$_POST['section'];
 if (! $section) $section='/';
-$numero_ftp = isset($_GET["numero_ftp"])?$_GET["numero_ftp"]:$_POST['numero_ftp'];
+$numero_ftp = GETPOST("numero_ftp");
 if (! $numero_ftp) $numero_ftp=1;
 $file=isset($_GET["file"])?$_GET["file"]:$_POST['file'];
 
@@ -535,7 +535,7 @@ else
 				print '<td>';
 				$newsection=$section.(preg_match('@[\\\/]$@',$section)?'':'/').$file;
 				$newsection=preg_replace('@[\\\/][^\\\/]+[\\\/]\.\.$@','/',$newsection);	// Change aaa/xxx/.. to new aaa
-				if ($is_directory) print '<a href="'.$_SERVER["PHP_SELF"].'?section='.urlencode($newsection).'">';
+				if ($is_directory) print '<a href="'.$_SERVER["PHP_SELF"].'?section='.urlencode($newsection).'&numero_ftp='.$numero_ftp.'">';
 				print $file;
 				if ($is_directory) print '</a>';
 				print '</td>';
@@ -627,7 +627,7 @@ if ($conn_id) ftp_close($conn_id);
 // End of page
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/17 23:59:39 $ - $Revision: 1.21 $');
 
 
 /**
