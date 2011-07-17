@@ -27,7 +27,7 @@
  *	\file       	htdocs/comm/propal.php
  *	\ingroup    	propale
  *	\brief      	Page of commercial proposals card and list
- *	\version		$Id: propal.php,v 1.610 2011/07/10 20:03:41 eldy Exp $
+ *	\version		$Id: propal.php,v 1.611 2011/07/17 19:01:28 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -1114,11 +1114,6 @@ if ($id > 0 || ! empty($ref))
 	print $formconfirm;
 
 
-	/*
-	 * Fiche propal
-	 *
-	 */
-
 	print '<table class="border" width="100%">';
 
 	$linkback="<a href=\"propal.php?page=$page&socid=$socid&viewstatut=$viewstatut&sortfield=$sortfield&$sortorder\">".$langs->trans("BackToList")."</a>";
@@ -1233,7 +1228,7 @@ if ($id > 0 || ! empty($ref))
 	print '<td valign="top" colspan="2" width="50%" rowspan="'.$rowspan.'">'.$langs->trans('NotePublic').' :<br>'. nl2br($object->note_public).'</td>';
 	print '</tr>';
 
-	// Date fin propal
+	// Date end proposal
 	print '<tr>';
 	print '<td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
@@ -1265,6 +1260,25 @@ if ($id > 0 || ! empty($ref))
 	}
 	print '</td>';
 	print '</tr>';
+
+    // Payment term
+    print '<tr><td>';
+    print '<table class="nobordernopadding" width="100%"><tr><td>';
+    print $langs->trans('PaymentConditionsShort');
+    print '</td>';
+    if ($action != 'editconditions' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+    print '</tr></table>';
+    print '</td><td colspan="3">';
+    if ($action == 'editconditions')
+    {
+        $html->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->cond_reglement_id,'cond_reglement_id');
+    }
+    else
+    {
+        $html->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->cond_reglement_id,'none');
+    }
+    print '</td>';
+    print '</tr>';
 
 	// Delivery date
 	$langs->load('deliveries');
@@ -1314,7 +1328,7 @@ if ($id > 0 || ! empty($ref))
 		print '</td></tr>';
 	}
 
-	// Availability
+	// Delivery delay
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('AvailabilityPeriod');
@@ -1325,11 +1339,11 @@ if ($id > 0 || ! empty($ref))
 	print '</td><td colspan="3">';
 	if ($action == 'editavailability')
 	{
-		$html->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id,$object->availability_id,'availability_id');
+		$html->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id,$object->availability_id,'availability_id',1);
 	}
 	else
 	{
-		$html->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id,$object->availability_id,'none');
+		$html->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id,$object->availability_id,'none',1);
 	}
 
 	print '</td>';
@@ -1353,25 +1367,6 @@ if ($id > 0 || ! empty($ref))
 		$html->form_demand_reason($_SERVER['PHP_SELF'].'?id='.$object->id,$object->demand_reason_id,'none');
 	}
 
-	print '</td>';
-	print '</tr>';
-
-	// Payment term
-	print '<tr><td>';
-	print '<table class="nobordernopadding" width="100%"><tr><td>';
-	print $langs->trans('PaymentConditionsShort');
-	print '</td>';
-	if ($action != 'editconditions' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
-	print '</tr></table>';
-	print '</td><td colspan="3">';
-	if ($action == 'editconditions')
-	{
-		$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->cond_reglement_id,'cond_reglement_id');
-	}
-	else
-	{
-		$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->cond_reglement_id,'none');
-	}
 	print '</td>';
 	print '</tr>';
 
@@ -1975,6 +1970,6 @@ else
 }
 $db->close();
 
-llxFooter('$Date: 2011/07/10 20:03:41 $ - $Revision: 1.610 $');
+llxFooter('$Date: 2011/07/17 19:01:28 $ - $Revision: 1.611 $');
 
 ?>
