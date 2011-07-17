@@ -74,6 +74,14 @@ function user_prepare_head($object)
         $h++;
     }
 
+    if ($conf->team->enabled && $user->rights->team->read)
+    {
+        $head[$h][0] = DOL_URL_ROOT.'/team/objectif.php?id='.$object->id;
+        $head[$h][1] = $langs->trans("Objectifs");
+		$head[$h][2] = 'objectif';
+        $h++;
+    }
+
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab

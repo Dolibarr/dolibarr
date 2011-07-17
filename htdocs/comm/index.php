@@ -629,23 +629,23 @@ if ($user->rights->agenda->myactions->read)
 /*
  * Graphe des suivis des objectifs des tous les commerciaux
  */
-if ($user->rights->hr->annual->read && $conf->highcharts->enabled && $conf->hr->enabled)
+if ($user->rights->team->annual->read && $conf->highcharts->enabled && $conf->team->enabled)
 {
     // YEAR
     $graph->label=$langs->trans("graphObjectifYear")." ".(isset($_GET["year"])?$_GET["year"]:strftime("%Y",dol_now()));
     $graph->name="graphAllObjectifYear";
     $graph->height="350px";
-    if($user->rights->hr->annual->all)
+    if($user->rights->team->annual->all)
             $graph->mine=0;
     $graph->graphAllObjectif(0,isset($_GET["year"])?$_GET["year"]:strftime("%Y",dol_now()));
-}    
-if ($user->rights->hr->read && $conf->highcharts->enabled && $conf->hr->enabled)
+}
+if ($user->rights->team->read && $conf->highcharts->enabled && $conf->team->enabled)
 {
     // MONTH
     $graph->label=$langs->trans("graphObjectifMonth").' '.(isset($_GET["month"])?$_GET["month"]:strftime("%m",dol_now()))."/".(isset($_GET["year"])?$_GET["year"]:strftime("%Y",dol_now()));
     $graph->name="graphAllObjectifMonth";
     $graph->height="350px";
-    if($user->rights->hr->all)
+    if($user->rights->team->all)
             $graph->mine=0;
     $graph->graphAllObjectif(isset($_GET["month"])?$_GET["month"]:strftime("%m",dol_now()),isset($_GET["year"])?$_GET["year"]:strftime("%Y",dol_now()));
     
