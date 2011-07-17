@@ -513,13 +513,13 @@ else if ($_GET["id"] || $_GET["ref"])
 	}
         if ($_GET["type"] == 4)
 	{
-            $langs->load("lead");
+            $langs->load("lead@lead");
 
 		/*
 		 * Fiche categorie produit lié à une affaire
 		 */
 
-            require_once(DOL_DOCUMENT_ROOT."/lib/lead.lib.php");
+            require_once(DOL_DOCUMENT_ROOT."/lead/lib/lead.lib.php");
             require_once(DOL_DOCUMENT_ROOT."/lead/class/lead.class.php");
 
             llxHeader('',$langs->trans('Product'),'EN:Commercial_Products|FR:Liste_des_produits|ES:Presupuestos');
@@ -649,11 +649,7 @@ else if ($_GET["id"] || $_GET["ref"])
                 print '</div>';
                 print "\n";
 
-                print '<table class="noborder" width="100%">';
-
                 formCategory($db,$object,4);
-
-                print "</table>";
 
             }
             else

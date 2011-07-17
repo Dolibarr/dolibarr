@@ -328,7 +328,7 @@ if (GETPOST("id") == 11)
     $langs->load("orders");
     $langs->load("contracts");
     $langs->load("projects");
-	$langs->load("lead");
+    $langs->load("lead@lead");
     $langs->load("propal");
     $langs->load("bills");
     $langs->load("interventions");
