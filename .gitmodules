@@ -4,3 +4,9 @@
 [submodule "htdocs/highCharts"]
 	path = htdocs/highCharts
 	url = https://git.symeos.com/module-highCharts.git
+[submodule "htdocs/lead"]
+	path = htdocs/lead
+	url = https://git.symeos.com/module-lead
+[submodule "htdocs/team"]
+	path = htdocs/team
+	url = https://git.symeos.com/module-team
