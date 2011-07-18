@@ -20,17 +20,16 @@
  *	    \file       htdocs/admin/events.php
  *      \ingroup    core
  *      \brief      Log event setup page
- *		\version    $Id: events.php,v 1.20 2011/07/18 23:30:56 eldy Exp $
+ *		\version    $Id$
  */
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/agenda.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/events.class.php");
 
 
 if (!$user->admin)
-accessforbidden();
+    accessforbidden();
 
 $langs->load("users");
 $langs->load("admin");
@@ -39,19 +38,52 @@ $langs->load("other");
 $action=GETPOST("action");
 
 
-$securityevent=new Events($db);
-$eventstolog=$securityevent->eventstolog;
-
+// List of all events supported by triggers
+$eventstolog=array(
+	array('id'=>'USER_LOGIN',             'test'=>1),
+	array('id'=>'USER_LOGIN_FAILED',      'test'=>1),
+    array('id'=>'USER_LOGOUT',            'test'=>1),
+	array('id'=>'USER_CREATE',            'test'=>1),
+	array('id'=>'USER_MODIFY',            'test'=>1),
+	array('id'=>'USER_NEW_PASSWORD',      'test'=>1),
+	array('id'=>'USER_ENABLEDISABLE',     'test'=>1),
+	array('id'=>'USER_DELETE',            'test'=>1),
+	array('id'=>'GROUP_CREATE',           'test'=>1),
+	array('id'=>'GROUP_MODIFY',           'test'=>1),
+	array('id'=>'GROUP_DELETE',           'test'=>1),
+/*	array('id'=>'ACTION_CREATE',          'test'=>$conf->societe->enabled),
+	array('id'=>'COMPANY_CREATE',         'test'=>$conf->societe->enabled),
+	array('id'=>'CONTRACT_VALIDATE',      'test'=>$conf->contrat->enabled),
+	array('id'=>'PROPAL_VALIDATE',        'test'=>$conf->propal->enabled),
+	array('id'=>'PROPAL_CLOSE_SIGNED',    'test'=>$conf->propal->enabled),
+	array('id'=>'PROPAL_CLOSE_REFUSED',   'test'=>$conf->propal->enabled),
+	array('id'=>'PROPAL_SENTBYMAIL',      'test'=>$conf->propal->enabled),
+	array('id'=>'ORDER_VALIDATE',         'test'=>$conf->commande->enabled),
+	array('id'=>'ORDER_SENTBYMAIL',       'test'=>$conf->commande->enabled),
+	array('id'=>'BILL_VALIDATE',          'test'=>$conf->facture->enabled),
+	array('id'=>'BILL_PAYED',             'test'=>$conf->facture->enabled),
+	array('id'=>'BILL_CANCEL',            'test'=>$conf->facture->enabled),
+	array('id'=>'BILL_SENTBYMAIL',        'test'=>$conf->facture->enabled),
+	array('id'=>'PAYMENT_CUSTOMER_CREATE','test'=>$conf->facture->enabled),
+	array('id'=>'PAYMENT_SUPPLIER_CREATE','test'=>$conf->fournisseur->enabled),
+	array('id'=>'MEMBER_CREATE',          'test'=>$conf->adherent->enabled),
+	array('id'=>'MEMBER_VALIDATE',        'test'=>$conf->adherent->enabled),
+	array('id'=>'MEMBER_SUBSCRIPTION',    'test'=>$conf->adherent->enabled),
+	array('id'=>'MEMBER_MODIFY',          'test'=>$conf->adherent->enabled),
+	array('id'=>'MEMBER_RESILIATE',       'test'=>$conf->adherent->enabled),
+	array('id'=>'MEMBER_DELETE',          'test'=>$conf->adherent->enabled),
+*/
+);
 
 
 /*
- *	Actions
- */
+*	Actions
+*/
 if ($action == "save")
 {
-	$i=0;
+    $i=0;
 
-	$db->begin();
+    $db->begin();
 
 	foreach ($eventstolog as $key => $arr)
 	{
@@ -61,8 +93,8 @@ if ($action == "save")
 		else dolibarr_del_const($db,$param,$conf->entity);
 	}
 
-	$db->commit();
-	$mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    $db->commit();
+    $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
 }
 
 
@@ -98,14 +130,14 @@ foreach ($eventstolog as $key => $arr)
 {
 	if ($arr['id'])
 	{
-		$var=!$var;
-		print '<tr '.$bc[$var].'>';
-		print '<td>'.$arr['id'].'</td>';
-		print '<td>';
-		$key='MAIN_LOGEVENTS_'.$arr['id'];
+	    $var=!$var;
+	    print '<tr '.$bc[$var].'>';
+	    print '<td>'.$arr['id'].'</td>';
+	    print '<td>';
+	    $key='MAIN_LOGEVENTS_'.$arr['id'];
 		$value=$conf->global->$key;
 		print '<input '.$bc[$var].' type="checkbox" name="'.$key.'" value="1"'.($value?' checked="true"':'').'>';
-		print '</td></tr>'."\n";
+	    print '</td></tr>'."\n";
 	}
 }
 print '</table>';
@@ -119,10 +151,12 @@ print "</form>\n";
 print '</div>';
 
 
-dol_htmloutput_mesg($mesg);
+
+if ($mesg) print "<br>$mesg<br>";
+print "<br>";
 
 
 $db->close();
 
-llxFooter('$Date: 2011/07/18 23:30:56 $ - $Revision: 1.20 $');
+llxFooter('$Date$ - $Revision$');
 ?>

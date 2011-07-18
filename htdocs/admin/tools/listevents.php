@@ -21,19 +21,19 @@
  *		\file       htdocs/admin/tools/listevents.php
  *      \ingroup    core
  *      \brief      List of security events
- *      \version    $Id: listevents.php,v 1.31 2011/07/18 23:28:30 eldy Exp $
+ *      \version    $Id$
  */
 
 require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT.'/core/class/events.class.php');
+
 if (! $user->admin)
-accessforbidden();
+  accessforbidden();
 
 // Security check
 if ($user->societe_id > 0)
 {
-	$action = '';
-	$socid = $user->societe_id;
+  $action = '';
+  $socid = $user->societe_id;
 }
 
 $langs->load("admin");
@@ -61,48 +61,23 @@ $search_ua   = GETPOST("search_ua");
  * Actions
  */
 
-$now=dol_now();
-
 // Purge audit events
 if ($_REQUEST['action'] == 'confirm_purge' && $_REQUEST['confirm'] == 'yes' && $user->admin)
 {
-	$error=0;
-
-	$db->begin();
-	$securityevents=new Events($db);
-
-	// Delete events
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."events";
 	$sql.= " WHERE entity = ".$conf->entity;
 	$resql = $db->query($sql);
 	if (! $resql)
 	{
-		$error++;
 		$mesg='<div class="error">'.$db->lasterror().'</div>';
-	}
-	// Add event purge
-	$text=$langs->trans("SecurityEventsPurged");
-	$securityevent=new Events($db);
-	$securityevent->type='SECURITY_EVENTS_PURGE';
-	$securityevent->dateevent=$now;
-	$securityevent->description=$text;
-	$result=$securityevent->create($user);
-	if ($result > 0)
-	{
-		dol_syslog($text, LOG_WARNING);
-	}
-	else
-	{
-		$error++;
-		dol_syslog($securityevent->error, LOG_ERROR);
-		$db->rolback();
 	}
 }
 
 
+
 /*
- *	View
- */
+*	View
+*/
 
 llxHeader();
 
@@ -240,21 +215,21 @@ if ($result)
 		else print '<tr><td colspan="6">'.$langs->trans("NoEventOrNoAuditSetup").'</td></tr>';
 	}
 	print "</table>";
-	$db->free($result);
+	$db->free();
 
 	if ($num)
 	{
-		print '<div class="tabsAction">';
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=purge">'.$langs->trans("Purge").'</a>';
-		print '</div>';
+	    print '<div class="tabsAction">';
+    	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=purge">'.$langs->trans("Purge").'</a>';
+    	print '</div>';
 	}
 }
 else
 {
-	dol_print_error($db);
+  dol_print_error($db);
 }
 
 $db->close();
 
-llxFooter('$Date: 2011/07/18 23:28:30 $ - $Revision: 1.31 $');
+llxFooter('$Date$ - $Revision$');
 ?>
