@@ -21,7 +21,7 @@
 /**
  *  \file		htdocs/includes/menus/standard/eldy.lib.php
  *  \brief		Library for file eldy menus
- *  \version	$Id: eldy.lib.php,v 1.59 2011/07/18 18:08:35 eldy Exp $
+ *  \version	$Id: eldy.lib.php,v 1.60 2011/07/18 20:19:41 eldy Exp $
  */
 
 
@@ -460,13 +460,13 @@ function print_eldy_menu($db,$atarget,$type_user)
 				else
 				{
 					$url=dol_buildpath($newTabMenu[$i]['url'],1);
-					if (! preg_match('/\?/',$url)) $url.='?';
-					else $url.='&';
 					if (! preg_match('/mainmenu/i',$url) || ! preg_match('/leftmenu/i',$url))
 					{
-						$url.='mainmenu='.$newTabMenu[$i]['mainmenu'].'&leftmenu=&';
+                        if (! preg_match('/\?/',$url)) $url.='?';
+                        else $url.='&';
+					    $url.='mainmenu='.$newTabMenu[$i]['mainmenu'].'&leftmenu=';
 					}
-					$url.="idmenu=".$newTabMenu[$i]['rowid'];
+					//$url.="idmenu=".$newTabMenu[$i]['rowid'];    // Already done by menuLoad
 				}
 				$url=preg_replace('/__LOGIN__/',$user->login,$url);
 
