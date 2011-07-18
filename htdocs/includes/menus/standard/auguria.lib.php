@@ -21,7 +21,7 @@
 /**
  *  \file		htdocs/includes/menus/standard/auguria.lib.php
  *  \brief		Library for file auguria menus
- *  \version	$Id$
+ *  \version	$Id: auguria.lib.php,v 1.19 2011/07/18 00:58:35 eldy Exp $
  */
 
 
@@ -91,7 +91,7 @@ function print_auguria_menu($db,$atarget,$type_user)
 				{
 					print_start_menu_entry_auguria($idsel);
 					print '<div class="mainmenu '.$idsel.'"><span class="mainmenu_'.$idsel.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-					print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#">';
+					print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
 					print_text_menu_entry_auguria($newTabMenu[$i]['titre']);
 					print '</a>';
 					print_end_menu_entry_auguria();
