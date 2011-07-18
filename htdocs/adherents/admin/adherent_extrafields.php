@@ -22,7 +22,7 @@
  *      \file       htdocs/adherents/admin/adherent_extrafields.php
  *		\ingroup    member
  *		\brief      Page to setup extra fields of members
- *		\version    $Id: adherent_extrafields.php,v 1.3 2011/07/05 20:39:36 eldy Exp $
+ *		\version    $Id: adherent_extrafields.php,v 1.4 2011/07/18 19:25:48 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -204,13 +204,13 @@ $var=True;
 foreach($extrafields->attribute_type as $key => $value)
 {
 	$var=!$var;
-	print "<tr $bc[$var]>";
+	print "<tr ".$bc[$var].">";
     print "<td>".$extrafields->attribute_label[$key]."</td>\n";
 	print "<td>".$key."</td>\n";
 	print "<td>".$type2label[$extrafields->attribute_type[$key]]."</td>\n";
 	print '<td align="right">'.$extrafields->attribute_size[$key]."</td>\n";
-	print '<td align="right"><a href="".$_SERVER["PHP_SELF"]."?action=edit&attrname='.$key.'">'.img_edit().'</a>';
-	print "&nbsp; <a href=\"".$_SERVER["PHP_SELF"]."?action=delete&attrname=$key\">".img_delete()."</a></td>\n";
+	print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&attrname='.$key.'">'.img_edit().'</a>';
+	print "&nbsp; <a href=\"".$_SERVER["PHP_SELF"]."?action=delete&attrname=".$key."\">".img_delete()."</a></td>\n";
 	print "</tr>";
 	//      $i++;
 }
@@ -312,5 +312,5 @@ if ($_GET["attrname"] && $action == 'edit')
 
 $db->close();
 
-llxFooter('$Date: 2011/07/05 20:39:36 $ - $Revision: 1.3 $');
+llxFooter('$Date: 2011/07/18 19:25:48 $ - $Revision: 1.4 $');
 ?>
