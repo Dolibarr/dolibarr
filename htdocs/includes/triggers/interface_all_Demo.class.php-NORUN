@@ -28,7 +28,7 @@
  *                  - Le nom de la classe doit etre InterfaceMytrigger
  *                  - Le nom de la methode constructeur doit etre InterfaceMytrigger
  *                  - Le nom de la propriete name doit etre Mytrigger
- *		\version	$Id: interface_all_Demo.class.php-NORUN,v 1.28 2011/07/08 15:43:54 eldy Exp $
+ *		\version	$Id: interface_all_Demo.class.php-NORUN,v 1.29 2011/07/18 01:06:52 eldy Exp $
  */
 
 
@@ -52,6 +52,7 @@ class InterfaceDemo
         $this->family = "demo";
         $this->description = "Triggers of this module are empty functions. They have no effect. They are provided for tutorial purpose only.";
         $this->version = 'dolibarr';            // 'development', 'experimental', 'dolibarr' or version
+        $this->picto = 'technic';
     }
     
     
