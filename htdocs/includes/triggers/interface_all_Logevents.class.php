@@ -21,7 +21,7 @@
  *      \file       htdocs/includes/triggers/interface_all_Logevents.class.php
  *      \ingroup    core
  *      \brief      Trigger file for
- *		\version	$Id: interface_all_Logevents.class.php,v 1.21 2011/07/08 15:43:54 eldy Exp $
+ *		\version	$Id: interface_all_Logevents.class.php,v 1.22 2011/07/18 01:06:52 eldy Exp $
  */
 
 
@@ -51,6 +51,7 @@ class InterfaceLogevents
         $this->family = "core";
         $this->description = "Triggers of this module allows to add security event records inside Dolibarr.";
         $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
+        $this->picto = 'technic';
     }
 
     /**

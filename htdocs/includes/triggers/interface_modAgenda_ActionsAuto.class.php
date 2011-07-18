@@ -22,7 +22,7 @@
  *	\file       htdocs/includes/triggers/interface_modAgenda_ActionsAuto.class.php
  *  \ingroup    agenda
  *  \brief      Trigger file for agenda module
- *	\version	$Id: interface_modAgenda_ActionsAuto.class.php,v 1.34 2011/07/13 18:05:27 eldy Exp $
+ *	\version	$Id: interface_modAgenda_ActionsAuto.class.php,v 1.35 2011/07/18 01:06:52 eldy Exp $
  */
 
 
@@ -52,6 +52,7 @@ class InterfaceActionsAuto
         $this->family = "agenda";
         $this->description = "Triggers of this module add actions in agenda according to setup made in agenda setup.";
         $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
+        $this->picto = 'action';
     }
 
     /**
