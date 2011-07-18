@@ -20,7 +20,7 @@
 /**
  *		\file       htdocs/theme/yellow/style.css.php
  *		\brief      Fichier de style CSS du theme Yellow
- *		\version    $Id: style.css.php,v 1.42 2011/07/06 11:40:21 eldy Exp $
+ *		\version    $Id: style.css.php,v 1.43 2011/07/18 23:37:03 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -64,7 +64,7 @@ body {
 <?php if (! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print') {  ?>
 	background-color: #FFFFFF;
 <?php } else { ?>
-	background-color: #ebebe0;
+	background-color: #fbfbf0;
 <?php } ?>
   font-size: 12px;
   font-family: helvetica, verdana, arial, sans-serif;
