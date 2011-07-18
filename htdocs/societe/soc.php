@@ -5,7 +5,7 @@
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2008	   Patrick Raguin       <patrick.raguin@auguria.net>
- * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
  *  \file       htdocs/societe/soc.php
  *  \ingroup    societe
  *  \brief      Third party card page
- *  \version    $Id: soc.php,v 1.122 2011/07/18 16:37:14 simnandez Exp $
+ *  \version    $Id: soc.php,v 1.121 2011/07/04 08:00:53 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -699,14 +699,12 @@ else
                                jQuery(".individualline").hide();
                                jQuery("#typent_id").val(0);
                                jQuery("#effectif_id").val(0);
-                               document.getElementById("TypeName").innerHTML=document.formsoc.ThirdPartyName.value;
                                document.formsoc.private.value=0;
                          });
                           jQuery("#radioprivate").click(function() {
                                jQuery(".individualline").show();
                                jQuery("#typent_id").val(id_te_private);
                                jQuery("#effectif_id").val(id_ef15);
-                               document.getElementById("TypeName").innerHTML=document.formsoc.LastName.value;
                                document.formsoc.private.value=1;
                          });
                          jQuery("#selectpays_id").change(function() {
@@ -737,16 +735,14 @@ else
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="private" value='.$object->particulier.'>';
         print '<input type="hidden" name="type" value='.GETPOST("type").'>';
-        print '<input type="hidden" name="LastName" value="'.$langs->trans('LastName').'">';
-        print '<input type="hidden" name="ThirdPartyName" value="'.$langs->trans('ThirdPartyName').'">';
         if ($modCodeClient->code_auto || $modCodeFournisseur->code_auto) print '<input type="hidden" name="code_auto" value="1">';
 
         print '<table class="border" width="100%">';
 
         // Name, firstname
-        if ($object->particulier || GETPOST("private"))
+        if ($object->particulier)
         {
-            print '<tr><td><span id="TypeName" class="fieldrequired">'.$langs->trans('LastName').'</span></td><td'.(empty($conf->global->SOCIETE_USEPREFIX)?' colspan="3"':'').'><input type="text" size="30" maxlength="60" name="nom" value="'.$object->nom.'"></td>';
+            print '<tr><td><span class="fieldrequired">'.$langs->trans('LastName').'</span></td><td'.(empty($conf->global->SOCIETE_USEPREFIX)?' colspan="3"':'').'><input type="text" size="30" maxlength="60" name="nom" value="'.$object->nom.'"></td>';
             if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
             {
                 print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" maxlength="5" name="prefix_comm" value="'.$object->prefix_comm.'"></td>';
@@ -755,7 +751,7 @@ else
         }
         else
         {
-            print '<tr><td><span span id="TypeName" class="fieldrequired">'.$langs->trans('ThirdPartyName').'</span></td><td'.(empty($conf->global->SOCIETE_USEPREFIX)?' colspan="3"':'').'><input type="text" size="30" maxlength="60" name="nom" value="'.$object->nom.'"></td>';
+            print '<tr><td><span class="fieldrequired">'.$langs->trans('ThirdPartyName').'</span></td><td'.(empty($conf->global->SOCIETE_USEPREFIX)?' colspan="3"':'').'><input type="text" size="30" maxlength="60" name="nom" value="'.$object->nom.'"></td>';
             if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
             {
                 print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" maxlength="5" name="prefix_comm" value="'.$object->prefix_comm.'"></td>';
@@ -1965,5 +1961,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/18 16:37:14 $ - $Revision: 1.122 $');
+llxFooter('$Date: 2011/07/04 08:00:53 $ - $Revision: 1.121 $');
 ?>
