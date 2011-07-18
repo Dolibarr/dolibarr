@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  *
@@ -23,7 +23,7 @@
  *	\file       htdocs/admin/company.php
  *	\ingroup    company
  *	\brief      Setup page to configure company/foundation
- *	\version    $Id: company.php,v 1.92 2011/06/24 19:57:45 eldy Exp $
+ *	\version    $Id: company.php,v 1.93 2011/07/18 18:09:04 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -623,7 +623,7 @@ else
      * Show parameters
      */
 
-    if ($message) print $message.'<br>';
+    dol_htmloutput_mesg($message);
 
     // Actions buttons
     //print '<div class="tabsAction">';
@@ -983,6 +983,6 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/06/24 19:57:45 $ - $Revision: 1.92 $');
+llxFooter('$Date: 2011/07/18 18:09:04 $ - $Revision: 1.93 $');
 
 ?>
