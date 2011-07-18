@@ -20,7 +20,7 @@
 /**
  *       \file       htdocs/admin/sms.php
  *       \brief      Page to setup emails sending
- *       \version    $Id$
+ *       \version    $Id: sms.php,v 1.8 2011/07/18 11:31:54 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -156,8 +156,7 @@ print "<br>\n";
 if ($message) print $message.'<br>';
 
 // List of sending methods
-$listofmethods=$conf->sms_engine;
-$listofmethods['']='';
+$listofmethods=(is_array($conf->sms_engine)?$conf->sms_engine:array());
 asort($listofmethods);
 
 if ($action == 'edit')
@@ -189,7 +188,7 @@ if ($action == 'edit')
 	// Method
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_SMS_SENDMODE").'</td><td>';
-	if (sizeof($listofmethods)) print $html->selectarray('MAIN_SMS_SENDMODE',$listofmethods,$conf->global->MAIN_SMS_SENDMODE);
+	if (count($listofmethods)) print $html->selectarray('MAIN_SMS_SENDMODE',$listofmethods,$conf->global->MAIN_SMS_SENDMODE,1);
 	else print '<font class="error">'.$langs->trans("None").'</font>';
     print '</td></tr>';
 
@@ -348,5 +347,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/18 11:31:54 $ - $Revision: 1.8 $');
 ?>
