@@ -21,7 +21,7 @@
 /**
  *  \file		htdocs/includes/menus/standard/auguria.lib.php
  *  \brief		Library for file auguria menus
- *  \version	$Id: auguria.lib.php,v 1.20 2011/07/18 20:19:41 eldy Exp $
+ *  \version	$Id: auguria.lib.php,v 1.19 2011/07/18 00:58:35 eldy Exp $
  */
 
 
@@ -64,15 +64,14 @@ function print_auguria_menu($db,$atarget,$type_user)
 				else
 				{
 					$url=dol_buildpath($newTabMenu[$i]['url'],1);
+					if (! preg_match('/\?/',$url)) $url.='?';
+					else $url.='&';
 					if (! preg_match('/mainmenu/i',$url) || ! preg_match('/leftmenu/i',$url))
 					{
-                        if (! preg_match('/\?/',$url)) $url.='?';
-                        else $url.='&';
-					    $url.='mainmenu='.$newTabMenu[$i]['mainmenu'].'&leftmenu=';
+						$url.='mainmenu='.$newTabMenu[$i]['mainmenu'].'&leftmenu=&';
 					}
-					//$url.="idmenu=".$newTabMenu[$i]['rowid'];    // Already done by menuLoad
+					$url.="idmenu=".$newTabMenu[$i]['rowid'];
 				}
-                $url=preg_replace('/__LOGIN__/',$user->login,$url);
 
 				// Define the class (top menu selected or not)
 				if (! empty($_SESSION['idmenu']) && $newTabMenu[$i]['rowid'] == $_SESSION['idmenu']) $classname='class="tmenusel"';
