@@ -128,4 +128,3 @@ InvoiceRef=Invoice ref.
 CodeNotDef=Not defined
 AddRemind=Dispatch available amount
 RemainToDivide= Remain to dispatch :
-WarningDepositsNotIncluded=Deposits invoices are not included in this version with this accountancy module.

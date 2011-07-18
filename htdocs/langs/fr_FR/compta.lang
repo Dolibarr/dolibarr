@@ -140,4 +140,3 @@ COMPTA_ACCOUNT_CUSTOMER=Code comptable client par défaut (si non défini sur fi
 COMPTA_ACCOUNT_SUPPLIER=Code comptable fournisseur par défaut (si non défini sur fiche tiers)
 AddRemind=Ventiler montant disponible
 RemainToDivide=Reste à répartir :
-WarningDepositsNotIncluded=Les factures d'accomptes ne sont pas encore prises en compte dans cette version avec ce module de comptabilité.
