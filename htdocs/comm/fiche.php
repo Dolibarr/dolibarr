@@ -26,7 +26,7 @@
  *       \file       htdocs/comm/fiche.php
  *       \ingroup    commercial, compta
  *       \brief      Page to show customer card of a third party
- *       \version    $Id$
+ *       \version    $Id: fiche.php,v 1.281 2011/07/18 10:22:22 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -223,7 +223,7 @@ if ($socid > 0)
 
 	// Address
 	print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3">';
-	dol_print_address($objsoc->address,'gmap','contact',$objsoc->id);
+	dol_print_address($objsoc->address,'gmap','thirdparty',$objsoc->id);
 	print "</td></tr>";
 
 	// Zip / Town
@@ -892,5 +892,5 @@ else
 $db->close();
 
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/18 10:22:22 $ - $Revision: 1.281 $');
 ?>
