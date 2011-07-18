@@ -22,7 +22,7 @@
 /**
  *	\file       htdocs/compta/prelevement/create.php
  *	\brief      Prelevement
- *	\version    $Id$
+ *	\version    $Id: create.php,v 1.33 2011/07/18 18:07:36 eldy Exp $
  */
 
 require("../bank/pre.inc.php");
@@ -141,7 +141,7 @@ if ($nb)
 }
 else
 {
-    print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoInvoiceToWithdraw")).'">'.$langs->trans("CreateAll")."</a>\n";
+    print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoInvoiceToWithdraw")).'">'.$langs->trans("CreateAll")."</a>\n";
 }
     //if ($nb11) print '<a class="butAction" href="create.php?action=create&amp;banque=1">'.$langs->trans("CreateBanque")."</a>\n";
     //if ($nb1)  print '<a class="butAction" href="create.php?action=create&amp;banque=1&amp;guichet=1">'.$langs->trans("CreateGuichet")."</a>\n";
@@ -274,5 +274,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/18 18:07:36 $ - $Revision: 1.33 $');
 ?>
