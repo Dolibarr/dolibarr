@@ -24,7 +24,7 @@
  *       \file       htdocs/comm/action/fiche.php
  *       \ingroup    agenda
  *       \brief      Page for event card
- *       \version    $Id$
+ *       \version    $Id: fiche.php,v 1.226 2011/07/18 01:44:15 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -471,8 +471,7 @@ if ($action == 'create')
 	if (GETPOST("actioncode") == 'AC_RDV') print_fiche_titre ($langs->trans("AddActionRendezVous"));
 	else print_fiche_titre ($langs->trans("AddAnAction"));
 
-	if ($mesg) print $mesg.'<br>';
-	else print "<br>";
+	dol_htmloutput_mesg($mesg);
 
 	print '<table class="border" width="100%">';
 
@@ -1023,7 +1022,7 @@ if ($id)
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/18 01:44:15 $ - $Revision: 1.226 $');
 
 
 /**
