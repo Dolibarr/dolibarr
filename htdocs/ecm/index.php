@@ -21,7 +21,7 @@
  *	\file       htdocs/ecm/index.php
  *	\ingroup    ecm
  *	\brief      Main page for ECM section area
- *	\version    $Id: index.php,v 1.101 2011/07/06 21:12:34 eldy Exp $
+ *	\version    $Id: index.php,v 1.102 2011/07/18 01:44:15 eldy Exp $
  *	\author		Laurent Destailleur
  */
 
@@ -372,7 +372,7 @@ if (GETPOST('action') == 'delete')
 	if ($ret == 'html') print '<br>';
 }
 
-if ($mesg) { print $mesg."<br>"; }
+dol_htmloutput_mesg($mesg);
 
 // Toolbar
 //$head = ecm_prepare_head_fm($fac);
@@ -889,5 +889,5 @@ else
 // End of page
 $db->close();
 
-llxFooter('$Date: 2011/07/06 21:12:34 $ - $Revision: 1.101 $');
+llxFooter('$Date: 2011/07/18 01:44:15 $ - $Revision: 1.102 $');
 ?>

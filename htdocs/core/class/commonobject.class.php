@@ -22,7 +22,7 @@
  *	\file       htdocs/core/class/commonobject.class.php
  *	\ingroup    core
  *	\brief      File of parent class of all other business classes (invoices, contracts, proposals, orders, ...)
- *	\version    $Id: commonobject.class.php,v 1.146 2011/07/13 16:55:25 eldy Exp $
+ *	\version    $Id: commonobject.class.php,v 1.147 2011/07/17 18:33:31 eldy Exp $
  */
 
 
@@ -1480,7 +1480,7 @@ class CommonObject
     						$this->hooks[$i]['modules'][$objModule->module_number] = $objModule;
 						}
 
-						// FIXME storing dao is useless here. It's goal of controller to known which dao to manage
+						// TODO storing dao is useless here. It's goal of controller to known which dao to manage
                         if ($resdao)
                         {
     						// Instantiate dataservice class (model)

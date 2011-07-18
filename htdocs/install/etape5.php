@@ -24,7 +24,7 @@
  *       \file      htdocs/install/etape5.php
  *	 	 \ingroup	install
  *       \brief     Last page of upgrade or install process
- *       \version   $Id: etape5.php,v 1.101 2011/06/26 12:56:31 eldy Exp $
+ *       \version   $Id: etape5.php,v 1.102 2011/07/17 18:13:44 eldy Exp $
  */
 
 include_once("./inc.php");
@@ -219,7 +219,6 @@ if ($action == "set" || preg_match('/upgrade/i',$action))
 				}
 
 				// If we ask to force some modules to be enabled
-				// This works only for module stored into root directory. Does not work for alternate modules.
 				if (! empty($force_install_module))
 				{
 					if (! defined('DOL_DOCUMENT_ROOT') && ! empty($dolibarr_main_document_root)) define('DOL_DOCUMENT_ROOT',$dolibarr_main_document_root);

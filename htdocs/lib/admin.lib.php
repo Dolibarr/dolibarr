@@ -21,7 +21,7 @@
 /**
  *	\file			htdocs/lib/admin.lib.php
  *  \brief			Library of admin functions
- *  \version		$Id$
+ *  \version		$Id: admin.lib.php,v 1.97 2011/07/17 18:13:44 eldy Exp $
  */
 
 
@@ -468,7 +468,7 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
 /**
  *  \brief      	Define head array for tabs of security setup pages
  *  \return			Array of head
- *  \version    	$Id$
+ *  \version    	$Id: admin.lib.php,v 1.97 2011/07/17 18:13:44 eldy Exp $
  */
 function security_prepare_head()
 {
@@ -601,8 +601,8 @@ function purgeSessions($mysessionid)
 
 /**
  *  Enable a module
- *  @param      value       Nom du module a activer
- *  @param      withdeps    Active/desactive aussi les dependances
+ *  @param      value       Name of module to activate
+ *  @param      withdeps    Activate/Disable also all dependencies
  *  @return     string      Error message or '';
  */
 function Activate($value,$withdeps=1)

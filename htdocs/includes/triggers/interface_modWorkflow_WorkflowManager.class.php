@@ -21,7 +21,7 @@
  *      \file       htdocs/includes/triggers/interface_modWorkflow_WorkflowManager.class.php
  *      \ingroup    core
  *      \brief      Trigger file for workflows
- *      \version	$Id: interface_modWorkflow_WorkflowManager.class.php,v 1.6 2011/07/08 15:43:54 eldy Exp $
+ *      \version	$Id: interface_modWorkflow_WorkflowManager.class.php,v 1.7 2011/07/18 01:06:52 eldy Exp $
  */
 
 
@@ -46,6 +46,7 @@ class InterfaceWorkflowManager
         $this->family = "core";
         $this->description = "Triggers of this module allows to manage workflows";
         $this->version = 'dolibarr';            // 'development', 'experimental', 'dolibarr' or version
+        $this->picto = 'technic';
     }
 
 

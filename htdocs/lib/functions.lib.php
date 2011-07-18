@@ -29,7 +29,7 @@
  *	\file			htdocs/lib/functions.lib.php
  *	\brief			A set of functions for Dolibarr
  *					This file contains all frequently used functions.
- *	\version		$Id: functions.lib.php,v 1.546 2011/07/09 11:24:32 eldy Exp $
+ *	\version		$Id: functions.lib.php,v 1.547 2011/07/18 00:48:33 eldy Exp $
  */
 
 // For compatibility during upgrade
@@ -2212,6 +2212,10 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
             else if ($feature == 'ecm')
             {
                 if (! $user->rights->ecm->upload) $deleteok=0;
+            }
+            else if ($feature == 'ftp')
+            {
+                if (! $user->rights->ftp->write) $deleteok=0;
             }
             else if (! empty($feature2))	// This should be used for future changes
             {

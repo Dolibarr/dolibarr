@@ -23,7 +23,7 @@
 /**
  *		\file       htdocs/theme/eldy/style.css.php
  *		\brief      Fichier de style CSS du theme Cameleo
- *		\version    $Id: style.css.php,v 1.6 2011/07/06 11:40:22 eldy Exp $
+ *		\version    $Id: style.css.php,v 1.7 2011/07/17 20:16:38 hregis Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -487,7 +487,7 @@ foreach($mainmenuusedarray as $key => $val)
 	{
 		if (file_exists($dirroot."/".$val."/img/".$val.".png"))
 		{
-			$url=DOL_URL_ROOT.'/'.$val.'/img/'.$val.'.png';
+			$url=dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
 			$found=1;
 			break;
 		}

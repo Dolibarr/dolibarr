@@ -20,7 +20,7 @@
  *      \file       htdocs/includes/triggers/interface_modLdap_Ldapsynchro.class.php
  *      \ingroup    core
  *      \brief      Fichier de gestion des triggers LDAP
- *		\version	$Id: interface_modLdap_Ldapsynchro.class.php,v 1.18 2011/07/08 15:43:54 eldy Exp $
+ *		\version	$Id: interface_modLdap_Ldapsynchro.class.php,v 1.19 2011/07/18 01:06:52 eldy Exp $
  */
 require_once (DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 
@@ -47,6 +47,7 @@ class InterfaceLdapsynchro
         $this->family = "ldap";
         $this->description = "Triggers of this module allows to synchronize Dolibarr toward a LDAP database.";
         $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
+        $this->picto = 'technic';
     }
 
     /**
