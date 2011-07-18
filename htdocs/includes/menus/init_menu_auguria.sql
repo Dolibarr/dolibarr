@@ -1,6 +1,6 @@
 --
--- $Id: init_menu_auguria.sql,v 1.122 2011/07/18 18:08:35 eldy Exp $
--- $Revision: 1.122 $
+-- $Id: init_menu_auguria.sql,v 1.121 2011/07/13 11:26:17 eldy Exp $
+-- $Revision: 1.121 $
 --
 -- Menu base entries
 -- This file is loaded when a menu handler base is activated (auguria, etc..)
@@ -33,7 +33,7 @@ insert into llx_menu (enabled, menu_handler, type, rowid, mainmenu, leftmenu, fk
 insert into llx_menu (enabled, menu_handler, type, rowid, mainmenu, leftmenu, fk_menu, url, titre, level, langs, perms, target, usertype, position, entity) values ('$leftmenu==\'setup\'', __HANDLER__, 'left', 108__+MAX_llx_menu__, 'home', '', 100__+MAX_llx_menu__, '/admin/proxy.php?leftmenu=setup', 'Security', 1, 'admin', '', '', 2, 7, __ENTITY__);
 insert into llx_menu (enabled, menu_handler, type, rowid, mainmenu, leftmenu, fk_menu, url, titre, level, langs, perms, target, usertype, position, entity) values ('$leftmenu==\'setup\'', __HANDLER__, 'left', 110__+MAX_llx_menu__, 'home', '', 100__+MAX_llx_menu__, '/admin/limits.php?leftmenu=setup', 'MenuLimits', 1, 'admin', '', '', 2, 8, __ENTITY__);
 insert into llx_menu (enabled, menu_handler, type, rowid, mainmenu, leftmenu, fk_menu, url, titre, level, langs, perms, target, usertype, position, entity) values ('$leftmenu==\'setup\'', __HANDLER__, 'left', 109__+MAX_llx_menu__, 'home', '', 100__+MAX_llx_menu__, '/admin/mails.php?leftmenu=setup', 'Emails', 1, 'admin', '', '', 2, 9, __ENTITY__);
-insert into llx_menu (enabled, menu_handler, type, rowid, mainmenu, leftmenu, fk_menu, url, titre, level, langs, perms, target, usertype, position, entity) values ('$leftmenu==\'setup\'', __HANDLER__, 'left', 113__+MAX_llx_menu__, 'home', '', 100__+MAX_llx_menu__, '/admin/sms.php?leftmenu=setup', 'Sms', 1, 'admin', '', '', 2, 9, __ENTITY__);
+insert into llx_menu (enabled, menu_handler, type, rowid, mainmenu, leftmenu, fk_menu, url, titre, level, langs, perms, target, usertype, position, entity) values ('$leftmenu==\'setup\' && $conf->global->MAIN_FEATURES_LEVEL', __HANDLER__, 'left', 113__+MAX_llx_menu__, 'home', '', 100__+MAX_llx_menu__, '/admin/sms.php?leftmenu=setup', 'Sms', 1, 'admin', '', '', 2, 9, __ENTITY__);
 insert into llx_menu (enabled, menu_handler, type, rowid, mainmenu, leftmenu, fk_menu, url, titre, level, langs, perms, target, usertype, position, entity) values ('$leftmenu==\'setup\'', __HANDLER__, 'left', 111__+MAX_llx_menu__, 'home', '', 100__+MAX_llx_menu__, '/admin/dict.php?leftmenu=setup', 'DictionnarySetup', 1, 'admin', '', '', 2, 10, __ENTITY__);
 insert into llx_menu (enabled, menu_handler, type, rowid, mainmenu, leftmenu, fk_menu, url, titre, level, langs, perms, target, usertype, position, entity) values ('$leftmenu==\'setup\'', __HANDLER__, 'left', 112__+MAX_llx_menu__, 'home', '', 100__+MAX_llx_menu__, '/admin/const.php?leftmenu=setup', 'OtherSetup', 1, 'admin', '', '', 2, 11, __ENTITY__);
 insert into llx_menu (enabled, menu_handler, type, rowid, mainmenu, leftmenu, fk_menu, url, titre, level, langs, perms, target, usertype, position, entity) values ('$user->admin', __HANDLER__, 'left', 200__+MAX_llx_menu__, 'home', '', 1__+MAX_llx_menu__, '/admin/system/index.php?leftmenu=system', 'SystemInfo', 0, 'admin', '', '', 2, 1, __ENTITY__);
