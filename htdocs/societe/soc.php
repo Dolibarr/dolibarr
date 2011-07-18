@@ -26,7 +26,7 @@
  *  \file       htdocs/societe/soc.php
  *  \ingroup    societe
  *  \brief      Third party card page
- *  \version    $Id: soc.php,v 1.123 2011/07/18 16:48:26 simnandez Exp $
+ *  \version    $Id: soc.php,v 1.122 2011/07/18 16:37:14 simnandez Exp $
  */
 
 require("../main.inc.php");
@@ -275,7 +275,7 @@ if (empty($reshook))
                         dol_syslog("This thirdparty is a personal people",LOG_DEBUG);
                         $contact=new Contact($db);
 
-     					$contact->civilite_id=$object->civilite_id;
+                        $contact->civilite_id = $object->civilite_id;
                         $contact->name=$object->nom_particulier;
                         $contact->firstname=$object->prenom;
                         $contact->address=$object->address;
@@ -283,13 +283,10 @@ if (empty($reshook))
                         $contact->cp=$object->cp;
                         $contact->town=$object->town;
                         $contact->ville=$object->ville;
-                        $contact->fk_departement=$object->departement_id;
-                        $contact->fk_pays=$object->pays_id;
+                        $contact->fk_pays=$object->fk_pays;
                         $contact->socid=$object->id;                   // fk_soc
                         $contact->status=1;
                         $contact->email=$object->email;
-						$contact->phone_pro=$object->tel;
-						$contact->fax=$object->fax;
                         $contact->priv=0;
 
                         $result=$contact->create($user);
@@ -1968,5 +1965,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/18 16:48:26 $ - $Revision: 1.123 $');
+llxFooter('$Date: 2011/07/18 16:37:14 $ - $Revision: 1.122 $');
 ?>
