@@ -21,7 +21,7 @@
  *	\file       htdocs/ftp/index.php
  *	\ingroup    ftp
  *	\brief      Main page for FTP section area
- *	\version    $Id: index.php,v 1.21 2011/07/17 23:59:39 eldy Exp $
+ *	\version    $Id: index.php,v 1.22 2011/07/18 00:03:18 eldy Exp $
  *	\author		Laurent Destailleur
  */
 
@@ -447,6 +447,7 @@ else
 
 
 		print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+        print '<input type="hidden" name="numero_ftp" value="'.$numero_ftp.'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 
@@ -627,7 +628,7 @@ if ($conn_id) ftp_close($conn_id);
 // End of page
 $db->close();
 
-llxFooter('$Date: 2011/07/17 23:59:39 $ - $Revision: 1.21 $');
+llxFooter('$Date: 2011/07/18 00:03:18 $ - $Revision: 1.22 $');
 
 
 /**
