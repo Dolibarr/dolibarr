@@ -21,7 +21,7 @@
  *	\file       htdocs/ftp/index.php
  *	\ingroup    ftp
  *	\brief      Main page for FTP section area
- *	\version    $Id: index.php,v 1.22 2011/07/18 00:03:18 eldy Exp $
+ *	\version    $Id: index.php,v 1.23 2011/07/18 00:49:19 eldy Exp $
  *	\author		Laurent Destailleur
  */
 
@@ -38,9 +38,6 @@ $langs->load("other");
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'ftp','');
-
-// Load permissions
-$user->getrights('ftp');
 
 // Get parameters
 $action = isset($_GET["action"])?$_GET["action"]:$_POST['action'];
@@ -628,7 +625,7 @@ if ($conn_id) ftp_close($conn_id);
 // End of page
 $db->close();
 
-llxFooter('$Date: 2011/07/18 00:03:18 $ - $Revision: 1.22 $');
+llxFooter('$Date: 2011/07/18 00:49:19 $ - $Revision: 1.23 $');
 
 
 /**
