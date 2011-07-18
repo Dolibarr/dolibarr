@@ -23,7 +23,7 @@
  *	    \file       htdocs/compta/tva/quadri_detail.php
  *      \ingroup    tax
  *		\brief      Trimestrial page - detailed version
- *		\version    $Id$
+ *		\version    $Id: quadri_detail.php,v 1.43 2011/07/18 11:11:19 eldy Exp $
  *		\todo 		Deal with recurrent invoices as well
  */
 
@@ -44,7 +44,7 @@ $langs->load("companies");
 $langs->load("products");
 
 // Date range
-$year=$_REQUEST["year"];
+$year=GETPOST("year");
 if (empty($year))
 {
 	$year_current = strftime("%Y",dol_now());
@@ -58,24 +58,26 @@ $date_end=dol_mktime(23,59,59,$_REQUEST["date_endmonth"],$_REQUEST["date_endday"
 // Quarter
 if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 {
-	$q=(! empty($_REQUEST["q"]))?$_REQUEST["q"]:0;
-	if ($q==0)
+	$q=GETPOST("q");
+	if (empty($q))
 	{
 		if (isset($_REQUEST["month"])) { $date_start=dol_get_first_day($year_start,$_REQUEST["month"],false); $date_end=dol_get_last_day($year_start,$_REQUEST["month"],false); }
-		else $q=1;
+		else
+		{
+            $month_current = strftime("%m",dol_now());
+            if ($month_current >= 10) $q=4;
+            elseif ($month_current >= 7) $q=3;
+            elseif ($month_current >= 4) $q=2;
+            else $q=1;
+		}
 	}
 	if ($q==1) { $date_start=dol_get_first_day($year_start,1,false); $date_end=dol_get_last_day($year_start,3,false); }
 	if ($q==2) { $date_start=dol_get_first_day($year_start,4,false); $date_end=dol_get_last_day($year_start,6,false); }
 	if ($q==3) { $date_start=dol_get_first_day($year_start,7,false); $date_end=dol_get_last_day($year_start,9,false); }
 	if ($q==4) { $date_start=dol_get_first_day($year_start,10,false); $date_end=dol_get_last_day($year_start,12,false); }
 }
-else
-{
-	// TODO We define q
 
-}
-
-$min = $_REQUEST["min"];
+$min = GETPOST("min");
 if (empty($min)) $min = 0;
 
 // Define modetax (0 or 1)
@@ -85,7 +87,7 @@ if (isset($_REQUEST["modetax"])) $modetax=$_REQUEST["modetax"];
 if (empty($modetax)) $modetax=0;
 
 // Security check
-$socid = isset($_REQUEST["socid"])?$_REQUEST["socid"]:'';
+$socid = GETPOST("socid");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
@@ -134,9 +136,10 @@ if ($modetax==1)	// Calculate on invoice for goods and services
 	else { $nextquarter=1; $nextyear++; }
 	//$periodlink=($prevyear?"<a href='".$_SERVER["PHP_SELF"]."?year=".$prevyear."&q=".$prevquarter."&modetax=".$modetax."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".$nextyear."&q=".$nextquarter."&modetax=".$modetax."'>".img_next()."</a>":"");
     $description=$langs->trans("RulesVATDue");
-    $description.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
     //if ($conf->global->MAIN_MODULE_COMPTABILITE || $conf->global->MAIN_MODULE_ACCOUNTING) $description.='<br>'.img_warning().' '.$langs->trans('OptionVatInfoModuleComptabilite');
-	$description.=$fsearch;
+    if ($conf->global->MAIN_MODULE_COMPTABILITE) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
+    $description.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
+    $description.=$fsearch;
     $builddate=time();
     //$exportlink=$langs->trans("NotYetAvailable");
 
@@ -164,7 +167,8 @@ if ($modetax==0) 	// Invoice for goods, payment for services
 	//$periodlink=($prevyear?"<a href='".$_SERVER["PHP_SELF"]."?year=".$prevyear."&q=".$prevquarter."&modetax=".$modetax."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".$nextyear."&q=".$nextquarter."&modetax=".$modetax."'>".img_next()."</a>":"");
     $description=$langs->trans("RulesVATIn");
     //if ($conf->global->MAIN_MODULE_COMPTABILITE || $conf->global->MAIN_MODULE_ACCOUNTING) $description.='<br>'.img_warning().' '.$langs->trans('OptionVatInfoModuleComptabilite');
-	$description.=$fsearch;
+    if ($conf->global->MAIN_MODULE_COMPTABILITE) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
+    $description.=$fsearch;
     $description.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
 	$builddate=time();
     //$exportlink=$langs->trans("NotYetAvailable");
@@ -188,14 +192,10 @@ $vatsup=$langs->trans("VATPaid");
 
 // VAT Received and paid
 
-//print "<br>";
-//print_titre($vatcust);
-
 echo '<table class="noborder" width="100%">';
 
 $y = $year_current;
 $total = 0;
-$subtotal = 0;
 $i=0;
 
 // Load arrays of datas
@@ -416,21 +416,36 @@ else
 				$x_coll_sum           += $temp_vat;
 			}
 		}
-
-		// Total customers
-		print '<tr class="liste_total">';
-		print '<td></td>';
-		print '<td align="right">'.$langs->trans("Total").':</td>';
-		if ($modetax == 0)
-		{
-			print '<td nowrap align="right">&nbsp;</td>';
-			print '<td align="right">&nbsp;</td>';
-		}
-		print '<td align="right">'.price(price2num($subtot_coll_total_ht,'MT')).'</td>';
-		print '<td nowrap align="right">'.price(price2num($subtot_coll_vat,'MT')).'</td>';
-		print '</tr>';
+        // Total customers for this vat rate
+        print '<tr class="liste_total">';
+        print '<td></td>';
+        print '<td align="right">'.$langs->trans("Total").':</td>';
+        if ($modetax == 0)
+        {
+            print '<td nowrap align="right">&nbsp;</td>';
+            print '<td align="right">&nbsp;</td>';
+        }
+        print '<td align="right">'.price(price2num($subtot_coll_total_ht,'MT')).'</td>';
+        print '<td nowrap align="right">'.price(price2num($subtot_coll_vat,'MT')).'</td>';
+        print '</tr>';
 	}
 
+    if (count($x_coll) == 0)   // Show a total ine if nothing shown
+    {
+        print '<tr class="liste_total">';
+        print '<td>&nbsp;</td>';
+        print '<td align="right">'.$langs->trans("Total").':</td>';
+        if ($modetax == 0)
+        {
+            print '<td nowrap align="right">&nbsp;</td>';
+            print '<td align="right">&nbsp;</td>';
+        }
+        print '<td align="right">'.price(price2num(0,'MT')).'</td>';
+        print '<td nowrap align="right">'.price(price2num(0,'MT')).'</td>';
+        print '</tr>';
+    }
+
+    // Blank line
 	print '<tr><td colspan="'.($span+1).'">&nbsp;</td></tr>';
 
 	//print table headers for this quadri - expenses now
@@ -552,35 +567,45 @@ else
 				$x_paye_sum           += $temp_vat;
 			}
 		}
-
-		// Total suppliers
-		print '<tr class="liste_total">';
-		print '<td>&nbsp;</td>';
-		print '<td align="right">'.$langs->trans("Total").':</td>';
-		if ($modetax == 0)
-		{
-			print '<td nowrap align="right">&nbsp;</td>';
-			print '<td align="right">&nbsp;</td>';
-		}
-		print '<td align="right">'.price(price2num($subtot_paye_total_ht,'MT')).'</td>';
-		print '<td nowrap align="right">'.price(price2num($subtot_paye_vat,'MT')).'</td>';
-		print '</tr>';
+        // Total suppliers for this vat rate
+        print '<tr class="liste_total">';
+        print '<td>&nbsp;</td>';
+        print '<td align="right">'.$langs->trans("Total").':</td>';
+        if ($modetax == 0)
+        {
+            print '<td nowrap align="right">&nbsp;</td>';
+            print '<td align="right">&nbsp;</td>';
+        }
+        print '<td align="right">'.price(price2num($subtot_paye_total_ht,'MT')).'</td>';
+        print '<td nowrap align="right">'.price(price2num($subtot_paye_vat,'MT')).'</td>';
+        print '</tr>';
 	}
 
-	print '<tr><td colspan="'.($span+1).'">&nbsp;</td></tr>';
+	if (count($x_paye) == 0)   // Show a total ine if nothing shown
+	{
+        print '<tr class="liste_total">';
+        print '<td>&nbsp;</td>';
+        print '<td align="right">'.$langs->trans("Total").':</td>';
+        if ($modetax == 0)
+        {
+            print '<td nowrap align="right">&nbsp;</td>';
+            print '<td align="right">&nbsp;</td>';
+        }
+        print '<td align="right">'.price(price2num(0,'MT')).'</td>';
+        print '<td nowrap align="right">'.price(price2num(0,'MT')).'</td>';
+        print '</tr>';
+	}
+
+    print '</table>';
 
 	// Total to pay
-	print '<tr class="liste_titre">';
-	print '<td class="liste_titre" colspan="'.($span-1).'"></td><td class="liste_titre" align="right" colspan="2">'.$langs->trans("TotalToPay").($q?', '.$langs->trans("Quadri").' '.$q:'').':</td>';
-	print '</tr>'."\n";
-
-	$diff = $x_coll_sum - $x_paye_sum;
+    print '<br><br>';
+    print '<table class="noborder" width="100%">';
+    $diff = $x_coll_sum - $x_paye_sum;
 	print '<tr class="liste_total">';
-	print '<td class="liste_total" colspan="'.$span.'"></td>';
+	print '<td class="liste_total" colspan="'.$span.'">'.$langs->trans("TotalToPay").($q?', '.$langs->trans("Quadri").' '.$q:'').'</td>';
 	print '<td class="liste_total" nowrap="nowrap" align="right"><b>'.price(price2num($diff,'MT'))."</b></td>\n";
 	print "</tr>\n";
-
-	//print '<tr><td colspan="'.($span+1).'">&nbsp;</td></tr>'."\n";
 
 	$i++;
 }
@@ -588,5 +613,5 @@ echo '</table>';
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/18 11:11:19 $ - $Revision: 1.43 $');
 ?>

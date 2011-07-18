@@ -23,7 +23,7 @@
  *	    \file       htdocs/compta/tva/clients.php
  *      \ingroup    tax
  *		\brief      Page des societes
- *		\version    $Id$
+ *		\version    $Id: clients.php,v 1.31 2011/07/18 11:11:19 eldy Exp $
  */
 
 require('../../main.inc.php');
@@ -38,7 +38,7 @@ $langs->load("companies");
 $langs->load("products");
 
 // Date range
-$year=$_REQUEST["year"];
+$year=GETPOST("year");
 if (empty($year))
 {
 	$year_current = strftime("%Y",dol_now());
@@ -52,24 +52,26 @@ $date_end=dol_mktime(23,59,59,$_REQUEST["date_endmonth"],$_REQUEST["date_endday"
 // Quarter
 if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 {
-	$q=(! empty($_REQUEST["q"]))?$_REQUEST["q"]:0;
-	if ($q==0)
+    $q=GETPOST("q");
+    if (empty($q))
 	{
 		if (isset($_REQUEST["month"])) { $date_start=dol_get_first_day($year_start,$_REQUEST["month"],false); $date_end=dol_get_last_day($year_start,$_REQUEST["month"],false); }
-		else $q=1;
+		else
+		{
+		    $month_current = strftime("%m",dol_now());
+		    if ($month_current >= 10) $q=4;
+            elseif ($month_current >= 7) $q=3;
+            elseif ($month_current >= 4) $q=2;
+            else $q=1;
+		}
 	}
 	if ($q==1) { $date_start=dol_get_first_day($year_start,1,false); $date_end=dol_get_last_day($year_start,3,false); }
 	if ($q==2) { $date_start=dol_get_first_day($year_start,4,false); $date_end=dol_get_last_day($year_start,6,false); }
 	if ($q==3) { $date_start=dol_get_first_day($year_start,7,false); $date_end=dol_get_last_day($year_start,9,false); }
 	if ($q==4) { $date_start=dol_get_first_day($year_start,10,false); $date_end=dol_get_last_day($year_start,12,false); }
 }
-else
-{
-	// TODO We define q
 
-}
-
-$min = $_REQUEST["min"];
+$min = GETPOST("min");
 if (empty($min)) $min = 0;
 
 // Define modetax (0 or 1)
@@ -78,7 +80,7 @@ $modetax = $conf->global->TAX_MODE;
 if (isset($_REQUEST["modetax"])) $modetax=$_REQUEST["modetax"];
 
 // Security check
-$socid = isset($_REQUEST["socid"])?$_REQUEST["socid"]:'';
+$socid = GETPOST("socid");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
@@ -104,7 +106,7 @@ $fsearch.='<br>';
 $fsearch.='  <input type="hidden" name="year" value="'.$year.'">';
 $fsearch.='  <input type="hidden" name="modetax" value="'.$modetax.'">';
 $fsearch.='  '.$langs->trans("SalesTurnover").' '.$langs->trans("Minimum").': ';
-$fsearch.='  <input type="text" name="min" value="'.$min.'">';
+$fsearch.='  <input type="text" name="min" id="min" value="'.$min.'" size="6">';
 
 // Affiche en-tete du rapport
 if ($modetax==1)	// Calculate on invoice for goods and services
@@ -115,7 +117,8 @@ if ($modetax==1)	// Calculate on invoice for goods and services
     //$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start-1)."&modetax=".$modetax."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+1)."&modetax=".$modetax."'>".img_next()."</a>":"");
     $description=$langs->trans("RulesVATDue");
     //if ($conf->global->MAIN_MODULE_COMPTABILITE || $conf->global->MAIN_MODULE_ACCOUNTING) $description.='<br>'.img_warning().' '.$langs->trans('OptionVatInfoModuleComptabilite');
-	$description.=$fsearch;
+    if ($conf->global->MAIN_MODULE_COMPTABILITE) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
+    $description.=$fsearch;
     $description.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
 	$builddate=time();
     //$exportlink=$langs->trans("NotYetAvailable");
@@ -137,9 +140,10 @@ if ($modetax==0) 	// Invoice for goods, payment for services
     //$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start-1)."&modetax=".$modetax."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+1)."&modetax=".$modetax."'>".img_next()."</a>":"");
     $description=$langs->trans("RulesVATIn");
     //if ($conf->global->MAIN_MODULE_COMPTABILITE || $conf->global->MAIN_MODULE_ACCOUNTING) $description.='<br>'.img_warning().' '.$langs->trans('OptionVatInfoModuleComptabilite');
-	$description.=$fsearch;
+    if ($conf->global->MAIN_MODULE_COMPTABILITE) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
+    $description.=$fsearch;
     $description.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
-	$builddate=time();
+    $builddate=time();
     //$exportlink=$langs->trans("NotYetAvailable");
 
 	$elementcust=$langs->trans("CustomersInvoices");
@@ -167,7 +171,7 @@ print "<tr class=\"liste_titre\">";
 print '<td align="left">'.$langs->trans("Num")."</td>";
 print '<td align="left">'.$langs->trans("Customer")."</td>";
 print "<td>".$langs->trans("VATIntra")."</td>";
-print "<td align=\"right\">".$langs->trans("SalesTurnover")." ".$langs->trans("HT")."</td>";
+print "<td align=\"right\">".$langs->trans("AmountHTVATRealReceived")."</td>";
 print "<td align=\"right\">".$vatcust."</td>";
 print "</tr>\n";
 
@@ -175,7 +179,7 @@ $coll_list = vat_by_thirdparty($db,0,$date_start,$date_end,$modetax,'sell');
 if (is_array($coll_list))
 {
 	$var=true;
-	$total = 0;  $subtotal = 0;
+	$total = 0;  $totalamount = 0;
 	$i = 1;
 	foreach($coll_list as $coll)
 	{
@@ -191,10 +195,11 @@ if (is_array($coll_list))
 				}
 				else
 				{
-					$intra = $langs->trans('NotRegistered');
+					//$intra = $langs->trans('NotRegistered');
+					$intra = '';
 				}
 			}
-			print "<tr $bc[$var]>";
+			print "<tr ".$bc[$var].">";
 			print "<td nowrap>".$i."</td>";
 			$company_static->id=$coll->socid;
 			$company_static->nom=$coll->nom;
@@ -204,13 +209,17 @@ if (is_array($coll_list))
 			print "<td nowrap>".$intra."</td>";
 			print "<td nowrap align=\"right\">".price($coll->amount)."</td>";
 			print "<td nowrap align=\"right\">".price($coll->tva)."</td>";
+            $totalamount = $totalamount + $coll->amount;
 			$total = $total + $coll->tva;
 			print "</tr>\n";
 			$i++;
 		}
 	}
+    $x_coll_sum = $total;
 
-	print '<tr class="liste_total"><td align="right" colspan="4">'.$langs->trans("Total").':</td><td nowrap align="right"><b>'.price($total).'</b></td>';
+	print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("Total").':</td>';
+    print '<td nowrap align="right">'.price($totalamount).'</td>';
+	print '<td nowrap align="right">'.price($total).'</td>';
 	print '</tr>';
 }
 else
@@ -237,7 +246,7 @@ print "<tr class=\"liste_titre\">";
 print '<td align="left">'.$langs->trans("Num")."</td>";
 print '<td align="left">'.$langs->trans("Supplier")."</td>";
 print "<td>".$langs->trans("VATIntra")."</td>";
-print "<td align=\"right\">".$langs->trans("Outcome")." ".$langs->trans("HT")."</td>";
+print "<td align=\"right\">".$langs->trans("AmountHTVATRealPaid")."</td>";
 print "<td align=\"right\">".$vatsup."</td>";
 print "</tr>\n";
 
@@ -247,7 +256,7 @@ $coll_list = vat_by_thirdparty($db,0,$date_start,$date_end,$modetax,'buy');
 if (is_array($coll_list))
 {
 	$var=true;
-	$total = 0;  $subtotal = 0;
+	$total = 0;  $totalamount = 0;
 	$i = 1;
 	foreach($coll_list as $coll)
 	{
@@ -263,7 +272,8 @@ if (is_array($coll_list))
 				}
 				else
 				{
-					$intra = $langs->trans('NotRegistered');
+					//$intra = $langs->trans('NotRegistered');
+					$intra = '';
 				}
 			}
 			print "<tr $bc[$var]>";
@@ -276,14 +286,30 @@ if (is_array($coll_list))
 			print "<td nowrap>".$intra."</td>";
 			print "<td nowrap align=\"right\">".price($coll->amount)."</td>";
 			print "<td nowrap align=\"right\">".price($coll->tva)."</td>";
+            $totalamount = $totalamount + $coll->amount;
 			$total = $total + $coll->tva;
 			print "</tr>\n";
 			$i++;
 		}
 	}
+    $x_paye_sum = $total;
 
-	print '<tr class="liste_total"><td align="right" colspan="4">'.$langs->trans("Total").':</td><td nowrap align="right"><b>'.price($total).'</b></td>';
+	print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("Total").':</td>';
+    print '<td nowrap align="right">'.price($totalamount).'</td>';
+	print '<td nowrap align="right">'.price($total).'</td>';
 	print '</tr>';
+
+	print '</table>';
+
+    // Total to pay
+    print '<br><br>';
+    print '<table class="noborder" width="100%">';
+    $diff = $x_coll_sum - $x_paye_sum;
+    print '<tr class="liste_total">';
+    print '<td class="liste_total" colspan="4">'.$langs->trans("TotalToPay").($q?', '.$langs->trans("Quadri").' '.$q:'').'</td>';
+    print '<td class="liste_total" nowrap="nowrap" align="right"><b>'.price(price2num($diff,'MT'))."</b></td>\n";
+    print "</tr>\n";
+
 }
 else
 {
@@ -301,5 +327,5 @@ print '</table>';
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/18 11:11:19 $ - $Revision: 1.31 $');
 ?>
