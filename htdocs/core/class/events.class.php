@@ -21,7 +21,7 @@
  *      \file       htdocs/core/class/events.class.php
  *      \ingroup    core
  *		\brief      File of class to manage security events.
- *		\version    $Id$
+ *		\version    $Id: events.class.php,v 1.7 2011/07/18 23:32:00 eldy Exp $
  *		\author		Laurent Destailleur
  */
 
@@ -52,6 +52,42 @@ class Events // extends CommonObject
 	var $dateevent;
 	var $description;
 
+	// List of all events supported by triggers
+	var $eventstolog=array(
+		array('id'=>'USER_LOGIN',             'test'=>1),
+		array('id'=>'USER_LOGIN_FAILED',      'test'=>1),
+	    array('id'=>'USER_LOGOUT',            'test'=>1),
+		array('id'=>'USER_CREATE',            'test'=>1),
+		array('id'=>'USER_MODIFY',            'test'=>1),
+		array('id'=>'USER_NEW_PASSWORD',      'test'=>1),
+		array('id'=>'USER_ENABLEDISABLE',     'test'=>1),
+		array('id'=>'USER_DELETE',            'test'=>1),
+		array('id'=>'GROUP_CREATE',           'test'=>1),
+		array('id'=>'GROUP_MODIFY',           'test'=>1),
+		array('id'=>'GROUP_DELETE',           'test'=>1),
+	/*	array('id'=>'ACTION_CREATE',          'test'=>$conf->societe->enabled),
+		array('id'=>'COMPANY_CREATE',         'test'=>$conf->societe->enabled),
+		array('id'=>'CONTRACT_VALIDATE',      'test'=>$conf->contrat->enabled),
+		array('id'=>'PROPAL_VALIDATE',        'test'=>$conf->propal->enabled),
+		array('id'=>'PROPAL_CLOSE_SIGNED',    'test'=>$conf->propal->enabled),
+		array('id'=>'PROPAL_CLOSE_REFUSED',   'test'=>$conf->propal->enabled),
+		array('id'=>'PROPAL_SENTBYMAIL',      'test'=>$conf->propal->enabled),
+		array('id'=>'ORDER_VALIDATE',         'test'=>$conf->commande->enabled),
+		array('id'=>'ORDER_SENTBYMAIL',       'test'=>$conf->commande->enabled),
+		array('id'=>'BILL_VALIDATE',          'test'=>$conf->facture->enabled),
+		array('id'=>'BILL_PAYED',             'test'=>$conf->facture->enabled),
+		array('id'=>'BILL_CANCEL',            'test'=>$conf->facture->enabled),
+		array('id'=>'BILL_SENTBYMAIL',        'test'=>$conf->facture->enabled),
+		array('id'=>'PAYMENT_CUSTOMER_CREATE','test'=>$conf->facture->enabled),
+		array('id'=>'PAYMENT_SUPPLIER_CREATE','test'=>$conf->fournisseur->enabled),
+		array('id'=>'MEMBER_CREATE',          'test'=>$conf->adherent->enabled),
+		array('id'=>'MEMBER_VALIDATE',        'test'=>$conf->adherent->enabled),
+		array('id'=>'MEMBER_SUBSCRIPTION',    'test'=>$conf->adherent->enabled),
+		array('id'=>'MEMBER_MODIFY',          'test'=>$conf->adherent->enabled),
+		array('id'=>'MEMBER_RESILIATE',       'test'=>$conf->adherent->enabled),
+		array('id'=>'MEMBER_DELETE',          'test'=>$conf->adherent->enabled),
+	*/
+	);
 
 
 	/**
@@ -75,7 +111,6 @@ class Events // extends CommonObject
 		global $conf, $langs;
 
 		// Clean parameters
-		$this->id=trim($this->id);
 		$this->description=trim($this->description);
 
 		// Check parameters
