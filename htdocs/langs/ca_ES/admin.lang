@@ -308,6 +308,7 @@ ResponseTimeout=Timeout de resposta
 SmsTestMessage=Missatge de prova de __PHONEFROM__ per __PHONETO__
 ModuleMustBeEnabledFirst=Per utilitzar aquesta funció ha d'estar activat el mòdul <b>%s</b>.
 SecurityToken=Clau per encriptar urls
+NoSmsEngine=No hi ha cap gestor d'enviament de SMS. Els gestors d'enviament de SMS no s'instal·len en estàndard (ja que depenen d'un proveïdor), però pot trobar a la plataforma http://www.dolistore.com
 # Modules
 Module0Name=Usuaris y grups
 Module0Desc=Gestió d'usuaris i grups

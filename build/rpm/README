@@ -21,4 +21,22 @@ with format RPM (for Redhat, Mandriva, ...).
 #
 # On Mageia (after su - root)
 # urpmi dolibarr-...rpm             To install package and dependencies
-# urpme dolibarr                    To remove package  
+# urpme dolibarr                    To remove package
+
+
+To submit a package to Fedora:
+
+- Create a bug with form https://bugzilla.redhat.com/bugzilla/enter_bug.cgi?product=Fedora&format=fedora-review
+This is example of content of review field (used for Bug 723326):
+Spec URL: http://www.dolibarr.org/files/fedora/dolibarr.spec
+SRPM URL: http://www.dolibarr.org/files/fedora/dolibarr-3.1.0-0.src.rpm
+Description:  Dolibarr ERP & CRM is an easy to use open source/free software
+for small and medium companies, foundations or freelances. It includes
+different features for Enterprise Resource Planning (ERP) and Customer
+Relationship Management (CRM) but also for different other activities.
+I am author of other already packaged OpenSources packages (awstats) but this
+is my first package to maintain myself. So i'm seeking a sponsor.
+
+- Edit field "Block" and add FE-NEEDSPONSOR
+
+  
