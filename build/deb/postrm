@@ -59,15 +59,15 @@ case "$1" in
 			echo postrm Mysql database deletion
 			# Get database configuration
 			dbserver="localhost"
-			dbname="dolibarr"
+			dbname="dolibarrmysql"
 			#db_get "dolibarr/db/name"
 			#dbname="$RET"
 			superuserlogin=''
 			superuserpassword=''
 			if [ -f /etc/mysql/debian.cnf ] ; then
 				# Load superuser login and pass
-				superuserlogin=$(/bin/grep --max-count=1 "user" /etc/mysql/debian.cnf | /bin/sed -e 's/^user[ =]*//g')
-				superuserpassword=$(/bin/grep --max-count=1 "password" /etc/mysql/debian.cnf | /bin/sed -e 's/^password[ =]*//g')
+				superuserlogin=$(grep --max-count=1 "user" /etc/mysql/debian.cnf | /bin/sed -e 's/^user[ =]*//g')
+				superuserpassword=$(grep --max-count=1 "password" /etc/mysql/debian.cnf | /bin/sed -e 's/^password[ =]*//g')
 			fi
 			echo postrm Mysql superuser found to use is $superuserlogin
 			dbadmin="$superuserlogin"
