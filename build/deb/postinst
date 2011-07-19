@@ -39,8 +39,8 @@ case "$1" in
 		superuserpassword=''
 		if [ -f /etc/mysql/debian.cnf ] ; then
 			# Load superuser login and pass
-			superuserlogin=$(grep --max-count=1 "user" /etc/mysql/debian.cnf | /bin/sed -e 's/^user[ =]*//g')
-			superuserpassword=$(grep --max-count=1 "password" /etc/mysql/debian.cnf | /bin/sed -e 's/^password[ =]*//g')
+			superuserlogin=$(/bin/grep --max-count=1 "user" /etc/mysql/debian.cnf | /bin/sed -e 's/^user[ =]*//g')
+			superuserpassword=$(/bin/grep --max-count=1 "password" /etc/mysql/debian.cnf | /bin/sed -e 's/^password[ =]*//g')
 		fi
 		echo Mysql superuser found to use is $superuserlogin
 		if [ -z "$superuserlogin" ] ; then
@@ -101,7 +101,6 @@ case "$1" in
 			# not have the same user/group.
 			#
 			chown -R $webuser:$webgroup /usr/share/dolibarr
-            chown -R root:$webgroup /usr/share/dolibarr/htdocs/conf/conf.php
 
 			# Add link to config file
             echo Setup web server $server to add dolibarr config file
