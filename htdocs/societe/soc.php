@@ -26,7 +26,7 @@
  *  \file       htdocs/societe/soc.php
  *  \ingroup    societe
  *  \brief      Third party card page
- *  \version    $Id: soc.php,v 1.123 2011/07/18 16:48:26 simnandez Exp $
+ *  \version    $Id: soc.php,v 1.124 2011/07/19 07:33:23 simnandez Exp $
  */
 
 require("../main.inc.php");
@@ -702,14 +702,14 @@ else
                                jQuery(".individualline").hide();
                                jQuery("#typent_id").val(0);
                                jQuery("#effectif_id").val(0);
-                               document.getElementById("TypeName").innerHTML=document.formsoc.ThirdPartyName.value;
+                               jQuery("#TypeName").html(document.formsoc.ThirdPartyName.value);
                                document.formsoc.private.value=0;
                          });
                           jQuery("#radioprivate").click(function() {
                                jQuery(".individualline").show();
                                jQuery("#typent_id").val(id_te_private);
                                jQuery("#effectif_id").val(id_ef15);
-                               document.getElementById("TypeName").innerHTML=document.formsoc.LastName.value;
+                               jQuery("#TypeName").html(document.formsoc.LastName.value);
                                document.formsoc.private.value=1;
                          });
                          jQuery("#selectpays_id").change(function() {
@@ -1968,5 +1968,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/18 16:48:26 $ - $Revision: 1.123 $');
+llxFooter('$Date: 2011/07/19 07:33:23 $ - $Revision: 1.124 $');
 ?>
