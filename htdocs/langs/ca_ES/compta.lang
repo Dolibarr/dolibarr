@@ -139,3 +139,4 @@ COMPTA_ACCOUNT_CUSTOMER=Codi comptable per defecte de clients (si no està defin
 COMPTA_ACCOUNT_SUPPLIER=Codi comptable per defecte de proveïdors (si no està definit a la pestanya tercers)
 AddRemind=Desglossar import disponible
 RemainToDivide=Resta a repartir :
+WarningDepositsNotIncluded=Les factures de bestreta encara no estan incloses en aquesta versió en el mòdul de comptabilitat.
