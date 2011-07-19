@@ -62,8 +62,8 @@ case "$1" in
 		then 
 			echo Create empty file /usr/share/dolibarr/htdocs/conf/conf.php		
 			touch /usr/share/dolibarr/htdocs/conf/conf.php
-			chown -R www-data:www-data /usr/share/dolibarr/htdocs/conf/conf.php
-	    	chmod -R 750 /usr/share/dolibarr/htdocs/conf/conf.php
+			chown -R root:www-data /usr/share/dolibarr/htdocs/conf/conf.php
+	    	chmod -R 660 /usr/share/dolibarr/htdocs/conf/conf.php
 		fi
 
 		#db_reset "dolibarr/webserver"
