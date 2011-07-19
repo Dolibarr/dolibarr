@@ -28,8 +28,9 @@ To submit a package to Debian:
 > reportbug -B debian --email username@domain.tld wnpp
 See page http://www.debian.org/devel/wnpp/#l1 for example of ITP requests contents.
 
-- Wait until you received bug number
-
+- Wait until you received bug number.
+For first ITP submission of Dolibarr, bug id was 634783.
+ 
 - Add a line for upstream into file changelog with bug number
 
 - Call for a mentor on ML debian-mentors to upload packages
