@@ -25,7 +25,7 @@
 /**
  *      \file       htdocs/lib/CMailFile.class.php
  *      \brief      File of class to send emails (with attachments or not)
- *		\version    $Id: CMailFile.class.php,v 1.147 2011/07/20 13:01:03 eldy Exp $
+ *		\version    $Id: CMailFile.class.php,v 1.146 2011/07/20 11:07:12 eldy Exp $
  *      \author     Dan Potter.
  *      \author	    Eric Seigne
  *      \author	    Laurent Destailleur.
@@ -340,17 +340,13 @@ class CMailFile
 					dol_syslog("CMailFile::sendfile: mail start HOST=".ini_get('SMTP').", PORT=".ini_get('smtp_port'), LOG_DEBUG);
 
 					$bounce = '';	// By default
-					if (! empty($conf->global->MAIN_MAIL_ALLOW_SENDMAIL_F))
+					if ($conf->global->MAIN_MAIL_ALLOW_SENDMAIL_F)
 					{
 						// le return-path dans les header ne fonctionne pas avec tous les MTA
 						// Le passage par -f est donc possible si la constante MAIN_MAIL_ALLOW_SENDMAIL_F est definie.
 						// La variable definie pose des pb avec certains sendmail securisee (option -f refusee car dangereuse)
-						$bounce .= ($bounce?' ':'').(! empty($conf->global->MAIN_MAIL_ERRORS_TO) ? '-f' . $conf->global->MAIN_MAIL_ERRORS_TO : ($this->addr_from != '' ? '-f' . $this->addr_from : '') );
+						$bounce = (! empty($conf->global->MAIN_MAIL_ERRORS_TO) ? '-f' . $conf->global->MAIN_MAIL_ERRORS_TO : ($this->addr_from != '' ? '-f' . $this->addr_from : '') );
 					}
-                    if (! empty($conf->global->MAIN_MAIL_SENDMAIL_FORCE_BA))    // To force usage of -ba option. This option tells sendmail to read From: or Sender: to setup sender
-                    {
-                        $bounce .= ($bounce?' ':'').'-ba';
-                    }
 
 					$this->message=stripslashes($this->message);
 
