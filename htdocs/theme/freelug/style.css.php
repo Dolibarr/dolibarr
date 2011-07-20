@@ -20,7 +20,7 @@
 /**
  *		\file       htdocs/theme/freelug/style.css.php
  *		\brief      Fichier de style CSS du theme Freelug
- *		\version    $Id: style.css.php,v 1.41 2011/07/06 11:40:22 eldy Exp $
+ *		\version    $Id: style.css.php,v 1.42 2011/07/20 19:03:33 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -1046,6 +1046,12 @@ th {
 /*
  *  Boxes
  */
+
+.boxtable {
+-moz-box-shadow: 6px 6px 20px #AAA;
+-webkit-box-shadow: 6px 6px 20px #AAA;
+box-shadow: 6px 6px 20px #AAA;
+}
 
 .box {
 	padding-right: 4px;

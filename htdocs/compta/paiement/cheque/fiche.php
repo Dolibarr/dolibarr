@@ -23,7 +23,7 @@
  *	\file       htdocs/compta/paiement/cheque/fiche.php
  *	\ingroup    bank, invoice
  *	\brief      Page for cheque deposits
- *	\version    $Id$
+ *	\version    $Id: fiche.php,v 1.77 2011/07/20 19:03:35 eldy Exp $
  */
 
 require("./pre.inc.php");	// We use pre.inc.php to have a dynamic menu
@@ -297,7 +297,8 @@ if ($action == 'new')
 
 	$now=dol_now();
 
-	print $langs->trans("SelectChequeTransactionAndGenerate").'<br>';
+	print $langs->trans("SelectChequeTransactionAndGenerate").'<br><br>'."\n";
+
 	print '<form class="nocellnopadd" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="action" value="new">';
     //print '<fieldset><legend>aaa</legend>';
@@ -354,7 +355,7 @@ if ($action == 'new')
 
 		if ($i == 0)
 		{
-			print $langs->trans("NoWaitingChecks").'<br>';
+			print '<b>'.$langs->trans("NoWaitingChecks").'</b><br>';
 		}
 	}
 
@@ -619,5 +620,5 @@ if ($action != 'new')
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/20 19:03:35 $ - $Revision: 1.77 $');
 ?>
