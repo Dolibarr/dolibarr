@@ -23,7 +23,7 @@
  *	\file       htdocs/fichinter/fiche.php
  *	\brief      Fichier fiche intervention
  *	\ingroup    ficheinter
- *	\version    $Id: fiche.php,v 1.171 2011/07/10 20:03:39 eldy Exp $
+ *	\version    $Id: fiche.php,v 1.172 2011/07/18 03:04:48 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -1072,14 +1072,14 @@ elseif ($fichinterid)
             // Validate
             if ($object->statut == 0 && $user->rights->ficheinter->creer && sizeof($object->lines) > 0)
             {
-                print '<a class="butAction" href="fiche.php?id='.$id.'&action=validate"';
+                print '<a class="butAction" href="fiche.php?id='.$object->id.'&action=validate"';
                 print '>'.$langs->trans("Valid").'</a>';
             }
 
             // Modify
             if ($object->statut == 1 && $user->rights->ficheinter->creer)
             {
-                print '<a class="butAction" href="fiche.php?id='.$id.'&action=modify"';
+                print '<a class="butAction" href="fiche.php?id='.$object->id.'&action=modify"';
                 print '>'.$langs->trans("Modify").'</a>';
             }
 
@@ -1092,7 +1092,7 @@ elseif ($fichinterid)
                 {
                     if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->ficheinter->ficheinter_advance->send)
                     {
-                        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
+                        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
                     }
                     else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
                 }
@@ -1112,7 +1112,7 @@ elseif ($fichinterid)
                 {
 	                if ($object->statut != 2)
 					{
-						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
+						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
 					}
 	            }
             }
@@ -1120,7 +1120,7 @@ elseif ($fichinterid)
             // Delete
             if (($object->statut == 0 && $user->rights->ficheinter->creer) || $user->rights->ficheinter->supprimer)
             {
-                print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=delete"';
+                print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete"';
                 print '>'.$langs->trans('Delete').'</a>';
             }
 
@@ -1128,7 +1128,7 @@ elseif ($fichinterid)
     }
 
     print '</div>';
-
+    print '<br>';
 
     if ($action != 'presend')
     {
@@ -1219,5 +1219,5 @@ elseif ($fichinterid)
 
 $db->close();
 
-llxFooter('$Date: 2011/07/10 20:03:39 $ - $Revision: 1.171 $');
+llxFooter('$Date: 2011/07/18 03:04:48 $ - $Revision: 1.172 $');
 ?>

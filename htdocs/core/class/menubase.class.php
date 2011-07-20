@@ -20,7 +20,7 @@
 /**
  *  \file       htdocs/core/class/menubase.class.php
  *  \ingroup    core
- *  \version	$Id: menubase.class.php,v 1.25 2011/07/13 22:18:48 eldy Exp $
+ *  \version	$Id: menubase.class.php,v 1.27 2011/07/18 20:19:48 eldy Exp $
  *  \brief      File of class to manage dynamic menu entries
  *  \remarks	Initialy built by build_class_from_table on 2008-01-12 14:19
  */

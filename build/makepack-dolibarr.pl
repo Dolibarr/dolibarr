@@ -2,7 +2,7 @@
 #----------------------------------------------------------------------------
 # \file         build/makepack-dolibarr.pl
 # \brief        Dolibarr package builder (tgz, zip, rpm, deb, exe, aps)
-# \version      $Id: makepack-dolibarr.pl,v 1.109 2011/07/11 11:09:02 eldy Exp $
+# \version      $Id: makepack-dolibarr.pl,v 1.110 2011/07/18 01:48:21 eldy Exp $
 # \author       (c)2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
 #----------------------------------------------------------------------------
 
@@ -48,7 +48,7 @@ if (-d "/usr/src/RPM") {
 
 
 use vars qw/ $REVISION $VERSION /;
-$REVISION='$Revision: 1.109 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
+$REVISION='$Revision: 1.110 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
 $VERSION="1.0 (build $REVISION)";
 
 
@@ -250,8 +250,8 @@ if ($nboftargetok) {
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/.settings`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/build/html`;
 
-        $ret=`rm -f  $BUILDROOT/$PROJECT/build/DoliWamp-*`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/build/DoliMamp-*`;
+        $ret=`rm -f  $BUILDROOT/$PROJECT/build/DoliW*-*`;
+        $ret=`rm -f  $BUILDROOT/$PROJECT/build/DoliM*-*`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/build/dolibarr-*.deb`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/build/dolibarr-*.rpm`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/build/dolibarr-*.tar`;

@@ -26,7 +26,7 @@
  *	\file       htdocs/compta/facture.php
  *	\ingroup    facture
  *	\brief      Page to create/see an invoice
- *	\version    $Id: facture.php,v 1.848 2011/07/10 20:03:40 eldy Exp $
+ *	\version    $Id: facture.php,v 1.849 2011/07/17 19:58:55 eldy Exp $
  */
 
 require('../main.inc.php');
@@ -739,62 +739,69 @@ if ($action == 'add' && $user->rights->facture->creer)
 
                         for ($i=0;$i<$num;$i++)
                         {
-                            $desc=($lines[$i]->desc?$lines[$i]->desc:$lines[$i]->libelle);
-                            $product_type=($lines[$i]->product_type?$lines[$i]->product_type:0);
-
-                            // Date start
-                            // TODO mutualiser
-                            $date_start=false;
-                            if ($lines[$i]->date_debut_prevue) $date_start=$lines[$i]->date_debut_prevue;
-                            if ($lines[$i]->date_debut_reel) $date_start=$lines[$i]->date_debut_reel;
-                            if ($lines[$i]->date_start) $date_start=$lines[$i]->date_start;
-
-                            //Date end
-                            // TODO mutualiser
-                            $date_end=false;
-                            if ($lines[$i]->date_fin_prevue) $date_end=$lines[$i]->date_fin_prevue;
-                            if ($lines[$i]->date_fin_reel) $date_end=$lines[$i]->date_fin_reel;
-                            if ($lines[$i]->date_end) $date_end=$lines[$i]->date_end;
-
-                            // Reset fk_parent_line for no child products and special product
-                            if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
-                                $fk_parent_line = 0;
-                            }
-
-                            $result = $object->addline(
-                            $id,
-                            $desc,
-                            $lines[$i]->subprice,
-                            $lines[$i]->qty,
-                            $lines[$i]->tva_tx,
-                            $lines[$i]->localtax1_tx,
-                            $lines[$i]->localtax2_tx,
-                            $lines[$i]->fk_product,
-                            $lines[$i]->remise_percent,
-                            $date_start,
-                            $date_end,
-                            0,
-                            $lines[$i]->info_bits,
-                            $lines[$i]->fk_remise_except,
-							'HT',
-                            0,
-                            $product_type,
-                            $lines[$i]->rang,
-                            $lines[$i]->special_code,
-                            $object->origin,
-                            $lines[$i]->rowid,
-                            $fk_parent_line
-                            );
-
-                            if ($result < 0)
+                            if ($lines[$i]->subprice < 0)
                             {
-                                $error++;
-                                break;
+                                // Negative line, we create a discount line
+                                // TODO
                             }
+                            else
+                            {
+                                // Positive line
+                                $desc=($lines[$i]->desc?$lines[$i]->desc:$lines[$i]->libelle);
+                                $product_type=($lines[$i]->product_type?$lines[$i]->product_type:0);
 
-                            // Defined the new fk_parent_line
-                            if ($result > 0 && $lines[$i]->product_type == 9) {
-                                $fk_parent_line = $result;
+                                // Date start
+                                $date_start=false;
+                                if ($lines[$i]->date_debut_prevue) $date_start=$lines[$i]->date_debut_prevue;
+                                if ($lines[$i]->date_debut_reel) $date_start=$lines[$i]->date_debut_reel;
+                                if ($lines[$i]->date_start) $date_start=$lines[$i]->date_start;
+
+                                //Date end
+                                $date_end=false;
+                                if ($lines[$i]->date_fin_prevue) $date_end=$lines[$i]->date_fin_prevue;
+                                if ($lines[$i]->date_fin_reel) $date_end=$lines[$i]->date_fin_reel;
+                                if ($lines[$i]->date_end) $date_end=$lines[$i]->date_end;
+
+                                // Reset fk_parent_line for no child products and special product
+                                if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
+                                    $fk_parent_line = 0;
+                                }
+
+                                $result = $object->addline(
+                                $id,
+                                $desc,
+                                $lines[$i]->subprice,
+                                $lines[$i]->qty,
+                                $lines[$i]->tva_tx,
+                                $lines[$i]->localtax1_tx,
+                                $lines[$i]->localtax2_tx,
+                                $lines[$i]->fk_product,
+                                $lines[$i]->remise_percent,
+                                $date_start,
+                                $date_end,
+                                0,
+                                $lines[$i]->info_bits,
+                                $lines[$i]->fk_remise_except,
+    							'HT',
+                                0,
+                                $product_type,
+                                $lines[$i]->rang,
+                                $lines[$i]->special_code,
+                                $object->origin,
+                                $lines[$i]->rowid,
+                                $fk_parent_line
+                                );
+
+                                if ($result < 0)
+                                {
+                                    $error++;
+                                    break;
+                                }
+
+                                // Defined the new fk_parent_line
+                                if ($result > 0 && $lines[$i]->product_type == 9) {
+                                    $fk_parent_line = $result;
+                                }
                             }
                         }
 
@@ -3241,5 +3248,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/10 20:03:40 $ - $Revision: 1.848 $');
+llxFooter('$Date: 2011/07/17 19:58:55 $ - $Revision: 1.849 $');
 ?>

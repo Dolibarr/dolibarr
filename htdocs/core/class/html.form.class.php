@@ -32,7 +32,7 @@
  *	\file       htdocs/core/class/html.form.class.php
  *  \ingroup    core
  *	\brief      File of class with all html predefined components
- *	\version	$Id: html.form.class.php,v 1.189 2011/07/13 14:03:15 eldy Exp $
+ *	\version	$Id: html.form.class.php,v 1.190 2011/07/17 19:01:26 eldy Exp $
  */
 
 
@@ -1508,8 +1508,8 @@ class Form
      *      Retourne la liste des types de delais de livraison possibles
      *      @param      selected        Id du type de delais pre-selectionne
      *      @param      htmlname        Nom de la zone select
-     *      @param      filtertype      Pour filtre
-     *		@param		addempty		Ajoute entree vide
+     *      @param      filtertype      To add a filter
+     *		@param		addempty		Add empty entry
      */
     function select_availability($selected='',$htmlname='availid',$filtertype='',$addempty=0)
     {

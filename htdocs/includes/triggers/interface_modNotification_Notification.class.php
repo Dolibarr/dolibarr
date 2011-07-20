@@ -21,7 +21,7 @@
  *      \file       htdocs/includes/triggers/interface_modNotification_Notification.class.php
  *      \ingroup    notification
  *      \brief      File of class of triggers for notification module
- *		\version	$Id$
+ *		\version	$Id: interface_modNotification_Notification.class.php,v 1.25 2011/07/18 01:06:52 eldy Exp $
  */
 
 
@@ -47,6 +47,7 @@ class InterfaceNotification
         $this->family = "notification";
         $this->description = "Triggers of this module send email notifications according to Notification module setup.";
         $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
+        $this->picto = 'email';
     }
 
     /**

@@ -26,7 +26,7 @@
 /**
  *  \file       htdocs/user/class/user.class.php
  *  \brief      Fichier de la classe utilisateur
- *  \version    $Id: user.class.php,v 1.45 2011/07/08 18:49:16 eldy Exp $
+ *  \version    $Id: user.class.php,v 1.46 2011/07/17 18:13:44 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
@@ -589,8 +589,8 @@ class User extends CommonObject
 	}
 
 	/**
-	 *      \brief      Change status of a user
-	 *      \return     int     <0 if KO, 0 if nothing is done, >0 if OK
+	 *      Change status of a user
+	 *      @return     int     <0 if KO, 0 if nothing is done, >0 if OK
 	 */
 	function setstatus($statut)
 	{
@@ -739,6 +739,7 @@ class User extends CommonObject
 			if ($num)
 			{
 				$this->error = 'ErrorLoginAlreadyExists';
+				dol_syslog("User::Create ".$this->error, LOG_WARNING);
 				$this->db->rollback();
 				return -6;
 			}
