@@ -26,7 +26,7 @@
  *	\file       htdocs/commande/fiche.php
  *	\ingroup    commande
  *	\brief      Page to show customer order
- *	\version    $Id: fiche.php,v 1.525 2011/07/10 20:03:41 eldy Exp $
+ *	\version    $Id: fiche.php,v 1.526 2011/07/20 21:26:11 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -1290,9 +1290,9 @@ if ($action == 'create' && $user->rights->commande->creer)
     $html->select_types_paiements($soc->mode_reglement,'mode_reglement_id');
     print '</td></tr>';
 
-    // delai de livraison
+    // Delivery delay
     print '<tr><td>'.$langs->trans('AvailabilityPeriod').'</td><td colspan="2">';
-    $html->select_availability($propal->availability,'availability_id');
+    $html->select_availability($propal->availability,'availability_id','',1);
     print '</td></tr>';
 
     // What trigger creation
@@ -1645,7 +1645,7 @@ else
 
             if ($action != 'editdate' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDate'),1).'</a></td>';
             print '</tr></table>';
-            print '</td><td colspan="2">';
+            print '</td><td colspan="3">';
             if ($action == 'editdate')
             {
                 print '<form name="setdate" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
@@ -1658,16 +1658,6 @@ else
             else
             {
                 print $object->date ? dol_print_date($object->date,'daytext') : '&nbsp;';
-            }
-            print '</td>';
-
-            print '<td width="50%">'.$langs->trans('Source').' : '.$object->getLabelSource();
-            if ($object->source == 0 && $conf->propal->enabled && $object->propale_id)
-            {
-                // Si source = propal
-                $propal = new Propal($db);
-                $propal->fetch($object->propale_id);
-                print ' -> <a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$propal->id.'">'.$propal->ref.'</a>';
             }
             print '</td>';
             print '</tr>';
@@ -1728,17 +1718,16 @@ else
             print '<table class="nobordernopadding" width="100%"><tr><td>';
             print $langs->trans('PaymentConditionsShort');
             print '</td>';
-
             if ($action != 'editconditions' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
             print '</tr></table>';
             print '</td><td colspan="2">';
             if ($action == 'editconditions')
             {
-                $html->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->cond_reglement_id,'cond_reglement_id');
+                $html->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->cond_reglement_id,'cond_reglement_id',1);
             }
             else
             {
-                $html->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->cond_reglement_id,'none');
+                $html->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->cond_reglement_id,'none',1);
             }
             print '</td>';
 
@@ -1772,15 +1761,15 @@ else
             print '</td><td colspan="2">';
             if ($action == 'editavailability')
             {
-                $html->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id,$object->availability_id,'availability_id');
+                $html->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id,$object->availability_id,'availability_id',1);
             }
             else
             {
-                $html->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id,$object->availability_id,'none');
+                $html->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id,$object->availability_id,'none',1);
             }
             print '</td></tr>';
 
-            // Origine de la demande
+            // Source
             print '<tr><td height="10">';
             print '<table class="nobordernopadding" width="100%"><tr><td>';
             print $langs->trans('Source');
@@ -2134,5 +2123,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/10 20:03:41 $ - $Revision: 1.525 $');
+llxFooter('$Date: 2011/07/20 21:26:11 $ - $Revision: 1.526 $');
 ?>
