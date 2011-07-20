@@ -22,7 +22,7 @@
  *       \file       htdocs/compta/bank/rappro.php
  *       \ingroup    banque
  *       \brief      Page to reconciliate bank transactions
- *       \version    $Id$
+ *       \version    $Id: rappro.php,v 1.66 2011/07/20 19:03:31 eldy Exp $
  */
 
 require("./pre.inc.php");
@@ -151,10 +151,10 @@ if ($resql)
     // Show last bank receipts
     $nbmax=5;
     $liste="";
-    $sql = "SELECT distinct num_releve FROM ".MAIN_DB_PREFIX."bank";
-    $sql.= " WHERE fk_account=".$_GET["account"];
-    $sql.= " ORDER BY num_releve DESC";
-    $sql.= " LIMIT ".($nbmax+1);
+    $sql = "SELECT DISTINCT num_releve FROM ".MAIN_DB_PREFIX."bank";
+    $sql.= " WHERE fk_account=".$_GET["account"]." AND num_releve IS NOT NULL";
+    $sql.= $db->order("num_releve","DESC");
+    $sql.= $db->plimit($nbmax+1);
     print $langs->trans("LastAccountStatements").' : ';
     $resqlr=$db->query($sql);
     if ($resqlr)
@@ -162,23 +162,24 @@ if ($resql)
         $numr=$db->num_rows($resqlr);
         $i=0;
         while (($i < $numr) && ($i < $nbmax))
-        {
+        {print $sql;
             $objr = $db->fetch_object($resqlr);
             $last_releve = $objr->num_releve;
             $i++;
-            $liste='<a href="releve.php?account='.$_GET["account"].'&amp;num='.$objr->num_releve.'">'.$objr->num_releve.'</a> &nbsp; '.$liste;
+            $liste='<a href="'.DOL_URL_ROOT.'/compta/bank/releve.php?account='.$_GET["account"].'&amp;num='.$objr->num_releve.'">'.$objr->num_releve.'</a> &nbsp; '.$liste;
         }
         if ($numr >= $nbmax) $liste="... &nbsp; ".$liste;
         print $liste;
+
         if ($numr > 0) print '<br><br>';
-        else print $langs->trans("None").'<br><br>';
+        else print '<b>'.$langs->trans("None").'</b><br><br>';
     }
     else
     {
         dol_print_error($db);
     }
 
-    print '<table class="border" width="100%">';
+    print '<table class="liste" width="100%">';
     print "<tr class=\"liste_titre\">\n";
     print '<td align="center">'.$langs->trans("DateOperationShort").'</td>';
     print '<td align="center">'.$langs->trans("DateValueShort").'</td>';
@@ -402,5 +403,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/20 19:03:31 $ - $Revision: 1.66 $');
 ?>

@@ -23,7 +23,7 @@
  *	    \file       htdocs/comm/action/listactions.php
  *      \ingroup    agenda
  *		\brief      Page to list actions
- *		\version    $Id$
+ *		\version    $Id: listactions.php,v 1.55 2011/07/20 19:03:34 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -213,7 +213,7 @@ if ($resql)
     //print '<br>';
 
 	$i = 0;
-	print "<table class=\"noborder\" width=\"100%\">";
+	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"acode",$param,"","",$sortfield,$sortorder);
 	//print_liste_field_titre($langs->trans("Title"),$_SERVER["PHP_SELF"],"a.label",$param,"","",$sortfield,$sortorder);
@@ -348,5 +348,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/20 19:03:34 $ - $Revision: 1.55 $');
 ?>
