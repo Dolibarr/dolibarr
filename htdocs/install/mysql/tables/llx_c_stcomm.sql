@@ -25,7 +25,7 @@ create table llx_c_stcomm
   id       integer      PRIMARY KEY,
   code     varchar(12)  UNIQUE NOT NULL,
   libelle  varchar(30),
-  type     smallint     DEFAULT 0;
+  type     smallint     DEFAULT 0,
   active   tinyint default 1  NOT NULL
 )ENGINE=innodb;
 
