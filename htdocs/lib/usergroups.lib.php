@@ -22,7 +22,7 @@
 /**
  *	    \file       htdocs/lib/usergroups.lib.php
  *		\brief      Ensemble de fonctions de base pour la gestion des utilisaterus et groupes
- *		\version    $Id: usergroups.lib.php,v 1.28 2011/07/04 09:01:38 eldy Exp $
+ *		\version    $Id: usergroups.lib.php,v 1.29 2011/07/18 23:35:06 eldy Exp $
  */
 function user_prepare_head($object)
 {
@@ -152,10 +152,10 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 {
     global $conf,$langs,$bc;
 
-    
+
 	$dirtheme=dol_buildpath($conf->global->MAIN_FORCETHEMEDIR.'/theme',0);
 	$urltheme=dol_buildpath($conf->global->MAIN_FORCETHEMEDIR.'/theme',1);
-	
+
     $selected_theme=$conf->global->MAIN_THEME;
     if (! empty($fuser)) $selected_theme=$fuser->conf->MAIN_THEME;
 
@@ -178,6 +178,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     	print '<td align="right">';
     	$url='http://www.dolistore.com/lang-en/4-skins';
     	if (preg_match('/fr/i',$langs->defaultlang)) $url='http://www.dolistore.com/lang-fr/4-themes';
+    	//if (preg_match('/es/i',$langs->defaultlang)) $url='http://www.dolistore.com/lang-es/4-themes';
     	print '<a href="'.$url.'" target="_blank">';
     	print $langs->trans('DownloadMoreSkins');
     	print '</a>';
@@ -203,7 +204,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	    print '<td'.($foruserprofile?' colspan="3"':'').'>'.$dirtheme.'</td>';
 	    print '</tr>';
     }
-        
+
 	if ($edit)
 	{
 		if ($subdir == $conf->global->MAIN_THEME) $title=$langs->trans("ThemeCurrentlyActive");

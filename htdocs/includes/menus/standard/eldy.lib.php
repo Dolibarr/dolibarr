@@ -21,7 +21,7 @@
 /**
  *  \file		htdocs/includes/menus/standard/eldy.lib.php
  *  \brief		Library for file eldy menus
- *  \version	$Id: eldy.lib.php,v 1.57 2011/07/13 11:26:17 eldy Exp $
+ *  \version	$Id: eldy.lib.php,v 1.60 2011/07/18 20:19:41 eldy Exp $
  */
 
 
@@ -101,7 +101,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 			{
 				print_start_menu_entry($idsel);
 				print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-				print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#">';
+				print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
 				print_text_menu_entry($langs->trans("ThirdParties"));
 				print '</a>';
 				print_end_menu_entry();
@@ -147,7 +147,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 			{
 				print_start_menu_entry($idsel);
 				print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-				print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#">';
+				print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
 				print_text_menu_entry($chaine);
 				print '</a>';
 				print_end_menu_entry();
@@ -194,7 +194,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 			{
 				print_start_menu_entry($idsel);
 				print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-				print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#">';
+				print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
 				print print_text_menu_entry($langs->trans("Commercial"));
 				print '</a>';
 				print_end_menu_entry();
@@ -237,7 +237,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 			{
 				print_start_menu_entry($idsel);
 				print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-				print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#">';
+				print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
 				print_text_menu_entry($langs->trans("MenuFinancial"));
 				print '</a>';
 				print_end_menu_entry();
@@ -279,7 +279,7 @@ function print_eldy_menu($db,$atarget,$type_user)
             {
                 print_start_menu_entry($idsel);
                 print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-                print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#">';
+                print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
                 print_text_menu_entry($langs->trans("MenuBankCash"));
                 print '</a>';
                 print_end_menu_entry();
@@ -320,7 +320,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 			{
 				print_start_menu_entry($idsel);
 				print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-				print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#">';
+				print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
 				print_text_menu_entry($langs->trans("Projects"));
 				print '</a>';
 				print_end_menu_entry();
@@ -361,7 +361,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 			{
 				print_start_menu_entry($idsel);
 				print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-				print '<a class="tmenudisabled"  id="mainmenua_'.$idsel.'" href="#">';
+				print '<a class="tmenudisabled"  id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
 				print_text_menu_entry($langs->trans("Tools"));
 				print '</a>';
 				print_end_menu_entry();
@@ -428,7 +428,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 			{
 				print_start_menu_entry($idsel);
 				print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-				print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#">';
+				print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
 				print_text_menu_entry($langs->trans("MenuMembers"));
 				print '</a>';
 				print_end_menu_entry();
@@ -460,13 +460,13 @@ function print_eldy_menu($db,$atarget,$type_user)
 				else
 				{
 					$url=dol_buildpath($newTabMenu[$i]['url'],1);
-					if (! preg_match('/\?/',$url)) $url.='?';
-					else $url.='&';
 					if (! preg_match('/mainmenu/i',$url) || ! preg_match('/leftmenu/i',$url))
 					{
-						$url.='mainmenu='.$newTabMenu[$i]['mainmenu'].'&leftmenu=&';
+                        if (! preg_match('/\?/',$url)) $url.='?';
+                        else $url.='&';
+					    $url.='mainmenu='.$newTabMenu[$i]['mainmenu'].'&leftmenu=';
 					}
-					$url.="idmenu=".$newTabMenu[$i]['rowid'];
+					//$url.="idmenu=".$newTabMenu[$i]['rowid'];    // Already done by menuLoad
 				}
 				$url=preg_replace('/__LOGIN__/',$user->login,$url);
 
@@ -490,7 +490,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 				{
 					print_start_menu_entry($idsel);
 					print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.' tmenuimage" id="mainmenuspan_'.$idsel.'"></span></div>';
-					print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#">';
+					print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
 					print_text_menu_entry($newTabMenu[$i]['titre']);
 					print '</a>';
 					print_end_menu_entry();
@@ -669,7 +669,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                 if ($leftmenu=="setup") $newmenu->add("/admin/proxy.php", $langs->trans("Security"),1);
                 if ($leftmenu=="setup") $newmenu->add("/admin/limits.php", $langs->trans("MenuLimits"),1);
                 if ($leftmenu=="setup") $newmenu->add("/admin/mails.php", $langs->trans("Emails"),1);
-                if ($leftmenu=="setup" && $conf->global->MAIN_FEATURES_LEVEL) $newmenu->add("/admin/sms.php", $langs->trans("Sms"),1);
+                if ($leftmenu=="setup") $newmenu->add("/admin/sms.php", $langs->trans("Sms"),1);
                 if ($leftmenu=="setup") $newmenu->add("/admin/dict.php", $langs->trans("DictionnarySetup"),1);
                 if ($leftmenu=="setup") $newmenu->add("/admin/const.php", $langs->trans("OtherSetup"),1);
 

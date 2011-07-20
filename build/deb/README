@@ -7,6 +7,7 @@ This directory contains files used by makepack-dolibarr.pl
 script to build a package, ready to be distributed,
 with format .DEB (for Debian, Ubuntu, ...).
 
+
 # This is standard command to work on Debian packaging:
 #
 # lintian package       To test a package   
@@ -19,3 +20,17 @@ with format .DEB (for Debian, Ubuntu, ...).
 #
 # dpkg -L packagename   List content of installed package 
 # dpkg --purge          Remove config files and interactive saved answers
+
+
+To submit a package to Debian:
+
+- Post an ITP with reportbugs :
+> reportbug -B debian --email username@domain.tld wnpp
+See page http://www.debian.org/devel/wnpp/#l1 for example of ITP requests contents.
+
+- Wait until you received bug number.
+For first ITP submission of Dolibarr, bug id was 634783.
+ 
+- Add a line for upstream into file changelog with bug number
+
+- Call for a mentor on ML debian-mentors to upload packages

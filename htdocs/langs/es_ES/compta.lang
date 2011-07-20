@@ -139,3 +139,4 @@ COMPTA_ACCOUNT_CUSTOMER=Código contable por defecto de clientes (si no está de
 COMPTA_ACCOUNT_SUPPLIER=Código contable por defecto de proveedores (si no está definido en la pestaña terceros)
 AddRemind=Desglosar importe disponible
 RemainToDivide=Resto a repartir :
+WarningDepositsNotIncluded=Las facturas de anticipo aún no están incluidas en esta versión en el módulo de contabilidad.

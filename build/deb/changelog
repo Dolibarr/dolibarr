@@ -1,4 +1,9 @@
-dolibarr 3.1.0 unstable; urgency=low
-  * New 3.1.0 release
-    More information into /usr/share/dolibarr/ChangeLog file.
- -- maintainer Laurent Destailleur <eldy@users.sourceforge.net>  2011-07-09
+dolibarr (3.1.0-1) unstable; urgency=low
+
+  [ Laurent Destailleur ]
+  * New upstream release.
+    closes: bug#634783
+    
+ -- Laurent Destailleur <eldy@destailleur.fr>  Mon, 18 Jul 2011 12:00:00 +0100     
+
+# More information into /usr/share/dolibarr/ChangeLog file. 
