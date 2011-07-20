@@ -27,7 +27,7 @@
  *	\file       	htdocs/comm/propal.php
  *	\ingroup    	propale
  *	\brief      	Page of commercial proposals card and list
- *	\version		$Id: propal.php,v 1.611 2011/07/17 19:01:28 eldy Exp $
+ *	\version		$Id: propal.php,v 1.612 2011/07/20 15:33:00 simnandez Exp $
  */
 
 require("../main.inc.php");
@@ -1824,10 +1824,16 @@ else
 
 		$num = $db->num_rows($result);
 
+	 	if ($socid)
+		{
+			$soc = new Societe($db);
+			 $soc->fetch($socid);
+		}
+            
 		$param='&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut;
 		if ($month) $param.='&amp;month='.$month;
 		if ($year) $param.='&amp;year='.$year;
-		print_barre_liste($langs->trans('ListOfProposals'), $page,'propal.php',$param,$sortfield,$sortorder,'',$num);
+		print_barre_liste($langs->trans('ListOfProposals').' - '.($socid?' '.$soc->nom:''), $page,'propal.php',$param,$sortfield,$sortorder,'',$num);
 
 		$i = 0;
 		print '<table class="liste" width="100%">';
@@ -1970,6 +1976,6 @@ else
 }
 $db->close();
 
-llxFooter('$Date: 2011/07/17 19:01:28 $ - $Revision: 1.611 $');
+llxFooter('$Date: 2011/07/20 15:33:00 $ - $Revision: 1.612 $');
 
 ?>
