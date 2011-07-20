@@ -21,7 +21,7 @@
 /**
  *		\file       htdocs/theme/auguria/style.css.php
  *		\brief      Fichier de style CSS du theme auguria
- *		\version    $Id: style.css.php,v 1.89 2011/07/21 01:20:33 eldy Exp $
+ *		\version    $Id: style.css.php,v 1.88 2011/07/20 19:03:35 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -1293,6 +1293,10 @@ font-family: <?php print $fontlist ?>;
 .error   { color: #550000; font-weight: bold; }
 
 td.highlights { background: #f9c5c6; }
+
+td.warning {	/* Utilise par Smarty */
+  background: #FF99A9;
+}
 
 div.ok {
   color: #114466;
