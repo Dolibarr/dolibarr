@@ -18,7 +18,7 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- $Id$
+-- $Id: llx_propal.sql,v 1.13 2011/07/17 21:35:12 hregis Exp $
 -- ===================================================================
 
 create table llx_propal
@@ -62,5 +62,6 @@ create table llx_propal
   model_pdf				varchar(255),
   date_livraison 		date DEFAULT NULL,		-- delivery date
   fk_availability 		integer NULL,
+  fk_demand_reason		integer,
   fk_adresse_livraison  integer					-- delivery address (deprecated)
 )ENGINE=innodb;

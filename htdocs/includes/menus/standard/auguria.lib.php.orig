@@ -21,7 +21,11 @@
 /**
  *  \file		htdocs/includes/menus/standard/auguria.lib.php
  *  \brief		Library for file auguria menus
+<<<<<<< HEAD
+ *  \version	$Id: auguria.lib.php,v 1.18 2011/04/13 11:19:19 eldy Exp $
+=======
  *  \version	$Id: auguria.lib.php,v 1.20 2011/07/18 20:19:41 eldy Exp $
+>>>>>>> ccbedeba222098b20ac41521e815cefc6719000b
  */
 
 

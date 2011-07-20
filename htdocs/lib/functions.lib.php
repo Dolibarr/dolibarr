@@ -29,7 +29,7 @@
  *	\file			htdocs/lib/functions.lib.php
  *	\brief			A set of functions for Dolibarr
  *					This file contains all frequently used functions.
- *	\version		$Id: functions.lib.php,v 1.546 2011/07/09 11:24:32 eldy Exp $
+ *	\version		$Id: functions.lib.php,v 1.548 2011/07/18 03:49:10 eldy Exp $
  */
 
 // For compatibility during upgrade
@@ -1559,34 +1559,40 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8')
 
 
 /**
- *	Show a picto according to module or object (generic function)
- *	@param      alt         Text of alt on image
- *	@param      object      Objet pour lequel il faut afficher le logo (example: user, group, action, bill, contract, propal, product, ...)
- *							Pour les modules externe utiliser nomimage@mymodule pour rechercher dans le repertoire "img" du module
- *  @param      options     Add more attribute on img tag
- *	@return     string      Return img tag
+ *	Show a picto called object_picto (generic function)
+ *	@param      alt                 Text of alt on image
+ *	@param      picto               Name of image to show object_picto (example: user, group, action, bill, contract, propal, product, ...)
+ *							        For external modules use imagename@mymodule to search into directory "img" of module.
+ *  @param      options             Add more attribute on img tag
+ *  @param      pictoisfullpath     If 1, image path is a full path
+ *	@return     string              Return img tag
  *  @see        img_picto, img_picto_common
  */
-function img_object($alt, $object, $options='')
+function img_object($alt, $picto, $options='', $pictoisfullpath=0)
 {
     global $conf,$langs;
 
-    $path =  'theme/'.$conf->theme;
+    $path = 'theme/'.$conf->theme;
     $url = DOL_URL_ROOT;
 
-    if (preg_match('/^([^@]+)@([^@]+)$/i',$object,$regs))
+    if (preg_match('/^([^@]+)@([^@]+)$/i',$picto,$regs))
     {
-        $object = $regs[1];
+        $picto = $regs[1];
         $path = $regs[2];
+        if (! preg_match('/(\.png|\.gif)$/i',$picto)) $picto.='.png';
         // If img file not into standard path, we use alternate path
-        if (defined('DOL_URL_ROOT_ALT') && DOL_URL_ROOT_ALT && ! file_exists(DOL_DOCUMENT_ROOT.'/'.$path.'/img/object_'.$object.'.png')) $url = DOL_URL_ROOT_ALT;
+        if (defined('DOL_URL_ROOT_ALT') && DOL_URL_ROOT_ALT && ! file_exists(DOL_DOCUMENT_ROOT.'/'.$path.'/img/object_'.$picto)) $url = DOL_URL_ROOT_ALT;
     }
-
-    return '<img src="'.$url.'/'.$path.'/img/object_'.$object.'.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
+    else
+    {
+        if (! preg_match('/(\.png|\.gif)$/i',$picto)) $picto.='.png';
+    }
+    if ($pictoisfullpath) return '<img src="'.$picto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
+    return '<img src="'.$url.'/'.$path.'/img/object_'.$picto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
 }
 
 /**
- *	Show picto (generic function)
+ *	Show picto whatever it's its name (generic function)
  *	@param      alt         		Text on alt and title of image
  *	@param      picto       		Name of image file to show (If no extension provided, we use '.png'). Image must be stored into img directory.
  *                                  Example: picto.png                  if picto.png is stored into htdocs/theme/mytheme/img
@@ -1612,8 +1618,10 @@ function img_picto($alt, $picto, $options='', $pictoisfullpath=0)
         // If img file not into standard path, we use alternate path
         if (defined('DOL_URL_ROOT_ALT') && DOL_URL_ROOT_ALT && ! file_exists(DOL_DOCUMENT_ROOT.'/'.$path.'/img/'.$picto)) $url = DOL_URL_ROOT_ALT;
     }
-
-    if (! preg_match('/(\.png|\.gif)$/i',$picto)) $picto.='.png';
+    else
+    {
+        if (! preg_match('/(\.png|\.gif)$/i',$picto)) $picto.='.png';
+    }
     if ($pictoisfullpath) return '<img src="'.$picto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
     return '<img src="'.$url.'/'.$path.'/img/'.$picto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
 }
@@ -2212,6 +2220,10 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
             else if ($feature == 'ecm')
             {
                 if (! $user->rights->ecm->upload) $deleteok=0;
+            }
+            else if ($feature == 'ftp')
+            {
+                if (! $user->rights->ftp->write) $deleteok=0;
             }
             else if (! empty($feature2))	// This should be used for future changes
             {

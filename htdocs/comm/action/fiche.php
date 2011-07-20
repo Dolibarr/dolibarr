@@ -24,7 +24,7 @@
  *       \file       htdocs/comm/action/fiche.php
  *       \ingroup    agenda
  *       \brief      Page for event card
- *       \version    $Id$
+ *       \version    $Id: fiche.php,v 1.227 2011/07/18 08:59:42 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -94,7 +94,8 @@ if ($action == 'add_action')
 	$_POST["apmonth"],
 	$_POST["apday"],
 	$_POST["apyear"]);
-	$datep2=dol_mktime(
+	
+	$datef=dol_mktime(
 	$fulldayevent?'23':$_POST["p2hour"],
 	$fulldayevent?'59':$_POST["p2min"],
 	$fulldayevent?'59':'0',
@@ -103,7 +104,7 @@ if ($action == 'add_action')
 	$_POST["p2year"]);
 
 	// Check parameters
-	if (! $datep2 && $_POST["percentage"] == 100)
+	if (! $datef && $_POST["percentage"] == 100)
 	{
 		$error=1;
 		$action = 'create';
@@ -146,7 +147,7 @@ if ($action == 'add_action')
 	}
 	$actioncomm->fk_project = isset($_POST["projectid"])?$_POST["projectid"]:0;
 	$actioncomm->datep = $datep;
-	$actioncomm->datef = $datep2;
+	$actioncomm->datef = $datef;
 	$actioncomm->percentage = isset($_POST["percentage"])?$_POST["percentage"]:0;
 	$actioncomm->duree=(($_POST["dureehour"] * 60) + $_POST["dureemin"]) * 60;
 
@@ -177,7 +178,7 @@ if ($action == 'add_action')
 	if ($_POST["add_phenix"] == 'on' && $conf->phenix->enabled) $actioncomm->use_phenix=1;
 
 	// Check parameters
-	if ($actioncomm->type_code == 'AC_RDV' && ($datep == '' || $datep2 == ''))
+	if ($actioncomm->type_code == 'AC_RDV' && ($datep == '' || $datef == ''))
 	{
 		$error=1;
 		$action = 'create';
@@ -296,7 +297,7 @@ if ($action == 'update')
 		$_POST["apday"],
 		$_POST["apyear"]);
 
-		$datep2=dol_mktime(
+		$datef=dol_mktime(
         $fulldayevent?'23':$_POST["p2hour"],
         $fulldayevent?'59':$_POST["p2min"],
 		$fulldayevent?'59':'0',
@@ -322,7 +323,7 @@ if ($action == 'update')
 		//print 'dddd'.$datep;
 		$actioncomm->label       = $_POST["label"];
 		$actioncomm->datep       = $datep;
-		$actioncomm->datef       = $datep2;
+		$actioncomm->datef       = $datef;
 		//$actioncomm->date        = $datea;
 		//$actioncomm->dateend     = $datea2;
 		$actioncomm->percentage  = $_POST["percentage"];
@@ -335,7 +336,7 @@ if ($action == 'update')
 		$actioncomm->note        = $_POST["note"];
 		$actioncomm->pnote       = $_POST["note"];
 
-		if (! $datep2 && $_POST["percentage"] == 100)
+		if (! $datef && $_POST["percentage"] == 100)
 		{
 			$error=$langs->trans("ErrorFieldRequired",$langs->trans("DateEnd"));
 			$action = 'edit';
@@ -471,8 +472,7 @@ if ($action == 'create')
 	if (GETPOST("actioncode") == 'AC_RDV') print_fiche_titre ($langs->trans("AddActionRendezVous"));
 	else print_fiche_titre ($langs->trans("AddAnAction"));
 
-	if ($mesg) print $mesg.'<br>';
-	else print "<br>";
+	dol_htmloutput_mesg($mesg);
 
 	print '<table class="border" width="100%">';
 
@@ -1023,7 +1023,7 @@ if ($id)
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/18 08:59:42 $ - $Revision: 1.227 $');
 
 
 /**
