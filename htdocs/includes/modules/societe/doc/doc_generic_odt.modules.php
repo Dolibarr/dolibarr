@@ -22,7 +22,7 @@
  *	\ingroup    societe
  *	\brief      File of class to build ODT documents for third parties
  *	\author	    Laurent Destailleur
- *	\version    $Id: doc_generic_odt.modules.php,v 1.32 2011/07/21 22:54:35 eldy Exp $
+ *	\version    $Id$
  */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/societe/modules_societe.class.php");
@@ -115,9 +115,37 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		$texthelp=$langs->trans("ListOfDirectoriesForModelGenODT");
 		// Add list of substitution keys
 		$texthelp.='<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
-		$texthelp.=$langs->transnoentitiesnoconv("FullListOnOnlineDocumentation");    // This contains an url, we don't modify it
+        /*$dummy=new User($db);
+        $tmparray=$this->get_substitutionarray_user($dummy,$langs);
+        $nb=0;
+        foreach($tmparray as $key => $val)
+        {
+            $texthelp.='{'.$key.'}<br>';
+            $nb++;
+            if ($nb >= 5) { $texthelp.='...<br>'; break; }
+        }
+		$dummy=new Societe($db);
+		$tmparray=$this->get_substitutionarray_mysoc($dummy,$langs);
+		$nb=0;
+		foreach($tmparray as $key => $val)
+		{
+			$texthelp.='{'.$key.'}<br>';
+			$nb++;
+			if ($nb >= 5) { $texthelp.='...<br>'; break; }
+		}
+		$tmparray=$this->get_substitutionarray_thirdparty($dummy,$langs);
+		$nb=0;
+		foreach($tmparray as $key => $val)
+		{
+			$texthelp.='{'.$key.'}<br>';
+			$nb++;
+			if ($nb >= 5) { $texthelp.='...<br>'; break; }
+		}*/
+		$texthelp.=$langs->trans("FullListOnOnlineDocumentation");
 
-		$texte.= $form->textwithpicto($texttitle,$texthelp,1,'help','',1);
+		$texte.= $form->textwithpicto($texttitle,$texthelp,1,'help');
+		//var_dump($listofdir);
+
         $texte.= '<table><tr><td>';
 		$texte.= '<textarea class="flat" cols="60" name="value1">';
 		$texte.=$conf->global->COMPANY_ADDON_PDF_ODT_PATH;
