@@ -23,7 +23,7 @@
 /**
  *		\file       htdocs/theme/eldy/style.css.php
  *		\brief      Fichier de style CSS du theme Cameleo
- *		\version    $Id: style.css.php,v 1.7 2011/07/17 20:16:38 hregis Exp $
+ *		\version    $Id: style.css.php,v 1.8 2011/07/21 01:20:33 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -1415,10 +1415,6 @@ font-family: <?php print $fontlist ?>;
 .ok      { color: #114466; }
 .warning { color: #887711; }
 .error   { color: #550000; font-weight: bold; }
-
-td.warning {	/* Utilise par Smarty */
-  background: #FF99A9;
-}
 
 div.ok {
   color: #114466;

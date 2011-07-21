@@ -24,7 +24,7 @@
  *		\ingroup    facture
  *		\brief      Page of a customer payment
  *		\remarks	Nearly same file than fournisseur/paiement/fiche.php
- *		\version    $Id$
+ *		\version    $Id: fiche.php,v 1.75 2011/07/20 12:37:23 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -348,7 +348,7 @@ if ($user->societe_id == 0 && $action == '')
 		}
 		else
 		{
-			print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("CantRemovePaymentWithOneInvoicePaid")).'">'.$langs->trans('Delete').'</a>';
+			print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("CantRemovePaymentWithOneInvoicePaid")).'">'.$langs->trans('Delete').'</a>';
 		}
 	}
 }
@@ -357,5 +357,5 @@ print '</div>';
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/20 12:37:23 $ - $Revision: 1.75 $');
 ?>

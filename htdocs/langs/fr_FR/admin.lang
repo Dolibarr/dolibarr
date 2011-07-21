@@ -856,6 +856,7 @@ MAIN_PROXY_PASS=Mot de passe pour passer le serveur proxy mandataire
 DefineHereComplementaryAttributes=Definissez ici la liste des attributs supplémentaire, non disponible en standard, et que vous voulez voir gérez sur les %s.
 ExtraFields=Attributs suplémentaires
 SendingMailSetup=Configuration de l'envoi par mail
+SendmailOptionNotComplete=Attention, sur certains systèmes Linux, avec cette méthode d'envoi, pour pouvoir envoyer des mails en votre nom, la configuration d'exécution de sendmail doit contenir l'option <b>-ba</b> (paramètre <b>mail.force_extra_parameters</b> dans le fichier <b>php.ini</b>). Si certains de vos destinataires ne reçoivent pas de message, essayer de modifer ce paramètre PHP avec <b>mail.force_extra_parameters = -ba</b>.
 
 ##### Module password generation= undefined
 PasswordGenerationStandard= Renvoie un mot de passe généré selon algorithme interne Dolibarr: 8 caractères, chiffres et caractères en minuscules mélangés.
