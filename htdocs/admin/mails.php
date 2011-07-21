@@ -20,7 +20,7 @@
 /**
  *       \file       htdocs/admin/mails.php
  *       \brief      Page to setup emails sending
- *       \version    $Id: mails.php,v 1.73 2011/07/10 20:03:39 eldy Exp $
+ *       \version    $Id: mails.php,v 1.74 2011/07/20 13:01:04 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -592,8 +592,18 @@ else
 	print '</table>';
 
 
-	// Boutons actions
+    if ($linuxlike && $conf->global->MAIN_MAIL_SENDMODE == 'mail')
+    {
+       $sendmailoption=ini_get('mail.force_extra_parameters');
+       //print 'x'.$sendmailoption;
+       if (empty($sendmailoption) || ! preg_match('/ba/',$sendmailoption))
+       {
+            print '<br>'.info_admin($langs->trans("SendmailOptionNotComplete"));
+       }
+    }
 
+
+	// Boutons actions
 	print '<div class="tabsAction">';
 
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
@@ -737,5 +747,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/10 20:03:39 $ - $Revision: 1.73 $');
+llxFooter('$Date: 2011/07/20 13:01:04 $ - $Revision: 1.74 $');
 ?>

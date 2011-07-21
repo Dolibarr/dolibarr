@@ -21,7 +21,7 @@
  *	    \file       htdocs/includes/boxes/modules_boxes.php
  *		\ingroup    facture
  *		\brief      Fichier contenant la classe mere des boites
- *		\version    $Id$
+ *		\version    $Id: modules_boxes.php,v 1.55 2011/07/20 19:03:35 eldy Exp $
  */
 
 
@@ -115,7 +115,7 @@ class ModeleBoxes
 
 		if (! empty($head['text']) || ! empty($head['sublink']) || $nblines)
 		{
-			print '<table summary="boxtable'.$this->box_id.'" width="100%" class="noborder">'."\n";
+			print '<table summary="boxtable'.$this->box_id.'" width="100%" class="noborder boxtable">'."\n";
 		}
 
 		// Show box title

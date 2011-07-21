@@ -66,8 +66,8 @@ case "$1" in
 			superuserpassword=''
 			if [ -f /etc/mysql/debian.cnf ] ; then
 				# Load superuser login and pass
-				superuserlogin=$(grep --max-count=1 "user" /etc/mysql/debian.cnf | /bin/sed -e 's/^user[ =]*//g')
-				superuserpassword=$(grep --max-count=1 "password" /etc/mysql/debian.cnf | /bin/sed -e 's/^password[ =]*//g')
+				superuserlogin=$(grep --max-count=1 "user" /etc/mysql/debian.cnf | sed -e 's/^user[ =]*//g')
+				superuserpassword=$(grep --max-count=1 "password" /etc/mysql/debian.cnf | sed -e 's/^password[ =]*//g')
 			fi
 			echo postrm Mysql superuser found to use is $superuserlogin
 			dbadmin="$superuserlogin"
@@ -208,7 +208,10 @@ case "$1" in
 		#fileorig="/usr/share/pixmaps/dolibarr.xpm"
 		#rm -f $fileorig
 		# Not sure this is usefull
-		if test -x /usr/bin/update-menus; then update-menus; fi
+        #if test -x /usr/bin/update-menus; then 
+        #   echo "update-menus"
+        #   update-menus;
+        #fi
 	;;
 
 	upgrade)

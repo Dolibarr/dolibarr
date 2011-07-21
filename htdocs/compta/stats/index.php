@@ -21,7 +21,7 @@
 /**
  *	\file        htdocs/compta/stats/index.php
  *	\brief       Page reporting CA
- *	\version     $Id$
+ *	\version     $Id: index.php,v 1.50 2011/07/20 19:03:32 eldy Exp $
  */
 
 require('../../main.inc.php');
@@ -171,7 +171,7 @@ if ($modecompta != 'CREANCES-DETTES') {
  */
 
 print '<table width="100%" class="noborder">';
-print '<tr class="liste_titre"><td rowspan="2">'.$langs->trans("Month").'</td>';
+print '<tr class="liste_titre"><td>&nbsp;</td>';
 
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
@@ -184,7 +184,7 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 }
 print '</tr>';
 
-print '<tr class="liste_titre">';
+print '<tr class="liste_titre"><td>'.$langs->trans("Month").'</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
 	print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
@@ -207,7 +207,7 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 	$mois_modulo = $mois;// ajout
 	if($mois>12){$mois_modulo = $mois-12;} // ajout
 	$var=!$var;
-	print "<tr $bc[$var]>";
+	print "<tr ".$bc[$var].">";
 
 	print "<td>".dol_print_date(dol_mktime(12,0,0,$mois_modulo,1,2000),"%B")."</td>";
 	for ($annee = $year_start ; $annee <= $year_end ; $annee++)
@@ -498,6 +498,6 @@ print "</table>";
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/20 19:03:32 $ - $Revision: 1.50 $');
 
 ?>

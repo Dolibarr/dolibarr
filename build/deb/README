@@ -30,6 +30,8 @@ See page http://www.debian.org/devel/wnpp/#l1 for example of ITP requests conten
 
 - Wait until you received bug number.
 For first ITP submission of Dolibarr, bug id was 634783.
+
+- Check bug is into database by searching with id on http://www.debian.org/Bugs/
  
 - Add a line for upstream into file changelog with bug number
 

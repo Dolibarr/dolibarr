@@ -22,7 +22,7 @@
  *	\file       htdocs/core/class/html.formfile.class.php
  *  \ingroup    core
  *	\brief      File of class to offer components to list and upload files
- *	\version	$Id: html.formfile.class.php,v 1.49 2011/07/13 14:41:03 eldy Exp $
+ *	\version	$Id: html.formfile.class.php,v 1.50 2011/07/20 19:03:32 eldy Exp $
  */
 
 
@@ -575,7 +575,7 @@ class FormFile
 		if (empty($useinecm)) print_titre($langs->trans("AttachedFiles"));
 		//else { $bc[true]=''; $bc[false]=''; };
 		$url=$_SERVER["PHP_SELF"];
-		print '<table width="100%" class="nobordernopadding">';
+		print '<table width="100%" class="'.($useinecm?'nobordernopadding':'liste').'">';
 		print '<tr class="liste_titre">';
 		print_liste_field_titre($langs->trans("Documents2"),$_SERVER["PHP_SELF"],"name","",$param,'align="left"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Size"),$_SERVER["PHP_SELF"],"size","",$param,'align="right"',$sortfield,$sortorder);

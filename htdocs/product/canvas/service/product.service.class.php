@@ -20,7 +20,7 @@
  *	\file       htdocs/product/canvas/service/product.service.class.php
  *	\ingroup    service
  *	\brief      Fichier de la classe des services par defaut
- *	\version    $Id$
+ *	\version    $Id: product.service.class.php,v 1.14 2011/07/21 01:20:33 eldy Exp $
  */
 
 /**
@@ -44,7 +44,6 @@ class ProductService extends Product
 		$this->db 				= $DB;
 		$this->id 				= $id ;
 		$this->user 			= $user;
-		//$this->smarty			= 0;
 		$this->module 			= "service";
 		$this->canvas 			= "service";
 		$this->name 			= "service";
