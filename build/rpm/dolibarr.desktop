@@ -4,14 +4,13 @@
 Version=1.0
 Encoding=UTF-8
 Name=Dolibarr ERP & CRM
-Name[es]=Dolibarr ERP & CRM
 Name[fr]=Dolibarr ERP & CRM
 Name[it]=Dolibarr ERP & CRM
 GenericName=Dolibarr ERP & CRM
 Comment=The easy to use manager (ERP & CRM) for small and medium enterprises or foundations
-Comment[es]=Software para gestión de PYMES, profesionales independientes, auto emprendedores ó asociaciones
 Comment[fr]=L'ERP & CRM simple pour la gestion des TPE, PME, associations et auto-entrepreneurs
 Comment[it]=Programma gestionale open source e gratuito per piccole e medie imprese, fondazioni e liberi professionisti
+Comment[es]=Software para gestión de PYMES, profesionales independientes, auto emprendedores ó asociaciones
 # Command to open an URL
 # For Fedora: xdg-open 
 # For Debian/Ubuntu: xdg-open or x-www-browser

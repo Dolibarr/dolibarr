@@ -17,36 +17,7 @@ set -e
 # for details, see /usr/share/doc/packaging-manual/
 
 
-
-lighttpd_remove() {
-	if [ -f /etc/lighttpd/conf-available/50-dolibarr.conf ] ; then
-		echo "Remove link for Lighttpd config file"
-		rm -f /etc/lighttpd/conf-available/50-dolibarr.conf
-		if which lighty-enable-mod >/dev/null 2>&1 ; then
-			lighty-disable-mod dolibarr
-		else
-			echo "Lighttpd not installed, skipping"
-		fi
-		# See bug #448682
-		if [ -h /etc/lighttpd/conf-enabled/50-dolibarr.conf ] ; then
-		    echo 'Manually deleting lighttpd/dolibarr configuration link'
-		    rm /etc/lighttpd/conf-enabled/50-dolibarr.conf
-		fi
-	fi
-}
-
-apache_remove() {
-	if [ -d /etc/$webserver/conf.d ] && [ -L /etc/$webserver/conf.d/dolibarr.conf ]; then
-		echo "Remove link for Apache config file"
-		rm -f /etc/$webserver/conf.d/dolibarr.conf
-	fi
-}
-
-
-
-if [ -f /usr/share/debconf/confmodule ]; then
-    . /usr/share/debconf/confmodule
-fi
+. /usr/share/debconf/confmodule
 
 db_version 2.0
 
@@ -55,62 +26,63 @@ echo Run the dolibarr postrm script
 
 docdir='/var/lib/dolibarr/documents'
 #docdir='/usr/share/dolibarr/documents'
+apachefileorig="/usr/share/dolibarr/build/deb/apache.conf"
+apacheconfig="/etc/dolibarr/apache.conf"
 #config="/usr/share/dolibarr/htdocs/conf/conf.php"
 config="/etc/dolibarr/conf.php"
 lockfile="/usr/share/dolibarr/install.lock"
 
+
+export webserver=""
+# Allows us to loop and substitute in one pass
+case $webserver in
+	Apache)		webservers="apache2" ;;
+	Apache-SSL)	webservers="apache2-ssl" ;;
+	Both)		webservers="apache2 apache2-ssl" ;;
+	*)		    webservers="apache2 apache2-ssl" ;;
+esac
 
 
 case "$1" in
 
     # Call when we upgrade
 	upgrade)
-		echo "postrm upgrade"
 	;;
 
     # Call when we uninstall
 	remove)
-		echo "postrm remove"
 		rm -f $lockfile
 
-		# Reconfigure web server
-		db_get dolibarr/reconfigure-webserver
-
-		webservers="$RET"
-
-		# Restart web servers
-		for webserver in $webservers; do
-			webserver=${webserver%,}
-			if [ "$webserver" = "lighttpd" ] ; then
-				lighttpd_remove
-			else
-				apache_remove $webserver
-			fi
-			# Redirection of 3 is needed because Debconf uses it and it might 
-			# be inherited by webserver. See bug #446324.
-			if [ -f /etc/init.d/$webserver ] ; then
-				if [ -x /usr/sbin/invoke-rc.d ]; then
-					invoke-rc.d $webserver reload 3>/dev/null || true
-				else
-					/etc/init.d/$webserver reload 3>/dev/null || true
-				fi
+		# Remove include files
+		export restart=""
+		for server in $webservers ; do
+			export conffile="/etc/$server/conf.d/dolibarr.conf"
+            if [ -f $conffile ] ;
+            then
+               echo Delete link $conffile
+	           rm -f $conffile
+	           status=purge
+		    fi
+			
+			if [ "x$status" = "xpurge" ] ;
+				then restart="$restart $server"
 			fi
 		done
 	;;
 
     # Call when we uninstall and purge
 	purge)
-		echo "postrm purge"
+		echo "postrm purge webservers=$webservers apacheconfig=$apacheconfig"
 
 		# Ask if we must delete database
 		echo "postrm db_input dolibarr/postrm"
-		db_input critical dolibarr/postrm || true
+		db_input critical "dolibarr/postrm" || true
 		db_go || true
 
 		echo "postrm db_get dolibarr/postrm"
 		# We disable set -e to avoid premature end of script if error
 		set +e
-		db_get dolibarr/postrm
+		db_get "dolibarr/postrm"
 		set -e
 	
 		if [ "$RET" = "true" ] ; then
@@ -213,12 +185,41 @@ case "$1" in
 			echo "postrm Delete of dolibarr database and uploaded files not wanted" 
 		fi
 	
+		# Remove include files
+		export restart=""
+		for server in $webservers ; do
+			export conffile="/etc/$server/conf.d/dolibarr.conf"
+            if [ -f $conffile ] ;
+            then
+               echo Delete file $conffile
+	           rm -f $conffile
+	           status=purge
+		    fi
+			
+			if [ "x$status" = "xpurge" ] ;
+				then restart="$restart $server"
+			fi
+		done
+
 		rm -rf /etc/dolibarr
 
+		# Restart servers
+		for server in $restart ; do
+            # We disable blocking errors
+            set +e
+            echo "Restart server $server if exists"
+    		if [ -x /usr/sbin/invoke-rc.d ]; then
+    		     invoke-rc.d $server reload || true
+    		else
+    		     /etc/init.d/$server reload || true
+    		fi
+    		# We restore blocking errors
+    		set -e
+		done
+		
 		# We clean variable (we ignore errors because db_reset can fails if var was never set)
         set +e
-		db_reset dolibarr/reconfigure-webserver
-		db_reset dolibarr/postrm
+		db_reset "dolibarr/postrm"
         set -e
 
 		#db_purge
@@ -228,7 +229,7 @@ case "$1" in
 	;;
 
 	*)
-		echo "postrm called with unknown argument $1" >&2
+		echo "postrm called with unknown argument \`$1'" >&2
 		exit 0
 	;;
 esac

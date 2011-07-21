@@ -13,16 +13,17 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: ca.php,v 1.17 2011/08/03 00:45:43 eldy Exp $
+ * $Id$
  */
 
 /**
 		\file 		htdocs/boutique/commande/ca.php
 		\ingroup    boutique
 		\brief      Page ca commandes du module OsCommerce
-		\version    $Revision: 1.17 $
+		\version    $Revision$
 */
 
 require("../../main.inc.php");
@@ -114,5 +115,5 @@ print "</table>";
 
 $dbosc->close();
 
-llxFooter('$Date: 2011/08/03 00:45:43 $ - $Revision: 1.17 $');
+llxFooter('$Date$ - $Revision$');
 ?>

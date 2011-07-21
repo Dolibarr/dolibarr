@@ -19,14 +19,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *	\file       	htdocs/comm/propal.php
  *	\ingroup    	propale
  *	\brief      	Page of commercial proposals card and list
- *	\version		$Id: propal.php,v 1.614 2011/08/03 00:46:26 eldy Exp $
+ *	\version		$Id: propal.php,v 1.613 2011/07/20 19:22:14 simnandez Exp $
  */
 
 require("../main.inc.php");
@@ -1975,6 +1976,6 @@ else
 }
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:26 $ - $Revision: 1.614 $');
+llxFooter('$Date: 2011/07/20 19:22:14 $ - $Revision: 1.613 $');
 
 ?>
