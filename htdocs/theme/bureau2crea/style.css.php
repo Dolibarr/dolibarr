@@ -23,7 +23,7 @@
 /**
  *		\file       htdocs/theme/bureau2crea/style.css.php
  *		\brief      Fichier de style CSS du theme bureau2crea
- *		\version    $Id: style.css.php,v 1.39 2011/07/21 01:20:32 eldy Exp $
+ *		\version    $Id: style.css.php,v 1.40 2011/07/21 09:05:33 simnandez Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -1217,6 +1217,7 @@ margin: 0px 0px 0px 0px;
 table.border {
 border: 2px solid #666666;
 border-collapse: collapse;
+clear: left;
 }
 
 table.border td {
