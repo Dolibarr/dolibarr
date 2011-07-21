@@ -25,7 +25,7 @@
  *	\file       htdocs/lib/pdf.lib.php
  *	\brief      Set of functions used for PDF generation
  *	\ingroup    core
- *	\version    $Id: pdf.lib.php,v 1.96 2011/07/04 08:53:01 eldy Exp $
+ *	\version    $Id: pdf.lib.php,v 1.97 2011/07/20 13:32:25 eldy Exp $
  */
 
 
@@ -324,7 +324,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0)
 
     $outputlangs->load("banks");
 
-    // Get format of bank id according to country of $account
+    // Get format of bank account according to its country
     $usedetailedbban=$account->useDetailedBBAN();
 
     //$onlynumber=0; $usedetailedbban=0; // For tests
@@ -425,7 +425,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0)
 
     $pdf->SetFont('','',6);
 
-    if (empty($onlynumber))
+    if (empty($onlynumber) && ! empty($account->domiciliation))
     {
         $pdf->SetXY ($curx, $cury);
         $val=$outputlangs->transnoentities("Residence").': ' . $outputlangs->convToOutputCharset($account->domiciliation);

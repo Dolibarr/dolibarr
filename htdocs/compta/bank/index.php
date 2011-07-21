@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copytight (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,7 +22,7 @@
  *       \file       htdocs/compta/bank/index.php
  *       \ingroup    banque
  *       \brief      Page accueil banque
- *       \version    $Id$
+ *       \version    $Id: index.php,v 1.54 2011/07/20 19:03:31 eldy Exp $
  */
 
 require("./pre.inc.php");
@@ -81,7 +81,7 @@ if ($resql)
 /*
  * Comptes courants (courant = 1)
  */
-print '<table class="nobordernopadding" width="100%">';
+print '<table class="liste" width="100%">';
 print '<tr class="liste_titre"><td width="30%">'.$langs->trans("CurrentAccounts").'</td>';
 print '<td width="20%">'.$langs->trans("Bank").'</td>';
 print '<td align="left">'.$langs->trans("AccountIdShort").'</td>';
@@ -245,5 +245,5 @@ print "</div>";
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/20 19:03:31 $ - $Revision: 1.54 $');
 ?>

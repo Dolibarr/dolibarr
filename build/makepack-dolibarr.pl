@@ -2,7 +2,7 @@
 #----------------------------------------------------------------------------
 # \file         build/makepack-dolibarr.pl
 # \brief        Dolibarr package builder (tgz, zip, rpm, deb, exe, aps)
-# \version      $Id: makepack-dolibarr.pl,v 1.110 2011/07/18 01:48:21 eldy Exp $
+# \version      $Id: makepack-dolibarr.pl,v 1.111 2011/07/21 01:20:31 eldy Exp $
 # \author       (c)2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
 #----------------------------------------------------------------------------
 
@@ -48,7 +48,7 @@ if (-d "/usr/src/RPM") {
 
 
 use vars qw/ $REVISION $VERSION /;
-$REVISION='$Revision: 1.110 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
+$REVISION='$Revision: 1.111 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
 $VERSION="1.0 (build $REVISION)";
 
 
@@ -276,7 +276,7 @@ if ($nboftargetok) {
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/theme/bureau2crea`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/test`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/Thumbs.db $BUILDROOT/$PROJECT/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/*/Thumbs.db`;
-	    $ret=`rm -fr $BUILDROOT/$PROJECT/CVS* $BUILDROOT/$PROJECT/*/CVS* $BUILDROOT/$PROJECT/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/*/CVS*`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/CVS* $BUILDROOT/$PROJECT/*/CVS* $BUILDROOT/$PROJECT/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/*/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/*/*/*/*/*/CVS*`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/.cvsignore $BUILDROOT/$PROJECT/*/.cvsignore $BUILDROOT/$PROJECT/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/*/*/*/.cvsignore`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/php_writeexcel/php.bmp`;
 	    $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/phpexcel/PHPExcel/Shared/PDF/fonts/utils/freetype6.dll`;
@@ -461,8 +461,11 @@ if ($nboftargetok) {
     		print "Create directory $BUILDROOT/$PROJECT.tmp/DEBIAN\n";
     		$ret=`mkdir "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
     		print "Copy $SOURCE/build/deb/* to $BUILDROOT/$PROJECT.tmp/DEBIAN\n";
-    		$ret=`cp -r "$SOURCE/build/deb/." "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
-		    $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/DEBIAN/CVS`;
+            $ret=`cp -r "$SOURCE/build/deb/config"    "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
+            $ret=`cp -r "$SOURCE/build/deb/control"   "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
+            $ret=`cp -r "$SOURCE/build/deb/postinst"  "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
+            $ret=`cp -r "$SOURCE/build/deb/postrm"    "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
+            $ret=`cp -r "$SOURCE/build/deb/templates" "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
  
  			print "Remove other files\n";
 		    $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/dev/dbmodel`;
@@ -479,6 +482,14 @@ if ($nboftargetok) {
 		    $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/doc/tshirt`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/doc/rollup`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/test`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/cashdesk/include/jscalendar/doc/html/CVS`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/cashdesk/include/jscalendar/skins/aqua/CVS`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/includes/ckeditor/plugins/*/dialogs/CVS`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/includes/ckeditor/plugins/*/images/CVS`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/includes/odtphp/zip/.svn`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/includes/odtphp/zip/pclzip/.svn`;
+		    
+            $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/COPYING`;
             $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/includes/barcode/php-barcode/genbarcode/genbarcode`;
             # To remove once stable
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/htdocs/theme/bureau2crea`;
@@ -508,14 +519,13 @@ if ($nboftargetok) {
             $ret=`mkdir -p "$BUILDROOT/$PROJECT.tmp/usr/share/doc/$PROJECT"`;
             
     		print "Copy README file into $BUILDROOT/$PROJECT.tmp/DEBIAN\n";
-    		$ret=`cp "$SOURCE/README" "$BUILDROOT/$PROJECT.tmp/DEBIAN/README"`;
             $ret=`cp "$SOURCE/README" "$BUILDROOT/$PROJECT.tmp/usr/share/doc/$PROJECT/README"`;
 
     		print "Copy copyright file into $BUILDROOT/$PROJECT.tmp/usr/share/doc/$PROJECT/copyright\n";
-            $ret=`cp "$BUILDROOT/$PROJECT.tmp/DEBIAN/copyright" "$BUILDROOT/$PROJECT.tmp/usr/share/doc/$PROJECT/copyright"`;
+            $ret=`cp "$SOURCE/build/deb/copyright" "$BUILDROOT/$PROJECT.tmp/usr/share/doc/$PROJECT/copyright"`;
 
-            #$ret=`gzip -9 -c $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/ChangeLog > $BUILDROOT/$PROJECT.tmp/usr/share/doc/$PROJECT/changelog.Debian.gz`;
-            $ret=`gzip -9 -c $BUILDROOT/$PROJECT.tmp/DEBIAN/changelog > $BUILDROOT/$PROJECT.tmp/usr/share/doc/$PROJECT/changelog.Debian.gz`;
+            #$ret=`gzip -9 -c $SOURCE/build/deb/changelog > $BUILDROOT/$PROJECT.tmp/usr/share/doc/$PROJECT/changelog.Debian.gz`;
+            $ret=`gzip -9 -c "$SOURCE/build/deb/changelog" > $BUILDROOT/$PROJECT.tmp/usr/share/doc/$PROJECT/changelog.Debian.gz`;
 
             print "Set owners on files/dir\n";
 		    $ret=`chown -R root.root $BUILDROOT/$PROJECT.tmp`;

@@ -1,4 +1,36 @@
-Copyright 2011 Laurent Destailleur <eldy@users.sourceforge.net>
+Format: http://svn.debian.org/wsvn/dep/web/deps/dep5.mdwn?op=file&rev=135
+Upstream-Name: Dolibarr
+Upstream-Contact: Laurent Destailleur <eldy@users.sourceforge.net>
+Source: cvs.savannah.nongnu.org:/sources/dolibar
 
-This software is distributed under GPL v2 licence.
-See file /usr/share/common-licenses/GPL-2
+Files: *
+Copyright: 2002-2009, Rodolphe Quiedeville   <rodolphe@quiedeville.org>
+           2003-2011, Laurent Destailleur    <eldy@users.sourceforge.net>
+           2004-2011, Regis Houssin          <regis@dolibarr.fr>
+           2003, Jean-Louis Bergamo          <jlb@j1b.org>
+           2004, Sebastien Di Cintio         <sdicintio@ressource-toi.org>
+           2004, Benoit Mortier              <benoit.mortier@opensides.be>
+           2004, Christophe Combelles        <ccomb@free.fr>
+           2008, Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
+           2010-2011, Juanjo Menent          <jmenent@2byte.es>
+License: GPL-2+
+ This program is free software; you can redistribute it
+ and/or modify it under the terms of the GNU General Public
+ License as published by the Free Software Foundation; either
+ version 2 of the License, or (at your option) any later
+ version.
+ .
+ This program is distributed in the hope that it will be
+ useful, but WITHOUT ANY WARRANTY; without even the implied
+ warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ PURPOSE.  See the GNU General Public License for more
+ details.
+ .
+ You should have received a copy of the GNU General Public
+ License along with this package; if not, write to the Free
+ Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+ Boston, MA  02110-1301 USA
+ .
+ On Debian systems, the full text of the GNU General Public
+ License version 2 can be found in the file
+ `/usr/share/common-licenses/GPL-2'.
