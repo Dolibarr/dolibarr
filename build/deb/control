@@ -8,7 +8,7 @@ Section: web
 Priority: optional
 Recommends: firefox
 Homepage: http://www.dolibarr.org
-Description: Easy to use web based ERP & CRM software
+Description: Easy to use ERP & CRM software to manage your activity
  Dolibarr ERP & CRM is an easy to use open source/free software for small 
  and medium companies, foundations or freelances. It includes different 
  features for Enterprise Resource Planning (ERP) and Customer Relationship
