@@ -59,8 +59,9 @@ PHP-BARCODE:
 ------------
 If files are replaced by new version, following changes must be done:
 
-* Add lines into barcode_outimage function
-*******************************************
+* Restore changes done into php-barcode.php marked with DOL_CHANGE LDR
+
+* Add lines into barcode_outimage function:
 	// DOLCHANGE LDR
     global $filebarcode;
 
