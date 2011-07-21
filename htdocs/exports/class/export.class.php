@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,14 +20,14 @@
 /**
  *	\file       htdocs/exports/class/export.class.php
  *	\ingroup    export
- *	\brief      Fichier de la classe des exports
- *	\version    $Id$
+ *	\brief      File of class to manage exports
+ *	\version    $Id: export.class.php,v 1.11 2011/07/20 19:03:34 eldy Exp $
  */
 
 
 /**
  *	\class 		Export
- *	\brief 		Classe permettant la gestion des exports
+ *	\brief 		Class to manage exports
  */
 class Export
 {
@@ -174,8 +174,8 @@ class Export
 						}
 					}
 				}
+                closedir($handle);
 			}
-			closedir($handle);
 		}
 	}
 

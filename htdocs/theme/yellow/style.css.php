@@ -20,7 +20,7 @@
 /**
  *		\file       htdocs/theme/yellow/style.css.php
  *		\brief      Fichier de style CSS du theme Yellow
- *		\version    $Id: style.css.php,v 1.43 2011/07/18 23:37:03 eldy Exp $
+ *		\version    $Id: style.css.php,v 1.44 2011/07/20 19:03:32 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -1038,6 +1038,12 @@ th {
 /*
  *  Boxes
  */
+
+.boxtable {
+-moz-box-shadow: 6px 6px 20px #AAA;
+-webkit-box-shadow: 6px 6px 20px #AAA;
+box-shadow: 6px 6px 20px #AAA;
+}
 
 .box {
 	padding-right: 4px;

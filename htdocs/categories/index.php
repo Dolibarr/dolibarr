@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010-2011 Herve Prot           <herve.prot@symeos.com>
@@ -25,7 +25,7 @@
  *      \file       htdocs/categories/index.php
  *      \ingroup    category
  *      \brief      Home page of category area
- *	 	\version	$Id$
+ *	 	\version	$Id: index.php,v 1.54 2011/07/20 19:03:34 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -131,7 +131,7 @@ $fulltree=$cate_arbo;
 
 
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Categories").'</td><td align="center">'.$langs->trans("Priority").'</td><td colspan="2">'.$langs->trans("Description").'</td></tr>';
+print '<tr class="liste_titre"><td>'.$langs->trans("Categories").'</td><td align="center">'.$langs->trans("Priority").'</td><td colspan="2">'.$langs->trans("Description").'</td></tr>';
 
 
 $section=isset($_GET["section"])?$_GET["section"]:$_POST['section'];
@@ -145,7 +145,7 @@ if (! $section) $section=0;
 
 
 // Root title line
-print '<tr><td colspan="2">';
+print '<tr><td>';
 print '<table class="nobordernopadding"><tr class="nobordernopadding">';
 print '<td align="left" width="24">';
 print img_picto_common('','treemenu/base.gif');
@@ -233,7 +233,7 @@ foreach($fulltree as $key => $val)
         print "<tr ".$bc[$var].">";
 
 		// Show tree graph pictos
-		print '<td align="left" colspan="2">';
+		print '<td align="left">';
 		print '<table class="nobordernopadding"><tr class="nobordernopadding"><td>';
 		$resarray=tree_showpad($fulltree,$key);
 		$a=$resarray[0];
@@ -260,13 +260,13 @@ foreach($fulltree as $key => $val)
 		// Show link
 		print '<td valign="middle">';
 		//if ($section == $val['id']) print ' <u>';
-		/* We don't want a link ... why ?
+		// We don't want a link ... why ?
 		$categstatic->id=$val['id'];
 		$categstatic->ref=$val['label'];
 		$categstatic->type=$type;
-		print $categstatic->getNomUrl(0,'',28);
-		*/
-		print ' &nbsp;'.'<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.$type.'">'.dol_trunc($val['label'],28).'</a>';
+		print ' &nbsp;'.$categstatic->getNomUrl(0,'',28);
+
+		//print ' &nbsp;'.'<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.$type.'">'.dol_trunc($val['label'],28).'</a>';
 		//if ($section == $val['id']) print '</u>';
 		print '</td>';
 		print '</tr></table>';
@@ -348,5 +348,5 @@ print "</table><br>";
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/20 19:03:34 $ - $Revision: 1.54 $');
 ?>

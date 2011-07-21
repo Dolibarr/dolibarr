@@ -21,7 +21,7 @@
 /**
  *  \file        htdocs/compta/resultat/clientfourn.php
  *	\brief       Page reporting
- *  \version     $Id$
+ *  \version     $Id: clientfourn.php,v 1.62 2011/07/20 19:03:33 eldy Exp $
  */
 
 require('../../main.inc.php');
@@ -128,7 +128,7 @@ report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportl
 // Show report array
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td width="10%">&nbsp;</td><td>'.$langs->trans("Element").'</td>';
+print '<td width="10%">&nbsp;</td><td>&nbsp;</td>';
 if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".$langs->trans("AmountHT")."</td>";
 print "<td align=\"right\">".$langs->trans("AmountTTC")."</td>";
 print "</tr>\n";
@@ -678,7 +678,7 @@ if ($mysoc->tva_assuj != 'franchise')	// Assujeti
     print '</tr>';
 
     print '<tr class="liste_total"><td align="left" colspan="2">'.$langs->trans("Profit").'</td>';
-    if ($modecompta == 'CREANCES-DETTES') print '<td class="border" align="right">'.price($total_ht).'</td>';
+    if ($modecompta == 'CREANCES-DETTES') print '<td class="liste_total" align="right">'.price($total_ht).'</td>';
     print '<td class="liste_total" align="right">'.price($total_ttc).'</td>';
     print '</tr>';
 }
@@ -689,5 +689,5 @@ print '<br>';
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/20 19:03:33 $ - $Revision: 1.62 $');
 ?>
