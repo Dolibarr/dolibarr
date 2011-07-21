@@ -39,8 +39,8 @@ case "$1" in
 		superuserpassword=''
 		if [ -f /etc/mysql/debian.cnf ] ; then
 			# Load superuser login and pass
-			superuserlogin=$(grep --max-count=1 "user" /etc/mysql/debian.cnf | /bin/sed -e 's/^user[ =]*//g')
-			superuserpassword=$(grep --max-count=1 "password" /etc/mysql/debian.cnf | /bin/sed -e 's/^password[ =]*//g')
+			superuserlogin=$(grep --max-count=1 "user" /etc/mysql/debian.cnf | sed -e 's/^user[ =]*//g')
+			superuserpassword=$(grep --max-count=1 "password" /etc/mysql/debian.cnf | sed -e 's/^password[ =]*//g')
 		fi
 		echo Mysql superuser found to use is $superuserlogin
 		if [ -z "$superuserlogin" ] ; then
@@ -115,10 +115,10 @@ case "$1" in
 		#target="/usr/share/applications/"
 		#cp -f $fileorig $target
 		# Not sure this is usefull
-		if test -x /usr/bin/update-menus; then 
-			echo "update-menus"
-			update-menus;
-		fi
+		#if test -x /usr/bin/update-menus; then 
+		#	echo "update-menus"
+		#	update-menus;
+		#fi
 		
 		# TODO Create the file to force parameters in Web installer
 		#if grep DBHOST /usr/share/dolibarr/htdocs/conf/conf.php > /dev/null

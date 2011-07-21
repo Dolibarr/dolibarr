@@ -21,29 +21,29 @@ Description: Easy to use ERP & CRM software to manage your activity.
  Only features you need are visible, depending on which module were activated.
  Most common used modules are:
  .
- * Customers, Suppliers or Prospects directory
- * Contacts directory
- * Orders management
- * Commercial proposals management
- * Invoices management
- * Products and services catalog
- * Stock management
- * Foundations members management
- * Bank accounts management
- * Point of Sale
- * Payments management
- * Commercial actions management
- * Contracts management
- * Standing orders management
- * Shipping management
- * Donations management
- * Bookmarks management
- * Mass Emailings
- * Reports
- * Data export and import tools
- * LDAP connectivity
- * PDF exports
- * And a lot of more modules...
+ Customers, Suppliers or Prospects directory
+ Contacts directory
+ Orders management
+ Commercial proposals management
+ Invoices management
+ Products and services catalog
+ Stock management
+ Foundations members management
+ Bank accounts management
+ Point of Sale
+ Payments management
+ Commercial actions management
+ Contracts management
+ Standing orders management
+ Shipping management
+ Donations management
+ Bookmarks management
+ Mass Emailings
+ Reports
+ Data export and import tools
+ LDAP connectivity
+ PDF exports
+ And a lot of more modules...
  .
  You can also add third parties external modules or develop yours.
  
