@@ -2,6 +2,6 @@ Template: dolibarr/postrm
 Type: boolean
 Default: true
 Description: Delete database ?
- Delete the Dolibarr MySQL database and all its datas (datas related
- to this quetion are the Dolibarr DBMS account and all
- Dolibarr tables) ?
+ Answer if you want to removed the Dolibarr MySQL database and all
+ its datas (datas related to this quetion are the Dolibarr DBMS account
+ and all Dolibarr tables).

@@ -28,7 +28,7 @@
  *	\file       htdocs/filefunc.inc.php
  * 	\ingroup	core
  *  \brief      File that include conf.php file and functions.lib.php
- *  \version    $Id: filefunc.inc.php,v 1.18 2011/07/13 21:19:58 eldy Exp $
+ *  \version    $Id: filefunc.inc.php,v 1.19 2011/07/21 22:11:30 eldy Exp $
  */
 
 define('DOL_VERSION','3.1.0-beta');	// Also defined in htdocs/install/inc.php (Ex: x.y.z-alpha, x.y.z)
@@ -92,8 +92,8 @@ if (! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && ! empty($_SERVER
 }
 if (empty($dolibarr_main_db_host))
 {
-	print 'Dolibarr setup was run but was not completed.<br>'."\n";
-	print 'Please, click <a href="install/index.php">here to finish Dolibarr install process</a> ...'."\n";
+	print 'Dolibarr setup is not yet complete.<br><br>'."\n";
+	print '<a href="install/index.php">Click here to finish Dolibarr install process</a> ...'."\n";
 	die;
 }
 if (empty($dolibarr_main_url_root))

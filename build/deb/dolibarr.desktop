@@ -2,7 +2,6 @@
 # This file is used to add Ubuntu menu entry
 # It must be saved into directory /usr/share/applications
 Version=1.0
-Encoding=UTF-8
 Name=Dolibarr ERP & CRM
 Name[fr]=Dolibarr ERP & CRM
 GenericName=Dolibarr ERP & CRM
