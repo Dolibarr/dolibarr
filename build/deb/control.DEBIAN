@@ -1,4 +1,5 @@
 Package: dolibarr
+Source: dolibarr
 Version: __VERSION__
 Architecture: all
 Maintainer: Laurent Destailleur <eldy@users.sourceforge.net>
@@ -45,4 +46,3 @@ Description: Easy to use web based ERP & CRM software
  And a lot of more modules...
  .
  You can also add third parties external modules or develop yours.
- 
