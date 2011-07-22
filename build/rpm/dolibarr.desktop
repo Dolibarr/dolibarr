@@ -13,7 +13,7 @@ Comment[it]=Programma gestionale open source e gratuito per piccole e medie impr
 Comment[es]=Software para gestión de PYMES, profesionales independientes, auto emprendedores ó asociaciones
 # Command to open an URL
 # For Fedora: xdg-open 
-# For Debian/Ubuntu: x-www-browser
+# For Debian/Ubuntu: xdg-open or x-www-browser
 # (exo-open for xfde, gnome-open for gnome, ...)
 Exec=xdg-open http://localhost/dolibarr
 Icon=dolibarr
