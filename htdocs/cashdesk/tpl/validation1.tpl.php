@@ -15,7 +15,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program. If not, see <http://www.gnu.org/licenses/>.
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 -->
 <fieldset class="cadre_facturation"><legend class="titre1"><?php echo $langs->trans("Summary"); ?></legend>
 
@@ -39,9 +40,9 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 		?>
 		<tr><td class="resume_label"><?php echo $langs->trans("TotalTTC"); ?> </td><td><?php echo price2num($obj_facturation->prix_total_ttc(),'MT').' '.$conf->monnaie; ?></td></tr>
 		<tr><td class="resume_label"><?php echo $langs->trans("PaymentMode"); ?> </td><td>
-		<?php
+		<?php 
 		switch ($obj_facturation->mode_reglement())
-		{
+		{	
 			case 'ESP':
 				echo $langs->trans("Cash");
 				$filtre='courant=2';
@@ -52,7 +53,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 				echo $langs->trans("CreditCard");
 				$filtre='courant=1';
 				if (!empty($conf->global->CASHDESK_ID_BANKACCOUNT_CB))
-					$selected = $conf->global->CASHDESK_ID_BANKACCOUNT_CB;
+					$selected = $conf->global->CASHDESK_ID_BANKACCOUNT_CB;		
 				break;
 			case 'CHQ':
 				echo $langs->trans("Cheque");
@@ -64,16 +65,16 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 				echo $langs->trans("Reported");
 				$filtre='courant=1 OR courant=2';
 				$selected='';
-				break;
+				break;	
 			default:
 				$filtre='courant=1 OR courant=2';
 				$selected='';
 		}
-
+			
 		?>
 		</td></tr>
-
-		<?php
+		
+		<?php 	
 			// Affichage des infos en fonction du mode de paiement
 			if ( $obj_facturation->mode_reglement() == 'DIF' ) {
 
@@ -99,10 +100,10 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 	<form id="frmValidation" class="formulaire2" method="post" action="validation_verif.php?action=valide_facture">
 		<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
 		<p class="note_label">
-			<?php
+			<?php	
 				echo $langs->trans("BankToPay"). "<br>";
 				$html = new Form($db);
-				$html->select_comptes($selected,'cashdeskbank',0,$filtre);
+				$html->select_comptes($selected,'cashdeskbank',0,$filtre);		
 			?>
 		</p>
 		<p class="note_label"><?php echo $langs->trans("Notes"); ?><br><textarea class="textarea_note" name="txtaNotes"></textarea></p>
