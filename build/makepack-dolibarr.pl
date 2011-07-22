@@ -2,7 +2,7 @@
 #----------------------------------------------------------------------------
 # \file         build/makepack-dolibarr.pl
 # \brief        Dolibarr package builder (tgz, zip, rpm, deb, exe, aps)
-# \version      $Id: makepack-dolibarr.pl,v 1.117 2011/07/26 23:25:59 eldy Exp $
+# \version      $Id: makepack-dolibarr.pl,v 1.112 2011/07/21 22:11:30 eldy Exp $
 # \author       (c)2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
 #----------------------------------------------------------------------------
 
@@ -34,7 +34,7 @@ $FILENAMESNAPSHOT="$PROJECT-snapshot";
 $FILENAMETGZ="$PROJECT-$MAJOR.$MINOR.$BUILD";
 $FILENAMEZIP="$PROJECT-$MAJOR.$MINOR.$BUILD";
 $FILENAMERPM="$PROJECT-$MAJOR.$MINOR.$BUILD-$RPMSUBVERSION";
-$FILENAMEDEB="${PROJECT}_${MAJOR}.${MINOR}.${BUILD}";
+$FILENAMEDEB="$PROJECT-$MAJOR.$MINOR.$BUILD";
 $FILENAMEAPS="$PROJECT-$MAJOR.$MINOR.$BUILD.app";
 $FILENAMEEXEDOLIWAMP="$PROJECT-$MAJOR.$MINOR.$BUILD";
 if (-d "/usr/src/redhat") {
@@ -48,7 +48,7 @@ if (-d "/usr/src/RPM") {
 
 
 use vars qw/ $REVISION $VERSION /;
-$REVISION='$Revision: 1.117 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
+$REVISION='$Revision: 1.112 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
 $VERSION="1.0 (build $REVISION)";
 
 
@@ -458,8 +458,8 @@ if ($nboftargetok) {
             # now newbuild is 0-1 or 0-4 for example
             print "Version is $MAJOR.$MINOR.$newbuild\n";
 
-    		print "Remove target ${FILENAMEDEB}_all.deb...\n";
-    		unlink("$DESTI/${FILENAMEDEB}_all.deb");
+    		print "Remove target $FILENAMEDEB.deb...\n";
+    		unlink("$DESTI/$FILENAMEDEB.deb");
 
             #rmdir "$BUILDROOT/$PROJECT.tmp";
     		$ret=`rm -fr $BUILDROOT/$PROJECT.tmp`;
@@ -468,33 +468,21 @@ if ($nboftargetok) {
     		print "Copy $BUILDROOT/$PROJECT to $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT\n";
     		$cmd="cp -pr \"$BUILDROOT/$PROJECT\" \"$BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT\"";
             $ret=`$cmd`;
-            
-            # Create DEBIAN directory
     		print "Create directory $BUILDROOT/$PROJECT.tmp/DEBIAN\n";
     		$ret=`mkdir "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
-    		print "Copy $SOURCE/build/deb/xxx to $BUILDROOT/$PROJECT.tmp/DEBIAN\n";
-            $ret=`cp -f "$SOURCE/build/deb/config"           "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
-            $ret=`cp -f "$SOURCE/build/deb/postinst"         "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
-            $ret=`cp -f "$SOURCE/build/deb/postrm"           "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
-            $ret=`cp -f "$SOURCE/build/deb/templates"        "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
-            print "Edit version in file $BUILDROOT/$PROJECT.tmp/DEBIAN/control\n";
-            open (SPECFROM,"<$SOURCE/build/deb/control.DEBIAN") || die "Error";
-            open (SPECTO,">$BUILDROOT/$PROJECT.tmp/DEBIAN/control") || die "Error";
-            while (<SPECFROM>) {
-                $_ =~ s/__VERSION__/$MAJOR.$MINOR.$newbuild/;
-                print SPECTO $_;
-            }
-            close SPECFROM;
-            close SPECTO;
-            print "Version set to $MAJOR.$MINOR.$newbuild\n";
-            
+    		print "Copy $SOURCE/build/deb/* to $BUILDROOT/$PROJECT.tmp/DEBIAN\n";
+            $ret=`cp -r "$SOURCE/build/deb/config"    "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
+            $ret=`cp -r "$SOURCE/build/deb/control"   "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
+            $ret=`cp -r "$SOURCE/build/deb/postinst"  "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
+            $ret=`cp -r "$SOURCE/build/deb/postrm"    "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
+            $ret=`cp -r "$SOURCE/build/deb/templates" "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
+
  			print "Remove other files\n";
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/build/aps`;
             $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/build/deb/config`;
-            $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/build/deb/control.*`;
+            $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/build/deb/control`;
             $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/build/deb/postinst`;
             $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/build/deb/postrm`;
-            $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/build/deb/rules`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/build/perl`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/build/dmg`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/dev/dbmodel`;
@@ -525,6 +513,17 @@ if ($nboftargetok) {
             # To remove once stable
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/htdocs/theme/bureau2crea`;
 
+ 			print "Edit version in file $BUILDROOT/$PROJECT.tmp/DEBIAN/control\n";
+            open (SPECFROM,"<$SOURCE/build/deb/control") || die "Error";
+            open (SPECTO,">$BUILDROOT/$PROJECT.tmp/DEBIAN/control") || die "Error";
+            while (<SPECFROM>) {
+                $_ =~ s/__VERSION__/$MAJOR.$MINOR.$newbuild/;
+                print SPECTO $_;
+            }
+            close SPECFROM;
+            close SPECTO;
+			print "Version set to $MAJOR.$MINOR.$newbuild\n";
+			
 			# dolibarr.desktop
 	   		print "Create directory $BUILDROOT/$PROJECT.tmp/usr/share/applications\n";
     		$ret=`mkdir -p "$BUILDROOT/$PROJECT.tmp/usr/share/applications"`;
@@ -582,48 +581,21 @@ if ($nboftargetok) {
             $olddir=getcwd();
      		chdir("$BUILDROOT");
  
-            # Creation of binary package
-    		$cmd="dpkg -b $BUILDROOT/$PROJECT.tmp $BUILDROOT/${FILENAMEDEB}_all.deb";
+    		$cmd="dpkg -b $BUILDROOT/$PROJECT.tmp $BUILDROOT/${FILENAMEDEB}.deb";
     		print "Launch DEB build ($cmd)\n";
     		$ret=`$cmd`;
     		print $ret."\n";
-
-            # Creation of source package
-            print "Create directory $BUILDROOT/$PROJECT.tmp/debian\n";
-            $ret=`mkdir "$BUILDROOT/$PROJECT.tmp/debian"`;
-            $ret=`mkdir "$BUILDROOT/$PROJECT.tmp/debian/source"`;
-            $ret=`rm -fr "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
-            print "Copy $SOURCE/build/deb/xxx to $BUILDROOT/$PROJECT.tmp/debian\n";
-            $ret=`cp -f "$SOURCE/build/deb/changelog"      "$BUILDROOT/$PROJECT.tmp/debian/changelog"`;
-            $ret=`cp -f "$SOURCE/build/deb/control.debian" "$BUILDROOT/$PROJECT.tmp/debian/control"`;
-            $ret=`cp -f "$SOURCE/build/deb/rules"          "$BUILDROOT/$PROJECT.tmp/debian/rules"`;
-            $ret=`cp -f "$SOURCE/build/deb/copyright"      "$BUILDROOT/$PROJECT.tmp/debian/copyright"`;
-            $ret=`cp -f "$SOURCE/build/deb/compat"         "$BUILDROOT/$PROJECT.tmp/debian/compat"`;
-            $ret=`cp -f "$SOURCE/build/deb/format"         "$BUILDROOT/$PROJECT.tmp/debian/source/format"`;
-            #$ret=`cp -f "$SOURCE/build/deb/postinst"       "$BUILDROOT/$PROJECT.tmp/debian"`;
-            #$ret=`cp -f "$SOURCE/build/deb/postrm"         "$BUILDROOT/$PROJECT.tmp/debian"`;
-            #$ret=`cp -f "$SOURCE/build/deb/templates"      "$BUILDROOT/$PROJECT.tmp/debian"`;
-            
-            $build = $newbuild;
-            $build =~ s/-.*$//g;
-            $cmd="mv $BUILDROOT/$PROJECT.tmp $BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build";
-            $ret=`$cmd`;
-            $cmd="dpkg-source -b $BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build";
-            print "Launch DEB src build ($cmd)\n";
-            $ret=`$cmd`;
-            print $ret."\n";
-
             chdir("$olddir");
     		
             if ($OS =~ /windows/i)
             {
-                print "Move ${FILENAMEDEB}_all.deb to $DESTI/${FILENAMEDEB}_all.deb\n";
-                $ret=`mv "$BUILDROOT/${FILENAMEDEB}_all.deb" "$DESTI/${FILENAMEDEB}_all.deb"`;
+                print "Move ${FILENAMEDEB}.deb to $DESTI/${FILENAMEDEB}.deb\n";
+                $ret=`mv "$BUILDROOT/${FILENAMEDEB}.deb" "$DESTI/${FILENAMEDEB}.deb"`;
             }
             else
             {
-                print "Move ${FILENAMEDEB}_all.deb to $DESTI/${FILENAMEDEB}_all.deb\n";
-                $ret=`mv "$BUILDROOT/${FILENAMEDEB}_all.deb" "$DESTI/${FILENAMEDEB}_all.deb"`;
+                print "Move ${FILENAMEDEB}.deb to $DESTI/${FILENAMEDEB}.deb\n";
+                $ret=`mv "$BUILDROOT/${FILENAMEDEB}.deb" "$DESTI/${FILENAMEDEB}.deb"`;
             }
         	next;
         }
