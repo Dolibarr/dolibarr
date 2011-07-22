@@ -24,7 +24,7 @@
  *  \file       htdocs/comm/action/index.php
  *  \ingroup    agenda
  *  \brief      Home page of calendar events
- *  \version    $Id$
+ *  \version    $Id: index.php,v 1.183 2011/07/22 06:51:31 simnandez Exp $
  */
 
 require("../../main.inc.php");
@@ -487,24 +487,23 @@ if ($showbirthday)
 
 //Exernal Calendars
 $listofextcals=array();
-if ($conf->global->MAIN_FEATURES_LEVEL>=2)
+
+if (empty($conf->global->AGENDA_DISABLE_EXT) && $conf->global->AGENDA_EXT_NB > 0)
 {
-    if (empty($conf->global->AGENDA_DISABLE_EXT) && $conf->global->AGENDA_EXT_NB > 0)
-    {
-        $i=0;
-        while($i < $conf->global->AGENDA_EXT_NB)
-        {
-            $i++;
-            $paramkey='AGENDA_EXT_SRC'.$i;
-            $url=$conf->global->$paramkey;
-            $paramkey='AGENDA_EXT_NAME'.$i;
-            $namecal = $conf->global->$paramkey;
-            $paramkey='AGENDA_EXT_COLOR'.$i;
-            $colorcal = $conf->global->$paramkey;
-            if ($url && $namecal) $listofextcals[]=array('src'=>$url,'name'=>$namecal,'color'=>$colorcal);
-        }
-    }
+	$i=0;
+	while($i < $conf->global->AGENDA_EXT_NB)
+	{
+		$i++;
+		$paramkey='AGENDA_EXT_SRC'.$i;
+		$url=$conf->global->$paramkey;
+		$paramkey='AGENDA_EXT_NAME'.$i;
+		$namecal = $conf->global->$paramkey;
+		$paramkey='AGENDA_EXT_COLOR'.$i;
+		$colorcal = $conf->global->$paramkey;
+		if ($url && $namecal) $listofextcals[]=array('src'=>$url,'name'=>$namecal,'color'=>$colorcal);
+	}
 }
+
 if (sizeof($listofextcals))
 {
     require_once(DOL_DOCUMENT_ROOT."/comm/action/class/ical.class.php");
@@ -787,7 +786,7 @@ $("#actionagenda_vcal_link").attr("href","/public/agenda/agendaexport.php?format
 ';
 */
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/22 06:51:31 $ - $Revision: 1.183 $');
 
 
 /**
