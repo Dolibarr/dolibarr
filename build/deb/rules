@@ -1,4 +1,4 @@
-#!/usr/bin/make -f
-
-%:
-    dh $@
+#
+# Sample debian/rules
+#
+# This script is not used, so is empty.
