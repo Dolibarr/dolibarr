@@ -16,7 +16,6 @@ ArtiChow          1.07     Public Domain               Yes              Graphics
 CKEditor		  3.6.1	   GPL or LGPL 2.1 or MPL 1.1  Yes				Editor WYSIWYG
 EFC/XFSS		  1.0.1	   LGPL 3.0					   Yes				Enhanced File Crypt/Extended File Stealth System
 FCKEditor         2.6.6    LGPL 2.1 or Mozilla PL 1.0  Yes              Editor WYSIWYG
-Flot              0.7      MIT Licence                 Yes              JS library to build graph
 FPDF              1.6      Public domain               Yes              PDF generation (original code is modified)
 FPDF_TPL          1.1.5    Apache Software License 2.0 No GPL3 only     PDF templates management
 FPDI              1.3.4    Apache Software License 2.0 No GPL3 only     PDF templates management
@@ -24,6 +23,7 @@ FPDI_Protection   1.0.3    Apache Software License 2.0 No GPL3 only     PDF encr
 GeoIP             x.x                                  Yes              GeoIP Maxmind conversion
 jQuery            1.6.1    GPL and MIT Licence         Yes              JS library
 jQuery UI         1.8.14   GPL and MIT Licence         Yes              JS library plugin UI
+jQuery Flot       0.7      MIT Licence                 Yes              JS library to build graph
 jQuery JCrop      0.9.8    MIT Licence                 Yes              JS library plugin Crop (to crop images)
 jQuery Layout     1.3.0	   GPL and MIT Licence         Yes              JS library plugin Layout (RC-29.15)
 jQuery TableDnD   0.5      GPL and MIT Licence         Yes              JS library plugin TableDnD (to reorder table rows)
