@@ -1,5 +1,5 @@
 --
--- $Id: 3.0.0-3.1.0.sql,v 1.80 2011/07/22 13:46:34 eldy Exp $
+-- $Id: 3.0.0-3.1.0.sql,v 1.79 2011/07/12 22:12:12 eldy Exp $
 --
 -- Be carefull to requests order.
 -- This file must be loaded by calling /install/index.php page
@@ -124,9 +124,7 @@ ALTER TABLE llx_usergroup_user DROP INDEX fk_user;
 ALTER TABLE llx_usergroup_user DROP INDEX uk_user_group_entity;
 ALTER TABLE llx_usergroup_user ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
 ALTER TABLE llx_usergroup_user ADD UNIQUE INDEX uk_usergroup_user (entity,fk_user,fk_usergroup);
--- V4.1 DELETE FROM llx_usergroup_user WHERE fk_user NOT IN (SELECT rowid from llx_user);
 ALTER TABLE llx_usergroup_user ADD CONSTRAINT fk_usergroup_user_fk_user      FOREIGN KEY (fk_user)         REFERENCES llx_user (rowid);
--- V4.1 DELETE FROM llx_usergroup_user WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 ALTER TABLE llx_usergroup_user ADD CONSTRAINT fk_usergroup_user_fk_usergroup FOREIGN KEY (fk_usergroup)    REFERENCES llx_usergroup (rowid);
 
 ALTER TABLE llx_commande ADD COLUMN ref_int	varchar(30) AFTER ref_ext;
