@@ -1297,3 +1297,5 @@ ProjectsModelModule=Modèles de document de rapport projets
 ExternalSiteSetup=Configuration du lien vers le site externe
 ##### Ecommerce #####
 EcommerceSiteSetup=Configuration du module Ecommerce
+##### Dict #####
+DictionnaryProspectStatus=Workflow Prospects/Clients

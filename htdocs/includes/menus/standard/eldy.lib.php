@@ -72,7 +72,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 	{
 		$langs->load("companies");
 		$langs->load("suppliers");
-        $langs->load("commercial");
+                $langs->load("commercial");
 
 		$classname="";
 		if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "companies")

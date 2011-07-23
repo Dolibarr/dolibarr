@@ -46,7 +46,7 @@ function societe_prepare_head($object)
     $h++;
 
     // TODO Remove tests on object->object. Functions must be called with a company object directly
-    if (($object->client==2 || $object->client==3
+    if (($object->client==2 || $object->client==1 || $object->client==3 
     || (isset($object->object) && $object->object->client==2) || (isset($object->object) && $object->object->client==3)) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
     {
         $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$object->id;
@@ -54,7 +54,7 @@ function societe_prepare_head($object)
         $head[$h][2] = 'prospect';
         $h++;
     }
-    if ($object->client==1 || $object->client==3 || (is_object($object->object) && $object->object->client==1) || (is_object($object->object) && $object->object->client==3))
+    if ($object->client==1 || $object->client==2 || $object->client==3 || (is_object($object->object) && $object->object->client==1) || (is_object($object->object) && $object->object->client==3))
     {
         $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("Customer");
