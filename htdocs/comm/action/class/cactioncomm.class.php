@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2011 Herve Prot           <herve.prot@symeos.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +39,7 @@ class CActionComm {
   var $type;
   var $libelle;
   var $active;
+  var $priority;
 
   var $error;
 
@@ -61,7 +63,7 @@ class CActionComm {
 	function fetch($id)
     {
 
-        $sql = "SELECT id, code, type, libelle, active";
+        $sql = "SELECT id, code, type, libelle, active, priority ";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm";
 		if (is_numeric($id)) $sql.= " WHERE id=".$id;
 		else $sql.= " WHERE code='".$id."'";
@@ -78,6 +80,7 @@ class CActionComm {
                 $this->type    = $obj->type;
                 $this->libelle = $obj->libelle;
                 $this->active  = $obj->active;
+                $this->priority= $obj->priority;
 
                 return 1;
             }
@@ -95,12 +98,13 @@ class CActionComm {
         }
     }
 
-	/**
-	 *    Return list of event types
-	 *    @param      active      1 or 0 to filter on event state active or not ('' bu default = no filter)
-	 *    @return     array       Array of all event types if OK, <0 if KO
-	 */
-	function liste_array($active='',$idorcode='id')
+	/*
+	*    \brief      Renvoi la liste des types d'actions existant
+	*    \param      active      1 ou 0 pour un filtre sur l'etat actif ou non ('' par defaut = pas de filtre)
+        *    \param      type        0 for graph, 1 rendez-vous, 2 task, 3 project task
+	*    \return     array       Tableau des types d'actions actifs si ok, <0 si erreur
+	*/
+	function liste_array($active='',$idorcode='id',$type='1,2')
 	{
 		global $langs,$conf;
 		$langs->load("commercial");
@@ -114,6 +118,7 @@ class CActionComm {
 		{
 			$sql.=" WHERE active=".$active;
 		}
+		$sql.=" AND type in(".$type.")";
 		$sql.= " ORDER BY module, position";
 
 		dol_syslog("CActionComm::liste_array sql=".$sql);
@@ -133,14 +138,16 @@ class CActionComm {
 						if ($obj->module == 'invoice' && ! $conf->facture->enabled)	 $qualified=0;
 						if ($obj->module == 'order'   && ! $conf->commande->enabled) $qualified=0;
 						if ($obj->module == 'propal'  && ! $conf->propal->enabled)	 $qualified=0;
-                        if ($obj->module == 'invoice_supplier' && ! $conf->fournisseur->enabled)   $qualified=0;
-                        if ($obj->module == 'order_supplier'   && ! $conf->fournisseur->enabled)   $qualified=0;
+                                                if ($obj->module == 'invoice_supplier' && ! $conf->fournisseur->enabled)   $qualified=0;
+                                                if ($obj->module == 'order_supplier'   && ! $conf->fournisseur->enabled)   $qualified=0;
+                                                if ($obj->module == 'lead' && ! $conf->lead->enabled)   $qualified=0;
+                                                if ($obj->module == 'system')   $qualified=0; // taches cachés
 					}
 					if ($qualified)
 					{
 						$transcode=$langs->trans("Action".$obj->code);
-						$repid[$obj->id] = ($transcode!="Action".$obj->code?$transcode:$langs->trans($obj->libelle));
-						$repcode[$obj->code] = ($transcode!="Action".$obj->code?$transcode:$langs->trans($obj->libelle));
+						$repid[$obj->id] = ($transcode!="Action".$obj->code?$transcode:$obj->libelle);
+						$repcode[$obj->code] = ($transcode!="Action".$obj->code?$transcode:$obj->libelle);
 					}
 					$i++;
 				}

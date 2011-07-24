@@ -53,7 +53,7 @@ class Conf
 	var $smart_menu;
 
 	//! Used to store instance for multi-company (default 1)
-	var $entity=0;
+	var $entity=1;
 
 	var $css_modules			= array();
 	var $tabs_modules			= array();
@@ -78,6 +78,7 @@ class Conf
 	{
 		//! Charset for HTML output and for storing data in memory
 		$this->file->character_set_client='UTF-8';	// UTF-8, ISO-8859-1
+                $this->entity=1;
 
         // $this->agendas_modules['comm/action'][]= 'ActionAgenda';
 	}

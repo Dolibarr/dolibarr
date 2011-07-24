@@ -2,6 +2,7 @@
 /* Copyright (C) 2008-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2011 Herve Prot           <herve.prot@symeos.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +36,7 @@
  * @param 		$month
  * @param 		$day
  * @param 		$showbirthday
+ * @param 		$action
  * @param 		$filtera
  * @param 		$filtert
  * @param 		$filterd
@@ -55,7 +57,7 @@ function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirt
 		print '<input type="hidden" name="month" value="'.$month.'">';
 		print '<input type="hidden" name="day" value="'.$day.'">';
 		print '<input type="hidden" name="showbirthday" value="'.$showbirthday.'">';
-		print '<table class="nobordernopadding" width="100%">';
+		print '<table class="border" width="100%">';
 		if ($canedit || $conf->projet->enabled)
 		{
 			print '<tr><td nowrap="nowrap">';
@@ -119,10 +121,11 @@ function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirt
 
 
 /**
- *  Show actions to do array
- *  @param		max		Max nb of records
+ *  \brief     	Show actions to do array
+ *  \param		max		Max nb of records
+ *  \param      fk_task     Action lié à cette tache
  */
-function show_array_actions_to_do($max=5)
+function show_array_actions_to_do($max=5, $fk_task=0)
 {
 	global $langs, $conf, $user, $db, $bc, $socid;
 
@@ -131,16 +134,18 @@ function show_array_actions_to_do($max=5)
 	include_once(DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php');
 	include_once(DOL_DOCUMENT_ROOT.'/societe/class/client.class.php');
 
-	$sql = "SELECT a.id, a.label, a.datep as dp, a.fk_user_author, a.percent,";
-	$sql.= " c.code, c.libelle,";
+	$sql = "SELECT a.id, a.label, a.datep as dp, a.fk_user_author, a.percent,a.note,";
+	$sql.= " c.code, c.libelle,c.type,";
 	$sql.= " s.nom as sname, s.rowid, s.client";
-	$sql.= " FROM (".MAIN_DB_PREFIX."c_actioncomm as c,";
-	$sql.= " ".MAIN_DB_PREFIX."actioncomm as a";
+	$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
+	$sql.= ", ".MAIN_DB_PREFIX."c_actioncomm as c";
+	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= ")";
-    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid AND s.entity IN (0, ".$conf->entity.")";
 	$sql.= " WHERE c.id = a.fk_action";
-    $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep2 > '".$db->idate($now)."'))";
+	$sql.= " AND a.percent < 100";
+	$sql.= " AND s.rowid = a.fk_soc";
+	$sql.= " AND s.entity = ".$conf->entity;
+        if ($fk_task) $sql.= " AND a.fk_task = ".$fk_task;
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid) $sql.= " AND s.rowid = ".$socid;
 	$sql.= " ORDER BY a.datep DESC, a.id DESC";
@@ -150,64 +155,61 @@ function show_array_actions_to_do($max=5)
 	if ($resql)
 	{
 	    $num = $db->num_rows($resql);
+	    if ($num > 0)
+	    {
+	        print '<table class="noborder" width="100%">';
+	        print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("LastActionsToDo",$max).($fk_task?" ".$langs->trans("LinkToThisTask"):'').'</td>';
+			print '<td colspan="2" align="right"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?status=todo">'.$langs->trans("FullList").'</a>';
+			print '</tr>';
+	        $var = true;
+	        $i = 0;
 
-	    print '<table class="noborder" width="100%">';
-	    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastActionsToDo",$max).'</td>';
-		print '<td colspan="2" align="right"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?status=todo">'.$langs->trans("FullList").'</a>';
-		print '</tr>';
+		    $staticaction=new ActionComm($db);
+	        $customerstatic=new Client($db);
 
-		$var = true;
-	    $i = 0;
+	        while ($i < $num)
+	        {
+	            $obj = $db->fetch_object($resql);
+	            $var=!$var;
 
-		$staticaction=new ActionComm($db);
-	    $customerstatic=new Client($db);
-		
-        while ($i < $num)
-        {
-            $obj = $db->fetch_object($resql);
-            $var=!$var;
+	            print "<tr $bc[$var]>";
 
-            print '<tr '.$bc[$var].'>';
+	            $staticaction->type_code=$obj->code;
+	            $staticaction->libelle=$obj->libelle;
+	            $staticaction->id=$obj->id;
+                    $staticaction->type=$obj->type;
+                    $staticaction->note=$obj->note;
+	            print '<td>'.$staticaction->getNomUrl(1,16).'</td>';
 
-            $staticaction->type_code=$obj->code;
-            $staticaction->libelle=$obj->label;
-            $staticaction->id=$obj->id;
-            print '<td>'.$staticaction->getNomUrl(1,34).'</td>';
+	            print '<td>'.dol_trunc($obj->label,22).'</td>';
 
-           // print '<td>'.dol_trunc($obj->label,22).'</td>';
+	            $customerstatic->id=$obj->rowid;
+	            $customerstatic->nom=$obj->sname;
+	            $customerstatic->client=$obj->client;
+	            print '<td>'.$customerstatic->getNomUrl(1,'',24).'</td>';
 
-            print '<td>';
-            if ($obj->rowid > 0)
-                {
-                    $customerstatic->id=$obj->rowid;
-                    $customerstatic->name=$obj->sname;
-                    $customerstatic->client=$obj->client;
-                    print $customerstatic->getNomUrl(1,'',16);
-                }
-                print '</td>';
+	            $datep=$db->jdate($obj->dp);
+	            $datep2=$db->jdate($obj->dp2);
 
-            $datep=$db->jdate($obj->dp);
-            $datep2=$db->jdate($obj->dp2);
+	            // Date
+				print '<td width="100" align="right">'.dol_print_date($datep,'day').'&nbsp;';
+				$late=0;
+				if ($obj->percent <= 0 && $datep && $datep < time()) $late=1;
+				if ($obj->percent == 0 && ! $datep && $datep2 && $datep2 < time()) $late=1;
+				if ($obj->percent > 0 && $obj->percent < 100 && $datep2 && $datep2 < time()) $late=1;
+				if ($obj->percent > 0 && $obj->percent < 100 && ! $datep2 && $datep && $datep < time()) $late=1;
+				if ($late) print img_warning($langs->trans("Late"));
+				print "</td>";
 
-            // Date
-			print '<td width="100" align="right">'.dol_print_date($datep,'day').'&nbsp;';
-			$late=0;
-			if ($obj->percent == 0 && $datep && $datep < time()) $late=1;
-			if ($obj->percent == 0 && ! $datep && $datep2 && $datep2 < time()) $late=1;
-			if ($obj->percent > 0 && $obj->percent < 100 && $datep2 && $datep2 < time()) $late=1;
-			if ($obj->percent > 0 && $obj->percent < 100 && ! $datep2 && $datep && $datep < time()) $late=1;
-			if ($late) print img_warning($langs->trans("Late"));
-			print "</td>";
+				// Statut
+				print '<td align="right" width="14">'.$staticaction->LibStatut($obj->percent,3).'</td>';
 
-			// Statut
-			print "<td align=\"right\" width=\"14\">".$staticaction->LibStatut($obj->percent,3)."</td>\n";
+				print "</tr>\n";
 
-			print "</tr>\n";
-
-            $i++;
-        }
-	    print "</table><br>";
-
+	            $i++;
+	        }
+	        print "</table><br>";
+	    }
 	    $db->free($resql);
 	}
 	else
@@ -218,27 +220,28 @@ function show_array_actions_to_do($max=5)
 
 
 /**
- *  Show last actions array
- *  @param		max		Max nb of records
- */
-function show_array_last_actions_done($max=5)
+   \brief      	Show last actions array
+   \param		max		Max nb of records
+   \param       fk_task             Taches liés à cette tache
+*/
+function show_array_last_actions_done($max=5, $fk_task=0)
 {
 	global $langs, $conf, $user, $db, $bc, $socid;
 
-	$now=dol_now();
-
-	$sql = "SELECT a.id, a.percent, a.datep as da, a.datep2 as da2, a.fk_user_author, a.label,";
-	$sql.= " c.code, c.libelle,";
+	$sql = "SELECT a.id, a.percent, a.datep as da, a.datep2 as da2, a.fk_user_author, a.label, a.note,";
+	$sql.= " c.code, c.libelle, c.type,";
 	$sql.= " s.rowid, s.nom as sname, s.client";
-	$sql.= " FROM (".MAIN_DB_PREFIX."c_actioncomm as c,";
-	$sql.= " ".MAIN_DB_PREFIX."actioncomm as a";
+	$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
+	$sql.= ", ".MAIN_DB_PREFIX."c_actioncomm as c";
+	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.=")";
-    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid AND s.entity IN (0, ".$conf->entity.")";
 	$sql.= " WHERE c.id = a.fk_action";
-    $sql.= " AND (a.percent >= 100 OR (a.percent = -1 AND a.datep2 <= '".$db->idate($now)."'))";
+	$sql.= " AND a.percent >= 100";
+	$sql.= " AND s.rowid = a.fk_soc";
+	$sql.= " AND s.entity = ".$conf->entity;
+        if ($fk_task) $sql.= " AND a.fk_task = ".$fk_task;
+	if ($socid)	$sql.= " AND s.rowid = ".$socid;
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-    if ($socid) $sql.= " AND s.rowid = ".$socid;
 	$sql .= " ORDER BY a.datep2 DESC";
 	$sql .= $db->plimit($max, 0);
 
@@ -246,13 +249,15 @@ function show_array_last_actions_done($max=5)
 	if ($resql)
 	{
 		$num = $db->num_rows($resql);
+                if ($num > 0)
+                {
 
-		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastDoneTasks",$max).'</td>';
-		print '<td colspan="2" align="right"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?status=done">'.$langs->trans("FullList").'</a>';
-		print '</tr>';
-		$var = true;
-		$i = 0;
+                    print '<table class="noborder" width="100%">';
+                    print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("LastDoneTasks",$max).($fk_task?(" ".$langs->trans("LinkToThisTask")):"").'</td>';
+                    print '<td colspan="2" align="right"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?status=done">'.$langs->trans("FullList").'</a>';
+                    print '</td></tr>';
+                    $var = true;
+                    $i = 0;
 
 	    $staticaction=new ActionComm($db);
 	    $customerstatic=new Societe($db);
@@ -262,39 +267,36 @@ function show_array_last_actions_done($max=5)
 			$obj = $db->fetch_object($resql);
 			$var=!$var;
 
-			print '<tr '.$bc[$var].'>';
+			print "<tr $bc[$var]>";
 
 			$staticaction->type_code=$obj->code;
 			$staticaction->libelle=$obj->label;
 			$staticaction->id=$obj->id;
-			print '<td>'.$staticaction->getNomUrl(1,34).'</td>';
+                        $staticaction->type=$obj->type;
+                        $staticaction->note=$obj->note;
+			print '<td>'.$staticaction->getNomUrl(1,16).'</td>';
 
-            //print '<td>'.dol_trunc($obj->label,24).'</td>';
+                        print '<td>'.dol_trunc($obj->label,22).'</td>';
 
-			print '<td>';
-			if ($obj->rowid > 0)
-			{
-                $customerstatic->id=$obj->rowid;
-                $customerstatic->name=$obj->sname;
-                $customerstatic->client=$obj->client;
-			    print $customerstatic->getNomUrl(1,'',24);
-			}
-			print '</td>';
+			$customerstatic->id=$obj->rowid;
+			$customerstatic->nom=$obj->sname;
+			$customerstatic->client=$obj->client;
+			print '<td>'.$customerstatic->getNomUrl(1,'',24).'</td>';
 
 			// Date
 			print '<td width="100" align="right">'.dol_print_date($db->jdate($obj->da2),'day');
 			print "</td>";
 
 			// Statut
-			print "<td align=\"right\" width=\"14\">".$staticaction->LibStatut($obj->percent,3)."</td>\n";
+			print '<td align="right" width="14">'.$staticaction->LibStatut($obj->percent,3).'</td>';
 
 			print "</tr>\n";
 			$i++;
-		}
-		// TODO Ajouter rappel pour "il y a des contrats a mettre en service"
-		// TODO Ajouter rappel pour "il y a des contrats qui arrivent a expiration"
-		print "</table><br>";
-
+                    }
+                    // TODO Ajouter rappel pour "il y a des contrats a mettre en service"
+                    // TODO Ajouter rappel pour "il y a des contrats qui arrivent a expiration"
+                    print "</table><br>";
+                }
 		$db->free($resql);
 	}
 	else
@@ -352,10 +354,13 @@ function actions_prepare_head($action)
 	$head[$h][2] = 'card';
 	$h++;
 
+        if($conf->ecm->enabled)
+        {
 	$head[$h][0] = DOL_URL_ROOT.'/comm/action/document.php?id='.$action->id;
 	$head[$h][1] = $langs->trans('Documents');
 	$head[$h][2] = 'documents';
 	$h++;
+        }
 
 	$head[$h][0] = DOL_URL_ROOT.'/comm/action/info.php?id='.$action->id;
 	$head[$h][1] = $langs->trans('Info');
