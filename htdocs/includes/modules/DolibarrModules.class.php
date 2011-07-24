@@ -50,6 +50,9 @@ class DolibarrModules
     var $menu=array();
     //! Tableau des documents ???
     var $docs;
+    
+    //! Pack SaaS
+    var $cameleo=0;
 
     var $dbversion;
 

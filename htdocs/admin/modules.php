@@ -71,7 +71,7 @@ $_SESSION["mode"]=$mode;
 $help_url='EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
 llxHeader('',$langs->trans("Setup"),$help_url);
 
-print_fiche_titre($langs->trans("ModulesSetup"),'','setup');
+print_fiche_titre($langs->trans("ModulesSetup").(!empty($conf->file->main_cameleo_pack)?" (P".$conf->file->main_cameleo_pack.")":''),'','setup');
 
 
 // Search modules
@@ -123,14 +123,14 @@ foreach ($conf->file->dol_document_root as $dirroot)
 					if ($modulequalified)
 					{
 						$modules[$i] = $objMod;
-			            $filename[$i]= $modName;
-			            $orders[$i]  = $objMod->family."_".$j;   // Tri par famille puis numero module
+                                                $filename[$i]= $modName;
+                                                $orders[$i]  = $objMod->family."_".$j;   // Tri par famille puis numero module
 						//print "x".$modName." ".$orders[$i]."\n<br>";
 						if (isset($categ[$objMod->special])) $categ[$objMod->special]++;					// Array of all different modules categories
-			            else $categ[$objMod->special]=1;
+                                                else $categ[$objMod->special]=1;
 						$dirmod[$i] = $dirroot;
 						$j++;
-			            $i++;
+                                                $i++;
 					}
 					else dol_syslog("Module ".get_class($objMod)." not qualified");
 		        }
@@ -216,8 +216,8 @@ if ($mesg) print '<div class="error">'.$mesg.'</div>';
 if ($mode != 4)
 {
     print "<table summary=\"list_of_modules\" class=\"noborder\" width=\"100%\">\n";
-    //print "<tr class=\"liste_titre\">\n";
-    print '<tr class="liste_total">'."\n";
+    print "<tr class=\"liste_titre\">\n";
+    //print '<tr class="liste_total">'."\n";
     //print "  <td>".$langs->trans("Family")."</td>\n";
     print "  <td colspan=\"2\">".$langs->trans("Module")."</td>\n";
     print "  <td>".$langs->trans("Description")."</td>\n";
@@ -332,6 +332,8 @@ if ($mode != 4)
             // Version
             print "<td align=\"center\" valign=\"top\" nowrap=\"nowrap\">";
             print $objMod->getVersion();
+            if(!empty($conf->file->main_cameleo_pack))
+                print "_P".$objMod->cameleo;
             print "</td>\n";
 
             // Activate/Disable and Setup (2 columns)
@@ -406,11 +408,29 @@ if ($mode != 4)
                 {
                     // Ne devrait pas arriver.
                 }
-
-                // Module non actif
-               	print '<a href="modules.php?id='.$objMod->numero.'&amp;action=set&amp;value=' . $modName . '&amp;mode=' . $mode . '">';
-               	print img_picto($langs->trans("Disabled"),'off');
-               	print "</a></td>\n  <td>&nbsp;</td>\n";
+                
+                if(!empty($conf->file->main_cameleo_pack))
+                {
+                    if($conf->file->main_cameleo_pack >= $objMod->cameleo)
+                    {
+                        // Module non actif
+                    print '<a href="modules.php?id='.$objMod->numero.'&amp;action=set&amp;value=' . $modName . '&amp;mode=' . $mode . '">';
+                    print img_picto($langs->trans("Disabled"),'off');
+                    print "</a></td>\n  <td>&nbsp;</td>\n";
+                    }
+                    else
+                    {
+                        print $langs->trans("NotIncluded");
+                        print "<td>&nbsp;</td>";
+                    }
+                }
+                else
+                {
+                    // Module non actif
+                    print '<a href="modules.php?id='.$objMod->numero.'&amp;action=set&amp;value=' . $modName . '&amp;mode=' . $mode . '">';
+                    print img_picto($langs->trans("Disabled"),'off');
+                    print "</a></td>\n  <td>&nbsp;</td>\n";
+                }
             }
 
             print "</tr>\n";

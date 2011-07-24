@@ -49,15 +49,16 @@ class modMap extends DolibarrModules
 
         $this->family = "technic";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+	$this->name = preg_replace('/^mod/i','',get_class($this));
         $this->description = "Carthographie";
         $this->version = 'development';                        // 'experimental' or 'dolibarr' or version
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         $this->special = 0;
         $this->picto='globe';
+        $this->cameleo=1;
 
         // Data directories to create when module is enabled
-        $this->dirs = array("/map/temp");
+        $this->dirs = array();
 
         // Config pages
         //-------------
