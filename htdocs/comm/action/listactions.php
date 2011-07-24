@@ -3,6 +3,7 @@
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2010-2011 Herve Prot           <herve.prot@symeos.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -129,7 +130,7 @@ $sql = "SELECT s.nom as societe, s.rowid as socid, s.client,";
 $sql.= " a.id, a.datep as dp, a.datep2 as dp2,";
 //$sql.= " a.datea as da, a.datea2 as da2,";
 $sql.= " a.fk_contact, a.note, a.label, a.percent as percent,";
-$sql.= " c.code as acode, c.libelle,";
+$sql.= " c.code as acode, c.libelle, c.type, a.note,";
 $sql.= " ua.login as loginauthor, ua.rowid as useridauthor,";
 $sql.= " ut.login as logintodo, ut.rowid as useridtodo,";
 $sql.= " ud.login as logindone, ud.rowid as useriddone,";
@@ -217,8 +218,8 @@ if ($resql)
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"acode",$param,"","",$sortfield,$sortorder);
 	//print_liste_field_titre($langs->trans("Title"),$_SERVER["PHP_SELF"],"a.label",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DateStart"),$_SERVER["PHP_SELF"],"a.datep",$param,'','align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DateEnd"),$_SERVER["PHP_SELF"],"a.datep2",$param,'','align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("DateEchAction"),$_SERVER["PHP_SELF"],"a.datep",$param,'','align="center"',$sortfield,$sortorder);
+	//print_liste_field_titre($langs->trans("DateEnd"),$_SERVER["PHP_SELF"],"a.datep2",$param,'','align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Contact"),$_SERVER["PHP_SELF"],"a.fk_contact",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("ActionUserAsk"),$_SERVER["PHP_SELF"],"ua.login",$param,"","",$sortfield,$sortorder);
@@ -241,11 +242,13 @@ if ($resql)
 		print "<tr $bc[$var]>";
 
 		// Action (type)
-		print '<td>';
+		print '<td width="20%">';
 		$actionstatic->id=$obj->id;
 		$actionstatic->type_code=$obj->acode;
+                $actionstatic->note=$obj->note;
 		$actionstatic->libelle=$obj->label;
-		print $actionstatic->getNomUrl(1,28);
+                $actionstatic->type=$obj->type;
+		print $actionstatic->getNomUrl(1,24);
 		print '</td>';
 
 		// Titre
@@ -253,10 +256,10 @@ if ($resql)
 		//print dol_trunc($obj->label,12);
 		//print '</td>';
 
-		print '<td align="center" nowrap="nowrap">';
+		print '<td width="15%" align="center" nowrap="nowrap">';
 		print dol_print_date($db->jdate($obj->dp),"day");
 		$late=0;
-		if ($obj->percent == 0 && $obj->dp && $db->jdate($obj->dp) < ($now - $delay_warning)) $late=1;
+		if ($obj->percent <= 0 && $obj->dp && $db->jdate($obj->dp) < ($now - $delay_warning)) $late=1;
 		if ($obj->percent == 0 && ! $obj->dp && $obj->dp2 && $db->jdate($obj->dp) < ($now - $delay_warning)) $late=1;
 		if ($obj->percent > 0 && $obj->percent < 100 && $obj->dp2 && $db->jdate($obj->dp2) < ($now - $delay_warning)) $late=1;
 		if ($obj->percent > 0 && $obj->percent < 100 && ! $obj->dp2 && $obj->dp && $db->jdate($obj->dp) < ($now - $delay_warning)) $late=1;
@@ -268,25 +271,25 @@ if ($resql)
 		print '</td>';
 
 		// Third party
-		print '<td>';
+		print '<td width="15%">';
 		if ($obj->socid)
 		{
 			$societestatic->id=$obj->socid;
 			$societestatic->client=$obj->client;
 			$societestatic->nom=$obj->societe;
-			print $societestatic->getNomUrl(1,'',10);
+			print $societestatic->getNomUrl(1,'',15);
 		}
 		else print '&nbsp;';
 		print '</td>';
 
 		// Contact
-		print '<td>';
+		print '<td width="15%">';
 		if ($obj->fk_contact > 0)
 		{
 			$contactstatic->name=$obj->name;
 			$contactstatic->firstname=$obj->firstname;
 			$contactstatic->id=$obj->fk_contact;
-			print $contactstatic->getNomUrl(1,'',10);
+			print $contactstatic->getNomUrl(1,'',15);
 		}
 		else
 		{
