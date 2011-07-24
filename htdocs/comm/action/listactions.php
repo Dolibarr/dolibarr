@@ -266,9 +266,10 @@ if ($resql)
 		if ($late) print img_warning($langs->trans("Late")).' ';
 		print '</td>';
 
-		print '<td align="center" nowrap="nowrap">';
-		print dol_print_date($db->jdate($obj->dp2),"day");
-		print '</td>';
+                //date end
+		//print '<td align="center" nowrap="nowrap">';
+		//print dol_print_date($db->jdate($obj->dp2),"day");
+		//print '</td>';
 
 		// Third party
 		print '<td width="15%">';
