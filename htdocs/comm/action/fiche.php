@@ -390,7 +390,7 @@ if ($action == 'update')
 		//$actioncomm->dateend     = $datea2;
 		$actioncomm->percentage  = $_POST["percentage"];
 		$actioncomm->priority    = $_POST["priority"];
-        $actioncomm->fulldayevent= $_POST["fullday"]?1:0;
+                $actioncomm->fulldayevent= $_POST["fullday"]?1:0;
 		$actioncomm->location    = isset($_POST["location"])?$_POST["location"]:'';
 		$actioncomm->societe->id = $_POST["socid"];
 		$actioncomm->contact->id = $_POST["contactid"];
@@ -567,8 +567,6 @@ if ($action == 'create')
                                 $("#jqstart").hide();
                                 $("#jqend").css("display","none");
                                 $("#jqloc").css("display","none");
-                                $(".fulldaystarthour").hide();
-                                $(".fulldaystartmin").hide();
                                 $(".fulldayendhour").hide();
                                 $(".fulldayendmin").hide();
                                 jQuery(".fulldaystartmin").val("00");
@@ -857,7 +855,7 @@ if ($id)
 	 */
 
 	$head=actions_prepare_head($act);
-	dol_fiche_head($head, 'card', $langs->trans("Action"),0,'action');
+	dol_fiche_head($head, 'card', $langs->trans("Actions"),0,'action');
 
 	$now=dol_now();
 	$delay_warning=$conf->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;
