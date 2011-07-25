@@ -4,54 +4,5 @@ Standards-Version: 3.9.1
 Section: web
 Priority: optional
 Homepage: http://www.dolibarr.org
-Build-Depends: debhelper (>= 7), po-debconf
-
-Package: dolibarr
-Depends: libapache2-mod-php5 | libapache2-mod-php5filter | php5-cgi | php5-fpm | php5,
-    php5-mysql | php5-mysqli, 
-    php5-cli, php5-cgi, php5-curl, php5-gd, php5-ldap, php-pear, php-mail-mime,
-    ${misc:Depends}, xdg-utils,
-    mysql-server, perl
-Recommends: apache2 | lighttpd | httpd, mysql-client
-Suggests: www-browser
 Architecture: all
-Section: web
-Priority: optional
-Homepage: http://www.dolibarr.org
-Description: Easy to use web based ERP & CRM software
- Dolibarr ERP & CRM is an easy to use open source/free software for small 
- and medium companies, foundations or freelances. It includes different 
- features for Enterprise Resource Planning (ERP) and Customer Relationship
- Management (CRM) but also for different other activities.
- It's a web software you can install as a standalone program or on any web
- hosting provider to use it from anywhere with any web browser.
- Dolibarr was designed to provide only features you need and be easy to use.
- .
- Only features you need are visible, depending on which module were activated.
- Most common used modules are:
- .
- Customers, Suppliers or Prospects directory,
- Contacts directory,
- Orders management,
- Commercial proposals management,
- Invoices management,
- Products and services catalog,
- Stock management,
- Foundations members management,
- Bank accounts management,
- Point of Sale,
- Payments management,
- Commercial actions management,
- Contracts management,
- Standing orders management,
- Shipping management,
- Donations management,
- Bookmarks management,
- Mass Emailings,
- Reports,
- Wizards to export and import data,
- LDAP connectivity,
- PDF exports,
- And a lot of more modules...
- .
- You can also add third parties external modules or develop yours.
+Build-Depends: debhelper
