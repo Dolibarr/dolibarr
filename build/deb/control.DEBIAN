@@ -1,4 +1,5 @@
 Package: dolibarr
+Source: dolibarr
 Version: __VERSION__
 Architecture: all
 Maintainer: Laurent Destailleur <eldy@users.sourceforge.net>
