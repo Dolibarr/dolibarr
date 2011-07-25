@@ -20,7 +20,7 @@
 /**
  *   \file       htdocs/admin/boxes.php
  *   \brief      Page to setup boxes
- *   \version    $Id: boxes.php,v 1.73 2011/08/01 13:26:22 hregis Exp $
+ *   \version    $Id: boxes.php,v 1.72 2011/07/31 22:23:22 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -278,7 +278,7 @@ if ($resql)
 		{
 			$boxname = $regs[1];
 			$module = $regs[2];
-			$sourcefile = "/".$module."/includes/boxes/".$boxname.".php";
+			$sourcefile = "/".$module."/inc/boxes/".$boxname.".php";
 		}
 		else
 		{
@@ -394,7 +394,7 @@ if ($resql)
 		{
 			$boxname = $regs[1];
 			$module = $regs[2];
-			$sourcefile = "/".$module."/includes/boxes/".$boxname.".php";
+			$sourcefile = "/".$module."/inc/boxes/".$boxname.".php";
 		}
 		else
 		{
@@ -470,5 +470,5 @@ print '</table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/01 13:26:22 $ - $Revision: 1.73 $');
+llxFooter('$Date: 2011/07/31 22:23:22 $ - $Revision: 1.72 $');
 ?>

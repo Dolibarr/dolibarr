@@ -13,13 +13,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**	    \file       htdocs/bookmarks/admin/bookmark.php
  *		\ingroup    bookmark
  *		\brief      Page to setup bookmark module
- *		\version    $Id: bookmark.php,v 1.3 2011/08/03 00:45:46 eldy Exp $
+ *		\version    $Id$
  */
 
 require("../../main.inc.php");
@@ -83,5 +84,5 @@ print '</table></form>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:45:46 $ - $Revision: 1.3 $');
+llxFooter('$Date$ - $Revision$');
 ?>
