@@ -4,4 +4,5 @@ Standards-Version: 3.9.1
 Section: web
 Priority: optional
 Homepage: http://www.dolibarr.org
-Build-Depends:
+Architecture: all
+Build-Depends: debhelper
