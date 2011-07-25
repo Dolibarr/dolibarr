@@ -4,7 +4,7 @@ Version: __VERSION__
 Architecture: all
 Maintainer: Laurent Destailleur <eldy@users.sourceforge.net>
 Installed-Size: 61200
-Depends: debconf, apache2, libapache2-mod-php5, php5, php5-cli, php5-cgi, php5-curl, php5-gd, php5-ldap, php5-mysql, php-pear, php-mail-mime, mysql-server, perl
+Depends: debconf, xdg-utils, apache2, libapache2-mod-php5, php5, php5-cli, php5-cgi, php5-curl, php5-gd, php5-ldap, php5-mysql, php-pear, php-mail-mime, mysql-server, perl
 Section: web
 Priority: optional
 Recommends: firefox
