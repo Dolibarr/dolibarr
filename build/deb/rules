@@ -1,10 +1,8 @@
 #!/usr/bin/make -f
 
-# Uncomment this to turn on verbose mode.
-export DH_VERBOSE=1
-export DH_OPTIONS=-v
+# This is the debhelper compatability version to use.
+#export DH_COMPAT=7    # Now defined into compat file
 
-#export DH_COMPAT=7    # This is the debhelper compatability version to use, now defined into compat file
 
 %:
-	dh $@
+    dh $@

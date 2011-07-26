@@ -22,7 +22,7 @@
 /**
  *	\file       htdocs/install/upgrade2.php
  *	\brief      Upgrade some data
- *	\version    $Id: upgrade2.php,v 1.186 2011/07/28 15:30:27 eldy Exp $
+ *	\version    $Id: upgrade2.php,v 1.182 2011/07/27 17:34:43 eldy Exp $
  */
 
 include_once('./inc.php');
@@ -306,7 +306,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
             // Reload menus
             migrate_reload_menu($db,$langs,$conf,$versionto);
 
-	    print '<tr><td colspan="4"><br>'.$langs->trans("MigrationFinished").'</td></tr>';
+            print $langs->trans("MigrationFinished");
         }
 
         // Script for VX (X<3.1) -> V3.1
@@ -324,7 +324,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
             // Reload menus
             migrate_reload_menu($db,$langs,$conf,$versionto);
 
-            print '<tr><td colspan="4"><br>'.$langs->trans("MigrationFinished").'</td></tr>';
+            print $langs->trans("MigrationFinished");
         }
 
         // On commit dans tous les cas.
@@ -3176,18 +3176,12 @@ function migrate_delete_old_files($db,$langs,$conf)
     DOL_DOCUMENT_ROOT.'/includes/modules/modProduit.class.php',
     DOL_DOCUMENT_ROOT.'/phenix/inc/triggers/interface_modPhenix_Phenixsynchro.class.php',
     DOL_DOCUMENT_ROOT.'/webcalendar/inc/triggers/interface_modWebcalendar_webcalsynchro.class.php',
-    DOL_DOCUMENT_ROOT.'/includes/triggers/interface_modWebcalendar_Webcalsynchro.class.php',
     DOL_DOCUMENT_ROOT.'/includes/triggers/interface_modCommande_Ecotax.class.php',
     DOL_DOCUMENT_ROOT.'/includes/triggers/interface_modCommande_fraisport.class.php',
     DOL_DOCUMENT_ROOT.'/includes/triggers/interface_modPropale_PropalWorkflow.class.php',
-    DOL_DOCUMENT_ROOT.'/includes/menus/smartphone/iphone.lib.php',
-    DOL_DOCUMENT_ROOT.'/includes/menus/smartphone/iphone_backoffice.php',
-    DOL_DOCUMENT_ROOT.'/includes/menus/smartphone/iphone_frontoffice.php',
     DOL_DOCUMENT_ROOT.'/includes/modules/mailings/dolibarr_services_expired.modules.php',
     DOL_DOCUMENT_ROOT.'/includes/modules/mailings/poire.modules.php',
-    DOL_DOCUMENT_ROOT.'/includes/modules/mailings/kiwi.modules.php',
-    DOL_DOCUMENT_ROOT.'/includes/modules/facture/pdf_crabe.modules.php',
-    DOL_DOCUMENT_ROOT.'/includes/modules/facture/pdf_oursin.modules.php'
+    DOL_DOCUMENT_ROOT.'/includes/modules/mailings/kiwi.modules.php'
     );
 
     foreach ($filetodeletearray as $filetodelete)
