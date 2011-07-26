@@ -22,7 +22,7 @@
  *       \file       htdocs/compta/bank/rappro.php
  *       \ingroup    banque
  *       \brief      Page to reconciliate bank transactions
- *       \version    $Id: rappro.php,v 1.67 2011/07/26 23:16:47 eldy Exp $
+ *       \version    $Id: rappro.php,v 1.66 2011/07/20 19:03:31 eldy Exp $
  */
 
 require("./pre.inc.php");
@@ -162,7 +162,7 @@ if ($resql)
         $numr=$db->num_rows($resqlr);
         $i=0;
         while (($i < $numr) && ($i < $nbmax))
-        {
+        {print $sql;
             $objr = $db->fetch_object($resqlr);
             $last_releve = $objr->num_releve;
             $i++;
@@ -403,5 +403,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/26 23:16:47 $ - $Revision: 1.67 $');
+llxFooter('$Date: 2011/07/20 19:03:31 $ - $Revision: 1.66 $');
 ?>

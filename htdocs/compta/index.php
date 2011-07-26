@@ -22,7 +22,7 @@
  *	\file       htdocs/compta/index.php
  *	\ingroup    compta
  *	\brief      Main page of accountancy area
- *	\version    $Id: index.php,v 1.183 2011/07/26 23:11:52 eldy Exp $
+ *	\version    $Id: index.php,v 1.182 2011/06/30 21:53:02 eldy Exp $
  */
 
 require('../main.inc.php');
@@ -100,7 +100,12 @@ print_fiche_titre($langs->trans("AccountancyTreasuryArea"));
 print '<table border="0" width="100%" class="notopnoleftnoright">';
 
 print '<tr>';
-print '<td valign="top" width="30%" class="notopnoleft">';
+
+if (($conf->facture->enabled && $user->rights->facture->lire) ||
+    ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire))
+{
+	print '<td valign="top" width="30%" class="notopnoleft">';
+}
 
 $max=3;
 
@@ -316,8 +321,16 @@ if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
 	}
 }
 
-print '</td>';
-print '<td valign="top" width="70%" class="notopnoleftnoright">';
+if (($conf->facture->enabled && $user->rights->facture->lire) ||
+    ($conf->fournisseur->enabled && $user->rights->fournisseur->lire))
+{
+	print '</td>';
+	print '<td valign="top" width="70%" class="notopnoleftnoright">';
+}
+else
+{
+	print '<td valign="top" width="100%" class="notopnoleftnoright">';
+}
 
 // Last modified customer invoices
 if ($conf->facture->enabled && $user->rights->facture->lire)
@@ -1032,5 +1045,5 @@ print '</table>';
 $db->close();
 
 
-llxFooter('$Date: 2011/07/26 23:11:52 $ - $Revision: 1.183 $');
+llxFooter('$Date: 2011/06/30 21:53:02 $ - $Revision: 1.182 $');
 ?>
