@@ -79,6 +79,60 @@ class modTeam extends DolibarrModules
         // Menu
         //------------
 	// voir menu dans le module lead (Problème avec l'ajout de menu dans les menus de gauche : attente de correction de bug pour remodifier
+        // Menu
+		$this->menu = array();			// List of menus to add
+		$r=0;
+		$this->menu[$r]=array(	'fk_menu' => 0,			// Put 0 if this is a top menu
+			'type'=>'top',			// This is a Top menu entry
+			'titre'=>'Team',
+			'mainmenu'=>'team',
+			'leftmenu'=>'1',
+			'url'=>'/team/index.php',
+			'langs'=>'comm',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'position'=>5,
+			'enabled'=>'1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
+			'perms'=>'$user->rights->team->read',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+			'target'=>'',
+			'user'=>0);				// 0=Menu for internal users, 1=external users, 2=both
+		$r++;
+
+		$this->menu[$r]=array(	'fk_menu'=>'r=0',
+			'type'=>'left',	
+			'titre'=>'Leads',
+			'mainmenu'=>'team',
+			'url'=>'/lead/index.php?mode=mine',
+			'langs'=>'lead@lead',
+			'position'=>1,
+			'enabled'=>'1',
+			'perms'=>'$user->rights->lead->lire',
+			'target'=>'',
+			'user'=>0);
+		$r++;
+		$this->menu[$r]=array(	'fk_menu'=>'r=1',
+			'type'=>'left',	
+			'titre'=>'AddLead',
+			'mainmenu'=>'team',
+			'url'=>'/lead/fiche.php?action=create',
+			'langs'=>'lead@lead',
+			'position'=>2,
+			'enabled'=>'1',
+			'perms'=>'$user->rights->lead->creer',
+			'target'=>'',
+			'user'=>0);
+		$r++;
+		$this->menu[$r]=array(	'fk_menu'=>'r=1',
+			'type'=>'left',	
+			'titre'=>'List',
+			'mainmenu'=>'team',
+			'url'=>'/lead/liste.php',
+			'langs'=>'lead@lead',
+			'position'=>5,
+			'enabled'=>'1',
+			'perms'=>'$user->rights->lead->all',
+			'target'=>'',
+			'user'=>0);
+		$r++;
+
 
         // Permissions
         //------------
