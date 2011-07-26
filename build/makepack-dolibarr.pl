@@ -2,7 +2,7 @@
 #----------------------------------------------------------------------------
 # \file         build/makepack-dolibarr.pl
 # \brief        Dolibarr package builder (tgz, zip, rpm, deb, exe, aps)
-# \version      $Id: makepack-dolibarr.pl,v 1.113 2011/07/22 16:40:18 eldy Exp $
+# \version      $Id: makepack-dolibarr.pl,v 1.114 2011/07/25 23:20:14 eldy Exp $
 # \author       (c)2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
 #----------------------------------------------------------------------------
 
@@ -48,7 +48,7 @@ if (-d "/usr/src/RPM") {
 
 
 use vars qw/ $REVISION $VERSION /;
-$REVISION='$Revision: 1.113 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
+$REVISION='$Revision: 1.114 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
 $VERSION="1.0 (build $REVISION)";
 
 
@@ -590,12 +590,15 @@ if ($nboftargetok) {
             # Creation of source package
             print "Create directory $BUILDROOT/$PROJECT.tmp/debian\n";
             $ret=`mkdir "$BUILDROOT/$PROJECT.tmp/debian"`;
+            $ret=`mkdir "$BUILDROOT/$PROJECT.tmp/debian/source"`;
             $ret=`rm -fr "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
             print "Copy $SOURCE/build/deb/xxx to $BUILDROOT/$PROJECT.tmp/debian\n";
             $ret=`cp -f "$SOURCE/build/deb/changelog"      "$BUILDROOT/$PROJECT.tmp/debian/changelog"`;
             $ret=`cp -f "$SOURCE/build/deb/control.debian" "$BUILDROOT/$PROJECT.tmp/debian/control"`;
             $ret=`cp -f "$SOURCE/build/deb/rules"          "$BUILDROOT/$PROJECT.tmp/debian/rules"`;
             $ret=`cp -f "$SOURCE/build/deb/copyright"      "$BUILDROOT/$PROJECT.tmp/debian/copyright"`;
+            $ret=`cp -f "$SOURCE/build/deb/compat"         "$BUILDROOT/$PROJECT.tmp/debian/compat"`;
+            $ret=`cp -f "$SOURCE/build/deb/format"         "$BUILDROOT/$PROJECT.tmp/debian/source/format"`;
             #$ret=`cp -f "$SOURCE/build/deb/postinst"       "$BUILDROOT/$PROJECT.tmp/debian"`;
             #$ret=`cp -f "$SOURCE/build/deb/postrm"         "$BUILDROOT/$PROJECT.tmp/debian"`;
             #$ret=`cp -f "$SOURCE/build/deb/templates"      "$BUILDROOT/$PROJECT.tmp/debian"`;
