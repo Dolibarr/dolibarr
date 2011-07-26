@@ -48,7 +48,7 @@ AutoReqProv: no
 
 
 %description
-Dolibarr ERP & CRM is an easy to use open source/free software for small  
+An easy to use CRM & ERP open source/free software for small  
 and medium companies, foundations or freelances. It includes different 
 features for Enterprise Resource Planning (ERP) and Customer Relationship 
 Management (CRM) but also for different other activities.
@@ -56,7 +56,7 @@ Dolibarr was designed to provide only features you need and be easy to
 use.
 
 %description -l es
-Dolibarr ERP y CRM es un software open source/gratis para pequeñas y
+Un software ERP y CRM open source/gratis para pequeñas y
 medianas empresas, asociaciones o autónomos. Incluye diferentes
 funcionalidades para la Planificación de Recursos Empresariales (ERP) y
 Gestión de la Relación con los Clientes (CRM) así como para para otras
@@ -65,13 +65,13 @@ solamente las funcionalidades que necesita y haciendo hincapié en su
 facilidad de uso.
     
 %description -l fr
-Dolibarr ERP & CRM est un logiciel de gestion de PME/PMI, autoentrepreneurs, 
+Logiciel ERP & CRM de gestion de PME/PMI, autoentrepreneurs, 
 artisans ou associations. Il permet de gérer vos clients, prospect, 
 fournisseurs, devis, factures, comptes bancaires, agenda, campagne emailings
 et bien d'autres choses dans une interface pensée pour la simplicité.
 
 %description -l it
-Dolibarr è un programma gestionale open source e gratuito per piccole e medie
+Un programma gestionale open source e gratuito per piccole e medie
 imprese, fondazioni e liberi professionisti. Include varie funzionalità per
 Enterprise Resource Planning e gestione dei clienti (CRM), ma anche ulteriori
 attività. Dolibar è progettato per poter fornire solo ciò di cui hai bisogno 
@@ -101,6 +101,7 @@ mkdir -p $RPM_BUILD_ROOT/var/www/dolibarr/doc
 mkdir -p $RPM_BUILD_ROOT/var/www/dolibarr/htdocs
 mkdir -p $RPM_BUILD_ROOT/var/www/dolibarr/scripts
 
+# %{_datadir} = /usr/share
 mkdir -p $RPM_BUILD_ROOT%{_datadir}/pixmaps
 cp doc/images/dolibarr_48x48.png $RPM_BUILD_ROOT%{_datadir}/pixmaps/dolibarr.png
 mkdir -p $RPM_BUILD_ROOT%{_datadir}/applications
@@ -153,6 +154,8 @@ export installfileorig="$targetdir/build/rpm/install.forced.php.install"
 export installconfig="%{_sysconfdir}/dolibarr/install.forced.php"
 export apachefileorig="$targetdir/build/rpm/httpd-dolibarr.conf"
 export apacheconfig="%{_sysconfdir}/dolibarr/apache.conf"
+export sefileorig="$targetdir/build/rpm/file_contexts.dolibarr"
+export seconfig="%{_sysconfdir}/selinux/targeted/contexts/files/file_contexts.dolibarr"
 #config="/usr/share/dolibarr/htdocs/conf/conf.php"
 config="%{_sysconfdir}/dolibarr/conf.php"
 lockfile="/usr/share/dolibarr/install.lock"
@@ -218,7 +221,7 @@ then
 	chmod -R 660 $config
 fi
 
-# Create a config file $apacheconfig
+# Create config file for apache $apacheconfig
 if [ ! -f $apacheconfig ]; then
   	 echo Create dolibarr web server config file $apacheconfig
      cp $apachefileorig $apacheconfig
@@ -226,7 +229,15 @@ if [ ! -f $apacheconfig ]; then
      chmod go-w $apacheconfig
 fi
 
-# Create a config link dolibarr.conf for Fedora or Redhat
+# Create config file for se $seconfig
+if [ ! -f $seconfig ]; then
+  	 echo Create se config file $seconfig
+     cp $sefileorig $seconfig
+#     chmod a-x $apacheconfig
+#     chmod go-w $apacheconfig
+fi
+
+# Create a config link dolibarr.conf
 if [ ! -f $apachelink ]; then
     echo Create dolibarr web server config link $apachelink
     ln -fs $apacheconfig $apachelink
@@ -355,7 +366,9 @@ echo Removed remaining $lockfile
 rm -f $lockfile
 echo Removed remaining dir $targetdir/doc
 rmdir $targetdir/doc >/dev/null 2>&1
-echo Removed remaining dir $targetdir/htdocs
-rmdir $targetdir/htdocs >/dev/null 2>&1
+#echo Removed remaining dir $targetdir/htdocs
+#rmdir $targetdir/htdocs >/dev/null 2>&1	# Already removed by rpm
 
 %changelog
+* Wed Jul 31 2011 Laurent Destailleur 3.1.0-0.2.beta1
+- Initial version (#723326)
