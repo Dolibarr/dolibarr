@@ -27,7 +27,7 @@
  *      \file       htdocs/includes/modules/modMyModule.class.php
  *      \ingroup    mymodule
  *      \brief      Description and activation file for module MyModule
- *		\version	$Id: modMyModule.class.php,v 1.67 2011/08/01 13:26:21 hregis Exp $
+ *		\version	$Id: modMyModule.class.php,v 1.66 2011/07/31 22:21:58 eldy Exp $
  */
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
@@ -72,7 +72,7 @@ class modMyModule extends DolibarrModules
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
 		$this->picto='generic';
 
-		// Defined if the directory /mymodule/includes/triggers/ contains triggers or not
+		// Defined if the directory /mymodule/inc/triggers/ contains triggers or not
 		$this->triggers = 0;
 
 		// Data directories to create when module is enabled.

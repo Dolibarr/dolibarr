@@ -5,24 +5,17 @@ RPM Package tools
 
 This directory contains files used by makepack-dolibarr.pl
 script to build a package, ready to be distributed,
-with format RPM (for Redhat, OpenSuse, Mandriva, ...).
+with format RPM (for Redhat, Mandriva, ...).
 
 
-# This is standard command to work on RPM packaging:
-#
-# yum -y install rpmlint
-# yum -y install hunspell-en hunspell-es hunspell-fr hunspell-it
+# This is standard command to work on Debian packaging:
 #
 # rpmlint file.rpm				    Test a package
-# mock -r fedora-15-i386 --rebuild ../SRPMS/hello-2.7-1.fc15.src.rpm
 #
 # On Fedora
 # rpm -i --test dolibarr-...rpm     To list dependencies of RPM   
 # yum install dolibarr-...rpm       To install package and dependencies   
-# yum erase dolibarr                To remove package
-# chcon -R -h -t httpd_sys_script_rw_t /file					To add temporary context rw for httpd on /file    
-# semanage fcontext -a -t httpd_sys_script_rw_t "/dir/(.*)?" 	To add persistent context rw for httpd on /dir (this add file_contexts.local)
-# restorecon -R -v /file			Restore values into files (cancel chcon, validate semanage)    
+# yum erase dolibarr                To remove package   
 #
 # On OpenSuse
 # yast --install dolibarr-...rpm    To install package and dependencies
