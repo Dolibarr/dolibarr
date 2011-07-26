@@ -10,6 +10,8 @@ with format RPM (for Redhat, Mandriva, ...).
 
 # This is standard command to work on Debian packaging:
 #
+# rpmlint file.rpm				    Test a package
+#
 # On Fedora
 # rpm -i --test dolibarr-...rpm     To list dependencies of RPM   
 # yum install dolibarr-...rpm       To install package and dependencies   
@@ -40,7 +42,9 @@ different features for Enterprise Resource Planning (ERP) and Customer
 Relationship Management (CRM) but also for different other activities.
 I am author of other already packaged OpenSources packages (awstats) but this
 is my first package to maintain myself. So i'm seeking a sponsor.
-
 - Edit field "Block" and add FE-NEEDSPONSOR
-
-- Check bug is into database by searching with id on https://bugzilla.redhat.com/  
+- Check bug is into database by searching with id on https://bugzilla.redhat.com/
+- Install fedora packager tools: yum install fedora-packager
+- Setup fedora packagers tools: fedora-packager-setup
+- Send your package: koji build --scratch f16 path_to_source_RPM
+- Check if package is available: http://koji.fedoraproject.org/koji/  
