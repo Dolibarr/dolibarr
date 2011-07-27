@@ -14,14 +14,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *       \file       htdocs/comm/mailing/index.php
  *       \ingroup    mailing
  *       \brief      Page accueil de la zone mailing
- *       \version    $Id: index.php,v 1.37 2011/08/03 00:46:33 eldy Exp $
+ *       \version    $Id$
  */
 
 require("../../main.inc.php");
@@ -215,6 +216,6 @@ if ($langs->file_exists("html/spam.html",0)) {
  }
 
 
-llxFooter('$Date: 2011/08/03 00:46:33 $ - $Revision: 1.37 $');
+llxFooter('$Date$ - $Revision$');
 
 ?>
