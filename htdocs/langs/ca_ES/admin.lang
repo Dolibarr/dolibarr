@@ -1246,9 +1246,9 @@ ClickToDialDesc=Aquest mòdul permet afegir una icona després del número de te
 CashDesk=TPV
 CashDeskSetup=Mòdul de configuració Terminal Punt de Venda
 CashDeskThirdPartyForSell=Tercer genéric a utilitzar per a les vendes
-CashDeskBankAccountForSell=Compte per defecte a utilitzar per als cobraments en efectiu (caixa)
-CashDeskBankAccountForCheque=Compte per defecte a utilitzar per als cobraments amb xecs
-CashDeskBankAccountForCB=Compte per defecte a utilitzar per als cobraments amb targeta de crèdit
+CashDeskBankAccountForSell=Compte a utilitzar per als cobraments en efectiu (caixa)
+CashDeskBankAccountForCheque=Compte a utilitzar per als cobraments amb xecs
+CashDeskBankAccountForCB=Compte a utilitzar per als cobraments amb targeta de crèdit
 CashDeskIdWareHouse=Magatzem a ultilitzar per a les vendes
 ##### Bookmark #####
 BookmarkSetup=Configuració del mòdul Bookmark
