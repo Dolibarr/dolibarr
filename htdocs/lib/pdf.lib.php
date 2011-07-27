@@ -25,7 +25,7 @@
  *	\file       htdocs/lib/pdf.lib.php
  *	\brief      Set of functions used for PDF generation
  *	\ingroup    core
- *	\version    $Id: pdf.lib.php,v 1.97 2011/07/20 13:32:25 eldy Exp $
+ *	\version    $Id: pdf.lib.php,v 1.98 2011/07/27 17:28:42 eldy Exp $
  */
 
 
@@ -635,7 +635,8 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
     if (pdf_getPDFFont($outputlangs) == 'Helvetica')
     {
         $pdf->SetXY(-20,-$posy);
-        $pdf->MultiCell(11, 2, $pdf->PageNo().'/{nb}', 0, 'R', 0);
+        $pdf->MultiCell(11, 2, $pdf->PageNo().'/'.$pdf->getAliasNbPages(), 0, 'R', 0);
+        //print 'xxx'.$pdf->getAliasNbPages().'-'.$pdf->getAliasNumPage();exit;
     }
 }
 
