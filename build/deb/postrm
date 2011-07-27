@@ -23,13 +23,12 @@ db_version 2.0
 
 echo Run the dolibarr postrm script
 
-#echo "postrm db_get dolibarr/webserver"
-# We disable set -e to avoid premature end of script if error
-set +e
-#db_get "dolibarr/webserver" || true
-set -e
-export webserver="$RET"
 
+docdir='/var/lib/dolibarr/documents'
+#docdir='/usr/share/dolibarr/documents'
+
+
+export webserver=""
 # Allows us to loop and substitute in one pass
 case $webserver in
 	Apache)		webservers="apache2" ;;
@@ -38,6 +37,7 @@ case $webserver in
 	*)		    webservers="apache2 apache2-ssl" ;;
 esac
 export includefile=/etc/dolibarr/apache.conf
+
 
 case "$1" in
     # Call when we uninstall and purge
@@ -139,21 +139,25 @@ case "$1" in
 			log="${log}Database $dbname already not exists."
 		    fi
 
+		    echo "Remove directory $docdir"
+		    rm -rf $docdir ; 
+ 
 		else
-			echo "postrm Delete of dolibarr database not wanted" 
+			echo "postrm Delete of dolibarr database and uploaded files not wanted" 
 		fi
 	
 		# Remove include files
+		export restart=""
 		for server in $webservers ; do
-			# New usage
 			export conffile="/etc/$server/conf.d/dolibarr.conf"
             if [ -f $conffile ] ;
             then
+               echo Delete file $conffile
 	           rm -f $conffile
 	           status=purge
 		    fi
 			
-			if [ "$status" = "purge" ] ;
+			if [ "x$status" = "xpurge" ] ;
 				then restart="$restart $server"
 			fi
 		done
@@ -161,7 +165,7 @@ case "$1" in
 		rm -rf /etc/dolibarr
 
 		# Restart servers
-		for server in $servers ; do
+		for server in $restart ; do
             # We disable blocking errors
             set +e
             echo "Restart server $server if exists"
@@ -175,7 +179,7 @@ case "$1" in
 		done
 		
 		# Remove file and conf file
-		for dir in /usr/share/dolibarr ; do
+		for dir in /usr/share/dolibarr; do
 			if [ -d $dir ] ; then 
                 # We disable blocking errors
                 set +e
@@ -190,8 +194,8 @@ case "$1" in
         set +e
 		db_reset "dolibarr/postrm"
         set -e
-        
-		db_purge
+
+		#db_purge
 	;;
 
     # Call when we uninstall
@@ -201,17 +205,22 @@ case "$1" in
 
         echo "postrm Force remove of /usr/share/dolibarr/htdocs/conf"
         rm -fr /usr/share/dolibarr/htdocs/conf
-
-		#echo "postrm Remove menu entry and image"
-		#fileorig="/usr/share/applications/dolibarr.desktop"
-		#rm -f $fileorig
-		#fileorig="/usr/share/pixmaps/dolibarr.xpm"
-		#rm -f $fileorig
-		# Not sure this is usefull
-        #if test -x /usr/bin/update-menus; then 
-        #   echo "update-menus"
-        #   update-menus;
-        #fi
+        
+		# Remove include files
+		export restart=""
+		for server in $webservers ; do
+			export conffile="/etc/$server/conf.d/dolibarr.conf"
+            if [ -f $conffile ] ;
+            then
+               echo Delete file $conffile
+	           rm -f $conffile
+	           status=purge
+		    fi
+			
+			if [ "x$status" = "xpurge" ] ;
+				then restart="$restart $server"
+			fi
+		done
 	;;
 
 	upgrade)
@@ -226,8 +235,8 @@ case "$1" in
 	;;
 esac
 
-db_stop
-
 #DEBHELPER#
+
+db_stop
 
 exit 0
