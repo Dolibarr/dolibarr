@@ -1,0 +1,30 @@
+# Dolibarr po templates
+# Copyright (C) 2011
+# This file is distributed under the same license as the PACKAGE package.
+# Laurent Destailleur <eldy@users.sourceforge.net>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: isc-dhcp@packages.debian.org\n"
+"POT-Creation-Date: 2010-07-07 18:58-0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+	
+#
+#. Description
+#: ../templates:dolibarr/postrm
+msgid ""
+"Delete database and uploaded files ?"
+msgstr ""
+
+#
+#. Description
+#: ../templates:dolibarr/postrm
+msgid ""
+"Answer if you want to removed the Dolibarr MySQL database and all other datas (datas related to this question are the Dolibarr DBMS account, all Dolibarr tables, and all uploaded files)."
+msgstr ""
