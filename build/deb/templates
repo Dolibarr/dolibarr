@@ -1,7 +1,7 @@
 Template: dolibarr/postrm
 Type: boolean
 Default: true
-Description: Delete database and uploaded files ?
+Description: Delete database ?
  Answer if you want to removed the Dolibarr MySQL database and all
- other datas (datas related to this question are the Dolibarr DBMS 
- account, all Dolibarr tables, and all uploaded files).
+ its datas (datas related to this quetion are the Dolibarr DBMS account
+ and all Dolibarr tables).
