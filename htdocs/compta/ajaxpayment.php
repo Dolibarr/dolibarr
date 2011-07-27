@@ -35,49 +35,74 @@ if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1'); // If we don't nee
 
 require('../main.inc.php');
 
-//print_r($_POST);
+$langs->Load('compta');
+
+//init var
+$amountPayment = $_POST['amountPayment'];
+$amounts = $_POST['amounts'];				// from text inputs : invoice amount payment (check required)
+$remains = $_POST['remains'];				// from dolibarr's object (no need to check)
+$currentInvId = $_POST['imgClicked'];		// from DOM elements : imgId (equals invoice id)
+
 
 // Getting the posted keys=>values, sanitize the ones who are from text inputs
 // from text inputs : total amount
-$amountPayment = price2num($_POST['amountPayment']);
-$amountPayment = is_numeric($amountPayment)? $amountPayment : 0;					// is a value
-// from text inputs : invoice amount payment
-$amounts = $_POST['amounts'];														// is an array (need a foreach)
+$amountPayment = $amountPayment!='' ? 	( is_numeric(price2num($amountPayment))	? price2num($amountPayment)
+																				: ''
+										) 
+									: '';			// keep void if not a valid entry
+// Checkamounts
 foreach ($amounts as $key => $value)
 {
 	$value = price2num($value);
 	if (!is_numeric($value)) unset($amounts[$key]);
 }
-// from dolibarr's object (no need to check)
-$remains = $_POST['remains'];
-// from DOM elements : imgId (equals invoice id)
-$currentInvId = $_POST['imgClicked'];
-
 
 // Treatment
-$result = $amountPayment - array_sum($amounts);										// Remaining amountPayment
+$result = $amountPayment != '' ? $amountPayment - array_sum($amounts) : $amountPayment + array_sum($amounts);										// Remaining amountPayment
 $toJsonArray = 	array();
+$totalRemaining = price2num(array_sum($remains));
+$toJsonArray['label'] = $amountPayment == '' ? $langs->transnoentities('AmountToBeCharged') : $langs->transnoentities('RemainingAmountPayment');
 if($currentInvId)																	// Here to breakdown
 {
 	// Get the current amount (from form) and the corresponding remainToPay (from invoice)
 	$currentAmount = $amounts['amount_'.$currentInvId];
 	$currentRemain = $remains['remain_'.$currentInvId];
-
-	// Reset the substraction for this amount
-	$result += price2num($currentAmount);
-	$currentAmount = 0;
-	if($result >= 0)			// then we need to calculate the amount to breakdown
+	
+	// If amountPayment isn't filled, breakdown invoice amount, else breakdown from amountPayment
+	if($amountPayment == '')
 	{
-		$amountToBreakdown = ($result - $currentRemain >= 0 ?
-									$currentRemain : 								// Remain can be fully paid
-									$currentRemain + ($result - $currentRemain));	// Remain can only partially be paid
-		$currentAmount = $amountToBreakdown;						// In both cases, amount will take breakdown value
-		$result -= $amountToBreakdown;								// And canceled substraction has been replaced by breakdown
-	}	// else there's no need to calc anything, just reset the field (result is still < 0)
+		// Check if current amount exists in amounts
+		$amountExists = array_key_exists('amount_'.$currentInvId,$amounts);
+		if($amountExists)
+		{
+			$remainAmount = $currentRemain - $currentAmount;	// To keep value between curRemain and curAmount
+			$result += $remainAmount;							// result must be deduced by
+			$currentAmount += $remainAmount;					// curAmount put to curRemain
+		}else 
+		{
+			$currentAmount = $currentRemain;
+			$result += $currentRemain;
+		}		
+	}else 
+	{
+		// Reset the substraction for this amount
+		$result += price2num($currentAmount);
+		$currentAmount = 0;
+		
+		if($result >= 0)			// then we need to calculate the amount to breakdown
+		{
+			$amountToBreakdown = ($result - $currentRemain >= 0 ?
+										$currentRemain : 								// Remain can be fully paid
+										$currentRemain + ($result - $currentRemain));	// Remain can only partially be paid
+			$currentAmount = $amountToBreakdown;						// In both cases, amount will take breakdown value
+			$result -= $amountToBreakdown;								// And canceled substraction has been replaced by breakdown
+		}	// else there's no need to calc anything, just reset the field (result is still < 0)
+	}
 	$toJsonArray['amount_'.$currentInvId] = price2num($currentAmount)."";			// Param will exist only if an img has been clicked
 }
 // Encode to JSON to return
-$toJsonArray['result'] = price2num($result)."";
-echo json_encode($toJsonArray);										// Printing the call's result
+$toJsonArray['makeRed'] = $totalRemaining < price2num($result) || price2num($result) < 0 ? true : false;
+$toJsonArray['result'] = price2num($result);
+echo json_encode($toJsonArray);	// Printing the call's result
 
 ?>
