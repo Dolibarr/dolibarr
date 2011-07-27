@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *		\file       htdocs/fourn/facture/impayees.php
  *		\ingroup    facture
  *		\brief      Page to list all unpaid invoices
- *		\version    $Id$
+ *		\version    $Id: impayees.php,v 1.25 2011/07/31 23:57:01 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -265,5 +264,5 @@ if ($user->rights->fournisseur->facture->lire)
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/31 23:57:01 $ - $Revision: 1.25 $');
 ?>

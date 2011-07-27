@@ -13,10 +13,9 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id$
+ * $Id: mantis.class.php,v 1.2 2011/07/31 23:24:38 eldy Exp $
  */
 
 /**
@@ -24,7 +23,7 @@
         \ingroup    mantis
 		\brief      Ensemble des fonctions permettant d'acceder a la database mantis.
 		\author     Laurent Destailleur.
-		\version    $Revision$
+		\version    $Revision: 1.2 $
 */
 
 
