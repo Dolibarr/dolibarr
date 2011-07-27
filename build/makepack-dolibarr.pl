@@ -2,7 +2,7 @@
 #----------------------------------------------------------------------------
 # \file         build/makepack-dolibarr.pl
 # \brief        Dolibarr package builder (tgz, zip, rpm, deb, exe, aps)
-# \version      $Id: makepack-dolibarr.pl,v 1.118 2011/07/27 17:53:44 eldy Exp $
+# \version      $Id: makepack-dolibarr.pl,v 1.119 2011/07/27 23:51:07 eldy Exp $
 # \author       (c)2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
 #----------------------------------------------------------------------------
 
@@ -48,7 +48,7 @@ if (-d "/usr/src/RPM") {
 
 
 use vars qw/ $REVISION $VERSION /;
-$REVISION='$Revision: 1.118 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
+$REVISION='$Revision: 1.119 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
 $VERSION="1.0 (build $REVISION)";
 
 
@@ -287,6 +287,7 @@ if ($nboftargetok) {
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/custom2`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/theme/bureau2crea`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/test`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/build/deb/po/CVS*`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/Thumbs.db $BUILDROOT/$PROJECT/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/*/Thumbs.db`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/CVS* $BUILDROOT/$PROJECT/*/CVS* $BUILDROOT/$PROJECT/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/*/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/*/*/*/*/*/CVS*  $BUILDROOT/$PROJECT/*/*/*/*/*/*/*/*/*/*/CVS*`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/.cvsignore $BUILDROOT/$PROJECT/*/.cvsignore $BUILDROOT/$PROJECT/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/*/*/*/.cvsignore`;
@@ -488,7 +489,8 @@ if ($nboftargetok) {
             $ret=`cp -f "$SOURCE/build/deb/postrm"           "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
             $ret=`cp -f "$SOURCE/build/deb/templates"        "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
             $ret=`cp -fr "$SOURCE/build/deb/po"              "$BUILDROOT/$PROJECT.tmp/DEBIAN"`;
-
+            $ret=`rm -fr "$BUILDROOT/$PROJECT.tmp/DEBIAN/po/CVS*"`;
+            
             print "Edit version in file $BUILDROOT/$PROJECT.tmp/DEBIAN/control\n";
             open (SPECFROM,"<$SOURCE/build/deb/control.DEBIAN") || die "Error";
             open (SPECTO,">$BUILDROOT/$PROJECT.tmp/DEBIAN/control") || die "Error";
