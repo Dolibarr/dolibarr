@@ -22,7 +22,7 @@
 /**
  *       \file       htdocs/user/group/perms.php
  *       \brief      Onglet user et permissions de la fiche utilisateur
- *       \version    $Id: perms.php,v 1.39 2011/07/31 23:21:25 eldy Exp $
+ *       \version    $Id: perms.php,v 1.40 2011/08/01 13:15:53 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -93,10 +93,34 @@ if ($_GET["id"])
 
     // Charge les modules soumis a permissions
     $modules = array();
-    foreach ($conf->file->dol_document_root as $dirroot)
+    $modulesdir = array();
+    
+	foreach ($conf->file->dol_document_root as $type => $dirroot)
+	{
+		$modulesdir[] = $dirroot . "/includes/modules/";
+		
+		if ($type == 'alt')
+		{	
+			$handle=@opendir($dirroot);
+			if (is_resource($handle))
+			{
+				while (($file = readdir($handle))!==false)
+				{
+				    if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
+				    {
+				    	if (is_dir($dirroot . '/' . $file . '/includes/modules/'))
+				    	{
+				    		$modulesdir[] = $dirroot . '/' . $file . '/includes/modules/';
+				    	}
+				    }
+				}
+				closedir($handle);
+			}
+		}
+	}
+    
+    foreach ($modulesdir as $dir)
     {
-        $dir = $dirroot . "/includes/modules/";
-
         // Load modules attributes in arrays (name, numero, orders) from dir directory
         //print $dir."\n<br>";
         $handle=@opendir($dir);
@@ -292,5 +316,5 @@ if ($_GET["id"])
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:21:25 $ - $Revision: 1.39 $');
+llxFooter('$Date: 2011/08/01 13:15:53 $ - $Revision: 1.40 $');
 ?>
