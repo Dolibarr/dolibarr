@@ -23,16 +23,16 @@ db_version 2.0
 
 echo Run the dolibarr postinst script
 
+
+docdir='/var/lib/dolibarr/documents'
+#docdir='/usr/share/dolibarr/documents'
+
+
+
 case "$1" in
 	configure)
 
-		# Copy apache.conf file into target directory
-		fileorig="/usr/share/dolibarr/build/deb/apache.conf"
-		config="/etc/dolibarr/apache.conf"
-		mkdir -p /etc/dolibarr
-		cp -p $fileorig $config
-
-		# Create install.forced.php into Dolibarr install directory
+		# Edit install.forced.php to match Debian values
 		fileorig="/usr/share/dolibarr/build/deb/install.forced.php.install"
 		config="/usr/share/dolibarr/htdocs/install/install.forced.php"
 		superuserlogin=''
@@ -48,10 +48,8 @@ case "$1" in
 		else
 			cat $fileorig | sed -e 's/__SUPERUSERLOGIN__/'$superuserlogin'/g' | sed -e 's/__SUPERUSERPASSWORD__/'$superuserpassword'/g' > $config
 		fi
-		
-        # Create document directory
-        #docdir='/var/lib/dolibarr/documents'
-        docdir='/usr/share/dolibarr/documents'
+
+        # Create document directory for uploaded data files
         mkdir -p $docdir
         chown -R www-data:www-data $docdir
         chmod -R 775 $docdir
@@ -96,10 +94,7 @@ case "$1" in
 
 			echo Web user.group used is $webuser.$webgroup
 
-			#
-			# That may lead to problems if apache & apache-ssl do
-			# not have the same user/group.
-			#
+			# Set permissions to web server
 			chown -R $webuser:$webgroup /usr/share/dolibarr
             chown -R root:$webgroup /usr/share/dolibarr/htdocs/conf/conf.php
 
