@@ -951,7 +951,7 @@ if ($id)
 		print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">'.$act->id.'</td></tr>';
 
 		// Type
-		print '<tr><td class="fieldrequired">'.($act->type==2?$langs->trans("Actions"):$langs->trans("Event")).'</td><td colspan="3">'.$act->type_label.'</td></tr>';
+		print '<tr><td class="fieldrequired">'.($act->type==2?$langs->trans("Action"):$langs->trans("Event")).'</td><td colspan="3">'.$act->type_label.'</td></tr>';
 
 		// Title
 		print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3"><input type="text" name="label" size="50" value="'.$act->label.'"></td></tr>';
