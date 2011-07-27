@@ -22,7 +22,7 @@
 /**
  *	\file       htdocs/install/upgrade2.php
  *	\brief      Upgrade some data
- *	\version    $Id: upgrade2.php,v 1.182 2011/07/27 17:34:43 eldy Exp $
+ *	\version    $Id: upgrade2.php,v 1.181 2011/07/27 17:32:40 eldy Exp $
  */
 
 include_once('./inc.php');
@@ -3158,7 +3158,7 @@ function migrate_directories($db,$langs,$conf,$oldname,$newname)
 
 
 /*
- * Delete depracted files
+ * Supprime fichiers obsoletes
  */
 function migrate_delete_old_files($db,$langs,$conf)
 {
