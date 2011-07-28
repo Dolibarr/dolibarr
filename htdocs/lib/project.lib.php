@@ -14,7 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
  */
 
@@ -22,7 +23,7 @@
  *	    \file       htdocs/lib/project.lib.php
  *		\brief      Functions used by project module
  *      \ingroup    project
- *      \version    $Id: project.lib.php,v 1.70 2011/07/31 23:26:00 eldy Exp $
+ *      \version    $Id: project.lib.php,v 1.69 2011/07/14 15:37:37 simnandez Exp $
  */
 require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
 
@@ -98,7 +99,7 @@ function project_prepare_head($object)
  *	    \file       htdocs/lib/project.lib.php
  *		\brief      Ensemble de fonctions de base pour le module projet
  *      \ingroup    societe
- *      \version    $Id: project.lib.php,v 1.70 2011/07/31 23:26:00 eldy Exp $
+ *      \version    $Id: project.lib.php,v 1.69 2011/07/14 15:37:37 simnandez Exp $
  */
 function task_prepare_head($object)
 {

@@ -12,14 +12,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *      \file       htdocs/includes/triggers/interface_modLdap_Ldapsynchro.class.php
  *      \ingroup    core
  *      \brief      Fichier de gestion des triggers LDAP
- *		\version	$Id: interface_modLdap_Ldapsynchro.class.php,v 1.20 2011/07/31 23:29:46 eldy Exp $
+ *		\version	$Id: interface_modLdap_Ldapsynchro.class.php,v 1.19 2011/07/18 01:06:52 eldy Exp $
  */
 require_once (DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 

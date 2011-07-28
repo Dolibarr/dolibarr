@@ -13,14 +13,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *  \file       htdocs/ecm/class/ecmdirectory.class.php
  *  \ingroup    ecm
  *  \brief      This file is an example for a class file
- *  \version    $Id: ecmdirectory.class.php,v 1.13 2011/07/31 23:50:54 eldy Exp $
+ *  \version    $Id$
  *  \author		Laurent Destailleur
  *  \remarks	Initialy built by build_class_from_table on 2008-02-24 19:24
  */

@@ -12,7 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 
@@ -20,7 +21,7 @@
  *  \file       htdocs/ecm/docmine.php
  *	\ingroup    ecm
  *	\brief     	Card of a directory for ECM module
- *	\version    $Id: docmine.php,v 1.47 2011/07/31 23:50:56 eldy Exp $
+ *	\version    $Id: docmine.php,v 1.46 2011/07/06 20:56:50 eldy Exp $
  *	\author		Laurent Destailleur
  */
 
@@ -378,5 +379,5 @@ if ($user->rights->ecm->read)
 // End of page
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:50:56 $ - $Revision: 1.47 $');
+llxFooter('$Date: 2011/07/06 20:56:50 $ - $Revision: 1.46 $');
 ?>
