@@ -22,7 +22,7 @@
  *   \file		    htdocs/core/class/interfaces.class.php
  *   \ingroup		core
  *   \brief			Fichier de la classe de gestion des triggers
- *   \version		$Id: interfaces.class.php,v 1.7 2011/06/27 10:41:31 hregis Exp $
+ *   \version		$Id: interfaces.class.php,v 1.8 2011/07/28 10:36:43 eldy Exp $
  */
 
 
@@ -122,7 +122,7 @@ class Interfaces
     					if ($objMod)
     					{
     						// Bypass if workflow module is enabled and if the trigger asked to be disable in such case
-    						if ($conf->workflow->enabled && ! empty($objMod->disabled_if_workflow))
+    						if (! empty($conf->workflow->enabled) && ! empty($objMod->disabled_if_workflow))
     						{
     							dol_syslog("Interfaces::run_triggers action=".$action." Bypass triggers for file '".$file."'",LOG_INFO);
     							continue;
