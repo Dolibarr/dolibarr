@@ -21,7 +21,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
@@ -29,7 +30,7 @@
  * 	\ingroup	core
  *  \brief      File that defines environment for all Dolibarr process (pages or scripts)
  * 				This script reads the conf file, init $lang, $db and and empty $user
- *  \version    $Id: master.inc.php,v 1.352 2011/08/01 12:25:14 hregis Exp $
+ *  \version    $Id: master.inc.php,v 1.350 2011/07/30 10:23:24 eldy Exp $
  */
 
 
@@ -70,14 +71,14 @@ $conf->file->character_set_client=strtoupper($force_charset_do_notuse);
 $conf->file->cookie_cryptkey = empty($dolibarr_main_cookie_cryptkey)?'':$dolibarr_main_cookie_cryptkey;
 
 // Define array of document root directories
-$conf->file->dol_document_root=array('main' => DOL_DOCUMENT_ROOT);
+$conf->file->dol_document_root=array(DOL_DOCUMENT_ROOT);
 if (! empty($dolibarr_main_document_root_alt))
 {
 	// dolibarr_main_document_root_alt contains several directories
 	$values=preg_split('/[;,]/',$dolibarr_main_document_root_alt);
 	foreach($values as $value)
 	{
-		$conf->file->dol_document_root['alt']=$value;
+		$conf->file->dol_document_root[]=$value;
 	}
 }
 

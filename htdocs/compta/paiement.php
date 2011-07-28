@@ -16,14 +16,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *	\file       htdocs/compta/paiement.php
  *	\ingroup    compta
  *	\brief      Page to create a payment
- *	\version    $Id: paiement.php,v 1.113 2011/08/03 00:46:23 eldy Exp $
+ *	\version    $Id: paiement.php,v 1.112 2011/07/27 08:00:45 cdelambert Exp $
  */
 
 require('../main.inc.php');
@@ -672,5 +673,5 @@ if (! GETPOST('action'))
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:23 $ - $Revision: 1.113 $');
+llxFooter('$Date: 2011/07/27 08:00:45 $ - $Revision: 1.112 $');
 ?>
