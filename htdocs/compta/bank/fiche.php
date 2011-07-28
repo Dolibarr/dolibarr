@@ -15,14 +15,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *	    \file       htdocs/compta/bank/fiche.php
  *      \ingroup    banque
  *		\brief      Page to create/view a bank account
- *		\version    $Id: fiche.php,v 1.78 2011/07/31 22:23:16 eldy Exp $
+ *		\version    $Id: fiche.php,v 1.77 2011/07/29 20:47:35 eldy Exp $
  */
 
 require("./pre.inc.php");
@@ -607,5 +608,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:16 $ - $Revision: 1.78 $');
+llxFooter('$Date: 2011/07/29 20:47:35 $ - $Revision: 1.77 $');
 ?>
