@@ -20,7 +20,7 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- $Id$
+-- $Id: llx_c_currencies.sql,v 1.7 2011/07/28 18:34:46 eldy Exp $
 --
 
 --
@@ -32,6 +32,7 @@
 -- Devises (code secondaire - code ISO4217 - libelle fr)
 --
 
+INSERT INTO llx_c_currencies ( code, code_iso, active, label ) VALUES ( 'BD', 'BBD', 1, 'Barbadian or Bajan Dollar');
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'BT', 'THB', 1, 'Bath thailandais'); 
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'CD', 'DKK', 1, 'Couronnes dannoises'); 
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'CN', 'NOK', 1, 'Couronnes norvegiennes'); 
@@ -88,3 +89,4 @@ insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'LK', 'L
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'MU', 'MUR', 1, 'Roupies mauritiennes');
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'SR', 'SAR', 1, 'Saudi riyal');
 INSERT INTO llx_c_currencies ( code, code_iso, active, label ) VALUES ( 'MX', 'MXP', 1, 'Pesos Mexicans');
+
