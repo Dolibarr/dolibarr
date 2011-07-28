@@ -14,14 +14,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *	    \file       htdocs/includes/boxes/box_factures_fourn.php
  *      \ingroup    supplier
  *		\brief      Fichier de gestion d'une box des factures fournisseurs
- *		\version    $Id: box_factures_fourn.php,v 1.36 2011/07/31 23:29:10 eldy Exp $
+ *		\version    $Id$
  */
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
 
