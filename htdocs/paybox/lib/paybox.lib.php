@@ -14,13 +14,14 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * or see http://www.gnu.org/
  */
 
 /**
  *	\file			htdocs/paybox/lib/paybox.lib.php
  *	\ingroup		paybox
  *  \brief			Library for common paybox functions
- *  \version		$Id: paybox.lib.php,v 1.10 2011/08/03 01:34:59 eldy Exp $
+ *  \version		$Id: paybox.lib.php,v 1.9 2011/07/31 23:24:24 eldy Exp $
  */
 function llxHeaderPaybox($title, $head = "")
 {

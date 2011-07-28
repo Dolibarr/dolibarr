@@ -15,14 +15,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *       \file       htdocs/comm/propal/document.php
  *       \ingroup    propale
  *       \brief      Page de gestion des documents attaches a une proposition commerciale
- *       \version    $Id: document.php,v 1.68 2011/08/03 00:46:33 eldy Exp $
+ *       \version    $Id: document.php,v 1.67 2011/07/14 05:21:53 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -208,5 +209,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:33 $ - $Revision: 1.68 $');
+llxFooter('$Date: 2011/07/14 05:21:53 $ - $Revision: 1.67 $');
 ?>
