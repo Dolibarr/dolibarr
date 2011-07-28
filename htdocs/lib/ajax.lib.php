@@ -21,7 +21,7 @@
 /**
  *  \file		htdocs/lib/ajax.lib.php
  *  \brief		Page called by Ajax request for produts
- *  \version	$Id: ajax.lib.php,v 1.58 2011/07/10 18:24:18 hregis Exp $
+ *  \version	$Id: ajax.lib.php,v 1.59 2011/07/28 18:57:23 eldy Exp $
  */
 
 
@@ -201,7 +201,10 @@ function ajax_dialog($title,$message,$w=350,$h=150)
 }
 
 /**
- * 	Convert combox
+ * 	Convert a select html field into an ajax combobox
+ *
+ * 	@param		htmlname		Name of html field
+ *  @return		string			Return html string to convert a select field into a combo
  */
 function ajax_combobox($htmlname)
 {
@@ -218,6 +221,7 @@ function ajax_combobox($htmlname)
 
 /**
  * 	On/off button for constant
+ *
  * 	@param		code	Name of constant
  * 	@param		input	Input element
  * 	TODO add different method for other input (show/hide, disable, ..)
@@ -229,7 +233,7 @@ function ajax_constantonoff($code,$input=array())
 	$out= '<script type="text/javascript">
 		$(function() {
 			var input='.json_encode($input).';
-			
+
 			// Set constant
 			$( "#set_'.$code.'" ).click(function() {
 				$.get( "'.DOL_URL_ROOT.'/core/ajaxconstantonoff.php", {
@@ -244,10 +248,10 @@ function ajax_constantonoff($code,$input=array())
 						$.each(input, function(key,value) {
 							$( "#" + value).removeAttr("disabled");
 						});
-					}		
+					}
 				});
 			});
-			
+
 			// Del constant
 			$( "#del_'.$code.'" ).click(function() {
 				$.get( "'.DOL_URL_ROOT.'/core/ajaxconstantonoff.php", {
