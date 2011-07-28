@@ -17,14 +17,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *	\file       htdocs/fourn/facture/fiche.php
  *	\ingroup    facture, fournisseur
  *	\brief      Page for supplier invoice card (view, edit, validate)
- *	\version    $Id: fiche.php,v 1.262 2011/07/31 23:57:00 eldy Exp $
+ *	\version    $Id: fiche.php,v 1.261 2011/07/10 20:03:39 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -1915,5 +1916,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:57:00 $ - $Revision: 1.262 $');
+llxFooter('$Date: 2011/07/10 20:03:39 $ - $Revision: 1.261 $');
 ?>
