@@ -23,7 +23,7 @@
  *		\file       htdocs/viewimage.php
  *		\brief      Wrapper to show images into Dolibarr screens
  *      \remarks    Call to wrapper is '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=diroffile&file=relativepathofofile&cache=0">'
- *		\version    $Id: viewimage.php,v 1.95 2011/07/09 00:15:16 eldy Exp $
+ *		\version    $Id: viewimage.php,v 1.96 2011/07/28 13:56:17 eldy Exp $
  */
 
 // Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
@@ -121,7 +121,7 @@ if ($modulepart)
     }
 
     // Wrapping pour les images des societes
-    if ($modulepart == 'societe')
+    elseif ($modulepart == 'societe')
     {
         $accessallowed=1;
         $original_file=$conf->societe->dir_output.'/'.$original_file;
