@@ -22,7 +22,7 @@
 /**
  *	\file       htdocs/install/upgrade2.php
  *	\brief      Upgrade some data
- *	\version    $Id: upgrade2.php,v 1.183 2011/07/28 10:43:43 eldy Exp $
+ *	\version    $Id: upgrade2.php,v 1.184 2011/07/28 10:55:45 eldy Exp $
  */
 
 include_once('./inc.php');
@@ -3179,6 +3179,9 @@ function migrate_delete_old_files($db,$langs,$conf)
     DOL_DOCUMENT_ROOT.'/includes/triggers/interface_modCommande_Ecotax.class.php',
     DOL_DOCUMENT_ROOT.'/includes/triggers/interface_modCommande_fraisport.class.php',
     DOL_DOCUMENT_ROOT.'/includes/triggers/interface_modPropale_PropalWorkflow.class.php',
+    DOL_DOCUMENT_ROOT.'/includes/menus/smartphone/iphone.lib.php',
+    DOL_DOCUMENT_ROOT.'/includes/menus/smartphone/iphone_backoffice.php',
+    DOL_DOCUMENT_ROOT.'/includes/menus/smartphone/iphone_frontoffice.php',
     DOL_DOCUMENT_ROOT.'/includes/modules/mailings/dolibarr_services_expired.modules.php',
     DOL_DOCUMENT_ROOT.'/includes/modules/mailings/poire.modules.php',
     DOL_DOCUMENT_ROOT.'/includes/modules/mailings/kiwi.modules.php'
