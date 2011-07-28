@@ -15,7 +15,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
  */
 
@@ -23,7 +24,7 @@
  *	\file       htdocs/includes/modules/supplier_order/pdf/pdf_muscadet.modules.php
  *	\ingroup    fournisseur
  *	\brief      Fichier de la classe permettant de generer les commandes fournisseurs au modele Muscadet
- *	\version    $Id: pdf_muscadet.modules.php,v 1.87 2011/07/31 23:28:13 eldy Exp $
+ *	\version    $Id$
  */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/supplier_order/modules_commandefournisseur.php");

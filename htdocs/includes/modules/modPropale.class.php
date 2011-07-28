@@ -16,7 +16,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
@@ -28,7 +29,7 @@
  *	\file       htdocs/includes/modules/modPropale.class.php
  *	\ingroup    propale
  *	\brief      Fichier de description et activation du module Propale
- * 	\version	$Id: modPropale.class.php,v 1.78 2011/07/31 23:28:11 eldy Exp $
+ * 	\version	$Id$
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
