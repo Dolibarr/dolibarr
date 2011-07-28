@@ -14,13 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *		\file       htdocs/install/repair.php
  *      \brief      Run repair script
- *      \version    $Id: repair.php,v 1.11 2011/07/31 23:26:24 eldy Exp $
+ *      \version    $Id$
  */
 
 include_once("./inc.php");

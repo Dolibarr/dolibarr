@@ -15,14 +15,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  * 	    \file       htdocs/includes/boxes/box_external_rss.php
  *      \ingroup    external_rss
  *      \brief      Fichier de gestion d'une box pour le module external_rss
- *      \version    $Id: box_external_rss.php,v 1.34 2011/07/31 23:29:10 eldy Exp $
+ *      \version    $Id$
  */
 
 include_once(MAGPIERSS_PATH."rss_fetch.inc");
