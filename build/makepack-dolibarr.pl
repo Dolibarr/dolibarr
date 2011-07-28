@@ -2,7 +2,7 @@
 #----------------------------------------------------------------------------
 # \file         build/makepack-dolibarr.pl
 # \brief        Dolibarr package builder (tgz, zip, rpm, deb, exe, aps)
-# \version      $Id: makepack-dolibarr.pl,v 1.119 2011/07/27 23:51:07 eldy Exp $
+# \version      $Id: makepack-dolibarr.pl,v 1.120 2011/07/28 18:32:00 eldy Exp $
 # \author       (c)2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
 #----------------------------------------------------------------------------
 
@@ -48,7 +48,7 @@ if (-d "/usr/src/RPM") {
 
 
 use vars qw/ $REVISION $VERSION /;
-$REVISION='$Revision: 1.119 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
+$REVISION='$Revision: 1.120 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
 $VERSION="1.0 (build $REVISION)";
 
 
@@ -555,10 +555,13 @@ if ($nboftargetok) {
             # To remove once stable
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/htdocs/theme/bureau2crea`;
 
-			# apache.conf
+			# Apache conf files
     		print "Copy apache.conf file into $BUILDROOT/$PROJECT.tmp/etc/$PROJECT/apache.conf\n";
     		$ret=`mkdir -p "$BUILDROOT/$PROJECT.tmp/etc/$PROJECT"`;
     		$ret=`cp "$SOURCE/build/deb/apache.conf" "$BUILDROOT/$PROJECT.tmp/etc/$PROJECT/apache.conf"`;
+
+			# Dolibarr conf files
+			# TODO
 
 			# dolibarr.desktop
 	   		print "Create directory $BUILDROOT/$PROJECT.tmp/usr/share/applications\n";
