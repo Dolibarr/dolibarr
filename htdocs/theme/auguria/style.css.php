@@ -21,7 +21,7 @@
 /**
  *		\file       htdocs/theme/auguria/style.css.php
  *		\brief      Fichier de style CSS du theme auguria
- *		\version    $Id: style.css.php,v 1.90 2011/07/28 13:26:34 eldy Exp $
+ *		\version    $Id: style.css.php,v 1.91 2011/07/28 20:54:02 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -1101,7 +1101,7 @@ border-left-style: solid;
 }
 
 table.noborder td {
-padding: 1px 2px 0px 1px;			/* t r b l */
+padding: 1px 2px 2px 1px;			/* t r b l */
 }
 
 table.nobordernopadding {
