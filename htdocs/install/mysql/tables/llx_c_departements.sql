@@ -16,7 +16,7 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- $Id$
+-- $Id: llx_c_departements.sql,v 1.3 2011/07/28 18:34:45 eldy Exp $
 -- ========================================================================
 
 create table llx_c_departements
@@ -24,7 +24,7 @@ create table llx_c_departements
   rowid            integer    AUTO_INCREMENT PRIMARY KEY,
   code_departement varchar(6) NOT NULL,
   fk_region        integer,
-  cheflieu         varchar(7),
+  cheflieu         varchar(50),
   tncc             integer,
   ncc              varchar(50),
   nom              varchar(50),
