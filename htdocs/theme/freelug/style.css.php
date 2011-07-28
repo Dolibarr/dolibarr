@@ -20,7 +20,7 @@
 /**
  *		\file       htdocs/theme/freelug/style.css.php
  *		\brief      Fichier de style CSS du theme Freelug
- *		\version    $Id: style.css.php,v 1.42 2011/07/20 19:03:33 eldy Exp $
+ *		\version    $Id: style.css.php,v 1.43 2011/07/28 13:31:58 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -1048,9 +1048,9 @@ th {
  */
 
 .boxtable {
--moz-box-shadow: 6px 6px 20px #AAA;
--webkit-box-shadow: 6px 6px 20px #AAA;
-box-shadow: 6px 6px 20px #AAA;
+-moz-box-shadow: 2px 4px 2px #AAA;
+-webkit-box-shadow: 2px 4px 2px #AAA;
+box-shadow: 2px 4px 2px #AAA;
 }
 
 .box {
