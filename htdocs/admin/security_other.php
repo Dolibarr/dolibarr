@@ -13,14 +13,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *	    \file       htdocs/admin/security_other.php
  *      \ingroup    core
  *      \brief      Security options setup
- *		\version    $Id: security_other.php,v 1.41 2011/07/31 22:23:22 eldy Exp $
+ *		\version    $Id: security_other.php,v 1.40 2011/07/29 21:04:27 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -347,5 +348,5 @@ $formfile->form_attach_new_file(DOL_URL_ROOT.'/admin/security_other.php',$langs-
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:22 $ - $Revision: 1.41 $');
+llxFooter('$Date: 2011/07/29 21:04:27 $ - $Revision: 1.40 $');
 ?>
