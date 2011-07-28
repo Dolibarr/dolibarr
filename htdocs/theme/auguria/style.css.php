@@ -21,7 +21,7 @@
 /**
  *		\file       htdocs/theme/auguria/style.css.php
  *		\brief      Fichier de style CSS du theme auguria
- *		\version    $Id: style.css.php,v 1.89 2011/07/21 01:20:33 eldy Exp $
+ *		\version    $Id: style.css.php,v 1.90 2011/07/28 13:26:34 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -1083,9 +1083,9 @@ margin-right: 1px;
 margin-bottom: 2px;
 margin-top: 0px;
 
--moz-box-shadow: 6px 6px 10px #CCC;
--webkit-box-shadow: 6px 6px 10px #CCC;
-box-shadow: 6px 6px 10px #CCC;
+-moz-box-shadow: 2px 4px 2px #CCC;
+-webkit-box-shadow: 2px 4px 2px #CCC;
+box-shadow: 2px 4px 2px #CCC;
 }
 
 table.noborder tr {
@@ -1139,9 +1139,9 @@ border-bottom-style: solid;
 margin-bottom: 2px;
 margin-top: 0px;
 
--moz-box-shadow: 6px 6px 10px #CCC;
--webkit-box-shadow: 6px 6px 10px #CCC;
-box-shadow: 6px 6px 10px #CCC;
+-moz-box-shadow: 2px 4px 2px #CCC;
+-webkit-box-shadow: 2px 4px 2px #CCC;
+box-shadow: 2px 4px 2px #CCC;
 }
 table.liste td {
 padding-right: 2px;
@@ -1240,9 +1240,9 @@ border: 0px;
  */
 
 .boxtable {
--moz-box-shadow: 6px 6px 10px #CCC;
--webkit-box-shadow: 6px 6px 10px #CCC;
-box-shadow: 6px 6px 10px #CCC;
+-moz-box-shadow: 2px 4px 2px #CCC;
+-webkit-box-shadow: 2px 4px 2px #CCC;
+box-shadow: 2px 4px 2px #CCC;
 }
 
 .box {
