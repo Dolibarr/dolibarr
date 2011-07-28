@@ -15,13 +15,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *	\file       htdocs/install/upgrade2.php
  *	\brief      Upgrade some data
- *	\version    $Id: upgrade2.php,v 1.187 2011/07/31 23:26:18 eldy Exp $
+ *	\version    $Id: upgrade2.php,v 1.185 2011/07/28 14:27:57 eldy Exp $
  */
 
 include_once('./inc.php');
@@ -3175,7 +3176,6 @@ function migrate_delete_old_files($db,$langs,$conf)
     DOL_DOCUMENT_ROOT.'/includes/modules/modProduit.class.php',
     DOL_DOCUMENT_ROOT.'/phenix/inc/triggers/interface_modPhenix_Phenixsynchro.class.php',
     DOL_DOCUMENT_ROOT.'/webcalendar/inc/triggers/interface_modWebcalendar_webcalsynchro.class.php',
-    DOL_DOCUMENT_ROOT.'/includes/triggers/interface_modWebcalendar_Webcalsynchro.class.php',
     DOL_DOCUMENT_ROOT.'/includes/triggers/interface_modCommande_Ecotax.class.php',
     DOL_DOCUMENT_ROOT.'/includes/triggers/interface_modCommande_fraisport.class.php',
     DOL_DOCUMENT_ROOT.'/includes/triggers/interface_modPropale_PropalWorkflow.class.php',
