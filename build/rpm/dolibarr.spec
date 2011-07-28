@@ -20,7 +20,7 @@ Vendor: Dolibarr dev team
 
 URL: http://www.%{name}.org
 Source: /usr/src/RPM/SOURCES/%{name}-%{version}.tgz
-#BuildArch: noarch
+BuildArch: noarch
 #BuildArchitectures: noarch
 BuildRoot: /tmp/%{name}-buildroot
 #Icon: dolibarr_logo1.gif
@@ -345,12 +345,19 @@ then
 fi
 
 # Removed dirs after apache restart
-echo Removed remaining dirs
+echo Removed remaining $apacheconfig
 rm -f $apacheconfig
+echo Removed remaining $config
 rm -f $config
+echo Removed remaining $installconfig
 rm -f $installconfig
+echo Removed remaining $lockfile
 rm -f $lockfile
+echo Removed remaining dir $targetdir/doc
 rmdir $targetdir/doc >/dev/null 2>&1
-rmdir $targetdir/htdocs >/dev/null 2>&1
+#echo Removed remaining dir $targetdir/htdocs
+#rmdir $targetdir/htdocs >/dev/null 2>&1	# Already removed by rpm
 
 %changelog
+* Wed Jul 31 2011 Laurent Destailleur 3.1.0
+- Initial upstream (#723326)
