@@ -13,14 +13,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *	 \file       htdocs/install/licence.php
  *   \ingroup    install
  *	 \brief      Page to show licence (Removed from install process to save time)
- *	 \version    $Id: licence.php,v 1.21 2011/07/31 23:26:22 eldy Exp $
+ *	 \version    $Id: licence.php,v 1.20 2011/07/30 14:56:42 eldy Exp $
  */
 
 include_once("./inc.php");
