@@ -22,7 +22,7 @@
 /**
  *	\file       htdocs/install/upgrade2.php
  *	\brief      Upgrade some data
- *	\version    $Id: upgrade2.php,v 1.182 2011/07/27 17:34:43 eldy Exp $
+ *	\version    $Id: upgrade2.php,v 1.183 2011/07/28 10:43:43 eldy Exp $
  */
 
 include_once('./inc.php');
@@ -306,7 +306,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
             // Reload menus
             migrate_reload_menu($db,$langs,$conf,$versionto);
 
-            print $langs->trans("MigrationFinished");
+	    print '<tr><td colspan="4"><br>'.$langs->trans("MigrationFinished").'</td></tr>';
         }
 
         // Script for VX (X<3.1) -> V3.1
@@ -324,7 +324,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
             // Reload menus
             migrate_reload_menu($db,$langs,$conf,$versionto);
 
-            print $langs->trans("MigrationFinished");
+            print '<tr><td colspan="4"><br>'.$langs->trans("MigrationFinished").'</td></tr>';
         }
 
         // On commit dans tous les cas.
