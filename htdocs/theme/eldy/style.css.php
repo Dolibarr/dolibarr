@@ -21,7 +21,7 @@
 /**
  *		\file       htdocs/theme/eldy/style.css.php
  *		\brief      Fichier de style CSS du theme Eldy
- *		\version    $Id: style.css.php,v 1.87 2011/07/21 01:20:33 eldy Exp $
+ *		\version    $Id: style.css.php,v 1.88 2011/07/28 13:22:19 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -1207,9 +1207,9 @@ border: 0px;
  */
 
 .boxtable {
--moz-box-shadow: 8px 8px 20px #CCC;
--webkit-box-shadow: 8px 8px 20px #CCC;
-box-shadow: 8px 8px 20px #CCC;
+-moz-box-shadow: 4px 4px 4px #CCC;
+-webkit-box-shadow: 4px 4px 4px #CCC;
+box-shadow: 4px 4px 4px #CCC;
 }
 
 .box {
