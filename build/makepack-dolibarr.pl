@@ -2,7 +2,7 @@
 #----------------------------------------------------------------------------
 # \file         build/makepack-dolibarr.pl
 # \brief        Dolibarr package builder (tgz, zip, rpm, deb, exe, aps)
-# \version      $Id: makepack-dolibarr.pl,v 1.122 2011/07/30 10:23:26 eldy Exp $
+# \version      $Id: makepack-dolibarr.pl,v 1.119 2011/07/27 23:51:07 eldy Exp $
 # \author       (c)2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
 #----------------------------------------------------------------------------
 
@@ -48,7 +48,7 @@ if (-d "/usr/src/RPM") {
 
 
 use vars qw/ $REVISION $VERSION /;
-$REVISION='$Revision: 1.122 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
+$REVISION='$Revision: 1.119 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
 $VERSION="1.0 (build $REVISION)";
 
 
@@ -263,7 +263,6 @@ if ($nboftargetok) {
         $ret=`rm -f  $BUILDROOT/$PROJECT/build/dolibarr-*.tgz`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/build/dolibarr-*.zip`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/build/doxygen/doxygen_warnings.log`;
-	    $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf.php`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf.php.mysql`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf.php.old`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf.php.postgres`;
@@ -277,21 +276,13 @@ if ($nboftargetok) {
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/test`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/spec`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/licence`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/dev/uml`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/dev/xdebug`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/doc/images/dolibarr_screenshot2.png`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/doc/images/dolibarr_screenshot3.png`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/doc/images/dolibarr_screenshot4.png`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/doc/images/dolibarr_screenshot5.png`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/doc/images/dolibarr_screenshot6.png`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/doc/images/dolibarr_screenshot7.png`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/doc/images/dolibarr_screenshot8.png`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/doc/images/dolibarr_screenshot9.png`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/doc/images/dolibarr_screenshot10.png`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/doc/images/dolibarr_screenshot11.png`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/doc/images/dolibarr_screenshot12.png`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/documents`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/document`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/conf/conf.php`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/conf/conf.php.mysql`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/conf/conf.php.old`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/conf/conf.php.postgres`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/conf/conf*sav*`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/custom`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/custom2`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/theme/bureau2crea`;
@@ -302,7 +293,6 @@ if ($nboftargetok) {
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/.cvsignore $BUILDROOT/$PROJECT/*/.cvsignore $BUILDROOT/$PROJECT/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/*/*/*/.cvsignore`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/php_writeexcel/php.bmp`;
         $ret=`rm -fr  $BUILDROOT/$PROJECT/htdocs/includes/phpexcel`;
-        $ret=`rm -fr  $BUILDROOT/$PROJECT/htdocs/includes/smarty`;
 	    #$ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/phpexcel/PHPExcel/Shared/PDF/fonts/utils/freetype6.dll`;
 	    #$ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/phpexcel/PHPExcel/Shared/PDF/fonts/utils/zlib1.dll`;
         #$ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/phpexcel/PHPExcel/Shared/PDF/fonts/utils/pfm2afm`;
@@ -435,15 +425,6 @@ if ($nboftargetok) {
 
  			print "Remove other files\n";
             $ret=`rm -f $BUILDROOT/$FILENAMETGZ2/htdocs/includes/barcode/php-barcode/genbarcode/genbarcode`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/aps`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/deb`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/dmg`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/doap`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/exe`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/live`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/patch`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/zip`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/perl`;
 
     		print "Compress $FILENAMETGZ2 into $FILENAMETGZ2.tgz...\n";
     		$ret=`tar --exclude-from "$SOURCE/build/tgz/tar_exclude.txt" --directory "$BUILDROOT" -czvf "$BUILDROOT/$FILENAMETGZ2.tgz" $FILENAMETGZ2`;
@@ -523,7 +504,6 @@ if ($nboftargetok) {
             
  			print "Remove other files\n";
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/build/aps`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/build/dmg`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/build/deb/po`;
             $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/build/deb/changelog`;
             $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/build/deb/compat`;
@@ -543,15 +523,18 @@ if ($nboftargetok) {
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/build/exe`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/build/live`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/build/patch`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/build/perl`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/build/rpm`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/build/zip`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/build/perl`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/build/dmg`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/dev/dbmodel`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/dev/fpdf`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/dev/initdata`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/dev/iso-normes`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/dev/phpcheckstyle`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/dev/phpunit`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/dev/uml`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/dev/xdebug`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/doc/flyer`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/doc/font`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/doc/tshirt`;
@@ -572,13 +555,10 @@ if ($nboftargetok) {
             # To remove once stable
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/htdocs/theme/bureau2crea`;
 
-			# Apache conf files
+			# apache.conf
     		print "Copy apache.conf file into $BUILDROOT/$PROJECT.tmp/etc/$PROJECT/apache.conf\n";
     		$ret=`mkdir -p "$BUILDROOT/$PROJECT.tmp/etc/$PROJECT"`;
     		$ret=`cp "$SOURCE/build/deb/apache.conf" "$BUILDROOT/$PROJECT.tmp/etc/$PROJECT/apache.conf"`;
-
-			# Dolibarr conf files
-			# TODO
 
 			# dolibarr.desktop
 	   		print "Create directory $BUILDROOT/$PROJECT.tmp/usr/share/applications\n";
@@ -720,21 +700,14 @@ if ($nboftargetok) {
             $ret=`$cmd`;
 
             print "Remove other files\n";
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/deb`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/dmg`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/doap`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/exe`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/live`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/patch`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/rpm`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/zip`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/perl`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/dev/dbmodel`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/dev/fpdf`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/dev/initdata`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/dev/iso-normes`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/dev/phpcheckstyle`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/dev/phpunit`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/dev/uml`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/dev/xdebug`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/doc/flyer`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/doc/font`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/doc/tshirt`;

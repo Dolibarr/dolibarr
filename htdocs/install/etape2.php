@@ -13,15 +13,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *      \file       htdocs/install/etape2.php
  *		\ingroup	install
  *      \brief      Create tables, primary keys, foreign keys, indexes and functions into database and then load reference data
- *      \version    $Id: etape2.php,v 1.104 2011/07/30 10:23:25 eldy Exp $
+ *      \version    $Id: etape2.php,v 1.106 2011/07/31 23:26:19 eldy Exp $
  */
 
 include("./inc.php");
@@ -54,7 +53,9 @@ if ($dolibarr_main_db_type == "pgsql")  $choix=2;
 if ($dolibarr_main_db_type == "mssql")  $choix=3;
 
 // Init "forced values" to nothing. "forced values" are used after a Doliwamp install wizard.
-if (file_exists("./install.forced.php")) include_once("./install.forced.php");
+$useforcedwizard=false;
+if (file_exists("./install.forced.php")) { $useforcedwizard=true; include_once("./install.forced.php"); }
+else if (file_exists("/etc/dolibarr/install.forced.php")) { $useforcedwizard=include_once("/etc/dolibarr/install.forced.php"); }
 
 dolibarr_install_syslog("--- etape2: Entering etape2.php page");
 
