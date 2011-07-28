@@ -32,6 +32,12 @@ docdir='/var/lib/dolibarr/documents'
 case "$1" in
 	configure)
 
+		# Copy apache.conf file into target directory.
+		#fileorig="/usr/share/dolibarr/build/deb/apache.conf"
+		#config="/etc/dolibarr/apache.conf"
+		#mkdir -p /etc/dolibarr
+		#cp -p $fileorig $config
+
 		# Edit install.forced.php to match Debian values
 		fileorig="/usr/share/dolibarr/build/deb/install.forced.php.install"
 		config="/usr/share/dolibarr/htdocs/install/install.forced.php"
