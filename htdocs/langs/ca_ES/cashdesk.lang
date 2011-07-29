@@ -33,5 +33,3 @@ Change=Canvi
 CalTip=Feu clic per veure el calendari
 CashDeskSetupStock=La configuració decrementa l'estoc en la creació de factures, però no ha indicat magatzem.<br>Canvieu la configuració del mòdul estoc, o esculli un magatzem
 BankToPay=Compte de cobrament
-ShowCompany=Veure empresa
-ShowStock=Veure magatzem
