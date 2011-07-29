@@ -25,7 +25,7 @@
  *  \file       htdocs/societe/soc.php
  *  \ingroup    societe
  *  \brief      Third party card page
- *  \version    $Id: soc.php,v 1.125 2011/07/31 23:22:57 eldy Exp $
+ *  \version    $Id: soc.php,v 1.126 2011/08/01 00:38:49 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -587,7 +587,8 @@ else
         if ($conf->fournisseur->enabled && (GETPOST("type")=='f' || GETPOST("type")==''))  { $object->fournisseur=1; }
         if (GETPOST("private")==1) { $object->particulier=1; }
 
-        $object->nom=$_POST["nom"];
+        $object->name=$_POST["nom"];
+        $object->nom=$_POST["nom"];    // deprecated
         $object->prenom=$_POST["prenom"];
         $object->particulier=$_REQUEST["private"];
         $object->prefix_comm=$_POST["prefix_comm"];
@@ -1093,7 +1094,8 @@ else
             if (! empty($_POST["nom"]))
             {
                 // We overwrite with values if posted
-                $object->nom=$_POST["nom"];
+                $object->name=$_POST["nom"];
+                $object->nom=$_POST["nom"];    // deprecated
                 $object->prefix_comm=$_POST["prefix_comm"];
                 $object->client=$_POST["client"];
                 $object->code_client=$_POST["code_client"];
@@ -1967,5 +1969,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:22:57 $ - $Revision: 1.125 $');
+llxFooter('$Date: 2011/08/01 00:38:49 $ - $Revision: 1.126 $');
 ?>
