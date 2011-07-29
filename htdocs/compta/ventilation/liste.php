@@ -14,9 +14,10 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: liste.php,v 1.22 2011/08/03 00:46:37 eldy Exp $
+ * $Id$
  */
 
 
@@ -24,7 +25,7 @@
  * 		\file       htdocs/compta/ventilation/liste.php
  * 		\ingroup    compta
  * 		\brief      Page de ventilation des lignes de facture
- * 		\version    $Revision: 1.22 $
+ * 		\version    $Revision$
  */
 
 require('../../main.inc.php');
@@ -127,5 +128,5 @@ else
 }
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date: 2011/08/03 00:46:37 $ r&eacute;vision $Revision: 1.22 $</em>");
+llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
 ?>

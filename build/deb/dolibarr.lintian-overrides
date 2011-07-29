@@ -1,9 +1,0 @@
-# embedded libraries, which don't seem to be available in Debian in correct version
-# or because they were modified and are specific dolibarr code
-embedded-javascript-library usr/share/dolibarr/htdocs/includes/ckeditor/adapters/jquery.js
-embedded-javascript-library usr/share/dolibarr/htdocs/includes/ckeditor/ckeditor.js
-embedded-javascript-library usr/share/dolibarr/htdocs/includes/fckeditor/fckeditor.js
-embedded-php-library usr/share/dolibarr/htdocs/includes/magpierss/extlib/Snoopy.class.inc
-embedded-php-library usr/share/dolibarr/htdocs/includes/magpierss/rss_parse.inc
-embedded-php-library usr/share/dolibarr/htdocs/includes/nusoap/lib/nusoap.php
-embedded-php-library usr/share/dolibarr/htdocs/includes/odtphp/zip/pclzip/pclzip.lib.php
