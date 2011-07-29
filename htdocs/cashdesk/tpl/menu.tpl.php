@@ -65,7 +65,7 @@ print '<div class="menu_bloc">';
 print '<ul class="menu">';
 print '<li class="menu_choix1"><a href="affIndex.php?menu=facturation&id=NOUV"><span>'.$langs->trans("NewSell").'</span></a></li>';
 
-print '<li class="menu_choix2"><a href=".."><span>'.$langs->trans("BackOffice").'</span></a></li>';
+print '<li class="menu_choix2"><a href="deconnexion.php"><span>'.$langs->trans("BackOffice").'</span></a></li>';
 
 print '<li class="menu_choix0">'.$langs->trans("User").': '.$_SESSION['prenom'].' '.$_SESSION['nom'].' <a href="deconnexion.php">'.$logout.'</a><br>';
 print $langs->trans("CashDeskThirdParty").': '.$companyLink.'<br>';
