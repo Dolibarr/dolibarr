@@ -7,7 +7,7 @@ that. However, we hope that this translation will help Dutch speakers
 understand the GNU GPL better.
 
 Nederlandse waarschuwing
-Dit is een niet officiï¿½le vertaling van de GNU Algemene Publieke Licentie in
+Dit is een niet officiële vertaling van de GNU Algemene Publieke Licentie in
 het Nederlands. Deze licentie is niet gepubliceerd door de Free Software
 Foundation, de condities van software onder de GPL hieronder zijn niet
 rechtsgeldig. Enkel de originele Engelse tekst van de GNU GPL bevat geldige
@@ -16,8 +16,8 @@ om de GNU GPL beter te begrijpen.
 
 Auteursrecht (C) 1989, 1991 Free Software Foundation, Inc.
 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-Het is eenieder toegestaan om dit licentiedocument te kopiï¿½ren en er letterlijke
-kopieï¿½n van te verspreiden, er wijzigingen in maken is echter niet toegestaan.
+Het is eenieder toegestaan om dit licentiedocument te kopiëren en er letterlijke
+kopieën van te verspreiden, er wijzigingen in maken is echter niet toegestaan.
 
                                    Voorwoord
 
@@ -32,7 +32,7 @@ alle andere programma's waarvan de auteur ze plaatst onder deze licentie.
 Minder Publieke Licentie). U kan deze ook toepassen op uw eigen programma's.
 
 Wanneer we het hebben over vrije software, dan hebben we het over vrijheid, niet
-prijs. Onze Algemene Publieke Licentie laat u toe om kopieï¿½n te verspreiden van
+prijs. Onze Algemene Publieke Licentie laat u toe om kopieën te verspreiden van
 vrije software (en dat U geld kan vragen voor deze dienst) en dat U er de
 broncode van hebt of kan krijgen als U dat wenst, dat U de software kan wijzigen
 of er delen van kan gebruiken in nieuwe vrije programma's en dat U weet dat U
@@ -40,10 +40,10 @@ deze dingen kan doen.
 
 Om deze rechten te beschermen, moeten we verbieden dat iemand U deze rechten
 ontzegt of vraagt deze op te geven. Deze restricties brengen enkele
-verantwoordelijkheden mee indien U kopieï¿½n van de software verspreidt of de
+verantwoordelijkheden mee indien U kopieën van de software verspreidt of de
 software wijzigt.
 
-Bijvoorbeeld, als U kopieï¿½n van zulk programma verspreidt,
+Bijvoorbeeld, als U kopieën van zulk programma verspreidt,
 kostenloos of voor een vergoeding, dan moet U de personen die de software
 ontvangen al de rechten geven die U hebt. U moet uzelf ervan verzekeren dan ook
 zij de broncode ontvangen of kunnen verkrijgen. U moet hen ook deze licentie
@@ -52,7 +52,7 @@ tonen zodat ze hun rechten kennen.
  We beschermen uw rechten met twee stappen
 (1) de software wordt auteursrechtelijk beschermd, en
 (2) we bieden U deze licentie die U de legale toestemming geeft om de software
-te kopiï¿½ren, te verspreiden en/of te wijzigen. 
+te kopiëren, te verspreiden en/of te wijzigen. 
 
 Alsook willen we voor de
 bescherming van de auteur en onszelf iedereen ervan verzekeren dat er geen
@@ -68,11 +68,11 @@ eigendom van een particulier brengen. Om dit te vermijden, hebben we het
 duidelijk gemaakt dat elk patent in licentie gegeven moet zijn voor eenieders
 vrij gebruik, oftewel helemaal niet in licentie gegeven mag zijn.
 
-De exacte bepalingen en condities om te kopiï¿½ren, verspreiden en wijzigen volgen
+De exacte bepalingen en condities om te kopiëren, verspreiden en wijzigen volgen
 hieronder.
 
                       GNU ALGEMENE PUBLIEKE LICENTIE
-       BEPALINGEN EN VOORWAARDEN OM TE KOPIï¿½REN, VERSPREIDEN EN WIJZIGEN
+       BEPALINGEN EN VOORWAARDEN OM TE KOPIËREN, VERSPREIDEN EN WIJZIGEN
 
 0.  Deze licentie is van toepassing op elk programma of ander werk dat een notie
 bevat van de eigenaar die zegt dat het verspreid mag worden onder de bepalingen
@@ -84,7 +84,7 @@ bevat, letterlijk oftewel gewijzigd en/of vertaald naar een andere taal.
 (Hierna vallen vertalingen zonder beperking onder de term "wijziging".)
 Elke licentiehouder wordt geadresseerd als "u". 
 
-Andere handelingen dan kopiï¿½ren,
+Andere handelingen dan kopiëren,
 verspreiden en wijzigen zijn niet gedekt door deze licentie; hiervoor is deze
 licentie niet bedoeld. De handeling om het Programma uit te voeren is niet 
 gelimiteerd, en de uitvoer van het Programma is enkel gedekt als de inhoud
@@ -93,7 +93,7 @@ gemaakt is door het Programma uit te voeren). Of dit waar is hangt af van wat
 het Programma doet.
 
 1.  U mag letterlijke exemplaren verspreiden van de programma broncode en deze
-kopiï¿½ren zoals U deze ontvangt, in eender welke vorm, op voorwaarde dat U ervoor
+kopiëren zoals U deze ontvangt, in eender welke vorm, op voorwaarde dat U ervoor
 oplet dat U op elke kopie de gepaste auteursrechten en afwijzing van garantie
 vermeldt; hou alle referenties naar deze licentie en naar het ontbreken van
 garantie intact ;en geef aan elke andere ontvanger van het Programma een kopie
@@ -105,7 +105,7 @@ honorarium.
 
 2.  U mag uw kopie of kopijen van het Programma, of een deel van het Programma,
 wijzigen, daarbij een werk gebaseerd op het Programma vormend. U mag deze 
-wijzigingen kopiï¿½ren en verspreiden onder de bepalingen van Paragraaf 1
+wijzigingen kopiëren en verspreiden onder de bepalingen van Paragraaf 1
 hierboven, indien U ook aan al deze voorwaarden voldoet:
 
 a) U moet in de gewijzigde bestanden duidelijk vermelden dat U het bestand 
@@ -146,7 +146,7 @@ Programma (of met een werk gebaseerd op het Programma) op een opslagmedium
 of verspreidingsmedium brengt het ander werk niet onder deze licentie.
 
 3.  U mag het Programma, of een werk gebaseerd op het Programma,
-zie paragraaf 2, verspreiden en kopiï¿½ren, in binaire of uitvoerbare vorm onder
+zie paragraaf 2, verspreiden en kopiëren, in binaire of uitvoerbare vorm onder
 de bepalingen van paragraaf 1 en 2 hierboven, op voorwaarde dat U aan een van
 de volgende voorwaarden voldoet :
 
@@ -158,11 +158,11 @@ b) Voeg een voor minstens 3 jaar geldige, geschreven, offerte bij, om de
 complete overeenstemmende broncode, op een medium dat hiervoor gebruikelijk is,
 voor Computers leesbaar, verspreidbaar onder de bepalingen van de paragrafen 1
 en 2 hierboven, aan elke derde partij te leveren, voor een vergoeding die niet
-meer bedraagt dan de kost om de broncode te kopiï¿½ren.
+meer bedraagt dan de kost om de broncode te kopiëren.
 
 c) Voeg de informatie bij die U ontving betreffende het aanbod om de bijpassende
 broncode te verkrijgen. (Dit alternatief is enkel toegestaan voor niet
-commerciï¿½le verspreiding en enkel als U het programma in binaire of uitvoerbare
+commerciële verspreiding en enkel als U het programma in binaire of uitvoerbare
 vorm ontving met zulk een aanbod, in overeenstemming met subparagraaf b
 erboven.) De broncode van een werk is de vorm van het werk waaraan voorkeur
 wordt gegeven om er wijzigingen in aan te brengen. Voor een uitvoerbaar werk
@@ -175,15 +175,15 @@ hoofdcomponenten (compiler, kernel, enz...) van het besturingssysteem op dewelke
 het Programma draait, tenzij die component bij het uitvoerbare bestand zit.
 
 Als verspreiding van een uitvoerbaar bestand of binaire code mogelijk gemaakt
-wordt door toegang tot het kopiï¿½ren van een vooraf bepaalde plaats, dan telt het
-mogelijk maken de broncode van diezelfde plaats te kopiï¿½ren als het verspreiden
-van de broncode, zelfs indien het mee kopiï¿½ren van de broncode optioneel is.
+wordt door toegang tot het kopiëren van een vooraf bepaalde plaats, dan telt het
+mogelijk maken de broncode van diezelfde plaats te kopiëren als het verspreiden
+van de broncode, zelfs indien het mee kopiëren van de broncode optioneel is.
 
-4.  U mag het Programma niet kopiï¿½ren, wijzigen, verder in licentie geven of
+4.  U mag het Programma niet kopiëren, wijzigen, verder in licentie geven of
 verspreiden behalve zoals expliciet vermeld in deze licentie. Eender welke
-poging om het programma op een andere manier te kopiï¿½ren, wijzigen, verder in
+poging om het programma op een andere manier te kopiëren, wijzigen, verder in
 licentie geven of verspreiden is ongeldig en verklaart automatisch uw rechten
-bepaald in deze licentie nietig. Derde partijen die kopieï¿½n of rechten van U
+bepaald in deze licentie nietig. Derde partijen die kopieën of rechten van U
 hebben ontvangen onder deze licentie blijven hun rechten behouden zolang ze de
 voorwaarden niet schenden.
 
@@ -193,12 +193,12 @@ Programma of werken gebaseerd op het Programma te wijzigen of te verspreiden.
 Deze daden zijn door de wet verboden als U deze licentieovereenkomst niet
 accepteert. Daarom geeft u aan dat door het Programma te verspreiden of te
 wijzigen, U deze licentie, en al zijn voorwaarden en bepalingen in verband met
-kopiï¿½ren, wijzigen of verspreiden van het Programma, of werken gebaseerd op het
+kopiëren, wijzigen of verspreiden van het Programma, of werken gebaseerd op het
 Programma, accepteert om dat te kunnen doen.
 
 6.  Elke keer U het Programma (of een werk gebaseerd op het Programma)
 verspreidt, krijgt de ontvanger automatisch een licentie van de originele
-licentiehouder om het Programma te kopiï¿½ren, verspreiden of wijzigen,
+licentiehouder om het Programma te kopiëren, verspreiden of wijzigen,
 onderworpen aan deze bepalingen en voorwaarden. U mag de ontvanger geen
 beperkingen opleggen om de rechten uit te oefenen die hierin bepaald zijn.
 
@@ -282,7 +282,7 @@ HET GEBRUIK, OF DE ONKUNDIGHEID OM HET PROGRAMMA TE GEBRUIKEN
 (INCLUSIEF, MAAR NIET GELIMITEERD TOT HET VERLIES VAN GEGEVENS,
 GEGEVENS DIE CORRUPT WORDEN, OF VERLIEZEN GELEDEN DOOR U OF DERDE PARTIJEN OF
 EEN FALING VAN HET PROGRAMMA OM SAMEN TE WERKEN MET ANDERE PROGRAMMA'S),
-ZELFS INDIEN DE AUTEURSRECHTHOUDER OF EEN ANDERE PARTIJ GEï¿½NFORMEERD WAS
+ZELFS INDIEN DE AUTEURSRECHTHOUDER OF EEN ANDERE PARTIJ GEÏNFORMEERD WAS
 OVER DE MOGELIJKHEID TOT ZULKE SCHADE.
 
 EINDE VAN DE BEPALINGEN EN VOORWAARDEN
@@ -312,7 +312,7 @@ Publieke Licentie voor meer details.
 U zou een kopie van de GNU Algemene Publieke Licentie ontvangen moeten
 hebben samen met dit Programma; indien dit niet zo is, schrijf naar
 de Free Software Foundation, Inc.,
-51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 Voeg ook informatie bij hoe men U kan contacteren via e-mail en gewone post.
 Als het Programma interactief is, laat het een korte boodschap tonen zoals
@@ -334,7 +334,7 @@ Fiscus (dat belastingsaangiften invult) geschreven door James Hacker.
 Deze Algemene Publieke Licentie laat niet toe dat het Programma verwerkt wordt 
 in een commercieel programma. Als uw Programma een subroutine bibliotheek is,
 dan kan U het misschien nuttige beschouwen om toe te staan dat uw Programma 
-gelinkt word met commerciï¿½le programma's. Als dat is wat U wil doen, 
+gelinkt word met commerciële programma's. Als dat is wat U wil doen, 
 dan moet U de GNU Algemene Minder Publieke Licentie gebruiken in plaats van
 deze licentie.
 
