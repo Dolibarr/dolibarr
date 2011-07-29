@@ -13,14 +13,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *    \file       htdocs/categories/liste.php
  *    \ingroup    category
  *    \brief      Page liste des categories
- *    \version	$Id: liste.php,v 1.10 2011/08/03 00:46:32 eldy Exp $
+ *    \version	$Id$
  */
 
 require("../main.inc.php");
@@ -76,5 +77,5 @@ print '</td></tr></table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:32 $ - $Revision: 1.10 $');
+llxFooter('$Date$ - $Revision$');
 ?>
