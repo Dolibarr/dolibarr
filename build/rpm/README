@@ -10,6 +10,8 @@ with format RPM (for Redhat, Mandriva, ...).
 
 # This is standard command to work on Debian packaging:
 #
+# rpmlint file.rpm				    Test a package
+#
 # On Fedora
 # rpm -i --test dolibarr-...rpm     To list dependencies of RPM   
 # yum install dolibarr-...rpm       To install package and dependencies   
@@ -27,18 +29,22 @@ with format RPM (for Redhat, Mandriva, ...).
 
 
 To submit a package to Fedora:
-
+- Create account on bugzilla.redhat.com
+- Create account on fedoraproject.org
+- Create SRPMS package.
+- Upload package onf http://fedorapeople.org
 - Create a bug with form https://bugzilla.redhat.com/bugzilla/enter_bug.cgi?product=Fedora&format=fedora-review
 This is example of content of review field (used for Bug 723326):
-Spec URL: http://www.dolibarr.org/files/fedora/dolibarr.spec
-SRPM URL: http://www.dolibarr.org/files/fedora/dolibarr-3.1.0-0.src.rpm
+SRPMS URL: http://www.dolibarr.org/files/fedora/dolibarr-x.y.z-xxx.src.rpm
 Description:  Dolibarr ERP & CRM is an easy to use open source/free software
 for small and medium companies, foundations or freelances. It includes
 different features for Enterprise Resource Planning (ERP) and Customer
 Relationship Management (CRM) but also for different other activities.
 I am author of other already packaged OpenSources packages (awstats) but this
 is my first package to maintain myself. So i'm seeking a sponsor.
-
 - Edit field "Block" and add FE-NEEDSPONSOR
-
-- Check bug is into database by searching with id on https://bugzilla.redhat.com/  
+- Check bug is into database by searching with id on https://bugzilla.redhat.com/
+- Install fedora packager tools: yum install fedora-packager
+- Setup fedora packagers tools: fedora-packager-setup
+- Send your package: koji build --scratch f16 path_to_source_RPM
+- Check if package is available: http://koji.fedoraproject.org/koji/  
