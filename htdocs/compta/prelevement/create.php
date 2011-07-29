@@ -22,7 +22,7 @@
 /**
  *	\file       htdocs/compta/prelevement/create.php
  *	\brief      Prelevement
- *	\version    $Id: create.php,v 1.33 2011/07/18 18:07:36 eldy Exp $
+ *	\version    $Id: create.php,v 1.34 2011/07/29 21:15:39 eldy Exp $
  */
 
 require("../bank/pre.inc.php");
@@ -42,6 +42,7 @@ $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
 // Get supervariables
 $action = GETPOST("action");
+
 
 /*
  * Actions
@@ -171,17 +172,18 @@ if ($resql)
     $num = $db->num_rows($resql);
     $i = 0;
 
-    print_fiche_titre($langs->trans("InvoiceWaitingWithdraw").' ('.$num.')','','');
+    print_fiche_titre($langs->trans("InvoiceWaitingWithdraw").($num > 0?' ('.$num.')':''),'','');
+
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<td>'.$langs->trans("Invoice").'</td>';
+    print '<td>'.$langs->trans("ThirdParty").'</td>';
+    print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
+    print '<td align="right">'.$langs->trans("DateRequest").'</td>';
+    print '</tr>';
 
     if ($num)
     {
-        print '<table class="noborder" width="100%">';
-        print '<tr class="liste_titre">';
-        print '<td>'.$langs->trans("Invoice").'</td>';
-        print '<td>'.$langs->trans("ThirdParty").'</td>';
-        print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
-        print '<td align="right">'.$langs->trans("DateRequest").'</td>';
-        print '</tr>';
         $var = True;
         while ($i < $num && $i < 20)
         {
@@ -207,10 +209,10 @@ if ($resql)
             print '</tr>';
             $i++;
         }
-
-        print "</table><br>";
-
     }
+    else print '<tr><td colspan="4">'.$langs->trans("None").'</td></tr>';
+    print "</table>";
+    print "<br>\n";
 }
 else
 {
@@ -274,5 +276,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/18 18:07:36 $ - $Revision: 1.33 $');
+llxFooter('$Date: 2011/07/29 21:15:39 $ - $Revision: 1.34 $');
 ?>
