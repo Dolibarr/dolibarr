@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,7 +21,7 @@
  *	    \file       htdocs/admin/security_other.php
  *      \ingroup    core
  *      \brief      Security options setup
- *		\version    $Id$
+ *		\version    $Id: security_other.php,v 1.40 2011/07/29 21:04:27 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -79,19 +79,6 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
     }
 }
 
-if ($_GET["action"] == 'set_main_upload_doc')
-{
-	if (! dolibarr_set_const($db, 'MAIN_UPLOAD_DOC',$_POST["MAIN_UPLOAD_DOC"],'chaine',0,'',$conf->entity))
-	{
-		dol_print_error($db);
-	}
-	else
-	{
-		Header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
-	}
-}
-
 if ($_GET["action"] == 'activate_captcha')
 {
 	dolibarr_set_const($db, "MAIN_SECURITY_ENABLECAPTCHA", '1','chaine',0,'',$conf->entity);
@@ -120,30 +107,32 @@ else if ($_GET["action"] == 'disable_advancedperms')
 
 if ($_GET["action"] == 'MAIN_SESSION_TIMEOUT')
 {
-	dolibarr_set_const($db, "MAIN_SESSION_TIMEOUT", $_POST["MAIN_SESSION_TIMEOUT"],'chaine',0,'',$conf->entity);
-	Header("Location: security_other.php");
-	exit;
+	if (! dolibarr_set_const($db, "MAIN_SESSION_TIMEOUT", $_POST["MAIN_SESSION_TIMEOUT"],'chaine',0,'',$conf->entity)) dol_print_error($db);
+	else $mesg=$langs->trans("RecordModifiedSuccessfully");
+}
+
+if ($_GET["action"] == 'MAIN_UPLOAD_DOC')
+{
+	if (! dolibarr_set_const($db, 'MAIN_UPLOAD_DOC',$_POST["MAIN_UPLOAD_DOC"],'chaine',0,'',$conf->entity)) dol_print_error($db);
+	else $mesg=$langs->trans("RecordModifiedSuccessfully");
 }
 
 if ($_GET["action"] == 'MAIN_UMASK')
 {
-	dolibarr_set_const($db, "MAIN_UMASK", $_POST["MAIN_UMASK"],'chaine',0,'',$conf->entity);
-	Header("Location: security_other.php");
-	exit;
+	if (! dolibarr_set_const($db, "MAIN_UMASK", $_POST["MAIN_UMASK"],'chaine',0,'',$conf->entity)) dol_print_error($db);
+	else $mesg=$langs->trans("RecordModifiedSuccessfully");
 }
 
 if ($_GET["action"] == 'MAIN_ANTIVIRUS_COMMAND')
 {
-	dolibarr_set_const($db, "MAIN_ANTIVIRUS_COMMAND", $_POST["MAIN_ANTIVIRUS_COMMAND"],'chaine',0,'',$conf->entity);
-	Header("Location: security_other.php");
-	exit;
+	if (! dolibarr_set_const($db, "MAIN_ANTIVIRUS_COMMAND", $_POST["MAIN_ANTIVIRUS_COMMAND"],'chaine',0,'',$conf->entity)) dol_print_error($db);
+	else $mesg=$langs->trans("RecordModifiedSuccessfully");
 }
 
 if ($_GET["action"] == 'MAIN_ANTIVIRUS_PARAM')
 {
-	dolibarr_set_const($db, "MAIN_ANTIVIRUS_PARAM", $_POST["MAIN_ANTIVIRUS_PARAM"],'chaine',0,'',$conf->entity);
-	Header("Location: security_other.php");
-	exit;
+	if (! dolibarr_set_const($db, "MAIN_ANTIVIRUS_PARAM", $_POST["MAIN_ANTIVIRUS_PARAM"],'chaine',0,'',$conf->entity)) dol_print_error($db);
+	else $mesg=$langs->trans("RecordModifiedSuccessfully");
 }
 
 
@@ -266,7 +255,7 @@ print '<td>'.$langs->trans("Value").'</td>';
 print '<td width="100">&nbsp;</td>';
 print '</tr>';
 
-print '<form action="'.$_SERVER["PHP_SELF"].'?action=set_main_upload_doc" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'?action=MAIN_UPLOAD_DOC" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<tr '.$bc[$var].'>';
 print '<td colspan="2">'.$langs->trans("MaxSizeForUploadedFiles").'.';
@@ -349,7 +338,7 @@ print '</div>';
 
 
 // Form to test upload
-if ($mesg) print $mesg;
+dol_htmloutput_mesg($mesg);
 
 // Affiche formulaire upload
 print '<br>';
@@ -359,5 +348,5 @@ $formfile->form_attach_new_file(DOL_URL_ROOT.'/admin/security_other.php',$langs-
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/29 21:04:27 $ - $Revision: 1.40 $');
 ?>
