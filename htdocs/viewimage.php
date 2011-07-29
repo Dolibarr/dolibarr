@@ -14,7 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
  */
 
@@ -22,7 +23,7 @@
  *		\file       htdocs/viewimage.php
  *		\brief      Wrapper to show images into Dolibarr screens
  *      \remarks    Call to wrapper is '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=diroffile&file=relativepathofofile&cache=0">'
- *		\version    $Id: viewimage.php,v 1.97 2011/07/31 23:19:04 eldy Exp $
+ *		\version    $Id: viewimage.php,v 1.96 2011/07/28 13:56:17 eldy Exp $
  */
 
 // Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
