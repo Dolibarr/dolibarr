@@ -13,14 +13,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *  \file       htdocs/core/class/menu.class.php
  *  \ingroup    core
  *  \brief      Fichier de la classe de gestion du menu gauche
- *  \version    $Id: menu.class.php,v 1.5 2011/07/31 23:45:13 eldy Exp $
+ *  \version    $Id: menu.class.php,v 1.4 2011/07/04 11:33:22 eldy Exp $
  */
 
 

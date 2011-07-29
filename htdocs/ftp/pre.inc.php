@@ -12,14 +12,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *		\file 		htdocs/ftp/pre.inc.php
  *		\ingroup    ftp
  *		\brief      File to manage left menu for FTP module
- *		\version    $Id: pre.inc.php,v 1.9 2011/08/01 00:01:02 eldy Exp $
+ *		\version    $Id$
  */
 
 require ("../main.inc.php");

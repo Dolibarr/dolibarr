@@ -1,5 +1,7 @@
 #!/bin/sh
 # postinst script for dolibarr
+#
+# see: dh_installdeb(1)
 
 set -e
 
@@ -14,31 +16,6 @@ set -e
 # for details, see /usr/share/doc/packaging-manual/
 
 
-
-
-lighttpd_install() {
-	if [ ! -f /etc/lighttpd/conf-available/50-dolibarr.conf ] ; then
-		if which lighty-enable-mod >/dev/null 2>&1 ; then
-			echo "Add link for Lighttpd config file"
-			ln -fs /etc/dolibarr/lighttpd.conf /etc/lighttpd/conf-available/50-dolibarr.conf
-			# We enabled it
-			lighty-enable-mod dolibarr fastcgi-php
-		else
-			echo "Lighttpd not installed, skipping"
-		fi
-	fi
-}
-
-apache_install() {
-	webserver=$1
-	if [ -d /etc/$webserver/conf.d ] && [ ! -e /etc/$webserver/conf.d/dolibarr.conf ]; then
-		echo "Add link for Apache config file"
-		ln -fs /etc/dolibarr/apache.conf /etc/$webserver/conf.d/dolibarr.conf
-	fi
-}
-
-
-
 . /usr/share/debconf/confmodule
 
 db_version 2.0
@@ -47,25 +24,23 @@ db_version 2.0
 echo Run the dolibarr postinst script
 
 
-# Define vars
 docdir='/var/lib/dolibarr/documents'
 #docdir='/usr/share/dolibarr/documents'
-installfileorig="/usr/share/dolibarr/build/deb/install.forced.php.install"
-installconfig="/etc/dolibarr/install.forced.php"
-#config="/usr/share/dolibarr/htdocs/conf/conf.php"
-config="/etc/dolibarr/conf.php"
+
 
 
 case "$1" in
 	configure)
 
-        # Create document directory for uploaded data files
-        mkdir -p $docdir
-        chown -R www-data:www-data $docdir
-        chmod -R 775 $docdir
-        chmod -R g+s $docdir
+		# Copy apache.conf file into target directory.
+		#fileorig="/usr/share/dolibarr/build/deb/apache.conf"
+		#config="/etc/dolibarr/apache.conf"
+		#mkdir -p /etc/dolibarr
+		#cp -p $fileorig $config
 
-		# Copy install config file (with matching Debian) values into target directory
+		# Edit install.forced.php to match Debian values
+		fileorig="/usr/share/dolibarr/build/deb/install.forced.php.install"
+		config="/usr/share/dolibarr/htdocs/install/install.forced.php"
 		superuserlogin=''
 		superuserpassword=''
 		if [ -f /etc/mysql/debian.cnf ] ; then
@@ -75,31 +50,42 @@ case "$1" in
 		fi
 		echo Mysql superuser found to use is $superuserlogin
 		if [ -z "$superuserlogin" ] ; then
-			cat $installfileorig | sed -e 's/__SUPERUSERLOGIN__/root/g' | sed -e 's/__SUPERUSERPASSWORD__//g' > $installconfig
+			cat $fileorig | sed -e 's/__SUPERUSERLOGIN__/root/g' | sed -e 's/__SUPERUSERPASSWORD__//g' > $config
 		else
-			cat $installfileorig | sed -e 's/__SUPERUSERLOGIN__/'$superuserlogin'/g' | sed -e 's/__SUPERUSERPASSWORD__/'$superuserpassword'/g' > $installconfig
+			cat $fileorig | sed -e 's/__SUPERUSERLOGIN__/'$superuserlogin'/g' | sed -e 's/__SUPERUSERPASSWORD__/'$superuserpassword'/g' > $config
 		fi
-		chown -R root:www-data $installconfig
-	   	chmod -R 660 $installconfig
+
+        # Create document directory for uploaded data files
+        mkdir -p $docdir
+        chown -R www-data:www-data $docdir
+        chmod -R 775 $docdir
+        chmod -R g+s $docdir
 
 		# Create an empty conf.php with permission to web server
-		if [ ! -f $config ]
+		if [ ! -f /usr/share/dolibarr/htdocs/conf/conf.php ]
 		then 
-			echo Create empty file $config		
-			touch $config
-			chown -R root:www-data $config
-	    	chmod -R 660 $config
+			echo Create empty file /usr/share/dolibarr/htdocs/conf/conf.php		
+			touch /usr/share/dolibarr/htdocs/conf/conf.php
+			chown -R root:www-data /usr/share/dolibarr/htdocs/conf/conf.php
+	    	chmod -R 660 /usr/share/dolibarr/htdocs/conf/conf.php
 		fi
 
-	
-		db_get dolibarr/reconfigure-webserver
-	
-		webservers="$RET"
-	
+		#db_reset "dolibarr/webserver"
+
+		# Get the web server type (use db_get for interactive mode).
+		#db_get "dolibarr/webserver"		# Read value for webserver.
+		#webserver="$RET"
+
+		case $webserver in
+			Apache)		webservers="apache2" ;;
+			Apache-SSL)	webservers="apache2-ssl" ;;
+			Both)		webservers="apache2 apache2-ssl" ;;
+			*)		    webservers="apache2 apache2-ssl" ;;
+		esac
+
 		# Set up web server.
-		for webserver in $webservers ; do
-			webserver=${webserver%,}
-			echo Complete config of server $webserver
+		for server in $webservers ; do
+			echo Complete config of server $server
 			
 			# Detect webuser and webgroup
 			webuser=
@@ -116,32 +102,47 @@ case "$1" in
 
 			# Set permissions to web server
 			chown -R $webuser:$webgroup /usr/share/dolibarr
-            chown -R root:$webgroup $config
+            chown -R root:$webgroup /usr/share/dolibarr/htdocs/conf/conf.php
+
+			# Add link to config file
+            echo Setup web server $server to add dolibarr config file
+			ln -fs /etc/dolibarr/apache.conf /etc/apache2/conf.d/dolibarr.conf
+			
 		done
 
-		# Restart web server.
-		for webserver in $webservers; do
-			webserver=${webserver%,}
-			if [ "$webserver" = "lighttpd" ] ; then
-				lighttpd_install
-			else
-				apache_install $webserver
-			fi
-			# Reload webserver in any case, configuration might have changed
-			# Redirection of 3 is needed because Debconf uses it and it might 
-			# be inherited by webserver. See bug #446324.
-	        if [ -f /etc/init.d/$webserver ] ; then
-	            if [ -x /usr/sbin/invoke-rc.d ]; then
-    	            echo Restart web server $server using invoke-rc.d
-	    		    # This works with Debian (5.05,...) and Ubuntu (9.10,10.04,...)
-	                invoke-rc.d $webserver reload 3>/dev/null || true
-	            else
-	                echo Restart web server $server using $server reload
-	                /etc/init.d/$webserver reload 3>/dev/null || true
-	            fi
-	        fi
-		done
+		#echo "Install menu entry"
+		# This one is for Gnome ubuntu
+		#fileorig="/usr/share/dolibarr/build/deb/dolibarr.desktop"
+		#target="/usr/share/applications/"
+		#cp -f $fileorig $target
+		# Not sure this is usefull
+		#if test -x /usr/bin/update-menus; then 
+		#	echo "update-menus"
+		#	update-menus;
+		#fi
+		
+		# TODO Create the file to force parameters in Web installer
+		#if grep DBHOST /usr/share/dolibarr/htdocs/conf/conf.php > /dev/null
+		#then
+		#    perl -pi -e "s/DBHOST/$dbserver/" /usr/share/dolibarr/htdocs/conf/conf.php
+		#    perl -pi -e "s/DBNAME/$dbname/" /usr/share/dolibarr/htdocs/conf/conf.php
+		#    perl -pi -e "s/DBUSER/$dbuser/" /usr/share/dolibarr/htdocs/conf/conf.php
+		#    perl -pi -e "s/DBPASS/$dbpass/" /usr/share/dolibarr/htdocs/conf/conf.php
+		#fi
 
+		# Restart servers
+		servers="apache2-ssl apache2 mysql"
+		# Another way to restart
+		for server in $servers ; do
+    		if [ -x /usr/sbin/invoke-rc.d ]; then
+                echo Restart web server $server using invoke-rc.d
+    		    # This works with Debian (5.05,...) and Ubuntu (9.10,10.04,...)
+    	    	invoke-rc.d $server reload || true
+    		else
+                echo Restart web server $server using $server reload
+    	    	/etc/init.d/$server reload || true
+    		fi
+		done
 		
 		echo ----------
 		echo "Call Dolibarr page http://localhost/dolibarr/ to complete the installation and use Dolibarr."
@@ -152,13 +153,13 @@ case "$1" in
 	;;
 
 	*)
-		echo "postinst called with unknown argument $1" >&2
+		echo "postinst called with unknown argument \`$1'" >&2
 		exit 0
 	;;
 esac
 
-#DEBHELPER#
-
 db_stop
+
+#DEBHELPER#
 
 exit 0
