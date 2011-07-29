@@ -4,16 +4,10 @@ Standards-Version: 3.9.1
 Section: web
 Priority: optional
 Homepage: http://www.dolibarr.org
-Build-Depends: debhelper (>= 7), po-debconf
+Build-Depends: debhelper, po-debconf
 
 Package: dolibarr
-Depends: libapache2-mod-php5 | libapache2-mod-php5filter | php5-cgi | php5-fpm | php5,
-    php5-mysql | php5-mysqli, 
-    php5-cli, php5-cgi, php5-curl, php5-gd, php5-ldap, php-pear, php-mail-mime,
-    ${misc:Depends}, xdg-utils,
-    mysql-server, perl
-Recommends: apache2 | lighttpd | httpd, mysql-client
-Suggests: www-browser
+Depends: ${misc:Depends}, xdg-utils, apache2, libapache2-mod-php5, php5, php5-cli, php5-cgi, php5-curl, php5-gd, php5-ldap, php5-mysql, php-pear, php-mail-mime, mysql-server, perl
 Architecture: all
 Section: web
 Priority: optional
