@@ -25,7 +25,7 @@
  *	\file       htdocs/product/class/product.class.php
  *	\ingroup    produit
  *	\brief      Fichier de la classe des produits predefinis
- *	\version    $Id$
+ *	\version    $Id: product.class.php,v 1.46 2011/07/29 06:59:36 tiaris Exp $
  */
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
 
@@ -533,7 +533,7 @@ class Product extends CommonObject
 	{
 		$sqr = 0;
 
-		$elements = array('propaldet','commandedet','facturedet','contratdet');
+		$elements = array('propaldet','commandedet','facturedet','contratdet','product_fournisseur');
 
 		foreach($elements as $table)
 		{
@@ -580,7 +580,7 @@ class Product extends CommonObject
 			if ($prod_use == 0)
 			{
 				// TODO possibility to add external module constraint
-				$elements = array('product_price','product_price_min','product_lang','categorie_product');
+				$elements = array('product_price','product_lang','categorie_product');
 
 				foreach($elements as $table)
 				{
