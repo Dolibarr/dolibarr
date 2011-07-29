@@ -1,6 +1,6 @@
 --------------------------------------------------------------
 English Dolibarr ChangeLog
-$Id: ChangeLog,v 1.424 2011/07/13 14:16:39 eldy Exp $
+$Id: ChangeLog,v 1.425 2011/07/29 10:55:22 simnandez Exp $
 --------------------------------------------------------------
 
 ***** ChangeLog for 3.1 compared to 3.0 *****
@@ -74,6 +74,7 @@ For users:
 - New: Look: Minor enhancements into agenda view.
 - New: Look: Nicer tooltips with transparency and shadow.
 - New: task #11004: Create invoice from intervention.
+- New: task #10501: Can use point of sale with different bank accounts.
 - Fix: Better Postgresql compatibility.
 - Fix: Numbering module for invoices use same number for invoice 
        and credit note if mask is same.
