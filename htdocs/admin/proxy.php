@@ -20,7 +20,7 @@
  *   	\file       htdocs/admin/proxy.php
  *      \ingroup    core
  *		\brief      Page  setup proxy to use for external web access
- *		\version    $Id$
+ *		\version    $Id: proxy.php,v 1.6 2011/07/29 21:04:27 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -201,9 +201,10 @@ print '</center>';
 print '</form><br>';
 
 
-if ($mesg) print $mesg.'<br>';
+dol_htmloutput_mesg($mesg);
+
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/29 21:04:27 $ - $Revision: 1.6 $');
 ?>
