@@ -12,13 +12,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *      \defgroup   webservices     Module webservices
  *      \brief      Module to enable the Dolibarr server of web services
- *		\brief		$Id: modWebServices.class.php,v 1.7 2011/07/31 23:28:10 eldy Exp $
+ *		\brief		$Id$
 */
 
 /**
