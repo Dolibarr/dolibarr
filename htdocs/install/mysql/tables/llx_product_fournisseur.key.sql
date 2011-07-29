@@ -17,7 +17,7 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- $Id$
+-- $Id: llx_product_fournisseur.key.sql,v 1.2 2011/07/29 06:58:52 tiaris Exp $
 -- ============================================================================
 
 
@@ -25,3 +25,5 @@ ALTER TABLE llx_product_fournisseur ADD UNIQUE INDEX uk_product_fournisseur_ref 
 
 ALTER TABLE llx_product_fournisseur ADD INDEX idx_product_fourn_fk_product (fk_product, entity);
 ALTER TABLE llx_product_fournisseur ADD INDEX idx_product_fourn_fk_soc (fk_soc, entity);
+
+ALTER TABLE llx_product_fournisseur ADD CONSTRAINT fk_product_fournisseur_fk_product    FOREIGN KEY (fk_product)    REFERENCES llx_product (rowid);
