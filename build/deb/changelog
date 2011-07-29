@@ -4,6 +4,6 @@ dolibarr (3.1.0-1.1) unstable; urgency=low
   * New upstream release.
     closes: bug#634783
     
- -- Laurent Destailleur <eldy@users.sourceforge.net>  Mon, 30 Jul 2011 12:00:00 +0100     
+ -- Laurent Destailleur <eldy@users.sourceforge.net>  Mon, 18 Jul 2011 12:00:00 +0100     
 
-# For a changelog file dedicated to users, see /usr/share/doc/dolibarr/UserChangeLog.gz file. 
+# More information into /usr/share/dolibarr/ChangeLog file. 
