@@ -15,13 +15,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *	\file       htdocs/compta/prelevement/create.php
  *	\brief      Prelevement
- *	\version    $Id: create.php,v 1.35 2011/07/31 22:23:29 eldy Exp $
+ *	\version    $Id: create.php,v 1.34 2011/07/29 21:15:39 eldy Exp $
  */
 
 require("../bank/pre.inc.php");
@@ -275,5 +276,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:29 $ - $Revision: 1.35 $');
+llxFooter('$Date: 2011/07/29 21:15:39 $ - $Revision: 1.34 $');
 ?>
