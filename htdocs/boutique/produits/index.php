@@ -13,16 +13,17 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: index.php,v 1.8 2011/08/03 00:45:45 eldy Exp $
+ * $Id$
  */
 
 /**
 		\file 		htdocs/boutique/produits/index.php
 		\ingroup    boutique
 		\brief      Page gestion produits du module OsCommerce
-		\version    $Revision: 1.8 $
+		\version    $Revision$
 */
 
 require("../../main.inc.php");
@@ -87,5 +88,5 @@ else
 
 $dbosc->close();
 
-llxFooter('$Date: 2011/08/03 00:45:45 $ - $Revision: 1.8 $');
+llxFooter('$Date$ - $Revision$');
 ?>
