@@ -31,7 +31,7 @@
  *	\file       htdocs/core/class/html.form.class.php
  *  \ingroup    core
  *	\brief      File of class with all html predefined components
- *	\version	$Id: html.form.class.php,v 1.191 2011/07/21 22:55:06 eldy Exp $
+ *	\version	$Id: html.form.class.php,v 1.192 2011/07/27 23:37:01 eldy Exp $
  */
 
 
@@ -677,7 +677,7 @@ class Form
         $sql = "SELECT s.rowid, s.name, s.firstname, s.poste FROM";
         $sql.= " ".MAIN_DB_PREFIX ."socpeople as s";
         $sql.= " WHERE entity = ".$conf->entity;
-        if ($socid) $sql.= " AND fk_soc=".$socid;
+        if ($socid > 0) $sql.= " AND fk_soc=".$socid;
         $sql.= " ORDER BY s.name ASC";
 
         dol_syslog("Form::select_contacts sql=".$sql);
