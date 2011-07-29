@@ -183,11 +183,6 @@ UseAnExternalHttpLinkOrRelativeDolibarrLink=Saisir une URL http externe ou une U
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choisir si le raccourci doit ouvrir la page dans une nouvelle fenêtre ou fenêtre courante
 BookmarksManagement=Gestion des marque-pages
 ListOfBookmarks=Liste des marque-pages
-##### Webcal #####
-LoginWebcal=Login Webcalendar
-ErrorWebcalLoginNotDefined=Le login Webcalendar associé à votre login Dolibarr <b>%s</b> n'est pas défini.
-##### Phenix #####
-ErrorPhenixLoginNotDefined=Le login Phenix associé à votre login Dolibarr <b>%s</b> n'est pas défini.
 ##### Calendar common #####
 AddCalendarEntry=Ajouter entrée dans le calendrier %s
 NewCompanyToDolibarr=Société %s ajoutée dans Dolibarr
