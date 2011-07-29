@@ -19,7 +19,7 @@
 /**
  *      \defgroup   workflow     Module workflow
  *      \brief      Workflow management
- *      \version    $Id: modWorkflow.class.php,v 1.11 2011/08/01 13:26:22 hregis Exp $
+ *      \version    $Id: modWorkflow.class.php,v 1.10 2011/07/31 23:28:10 eldy Exp $
  */
 
 /**
@@ -68,7 +68,7 @@ class modWorkflow extends DolibarrModules
         // If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
         $this->picto='technic';
 
-        // Defined if the directory /mymodule/includes/triggers/ contains triggers or not
+        // Defined if the directory /mymodule/inc/triggers/ contains triggers or not
         $this->triggers = 1;
 
         // Data directories to create when module is enabled
