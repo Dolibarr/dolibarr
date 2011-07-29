@@ -12,7 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
  */
 
@@ -20,7 +21,7 @@
  *	\file       htdocs/includes/modules/mailings/peche.modules.php
  *	\ingroup    mailing
  *	\brief      File of class to offer a selector of emailing targets with Rule 'Peche'.
- *	\version    $Id: peche.modules.php,v 1.16 2011/07/31 23:28:15 eldy Exp $
+ *	\version    $Id$
  */
 include_once DOL_DOCUMENT_ROOT.'/includes/modules/mailings/modules_mailings.php';
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
