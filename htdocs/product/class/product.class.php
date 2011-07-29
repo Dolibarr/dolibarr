@@ -25,7 +25,7 @@
  *	\file       htdocs/product/class/product.class.php
  *	\ingroup    produit
  *	\brief      Fichier de la classe des produits predefinis
- *	\version    $Id: product.class.php,v 1.46 2011/07/29 06:59:36 tiaris Exp $
+ *	\version    $Id: product.class.php,v 1.47 2011/07/29 20:47:35 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
 
@@ -191,14 +191,15 @@ class Product extends CommonObject
 
 	/**
 	 *	Insert product into database
-	 *	@param    user     	User making insert
-	 *	@return   int     	id of product/service if OK or number of error < 0
+	 *	@param    user     		User making insert
+	 *  @param	  notrigger		Disable triggers
+	 *	@return   int     		Id of product/service if OK or number of error < 0
 	 */
-	function create($user)
+	function create($user,$notrigger=0)
 	{
-		global $conf ;
+		global $conf, $langs;
 
-		$this->errno = 0;
+        $error=0;
 
 		// Clean parameters
 		$this->ref = dol_string_nospecial(trim($this->ref));
@@ -250,171 +251,148 @@ class Product extends CommonObject
 			$this->error='ErrorWrongParameters';
 			return -1;
 		}
+		if (empty($this->ref))
+		{
+			$this->error='ErrorWrongParameters';
+		    return -2;
+		}
 
 		dol_syslog("Product::Create ref=".$this->ref." price=".$this->price." price_ttc=".$this->price_ttc." tva_tx=".$this->tva_tx." price_base_type=".$this->price_base_type." Category : ".$this->catid, LOG_DEBUG);
 
-		if ($this->ref)
+
+		$this->db->begin();
+
+		$sql = "SELECT count(*) as nb";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product";
+		$sql.= " WHERE ref = '" .$this->ref."'";
+		$sql.= " AND entity = ".$conf->entity;
+
+		$result = $this->db->query($sql);
+		if ($result)
 		{
-			$this->db->begin();
-
-			$sql = "SELECT count(*)";
-			$sql.= " FROM ".MAIN_DB_PREFIX."product";
-			$sql.= " WHERE ref = '" .$this->ref."'";
-			$sql.= " AND entity = ".$conf->entity;
-
-			$result = $this->db->query($sql) ;
-			if ($result)
+			$obj = $this->db->fetch_object($result);
+			if ($obj->nb == 0)
 			{
-				$row = $this->db->fetch_array($result);
-				if ($row[0] == 0)
+				// Produit non deja existant
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."product (";
+				$sql.= "datec";
+				$sql.= ", entity";
+				$sql.= ", ref";
+				$sql.= ", price_min";
+				$sql.= ", price_min_ttc";
+				$sql.= ", label";
+				$sql.= ", fk_user_author";
+				$sql.= ", fk_product_type";
+				$sql.= ", price";
+				$sql.= ", price_ttc";
+				$sql.= ", price_base_type";
+				$sql.= ", tobuy";
+				$sql.= ", tosell";
+				$sql.= ", canvas";
+				$sql.= ", finished";
+				$sql.= ", hidden";
+				$sql.= ") VALUES (";
+				$sql.= $this->db->idate(mktime());
+				$sql.= ", ".$conf->entity;
+				$sql.= ", '".$this->ref."'";
+				$sql.= ", ".price2num($price_min_ht);
+				$sql.= ", ".price2num($price_min_ttc);
+				$sql.= ", ".($this->libelle?"'".$this->db->escape($this->libelle)."'":"null");
+				$sql.= ", ".$user->id;
+				$sql.= ", ".$this->type;
+				$sql.= ", ".price2num($price_ht);
+				$sql.= ", ".price2num($price_ttc);
+				$sql.= ", '".$this->price_base_type."'";
+				$sql.= ", ".$this->status;
+				$sql.= ", ".$this->status_buy;
+				$sql.= ", '".$this->canvas."'";
+				$sql.= ", ".$this->finished;
+				$sql.= ", ".$this->hidden;
+				$sql.= ")";
+
+				dol_syslog("Product::Create sql=".$sql);
+				$result = $this->db->query($sql);
+				if ( $result )
 				{
-					// Produit non deja existant
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."product (";
-					$sql.= "datec";
-					$sql.= ", entity";
-					$sql.= ", ref";
-					$sql.= ", price_min";
-					$sql.= ", price_min_ttc";
-					$sql.= ", label";
-					$sql.= ", fk_user_author";
-					$sql.= ", fk_product_type";
-					$sql.= ", price";
-					$sql.= ", price_ttc";
-					$sql.= ", price_base_type";
-					$sql.= ", canvas";
-					$sql.= ", finished";
-					$sql.= ", hidden";
-					$sql.= ") VALUES (";
-					$sql.= $this->db->idate(mktime());
-					$sql.= ", ".$conf->entity;
-					$sql.= ", '".$this->ref."'";
-					$sql.= ", ".price2num($price_min_ht);
-					$sql.= ", ".price2num($price_min_ttc);
-					$sql.= ", ".($this->libelle?"'".$this->db->escape($this->libelle)."'":"null");
-					$sql.= ", ".$user->id;
-					$sql.= ", ".$this->type;
-					$sql.= ", ".price2num($price_ht);
-					$sql.= ", ".price2num($price_ttc);
-					$sql.= ", '".$this->price_base_type."'";
-					$sql.= ", '".$this->canvas."'";
-					$sql.= ", ".$this->finished;
-					$sql.= ", ".$this->hidden;
-					$sql.= ")";
+					$id = $this->db->last_insert_id(MAIN_DB_PREFIX."product");
 
-					dol_syslog("Product::Create sql=".$sql);
-					$result = $this->db->query($sql);
-					if ( $result )
+					if ($id > 0)
 					{
-						$id = $this->db->last_insert_id(MAIN_DB_PREFIX."product");
+						$this->id				= $id;
+						$this->price			= $price_ht;
+						$this->price_ttc		= $price_ttc;
+						$this->price_min		= $price_min_ht;
+						$this->price_min_ttc	= $price_min_ttc;
 
-						if ($id > 0)
+						$result = $this->_log_price($user);
+						if ($result > 0)
 						{
-							$this->id				= $id;
-							$this->price			= $price_ht;
-							$this->price_ttc		= $price_ttc;
-							$this->price_min		= $price_min_ht;
-							$this->price_min_ttc	= $price_min_ttc;
-
-							$result = $this->_log_price($user);
-							if ($result > 0)
+							if ( $this->update($id, $user) > 0)
 							{
-								if ( $this->update($id, $user) > 0)
+								if ($this->catid > 0)
 								{
-									if ($this->catid > 0)
-									{
-										require_once(DOL_DOCUMENT_ROOT ."/categories/class/categorie.class.php");
-										$cat = new Categorie($this->db, $this->catid);
-										$cat->add_type($this,"product");
-									}
-								}
-								else
-								{
-									$this->_setErrNo("Create",260,$this->error);
+									require_once(DOL_DOCUMENT_ROOT ."/categories/class/categorie.class.php");
+									$cat = new Categorie($this->db, $this->catid);
+									$cat->add_type($this,"product");
 								}
 							}
 							else
 							{
-								$this->error=$this->db->error();
-								$this->_setErrNo("Create",264,$this->error);
+							    $error++;
+					            $this->error='ErrorFailedToUpdateRecord';
 							}
 						}
 						else
 						{
-							$this->_setErrNo("Create",259);
+							$error++;
+						    $this->error=$this->db->lasterror();
 						}
 					}
 					else
 					{
-						$this->error=$this->db->error();
-						$this->_setErrNo("Create",258,$this->error);
+						$error++;
+					    $this->error='ErrorFailedToGetInsertedId';
 					}
 				}
 				else
 				{
-					// Le produit existe deja
-					$this->error='ErrorProductAlreadyExists';
+					$error++;
+				    $this->error=$this->db->lasterror();
 				}
 			}
 			else
 			{
-				$this->_setErrNo("Create",263);
-			}
-
-			/*
-			 * END COMMIT
-			 */
-
-			if ($this->errno === 0)
-			{
-				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('PRODUCT_CREATE',$this,$user,$langs,$conf);
-				if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				// Fin appel triggers
-
-				$this->db->commit();
-				return $id;
-			}
-			else
-			{
-				$this->db->rollback();
-				return -1;
+				// Product already exists with this ref
+				$langs->trans("Error")." : ".$langs->trans("ErrorProductAlreadyExists",$this->ref);
 			}
 		}
 		else
 		{
-			$this->_setErrNo("Create",262);
-
-			return -2;
+			$error++;
+		    $this->error=$this->db->lasterror();
 		}
 
-		return -1;
+		if (! $error && ! $notrigger)
+		{
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			$interface=new Interfaces($this->db);
+			$result=$interface->run_triggers('PRODUCT_CREATE',$this,$user,$langs,$conf);
+			if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			// Fin appel triggers
+		}
+
+		if (! $error)
+		{
+			$this->db->commit();
+			return $this->id;
+		}
+		else
+		{
+			$this->db->rollback();
+			return -$error;
+		}
 	}
-
-	/**
-	 *  Positionne le numero d'erreur
-	 *  @param      func Nom de la fonction
-	 *  @param      num  Numero de l'erreur
-	 *  @param		error string
-	 */
-	function _setErrNo($func, $num, $error='')
-	{
-		$this->errno = $num;
-		dol_syslog(get_class($this)."::".$func." - ERRNO(".$this->errno.")".($error?' - '.$error:''), LOG_ERR);
-	}
-
-	/**
-	 *	Retourne le texte de l'erreur
-	 */
-	function error()
-	{
-		$errs[257] = "ErrorProductAlreadyExists";
-		$errs[262] = "ErrorProductBadRefOrLabel";
-
-		return $errs[$this->errno];
-	}
-
 
 	/**
 	 *	Update a record into database
@@ -2161,7 +2139,7 @@ class Product extends CommonObject
 					$prods[$this->db->escape($rec['label'])][$keyChild] = $valueChild;
 				}
 			}
-			
+
 			return $prods;
 		}
 		else
