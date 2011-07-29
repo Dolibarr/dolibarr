@@ -23,7 +23,7 @@
  *	    \file       htdocs/compta/bank/fiche.php
  *      \ingroup    banque
  *		\brief      Page to create/view a bank account
- *		\version    $Id$
+ *		\version    $Id: fiche.php,v 1.77 2011/07/29 20:47:35 eldy Exp $
  */
 
 require("./pre.inc.php");
@@ -99,7 +99,7 @@ if ($_POST["action"] == 'add')
             $_GET["id"]=$id;            // Force chargement page en mode visu
         }
         else {
-            $message='<div class="error">'.$account->error().'</div>';
+            $message='<div class="error">'.$account->error.'</div>';
             $action='create';   // Force chargement page en mode creation
         }
     }
@@ -167,7 +167,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
         }
         else
         {
-            $message='<div class="error">'.$account->error().'</div>';
+            $message='<div class="error">'.$account->error.'</div>';
             $action='edit';     // Force chargement page edition
         }
     }
@@ -608,5 +608,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/29 20:47:35 $ - $Revision: 1.77 $');
 ?>

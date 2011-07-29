@@ -23,7 +23,7 @@
  *	    \file       htdocs/societe/rib.php
  *      \ingroup    societe
  *		\brief      BAN tab for companies
- *		\version    $Id$
+ *		\version    $Id: rib.php,v 1.36 2011/07/29 20:47:34 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -73,7 +73,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
 	$result = $account->update($user);
 	if (! $result)
 	{
-		$message=$account->error();
+		$message=$account->error;
 		$_GET["action"]='edit';     // Force chargement page edition
 	}
 	else
@@ -272,5 +272,5 @@ if ($_GET["socid"] && $_GET["action"] == 'edit' && $user->rights->societe->creer
 $db->close();
 
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/29 20:47:34 $ - $Revision: 1.36 $');
 ?>

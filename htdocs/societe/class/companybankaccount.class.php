@@ -21,7 +21,7 @@
  * 		\files		htdocs/societe/class/companybankaccount.class.php
  *		\ingroup    societe
  *		\brief      File of class to manage bank accounts description of third parties
- *   	\version	$Id$
+ *   	\version	$Id: companybankaccount.class.php,v 1.10 2011/07/29 20:47:35 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/compta/bank/class/account.class.php");
@@ -180,15 +180,6 @@ class CompanyBankAccount extends Account
 			dol_print_error($this->db);
 			return -1;
 		}
-	}
-
-	/**
-	 *
-	 *
-	 */
-	function error()
-	{
-		return $this->error;
 	}
 
 }
