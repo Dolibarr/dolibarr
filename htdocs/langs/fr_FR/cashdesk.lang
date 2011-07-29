@@ -32,3 +32,4 @@ NoVAT=Pas de TVA pour cette vente
 Change=Rendu
 CalTip=Cliquez pour afficher le calendrier
 CashDeskSetupStock=La configuration du module stock demande une réduction du stock sur facturation, mais vous n'avez pas spécifiez d'entrepôt. Vous devez modifier la configuration du module stock ou choisir un entrepôt.
+BankToPay=Compte à créditer

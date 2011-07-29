@@ -2,6 +2,7 @@
 $langs->load("main");
 ?>
 <!--Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
+	Copyright (C) 2011 		Juanjo Menent	 <jmenent@2byte.es>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -38,10 +39,42 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 			}
 		?>
 		<tr><td class="resume_label"><?php echo $langs->trans("TotalTTC"); ?> </td><td><?php echo price2num($obj_facturation->prix_total_ttc(),'MT').' '.$conf->monnaie; ?></td></tr>
-		<tr><td class="resume_label"><?php echo $langs->trans("PaymentMode"); ?> </td><td><?php echo $obj_facturation->mode_reglement(); ?></td></tr>
-
-		<?php
-
+		<tr><td class="resume_label"><?php echo $langs->trans("PaymentMode"); ?> </td><td>
+		<?php 
+		switch ($obj_facturation->mode_reglement())
+		{	
+			case 'ESP':
+				echo $langs->trans("Cash");
+				$filtre='courant=2';
+				if (!empty($conf->global->CASHDESK_ID_BANKACCOUNT_CASH))
+					$selected = $conf->global->CASHDESK_ID_BANKACCOUNT_CASH;
+				break;
+			case 'CB':
+				echo $langs->trans("CreditCard");
+				$filtre='courant=1';
+				if (!empty($conf->global->CASHDESK_ID_BANKACCOUNT_CB))
+					$selected = $conf->global->CASHDESK_ID_BANKACCOUNT_CB;		
+				break;
+			case 'CHQ':
+				echo $langs->trans("Cheque");
+				$filtre='courant=1';
+				if (!empty($conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE))
+					$selected = $conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE;
+				break;
+			case 'DIF':
+				echo $langs->trans("Reported");
+				$filtre='courant=1 OR courant=2';
+				$selected='';
+				break;	
+			default:
+				$filtre='courant=1 OR courant=2';
+				$selected='';
+		}
+			
+		?>
+		</td></tr>
+		
+		<?php 	
 			// Affichage des infos en fonction du mode de paiement
 			if ( $obj_facturation->mode_reglement() == 'DIF' ) {
 
@@ -66,7 +99,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 	<form id="frmValidation" class="formulaire2" method="post" action="validation_verif.php?action=valide_facture">
 		<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
-
+		<p class="note_label">
+			<?php	
+				echo $langs->trans("BankToPay"). "<br>";
+				$html = new Form($db);
+				$html->select_comptes($selected,'cashdeskbank',0,$filtre);		
+			?>
+		</p>
 		<p class="note_label"><?php echo $langs->trans("Notes"); ?><br><textarea class="textarea_note" name="txtaNotes"></textarea></p>
 
 		<span><input class="bouton_validation" type="submit" name="btnValider" value="<?php echo $langs->trans("ValidateInvoice"); ?>" /></span>

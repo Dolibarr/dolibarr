@@ -32,3 +32,4 @@ NoVAT=No VAT for this sale
 Change=Excess received
 CalTip=Click to view the calendar
 CashDeskSetupStock=You ask to decrease stock on invoice creation but warehouse for this is was not defined<br>Change stock module setup, or choose a warehouse
+BankToPay=Charge Account
