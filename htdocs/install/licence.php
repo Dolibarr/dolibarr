@@ -21,7 +21,7 @@
  *	 \file       htdocs/install/licence.php
  *   \ingroup    install
  *	 \brief      Page to show licence (Removed from install process to save time)
- *	 \version    $Id: licence.php,v 1.20 2011/07/30 14:56:42 eldy Exp $
+ *	 \version    $Id: licence.php,v 1.19 2011/07/30 10:23:25 eldy Exp $
  */
 
 include_once("./inc.php");
@@ -33,9 +33,7 @@ $langs->setDefaultLang($setuplang);
 $langs->load("install");
 
 // Init "forced values" to nothing. "forced values" are used after an doliwamp install wizard.
-$useforcedwizard=false;
-if (file_exists("./install.forced.php")) { $useforcedwizard=true; include_once("./install.forced.php"); }
-else if (file_exists("/etc/dolibarr/install.forced.php")) { $useforcedwizard=include_once("/etc/dolibarr/install.forced.php"); }
+if (file_exists("./install.forced.php")) include_once("./install.forced.php");
 
 dolibarr_install_syslog("Licence: Entering licence.php page");
 
