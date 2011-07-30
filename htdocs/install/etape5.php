@@ -16,14 +16,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *       \file      htdocs/install/etape5.php
  *	 	 \ingroup	install
  *       \brief     Last page of upgrade or install process
- *       \version   $Id: etape5.php,v 1.107 2011/07/31 23:26:19 eldy Exp $
+ *       \version   $Id: etape5.php,v 1.104 2011/07/30 14:56:43 eldy Exp $
  */
 
 include_once("./inc.php");
@@ -314,6 +315,7 @@ if ($action == "set")
 		if (! empty($force_install_lockinstall))
 		{
 			// Install is finished, we create the lock file
+			$lockfile="../../install.lock";
 			$fp = @fopen($lockfile, "w");
 			if ($fp)
 			{
@@ -363,6 +365,7 @@ elseif (preg_match('/upgrade/i',$action))
 		if (! empty($force_install_lockinstall))
 		{
 			// Upgrade is finished, we create the lock file
+			$lockfile="../../install.lock";
 			$fp = @fopen($lockfile, "w");
 			if ($fp)
 			{

@@ -18,14 +18,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *  \file       htdocs/product/fiche.php
  *  \ingroup    product
  *  \brief      Page to show product
- *  \version    $Id: fiche.php,v 1.374 2011/07/31 23:19:26 eldy Exp $
+ *  \version    $Id: fiche.php,v 1.373 2011/07/29 20:47:35 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -1645,6 +1646,6 @@ if ($product->id && $action == '' && $product->status)
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:19:26 $ - $Revision: 1.374 $');
+llxFooter('$Date: 2011/07/29 20:47:35 $ - $Revision: 1.373 $');
 
 ?>
