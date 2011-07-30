@@ -28,7 +28,7 @@
  *	\file       htdocs/filefunc.inc.php
  * 	\ingroup	core
  *  \brief      File that include conf.php file and functions.lib.php
- *  \version    $Id: filefunc.inc.php,v 1.19 2011/07/21 22:11:30 eldy Exp $
+ *  \version    $Id: filefunc.inc.php,v 1.20 2011/07/30 10:23:24 eldy Exp $
  */
 
 define('DOL_VERSION','3.1.0-beta');	// Also defined in htdocs/install/inc.php (Ex: x.y.z-alpha, x.y.z)
@@ -61,8 +61,17 @@ error_reporting(E_ALL ^ E_NOTICE);
 //error_reporting(E_ALL);
 
 
+$conffiletoshowshort = "conf.php";
+# Define localization of conf file
+$conffile = "conf/conf.php";
+$conffiletoshow = "htdocs/conf/conf.php";
+# For debian like systems
+#$conffile = "/etc/dolibarr/conf.php";
+#$conffiletoshow = "/etc/dolibarr/conf.php";
+
+
 // Include configuration
-$result=@include_once("conf/conf.php");
+$result=@include_once($conffile);
 if (! $result && ! empty($_SERVER["GATEWAY_INTERFACE"]))    // If install not done and we are in a web session
 {
 	header("Location: install/index.php");
