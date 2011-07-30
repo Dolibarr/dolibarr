@@ -21,7 +21,7 @@
  *      \file       htdocs/install/etape2.php
  *		\ingroup	install
  *      \brief      Create tables, primary keys, foreign keys, indexes and functions into database and then load reference data
- *      \version    $Id: etape2.php,v 1.105 2011/07/30 14:56:43 eldy Exp $
+ *      \version    $Id: etape2.php,v 1.104 2011/07/30 10:23:25 eldy Exp $
  */
 
 include("./inc.php");
@@ -54,9 +54,7 @@ if ($dolibarr_main_db_type == "pgsql")  $choix=2;
 if ($dolibarr_main_db_type == "mssql")  $choix=3;
 
 // Init "forced values" to nothing. "forced values" are used after a Doliwamp install wizard.
-$useforcedwizard=false;
-if (file_exists("./install.forced.php")) { $useforcedwizard=true; include_once("./install.forced.php"); }
-else if (file_exists("/etc/dolibarr/install.forced.php")) { $useforcedwizard=include_once("/etc/dolibarr/install.forced.php"); }
+if (file_exists("./install.forced.php")) include_once("./install.forced.php");
 
 dolibarr_install_syslog("--- etape2: Entering etape2.php page");
 
