@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 /**
  *		\file 		htdocs/admin/system/constall.php
  *		\brief      Page to show all Dolibarr setup (config file and database constants)
- *		\version    $Id$
+ *		\version    $Id: constall.php,v 1.23 2011/07/30 10:23:26 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -44,7 +44,7 @@ llxHeader();
 print_fiche_titre($langs->trans("SummaryConst"),'','setup');
 
 
-print_titre($langs->trans("ConfigurationFile"));
+print_titre($langs->trans("ConfigurationFile").' ('.$conffiletoshowshort.')');
 // Parameters in conf.php file
 $configfileparameters=array(
 //							'separator',
@@ -112,7 +112,7 @@ $i=0;
 foreach($configfileparameters as $key)
 {
 	$ignore=0;
-	
+
 	if ($key == 'dolibarr_main_url_root_alt' && empty(${$key})) $ignore=1;
 	if ($key == 'dolibarr_main_document_root_alt' && empty(${$key})) $ignore=1;
 

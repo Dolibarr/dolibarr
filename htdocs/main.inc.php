@@ -26,7 +26,7 @@
  *	\file       htdocs/main.inc.php
  *	\ingroup	core
  *	\brief      File that defines environment for Dolibarr pages only (variables not required by scripts)
- *	\version    $Id: main.inc.php,v 1.754 2011/07/12 20:16:03 eldy Exp $
+ *	\version    $Id: main.inc.php,v 1.755 2011/07/30 10:23:24 eldy Exp $
  */
 
 @ini_set('memory_limit', '64M');	// This may be useless if memory is hard limited by your PHP
@@ -296,31 +296,6 @@ if (! empty($_SESSION["disablemodules"]))
 	foreach($disabled_modules as $module)
 	{
 		if ($module) $conf->$module->enabled=false;
-	}
-}
-
-// Init Smarty (used by some modules like multicompany)
-if (sizeof($conf->need_smarty) > 0)
-{
-	// Usage of const in conf.php file (deprecated) can overwrite default dir.
-	$dolibarr_smarty_libs_dir=DOL_DOCUMENT_ROOT.'/includes/smarty/libs/';
-	$dolibarr_smarty_compile=DOL_DATA_ROOT.'/smarty/templates/temp';
-	$dolibarr_smarty_cache=DOL_DATA_ROOT.'/smarty/cache/temp';
-
-	// Create directory if not exist
-	if (! is_dir($dolibarr_smarty_compile)) create_exdir($dolibarr_smarty_compile);
-	if (! is_dir($dolibarr_smarty_cache))	create_exdir($dolibarr_smarty_cache);
-
-	$smarty_libs = $dolibarr_smarty_libs_dir. "Smarty.class.php";
-	if (@include_once($smarty_libs))
-	{
-		$smarty = new Smarty();
-		$smarty->compile_dir = $dolibarr_smarty_compile;
-		$smarty->cache_dir = $dolibarr_smarty_cache;
-	}
-	else
-	{
-		dol_print_error('',"Library Smarty ".$smarty_libs." not found.");
 	}
 }
 
