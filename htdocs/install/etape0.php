@@ -22,7 +22,7 @@
  *	\file       htdocs/install/etape0.php
  *	\ingroup	install
  *	\brief      Show and ask charset for database
- *	\version    $Id: etape0.php,v 1.40 2011/07/30 10:23:25 eldy Exp $
+ *	\version    $Id: etape0.php,v 1.41 2011/07/30 14:56:43 eldy Exp $
  */
 
 define('DONOTLOADCONF',1);	// To avoid loading conf by file inc.php
@@ -49,7 +49,9 @@ $passroot=isset($_POST["db_pass_root"])?$_POST["db_pass_root"]:"";
 $main_dir=isset($_POST["main_dir"])?trim($_POST["main_dir"]):'';
 
 // Init "forced values" to nothing. "forced values" are used after an doliwamp install wizard.
-if (file_exists("./install.forced.php")) include_once("./install.forced.php");
+$useforcedwizard=false;
+if (file_exists("./install.forced.php")) { $useforcedwizard=true; include_once("./install.forced.php"); }
+else if (file_exists("/etc/dolibarr/install.forced.php")) { $useforcedwizard=include_once("/etc/dolibarr/install.forced.php"); }
 
 dolibarr_install_syslog("--- etape0: Entering etape0.php page");
 
