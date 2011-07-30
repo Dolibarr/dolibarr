@@ -25,7 +25,7 @@
  *       \file       htdocs/install/fileconf.php
  *       \ingroup    install
  *       \brief      Ask all informations required to build Dolibarr htdocs/conf/conf.php file (will be wrote on disk on next page)
- *       \version    $Id: fileconf.php,v 1.91 2011/06/26 01:52:59 eldy Exp $
+ *       \version    $Id: fileconf.php,v 1.92 2011/07/30 10:23:25 eldy Exp $
  */
 include_once("./inc.php");
 
@@ -69,7 +69,7 @@ pHeader($langs->trans("ConfigurationFile"),"etape0");
 // Test if we can run a first install process
 if (! is_writable($conffile))
 {
-    print $langs->trans("ConfFileIsNotWritable",'htdocs/conf/conf.php');
+    print $langs->trans("ConfFileIsNotWritable",$conffiletoshow);
     pFooter(1,$setuplang,'jscheckparam');
     exit;
 }
@@ -195,10 +195,10 @@ if (empty($dolibarr_main_url_root))
         $dolibarr_main_url_root=$proto."://".$serverport.$_SERVER["SCRIPT_NAME"];
     }
     # Clean proposed URL
-    $dolibarr_main_url_root = preg_replace('/\/fileconf\.php$/','',$dolibarr_main_url_root);    # Supprime le /fileconf.php
-    $dolibarr_main_url_root = preg_replace('/\/$/','',$dolibarr_main_url_root);             # Supprime le /
-    $dolibarr_main_url_root = preg_replace('/\/index\.php$/','',$dolibarr_main_url_root);       # Supprime le /index.php
-    $dolibarr_main_url_root = preg_replace('/\/install$/','',$dolibarr_main_url_root);      # Supprime le /install
+    $dolibarr_main_url_root = preg_replace('/\/fileconf\.php$/','',$dolibarr_main_url_root);    # Remove the /fileconf.php
+    $dolibarr_main_url_root = preg_replace('/\/$/','',$dolibarr_main_url_root);             # Remove the /
+    $dolibarr_main_url_root = preg_replace('/\/index\.php$/','',$dolibarr_main_url_root);       # Remove the /index.php
+    $dolibarr_main_url_root = preg_replace('/\/install$/','',$dolibarr_main_url_root);      # Remove the /install
 }
 ?>
 	<tr>

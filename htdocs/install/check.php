@@ -23,7 +23,7 @@
  *	\file       htdocs/install/check.php
  *	\ingroup    install
  *	\brief      Test if file conf can be modified and if does not exists, test if install process can create it
- *	\version    $Id: check.php,v 1.84 2011/07/12 20:52:41 eldy Exp $
+ *	\version    $Id: check.php,v 1.85 2011/07/30 10:23:25 eldy Exp $
  */
 include_once("./inc.php");
 
@@ -214,10 +214,9 @@ else
 // Si fichier absent et n'a pu etre cree
 if (! file_exists($conffile))
 {
-	//print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ConfFileDoesNotExistsAndCouldNotBeCreated",$conffile);
-	print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ConfFileDoesNotExistsAndCouldNotBeCreated",'conf.php');
+	print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ConfFileDoesNotExistsAndCouldNotBeCreated",$conffiletoshow);
 	print "<br><br>";
-	print $langs->trans("YouMustCreateWithPermission",'htdocs/conf/conf.php');
+	print $langs->trans("YouMustCreateWithPermission",$conffiletoshow);
 	print "<br><br>";
 
 	print $langs->trans("CorrectProblemAndReloadPage",$_SERVER['PHP_SELF'].'?testget=ok');
@@ -230,14 +229,14 @@ else
 	{
 		if ($confexists)
 		{
-			print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("ConfFileExists",'conf.php');
+			print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("ConfFileExists",$conffiletoshow);
 		}
 		else
 		{
-			print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("ConfFileCouldBeCreated",'conf.php');
+			print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("ConfFileCouldBeCreated",$conffiletoshow);
 		}
 		print "<br>";
-		print '<img src="../theme/eldy/img/tick.png" alt="Warning"> '.$langs->trans("ConfFileIsNotWritable",'htdocs/conf/conf.php');
+		print '<img src="../theme/eldy/img/tick.png" alt="Warning"> '.$langs->trans("ConfFileIsNotWritable",$conffiletoshow);
 		print "<br>\n";
 
 		$allowinstall=0;
@@ -247,14 +246,14 @@ else
 	{
 		if ($confexists)
 		{
-			print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("ConfFileExists",'conf.php');
+			print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("ConfFileExists",$conffiletoshow);
 		}
 		else
 		{
-			print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("ConfFileCouldBeCreated",'conf.php');
+			print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("ConfFileCouldBeCreated",$conffiletoshow);
 		}
 		print "<br>";
-		print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("ConfFileIsWritable",'conf.php');
+		print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("ConfFileIsWritable",$conffiletoshow);
 		print "<br>\n";
 
 		$allowinstall=1;
@@ -274,8 +273,8 @@ else
 			{
 				if (! file_exists($dolibarr_main_document_root."/lib/admin.lib.php"))
 				{
-				    print '<font class="error">A conf.php file exists with a dolibarr_main_document_root to '.$dolibarr_main_document_root.' that seems wrong. Try to fix or remove the conf.php file.</font><br>'."\n";
-				    dol_syslog("A conf.php file exists with a dolibarr_main_document_root to ".$dolibarr_main_document_root." that seems wrong. Try to fix or remove the conf.php file.", LOG_WARNING);
+				    print '<font class="error">A '.$conffiletoshow.' file exists with a dolibarr_main_document_root to '.$dolibarr_main_document_root.' that seems wrong. Try to fix or remove the '.$conffiletoshow.' file.</font><br>'."\n";
+				    dol_syslog("A '.$conffiletoshow.' file exists with a dolibarr_main_document_root to ".$dolibarr_main_document_root." that seems wrong. Try to fix or remove the '.$conffiletoshow.' file.", LOG_WARNING);
 				}
 				else
 				{

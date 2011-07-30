@@ -23,7 +23,7 @@
  *	\file       htdocs/install/etape4.php
  *	\ingroup	install
  *	\brief      Ask login and password of Dolibarr admin user
- *	\version    $Id$
+ *	\version    $Id: etape4.php,v 1.36 2011/07/30 10:23:25 eldy Exp $
  */
 
 
@@ -59,7 +59,7 @@ pHeader($langs->trans("AdminAccountCreation"),"etape5");
 // Test if we can run a first install process
 if (! is_writable($conffile))
 {
-    print $langs->trans("ConfFileIsNotWritable",'htdocs/conf/conf.php');
+    print $langs->trans("ConfFileIsNotWritable",$conffiletoshow);
     pFooter(1,$setuplang,'jscheckparam');
     exit;
 }

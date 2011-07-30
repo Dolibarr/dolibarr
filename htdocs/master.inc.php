@@ -29,8 +29,8 @@
  *	\file       htdocs/master.inc.php
  * 	\ingroup	core
  *  \brief      File that defines environment for all Dolibarr process (pages or scripts)
- * 				This script reads the conf.php file, init $lang, $db and empty $user
- *  \version    $Id: master.inc.php,v 1.349 2011/06/28 15:06:26 hregis Exp $
+ * 				This script reads the conf file, init $lang, $db and and empty $user
+ *  \version    $Id: master.inc.php,v 1.350 2011/07/30 10:23:24 eldy Exp $
  */
 
 
@@ -65,7 +65,7 @@ if (defined('TEST_DB_FORCE_TYPE')) $conf->db->type=constant('TEST_DB_FORCE_TYPE'
 $conf->file->main_authentication = empty($dolibarr_main_authentication)?'':$dolibarr_main_authentication;
 // Force https
 $conf->file->main_force_https = empty($dolibarr_main_force_https)?'':$dolibarr_main_force_https;
-// Define charset for HTML Output (can set hidden value force_charset in conf.php file)
+// Define charset for HTML Output (can set hidden value force_charset in conf file)
 $conf->file->character_set_client=strtoupper($force_charset_do_notuse);
 // Cookie cryptkey
 $conf->file->cookie_cryptkey = empty($dolibarr_main_cookie_cryptkey)?'':$dolibarr_main_cookie_cryptkey;

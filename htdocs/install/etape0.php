@@ -22,7 +22,7 @@
  *	\file       htdocs/install/etape0.php
  *	\ingroup	install
  *	\brief      Show and ask charset for database
- *	\version    $Id$
+ *	\version    $Id: etape0.php,v 1.40 2011/07/30 10:23:25 eldy Exp $
  */
 
 define('DONOTLOADCONF',1);	// To avoid loading conf by file inc.php
@@ -63,7 +63,7 @@ pHeader($langs->trans("ConfigurationFile"),"etape1");
 // Test if we can run a first install process
 if (! is_writable($conffile))
 {
-    print $langs->trans("ConfFileIsNotWritable",'htdocs/conf/conf.php');
+    print $langs->trans("ConfFileIsNotWritable",$conffiletoshow);
     pFooter(1,$setuplang,'jscheckparam');
     exit;
 }

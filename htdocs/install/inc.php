@@ -22,7 +22,7 @@
 /**	    \file       htdocs/install/inc.php
  * 		\ingroup	core
  *		\brief      File that define environment for install pages
- *		\version    $Id: inc.php,v 1.135 2011/07/13 21:19:58 eldy Exp $
+ *		\version    $Id: inc.php,v 1.136 2011/07/30 10:23:25 eldy Exp $
  */
 
 define('DOL_VERSION','3.1.0-beta');	// Also defined in htdocs/master.inc.php (Ex: x.y.z-alpha, x.y.z)
@@ -69,7 +69,16 @@ else
 }
 
 $includeconferror='';
+
+
+$conffiletoshowshort = "conf.php";
+# Define localization of conf file
 $conffile = "../conf/conf.php";
+$conffiletoshow = "htdocs/conf/conf.php";
+# For debian like systems
+#$conffile = "/etc/dolibarr/conf.php";
+#$conffiletoshow = "/etc/dolibarr/conf.php";
+
 
 if (! defined('DONOTLOADCONF') && file_exists($conffile))
 {

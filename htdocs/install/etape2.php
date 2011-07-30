@@ -21,7 +21,7 @@
  *      \file       htdocs/install/etape2.php
  *		\ingroup	install
  *      \brief      Create tables, primary keys, foreign keys, indexes and functions into database and then load reference data
- *      \version    $Id$
+ *      \version    $Id: etape2.php,v 1.104 2011/07/30 10:23:25 eldy Exp $
  */
 
 include("./inc.php");
@@ -68,7 +68,7 @@ pHeader($langs->trans("CreateDatabaseObjects"),"etape4");
 // Test if we can run a first install process
 if (! is_writable($conffile))
 {
-    print $langs->trans("ConfFileIsNotWritable",'htdocs/conf/conf.php');
+    print $langs->trans("ConfFileIsNotWritable",$conffiletoshow);
     pFooter(1,$setuplang,'jscheckparam');
     exit;
 }

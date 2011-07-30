@@ -21,7 +21,7 @@
  *	 \file       htdocs/install/licence.php
  *   \ingroup    install
  *	 \brief      Page to show licence (Removed from install process to save time)
- *	 \version    $Id$
+ *	 \version    $Id: licence.php,v 1.19 2011/07/30 10:23:25 eldy Exp $
  */
 
 include_once("./inc.php");
@@ -47,7 +47,7 @@ pHeader($langs->trans("License"),"fileconf");
 // Test if we can run a first install process
 if (! is_writable($conffile))
 {
-    print $langs->trans("ConfFileIsNotWritable",'htdocs/conf/conf.php');
+    print $langs->trans("ConfFileIsNotWritable",$conffiletoshow);
     pFooter(1,$setuplang,'jscheckparam');
     exit;
 }

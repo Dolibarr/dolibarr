@@ -24,7 +24,7 @@
  *       \file      htdocs/install/etape5.php
  *	 	 \ingroup	install
  *       \brief     Last page of upgrade or install process
- *       \version   $Id: etape5.php,v 1.102 2011/07/17 18:13:44 eldy Exp $
+ *       \version   $Id: etape5.php,v 1.103 2011/07/30 10:23:25 eldy Exp $
  */
 
 include_once("./inc.php");
@@ -109,7 +109,7 @@ pHeader($langs->trans("SetupEnd"),"etape5");
 // Test if we can run a first install process
 if (! GETPOST("versionfrom") && ! GETPOST("versionto") && ! is_writable($conffile))
 {
-    print $langs->trans("ConfFileIsNotWritable",'htdocs/conf/conf.php');
+    print $langs->trans("ConfFileIsNotWritable",$conffiletoshow);
     pFooter(1,$setuplang,'jscheckparam');
     exit;
 }
@@ -380,7 +380,7 @@ elseif (preg_match('/upgrade/i',$action))
 		}
 		if (empty($createlock))
 		{
-			print '<div class="warning">'.$langs->trans("WarningRemoveInstallDir")."</div>";
+			print '<br><div class="warning">'.$langs->trans("WarningRemoveInstallDir")."</div>";
 		}
 
 		print "<br>";
