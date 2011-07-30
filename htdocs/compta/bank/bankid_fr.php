@@ -15,14 +15,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *  \file       htdocs/compta/bank/bankid_fr.php
  *  \ingroup    banque
  *  \brief      Fiche creation compte bancaire
- *  \version    $Id: bankid_fr.php,v 1.28 2011/07/31 22:23:20 eldy Exp $
+ *  \version    $Id: bankid_fr.php,v 1.27 2011/07/29 20:47:35 eldy Exp $
  */
 
 require("./pre.inc.php");
@@ -385,5 +386,5 @@ if ($_GET["id"] && $_GET["action"] == 'edit' && $user->rights->banque->configure
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:20 $ - $Revision: 1.28 $');
+llxFooter('$Date: 2011/07/29 20:47:35 $ - $Revision: 1.27 $');
 ?>
