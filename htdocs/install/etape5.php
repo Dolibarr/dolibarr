@@ -24,7 +24,7 @@
  *       \file      htdocs/install/etape5.php
  *	 	 \ingroup	install
  *       \brief     Last page of upgrade or install process
- *       \version   $Id: etape5.php,v 1.106 2011/07/31 13:28:45 eldy Exp $
+ *       \version   $Id: etape5.php,v 1.103 2011/07/30 10:23:25 eldy Exp $
  */
 
 include_once("./inc.php");
@@ -63,9 +63,12 @@ if (! isset($force_install_databasepass))      $force_install_databasepass='';
 if (! isset($force_install_databaserootlogin)) $force_install_databaserootlogin='';
 if (! isset($force_install_databaserootpass))  $force_install_databaserootpass='';
 if (! isset($force_install_lockinstall))       $force_install_lockinstall='';
-$useforcedwizard=false;
-if (file_exists("./install.forced.php")) { $useforcedwizard=true; include_once("./install.forced.php"); }
-else if (file_exists("/etc/dolibarr/install.forced.php")) { $useforcedwizard=include_once("/etc/dolibarr/install.forced.php"); }
+$usedoliwamp=false;
+if (file_exists("./install.forced.php"))
+{
+	$usedoliwamp=true;
+	include_once("./install.forced.php");
+}
 
 dolibarr_install_syslog("--- etape5: Entering etape5.php page", LOG_INFO);
 
@@ -102,7 +105,6 @@ if ($action == "set")
  */
 
 pHeader($langs->trans("SetupEnd"),"etape5");
-print '<br>';
 
 // Test if we can run a first install process
 if (! GETPOST("versionfrom") && ! GETPOST("versionto") && ! is_writable($conffile))
@@ -206,7 +208,7 @@ if ($action == "set" || preg_match('/upgrade/i',$action))
 				if (! $resql) dol_print_error($db,'Error in setup program');
 				$conf->global->MAIN_VERSION_LAST_INSTALL=$targetversion;
 
-				if ($useforcedwizard)
+				if ($usedoliwamp)
 				{
 					dolibarr_install_syslog('install/etape5.php set MAIN_REMOVE_INSTALL_WARNING const to 1', LOG_DEBUG);
 					$resql=$db->query("DELETE FROM llx_const WHERE ".$db->decrypt('name')."='MAIN_REMOVE_INSTALL_WARNING'");
@@ -315,6 +317,7 @@ if ($action == "set")
 		if (! empty($force_install_lockinstall))
 		{
 			// Install is finished, we create the lock file
+			$lockfile="../../install.lock";
 			$fp = @fopen($lockfile, "w");
 			if ($fp)
 			{
@@ -364,6 +367,7 @@ elseif (preg_match('/upgrade/i',$action))
 		if (! empty($force_install_lockinstall))
 		{
 			// Upgrade is finished, we create the lock file
+			$lockfile="../../install.lock";
 			$fp = @fopen($lockfile, "w");
 			if ($fp)
 			{
