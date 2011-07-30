@@ -14,14 +14,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *	\file       htdocs/install/etape0.php
  *	\ingroup	install
  *	\brief      Show and ask charset for database
- *	\version    $Id: etape0.php,v 1.42 2011/07/31 23:26:25 eldy Exp $
+ *	\version    $Id: etape0.php,v 1.40 2011/07/30 10:23:25 eldy Exp $
  */
 
 define('DONOTLOADCONF',1);	// To avoid loading conf by file inc.php
@@ -48,9 +49,7 @@ $passroot=isset($_POST["db_pass_root"])?$_POST["db_pass_root"]:"";
 $main_dir=isset($_POST["main_dir"])?trim($_POST["main_dir"]):'';
 
 // Init "forced values" to nothing. "forced values" are used after an doliwamp install wizard.
-$useforcedwizard=false;
-if (file_exists("./install.forced.php")) { $useforcedwizard=true; include_once("./install.forced.php"); }
-else if (file_exists("/etc/dolibarr/install.forced.php")) { $useforcedwizard=include_once("/etc/dolibarr/install.forced.php"); }
+if (file_exists("./install.forced.php")) include_once("./install.forced.php");
 
 dolibarr_install_syslog("--- etape0: Entering etape0.php page");
 
