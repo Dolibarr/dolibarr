@@ -16,14 +16,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *		\file       htdocs/install/etape1.php
  *		\ingroup	install
  *		\brief      Build conf file on disk
- *		\version    $Id: etape1.php,v 1.136 2011/07/31 23:26:18 eldy Exp $
+ *		\version    $Id: etape1.php,v 1.134 2011/07/30 10:23:25 eldy Exp $
  */
 
 define('DONOTLOADCONF',1);	// To avoid loading conf by file inc.php
@@ -38,9 +39,7 @@ $langs->load("admin");
 $langs->load("install");
 
 // Init "forced values" to nothing. "forced values" are used after an doliwamp install wizard.
-$useforcedwizard=false;
-if (file_exists("./install.forced.php")) { $useforcedwizard=true; include_once("./install.forced.php"); }
-else if (file_exists("/etc/dolibarr/install.forced.php")) { $useforcedwizard=include_once("/etc/dolibarr/install.forced.php"); }
+if (file_exists("./install.forced.php")) include_once("./install.forced.php");
 
 dolibarr_install_syslog("--- etape1: Entering etape1.php page");
 
@@ -527,7 +526,6 @@ function write_conf_file($conffile)
 	global $dolibarr_main_url_root,$dolibarr_main_document_root,$dolibarr_main_data_root,$dolibarr_main_db_host;
 	global $dolibarr_main_db_port,$dolibarr_main_db_name,$dolibarr_main_db_user,$dolibarr_main_db_pass;
 	global $dolibarr_main_db_type,$dolibarr_main_db_character_set,$dolibarr_main_db_collation,$dolibarr_main_authentication;
-    global $conffile,$conffiletoshow,$conffiletoshowshort;
 
 	$error=0;
 
