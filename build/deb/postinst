@@ -24,17 +24,31 @@ db_version 2.0
 echo Run the dolibarr postinst script
 
 
+# Define vars
 docdir='/var/lib/dolibarr/documents'
 #docdir='/usr/share/dolibarr/documents'
-
+apachefileorig="/usr/share/dolibarr/build/deb/apache.conf"
+apacheconfig="/etc/dolibarr/apache.conf"
+installfileorig="/usr/share/dolibarr/build/deb/install.forced.php.install"
+installconfig="/etc/dolibarr/install.forced.php"
+#config="/usr/share/dolibarr/htdocs/conf/conf.php"
+config="/etc/dolibarr/conf.php"
 
 
 case "$1" in
 	configure)
 
-		# Edit install.forced.php to match Debian values
-		fileorig="/usr/share/dolibarr/build/deb/install.forced.php.install"
-		config="/usr/share/dolibarr/htdocs/install/install.forced.php"
+        # Create document directory for uploaded data files
+        mkdir -p $docdir
+        chown -R www-data:www-data $docdir
+        chmod -R 775 $docdir
+        chmod -R g+s $docdir
+
+		# Copy apache.conf file into target directory
+		#mkdir -p /etc/dolibarr
+		#cp -p $apachefileorig $apacheconfig
+
+		# Copy install config file (with matching Debian) values into target directory
 		superuserlogin=''
 		superuserpassword=''
 		if [ -f /etc/mysql/debian.cnf ] ; then
@@ -44,29 +58,24 @@ case "$1" in
 		fi
 		echo Mysql superuser found to use is $superuserlogin
 		if [ -z "$superuserlogin" ] ; then
-			cat $fileorig | sed -e 's/__SUPERUSERLOGIN__/root/g' | sed -e 's/__SUPERUSERPASSWORD__//g' > $config
+			cat $installfileorig | sed -e 's/__SUPERUSERLOGIN__/root/g' | sed -e 's/__SUPERUSERPASSWORD__//g' > $installconfig
 		else
-			cat $fileorig | sed -e 's/__SUPERUSERLOGIN__/'$superuserlogin'/g' | sed -e 's/__SUPERUSERPASSWORD__/'$superuserpassword'/g' > $config
+			cat $installfileorig | sed -e 's/__SUPERUSERLOGIN__/'$superuserlogin'/g' | sed -e 's/__SUPERUSERPASSWORD__/'$superuserpassword'/g' > $installconfig
 		fi
-
-        # Create document directory for uploaded data files
-        mkdir -p $docdir
-        chown -R www-data:www-data $docdir
-        chmod -R 775 $docdir
-        chmod -R g+s $docdir
+		chown -R root:www-data $installconfig
+	   	chmod -R 660 $installconfig
 
 		# Create an empty conf.php with permission to web server
-		if [ ! -f /usr/share/dolibarr/htdocs/conf/conf.php ]
+		if [ ! -f $config ]
 		then 
-			echo Create empty file /usr/share/dolibarr/htdocs/conf/conf.php		
-			touch /usr/share/dolibarr/htdocs/conf/conf.php
-			chown -R root:www-data /usr/share/dolibarr/htdocs/conf/conf.php
-	    	chmod -R 660 /usr/share/dolibarr/htdocs/conf/conf.php
+			echo Create empty file $config		
+			touch $config
+			chown -R root:www-data $config
+	    	chmod -R 660 $config
 		fi
 
-		#db_reset "dolibarr/webserver"
-
 		# Get the web server type (use db_get for interactive mode).
+		#db_reset "dolibarr/webserver"
 		#db_get "dolibarr/webserver"		# Read value for webserver.
 		#webserver="$RET"
 
@@ -96,33 +105,13 @@ case "$1" in
 
 			# Set permissions to web server
 			chown -R $webuser:$webgroup /usr/share/dolibarr
-            chown -R root:$webgroup /usr/share/dolibarr/htdocs/conf/conf.php
+            chown -R root:$webgroup $config
 
 			# Add link to config file
             echo Setup web server $server to add dolibarr config file
 			ln -fs /etc/dolibarr/apache.conf /etc/apache2/conf.d/dolibarr.conf
 			
 		done
-
-		#echo "Install menu entry"
-		# This one is for Gnome ubuntu
-		#fileorig="/usr/share/dolibarr/build/deb/dolibarr.desktop"
-		#target="/usr/share/applications/"
-		#cp -f $fileorig $target
-		# Not sure this is usefull
-		#if test -x /usr/bin/update-menus; then 
-		#	echo "update-menus"
-		#	update-menus;
-		#fi
-		
-		# TODO Create the file to force parameters in Web installer
-		#if grep DBHOST /usr/share/dolibarr/htdocs/conf/conf.php > /dev/null
-		#then
-		#    perl -pi -e "s/DBHOST/$dbserver/" /usr/share/dolibarr/htdocs/conf/conf.php
-		#    perl -pi -e "s/DBNAME/$dbname/" /usr/share/dolibarr/htdocs/conf/conf.php
-		#    perl -pi -e "s/DBUSER/$dbuser/" /usr/share/dolibarr/htdocs/conf/conf.php
-		#    perl -pi -e "s/DBPASS/$dbpass/" /usr/share/dolibarr/htdocs/conf/conf.php
-		#fi
 
 		# Restart servers
 		servers="apache2-ssl apache2 mysql"
