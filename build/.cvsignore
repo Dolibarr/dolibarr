@@ -16,3 +16,4 @@ html
 *.deb
 *.dsc
 *.tar.gz
+*.changes
