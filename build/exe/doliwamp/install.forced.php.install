@@ -4,9 +4,9 @@
 // This file must be present into htdocs/install directory
 // during install process to be used.
 //
-// $Id: install.forced.php.install,v 1.15 2011/06/26 01:52:59 eldy Exp $
+// $Id: install.forced.php.install,v 1.16 2011/07/30 14:56:12 eldy Exp $
 //
-$force_install_noedit=1;
+$force_install_noedit=2;
 $force_install_message='KeepDefaultValuesWamp';
 $force_install_main_data_root='WAMPROOT/dolibarr_documents';
 $force_install_type='mysqli';
