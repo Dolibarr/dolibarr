@@ -16,17 +16,16 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id$
+ * $Id: mantis.php,v 1.3 2011/07/31 23:24:38 eldy Exp $
  */
 
 /**
  *   \file       htdocs/mantis/admin/mantis.php
  *   \ingroup    mantis
  *   \brief      Page de configuration du module mantis
- *   \version    $Revision$
+ *   \version    $Revision: 1.3 $
  */
 
 require("../../main.inc.php");
@@ -205,5 +204,5 @@ print "<br>";
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/31 23:24:38 $ - $Revision: 1.3 $');
 ?>

@@ -26,6 +26,11 @@ echo Run the dolibarr postrm script
 
 docdir='/var/lib/dolibarr/documents'
 #docdir='/usr/share/dolibarr/documents'
+apachefileorig="/usr/share/dolibarr/build/deb/apache.conf"
+apacheconfig="/etc/dolibarr/apache.conf"
+#config="/usr/share/dolibarr/htdocs/conf/conf.php"
+config="/etc/dolibarr/conf.php"
+lockfile="/usr/share/dolibarr/install.lock"
 
 
 export webserver=""
@@ -36,13 +41,38 @@ case $webserver in
 	Both)		webservers="apache2 apache2-ssl" ;;
 	*)		    webservers="apache2 apache2-ssl" ;;
 esac
-export includefile=/etc/dolibarr/apache.conf
 
 
 case "$1" in
+
+    # Call when we upgrade
+	upgrade)
+	;;
+
+    # Call when we uninstall
+	remove)
+		rm -f $lockfile
+
+		# Remove include files
+		export restart=""
+		for server in $webservers ; do
+			export conffile="/etc/$server/conf.d/dolibarr.conf"
+            if [ -f $conffile ] ;
+            then
+               echo Delete link $conffile
+	           rm -f $conffile
+	           status=purge
+		    fi
+			
+			if [ "x$status" = "xpurge" ] ;
+				then restart="$restart $server"
+			fi
+		done
+	;;
+
     # Call when we uninstall and purge
 	purge)
-		echo "postrm purge webservers=$webservers includefile=$includefile"
+		echo "postrm purge webservers=$webservers apacheconfig=$apacheconfig"
 
 		# Ask if we must delete database
 		echo "postrm db_input dolibarr/postrm"
@@ -59,7 +89,8 @@ case "$1" in
 			echo postrm Mysql database deletion
 			# Get database configuration
 			dbserver="localhost"
-			dbname="dolibarrmysql"
+			dbuser="dolibarrdebian"
+			dbname="dolibarrdebian"
 			#db_get "dolibarr/db/name"
 			#dbname="$RET"
 			superuserlogin=''
@@ -120,23 +151,31 @@ case "$1" in
 			fi
 			mysqlcmd="mysql $hostopt $passopt -u $dbadmin"
 
-		    # Now run the drop commands
-		    if eval $mysqlcmd -f -e "\"show databases;\"" | grep -e "^$dbname" > /dev/null 2>&1 ; then
-			log="${log}Droping database $dbname."
-			if eval $mysqlcmd -f -e "\"DROP DATABASE $dbname;\"" ; then
-			    if eval $mysqlcmd -f -e "\"show databases;\"" | grep -e "^$dbname" > /dev/null 2>&1 ; then
-				error="Database $dbname NOT successfully droped. You have to do it manually."
-				echo $error
-			    else
-				status=drop
-			    fi
+		    # Now run the drop user
+			if eval $mysqlcmd -f -e "\"DROP USER '$dbuser'@'localhost';\"" ; then
+				echo Database login $dbuser removed
 			else
-			    error="Unable to run the drop database script."
+			    error="Unable to run $mysqlcmd -f -e \"DROP USER '$dbuser'@'localhost';\""
 				echo $error
 			fi
+
+		    # Now run the drop commands
+		    if eval $mysqlcmd -f -e "\"show databases;\"" | grep -e "^$dbname" > /dev/null 2>&1 ; then
+				log="${log}Droping database $dbname."
+				if eval $mysqlcmd -f -e "\"DROP DATABASE $dbname;\"" ; then
+				    if eval $mysqlcmd -f -e "\"show databases;\"" | grep -e "^$dbname" > /dev/null 2>&1 ; then
+					error="Database $dbname NOT successfully droped. You have to do it manually."
+					echo $error
+				    else
+					status=drop
+				    fi
+				else
+				    error="Unable to run the drop database script."
+					echo $error
+				fi
 		    else
-			status=nothing
-			log="${log}Database $dbname already not exists."
+				status=nothing
+				log="${log}Database $dbname already not exists."
 		    fi
 
 		    echo "Remove directory $docdir"
@@ -178,52 +217,12 @@ case "$1" in
     		set -e
 		done
 		
-		# Remove file and conf file
-		for dir in /usr/share/dolibarr; do
-			if [ -d $dir ] ; then 
-                # We disable blocking errors
-                set +e
-			    echo "Remove directory $dir"
-			    rm -rf $dir ; 
-                # We restore blocking errors
-                set -e
-			fi
-		done
-		
 		# We clean variable (we ignore errors because db_reset can fails if var was never set)
         set +e
 		db_reset "dolibarr/postrm"
         set -e
 
 		#db_purge
-	;;
-
-    # Call when we uninstall
-	remove)
-		echo "postrm Force remove of /usr/share/dolibarr/htdocs/install"
-		rm -fr /usr/share/dolibarr/htdocs/install
-
-        echo "postrm Force remove of /usr/share/dolibarr/htdocs/conf"
-        rm -fr /usr/share/dolibarr/htdocs/conf
-        
-		# Remove include files
-		export restart=""
-		for server in $webservers ; do
-			export conffile="/etc/$server/conf.d/dolibarr.conf"
-            if [ -f $conffile ] ;
-            then
-               echo Delete file $conffile
-	           rm -f $conffile
-	           status=purge
-		    fi
-			
-			if [ "x$status" = "xpurge" ] ;
-				then restart="$restart $server"
-			fi
-		done
-	;;
-
-	upgrade)
 	;;
 
 	failed-upgrade|abort-install|abort-upgrade|disappear)
