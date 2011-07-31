@@ -17,14 +17,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *  \file       htdocs/commande/class/commande.class.php
  *  \ingroup    commande
  *  \brief      Fichier des classes de commandes
- *  \version    $Id: commande.class.php,v 1.120 2011/07/31 22:23:14 eldy Exp $
+ *  \version    $Id: commande.class.php,v 1.119 2011/07/12 07:17:11 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");

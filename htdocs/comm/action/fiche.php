@@ -16,14 +16,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *       \file       htdocs/comm/action/fiche.php
  *       \ingroup    agenda
  *       \brief      Page for event card
- *       \version    $Id: fiche.php,v 1.228 2011/07/31 22:23:20 eldy Exp $
+ *       \version    $Id: fiche.php,v 1.227 2011/07/18 08:59:42 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -1022,7 +1023,7 @@ if ($id)
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:20 $ - $Revision: 1.228 $');
+llxFooter('$Date: 2011/07/18 08:59:42 $ - $Revision: 1.227 $');
 
 
 /**

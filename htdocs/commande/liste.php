@@ -15,14 +15,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *	\file       htdocs/commande/liste.php
  *	\ingroup    commande
  *	\brief      Page to list orders
- *	\version    $Id: liste.php,v 1.78 2011/07/31 22:23:15 eldy Exp $
+ *	\version    $Id: liste.php,v 1.77 2011/07/04 10:30:02 eldy Exp $
  */
 
 
@@ -277,5 +278,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:15 $ - $Revision: 1.78 $');
+llxFooter('$Date: 2011/07/04 10:30:02 $ - $Revision: 1.77 $');
 ?>

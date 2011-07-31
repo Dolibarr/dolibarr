@@ -14,7 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
@@ -27,7 +28,7 @@
  *      \file       htdocs/includes/modules/modMyModule.class.php
  *      \ingroup    mymodule
  *      \brief      Description and activation file for module MyModule
- *		\version	$Id: modMyModule.class.php,v 1.66 2011/07/31 22:21:58 eldy Exp $
+ *		\version	$Id$
  */
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 

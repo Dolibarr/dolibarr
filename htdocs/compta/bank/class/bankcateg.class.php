@@ -13,14 +13,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *      \file       compta/bank/class/bankcateg.class.php
  *      \ingroup    banque
  *      \brief      This file is CRUD class file (Create/Read/Update/Delete) for bank categories
- *		\version    $Id: bankcateg.class.php,v 1.9 2011/07/31 22:23:30 eldy Exp $
+ *		\version    $Id$
  *		\author		Laurent Destailleur
  *		\remarks	Initialy built by build_class_from_table on 2009-01-02 15:26
  */

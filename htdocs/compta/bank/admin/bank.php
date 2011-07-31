@@ -13,7 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 
@@ -21,7 +22,7 @@
  *      \file       htdocs/compta/bank/admin/bank.php
  *		\ingroup    bank
  *		\brief      Page to setup the bank module
- *		\version    $Id: bank.php,v 1.8 2011/07/31 22:23:31 eldy Exp $
+ *		\version    $Id$
  */
 
 require("../../../main.inc.php");
@@ -171,5 +172,5 @@ print "</table>\n";
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:31 $ - $Revision: 1.8 $');
+llxFooter('$Date$ - $Revision$');
 ?>

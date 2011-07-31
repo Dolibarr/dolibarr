@@ -14,7 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * ATTENTION DE PAS EXECUTER CE SCRIPT SUR UNE INSTALLATION DE PRODUCTION
  */
@@ -22,7 +23,7 @@
 /**
  *	    \file       htdocs/dev/generate-propale.php
  *		\brief      Script de generation de donnees aleatoires pour les propales
- *		\version    $Id: generate-propale.php,v 1.16 2011/07/31 22:21:57 eldy Exp $
+ *		\version    $Id: generate-propale.php,v 1.15 2011/07/09 14:11:40 eldy Exp $
  */
 
 // Test si mode batch

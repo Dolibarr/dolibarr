@@ -13,14 +13,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *		\file       htdocs/admin/security.php
  *      \ingroup    setup
  *      \brief      Page de configuration du module securite
- *		\version    $Id: security.php,v 1.56 2011/07/31 22:23:24 eldy Exp $
+ *		\version    $Id$
  */
 
 require("../main.inc.php");
@@ -431,5 +432,5 @@ print '</div>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:24 $ - $Revision: 1.56 $');
+llxFooter('$Date$ - $Revision$');
 ?>

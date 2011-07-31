@@ -13,14 +13,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *      \file       dev/translation/autotranslator.php
  *		\ingroup    mymodule othermodule1 othermodule2
  *      \brief      This file is an example for a command line script
- *      \version    $Id: autotranslator.php,v 1.13 2011/07/31 22:21:59 eldy Exp $
+ *      \version    $Id: autotranslator.php,v 1.12 2011/07/09 14:11:41 eldy Exp $
  * 		\author		Put author name here
  *		\remarks	Put here some comments
  */
@@ -44,7 +45,7 @@ require_once($path.'../../htdocs/lib/files.lib.php');
 $langs->load("main");
 
 // Global variables
-$version='$Revision: 1.13 $';
+$version='$Revision: 1.12 $';
 $error=0;
 
 

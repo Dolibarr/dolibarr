@@ -14,14 +14,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *		\file       htdocs/compta/bank/virement.php
  *		\ingroup    banque
  *		\brief      Page de saisie d'un virement
- *		\version    $Id: virement.php,v 1.49 2011/07/31 22:23:17 eldy Exp $
+ *		\version    $Id: virement.php,v 1.48 2011/07/04 10:34:56 eldy Exp $
  */
 
 require("./pre.inc.php");
@@ -175,5 +176,5 @@ print "</form>";
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:17 $ - $Revision: 1.49 $');
+llxFooter('$Date: 2011/07/04 10:34:56 $ - $Revision: 1.48 $');
 ?>

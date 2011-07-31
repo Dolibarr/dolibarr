@@ -17,14 +17,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *	\file       htdocs/admin/fichinter.php
  *	\ingroup    fichinter
  *	\brief      Setup page of module Interventions
- *	\version    $Id: fichinter.php,v 1.62 2011/07/31 22:23:22 eldy Exp $
+ *	\version    $Id$
  */
 
 require("../main.inc.php");
@@ -452,5 +453,5 @@ print '<br>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:22 $ - $Revision: 1.62 $');
+llxFooter('$Date$ - $Revision$');
 ?>

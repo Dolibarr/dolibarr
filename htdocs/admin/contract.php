@@ -12,14 +12,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *	\file       htdocs/admin/contract.php
  *	\ingroup    contract
  *	\brief      Setup page of module Contracts
- *	\version    $Id: contract.php,v 1.5 2011/07/31 22:23:25 eldy Exp $
+ *	\version    $Id$
  */
 
 require("../main.inc.php");
@@ -173,5 +174,5 @@ if (is_resource($handle))
 print '</table><br>';
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:25 $ - $Revision: 1.5 $');
+llxFooter('$Date$ - $Revision$');
 ?>

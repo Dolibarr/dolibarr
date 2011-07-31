@@ -15,14 +15,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *  \file       htdocs/adherents/document.php
  *  \brief      Tab for documents linked to third party
  *  \ingroup    societe
- *  \version    $Id: document.php,v 1.9 2011/07/31 22:23:28 eldy Exp $
+ *  \version    $Id: document.php,v 1.8 2011/07/06 20:56:50 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -230,6 +231,6 @@ else
 $db->close();
 
 
-llxFooter('$Date: 2011/07/31 22:23:28 $ - $Revision: 1.9 $');
+llxFooter('$Date: 2011/07/06 20:56:50 $ - $Revision: 1.8 $');
 
 ?>

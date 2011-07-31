@@ -14,14 +14,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *       \file       htdocs/compta/bank/index.php
  *       \ingroup    banque
  *       \brief      Page accueil banque
- *       \version    $Id: index.php,v 1.55 2011/07/31 22:23:16 eldy Exp $
+ *       \version    $Id: index.php,v 1.54 2011/07/20 19:03:31 eldy Exp $
  */
 
 require("./pre.inc.php");
@@ -244,5 +245,5 @@ print "</div>";
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:16 $ - $Revision: 1.55 $');
+llxFooter('$Date: 2011/07/20 19:03:31 $ - $Revision: 1.54 $');
 ?>

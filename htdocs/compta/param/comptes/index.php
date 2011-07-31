@@ -13,16 +13,17 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: index.php,v 1.11 2011/07/31 22:23:31 eldy Exp $
+ * $Id$
  */
 
 /**
         \file       htdocs/compta/param/comptes/index.php
         \ingroup    compta
 		\brief      Page acceuil zone parametrages
-		\version    $Revision: 1.11 $
+		\version    $Revision$
 */
 
 require("../../../main.inc.php");
@@ -76,5 +77,5 @@ print '</table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:31 $ - $Revision: 1.11 $');
+llxFooter('$Date$ - $Revision$');
 ?>
