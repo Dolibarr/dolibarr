@@ -14,7 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
 require("../../main.inc.php");
@@ -203,5 +204,5 @@ print "</table>";
 
 // End of page
 $db->close();
-llxFooter('$Date: 2011/07/31 22:08:25 $ - $Revision: 1.10 $');
+llxFooter('$Date: 2011/07/31 21:26:51 $ - $Revision: 1.9 $');
 ?>

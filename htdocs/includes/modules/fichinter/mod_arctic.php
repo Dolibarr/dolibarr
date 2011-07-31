@@ -15,7 +15,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
  */
 
@@ -23,7 +24,7 @@
  *	\file       htdocs/includes/modules/fichinter/mod_arctic.php
  *	\ingroup    fiche intervention
  *	\brief      File with Arctic numbering module for interventions
- *	\version    $Id: mod_arctic.php,v 1.19 2011/07/31 23:28:15 eldy Exp $
+ *	\version    $Id: mod_arctic.php,v 1.18 2011/07/02 15:46:02 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/modules_fichinter.php");
 
