@@ -27,13 +27,11 @@ with format RPM (for Redhat, Mandriva, ...).
 
 
 To submit a package to Fedora:
-- Create account on bugzilla.redhat.com
-- Create account on fedoraproject.org
-- Create SRPMS package.
-- Upload package onf http://fedorapeople.org
+
 - Create a bug with form https://bugzilla.redhat.com/bugzilla/enter_bug.cgi?product=Fedora&format=fedora-review
 This is example of content of review field (used for Bug 723326):
-SRPMS URL: http://www.dolibarr.org/files/fedora/dolibarr-x.y.z-xxx.src.rpm
+Spec URL: http://www.dolibarr.org/files/fedora/dolibarr.spec
+SRPM URL: http://www.dolibarr.org/files/fedora/dolibarr-3.1.0-0.src.rpm
 Description:  Dolibarr ERP & CRM is an easy to use open source/free software
 for small and medium companies, foundations or freelances. It includes
 different features for Enterprise Resource Planning (ERP) and Customer
