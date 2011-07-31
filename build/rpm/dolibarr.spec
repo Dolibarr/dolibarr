@@ -355,9 +355,7 @@ echo Removed remaining $lockfile
 rm -f $lockfile
 echo Removed remaining dir $targetdir/doc
 rmdir $targetdir/doc >/dev/null 2>&1
-#echo Removed remaining dir $targetdir/htdocs
-#rmdir $targetdir/htdocs >/dev/null 2>&1	# Already removed by rpm
+echo Removed remaining dir $targetdir/htdocs
+rmdir $targetdir/htdocs >/dev/null 2>&1
 
 %changelog
-* Wed Jul 31 2011 Laurent Destailleur 3.1.0
-- Initial upstream (#723326)
