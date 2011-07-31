@@ -2,7 +2,7 @@
 #----------------------------------------------------------------------------
 # \file         build/makepack-dolibarr.pl
 # \brief        Dolibarr package builder (tgz, zip, rpm, deb, exe, aps)
-# \version      $Id: makepack-dolibarr.pl,v 1.123 2011/07/30 14:56:12 eldy Exp $
+# \version      $Id: makepack-dolibarr.pl,v 1.124 2011/07/31 13:17:03 eldy Exp $
 # \author       (c)2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
 #----------------------------------------------------------------------------
 
@@ -48,7 +48,7 @@ if (-d "/usr/src/RPM") {
 
 
 use vars qw/ $REVISION $VERSION /;
-$REVISION='$Revision: 1.123 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
+$REVISION='$Revision: 1.124 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
 $VERSION="1.0 (build $REVISION)";
 
 
@@ -696,12 +696,12 @@ if ($nboftargetok) {
             if ($OS =~ /windows/i)
             {
                 print "Move *_all.deb to $DESTI\n";
-                $ret=`mv "$BUILDROOT/*_all.deb" "$DESTI/"`;
+                $ret=`mv $BUILDROOT/*_all.deb "$DESTI/"`;
             }
             else
             {
                 print "Move *_all.deb to $DESTI\n";
-                $ret=`mv "$BUILDROOT/*_all.deb" "$DESTI/"`;
+                $ret=`mv $BUILDROOT/*_all.deb "$DESTI/"`;
             }
         	next;
         }
