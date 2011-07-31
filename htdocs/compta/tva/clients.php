@@ -15,14 +15,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *	    \file       htdocs/compta/tva/clients.php
  *      \ingroup    tax
  *		\brief      Page des societes
- *		\version    $Id: clients.php,v 1.32 2011/08/03 00:46:25 eldy Exp $
+ *		\version    $Id: clients.php,v 1.31 2011/07/18 11:11:19 eldy Exp $
  */
 
 require('../../main.inc.php');
@@ -326,5 +327,5 @@ print '</table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:25 $ - $Revision: 1.32 $');
+llxFooter('$Date: 2011/07/18 11:11:19 $ - $Revision: 1.31 $');
 ?>
