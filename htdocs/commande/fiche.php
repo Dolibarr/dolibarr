@@ -18,15 +18,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/commande/fiche.php
  *	\ingroup    commande
  *	\brief      Page to show customer order
- *	\version    $Id: fiche.php,v 1.526 2011/07/20 21:26:11 eldy Exp $
+ *	\version    $Id: fiche.php,v 1.527 2011/07/31 22:23:15 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -2123,5 +2122,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/20 21:26:11 $ - $Revision: 1.526 $');
+llxFooter('$Date: 2011/07/31 22:23:15 $ - $Revision: 1.527 $');
 ?>

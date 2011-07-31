@@ -12,15 +12,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *       \file      htdocs/support/index.php
  *       \ingroup   support
  *       \brief     Provide an Online Help support
- *       \version   $Id$
+ *       \version   $Id: index.php,v 1.23 2011/07/31 23:22:33 eldy Exp $
  */
 
 error_reporting(0);

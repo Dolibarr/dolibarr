@@ -12,15 +12,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/product/canvas/service/product.service.class.php
  *	\ingroup    service
  *	\brief      Fichier de la classe des services par defaut
- *	\version    $Id: product.service.class.php,v 1.14 2011/07/21 01:20:33 eldy Exp $
+ *	\version    $Id: product.service.class.php,v 1.15 2011/07/31 23:24:03 eldy Exp $
  */
 
 /**

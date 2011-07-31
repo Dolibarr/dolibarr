@@ -18,15 +18,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *  \file       htdocs/societe/soc.php
  *  \ingroup    societe
  *  \brief      Third party card page
- *  \version    $Id: soc.php,v 1.124 2011/07/19 07:33:23 simnandez Exp $
+ *  \version    $Id: soc.php,v 1.125 2011/07/31 23:22:57 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -1968,5 +1967,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/19 07:33:23 $ - $Revision: 1.124 $');
+llxFooter('$Date: 2011/07/31 23:22:57 $ - $Revision: 1.125 $');
 ?>

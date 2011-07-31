@@ -13,14 +13,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *  \file       htdocs/admin/system/dolibarr.php
  *  \brief      Page to show Dolibarr informations
- *  \version    $Id: dolibarr.php,v 1.58 2011/07/13 13:15:17 eldy Exp $
+ *  \version    $Id: dolibarr.php,v 1.59 2011/07/31 22:23:14 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -213,5 +212,5 @@ print '<tr '.$bc[$var].'><td width="300">=> '.$langs->trans("File encoding").'</
 print '</table>';
 print '<br>';
 
-llxFooter('$Date: 2011/07/13 13:15:17 $ - $Revision: 1.58 $');
+llxFooter('$Date: 2011/07/31 22:23:14 $ - $Revision: 1.59 $');
 ?>

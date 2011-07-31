@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	    \file       htdocs/societe/notify/fiche.php
  *      \ingroup    societe, notification
  *		\brief      Tab for notifications of third party
- *		\version    $Id$
+ *		\version    $Id: fiche.php,v 1.70 2011/07/31 23:22:58 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -350,6 +349,6 @@ if ( $soc->fetch($soc->id) )
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/31 23:22:58 $ - $Revision: 1.70 $');
 
 ?>

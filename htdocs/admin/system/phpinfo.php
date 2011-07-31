@@ -13,14 +13,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *      \file       htdocs/admin/system/phpinfo.php
  *		\brief      Page des infos systeme de php
- *		\version    $Id$
+ *		\version    $Id: phpinfo.php,v 1.19 2011/07/31 22:23:14 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -122,5 +121,5 @@ if (isset($title))
 print "$chaine\n";	// Ne pas centrer la reponse php car certains tableau du bas tres large rendent ceux du haut completement a droite
 print "<br>\n";
 
-llxfooter('$Date$ - $Revision$');
+llxfooter('$Date: 2011/07/31 22:23:14 $ - $Revision: 1.19 $');
 ?>

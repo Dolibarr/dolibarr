@@ -17,15 +17,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	    \file       htdocs/admin/dict.php
  *		\ingroup    setup
  *		\brief      Page to administer data tables
- *		\version    $Id: dict.php,v 1.145 2011/06/25 09:50:56 eldy Exp $
+ *		\version    $Id: dict.php,v 1.146 2011/07/31 22:23:22 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -897,7 +896,7 @@ print '<br>';
 
 $db->close();
 
-llxFooter('$Date: 2011/06/25 09:50:56 $ - $Revision: 1.145 $');
+llxFooter('$Date: 2011/07/31 22:23:22 $ - $Revision: 1.146 $');
 
 
 /**
