@@ -12,14 +12,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *	\file       htdocs/cashdesk/admin/cashdesk.php
  *	\ingroup    cashdesk
  *	\brief      Setup page for cashdesk module
- *	\version    $Id: cashdesk.php,v 1.7 2011/08/03 00:46:38 eldy Exp $
+ *	\version    $Id$
  */
 
 require("../../main.inc.php");
@@ -128,5 +129,5 @@ print '<center><input type="submit" class="button" value="'.$langs->trans("Save"
 
 print "</form>\n";
 
-llxFooter('$Date: 2011/08/03 00:46:38 $ - $Revision: 1.7 $');
+llxFooter('$Date$ - $Revision$');
 ?>
