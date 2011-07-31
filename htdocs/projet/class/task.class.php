@@ -13,14 +13,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *      \file       htdocs/projet/class/task.class.php
  *      \ingroup    project
  *      \brief      This file is a CRUD class file for Task (Create/Read/Update/Delete)
- *		\version    $Id: task.class.php,v 1.12 2011/07/31 23:23:39 eldy Exp $
+ *		\version    $Id: task.class.php,v 1.11 2011/06/25 10:55:11 eldy Exp $
  *		\remarks	Initialy built by build_class_from_table on 2008-09-10 12:41
  */
 

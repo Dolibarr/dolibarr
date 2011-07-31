@@ -15,14 +15,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *	\file       	htdocs/product/stock/user.php
  *	\ingroup    	stock
  *	\brief      	Page to link dolibarr users with warehouses
- *	\version    	$Id: user.php,v 1.16 2011/07/31 23:24:01 eldy Exp $
+ *	\version    	$Id$
  * 	\deprecated		This page is never called. Feature will never be developped.
  */
 
@@ -175,5 +176,5 @@ if ($_GET["id"])
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:24:01 $ - $Revision: 1.16 $');
+llxFooter('$Date$ - $Revision$');
 ?>

@@ -14,13 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *       \file       htdocs/product/ajaxproducts.php
  *       \brief      File to return Ajax response on product list request
- *       \version    $Id: ajaxproducts.php,v 1.37 2011/07/31 23:19:26 eldy Exp $
+ *       \version    $Id: ajaxproducts.php,v 1.36 2011/07/10 17:28:10 hregis Exp $
  */
 
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL',1); // Disables token renewal

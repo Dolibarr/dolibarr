@@ -14,14 +14,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *	\file       htdocs/societe/societe.php
  *	\ingroup    societe
  *	\brief      Page to show a third party
- *	\version    $Id: societe.php,v 1.12 2011/07/31 23:22:56 eldy Exp $
+ *	\version    $Id$
  */
 
 require_once("../main.inc.php");
@@ -429,5 +430,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:22:56 $ - $Revision: 1.12 $');
+llxFooter('$Date$ - $Revision$');
 ?>

@@ -14,14 +14,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *	\file       htdocs/public/members/public_card.php
  *	\ingroup    member
  * 	\brief      File to show a public card of a member
- *	\version    $Id: public_card.php,v 1.12 2011/07/31 23:23:21 eldy Exp $
+ *	\version    $Id$
  */
 
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
@@ -113,7 +114,7 @@ if ($rowid > 0)
 
 $db->close();
 
-llxFooterVierge('$Date: 2011/07/31 23:23:21 $ - $Revision: 1.12 $');
+llxFooterVierge('$Date$ - $Revision$');
 
 
 /* Functions header and footer */

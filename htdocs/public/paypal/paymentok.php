@@ -13,7 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
@@ -23,7 +24,7 @@
  *                  This page is called by paypal with url provided to payal competed with parameter TOKEN=xxx
  *                  This token can be used to get more informations.
  *		\author	    Laurent Destailleur
- *		\version    $Id: paymentok.php,v 1.12 2011/07/31 23:23:20 eldy Exp $
+ *		\version    $Id$
  */
 
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
@@ -188,5 +189,5 @@ html_print_paypal_footer($mysoc,$langs);
 
 $db->close();
 
-llxFooterPaypal('$Date: 2011/07/31 23:23:20 $ - $Revision: 1.12 $');
+llxFooterPaypal('$Date$ - $Revision$');
 ?>

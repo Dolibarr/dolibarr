@@ -12,14 +12,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *		\file       htdocs/societe/checkvat/checkVatPopup.php
  *		\ingroup    societe
  *		\brief      Popup screen to validate VAT
- *		\version    $Id: checkVatPopup.php,v 1.20 2011/07/31 23:22:59 eldy Exp $
+ *		\version    $Id$
  */
 
 require ("../../main.inc.php");
@@ -66,7 +67,7 @@ else
     $params=getSoapParams();
     //ini_set('default_socket_timeout', $params['response_timeout']);
     //$soapclient = new SoapClient($WS_DOL_URL_WSDL,$params);
-	$soapclient = new nusoap_client($WS_DOL_URL_WSDL,true,$params['proxy_host'],$params['proxy_port'],$params['proxy_login'],$params['proxy_password'],$params['connection_timeout'],$params['response_timeout']);
+	$soapclient = new nusoap_client($WS_DOL_URL_WSDL,true,$params['proxy_host'],$params['proxy_port'],$params['proxy_user'],$params['proxy_host'],$params['connection_timeout'],$params['response_timeout']);
 
 	// Check for an error
 	$err = $soapclient->getError();
@@ -166,5 +167,5 @@ if ($messagetoshow)
 }
 
 
-llxFooter('$Date: 2011/07/31 23:22:59 $ - $Revision: 1.20 $',0);
+llxFooter('$Date$ - $Revision$',0);
 ?>
