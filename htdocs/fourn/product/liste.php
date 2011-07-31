@@ -15,15 +15,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *		\file       htdocs/fourn/product/liste.php
  *		\ingroup    produit
  *		\brief      Page liste des produits ou services
- *		\version    $Id$
+ *		\version    $Id: liste.php,v 1.42 2011/07/31 23:57:03 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -260,5 +259,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/31 23:57:03 $ - $Revision: 1.42 $');
 ?>
