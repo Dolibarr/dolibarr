@@ -2,7 +2,7 @@
 #----------------------------------------------------------------------------
 # \file         build/makepack-dolibarr.pl
 # \brief        Dolibarr package builder (tgz, zip, rpm, deb, exe, aps)
-# \version      $Id: makepack-dolibarr.pl,v 1.124 2011/07/31 13:17:03 eldy Exp $
+# \version      $Id: makepack-dolibarr.pl,v 1.125 2011/07/31 15:31:32 eldy Exp $
 # \author       (c)2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
 #----------------------------------------------------------------------------
 
@@ -48,7 +48,7 @@ if (-d "/usr/src/RPM") {
 
 
 use vars qw/ $REVISION $VERSION /;
-$REVISION='$Revision: 1.124 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
+$REVISION='$Revision: 1.125 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
 $VERSION="1.0 (build $REVISION)";
 
 
@@ -274,6 +274,10 @@ if ($nboftargetok) {
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/barcode/php-barcode/fonts/Veranda*.ttf`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/fckeditor/fckeditor.py`;
 	    
+        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/install/mssql/README`;
+        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/install/mysql/README`;
+        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/install/pgsql/README`;
+
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/test`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/spec`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/licence`;
