@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *      \file       scripts/invoices/rebuild_merge_pdf.php
  *      \ingroup    facture
  *      \brief      Script to rebuild PDF and merge PDF files into one
- *		\version	$Id: rebuild_merge_pdf.php,v 1.20 2011/07/09 14:11:41 eldy Exp $
+ *		\version	$Id: rebuild_merge_pdf.php,v 1.21 2011/07/31 22:22:11 eldy Exp $
  */
 
 $sapi_type = php_sapi_name();
@@ -49,7 +48,7 @@ require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 $langs->load("main");
 
 // Global variables
-$version='$Revision: 1.20 $';
+$version='$Revision: 1.21 $';
 $error=0;
 
 

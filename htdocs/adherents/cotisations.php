@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *      \file       htdocs/adherents/cotisations.php
  *      \ingroup    member
  *		\brief      Page de consultation et insertion d'une cotisation
- *		\version    $Id$
+ *		\version    $Id: cotisations.php,v 1.58 2011/07/31 22:23:28 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -229,5 +228,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/31 22:23:28 $ - $Revision: 1.58 $');
 ?>

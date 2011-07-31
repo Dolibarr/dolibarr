@@ -14,8 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * ATTENTION DE PAS EXECUTER CE SCRIPT SUR UNE INSTALLATION DE PRODUCTION
  */
@@ -23,7 +22,7 @@
 /**
  *      \file       htdocs/dev/generate-societe.php
  *		\brief      Script de generation de donnees aleatoires pour les societes
- *		\version    $Id: generate-societe.php,v 1.16 2011/07/09 14:11:40 eldy Exp $
+ *		\version    $Id: generate-societe.php,v 1.17 2011/07/31 22:21:57 eldy Exp $
  */
 
 // Test si mode batch

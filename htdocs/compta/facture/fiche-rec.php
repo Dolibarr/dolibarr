@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/compta/facture/fiche-rec.php
  *	\ingroup    facture
  *	\brief      Page to show predefined invoice
- *	\version    $Id: fiche-rec.php,v 1.74 2011/06/30 13:27:21 hregis Exp $
+ *	\version    $Id: fiche-rec.php,v 1.75 2011/07/31 22:23:13 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -576,5 +575,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/06/30 13:27:21 $ - $Revision: 1.74 $');
+llxFooter('$Date: 2011/07/31 22:23:13 $ - $Revision: 1.75 $');
 ?>
