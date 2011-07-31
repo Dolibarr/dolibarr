@@ -13,14 +13,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *      \file       htdocs/lib/tax.lib.php
  *      \ingroup    tax
  *      \brief      Library for tax module
- *      \version    $Id: tax.lib.php,v 1.22 2011/07/31 23:26:01 eldy Exp $
+ *      \version    $Id: tax.lib.php,v 1.21 2011/07/18 11:11:19 eldy Exp $
  */
 
 

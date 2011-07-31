@@ -12,16 +12,17 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: mantis.php,v 1.8 2011/07/31 23:24:38 eldy Exp $
+ * $Id$
  */
 
 /**	    \file       htdocs/mantis/mantis.php
         \ingroup    mantis
 		\brief      Page generant 2 frames, une pour le menu Dolibarr, l'autre pour l'affichage de Mantis
 		\author	    Laurent Destailleur
-		\version    $Revision: 1.8 $
+		\version    $Revision$
 */
 
 require("../main.inc.php");
@@ -30,7 +31,7 @@ if (empty($conf->global->PHPMANTIS_URL))
 {
 	llxHeader();
 	print '<div class="error">Module Mantis was not configured properly.</div>';
-	llxFooter('$Date: 2011/07/31 23:24:38 $ - $Revision: 1.8 $');
+	llxFooter('$Date$ - $Revision$');
 }
 
 $mainmenu=isset($_GET["mainmenu"])?$_GET["mainmenu"]:"";

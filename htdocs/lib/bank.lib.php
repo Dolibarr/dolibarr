@@ -12,7 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
  */
 
@@ -20,7 +21,7 @@
 	    \file       htdocs/lib/bank.lib.php
 		\brief      Ensemble de fonctions de base pour le module banque
         \ingroup    banque
-        \version    $Id: bank.lib.php,v 1.14 2011/07/31 23:25:13 eldy Exp $
+        \version    $Id$
 
 		Ensemble de fonctions de base de dolibarr sous forme d'include
 */

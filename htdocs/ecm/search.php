@@ -13,14 +13,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *	\file       htdocs/ecm/index.php
  *	\ingroup    ecm
  *	\brief      Main page for ECM section area
- *	\version    $Id: search.php,v 1.19 2011/07/31 23:50:55 eldy Exp $
+ *	\version    $Id: search.php,v 1.18 2011/07/06 20:56:50 eldy Exp $
  *	\author		Laurent Destailleur
  */
 
@@ -213,5 +214,5 @@ print '<br>';
 // End of page
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:50:55 $ - $Revision: 1.19 $');
+llxFooter('$Date: 2011/07/06 20:56:50 $ - $Revision: 1.18 $');
 ?>

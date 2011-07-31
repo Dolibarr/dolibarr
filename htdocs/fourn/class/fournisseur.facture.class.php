@@ -17,14 +17,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *	\file       htdocs/fourn/class/fournisseur.facture.class.php
  *	\ingroup    fournisseur,facture
  *	\brief      File of class to manage suppliers invoices
- *	\version    $Id: fournisseur.facture.class.php,v 1.35 2011/07/31 23:57:02 eldy Exp $
+ *	\version    $Id$
  */
 
 include_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
