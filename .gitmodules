@@ -13,3 +13,6 @@
 [submodule "htdocs/memcache"]
 	path = htdocs/memcache
 	url = https://git.symeos.com/module-memcache.git
+[submodule "htdocs/genfact"]
+	path = htdocs/genfact
+	url = https://git.symeos.com/module-genfact.git
