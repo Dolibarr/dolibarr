@@ -13,14 +13,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *       \file       htdocs/user/param_ihm.php
  *       \brief      Page to show user setup for display
- *       \version    $Id: param_ihm.php,v 1.52 2011/07/08 18:49:17 eldy Exp $
+ *       \version    $Id: param_ihm.php,v 1.53 2011/07/31 23:19:43 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -259,5 +258,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/08 18:49:17 $ - $Revision: 1.52 $');
+llxFooter('$Date: 2011/07/31 23:19:43 $ - $Revision: 1.53 $');
 ?>

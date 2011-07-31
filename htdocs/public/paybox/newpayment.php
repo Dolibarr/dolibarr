@@ -14,8 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
@@ -23,7 +22,7 @@
  *		\ingroup    paybox
  *		\brief      File to offer a way to make a payment for a particular Dolibarr entity
  *		\author	    Laurent Destailleur
- *		\version    $Id: newpayment.php,v 1.60 2011/07/13 12:03:30 eldy Exp $
+ *		\version    $Id: newpayment.php,v 1.61 2011/07/31 23:23:21 eldy Exp $
  */
 
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
@@ -729,5 +728,5 @@ html_print_paybox_footer($mysoc,$langs);
 
 $db->close();
 
-llxFooterPayBox('$Date: 2011/07/13 12:03:30 $ - $Revision: 1.60 $');
+llxFooterPayBox('$Date: 2011/07/31 23:23:21 $ - $Revision: 1.61 $');
 ?>

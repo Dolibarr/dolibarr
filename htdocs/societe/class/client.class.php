@@ -13,15 +13,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *   	\file       htdocs/societe/class/client.class.php
  *		\ingroup    societe
  *		\brief      File for class of customers
- *		\version    $Id$
+ *		\version    $Id: client.class.php,v 1.4 2011/07/31 23:22:58 eldy Exp $
  */
 include_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
 
