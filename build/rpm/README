@@ -5,24 +5,15 @@ RPM Package tools
 
 This directory contains files used by makepack-dolibarr.pl
 script to build a package, ready to be distributed,
-with format RPM (for Redhat, OpenSuse, Mandriva, ...).
+with format RPM (for Redhat, Mandriva, ...).
 
 
-# This is standard command to work on RPM packaging:
-#
-# yum -y install rpmlint
-# yum -y install hunspell-en hunspell-es hunspell-fr hunspell-it
-#
-# rpmlint file.rpm				    Test a package
-# mock -r fedora-15-i386 --rebuild ../SRPMS/hello-2.7-1.fc15.src.rpm
+# This is standard command to work on Debian packaging:
 #
 # On Fedora
 # rpm -i --test dolibarr-...rpm     To list dependencies of RPM   
 # yum install dolibarr-...rpm       To install package and dependencies   
-# yum erase dolibarr                To remove package
-# chcon -R -h -t httpd_sys_script_rw_t /file					To add temporary context rw for httpd on /file    
-# semanage fcontext -a -t httpd_sys_script_rw_t "/dir/(.*)?" 	To add persistent context rw for httpd on /dir (this add file_contexts.local)
-# restorecon -R -v /file			Restore values into files (cancel chcon, validate semanage)    
+# yum erase dolibarr                To remove package   
 #
 # On OpenSuse
 # yast --install dolibarr-...rpm    To install package and dependencies
@@ -36,22 +27,18 @@ with format RPM (for Redhat, OpenSuse, Mandriva, ...).
 
 
 To submit a package to Fedora:
-- Create account on bugzilla.redhat.com
-- Create account on fedoraproject.org
-- Create SRPMS package.
-- Upload package onf http://fedorapeople.org
+
 - Create a bug with form https://bugzilla.redhat.com/bugzilla/enter_bug.cgi?product=Fedora&format=fedora-review
 This is example of content of review field (used for Bug 723326):
-SRPMS URL: http://www.dolibarr.org/files/fedora/dolibarr-x.y.z-xxx.src.rpm
+Spec URL: http://www.dolibarr.org/files/fedora/dolibarr.spec
+SRPM URL: http://www.dolibarr.org/files/fedora/dolibarr-3.1.0-0.src.rpm
 Description:  Dolibarr ERP & CRM is an easy to use open source/free software
 for small and medium companies, foundations or freelances. It includes
 different features for Enterprise Resource Planning (ERP) and Customer
 Relationship Management (CRM) but also for different other activities.
 I am author of other already packaged OpenSources packages (awstats) but this
 is my first package to maintain myself. So i'm seeking a sponsor.
+
 - Edit field "Block" and add FE-NEEDSPONSOR
-- Check bug is into database by searching with id on https://bugzilla.redhat.com/
-- Install fedora packager tools: yum install fedora-packager
-- Setup fedora packagers tools: fedora-packager-setup
-- Send your package: koji build --scratch f16 path_to_source_RPM
-- Check if package is available: http://koji.fedoraproject.org/koji/  
+
+- Check bug is into database by searching with id on https://bugzilla.redhat.com/  
