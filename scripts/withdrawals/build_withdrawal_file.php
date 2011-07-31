@@ -15,15 +15,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *      \file       scripts/withdrawals/build_withdrawal_file.php
  *      \ingroup    prelevement
  *      \brief      Script de prelevement
- * 		\version	$Id: build_withdrawal_file.php,v 1.4 2011/07/09 14:11:41 eldy Exp $
+ * 		\version	$Id: build_withdrawal_file.php,v 1.5 2011/07/31 22:22:12 eldy Exp $
  */
 
 $sapi_type = php_sapi_name();
@@ -37,7 +36,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 // Recupere env dolibarr
-$version='$Revision: 1.4 $';
+$version='$Revision: 1.5 $';
 
 require_once($path."../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/bon-prelevement.class.php");

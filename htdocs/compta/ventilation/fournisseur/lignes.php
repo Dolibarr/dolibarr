@@ -12,17 +12,16 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id$
+ * $Id: lignes.php,v 1.6 2011/07/31 22:23:30 eldy Exp $
  */
 
 /**
    \file       htdocs/compta/ventilation/fournisseur/lignes.php
    \ingroup    facture
    \brief      Page de detail des lignes de ventilation d'une facture
-   \version    $Revision$
+   \version    $Revision: 1.6 $
 */
 
 require('../../../main.inc.php');
@@ -114,5 +113,5 @@ print "</table></form>";
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter("<em>Derni&egrave;re modification $Date: 2011/07/31 22:23:30 $ r&eacute;vision $Revision: 1.6 $</em>");
 ?>

@@ -13,14 +13,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *      \file       dev/samples/manage_order.php
  *      \brief      This file is an example for a command line script
- *      \version    $Id: create_invoice.php,v 1.5 2011/07/09 14:11:41 eldy Exp $
+ *      \version    $Id: create_invoice.php,v 1.6 2011/07/31 22:21:59 eldy Exp $
  *		\author		Put author name here
  *		\remarks	Put here some comments
  */
@@ -36,7 +35,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 // Global variables
-$version='$Revision: 1.5 $';
+$version='$Revision: 1.6 $';
 $error=0;
 
 

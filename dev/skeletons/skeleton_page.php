@@ -13,15 +13,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *   	\file       dev/skeletons/skeleton_page.php
  *		\ingroup    mymodule othermodule1 othermodule2
  *		\brief      This file is an example of a php page
- *		\version    $Id$
+ *		\version    $Id: skeleton_page.php,v 1.19 2011/07/31 22:21:57 eldy Exp $
  *		\author		Put author name here
  *		\remarks	Put here some comments
  */
@@ -114,5 +113,5 @@ $somethingshown=$myobject->showLinkedObjectBlock();
 
 // End of page
 $db->close();
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/31 22:21:57 $ - $Revision: 1.19 $');
 ?>

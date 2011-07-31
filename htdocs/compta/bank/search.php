@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/compta/bank/search.php
  *	\ingroup    banque
  *	\brief      List of bank transactions
- *	\version    $Id$
+ *	\version    $Id: search.php,v 1.54 2011/07/31 22:23:16 eldy Exp $
  */
 
 require("./pre.inc.php");
@@ -285,5 +284,5 @@ if ($_POST["action"] == "search" && ! $num)
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/31 22:23:16 $ - $Revision: 1.54 $');
 ?>
