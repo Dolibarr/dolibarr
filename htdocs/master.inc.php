@@ -59,7 +59,6 @@ $conf->db->dolibarr_main_db_collation=$dolibarr_main_db_collation;
 $conf->db->dolibarr_main_db_encryption = $dolibarr_main_db_encryption;
 $conf->db->dolibarr_main_db_cryptkey = $dolibarr_main_db_cryptkey;
 $conf->file->main_limit_users = $dolibarr_main_limit_users;
-$conf->file->main_cameleo_pack = $dolibarr_main_cameleo_pack;
 $conf->file->mailing_limit_sendbyweb = $dolibarr_mailing_limit_sendbyweb;
 if (defined('TEST_DB_FORCE_TYPE')) $conf->db->type=constant('TEST_DB_FORCE_TYPE');	// For test purpose
 // Identifiant autres

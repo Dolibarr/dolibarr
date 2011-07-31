@@ -54,6 +54,7 @@ class modTeam extends DolibarrModules
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         $this->special = 0;
         $this->picto='user';
+        $this->moddir="team"; //directory for module in htdocs
 
         // Data directories to create when module is enabled
         $this->dirs = array("/team/temp");

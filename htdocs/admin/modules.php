@@ -4,6 +4,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,7 +72,7 @@ $_SESSION["mode"]=$mode;
 $help_url='EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
 llxHeader('',$langs->trans("Setup"),$help_url);
 
-print_fiche_titre($langs->trans("ModulesSetup").(!empty($conf->file->main_cameleo_pack)?" (P".$conf->file->main_cameleo_pack.")":''),'','setup');
+print_fiche_titre($langs->trans("ModulesSetup"),'','setup');
 
 
 // Search modules
@@ -112,6 +113,9 @@ foreach ($conf->file->dol_document_root as $dirroot)
 		            {
 		                $j = 1000 + $i;
 		            }
+                            
+                            if(!empty($objMod->moddir) && !is_readable($dirroot."/".$objMod->moddir."/index.php"))
+                                continue; // Ne charge pas le module car dossier module vide
 
 					$modulequalified=1;
 
@@ -332,8 +336,6 @@ if ($mode != 4)
             // Version
             print "<td align=\"center\" valign=\"top\" nowrap=\"nowrap\">";
             print $objMod->getVersion();
-            if(!empty($conf->file->main_cameleo_pack))
-                print "_P".$objMod->cameleo;
             print "</td>\n";
 
             // Activate/Disable and Setup (2 columns)
@@ -409,28 +411,10 @@ if ($mode != 4)
                     // Ne devrait pas arriver.
                 }
                 
-                if(!empty($conf->file->main_cameleo_pack))
-                {
-                    if($conf->file->main_cameleo_pack >= $objMod->cameleo)
-                    {
-                        // Module non actif
-                    print '<a href="modules.php?id='.$objMod->numero.'&amp;action=set&amp;value=' . $modName . '&amp;mode=' . $mode . '">';
-                    print img_picto($langs->trans("Disabled"),'off');
-                    print "</a></td>\n  <td>&nbsp;</td>\n";
-                    }
-                    else
-                    {
-                        print $langs->trans("NotIncluded");
-                        print "<td>&nbsp;</td>";
-                    }
-                }
-                else
-                {
-                    // Module non actif
-                    print '<a href="modules.php?id='.$objMod->numero.'&amp;action=set&amp;value=' . $modName . '&amp;mode=' . $mode . '">';
-                    print img_picto($langs->trans("Disabled"),'off');
-                    print "</a></td>\n  <td>&nbsp;</td>\n";
-                }
+                // Module non actif
+                print '<a href="modules.php?id='.$objMod->numero.'&amp;action=set&amp;value=' . $modName . '&amp;mode=' . $mode . '">';
+                print img_picto($langs->trans("Disabled"),'off');
+                print "</a></td>\n  <td>&nbsp;</td>\n";
             }
 
             print "</tr>\n";

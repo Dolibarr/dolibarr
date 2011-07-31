@@ -10,3 +10,6 @@
 [submodule "htdocs/team"]
 	path = htdocs/team
 	url = https://git.symeos.com/module-team
+[submodule "htdocs/memcache"]
+	path = htdocs/memcache
+	url = https://git.symeos.com/module-memcache.git

@@ -58,6 +58,7 @@ class modLead extends DolibarrModules
 		$this->special = 0;
 		$this->config_page_url = array("lead.php@lead");
 		$this->picto='lead';
+                $this->moddir="lead"; //directory for module in htdocs
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/lead/temp");

@@ -652,12 +652,6 @@ function Activate($value,$withdeps=1)
         {
             return $langs->trans("ErrorModuleRequireJavascript");
         }
-        
-        // Test if Pack SaaS Cameleo is ok
-        if(!empty($conf->file->main_cameleo_pack) && $conf->file->main_cameleo_pack < $objMod->cameleo)
-        {
-            return $langs->trans("ErrorModuleRequireUpgradePack");
-        }
 
         $result=$objMod->init();
         if ($result <= 0) $ret=$objMod->error;

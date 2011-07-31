@@ -5,6 +5,7 @@
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,9 +51,6 @@ class DolibarrModules
     var $menu=array();
     //! Tableau des documents ???
     var $docs;
-    
-    //! Pack SaaS
-    var $cameleo=0;
 
     var $dbversion;
 

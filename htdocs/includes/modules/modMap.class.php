@@ -55,7 +55,7 @@ class modMap extends DolibarrModules
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         $this->special = 0;
         $this->picto='globe';
-        $this->cameleo=1;
+        $this->moddir="map"; //directory for module in htdocs : test index.php presence
 
         // Data directories to create when module is enabled
         $this->dirs = array();
