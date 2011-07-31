@@ -2,7 +2,7 @@
 #----------------------------------------------------------------------------
 # \file         build/makepack-dolibarr.pl
 # \brief        Dolibarr package builder (tgz, zip, rpm, deb, exe, aps)
-# \version      $Id: makepack-dolibarr.pl,v 1.126 2011/07/31 17:14:03 eldy Exp $
+# \version      $Id: makepack-dolibarr.pl,v 1.127 2011/07/31 18:06:36 eldy Exp $
 # \author       (c)2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
 #----------------------------------------------------------------------------
 
@@ -11,7 +11,7 @@ use Cwd;
 $PROJECT="dolibarr";
 $MAJOR="3";
 $MINOR="1";
-$BUILD="0-dev";		# Mettre x pour release, x-dev pour dev, x-beta pour beta, x-rc pour release candidate
+$BUILD="0-beta";		# Mettre x pour release, x-dev pour dev, x-beta pour beta, x-rc pour release candidate
 $RPMSUBVERSION="auto";	# auto use value found into BUILD
 
 @LISTETARGET=("TGZ","ZIP","RPM","DEB","APS","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
@@ -48,7 +48,7 @@ if (-d "/usr/src/RPM") {
 
 
 use vars qw/ $REVISION $VERSION /;
-$REVISION='$Revision: 1.126 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
+$REVISION='$Revision: 1.127 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
 $VERSION="1.0 (build $REVISION)";
 
 
@@ -418,11 +418,15 @@ if ($nboftargetok) {
     		$ARCH='noarch';
 			if ($RPMDIR eq "") { $RPMDIR=$ENV{'HOME'}."/rpmbuild"; }
            	$newbuild = $BUILD;
-            $newbuild =~ s/(dev|alpha)/0/gi;				# dev
-            $newbuild =~ s/beta/1/gi;						# beta
-            $newbuild =~ s/rc./2/gi;						# rc
+           	# For fedora
+            $newbuild =~ s/(dev|alpha)/0.1.a/gi;			# dev
+            $newbuild =~ s/beta/0.2.beta1/gi;				# beta
+            $newbuild =~ s/rc./0.3.rc1/gi;					# rc
             if ($newbuild !~ /-/) { $newbuild.='-3'; }		# finale
-            # now newbuild is 0-0 or 0-3 for example
+            #$newbuild =~ s/(dev|alpha)/0/gi;				# dev
+            #$newbuild =~ s/beta/1/gi;						# beta
+            #$newbuild =~ s/rc./2/gi;						# rc
+            #if ($newbuild !~ /-/) { $newbuild.='-3'; }		# finale
             $REL1 = $newbuild; $REL1 =~ s/-.*$//gi;
             if ($RPMSUBVERSION eq 'auto') { $RPMSUBVERSION = $newbuild; $RPMSUBVERSION =~ s/^.*-//gi; }
             print "Version is $MAJOR.$MINOR.$REL1-$RPMSUBVERSION\n";
@@ -709,12 +713,15 @@ if ($nboftargetok) {
                 $ret=`mv $BUILDROOT/*_all.deb "$DESTI/"`;
                 $ret=`mv $BUILDROOT/*.dsc "$DESTI/"`;
                 $ret=`mv $BUILDROOT/*.tar.gz "$DESTI/"`;
+                $ret=`mv $BUILDROOT/*.changes "$DESTI/"`;
             }
             else
             {
                 print "Move *_all.deb to $DESTI\n";
+                $ret=`mv $BUILDROOT/*_all.deb "$DESTI/"`;
                 $ret=`mv $BUILDROOT/*.dsc "$DESTI/"`;
                 $ret=`mv $BUILDROOT/*.tar.gz "$DESTI/"`;
+                $ret=`mv $BUILDROOT/*.changes "$DESTI/"`;
             }
         	next;
         }
