@@ -13,15 +13,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * or see http://www.gnu.org/
  */
 
 /**
  *  \file		htdocs/lib/images.lib.php
  *  \brief		Set of function for manipulating images
- * 	\version	$Id: images.lib.php,v 1.23 2011/07/05 22:51:24 eldy Exp $
+ * 	\version	$Id: images.lib.php,v 1.24 2011/07/31 23:26:02 eldy Exp $
  */
 
 // Define size of logo small and mini
