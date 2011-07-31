@@ -1,5 +1,7 @@
 #!/bin/sh
 # postinst script for dolibarr
+#
+# see: dh_installdeb(1)
 
 set -e
 
@@ -14,31 +16,6 @@ set -e
 # for details, see /usr/share/doc/packaging-manual/
 
 
-
-
-lighttpd_install() {
-	if [ ! -f /etc/lighttpd/conf-available/50-dolibarr.conf ] ; then
-		if which lighty-enable-mod >/dev/null 2>&1 ; then
-			echo "Add link for Lighttpd config file"
-			ln -s /etc/dolibarr/lighttpd.conf /etc/lighttpd/conf-available/50-dolibarr.conf
-			# We enabled it
-			lighty-enable-mod dolibarr fastcgi-php
-		else
-			echo "Lighttpd not installed, skipping"
-		fi
-	fi
-}
-
-apache_install() {
-	webserver=$1
-	if [ -d /etc/$webserver/conf.d ] && [ ! -e /etc/$webserver/conf.d/dolibarr.conf ]; then
-		echo "Add link for Apache config file"
-		ln -s /etc/dolibarr/apache.conf /etc/$webserver/conf.d/dolibarr.conf
-	fi
-}
-
-
-
 . /usr/share/debconf/confmodule
 
 db_version 2.0
@@ -50,6 +27,8 @@ echo Run the dolibarr postinst script
 # Define vars
 docdir='/var/lib/dolibarr/documents'
 #docdir='/usr/share/dolibarr/documents'
+apachefileorig="/usr/share/dolibarr/build/deb/apache.conf"
+apacheconfig="/etc/dolibarr/apache.conf"
 installfileorig="/usr/share/dolibarr/build/deb/install.forced.php.install"
 installconfig="/etc/dolibarr/install.forced.php"
 #config="/usr/share/dolibarr/htdocs/conf/conf.php"
@@ -64,6 +43,10 @@ case "$1" in
         chown -R www-data:www-data $docdir
         chmod -R 775 $docdir
         chmod -R g+s $docdir
+
+		# Copy apache.conf file into target directory
+		#mkdir -p /etc/dolibarr
+		#cp -p $apachefileorig $apacheconfig
 
 		# Copy install config file (with matching Debian) values into target directory
 		superuserlogin=''
@@ -91,23 +74,21 @@ case "$1" in
 	    	chmod -R 660 $config
 		fi
 
-	
-		# Reconfigure web server
-		db_reset dolibarr/reconfigure-webserver
-		
-		# Ask if we must delete database
-		echo "Ask for web server to setup"
-		db_input critical dolibarr/reconfigure-webserver || true
-		db_go || true
-		
-		db_get dolibarr/reconfigure-webserver
-	
-		webservers="$RET"
-	
+		# Get the web server type (use db_get for interactive mode).
+		#db_reset "dolibarr/webserver"
+		#db_get "dolibarr/webserver"		# Read value for webserver.
+		#webserver="$RET"
+
+		case $webserver in
+			Apache)		webservers="apache2" ;;
+			Apache-SSL)	webservers="apache2-ssl" ;;
+			Both)		webservers="apache2 apache2-ssl" ;;
+			*)		    webservers="apache2 apache2-ssl" ;;
+		esac
+
 		# Set up web server.
-		for webserver in $webservers ; do
-			webserver=${webserver%,}
-			echo Complete config of server $webserver
+		for server in $webservers ; do
+			echo Complete config of server $server
 			
 			# Detect webuser and webgroup
 			webuser=
@@ -125,31 +106,26 @@ case "$1" in
 			# Set permissions to web server
 			chown -R $webuser:$webgroup /usr/share/dolibarr
             chown -R root:$webgroup $config
+
+			# Add link to config file
+            echo Setup web server $server to add dolibarr config file
+			ln -fs /etc/dolibarr/apache.conf /etc/apache2/conf.d/dolibarr.conf
+			
 		done
 
-		# Restart web server.
-		for webserver in $webservers; do
-			webserver=${webserver%,}
-			if [ "$webserver" = "lighttpd" ] ; then
-				lighttpd_install
-			else
-				apache_install $webserver
-			fi
-			# Reload webserver in any case, configuration might have changed
-			# Redirection of 3 is needed because Debconf uses it and it might 
-			# be inherited by webserver. See bug #446324.
-	        if [ -f /etc/init.d/$webserver ] ; then
-	            if [ -x /usr/sbin/invoke-rc.d ]; then
-    	            echo Restart web server $server using invoke-rc.d
-	    		    # This works with Debian (5.05,...) and Ubuntu (9.10,10.04,...)
-	                invoke-rc.d $webserver reload 3>/dev/null || true
-	            else
-	                echo Restart web server $server using $server reload
-	                /etc/init.d/$webserver reload 3>/dev/null || true
-	            fi
-	        fi
+		# Restart servers
+		servers="apache2-ssl apache2 mysql"
+		# Another way to restart
+		for server in $servers ; do
+    		if [ -x /usr/sbin/invoke-rc.d ]; then
+                echo Restart web server $server using invoke-rc.d
+    		    # This works with Debian (5.05,...) and Ubuntu (9.10,10.04,...)
+    	    	invoke-rc.d $server reload || true
+    		else
+                echo Restart web server $server using $server reload
+    	    	/etc/init.d/$server reload || true
+    		fi
 		done
-
 		
 		echo ----------
 		echo "Call Dolibarr page http://localhost/dolibarr/ to complete the installation and use Dolibarr."
@@ -160,13 +136,13 @@ case "$1" in
 	;;
 
 	*)
-		echo "postinst called with unknown argument $1" >&2
+		echo "postinst called with unknown argument \`$1'" >&2
 		exit 0
 	;;
 esac
 
-#DEBHELPER#
-
 db_stop
+
+#DEBHELPER#
 
 exit 0
