@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
 require("../../main.inc.php");
@@ -57,8 +57,8 @@ $html=new Form($db);
 
 $year_current = strftime("%Y",dol_now());
 $pastmonth = strftime("%m",dol_now()) - 1;
-$pastmonthyear = $year_current; 
-if ($pastmonth == 0) 
+$pastmonthyear = $year_current;
+if ($pastmonth == 0)
 {
 	$pastmonth = 12;
 	$pastmonthyear--;
@@ -159,7 +159,7 @@ foreach ($tabfac as $key => $val)
 	$invoicestatic->id=$key;
 	$invoicestatic->ref=$val["ref"];
 	$invoicestatic->type=$val["type"];
-	
+
 	print "<tr ".$bc[$var].">";
 	// third party
 	//print "<td>".$conf->global->COMPTA_JOURNAL_SELL."</td>";
@@ -204,5 +204,5 @@ print "</table>";
 
 // End of page
 $db->close();
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/31 21:26:51 $ - $Revision: 1.9 $');
 ?>
