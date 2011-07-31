@@ -17,15 +17,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/contact/class/contact.class.php
  *	\ingroup    societe
  *	\brief      File of contacts class
- *	\version    $Id: contact.class.php,v 1.31 2011/07/10 16:50:40 eldy Exp $
+ *	\version    $Id: contact.class.php,v 1.32 2011/07/31 23:54:12 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
 
