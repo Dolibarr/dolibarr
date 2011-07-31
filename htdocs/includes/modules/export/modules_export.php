@@ -14,13 +14,14 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * or see http://www.gnu.org/
  */
 
 /**
  *	\file       htdocs/includes/modules/export/modules_export.php
  *	\ingroup    export
  *	\brief      File of parent class for export modules
- *	\version    $Id: modules_export.php,v 1.25 2011/08/03 01:38:52 eldy Exp $
+ *	\version    $Id: modules_export.php,v 1.24 2011/07/31 23:28:18 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT.'/lib/functions.lib.php');
