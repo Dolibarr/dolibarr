@@ -2,7 +2,7 @@
 #----------------------------------------------------------------------------
 # \file         build/makepack-dolibarr.pl
 # \brief        Dolibarr package builder (tgz, zip, rpm, deb, exe, aps)
-# \version      $Id: makepack-dolibarr.pl,v 1.123 2011/07/30 14:56:12 eldy Exp $
+# \version      $Id: makepack-dolibarr.pl,v 1.127 2011/07/31 18:06:36 eldy Exp $
 # \author       (c)2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
 #----------------------------------------------------------------------------
 
@@ -11,7 +11,7 @@ use Cwd;
 $PROJECT="dolibarr";
 $MAJOR="3";
 $MINOR="1";
-$BUILD="0-dev";		# Mettre x pour release, x-dev pour dev, x-beta pour beta, x-rc pour release candidate
+$BUILD="0-beta";		# Mettre x pour release, x-dev pour dev, x-beta pour beta, x-rc pour release candidate
 $RPMSUBVERSION="auto";	# auto use value found into BUILD
 
 @LISTETARGET=("TGZ","ZIP","RPM","DEB","APS","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
@@ -48,7 +48,7 @@ if (-d "/usr/src/RPM") {
 
 
 use vars qw/ $REVISION $VERSION /;
-$REVISION='$Revision: 1.123 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
+$REVISION='$Revision: 1.127 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
 $VERSION="1.0 (build $REVISION)";
 
 
@@ -274,6 +274,10 @@ if ($nboftargetok) {
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/barcode/php-barcode/fonts/Veranda*.ttf`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/fckeditor/fckeditor.py`;
 	    
+        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/install/mssql/README`;
+        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/install/mysql/README`;
+        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/install/pgsql/README`;
+
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/test`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/spec`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/licence`;
@@ -410,14 +414,19 @@ if ($nboftargetok) {
     	}
     
     	if ($target eq 'RPM') {                 # Linux only
-    		$ARCH='i386';
+    		#$ARCH='i386';
+    		$ARCH='noarch';
 			if ($RPMDIR eq "") { $RPMDIR=$ENV{'HOME'}."/rpmbuild"; }
            	$newbuild = $BUILD;
-            $newbuild =~ s/(dev|alpha)/0/gi;				# dev
-            $newbuild =~ s/beta/1/gi;						# beta
-            $newbuild =~ s/rc./2/gi;						# rc
+           	# For fedora
+            $newbuild =~ s/(dev|alpha)/0.1.a/gi;			# dev
+            $newbuild =~ s/beta/0.2.beta1/gi;				# beta
+            $newbuild =~ s/rc./0.3.rc1/gi;					# rc
             if ($newbuild !~ /-/) { $newbuild.='-3'; }		# finale
-            # now newbuild is 0-0 or 0-3 for example
+            #$newbuild =~ s/(dev|alpha)/0/gi;				# dev
+            #$newbuild =~ s/beta/1/gi;						# beta
+            #$newbuild =~ s/rc./2/gi;						# rc
+            #if ($newbuild !~ /-/) { $newbuild.='-3'; }		# finale
             $REL1 = $newbuild; $REL1 =~ s/-.*$//gi;
             if ($RPMSUBVERSION eq 'auto') { $RPMSUBVERSION = $newbuild; $RPMSUBVERSION =~ s/^.*-//gi; }
             print "Version is $MAJOR.$MINOR.$REL1-$RPMSUBVERSION\n";
@@ -435,6 +444,7 @@ if ($nboftargetok) {
 
  			print "Remove other files\n";
             $ret=`rm -f $BUILDROOT/$FILENAMETGZ2/htdocs/includes/barcode/php-barcode/genbarcode/genbarcode`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/README`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/aps`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/deb`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/dmg`;
@@ -472,6 +482,10 @@ if ($nboftargetok) {
    		    print "Move $RPMDIR/RPMS/".$ARCH."/".$FILENAMETGZ2."-".$RPMSUBVERSION.".".$ARCH.".rpm into $DESTI/".$FILENAMETGZ2."-".$RPMSUBVERSION.".".$ARCH.".rpm\n";
    		    $cmd="mv \"$RPMDIR/RPMS/".$ARCH."/".$FILENAMETGZ2."-".$RPMSUBVERSION.".".$ARCH.".rpm\" \"$DESTI/".$FILENAMETGZ2."-".$RPMSUBVERSION.".".$ARCH.".rpm\"";
     		$ret=`$cmd`;
+   		    print "Move $RPMDIR/SRPMS/".$FILENAMETGZ2."-".$RPMSUBVERSION.".src.rpm into $DESTI/".$FILENAMETGZ2."-".$RPMSUBVERSION.".src.rpm\n";
+   		    $cmd="mv \"$RPMDIR/SRPMS/".$FILENAMETGZ2."-".$RPMSUBVERSION.".src.rpm\" \"$DESTI/".$FILENAMETGZ2."-".$RPMSUBVERSION.".src.rpm\"";
+    		$ret=`$cmd`;
+
     		next;
     	}
     	
@@ -675,7 +689,7 @@ if ($nboftargetok) {
             $ret=`cp -f  "$SOURCE/build/deb/compat"         "$BUILDROOT/$PROJECT.tmp/debian/compat"`;
             $ret=`cp -f  "$SOURCE/build/deb/format"         "$BUILDROOT/$PROJECT.tmp/debian/source/format"`;
             $ret=`cp -fr "$SOURCE/build/deb/po"             "$BUILDROOT/$PROJECT.tmp/debian/po"`;
-			$ret=`rm -fr "$SOURCE/build/deb/po/CVS"`;
+			$ret=`rm -fr "$BUILDROOT/$PROJECT.tmp/debian/po/CVS"`;
             # Add files also required to build binary package with dpkg-buildpackages
             $ret=`cp -f  "$SOURCE/build/deb/config"         "$BUILDROOT/$PROJECT.tmp/debian"`;
             $ret=`cp -f  "$SOURCE/build/deb/postinst"       "$BUILDROOT/$PROJECT.tmp/debian"`;
@@ -696,12 +710,18 @@ if ($nboftargetok) {
             if ($OS =~ /windows/i)
             {
                 print "Move *_all.deb to $DESTI\n";
-                $ret=`mv "$BUILDROOT/*_all.deb" "$DESTI/"`;
+                $ret=`mv $BUILDROOT/*_all.deb "$DESTI/"`;
+                $ret=`mv $BUILDROOT/*.dsc "$DESTI/"`;
+                $ret=`mv $BUILDROOT/*.tar.gz "$DESTI/"`;
+                $ret=`mv $BUILDROOT/*.changes "$DESTI/"`;
             }
             else
             {
                 print "Move *_all.deb to $DESTI\n";
-                $ret=`mv "$BUILDROOT/*_all.deb" "$DESTI/"`;
+                $ret=`mv $BUILDROOT/*_all.deb "$DESTI/"`;
+                $ret=`mv $BUILDROOT/*.dsc "$DESTI/"`;
+                $ret=`mv $BUILDROOT/*.tar.gz "$DESTI/"`;
+                $ret=`mv $BUILDROOT/*.changes "$DESTI/"`;
             }
         	next;
         }
