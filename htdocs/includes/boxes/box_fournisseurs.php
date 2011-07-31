@@ -13,15 +13,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
     \file       htdocs/includes/boxes/box_fournisseurs.php
     \ingroup    fournisseurs
     \brief      Module to generate box of suppliers
-	\version	$Id$
+	\version	$Id: box_fournisseurs.php,v 1.30 2011/07/31 23:29:10 eldy Exp $
 */
 
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");

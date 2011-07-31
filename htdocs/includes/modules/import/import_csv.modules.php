@@ -13,8 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * or see http://www.gnu.org/
  */
 
@@ -23,7 +22,7 @@
  *		\ingroup    import
  *		\brief      File to load import files with CSV format
  *		\author	    Laurent Destailleur
- *		\version    $Id$
+ *		\version    $Id: import_csv.modules.php,v 1.33 2011/07/31 23:28:17 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/import/modules_import.php");
@@ -72,7 +71,7 @@ class ImportCsv extends ModeleImports
 		$this->desc=$langs->trans("CSVFormatDesc",$this->separator,$this->enclosure,$this->escape);
 		$this->extension='csv';         // Extension for generated file by this driver
 		$this->picto='mime/other';		// Picto
-		$ver=explode(' ','$Revision$');
+		$ver=explode(' ','$Revision: 1.33 $');
 		$this->version=$ver[2];         // Driver version
 
 		// If driver use an external library, put its name here
