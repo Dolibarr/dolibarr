@@ -106,7 +106,7 @@ else
 }
 
 // Select every potentiels, and note each potentiels which fit in search parameters
-dol_syslog('prospects::prospects_prospect_level',LOG_DEBUG);
+dol_syslog('clients::prospects_prospect_level',LOG_DEBUG);
 $sql = "SELECT code, label, sortorder, ".$sortwhere;
 $sql.= " FROM ".MAIN_DB_PREFIX."c_prospectlevel";
 $sql.= " WHERE active > 0";
@@ -299,13 +299,13 @@ if ($resql)
 	}
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Company"),"prospects.php","s.nom","",$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Town"),"prospects.php","s.ville","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("State"),"prospects.php","s.fk_departement","",$param,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Postalcode"),"prospects.php","cp","",$param,"align=\"left\"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DateCreation"),"prospects.php","s.datec","",$param,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("ProspectLevelShort"),"prospects.php","s.fk_prospectlevel","",$param,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("StatusProsp"),"prospects.php","s.fk_stcomm","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Company"),"clients.php","s.nom","",$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Town"),"clients.php","s.ville","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("State"),"clients.php","s.fk_departement","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Postalcode"),"clients.php","cp","",$param,"align=\"left\"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("DateCreation"),"clients.php","s.datec","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("ProspectLevelShort"),"clients.php","s.fk_prospectlevel","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("StatusProsp"),"clients.php","s.fk_stcomm","",$param,'align="center"',$sortfield,$sortorder);
 	print '<td class="liste_titre">&nbsp;</td>';
     print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"s.status","",$params,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";

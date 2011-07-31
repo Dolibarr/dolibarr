@@ -3,6 +3,7 @@
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2010-2011 Herve Prot           <herve.prot@symeos.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,7 @@ require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 
 $langs->load("companies");
 $langs->load("suppliers");
+$langs->load('commercial');
 
 // Security check
 $contactid = isset($_GET["id"])?$_GET["id"]:'';
@@ -48,6 +50,8 @@ $search_phonemob=GETPOST("search_phonemob");
 $search_fax=GETPOST("search_fax");
 $search_email=GETPOST("search_email");
 $search_priv=GETPOST("search_priv");
+$search_cp=GETPOST("search_cp");
+
 
 $type=GETPOST("type");
 $view=GETPOST("view");
@@ -101,6 +105,7 @@ if ($_POST["button_removefilter"])
     $search_fax="";
     $search_email="";
     $search_priv="";
+    $search_cp="";
     $sall="";
 }
 if ($search_priv < 0) $search_priv='';
@@ -116,7 +121,7 @@ llxHeader('',$langs->trans("ContactsAddresses"),'EN:Module_Third_Parties|FR:Modu
 $form=new Form($db);
 
 $sql = "SELECT s.rowid as socid, s.nom,";
-$sql.= " p.rowid as cidp, p.name, p.firstname, p.poste, p.email,";
+$sql.= " s.cp as cpost, p.rowid as cidp, p.name, p.firstname, p.poste, p.email,";
 $sql.= " p.phone, p.phone_mobile, p.fax, p.fk_pays, p.priv,";
 $sql.= " p.tms,";
 $sql.= " cp.code as pays_code";
@@ -160,6 +165,10 @@ if ($search_societe)    // filtre sur la societe
 if (strlen($search_poste))    // filtre sur la societe
 {
     $sql .= " AND p.poste like '%".$db->escape($search_poste)."%'";
+}
+if ($search_cp)      // filtre sur le code postal
+{
+    $sql .= " AND s.cp like '".$db->escape($search_cp)."%'";
 }
 if (strlen($search_phone))
 {
@@ -275,6 +284,7 @@ if ($result)
         print_liste_field_titre($langs->trans("Phone"),"index.php","p.phone", $begin, $param, '', $sortfield,$sortorder);
         print_liste_field_titre($langs->trans("EMail"),"index.php","p.email", $begin, $param, '', $sortfield,$sortorder);
     }
+	print_liste_field_titre("Code Postal","index.php","p.tms", $begin, $param, 'align="center"', $sortfield,$sortorder);
     print_liste_field_titre($langs->trans("DateModificationShort"),"index.php","p.tms", $begin, $param, 'align="center"', $sortfield,$sortorder);
     print_liste_field_titre($langs->trans("ContactVisibility"),"index.php","p.priv", $begin, $param, 'align="center"', $sortfield,$sortorder);
     print '<td class="liste_titre">&nbsp;</td>';
@@ -318,6 +328,10 @@ if ($result)
         print '<input class="flat" type="text" name="search_email" size="9" value="'.$search_email.'">';
         print '</td>';
     }
+	//CP
+        print '<td class="liste_titre" align="center">';
+        print '<input class="flat" type="text" name="search_cp" size="7" value="'.$search_cp.'">';
+        print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="center">';
 	$selectarray=array('0'=>$langs->trans("ContactPublic"),'1'=>$langs->trans("ContactPrivate"));
@@ -385,6 +399,9 @@ if ($result)
             // EMail
             print '<td>'.dol_print_email($obj->email,$obj->cidp,$obj->socid,'AC_EMAIL',18).'</td>';
         }
+
+		// CP
+		print '<td align="center">'.$obj->cpost.'</td>';
 
 		// Date
 		print '<td align="center">'.dol_print_date($db->jdate($obj->tms),"day").'</td>';
