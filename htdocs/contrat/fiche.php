@@ -23,7 +23,7 @@
  *       \file       htdocs/contrat/fiche.php
  *       \ingroup    contrat
  *       \brief      Page of a contract
- *       \version    $Id: fiche.php,v 1.198 2011/08/02 12:44:20 simnandez Exp $
+ *       \version    $Id: fiche.php,v 1.197 2011/07/31 23:46:54 eldy Exp $
  */
 
 require ("../main.inc.php");
@@ -757,7 +757,7 @@ else
 
 				$var=!$var;
 
-				if ($_REQUEST["action"] != 'editline' || $_GET["rowid"] != $objp->rowid)
+				if ($action != 'editline' || $_GET["rowid"] != $objp->rowid)
 				{
 					print '<tr '.$bc[$var].' valign="top">';
 					// Libelle
@@ -1286,5 +1286,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/02 12:44:20 $ - $Revision: 1.198 $');
+llxFooter('$Date: 2011/07/31 23:46:54 $ - $Revision: 1.197 $');
 ?>
