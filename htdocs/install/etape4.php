@@ -23,7 +23,7 @@
  *	\file       htdocs/install/etape4.php
  *	\ingroup	install
  *	\brief      Ask login and password of Dolibarr admin user
- *	\version    $Id: etape4.php,v 1.36 2011/07/30 10:23:25 eldy Exp $
+ *	\version    $Id: etape4.php,v 1.37 2011/07/30 14:56:43 eldy Exp $
  */
 
 
@@ -41,7 +41,9 @@ $langs->load("install");
 
 // Init "forced values" to nothing. "forced values" are used after an doliwamp install wizard.
 if (! isset($force_install_dolibarrlogin))     $force_install_dolibarrlogin='';
-if (file_exists("./install.forced.php")) include_once("./install.forced.php");
+$useforcedwizard=false;
+if (file_exists("./install.forced.php")) { $useforcedwizard=true; include_once("./install.forced.php"); }
+else if (file_exists("/etc/dolibarr/install.forced.php")) { $useforcedwizard=include_once("/etc/dolibarr/install.forced.php"); }
 
 dolibarr_install_syslog("--- etape4: Entering etape4.php page");
 
