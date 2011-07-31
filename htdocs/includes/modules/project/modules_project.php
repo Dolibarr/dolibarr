@@ -12,7 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
  */
 
@@ -21,7 +22,7 @@
  *      \ingroup    project
  *      \brief      File that contain parent class for projects models
  *                  and parent class for projects numbering models
- *      \version    $Id: modules_project.php,v 1.12 2011/07/31 23:28:09 eldy Exp $
+ *      \version    $Id$
  */
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');

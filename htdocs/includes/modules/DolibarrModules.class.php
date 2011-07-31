@@ -17,13 +17,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *  \file           htdocs/includes/modules/DolibarrModules.class.php
  *  \brief          Fichier de description et activation des modules Dolibarr
- *  \version        $Id: DolibarrModules.class.php,v 1.163 2011/07/31 23:28:12 eldy Exp $
+ *  \version        $Id: DolibarrModules.class.php,v 1.162 2011/07/17 18:13:44 eldy Exp $
  */
 
 
