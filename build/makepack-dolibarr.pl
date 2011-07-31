@@ -2,7 +2,7 @@
 #----------------------------------------------------------------------------
 # \file         build/makepack-dolibarr.pl
 # \brief        Dolibarr package builder (tgz, zip, rpm, deb, exe, aps)
-# \version      $Id: makepack-dolibarr.pl,v 1.129 2011/08/01 18:22:26 eldy Exp $
+# \version      $Id: makepack-dolibarr.pl,v 1.128 2011/07/31 22:08:13 eldy Exp $
 # \author       (c)2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
 #----------------------------------------------------------------------------
 
@@ -48,7 +48,7 @@ if (-d "/usr/src/RPM") {
 
 
 use vars qw/ $REVISION $VERSION /;
-$REVISION='$Revision: 1.129 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
+$REVISION='$Revision: 1.128 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
 $VERSION="1.0 (build $REVISION)";
 
 
@@ -318,9 +318,6 @@ if ($nboftargetok) {
         $ret=`rm -fr  $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/utils`;
         #$ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/utils/pfm2afm`;
         #$ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/utils/ttf2ufm`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/flot/jquery.js`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/flot/jquery.min.js`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/jcrop/js/jquery.min.js`;
 	}
     
     # Build package for each target
@@ -572,8 +569,6 @@ if ($nboftargetok) {
     	
     	if ($target eq 'DEB') 
     	{
-            $olddir=getcwd();
-
             $newbuild = $BUILD;
             $newbuild =~ s/(dev|alpha)/1/gi;                # dev
             $newbuild =~ s/beta/2/gi;                       # beta
@@ -676,22 +671,19 @@ if ($nboftargetok) {
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/includes/odtphp/zip/.svn`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/includes/odtphp/zip/pclzip/.svn`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/includes/smarty`;
-		    $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/includes/fckeditor/license.txt`;
-		    $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/includes/jquery/plugins/flot/LICENSE.txt`;
-		    $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/includes/php_writeexcel/LICENSE`;
-		    $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/includes/tcpdf/LICENSE.TXT`;
+		    
             $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/COPYING`;
             $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/includes/barcode/php-barcode/genbarcode/genbarcode`;
             # To remove once stable
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/htdocs/theme/bureau2crea`;
 
-			# Apache and lighttpd conf files
+			# Apache conf files
     		print "Copy apache.conf file into $BUILDROOT/$PROJECT.tmp/etc/$PROJECT/apache.conf\n";
     		$ret=`mkdir -p "$BUILDROOT/$PROJECT.tmp/etc/$PROJECT"`;
     		$ret=`cp "$SOURCE/build/deb/apache.conf" "$BUILDROOT/$PROJECT.tmp/etc/$PROJECT/apache.conf"`;
-    		print "Copy lighttpd.conf file into $BUILDROOT/$PROJECT.tmp/etc/$PROJECT/lighttpd.conf\n";
-    		$ret=`mkdir -p "$BUILDROOT/$PROJECT.tmp/etc/$PROJECT"`;
-    		$ret=`cp "$SOURCE/build/deb/lighttpd.conf" "$BUILDROOT/$PROJECT.tmp/etc/$PROJECT/lighttpd.conf"`;
+
+			# Dolibarr conf files
+			# TODO
 
 			# dolibarr.desktop
 	   		print "Create directory $BUILDROOT/$PROJECT.tmp/usr/share/applications\n";
@@ -737,15 +729,17 @@ if ($nboftargetok) {
             $cmd="find $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/includes/fckeditor/editor/dialog/fck_spellerpages/spellerpages/server-scripts -name '*.pl' -type f -exec chmod 755 {} \\; ";
             $ret=`$cmd`;
             
-             # Creation of binary package (to build without sources)
-     		#print "Go to directory $BUILDROOT\n";
-     		#chdir("$BUILDROOT");
+     		print "Go to directory $BUILDROOT\n";
+            $olddir=getcwd();
+     		chdir("$BUILDROOT");
+ 
+            # Creation of binary package (to build without sources)
     		#$cmd="dpkg -b $BUILDROOT/$PROJECT.tmp $BUILDROOT/${FILENAMEDEB}_all.deb";
     		#print "Launch DEB build ($cmd)\n";
     		#$ret=`$cmd`;
     		#print $ret."\n";
 
-            # Prepare source package
+            # Creation of source package
             print "Create directory $BUILDROOT/$PROJECT.tmp/debian\n";
             $ret=`mkdir "$BUILDROOT/$PROJECT.tmp/debian"`;
             $ret=`mkdir "$BUILDROOT/$PROJECT.tmp/debian/source"`;
@@ -757,7 +751,6 @@ if ($nboftargetok) {
             $ret=`cp -f  "$SOURCE/build/deb/README.debian"  "$BUILDROOT/$PROJECT.tmp/usr/share/doc/dolibarr/README"`;
             $ret=`cp -f  "$SOURCE/build/deb/changelog"      "$BUILDROOT/$PROJECT.tmp/debian/changelog"`;
             $ret=`cp -f  "$SOURCE/build/deb/control.debian" "$BUILDROOT/$PROJECT.tmp/debian/control"`;
-            $ret=`cp -f  "$SOURCE/build/deb/dolibarr.lintian-overrides"        "$BUILDROOT/$PROJECT.tmp/debian/dolibarr.lintian-overrides"`;
             $ret=`cp -f  "$SOURCE/build/deb/install"        "$BUILDROOT/$PROJECT.tmp/debian/install"`;
             $ret=`cp -f  "$SOURCE/build/deb/rules"          "$BUILDROOT/$PROJECT.tmp/debian/rules"`;
             $ret=`cp -f  "$SOURCE/build/deb/copyright"      "$BUILDROOT/$PROJECT.tmp/debian/copyright"`;
@@ -773,9 +766,6 @@ if ($nboftargetok) {
             
             $cmd="mv $BUILDROOT/$PROJECT.tmp $BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build";
             $ret=`$cmd`;
-
-			# Creation of source package          
-     		print "Go to directory $BUILDROOT\n";
             chdir("$BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build");
             #$cmd="dpkg-source -b $BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build";
             $cmd="dpkg-buildpackage -us -uc";
