@@ -13,8 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * or see http://www.gnu.org/
  */
 
@@ -22,7 +21,7 @@
  *	\file       htdocs/includes/modules/project/mod_project_simple.php
  *	\ingroup    project
  *	\brief      File with class to manage the numbering module Simple for project references
- *	\version    $Id$
+ *	\version    $Id: mod_project_simple.php,v 1.6 2011/07/31 23:28:09 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/project/modules_project.php");

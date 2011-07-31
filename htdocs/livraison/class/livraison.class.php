@@ -15,15 +15,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *  \file       htdocs/livraison/class/livraison.class.php
  *  \ingroup    delivery
  *  \brief      Fichier de la classe de gestion des bons de livraison
- *  \version    $Id$
+ *  \version    $Id: livraison.class.php,v 1.28 2011/07/31 23:24:38 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
