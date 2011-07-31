@@ -113,10 +113,6 @@ foreach ($conf->file->dol_document_root as $dirroot)
 		            {
 		                $j = 1000 + $i;
 		            }
-                            
-                            if(!empty($objMod->moddir) && !is_readable($dirroot."/".$objMod->moddir."/index.php"))
-                                continue; // Ne charge pas le module car dossier module vide
-
 					$modulequalified=1;
 
 					// We discard modules according to features level (PS: if module is activated we always show it)
@@ -339,7 +335,14 @@ if ($mode != 4)
             print "</td>\n";
 
             // Activate/Disable and Setup (2 columns)
-            if (! empty($conf->global->$const_name))
+            if(!empty($objMod->moddir) && !is_readable($dirroot."/".$objMod->moddir."/index.php"))
+            {
+                print "<td align=\"center\" valign=\"top\">"; // Ne charge pas le module car dossier module vide
+                print $langs->trans("NotInstalled");
+                print '</td>'."\n";
+                print "<td>&nbsp;</td>\n";
+            }
+            elseif (! empty($conf->global->$const_name))
             {
                 $disableSetup = 0;
 

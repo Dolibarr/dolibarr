@@ -194,6 +194,7 @@ SourceFile= Fichier source
 AutomaticIfJavascriptDisabled= Automatique si Javascript désactivé
 AvailableOnlyIfJavascriptNotDisabled= Disponible uniquement si Javascript non désactivé
 AvailableOnlyIfJavascriptAndAjaxNotDisabled= Disponible uniquement si Javascript non désactivé
+NotInstalled=Non installé
 Required= Requis
 Security= Sécurité
 Passwords= Mots de passe
