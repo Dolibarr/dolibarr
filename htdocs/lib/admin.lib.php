@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 /**
  *	\file			htdocs/lib/admin.lib.php
  *  \brief			Library of admin functions
- *  \version		$Id: admin.lib.php,v 1.99 2011/08/01 12:53:37 hregis Exp $
+ *  \version		$Id: admin.lib.php,v 1.98 2011/07/31 23:25:40 eldy Exp $
  */
 
 
@@ -467,7 +467,7 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
 /**
  *  \brief      	Define head array for tabs of security setup pages
  *  \return			Array of head
- *  \version    	$Id: admin.lib.php,v 1.99 2011/08/01 12:53:37 hregis Exp $
+ *  \version    	$Id: admin.lib.php,v 1.98 2011/07/31 23:25:40 eldy Exp $
  */
 function security_prepare_head()
 {
@@ -615,41 +615,16 @@ function Activate($value,$withdeps=1)
     // Activate module
     if ($modName)
     {
-        $modFile = $modName . ".class.php";
+        $file = $modName . ".class.php";
 
         // Loop on each directory
         $found=false;
-    	foreach ($conf->file->dol_document_root as $type => $dirroot)
+        foreach ($conf->file->dol_document_root as $dol_document_root)
         {
-            $modulesdir[] = $dirroot."/includes/modules/";
-            
-            if ($type == 'alt')
-			{	
-				$handle=@opendir($dirroot);
-				if (is_resource($handle))
-				{
-					while (($file = readdir($handle))!==false)
-					{
-					    if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
-					    {
-					    	if (is_dir($dirroot . '/' . $file . '/includes/modules/'))
-					    	{
-					    		$modulesdir[] = $dirroot . '/' . $file . '/includes/modules/';
-					    	}
-					    }
-					}
-					closedir($handle);
-				}
-			}
-        }
+            $dir = $dol_document_root."/includes/modules/";
 
-        foreach ($modulesdir as $dir)
-        {
-        	if (file_exists($dir.$modFile))
-        	{
-        		$found=@include_once($dir.$modFile);
-        		if ($found) break;
-        	}
+        	$found=@include_once($dir.$file);
+            if ($found) break;
         }
 
         $objMod = new $modName($db);
@@ -725,46 +700,20 @@ function UnActivate($value,$requiredby=1)
     $modName = $value;
 
     $ret='';
-    $modulesdir=array();
 
     // Desactivation du module
     if ($modName)
     {
-        $modFile = $modName . ".class.php";
+        $file = $modName . ".class.php";
 
         // Loop on each directory
 		$found=false;
-        foreach ($conf->file->dol_document_root as $type => $dirroot)
+        foreach ($conf->file->dol_document_root as $dol_document_root)
         {
-            $modulesdir[] = $dirroot."/includes/modules/";
-            
-            if ($type == 'alt')
-			{	
-				$handle=@opendir($dirroot);
-				if (is_resource($handle))
-				{
-					while (($file = readdir($handle))!==false)
-					{
-					    if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
-					    {
-					    	if (is_dir($dirroot . '/' . $file . '/includes/modules/'))
-					    	{
-					    		$modulesdir[] = $dirroot . '/' . $file . '/includes/modules/';
-					    	}
-					    }
-					}
-					closedir($handle);
-				}
-			}
-        }
+            $dir = $dol_document_root."/includes/modules/";
 
-        foreach ($modulesdir as $dir)
-        {
-        	if (file_exists($dir.$modFile))
-        	{
-        		$found=@include_once($dir.$modFile);
-        		if ($found) break;
-        	}
+        	$found=@include_once($dir.$file);
+            if ($found) break;
         }
 
         if ($found)
