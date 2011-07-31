@@ -12,7 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
@@ -47,7 +48,7 @@ $currentInvId = $_POST['imgClicked'];		// from DOM elements : imgId (equals invo
 // from text inputs : total amount
 $amountPayment = $amountPayment!='' ? 	( is_numeric(price2num($amountPayment))	? price2num($amountPayment)
 																				: ''
-										)
+										) 
 									: '';			// keep void if not a valid entry
 // Checkamounts
 foreach ($amounts as $key => $value)
@@ -66,7 +67,7 @@ if($currentInvId)																	// Here to breakdown
 	// Get the current amount (from form) and the corresponding remainToPay (from invoice)
 	$currentAmount = $amounts['amount_'.$currentInvId];
 	$currentRemain = $remains['remain_'.$currentInvId];
-
+	
 	// If amountPayment isn't filled, breakdown invoice amount, else breakdown from amountPayment
 	if($amountPayment == '')
 	{
@@ -77,17 +78,17 @@ if($currentInvId)																	// Here to breakdown
 			$remainAmount = $currentRemain - $currentAmount;	// To keep value between curRemain and curAmount
 			$result += $remainAmount;							// result must be deduced by
 			$currentAmount += $remainAmount;					// curAmount put to curRemain
-		}else
+		}else 
 		{
 			$currentAmount = $currentRemain;
 			$result += $currentRemain;
-		}
-	}else
+		}		
+	}else 
 	{
 		// Reset the substraction for this amount
 		$result += price2num($currentAmount);
 		$currentAmount = 0;
-
+		
 		if($result >= 0)			// then we need to calculate the amount to breakdown
 		{
 			$amountToBreakdown = ($result - $currentRemain >= 0 ?
