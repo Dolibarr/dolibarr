@@ -12,8 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**	    \file       htdocs/public/agenda/agendaexport.php
@@ -22,7 +21,7 @@
  *                  http://127.0.0.1/dolibarr/public/agenda/agendaexport.php?format=vcal&exportkey=cle
  *                  http://127.0.0.1/dolibarr/public/agenda/agendaexport.php?format=ical&type=event&exportkey=cle
  *					http://127.0.0.1/dolibarr/public/agenda/agendaexport.php?format=rss&exportkey=cle
- *		\version    $Id$
+ *		\version    $Id: agendaexport.php,v 1.18 2011/07/31 23:23:21 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
@@ -74,7 +73,7 @@ if (empty($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY))
 
 	llxHeaderVierge();
 	print '<div class="error">Module Agenda was not configured properly.</div>';
-	llxFooterVierge('$Date$ - $Revision$');
+	llxFooterVierge('$Date: 2011/07/31 23:23:21 $ - $Revision: 1.18 $');
 	exit;
 }
 
@@ -85,7 +84,7 @@ if (empty($_GET["exportkey"]) || $conf->global->MAIN_AGENDA_XCAL_EXPORTKEY != $_
 
 	llxHeaderVierge();
 	print '<div class="error">Bad value for key.</div>';
-	llxFooterVierge('$Date$ - $Revision$');
+	llxFooterVierge('$Date: 2011/07/31 23:23:21 $ - $Revision: 1.18 $');
 	exit;
 }
 
@@ -117,7 +116,7 @@ if ($shortfilename=='dolibarrcalendar')
 	$langs->load("errors");
 	llxHeaderVierge();
     print '<div class="error">'.$langs->trans("ErrorWrongValueForParameterX",'format').'</div>';
-	llxFooterVierge('$Date$ - $Revision$');
+	llxFooterVierge('$Date: 2011/07/31 23:23:21 $ - $Revision: 1.18 $');
 	exit;
 }
 
@@ -202,5 +201,5 @@ if ($format == 'rss')
 
 llxHeaderVierge();
 print '<div class="error">'.$agenda->error.'</div>';
-llxFooterVierge('$Date$ - $Revision$');
+llxFooterVierge('$Date: 2011/07/31 23:23:21 $ - $Revision: 1.18 $');
 ?>

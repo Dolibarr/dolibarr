@@ -16,15 +16,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *  \file       htdocs/product/fournisseurs.php
  *  \ingroup    product
  *  \brief      Page of tab suppliers for products
- *  \version    $Id$
+ *  \version    $Id: fournisseurs.php,v 1.97 2011/07/31 23:19:26 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -431,5 +430,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/31 23:19:26 $ - $Revision: 1.97 $');
 ?>
