@@ -13,8 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * or see http://www.gnu.org/
  */
 
@@ -22,7 +21,7 @@
  *	\file       htdocs/includes/modules/supplier_invoice/pdf/pdf_canelle.modules.php
  *	\ingroup    fournisseur
  *	\brief      Class file to generate the supplier invoices with the canelle model
- *	\version    $Id$
+ *	\version    $Id: pdf_canelle.modules.php,v 1.35 2011/07/31 23:28:18 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/supplier_invoice/modules_facturefournisseur.php");
