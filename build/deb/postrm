@@ -30,6 +30,7 @@ apachefileorig="/usr/share/dolibarr/build/deb/apache.conf"
 apacheconfig="/etc/dolibarr/apache.conf"
 #config="/usr/share/dolibarr/htdocs/conf/conf.php"
 config="/etc/dolibarr/conf.php"
+lockfile="/usr/share/dolibarr/install.lock"
 
 
 export webserver=""
@@ -43,6 +44,32 @@ esac
 
 
 case "$1" in
+
+    # Call when we upgrade
+	upgrade)
+	;;
+
+    # Call when we uninstall
+	remove)
+		rm -f $lockfile
+
+		# Remove include files
+		export restart=""
+		for server in $webservers ; do
+			export conffile="/etc/$server/conf.d/dolibarr.conf"
+            if [ -f $conffile ] ;
+            then
+               echo Delete link $conffile
+	           rm -f $conffile
+	           status=purge
+		    fi
+			
+			if [ "x$status" = "xpurge" ] ;
+				then restart="$restart $server"
+			fi
+		done
+	;;
+
     # Call when we uninstall and purge
 	purge)
 		echo "postrm purge webservers=$webservers apacheconfig=$apacheconfig"
@@ -196,30 +223,6 @@ case "$1" in
         set -e
 
 		#db_purge
-	;;
-
-    # Call when we uninstall
-	remove)
-		rm -f /usr/share/dolibarr/install.lock
-
-		# Remove include files
-		export restart=""
-		for server in $webservers ; do
-			export conffile="/etc/$server/conf.d/dolibarr.conf"
-            if [ -f $conffile ] ;
-            then
-               echo Delete link $conffile
-	           rm -f $conffile
-	           status=purge
-		    fi
-			
-			if [ "x$status" = "xpurge" ] ;
-				then restart="$restart $server"
-			fi
-		done
-	;;
-
-	upgrade)
 	;;
 
 	failed-upgrade|abort-install|abort-upgrade|disappear)
