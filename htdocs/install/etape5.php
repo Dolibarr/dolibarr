@@ -24,7 +24,7 @@
  *       \file      htdocs/install/etape5.php
  *	 	 \ingroup	install
  *       \brief     Last page of upgrade or install process
- *       \version   $Id: etape5.php,v 1.104 2011/07/30 14:56:43 eldy Exp $
+ *       \version   $Id: etape5.php,v 1.105 2011/07/31 11:56:43 eldy Exp $
  */
 
 include_once("./inc.php");
@@ -315,7 +315,6 @@ if ($action == "set")
 		if (! empty($force_install_lockinstall))
 		{
 			// Install is finished, we create the lock file
-			$lockfile="../../install.lock";
 			$fp = @fopen($lockfile, "w");
 			if ($fp)
 			{
