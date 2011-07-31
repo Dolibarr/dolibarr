@@ -25,7 +25,7 @@
  *       \file       htdocs/install/fileconf.php
  *       \ingroup    install
  *       \brief      Ask all informations required to build Dolibarr htdocs/conf/conf.php file (will be wrote on disk on next page)
- *       \version    $Id: fileconf.php,v 1.92 2011/07/30 10:23:25 eldy Exp $
+ *       \version    $Id: fileconf.php,v 1.93 2011/07/30 14:56:43 eldy Exp $
  */
 include_once("./inc.php");
 
@@ -39,8 +39,8 @@ $langs->load("install");
 $langs->load("errors");
 
 // You can force preselected values of the config step of Dolibarr by adding a file
-// install.forced.php into directory htdocs/install (This is the case with some installer
-// lile DoliWamp, DoliMamp or DoliBuntu.
+// install.forced.php into directory htdocs/install (This is the case with some wizard
+// installer like DoliWamp, DoliMamp or DoliBuntu).
 // We first init "forced values" to nothing.
 if (! isset($force_install_noedit))            $force_install_noedit='';
 if (! isset($force_install_type))              $force_install_type='';
@@ -53,7 +53,9 @@ if (! isset($force_install_databasepass))      $force_install_databasepass='';
 if (! isset($force_install_databaserootlogin)) $force_install_databaserootlogin='';
 if (! isset($force_install_databaserootpass))  $force_install_databaserootpass='';
 // Now we load forced value from install.forced.php file.
-if (file_exists("./install.forced.php")) include_once("./install.forced.php");
+$useforcedwizard=false;
+if (file_exists("./install.forced.php")) { $useforcedwizard=true; include_once("./install.forced.php"); }
+else if (file_exists("/etc/dolibarr/install.forced.php")) { $useforcedwizard=include_once("/etc/dolibarr/install.forced.php"); }
 
 dolibarr_install_syslog("Fileconf: Entering fileconf.php page");
 
@@ -159,7 +161,10 @@ if (! empty($force_install_message))
 		}
 		?>
 		<td class="label" valign="top">
-		<input type="text" size="60" value="<?php print $dolibarr_main_data_root; ?>"<?php print (empty($todoforce_install_main_data_root)?'':' disabled="true"'); ?>  name="main_data_dir">
+		<?php
+		if ($force_install_noedit == 2) print '<input type="hidden" value="'.$dolibarr_main_data_root.'" name="main_data_dir">';
+		print '<input type="text" size="60" value="'.$dolibarr_main_data_root.'"'.(($force_install_noedit != 2)?'':' disabled="true"').' name="main_data_dir'.(($force_install_noedit != 2)?'':'_bis').'">';
+		?>
 		</td>
 		<td class="comment"><?php
 		print $langs->trans("WithNoSlashAtTheEnd")."<br>";
@@ -167,7 +172,7 @@ if (! empty($force_install_message))
 		print $langs->trans("Examples").":<br>";
 		?>
 		<ul>
-			<li>/var/dolibarr_documents</li>
+			<li>/var/lib/dolibarr/documents</li>
 			<li>C:/My Documents/dolibarr/</li>
 		</ul>
 		</td>
@@ -205,7 +210,10 @@ if (empty($dolibarr_main_url_root))
 		<td valign="top" class="label"><b> <?php echo $langs->trans("URLRoot"); ?></b>
 		</td>
 		<td valign="top" class="label">
-		<input type="text" size="60" name="main_url"<?php print (empty($todoforce_install_main_data_root)?'':' disabled="true"'); ?> value="<?php print $dolibarr_main_url_root; ?>">
+		<?php
+		if ($force_install_noedit == 2) print '<input type="hidden" value="'.$dolibarr_main_url_root.'" name="main_url">';
+		print '<input type="text" size="60" value="'.$dolibarr_main_url_root.'"'.(($force_install_noedit != 2)?'':' disabled="true"').' name="main_url'.(($force_install_noedit != 2)?'':'_bis').'">';
+		?>
 		</td>
 		<td class="comment"><?php print $langs->trans("Examples").":<br>"; ?>
 		<ul>
@@ -304,9 +312,9 @@ if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if t
         if ($force_install_noedit && $force_install_type) print '<input id="db_type" type="hidden" value="'.$force_install_type.'" name="db_type">';
         print '<select id="db_type" name="db_type'.(empty($force_install_noedit) || empty($force_install_type)?'':'_bis').'"'.($force_install_noedit && $force_install_type?' disabled="true"':'').'>';
 		print $option;
-		print '</select> &nbsp;</td>';
+		print '</select>';
 
-		?>
+		?></td>
 		<td class="comment"><?php echo $langs->trans("DatabaseType"); ?></td>
 
 	</tr>
@@ -339,7 +347,7 @@ if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if t
 	<tr>
 		<td class="label" valign="top"><b> <?php echo $langs->trans("DatabaseName"); ?>	</b></td>
 
-		<td class="label" valign="top"><input type="text" name="db_name"
+		<td class="label" valign="top"><input type="text" id="db_name" name="db_name"
 			value="<?php echo (! empty($dolibarr_main_db_name))?$dolibarr_main_db_name:$force_install_database; ?>"></td>
 		<td class="comment"><?php echo $langs->trans("DatabaseName"); ?></td>
 	</tr>
@@ -358,7 +366,7 @@ if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if t
 	<tr>
 		<td class="label" valign="top"><b><?php echo $langs->trans("Login"); ?></b>
 		</td>
-		<td class="label" valign="top"><input type="text" name="db_user"
+		<td class="label" valign="top"><input type="text" id="db_user" name="db_user"
 			value="<?php print (! empty($dolibarr_main_db_user))?$dolibarr_main_db_user:$force_install_databaselogin; ?>"></td>
 		<td class="comment"><?php echo $langs->trans("AdminLogin"); ?></td>
 	</tr>
@@ -366,7 +374,7 @@ if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if t
 	<tr>
 		<td class="label" valign="top"><b><?php echo $langs->trans("Password"); ?></b>
 		</td>
-		<td class="label" valign="top"><input type="password" name="db_pass"
+		<td class="label" valign="top"><input type="password" id="db_pass" name="db_pass"
 			value="<?php print (! empty($dolibarr_main_db_pass))?$dolibarr_main_db_pass:$force_install_databasepass; ?>"></td>
 		<td class="comment"><?php echo $langs->trans("AdminPassword"); ?></td>
 	</tr>
@@ -375,8 +383,7 @@ if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if t
 		<td class="label" valign="top"><?php echo $langs->trans("CreateUser"); ?>
 		</td>
 
-		<td class="label" valign="top"><input type="checkbox"
-			id="db_create_user" name="db_create_user"
+		<td class="label" valign="top"><input type="checkbox" id="db_create_user" name="db_create_user"
 			<?php if (! empty($force_install_createuser)) print ' checked="on"'; ?>></td>
 		<td class="comment"><?php echo $langs->trans("CheckToCreateUser"); ?>
 		</td>
@@ -393,7 +400,7 @@ if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if t
 
 	<tr>
 		<td class="label" valign="top"><?php echo $langs->trans("Login"); ?></td>
-		<td class="label" valign="top"><input type="text" name="db_user_root" class="needroot"
+		<td class="label" valign="top"><input type="text" id="db_user_root" name="db_user_root" class="needroot"
 			value="<?php print (! empty($db_user_root))?$db_user_root:$force_install_databaserootlogin; ?>"></td>
 		<td class="label">
 		<div class="comment"><?php echo $langs->trans("DatabaseRootLoginDescription"); ?>
@@ -404,8 +411,7 @@ if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if t
 	<tr>
 		<td class="label" valign="top"><?php echo $langs->trans("Password"); ?>
 		</td>
-		<td class="label" valign="top"><input type="password" class="needroot"
-			name="db_pass_root"
+		<td class="label" valign="top"><input type="password" id="db_pass_root" name="db_pass_root" class="needroot"
 			value="<?php print (! empty($db_pass_root))?$db_pass_root:$force_install_databaserootpass; ?>"></td>
 		<td class="label">
 		<div class="comment"><?php echo $langs->trans("KeepEmptyIfNoPassword"); ?>
@@ -436,6 +442,9 @@ jQuery(document).ready(function() {
 	jQuery("#db_create_user").click(function() {
 		init_needroot();
 	});
+	<?php if ($force_install_noedit) { ?>
+	jQuery("#db_pass").focus();
+	<?php } ?>
 });
 
 function checkDatabaseName(databasename) {
