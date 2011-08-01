@@ -15,15 +15,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/install/check.php
  *	\ingroup    install
  *	\brief      Test if file conf can be modified and if does not exists, test if install process can create it
- *	\version    $Id: check.php,v 1.85 2011/07/30 10:23:25 eldy Exp $
+ *	\version    $Id: check.php,v 1.87 2011/07/31 23:26:19 eldy Exp $
  */
 include_once("./inc.php");
 
@@ -39,7 +38,9 @@ $langs->load("install");
 
 // Init "forced values" to nothing. "forced values" are used after an doliwamp install wizard.
 if (! isset($force_install_dolibarrlogin))     $force_install_dolibarrlogin='';
-if (file_exists("./install.forced.php")) include_once("./install.forced.php");
+$useforcedwizard=false;
+if (file_exists("./install.forced.php")) { $useforcedwizard=true; include_once("./install.forced.php"); }
+else if (file_exists("/etc/dolibarr/install.forced.php")) { $useforcedwizard=include_once("/etc/dolibarr/install.forced.php"); }
 
 dolibarr_install_syslog("Dolibarr install/upgrade process started");
 
