@@ -23,7 +23,7 @@
  *		\brief      File for Tanslate class
  *		\author	    Eric Seigne
  *		\author	    Laurent Destailleur
- *		\version    $Id: translate.class.php,v 1.49 2011/08/01 22:03:50 eldy Exp $
+ *		\version    $Id: translate.class.php,v 1.48 2011/07/31 23:45:14 eldy Exp $
  */
 
 
@@ -512,10 +512,9 @@ class Translate {
 	 *  Return list of all available languages
 	 * 	@param		langdir		Directory to scan
 	 *  @param      maxlength   Max length for each value in combo box (will be truncated)
-	 *  @param		usecode		Show code instead of country name for language variant
 	 *  @return     array     	List of languages
 	 */
-	function get_available_languages($langdir=DOL_DOCUMENT_ROOT,$maxlength=0,$usecode=0)
+	function get_available_languages($langdir=DOL_DOCUMENT_ROOT,$maxlength=0)
 	{
 		global $conf;
 
@@ -528,7 +527,7 @@ class Translate {
 			{
 				$this->load("languages");
 
-				if ($usecode || ! empty($conf->global->MAIN_SHOW_LANGUAGE_CODE))
+				if (isset($conf->global->MAIN_SHOW_LANGUAGE_CODE) && $conf->global->MAIN_SHOW_LANGUAGE_CODE)
 				{
 					$langs_available[$dir] = $dir.': '.dol_trunc($this->trans('Language_'.$dir),$maxlength);
 				}
