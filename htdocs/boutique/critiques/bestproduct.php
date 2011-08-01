@@ -14,17 +14,18 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: bestproduct.php,v 1.10 2011/08/03 00:45:46 eldy Exp $
- * $Source: /cvsroot/dolibarr/dolibarr/htdocs/boutique/critiques/bestproduct.php,v $
+ * $Id$
+ * $Source$
  */
 
 /**
 	    \file       htdocs/boutique/critiques/bestproduct.php
 		\ingroup    boutique
 		\brief      Page affichage meilleures critiques OS Commerce
-		\version    $Revision: 1.10 $
+		\version    $Revision$
 */
 
 require("../../main.inc.php");
@@ -98,5 +99,5 @@ print "</TABLE>";
 
 $dbosc->close();
 
-llxFooter('$Date: 2011/08/03 00:45:46 $ - $Revision: 1.10 $');
+llxFooter('$Date$ - $Revision$');
 ?>
