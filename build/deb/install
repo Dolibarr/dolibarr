@@ -1,4 +1,5 @@
 etc/dolibarr/apache.conf
+etc/dolibarr/lighttpd.conf
 usr/share/applications/dolibarr.desktop
 usr/share/doc/dolibarr
 usr/share/dolibarr
