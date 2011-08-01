@@ -12,15 +12,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/core/class/html.formcompany.class.php
  *  \ingroup    core
  *	\brief      File of class to build HTML component for third parties management
- *	\version	$Id: html.formcompany.class.php,v 1.33 2011/06/26 21:51:56 eldy Exp $
+ *	\version	$Id: html.formcompany.class.php,v 1.34 2011/07/31 23:45:14 eldy Exp $
  */
 
 
