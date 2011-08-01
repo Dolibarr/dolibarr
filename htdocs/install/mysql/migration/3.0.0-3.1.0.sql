@@ -1,5 +1,5 @@
 --
--- $Id: 3.0.0-3.1.0.sql,v 1.82 2011/07/28 18:34:46 eldy Exp $
+-- $Id: 3.0.0-3.1.0.sql,v 1.84 2011/07/29 19:59:10 eldy Exp $
 --
 -- Be carefull to requests order.
 -- This file must be loaded by calling /install/index.php page
@@ -25,8 +25,10 @@ ALTER TABLE llx_c_ziptown MODIFY fk_county integer NULL;
 
 ALTER TABLE llx_c_actioncomm ADD COLUMN position integer NOT NULL DEFAULT 0;
 ALTER TABLE llx_propal ADD COLUMN fk_demand_reason integer NULL DEFAULT 0;
-ALTER TABLE llx_commande_fournisseur ADD COLUMN fk_cond_reglement integer NULL DEFAULT 0;
-ALTER TABLE llx_commande_fournisseur ADD COLUMN fk_mode_reglement integer NULL DEFAULT 0;
+ALTER TABLE llx_commande_fournisseur ADD COLUMN fk_cond_reglement integer NULL DEFAULT 0 after model_pdf;
+ALTER TABLE llx_commande_fournisseur ADD COLUMN fk_mode_reglement integer NULL DEFAULT 0 after fk_cond_reglement;
+ALTER TABLE llx_commande_fournisseur ADD COLUMN import_key varchar(14);
+
 --ALTER TABLE llx_c_currencies ADD COLUMN symbole varchar(3) NOT NULL default '';
 
 ALTER TABLE llx_commande_fournisseur MODIFY model_pdf varchar(255);
@@ -128,6 +130,9 @@ ALTER TABLE llx_usergroup_user ADD UNIQUE INDEX uk_usergroup_user (entity,fk_use
 ALTER TABLE llx_usergroup_user ADD CONSTRAINT fk_usergroup_user_fk_user      FOREIGN KEY (fk_user)         REFERENCES llx_user (rowid);
 -- V4.1 DELETE FROM llx_usergroup_user WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 ALTER TABLE llx_usergroup_user ADD CONSTRAINT fk_usergroup_user_fk_usergroup FOREIGN KEY (fk_usergroup)    REFERENCES llx_usergroup (rowid);
+
+-- V4.1 DELETE FROM llx_product_fournisseur where fk_product NOT IN (SELECT rowid from llx_product);
+ALTER TABLE llx_product_fournisseur ADD CONSTRAINT fk_product_fournisseur_fk_product FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
 
 ALTER TABLE llx_commande ADD COLUMN ref_int	varchar(30) AFTER ref_ext;
 ALTER TABLE llx_facture ADD COLUMN ref_int varchar(30) AFTER ref_ext;
@@ -478,3 +483,4 @@ ALTER TABLE llx_don ADD   phone_mobile    varchar(24) after email;
 ALTER TABLE llx_don ADD   phone           varchar(24) after email;
 
 ALTER TABLE llx_user ADD civilite varchar(6) after entity;
+
