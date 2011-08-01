@@ -20,7 +20,7 @@ lighttpd_install() {
 	if [ ! -f /etc/lighttpd/conf-available/50-dolibarr.conf ] ; then
 		if which lighty-enable-mod >/dev/null 2>&1 ; then
 			echo "Add link for Lighttpd config file"
-			ln -fs /etc/dolibarr/lighttpd.conf /etc/lighttpd/conf-available/50-dolibarr.conf
+			ln -s /etc/dolibarr/lighttpd.conf /etc/lighttpd/conf-available/50-dolibarr.conf
 			# We enabled it
 			lighty-enable-mod dolibarr fastcgi-php
 		else
@@ -33,7 +33,7 @@ apache_install() {
 	webserver=$1
 	if [ -d /etc/$webserver/conf.d ] && [ ! -e /etc/$webserver/conf.d/dolibarr.conf ]; then
 		echo "Add link for Apache config file"
-		ln -fs /etc/dolibarr/apache.conf /etc/$webserver/conf.d/dolibarr.conf
+		ln -s /etc/dolibarr/apache.conf /etc/$webserver/conf.d/dolibarr.conf
 	fi
 }
 
@@ -92,6 +92,14 @@ case "$1" in
 		fi
 
 	
+		# Reconfigure web server
+		db_reset dolibarr/reconfigure-webserver
+		
+		# Ask if we must delete database
+		echo "Ask for web server to setup"
+		db_input critical dolibarr/reconfigure-webserver || true
+		db_go || true
+		
 		db_get dolibarr/reconfigure-webserver
 	
 		webservers="$RET"

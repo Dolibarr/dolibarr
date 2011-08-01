@@ -65,12 +65,10 @@ case "$1" in
 
     # Call when we upgrade
 	upgrade)
-		echo "postrm upgrade"
 	;;
 
     # Call when we uninstall
 	remove)
-		echo "postrm remove"
 		rm -f $lockfile
 
 		# Reconfigure web server
@@ -100,7 +98,7 @@ case "$1" in
 
     # Call when we uninstall and purge
 	purge)
-		echo "postrm purge"
+		echo "postrm purge webservers=$webservers"
 
 		# Ask if we must delete database
 		echo "postrm db_input dolibarr/postrm"
