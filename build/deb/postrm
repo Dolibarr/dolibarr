@@ -17,7 +17,36 @@ set -e
 # for details, see /usr/share/doc/packaging-manual/
 
 
-. /usr/share/debconf/confmodule
+
+lighttpd_remove() {
+	if [ -f /etc/lighttpd/conf-available/50-dolibarr.conf ] ; then
+		echo "Remove link for Lighttpd config file"
+		rm -f /etc/lighttpd/conf-available/50-dolibarr.conf
+		if which lighty-enable-mod >/dev/null 2>&1 ; then
+			lighty-disable-mod dolibarr
+		else
+			echo "Lighttpd not installed, skipping"
+		fi
+		# See bug #448682
+		if [ -h /etc/lighttpd/conf-enabled/50-dolibarr.conf ] ; then
+		    echo 'Manually deleting lighttpd/dolibarr configuration link'
+		    rm /etc/lighttpd/conf-enabled/50-dolibarr.conf
+		fi
+	fi
+}
+
+apache_remove() {
+	if [ -d /etc/$webserver/conf.d ] && [ -L /etc/$webserver/conf.d/dolibarr.conf ]; then
+		echo "Remove link for Apache config file"
+		rm -f /etc/$webserver/conf.d/dolibarr.conf
+	fi
+}
+
+
+
+if [ -f /usr/share/debconf/confmodule ]; then
+    . /usr/share/debconf/confmodule
+fi
 
 db_version 2.0
 
@@ -26,40 +55,68 @@ echo Run the dolibarr postrm script
 
 docdir='/var/lib/dolibarr/documents'
 #docdir='/usr/share/dolibarr/documents'
+#config="/usr/share/dolibarr/htdocs/conf/conf.php"
+config="/etc/dolibarr/conf.php"
+lockfile="/usr/share/dolibarr/install.lock"
 
-
-export webserver=""
-# Allows us to loop and substitute in one pass
-case $webserver in
-	Apache)		webservers="apache2" ;;
-	Apache-SSL)	webservers="apache2-ssl" ;;
-	Both)		webservers="apache2 apache2-ssl" ;;
-	*)		    webservers="apache2 apache2-ssl" ;;
-esac
-export includefile=/etc/dolibarr/apache.conf
 
 
 case "$1" in
+
+    # Call when we upgrade
+	upgrade)
+	;;
+
+    # Call when we uninstall
+	remove)
+		rm -f $lockfile
+
+		# Reconfigure web server
+		db_get dolibarr/reconfigure-webserver
+
+		webservers="$RET"
+
+		# Restart web servers
+		for webserver in $webservers; do
+			webserver=${webserver%,}
+			if [ "$webserver" = "lighttpd" ] ; then
+				lighttpd_remove
+			else
+				apache_remove $webserver
+			fi
+			# Redirection of 3 is needed because Debconf uses it and it might 
+			# be inherited by webserver. See bug #446324.
+			if [ -f /etc/init.d/$webserver ] ; then
+				if [ -x /usr/sbin/invoke-rc.d ]; then
+					invoke-rc.d $webserver reload 3>/dev/null || true
+				else
+					/etc/init.d/$webserver reload 3>/dev/null || true
+				fi
+			fi
+		done
+	;;
+
     # Call when we uninstall and purge
 	purge)
-		echo "postrm purge webservers=$webservers includefile=$includefile"
+		echo "postrm purge webservers=$webservers"
 
 		# Ask if we must delete database
 		echo "postrm db_input dolibarr/postrm"
-		db_input critical "dolibarr/postrm" || true
+		db_input critical dolibarr/postrm || true
 		db_go || true
 
 		echo "postrm db_get dolibarr/postrm"
 		# We disable set -e to avoid premature end of script if error
 		set +e
-		db_get "dolibarr/postrm"
+		db_get dolibarr/postrm
 		set -e
 	
 		if [ "$RET" = "true" ] ; then
 			echo postrm Mysql database deletion
 			# Get database configuration
 			dbserver="localhost"
-			dbname="dolibarrmysql"
+			dbuser="dolibarrdebian"
+			dbname="dolibarrdebian"
 			#db_get "dolibarr/db/name"
 			#dbname="$RET"
 			superuserlogin=''
@@ -120,23 +177,31 @@ case "$1" in
 			fi
 			mysqlcmd="mysql $hostopt $passopt -u $dbadmin"
 
-		    # Now run the drop commands
-		    if eval $mysqlcmd -f -e "\"show databases;\"" | grep -e "^$dbname" > /dev/null 2>&1 ; then
-			log="${log}Droping database $dbname."
-			if eval $mysqlcmd -f -e "\"DROP DATABASE $dbname;\"" ; then
-			    if eval $mysqlcmd -f -e "\"show databases;\"" | grep -e "^$dbname" > /dev/null 2>&1 ; then
-				error="Database $dbname NOT successfully droped. You have to do it manually."
-				echo $error
-			    else
-				status=drop
-			    fi
+		    # Now run the drop user
+			if eval $mysqlcmd -f -e "\"DROP USER '$dbuser'@'localhost';\"" ; then
+				echo Database login $dbuser removed
 			else
-			    error="Unable to run the drop database script."
+			    error="Unable to run $mysqlcmd -f -e \"DROP USER '$dbuser'@'localhost';\""
 				echo $error
 			fi
+
+		    # Now run the drop commands
+		    if eval $mysqlcmd -f -e "\"show databases;\"" | grep -e "^$dbname" > /dev/null 2>&1 ; then
+				log="${log}Droping database $dbname."
+				if eval $mysqlcmd -f -e "\"DROP DATABASE $dbname;\"" ; then
+				    if eval $mysqlcmd -f -e "\"show databases;\"" | grep -e "^$dbname" > /dev/null 2>&1 ; then
+					error="Database $dbname NOT successfully droped. You have to do it manually."
+					echo $error
+				    else
+					status=drop
+				    fi
+				else
+				    error="Unable to run the drop database script."
+					echo $error
+				fi
 		    else
-			status=nothing
-			log="${log}Database $dbname already not exists."
+				status=nothing
+				log="${log}Database $dbname already not exists."
 		    fi
 
 		    echo "Remove directory $docdir"
@@ -146,91 +211,22 @@ case "$1" in
 			echo "postrm Delete of dolibarr database and uploaded files not wanted" 
 		fi
 	
-		# Remove include files
-		export restart=""
-		for server in $webservers ; do
-			export conffile="/etc/$server/conf.d/dolibarr.conf"
-            if [ -f $conffile ] ;
-            then
-               echo Delete file $conffile
-	           rm -f $conffile
-	           status=purge
-		    fi
-			
-			if [ "x$status" = "xpurge" ] ;
-				then restart="$restart $server"
-			fi
-		done
-
 		rm -rf /etc/dolibarr
 
-		# Restart servers
-		for server in $restart ; do
-            # We disable blocking errors
-            set +e
-            echo "Restart server $server if exists"
-    		if [ -x /usr/sbin/invoke-rc.d ]; then
-    		     invoke-rc.d $server reload || true
-    		else
-    		     /etc/init.d/$server reload || true
-    		fi
-    		# We restore blocking errors
-    		set -e
-		done
-		
-		# Remove file and conf file
-		for dir in /usr/share/dolibarr; do
-			if [ -d $dir ] ; then 
-                # We disable blocking errors
-                set +e
-			    echo "Remove directory $dir"
-			    rm -rf $dir ; 
-                # We restore blocking errors
-                set -e
-			fi
-		done
-		
 		# We clean variable (we ignore errors because db_reset can fails if var was never set)
         set +e
-		db_reset "dolibarr/postrm"
+		db_reset dolibarr/reconfigure-webserver
+		db_reset dolibarr/postrm
         set -e
 
 		#db_purge
-	;;
-
-    # Call when we uninstall
-	remove)
-		echo "postrm Force remove of /usr/share/dolibarr/htdocs/install"
-		rm -fr /usr/share/dolibarr/htdocs/install
-
-        echo "postrm Force remove of /usr/share/dolibarr/htdocs/conf"
-        rm -fr /usr/share/dolibarr/htdocs/conf
-        
-		# Remove include files
-		export restart=""
-		for server in $webservers ; do
-			export conffile="/etc/$server/conf.d/dolibarr.conf"
-            if [ -f $conffile ] ;
-            then
-               echo Delete file $conffile
-	           rm -f $conffile
-	           status=purge
-		    fi
-			
-			if [ "x$status" = "xpurge" ] ;
-				then restart="$restart $server"
-			fi
-		done
-	;;
-
-	upgrade)
 	;;
 
 	failed-upgrade|abort-install|abort-upgrade|disappear)
 	;;
 
 	*)
-		echo "postrm called with unknown argument \`$1'" >&2
+		echo "postrm called with unknown argument $1" >&2
 		exit 0
 	;;
 esac

@@ -12,17 +12,16 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id$
+ * $Id: frames.php,v 1.10 2011/07/31 23:50:56 eldy Exp $
  */
 
 /**	    \file       htdocs/externalsite/frames.php
         \ingroup    externalsite
 		\brief      Page that build two frames: One for menu, the other for the target page to show
 		\author	    Laurent Destailleur
-		\version    $Revision$
+		\version    $Revision: 1.10 $
 */
 
 require("../main.inc.php");
@@ -33,7 +32,7 @@ if (empty($conf->global->EXTERNALSITE_URL))
 {
 	llxHeader();
 	print '<div class="error">Module ExternalSite was not configured properly.</div>';
-	llxFooter('$Date$ - $Revision$');
+	llxFooter('$Date: 2011/07/31 23:50:56 $ - $Revision: 1.10 $');
 }
 
 $mainmenu=GETPOST('mainmenu');
