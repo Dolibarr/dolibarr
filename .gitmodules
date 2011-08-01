@@ -1,18 +1,3 @@
-[submodule "htdocs/multicompany"]
-	path = htdocs/multicompany
-	url = git+ssh://scm.doliforge.org/gitroot/regisperso/regisperso.git
-[submodule "htdocs/highCharts"]
-	path = htdocs/highCharts
-	url = https://git.symeos.com/module-highCharts.git
-[submodule "htdocs/lead"]
-	path = htdocs/lead
-	url = https://git.symeos.com/module-lead
-[submodule "htdocs/team"]
-	path = htdocs/team
-	url = https://git.symeos.com/module-team
-[submodule "htdocs/memcache"]
-	path = htdocs/memcache
-	url = https://git.symeos.com/module-memcache.git
-[submodule "htdocs/genfact"]
-	path = htdocs/genfact
-	url = https://git.symeos.com/module-genfact.git
+[submodule "htdocs/custom/multicompany"]
+	path = htdocs/custom/multicompany
+	url = git+ssh://scm.doliforge.org/gitroot/multicompany/multicompany.git
