@@ -22,7 +22,16 @@ if [ "$1" = "reconfigure" ] ; then
 	done
 	mv ${config} ${config}.0
 fi
-
+# Rotate old configuration
+if [ "$1" = "reconfigure" ] ; then
+	config="/etc/dolibarr/lighttpd.conf"
+	for i in $(seq 8 -1 0) ; do
+		if [ -f ${config}.$i ] ; then
+			mv ${config}.$i ${config}.$(($i +1))
+		fi
+	done
+	mv ${config} ${config}.0
+fi
 
 
 db_capb backup
