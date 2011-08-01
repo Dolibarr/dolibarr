@@ -3,7 +3,7 @@
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 /**
  *  \file       htdocs/admin/modules.php
  *  \brief      Page to activate/disable all modules
- *  \version    $Id: modules.php,v 1.156 2011/07/31 22:23:22 eldy Exp $
+ *  \version    $Id: modules.php,v 1.158 2011/08/01 12:28:09 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -79,12 +79,36 @@ $modules = array();
 $orders = array();
 $categ = array();
 $dirmod = array();
+$modulesdir = array();
 $i = 0;	// is a sequencer of modules found
 $j = 0;	// j is module number. Automatically affected if module number not defined.
-foreach ($conf->file->dol_document_root as $dirroot)
-{
-	$dir = $dirroot . "/includes/modules/";
 
+foreach ($conf->file->dol_document_root as $type => $dirroot)
+{
+	$modulesdir[] = $dirroot . "/includes/modules/";
+	
+	if ($type == 'alt')
+	{	
+		$handle=@opendir($dirroot);
+		if (is_resource($handle))
+		{
+			while (($file = readdir($handle))!==false)
+			{
+			    if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
+			    {
+			    	if (is_dir($dirroot . '/' . $file . '/includes/modules/'))
+			    	{
+			    		$modulesdir[] = $dirroot . '/' . $file . '/includes/modules/';
+			    	}
+			    }
+			}
+			closedir($handle);
+		}
+	}
+}
+
+foreach ($modulesdir as $dir)
+{
 	// Load modules attributes in arrays (name, numero, orders) from dir directory
 	//print $dir."\n<br>";
 	dol_syslog("Scan directory ".$dir." for modules");
@@ -449,5 +473,5 @@ print '</div>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:22 $ - $Revision: 1.156 $');
+llxFooter('$Date: 2011/08/01 12:28:09 $ - $Revision: 1.158 $');
 ?>
