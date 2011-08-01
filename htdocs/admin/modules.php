@@ -22,7 +22,7 @@
 /**
  *  \file       htdocs/admin/modules.php
  *  \brief      Page to activate/disable all modules
- *  \version    $Id: modules.php,v 1.158 2011/08/01 12:28:09 hregis Exp $
+ *  \version    $Id: modules.php,v 1.157 2011/08/01 12:25:15 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -89,10 +89,10 @@ foreach ($conf->file->dol_document_root as $type => $dirroot)
 	
 	if ($type == 'alt')
 	{	
-		$handle=@opendir($dirroot);
-		if (is_resource($handle))
+		$althandle=@opendir($dirroot);
+		if (is_resource($althandle))
 		{
-			while (($file = readdir($handle))!==false)
+			while (($file = readdir($althandle))!==false)
 			{
 			    if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
 			    {
@@ -102,7 +102,6 @@ foreach ($conf->file->dol_document_root as $type => $dirroot)
 			    	}
 			    }
 			}
-			closedir($handle);
 		}
 	}
 }
@@ -473,5 +472,5 @@ print '</div>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/01 12:28:09 $ - $Revision: 1.158 $');
+llxFooter('$Date: 2011/08/01 12:25:15 $ - $Revision: 1.157 $');
 ?>
