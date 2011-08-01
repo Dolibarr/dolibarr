@@ -14,8 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * or see http://www.gnu.org/
  */
 
@@ -23,7 +22,7 @@
  *   \file       htdocs/includes/modules/livraison/mod_livraison_jade.php
  *   \ingroup    delivery
  *   \brief      Fichier contenant la classe du modele de numerotation de reference de bon de livraison Jade
- *   \version    $Id$
+ *   \version    $Id: mod_livraison_jade.php,v 1.9 2011/07/31 23:28:14 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/livraison/modules_livraison.php");

@@ -13,15 +13,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/contact/canvas/default/actions_contactcard_default.class.php
  *	\ingroup    thirdparty
  *	\brief      Fichier de la classe Thirdparty contact card controller (default canvas)
- *	\version    $Id: actions_contactcard_default.class.php,v 1.9 2011/07/08 13:07:45 eldy Exp $
+ *	\version    $Id: actions_contactcard_default.class.php,v 1.10 2011/07/31 23:54:11 eldy Exp $
  */
 include_once(DOL_DOCUMENT_ROOT.'/contact/canvas/actions_contactcard_common.class.php');
 
