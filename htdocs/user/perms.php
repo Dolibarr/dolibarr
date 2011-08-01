@@ -22,7 +22,7 @@
 /**
  *       \file       htdocs/user/perms.php
  *       \brief      Onglet user et permissions de la fiche utilisateur
- *       \version    $Id: perms.php,v 1.57 2011/08/01 13:15:54 hregis Exp $
+ *       \version    $Id: perms.php,v 1.56 2011/07/31 23:19:42 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -120,34 +120,12 @@ $db->begin();
 
 // Search all modules with permission and reload permissions def.
 $modules = array();
-$modulesdir = array();
 
-foreach ($conf->file->dol_document_root as $type => $dirroot)
+$listdir=$conf->file->dol_document_root;
+foreach($listdir as $dirroot)
 {
-	$modulesdir[] = $dirroot . "/includes/modules/";
-	
-	if ($type == 'alt')
-	{	
-		$handle=@opendir($dirroot);
-		if (is_resource($handle))
-		{
-			while (($file = readdir($handle))!==false)
-			{
-			    if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
-			    {
-			    	if (is_dir($dirroot . '/' . $file . '/includes/modules/'))
-			    	{
-			    		$modulesdir[] = $dirroot . '/' . $file . '/includes/modules/';
-			    	}
-			    }
-			}
-			closedir($handle);
-		}
-	}
-}
+	$dir=$dirroot."/includes/modules/";
 
-foreach($modulesdir as $dir)
-{
 	$handle=opendir($dir);
     if (is_resource($handle))
     {
@@ -395,5 +373,5 @@ print '</table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/01 13:15:54 $ - $Revision: 1.57 $');
+llxFooter('$Date: 2011/07/31 23:19:42 $ - $Revision: 1.56 $');
 ?>
