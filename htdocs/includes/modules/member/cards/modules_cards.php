@@ -15,8 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * or see http://www.gnu.org/
  */
 
@@ -24,7 +23,7 @@
  *	\file       htdocs/includes/modules/member/cards/modules_cards.php
  *	\ingroup    member
  *	\brief      File of parent class of document generator for members cards.
- *	\version    $Id: modules_cards.php,v 1.10 2011/07/04 08:53:01 eldy Exp $
+ *	\version    $Id: modules_cards.php,v 1.11 2011/07/31 23:28:18 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');

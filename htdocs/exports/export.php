@@ -13,15 +13,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *       \file       htdocs/exports/export.php
  *       \ingroup    export
  *       \brief      Pages of export Wizard
- *       \version    $Id$
+ *       \version    $Id: export.php,v 1.83 2011/07/31 23:50:55 eldy Exp $
  */
 
 require_once("../main.inc.php");
@@ -808,7 +807,7 @@ print '<br>';
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/31 23:50:55 $ - $Revision: 1.83 $');
 
 
 /**

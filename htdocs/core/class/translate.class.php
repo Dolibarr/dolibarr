@@ -14,8 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
@@ -24,7 +23,7 @@
  *		\brief      File for Tanslate class
  *		\author	    Eric Seigne
  *		\author	    Laurent Destailleur
- *		\version    $Id$
+ *		\version    $Id: translate.class.php,v 1.49 2011/08/01 22:03:50 eldy Exp $
  */
 
 
@@ -513,9 +512,10 @@ class Translate {
 	 *  Return list of all available languages
 	 * 	@param		langdir		Directory to scan
 	 *  @param      maxlength   Max length for each value in combo box (will be truncated)
+	 *  @param		usecode		Show code instead of country name for language variant
 	 *  @return     array     	List of languages
 	 */
-	function get_available_languages($langdir=DOL_DOCUMENT_ROOT,$maxlength=0)
+	function get_available_languages($langdir=DOL_DOCUMENT_ROOT,$maxlength=0,$usecode=0)
 	{
 		global $conf;
 
@@ -528,7 +528,7 @@ class Translate {
 			{
 				$this->load("languages");
 
-				if (isset($conf->global->MAIN_SHOW_LANGUAGE_CODE) && $conf->global->MAIN_SHOW_LANGUAGE_CODE)
+				if ($usecode || ! empty($conf->global->MAIN_SHOW_LANGUAGE_CODE))
 				{
 					$langs_available[$dir] = $dir.': '.dol_trunc($this->trans('Language_'.$dir),$maxlength);
 				}
