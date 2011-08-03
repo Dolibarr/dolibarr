@@ -17,10 +17,10 @@
  */
 
 /**
- *	\file       htdocs/boutique/index.php
- *	\ingroup    boutique
- *	\brief      Page accueil zone boutique
- *	\version    $Id: index.php,v 1.17 2011/08/03 01:17:17 eldy Exp $
+ \file       htdocs/boutique/index.php
+ \ingroup    boutique
+ \brief      Page accueil zone boutique
+ \version    $Id: index.php,v 1.16 2011/08/03 00:45:46 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -238,5 +238,5 @@ print '</tr></table>';
 
 $dbosc->close();
 
-llxFooter('$Date: 2011/08/03 01:17:17 $ - $Revision: 1.17 $');
+llxFooter('$Date: 2011/08/03 00:45:46 $ - $Revision: 1.16 $');
 ?>
