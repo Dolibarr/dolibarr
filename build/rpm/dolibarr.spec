@@ -7,7 +7,7 @@
 # --------------------------------------------------------
 
 %define name dolibarr
-%define version	__VERSION__
+%define version __VERSION__
 %define release __RELEASE__
 
 Name: %{name}
@@ -105,15 +105,13 @@ echo Building %{name}-%{version}-%{release}
 %{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/applications
 %{__install} -m 644 var/www/dolibarr/build/rpm/dolibarr.desktop $RPM_BUILD_ROOT%{_datadir}/applications/dolibarr.desktop
 
-%{__mkdir} -p $RPM_BUILD_ROOT/var/www/dolibarr/build
-%{__mkdir} -p $RPM_BUILD_ROOT/var/www/dolibarr/doc
 %{__mkdir} -p $RPM_BUILD_ROOT/var/www/dolibarr/htdocs
 %{__mkdir} -p $RPM_BUILD_ROOT/var/www/dolibarr/scripts
-%{__cp} -pr var/www/dolibarr/build   $RPM_BUILD_ROOT/var/www/dolibarr
-%{__cp} -pr var/www/dolibarr/doc     $RPM_BUILD_ROOT/var/www/dolibarr
+%{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/doc/dolibarr
 %{__cp} -pr var/www/dolibarr/htdocs  $RPM_BUILD_ROOT/var/www/dolibarr
 %{__cp} -pr var/www/dolibarr/scripts $RPM_BUILD_ROOT/var/www/dolibarr
-%{__install} -m 644 var/www/dolibarr/COPYRIGHT $RPM_BUILD_ROOT/var/www/dolibarr/doc/COPYRIGHT
+%{__cp} -pr var/www/dolibarr/doc/*   $RPM_BUILD_ROOT%{_datadir}/doc/dolibarr
+%{__install} -m 644 var/www/dolibarr/COPYRIGHT $RPM_BUILD_ROOT%{_datadir}/doc/dolibarr/COPYRIGHT
 
 
 #---- clean
@@ -125,13 +123,11 @@ echo Building %{name}-%{version}-%{release}
 %files
 
 %defattr(-,root,root)
-%doc /var/www/dolibarr/doc/*
-%dir /var/www/dolibarr/build
+%doc %{_datadir}/doc/dolibarr/*
 %dir /var/www/dolibarr/htdocs
 %dir /var/www/dolibarr/scripts
 %_datadir/pixmaps/dolibarr.png
 %_datadir/applications/%{name}.desktop
-/var/www/dolibarr/build/*
 /var/www/dolibarr/htdocs/*
 /var/www/dolibarr/scripts/*
 
@@ -213,11 +209,11 @@ fi
 
 # Create an empty conf.php with permission to web server
 if [ ! -f $config ]
-then 
-	echo Create empty file $config		
-	touch $config
-	%{__chown} -R root:$apachegroup $config
-	%{__chmod} -R 660 $config
+then
+    echo Create empty file $config
+    touch $config
+    %{__chown} -R root:$apachegroup $config
+    %{__chmod} -R 660 $config
 fi
 
 # Create config file for apache $apacheconfig
@@ -267,7 +263,7 @@ fi
 # Restart mysql
 echo Restart mysql
 if [ -f /etc/init.d/mysqld ]; then
-	/etc/init.d/mysqld restart
+    /etc/init.d/mysqld restart
 fi
 
 # Show result
