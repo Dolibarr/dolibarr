@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *       \file       htdocs/comm/mailing/cibles.php
  *       \ingroup    mailing
  *       \brief      Page to define emailing targets
- *       \version    $Id$
+ *       \version    $Id: cibles.php,v 1.76 2011/08/03 00:46:33 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -515,5 +514,5 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/03 00:46:33 $ - $Revision: 1.76 $');
 ?>

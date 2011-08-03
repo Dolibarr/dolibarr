@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/comm/propal/index.php
  *	\ingroup    propal
  *	\brief      Home page of proposal area
- *	\version    $Id: index.php,v 1.6 2011/07/04 10:35:49 hregis Exp $
+ *	\version    $Id: index.php,v 1.7 2011/08/03 00:46:34 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -416,6 +415,6 @@ print '</td></tr></table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/04 10:35:49 $ - $Revision: 1.6 $');
+llxFooter('$Date: 2011/08/03 00:46:34 $ - $Revision: 1.7 $');
 
 ?>
