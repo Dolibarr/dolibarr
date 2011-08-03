@@ -22,7 +22,7 @@
  *	\brief      File of class to manage widget boxes
  *	\author     Rodolphe Qiedeville
  *	\author	    Laurent Destailleur
- *	\version    $Id: boxes.php,v 1.54 2011/07/31 23:19:04 eldy Exp $
+ *	\version    $Id: boxes.php,v 1.55 2011/08/01 13:26:21 hregis Exp $
  */
 
 
@@ -220,7 +220,7 @@ class InfoBox
 					{
 						$boxname = $regs[1];
 						$module = $regs[2];
-						$sourcefile = dol_buildpath("/".$module."/inc/boxes/".$boxname.".php");
+						$sourcefile = dol_buildpath("/".$module."/includes/boxes/".$boxname.".php");
 					}
 					else
 					{
@@ -281,7 +281,7 @@ class InfoBox
 					{
 						$boxname = $regs[1];
 						$module = $regs[2];
-						$sourcefile = "/".$module."/inc/boxes/".$boxname.".php";
+						$sourcefile = "/".$module."/includes/boxes/".$boxname.".php";
 					}
 					else
 					{
