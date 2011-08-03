@@ -226,8 +226,8 @@ if [ ! -f $config ]
 then 
 	echo Create empty file $config		
 	touch $config
-	%{__chown} -R root:$apachegroup $config
-	%{__chmod} -R 660 $config
+	chown -R root:$apachegroup $config
+	chmod -R 660 $config
 fi
 
 # Create config file for apache $apacheconfig
@@ -241,12 +241,10 @@ fi
 # Create config file for se $seconfig
 if [ "x$os" = "xfedora-redhat" -a -s /sbin/restorecon -a ! -f $seconfig ]; then
   	 echo Add SE Linux permission from file $sefileorig
-	 semanage fcontext -a -t httpd_sys_script_rw_t "/etc/dolibarr(/.*?)"
-	 semanage fcontext -a -t httpd_sys_script_rw_t "/usr/share/dolibarr(/.*?)"
-	 semanage fcontext -a -t httpd_sys_script_rw_t "/var/www/dolibarr/install.lock"
+#     cp $sefileorig $seconfig
      restorecon -R -v /etc/dolibarr
+     restorecon -R -v /var/www/dolibarr
      restorecon -R -v /usr/share/dolibarr
-     restorecon -v /var/www/dolibarr/install.lock
 fi
 
 # Create a config link dolibarr.conf
@@ -257,13 +255,13 @@ fi
 
 # Set permissions
 echo Set permission to $apacheuser:$apachegroup on $targetdir
-%{__chown} -R $apacheuser:$apachegroup $targetdir
-%{__chmod} -R a-w $targetdir
-%{__chmod} u+w $targetdir
+chown -R $apacheuser:$apachegroup $targetdir
+chmod -R a-w $targetdir
+chmod u+w $targetdir
 
 echo Set permission to $apacheuser:$apachegroup on $docdir
-%{__chown} -R $apacheuser:$apachegroup $docdir
-%{__chmod} -R o-w $docdir
+chown -R $apacheuser:$apachegroup $docdir
+chmod -R o-w $docdir
 
 # Restart web server
 echo Restart web server
