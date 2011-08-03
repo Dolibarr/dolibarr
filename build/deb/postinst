@@ -144,7 +144,7 @@ case "$1" in
 
 		
 		echo ----------
-		echo "Call Dolibarr page http://localhost/dolibarr/ to complete the installation and use Dolibarr."
+		echo "Call Dolibarr page http://localhost/dolibarr/ to complete the setup and use Dolibarr."
 		echo ----------
 	;;
 
