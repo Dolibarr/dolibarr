@@ -13,15 +13,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	    \file       htdocs/adherents/stats/index.php
  *      \ingroup    member
  *		\brief      Page des stats
- *		\version    $Id$
+ *		\version    $Id: geo.php,v 1.2 2011/08/03 00:45:44 eldy Exp $
 */
 
 require("../../main.inc.php");
@@ -276,5 +275,5 @@ dol_fiche_end();
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/03 00:45:44 $ - $Revision: 1.2 $');
 ?>
