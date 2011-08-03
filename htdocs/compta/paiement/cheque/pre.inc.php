@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *		\file   	htdocs/compta/paiement/cheque/pre.inc.php
  *		\ingroup    compta
  *		\brief  	Fichier gestionnaire du menu cheques
- *		\version	$Id: pre.inc.php,v 1.19 2011/07/04 11:33:23 eldy Exp $
+ *		\version	$Id: pre.inc.php,v 1.20 2011/08/03 00:46:28 eldy Exp $
  */
 
 require_once("../../../main.inc.php");
