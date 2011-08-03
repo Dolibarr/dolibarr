@@ -109,8 +109,8 @@ PHPServerOffsetWithGreenwich=Offset servidor con Greenwich (segundos)
 ClientOffsetWithGreenwich=Offset cliente/navegador con Greenwich (segundos)
 DaylingSavingTime=Horario de verano (usuario)
 CurrentHour=Hora PHP (servidor)
-CompanyTZ=Zona Horaria empresa (casa madre)
-CompanyHour=Hora empresa (casa madre)
+CompanyTZ=Zona Horaria empresa (sede central)
+CompanyHour=Hora empresa (sede central)
 CurrentSessionTimeOut=Time out sesión actual
 OSEnv=Entorno SO
 Box=Panel
@@ -854,7 +854,8 @@ MAIN_PROXY_USER=Login del servidor proxy
 MAIN_PROXY_PASS=Contraseña del servidor proxy
 DefineHereComplementaryAttributes=Defina aquí la lista de atributos adicionales, no disponibles en estándar, y que desea gestionar para %s.
 ExtraFields=Atributos adicionales
-
+SendmailOptionNotComplete=Atención, en algunos sistemas Linux, con este método de envio, para poder enviar mails en su nombre, la configuración de sendmail debe contener la opción <b>-ba</b> (parámetro <b>mail.force_extra_parameters</b> en el archivo <b>php.ini</b>). Si algunos de sus destinatarios no reciben sus mensajes, pruebe a modificar este parámetro PHP con <b>mail.force_extra_parameters = -ba</b>.
+	 
 ##### Module password generation
 PasswordGenerationStandard=Devuelve una contraseña generada por el algoritmo interno Dolibarr: 8 caracteres, números y caracteres en minúsculas mezcladas.
 PasswordGenerationNone=No ofrece contraseñas. La contraseña se introduce manualmente.
@@ -1245,9 +1246,9 @@ ClickToDialDesc=Este módulo permite agregar un icono después del número de te
 CashDesk=TPV
 CashDeskSetup=Configuración del módulo Terminal Punto de Venta
 CashDeskThirdPartyForSell=Tercero genérico a usar para la venta
-CashDeskBankAccountForSell=Cuenta a utilizar para los cobros en efectivo (caja)
-CashDeskBankAccountForCheque=Cuenta a utilizar para los cobros con cheques
-CashDeskBankAccountForCB=Cuenta a utilizar para los cobros con tarjeta de crédito
+CashDeskBankAccountForSell=Cuenta por defecto a utilizar para los cobros en efectivo (caja)
+CashDeskBankAccountForCheque=Cuenta por defecto a utilizar para los cobros con cheques
+CashDeskBankAccountForCB=Cuenta por defecto a utilizar para los cobros con tarjeta de crédito
 CashDeskIdWareHouse=Almacén a utilizar para las ventas
 ##### Bookmark #####
 BookmarkSetup=Configuración del módulo Marcadores

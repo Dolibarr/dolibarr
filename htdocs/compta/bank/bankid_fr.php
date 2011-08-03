@@ -23,7 +23,7 @@
  *  \file       htdocs/compta/bank/bankid_fr.php
  *  \ingroup    banque
  *  \brief      Fiche creation compte bancaire
- *  \version    $Id$
+ *  \version    $Id: bankid_fr.php,v 1.27 2011/07/29 20:47:35 eldy Exp $
  */
 
 require("./pre.inc.php");
@@ -75,7 +75,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
 		}
 		else
 		{
-			$message='<div class="error">'.$account->error().'</div>';
+			$message='<div class="error">'.$account->error.'</div>';
 			$_GET["action"]='edit';     // Force chargement page edition
 		}
 	}
@@ -386,5 +386,5 @@ if ($_GET["id"] && $_GET["action"] == 'edit' && $user->rights->banque->configure
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/29 20:47:35 $ - $Revision: 1.27 $');
 ?>

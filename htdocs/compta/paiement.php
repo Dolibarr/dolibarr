@@ -24,7 +24,7 @@
  *	\file       htdocs/compta/paiement.php
  *	\ingroup    compta
  *	\brief      Page to create a payment
- *	\version    $Id: paiement.php,v 1.111 2011/07/13 08:57:21 eldy Exp $
+ *	\version    $Id: paiement.php,v 1.112 2011/07/27 08:00:45 cdelambert Exp $
  */
 
 require('../main.inc.php');
@@ -290,6 +290,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		            	json["amountPayment"] = jQuery("#amountpayment").attr("value");
 		            	json["amounts"] = elemToJson(form.find("input[name*=\"amount_\"]"));
 		            	json["remains"] = elemToJson(form.find("input[name*=\"remain_\"]"));
+		            	
 		            	if(imgId != null)json["imgClicked"] = imgId;
 
             			jQuery.post("ajaxpayment.php", json, function(data)
@@ -300,13 +301,14 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
             				for(var key in json)
             				{
-            					if(key == "result")	{
-            						jQuery("#"+key).text(json[key]);
-            						if(json[key] < 0) {
+            					if(key == "result")	{      						
+            						if(json["makeRed"]) {            							
             							jQuery("#"+key).css("color", "red");
             						} else {
             							jQuery("#"+key).removeAttr("style");
             						}
+            						json[key]=json["label"]+" "+json[key];            						
+            						jQuery("#"+key).text(json[key]);
             					} else {
             						form.find("input[name*=\""+key+"\"]").each(function() {
             							jQuery(this).attr("value", json[key]);
@@ -671,5 +673,5 @@ if (! GETPOST('action'))
 
 $db->close();
 
-llxFooter('$Date: 2011/07/13 08:57:21 $ - $Revision: 1.111 $');
+llxFooter('$Date: 2011/07/27 08:00:45 $ - $Revision: 1.112 $');
 ?>

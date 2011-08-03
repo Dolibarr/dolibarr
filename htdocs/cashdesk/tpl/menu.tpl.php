@@ -2,6 +2,7 @@
 /* Copyright (C) 2007-2008 Jeremie Ollivier      <jeremie.o@laposte.net>
  * Copyright (C) 2008-2010 Laurent Destailleur   <eldy@uers.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2011      Juanjo Menent         <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,13 +65,13 @@ print '<div class="menu_bloc">';
 print '<ul class="menu">';
 print '<li class="menu_choix1"><a href="affIndex.php?menu=facturation&id=NOUV"><span>'.$langs->trans("NewSell").'</span></a></li>';
 
-print '<li class="menu_choix2"><a href=".."><span>'.$langs->trans("BackOffice").'</span></a></li>';
+print '<li class="menu_choix2"><a href="deconnexion.php"><span>'.$langs->trans("BackOffice").'</span></a></li>';
 
 print '<li class="menu_choix0">'.$langs->trans("User").': '.$_SESSION['prenom'].' '.$_SESSION['nom'].' <a href="deconnexion.php">'.$logout.'</a><br>';
 print $langs->trans("CashDeskThirdParty").': '.$companyLink.'<br>';
-print $langs->trans("CashDeskBankCash").': '.$bankcashLink.'<br>';
+/*print $langs->trans("CashDeskBankCash").': '.$bankcashLink.'<br>';
 print $langs->trans("CashDeskBankCB").': '.$bankcbLink.'<br>';
-print $langs->trans("CashDeskBankCheque").': '.$bankchequeLink.'<br>';
+print $langs->trans("CashDeskBankCheque").': '.$bankchequeLink.'<br>';*/
 if (!empty($_SESSION["CASHDESK_ID_WAREHOUSE"]) && $conf->stock->enabled)
 {
 	print $langs->trans("CashDeskWarehouse").': '.$warehouseLink;

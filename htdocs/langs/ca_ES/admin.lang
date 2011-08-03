@@ -109,8 +109,8 @@ PHPServerOffsetWithGreenwich=Offset amb Greenwich (segons)
 ClientOffsetWithGreenwich=Offset client/navegador amb Greenwich (segons)
 DaylingSavingTime=Horari d'estiu (usuari)
 CurrentHour=Hora PHP (servidor)
-CompanyTZ=Zona Horària empresa (casa mare)
-CompanyHour=Hora empresa (casa mare)
+CompanyTZ=Zona Horària empresa (seu central)
+CompanyHour=Hora empresa (seu central)
 CurrentSessionTimeOut=Time out sessió actual
 OSEnv=Entorn SO
 Box=Panell
@@ -854,6 +854,7 @@ MAIN_PROXY_USER=Login del servidor proxy
 MAIN_PROXY_PASS=Contrasenya del servidor proxy
 DefineHereComplementaryAttributes=Definiu aquí la llista d'atributs addicionals, no disponibles a estàndard, i que vol gestionar per %s.
 ExtraFields=Atributs addicionals
+SendmailOptionNotComplete=Atenció, en alguns sistemes Linux, amb aquest mètode d'enviament, per poder enviar mails en nom seu, la configuració de sendmail ha de contenir l'opció <b>-ba</b> (paràmetre <b>mail.force_extra_parameters</b> a l'arxiu <b>php.ini</b>). Si alguns dels seus destinataris no reben els seus missatges, proveu de modificar aquest paràmetre PHP amb <b>mail.force_extra_parameters =-ba </b>.
 
 ##### Module password generation
 PasswordGenerationStandard=Retorna una contrasenya generada per l'algoritme intern Dolibarr: 8 caràcters, números i caràcters en minúscules barrejades.
@@ -1245,9 +1246,9 @@ ClickToDialDesc=Aquest mòdul permet afegir una icona després del número de te
 CashDesk=TPV
 CashDeskSetup=Mòdul de configuració Terminal Punt de Venda
 CashDeskThirdPartyForSell=Tercer genéric a utilitzar per a les vendes
-CashDeskBankAccountForSell=Compte a utilitzar per als cobraments en efectiu (caixa)
-CashDeskBankAccountForCheque=Compte a utilitzar per als cobraments amb xecs
-CashDeskBankAccountForCB=Compte a utilitzar per als cobraments amb targeta de crèdit
+CashDeskBankAccountForSell=Compte per defecte a utilitzar per als cobraments en efectiu (caixa)
+CashDeskBankAccountForCheque=Compte per defecte a utilitzar per als cobraments amb xecs
+CashDeskBankAccountForCB=Compte per defecte a utilitzar per als cobraments amb targeta de crèdit
 CashDeskIdWareHouse=Magatzem a ultilitzar per a les vendes
 ##### Bookmark #####
 BookmarkSetup=Configuració del mòdul Bookmark

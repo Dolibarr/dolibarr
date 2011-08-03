@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,8 +20,8 @@
 
 /**
  *  \file       htdocs/admin/system/index.php
- *  \brief      Page accueil infos systeme
- *  \version    $Id$
+ *  \brief      Home page of system information
+ *  \version    $Id: index.php,v 1.48 2011/07/27 23:50:52 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -37,6 +37,13 @@ if (!$user->admin)
 
 
 /*
+ * Actions
+ */
+
+// None
+
+
+/*
  * View
  */
 
@@ -44,8 +51,6 @@ llxHeader();
 
 print_fiche_titre($langs->trans("SummarySystem"),'','setup');
 
-//print "<br>\n";
-print info_admin($langs->trans("SystemInfoDesc")).'<br>';
 
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\"><td colspan=\"2\">Dolibarr</td></tr>\n";
@@ -118,5 +123,9 @@ print '</table>';
 print '<br>';
 
 
-llxFooter('$Date$ - $Revision$');
+//print "<br>\n";
+print info_admin($langs->trans("SystemInfoDesc")).'<br>';
+
+
+llxFooter('$Date: 2011/07/27 23:50:52 $ - $Revision: 1.48 $');
 ?>

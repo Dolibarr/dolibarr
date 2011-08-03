@@ -15,15 +15,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *      \file       scripts/company/export-contacts-xls-example.php
  *      \ingroup    company
  *      \brief      Export third parties' contacts with emails
- *		\version	$Id: export-contacts-xls-example.php,v 1.7 2011/07/09 14:11:42 eldy Exp $
+ *		\version	$Id: export-contacts-xls-example.php,v 1.8 2011/07/31 22:22:12 eldy Exp $
  */
 
 $sapi_type = php_sapi_name();
@@ -43,7 +42,7 @@ if (! isset($argv[1]) || ! $argv[1]) {
 $now=$argv[1];
 
 // Recupere env dolibarr
-$version='$Revision: 1.7 $';
+$version='$Revision: 1.8 $';
 
 require_once("../../htdocs/master.inc.php");
 require_once(PHP_WRITEEXCEL_PATH."/class.writeexcel_workbook.inc.php");

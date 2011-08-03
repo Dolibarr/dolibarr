@@ -5,7 +5,7 @@
 # This file is used by Dolibarr setup process to create true Dolibarr
 # config file called "conf.php".
 #
-# $Id$
+# $Id: conf.php.example,v 1.49 2011/07/30 11:12:52 eldy Exp $
 
 
 ###################
@@ -248,14 +248,5 @@ $dolibarr_main_prod='0';
 # Default value: 0 (use database value if exist)
 # Examples:
 # $dolibarr_mailing_limit_sendbyweb='0';
-
-# This is an development feature to allow external components to overwrite
-# some Dolibarr kernel files to be overwritten by versions provided by
-# third parties modules.
-# !! This feature is not working yet and breaks Dolibarr stability !!
-# Default value: 0
-# Possible values: 0 or 1
-# Examples:
-# $dolibarr_allow_overwritekernel='0';
 
 ?>

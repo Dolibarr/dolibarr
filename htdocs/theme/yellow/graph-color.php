@@ -13,15 +13,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *		\file       htdocs/theme/yellow/graph-color.php
  *		\brief      File to declare colors to use to build graphics with theme Yellow
  *      \ingroup    core
- *		\version    $Id$
+ *		\version    $Id: graph-color.php,v 1.6 2011/07/31 23:22:04 eldy Exp $
  */
 
 global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;

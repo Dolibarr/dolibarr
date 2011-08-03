@@ -15,15 +15,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *		\file   	htdocs/compta/bank/pre.inc.php
  *		\ingroup    compta
  *		\brief  	Fichier gestionnaire du menu compta banque
- *		\version	$Id: pre.inc.php,v 1.51 2011/07/04 11:33:22 eldy Exp $
+ *		\version	$Id: pre.inc.php,v 1.52 2011/07/31 22:23:16 eldy Exp $
  */
 
 require_once("../../main.inc.php");

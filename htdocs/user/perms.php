@@ -16,14 +16,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *       \file       htdocs/user/perms.php
  *       \brief      Onglet user et permissions de la fiche utilisateur
- *       \version    $Id$
+ *       \version    $Id: perms.php,v 1.57 2011/08/01 13:15:54 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -121,12 +120,34 @@ $db->begin();
 
 // Search all modules with permission and reload permissions def.
 $modules = array();
+$modulesdir = array();
 
-$listdir=$conf->file->dol_document_root;
-foreach($listdir as $dirroot)
+foreach ($conf->file->dol_document_root as $type => $dirroot)
 {
-	$dir=$dirroot."/includes/modules/";
+	$modulesdir[] = $dirroot . "/includes/modules/";
+	
+	if ($type == 'alt')
+	{	
+		$handle=@opendir($dirroot);
+		if (is_resource($handle))
+		{
+			while (($file = readdir($handle))!==false)
+			{
+			    if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
+			    {
+			    	if (is_dir($dirroot . '/' . $file . '/includes/modules/'))
+			    	{
+			    		$modulesdir[] = $dirroot . '/' . $file . '/includes/modules/';
+			    	}
+			    }
+			}
+			closedir($handle);
+		}
+	}
+}
 
+foreach($modulesdir as $dir)
+{
 	$handle=opendir($dir);
     if (is_resource($handle))
     {
@@ -374,5 +395,5 @@ print '</table>';
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/01 13:15:54 $ - $Revision: 1.57 $');
 ?>

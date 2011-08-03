@@ -1,0 +1,103 @@
+README (english)
+--------------------------------
+Starter documentation
+--------------------------------
+
+1) Install Dolibarr
+2) Upgrade Dolibarr from an older version
+3) What's new in this version
+4) What Dolibarr can do
+5) What Dolibarr can't do yet, todo list
+
+
+I - DOLIBARR INSTALL
+--------------------
+
+Dolibarr files and its dependencies are automatically installed when you install
+the dolibarr Debian package.
+  
+Once package is installed, go on menu entry called Dolibarr or use your web browser
+to call page http://localhost/dolibarr
+
+
+
+II - DOLIBARR UPGRADE
+---------------------
+
+Dolibarr files and its dependencies are automatically upgraded when you install
+the dolibarr Debian package.
+
+Once new package is installed, go on menu entry called Dolibarr or use your web browser
+to call page http://localhost/dolibarr
+If a database upgrade is required, you will be prompted to. 
+
+  
+
+III - WHAT'S NEW
+----------------
+
+See ChangeLog file.
+
+
+
+IV - WHAT DOLIBARR CAN DO
+-------------------------
+
+Main modules/features:
+- Products and services catalog
+- Customers, Prospects or Suppliers directory
+- Address book
+- Stock management
+- Bank accounts management
+- Orders management with PDF export
+- Commercial proposals management with PDF export
+- Contracts management
+- Invoices management with PDF export
+- Payments management
+- Standing orders management
+- Shipping management
+- ECM (Electronic Content Management)
+- EMailings
+- Agenda with ical,vcal export for third tools integration
+- Management of foundation members
+- Donation management
+
+Other modules:
+- Bookmarks management
+- Can reports Dolibarr events inside Webcalendar or Phenix
+- Data export tools
+- LDAP connectivity
+- Third parties or products categories 
+- ClickToDial phone numbers
+- RSS
+
+Miscellanous:
+- Mutli-user, with several permissions levels for each feature.
+- Serveral menu managers (can be used by internal users, as a back-office,
+  with a particular menu, or by external users, as a front-office, with
+  another menu and permissions).
+- Very user friendly and easy to use.
+- Optional WYSIWYG forms, optional Ajax forms.
+- Several skins.
+- Code is highly customizable (a lot of use of modules and submodules).
+- Works with Mysql 3.1 or higher, experimental support for PostgreSql.
+- Works with PHP 4.3 or higher.
+- An easy to understand and maintain code (PHP with no heavy frameworks).
+- A trigger architecture to allow you to make Dolibarr business events run
+  PHP code to update your own information system.
+- "NPR VAT Rate" (French particularity for managing VAT in DOM-TOM 
+  called "Non Perçue Récupérable").
+
+
+
+V - WHAT DOLIBARR CAN'T DO YET (TODO LIST)
+------------------------------------------
+This is features that Dolibarr does not support completely yet:
+- Accountancy.
+- Dolibarr can manage only one currency.
+- Dolibarr does not support the double Canadian Tax.
+- Dolibarr does not make coffee (not yet).
+- Stock management with option increase/decrease on invoice works on
+  warehouse number one only (no way to choose warehouse).
+- Stock management with option increase/decrease on orders works on
+  warehouse number one only (no way to choose warehouse).

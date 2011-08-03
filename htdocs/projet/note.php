@@ -12,15 +12,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/projet/note.php
  *	\ingroup    project
  *	\brief      Fiche d'information sur un projet
- *	\version    $Id$
+ *	\version    $Id: note.php,v 1.13 2011/07/31 23:23:38 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -209,5 +208,5 @@ if ($id > 0 || ! empty($ref))
 }
 $db->close();
 
-llxFooter('$Date$ - $Revision: 1.15 ');
+llxFooter('$Date: 2011/07/31 23:23:38 $ - $Revision: 1.15 ');
 ?>

@@ -13,3 +13,7 @@ module_pibarcode-1.0.tgz
 version-phpsane.txt
 makepack-phpsane.conf
 html
+*.deb
+*.dsc
+*.tar.gz
+*.changes

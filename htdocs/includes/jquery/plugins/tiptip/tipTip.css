@@ -32,7 +32,6 @@
     border: 1px solid rgba(255,255,255,0.25);
     background-color: rgb(215,215,215);
     background-color: rgba(255,255,255,0.94);
-    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(transparent), to(#000));
     border-radius: 3px;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;

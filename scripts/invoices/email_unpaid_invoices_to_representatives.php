@@ -15,15 +15,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *      \file       scripts/invoices/email_unpaid_invoices_to_representatives.php
  *      \ingroup    facture
  *      \brief      Script to send a mail to dolibarr users linked to companies with unpaid invoices
- *		\version	$Id: email_unpaid_invoices_to_representatives.php,v 1.9 2011/07/09 14:11:41 eldy Exp $
+ *		\version	$Id: email_unpaid_invoices_to_representatives.php,v 1.10 2011/07/31 22:22:11 eldy Exp $
  */
 
 $sapi_type = php_sapi_name();

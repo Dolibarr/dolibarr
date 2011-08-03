@@ -26,7 +26,7 @@
  *  \file       htdocs/product/fiche.php
  *  \ingroup    product
  *  \brief      Page to show product
- *  \version    $Id$
+ *  \version    $Id: fiche.php,v 1.373 2011/07/29 20:47:35 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -294,6 +294,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->produit->
 		{
 			$product->ref = GETPOST('clone_ref');
 			$product->status = 0;
+			$product->status_buy = 0;
 			$product->finished = 1;
 			$product->id = null;
 
@@ -1645,6 +1646,6 @@ if ($product->id && $action == '' && $product->status)
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/29 20:47:35 $ - $Revision: 1.373 $');
 
 ?>

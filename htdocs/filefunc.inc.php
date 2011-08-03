@@ -28,7 +28,7 @@
  *	\file       htdocs/filefunc.inc.php
  * 	\ingroup	core
  *  \brief      File that include conf.php file and functions.lib.php
- *  \version    $Id: filefunc.inc.php,v 1.18 2011/07/13 21:19:58 eldy Exp $
+ *  \version    $Id: filefunc.inc.php,v 1.20 2011/07/30 10:23:24 eldy Exp $
  */
 
 define('DOL_VERSION','3.1.0-beta');	// Also defined in htdocs/install/inc.php (Ex: x.y.z-alpha, x.y.z)
@@ -61,8 +61,17 @@ error_reporting(E_ALL ^ E_NOTICE);
 //error_reporting(E_ALL);
 
 
+$conffiletoshowshort = "conf.php";
+# Define localization of conf file
+$conffile = "conf/conf.php";
+$conffiletoshow = "htdocs/conf/conf.php";
+# For debian like systems
+#$conffile = "/etc/dolibarr/conf.php";
+#$conffiletoshow = "/etc/dolibarr/conf.php";
+
+
 // Include configuration
-$result=@include_once("conf/conf.php");
+$result=@include_once($conffile);
 if (! $result && ! empty($_SERVER["GATEWAY_INTERFACE"]))    // If install not done and we are in a web session
 {
 	header("Location: install/index.php");
@@ -92,8 +101,8 @@ if (! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && ! empty($_SERVER
 }
 if (empty($dolibarr_main_db_host))
 {
-	print 'Dolibarr setup was run but was not completed.<br>'."\n";
-	print 'Please, click <a href="install/index.php">here to finish Dolibarr install process</a> ...'."\n";
+	print 'Dolibarr setup is not yet complete.<br><br>'."\n";
+	print '<a href="install/index.php">Click here to finish Dolibarr install process</a> ...'."\n";
 	die;
 }
 if (empty($dolibarr_main_url_root))

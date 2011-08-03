@@ -15,15 +15,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * or see http://www.gnu.org/
  */
 
 /**
  *	\file 		htdocs/lib/ldap.class.php
  *	\brief 		File of class to manage LDAP features
- *	\version 	$Id$
+ *	\version 	$Id: ldap.class.php,v 1.77 2011/07/31 23:25:43 eldy Exp $
  */
 
 /**

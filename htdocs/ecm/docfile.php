@@ -12,15 +12,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file      	htdocs/ecm/docfile.php
  *	\ingroup   	ecm
  *	\brief     	Card of a file for ECM module
- *	\version   	$Id$
+ *	\version   	$Id: docfile.php,v 1.19 2011/07/31 23:50:55 eldy Exp $
  *	\author		Laurent Destailleur
  */
 
@@ -285,5 +284,5 @@ if ($_GET["action"] != 'edit')
 // End of page
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/31 23:50:55 $ - $Revision: 1.19 $');
 ?>

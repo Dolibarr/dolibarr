@@ -17,7 +17,7 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- $Id$
+-- $Id: llx_commande_fournisseur.sql,v 1.7 2011/07/28 22:22:31 eldy Exp $
 -- ===================================================================
 
 create table llx_commande_fournisseur
@@ -54,7 +54,11 @@ create table llx_commande_fournisseur
   note                text,
   note_public         text,
   model_pdf           varchar(255),
-  fk_methode_commande integer default 0
+  
+  fk_cond_reglement   integer,                       -- condition de reglement
+  fk_mode_reglement   integer,                       -- mode de reglement
+  fk_methode_commande integer default 0,			 -- should be named fk_input_method
+  import_key          varchar(14)
 )ENGINE=innodb;
 
 -- 

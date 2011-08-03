@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,7 +21,7 @@
  *      \file       htdocs/imports/import.php
  *      \ingroup    import
  *      \brief      Pages of import Wizard
- *      \version    $Id: import.php,v 1.67 2011/07/04 11:33:23 eldy Exp $
+ *      \version    $Id: import.php,v 1.68 2011/07/29 22:31:37 eldy Exp $
  */
 
 require_once("../main.inc.php");
@@ -424,13 +424,13 @@ if ($step == 2 && $datatoimport)
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
 
+	print $langs->trans("ChooseFormatOfFileToImport",img_picto('','filenew')).'<br>';
 	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
 	$filetoimport='';
 	$var=true;
 
 	// Add format informations and link to download example
-	print '<tr><td colspan="4">'.$langs->trans("ChooseFormatOfFileToImport",img_picto('','filenew')).'</td></tr>';
 	print '<tr class="liste_titre"><td colspan="6">';
 	print $langs->trans("FileMustHaveOneOfFollowingFormat");
 	print '</td></tr>';
@@ -1669,7 +1669,7 @@ print '<br>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/04 11:33:23 $ - $Revision: 1.67 $');
+llxFooter('$Date: 2011/07/29 22:31:37 $ - $Revision: 1.68 $');
 
 
 /*

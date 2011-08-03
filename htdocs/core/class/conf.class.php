@@ -23,9 +23,9 @@
 /**
  *	\file       	htdocs/core/class/conf.class.php
  *	\ingroup		core
- *  \brief      	Fichier de la classe de stockage de la config courante
- *  \remarks		La config est stockee dans le fichier conf/conf.php
- *  \version    	$Id: conf.class.php,v 1.61 2011/07/13 18:04:25 eldy Exp $
+ *  \brief      	File of class to manage storage of current setup
+ *  				Config is stored into file conf.php
+ *  \version    	$Id: conf.class.php,v 1.62 2011/07/30 10:23:26 eldy Exp $
  */
 
 
