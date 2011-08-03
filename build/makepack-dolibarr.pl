@@ -2,7 +2,7 @@
 #----------------------------------------------------------------------------
 # \file         build/makepack-dolibarr.pl
 # \brief        Dolibarr package builder (tgz, zip, rpm, deb, exe, aps)
-# \version      $Id: makepack-dolibarr.pl,v 1.131 2011/08/03 01:43:26 eldy Exp $
+# \version      $Id: makepack-dolibarr.pl,v 1.130 2011/08/03 00:47:37 eldy Exp $
 # \author       (c)2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
 #----------------------------------------------------------------------------
 
@@ -48,7 +48,7 @@ if (-d "/usr/src/RPM") {
 
 
 use vars qw/ $REVISION $VERSION /;
-$REVISION='$Revision: 1.131 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
+$REVISION='$Revision: 1.130 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
 $VERSION="1.0 (build $REVISION)";
 
 
@@ -452,6 +452,7 @@ if ($nboftargetok) {
             $ret=`$cmd`;
 
  			print "Remove other files\n";
+            $ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/htdocs/includes/barcode/php-barcode/genbarcode/genbarcode`;
             $ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/README`;
             $ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/README-FR`;
             $ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/build/README`;
@@ -490,7 +491,7 @@ if ($nboftargetok) {
             $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/htdocs/includes/smarty`;
 
             $ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/COPYING`;
-            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/htdocs/includes/barcode/php-barcode/genbarcode`;
+            $ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/htdocs/includes/barcode/php-barcode/genbarcode/genbarcode`;
             # To remove once stable
             $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/htdocs/htdocs/theme/bureau2crea`;
 
@@ -687,7 +688,7 @@ if ($nboftargetok) {
 		    $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/includes/php_writeexcel/LICENSE`;
 		    $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/includes/tcpdf/LICENSE.TXT`;
             $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/COPYING`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/includes/barcode/php-barcode/genbarcode`;
+            $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/includes/barcode/php-barcode/genbarcode/genbarcode`;
             # To remove once stable
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/htdocs/theme/bureau2crea`;
 
