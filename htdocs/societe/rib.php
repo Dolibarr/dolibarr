@@ -15,14 +15,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
  *	    \file       htdocs/societe/rib.php
  *      \ingroup    societe
  *		\brief      BAN tab for companies
- *		\version    $Id: rib.php,v 1.37 2011/07/31 23:22:56 eldy Exp $
+ *		\version    $Id: rib.php,v 1.36 2011/07/29 20:47:34 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -271,5 +272,5 @@ if ($_GET["socid"] && $_GET["action"] == 'edit' && $user->rights->societe->creer
 $db->close();
 
 
-llxFooter('$Date: 2011/07/31 23:22:56 $ - $Revision: 1.37 $');
+llxFooter('$Date: 2011/07/29 20:47:34 $ - $Revision: 1.36 $');
 ?>
