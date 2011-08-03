@@ -44,7 +44,9 @@ Copyright: 2002-2009, Rodolphe Quiedeville   <rodolphe@quiedeville.org>
  On Debian systems, the full text of the GNU General Public
  License version 2 can be found in the file
  `/usr/share/common-licenses/GPL-2'.
- 
+ Full text of Lesser General Public Licence version 3 can be 
+ found in the file
+ `/usr/share/common-licenses/LGPL-3'.
  
 Files: htdocs/includes/artichow/*
 License: Public Domain
@@ -63,6 +65,9 @@ License: GPL-2+
 
 Files: htdocs/includes/jquery/*
 License: GPL-2+ or MIT
+
+Files: htdocs/includes/jquery/plugins/flot/*
+License: Public Domain
 
 Files: htdocs/includes/jsgantt/*
 License: GPL-2+
