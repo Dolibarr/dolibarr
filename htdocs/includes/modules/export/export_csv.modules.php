@@ -13,7 +13,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
  */
 
 /**
@@ -21,7 +20,7 @@
  *		\ingroup    export
  *		\brief      File of class to build exports with CSV format
  *		\author	    Laurent Destailleur
- *		\version    $Id: export_csv.modules.php,v 1.30 2011/07/31 23:28:18 eldy Exp $
+ *		\version    $Id: export_csv.modules.php,v 1.31 2011/08/03 01:38:53 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/export/modules_export.php");
@@ -65,7 +64,7 @@ class ExportCsv extends ModeleExports
 		$this->desc=$langs->trans("CSVFormatDesc",$this->separator,$this->enclosure,$this->escape);
 		$this->extension='csv';         // Extension for generated file by this driver
 		$this->picto='mime/other';		// Picto
-		$ver=explode(' ','$Revision: 1.30 $');
+		$ver=explode(' ','$Revision: 1.31 $');
 		$this->version=$ver[2];         // Driver version
 
 		// If driver use an external library, put its name here
