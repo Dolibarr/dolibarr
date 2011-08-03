@@ -6,10 +6,6 @@
 # edit it if you need to match your rules.
 # --------------------------------------------------------
 
-#%define is_mandrake %(test -e /etc/mandrake-release && echo 1 || echo 0)
-#%define is_suse %(test -e /etc/SuSE-release && echo 1 || echo 0)
-#%define is_fedora %(test -e /etc/fedora-release && echo 1 || echo 0)
-
 %define name dolibarr
 %define version	__VERSION__
 %define release __RELEASE__
@@ -23,23 +19,20 @@ Summary(fr): Logiciel ERP & CRM de gestion de PME/PMI, autoentrepreneurs ou asso
 Summary(it): Programmo gestionale per piccole imprese, fondazioni e liberi professionisti
 
 License: GPLv2+
-Packager: Laurent Destailleur (Eldy) <eldy@users.sourceforge.net>
+#Packager: Laurent Destailleur (Eldy) <eldy@users.sourceforge.net>
 Vendor: Dolibarr dev team
 
 URL: http://www.%{name}.org
-Source: /usr/src/RPM/SOURCES/%{name}-%{version}.tgz
+Source0: http://www.dolibarr.org/files/fedora/%{name}-%{version}.tgz
 BuildArch: noarch
 #BuildArchitectures: noarch
-BuildRoot: /tmp/%{name}-buildroot
+BuildRoot: %{_tmppath}/%{name}-%{version}-build
 #Icon: dolibarr_logo1.gif
 
 # For Mandriva-Mageia
 Group: Networking/WWW
 # For all other distrib
 Group: Applications/Internet
-
-# Requires can use lua to be defined dynamically (but still at build time) 
-# %{lua: if posix.access("/aaa") then print("Requires: bidon1 mysql-server mysql httpd php php-cli php-gd php-ldap php-imap php-mysql") end }
 
 # Requires for Fedora-Redhat
 Requires: mysql-server mysql httpd php php-cli php-gd php-ldap php-imap php-mysql 
@@ -74,7 +67,7 @@ que necesita y haciendo hincapié en su facilidad de uso.
 %description -l fr
 Logiciel ERP & CRM de gestion de PME/PMI, autoentrepreneurs, 
 artisans ou associations. Il permet de gérer vos clients, prospect, 
-fournisseurs, devis, factures, comptes bancaires, agenda, campagne emailings
+fournisseurs, devis, factures, comptes bancaires, agenda, campagnes mailings
 et bien d'autres choses dans une interface pensée pour la simplicité.
 
 %description -l it
@@ -107,11 +100,10 @@ echo Building %{name}-%{version}-%{release}
 %{__install} -m 644 etc/dolibarr/apache.conf $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr/apache.conf
 %{__install} -m 644 etc/dolibarr/file_contexts.dolibarr $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr/file_contexts.dolibarr
 
-# %{_datadir} = /usr/share
 %{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/pixmaps
 %{__install} -m 644 var/www/dolibarr/doc/images/dolibarr_48x48.png $RPM_BUILD_ROOT%{_datadir}/pixmaps/dolibarr.png
 %{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/applications
-%{__install} -m 644 var/www/dolibarr/build/rpm/dolibarr.desktop    $RPM_BUILD_ROOT%{_datadir}/applications/dolibarr.desktop
+%{__install} -m 644 var/www/dolibarr/build/rpm/dolibarr.desktop $RPM_BUILD_ROOT%{_datadir}/applications/dolibarr.desktop
 
 %{__mkdir} -p $RPM_BUILD_ROOT/var/www/dolibarr/build
 %{__mkdir} -p $RPM_BUILD_ROOT/var/www/dolibarr/doc
@@ -121,7 +113,7 @@ echo Building %{name}-%{version}-%{release}
 %{__cp} -pr var/www/dolibarr/doc     $RPM_BUILD_ROOT/var/www/dolibarr
 %{__cp} -pr var/www/dolibarr/htdocs  $RPM_BUILD_ROOT/var/www/dolibarr
 %{__cp} -pr var/www/dolibarr/scripts $RPM_BUILD_ROOT/var/www/dolibarr
-%{__install} -m 644 var/www/dolibarr/COPYRIGHT  $RPM_BUILD_ROOT/var/www/dolibarr/doc/COPYRIGHT
+%{__install} -m 644 var/www/dolibarr/COPYRIGHT $RPM_BUILD_ROOT/var/www/dolibarr/doc/COPYRIGHT
 
 
 #---- clean
@@ -150,8 +142,6 @@ echo Building %{name}-%{version}-%{release}
 
 #---- post (after unzip during install)
 %post
-#%update_menus	# Does not exists on fedora nor mandriva
-
 
 # Define vars
 # Dolibarr files are stored into /var/www
@@ -232,7 +222,7 @@ fi
 
 # Create config file for apache $apacheconfig
 #if [ ! -f $apacheconfig ]; then
-#  	 echo Create dolibarr web server config file $apacheconfig
+#     echo Create dolibarr web server config file $apacheconfig
 #     cp $apachefileorig $apacheconfig
 #     chmod a-x $apacheconfig
 #     chmod go-w $apacheconfig
@@ -240,13 +230,13 @@ fi
 
 # Create config file for se $seconfig
 if [ "x$os" = "xfedora-redhat" -a -s /sbin/restorecon -a ! -f $seconfig ]; then
-  	 echo Add SE Linux permission from file $sefileorig
-	 semanage fcontext -a -t httpd_sys_script_rw_t "/etc/dolibarr(/.*?)"
-	 semanage fcontext -a -t httpd_sys_script_rw_t "/usr/share/dolibarr(/.*?)"
-	 semanage fcontext -a -t httpd_sys_script_rw_t "/var/www/dolibarr/install.lock"
-     restorecon -R -v /etc/dolibarr
-     restorecon -R -v /usr/share/dolibarr
-     restorecon -v /var/www/dolibarr/install.lock
+    echo Add SE Linux permission from file $sefileorig
+    semanage fcontext -a -t httpd_sys_script_rw_t "/etc/dolibarr(/.*?)"
+    semanage fcontext -a -t httpd_sys_script_rw_t "/usr/share/dolibarr(/.*?)"
+    semanage fcontext -a -t httpd_sys_script_rw_t "/var/www/dolibarr/install.lock"
+    restorecon -R -v /etc/dolibarr
+    restorecon -R -v /usr/share/dolibarr
+    restorecon -v /var/www/dolibarr/install.lock
 fi
 
 # Create a config link dolibarr.conf
@@ -294,8 +284,6 @@ echo
 
 #---- postun (after uninstall)
 %postun
-#%clean_menus	# Does not exists on fedora nor mandriva
-
 
 # Define vars
 # Dolibarr files are stored into targetdir
