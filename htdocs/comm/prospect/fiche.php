@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/comm/prospect/fiche.php
  *	\ingroup    prospect
  *	\brief      Page de la fiche prospect
- *	\version    $Id$
+ *	\version    $Id: fiche.php,v 1.127 2011/08/03 00:46:27 eldy Exp $
  */
 
 require_once("../../main.inc.php");
@@ -338,5 +337,5 @@ if ($socid > 0)
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/03 00:46:27 $ - $Revision: 1.127 $');
 ?>
