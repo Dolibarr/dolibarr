@@ -21,7 +21,7 @@
  *   	\file       htdocs/admin/perms.php
  *      \ingroup    core
  *		\brief      Page d'administration/configuration des permissions par defaut
- *		\version    $Id: perms.php,v 1.42 2011/07/31 22:23:26 eldy Exp $
+ *		\version    $Id: perms.php,v 1.43 2011/08/01 12:53:37 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -76,10 +76,34 @@ $db->begin();
 
 // Charge les modules soumis a permissions
 $modules = array();
-foreach ($conf->file->dol_document_root as $dirroot)
-{
-	$dir = $dirroot . "/includes/modules/";
+$modulesdir = array();
 
+foreach ($conf->file->dol_document_root as $type => $dirroot)
+{
+	$modulesdir[] = $dirroot . "/includes/modules/";
+	
+	if ($type == 'alt')
+	{	
+		$handle=@opendir($dirroot);
+		if (is_resource($handle))
+		{
+			while (($file = readdir($handle))!==false)
+			{
+			    if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
+			    {
+			    	if (is_dir($dirroot . '/' . $file . '/includes/modules/'))
+			    	{
+			    		$modulesdir[] = $dirroot . '/' . $file . '/includes/modules/';
+			    	}
+			    }
+			}
+			closedir($handle);
+		}
+	}
+}
+
+foreach ($modulesdir as $dir)
+{
 	// Load modules attributes in arrays (name, numero, orders) from dir directory
 	//print $dir."\n<br>";
 	$handle=@opendir($dir);
@@ -194,5 +218,5 @@ print '</div>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:26 $ - $Revision: 1.42 $');
+llxFooter('$Date: 2011/08/01 12:53:37 $ - $Revision: 1.43 $');
 ?>
