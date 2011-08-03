@@ -14,3 +14,6 @@ version-phpsane.txt
 makepack-phpsane.conf
 html
 *.deb
+*.dsc
+*.tar.gz
+*.changes
