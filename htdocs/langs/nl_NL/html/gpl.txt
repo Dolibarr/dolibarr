@@ -312,7 +312,7 @@ Publieke Licentie voor meer details.
 U zou een kopie van de GNU Algemene Publieke Licentie ontvangen moeten
 hebben samen met dit Programma; indien dit niet zo is, schrijf naar
 de Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 Voeg ook informatie bij hoe men U kan contacteren via e-mail en gewone post.
 Als het Programma interactief is, laat het een korte boodschap tonen zoals

@@ -12,18 +12,15 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program; if not, write to the Free Software
--- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+-- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- $Id$
+-- $Id: llx_osc_order.sql,v 1.1 2011/08/03 01:03:46 eldy Exp $
 -- ===================================================================
 
-CREATE TABLE llx_osc_product (
+CREATE TABLE llx_osc_order (
   rowid int(11) NOT NULL default '0',
   datem datetime default NULL,
-  fk_product int(11) NOT NULL default '0',
+  fk_commande int(11) NOT NULL default '0',
   PRIMARY KEY  (rowid),
-  UNIQUE KEY fk_product (fk_product)
-) TYPE=InnoDB COMMENT='Table transition produit OSC - produit Dolibarr';
-
-
+  UNIQUE KEY fk_commande (fk_commande)
+) TYPE=InnoDB COMMENT='Table transition commande OSC - commande Dolibarr';

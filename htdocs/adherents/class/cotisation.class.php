@@ -13,15 +13,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *		\file 		htdocs/adherents/class/cotisation.class.php
  *      \ingroup    member
  *		\brief      File of class to manage subscriptions of foundation members
- *		\version    $Id$
+ *		\version    $Id: cotisation.class.php,v 1.9 2011/08/03 00:45:44 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
