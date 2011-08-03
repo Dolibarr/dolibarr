@@ -1,6 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
--- Copyright (C) 2005 Marc Barilley / Océbo <marc@ocebo.com>
+-- Copyright (C) 2005 Marc Barilley / Ocï¿½bo <marc@ocebo.com>
 -- Copyright (C) 2005 Laurent Destailleur   <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -14,10 +14,9 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program; if not, write to the Free Software
--- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+-- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- $Id$
+-- $Id: llx_paiementfourn_facturefourn.key.sql,v 1.2 2011/08/03 01:25:31 eldy Exp $
 -- ===========================================================================
 
 ALTER TABLE llx_paiementfourn_facturefourn ADD INDEX idx_paiementfourn_facturefourn_fk_facture(fk_facturefourn);
