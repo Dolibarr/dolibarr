@@ -23,7 +23,7 @@
  *	\file       htdocs/install/check.php
  *	\ingroup    install
  *	\brief      Test if file conf can be modified and if does not exists, test if install process can create it
- *	\version    $Id: check.php,v 1.85 2011/07/30 10:23:25 eldy Exp $
+ *	\version    $Id: check.php,v 1.86 2011/07/30 14:56:43 eldy Exp $
  */
 include_once("./inc.php");
 
@@ -39,7 +39,9 @@ $langs->load("install");
 
 // Init "forced values" to nothing. "forced values" are used after an doliwamp install wizard.
 if (! isset($force_install_dolibarrlogin))     $force_install_dolibarrlogin='';
-if (file_exists("./install.forced.php")) include_once("./install.forced.php");
+$useforcedwizard=false;
+if (file_exists("./install.forced.php")) { $useforcedwizard=true; include_once("./install.forced.php"); }
+else if (file_exists("/etc/dolibarr/install.forced.php")) { $useforcedwizard=include_once("/etc/dolibarr/install.forced.php"); }
 
 dolibarr_install_syslog("Dolibarr install/upgrade process started");
 
