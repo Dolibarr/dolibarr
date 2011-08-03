@@ -1,7 +1,7 @@
 <?php
 
 /*
-$Id$
+$Id: class.nusoap_base.php,v 1.7 2011/08/03 16:46:46 eldy Exp $
 
 NuSOAP - Web Services Toolkit for PHP
 
@@ -18,8 +18,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 Lesser General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 The NuSOAP project home is:
 http://sourceforge.net/projects/nusoap/
@@ -79,7 +78,7 @@ $GLOBALS['_transient']['static']['nusoap_base']['globalDebugLevel'] = 9;
 *
 * @author   Dietrich Ayala <dietrich@ganx4.com>
 * @author   Scott Nichol <snichol@users.sourceforge.net>
-* @version  $Id$
+* @version  $Id: class.nusoap_base.php,v 1.7 2011/08/03 16:46:46 eldy Exp $
 * @access   public
 */
 class nusoap_base {
@@ -103,7 +102,7 @@ class nusoap_base {
 	 * @var string
 	 * @access private
 	 */
-	var $revision = '$Revision$';
+	var $revision = '$Revision: 1.7 $';
     /**
      * Current error string (manipulated by getError/setError)
 	 *
@@ -141,7 +140,7 @@ class nusoap_base {
 	* @access   public
 	*/
 	var $XMLSchemaVersion = 'http://www.w3.org/2001/XMLSchema';
-	
+
     /**
 	* charset encoding for outgoing messages
 	*
@@ -408,7 +407,7 @@ class nusoap_base {
 		$this->debug("in serialize_val: name=$name, type=$type, name_ns=$name_ns, type_ns=$type_ns, use=$use, soapval=$soapval");
 		$this->appendDebug('value=' . $this->varDump($val));
 		$this->appendDebug('attributes=' . $this->varDump($attributes));
-		
+
     	if (is_object($val) && get_class($val) == 'soapval' && (! $soapval)) {
     		$this->debug("serialize_val: serialize soapval");
         	$xml = $val->serialize($use);
@@ -982,7 +981,7 @@ function iso8601_to_timestamp($datestr){
 function usleepWindows($usec)
 {
 	$start = gettimeofday();
-	
+
 	do
 	{
 		$stop = gettimeofday();
