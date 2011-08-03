@@ -20,9 +20,8 @@ la GPL.
  -Licence Publique Générale GNU Version 2, Juin 1991-
 
 Copyright (c) Free Software Foundation, Inc.
-59 Temple Place, Suite 330,
-Boston, MA 02111-1307
-Etats-Unis, 1989, 1991.
+51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
 La copie et la distribution de copies exactes de ce document sont
 autorisées, mais aucune modification n'est permise.
 
