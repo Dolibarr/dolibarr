@@ -101,17 +101,19 @@ echo Building %{name}-%{version}-%{release}
 %{__install} -m 644 etc/dolibarr/file_contexts.dolibarr $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr/file_contexts.dolibarr
 
 %{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/pixmaps
-%{__install} -m 644 var/www/dolibarr/doc/images/dolibarr_48x48.png $RPM_BUILD_ROOT%{_datadir}/pixmaps/dolibarr.png
+%{__install} -m 644 usr/share/dolibarr/doc/images/dolibarr_48x48.png $RPM_BUILD_ROOT%{_datadir}/pixmaps/dolibarr.png
 %{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/applications
-%{__install} -m 644 var/www/dolibarr/build/rpm/dolibarr.desktop $RPM_BUILD_ROOT%{_datadir}/applications/dolibarr.desktop
+%{__install} -m 644 usr/share/dolibarr/build/rpm/dolibarr.desktop $RPM_BUILD_ROOT%{_datadir}/applications/dolibarr.desktop
 
-%{__mkdir} -p $RPM_BUILD_ROOT/var/www/dolibarr/htdocs
-%{__mkdir} -p $RPM_BUILD_ROOT/var/www/dolibarr/scripts
+%{__mkdir} -p $RPM_BUILD_ROOT/usr/share/dolibarr/build
+%{__mkdir} -p $RPM_BUILD_ROOT/usr/share/dolibarr/htdocs
+%{__mkdir} -p $RPM_BUILD_ROOT/usr/share/dolibarr/scripts
 %{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/doc/dolibarr
-%{__cp} -pr var/www/dolibarr/htdocs  $RPM_BUILD_ROOT/var/www/dolibarr
-%{__cp} -pr var/www/dolibarr/scripts $RPM_BUILD_ROOT/var/www/dolibarr
-%{__cp} -pr var/www/dolibarr/doc/*   $RPM_BUILD_ROOT%{_datadir}/doc/dolibarr
-%{__install} -m 644 var/www/dolibarr/COPYRIGHT $RPM_BUILD_ROOT%{_datadir}/doc/dolibarr/COPYRIGHT
+%{__cp} -pr usr/share/dolibarr/build   $RPM_BUILD_ROOT/usr/share/dolibarr
+%{__cp} -pr usr/share/dolibarr/htdocs  $RPM_BUILD_ROOT/usr/share/dolibarr
+%{__cp} -pr usr/share/dolibarr/scripts $RPM_BUILD_ROOT/usr/share/dolibarr
+%{__cp} -pr usr/share/dolibarr/doc/*   $RPM_BUILD_ROOT%{_datadir}/doc/dolibarr
+%{__install} -m 644 usr/share/dolibarr/COPYRIGHT $RPM_BUILD_ROOT%{_datadir}/doc/dolibarr/COPYRIGHT
 
 
 #---- clean
@@ -124,12 +126,14 @@ echo Building %{name}-%{version}-%{release}
 
 %defattr(-,root,root)
 %doc %{_datadir}/doc/dolibarr/*
-%dir /var/www/dolibarr/htdocs
-%dir /var/www/dolibarr/scripts
+%dir /usr/share/dolibarr/build
+%dir /usr/share/dolibarr/htdocs
+%dir /usr/share/dolibarr/scripts
 %_datadir/pixmaps/dolibarr.png
 %_datadir/applications/%{name}.desktop
-/var/www/dolibarr/htdocs/*
-/var/www/dolibarr/scripts/*
+/usr/share/dolibarr/build/*
+/usr/share/dolibarr/htdocs/*
+/usr/share/dolibarr/scripts/*
 
 %defattr(0664, -, -, 0755)
 %config(noreplace) %{_sysconfdir}/dolibarr/apache.conf
@@ -140,17 +144,14 @@ echo Building %{name}-%{version}-%{release}
 %post
 
 # Define vars
-# Dolibarr files are stored into /var/www
-export targetdir='/var/www/dolibarr'
+# Dolibarr files are stored into /usr/share
+export targetdir='/usr/share/dolibarr'
 # Dolibarr uploaded files and generated documents will be stored into docdir 
-#export docdir="/var/lib/dolibarr/documents"
-export docdir="/usr/share/dolibarr/documents"
+export docdir="/var/lib/dolibarr/documents"
 export installfileorig="$targetdir/build/rpm/install.forced.php.install"
 export installconfig="%{_sysconfdir}/dolibarr/install.forced.php"
 export apachefileorig="$targetdir/build/rpm/httpd-dolibarr.conf"
 export apacheconfig="%{_sysconfdir}/dolibarr/apache.conf"
-export sefileorig="%{_sysconfdir}/dolibarr/file_contexts.dolibarr"
-export seconfig="%{_sysconfdir}/selinux/targeted/contexts/files/file_contexts.dolibarr"
 #export config="/usr/share/dolibarr/htdocs/conf/conf.php"
 export config="%{_sysconfdir}/dolibarr/conf.php"
 export lockfile="/usr/share/dolibarr/install.lock"
@@ -216,23 +217,18 @@ then
     %{__chmod} -R 660 $config
 fi
 
-# Create config file for apache $apacheconfig
-#if [ ! -f $apacheconfig ]; then
-#     echo Create dolibarr web server config file $apacheconfig
-#     cp $apachefileorig $apacheconfig
-#     chmod a-x $apacheconfig
-#     chmod go-w $apacheconfig
-#fi
-
 # Create config file for se $seconfig
-if [ "x$os" = "xfedora-redhat" -a -s /sbin/restorecon -a ! -f $seconfig ]; then
-    echo Add SE Linux permission from file $sefileorig
+if [ "x$os" = "xfedora-redhat" -a -s /sbin/restorecon ]; then
+    echo Add SE Linux permissions for dolibarr
+    # semanage add records into /etc/selinux/targeted/contexts/files/file_contexts.local
     semanage fcontext -a -t httpd_sys_script_rw_t "/etc/dolibarr(/.*?)"
-    semanage fcontext -a -t httpd_sys_script_rw_t "/usr/share/dolibarr(/.*?)"
-    semanage fcontext -a -t httpd_sys_script_rw_t "/var/www/dolibarr/install.lock"
+    #semanage fcontext -a -t httpd_sys_script_rw_t "/usr/share/dolibarr(/.*?)"
+    semanage fcontext -a -t httpd_sys_script_rw_t "/usr/share/dolibarr/install.lock"
+    semanage fcontext -a -t httpd_sys_script_rw_t "/var/lib/dolibarr(/.*?)"
     restorecon -R -v /etc/dolibarr
-    restorecon -R -v /usr/share/dolibarr
-    restorecon -v /var/www/dolibarr/install.lock
+    #restorecon -R -v /usr/share/dolibarr
+    restorecon -v /usr/share/dolibarr/install.lock
+    restorecon -R -v /var/lib/dolibarr
 fi
 
 # Create a config link dolibarr.conf
@@ -247,9 +243,9 @@ echo Set permission to $apacheuser:$apachegroup on $targetdir
 %{__chmod} -R a-w $targetdir
 %{__chmod} u+w $targetdir
 
-echo Set permission to $apacheuser:$apachegroup on $docdir
-%{__chown} -R $apacheuser:$apachegroup $docdir
-%{__chmod} -R o-w $docdir
+echo Set permission to $apacheuser:$apachegroup on /var/lib/dolibarr
+%{__chown} -R $apacheuser:$apachegroup /var/lib/dolibarr
+%{__chmod} -R o-w /var/lib/dolibarr
 
 # Restart web server
 echo Restart web server
@@ -269,7 +265,7 @@ fi
 # Show result
 echo
 echo "----- Dolibarr %version - (c) Dolibarr dev team -----"
-echo "Dolibarr files are now installed (into /var/www/dolibarr)."
+echo "Dolibarr files are now installed (into /usr/share/dolibarr)."
 echo "To finish installation and use Dolibarr, click on ne menu" 
 echo "entry Dolibarr ERP-CRM or call the following page from your"
 echo "web browser:"  
@@ -283,10 +279,9 @@ echo
 
 # Define vars
 # Dolibarr files are stored into targetdir
-export targetdir='/var/www/dolibarr'
+export targetdir='/usr/share/dolibarr'
 # Dolibarr uploaded files and generated documents will be stored into docdir 
-#export docdir="/var/lib/dolibarr/documents"
-export docdir="/usr/share/dolibarr/documents"
+export docdir="/var/lib/dolibarr/documents"
 export installfileorig="$targetdir/build/rpm/install.forced.php.install"
 export installconfig="%{_sysconfdir}/dolibarr/install.forced.php"
 export apachefileorig="$targetdir/build/rpm/httpd-dolibarr.conf"
@@ -352,8 +347,6 @@ echo Removed remaining $installconfig
 %{__rm} -f $installconfig
 echo Removed remaining $lockfile
 %{__rm} -f $lockfile
-echo Removed remaining dir $targetdir/doc
-rmdir $targetdir/doc >/dev/null 2>&1
 
 
 %changelog
