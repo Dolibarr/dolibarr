@@ -35,3 +35,4 @@ CashDeskSetupStock=La configuración decrementa el stock en la creación de fact
 BankToPay=Cuenta de cobro
 ShowCompany=Ver empresa
 ShowStock=Ver almacén
+DeleteArticle=Haga clic para quitar este artículo

@@ -35,3 +35,4 @@ CashDeskSetupStock=La configuració decrementa l'estoc en la creació de facture
 BankToPay=Compte de cobrament
 ShowCompany=Veure empresa
 ShowStock=Veure magatzem
+DeleteArticle=Feu clic per treure aquest article
