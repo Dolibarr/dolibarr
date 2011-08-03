@@ -2,7 +2,7 @@
 #----------------------------------------------------------------------------
 # \file         build/makepack-dolibarr.pl
 # \brief        Dolibarr package builder (tgz, zip, rpm, deb, exe, aps)
-# \version      $Id: makepack-dolibarr.pl,v 1.131 2011/08/03 01:43:26 eldy Exp $
+# \version      $Id: makepack-dolibarr.pl,v 1.132 2011/08/03 20:00:00 eldy Exp $
 # \author       (c)2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
 #----------------------------------------------------------------------------
 
@@ -48,7 +48,7 @@ if (-d "/usr/src/RPM") {
 
 
 use vars qw/ $REVISION $VERSION /;
-$REVISION='$Revision: 1.131 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
+$REVISION='$Revision: 1.132 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
 $VERSION="1.0 (build $REVISION)";
 
 
@@ -280,9 +280,10 @@ if ($nboftargetok) {
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/install/mysql/README`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/install/pgsql/README`;
 
+        $ret=`rm -fr $BUILDROOT/$PROJECT/dev/iso-normes`;
+        $ret=`rm -fr $BUILDROOT/$PROJECT/dev/licence`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/test`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/spec`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/dev/licence`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/uml`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/xdebug`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/doc/images/dolibarr_screenshot2.png`;
@@ -452,6 +453,10 @@ if ($nboftargetok) {
             $ret=`$cmd`;
 
  			print "Remove other files\n";
+            $ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/ChangeLog`;
+            $ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/COPYING`;
+            #$ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/COPYRIGHT`;
+            $ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/INSTALL`;
             $ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/README`;
             $ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/README-FR`;
             $ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/build/README`;
@@ -487,6 +492,8 @@ if ($nboftargetok) {
             $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/htdocs/includes/nusoap/lib/Mail`;
             $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/htdocs/includes/odtphp/zip/.svn`;
             $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/htdocs/includes/odtphp/zip/pclzip/.svn`;
+            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/htdocs/includes/odtphp/zip/pclzip/gnu-lgpl.txt`;
+            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/htdocs/includes/php_writeexcel/LICENSE`;
             $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/htdocs/includes/smarty`;
 
             $ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/COPYING`;
@@ -624,6 +631,8 @@ if ($nboftargetok) {
             print "Version set to $MAJOR.$MINOR.$newbuild\n";
             
  			print "Remove other files\n";
+            $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/ChangeLog`;
+            $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/COPYING`;
             $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/COPYRIGHT`;
             $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/INSTALL`;
             $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/README`;
@@ -686,7 +695,6 @@ if ($nboftargetok) {
 		    $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/includes/jquery/plugins/flot/LICENSE.txt`;
 		    $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/includes/php_writeexcel/LICENSE`;
 		    $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/includes/tcpdf/LICENSE.TXT`;
-            $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/COPYING`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/includes/barcode/php-barcode/genbarcode`;
             # To remove once stable
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/htdocs/theme/bureau2crea`;
@@ -714,6 +722,9 @@ if ($nboftargetok) {
             print "Create directory $BUILDROOT/$PROJECT.tmp/usr/share/doc/$PROJECT\n";
             $ret=`mkdir -p "$BUILDROOT/$PROJECT.tmp/usr/share/doc/$PROJECT"`;
             
+            # changelog (to build binary package directly without sources. Useless if we build from sources)
+            $ret=`gzip -9 -c "$SOURCE/build/deb/changelog" > $BUILDROOT/$PROJECT.tmp/usr/share/doc/$PROJECT/changelog.gz`;
+
 			# Set owners
             print "Set owners on files/dir\n";
 		    $ret=`chown -R root.root $BUILDROOT/$PROJECT.tmp`;
