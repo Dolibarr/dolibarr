@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file 		htdocs/adherents/cartes/carte.php
  *	\ingroup    member
  *	\brief      Page to output members business cards
- *	\version    $Id$
+ *	\version    $Id: carte.php,v 1.42 2011/08/03 00:45:46 eldy Exp $
  */
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
@@ -88,7 +87,7 @@ if ((empty($foruserid) && empty($foruserlogin) && empty($mode)) || $mesg)
     print '</form>';
     print '<br>';
 
-    llxFooter('$Date$ - $Revision$');
+    llxFooter('$Date: 2011/08/03 00:45:46 $ - $Revision: 1.42 $');
 }
 else
 {
@@ -211,7 +210,7 @@ else
     {
     	dol_print_error($db);
 
-    	llxFooter('$Date$ - $Revision$');
+    	llxFooter('$Date: 2011/08/03 00:45:46 $ - $Revision: 1.42 $');
     }
 }
 

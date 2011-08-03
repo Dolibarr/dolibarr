@@ -22,12 +22,13 @@ with format .DEB (for Debian, Ubuntu, ...).
 # lintian --pedantic -E -I package.deb   To test a package   
 #
 # dpkg -l                                List all packages
-# dpkg -b                                To build package
+# dpkg -b                                To build binary only package
 # dpkg -c package.deb                    List content of package
 # dpkg -I package.deb                    Give informations on package
 # dpkg -i package.deb                    Install a package
-#
+# dpkg-reconfigure -plow package		 Reconfigure package
 # dpkg -L packagename                    List content of installed package 
+# dpkg -r packagename                    Remove config files and interactive saved answers
 # dpkg --purge                           Remove config files and interactive saved answers
 #
 # dpkg-buildpackage -us -uc              Build a source and binary package
@@ -49,5 +50,5 @@ For first ITP submission of Dolibarr, bug id was 634783.
 - Call for a mentor on ML debian-mentors to upload packages
 
 - Once package is uploaded, following URL are available:
-http://packages.qa.debian.org/package
+http://packages.qa.debian.org/package.html
 http://bugs.debian.org/package
