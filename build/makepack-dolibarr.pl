@@ -2,7 +2,7 @@
 #----------------------------------------------------------------------------
 # \file         build/makepack-dolibarr.pl
 # \brief        Dolibarr package builder (tgz, zip, rpm, deb, exe, aps)
-# \version      $Id: makepack-dolibarr.pl,v 1.132 2011/08/03 20:00:00 eldy Exp $
+# \version      $Id: makepack-dolibarr.pl,v 1.133 2011/08/03 21:46:02 eldy Exp $
 # \author       (c)2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
 #----------------------------------------------------------------------------
 
@@ -48,7 +48,7 @@ if (-d "/usr/src/RPM") {
 
 
 use vars qw/ $REVISION $VERSION /;
-$REVISION='$Revision: 1.132 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
+$REVISION='$Revision: 1.133 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
 $VERSION="1.0 (build $REVISION)";
 
 
@@ -446,60 +446,60 @@ if ($nboftargetok) {
 
             #rmdir "$BUILDROOT/$FILENAMETGZ2";
     		$ret=`rm -fr $BUILDROOT/$FILENAMETGZ2`;
-    		print "Create directory $BUILDROOT/$FILENAMETGZ2/var/www\n";
-    		$ret=`mkdir -p "$BUILDROOT/$FILENAMETGZ2/var/www"`;
-            print "Copy $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT\n";
-    		$cmd="cp -pr \"$BUILDROOT/$PROJECT\" \"$BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT\"";
+    		print "Create directory $BUILDROOT/$FILENAMETGZ2/usr/share\n";
+    		$ret=`mkdir -p "$BUILDROOT/$FILENAMETGZ2/usr/share"`;
+            print "Copy $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT\n";
+    		$cmd="cp -pr \"$BUILDROOT/$PROJECT\" \"$BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT\"";
             $ret=`$cmd`;
 
  			print "Remove other files\n";
-            $ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/ChangeLog`;
-            $ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/COPYING`;
-            #$ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/COPYRIGHT`;
-            $ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/INSTALL`;
-            $ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/README`;
-            $ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/README-FR`;
-            $ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/build/README`;
-            $ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/build/README-FR`;
-            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/build/aps`;
-            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/build/deb`;
-            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/build/dmg`;
-            $ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/build/pad/README`;
-            $ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/build/tgz/README`;
-            $ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/build/deb/README`;
-            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/build/doap`;
-            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/build/exe`;
-            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/build/live`;
-            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/build/patch`;
-            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/build/zip`;
-            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/build/perl`;
-		    $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/dev/dbmodel`;
-		    $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/dev/fpdf`;
-		    $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/dev/initdata`;
-		    $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/dev/iso-normes`;
-		    $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/dev/phpcheckstyle`;
-		    $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/dev/phpunit`;
-		    $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/doc/flyer`;
-		    $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/doc/font`;
-		    $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/doc/tshirt`;
-		    $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/doc/rollup`;
-		    $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/test`;
-            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/htdocs/cashdesk/include/jscalendar/doc/html/CVS`;
-            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/htdocs/cashdesk/include/jscalendar/skins/aqua/CVS`;
-            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/htdocs/includes/ckeditor/plugins/*/dialogs/CVS`;
-            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/htdocs/includes/ckeditor/plugins/*/images/CVS`;
-            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/htdocs/includes/fpdf/fpdf`;
-            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/htdocs/includes/nusoap/lib/Mail`;
-            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/htdocs/includes/odtphp/zip/.svn`;
-            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/htdocs/includes/odtphp/zip/pclzip/.svn`;
-            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/htdocs/includes/odtphp/zip/pclzip/gnu-lgpl.txt`;
-            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/htdocs/includes/php_writeexcel/LICENSE`;
-            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/htdocs/includes/smarty`;
+            $ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/ChangeLog`;
+            $ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/COPYING`;
+            #$ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/COPYRIGHT`;
+            $ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/INSTALL`;
+            $ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/README`;
+            $ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/README-FR`;
+            $ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/build/README`;
+            $ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/build/README-FR`;
+            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/build/aps`;
+            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/build/deb`;
+            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/build/dmg`;
+            $ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/build/pad/README`;
+            $ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/build/tgz/README`;
+            $ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/build/deb/README`;
+            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/build/doap`;
+            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/build/exe`;
+            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/build/live`;
+            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/build/patch`;
+            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/build/zip`;
+            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/build/perl`;
+		    $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/dev/dbmodel`;
+		    $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/dev/fpdf`;
+		    $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/dev/initdata`;
+		    $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/dev/iso-normes`;
+		    $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/dev/phpcheckstyle`;
+		    $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/dev/phpunit`;
+		    $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/doc/flyer`;
+		    $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/doc/font`;
+		    $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/doc/tshirt`;
+		    $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/doc/rollup`;
+		    $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/test`;
+            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/htdocs/cashdesk/include/jscalendar/doc/html/CVS`;
+            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/htdocs/cashdesk/include/jscalendar/skins/aqua/CVS`;
+            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/htdocs/includes/ckeditor/plugins/*/dialogs/CVS`;
+            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/htdocs/includes/ckeditor/plugins/*/images/CVS`;
+            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/htdocs/includes/fpdf/fpdf`;
+            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/htdocs/includes/nusoap/lib/Mail`;
+            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/htdocs/includes/odtphp/zip/.svn`;
+            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/htdocs/includes/odtphp/zip/pclzip/.svn`;
+            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/htdocs/includes/odtphp/zip/pclzip/gnu-lgpl.txt`;
+            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/htdocs/includes/php_writeexcel/LICENSE`;
+            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/htdocs/includes/smarty`;
 
-            $ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/COPYING`;
-            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/htdocs/includes/barcode/php-barcode/genbarcode`;
+            $ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/COPYING`;
+            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/htdocs/includes/barcode/php-barcode/genbarcode`;
             # To remove once stable
-            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/htdocs/htdocs/theme/bureau2crea`;
+            $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/htdocs/htdocs/theme/bureau2crea`;
 
 			# Apache conf files
     		print "Copy apache.conf file into $BUILDROOT/$FILENAMETGZ2/etc/$PROJECT/httpd-dolibarr.conf\n";
@@ -530,21 +530,21 @@ if ($nboftargetok) {
 		    $ret=`chmod -R 755 $BUILDROOT/$FILENAMETGZ2`;
 		    $cmd="find $BUILDROOT/$FILENAMETGZ2 -type f -exec chmod 644 {} \\; ";
             $ret=`$cmd`;
-            $cmd="find $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/build -name '*.php' -type f -exec chmod 755 {} \\; ";
+            $cmd="find $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/build -name '*.php' -type f -exec chmod 755 {} \\; ";
             $ret=`$cmd`;
-            $cmd="find $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/build -name '*.pl' -type f -exec chmod 755 {} \\; ";
+            $cmd="find $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/build -name '*.pl' -type f -exec chmod 755 {} \\; ";
             $ret=`$cmd`;
-            $cmd="find $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/dev -name '*.php' -type f -exec chmod 755 {} \\; ";
+            $cmd="find $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/dev -name '*.php' -type f -exec chmod 755 {} \\; ";
             $ret=`$cmd`;
-            $ret=`chmod -R 644 $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/dev/translation/langAutoParser.class.php`;
-            $ret=`chmod -R 644 $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/dev/skeletons/skeleton_page.php`;
-            $ret=`chmod -R 644 $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/dev/skeletons/modMyModule.class.php`;
-            $ret=`chmod -R 644 $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/dev/skeletons/skeleton_class.class.php`;
-            $cmd="find $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/scripts -name '*.php' -type f -exec chmod 755 {} \\; ";
+            $ret=`chmod -R 644 $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/dev/translation/langAutoParser.class.php`;
+            $ret=`chmod -R 644 $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/dev/skeletons/skeleton_page.php`;
+            $ret=`chmod -R 644 $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/dev/skeletons/modMyModule.class.php`;
+            $ret=`chmod -R 644 $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/dev/skeletons/skeleton_class.class.php`;
+            $cmd="find $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/scripts -name '*.php' -type f -exec chmod 755 {} \\; ";
             $ret=`$cmd`;
-            $cmd="find $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/htdocs/includes/geoip -name 'sample*.php' -type f -exec chmod 755 {} \\; ";
+            $cmd="find $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/htdocs/includes/geoip -name 'sample*.php' -type f -exec chmod 755 {} \\; ";
             $ret=`$cmd`;
-            $cmd="find $BUILDROOT/$FILENAMETGZ2/var/www/$PROJECT/htdocs/includes/fckeditor/editor/dialog/fck_spellerpages/spellerpages/server-scripts -name '*.pl' -type f -exec chmod 755 {} \\; ";
+            $cmd="find $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/htdocs/includes/fckeditor/editor/dialog/fck_spellerpages/spellerpages/server-scripts -name '*.pl' -type f -exec chmod 755 {} \\; ";
             $ret=`$cmd`;
 
 			# Build tgz
