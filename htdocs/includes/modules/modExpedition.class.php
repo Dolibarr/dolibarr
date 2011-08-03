@@ -15,7 +15,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
@@ -32,7 +33,7 @@
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
-/**
+/** 
  * 	\class modExpedition
  *	\brief      Classe de description et activation du module Expedition
  */
@@ -106,7 +107,7 @@ class modExpedition extends DolibarrModules
 		$this->const[$r][3] = 'Nom du gestionnaire de numerotation des bons de reception';
 		$this->const[$r][4] = 0;
 		$r++;
-
+		
 		$this->const[$r][0] = "EXPEDITION_ADDON_NUMBER";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "mod_expedition_safor";
@@ -142,7 +143,7 @@ class modExpedition extends DolibarrModules
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'valider';
-
+		
 		$r++;
 		$this->rights[$r][0] = 105; // id de la permission
 		$this->rights[$r][1] = 'Envoyer les expeditions aux clients'; // libelle de la permission
