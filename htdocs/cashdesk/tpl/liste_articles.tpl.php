@@ -11,7 +11,7 @@ require_once(DOL_DOCUMENT_ROOT.'/product/class/product.class.php');
 ?>
 
 <!--Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
-
+	Copyright (C) 2011		Juanjo Menent 	 <jmenent@2byte.es>
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
@@ -82,7 +82,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 		for($i=0;$i < $tab_size;$i++) {
 
 			echo ('<div class="cadre_article">'."\n");
-				echo ('<p><a href="facturation_verif.php?action=suppr_article&suppr_id='.$tab[$i]['id'].'" title="Cliquez pour enlever cet article">'.$tab[$i]['ref'].' - '.$tab[$i]['label'].'</a></p>'."\n");
+				echo ('<p><a href="facturation_verif.php?action=suppr_article&suppr_id='.$tab[$i]['id'].'" title="'.$langs->trans("DeleteArticle").'">'.$tab[$i]['ref'].' - '.$tab[$i]['label'].'</a></p>'."\n");
 
 				if ( $tab[$i]['remise_percent'] > 0 ) {
 

@@ -5,33 +5,34 @@
 # file to build a package for your own distributions and 
 # edit it if you need to match your rules.
 # --------------------------------------------------------
+
 %define name dolibarr
-%define version	__VERSION__
+%define version __VERSION__
 %define release __RELEASE__
 
 Name: %{name}
 Version: %{version}
 Release: %{release}
-Summary: Dolibarr
+Summary: ERP and CRM software for small and medium companies or foundations 
+Summary(es): Software ERP y CRM para pequeñas y medianas empresas o, asociaciones o autónomos
+Summary(fr): Logiciel ERP & CRM de gestion de PME/PMI, autoentrepreneurs ou associations
+Summary(it): Programmo gestionale per piccole imprese, fondazioni e liberi professionisti
 
-License: GPL
-Packager: Laurent Destailleur (Eldy) <eldy@users.sourceforge.net>
+License: GPLv2+
+#Packager: Laurent Destailleur (Eldy) <eldy@users.sourceforge.net>
 Vendor: Dolibarr dev team
 
 URL: http://www.%{name}.org
-Source: /usr/src/RPM/SOURCES/%{name}-%{version}.tgz
+Source0: http://www.dolibarr.org/files/fedora/%{name}-%{version}.tgz
 BuildArch: noarch
 #BuildArchitectures: noarch
-BuildRoot: /tmp/%{name}-buildroot
+BuildRoot: %{_tmppath}/%{name}-%{version}-build
 #Icon: dolibarr_logo1.gif
 
 # For Mandriva-Mageia
 Group: Networking/WWW
 # For all other distrib
 Group: Applications/Internet
-
-# Requires can use lua to be defined dynamically (but still at build time) 
-# %{lua: if posix.access("/aaa") then print("Requires: bidon1 mysql-server mysql httpd php php-cli php-gd php-ldap php-imap php-mysql") end }
 
 # Requires for Fedora-Redhat
 Requires: mysql-server mysql httpd php php-cli php-gd php-ldap php-imap php-mysql 
@@ -56,27 +57,26 @@ Dolibarr was designed to provide only features you need and be easy to
 use.
 
 %description -l es
-Un software ERP y CRM open source/gratis para pequeñas y
-medianas empresas, asociaciones o autónomos. Incluye diferentes
-funcionalidades para la Planificación de Recursos Empresariales (ERP) y
-Gestión de la Relación con los Clientes (CRM) así como para para otras
-diferentes actividades. Dolibarr ha sido diseñado para suministrarle
-solamente las funcionalidades que necesita y haciendo hincapié en su
-facilidad de uso.
+Un software ERP y CRM para pequeñas y medianas empresas, asociaciones
+o autónomos. Incluye diferentes funcionalidades para la Planificación 
+de Recursos Empresariales (ERP) y Gestión de la Relación con los
+Clientes (CRM) así como para para otras diferentes actividades. 
+Dolibarr ha sido diseñado para suministrarle solamente las funcionalidades
+que necesita y haciendo hincapié en su facilidad de uso.
     
 %description -l fr
 Logiciel ERP & CRM de gestion de PME/PMI, autoentrepreneurs, 
 artisans ou associations. Il permet de gérer vos clients, prospect, 
-fournisseurs, devis, factures, comptes bancaires, agenda, campagne emailings
+fournisseurs, devis, factures, comptes bancaires, agenda, campagnes mailings
 et bien d'autres choses dans une interface pensée pour la simplicité.
 
 %description -l it
-Un programma gestionale open source e gratuito per piccole e medie
+Un programmo gestionale per piccole e medie
 imprese, fondazioni e liberi professionisti. Include varie funzionalità per
 Enterprise Resource Planning e gestione dei clienti (CRM), ma anche ulteriori
-attività. Dolibar è progettato per poter fornire solo ciò di cui hai bisogno 
+attività. Progettato per poter fornire solo ciò di cui hai bisogno 
 ed essere facile da usare.
-Dolibar è completamente web-based, progettato per poter fornire solo ciò di 
+Programmo web, progettato per poter fornire solo ciò di 
 cui hai bisogno ed essere facile da usare.
 
 
@@ -94,71 +94,67 @@ echo Building %{name}-%{version}-%{release}
 
 #---- install
 %install
-rm -rf $RPM_BUILD_ROOT
+%{__rm} -rf $RPM_BUILD_ROOT
 
-mkdir -p $RPM_BUILD_ROOT/var/www/dolibarr/build
-mkdir -p $RPM_BUILD_ROOT/var/www/dolibarr/doc
-mkdir -p $RPM_BUILD_ROOT/var/www/dolibarr/htdocs
-mkdir -p $RPM_BUILD_ROOT/var/www/dolibarr/scripts
+%{__mkdir} -p $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr
+%{__install} -m 644 etc/dolibarr/apache.conf $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr/apache.conf
+%{__install} -m 644 etc/dolibarr/file_contexts.dolibarr $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr/file_contexts.dolibarr
 
-# %{_datadir} = /usr/share
-mkdir -p $RPM_BUILD_ROOT%{_datadir}/pixmaps
-cp doc/images/dolibarr_48x48.png $RPM_BUILD_ROOT%{_datadir}/pixmaps/dolibarr.png
-mkdir -p $RPM_BUILD_ROOT%{_datadir}/applications
-cp build/rpm/dolibarr.desktop    $RPM_BUILD_ROOT/%{_datadir}/applications/dolibarr.desktop
+%{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/pixmaps
+%{__install} -m 644 usr/share/dolibarr/doc/images/dolibarr_48x48.png $RPM_BUILD_ROOT%{_datadir}/pixmaps/dolibarr.png
+%{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/applications
+%{__install} -m 644 usr/share/dolibarr/build/rpm/dolibarr.desktop $RPM_BUILD_ROOT%{_datadir}/applications/dolibarr.desktop
 
-install -m 444 README     $RPM_BUILD_ROOT/var/www/dolibarr/README
-install -m 444 COPYRIGHT  $RPM_BUILD_ROOT/var/www/dolibarr/COPYRIGHT
-cp -pr build   $RPM_BUILD_ROOT/var/www/dolibarr
-cp -pr doc     $RPM_BUILD_ROOT/var/www/dolibarr
-cp -pr htdocs  $RPM_BUILD_ROOT/var/www/dolibarr
-cp -pr scripts $RPM_BUILD_ROOT/var/www/dolibarr
+%{__mkdir} -p $RPM_BUILD_ROOT/usr/share/dolibarr/build
+%{__mkdir} -p $RPM_BUILD_ROOT/usr/share/dolibarr/htdocs
+%{__mkdir} -p $RPM_BUILD_ROOT/usr/share/dolibarr/scripts
+%{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/doc/dolibarr
+%{__cp} -pr usr/share/dolibarr/build   $RPM_BUILD_ROOT/usr/share/dolibarr
+%{__cp} -pr usr/share/dolibarr/htdocs  $RPM_BUILD_ROOT/usr/share/dolibarr
+%{__cp} -pr usr/share/dolibarr/scripts $RPM_BUILD_ROOT/usr/share/dolibarr
+%{__cp} -pr usr/share/dolibarr/doc/*   $RPM_BUILD_ROOT%{_datadir}/doc/dolibarr
+%{__install} -m 644 usr/share/dolibarr/COPYRIGHT $RPM_BUILD_ROOT%{_datadir}/doc/dolibarr/COPYRIGHT
 
 
 #---- clean
 %clean
-rm -rf $RPM_BUILD_ROOT
+%{__rm} -rf $RPM_BUILD_ROOT
 
 
 #---- files
 %files
+
 %defattr(-,root,root)
-%doc README
-%doc COPYRIGHT
-%doc /var/www/dolibarr/doc/*
-%dir /var/www/dolibarr/build
-%dir /var/www/dolibarr/htdocs
-%dir /var/www/dolibarr/scripts
-%_datadir/pixmaps/*
+%doc %{_datadir}/doc/dolibarr/*
+%dir /usr/share/dolibarr/build
+%dir /usr/share/dolibarr/htdocs
+%dir /usr/share/dolibarr/scripts
+%_datadir/pixmaps/dolibarr.png
 %_datadir/applications/%{name}.desktop
-/var/www/dolibarr/build/*
-/var/www/dolibarr/htdocs/*
-/var/www/dolibarr/scripts/*
-/var/www/dolibarr/README
-/var/www/dolibarr/COPYRIGHT
-#%config /var/www/dolibarr/htdocs/conf/conf.php
+/usr/share/dolibarr/build/*
+/usr/share/dolibarr/htdocs/*
+/usr/share/dolibarr/scripts/*
+
+%defattr(0664, -, -, 0755)
+%config(noreplace) %{_sysconfdir}/dolibarr/apache.conf
+%config(noreplace) %{_sysconfdir}/dolibarr/file_contexts.dolibarr
 
 
 #---- post (after unzip during install)
 %post
-#%update_menus	# Does not exists on fedora nor mandriva
-
 
 # Define vars
-# Dolibarr files are stored into /var/www
-export targetdir='/var/www/dolibarr'
+# Dolibarr files are stored into /usr/share
+export targetdir='/usr/share/dolibarr'
 # Dolibarr uploaded files and generated documents will be stored into docdir 
-#export docdir="/var/lib/dolibarr/documents"
-export docdir="/usr/share/dolibarr/documents"
+export docdir="/var/lib/dolibarr/documents"
 export installfileorig="$targetdir/build/rpm/install.forced.php.install"
 export installconfig="%{_sysconfdir}/dolibarr/install.forced.php"
 export apachefileorig="$targetdir/build/rpm/httpd-dolibarr.conf"
 export apacheconfig="%{_sysconfdir}/dolibarr/apache.conf"
-export sefileorig="$targetdir/build/rpm/file_contexts.dolibarr"
-export seconfig="%{_sysconfdir}/selinux/targeted/contexts/files/file_contexts.dolibarr"
-#config="/usr/share/dolibarr/htdocs/conf/conf.php"
-config="%{_sysconfdir}/dolibarr/conf.php"
-lockfile="/usr/share/dolibarr/install.lock"
+#export config="/usr/share/dolibarr/htdocs/conf/conf.php"
+export config="%{_sysconfdir}/dolibarr/conf.php"
+export lockfile="/usr/share/dolibarr/install.lock"
 
 
 # Detect OS
@@ -192,8 +188,8 @@ echo OS detected: $os
 
 # Create empty directory for uploaded files and generated documents 
 echo Create document directory $docdir
-mkdir -p $docdir
-mkdir -p %{_sysconfdir}/dolibarr
+%{__mkdir} -p $docdir
+%{__mkdir} -p %{_sysconfdir}/dolibarr
 
 # Create install.forced.php into Dolibarr install directory
 superuserlogin=''
@@ -205,36 +201,34 @@ if [ -f %{_sysconfdir}/mysql/debian.cnf ] ; then
 fi
 echo Mysql superuser found to use is $superuserlogin
 if [ -z "$superuserlogin" ] ; then
-    cat $installfileorig | sed -e 's/__SUPERUSERLOGIN__/root/g' | sed -e 's/__SUPERUSERPASSWORD__//g' > $installconfig
+    %{__cat} $installfileorig | sed -e 's/__SUPERUSERLOGIN__/root/g' | sed -e 's/__SUPERUSERPASSWORD__//g' > $installconfig
 else
-    cat $installfileorig | sed -e 's/__SUPERUSERLOGIN__/'$superuserlogin'/g' | sed -e 's/__SUPERUSERPASSWORD__/'$superuserpassword'/g' > $installconfig
+    %{__cat} $installfileorig | sed -e 's/__SUPERUSERLOGIN__/'$superuserlogin'/g' | sed -e 's/__SUPERUSERPASSWORD__/'$superuserpassword'/g' > $installconfig
 fi
-chown -R root:$apachegroup $installconfig
-chmod -R 660 $installconfig
+%{__chown} -R root:$apachegroup $installconfig
+%{__chmod} -R 660 $installconfig
 
 # Create an empty conf.php with permission to web server
 if [ ! -f $config ]
-then 
-	echo Create empty file $config		
-	touch $config
-	chown -R root:$apachegroup $config
-	chmod -R 660 $config
-fi
-
-# Create config file for apache $apacheconfig
-if [ ! -f $apacheconfig ]; then
-  	 echo Create dolibarr web server config file $apacheconfig
-     cp $apachefileorig $apacheconfig
-     chmod a-x $apacheconfig
-     chmod go-w $apacheconfig
+then
+    echo Create empty file $config
+    touch $config
+    %{__chown} -R root:$apachegroup $config
+    %{__chmod} -R 660 $config
 fi
 
 # Create config file for se $seconfig
-if [ ! -f $seconfig ]; then
-  	 echo Create se config file $seconfig
-     cp $sefileorig $seconfig
-#     chmod a-x $apacheconfig
-#     chmod go-w $apacheconfig
+if [ "x$os" = "xfedora-redhat" -a -s /sbin/restorecon ]; then
+    echo Add SE Linux permissions for dolibarr
+    # semanage add records into /etc/selinux/targeted/contexts/files/file_contexts.local
+    semanage fcontext -a -t httpd_sys_script_rw_t "/etc/dolibarr(/.*?)"
+    #semanage fcontext -a -t httpd_sys_script_rw_t "/usr/share/dolibarr(/.*?)"
+    semanage fcontext -a -t httpd_sys_script_rw_t "/usr/share/dolibarr/install.lock"
+    semanage fcontext -a -t httpd_sys_script_rw_t "/var/lib/dolibarr(/.*?)"
+    restorecon -R -v /etc/dolibarr
+    #restorecon -R -v /usr/share/dolibarr
+    restorecon -v /usr/share/dolibarr/install.lock
+    restorecon -R -v /var/lib/dolibarr
 fi
 
 # Create a config link dolibarr.conf
@@ -245,25 +239,13 @@ fi
 
 # Set permissions
 echo Set permission to $apacheuser:$apachegroup on $targetdir
-chown -R $apacheuser:$apachegroup $targetdir
-chmod -R a-w $targetdir
-chmod u+w $targetdir
+%{__chown} -R $apacheuser:$apachegroup $targetdir
+%{__chmod} -R a-w $targetdir
+%{__chmod} u+w $targetdir
 
-echo Set permission to $apacheuser:$apachegroup on $docdir
-chown -R $apacheuser:$apachegroup $docdir
-chmod -R o-w $docdir
-
-# Set SE Linux on OS SE is enabled
-if [ "x$os" = "xfedora-redhat" -a -s /usr/bin/chcon ]; then
-    echo Set SELinux permissions
-    # Warning: chcon seems not cumulative 
-    #chcon -R -h -t httpd_sys_content_t $targetdir
-    #chcon -R -h -t httpd_sys_content_t $docdir
-    chcon -R -h -t httpd_sys_script_rw_t $targetdir
-    chcon -R -h -t httpd_sys_script_rw_t $docdir
-    chcon -R -h -t httpd_sys_script_rw_t %{_sysconfdir}/dolibarr
-    #chcon -R -h -t httpd_sys_script_exec_t $targetdir
-fi
+echo Set permission to $apacheuser:$apachegroup on /var/lib/dolibarr
+%{__chown} -R $apacheuser:$apachegroup /var/lib/dolibarr
+%{__chmod} -R o-w /var/lib/dolibarr
 
 # Restart web server
 echo Restart web server
@@ -274,10 +256,16 @@ if [ -f %{_sysconfdir}/init.d/apache2 ]; then
     %{_sysconfdir}/init.d/apache2 restart
 fi
 
+# Restart mysql
+echo Restart mysql
+if [ -f /etc/init.d/mysqld ]; then
+    /etc/init.d/mysqld restart
+fi
+
 # Show result
 echo
 echo "----- Dolibarr %version - (c) Dolibarr dev team -----"
-echo "Dolibarr files are now installed (into /var/www/dolibarr)."
+echo "Dolibarr files are now installed (into /usr/share/dolibarr)."
 echo "To finish installation and use Dolibarr, click on ne menu" 
 echo "entry Dolibarr ERP-CRM or call the following page from your"
 echo "web browser:"  
@@ -288,22 +276,19 @@ echo
 
 #---- postun (after uninstall)
 %postun
-#%clean_menus	# Does not exists on fedora nor mandriva
-
 
 # Define vars
 # Dolibarr files are stored into targetdir
-export targetdir='/var/www/dolibarr'
+export targetdir='/usr/share/dolibarr'
 # Dolibarr uploaded files and generated documents will be stored into docdir 
-#export docdir="/var/lib/dolibarr/documents"
-export docdir="/usr/share/dolibarr/documents"
+export docdir="/var/lib/dolibarr/documents"
 export installfileorig="$targetdir/build/rpm/install.forced.php.install"
 export installconfig="%{_sysconfdir}/dolibarr/install.forced.php"
 export apachefileorig="$targetdir/build/rpm/httpd-dolibarr.conf"
 export apacheconfig="%{_sysconfdir}/dolibarr/apache.conf"
-#config="/usr/share/dolibarr/htdocs/conf/conf.php"
-config="%{_sysconfdir}/dolibarr/conf.php"
-lockfile="$targetdir/install.lock"
+#export config="/usr/share/dolibarr/htdocs/conf/conf.php"
+export config="%{_sysconfdir}/dolibarr/conf.php"
+export lockfile="$targetdir/install.lock"
 
 
 # Detect OS
@@ -338,7 +323,7 @@ echo OS detected: $os
 if [ -f $apachelink ] ;
 then
     echo Delete apache config link for Dolibarr
-    rm -f $apachelink
+    %{__rm} -f $apachelink
     status=purge
 fi
 
@@ -356,18 +341,13 @@ then
 fi
 
 # Removed dirs after apache restart
-echo Removed remaining $apacheconfig
-rm -f $apacheconfig
 echo Removed remaining $config
-rm -f $config
+%{__rm} -f $config
 echo Removed remaining $installconfig
-rm -f $installconfig
+%{__rm} -f $installconfig
 echo Removed remaining $lockfile
-rm -f $lockfile
-echo Removed remaining dir $targetdir/doc
-rmdir $targetdir/doc >/dev/null 2>&1
-#echo Removed remaining dir $targetdir/htdocs
-#rmdir $targetdir/htdocs >/dev/null 2>&1	# Already removed by rpm
+%{__rm} -f $lockfile
+
 
 %changelog
 * Wed Jul 31 2011 Laurent Destailleur 3.1.0-0.2.beta1
