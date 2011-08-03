@@ -13,17 +13,16 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id$
+ * $Id: osc-liste.php,v 1.10 2011/08/03 00:45:45 eldy Exp $
  */
 
 /**
 		\file 		htdocs/boutique/produits/osc-liste.php
 		\ingroup    boutique
 		\brief      Page gestion produits du module OsCommerce
-		\version    $Revision$
+		\version    $Revision: 1.10 $
 */
 
 require("../../main.inc.php");
@@ -106,5 +105,5 @@ print "</TABLE>";
 
 $dbosc->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/03 00:45:45 $ - $Revision: 1.10 $');
 ?>

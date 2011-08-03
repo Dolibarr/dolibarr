@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	    \file       htdocs/comm/remx.php
  *      \ingroup    societe
  *		\brief      Page to edit absolute discounts for a customer
- *		\version    $Id: remx.php,v 1.51 2011/07/17 20:02:10 eldy Exp $
+ *		\version    $Id: remx.php,v 1.52 2011/08/03 00:46:26 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -539,5 +538,5 @@ if ($_socid > 0)
 
 $db->close();
 
-llxFooter('$Date: 2011/07/17 20:02:10 $ - $Revision: 1.51 $');
+llxFooter('$Date: 2011/08/03 00:46:26 $ - $Revision: 1.52 $');
 ?>
