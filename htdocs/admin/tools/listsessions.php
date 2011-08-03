@@ -13,15 +13,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *		\file       htdocs/admin/tools/listsessions.php
  *      \ingroup    core
  *      \brief      List of PHP sessions
- *      \version    $Id$
+ *      \version    $Id: listsessions.php,v 1.12 2011/08/03 00:45:43 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -211,5 +210,5 @@ print '<br>';
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/03 00:45:43 $ - $Revision: 1.12 $');
 ?>

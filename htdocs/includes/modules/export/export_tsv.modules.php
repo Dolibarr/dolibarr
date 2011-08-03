@@ -12,9 +12,7 @@
 * GNU General Public License for more details.
 *
 * You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-* or see http://www.gnu.org/
+* along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
 /**
@@ -22,7 +20,7 @@
  *		\ingroup    export
  *		\brief      File of class to build export files with format TSV
  *		\author	    Laurent Destailleur
- *		\version    $Id$
+ *		\version    $Id: export_tsv.modules.php,v 1.14 2011/08/03 01:38:52 eldy Exp $
 */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/export/modules_export.php");
@@ -61,7 +59,7 @@ class ExportTsv extends ModeleExports
         $this->desc='<b>Tab Separated Value</b> file format (.tsv)<br>This is a text file format where fields are separated by separator [tab].';
         $this->extension='tsv';         // Extension for generated file by this driver
         $this->picto='mime/other';		// Picto
-        $ver=explode(' ','$Revision$');
+        $ver=explode(' ','$Revision: 1.14 $');
         $this->version=$ver[2];         // Driver version
 
         // If driver use an external library, put its name here
