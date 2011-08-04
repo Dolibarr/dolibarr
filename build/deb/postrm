@@ -54,10 +54,8 @@ echo Run the dolibarr postrm script
 
 
 docdir='/var/lib/dolibarr/documents'
-#docdir='/usr/share/dolibarr/documents'
-#config="/usr/share/dolibarr/htdocs/conf/conf.php"
 config="/etc/dolibarr/conf.php"
-lockfile="/usr/share/dolibarr/install.lock"
+lockfile="$docdir/install.lock"
 
 
 
