@@ -22,7 +22,7 @@
 /**
  *	\file       	htdocs/lib/databases/mysql.lib.php
  *	\brief      	Class file to manage Dolibarr database access for a Mysql database
- *	\version		$Id: mysql.lib.php,v 1.120 2011/08/04 13:58:14 eldy Exp $
+ *	\version		$Id: mysql.lib.php,v 1.121 2011/08/04 13:58:55 eldy Exp $
  */
 // For compatibility during upgrade
 if (! defined('DOL_DOCUMENT_ROOT'))	 define('DOL_DOCUMENT_ROOT', '../..');
@@ -1174,7 +1174,7 @@ class DoliDb
 		{
 			$liste=$this->fetch_array($resql);
 			$basedir=$liste['Value'];
-			$fullpathofimport=$basedir.'bin/mysql';
+			$fullpathofimport=$basedir.(preg_match('/\/$/',$basedir)?'':'/').'bin/mysql';
 		}
 		return $fullpathofimport;
 	}
