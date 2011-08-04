@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: freeproductline_create.tpl.php,v 1.15 2011/07/31 23:45:13 eldy Exp $
+ * $Id: freeproductline_create.tpl.php,v 1.16 2011/08/04 21:46:50 eldy Exp $
  *
  * Need to have following variables defined:
  * $conf
@@ -46,7 +46,7 @@
 	<?php
 	echo $html->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1);
 	if (($conf->product->enabled && $conf->service->enabled) || (empty($conf->product->enabled) && empty($conf->service->enabled))) echo '<br>';
-	
+
 	if (! empty($this->hooks)) {
 		foreach($this->hooks as $hook) {
 			if (! empty($hook['modules'])) {
@@ -59,7 +59,7 @@
 			}
 		}
 	}
-	
+
 	// Editor wysiwyg
 	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
     $nbrows=ROWS_2;
@@ -72,7 +72,7 @@
 	<td align="right">
 	<?php
 	if ($buyer->tva_assuj == "0") echo '<input type="hidden" name="np_tva_tx" value="0">0';
-	else $html->select_tva('np_tva_tx', $conf->defaulttx, $seller, $buyer);
+	else echo $html->load_tva('np_tva_tx', -1, $seller, $buyer);
 	?>
 	</td>
 	<td align="right"><input type="text" size="5" name="np_price"></td>

@@ -28,7 +28,7 @@
  *	\file			htdocs/lib/functions.lib.php
  *	\brief			A set of functions for Dolibarr
  *					This file contains all frequently used functions.
- *	\version		$Id: functions.lib.php,v 1.549 2011/07/31 23:25:25 eldy Exp $
+ *	\version		$Id: functions.lib.php,v 1.552 2011/08/04 22:01:23 eldy Exp $
  */
 
 // For compatibility during upgrade
@@ -1639,6 +1639,7 @@ function img_picto_common($alt, $picto, $options='', $pictoisfullpath=0)
     global $conf;
     if (! preg_match('/(\.png|\.gif)$/i',$picto)) $picto.='.png';
     if ($pictoisfullpath) return '<img src="'.$picto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
+    if (! empty($conf->global->MAIN_MODULE_CAN_OVERWRITE_COMMONICONS) && file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/'.$picto)) return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/'.$picto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
     return '<img src="'.DOL_URL_ROOT.'/theme/common/'.$picto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
 }
 
@@ -3148,14 +3149,24 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $idprod=0)
     dol_syslog("get_default_tva: seller use vat=".$societe_vendeuse->tva_assuj.", seller country=".$societe_vendeuse->pays_code.", seller in cee=".$societe_vendeuse->isInEEC().", buyer country=".$societe_acheteuse->pays_code.", buyer in cee=".$societe_acheteuse->isInEEC().", idprod=".$idprod.", SERVICE_ARE_ECOMMERCE_200238EC=".$conf->global->SERVICES_ARE_ECOMMERCE_200238EC);
 
     // Si vendeur non assujeti a TVA (tva_assuj vaut 0/1 ou franchise/reel)
-    if (is_numeric($societe_vendeuse->tva_assuj) && ! $societe_vendeuse->tva_assuj) return 0;
-    if (! is_numeric($societe_vendeuse->tva_assuj) && $societe_vendeuse->tva_assuj=='franchise') return 0;
+    if (is_numeric($societe_vendeuse->tva_assuj) && ! $societe_vendeuse->tva_assuj)
+    {
+        //print 'VATRULE 1';
+        return 0;
+    }
+    if (! is_numeric($societe_vendeuse->tva_assuj) && $societe_vendeuse->tva_assuj=='franchise')
+    {
+        //print 'VATRULE 2';
+        return 0;
+    }
 
-    // Si le (pays vendeur = pays acheteur) alors la TVA par defaut=TVA du produit vendu. Fin de regle.
     //if (is_object($societe_acheteuse) && ($societe_vendeuse->pays_id == $societe_acheteuse->pays_id) && ($societe_acheteuse->tva_assuj == 1 || $societe_acheteuse->tva_assuj == 'reel'))
     // Le test ci-dessus ne devrait pas etre necessaire. Me signaler l'exemple du cas juridique concerne si le test suivant n'est pas suffisant.
-    if ($societe_vendeuse->pays_code == $societe_acheteuse->pays_code) // Warning ->pays_id not always defined
+
+    // Si le (pays vendeur = pays acheteur) alors la TVA par defaut=TVA du produit vendu. Fin de regle.
+    if ($societe_vendeuse->pays_code == $societe_acheteuse->pays_code) // Warning ->pays_code not always defined
     {
+        //print 'VATRULE 3';
         return get_product_vat_for_country($idprod,$societe_vendeuse->pays_code);
     }
 
@@ -3169,10 +3180,12 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $idprod=0)
         $isacompany=$societe_acheteuse->isACompany();
         if ($isacompany)
         {
+            //print 'VATRULE 4';
             return 0;
         }
         else
         {
+            //print 'VATRULE 5';
             return get_product_vat_for_country($idprod,$societe_vendeuse->pays_code);
         }
     }
@@ -3184,12 +3197,14 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $idprod=0)
         //print "eee".$societe_acheteuse->isACompany();exit;
         if (! $societe_vendeuse->isInEEC() && $societe_acheteuse->isInEEC() && ! $societe_acheteuse->isACompany())
         {
+            //print 'VATRULE 6';
             return get_product_vat_for_country($idprod,$societe_acheteuse->pays_code);
         }
     }
 
     // Sinon la TVA proposee par defaut=0. Fin de regle.
     // Rem: Cela signifie qu'au moins un des 2 est hors Communaute europeenne et que le pays differe
+    //print 'VATRULE 7';
     return 0;
 }
 

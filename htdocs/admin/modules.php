@@ -4,6 +4,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +23,7 @@
 /**
  *  \file       htdocs/admin/modules.php
  *  \brief      Page to activate/disable all modules
- *  \version    $Id: modules.php,v 1.157 2011/08/01 12:25:15 hregis Exp $
+ *  \version    $Id: modules.php,v 1.159 2011/08/04 21:07:33 simnandez Exp $
  */
 
 require("../main.inc.php");
@@ -89,10 +90,10 @@ foreach ($conf->file->dol_document_root as $type => $dirroot)
 	
 	if ($type == 'alt')
 	{	
-		$althandle=@opendir($dirroot);
-		if (is_resource($althandle))
+		$handle=@opendir($dirroot);
+		if (is_resource($handle))
 		{
-			while (($file = readdir($althandle))!==false)
+			while (($file = readdir($handle))!==false)
 			{
 			    if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
 			    {
@@ -102,6 +103,7 @@ foreach ($conf->file->dol_document_root as $type => $dirroot)
 			    	}
 			    }
 			}
+			closedir($handle);
 		}
 	}
 }
@@ -373,7 +375,7 @@ if ($mode != 4)
                 else
                 {
                 	print '<a href="modules.php?id='.$objMod->numero.'&amp;action=reset&amp;value=' . $modName . '&amp;mode=' . $mode . '">';
-                	print img_picto($langs->trans("Activated"),'on');
+                	print img_picto($langs->trans("Activated"),'switch_on');
                 	print '</a></td>'."\n";
                 }
 
@@ -431,7 +433,7 @@ if ($mode != 4)
 
                 // Module non actif
                	print '<a href="modules.php?id='.$objMod->numero.'&amp;action=set&amp;value=' . $modName . '&amp;mode=' . $mode . '">';
-               	print img_picto($langs->trans("Disabled"),'off');
+               	print img_picto($langs->trans("Disabled"),'switch_off');
                	print "</a></td>\n  <td>&nbsp;</td>\n";
             }
 
@@ -472,5 +474,5 @@ print '</div>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/01 12:25:15 $ - $Revision: 1.157 $');
+llxFooter('$Date: 2011/08/04 21:07:33 $ - $Revision: 1.159 $');
 ?>

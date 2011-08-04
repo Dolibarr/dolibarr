@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: predefinedproductline_edit.tpl.php,v 1.14 2011/07/31 23:45:11 eldy Exp $
+ * $Id: predefinedproductline_edit.tpl.php,v 1.15 2011/08/04 21:46:50 eldy Exp $
  *
  * Need to have following variables defined:
  * $conf
@@ -69,7 +69,7 @@
 	?>
 	</td>
 
-	<td align="right"><?php echo $html->select_tva('tva_tx',$line->tva_tx,$seller,$buyer,'',$line->info_bits); ?></td>
+	<td align="right"><?php echo $html->load_tva('tva_tx',$line->tva_tx,$seller,$buyer,'',$line->info_bits); ?></td>
 
 	<td align="right"><input size="6" type="text" class="flat" name="subprice" value="<?php echo price($line->subprice,0,'',0); ?>"></td>
 
