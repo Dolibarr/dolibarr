@@ -28,7 +28,7 @@
  *	\file			htdocs/lib/functions.lib.php
  *	\brief			A set of functions for Dolibarr
  *					This file contains all frequently used functions.
- *	\version		$Id: functions.lib.php,v 1.549 2011/07/31 23:25:25 eldy Exp $
+ *	\version		$Id: functions.lib.php,v 1.550 2011/08/04 07:50:25 hregis Exp $
  */
 
 // For compatibility during upgrade
@@ -1637,8 +1637,10 @@ function img_picto($alt, $picto, $options='', $pictoisfullpath=0)
 function img_picto_common($alt, $picto, $options='', $pictoisfullpath=0)
 {
     global $conf;
+    $path =  'theme/'.$conf->theme;
     if (! preg_match('/(\.png|\.gif)$/i',$picto)) $picto.='.png';
     if ($pictoisfullpath) return '<img src="'.$picto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
+    if (file_exists(DOL_DOCUMENT_ROOT.'/'.$path.'/'.$picto)) return '<img src="'.DOL_URL_ROOT.'/'.$path.'/'.$picto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
     return '<img src="'.DOL_URL_ROOT.'/theme/common/'.$picto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
 }
 
