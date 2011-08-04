@@ -56,6 +56,9 @@ config="/etc/dolibarr/conf.php"
 
 case "$1" in
 	configure)
+	
+		# Remove lock file
+		rm -f $docdir/install.lock
 
         # Create document directory for uploaded data files
         mkdir -p $docdir

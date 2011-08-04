@@ -183,6 +183,8 @@ if [ -d %{_sysconfdir}/apache2/conf.d -a `grep ^www-data /etc/passwd | wc -l` -g
 fi
 echo OS detected: $os
 
+# Remove lock file
+%{__rm} -f $docdir/install.lock
 
 # Create empty directory for uploaded files and generated documents 
 echo Create document directory $docdir
