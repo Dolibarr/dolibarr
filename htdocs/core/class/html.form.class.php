@@ -30,7 +30,7 @@
  *	\file       htdocs/core/class/html.form.class.php
  *  \ingroup    core
  *	\brief      File of class with all html predefined components
- *	\version	$Id: html.form.class.php,v 1.193 2011/07/31 23:45:14 eldy Exp $
+ *	\version	$Id: html.form.class.php,v 1.194 2011/08/04 21:46:51 eldy Exp $
  */
 
 
@@ -2669,11 +2669,10 @@ class Form
      *                  Si (vendeur et acheteur dans Communaute europeenne) et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par defaut=0 (La TVA doit etre paye par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
      *                  Si (vendeur et acheteur dans Communaute europeenne) et bien vendu autre que transport neuf alors la TVA par defaut=TVA du produit vendu. Fin de regle.
      *                  Sinon la TVA proposee par defaut=0. Fin de regle.
+     *      @deprecated
      */
     function select_tva($htmlname='tauxtva', $selectedrate='', $societe_vendeuse='', $societe_acheteuse='', $idprod=0, $info_bits=0, $type='')
     {
-        // TODO size of field is too large
-    	//print '<script>jQuery(function() { jQuery( "#'.$htmlname.'" ).combobox(); });</script>';
     	print $this->load_tva($htmlname, $selectedrate, $societe_vendeuse, $societe_acheteuse, $idprod, $info_bits, $type);
     }
 
@@ -2800,6 +2799,7 @@ class Form
             $defaulttx=get_default_tva($societe_vendeuse,$societe_acheteuse,$idprod);
             $defaultnpr=get_default_npr($societe_vendeuse,$societe_acheteuse,$idprod);
         }
+
         // Si taux par defaut n'a pu etre determine, on prend dernier de la liste.
         // Comme ils sont tries par ordre croissant, dernier = plus eleve = taux courant
         if ($defaulttx < 0 || dol_strlen($defaulttx) == 0)

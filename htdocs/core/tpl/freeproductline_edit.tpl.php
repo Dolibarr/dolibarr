@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: freeproductline_edit.tpl.php,v 1.15 2011/07/31 23:45:11 eldy Exp $
+ * $Id: freeproductline_edit.tpl.php,v 1.16 2011/08/04 21:46:50 eldy Exp $
  *
  * Need to have following variables defined:
  * $conf
@@ -37,7 +37,7 @@
 <tr <?php echo $bc[$var]; ?>>
 	<td>
 	<a name="<?php echo $line->id; ?>"></a>
-	
+
 	<?php
 	if (! empty($this->hooks)) {
 		foreach($this->hooks as $hook) {
@@ -61,7 +61,7 @@
 	?>
 	</td>
 
-	<td align="right"><?php echo $html->select_tva('tva_tx',$line->tva_tx,$seller,$buyer,0,$line->info_bits,$line->product_type); ?></td>
+	<td align="right"><?php echo $html->load_tva('tva_tx',$line->tva_tx,$seller,$buyer,0,$line->info_bits,$line->product_type); ?></td>
 
 	<td align="right"><input size="6" type="text" class="flat" name="subprice" value="<?php echo price($line->subprice,0,'',0); ?>"></td>
 

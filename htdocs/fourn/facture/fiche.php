@@ -24,7 +24,7 @@
  *	\file       htdocs/fourn/facture/fiche.php
  *	\ingroup    facture, fournisseur
  *	\brief      Page for supplier invoice card (view, edit, validate)
- *	\version    $Id: fiche.php,v 1.262 2011/07/31 23:57:00 eldy Exp $
+ *	\version    $Id: fiche.php,v 1.263 2011/08/04 21:46:50 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -1114,7 +1114,7 @@ if ($_GET['action'] == 'create')
 	            print '<td><input size="50" name="label'.$i.'" value="'.$value_label.'" type="text"></td>';
 	            print '<td align="right"><input type="text" size="8" name="amount'.$i.'" value="'.$value_pu.'"></td>';
 	            print '<td align="right">';
-	            $html->select_tva('tauxtva'.$i,$value_tauxtva,$societe,$mysoc);
+	            print $html->load_tva('tauxtva'.$i,$value_tauxtva,$societe,$mysoc);
 	            print '</td>';
 	            print '<td align="right"><input type="text" size="3" name="qty'.$i.'" value="'.$value_qty.'"></td>';
 	            print '<td align="right"><input type="text" size="8" name="amountttc'.$i.'" value=""></td></tr>';
@@ -1549,7 +1549,7 @@ else
 
                     // VAT
                     print '<td align="right">';
-                    $html->select_tva('tauxtva',$fac->lines[$i]->tva_tx,$societe,$mysoc);
+                    print $html->load_tva('tauxtva',$fac->lines[$i]->tva_tx,$societe,$mysoc);
                     print '</td>';
 
                     // Unit price
@@ -1678,7 +1678,7 @@ else
 
                 print '</td>';
                 print '<td align="right">';
-                print $html->select_tva('tauxtva',$conf->defaulttx,$societe,$mysoc);
+                print $html->load_tva('tauxtva',($_POST["tauxtva"]?$_POST["tauxtva"]:-1),$societe,$mysoc);
                 print '</td>';
                 print '<td align="right">';
                 print '<input size="4" name="amount" type="text">';
@@ -1915,5 +1915,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:57:00 $ - $Revision: 1.262 $');
+llxFooter('$Date: 2011/08/04 21:46:50 $ - $Revision: 1.263 $');
 ?>

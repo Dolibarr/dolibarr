@@ -23,7 +23,7 @@
  *	\file       htdocs/product/price.php
  *	\ingroup    product
  *	\brief      Page to show product prices
- *	\version    $Id: price.php,v 1.110 2011/07/31 23:19:25 eldy Exp $
+ *	\version    $Id: price.php,v 1.111 2011/08/04 21:46:50 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -317,7 +317,7 @@ if ($_GET["action"] == 'edit_price' && ($user->rights->produit->creer || $user->
 
         // VAT
         print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
-        print $html->select_tva("tva_tx",$product->tva_tx,$mysoc,'',$product->id);
+        print $html->load_tva("tva_tx",$product->tva_tx,$mysoc,'',$product->id);
         print '</td></tr>';
 
 		// Price base
@@ -377,7 +377,7 @@ if ($_GET["action"] == 'edit_price' && ($user->rights->produit->creer || $user->
             if ($i == 1)
             {
                 print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
-                print $html->select_tva("tva_tx_".$i,$product->multiprices_tva_tx["$i"],$mysoc,'',$product->id);
+                print $html->load_tva("tva_tx_".$i,$product->multiprices_tva_tx["$i"],$mysoc,'',$product->id);
                 print '</td></tr>';
             }
             else
@@ -534,5 +534,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:19:25 $ - $Revision: 1.110 $');
+llxFooter('$Date: 2011/08/04 21:46:50 $ - $Revision: 1.111 $');
 ?>

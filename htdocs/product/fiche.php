@@ -25,7 +25,7 @@
  *  \file       htdocs/product/fiche.php
  *  \ingroup    product
  *  \brief      Page to show product
- *  \version    $Id: fiche.php,v 1.374 2011/07/31 23:19:26 eldy Exp $
+ *  \version    $Id: fiche.php,v 1.375 2011/08/04 21:46:50 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -793,7 +793,7 @@ if ($action == 'create' && ($user->rights->produit->creer || $user->rights->serv
 
 			// VAT
 			print '<tr><td width="20%">'.$langs->trans("VATRate").'</td><td>';
-			print $html->select_tva("tva_tx",$conf->defaulttx,$mysoc,'');
+			print $html->load_tva("tva_tx",-1,$mysoc,'');
 			print '</td></tr>';
 
 			print '</table>';
@@ -1645,6 +1645,6 @@ if ($product->id && $action == '' && $product->status)
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:19:26 $ - $Revision: 1.374 $');
+llxFooter('$Date: 2011/08/04 21:46:50 $ - $Revision: 1.375 $');
 
 ?>

@@ -21,7 +21,7 @@
  *	    \file       htdocs/comm/remx.php
  *      \ingroup    societe
  *		\brief      Page to edit absolute discounts for a customer
- *		\version    $Id: remx.php,v 1.52 2011/08/03 00:46:26 eldy Exp $
+ *		\version    $Id: remx.php,v 1.53 2011/08/04 21:46:51 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -270,7 +270,7 @@ if ($_socid > 0)
 	print '<td><input type="text" size="5" name="amount_ht" value="'.$_POST["amount_ht"].'">&nbsp;'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 	print '<tr><td width="38%">'.$langs->trans("VAT").'</td>';
 	print '<td>';
-	$form->select_tva('tva_tx','0','',$mysoc,'');
+	print $form->load_tva('tva_tx','0','',$mysoc,'');
 	print '</td></tr>';
 	print '<tr><td>'.$langs->trans("NoteReason").'</td>';
 	print '<td><input type="text" size="60" name="desc" value="'.$_POST["desc"].'"></td></tr>';
@@ -538,5 +538,5 @@ if ($_socid > 0)
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:26 $ - $Revision: 1.52 $');
+llxFooter('$Date: 2011/08/04 21:46:51 $ - $Revision: 1.53 $');
 ?>

@@ -25,7 +25,7 @@
  *	\file		htdocs/fourn/commande/fiche.php
  *	\ingroup	supplier, order
  *	\brief		Card supplier order
- *	\version	$Id: fiche.php,v 1.232 2011/07/10 20:03:40 eldy Exp $
+ *	\version	$Id: fiche.php,v 1.233 2011/08/04 21:46:51 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -1174,7 +1174,7 @@ if ($id > 0 || ! empty($ref))
 
 		      	print '</td>';
 				print '<td>';
-				$html->select_tva('tva_tx',$line->tva_tx);
+				print $html->load_tva('tva_tx',$line->tva_tx);
 				print '</td>';
 				print '<td align="right"><input	size="5" type="text" name="pu"	value="'.price($line->subprice).'"></td>';
 				print '<td align="right"><input size="2" type="text" name="qty" value="'.$line->qty.'"></td>';
@@ -1227,10 +1227,7 @@ if ($id > 0 || ! empty($ref))
 
 			print '</td>';
 			print '<td align="center">';
-			//if($soc->tva_assuj == "0")
-			//print '<input type="hidden" name="tva_tx" value="0">0';
-			//else
-			print $html->select_tva('tva_tx',($_POST["tva_tx"]?$_POST["tva_tx"]:$conf->defaulttx),$soc,$mysoc);
+			print $html->load_tva('tva_tx',($_POST["tva_tx"]?$_POST["tva_tx"]:-1),$soc,$mysoc);
 			print '</td>';
 			print '<td align="right"><input type="text" name="pu" size="5" value="'.$_POST["pu"].'"></td>';
 			print '<td align="right"><input type="text" name="qty" value="'.($_POST["qty"]?$_POST["qty"]:'1').'" size="2"></td>';
@@ -1545,5 +1542,5 @@ if ($id > 0 || ! empty($ref))
 
 $db->close();
 
-llxFooter('$Date: 2011/07/10 20:03:40 $	- $Revision: 1.232 $');
+llxFooter('$Date: 2011/08/04 21:46:51 $	- $Revision: 1.233 $');
 ?>
