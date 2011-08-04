@@ -23,7 +23,7 @@
 /**
  *	\file       htdocs/lib/databases/pgsql.lib.php
  *	\brief      Fichier de la classe permettant de gerer une base pgsql
- *	\version	$Id: pgsql.lib.php,v 1.110 2011/07/31 23:26:03 eldy Exp $
+ *	\version	$Id: pgsql.lib.php,v 1.111 2011/08/04 13:58:14 eldy Exp $
  */
 // For compatibility during upgrade
 if (! defined('DOL_DOCUMENT_ROOT'))	 define('DOL_DOCUMENT_ROOT', '../..');
@@ -1233,8 +1233,8 @@ class DoliDb
 	}
 
 	/**
-	 *	\brief		Return full path of dump program
-	 *	\return		string		Full path of dump program
+	 *	Return full path of dump program
+	 *	@return		string		Full path of dump program
 	 */
 	function getPathOfDump()
 	{
@@ -1259,10 +1259,10 @@ class DoliDb
 		return $fullpathofdump;
 	}
 
-	/**
-	 *	\brief		Return full path of restore program
-	 *	\return		string		Full path of restore program
-	 */
+    /**
+     *	Return full path of restore program
+     *	@return		string		Full path of restore program
+     */
 	function getPathOfRestore()
 	{
 		$fullpathofdump='/pathtopgrestore/pg_restore';

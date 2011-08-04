@@ -21,7 +21,7 @@
 /**
  *	\file       	htdocs/lib/databases/mssql.lib.php
  *	\brief			Fichier de la classe permettant de gerer une base mssql
- *	\version		$Id: mssql.lib.php,v 1.86 2011/07/31 23:26:03 eldy Exp $
+ *	\version		$Id: mssql.lib.php,v 1.87 2011/08/04 13:58:14 eldy Exp $
  */
 
 // Pour compatibilite lors de l'upgrade
@@ -1022,14 +1022,24 @@ class DoliDb
 		return ''; // attente debugage
 	}
 
+	/*
+	 *  Return full path of dump program
+	 *	@return		string		Full path of dump program
+	 */
 	function getPathOfDump()
 	{
 
+	    return '';
 	}
 
+    /**
+     *	Return full path of restore program
+     *	@return		string		Full path of restore program
+     */
 	function getPathOfRestore()
 	{
 
+	    return '';
 	}
 }
 
