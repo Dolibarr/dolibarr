@@ -21,7 +21,7 @@
 /**	    \file       htdocs/install/inc.php
  * 		\ingroup	core
  *		\brief      File that define environment for install pages
- *		\version    $Id: inc.php,v 1.137 2011/07/31 23:26:18 eldy Exp $
+ *		\version    $Id: inc.php,v 1.138 2011/08/04 12:07:30 eldy Exp $
  */
 
 define('DOL_VERSION','3.1.0-beta');	// Also defined in htdocs/master.inc.php (Ex: x.y.z-alpha, x.y.z)
@@ -70,16 +70,15 @@ else
 $includeconferror='';
 
 
+# Define vars
 $conffiletoshowshort = "conf.php";
 # Define localization of conf file
 $conffile = "../conf/conf.php";
 $conffiletoshow = "htdocs/conf/conf.php";
-$lockfile = '../../install.lock';
 # For debian/redhat like systems
 #$conffile = "/etc/dolibarr/conf.php";
 #$conffiletoshow = "/etc/dolibarr/conf.php";
-#$lockfile = '/etc/dolibarr/install.lock';    # Web has no permission to write here
-$lockfile = '../../install.lock';
+
 
 if (! defined('DONOTLOADCONF') && file_exists($conffile))
 {
@@ -127,7 +126,6 @@ if (! defined('DONOTLOADCONF') && file_exists($conffile))
 	}
 }
 $conf->global->MAIN_LOGTOHTML=1;
-
 
 // Define prefix
 if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_';
@@ -179,6 +177,7 @@ if (preg_match('/install.lock/i',$_SERVER["SCRIPT_FILENAME"]))
     }
 	exit;
 }
+$lockfile=DOL_DATA_ROOT.'/install.lock';
 if (file_exists($lockfile))
 {
 	print 'Install pages have been disabled for security reason (by lock file install.lock into dolibarr root directory).<br>';

@@ -23,7 +23,7 @@
  *       \file      htdocs/install/etape5.php
  *	 	 \ingroup	install
  *       \brief     Last page of upgrade or install process
- *       \version   $Id: etape5.php,v 1.107 2011/07/31 23:26:19 eldy Exp $
+ *       \version   $Id: etape5.php,v 1.108 2011/08/04 12:07:30 eldy Exp $
  */
 
 include_once("./inc.php");
@@ -314,7 +314,8 @@ if ($action == "set")
 		if (! empty($force_install_lockinstall))
 		{
 			// Install is finished, we create the lock file
-			$fp = @fopen($lockfile, "w");
+			$lockfile=DOL_DATA_ROOT.'/install.lock';
+		    $fp = @fopen($lockfile, "w");
 			if ($fp)
 			{
                 if ($force_install_lockinstall == 1) $force_install_lockinstall=444;    // For backward compatibility
@@ -363,7 +364,8 @@ elseif (preg_match('/upgrade/i',$action))
 		if (! empty($force_install_lockinstall))
 		{
 			// Upgrade is finished, we create the lock file
-			$fp = @fopen($lockfile, "w");
+			$lockfile=DOL_DATA_ROOT.'/install.lock';
+		    $fp = @fopen($lockfile, "w");
 			if ($fp)
 			{
                 if ($force_install_lockinstall == 1) $force_install_lockinstall=444;    // For backward compatibility

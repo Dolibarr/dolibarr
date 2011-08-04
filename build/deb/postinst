@@ -49,10 +49,8 @@ echo Run the dolibarr postinst script
 
 # Define vars
 docdir='/var/lib/dolibarr/documents'
-#docdir='/usr/share/dolibarr/documents'
 installfileorig="/usr/share/dolibarr/build/deb/install.forced.php.install"
 installconfig="/etc/dolibarr/install.forced.php"
-#config="/usr/share/dolibarr/htdocs/conf/conf.php"
 config="/etc/dolibarr/conf.php"
 
 
