@@ -20,7 +20,7 @@
 /**
  *  \file		htdocs/includes/menus/standard/eldy.lib.php
  *  \brief		Library for file eldy menus
- *  \version	$Id: eldy.lib.php,v 1.61 2011/07/31 23:46:07 eldy Exp $
+ *  \version	$Id: eldy.lib.php,v 1.62 2011/08/05 18:28:01 eldy Exp $
  */
 
 
@@ -203,7 +203,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 
 	// Financial
 	if ($conf->comptabilite->enabled || $conf->accounting->enabled
-	|| $conf->facture->enabled || $conf->deplacement->enabled || $conf->don->enabled)
+	|| $conf->facture->enabled || $conf->deplacement->enabled || $conf->don->enabled || $conf->tax->enabled)
 	{
 		$langs->load("compta");
 
@@ -219,7 +219,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 
 		$idsel='accountancy';
 		if ($user->rights->compta->resultat->lire || $user->rights->accounting->plancompte->lire
-		|| $user->rights->facture->lire || $user->rights->banque->lire)
+		|| $user->rights->facture->lire || $user->rights->deplacement->lire || $user->rights->don->lire || $user->rights->tax->charges->lire)
 		{
 			print_start_menu_entry($idsel);
 			print '<a class="tmenuimage" href="'.DOL_URL_ROOT.'/compta/index.php?mainmenu=accountancy&amp;leftmenu="'.($atarget?' target="'.$atarget.'"':'').'>';
