@@ -58,7 +58,7 @@ if (!empty($_SESSION["CASHDESK_ID_WAREHOUSE"]) && $conf->stock->enabled)
 $langs->load("cashdesk");
 $langs->load("main");
 
-$logout='<img class="login" border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png">';
+$logout='<img class="login" border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png" title="'.dol_escape_htmltag($langs->trans("Logout")).'">';
 
 print '<div class="menu_bloc">';
 print '<ul class="menu">';
