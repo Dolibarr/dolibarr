@@ -23,7 +23,7 @@
  *		\ingroup    facture
  *		\brief      Page of a customer payment
  *		\remarks	Nearly same file than fournisseur/paiement/fiche.php
- *		\version    $Id: fiche.php,v 1.76 2011/08/03 00:46:35 eldy Exp $
+ *		\version    $Id: fiche.php,v 1.77 2011/08/05 21:06:55 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -84,7 +84,8 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes' && $user->rights-
 	}
 	else
 	{
-		$mesg='<div class="error">'.$paiement->error.'</div>';
+	    $langs->load("errors");
+		$mesg='<div class="error">'.$langs->trans($paiement->error).'</div>';
         $db->rollback();
 	}
 }
@@ -120,7 +121,8 @@ if ($action == 'confirm_valide' && GETPOST('confirm') == 'yes' && $user->rights-
 	}
 	else
 	{
-		$mesg='<div class="error">'.$paiement->error.'</div>';
+	    $langs->load("errors");
+		$mesg='<div class="error">'.$langs->trans($paiement->error).'</div>';
 		$db->rollback();
 	}
 }
@@ -178,7 +180,7 @@ if ($action == 'valide')
 }
 
 
-if ($mesg) print $mesg.'<br>';
+dol_htmloutput_mesg($mesg);
 
 
 print '<table class="border" width="100%">';
@@ -356,5 +358,5 @@ print '</div>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:35 $ - $Revision: 1.76 $');
+llxFooter('$Date: 2011/08/05 21:06:55 $ - $Revision: 1.77 $');
 ?>
