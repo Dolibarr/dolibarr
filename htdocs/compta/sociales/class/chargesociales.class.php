@@ -20,7 +20,7 @@
  *      \file       htdocs/compta/sociales/class/chargesociales.class.php
  *		\ingroup    facture
  *		\brief      Fichier de la classe des charges sociales
- *		\version    $Id: chargesociales.class.php,v 1.14 2011/08/03 00:46:38 eldy Exp $
+ *		\version    $Id: chargesociales.class.php,v 1.15 2011/08/05 21:11:50 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
@@ -147,25 +147,72 @@ class ChargeSociales extends CommonObject
 
 
 	/**
-	 *      \brief      Efface un charge sociale
-	 *      \param      user    Utilisateur qui cree le paiement
-	 *      \return     int     <0 si erreur, >0 si ok
+	 *      Delete a social contribution
+	 *      @param      user    Object user making delete
+	 *      @return     int     <0 if KO, >0 if OK
 	 */
 	function delete($user)
 	{
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."chargesociales where rowid='".$this->id."'";
+	    $error=0;
 
-		dol_syslog("ChargesSociales::delete sql=".$sql);
-		$resql=$this->db->query($sql);
-		if ($resql)
+	    $this->db->begin();
+
+	    // Get bank transaction lines for this social contributions
+	    include_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");
+	    $account=new Account($this->db);
+        $lines_url=$account->get_url('',$this->id,'sc');
+
+        // Delete bank urls
+        foreach ($lines_url as $line_url)
+        {
+            if (! $error)
+            {
+                $accountline=new AccountLine($this->db);
+                $accountline->fetch($line_url['fk_bank']);
+                $result=$accountline->delete_urls($user);
+                if ($result < 0)
+                {
+                    $error++;
+                }
+            }
+        }
+
+        // Delete payments
+        if (! $error)
+        {
+    	    $sql = "DELETE FROM ".MAIN_DB_PREFIX."paiementcharge where fk_charge='".$this->id."'";
+    		dol_syslog(get_class($this)."::delete sql=".$sql);
+    		$resql=$this->db->query($sql);
+    		if (! $resql)
+    		{
+    		    $error++;
+    			$this->error=$this->db->lasterror();
+    		}
+        }
+
+        if (! $error)
+        {
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."chargesociales where rowid='".$this->id."'";
+    		dol_syslog(get_class($this)."::delete sql=".$sql);
+    		$resql=$this->db->query($sql);
+    		if (! $resql)
+    		{
+    		    $error++;
+    			$this->error=$this->db->lasterror();
+    		}
+        }
+
+		if (! $error)
 		{
+		    $this->db->commit();
 			return 1;
 		}
 		else
 		{
-			$this->error=$this->db->error();
+		    $this->db->rollback();
 			return -1;
 		}
+
 	}
 
 
