@@ -24,7 +24,7 @@
  *	\ingroup		core
  *  \brief      	File of class to manage storage of current setup
  *  				Config is stored into file conf.php
- *  \version    	$Id: conf.class.php,v 1.64 2011/08/01 13:26:22 hregis Exp $
+ *  \version    	$Id: conf.class.php,v 1.65 2011/08/04 21:46:51 eldy Exp $
  */
 
 
@@ -324,15 +324,6 @@ class Conf
 		// Defini le mode de calcul des etats comptables (CA,...)
 		$this->compta->mode = 'RECETTES-DEPENSES';  // By default
 		if (isset($this->global->COMPTA_MODE)) $this->compta->mode = $this->global->COMPTA_MODE;  // Can be 'RECETTES-DEPENSES' ou 'CREANCES-DETTES'
-
-		// $this->defaulttx
-		if (isset($this->global->FACTURE_TVAOPTION) && $this->global->FACTURE_TVAOPTION == 'franchise')
-		{
-			$this->defaulttx='0';		// Taux par defaut des factures clients
-		}
-		else {
-			$this->defaulttx='';		// Pas de taux par defaut des factures clients, le plus élevé sera pris
-		}
 
 		// $this->liste_limit = constante de taille maximale des listes
 		if (empty($this->global->MAIN_SIZE_LISTE_LIMIT)) $this->global->MAIN_SIZE_LISTE_LIMIT=25;

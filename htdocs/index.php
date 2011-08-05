@@ -20,7 +20,7 @@
 /**
  *	\file       htdocs/index.php
  *	\brief      Dolibarr home page
- *	\version    $Id: index.php,v 1.200 2011/07/31 23:19:05 eldy Exp $
+ *	\version    $Id: index.php,v 1.201 2011/08/04 12:07:30 eldy Exp $
  */
 
 define('NOCSRFCHECK',1);	// This is login page. We must be able to go on it from another web site.
@@ -545,8 +545,9 @@ if ($user->admin && empty($conf->global->MAIN_REMOVE_INSTALL_WARNING))
 {
     $message='';
 
-    // Install lock missing
-    if (! file_exists('../install.lock') && is_dir(DOL_DOCUMENT_ROOT."/install"))
+    // Check if install lock file is present
+    $lockfile=DOL_DATA_ROOT.'/install.lock';
+    if (! empty($lockfile) && ! file_exists($lockfile) && is_dir(DOL_DOCUMENT_ROOT."/install"))
     {
         $langs->load("other");
         //if (! empty($message)) $message.='<br>';
@@ -573,7 +574,7 @@ if ($user->admin && empty($conf->global->MAIN_REMOVE_INSTALL_WARNING))
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:19:05 $ - $Revision: 1.200 $');
+llxFooter('$Date: 2011/08/04 12:07:30 $ - $Revision: 1.201 $');
 
 
 /**

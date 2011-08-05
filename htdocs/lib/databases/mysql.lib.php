@@ -22,7 +22,7 @@
 /**
  *	\file       	htdocs/lib/databases/mysql.lib.php
  *	\brief      	Class file to manage Dolibarr database access for a Mysql database
- *	\version		$Id: mysql.lib.php,v 1.119 2011/07/31 23:26:03 eldy Exp $
+ *	\version		$Id: mysql.lib.php,v 1.121 2011/08/04 13:58:55 eldy Exp $
  */
 // For compatibility during upgrade
 if (! defined('DOL_DOCUMENT_ROOT'))	 define('DOL_DOCUMENT_ROOT', '../..');
@@ -1144,8 +1144,8 @@ class DoliDb
 	}
 
 	/**
-	 *	\brief		Return full path of dump program
-	 *	\return		string		Full path of dump program
+	 *	Return full path of dump program
+	 *	@return		string		Full path of dump program
 	 */
 	function getPathOfDump()
 	{
@@ -1156,7 +1156,7 @@ class DoliDb
 		{
 			$liste=$this->fetch_array($resql);
 			$basedir=$liste['Value'];
-			$fullpathofdump=$basedir.'bin/mysqldump';
+			$fullpathofdump=$basedir.(preg_match('/\/$/',$basedir)?'':'/').'bin/mysqldump';
 		}
 		return $fullpathofdump;
 	}
@@ -1174,7 +1174,7 @@ class DoliDb
 		{
 			$liste=$this->fetch_array($resql);
 			$basedir=$liste['Value'];
-			$fullpathofimport=$basedir.'bin/mysql';
+			$fullpathofimport=$basedir.(preg_match('/\/$/',$basedir)?'':'/').'bin/mysql';
 		}
 		return $fullpathofimport;
 	}

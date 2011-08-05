@@ -154,8 +154,6 @@ export apachefileorig="$targetdir/build/rpm/httpd-dolibarr.conf"
 export apacheconfig="%{_sysconfdir}/dolibarr/apache.conf"
 #export config="/usr/share/dolibarr/htdocs/conf/conf.php"
 export config="%{_sysconfdir}/dolibarr/conf.php"
-export lockfile="/usr/share/dolibarr/install.lock"
-
 
 # Detect OS
 os='unknown';
@@ -185,6 +183,8 @@ if [ -d %{_sysconfdir}/apache2/conf.d -a `grep ^www-data /etc/passwd | wc -l` -g
 fi
 echo OS detected: $os
 
+# Remove lock file
+%{__rm} -f $docdir/install.lock
 
 # Create empty directory for uploaded files and generated documents 
 echo Create document directory $docdir
@@ -223,11 +223,9 @@ if [ "x$os" = "xfedora-redhat" -a -s /sbin/restorecon ]; then
     # semanage add records into /etc/selinux/targeted/contexts/files/file_contexts.local
     semanage fcontext -a -t httpd_sys_script_rw_t "/etc/dolibarr(/.*?)"
     #semanage fcontext -a -t httpd_sys_script_rw_t "/usr/share/dolibarr(/.*?)"
-    semanage fcontext -a -t httpd_sys_script_rw_t "/usr/share/dolibarr/install.lock"
     semanage fcontext -a -t httpd_sys_script_rw_t "/var/lib/dolibarr(/.*?)"
     restorecon -R -v /etc/dolibarr
     #restorecon -R -v /usr/share/dolibarr
-    restorecon -v /usr/share/dolibarr/install.lock
     restorecon -R -v /var/lib/dolibarr
 fi
 
@@ -288,7 +286,6 @@ export apachefileorig="$targetdir/build/rpm/httpd-dolibarr.conf"
 export apacheconfig="%{_sysconfdir}/dolibarr/apache.conf"
 #export config="/usr/share/dolibarr/htdocs/conf/conf.php"
 export config="%{_sysconfdir}/dolibarr/conf.php"
-export lockfile="$targetdir/install.lock"
 
 
 # Detect OS
@@ -345,8 +342,8 @@ echo Removed remaining $config
 %{__rm} -f $config
 echo Removed remaining $installconfig
 %{__rm} -f $installconfig
-echo Removed remaining $lockfile
-%{__rm} -f $lockfile
+echo Removed remaining $docdir/install.lock
+%{__rm} -f $docdir/install.lock
 
 
 %changelog

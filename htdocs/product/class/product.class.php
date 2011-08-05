@@ -24,7 +24,7 @@
  *	\file       htdocs/product/class/product.class.php
  *	\ingroup    produit
  *	\brief      Fichier de la classe des produits predefinis
- *	\version    $Id: product.class.php,v 1.48 2011/07/31 23:24:03 eldy Exp $
+ *	\version    $Id: product.class.php,v 1.49 2011/08/04 21:46:51 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
 
@@ -2861,7 +2861,7 @@ class Product extends CommonObject
 			$this->tpl['price_base_type'] = $html->load_PriceBaseType($this->price_base_type, "price_base_type");
 
 			// VAT
-			$this->tpl['tva_tx'] = $html->load_tva("tva_tx",$conf->defaulttx,$mysoc,'');
+			$this->tpl['tva_tx'] = $html->load_tva("tva_tx",-1,$mysoc,'');
 		}
 
 		if ($action == 'create' || $action == 'edit')
