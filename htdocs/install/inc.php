@@ -21,7 +21,7 @@
 /**	    \file       htdocs/install/inc.php
  * 		\ingroup	core
  *		\brief      File that define environment for install pages
- *		\version    $Id: inc.php,v 1.138 2011/08/04 12:07:30 eldy Exp $
+ *		\version    $Id: inc.php,v 1.139 2011/08/05 23:47:34 eldy Exp $
  */
 
 define('DOL_VERSION','3.1.0-beta');	// Also defined in htdocs/master.inc.php (Ex: x.y.z-alpha, x.y.z)
@@ -178,7 +178,7 @@ if (preg_match('/install.lock/i',$_SERVER["SCRIPT_FILENAME"]))
 	exit;
 }
 $lockfile=DOL_DATA_ROOT.'/install.lock';
-if (file_exists($lockfile))
+if (constant('DOL_DATA_ROOT') && file_exists($lockfile))
 {
 	print 'Install pages have been disabled for security reason (by lock file install.lock into dolibarr root directory).<br>';
 	if (! empty($dolibarr_main_url_root))
