@@ -20,7 +20,7 @@
  *	\file       htdocs/exports/class/export.class.php
  *	\ingroup    export
  *	\brief      File of class to manage exports
- *	\version    $Id: export.class.php,v 1.12 2011/07/31 23:50:57 eldy Exp $
+ *	\version    $Id: export.class.php,v 1.13 2011/08/05 06:29:50 tiaris Exp $
  */
 
 
@@ -213,11 +213,12 @@ class Export
 	 *      \param      model               Export format
 	 *      \param      datatoexport        Name of dataset to export
 	 *      \param      array_selected      Filter on array of fields to export
+	 *      \param		sqlquery = ''		if set, transmit a sql query instead of building it from arrays
 	 *      \remarks    Les tableaux array_export_xxx sont deja chargees pour le bon datatoexport
 	 *                  aussi le parametre datatoexport est inutilise
 	 */
-	function build_file($user, $model, $datatoexport, $array_selected)
-	{
+	function build_file($user, $model, $datatoexport, $array_selected, $sqlquery = '')
+ 	{
 		global $conf,$langs;
 
 		$indice=0;
@@ -232,7 +233,8 @@ class Export
 		require_once($dir.$file);
 		$objmodel = new $classname($db);
 
-		$sql=$this->build_sql($indice,$array_selected);
+		if ($sqlquery) $sql = $sqlquery;
+        else $sql=$this->build_sql($indice,$array_selected);
 
 		// Run the sql
 		$this->sqlusedforexport=$sql;
