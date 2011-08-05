@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2006      Auguria SARL         <info@auguria.org>
- * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
  *  \file       htdocs/product/fiche.php
  *  \ingroup    product
  *  \brief      Page to show product
- *  \version    $Id: fiche.php,v 1.375 2011/08/04 21:46:50 eldy Exp $
+ *  \version    $Id: fiche.php,v 1.376 2011/08/05 12:59:17 simnandez Exp $
  */
 
 require("../main.inc.php");
@@ -1286,7 +1286,7 @@ if ($product->id && $action == '' && $product->status)
 		$sql.= " AND p.entity = ".$conf->entity;
 		$sql.= " AND p.fk_statut = 0";
 		$sql.= " AND p.fk_user_author = ".$user->id;
-		$sql.= " ORDER BY p.datec DESC, tms DESC";
+		$sql.= " ORDER BY p.datec DESC, p.tms DESC";
 
 		$result=$db->query($sql);
 		if ($result)
@@ -1645,6 +1645,6 @@ if ($product->id && $action == '' && $product->status)
 
 $db->close();
 
-llxFooter('$Date: 2011/08/04 21:46:50 $ - $Revision: 1.375 $');
+llxFooter('$Date: 2011/08/05 12:59:17 $ - $Revision: 1.376 $');
 
 ?>
