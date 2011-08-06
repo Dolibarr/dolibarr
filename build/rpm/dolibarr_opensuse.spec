@@ -6,13 +6,11 @@
 # edit it if you need to match your rules.
 # --------------------------------------------------------
 
-%define name dolibarr
 %define version __VERSION__
-%define release __RELEASE__
 
-Name: %{name}
+Name: dolibarr
 Version: %{version}
-Release: %{release}
+Release: __RELEASE__
 Summary: ERP and CRM software for small and medium companies or foundations 
 Summary(es): Software ERP y CRM para pequeñas y medianas empresas o, asociaciones o autónomos
 Summary(fr): Logiciel ERP & CRM de gestion de PME/PMI, autoentrepreneurs ou associations
@@ -22,27 +20,16 @@ License: GPLv2+
 #Packager: Laurent Destailleur (Eldy) <eldy@users.sourceforge.net>
 Vendor: Dolibarr dev team
 
-URL: http://www.%{name}.org
-Source0: http://www.dolibarr.org/files/fedora/%{name}-%{version}.tgz
+URL: http://www.dolibarr.org
+Source0: http://www.dolibarr.org/files/opensuse/dolibarr-%{version}.tgz
 BuildArch: noarch
 #BuildArchitectures: noarch
-BuildRoot: %{_tmppath}/%{name}-%{version}-build
-#Icon: dolibarr_logo1.gif
+BuildRoot: %{_tmppath}/dolibarr-%{version}-build
 
-# For Mandriva-Mageia
-Group: Networking/WWW
-# For all other distrib
 Group: Applications/Internet
 
-# Requires for Fedora-Redhat
-Requires: mysql-server mysql httpd php php-cli php-gd php-ldap php-imap php-mysql 
-# Requires for OpenSuse
-#Requires: mysql-community-server mysql-community-server-client apache2 apache2-mod_php5 php5 php5-gd php5-ldap php5-imap php5-mysql php5-openssl 
-# Requires for Mandriva-Mageia
-#Requires: mysql mysql-client apache-base apache-mod_php php-cgi php-cli php-bz2 php-gd php-ldap php-imap php-mysqli php-openssl 
+Requires: mysql-community-server mysql-community-server-client apache2 apache2-mod_php5 php5 php5-gd php5-ldap php5-imap php5-mysql php5-openssl 
 
-#Requires(pre):
-#Requires(postun):
 
 # Set yes to build test package, no for release (this disable need of /usr/bin/php not found by OpenSuse)
 AutoReqProv: no
@@ -83,7 +70,6 @@ cui hai bisogno ed essere facile da usare.
 
 #---- prep
 %prep
-echo Building %{name}-%{version}-%{release}
 %setup -q
 
 
@@ -124,13 +110,13 @@ echo Building %{name}-%{version}-%{release}
 #---- files
 %files
 
-%defattr(-,root,root)
-%doc %{_datadir}/doc/dolibarr/*
+%defattr(-, root, root, 0755)
+%doc /usr/share/doc/dolibarr/*
 %dir /usr/share/dolibarr/build
 %dir /usr/share/dolibarr/htdocs
 %dir /usr/share/dolibarr/scripts
 %_datadir/pixmaps/dolibarr.png
-%_datadir/applications/%{name}.desktop
+%_datadir/applications/dolibarr.desktop
 /usr/share/dolibarr/build/*
 /usr/share/dolibarr/htdocs/*
 /usr/share/dolibarr/scripts/*
@@ -144,44 +130,13 @@ echo Building %{name}-%{version}-%{release}
 %post
 
 # Define vars
-# Dolibarr files are stored into /usr/share
-export targetdir='/usr/share/dolibarr'
-# Dolibarr uploaded files and generated documents will be stored into docdir 
 export docdir="/var/lib/dolibarr/documents"
-export installfileorig="$targetdir/build/rpm/install.forced.php.install"
+export installfileorig="/usr/share/dolibarr/build/rpm/install.forced.php.install"
 export installconfig="%{_sysconfdir}/dolibarr/install.forced.php"
-export apachefileorig="$targetdir/build/rpm/httpd-dolibarr.conf"
-export apacheconfig="%{_sysconfdir}/dolibarr/apache.conf"
-#export config="/usr/share/dolibarr/htdocs/conf/conf.php"
 export config="%{_sysconfdir}/dolibarr/conf.php"
-
-# Detect OS
-os='unknown';
-if [ -d %{_sysconfdir}/httpd/conf.d ]; then
-    export os='fedora-redhat';
-    export apachelink="%{_sysconfdir}/httpd/conf.d/dolibarr.conf"
-    export apacheuser='apache';
-    export apachegroup='apache';
-fi
-if [ -d %{_sysconfdir}/apache2/conf.d -a `grep ^wwwrun /etc/passwd | wc -l` -ge 1 ]; then
-    export os='opensuse';
-    export apachelink="%{_sysconfdir}/apache2/conf.d/dolibarr.conf"
-    export apacheuser='wwwrun';
-    export apachegroup='www';
-fi
-if [ -d %{_sysconfdir}/httpd/conf.d -a `grep -i "^mageia\|mandriva" /etc/issue | wc -l` -ge 1 ]; then
-    export os='mageia-mandriva';
-    export apachelink="%{_sysconfdir}/httpd/conf.d/dolibarr.conf"
-    export apacheuser='apache';
-    export apachegroup='apache';
-fi
-if [ -d %{_sysconfdir}/apache2/conf.d -a `grep ^www-data /etc/passwd | wc -l` -ge 1 ]; then
-    export os='ubuntu-debian';
-    export apachelink="%{_sysconfdir}/apache2/conf.d/dolibarr.conf"
-    export apacheuser='www-data';
-    export apachegroup='www-data';
-fi
-echo OS detected: $os
+export apachelink="%{_sysconfdir}/apache2/conf.d/dolibarr.conf"
+export apacheuser='wwwrun';
+export apachegroup='www';
 
 # Remove lock file
 %{__rm} -f $docdir/install.lock
@@ -189,22 +144,9 @@ echo OS detected: $os
 # Create empty directory for uploaded files and generated documents 
 echo Create document directory $docdir
 %{__mkdir} -p $docdir
-%{__mkdir} -p %{_sysconfdir}/dolibarr
 
 # Create install.forced.php into Dolibarr install directory
-superuserlogin=''
-superuserpassword=''
-if [ -f %{_sysconfdir}/mysql/debian.cnf ] ; then
-    # Load superuser login and pass
-    superuserlogin=$(/bin/grep --max-count=1 "user" %{_sysconfdir}/mysql/debian.cnf | /bin/sed -e 's/^user[ =]*//g')
-    superuserpassword=$(/bin/grep --max-count=1 "password" %{_sysconfdir}/mysql/debian.cnf | /bin/sed -e 's/^password[ =]*//g')
-fi
-echo Mysql superuser found to use is $superuserlogin
-if [ -z "$superuserlogin" ] ; then
-    %{__cat} $installfileorig | sed -e 's/__SUPERUSERLOGIN__/root/g' | sed -e 's/__SUPERUSERPASSWORD__//g' > $installconfig
-else
-    %{__cat} $installfileorig | sed -e 's/__SUPERUSERLOGIN__/'$superuserlogin'/g' | sed -e 's/__SUPERUSERPASSWORD__/'$superuserpassword'/g' > $installconfig
-fi
+%{__cat} $installfileorig | sed -e 's/__SUPERUSERLOGIN__/root/g' | sed -e 's/__SUPERUSERPASSWORD__//g' > $installconfig
 %{__chown} -R root:$apachegroup $installconfig
 %{__chmod} -R 660 $installconfig
 
@@ -217,29 +159,11 @@ then
     %{__chmod} -R 660 $config
 fi
 
-# Create config file for se $seconfig
-if [ "x$os" = "xfedora-redhat" -a -s /sbin/restorecon ]; then
-    echo Add SE Linux permissions for dolibarr
-    # semanage add records into /etc/selinux/targeted/contexts/files/file_contexts.local
-    semanage fcontext -a -t httpd_sys_script_rw_t "/etc/dolibarr(/.*?)"
-    #semanage fcontext -a -t httpd_sys_script_rw_t "/usr/share/dolibarr(/.*?)"
-    semanage fcontext -a -t httpd_sys_script_rw_t "/var/lib/dolibarr(/.*?)"
-    restorecon -R -v /etc/dolibarr
-    #restorecon -R -v /usr/share/dolibarr
-    restorecon -R -v /var/lib/dolibarr
-fi
-
 # Create a config link dolibarr.conf
 if [ ! -f $apachelink ]; then
     echo Create dolibarr web server config link $apachelink
-    ln -fs $apacheconfig $apachelink
+    ln -fs %{_sysconfdir}/dolibarr/apache.conf $apachelink
 fi
-
-# Set permissions
-echo Set permission to $apacheuser:$apachegroup on $targetdir
-%{__chown} -R $apacheuser:$apachegroup $targetdir
-%{__chmod} -R a-w $targetdir
-%{__chmod} u+w $targetdir
 
 echo Set permission to $apacheuser:$apachegroup on /var/lib/dolibarr
 %{__chown} -R $apacheuser:$apachegroup /var/lib/dolibarr
@@ -276,45 +200,13 @@ echo
 %postun
 
 # Define vars
-# Dolibarr files are stored into targetdir
-export targetdir='/usr/share/dolibarr'
-# Dolibarr uploaded files and generated documents will be stored into docdir 
 export docdir="/var/lib/dolibarr/documents"
-export installfileorig="$targetdir/build/rpm/install.forced.php.install"
+export installfileorig="/usr/share/dolibarr/build/rpm/install.forced.php.install"
 export installconfig="%{_sysconfdir}/dolibarr/install.forced.php"
-export apachefileorig="$targetdir/build/rpm/httpd-dolibarr.conf"
-export apacheconfig="%{_sysconfdir}/dolibarr/apache.conf"
-#export config="/usr/share/dolibarr/htdocs/conf/conf.php"
 export config="%{_sysconfdir}/dolibarr/conf.php"
-
-
-# Detect OS
-os='unknown';
-if [ -d %{_sysconfdir}/httpd/conf.d ]; then
-    export os='fedora-redhat';
-    export apachelink="%{_sysconfdir}/httpd/conf.d/dolibarr.conf"
-    export apacheuser='apache';
-    export apachegroup='apache';
-fi
-if [ -d %{_sysconfdir}/apache2/conf.d -a `grep ^wwwrun /etc/passwd | wc -l` -ge 1 ]; then
-    export os='opensuse';
-    export apachelink="%{_sysconfdir}/apache2/conf.d/dolibarr.conf"
-    export apacheuser='wwwrun';
-    export apachegroup='www';
-fi
-if [ -d %{_sysconfdir}/httpd/conf.d -a `grep -i "^mageia\|mandriva" /etc/issue | wc -l` -ge 1 ]; then
-    export os='mageia-mandriva';
-    export apachelink="%{_sysconfdir}/httpd/conf.d/dolibarr.conf"
-    export apacheuser='apache';
-    export apachegroup='apache';
-fi
-if [ -d %{_sysconfdir}/apache2/conf.d -a `grep ^www-data /etc/passwd | wc -l` -ge 1 ]; then
-    export os='ubuntu-debian';
-    export apachelink="%{_sysconfdir}/apache2/conf.d/dolibarr.conf"
-    export apacheuser='www-data';
-    export apachegroup='www-data';
-fi
-echo OS detected: $os
+export apachelink="%{_sysconfdir}/apache2/conf.d/dolibarr.conf"
+export apacheuser='wwwrun';
+export apachegroup='www';
 
 # Remove apache link
 if [ -f $apachelink ] ;
@@ -342,8 +234,6 @@ echo Removed remaining $config
 %{__rm} -f $config
 echo Removed remaining $installconfig
 %{__rm} -f $installconfig
-echo Removed remaining $docdir/install.lock
-%{__rm} -f $docdir/install.lock
 
 
 %changelog
