@@ -73,9 +73,11 @@ cui hai bisogno ed essere facile da usare.
 %setup -q
 
 
+
 #---- build
 %build
 # Nothing to build
+
 
 
 #---- install
@@ -83,6 +85,8 @@ cui hai bisogno ed essere facile da usare.
 %{__rm} -rf $RPM_BUILD_ROOT
 
 %{__mkdir} -p $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr
+%{__install} -m 644 etc/dolibarr/conf.php $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr/conf.php
+%{__install} -m 644 etc/dolibarr/install.forced.php $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr/install.forced.php
 %{__install} -m 644 etc/dolibarr/apache.conf $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr/apache.conf
 %{__install} -m 644 etc/dolibarr/file_contexts.dolibarr $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr/file_contexts.dolibarr
 
@@ -94,12 +98,12 @@ cui hai bisogno ed essere facile da usare.
 %{__mkdir} -p $RPM_BUILD_ROOT/usr/share/dolibarr/build
 %{__mkdir} -p $RPM_BUILD_ROOT/usr/share/dolibarr/htdocs
 %{__mkdir} -p $RPM_BUILD_ROOT/usr/share/dolibarr/scripts
-%{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/doc/dolibarr
+%{__mkdir} -p $RPM_BUILD_ROOT/usr/share/doc/dolibarr
 %{__cp} -pr usr/share/dolibarr/build   $RPM_BUILD_ROOT/usr/share/dolibarr
 %{__cp} -pr usr/share/dolibarr/htdocs  $RPM_BUILD_ROOT/usr/share/dolibarr
 %{__cp} -pr usr/share/dolibarr/scripts $RPM_BUILD_ROOT/usr/share/dolibarr
-%{__cp} -pr usr/share/dolibarr/doc/*   $RPM_BUILD_ROOT%{_datadir}/doc/dolibarr
-%{__install} -m 644 usr/share/dolibarr/COPYRIGHT $RPM_BUILD_ROOT%{_datadir}/doc/dolibarr/COPYRIGHT
+%{__cp} -pr usr/share/dolibarr/doc/*   $RPM_BUILD_ROOT/usr/share/doc/dolibarr
+%{__install} -m 644 usr/share/dolibarr/COPYRIGHT $RPM_BUILD_ROOT/usr/share/doc/dolibarr/COPYRIGHT
 
 
 #---- clean
@@ -107,11 +111,12 @@ cui hai bisogno ed essere facile da usare.
 %{__rm} -rf $RPM_BUILD_ROOT
 
 
+
 #---- files
 %files
 
 %defattr(-, root, root, 0755)
-%doc /usr/share/doc/dolibarr/*
+%doc /usr/share/doc/dolibarr
 %dir /usr/share/dolibarr/build
 %dir /usr/share/dolibarr/htdocs
 %dir /usr/share/dolibarr/scripts
@@ -121,9 +126,12 @@ cui hai bisogno ed essere facile da usare.
 /usr/share/dolibarr/htdocs/*
 /usr/share/dolibarr/scripts/*
 
-%defattr(0664, -, -, 0755)
+%defattr(0664, -, -)
+%config(noreplace) %{_sysconfdir}/dolibarr/conf.php
 %config(noreplace) %{_sysconfdir}/dolibarr/apache.conf
+%config(noreplace) %{_sysconfdir}/dolibarr/install.forced.php
 %config(noreplace) %{_sysconfdir}/dolibarr/file_contexts.dolibarr
+
 
 
 #---- post (after unzip during install)
@@ -131,9 +139,6 @@ cui hai bisogno ed essere facile da usare.
 
 # Define vars
 export docdir="/var/lib/dolibarr/documents"
-export installfileorig="/usr/share/dolibarr/build/rpm/install.forced.php.install"
-export installconfig="%{_sysconfdir}/dolibarr/install.forced.php"
-export config="%{_sysconfdir}/dolibarr/conf.php"
 export apachelink="%{_sysconfdir}/httpd/conf.d/dolibarr.conf"
 export apacheuser='apache';
 export apachegroup='apache';
@@ -145,22 +150,10 @@ export apachegroup='apache';
 echo Create document directory $docdir
 %{__mkdir} -p $docdir
 
-# Create install.forced.php into Dolibarr install directory
-%{__cat} $installfileorig | sed -e 's/__SUPERUSERLOGIN__/root/g' | sed -e 's/__SUPERUSERPASSWORD__//g' > $installconfig
-%{__chown} -R root:$apachegroup $installconfig
-%{__chmod} -R 660 $installconfig
-
-# Create an empty conf.php with permission to web server
-if [ ! -f $config ]
-then
-    echo Create empty file $config
-    touch $config
-    %{__chown} -R root:$apachegroup $config
-    %{__chmod} -R 660 $config
-fi
+%{__chown} -R root:$apachegroup /etc/dolibarr/*
 
 # Create a config link dolibarr.conf
-if [ ! -f $apachelink ]; then
+if [ ! -L $apachelink ]; then
     echo Create dolibarr web server config link $apachelink
     ln -fs %{_sysconfdir}/dolibarr/apache.conf $apachelink
 fi
@@ -188,7 +181,7 @@ fi
 echo
 echo "----- Dolibarr %version - (c) Dolibarr dev team -----"
 echo "Dolibarr files are now installed (into /usr/share/dolibarr)."
-echo "To finish installation and use Dolibarr, click on ne menu" 
+echo "To finish installation and use Dolibarr, click on the menu" 
 echo "entry Dolibarr ERP-CRM or call the following page from your"
 echo "web browser:"  
 echo "http://localhost/dolibarr/"
@@ -200,17 +193,10 @@ echo
 %postun
 
 # Define vars
-export docdir="/var/lib/dolibarr/documents"
-export installfileorig="/usr/share/dolibarr/build/rpm/install.forced.php.install"
-export installconfig="%{_sysconfdir}/dolibarr/install.forced.php"
-export config="%{_sysconfdir}/dolibarr/conf.php"
 export apachelink="%{_sysconfdir}/httpd/conf.d/dolibarr.conf"
-export apacheuser='apache';
-export apachegroup='apache';
-
 
 # Remove apache link
-if [ -f $apachelink ] ;
+if [ -L $apachelink ] ;
 then
     echo Delete apache config link for Dolibarr
     %{__rm} -f $apachelink
@@ -230,11 +216,6 @@ then
     fi
 fi
 
-# Removed dirs after apache restart
-echo Removed remaining $config
-%{__rm} -f $config
-echo Removed remaining $installconfig
-%{__rm} -f $installconfig
 
 
 %changelog
