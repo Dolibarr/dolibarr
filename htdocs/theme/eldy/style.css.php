@@ -21,7 +21,7 @@
 /**
  *		\file       htdocs/theme/eldy/style.css.php
  *		\brief      Fichier de style CSS du theme Eldy
- *		\version    $Id: style.css.php,v 1.94 2011/08/07 22:58:48 eldy Exp $
+ *		\version    $Id: style.css.php,v 1.90 2011/08/07 15:06:23 grandoc Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -1214,6 +1214,14 @@ border: 0px;
 -moz-box-shadow: 4px 4px 4px #CCC;
 -webkit-box-shadow: 4px 4px 4px #CCC;
 box-shadow: 4px 4px 4px #CCC;
+<!--[if lte IE 8]> 
+<style type="text/css"> 
+  background-color: #fff;
+  zoom: 1;
+  filter: progid:DXImageTransform.Microsoft.Shadow(color='#cccccc',
+     Direction=135, Strength=6); 
+<![endif]--> 
+
 }
 
 
