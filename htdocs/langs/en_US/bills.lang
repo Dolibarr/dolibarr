@@ -366,7 +366,7 @@ DisabledBecausePayments=Not possible since there is some payments
 CantRemovePaymentWithOneInvoicePaid=Can't remove payment since there is at least one invoice classified payed
 ExpectedToPay=Expected payment
 PayedByThisPayment=Payed by this payment
-ClosePaidInvoicesAutomatically=Classify "Payed" all standard or replacement invoices entierely payed. 
+ClosePaidInvoicesAutomatically=Classify "Payed" all invoices entierely payed. 
 AllCompletelyPayedInvoiceWillBeClosed=All invoice with no remain to pay will be automatically closed to status "Payed".
 ##### Types de contacts #####
 TypeContact_facture_internal_SALESREPFOLL=Representative following-up customer invoice
