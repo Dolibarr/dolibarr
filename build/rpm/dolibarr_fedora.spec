@@ -93,7 +93,8 @@ cui hai bisogno ed essere facile da usare.
 %{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/pixmaps
 %{__install} -m 644 usr/share/dolibarr/doc/images/dolibarr_48x48.png $RPM_BUILD_ROOT%{_datadir}/pixmaps/dolibarr.png
 %{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/applications
-%{__desktop-file-install} -m 644 usr/share/dolibarr/build/rpm/dolibarr.desktop $RPM_BUILD_ROOT%{_datadir}/applications/dolibarr.desktop
+#desktop-file-install -m 644 usr/share/dolibarr/build/rpm/dolibarr.desktop $RPM_BUILD_ROOT%{_datadir}/applications/dolibarr.desktop
+%{install} -m 644 usr/share/dolibarr/build/rpm/dolibarr.desktop $RPM_BUILD_ROOT%{_datadir}/applications/dolibarr.desktop
 
 %{__mkdir} -p $RPM_BUILD_ROOT/usr/share/dolibarr/build
 %{__mkdir} -p $RPM_BUILD_ROOT/usr/share/dolibarr/htdocs
@@ -150,6 +151,7 @@ export apachegroup='apache';
 echo Create document directory $docdir
 %{__mkdir} -p $docdir
 
+# Set correct owner on config files
 %{__chown} -R root:$apachegroup /etc/dolibarr/*
 
 # Create config for se $seconfig
