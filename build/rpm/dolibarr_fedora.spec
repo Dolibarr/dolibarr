@@ -113,15 +113,15 @@ cui hai bisogno ed essere facile da usare.
 %files
 
 %defattr(-, root, root, 0755)
-%doc /usr/share/doc/dolibarr
-%dir /usr/share/dolibarr/build
-%dir /usr/share/dolibarr/htdocs
-%dir /usr/share/dolibarr/scripts
+%doc %_datadir/doc/dolibarr
+%dir %_datadir/dolibarr/build
+%dir %_datadir/dolibarr/htdocs
+%dir %_datadir/dolibarr/scripts
 %_datadir/pixmaps/dolibarr.png
 %_datadir/applications/dolibarr.desktop
-/usr/share/dolibarr/build/*
-/usr/share/dolibarr/htdocs/*
-/usr/share/dolibarr/scripts/*
+%_datadir/dolibarr/build/*
+%_datadir/dolibarr/htdocs/*
+%_datadir/dolibarr/scripts/*
 
 %defattr(0664, -, -)
 %config(noreplace) %{_sysconfdir}/dolibarr/conf.php
