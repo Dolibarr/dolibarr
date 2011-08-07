@@ -21,7 +21,7 @@
 /**
  *		\file       htdocs/theme/eldy/style.css.php
  *		\brief      Fichier de style CSS du theme Eldy
- *		\version    $Id: style.css.php,v 1.94 2011/08/07 22:58:48 eldy Exp $
+ *		\version    $Id: style.css.php,v 1.91 2011/08/07 16:36:45 grandoc Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -270,14 +270,32 @@ a.tmenu:link, a.tmenu:visited, a.tmenu:hover, a.tmenu:active {
 	margin: 0px 1px 2px 1px;
 	font-weight: normal;
 	white-space: nowrap;
+	-moz-border-radius: 6px 6px 0px 0px;
+    -webkit-border-radius: 6px 6px 0px 0px;
+	-moz-background-clip: padding; 
+	-webkit-background-clip: padding-box; 
+	background-clip: padding-box;
+    border-radius: 6px 6px 0px 0px;
+	-moz-box-shadow: 2px 0px 4px #898484;
+	-webkit-box-shadow: 2px 0px 4px #898484;
+	box-shadow: 2px 0px 4px #898484;
 }
 a.tmenu:hover, a.tmenu:active {
 	margin: 0px 0px 0px 0px;
 	background: #dee7ec;
 	border-<?php print $right; ?>: 1px solid #555555;
 	border-<?php print $left; ?>: 1px solid #D8D8D8;
+	-moz-border-radius: 6px 6px 0px 0px;
+    -webkit-border-radius: 6px 6px 0px 0px;
+    border-radius: 6px 6px 0px 0px;
+	-moz-background-clip: padding; 
+	-webkit-background-clip: padding-box; 
+	background-clip: padding-box;
 	border-top: 1px solid #D8D8D8;
-	border-bottom: 2px solid #dee7ec;
+	border-bottom: 1px solid #dee7ec;
+	-moz-box-shadow: 2px 0px 4px #898484;
+	-webkit-box-shadow: 2px 0px 4px #898484;
+	box-shadow: 2px 0px 4px #898484;
 }
 a.tmenu:active {
 	background: #F4F4F4;
@@ -289,10 +307,19 @@ a.tmenusel:link, a.tmenusel:visited, a.tmenusel:hover, a.tmenusel:active {
 	font-weight: normal;
 	color: #234046;
 	background: #F4F4F4;
+	-moz-border-radius: 6px 6px 0px 0px;
+    -webkit-border-radius: 6px 6px 0px 0px;
+    border-radius: 6px 6px 0px 0px;
+	-moz-background-clip: padding; 
+	-webkit-background-clip: padding-box; 
+	background-clip: padding-box;
+	-moz-box-shadow: 2px 0px 4px #0C0C0C;
+	-webkit-box-shadow: 2px 0px 4px #0C0C0C;
+	box-shadow: 2px 0px 4px #0C0C0C;
 	border-<?php print $right; ?>: 1px solid #555555;
 	border-top: 1px solid #D8D8D8;
 	border-<?php print $left; ?>: 1px solid #D8D8D8;
-	border-bottom: 2px solid #F4F4F4;
+	border-bottom: 1px solid #F4F4F4;
 	white-space: nowrap;
 }
 
@@ -1214,6 +1241,14 @@ border: 0px;
 -moz-box-shadow: 4px 4px 4px #CCC;
 -webkit-box-shadow: 4px 4px 4px #CCC;
 box-shadow: 4px 4px 4px #CCC;
+<!--[if lte IE 8]> 
+<style type="text/css"> 
+  background-color: #fff;
+  zoom: 1;
+  filter: progid:DXImageTransform.Microsoft.Shadow(color='#cccccc',
+     Direction=135, Strength=6); 
+<![endif]--> 
+
 }
 
 
