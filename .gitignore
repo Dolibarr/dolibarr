@@ -3,4 +3,4 @@ htdocs/conf/conf.php.old
 documents/
 nbproject
 .settings/
-.buildpath/
+.buildpath
