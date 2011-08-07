@@ -6,10 +6,8 @@
 # edit it if you need to match your rules.
 # --------------------------------------------------------
 
-%define version __VERSION__
-
 Name: dolibarr
-Version: %{version}
+Version: __VERSION__
 Release: __RELEASE__
 Summary: ERP and CRM software for small and medium companies or foundations 
 Summary(es): Software ERP y CRM para pequeñas y medianas empresas o, asociaciones o autónomos
@@ -21,15 +19,13 @@ License: GPLv2+
 Vendor: Dolibarr dev team
 
 URL: http://www.dolibarr.org
-Source0: http://www.dolibarr.org/files/mandriva/dolibarr-%{version}.tgz
+Source0: http://www.dolibarr.org/files/mandriva/%{name}-%{version}.tgz
 BuildArch: noarch
 #BuildArchitectures: noarch
-BuildRoot: %{_tmppath}/dolibarr-%{version}-build
+BuildRoot: %{_tmppath}/%{name}-%{version}-build
 
 Group: Networking/WWW
-
 Requires: mysql mysql-client apache-base apache-mod_php php-cgi php-cli php-bz2 php-gd php-ldap php-imap php-mysqli php-openssl 
-
 
 # Set yes to build test package, no for release (this disable need of /usr/bin/php not found by OpenSuse)
 AutoReqProv: no
