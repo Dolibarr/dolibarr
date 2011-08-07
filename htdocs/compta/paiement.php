@@ -23,7 +23,7 @@
  *	\file       htdocs/compta/paiement.php
  *	\ingroup    compta
  *	\brief      Page to create a payment
- *	\version    $Id: paiement.php,v 1.114 2011/08/08 01:01:46 eldy Exp $
+ *	\version    $Id: paiement.php,v 1.113 2011/08/03 00:46:23 eldy Exp $
  */
 
 require('../main.inc.php');
@@ -289,7 +289,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		            	json["amountPayment"] = jQuery("#amountpayment").attr("value");
 		            	json["amounts"] = elemToJson(form.find("input[name*=\"amount_\"]"));
 		            	json["remains"] = elemToJson(form.find("input[name*=\"remain_\"]"));
-
+		            	
 		            	if(imgId != null)json["imgClicked"] = imgId;
 
             			jQuery.post("ajaxpayment.php", json, function(data)
@@ -300,13 +300,13 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
             				for(var key in json)
             				{
-            					if(key == "result")	{
-            						if(json["makeRed"]) {
+            					if(key == "result")	{      						
+            						if(json["makeRed"]) {            							
             							jQuery("#"+key).css("color", "red");
             						} else {
             							jQuery("#"+key).removeAttr("style");
             						}
-            						json[key]=json["label"]+" "+json[key];
+            						json[key]=json["label"]+" "+json[key];            						
             						jQuery("#"+key).text(json[key]);
             					} else {
             						form.find("input[name*=\""+key+"\"]").each(function() {
@@ -581,7 +581,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                 $langs->load("withdrawals");
                 if ($conf->global->WITHDRAW_DISABLE_AUTOCREATE_ONPAYMENTS) print '<br>'.$langs->trans("IfInvoiceNeedOnWithdrawPaymentWontBeClosed");
             }*/
-            print '<br><input type="submit" class="button" value="'.$langs->trans('Save').'"><br><br></center>';
+            print '<br><input type="submit" class="button" value="'.$langs->trans('Save').'"></center>';
             //			print '</td></tr>';
         }
 
@@ -672,5 +672,5 @@ if (! GETPOST('action'))
 
 $db->close();
 
-llxFooter('$Date: 2011/08/08 01:01:46 $ - $Revision: 1.114 $');
+llxFooter('$Date: 2011/08/03 00:46:23 $ - $Revision: 1.113 $');
 ?>
