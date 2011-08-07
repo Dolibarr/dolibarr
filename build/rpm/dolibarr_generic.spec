@@ -29,7 +29,8 @@ Group: Networking/WWW
 # For all other distrib
 Group: Applications/Internet
 # Requires for Fedora-Redhat
-Requires: mysql-server mysql httpd php php-cli php-gd php-ldap php-imap php-mysql 
+Requires: mysql-server mysql httpd php php-cli php-gd php-ldap php-imap 
+Requires: php-mysql >= 4.1.0 
 # Requires for OpenSuse
 #Requires: mysql-community-server mysql-community-server-client apache2 apache2-mod_php5 php5 php5-gd php5-ldap php5-imap php5-mysql php5-openssl 
 # Requires for Mandriva-Mageia
@@ -121,37 +122,37 @@ cui hai bisogno ed essere facile da usare.
 %files
 
 %defattr(-, root, root, 0755)
-%doc /usr/share/doc/dolibarr
-%dir /usr/share/dolibarr/build
-%dir /usr/share/dolibarr/htdocs
-%dir /usr/share/dolibarr/scripts
+%doc %_datadir/doc/dolibarr
+%dir %_datadir/dolibarr/build
+%dir %_datadir/dolibarr/htdocs
+%dir %_datadir/dolibarr/scripts
 %_datadir/pixmaps/dolibarr.png
 %_datadir/applications/dolibarr.desktop
-/usr/share/dolibarr/build/*
-/usr/share/dolibarr/htdocs/*
-/usr/share/dolibarr/scripts/*
-#lang(ar_SA) /usr/share/dolibarr/htdocs/langs/ar_SA
-#lang(ca_ES) /usr/share/dolibarr/htdocs/langs/ca_ES
-#lang(da_DK) /usr/share/dolibarr/htdocs/langs/da_DK
-#lang(de_AT) /usr/share/dolibarr/htdocs/langs/de_AT
-#lang(de_DE) /usr/share/dolibarr/htdocs/langs/de_DE
-#lang(el_GR) /usr/share/dolibarr/htdocs/langs/el_GR
-#lang(en_AU) /usr/share/dolibarr/htdocs/langs/el_AU
-#lang(en_GB) /usr/share/dolibarr/htdocs/langs/el_GB
-#lang(en_IN) /usr/share/dolibarr/htdocs/langs/el_IN
-#lang(en_NZ) /usr/share/dolibarr/htdocs/langs/el_NZ
-#lang(en) /usr/share/dolibarr/htdocs/langs/en_US
-#lang(es_AR) /usr/share/dolibarr/htdocs/langs/es_AR
-#lang(es) /usr/share/dolibarr/htdocs/langs/es_ES
-#lang(es_HN) /usr/share/dolibarr/htdocs/langs/es_HN
-#lang(es_MX) /usr/share/dolibarr/htdocs/langs/en_MX
-#lang(es_PR) /usr/share/dolibarr/htdocs/langs/en_PR
-#lang(fa_IR) /usr/share/dolibarr/htdocs/langs/fa_IR
-#lang(fi_FI) /usr/share/dolibarr/htdocs/langs/fi_FI
-#lang(fr_BE) /usr/share/dolibarr/htdocs/langs/fr_BE
-#lang(fr_CA) /usr/share/dolibarr/htdocs/langs/fr_CA
-#lang(fr_CH) /usr/share/dolibarr/htdocs/langs/fr_CH
-#lang(fr) /usr/share/dolibarr/htdocs/langs/fr_FR
+%_datadir/dolibarr/build/*
+%_datadir/dolibarr/htdocs/*
+%_datadir/dolibarr/scripts/*
+#lang(ar_SA) %_datadir/dolibarr/htdocs/langs/ar_SA
+#lang(ca_ES) %_datadir/dolibarr/htdocs/langs/ca_ES
+#lang(da_DK) %_datadir/dolibarr/htdocs/langs/da_DK
+#lang(de_AT) %_datadir/dolibarr/htdocs/langs/de_AT
+#lang(de_DE) %_datadir/dolibarr/htdocs/langs/de_DE
+#lang(el_GR) %_datadir/dolibarr/htdocs/langs/el_GR
+#lang(en_AU) %_datadir/dolibarr/htdocs/langs/el_AU
+#lang(en_GB) %_datadir/dolibarr/htdocs/langs/el_GB
+#lang(en_IN) %_datadir/dolibarr/htdocs/langs/el_IN
+#lang(en_NZ) %_datadir/dolibarr/htdocs/langs/el_NZ
+#lang(en) %_datadir/dolibarr/htdocs/langs/en_US
+#lang(es_AR) %_datadir/dolibarr/htdocs/langs/es_AR
+#lang(es) %_datadir/dolibarr/htdocs/langs/es_ES
+#lang(es_HN) %_datadir/dolibarr/htdocs/langs/es_HN
+#lang(es_MX) %_datadir/dolibarr/htdocs/langs/en_MX
+#lang(es_PR) %_datadir/dolibarr/htdocs/langs/en_PR
+#lang(fa_IR) %_datadir/dolibarr/htdocs/langs/fa_IR
+#lang(fi_FI) %_datadir/dolibarr/htdocs/langs/fi_FI
+#lang(fr_BE) %_datadir/dolibarr/htdocs/langs/fr_BE
+#lang(fr_CA) %_datadir/dolibarr/htdocs/langs/fr_CA
+#lang(fr_CH) %_datadir/dolibarr/htdocs/langs/fr_CH
+#lang(fr) %_datadir/dolibarr/htdocs/langs/fr_FR
 
 %defattr(0664, -, -)
 %config(noreplace) %{_sysconfdir}/dolibarr/conf.php
