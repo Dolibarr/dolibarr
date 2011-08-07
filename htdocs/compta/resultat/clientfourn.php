@@ -20,7 +20,7 @@
 /**
  *  \file        htdocs/compta/resultat/clientfourn.php
  *	\brief       Page reporting
- *  \version     $Id: clientfourn.php,v 1.63 2011/08/03 00:46:31 eldy Exp $
+ *  \version     $Id: clientfourn.php,v 1.64 2011/08/06 18:44:59 eldy Exp $
  */
 
 require('../../main.inc.php');
@@ -105,7 +105,7 @@ $html=new Form($db);
 if ($modecompta=="CREANCES-DETTES")
 {
     $nom=$langs->trans("AnnualByCompaniesDueDebtMode");
-    $nom.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=RECETTES-DEPENSES">','</a>').')';
+    $nom.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.(GETPOST("month")>0?'&month='.GETPOST("month"):'').'&modecompta=RECETTES-DEPENSES">','</a>').')';
     $period=$html->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$html->select_date($date_end,'date_end',0,0,0,'',1,0,1);
     //$periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
     $description=$langs->trans("RulesResultDue");
@@ -114,7 +114,7 @@ if ($modecompta=="CREANCES-DETTES")
 }
 else {
     $nom=$langs->trans("AnnualByCompaniesInputOutputMode");
-    $nom.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=CREANCES-DETTES">','</a>').')';
+    $nom.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.(GETPOST("month")>0?'&month='.GETPOST("month"):'').'&modecompta=CREANCES-DETTES">','</a>').')';
     //$period=$html->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$html->select_date($date_end,'date_end',1,1,0,'',1,0,1);
     $period=$html->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$html->select_date($date_end,'date_end',0,0,0,'',1,0,1);
     //$periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
@@ -663,8 +663,8 @@ else
 if ($mysoc->tva_assuj != 'franchise')	// Assujeti
 {
     print '<tr class="liste_total">';
-    if ($modecompta == 'CREANCES-DETTES') print '<td colspan="3" align="right">'.price($subtotal_ht).'</td>';
-    print '<td colspan="3" align="right">'.price($subtotal_ttc).'</td>';
+    if ($modecompta == 'CREANCES-DETTES') print '<td colspan="3" align="right">'.price(price2num($subtotal_ht)).'</td>';
+    print '<td colspan="3" align="right">'.price(price2num($subtotal_ttc)).'</td>';
     print '</tr>';
 }
 
@@ -677,8 +677,8 @@ if ($mysoc->tva_assuj != 'franchise')	// Assujeti
     print '</tr>';
 
     print '<tr class="liste_total"><td align="left" colspan="2">'.$langs->trans("Profit").'</td>';
-    if ($modecompta == 'CREANCES-DETTES') print '<td class="liste_total" align="right">'.price($total_ht).'</td>';
-    print '<td class="liste_total" align="right">'.price($total_ttc).'</td>';
+    if ($modecompta == 'CREANCES-DETTES') print '<td class="liste_total" align="right">'.price(price2num($total_ht)).'</td>';
+    print '<td class="liste_total" align="right">'.price(price2num($total_ttc)).'</td>';
     print '</tr>';
 }
 
@@ -688,5 +688,5 @@ print '<br>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:31 $ - $Revision: 1.63 $');
+llxFooter('$Date: 2011/08/06 18:44:59 $ - $Revision: 1.64 $');
 ?>

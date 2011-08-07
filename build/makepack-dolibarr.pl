@@ -2,7 +2,7 @@
 #----------------------------------------------------------------------------
 # \file         build/makepack-dolibarr.pl
 # \brief        Dolibarr package builder (tgz, zip, rpm, deb, exe, aps)
-# \version      $Id: makepack-dolibarr.pl,v 1.133 2011/08/03 21:46:02 eldy Exp $
+# \version      $Id: makepack-dolibarr.pl,v 1.135 2011/08/07 00:13:04 eldy Exp $
 # \author       (c)2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
 #----------------------------------------------------------------------------
 
@@ -14,12 +14,15 @@ $MINOR="1";
 $BUILD="0-beta";		# Mettre x pour release, x-dev pour dev, x-beta pour beta, x-rc pour release candidate
 $RPMSUBVERSION="auto";	# auto use value found into BUILD
 
-@LISTETARGET=("TGZ","ZIP","RPM","DEB","APS","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
+@LISTETARGET=("TGZ","ZIP","RPM_GENE","RPM_FEDO","RPM_MAND","RPM_OPEN","DEB","APS","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
 %REQUIREMENTTARGET=(                            # Tool requirement for each package
 "SNAPSHOT"=>"tar",
 "TGZ"=>"tar",
 "ZIP"=>"7z",
-"RPM"=>"rpmbuild",
+"RPM_GENE"=>"rpmbuild",
+"RPM_FEDO"=>"rpmbuild",
+"RPM_MAND"=>"rpmbuild",
+"RPM_OPEN"=>"rpmbuild",
 "DEB"=>"dpkg",
 "APS"=>"zip",
 "EXEDOLIWAMP"=>"iscc.exe"
@@ -48,7 +51,7 @@ if (-d "/usr/src/RPM") {
 
 
 use vars qw/ $REVISION $VERSION /;
-$REVISION='$Revision: 1.133 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
+$REVISION='$Revision: 1.135 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
 $VERSION="1.0 (build $REVISION)";
 
 
@@ -135,14 +138,14 @@ else {
     	}
     
     	# On demande de choisir le fichier à passer
-    	print "Choose one package number or several separated with space: ";
+    	print "Choose one package number or several separated with space (0 - ".$cpt."): ";
     	$NUM_SCRIPT=<STDIN>; 
     	chomp($NUM_SCRIPT);
     	if ($NUM_SCRIPT =~ s/-//g) {
     		# Do not do copy	
     		$copyalreadydone=1;
     	}
-    	if ($NUM_SCRIPT !~ /^[0-$cpt\s]+$/)
+    	if ($NUM_SCRIPT !~ /^[0-9\s]+$/)
     	{
     		print "This is not a valid package number list.\n";
     		$found = 0;
@@ -421,7 +424,7 @@ if ($nboftargetok) {
     		next;
     	}
     
-    	if ($target eq 'RPM') {                 # Linux only
+    	if ($target =~ /RPM/) {                 # Linux only
     		#$ARCH='i386';
     		$ARCH='noarch';
 			if ($RPMDIR eq "") { $RPMDIR=$ENV{'HOME'}."/rpmbuild"; }
@@ -471,6 +474,7 @@ if ($nboftargetok) {
             $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/build/exe`;
             $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/build/live`;
             $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/build/patch`;
+	        $ret=`rm -f  $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/build/rpm/conf.php`;
             $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/build/zip`;
             $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/build/perl`;
 		    $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/dev/dbmodel`;
@@ -506,6 +510,8 @@ if ($nboftargetok) {
     		$ret=`mkdir -p "$BUILDROOT/$FILENAMETGZ2/etc/$PROJECT"`;
     		$ret=`cp "$SOURCE/build/rpm/httpd-dolibarr.conf" "$BUILDROOT/$FILENAMETGZ2/etc/$PROJECT/apache.conf"`;
     		$ret=`cp "$SOURCE/build/rpm/file_contexts.dolibarr" "$BUILDROOT/$FILENAMETGZ2/etc/$PROJECT/file_contexts.dolibarr"`;
+    		$ret=`cp "$SOURCE/build/rpm/conf.php" "$BUILDROOT/$FILENAMETGZ2/etc/$PROJECT/conf.php"`;
+    		$ret=`cp "$SOURCE/build/rpm/install.forced.php.install" "$BUILDROOT/$FILENAMETGZ2/etc/$PROJECT/install.forced.php"`;
 
 			# Dolibarr conf files
 			# TODO
@@ -555,9 +561,14 @@ if ($nboftargetok) {
     		rename("$BUILDROOT/$FILENAMETGZ2.tgz","$RPMDIR/SOURCES/$FILENAMETGZ2.tgz");
             $ret=`$cmd`;
 
-    		$BUILDFIC="$FILENAME.spec";
+    		$BUILDFIC="${FILENAME}.spec";
+    		$BUILDFICSRC="${FILENAME}_generic.spec";
+    		if ($target =~ /FEDO/i) { $BUILDFICSRC="${FILENAME}_fedora.spec"; }
+    		if ($target =~ /MAND/i) { $BUILDFICSRC="${FILENAME}_mandriva.spec"; }
+    		if ($target =~ /OPEN/i) { $BUILDFICSRC="${FILENAME}_opensuse.spec"; }
+    		
  			print "Generate file $BUILDROOT/$BUILDFIC\n";
-            open (SPECFROM,"<$SOURCE/build/rpm/${BUILDFIC}") || die "Error";
+            open (SPECFROM,"<$SOURCE/build/rpm/${BUILDFICSRC}") || die "Error";
             open (SPECTO,">$BUILDROOT/$BUILDFIC") || die "Error";
             while (<SPECFROM>) {
                 $_ =~ s/__FILENAMETGZ__/$FILENAMETGZ/;

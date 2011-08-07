@@ -24,7 +24,7 @@
  *       \file       htdocs/install/fileconf.php
  *       \ingroup    install
  *       \brief      Ask all informations required to build Dolibarr htdocs/conf/conf.php file (will be wrote on disk on next page)
- *       \version    $Id: fileconf.php,v 1.94 2011/07/31 23:26:27 eldy Exp $
+ *       \version    $Id: fileconf.php,v 1.95 2011/08/06 23:10:01 eldy Exp $
  */
 include_once("./inc.php");
 
@@ -161,8 +161,8 @@ if (! empty($force_install_message))
 		?>
 		<td class="label" valign="top">
 		<?php
-		if ($force_install_noedit == 2) print '<input type="hidden" value="'.$dolibarr_main_data_root.'" name="main_data_dir">';
-		print '<input type="text" size="60" value="'.$dolibarr_main_data_root.'"'.(($force_install_noedit != 2)?'':' disabled="true"').' name="main_data_dir'.(($force_install_noedit != 2)?'':'_bis').'">';
+		if ($force_install_noedit) print '<input type="hidden" value="'.$dolibarr_main_data_root.'" name="main_data_dir">';
+		print '<input type="text" size="60" value="'.$dolibarr_main_data_root.'"'.(empty($force_install_noedit)?'':' disabled="true"').' name="main_data_dir'.(empty($force_install_noedit)?'':'_bis').'">';
 		?>
 		</td>
 		<td class="comment"><?php
@@ -210,8 +210,8 @@ if (empty($dolibarr_main_url_root))
 		</td>
 		<td valign="top" class="label">
 		<?php
-		if ($force_install_noedit == 2) print '<input type="hidden" value="'.$dolibarr_main_url_root.'" name="main_url">';
-		print '<input type="text" size="60" value="'.$dolibarr_main_url_root.'"'.(($force_install_noedit != 2)?'':' disabled="true"').' name="main_url'.(($force_install_noedit != 2)?'':'_bis').'">';
+		if ($force_install_noedit) print '<input type="hidden" value="'.$dolibarr_main_url_root.'" name="main_url">';
+		print '<input type="text" size="60" value="'.$dolibarr_main_url_root.'"'.(empty($force_install_noedit)?'':' disabled="true"').' name="main_url'.(empty($force_install_noedit)?'':'_bis').'">';
 		?>
 		</td>
 		<td class="comment"><?php print $langs->trans("Examples").":<br>"; ?>
@@ -321,10 +321,10 @@ if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if t
 	<tr>
 		<td valign="top" class="label"><b> <?php echo $langs->trans("Server"); ?>
 		</b></td>
-		<td valign="top" class="label"><input type="text" name="db_host<?php print (!empty($force_install_noedit) && $force_install_dbserver)?'_bis':''; ?>"
-			<?php if (!empty($force_install_noedit) && $force_install_dbserver) print ' disabled="disabled"'; ?>
+		<td valign="top" class="label"><input type="text" name="db_host<?php print ($force_install_noedit==2 && $force_install_dbserver)?'_bis':''; ?>"
+			<?php if ($force_install_noedit==2 && $force_install_dbserver) print ' disabled="disabled"'; ?>
 			value="<?php print (! empty($dolibarr_main_db_host))?$dolibarr_main_db_host:(empty($force_install_dbserver)?'localhost':$force_install_dbserver); ?>">
-		<?php if (!empty($force_install_noedit) && $force_install_dbserver) print '<input type="hidden" name="db_host" value="'.((! empty($dolibarr_main_db_host))?$dolibarr_main_db_host:$force_install_dbserver).'">'; ?>
+		<?php if ($force_install_noedit==2 && $force_install_dbserver) print '<input type="hidden" name="db_host" value="'.((! empty($dolibarr_main_db_host))?$dolibarr_main_db_host:$force_install_dbserver).'">'; ?>
 		</td>
 		<td class="comment"><?php echo $langs->trans("ServerAddressDescription"); ?>
 		</td>
@@ -333,10 +333,10 @@ if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if t
 
 	<tr>
 		<td valign="top" class="label"><?php echo $langs->trans("Port"); ?></td>
-		<td valign="top" class="label"><input type="text" name="db_port<?php print (!empty($force_install_noedit) && $force_install_port)?'_bis':''; ?>"
-			<?php if (!empty($force_install_noedit) && $force_install_port) print ' disabled="disabled"'; ?>
+		<td valign="top" class="label"><input type="text" name="db_port<?php print ($force_install_noedit==2 && $force_install_port)?'_bis':''; ?>"
+			<?php if ($force_install_noedit==2 && $force_install_port) print ' disabled="disabled"'; ?>
 			value="<?php print (! empty($dolibarr_main_db_port))?$dolibarr_main_db_port:$force_install_port; ?>">
-		<?php if (!empty($force_install_noedit) && $force_install_port) print '<input type="hidden" name="db_port" value="'.((! empty($dolibarr_main_db_port))?$dolibarr_main_db_port:$force_install_port).'">'; ?>
+		<?php if ($force_install_noedit==2 && $force_install_port) print '<input type="hidden" name="db_port" value="'.((! empty($dolibarr_main_db_port))?$dolibarr_main_db_port:$force_install_port).'">'; ?>
 		</td>
 		<td class="comment"><?php echo $langs->trans("ServerPortDescription"); ?>
 		</td>
@@ -390,7 +390,10 @@ if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if t
 
 
 	<!-- Super access -->
-
+	<?php
+	    $force_install_databaserootlogin=preg_replace('/__SUPERUSERLOGIN__/','root',$force_install_databaserootlogin);
+	    $force_install_databaserootpass=preg_replace('/__SUPERUSERPASSWORD__/','',$force_install_databaserootpass);
+	?>
 	<tr>
 		<td colspan="3" class="label" align="center"><br>
 		<h3><?php echo $langs->trans("DatabaseSuperUserAccess"); ?></h3>
