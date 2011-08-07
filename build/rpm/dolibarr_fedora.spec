@@ -6,10 +6,8 @@
 # edit it if you need to match your rules.
 # --------------------------------------------------------
 
-%define version __VERSION__
-
 Name: dolibarr
-Version: %{version}
+Version: __VERSION__
 Release: __RELEASE__%{?dist}
 Summary: ERP and CRM software for small and medium companies or foundations 
 Summary(es): Software ERP y CRM para pequeñas y medianas empresas o, asociaciones o autónomos
@@ -21,15 +19,13 @@ License: GPLv2+
 Vendor: Dolibarr dev team
 
 URL: http://www.dolibarr.org
-Source0: http://www.dolibarr.org/files/fedora/dolibarr-%{version}.tgz
+Source0: http://www.dolibarr.org/files/fedora/%{name}-%{version}.tgz
 BuildArch: noarch
 #BuildArchitectures: noarch
-BuildRoot: %{_tmppath}/dolibarr-%{version}-build
+BuildRoot: %{_tmppath}/%{name}-%{version}-build
 
 Group: Applications/Internet
-
 Requires: mysql-server mysql httpd php php-cli php-gd php-ldap php-imap php-mysql 
-
 
 # Set yes to build test package, no for release (this disable need of /usr/bin/php not found by OpenSuse)
 AutoReqProv: no
