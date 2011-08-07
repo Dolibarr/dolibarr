@@ -2,7 +2,7 @@
 #----------------------------------------------------------------------------
 # \file         build/makepack-dolibarr.pl
 # \brief        Dolibarr package builder (tgz, zip, rpm, deb, exe, aps)
-# \version      $Id: makepack-dolibarr.pl,v 1.139 2011/08/07 23:44:55 eldy Exp $
+# \version      $Id: makepack-dolibarr.pl,v 1.138 2011/08/07 18:01:14 eldy Exp $
 # \author       (c)2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
 #----------------------------------------------------------------------------
 
@@ -45,7 +45,7 @@ if (-d "/usr/src/RPM")    { $RPMDIR="/usr/src/RPM"; } # mandrake
 
 
 use vars qw/ $REVISION $VERSION /;
-$REVISION='$Revision: 1.139 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
+$REVISION='$Revision: 1.138 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
 $VERSION="3.1 (build $REVISION)";
 
 
@@ -125,7 +125,7 @@ else {
     my $NUM_SCRIPT;
     while (! $found) {
     	my $cpt=0;
-    	printf(" %2d - %-12s    (%s)\n",$cpt,"All (Except SNAPSHOT)","Need ".join(",",values %REQUIREMENTTARGET));
+    	printf(" %2d - %-12s    (%s)\n",$cpt,"All","Need ".join(",",values %REQUIREMENTTARGET));
     	foreach my $target (@LISTETARGET) {
     		$cpt++;
     		printf(" %2d - %-12s    (%s)\n",$cpt,$target,"Need ".$REQUIREMENTTARGET{$target});
@@ -157,7 +157,7 @@ else {
     }
     else {
     	foreach my $key (@LISTETARGET) {
-    		if ($key ne 'SNAPSHOT') { $CHOOSEDTARGET{$key}=1; }
+    	    $CHOOSEDTARGET{$key}=1;
         }
     }
 }
@@ -615,8 +615,6 @@ if ($nboftargetok) {
 
             #rmdir "$BUILDROOT/$PROJECT.tmp";
     		$ret=`rm -fr $BUILDROOT/$PROJECT.tmp`;
-    		$ret=`rm -fr $BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build`;
-    		
     		print "Create directory $BUILDROOT/$PROJECT.tmp/usr/share\n";
     		$ret=`mkdir -p "$BUILDROOT/$PROJECT.tmp/usr/share"`;
     		print "Copy $BUILDROOT/$PROJECT to $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT\n";
@@ -824,7 +822,7 @@ if ($nboftargetok) {
             $ret=`$cmd`;
 
 			# Creation of source package          
-     		print "Go to directory $BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build\n";
+     		print "Go to directory $BUILDROOT\n";
             chdir("$BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build");
             #$cmd="dpkg-source -b $BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build";
             $cmd="dpkg-buildpackage -us -uc";
