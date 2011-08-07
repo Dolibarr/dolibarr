@@ -2,7 +2,7 @@
 #----------------------------------------------------------------------------
 # \file         build/makepack-dolibarr.pl
 # \brief        Dolibarr package builder (tgz, zip, rpm, deb, exe, aps)
-# \version      $Id: makepack-dolibarr.pl,v 1.139 2011/08/07 23:44:55 eldy Exp $
+# \version      $Id: makepack-dolibarr.pl,v 1.136 2011/08/07 15:07:44 eldy Exp $
 # \author       (c)2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
 #----------------------------------------------------------------------------
 
@@ -45,7 +45,7 @@ if (-d "/usr/src/RPM")    { $RPMDIR="/usr/src/RPM"; } # mandrake
 
 
 use vars qw/ $REVISION $VERSION /;
-$REVISION='$Revision: 1.139 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
+$REVISION='$Revision: 1.136 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
 $VERSION="3.1 (build $REVISION)";
 
 
@@ -125,7 +125,7 @@ else {
     my $NUM_SCRIPT;
     while (! $found) {
     	my $cpt=0;
-    	printf(" %2d - %-12s    (%s)\n",$cpt,"All (Except SNAPSHOT)","Need ".join(",",values %REQUIREMENTTARGET));
+    	printf(" %2d - %-12s    (%s)\n",$cpt,"All","Need ".join(",",values %REQUIREMENTTARGET));
     	foreach my $target (@LISTETARGET) {
     		$cpt++;
     		printf(" %2d - %-12s    (%s)\n",$cpt,$target,"Need ".$REQUIREMENTTARGET{$target});
@@ -157,7 +157,7 @@ else {
     }
     else {
     	foreach my $key (@LISTETARGET) {
-    		if ($key ne 'SNAPSHOT') { $CHOOSEDTARGET{$key}=1; }
+    	    $CHOOSEDTARGET{$key}=1;
         }
     }
 }
@@ -408,7 +408,7 @@ if ($nboftargetok) {
     	if ($target =~ /RPM/) {                 # Linux only
     		$NEWDESTI=$DESTI;
     		$subdir="package_rpm_generic";
-    		if ($target =~ /FEDO/i) { $subdir="package_rpm_redhat-fedora"; }
+    		if ($target =~ /FEDO/i) { $subdir="package_rpm_fedora"; }
     		if ($target =~ /MAND/i) { $subdir="package_rpm_mandriva"; }
     		if ($target =~ /OPEN/i) { $subdir="package_rpm_opensuse"; }
 			if (-d $DESTI.'/'.$subdir) { $NEWDESTI=$DESTI.'/'.$subdir; } 
@@ -510,13 +510,28 @@ if ($nboftargetok) {
             # To remove once stable
             $ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/htdocs/htdocs/theme/bureau2crea`;
 
-			# Conf files
+			# Apache conf files
     		print "Copy apache.conf file into $BUILDROOT/$FILENAMETGZ2/etc/$PROJECT/httpd-dolibarr.conf\n";
     		$ret=`mkdir -p "$BUILDROOT/$FILENAMETGZ2/etc/$PROJECT"`;
     		$ret=`cp "$SOURCE/build/rpm/httpd-dolibarr.conf" "$BUILDROOT/$FILENAMETGZ2/etc/$PROJECT/apache.conf"`;
     		$ret=`cp "$SOURCE/build/rpm/file_contexts.dolibarr" "$BUILDROOT/$FILENAMETGZ2/etc/$PROJECT/file_contexts.dolibarr"`;
     		$ret=`cp "$SOURCE/build/rpm/conf.php" "$BUILDROOT/$FILENAMETGZ2/etc/$PROJECT/conf.php"`;
     		$ret=`cp "$SOURCE/build/rpm/install.forced.php.install" "$BUILDROOT/$FILENAMETGZ2/etc/$PROJECT/install.forced.php"`;
+
+			# Dolibarr conf files
+			# TODO
+
+			# dolibarr.desktop
+	   		#print "Create directory $BUILDROOT/$FILENAMETGZ2/usr/share/applications\n";
+    		#$ret=`mkdir -p "$BUILDROOT/$FILENAMETGZ2/usr/share/applications"`;
+    		#print "Copy desktop file into $BUILDROOT/$FILENAMETGZ2/usr/share/applications/dolibarr.desktop\n";
+    		#$ret=`cp "$SOURCE/build/rpm/dolibarr.desktop" "$BUILDROOT/$FILENAMETGZ2/usr/share/applications/dolibarr.desktop"`;
+            
+            # pixmap
+	   		#print "Create directory $BUILDROOT/$FILENAMETGZ2/usr/share/pixmaps\n";
+    		#$ret=`mkdir -p "$BUILDROOT/$FILENAMETGZ2/usr/share/pixmaps"`;
+    		#print "Copy pixmap file into $BUILDROOT/$FILENAMETGZ2/usr/share/pixmaps/dolibarr.xpm\n";
+    		#$ret=`cp "$SOURCE/doc/images/dolibarr.xpm" "$BUILDROOT/$FILENAMETGZ2/usr/share/pixmaps/dolibarr.xpm"`;
 
 			# Set owners
             print "Set owners on files/dir\n";
@@ -580,9 +595,6 @@ if ($nboftargetok) {
    		    print "Move $RPMDIR/SRPMS/".$FILENAMETGZ2."-".$RPMSUBVERSION.".src.rpm into $NEWDESTI/".$FILENAMETGZ2."-".$RPMSUBVERSION.".src.rpm\n";
    		    $cmd="mv \"$RPMDIR/SRPMS/".$FILENAMETGZ2."-".$RPMSUBVERSION.".src.rpm\" \"$NEWDESTI/".$FILENAMETGZ2."-".$RPMSUBVERSION.".src.rpm\"";
     		$ret=`$cmd`;
-   		    print "Move $RPMDIR/SOURCES/".$FILENAMETGZ2.".tgz into $NEWDESTI/".$FILENAMETGZ2.".tgz\n";
-   		    $cmd="mv \"$RPMDIR/SOURCES/".$FILENAMETGZ2.".tgz\" \"$NEWDESTI/".$FILENAMETGZ2.".tgz\"";
-    		$ret=`$cmd`;
     		next;
     	}
 
@@ -615,8 +627,6 @@ if ($nboftargetok) {
 
             #rmdir "$BUILDROOT/$PROJECT.tmp";
     		$ret=`rm -fr $BUILDROOT/$PROJECT.tmp`;
-    		$ret=`rm -fr $BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build`;
-    		
     		print "Create directory $BUILDROOT/$PROJECT.tmp/usr/share\n";
     		$ret=`mkdir -p "$BUILDROOT/$PROJECT.tmp/usr/share"`;
     		print "Copy $BUILDROOT/$PROJECT to $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT\n";
@@ -824,7 +834,7 @@ if ($nboftargetok) {
             $ret=`$cmd`;
 
 			# Creation of source package          
-     		print "Go to directory $BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build\n";
+     		print "Go to directory $BUILDROOT\n";
             chdir("$BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build");
             #$cmd="dpkg-source -b $BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build";
             $cmd="dpkg-buildpackage -us -uc";
