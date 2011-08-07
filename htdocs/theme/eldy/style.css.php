@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C)      2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C)	  2011 Philippe Grand       <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
 /**
  *		\file       htdocs/theme/eldy/style.css.php
  *		\brief      Fichier de style CSS du theme Eldy
- *		\version    $Id: style.css.php,v 1.89 2011/07/31 23:22:05 eldy Exp $
+ *		\version    $Id: style.css.php,v 1.90 2011/08/07 15:06:23 grandoc Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -815,10 +816,9 @@ div.tabBar {
     padding-right: 8px;
     padding-bottom: 8px;
     margin: 0px 0px 10px 0px;
-    -moz-border-radius-topleft:6px;
-    -moz-border-radius-topright:6px;
-    -moz-border-radius-bottomleft:6px;
-    -moz-border-radius-bottomright:6px;
+    -moz-border-radius:6px;
+    -webkit-border-radius: 6px;
+	border-radius: 6px;
     border-right: 1px solid #555555;
     border-bottom: 1px solid #555555;
     border-left: 1px solid #D0D0D0;
@@ -856,8 +856,9 @@ a.tab:link {
     margin: 0em 0.2em;
     text-decoration: none;
     white-space: nowrap;
-    -moz-border-radius-topleft:6px;
-    -moz-border-radius-topright:6px;
+    -moz-border-radius:6px 6px 0px 0px;
+	-webkit-border-radius:6px 6px 0px 0px;
+	border-radius:6px 6px 0px 0px;
 
     border-<?php print $right; ?>: 1px solid #555555;
     border-<?php print $left; ?>: 1px solid #D8D8D8;
@@ -871,8 +872,9 @@ a.tab:visited {
     margin: 0em 0.2em;
     text-decoration: none;
     white-space: nowrap;
-    -moz-border-radius-topleft:6px;
-    -moz-border-radius-topright:6px;
+    -moz-border-radius:6px 6px 0px 0px;
+	-webkit-border-radius:6px 6px 0px 0px;
+	border-radius:6px 6px 0px 0px;
 
     border-<?php print $right; ?>: 1px solid #555555;
     border-<?php print $left; ?>: 1px solid #D8D8D8;
@@ -886,8 +888,9 @@ a.tab#active {
     padding: 0px 6px;
     margin: 0em 0.2em;
     text-decoration: none;
-    -moz-border-radius-topleft:6px;
-    -moz-border-radius-topright:6px;
+    -moz-border-radius:6px 6px 0px 0px;
+	-webkit-border-radius:6px 6px 0px 0px;
+	border-radius:6px 6px 0px 0px;
 
     border-<?php print $right; ?>: 1px solid #555555;
     border-<?php print $left; ?>: 1px solid #D8D8D8;
@@ -901,8 +904,9 @@ a.tab:hover {
     padding: 0px 6px;
     margin: 0em 0.2em;
     text-decoration: none;
-    -moz-border-radius-topleft:6px;
-    -moz-border-radius-topright:6px;
+    -moz-border-radius:6px 6px 0px 0px;
+	-webkit-border-radius:6px 6px 0px 0px;
+	border-radius:6px 6px 0px 0px;
 
     border-<?php print $right; ?>: 1px solid #555555;
     border-<?php print $left; ?>: 1px solid #D8D8D8;
@@ -928,8 +932,9 @@ span.tabspan {
     margin: 0em 0.2em;
     text-decoration: none;
     white-space: nowrap;
-    -moz-border-radius-topleft:6px;
-    -moz-border-radius-topright:6px;
+    -moz-border-radius:6px 6px 0px 0px;
+	-webkit-border-radius:6px 6px 0px 0px;
+	border-radius:6px 6px 0px 0px;
 
     border-<?php print $right; ?>: 1px solid #555555;
     border-<?php print $left; ?>: 1px solid #D8D8D8;
@@ -1209,7 +1214,16 @@ border: 0px;
 -moz-box-shadow: 4px 4px 4px #CCC;
 -webkit-box-shadow: 4px 4px 4px #CCC;
 box-shadow: 4px 4px 4px #CCC;
+<!--[if lte IE 8]> 
+<style type="text/css"> 
+  background-color: #fff;
+  zoom: 1;
+  filter: progid:DXImageTransform.Microsoft.Shadow(color='#cccccc',
+     Direction=135, Strength=6); 
+<![endif]--> 
+
 }
+
 
 .box {
 padding-right: 0px;
@@ -1227,8 +1241,6 @@ font-family: <?php print $fontlist ?>, sans-serif;
 font-weight: normal;
 border-bottom: 1px solid #FDFFFF;
 white-space: nowrap;
-  -moz-border-radius-topleft:6px;
-  -moz-border-radius-topright:6px;
 }
 
 tr.box_impair {
@@ -1269,6 +1281,8 @@ div.warning {
   margin: 0.5em 0em 0.5em 0em;
   border: 1px solid #e0e0d0;
   -moz-border-radius:6px;
+  -webkit-border-radius: 6px;
+  border-radius: 6px;
   background: #efefd4;
 }
 
@@ -1278,6 +1292,8 @@ div.error {
   margin: 0.5em 0em 0.5em 0em;
   border: 1px solid #8C9CAB;
   -moz-border-radius:6px;
+  -webkit-border-radius: 6px;
+  border-radius: 6px;
   background: #EFCFCF;
 }
 
@@ -1288,6 +1304,8 @@ div.info {
   margin: 0.5em 0em 0.5em 0em;
   border: 1px solid #e0e0d0;
   -moz-border-radius:6px;
+  -webkit-border-radius: 6px;
+  border-radius:6px;
   background: #efefd4;
 }
 
@@ -1381,6 +1399,8 @@ z-index: 3000;
 background-color: #FFFFF0;
 opacity: 1;
 -moz-border-radius:6px;
+-webkit-border-radius: 6px;
+border-radius: 6px;
 }
 
 
@@ -1402,7 +1422,9 @@ opacity: 1;
 }
 
 .bodyline {
-	-moz-border-radius:8px;
+	-moz-border-radius: 8px;
+	-webkit-border-radius: 8px;
+	border-radius: 8px;
 	border: 1px #E4ECEC outset;
 	padding: 0px;
 	margin-bottom: 5px;
@@ -1498,7 +1520,7 @@ td.hidden {
 .cal_past_month    { background: #EEEEEE; border: solid 1px #ACBCBB; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_current_month { background: #FFFFFF; border: solid 1px #ACBCBB; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_today         { background: #FFFFFF; border: solid 2px #6C7C7B; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
-table.cal_event    { border-collapse: collapse; margin-bottom: 1px; }
+table.cal_event    { border-collapse: collapse; margin-bottom: 1px; -webkit-border-radius: 6px; border-radius: 6px; }
 table.cal_event td { border: 0px; padding-<?php print $left; ?>: 0px; padding-<?php print $right; ?>: 2px; padding-top: 0px; padding-bottom: 0px; }
 .cal_event a:link    { color: #111111; font-size: 11px; font-weight: normal !important; }
 .cal_event a:visited { color: #111111; font-size: 11px; font-weight: normal !important; }
