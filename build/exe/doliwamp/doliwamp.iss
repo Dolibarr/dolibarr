@@ -10,7 +10,7 @@
 ; only the root user with no password, stop server and catch
 ; files user.MY* to put them in the Dolibarr build/exe/doliwamp/mysql directory.
 ;
-; Version: $Id: doliwamp.iss,v 1.84 2011/08/05 23:52:45 eldy Exp $
+; Version: $Id: doliwamp.iss,v 1.85 2011/08/07 16:37:45 eldy Exp $
 ;----------------------------------------------------------------------------------------
 
 
@@ -397,7 +397,7 @@ begin
 
 
     // Remove lock file
-    lockfile := pathWithSlashes+'/www/dolibarr/install.lock';
+    lockfile := pathWithSlashes+'/dolibarr_documents/install.lock';
     if FileExists (lockfile) and not DeleteFile(lockfile) then
     begin
       themessage := FmtMessage(CustomMessage('FailedToDeleteLock'),[pathWithSlashes]);
