@@ -150,6 +150,7 @@ export apachegroup='apache';
 echo Create document directory $docdir
 %{__mkdir} -p $docdir
 
+# Set correct owner on config files
 %{__chown} -R root:$apachegroup /etc/dolibarr/*
 
 # Create a config link dolibarr.conf

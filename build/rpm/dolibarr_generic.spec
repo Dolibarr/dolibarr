@@ -220,6 +220,8 @@ then
 	%{__cat} /usr/share/dolibarr/build/rpm/install.forced.php.install | sed -e 's/__SUPERUSERLOGIN__/'$superuserlogin'/g' | sed -e 's/__SUPERUSERPASSWORD__/'$superuserpassword'/g' > $installconfig
 	%{__chmod} -R 660 $installconfig
 fi
+
+# Set correct owner on config files
 %{__chown} -R root:$apachegroup /etc/dolibarr/*
 
 # Create config for se $seconfig
