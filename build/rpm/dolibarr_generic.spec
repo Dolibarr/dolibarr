@@ -6,10 +6,8 @@
 # edit it if you need to match your rules.
 # --------------------------------------------------------
 
-%define version __VERSION__
-
 Name: dolibarr
-Version: %{version}
+Version: __VERSION__
 Release: __RELEASE__
 Summary: ERP and CRM software for small and medium companies or foundations 
 Summary(es): Software ERP y CRM para pequeñas y medianas empresas o, asociaciones o autónomos
@@ -21,16 +19,15 @@ License: GPLv2+
 Vendor: Dolibarr dev team
 
 URL: http://www.dolibarr.org
-Source0: http://www.dolibarr.org/files/fedora/dolibarr-%{version}.tgz
+Source0: http://www.dolibarr.org/files/fedora/%{name}-%{version}.tgz
 BuildArch: noarch
 #BuildArchitectures: noarch
-BuildRoot: %{_tmppath}/dolibarr-%{version}-build
+BuildRoot: %{_tmppath}/%{name}-%{version}-build
 
 # For Mandriva-Mageia
 Group: Networking/WWW
 # For all other distrib
 Group: Applications/Internet
-
 # Requires for Fedora-Redhat
 Requires: mysql-server mysql httpd php php-cli php-gd php-ldap php-imap php-mysql 
 # Requires for OpenSuse
@@ -229,10 +226,8 @@ if [ "x$os" = "xfedora-redhat" -a -s /sbin/restorecon ]; then
     echo Add SE Linux permissions for dolibarr
     # semanage add records into /etc/selinux/targeted/contexts/files/file_contexts.local
     semanage fcontext -a -t httpd_sys_script_rw_t "/etc/dolibarr(/.*?)"
-    #semanage fcontext -a -t httpd_sys_script_rw_t "/usr/share/dolibarr(/.*?)"
     semanage fcontext -a -t httpd_sys_script_rw_t "/var/lib/dolibarr(/.*?)"
     restorecon -R -v /etc/dolibarr
-    #restorecon -R -v /usr/share/dolibarr
     restorecon -R -v /var/lib/dolibarr
 fi
 
