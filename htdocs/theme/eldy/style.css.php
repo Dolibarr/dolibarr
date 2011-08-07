@@ -21,7 +21,7 @@
 /**
  *		\file       htdocs/theme/eldy/style.css.php
  *		\brief      Fichier de style CSS du theme Eldy
- *		\version    $Id: style.css.php,v 1.91 2011/08/07 16:36:45 grandoc Exp $
+ *		\version    $Id: style.css.php,v 1.92 2011/08/07 17:54:36 grandoc Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -1091,6 +1091,15 @@ border-bottom-color: #BBBBBB;
 border-bottom-style: solid;
 
 margin: 0px 0px 2px 0px;
+
+box-shadow: 4px 4px 4px #CCC;
+<!--[if lte IE 8]> 
+<style type="text/css"> 
+  background-color: #fff;
+  zoom: 1;
+  filter: progid:DXImageTransform.Microsoft.Shadow(color='#cccccc',
+     Direction=135, Strength=6); 
+<![endif]--> 
 }
 
 table.noborder tr {
@@ -1108,6 +1117,7 @@ height: 18px;
 
 table.noborder td {
 padding: 1px 2px 0px 1px;			/* t r b l */
+
 }
 
 table.nobordernopadding {
