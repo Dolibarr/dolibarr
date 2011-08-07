@@ -94,7 +94,7 @@ cui hai bisogno ed essere facile da usare.
 %{__install} -m 644 usr/share/dolibarr/doc/images/dolibarr_48x48.png $RPM_BUILD_ROOT%{_datadir}/pixmaps/dolibarr.png
 %{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/applications
 #desktop-file-install -m 644 usr/share/dolibarr/build/rpm/dolibarr.desktop $RPM_BUILD_ROOT%{_datadir}/applications/dolibarr.desktop
-%{install} -m 644 usr/share/dolibarr/build/rpm/dolibarr.desktop $RPM_BUILD_ROOT%{_datadir}/applications/dolibarr.desktop
+%{__install} -m 644 usr/share/dolibarr/build/rpm/dolibarr.desktop $RPM_BUILD_ROOT%{_datadir}/applications/dolibarr.desktop
 
 %{__mkdir} -p $RPM_BUILD_ROOT/usr/share/dolibarr/build
 %{__mkdir} -p $RPM_BUILD_ROOT/usr/share/dolibarr/htdocs
