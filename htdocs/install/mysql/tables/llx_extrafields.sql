@@ -2,6 +2,7 @@
 -- Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
 -- Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
+-- Copyright (C) 2011      Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,7 +17,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- $Id: llx_extrafields.sql,v 1.2 2011/08/03 01:25:42 eldy Exp $
+-- $Id: llx_extrafields.sql,v 1.3 2011/08/08 23:24:30 eldy Exp $
 -- ===================================================================
 
 create table llx_extrafields
