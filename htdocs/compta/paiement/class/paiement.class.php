@@ -21,7 +21,7 @@
  *	\file       htdocs/compta/paiement/class/paiement.class.php
  *	\ingroup    facture
  *	\brief      File of class to manage payments of customers invoices
- *	\version    $Id: paiement.class.php,v 1.23 2011/08/05 21:06:55 eldy Exp $
+ *	\version    $Id: paiement.class.php,v 1.24 2011/08/08 01:01:45 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
 
@@ -200,7 +200,8 @@ class Paiement extends CommonObject
                                 }
                             }
 
-                            if ($remaintopay) dol_syslog("Remain to pay for invoice ".$facid." not null. We do nothing more.");
+                            if ($invoice->type != 0 && $invoice->type != 1) dol_syslog("Invoice ".$facid." is not a standard nor replacement invoice. We do nothing more.");
+                            else if ($remaintopay) dol_syslog("Remain to pay for invoice ".$facid." not null. We do nothing more.");
                             else if ($mustwait) dol_syslog("There is ".$mustwait." differed payment to process, we do nothing more.");
                             else $result=$invoice->set_paid($user,'','');
 					    }
