@@ -16,3 +16,6 @@
 [submodule "htdocs/custom/docgen"]
 	path = htdocs/custom/docgen
 	url = git+ssh://scm.doliforge.org/gitroot/docgen/docgen.git
+[submodule "htdocs/custom/extrafields"]
+	path = htdocs/custom/extrafields
+	url = git+ssh://scm.doliforge.org/gitroot/extrafields/extrafields.git

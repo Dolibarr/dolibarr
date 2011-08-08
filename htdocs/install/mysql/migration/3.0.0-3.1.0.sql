@@ -482,9 +482,3 @@ ALTER TABLE llx_don ADD   phone_mobile    varchar(24) after email;
 ALTER TABLE llx_don ADD   phone           varchar(24) after email;
 
 ALTER TABLE llx_user ADD civilite varchar(6) after entity;
-
-ALTER TABLE llx_advanced_extrafields_options DROP COLUMN tms;
-ALTER TABLE llx_advanced_extrafields_options CHANGE COLUMN rang pos integer;
-ALTER TABLE llx_advanced_extrafields CHANGE COLUMN rang pos integer;
-ALTER TABLE llx_advanced_extrafields CHANGE COLUMN format type varchar(8) NOT NULL;
-ALTER TABLE llx_advanced_extrafields CHANGE COLUMN fieldsize size integer;
