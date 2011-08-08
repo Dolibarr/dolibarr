@@ -19,10 +19,9 @@ beta version of Dolibarr, step by step.
 - Add a CVS Tag (DOLIBARR_x_y_BETA)
 - Create a branch (DOLIBARR_x_y_BRANCH).
 
-- Update the CVS on server that build automatically the tgz beta package
-  or build Dolibarr and DoliWamp with makepack-dolibarr.pl
-- Enable entries on joomla web site www.dolibarr.org with links
-  that point to that file ("Dolibarr CVS snapshot of current beta").
+- Run makepack-dolibarr.pl to generate all packages.
+- Enable the category that point to the beta files on joomla 
+  web site www.dolibarr.org
 
 - Post a news on dolibarr.org/dolibarr.fr
 - Send mail on mailings-list
