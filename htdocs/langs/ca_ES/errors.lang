@@ -82,4 +82,5 @@ ErrorBadMask=Error en la màscara
 ErrorBadMaskFailedToLocatePosOfSequence=Error, sense número de seqüència en la màscara
 ErrorBadMaskBadRazMonth=Error, valor de tornada a 0 incorrecte
 ErrorSelectAtLeastOne=Error. Seleccioneu com a mínim una entrada.
+ErrorProductWithRefNotExist=La referència de producte '<i>%s</i>' no existeix
 ErrorDeleteNotPossibleLineIsConsolidated=Eliminació impossible ja que el registre està enllaçat a una transacció bancària conciliada
