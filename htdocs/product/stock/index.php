@@ -16,14 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: index.php,v 1.31 2011/07/31 23:24:01 eldy Exp $
+ * $Id: index.php,v 1.32 2011/08/08 15:28:01 eldy Exp $
  */
 
 /**
  *  \file       htdocs/product/stock/index.php
  *  \ingroup    stock
- *  \brief      Page accueil stocks produits
- *  \version    $Revision: 1.31 $
+ *  \brief      Home page of stock area
+ *  \version    $Revision: 1.32 $
  */
 
 require("../../main.inc.php");
@@ -103,7 +103,7 @@ else
     dol_print_error($db);
 }
 
-print '</td><td valign="top" width="70%" class="notopnoleft">';
+print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 
 // Last movements
 $max=10;
@@ -163,5 +163,5 @@ print '</td></tr></table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:24:01 $ - $Revision: 1.31 $');
+llxFooter('$Date: 2011/08/08 15:28:01 $ - $Revision: 1.32 $');
 ?>

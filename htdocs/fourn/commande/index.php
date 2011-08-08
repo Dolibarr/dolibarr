@@ -19,9 +19,9 @@
 
 /**
  *	 \file       htdocs/fourn/commande/index.php
- *	 \ingroup    commande
- *	 \brief      Page accueil commandes fournisseurs
- *   \version    $Revision: 1.43 $
+ *	 \ingroup    commande fournisseur
+ *	 \brief      Home page of supplier's orders area
+ *   \version    $Revision: 1.44 $
  */
 
 require("../../main.inc.php");
@@ -240,7 +240,7 @@ else
 }
 
 
-print '</td><td width="70%" valign="top" class="notopnoleft">';
+print '</td><td width="70%" valign="top" class="notopnoleftnoright">';
 
 
 /*
@@ -387,5 +387,5 @@ print '</td></tr></table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:57:02 $ - $Revision: 1.43 $');
+llxFooter('$Date: 2011/08/08 15:28:00 $ - $Revision: 1.44 $');
 ?>

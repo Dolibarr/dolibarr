@@ -20,7 +20,7 @@
         \file       htdocs/compta/param/index.php
         \ingroup    compta
 		\brief      Page acceuil zone parametrage comptabilite
-		\version    $Id: index.php,v 1.12 2011/08/03 00:46:21 eldy Exp $
+		\version    $Id: index.php,v 1.13 2011/08/08 15:28:01 eldy Exp $
 */
 
 require("../../main.inc.php");
@@ -62,7 +62,7 @@ print "</table></form><br>";
 
 
 
-print '</td><td valign="top" width="70%" class="notopnoleft">';
+print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 
 
 
@@ -72,5 +72,5 @@ print '</table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:21 $ - $Revision: 1.12 $');
+llxFooter('$Date: 2011/08/08 15:28:01 $ - $Revision: 1.13 $');
 ?>
