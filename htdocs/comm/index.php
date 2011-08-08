@@ -21,7 +21,7 @@
  *	\file       htdocs/comm/index.php
  *	\ingroup    commercial
  *	\brief      Home page of commercial area
- *	\version    $Id: index.php,v 1.172 2011/08/08 12:22:52 eldy Exp $
+ *	\version    $Id: index.php,v 1.173 2011/08/08 14:25:44 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -273,6 +273,87 @@ $max=3;
 
 
 /*
+ * Last modified proposals
+ */
+/*
+if ($conf->propal->enabled && $user->rights->propale->lire)
+{
+	$sql = "SELECT s.nom as name, s.rowid as socid, s.client, s.canvas, p.rowid as propalid, p.total_ht, p.ref, p.fk_statut, p.datep as dp";
+	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+	$sql.= ", ".MAIN_DB_PREFIX."propal as p";
+	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql.= " WHERE p.fk_soc = s.rowid";
+	$sql.= " AND p.entity = ".$conf->entity;
+	//$sql.= " AND p.fk_statut > 1";
+	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+	if ($socid)	$sql.= " AND s.rowid = ".$socid;
+	$sql.= " ORDER BY p.datep DESC";
+	$sql.= $db->plimit($NBMAX, 0);
+
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+
+		$i = 0;
+		print '<table class="noborder" width="100%">';
+		print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("LastModifiedProposals",$NBMAX).'</td></tr>';
+		$var=False;
+		while ($i < $num)
+		{
+			$objp = $db->fetch_object($resql);
+			print '<tr '.$bc[$var].'>';
+
+			// Ref
+			print '<td nowrap="nowrap" width="140">';
+
+			$propalstatic->id=$objp->propalid;
+			$propalstatic->ref=$objp->ref;
+
+			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+			print '<td class="nobordernopadding" nowrap="nowrap">';
+			print $propalstatic->getNomUrl(1);
+			print '</td>';
+			print '<td width="18" class="nobordernopadding" nowrap="nowrap">';
+			// TODO se baser sur datep ou fin_validite ?
+			if (($objp->fk_statut <= 1) && ($db->jdate($objp->dp) < ($now - $conf->propal->cloture->warning_delay))) print img_warning($langs->trans("Late"));
+			print '</td>';
+			print '<td width="16" align="center" class="nobordernopadding">';
+			$filename=dol_sanitizeFileName($objp->ref);
+			$filedir=$conf->propale->dir_output . '/' . dol_sanitizeFileName($objp->ref);
+			$urlsource=$_SERVER['PHP_SELF'].'?id='.$objp->propalid;
+			$formfile->show_documents('propal',$filename,$filedir,$urlsource,'','','',1,'',1);
+			print '</td></tr></table>';
+
+			print '</td>';
+
+			print '<td align="left">';
+            $companystatic->id=$objp->socid;
+            $companystatic->name=$objp->name;
+            $companystatic->client=$objp->client;
+            $companystatic->canvas=$objp->canvas;
+            print $companystatic->getNomUrl(1,'customer',44);
+			print '</td>';
+			print '<td align="right">';
+			print dol_print_date($db->jdate($objp->dp),'day').'</td>'."\n";
+			print '<td align="right">'.price($objp->total_ht).'</td>'."\n";
+			print '<td align="center" width="14">'.$propalstatic->LibStatut($objp->fk_statut,3).'</td>'."\n";
+			print '</tr>'."\n";
+			$i++;
+			$var=!$var;
+		}
+
+		print "</table><br>";
+		$db->free($resql);
+	}
+	else
+	{
+		dol_print_error($db,'');
+	}
+}
+*/
+
+/*
  * Last modified customers or prospects
  */
 if ($conf->societe->enabled && $user->rights->societe->lire)
@@ -405,8 +486,7 @@ if ($user->rights->agenda->myactions->read)
 
 
 /*
- * Derniers contrats
- *
+ * Last contracts
  */
 if ($conf->contrat->enabled && $user->rights->contrat->lire && 0) // TODO A REFAIRE DEPUIS NOUVEAU CONTRAT
 {
@@ -465,8 +545,7 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire && 0) // TODO A REFA
 }
 
 /*
- * Propales ouvertes
- *
+ * Opened proposals
  */
 if ($conf->propal->enabled && $user->rights->propale->lire)
 {
@@ -551,5 +630,5 @@ print '</table>';
 $db->close();
 
 
-llxFooter('$Date: 2011/08/08 12:22:52 $ - $Revision: 1.172 $');
+llxFooter('$Date: 2011/08/08 14:25:44 $ - $Revision: 1.173 $');
 ?>
