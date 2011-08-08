@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
- * Copyright (C) 2008-2010 Laurent Destailleur   <eldy@uers.sourceforge.net>
+/* Copyright (C) 2007-2008 Jeremie Ollivier      <jeremie.o@laposte.net>
+ * Copyright (C) 2008-2011 Laurent Destailleur   <eldy@uers.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,9 @@
  */
 
 
+/**
+ * Class ot manage authentication for pos module (cashdesk)
+ */
 class Auth {
 
 	var $db;
