@@ -24,7 +24,7 @@
  * 	\file 		htdocs/core/class/extrafields.class.php
  *	\ingroup    core
  *	\brief      File of class to manage extra fields
- *	\version    $Id: extrafields.class.php,v 1.7 2011/08/08 12:28:08 hregis Exp $
+ *	\version    $Id: extrafields.class.php,v 1.8 2011/08/08 12:31:14 hregis Exp $
  */
 
 /**
@@ -436,7 +436,7 @@ class ExtraFields
         else if ($type == 'text')
         {
         	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-        	$doleditor=new DolEditor('options_'.$key,$value,'',360,'dolibarr_notes','In',true,false,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_SOCIETE,5,100);
+        	$doleditor=new DolEditor('options_'.$key,$value,'',200,'dolibarr_notes','In',false,false,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_SOCIETE,5,100);
         	$out=$doleditor->Create(1);
         }
 	    else if ($type == 'date') $out.=' (YYYY-MM-DD)';
