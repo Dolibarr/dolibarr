@@ -1,5 +1,5 @@
 --
--- $Id: 3.0.0-3.1.0.sql,v 1.85 2011/08/03 10:55:39 simnandez Exp $
+-- $Id: 3.0.0-3.1.0.sql,v 1.86 2011/08/08 16:07:33 hregis Exp $
 --
 -- Be carefull to requests order.
 -- This file must be loaded by calling /install/index.php page
@@ -483,3 +483,6 @@ ALTER TABLE llx_don ADD   phone           varchar(24) after email;
 
 ALTER TABLE llx_user ADD civilite varchar(6) after entity;
 
+ALTER TABLE llx_advanced_extrafields_options DROP COLUMN tms;
+ALTER TABLE llx_advanced_extrafields_options CHANGE COLUMN rang pos integer;
+ALTER TABLE llx_advanced_extrafields CHANGE COLUMN rang pos integer;
