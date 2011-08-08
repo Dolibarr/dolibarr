@@ -21,7 +21,7 @@
  *	    \file       htdocs/contrat/services.php
  *      \ingroup    contrat
  *		\brief      Page to list services in contracts
- *		\version    $Id: services.php,v 1.57 2011/07/31 23:46:55 eldy Exp $
+ *		\version    $Id: services.php,v 1.58 2011/08/08 14:25:44 eldy Exp $
  */
 
 require ("../main.inc.php");
@@ -93,7 +93,7 @@ if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc
 if ($mode == "0") $sql.= " AND cd.statut = 0";
 if ($mode == "4") $sql.= " AND cd.statut = 4";
 if ($mode == "5") $sql.= " AND cd.statut = 5";
-if ($filter == "expired") $sql.= " AND date_fin_validite < ".$db->idate($now);
+if ($filter == "expired") $sql.= " AND cd.date_fin_validite < '".$db->idate($now)."'";
 if ($search_nom)      $sql.= " AND s.nom like '%".$db->escape($search_nom)."%'";
 if ($search_contract) $sql.= " AND c.rowid = '".$db->escape($search_contract)."'";
 if ($search_service)  $sql.= " AND (p.ref like '%".$db->escape($search_service)."%' OR p.description like '%".$db->escape($search_service)."%' OR cd.description LIKE '%".$db->escape($search_service)."%')";
@@ -266,5 +266,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:46:55 $ - $Revision: 1.57 $');
+llxFooter('$Date: 2011/08/08 14:25:44 $ - $Revision: 1.58 $');
 ?>
