@@ -22,9 +22,9 @@
 /**
  *	\file       htdocs/includes/modules/livraison/pdf/pdf_typhon.modules.php
  *	\ingroup    livraison
- *	\brief      Fichier de la classe permettant de generer les bons de livraison au modele Typhon
+ *	\brief      File of class to manage receving receipts with template Typhon
  *	\author	    Laurent Destailleur
- *	\version    $Id: pdf_typhon.modules.php,v 1.86 2011/07/31 23:28:17 eldy Exp $
+ *	\version    $Id: pdf_typhon.modules.php,v 1.87 2011/08/08 16:07:48 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/livraison/modules_livraison.php");
@@ -539,11 +539,11 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	    if (! empty($object->linkedObjects))
 		{
 			$outputlangs->load('orders');
-			
+
 			foreach($object->linkedObjects as $elementtype => $objects)
 			{
 				$object->fetchObjectLinked('','',$objects[0]->id,$objects[0]->element);
-				
+
 				foreach($object->linkedObjects as $elementtype => $objects)
 				{
 					$num=sizeof($objects);

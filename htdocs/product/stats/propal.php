@@ -19,9 +19,9 @@
 
 /**
  *	    \file       htdocs/product/stats/propal.php
- *      \ingroup    product, service, propal
+ *      \ingroup    product service propal
  *		\brief      Page des stats des propals pour un produit
- *		\version    $Id: propal.php,v 1.57 2011/07/31 23:24:00 eldy Exp $
+ *		\version    $Id: propal.php,v 1.58 2011/08/08 16:07:47 eldy Exp $
  */
 
 
@@ -184,5 +184,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:24:00 $ - $Revision: 1.57 $');
+llxFooter('$Date: 2011/08/08 16:07:47 $ - $Revision: 1.58 $');
 ?>

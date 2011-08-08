@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
@@ -21,9 +21,9 @@
 
 /**
  *	\file       htdocs/product/stock/product.php
- *	\ingroup    product, stock
+ *	\ingroup    product stock
  *	\brief      Page to list detailed stock of a product
- *	\version    $Id: product.php,v 1.108 2011/07/31 23:24:00 eldy Exp $
+ *	\version    $Id: product.php,v 1.109 2011/08/08 16:07:48 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -518,5 +518,5 @@ print "</table>";
 $db->close();
 
 
-llxFooter('$Date: 2011/07/31 23:24:00 $ - $Revision: 1.108 $');
+llxFooter('$Date: 2011/08/08 16:07:48 $ - $Revision: 1.109 $');
 ?>
