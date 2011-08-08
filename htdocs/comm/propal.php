@@ -26,7 +26,7 @@
  *	\file       	htdocs/comm/propal.php
  *	\ingroup    	propale
  *	\brief      	Page of commercial proposals card and list
- *	\version		$Id: propal.php,v 1.614 2011/08/03 00:46:26 eldy Exp $
+ *	\version		$Id: propal.php,v 1.615 2011/08/08 01:53:26 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -818,6 +818,10 @@ if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST
 	$localtax2_rate=get_localtax($vat_rate,2,$object->client);
     $up_ht=GETPOST('pu')?GETPOST('pu'):GETPOST('subprice');
 
+    // Define special_code for special lines
+    $special_code=0;
+    if (empty($_POST['qty'])) $special_code=3;
+
 	// On verifie que le prix minimum est respecte
 	$productid = $_POST['productid'] ;
 	if ($productid)
@@ -843,7 +847,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST
 		$_POST['desc'],
 		'HT',
 		$info_bits,
-		'',
+		$special_code,
 		$_POST['fk_parent_line']
 		);
 
@@ -1828,7 +1832,7 @@ else
 			$soc = new Societe($db);
 			 $soc->fetch($socid);
 		}
-            
+
 		$param='&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut;
 		if ($month) $param.='&amp;month='.$month;
 		if ($year) $param.='&amp;year='.$year;
@@ -1975,6 +1979,6 @@ else
 }
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:26 $ - $Revision: 1.614 $');
+llxFooter('$Date: 2011/08/08 01:53:26 $ - $Revision: 1.615 $');
 
 ?>

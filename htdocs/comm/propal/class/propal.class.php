@@ -29,7 +29,7 @@
  *	\author     Rodolphe Qiedeville
  *	\author	    Eric Seigne
  *	\author	    Laurent Destailleur
- *	\version    $Id: propal.class.php,v 1.110 2011/08/03 00:46:39 eldy Exp $
+ *	\version    $Id: propal.class.php,v 1.111 2011/08/08 01:53:26 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
@@ -431,18 +431,20 @@ class Propal extends CommonObject
 
 
 	/**
-	 *    \brief      Mise a jour d'une ligne de produit
-	 *    \param      rowid              	Id de la ligne
-	 *    \param      pu		        	Prix unitaire (HT ou TTC selon price_base_type)
-	 *    \param      qty             	Quantity
-	 *    \param      remise_percent  	Remise effectuee sur le produit
-	 *    \param      txtva	          	Taux de TVA
-	 * 	  \param	  txlocaltax1		Local tax 1 rate
-	 *    \param	  txlocaltax2		Local tax 2 rate
-	 *    \param      desc            	Description
-	 *	\param		price_base_type		HT ou TTC
-	 *	\param     	info_bits        	Miscellanous informations
-	 *    \return     int             	0 en cas de succes
+	 *    Update a proposal line
+	 *    @param      rowid             Id de la ligne
+	 *    @param      pu		        Prix unitaire (HT ou TTC selon price_base_type)
+	 *    @param      qty             	Quantity
+	 *    @param      remise_percent  	Remise effectuee sur le produit
+	 *    @param      txtva	          	Taux de TVA
+	 * 	  @param	  txlocaltax1		Local tax 1 rate
+	 *    @param	  txlocaltax2		Local tax 2 rate
+	 *    @param      desc            	Description
+	 *	  @param	  price_base_type	HT ou TTC
+	 *	  @param      info_bits        	Miscellanous informations
+	 *	  @param      special_code      Set special code ('' = we don't change it)
+	 *	  @param      fk_parent_line    Id of line parent
+	 *    @return     int             	0 en cas de succes
 	 */
 	function updateline($rowid, $pu, $qty, $remise_percent=0, $txtva, $txlocaltax1=0, $txlocaltax2=0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $skip_update_total=0)
 	{
@@ -458,6 +460,8 @@ class Propal extends CommonObject
 		$txtva = price2num($txtva);
 		$txlocaltax1=price2num($txlocaltax1);
 		$txlocaltax2=price2num($txlocaltax2);
+		if (empty($qty) && empty($special_code)) $special_code=3;    // Set option tag
+		if (! empty($qty) && $special_code == 3) $special_code=0;    // Remove option tag
 
 		if ($this->statut == 0)
 		{
@@ -507,8 +511,6 @@ class Propal extends CommonObject
 			$this->line->special_code=$special_code;
 			$this->line->fk_parent_line=$fk_parent_line;
 			$this->line->skip_update_total=$skip_update_total;
-
-			if (empty($qty) && empty($special_code)) $this->line->special_code=3;
 
 			// TODO deprecated
 			$this->line->price=$price;
@@ -2671,12 +2673,11 @@ class PropaleLigne
 		$sql.= " , marge_tx='".$this->marge_tx."'";
 		$sql.= " , marque_tx='".$this->marque_tx."'";
 		$sql.= " , info_bits=".$this->info_bits;
-		if ($this->special_code != '') $sql.= " , special_code=".$this->special_code;
+		if (strlen($this->special_code)) $sql.= " , special_code=".$this->special_code;
 		$sql.= " , fk_parent_line=".($this->fk_parent_line>0?$this->fk_parent_line:"null");
 		$sql.= " WHERE rowid = ".$this->rowid;
 
 		dol_syslog("PropaleLigne::update sql=$sql");
-
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

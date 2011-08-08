@@ -21,7 +21,7 @@
 /**
  * 	    \file       htdocs/support/inc.php
  *		\brief      File that define environment for support pages
- *		\version    $Id: inc.php,v 1.31 2011/07/31 23:22:33 eldy Exp $
+ *		\version    $Id: inc.php,v 1.32 2011/08/07 13:10:26 eldy Exp $
  */
 
 define('DOL_VERSION','2.5-dev');	// Also defined in htdocs/master.inc.php
@@ -63,7 +63,16 @@ else
 
 
 $includeconferror='';
+
+# Define vars
+$conffiletoshowshort = "conf.php";
+# Define localization of conf file
 $conffile = "../conf/conf.php";
+$conffiletoshow = "htdocs/conf/conf.php";
+# For debian/redhat like systems
+#$conffile = "/etc/dolibarr/conf.php";
+#$conffiletoshow = "/etc/dolibarr/conf.php";
+
 $charset="UTF-8";	// If not output format found in any conf file
 if (! defined('DONOTLOADCONF') && file_exists($conffile))
 {

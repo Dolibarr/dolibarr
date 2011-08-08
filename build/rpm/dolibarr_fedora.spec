@@ -6,10 +6,8 @@
 # edit it if you need to match your rules.
 # --------------------------------------------------------
 
-%define version __VERSION__
-
 Name: dolibarr
-Version: %{version}
+Version: __VERSION__
 Release: __RELEASE__%{?dist}
 Summary: ERP and CRM software for small and medium companies or foundations 
 Summary(es): Software ERP y CRM para pequeñas y medianas empresas o, asociaciones o autónomos
@@ -21,15 +19,13 @@ License: GPLv2+
 Vendor: Dolibarr dev team
 
 URL: http://www.dolibarr.org
-Source0: http://www.dolibarr.org/files/fedora/dolibarr-%{version}.tgz
+Source0: http://www.dolibarr.org/files/fedora/%{name}-%{version}.tgz
 BuildArch: noarch
 #BuildArchitectures: noarch
-BuildRoot: %{_tmppath}/dolibarr-%{version}-build
+BuildRoot: %{_tmppath}/%{name}-%{version}-build
 
 Group: Applications/Internet
-
 Requires: mysql-server mysql httpd php php-cli php-gd php-ldap php-imap php-mysql 
-
 
 # Set yes to build test package, no for release (this disable need of /usr/bin/php not found by OpenSuse)
 AutoReqProv: no
@@ -93,7 +89,8 @@ cui hai bisogno ed essere facile da usare.
 %{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/pixmaps
 %{__install} -m 644 usr/share/dolibarr/doc/images/dolibarr_48x48.png $RPM_BUILD_ROOT%{_datadir}/pixmaps/dolibarr.png
 %{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/applications
-%{__desktop-file-install} -m 644 usr/share/dolibarr/build/rpm/dolibarr.desktop $RPM_BUILD_ROOT%{_datadir}/applications/dolibarr.desktop
+#desktop-file-install -m 644 usr/share/dolibarr/build/rpm/dolibarr.desktop $RPM_BUILD_ROOT%{_datadir}/applications/dolibarr.desktop
+%{__install} -m 644 usr/share/dolibarr/build/rpm/dolibarr.desktop $RPM_BUILD_ROOT%{_datadir}/applications/dolibarr.desktop
 
 %{__mkdir} -p $RPM_BUILD_ROOT/usr/share/dolibarr/build
 %{__mkdir} -p $RPM_BUILD_ROOT/usr/share/dolibarr/htdocs
@@ -116,15 +113,15 @@ cui hai bisogno ed essere facile da usare.
 %files
 
 %defattr(-, root, root, 0755)
-%doc /usr/share/doc/dolibarr
-%dir /usr/share/dolibarr/build
-%dir /usr/share/dolibarr/htdocs
-%dir /usr/share/dolibarr/scripts
+%doc %_datadir/doc/dolibarr
+%dir %_datadir/dolibarr/build
+%dir %_datadir/dolibarr/htdocs
+%dir %_datadir/dolibarr/scripts
 %_datadir/pixmaps/dolibarr.png
 %_datadir/applications/dolibarr.desktop
-/usr/share/dolibarr/build/*
-/usr/share/dolibarr/htdocs/*
-/usr/share/dolibarr/scripts/*
+%_datadir/dolibarr/build/*
+%_datadir/dolibarr/htdocs/*
+%_datadir/dolibarr/scripts/*
 
 %defattr(0664, -, -)
 %config(noreplace) %{_sysconfdir}/dolibarr/conf.php
@@ -150,6 +147,7 @@ export apachegroup='apache';
 echo Create document directory $docdir
 %{__mkdir} -p $docdir
 
+# Set correct owner on config files
 %{__chown} -R root:$apachegroup /etc/dolibarr/*
 
 # Create config for se $seconfig
