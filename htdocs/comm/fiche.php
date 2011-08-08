@@ -23,9 +23,9 @@
 
 /**
  *       \file       htdocs/comm/fiche.php
- *       \ingroup    commercial, compta
+ *       \ingroup    commercial compta
  *       \brief      Page to show customer card of a third party
- *       \version    $Id: fiche.php,v 1.282 2011/08/03 00:46:27 eldy Exp $
+ *       \version    $Id: fiche.php,v 1.283 2011/08/08 16:15:05 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -891,5 +891,5 @@ else
 $db->close();
 
 
-llxFooter('$Date: 2011/08/03 00:46:27 $ - $Revision: 1.282 $');
+llxFooter('$Date: 2011/08/08 16:15:05 $ - $Revision: 1.283 $');
 ?>
