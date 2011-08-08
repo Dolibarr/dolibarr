@@ -19,9 +19,9 @@
 
 /**
  *	\file       htdocs/comm/clients.php
- *	\ingroup    commercial, societe
+ *	\ingroup    commercial societe
  *	\brief      List of customers
- *	\version    $Id: clients.php,v 1.79 2011/08/03 00:46:26 eldy Exp $
+ *	\version    $Id: clients.php,v 1.80 2011/08/08 16:15:05 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -249,5 +249,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:26 $ - $Revision: 1.79 $');
+llxFooter('$Date: 2011/08/08 16:15:05 $ - $Revision: 1.80 $');
 ?>
