@@ -20,7 +20,7 @@
 /**
  *		\file       htdocs/theme/auguria/style.css.php
  *		\brief      Fichier de style CSS du theme auguria
- *		\version    $Id: style.css.php,v 1.92 2011/07/31 23:22:04 eldy Exp $
+ *		\version    $Id: style.css.php,v 1.93 2011/08/08 15:19:28 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -194,8 +194,8 @@ td.vmenu {
 }
 
 div.fiche {
-	margin-<?php print $left; ?>: 4px;
-	margin-<?php print $right; ?>: 4px;
+	margin-<?php print $left; ?>: 10px;
+	margin-<?php print $right; ?>: 6px;
 }
 
 /* ============================================================================== */
@@ -1026,7 +1026,7 @@ border-collapse: collapse;
 border: 0px;
 padding-top: 0px;
 padding-<?php print $left; ?>: 0px;
-padding-<?php print $right; ?>: 4px;
+padding-<?php print $right; ?>: 10px;
 padding-bottom: 4px;
 margin: 0px 0px;
 }
