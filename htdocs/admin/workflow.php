@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,10 +19,10 @@
  */
 
 /**
- *	\file       htdocs/admin/societe.php
+ *	\file       htdocs/admin/workflow.php
  *	\ingroup    company
- *	\brief      Third party module setup page
- *	\version    $Id: workflow.php,v 1.5 2011/07/31 22:23:21 eldy Exp $
+ *	\brief      Workflows setup page
+ *	\version    $Id: workflow.php,v 1.6 2011/08/08 16:00:18 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -135,5 +135,5 @@ print '</table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:21 $ - $Revision: 1.5 $');
+llxFooter('$Date: 2011/08/08 16:00:18 $ - $Revision: 1.6 $');
 ?>

@@ -17,13 +17,13 @@
  */
 
 /**
- *     	\file       htdocs/public/paybox/paymentko.php
- *		\ingroup    paybox
+ *     	\file       htdocs/public/paypal/paymentko.php
+ *		\ingroup    paypal
  *		\brief      File to show page after a failed payment.
  *                  This page is called by paypal with url provided to payal competed with parameter TOKEN=xxx
  *                  This token can be used to get more informations.
  *		\author	    Laurent Destailleur
- *		\version    $Id: paymentko.php,v 1.7 2011/07/31 23:23:20 eldy Exp $
+ *		\version    $Id: paymentko.php,v 1.8 2011/08/08 16:00:19 eldy Exp $
  */
 
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
@@ -81,5 +81,5 @@ html_print_paypal_footer($mysoc,$langs);
 
 $db->close();
 
-llxFooterPaypal('$Date: 2011/07/31 23:23:20 $ - $Revision: 1.7 $');
+llxFooterPaypal('$Date: 2011/08/08 16:00:19 $ - $Revision: 1.8 $');
 ?>

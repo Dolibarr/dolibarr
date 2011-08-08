@@ -16,10 +16,10 @@
  */
 
 /**
- *	\file       htdocs/projet/ganttview.php
+ *	\file       htdocs/projet/ganttchart.php
  *	\ingroup    projet
- *	\brief      Gantt diagrame of a project
- *	\version    $Id: ganttchart.php,v 1.7 2011/07/31 23:23:36 eldy Exp $
+ *	\brief      Gantt diagram of a project
+ *	\version    $Id: ganttchart.php,v 1.8 2011/08/08 16:00:46 eldy Exp $
  */
 
 ?>
