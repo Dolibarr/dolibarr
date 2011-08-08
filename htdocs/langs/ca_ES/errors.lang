@@ -1,4 +1,3 @@
-
 # Dolibarr language file - ca_ES - errors 
 CHARSET=UTF-8
 MenuManager=Gestor de menú
@@ -83,3 +82,4 @@ ErrorBadMask=Error en la màscara
 ErrorBadMaskFailedToLocatePosOfSequence=Error, sense número de seqüència en la màscara
 ErrorBadMaskBadRazMonth=Error, valor de tornada a 0 incorrecte
 ErrorSelectAtLeastOne=Error. Seleccioneu com a mínim una entrada.
+ErrorDeleteNotPossibleLineIsConsolidated=Eliminació impossible ja que el registre està enllaçat a una transacció bancària conciliada
