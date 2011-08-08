@@ -22,7 +22,7 @@
  *	\brief      File of class to manage widget boxes
  *	\author     Rodolphe Qiedeville
  *	\author	    Laurent Destailleur
- *	\version    $Id: boxes.php,v 1.55 2011/08/01 13:26:21 hregis Exp $
+ *	\version    $Id: boxes.php,v 1.56 2011/08/08 15:28:01 eldy Exp $
  */
 
 
@@ -52,7 +52,7 @@ function printBoxesArea($user,$areacode)
 		print '<table width="100%" style="border-collapse: collapse; border: 0px; margin: 0px; padding: 0px;"><tr>';
 
 		// Affichage colonne gauche
-		print '<td width="50%" valign="top" style="padding-right: 4px;">'."\n";
+		print '<td width="50%" valign="top" class="notopnoleft" style="padding-right: 8px;">'."\n";
 
 		print "\n<!-- Box left container -->\n";
 		print '<div id="left" class="connectedSortable">'."\n";
@@ -87,7 +87,7 @@ function printBoxesArea($user,$areacode)
 
 		print "</td>\n";
 		// Affichage colonne droite
-		print '<td width="50%" valign="top" style="padding-right: 2px;">';
+		print '<td width="50%" valign="top">';
 
 		print "\n<!-- Box right container -->\n";
 		print '<div id="right" class="connectedSortable">'."\n";
