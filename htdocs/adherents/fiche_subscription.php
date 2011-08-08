@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
 /**
  *       \file       htdocs/adherents/fiche_subscription.php
  *       \ingroup    member
- *       \brief      Page d'ajout, edition, suppression d'une fiche adh�sion
- *       \version    $Id: fiche_subscription.php,v 1.30 2011/07/31 22:23:28 eldy Exp $
+ *       \brief      Page to add/edit/remove a member subscription
+ *       \version    $Id: fiche_subscription.php,v 1.31 2011/08/08 18:47:41 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -392,5 +392,5 @@ if ($rowid && $action != 'edit')
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:28 $ - $Revision: 1.30 $');
+llxFooter('$Date: 2011/08/08 18:47:41 $ - $Revision: 1.31 $');
 ?>
