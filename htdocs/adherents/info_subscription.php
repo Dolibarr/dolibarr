@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,10 +17,10 @@
  */
 
 /**
- *      \file       htdocs/adherents/info.php
+ *      \file       htdocs/adherents/info_subscription.php
  *      \ingroup    member
- *		\brief      Page des informations d'un adherent
- *		\version    $Id: info_subscription.php,v 1.12 2011/07/31 22:23:28 eldy Exp $
+ *		\brief      Page with information of subscriptions of a member
+ *		\version    $Id: info_subscription.php,v 1.13 2011/08/08 16:00:18 eldy Exp $
 */
 
 require("../main.inc.php");
@@ -80,5 +80,5 @@ print '</div>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:28 $ - $Revision: 1.12 $');
+llxFooter('$Date: 2011/08/08 16:00:18 $ - $Revision: 1.13 $');
 ?>
