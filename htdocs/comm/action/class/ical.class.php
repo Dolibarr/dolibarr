@@ -21,7 +21,7 @@
  *       \file       htdocs/comm/action/class/ical.class.php
  *       \ingroup    commercial
  *       \brief      File of class to parse ical calendars
- *       \version    $Id: ical.class.php,v 1.6 2011/08/03 00:46:20 eldy Exp $
+ *       \version    $Id: ical.class.php,v 1.7 2011/08/08 15:47:16 eldy Exp $
  */
 class ical
 {
@@ -31,7 +31,15 @@ class ical
     var $todo_count; // Number of TODOs
     var $last_key; //Help variable save last key (multiline string)
 
-    /**
+
+	/**
+	 * Constructor
+	 */
+	public function ical()
+	{
+	}
+
+	/**
      * Read text file, icalender text file
      *
      * @param string $file
