@@ -19,9 +19,9 @@
 
 /**
  *       \file       htdocs/product/stats/commande.php
- *       \ingroup    product, service, commande
+ *       \ingroup    product service commande
  *       \brief      Page des stats des commandes clients pour un produit
- *       \version    $Id: commande.php,v 1.47 2011/07/31 23:24:00 eldy Exp $
+ *       \version    $Id: commande.php,v 1.48 2011/08/08 16:07:47 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -190,5 +190,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:24:00 $ - $Revision: 1.47 $');
+llxFooter('$Date: 2011/08/08 16:07:47 $ - $Revision: 1.48 $');
 ?>

@@ -18,11 +18,16 @@
  */
 
 /**
-*		\mainpage	Dolibarr project
-*
-*		This is source documentation for Dolibarr ERP/CRM.<br>
-*		This documentation can be built or updated running the script <b>dolibarr-doxygen-build.pl</b> or from Eclipse with Doxygen plugin.<br>
-*		<br>
-*		Dolibarr official web site: <a href="http://www.dolibarr.org">www.dolibarr.org</a><br>
-*       Dolibarr site francophone: <a href="http://www.dolibarr.fr">www.dolibarr.fr</a><br>
-*/
+ *		\mainpage	Dolibarr project
+ *	    \file       htdocs/lib/doxygen.php
+ *      \ingroup    core
+ *		\brief      Page used as doxygen documentation header
+ *		\version    $Id: doxygen.php,v 1.7 2011/08/08 16:07:48 eldy Exp $
+ *
+ *	    This is source documentation for Dolibarr ERP/CRM.<br>
+ *      This documentation can be built or updated running the script <b>dolibarr-doxygen-build.pl</b> or from Eclipse with Doxygen plugin.<br>
+ *      <br>
+ *      Dolibarr official web site: <a href="http://www.dolibarr.org">www.dolibarr.org</a><br>
+ *      Dolibarr site francophone: <a href="http://www.dolibarr.fr">www.dolibarr.fr</a><br>
+ */
+?>
