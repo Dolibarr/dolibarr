@@ -21,7 +21,7 @@
  *	\file       htdocs/projet/activity/index.php
  *	\ingroup    projet
  *	\brief      Page activite perso du module projet
- *	\version    $Id: index.php,v 1.36 2011/07/31 23:23:39 eldy Exp $
+ *	\version    $Id: index.php,v 1.37 2011/08/08 15:28:01 eldy Exp $
  */
 
 require ("../../main.inc.php");
@@ -126,7 +126,7 @@ print "</table>";
 // TODO Do not use date_add function to be compatible with all database
 if ($db->type != 'pgsql')
 {
-	
+
 /* Affichage de la liste des projets d'hier */
 print '<br><table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -181,7 +181,7 @@ print "</table>";
 }
 
 
-print '</td><td width="70%" valign="top" class="notopnoleft">';
+print '</td><td width="70%" valign="top" class="notopnoleftright">';
 
 // TODO Do not use week function to be compatible with all database
 if ($db->type != 'pgsql')
@@ -331,5 +331,5 @@ print '</td></tr></table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:23:39 $ - $Revision: 1.36 $');
+llxFooter('$Date: 2011/08/08 15:28:01 $ - $Revision: 1.37 $');
 ?>

@@ -25,7 +25,7 @@
  *	\file       htdocs/commande/fiche.php
  *	\ingroup    commande
  *	\brief      Page to show customer order
- *	\version    $Id: fiche.php,v 1.527 2011/07/31 22:23:15 eldy Exp $
+ *	\version    $Id: fiche.php,v 1.528 2011/08/08 12:00:13 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -1957,14 +1957,23 @@ else
 
                         if ($object->statut > 0 && $object->statut < 3 && $object->getNbOfProductsLines() > 0)
                         {
-                            if ($user->rights->expedition->creer)
-                            {
-                                print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/shipment.php?id='.$object->id.'">'.$langs->trans('ShipProduct').'</a>';
-                            }
-                            else
-                            {
-                                print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('ShipProduct').'</a>';
-                            }
+						    if (($conf->expedition_bon->enabled && $user->rights->expedition->creer)
+	                        || ($conf->livraison_bon->enabled && $user->rights->expedition->livraison->creer))
+	                        {
+                                if ($user->rights->expedition->creer)
+                                {
+                                    print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/shipment.php?id='.$object->id.'">'.$langs->trans('ShipProduct').'</a>';
+                                }
+                                else
+                                {
+                                    print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('ShipProduct').'</a>';
+                                }
+	                        }
+	                        else
+	                        {
+                                $langs->load("errors");
+	                            print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("ErrorModuleSetupNotComplete")).'">'.$langs->trans('ShipProduct').'</a>';
+	                        }
                         }
                     }
 
@@ -2122,5 +2131,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:15 $ - $Revision: 1.527 $');
+llxFooter('$Date: 2011/08/08 12:00:13 $ - $Revision: 1.528 $');
 ?>

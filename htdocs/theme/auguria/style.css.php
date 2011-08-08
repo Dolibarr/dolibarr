@@ -20,7 +20,7 @@
 /**
  *		\file       htdocs/theme/auguria/style.css.php
  *		\brief      Fichier de style CSS du theme auguria
- *		\version    $Id: style.css.php,v 1.92 2011/07/31 23:22:04 eldy Exp $
+ *		\version    $Id: style.css.php,v 1.96 2011/08/08 15:39:08 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -81,6 +81,11 @@ body {
 
 a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; font-weight: bold; color: #000000; text-decoration: none; }
 
+/*
+input:focus, textarea:focus, button:focus, select:focus {
+    box-shadow: 0 0 4px #8091BF;
+}
+*/
 input {
     font-size: <?php print $fontsize ?>px;
     font-family: <?php print $fontlist ?>;
@@ -194,8 +199,8 @@ td.vmenu {
 }
 
 div.fiche {
-	margin-<?php print $left; ?>: 4px;
-	margin-<?php print $right; ?>: 4px;
+	margin-<?php print $left; ?>: 10px;
+	margin-<?php print $right; ?>: 6px;
 }
 
 /* ============================================================================== */
@@ -1026,7 +1031,7 @@ border-collapse: collapse;
 border: 0px;
 padding-top: 0px;
 padding-<?php print $left; ?>: 0px;
-padding-<?php print $right; ?>: 4px;
+padding-<?php print $right; ?>: 10px;
 padding-bottom: 4px;
 margin: 0px 0px;
 }
@@ -1319,9 +1324,9 @@ div.info {
   color: #707070;
   padding: 0.2em 0.2em 0.2em 0.2em;
   margin: 0.5em 0em 0.5em 0em;
-  border: 1px solid #c0c0d0;
+  border: 1px solid #DFDFA0;
   -moz-border-radius:6px;
-  background: #efefd4;
+  background: #EFEFD4;
 }
 
 

@@ -21,7 +21,7 @@
 /**
  *		\file       htdocs/theme/eldy/style.css.php
  *		\brief      Fichier de style CSS du theme Eldy
- *		\version    $Id: style.css.php,v 1.94 2011/08/07 22:58:48 eldy Exp $
+ *		\version    $Id: style.css.php,v 1.98 2011/08/08 15:39:08 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -85,6 +85,11 @@ body {
 
 a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; font-weight: bold; color: #000000; text-decoration: none; }
 
+/*
+input:focus, textarea:focus, button:focus, select:focus {
+    box-shadow: 0 0 4px #8091BF;
+}
+*/
 input {
     font-size: <?php print $fontsize ?>px;
     font-family: <?php print $fontlist ?>;
@@ -197,8 +202,8 @@ td.vmenu {
 }
 
 div.fiche {
-	margin-<?php print $left; ?>: 6px;
-	margin-<?php print $right; ?>: 5px;
+	margin-<?php print $left; ?>: 10px;
+	margin-<?php print $right; ?>: 6px;
 }
 
 /* ============================================================================== */
@@ -1012,7 +1017,7 @@ border-collapse: collapse;
 border: 0px;
 padding-top: 0px;
 padding-<?php print $left; ?>: 0px;
-padding-<?php print $right; ?>: 4px;
+padding-<?php print $right; ?>: 8px;
 padding-bottom: 4px;
 margin: 0px 0px;
 }
@@ -1282,7 +1287,7 @@ div.error {
   color: #550000; font-weight: bold;
   padding: 0.2em 0.2em 0.2em 0.2em;
   margin: 0.5em 0em 0.5em 0em;
-  border: 1px solid #8C9CAB;
+  border: 1px solid #DC9CAB;
   -moz-border-radius:6px;
   -webkit-border-radius: 6px;
   border-radius: 6px;
@@ -1294,11 +1299,11 @@ div.info {
   color: #707070;
   padding: 0.2em 0.2em 0.2em 0.2em;
   margin: 0.5em 0em 0.5em 0em;
-  border: 1px solid #e0e0d0;
+  border: 1px solid #DFDFA0;
   -moz-border-radius:6px;
   -webkit-border-radius: 6px;
   border-radius:6px;
-  background: #efefd4;
+  background: #EFEFD4;
 }
 
 

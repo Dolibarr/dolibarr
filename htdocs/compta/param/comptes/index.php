@@ -15,14 +15,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: index.php,v 1.11 2011/07/31 22:23:31 eldy Exp $
+ * $Id: index.php,v 1.12 2011/08/08 15:28:01 eldy Exp $
  */
 
 /**
         \file       htdocs/compta/param/comptes/index.php
         \ingroup    compta
 		\brief      Page acceuil zone parametrages
-		\version    $Revision: 1.11 $
+		\version    $Revision: 1.12 $
 */
 
 require("../../../main.inc.php");
@@ -66,7 +66,7 @@ print "</table></form><br>";
 
 
 
-print '</td><td valign="top" width="70%" class="notopnoleft">';
+print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 
 
 
@@ -76,5 +76,5 @@ print '</table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:31 $ - $Revision: 1.11 $');
+llxFooter('$Date: 2011/08/08 15:28:01 $ - $Revision: 1.12 $');
 ?>

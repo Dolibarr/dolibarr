@@ -21,8 +21,8 @@
 /**
  *       \file       htdocs/product/stats/fiche.php
  *       \ingroup    product
- *       \brief      Page des stats produits
- *       \version    $Id: fiche.php,v 1.110 2011/07/31 23:24:00 eldy Exp $
+ *       \brief      Page of product statistics
+ *       \version    $Id: fiche.php,v 1.111 2011/08/08 16:07:48 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -161,7 +161,7 @@ if ($_GET["id"] || $_GET["ref"])
 		);
 
 		$px = new DolGraph();
-		
+
 		if (! $error)
 		{
 			$mesg = $px->isGraphKo();
@@ -170,9 +170,9 @@ if ($_GET["id"] || $_GET["ref"])
 				foreach($graphfiles as $key => $val)
 				{
 					if (! $graphfiles[$key]['file']) continue;
-	
+
 					$graph_data = array();
-	
+
 					// TODO Test si deja existant et recent, on ne genere pas
 					if ($key == 'propal')            $graph_data = $product->get_nb_propal($socid,$mode);
 					if ($key == 'orders')            $graph_data = $product->get_nb_order($socid,$mode);
@@ -189,7 +189,7 @@ if ($_GET["id"] || $_GET["ref"])
 						$px->SetPrecisionY(0);
 						$px->SetShading(3);
 						//print 'x '.$key.' '.$graphfiles[$key]['file'];
-	
+
 						$px->draw($dir."/".$graphfiles[$key]['file']);
 					}
 					else
@@ -198,10 +198,10 @@ if ($_GET["id"] || $_GET["ref"])
 					}
 				}
 			}
-	
+
 			$mesg = $langs->trans("ChartGenerated");
 		}
-		
+
 		// Show graphs
 		$i=0;
 		foreach($graphfiles as $key => $val)
@@ -270,5 +270,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:24:00 $ - $Revision: 1.110 $');
+llxFooter('$Date: 2011/08/08 16:07:48 $ - $Revision: 1.111 $');
 ?>

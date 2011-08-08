@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier	    <benoit.mortier@opensides.be>
  * Copyright (C) 2009-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2009-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
  * 	\file 		htdocs/core/class/extrafields.class.php
  *	\ingroup    core
  *	\brief      File of class to manage extra fields
- *	\version    $Id: extrafields.class.php,v 1.6 2011/07/31 23:45:14 eldy Exp $
+ *	\version    $Id: extrafields.class.php,v 1.8 2011/08/08 12:31:14 hregis Exp $
  */
 
 /**
@@ -405,6 +405,8 @@ class ExtraFields
 	 */
 	function showInputField($key,$value,$moreparam='')
 	{
+		global $conf;
+		
         $label=$this->attribute_label[$key];
 	    $type=$this->attribute_type[$key];
         $size=$this->attribute_size[$key];
@@ -426,10 +428,19 @@ class ExtraFields
             $showsize=round($size);
             if ($showsize > 48) $showsize=48;
         }
-	    //print $type.'-'.$size;
-        $out='<input type="text" name="options_'.$key.'" size="'.$showsize.'" maxlength="'.$size.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
-	    if ($type == 'date') $out.=' (YYYY-MM-DD)';
-        if ($type == 'datetime') $out.=' (YYYY-MM-DD HH:MM:SS)';
+        
+	    if ($type == 'varchar')
+        {
+        	$out='<input type="text" name="options_'.$key.'" size="'.$showsize.'" maxlength="'.$size.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
+        }
+        else if ($type == 'text')
+        {
+        	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+        	$doleditor=new DolEditor('options_'.$key,$value,'',200,'dolibarr_notes','In',false,false,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_SOCIETE,5,100);
+        	$out=$doleditor->Create(1);
+        }
+	    else if ($type == 'date') $out.=' (YYYY-MM-DD)';
+        else if ($type == 'datetime') $out.=' (YYYY-MM-DD HH:MM:SS)';
 	    return $out;
 	}
 

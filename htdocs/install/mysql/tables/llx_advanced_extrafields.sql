@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2010 Regis Houssin  <regis@dolibarr.fr>
+-- Copyright (C) 2010-2011 Regis Houssin  <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- $Id: llx_advanced_extrafields.sql,v 1.2 2011/08/03 01:25:29 eldy Exp $
+-- $Id: llx_advanced_extrafields.sql,v 1.3 2011/08/08 16:07:33 hregis Exp $
 -- ===================================================================
 
 create table llx_advanced_extrafields
@@ -26,9 +26,11 @@ create table llx_advanced_extrafields
   elementtype			varchar(64) NOT NULL,           -- type of link 'invoice', 'order', 'proposal', 'invoice_supplier', 'order_supplier'
   name 					varchar(64) NOT NULL,           -- code name of field
   label					varchar(64) NOT NULL,
-  format				varchar(8) 	NOT NULL,           -- date, string, integer, float
+  type					varchar(8) 	NOT NULL,           -- date, string, integer, float
   fieldsize 			integer,
   maxlength 			integer,
   options 				varchar(255),
-  rang 					integer
+  
+  pos 					integer
+  
 )ENGINE=innodb;

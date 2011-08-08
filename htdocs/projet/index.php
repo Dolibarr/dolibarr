@@ -21,7 +21,7 @@
  *       \file       htdocs/projet/index.php
  *       \ingroup    projet
  *       \brief      Main project home page
- *       \version    $Id: index.php,v 1.75 2011/07/31 23:23:39 eldy Exp $
+ *       \version    $Id: index.php,v 1.76 2011/08/08 15:28:01 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -71,7 +71,7 @@ print '<tr><td width="30%" valign="top" class="notopnoleft">';
 
 print_projecttasks_array($db,$socid,$projectsListId);
 
-print '</td><td width="70%" valign="top" class="notopnoleft">';
+print '</td><td width="70%" valign="top" class="notopnoleftnoright">';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -130,5 +130,5 @@ print '</td></tr></table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:23:39 $ - $Revision: 1.75 $');
+llxFooter('$Date: 2011/08/08 15:28:01 $ - $Revision: 1.76 $');
 ?>

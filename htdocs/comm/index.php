@@ -21,7 +21,7 @@
  *	\file       htdocs/comm/index.php
  *	\ingroup    commercial
  *	\brief      Home page of commercial area
- *	\version    $Id: index.php,v 1.171 2011/08/03 00:46:26 eldy Exp $
+ *	\version    $Id: index.php,v 1.173 2011/08/08 14:25:44 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -275,7 +275,7 @@ $max=3;
 /*
  * Last modified proposals
  */
-
+/*
 if ($conf->propal->enabled && $user->rights->propale->lire)
 {
 	$sql = "SELECT s.nom as name, s.rowid as socid, s.client, s.canvas, p.rowid as propalid, p.total_ht, p.ref, p.fk_statut, p.datep as dp";
@@ -351,6 +351,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 		dol_print_error($db,'');
 	}
 }
+*/
 
 /*
  * Last modified customers or prospects
@@ -485,8 +486,7 @@ if ($user->rights->agenda->myactions->read)
 
 
 /*
- * Derniers contrats
- *
+ * Last contracts
  */
 if ($conf->contrat->enabled && $user->rights->contrat->lire && 0) // TODO A REFAIRE DEPUIS NOUVEAU CONTRAT
 {
@@ -545,8 +545,7 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire && 0) // TODO A REFA
 }
 
 /*
- * Propales ouvertes
- *
+ * Opened proposals
  */
 if ($conf->propal->enabled && $user->rights->propale->lire)
 {
@@ -631,5 +630,5 @@ print '</table>';
 $db->close();
 
 
-llxFooter('$Date: 2011/08/03 00:46:26 $ - $Revision: 1.171 $');
+llxFooter('$Date: 2011/08/08 14:25:44 $ - $Revision: 1.173 $');
 ?>

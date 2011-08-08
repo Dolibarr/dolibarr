@@ -20,8 +20,8 @@
 /**
  *	\file       htdocs/fourn/index.php
  *	\ingroup    fournisseur
- *	\brief      Page accueil de la zone fournisseurs
- *	\version    $Id: index.php,v 1.68 2011/07/31 23:57:03 eldy Exp $
+ *	\brief      Home page of suppliers area
+ *	\version    $Id: index.php,v 1.69 2011/08/08 15:28:01 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -223,7 +223,7 @@ if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
 }
 
 print "</td>\n";
-print '<td valign="top" width="70%" class="notopnoleft">';
+print '<td valign="top" width="70%" class="notopnoleftnoright">';
 
 /*
  * List last modified supliers
@@ -320,5 +320,5 @@ print "</table>\n";
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:57:03 $ - $Revision: 1.68 $');
+llxFooter('$Date: 2011/08/08 15:28:01 $ - $Revision: 1.69 $');
 ?>
