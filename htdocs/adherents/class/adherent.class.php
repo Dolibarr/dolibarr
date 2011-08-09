@@ -24,7 +24,7 @@
  *	\file       htdocs/adherents/class/adherent.class.php
  *	\ingroup    member
  *	\brief      File of class to manage members of a foundation
- *	\version    $Id: adherent.class.php,v 1.47 2011/08/10 00:50:17 eldy Exp $
+ *	\version    $Id: adherent.class.php,v 1.46 2011/08/09 17:59:46 hregis Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
@@ -420,21 +420,33 @@ class Adherent extends CommonObject
         if ($resql)
         {
             $nbrowsaffected+=$this->db->affected_rows($resql);
-
-            // Actions on extra fields (by external module or standard code)
-            include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
-            $hookmanager=new HookManager($db);
-            $hookmanager->callHooks(array('member_extrafields'));
-            $reshook=$hookmanager->executeHooks('insertExtraFields',$action,$this,$socid);    // Note that $action and $object may have been modified by some hooks
-            if (empty($reshook))
+            
+            /*
+            $result=$this->insertExtraFields();
+            if ($result < 0)
             {
-                $result=$this->insertExtraFields();
-                if ($result < 0)
-                {
-                    $error++;
-                }
+                $error++;
             }
-            else if ($reshook < 0) $error++;
+            */
+            
+        	// Hook for external modules
+        	if (! empty($this->hooks))
+        	{
+        		foreach($this->hooks as $hook)
+        		{
+        			if ($hook['type'] == 'member_extrafields' && ! empty($hook['modules']))
+        			{
+        				foreach($hook['modules'] as $module)
+        				{
+        					if (method_exists($module,'insertExtraFields'))
+        					{
+        						$result=$module->insertExtraFields($this);
+        						if ($result < 0) $error++;
+        					}
+        				}
+        			}
+        		}
+        	}
 
             // Update password
             if (! $error && $this->pass)
