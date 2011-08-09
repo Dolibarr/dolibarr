@@ -22,7 +22,7 @@
 /**
  *		\file       htdocs/theme/bureau2crea/style.css.php
  *		\brief      Fichier de style CSS du theme bureau2crea
- *		\version    $Id: style.css.php,v 1.41 2011/07/31 23:19:57 eldy Exp $
+ *		\version    $Id: style.css.php,v 1.42 2011/08/09 13:36:43 simnandez Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -1221,7 +1221,7 @@ clear: left;
 
 table.border td {
 padding: 1px 2px;
-border: 1px solid #EFEFEF;
+/*border: 1px solid #EFEFEF;*/
 border-collapse: collapse;
 }
 
@@ -1235,6 +1235,9 @@ border-left: 1px solid #000000;
 /* Main boxes */
 
 table.noborder {
+	box-shadow: 2px 4px 2px #CCCCCC;
+	-moz-box-shadow: 2px 4px 2px #CCCCCC;
+	-webkit-box-shadow: 2px 4px 2px #CCCCCC;
 	border-collapse: collapse;
 	border: 1px solid #666;
 }
