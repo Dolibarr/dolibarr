@@ -21,7 +21,7 @@
  *	\file       htdocs/core/class/commonobject.class.php
  *	\ingroup    core
  *	\brief      File of parent class of all other business classes (invoices, contracts, proposals, orders, ...)
- *	\version    $Id: commonobject.class.php,v 1.148 2011/07/31 23:45:14 eldy Exp $
+ *	\version    $Id: commonobject.class.php,v 1.149 2011/08/09 09:13:09 hregis Exp $
  */
 
 
@@ -1987,7 +1987,65 @@ class CommonObject
 		include(DOL_DOCUMENT_ROOT.'/core/tpl/originproductline.tpl.php');
 	}
 
+	/**
+	 * 
+	 */
+	function showInputFields($object,$post='',$socid=0)
+	{
+		global $conf;
+		
+		require_once(DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php");
+		
+		$extrafields = new ExtraFields($this->db);
+		
+		$elementtype = $object->element;
+		if ($object->element = 'societe') $elementtype = 'company';
+		
+		$extralabels=$extrafields->fetch_name_optionals_label($elementtype);
+		
+		if ($socid)
+		{
+			$res=$object->fetch_optionals($socid,$extralabels);
+			if ($res < 0) { dol_print_error($db); exit; }
+		}
+		
+		foreach($extrafields->attribute_label as $key=>$label)
+        {
+            $value=(isset($post["options_$key"])?$post["options_$key"]:($socid?$object->array_options["options_$key"]:''));
+            print "<tr><td>".$label.'</td><td colspan="3">';
+            print $extrafields->showInputField($key,$value);
+            print '</td></tr>'."\n";
+        }
+	}
+	
+	/**
+	 * 
+	 */
+	function showOutputFields($object,$socid)
+	{
+		global $conf;
+		
+		require_once(DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php");
+		
+		$extrafields = new ExtraFields($this->db);
+		
+		$elementtype = $object->element;
+		if ($object->element = 'societe') $elementtype = 'company';
+		
+		$extralabels=$extrafields->fetch_name_optionals_label($elementtype);
+		
+		$res=$object->fetch_optionals($socid,$extralabels);
+        if ($res < 0) { dol_print_error($db); exit; }
 
+		foreach($extrafields->attribute_label as $key=>$label)
+        {
+            $value=$object->array_options["options_$key"];
+            print "<tr><td>".$label.'</td><td colspan="3">';
+            print $extrafields->showOutputField($key,$value);
+            print "</td></tr>\n";
+        }
+	}
+	
 	/**
 	 *     Add/Update extra fields
 	 *     TODO Use also type of field to do manage date fields

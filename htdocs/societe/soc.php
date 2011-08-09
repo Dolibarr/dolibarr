@@ -25,7 +25,7 @@
  *  \file       htdocs/societe/soc.php
  *  \ingroup    societe
  *  \brief      Third party card page
- *  \version    $Id: soc.php,v 1.126 2011/08/01 00:38:49 eldy Exp $
+ *  \version    $Id: soc.php,v 1.127 2011/08/09 09:13:09 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -35,7 +35,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formadmin.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formcompany.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php");
+//require_once(DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 if ($conf->adherent->enabled) require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
 
@@ -52,7 +52,7 @@ $action = GETPOST('action');
 $confirm = GETPOST('confirm');
 
 $object = new Societe($db);
-$extrafields = new ExtraFields($db);
+//$extrafields = new ExtraFields($db);
 
 // Security check
 $socid = GETPOST("socid");
@@ -78,7 +78,7 @@ else
 // Instantiate hooks of thirdparty module. Note that conf->hooks_modules contains array array
 if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
 {
-    $object->callHooks('thirdpartycard');
+    $object->callHooks(array('thirdpartycard','extrafields'));
 }
 
 
@@ -502,7 +502,7 @@ if (empty($reshook))
  */
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label('company');
+//$extralabels=$extrafields->fetch_name_optionals_label('company');
 
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$langs->trans("ThirdParty"),$help_url);
@@ -1025,6 +1025,7 @@ else
         }
 
         // Other attributes
+        /*
         foreach($extrafields->attribute_label as $key=>$label)
         {
             $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:'');
@@ -1032,6 +1033,25 @@ else
             print $extrafields->showInputField($key,$value);
             print '</td></tr>'."\n";
         }
+        */
+
+        // Hook for external modules
+        if (! empty($object->hooks))
+        {
+        	foreach($object->hooks as $hook)
+        	{
+        		if (! empty($hook['modules']))
+                {
+                    foreach($hook['modules'] as $module)
+                    {
+                    	if (method_exists($module,'showInputFields'))
+                    	{
+                    		$module->showInputFields($object,$_POST);
+                    	}
+                    }
+				}
+			}
+		}
 
         // Ajout du logo
         print '<tr>';
@@ -1057,11 +1077,11 @@ else
 
         if ($socid)
         {
-            $object = new Societe($db);
+            //$object = new Societe($db);
             $res=$object->fetch($socid);
             if ($res < 0) { dol_print_error($db,$object->error); exit; }
-            $res=$object->fetch_optionals($socid,$extralabels);
-            if ($res < 0) { dol_print_error($db); exit; }
+            //$res=$object->fetch_optionals($socid,$extralabels);
+            //if ($res < 0) { dol_print_error($db); exit; }
 
             // Load object modCodeTiers
             $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
@@ -1448,6 +1468,7 @@ else
             }
 
             // Other attributes
+            /*
             foreach($extrafields->attribute_label as $key=>$label)
             {
                 $value=(isset($_POST["options_$key"])?$_POST["options_$key"]:$object->array_options["options_$key"]);
@@ -1455,6 +1476,25 @@ else
                 print $extrafields->showInputField($key,$value);
                 print "</td></tr>\n";
             }
+            */
+            
+	        // Hook for external modules
+	        if (! empty($object->hooks))
+	        {
+	        	foreach($object->hooks as $hook)
+	        	{
+	        		if (! empty($hook['modules']))
+	                {
+	                    foreach($hook['modules'] as $module)
+	                    {
+	                    	if (method_exists($module,'showInputFields'))
+	                    	{
+	                    		$module->showInputFields($object,$_POST,$socid);
+	                    	}
+	                    }
+					}
+				}
+			}
 
             // Logo
             print '<tr>';
@@ -1491,11 +1531,11 @@ else
         /*
          * View
          */
-        $object = new Societe($db);
+        //$object = new Societe($db);
         $res=$object->fetch($socid);
         if ($res < 0) { dol_print_error($db,$object->error); exit; }
-        $res=$object->fetch_optionals($socid,$extralabels);
-        if ($res < 0) { dol_print_error($db); exit; }
+        //$res=$object->fetch_optionals($socid,$extralabels);
+        //if ($res < 0) { dol_print_error($db); exit; }
 
 
         $head = societe_prepare_head($object);
@@ -1784,6 +1824,7 @@ else
         }
 
         // Other attributes
+        /*
         foreach($extrafields->attribute_label as $key=>$label)
         {
             $value=$object->array_options["options_$key"];
@@ -1791,6 +1832,25 @@ else
             print $extrafields->showOutputField($key,$value);
             print "</td></tr>\n";
         }
+        */
+
+    	// Hook for external modules
+        if (! empty($object->hooks))
+        {
+        	foreach($object->hooks as $hook)
+        	{
+        		if (! empty($hook['modules']))
+                {
+                    foreach($hook['modules'] as $module)
+                    {
+                    	if (method_exists($module,'showOutputFields'))
+                    	{
+                    		$module->showOutputFields($object,$socid);
+                    	}
+                    }
+				}
+			}
+		}
 
         // Ban
         if (empty($conf->global->SOCIETE_DISABLE_BANKACCOUNT))
@@ -1969,5 +2029,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/01 00:38:49 $ - $Revision: 1.126 $');
+llxFooter('$Date: 2011/08/09 09:13:09 $ - $Revision: 1.127 $');
 ?>
