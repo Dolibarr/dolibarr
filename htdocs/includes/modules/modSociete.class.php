@@ -22,7 +22,7 @@
 /**
  *	\defgroup   societe     Module societe
  *	\brief      Module to manage third parties (customers, prospects)
- *	\version	$Id: modSociete.class.php,v 1.122 2011/08/10 00:50:18 eldy Exp $
+ *	\version	$Id: modSociete.class.php,v 1.120 2011/08/09 09:13:09 hregis Exp $
  */
 
 /**
@@ -104,6 +104,15 @@ class modSociete extends DolibarrModules
 		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/thirdparties";
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
+		$r++;
+
+		$this->const[$r][0] = "MAIN_MODULE_SOCIETE_HOOKS";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "extrafields";
+		$this->const[$r][3] = "";
+		$this->const[$r][4] = 0;
+		$this->const[$r][4] = 'current';
+		$this->const[$r][4] = 1;
 		$r++;
 
 		// Boxes
