@@ -24,7 +24,10 @@ BuildArch: noarch
 #BuildArchitectures: noarch
 BuildRoot: %{_tmppath}/%{name}-%{version}-build
 
-Group: Applications/Productivity
+# For Mandriva-Mageia
+Group: Networking/WWW
+# For all other distrib
+Group: Applications/Internet
 # Requires for Fedora-Redhat
 Requires: mysql-server mysql httpd php php-cli php-gd php-ldap php-imap 
 Requires: php-mysql >= 4.1.0 

@@ -24,7 +24,7 @@ BuildArch: noarch
 #BuildArchitectures: noarch
 BuildRoot: %{_tmppath}/%{name}-%{version}-build
 
-Group: Productivity/Office/Management
+Group: Applications/Internet
 Requires: mysql-community-server mysql-community-server-client apache2 apache2-mod_php5 php5 php5-gd php5-ldap php5-imap php5-mysql php5-openssl 
 
 # Set yes to build test package, no for release (this disable need of /usr/bin/php not found by OpenSuse)
@@ -99,11 +99,6 @@ cui hai bisogno ed essere facile da usare.
 %{__cp} -pr usr/share/dolibarr/doc/*   $RPM_BUILD_ROOT/usr/share/doc/dolibarr
 %{__install} -m 644 usr/share/dolibarr/COPYRIGHT $RPM_BUILD_ROOT/usr/share/doc/dolibarr/COPYRIGHT
 
-# Enable this command to tag desktop file for suse
-#%suse_update_desktop_file dolibarr
-
-# Enable this command to allow suse detection of duplicate files and create hardlinks instead
-#%fdupes
 
 
 #---- clean
