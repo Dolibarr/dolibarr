@@ -24,7 +24,7 @@
  *	\file       htdocs/adherents/class/adherent.class.php
  *	\ingroup    member
  *	\brief      File of class to manage members of a foundation
- *	\version    $Id: adherent.class.php,v 1.45 2011/08/03 00:45:44 eldy Exp $
+ *	\version    $Id: adherent.class.php,v 1.46 2011/08/09 17:59:46 hregis Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
@@ -420,12 +420,33 @@ class Adherent extends CommonObject
         if ($resql)
         {
             $nbrowsaffected+=$this->db->affected_rows($resql);
-
+            
+            /*
             $result=$this->insertExtraFields();
             if ($result < 0)
             {
                 $error++;
             }
+            */
+            
+        	// Hook for external modules
+        	if (! empty($this->hooks))
+        	{
+        		foreach($this->hooks as $hook)
+        		{
+        			if ($hook['type'] == 'member_extrafields' && ! empty($hook['modules']))
+        			{
+        				foreach($hook['modules'] as $module)
+        				{
+        					if (method_exists($module,'insertExtraFields'))
+        					{
+        						$result=$module->insertExtraFields($this);
+        						if ($result < 0) $error++;
+        					}
+        				}
+        			}
+        		}
+        	}
 
             // Update password
             if (! $error && $this->pass)

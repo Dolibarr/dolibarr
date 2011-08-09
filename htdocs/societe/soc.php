@@ -25,7 +25,7 @@
  *  \file       htdocs/societe/soc.php
  *  \ingroup    societe
  *  \brief      Third party card page
- *  \version    $Id: soc.php,v 1.128 2011/08/09 14:27:38 hregis Exp $
+ *  \version    $Id: soc.php,v 1.129 2011/08/09 17:59:52 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -78,7 +78,7 @@ else
 // Instantiate hooks of thirdparty module. Note that conf->hooks_modules contains array array
 if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
 {
-    $object->callHooks(array('thirdpartycard','extrafields'));
+    $object->callHooks(array('thirdpartycard','thirdparty_extrafields'));
 }
 
 
@@ -1040,7 +1040,7 @@ else
         {
         	foreach($object->hooks as $hook)
         	{
-        		if ($hook['type'] == 'extrafields' && ! empty($hook['modules']))
+        		if ($hook['type'] == 'thirdparty_extrafields' && ! empty($hook['modules']))
                 {
                     foreach($hook['modules'] as $module)
                     {
@@ -1483,7 +1483,7 @@ else
 	        {
 	        	foreach($object->hooks as $hook)
 	        	{
-	        		if ($hook['type'] == 'extrafields' && ! empty($hook['modules']))
+	        		if ($hook['type'] == 'thirdparty_extrafields' && ! empty($hook['modules']))
 	                {
 	                    foreach($hook['modules'] as $module)
 	                    {
@@ -1839,7 +1839,7 @@ else
         {
         	foreach($object->hooks as $hook)
         	{
-        		if ($hook['type'] == 'extrafields' && ! empty($hook['modules']))
+        		if ($hook['type'] == 'thirdparty_extrafields' && ! empty($hook['modules']))
                 {
                     foreach($hook['modules'] as $module)
                     {
@@ -2029,5 +2029,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/09 14:27:38 $ - $Revision: 1.128 $');
+llxFooter('$Date: 2011/08/09 17:59:52 $ - $Revision: 1.129 $');
 ?>
