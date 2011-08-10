@@ -26,7 +26,7 @@
  *	\file       	htdocs/comm/propal.php
  *	\ingroup    	propale
  *	\brief      	Page of commercial proposals card and list
- *	\version		$Id: propal.php,v 1.616 2011/08/10 10:55:40 hregis Exp $
+ *	\version		$Id: propal.php,v 1.617 2011/08/10 17:40:46 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -865,7 +865,7 @@ if ($action == 'builddoc' && $user->rights->propale->creer)
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
-	$result=propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
+	$result=propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
 	if ($result <= 0)
 	{
 		dol_print_error($db,$result);
@@ -1072,7 +1072,7 @@ if ($id > 0 || ! empty($ref))
 		$formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateProp'), $text, 'confirm_validate','',0,1);
 	}
 	
-	$formconfirm=$hookmanager->executeHooks('formconfirm',$action,$object,$lineid);    // Note that $action and $object may have been modified by hook
+	if (! $formconfirm) $formconfirm=$hookmanager->executeHooks('formconfirm',$action,$object,$lineid);    // Note that $action and $object may have been modified by hook
 
 	// Print form confirm
 	print $formconfirm;
@@ -1926,6 +1926,6 @@ else
 }
 $db->close();
 
-llxFooter('$Date: 2011/08/10 10:55:40 $ - $Revision: 1.616 $');
+llxFooter('$Date: 2011/08/10 17:40:46 $ - $Revision: 1.617 $');
 
 ?>
