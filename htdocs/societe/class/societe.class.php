@@ -26,7 +26,7 @@
  *	\file       htdocs/societe/class/societe.class.php
  *	\ingroup    societe
  *	\brief      File for third party class
- *	\version    $Id: societe.class.php,v 1.93 2011/08/09 17:59:50 hregis Exp $
+ *	\version    $Id: societe.class.php,v 1.94 2011/08/10 00:50:16 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 
@@ -533,32 +533,20 @@ class Societe extends CommonObject
                 // Si le fournisseur est classe on l'ajoute
                 $this->AddFournisseurInCategory($this->fournisseur_categorie);
 
-                /*
-                $result=$this->insertExtraFields();
-                if ($result < 0)
+                // Actions on extra fields (by external module or standard code)
+                include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+                $hookmanager=new HookManager($db);
+                $hookmanager->callHooks(array('thirdparty_extrafields'));
+                $reshook=$hookmanager->executeHooks('insertExtraFields',$action,$this,$socid);    // Note that $action and $object may have been modified by some hooks
+                if (empty($reshook))
                 {
-                    $error++;
+                    $result=$this->insertExtraFields($this);
+                    if ($result < 0)
+                    {
+                        $error++;
+                    }
                 }
-                */
-                
-            	// Hook for external modules
-		        if (! empty($this->hooks))
-		        {
-		        	foreach($this->hooks as $hook)
-		        	{
-		        		if ($hook['type'] == 'thirdparty_extrafields' && ! empty($hook['modules']))
-		                {
-		                    foreach($hook['modules'] as $module)
-		                    {
-		                    	if (method_exists($module,'insertExtraFields'))
-		                    	{
-		                    		$result=$module->insertExtraFields($this);
-		                    		if ($result < 0) $error++;
-		                    	}
-		                    }
-						}
-					}
-				}
+                else if ($reshook < 0) $error++;
 
                 if (! $error && $call_trigger)
                 {

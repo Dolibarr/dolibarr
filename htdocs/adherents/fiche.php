@@ -22,7 +22,7 @@
  *       \file       htdocs/adherents/fiche.php
  *       \ingroup    member
  *       \brief      Page of member
- *       \version    $Id: fiche.php,v 1.239 2011/08/09 17:59:52 hregis Exp $
+ *       \version    $Id: fiche.php,v 1.240 2011/08/10 00:50:19 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -32,7 +32,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/images.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php");
-//require_once(DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/cotisation.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formcompany.class.php");
@@ -46,7 +46,7 @@ $langs->load("users");
 if (! $user->rights->adherent->lire) accessforbidden();
 
 $object = new Adherent($db);
-//$extrafields = new ExtraFields($db);
+$extrafields = new ExtraFields($db);
 
 $errmsg=''; $errmsgs=array();
 
@@ -80,16 +80,18 @@ if ($rowid)
 	$caneditfieldmember=$user->rights->adherent->creer;
 }
 
-// Instantiate hooks of thirdparty module. Note that conf->hooks_modules contains array array
-if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
-{
-    $object->callHooks('member_extrafields');
-}
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+$hookmanager=new HookManager($db);
+$hookmanager->callHooks(array('member_extrafields'));
 
 
 /*
  * 	Actions
  */
+
+$reshook=$hookmanager->executeHooks('doActions',$action,$object,$socid);    // Note that $action and $object may have been modified by some hooks
+
 
 if ($_POST['action'] == 'setuserid' && ($user->rights->user->self->creer || $user->rights->user->user->creer))
 {
@@ -599,7 +601,7 @@ if ($user->rights->adherent->creer && $_POST["action"] == 'confirm_add_spip' && 
  */
 
 // fetch optionals attributes and labels
-//$extralabels=$extrafields->fetch_name_optionals_label('member');
+$extralabels=$extrafields->fetch_name_optionals_label('member');
 
 $help_url='EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
 llxHeader('',$langs->trans("Member"),$help_url);
@@ -770,34 +772,18 @@ if ($action == 'create')
     print $html->selectyesno("public",$object->public,1);
     print "</td></tr>\n";
 
-    // Attribut optionnels
-    /*
-    foreach($extrafields->attribute_label as $key=>$label)
+    // Other attributes
+    $reshook=$hookmanager->executeHooks('showInputFields',$action,$object);    // Note that $action and $object may have been modified by hook
+    if (empty($reshook))
     {
-        $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:'');
-        print "<tr><td>".$label.'</td><td>';
-        print $extrafields->showInputField($key,$value);
-        print '</td></tr>'."\n";
+        foreach($extrafields->attribute_label as $key=>$label)
+        {
+            $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:'');
+            print "<tr><td>".$label.'</td><td>';
+            print $extrafields->showInputField($key,$value);
+            print '</td></tr>'."\n";
+        }
     }
-    */
-
-	// Hook for external modules
-	if (! empty($object->hooks))
-	{
-		foreach($object->hooks as $hook)
-		{
-			if ($hook['type'] == 'member_extrafields' && ! empty($hook['modules']))
-			{
-				foreach($hook['modules'] as $module)
-				{
-					if (method_exists($module,'showInputFields'))
-					{
-						$module->showInputFields($object,$_POST);
-					}
-				}
-			}
-		}
-	}
 
 /*
     // Third party Dolibarr
@@ -1004,33 +990,17 @@ if ($action == 'edit')
     print "</td></tr>\n";
 
 	// Other attributes
-	/*
-	foreach($extrafields->attribute_label as $key=>$label)
-	{
-	    $value=(isset($_POST["options_$key"])?$_POST["options_$key"]:$object->array_options["options_$key"]);
-		print "<tr><td>".$label."</td><td>";
-        print $extrafields->showInputField($key,$value);
-		print "</td></tr>\n";
-	}
-	*/
-	
-	// Hook for external modules
-	if (! empty($object->hooks))
-	{
-		foreach($object->hooks as $hook)
-		{
-			if ($hook['type'] == 'member_extrafields' && ! empty($hook['modules']))
-			{
-				foreach($hook['modules'] as $module)
-				{
-					if (method_exists($module,'showInputFields'))
-					{
-						$module->showInputFields($object,$_POST,$rowid);
-					}
-				}
-			}
-		}
-	}
+    $reshook=$hookmanager->executeHooks('showInputFields',$action,$object);    // Note that $action and $object may have been modified by hook
+    if (empty($reshook))
+    {
+    	foreach($extrafields->attribute_label as $key=>$label)
+    	{
+    	    $value=(isset($_POST["options_$key"])?$_POST["options_$key"]:$object->array_options["options_$key"]);
+    		print "<tr><td>".$label."</td><td>";
+            print $extrafields->showInputField($key,$value);
+    		print "</td></tr>\n";
+    	}
+    }
 
 	// Third party Dolibarr
     if ($conf->societe->enabled)
@@ -1332,33 +1302,17 @@ if ($rowid && $action != 'edit')
     print '<tr><td>'.$langs->trans("Status").'</td><td class="valeur">'.$object->getLibStatut(4).'</td></tr>';
 
     // Other attributes
-    /*
-    foreach($extrafields->attribute_label as $key=>$label)
+    $reshook=$hookmanager->executeHooks('showOutputField',$action,$object,$socid);    // Note that $action and $object may have been modified by hook
+    if (empty($reshook))
     {
-        $value=$object->array_options["options_$key"];
-        print "<tr><td>".$label."</td><td>";
-        print $extrafields->showOutputField($key,$value);
-        print "</td></tr>\n";
-    }
-    */
-    
-	// Hook for external modules
-    if (! empty($object->hooks))
-    {
-    	foreach($object->hooks as $hook)
+        foreach($extrafields->attribute_label as $key=>$label)
         {
-        	if ($hook['type'] == 'member_extrafields' && ! empty($hook['modules']))
-            {
-                foreach($hook['modules'] as $module)
-                {
-                	if (method_exists($module,'showOutputFields'))
-                	{
-                		$module->showOutputFields($object,$rowid);
-                	}
-                }
-            }
-		}
-	}
+            $value=$object->array_options["options_$key"];
+            print "<tr><td>".$label."</td><td>";
+            print $extrafields->showOutputField($key,$value);
+            print "</td></tr>\n";
+        }
+    }
 
 	// Third party Dolibarr
     if ($conf->societe->enabled)
@@ -1568,5 +1522,5 @@ if ($rowid && $action != 'edit')
 
 $db->close();
 
-llxFooter('$Date: 2011/08/09 17:59:52 $ - $Revision: 1.239 $');
+llxFooter('$Date: 2011/08/10 00:50:19 $ - $Revision: 1.240 $');
 ?>
