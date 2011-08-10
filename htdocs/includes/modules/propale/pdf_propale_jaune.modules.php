@@ -23,7 +23,7 @@
  * 	\file       htdocs/includes/modules/propale/pdf_propale_jaune.modules.php
  *	\ingroup    propale
  *	\brief      Fichier de la classe permettant de generer les propales au modele Jaune
- *	\version    $Id: pdf_propale_jaune.modules.php,v 1.117 2011/07/31 23:28:16 eldy Exp $
+ *	\version    $Id: pdf_propale_jaune.modules.php,v 1.118 2011/08/10 17:40:44 hregis Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php");
@@ -85,7 +85,7 @@ class pdf_propale_jaune extends ModelePDFPropales
      *  @param      hideref         Do not show ref
      *  @return     int             1=OK, 0=KO
 	 */
-	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0)
+	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0,$hookmanager=false)
 	{
 		global $user,$langs,$conf;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -181,28 +181,28 @@ class pdf_propale_jaune extends ModelePDFPropales
                     $pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
 
                     // Description de la ligne produit
-					pdf_writelinedesc($pdf,$object,$i,$outputlangs,102,4,30,$curY,1,$hidedesc);
+					pdf_writelinedesc($pdf,$object,$i,$outputlangs,102,4,30,$curY,1,$hidedesc,0,$hookmanager);
 
 					$pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
 					$nexY = $pdf->GetY();
 
-					$ref = pdf_getlineref($object, $i, $outputlangs);
+					$ref = pdf_getlineref($object, $i, $outputlangs, $hidedetails, $hookmanager);
 					$pdf->SetXY (10, $curY );
 					$pdf->MultiCell(20, 4, $ref, 0, 'L', 0);
 
-					$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails);
+					$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails, $hookmanager);
 					$pdf->SetXY (132, $curY );
 					$pdf->MultiCell(12, 4, $vat_rate, 0, 'R');
 
-					$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
+					$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails, $hookmanager);
 					$pdf->SetXY (144, $curY );
 					$pdf->MultiCell(10, 4, $qty, 0, 'R', 0);
 
-					$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails);
+					$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails, $hookmanager);
 					$pdf->SetXY (154, $curY );
 					$pdf->MultiCell(22, 4, $up_excl_tax, 0, 'R', 0);
 
-					$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails);
+					$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails, $hookmanager);
 					$pdf->SetXY (176, $curY );
 					$pdf->MultiCell(24, 4, $total_excl_tax, 0, 'R', 0);
 
