@@ -27,7 +27,7 @@
  *	\file       htdocs/compta/facture/class/facture.class.php
  *	\ingroup    facture
  *	\brief      Fichier de la classe des factures clients
- *	\version    $Id: facture.class.php,v 1.124 2011/08/03 00:46:25 eldy Exp $
+ *	\version    $Id: facture.class.php,v 1.125 2011/08/10 19:55:21 hregis Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
@@ -518,7 +518,7 @@ class Facture extends CommonObject
      *		@param		invertdetail	Reverse sign of amounts for lines
      * 	 	@return		int				New id of clone
      */
-    function createFromClone($fromid,$invertdetail=0)
+    function createFromClone($fromid,$invertdetail=0,$hookmanager=false)
     {
         global $conf,$user,$langs;
 
@@ -531,12 +531,6 @@ class Facture extends CommonObject
         // Load new object
         $object=new Facture($this->db);
         $object->fetch($fromid);
-
-        // Instantiate hooks of thirdparty module
-        if (is_array($conf->hooks_modules) && ! empty($conf->hooks_modules))
-        {
-            $object->callHooks('invoicecard');
-        }
 
         $this->db->begin();
 
@@ -576,24 +570,12 @@ class Facture extends CommonObject
 
         if (! $error)
         {
-            // Hook for external modules
-            if (! empty($object->hooks))
-            {
-            	foreach($object->hooks as $hook)
-            	{
-            		if (! empty($hook['modules']))
-            		{
-            			foreach($hook['modules'] as $module)
-            			{
-            				if (method_exists($module,'createfrom'))
-            				{
-            					$result = $module->createfrom($objFrom,$result,$object->element);
-            					if ($result < 0) $error++;
-            				}
-            			}
-            		}
-            	}
-            }
+        	// Hook of thirdparty module
+			if (is_object($hookmanager))
+			{
+				$reshook=$hookmanager->executeHooks('createfrom','',$objFrom,$result,$object->element);    // Note that $action and $object may have been modified by some hooks
+				if ($reshook < 0) $error++;
+			}
 
             // Appel des triggers
             include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
@@ -621,7 +603,7 @@ class Facture extends CommonObject
      *      @param      object          Object source
      *      @return     int             <0 if KO, 0 if nothing done, 1 if OK
      */
-    function createFromOrder($object)
+    function createFromOrder($object, $hookmanager=false)
     {
         global $conf,$user,$langs;
 
@@ -675,24 +657,12 @@ class Facture extends CommonObject
 
         if ($ret > 0)
         {
-        	// Hook for external modules
-            if (! empty($object->hooks))
-            {
-            	foreach($object->hooks as $hook)
-            	{
-            		if (! empty($hook['modules']))
-            		{
-            			foreach($hook['modules'] as $module)
-            			{
-            				if (method_exists($module,'createfrom'))
-            				{
-            					$result = $module->createfrom($objFrom,$result,$object->element);
-            					if ($result < 0) $error++;
-            				}
-            			}
-            		}
-            	}
-            }
+        	// Hook of thirdparty module
+			if (is_object($hookmanager))
+			{
+				$reshook=$hookmanager->executeHooks('createfrom','',$objFrom,$result,$object->element);    // Note that $action and $object may have been modified by some hooks
+				if ($reshook < 0) $error++;
+			}
 
             if (! $error)
             {
