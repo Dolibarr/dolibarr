@@ -27,7 +27,7 @@
  *	\file       htdocs/compta/facture/class/facture.class.php
  *	\ingroup    facture
  *	\brief      Fichier de la classe des factures clients
- *	\version    $Id: facture.class.php,v 1.126 2011/08/10 22:47:33 eldy Exp $
+ *	\version    $Id: facture.class.php,v 1.125 2011/08/10 19:55:21 hregis Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
@@ -573,8 +573,7 @@ class Facture extends CommonObject
         	// Hook of thirdparty module
 			if (is_object($hookmanager))
 			{
-			    $parameters=array('objFrom'=>$objFrom);
-				$reshook=$hookmanager->executeHooks('createfrom',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+				$reshook=$hookmanager->executeHooks('createfrom','',$objFrom,$result,$object->element);    // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) $error++;
 			}
 
@@ -661,8 +660,7 @@ class Facture extends CommonObject
         	// Hook of thirdparty module
 			if (is_object($hookmanager))
 			{
-			    $parameters=array('objFrom'=>$objFrom);
-				$reshook=$hookmanager->executeHooks('createfrom',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+				$reshook=$hookmanager->executeHooks('createfrom','',$objFrom,$result,$object->element);    // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) $error++;
 			}
 
@@ -1636,7 +1634,7 @@ class Facture extends CommonObject
             if (! $error)
             {
             	$this->oldref = '';
-
+            	
                 // Rename directory if dir was a temporary ref
                 if (preg_match('/^[\(]?PROV/i', $this->ref))
                 {
@@ -1653,7 +1651,7 @@ class Facture extends CommonObject
                         if (@rename($dirsource, $dirdest))
                         {
                         	$this->oldref = $facref;
-
+                        	
                             dol_syslog("Rename ok");
                             // Suppression ancien fichier PDF dans nouveau rep
                             dol_delete_file($conf->facture->dir_output.'/'.$snumfa.'/'.$facref.'.*');
@@ -1995,12 +1993,12 @@ class Facture extends CommonObject
 
             // Update line into database
             $this->line=new FactureLigne($this->db);
-
+            
             // Stock previous line records
 			$staticline=new FactureLigne($this->db);
 			$staticline->fetch($rowid);
 			$this->line->oldline = $staticline;
-
+			
             $this->line->rowid				= $rowid;
             $this->line->desc				= $desc;
             $this->line->qty				= $qty;
@@ -3247,7 +3245,7 @@ class FactureLigne
 {
     var $db;
     var $error;
-
+    
     var $oldline;
 
     //! From llx_facturedet

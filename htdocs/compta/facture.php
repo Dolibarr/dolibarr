@@ -25,7 +25,7 @@
  *	\file       htdocs/compta/facture.php
  *	\ingroup    facture
  *	\brief      Page to create/see an invoice
- *	\version    $Id: facture.php,v 1.852 2011/08/10 18:04:41 hregis Exp $
+ *	\version    $Id: facture.php,v 1.853 2011/08/10 19:55:21 hregis Exp $
  */
 
 require('../main.inc.php');
@@ -95,7 +95,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes')
     }
     else
     {
-        $result=$object->createFromClone($id);
+        $result=$object->createFromClone($id,0,$hookmanager);
         if ($result > 0)
         {
             header("Location: ".$_SERVER['PHP_SELF'].'?facid='.$result);
@@ -3178,5 +3178,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/10 18:04:41 $ - $Revision: 1.852 $');
+llxFooter('$Date: 2011/08/10 19:55:21 $ - $Revision: 1.853 $');
 ?>
