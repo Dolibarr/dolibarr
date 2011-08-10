@@ -21,7 +21,7 @@
  *	\file       htdocs/core/class/html.formfile.class.php
  *  \ingroup    core
  *	\brief      File of class to offer components to list and upload files
- *	\version	$Id: html.formfile.class.php,v 1.52 2011/08/10 10:55:37 hregis Exp $
+ *	\version	$Id: html.formfile.class.php,v 1.53 2011/08/10 19:55:22 hregis Exp $
  */
 
 
@@ -146,7 +146,7 @@ class FormFile
 	 * 		@param		title				Title to show on top of form
 	 * 		@param		buttonlabel			Label on submit button
 	 * 		@param		codelang			Default language code to use on lang combo box if multilang is enabled
-	 * 		@param		hooks				Object hook of external modules
+	 * 		@param		hookmanager			Object hook of external modules
 	 * 		@return		int					<0 if KO, number of shown files if OK
 	 */
 	function show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='',$codelang='',$hookmanager=false)

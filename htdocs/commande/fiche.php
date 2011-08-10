@@ -25,7 +25,7 @@
  *	\file       htdocs/commande/fiche.php
  *	\ingroup    commande
  *	\brief      Page to show customer order
- *	\version    $Id: fiche.php,v 1.531 2011/08/10 18:04:58 hregis Exp $
+ *	\version    $Id: fiche.php,v 1.532 2011/08/10 19:55:22 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -85,7 +85,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes')
     }
     else
     {
-        $result=$object->createFromClone($id, 0, GETPOST('socid'));
+        $result=$object->createFromClone($id, 0, GETPOST('socid'), $hookmanager);
         if ($result > 0)
         {
             header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
@@ -2063,5 +2063,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/10 18:04:58 $ - $Revision: 1.531 $');
+llxFooter('$Date: 2011/08/10 19:55:22 $ - $Revision: 1.532 $');
 ?>
