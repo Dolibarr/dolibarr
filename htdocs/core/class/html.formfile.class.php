@@ -21,7 +21,7 @@
  *	\file       htdocs/core/class/html.formfile.class.php
  *  \ingroup    core
  *	\brief      File of class to offer components to list and upload files
- *	\version	$Id: html.formfile.class.php,v 1.54 2011/08/10 22:47:34 eldy Exp $
+ *	\version	$Id: html.formfile.class.php,v 1.52 2011/08/10 10:55:37 hregis Exp $
  */
 
 
@@ -146,7 +146,7 @@ class FormFile
 	 * 		@param		title				Title to show on top of form
 	 * 		@param		buttonlabel			Label on submit button
 	 * 		@param		codelang			Default language code to use on lang combo box if multilang is enabled
-	 * 		@param		hookmanager			Object hook of external modules
+	 * 		@param		hooks				Object hook of external modules
 	 * 		@return		int					<0 if KO, number of shown files if OK
 	 */
 	function show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='',$codelang='',$hookmanager=false)
@@ -451,8 +451,7 @@ class FormFile
 			$out.= '</tr>';
 
 			// Execute hooks
-			$parameters=array('socid'=>$GLOBALS['socid'],'id'=>$GLOBAL['id']);
-			if (is_object($hookmanager)) $out.= $hookmanager->executeHooks('formBuilddocOptions',$parameters);
+			if (is_object($hookmanager)) $out.= $hookmanager->executeHooks('formBuilddocOptions');
 		}
 
 		// Get list of files
