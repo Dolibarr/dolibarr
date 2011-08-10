@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: freeproductline_edit.tpl.php,v 1.16 2011/08/04 21:46:50 eldy Exp $
+ * $Id: freeproductline_edit.tpl.php,v 1.17 2011/08/10 10:55:34 hregis Exp $
  *
  * Need to have following variables defined:
  * $conf
@@ -39,18 +39,7 @@
 	<a name="<?php echo $line->id; ?>"></a>
 
 	<?php
-	if (! empty($this->hooks)) {
-		foreach($this->hooks as $hook) {
-			if (! empty($hook['modules'])) {
-				foreach($hook['modules'] as $module) {
-					if (method_exists($module,'formEditProductOptions')) {
-						$module->formEditProductOptions($this,$line->fk_parent_line);
-						echo '<br>';
-					}
-				}
-			}
-		}
-	}
+	if (is_object($hookmanager)) $hookmanager->executeHooks('formEditProductOptions',$action,$this,$line->fk_parent_line);
 
 	// editeur wysiwyg
     $nbrows=ROWS_2;
