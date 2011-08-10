@@ -25,7 +25,7 @@
  *	\file       htdocs/commande/fiche.php
  *	\ingroup    commande
  *	\brief      Page to show customer order
- *	\version    $Id: fiche.php,v 1.533 2011/08/10 22:47:34 eldy Exp $
+ *	\version    $Id: fiche.php,v 1.529 2011/08/10 17:40:46 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -74,8 +74,7 @@ $hookmanager->callHooks(array('ordercard'));
 /*                     Actions                                                */
 /******************************************************************************/
 
-$parameters=array('socid'=>$socid);
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions',$action,$object,$socid);    // Note that $action and $object may have been modified by some hooks
 
 // Action clone object
 if ($action == 'confirm_clone' && $confirm == 'yes')
@@ -86,7 +85,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes')
     }
     else
     {
-        $result=$object->createFromClone($id, 0, GETPOST('socid'), $hookmanager);
+        $result=$object->createFromClone($id, 0, GETPOST('socid'));
         if ($result > 0)
         {
             header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
@@ -159,7 +158,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes')
                 $outputlangs = new Translate("",$conf);
                 $outputlangs->setDefaultLang($newlang);
             }
-            commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+            commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
         }
         else
         {
@@ -295,9 +294,26 @@ if ($action == 'add' && $user->rights->commande->creer)
                 }
 
                 // Hooks
-                $parameters=array('objFrom'=>$srcobject);
-                $reshook=$hookmanager->executeHooks('createfrom',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+                $reshook=$hookmanager->executeHooks('createfrom',$action,$srcobject,$object_id,$object->element);    // Note that $action and $object may have been modified by hook
                 if ($reshook < 0) $error++;
+                /*
+                if (! empty($object->hooks))
+                {
+                	foreach($object->hooks as $hook)
+                	{
+                		if (! empty($hook['modules']))
+                		{
+                			foreach($hook['modules'] as $module)
+                			{
+                				if (method_exists($module,'createfrom'))
+                				{
+                					$res = $module->createfrom($srcobject,$object_id,$object->element);
+                					if ($res < 0) $error++;
+                				}
+                			}
+                		}
+                	}
+                }*/
             }
             else
             {
@@ -613,7 +629,7 @@ if ($action == 'addline' && $user->rights->commande->creer)
                         $outputlangs = new Translate("",$conf);
                         $outputlangs->setDefaultLang($newlang);
                     }
-                    commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+                    commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
 
                     unset($_POST['qty']);
                     unset($_POST['type']);
@@ -721,7 +737,7 @@ if ($action == 'updateligne' && $user->rights->commande->creer && $_POST['save']
                 $outputlangs = new Translate("",$conf);
                 $outputlangs->setDefaultLang($newlang);
             }
-            commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+            commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
         }
         else
         {
@@ -755,7 +771,7 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->command
             $outputlangs = new Translate("",$conf);
             $outputlangs->setDefaultLang($newlang);
         }
-        commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+        commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
     }
 }
 
@@ -795,7 +811,7 @@ if ($action == 'modif' && $user->rights->commande->creer)
             $outputlangs = new Translate("",$conf);
             $outputlangs->setDefaultLang($newlang);
         }
-        commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+        commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
     }
 }
 
@@ -820,7 +836,7 @@ if ($action == 'up' && $user->rights->commande->creer)
         $outputlangs->setDefaultLang($newlang);
     }
 
-    commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+    commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
 
     Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.'#'.$_GET['rowid']);
     exit;
@@ -842,7 +858,7 @@ if ($action == 'down' && $user->rights->commande->creer)
         $outputlangs = new Translate("",$conf);
         $outputlangs->setDefaultLang($newlang);
     }
-    commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+    commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
 
     Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.'#'.$_GET['rowid']);
     exit;
@@ -1499,12 +1515,8 @@ else
                 // Paiement incomplet. On demande si motif = escompte ou autre
                 $formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneOrder'),$langs->trans('ConfirmCloneOrder',$object->ref),'confirm_clone',$formquestion,'yes',1);
             }
-
-            if (! $formconfirm)
-            {
-                $parameters=array('lineid'=>$lienid);
-                $formconfirm=$hookmanager->executeHooks('formconfirm',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-            }
+            
+            if (! $formconfirm) $formconfirm=$hookmanager->executeHooks('formconfirm',$action,$object,$lineid);    // Note that $action and $object may have been modified by hook
 
             // Print form confirm
             print $formconfirm;
@@ -1843,9 +1855,8 @@ else
                         $var=!$var;
                         $object->formAddPredefinedProduct(1,$mysoc,$soc,$hookmanager);
                     }
-
-                    $parameters=array();
-                    $reshook=$hookmanager->executeHooks('formAddObject',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+                    
+                    $reshook=$hookmanager->executeHooks('formAddObject',$action,$object);    // Note that $action and $object may have been modified by hook
                 }
             }
             print '</table>';
@@ -2070,5 +2081,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/10 22:47:34 $ - $Revision: 1.533 $');
+llxFooter('$Date: 2011/08/10 17:40:46 $ - $Revision: 1.529 $');
 ?>
