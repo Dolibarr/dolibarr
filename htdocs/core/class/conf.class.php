@@ -24,7 +24,7 @@
  *	\ingroup		core
  *  \brief      	File of class to manage storage of current setup
  *  				Config is stored into file conf.php
- *  \version    	$Id: conf.class.php,v 1.65 2011/08/04 21:46:51 eldy Exp $
+ *  \version    	$Id: conf.class.php,v 1.66 2011/08/10 23:30:19 eldy Exp $
  */
 
 
@@ -59,7 +59,6 @@ class Conf
 	var $triggers_modules		= array();
 	var $hooks_modules			= array();
 	var $login_method_modules	= array();
-	var $need_smarty			= array();
 	var $modules				= array();
 	var $entities				= array();
 
@@ -162,18 +161,11 @@ class Conf
 								$this->hooks_modules[$modulename][]=$value;
 							}
 						}
-						// If this is constant for a smarty need by a module
-						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_NEEDSMARTY$/i',$key,$reg))
-						{
-							$module=strtolower($reg[1]);
-							// Add this module in list of modules that need smarty
-							$this->need_smarty[]=$module;
-						}
 					    // If this is constant for a sms engine
                         elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_SMS$/i',$key,$reg))
                         {
                             $module=strtolower($reg[1]);
-                            // Add this module in list of modules that need smarty
+                            // Add this module in list of modules that provide SMS
                             $this->sms_engine[$module]=$module;
                         }
 						// If this is a module constant
