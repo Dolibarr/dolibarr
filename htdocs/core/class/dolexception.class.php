@@ -19,17 +19,15 @@
  *   \file			htdocs/core/class/dolexception.class.php
  *   \ingroup		core
  *   \brief			File of class for exceptions
- *   \version		$Id: dolexception.class.php,v 1.4 2011/08/10 12:46:04 eldy Exp $
+ *   \version		$Id: dolexception.class.php,v 1.3 2011/07/31 23:45:14 eldy Exp $
  */
 
 
 /**
  *    \class      DolException
- *    \brief      Class to manage exceptions
+ *    \brief      Classe de la gestion des exceptions
  */
 class DolException extends Exception
 {
-    function DolException()
-    {
-    }
+
 }
