@@ -25,7 +25,7 @@
  *	\file       htdocs/main.inc.php
  *	\ingroup	core
  *	\brief      File that defines environment for Dolibarr pages only (variables not required by scripts)
- *	\version    $Id: main.inc.php,v 1.759 2011/08/10 22:47:36 eldy Exp $
+ *	\version    $Id: main.inc.php,v 1.758 2011/08/10 11:23:41 eldy Exp $
  */
 
 @ini_set('memory_limit', '64M');	// This may be useless if memory is hard limited by your PHP
@@ -1346,8 +1346,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	}
 
 	// Execute hook printSearchForm
-	$parameters=array();
-    $searchform.=$hookmanager->executeHooks('printSearchForm',$parameters);    // Note that $action and $object may have been modified by some hooks
+    $searchform.=$hookmanager->executeHooks('printSearchForm');    // Note that $action and $object may have been modified by some hooks
 
 	// Define $bookmarks
 	if ($conf->bookmark->enabled && $user->rights->bookmark->lire)
@@ -1458,8 +1457,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	print "\n";
 
 	// Execute hook printLeftBlock
-	$parameters=array();
-    $leftblock.=$hookmanager->executeHooks('printLeftBlock',$parameters);    // Note that $action and $object may have been modified by some hooks
+    $leftblock.=$hookmanager->executeHooks('printLeftBlock');    // Note that $action and $object may have been modified by some hooks
     print $leftblock;
 
 	if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '</div> <!-- End left layout -->'."\n";
