@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: predefinedproductline_edit.tpl.php,v 1.16 2011/08/10 10:55:34 hregis Exp $
+ * $Id: predefinedproductline_edit.tpl.php,v 1.17 2011/08/10 22:47:33 eldy Exp $
  *
  * Need to have following variables defined:
  * $conf
@@ -47,7 +47,10 @@
 	echo ' - '.nl2br($line->product_label);
 	echo '<br>';
 
-	if (is_object($hookmanager)) $hookmanager->executeHooks('formEditProductOptions',$action,$this,$line->fk_parent_line);
+	if (is_object($hookmanager))
+	{
+	    $parameters=array('fk_parent_line'=>$line_fk_parent_line);
+	    $hookmanager->executeHooks('formEditProductOptions',$parameters,$object,$action);
 
 	// editeur wysiwyg
     $nbrows=ROWS_2;

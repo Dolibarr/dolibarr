@@ -25,7 +25,7 @@
  *	\file       htdocs/compta/facture.php
  *	\ingroup    facture
  *	\brief      Page to create/see an invoice
- *	\version    $Id: facture.php,v 1.853 2011/08/10 19:55:21 hregis Exp $
+ *	\version    $Id: facture.php,v 1.854 2011/08/10 22:47:34 eldy Exp $
  */
 
 require('../main.inc.php');
@@ -84,7 +84,8 @@ $hookmanager->callHooks(array('invoicecard'));
 /*                     Actions                                                */
 /******************************************************************************/
 
-$reshook=$hookmanager->executeHooks('doActions',$action,$object,$socid);    // Note that $action and $object may have been modified by some hooks
+$parameters=array('socid'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
 // Action clone object
 if ($action == 'confirm_clone' && $confirm == 'yes')
@@ -781,7 +782,8 @@ if ($action == 'add' && $user->rights->facture->creer)
                         }
 
                         // Hooks
-                        $reshook=$hookmanager->executeHooks('createfrom',$action,$srcobject,$id,$object->element);    // Note that $action and $object may have been modified by hook
+                        $parameters=array('srcobject'=>$srcobject);
+                        $reshook=$hookmanager->executeHooks('createfrom',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
                         if ($reshook < 0) $error++;
                     }
                     else
@@ -2032,8 +2034,12 @@ else
                 // Paiement incomplet. On demande si motif = escompte ou autre
                 $formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id,$langs->trans('CloneInvoice'),$langs->trans('ConfirmCloneInvoice',$object->ref),'confirm_clone',$formquestion,'yes',1);
             }
-            
-            if (! $formconfirm) $formconfirm=$hookmanager->executeHooks('formconfirm',$action,$object,$lineid);    // Note that $action and $object may have been modified by hook
+
+            if (! $formconfirm)
+            {
+                $parameters=array('lineid'=>$lineid);
+                $formconfirm=$hookmanager->executeHooks('formconfirm',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+            }
 
             // Print form confirm
             print $formconfirm;
@@ -2568,8 +2574,9 @@ else
                     $var=!$var;
                     $object->formAddPredefinedProduct(1,$mysoc,$soc,$hookmanager);
                 }
-                
-                $reshook=$hookmanager->executeHooks('formAddObject',$action,$object);    // Note that $action and $object may have been modified by hook
+
+                $parameters=array();
+                $reshook=$hookmanager->executeHooks('formAddObject',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             }
 
             print "</table>\n";
@@ -3178,5 +3185,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/10 19:55:21 $ - $Revision: 1.853 $');
+llxFooter('$Date: 2011/08/10 22:47:34 $ - $Revision: 1.854 $');
 ?>
