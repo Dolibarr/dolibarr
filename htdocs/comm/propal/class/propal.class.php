@@ -29,7 +29,7 @@
  *	\author     Rodolphe Qiedeville
  *	\author	    Eric Seigne
  *	\author	    Laurent Destailleur
- *	\version    $Id: propal.class.php,v 1.113 2011/08/10 22:47:35 eldy Exp $
+ *	\version    $Id: propal.class.php,v 1.112 2011/08/10 19:55:22 hregis Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
@@ -903,8 +903,7 @@ class Propal extends CommonObject
 			// Hook of thirdparty module
 			if (is_object($hookmanager))
 			{
-			    $parameters=array('objFrom'=>$objFrom);
-				$reshook=$hookmanager->executeHooks('createfrom',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+				$reshook=$hookmanager->executeHooks('createfrom','',$objFrom,$result,$object->element);    // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) $error++;
 			}
 

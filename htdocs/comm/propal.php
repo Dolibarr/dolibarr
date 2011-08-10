@@ -26,7 +26,7 @@
  *	\file       	htdocs/comm/propal.php
  *	\ingroup    	propale
  *	\brief      	Page of commercial proposals card and list
- *	\version		$Id: propal.php,v 1.618 2011/08/10 18:05:49 hregis Exp $
+ *	\version		$Id: propal.php,v 1.619 2011/08/10 19:55:22 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -101,7 +101,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes')
 	}
 	else
 	{
-		$result=$object->createFromClone($id,0,GETPOST('socid'));
+		$result=$object->createFromClone($id,0,GETPOST('socid'),$hookmanager);
 		if ($result > 0)
 		{
 			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
@@ -1926,6 +1926,6 @@ else
 }
 $db->close();
 
-llxFooter('$Date: 2011/08/10 18:05:49 $ - $Revision: 1.618 $');
+llxFooter('$Date: 2011/08/10 19:55:22 $ - $Revision: 1.619 $');
 
 ?>
