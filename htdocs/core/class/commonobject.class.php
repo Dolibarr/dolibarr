@@ -21,7 +21,7 @@
  *	\file       htdocs/core/class/commonobject.class.php
  *	\ingroup    core
  *	\brief      File of parent class of all other business classes (invoices, contracts, proposals, orders, ...)
- *	\version    $Id: commonobject.class.php,v 1.150 2011/08/09 17:59:45 hregis Exp $
+ *	\version    $Id: commonobject.class.php,v 1.151 2011/08/10 00:50:17 eldy Exp $
  */
 
 
@@ -1437,66 +1437,6 @@ class CommonObject
 
 
 	/**
-	 *	Init array this->hooks with instantiated controler and/or dao
-	 *	@param	     arraytype	      Array list of hooked tab/features. For example: thirdpartytab, ...
-	 */
-	function callHooks($arraytype)
-	{
-		global $conf;
-
-		if (! is_array($arraytype)) $arraytype=array($arraytype);
-
-		$i=0;
-
-		foreach($conf->hooks_modules as $module => $hooks)
-		{
-			if ($conf->$module->enabled)
-			{
-				foreach($arraytype as $type)
-				{
-					if (in_array($type,$hooks))
-					{
-						$path		= $module;
-						if ($module == 'adherent') $path = 'adherents';
-						$path 		= '/'.$path.'/class/';
-						$actionfile = 'actions_'.$module.'.class.php';
-						$daofile 	= 'dao_'.$module.'.class.php';
-						$pathroot	= '';
-
-						$this->hooks[$i]['type']=$type;
-
-						// Include actions class (controller)
-                        //print 'include '.$path.$actionfile."\n";
-						$resaction=dol_include_once($path.$actionfile);
-
-						// Include dataservice class (model)
-                        //print 'include '.$path.$daofile."\n";
-						$resdao=dol_include_once($path.$daofile);
-
-						// Instantiate actions class (controller)
-						if ($resaction)
-						{
-    						$controlclassname = 'Actions'.ucfirst($module);
-    						$objModule = new $controlclassname($this->db);
-    						$this->hooks[$i]['modules'][$objModule->module_number] = $objModule;
-						}
-
-						// TODO storing dao is useless here. It's goal of controller to known which dao to manage
-                        if ($resdao)
-                        {
-    						// Instantiate dataservice class (model)
-    						$modelclassname = 'Dao'.ucfirst($module);
-    						$this->hooks[$i]['modules'][$objModule->module_number]->object = new $modelclassname($this->db);
-                        }
-
-                        $i++;
-					}
-				}
-			}
-		}
-	}
-
-	/**
 	 * 	Get special code of line
 	 * 	@param		lineid		Id of line
 	 */
@@ -1989,72 +1929,14 @@ class CommonObject
 		include(DOL_DOCUMENT_ROOT.'/core/tpl/originproductline.tpl.php');
 	}
 
-	/**
-	 * 
-	 */
-	function showInputFields($object,$post='',$id=0)
-	{
-		global $conf;
-		
-		require_once(DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php");
-		
-		$extrafields = new ExtraFields($this->db);
-		
-		$elementtype = $object->element;
-		if ($object->element == 'societe') $elementtype = 'company';
-		
-		$extralabels=$extrafields->fetch_name_optionals_label($elementtype);
-		
-		if ($id)
-		{
-			$res=$object->fetch_optionals($id,$extralabels);
-			if ($res < 0) { dol_print_error($db); exit; }
-		}
 
-		foreach($extrafields->attribute_label as $key=>$label)
-        {
-            $value=(isset($post["options_$key"])?$post["options_$key"]:($id?$object->array_options["options_$key"]:''));
-            print "<tr><td>".$label.'</td><td colspan="3">';
-            print $extrafields->showInputField($key,$value);
-            print '</td></tr>'."\n";
-        }
-	}
-	
-	/**
-	 * 
-	 */
-	function showOutputFields($object,$id)
-	{
-		global $conf;
-		
-		require_once(DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php");
-		
-		$extrafields = new ExtraFields($this->db);
-		
-		$elementtype = $object->element;
-		if ($object->element == 'societe') $elementtype = 'company';
-		
-		$extralabels=$extrafields->fetch_name_optionals_label($elementtype);
-		
-		$res=$object->fetch_optionals($id,$extralabels);
-        if ($res < 0) { dol_print_error($db); exit; }
-
-		foreach($extrafields->attribute_label as $key=>$label)
-        {
-            $value=$object->array_options["options_$key"];
-            print "<tr><td>".$label.'</td><td colspan="3">';
-            print $extrafields->showOutputField($key,$value);
-            print "</td></tr>\n";
-        }
-	}
-	
 	/**
 	 *     Add/Update extra fields
 	 *     TODO Use also type of field to do manage date fields
 	 */
 	function insertExtraFields($object)
 	{
-        if (sizeof($object->array_options) > 0)
+	    if (sizeof($object->array_options) > 0)
         {
             $this->db->begin();
 
