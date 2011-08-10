@@ -25,7 +25,7 @@
  *	\file       htdocs/commande/fiche.php
  *	\ingroup    commande
  *	\brief      Page to show customer order
- *	\version    $Id: fiche.php,v 1.529 2011/08/10 17:40:46 hregis Exp $
+ *	\version    $Id: fiche.php,v 1.530 2011/08/10 17:56:18 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -296,24 +296,6 @@ if ($action == 'add' && $user->rights->commande->creer)
                 // Hooks
                 $reshook=$hookmanager->executeHooks('createfrom',$action,$srcobject,$object_id,$object->element);    // Note that $action and $object may have been modified by hook
                 if ($reshook < 0) $error++;
-                /*
-                if (! empty($object->hooks))
-                {
-                	foreach($object->hooks as $hook)
-                	{
-                		if (! empty($hook['modules']))
-                		{
-                			foreach($hook['modules'] as $module)
-                			{
-                				if (method_exists($module,'createfrom'))
-                				{
-                					$res = $module->createfrom($srcobject,$object_id,$object->element);
-                					if ($res < 0) $error++;
-                				}
-                			}
-                		}
-                	}
-                }*/
             }
             else
             {
@@ -2081,5 +2063,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/10 17:40:46 $ - $Revision: 1.529 $');
+llxFooter('$Date: 2011/08/10 17:56:18 $ - $Revision: 1.530 $');
 ?>
