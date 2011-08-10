@@ -20,7 +20,7 @@
 /**
  *  \file		htdocs/includes/menus/standard/eldy.lib.php
  *  \brief		Library for file eldy menus
- *  \version	$Id: eldy.lib.php,v 1.64 2011/08/10 23:48:25 eldy Exp $
+ *  \version	$Id: eldy.lib.php,v 1.63 2011/08/10 20:27:09 eldy Exp $
  */
 
 
@@ -637,7 +637,6 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
 
                 if ($leftmenu=="setup") $newmenu->add("/admin/proxy.php", $langs->trans("Security"),1);
                 if ($leftmenu=="setup") $newmenu->add("/admin/limits.php", $langs->trans("MenuLimits"),1);
-                if ($leftmenu=="setup") $newmenu->add("/admin/pdf.php", $langs->trans("PDF"),1);
                 if ($leftmenu=="setup") $newmenu->add("/admin/mails.php", $langs->trans("Emails"),1);
                 if ($leftmenu=="setup") $newmenu->add("/admin/sms.php", $langs->trans("Sms"),1);
                 if ($leftmenu=="setup") $newmenu->add("/admin/dict.php", $langs->trans("DictionnarySetup"),1);
