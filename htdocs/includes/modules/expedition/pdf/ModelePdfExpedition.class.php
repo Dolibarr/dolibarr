@@ -22,11 +22,11 @@
  *  \file       htdocs/includes/modules/expedition/pdf/ModelePdfExpedition.class.php
  *  \ingroup    shipping
  *  \brief      Fichier contenant la classe mere de generation des expeditions
- *  \version    $Id: ModelePdfExpedition.class.php,v 1.16 2011/07/31 23:28:13 eldy Exp $
+ *  \version    $Id: ModelePdfExpedition.class.php,v 1.17 2011/08/10 23:20:55 eldy Exp $
  */
 
+require_once(FPDFI_PATH.'fpdi_protection.php');
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
-require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 
 
 /**
@@ -75,10 +75,10 @@ function expedition_pdf_create($db, $object, $modele, $outputlangs)
 
 	// Positionne modele sur le nom du modele de commande a utiliser
 	$file = "pdf_expedition_".$modele.".modules.php";
-	
+
 	// On verifie l'emplacement du modele
 	$file = dol_buildpath($dir.$file);
-	
+
 	if ($modele && file_exists($file)) $modelisok=1;
 
     // Si model pas encore bon

@@ -60,12 +60,12 @@
  *	\author	    Laurent Passebecq
  *	\author	    Rodolphe Quiedville
  *	\author	    Jean Louis Bergamo.
- *	\version    $Id: pdf_standard.class.php,v 1.22 2011/07/31 23:28:18 eldy Exp $
+ *	\version    $Id: pdf_standard.class.php,v 1.23 2011/08/10 23:20:55 eldy Exp $
  */
 
+require_once(FPDFI_PATH.'fpdi_protection.php');
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/lib/format_cards.lib.php');
-require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 
 
 /**

@@ -26,10 +26,10 @@
  *      \ingroup    commande
  *      \brief      File that contain parent class for supplier orders models
  *                  and parent class for supplier orders numbering models
- *      \version    $Id: modules_commandefournisseur.php,v 1.22 2011/07/31 23:28:17 eldy Exp $
+ *      \version    $Id: modules_commandefournisseur.php,v 1.23 2011/08/10 23:21:14 eldy Exp $
  */
+require_once(FPDFI_PATH.'fpdi_protection.php');
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
-require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");	// requis car utilise par les classes qui heritent
 
 
@@ -168,7 +168,7 @@ function supplier_order_pdf_create($db, $object, $model, $outputlangs, $hidedeta
         $file = dol_buildpath($dir.$file);
 		if (file_exists($file))   $modelisok=1;
 	}
-	
+
 	// Si model pas encore bon
 	if (! $modelisok)
 	{
@@ -196,7 +196,7 @@ function supplier_order_pdf_create($db, $object, $model, $outputlangs, $hidedeta
 		{
 			$outputlangs->charset_output=$sav_charset_output;
 			// on supprime l'image correspondant au preview
-			supplier_order_delete_preview($db, $object->id);		
+			supplier_order_delete_preview($db, $object->id);
 			return 1;
 		}
 		else
@@ -241,8 +241,8 @@ function supplier_order_delete_preview($db, $comfournid, $comfournref='')
 		$soc = new Societe($db);
 		$soc->fetch($comfourn->socid);
 	}
-	
-	
+
+
 
 	if ($conf->fournisseur->dir_output.'/commande')
 	{
