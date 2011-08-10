@@ -28,7 +28,7 @@
  *		\file       htdocs/includes/modules/modAdherent.class.php
  *      \ingroup    member
  *      \brief      File descriptor or module Member
- *		\version	$Id: modAdherent.class.php,v 1.88 2011/08/09 17:59:51 hregis Exp $
+ *		\version	$Id: modAdherent.class.php,v 1.89 2011/08/10 00:50:18 eldy Exp $
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
@@ -74,7 +74,6 @@ class modAdherent extends DolibarrModules
         // Constantes
         //-----------
         $this->const = array();
-        $this->const[0]  = array("MAIN_MODULE_ADHERENT_HOOKS","chaine",'member_extrafields','',0);
         $this->const[2]  = array("MAIN_SEARCHFORM_ADHERENT","yesno","1","Show form for quick member search");
         $this->const[3]  = array("ADHERENT_MAIL_RESIL","texte","Votre adhésion vient d'être résiliée.\r\nNous espérons vous revoir très bientôt","Mail de résiliation");
         $this->const[4]  = array("ADHERENT_MAIL_VALID","texte","Votre adhésion vient d'être validée. \r\nVoici le rappel de vos coordonnées (toute information erronée entrainera la non validation de votre inscription) :\r\n\r\n%INFOS%\r\n\r\n","Mail de validation");
