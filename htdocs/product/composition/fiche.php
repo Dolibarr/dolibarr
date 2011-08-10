@@ -4,6 +4,7 @@
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
+ * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +24,7 @@
  *  \file       htdocs/product/composition/fiche.php
  *  \ingroup    product
  *  \brief      Page de la fiche produit
- *  \version    $Id: fiche.php,v 1.9 2011/07/31 23:24:03 eldy Exp $
+ *  \version    $Id: fiche.php,v 1.10 2011/08/10 10:00:48 simnandez Exp $
  */
 
 require("../../main.inc.php");
@@ -218,13 +219,14 @@ if ($id || $ref)
 					$productstatic->id=$value['id'];
 					$productstatic->type=$value['type'];
 					$productstatic->ref=$value['fullpath'];
+					$productstatic->load_stock();
 					//var_dump($value);
 					//print '<pre>'.$productstatic->ref.'</pre>';
 					//print $productstatic->getNomUrl(1).'<br>';
 					//print $value[0];	// This contains a tr line.
 					print '<tr>';
-					print '<td>'.$productstatic->getNomUrl(1).' ('.$value['nb'].')</td>';
-					print '<td></td>';
+					print '<td>'.$productstatic->getNomUrl(1).'&nbsp &nbsp</td>';
+					print '<td>'.$langs->trans("Stock").' : <b>'.$productstatic->stock_reel.' ('.$value['nb'].')</b></td>';
 					print '</tr>';
 				}
 				print '</table>';
@@ -279,13 +281,14 @@ if ($id || $ref)
 				$productstatic->id=$value['id'];
 				$productstatic->type=$value['type'];
 				$productstatic->ref=$value['fullpath'];
+				$productstatic->load_stock();
 				//var_dump($value);
 				//print '<pre>'.$productstatic->ref.'</pre>';
 				//print $productstatic->getNomUrl(1).'<br>';
 				//print $value[0];	// This contains a tr line.
 				print '<tr>';
-				print '<td>'.$productstatic->getNomUrl(1).' ('.$value['nb'].')</td>';
-				print '<td></td>';
+				print '<td>'.$productstatic->getNomUrl(1).'&nbsp &nbsp</td>';
+				print '<td>'.$langs->trans("Stock").' : <b>'.$productstatic->stock_reel.' ('.$value['nb'].')</b></td>';
 				print '</tr>';
 			}
 			print '</table>';
@@ -446,5 +449,5 @@ print "\n</div>\n";
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:24:03 $ - $Revision: 1.9 $');
+llxFooter('$Date: 2011/08/10 10:00:48 $ - $Revision: 1.10 $');
 ?>
