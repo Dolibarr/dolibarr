@@ -26,7 +26,7 @@
  *	\file       	htdocs/comm/propal.php
  *	\ingroup    	propale
  *	\brief      	Page of commercial proposals card and list
- *	\version		$Id: propal.php,v 1.619 2011/08/10 19:55:22 hregis Exp $
+ *	\version		$Id: propal.php,v 1.620 2011/08/10 22:47:35 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -90,7 +90,8 @@ $hookmanager->callHooks(array('propalcard'));
 /*                     Actions                                                */
 /******************************************************************************/
 
-$reshook=$hookmanager->executeHooks('doActions',$action,$object,$socid);    // Note that $action and $object may have been modified by some hooks
+$parameters=array('socid'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
 // Action clone object
 if ($action == 'confirm_clone' && $confirm == 'yes')
@@ -1071,8 +1072,12 @@ if ($id > 0 || ! empty($ref))
 
 		$formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateProp'), $text, 'confirm_validate','',0,1);
 	}
-	
-	if (! $formconfirm) $formconfirm=$hookmanager->executeHooks('formconfirm',$action,$object,$lineid);    // Note that $action and $object may have been modified by hook
+
+	if (! $formconfirm)
+	{
+	    $parameters=array('lineid'=>$lineid);
+	    $formconfirm=$hookmanager->executeHooks('formconfirm',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	}
 
 	// Print form confirm
 	print $formconfirm;
@@ -1469,7 +1474,8 @@ if ($id > 0 || ! empty($ref))
 				$object->formAddPredefinedProduct(0,$mysoc,$soc,$hookmanager);
 			}
 
-			$reshook=$hookmanager->executeHooks('formAddObject',$action,$object);    // Note that $action and $object may have been modified by hook
+			$parameters=array();
+			$reshook=$hookmanager->executeHooks('formAddObject',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 		}
 	}
 
@@ -1926,6 +1932,6 @@ else
 }
 $db->close();
 
-llxFooter('$Date: 2011/08/10 19:55:22 $ - $Revision: 1.619 $');
+llxFooter('$Date: 2011/08/10 22:47:35 $ - $Revision: 1.620 $');
 
 ?>

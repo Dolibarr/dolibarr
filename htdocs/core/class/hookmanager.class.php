@@ -21,7 +21,7 @@
  *	\file       htdocs/core/class/hookmanager.class.php
  *	\ingroup    core
  *	\brief      File of class to manage hooks
- *	\version    $Id: hookmanager.class.php,v 1.4 2011/08/10 19:35:25 eldy Exp $
+ *	\version    $Id: hookmanager.class.php,v 1.5 2011/08/10 22:47:34 eldy Exp $
  */
 
 
@@ -53,7 +53,9 @@ class HookManager
 	/**
 	 *	Init array this->hooks with instantiated controler
 	 *  A hook is declared by a module by adding a constant MAIN_MODULE_MYMODULENAME_HOOKS
-	 *  with value nameofhookkey1:nameofhookkey2:...:nameofhookkeyn
+	 *  with value nameofhookkey1:nameofhookkey2:...:nameofhookkeyn.
+	 *  This add into conf->hooks_module an entries ('modulename'=>nameofhookkey)
+	 *  After this, this->hooks is defined
 	 *	@param	    arraytype	    Array list of hooked tab/features. For example: thirdpartytab, ...
 	 *	@return		int				Always 1
 	 */
@@ -89,10 +91,10 @@ class HookManager
 						if ($resaction)
 						{
     						$controlclassname = 'Actions'.ucfirst($module);
-    						$objModule = new $controlclassname($this->db);
-    						$this->hooks[$i]['modules'][$objModule->module_number] = $objModule;
+    						$actionInstance = new $controlclassname($this->db);
+    						$this->hooks[$i]['modules'][$module] = $actionInstance;
 						}
-						
+
 						// Include dataservice class (model)
 						// TODO storing dao is useless here. It's goal of controller to known which dao to manage
 						$daofile 	= 'dao_'.$module.'.class.php';
@@ -100,8 +102,8 @@ class HookManager
 						if ($resdao)
 						{
 							// Instantiate dataservice class (model)
-							$modelclassname = 'Dao'.ucfirst($module);
-							$this->hooks[$i]['modules'][$objModule->module_number]->object = new $modelclassname($this->db);
+							$daoInstance = 'Dao'.ucfirst($module);
+							$this->hooks[$i]['modules'][$module]->object = new $daoInstance($this->db);
 						}
 
                         $i++;
@@ -115,17 +117,17 @@ class HookManager
     /**
      * 		Execute hooks (if the were initialized) for the given method
      * 		@param		method		Method name to hook ('doActions', 'printSearchForm', ...)
-     * 	    @param		action		Action code ('create', 'edit', 'view', 'add', 'update', 'delete'...)
+     * 	    @param		parameters	Array of parameters
+     * 	    @param		action		Action code on calling page ('create', 'edit', 'view', 'add', 'update', 'delete'...)
      * 		@param		object		Object to use hooks on
-     * 	    @param		id			Id.
      * 		@param		string		For doActions,showInputField,showOutputField: Return 0 if we want to keep doing standard actions, >0 if if want to stop standard actions, >0 means KO.
      * 								For printSearchForm,printLeftBlock:           Return HTML string.
      * 								$this->error or this->errors are also defined with hooks errors.
      */
-	function executeHooks($method, $action='', &$object='', $id='', $parameters=false)
+	function executeHooks($method, $parameters=false, &$action='', &$object='')
 	{
 		global $var;
-		
+
         if (! is_array($this->hooks) || empty($this->hooks)) return '';
 
         // Loop on each hook
@@ -134,17 +136,17 @@ class HookManager
         {
             if (! empty($hook['modules']))
             {
-                foreach($hook['modules'] as $module)
+                foreach($hook['modules'] as $module => $actioninstance)
                 {
                 	$var=!$var;
-                	
+
                     // Hooks that return int
-                    if ($method == 'doActions' && method_exists($module,$method))
+                    if ($method == 'doActions' && method_exists($actioninstance,$method))
                     {
-                        $restmp+=$module->doActions($object, $action, $id); // action can be changed by method (to go back to other action for example), socid can be changed/set by method (during creation for example)
-                        if ($restmp < 0 || ! empty($module->error) || (! empty($module->errors) && sizeof($module->errors) > 0))
+                        $restmp+=$actioninstance->doActions($parameters, $object, $action); // action can be changed by method (to go back to other action for example), socid can be changed/set by method (during creation for example)
+                        if ($restmp < 0 || ! empty($actioninstance->error) || (! empty($actioninstance->errors) && sizeof($actioninstance->errors) > 0))
                         {
-                            $this->error=$module->error; $this->errors=$module->errors;
+                            $this->error=$actioninstance->error; $this->errors=$actioninstance->errors;
                             if ($action=='add')    $action='create';    // TODO this change must be inside the doActions
                             if ($action=='update') $action='edit';      // TODO this change must be inside the doActions
                         }
@@ -153,48 +155,37 @@ class HookManager
                             $resaction+=$restmp;
                         }
                     }
-                    else if ($method == 'showInputFields' && method_exists($module,$method))
+                    else if ($method == 'showInputFields' && method_exists($actioninstance,$method))
                     {
-                        $restmp+=$module->showInputFields($object, $action, $id); // action can be changed by method (to go back to other action for example), socid can be changed/set by method (during creation for example)
-                        if ($restmp < 0 || ! empty($module->error) || (! empty($module->errors) && sizeof($module->errors) > 0))
+                        $restmp+=$actioninstance->showInputFields($parameters, $object, $action); // action can be changed by method (to go back to other action for example), socid can be changed/set by method (during creation for example)
+                        if ($restmp < 0 || ! empty($actioninstance->error) || (! empty($actioninstance->errors) && sizeof($actioninstance->errors) > 0))
                         {
-                            $this->error=$module->error; $this->errors=$module->errors;
+                            $this->error=$actioninstance->error; $this->errors=$actioninstance->errors;
                         }
                         else
                         {
                             $resaction+=$restmp;
                         }
                     }
-                    else if ($method == 'showOutputFields' && method_exists($module,$method))
+                    else if ($method == 'showOutputFields' && method_exists($actioninstance,$method))
                     {
-                        $restmp+=$module->showOutputFields($object, $id); // action can be changed by method (to go back to other action for example), socid can be changed/set by method (during creation for example)
-                        if ($restmp < 0 || ! empty($module->error) || (! empty($module->errors) && sizeof($module->errors) > 0))
+                        $restmp+=$actioninstance->showOutputFields($parameters, $object, $action); // action can be changed by method (to go back to other action for example), socid can be changed/set by method (during creation for example)
+                        if ($restmp < 0 || ! empty($actioninstance->error) || (! empty($actioninstance->errors) && sizeof($actioninstance->errors) > 0))
                         {
-                            $this->error=$module->error; $this->errors=$module->errors;
+                            $this->error=$actioninstance->error; $this->errors=$actioninstance->errors;
                         }
                         else
                         {
                             $resaction+=$restmp;
                         }
                     }
-                    // Hooks that return a string
-                    else if ($method == 'printSearchForm' && method_exists($module,$method))
+                    // Generic hooks that return a string (printSearchForm, printLeftBlock, formBuilddocOptions, ...)
+                    else if (method_exists($actioninstance,$method))
                     {
-                        $resprint.='<!-- Begin search form hook area -->'."\n";
-                        $resprint.=$module->printSearchForm($object, $action, $id); // action can be changed by method (to go back to other action for example), socid can be changed/set by method (during creation for example)
-                        $resprint.="\n".'<!-- End of search form hook area -->'."\n";
-                    }
-                    else if ($method == 'printLeftBlock' && method_exists($module,$method))
-                    {
-                        $resprint.='<!-- Begin left block hook area -->'."\n";
-                        $resprint.=$module->printLeftBlock($object, $action, $id); // action can be changed by method (to go back to other action for example), socid can be changed/set by method (during creation for example)
-                        $resprint.="\n".'<!-- End of left block hook area -->'."\n";
-                    }
-                    // Hook generic
-                    else if (method_exists($module,$method))
-                    {
-                    	if (is_array($parameters) && $parameters['special_code'] > 3 && $parameters['special_code'] != $module->module_number) continue;
-                    	$resprint.=$module->$method($object, $action, $id, $parameters, $this);
+                        $resprint.='<!-- Begin hook '.$method.' -->'."\n";
+                        if (is_array($parameters) && $parameters['special_code'] > 3 && $parameters['special_code'] != $module) continue;
+                    	$resprint.=$actioninstance->$method($parameters, $object, $action, $this);
+                        $resprint.="\n".'<!-- End of hook '.$method.' -->'."\n";
                     }
                 }
             }
