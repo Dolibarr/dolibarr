@@ -25,7 +25,7 @@
  *  \file       htdocs/societe/soc.php
  *  \ingroup    societe
  *  \brief      Third party card page
- *  \version    $Id: soc.php,v 1.132 2011/08/10 22:47:35 eldy Exp $
+ *  \version    $Id: soc.php,v 1.131 2011/08/10 19:34:44 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -87,8 +87,7 @@ $hookmanager->callHooks(array('thirdpartycard','thirdparty_extrafields'));
  * Actions
  */
 
-$parameters=array('socid'=>$socid);
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions',$action,$object,$socid);    // Note that $action and $object may have been modified by some hooks
 
 
 // ---------- start deprecated. Use hook to hook actions.
@@ -1000,8 +999,7 @@ else
         }
 
         // Other attributes
-        $parameters=array();
-        $reshook=$hookmanager->executeHooks('showInputFields',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+        $reshook=$hookmanager->executeHooks('showInputFields',$action,$object);    // Note that $action and $object may have been modified by hook
         if (empty($reshook))
         {
             foreach($extrafields->attribute_label as $key=>$label)
@@ -1428,8 +1426,7 @@ else
             }
 
             // Other attributes
-            $parameters=array();
-            $reshook=$hookmanager->executeHooks('showInputFields',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+            $reshook=$hookmanager->executeHooks('showInputFields',$action,$object);    // Note that $action and $object may have been modified by hook
             if (empty($reshook))
             {
                 foreach($extrafields->attribute_label as $key=>$label)
@@ -1769,8 +1766,7 @@ else
         }
 
         // Other attributes
-        $parameters=array('socid'=>$socid);
-        $reshook=$hookmanager->executeHooks('showOutputFields',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+        $reshook=$hookmanager->executeHooks('showOutputFields',$action,$object,$socid);    // Note that $action and $object may have been modified by hook
         if (empty($reshook))
         {
             foreach($extrafields->attribute_label as $key=>$label)
@@ -1959,5 +1955,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/10 22:47:35 $ - $Revision: 1.132 $');
+llxFooter('$Date: 2011/08/10 19:34:44 $ - $Revision: 1.131 $');
 ?>

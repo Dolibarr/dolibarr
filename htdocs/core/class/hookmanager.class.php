@@ -21,7 +21,7 @@
  *	\file       htdocs/core/class/hookmanager.class.php
  *	\ingroup    core
  *	\brief      File of class to manage hooks
- *	\version    $Id: hookmanager.class.php,v 1.3 2011/08/10 17:40:45 hregis Exp $
+ *	\version    $Id: hookmanager.class.php,v 1.4 2011/08/10 19:35:25 eldy Exp $
  */
 
 
@@ -51,7 +51,9 @@ class HookManager
 
 
 	/**
-	 *	Init array this->hooks with instantiated controler and/or dao
+	 *	Init array this->hooks with instantiated controler
+	 *  A hook is declared by a module by adding a constant MAIN_MODULE_MYMODULENAME_HOOKS
+	 *  with value nameofhookkey1:nameofhookkey2:...:nameofhookkeyn
 	 *	@param	    arraytype	    Array list of hooked tab/features. For example: thirdpartytab, ...
 	 *	@return		int				Always 1
 	 */
