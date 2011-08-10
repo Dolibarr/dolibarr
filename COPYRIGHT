@@ -16,7 +16,6 @@ ArtiChow          1.07     Public Domain               Yes              Graphics
 CKEditor		  3.6.1	   GPL or LGPL 2.1 or MPL 1.1  Yes				Editor WYSIWYG
 EFC/XFSS		  1.0.1	   LGPL 3.0					   Yes				Enhanced File Crypt/Extended File Stealth System
 FCKEditor         2.6.6    LGPL 2.1 or Mozilla PL 1.0  Yes              Editor WYSIWYG
-FPDF              1.6      Public domain               Yes              PDF generation (original code is modified)
 FPDF_TPL          1.1.5    Apache Software License 2.0 No GPL3 only     PDF templates management
 FPDI              1.3.4    Apache Software License 2.0 No GPL3 only     PDF templates management
 FPDI_Protection   1.0.3    Apache Software License 2.0 No GPL3 only     PDF encryption (8 files)
@@ -38,7 +37,6 @@ Php-barcode       0.3pl1   GPL 2.0                     Yes              Bar code
 PHP_WriteExcel    0.3.0    LGPL 2.1                    Yes              Excel files generation (obsolete)
 PHP_ExcelReader   2.21     MIT License                 Yes              Parse and retrieve information from XLS files (obsolete)
 PHPExcel		  1.7.6    LGPL 2.1                    Yes              Read/Write XLS files, read ODS files
-Smarty            2.6.26   LGPL 2.1                    Yes              Templates engine used by some pages
 SMTPs             1.15     GPL                         Yes              SMTPS library
 TCPDF             5.9.098  LGPL 3.0                    Yes				PDF generation
 VCard             2.0      GPL 2.0                     Yes              VCard library
