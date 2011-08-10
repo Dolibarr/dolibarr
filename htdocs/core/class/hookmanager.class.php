@@ -21,7 +21,7 @@
  *	\file       htdocs/core/class/hookmanager.class.php
  *	\ingroup    core
  *	\brief      File of class to manage hooks
- *	\version    $Id: hookmanager.class.php,v 1.2 2011/08/10 10:55:36 hregis Exp $
+ *	\version    $Id: hookmanager.class.php,v 1.3 2011/08/10 17:40:45 hregis Exp $
  */
 
 
@@ -120,7 +120,7 @@ class HookManager
      * 								For printSearchForm,printLeftBlock:           Return HTML string.
      * 								$this->error or this->errors are also defined with hooks errors.
      */
-	function executeHooks($method, &$action='', &$object='', $id='', $parameters=false)
+	function executeHooks($method, $action='', &$object='', $id='', $parameters=false)
 	{
 		global $var;
 		
@@ -191,13 +191,14 @@ class HookManager
                     // Hook generic
                     else if (method_exists($module,$method))
                     {
+                    	if (is_array($parameters) && $parameters['special_code'] > 3 && $parameters['special_code'] != $module->module_number) continue;
                     	$resprint.=$module->$method($object, $action, $id, $parameters, $this);
                     }
                 }
             }
         }
 
-        if ($method == 'doActions' || $method == 'showInputField' || $method == 'showOutputFields') return $resaction;
+        if ($method == 'doActions' || $method == 'showInputFields' || $method == 'showOutputFields') return $resaction;
         return $resprint;
 	}
 
