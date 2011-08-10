@@ -1,6 +1,6 @@
 --
--- $Id: init_menu_auguria.sql,v 1.125 2011/08/10 20:27:10 eldy Exp $
--- $Revision: 1.125 $
+-- $Id: init_menu_auguria.sql,v 1.124 2011/08/05 18:28:02 eldy Exp $
+-- $Revision: 1.124 $
 --
 -- Menu base entries
 -- This file is loaded when a menu handler base is activated (auguria, etc..)
@@ -63,7 +63,7 @@ insert into llx_menu (enabled, menu_handler, type, rowid, mainmenu, leftmenu, fk
 insert into llx_menu (enabled, menu_handler, type, rowid, mainmenu, leftmenu, fk_menu, url, titre, level, langs, perms, target, usertype, position, entity) values ('$leftmenu==\'users\'', __HANDLER__, 'left', 403__+MAX_llx_menu__, 'home', '', 400__+MAX_llx_menu__, '/user/group/index.php?leftmenu=users', 'Groups', 1, 'users', '($conf->global->MAIN_USE_ADVANCED_PERMS?$user->rights->user->group_advance->read:$user->rights->user->user->lire) || $user->admin', '', 2, 1, __ENTITY__);
 insert into llx_menu (enabled, menu_handler, type, rowid, mainmenu, leftmenu, fk_menu, url, titre, level, langs, perms, target, usertype, position, entity) values ('$leftmenu==\'users\'', __HANDLER__, 'left', 404__+MAX_llx_menu__, 'home', '', 403__+MAX_llx_menu__, '/user/group/fiche.php?leftmenu=users&amp;action=create', 'NewGroup', 2, 'users', '($conf->global->MAIN_USE_ADVANCED_PERMS?$user->rights->user->group_advance->write:$user->rights->user->user->creer) || $user->admin', '', 2, 0, __ENTITY__);
 -- Third parties
-insert into llx_menu (enabled, menu_handler, type, rowid, mainmenu, leftmenu, fk_menu, url, titre, level, langs, perms, target, usertype, position, entity) values ('$conf->societe->enabled', __HANDLER__, 'left', 500__+MAX_llx_menu__, 'companies', '', 2__+MAX_llx_menu__, '/societe/index.php', 'ThirdParty', 0, 'companies', '$user->rights->societe->lire', '', 2, 0, __ENTITY__);
+insert into llx_menu (enabled, menu_handler, type, rowid, mainmenu, leftmenu, fk_menu, url, titre, level, langs, perms, target, usertype, position, entity) values ('$conf->societe->enabled', __HANDLER__, 'left', 500__+MAX_llx_menu__, 'companies', '', 2__+MAX_llx_menu__, '/societe/societe.php', 'ThirdParty', 0, 'companies', '$user->rights->societe->lire', '', 2, 0, __ENTITY__);
 insert into llx_menu (enabled, menu_handler, type, rowid, mainmenu, leftmenu, fk_menu, url, titre, level, langs, perms, target, usertype, position, entity) values ('$conf->societe->enabled', __HANDLER__, 'left', 501__+MAX_llx_menu__, 'companies', '', 500__+MAX_llx_menu__, '/societe/soc.php?action=create', 'MenuNewThirdParty', 1, 'companies', '$user->rights->societe->lire', '', 2, 0, __ENTITY__);
 insert into llx_menu (enabled, menu_handler, type, rowid, mainmenu, leftmenu, fk_menu, url, titre, level, langs, perms, target, usertype, position, entity) values ('$conf->societe->enabled && $conf->fournisseur->enabled', __HANDLER__, 'left', 503__+MAX_llx_menu__, 'companies', '', 500__+MAX_llx_menu__, '/fourn/liste.php?leftmenu=suppliers', 'ListSuppliersShort', 1, 'suppliers', '$user->rights->societe->lire && $user->rights->fournisseur->lire', '', 2, 5, __ENTITY__);
 insert into llx_menu (enabled, menu_handler, type, rowid, mainmenu, leftmenu, fk_menu, url, titre, level, langs, perms, target, usertype, position, entity) values ('$conf->societe->enabled && $conf->fournisseur->enabled', __HANDLER__, 'left', 504__+MAX_llx_menu__, 'companies', '', 503__+MAX_llx_menu__, '/societe/soc.php?leftmenu=supplier&amp;action=create&amp;type=f', 'NewSupplier', 2, 'suppliers', '$user->rights->societe->creer', '', 2, 0, __ENTITY__);
