@@ -25,7 +25,7 @@
  *	\file       htdocs/compta/facture.php
  *	\ingroup    facture
  *	\brief      Page to create/see an invoice
- *	\version    $Id: facture.php,v 1.854 2011/08/10 22:47:34 eldy Exp $
+ *	\version    $Id: facture.php,v 1.851 2011/08/10 17:56:13 hregis Exp $
  */
 
 require('../main.inc.php');
@@ -84,8 +84,7 @@ $hookmanager->callHooks(array('invoicecard'));
 /*                     Actions                                                */
 /******************************************************************************/
 
-$parameters=array('socid'=>$socid);
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions',$action,$object,$socid);    // Note that $action and $object may have been modified by some hooks
 
 // Action clone object
 if ($action == 'confirm_clone' && $confirm == 'yes')
@@ -96,7 +95,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes')
     }
     else
     {
-        $result=$object->createFromClone($id,0,$hookmanager);
+        $result=$object->createFromClone($id);
         if ($result > 0)
         {
             header("Location: ".$_SERVER['PHP_SELF'].'?facid='.$result);
@@ -171,7 +170,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes')
                 $outputlangs = new Translate("",$conf);
                 $outputlangs->setDefaultLang($newlang);
             }
-            $result=facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+            $result=facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
             if ($result > 0)
             {
                 Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id);
@@ -332,7 +331,7 @@ if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->facture->v
             $outputlangs = new Translate("",$conf);
             $outputlangs->setDefaultLang($newlang);
         }
-        facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+        facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
     }
     else
     {
@@ -389,7 +388,7 @@ if ($action == 'modif' && ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $us
             $outputlangs = new Translate("",$conf);
             $outputlangs->setDefaultLang($newlang);
         }
-        facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+        facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
     }
 }
 
@@ -782,8 +781,7 @@ if ($action == 'add' && $user->rights->facture->creer)
                         }
 
                         // Hooks
-                        $parameters=array('srcobject'=>$srcobject);
-                        $reshook=$hookmanager->executeHooks('createfrom',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+                        $reshook=$hookmanager->executeHooks('createfrom',$action,$srcobject,$id,$object->element);    // Note that $action and $object may have been modified by hook
                         if ($reshook < 0) $error++;
                     }
                     else
@@ -997,7 +995,7 @@ if (($action == 'addline' || $action == 'addline_predef') && $user->rights->fact
             $outputlangs = new Translate("",$conf);
             $outputlangs->setDefaultLang($newlang);
         }
-        facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+        facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
 
         unset($_POST['qty']);
         unset($_POST['type']);
@@ -1095,7 +1093,7 @@ if ($action == 'updateligne' && $user->rights->facture->creer && $_POST['save'] 
             $outputlangs = new Translate("",$conf);
             $outputlangs->setDefaultLang($newlang);
         }
-        facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+        facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
     }
 }
 
@@ -1123,7 +1121,7 @@ if ($action == 'up' && $user->rights->facture->creer)
         $outputlangs = new Translate("",$conf);
         $outputlangs->setDefaultLang($newlang);
     }
-    facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+    facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
 
     Header ('Location: '.$_SERVER["PHP_SELF"].'?facid='.$object->id.'#'.$_GET['rowid']);
     exit;
@@ -1145,7 +1143,7 @@ if ($action == 'down' && $user->rights->facture->creer)
         $outputlangs = new Translate("",$conf);
         $outputlangs->setDefaultLang($newlang);
     }
-    facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+    facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
 
     Header ('Location: '.$_SERVER["PHP_SELF"].'?facid='.$object->id.'#'.$_GET['rowid']);
     exit;
@@ -2034,12 +2032,8 @@ else
                 // Paiement incomplet. On demande si motif = escompte ou autre
                 $formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id,$langs->trans('CloneInvoice'),$langs->trans('ConfirmCloneInvoice',$object->ref),'confirm_clone',$formquestion,'yes',1);
             }
-
-            if (! $formconfirm)
-            {
-                $parameters=array('lineid'=>$lineid);
-                $formconfirm=$hookmanager->executeHooks('formconfirm',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-            }
+            
+            if (! $formconfirm) $formconfirm=$hookmanager->executeHooks('formconfirm',$action,$object,$lineid);    // Note that $action and $object may have been modified by hook
 
             // Print form confirm
             print $formconfirm;
@@ -2574,9 +2568,8 @@ else
                     $var=!$var;
                     $object->formAddPredefinedProduct(1,$mysoc,$soc,$hookmanager);
                 }
-
-                $parameters=array();
-                $reshook=$hookmanager->executeHooks('formAddObject',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+                
+                $reshook=$hookmanager->executeHooks('formAddObject',$action,$object);    // Note that $action and $object may have been modified by hook
             }
 
             print "</table>\n";
@@ -2866,7 +2859,7 @@ else
                         $outputlangs = new Translate("",$conf);
                         $outputlangs->setDefaultLang($newlang);
                     }
-                    $result=facture_pdf_create($db, $object, '', $_REQUEST['model'], $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+                    $result=facture_pdf_create($db, $object, '', $_REQUEST['model'], $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
                     if ($result <= 0)
                     {
                         dol_print_error($db,$result);
@@ -3185,5 +3178,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/10 22:47:34 $ - $Revision: 1.854 $');
+llxFooter('$Date: 2011/08/10 17:56:13 $ - $Revision: 1.851 $');
 ?>
