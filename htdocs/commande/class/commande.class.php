@@ -24,7 +24,7 @@
  *  \file       htdocs/commande/class/commande.class.php
  *  \ingroup    commande
  *  \brief      Fichier des classes de commandes
- *  \version    $Id: commande.class.php,v 1.122 2011/08/10 19:55:22 hregis Exp $
+ *  \version    $Id: commande.class.php,v 1.123 2011/08/10 22:47:33 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
@@ -825,7 +825,8 @@ class Commande extends CommonObject
 			// Hook of thirdparty module
 			if (is_object($hookmanager))
 			{
-				$reshook=$hookmanager->executeHooks('createfrom','',$objFrom,$result,$object->element);    // Note that $action and $object may have been modified by some hooks
+			    $parameters=array('objFrom'=>$objFrom);
+				$reshook=$hookmanager->executeHooks('createfrom',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) $error++;
 			}
 
@@ -916,7 +917,7 @@ class Commande extends CommonObject
 				// Hook of thirdparty module
 				if (is_object($hookmanager))
 				{
-					$reshook=$hookmanager->executeHooks('createfrom','',$object,$ret,$this->element);    // Note that $action and $object may have been modified by some hooks
+					$reshook=$hookmanager->executeHooks('createfrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 					if ($reshook < 0) $error++;
 				}
 
