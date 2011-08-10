@@ -23,10 +23,10 @@
  *	    \file       htdocs/includes/modules/dons/modules_don.php
  *		\ingroup    don
  *		\brief      File of class to manage donation document generation
- *		\version    $Id: modules_don.php,v 1.21 2011/08/08 16:07:48 eldy Exp $
+ *		\version    $Id: modules_don.php,v 1.22 2011/08/10 23:21:12 eldy Exp $
  */
+require_once(FPDFI_PATH.'fpdi_protection.php');
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
-require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 require_once(DOL_DOCUMENT_ROOT."/compta/dons/class/don.class.php");
 
 
