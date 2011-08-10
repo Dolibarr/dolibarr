@@ -25,7 +25,7 @@
  *  \file       htdocs/societe/soc.php
  *  \ingroup    societe
  *  \brief      Third party card page
- *  \version    $Id: soc.php,v 1.126 2011/08/01 00:38:49 eldy Exp $
+ *  \version    $Id: soc.php,v 1.130 2011/08/10 00:50:19 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -75,11 +75,10 @@ else
     $result = restrictedArea($user, 'societe', $socid);
 }
 
-// Instantiate hooks of thirdparty module. Note that conf->hooks_modules contains array array
-if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
-{
-    $object->callHooks('thirdpartycard');
-}
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+$hookmanager=new HookManager($db);
+$hookmanager->callHooks(array('thirdpartycard','thirdparty_extrafields'));
 
 
 
@@ -87,35 +86,8 @@ if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
  * Actions
  */
 
-$reshook=0;
+$reshook=$hookmanager->executeHooks('doActions',$action,$object,$socid);    // Note that $action and $object may have been modified by some hooks
 
-// Hook of actions. After that, reshook is 0 if we need to process standard actions, >0 otherwise.
-if (! empty($object->hooks))
-{
-    foreach($object->hooks as $hook)
-    {
-        if (! empty($hook['modules']))
-        {
-            foreach($hook['modules'] as $module)
-            {
-                if (method_exists($module,'doActions'))
-                {
-                    $resaction+=$module->doActions($object,$action,$socid); // object is deprecated, action can be changed by method (to go back to other action for example), socid can be changed/set by method (during creation for example)
-                    if ($resaction < 0 || ! empty($module->error) || (! empty($module->errors) && sizeof($module->errors) > 0))
-                    {
-                        $error=$module->error; $errors=$module->errors;
-                        if ($action=='add')    $action='create';    // TODO this chnage must be inside the doActions
-                        if ($action=='update') $action='edit';      // TODO this chnage must be inside the doActions
-                    }
-                    else
-                    {
-                        $reshook+=$resaction;
-                    }
-                }
-            }
-        }
-    }
-}
 
 // ---------- start deprecated. Use hook to hook actions.
 // If canvas actions are defined, because on url, or because contact was created with canvas feature on, we use the canvas feature.
@@ -132,6 +104,7 @@ if (method_exists($objcanvas->control,'doActions'))
     }
 }
 // ---------- end deprecated.
+
 
 if (empty($reshook))
 {
@@ -1025,12 +998,16 @@ else
         }
 
         // Other attributes
-        foreach($extrafields->attribute_label as $key=>$label)
+        $reshook=$hookmanager->executeHooks('showInputFields',$action,$object);    // Note that $action and $object may have been modified by hook
+        if (empty($reshook))
         {
-            $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:'');
-            print "<tr><td>".$label.'</td><td colspan="3">';
-            print $extrafields->showInputField($key,$value);
-            print '</td></tr>'."\n";
+            foreach($extrafields->attribute_label as $key=>$label)
+            {
+                $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:'');
+                print "<tr><td>".$label.'</td><td colspan="3">';
+                print $extrafields->showInputField($key,$value);
+                print '</td></tr>'."\n";
+            }
         }
 
         // Ajout du logo
@@ -1061,7 +1038,7 @@ else
             $res=$object->fetch($socid);
             if ($res < 0) { dol_print_error($db,$object->error); exit; }
             $res=$object->fetch_optionals($socid,$extralabels);
-            if ($res < 0) { dol_print_error($db); exit; }
+            //if ($res < 0) { dol_print_error($db); exit; }
 
             // Load object modCodeTiers
             $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
@@ -1448,12 +1425,16 @@ else
             }
 
             // Other attributes
-            foreach($extrafields->attribute_label as $key=>$label)
+            $reshook=$hookmanager->executeHooks('showInputFields',$action,$object);    // Note that $action and $object may have been modified by hook
+            if (empty($reshook))
             {
-                $value=(isset($_POST["options_$key"])?$_POST["options_$key"]:$object->array_options["options_$key"]);
-                print "<tr><td>".$label."</td><td colspan=\"3\">";
-                print $extrafields->showInputField($key,$value);
-                print "</td></tr>\n";
+                foreach($extrafields->attribute_label as $key=>$label)
+                {
+                    $value=(isset($_POST["options_$key"])?$_POST["options_$key"]:$object->array_options["options_$key"]);
+                    print "<tr><td>".$label."</td><td colspan=\"3\">";
+                    print $extrafields->showInputField($key,$value);
+                    print "</td></tr>\n";
+                }
             }
 
             // Logo
@@ -1495,7 +1476,7 @@ else
         $res=$object->fetch($socid);
         if ($res < 0) { dol_print_error($db,$object->error); exit; }
         $res=$object->fetch_optionals($socid,$extralabels);
-        if ($res < 0) { dol_print_error($db); exit; }
+        //if ($res < 0) { dol_print_error($db); exit; }
 
 
         $head = societe_prepare_head($object);
@@ -1784,12 +1765,16 @@ else
         }
 
         // Other attributes
-        foreach($extrafields->attribute_label as $key=>$label)
+        $reshook=$hookmanager->executeHooks('showOutputFields',$action,$object,$socid);    // Note that $action and $object may have been modified by hook
+        if (empty($reshook))
         {
-            $value=$object->array_options["options_$key"];
-            print "<tr><td>".$label.'</td><td colspan="3">';
-            print $extrafields->showOutputField($key,$value);
-            print "</td></tr>\n";
+            foreach($extrafields->attribute_label as $key=>$label)
+            {
+                $value=$object->array_options["options_$key"];
+                print "<tr><td>".$label.'</td><td colspan="3">';
+                print $extrafields->showOutputField($key,$value);
+                print "</td></tr>\n";
+            }
         }
 
         // Ban
@@ -1969,5 +1954,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/01 00:38:49 $ - $Revision: 1.126 $');
+llxFooter('$Date: 2011/08/10 00:50:19 $ - $Revision: 1.130 $');
 ?>

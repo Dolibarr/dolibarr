@@ -22,7 +22,7 @@
  *       \file       htdocs/adherents/fiche.php
  *       \ingroup    member
  *       \brief      Page of member
- *       \version    $Id: fiche.php,v 1.238 2011/07/31 22:23:27 eldy Exp $
+ *       \version    $Id: fiche.php,v 1.240 2011/08/10 00:50:19 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -45,7 +45,7 @@ $langs->load("users");
 // Security check
 if (! $user->rights->adherent->lire) accessforbidden();
 
-$adh = new Adherent($db);
+$object = new Adherent($db);
 $extrafields = new ExtraFields($db);
 
 $errmsg=''; $errmsgs=array();
@@ -57,17 +57,17 @@ $typeid=GETPOST("typeid");
 if ($rowid)
 {
 	// Load member
-	$result = $adh->fetch($rowid);
+	$result = $object->fetch($rowid);
 
 	// Define variables to know what current user can do on users
 	$canadduser=($user->admin || $user->rights->user->user->creer);
 	// Define variables to know what current user can do on properties of user linked to edited member
-	if ($adh->user_id)
+	if ($object->user_id)
 	{
-		// $user est le user qui edite, $adh->user_id est l'id de l'utilisateur lies au membre edite
-		$caneditfielduser=( (($user->id == $adh->user_id) && $user->rights->user->self->creer)
-		|| (($user->id != $adh->user_id) && $user->rights->user->user->creer) );
-		$caneditpassworduser=( (($user->id == $adh->user_id) && $user->rights->user->self->password)
+		// $user est le user qui edite, $object->user_id est l'id de l'utilisateur lies au membre edite
+		$caneditfielduser=( (($user->id == $object->user_id) && $user->rights->user->self->creer)
+		|| (($user->id != $object->user_id) && $user->rights->user->user->creer) );
+		$caneditpassworduser=( (($user->id == $object->user_id) && $user->rights->user->self->password)
 		|| (($user->id != $adh->user_id) && $user->rights->user->user->password) );
 	}
 }
@@ -80,18 +80,25 @@ if ($rowid)
 	$caneditfieldmember=$user->rights->adherent->creer;
 }
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+$hookmanager=new HookManager($db);
+$hookmanager->callHooks(array('member_extrafields'));
 
 
 /*
  * 	Actions
  */
 
+$reshook=$hookmanager->executeHooks('doActions',$action,$object,$socid);    // Note that $action and $object may have been modified by some hooks
+
+
 if ($_POST['action'] == 'setuserid' && ($user->rights->user->self->creer || $user->rights->user->user->creer))
 {
 	$error=0;
 	if (empty($user->rights->user->user->creer))	// If can edit only itself user, we can link to itself only
 	{
-		if ($_POST["userid"] != $user->id && $_POST["userid"] != $adh->user_id)
+		if ($_POST["userid"] != $user->id && $_POST["userid"] != $object->user_id)
 		{
 			$error++;
 			$mesg='<div class="error">'.$langs->trans("ErrorUserPermissionAllowsToLinksToItselfOnly").'</div>';
@@ -100,10 +107,10 @@ if ($_POST['action'] == 'setuserid' && ($user->rights->user->self->creer || $use
 
 	if (! $error)
 	{
-		if ($_POST["userid"] != $adh->user_id)	// If link differs from currently in database
+		if ($_POST["userid"] != $object->user_id)	// If link differs from currently in database
 		{
-			$result=$adh->setUserId($_POST["userid"]);
-			if ($result < 0) dol_print_error($adh->db,$adh->error);
+			$result=$object->setUserId($_POST["userid"]);
+			if ($result < 0) dol_print_error($object->db,$object->error);
 			$_POST['action']='';
 			$action='';
 		}
@@ -114,7 +121,7 @@ if ($_POST['action'] == 'setsocid')
 	$error=0;
 	if (! $error)
 	{
-		if ($_POST["socid"] != $adh->fk_soc)	// If link differs from currently in database
+		if ($_POST["socid"] != $object->fk_soc)	// If link differs from currently in database
 		{
 			$sql ="SELECT rowid FROM ".MAIN_DB_PREFIX."adherent";
 			$sql.=" WHERE fk_soc = '".$_POST["socid"]."'";
@@ -136,8 +143,8 @@ if ($_POST['action'] == 'setsocid')
 
 			if (! $error)
 			{
-				$result=$adh->setThirdPartyId($_POST["socid"]);
-				if ($result < 0) dol_print_error($adh->db,$adh->error);
+				$result=$object->setThirdPartyId($_POST["socid"]);
+				if ($result < 0) dol_print_error($object->db,$object->error);
 				$_POST['action']='';
 				$action='';
 			}
@@ -152,7 +159,7 @@ if ($_POST["action"] == 'confirm_create_user' && $_POST["confirm"] == 'yes' && $
 	{
 		// Creation user
 		$nuser = new User($db);
-		$result=$nuser->create_from_member($adh,$_POST["login"]);
+		$result=$nuser->create_from_member($object,$_POST["login"]);
 
 		if ($result < 0)
 		{
@@ -162,7 +169,7 @@ if ($_POST["action"] == 'confirm_create_user' && $_POST["confirm"] == 'yes' && $
 	}
 	else
 	{
-		$errmsg=$adh->error;
+		$errmsg=$object->error;
 	}
 }
 
@@ -173,7 +180,7 @@ if ($_POST["action"] == 'confirm_create_thirdparty' && $_POST["confirm"] == 'yes
 	{
 		// Creation user
 		$company = new Societe($db);
-		$result=$company->create_from_member($adh,$_POST["companyname"]);
+		$result=$company->create_from_member($object,$_POST["companyname"]);
 
 		if ($result < 0)
 		{
@@ -184,15 +191,15 @@ if ($_POST["action"] == 'confirm_create_thirdparty' && $_POST["confirm"] == 'yes
 	}
 	else
 	{
-		$errmsg=$adh->error;
+		$errmsg=$object->error;
 	}
 }
 
 if ($_REQUEST["action"] == 'confirm_sendinfo' && $_REQUEST["confirm"] == 'yes')
 {
-	if ($adh->email)
+	if ($object->email)
 	{
-		$result=$adh->send_an_email($langs->transnoentitiesnoconv("ThisIsContentOfYourCard")."\n\n%INFOS%\n\n",$langs->transnoentitiesnoconv("CardContent"));
+		$result=$object->send_an_email($langs->transnoentitiesnoconv("ThisIsContentOfYourCard")."\n\n%INFOS%\n\n",$langs->transnoentitiesnoconv("CardContent"));
 		$mesg=$langs->trans("CardSent");
 	}
 }
@@ -212,79 +219,79 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->adhe
 	// Create new object
 	if ($result > 0)
 	{
-		$adh->oldcopy=dol_clone($adh);
+		$object->oldcopy=dol_clone($object);
 
 		// Change values
-		$adh->civilite_id = trim($_POST["civilite_id"]);
-		$adh->prenom      = trim($_POST["prenom"]);
-		$adh->nom         = trim($_POST["nom"]);
-		$adh->login       = trim($_POST["login"]);
-		$adh->pass        = trim($_POST["pass"]);
+		$object->civilite_id = trim($_POST["civilite_id"]);
+		$object->prenom      = trim($_POST["prenom"]);
+		$object->nom         = trim($_POST["nom"]);
+		$object->login       = trim($_POST["login"]);
+		$object->pass        = trim($_POST["pass"]);
 
-		$adh->societe     = trim($_POST["societe"]);
-        $adh->adresse     = trim($_POST["address"]);    // deprecated
-		$adh->address     = trim($_POST["address"]);
-        $adh->cp          = trim($_POST["zipcode"]);    // deprecated
-		$adh->zip         = trim($_POST["zipcode"]);
-        $adh->ville       = trim($_POST["town"]);       // deprecated
-        $adh->town        = trim($_POST["town"]);
+		$object->societe     = trim($_POST["societe"]);
+        $object->adresse     = trim($_POST["address"]);    // deprecated
+		$object->address     = trim($_POST["address"]);
+        $object->cp          = trim($_POST["zipcode"]);    // deprecated
+		$object->zip         = trim($_POST["zipcode"]);
+        $object->ville       = trim($_POST["town"]);       // deprecated
+        $object->town        = trim($_POST["town"]);
 
-		$adh->fk_departement = $_POST["departement_id"];
-		$adh->pays_id        = $_POST["pays_id"];
+		$object->fk_departement = $_POST["departement_id"];
+		$object->pays_id        = $_POST["pays_id"];
 
-		$adh->phone       = trim($_POST["phone"]);
-		$adh->phone_perso = trim($_POST["phone_perso"]);
-		$adh->phone_mobile= trim($_POST["phone_mobile"]);
-		$adh->email       = trim($_POST["email"]);
-		$adh->naiss       = $datenaiss;
+		$object->phone       = trim($_POST["phone"]);
+		$object->phone_perso = trim($_POST["phone_perso"]);
+		$object->phone_mobile= trim($_POST["phone_mobile"]);
+		$object->email       = trim($_POST["email"]);
+		$object->naiss       = $datenaiss;
 
-		$adh->typeid      = $_POST["typeid"];
-		$adh->note        = trim($_POST["comment"]);
-		$adh->morphy      = $_POST["morphy"];
+		$object->typeid      = $_POST["typeid"];
+		$object->note        = trim($_POST["comment"]);
+		$object->morphy      = $_POST["morphy"];
 
-		$adh->amount      = $_POST["amount"];
+		$object->amount      = $_POST["amount"];
 
-        if (GETPOST('deletephoto')) $adh->photo='';
-		elseif (! empty($_FILES['photo']['name'])) $adh->photo  = dol_sanitizeFileName($_FILES['photo']['name']);
+        if (GETPOST('deletephoto')) $object->photo='';
+		elseif (! empty($_FILES['photo']['name'])) $object->photo  = dol_sanitizeFileName($_FILES['photo']['name']);
 
 		// Get status and public property
-		$adh->statut      = $_POST["statut"];
-		$adh->public      = $_POST["public"];
+		$object->statut      = $_POST["statut"];
+		$object->public      = $_POST["public"];
 
 		// Get extra fields
 		foreach($_POST as $key => $value)
 		{
 			if (preg_match("/^options_/",$key))
 			{
-				$adh->array_options[$key]=$_POST[$key];
+				$object->array_options[$key]=$_POST[$key];
 			}
 		}
 
 		// Check if we need to also synchronize user information
 		$nosyncuser=0;
-		if ($adh->user_id)	// If linked to a user
+		if ($object->user_id)	// If linked to a user
 		{
-			if ($user->id != $adh->user_id && empty($user->rights->user->user->creer)) $nosyncuser=1;		// Disable synchronizing
+			if ($user->id != $object->user_id && empty($user->rights->user->user->creer)) $nosyncuser=1;		// Disable synchronizing
 		}
 
 		// Check if we need to also synchronize password information
 		$nosyncuserpass=0;
-		if ($adh->user_id)	// If linked to a user
+		if ($object->user_id)	// If linked to a user
 		{
-			if ($user->id != $adh->user_id && empty($user->rights->user->user->password)) $nosyncuserpass=1;	// Disable synchronizing
+			if ($user->id != $object->user_id && empty($user->rights->user->user->password)) $nosyncuserpass=1;	// Disable synchronizing
 		}
 
-		$result=$adh->update($user,0,$nosyncuser,$nosyncuserpass);
-		if ($result >= 0 && ! sizeof($adh->errors))
+		$result=$object->update($user,0,$nosyncuser,$nosyncuserpass);
+		if ($result >= 0 && ! sizeof($object->errors))
 		{
-            $dir= $conf->adherent->dir_output . '/' . get_exdir($adh->id,2,0,1).'/photos';
+            $dir= $conf->adherent->dir_output . '/' . get_exdir($object->id,2,0,1).'/photos';
 		    $file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
             if ($file_OK)
             {
     		    if (GETPOST('deletephoto'))
                 {
-                    $fileimg=$conf->adherent->dir_output.'/'.get_exdir($adh->id,2,0,1).'/photos/'.$adh->photo;
-                    $dirthumbs=$conf->adherent->dir_output.'/'.get_exdir($adh->id,2,0,1).'/photos/thumbs';
+                    $fileimg=$conf->adherent->dir_output.'/'.get_exdir($object->id,2,0,1).'/photos/'.$object->photo;
+                    $dirthumbs=$conf->adherent->dir_output.'/'.get_exdir($object->id,2,0,1).'/photos/thumbs';
                     dol_delete_file($fileimg);
                     dol_delete_dir_recursive($dirthumbs);
                 }
@@ -318,13 +325,13 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->adhe
     			}
             }
 
-			$_GET["rowid"]=$adh->id;
+			$_GET["rowid"]=$object->id;
 			$_REQUEST["action"]='';
 		}
 		else
 		{
-            if ($adh->error) $errmsg=$adh->error;
-            else $errmsgs=$adh->errors;
+            if ($object->error) $errmsg=$object->error;
+            else $errmsgs=$object->errors;
 			$action='';
 		}
 	}
@@ -371,39 +378,39 @@ if ($_POST["action"] == 'add' && $user->rights->adherent->creer)
     $userid=$_POST["userid"];
     $socid=$_POST["socid"];
 
-    $adh->civilite_id = $civilite_id;
-    $adh->prenom      = $prenom;
-    $adh->nom         = $nom;
-    $adh->societe     = $societe;
-    $adh->adresse     = $address; // deprecated
-    $adh->address     = $address;
-    $adh->cp          = $zip;     // deprecated
-    $adh->zip         = $zip;
-    $adh->ville       = $town;    // deprecated
-    $adh->town        = $town;
-    $adh->fk_departement = $departement_id;
-    $adh->pays_id     = $pays_id;
-    $adh->phone       = $phone;
-    $adh->phone_perso = $phone_perso;
-    $adh->phone_mobile= $phone_mobile;
-    $adh->email       = $email;
-    $adh->login       = $login;
-    $adh->pass        = $pass;
-    $adh->naiss       = $datenaiss;
-    $adh->photo       = $photo;
-    $adh->typeid      = $typeid;
-    $adh->note        = $comment;
-    $adh->morphy      = $morphy;
-    $adh->user_id     = $userid;
-    $adh->fk_soc      = $socid;
-    $adh->public      = $public;
+    $object->civilite_id = $civilite_id;
+    $object->prenom      = $prenom;
+    $object->nom         = $nom;
+    $object->societe     = $societe;
+    $object->adresse     = $address; // deprecated
+    $object->address     = $address;
+    $object->cp          = $zip;     // deprecated
+    $object->zip         = $zip;
+    $object->ville       = $town;    // deprecated
+    $object->town        = $town;
+    $object->fk_departement = $departement_id;
+    $object->pays_id     = $pays_id;
+    $object->phone       = $phone;
+    $object->phone_perso = $phone_perso;
+    $object->phone_mobile= $phone_mobile;
+    $object->email       = $email;
+    $object->login       = $login;
+    $object->pass        = $pass;
+    $object->naiss       = $datenaiss;
+    $object->photo       = $photo;
+    $object->typeid      = $typeid;
+    $object->note        = $comment;
+    $object->morphy      = $morphy;
+    $object->user_id     = $userid;
+    $object->fk_soc      = $socid;
+    $object->public      = $public;
 
     // Get extra fields
     foreach($_POST as $key => $value)
     {
         if (preg_match("/^options_/",$key))
         {
-            $adh->array_options[$key]=$_POST[$key];
+            $object->array_options[$key]=$_POST[$key];
         }
     }
 
@@ -463,19 +470,19 @@ if ($_POST["action"] == 'add' && $user->rights->adherent->creer)
 		$db->begin();
 
 		// Email a peu pres correct et le login n'existe pas
-        $result=$adh->create($user);
+        $result=$object->create($user);
 		if ($result > 0)
         {
 			$db->commit();
-			$rowid=$adh->id;
+			$rowid=$object->id;
 			$action='';
         }
         else
 		{
 			$db->rollback();
 
-			if ($adh->error) $errmsg=$adh->error;
-			else $errmsgs=$adh->errors;
+			if ($object->error) $errmsg=$object->error;
+			else $errmsgs=$object->errors;
 
 			$action = 'create';
         }
@@ -487,7 +494,7 @@ if ($_POST["action"] == 'add' && $user->rights->adherent->creer)
 
 if ($user->rights->adherent->supprimer && $_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes')
 {
-    $result=$adh->delete($rowid);
+    $result=$object->delete($rowid);
     if ($result > 0)
     {
     	Header("Location: liste.php");
@@ -495,40 +502,40 @@ if ($user->rights->adherent->supprimer && $_REQUEST["action"] == 'confirm_delete
     }
     else
     {
-    	$errmesg=$adh->error;
+    	$errmesg=$object->error;
     }
 }
 
 if ($user->rights->adherent->creer && $_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes')
 {
-    $result=$adh->validate($user);
+    $result=$object->validate($user);
 
     $adht = new AdherentType($db);
-    $adht->fetch($adh->typeid);
+    $adht->fetch($object->typeid);
 
-	if ($result >= 0 && ! sizeof($adh->errors))
+	if ($result >= 0 && ! sizeof($object->errors))
 	{
         // Send confirmation Email (selon param du type adherent sinon generique)
-		if ($adh->email && $_POST["send_mail"])
+		if ($object->email && $_POST["send_mail"])
 		{
-			$result=$adh->send_an_email($adht->getMailOnValid(),$conf->global->ADHERENT_MAIL_VALID_SUBJECT,array(),array(),array(),"","",0,2);
+			$result=$object->send_an_email($adht->getMailOnValid(),$conf->global->ADHERENT_MAIL_VALID_SUBJECT,array(),array(),array(),"","",0,2);
 			if ($result < 0)
 			{
-				$errmsg.=$adh->error;
+				$errmsg.=$object->error;
 			}
 		}
 
 	    // Rajoute l'utilisateur dans les divers abonnements (mailman, spip, etc...)
-	    if ($adh->add_to_abo() < 0)
+	    if ($object->add_to_abo() < 0)
 	    {
 	        // error
-	        $errmsg.= $langs->trans("FaildToAddToMailmanList").': '.$adh->error."<br>\n";
+	        $errmsg.= $langs->trans("FaildToAddToMailmanList").': '.$object->error."<br>\n";
 	    }
 	}
 	else
 	{
-        if ($adh->error) $errmsg=$adh->error;
-        else $errmsgs=$adh->errors;
+        if ($object->error) $errmsg=$object->error;
+        else $errmsgs=$object->errors;
 		$action='';
 	}
 }
@@ -536,53 +543,53 @@ if ($user->rights->adherent->creer && $_POST["action"] == 'confirm_valid' && $_P
 if ($user->rights->adherent->supprimer && $_POST["action"] == 'confirm_resign' && $_POST["confirm"] == 'yes')
 {
     $adht = new AdherentType($db);
-    $adht->fetch($adh->typeid);
+    $adht->fetch($object->typeid);
 
-    $result=$adh->resiliate($user);
+    $result=$object->resiliate($user);
 
-    if ($result >= 0 && ! sizeof($adh->errors))
+    if ($result >= 0 && ! sizeof($object->errors))
 	{
-	    if ($adh->email && $_POST["send_mail"])
+	    if ($object->email && $_POST["send_mail"])
 		{
-			$result=$adh->send_an_email($adht->getMailOnResiliate(),$conf->global->ADHERENT_MAIL_RESIL_SUBJECT,array(),array(),array(),"","",0,-1);
+			$result=$object->send_an_email($adht->getMailOnResiliate(),$conf->global->ADHERENT_MAIL_RESIL_SUBJECT,array(),array(),array(),"","",0,-1);
 		}
 		if ($result < 0)
 		{
-			$errmsg.=$adh->error;
+			$errmsg.=$object->error;
 		}
 
 	    // supprime l'utilisateur des divers abonnements ..
-	    if ($adh->del_to_abo() < 0)
+	    if ($object->del_to_abo() < 0)
 	    {
 	        // error
-	        $errmsg.=$langs->trans("FaildToRemoveFromMailmanList").': '.$adh->error."<br>\n";
+	        $errmsg.=$langs->trans("FaildToRemoveFromMailmanList").': '.$object->error."<br>\n";
 	    }
 	}
 	else
 	{
-		if ($adh->error) $errmsg=$adh->error;
-		else $errmsgs=$adh->errors;
+		if ($object->error) $errmsg=$object->error;
+		else $errmsgs=$object->errors;
 		$action='';
 	}
 }
 
 if ($user->rights->adherent->supprimer && $_POST["action"] == 'confirm_del_spip' && $_POST["confirm"] == 'yes')
 {
-	if (! sizeof($adh->errors))
+	if (! sizeof($object->errors))
 	{
-	    if(!$adh->del_to_spip()){
-	        $errmsg.="Echec de la suppression de l'utilisateur dans spip: ".$adh->error."<BR>\n";
+	    if(!$object->del_to_spip()){
+	        $errmsg.="Echec de la suppression de l'utilisateur dans spip: ".$object->error."<BR>\n";
 	    }
 	}
 }
 
 if ($user->rights->adherent->creer && $_POST["action"] == 'confirm_add_spip' && $_POST["confirm"] == 'yes')
 {
-	if (! sizeof($adh->errors))
+	if (! sizeof($object->errors))
 	{
-	    if (!$adh->add_to_spip())
+	    if (!$object->add_to_spip())
 	    {
-	        $errmsg.="Echec du rajout de l'utilisateur dans spip: ".$adh->error."<BR>\n";
+	        $errmsg.="Echec du rajout de l'utilisateur dans spip: ".$object->error."<BR>\n";
 	    }
 	}
 }
@@ -611,15 +618,15 @@ if ($action == 'create')
     /* Fiche creation                                                             */
     /*                                                                            */
     /* ************************************************************************** */
-    $adh->fk_departement = $_POST["departement_id"];
+    $object->fk_departement = $_POST["departement_id"];
 
     // We set pays_id, pays_code and label for the selected country
-    $adh->pays_id=$_POST["pays_id"]?$_POST["pays_id"]:$mysoc->pays_id;
-    if ($adh->pays_id)
+    $object->pays_id=$_POST["pays_id"]?$_POST["pays_id"]:$mysoc->pays_id;
+    if ($object->pays_id)
     {
         $sql = "SELECT rowid, code, libelle";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
-        $sql.= " WHERE rowid = ".$adh->pays_id;
+        $sql.= " WHERE rowid = ".$object->pays_id;
         $resql=$db->query($sql);
         if ($resql)
         {
@@ -629,9 +636,9 @@ if ($action == 'create')
         {
             dol_print_error($db);
         }
-        $adh->pays_id=$obj->rowid;
-        $adh->pays_code=$obj->code;
-        $adh->pays=$obj->libelle;
+        $object->pays_id=$obj->rowid;
+        $object->pays_code=$obj->code;
+        $object->pays=$obj->libelle;
     }
 
     $adht = new AdherentType($db);
@@ -662,14 +669,14 @@ if ($action == 'create')
     // Login
     if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
     {
-        print '<tr><td><span class="fieldrequired">'.$langs->trans("Login").' / '.$langs->trans("Id").'</span></td><td><input type="text" name="member_login" size="40" value="'.(isset($_POST["member_login"])?$_POST["member_login"]:$adh->login).'"></td></tr>';
+        print '<tr><td><span class="fieldrequired">'.$langs->trans("Login").' / '.$langs->trans("Id").'</span></td><td><input type="text" name="member_login" size="40" value="'.(isset($_POST["member_login"])?$_POST["member_login"]:$object->login).'"></td></tr>';
     }
 
     // Moral-Physique
     $morphys["phy"] = $langs->trans("Physical");
     $morphys["mor"] = $langs->trans("Moral");
     print '<tr><td><span class="fieldrequired">'.$langs->trans("Nature")."</span></td><td>\n";
-    print $html->selectarray("morphy", $morphys, isset($_POST["morphy"])?$_POST["morphy"]:$adh->morphy, 1);
+    print $html->selectarray("morphy", $morphys, isset($_POST["morphy"])?$_POST["morphy"]:$object->morphy, 1);
     print "</td>\n";
 
     // Type
@@ -684,19 +691,19 @@ if ($action == 'create')
     print "</td>\n";
 
     // Company
-    print '<tr><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.(isset($_POST["societe"])?$_POST["societe"]:$adh->societe).'"></td></tr>';
+    print '<tr><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.(isset($_POST["societe"])?$_POST["societe"]:$object->societe).'"></td></tr>';
 
     // Civility
     print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
-    print $htmlcompany->select_civilite(isset($_POST["civilite_id"])?$_POST["civilite_id"]:$adh->civilite_id,'civilite_id').'</td>';
+    print $htmlcompany->select_civilite(isset($_POST["civilite_id"])?$_POST["civilite_id"]:$object->civilite_id,'civilite_id').'</td>';
     print '</tr>';
 
     // Lastname
-    print '<tr><td><span class="fieldrequired">'.$langs->trans("Lastname").'</span></td><td><input type="text" name="nom" value="'.(isset($_POST["nom"])?$_POST["nom"]:$adh->nom).'" size="40"></td>';
+    print '<tr><td><span class="fieldrequired">'.$langs->trans("Lastname").'</span></td><td><input type="text" name="nom" value="'.(isset($_POST["nom"])?$_POST["nom"]:$object->nom).'" size="40"></td>';
     print '</tr>';
 
     // Firstname
-    print '<tr><td>'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40" value="'.(isset($_POST["prenom"])?$_POST["prenom"]:$adh->prenom).'"></td>';
+    print '<tr><td>'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40" value="'.(isset($_POST["prenom"])?$_POST["prenom"]:$object->prenom).'"></td>';
     print '</tr>';
 
     // Password
@@ -711,20 +718,20 @@ if ($action == 'create')
 
     // Address
     print '<tr><td valign="top">'.$langs->trans("Address").'</td><td>';
-    print '<textarea name="address" wrap="soft" cols="40" rows="2">'.(isset($_POST["address"])?$_POST["address"]:$adh->address).'</textarea>';
+    print '<textarea name="address" wrap="soft" cols="40" rows="2">'.(isset($_POST["address"])?$_POST["address"]:$object->address).'</textarea>';
     print '</td></tr>';
 
     // Zip / Town
     print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>';
-    print $htmlcompany->select_ziptown((isset($_POST["zipcode"])?$_POST["zipcode"]:$adh->zip),'zipcode',array('town','selectpays_id','departement_id'),6);
+    print $htmlcompany->select_ziptown((isset($_POST["zipcode"])?$_POST["zipcode"]:$object->zip),'zipcode',array('town','selectpays_id','departement_id'),6);
     print ' ';
-    print $htmlcompany->select_ziptown((isset($_POST["town"])?$_POST["town"]:$adh->town),'town',array('zipcode','selectpays_id','departement_id'));
+    print $htmlcompany->select_ziptown((isset($_POST["town"])?$_POST["town"]:$object->town),'town',array('zipcode','selectpays_id','departement_id'));
     print '</td></tr>';
 
     // Country
-    $adh->pays_id=$adh->pays_id?$adh->pays_id:$mysoc->pays_id;
+    $object->pays_id=$object->pays_id?$object->pays_id:$mysoc->pays_id;
     print '<tr><td width="25%">'.$langs->trans('Country').'</td><td>';
-    $html->select_pays(isset($_POST["pays_id"])?$_POST["pays_id"]:$adh->pays_id,'pays_id');
+    $html->select_pays(isset($_POST["pays_id"])?$_POST["pays_id"]:$object->pays_id,'pays_id');
     if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
     print '</td></tr>';
 
@@ -732,9 +739,9 @@ if ($action == 'create')
     if (empty($conf->global->MEMBER_DISABLE_STATE))
     {
         print '<tr><td>'.$langs->trans('State').'</td><td>';
-        if ($adh->pays_id)
+        if ($object->pays_id)
         {
-            $htmlcompany->select_departement(isset($_POST["departement_id"])?$_POST["departement_id"]:$adh->fk_departement,$adh->pays_code);
+            $htmlcompany->select_departement(isset($_POST["departement_id"])?$_POST["departement_id"]:$object->fk_departement,$object->pays_code);
         }
         else
         {
@@ -744,34 +751,38 @@ if ($action == 'create')
     }
 
     // Tel pro
-    print '<tr><td>'.$langs->trans("PhonePro").'</td><td><input type="text" name="phone" size="20" value="'.(isset($_POST["phone"])?$_POST["phone"]:$adh->phone).'"></td></tr>';
+    print '<tr><td>'.$langs->trans("PhonePro").'</td><td><input type="text" name="phone" size="20" value="'.(isset($_POST["phone"])?$_POST["phone"]:$object->phone).'"></td></tr>';
 
     // Tel perso
-    print '<tr><td>'.$langs->trans("PhonePerso").'</td><td><input type="text" name="phone_perso" size="20" value="'.(isset($_POST["phone_perso"])?$_POST["phone_perso"]:$adh->phone_perso).'"></td></tr>';
+    print '<tr><td>'.$langs->trans("PhonePerso").'</td><td><input type="text" name="phone_perso" size="20" value="'.(isset($_POST["phone_perso"])?$_POST["phone_perso"]:$object->phone_perso).'"></td></tr>';
 
     // Tel mobile
-    print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td><input type="text" name="phone_mobile" size="20" value="'.(isset($_POST["phone_mobile"])?$_POST["phone_mobile"]:$adh->phone_mobile).'"></td></tr>';
+    print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td><input type="text" name="phone_mobile" size="20" value="'.(isset($_POST["phone_mobile"])?$_POST["phone_mobile"]:$object->phone_mobile).'"></td></tr>';
 
     // EMail
-    print '<tr><td>'.($conf->global->ADHERENT_MAIL_REQUIRED?'<span class="fieldrequired">':'').$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED?'</span>':'').'</td><td><input type="text" name="member_email" size="40" value="'.(isset($_POST["member_email"])?$_POST["member_email"]:$adh->email).'"></td></tr>';
+    print '<tr><td>'.($conf->global->ADHERENT_MAIL_REQUIRED?'<span class="fieldrequired">':'').$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED?'</span>':'').'</td><td><input type="text" name="member_email" size="40" value="'.(isset($_POST["member_email"])?$_POST["member_email"]:$object->email).'"></td></tr>';
 
     // Birthday
     print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
-    $html->select_date(($adh->naiss ? $adh->naiss : -1),'naiss','','',1,'formsoc');
+    $html->select_date(($object->naiss ? $object->naiss : -1),'naiss','','',1,'formsoc');
     print "</td></tr>\n";
 
     // Profil public
     print "<tr><td>".$langs->trans("Public")."</td><td>\n";
-    print $html->selectyesno("public",$adh->public,1);
+    print $html->selectyesno("public",$object->public,1);
     print "</td></tr>\n";
 
-    // Attribut optionnels
-    foreach($extrafields->attribute_label as $key=>$label)
+    // Other attributes
+    $reshook=$hookmanager->executeHooks('showInputFields',$action,$object);    // Note that $action and $object may have been modified by hook
+    if (empty($reshook))
     {
-        $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:'');
-        print "<tr><td>".$label.'</td><td>';
-        print $extrafields->showInputField($key,$value);
-        print '</td></tr>'."\n";
+        foreach($extrafields->attribute_label as $key=>$label)
+        {
+            $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:'');
+            print "<tr><td>".$label.'</td><td>';
+            print $extrafields->showInputField($key,$value);
+            print '</td></tr>'."\n";
+        }
     }
 
 /*
@@ -779,13 +790,13 @@ if ($action == 'create')
     if ($conf->societe->enabled)
     {
         print '<tr><td>'.$langs->trans("LinkedToDolibarrThirdParty").'</td><td class="valeur">';
-        print $html->select_societes($adh->fk_soc,'socid','',1);
+        print $html->select_societes($object->fk_soc,'socid','',1);
         print '</td></tr>';
     }
 
     // Login Dolibarr
     print '<tr><td>'.$langs->trans("LinkedToDolibarrUser").'</td><td class="valeur">';
-    print $html->select_users($adh->user_id,'userid',1);
+    print $html->select_users($object->user_id,'userid',1);
     print '</td></tr>';
 */
     print "</table>\n";
@@ -805,19 +816,19 @@ if ($action == 'edit')
 	 *
 	 ********************************************/
 
-	$adh = new Adherent($db);
-    $res=$adh->fetch($rowid);
-    if ($res < 0) { dol_print_error($db,$adh->error); exit; }
-    $res=$adh->fetch_optionals($rowid,$extralabels);
-    if ($res < 0) { dol_print_error($db); exit; }
+	//$object = new Adherent($db);
+    $res=$object->fetch($rowid);
+    if ($res < 0) { dol_print_error($db,$object->error); exit; }
+    //$res=$object->fetch_optionals($rowid,$extralabels);
+    //if ($res < 0) { dol_print_error($db); exit; }
 
 	$adht = new AdherentType($db);
-    $adht->fetch($adh->typeid);
+    $adht->fetch($object->typeid);
 
 	// We set pays_id, and pays_code label of the chosen country
-	if (isset($_POST["pays"]) || $adh->pays_id)
+	if (isset($_POST["pays"]) || $object->pays_id)
 	{
-		$sql = "SELECT rowid, code, libelle from ".MAIN_DB_PREFIX."c_pays where rowid = ".(isset($_POST["pays"])?$_POST["pays"]:$adh->pays_id);
+		$sql = "SELECT rowid, code, libelle from ".MAIN_DB_PREFIX."c_pays where rowid = ".(isset($_POST["pays"])?$_POST["pays"]:$object->pays_id);
 		$resql=$db->query($sql);
 		if ($resql)
 		{
@@ -827,12 +838,12 @@ if ($action == 'edit')
 		{
 			dol_print_error($db);
 		}
-		$adh->pays_id=$obj->rowid;
-		$adh->pays_code=$obj->code;
-		$adh->pays=$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->libelle;
+		$object->pays_id=$obj->rowid;
+		$object->pays_code=$obj->code;
+		$object->pays=$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->libelle;
 	}
 
-	$head = member_prepare_head($adh);
+	$head = member_prepare_head($object);
 
 	dol_fiche_head($head, 'general', $langs->trans("Member"), 0, 'user');
 
@@ -852,42 +863,41 @@ if ($action == 'edit')
         print '</script>'."\n";
 	}
 
-	$rowspan=17;
-    if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) $rowspan+=1;
-	$rowspan+=sizeof($extrafields->attribute_label);
+	$rowspan=15;
+    if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) $rowspan++;
 	if ($conf->societe->enabled) $rowspan++;
 
 	print '<form name="formsoc" action="'.$_SERVER["PHP_SELF"].'" method="post" enctype="multipart/form-data">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print "<input type=\"hidden\" name=\"action\" value=\"update\">";
-	print "<input type=\"hidden\" name=\"rowid\" value=\"$rowid\">";
-	print "<input type=\"hidden\" name=\"statut\" value=\"".$adh->statut."\">";
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+	print '<input type="hidden" name="action" value="update" />';
+	print '<input type="hidden" name="rowid" value="'.$rowid.'" />';
+	print '<input type="hidden" name="statut" value="'.$object->statut.'" />';
 
 	print '<table class="border" width="100%">';
 
     // Ref
-    print '<tr><td>'.$langs->trans("Ref").'</td><td class="valeur" colspan="2">'.$adh->id.'</td></tr>';
+    print '<tr><td>'.$langs->trans("Ref").'</td><td class="valeur" colspan="2">'.$object->id.'</td></tr>';
 
     // Login
     if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
     {
-        print '<tr><td><span class="fieldrequired">'.$langs->trans("Login").' / '.$langs->trans("Id").'</span></td><td colspan="2"><input type="text" name="login" size="30" value="'.(isset($_POST["login"])?$_POST["login"]:$adh->login).'"></td></tr>';
+        print '<tr><td><span class="fieldrequired">'.$langs->trans("Login").' / '.$langs->trans("Id").'</span></td><td colspan="2"><input type="text" name="login" size="30" value="'.(isset($_POST["login"])?$_POST["login"]:$object->login).'"></td></tr>';
     }
 
     // Physique-Moral
 	$morphys["phy"] = $langs->trans("Physical");
 	$morphys["mor"] = $langs->trans("Morale");
 	print '<tr><td><span class="fieldrequired">'.$langs->trans("Nature").'</span></td><td>';
-	print $html->selectarray("morphy",  $morphys, isset($_POST["morphy"])?$_POST["morphy"]:$adh->morphy);
+	print $html->selectarray("morphy",  $morphys, isset($_POST["morphy"])?$_POST["morphy"]:$object->morphy);
 	print "</td>";
     // Photo
     print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
-    print $html->showphoto('memberphoto',$adh)."\n";
+    print $html->showphoto('memberphoto',$object)."\n";
     if ($caneditfieldmember)
     {
-        if ($adh->photo) print "<br>\n";
+        if ($object->photo) print "<br>\n";
         print '<table class="nobordernopadding">';
-        if ($adh->photo) print '<tr><td align="center"><input type="checkbox" class="flat" name="deletephoto" id="photodelete"> '.$langs->trans("Delete").'<br><br></td></tr>';
+        if ($object->photo) print '<tr><td align="center"><input type="checkbox" class="flat" name="deletephoto" id="photodelete"> '.$langs->trans("Delete").'<br><br></td></tr>';
         print '<tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
         print '<tr><td><input type="file" class="flat" name="photo" id="photoinput"></td></tr>';
         print '</table>';
@@ -898,54 +908,54 @@ if ($action == 'edit')
     print '<tr><td><span class="fieldrequired">'.$langs->trans("Type").'</span></td><td>';
     if ($user->rights->adherent->creer)
     {
-        print $html->selectarray("typeid",  $adht->liste_array(), (isset($_POST["typeid"])?$_POST["typeid"]:$adh->typeid));
+        print $html->selectarray("typeid",  $adht->liste_array(), (isset($_POST["typeid"])?$_POST["typeid"]:$object->typeid));
     }
     else
     {
         print $adht->getNomUrl(1);
-        print '<input type="hidden" name="typeid" value="'.$adh->typeid.'">';
+        print '<input type="hidden" name="typeid" value="'.$object->typeid.'">';
     }
     print "</td></tr>";
 
 	// Company
-	print '<tr><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.(isset($_POST["societe"])?$_POST["societe"]:$adh->societe).'"></td></tr>';
+	print '<tr><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.(isset($_POST["societe"])?$_POST["societe"]:$object->societe).'"></td></tr>';
 
 	// Civilite
 	print '<tr><td width="20%">'.$langs->trans("UserTitle").'</td><td width="35%">';
-	print $htmlcompany->select_civilite(isset($_POST["civilite_id"])?$_POST["civilite_id"]:$adh->civilite_id)."\n";
+	print $htmlcompany->select_civilite(isset($_POST["civilite_id"])?$_POST["civilite_id"]:$object->civilite_id)."\n";
 	print '</td>';
 	print '</tr>';
 
 	// Name
-	print '<tr><td><span class="fieldrequired">'.$langs->trans("Lastname").'</span></td><td><input type="text" name="nom" size="40" value="'.(isset($_POST["nom"])?$_POST["nom"]:$adh->nom).'"></td>';
+	print '<tr><td><span class="fieldrequired">'.$langs->trans("Lastname").'</span></td><td><input type="text" name="nom" size="40" value="'.(isset($_POST["nom"])?$_POST["nom"]:$object->nom).'"></td>';
 	print '</tr>';
 
 	// Firstname
-	print '<tr><td width="20%">'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40" value="'.(isset($_POST["prenom"])?$_POST["prenom"]:$adh->prenom).'"></td>';
+	print '<tr><td width="20%">'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40" value="'.(isset($_POST["prenom"])?$_POST["prenom"]:$object->prenom).'"></td>';
 	print '</tr>';
 
 	// Password
 	if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
 	{
-	    print '<tr><td><span class="fieldrequired">'.$langs->trans("Password").'</span></td><td><input type="password" name="pass" size="30" value="'.(isset($_POST["pass"])?$_POST["pass"]:$adh->pass).'"></td></tr>';
+	    print '<tr><td><span class="fieldrequired">'.$langs->trans("Password").'</span></td><td><input type="password" name="pass" size="30" value="'.(isset($_POST["pass"])?$_POST["pass"]:$object->pass).'"></td></tr>';
 	}
 
 	// Address
 	print '<tr><td>'.$langs->trans("Address").'</td><td>';
-	print '<textarea name="address" wrap="soft" cols="40" rows="2">'.(isset($_POST["address"])?$_POST["address"]:$adh->address).'</textarea>';
+	print '<textarea name="address" wrap="soft" cols="40" rows="2">'.(isset($_POST["address"])?$_POST["address"]:$object->address).'</textarea>';
 	print '</td></tr>';
 
     // Zip / Town
     print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>';
-    print $htmlcompany->select_ziptown((isset($_POST["zipcode"])?$_POST["zipcode"]:$adh->zip),'zipcode',array('town','selectpays_id','departement_id'),6);
+    print $htmlcompany->select_ziptown((isset($_POST["zipcode"])?$_POST["zipcode"]:$object->zip),'zipcode',array('town','selectpays_id','departement_id'),6);
     print ' ';
-    print $htmlcompany->select_ziptown((isset($_POST["town"])?$_POST["town"]:$adh->town),'town',array('zipcode','selectpays_id','departement_id'));
+    print $htmlcompany->select_ziptown((isset($_POST["town"])?$_POST["town"]:$object->town),'town',array('zipcode','selectpays_id','departement_id'));
     print '</td></tr>';
 
     // Country
-    //$adh->pays_id=$adh->pays_id?$adh->pays_id:$mysoc->pays_id;    // In edit mode we don't force to company country if not defined
+    //$object->pays_id=$object->pays_id?$object->pays_id:$mysoc->pays_id;    // In edit mode we don't force to company country if not defined
     print '<tr><td width="25%">'.$langs->trans('Country').'</td><td>';
-    $html->select_pays(isset($_POST["pays_id"])?$_POST["pays_id"]:$adh->pays_id,'pays_id');
+    $html->select_pays(isset($_POST["pays_id"])?$_POST["pays_id"]:$object->pays_id,'pays_id');
     if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
     print '</td></tr>';
 
@@ -953,49 +963,53 @@ if ($action == 'edit')
     if (empty($conf->global->MEMBER_DISABLE_STATE))
     {
     	print '<tr><td>'.$langs->trans('State').'</td><td>';
-    	$htmlcompany->select_departement($adh->fk_departement,$adh->pays_code);
+    	$htmlcompany->select_departement($object->fk_departement,$object->pays_code);
     	print '</td></tr>';
     }
 
 	// Tel
-	print '<tr><td>'.$langs->trans("PhonePro").'</td><td><input type="text" name="phone" size="20" value="'.(isset($_POST["phone"])?$_POST["phone"]:$adh->phone).'"></td></tr>';
+	print '<tr><td>'.$langs->trans("PhonePro").'</td><td><input type="text" name="phone" size="20" value="'.(isset($_POST["phone"])?$_POST["phone"]:$object->phone).'"></td></tr>';
 
 	// Tel perso
-	print '<tr><td>'.$langs->trans("PhonePerso").'</td><td><input type="text" name="phone_perso" size="20" value="'.(isset($_POST["phone_perso"])?$_POST["phone_perso"]:$adh->phone_perso).'"></td></tr>';
+	print '<tr><td>'.$langs->trans("PhonePerso").'</td><td><input type="text" name="phone_perso" size="20" value="'.(isset($_POST["phone_perso"])?$_POST["phone_perso"]:$object->phone_perso).'"></td></tr>';
 
 	// Tel mobile
-	print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td><input type="text" name="phone_mobile" size="20" value="'.(isset($_POST["phone_mobile"])?$_POST["phone_mobile"]:$adh->phone_mobile).'"></td></tr>';
+	print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td><input type="text" name="phone_mobile" size="20" value="'.(isset($_POST["phone_mobile"])?$_POST["phone_mobile"]:$object->phone_mobile).'"></td></tr>';
 
 	// EMail
-	print '<tr><td>'.($conf->global->ADHERENT_MAIL_REQUIRED?'<span class="fieldrequired">':'').$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED?'</span>':'').'</td><td><input type="text" name="email" size="40" value="'.(isset($_POST["email"])?$_POST["email"]:$adh->email).'"></td></tr>';
+	print '<tr><td>'.($conf->global->ADHERENT_MAIL_REQUIRED?'<span class="fieldrequired">':'').$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED?'</span>':'').'</td><td><input type="text" name="email" size="40" value="'.(isset($_POST["email"])?$_POST["email"]:$object->email).'"></td></tr>';
 
 	// Date naissance
     print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
-    $html->select_date(($adh->naiss ? $adh->naiss : -1),'naiss','','',1,'formsoc');
+    $html->select_date(($object->naiss ? $object->naiss : -1),'naiss','','',1,'formsoc');
     print "</td></tr>\n";
 
 	// Profil public
     print "<tr><td>".$langs->trans("Public")."</td><td>\n";
-    print $html->selectyesno("public",(isset($_POST["public"])?$_POST["public"]:$adh->public),1);
+    print $html->selectyesno("public",(isset($_POST["public"])?$_POST["public"]:$object->public),1);
     print "</td></tr>\n";
 
 	// Other attributes
-	foreach($extrafields->attribute_label as $key=>$label)
-	{
-	    $value=(isset($_POST["options_$key"])?$_POST["options_$key"]:$adh->array_options["options_$key"]);
-		print "<tr><td>".$label."</td><td>";
-        print $extrafields->showInputField($key,$value);
-		print "</td></tr>\n";
-	}
+    $reshook=$hookmanager->executeHooks('showInputFields',$action,$object);    // Note that $action and $object may have been modified by hook
+    if (empty($reshook))
+    {
+    	foreach($extrafields->attribute_label as $key=>$label)
+    	{
+    	    $value=(isset($_POST["options_$key"])?$_POST["options_$key"]:$object->array_options["options_$key"]);
+    		print "<tr><td>".$label."</td><td>";
+            print $extrafields->showInputField($key,$value);
+    		print "</td></tr>\n";
+    	}
+    }
 
 	// Third party Dolibarr
     if ($conf->societe->enabled)
     {
-    	print '<tr><td>'.$langs->trans("LinkedToDolibarrThirdParty").'</td><td class="valeur">';
-    	if ($adh->fk_soc)
+    	print '<tr><td>'.$langs->trans("LinkedToDolibarrThirdParty").'</td><td colspan="2" class="valeur">';
+    	if ($object->fk_soc)
 	    {
 	    	$company=new Societe($db);
-	    	$result=$company->fetch($adh->fk_soc);
+	    	$result=$company->fetch($object->fk_soc);
 	    	print $company->getNomUrl(1);
 	    }
 	    else
@@ -1006,10 +1020,10 @@ if ($action == 'edit')
     }
 
     // Login Dolibarr
-	print '<tr><td>'.$langs->trans("LinkedToDolibarrUser").'</td><td class="valeur">';
-	if ($adh->user_id)
+	print '<tr><td>'.$langs->trans("LinkedToDolibarrUser").'</td><td colspan="2" class="valeur">';
+	if ($object->user_id)
 	{
-		print $html->form_users($_SERVER['PHP_SELF'].'?rowid='.$adh->id,$adh->user_id,'none');
+		print $html->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id,$object->user_id,'none');
 	}
 	else print $langs->trans("NoDolibarrAccess");
 	print '</td></tr>';
@@ -1035,21 +1049,21 @@ if ($rowid && $action != 'edit')
 	/*                                                                            */
 	/* ************************************************************************** */
 
-    $adh = new Adherent($db);
-    $res=$adh->fetch($rowid);
-    if ($res < 0) { dol_print_error($db,$adh->error); exit; }
-    $res=$adh->fetch_optionals($rowid,$extralabels);
-	if ($res < 0) { dol_print_error($db); exit; }
+    //$object = new Adherent($db);
+    $res=$object->fetch($rowid);
+    if ($res < 0) { dol_print_error($db,$object->error); exit; }
+    //$res=$object->fetch_optionals($rowid,$extralabels);
+	//if ($res < 0) { dol_print_error($db); exit; }
 
     $adht = new AdherentType($db);
-    $res=$adht->fetch($adh->typeid);
+    $res=$adht->fetch($object->typeid);
 	if ($res < 0) { dol_print_error($db); exit; }
 
 
 	/*
 	 * Affichage onglets
 	 */
-	$head = member_prepare_head($adh);
+	$head = member_prepare_head($object);
 
 	dol_fiche_head($head, 'general', $langs->trans("Member"), 0, 'user');
 
@@ -1058,14 +1072,14 @@ if ($rowid && $action != 'edit')
 	// Confirm create user
 	if ($_GET["action"] == 'create_user')
 	{
-		$login=$adh->login;
+		$login=$object->login;
 		if (empty($login))
 		{
 			// Full firstname and name separated with a dot : firstname.name
 			include_once(DOL_DOCUMENT_ROOT.'/lib/functions2.lib.php');
-			$login=dol_buildlogin($adh->nom,$adh->prenom);
+			$login=dol_buildlogin($object->nom,$object->prenom);
 		}
-		if (empty($login)) $login=strtolower(substr($adh->prenom, 0, 4)) . strtolower(substr($adh->nom, 0, 4));
+		if (empty($login)) $login=strtolower(substr($object->prenom, 0, 4)) . strtolower(substr($object->nom, 0, 4));
 
 		// Create a form array
 		$formquestion=array(
@@ -1074,31 +1088,31 @@ if ($rowid && $action != 'edit')
         $text=$langs->trans("ConfirmCreateLogin").'<br>';
         if ($conf->societe->enabled)
         {
-            if ($adh->fk_soc > 0) $text.=$langs->trans("UserWillBeExternalUser");
+            if ($object->fk_soc > 0) $text.=$langs->trans("UserWillBeExternalUser");
             else $text.=$langs->trans("UserWillBeInternalUser");
         }
-		$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?rowid=".$adh->id,$langs->trans("CreateDolibarrLogin"),$text,"confirm_create_user",$formquestion,'yes');
+		$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?rowid=".$object->id,$langs->trans("CreateDolibarrLogin"),$text,"confirm_create_user",$formquestion,'yes');
 		if ($ret == 'html') print '<br>';
 	}
 
 	// Confirm create third party
 	if ($_GET["action"] == 'create_thirdparty')
 	{
-		$name = $adh->getFullName($langs);
+		$name = $object->getFullName($langs);
 		if (! empty($name))
 		{
-			if ($adh->societe) $name.=' ('.$adh->societe.')';
+			if ($object->societe) $name.=' ('.$object->societe.')';
 		}
 		else
 		{
-			$name=$adh->societe;
+			$name=$object->societe;
 		}
 
 		// Create a form array
 		$formquestion=array(
 		array('label' => $langs->trans("NameToCreate"), 'type' => 'text', 'name' => 'companyname', 'value' => $name));
 
-		$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?rowid=".$adh->id,$langs->trans("CreateDolibarrThirdParty"),$langs->trans("ConfirmCreateThirdParty"),"confirm_create_thirdparty",$formquestion,1);
+		$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?rowid=".$object->id,$langs->trans("CreateDolibarrThirdParty"),$langs->trans("ConfirmCreateThirdParty"),"confirm_create_thirdparty",$formquestion,1);
 		if ($ret == 'html') print '<br>';
 	}
 
@@ -1108,17 +1122,17 @@ if ($rowid && $action != 'edit')
 		$langs->load("mails");
 
         $adht = new AdherentType($db);
-        $adht->fetch($adh->typeid);
+        $adht->fetch($object->typeid);
 
-        $subjecttosend=$adh->makeSubstitution($conf->global->ADHERENT_MAIL_VALID_SUBJECT);
-        $texttosend=$adh->makeSubstitution($adht->getMailOnValid());
+        $subjecttosend=$object->makeSubstitution($conf->global->ADHERENT_MAIL_VALID_SUBJECT);
+        $texttosend=$object->makeSubstitution($adht->getMailOnValid());
 
         $tmp=$langs->trans("SendAnEMailToMember");
         $tmp.=' ('.$langs->trans("MailFrom").': <b>'.$conf->global->ADHERENT_MAIL_FROM.'</b>, ';
-        $tmp.=$langs->trans("MailRecipient").': <b>'.$adh->email.'</b>)';
+        $tmp.=$langs->trans("MailRecipient").': <b>'.$object->email.'</b>)';
         $helpcontent='';
         $helpcontent.='<b>'.$langs->trans("MailFrom").'</b>: '.$conf->global->ADHERENT_MAIL_FROM.'<br>'."\n";
-        $helpcontent.='<b>'.$langs->trans("MailRecipient").'</b>: '.$adh->email.'<br>'."\n";
+        $helpcontent.='<b>'.$langs->trans("MailRecipient").'</b>: '.$object->email.'<br>'."\n";
 		$helpcontent.='<b>'.$langs->trans("Subject").'</b>:<br>'."\n";
         $helpcontent.=$subjecttosend."\n";
         $helpcontent.="<br>";
@@ -1128,7 +1142,7 @@ if ($rowid && $action != 'edit')
 
         // Cree un tableau formulaire
         $formquestion=array();
-		if ($adh->email) $formquestion[0]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label,  'value' => ($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL?true:false));
+		if ($object->email) $formquestion[0]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label,  'value' => ($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL?true:false));
         $ret=$html->form_confirm("fiche.php?rowid=$rowid",$langs->trans("ValidateMember"),$langs->trans("ConfirmValidateMember"),"confirm_valid",$formquestion,1);
         if ($ret == 'html') print '<br>';
     }
@@ -1136,7 +1150,7 @@ if ($rowid && $action != 'edit')
     // Confirm send card by mail
     if ($action == 'sendinfo')
     {
-        $ret=$html->form_confirm("fiche.php?rowid=$rowid",$langs->trans("SendCardByMail"),$langs->trans("ConfirmSendCardByMail",$adh->email),"confirm_sendinfo",'',0,1);
+        $ret=$html->form_confirm("fiche.php?rowid=$rowid",$langs->trans("SendCardByMail"),$langs->trans("ConfirmSendCardByMail",$object->email),"confirm_sendinfo",'',0,1);
         if ($ret == 'html') print '<br>';
     }
 
@@ -1146,17 +1160,17 @@ if ($rowid && $action != 'edit')
 		$langs->load("mails");
 
         $adht = new AdherentType($db);
-        $adht->fetch($adh->typeid);
+        $adht->fetch($object->typeid);
 
-        $subjecttosend=$adh->makeSubstitution($conf->global->ADHERENT_MAIL_RESIL_SUBJECT);
-        $texttosend=$adh->makeSubstitution($adht->getMailOnResiliate());
+        $subjecttosend=$object->makeSubstitution($conf->global->ADHERENT_MAIL_RESIL_SUBJECT);
+        $texttosend=$object->makeSubstitution($adht->getMailOnResiliate());
 
         $tmp=$langs->trans("SendAnEMailToMember");
         $tmp.=' ('.$langs->trans("MailFrom").': <b>'.$conf->global->ADHERENT_MAIL_FROM.'</b>, ';
-        $tmp.=$langs->trans("MailRecipient").': <b>'.$adh->email.'</b>)';
+        $tmp.=$langs->trans("MailRecipient").': <b>'.$object->email.'</b>)';
         $helpcontent='';
         $helpcontent.='<b>'.$langs->trans("MailFrom").'</b>: '.$conf->global->ADHERENT_MAIL_FROM.'<br>'."\n";
-        $helpcontent.='<b>'.$langs->trans("MailRecipient").'</b>: '.$adh->email.'<br>'."\n";
+        $helpcontent.='<b>'.$langs->trans("MailRecipient").'</b>: '.$object->email.'<br>'."\n";
         $helpcontent.='<b>'.$langs->trans("Subject").'</b>:<br>'."\n";
         $helpcontent.=$subjecttosend."\n";
         $helpcontent.="<br>";
@@ -1166,7 +1180,7 @@ if ($rowid && $action != 'edit')
 
         // Cree un tableau formulaire
 		$formquestion=array();
-		if ($adh->email) $formquestion[0]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label, 'value' => ($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL?'true':'false'));
+		if ($object->email) $formquestion[0]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label, 'value' => ($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL?'true':'false'));
 		$ret=$html->form_confirm("fiche.php?rowid=$rowid",$langs->trans("ResiliateMember"),$langs->trans("ConfirmResiliateMember"),"confirm_resign",$formquestion);
         if ($ret == 'html') print '<br>';
     }
@@ -1196,8 +1210,8 @@ if ($rowid && $action != 'edit')
         if ($ret == 'html') print '<br>';
     }
 
-    $rowspan=19+sizeof($extrafields->attribute_label);
-    if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) $rowspan+=1;
+    $rowspan=17;
+    if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) $rowspan++;
     if ($conf->societe->enabled) $rowspan++;
 
     print '<table class="border" width="100%">';
@@ -1205,23 +1219,23 @@ if ($rowid && $action != 'edit')
     // Ref
     print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
 	print '<td class="valeur" colspan="2">';
-	print $html->showrefnav($adh,'rowid');
+	print $html->showrefnav($object,'rowid');
 	print '</td></tr>';
 
     $showphoto='<td rowspan="'.$rowspan.'" align="center" valign="middle" width="25%">';
-    $showphoto.=$html->showphoto('memberphoto',$adh);
+    $showphoto.=$html->showphoto('memberphoto',$object);
     $showphoto.='</td>';
 
     // Login
     if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
     {
-        print '<tr><td>'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$adh->login.'&nbsp;</td>';
+        print '<tr><td>'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td>';
         print $showphoto; $showphoto='';
         print '</tr>';
     }
 
 	// Morphy
-    print '<tr><td>'.$langs->trans("Nature").'</td><td class="valeur" >'.$adh->getmorphylib().'</td>';
+    print '<tr><td>'.$langs->trans("Nature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
     print $showphoto; $showphoto='';
     print '</tr>';
 
@@ -1229,71 +1243,75 @@ if ($rowid && $action != 'edit')
     print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
 
     // Company
-    print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$adh->societe.'</td></tr>';
+    print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->societe.'</td></tr>';
 
 	// Civility
-    print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$adh->getCivilityLabel().'&nbsp;</td>';
+    print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$object->getCivilityLabel().'&nbsp;</td>';
 	print '</tr>';
 
     // Name
-    print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur">'.$adh->nom.'&nbsp;</td>';
+    print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur">'.$object->nom.'&nbsp;</td>';
 	print '</tr>';
 
     // Firstname
-    print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur">'.$adh->prenom.'&nbsp;</td></tr>';
+    print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur">'.$object->prenom.'&nbsp;</td></tr>';
 
 	// Password
     if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
     {
-        print '<tr><td>'.$langs->trans("Password").'</td><td>'.preg_replace('/./i','*',$adh->pass).'</td></tr>';
+        print '<tr><td>'.$langs->trans("Password").'</td><td>'.preg_replace('/./i','*',$object->pass).'</td></tr>';
     }
 
     // Address
     print '<tr><td>'.$langs->trans("Address").'</td><td class="valeur">';
-    dol_print_address($adh->address,'gmap','member',$adh->id);
+    dol_print_address($object->address,'gmap','member',$object->id);
     print '</td></tr>';
 
     // Zip / Town
-    print '<tr><td nowrap="nowrap">'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td class="valeur">'.$adh->zip.(($adh->zip && $adh->town)?' / ':'').$adh->town.'</td></tr>';
+    print '<tr><td nowrap="nowrap">'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td class="valeur">'.$object->zip.(($object->zip && $object->town)?' / ':'').$object->town.'</td></tr>';
 
 	// Country
     print '<tr><td>'.$langs->trans("Country").'</td><td class="valeur">';
-	$img=picto_from_langcode($adh->pays_code);
+	$img=picto_from_langcode($object->pays_code);
 	if ($img) print $img.' ';
-    print getCountry($adh->pays_code);
+    print getCountry($object->pays_code);
     print '</td></tr>';
 
 	// State
-	print '<tr><td>'.$langs->trans('State').'</td><td class="valeur">'.$adh->departement.'</td>';
+	print '<tr><td>'.$langs->trans('State').'</td><td class="valeur">'.$object->departement.'</td>';
 
     // Tel pro.
-    print '<tr><td>'.$langs->trans("PhonePro").'</td><td class="valeur">'.dol_print_phone($adh->phone,$adh->pays_code,0,$adh->fk_soc,1).'</td></tr>';
+    print '<tr><td>'.$langs->trans("PhonePro").'</td><td class="valeur">'.dol_print_phone($object->phone,$object->pays_code,0,$object->fk_soc,1).'</td></tr>';
 
     // Tel perso
-    print '<tr><td>'.$langs->trans("PhonePerso").'</td><td class="valeur">'.dol_print_phone($adh->phone_perso,$adh->pays_code,0,$adh->fk_soc,1).'</td></tr>';
+    print '<tr><td>'.$langs->trans("PhonePerso").'</td><td class="valeur">'.dol_print_phone($object->phone_perso,$object->pays_code,0,$object->fk_soc,1).'</td></tr>';
 
     // Tel mobile
-    print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td class="valeur">'.dol_print_phone($adh->phone_mobile,$adh->pays_code,0,$adh->fk_soc,1).'</td></tr>';
+    print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td class="valeur">'.dol_print_phone($object->phone_mobile,$object->pays_code,0,$object->fk_soc,1).'</td></tr>';
 
     // EMail
-    print '<tr><td>'.$langs->trans("EMail").'</td><td class="valeur">'.dol_print_email($adh->email,0,$adh->fk_soc,1).'</td></tr>';
+    print '<tr><td>'.$langs->trans("EMail").'</td><td class="valeur">'.dol_print_email($object->email,0,$object->fk_soc,1).'</td></tr>';
 
 	// Date naissance
-    print '<tr><td>'.$langs->trans("Birthday").'</td><td class="valeur">'.dol_print_date($adh->naiss,'day').'</td></tr>';
+    print '<tr><td>'.$langs->trans("Birthday").'</td><td class="valeur">'.dol_print_date($object->naiss,'day').'</td></tr>';
 
     // Public
-    print '<tr><td>'.$langs->trans("Public").'</td><td class="valeur">'.yn($adh->public).'</td></tr>';
+    print '<tr><td>'.$langs->trans("Public").'</td><td class="valeur">'.yn($object->public).'</td></tr>';
 
     // Status
-    print '<tr><td>'.$langs->trans("Status").'</td><td class="valeur">'.$adh->getLibStatut(4).'</td></tr>';
+    print '<tr><td>'.$langs->trans("Status").'</td><td class="valeur">'.$object->getLibStatut(4).'</td></tr>';
 
     // Other attributes
-    foreach($extrafields->attribute_label as $key=>$label)
+    $reshook=$hookmanager->executeHooks('showOutputField',$action,$object,$socid);    // Note that $action and $object may have been modified by hook
+    if (empty($reshook))
     {
-        $value=$adh->array_options["options_$key"];
-        print "<tr><td>".$label."</td><td>";
-        print $extrafields->showOutputField($key,$value);
-        print "</td></tr>\n";
+        foreach($extrafields->attribute_label as $key=>$label)
+        {
+            $value=$object->array_options["options_$key"];
+            print "<tr><td>".$label."</td><td>";
+            print $extrafields->showOutputField($key,$value);
+            print "</td></tr>\n";
+        }
     }
 
 	// Third party Dolibarr
@@ -1303,29 +1321,29 @@ if ($rowid && $action != 'edit')
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 	    print $langs->trans("LinkedToDolibarrThirdParty");
 	    print '</td>';
-		if ($_GET['action'] != 'editthirdparty' && $user->rights->adherent->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editthirdparty&amp;rowid='.$adh->id.'">'.img_edit($langs->trans('SetLinkToThirdParty'),1).'</a></td>';
+		if ($_GET['action'] != 'editthirdparty' && $user->rights->adherent->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editthirdparty&amp;rowid='.$object->id.'">'.img_edit($langs->trans('SetLinkToThirdParty'),1).'</a></td>';
 		print '</tr></table>';
-	    print '</td><td class="valeur">';
+	    print '</td><td colspan="2" class="valeur">';
 		if ($_GET['action'] == 'editthirdparty')
 		{
 			$htmlname='socid';
 			print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" name="form'.$htmlname.'">';
-            print '<input type="hidden" name="rowid" value="'.$adh->id.'">';
+            print '<input type="hidden" name="rowid" value="'.$object->id.'">';
 			print '<input type="hidden" name="action" value="set'.$htmlname.'">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
 			print '<tr><td>';
-			print $html->select_societes($adh->fk_soc,'socid','',1);
+			print $html->select_societes($object->fk_soc,'socid','',1);
 			print '</td>';
 			print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 			print '</tr></table></form>';
 		}
 		else
 		{
-			if ($adh->fk_soc)
+			if ($object->fk_soc)
 		    {
 		    	$company=new Societe($db);
-		    	$result=$company->fetch($adh->fk_soc);
+		    	$result=$company->fetch($object->fk_soc);
 		    	print $company->getNomUrl(1);
 		    }
 		    else
@@ -1341,23 +1359,23 @@ if ($rowid && $action != 'edit')
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans("LinkedToDolibarrUser");
 	print '</td>';
-	if ($_GET['action'] != 'editlogin' && $user->rights->adherent->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editlogin&amp;rowid='.$adh->id.'">'.img_edit($langs->trans('SetLinkToUser'),1).'</a></td>';
+	if ($_GET['action'] != 'editlogin' && $user->rights->adherent->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editlogin&amp;rowid='.$object->id.'">'.img_edit($langs->trans('SetLinkToUser'),1).'</a></td>';
 	print '</tr></table>';
-	print '</td><td class="valeur">';
+	print '</td><td colspan="2" class="valeur">';
 	if ($_GET['action'] == 'editlogin')
 	{
 		/*$include=array();
 		if (empty($user->rights->user->user->creer))	// If can edit only itself user, we can link to itself only
 		{
-			$include=array($adh->user_id,$user->id);
+			$include=array($object->user_id,$user->id);
 		}*/
-		print $html->form_users($_SERVER['PHP_SELF'].'?rowid='.$adh->id,$adh->user_id,'userid','');
+		print $html->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id,$object->user_id,'userid','');
 	}
 	else
 	{
-		if ($adh->user_id)
+		if ($object->user_id)
 		{
-			print $html->form_users($_SERVER['PHP_SELF'].'?rowid='.$adh->id,$adh->user_id,'none');
+			print $html->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id,$object->user_id,'none');
 		}
 		else print $langs->trans("NoDolibarrAccess");
 	}
@@ -1387,7 +1405,7 @@ if ($rowid && $action != 'edit')
 		}
 
 		// Valider
-		if ($adh->statut == -1)
+		if ($object->statut == -1)
 		{
 			if ($user->rights->adherent->creer)
 			{
@@ -1400,7 +1418,7 @@ if ($rowid && $action != 'edit')
 		}
 
 		// Reactiver
-		if ($adh->statut == 0)
+		if ($object->statut == 0)
 		{
 			if ($user->rights->adherent->creer)
 			{
@@ -1413,11 +1431,11 @@ if ($rowid && $action != 'edit')
 		}
 
 		// Envoi fiche par mail
-		if ($adh->statut >= 1)
+		if ($object->statut >= 1)
 		{
 			if ($user->rights->adherent->creer)
 			{
-				if ($adh->email) print "<a class=\"butAction\" href=\"fiche.php?rowid=$adh->id&action=sendinfo\">".$langs->trans("SendCardByMail")."</a>\n";
+				if ($object->email) print "<a class=\"butAction\" href=\"fiche.php?rowid=$object->id&action=sendinfo\">".$langs->trans("SendCardByMail")."</a>\n";
 				else print "<a class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NoEMail"))."\">".$langs->trans("SendCardByMail")."</a>\n";
 		    }
 			else
@@ -1427,7 +1445,7 @@ if ($rowid && $action != 'edit')
 		}
 
 		// Resilier
-		if ($adh->statut >= 1)
+		if ($object->statut >= 1)
 		{
 			if ($user->rights->adherent->supprimer)
 			{
@@ -1440,11 +1458,11 @@ if ($rowid && $action != 'edit')
 		}
 
 		// Create third party
-		if ($conf->societe->enabled && ! $adh->fk_soc)
+		if ($conf->societe->enabled && ! $object->fk_soc)
 		{
 			if ($user->rights->societe->creer)
 			{
-				if ($adh->statut != -1) print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$adh->id.'&amp;action=create_thirdparty">'.$langs->trans("CreateDolibarrThirdParty").'</a>';
+				if ($object->statut != -1) print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&amp;action=create_thirdparty">'.$langs->trans("CreateDolibarrThirdParty").'</a>';
 				else print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("CreateDolibarrThirdParty").'</a>';
 			}
 			else
@@ -1454,11 +1472,11 @@ if ($rowid && $action != 'edit')
 		}
 
 		// Create user
-		if (! $user->societe_id && ! $adh->user_id)
+		if (! $user->societe_id && ! $object->user_id)
 		{
 			if ($user->rights->user->user->creer)
 			{
-				if ($adh->statut != -1) print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$adh->id.'&amp;action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a>';
+				if ($object->statut != -1) print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&amp;action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a>';
 				else print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("CreateDolibarrLogin").'</a>';
 			}
 			else
@@ -1470,7 +1488,7 @@ if ($rowid && $action != 'edit')
 		// Delete
 	    if ($user->rights->adherent->supprimer)
 	    {
-	        print "<a class=\"butActionDelete\" href=\"fiche.php?rowid=$adh->id&action=delete\">".$langs->trans("Delete")."</a>\n";
+	        print "<a class=\"butActionDelete\" href=\"fiche.php?rowid=$object->id&action=delete\">".$langs->trans("Delete")."</a>\n";
 	    }
 		else
 		{
@@ -1480,17 +1498,17 @@ if ($rowid && $action != 'edit')
 	    // Action SPIP
 	    if ($conf->global->ADHERENT_USE_SPIP)
 	    {
-	        $isinspip=$adh->is_in_spip();
+	        $isinspip=$object->is_in_spip();
 	        if ($isinspip == 1)
 	        {
-	            print "<a class=\"butAction\" href=\"fiche.php?rowid=$adh->id&action=del_spip\">".$langs->trans("DeleteIntoSpip")."</a>\n";
+	            print "<a class=\"butAction\" href=\"fiche.php?rowid=$object->id&action=del_spip\">".$langs->trans("DeleteIntoSpip")."</a>\n";
 	        }
 	        if ($isinspip == 0)
 	        {
-	            print "<a class=\"butAction\" href=\"fiche.php?rowid=$adh->id&action=add_spip\">".$langs->trans("AddIntoSpip")."</a>\n";
+	            print "<a class=\"butAction\" href=\"fiche.php?rowid=$object->id&action=add_spip\">".$langs->trans("AddIntoSpip")."</a>\n";
 	        }
 	        if ($isinspip == -1) {
-	            print '<br><font class="error">Failed to connect to SPIP: '.$adh->error.'</font>';
+	            print '<br><font class="error">Failed to connect to SPIP: '.$object->error.'</font>';
 	        }
 	    }
 
@@ -1504,5 +1522,5 @@ if ($rowid && $action != 'edit')
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:27 $ - $Revision: 1.238 $');
+llxFooter('$Date: 2011/08/10 00:50:19 $ - $Revision: 1.240 $');
 ?>

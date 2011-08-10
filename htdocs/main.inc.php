@@ -25,7 +25,7 @@
  *	\file       htdocs/main.inc.php
  *	\ingroup	core
  *	\brief      File that defines environment for Dolibarr pages only (variables not required by scripts)
- *	\version    $Id: main.inc.php,v 1.756 2011/07/31 23:19:05 eldy Exp $
+ *	\version    $Id: main.inc.php,v 1.757 2011/08/10 00:50:19 eldy Exp $
  */
 
 @ini_set('memory_limit', '64M');	// This may be useless if memory is hard limited by your PHP
@@ -1311,12 +1311,9 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	print "\n";
 
 	// Instantiate hooks of thirdparty module
-	if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
-	{
-		require_once(DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php');
-		$object = new CommonObject($db);
-		$object->callHooks(array('searchform','leftblock'));
-	}
+    include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+    $hookmanager=new HookManager($db);
+    $hookmanager->callHooks(array('printSearchform','leftblock'));
 
 	// Define $searchform
 	if ($conf->societe->enabled && $conf->global->MAIN_SEARCHFORM_SOCIETE && $user->rights->societe->lire)
@@ -1348,24 +1345,8 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 		img_object('','user').' '.$langs->trans("Members"), 'member', 'sall');
 	}
 
-	// Search form hook for external modules
-	if (! empty($object->hooks))
-	{
-		$searchform.='<!-- Begin search form hook area -->'."\n";
-
-		foreach($object->hooks as $hook)
-		{
-			if ($hook['type'] == 'searchform' && ! empty($hook['modules']))
-			{
-				foreach($hook['modules'] as $module)
-				{
-					if (method_exists($module,'printSearchForm')) $searchform.=$module->printSearchForm();
-				}
-			}
-		}
-
-        $searchform.="\n".'<!-- End of search form hook area -->'."\n";
-    }
+	// Execute hook printSearchForm
+    $searchform.=$hookmanager->executeHooks('printSearchForm');    // Note that $action and $object may have been modified by some hooks
 
 	// Define $bookmarks
 	if ($conf->bookmark->enabled && $user->rights->bookmark->lire)
@@ -1475,24 +1456,9 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 
 	print "\n";
 
-	// Left block hook for external modules
-	if (! empty($object->hooks))
-	{
-		print '<!-- Begin left block hook area -->'."\n";
-
-		foreach($object->hooks as $hook)
-		{
-			if ($hook['type'] == 'leftblock' && ! empty($hook['modules']))
-			{
-				foreach($hook['modules'] as $module)
-				{
-					if (method_exists($module,'printLeftBlock')) $module->printLeftBlock();
-				}
-			}
-		}
-
-        print "\n".'<!-- End of left block hook area -->'."\n";
-    }
+	// Execute hook printLeftBlock
+    $leftblock.=$hookmanager->executeHooks('printLeftBlock');    // Note that $action and $object may have been modified by some hooks
+    print $leftblock;
 
 	if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '</div> <!-- End left layout -->'."\n";
 	else print '</td>';
