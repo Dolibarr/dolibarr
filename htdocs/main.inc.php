@@ -25,7 +25,7 @@
  *	\file       htdocs/main.inc.php
  *	\ingroup	core
  *	\brief      File that defines environment for Dolibarr pages only (variables not required by scripts)
- *	\version    $Id: main.inc.php,v 1.757 2011/08/10 00:50:19 eldy Exp $
+ *	\version    $Id: main.inc.php,v 1.758 2011/08/10 11:23:41 eldy Exp $
  */
 
 @ini_set('memory_limit', '64M');	// This may be useless if memory is hard limited by your PHP
@@ -1313,7 +1313,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	// Instantiate hooks of thirdparty module
     include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
     $hookmanager=new HookManager($db);
-    $hookmanager->callHooks(array('printSearchform','leftblock'));
+    $hookmanager->callHooks(array('searchform','leftblock'));
 
 	// Define $searchform
 	if ($conf->societe->enabled && $conf->global->MAIN_SEARCHFORM_SOCIETE && $user->rights->societe->lire)
