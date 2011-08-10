@@ -21,7 +21,7 @@
  *	\file       htdocs/core/class/commonobject.class.php
  *	\ingroup    core
  *	\brief      File of parent class of all other business classes (invoices, contracts, proposals, orders, ...)
- *	\version    $Id: commonobject.class.php,v 1.154 2011/08/10 22:47:34 eldy Exp $
+ *	\version    $Id: commonobject.class.php,v 1.152 2011/08/10 10:55:37 hregis Exp $
  */
 
 
@@ -1655,7 +1655,7 @@ class CommonObject
      *  @param		$selected		   	Object line selected
      *  @param      $dateSelector      	1=Show also date range input fields
 	 */
-	function printObjectLines($action='viewline',$seller,$buyer,$selected=0,$dateSelector=0,$hookmanager=false)
+	function printObjectLines($action='viewline',$seller,$buyer,$selected=0,$dateSelector=0,$hookmanager='')
 	{
 		global $conf,$langs;
 
@@ -1703,7 +1703,16 @@ class CommonObject
 				if (empty($line->fk_parent_line))
 				{
 					$parameters = array('line'=>$line,'var'=>$var,'num'=>$num,'i'=>$i,'dateSelector'=>$dateSelector,'seller'=>$seller,'buyer'=>$buyer,'selected'=>$selected);
-					$reshook=$hookmanager->executeHooks('printObjectLine',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+					$reshook=$hookmanager->executeHooks('printObjectLine',$action,$this,'',$parameters);    // Note that $action and $object may have been modified by some hooks
+					/*
+					foreach($this->hooks as $hook)
+					{
+						if (method_exists($hook['modules'][$line->special_code],'printObjectLine'))
+						{
+							$hook['modules'][$line->special_code]->printObjectLine($action,$this,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected);
+						}
+					}
+					*/
 				}
 			}
 			else
