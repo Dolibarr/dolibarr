@@ -23,11 +23,11 @@
  *  \ingroup    propale
  *  \brief      Fichier contenant la classe mere de generation des propales en PDF
  *  			et la classe mere de numerotation des propales
- *	\version    $Id: modules_propale.php,v 1.64 2011/08/10 17:40:44 hregis Exp $
+ *	\version    $Id: modules_propale.php,v 1.65 2011/08/10 23:21:13 eldy Exp $
  */
 
+require_once(FPDFI_PATH.'fpdi_protection.php');
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
-require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");   // Requis car utilise dans les classes qui heritent
 
 
@@ -196,14 +196,14 @@ function propale_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0,
 			$outputlangs->charset_output=$sav_charset_output;
 			// on supprime l'image correspondant au preview
 			propale_delete_preview($db, $object->id);
-			
+
 			// Appel des triggers
 			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 			$interface=new Interfaces($db);
 			$result=$interface->run_triggers('PROPAL_BUILDDOC',$object,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
-			
+
 			return 1;
 		}
 		else

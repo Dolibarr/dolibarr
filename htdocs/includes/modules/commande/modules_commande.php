@@ -25,11 +25,11 @@
  *  \ingroup		commande
  *  \brief			Fichier contenant la classe mere de generation des commandes en PDF
  *  				et la classe mere de numerotation des commandes
- *  \version    	$Id: modules_commande.php,v 1.49 2011/08/10 17:40:45 hregis Exp $
+ *  \version    	$Id: modules_commande.php,v 1.50 2011/08/10 23:21:09 eldy Exp $
  */
 
+require_once(FPDFI_PATH.'fpdi_protection.php');
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
-require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");	// requis car utilise par les classes qui heritent
 require_once(DOL_DOCUMENT_ROOT.'/core/class/discount.class.php');
 
@@ -197,14 +197,14 @@ function commande_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0
 			$outputlangs->charset_output=$sav_charset_output;
 			// on supprime l'image correspondant au preview
 			commande_delete_preview($db, $object->id);
-			
+
 			// Appel des triggers
 			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 			$interface=new Interfaces($db);
 			$result=$interface->run_triggers('ORDER_BUILDDOC',$object,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
-			
+
 			return 1;
 		}
 		else
