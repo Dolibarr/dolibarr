@@ -14,12 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: error.tpl.php,v 1.2 2011/07/31 23:45:12 eldy Exp $
+ * $Id: error.tpl.php,v 1.3 2011/08/10 23:30:22 eldy Exp $
  */
 ?>
- 
-<!-- BEGIN SMARTY TEMPLATE -->
+
+<!-- BEGIN TEMPLATE -->
 
 
 
-<!-- END SMARTY TEMPLATE -->
+<!-- END TEMPLATE -->
