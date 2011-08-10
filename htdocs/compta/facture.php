@@ -25,7 +25,7 @@
  *	\file       htdocs/compta/facture.php
  *	\ingroup    facture
  *	\brief      Page to create/see an invoice
- *	\version    $Id: facture.php,v 1.850 2011/08/03 00:46:23 eldy Exp $
+ *	\version    $Id: facture.php,v 1.851 2011/08/10 17:56:13 hregis Exp $
  */
 
 require('../main.inc.php');
@@ -74,41 +74,17 @@ $usehm=$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE;
 
 $object=new Facture($db);
 
-// Instantiate hooks of thirdparty module
-if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
-{
-    $object->callHooks('invoicecard');
-}
-
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+$hookmanager=new HookManager($db);
+$hookmanager->callHooks(array('invoicecard'));
 
 
 /******************************************************************************/
 /*                     Actions                                                */
 /******************************************************************************/
 
-// Hook of actions
-if (! empty($object->hooks))
-{
-	foreach($object->hooks as $hook)
-	{
-		if (! empty($hook['modules']))
-		{
-			foreach($hook['modules'] as $module)
-			{
-				if (method_exists($module,'doActions'))
-				{
-					$reshook+=$module->doActions($object);
-			        if (! empty($module->error) || (! empty($module->errors) && sizeof($module->errors) > 0))
-			        {
-			            $mesg=$module->error; $mesgs=$module->errors;
-			            if ($action=='add')    $action='create';
-			            if ($action=='update') $action='edit';
-			        }
-				}
-			}
-		}
-	}
-}
+$reshook=$hookmanager->executeHooks('doActions',$action,$object,$socid);    // Note that $action and $object may have been modified by some hooks
 
 // Action clone object
 if ($action == 'confirm_clone' && $confirm == 'yes')
@@ -805,23 +781,8 @@ if ($action == 'add' && $user->rights->facture->creer)
                         }
 
                         // Hooks
-                        if (! empty($object->hooks))
-                        {
-                        	foreach($object->hooks as $hook)
-                        	{
-                        		if (! empty($hook['modules']))
-                        		{
-                        			foreach($hook['modules'] as $module)
-                        			{
-                        				if (method_exists($module,'createfrom'))
-                        				{
-                        					$res = $module->createfrom($srcobject,$id,$object->element);
-                        					if ($res < 0) $error++;
-                        				}
-                        			}
-                        		}
-                        	}
-                        }
+                        $reshook=$hookmanager->executeHooks('createfrom',$action,$srcobject,$id,$object->element);    // Note that $action and $object may have been modified by hook
+                        if ($reshook < 0) $error++;
                     }
                     else
                     {
@@ -1415,7 +1376,7 @@ if (GETPOST('action') == 'builddoc')	// En get ou en post
         $outputlangs = new Translate("",$conf);
         $outputlangs->setDefaultLang($newlang);
     }
-    $result=facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
+    $result=facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
     if ($result <= 0)
     {
         dol_print_error($db,$result);
@@ -2071,21 +2032,8 @@ else
                 // Paiement incomplet. On demande si motif = escompte ou autre
                 $formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id,$langs->trans('CloneInvoice'),$langs->trans('ConfirmCloneInvoice',$object->ref),'confirm_clone',$formquestion,'yes',1);
             }
-
-            // Hook for external modules
-            if (empty($formconfirm) && ! empty($object->hooks))
-            {
-            	foreach($object->hooks as $hook)
-            	{
-            		if (! empty($hook['modules']))
-            		{
-            			 foreach($hook['modules'] as $module)
-            			 {
-            			 	if (empty($formconfirm) && method_exists($module,'formconfirm')) $formconfirm = $module->formconfirm($action,$object,$lineid);
-            			 }
-            		}
-            	}
-            }
+            
+            if (! $formconfirm) $formconfirm=$hookmanager->executeHooks('formconfirm',$action,$object,$lineid);    // Note that $action and $object may have been modified by hook
 
             // Print form confirm
             print $formconfirm;
@@ -2603,7 +2551,7 @@ else
             print '<table id="tablelines" class="noborder" width="100%">';
 
             // Show object lines
-            if (! empty($object->lines)) $object->printObjectLines($action,$mysoc,$soc,$lineid,1);
+            if (! empty($object->lines)) $object->printObjectLines($action,$mysoc,$soc,$lineid,1,$hookmanager);
 
             /*
              * Form to add new line
@@ -2612,33 +2560,16 @@ else
             {
                 $var=true;
 
-                $object->formAddFreeProduct(1,$mysoc,$soc);
+                $object->formAddFreeProduct(1,$mysoc,$soc,$hookmanager);
 
                 // Add predefined products/services
                 if ($conf->product->enabled || $conf->service->enabled)
                 {
                     $var=!$var;
-                    $object->formAddPredefinedProduct(1,$mysoc,$soc);
+                    $object->formAddPredefinedProduct(1,$mysoc,$soc,$hookmanager);
                 }
-
-                // Hook for external modules
-                if (! empty($object->hooks))
-                {
-                	foreach($object->hooks as $hook)
-                	{
-                		if (! empty($hook['modules']))
-                		{
-                			foreach($hook['modules'] as $module)
-                			{
-                				if (method_exists($module,'formAddObject'))
-                				{
-                					$var=!$var;
-                					$module->formAddObject($object);
-                				}
-                			}
-                		}
-                	}
-                }
+                
+                $reshook=$hookmanager->executeHooks('formAddObject',$action,$object);    // Note that $action and $object may have been modified by hook
             }
 
             print "</table>\n";
@@ -2874,7 +2805,7 @@ else
                 $delallowed=$user->rights->facture->supprimer;
 
                 print '<br>';
-                $somethingshown=$formfile->show_documents('facture',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang,$object->hooks);
+                $somethingshown=$formfile->show_documents('facture',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang,$hookmanager);
 
                 /*
                  * Linked object block
@@ -3247,5 +3178,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:23 $ - $Revision: 1.850 $');
+llxFooter('$Date: 2011/08/10 17:56:13 $ - $Revision: 1.851 $');
 ?>
