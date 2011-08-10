@@ -25,7 +25,7 @@
  *  \file       htdocs/societe/soc.php
  *  \ingroup    societe
  *  \brief      Third party card page
- *  \version    $Id: soc.php,v 1.130 2011/08/10 00:50:19 eldy Exp $
+ *  \version    $Id: soc.php,v 1.131 2011/08/10 19:34:44 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -78,6 +78,7 @@ else
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
 $hookmanager=new HookManager($db);
+// TODO: Remove callHooks and add page into executeHooks
 $hookmanager->callHooks(array('thirdpartycard','thirdparty_extrafields'));
 
 
@@ -1954,5 +1955,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/10 00:50:19 $ - $Revision: 1.130 $');
+llxFooter('$Date: 2011/08/10 19:34:44 $ - $Revision: 1.131 $');
 ?>
