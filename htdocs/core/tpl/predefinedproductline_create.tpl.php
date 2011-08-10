@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: predefinedproductline_create.tpl.php,v 1.14 2011/07/31 23:45:12 eldy Exp $
+ * $Id: predefinedproductline_create.tpl.php,v 1.15 2011/08/10 10:55:35 hregis Exp $
  *
  * Need to have following variables defined:
  * $conf
@@ -59,18 +59,7 @@
 
 	if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) echo '<br>';
 	
-	if (! empty($this->hooks)) {
-		foreach($this->hooks as $hook) {
-			if (! empty($hook['modules'])) {
-				foreach($hook['modules'] as $module) {
-					if (method_exists($module,'formCreateProductOptions')) {
-						$module->formCreateProductOptions($object);
-						echo '<br>';
-					}
-				}
-			}
-		}
-	}
+	if (is_object($hookmanager)) $hookmanager->executeHooks('formCreateProductOptions',$action,$object);
 
 	// Editor wysiwyg
 	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
