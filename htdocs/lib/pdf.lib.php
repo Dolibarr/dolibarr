@@ -24,7 +24,7 @@
  *	\file       htdocs/lib/pdf.lib.php
  *	\brief      Set of functions used for PDF generation
  *	\ingroup    core
- *	\version    $Id: pdf.lib.php,v 1.99 2011/07/31 23:25:42 eldy Exp $
+ *	\version    $Id: pdf.lib.php,v 1.100 2011/08/10 17:32:29 eldy Exp $
  */
 
 
@@ -1150,5 +1150,32 @@ function pdf_getTotalQty($object,$type='',$outputlangs)
 
 	return $total;
 }
+
+
+/**
+ *	Convert a currency code into its symbol
+ *  @param      pdf                 PDF object
+ *  @param		currency_code
+ *  @param		string				Currency symbol encoded into UTF8
+ */
+function pdf_getCurrencySymbol(&$pdf, $currency_code)
+{
+	switch ($currency_code) {
+		case "EUR":
+			$currency_sign = " ".$pdf->unichr(8364);
+			break;
+		case "USD":
+		    $currency_sign = " ".utf8_encode('$');
+			break;
+		case "GBP":
+		    $currency_sign = " ".utf8_encode('£');
+			break;
+		default:
+			$currency_sign = " ".$currency;
+			break;
+	}
+	return $currency_sign;
+}
+
 
 ?>
