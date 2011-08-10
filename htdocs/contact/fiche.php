@@ -23,7 +23,7 @@
  *       \file       htdocs/contact/fiche.php
  *       \ingroup    societe
  *       \brief      Card of a contact
- *       \version    $Id: fiche.php,v 1.223 2011/08/10 19:55:22 hregis Exp $
+ *       \version    $Id: fiche.php,v 1.224 2011/08/10 22:47:34 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -77,7 +77,8 @@ $hookmanager->callHooks(array('contactcard'));
  *	Actions
  */
 
-$reshook=$hookmanager->executeHooks('doActions',$action,$object,$id);    // Note that $action and $object may have been modified by some hooks
+$parameters=array('id'=>$id);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
 
 // ---------- start deprecated. Use hook to hook actions.
@@ -948,5 +949,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/10 19:55:22 $ - $Revision: 1.223 $');
+llxFooter('$Date: 2011/08/10 22:47:34 $ - $Revision: 1.224 $');
 ?>

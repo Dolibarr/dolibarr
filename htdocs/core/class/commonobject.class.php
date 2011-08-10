@@ -21,7 +21,7 @@
  *	\file       htdocs/core/class/commonobject.class.php
  *	\ingroup    core
  *	\brief      File of parent class of all other business classes (invoices, contracts, proposals, orders, ...)
- *	\version    $Id: commonobject.class.php,v 1.153 2011/08/10 17:40:46 hregis Exp $
+ *	\version    $Id: commonobject.class.php,v 1.154 2011/08/10 22:47:34 eldy Exp $
  */
 
 
@@ -1703,7 +1703,7 @@ class CommonObject
 				if (empty($line->fk_parent_line))
 				{
 					$parameters = array('line'=>$line,'var'=>$var,'num'=>$num,'i'=>$i,'dateSelector'=>$dateSelector,'seller'=>$seller,'buyer'=>$buyer,'selected'=>$selected);
-					$reshook=$hookmanager->executeHooks('printObjectLine',$action,$this,'',$parameters);    // Note that $action and $object may have been modified by some hooks
+					$reshook=$hookmanager->executeHooks('printObjectLine',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 				}
 			}
 			else

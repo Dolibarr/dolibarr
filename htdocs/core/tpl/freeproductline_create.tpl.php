@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: freeproductline_create.tpl.php,v 1.17 2011/08/10 10:55:36 hregis Exp $
+ * $Id: freeproductline_create.tpl.php,v 1.18 2011/08/10 22:47:33 eldy Exp $
  *
  * Need to have following variables defined:
  * $conf
@@ -47,7 +47,11 @@
 	echo $html->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1);
 	if (($conf->product->enabled && $conf->service->enabled) || (empty($conf->product->enabled) && empty($conf->service->enabled))) echo '<br>';
 
-	if (is_object($hookmanager)) $hookmanager->executeHooks('formCreateProductOptions',$action,$object);
+	if (is_object($hookmanager))
+	{
+	    $parameters=array();
+	    $hookmanager->executeHooks('formCreateProductOptions',$parameters,$object,$action);
+	}
 
 	// Editor wysiwyg
 	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
