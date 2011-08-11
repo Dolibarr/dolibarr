@@ -23,10 +23,9 @@
  *  \ingroup    propale
  *  \brief      Fichier contenant la classe mere de generation des propales en PDF
  *  			et la classe mere de numerotation des propales
- *	\version    $Id: modules_propale.php,v 1.65 2011/08/10 23:21:13 eldy Exp $
+ *	\version    $Id: modules_propale.php,v 1.66 2011/08/11 12:14:03 eldy Exp $
  */
 
-require_once(FPDFI_PATH.'fpdi_protection.php');
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");   // Requis car utilise dans les classes qui heritent
 

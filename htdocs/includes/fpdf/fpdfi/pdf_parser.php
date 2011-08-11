@@ -1,8 +1,8 @@
 <?php
 //
-//  FPDI - Version 1.3.4
+//  FPDI - Version 1.4.1
 //
-//    Copyright 2004-2010 Setasign - Jan Slabon
+//    Copyright 2004-2011 Setasign - Jan Slabon
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -46,8 +46,7 @@ if (!defined ('PDF_TYPE_REAL'))
     
 require_once('pdf_context.php');
 
-$__tmp = version_compare(phpversion(), "5") == -1 ? array('pdf_parser') : array('pdf_parser', false);
-if (!call_user_func_array('class_exists', $__tmp)) {
+if (!class_exists('pdf_parser', false)) {
     
     class pdf_parser {
     	
@@ -146,7 +145,7 @@ if (!call_user_func_array('class_exists', $__tmp)) {
          */
         function getEncryption() {
             if (isset($this->xref['trailer'][1]['/Encrypt'])) {
-                $this->error('File is encrypted!');
+            	$this->error('File is encrypted!');
             }
         }
         
@@ -718,5 +717,3 @@ if (!call_user_func_array('class_exists', $__tmp)) {
         }
     }
 }
-
-unset($__tmp);

@@ -24,7 +24,7 @@
  *	\ingroup    facture
  *	\brief      File of class to generate invoices from crab model
  *	\author	    Laurent Destailleur
- *	\version    $Id: pdf_crabe.modules.php,v 1.13 2011/08/10 17:56:11 hregis Exp $
+ *	\version    $Id: pdf_crabe.modules.php,v 1.14 2011/08/11 12:14:02 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/facture/modules_facture.php");
@@ -121,7 +121,7 @@ class pdf_crabe extends ModelePDFFactures
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!class_exists('TCPDF')) $outputlangs->charset_output='ISO-8859-1';
+		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
 		$outputlangs->load("main");
 		$outputlangs->load("dict");

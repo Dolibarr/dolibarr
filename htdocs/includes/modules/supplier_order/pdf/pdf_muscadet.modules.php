@@ -23,7 +23,7 @@
  *	\file       htdocs/includes/modules/supplier_order/pdf/pdf_muscadet.modules.php
  *	\ingroup    fournisseur
  *	\brief      Fichier de la classe permettant de generer les commandes fournisseurs au modele Muscadet
- *	\version    $Id: pdf_muscadet.modules.php,v 1.87 2011/07/31 23:28:13 eldy Exp $
+ *	\version    $Id: pdf_muscadet.modules.php,v 1.88 2011/08/11 12:14:00 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/supplier_order/modules_commandefournisseur.php");
@@ -106,7 +106,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!class_exists('TCPDF')) $outputlangs->charset_output='ISO-8859-1';
+		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
@@ -667,7 +667,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			$text=$this->emetteur->name;
 			$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 		}
-		
+
 		$pdf->SetFont('','B',$default_font_size + 3);
 		$pdf->SetXY(100,$posy);
 		$pdf->SetTextColor(0,0,60);

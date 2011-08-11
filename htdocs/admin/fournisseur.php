@@ -25,7 +25,7 @@
  *  \file       htdocs/admin/fournisseur.php
  *  \ingroup    fournisseur
  *  \brief      Page d'administration-configuration du module Fournisseur
- *  \version    $Id: fournisseur.php,v 1.63 2011/07/31 22:23:21 eldy Exp $
+ *  \version    $Id: fournisseur.php,v 1.64 2011/08/11 12:14:02 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -109,10 +109,11 @@ if ($action == 'specimenfacture')   // For invoices
 	// Charge le modele
 	$dir = "/includes/modules/supplier_invoice/pdf/";
 	$file = "pdf_".$modele.".modules.php";
-	if (file_exists($dir.$file))
+	$file = dol_buildpath($dir.$file);
+    if (file_exists($file))
 	{
 		$classname = "pdf_".$modele;
-		require_once($dir.$file);
+		require_once($file);
 
 		$obj = new $classname($db,$facture);
 
@@ -499,6 +500,7 @@ else
 	dol_print_error($db);
 }
 
+
 print '<table class="noborder" width="100%">'."\n";
 print '<tr class="liste_titre">'."\n";
 print '<td width="100">'.$langs->trans("Name").'</td>'."\n";
@@ -617,5 +619,5 @@ print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">'
 print "</td></tr>\n";
 print '</form>';
 
-llxFooter('$Date: 2011/07/31 22:23:21 $ - $Revision: 1.63 $');
+llxFooter('$Date: 2011/08/11 12:14:02 $ - $Revision: 1.64 $');
 ?>
