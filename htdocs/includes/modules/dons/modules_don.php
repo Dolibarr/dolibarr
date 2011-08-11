@@ -23,9 +23,8 @@
  *	    \file       htdocs/includes/modules/dons/modules_don.php
  *		\ingroup    don
  *		\brief      File of class to manage donation document generation
- *		\version    $Id: modules_don.php,v 1.22 2011/08/10 23:21:12 eldy Exp $
+ *		\version    $Id: modules_don.php,v 1.23 2011/08/11 12:14:02 eldy Exp $
  */
-require_once(FPDFI_PATH.'fpdi_protection.php');
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 require_once(DOL_DOCUMENT_ROOT."/compta/dons/class/don.class.php");
 
@@ -84,7 +83,7 @@ class ModeleNumRefDons
         return $langs->trans("NoDescription");
     }
 
-    /**     \brief      Renvoi un exemple de num�rotation
+    /**     \brief      Renvoi un exemple de numerotation
      *      \return     string      Example
      */
     function getExample()
@@ -94,8 +93,8 @@ class ModeleNumRefDons
         return $langs->trans("NoExample");
     }
 
-    /**     \brief      Test si les num�ros d�j� en vigueur dans la base ne provoquent pas d
-     *                  de conflits qui empechera cette num�rotation de fonctionner.
+    /**     \brief      Test si les numeros deja en vigueur dans la base ne provoquent pas d
+     *                  de conflits qui empechera cette numerotation de fonctionner.
      *      \return     boolean     false si conflit, true si ok
      */
     function canBeActivated()
@@ -103,7 +102,7 @@ class ModeleNumRefDons
         return true;
     }
 
-    /**     \brief      Renvoi prochaine valeur attribu�e
+    /**     \brief      Renvoi prochaine valeur attribuee
      *      \return     string      Valeur
      */
     function getNextValue()
@@ -129,13 +128,13 @@ class ModeleNumRefDons
 
 
 /**
- \brief      Cr�e un don sur disque en fonction du mod�le de DON_ADDON_PDF
- \param	    db  			objet base de donn�e
- \param	    id				id du don � cr�er
- \param	    message			message
- \param	    modele			force le modele � utiliser ('' par defaut)
- \param		outputlangs		objet lang a utiliser pour traduction
- \return     int         	0 si KO, 1 si OK
+ *	\brief      Cree un don sur disque en fonction du modele de DON_ADDON_PDF
+ *	\param	    db  			objet base de donnee
+ *	\param	    id				id du don e creer
+ *	\param	    message			message
+ *	\param	    modele			force le modele a utiliser ('' par defaut)
+ *	\param		outputlangs		objet lang a utiliser pour traduction
+ *	\return     int         	0 si KO, 1 si OK
  */
 function don_create($db, $id, $message, $modele, $outputlangs)
 {
@@ -175,7 +174,7 @@ function don_create($db, $id, $message, $modele, $outputlangs)
         $sav_charset_output=$outputlangs->charset_output;
         if ($obj->write_file($id,$outputlangs) > 0)
         {
-            // Succ�s de la cr�ation de la facture. On g�n�re le fichier meta
+            // Success. We build meta file
             don_meta_create($db, $id);
             // et on supprime l'image correspondant au preview
             don_delete_preview($db, $id);
@@ -199,10 +198,10 @@ function don_create($db, $id, $message, $modele, $outputlangs)
 }
 
 /**
- \brief       Cr�� un meta fichier � c�t� de la facture sur le disque pour faciliter les recherches en texte plein. Pourquoi ? tout simplement parcequ'en fin d'exercice quand je suis avec mon comptable je n'ai pas de connexion internet "rapide" pour retrouver en 2 secondes une facture non pay�e ou compliqu�e � g�rer ... avec un rgrep c'est vite fait bien fait [eric seigne
- \param	    db  		Objet base de donn�e
- \param	    donid		Id du don � cr�er
- \param       message     Message
+ *	\brief       Cree un meta fichier a cote de la facture sur le disque pour faciliter les recherches en texte plein. Pourquoi ? tout simplement parcequ'en fin d'exercice quand je suis avec mon comptable je n'ai pas de connexion internet "rapide" pour retrouver en 2 secondes une facture non pay�e ou compliqu�e � g�rer ... avec un rgrep c'est vite fait bien fait [eric seigne
+ *	\param	    db  		Objet base de donnee
+ *	\param	    donid		Id du don a creer
+ *	\param       message     Message
  */
 function don_meta_create($db, $donid, $message="")
 {
@@ -215,9 +214,9 @@ function don_meta_create($db, $donid, $message="")
 
 
 /**
- \brief       Supprime l'image de pr�visualitation, pour le cas de r�g�n�ration de facture
- \param	    db  		Objet base de donn�e
- \param	    donid		Id du don
+ *	\brief       Supprime l'image de previsualitation, pour le cas de r�g�n�ration de facture
+ *	\param	    db  		Objet base de donnee
+ *	\param	    donid		Id du don
  */
 function don_delete_preview($db, $donid)
 {

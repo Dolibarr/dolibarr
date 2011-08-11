@@ -1,8 +1,8 @@
 <?php
 //
-//  FPDI - Version 1.3.4
+//  FPDI - Version 1.4.1
 //
-//    Copyright 2004-2010 Setasign - Jan Slabon
+//    Copyright 2004-2011 Setasign - Jan Slabon
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -28,35 +28,11 @@
  */
 class FPDF extends TCPDF {
     
-    function __get($name) {
-        switch ($name) {
-            case 'PDFVersion':
-                return $this->PDFVersion;
-            case 'k':
-                return $this->k;
-            default:
-                // Error handling
-                $this->Error('Cannot access protected property '.get_class($this).':$'.$name.' / Undefined property: '.get_class($this).'::$'.$name);
-        }
-    }
-
-    function __set($name, $value) {
-        switch ($name) {
-            case 'PDFVersion':
-                $this->PDFVersion = $value;
-                break;
-            default:
-                // Error handling
-                $this->Error('Cannot access protected property '.get_class($this).':$'.$name.' / Undefined property: '.get_class($this).'::$'.$name);
-        }
-    }
-
-    function _putstream($s) {
+	function _putstream($s) {
 		$this->_out($this->_getstream($s));
 	}
 	
 	function _getxobjectdict() {
-		
         $out = parent::_getxobjectdict();
         if (count($this->tpls)) {
             foreach($this->tpls as $tplidx => $tpl) {
@@ -74,7 +50,7 @@ class FPDF extends TCPDF {
      */
     function pdf_write_value(&$value) {
         switch ($value[0]) {
-    		case PDF_TYPE_STRING :
+    		case PDF_TYPE_STRING:
 				if ($this->encrypted) {
 				    $value[1] = $this->_unescape($value[1]);
                     $value[1] = $this->_RC4($this->_objectkey($this->_current_obj_id), $value[1]);
@@ -82,13 +58,13 @@ class FPDF extends TCPDF {
                 } 
     			break;
     			
-			case PDF_TYPE_STREAM :
+			case PDF_TYPE_STREAM:
 			    if ($this->encrypted) {
 			        $value[2][1] = $this->_RC4($this->_objectkey($this->_current_obj_id), $value[2][1]);
                 }
                 break;
                 
-            case PDF_TYPE_HEX :
+            case PDF_TYPE_HEX:
             	if ($this->encrypted) {
                 	$value[1] = $this->hex2str($value[1]);
                 	$value[1] = $this->_RC4($this->_objectkey($this->_current_obj_id), $value[1]);

@@ -24,7 +24,7 @@
  *	\ingroup    propale
  *	\brief      Fichier de la classe permettant de generer les propales au modele Azur
  *	\author	    Laurent Destailleur
- *	\version    $Id: pdf_propale_azur.modules.php,v 1.244 2011/08/10 17:40:42 hregis Exp $
+ *	\version    $Id: pdf_propale_azur.modules.php,v 1.245 2011/08/11 12:14:03 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/propale/modules_propale.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
@@ -117,7 +117,7 @@ class pdf_propale_azur extends ModelePDFPropales
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		$sav_charset_output=$outputlangs->charset_output;
-		if (!class_exists('TCPDF')) $outputlangs->charset_output='ISO-8859-1';
+		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
 		$outputlangs->load("main");
 		$outputlangs->load("dict");

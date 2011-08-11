@@ -1,8 +1,8 @@
 <?php
 //
-//  FPDI - Version 1.3.4
+//  FPDI - Version 1.4.1
 //
-//    Copyright 2004-2010 Setasign - Jan Slabon
+//    Copyright 2004-2011 Setasign - Jan Slabon
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.

@@ -24,20 +24,66 @@
  *	\file       htdocs/lib/pdf.lib.php
  *	\brief      Set of functions used for PDF generation
  *	\ingroup    core
- *	\version    $Id: pdf.lib.php,v 1.102 2011/08/10 22:47:35 eldy Exp $
+ *	\version    $Id: pdf.lib.php,v 1.103 2011/08/11 12:14:04 eldy Exp $
  */
 
 
 /**
- *      Return a PDF instance object. We create a FPDI instance that instanciate TCPDF (or FPDF if MAIN_USE_FPDF is on)
- *      @param      format          Array(width,height)
+ *      Return array with format properties of default PDF format
+ *      @return     array		Array('width'=>w,'height'=>h,'unit'=>u);
+ */
+function pdf_getFormat()
+{
+    global $conf,$db;
+
+    // Default value if setup was not done and/or entry into c_paper_format not defined
+    $width=210; $height=297; $unit='mm';
+
+    $pdfformat=$conf->global->MAIN_PDF_FORMAT;
+    if (empty($pdfformat))
+    {
+        include_once(DOL_DOCUMENT_ROOT.'/lib/functions2.lib.php');
+        $pdfformat=dol_getDefaultFormat();
+    }
+
+	$sql="SELECT code, label, width, height, unit FROM ".MAIN_DB_PREFIX."c_paper_format";
+    $sql.=" WHERE code = '".$pdfformat."'";
+    $resql=$db->query($sql);
+    if ($resql)
+    {
+        $obj=$db->fetch_object($resql);
+        if ($obj)
+        {
+            $width=$obj->width;
+            $height=$obj->height;
+            $unit=$obj->unit;
+        }
+    }
+
+    //print "pdfformat=".$pdfformat." width=".$width." height=".$height." unit=".$unit;
+    return array('width'=>$width,'height'=>$height,'unit'=>$unit);
+}
+
+/**
+ *      Return a PDF instance object. We create a FPDI instance that instanciate TCPDF.
+ *      @param      format          Array(width,height). Keep empty to use default setup.
  *      @param      metric          Unit of format ('mm')
  *      @param      pagetype        'P' or 'l'
  *      @return     PDF object
  */
-function pdf_getInstance($format,$metric='mm',$pagetype='P')
+function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 {
     global $conf;
+
+    require_once(TCPDF_PATH.'tcpdf.php');
+    require_once(FPDFI_PATH.'fpdi.php');
+
+    //if (! is_array($format) || empty($format) || empty($metric))
+    //{
+        $arrayformat=pdf_getFormat();
+        $format=array($arrayformat['width'],$arrayformat['height']);
+        $metric=$arrayformat['unit'];
+    //}
 
     // Protection et encryption du pdf
     if ($conf->global->PDF_SECURITY_ENCRYPTION)

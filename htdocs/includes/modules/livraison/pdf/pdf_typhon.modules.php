@@ -24,7 +24,7 @@
  *	\ingroup    livraison
  *	\brief      File of class to manage receving receipts with template Typhon
  *	\author	    Laurent Destailleur
- *	\version    $Id: pdf_typhon.modules.php,v 1.87 2011/08/08 16:07:48 eldy Exp $
+ *	\version    $Id: pdf_typhon.modules.php,v 1.88 2011/08/11 12:14:02 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/livraison/modules_livraison.php");
@@ -107,7 +107,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!class_exists('TCPDF')) $outputlangs->charset_output='ISO-8859-1';
+		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
 		$outputlangs->load("main");
 		$outputlangs->load("dict");

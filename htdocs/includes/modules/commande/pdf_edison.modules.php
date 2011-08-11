@@ -23,7 +23,7 @@
  *	\file       htdocs/includes/modules/commande/pdf_edison.modules.php
  *	\ingroup    commande
  *	\brief      Fichier de la classe permettant de generer les commandes au modele Edison
- *	\version    $Id: pdf_edison.modules.php,v 1.90 2011/08/10 17:40:45 hregis Exp $
+ *	\version    $Id: pdf_edison.modules.php,v 1.91 2011/08/11 12:14:00 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/commande/modules_commande.php");
@@ -101,7 +101,7 @@ class pdf_edison extends ModelePDFCommandes
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!class_exists('TCPDF')) $outputlangs->charset_output='ISO-8859-1';
+		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
