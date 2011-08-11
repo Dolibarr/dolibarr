@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin           <regis@dolibarr.fr>
  * Copyright (C) 2004      Sebastien Di Cintio     <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier          <benoit.mortier@opensides.be>
@@ -109,10 +109,11 @@ if ($action == 'specimenfacture')   // For invoices
 	// Charge le modele
 	$dir = "/includes/modules/supplier_invoice/pdf/";
 	$file = "pdf_".$modele.".modules.php";
-	if (file_exists($dir.$file))
+	$file = dol_buildpath($dir.$file);
+	if (file_exists($file))
 	{
 		$classname = "pdf_".$modele;
-		require_once($dir.$file);
+		require_once($file);
 
 		$obj = new $classname($db,$facture);
 
