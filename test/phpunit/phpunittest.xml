@@ -18,7 +18,6 @@
     <directory suffix=".php">../../htdocs/includes/artichow/</directory>
     <directory suffix=".php">../../htdocs/includes/barcode/php-barcode/</directory>
     <directory suffix=".php">../../htdocs/includes/ckeditor/</directory>
-    <directory suffix=".php">../../htdocs/includes/efc_xfss/</directory>
     <directory suffix=".php">../../htdocs/includes/fckeditor/</directory>
     <directory suffix=".php">../../htdocs/includes/fpdi/</directory>
     <directory suffix=".php">../../htdocs/includes/geoip/</directory>
@@ -61,11 +60,9 @@
     <directory suffix=".php">../../htdocs/includes/adodbtime/</directory>
     <directory suffix=".php">../../htdocs/includes/artichow/</directory>
     <directory suffix=".php">../../htdocs/includes/barcode/php-barcode/</directory>
-    <directory suffix=".php">../../htdocs/includes/efc_xfss/</directory>
     <directory suffix=".php">../../htdocs/includes/fckeditor/</directory>
     <directory suffix=".php">../../htdocs/includes/fpdi/</directory>
     <directory suffix=".php">../../htdocs/includes/geoip/</directory>
-    <directory suffix=".php">../../htdocs/includes/jcrop/</directory>
     <directory suffix=".php">../../htdocs/includes/jquery/</directory>
     <directory suffix=".php">../../htdocs/includes/jsgantt/</directory>
     <directory suffix=".php">../../htdocs/includes/magpierss/</directory>
