@@ -4,6 +4,7 @@
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
+ * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +24,7 @@
  *  \file       htdocs/product/composition/fiche.php
  *  \ingroup    product
  *  \brief      Page de la fiche produit
- *  \version    $Id: fiche.php,v 1.9 2011/07/31 23:24:03 eldy Exp $
+ *  \version    $Id: fiche.php,v 1.11 2011/08/10 11:53:25 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -135,7 +136,7 @@ if($action == 'search' )
 	$sql.= " WHERE p.entity = ".$conf->entity;
 	if($key != "")
 	{
-		if ($conf->global->MAIN_MULTILANGS) 
+		if ($conf->global->MAIN_MULTILANGS)
 		{
 			$sql.= " AND (p.ref like '%".$key."%'";
 			$sql.= " OR pl.label like '%".$key."%')";
@@ -204,8 +205,8 @@ if ($id || $ref)
 			print '<tr><td>'.$langs->trans("AssociatedProductsNumber").'</td><td>'.sizeof($product->get_arbo_each_prod()).'</td>';
 
 			dol_fiche_end();
-			
-			
+
+
 			// List of subproducts
 			$prods_arbo = $product->get_arbo_each_prod();
 			if(sizeof($prods_arbo) > 0)
@@ -218,13 +219,14 @@ if ($id || $ref)
 					$productstatic->id=$value['id'];
 					$productstatic->type=$value['type'];
 					$productstatic->ref=$value['fullpath'];
+					if ($conf->stock->enabled) $productstatic->load_stock();
 					//var_dump($value);
 					//print '<pre>'.$productstatic->ref.'</pre>';
 					//print $productstatic->getNomUrl(1).'<br>';
 					//print $value[0];	// This contains a tr line.
 					print '<tr>';
-					print '<td>'.$productstatic->getNomUrl(1).' ('.$value['nb'].')</td>';
-					print '<td></td>';
+					print '<td>'.$productstatic->getNomUrl(1).' ('.$value['nb'].') &nbsp &nbsp</td>';
+					if ($conf->stock->enabled) print '<td>'.$langs->trans("Stock").' : <b>'.$productstatic->stock_reel.'</b></td>';
 					print '</tr>';
 				}
 				print '</table>';
@@ -279,13 +281,14 @@ if ($id || $ref)
 				$productstatic->id=$value['id'];
 				$productstatic->type=$value['type'];
 				$productstatic->ref=$value['fullpath'];
+				if ($conf->stock->enabled) $productstatic->load_stock();
 				//var_dump($value);
 				//print '<pre>'.$productstatic->ref.'</pre>';
 				//print $productstatic->getNomUrl(1).'<br>';
 				//print $value[0];	// This contains a tr line.
 				print '<tr>';
-				print '<td>'.$productstatic->getNomUrl(1).' ('.$value['nb'].')</td>';
-				print '<td></td>';
+				print '<td>'.$productstatic->getNomUrl(1).' ('.$value['nb'].') &nbsp &nbsp</td>';
+				if ($conf->stock->enabled) print '<td>'.$langs->trans("Stock").' : <b>'.$productstatic->stock_reel.'</b></td>';
 				print '</tr>';
 			}
 			print '</table>';
@@ -295,29 +298,31 @@ if ($id || $ref)
 		print '</table>';
 
 		dol_fiche_end();
-		
+
 		print '<br>';
 
+        print_fiche_titre($langs->trans("ProductToAddSearch"),'','');
 		print '<form action="'.DOL_URL_ROOT.'/product/composition/fiche.php?id='.$id.'" method="post">';
+		print '<table class="border" width="100%"><tr><td>';
 		print '<table class="nobordernopadding">';
-		print '<tr><td><b>'.$langs->trans("ProductToAddSearch").'</b></td></tr>';
-
 		print '<tr><td>';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		print $langs->trans("KeywordFilter");
-		print '</td><td><input type="text" name="key" value="'.$key.'">';
+		print $langs->trans("KeywordFilter").' &nbsp; ';
+		print '</td>';
+		print '<td><input type="text" name="key" value="'.$key.'">';
 		print '<input type="hidden" name="action" value="search">';
 		print '<input type="hidden" name="id" value="'.$id.'">';
 		print '</td></tr>';
 
 		if($conf->categorie->enabled)
 		{
-			print '<tr><td>'.$langs->trans("CategoryFilter");
-			print '</td><td>'.$html->select_all_categories(0,$catMere).'</td></tr>';
+			print '<tr><td>'.$langs->trans("CategoryFilter").' &nbsp; </td>';
+			print '<td>'.$html->select_all_categories(0,$catMere).'</td></tr>';
 		}
 
 		print '<tr><td colspan="2"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
 		print '</table>';
+		print '</td></td></table>';
 		print '</form>';
 
 		if($action == 'search')
@@ -408,7 +413,7 @@ if ($id || $ref)
 			}
 			print '</table>';
 			print '<input type="hidden" name="max_prod" value="'.$i.'">';
-			
+
 			if($num > 0)
 			{
 				print '<br><center><input type="submit" class="button" value="'.$langs->trans("Add").'/'.$langs->trans("Update").'">';
@@ -446,5 +451,5 @@ print "\n</div>\n";
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:24:03 $ - $Revision: 1.9 $');
+llxFooter('$Date: 2011/08/10 11:53:25 $ - $Revision: 1.11 $');
 ?>

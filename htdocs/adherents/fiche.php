@@ -22,7 +22,7 @@
  *       \file       htdocs/adherents/fiche.php
  *       \ingroup    member
  *       \brief      Page of member
- *       \version    $Id: fiche.php,v 1.240 2011/08/10 00:50:19 eldy Exp $
+ *       \version    $Id: fiche.php,v 1.241 2011/08/10 22:47:35 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -90,7 +90,8 @@ $hookmanager->callHooks(array('member_extrafields'));
  * 	Actions
  */
 
-$reshook=$hookmanager->executeHooks('doActions',$action,$object,$socid);    // Note that $action and $object may have been modified by some hooks
+$parameters=array('socid'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
 
 if ($_POST['action'] == 'setuserid' && ($user->rights->user->self->creer || $user->rights->user->user->creer))
@@ -773,7 +774,8 @@ if ($action == 'create')
     print "</td></tr>\n";
 
     // Other attributes
-    $reshook=$hookmanager->executeHooks('showInputFields',$action,$object);    // Note that $action and $object may have been modified by hook
+    $parameters=array();
+    $reshook=$hookmanager->executeHooks('showInputFields',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
     if (empty($reshook))
     {
         foreach($extrafields->attribute_label as $key=>$label)
@@ -990,7 +992,8 @@ if ($action == 'edit')
     print "</td></tr>\n";
 
 	// Other attributes
-    $reshook=$hookmanager->executeHooks('showInputFields',$action,$object);    // Note that $action and $object may have been modified by hook
+	$parameters=array();
+    $reshook=$hookmanager->executeHooks('showInputFields',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
     if (empty($reshook))
     {
     	foreach($extrafields->attribute_label as $key=>$label)
@@ -1302,7 +1305,8 @@ if ($rowid && $action != 'edit')
     print '<tr><td>'.$langs->trans("Status").'</td><td class="valeur">'.$object->getLibStatut(4).'</td></tr>';
 
     // Other attributes
-    $reshook=$hookmanager->executeHooks('showOutputField',$action,$object,$socid);    // Note that $action and $object may have been modified by hook
+    $parameters=array();
+    $reshook=$hookmanager->executeHooks('showOutputField',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
     if (empty($reshook))
     {
         foreach($extrafields->attribute_label as $key=>$label)
@@ -1522,5 +1526,5 @@ if ($rowid && $action != 'edit')
 
 $db->close();
 
-llxFooter('$Date: 2011/08/10 00:50:19 $ - $Revision: 1.240 $');
+llxFooter('$Date: 2011/08/10 22:47:35 $ - $Revision: 1.241 $');
 ?>

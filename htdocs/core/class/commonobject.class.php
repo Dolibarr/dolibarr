@@ -21,7 +21,7 @@
  *	\file       htdocs/core/class/commonobject.class.php
  *	\ingroup    core
  *	\brief      File of parent class of all other business classes (invoices, contracts, proposals, orders, ...)
- *	\version    $Id: commonobject.class.php,v 1.151 2011/08/10 00:50:17 eldy Exp $
+ *	\version    $Id: commonobject.class.php,v 1.153 2011/08/10 17:40:46 hregis Exp $
  */
 
 
@@ -1615,7 +1615,7 @@ class CommonObject
      *  @param			$seller				Object thirdparty who sell
      *  @param			$buyer				Object thirdparty who buy
 	 */
-	function formAddPredefinedProduct($dateSelector,$seller,$buyer)
+	function formAddPredefinedProduct($dateSelector,$seller,$buyer,$hookmanager=false)
 	{
 		global $conf,$langs,$object;
 		global $html,$bcnd,$var;
@@ -1630,7 +1630,7 @@ class CommonObject
      *  But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
      *  @param          $dateSelector       1=Show also date range input fields
      */
-	function formAddFreeProduct($dateSelector,$seller,$buyer)
+	function formAddFreeProduct($dateSelector,$seller,$buyer,$hookmanager=false)
 	{
 		global $conf,$langs,$object;
 		global $html,$bcnd,$var;
@@ -1655,7 +1655,7 @@ class CommonObject
      *  @param		$selected		   	Object line selected
      *  @param      $dateSelector      	1=Show also date range input fields
 	 */
-	function printObjectLines($action='viewline',$seller,$buyer,$selected=0,$dateSelector=0)
+	function printObjectLines($action='viewline',$seller,$buyer,$selected=0,$dateSelector=0,$hookmanager=false)
 	{
 		global $conf,$langs;
 
@@ -1698,22 +1698,17 @@ class CommonObject
 		{
 			$var=!$var;
 
-			if (! empty($this->hooks) && ( ($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line) ) )
+			if (is_object($hookmanager) && ( ($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line) ) )
 			{
 				if (empty($line->fk_parent_line))
 				{
-					foreach($this->hooks as $hook)
-					{
-						if (method_exists($hook['modules'][$line->special_code],'printObjectLine'))
-						{
-							$hook['modules'][$line->special_code]->printObjectLine($action,$this,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected);
-						}
-					}
+					$parameters = array('line'=>$line,'var'=>$var,'num'=>$num,'i'=>$i,'dateSelector'=>$dateSelector,'seller'=>$seller,'buyer'=>$buyer,'selected'=>$selected);
+					$reshook=$hookmanager->executeHooks('printObjectLine',$action,$this,'',$parameters);    // Note that $action and $object may have been modified by some hooks
 				}
 			}
 			else
 			{
-				$this->printLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected);
+				$this->printLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected,$hookmanager);
 			}
 
 			$i++;
@@ -1737,7 +1732,7 @@ class CommonObject
      *  @param      $buyer             Object of buyer third party
      *  @param		$selected		   Object line selected
 	 */
-	function printLine($action='viewline',$line,$var=true,$num=0,$i=0,$dateSelector=0,$seller,$buyer,$selected=0)
+	function printLine($action='viewline',$line,$var=true,$num=0,$i=0,$dateSelector=0,$seller,$buyer,$selected=0,$hookmanager=false)
 	{
 		global $conf,$langs,$user;
 		global $html,$bc,$bcdd;

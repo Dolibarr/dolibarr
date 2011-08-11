@@ -20,7 +20,7 @@
 /**
  *  \file		htdocs/includes/menus/standard/eldy.lib.php
  *  \brief		Library for file eldy menus
- *  \version	$Id: eldy.lib.php,v 1.62 2011/08/05 18:28:01 eldy Exp $
+ *  \version	$Id: eldy.lib.php,v 1.64 2011/08/10 23:48:25 eldy Exp $
  */
 
 
@@ -637,6 +637,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
 
                 if ($leftmenu=="setup") $newmenu->add("/admin/proxy.php", $langs->trans("Security"),1);
                 if ($leftmenu=="setup") $newmenu->add("/admin/limits.php", $langs->trans("MenuLimits"),1);
+                if ($leftmenu=="setup") $newmenu->add("/admin/pdf.php", $langs->trans("PDF"),1);
                 if ($leftmenu=="setup") $newmenu->add("/admin/mails.php", $langs->trans("Emails"),1);
                 if ($leftmenu=="setup") $newmenu->add("/admin/sms.php", $langs->trans("Sms"),1);
                 if ($leftmenu=="setup") $newmenu->add("/admin/dict.php", $langs->trans("DictionnarySetup"),1);
@@ -684,7 +685,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
             if ($conf->societe->enabled)
             {
                 $langs->load("companies");
-                $newmenu->add("/societe/societe.php", $langs->trans("ThirdParty"), 0, $user->rights->societe->lire);
+                $newmenu->add("/societe/index.php", $langs->trans("ThirdParty"), 0, $user->rights->societe->lire);
 
                 if ($user->rights->societe->creer)
                 {
@@ -692,6 +693,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                     if (! $conf->use_javascript_ajax) $newmenu->add("/societe/soc.php?action=create&amp;private=1",$langs->trans("MenuNewPrivateIndividual"),1);
                 }
 
+                // TODO Avoid doing dir scan
                 if(is_dir("societe/groupe"))
                 {
                     $newmenu->add("/societe/groupe/index.php", $langs->trans("MenuSocGroup"),1);

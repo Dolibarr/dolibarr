@@ -21,9 +21,22 @@
  *	\file			htdocs/lib/functions2.lib.php
  *	\brief			A set of functions for Dolibarr
  *					This file contains all rare functions.
- *	\version		$Id: functions2.lib.php,v 1.76 2011/07/31 23:26:00 eldy Exp $
+ *	\version		$Id: functions2.lib.php,v 1.77 2011/08/11 01:34:55 eldy Exp $
  */
 
+
+/**
+ *  Return default paper format code
+ *	@return		string		Defautl paper format code
+ */
+function dol_getDefaultFormat()
+{
+    global $langs;
+    $selected='EUA4';
+    if ($langs->defaultlang == 'ca_CA') $selected='CAP4';        // Canada
+    if ($langs->defaultlang == 'en_US') $selected='USLetter';    // US
+    return $selected;
+}
 
 
 /**

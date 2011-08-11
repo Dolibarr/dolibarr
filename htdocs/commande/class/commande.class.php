@@ -24,7 +24,7 @@
  *  \file       htdocs/commande/class/commande.class.php
  *  \ingroup    commande
  *  \brief      Fichier des classes de commandes
- *  \version    $Id: commande.class.php,v 1.121 2011/08/08 01:10:07 eldy Exp $
+ *  \version    $Id: commande.class.php,v 1.123 2011/08/10 22:47:33 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
@@ -769,19 +769,13 @@ class Commande extends CommonObject
 	 *		@param		socid			Id of thirdparty
 	 * 	 	@return		int				New id of clone
 	 */
-	function createFromClone($fromid,$invertdetail=0,$socid=0)
+	function createFromClone($fromid,$invertdetail=0,$socid=0,$hookmanager=false)
 	{
 		global $conf,$user,$langs;
 
 		$error=0;
 
 		$object=new Commande($this->db);
-
-		// Instantiate hooks of thirdparty module
-		if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
-		{
-			$object->callHooks('ordercard');
-		}
 
 		$this->db->begin();
 
@@ -829,22 +823,11 @@ class Commande extends CommonObject
 		if (! $error)
 		{
 			// Hook of thirdparty module
-			if (! empty($object->hooks))
+			if (is_object($hookmanager))
 			{
-				foreach($object->hooks as $hook)
-				{
-					if (! empty($hook['modules']))
-					{
-						foreach($hook['modules'] as $module)
-						{
-							if (method_exists($module,'createfrom'))
-							{
-								$result = $module->createfrom($objFrom,$result,$object->element);
-								if ($result < 0) $error++;
-							}
-						}
-					}
-				}
+			    $parameters=array('objFrom'=>$objFrom);
+				$reshook=$hookmanager->executeHooks('createfrom',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+				if ($reshook < 0) $error++;
 			}
 
 			// Appel des triggers
@@ -875,7 +858,7 @@ class Commande extends CommonObject
 	 *      @param      invertdetail    Reverse sign of amounts for lines
 	 *      @return     int             <0 if KO, 0 if nothing done, 1 if OK
 	 */
-	function createFromProposal($object,$invertdetail=0)
+	function createFromProposal($object,$invertdetail=0,$hookmanager=false)
 	{
 		global $conf,$user,$langs;
 
@@ -932,22 +915,10 @@ class Commande extends CommonObject
 			if ($ret > 0)
 			{
 				// Hook of thirdparty module
-				if (! empty($object->hooks))
+				if (is_object($hookmanager))
 				{
-					foreach($object->hooks as $hook)
-					{
-						if (! empty($hook['modules']))
-						{
-							foreach($hook['modules'] as $module)
-							{
-								if (method_exists($module,'createfrom'))
-								{
-									$result = $module->createfrom($object,$ret,$this->element);
-									if ($result < 0) $error++;
-								}
-							}
-						}
-					}
+					$reshook=$hookmanager->executeHooks('createfrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+					if ($reshook < 0) $error++;
 				}
 
 				if (! $error)

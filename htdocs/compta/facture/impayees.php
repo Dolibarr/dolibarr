@@ -22,7 +22,7 @@
  *		\file       htdocs/compta/facture/impayees.php
  *		\ingroup    facture
  *		\brief      Page to list and build liste of unpaid invoices
- *		\version    $Revision: 1.84 $
+ *		\version    $Revision: 1.85 $
  */
 
 require("../../main.inc.php");
@@ -52,7 +52,7 @@ if ($_POST["action"] == "builddoc" && $user->rights->facture->lire)
 {
 	if (is_array($_POST['toGenerate']))
 	{
-        require_once(DOL_DOCUMENT_ROOT."/includes/fpdf/fpdfi/fpdi.php");
+        require_once(FPDFI_PATH.'fpdi.php');
         require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 
 		$factures = dol_dir_list($conf->facture->dir_output,'all',1,implode('\.pdf|',$_POST['toGenerate']).'\.pdf','\.meta$|\.png','date',SORT_DESC) ;
@@ -424,5 +424,5 @@ if ($result)
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:13 $ - $Revision: 1.84 $');
+llxFooter('$Date: 2011/08/10 23:21:13 $ - $Revision: 1.85 $');
 ?>
