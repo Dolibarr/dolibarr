@@ -20,12 +20,13 @@
 /**
  *  \file			htdocs/lib/security.lib.php
  *  \brief			Set of function used for dolibarr security
- *  \version		$Id: security.lib.php,v 1.125 2011/07/31 23:25:15 eldy Exp $
+ *  \version		$Id: security.lib.php,v 1.126 2011/08/11 19:41:24 eldy Exp $
  */
 
 
 /**
  *   Return a login if login/pass was successfull using an external login method
+ *
  *   @return	string		Login or ''
  * 	 TODO Provide usertotest, passwordtotest and entitytotest by parameters
  */
@@ -82,6 +83,7 @@ function getLoginMethod()
 
 /**
  *	Show Dolibarr default login page
+ *
  *	@param		langs		Lang object (must be initialized by a new).
  *	@param		conf		Conf object
  *	@param		mysoc		Company object
@@ -267,6 +269,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 
 /**
  *  Fonction pour initialiser un salt pour la fonction crypt
+ *
  *  @param		$type		2=>renvoi un salt pour cryptage DES
  *							12=>renvoi un salt pour cryptage MD5
  *							non defini=>renvoi un salt pour cryptage par defaut
@@ -295,6 +298,7 @@ function makesalt($type=CRYPT_SALT_LENGTH)
 
 /**
  *  Encode or decode database password in config file
+ *
  *  @param   	level   	Encode level: 0 no encoding, 1 encoding
  *	@return		int			<0 if KO, >0 if OK
  */
@@ -429,113 +433,6 @@ function dol_decode($chain)
 	return $string_decoded;
 }
 
-
-/**
- * Return array of ciphers mode available
- * @return strAv	Configuration file content
- */
-function dol_efc_config()
-{
-	// Make sure we can use mcrypt_generic_init
-	if (!function_exists("mcrypt_generic_init"))
-	{
-		return -1;
-	}
-
-	// Set a temporary $key and $data for encryption tests
-	$key = md5(time() . getmypid());
-	$data = mt_rand();
-
-	// Get and sort available cipher methods
-	$ciphers = mcrypt_list_algorithms();
-	natsort($ciphers);
-
-	// Get and sort available cipher modes
-	$modes = mcrypt_list_modes();
-	natsort($modes);
-
-	foreach ($ciphers as $cipher)
-	{
-		foreach ($modes as $mode)
-		{
-			// Not Compatible
-			$result = 'false';
-
-			// open encryption module
-			$td = @mcrypt_module_open($cipher, '', $mode, '');
-
-			// if we could open the cipher
-			if ($td)
-			{
-				// try to generate the iv
-				$iv = @mcrypt_create_iv(mcrypt_enc_get_iv_size ($td), MCRYPT_RAND);
-
-				// if we could generate the iv
-				if ($iv)
-				{
-					// initialize encryption
-					@mcrypt_generic_init ($td, $key, $iv);
-
-					// encrypt data
-					$encrypted_data = mcrypt_generic($td, $data);
-
-					// cleanup
-					mcrypt_generic_deinit($td);
-
-					// No error issued
-					$result = 'true';
-				}
-
-				// close
-				@mcrypt_module_close($td);
-			}
-
-			if ($result == "true") $available["$cipher"][] = $mode;
-		}
-	}
-
-	if (count($available) > 0)
-	{
-		// Content of configuration
-		$strAv = "<?php\n";
-		$strAv.= "/* Copyright (C) 2003 HumanEasy, Lda. <humaneasy@sitaar.com>\n";
-		$strAv.= " * Copyright (C) 2009 Regis Houssin <regis@dolibarr.fr>\n";
-		$strAv.= " *\n";
-		$strAv.= " * All rights reserved.\n";
-		$strAv.= " * This file is licensed under GNU GPL version 2 or above.\n";
-		$strAv.= " * Please visit http://www.gnu.org to now more about it.\n";
-		$strAv.= " */\n\n";
-		$strAv.= "/**\n";
-		$strAv.= " *  Name: EasyFileCrypt Extending Crypt Class\n";
-		$strAv.= " *  Version: 1.0\n";
-		$strAv.= " *  Created: ".date("r")."\n";
-		$strAv.= " *  Ciphers Installed on this system: ".count($ciphers)."\n";
-		$strAv.= " */\n\n";
-		$strAv.= "    \$xfss = Array ( ";
-
-		foreach ($ciphers as $avCipher) {
-
-			$v = "";
-			if (count($available["$avCipher"]) > 0) {
-				foreach ($available["$avCipher"] as $avMode)
-				$v .= " '".$avMode."', ";
-
-				$i = dol_strlen($v) - 2;
-				if ($v[$i] == ",")
-				$v = substr($v, 2, $i - 3);
-			}
-			if (!empty($v)) $v = " '".$v."' ";
-			$strAv .= "'".$avCipher."' => Array (".$v."),\n                    ";
-		}
-		$strAv = rtrim($strAv);
-		if ($strAv[dol_strlen($strAv) - 1] == ",")
-		$strAv = substr($strAv, 0, dol_strlen($strAv) - 1);
-		$strAv .= " );\n\n";
-		$strAv .= "?>";
-
-		return $strAv;
-	}
-}
 
 /**
  * Return a generated password using default module

@@ -22,10 +22,9 @@
  *  \file       htdocs/includes/modules/expedition/pdf/ModelePdfExpedition.class.php
  *  \ingroup    shipping
  *  \brief      Fichier contenant la classe mere de generation des expeditions
- *  \version    $Id: ModelePdfExpedition.class.php,v 1.17 2011/08/10 23:20:55 eldy Exp $
+ *  \version    $Id: ModelePdfExpedition.class.php,v 1.18 2011/08/11 12:14:00 eldy Exp $
  */
 
-require_once(FPDFI_PATH.'fpdi_protection.php');
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 
 

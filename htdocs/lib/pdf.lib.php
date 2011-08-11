@@ -24,20 +24,64 @@
  *	\file       htdocs/lib/pdf.lib.php
  *	\brief      Set of functions used for PDF generation
  *	\ingroup    core
- *	\version    $Id: pdf.lib.php,v 1.102 2011/08/10 22:47:35 eldy Exp $
+ *	\version    $Id: pdf.lib.php,v 1.104 2011/08/11 16:09:52 eldy Exp $
  */
 
 
 /**
- *      Return a PDF instance object. We create a FPDI instance that instanciate TCPDF (or FPDF if MAIN_USE_FPDF is on)
- *      @param      format          Array(width,height)
+ *      Return array with format properties of default PDF format
+ *      @return     array		Array('width'=>w,'height'=>h,'unit'=>u);
+ */
+function pdf_getFormat()
+{
+    global $conf,$db;
+
+    // Default value if setup was not done and/or entry into c_paper_format not defined
+    $width=210; $height=297; $unit='mm';
+
+    $pdfformat=$conf->global->MAIN_PDF_FORMAT;
+    if (empty($pdfformat))
+    {
+        include_once(DOL_DOCUMENT_ROOT.'/lib/functions2.lib.php');
+        $pdfformat=dol_getDefaultFormat();
+    }
+
+	$sql="SELECT code, label, width, height, unit FROM ".MAIN_DB_PREFIX."c_paper_format";
+    $sql.=" WHERE code = '".$pdfformat."'";
+    $resql=$db->query($sql);
+    if ($resql)
+    {
+        $obj=$db->fetch_object($resql);
+        if ($obj)
+        {
+            $width=$obj->width;
+            $height=$obj->height;
+            $unit=$obj->unit;
+        }
+    }
+
+    //print "pdfformat=".$pdfformat." width=".$width." height=".$height." unit=".$unit;
+    return array('width'=>$width,'height'=>$height,'unit'=>$unit);
+}
+
+/**
+ *      Return a PDF instance object. We create a FPDI instance that instanciate TCPDF.
+ *      @param      format          Array(width,height). Keep empty to use default setup.
  *      @param      metric          Unit of format ('mm')
  *      @param      pagetype        'P' or 'l'
  *      @return     PDF object
  */
-function pdf_getInstance($format,$metric='mm',$pagetype='P')
+function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 {
     global $conf;
+
+    require_once(TCPDF_PATH.'tcpdf.php');
+    // We need to instantiate fpdi object (instead of tcpdf) to use merging features. But we can disable it.
+    if (empty($conf->global->MAIN_DISABLE_FPDI)) require_once(FPDFI_PATH.'fpdi.php');
+
+    $arrayformat=pdf_getFormat();
+    $format=array($arrayformat['width'],$arrayformat['height']);
+    $metric=$arrayformat['unit'];
 
     // Protection et encryption du pdf
     if ($conf->global->PDF_SECURITY_ENCRYPTION)
@@ -53,15 +97,17 @@ function pdf_getInstance($format,$metric='mm',$pagetype='P')
         - print-high : Print the document to a representation from which a faithful digital copy of the PDF content could be generated. When this is not set, printing is limited to a low-level representation of the appearance, possibly of degraded quality.
         - owner : (inverted logic - only for public-key) when set permits change of encryption and enables all other permissions.
         */
-        if ($conf->global->MAIN_USE_FPDF)
+        if (! empty($conf->global->MAIN_USE_FPDF))
         {
+            require_once(FPDFI_PATH.'fpdi_protection.php');
             $pdf = new FPDI_Protection($pagetype,$metric,$format);
             // For FPDF, we specify permission we want to open
             $pdfrights = array('print');
         }
         else
         {
-            $pdf = new FPDI($pagetype,$metric,$format);
+            if (class_exists('FPDI')) $pdf = new FPDI($pagetype,$metric,$format);
+            else $pdf = new TCPDF($pagetype,$metric,$format);
             // For TCPDF, we specify permission we want to block
             $pdfrights = array('modify','copy');
         }
@@ -71,7 +117,8 @@ function pdf_getInstance($format,$metric='mm',$pagetype='P')
     }
     else
     {
-        $pdf=new FPDI($pagetype,$metric,$format);
+        if (class_exists('FPDI')) $pdf = new FPDI($pagetype,$metric,$format);
+        else $pdf = new TCPDF($pagetype,$metric,$format);
     }
     return $pdf;
 }

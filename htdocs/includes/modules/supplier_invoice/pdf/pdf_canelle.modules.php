@@ -21,7 +21,7 @@
  *	\file       htdocs/includes/modules/supplier_invoice/pdf/pdf_canelle.modules.php
  *	\ingroup    fournisseur
  *	\brief      Class file to generate the supplier invoices with the canelle model
- *	\version    $Id: pdf_canelle.modules.php,v 1.35 2011/07/31 23:28:18 eldy Exp $
+ *	\version    $Id: pdf_canelle.modules.php,v 1.36 2011/08/11 12:14:01 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/supplier_invoice/modules_facturefournisseur.php");
@@ -105,7 +105,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!class_exists('TCPDF')) $outputlangs->charset_output='ISO-8859-1';
+		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
 		$outputlangs->load("main");
 		$outputlangs->load("dict");

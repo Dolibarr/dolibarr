@@ -22,7 +22,7 @@
  *	\file       htdocs/includes/modules/expedition/pdf/pdf_expedition_merou.modules.php
  *	\ingroup    expedition
  *	\brief      Fichier de la classe permettant de generer les bordereaux envoi au modele Merou
- *	\version    $Id: pdf_expedition_merou.modules.php,v 1.85 2011/07/31 23:28:13 eldy Exp $
+ *	\version    $Id: pdf_expedition_merou.modules.php,v 1.86 2011/08/11 12:14:00 eldy Exp $
  */
 
 require_once DOL_DOCUMENT_ROOT."/includes/modules/expedition/pdf/ModelePdfExpedition.class.php";
@@ -81,7 +81,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!class_exists('TCPDF')) $outputlangs->charset_output='ISO-8859-1';
+		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
@@ -325,7 +325,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 	function _pagehead(&$pdf, $object, $outputlangs)
 	{
 		global $conf, $langs;
-		
+
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
@@ -384,9 +384,9 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		//$this->Code39($Xoff+43, $Yoff+1, $object->ref,$ext = true, $cks = false, $w = 0.4, $h = 4, $wide = true);
 
 		// Add list of linked elements
-		// TODO possibility to use with other elements (business module,...) 
+		// TODO possibility to use with other elements (business module,...)
 	    //$object->load_object_linked();
-	    
+
 		$origin 	= $object->origin;
 		$origin_id 	= $object->origin_id;
 
@@ -394,7 +394,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		if ($conf->$origin->enabled)
 		{
 			$outputlangs->load('orders');
-			
+
 			$classname = ucfirst($origin);
 			$linkedobject = new $classname($this->db);
 			$result=$linkedobject->fetch($origin_id);
@@ -451,7 +451,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->SetXY($blSocX-80,$blSocY+23);
 		$pdf->SetFont('','', $default_font_size - 2);
 		$pdf->SetTextColor(0,0,0);
-		
+
 		if (! empty($object->tracking_number))
 		{
 			$object->GetUrlTrackingStatus($object->tracking_number);

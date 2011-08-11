@@ -21,7 +21,7 @@
  *	\file       htdocs/core/class/html.formfile.class.php
  *  \ingroup    core
  *	\brief      File of class to offer components to list and upload files
- *	\version	$Id: html.formfile.class.php,v 1.54 2011/08/10 22:47:34 eldy Exp $
+ *	\version	$Id: html.formfile.class.php,v 1.55 2011/08/11 07:41:41 hregis Exp $
  */
 
 
@@ -451,7 +451,7 @@ class FormFile
 			$out.= '</tr>';
 
 			// Execute hooks
-			$parameters=array('socid'=>$GLOBALS['socid'],'id'=>$GLOBAL['id']);
+			$parameters=array('socid'=>$GLOBALS['socid'],'id'=>$GLOBALS['id']);
 			if (is_object($hookmanager)) $out.= $hookmanager->executeHooks('formBuilddocOptions',$parameters);
 		}
 

@@ -26,9 +26,8 @@
  *      \ingroup    commande
  *      \brief      File that contain parent class for supplier orders models
  *                  and parent class for supplier orders numbering models
- *      \version    $Id: modules_commandefournisseur.php,v 1.23 2011/08/10 23:21:14 eldy Exp $
+ *      \version    $Id: modules_commandefournisseur.php,v 1.24 2011/08/11 12:14:04 eldy Exp $
  */
-require_once(FPDFI_PATH.'fpdi_protection.php');
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");	// requis car utilise par les classes qui heritent
 

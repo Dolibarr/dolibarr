@@ -25,7 +25,7 @@
  * 		\ingroup    facture
  * 		\brief      Fichier de la classe permettant de generer les factures au modele oursin
  * 		\author	    Sylvain SCATTOLINI base sur un modele de Laurent Destailleur
- * 		\version    $Id: pdf_oursin.modules.php,v 1.12 2011/08/10 17:56:10 hregis Exp $
+ * 		\version    $Id: pdf_oursin.modules.php,v 1.13 2011/08/11 12:14:02 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
@@ -120,7 +120,7 @@ class pdf_oursin extends ModelePDFFactures
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!class_exists('TCPDF')) $outputlangs->charset_output='ISO-8859-1';
+		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 

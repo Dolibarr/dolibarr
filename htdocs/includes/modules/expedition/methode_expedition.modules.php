@@ -22,9 +22,8 @@
  *	\ingroup    expedition
  *	\brief      Fichier contenant la classe mere de generation de bon de livraison en PDF
  *				et la classe mere de numerotation des bons de livraisons
- * 	\version	$Id: methode_expedition.modules.php,v 1.11 2011/08/10 23:21:12 eldy Exp $
+ * 	\version	$Id: methode_expedition.modules.php,v 1.12 2011/08/11 12:14:02 eldy Exp $
  */
-require_once(FPDFI_PATH.'fpdi_protection.php');
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 
 

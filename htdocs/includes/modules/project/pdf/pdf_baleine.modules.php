@@ -21,7 +21,7 @@
  *	\ingroup    project
  *	\brief      Fichier de la classe permettant de generer les projets au modele Baleine
  *	\author	    Regis Houssin
- *	\version    $Id: pdf_baleine.modules.php,v 1.39 2011/07/31 23:28:18 eldy Exp $
+ *	\version    $Id: pdf_baleine.modules.php,v 1.40 2011/08/11 12:14:04 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/project/modules_project.php");
@@ -95,7 +95,7 @@ class pdf_baleine extends ModelePDFProjects
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!class_exists('TCPDF')) $outputlangs->charset_output='ISO-8859-1';
+		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
 		$outputlangs->load("main");
 		$outputlangs->load("dict");

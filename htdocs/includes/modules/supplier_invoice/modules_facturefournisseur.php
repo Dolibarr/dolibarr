@@ -20,9 +20,8 @@
  *		\file       htdocs/includes/modules/supplier_invoice/modules_facturefournisseur.php
  *      \ingroup    facture fourniseur
  *      \brief      File that contain parent class for supplier invoices models
- *      \version    $Id: modules_facturefournisseur.php,v 1.10 2011/08/10 23:21:14 eldy Exp $
+ *      \version    $Id: modules_facturefournisseur.php,v 1.11 2011/08/11 12:14:04 eldy Exp $
  */
-require_once(FPDFI_PATH.'fpdi_protection.php');
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 
 

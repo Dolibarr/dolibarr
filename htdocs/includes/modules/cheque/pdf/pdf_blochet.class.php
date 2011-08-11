@@ -21,10 +21,9 @@
  *	\file       htdocs/includes/modules/cheque/pdf/pdf_blochet.class.php
  *	\ingroup    banque
  *	\brief      File to build cheque deposit receipts
- *	\version    $Id: pdf_blochet.class.php,v 1.42 2011/08/10 23:21:12 eldy Exp $
+ *	\version    $Id: pdf_blochet.class.php,v 1.43 2011/08/11 12:14:03 eldy Exp $
  */
 
-require_once(FPDFI_PATH.'fpdi_protection.php');
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/cheque/pdf/modules_chequereceipts.php");
@@ -89,7 +88,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
         if (! is_object($outputlangs)) $outputlangs=$langs;
         // For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
         $sav_charset_output=$outputlangs->charset_output;
-        if (!class_exists('TCPDF')) $outputlangs->charset_output='ISO-8859-1';
+        if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
 		$outputlangs->load("main");
 		$outputlangs->load("companies");
