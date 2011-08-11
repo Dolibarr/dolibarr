@@ -84,3 +84,4 @@ ErrorBadMaskBadRazMonth=Error, valor de tornada a 0 incorrecte
 ErrorSelectAtLeastOne=Error. Seleccioneu com a mínim una entrada.
 ErrorProductWithRefNotExist=La referència de producte '<i>%s</i>' no existeix
 ErrorDeleteNotPossibleLineIsConsolidated=Eliminació impossible ja que el registre està enllaçat a una transacció bancària conciliada
+ErrorProdIdAlreadyExist=%s es troba assignat a altre tercer
