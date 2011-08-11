@@ -24,7 +24,7 @@
  *	\file       htdocs/lib/pdf.lib.php
  *	\brief      Set of functions used for PDF generation
  *	\ingroup    core
- *	\version    $Id: pdf.lib.php,v 1.104 2011/08/11 16:09:52 eldy Exp $
+ *	\version    $Id: pdf.lib.php,v 1.103 2011/08/11 12:14:04 eldy Exp $
  */
 
 
@@ -76,12 +76,14 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
     global $conf;
 
     require_once(TCPDF_PATH.'tcpdf.php');
-    // We need to instantiate fpdi object (instead of tcpdf) to use merging features. But we can disable it.
-    if (empty($conf->global->MAIN_DISABLE_FPDI)) require_once(FPDFI_PATH.'fpdi.php');
+    require_once(FPDFI_PATH.'fpdi.php');
 
-    $arrayformat=pdf_getFormat();
-    $format=array($arrayformat['width'],$arrayformat['height']);
-    $metric=$arrayformat['unit'];
+    //if (! is_array($format) || empty($format) || empty($metric))
+    //{
+        $arrayformat=pdf_getFormat();
+        $format=array($arrayformat['width'],$arrayformat['height']);
+        $metric=$arrayformat['unit'];
+    //}
 
     // Protection et encryption du pdf
     if ($conf->global->PDF_SECURITY_ENCRYPTION)
@@ -97,17 +99,15 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
         - print-high : Print the document to a representation from which a faithful digital copy of the PDF content could be generated. When this is not set, printing is limited to a low-level representation of the appearance, possibly of degraded quality.
         - owner : (inverted logic - only for public-key) when set permits change of encryption and enables all other permissions.
         */
-        if (! empty($conf->global->MAIN_USE_FPDF))
+        if ($conf->global->MAIN_USE_FPDF)
         {
-            require_once(FPDFI_PATH.'fpdi_protection.php');
             $pdf = new FPDI_Protection($pagetype,$metric,$format);
             // For FPDF, we specify permission we want to open
             $pdfrights = array('print');
         }
         else
         {
-            if (class_exists('FPDI')) $pdf = new FPDI($pagetype,$metric,$format);
-            else $pdf = new TCPDF($pagetype,$metric,$format);
+            $pdf = new FPDI($pagetype,$metric,$format);
             // For TCPDF, we specify permission we want to block
             $pdfrights = array('modify','copy');
         }
@@ -117,8 +117,7 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
     }
     else
     {
-        if (class_exists('FPDI')) $pdf = new FPDI($pagetype,$metric,$format);
-        else $pdf = new TCPDF($pagetype,$metric,$format);
+        $pdf=new FPDI($pagetype,$metric,$format);
     }
     return $pdf;
 }
