@@ -21,7 +21,7 @@
  *	\file       htdocs/core/class/hookmanager.class.php
  *	\ingroup    core
  *	\brief      File of class to manage hooks
- *	\version    $Id: hookmanager.class.php,v 1.5 2011/08/10 22:47:34 eldy Exp $
+ *	\version    $Id: hookmanager.class.php,v 1.6 2011/08/11 07:51:50 hregis Exp $
  */
 
 
@@ -124,7 +124,7 @@ class HookManager
      * 								For printSearchForm,printLeftBlock:           Return HTML string.
      * 								$this->error or this->errors are also defined with hooks errors.
      */
-	function executeHooks($method, $parameters=false, &$action='', &$object='')
+	function executeHooks($method, $parameters=false, &$object='', &$action='')
 	{
 		global $var;
 
