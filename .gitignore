@@ -1,6 +1,9 @@
 htdocs/conf/conf.php
 htdocs/conf/conf.php.old
 documents/
+custom/
+custom2/
 nbproject
 .settings/
 .buildpath
+/.git
