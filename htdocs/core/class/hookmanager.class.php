@@ -21,7 +21,7 @@
  *	\file       htdocs/core/class/hookmanager.class.php
  *	\ingroup    core
  *	\brief      File of class to manage hooks
- *	\version    $Id: hookmanager.class.php,v 1.6 2011/08/11 07:51:50 hregis Exp $
+ *	\version    $Id: hookmanager.class.php,v 1.7 2011/08/11 09:26:34 hregis Exp $
  */
 
 
@@ -182,10 +182,8 @@ class HookManager
                     // Generic hooks that return a string (printSearchForm, printLeftBlock, formBuilddocOptions, ...)
                     else if (method_exists($actioninstance,$method))
                     {
-                        $resprint.='<!-- Begin hook '.$method.' -->'."\n";
-                        if (is_array($parameters) && $parameters['special_code'] > 3 && $parameters['special_code'] != $module) continue;
+                        if (is_array($parameters) && $parameters['special_code'] > 3 && $parameters['special_code'] != $actioninstance->module_number) continue;
                     	$resprint.=$actioninstance->$method($parameters, $object, $action, $this);
-                        $resprint.="\n".'<!-- End of hook '.$method.' -->'."\n";
                     }
                 }
             }
