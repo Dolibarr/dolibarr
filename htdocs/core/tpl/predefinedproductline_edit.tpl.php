@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: predefinedproductline_edit.tpl.php,v 1.19 2011/08/11 07:41:41 hregis Exp $
+ * $Id: predefinedproductline_edit.tpl.php,v 1.20 2011/08/11 09:25:07 hregis Exp $
  *
  * Need to have following variables defined:
  * $conf
@@ -51,7 +51,7 @@
 		{
 		    $fk_parent_line = ($_POST["fk_parent_line"] ? $_POST["fk_parent_line"] : $line->fk_parent_line);
 			$parameters=array('fk_parent_line'=>$fk_parent_line);
-		    $hookmanager->executeHooks('formEditProductOptions',$parameters,$object,$action);
+		    $hookmanager->executeHooks('formEditProductOptions',$parameters,$this,$action);
 		}
 		
 		// editeur wysiwyg
