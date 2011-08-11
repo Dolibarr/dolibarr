@@ -6,7 +6,7 @@
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2008      Patrick Raguin       <patrick.raguin@auguria.net>
- * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
  *	\file       htdocs/societe/class/societe.class.php
  *	\ingroup    societe
  *	\brief      File for third party class
- *	\version    $Id: societe.class.php,v 1.97 2011/08/11 16:53:43 simnandez Exp $
+ *	\version    $Id: societe.class.php,v 1.96 2011/08/10 22:47:35 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 
@@ -1958,88 +1958,12 @@ class Societe extends CommonObject
             }
         }
     }
-    
-	/**
-     *    Returns if a profid sould be verified
-     *    @param      idprof          1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
-     *    @return     boolean         true , false
-     */
-    function id_prof_verifiable($idprof)
-    {
-	    global $conf;
-	    
-     	switch($idprof)
-        {
-        	case 1:
-        		$ret=(!$conf->global->SOCIETE_IDPROF1_UNIQUE?false:true);
-        		break;
-        	case 2:
-        		$ret=(!$conf->global->SOCIETE_IDPROF2_UNIQUE?false:true);
-        		break;
-        	case 3:
-        		$ret=(!$conf->global->SOCIETE_IDPROF3_UNIQUE?false:true);
-        		break;
-        	case 4:
-        		$ret=(!$conf->global->SOCIETE_IDPROF4_UNIQUE?false:true);
-        		break;
-        	default:
-        		$ret=false;
-        }
-        
-        return $ret;
-    }
-    
-	/**
-     *    Verify if a profid exists into database for others thirds
-     *    @param      	idprof		1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
-     *    @param		value		value of profid
-     *    @param		socid		id of society if update
-     *    @return     	boolean		true if exists, false if not
-     */
-    function id_prof_exists($idprof,$value,$socid=0)
-    {
-     	switch($idprof)
-        {
-        	case 1:
-        		$field="siren";
-        		break;
-        	case 2:
-        		$field="siret";
-        		break;
-        	case 3:
-        		$field="ape";
-        		break;
-        	case 4:
-        		$field="idprof4";
-        		break;
-        }
-        
-         //Verify duplicate entries
-        $sql  = "SELECT COUNT(*) as idprof FROM ".MAIN_DB_PREFIX."societe WHERE ".$field." = '".$value."'";
-        if($socid) $sql .= " AND rowid <> ".$socid;
-        $resql = $this->db->query($sql);
-        if ($resql)
-        {
-            $nump = $this->db->num_rows($resql);
-            $obj = $this->db->fetch_object($resql);
-            $count = $obj->idprof;
-        }
-        else
-        {
-            $count = 0;
-            print $this->db->error();
-        }
-        $this->db->free($resql);
-        
-		if ($count > 0) return true;
-		else return false;     
-    }
 
     /**
      *    Verifie la validite d'un identifiant professionnel en fonction du pays de la societe (siren, siret, ...)
      *    @param      idprof          1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
      *    @param      soc             Objet societe
-     *    @return     int             <=0 if KO, >0 if OK, -10=idprofx already exist into database
+     *    @return     int             <=0 if KO, >0 if OK
      *    TODO not in business class
      */
     function id_prof_check($idprof,$soc)
@@ -2049,7 +1973,7 @@ class Societe extends CommonObject
         $ok=1;
 
         if (! empty($conf->global->MAIN_DISABLEPROFIDRULES)) return 1;
-        
+
         // Verifie SIREN si pays FR
         if ($idprof == 1 && $soc->pays_code == 'FR')
         {

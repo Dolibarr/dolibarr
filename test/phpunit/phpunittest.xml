@@ -18,8 +18,9 @@
     <directory suffix=".php">../../htdocs/includes/artichow/</directory>
     <directory suffix=".php">../../htdocs/includes/barcode/php-barcode/</directory>
     <directory suffix=".php">../../htdocs/includes/ckeditor/</directory>
+    <directory suffix=".php">../../htdocs/includes/efc_xfss/</directory>
     <directory suffix=".php">../../htdocs/includes/fckeditor/</directory>
-    <directory suffix=".php">../../htdocs/includes/fpdi/</directory>
+    <directory suffix=".php">../../htdocs/includes/fpdf/</directory>
     <directory suffix=".php">../../htdocs/includes/geoip/</directory>
     <directory suffix=".php">../../htdocs/includes/jquery/</directory>
     <directory suffix=".php">../../htdocs/includes/jsgantt/</directory>
@@ -28,6 +29,7 @@
     <directory suffix=".php">../../htdocs/includes/nusoap/</directory>
     <directory suffix=".php">../../htdocs/includes/odtphp/</directory>
     <directory suffix=".php">../../htdocs/includes/phpexcel/</directory>
+    <directory suffix=".php">../../htdocs/includes/php_writeexcel/</directory>
     <directory suffix=".php">../../htdocs/includes/smtps/</directory>
     <directory suffix=".php">../../htdocs/includes/tcpdf/</directory>
     <directory suffix=".php">../../htdocs/includes/vcard/</directory>
@@ -60,9 +62,11 @@
     <directory suffix=".php">../../htdocs/includes/adodbtime/</directory>
     <directory suffix=".php">../../htdocs/includes/artichow/</directory>
     <directory suffix=".php">../../htdocs/includes/barcode/php-barcode/</directory>
+    <directory suffix=".php">../../htdocs/includes/efc_xfss/</directory>
     <directory suffix=".php">../../htdocs/includes/fckeditor/</directory>
-    <directory suffix=".php">../../htdocs/includes/fpdi/</directory>
+    <directory suffix=".php">../../htdocs/includes/fpdf/</directory>
     <directory suffix=".php">../../htdocs/includes/geoip/</directory>
+    <directory suffix=".php">../../htdocs/includes/jcrop/</directory>
     <directory suffix=".php">../../htdocs/includes/jquery/</directory>
     <directory suffix=".php">../../htdocs/includes/jsgantt/</directory>
     <directory suffix=".php">../../htdocs/includes/magpierss/</directory>
@@ -70,6 +74,7 @@
     <directory suffix=".php">../../htdocs/includes/nusoap/</directory>
     <directory suffix=".php">../../htdocs/includes/odtphp/</directory>
     <directory suffix=".php">../../htdocs/includes/phpexcel/</directory>
+    <directory suffix=".php">../../htdocs/includes/php_writeexcel/</directory>
     <directory suffix=".php">../../htdocs/includes/smtps/</directory>
     <directory suffix=".php">../../htdocs/includes/tcpdf/</directory>
     <directory suffix=".php">../../htdocs/includes/vcard/</directory>
