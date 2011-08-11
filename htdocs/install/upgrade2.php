@@ -21,7 +21,7 @@
 /**
  *	\file       htdocs/install/upgrade2.php
  *	\brief      Upgrade some data
- *	\version    $Id: upgrade2.php,v 1.187 2011/07/31 23:26:18 eldy Exp $
+ *	\version    $Id: upgrade2.php,v 1.188 2011/08/11 16:22:34 eldy Exp $
  */
 
 include_once('./inc.php');
@@ -134,24 +134,6 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 
 	// Chargement config
 	if (! $error) $conf->setValues($db);
-
-
-	/*
-	 * Pour utiliser d'autres versions des librairies externes que les
-	 * versions embarquees dans Dolibarr, definir les constantes adequates:
-	 * Pour FPDF:           FPDF_PATH
-	 * Pour PHP_WriteExcel: PHP_WRITEEXCEL_PATH
-	 * Pour MagpieRss:      MAGPIERSS_PATH
-	 * Pour NuSOAP:         NUSOAP_PATH
-	 * Pour TCPDF:          TCPDF_PATH
-	 */
-	if (! defined('FPDF_PATH'))           { define('FPDF_PATH',          DOL_DOCUMENT_ROOT .'/includes/fpdf/fpdf/'); }
-	if (! defined('PHP_WRITEEXCEL_PATH')) { define('PHP_WRITEEXCEL_PATH',DOL_DOCUMENT_ROOT .'/includes/php_writeexcel/'); }
-	if (! defined('MAGPIERSS_PATH'))      { define('MAGPIERSS_PATH',     DOL_DOCUMENT_ROOT .'/includes/magpierss/'); }
-	if (! defined('NUSOAP_PATH'))         { define('NUSOAP_PATH',        DOL_DOCUMENT_ROOT .'/includes/nusoap/lib/'); }
-	// Les autres path
-	if (! defined('MAGPIE_DIR'))          { define('MAGPIE_DIR',         MAGPIERSS_PATH); }
-	if (! defined('MAGPIE_CACHE_DIR'))    { define('MAGPIE_CACHE_DIR',   DOL_DATA_ROOT .'/rss/temp'); }
 
 
 	/***************************************************************************************
