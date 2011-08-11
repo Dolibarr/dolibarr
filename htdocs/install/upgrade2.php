@@ -21,7 +21,7 @@
 /**
  *	\file       htdocs/install/upgrade2.php
  *	\brief      Upgrade some data
- *	\version    $Id: upgrade2.php,v 1.187 2011/07/31 23:26:18 eldy Exp $
+ *	\version    $Id: upgrade2.php,v 1.189 2011/08/11 21:03:42 eldy Exp $
  */
 
 include_once('./inc.php');
@@ -134,24 +134,6 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 
 	// Chargement config
 	if (! $error) $conf->setValues($db);
-
-
-	/*
-	 * Pour utiliser d'autres versions des librairies externes que les
-	 * versions embarquees dans Dolibarr, definir les constantes adequates:
-	 * Pour FPDF:           FPDF_PATH
-	 * Pour PHP_WriteExcel: PHP_WRITEEXCEL_PATH
-	 * Pour MagpieRss:      MAGPIERSS_PATH
-	 * Pour NuSOAP:         NUSOAP_PATH
-	 * Pour TCPDF:          TCPDF_PATH
-	 */
-	if (! defined('FPDF_PATH'))           { define('FPDF_PATH',          DOL_DOCUMENT_ROOT .'/includes/fpdf/fpdf/'); }
-	if (! defined('PHP_WRITEEXCEL_PATH')) { define('PHP_WRITEEXCEL_PATH',DOL_DOCUMENT_ROOT .'/includes/php_writeexcel/'); }
-	if (! defined('MAGPIERSS_PATH'))      { define('MAGPIERSS_PATH',     DOL_DOCUMENT_ROOT .'/includes/magpierss/'); }
-	if (! defined('NUSOAP_PATH'))         { define('NUSOAP_PATH',        DOL_DOCUMENT_ROOT .'/includes/nusoap/lib/'); }
-	// Les autres path
-	if (! defined('MAGPIE_DIR'))          { define('MAGPIE_DIR',         MAGPIERSS_PATH); }
-	if (! defined('MAGPIE_CACHE_DIR'))    { define('MAGPIE_CACHE_DIR',   DOL_DATA_ROOT .'/rss/temp'); }
 
 
 	/***************************************************************************************
@@ -304,8 +286,6 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 
             // Reload menus
             migrate_reload_menu($db,$langs,$conf,$versionto);
-
-	    print '<tr><td colspan="4"><br>'.$langs->trans("MigrationFinished").'</td></tr>';
         }
 
         // Script for VX (X<3.1) -> V3.1
@@ -322,9 +302,22 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 
             // Reload menus
             migrate_reload_menu($db,$langs,$conf,$versionto);
-
-            print '<tr><td colspan="4"><br>'.$langs->trans("MigrationFinished").'</td></tr>';
         }
+
+        // Script for VX (X<3.2) -> V3.2
+        $afterversionarray=explode('.','3.1.9');
+        $beforeversionarray=explode('.','3.2.9');
+        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+        {
+            // Reload modules
+            migrate_reload_modules($db,$langs,$conf);
+
+            // Reload menus
+            migrate_reload_menu($db,$langs,$conf,$versionto);
+        }
+
+
+        print '<tr><td colspan="4"><br>'.$langs->trans("MigrationFinished").'</td></tr>';
 
         // On commit dans tous les cas.
 		// La procedure etant concue pour pouvoir passer plusieurs fois quelquesoit la situation.

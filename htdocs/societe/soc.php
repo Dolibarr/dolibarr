@@ -25,7 +25,7 @@
  *  \file       htdocs/societe/soc.php
  *  \ingroup    societe
  *  \brief      Third party card page
- *  \version    $Id: soc.php,v 1.132 2011/08/10 22:47:35 eldy Exp $
+ *  \version    $Id: soc.php,v 1.133 2011/08/11 16:53:43 simnandez Exp $
  */
 
 require("../main.inc.php");
@@ -133,7 +133,7 @@ if (empty($reshook))
             $object->fetch($socid);
         }
         else if ($canvas) $object->canvas=$canvas;
-
+        
         if (GETPOST("private") == 1)
         {
             $object->particulier           = GETPOST("private");
@@ -230,8 +230,24 @@ if (empty($reshook))
                 $error++; $errors[] = $langs->trans("ErrorSupplierModuleNotEnabled");
                 $action = ($action=='add'?'create':'edit');
             }
-        }
 
+            if($action == 'add') $mode=0;
+            else $mode=1;
+            
+        	for ($i = 1; $i < 3; $i++) 
+        	{
+    			$slabel="idprof".$i;
+        		if (($_POST[$slabel] && $object->id_prof_verifiable($i)))
+				{
+					if($object->id_prof_exists($i,$_POST["$slabel"],$object->id))
+					{
+						$langs->load("errors");
+                		$error++; $errors[] = $langs->transcountry('ProfId'.$i ,$object->pays_code)." ".$langs->trans("ErrorProdIdAlreadyExist",$_POST["$slabel"]);
+                		$action = ($action=='add'?'create':'edit');
+					}
+				}
+			}
+        }    
         if (! $error)
         {
             if ($action == 'add')
@@ -1959,5 +1975,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/10 22:47:35 $ - $Revision: 1.132 $');
+llxFooter('$Date: 2011/08/11 16:53:43 $ - $Revision: 1.133 $');
 ?>
