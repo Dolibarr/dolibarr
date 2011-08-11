@@ -2,7 +2,7 @@
 #----------------------------------------------------------------------------
 # \file         build/makepack-dolibarr.pl
 # \brief        Dolibarr package builder (tgz, zip, rpm, deb, exe, aps)
-# \version      $Id: makepack-dolibarr.pl,v 1.141 2011/08/11 19:13:02 eldy Exp $
+# \version      $Id: makepack-dolibarr.pl,v 1.142 2011/08/11 20:54:08 eldy Exp $
 # \author       (c)2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
 #----------------------------------------------------------------------------
 
@@ -10,8 +10,8 @@ use Cwd;
 
 $PROJECT="dolibarr";
 $MAJOR="3";
-$MINOR="1";
-$BUILD="0-beta";		# Mettre x pour release, x-dev pour dev, x-beta pour beta, x-rc pour release candidate
+$MINOR="2";
+$BUILD="0-alpha";		# Mettre x pour release, x-dev pour dev, x-beta pour beta, x-rc pour release candidate
 $RPMSUBVERSION="auto";	# auto use value found into BUILD
 
 @LISTETARGET=("TGZ","ZIP","RPM_GENERIC","RPM_FEDORA","RPM_MANDRIVA","RPM_OPENSUSE","DEB","APS","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
@@ -45,7 +45,7 @@ if (-d "/usr/src/RPM")    { $RPMDIR="/usr/src/RPM"; } # mandrake
 
 
 use vars qw/ $REVISION $VERSION /;
-$REVISION='$Revision: 1.141 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
+$REVISION='$Revision: 1.142 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
 $VERSION="3.1 (build $REVISION)";
 
 
