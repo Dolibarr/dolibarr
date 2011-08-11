@@ -24,7 +24,7 @@
  *  \file       htdocs/commande/class/commande.class.php
  *  \ingroup    commande
  *  \brief      Fichier des classes de commandes
- *  \version    $Id: commande.class.php,v 1.123 2011/08/10 22:47:33 eldy Exp $
+ *  \version    $Id: commande.class.php,v 1.124 2011/08/11 07:41:41 hregis Exp $
  */
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
@@ -899,7 +899,7 @@ class Commande extends CommonObject
 			$this->cond_reglement_id    = $object->cond_reglement_id;
 			$this->mode_reglement_id    = $object->mode_reglement_id;
 			$this->availability_id      = $object->availability_id;
-			$this->demand_reason_id      = $object->demand_reason_id;
+			$this->demand_reason_id     = $object->demand_reason_id;
 			$this->date_livraison       = $object->date_livraison;
 			$this->fk_delivery_address  = $object->fk_delivery_address;
 			$this->contact_id           = $object->contactid;
@@ -917,6 +917,7 @@ class Commande extends CommonObject
 				// Hook of thirdparty module
 				if (is_object($hookmanager))
 				{
+					$parameters=array('objFrom'=>$object);
 					$reshook=$hookmanager->executeHooks('createfrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 					if ($reshook < 0) $error++;
 				}
