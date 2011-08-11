@@ -3,6 +3,7 @@ This file describe changes made on external library after beeing included
 in Dolibarr root.
 
 
+
 ALL:
 ----
 Replace "& new" by "new"
@@ -21,10 +22,6 @@ By
 Replace call to serialize_val with no bugged value
 
 
-FPDFI and FPDF_TPL:
--------------------
-* Replaced all sprintf(%0.2f) by sprintf(%0.2F) (Fix bug)
-
 
 TCPDF:
 ------
@@ -40,6 +37,7 @@ if (! function_exists('getmypid')) {
 		return rand(1,32768);
 	}
 }
+
 
 
 JSGANTT:
