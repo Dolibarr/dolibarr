@@ -25,7 +25,7 @@
  *	\file       htdocs/compta/facture.php
  *	\ingroup    facture
  *	\brief      Page to create/see an invoice
- *	\version    $Id: facture.php,v 1.855 2011/08/11 15:14:50 hregis Exp $
+ *	\version    $Id: facture.php,v 1.854 2011/08/10 22:47:34 eldy Exp $
  */
 
 require('../main.inc.php');
@@ -782,7 +782,7 @@ if ($action == 'add' && $user->rights->facture->creer)
                         }
 
                         // Hooks
-                        $parameters=array('objFrom'=>$srcobject);
+                        $parameters=array('srcobject'=>$srcobject);
                         $reshook=$hookmanager->executeHooks('createfrom',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
                         if ($reshook < 0) $error++;
                     }
@@ -1835,7 +1835,7 @@ if ($action == 'create')
 
         print '<table class="noborder" width="100%">';
 
-        $objectsrc->printOriginLinesList($hookmanager);
+        $objectsrc->printOriginLinesList($object);
 
         print '</table>';
     }
@@ -3185,5 +3185,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/11 15:14:50 $ - $Revision: 1.855 $');
+llxFooter('$Date: 2011/08/10 22:47:34 $ - $Revision: 1.854 $');
 ?>

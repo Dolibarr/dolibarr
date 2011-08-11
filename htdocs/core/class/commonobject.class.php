@@ -21,7 +21,7 @@
  *	\file       htdocs/core/class/commonobject.class.php
  *	\ingroup    core
  *	\brief      File of parent class of all other business classes (invoices, contracts, proposals, orders, ...)
- *	\version    $Id: commonobject.class.php,v 1.155 2011/08/11 15:14:51 hregis Exp $
+ *	\version    $Id: commonobject.class.php,v 1.154 2011/08/10 22:47:34 eldy Exp $
  */
 
 
@@ -1800,7 +1800,7 @@ class CommonObject
      *  If lines are into a template, title must also be into a template
      *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
 	 */
-	function printOriginLinesList($hookmanager=false)
+	function printOriginLinesList()
 	{
 		global $langs;
 
@@ -1820,12 +1820,14 @@ class CommonObject
 		{
 			$var=!$var;
 
-			if (is_object($hookmanager) && ( ($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line) ) )
+			if (! empty($this->hooks) && ( ($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line) ) )
 			{
 				if (empty($line->fk_parent_line))
 				{
-					$parameters=array('line'=>$line,'var'=>$var,'i'=>$i);
-					$reshook=$hookmanager->executeHooks('printOriginObjectLine',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+					foreach($this->hooks as $hook)
+					{
+						if (method_exists($hook['modules'][$line->special_code],'printOriginObjectLine')) $hook['modules'][$line->special_code]->printOriginObjectLine($this,$line,$var,$i);
+					}
 				}
 			}
 			else

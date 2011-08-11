@@ -27,7 +27,7 @@
  *	\file       htdocs/compta/facture/class/facture.class.php
  *	\ingroup    facture
  *	\brief      Fichier de la classe des factures clients
- *	\version    $Id: facture.class.php,v 1.127 2011/08/11 15:14:50 hregis Exp $
+ *	\version    $Id: facture.class.php,v 1.126 2011/08/10 22:47:33 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
@@ -661,8 +661,8 @@ class Facture extends CommonObject
         	// Hook of thirdparty module
 			if (is_object($hookmanager))
 			{
-			    $parameters=array('objFrom'=>$object);
-				$reshook=$hookmanager->executeHooks('createfrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+			    $parameters=array('objFrom'=>$objFrom);
+				$reshook=$hookmanager->executeHooks('createfrom',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) $error++;
 			}
 

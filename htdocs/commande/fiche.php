@@ -25,7 +25,7 @@
  *	\file       htdocs/commande/fiche.php
  *	\ingroup    commande
  *	\brief      Page to show customer order
- *	\version    $Id: fiche.php,v 1.534 2011/08/11 15:14:51 hregis Exp $
+ *	\version    $Id: fiche.php,v 1.533 2011/08/10 22:47:34 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -1392,7 +1392,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 
         print '<table class="noborder" width="100%">';
 
-        $objectsrc->printOriginLinesList($hookmanager);
+        $objectsrc->printOriginLinesList();
 
         print '</table>';
     }
@@ -2070,5 +2070,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/11 15:14:51 $ - $Revision: 1.534 $');
+llxFooter('$Date: 2011/08/10 22:47:34 $ - $Revision: 1.533 $');
 ?>
