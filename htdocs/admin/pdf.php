@@ -20,7 +20,7 @@
 /**
  *       \file       htdocs/admin/pdf.php
  *       \brief      Page to setup PDF options
- *       \version    $Id: pdf.php,v 1.1 2011/08/10 23:48:09 eldy Exp $
+ *       \version    $Id: pdf.php,v 1.2 2011/08/11 01:34:54 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -44,8 +44,10 @@ if (!$user->admin)
 
 if (isset($_POST["action"]) && $_POST["action"] == 'update')
 {
+	dolibarr_set_const($db, "MAIN_PDF_FORMAT",    $_POST["MAIN_PDF_FORMAT"],'chaine',0,'',$conf->entity);
+
 	dolibarr_set_const($db, "MAIN_PROFID1_IN_ADDRESS",    $_POST["MAIN_PROFID1_IN_ADDRESS"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_PROFID2_IN_ADDRESS",    $_POST["MAIN_PROFID2_IN_ADDRESS"],'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "MAIN_PROFID2_IN_ADDRESS",    $_POST["MAIN_PROFID2_IN_ADDRESS"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_PROFID3_IN_ADDRESS",    $_POST["MAIN_PROFID3_IN_ADDRESS"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_PROFID4_IN_ADDRESS",    $_POST["MAIN_PROFID4_IN_ADDRESS"],'chaine',0,'',$conf->entity);
 
@@ -82,11 +84,31 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')	// Edit
     clearstatcache();
 
 
-    // PDF
+    // Misc options
+    print_fiche_titre($langs->trans("DictionnaryPaperFormat"),'','').'<br>';
+	$var=true;
+    print '<table summary="more" class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+
+    $selected=$conf->global->MAIN_PDF_FORMAT;
+    if (empty($selected)) $selected=dol_getDefaultFormat();
+
+    // Show pdf format
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("DictionnaryPaperFormat").'</td><td>';
+    print $formadmin->select_paper_format($selected,'MAIN_PDF_FORMAT');
+    print '</td></tr>';
+
+	print '</table>';
+
+	print '<br>';
+
+
+    // Addresses
     print_fiche_titre($langs->trans("PDFAddressForging"),'','').'<br>';
 	$var=true;
     print '<table summary="more" class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td colspan="2">'.$langs->trans("Value").'</td></tr>';
+    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
     // Show prof id 1 in address into pdf
     $var=!$var;
@@ -126,9 +148,25 @@ else	// Show
 {
     $var=true;
 
-    print_fiche_titre($langs->trans("PDFAddressForging"),'','').'<br>';
+    // Misc options
+    print_fiche_titre($langs->trans("DictionnaryPaperFormat"),'','').'<br>';
+	$var=true;
+    print '<table summary="more" class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+
+    // Show pdf format
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("DictionnaryPaperFormat").'</td><td>';
+    print $conf->global->MAIN_PDF_FORMAT;
+    print '</td></tr>';
+
+	print '</table>';
+
+	print '<br>';
+
+	print_fiche_titre($langs->trans("PDFAddressForging"),'','').'<br>';
     print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
     // Show prof id 1 in address into pdf
     $var=!$var;
@@ -166,5 +204,5 @@ else	// Show
 
 $db->close();
 
-llxFooter('$Date: 2011/08/10 23:48:09 $ - $Revision: 1.1 $');
+llxFooter('$Date: 2011/08/11 01:34:54 $ - $Revision: 1.2 $');
 ?>
