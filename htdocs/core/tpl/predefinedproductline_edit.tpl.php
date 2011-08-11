@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: predefinedproductline_edit.tpl.php,v 1.18 2011/08/11 01:36:53 eldy Exp $
+ * $Id: predefinedproductline_edit.tpl.php,v 1.19 2011/08/11 07:41:41 hregis Exp $
  *
  * Need to have following variables defined:
  * $conf
@@ -49,16 +49,18 @@
 
 		if (is_object($hookmanager))
 		{
-		    $parameters=array('fk_parent_line'=>$line_fk_parent_line);
+		    $fk_parent_line = ($_POST["fk_parent_line"] ? $_POST["fk_parent_line"] : $line->fk_parent_line);
+			$parameters=array('fk_parent_line'=>$fk_parent_line);
 		    $hookmanager->executeHooks('formEditProductOptions',$parameters,$object,$action);
-
-		    // editeur wysiwyg
-		    $nbrows=ROWS_2;
-		    if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-		    require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-		    $doleditor=new DolEditor('desc',$line->description,'',164,'dolibarr_details','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
-		    $doleditor->Create();
-		    ?></td>
+		}
+		
+		// editeur wysiwyg
+		$nbrows=ROWS_2;
+		if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
+		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+		$doleditor=new DolEditor('desc',$line->description,'',164,'dolibarr_details','',false,true,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
+		$doleditor->Create();
+		?></td>
 
 	<td align="right"><?php echo $html->load_tva('tva_tx',$line->tva_tx,$seller,$buyer,'',$line->info_bits); ?></td>
 
@@ -82,7 +84,7 @@
 		value="<?php echo $langs->trans("Cancel"); ?>"></td>
 </tr>
 
-		    <?php if ($conf->service->enabled && $dateSelector && $line->product_type == 1)	{ ?>
+<?php if ($conf->service->enabled && $dateSelector && $line->product_type == 1)	{ ?>
 <tr <?php echo $bc[$var]; ?>>
 	<td colspan="9"><?php echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' '; ?>
 	<?php
@@ -91,5 +93,5 @@
 	echo $html->select_date($line->date_end,'date_end',$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$line->date_end?0:1,"updateligne");
 	?></td>
 </tr>
-	<?php } ?></form>
+<?php } ?></form>
 <!-- END PHP TEMPLATE predefinedproductline_edit.tpl.php -->
