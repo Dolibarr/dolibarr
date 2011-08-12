@@ -22,7 +22,7 @@
  *	\file       htdocs/admin/workflow.php
  *	\ingroup    company
  *	\brief      Workflows setup page
- *	\version    $Id: workflow.php,v 1.6 2011/08/08 16:00:18 eldy Exp $
+ *	\version    $Id: workflow.php,v 1.7 2011/08/12 05:41:01 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -96,7 +96,7 @@ $workflowcodes=array();
 if ($conf->propal->enabled && $conf->commande->enabled) $workflowcodes['WORKFLOW_PROPAL_AUTOCREATE_ORDER']='WORKFLOW_PROPAL_AUTOCREATE_ORDER';
 //if ($conf->propal->enabled && $conf->facture->enabled)  $workflowcodes['WORKFLOW_PROPAL_AUTOCREATE_INVOICE']='WORKFLOW_PROPAL_AUTOCREATE_INVOICE';
 //if ($conf->contrat->enabled && $conf->facture->enabled)  $workflowcodes['WORKFLOW_CONTRACT_AUTOCREATE_INVOICE']='WORKFLOW_CONTRACT_AUTOCREATE_INVOICE';
-//if ($conf->commande->enabled && $conf->facture->enabled) $workflowcodes['WORKFLOW_ORDER_AUTOCREATE_INVOICE']='WORKFLOW_ORDER_AUTOCREATE_INVOICE';
+if ($conf->commande->enabled && $conf->facture->enabled) $workflowcodes['WORKFLOW_ORDER_AUTOCREATE_INVOICE']='WORKFLOW_ORDER_AUTOCREATE_INVOICE';
 
 if (sizeof($workflowcodes) > 0)
 {
@@ -135,5 +135,5 @@ print '</table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/08 16:00:18 $ - $Revision: 1.6 $');
+llxFooter('$Date: 2011/08/12 05:41:01 $ - $Revision: 1.7 $');
 ?>
