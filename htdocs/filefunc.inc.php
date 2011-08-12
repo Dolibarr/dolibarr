@@ -27,10 +27,10 @@
  *	\file       htdocs/filefunc.inc.php
  * 	\ingroup	core
  *  \brief      File that include conf.php file and functions.lib.php
- *  \version    $Id: filefunc.inc.php,v 1.22 2011/08/04 12:07:29 eldy Exp $
+ *  \version    $Id: filefunc.inc.php,v 1.23 2011/08/11 20:54:08 eldy Exp $
  */
 
-define('DOL_VERSION','3.1.0-beta');	// Also defined in htdocs/install/inc.php (Ex: x.y.z-alpha, x.y.z)
+define('DOL_VERSION','3.2.0-alpha');	// Also defined in htdocs/install/inc.php (Ex: x.y.z-alpha, x.y.z)
 define('EURO',chr(128));
 
 // Definition des constantes syslog
