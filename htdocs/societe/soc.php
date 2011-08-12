@@ -25,7 +25,7 @@
  *  \file       htdocs/societe/soc.php
  *  \ingroup    societe
  *  \brief      Third party card page
- *  \version    $Id: soc.php,v 1.133 2011/08/11 16:53:43 simnandez Exp $
+ *  \version    $Id: soc.php,v 1.134 2011/08/12 06:55:47 simnandez Exp $
  */
 
 require("../main.inc.php");
@@ -230,9 +230,6 @@ if (empty($reshook))
                 $error++; $errors[] = $langs->trans("ErrorSupplierModuleNotEnabled");
                 $action = ($action=='add'?'create':'edit');
             }
-
-            if($action == 'add') $mode=0;
-            else $mode=1;
             
         	for ($i = 1; $i < 3; $i++) 
         	{
@@ -1975,5 +1972,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/11 16:53:43 $ - $Revision: 1.133 $');
+llxFooter('$Date: 2011/08/12 06:55:47 $ - $Revision: 1.134 $');
 ?>
