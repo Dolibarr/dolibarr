@@ -219,7 +219,7 @@ if (empty($dolibarr_main_url_root))
 			<li>http://localhost/</li>
 			<li>http://www.myserver.com:8180/dolibarr</li>
 		</ul>
-
+		</td>
 	</tr>
 
 <?php
