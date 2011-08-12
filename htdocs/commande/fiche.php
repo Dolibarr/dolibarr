@@ -25,7 +25,7 @@
  *	\file       htdocs/commande/fiche.php
  *	\ingroup    commande
  *	\brief      Page to show customer order
- *	\version    $Id: fiche.php,v 1.534 2011/08/11 15:14:51 hregis Exp $
+ *	\version    $Id: fiche.php,v 1.535 2011/08/12 05:41:02 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -1502,7 +1502,7 @@ else
 
             if (! $formconfirm)
             {
-                $parameters=array('lineid'=>$lienid);
+                $parameters=array('lineid'=>$lineid);
                 $formconfirm=$hookmanager->executeHooks('formconfirm',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             }
 
@@ -2070,5 +2070,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/11 15:14:51 $ - $Revision: 1.534 $');
+llxFooter('$Date: 2011/08/12 05:41:02 $ - $Revision: 1.535 $');
 ?>

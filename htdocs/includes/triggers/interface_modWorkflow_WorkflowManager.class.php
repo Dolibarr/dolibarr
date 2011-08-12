@@ -20,7 +20,7 @@
  *      \file       htdocs/includes/triggers/interface_modWorkflow_WorkflowManager.class.php
  *      \ingroup    core
  *      \brief      Trigger file for workflows
- *      \version	$Id: interface_modWorkflow_WorkflowManager.class.php,v 1.9 2011/08/10 19:55:21 hregis Exp $
+ *      \version	$Id: interface_modWorkflow_WorkflowManager.class.php,v 1.10 2011/08/12 05:41:01 hregis Exp $
  */
 
 
@@ -111,7 +111,7 @@ class InterfaceWorkflowManager
                 $hookmanager=new HookManager($this->db);
                 $hookmanager->callHooks(array('ordercard'));
                 
-                $ret=$order->createFromProposal($object,0,$hookmanager);
+                $ret=$order->createFromProposal($object,$hookmanager);
                 if ($ret < 0) { $this->error=$invoice->error; $this->errors[]=$invoice->error; }
                 return $ret;
             }
