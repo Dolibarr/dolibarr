@@ -25,7 +25,7 @@
  *  \file       htdocs/societe/soc.php
  *  \ingroup    societe
  *  \brief      Third party card page
- *  \version    $Id: soc.php,v 1.135 2011/08/13 00:48:00 eldy Exp $
+ *  \version    $Id: soc.php,v 1.134 2011/08/12 06:55:47 simnandez Exp $
  */
 
 require("../main.inc.php");
@@ -1034,12 +1034,11 @@ else
         print '</td>';
         print '</tr>';
 
-        print '</table>'."\n";
-
-        print '<br><center>';
+        print '<tr><td colspan="4" align="center">';
         print '<input type="submit" class="button" value="'.$langs->trans('AddThirdParty').'">';
-        print '</center>'."\n";
+        print '</td></tr>'."\n";
 
+        print '</table>'."\n";
         print '</form>'."\n";
     }
     elseif ($action == 'edit')
@@ -1973,5 +1972,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/13 00:48:00 $ - $Revision: 1.135 $');
+llxFooter('$Date: 2011/08/12 06:55:47 $ - $Revision: 1.134 $');
 ?>
