@@ -27,7 +27,7 @@
  *	\file       htdocs/compta/facture/class/facture.class.php
  *	\ingroup    facture
  *	\brief      Fichier de la classe des factures clients
- *	\version    $Id: facture.class.php,v 1.127 2011/08/11 15:14:50 hregis Exp $
+ *	\version    $Id: facture.class.php,v 1.128 2011/08/12 05:41:01 hregis Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
@@ -618,22 +618,27 @@ class Facture extends CommonObject
         {
             $line = new FactureLigne($this->db);
 
-            $line->libelle           = $object->lines[$i]->libelle;
-            $line->desc              = $object->lines[$i]->desc;
-            $line->price             = $object->lines[$i]->price;
-            $line->subprice          = $object->lines[$i]->subprice;
-            $line->tva_tx            = $object->lines[$i]->tva_tx;
-            $line->localtax1_tx      = $object->lines[$i]->localtax1_tx;
-            $line->localtax2_tx      = $object->lines[$i]->localtax2_tx;
-            $line->qty               = $object->lines[$i]->qty;
-            $line->fk_remise_except  = $object->lines[$i]->fk_remise_except;
-            $line->remise_percent    = $object->lines[$i]->remise_percent;
-            $line->fk_product        = $object->lines[$i]->fk_product;
-            $line->info_bits         = $object->lines[$i]->info_bits;
-            $line->product_type      = $object->lines[$i]->product_type;
-            $line->rang              = $object->lines[$i]->rang;
-            $line->special_code      = $object->lines[$i]->special_code;
-            $line->fk_parent_line    = $object->lines[$i]->fk_parent_line;
+            $line->libelle			= $object->lines[$i]->libelle;
+            $line->desc				= $object->lines[$i]->desc;
+            $line->price			= $object->lines[$i]->price;
+            $line->subprice			= $object->lines[$i]->subprice;
+            $line->tva_tx			= $object->lines[$i]->tva_tx;
+            $line->localtax1_tx		= $object->lines[$i]->localtax1_tx;
+            $line->localtax2_tx		= $object->lines[$i]->localtax2_tx;
+            $line->qty				= $object->lines[$i]->qty;
+            $line->fk_remise_except	= $object->lines[$i]->fk_remise_except;
+            $line->remise_percent	= $object->lines[$i]->remise_percent;
+            $line->fk_product		= $object->lines[$i]->fk_product;
+            $line->info_bits		= $object->lines[$i]->info_bits;
+            $line->product_type		= $object->lines[$i]->product_type;
+            $line->rang				= $object->lines[$i]->rang;
+            $line->special_code		= $object->lines[$i]->special_code;
+            $line->fk_parent_line	= $object->lines[$i]->fk_parent_line;
+            
+            // TODO it's ok ?
+            $line->total_ht			= $object->lines[$i]->total_ht;
+            $line->total_tva		= $object->lines[$i]->total_tva;
+            $line->total_ttc		= $object->lines[$i]->total_ttc;
 
             $this->lines[$i] = $line;
         }

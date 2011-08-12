@@ -24,7 +24,7 @@
  *  \file       htdocs/commande/class/commande.class.php
  *  \ingroup    commande
  *  \brief      Fichier des classes de commandes
- *  \version    $Id: commande.class.php,v 1.124 2011/08/11 07:41:41 hregis Exp $
+ *  \version    $Id: commande.class.php,v 1.125 2011/08/12 05:41:01 hregis Exp $
  */
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
@@ -453,7 +453,8 @@ class Commande extends CommonObject
 	 */
 	function cloture($user)
 	{
-		global $conf;
+		global $conf, $langs;
+		
 		$error=0;
 
 		if ($user->rights->commande->valider)
@@ -855,10 +856,9 @@ class Commande extends CommonObject
 	/**
 	 *      Load an object from a proposal and create a new order into database
 	 *      @param      object          Object source
-	 *      @param      invertdetail    Reverse sign of amounts for lines
 	 *      @return     int             <0 if KO, 0 if nothing done, 1 if OK
 	 */
-	function createFromProposal($object,$invertdetail=0,$hookmanager=false)
+	function createFromProposal($object,$hookmanager=false)
 	{
 		global $conf,$user,$langs;
 
