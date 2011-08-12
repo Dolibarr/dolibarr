@@ -1730,6 +1730,7 @@ class Form
         if ($user->admin && ! $noadmininfo) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
     }
 
+
     /**
      *      \brief      Selection HT ou TTC
      *      \param      selected        Id pre-selectionne
@@ -1739,6 +1740,7 @@ class Form
     {
         print $this->load_PriceBaseType($selected,$htmlname);
     }
+
 
     /**
      *      \brief      Selection HT ou TTC
@@ -1773,12 +1775,15 @@ class Form
         return $return;
     }
 
+
     /**
      *    Return combo list of differents status of a proposal
      *    Values are id of table c_propalst
-     *    @param      selected    etat pre-selectionne
+     *
+     *    @param    selected    etat pre-selectionne
+     *    @param	short		Use short labels
      */
-    function select_propal_statut($selected='')
+    function select_propal_statut($selected='',$short=0)
     {
         global $langs;
 
@@ -1806,7 +1811,17 @@ class Form
                     {
                         print '<option value="'.$obj->id.'">';
                     }
-                    print ($langs->trans("PropalStatus".$obj->code)!="PropalStatus".$obj->code)?$langs->trans("PropalStatus".$obj->code):$obj->label;
+                    $key=$obj->code;
+                    if ($langs->trans("PropalStatus".$key.($short?'Short':'')) != "PropalStatus".$key.($short?'Short':''))
+                    {
+                        print $langs->trans("PropalStatus".$key.($short?'Short':''));
+                    }
+                    else
+                    {
+                        $conv_to_new_code=array('PR_DRAFT'=>'Draft','PR_OPEN'=>'Opened','PR_CLOSED'=>'Closed','PR_SIGNED'=>'Signed','PR_NOTSIGNED'=>'NotSigned','PR_FAC'=>'Billed');
+                        if (! empty($conv_to_new_code[$obj->code])) $key=$conv_to_new_code[$obj->code];
+                        print ($langs->trans("PropalStatus".$key.($short?'Short':''))!="PropalStatus".$key.($short?'Short':''))?$langs->trans("PropalStatus".$key.($short?'Short':'')):$obj->label;
+                    }
                     print '</option>';
                     $i++;
                 }
@@ -1822,6 +1837,7 @@ class Form
 
     /**
      *    Return a HTML select list of bank accounts
+     *
      *    @param      selected          Id account pre-selected
      *    @param      htmlname          Name of select zone
      *    @param      statut            Status of searched accounts (0=open, 1=closed)
