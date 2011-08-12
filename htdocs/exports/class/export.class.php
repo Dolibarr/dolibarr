@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  *	\file       htdocs/exports/class/export.class.php
  *	\ingroup    export
  *	\brief      File of class to manage exports
- *	\version    $Id: export.class.php,v 1.13 2011/08/05 06:29:50 tiaris Exp $
+ *	\version    $Id: export.class.php,v 1.14 2011/08/12 07:11:08 hregis Exp $
  */
 
 
@@ -71,12 +71,33 @@ class Export
 
         $var=true;
         $i=0;
-
-		//$dir=DOL_DOCUMENT_ROOT."/includes/modules";
-		foreach($conf->file->dol_document_root as $dirroot)
+        
+        foreach ($conf->file->dol_document_root as $type => $dirroot)
 		{
-			$dir = $dirroot.'/includes/modules';
+			$modulesdir[] = $dirroot . "/includes/modules/";
+			
+			if ($type == 'alt')
+			{	
+				$handle=@opendir($dirroot);
+				if (is_resource($handle))
+				{
+					while (($file = readdir($handle))!==false)
+					{
+					    if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
+					    {
+					    	if (is_dir($dirroot . '/' . $file . '/includes/modules/'))
+					    	{
+					    		$modulesdir[] = $dirroot . '/' . $file . '/includes/modules/';
+					    	}
+					    }
+					}
+					closedir($handle);
+				}
+			}
+		}
 
+		foreach($modulesdir as $dir)
+		{
 			// Search available exports
 			$handle=@opendir($dir);
 			if (is_resource($handle))
@@ -84,7 +105,7 @@ class Export
                 // Search module files
 			    while (($file = readdir($handle))!==false)
 				{
-					if (preg_match("/^(mod.*)\.class\.php$/i",$file,$reg))
+					if (is_readable($dir.$file) && preg_match("/^(mod.*)\.class\.php$/i",$file,$reg))
 					{
 						$modulename=$reg[1];
 
@@ -96,7 +117,7 @@ class Export
 						if ($enabled)
 						{
 							// Chargement de la classe
-							$file = $dir."/".$modulename.".class.php";
+							$file = $dir.$modulename.".class.php";
 							$classname = $modulename;
 							require_once($file);
 							$module = new $classname($this->db);
