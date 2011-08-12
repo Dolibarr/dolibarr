@@ -24,7 +24,7 @@
  *       \file       htdocs/install/fileconf.php
  *       \ingroup    install
  *       \brief      Ask all informations required to build Dolibarr htdocs/conf/conf.php file (will be wrote on disk on next page)
- *       \version    $Id: fileconf.php,v 1.96 2011/08/12 18:48:35 eldy Exp $
+ *       \version    $Id: fileconf.php,v 1.97 2011/08/12 20:16:00 eldy Exp $
  */
 include_once("./inc.php");
 
@@ -347,7 +347,7 @@ if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if t
 		<td class="label" valign="top"><b> <?php echo $langs->trans("DatabaseName"); ?>	</b></td>
 
 		<td class="label" valign="top"><input type="text" id="db_name" name="db_name"
-			value="<?php echo (! empty($dolibarr_main_db_name))?$dolibarr_main_db_name:$force_install_database; ?>"></td>
+			value="<?php echo (! empty($dolibarr_main_db_name))?$dolibarr_main_db_name:($force_install_database?$force_install_database:'dolibarr'); ?>"></td>
 		<td class="comment"><?php echo $langs->trans("DatabaseName"); ?></td>
 	</tr>
 
