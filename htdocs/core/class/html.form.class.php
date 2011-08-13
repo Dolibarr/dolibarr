@@ -30,7 +30,7 @@
  *	\file       htdocs/core/class/html.form.class.php
  *  \ingroup    core
  *	\brief      File of class with all html predefined components
- *	\version	$Id: html.form.class.php,v 1.194 2011/08/04 21:46:51 eldy Exp $
+ *	\version	$Id: html.form.class.php,v 1.195 2011/08/12 21:29:29 eldy Exp $
  */
 
 
@@ -1646,11 +1646,12 @@ class Form
 
 
     /**
-     *      \brief      Retourne la liste des types de paiements possibles
-     *      \param      selected        Id du type de paiement pre-selectionne
-     *      \param      htmlname        Nom de la zone select
-     *      \param      filtertype      Pour filtre
-     *		\param		addempty		Ajoute entree vide
+     *      Retourne la liste des types de paiements possibles
+     *
+     *      @param      selected        Id du type de paiement pre-selectionne
+     *      @param      htmlname        Nom de la zone select
+     *      @param      filtertype      Pour filtre
+     *		@param		addempty		Ajoute entree vide
      */
     function select_conditions_paiements($selected='',$htmlname='condid',$filtertype=-1,$addempty=0)
     {
@@ -1680,6 +1681,7 @@ class Form
 
     /**
      *      Return list of payment methods
+     *
      *      @param      selected        Id du mode de paiement pre-selectionne
      *      @param      htmlname        Nom de la zone select
      *      @param      filtertype      To filter on field type in llx_c_paiement (array('code'=>xx,'label'=>zz))
@@ -1730,20 +1732,24 @@ class Form
         if ($user->admin && ! $noadmininfo) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
     }
 
+
     /**
-     *      \brief      Selection HT ou TTC
-     *      \param      selected        Id pre-selectionne
-     *      \param      htmlname        Nom de la zone select
+     *      Selection HT or TTC
+     *
+     *      @param      selected        Id pre-selectionne
+     *      @param      htmlname        Nom de la zone select
      */
     function select_PriceBaseType($selected='',$htmlname='price_base_type')
     {
         print $this->load_PriceBaseType($selected,$htmlname);
     }
 
+
     /**
-     *      \brief      Selection HT ou TTC
-     *      \param      selected        Id pre-selectionne
-     *      \param      htmlname        Nom de la zone select
+     *      Selection HT or TTC
+     *
+     *      @param      selected        Id pre-selectionne
+     *      @param      htmlname        Nom de la zone select
      */
     function load_PriceBaseType($selected='',$htmlname='price_base_type')
     {
@@ -1773,12 +1779,15 @@ class Form
         return $return;
     }
 
+
     /**
      *    Return combo list of differents status of a proposal
      *    Values are id of table c_propalst
-     *    @param      selected    etat pre-selectionne
+     *
+     *    @param    selected    etat pre-selectionne
+     *    @param	short		Use short labels
      */
-    function select_propal_statut($selected='')
+    function select_propal_statut($selected='',$short=0)
     {
         global $langs;
 
@@ -1806,7 +1815,17 @@ class Form
                     {
                         print '<option value="'.$obj->id.'">';
                     }
-                    print ($langs->trans("PropalStatus".$obj->code)!="PropalStatus".$obj->code)?$langs->trans("PropalStatus".$obj->code):$obj->label;
+                    $key=$obj->code;
+                    if ($langs->trans("PropalStatus".$key.($short?'Short':'')) != "PropalStatus".$key.($short?'Short':''))
+                    {
+                        print $langs->trans("PropalStatus".$key.($short?'Short':''));
+                    }
+                    else
+                    {
+                        $conv_to_new_code=array('PR_DRAFT'=>'Draft','PR_OPEN'=>'Opened','PR_CLOSED'=>'Closed','PR_SIGNED'=>'Signed','PR_NOTSIGNED'=>'NotSigned','PR_FAC'=>'Billed');
+                        if (! empty($conv_to_new_code[$obj->code])) $key=$conv_to_new_code[$obj->code];
+                        print ($langs->trans("PropalStatus".$key.($short?'Short':''))!="PropalStatus".$key.($short?'Short':''))?$langs->trans("PropalStatus".$key.($short?'Short':'')):$obj->label;
+                    }
                     print '</option>';
                     $i++;
                 }
@@ -1822,6 +1841,7 @@ class Form
 
     /**
      *    Return a HTML select list of bank accounts
+     *
      *    @param      selected          Id account pre-selected
      *    @param      htmlname          Name of select zone
      *    @param      statut            Status of searched accounts (0=open, 1=closed)
@@ -1885,6 +1905,7 @@ class Form
 
     /**
      *    Return list of categories having choosed type
+     *
      *    @param    type			Type de categories (0=product, 1=supplier, 2=customer, 3=member)
      *    @param    selected    	Id of category preselected
      *    @param    select_name		HTML field name
@@ -1929,6 +1950,7 @@ class Form
 
 	/**
      *     Show a confirmation HTML form or AJAX popup
+     *
      *     @param  page        	   Url of page to call if confirmation is OK
      *     @param  title       	   title
      *     @param  question    	   question
@@ -1946,6 +1968,7 @@ class Form
 
     /**
      *     Show a confirmation HTML form or AJAX popup
+     *
      *     @param  page        	   Url of page to call if confirmation is OK
      *     @param  title       	   title
      *     @param  question    	   question
@@ -2150,6 +2173,7 @@ class Form
 
     /**
      *    Show a form to select a project
+     *
      *    @param      page        Page
      *    @param      socid       Id societe
      *    @param      selected    Id projet pre-selectionne
@@ -2190,6 +2214,7 @@ class Form
 
     /**
      *    	Show a form to select payment conditions
+     *
      *    	@param      page        	Page
      *    	@param      selected    	Id condition pre-selectionne
      *    	@param      htmlname    	Name of select html field
@@ -2224,6 +2249,7 @@ class Form
 
 	 /**
      *    	Show a form to select a delivery delay
+     *
      *    	@param      page        	Page
      *    	@param      selected    	Id condition pre-selectionne
      *    	@param      htmlname    	Name of select html field
@@ -2258,6 +2284,7 @@ class Form
 
 	/**
      *    	Show a select form to select origin
+     *
      *    	@param      page        	Page
      *    	@param      selected    	Id condition pre-selectionne
      *    	@param      htmlname    	Name of select html field
@@ -2299,6 +2326,7 @@ class Form
 
     /**
      *    Show a form to select a date
+     *
      *    @param      page        Page
      *    @param      selected    Date preselected
      *    @param      htmlname    Name of input html field
@@ -2334,6 +2362,7 @@ class Form
 
     /**
      *    	Show a select form to choose a user
+     *
      *    	@param      page        	Page
      *   	@param      selected    	Id of user preselected
      *    	@param      htmlname    	Name of input html field
@@ -2374,10 +2403,11 @@ class Form
 
 
     /**
-     *    \brief      Affiche formulaire de selection des modes de reglement
-     *    \param      page        Page
-     *    \param      selected    Id mode pre-selectionne
-     *    \param      htmlname    Name of select html field
+     *    Affiche formulaire de selection des modes de reglement
+     *
+     *    @param      page        Page
+     *    @param      selected    Id mode pre-selectionne
+     *    @param      htmlname    Name of select html field
      */
     function form_modes_reglement($page, $selected='', $htmlname='mode_reglement_id')
     {
@@ -2409,6 +2439,7 @@ class Form
 
     /**
      *    	Show a select box with available absolute discounts
+     *
      *    	@param      page        	Page URL where form is shown
      *    	@param      selected    	Value pre-selected
      *		@param      htmlname    	Nom du formulaire select. Si none, non modifiable
@@ -2462,10 +2493,11 @@ class Form
 
 
     /**
-     *    \brief      Affiche formulaire de selection des contacts
-     *    \param      page        Page
-     *    \param      selected    Id contact pre-selectionne
-     *    \param      htmlname    Nom du formulaire select
+     *    Affiche formulaire de selection des contacts
+     *
+     *    @param      page        Page
+     *    @param      selected    Id contact pre-selectionne
+     *    @param      htmlname    Nom du formulaire select
      */
     function form_contacts($page, $societe, $selected='', $htmlname='contactidp')
     {
@@ -2505,10 +2537,11 @@ class Form
     }
 
 /**
-     *    \brief      Affiche formulaire de selection des tiers
-     *    \param      page        Page
-     *    \param      selected    Id contact pre-selectionne
-     *    \param      htmlname    Nom du formulaire select
+     *    Affiche formulaire de selection des tiers
+     *
+     *    @param      page        Page
+     *    @param      selected    Id contact pre-selectionne
+     *    @param      htmlname    Nom du formulaire select
      */
     function form_thirdparty($page, $selected='', $htmlname='socid')
     {
@@ -2541,12 +2574,13 @@ class Form
     }
 
     /**
-     *    	\brief      Affiche formulaire de selection de l'adresse
-     *    	\param      page        	Page
-     *    	\param      selected    	Id condition pre-selectionne
-     *    	\param      htmlname    	Nom du formulaire select
-     *		\param		origin        	Origine de l'appel pour pouvoir creer un retour
-     *      \param      originid      	Id de l'origine
+     *    	Affiche formulaire de selection de l'adresse
+     *
+     *    	@param      page        	Page
+     *    	@param      selected    	Id condition pre-selectionne
+     *    	@param      htmlname    	Nom du formulaire select
+     *		@param		origin        	Origine de l'appel pour pouvoir creer un retour
+     *      @param      originid      	Id de l'origine
      */
     function form_address($page, $selected='', $socid, $htmlname='address_id', $origin='', $originid='')
     {
@@ -2583,6 +2617,7 @@ class Form
 
     /**
      *    Retourne la liste des devises, dans la langue de l'utilisateur
+     *
      *    @param     selected    code devise pre-selectionne
      *    @param     htmlname    nom de la liste deroulante
      */
@@ -2593,6 +2628,7 @@ class Form
 
     /**
      *    Retourne la liste des devises, dans la langue de l'utilisateur
+     *
      *    @param     selected    code devise pre-selectionne
      *    @param     htmlname    nom de la liste deroulante
      */
@@ -2656,15 +2692,16 @@ class Form
     }
 
     /**
-     *      \brief      Output an HTML select vat rate
-     *      \param      htmlname            Nom champ html
-     *      \param      selectedrate        Forcage du taux tva pre-selectionne. Mettre '' pour aucun forcage.
-     *      \param      societe_vendeuse    Objet societe vendeuse
-     *      \param      societe_acheteuse   Objet societe acheteuse
-     *      \param      idprod              Id product
-     *      \param      info_bits           Miscellanous information on line
-     *      \param      type               ''=Unknown, 0=Product, 1=Service (Used if idprod not defined)
-     *      \remarks    Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
+     *      Output an HTML select vat rate
+     *
+     *      @param      htmlname            Nom champ html
+     *      @param      selectedrate        Forcage du taux tva pre-selectionne. Mettre '' pour aucun forcage.
+     *      @param      societe_vendeuse    Objet societe vendeuse
+     *      @param      societe_acheteuse   Objet societe acheteuse
+     *      @param      idprod              Id product
+     *      @param      info_bits           Miscellanous information on line
+     *      @param      type               ''=Unknown, 0=Product, 1=Service (Used if idprod not defined)
+     *                  Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
      *                  Si le (pays vendeur = pays acheteur) alors la TVA par defaut=TVA du produit vendu. Fin de regle.
      *                  Si (vendeur et acheteur dans Communaute europeenne) et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par defaut=0 (La TVA doit etre paye par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
      *                  Si (vendeur et acheteur dans Communaute europeenne) et bien vendu autre que transport neuf alors la TVA par defaut=TVA du produit vendu. Fin de regle.
@@ -2678,15 +2715,16 @@ class Form
 
 
     /**
-     *      \brief      Output an HTML select vat rate
-     *      \param      htmlname           Nom champ html
-     *      \param      selectedrate       Forcage du taux tva pre-selectionne. Mettre '' pour aucun forcage.
-     *      \param      societe_vendeuse   Objet societe vendeuse
-     *      \param      societe_acheteuse  Objet societe acheteuse
-     *      \param      idprod             Id product
-     *      \param      info_bits          Miscellanous information on line
-     *      \param      type               ''=Unknown, 0=Product, 1=Service (Used if idprod not defined)
-     *      \remarks    Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
+     *      Output an HTML select vat rate
+     *
+     *      @param      htmlname           Nom champ html
+     *      @param      selectedrate       Forcage du taux tva pre-selectionne. Mettre '' pour aucun forcage.
+     *      @param      societe_vendeuse   Objet societe vendeuse
+     *      @param      societe_acheteuse  Objet societe acheteuse
+     *      @param      idprod             Id product
+     *      @param      info_bits          Miscellanous information on line
+     *      @param      type               ''=Unknown, 0=Product, 1=Service (Used if idprod not defined)
+     *                  Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
      *                  Si le (pays vendeur = pays acheteur) alors la TVA par defaut=TVA du produit vendu. Fin de regle.
      *                  Si (vendeur et acheteur dans Communaute europeenne) et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par defaut=0 (La TVA doit etre paye par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
      *                  Si (vendeur et acheteur dans Communaute europeenne) et bien vendu autre que transport neuf alors la TVA par defaut=TVA du produit vendu. Fin de regle.
@@ -2843,6 +2881,7 @@ class Form
      *            	- set_time date (Local PHP server timestamps or date format YYYY-MM-DD or YYYY-MM-DD HH:MM)
      *            	- local date of PHP server if set_time is ''
      *            	- Empty (fields empty) if set_time is -1 (in this case, parameter empty must also have value 1)
+     *
      *		@param	set_time 		Pre-selected date (must be a local PHP server timestamp)
      *		@param	prefix			Prefix for fields name
      *		@param	h				1=Show also hours
@@ -3104,6 +3143,7 @@ class Form
 
     /**
      *	Function to show a form to select a duration on a page
+     *
      *	@param		prefix   	prefix
      *	@param  	iSecond  	Default preselected duration (number of seconds)
      * 	@param		disabled	Disable the combo box
@@ -3144,6 +3184,7 @@ class Form
 
     /**
      *	Show a select form from an array
+     *
      *	@param	htmlname        Name of html select area
      *	@param	array           Array with key+value
      *	@param	id              Preselected key
@@ -3203,6 +3244,7 @@ class Form
 
     /**
      *	Show a select form from an array
+     *
      * 	@deprecated				Use selectarray instead
      */
     function select_array($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $option='', $translate=0, $maxlen=0)
@@ -3213,6 +3255,7 @@ class Form
 
     /**
      *    	Return an html string with a select combo box to choose yes or no
+     *
      *    	@param      name            Name of html select field
      *    	@param      value           Pre-selected value
      *  	@param      option          0 return yes/no, 1 return 1/0
@@ -3248,7 +3291,8 @@ class Form
 
 
     /**
-     *    Retourne la liste des modeles d'export
+     *    Return list of export templates
+     *
      *    @param      selected          Id modele pre-selectionne
      *    @param      htmlname          Nom de la zone select
      *    @param      type              Type des modeles recherches
@@ -3297,6 +3341,7 @@ class Form
     /**
      *    Return a HTML area with the reference of object and a navigation bar for a business object
      *    To add a particular filter on select, you must set $object->next_prev_filter to SQL criteria.
+     *
      *    @param      object		Object to show
      *    @param      paramid   	Name of parameter to use to name the id into the URL link
      *    @param      morehtml  	More html content to output just before the nav bar
@@ -3343,6 +3388,7 @@ class Form
 
     /**
      *    	Return HTML code to output a photo
+     *
      *    	@param      modulepart		Key to define module concerned ('societe', 'userphoto', 'memberphoto')
      *     	@param      object			Object containing data to retrieve file name
      * 		@param		width			Width of photo
@@ -3437,6 +3483,7 @@ class Form
 
     /**
      *	Return select list of groups
+     *
      *  @param      selected        Id group preselected
      *  @param      htmlname        Field name in form
      *  @param      show_empty      0=liste sans valeur nulle, 1=ajoute valeur inconnue

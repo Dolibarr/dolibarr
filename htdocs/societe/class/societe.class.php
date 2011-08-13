@@ -26,7 +26,7 @@
  *	\file       htdocs/societe/class/societe.class.php
  *	\ingroup    societe
  *	\brief      File for third party class
- *	\version    $Id: societe.class.php,v 1.97 2011/08/11 16:53:43 simnandez Exp $
+ *	\version    $Id: societe.class.php,v 1.98 2011/08/12 06:55:55 simnandez Exp $
  */
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 
@@ -2039,7 +2039,7 @@ class Societe extends CommonObject
      *    Verifie la validite d'un identifiant professionnel en fonction du pays de la societe (siren, siret, ...)
      *    @param      idprof          1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
      *    @param      soc             Objet societe
-     *    @return     int             <=0 if KO, >0 if OK, -10=idprofx already exist into database
+     *    @return     int             <=0 if KO, >0 if OK
      *    TODO not in business class
      */
     function id_prof_check($idprof,$soc)
