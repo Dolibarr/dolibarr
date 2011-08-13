@@ -19,6 +19,6 @@
 [submodule "htdocs/custom/extrafields"]
 	path = htdocs/custom/extrafields
 	url = git+ssh://scm.doliforge.org/gitroot/extrafields/extrafields.git
-[submodule "htdocs/custom/massfacturation"]
-	path = htdocs/custom/massfacturation
-	url = git+ssh://scm.doliforge.org/gitroot/massfacturation/massfacturation.git
+[submodule "htdocs/custom/genfact"]
+	path = htdocs/custom/genfact
+	url = git+ssh://hregis@scm.doliforge.org/gitroot/massfacturation/massfacturation.git
