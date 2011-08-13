@@ -26,7 +26,7 @@
  *	\file       	htdocs/comm/propal.php
  *	\ingroup    	propale
  *	\brief      	Page of commercial proposals card and list
- *	\version		$Id: propal.php,v 1.620 2011/08/10 22:47:35 eldy Exp $
+ *	\version		$Id: propal.php,v 1.621 2011/08/12 21:29:47 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -1826,7 +1826,7 @@ else
 		print '</td>';
 		print '<td class="liste_titre">&nbsp;</td>';
 		print '<td class="liste_titre" align="right">';
-		$html->select_propal_statut($viewstatut);
+		$html->select_propal_statut($viewstatut,1);
 		print '</td>';
 		print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 		print '</td>';
@@ -1932,6 +1932,6 @@ else
 }
 $db->close();
 
-llxFooter('$Date: 2011/08/10 22:47:35 $ - $Revision: 1.620 $');
+llxFooter('$Date: 2011/08/12 21:29:47 $ - $Revision: 1.621 $');
 
 ?>
