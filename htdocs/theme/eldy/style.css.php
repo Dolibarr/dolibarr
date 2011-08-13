@@ -21,7 +21,7 @@
 /**
  *		\file       htdocs/theme/eldy/style.css.php
  *		\brief      Fichier de style CSS du theme Eldy
- *		\version    $Id: style.css.php,v 1.98 2011/08/08 15:39:08 eldy Exp $
+ *		\version    $Id: style.css.php,v 1.99 2011/08/13 00:48:01 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -85,17 +85,16 @@ body {
 
 a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; font-weight: bold; color: #000000; text-decoration: none; }
 
-/*
 input:focus, textarea:focus, button:focus, select:focus {
     box-shadow: 0 0 4px #8091BF;
 }
-*/
+
 input {
     font-size: <?php print $fontsize ?>px;
     font-family: <?php print $fontlist ?>;
     background: #FDFDFD;
     border: 1px solid #ACBCBB;
-    padding: 0px 0px 0px 0px;
+    padding: 1px 1px 1px 1px;
     margin: 0px 0px 0px 0px;
 }
 input.flat {
@@ -103,18 +102,18 @@ input.flat {
 	font-family: <?php print $fontlist ?>;
     background: #FDFDFD;
     border: 1px solid #ACBCBB;
-    padding: 0px 0px 0px 0px;
+    padding: 1px 1px 1px 1px;
     margin: 0px 0px 0px 0px;
 }
 input:disabled {
-background:#ddd;
+	background:#ddd;
 }
 textarea  {
 	font-size: <?php print $fontsize ?>px;
 	font-family: <?php print $fontlist ?>;
     background: #FDFDFD;
     border: 1px solid #ACBCBB;
-    padding: 0px 0px 0px 0px;
+    padding: 1px 1px 1px 1px;
     margin: 0px 0px 0px 0px;
 }
 textarea.flat {
@@ -122,11 +121,11 @@ textarea.flat {
 	font-family: <?php print $fontlist ?>;
     background: #FDFDFD;
     border: 1px solid #ACBCBB;
-    padding: 0px 0px 0px 0px;
+    padding: 1px 1px 1px 1px;
     margin: 0px 0px 0px 0px;
 }
 textarea:disabled {
-background:#ddd;
+	background:#ddd;
 }
 select.flat {
 	background: #FDFDFD;
@@ -134,7 +133,7 @@ select.flat {
 	font-family: <?php print $fontlist ?>;
 	font-weight: normal;
     border: 1px solid #ACBCBB;
-    padding: 0px 0px 0px 0px;
+    padding: 1px 1px 1px 1px;
     margin: 0px 0px 0px 0px;
 }
 .button {
@@ -142,8 +141,14 @@ select.flat {
 	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/button_bg.png' ?>);
 	background-position: bottom;
     border: 1px solid #ACBCBB;
-    padding: 0px 2px 0px 2px;
-    margin: 0px 0px 0px 0px;
+	padding: 0.2em 0.7em;
+	margin: 0em 0.5em;
+    -moz-border-radius:0px 5px 0px 5px;
+	-webkit-border-radius:0px 5px 0px 5px;
+	border-radius:0px 5px 0px 5px;
+    -moz-box-shadow: 4px 4px 4px #CCC;
+    -webkit-box-shadow: 4px 4px 4px #CCC;
+    box-shadow: 4px 4px 4px #CCC;
 }
 .button:focus  {
     font-family: <?php print $fontlist ?>;
@@ -151,16 +156,25 @@ select.flat {
 	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/button_bg.png' ?>);
 	background-position: bottom;
     border: 1px solid #ACBCBB;
-    padding: 0px 2px 0px 2px;
-    margin: 0px 0px 0px 0px;
+	padding: 0.2em 0.7em;
+	margin: 0em 0.5em;
+}
+.button:hover   {
+	background: #dee7ec;
 }
 .buttonajax {
     font-family: <?php print $fontlist ?>;
 	border: 0px;
 	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/button_bg.png' ?>);
 	background-position: bottom;
-    padding: 0px 0px 0px 0px;
-    margin: 0px 0px 0px 0px;
+	padding: 0.2em 0.7em;
+	margin: 0em 0.5em;
+    -moz-border-radius:0px 5px 0px 5px;
+	-webkit-border-radius:0px 5px 0px 5px;
+	border-radius:0px 5px 0px 5px;
+    -moz-box-shadow: 4px 4px 4px #CCC;
+    -webkit-box-shadow: 4px 4px 4px #CCC;
+    box-shadow: 4px 4px 4px #CCC;
 }
 form {
     padding: 0em 0em 0em 0em;
@@ -820,7 +834,7 @@ div.tabBar {
     padding-left: 8px;
     padding-right: 8px;
     padding-bottom: 8px;
-    margin: 0px 0px 10px 0px;
+    margin: 0px 0px 14px 0px;
     -moz-border-radius:6px;
     -webkit-border-radius: 6px;
 	border-radius: 6px;
@@ -950,18 +964,22 @@ span.tabspan {
 /* Boutons actions                                                                */
 /* ============================================================================== */
 
-/* Nouvelle syntaxe a utiliser */
-
 .butAction, .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
 	font-family: <?php print $fontlist ?>;
 	font-weight: bold;
 	background: white;
 	border: 1px solid #8CACBB;
 	color: #434956;
-	padding: 0em 0.7em;
-	margin: 0em 0.5em;
 	text-decoration: none;
 	white-space: nowrap;
+	padding: 0.4em 0.7em;
+	margin: 0em 0.7em;
+    -moz-border-radius:0px 5px 0px 5px;
+	-webkit-border-radius:0px 5px 0px 5px;
+	border-radius:0px 5px 0px 5px;
+    -moz-box-shadow: 4px 4px 4px #CCC;
+    -webkit-box-shadow: 4px 4px 4px #CCC;
+    box-shadow: 4px 4px 4px #CCC;
 }
 
 .butAction:hover   {
@@ -982,11 +1000,17 @@ span.tabspan {
 	background: white !important;
 	border: 1px solid #AAAAAA !important;
 	color: #AAAAAA !important;
-	padding: 0em 0.7em !important;
-	margin: 0em 0.5em !important;
 	text-decoration: none !important;
 	white-space: nowrap !important;
 	cursor: not-allowed;
+	padding: 0.4em 0.7em;
+	margin: 0em 0.7em;
+    -moz-border-radius:0px 5px 0px 5px;
+	-webkit-border-radius:0px 5px 0px 5px;
+	border-radius:0px 5px 0px 5px;
+    -moz-box-shadow: 4px 4px 4px #CCC;
+    -webkit-box-shadow: 4px 4px 4px #CCC;
+    box-shadow: 4px 4px 4px #CCC;
 }
 
 span.butAction, span.butActionDelete {
@@ -1038,7 +1062,7 @@ border-collapse: collapse;
 }
 
 table.border td {
-padding: 1px 2px;
+padding: 1px 2px 1px 1px;
 border: 1px solid #9CACBB;
 border-collapse: collapse;
 }
@@ -1085,7 +1109,7 @@ height: 18px;
 }
 
 table.noborder td {
-padding: 1px 2px 0px 1px;			/* t r b l */
+padding: 1px 2px 1px 1px;			/* t r b l */
 }
 
 table.nobordernopadding {
@@ -1189,6 +1213,7 @@ white-space: nowrap;
 background: #eaeaea;
 font-family: <?php print $fontlist ?>;
 border: 0px;
+margin-bottom: 1px;
 }
 /*
 .impair:hover {
@@ -1202,6 +1227,7 @@ border: 0px;
 background: #ffffff;
 font-family: <?php print $fontlist ?>;
 border: 0px;
+margin-bottom: 1px;
 }
 /*
 .pair:hover {
@@ -1296,7 +1322,7 @@ div.error {
 
 /* Info admin */
 div.info {
-  color: #707070;
+  color: #A0A050;
   padding: 0.2em 0.2em 0.2em 0.2em;
   margin: 0.5em 0em 0.5em 0em;
   border: 1px solid #DFDFA0;

@@ -23,7 +23,7 @@
  *       \file       htdocs/contact/fiche.php
  *       \ingroup    societe
  *       \brief      Card of a contact
- *       \version    $Id: fiche.php,v 1.224 2011/08/10 22:47:34 eldy Exp $
+ *       \version    $Id: fiche.php,v 1.225 2011/08/13 00:48:00 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -544,7 +544,7 @@ else
             }
             print '</tr>';
 
-            print "</table><br>";
+            print "</table><br><br>";
 
 
             print '<center>';
@@ -949,5 +949,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/10 22:47:34 $ - $Revision: 1.224 $');
+llxFooter('$Date: 2011/08/13 00:48:00 $ - $Revision: 1.225 $');
 ?>
