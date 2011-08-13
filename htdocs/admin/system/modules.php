@@ -48,22 +48,45 @@ $modules = array();
 $modules_names = array();
 $modules_files = array();
 
-// Load list of modules
-foreach($conf->file->dol_document_root as $searchdir)
+foreach ($conf->file->dol_document_root as $type => $dirroot)
 {
-	$dirtoscan = $searchdir . "/includes/modules/";
-	$handle=opendir($dirtoscan);
+	$modulesdir[] = $dirroot . "/includes/modules/";
+	
+	if ($type == 'alt')
+	{	
+		$handle=@opendir($dirroot);
+		if (is_resource($handle))
+		{
+			while (($file = readdir($handle))!==false)
+			{
+			    if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
+			    {
+			    	if (is_dir($dirroot . '/' . $file . '/includes/modules/'))
+			    	{
+			    		$modulesdir[] = $dirroot . '/' . $file . '/includes/modules/';
+			    	}
+			    }
+			}
+			closedir($handle);
+		}
+	}
+}
+
+// Load list of modules
+foreach($modulesdir as $dir)
+{
+	$handle=opendir($dir);
     if (is_resource($handle))
     {
     	while (($file = readdir($handle))!==false)
     	{
-    		if (is_readable($dirtoscan.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php')
+    		if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php')
     		{
     			$modName = substr($file, 0, dol_strlen($file) - 10);
 
     			if ($modName)
     			{
-    				include_once($dirtoscan.$file);
+    				include_once($dir.$file);
     				$objMod = new $modName($db);
 
     				$modules[$objMod->numero]=$objMod;
