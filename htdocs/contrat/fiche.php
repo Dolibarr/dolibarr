@@ -23,7 +23,7 @@
  *       \file       htdocs/contrat/fiche.php
  *       \ingroup    contrat
  *       \brief      Page of a contract
- *       \version    $Id: fiche.php,v 1.199 2011/08/04 21:46:51 eldy Exp $
+ *       \version    $Id: fiche.php,v 1.200 2011/08/13 13:03:20 eldy Exp $
  */
 
 require ("../main.inc.php");
@@ -550,12 +550,13 @@ if ($action == 'create')
     	print '</textarea></td></tr>';
     }
 
-    print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
-
     print "</table>\n";
+
+    print '<br><center><input type="submit" class="button" value="'.$langs->trans("Create").'"></center>';
+
     print "</form>\n";
 
-    print '</div>';
+    dol_fiche_end();
 }
 else
 /* *************************************************************************** */
@@ -1286,5 +1287,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/04 21:46:51 $ - $Revision: 1.199 $');
+llxFooter('$Date: 2011/08/13 13:03:20 $ - $Revision: 1.200 $');
 ?>
