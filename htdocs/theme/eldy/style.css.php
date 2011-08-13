@@ -21,7 +21,7 @@
 /**
  *		\file       htdocs/theme/eldy/style.css.php
  *		\brief      Fichier de style CSS du theme Eldy
- *		\version    $Id: style.css.php,v 1.99 2011/08/13 00:48:01 eldy Exp $
+ *		\version    $Id: style.css.php,v 1.100 2011/08/13 13:03:03 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -846,7 +846,7 @@ div.tabBar {
 }
 
 div.tabsAction {
-    margin: 20px 0em 1px 0em;
+    margin: 20px 0em 10px 0em;
     padding: 0em 0em;
     text-align: right;
 }

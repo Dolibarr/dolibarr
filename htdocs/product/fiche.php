@@ -25,7 +25,7 @@
  *  \file       htdocs/product/fiche.php
  *  \ingroup    product
  *  \brief      Page to show product
- *  \version    $Id: fiche.php,v 1.376 2011/08/05 12:59:17 simnandez Exp $
+ *  \version    $Id: fiche.php,v 1.377 2011/08/13 13:03:03 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -659,7 +659,7 @@ if ($action == 'create' && ($user->rights->produit->creer || $user->rights->serv
 		else $title=$langs->trans("NewProduct");
 		print_fiche_titre($title);
 
-		if ($mesg) print $mesg."\n";
+		dol_htmloutput_mesg($mesg);
 
 		print '<table class="border" width="100%">';
 		print '<tr>';
@@ -856,9 +856,7 @@ if ($id || $ref)
 			if ($product->isservice()) $type = $langs->trans('Service');
 			print_fiche_titre($langs->trans('Modify').' '.$type.' : '.$product->ref, "");
 
-			if ($mesg) {
-				print '<br><div class="error">'.$mesg.'</div><br>';
-			}
+			dol_htmloutput_errors($mesg);
 
 			// Main official, simple, and not duplicated code
 			print '<form action="fiche.php" method="POST">'."\n";
@@ -1645,6 +1643,6 @@ if ($product->id && $action == '' && $product->status)
 
 $db->close();
 
-llxFooter('$Date: 2011/08/05 12:59:17 $ - $Revision: 1.376 $');
+llxFooter('$Date: 2011/08/13 13:03:03 $ - $Revision: 1.377 $');
 
 ?>
