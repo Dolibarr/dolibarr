@@ -25,8 +25,13 @@ BuildArch: noarch
 BuildRoot: %{_tmppath}/%{name}-%{version}-build
 
 Group: Applications/Productivity
+# Requires for Fedora-Redhat
 Requires: mysql-server mysql httpd php php-cli php-gd php-ldap php-imap 
 Requires: php-mysql >= 4.1.0 
+# Requires for OpenSuse
+#Requires: mysql-community-server mysql-community-server-client apache2 apache2-mod_php5 php5 php5-gd php5-ldap php5-imap php5-mysql php5-openssl 
+# Requires for Mandriva-Mageia
+#Requires: mysql mysql-client apache-base apache-mod_php php-cgi php-cli php-bz2 php-gd php-ldap php-imap php-mysqli php-openssl 
 
 # Set yes to build test package, no for release (this disable need of /usr/bin/php not found by OpenSuse)
 AutoReqProv: no
@@ -207,7 +212,7 @@ then
 	    superuserpassword=$(/bin/grep --max-count=1 "password" %{_sysconfdir}/mysql/debian.cnf | /bin/sed -e 's/^password[ =]*//g')
 	fi
 	echo Mysql superuser found to use is $superuserlogin
-	%{__cat} /usr/share/dolibarr/build/rpm/install.forced.php.generic | sed -e 's/__SUPERUSERLOGIN__/'$superuserlogin'/g' | sed -e 's/__SUPERUSERPASSWORD__/'$superuserpassword'/g' > $installconfig
+	%{__cat} /usr/share/dolibarr/build/rpm/install.forced.php.install | sed -e 's/__SUPERUSERLOGIN__/'$superuserlogin'/g' | sed -e 's/__SUPERUSERPASSWORD__/'$superuserpassword'/g' > $installconfig
 	%{__chmod} -R 660 $installconfig
 fi
 
