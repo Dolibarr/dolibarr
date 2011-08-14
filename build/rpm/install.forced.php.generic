@@ -1,4 +1,6 @@
 <?php
+
+$force_install_packager='rpmgeneric';
 $force_install_noedit=1;	# 1 to block var specific to distrib, 2 to block every technical parameters
 $force_install_message='KeepDefaultValuesDeb';
 $force_install_main_data_root='/var/lib/dolibarr/documents';
@@ -15,8 +17,5 @@ $force_install_databaserootpass='__SUPERUSERPASSWORD__';
 $force_install_dolibarrlogin='admin';
 $force_install_nophpinfo='1';
 $force_install_lockinstall='444';
-
-#$force_dolibarr_lib_ODTPHP_PATHTOPCLZIP='/usr/share/php/libphp-pclzip';
-$force_dolibarr_font_DOL_DEFAULT_TTF_BOLD='/usr/share/fonts/dejavu/DejaVuSans-Bold.ttf';
 
 ?>
