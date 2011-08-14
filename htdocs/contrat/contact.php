@@ -20,7 +20,7 @@
         \file       htdocs/contrat/contact.php
         \ingroup    contrat
         \brief      Onglet de gestion des contacts des contrats
-        \version    $Id: contact.php,v 1.47 2011/08/14 02:11:46 eldy Exp $
+        \version    $Id: contact.php,v 1.48 2011/08/14 03:13:50 eldy Exp $
 */
 
 require ("../main.inc.php");
@@ -78,25 +78,9 @@ if ($_POST["action"] == 'addcontact' && $user->rights->contrat->creer)
 if ($_GET["action"] == 'swapstatut' && $user->rights->contrat->creer)
 {
 	$contrat = new Contrat($db);
-	if ($contrat->fetch($_GET["id"]))
+	if ($contrat->fetch(GETPOST("id")))
 	{
-		$db->begin();
-
-		$contact = $contrat->detail_contact($_GET["ligne"]);
-		$id_type_contact = $contact->fk_c_type_contact;
-
-		$statut = ($contact->statut == 4) ? 5 : 4;
-
-		$result = $contrat->update_contact($_GET["ligne"], $statut, $id_type_contact);
-		if ($result >= 0)
-		{
-			$db->commit();
-		}
-		else
-		{
-			dol_print_error($db, "result=$result");
-			$db->rollback();
-		}
+	    $result=$contrat->swapContactStatus(GETPOST('ligne'));
 	}
 	else
 	{
@@ -130,6 +114,7 @@ $formcompany= new FormCompany($db);
 $contactstatic=new Contact($db);
 $userstatic=new User($db);
 
+dol_htmloutput_mesg($mesg);
 
 /* *************************************************************************** */
 /*                                                                             */
@@ -376,5 +361,5 @@ if ($id > 0)
 
 $db->close();
 
-llxFooter('$Date: 2011/08/14 02:11:46 $');
+llxFooter('$Date: 2011/08/14 03:13:50 $');
 ?>

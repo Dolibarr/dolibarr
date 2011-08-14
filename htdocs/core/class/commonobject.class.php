@@ -21,7 +21,7 @@
  *	\file       htdocs/core/class/commonobject.class.php
  *	\ingroup    core
  *	\brief      File of parent class of all other business classes (invoices, contracts, proposals, orders, ...)
- *	\version    $Id: commonobject.class.php,v 1.155 2011/08/11 15:14:51 hregis Exp $
+ *	\version    $Id: commonobject.class.php,v 1.156 2011/08/14 03:13:50 eldy Exp $
  */
 
 
@@ -171,24 +171,24 @@ class CommonObject
 	 *      Update a link to contact line
 	 *      @param      rowid               Id of line contact-element
 	 * 		@param		statut	            New status of link
-	 *      @param      type_contact_id     Id of contact type
+	 *      @param      type_contact_id     Id of contact type (not modified if 0)
 	 *      @return     int                 <0 if KO, >= 0 if OK
 	 */
-	function update_contact($rowid, $statut, $type_contact_id)
+	function update_contact($rowid, $statut, $type_contact_id=0)
 	{
 		// Insertion dans la base
 		$sql = "UPDATE ".MAIN_DB_PREFIX."element_contact set";
-		$sql.= " statut = ".$statut.",";
-		$sql.= " fk_c_type_contact = '".$type_contact_id ."'";
+		$sql.= " statut = ".$statut;
+		if ($type_contact_id) $sql.= ", fk_c_type_contact = '".$type_contact_id ."'";
 		$sql.= " where rowid = ".$rowid;
-		// Retour
-		if (  $this->db->query($sql) )
+		$resql=$this->db->query($sql);
+		if ($resql)
 		{
 			return 0;
 		}
 		else
 		{
-			dol_print_error($this->db);
+			$this->error=$this->db->lasterror();
 			return -1;
 		}
 	}
@@ -199,7 +199,7 @@ class CommonObject
 	 *    @param		notrigger		Disable all triggers
 	 *    @return     	int				>0 if OK, <0 if KO
 	 */
-	function delete_contact($rowid,$notrigger=0)
+	function delete_contact($rowid, $notrigger=0)
 	{
 		global $user,$langs,$conf;
 
@@ -329,35 +329,41 @@ class CommonObject
 		}
 	}
 
-	/**
-	 *    Return fetch cursor of a contact
-	 *    FIXME We should never return an open db cursor
-	 *    @param      rowid      L'identifiant du contact
-	 *    @return     object     L'objet construit par DoliDb.fetch_object
-	 */
-	function detail_contact($rowid)
+
+    /**
+     * 		Update status of a contact linked to object
+     *
+     * 		@param		$rowid		Id of link between object and contact
+     * 		@return		int			<0 if KO, >=0 if OK
+     */
+	function swapContactStatus($rowid)
 	{
 		$sql = "SELECT ec.datecreate, ec.statut, ec.fk_socpeople, ec.fk_c_type_contact,";
-		$sql.= " tc.code, tc.libelle,";
-		$sql.= " s.fk_soc";
+		$sql.= " tc.code, tc.libelle";
+		//$sql.= ", s.fk_soc";
 		$sql.= " FROM (".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as tc)";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as s ON ec.fk_socpeople=s.rowid";	// Si contact de type external, alors il est li� � une societe
+		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as s ON ec.fk_socpeople=s.rowid";	// Si contact de type external, alors il est lie a une societe
 		$sql.= " WHERE ec.rowid =".$rowid;
 		$sql.= " AND ec.fk_c_type_contact=tc.rowid";
 		$sql.= " AND tc.element = '".$this->element."'";
 
+		dol_syslog(get_class($object)."::swapContactStatus sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
 			$obj = $this->db->fetch_object($resql);
-			return $obj;
+		    $newstatut = ($obj->statut == 4) ? 5 : 4;
+		    $result = $this->update_contact($rowid, $newstatut);
+		    $this->db->free($resql);
+		    return $result;
 		}
 		else
 		{
 			$this->error=$this->db->error();
 			dol_print_error($this->db);
-			return null;
+			return -1;
 		}
+
 	}
 
 	/**
