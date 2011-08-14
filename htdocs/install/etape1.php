@@ -23,7 +23,7 @@
  *		\file       htdocs/install/etape1.php
  *		\ingroup	install
  *		\brief      Build conf file on disk
- *		\version    $Id: etape1.php,v 1.138 2011/08/14 17:17:19 eldy Exp $
+ *		\version    $Id: etape1.php,v 1.139 2011/08/14 21:25:26 eldy Exp $
  */
 
 define('DONOTLOADCONF',1);	// To avoid loading conf by file inc.php
@@ -235,7 +235,8 @@ if ($action == "set")
 	/**
 	 * Write main.inc.php and master.inc.php into documents dir
 	 */
-	// TODO
+	$error+=write_main_file($main_data_dir.'/main.inc.php',$main_dir);
+	$error+=write_master_file($main_data_dir.'/master.inc.php',$main_dir);
 
 	/**
 	 * Create database and admin user database
@@ -519,6 +520,46 @@ function jsinfo()
 dolibarr_install_syslog("--- install/etape1.php end", LOG_INFO);
 
 pFooter($error,$setuplang,'jsinfo');
+
+
+/**
+ *  Create main file. No particular permissions are set by installer.
+ *
+ *  @param      mainfile        Path to conf file to generate/update
+ */
+function write_main_file($mainfile,$main_dir)
+{
+	$fp = fopen("$mainfile", "w");
+	if($fp)
+	{
+		clearstatcache();
+        fputs($fp, '<?php'."\n");
+		fputs($fp, "# Wrapper to include main into htdocs\n");
+        fputs($fp, "include_once('".$main_dir."/main.inc.php');\n");
+		fputs($fp, '?>');
+		fclose($fp);
+	}
+}
+
+
+/**
+ *  Create master file. No particular permissions are set by installer.
+ *
+ *  @param      masterfile        Path to conf file to generate/update
+ */
+function write_master_file($masterfile,$main_dir)
+{
+	$fp = fopen("$masterfile", "w");
+	if($fp)
+	{
+		clearstatcache();
+        fputs($fp, '<?php'."\n");
+		fputs($fp, "# Wrapper to include master into htdocs\n");
+        fputs($fp, "include_once('".$main_dir."/master.inc.php');\n");
+		fputs($fp, '?>');
+		fclose($fp);
+	}
+}
 
 
 /**
