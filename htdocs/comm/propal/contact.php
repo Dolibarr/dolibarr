@@ -20,7 +20,7 @@
  *       \file       htdocs/comm/propal/contact.php
  *       \ingroup    propal
  *       \brief      Onglet de gestion des contacts de propal
- *       \version    $Id: contact.php,v 1.44 2011/08/14 02:11:45 eldy Exp $
+ *       \version    $Id: contact.php,v 1.45 2011/08/14 03:13:50 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -81,26 +81,15 @@ if ($_POST["action"] == 'addcontact' && $user->rights->propale->creer)
 	}
 }
 
-// bascule du statut d'un contact
+// Bascule du statut d'un contact
 if ($action == 'swapstatut' && $user->rights->propale->creer)
 {
 	$propal = new Propal($db);
-	if ($propal->fetch($id))
+	if ($propal->fetch($id) > 0)
 	{
-		$contact = $propal->detail_contact($ligne);
-		$id_type_contact = $contact->fk_c_type_contact;
-		$statut = ($contact->statut == 4) ? 5 : 4;
-
-		$result = $propal->update_contact($ligne, $statut, $id_type_contact);
-		if ($result >= 0)
-		{
-			$db->commit();
-		} else
-		{
-			dol_print_error($db, "result=$result");
-			$db->rollback();
-		}
-	} else
+	    $result=$propal->swapContactStatus(GETPOST('ligne'));
+	}
+	else
 	{
 		dol_print_error($db);
 	}
@@ -384,5 +373,5 @@ if ($id > 0 || ! empty($ref))
 
 $db->close();
 
-llxFooter('$Date: 2011/08/14 02:11:45 $');
+llxFooter('$Date: 2011/08/14 03:13:50 $');
 ?>
