@@ -22,7 +22,7 @@
 /**
  *	\defgroup   societe     Module societe
  *	\brief      Module to manage third parties (customers, prospects)
- *	\version	$Id: modSociete.class.php,v 1.122 2011/08/10 00:50:18 eldy Exp $
+ *	\version	$Id: modSociete.class.php,v 1.123 2011/08/14 00:09:30 eldy Exp $
  */
 
 /**
@@ -206,12 +206,15 @@ class modSociete extends DolibarrModules
         // Add extra fields
         $sql="SELECT name, label FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'company'";
         $resql=$this->db->query($sql);
-        while ($obj=$this->db->fetch_object($resql))
+        if ($resql)    // This can fail when class is used on old database (during migration for example)
         {
-            $fieldname='extra.'.$obj->name;
-            $fieldlabel=ucfirst($obj->label);
-            $this->export_fields_array[$r][$fieldname]=$fieldlabel;
-            $this->export_entities_array[$r][$fieldname]='company';
+            while ($obj=$this->db->fetch_object($resql))
+            {
+                $fieldname='extra.'.$obj->name;
+                $fieldlabel=ucfirst($obj->label);
+                $this->export_fields_array[$r][$fieldname]=$fieldlabel;
+                $this->export_entities_array[$r][$fieldname]='company';
+            }
         }
         // End add axtra fields
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
@@ -240,12 +243,15 @@ class modSociete extends DolibarrModules
         // Add extra fields
         $sql="SELECT name, label FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'contact'";
         $resql=$this->db->query($sql);
-        while ($obj=$this->db->fetch_object($resql))
+        if ($resql)    // This can fail when class is used on old database (during migration for example)
         {
-            $fieldname='extra.'.$obj->name;
-            $fieldlabel=ucfirst($obj->label);
-            $this->export_fields_array[$r][$fieldname]=$fieldlabel;
-            $this->export_entities_array[$r][$fieldname]='contact';
+            while ($obj=$this->db->fetch_object($resql))
+            {
+                $fieldname='extra.'.$obj->name;
+                $fieldlabel=ucfirst($obj->label);
+                $this->export_fields_array[$r][$fieldname]=$fieldlabel;
+                $this->export_entities_array[$r][$fieldname]='contact';
+            }
         }
         // End add axtra fields
         $this->export_sql_start[$r]='SELECT DISTINCT ';
