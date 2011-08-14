@@ -21,7 +21,7 @@
  *     \file       htdocs/commande/contact.php
  *     \ingroup    commande
  *     \brief      Onglet de gestion des contacts de commande
- *     \version    $Id: contact.php,v 1.44 2011/08/14 02:11:45 eldy Exp $
+ *     \version    $Id: contact.php,v 1.45 2011/08/14 03:13:50 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -80,22 +80,11 @@ if ($_POST["action"] == 'addcontact' && $user->rights->commande->creer)
 if ($_GET["action"] == 'swapstatut' && $user->rights->commande->creer)
 {
 	$commande = new Commande($db);
-	if ($commande->fetch($_GET["id"]))
+	if ($commande->fetch(GETPOST("id")))
 	{
-		$contact = $commande->detail_contact($_GET["ligne"]);
-		$id_type_contact = $contact->fk_c_type_contact;
-		$statut = ($contact->statut == 4) ? 5 : 4;
-
-		$result = $commande->update_contact($_GET["ligne"], $statut, $id_type_contact);
-		if ($result >= 0)
-		{
-			$db->commit();
-		} else
-		{
-			dol_print_error($db, "result=$result");
-			$db->rollback();
-		}
-	} else
+	    $result=$commande->swapContactStatus(GETPOST('ligne'));
+	}
+	else
 	{
 		dol_print_error($db);
 	}
@@ -376,5 +365,5 @@ if ($id > 0 || ! empty($ref))
 
 $db->close();
 
-llxFooter('$Date: 2011/08/14 02:11:45 $');
+llxFooter('$Date: 2011/08/14 03:13:50 $');
 ?>
