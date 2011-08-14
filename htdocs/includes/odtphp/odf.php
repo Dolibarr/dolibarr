@@ -7,10 +7,10 @@ class OdfException extends Exception
  * You need PHP 5.2 at least
  * You need Zip Extension or PclZip library
  * Encoding : ISO-8859-1
- * Last commit by $Author$
- * Date - $Date$
+ * Last commit by $Author: eldy $
+ * Date - $Date: 2011/08/14 13:13:00 $
  * SVN Revision - $Rev: 56 $
- * Id : $Id$
+ * Id : $Id: odf.php,v 1.7 2011/08/14 13:13:00 eldy Exp $
  *
  * @copyright  GPL License 2008 - Julien Pauli - Cyril PIERRE de GEYER - Anaska (http://www.anaska.com)
  * @copyright  GPL License 2010 - Laurent Destailleur - eldy@users.sourceforge.net
@@ -112,13 +112,13 @@ class Odf
 		{
 		    // TODO Warning string may be:
 		    // <text:span text:style-name="T13">{</text:span><text:span text:style-name="T12">aaa</text:span><text:span text:style-name="T13">}</text:span>
-		    // instead of {aaa}.
+		    // instead of {aaa} so we should enhance this function.
             //print $key.'-'.$value.'-'.strpos($this->contentXml, $this->config['DELIMITER_LEFT'] . $key . $this->config['DELIMITER_RIGHT']).'<br>';
-            if (strpos($this->contentXml, $this->config['DELIMITER_LEFT'] . $key . $this->config['DELIMITER_RIGHT']) === false) {
+		    if (strpos($this->contentXml, $this->config['DELIMITER_LEFT'] . $key . $this->config['DELIMITER_RIGHT']) === false) {
                 //if (strpos($this->contentXml, '">'. $key . '</text;span>') === false) {
-                    throw new OdfException("var $key not found in the document");
+		        throw new OdfException("var $key not found in the document");
                 //}
-			}
+		    }
 			$value = $encode ? htmlspecialchars($value) : $value;
 			$value = ($charset == 'ISO-8859') ? utf8_encode($value) : $value;
 			$this->vars[$this->config['DELIMITER_LEFT'] . $key . $this->config['DELIMITER_RIGHT']] = str_replace("\n", "<text:line-break/>", $value);
