@@ -26,8 +26,8 @@
 /**
  *	\file       htdocs/compta/facture/class/facture.class.php
  *	\ingroup    facture
- *	\brief      Fichier de la classe des factures clients
- *	\version    $Id: facture.class.php,v 1.128 2011/08/12 05:41:01 hregis Exp $
+ *	\brief      File of class to manage invoices
+ *	\version    $Id: facture.class.php,v 1.129 2011/08/14 00:00:06 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
@@ -37,7 +37,7 @@ require_once(DOL_DOCUMENT_ROOT ."/societe/class/client.class.php");
 
 /**
  *	\class      Facture
- *	\brief      Classe permettant la gestion des factures clients
+ *	\brief      Class to manage invoices
  */
 class Facture extends CommonObject
 {
@@ -634,7 +634,7 @@ class Facture extends CommonObject
             $line->rang				= $object->lines[$i]->rang;
             $line->special_code		= $object->lines[$i]->special_code;
             $line->fk_parent_line	= $object->lines[$i]->fk_parent_line;
-            
+
             // TODO it's ok ?
             $line->total_ht			= $object->lines[$i]->total_ht;
             $line->total_tva		= $object->lines[$i]->total_tva;

@@ -21,7 +21,7 @@
  *	\file       htdocs/projet/tasks/contact.php
  *	\ingroup    project
  *	\brief      Actors of a task
- *	\version    $Id: contact.php,v 1.22 2011/07/31 23:23:36 eldy Exp $
+ *	\version    $Id: contact.php,v 1.23 2011/08/14 02:11:46 eldy Exp $
  */
 
 require ("../../main.inc.php");
@@ -76,31 +76,6 @@ if ($_POST["action"] == 'addcontact' && $user->rights->projet->creer)
 		{
 			$mesg = '<div class="error">'.$task->error.'</div>';
 		}
-	}
-}
-// modification d'un contact. On enregistre le type
-if ($_POST["action"] == 'updateline' && $user->rights->projet->creer)
-{
-	$task = new Task($db);
-	if ($task->fetch($taskid))
-	{
-		$contact = $task->detail_contact($_POST["elrowid"]);
-		$type = $_POST["type"];
-		$statut = $contact->statut;
-
-		$result = $task->update_contact($_POST["elrowid"], $statut, $type);
-		if ($result >= 0)
-		{
-			$db->commit();
-		} else
-		{
-			dol_print_error($db, "result=$result");
-			$db->rollback();
-		}
-	}
-	else
-	{
-		dol_print_error($db);
 	}
 }
 
@@ -416,5 +391,5 @@ if ($id > 0 || ! empty($ref))
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:23:36 $ - $Revision: 1.22 $');
+llxFooter('$Date: 2011/08/14 02:11:46 $ - $Revision: 1.23 $');
 ?>

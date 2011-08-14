@@ -1,5 +1,5 @@
 --
--- $Id$
+-- $Id: 2.7.0-2.8.0.sql,v 1.44 2011/08/14 00:27:18 eldy Exp $
 --
 -- Be carefull to requests order.
 -- This file must be loaded by calling /install/index.php page
@@ -195,3 +195,19 @@ ALTER TABLE llx_fichinterdet ADD INDEX idx_fichinterdet_fk_fichinter (fk_fichint
 ALTER TABLE llx_fichinterdet ADD CONSTRAINT fk_fichinterdet_fk_fichinter FOREIGN KEY (fk_fichinter) REFERENCES llx_fichinter (rowid);
 
 
+
+-- This was created into 2.9.0 but we need them to avoid errors of migration to 2.8 using new classes
+alter table llx_facture add column localtax1 double(24,8) DEFAULT 0 after tva;
+alter table llx_facture add column localtax2 double(24,8) DEFAULT 0 after localtax1;
+alter table llx_facturedet add column localtax1_tx double(6,3) DEFAULT 0 after tva_tx;
+alter table llx_facturedet add column localtax2_tx double(6,3) DEFAULT 0 after localtax1_tx;
+alter table llx_facturedet add column total_localtax1 double(24,8) DEFAULT 0 after total_tva;
+alter table llx_facturedet add column total_localtax2 double(24,8) DEFAULT 0 after total_localtax1;
+
+
+
+-- This was created into 3.0.0 but we need them to avoid errors of migration to 2.8 using new classes
+ALTER TABLE llx_propaldet ADD COLUMN fk_parent_line	integer NULL AFTER fk_propal;
+ALTER TABLE llx_commandedet ADD COLUMN fk_parent_line integer NULL AFTER fk_commande;
+ALTER TABLE llx_facturedet ADD COLUMN fk_parent_line integer NULL AFTER fk_facture;
+ALTER TABLE llx_facturedet_rec ADD COLUMN fk_parent_line integer NULL AFTER fk_facture;
