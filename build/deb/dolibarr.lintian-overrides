@@ -6,8 +6,3 @@ embedded-javascript-library usr/share/dolibarr/htdocs/includes/fckeditor/fckedit
 embedded-php-library usr/share/dolibarr/htdocs/includes/magpierss/extlib/Snoopy.class.inc
 embedded-php-library usr/share/dolibarr/htdocs/includes/magpierss/rss_parse.inc
 embedded-php-library usr/share/dolibarr/htdocs/includes/nusoap/lib/nusoap.php
-# embedded fonts, wich are specific to Dolibarr usage
-font-in-non-font-package usr/share/dolibarr/htdocs/includes/artichow/font/Tuffy.ttf
-font-in-non-font-package usr/share/dolibarr/htdocs/includes/artichow/font/TuffyBold.ttf
-font-in-non-font-package usr/share/dolibarr/htdocs/includes/artichow/font/TuffyBoldItalic.ttf
-font-in-non-font-package usr/share/dolibarr/htdocs/includes/artichow/font/TuffyItalic.ttf
