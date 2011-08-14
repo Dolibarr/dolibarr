@@ -22,7 +22,7 @@
  *       \file       htdocs/comm/propal/document.php
  *       \ingroup    propale
  *       \brief      Page de gestion des documents attaches a une proposition commerciale
- *       \version    $Id: document.php,v 1.68 2011/08/03 00:46:33 eldy Exp $
+ *       \version    $Id: document.php,v 1.69 2011/08/14 02:11:45 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -146,7 +146,7 @@ if ($id > 0 || ! empty($ref))
 
         print '<table class="border"width="100%">';
 
-		$linkback='<a href="'.$_SERVER["PHP_SELF"].'?page=$page&socid=$socid&viewstatut=$viewstatut&sortfield=$sortfield&$sortorder">'.$langs->trans("BackToList").'</a>';
+		$linkback='<a href="'.DOL_URL_ROOT.'/comm/propal.php'."?page=$page&socid=$socid&viewstatut=$viewstatut&sortfield=$sortfield&$sortorder".'">'.$langs->trans("BackToList").'</a>';
 
 		// Ref
 		print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">';
@@ -208,5 +208,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:33 $ - $Revision: 1.68 $');
+llxFooter('$Date: 2011/08/14 02:11:45 $ - $Revision: 1.69 $');
 ?>

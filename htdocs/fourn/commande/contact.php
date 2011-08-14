@@ -21,7 +21,7 @@
  *       \file       htdocs/fourn/commande/contact.php
  *       \ingroup    commande
  *       \brief      Onglet de gestion des contacts de commande
- *       \version    $Id: contact.php,v 1.20 2011/07/31 23:57:02 eldy Exp $
+ *       \version    $Id: contact.php,v 1.21 2011/08/14 02:11:46 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -73,30 +73,6 @@ if ($_POST["action"] == 'addcontact' && $user->rights->commande->creer)
 		{
 			$mesg = '<div class="error">'.$commande->error.'</div>';
 		}
-	}
-}
-// modification d'un contact. On enregistre le type
-if ($_POST["action"] == 'updateligne' && $user->rights->commande->creer)
-{
-	$commande = new CommandeFournisseur($db);
-	if ($commande->fetch($_GET["id"]))
-	{
-		$contact = $commande->detail_contact($_POST["elrowid"]);
-		$type = $_POST["type"];
-		$statut = $contact->statut;
-
-		$result = $commande->update_contact($_POST["elrowid"], $statut, $type);
-		if ($result >= 0)
-		{
-			$db->commit();
-		} else
-		{
-			dol_print_error($db, "result=$result");
-			$db->rollback();
-		}
-	} else
-	{
-		dol_print_error($db);
 	}
 }
 
@@ -366,7 +342,7 @@ if ($id > 0 || ! empty($ref))
 				print '</td>';
 
 				// Icon update et delete
-				print '<td align="center" nowrap>';
+				print '<td align="center" nowrap="nowrap">';
 				if ($commande->statut < 5 && $user->rights->commande->creer)
 				{
 					print '&nbsp;';
@@ -392,5 +368,5 @@ if ($id > 0 || ! empty($ref))
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:57:02 $');
+llxFooter('$Date: 2011/08/14 02:11:46 $');
 ?>
