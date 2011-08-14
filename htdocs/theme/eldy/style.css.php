@@ -21,7 +21,7 @@
 /**
  *		\file       htdocs/theme/eldy/style.css.php
  *		\brief      Fichier de style CSS du theme Eldy
- *		\version    $Id: style.css.php,v 1.101 2011/08/14 00:37:55 eldy Exp $
+ *		\version    $Id: style.css.php,v 1.102 2011/08/14 23:55:19 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -1929,6 +1929,22 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 }
 span.cke_skin_kama { padding: 0 !important; }
 .cke_wrapper { padding: 4px !important; }
+
+a.cke_dialog_ui_button
+{
+    font-family: <?php print $fontlist ?> !important;
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/button_bg.png' ?>) !important;
+	background-position: bottom !important;
+    border: 1px solid #ACBCBB !important;
+	padding: 0.1em 0.7em !important;
+	margin: 0em 0.5em !important;
+    -moz-border-radius:0px 5px 0px 5px !important;
+	-webkit-border-radius:0px 5px 0px 5px !important;
+	border-radius:0px 5px 0px 5px !important;
+    -moz-box-shadow: 4px 4px 4px #CCC !important;
+    -webkit-box-shadow: 4px 4px 4px #CCC !important;
+    box-shadow: 4px 4px 4px #CCC !important;
+}
 
 
 /* ============================================================================== */
