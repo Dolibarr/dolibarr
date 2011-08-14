@@ -20,7 +20,7 @@
  *	\file       htdocs/core/class/dolgraph.class.php
  *  \ingroup    core
  *	\brief      Fichier de la classe mere de gestion des graph
- *	\version    $Id: dolgraph.class.php,v 1.7 2011/07/31 23:45:15 eldy Exp $
+ *	\version    $Id: dolgraph.class.php,v 1.8 2011/08/14 18:26:26 eldy Exp $
  *
  *	Usage:
  *	$graph_data = array(array('labelA',yA),array('labelB',yB));
@@ -415,6 +415,7 @@ class DolGraph
 	 */
 	function draw_artichow($file)
 	{
+	    global $artichow_defaultfont;
 		dol_syslog("DolGraph.class::draw_artichow this->type=".$this->type);
 
 		if (! defined('SHADOW_RIGHT_TOP'))  define('SHADOW_RIGHT_TOP',3);
@@ -442,7 +443,8 @@ class DolGraph
 		if (isset($this->title))
 		{
 			$graph->title->set($this->title);
-			$graph->title->setFont(new Tuffy(10));
+			//print $artichow_defaultfont;exit;
+			$graph->title->setFont(new $artichow_defaultfont(10));
 		}
 
 		if (is_array($this->bgcolor)) $graph->setBackgroundColor($bgcolor);
@@ -555,7 +557,7 @@ class DolGraph
 
 			//$plot->reduce(80);		// Evite temps d'affichage trop long et nombre de ticks absisce satures
 
-			$group->legend->setTextFont(new Tuffy(10)); // This is to force Artichow to use awFileFontDriver to
+			$group->legend->setTextFont(new $artichow_defaultfont(10)); // This is to force Artichow to use awFileFontDriver to
 														// solve a bug in Artichow with UTF8
 			if (sizeof($this->Legend))
 			{
@@ -568,7 +570,7 @@ class DolGraph
 		}
 
 		$group->axis->bottom->setLabelText($legends);
-		$group->axis->bottom->label->setFont(new Tuffy(7));
+		$group->axis->bottom->label->setFont(new $artichow_defaultfont(7));
 
 		//print $group->axis->bottom->getLabelNumber();
 		if ($this->labelInterval > 0) $group->axis->bottom->setLabelInterval($this->labelInterval);
