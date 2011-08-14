@@ -21,7 +21,7 @@
 /**
  *		\file       htdocs/theme/eldy/style.css.php
  *		\brief      Fichier de style CSS du theme Eldy
- *		\version    $Id: style.css.php,v 1.100 2011/08/13 13:03:03 eldy Exp $
+ *		\version    $Id: style.css.php,v 1.101 2011/08/14 00:37:55 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -141,7 +141,7 @@ select.flat {
 	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/button_bg.png' ?>);
 	background-position: bottom;
     border: 1px solid #ACBCBB;
-	padding: 0.2em 0.7em;
+	padding: 0.1em 0.7em;
 	margin: 0em 0.5em;
     -moz-border-radius:0px 5px 0px 5px;
 	-webkit-border-radius:0px 5px 0px 5px;
@@ -156,8 +156,6 @@ select.flat {
 	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/button_bg.png' ?>);
 	background-position: bottom;
     border: 1px solid #ACBCBB;
-	padding: 0.2em 0.7em;
-	margin: 0em 0.5em;
 }
 .button:hover   {
 	background: #dee7ec;
@@ -167,7 +165,7 @@ select.flat {
 	border: 0px;
 	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/button_bg.png' ?>);
 	background-position: bottom;
-	padding: 0.2em 0.7em;
+	padding: 0.1em 0.7em;
 	margin: 0em 0.5em;
     -moz-border-radius:0px 5px 0px 5px;
 	-webkit-border-radius:0px 5px 0px 5px;
