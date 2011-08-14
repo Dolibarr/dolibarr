@@ -5,7 +5,7 @@
 # This file is used by Dolibarr setup process to create true Dolibarr
 # config file called "conf.php".
 #
-# $Id: conf.php.example,v 1.51 2011/08/14 15:59:49 eldy Exp $
+# $Id: conf.php.example,v 1.52 2011/08/14 17:17:19 eldy Exp $
 
 
 ###################
@@ -262,7 +262,7 @@ $dolibarr_main_prod='0';
 ##############################
 
 # Value to overwrite some path to use font instead of embedded one
-#$dolibarr_font_DOL_DEFAULT_TTF="/usr/share/font/dejavu/DejaVuSans.ttf";
-#$dolibarr_font_DOL_DEFAULT_TTF_BOLD="/usr/share/font/dejavu/DejaVuSans-Bold.ttf";
+#$dolibarr_font_DOL_DEFAULT_TTF="/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans.ttf";
+#$dolibarr_font_DOL_DEFAULT_TTF_BOLD="/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans-Bold.ttf";
 
 ?>

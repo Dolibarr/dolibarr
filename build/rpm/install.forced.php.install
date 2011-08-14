@@ -15,4 +15,8 @@ $force_install_databaserootpass='__SUPERUSERPASSWORD__';
 $force_install_dolibarrlogin='admin';
 $force_install_nophpinfo='1';
 $force_install_lockinstall='444';
+
+#$force_dolibarr_lib_ODTPHP_PATHTOPCLZIP='/usr/share/php/libphp-pclzip';
+$force_dolibarr_font_DOL_DEFAULT_TTF_BOLD='/usr/share/fonts/dejavu/DejaVuSans-Bold.ttf';
+
 ?>

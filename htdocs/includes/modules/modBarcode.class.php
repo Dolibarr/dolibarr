@@ -20,7 +20,7 @@
 /**
  *	\defgroup   barcode         Module barcode
  *	\brief      Module pour gerer les codes barres
- *	\version	$Id: modBarcode.class.php,v 1.29 2011/08/04 12:40:17 eldy Exp $
+ *	\version	$Id: modBarcode.class.php,v 1.30 2011/08/14 17:17:20 eldy Exp $
  */
 
 /**
@@ -61,7 +61,7 @@ class modBarcode extends DolibarrModules
 		$this->dirs = array("/barcode/temp");
 
 		// Dependances
-		$this->depends = array("modProduct");
+		$this->depends = array();        // May be used for product or service or third party module
 		$this->requiredby = array();
 
 		// Config pages
