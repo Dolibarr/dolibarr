@@ -21,7 +21,7 @@
  *	\ingroup    societe
  *	\brief      File of class to build ODT documents for third parties
  *	\author	    Laurent Destailleur
- *	\version    $Id: doc_generic_odt.modules.php,v 1.33 2011/07/31 23:28:18 eldy Exp $
+ *	\version    $Id: doc_generic_odt.modules.php,v 1.34 2011/08/14 13:26:06 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/societe/modules_societe.class.php");
@@ -220,7 +220,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				create_exdir($conf->societe->dir_temp);
 
 				// Open and load template
-				require_once(DOL_DOCUMENT_ROOT.'/includes/odtphp/odf.php');
+				require_once(ODTPHP_PATH.'odf.php');
 				$odfHandler = new odf($srctemplatepath, array(
 						'PATH_TO_TMP'	  => $conf->societe->dir_temp,
 						'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
