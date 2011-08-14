@@ -4,7 +4,7 @@
 // This file must be present into htdocs/install directory
 // during install process to be used.
 //
-// $Id: install.forced.php.install,v 1.9 2011/07/30 14:56:12 eldy Exp $
+// $Id: install.forced.php.install,v 1.10 2011/08/14 14:31:59 eldy Exp $
 //
 
 $force_install_noedit=2;
@@ -24,4 +24,7 @@ $force_install_databaserootpass='__SUPERUSERPASSWORD__';
 $force_install_dolibarrlogin='admin';
 $force_install_nophpinfo='1';
 $force_install_lockinstall='444';
+
+$force_install_libpath=array('ODTPHP_PATHTOPCLZIP'=>"/usr/share/php/libphp-pclzip");
+
 ?>
