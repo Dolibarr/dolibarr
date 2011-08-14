@@ -20,7 +20,7 @@
  *       \file       htdocs/comm/propal/contact.php
  *       \ingroup    propal
  *       \brief      Onglet de gestion des contacts de propal
- *       \version    $Id: contact.php,v 1.43 2011/08/03 00:46:33 eldy Exp $
+ *       \version    $Id: contact.php,v 1.44 2011/08/14 02:11:45 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -78,30 +78,6 @@ if ($_POST["action"] == 'addcontact' && $user->rights->propale->creer)
 		{
 			$mesg = '<div class="error">'.$propal->error.'</div>';
 		}
-	}
-}
-// modification d'un contact. On enregistre le type
-if ($_POST["action"] == 'updateligne' && $user->rights->propale->creer)
-{
-	$propal = new Propal($db);
-	if ($propal->fetch($id))
-	{
-		$contact = $propal->detail_contact($_POST["elrowid"]);
-		$type = $_POST["type"];
-		$statut = $contact->statut;
-
-		$result = $propal->update_contact($_POST["elrowid"], $statut, $type);
-		if ($result >= 0)
-		{
-			$db->commit();
-		} else
-		{
-			dol_print_error($db, "result=$result");
-			$db->rollback();
-		}
-	} else
-	{
-		dol_print_error($db);
 	}
 }
 
@@ -165,7 +141,7 @@ $userstatic=new User($db);
 /* Mode vue et edition                                                         */
 /*                                                                             */
 /* *************************************************************************** */
-if (isset($mesg)) print $mesg;
+dol_htmloutput_mesg($mesg);
 
 $id = $id;
 $ref= GETPOST('ref');
@@ -187,7 +163,7 @@ if ($id > 0 || ! empty($ref))
 		*/
 		print '<table class="border" width="100%">';
 
-		$linkback="<a href=\"".$_SERVER["PHP_SELF"]."?page=$page&socid=$socid&viewstatut=$viewstatut&sortfield=$sortfield&$sortorder\">".$langs->trans("BackToList")."</a>";
+		$linkback="<a href=\"".DOL_URL_ROOT.'/comm/propal.php'."?page=$page&socid=$socid&viewstatut=$viewstatut&sortfield=$sortfield&$sortorder\">".$langs->trans("BackToList")."</a>";
 
 		// Ref
 		print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">';
@@ -301,7 +277,7 @@ if ($id > 0 || ! empty($ref))
 
 			print '</form>';
 
-            print '<tr><td colspan="6">&nbsp;</td></tr>';
+            print '<tr><td colspan="7">&nbsp;</td></tr>';
 		}
 
 
@@ -311,7 +287,8 @@ if ($id > 0 || ! empty($ref))
 		print '<td>'.$langs->trans("Company").'</td>';
 		print '<td>'.$langs->trans("Contacts").'</td>';
 		print '<td>'.$langs->trans("ContactType").'</td>';
-		print '<td align="center" colspan="3">'.$langs->trans("Status").'</td>';
+		print '<td align="center">'.$langs->trans("Status").'</td>';
+		print '<td colspan="2">&nbsp;</td>';
 		print "</tr>\n";
 
 		$companystatic = new Societe($db);
@@ -382,7 +359,7 @@ if ($id > 0 || ! empty($ref))
 				print '</td>';
 
 				// Icon update et delete
-				print '<td align="center" nowrap colspan="3">';
+				print '<td align="center" nowrap="nowrap" colspan="2">';
 				if ($user->rights->propale->creer)
 				{
 					print '&nbsp;';
@@ -407,5 +384,5 @@ if ($id > 0 || ! empty($ref))
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:33 $');
+llxFooter('$Date: 2011/08/14 02:11:45 $');
 ?>

@@ -20,7 +20,7 @@
  *       \file       htdocs/fichinter/contact.php
  *       \ingroup    fichinter
  *       \brief      Onglet de gestion des contacts de fiche d'intervention
- *       \version    $Id: contact.php,v 1.30 2011/07/31 23:50:54 eldy Exp $
+ *       \version    $Id: contact.php,v 1.31 2011/08/14 02:11:45 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -72,30 +72,6 @@ if ($_POST["action"] == 'addcontact' && $user->rights->ficheinter->creer)
 		{
 			$mesg = '<div class="error">'.$fichinter->error.'</div>';
 		}
-	}
-}
-// modification d'un contact. On enregistre le type
-if ($_POST["action"] == 'updateligne' && $user->rights->ficheinter->creer)
-{
-	$fichinter = new Fichinter($db);
-	if ($fichinter->fetch($_GET["id"]))
-	{
-		$contact = $fichinter->detail_contact($_POST["elrowid"]);
-		$type = $_POST["type"];
-		$statut = $contact->statut;
-
-		$result = $fichinter->update_contact($_POST["elrowid"], $statut, $type);
-		if ($result >= 0)
-		{
-			$db->commit();
-		} else
-		{
-			dol_print_error($db, "result=$result");
-			$db->rollback();
-		}
-	} else
-	{
-		dol_print_error($db);
 	}
 }
 
@@ -384,5 +360,5 @@ if ($id > 0)
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:50:54 $');
+llxFooter('$Date: 2011/08/14 02:11:45 $');
 ?>

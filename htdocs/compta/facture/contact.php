@@ -20,7 +20,7 @@
  *       \file       htdocs/compta/facture/contact.php
  *       \ingroup    facture
  *       \brief      Onglet de gestion des contacts des factures
- *       \version    $Id: contact.php,v 1.48 2011/07/31 22:23:13 eldy Exp $
+ *       \version    $Id: contact.php,v 1.49 2011/08/14 02:11:46 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -72,30 +72,6 @@ if ($_POST["action"] == 'addcontact' && $user->rights->facture->creer)
 		{
 			$mesg = '<div class="error">'.$facture->error.'</div>';
 		}
-	}
-}
-// modification d'un contact. On enregistre le type
-if ($_POST["action"] == 'updateligne' && $user->rights->facture->creer)
-{
-	$facture = new Facture($db);
-	if ($facture->fetch($_GET["facid"]))
-	{
-		$contact = $facture->detail_contact($_POST["elrowid"]);
-		$type = $_POST["type"];
-		$statut = $contact->statut;
-
-		$result = $facture->update_contact($_POST["elrowid"], $statut, $type);
-		if ($result >= 0)
-		{
-			$db->commit();
-		} else
-		{
-			dol_print_error($db, "result=$result");
-			$db->rollback();
-		}
-	} else
-	{
-		dol_print_error($db);
 	}
 }
 
@@ -395,5 +371,5 @@ if ($id > 0 || ! empty($ref))
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:13 $');
+llxFooter('$Date: 2011/08/14 02:11:46 $');
 ?>

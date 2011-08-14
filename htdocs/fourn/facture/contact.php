@@ -21,7 +21,7 @@
  *      \file       htdocs/fourn/facture/contact.php
  *      \ingroup    facture, fournisseur
  *      \brief      Onglet de gestion des contacts des factures
- *      \version    $Id: contact.php,v 1.27 2011/07/31 23:57:01 eldy Exp $
+ *      \version    $Id: contact.php,v 1.28 2011/08/14 02:11:46 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -74,30 +74,6 @@ if ($_POST["action"] == 'addcontact' && $user->rights->fournisseur->facture->cre
 		{
 			$mesg = '<div class="error">'.$facture->error.'</div>';
 		}
-	}
-}
-// modification d'un contact. On enregistre le type
-if ($_POST["action"] == 'updateligne' && $user->rights->fournisseur->facture->creer)
-{
-	$facture = new FactureFournisseur($db);
-	if ($facture->fetch($_GET["facid"]))
-	{
-		$contact = $facture->detail_contact($_POST["elrowid"]);
-		$type = $_POST["type"];
-		$statut = $contact->statut;
-
-		$result = $facture->update_contact($_POST["elrowid"], $statut, $type);
-		if ($result >= 0)
-		{
-			$db->commit();
-		} else
-		{
-			dol_print_error($db, "result=$result");
-			$db->rollback();
-		}
-	} else
-	{
-		dol_print_error($db);
 	}
 }
 
@@ -384,5 +360,5 @@ if ($id > 0)
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:57:01 $');
+llxFooter('$Date: 2011/08/14 02:11:46 $');
 ?>
