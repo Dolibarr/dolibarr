@@ -29,7 +29,7 @@
  * 	\ingroup	core
  *  \brief      File that defines environment for all Dolibarr process (pages or scripts)
  * 				This script reads the conf file, init $lang, $db and and empty $user
- *  \version    $Id: master.inc.php,v 1.356 2011/08/14 18:26:15 eldy Exp $
+ *  \version    $Id: master.inc.php,v 1.355 2011/08/14 17:17:20 eldy Exp $
  */
 
 
@@ -301,9 +301,7 @@ if (! defined('NUSOAP_PATH'))          { define('NUSOAP_PATH',        DOL_DOCUME
 if (! defined('PHPEXCEL_PATH'))        { define('PHPEXCEL_PATH',      DOL_DOCUMENT_ROOT .'/includes/phpexcel/'); }
 if (! defined('ODTPHP_PATH'))          { define('ODTPHP_PATH',          empty($dolibarr_lib_ODTPHP_PATH)?DOL_DOCUMENT_ROOT.'/includes/odtphp/':$dolibarr_lib_ODTPHP_PATH.'/'); }
 if (! defined('ODTPHP_PATHTOPCLZIP'))  { define('ODTPHP_PATHTOPCLZIP',  empty($dolibarr_lib_ODTPHP_PATHTOPCLZIP)?DOL_DOCUMENT_ROOT.'/includes/odtphp/zip/pclzip/':$dolibarr_lib_ODTPHP_PATHTOPCLZIP.'/'); }
-if (! defined('ARTICHOW_FONT'))        { define('ARTICHOW_FONT',        empty($dolibarr_font_DOL_DEFAULT_TTF_BOLD)?DOL_DOCUMENT_ROOT.'/includes/artichow/font':dirname($dolibarr_font_DOL_DEFAULT_TTF_BOLD)); }
 // Other required path
-if (! defined('ARTICHOW_FONT_NAMES'))  { define('ARTICHOW_FONT_NAMES',  empty($dolibarr_font_DOL_DEFAULT_TTF_BOLD)?'Tuffy,TuffyBold,TuffyBoldItalic,TuffyItalic':'DejaVuSans,DejaVuSans-Bold,DejaVuSans-BoldOblique,DejaVuSans-Oblique'); }
 if (! defined('DOL_DEFAULT_TTF'))      { define('DOL_DEFAULT_TTF',      empty($dolibarr_font_DOL_DEFAULT_TTF)?DOL_DOCUMENT_ROOT.'/includes/barcode/php-barcode/fonts/Aerial.ttf':$dolibarr_font_DOL_DEFAULT_TTF); }
 if (! defined('DOL_DEFAULT_TTF_BOLD')) { define('DOL_DEFAULT_TTF_BOLD', empty($dolibarr_font_DOL_DEFAULT_TTF_BOLD)?DOL_DOCUMENT_ROOT.'/includes/barcode/php-barcode/fonts/AerialBd.ttf':$dolibarr_font_DOL_DEFAULT_TTF_BOLD); }
 if (! defined('MAGPIE_DIR'))           { define('MAGPIE_DIR',         MAGPIERSS_PATH); }
