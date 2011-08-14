@@ -23,7 +23,7 @@
  *		\file       htdocs/install/etape1.php
  *		\ingroup	install
  *		\brief      Build conf file on disk
- *		\version    $Id: etape1.php,v 1.137 2011/08/04 13:19:26 eldy Exp $
+ *		\version    $Id: etape1.php,v 1.138 2011/08/14 17:17:19 eldy Exp $
  */
 
 define('DONOTLOADCONF',1);	// To avoid loading conf by file inc.php
@@ -231,6 +231,11 @@ if ($action == "set")
 
 		$error+=write_conf_file($conffile);
 	}
+
+	/**
+	 * Write main.inc.php and master.inc.php into documents dir
+	 */
+	// TODO
 
 	/**
 	 * Create database and admin user database
@@ -518,7 +523,8 @@ pFooter($error,$setuplang,'jsinfo');
 
 /**
  *  Save configuration file. No particular permissions are set by installer.
- *  @param      conffile        Path to conf file
+ *
+ *  @param      conffile        Path to conf file to generate/update
  */
 function write_conf_file($conffile)
 {
@@ -528,6 +534,8 @@ function write_conf_file($conffile)
 	global $dolibarr_main_db_port,$dolibarr_main_db_name,$dolibarr_main_db_user,$dolibarr_main_db_pass;
 	global $dolibarr_main_db_type,$dolibarr_main_db_character_set,$dolibarr_main_db_collation,$dolibarr_main_authentication;
     global $conffile,$conffiletoshow,$conffiletoshowshort;
+    global $force_dolibarr_lib_ODTPHP_PATH, $force_dolibarr_lib_ODTPHP_PATHTOPCLZIP;
+    global $force_dolibarr_font_DOL_DEFAULT_TTF, $force_dolibarr_font_DOL_DEFAULT_TTF_BOLD;
 
 	$error=0;
 
@@ -607,6 +615,24 @@ function write_conf_file($conffile)
 		fputs($fp,"\n");
 
 		fputs($fp, '$dolibarr_mailing_limit_sendbyweb=\'0\';');
+        fputs($fp,"\n");
+
+        // Write params to overwrites default lib path
+        fputs($fp,"\n");
+        if (empty($force_dolibarr_lib_ODTPHP_PATH)) { fputs($fp, '#'); $force_dolibarr_lib_ODTPHP_PATH=''; }
+        fputs($fp, '$dolibarr_lib_ODTPHP_PATH=\''.$force_dolibarr_lib_ODTPHP_PATH.'\';');
+        fputs($fp,"\n");
+        if (empty($force_dolibarr_lib_ODTPHP_PATHTOPCLZIP)) { fputs($fp, '#'); $force_dolibarr_lib_ODTPHP_PATHTOPCLZIP=''; }
+        fputs($fp, '$dolibarr_lib_ODTPHP_PATHTOPCLZIP=\''.$force_dolibarr_lib_ODTPHP_PATHTOPCLZIP.'\';');
+        fputs($fp,"\n");
+
+        // Write params to overwrites default font path
+        fputs($fp,"\n");
+        if (empty($force_dolibarr_font_DOL_DEFAULT_TTF)) { fputs($fp, '#'); $force_dolibarr_font_DOL_DEFAULT_TTF=''; }
+   		fputs($fp, '$dolibarr_font_DOL_DEFAULT_TTF=\''.$force_dolibarr_font_DOL_DEFAULT_TTF.'\';');
+        fputs($fp,"\n");
+        if (empty($force_dolibarr_font_DOL_DEFAULT_TTF_BOLD)) { fputs($fp, '#'); $force_dolibarr_font_DOL_DEFAULT_TTF_BOLD=''; }
+        fputs($fp, '$dolibarr_font_DOL_DEFAULT_TTF_BOLD=\''.$force_dolibarr_font_DOL_DEFAULT_TTF_BOLD.'\';');
         fputs($fp,"\n");
 
 		fputs($fp, '?>');

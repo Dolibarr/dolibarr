@@ -29,7 +29,7 @@
  * 	\ingroup	core
  *  \brief      File that defines environment for all Dolibarr process (pages or scripts)
  * 				This script reads the conf file, init $lang, $db and and empty $user
- *  \version    $Id: master.inc.php,v 1.353 2011/08/11 12:14:03 eldy Exp $
+ *  \version    $Id: master.inc.php,v 1.355 2011/08/14 17:17:20 eldy Exp $
  */
 
 
@@ -203,7 +203,7 @@ if (! empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED))
 }
 
 /*
- * Create object $mysoc (A "Societe" object that contains properties of companies managed by Dolibarr.
+ * Create object $mysoc (A thirdparty object that contains properties of companies managed by Dolibarr.
  */
 if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 {
@@ -281,38 +281,33 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 }
 
 
-/*
- * Set default language (must be after the setValues of $conf)
- */
+// Set default language (must be after the setValues of $conf)
 if (! defined('NOREQUIRETRAN'))
 {
 	$langs->setDefaultLang($conf->global->MAIN_LANG_DEFAULT);
 }
 
-/*
- * Pour utiliser d'autres versions des librairies externes que les
- * versions embarquees dans Dolibarr, definir les constantes adequates:
- * Pour FPDF:           FPDF_PATH
- * Pour PHP_WriteExcel: PHP_WRITEEXCEL_PATH
- * Pour MagpieRss:      MAGPIERSS_PATH
- * Pour PHPlot:         PHPLOT_PATH
- * Pour JPGraph:        JPGRAPH_PATH
- * Pour NuSOAP:         NUSOAP_PATH
- * Pour TCPDF:          TCPDF_PATH
- */
-// Les path racines
-if (! defined('FPDF_PATH'))           { define('FPDF_PATH',          DOL_DOCUMENT_ROOT .'/includes/fpdf/fpdf/'); }
-if (! defined('TCPDF_PATH'))          { define('TCPDF_PATH',         DOL_DOCUMENT_ROOT .'/includes/tcpdf/'); }
-if (! defined('FPDFI_PATH'))          { define('FPDFI_PATH',         DOL_DOCUMENT_ROOT .'/includes/fpdf/fpdfi/'); }
-if (! defined('MAGPIERSS_PATH'))      { define('MAGPIERSS_PATH',     DOL_DOCUMENT_ROOT .'/includes/magpierss/'); }
-if (! defined('NUSOAP_PATH'))         { define('NUSOAP_PATH',        DOL_DOCUMENT_ROOT .'/includes/nusoap/lib/'); }
-if (! defined('PHP_WRITEEXCEL_PATH')) { define('PHP_WRITEEXCEL_PATH',DOL_DOCUMENT_ROOT .'/includes/php_writeexcel/'); }
-if (! defined('PHPEXCELREADER'))      { define('PHPEXCELREADER',     DOL_DOCUMENT_ROOT .'/includes/phpexcelreader/'); }
-// Les autres path
-if (! defined('MAGPIE_DIR'))          { define('MAGPIE_DIR',         MAGPIERSS_PATH); }
-if (! defined('MAGPIE_CACHE_DIR'))    { define('MAGPIE_CACHE_DIR',   $conf->externalrss->dir_temp); }
-
-
 if (! defined('MAIN_LABEL_MENTION_NPR') ) define('MAIN_LABEL_MENTION_NPR','NPR');
+
+/*
+ * To us other version of external libraries than embeded libraries, define here
+ * constant to path. Use '' to use include class path autodetect.
+ */
+// Path to root libraries
+if (! defined('TCPDF_PATH'))           { define('TCPDF_PATH',         DOL_DOCUMENT_ROOT .'/includes/tcpdf/'); }
+if (! defined('FPDFI_PATH'))           { define('FPDFI_PATH',         DOL_DOCUMENT_ROOT .'/includes/fpdfi/'); }
+if (! defined('MAGPIERSS_PATH'))       { define('MAGPIERSS_PATH',     DOL_DOCUMENT_ROOT .'/includes/magpierss/'); }
+if (! defined('NUSOAP_PATH'))          { define('NUSOAP_PATH',        DOL_DOCUMENT_ROOT .'/includes/nusoap/lib/'); }
+if (! defined('PHPEXCEL_PATH'))        { define('PHPEXCEL_PATH',      DOL_DOCUMENT_ROOT .'/includes/phpexcel/'); }
+if (! defined('ODTPHP_PATH'))          { define('ODTPHP_PATH',          empty($dolibarr_lib_ODTPHP_PATH)?DOL_DOCUMENT_ROOT.'/includes/odtphp/':$dolibarr_lib_ODTPHP_PATH.'/'); }
+if (! defined('ODTPHP_PATHTOPCLZIP'))  { define('ODTPHP_PATHTOPCLZIP',  empty($dolibarr_lib_ODTPHP_PATHTOPCLZIP)?DOL_DOCUMENT_ROOT.'/includes/odtphp/zip/pclzip/':$dolibarr_lib_ODTPHP_PATHTOPCLZIP.'/'); }
+// Other required path
+if (! defined('DOL_DEFAULT_TTF'))      { define('DOL_DEFAULT_TTF',      empty($dolibarr_font_DOL_DEFAULT_TTF)?DOL_DOCUMENT_ROOT.'/includes/barcode/php-barcode/fonts/Aerial.ttf':$dolibarr_font_DOL_DEFAULT_TTF); }
+if (! defined('DOL_DEFAULT_TTF_BOLD')) { define('DOL_DEFAULT_TTF_BOLD', empty($dolibarr_font_DOL_DEFAULT_TTF_BOLD)?DOL_DOCUMENT_ROOT.'/includes/barcode/php-barcode/fonts/AerialBd.ttf':$dolibarr_font_DOL_DEFAULT_TTF_BOLD); }
+if (! defined('MAGPIE_DIR'))           { define('MAGPIE_DIR',         MAGPIERSS_PATH); }
+if (! defined('MAGPIE_CACHE_DIR'))     { define('MAGPIE_CACHE_DIR',   $conf->externalrss->dir_temp); }
+// Old path to root deprecated (not used). Kept for extensions.
+if (! defined('FPDF_PATH'))            { define('FPDF_PATH',          DOL_DOCUMENT_ROOT .'/includes/fpdf/fpdf/'); }
+if (! defined('PHP_WRITEEXCEL_PATH'))  { define('PHP_WRITEEXCEL_PATH',DOL_DOCUMENT_ROOT .'/includes/php_writeexcel/'); }
 
 ?>
