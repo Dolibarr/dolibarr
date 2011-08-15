@@ -2,7 +2,7 @@
 #----------------------------------------------------------------------------
 # \file         build/makepack-dolibarr.pl
 # \brief        Dolibarr package builder (tgz, zip, rpm, deb, exe, aps)
-# \version      $Id: makepack-dolibarr.pl,v 1.147 2011/08/14 21:25:26 eldy Exp $
+# \version      $Id: makepack-dolibarr.pl,v 1.148 2011/08/15 00:15:18 eldy Exp $
 # \author       (c)2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
 #----------------------------------------------------------------------------
 
@@ -45,7 +45,7 @@ if (-d "/usr/src/RPM")    { $RPMDIR="/usr/src/RPM"; } # mandrake
 
 
 use vars qw/ $REVISION $VERSION /;
-$REVISION='$Revision: 1.147 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
+$REVISION='$Revision: 1.148 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
 $VERSION="3.2 (build $REVISION)";
 
 
@@ -315,12 +315,7 @@ if ($nboftargetok) {
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/barcode/php-barcode/fonts/Tymes*.ttf`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/barcode/php-barcode/fonts/Veranda*.ttf`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/barcode/php-barcode/genbarcode`;
-   	    $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/fckeditor/_samples`;
-	    $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/fckeditor/_testcases`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/fckeditor/editor/dialog/fck_spellerpages/spellerpages/server-scripts/spellchecker.pl`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/fckeditor/editor/dialog/fck_spellerpages/spellerpages/blank.html`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/fckeditor/fckeditor.py`;
-	    $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/fckeditor/license.txt`;
+   	    $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/fckeditor`;
 	    $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/flot/LICENSE.txt`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/flot/jquery.js`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/flot/jquery.min.js`;
@@ -548,8 +543,6 @@ if ($nboftargetok) {
             $ret=`$cmd`;
             $cmd="find $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/htdocs/includes/geoip -name 'sample*.php' -type f -exec chmod 755 {} \\; ";
             $ret=`$cmd`;
-            $cmd="find $BUILDROOT/$FILENAMETGZ2/usr/share/$PROJECT/htdocs/includes/fckeditor/editor/dialog/fck_spellerpages/spellerpages/server-scripts -name '*.pl' -type f -exec chmod 755 {} \\; ";
-            $ret=`$cmd`;
 
 			# Build tgz
     		print "Compress $FILENAMETGZ2 into $FILENAMETGZ2.tgz...\n";
@@ -769,8 +762,6 @@ if ($nboftargetok) {
             $cmd="find $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/scripts -name '*.php' -type f -exec chmod 755 {} \\; ";
             $ret=`$cmd`;
             $cmd="find $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/includes/geoip -name 'sample*.php' -type f -exec chmod 755 {} \\; ";
-            $ret=`$cmd`;
-            $cmd="find $BUILDROOT/$PROJECT.tmp/usr/share/$PROJECT/htdocs/includes/fckeditor/editor/dialog/fck_spellerpages/spellerpages/server-scripts -name '*.pl' -type f -exec chmod 755 {} \\; ";
             $ret=`$cmd`;
             
              # Creation of binary package (to build without sources)
