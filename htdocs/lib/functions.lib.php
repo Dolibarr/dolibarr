@@ -28,7 +28,7 @@
  *	\file			htdocs/lib/functions.lib.php
  *	\brief			A set of functions for Dolibarr
  *					This file contains all frequently used functions.
- *	\version		$Id: functions.lib.php,v 1.553 2011/08/15 17:43:40 eldy Exp $
+ *	\version		$Id: functions.lib.php,v 1.554 2011/08/15 18:37:07 eldy Exp $
  */
 
 // For compatibility during upgrade
@@ -1623,6 +1623,7 @@ function img_picto($alt, $picto, $options='', $pictoisfullpath=0)
     {
         if (! preg_match('/(\.png|\.gif)$/i',$picto)) $picto.='.png';
     }
+
     if ($pictoisfullpath) return '<img src="'.$picto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
     return '<img src="'.$url.'/'.$path.'/img/'.$picto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
 }
@@ -2679,7 +2680,7 @@ function load_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath
 
     $return.= "\n";
     $return.= '<table '.($id?'id="'.$id.'" ':'').'summary="" width="100%" border="0" class="notopnoleftnoright" style="margin-bottom: 2px;"><tr>';
-    $return.= '<td class="nobordernopadding hideonsmartphone" width="40" align="left" valign="middle">'.img_picto('',$picto, 'id="pictotitle"', $pictoisfullpath).'</td>';
+    if ($picto) $return.= '<td class="nobordernopadding hideonsmartphone" width="40" align="left" valign="middle">'.img_picto('',$picto, 'id="pictotitle"', $pictoisfullpath).'</td>';
     $return.= '<td class="nobordernopadding" valign="middle">';
     $return.= '<div class="titre">'.$titre.'</div>';
     $return.= '</td>';
