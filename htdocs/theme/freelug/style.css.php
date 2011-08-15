@@ -19,7 +19,7 @@
 /**
  *		\file       htdocs/theme/freelug/style.css.php
  *		\brief      Fichier de style CSS du theme Freelug
- *		\version    $Id: style.css.php,v 1.46 2011/08/15 17:43:42 eldy Exp $
+ *		\version    $Id: style.css.php,v 1.47 2011/08/15 18:37:08 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -1069,10 +1069,6 @@ a.impayee:hover { font-weight: bold; color: #550000; }
  */
 
 .fieldrequired { font-weight: bold; color: #000055; }
-
-#pictotitle {
-	<?php print !empty($conf->browser->phone)?'display: none;':''; ?>
-}
 
 .photo {
 border: 0px;
