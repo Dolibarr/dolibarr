@@ -22,7 +22,7 @@
  *	\file       htdocs/install/check.php
  *	\ingroup    install
  *	\brief      Test if file conf can be modified and if does not exists, test if install process can create it
- *	\version    $Id: check.php,v 1.88 2011/08/11 20:59:32 eldy Exp $
+ *	\version    $Id: check.php,v 1.89 2011/08/15 12:14:25 eldy Exp $
  */
 include_once("./inc.php");
 
@@ -73,7 +73,7 @@ if (versioncompare(versionphparray(),array(4,3,10)) < 0)        // Minimum to us
 }
 else if (versioncompare(versionphparray(),array(5,2,0)) < 0)    // Minimum supported (warning if lower)
 {
-    print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("WarningPHPVersionTooLow",'5.0.0');
+    print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("WarningPHPVersionTooLow",'5.2.0');
     $checksok=0;
 }
 else
