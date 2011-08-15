@@ -22,7 +22,7 @@
  *	\brief      File of class to manage widget boxes
  *	\author     Rodolphe Qiedeville
  *	\author	    Laurent Destailleur
- *	\version    $Id: boxes.php,v 1.56 2011/08/08 15:28:01 eldy Exp $
+ *	\version    $Id: boxes.php,v 1.58 2011/08/15 18:37:07 eldy Exp $
  */
 
 
@@ -41,18 +41,21 @@ function printBoxesArea($user,$areacode)
 	$infobox=new InfoBox($db);
 	$boxarray=$infobox->listboxes($areacode,$user);
 
-	//$boxid_left = array();
-	//$boxid_right = array();
 	if (count($boxarray))
 	{
-		print_fiche_titre($langs->trans("OtherInformationsBoxes"),'','','','otherboxes');
+		print load_fiche_titre($langs->trans("OtherInformationsBoxes"),'','','','otherboxes');
 		print '<table width="100%" class="notopnoleftnoright">';
 		print '<tr><td class="notopnoleftnoright">'."\n";
 
-		print '<table width="100%" style="border-collapse: collapse; border: 0px; margin: 0px; padding: 0px;"><tr>';
 
-		// Affichage colonne gauche
-		print '<td width="50%" valign="top" class="notopnoleft" style="padding-right: 8px;">'."\n";
+        if (! empty($conf->global->MAIN_TRY_DIV)) print '<div class="fichehalfleft">';
+        else {
+    		print '<table width="100%" style="border-collapse: collapse; border: 0px; margin: 0px; padding: 0px;"><tr>';
+
+    		// Affichage colonne gauche
+    		print '<td class="notopnoleft" width="50%" valign="top" style="padding-right: 8px;">'."\n";
+        }
+
 
 		print "\n<!-- Box left container -->\n";
 		print '<div id="left" class="connectedSortable">'."\n";
@@ -65,29 +68,27 @@ function printBoxesArea($user,$areacode)
 				$ii++;
 				//print 'box_id '.$boxarray[$ii]->box_id.' ';
 				//print 'box_order '.$boxarray[$ii]->box_order.'<br>';
-				//$boxid_left[$key] = $box->box_id;
 				// Affichage boite key
 				$box->loadBox($conf->box_max_lines);
 				$box->showBox();
 			}
 		}
 
-		// If no box on left, we add an invisible empty box
-//		if ($ii==0)
-//		{
-			$emptybox=new ModeleBoxes($db);
-			$emptybox->box_id='A';
-			$emptybox->info_box_head=array();
-			$emptybox->info_box_contents=array();
-			$emptybox->showBox(array(),array());
-//		}
+		$emptybox=new ModeleBoxes($db);
+		$emptybox->box_id='A';
+		$emptybox->info_box_head=array();
+		$emptybox->info_box_contents=array();
+		$emptybox->showBox(array(),array());
 
 		print "</div>\n";
 		print "<!-- End box container -->\n";
 
-		print "</td>\n";
-		// Affichage colonne droite
-		print '<td width="50%" valign="top">';
+        if (! empty($conf->global->MAIN_TRY_DIV)) print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+        else {
+    		print "</td>\n";
+    		// Affichage colonne droite
+    		print '<td class="notopnoleft" width="50%" valign="top">';
+        }
 
 		print "\n<!-- Box right container -->\n";
 		print '<div id="right" class="connectedSortable">'."\n";
@@ -100,27 +101,26 @@ function printBoxesArea($user,$areacode)
 				$ii++;
 				//print 'box_id '.$boxarray[$ii]->box_id.' ';
 				//print 'box_order '.$boxarray[$ii]->box_order.'<br>';
-				//$boxid_right[$key] = $boxarray[$key]->box_id;
 				// Affichage boite key
 				$box->loadBox($conf->box_max_lines);
 				$box->showBox();
 			}
 		}
 
-		// If no box on right, we show add an invisible empty box
-//		if ($ii==0)
-//		{
-			$emptybox=new ModeleBoxes($db);
-			$emptybox->box_id='B';
-			$emptybox->info_box_head=array();
-			$emptybox->info_box_contents=array();
-			$emptybox->showBox(array(),array());
-//		}
+		$emptybox=new ModeleBoxes($db);
+		$emptybox->box_id='B';
+		$emptybox->info_box_head=array();
+		$emptybox->info_box_contents=array();
+		$emptybox->showBox(array(),array());
 
 		print "</div>\n";
 		print "<!-- End box container -->\n";
-		print "</td>";
-		print "</tr></table>\n";
+
+		if (! empty($conf->global->MAIN_TRY_DIV)) print '</div></div>';
+        else {
+    		print "</td>";
+    		print "</tr></table>\n";
+        }
 		print "\n";
 
 		print "</td></tr>";

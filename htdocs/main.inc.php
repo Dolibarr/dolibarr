@@ -25,7 +25,7 @@
  *	\file       htdocs/main.inc.php
  *	\ingroup	core
  *	\brief      File that defines environment for Dolibarr pages only (variables not required by scripts)
- *	\version    $Id: main.inc.php,v 1.759 2011/08/10 22:47:36 eldy Exp $
+ *	\version    $Id: main.inc.php,v 1.761 2011/08/15 17:55:50 eldy Exp $
  */
 
 @ini_set('memory_limit', '64M');	// This may be useless if memory is hard limited by your PHP
@@ -193,6 +193,9 @@ if (isset($_SERVER["HTTP_USER_AGENT"]))
 	// Other
 	if (in_array($conf->browser->name,array('firefox','iceweasel'))) $conf->browser->firefox=1;
 	//$conf->browser->phone='android';
+
+    // Force usage of left menu when smartphone is used
+	if ($conf->browser->phone && ! empty($conf->global->MAIN_MENU_FORCE_USE_JQUERY_LAYOUT)) $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT='forced';
 }
 
 
@@ -1100,19 +1103,20 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 						//contentIgnoreSelector: "span",
 						togglerTip_open: "Close This Pane",
 						togglerTip_closed: "Open This Pane",
-						resizerTip:	"Resize This Pane"
+						resizerTip:	"Resize This Pane",
+						fxSpeed: "fast"
 					},
 					west: {
 						paneClass: "leftContent",
-						spacing_closed:	14,
-						togglerLength_closed: 14,
-						togglerAlign_closed: "top",
+						//spacing_closed:	14,
+						//togglerLength_closed: 14,
+						//togglerAlign_closed: "auto",
 						//togglerLength_open: 0,
 						//	effect defaults - overridden on some panes
 						//slideTrigger_open:	"mouseover",
 						//initClosed:	true,
 						fxName:	"drop",
-						fxSpeed: "normal",
+						fxSpeed: "fast",
 						fxSettings: { easing: "" }
 					},
 					north: {
@@ -1123,7 +1127,8 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 						togglerLength_open:	0,
 						togglerLength_closed: -1,
 						slidable: false,
-						fxName:	"none"
+						fxName:	"none",
+						fxSpeed: "fast"
 					},
 					center: {
 						paneSelector: "#mainContent"
@@ -1151,7 +1156,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
     	print "\n".'<script type="text/javascript">
                     jQuery(document).ready(function () {
                     	jQuery(function() {
-                        	$(".classfortooltip").tipTip({maxWidth: "600px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50});
+                        	jQuery(".classfortooltip").tipTip({maxWidth: "'.dol_size(600,'width').'px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50});
                         });
                     });
                 </script>';

@@ -23,7 +23,7 @@
  *		\file       htdocs/install/etape1.php
  *		\ingroup	install
  *		\brief      Build conf file on disk
- *		\version    $Id: etape1.php,v 1.139 2011/08/14 21:25:26 eldy Exp $
+ *		\version    $Id: etape1.php,v 1.140 2011/08/15 12:14:25 eldy Exp $
  */
 
 define('DONOTLOADCONF',1);	// To avoid loading conf by file inc.php
@@ -162,13 +162,13 @@ if ($action == "set")
 			}
 
 			// Les documents sont en dehors de htdocs car ne doivent pas pouvoir etre telecharges en passant outre l'authentification
-			$dir[0] = "$main_data_dir/facture";
-			$dir[1] = "$main_data_dir/users";
-			$dir[2] = "$main_data_dir/propale";
-			$dir[3] = "$main_data_dir/mycompany";
-			$dir[4] = "$main_data_dir/ficheinter";
-			$dir[5] = "$main_data_dir/produit";
-			$dir[6] = "$main_data_dir/rapport";
+			$dir[0] = $main_data_dir."/mycompany";
+			$dir[1] = $main_data_dir."/users";
+			$dir[2] = $main_data_dir."/modules";
+			$dir[3] = $main_data_dir."/facture";
+			$dir[4] = $main_data_dir."/propale";
+			$dir[5] = $main_data_dir."/ficheinter";
+			$dir[6] = $main_data_dir."/produit";
 
 			// Boucle sur chaque repertoire de dir[] pour les creer s'ils nexistent pas
 			for ($i = 0 ; $i < sizeof($dir) ; $i++)

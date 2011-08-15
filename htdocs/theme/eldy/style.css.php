@@ -21,7 +21,7 @@
 /**
  *		\file       htdocs/theme/eldy/style.css.php
  *		\brief      Fichier de style CSS du theme Eldy
- *		\version    $Id: style.css.php,v 1.101 2011/08/14 00:37:55 eldy Exp $
+ *		\version    $Id: style.css.php,v 1.104 2011/08/15 18:25:58 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -58,9 +58,13 @@ $left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
 $fontsize=empty($conf->browser->phone)?'12':'12';
 $fontsizesmaller=empty($conf->browser->phone)?'11':'11';
 
-$fontlist='arial,tahoma,verdana,helvetica';
-//$fontlist='Verdana,Helvetica,Arial,sans-serif';
+$path=DOL_URL_ROOT;
 
+// Define image path files
+$fontlist='arial,tahoma,verdana,helvetica';    //$fontlist='Verdana,Helvetica,Arial,sans-serif';
+$img_liste_titre=dol_buildpath($path.'/theme/eldy/img/liste_titre2.png',1);
+$img_head=dol_buildpath($path.'/theme/eldy/img/headbg2.jpg',1);
+$img_button=dol_buildpath($path.'/theme/eldy/img/button_bg.png',1);
 ?>
 
 /* ============================================================================== */
@@ -71,7 +75,7 @@ body {
 <?php if (GETPOST("optioncss") == 'print') {  ?>
 	background-color: #FFFFFF;
 <?php } else { ?>
-	background: #ffffff url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/headbg2.jpg' ?>) 0 0 no-repeat;
+	background: #ffffff url(<?php echo $img_head; ?>) 0 0 no-repeat;
 <?php } ?>
 	color: #101010;
 	font-size: <?php print $fontsize ?>px;
@@ -138,7 +142,7 @@ select.flat {
 }
 .button {
     font-family: <?php print $fontlist ?>;
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/button_bg.png' ?>);
+	background-image: url(<?php echo $img_button ?>);
 	background-position: bottom;
     border: 1px solid #ACBCBB;
 	padding: 0.1em 0.7em;
@@ -153,7 +157,7 @@ select.flat {
 .button:focus  {
     font-family: <?php print $fontlist ?>;
 	color: #222244;
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/button_bg.png' ?>);
+	background-image: url(<?php echo $img_button ?>);
 	background-position: bottom;
     border: 1px solid #ACBCBB;
 }
@@ -163,7 +167,7 @@ select.flat {
 .buttonajax {
     font-family: <?php print $fontlist ?>;
 	border: 0px;
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/button_bg.png' ?>);
+	background-image: url(<?php echo $img_button ?>);
 	background-position: bottom;
 	padding: 0.1em 0.7em;
 	margin: 0em 0.5em;
@@ -183,12 +187,19 @@ div.float
     float:<?php print $left; ?>;
 }
 
-/* For hide object and add pointer cursor */
+/* ============================================================================== */
+/* Styles to hide objects                                                         */
+/* ============================================================================== */
 
 .hideobject { display: none; }
+<?php if (! empty($conf->browser->phone)) { ?>
+.hideonsmartphone { display: none; }
+<?php } ?>
 .linkobject { cursor: pointer; }
 
-/* For dragging lines */
+/* ============================================================================== */
+/* Styles for dragging lines                                                      */
+/* ============================================================================== */
 
 .dragClass {
 	color: #002255;
@@ -205,18 +216,35 @@ td.showDragHandle {
 /* Styles de positionnement des zones                                             */
 /* ============================================================================== */
 
-td.vmenu {
-    margin-<?php print $right; ?>: 2px;
-    padding: 0px;
-    padding-bottom: 0px;
-    padding-top: 1px;
-    width: 168px;
+div.fiche {
+	margin-<?php print $left; ?>: <?php print empty($conf->browser->phone)?'10':'2'; ?>px;
+	margin-<?php print $right; ?>: <?php print empty($conf->browser->phone)?'6':''; ?>px;
 }
 
-div.fiche {
-	margin-<?php print $left; ?>: 10px;
-	margin-<?php print $right; ?>: 6px;
+div.fichecenter {
+	width: 100%;
+	clear: both;	/* This is to have div fichecenter that are true rectangles */
 }
+div.fichethirdleft {
+	<?php if (empty($conf->browser->phone)) { print "float: ".$left.";\n"; } ?>
+	<?php if (empty($conf->browser->phone)) { print "width: 35%;\n"; } ?>
+}
+div.fichetwothirdright {
+	<?php if (empty($conf->browser->phone)) { print "float: ".$left.";\n"; } ?>
+	<?php if (empty($conf->browser->phone)) { print "width: 65%;\n"; } ?>
+}
+div.fichehalfleft {
+	<?php if (empty($conf->browser->phone)) { print "float: ".$left.";\n"; } ?>
+	<?php if (empty($conf->browser->phone)) { print "width: 50%;\n"; } ?>
+}
+div.fichehalfright {
+	<?php if (empty($conf->browser->phone)) { print "float: ".$left.";\n"; } ?>
+	<?php if (empty($conf->browser->phone)) { print "width: 50%;\n"; } ?>
+}
+div.ficheaddleft {
+	<?php if (empty($conf->browser->phone)) { print "padding-left: 6px;\n"; } ?>
+}
+
 
 /* ============================================================================== */
 /* Menu top et 1ere ligne tableau                                                 */
@@ -251,8 +279,8 @@ div.tmenu {
     font-weight: normal;
     height: <?php print $heightmenu; ?>px;
 /*    background: #b3c5cc; */
-/*    background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/tmenu.jpg' ?>);*/
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/tmenu2.jpg' ?>);
+/*    background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/tmenu.jpg',1) ?>);*/
+    background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/tmenu2.jpg',1) ?>);
 /*    background-position: center bottom; */
     color: #000000;
     text-decoration: none;
@@ -349,69 +377,74 @@ div.mainmenu {
 <?php if (empty($conf->browser->phone)) { ?>
 
 div.mainmenu.home{
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/home.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/home.png',1) ?>);
 }
 
 div.mainmenu.companies {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/company.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/members.png',1) ?>);
+}
+
+div.mainmenu.contacts {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/stethoscope.png',1) ?>);
 }
 
 div.mainmenu.products {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/products.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/products.png',1) ?>);
 	margin-left: 10px;
 }
 
 div.mainmenu.commercial {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/commercial.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/commercial.png',1) ?>);
 }
 
 div.mainmenu.accountancy {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/money.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/money.png',1) ?>);
 }
 
 div.mainmenu.bank {
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/bank.png' ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/bank.png',1) ?>);
 }
 
 div.mainmenu.project {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/project.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/project.png',1) ?>);
 }
 
 div.mainmenu.tools {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/tools.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/tools.png',1) ?>);
 }
 
 div.mainmenu.ftp {
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/tools.png' ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/tools.png',1) ?>);
 }
 
 div.mainmenu.members {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/members.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/members.png',1) ?>);
 }
 
 div.mainmenu.shop {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/shop.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/shop.png',1) ?>);
 }
 
 div.mainmenu.agenda {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/agenda.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/agenda.png',1) ?>);
 }
 
 div.mainmenu.ecm {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/ecm.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/ecm.png',1) ?>);
 }
 
 div.mainmenu.cashdesk {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/pointofsale.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/pointofsale.png',1) ?>);
 }
 
 div.mainmenu.webcal {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/agenda.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/agenda.png',1) ?>);
 }
 
 div.mainmenu.google {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/globe.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/globe.png',1) ?>);
 }
+
 
 <?php
 // Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
@@ -452,7 +485,7 @@ foreach($mainmenuusedarray as $key => $val)
 	// Img file not found
 	if (! $found && $generic <= 4)
 	{
-		$url=DOL_URL_ROOT."/theme/eldy/img/menus/generic".$generic.".png";
+		$url=dol_buildpath($path."/theme/eldy/img/menus/generic".$generic.".png",1);
 		$found=1;
 		$generic++;
 	}
@@ -522,8 +555,15 @@ img.login, img.printer, img.entity {
 /* Menu gauche                                                                    */
 /* ============================================================================== */
 
-<?php if ((GETPOST("optioncss") == 'print')
-|| (! empty($conf->browser->phone) && empty($conf->global->MAIN_SEARCHFORM_WITH_SMARTHPONE) && empty($conf->global->BOOKMARKS_SHOW_WITH_SMARTHPONE))) { ?>
+td.vmenu {
+    margin-<?php print $right; ?>: 2px;
+    padding: 0px;
+    padding-bottom: 0px;
+    padding-top: 1px;
+    width: 168px;
+}
+
+<?php if (GETPOST("optioncss") == 'print') { ?>
 .vmenu {
     display: none;
 }
@@ -553,7 +593,7 @@ div.blockvmenupair, div.blockvmenuimpair
     padding-bottom: 3px;
     margin: 1px 0px 0px 0px;
 	background: #FFFFFF;
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/tmenu.jpg' ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/tmenu.jpg',1) ?>);
     background-position:top;
     background-repeat:repeat-x;
 }
@@ -573,7 +613,7 @@ div.blockvmenusearch
     padding-bottom: 3px;
     margin: 4px 0px 0px 0px;
 	background: #E3E6E8;
-/*    background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/tmenu.jpg' ?>); */
+/*    background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/tmenu.jpg',1) ?>); */
     background-position:top;
     background-repeat:repeat-x;
 }
@@ -593,7 +633,7 @@ div.blockvmenubookmarks
     padding-bottom: 3px;
     margin: 1px 0px 0px 0px;
     background: #E3E6E8;
-/*    background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/tmenu.jpg' ?>); */
+/*    background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/tmenu.jpg',1) ?>); */
     background-position:top;
     background-repeat:repeat-x;
 }
@@ -649,10 +689,6 @@ td.photo {
  *  PANES and CONTENT-DIVs
  */
 
-#mainContent {
-	background: #ffffff url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/headbg2.jpg' ?>) 0 0 no-repeat;
-}
-
 #mainContent, #leftContent .ui-layout-pane {
     padding:    0px;
     overflow:	auto;
@@ -670,7 +706,7 @@ td.photo {
 /* ============================================================================== */
 
 .toolbar {
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tmenu2.jpg' ?>) !important;
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$conf->theme.'/img/tmenu2.png',1) ?>) !important;
     background-repeat: repeat-x !important;
     border: 1px solid #BBB !important;
 }
@@ -721,88 +757,132 @@ td.photo {
  *  RESIZER-BARS
  */
 .ui-layout-resizer  { /* all 'resizer-bars' */
-    background:     #EEE;
-    border:         1px solid #BBB;
-    border-width:   0;
+	width: 8px !important;
+}
+.ui-layout-resizer-hover    {   /* affects both open and closed states */
+}
+/* NOTE: It looks best when 'hover' and 'dragging' are set to the same color,
+    otherwise color shifts while dragging when bar can't keep up with mouse */
+/*.ui-layout-resizer-open-hover ,*/ /* hover-color to 'resize' */
+.ui-layout-resizer-dragging {   /* resizer beging 'dragging' */
+    background: #DDD;
+    width: 8px;
+}
+.ui-layout-resizer-dragging {   /* CLONED resizer being dragged */
+    border-left:  1px solid #BBB;
+    border-right: 1px solid #BBB;
+}
+/* NOTE: Add a 'dragging-limit' color to provide visual feedback when resizer hits min/max size limits */
+.ui-layout-resizer-dragging-limit { /* CLONED resizer at min or max size-limit */
+    background: #E1A4A4; /* red */
+}
+.ui-layout-resizer-closed:hover {
+    background-color: #EEDDDD;
+}
+.ui-layout-resizer-sliding {    /* resizer when pane is 'slid open' */
+    opacity: .10; /* show only a slight shadow */
+    filter:  alpha(opacity=10);
     }
-    .ui-layout-resizer-drag {       /* REAL resizer while resize in progress */
+    .ui-layout-resizer-sliding-hover {  /* sliding resizer - hover */
+        opacity: 1.00; /* on-hover, show the resizer-bar normally */
+        filter:  alpha(opacity=100);
     }
-    .ui-layout-resizer-hover    {   /* affects both open and closed states */
-    }
-    /* NOTE: It looks best when 'hover' and 'dragging' are set to the same color,
-        otherwise color shifts while dragging when bar can't keep up with mouse */
-    /*.ui-layout-resizer-open-hover ,*/ /* hover-color to 'resize' */
-    .ui-layout-resizer-dragging {   /* resizer beging 'dragging' */
-        background: #AAA;
-    }
-    .ui-layout-resizer-dragging {   /* CLONED resizer being dragged */
-        border-left:  1px solid #BBB;
-        border-right: 1px solid #BBB;
-    }
-    /* NOTE: Add a 'dragging-limit' color to provide visual feedback when resizer hits min/max size limits */
-    .ui-layout-resizer-dragging-limit { /* CLONED resizer at min or max size-limit */
-        background: #E1A4A4; /* red */
-    }
-
-    .ui-layout-resizer-closed-hover { /* hover-color to 'slide open' */
-        background: #EBD5AA;
-    }
-    .ui-layout-resizer-sliding {    /* resizer when pane is 'slid open' */
-        opacity: .10; /* show only a slight shadow */
-        filter:  alpha(opacity=10);
-        }
-        .ui-layout-resizer-sliding-hover {  /* sliding resizer - hover */
-            opacity: 1.00; /* on-hover, show the resizer-bar normally */
-            filter:  alpha(opacity=100);
-        }
-        /* sliding resizer - add 'outside-border' to resizer on-hover
-         * this sample illustrates how to target specific panes and states */
-        .ui-layout-resizer-north-sliding-hover  { border-bottom-width:  1px; }
-        .ui-layout-resizer-south-sliding-hover  { border-top-width:     1px; }
-        .ui-layout-resizer-west-sliding-hover   { border-right-width:   1px; }
-        .ui-layout-resizer-east-sliding-hover   { border-left-width:    1px; }
+/* sliding resizer - add 'outside-border' to resizer on-hover
+ * this sample illustrates how to target specific panes and states */
+.ui-layout-resizer-north-sliding-hover  { border-bottom-width:  1px; }
+.ui-layout-resizer-south-sliding-hover  { border-top-width:     1px; }
+.ui-layout-resizer-west-sliding-hover   { border-right-width:   1px; }
+.ui-layout-resizer-east-sliding-hover   { border-left-width:    1px; }
 
 /*
  *  TOGGLER-BUTTONS
  */
 .ui-layout-toggler {
-    border: 1px solid #BBB; /* match pane-border */
-    background-color: #BBB;
+    border-top: 1px solid #AAA; /* match pane-border */
+    border-right: 1px solid #AAA; /* match pane-border */
+    border-bottom: 1px solid #AAA; /* match pane-border */
+    background-color: #DDD;
+    top: 5px !important;
     }
-    .ui-layout-resizer-hover .ui-layout-toggler {
-        opacity: .60;
-        filter:  alpha(opacity=60);
+.ui-layout-toggler-open {
+	height: 48px !important;
+	width: 5px !important;
+    -moz-border-radius:0px 10px 10px 0px;
+	-webkit-border-radius:0px 10px 10px 0px;
+	border-radius:0px 10px 10px 0px;
+}
+.ui-layout-toggler-closed {
+	height: 48px !important;
+	width: 5px !important;
+    -moz-border-radius:0px 10px 10px 0px;
+	-webkit-border-radius:0px 10px 10px 0px;
+	border-radius:0px 10px 10px 0px;
+}
+.ui-layout-toggler .content {	/* style the text we put INSIDE the togglers */
+    color:          #666;
+    font-size:      12px;
+    font-weight:    bold;
+    width:          100%;
+    padding-bottom: 0.35ex; /* to 'vertically center' text inside text-span */
+}
+
+/* hide the toggler-button when the pane is 'slid open' */
+.ui-layout-resizer-sliding  ui-layout-toggler {
+    display: none;
+}
+
+.ui-layout-north {
+	height: <?php print (empty($conf->browser->phone)?'54':'21'); ?>px !important;
+}
+
+/* ECM */
+
+#containerlayout .ecm-layout-pane { /* all 'panes' */
+    background: #FFF;
+    border:     1px solid #BBB;
+    /* DO NOT add scrolling (or padding) to 'panes' that have a content-div,
+       otherwise you may get double-scrollbars - on the pane AND on the content-div
+    */
+    padding:    0px;
+    overflow:   auto;
+}
+/* (scrolling) content-div inside pane allows for fixed header(s) and/or footer(s) */
+#containerlayout .ecm-layout-content {
+	padding:    10px;
+	position:   relative; /* contain floated or positioned elements */
+	overflow:   auto; /* add scrolling to content-div */
+}
+
+.ecm-layout-toggler {
+    background-color: #DDD;
     }
-    .ui-layout-resizer-hover .ui-layout-toggler-hover { /* need specificity */
-        background-color: #FC6;
-        opacity: 1.00;
-        filter:  alpha(opacity=100);
-    }
-    .ui-layout-toggler-north ,
-    .ui-layout-toggler-south {
-        border-width: 0 1px; /* left/right borders */
-    }
-    .ui-layout-toggler-west ,
-    .ui-layout-toggler-east {
-        border-width: 1px 0; /* top/bottom borders */
-    }
-    /* hide the toggler-button when the pane is 'slid open' */
-    .ui-layout-resizer-sliding  ui-layout-toggler {
-        display: none;
-    }
-    /*
-     *  style the text we put INSIDE the togglers
-     */
-    .ui-layout-toggler .content {
-        color:          #666;
-        font-size:      12px;
-        font-weight:    bold;
-        width:          100%;
-        padding-bottom: 0.35ex; /* to 'vertically center' text inside text-span */
+.ecm-layout-toggler-open {
+	height: 48px !important;
+	width: 6px !important;
+}
+.ecm-layout-toggler-closed {
+	height: 48px !important;
+	width: 6px !important;
+}
+.ecm-layout-toggler .content {	/* style the text we put INSIDE the togglers */
+    color:          #666;
+    font-size:      12px;
+    font-weight:    bold;
+    width:          100%;
+    padding-bottom: 0.35ex; /* to 'vertically center' text inside text-span */
+}
+#ecm-layout-west-resizer {
+	width: 6px !important;
+}
+
+.ecm-layout-resizer  { /* all 'resizer-bars' */
+    background:     #EEE;
+    border:         1px solid #BBB;
+    border-width:   0;
     }
 
 .ecm-in-layout-center {
-    border-left: 0px !important;
+    border-left: 1px !important;
     border-right: 0px !important;
     border-top: 0px !important;
 }
@@ -840,7 +920,7 @@ div.tabBar {
     border-bottom: 1px solid #555555;
     border-left: 1px solid #D0D0D0;
     border-top: 1px solid #D8D8D8;
-    background: #dee7ec url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/tab_background.png' ?>) repeat-x;
+    background: #dee7ec url(<?php echo dol_buildpath($path.'/theme/eldy/img/tab_background.png',1) ?>) repeat-x;
 }
 
 div.tabsAction {
@@ -1022,7 +1102,7 @@ span.butAction, span.butActionDelete {
 
 /*
 #undertopmenu {
-background-image: url("<?php echo DOL_URL_ROOT.'/theme/eldy/img/gradient.gif' ?>");
+background-image: url("<?php echo dol_buildpath($path.'/theme/eldy/img/gradient.gif',1) ?>");
 background-repeat: repeat-x;
 }
 */
@@ -1075,6 +1155,8 @@ border-left: 1px solid #000000;
 /* Main boxes */
 
 table.noborder {
+width: 100%;
+
 border-collapse: collapse;
 border-top-color: #FEFEFE;
 
@@ -1148,7 +1230,7 @@ padding-right: 2px;
 tr.liste_titre {
 height: 20px !important;
 background: #7699A9;
-background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre2.png' ?>);
+background-image: url(<?php echo $img_liste_titre ?>);
 background-repeat: repeat-x;
 color: #334444;
 font-family: <?php print $fontlist ?>;
@@ -1157,7 +1239,7 @@ white-space: nowrap;
 }
 td.liste_titre {
 background: #7699A9;
-background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre2.png' ?>);
+background-image: url(<?php echo $img_liste_titre ?>);
 background-repeat: repeat-x;
 color: #334444;
 font-family: <?php print $fontlist ?>;
@@ -1168,7 +1250,7 @@ white-space: nowrap;
 td.liste_titre_sel
 {
 background: #7699A9;
-background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre2.png' ?>);
+background-image: url(<?php echo $img_liste_titre ?>);
 background-repeat: repeat-x;
 color: #F5FFFF;
 font-family: <?php print $fontlist ?>;
@@ -1178,7 +1260,7 @@ white-space: nowrap;
 }
 input.liste_titre {
 background: #7699A9;
-background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre2.png' ?>);
+background-image: url(<?php echo $img_liste_titre ?>);
 background-repeat: repeat-x;
 border: 0px;
 }
@@ -1186,7 +1268,6 @@ border: 0px;
 tr.liste_total td {
 border-top: 1px solid #DDDDDD;
 background: #F0F0F0;
-/* background-image: url(<?php echo DOL_URL_ROOT.'/theme/login_background.png' ?>); */
 background-repeat: repeat-x;
 color: #332266;
 font-weight: normal;
@@ -1255,7 +1336,7 @@ padding-bottom: 4px;
 tr.box_titre {
 height: 20px;
 background: #7699A9;
-background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre2.png' ?>);
+background-image: url(<?php echo $img_liste_titre; ?>);
 background-repeat: repeat-x;
 color: #334444;
 font-family: <?php print $fontlist ?>, sans-serif;
@@ -1352,10 +1433,6 @@ a.impayee:hover { font-weight: bold; color: #550000; }
  */
 
 .fieldrequired { font-weight: bold; color: #000055; }
-
-#pictotitle {
-	<?php print !empty($conf->browser->phone)?'display: none;':''; ?>
-}
 
 .photo {
 border: 0px;
@@ -1593,7 +1670,7 @@ table.cal_event td { border: 0px; padding-<?php print $left; ?>: 0px; padding-<?
 /*  Ajax - Liste deroulante de l'autocompletion                                   */
 /* ============================================================================== */
 
-.ui-autocomplete-loading { background: white url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/working.gif' ?>) right center no-repeat; }
+.ui-autocomplete-loading { background: white url(<?php echo dol_buildpath($path.'/theme/eldy/img/working.gif',1) ?>) right center no-repeat; }
 .ui-autocomplete {
 	       position:absolute;
 	       width:auto;
@@ -1637,7 +1714,7 @@ form.inplaceeditor-form input[type="submit"] { /* The submit button */
   font-size: 100%;
   font-weight:normal;
 	border: 0px;
-	background-image : url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/button_bg.png' ?>);
+	background-image : url(<?php echo $img_button ?>);
 	background-position : bottom;
 	cursor:pointer;
 }
@@ -1647,7 +1724,7 @@ form.inplaceeditor-form a { /* The cancel link */
   font-size: 11px;
 	font-weight:normal;
 	border: 0px;
-	background-image : url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/button_bg.png' ?>);
+	background-image : url(<?php echo $img_button ?>);
 	background-position : bottom;
 	cursor:pointer;
 }
@@ -1676,16 +1753,16 @@ ul.arbre strong {
     font-weight: normal;
     padding: 0 0 0 20px;
     margin: 0 0 0 -7px;
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/common/treemenu/branch.gif' ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/branch.gif',1) ?>);
     background-repeat: no-repeat;
     background-position: 1px 50%;
 }
 ul.arbre strong.arbre-plier {
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/common/treemenu/plus.gif' ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/plus.gif',1) ?>);
     cursor: pointer;
 }
 ul.arbre strong.arbre-deplier {
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/common/treemenu/minus.gif' ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/minus.gif',1) ?>);
     cursor: pointer;
 }
 ul.arbre ul {
@@ -1929,6 +2006,22 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 }
 span.cke_skin_kama { padding: 0 !important; }
 .cke_wrapper { padding: 4px !important; }
+
+a.cke_dialog_ui_button
+{
+    font-family: <?php print $fontlist ?> !important;
+	background-image: url(<?php echo $img_button ?>) !important;
+	background-position: bottom !important;
+    border: 1px solid #ACBCBB !important;
+	padding: 0.1em 0.7em !important;
+	margin: 0em 0.5em !important;
+    -moz-border-radius:0px 5px 0px 5px !important;
+	-webkit-border-radius:0px 5px 0px 5px !important;
+	border-radius:0px 5px 0px 5px !important;
+    -moz-box-shadow: 4px 4px 4px #CCC !important;
+    -webkit-box-shadow: 4px 4px 4px #CCC !important;
+    box-shadow: 4px 4px 4px #CCC !important;
+}
 
 
 /* ============================================================================== */

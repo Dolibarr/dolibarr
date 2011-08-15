@@ -28,7 +28,7 @@
  *	\file			htdocs/lib/functions.lib.php
  *	\brief			A set of functions for Dolibarr
  *					This file contains all frequently used functions.
- *	\version		$Id: functions.lib.php,v 1.552 2011/08/04 22:01:23 eldy Exp $
+ *	\version		$Id: functions.lib.php,v 1.554 2011/08/15 18:37:07 eldy Exp $
  */
 
 // For compatibility during upgrade
@@ -183,14 +183,16 @@ function dol_clone($object)
 /**
  *	Optimize a size for some browsers (phone, smarphone, ...)
  * 	@param			size		Size we want
- * 	@param			type		Type of optimizing(''=Optimize for a truncate, 'width'=Optimize for screen width)
+ * 	@param			type		Type of optimizing:
+ * 								'' = function used to define a size for truncation
+ * 								'width' = function is used to define a width
  *	@return         int			New size after optimizing
  */
 function dol_size($size,$type='')
 {
     global $conf;
     if (empty($conf->browser->phone)) return $size;
-    if ($type == 'width') return 250;
+    if ($type == 'width' && $size > 250) return 250;
     else return 10;
 }
 
@@ -1621,6 +1623,7 @@ function img_picto($alt, $picto, $options='', $pictoisfullpath=0)
     {
         if (! preg_match('/(\.png|\.gif)$/i',$picto)) $picto.='.png';
     }
+
     if ($pictoisfullpath) return '<img src="'.$picto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
     return '<img src="'.$url.'/'.$path.'/img/'.$picto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
 }
@@ -2677,7 +2680,7 @@ function load_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath
 
     $return.= "\n";
     $return.= '<table '.($id?'id="'.$id.'" ':'').'summary="" width="100%" border="0" class="notopnoleftnoright" style="margin-bottom: 2px;"><tr>';
-    if (empty($conf->browser->phone) && $picto) $return.= '<td class="nobordernopadding" width="40" align="left" valign="middle">'.img_picto('',$picto, 'id="pictotitle"', $pictoisfullpath).'</td>';
+    if ($picto) $return.= '<td class="nobordernopadding hideonsmartphone" width="40" align="left" valign="middle">'.img_picto('',$picto, 'id="pictotitle"', $pictoisfullpath).'</td>';
     $return.= '<td class="nobordernopadding" valign="middle">';
     $return.= '<div class="titre">'.$titre.'</div>';
     $return.= '</td>';

@@ -21,7 +21,7 @@
  *	\file       htdocs/core/class/html.formfile.class.php
  *  \ingroup    core
  *	\brief      File of class to offer components to list and upload files
- *	\version	$Id: html.formfile.class.php,v 1.55 2011/08/11 07:41:41 hregis Exp $
+ *	\version	$Id: html.formfile.class.php,v 1.56 2011/08/15 23:17:52 eldy Exp $
  */
 
 
@@ -387,7 +387,7 @@ class FormFile
 			$buttonlabeltoshow=$buttonlabel;
 			if (empty($buttonlabel)) $buttonlabel=$langs->trans('Generate');
 
-			if (empty($noform)) $out.= '<form action="'.$urlsource.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc').'" name="'.$forname.'" method="post">';
+			if (empty($noform)) $out.= '<form action="'.$urlsource.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc').'" name="'.$forname.'" id="'.$forname.'_form" method="post">';
 			$out.= '<input type="hidden" name="action" value="builddoc">';
 			$out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 

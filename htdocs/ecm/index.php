@@ -20,7 +20,7 @@
  *	\file       htdocs/ecm/index.php
  *	\ingroup    ecm
  *	\brief      Main page for ECM section area
- *	\version    $Id: index.php,v 1.103 2011/07/31 23:50:55 eldy Exp $
+ *	\version    $Id: index.php,v 1.104 2011/08/15 17:43:41 eldy Exp $
  *	\author		Laurent Destailleur
  */
 
@@ -313,6 +313,9 @@ $morejs="
     jQuery(document).ready(function () {
         jQuery('#containerlayout').layout({
         	name: \"ecmlayout\"
+        ,   paneClass:    \"ecm-layout-pane\"
+        ,   esizerClass: \"ecm-layout-resizer\"
+        ,   togglerClass: \"ecm-layout-toggler\"
         ,   center__paneSelector:   \"#ecm-layout-center\"
         ,   north__paneSelector:    \"#ecm-layout-north\"
         ,   west__paneSelector:     \"#ecm-layout-west\"
@@ -888,5 +891,5 @@ else
 // End of page
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:50:55 $ - $Revision: 1.103 $');
+llxFooter('$Date: 2011/08/15 17:43:41 $ - $Revision: 1.104 $');
 ?>
