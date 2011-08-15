@@ -25,7 +25,7 @@
  *	\file       htdocs/main.inc.php
  *	\ingroup	core
  *	\brief      File that defines environment for Dolibarr pages only (variables not required by scripts)
- *	\version    $Id: main.inc.php,v 1.760 2011/08/15 17:43:43 eldy Exp $
+ *	\version    $Id: main.inc.php,v 1.761 2011/08/15 17:55:50 eldy Exp $
  */
 
 @ini_set('memory_limit', '64M');	// This may be useless if memory is hard limited by your PHP
@@ -195,7 +195,7 @@ if (isset($_SERVER["HTTP_USER_AGENT"]))
 	//$conf->browser->phone='android';
 
     // Force usage of left menu when smartphone is used
-	if ($conf->browser->phone) $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT='forced';
+	if ($conf->browser->phone && ! empty($conf->global->MAIN_MENU_FORCE_USE_JQUERY_LAYOUT)) $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT='forced';
 }
 
 
