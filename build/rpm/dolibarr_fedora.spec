@@ -25,7 +25,7 @@ BuildArch: noarch
 BuildRoot: %{_tmppath}/%{name}-%{version}-build
 
 Group: Applications/Productivity
-Requires: mysql-server mysql httpd php php-cli php-gd php-ldap php-imap php-mysql 
+Requires: mysql-server mysql httpd php php-cli php-gd php-ldap php-imap php-mysql dejavu-sans-fonts
 
 # Set yes to build test package, no for release (this disable need of /usr/bin/php not found by OpenSuse)
 AutoReqProv: no
@@ -82,9 +82,9 @@ cui hai bisogno ed essere facile da usare.
 
 %{__mkdir} -p $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr
 %{__install} -m 644 etc/dolibarr/conf.php $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr/conf.php
-%{__install} -m 644 etc/dolibarr/install.forced.php $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr/install.forced.php
 %{__install} -m 644 etc/dolibarr/apache.conf $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr/apache.conf
 %{__install} -m 644 etc/dolibarr/file_contexts.dolibarr $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr/file_contexts.dolibarr
+%{__install} -m 644 usr/share/dolibarr/build/rpm/install.forced.php.fedora $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr/install.forced.php
 
 %{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/pixmaps
 %{__install} -m 644 usr/share/dolibarr/doc/images/dolibarr_48x48.png $RPM_BUILD_ROOT%{_datadir}/pixmaps/dolibarr.png

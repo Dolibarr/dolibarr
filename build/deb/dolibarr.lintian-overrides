@@ -2,17 +2,6 @@
 # or because they were modified and are specific dolibarr code
 embedded-javascript-library usr/share/dolibarr/htdocs/includes/ckeditor/adapters/jquery.js
 embedded-javascript-library usr/share/dolibarr/htdocs/includes/ckeditor/ckeditor.js
-embedded-javascript-library usr/share/dolibarr/htdocs/includes/fckeditor/fckeditor.js
 embedded-php-library usr/share/dolibarr/htdocs/includes/magpierss/extlib/Snoopy.class.inc
 embedded-php-library usr/share/dolibarr/htdocs/includes/magpierss/rss_parse.inc
 embedded-php-library usr/share/dolibarr/htdocs/includes/nusoap/lib/nusoap.php
-embedded-php-library usr/share/dolibarr/htdocs/includes/odtphp/zip/pclzip/pclzip.lib.php
-# embedded fonts, wich are specific to Dolibarr usage
-font-in-non-font-package usr/share/dolibarr/htdocs/includes/artichow/font/Tuffy.ttf
-font-in-non-font-package usr/share/dolibarr/htdocs/includes/artichow/font/TuffyBold.ttf
-font-in-non-font-package usr/share/dolibarr/htdocs/includes/artichow/font/TuffyBoldItalic.ttf
-font-in-non-font-package usr/share/dolibarr/htdocs/includes/artichow/font/TuffyItalic.ttf
-font-in-non-font-package usr/share/dolibarr/htdocs/includes/barcode/php-barcode/fonts/Aerial.ttf
-font-in-non-font-package usr/share/dolibarr/htdocs/includes/barcode/php-barcode/fonts/AerialBd.ttf
-font-in-non-font-package usr/share/dolibarr/htdocs/includes/barcode/php-barcode/fonts/AerialBdIt.ttf
-font-in-non-font-package usr/share/dolibarr/htdocs/includes/barcode/php-barcode/fonts/AerialIt.ttf

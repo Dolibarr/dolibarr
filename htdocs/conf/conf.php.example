@@ -5,7 +5,7 @@
 # This file is used by Dolibarr setup process to create true Dolibarr
 # config file called "conf.php".
 #
-# $Id: conf.php.example,v 1.49 2011/07/30 11:12:52 eldy Exp $
+# $Id: conf.php.example,v 1.51 2011/08/14 15:59:49 eldy Exp $
 
 
 ###################
@@ -212,7 +212,7 @@ $dolibarr_main_force_https='0';
 # dolibarr_nocsrfcheck
 # This parameter can be used to disable CSRF protection.
 # This might be required if you access Dolibarr behind a proxy that make
-# URL rewriting to avoid false alarms.
+# URL rewriting, to avoid false alarms.
 # Default value: 0
 # Possible values: 0 or 1
 # Examples:
@@ -248,5 +248,21 @@ $dolibarr_main_prod='0';
 # Default value: 0 (use database value if exist)
 # Examples:
 # $dolibarr_mailing_limit_sendbyweb='0';
+
+
+##############################
+# Path to external libraries #
+##############################
+
+# Value to overwrite some path to use shared libraries instead of embedded one
+#$dolibarr_lib_ODTPHP_PATHTOPCLZIP="/usr/share/php/libphp-pclzip";
+
+##############################
+# Path to external font      #
+##############################
+
+# Value to overwrite some path to use font instead of embedded one
+#$dolibarr_font_DOL_DEFAULT_TTF="/usr/share/font/dejavu/DejaVuSans.ttf";
+#$dolibarr_font_DOL_DEFAULT_TTF_BOLD="/usr/share/font/dejavu/DejaVuSans-Bold.ttf";
 
 ?>

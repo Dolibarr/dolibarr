@@ -20,16 +20,16 @@ set -e
 
 lighttpd_remove() {
 	if [ -f /etc/lighttpd/conf-available/50-dolibarr.conf ] ; then
-		echo "Remove link for Lighttpd config file"
+		echo "postrm Remove link for Lighttpd config file"
 		rm -f /etc/lighttpd/conf-available/50-dolibarr.conf
 		if which lighty-enable-mod >/dev/null 2>&1 ; then
 			lighty-disable-mod dolibarr
 		else
-			echo "Lighttpd not installed, skipping"
+			echo "postrm Lighttpd not installed, skipping"
 		fi
 		# See bug #448682
 		if [ -h /etc/lighttpd/conf-enabled/50-dolibarr.conf ] ; then
-		    echo 'Manually deleting lighttpd/dolibarr configuration link'
+		    echo "postrm Manually deleting lighttpd/dolibarr configuration link"
 		    rm /etc/lighttpd/conf-enabled/50-dolibarr.conf
 		fi
 	fi
@@ -37,7 +37,7 @@ lighttpd_remove() {
 
 apache_remove() {
 	if [ -d /etc/$webserver/conf.d ] && [ -L /etc/$webserver/conf.d/dolibarr.conf ]; then
-		echo "Remove link for Apache config file"
+		echo "postrm Remove link for Apache config file"
 		rm -f /etc/$webserver/conf.d/dolibarr.conf
 	fi
 }
@@ -179,10 +179,10 @@ case "$1" in
 
 		    # Now run the drop user
 			if eval $mysqlcmd -f -e "\"DROP USER '$dbuser'@'localhost';\"" ; then
-				echo Database login $dbuser removed
+				echo postrm Database login $dbuser removed
 			else
 			    error="Unable to run $mysqlcmd -f -e \"DROP USER '$dbuser'@'localhost';\""
-				echo $error
+				echo postrm $error
 			fi
 
 		    # Now run the drop commands
@@ -191,20 +191,20 @@ case "$1" in
 				if eval $mysqlcmd -f -e "\"DROP DATABASE $dbname;\"" ; then
 				    if eval $mysqlcmd -f -e "\"show databases;\"" | grep -e "^$dbname" > /dev/null 2>&1 ; then
 					error="Database $dbname NOT successfully droped. You have to do it manually."
-					echo $error
+					echo postrm $error
 				    else
 					status=drop
 				    fi
 				else
 				    error="Unable to run the drop database script."
-					echo $error
+					echo postrm $error
 				fi
 		    else
 				status=nothing
 				log="${log}Database $dbname already not exists."
 		    fi
 
-		    echo "Remove directory $docdir"
+		    echo "postrm Remove directory $docdir"
 		    rm -rf $docdir ; 
  
 		else

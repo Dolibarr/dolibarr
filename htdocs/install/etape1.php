@@ -23,7 +23,7 @@
  *		\file       htdocs/install/etape1.php
  *		\ingroup	install
  *		\brief      Build conf file on disk
- *		\version    $Id: etape1.php,v 1.137 2011/08/04 13:19:26 eldy Exp $
+ *		\version    $Id: etape1.php,v 1.139 2011/08/14 21:25:26 eldy Exp $
  */
 
 define('DONOTLOADCONF',1);	// To avoid loading conf by file inc.php
@@ -231,6 +231,12 @@ if ($action == "set")
 
 		$error+=write_conf_file($conffile);
 	}
+
+	/**
+	 * Write main.inc.php and master.inc.php into documents dir
+	 */
+	$error+=write_main_file($main_data_dir.'/main.inc.php',$main_dir);
+	$error+=write_master_file($main_data_dir.'/master.inc.php',$main_dir);
 
 	/**
 	 * Create database and admin user database
@@ -517,8 +523,49 @@ pFooter($error,$setuplang,'jsinfo');
 
 
 /**
+ *  Create main file. No particular permissions are set by installer.
+ *
+ *  @param      mainfile        Path to conf file to generate/update
+ */
+function write_main_file($mainfile,$main_dir)
+{
+	$fp = fopen("$mainfile", "w");
+	if($fp)
+	{
+		clearstatcache();
+        fputs($fp, '<?php'."\n");
+		fputs($fp, "# Wrapper to include main into htdocs\n");
+        fputs($fp, "include_once('".$main_dir."/main.inc.php');\n");
+		fputs($fp, '?>');
+		fclose($fp);
+	}
+}
+
+
+/**
+ *  Create master file. No particular permissions are set by installer.
+ *
+ *  @param      masterfile        Path to conf file to generate/update
+ */
+function write_master_file($masterfile,$main_dir)
+{
+	$fp = fopen("$masterfile", "w");
+	if($fp)
+	{
+		clearstatcache();
+        fputs($fp, '<?php'."\n");
+		fputs($fp, "# Wrapper to include master into htdocs\n");
+        fputs($fp, "include_once('".$main_dir."/master.inc.php');\n");
+		fputs($fp, '?>');
+		fclose($fp);
+	}
+}
+
+
+/**
  *  Save configuration file. No particular permissions are set by installer.
- *  @param      conffile        Path to conf file
+ *
+ *  @param      conffile        Path to conf file to generate/update
  */
 function write_conf_file($conffile)
 {
@@ -528,6 +575,8 @@ function write_conf_file($conffile)
 	global $dolibarr_main_db_port,$dolibarr_main_db_name,$dolibarr_main_db_user,$dolibarr_main_db_pass;
 	global $dolibarr_main_db_type,$dolibarr_main_db_character_set,$dolibarr_main_db_collation,$dolibarr_main_authentication;
     global $conffile,$conffiletoshow,$conffiletoshowshort;
+    global $force_dolibarr_lib_ODTPHP_PATH, $force_dolibarr_lib_ODTPHP_PATHTOPCLZIP;
+    global $force_dolibarr_font_DOL_DEFAULT_TTF, $force_dolibarr_font_DOL_DEFAULT_TTF_BOLD;
 
 	$error=0;
 
@@ -607,6 +656,24 @@ function write_conf_file($conffile)
 		fputs($fp,"\n");
 
 		fputs($fp, '$dolibarr_mailing_limit_sendbyweb=\'0\';');
+        fputs($fp,"\n");
+
+        // Write params to overwrites default lib path
+        fputs($fp,"\n");
+        if (empty($force_dolibarr_lib_ODTPHP_PATH)) { fputs($fp, '#'); $force_dolibarr_lib_ODTPHP_PATH=''; }
+        fputs($fp, '$dolibarr_lib_ODTPHP_PATH=\''.$force_dolibarr_lib_ODTPHP_PATH.'\';');
+        fputs($fp,"\n");
+        if (empty($force_dolibarr_lib_ODTPHP_PATHTOPCLZIP)) { fputs($fp, '#'); $force_dolibarr_lib_ODTPHP_PATHTOPCLZIP=''; }
+        fputs($fp, '$dolibarr_lib_ODTPHP_PATHTOPCLZIP=\''.$force_dolibarr_lib_ODTPHP_PATHTOPCLZIP.'\';');
+        fputs($fp,"\n");
+
+        // Write params to overwrites default font path
+        fputs($fp,"\n");
+        if (empty($force_dolibarr_font_DOL_DEFAULT_TTF)) { fputs($fp, '#'); $force_dolibarr_font_DOL_DEFAULT_TTF=''; }
+   		fputs($fp, '$dolibarr_font_DOL_DEFAULT_TTF=\''.$force_dolibarr_font_DOL_DEFAULT_TTF.'\';');
+        fputs($fp,"\n");
+        if (empty($force_dolibarr_font_DOL_DEFAULT_TTF_BOLD)) { fputs($fp, '#'); $force_dolibarr_font_DOL_DEFAULT_TTF_BOLD=''; }
+        fputs($fp, '$dolibarr_font_DOL_DEFAULT_TTF_BOLD=\''.$force_dolibarr_font_DOL_DEFAULT_TTF_BOLD.'\';');
         fputs($fp,"\n");
 
 		fputs($fp, '?>');
