@@ -21,7 +21,7 @@
 /**
  *		\file       htdocs/theme/eldy/style.css.php
  *		\brief      Fichier de style CSS du theme Eldy
- *		\version    $Id: style.css.php,v 1.103 2011/08/15 17:43:42 eldy Exp $
+ *		\version    $Id: style.css.php,v 1.104 2011/08/15 18:25:58 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -58,9 +58,13 @@ $left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
 $fontsize=empty($conf->browser->phone)?'12':'12';
 $fontsizesmaller=empty($conf->browser->phone)?'11':'11';
 
-$fontlist='arial,tahoma,verdana,helvetica';
-//$fontlist='Verdana,Helvetica,Arial,sans-serif';
+$path=DOL_URL_ROOT;
 
+// Define image path files
+$fontlist='arial,tahoma,verdana,helvetica';    //$fontlist='Verdana,Helvetica,Arial,sans-serif';
+$img_liste_titre=dol_buildpath($path.'/theme/eldy/img/liste_titre2.png',1);
+$img_head=dol_buildpath($path.'/theme/eldy/img/headbg2.jpg',1);
+$img_button=dol_buildpath($path.'/theme/eldy/img/button_bg.png',1);
 ?>
 
 /* ============================================================================== */
@@ -71,7 +75,7 @@ body {
 <?php if (GETPOST("optioncss") == 'print') {  ?>
 	background-color: #FFFFFF;
 <?php } else { ?>
-	background: #ffffff url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/headbg2.jpg' ?>) 0 0 no-repeat;
+	background: #ffffff url(<?php echo $img_head; ?>) 0 0 no-repeat;
 <?php } ?>
 	color: #101010;
 	font-size: <?php print $fontsize ?>px;
@@ -138,7 +142,7 @@ select.flat {
 }
 .button {
     font-family: <?php print $fontlist ?>;
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/button_bg.png' ?>);
+	background-image: url(<?php echo $img_button ?>);
 	background-position: bottom;
     border: 1px solid #ACBCBB;
 	padding: 0.1em 0.7em;
@@ -153,7 +157,7 @@ select.flat {
 .button:focus  {
     font-family: <?php print $fontlist ?>;
 	color: #222244;
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/button_bg.png' ?>);
+	background-image: url(<?php echo $img_button ?>);
 	background-position: bottom;
     border: 1px solid #ACBCBB;
 }
@@ -163,7 +167,7 @@ select.flat {
 .buttonajax {
     font-family: <?php print $fontlist ?>;
 	border: 0px;
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/button_bg.png' ?>);
+	background-image: url(<?php echo $img_button ?>);
 	background-position: bottom;
 	padding: 0.1em 0.7em;
 	margin: 0em 0.5em;
@@ -275,8 +279,8 @@ div.tmenu {
     font-weight: normal;
     height: <?php print $heightmenu; ?>px;
 /*    background: #b3c5cc; */
-/*    background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/tmenu.jpg' ?>);*/
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/tmenu2.jpg' ?>);
+/*    background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/tmenu.jpg',1) ?>);*/
+    background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/tmenu2.jpg',1) ?>);
 /*    background-position: center bottom; */
     color: #000000;
     text-decoration: none;
@@ -373,69 +377,74 @@ div.mainmenu {
 <?php if (empty($conf->browser->phone)) { ?>
 
 div.mainmenu.home{
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/home.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/home.png',1) ?>);
 }
 
 div.mainmenu.companies {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/company.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/members.png',1) ?>);
+}
+
+div.mainmenu.contacts {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/stethoscope.png',1) ?>);
 }
 
 div.mainmenu.products {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/products.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/products.png',1) ?>);
 	margin-left: 10px;
 }
 
 div.mainmenu.commercial {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/commercial.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/commercial.png',1) ?>);
 }
 
 div.mainmenu.accountancy {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/money.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/money.png',1) ?>);
 }
 
 div.mainmenu.bank {
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/bank.png' ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/bank.png',1) ?>);
 }
 
 div.mainmenu.project {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/project.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/project.png',1) ?>);
 }
 
 div.mainmenu.tools {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/tools.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/tools.png',1) ?>);
 }
 
 div.mainmenu.ftp {
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/tools.png' ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/tools.png',1) ?>);
 }
 
 div.mainmenu.members {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/members.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/members.png',1) ?>);
 }
 
 div.mainmenu.shop {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/shop.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/shop.png',1) ?>);
 }
 
 div.mainmenu.agenda {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/agenda.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/agenda.png',1) ?>);
 }
 
 div.mainmenu.ecm {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/ecm.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/ecm.png',1) ?>);
 }
 
 div.mainmenu.cashdesk {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/pointofsale.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/pointofsale.png',1) ?>);
 }
 
 div.mainmenu.webcal {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/agenda.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/agenda.png',1) ?>);
 }
 
 div.mainmenu.google {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/globe.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/globe.png',1) ?>);
 }
+
 
 <?php
 // Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
@@ -476,7 +485,7 @@ foreach($mainmenuusedarray as $key => $val)
 	// Img file not found
 	if (! $found && $generic <= 4)
 	{
-		$url=DOL_URL_ROOT."/theme/eldy/img/menus/generic".$generic.".png";
+		$url=dol_buildpath($path."/theme/eldy/img/menus/generic".$generic.".png",1);
 		$found=1;
 		$generic++;
 	}
@@ -584,7 +593,7 @@ div.blockvmenupair, div.blockvmenuimpair
     padding-bottom: 3px;
     margin: 1px 0px 0px 0px;
 	background: #FFFFFF;
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/tmenu.jpg' ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/tmenu.jpg',1) ?>);
     background-position:top;
     background-repeat:repeat-x;
 }
@@ -604,7 +613,7 @@ div.blockvmenusearch
     padding-bottom: 3px;
     margin: 4px 0px 0px 0px;
 	background: #E3E6E8;
-/*    background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/tmenu.jpg' ?>); */
+/*    background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/tmenu.jpg',1) ?>); */
     background-position:top;
     background-repeat:repeat-x;
 }
@@ -624,7 +633,7 @@ div.blockvmenubookmarks
     padding-bottom: 3px;
     margin: 1px 0px 0px 0px;
     background: #E3E6E8;
-/*    background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/tmenu.jpg' ?>); */
+/*    background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/tmenu.jpg',1) ?>); */
     background-position:top;
     background-repeat:repeat-x;
 }
@@ -697,7 +706,7 @@ td.photo {
 /* ============================================================================== */
 
 .toolbar {
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tmenu2.jpg' ?>) !important;
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$conf->theme.'/img/tmenu2.png',1) ?>) !important;
     background-repeat: repeat-x !important;
     border: 1px solid #BBB !important;
 }
@@ -911,7 +920,7 @@ div.tabBar {
     border-bottom: 1px solid #555555;
     border-left: 1px solid #D0D0D0;
     border-top: 1px solid #D8D8D8;
-    background: #dee7ec url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/tab_background.png' ?>) repeat-x;
+    background: #dee7ec url(<?php echo dol_buildpath($path.'/theme/eldy/img/tab_background.png',1) ?>) repeat-x;
 }
 
 div.tabsAction {
@@ -1093,7 +1102,7 @@ span.butAction, span.butActionDelete {
 
 /*
 #undertopmenu {
-background-image: url("<?php echo DOL_URL_ROOT.'/theme/eldy/img/gradient.gif' ?>");
+background-image: url("<?php echo dol_buildpath($path.'/theme/eldy/img/gradient.gif',1) ?>");
 background-repeat: repeat-x;
 }
 */
@@ -1221,7 +1230,7 @@ padding-right: 2px;
 tr.liste_titre {
 height: 20px !important;
 background: #7699A9;
-background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre2.png' ?>);
+background-image: url(<?php echo $img_liste_titre ?>);
 background-repeat: repeat-x;
 color: #334444;
 font-family: <?php print $fontlist ?>;
@@ -1230,7 +1239,7 @@ white-space: nowrap;
 }
 td.liste_titre {
 background: #7699A9;
-background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre2.png' ?>);
+background-image: url(<?php echo $img_liste_titre ?>);
 background-repeat: repeat-x;
 color: #334444;
 font-family: <?php print $fontlist ?>;
@@ -1241,7 +1250,7 @@ white-space: nowrap;
 td.liste_titre_sel
 {
 background: #7699A9;
-background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre2.png' ?>);
+background-image: url(<?php echo $img_liste_titre ?>);
 background-repeat: repeat-x;
 color: #F5FFFF;
 font-family: <?php print $fontlist ?>;
@@ -1251,7 +1260,7 @@ white-space: nowrap;
 }
 input.liste_titre {
 background: #7699A9;
-background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre2.png' ?>);
+background-image: url(<?php echo $img_liste_titre ?>);
 background-repeat: repeat-x;
 border: 0px;
 }
@@ -1259,7 +1268,6 @@ border: 0px;
 tr.liste_total td {
 border-top: 1px solid #DDDDDD;
 background: #F0F0F0;
-/* background-image: url(<?php echo DOL_URL_ROOT.'/theme/login_background.png' ?>); */
 background-repeat: repeat-x;
 color: #332266;
 font-weight: normal;
@@ -1328,7 +1336,7 @@ padding-bottom: 4px;
 tr.box_titre {
 height: 20px;
 background: #7699A9;
-background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre2.png' ?>);
+background-image: url(<?php echo $img_liste_titre; ?>);
 background-repeat: repeat-x;
 color: #334444;
 font-family: <?php print $fontlist ?>, sans-serif;
@@ -1662,7 +1670,7 @@ table.cal_event td { border: 0px; padding-<?php print $left; ?>: 0px; padding-<?
 /*  Ajax - Liste deroulante de l'autocompletion                                   */
 /* ============================================================================== */
 
-.ui-autocomplete-loading { background: white url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/working.gif' ?>) right center no-repeat; }
+.ui-autocomplete-loading { background: white url(<?php echo dol_buildpath($path.'/theme/eldy/img/working.gif',1) ?>) right center no-repeat; }
 .ui-autocomplete {
 	       position:absolute;
 	       width:auto;
@@ -1706,7 +1714,7 @@ form.inplaceeditor-form input[type="submit"] { /* The submit button */
   font-size: 100%;
   font-weight:normal;
 	border: 0px;
-	background-image : url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/button_bg.png' ?>);
+	background-image : url(<?php echo $img_button ?>);
 	background-position : bottom;
 	cursor:pointer;
 }
@@ -1716,7 +1724,7 @@ form.inplaceeditor-form a { /* The cancel link */
   font-size: 11px;
 	font-weight:normal;
 	border: 0px;
-	background-image : url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/button_bg.png' ?>);
+	background-image : url(<?php echo $img_button ?>);
 	background-position : bottom;
 	cursor:pointer;
 }
@@ -1745,16 +1753,16 @@ ul.arbre strong {
     font-weight: normal;
     padding: 0 0 0 20px;
     margin: 0 0 0 -7px;
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/common/treemenu/branch.gif' ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/branch.gif',1) ?>);
     background-repeat: no-repeat;
     background-position: 1px 50%;
 }
 ul.arbre strong.arbre-plier {
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/common/treemenu/plus.gif' ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/plus.gif',1) ?>);
     cursor: pointer;
 }
 ul.arbre strong.arbre-deplier {
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/common/treemenu/minus.gif' ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/minus.gif',1) ?>);
     cursor: pointer;
 }
 ul.arbre ul {
@@ -2002,7 +2010,7 @@ span.cke_skin_kama { padding: 0 !important; }
 a.cke_dialog_ui_button
 {
     font-family: <?php print $fontlist ?> !important;
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/button_bg.png' ?>) !important;
+	background-image: url(<?php echo $img_button ?>) !important;
 	background-position: bottom !important;
     border: 1px solid #ACBCBB !important;
 	padding: 0.1em 0.7em !important;
