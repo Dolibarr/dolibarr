@@ -22,7 +22,7 @@
  *	\brief      File of class to manage widget boxes
  *	\author     Rodolphe Qiedeville
  *	\author	    Laurent Destailleur
- *	\version    $Id: boxes.php,v 1.57 2011/08/15 17:45:55 eldy Exp $
+ *	\version    $Id: boxes.php,v 1.58 2011/08/15 18:37:07 eldy Exp $
  */
 
 
@@ -43,7 +43,7 @@ function printBoxesArea($user,$areacode)
 
 	if (count($boxarray))
 	{
-		print_fiche_titre($langs->trans("OtherInformationsBoxes"),'','','','otherboxes');
+		print load_fiche_titre($langs->trans("OtherInformationsBoxes"),'','','','otherboxes');
 		print '<table width="100%" class="notopnoleftnoright">';
 		print '<tr><td class="notopnoleftnoright">'."\n";
 
