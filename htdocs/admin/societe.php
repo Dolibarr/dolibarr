@@ -22,7 +22,7 @@
  *	\file       htdocs/admin/societe.php
  *	\ingroup    company
  *	\brief      Third party module setup page
- *	\version    $Id: societe.php,v 1.61 2011/07/31 22:23:23 eldy Exp $
+ *	\version    $Id: societe.php,v 1.62 2011/08/16 16:49:24 simnandez Exp $
  */
 
 require("../main.inc.php");
@@ -157,6 +157,20 @@ if ($_GET["action"] == 'setdoc')
 	}
 }
 
+//Activate ProfId
+if ($_GET["action"] == 'setprofid')
+{
+	$idprof="SOCIETE_IDPROF".$_GET["value"]."_UNIQUE";
+	if (dolibarr_set_const($db, $idprof,$_GET["status"],'chaine',0,'',$conf->entity) > 0)
+	{
+		Header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	}
+	else
+	{
+		dol_print_error($db);
+	}
+}
 
 
 /*
@@ -451,6 +465,72 @@ print '</table>';
 
 print '<br>';
 
+//IDProf
+print_titre($langs->trans("CompanyIdProfChecker"));
+
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Name").'</td>';
+print '<td>'.$langs->trans("Description").'</td>';
+print '<td align="center">'.$langs->trans("Value").'</td>';
+print "</tr>\n";
+
+$profid[0][0]=$langs->trans("ProfId1");
+$profid[0][1]=$langs->transcountry('ProfId1' ,$mysoc->pays_code);
+$profid[1][0]=$langs->trans("ProfId2");
+$profid[1][1]=$langs->transcountry('ProfId2' ,$mysoc->pays_code);
+$profid[2][0]=$langs->trans("ProfId3");
+$profid[2][1]=$langs->transcountry('ProfId3' ,$mysoc->pays_code);
+$profid[3][0]=$langs->trans("ProfId4");
+$profid[3][1]=$langs->transcountry('ProfId4' ,$mysoc->pays_code);
+
+$var = true;
+$i=0;
+
+while ($i < sizeof($profid))
+{
+	$var = !$var;
+
+	print '<tr '.$bc[$var].'>';
+	print '<td>'.$profid[$i][0]."</td><td>\n";
+	print $profid[$i][1];
+	print '</td>';
+
+	switch($i)
+	{
+        case 0:
+        	$verif=(!$conf->global->SOCIETE_IDPROF1_UNIQUE?false:true);
+        	break;
+        case 1:
+        	$verif=(!$conf->global->SOCIETE_IDPROF2_UNIQUE?false:true);
+        	break;
+        case 2:
+        	$verif=(!$conf->global->SOCIETE_IDPROF3_UNIQUE?false:true);
+        	break;
+        case 3:
+        	$verif=(!$conf->global->SOCIETE_IDPROF4_UNIQUE?false:true);
+        	break;
+	}
+	
+	if ($verif)
+	{
+		print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setprofid&amp;value='.($i+1).'&amp;status=0">';
+		print img_picto($langs->trans("Activated"),'switch_on');
+		print '</a></td>';
+	}
+	else
+	{
+		print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setprofid&amp;value='.($i+1).'&amp;status=1">';
+		print img_picto($langs->trans("Disabled"),'switch_off');
+		print '</a></td>';
+	}
+	print "</tr>\n";
+	$i++;
+}
+
+print "</table>\n";
+
+
 print_titre($langs->trans("Other"));
 
 // Autres options
@@ -498,5 +578,5 @@ dol_fiche_end();
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:23 $ - $Revision: 1.61 $');
+llxFooter('$Date: 2011/08/16 16:49:24 $ - $Revision: 1.62 $');
 ?>
