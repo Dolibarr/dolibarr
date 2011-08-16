@@ -182,15 +182,12 @@ function OnUploadCompleted( errorNumber, fileUrl, fileName, customMsg )
 
 		</script>
 	</head>
-	<frameset cols="150,*" class="Frame" framespacing="3" bordercolor="#f1f1e3" frameborder="1">
-		<frameset rows="50,*" framespacing="0">
-			<frame src="frmresourcetype.php" scrolling="no" frameborder="0">
-			<frame name="frmFolders" src="frmfolders.php" scrolling="auto" frameborder="0">
-		</frameset>
+	<frameset cols="150,*" framespacing="3" border="1" style="border: 2px solid #CCCCCC;">
+		<frame name="frmFolders" src="frmfolders.php" scrolling="auto" frameborder="1">
 		<frameset rows="50,*,50" framespacing="0">
 			<frame name="frmActualFolder" src="frmactualfolder.php" scrolling="no" frameborder="0">
 			<frame name="frmResourcesList" src="frmresourceslist.php" scrolling="auto" frameborder="0">
-			<frameset cols="150,*,0" framespacing="0" frameborder="0">
+			<frameset cols="150,*,0" framespacing="0" border="0">
 				<frame name="frmCreateFolder" src="frmcreatefolder.php" scrolling="no" frameborder="0">
 				<frame name="frmUpload" src="frmupload.php" scrolling="no" frameborder="0">
 				<frame name="frmUploadWorker" src="javascript:void(0)" scrolling="no" frameborder="0">
