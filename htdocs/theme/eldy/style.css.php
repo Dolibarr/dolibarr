@@ -21,7 +21,7 @@
 /**
  *		\file       htdocs/theme/eldy/style.css.php
  *		\brief      Fichier de style CSS du theme Eldy
- *		\version    $Id: style.css.php,v 1.106 2011/08/16 16:39:13 eldy Exp $
+ *		\version    $Id: style.css.php,v 1.107 2011/08/16 17:59:46 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -2004,7 +2004,6 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 }
 span.cke_skin_kama { padding: 0 !important; }
 .cke_wrapper { padding: 4px !important; }
-
 a.cke_dialog_ui_button
 {
     font-family: <?php print $fontlist ?> !important;
@@ -2019,6 +2018,10 @@ a.cke_dialog_ui_button
     -moz-box-shadow: 4px 4px 4px #CCC !important;
     -webkit-box-shadow: 4px 4px 4px #CCC !important;
     box-shadow: 4px 4px 4px #CCC !important;
+}
+.cke_dialog_ui_hbox_last
+{
+	vertical-align: bottom ! important;
 }
 
 
