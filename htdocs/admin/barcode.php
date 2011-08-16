@@ -21,10 +21,10 @@
  *	\file       htdocs/includes/modules/barcode/admin/barcode.php
  *	\ingroup    barcode
  *	\brief      Page d'administration/configuration du module Code barre
- *	\version    $Id: barcode.php,v 1.6 2011/07/31 23:46:07 eldy Exp $
+ *	\version    $Id: barcode.php,v 1.48 2011/08/16 10:11:02 eldy Exp $
  */
 
-require("../../../../main.inc.php");
+require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/barcode/html.formbarcode.class.php");
 
@@ -297,5 +297,5 @@ print "<br>";
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:46:07 $ - $Revision: 1.6 $');
+llxFooter('$Date: 2011/08/16 10:11:02 $ - $Revision: 1.48 $');
 ?>
