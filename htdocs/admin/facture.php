@@ -23,7 +23,7 @@
  *      \file       htdocs/admin/facture.php
  *		\ingroup    facture
  *		\brief      Page to setup invoice module
- *		\version    $Id: facture.php,v 1.150 2011/07/31 22:23:25 eldy Exp $
+ *		\version    $Id: facture.php,v 1.151 2011/08/16 09:57:02 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -586,7 +586,7 @@ if ($conf->banque->enabled)
         $num = $db->num_rows($resql);
         $i = 0;
         if ($num > 0) {
-            print "<select name=\"rib\">";
+            print '<select name="rib" class="flat" id="rib">';
             print '<option value="0">'.$langs->trans("DoNotSuggestPaymentMode").'</option>';
             while ($i < $num)
             {
@@ -613,7 +613,7 @@ $var=!$var;
 print '<tr '.$bc[$var].'>';
 print "<td>".$langs->trans("SuggestPaymentByChequeToAddress")."</td>";
 print "<td>";
-print '<select name="chq">';
+print '<select class="flat" name="chq" id="chq">';
 print '<option value="0">'.$langs->trans("DoNotSuggestPaymentMode").'</option>';
 print '<option value="-1"'.($conf->global->FACTURE_CHQ_NUMBER?' selected="selected"':'').'>'.$langs->trans("MenuCompanySetup").' ('.($mysoc->name?$mysoc->name:$langs->trans("NotDefined")).')</option>';
 
@@ -718,5 +718,5 @@ print "</table>\n";
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:25 $ - $Revision: 1.150 $');
+llxFooter('$Date: 2011/08/16 09:57:02 $ - $Revision: 1.151 $');
 ?>

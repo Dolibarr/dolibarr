@@ -23,7 +23,7 @@
  *		\file       htdocs/install/etape1.php
  *		\ingroup	install
  *		\brief      Build conf file on disk
- *		\version    $Id: etape1.php,v 1.140 2011/08/15 12:14:25 eldy Exp $
+ *		\version    $Id: etape1.php,v 1.141 2011/08/16 09:05:39 eldy Exp $
  */
 
 define('DONOTLOADCONF',1);	// To avoid loading conf by file inc.php
@@ -235,7 +235,7 @@ if ($action == "set")
 	/**
 	 * Write main.inc.php and master.inc.php into documents dir
 	 */
-	$error+=write_main_file($main_data_dir.'/main.inc.php',$main_dir);
+	//$error+=write_main_file($main_data_dir.'/main.inc.php',$main_dir);
 	$error+=write_master_file($main_data_dir.'/master.inc.php',$main_dir);
 
 	/**
@@ -527,7 +527,7 @@ pFooter($error,$setuplang,'jsinfo');
  *
  *  @param      mainfile        Path to conf file to generate/update
  */
-function write_main_file($mainfile,$main_dir)
+/*function write_main_file($mainfile,$main_dir)
 {
 	$fp = fopen("$mainfile", "w");
 	if($fp)
@@ -539,7 +539,7 @@ function write_main_file($mainfile,$main_dir)
 		fputs($fp, '?>');
 		fclose($fp);
 	}
-}
+}*/
 
 
 /**
