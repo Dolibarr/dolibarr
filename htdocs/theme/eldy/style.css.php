@@ -21,7 +21,7 @@
 /**
  *		\file       htdocs/theme/eldy/style.css.php
  *		\brief      Fichier de style CSS du theme Eldy
- *		\version    $Id: style.css.php,v 1.105 2011/08/16 06:41:02 hregis Exp $
+ *		\version    $Id: style.css.php,v 1.106 2011/08/16 16:39:13 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -216,7 +216,7 @@ td.showDragHandle {
 
 div.fiche {
 	margin-<?php print $left; ?>: <?php print empty($conf->browser->phone)?'10':'2'; ?>px;
-	margin-<?php print $right; ?>: <?php print empty($conf->browser->phone)?'6':''; ?>px;
+	margin-<?php print $right; ?>: <?php print empty($conf->browser->phone)?'8':''; ?>px;
 }
 
 div.fichecenter {
@@ -240,7 +240,7 @@ div.fichehalfright {
 	<?php if (empty($conf->browser->phone)) { print "width: 50%;\n"; } ?>
 }
 div.ficheaddleft {
-	<?php if (empty($conf->browser->phone)) { print "padding-left: 6px;\n"; } ?>
+	<?php if (empty($conf->browser->phone)) { print "padding-left: 8px;\n"; } ?>
 }
 
 
