@@ -883,6 +883,7 @@ NotificationsDesc= La fonction des notifications par emails permet d'envoyer aut
 ModelModules=Modèle de documents
 DocumentModelOdt=Genération depuis des modèles OpenDocument (Fichier .ODT OpenOffice, KOffice, TextEdit...)
 WatermarkOnDraft=Filigrane sur les documents brouillons
+CompanyIdProfChecker=Id professionel unique 
 ##### Webcal setup #####
 WebCalSetup= Configuration du lien vers le calendrier Webcalendar
 WebCalSyncro= Intégrer les événements Dolibarr dans WebCalendar
