@@ -1,7 +1,6 @@
 <?PHP
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010-2011 Emmanuel Chauve  <emmanuel@bureau2crea.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +18,9 @@
 
 /**
  *		\file       htdocs/theme/bureau2crea/graph-color.php
- *		\brief      File to declare colors to use to build graphics with theme Bure2Crea
+ *		\brief      File to declare colors to use to build graphics with theme Auguria
  *      \ingroup    core
- *		\version    $Id: graph-color.php,v 1.3 2011/08/17 15:47:49 cdelambert Exp $
+ *		\version    $Id: graph-color.php,v 1.2 2011/07/31 23:19:57 eldy Exp $
  */
 
 global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;
