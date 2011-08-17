@@ -22,10 +22,10 @@
  * 	    \file       htdocs/includes/boxes/box_external_rss.php
  *      \ingroup    external_rss
  *      \brief      Fichier de gestion d'une box pour le module external_rss
- *      \version    $Id: box_external_rss.php,v 1.34 2011/07/31 23:29:10 eldy Exp $
+ *      \version    $Id: box_external_rss.php,v 1.35 2011/08/17 13:44:16 eldy Exp $
  */
 
-include_once(MAGPIERSS_PATH."rss_fetch.inc");
+include_once(DOL_DOCUMENT_ROOT."/core/class/rssparser.class.php");
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
 
 
@@ -57,10 +57,12 @@ class box_external_rss extends ModeleBoxes {
     }
 
     /**
-     *  Charge les donnees en memoire pour affichage ulterieur
-     *  @param      $max        Nombre maximum d'enregistrements a charger
+     *  Load information for box into memory to show them later with this->showBox method.
+     *
+     *  @param      $max        	Max numbe rof records to load
+     *  @param		$cachedelay		Delay we accept for cache file
      */
-    function loadBox($max=5)
+    function loadBox($max=5, $cachdelay=300)
     {
         global $user, $langs, $conf;
         $langs->load("boxes");
@@ -71,56 +73,52 @@ class box_external_rss extends ModeleBoxes {
 		preg_match('/^([0-9]+) /',$this->param,$reg);
 		$site=$reg[1];
 
-		// Creation rep (pas besoin, on le cree apres recup flux)
-		// documents/rss is created by module activation
-		// documents/rss/tmp is created by magpie
-		//$result=create_exdir($conf->externalrss->dir_temp);
+		// Create dir nor required
+		// documents/externalrss is created by module activation
+		// documents/externalrss/tmp is created by rssparser
 
-		// Recupere flux RSS definie dans EXTERNAL_RSS_URLRSS_$site
+		// Get RSS feed
         $url=@constant("EXTERNAL_RSS_URLRSS_".$site);
-        //define('MAGPIE_DEBUG',1);
-        $rss=fetch_rss($url);
-        if (! is_object($rss))
-        {
-        	dol_syslog("FETCH_RSS site=".$site);
-        	dol_syslog("FETCH_RSS url=".$url);
-        	return -1;
-        }
 
-		// INFO sur le channel
-		$description=$rss->channel['tagline'];
-		$link=$rss->channel['link'];
+        $rssparser=new RssParser($db);
+		$result = $rssparser->parser($url, $this->max, $cachdelay, $conf->externalrss->dir_temp);
+
+		// INFO on channel
+		$description=$rssparser->getDescription();
+		$link=$rssparser->getLink();
 
         $title=$langs->trans("BoxTitleLastRssInfos",$max, @constant("EXTERNAL_RSS_TITLE_". $site));
-        if ($rss->ERROR)
+        if ($result < 0 || ! empty($rssparser->error))
         {
-            // Affiche warning car il y a eu une erreur
-            $title.=" ".img_error($langs->trans("FailedToRefreshDataInfoNotUpToDate",(isset($rss->date)?dol_print_date($rss->date,"dayhourtext"):$langs->trans("Unknown"))));
+            // Show warning
+            $title.=" ".img_error($langs->trans("FailedToRefreshDataInfoNotUpToDate",($rssparser->getLastFetchDate()?dol_print_date($rssparser->getLastFetchDate(),"dayhourtext"):$langs->trans("Unknown"))));
             $this->info_box_head = array('text' => $title,'limit' => 0);
         }
         else
         {
         	$this->info_box_head = array('text' => $title,
-        		'sublink' => $link, 'subtext'=>$langs->trans("LastRefreshDate").': '.(isset($rss->date)?dol_print_date($rss->date,"dayhourtext"):$langs->trans("Unknown")), 'subpicto'=>'object_bookmark');
+        		'sublink' => $link, 'subtext'=>$langs->trans("LastRefreshDate").': '.($rssparser->getLastFetchDate()?dol_print_date($rssparser->getLastFetchDate(),"dayhourtext"):$langs->trans("Unknown")), 'subpicto'=>'object_bookmark');
 		}
 
-		// INFO sur le elements
-        for($i = 0; $i < $max && $i < sizeof($rss->items); $i++)
+		// INFO on items
+		$items=$rssparser->getItems();
+		$nbitems=sizeof($items);
+        for($i = 0; $i < $max && $i < $nbitems; $i++)
         {
-            $item = $rss->items[$i];
+            $item = $items[$i];
 
-			// Magpierss common fields
+			// Feed common fields
             $href  = $item['link'];
         	$title = urldecode($item['title']);
 			$date  = $item['date_timestamp'];	// date will be empty if conversion into timestamp failed
-			if ($rss->is_rss())		// If RSS
+			if ($rssparser->getFormat() == 'rss')		// If RSS
 			{
 				if (! $date && isset($item['pubdate']))    $date=$item['pubdate'];
 				if (! $date && isset($item['dc']['date'])) $date=$item['dc']['date'];
 				//$item['dc']['language']
 				//$item['dc']['publisher']
 			}
-			if ($rss->is_atom())	// If Atom
+			if ($rssparser->getFormat() == 'atom')	// If Atom
 			{
 				if (! $date && isset($item['issued']))    $date=$item['issued'];
 				if (! $date && isset($item['modified']))  $date=$item['modified'];

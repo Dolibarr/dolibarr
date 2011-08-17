@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2003,2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
@@ -23,21 +23,27 @@
 /**
  *      \file       htdocs/admin/external_rss.php
  *      \ingroup    external_rss
- *      \brief      Page d'administration/configuration du module ExternalRss
- *      \version    $Id: external_rss.php,v 1.48 2011/07/31 22:23:21 eldy Exp $
+ *      \brief      Page to setupe module ExternalRss
+ *      \version    $Id: external_rss.php,v 1.49 2011/08/17 13:44:16 eldy Exp $
  */
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
-include_once(MAGPIERSS_PATH."rss_fetch.inc");
-
+require_once(DOL_DOCUMENT_ROOT."/core/class/rssparser.class.php");
 
 $langs->load("admin");
 
+// Security check
 if (!$user->admin) accessforbidden();
 
 $def = array();
 $lastexternalrss=0;
+$action=GETPOST('action');
+
+
+/*
+ * Actions
+ */
 
 // positionne la variable pour le nombre de rss externes
 $sql ="SELECT MAX(".$db->decrypt('name').") as name FROM ".MAIN_DB_PREFIX."const";
@@ -54,14 +60,14 @@ else
     dol_print_error($db);
 }
 
-if ($_POST["action"] == 'add' || $_POST["modify"])
+if ($action == 'add' || $_POST["modify"])
 {
+    $external_rss_title = "external_rss_title_" . $_POST["norss"];
     $external_rss_urlrss = "external_rss_urlrss_" . $_POST["norss"];
 
-    if(isset($_POST[$external_rss_urlrss]))
+    if (! empty($_POST[$external_rss_urlrss]))
     {
         $boxlabel='(ExternalRSSInformations)';
-        $external_rss_title = "external_rss_title_" . $_POST["norss"];
         //$external_rss_url = "external_rss_url_" . $_POST["norss"];
 
         $db->begin();
@@ -141,7 +147,7 @@ if ($_POST["delete"])
 				if (! $resql)
 				{
 					$db->rollback();
-					dol_print_error($db,"sql=$sql");
+					dol_print_error($db,"sql=".$sql);
 					exit;
 				}
 
@@ -153,7 +159,7 @@ if ($_POST["delete"])
 		else
 		{
 			$db->rollback();
-			dol_print_error($db,"sql=$sql");
+			dol_print_error($db,"sql=".$sql);
 			exit;
         }
 
@@ -178,10 +184,10 @@ if ($_POST["delete"])
 
 
 /*
- * Affichage page
+ * View
  */
 
-llxHeader();
+llxHeader('',$langs->trans("ExternalRSSSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("ExternalRSSSetup"), $linkback, 'setup');
@@ -191,7 +197,7 @@ print '<br>';
 print '<form name="externalrssconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-print '<table class="nobordernopadding" width="100%">';
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("NewRSS").'</td>';
 print '<td>'.$langs->trans("Example").'</td>';
@@ -205,25 +211,24 @@ print '</tr>';
 print '<tr class="pair">';
 print '<td>URL du RSS</td>';
 print '<td><input type="text" name="external_rss_urlrss_'.($lastexternalrss+1).'" value="'.@constant("EXTERNAL_RSS_URLRSS_" . ($lastexternalrss+1)).'" size="64"></td>';
-print '<td>http://wiki.april.org/RecentChanges?format=rss<br>http://linuxfr.org/backend/news/rss20.rss<br>http://back.fr.lolix.org/jobs.rss.php3</td>';
+print '<td>http://news.google.com/news?ned=us&topic=h&output=rss<br>http://linuxfr.org/backend/news/rss20.rss</td>';
 print '</tr>';
-print '<tr><td colspan="3" align="center">';
+print '</table>';
+
+print '<center><br>';
 print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
 print '<input type="hidden" name="action" value="add">';
 print '<input type="hidden" name="norss" value="'.($lastexternalrss+1).'">';
-print '</td></tr>';
-print '</table>';
+print '<br><br>';
+
 print '</form>';
 
-print '<br>';
-
-print '<table class="nobordernopadding" width="100%">';
 
 $sql ="SELECT rowid, file, note FROM ".MAIN_DB_PREFIX."boxes_def";
 $sql.=" WHERE file = 'box_external_rss.php'";
 $sql.=" ORDER BY note";
 
-dol_syslog("external_rss select rss boxes sql=".$sql,LOG_DEBUG);
+dol_syslog("select rss boxes sql=".$sql,LOG_DEBUG);
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -238,24 +243,30 @@ if ($resql)
 		$idrss = $reg[1];
 		//print "x".$idrss;
 
+        $rssparser=new RssParser($db);
+		$result = $rssparser->parser(@constant("EXTERNAL_RSS_URLRSS_".$idrss), 5, 300, $conf->externalrss->dir_temp);
+
 		$var=true;
 
-		$rss = fetch_rss( @constant("EXTERNAL_RSS_URLRSS_".$idrss) );
-		// fetch_rss initialise les objets suivant:
-		// print_r($rss->channel);
-		// print_r($rss->image);
-		// print_r($rss->items);
-
+		print "<br>";
 		print "<form name=\"externalrssconfig\" action=\"".$_SERVER["PHP_SELF"]."\" method=\"post\">";
+
+		print '<table class="noborder" width="100%">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 		print "<tr class=\"liste_titre\">";
-		print "<td colspan=\"2\">".$langs->trans("RSS")." ".($i+1)."</td>";
+		print "<td>".$langs->trans("RSS")." ".($i+1)."</td>";
+        print '<td align="right">';
+        print "<input type=\"submit\" class=\"button\" name=\"modify\" value=\"".$langs->trans("Modify")."\">";
+		print " &nbsp; ";
+		print "<input type=\"submit\" class=\"button\" name=\"delete\" value=\"".$langs->trans("Delete")."\">";
+		print "<input type=\"hidden\" name=\"norss\"  value=\"".$idrss."\">";
+		print '</td>';
 		print "</tr>";
 
 		$var=!$var;
 		print "<tr ".$bc[$var].">";
-		print "<td width=\"100\">".$langs->trans("Title")."</td>";
+		print "<td width=\"100px\">".$langs->trans("Title")."</td>";
 		print "<td><input type=\"text\" class=\"flat\" name=\"external_rss_title_" . $idrss . "\" value=\"" . @constant("EXTERNAL_RSS_TITLE_" . $idrss) . "\" size=\"64\"></td>";
 		print "</tr>";
 
@@ -269,7 +280,7 @@ if ($resql)
 		print "<tr ".$bc[$var].">";
 		print "<td>".$langs->trans("Status")."</td>";
 		print "<td>";
-	    if (! $rss->ERROR)
+	    if ($result > 0 && empty($rss->error))
 	    {
 			print '<font class="ok">'.$langs->trans("Online").'</div>';
 		}
@@ -281,25 +292,20 @@ if ($resql)
 		print "</tr>";
 
 		// Logo
-	    if (! $rss->ERROR && $rss->image['url'])
+	    if ($result > 0 && empty($rss->error))
 	    {
 			$var=!$var;
 			print "<tr ".$bc[$var].">";
 			print "<td>".$langs->trans("Logo")."</td>";
 			print '<td>';
-			print '<img height="32" src="'.$rss->image['url'].'">';
+			$imageurl=$rssparser->getImageUrl();
+			if ($imageurl) print '<img height="32" src="'.$imageurl.'">';
+			else print $langs->trans("None");
 			print '</td>';
 			print "</tr>";
 		}
 
-		print "<tr>";
-		print "<td colspan=\"2\" align=\"center\">";
-		print "<input type=\"submit\" class=\"button\" name=\"modify\" value=\"".$langs->trans("Modify")."\">";
-		print " &nbsp; ";
-		print "<input type=\"submit\" class=\"button\" name=\"delete\" value=\"".$langs->trans("Delete")."\">";
-		print "<input type=\"hidden\" name=\"norss\"  value=\"".$idrss."\">";
-		print "</td>";
-		print "</tr>";
+		print '</table>';
 
 		print "</form>";
 
@@ -311,10 +317,8 @@ else
 	dol_print_error($db);
 }
 
-print '</table>'."\n";
-
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:21 $ - $Revision: 1.48 $');
+llxFooter('$Date: 2011/08/17 13:44:16 $ - $Revision: 1.49 $');
 ?>

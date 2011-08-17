@@ -22,7 +22,6 @@
     <directory suffix=".php">../../htdocs/includes/geoip/</directory>
     <directory suffix=".php">../../htdocs/includes/jquery/</directory>
     <directory suffix=".php">../../htdocs/includes/jsgantt/</directory>
-    <directory suffix=".php">../../htdocs/includes/magpierss/</directory>
     <directory suffix=".php">../../htdocs/includes/menus/smartphone/</directory>
     <directory suffix=".php">../../htdocs/includes/nusoap/</directory>
     <directory suffix=".php">../../htdocs/includes/odtphp/</directory>
@@ -63,7 +62,6 @@
     <directory suffix=".php">../../htdocs/includes/geoip/</directory>
     <directory suffix=".php">../../htdocs/includes/jquery/</directory>
     <directory suffix=".php">../../htdocs/includes/jsgantt/</directory>
-    <directory suffix=".php">../../htdocs/includes/magpierss/</directory>
     <directory suffix=".php">../../htdocs/includes/menus/smartphone</directory>
     <directory suffix=".php">../../htdocs/includes/nusoap/</directory>
     <directory suffix=".php">../../htdocs/includes/odtphp/</directory>
