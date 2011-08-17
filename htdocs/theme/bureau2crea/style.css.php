@@ -22,7 +22,7 @@
 /**
  *		\file       htdocs/theme/bureau2crea/style.css.php
  *		\brief      Fichier de style CSS du theme bureau2crea
- *		\version    $Id: style.css.php,v 1.51 2011/08/17 15:15:15 bureau2crea Exp $
+ *		\version    $Id: style.css.php,v 1.52 2011/08/17 15:56:16 bureau2crea Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -1497,7 +1497,7 @@ border: 0px;
 }
 
 .pair td, .impair td {
-	padding: 3px !important;
+	padding: 2px 3px !important;
 }
 
 .pair:hover {
