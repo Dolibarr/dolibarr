@@ -28,7 +28,7 @@
  *	\file			htdocs/lib/functions.lib.php
  *	\brief			A set of functions for Dolibarr
  *					This file contains all frequently used functions.
- *	\version		$Id: functions.lib.php,v 1.555 2011/08/17 15:56:24 eldy Exp $
+ *	\version		$Id: functions.lib.php,v 1.556 2011/08/17 16:08:49 eldy Exp $
  */
 
 // For compatibility during upgrade
@@ -3626,6 +3626,7 @@ function make_substitutions($chaine,$substitutionarray)
 
 /**
  *      Complete the $substitutionarray with more entries
+ *
  *      @param      substitutionarray       Array substitution old value => new value value
  *      @param      outputlangs             If we want substitution from special constants, we provide a language
  *      @param      object                  If we want substitution from special constants, we provide data in a source object
@@ -3661,6 +3662,7 @@ function complete_substitutions_array(&$substitutionarray,$outputlangs,$object='
 
 /**
  *    Format output for start and end date
+ *
  *    @param      	date_start    Start date
  *    @param      	date_end      End date
  *    @param      	format        Output format
@@ -3673,6 +3675,7 @@ function print_date_range($date_start,$date_end,$format = '',$outputlangs='')
 
 /**
  *    Format output for start and end date
+ *
  *    @param      	date_start    Start date
  *    @param      	date_end      End date
  *    @param      	format        Output format
@@ -3703,52 +3706,9 @@ function get_date_range($date_start,$date_end,$format = '',$outputlangs='')
 }
 
 
-
 /**
- *	Retourne un tableau des mois ou le mois selectionne
- *	@param   selected			Mois a selectionner ou -1
- *	@return  string or array	Month string or array if selected < 0
- */
-function monthArrayOrSelected($selected=0)
-{
-    global $langs;
-    $langs->load("main");
-
-    $month = array (1  => $langs->trans("January"),
-    2  => $langs->trans("February"),
-    3  => $langs->trans("March"),
-    4  => $langs->trans("April"),
-    5  => $langs->trans("May"),
-    6  => $langs->trans("June"),
-    7  => $langs->trans("July"),
-    8  => $langs->trans("August"),
-    9  => $langs->trans("September"),
-    10 => $langs->trans("October"),
-    11 => $langs->trans("November"),
-    12 => $langs->trans("December")
-    );
-
-    if ($selected >=0)
-    {
-        $return='';
-        foreach ($month as $key => $val)
-        {
-            if ($selected == $key)
-            {
-                $return = $val;
-            }
-        }
-        return $return;
-    }
-    else
-    {
-        return $month;
-    }
-}
-
-
-/**
- *	Get formated messages to output (Used to show messages on html output)
+ *	Get formated messages to output (Used to show messages on html output).
+ *
  *	@param		mesgstring		Message string
  *	@param		mesgarray       Messages array
  *  @param      style           Style of message output ('ok' or 'error')
@@ -3843,7 +3803,8 @@ function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
 }
 
 /**
- *  Get formated error messages to output (Used to show messages on html output)
+ *  Get formated error messages to output (Used to show messages on html output).
+ *
  *  @param      mesgstring          Error message
  *  @param      mesgarray           Error messages array
  *  @param      keepembedded        Set to 1 in error message must be kept embedded into its html place (this disable jnotify)
@@ -3857,7 +3818,8 @@ function get_htmloutput_errors($mesgstring='', $mesgarray='', $keepembedded=0)
 }
 
 /**
- *	Print formated messages to output (Used to show messages on html output)
+ *	Print formated messages to output (Used to show messages on html output).
+ *
  *	@param		mesgstring		Message
  *	@param		mesgarray       Messages array
  *  @param      style           Which style to use ('ok', 'error')
@@ -3905,7 +3867,8 @@ function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
 }
 
 /**
- *  Print formated error messages to output (Used to show messages on html output)
+ *  Print formated error messages to output (Used to show messages on html output).
+ *
  *  @param      mesgstring          Error message
  *  @param      mesgarray           Error messages array
  *  @param      keepembedded        Set to 1 in error message must be kept embedded into its html place (this disable jnotify)
@@ -3922,6 +3885,7 @@ function dol_htmloutput_errors($mesgstring='', $mesgarray='', $keepembedded=0)
  *	ascending (default) or descending output and uses optionally
  *	natural case insensitive sorting (which can be optionally case
  *	sensitive as well).
+ *
  *  @param      array           	Array to sort
  *  @param      index
  *  @param      order
@@ -3952,6 +3916,7 @@ function dol_sort_array(&$array, $index, $order='asc', $natsort, $case_sensitive
 
 /**
  *      Check if a string is in UTF8
+ *
  *      @param      $str        String to check
  * 		@return		boolean		True if string is UTF8 or ISO compatible with UTF8, False if not (ISO with special char or Binary)
  */
@@ -3979,6 +3944,7 @@ function utf8_check($str)
 /**
  *      Return an UTF-8 string encoded into OS filesystem encoding. This function is used to define
  * 	    value to pass to filesystem PHP functions.
+ *
  *      @param      $str        String to encode (UTF-8)
  * 		@return		string		Encoded string (UTF-8, ISO-8859-1)
  */
@@ -3996,6 +3962,7 @@ function dol_osencode($str)
 
 /**
  *      Return an id from a Code. Store Code-Id in a cache.
+ *
  * 		@param		db			Database handler
  * 		@param		key			Code to get Id
  * 		@param		tablename	Table name without prefix
@@ -4038,6 +4005,7 @@ function dol_getIdFromCode($db,$key,$tablename,$fieldkey='code',$fieldid='id')
 
 /**
  * Verify if condition in string is ok or not
+ *
  * @param 	string 		$strRights
  * @return 	boolean		true or false
  */
@@ -4079,80 +4047,9 @@ function dol_eval($s)
 }
 
 
-if (! function_exists('glob') && ! is_callable('glob'))
-{
-    /**
-     *  To define glob() function if not exists
-     */
-    function glob($pattern)
-    {
-        #get pathname (everything up until the last / or \)
-        $path=$output=null;
-        if(PHP_OS=='WIN32') $slash='\\';
-        else $slash='/';
-        $lastpos=strrpos($pattern,$slash);
-
-        if(!($lastpos===false))
-        {
-            $path=substr($pattern,0,-$lastpos-1);
-            $pattern=substr($pattern,$lastpos);
-        }
-        else
-        {
-            #no dir info, use current dir
-            $path=getcwd();
-        }
-
-        $handle=@opendir($path);
-        if($handle===false) return false;
-
-        while($dir=readdir($handle))
-        {
-            if(pattern_match($pattern,$dir)) $output[]=$dir;
-        }
-
-        closedir($handle);
-
-        if(is_array($output)) return $output;
-        return false;
-    }
-}
-
-/**
- * 	For dol_glob() function
- */
-function pattern_match($pattern,$string)
-{
-    #basically prepare a regular expression
-    $out=null;
-    $chunks=explode(';',$pattern);
-    foreach($chunks as $pattern)
-    {
-        $escape=array('$','^','.','{','}','(',')','[',']','|');
-        while(strpos($pattern,'**')!==false) $pattern=str_replace('**','*',$pattern);
-
-        foreach($escape as $probe) $pattern=str_replace($probe,"\\$probe",$pattern);
-
-        $pattern=str_replace('?*','*',str_replace('*?','*',str_replace('*',".*",str_replace('?','.{1,1}',$pattern))));
-        $out[]=$pattern;
-    }
-
-    if(count($out)==1)
-    {
-        return(preg_match('/^'.$out[0].'$/i',$string));
-    }
-    else
-    {
-        foreach($out as $tester)
-        {
-            if(preg_match('/^'.$tester.'$/i',$string)) return true;
-            return false;
-        }
-    }
-}
-
 /**
  * 	Return img flag of country for a language code or country code
+ *
  * 	@param		codelang	Language code (en_IN, fr_CA...) or Country code (IN, FR)
  * 	@return		string		HTML img string with flag.
  */
@@ -4180,6 +4077,7 @@ function picto_from_langcode($codelang)
 
 /**
  *  Complete or removed entries into a head array (used to build tabs) with value added by external modules
+ *
  *  @param      conf            Object conf
  *  @param      langs           Object langs
  *  @param      object          Object object
