@@ -12,7 +12,7 @@
  *	\file       htdocs/includes/modules/mailings/thirdparties_services_expired.modules.php
  *	\ingroup    mailing
  *	\brief      File of class to offer a selector of emailing targets with Rule 'services expired'.
- *	\version    $Id: thirdparties_services_expired.modules.php,v 1.2 2011/08/17 16:18:12 eldy Exp $
+ *	\version    $Id$
  */
 include_once DOL_DOCUMENT_ROOT.'/includes/modules/mailings/modules_mailings.php';
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
@@ -54,7 +54,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 		if ($result)
 		{
 			$num = $this->db->num_rows($result);
-			dol_syslog("dolibarr_services_expired.modules.php:mailing_dolibarr_services_expired ".$num." services found");
+			dolibarr_syslog("dolibarr_services_expired.modules.php:mailing_dolibarr_services_expired ".$num." services found");
 
 			$i = 0;
 			while ($i < $num)
@@ -112,7 +112,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 			$num = $this->db->num_rows($result);
 			$i = 0;
 
-			dol_syslog(get_class($this)."::add_to_target ".$num." targets found");
+			dolibarr_syslog(get_class($this)."::add_to_target ".$num." targets found");
 
 			$old = '';
 			while ($i < $num)
@@ -141,7 +141,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 		}
 		else
 		{
-			dol_syslog($this->db->error());
+			dolibarr_syslog($this->db->error());
 			$this->error=$this->db->error();
 			return -1;
 		}

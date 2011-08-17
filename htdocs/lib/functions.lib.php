@@ -28,7 +28,7 @@
  *	\file			htdocs/lib/functions.lib.php
  *	\brief			A set of functions for Dolibarr
  *					This file contains all frequently used functions.
- *	\version		$Id: functions.lib.php,v 1.557 2011/08/17 16:18:12 eldy Exp $
+ *	\version		$Id: functions.lib.php,v 1.556 2011/08/17 16:08:49 eldy Exp $
  */
 
 // For compatibility during upgrade
@@ -58,7 +58,6 @@ function dol_shutdown()
 
 /**
  *  Return value of a param into GET or POST supervariable
- *
  *  @param          paramname   Name of parameter to found
  *  @param			check		Type of check (''=no check,  'int'=check it's numeric, 'alpha'=check it's alpha only)
  *  @param			method		Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
@@ -86,9 +85,8 @@ function GETPOST($paramname,$check='',$method=0)
 
 /**
  *  Return a prefix to use for this Dolibarr instance for session or cookie names.
- *  This prefix is unique for instance and avoid conflict between multi-instances,
- *  even when having two instances with one root dir or two instances in virtual servers
- *
+ *  This prefix is unique for instance and avoid conflict between multi-instances Dolibarrs,
+ *  even when having two instances with one root dir or two instances in virtual servers.
  *  @return         string      A calculated prefix
  */
 function dol_getprefix()
@@ -101,8 +99,7 @@ function dol_getprefix()
  *	WARNING: In most cases, you should not use this function:
  *  To link to a core file, use include(DOL_DOCUMENT_ROOT.'/pathtofile')
  *  To link to a module file from a module file, use include('./mymodulefile');
- *  To link to a module file from a core file, then this function can be used
- *
+ *  To link to a module file from a core file, then this function can be used.
  * 	@param			relpath		Relative path to file (Ie: mydir/myfile, ../myfile, ...)
  *  @return         int			false if include fails.
  */
@@ -114,8 +111,7 @@ function dol_include_once($relpath)
 
 
 /**
- *	Return path of url or filesystem. Return default_root or alternate root if file_exist fails
- *
+ *	Return path of url or filesystem. Return default_root or alternate root if file_exist fails.
  * 	@param			path		Relative path to file (if mode=0, ie: mydir/myfile, ../myfile, ...) or relative url (if mode=1).
  *  @param			type		0=Used for a Filesystem path, 1=Used for an URL path (output relative), 2=Used for an URL path (output full path)
  *  @return         string		Full filsystem path (if mode=0), Full url path (if mode=1)
@@ -167,8 +163,7 @@ function dol_buildpath($path,$type=0)
 
 /**
  *	Create a clone of instance of object (new instance with same properties)
- * 	This function works for both PHP4 and PHP5
- *
+ * 	This function works for both PHP4 and PHP5.
  * 	@param			object		Object to clone
  *	@return         date		Timestamp
  */
@@ -187,7 +182,6 @@ function dol_clone($object)
 
 /**
  *	Optimize a size for some browsers (phone, smarphone, ...)
- *
  * 	@param			size		Size we want
  * 	@param			type		Type of optimizing:
  * 								'' = function used to define a size for truncation
@@ -204,8 +198,7 @@ function dol_size($size,$type='')
 
 
 /**
- *	Return date for now. We should always use this function without parameters (that means GMT time)
- *
+ *	Return date for now. We should always use this function without parameters (that means GMT time).
  * 	@param			mode		'gmt' => we return GMT timestamp,
  * 								'tzserver' => we add the PHP server timezone
  *  							'tzref' => we add the company timezone
@@ -237,8 +230,7 @@ function dol_now($mode='gmt')
 
 
 /**
- *	Clean a string to use it as a file name
- *
+ *	Clean a string to use it as a file name.
  *	@param          str             String to clean
  * 	@param			newstr			String to replace bad chars with
  *	@return         string          String cleaned (a-zA-Z_)
@@ -251,8 +243,7 @@ function dol_sanitizeFileName($str,$newstr='_')
 }
 
 /**
- *	Clean a string from all accent characters to be used as ref, login or by dol_sanitizeFileName
- *
+ *	Clean a string from all accent characters to be used as ref, login or by dol_sanitizeFileName.
  *	@param          str             String to clean
  *	@return         string          Cleaned string
  * 	@see    		dol_sanitizeFilename, dol_string_nospecial
@@ -298,8 +289,7 @@ function dol_string_unaccent($str)
 }
 
 /**
- *	Clean a string from all punctuation characters to use it as a ref or login
- *
+ *	Clean a string from all punctuation characters to use it as a ref or login.
  *	@param          str             String to clean
  * 	@param			newstr			String to replace forbidden chars with
  *  @param          badchars        List of forbidden characters
@@ -318,7 +308,6 @@ function dol_string_nospecial($str,$newstr='_',$badchars='')
 
 /**
  *  Returns text escaped for inclusion into javascript code
- *
  *  @param       $stringtoescape	String to escape
  *  @return      string      		Escaped string
  */
@@ -332,7 +321,6 @@ function dol_escape_js($stringtoescape)
 
 /**
  *  Returns text escaped for inclusion in HTML alt or title tags
- *
  *  @param      $stringtoescape		String to escape
  *  @param		$keepb				Do not clean b tags
  *  @return     string      		Escaped string
@@ -344,6 +332,12 @@ function dol_escape_htmltag($stringtoescape,$keepb=0)
     if ($keepb) $tmp=strtr($tmp, array('"'=>'',"\r"=>'\\r',"\n"=>'\\n'));
     else $tmp=strtr($tmp, array('"'=>'',"\r"=>'\\r',"\n"=>'\\n',"<b>"=>'','</b>'=>''));
     return dol_htmlentities($tmp,ENT_COMPAT,'UTF-8');
+}
+
+/* For backward compatiblity */
+function dolibarr_syslog($message, $level=LOG_INFO)
+{
+    return dol_syslog($message, $level);
 }
 
 /**
