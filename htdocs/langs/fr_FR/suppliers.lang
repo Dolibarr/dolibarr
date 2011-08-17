@@ -21,6 +21,7 @@ NoRecordedSuppliers=Pas de fournisseur enregistré
 SupplierPayment=Paiement fournisseur
 SuppliersArea=Espace fournisseurs
 RefSupplierShort=Réf. fournisseur
+Availability=Disponibilité
 ExportDataset_fournisseur_1=Factures fournisseurs et lignes de facture
 ExportDataset_fournisseur_2=Factures fournisseurs et règlements
 ApproveThisOrder=Approuver la commande

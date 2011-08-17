@@ -2,6 +2,7 @@
 /* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@
  * 	\file       htdocs/fourn/class/fournisseur.product.class.php
  * 	\ingroup    produit
  * 	\brief      File of class to manage predefined suppliers products
- * 	\version    $Id: fournisseur.product.class.php,v 1.7 2011/07/31 23:57:02 eldy Exp $
+ * 	\version    $Id: fournisseur.product.class.php,v 1.8 2011/08/17 15:22:40 simnandez Exp $
  */
 
 require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
@@ -42,7 +43,7 @@ class ProductFournisseur extends Product
 	var $fourn_qty;
 	var $product_fourn_id;
 	var $product_fourn_price_id;
-
+	var $fk_availability;
 
 	function ProductFournisseur($db)
 	{
@@ -250,7 +251,7 @@ class ProductFournisseur extends Product
 	*    \param  price_base_type	HT or TTC
 	*    \param  fourn				Supplier
 	*/
-	function update_buyprice($qty, $buyprice, $user, $price_base_type='HT', $fourn)
+	function update_buyprice($qty, $buyprice, $user, $price_base_type='HT', $fourn,$availability)
 	{
 		global $mysoc;
 
@@ -286,13 +287,14 @@ class ProductFournisseur extends Product
 
 			// Ajoute prix courant du fournisseur pour cette quantite
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price(";
-			$sql.= "datec, fk_product_fournisseur, fk_user, price, quantity, unitprice)";
+			$sql.= "datec, fk_product_fournisseur, fk_user, price, quantity, unitprice, fk_availability)";
 			$sql.= " values('".$this->db->idate($now)."',";
 			$sql.= " ".$this->product_fourn_id.",";
 			$sql.= " ".$user->id.",";
 			$sql.= " ".price2num($buyprice).",";
 			$sql.= " ".$qty.",";
-			$sql.= " ".$unitBuyPrice;
+			$sql.= " ".$unitBuyPrice.",";
+			$sql.= " ".$availability;
             $sql.=")";
 
 			dol_syslog("ProductFournisseur::update_buyprice sql=".$sql);
@@ -419,7 +421,7 @@ class ProductFournisseur extends Product
 	*/
 	function fetch_product_fournisseur_price($rowid)
 	{
-		$sql = "SELECT pfp.rowid, pfp.price, pfp.quantity, pfp.unitprice";
+		$sql = "SELECT pfp.rowid, pfp.price, pfp.quantity, pfp.unitprice, pfp.fk_availability";
 		$sql.= ", pf.rowid as product_fourn_id, pf.fk_soc, pf.ref_fourn, pf.fk_product";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
 		$sql.= ", ".MAIN_DB_PREFIX."product_fournisseur as pf";
@@ -441,6 +443,7 @@ class ProductFournisseur extends Product
 				$this->fourn_unitprice        = $obj->unitprice;
 				$this->product_id             = $obj->fk_product;	// deprecated
 				$this->fk_product             = $obj->fk_product;
+				$this->fk_availability		  = $obj->fk_availability;
 				return 1;
 			}
 			else
