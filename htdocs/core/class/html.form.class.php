@@ -30,7 +30,7 @@
  *	\file       htdocs/core/class/html.form.class.php
  *  \ingroup    core
  *	\brief      File of class with all html predefined components
- *	\version	$Id: html.form.class.php,v 1.195 2011/08/12 21:29:29 eldy Exp $
+ *	\version	$Id: html.form.class.php,v 1.196 2011/08/17 15:56:23 eldy Exp $
  */
 
 
@@ -223,7 +223,7 @@ class Form
         // Info or help
         if ($type == 'info') 				$img=img_help(0,$alt);
         if ($type == 'help' || $type ==1)	$img=img_help(1,$alt);
-        if ($type == 'superadmin') 			$img=img_redstar($alt);
+        if ($type == 'superadmin') 			$img=img_picto($alt,"redstar");
         if ($type == 'admin')				$img=img_picto($alt,"star");
         // Warnings
         if ($type == 'warning') 			$img=img_warning($alt);
@@ -3130,7 +3130,6 @@ class Form
             {
                 $retstring.='<button class="dpInvisibleButtons" id="'.$prefix.'ButtonNow" type="button" name="_useless" value="Now" onClick="'.$reset_scripts.'">';
                 $retstring.=$langs->trans("Now");
-                //print img_refresh($langs->trans("Now"));
                 $retstring.='</button> ';
             }
         }

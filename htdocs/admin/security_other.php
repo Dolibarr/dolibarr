@@ -20,7 +20,7 @@
  *	    \file       htdocs/admin/security_other.php
  *      \ingroup    core
  *      \brief      Security options setup
- *		\version    $Id: security_other.php,v 1.41 2011/07/31 22:23:22 eldy Exp $
+ *		\version    $Id: security_other.php,v 1.42 2011/08/17 15:56:23 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -202,11 +202,11 @@ if (function_exists("imagecreatefrompng"))
 {
 	if ($conf->global->MAIN_SECURITY_ENABLECAPTCHA == 0)
 	{
-		print '<a href="security_other.php?action=activate_captcha">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+		print '<a href="security_other.php?action=activate_captcha">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 	}
 	if($conf->global->MAIN_SECURITY_ENABLECAPTCHA == 1)
 	{
-		print '<a href="security_other.php?action=disable_captcha">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+		print '<a href="security_other.php?action=disable_captcha">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
 	}
 }
 else
@@ -227,11 +227,11 @@ print '<td colspan="3">'.$langs->trans("UseAdvancedPerms").'</td>';
 print '<td align="right">';
 if ($conf->global->MAIN_USE_ADVANCED_PERMS == 0)
 {
-	print '<a href="security_other.php?action=activate_advancedperms">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+	print '<a href="security_other.php?action=activate_advancedperms">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 }
 if($conf->global->MAIN_USE_ADVANCED_PERMS == 1)
 {
-	print '<a href="security_other.php?action=disable_advancedperms">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+	print '<a href="security_other.php?action=disable_advancedperms">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
 }
 print "</td>";
 
@@ -347,5 +347,5 @@ $formfile->form_attach_new_file(DOL_URL_ROOT.'/admin/security_other.php',$langs-
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:22 $ - $Revision: 1.41 $');
+llxFooter('$Date: 2011/08/17 15:56:23 $ - $Revision: 1.42 $');
 ?>
