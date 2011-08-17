@@ -22,7 +22,7 @@
 /**
  *		\file       htdocs/theme/bureau2crea/style.css.php
  *		\brief      Fichier de style CSS du theme bureau2crea
- *		\version    $Id: style.css.php,v 1.45 2011/08/17 08:00:48 bureau2crea Exp $
+ *		\version    $Id: style.css.php,v 1.46 2011/08/17 08:22:10 bureau2crea Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -497,7 +497,12 @@ li.tmenu a {
     }
 
 li.tmenu a:hover {
-	color: #a1ad23;
+	color: #842F00;
+    }
+
+li.tmenu a.tmenusel {
+	color: #842F00;
+    font-weight: bold;
     }
 
 li.tmenu .tmenusel {
@@ -507,11 +512,9 @@ li.tmenu .tmenusel {
     -moz-border-radius-topright:4px;
     border-top-left-radius:4px;
     border-top-right-radius:4px;
-    border-right: 1px solid #555555;
-    border-bottom: 0px solid #555555;
-    border-left: 1px solid #D0D0D0;
-    border-top: 1px solid #D8D8D8;
-    background: #606060;
+    border: 2px solid #842F00;
+    border-bottom: none;
+    background: #FFFFFF;
 	}
 
 
