@@ -22,7 +22,7 @@
 /**
  *		\file       htdocs/theme/bureau2crea/style.css.php
  *		\brief      Fichier de style CSS du theme bureau2crea
- *		\version    $Id: style.css.php,v 1.52 2011/08/17 15:56:16 bureau2crea Exp $
+ *		\version    $Id: style.css.php,v 1.53 2011/08/17 16:17:21 bureau2crea Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -668,7 +668,7 @@ div.menu_titre
 
 div.menu_titre a.vmenu {
 	/*font-weight: bold;*/
-    font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+    /*font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;*/
     font-size: 12px;
 }
 
@@ -1420,6 +1420,7 @@ td.liste_titre {
     font-weight: normal;
     white-space: nowrap;
     background-image: none;
+    background: none;
 }
 
 /*tr.liste_titre select.flat {
@@ -2287,6 +2288,14 @@ div.other {
 	margin: 10px 0px;
     text-align: center;
     }
+    
+form.listactionsfilter img {
+	display: none;
+    }
+    
+form.listactionsfilter input[type="submit"] {
+	margin: 2px 0px;
+}
 
 <?php
 if (is_object($db)) $db->close();
