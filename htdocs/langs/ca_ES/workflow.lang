@@ -4,3 +4,6 @@ WorkflowSetup=Configuració del mòdul workflow
 WorkflowDesc=Aquest mòdul us permet canviar el comportament automatitzat. Per defecte, el workflow és obert i no imposat. Activi els enllaços automàtics que li interessen.
 ThereIsNoWorkflowToModify=No hi ha workflow modificable per als mòduls que té activats.
 descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Crear una comanda de client automàticament a la signatura d'un pressupost
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Crear una factura a client automàticament a la signatura d'un pressupost
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Crear una factura a client automàticament a la validació d'un contracte
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Crear una factura a client automàticament al tancament d'una comanda de client
