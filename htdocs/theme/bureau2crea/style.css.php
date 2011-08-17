@@ -22,7 +22,7 @@
 /**
  *		\file       htdocs/theme/bureau2crea/style.css.php
  *		\brief      Fichier de style CSS du theme bureau2crea
- *		\version    $Id: style.css.php,v 1.44 2011/08/15 17:43:41 eldy Exp $
+ *		\version    $Id: style.css.php,v 1.46 2011/08/17 08:22:10 bureau2crea Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -242,7 +242,7 @@ div.vmenu {
 	position: relative;
     float: left;
     margin: 0px;
-    width: 220px;
+    width: 180px;
 }
 
 div.fiche {
@@ -497,7 +497,12 @@ li.tmenu a {
     }
 
 li.tmenu a:hover {
-	color: #a1ad23;
+	color: #842F00;
+    }
+
+li.tmenu a.tmenusel {
+	color: #842F00;
+    font-weight: bold;
     }
 
 li.tmenu .tmenusel {
@@ -507,11 +512,9 @@ li.tmenu .tmenusel {
     -moz-border-radius-topright:4px;
     border-top-left-radius:4px;
     border-top-right-radius:4px;
-    border-right: 1px solid #555555;
-    border-bottom: 0px solid #555555;
-    border-left: 1px solid #D0D0D0;
-    border-top: 1px solid #D8D8D8;
-    background: #606060;
+    border: 2px solid #842F00;
+    border-bottom: none;
+    background: #FFFFFF;
 	}
 
 
@@ -594,7 +597,7 @@ img.login, img.printer, img.entity {
 .vmenu{
 margin: 0;
 position: relative;
-width: 210px;
+width: 180px;
 }
 <?php if (GETPOST("optioncss") == 'print') { ?>
 .vmenu {
@@ -627,7 +630,7 @@ div.blockvmenupair
 	padding: 0px;
 	width: 100%;
     background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_leftCategorie.jpg' ?>);
-    background-position: top left;
+    background-position: top right;
     background-repeat: no-repeat;
 
 }
@@ -681,15 +684,15 @@ div.blockvmenusearch
 {
 	margin: 3px 0px 15px 0px;
 	padding: 25px 0px 2px 2px;
-	width: 220px;
+	width: 180px;
     background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_leftMenu.jpg' ?>);
-    background-position: top left;
+    background-position: top right;
     background-repeat: no-repeat;
 }
 
 div.blockvmenusearch input[type="text"] {
 	float: left;
-    width: 150px;
+    width: 110px;
     border: 1px solid #333;
     font-size: 10px;
     height: 16px;
@@ -1364,8 +1367,6 @@ table.noborder {
 
 tr.liste_titre {
     height: 20px;
- 	background: #7699A9;
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/menus/trtitle.png' ?>);
     background-repeat: repeat-x;
     color: #FFFFFF;
     font-family: <?php print $fontlist ?>;
