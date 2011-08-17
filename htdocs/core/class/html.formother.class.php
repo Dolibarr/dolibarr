@@ -28,7 +28,7 @@
  *	\file       htdocs/core/class/html.formother.class.php
  *  \ingroup    core
  *	\brief      Fichier de la classe des fonctions predefinie de composants html autre
- *	\version	$Id: html.formother.class.php,v 1.18 2011/07/31 23:45:14 eldy Exp $
+ *	\version	$Id: html.formother.class.php,v 1.19 2011/08/17 16:07:41 eldy Exp $
  */
 
 
@@ -561,6 +561,8 @@ class FormOther
      */
     function select_month($selected='',$htmlname='monthid',$useempty=0)
     {
+        require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
+
         $month = monthArrayOrSelected(-1);	// Get array
 
         $select_month = '<select class="flat" name="'.$htmlname.'">';
@@ -596,7 +598,7 @@ class FormOther
     {
     	print $this->selectyear($selected,$htmlname,$useempty,$min_year,$max_year,$offset,$invert,$option);
     }
-    
+
     /**
      *    	Return HTML combo list of years
      *      @param      selected          Preselected value (''=current year, -1=none, year otherwise)
@@ -608,7 +610,7 @@ class FormOther
 	function selectyear($selected='',$htmlname='yearid',$useempty=0, $min_year=10, $max_year=5, $offset=0, $invert=0, $option='')
     {
     	$out='';
-    	
+
         $currentyear = date("Y")+$offset;
     	$max_year = $currentyear+$max_year;
         $min_year = $currentyear-$min_year;
@@ -639,7 +641,7 @@ class FormOther
 	        }
         }
         $out.= "</select>\n";
-        
+
         return $out;
     }
 
