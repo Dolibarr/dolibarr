@@ -25,7 +25,7 @@
  *  \file       htdocs/societe/soc.php
  *  \ingroup    societe
  *  \brief      Third party card page
- *  \version    $Id: soc.php,v 1.135 2011/08/13 00:48:00 eldy Exp $
+ *  \version    $Id: soc.php,v 1.136 2011/08/17 19:43:19 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -1013,7 +1013,7 @@ else
         }
 
         // Other attributes
-        $parameters=array();
+        $parameters=array('colspan' => ' colspan="3"');
         $reshook=$hookmanager->executeHooks('showInputFields',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
         if (empty($reshook))
         {
@@ -1442,7 +1442,7 @@ else
             }
 
             // Other attributes
-            $parameters=array();
+            $parameters=array('colspan' => ' colspan="3"');
             $reshook=$hookmanager->executeHooks('showInputFields',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             if (empty($reshook))
             {
@@ -1783,7 +1783,7 @@ else
         }
 
         // Other attributes
-        $parameters=array('socid'=>$socid);
+        $parameters=array('socid'=>$socid, 'colspan' => ' colspan="3"');
         $reshook=$hookmanager->executeHooks('showOutputFields',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
         if (empty($reshook))
         {
@@ -1973,5 +1973,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/13 00:48:00 $ - $Revision: 1.135 $');
+llxFooter('$Date: 2011/08/17 19:43:19 $ - $Revision: 1.136 $');
 ?>
