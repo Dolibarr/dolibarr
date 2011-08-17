@@ -21,7 +21,7 @@
  *      \file       htdocs/user/group/index.php
  * 		\ingroup	core
  *      \brief      Page of user groups
- *      \version    $Id: index.php,v 1.24 2011/07/31 23:21:25 eldy Exp $
+ *      \version    $Id: index.php,v 1.25 2011/08/17 15:56:24 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -90,7 +90,7 @@ if ($resql)
         print '<td><a href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$obj->nom.'</a>';
         if (!$obj->entity)
         {
-        	print img_redstar($langs->trans("GlobalGroup"));
+        	print img_picto($langs->trans("GlobalGroup"),'redstar');
         }
         print "</td>";
         print '<td align="center">'.$obj->nb.'</td>';
@@ -108,6 +108,6 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:21:25 $ - $Revision: 1.24 $');
+llxFooter('$Date: 2011/08/17 15:56:24 $ - $Revision: 1.25 $');
 
 ?>

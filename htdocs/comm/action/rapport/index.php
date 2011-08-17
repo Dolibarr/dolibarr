@@ -22,7 +22,7 @@
  *	    \file       htdocs/comm/action/rapport/index.php
  *      \ingroup    commercial
  *		\brief      Page with reports of actions
- *		\version    $Id: index.php,v 1.48 2011/08/03 00:46:36 eldy Exp $
+ *		\version    $Id: index.php,v 1.49 2011/08/17 15:56:26 eldy Exp $
  */
 
 require("../../../main.inc.php");
@@ -116,7 +116,7 @@ if ($resql)
 			print '<td align="center">'.$obj->cc.'</td>';
 
 			print '<td>';
-			print '<a href="index.php?action=builddoc&amp;page='.$page.'&amp;month='.$obj->month.'&amp;year='.$obj->year.'">'.img_file_new().'</a>';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?action=builddoc&amp;page='.$page.'&amp;month='.$obj->month.'&amp;year='.$obj->year.'">'.img_picto('','filenew').'</a>';
 			print '</td>';
 
 			$name = "actions-".$obj->month."-".$obj->year.".pdf";
@@ -150,5 +150,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:36 $ - $Revision: 1.48 $');
+llxFooter('$Date: 2011/08/17 15:56:26 $ - $Revision: 1.49 $');
 ?>

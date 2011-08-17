@@ -28,7 +28,7 @@
  *	\file			htdocs/lib/functions.lib.php
  *	\brief			A set of functions for Dolibarr
  *					This file contains all frequently used functions.
- *	\version		$Id: functions.lib.php,v 1.554 2011/08/15 18:37:07 eldy Exp $
+ *	\version		$Id: functions.lib.php,v 1.555 2011/08/17 15:56:24 eldy Exp $
  */
 
 // For compatibility during upgrade
@@ -1501,6 +1501,7 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',
  *	Truncate a string to a particular length adding '...' if string larger than length.
  * 	If length = max length+1, we do no truncate to avoid having just 1 char replaced with '...'.
  *  MAIN_DISABLE_TRUNC=1 can disable all truncings
+ *
  *	@param      string				String to truncate
  *	@param      size				Max string size. 0 for no limit.
  *	@param		trunc				Where to trunc: right, left, middle, wrap
@@ -1561,6 +1562,7 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8')
 
 /**
  *	Show a picto called object_picto (generic function)
+ *
  *	@param      alt                 Text of alt on image
  *	@param      picto               Name of image to show object_picto (example: user, group, action, bill, contract, propal, product, ...)
  *							        For external modules use imagename@mymodule to search into directory "img" of module.
@@ -1571,35 +1573,39 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8')
  */
 function img_object($alt, $picto, $options='', $pictoisfullpath=0)
 {
-    global $conf,$langs;
+    global $conf;
 
-    $path = 'theme/'.$conf->theme;
-    $url = DOL_URL_ROOT;
+    // Clean parameters
+    if (! preg_match('/(\.png|\.gif)$/i',$picto)) $picto.='.png';
 
-    if (preg_match('/^([^@]+)@([^@]+)$/i',$picto,$regs))
-    {
-        $picto = $regs[1];
-        $path = $regs[2];
-        if (! preg_match('/(\.png|\.gif)$/i',$picto)) $picto.='.png';
-        // If img file not into standard path, we use alternate path
-        if (defined('DOL_URL_ROOT_ALT') && DOL_URL_ROOT_ALT && ! file_exists(DOL_DOCUMENT_ROOT.'/'.$path.'/img/object_'.$picto)) $url = DOL_URL_ROOT_ALT;
-    }
+    // Define fullpathpicto to use into src
+    if (! empty($pictoisfullpath)) $fullpathpicto=$picto;
     else
     {
-        if (! preg_match('/(\.png|\.gif)$/i',$picto)) $picto.='.png';
+        // By default, we search into theme directory
+        $url = DOL_URL_ROOT;
+        $path = 'theme/'.$conf->theme;
+        if (! empty($conf->global->MAIN_FORCETHEMEDIR)) $path=preg_replace('/^\//','',$conf->global->MAIN_FORCETHEMEDIR).'/'.$path;
+        // If we ask an image into module/img (not into a theme path)
+        if (preg_match('/^([^@]+)@([^@]+)$/i',$picto,$regs)) { $picto = $regs[1]; $path=$regs[2]; }   // If image into a module/img path
+        // If img file not into standard path, we use alternate path
+        if (defined('DOL_URL_ROOT_ALT') && DOL_URL_ROOT_ALT && ! file_exists(DOL_DOCUMENT_ROOT.'/'.$path.'/img/object_'.$picto)) $url = DOL_URL_ROOT_ALT;
+
+        $fullpathpicto=$url.'/'.$path.'/img/object_'.$picto;
     }
-    if ($pictoisfullpath) return '<img src="'.$picto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
-    return '<img src="'.$url.'/'.$path.'/img/object_'.$picto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
+
+    return '<img src="'.$fullpathpicto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
 }
 
 /**
  *	Show picto whatever it's its name (generic function)
+ *
  *	@param      alt         		Text on alt and title of image
  *	@param      picto       		Name of image file to show (If no extension provided, we use '.png'). Image must be stored into img directory.
  *                                  Example: picto.png                  if picto.png is stored into htdocs/theme/mytheme/img
  *                                  Example: picto.png@mymodule         if picto.png is stored into htdocs/mymodule/img
  *                                  Example: /mydir/mysubdir/picto.png  if picto.png is stored into htdocs/mydir/mysubdir (pictoisfullpath must be set to 1)
- *	@param		options				Add more attribute on img tag
+ *	@param		options				Add more attribute on img tag (For example 'style="float: right"')
  *	@param		pictoisfullpath		If 1, image path is a full path
  *  @return     string              Return img tag
  *  @see        img_object, img_picto_common
@@ -1608,28 +1614,31 @@ function img_picto($alt, $picto, $options='', $pictoisfullpath=0)
 {
     global $conf;
 
-    $path =  'theme/'.$conf->theme;
-    $url = DOL_URL_ROOT;
+    // Clean parameters
+    if (! preg_match('/(\.png|\.gif)$/i',$picto)) $picto.='.png';
 
-    if (preg_match('/^([^@]+)@([^@]+)$/i',$picto,$regs))
-    {
-        $picto = $regs[1];
-        $path = $regs[2];
-        if (! preg_match('/(\.png|\.gif)$/i',$picto)) $picto.='.png';
-        // If img file not into standard path, we use alternate path
-        if (defined('DOL_URL_ROOT_ALT') && DOL_URL_ROOT_ALT && ! file_exists(DOL_DOCUMENT_ROOT.'/'.$path.'/img/'.$picto)) $url = DOL_URL_ROOT_ALT;
-    }
+    // Define fullpathpicto to use into src
+    if (! empty($pictoisfullpath)) $fullpathpicto=$picto;
     else
     {
-        if (! preg_match('/(\.png|\.gif)$/i',$picto)) $picto.='.png';
+        // By default, we search into theme directory
+        $url = DOL_URL_ROOT;
+        $path = 'theme/'.$conf->theme;
+        if (! empty($conf->global->MAIN_FORCETHEMEDIR)) $path=preg_replace('/^\//','',$conf->global->MAIN_FORCETHEMEDIR).'/'.$path;
+        // If we ask an image into module/img (not into a theme path)
+        if (preg_match('/^([^@]+)@([^@]+)$/i',$picto,$regs)) { $picto = $regs[1]; $path=$regs[2]; }   // If image into a module/img path
+        // If img file not into standard path, we use alternate path
+        if (defined('DOL_URL_ROOT_ALT') && DOL_URL_ROOT_ALT && ! file_exists(DOL_DOCUMENT_ROOT.'/'.$path.'/img/'.$picto)) $url = DOL_URL_ROOT_ALT;
+
+        $fullpathpicto=$url.'/'.$path.'/img/'.$picto;
     }
 
-    if ($pictoisfullpath) return '<img src="'.$picto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
-    return '<img src="'.$url.'/'.$path.'/img/'.$picto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
+    return '<img src="'.$fullpathpicto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
 }
 
 /**
  *	Show picto (generic function)
+ *
  *	@param      alt         		Text on alt and title of image
  *	@param      picto       		Name of image file to show (If no extension provided, we use '.png'). Image must be stored into htdocs/theme/common directory.
  *	@param		options				Add more attribute on img tag
@@ -1648,6 +1657,7 @@ function img_picto_common($alt, $picto, $options='', $pictoisfullpath=0)
 
 /**
  *	Show logo action
+ *
  *	@param      alt         Text for image alt and title
  *	@param      numaction   Action to show
  *	@return     string      Return an img tag
@@ -1665,57 +1675,9 @@ function img_action($alt = "default", $numaction)
     return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/stcomm'.$numaction.'.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
 }
 
-
 /**
- *	Affiche logo fichier
- *	@param      alt         Texte sur le alt de l'image
- *	@return     string      Retourne tag img
- */
-function img_file($alt = "default")
-{
-    global $conf,$langs;
-    if ($alt=="default") $alt=$langs->trans("Show");
-    return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/file.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
-}
-
-/**
- *	Affiche logo refresh
- *	@param      alt         Texte sur le alt de l'image
- *	@return     string      Retourne tag img
- */
-function img_refresh($alt = "default")
-{
-    global $conf,$langs;
-    if ($alt=="default") $alt=$langs->trans("Refresh");
-    return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/refresh.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
-}
-
-/**
- *	Affiche logo dossier
- *	@param      alt         Texte sur le alt de l'image
- *	@return     string      Retourne tag img
- */
-function img_folder($alt = "default")
-{
-    global $conf,$langs;
-    if ($alt=="default") $alt=$langs->trans("Dossier");
-    return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/folder.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
-}
-
-/**
- *	Affiche logo nouveau fichier
- *	@param      alt         Texte sur le alt de l'image
- *	@return     string      Retourne tag img
- */
-function img_file_new($alt = "default")
-{
-    global $conf,$langs;
-    if ($alt=="default") $alt=$langs->trans("Show");
-    return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/filenew.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
-}
-
-/**
- *  Affiche logo pdf
+ *  Show pdf logo
+ *
  *  @param      alt         Texte sur le alt de l'image
  *  @param      $size       Taille de l'icone : 3 = 16x16px , 2 = 14x14px
  *  @return     string      Retourne tag img
@@ -1728,7 +1690,8 @@ function img_pdf($alt = "default",$size=3)
 }
 
 /**
- *	Affiche logo +
+ *	Show logo +
+ *
  *	@param      alt         Texte sur le alt de l'image
  *	@return     string      Retourne tag img
  */
@@ -1736,10 +1699,11 @@ function img_edit_add($alt = "default")
 {
     global $conf,$langs;
     if ($alt=="default") $alt=$langs->trans("Add");
-    return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/edit_add.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
+    return img_picto($alt,'edit_add.png');
 }
 /**
- *	Affiche logo -
+ *	Show logo -
+ *
  *	@param      alt         Texte sur le alt de l'image
  *	@return     string      Retourne tag img
  */
@@ -1747,11 +1711,12 @@ function img_edit_remove($alt = "default")
 {
     global $conf,$langs;
     if ($alt=="default") $alt=$langs->trans("Remove");
-    return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/edit_remove.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
+    return img_picto($alt,'edit_remove.png');
 }
 
 /**
- *	Affiche logo editer/modifier fiche
+ *	Show logo editer/modifier fiche
+ *
  *	@param      alt         Texte sur le alt de l'image
  *	@param      float       Si il faut y mettre le style "float: right"
  *	@param      other		Add more attributes on img
@@ -1769,7 +1734,8 @@ function img_edit($alt = "default", $float=0, $other='')
 }
 
 /**
- *	Affiche logo voir fiche
+ *	Show logo view card
+ *
  *	@param      alt         Texte sur le alt de l'image
  *	@param      float       Si il faut y mettre le style "float: right"
  *	@param      other		Add more attributes on img
@@ -1788,6 +1754,7 @@ function img_view($alt = "default", $float=0, $other='')
 
 /**
  *  Show delete logo
+ *
  *  @param      alt         Texte sur le alt de l'image
  *  @return     string      Retourne tag img
  */
@@ -1795,12 +1762,13 @@ function img_delete($alt = "default")
 {
     global $conf,$langs;
     if ($alt=="default") $alt=$langs->trans("Delete");
-    return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
+    return img_picto($alt,'delete.png');
 }
 
 
 /**
  *	Show help logo with cursor "?"
+ *
  * 	@param		usehelpcursor
  * 	@param		usealttitle		Texte to use as alt title
  * 	@return     string      	Retourne tag img
@@ -1823,6 +1791,7 @@ function img_help($usehelpcursor=1,$usealttitle=1)
 
 /**
  *	Affiche logo info
+ *
  *	@param      alt         Texte sur le alt de l'image
  *	@return     string      Retourne tag img
  */
@@ -1830,11 +1799,12 @@ function img_info($alt = "default")
 {
     global $conf,$langs;
     if ($alt=="default") $alt=$langs->trans("Informations");
-    return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/info.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
+    return img_picto($alt,'info.png');
 }
 
 /**
  *	Affiche logo warning
+ *
  *	@param      alt         Texte sur le alt de l'image
  *	@param      float       Si il faut afficher le style "float: right"
  *	@return     string      Retourne tag img
@@ -1843,32 +1813,12 @@ function img_warning($alt = "default",$float=0)
 {
     global $conf,$langs;
     if ($alt=="default") $alt=$langs->trans("Warning");
-    $img='<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/warning.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"';
-    if ($float) $img.=' style="float: right"';
-    $img.='>';
-
-    return $img;
-}
-
-/**
- *	Affiche logo redstar
- *	@param      alt         Texte sur le alt de l'image
- *	@param      float       Si il faut afficher le style "float: right"
- *	@return     string      Retourne tag img
- */
-function img_redstar($alt = "default",$float=0)
-{
-    global $conf,$langs;
-    if ($alt=="default") $alt=$langs->trans("SuperAdministrator");
-    $img='<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/redstar.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"';
-    if ($float) $img.=' style="float: right"';
-    $img.='>';
-
-    return $img;
+    return img_picto($alt,'warning.png',$float?'style="float: right"':'');
 }
 
 /**
  *  Affiche logo error
+ *
  *  @param      alt         Texte sur le alt de l'image
  *  @return     string      Retourne tag img
  */
@@ -1876,11 +1826,12 @@ function img_error($alt = "default")
 {
     global $conf,$langs;
     if ($alt=="default") $alt=$langs->trans("Error");
-    return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/error.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
+    return img_picto($alt,'error.png');
 }
 
 /**
  *	Affiche logo telephone
+ *
  *	@param      alt         Texte sur le alt de l'image
  *	@param		option		Choose of logo
  *	@return     string      Retourne tag img
@@ -1898,6 +1849,7 @@ function img_phone($alt = "default",$option=0)
 
 /**
  *	Affiche logo suivant
+ *
  *	@param      alt         Texte sur le alt de l'image
  *	@return     string      Retourne tag img
  */
@@ -1912,6 +1864,7 @@ function img_next($alt = "default")
 
 /**
  *	Affiche logo precedent
+ *
  *	@param      alt     Texte sur le alt de l'image
  *	@return     string      Retourne tag img
  */
@@ -1924,6 +1877,7 @@ function img_previous($alt = "default")
 
 /**
  *	Show logo down arrow
+ *
  *	@param      alt         Texte sur le alt de l'image
  *	@param      selected    Affiche version "selected" du logo
  *	@return     string      Retourne tag img
@@ -1938,6 +1892,7 @@ function img_down($alt = "default", $selected=0)
 
 /**
  *	Show logo top arrow
+ *
  *	@param      alt         Texte sur le alt de l'image
  *	@param      selected    Affiche version "selected" du logo
  *	@return     string      Retourne tag img
@@ -1952,6 +1907,7 @@ function img_up($alt = "default", $selected=0)
 
 /**
  *	Affiche logo gauche
+ *
  *	@param      alt         Texte sur le alt de l'image
  *	@param      selected    Affiche version "selected" du logo
  *	@return     string      Retourne tag img
@@ -1966,6 +1922,7 @@ function img_left($alt = "default", $selected=0)
 
 /**
  *	Affiche logo droite
+ *
  *	@param      alt         Texte sur le alt de l'image
  *	@param      selected    Affiche version "selected" du logo
  *	@return     string      Retourne tag img
@@ -1979,19 +1936,8 @@ function img_right($alt = "default", $selected=0)
 }
 
 /**
- *	Affiche logo tick
- *	@param      alt         Texte sur le alt de l'image
- *	@return     string      Retourne tag img
- */
-function img_tick($alt = "default")
-{
-    global $conf,$langs;
-    if ($alt=="default") $alt=$langs->trans("Active");
-    return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
-}
-
-/**
  *	Affiche le logo tick si allow
+ *
  *	@param      allow       Authorise ou non
  *	@param      alt			Alt text for img
  *	@return     string      Retourne tag img

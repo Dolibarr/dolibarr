@@ -22,7 +22,7 @@
 /**
  *       \file       htdocs/user/group/perms.php
  *       \brief      Onglet user et permissions de la fiche utilisateur
- *       \version    $Id: perms.php,v 1.40 2011/08/01 13:15:53 hregis Exp $
+ *       \version    $Id: perms.php,v 1.41 2011/08/17 15:56:24 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -94,13 +94,13 @@ if ($_GET["id"])
     // Charge les modules soumis a permissions
     $modules = array();
     $modulesdir = array();
-    
+
 	foreach ($conf->file->dol_document_root as $type => $dirroot)
 	{
 		$modulesdir[] = $dirroot . "/includes/modules/";
-		
+
 		if ($type == 'alt')
-		{	
+		{
 			$handle=@opendir($dirroot);
 			if (is_resource($handle))
 			{
@@ -118,7 +118,7 @@ if ($_GET["id"])
 			}
 		}
 	}
-    
+
     foreach ($modulesdir as $dir)
     {
         // Load modules attributes in arrays (name, numero, orders) from dir directory
@@ -208,7 +208,7 @@ if ($_GET["id"])
     print '<td colspan="2">'.$fgroup->nom.'';
     if (! $fgroup->entity)
     {
-        print img_redstar($langs->trans("GlobalGroup"));
+        print img_picto($langs->trans("GlobalGroup"),'redstar');
     }
     print "</td></tr>\n";
 
@@ -290,7 +290,7 @@ if ($_GET["id"])
                     print '<td align="center"><a href="perms.php?id='.$fgroup->id.'&amp;action=delrights&amp;rights='.$obj->id.'#'.$objMod->getName().'">'.img_edit_remove($langs->trans("Remove")).'</a></td>';
                 }
                 print '<td align="center">';
-                print img_tick();
+                print img_picto($langs->trans("Active"),'tick');
                 print '</td>';
             }
             else
@@ -316,5 +316,5 @@ if ($_GET["id"])
 
 $db->close();
 
-llxFooter('$Date: 2011/08/01 13:15:53 $ - $Revision: 1.40 $');
+llxFooter('$Date: 2011/08/17 15:56:24 $ - $Revision: 1.41 $');
 ?>

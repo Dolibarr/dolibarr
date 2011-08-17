@@ -25,7 +25,7 @@
  *   	\file       htdocs/adherents/admin/adherent.php
  *		\ingroup    member
  *		\brief      Page to setup the module Foundation
- *		\version    $Id: adherent.php,v 1.18 2011/08/03 00:45:42 eldy Exp $
+ *		\version    $Id: adherent.php,v 1.19 2011/08/17 15:56:23 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -195,7 +195,7 @@ print '<br>';
 $var=!$var;
 if ($conf->global->ADHERENT_USE_MAILMAN)
 {
-    $lien=img_tick().' ';
+    $lien=img_picto($langs->trans("Active"),'tick').' ';
     $lien.='<a href="'.$_SERVER["PHP_SELF"].'?action=unset&value=0&name=ADHERENT_USE_MAILMAN">'.$langs->trans("Disable").'</a>';
     // Edition des varibales globales
     $constantes=array('ADHERENT_MAILMAN_LISTS',
@@ -238,7 +238,7 @@ else
 $var=!$var;
 if ($conf->global->ADHERENT_USE_SPIP)
 {
-    $lien=img_tick().' ';
+    $lien=img_picto($langs->trans("Active"),'tick').' ';
     $lien.='<a href="'.$_SERVER["PHP_SELF"].'?action=unset&value=0&name=ADHERENT_USE_SPIP">'.$langs->trans("Disable").'</a>';
     // Edition des varibales globales
     $constantes=array('ADHERENT_USE_SPIP_AUTO',
@@ -331,7 +331,7 @@ $db->close();
 
 print '<br>';
 
-llxFooter('$Date: 2011/08/03 00:45:42 $ - $Revision: 1.18 $');
+llxFooter('$Date: 2011/08/17 15:56:23 $ - $Revision: 1.19 $');
 
 
 

@@ -22,7 +22,7 @@
  *	\file       htdocs/admin/company.php
  *	\ingroup    company
  *	\brief      Setup page to configure company/foundation
- *	\version    $Id: company.php,v 1.94 2011/07/31 22:23:24 eldy Exp $
+ *	\version    $Id: company.php,v 1.95 2011/08/17 15:56:23 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -715,7 +715,7 @@ else
     // On propose la generation de la vignette si elle n'existe pas
     if (!is_file($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini) && preg_match('/(\.jpg|\.jpeg|\.png)$/i',$mysoc->logo))
     {
-        print '<a href="'.$_SERVER["PHP_SELF"].'?action=addthumb&amp;file='.urlencode($mysoc->logo).'">'.img_refresh($langs->trans('GenerateThumb')).'&nbsp;&nbsp;</a>';
+        print '<a href="'.$_SERVER["PHP_SELF"].'?action=addthumb&amp;file='.urlencode($mysoc->logo).'">'.img_picto($langs->trans('GenerateThumb'),'refresh').'&nbsp;&nbsp;</a>';
     }
     else if ($mysoc->logo_mini && is_file($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
     {
@@ -982,6 +982,6 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:24 $ - $Revision: 1.94 $');
+llxFooter('$Date: 2011/08/17 15:56:23 $ - $Revision: 1.95 $');
 
 ?>

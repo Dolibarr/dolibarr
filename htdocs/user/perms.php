@@ -22,7 +22,7 @@
 /**
  *       \file       htdocs/user/perms.php
  *       \brief      Onglet user et permissions de la fiche utilisateur
- *       \version    $Id: perms.php,v 1.57 2011/08/01 13:15:54 hregis Exp $
+ *       \version    $Id: perms.php,v 1.58 2011/08/17 15:56:25 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -125,9 +125,9 @@ $modulesdir = array();
 foreach ($conf->file->dol_document_root as $type => $dirroot)
 {
 	$modulesdir[] = $dirroot . "/includes/modules/";
-	
+
 	if ($type == 'alt')
-	{	
+	{
 		$handle=@opendir($dirroot);
 		if (is_resource($handle))
 		{
@@ -346,7 +346,7 @@ if ($result)
                 print '<td align="center">'.img_picto($langs->trans("Administrator"),'star').'</td>';
             }
             print '<td align="center" nowrap="nowrap">';
-            print img_tick();
+            print img_picto($langs->trans("Active"),'tick');
             print '</td>';
         }
         else if (in_array($obj->id, $permsuser))
@@ -357,7 +357,7 @@ if ($result)
                 print '<td align="center"><a href="perms.php?id='.$fuser->id.'&amp;action=delrights&amp;rights='.$obj->id.'#'.$objMod->getName().'">'.img_edit_remove($langs->trans("Remove")).'</a></td>';
             }
             print '<td align="center" nowrap="nowrap">';
-            print img_tick();
+            print img_picto($langs->trans("Active"),'tick');
             print '</td>';
         }
         else if (in_array($obj->id, $permsgroup)) {
@@ -370,7 +370,7 @@ if ($result)
 				print '</td>';
             }
             print '<td align="center" nowrap="nowrap">';
-            print img_tick();
+            print img_picto($langs->trans("Active"),'tick');
             print '</td>';
         }
         else
@@ -395,5 +395,5 @@ print '</table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/01 13:15:54 $ - $Revision: 1.57 $');
+llxFooter('$Date: 2011/08/17 15:56:25 $ - $Revision: 1.58 $');
 ?>

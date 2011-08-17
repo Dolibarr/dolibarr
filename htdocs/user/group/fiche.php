@@ -20,7 +20,7 @@
 /**
  *       \file       htdocs/user/group/fiche.php
  *       \brief      Onglet groupes utilisateurs
- *       \version    $Id: fiche.php,v 1.69 2011/07/31 23:21:25 eldy Exp $
+ *       \version    $Id: fiche.php,v 1.70 2011/08/17 15:56:24 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -293,7 +293,7 @@ else
             print '<td width="75%" class="valeur">'.$object->nom;
             if (empty($object->entity))
             {
-                print img_redstar($langs->trans("GlobalGroup"));
+                print img_picto($langs->trans("GlobalGroup"),'redstar');
             }
             print "</td></tr>\n";
 
@@ -386,7 +386,7 @@ else
                     print "<tr $bc[$var]>";
                     print '<td>';
                     print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$useringroup->id.'">'.img_object($langs->trans("ShowUser"),"user").' '.$useringroup->login.'</a>';
-                    if ($useringroup->admin  && ! $useringroup->entity) print img_redstar($langs->trans("SuperAdministrator"));
+                    if ($useringroup->admin  && ! $useringroup->entity) print img_picto($langs->trans("SuperAdministrator"),'redstar');
                     else if ($useringroup->admin) print img_picto($langs->trans("Administrator"),'star');
                     print '</td>';
                     print '<td>'.ucfirst(stripslashes($useringroup->lastname)).'</td>';
@@ -473,5 +473,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:21:25 $ - $Revision: 1.69 $');
+llxFooter('$Date: 2011/08/17 15:56:24 $ - $Revision: 1.70 $');
 ?>

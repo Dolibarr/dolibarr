@@ -19,7 +19,7 @@
 /**
  *	\file       htdocs/user/home.php
  *	\brief      Home page of users and groups management
- *	\version    $Id: home.php,v 1.48 2011/07/31 23:19:42 eldy Exp $
+ *	\version    $Id: home.php,v 1.49 2011/08/17 15:56:25 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -123,7 +123,7 @@ if ($resql)
 		print '<td><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->firstname.' '.$obj->name.'</a>';
 		if ($conf->global->MAIN_MODULE_MULTICOMPANY && $obj->admin && ! $obj->entity)
 		{
-			print img_redstar($langs->trans("SuperAdministrator"));
+			print img_picto($langs->trans("SuperAdministrator"),'redstar');
 		}
 		else if ($obj->admin)
 		{
@@ -219,5 +219,5 @@ print '</table>';
 $db->close();
 
 
-llxFooter('$Date: 2011/07/31 23:19:42 $ - $Revision: 1.48 $');
+llxFooter('$Date: 2011/08/17 15:56:25 $ - $Revision: 1.49 $');
 ?>

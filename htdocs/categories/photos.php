@@ -22,7 +22,7 @@
  *       \file       htdocs/categories/photos.php
  *       \ingroup    category
  *       \brief      Gestion des photos d'une categorie
- *       \version    $Id: photos.php,v 1.13 2011/08/03 00:46:32 eldy Exp $
+ *       \version    $Id: photos.php,v 1.14 2011/08/17 15:56:26 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -266,7 +266,7 @@ if (!empty($id) || !empty($ref))
 				// On propose la generation de la vignette si elle n'existe pas et si la taille est superieure aux limites
 				if (!$obj['photo_vignette'] && preg_match('/(\.bmp|\.gif|\.jpg|\.jpeg|\.png)$/i',$obj['photo']) && ($object->imgWidth > $maxWidth || $object->imgHeight > $maxHeight))
 				{
-					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=addthumb&amp;type='.$type.'&amp;file='.urlencode($pdir.$viewfilename).'">'.img_refresh($langs->trans('GenerateThumb')).'&nbsp;&nbsp;</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=addthumb&amp;type='.$type.'&amp;file='.urlencode($pdir.$viewfilename).'">'.img_picto($langs->trans('GenerateThumb'),'refresh').'&nbsp;&nbsp;</a>';
 				}
 				if ($user->rights->categorie->creer)
 				{
@@ -304,5 +304,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:32 $ - $Revision: 1.13 $');
+llxFooter('$Date: 2011/08/17 15:56:26 $ - $Revision: 1.14 $');
 ?>
