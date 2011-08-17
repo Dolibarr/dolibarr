@@ -21,7 +21,7 @@
 /**
  *  \file		htdocs/lib/date.lib.php
  *  \brief		Set of function to manipulate dates
- *  \version	$Id: date.lib.php,v 1.33 2011/07/31 23:25:42 eldy Exp $
+ *  \version	$Id: date.lib.php,v 1.34 2011/08/17 16:08:49 eldy Exp $
  */
 
 
@@ -560,6 +560,52 @@ function num_open_day($timestampStart, $timestampEnd,$inhour=0,$lastday=0)
 	{
 		return $langs->trans("Error");
 	}
+}
+
+
+
+/**
+ *	Return array of translated months or selected month
+ *
+ *	@param   selected			-1 to return array of all months or motnh to select
+ *	@return  string or array	Month string or array if selected < 0
+ */
+function monthArrayOrSelected($selected=0)
+{
+    global $langs;
+
+    $month = array (
+    1  => $langs->trans("January"),
+    2  => $langs->trans("February"),
+    3  => $langs->trans("March"),
+    4  => $langs->trans("April"),
+    5  => $langs->trans("May"),
+    6  => $langs->trans("June"),
+    7  => $langs->trans("July"),
+    8  => $langs->trans("August"),
+    9  => $langs->trans("September"),
+    10 => $langs->trans("October"),
+    11 => $langs->trans("November"),
+    12 => $langs->trans("December")
+    );
+
+    if ($selected >=0)
+    {
+        $return='';
+        foreach ($month as $key => $val)
+        {
+            if ($selected == $key)
+            {
+                $return = $val;
+                break;
+            }
+        }
+        return $return;
+    }
+    else
+    {
+        return $month;
+    }
 }
 
 ?>
