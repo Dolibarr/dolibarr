@@ -15,14 +15,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: fckeditor.php,v 1.34 2011/08/17 15:56:23 eldy Exp $
+ * $Id: fckeditor.php,v 1.33 2011/08/17 13:15:10 eldy Exp $
  */
 
 /**
  *  \file       htdocs/admin/fckeditor.php
  *  \ingroup    fckeditor
  *  \brief      Page d'activation du module FCKeditor dans les autres modules
- *  \version    $Revision: 1.34 $
+ *  \version    $Revision: 1.33 $
  */
 
 require("../main.inc.php");
@@ -132,7 +132,7 @@ foreach($modules as $const => $desc)
 	$constante = 'FCKEDITOR_ENABLE_'.$const;
 	$value = $conf->global->$constante;
 
-	print $value == 1 ? img_picto($langs->trans("Active"),'tick') : '&nbsp;';
+	print $value == 1 ? img_tick() : '&nbsp;';
 
 	print '</td>';
 	print '<td align="center" width="100">';
@@ -172,5 +172,5 @@ print $conf->global->FCKEDITOR_TEST;
 
 $db->close();
 
-llxFooter('$Date: 2011/08/17 15:56:23 $ - $Revision: 1.34 $');
+llxFooter('$Date: 2011/08/17 13:15:10 $ - $Revision: 1.33 $');
 ?>
