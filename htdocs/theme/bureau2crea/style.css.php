@@ -22,7 +22,7 @@
 /**
  *		\file       htdocs/theme/bureau2crea/style.css.php
  *		\brief      Fichier de style CSS du theme bureau2crea
- *		\version    $Id: style.css.php,v 1.49 2011/08/17 13:08:19 eldy Exp $
+ *		\version    $Id: style.css.php,v 1.50 2011/08/17 14:07:16 bureau2crea Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -1016,16 +1016,16 @@ div.tabs {
 }
 
 div.tabs a.tabTitle {
-	margin: 4px;
+	padding: 4px 20px;
     position: relative;
     float: left;
-    height: 16px;
+    height: 17px;
     color: #FFF;
     line-height: 16px;
     font-weight: bold;
     font-size: 14px;
     display: block;
-    padding-left: 20px;
+    background-color: #202020;
 }
 
 div.tabs a.tabTitle img {
@@ -1353,7 +1353,7 @@ table.nobordernopadding td {
 /* For lists */
 
 table.liste {
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_centerBlock-title.jpg' ?>);
+    /*background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_centerBlock-title.jpg' ?>);*/
     background-repeat: no-repeat;
     background-position: top right;
     vertical-align: text-top;
@@ -1364,7 +1364,7 @@ padding: 0px 5px;
 }
 
 table.noborder {
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_centerBlock-title.jpg' ?>);
+    /*background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_centerBlock-title.jpg' ?>);*/
     background-repeat: no-repeat;
     background-position: top right;
     vertical-align: text-top;
@@ -1373,7 +1373,7 @@ table.noborder {
 tr.liste_titre {
     height: 25px;
     background-repeat: repeat-x;
-    color: #FFFFFF;
+    color: #333333;
     font-family: <?php print $fontlist ?>;
     font-weight: normal;
     /* text-decoration: underline; */
@@ -1381,8 +1381,30 @@ tr.liste_titre {
     white-space: nowrap;
 }
 
+tr.liste_titre:first-child {
+    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_centerBlock-title.jpg' ?>);
+    background-position: top right;
+}
+
+td.liste_titre_sel,   
+tr.liste_titre:first-child td {   
+    color: #FFFFFF !important;
+}
+
+tr.liste_titre {
+    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_centerBlock-title2.jpg' ?>);
+}
+
+tr.liste_total {
+height: 25px;
+border-top: 1px solid #333;
+}
+
+div#stats {
+}
+
 tr.liste_titre a {
-color: #FFFFFF;
+color: #333333;
 margin: 0px 5px;
 }
 
@@ -1393,7 +1415,7 @@ tr.liste_titre td {
 
 td.liste_titre {
     background-repeat: repeat-x;
-    color: #FFFFFF;
+    color: #333333;
     font-family: <?php print $fontlist ?>;
     font-weight: normal;
     white-space: nowrap;
@@ -1438,7 +1460,7 @@ background-repeat: repeat-x;
 color: #332266;
 font-weight: normal;
 white-space: nowrap;
-padding: 3px;
+padding: 5px;
 }
 
 th {
@@ -2171,9 +2193,15 @@ a.cke_dialog_ui_button
 border: 1px solid #666666 !important;
 }
 
+table.login {
+	border-collapse: collapse;
+    }
 
+table.login tr,
+table.login td {
+	height: 0px;
+}
 
 <?php
 if (is_object($db)) $db->close();
 ?>
-
