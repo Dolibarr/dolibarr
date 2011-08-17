@@ -23,7 +23,7 @@
  *  \file       htdocs/product/fournisseurs.php
  *  \ingroup    product
  *  \brief      Page of tab suppliers for products
- *  \version    $Id: fournisseurs.php,v 1.98 2011/08/17 15:22:39 simnandez Exp $
+ *  \version    $Id: fournisseurs.php,v 1.99 2011/08/17 16:44:38 simnandez Exp $
  */
 
 require("../main.inc.php");
@@ -355,6 +355,7 @@ if ($_GET["id"] || $_GET["ref"])
 				else $nblignefour=4;
 				
 				$param="&id=".$product->id;	
+				print '<tr class="liste_titre">';
 				print_liste_field_titre($langs->trans("Suppliers"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
 				print '<td class="liste_titre">'.$langs->trans("SupplierRef").'</td>';
 				if(!empty($conf->global->FOURN_PRODUCT_AVAILABILITY))
@@ -362,9 +363,8 @@ if ($_GET["id"] || $_GET["ref"])
 				print_liste_field_titre($langs->trans("QtyMin"),$_SERVER["PHP_SELF"],"pfp.quantity","",$param,"",$sortfield,$sortorder);
 				print '<td class="liste_titre" align="right">'.$langs->trans("PriceQtyMinHT").'</td>';
 				print_liste_field_titre($langs->trans("UnitPriceHT"),$_SERVER["PHP_SELF"],"pfp.unitprice","",$param,'align="right"',$sortfield,$sortorder);
-
 				print '<td class="liste_titre"></td>';
-				print '</tr>';
+				print "</tr>\n";
 
 				// Suppliers list
 				$sql = "SELECT s.nom, s.rowid as socid,";
@@ -453,5 +453,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/17 15:22:39 $ - $Revision: 1.98 $');
+llxFooter('$Date: 2011/08/17 16:44:38 $ - $Revision: 1.99 $');
 ?>
