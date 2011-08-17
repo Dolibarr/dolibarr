@@ -21,7 +21,7 @@
 /**
  *		\file       htdocs/theme/eldy/style.css.php
  *		\brief      Fichier de style CSS du theme Eldy
- *		\version    $Id: style.css.php,v 1.107 2011/08/16 17:59:46 eldy Exp $
+ *		\version    $Id: style.css.php,v 1.108 2011/08/17 13:08:20 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -2032,3 +2032,7 @@ a.cke_dialog_ui_button
 .template-upload {
     height: 72px !important;
 }
+
+<?php
+if (is_object($db)) $db->close();
+?>
