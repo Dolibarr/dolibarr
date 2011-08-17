@@ -25,7 +25,7 @@
  *	\file       htdocs/main.inc.php
  *	\ingroup	core
  *	\brief      File that defines environment for Dolibarr pages only (variables not required by scripts)
- *	\version    $Id: main.inc.php,v 1.762 2011/08/17 09:51:39 cdelambert Exp $
+ *	\version    $Id: main.inc.php,v 1.761 2011/08/15 17:55:50 eldy Exp $
  */
 
 @ini_set('memory_limit', '64M');	// This may be useless if memory is hard limited by your PHP
@@ -868,11 +868,8 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		// Displays meta
 		print '<meta name="robots" content="noindex,nofollow">'."\n";      // Evite indexation par robots
 		print '<meta name="author" content="Dolibarr Development Team">'."\n";
-		if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/favicon.ico')){
-			print '<link rel="shortcut icon" type="image/x-icon" href="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/favicon.ico">'."\n";
-		}else{
-			print '<link rel="shortcut icon" type="image/x-icon" href="'.DOL_URL_ROOT.'/favicon.ico">'."\n";
-		}
+		print '<link rel="shortcut icon" type="image/x-icon" href="'.DOL_URL_ROOT.'/favicon.ico">'."\n";
+
 		// Displays title
 		$appli='Dolibarr';
 		if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $appli=$conf->global->MAIN_APPLICATION_TITLE;
