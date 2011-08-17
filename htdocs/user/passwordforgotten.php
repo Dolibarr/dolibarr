@@ -19,7 +19,7 @@
 /**
  *       \file       htdocs/user/passwordforgotten.php
  *       \brief      Page to ask a new password
- *       \version    $Id: passwordforgotten.php,v 1.76 2011/07/31 23:19:43 eldy Exp $
+ *       \version    $Id: passwordforgotten.php,v 1.77 2011/08/17 15:56:25 eldy Exp $
  */
 
 define("NOLOGIN",1);	// This means this output page does not require to be logged.
@@ -243,7 +243,7 @@ if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)  && empty($conf->global->MU
 if (function_exists("imagecreatefrompng") && ! $disabled)
 {
     $captcha = 1;
-    $captcha_refresh = img_refresh();
+    $captcha_refresh = img_picto($langs->trans("Refresh"),'refresh');
 }
 
 include($template_dir.'passwordforgotten.tpl.php');	// To use native PHP

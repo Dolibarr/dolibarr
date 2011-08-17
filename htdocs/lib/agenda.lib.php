@@ -21,7 +21,7 @@
 /**
  *  \file		htdocs/lib/agenda.lib.php
  *  \brief		Set of function for the agenda module
- *  \version	$Id: agenda.lib.php,v 1.43 2011/07/31 23:25:33 eldy Exp $
+ *  \version	$Id: agenda.lib.php,v 1.44 2011/08/17 16:05:04 cdelambert Exp $
  */
 
 
@@ -47,7 +47,7 @@ function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirt
 	// Filters
 	if ($canedit || $conf->projet->enabled)
 	{
-		print '<form name="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		print '<form name="listactionsfilter" class="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="status" value="'.$status.'">';
 		print '<input type="hidden" name="year" value="'.$year.'">';

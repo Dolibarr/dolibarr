@@ -1,5 +1,5 @@
 --
--- $Id: 3.1.0-3.2.0.sql,v 1.1 2011/08/11 01:34:54 eldy Exp $
+-- $Id: 3.1.0-3.2.0.sql,v 1.2 2011/08/17 15:22:39 simnandez Exp $
 --
 -- Be carefull to requests order.
 -- This file must be loaded by calling /install/index.php page
@@ -11,4 +11,6 @@
 -- To change type of field: ALTER TABLE llx_table MODIFY name varchar(60);
 --
 
-UPDATE llx_c_paper_format SET active=1 WHERE active=0; 
+UPDATE llx_c_paper_format SET active=1 WHERE active=0;
+
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN fk_availability integer AFTER fk_product_fournisseur; 

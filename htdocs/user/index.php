@@ -21,7 +21,7 @@
  *      \file       htdocs/user/index.php
  * 		\ingroup	core
  *      \brief      Page of users
- *      \version    $Id: index.php,v 1.51 2011/07/31 23:19:42 eldy Exp $
+ *      \version    $Id: index.php,v 1.52 2011/08/17 15:56:25 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -103,7 +103,7 @@ if ($result)
         print '<td><a href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->login.'</a>';
         if ($conf->global->MAIN_MODULE_MULTICOMPANY && $obj->admin && ! $obj->entity)
         {
-          	print img_redstar($langs->trans("SuperAdministrator"));
+          	print img_picto($langs->trans("SuperAdministrator"),'redstar');
         }
         else if ($obj->admin)
         {
@@ -149,5 +149,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:19:42 $ - $Revision: 1.51 $');
+llxFooter('$Date: 2011/08/17 15:56:25 $ - $Revision: 1.52 $');
 ?>

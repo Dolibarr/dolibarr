@@ -23,7 +23,7 @@
  *  \file       htdocs/product/admin/produit.php
  *  \ingroup    produit
  *  \brief      Page d'administration/configuration du module Produit
- *  \version    $Id: produit.php,v 1.7 2011/07/31 23:24:02 eldy Exp $
+ *  \version    $Id: produit.php,v 1.8 2011/08/17 15:56:26 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -267,7 +267,7 @@ if ($conf->global->PRODUCT_CANVAS_ABILITY)
 
     					if ($conf->global->$const)
     					{
-    						print img_tick();
+    						print img_picto($langs->trans("Active"),'tick');
     						print '</td><td align="right">';
     						print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;spe='.$file.'&amp;value=0">'.$langs->trans("Disable").'</a>';
     					}
@@ -294,5 +294,5 @@ if ($conf->global->PRODUCT_CANVAS_ABILITY)
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:24:02 $ - $Revision: 1.7 $');
+llxFooter('$Date: 2011/08/17 15:56:26 $ - $Revision: 1.8 $');
 ?>

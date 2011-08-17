@@ -22,12 +22,13 @@
  *	\file       htdocs/admin/company.php
  *	\ingroup    company
  *	\brief      Setup page to configure company/foundation
- *	\version    $Id: company.php,v 1.94 2011/07/31 22:23:24 eldy Exp $
+ *	\version    $Id: company.php,v 1.96 2011/08/17 16:07:41 eldy Exp $
  */
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/images.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
@@ -715,7 +716,7 @@ else
     // On propose la generation de la vignette si elle n'existe pas
     if (!is_file($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini) && preg_match('/(\.jpg|\.jpeg|\.png)$/i',$mysoc->logo))
     {
-        print '<a href="'.$_SERVER["PHP_SELF"].'?action=addthumb&amp;file='.urlencode($mysoc->logo).'">'.img_refresh($langs->trans('GenerateThumb')).'&nbsp;&nbsp;</a>';
+        print '<a href="'.$_SERVER["PHP_SELF"].'?action=addthumb&amp;file='.urlencode($mysoc->logo).'">'.img_picto($langs->trans('GenerateThumb'),'refresh').'&nbsp;&nbsp;</a>';
     }
     else if ($mysoc->logo_mini && is_file($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
     {
@@ -982,6 +983,6 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:24 $ - $Revision: 1.94 $');
+llxFooter('$Date: 2011/08/17 16:07:41 $ - $Revision: 1.96 $');
 
 ?>

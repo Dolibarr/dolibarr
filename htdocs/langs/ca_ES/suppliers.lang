@@ -21,6 +21,7 @@ NoRecordedSuppliers= Sense proveïdors registrats
 SupplierPayment= Pagament a proveïdor
 SuppliersArea= Àrea proveïdors
 RefSupplierShort= Ref. proveïdor
+Availability=Disponibilitat
 ExportDataset_fournisseur_1= Factures de proveïdors i línies de factura
 ExportDataset_fournisseur_2= Factures proveïdors i pagaments
 ApproveThisOrder= Aprovar aquesta comanda

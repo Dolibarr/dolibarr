@@ -20,7 +20,7 @@
 /**
  *  \file			htdocs/lib/security.lib.php
  *  \brief			Set of function used for dolibarr security
- *  \version		$Id: security.lib.php,v 1.126 2011/08/11 19:41:24 eldy Exp $
+ *  \version		$Id: security.lib.php,v 1.127 2011/08/17 13:59:24 cdelambert Exp $
  */
 
 
@@ -200,9 +200,14 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=companylogo&amp;file='.urlencode($mysoc->logo);
 		$width=128;
 	}
+	elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/dolibarr_logo.png'))
+	{
+		$urllogo=DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/dolibarr_logo.png';
+	}
 	elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.png'))
 	{
 		$urllogo=DOL_URL_ROOT.'/theme/dolibarr_logo.png';
+		
 	}
 
 	// Entity field

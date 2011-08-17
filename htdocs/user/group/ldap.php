@@ -20,7 +20,7 @@
  *       \file       htdocs/user/group/ldap.php
  *       \ingroup    ldap
  *       \brief      Page fiche LDAP groupe
- *       \version    $Id: ldap.php,v 1.26 2011/07/31 23:21:25 eldy Exp $
+ *       \version    $Id: ldap.php,v 1.27 2011/08/17 15:56:24 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -115,7 +115,7 @@ print '<tr><td width="25%" valign="top">'.$langs->trans("Name").'</td>';
 print '<td width="75%" class="valeur">'.$fgroup->nom;
 if (!$fgroup->entity)
 {
-	print img_redstar($langs->trans("GlobalGroup"));
+	print img_picto($langs->trans("GlobalGroup"),'redstar');
 }
 print "</td></tr>\n";
 
@@ -215,5 +215,5 @@ print '</table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:21:25 $ - $Revision: 1.26 $');
+llxFooter('$Date: 2011/08/17 15:56:24 $ - $Revision: 1.27 $');
 ?>

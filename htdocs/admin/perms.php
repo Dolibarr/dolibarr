@@ -21,7 +21,7 @@
  *   	\file       htdocs/admin/perms.php
  *      \ingroup    core
  *		\brief      Page d'administration/configuration des permissions par defaut
- *		\version    $Id: perms.php,v 1.43 2011/08/01 12:53:37 hregis Exp $
+ *		\version    $Id: perms.php,v 1.44 2011/08/17 15:56:23 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -81,9 +81,9 @@ $modulesdir = array();
 foreach ($conf->file->dol_document_root as $type => $dirroot)
 {
 	$modulesdir[] = $dirroot . "/includes/modules/";
-	
+
 	if ($type == 'alt')
-	{	
+	{
 		$handle=@opendir($dirroot);
 		if (is_resource($handle))
 		{
@@ -194,8 +194,7 @@ if ($result)
         print '<td align="center">';
         if ($obj->bydefault == 1)
         {
-
-            print img_tick();
+            print img_picto($langs->trans("Active"),'tick');
             print '</td><td>';
             print '<a href="perms.php?pid='.$obj->id.'&amp;action=remove#'.$objMod->getName().'">'.img_edit_remove().'</a>';
         }
@@ -218,5 +217,5 @@ print '</div>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/01 12:53:37 $ - $Revision: 1.43 $');
+llxFooter('$Date: 2011/08/17 15:56:23 $ - $Revision: 1.44 $');
 ?>

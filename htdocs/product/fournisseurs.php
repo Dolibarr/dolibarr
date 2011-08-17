@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
  *  \file       htdocs/product/fournisseurs.php
  *  \ingroup    product
  *  \brief      Page of tab suppliers for products
- *  \version    $Id: fournisseurs.php,v 1.97 2011/07/31 23:19:26 eldy Exp $
+ *  \version    $Id: fournisseurs.php,v 1.98 2011/08/17 15:22:39 simnandez Exp $
  */
 
 require("../main.inc.php");
@@ -51,6 +51,12 @@ if (isset($_GET["id"]) || isset($_GET["ref"]))
 $fieldid = isset($_GET["ref"])?'ref':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'produit|service&fournisseur',$id,'product','','',$fieldid);
+
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+
+if (! $sortfield) $sortfield="s.nom";
+if (! $sortorder) $sortorder="ASC";
 
 $mesg = '';
 
@@ -140,7 +146,7 @@ if ($_POST["action"] == 'updateprice' && $_POST["cancel"] <> $langs->trans("Canc
 					$supplier=new Fournisseur($db);
 					$result=$supplier->fetch($id_fourn);
 
-					$ret=$product->update_buyprice($_POST["qty"], $_POST["price"], $user, $_POST["price_base_type"], $supplier);
+					$ret=$product->update_buyprice($_POST["qty"], $_POST["price"], $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"]);
 					if ($ret < 0)
 					{
 						$error++;
@@ -282,7 +288,14 @@ if ($_GET["id"] || $_GET["ref"])
 				}
 				print '</td>';
 				print '</tr>';
-
+				
+				//Availability
+				if(!empty($conf->global->FOURN_PRODUCT_AVAILABILITY))
+				{
+					print '<tr><td>'.$langs->trans("Availability").'</td><td colspan="3">';
+					$html->select_availability($product->fk_availability,"oselDispo",1);
+					print '</td></tr>'."\n";
+				}
 				print '<tr>';
 				print '<td>'.$langs->trans("QtyMin").'</td>';
 				print '<td>';
@@ -340,19 +353,23 @@ if ($_GET["id"] || $_GET["ref"])
 				print '<table class="noborder" width="100%">';
 				if ($product->isproduct()) $nblignefour=4;
 				else $nblignefour=4;
-				print '<tr class="liste_titre"><td valign="top">';
-				print $langs->trans("Suppliers").'</td>';
-				print '<td>'.$langs->trans("SupplierRef").'</td>';
-				print '<td align="center">'.$langs->trans("QtyMin").'</td>';
-				print '<td align="right">'.$langs->trans("PriceQtyMinHT").'</td>';
-				print '<td align="right">'.$langs->trans("UnitPriceHT").'</td>';
-				print '<td>&nbsp;</td>';
+				
+				$param="&id=".$product->id;	
+				print_liste_field_titre($langs->trans("Suppliers"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
+				print '<td class="liste_titre">'.$langs->trans("SupplierRef").'</td>';
+				if(!empty($conf->global->FOURN_PRODUCT_AVAILABILITY))
+					print_liste_field_titre($langs->trans("Availability"),$_SERVER["PHP_SELF"],"pfp.fk_availability","",$param,"",$sortfield,$sortorder);
+				print_liste_field_titre($langs->trans("QtyMin"),$_SERVER["PHP_SELF"],"pfp.quantity","",$param,"",$sortfield,$sortorder);
+				print '<td class="liste_titre" align="right">'.$langs->trans("PriceQtyMinHT").'</td>';
+				print_liste_field_titre($langs->trans("UnitPriceHT"),$_SERVER["PHP_SELF"],"pfp.unitprice","",$param,'align="right"',$sortfield,$sortorder);
+
+				print '<td class="liste_titre"></td>';
 				print '</tr>';
 
 				// Suppliers list
 				$sql = "SELECT s.nom, s.rowid as socid,";
 				$sql.= " pf.ref_fourn,";
-				$sql.= " pfp.rowid, pfp.price, pfp.quantity, pfp.unitprice";
+				$sql.= " pfp.rowid, pfp.price, pfp.quantity, pfp.unitprice, pfp.fk_availability";
 				$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 				$sql.= ", ".MAIN_DB_PREFIX."product_fournisseur as pf";
 				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
@@ -360,9 +377,8 @@ if ($_GET["id"] || $_GET["ref"])
 				$sql.= " WHERE pf.fk_soc = s.rowid";
 				$sql.= " AND s.entity = ".$conf->entity;
 				$sql.= " AND pf.fk_product = ".$product->id;
-				$sql.= " ORDER BY s.nom, pfp.quantity";
-
-				$resql="";
+				//$sql.= " ORDER BY s.nom, pfp.quantity";
+				$sql.= $db->order($sortfield,$sortorder);
 				$resql=$db->query($sql);
 				if ($resql)
 				{
@@ -380,7 +396,14 @@ if ($_GET["id"] || $_GET["ref"])
 
 						// Supplier
 						print '<td align="left">'.$objp->ref_fourn.'</td>';
-
+						
+						//Availability
+						if(!empty($conf->global->FOURN_PRODUCT_AVAILABILITY))
+						{
+							$html->load_cache_availability();
+                			$availability= $html->cache_availability[$objp->fk_availability]['label'];
+							print '<td align="left">'.$availability.'</td>';
+						}
 						// Quantity
 						print '<td align="center">';
 						print $objp->quantity;
@@ -430,5 +453,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:19:26 $ - $Revision: 1.97 $');
+llxFooter('$Date: 2011/08/17 15:22:39 $ - $Revision: 1.98 $');
 ?>
