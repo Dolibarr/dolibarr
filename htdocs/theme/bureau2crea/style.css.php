@@ -22,7 +22,7 @@
 /**
  *		\file       htdocs/theme/bureau2crea/style.css.php
  *		\brief      Fichier de style CSS du theme bureau2crea
- *		\version    $Id: style.css.php,v 1.46 2011/08/17 08:22:10 bureau2crea Exp $
+ *		\version    $Id: style.css.php,v 1.47 2011/08/17 09:42:14 bureau2crea Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -167,7 +167,7 @@ input.button[type=submit] {
     padding: 0px 10px 0px 10px;
     margin: 0px;
     background-repeat: repeat-x;
-    border: 2px solid #336600;
+    /*border: 2px solid #336600;*/
     color: #FFFFFF;
     cursor: pointer;
     font-size: 10px;
@@ -243,6 +243,7 @@ div.vmenu {
     float: left;
     margin: 0px;
     width: 180px;
+    margin-left: 10px;
 }
 
 div.fiche {
@@ -315,7 +316,7 @@ div.tmenu {
     padding: 0px;
     margin: 10px 0px 10px 0px;
     font-size: 13px;
-    background-image : url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_tmenu.jpg' ?>) ;
+    background-image : url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_mainNav.jpg' ?>) ;
     height: 22px;
     border-bottom: 2px solid #842F00;
 <?php } ?>
@@ -473,8 +474,6 @@ li.tmenu span, li.tmenusel span {
     }
 
 li.tmenu {
-    background-image : url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_tmenu_btnD.jpg' ?>);
-    background-position: right;
     }
 .tmenuimage {
 margin: 0 !important;
@@ -485,35 +484,27 @@ li.tmenu a {
 	position: relative;
 	display: block;
     height: 22px;
-    background-image : url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_tmenu_btnG.jpg' ?>);
-    background-position: left center;
-	background-repeat: no-repeat;
     font-size: 12px;
     font-family: Geneva, Verdana, sans-serif;
-    line-height: 25px;
+    line-height: 22px;
     color: #FFF;
     font-weight: normal;
     float: left;
     }
 
 li.tmenu a:hover {
-	color: #842F00;
+	color: #FFFFFF;
+    background-color: #D45416;
     }
 
-li.tmenu a.tmenusel {
+li.tmenu a.tmenusel,
+li.tmenu a.tmenusel:hover {
 	color: #842F00;
     font-weight: bold;
+    background-color: #FFF;
     }
 
 li.tmenu .tmenusel {
-	color: #FFF;
- 	padding: 0px 10px 0px 10px;
-	-moz-border-radius-topleft:4px;
-    -moz-border-radius-topright:4px;
-    border-top-left-radius:4px;
-    border-top-right-radius:4px;
-    border: 2px solid #842F00;
-    border-bottom: none;
     background: #FFFFFF;
 	}
 
@@ -557,10 +548,11 @@ li.tmenu a.tmenudisabled {
 div.login_block {
 	position: absolute;
 	<?php print $right; ?>: 5px;
-	top: 3px;
+	top: 6px;
 	font-weight: bold;
 	<?php if (GETPOST("optioncss") == 'print') { ?>
 	display: none;
+    color: #FFF;
 	<?php } ?>
 }
 
@@ -575,7 +567,7 @@ div.login {
 	font-weight: bold;
 }
 div.login a {
-	color: #234046;
+	color: #FFFFFF;
 }
 div.login a:hover {
 	color: black;
@@ -641,7 +633,7 @@ div.blockvmenuimpair
 	padding: 0px;
 	width: 100%;
     background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_leftCategorie.jpg' ?>);
-    background-position: top left;
+    background-position: top right;
     background-repeat: no-repeat;
 
 }
@@ -677,7 +669,7 @@ div.menu_titre
 div.menu_titre a.vmenu {
 	font-weight: bold;
     font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
-    font-size: 13px;
+    font-size: 12px;
 }
 
 div.blockvmenusearch
@@ -1011,46 +1003,53 @@ td.photo {
 
 div.tabs {
     top: 20px;
-    margin: 10px 0px 0px 0px;
+    margin: 0px 0px 10px 0px;
     text-align: left;
     width: 100%;
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_tmenu.jpg' ?>);
-    height: 18px;
-    border-bottom: 2px solid #842F00;
+    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_navHorizontal.jpg' ?>);
+    height: 25px;
     background-repeat: repeat-x;
     background-position: bottom;
 }
 
 div.tabs a.tabTitle {
-	margin-right: 5px;
+	margin: 4px;
     position: relative;
     float: left;
+    height: 16px;
+    color: #FFF;
+    line-height: 16px;
+    font-weight: bold;
+    font-size: 14px;
+    display: block;
+    padding-left: 20px;
+}
+
+div.tabs a.tabTitle img {
+position: absolute;
+top: 0px;
+left: 0px;
 }
 
 div.tabs a.tab {
 	display: block;
 	width: auto;
-    font-size: 10px;
-    height: 18px;
-    background-position: right;
-    line-height: 18px;
+    font-size: 11px;
+    height: 25px;
+    line-height: 25px;
     color: #FFFFFF;
     text-decoration: none;
     position: relative;
     float: left;
-    margin-left: 10px;
     padding: 0px 10px 0px 10px;
-    margin-bottom: -2px;
-    border: 1px solid #666;
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_btnGrey.jpg' ?>);
 }
 
 div.tabs a.tab#active {
     background-color: #FFF;
-    color: #842F00;
-    border: 1px solid #842F00;
+    color: #D45416;
     border-bottom: 0px;
     background-image: none;
+    
 }
 
 div.tabs a.tab span {
@@ -1068,7 +1067,8 @@ div.tabs a.tab#active span {
 }
 
 div.tabs a.tab:hover {
-	color: #333333;
+	color: #FFFFFF;
+    background-color: #505050;
 }
 
 /*div.tabs {
@@ -1203,7 +1203,6 @@ span.tabspan {
 	font-family:"Trebuchet MS",Arial,Helvetica,sans-serif;
 	font-weight: bold;
 	background: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_btnBlue.jpg' ?>) repeat-x;
-	border: 2px solid #063953;
 	color: #FFF;
 	padding: 0px 10px 0px 10px;
 	margin: 0px 10px 0px 10px;
@@ -1221,15 +1220,14 @@ span.tabspan {
 }
 
 .butActionDelete    {
-	border: 1px solid red;
+	background: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_btnRed.jpg' ?>) repeat-x;
+    color: #FFF;
 }
 
 .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
-	border: 1px solid #997777;
 }
 
 .butActionDelete:hover {
-	background: #FFe7ec;
 }
 
 .butActionRefused {
@@ -1289,9 +1287,10 @@ margin: 0px 0px 0px 0px;
 
 
 table.border {
-border: 2px solid #666666;
-border-collapse: collapse;
-clear: left;
+-webkit-box-shadow: #CCC 2px 4px 2px;
+border: 1px solid #666;
+/*border-collapse: collapse;*/
+padding: 10px;
 }
 
 table.border td {
@@ -1310,11 +1309,11 @@ border-left: 1px solid #000000;
 /* Main boxes */
 
 table.noborder {
-	box-shadow: 2px 4px 2px #CCCCCC;
+	/*box-shadow: 2px 4px 2px #CCCCCC;
 	-moz-box-shadow: 2px 4px 2px #CCCCCC;
-	-webkit-box-shadow: 2px 4px 2px #CCCCCC;
+	-webkit-box-shadow: 2px 4px 2px #CCCCCC; */
 	border-collapse: collapse;
-	border: 1px solid #666;
+	/*border: 1px solid #666;*/
 }
 
 table.noborder tr {
@@ -1374,6 +1373,11 @@ tr.liste_titre {
     /* text-decoration: underline; */
     /* border-bottom: 1px solid #FDFFFF; */
     white-space: nowrap;
+}
+
+tr.liste_titre a {
+color: #FFFFFF;
+margin: 0px 5px;
 }
 
 tr.liste_titre td {
@@ -2107,6 +2111,7 @@ table.noborder {
 	margin-bottom: 10px;
     position: relative;
     float: left;
+    border: none;
 }
 
 div.leftContent {
