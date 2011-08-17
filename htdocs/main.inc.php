@@ -25,7 +25,7 @@
  *	\file       htdocs/main.inc.php
  *	\ingroup	core
  *	\brief      File that defines environment for Dolibarr pages only (variables not required by scripts)
- *	\version    $Id: main.inc.php,v 1.763 2011/08/17 19:26:48 eldy Exp $
+ *	\version    $Id: main.inc.php,v 1.762 2011/08/17 09:51:39 cdelambert Exp $
  */
 
 @ini_set('memory_limit', '64M');	// This may be useless if memory is hard limited by your PHP
@@ -136,6 +136,31 @@ session_start();
 // Init the 5 global objects
 // This include will set: $conf, $db, $langs, $user, $mysoc objects
 require_once("master.inc.php");
+
+// Activate error interceptions
+/*
+function processError($code, $message, $file, $line, $context)
+{
+	$errmess='ERROR '.$file.' - '.$line.' - '.error_reporting()." - ".$code."<br>\n";
+	//print $errmess;
+	if (error_reporting() & $code) {
+		print $errmess;
+		throw new Exception($message, $code);
+    }
+}
+set_error_handler('processError');
+*/
+
+// GET and POST converter
+/*
+foreach($_REQUEST as $key => $value)
+{
+	// For prevent conflict
+	$var = '__'.$key;
+	// Create variable with tested value
+	$$var = GETPOST($key);
+}
+*/
 
 // Activate end of page function
 register_shutdown_function('dol_shutdown');
@@ -1202,13 +1227,9 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	if (! empty($conf->browser->phone)) $loginhtmltext.='<br><b>'.$langs->trans("Phone").'</b>: '.$conf->browser->phone;
 	if (! empty($_SESSION["disablemodules"])) $loginhtmltext.='<br><b>'.$langs->trans("DisabledModules").'</b>: <br>'.join(', ',explode(',',$_SESSION["disablemodules"]));
 
-	$appli='Dolibarr';
-	if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $appli=$conf->global->MAIN_APPLICATION_TITLE;
-
 	// Link info
-	$logouttext='';
-	$logouthtmltext=$appli.' '.DOL_VERSION.'<br>';
-	$logouthtmltext.=$langs->trans("Logout").'<br>';
+	$logouthtmltext=''; $logouttext='';
+	$logouthtmltext=$langs->trans("Logout").'<br>';
 	//$logouthtmltext.="<br>";
 	if ($_SESSION["dol_authmode"] != 'forceuser'
 	&& $_SESSION["dol_authmode"] != 'http')
