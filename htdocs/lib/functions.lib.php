@@ -28,7 +28,7 @@
  *	\file			htdocs/lib/functions.lib.php
  *	\brief			A set of functions for Dolibarr
  *					This file contains all frequently used functions.
- *	\version		$Id: functions.lib.php,v 1.557 2011/08/17 16:18:12 eldy Exp $
+ *	\version		$Id: functions.lib.php,v 1.558 2011/08/17 16:33:53 eldy Exp $
  */
 
 // For compatibility during upgrade
@@ -1582,7 +1582,7 @@ function img_object($alt, $picto, $options='', $pictoisfullpath=0)
     global $conf;
 
     // Clean parameters
-    if (! preg_match('/(\.png|\.gif)$/i',$picto)) $picto.='.png';
+    if (! preg_match('/(\.png|\.gif)$/i',$picto) && ! preg_match('/^([^@]+)@([^@]+)$/i',$picto)) $picto.='.png';
 
     // Define fullpathpicto to use into src
     if (! empty($pictoisfullpath)) $fullpathpicto=$picto;
@@ -1593,7 +1593,8 @@ function img_object($alt, $picto, $options='', $pictoisfullpath=0)
         $path = 'theme/'.$conf->theme;
         if (! empty($conf->global->MAIN_FORCETHEMEDIR)) $path=preg_replace('/^\//','',$conf->global->MAIN_FORCETHEMEDIR).'/'.$path;
         // If we ask an image into module/img (not into a theme path)
-        if (preg_match('/^([^@]+)@([^@]+)$/i',$picto,$regs)) { $picto = $regs[1]; $path=$regs[2]; }   // If image into a module/img path
+        if (preg_match('/^([^@]+)@([^@]+)$/i',$picto,$regs)) { $picto = $regs[1]; $path=$regs[2]; }      // If image into a module/img path
+        if (! preg_match('/(\.png|\.gif)$/i',$picto)) $picto.='.png';
         // If img file not into standard path, we use alternate path
         if (defined('DOL_URL_ROOT_ALT') && DOL_URL_ROOT_ALT && ! file_exists(DOL_DOCUMENT_ROOT.'/'.$path.'/img/object_'.$picto)) $url = DOL_URL_ROOT_ALT;
 
@@ -1621,7 +1622,7 @@ function img_picto($alt, $picto, $options='', $pictoisfullpath=0)
     global $conf;
 
     // Clean parameters
-    if (! preg_match('/(\.png|\.gif)$/i',$picto)) $picto.='.png';
+    if (! preg_match('/(\.png|\.gif)$/i',$picto) && ! preg_match('/^([^@]+)@([^@]+)$/i',$picto)) $picto.='.png';
 
     // Define fullpathpicto to use into src
     if (! empty($pictoisfullpath)) $fullpathpicto=$picto;
@@ -1632,7 +1633,8 @@ function img_picto($alt, $picto, $options='', $pictoisfullpath=0)
         $path = 'theme/'.$conf->theme;
         if (! empty($conf->global->MAIN_FORCETHEMEDIR)) $path=preg_replace('/^\//','',$conf->global->MAIN_FORCETHEMEDIR).'/'.$path;
         // If we ask an image into module/img (not into a theme path)
-        if (preg_match('/^([^@]+)@([^@]+)$/i',$picto,$regs)) { $picto = $regs[1]; $path=$regs[2]; }   // If image into a module/img path
+        if (preg_match('/^([^@]+)@([^@]+)$/i',$picto,$regs)) { $picto = $regs[1]; $path=$regs[2]; }      // If image into a module/img path
+        if (! preg_match('/(\.png|\.gif)$/i',$picto)) $picto.='.png';
         // If img file not into standard path, we use alternate path
         if (defined('DOL_URL_ROOT_ALT') && DOL_URL_ROOT_ALT && ! file_exists(DOL_DOCUMENT_ROOT.'/'.$path.'/img/'.$picto)) $url = DOL_URL_ROOT_ALT;
 
