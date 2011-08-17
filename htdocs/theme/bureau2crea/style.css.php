@@ -22,7 +22,7 @@
 /**
  *		\file       htdocs/theme/bureau2crea/style.css.php
  *		\brief      Fichier de style CSS du theme bureau2crea
- *		\version    $Id: style.css.php,v 1.46 2011/08/17 08:22:10 bureau2crea Exp $
+ *		\version    $Id: style.css.php,v 1.54 2011/08/17 16:36:32 bureau2crea Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -167,7 +167,7 @@ input.button[type=submit] {
     padding: 0px 10px 0px 10px;
     margin: 0px;
     background-repeat: repeat-x;
-    border: 2px solid #336600;
+    /*border: 2px solid #336600;*/
     color: #FFFFFF;
     cursor: pointer;
     font-size: 10px;
@@ -243,11 +243,12 @@ div.vmenu {
     float: left;
     margin: 0px;
     width: 180px;
+    margin-left: 10px;
 }
 
 div.fiche {
 	margin-<?php print $left; ?>: <?php print empty($conf->browser->phone)?'10':'2'; ?>px;
-	margin-<?php print $right; ?>: <?php print empty($conf->browser->phone)?'6':''; ?>px;
+	margin-<?php print $right; ?>: <?php print empty($conf->browser->phone)?'10':''; ?>px;
     padding: 0px;
     position: relative;
     height: auto;
@@ -315,7 +316,7 @@ div.tmenu {
     padding: 0px;
     margin: 10px 0px 10px 0px;
     font-size: 13px;
-    background-image : url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_tmenu.jpg' ?>) ;
+    background-image : url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_mainNav.jpg' ?>) ;
     height: 22px;
     border-bottom: 2px solid #842F00;
 <?php } ?>
@@ -473,8 +474,6 @@ li.tmenu span, li.tmenusel span {
     }
 
 li.tmenu {
-    background-image : url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_tmenu_btnD.jpg' ?>);
-    background-position: right;
     }
 .tmenuimage {
 margin: 0 !important;
@@ -485,35 +484,27 @@ li.tmenu a {
 	position: relative;
 	display: block;
     height: 22px;
-    background-image : url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_tmenu_btnG.jpg' ?>);
-    background-position: left center;
-	background-repeat: no-repeat;
     font-size: 12px;
     font-family: Geneva, Verdana, sans-serif;
-    line-height: 25px;
+    line-height: 22px;
     color: #FFF;
     font-weight: normal;
     float: left;
     }
 
 li.tmenu a:hover {
-	color: #842F00;
+	color: #FFFFFF;
+    background-color: #D45416;
     }
 
-li.tmenu a.tmenusel {
+li.tmenu a.tmenusel,
+li.tmenu a.tmenusel:hover {
 	color: #842F00;
     font-weight: bold;
+    background-color: #FFF;
     }
 
 li.tmenu .tmenusel {
-	color: #FFF;
- 	padding: 0px 10px 0px 10px;
-	-moz-border-radius-topleft:4px;
-    -moz-border-radius-topright:4px;
-    border-top-left-radius:4px;
-    border-top-right-radius:4px;
-    border: 2px solid #842F00;
-    border-bottom: none;
     background: #FFFFFF;
 	}
 
@@ -557,10 +548,11 @@ li.tmenu a.tmenudisabled {
 div.login_block {
 	position: absolute;
 	<?php print $right; ?>: 5px;
-	top: 3px;
+	top: 6px;
 	font-weight: bold;
 	<?php if (GETPOST("optioncss") == 'print') { ?>
 	display: none;
+    color: #FFF;
 	<?php } ?>
 }
 
@@ -575,7 +567,7 @@ div.login {
 	font-weight: bold;
 }
 div.login a {
-	color: #234046;
+	color: #FFFFFF;
 }
 div.login a:hover {
 	color: black;
@@ -641,7 +633,7 @@ div.blockvmenuimpair
 	padding: 0px;
 	width: 100%;
     background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_leftCategorie.jpg' ?>);
-    background-position: top left;
+    background-position: top right;
     background-repeat: no-repeat;
 
 }
@@ -675,9 +667,9 @@ div.menu_titre
 }
 
 div.menu_titre a.vmenu {
-	font-weight: bold;
-    font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
-    font-size: 13px;
+	/*font-weight: bold;*/
+    /*font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;*/
+    font-size: 12px;
 }
 
 div.blockvmenusearch
@@ -721,7 +713,7 @@ div.blockvmenubookmarks
 	padding: 0px;
 	width: 100%;
     background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_leftCategorie.jpg' ?>);
-    background-position: top left;
+    background-position: top right;
     background-repeat: no-repeat;
     margin-bottom: 15px;
 }
@@ -784,9 +776,12 @@ td.barre_select {
 }
 
 td.photo {
-	background: #F4F4F4;
-	color: #000000;
-    border: 1px solid #b3c5cc;
+	box-shadow: 2px 4px 2px #CCCCCC;
+	-moz-box-shadow: 2px 4px 2px #CCCCCC;
+	-webkit-box-shadow: 2px 4px 2px #CCCCCC;
+	border-collapse: collapse;
+	border: 1px solid #666;
+    background-color: #EDEDED;
 }
 
 
@@ -1011,46 +1006,54 @@ td.photo {
 
 div.tabs {
     top: 20px;
-    margin: 10px 0px 0px 0px;
+    margin: 0px 0px 10px 0px;
     text-align: left;
     width: 100%;
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_tmenu.jpg' ?>);
-    height: 18px;
-    border-bottom: 2px solid #842F00;
+    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_navHorizontal.jpg' ?>);
+    height: 25px;
     background-repeat: repeat-x;
-    background-position: bottom;
+    background-position: left;
 }
 
 div.tabs a.tabTitle {
-	margin-right: 5px;
+	padding: 4px 10px;
+    margin-left: 25px;
     position: relative;
     float: left;
+    height: 17px;
+    color: #FFF;
+    line-height: 16px;
+    font-weight: bold;
+    font-size: 14px;
+    display: block;
+    background-color: #202020;
+}
+
+div.tabs a.tabTitle img {
+position: absolute;
+top: 4px;
+left: -20px;
 }
 
 div.tabs a.tab {
 	display: block;
 	width: auto;
-    font-size: 10px;
-    height: 18px;
-    background-position: right;
-    line-height: 18px;
+    font-size: 11px;
+    height: 25px;
+    line-height: 25px;
     color: #FFFFFF;
     text-decoration: none;
     position: relative;
     float: left;
-    margin-left: 10px;
     padding: 0px 10px 0px 10px;
-    margin-bottom: -2px;
-    border: 1px solid #666;
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_btnGrey.jpg' ?>);
 }
 
 div.tabs a.tab#active {
     background-color: #FFF;
-    color: #842F00;
-    border: 1px solid #842F00;
+    color: #D45416;
     border-bottom: 0px;
     background-image: none;
+
 }
 
 div.tabs a.tab span {
@@ -1068,7 +1071,8 @@ div.tabs a.tab#active span {
 }
 
 div.tabs a.tab:hover {
-	color: #333333;
+	color: #FFFFFF;
+    background-color: #505050;
 }
 
 /*div.tabs {
@@ -1203,7 +1207,6 @@ span.tabspan {
 	font-family:"Trebuchet MS",Arial,Helvetica,sans-serif;
 	font-weight: bold;
 	background: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_btnBlue.jpg' ?>) repeat-x;
-	border: 2px solid #063953;
 	color: #FFF;
 	padding: 0px 10px 0px 10px;
 	margin: 0px 10px 0px 10px;
@@ -1214,22 +1217,21 @@ span.tabspan {
     height: 18px;
     line-height: 18px;
     cursor: pointer;
+    margin-bottom: 10px;
 }
 
 .butAction:hover   {
-	background: #dee7ec;
 }
 
 .butActionDelete    {
-	border: 1px solid red;
+	background: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_btnRed.jpg' ?>) repeat-x !important;
+    color: #FFF;
 }
 
 .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
-	border: 1px solid #997777;
 }
 
 .butActionDelete:hover {
-	background: #FFe7ec;
 }
 
 .butActionRefused {
@@ -1273,7 +1275,7 @@ border-collapse: collapse;
 border: 0px;
 padding-top: 0px;
 padding-<?php print $left; ?>: 0px;
-padding-<?php print $right; ?>: 4px;
+padding-<?php print $right; ?>: 10px;
 padding-bottom: 4px;
 margin: 0px 0px;
 }
@@ -1289,9 +1291,21 @@ margin: 0px 0px 0px 0px;
 
 
 table.border {
-border: 2px solid #666666;
+-webkit-box-shadow: #CCC 2px 4px 2px;
+border: 1px solid #666;
+/*border-collapse: collapse;*/
+padding: 10px;
+}
+
+table.border.formdoc {
+padding: 0px;
 border-collapse: collapse;
-clear: left;
+border-right: 1px solid #666;
+}
+
+table.border.formdoc td {
+margin: 0px;
+padding: 0px;
 }
 
 table.border td {
@@ -1310,11 +1324,12 @@ border-left: 1px solid #000000;
 /* Main boxes */
 
 table.noborder {
-	box-shadow: 2px 4px 2px #CCCCCC;
+	/*box-shadow: 2px 4px 2px #CCCCCC;
 	-moz-box-shadow: 2px 4px 2px #CCCCCC;
-	-webkit-box-shadow: 2px 4px 2px #CCCCCC;
+	-webkit-box-shadow: 2px 4px 2px #CCCCCC; */
 	border-collapse: collapse;
-	border: 1px solid #666;
+	/*border: 1px solid #666;*/
+
 }
 
 table.noborder tr {
@@ -1339,36 +1354,27 @@ table.nobordernopadding td {
 /* For lists */
 
 table.liste {
-width: 100%;
-border-collapse: collapse;
-border-top-color: #FEFEFE;
-
-border-right-width: 1px;
-border-right-color: #BBBBBB;
-border-right-style: solid;
-
-border-bottom-width: 1px;
-border-bottom-color: #BBBBBB;
-border-bottom-style: solid;
-
-margin-bottom: 2px;
-margin-top: 0px;
+    /*background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_centerBlock-title.jpg' ?>);*/
+    background-repeat: no-repeat;
+    background-position: top right;
+    vertical-align: text-top;
+    border-collapse: collapse;
 }
 table.liste td {
-padding-right: 2px;
+padding: 0px 5px;
 }
 
 table.noborder {
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_centerBlock-title.jpg' ?>);
+    /*background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_centerBlock-title.jpg' ?>);*/
     background-repeat: no-repeat;
     background-position: top right;
     vertical-align: text-top;
 }
 
 tr.liste_titre {
-    height: 20px;
+    height: 25px;
     background-repeat: repeat-x;
-    color: #FFFFFF;
+    color: #333333;
     font-family: <?php print $fontlist ?>;
     font-weight: normal;
     /* text-decoration: underline; */
@@ -1376,18 +1382,46 @@ tr.liste_titre {
     white-space: nowrap;
 }
 
+tr.liste_titre:first-child {
+    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_centerBlock-title.jpg' ?>);
+    background-position: top right;
+}
+
+td.liste_titre_sel,   
+tr.liste_titre:first-child td {   
+    color: #FFFFFF !important;
+}
+
+tr.liste_titre {
+    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_centerBlock-title2.jpg' ?>);
+}
+
+tr.liste_total {
+height: 25px;
+border-top: 1px solid #333;
+}
+
+div#stats {
+}
+
+tr.liste_titre a {
+color: #333333;
+margin: 0px 5px;
+}
+
 tr.liste_titre td {
-	padding-left: 3px;
-    vertical-align: text-top;
+	padding: 0px 5px;
+    vertical-align: middle;
 }
 
 td.liste_titre {
     background-repeat: repeat-x;
-    color: #FFFFFF;
+    color: #333333;
     font-family: <?php print $fontlist ?>;
     font-weight: normal;
     white-space: nowrap;
     background-image: none;
+    background: none;
 }
 
 /*tr.liste_titre select.flat {
@@ -1400,12 +1434,11 @@ td.liste_titre {
 tr.liste_titre input.button {
 	float: left;
     position: relative;
-    margin: 30px 10px 10px 0px;
+    /*margin: 30px 10px 10px 0px;*/
 }
 
 td.liste_titre_sel {
-    background: #7699A9;
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/menus/trtitle.png' ?>);
+    background: #505050;
     background-repeat: repeat-x;
     color: #FFFFFF;
     font-family: <?php print $fontlist ?>;
@@ -1429,7 +1462,7 @@ background-repeat: repeat-x;
 color: #332266;
 font-weight: normal;
 white-space: nowrap;
-padding: 3px;
+padding: 5px;
 }
 
 th {
@@ -1466,7 +1499,7 @@ border: 0px;
 }
 
 .pair td, .impair td {
-	padding: 3px !important;
+	padding: 2px 3px !important;
 }
 
 .pair:hover {
@@ -1595,11 +1628,13 @@ div.titre {
 	font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
 	font-weight: normal;
 	color: #842F00;
-    font-size: 20px;
+    font-size: 16px;
 	text-decoration: none;
-    margin-left: 20px;
 }
 
+#pictotitle {
+margin-right: 15px;
+}
 
 /* ============================================================================== */
 /* Formulaire confirmation (When Ajax JQuery is used)                             */
@@ -2107,6 +2142,7 @@ table.noborder {
 	margin-bottom: 10px;
     position: relative;
     float: left;
+    border: none;
 }
 
 div.leftContent {
@@ -2149,3 +2185,119 @@ a.cke_dialog_ui_button
 .template-upload {
     height: 72px !important;
 }
+
+
+/* ============================================================================== */
+/*  Login                                                                   */
+/* ============================================================================== */
+
+#login {
+	position: absolute;
+    display: block;
+    width: 480px;
+    height: auto;
+    top: 20px;
+    left: 50%;
+    margin-left: -240px;
+    }
+    
+div#infoVersion {
+	position: relative;
+    width: 100%;
+    height: 15px;
+    line-height: 15px;
+    text-align: center;
+    font-size: 10px;
+    background-color: #D6D6D6;
+    }
+    
+div#logoBox {
+	position: relative;
+    width: 100%;
+    height: auto;
+    margin-top: 30px;
+    }
+    
+div#parameterBox {
+	position: relative;
+    width: 100%;
+    height: auto;
+    border: 1px solid #666;
+    border-top: 2px solid #842F00;
+    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_connectionBox.jpg' ?>);
+    background-repeat: no-repeat;
+    background-position: top center;
+    }
+    
+div#parameterBox div {
+	width: 100%;
+    height: 20px;
+    position: relative;
+    line-height: 20px;
+    }
+    
+div#parameterBox div label {
+	width: 190px;
+    text-align: right;
+    display: block;
+    float: left;
+    margin-right: 10px;
+    }
+    
+div#parameterBox div input[type="text"],
+div#parameterBox div input[type="password"] {
+	width: 180px;
+    height: 16px;
+    font-size: 10px;
+    margin-top: 2px;
+    }
+    
+div#connectionLine {
+	margin: 10px 0px;
+	text-align: center;
+    }
+    
+div#logBox {
+margin-top: 25px;
+}
+
+div.captchaBox {
+	margin-top: 10px;
+    }
+    
+div.captchaImg {
+	margin-bottom: 10px;
+    margin-top: 5px;
+    height: 40px !important;
+    }
+
+img#captcha {
+	margin-left: 200px;
+    }
+    
+div#infoLogin {
+    width: 100%;
+    height: auto;
+    text-align: center;
+    margin-top: 20px;
+    color: #666;
+    position: relative;
+    margin-bottom: 20px;
+}
+
+div.other {
+	margin: 10px 0px;
+    text-align: center;
+    }
+    
+form.listactionsfilter img {
+	display: none;
+    }
+    
+form.listactionsfilter input[type="submit"] {
+	margin: 2px 0px;
+}
+
+<?php
+if (is_object($db)) $db->close();
+?>
