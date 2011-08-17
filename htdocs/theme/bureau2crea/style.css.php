@@ -22,7 +22,7 @@
 /**
  *		\file       htdocs/theme/bureau2crea/style.css.php
  *		\brief      Fichier de style CSS du theme bureau2crea
- *		\version    $Id: style.css.php,v 1.53 2011/08/17 16:17:21 bureau2crea Exp $
+ *		\version    $Id: style.css.php,v 1.54 2011/08/17 16:36:32 bureau2crea Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -1012,11 +1012,12 @@ div.tabs {
     background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_navHorizontal.jpg' ?>);
     height: 25px;
     background-repeat: repeat-x;
-    background-position: bottom;
+    background-position: left;
 }
 
 div.tabs a.tabTitle {
-	padding: 4px 20px;
+	padding: 4px 10px;
+    margin-left: 25px;
     position: relative;
     float: left;
     height: 17px;
@@ -1030,8 +1031,8 @@ div.tabs a.tabTitle {
 
 div.tabs a.tabTitle img {
 position: absolute;
-top: 0px;
-left: 0px;
+top: 4px;
+left: -20px;
 }
 
 div.tabs a.tab {
