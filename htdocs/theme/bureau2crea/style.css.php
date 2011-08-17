@@ -22,7 +22,7 @@
 /**
  *		\file       htdocs/theme/bureau2crea/style.css.php
  *		\brief      Fichier de style CSS du theme bureau2crea
- *		\version    $Id: style.css.php,v 1.51 2011/08/17 15:15:15 bureau2crea Exp $
+ *		\version    $Id: style.css.php,v 1.49 2011/08/17 13:08:19 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -1016,16 +1016,16 @@ div.tabs {
 }
 
 div.tabs a.tabTitle {
-	padding: 4px 20px;
+	margin: 4px;
     position: relative;
     float: left;
-    height: 17px;
+    height: 16px;
     color: #FFF;
     line-height: 16px;
     font-weight: bold;
     font-size: 14px;
     display: block;
-    background-color: #202020;
+    padding-left: 20px;
 }
 
 div.tabs a.tabTitle img {
@@ -1353,7 +1353,7 @@ table.nobordernopadding td {
 /* For lists */
 
 table.liste {
-    /*background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_centerBlock-title.jpg' ?>);*/
+    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_centerBlock-title.jpg' ?>);
     background-repeat: no-repeat;
     background-position: top right;
     vertical-align: text-top;
@@ -1364,7 +1364,7 @@ padding: 0px 5px;
 }
 
 table.noborder {
-    /*background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_centerBlock-title.jpg' ?>);*/
+    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_centerBlock-title.jpg' ?>);
     background-repeat: no-repeat;
     background-position: top right;
     vertical-align: text-top;
@@ -1373,7 +1373,7 @@ table.noborder {
 tr.liste_titre {
     height: 25px;
     background-repeat: repeat-x;
-    color: #333333;
+    color: #FFFFFF;
     font-family: <?php print $fontlist ?>;
     font-weight: normal;
     /* text-decoration: underline; */
@@ -1381,30 +1381,8 @@ tr.liste_titre {
     white-space: nowrap;
 }
 
-tr.liste_titre:first-child {
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_centerBlock-title.jpg' ?>);
-    background-position: top right;
-}
-
-td.liste_titre_sel,   
-tr.liste_titre:first-child td {   
-    color: #FFFFFF !important;
-}
-
-tr.liste_titre {
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_centerBlock-title2.jpg' ?>);
-}
-
-tr.liste_total {
-height: 25px;
-border-top: 1px solid #333;
-}
-
-div#stats {
-}
-
 tr.liste_titre a {
-color: #333333;
+color: #FFFFFF;
 margin: 0px 5px;
 }
 
@@ -1415,7 +1393,7 @@ tr.liste_titre td {
 
 td.liste_titre {
     background-repeat: repeat-x;
-    color: #333333;
+    color: #FFFFFF;
     font-family: <?php print $fontlist ?>;
     font-weight: normal;
     white-space: nowrap;
@@ -1460,7 +1438,7 @@ background-repeat: repeat-x;
 color: #332266;
 font-weight: normal;
 white-space: nowrap;
-padding: 5px;
+padding: 3px;
 }
 
 th {
@@ -2189,105 +2167,13 @@ a.cke_dialog_ui_button
 /*  Login                                                                   */
 /* ============================================================================== */
 
-#login {
-	position: absolute;
-    display: block;
-    width: 480px;
-    height: auto;
-    top: 20px;
-    left: 50%;
-    margin-left: -240px;
-    }
-    
-div#infoVersion {
-	position: relative;
-    width: 100%;
-    height: 15px;
-    line-height: 15px;
-    text-align: center;
-    font-size: 10px;
-    background-color: #D6D6D6;
-    }
-    
-div#logoBox {
-	position: relative;
-    width: 100%;
-    height: auto;
-    margin-top: 30px;
-    }
-    
-div#parameterBox {
-	position: relative;
-    width: 100%;
-    height: auto;
-    border: 1px solid #666;
-    border-top: 2px solid #842F00;
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_connectionBox.jpg' ?>);
-    background-repeat: no-repeat;
-    background-position: top center;
-    }
-    
-div#parameterBox div {
-	width: 100%;
-    height: 20px;
-    position: relative;
-    line-height: 20px;
-    }
-    
-div#parameterBox div label {
-	width: 190px;
-    text-align: right;
-    display: block;
-    float: left;
-    margin-right: 10px;
-    }
-    
-div#parameterBox div input[type="text"],
-div#parameterBox div input[type="password"] {
-	width: 180px;
-    height: 16px;
-    font-size: 10px;
-    margin-top: 2px;
-    }
-    
-div#connectionLine {
-	margin: 10px 0px;
-	text-align: center;
-    }
-    
-div#logBox {
-margin-top: 25px;
+#login table {
+border: 1px solid #666666 !important;
 }
 
-div.captchaBox {
-	margin-top: 10px;
-    }
-    
-div.captchaImg {
-	margin-bottom: 10px;
-    margin-top: 5px;
-    height: 40px !important;
-    }
 
-img#captcha {
-	margin-left: 200px;
-    }
-    
-div#infoLogin {
-    width: 100%;
-    height: auto;
-    text-align: center;
-    margin-top: 20px;
-    color: #666;
-    position: relative;
-    margin-bottom: 20px;
-}
-
-div.other {
-	margin: 10px 0px;
-    text-align: center;
-    }
 
 <?php
 if (is_object($db)) $db->close();
 ?>
+
