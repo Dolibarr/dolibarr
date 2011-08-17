@@ -23,7 +23,7 @@
  *		\brief      File for Tanslate class
  *		\author	    Eric Seigne
  *		\author	    Laurent Destailleur
- *		\version    $Id: translate.class.php,v 1.52 2011/08/17 21:51:20 eldy Exp $
+ *		\version    $Id: translate.class.php,v 1.51 2011/08/17 21:41:24 eldy Exp $
  */
 
 
@@ -260,17 +260,17 @@ class Translate {
 								{
 									$value=trim(preg_replace('/\\n/',"\n",$tab[1]));
 
-									//if ($key == 'CHARSET')		// This is to declare in which charset files are encoded
-									//{
-									//	$this->charset_inputfile[$newdomain]=strtoupper($value);
+									if ($key == 'CHARSET')		// This is to declare in which charset files are encoded
+									{
+										$this->charset_inputfile[$newdomain]=strtoupper($value);
 										//print 'File '.$file_lang.' is declared to have format '.$this->charset_inputfile[$newdomain].'<br>';
-									//}
-									//else
-									if ($key == 'DIRECTION')	// This is to declare direction of language
+									}
+									elseif ($key == 'DIRECTION')	// This is to declare direction of language
 									{
 										if ($alt < 2 || empty($this->tab_translate[$key]))	// We load direction only for primary files or if not yet loaded
 										{
                                             $this->tab_translate[$key]=$value;
+
 											if ($stopafterdirection) break;	// We do not save tab if we stop after DIRECTION
 											else if ($usecachekey) $tabtranslatedomain[$key]=$value;
 										}
@@ -278,9 +278,11 @@ class Translate {
 									else
 									{
 										// On stocke toujours dans le tableau Tab en UTF-8
-										//if (! empty($this->charset_inputfile[$newdomain]) && $this->charset_inputfile[$newdomain] == 'ISO-8859-1') $value=utf8_encode($value);
+										if (! empty($this->charset_inputfile[$newdomain]) && $this->charset_inputfile[$newdomain] == 'ISO-8859-1') $value=utf8_encode($value);
 
+										//print 'XX'.$key;
 										$this->tab_translate[$key]=$value;
+
 										if ($usecachekey) $tabtranslatedomain[$key]=$value;	// To save lang content in cache
 									}
 								}
@@ -292,6 +294,7 @@ class Translate {
 						// To save lang content for usecachekey into cache
 						if ($usecachekey && sizeof($tabtranslatedomain))
 						{
+							require_once(DOL_DOCUMENT_ROOT ."/lib/memory.lib.php");
 							$ressetcache=dol_setcache($usecachekey,$tabtranslatedomain);
 							if ($ressetcache < 0)
 							{
