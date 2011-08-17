@@ -22,7 +22,7 @@
 /**
  *		\file       htdocs/theme/bureau2crea/style.css.php
  *		\brief      Fichier de style CSS du theme bureau2crea
- *		\version    $Id: style.css.php,v 1.48 2011/08/17 13:01:43 bureau2crea Exp $
+ *		\version    $Id: style.css.php,v 1.49 2011/08/17 13:08:19 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -1052,7 +1052,7 @@ div.tabs a.tab#active {
     color: #D45416;
     border-bottom: 0px;
     background-image: none;
-    
+
 }
 
 div.tabs a.tab span {
@@ -1328,7 +1328,7 @@ table.noborder {
 	-webkit-box-shadow: 2px 4px 2px #CCCCCC; */
 	border-collapse: collapse;
 	/*border: 1px solid #666;*/
-    
+
 }
 
 table.noborder tr {
@@ -2162,6 +2162,7 @@ a.cke_dialog_ui_button
     height: 72px !important;
 }
 
+
 /* ============================================================================== */
 /*  Login                                                                   */
 /* ============================================================================== */
@@ -2169,3 +2170,10 @@ a.cke_dialog_ui_button
 #login table {
 border: 1px solid #666666 !important;
 }
+
+
+
+<?php
+if (is_object($db)) $db->close();
+?>
+
