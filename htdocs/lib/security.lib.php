@@ -20,7 +20,7 @@
 /**
  *  \file			htdocs/lib/security.lib.php
  *  \brief			Set of function used for dolibarr security
- *  \version		$Id: security.lib.php,v 1.128 2011/08/17 15:56:24 eldy Exp $
+ *  \version		$Id: security.lib.php,v 1.127 2011/08/17 13:59:24 cdelambert Exp $
  */
 
 
@@ -231,7 +231,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	if (function_exists("imagecreatefrompng") && ! empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA))
 	{
 		$captcha=1;
-		$captcha_refresh=img_picto($langs->trans("Refresh"),'refresh');
+		$captcha_refresh=img_refresh();
 	}
 
 	// Extra link
