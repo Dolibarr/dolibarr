@@ -22,7 +22,7 @@
 /**
  *		\file       htdocs/theme/bureau2crea/style.css.php
  *		\brief      Fichier de style CSS du theme bureau2crea
- *		\version    $Id: style.css.php,v 1.54 2011/08/17 16:36:32 bureau2crea Exp $
+ *		\version    $Id: style.css.php,v 1.51 2011/08/17 15:15:15 bureau2crea Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -668,7 +668,7 @@ div.menu_titre
 
 div.menu_titre a.vmenu {
 	/*font-weight: bold;*/
-    /*font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;*/
+    font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
     font-size: 12px;
 }
 
@@ -1012,12 +1012,11 @@ div.tabs {
     background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_navHorizontal.jpg' ?>);
     height: 25px;
     background-repeat: repeat-x;
-    background-position: left;
+    background-position: bottom;
 }
 
 div.tabs a.tabTitle {
-	padding: 4px 10px;
-    margin-left: 25px;
+	padding: 4px 20px;
     position: relative;
     float: left;
     height: 17px;
@@ -1031,8 +1030,8 @@ div.tabs a.tabTitle {
 
 div.tabs a.tabTitle img {
 position: absolute;
-top: 4px;
-left: -20px;
+top: 0px;
+left: 0px;
 }
 
 div.tabs a.tab {
@@ -1421,7 +1420,6 @@ td.liste_titre {
     font-weight: normal;
     white-space: nowrap;
     background-image: none;
-    background: none;
 }
 
 /*tr.liste_titre select.flat {
@@ -1499,7 +1497,7 @@ border: 0px;
 }
 
 .pair td, .impair td {
-	padding: 2px 3px !important;
+	padding: 3px !important;
 }
 
 .pair:hover {
@@ -2289,14 +2287,6 @@ div.other {
 	margin: 10px 0px;
     text-align: center;
     }
-    
-form.listactionsfilter img {
-	display: none;
-    }
-    
-form.listactionsfilter input[type="submit"] {
-	margin: 2px 0px;
-}
 
 <?php
 if (is_object($db)) $db->close();
