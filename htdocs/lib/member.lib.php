@@ -19,7 +19,7 @@
 /**
  *	    \file       htdocs/lib/member.lib.php
  *		\brief      Ensemble de fonctions de base pour les adherents
- *		\version    $Id: member.lib.php,v 1.26 2011/08/17 19:43:18 hregis Exp $
+ *		\version    $Id: member.lib.php,v 1.25 2011/07/31 23:26:02 eldy Exp $
  *
  *		Ensemble de fonctions de base de dolibarr sous forme d'include
  */
@@ -110,12 +110,6 @@ function member_admin_prepare_head($object)
     $head[$h][2] = 'general';
     $h++;
 
-    // Show more tabs from modules
-    // Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'member_admin');
-    
     $head[$h][0] = DOL_URL_ROOT.'/adherents/admin/adherent_extrafields.php';
     $head[$h][1] = $langs->trans("ExtraFields");
     $head[$h][2] = 'attributes';
@@ -125,8 +119,12 @@ function member_admin_prepare_head($object)
     $head[$h][1] = $langs->trans("BlankSubscriptionForm");
     $head[$h][2] = 'public';
     $h++;
-    
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'member_admin','remove');
+
+    // Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
+    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+    // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+    complete_head_from_modules($conf,$langs,$object,$head,$h,'member_admin');
 
     return $head;
 }

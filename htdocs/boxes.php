@@ -22,7 +22,7 @@
  *	\brief      File of class to manage widget boxes
  *	\author     Rodolphe Qiedeville
  *	\author	    Laurent Destailleur
- *	\version    $Id: boxes.php,v 1.59 2011/08/17 22:20:29 eldy Exp $
+ *	\version    $Id: boxes.php,v 1.58 2011/08/15 18:37:07 eldy Exp $
  */
 
 
@@ -48,7 +48,13 @@ function printBoxesArea($user,$areacode)
 		print '<tr><td class="notopnoleftnoright">'."\n";
 
 
-        print '<div class="fichehalfleft">';
+        if (! empty($conf->global->MAIN_TRY_DIV)) print '<div class="fichehalfleft">';
+        else {
+    		print '<table width="100%" style="border-collapse: collapse; border: 0px; margin: 0px; padding: 0px;"><tr>';
+
+    		// Affichage colonne gauche
+    		print '<td class="notopnoleft" width="50%" valign="top" style="padding-right: 8px;">'."\n";
+        }
 
 
 		print "\n<!-- Box left container -->\n";
@@ -77,7 +83,12 @@ function printBoxesArea($user,$areacode)
 		print "</div>\n";
 		print "<!-- End box container -->\n";
 
-        print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+        if (! empty($conf->global->MAIN_TRY_DIV)) print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+        else {
+    		print "</td>\n";
+    		// Affichage colonne droite
+    		print '<td class="notopnoleft" width="50%" valign="top">';
+        }
 
 		print "\n<!-- Box right container -->\n";
 		print '<div id="right" class="connectedSortable">'."\n";
@@ -105,7 +116,11 @@ function printBoxesArea($user,$areacode)
 		print "</div>\n";
 		print "<!-- End box container -->\n";
 
-		print '</div></div>';
+		if (! empty($conf->global->MAIN_TRY_DIV)) print '</div></div>';
+        else {
+    		print "</td>";
+    		print "</tr></table>\n";
+        }
 		print "\n";
 
 		print "</td></tr>";
