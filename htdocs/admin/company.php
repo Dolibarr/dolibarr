@@ -22,13 +22,12 @@
  *	\file       htdocs/admin/company.php
  *	\ingroup    company
  *	\brief      Setup page to configure company/foundation
- *	\version    $Id: company.php,v 1.96 2011/08/17 16:07:41 eldy Exp $
+ *	\version    $Id: company.php,v 1.95 2011/08/17 15:56:23 eldy Exp $
  */
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/images.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
@@ -983,6 +982,6 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/17 16:07:41 $ - $Revision: 1.96 $');
+llxFooter('$Date: 2011/08/17 15:56:23 $ - $Revision: 1.95 $');
 
 ?>
