@@ -22,7 +22,7 @@
 /**
  *		\file       htdocs/theme/bureau2crea/style.css.php
  *		\brief      Fichier de style CSS du theme bureau2crea
- *		\version    $Id: style.css.php,v 1.50 2011/08/17 14:07:16 bureau2crea Exp $
+ *		\version    $Id: style.css.php,v 1.52 2011/08/17 15:56:16 bureau2crea Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -1497,7 +1497,7 @@ border: 0px;
 }
 
 .pair td, .impair td {
-	padding: 3px !important;
+	padding: 2px 3px !important;
 }
 
 .pair:hover {
@@ -2189,18 +2189,104 @@ a.cke_dialog_ui_button
 /*  Login                                                                   */
 /* ============================================================================== */
 
-#login table {
-border: 1px solid #666666 !important;
+#login {
+	position: absolute;
+    display: block;
+    width: 480px;
+    height: auto;
+    top: 20px;
+    left: 50%;
+    margin-left: -240px;
+    }
+    
+div#infoVersion {
+	position: relative;
+    width: 100%;
+    height: 15px;
+    line-height: 15px;
+    text-align: center;
+    font-size: 10px;
+    background-color: #D6D6D6;
+    }
+    
+div#logoBox {
+	position: relative;
+    width: 100%;
+    height: auto;
+    margin-top: 30px;
+    }
+    
+div#parameterBox {
+	position: relative;
+    width: 100%;
+    height: auto;
+    border: 1px solid #666;
+    border-top: 2px solid #842F00;
+    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_connectionBox.jpg' ?>);
+    background-repeat: no-repeat;
+    background-position: top center;
+    }
+    
+div#parameterBox div {
+	width: 100%;
+    height: 20px;
+    position: relative;
+    line-height: 20px;
+    }
+    
+div#parameterBox div label {
+	width: 190px;
+    text-align: right;
+    display: block;
+    float: left;
+    margin-right: 10px;
+    }
+    
+div#parameterBox div input[type="text"],
+div#parameterBox div input[type="password"] {
+	width: 180px;
+    height: 16px;
+    font-size: 10px;
+    margin-top: 2px;
+    }
+    
+div#connectionLine {
+	margin: 10px 0px;
+	text-align: center;
+    }
+    
+div#logBox {
+margin-top: 25px;
 }
 
-table.login {
-	border-collapse: collapse;
+div.captchaBox {
+	margin-top: 10px;
+    }
+    
+div.captchaImg {
+	margin-bottom: 10px;
+    margin-top: 5px;
+    height: 40px !important;
     }
 
-table.login tr,
-table.login td {
-	height: 0px;
+img#captcha {
+	margin-left: 200px;
+    }
+    
+div#infoLogin {
+    width: 100%;
+    height: auto;
+    text-align: center;
+    margin-top: 20px;
+    color: #666;
+    position: relative;
+    margin-bottom: 20px;
 }
+
+div.other {
+	margin: 10px 0px;
+    text-align: center;
+    }
 
 <?php
 if (is_object($db)) $db->close();
