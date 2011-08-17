@@ -20,7 +20,7 @@
 /**
  *		\file       htdocs/theme/auguria/style.css.php
  *		\brief      Fichier de style CSS du theme auguria
- *		\version    $Id: style.css.php,v 1.100 2011/08/16 17:59:46 eldy Exp $
+ *		\version    $Id: style.css.php,v 1.101 2011/08/17 13:08:19 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -2061,3 +2061,7 @@ div.tdlineupdown {
     cursor: move;
 	white-space: nowrap;
 }
+
+<?php
+if (is_object($db)) $db->close();
+?>

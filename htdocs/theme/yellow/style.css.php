@@ -19,7 +19,7 @@
 /**
  *		\file       htdocs/theme/yellow/style.css.php
  *		\brief      Fichier de style CSS du theme Yellow
- *		\version    $Id: style.css.php,v 1.48 2011/08/15 17:43:42 eldy Exp $
+ *		\version    $Id: style.css.php,v 1.49 2011/08/17 13:08:19 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -1651,3 +1651,7 @@ a.cke_dialog_ui_button
 .template-upload {
     height: 72px !important;
 }
+
+<?php
+if (is_object($db)) $db->close();
+?>
