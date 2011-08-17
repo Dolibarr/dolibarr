@@ -22,7 +22,7 @@
 /**
  *		\file       htdocs/theme/bureau2crea/style.css.php
  *		\brief      Fichier de style CSS du theme bureau2crea
- *		\version    $Id: style.css.php,v 1.45 2011/08/17 08:00:48 bureau2crea Exp $
+ *		\version    $Id: style.css.php,v 1.44 2011/08/15 17:43:41 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -242,7 +242,7 @@ div.vmenu {
 	position: relative;
     float: left;
     margin: 0px;
-    width: 180px;
+    width: 220px;
 }
 
 div.fiche {
@@ -594,7 +594,7 @@ img.login, img.printer, img.entity {
 .vmenu{
 margin: 0;
 position: relative;
-width: 180px;
+width: 210px;
 }
 <?php if (GETPOST("optioncss") == 'print') { ?>
 .vmenu {
@@ -627,7 +627,7 @@ div.blockvmenupair
 	padding: 0px;
 	width: 100%;
     background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_leftCategorie.jpg' ?>);
-    background-position: top right;
+    background-position: top left;
     background-repeat: no-repeat;
 
 }
@@ -681,15 +681,15 @@ div.blockvmenusearch
 {
 	margin: 3px 0px 15px 0px;
 	padding: 25px 0px 2px 2px;
-	width: 180px;
+	width: 220px;
     background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_leftMenu.jpg' ?>);
-    background-position: top right;
+    background-position: top left;
     background-repeat: no-repeat;
 }
 
 div.blockvmenusearch input[type="text"] {
 	float: left;
-    width: 110px;
+    width: 150px;
     border: 1px solid #333;
     font-size: 10px;
     height: 16px;
@@ -1364,6 +1364,8 @@ table.noborder {
 
 tr.liste_titre {
     height: 20px;
+ 	background: #7699A9;
+    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/menus/trtitle.png' ?>);
     background-repeat: repeat-x;
     color: #FFFFFF;
     font-family: <?php print $fontlist ?>;
