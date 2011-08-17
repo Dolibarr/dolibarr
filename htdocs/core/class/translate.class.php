@@ -23,7 +23,7 @@
  *		\brief      File for Tanslate class
  *		\author	    Eric Seigne
  *		\author	    Laurent Destailleur
- *		\version    $Id: translate.class.php,v 1.52 2011/08/17 21:51:20 eldy Exp $
+ *		\version    $Id: translate.class.php,v 1.50 2011/08/15 23:17:14 eldy Exp $
  */
 
 
@@ -35,16 +35,16 @@ class Translate {
 
 	var $dir;						// Directories that contains /langs subdirectory
 
-	var $defaultlang;				// Current language for current user
+	var $defaultlang;				// Langue courante en vigueur de l'utilisateur
 	var $direction = 'ltr';			// Left to right or Right to left
-	var $charset_inputfile=array();	// To store charset encoding used for language
-	var $charset_output='UTF-8';	// Codage used by "trans" method outputs
 
-	var $tab_translate=array();		// Array of all translations key=>value
+	var $tab_translate=array();		// Tableau des traductions
 	var $tab_loaded=array();		// Array to store result after loading each language file
 
-	var $cache_labels=array();		// Cache for labels return by trans method
+	var $cache_labels=array();		// Cache for labels
 
+	var $charset_inputfile=array();	// To store charset encoding used for language
+	var $charset_output='UTF-8';	// Codage used by "trans" method outputs
 
 
 	/**
@@ -60,6 +60,7 @@ class Translate {
 		if ($dir) $this->dir=array($dir);
 		else $this->dir=$conf->file->dol_document_root;
 	}
+
 
 
 	/**
@@ -219,7 +220,7 @@ class Translate {
 				// Using a memcached server
 				if (! empty($conf->memcached->enabled) && ! empty($conf->global->MEMCACHED_SERVER))
 				{
-					$usecachekey=$newdomain.'_'.$langofdir.'_'.md5($file_lang);    // Should not contains special chars
+					$usecachekey=$newdomain.'_'.$langofdir.'_'.$file_lang;
 				}
 				// Using cache with shmop. Speed gain: 40ms - Memory overusage: 200ko (Size of session cache file)
 				else if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02))
@@ -260,17 +261,17 @@ class Translate {
 								{
 									$value=trim(preg_replace('/\\n/',"\n",$tab[1]));
 
-									//if ($key == 'CHARSET')		// This is to declare in which charset files are encoded
-									//{
-									//	$this->charset_inputfile[$newdomain]=strtoupper($value);
-										//print 'File '.$file_lang.' is declared to have format '.$this->charset_inputfile[$newdomain].'<br>';
-									//}
-									//else
-									if ($key == 'DIRECTION')	// This is to declare direction of language
+									if ($key == 'CHARSET')		// This is to declare in which charset files are encoded
 									{
-										if ($alt < 2 || empty($this->tab_translate[$key]))	// We load direction only for primary files or if not yet loaded
+										$this->charset_inputfile[$newdomain]=strtoupper($value);
+										//print 'File '.$file_lang.' is declared to have format '.$this->charset_inputfile[$newdomain].'<br>';
+									}
+									elseif ($key == 'DIRECTION')	// This is to declare direction of language
+									{
+										if ($alt < 2 || empty($this->tab_translate[$key]))	// We load direction only for primary files or if not yer load
 										{
                                             $this->tab_translate[$key]=$value;
+
 											if ($stopafterdirection) break;	// We do not save tab if we stop after DIRECTION
 											else if ($usecachekey) $tabtranslatedomain[$key]=$value;
 										}
@@ -278,9 +279,11 @@ class Translate {
 									else
 									{
 										// On stocke toujours dans le tableau Tab en UTF-8
-										//if (! empty($this->charset_inputfile[$newdomain]) && $this->charset_inputfile[$newdomain] == 'ISO-8859-1') $value=utf8_encode($value);
+										if (empty($this->charset_inputfile[$newdomain]) || $this->charset_inputfile[$newdomain] == 'ISO-8859-1') $value=utf8_encode($value);
 
+										//print 'XX'.$key;
 										$this->tab_translate[$key]=$value;
+
 										if ($usecachekey) $tabtranslatedomain[$key]=$value;	// To save lang content in cache
 									}
 								}
@@ -292,16 +295,12 @@ class Translate {
 						// To save lang content for usecachekey into cache
 						if ($usecachekey && sizeof($tabtranslatedomain))
 						{
-							$ressetcache=dol_setcache($usecachekey,$tabtranslatedomain);
-							if ($ressetcache < 0)
-							{
-							    $error='Failed to set cache for usecachekey='.$usecachekey.' result='.$ressetcache;
-							    dol_syslog($error, LOG_ERR);
-							}
+							require_once(DOL_DOCUMENT_ROOT ."/lib/memory.lib.php");
+							$size=dol_setcache($usecachekey,$tabtranslatedomain);
 						}
 						//exit;
 
-						if (empty($conf->global->MAIN_FORCELANGDIR)) break;		// Break loop on each root dir. If a module has forced dir, we do not stop loop.
+						if (empty($conf->global->MAIN_FORCELANGDIR)) break;		// Break loop on each root dir. If a module has forced, we do not stop loop.
 					}
 				}
 			}

@@ -26,7 +26,7 @@
  *	\file       htdocs/societe/class/societe.class.php
  *	\ingroup    societe
  *	\brief      File for third party class
- *	\version    $Id: societe.class.php,v 1.99 2011/08/17 19:43:19 hregis Exp $
+ *	\version    $Id: societe.class.php,v 1.98 2011/08/12 06:55:55 simnandez Exp $
  */
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 
@@ -219,7 +219,7 @@ class Societe extends CommonObject
             {
                 $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."societe");
 
-                $ret = $this->update($this->id,$user,0,1,1,'add');
+                $ret = $this->update($this->id,$user,0,1,1);
 
                 // si un commercial cree un client il lui est affecte automatiquement
                 if (!$user->rights->societe->client->voir)
@@ -368,7 +368,7 @@ class Societe extends CommonObject
      *		@param		allowmodcodefournisseur		Inclut modif code fournisseur et code compta fournisseur
      *      @return     int             			<0 if KO, >=0 if OK
      */
-    function update($id, $user='', $call_trigger=1, $allowmodcodeclient=0, $allowmodcodefournisseur=0, $action='update')
+    function update($id, $user='', $call_trigger=1, $allowmodcodeclient=0, $allowmodcodefournisseur=0)
     {
         require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 
@@ -975,25 +975,8 @@ class Societe extends CommonObject
                 $this->error = $this->db->lasterror();
                 dol_syslog("Societe::Delete erreur -3 ".$this->error, LOG_ERR);
             }
-            
-            if ($sqr == 4)
-            {
-            	// Actions on extra fields (by external module or standard code)
-                include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
-                $hookmanager=new HookManager($this->db);
-                $hookmanager->callHooks(array('thirdparty_extrafields'));
-                $parameters=array();
-                $reshook=$hookmanager->executeHooks('deleteExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-                if (empty($reshook))
-                {
-                    //TODO add deleteExtraFields function
-                	//$result=$this->deleteExtraFields($this);
-                    //if ($result > 0) $sqr++;
-                }
-                else if ($reshook > 0) $sqr++;
-            }
 
-            if ($sqr == 5)
+            if ($sqr == 4)
             {
                 // Appel des triggers
                 include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");

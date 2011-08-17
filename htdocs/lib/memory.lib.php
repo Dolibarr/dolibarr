@@ -19,7 +19,7 @@
 /**
  *  \file		htdocs/lib/memory.lib.php
  *  \brief		Set of function for memory/cache management
- *  \version	$Id: memory.lib.php,v 1.12 2011/08/17 21:39:08 eldy Exp $
+ *  \version	$Id: memory.lib.php,v 1.11 2011/07/31 23:25:11 eldy Exp $
  */
 
 global $shmkeys,$shmoffset;
@@ -34,11 +34,10 @@ $shmoffset=100;
 
 
 /**
- * 	Save data into a memory area shared by all users, all sessions on server
- *
- *  @param      $memoryid		Memory id of shared area
- * 	@param		$data			Data to save
- * 	@return		int				<0 if KO, Nb of bytes written if OK
+ * 	\brief      Save data into a memory area shared by all users, all sessions on server
+ *  \param      $memoryid		Memory id of shared area
+ * 	\param		$data			Data to save
+ * 	\return		int				<0 if KO, Nb of bytes written if OK
  */
 function dol_setcache($memoryid,$data)
 {
@@ -53,8 +52,7 @@ function dol_setcache($memoryid,$data)
 		$tmparray=explode(':',$conf->global->MEMCACHED_SERVER);
 		$result=$m->addServer($tmparray[0], $tmparray[1]?$tmparray[1]:11211);
 		//$m->setOption(Memcached::OPT_COMPRESSION, false);
-		//print "Add memoryid=".$memoryid;
-		$m->add($memoryid,$data);    // This fails if key already exists
+		$m->add($memoryid,$data);
 		$rescode=$m->getResultCode();
 		if ($rescode == 0)
 		{
@@ -72,7 +70,7 @@ function dol_setcache($memoryid,$data)
 		$tmparray=explode(':',$conf->global->MEMCACHED_SERVER);
 		$result=$m->addServer($tmparray[0], $tmparray[1]?$tmparray[1]:11211);
 		//$m->setOption(Memcached::OPT_COMPRESSION, false);
-		$result=$m->add($memoryid,$data);    // This fails if key already exists
+		$result=$m->add($memoryid,$data);
 		if ($result)
 		{
 			return sizeof($data);
@@ -92,10 +90,9 @@ function dol_setcache($memoryid,$data)
 }
 
 /**
- * 	Read a memory area shared by all users, all sessions on server
- *
- *  @param      $memoryid		Memory id of shared area
- * 	@return		int				<0 if KO, data if OK
+ * 	\brief      Read a memory area shared by all users, all sessions on server
+ *  \param      $memoryid		Memory id of shared area
+ * 	\return		int				<0 if KO, data if OK
  */
 function dol_getcache($memoryid)
 {
@@ -109,10 +106,9 @@ function dol_getcache($memoryid)
 		$tmparray=explode(':',$conf->global->MEMCACHED_SERVER);
 		$result=$m->addServer($tmparray[0], $tmparray[1]?$tmparray[1]:11211);
 		//$m->setOption(Memcached::OPT_COMPRESSION, false);
-		//print "Get memoryid=".$memoryid;
 		$data=$m->get($memoryid);
 		$rescode=$m->getResultCode();
-		//print "memoryid=".$memoryid." - rescode=".$rescode." - data=".sizeof($data)."\n<br>";
+		//print "memoryid=".$memoryid." - rescode=".$rescode." - date=".sizeof($data)."\n<br>";
 		//var_dump($data);
 		if ($rescode == 0)
 		{
@@ -131,7 +127,7 @@ function dol_getcache($memoryid)
 		$result=$m->addServer($tmparray[0], $tmparray[1]?$tmparray[1]:11211);
 		//$m->setOption(Memcached::OPT_COMPRESSION, false);
 		$data=$m->get($memoryid);
-		//print "memoryid=".$memoryid." - rescode=".$rescode." - data=".sizeof($data)."\n<br>";
+		//print "memoryid=".$memoryid." - rescode=".$rescode." - date=".sizeof($data)."\n<br>";
 		//var_dump($data);
 		if ($data)
 		{

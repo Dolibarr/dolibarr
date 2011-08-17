@@ -20,7 +20,7 @@
 /**
  *	\file       htdocs/index.php
  *	\brief      Dolibarr home page
- *	\version    $Id: index.php,v 1.203 2011/08/17 22:13:26 eldy Exp $
+ *	\version    $Id: index.php,v 1.202 2011/08/15 17:43:43 eldy Exp $
  */
 
 define('NOCSRFCHECK',1);	// This is login page. We must be able to go on it from another web site.
@@ -90,7 +90,8 @@ if (! empty($conf->global->MAIN_MOTD))
 }
 
 
-print '<div class="fichecenter"><div class="fichethirdleft">';
+if (! empty($conf->global->MAIN_TRY_DIV)) print '<div class="fichecenter"><div class="fichethirdleft">';
+else print '<table width="100%" class="notopnoleftnoright"><tr><td valign="top" class="notopnoleft">';
 
 
 /*
@@ -254,7 +255,8 @@ if ($user->societe_id == 0)
 }
 
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+if (! empty($conf->global->MAIN_TRY_DIV)) print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+else print '</td><td width="65%" valign="top" class="notopnoleftnoright">';
 
 
 /*
@@ -514,7 +516,8 @@ foreach($dashboardlines as $key => $board)
 print '</table>';   // End table array
 
 
-print '</div></div></div><div class="fichecenter"><br>';
+if (! empty($conf->global->MAIN_TRY_DIV)) print '</div></div></div><div class="fichecenter"><br>';
+else print '</td></tr></table>';      // End table left area
 
 
 
@@ -525,7 +528,7 @@ print '</div></div></div><div class="fichecenter"><br>';
 printBoxesArea($user,"0");
 
 
-print '</div>';
+if (! empty($conf->global->MAIN_TRY_DIV)) print '</div>';
 
 /*
  * Show security warnings
@@ -565,7 +568,7 @@ if ($user->admin && empty($conf->global->MAIN_REMOVE_INSTALL_WARNING))
 
 $db->close();
 
-llxFooter('$Date: 2011/08/17 22:13:26 $ - $Revision: 1.203 $');
+llxFooter('$Date: 2011/08/15 17:43:43 $ - $Revision: 1.202 $');
 
 
 /**
