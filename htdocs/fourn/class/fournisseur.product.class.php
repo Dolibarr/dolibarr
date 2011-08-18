@@ -22,7 +22,7 @@
  * 	\file       htdocs/fourn/class/fournisseur.product.class.php
  * 	\ingroup    produit
  * 	\brief      File of class to manage predefined suppliers products
- * 	\version    $Id: fournisseur.product.class.php,v 1.8 2011/08/17 15:22:40 simnandez Exp $
+ * 	\version    $Id: fournisseur.product.class.php,v 1.9 2011/08/18 08:01:07 simnandez Exp $
  */
 
 require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
@@ -53,9 +53,9 @@ class ProductFournisseur extends Product
 
 
    /**
-	*    \brief    Remove all prices for this couple supplier-product
-	*    \param    id_fourn    id du fournisseur
-	*    \return   int         < 0 si erreur, > 0 si ok
+	*    Remove all prices for this couple supplier-product
+	*    @param    id_fourn    Supplier Id
+	*    @return   int         < 0 if error, > 0 if ok
 	*/
 	function remove_fournisseur($id_fourn)
 	{
@@ -122,9 +122,9 @@ class ProductFournisseur extends Product
 
 
    /**
-	*    \brief    Remove supplier product
-	*    \param    rowid     Product id
-	*    \return   int       < 0 si erreur, > 0 si ok
+	*    Remove supplier product
+	*    @param    rowid     Product id
+	*    @return   int       < 0 if error, > 0 if ok
 	*/
 	function remove_product_fournisseur($rowid)
 	{
@@ -144,9 +144,9 @@ class ProductFournisseur extends Product
 	}
 
 	/**
-	 * 	\brief		Remove a price for a couple supplier-product
-	 * 	\param		rowid	Line id of price
-	 *	\return		int		<0 if KO, >0 if OK
+	 * 	Remove a price for a couple supplier-product
+	 * 	@param		rowid	Line id of price
+	 *	@return		int		<0 if KO, >0 if OK
 	 */
 	function remove_product_fournisseur_price($rowid)
 	{
@@ -221,8 +221,11 @@ class ProductFournisseur extends Product
 
 
    /**
-	*
-	*
+	*	 Modify the purchase price for a supplier
+	*    @param  ref             	Supplier ref
+ 	*	 @param  qty             	Min quantity for which price is valid
+	*    @param  buyprice        	Purchase price for the quantity min
+	*    @param  user            	Object user user made changes
 	*/
 	function update($ref, $qty, $buyprice, $user)
 	{
@@ -244,12 +247,13 @@ class ProductFournisseur extends Product
 
 
    /**
-	*    \brief  Modifie le prix d'achat pour un fournisseur
-	*    \param  qty             	Quantite min pour lequel le prix est valide
-	*    \param  buyprice        	Prix d'achat pour la quantite min
-	*    \param  user            	Objet user de l'utilisateur qui modifie
-	*    \param  price_base_type	HT or TTC
-	*    \param  fourn				Supplier
+	*    Modify the purchase price for a supplier
+	*    @param  qty             	Min quantity for which price is valid
+	*    @param  buyprice        	Purchase price for the quantity min
+	*    @param  user            	Object user user made changes
+	*    @param  price_base_type	HT or TTC
+	*    @param  fourn				Supplier
+	*    @param  availability		Product availability
 	*/
 	function update_buyprice($qty, $buyprice, $user, $price_base_type='HT', $fourn,$availability)
 	{
@@ -344,13 +348,13 @@ class ProductFournisseur extends Product
 
 
 	/**
-	 * 	\brief  Modifie le prix d'achat pour un fournisseur par la referecne du produit chez le fournisseur
-	 * 	\param  id_fourn        		Id du fournisseur
-	 * 	\param  product_fourn_ref 		Ref du produit chez le fournisseur
-	 * 	\param  qty             		Quantite pour lequel le prix est valide
-	 * 	\param  buyprice        		Prix d'achat pour la quantite
-	 * 	\param  user            		Objet user de l'utilisateur qui modifie
-	 * 	\return	int						<0 si KO, >0 si OK
+	 * 	Changes the purchase price for a supplier of the product in the reference supplier
+	 * 	@param  id_fourn        		Supplier ID
+	 * 	@param  product_fourn_ref 		Supplier ref product
+	 * 	@param  qty             		Amount for which the price is valid
+	 * 	@param  buyprice        		Purchase price for the quantity
+	 * 	@param  user            		Object user user made changes
+	 * 	@return	int						<0 if KO, >0 if OK
 	 */
 	function UpdateBuyPriceByFournRef($id_fourn, $product_fourn_ref, $qty, $buyprice, $user, $price_base_type='HT')
 	{
@@ -380,9 +384,9 @@ class ProductFournisseur extends Product
 
 
    /**
-	*    \brief      Charge les informations relatives a un fournisseur
-	*    \param      fournid         id du fournisseur
-	*    \return     int             < 0 si erreur, > 0 si ok
+	*    Load information about a provider
+	*    @param      fournid         Supplier ID
+	*    @return     int             < 0 if error, > 0 if ok
 	*/
 	function fetch_fourn_data($fournid)
 	{
@@ -415,9 +419,9 @@ class ProductFournisseur extends Product
 	}
 
    /**
-	*    \brief      Charge les informations relatives a un prix de fournisseur
-	*    \param      rowid	         id ligne
-	*    \return     int             < 0 if KO, 0 if OK but not found, > 0 if OK
+	*    Loads the price information of a provider
+	*    @param      rowid	         line id
+	*    @return     int             < 0 if KO, 0 if OK but not found, > 0 if OK
 	*/
 	function fetch_product_fournisseur_price($rowid)
 	{
