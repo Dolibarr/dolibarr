@@ -21,7 +21,7 @@
 /**
  *	    \file       htdocs/lib/usergroups.lib.php
  *		\brief      Ensemble de fonctions de base pour la gestion des utilisaterus et groupes
- *		\version    $Id: usergroups.lib.php,v 1.30 2011/07/31 23:25:25 eldy Exp $
+ *		\version    $Id: usergroups.lib.php,v 1.31 2011/08/18 08:25:09 hregis Exp $
  */
 function user_prepare_head($object)
 {
@@ -222,7 +222,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
         	&& substr($subdir, 0, 3) <> 'CVS' && ! preg_match('/common|phones/i',$subdir))
         {
 			// Disable not stable themes
-        	if ($conf->global->MAIN_FEATURES_LEVEL < 1 && preg_match('/bureau2crea/i',$subdir)) continue;
+        	//if ($conf->global->MAIN_FEATURES_LEVEL < 1 && preg_match('/bureau2crea/i',$subdir)) continue;
 
             if ($i % $thumbsbyrow == 0)
             {
