@@ -24,7 +24,7 @@
  *  \file       htdocs/product/composition/fiche.php
  *  \ingroup    product
  *  \brief      Page de la fiche produit
- *  \version    $Id: fiche.php,v 1.12 2011/08/18 16:16:05 simnandez Exp $
+ *  \version    $Id: fiche.php,v 1.13 2011/08/18 16:32:08 simnandez Exp $
  */
 
 require("../../main.inc.php");
@@ -248,7 +248,6 @@ if ($id || $ref)
 					$productstatic->id=$idprod;// $value["id"];
 					$productstatic->type=$value["fk_product_type"];
 					$productstatic->ref=$value['label'];
-					if ($conf->stock->enabled) $productstatic->load_stock();
 					print '<tr>';
 					print '<td>'.$productstatic->getNomUrl(1).'</td>';;
 					print '</tr>';
@@ -288,6 +287,7 @@ if ($id || $ref)
 		print '</tr>';
 
 		// Number of subproducts
+		$prodsfather = $product->getFather(); //Parent Products
 		$product->get_sousproduits_arbo ();
 		print '<tr><td>'.$langs->trans("AssociatedProductsNumber").'</td><td>'.sizeof($product->get_arbo_each_prod()).'</td>';
 		print '</tr>';
@@ -313,6 +313,28 @@ if ($id || $ref)
 				print '<tr>';
 				print '<td>'.$productstatic->getNomUrl(1).' ('.$value['nb'].') &nbsp &nbsp</td>';
 				if ($conf->stock->enabled) print '<td>'.$langs->trans("Stock").' : <b>'.$productstatic->stock_reel.'</b></td>';
+				print '</tr>';
+			}
+			print '</table>';
+			print '</td></tr>';
+		}
+		
+		// Number of parent products
+		print '<tr><td>'.$langs->trans("ParentProductsNumber").'</td><td>'.sizeof($prodsfather).'</td>';
+		
+		if(sizeof($prodsfather) > 0)
+		{
+			print '<tr><td colspan="2">';
+			print '<b>'.$langs->trans("ProductParentList").'</b><br>';
+			print '<table class="nobordernopadding">';
+			foreach($prodsfather as $value)
+			{
+				$idprod= $value["id"];
+				$productstatic->id=$idprod;// $value["id"];
+				$productstatic->type=$value["fk_product_type"];
+				$productstatic->ref=$value['label'];
+				print '<tr>';
+				print '<td>'.$productstatic->getNomUrl(1).'</td>';;
 				print '</tr>';
 			}
 			print '</table>';
@@ -475,5 +497,5 @@ print "\n</div>\n";
 
 $db->close();
 
-llxFooter('$Date: 2011/08/18 16:16:05 $ - $Revision: 1.12 $');
+llxFooter('$Date: 2011/08/18 16:32:08 $ - $Revision: 1.13 $');
 ?>
