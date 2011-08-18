@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Brice Davoleau       <brice.davoleau@gmail.com>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin  		<patrick.raguin@gmail.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
@@ -24,7 +24,7 @@
  *  \file       htdocs/categories/categorie.php
  *  \ingroup    category
  *  \brief      Page to show category tab
- *  \version    $Id: categorie.php,v 1.65 2011/08/03 00:46:32 eldy Exp $
+ *  \version    $Id: categorie.php,v 1.66 2011/08/18 22:33:43 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -418,7 +418,7 @@ else if ($_GET["id"] || $_GET["ref"])
 
 		print '</div>';
 
-		if ($mesg) print($mesg);
+		dol_htmloutput_mesg($mesg);
 
 		formCategory($db,$member,3);
 	}
@@ -447,7 +447,7 @@ function formCategory($db,$object,$typeid)
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td width="40%">';
-	print $langs->trans("ClassifyInCategory");
+	print $langs->trans("ClassifyInCategory").' &nbsp;';
 	print $html->select_all_categories($typeid);
 	print '</td><td>';
 	print '<input type="submit" class="button" value="'.$langs->trans("Classify").'"></td>';
@@ -534,5 +534,5 @@ function formCategory($db,$object,$typeid)
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:32 $ - $Revision: 1.65 $');
+llxFooter('$Date: 2011/08/18 22:33:43 $ - $Revision: 1.66 $');
 ?>
