@@ -20,7 +20,7 @@
 /**
  *       \file       htdocs/admin/ihm.php
  *       \brief      Page to setup GUI display options
- *       \version    $Id: ihm.php,v 1.131 2011/08/10 23:48:09 eldy Exp $
+ *       \version    $Id: ihm.php,v 1.132 2011/08/18 23:17:23 cdelambert Exp $
  */
 
 require("../main.inc.php");
@@ -67,6 +67,9 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 	dolibarr_set_const($db, "MAIN_FIRSTNAME_NAME_POSITION",          $_POST["MAIN_FIRSTNAME_NAME_POSITION"],'chaine',0,'',$conf->entity);
 
 	dolibarr_set_const($db, "MAIN_THEME",              $_POST["main_theme"],'chaine',0,'',$conf->entity);
+	if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/init_ihm.php')){
+		include_once (DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/init_ihm.php');
+	}
 
 	dolibarr_set_const($db, "MAIN_SEARCHFORM_CONTACT", $_POST["MAIN_SEARCHFORM_CONTACT"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_SEARCHFORM_SOCIETE", $_POST["MAIN_SEARCHFORM_SOCIETE"],'chaine',0,'',$conf->entity);
@@ -406,5 +409,5 @@ else	// Show
 
 $db->close();
 
-llxFooter('$Date: 2011/08/10 23:48:09 $ - $Revision: 1.131 $');
+llxFooter('$Date: 2011/08/18 23:17:23 $ - $Revision: 1.132 $');
 ?>
