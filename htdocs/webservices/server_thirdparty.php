@@ -18,7 +18,7 @@
 /**
  *       \file       htdocs/webservices/server_thirdparty.php
  *       \brief      File that is entry point to call Dolibarr WebServices
- *       \version    $Id: server_thirdparty.php,v 1.13 2011/07/31 23:21:08 eldy Exp $
+ *       \version    $Id: server_thirdparty.php,v 1.14 2011/08/18 22:26:10 eldy Exp $
  */
 
 // This is to make Dolibarr working with Plesk
@@ -180,11 +180,11 @@ function getThirdParty($authentication,$id='',$ref='',$ref_ext='')
 //			    		'date_creation' => $thirdparty->
 //			    		'date_modification' => $thirdparty->
 			            'address' => $thirdparty->address,
-				        'zip' => $thirdparty->cp,
-				        'town' => $thirdparty->ville,
-				        'province_id' => $thirdparty->departement_id,
-				        'country_id' => $thirdparty->pays_id,
-				        'country_code' => $thirdparty->pays_code,
+				        'zip' => $thirdparty->zip,
+				        'town' => $thirdparty->town,
+				        'province_id' => $thirdparty->state_id,
+				        'country_id' => $thirdparty->country_id,
+				        'country_code' => $thirdparty->country_code,
 				        'country' => $thirdparty->country,
 			            'phone' => $thirdparty->tel,
 				        'fax' => $thirdparty->fax,

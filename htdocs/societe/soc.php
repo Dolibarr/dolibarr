@@ -25,7 +25,7 @@
  *  \file       htdocs/societe/soc.php
  *  \ingroup    societe
  *  \brief      Third party card page
- *  \version    $Id: soc.php,v 1.137 2011/08/18 06:49:01 hregis Exp $
+ *  \version    $Id: soc.php,v 1.138 2011/08/18 22:25:46 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -133,7 +133,7 @@ if (empty($reshook))
             $object->fetch($socid);
         }
         else if ($canvas) $object->canvas=$canvas;
-        
+
         if (GETPOST("private") == 1)
         {
             $object->particulier           = GETPOST("private");
@@ -156,7 +156,8 @@ if (empty($reshook))
         $object->town                  = $_POST["town"];
         $object->ville                 = $_POST["town"];    // TODO obsolete
         $object->pays_id               = $_POST["pays_id"];
-        $object->departement_id        = $_POST["departement_id"];
+        $object->country_id            = $_POST["pays_id"];
+        $object->state_id              = $_POST["departement_id"];
         $object->tel                   = $_POST["tel"];
         $object->fax                   = $_POST["fax"];
         $object->email                 = trim($_POST["email"]);
@@ -230,8 +231,8 @@ if (empty($reshook))
                 $error++; $errors[] = $langs->trans("ErrorSupplierModuleNotEnabled");
                 $action = ($action=='add'?'create':'edit');
             }
-            
-        	for ($i = 1; $i < 3; $i++) 
+
+        	for ($i = 1; $i < 3; $i++)
         	{
     			$slabel="idprof".$i;
         		if (($_POST[$slabel] && $object->id_prof_verifiable($i)))
@@ -244,7 +245,7 @@ if (empty($reshook))
 					}
 				}
 			}
-        }    
+        }
         if (! $error)
         {
             if ($action == 'add')
@@ -270,7 +271,7 @@ if (empty($reshook))
                         $contact->cp=$object->cp;
                         $contact->town=$object->town;
                         $contact->ville=$object->ville;
-                        $contact->fk_departement=$object->departement_id;
+                        $contact->fk_departement=$object->state_id;
                         $contact->fk_pays=$object->pays_id;
                         $contact->socid=$object->id;                   // fk_soc
                         $contact->status=1;
@@ -569,14 +570,14 @@ else
         $modCodeFournisseur = new $module;
 
         //if ($_GET["type"]=='cp') { $object->client=3; }
-        if (GETPOST("type")!='f') $object->client=3;
+        if (GETPOST("type")!='f')  { $object->client=3; }
         if (GETPOST("type")=='c')  { $object->client=1; }
         if (GETPOST("type")=='p')  { $object->client=2; }
         if ($conf->fournisseur->enabled && (GETPOST("type")=='f' || GETPOST("type")==''))  { $object->fournisseur=1; }
         if (GETPOST("private")==1) { $object->particulier=1; }
 
         $object->name=$_POST["nom"];
-        $object->nom=$_POST["nom"];    // deprecated
+        $object->nom=$_POST["nom"];     // TODO obsolete
         $object->prenom=$_POST["prenom"];
         $object->particulier=$_REQUEST["private"];
         $object->prefix_comm=$_POST["prefix_comm"];
@@ -586,9 +587,11 @@ else
         $object->code_fournisseur=$_POST["code_fournisseur"];
         $object->adresse=$_POST["adresse"]; // TODO obsolete
         $object->address=$_POST["adresse"];
-        $object->cp=$_POST["zipcode"];
-        $object->ville=$_POST["town"];
-        $object->departement_id=$_POST["departement_id"];
+        $object->cp=$_POST["zipcode"]; // TODO obsolete
+        $object->zip=$_POST["zipcode"];
+        $object->ville=$_POST["town"]; // TODO obsolete
+        $object->town=$_POST["town"];
+        $object->state_id=$_POST["departement_id"];
         $object->tel=$_POST["tel"];
         $object->fax=$_POST["fax"];
         $object->email=$_POST["email"];
@@ -647,10 +650,11 @@ else
                 }
             }
         }
-        ### Gestion du logo de la société
 
+        ### Gestion du logo de la société
         // We set pays_id, pays_code and label for the selected country
-        $object->pays_id=$_POST["pays_id"]?$_POST["pays_id"]:$mysoc->pays_id;
+        $object->country_id=$_POST["pays_id"]?$_POST["pays_id"]:$mysoc->country_id;
+        $object->pays_id=$_POST["pays_id"]?$_POST["pays_id"]:$mysoc->country_id;
         if ($object->pays_id)
         {
             $sql = "SELECT code, libelle";
@@ -667,9 +671,10 @@ else
             }
             $object->pays_code=$obj->code;
             $object->pays=$obj->libelle;
+            $object->country_code=$obj->code;
+            $object->country=$obj->libelle;
         }
         $object->forme_juridique_code=$_POST['forme_juridique_code'];
-
         /* Show create form */
 
         print_fiche_titre($langs->trans("NewCompany"));
@@ -826,9 +831,8 @@ else
         // Barcode
         if ($conf->global->MAIN_MODULE_BARCODE)
         {
-            print '<tr><td>'.$langs->trans('Gencod').'</td><td colspan="3"><input type="text" name="gencod">';
-            print $object->gencod;
-            print '</textarea></td></tr>';
+            print '<tr><td>'.$langs->trans('Gencod').'</td><td colspan="3"><input type="text" name="gencod" value="'.$object->gencod.'">';
+            print '</td></tr>';
         }
 
         // Address
@@ -838,14 +842,14 @@ else
 
         // Zip / Town
         print '<tr><td>'.$langs->trans('Zip').'</td><td>';
-        print $formcompany->select_ziptown($object->cp,'zipcode',array('town','selectpays_id','departement_id'),6);
+        print $formcompany->select_ziptown($object->zip,'zipcode',array('town','selectpays_id','departement_id'),6);
         print '</td><td>'.$langs->trans('Town').'</td><td>';
-        print $formcompany->select_ziptown($object->ville,'town',array('zipcode','selectpays_id','departement_id'));
+        print $formcompany->select_ziptown($object->town,'town',array('zipcode','selectpays_id','departement_id'));
         print '</td></tr>';
 
         // Country
         print '<tr><td width="25%">'.$langs->trans('Country').'</td><td colspan="3">';
-        $form->select_pays($object->pays_id,'pays_id');
+        $form->select_pays($object->country_id,'pays_id');
         if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
         print '</td></tr>';
 
@@ -853,7 +857,7 @@ else
         if (empty($conf->global->SOCIETE_DISABLE_STATE))
         {
             print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
-            if ($object->pays_id) $formcompany->select_departement($object->departement_id,$object->pays_code);
+            if ($object->country_id) $formcompany->select_departement($object->state_id,$object->country_code,'departement_id');
             else print $countrynotdefined;
             print '</td></tr>';
         }
@@ -1089,18 +1093,16 @@ else
             {
                 // We overwrite with values if posted
                 $object->name=$_POST["nom"];
-                $object->nom=$_POST["nom"];    // deprecated
                 $object->prefix_comm=$_POST["prefix_comm"];
                 $object->client=$_POST["client"];
                 $object->code_client=$_POST["code_client"];
                 $object->fournisseur=$_POST["fournisseur"];
                 $object->code_fournisseur=$_POST["code_fournisseur"];
-                $object->adresse=$_POST["adresse"]; // TODO obsolete
                 $object->address=$_POST["adresse"];
-                $object->cp=$_POST["zipcode"];
-                $object->ville=$_POST["town"];
-                $object->pays_id=$_POST["pays_id"]?$_POST["pays_id"]:$mysoc->pays_id;
-                $object->departement_id=$_POST["departement_id"];
+                $object->zip=$_POST["zipcode"];
+                $object->town=$_POST["town"];
+                $object->country_id=$_POST["pays_id"]?$_POST["pays_id"]:$mysoc->pays_id;
+                $object->state_id=$_POST["departement_id"];
                 $object->tel=$_POST["tel"];
                 $object->fax=$_POST["fax"];
                 $object->email=$_POST["email"];
@@ -1299,7 +1301,7 @@ else
             if (empty($conf->global->SOCIETE_DISABLE_STATE))
             {
                 print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
-                $formcompany->select_departement($object->departement_id,$object->pays_code);
+                $formcompany->select_departement($object->state_id,$object->pays_code);
                 print '</td></tr>';
             }
 
@@ -1973,5 +1975,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/18 06:49:01 $ - $Revision: 1.137 $');
+llxFooter('$Date: 2011/08/18 22:25:46 $ - $Revision: 1.138 $');
 ?>

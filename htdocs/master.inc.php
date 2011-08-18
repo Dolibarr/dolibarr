@@ -29,7 +29,7 @@
  * 	\ingroup	core
  *  \brief      File that defines environment for all Dolibarr process (pages or scripts)
  * 				This script reads the conf file, init $lang, $db and and empty $user
- *  \version    $Id: master.inc.php,v 1.357 2011/08/17 13:44:15 eldy Exp $
+ *  \version    $Id: master.inc.php,v 1.358 2011/08/18 22:26:02 eldy Exp $
  */
 
 
@@ -219,7 +219,6 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 	$mysoc->zip=$conf->global->MAIN_INFO_SOCIETE_CP;
 	$mysoc->ville=$conf->global->MAIN_INFO_SOCIETE_VILLE; 		// TODO deprecated
 	$mysoc->town=$conf->global->MAIN_INFO_SOCIETE_VILLE;
-	$mysoc->departement_id=$conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT;	// TODO deprecated
 	$mysoc->state_id=$conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT;
 	$mysoc->note=empty($conf->global->MAIN_INFO_SOCIETE_NOTE)?'':$conf->global->MAIN_INFO_SOCIETE_NOTE;
 
