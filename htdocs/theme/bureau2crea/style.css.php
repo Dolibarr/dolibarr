@@ -22,7 +22,7 @@
 /**
  *		\file       htdocs/theme/bureau2crea/style.css.php
  *		\brief      Fichier de style CSS du theme bureau2crea
- *		\version    $Id: style.css.php,v 1.54 2011/08/17 16:36:32 bureau2crea Exp $
+ *		\version    $Id: style.css.php,v 1.55 2011/08/18 15:42:14 cdelambert Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -114,6 +114,11 @@ body {
 #mainbody .content_box {
 	margin: 0px 20px 20px 20px;
     }
+
+#ad_banner {
+	text-align: center;
+	vertical-align: bottom;
+}
 
 a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; font-weight: bold; color: #000000; text-decoration: none; }
 

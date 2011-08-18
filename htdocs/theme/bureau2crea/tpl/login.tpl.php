@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: login.tpl.php,v 1.1 2011/08/17 15:15:15 bureau2crea Exp $
+ * $Id: login.tpl.php,v 1.2 2011/08/18 15:42:15 cdelambert Exp $
  */
 
 header('Cache-Control: Public, must-revalidate');
@@ -156,7 +156,7 @@ jQuery(document).ready(function () {
 	if (! empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && ! empty($conf->global->MAIN_GOOGLE_AD_SLOT))
 	{
 	?>
-		<div align="center">
+		<div id="ad_banner">
 			<script type="text/javascript"><!--
 				google_ad_client = "<?php echo $conf->global->MAIN_GOOGLE_AD_CLIENT ?>";
 				google_ad_slot = "<?php echo $conf->global->MAIN_GOOGLE_AD_SLOT ?>";
