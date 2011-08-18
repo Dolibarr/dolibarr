@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: login.tpl.php,v 1.1 2011/08/17 15:15:15 bureau2crea Exp $
+ * $Id: login.tpl.php,v 1.3 2011/08/18 17:22:12 cdelambert Exp $
  */
 
 header('Cache-Control: Public, must-revalidate');
@@ -148,10 +148,6 @@ jQuery(document).ready(function () {
 	</div>
 <?php } ?>
 
-
-</form>
-
-
 	<?php
 	if (! empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && ! empty($conf->global->MAIN_GOOGLE_AD_SLOT))
 	{
@@ -169,6 +165,10 @@ jQuery(document).ready(function () {
 			</script>
 		</div>
 	<?php } ?>
+</form>
+
+
+
 
 <!-- authentication mode = <?php echo $main_authentication ?> -->
 <!-- cookie name used for this session = <?php echo $session_name ?> -->

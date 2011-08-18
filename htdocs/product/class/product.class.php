@@ -24,7 +24,7 @@
  *	\file       htdocs/product/class/product.class.php
  *	\ingroup    produit
  *	\brief      Fichier de la classe des produits predefinis
- *	\version    $Id: product.class.php,v 1.50 2011/08/17 15:56:26 eldy Exp $
+ *	\version    $Id: product.class.php,v 1.51 2011/08/18 16:16:04 simnandez Exp $
  */
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
 
@@ -2080,6 +2080,40 @@ class Product extends CommonObject
 		}
 		return $this->res;
 	}
+	
+	
+	/**
+	 *  Return all Father products fo current product
+	 *  @return 	array prod
+	 */
+	function getFather()
+	{
+
+		$sql = "SELECT p.label as label,p.rowid,pa.fk_product_pere as id,p.fk_product_type";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product_association as pa,";
+		$sql.= " ".MAIN_DB_PREFIX."product as p";
+		$sql.= " WHERE p.rowid = pa.fk_product_pere";
+		$sql.= " AND pa.fk_product_fils=".$this->id;
+
+		$res = $this->db->query($sql);
+		if ($res)
+		{
+			$prods = array ();
+			while ($record = $this->db->fetch_array ($res))
+			{
+				$prods[$record['id']]['id'] =  $record['rowid'];
+				$prods[$record['id']]['label'] =  $this->db->escape($record['label']);
+				$prods[$record['id']]['fk_product_type'] =  $record['fk_product_type'];
+			}
+			return $prods;
+		}
+		else
+		{
+			dol_print_error ($this->db);
+			return -1;
+		}
+	}
+	
 
 	/**
 	 *  Return all parent products fo current product
