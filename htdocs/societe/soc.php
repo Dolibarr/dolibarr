@@ -25,7 +25,7 @@
  *  \file       htdocs/societe/soc.php
  *  \ingroup    societe
  *  \brief      Third party card page
- *  \version    $Id: soc.php,v 1.136 2011/08/17 19:43:19 hregis Exp $
+ *  \version    $Id: soc.php,v 1.137 2011/08/18 06:49:01 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -89,7 +89,7 @@ $hookmanager->callHooks(array('thirdpartycard','thirdparty_extrafields'));
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-
+$error=$hookmanager->error; $errors=$hookmanager->errors;
 
 // ---------- start deprecated. Use hook to hook actions.
 // If canvas actions are defined, because on url, or because contact was created with canvas feature on, we use the canvas feature.
@@ -1973,5 +1973,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/17 19:43:19 $ - $Revision: 1.136 $');
+llxFooter('$Date: 2011/08/18 06:49:01 $ - $Revision: 1.137 $');
 ?>

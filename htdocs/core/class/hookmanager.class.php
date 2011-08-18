@@ -21,7 +21,7 @@
  *	\file       htdocs/core/class/hookmanager.class.php
  *	\ingroup    core
  *	\brief      File of class to manage hooks
- *	\version    $Id: hookmanager.class.php,v 1.7 2011/08/11 09:26:34 hregis Exp $
+ *	\version    $Id: hookmanager.class.php,v 1.8 2011/08/18 07:05:13 hregis Exp $
  */
 
 
@@ -143,40 +143,28 @@ class HookManager
                     // Hooks that return int
                     if ($method == 'doActions' && method_exists($actioninstance,$method))
                     {
-                        $restmp+=$actioninstance->doActions($parameters, $object, $action); // action can be changed by method (to go back to other action for example), socid can be changed/set by method (during creation for example)
-                        if ($restmp < 0 || ! empty($actioninstance->error) || (! empty($actioninstance->errors) && sizeof($actioninstance->errors) > 0))
+                        $resaction+=$actioninstance->doActions($parameters, $object, $action); // action can be changed by method (to go back to other action for example), socid can be changed/set by method (during creation for example)
+                        if ($resaction < 0 || ! empty($actioninstance->error) || (! empty($actioninstance->errors) && sizeof($actioninstance->errors) > 0))
                         {
                             $this->error=$actioninstance->error; $this->errors=$actioninstance->errors;
                             if ($action=='add')    $action='create';    // TODO this change must be inside the doActions
                             if ($action=='update') $action='edit';      // TODO this change must be inside the doActions
                         }
-                        else
-                        {
-                            $resaction+=$restmp;
-                        }
                     }
                     else if ($method == 'showInputFields' && method_exists($actioninstance,$method))
                     {
-                        $restmp+=$actioninstance->showInputFields($parameters, $object, $action); // action can be changed by method (to go back to other action for example), socid can be changed/set by method (during creation for example)
-                        if ($restmp < 0 || ! empty($actioninstance->error) || (! empty($actioninstance->errors) && sizeof($actioninstance->errors) > 0))
+                        $resaction+=$actioninstance->showInputFields($parameters, $object, $action); // action can be changed by method (to go back to other action for example), socid can be changed/set by method (during creation for example)
+                        if ($resaction < 0 || ! empty($actioninstance->error) || (! empty($actioninstance->errors) && sizeof($actioninstance->errors) > 0))
                         {
                             $this->error=$actioninstance->error; $this->errors=$actioninstance->errors;
-                        }
-                        else
-                        {
-                            $resaction+=$restmp;
                         }
                     }
                     else if ($method == 'showOutputFields' && method_exists($actioninstance,$method))
                     {
-                        $restmp+=$actioninstance->showOutputFields($parameters, $object, $action); // action can be changed by method (to go back to other action for example), socid can be changed/set by method (during creation for example)
-                        if ($restmp < 0 || ! empty($actioninstance->error) || (! empty($actioninstance->errors) && sizeof($actioninstance->errors) > 0))
+                        $resaction+=$actioninstance->showOutputFields($parameters, $object, $action); // action can be changed by method (to go back to other action for example), socid can be changed/set by method (during creation for example)
+                        if ($resaction < 0 || ! empty($actioninstance->error) || (! empty($actioninstance->errors) && sizeof($actioninstance->errors) > 0))
                         {
                             $this->error=$actioninstance->error; $this->errors=$actioninstance->errors;
-                        }
-                        else
-                        {
-                            $resaction+=$restmp;
                         }
                     }
                     // Generic hooks that return a string (printSearchForm, printLeftBlock, formBuilddocOptions, ...)
