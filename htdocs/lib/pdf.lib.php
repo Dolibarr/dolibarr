@@ -24,7 +24,7 @@
  *	\file       htdocs/lib/pdf.lib.php
  *	\brief      Set of functions used for PDF generation
  *	\ingroup    core
- *	\version    $Id: pdf.lib.php,v 1.104 2011/08/11 16:09:52 eldy Exp $
+ *	\version    $Id: pdf.lib.php,v 1.105 2011/08/18 22:25:46 eldy Exp $
  */
 
 
@@ -218,8 +218,8 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
     if ($mode == 'target' && ! is_object($targetcompany)) return -1;
     if ($mode == 'delivery' && ! is_object($deliverycompany)) return -1;
 
-    if ($sourcecompany->departement_id && empty($sourcecompany->departement)) $sourcecompany->departement=getState($sourcecompany->departement_id);
-    if ($targetcompany->departement_id && empty($targetcompany->departement)) $targetcompany->departement=getState($targetcompany->departement_id);
+    if ($sourcecompany->state_id && empty($sourcecompany->departement)) $sourcecompany->departement=getState($sourcecompany->state_id);
+    if ($targetcompany->state_id && empty($targetcompany->departement)) $targetcompany->departement=getState($targetcompany->state_id);
 
     if ($mode == 'source')
     {
