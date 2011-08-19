@@ -22,7 +22,7 @@
  *      \file       htdocs/user/group/index.php
  * 		\ingroup	core
  *      \brief      Page of user groups
- *      \version    $Id: index.php,v 1.26 2011/08/19 07:22:18 hregis Exp $
+ *      \version    $Id: index.php,v 1.27 2011/08/19 09:26:10 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -103,7 +103,7 @@ if ($resql)
         //multicompany
         if($conf->multicompany->enabled && $conf->entity==0)
         {
-            require_once(DOL_DOCUMENT_ROOT."/multicompany/class/actions_multicompany.class.php");
+            dol_include_once("/multicompany/class/actions_multicompany.class.php");
             $mc = new ActionsMulticompany($db);
             $mc->getInfo($obj->entity);
             print '<td align="center">'.$mc->label.'</td>';
@@ -123,6 +123,6 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/19 07:22:18 $ - $Revision: 1.26 $');
+llxFooter('$Date: 2011/08/19 09:26:10 $ - $Revision: 1.27 $');
 
 ?>
