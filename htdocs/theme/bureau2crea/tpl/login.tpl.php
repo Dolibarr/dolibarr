@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: login.tpl.php,v 1.3 2011/08/18 17:22:12 cdelambert Exp $
+ * $Id: login.tpl.php,v 1.4 2011/08/19 15:06:29 cdelambert Exp $
  */
 
 header('Cache-Control: Public, must-revalidate');
@@ -37,6 +37,10 @@ header("Content-type: text/html; charset=".$conf->file->character_set_client);
 <script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/js/jquery-latest.min.js"></script>
 <link rel="stylesheet" type="text/css" href="<?php echo $conf_css; ?>" />
 <?php echo $conf->global->MAIN_HTML_HEADER ?>
+<?php
+$favicon=DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/favicon.ico';
+?>
+<link rel="shortcut icon" type="image/x-icon" href="<?php echo $favicon; ?>" />
 <!-- HTTP_USER_AGENT = <?php echo $_SERVER['HTTP_USER_AGENT']; ?> -->
 </head>
 
