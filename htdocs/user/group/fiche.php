@@ -21,7 +21,7 @@
 /**
  *       \file       htdocs/user/group/fiche.php
  *       \brief      Onglet groupes utilisateurs
- *       \version    $Id: fiche.php,v 1.72 2011/08/19 09:26:10 hregis Exp $
+ *       \version    $Id: fiche.php,v 1.73 2011/08/19 09:26:42 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -47,7 +47,7 @@ $langs->load("other");
 // Security check
 $result = restrictedArea($user, 'user', $_GET["id"], 'usergroup', 'user');
 
-if($conf->multicompany->enabled && $conf->entity > 0 && $conf->global->MULTICOMPANY_MODE_TRANVERSAL)
+if($conf->multicompany->enabled && $conf->entity > 0 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
 {
     accessforbidden();
 }
@@ -136,8 +136,8 @@ if ($action == 'adduser' || $action =='removeuser')
 
 			$edituser = new User($db);
 			$edituser->fetch($userid);
-			if ($action == 'adduser')    $result=$edituser->SetInGroup($object->id,($conf->global->MULTICOMPANY_MODE_TRANVERSAL?$_POST["entity"]:$object->entity));
-			if ($action == 'removeuser') $result=$edituser->RemoveFromGroup($object->id,($conf->global->MULTICOMPANY_MODE_TRANVERSAL?$_GET["entity"]:$object->entity));
+			if ($action == 'adduser')    $result=$edituser->SetInGroup($object->id,($conf->global->MULTICOMPANY_TRANSVERSE_MODE?$_POST["entity"]:$object->entity));
+			if ($action == 'removeuser') $result=$edituser->RemoveFromGroup($object->id,($conf->global->MULTICOMPANY_TRANSVERSE_MODE?$_GET["entity"]:$object->entity));
 
             if ($result > 0)
             {
@@ -221,7 +221,7 @@ if ($action == 'create')
 	// Multicompany
 	if ($conf->multicompany->enabled)
 	{
-		if ($conf->entity == 0 && !$conf->global->MULTICOMPANY_MODE_TRANVERSAL)
+		if ($conf->entity == 0 && !$conf->global->MULTICOMPANY_TRANSVERSE_MODE)
                 {
                     $mc = new ActionsMulticompany($db);
                     print "<tr>".'<td valign="top">'.$langs->trans("Entity").'</td>';
@@ -360,7 +360,7 @@ else
             
             if (! empty($userslist))
             {
-                if( !($conf->multicompany->enabled && $conf->global->MULTICOMPANY_MODE_TRANVERSAL))
+                if( !($conf->multicompany->enabled && $conf->global->MULTICOMPANY_TRANSVERSE_MODE))
                 {
                     foreach($userslist as $useringroup)
                     {
@@ -382,7 +382,7 @@ else
                 // Multicompany
                 if ($conf->multicompany->enabled)
                 {
-                    if ($conf->entity == 0 && $conf->global->MULTICOMPANY_MODE_TRANVERSAL)
+                    if ($conf->entity == 0 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
                     {
                         $mc = new ActionsMulticompany($db);
                         print '</td><td valign="top">'.$langs->trans("Entity").'</td>';
@@ -478,7 +478,7 @@ else
             // Multicompany
             if ($conf->multicompany->enabled)
             {
-                if ($conf->entity == 0 && !$conf->global->MULTICOMPANY_MODE_TRANVERSAL)
+                if ($conf->entity == 0 && !$conf->global->MULTICOMPANY_TRANSVERSE_MODE)
                 {
                     $mc = new ActionsMulticompany($db);
                     print "<tr>".'<td valign="top">'.$langs->trans("Entity").'</td>';
@@ -520,5 +520,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/19 09:26:10 $ - $Revision: 1.72 $');
+llxFooter('$Date: 2011/08/19 09:26:42 $ - $Revision: 1.73 $');
 ?>

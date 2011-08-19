@@ -24,7 +24,7 @@
 /**
  *       \file       htdocs/user/fiche.php
  *       \brief      Tab of user card
- *       \version    $Id: fiche.php,v 1.277 2011/08/19 09:26:10 hregis Exp $
+ *       \version    $Id: fiche.php,v 1.278 2011/08/19 09:26:41 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -51,7 +51,7 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 }
 
 //Multicompany in mode transversal
-if($conf->multicompany->enabled && $conf->entity > 0 && $conf->global->MULTICOMPANY_MODE_TRANVERSAL)
+if($conf->multicompany->enabled && $conf->entity > 0 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
 {
     accessforbidden();
 }
@@ -203,7 +203,7 @@ if ($_POST["action"] == 'add' && $canadduser)
         $edituser->note          = $_POST["note"];
         $edituser->ldap_sid      = $_POST["ldap_sid"];
         // If multicompany is off, admin users must all be on entity 0.
-        $edituser->entity        = (empty($_POST["entity"]) || empty($conf->multicompany->enabled) ? 0 : $_POST["entity"]);
+        $edituser->entity        = ( ! empty($_POST["admin"]) && (! empty($_POST["superadmin"]) || empty($_POST["entity"]) || empty($conf->multicompany->enabled)) ? 0 : $_POST["entity"]);
 
         $db->begin();
 
@@ -243,8 +243,8 @@ if (($action == 'addgroup' || $action == 'removegroup') && $caneditfield)
 
         $edituser = new User($db);
         $edituser->fetch($_GET["id"]);
-        if ($action == 'addgroup')    $edituser->SetInGroup($group,($conf->global->MULTICOMPANY_MODE_TRANVERSAL?$_POST["entity"]:$editgroup->entity));
-        if ($action == 'removegroup') $edituser->RemoveFromGroup($group,($conf->global->MULTICOMPANY_MODE_TRANVERSAL?$_GET["entity"]:$editgroup->entity));
+        if ($action == 'addgroup')    $edituser->SetInGroup($group,($conf->global->MULTICOMPANY_TRANSVERSE_MODE?GETPOST("entity"):$editgroup->entity));
+        if ($action == 'removegroup') $edituser->RemoveFromGroup($group,($conf->global->MULTICOMPANY_TRANSVERSE_MODE?GETPOST("entity"):$editgroup->entity));
 
         if ($result > 0)
         {
@@ -299,7 +299,7 @@ if ($action == 'update' && ! $_POST["cancel"])
             $edituser->webcal_login  = $_POST["webcal_login"];
             $edituser->phenix_login  = $_POST["phenix_login"];
             $edituser->phenix_pass   = $_POST["phenix_pass"];
-            $edituser->entity        = ( empty($_POST["entity"]) ? 0 : $_POST["entity"]);
+            $edituser->entity        = ( (! empty($_POST["superadmin"]) && ! empty($_POST["admin"]) || empty($_POST["entity"])) ? 0 : $_POST["entity"]);
             if (GETPOST('deletephoto')) $edituser->photo='';
             if (! empty($_FILES['photo']['name'])) $edituser->photo = dol_sanitizeFileName($_FILES['photo']['name']);
 
@@ -666,7 +666,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
         print '<td>';
         print $form->selectyesno('admin',$_POST["admin"],1);
 
-        /*if (! empty($conf->multicompany->enabled) && ! $user->entity)
+        if (! empty($conf->multicompany->enabled) && ! $user->entity && ! $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
         {
             if ($conf->use_javascript_ajax)
             {
@@ -688,14 +688,14 @@ if (($action == 'create') || ($action == 'adduserldap'))
             $checked=($_POST["superadmin"]?' checked':'');
             $disabled=($_POST["superadmin"]?'':' disabled');
             print '<input type="checkbox" name="superadmin" value="1"'.$checked.$disabled.' /> '.$langs->trans("SuperAdministrator");
-        }*/
+        }
         print "</td></tr>\n";
     }
         
     //Multicompany
     if ($conf->multicompany->enabled)
     {
-        if ($conf->entity == 0 && !$conf->global->MULTICOMPANY_MODE_TRANVERSAL)
+        if ($conf->entity == 0 && ! $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
         {
             $mc = new ActionsMulticompany($db);
             print "<tr>".'<td valign="top">'.$langs->trans("Entity").'</td>';
@@ -1259,7 +1259,7 @@ else
 
                 if (! empty($groupslist))
                 {
-                    if( !($conf->multicompany->enabled && $conf->global->MULTICOMPANY_MODE_TRANVERSAL))
+                    if( !($conf->multicompany->enabled && $conf->global->MULTICOMPANY_TRANSVERSE_MODE))
                     {
                         foreach($groupslist as $groupforuser)
                         {
@@ -1282,7 +1282,7 @@ else
                     // Multicompany
                     if ($conf->multicompany->enabled)
                     {
-                        if ($conf->entity == 0 && $conf->global->MULTICOMPANY_MODE_TRANVERSAL)
+                        if ($conf->entity == 0 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
                         {
                             $mc = new ActionsMulticompany($db);
                             print '</td><td valign="top">'.$langs->trans("Entity").'</td>';
@@ -1489,7 +1489,7 @@ else
                 {
                     print $form->selectyesno('admin',$fuser->admin,1);
 
-                    /*if (! empty($conf->multicompany->enabled) && ! $user->entity)
+                    if (! empty($conf->multicompany->enabled) && ! $user->entity && ! $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
                     {
                         if ($conf->use_javascript_ajax)
                         {
@@ -1517,52 +1517,53 @@ else
 
                         $checked=(($fuser->admin && ! $fuser->entity) ? ' checked' : '');
                         print '<input type="checkbox" name="superadmin" value="1"'.$checked.' /> '.$langs->trans("SuperAdministrator");
-                    }*/
+                    }
                 }
                 else
                 {
                     $yn = yn($fuser->admin);
                     print '<input type="hidden" name="admin" value="'.$fuser->admin.'">';
-                    //if (! empty($conf->multicompany->enabled) && ! $fuser->entity) print $html->textwithpicto($yn,$langs->trans("DontDowngradeSuperAdmin"),1,'warning');
-                    //else print $yn;
+                    if (! empty($conf->multicompany->enabled) && ! $fuser->entity) print $html->textwithpicto($yn,$langs->trans("DontDowngradeSuperAdmin"),1,'warning');
+                    else print $yn;
                 }
                 print '</td></tr>';
             }
 
             //Multicompany
-                        if ($conf->multicompany->enabled)
-                        {
-                            if ($conf->entity == 0 && !$conf->global->MULTICOMPANY_MODE_TRANVERSAL)
-                            {
-                                $mc = new ActionsMulticompany($db);
-                                print "<tr>".'<td valign="top">'.$langs->trans("Entity").'</td>';
-                                print "<td>".$mc->select_entities($fuser->entity);
-                                print "</td></tr>\n";
-                            }
-                            else
-                            {
-                                print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
-                            }
-                        }
-                        else
-                        {
-            // Type
-            print '<tr><td width="25%" valign="top">'.$langs->trans("Type").'</td>';
-            print '<td>';
-            if ($fuser->societe_id)
+            if ($conf->multicompany->enabled)
             {
-                print $langs->trans("External");
-            }
-            else if ($fuser->ldap_sid)
-            {
-                print $langs->trans("DomainUser");
+            	if ($conf->entity == 0 && ! $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
+            	{
+            		$mc = new ActionsMulticompany($db);
+            		print "<tr>".'<td valign="top">'.$langs->trans("Entity").'</td>';
+            		print "<td>".$mc->select_entities($fuser->entity);
+            		print "</td></tr>\n";
+            	}
+            	else
+            	{
+            		print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
+            	}
             }
             else
             {
-                print $langs->trans("Internal");
+            	// Type
+            	print '<tr><td width="25%" valign="top">'.$langs->trans("Type").'</td>';
+            	print '<td>';
+            	if ($fuser->societe_id)
+            	{
+            		print $langs->trans("External");
+            	}
+            	else if ($fuser->ldap_sid)
+            	{
+            		print $langs->trans("DomainUser");
+            	}
+            	else
+            	{
+            		print $langs->trans("Internal");
+            	}
+            	print '</td></tr>';
             }
-            print '</td></tr>';
-                        }
+            
             // Tel pro
             print "<tr>".'<td valign="top">'.$langs->trans("PhonePro").'</td>';
             print '<td>';
@@ -1742,7 +1743,7 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/19 09:26:10 $ - $Revision: 1.277 $');
+llxFooter('$Date: 2011/08/19 09:26:41 $ - $Revision: 1.278 $');
 
 
 

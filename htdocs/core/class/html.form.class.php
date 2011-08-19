@@ -31,7 +31,7 @@
  *	\file       htdocs/core/class/html.form.class.php
  *  \ingroup    core
  *	\brief      File of class with all html predefined components
- *	\version	$Id: html.form.class.php,v 1.197 2011/08/19 07:22:17 hregis Exp $
+ *	\version	$Id: html.form.class.php,v 1.198 2011/08/19 09:26:41 hregis Exp $
  */
 
 
@@ -845,7 +845,7 @@ class Form
                         $out.= '>';
                     }
                     $out.= $userstatic->getFullName($langs);
-                    if($conf->entity==0 && !$conf->global->MULTICOMPANY_MODE_TRANVERSAL)
+                    if($conf->entity==0 && !$conf->global->MULTICOMPANY_TRANSVERSE_MODE)
                         $out.=" (".$obj->label.")";
 
                     //if ($obj->admin) $out.= ' *';
@@ -3554,7 +3554,7 @@ class Form
                     $out.= '>';
 
                     $out.= $obj->nom;
-                    if($conf->entity==0 && !$conf->global->MULTICOMPANY_MODE_TRANVERSAL)
+                    if($conf->entity==0 && !$conf->global->MULTICOMPANY_TRANSVERSE_MODE)
                         $out.= " (".$obj->label.")";
 
                     $out.= '</option>';
