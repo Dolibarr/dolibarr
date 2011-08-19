@@ -15,5 +15,4 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-dolibarr_set_const($db, "MAIN_FAVICON_THEME", DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/favicon.ico','chaine',0,'',$conf->entity);
 dolibarr_set_const($db, "MAIN_JS_ON_PAYMENT", 1,'chaine',0,'',$conf->entity);
