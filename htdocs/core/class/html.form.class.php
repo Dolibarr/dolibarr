@@ -794,17 +794,21 @@ class Form
         $out='';
 
         // On recherche les utilisateurs
-        $sql = "SELECT u.rowid, u.name, u.firstname, u.login, u.admin";
-        if($conf->entity==0)
-            $sql.=" ,e.label";
-        $sql.= " FROM ".MAIN_DB_PREFIX ."user as u";
-        if($conf->entity==0)
+        $sql = "SELECT u.rowid, u.name, u.firstname, u.login, u.admin, u.entity";
+        if($conf->multicompany->enabled && $conf->entity == 1 && $user->admin && ! $user->entity)
         {
-            $sql.=" LEFT JOIN ".MAIN_DB_PREFIX ."entity as e on e.rowid=u.entity";
-            $sql.=" WHERE u.entity IS NOT NULL";
+        	$sql.= ", e.label";
+        }
+        $sql.= " FROM ".MAIN_DB_PREFIX ."user as u";
+        if($conf->multicompany->enabled && $conf->entity == 1 && $user->admin && ! $user->entity)
+        {
+            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX ."entity as e on e.rowid=u.entity";
+            $sql.= " WHERE u.entity IS NOT NULL";
         }
         else
-            $sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+        {
+        	$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+        }
         if (is_array($exclude) && $excludeUsers) $sql.= " AND u.rowid NOT IN ('".$excludeUsers."')";
         if (is_array($include) && $includeUsers) $sql.= " AND u.rowid IN ('".$includeUsers."')";
         $sql.= " ORDER BY u.name ASC";
@@ -845,8 +849,12 @@ class Form
                         $out.= '>';
                     }
                     $out.= $userstatic->getFullName($langs);
-                    if($conf->entity==0 && !$conf->global->MULTICOMPANY_TRANSVERSE_MODE)
-                        $out.=" (".$obj->label.")";
+                    
+                    if($conf->multicompany->enabled && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
+                    {
+                    	if ($obj->admin && ! $obj->entity) $out.=" (".$langs->trans("AllEntities").")";
+						else $out.=" (".$obj->label.")";
+                    }
 
                     //if ($obj->admin) $out.= ' *';
                     if ($conf->global->MAIN_SHOW_LOGIN) $out.= ' ('.$obj->login.')';
@@ -3515,17 +3523,21 @@ class Form
 
         // On recherche les groupes
         $sql = "SELECT ug.rowid, ug.nom ";
-        if($conf->entity==0)
-            $sql.= ", e.label";
+        if($conf->multicompany->enabled && $conf->entity == 1)
+        {
+        	$sql.= ", e.label";
+        }
         $sql.= " FROM ".MAIN_DB_PREFIX."usergroup as ug ";
-        if($conf->entity==0)
+        if($conf->multicompany->enabled && $conf->entity == 1)
         {
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."entity as e on e.rowid=ug.entity";
             $sql.= " WHERE ug.entity IS NOT NULL";
         }
         else
-             $sql.= " WHERE ug.entity IN (0,".$conf->entity.")";
-	if (is_array($exclude) && $excludeGroups) $sql.= " AND ug.rowid NOT IN ('".$excludeGroups."')";
+        {
+        	$sql.= " WHERE ug.entity IN (0,".$conf->entity.")";
+        }
+        if (is_array($exclude) && $excludeGroups) $sql.= " AND ug.rowid NOT IN ('".$excludeGroups."')";
         if (is_array($include) && $includeGroups) $sql.= " AND ug.rowid IN ('".$includeGroups."')";
 		$sql.= " ORDER BY ug.nom ASC";
 
@@ -3554,8 +3566,10 @@ class Form
                     $out.= '>';
 
                     $out.= $obj->nom;
-                    if($conf->entity==0 && !$conf->global->MULTICOMPANY_TRANSVERSE_MODE)
-                        $out.= " (".$obj->label.")";
+                    if($conf->multicompany->enabled && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1)
+                    {
+                    	$out.= " (".$obj->label.")";
+                    }
 
                     $out.= '</option>';
                     $i++;

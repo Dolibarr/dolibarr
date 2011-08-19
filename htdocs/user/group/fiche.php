@@ -47,7 +47,7 @@ $langs->load("other");
 // Security check
 $result = restrictedArea($user, 'user', $_GET["id"], 'usergroup', 'user');
 
-if($conf->multicompany->enabled && $conf->entity > 0 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
+if($conf->multicompany->enabled && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
 {
     accessforbidden();
 }
@@ -93,9 +93,9 @@ if ($_POST["action"] == 'add')
 
 		if (! $message)
 		{
-			$object->nom			= trim($_POST["nom"]);
+			$object->nom	= trim($_POST["nom"]);
 			$object->entity	= $_POST["entity"];
-			$object->note		= trim($_POST["note"]);
+			$object->note	= trim($_POST["note"]);
 
             $db->begin();
 
@@ -136,8 +136,8 @@ if ($action == 'adduser' || $action =='removeuser')
 
 			$edituser = new User($db);
 			$edituser->fetch($userid);
-			if ($action == 'adduser')    $result=$edituser->SetInGroup($object->id,($conf->global->MULTICOMPANY_TRANSVERSE_MODE?$_POST["entity"]:$object->entity));
-			if ($action == 'removeuser') $result=$edituser->RemoveFromGroup($object->id,($conf->global->MULTICOMPANY_TRANSVERSE_MODE?$_GET["entity"]:$object->entity));
+			if ($action == 'adduser')    $result=$edituser->SetInGroup($object->id,($conf->global->MULTICOMPANY_TRANSVERSE_MODE?GETPOST("entity"):$object->entity));
+			if ($action == 'removeuser') $result=$edituser->RemoveFromGroup($object->id,($conf->global->MULTICOMPANY_TRANSVERSE_MODE?GETPOST("entity"):$object->entity));
 
             if ($result > 0)
             {
@@ -169,9 +169,9 @@ if ($_POST["action"] == 'update')
 
         $object->oldcopy=dol_clone($object);
 
-		$object->nom			= trim($_POST["group"]);
+		$object->nom	= trim($_POST["group"]);
 		$object->entity	= $_POST["entity"];
-		$object->note		= dol_htmlcleanlastbr($_POST["note"]);
+		$object->note	= dol_htmlcleanlastbr($_POST["note"]);
 
         $ret=$object->update();
 
@@ -221,17 +221,17 @@ if ($action == 'create')
 	// Multicompany
 	if ($conf->multicompany->enabled)
 	{
-		if ($conf->entity == 0 && !$conf->global->MULTICOMPANY_TRANSVERSE_MODE)
-                {
-                    $mc = new ActionsMulticompany($db);
-                    print "<tr>".'<td valign="top">'.$langs->trans("Entity").'</td>';
-                    print "<td>".$mc->select_entities($conf->entity);
-                    print "</td></tr>\n";
-                }
-            	else
-            	{
-            		print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
-            	}
+		if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
+		{
+			$mc = new ActionsMulticompany($db);
+			print "<tr>".'<td valign="top">'.$langs->trans("Entity").'</td>';
+			print "<td>".$mc->select_entities($conf->entity);
+			print "</td></tr>\n";
+		}
+		else
+		{
+			print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
+		}
 	}
 
     print "<tr>".'<td valign="top">'.$langs->trans("Note").'</td><td>';
@@ -304,19 +304,16 @@ else
 				print img_redstar($langs->trans("GlobalGroup"));
 			}
 			print "</td></tr>\n";
-                        
-                        // Multicompany
-                        if ($conf->multicompany->enabled)
-                        {
-                            if ($conf->entity == 0)
-                            {
-                                $mc = new ActionsMulticompany($db);
-                                $mc->getInfo($object->entity);
-                                print "<tr>".'<td valign="top">'.$langs->trans("Entity").'</td>';
-                                print '<td width="75%" class="valeur">'.$mc->label;
-                                print "</td></tr>\n";
-                            }
-                        }
+			
+			// Multicompany
+			if ($conf->multicompany->enabled && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
+			{
+				$mc = new ActionsMulticompany($db);
+				$mc->getInfo($object->entity);
+				print "<tr>".'<td valign="top">'.$langs->trans("Entity").'</td>';
+				print '<td width="75%" class="valeur">'.$mc->label;
+				print "</td></tr>\n";
+			}
 
 			// Note
 			print '<tr><td width="25%" valign="top">'.$langs->trans("Note").'</td>';
@@ -382,7 +379,7 @@ else
                 // Multicompany
                 if ($conf->multicompany->enabled)
                 {
-                    if ($conf->entity == 0 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
+                    if ($conf->entity == 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
                     {
                         $mc = new ActionsMulticompany($db);
                         print '</td><td valign="top">'.$langs->trans("Entity").'</td>';
@@ -390,11 +387,13 @@ else
                     }
                     else
                     {
-            		print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
+                    	print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
                     }
                 }
                 else
-                    print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
+                {
+                	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
+                }
                 print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
                 print '</td></tr>'."\n";
                 print '</table></form>'."\n";
@@ -407,8 +406,10 @@ else
             print '<table class="noborder" width="100%">';
             print '<tr class="liste_titre">';
             print '<td class="liste_titre" width="25%">'.$langs->trans("Login").'</td>';
-            if($conf->multicompany->enabled && $conf->entity==0)
-                print '<td class="liste_titre" width="25%">'.$langs->trans("Entity").'</td>';
+            if($conf->multicompany->enabled && $conf->entity == 1)
+            {
+            	print '<td class="liste_titre" width="25%">'.$langs->trans("Entity").'</td>';
+            }
             print '<td class="liste_titre" width="25%">'.$langs->trans("Lastname").'</td>';
             print '<td class="liste_titre" width="25%">'.$langs->trans("Firstname").'</td>';
             print '<td class="liste_titre" align="right">'.$langs->trans("Status").'</td>';
@@ -427,15 +428,15 @@ else
             		print "<tr $bc[$var]>";
             		print '<td>';
             		print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$useringroup->id.'">'.img_object($langs->trans("ShowUser"),"user").' '.$useringroup->login.'</a>';
-            		if ($useringroup->admin  && ! $useringroup->entity) print img_redstar($langs->trans("SuperAdministrator"));
+            		if ($useringroup->admin  && ! $useringroup->entity) print img_picto($langs->trans("SuperAdministrator"),'redstar');
             		else if ($useringroup->admin) print img_picto($langs->trans("Administrator"),'star');
             		print '</td>';
-                        if($conf->multicompany->enabled && $conf->entity==0)
-                        {
-                            $mc = new ActionsMulticompany($db);
-                            $mc->getInfo($useringroup->usergroup_entity);
-                            print '<td class="valeur">'.$mc->label."</td>";
-                        }
+            		if($conf->multicompany->enabled && $conf->entity == 1)
+            		{
+            			$mc = new ActionsMulticompany($db);
+            			$mc->getInfo($useringroup->usergroup_entity);
+            			print '<td class="valeur">'.$mc->label."</td>";
+            		}
             		print '<td>'.ucfirst(stripslashes($useringroup->lastname)).'</td>';
             		print '<td>'.ucfirst(stripslashes($useringroup->firstname)).'</td>';
             		print '<td align="right">'.$useringroup->getLibStatut(5).'</td>';
@@ -478,7 +479,7 @@ else
             // Multicompany
             if ($conf->multicompany->enabled)
             {
-                if ($conf->entity == 0 && !$conf->global->MULTICOMPANY_TRANSVERSE_MODE)
+                if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
                 {
                     $mc = new ActionsMulticompany($db);
                     print "<tr>".'<td valign="top">'.$langs->trans("Entity").'</td>';

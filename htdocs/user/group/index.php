@@ -59,15 +59,19 @@ print_fiche_titre($langs->trans("ListOfGroups"));
 $sql = "SELECT g.rowid, g.nom, g.entity, g.datec, COUNT(ugu.rowid) as nb";
 $sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_usergroup = g.rowid";
-if($conf->entity==0)
-    $sql.= " WHERE g.entity IS NOT NULL";
-else            
-    $sql.= " WHERE g.entity IN (0,".$conf->entity.")";
+if($conf->multicompany->enabled && $conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1)
+{
+	$sql.= " WHERE g.entity IS NOT NULL";
+}
+else
+{
+	$sql.= " WHERE g.entity IN (0,".$conf->entity.")";
+}
 if ($_POST["search_group"])
 {
-    $sql .= " AND (g.nom like '%".$_POST["search_group"]."%' OR g.note like '%".$_POST["search_group"]."%')";
+    $sql .= " AND (g.nom LIKE '%".$_POST["search_group"]."%' OR g.note LIKE '%".$_POST["search_group"]."%')";
 }
-if ($sall) $sql.= " AND (g.nom like '%".$sall."%' OR g.note like '%".$sall."%')";
+if ($sall) $sql.= " AND (g.nom LIKE '%".$sall."%' OR g.note LIKE '%".$sall."%')";
 $sql.= " GROUP BY g.rowid, g.nom, g.entity, g.datec";
 $sql.= $db->order($sortfield,$sortorder);
 
@@ -82,8 +86,10 @@ if ($resql)
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Group"),$_SERVER["PHP_SELF"],"g.nom",$param,"","",$sortfield,$sortorder);
     //multicompany
-    if($conf->multicompany->enabled && $conf->entity==0)
-        print_liste_field_titre($langs->trans("Entity"),$_SERVER["PHP_SELF"],"g.entity",$param,"",'align="center"',$sortfield,$sortorder);
+    if($conf->multicompany->enabled && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1)
+    {
+    	print_liste_field_titre($langs->trans("Entity"),$_SERVER["PHP_SELF"],"g.entity",$param,"",'align="center"',$sortfield,$sortorder);
+    }
     print_liste_field_titre($langs->trans("NbOfUsers"),$_SERVER["PHP_SELF"],"g.nb",$param,"",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"g.datec",$param,"",'align="right"',$sortfield,$sortorder);
     print "</tr>\n";
@@ -101,7 +107,7 @@ if ($resql)
         }
         print "</td>";
         //multicompany
-        if($conf->multicompany->enabled && $conf->entity==0)
+        if($conf->multicompany->enabled && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1)
         {
             dol_include_once("/multicompany/class/actions_multicompany.class.php");
             $mc = new ActionsMulticompany($db);

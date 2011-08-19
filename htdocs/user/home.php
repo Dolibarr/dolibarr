@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,7 +100,14 @@ $sql = "SELECT u.rowid, u.name, u.firstname, u.admin, u.login, u.fk_societe, u.d
 $sql.= " s.nom, s.canvas";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_societe = s.rowid";
-$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+if($conf->multicompany->enabled && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && ! $user->entity)))
+{
+	$sql.= " WHERE u.entity IS NOT NULL";
+}
+else
+{
+	$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+}
 if (!empty($socid)) $sql.= " AND u.fk_societe = ".$socid;
 $sql.= $db->order("u.datec","DESC");
 $sql.= $db->plimit($max);
@@ -139,11 +146,27 @@ if ($resql)
             $companystatic->canvas=$obj->canvas;
             print $companystatic->getNomUrl(1);
 		}
+		else if ($conf->multicompany->enabled)
+        {
+        	if ($obj->admin && ! $obj->entity)
+        	{
+        		print $langs->trans("AllEntities");
+        	}
+        	else
+        	{
+        		$mc = new ActionsMulticompany($db);
+        		$mc->getInfo($obj->entity);
+        		print $mc->label;
+        	}
+        }
 		else if ($obj->ldap_sid)
 		{
 			print $langs->trans("DomainUser");
 		}
-		else print $langs->trans("InternalUser");
+		else
+		{
+			print $langs->trans("InternalUser");
+		}
 		print '</td>';
 		print '<td align="right">'.dol_print_date($db->jdate($obj->datec),'dayhour').'</td>';
         print '<td align="right">';

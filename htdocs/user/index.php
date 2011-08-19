@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,10 +69,14 @@ $sql.= " u.ldap_sid, u.statut, u.entity,";
 $sql.= " s.nom, s.canvas";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_societe = s.rowid";
-if($conf->entity==0)
-    $sql.= " WHERE u.entity IS NOT NULL";
+if($conf->multicompany->enabled && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && ! $user->entity)))
+{
+	$sql.= " WHERE u.entity IS NOT NULL";
+}
 else
-    $sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+{
+	$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+}
 if (!empty($socid)) $sql.= " AND u.fk_societe = ".$socid;
 if ($_POST["search_user"])
 {
@@ -88,7 +92,7 @@ if ($result)
     $i = 0;
 
     $param="search_user=$search_user&amp;sall=$sall";
-    print "<table class=\"noborder\" width=\"100%\">";
+    print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Login"),"index.php","u.login",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("LastName"),"index.php","u.name",$param,"","",$sortfield,$sortorder);
@@ -106,7 +110,7 @@ if ($result)
 
         print "<tr $bc[$var]>";
         print '<td><a href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->login.'</a>';
-        if ($conf->global->MAIN_MODULE_MULTICOMPANY && $obj->admin && ! $obj->entity)
+        if ($conf->multicompany->enabled && $obj->admin && ! $obj->entity)
         {
           	print img_picto($langs->trans("SuperAdministrator"),'redstar');
         }
@@ -127,16 +131,25 @@ if ($result)
         }
         else if ($conf->multicompany->enabled)
         {
-            $mc = new ActionsMulticompany($db);
-            $mc->getInfo($obj->entity);
-            print $mc->label;
+        	if ($obj->admin && ! $obj->entity)
+        	{
+        		print $langs->trans("AllEntities");
+        	}
+        	else
+        	{
+        		$mc = new ActionsMulticompany($db);
+        		$mc->getInfo($obj->entity);
+        		print $mc->label;
+        	}
         }
         else if ($obj->ldap_sid)
         {
         	print $langs->trans("DomainUser");
         }
-        else 
-            print $langs->trans("InternalUser");
+        else
+        {
+        	print $langs->trans("InternalUser");
+        }
         print '</td>';
 
         // Date creation
