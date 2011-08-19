@@ -21,7 +21,11 @@
 /**
  *       \file       htdocs/user/group/fiche.php
  *       \brief      Onglet groupes utilisateurs
+<<<<<<< HEAD
  *       \version    $Id: fiche.php,v 1.69 2011/07/31 23:21:25 eldy Exp $
+=======
+ *       \version    $Id: fiche.php,v 1.73 2011/08/19 09:26:42 hregis Exp $
+>>>>>>> refs/heads/origin
  */
 
 require("../../main.inc.php");
@@ -520,5 +524,9 @@ else
 
 $db->close();
 
+<<<<<<< HEAD
 llxFooter('$Date: 2011/07/31 23:21:25 $ - $Revision: 1.69 $');
+=======
+llxFooter('$Date: 2011/08/19 09:26:42 $ - $Revision: 1.73 $');
+>>>>>>> refs/heads/origin
 ?>

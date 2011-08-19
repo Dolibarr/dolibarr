@@ -22,7 +22,7 @@
  *      \file       htdocs/user/group/index.php
  * 		\ingroup	core
  *      \brief      Page of user groups
- *      \version    $Id: index.php,v 1.25 2011/08/17 15:56:24 eldy Exp $
+ *      \version    $Id: index.php,v 1.27 2011/08/19 09:26:10 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -123,6 +123,6 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/17 15:56:24 $ - $Revision: 1.25 $');
+llxFooter('$Date: 2011/08/19 09:26:10 $ - $Revision: 1.27 $');
 
 ?>
