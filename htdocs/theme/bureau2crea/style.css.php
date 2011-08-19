@@ -22,7 +22,7 @@
 /**
  *		\file       htdocs/theme/bureau2crea/style.css.php
  *		\brief      Fichier de style CSS du theme bureau2crea
- *		\version    $Id: style.css.php,v 1.55 2011/08/18 15:42:14 cdelambert Exp $
+ *		\version    $Id: style.css.php,v 1.56 2011/08/19 11:49:48 bureau2crea Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -1591,6 +1591,10 @@ div.error {
   margin-bottom: 20px;
 }
 
+#login div.error {
+	margin-top: 20px;
+    }
+
 /* Info admin */
 div.info {
   color: #505050;
@@ -2197,13 +2201,14 @@ a.cke_dialog_ui_button
 /* ============================================================================== */
 
 #login {
-	position: absolute;
+	position: relative;
     display: block;
     width: 480px;
     height: auto;
     top: 20px;
     left: 50%;
     margin-left: -240px;
+    margin-bottom: 30px;
     }
     
 div#infoVersion {
@@ -2293,6 +2298,10 @@ div#infoLogin {
 div.other {
 	margin: 10px 0px;
     text-align: center;
+    position: relative;
+    width: 480px;
+    left: 50%;
+    margin-left: -240px;
     }
     
 form.listactionsfilter img {
