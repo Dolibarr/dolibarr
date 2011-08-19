@@ -21,4 +21,4 @@
 	url = git+ssh://scm.doliforge.org/gitroot/extrafields/extrafields.git
 [submodule "htdocs/custom/genfact"]
 	path = htdocs/custom/genfact
-	url = git+ssh://hregis@scm.doliforge.org/gitroot/massfacturation/massfacturation.git
+	url = git+ssh://scm.doliforge.org/gitroot/massfacturation/massfacturation.git
