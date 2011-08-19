@@ -21,13 +21,13 @@
 /**
  *       \file       htdocs/user/group/fiche.php
  *       \brief      Onglet groupes utilisateurs
- *       \version    $Id: fiche.php,v 1.71 2011/08/19 07:22:18 hregis Exp $
+ *       \version    $Id: fiche.php,v 1.72 2011/08/19 09:26:10 hregis Exp $
  */
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
-if($conf->multicompany->enabled) require_once(DOL_DOCUMENT_ROOT."/multicompany/class/actions_multicompany.class.php");
+if($conf->multicompany->enabled) dol_include_once("/multicompany/class/actions_multicompany.class.php");
 
 // Defini si peux lire/modifier utilisateurs et permisssions
 $canreadperms=($user->admin || $user->rights->user->user->lire);
@@ -520,5 +520,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/19 07:22:18 $ - $Revision: 1.71 $');
+llxFooter('$Date: 2011/08/19 09:26:10 $ - $Revision: 1.72 $');
 ?>
