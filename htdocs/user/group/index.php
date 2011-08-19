@@ -2,6 +2,7 @@
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@
  *      \file       htdocs/user/group/index.php
  * 		\ingroup	core
  *      \brief      Page of user groups
- *      \version    $Id: index.php,v 1.25 2011/08/17 15:56:24 eldy Exp $
+ *      \version    $Id: index.php,v 1.26 2011/08/19 07:22:18 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -58,7 +59,10 @@ print_fiche_titre($langs->trans("ListOfGroups"));
 $sql = "SELECT g.rowid, g.nom, g.entity, g.datec, COUNT(ugu.rowid) as nb";
 $sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_usergroup = g.rowid";
-$sql.= " WHERE g.entity IN (0,".$conf->entity.")";
+if($conf->entity==0)
+    $sql.= " WHERE g.entity IS NOT NULL";
+else            
+    $sql.= " WHERE g.entity IN (0,".$conf->entity.")";
 if ($_POST["search_group"])
 {
     $sql .= " AND (g.nom like '%".$_POST["search_group"]."%' OR g.note like '%".$_POST["search_group"]."%')";
@@ -77,6 +81,9 @@ if ($resql)
     print "<table class=\"noborder\" width=\"100%\">";
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Group"),$_SERVER["PHP_SELF"],"g.nom",$param,"","",$sortfield,$sortorder);
+    //multicompany
+    if($conf->multicompany->enabled && $conf->entity==0)
+        print_liste_field_titre($langs->trans("Entity"),$_SERVER["PHP_SELF"],"g.entity",$param,"",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("NbOfUsers"),$_SERVER["PHP_SELF"],"g.nb",$param,"",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"g.datec",$param,"",'align="right"',$sortfield,$sortorder);
     print "</tr>\n";
@@ -93,6 +100,14 @@ if ($resql)
         	print img_picto($langs->trans("GlobalGroup"),'redstar');
         }
         print "</td>";
+        //multicompany
+        if($conf->multicompany->enabled && $conf->entity==0)
+        {
+            require_once(DOL_DOCUMENT_ROOT."/multicompany/class/actions_multicompany.class.php");
+            $mc = new ActionsMulticompany($db);
+            $mc->getInfo($obj->entity);
+            print '<td align="center">'.$mc->label.'</td>';
+        }
         print '<td align="center">'.$obj->nb.'</td>';
         print '<td align="right" nowrap="nowrap">'.dol_print_date($db->jdate($obj->datec),"dayhour").'</td>';
         print "</tr>\n";
@@ -108,6 +123,6 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/17 15:56:24 $ - $Revision: 1.25 $');
+llxFooter('$Date: 2011/08/19 07:22:18 $ - $Revision: 1.26 $');
 
 ?>

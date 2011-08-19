@@ -21,10 +21,12 @@
  *      \file       htdocs/user/index.php
  * 		\ingroup	core
  *      \brief      Page of users
- *      \version    $Id: index.php,v 1.52 2011/08/17 15:56:25 eldy Exp $
+ *      \version    $Id: index.php,v 1.53 2011/08/19 07:22:17 hregis Exp $
  */
 
 require("../main.inc.php");
+if($conf->multicompany->enabled) dol_include_once("/multicompany/class/actions_multicompany.class.php");
+
 
 if (! $user->rights->user->user->lire && ! $user->admin) accessforbidden();
 
@@ -67,7 +69,10 @@ $sql.= " u.ldap_sid, u.statut, u.entity,";
 $sql.= " s.nom, s.canvas";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_societe = s.rowid";
-$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+if($conf->entity==0)
+    $sql.= " WHERE u.entity IS NOT NULL";
+else
+    $sql.= " WHERE u.entity IN (0,".$conf->entity.")";
 if (!empty($socid)) $sql.= " AND u.fk_societe = ".$socid;
 if ($_POST["search_user"])
 {
@@ -120,11 +125,18 @@ if ($result)
             $companystatic->canvas=$obj->canvas;
             print $companystatic->getNomUrl(1);
         }
+        else if ($conf->multicompany->enabled)
+        {
+            $mc = new ActionsMulticompany($db);
+            $mc->getInfo($obj->entity);
+            print $mc->label;
+        }
         else if ($obj->ldap_sid)
         {
         	print $langs->trans("DomainUser");
         }
-        else print $langs->trans("InternalUser");
+        else 
+            print $langs->trans("InternalUser");
         print '</td>';
 
         // Date creation
@@ -149,5 +161,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/17 15:56:25 $ - $Revision: 1.52 $');
+llxFooter('$Date: 2011/08/19 07:22:17 $ - $Revision: 1.53 $');
 ?>
