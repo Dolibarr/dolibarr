@@ -21,7 +21,7 @@
  *      \file       htdocs/user/index.php
  * 		\ingroup	core
  *      \brief      Page of users
- *      \version    $Id: index.php,v 1.53 2011/08/19 07:22:17 hregis Exp $
+ *      \version    $Id: index.php,v 1.54 2011/08/19 22:15:23 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -174,5 +174,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/19 07:22:17 $ - $Revision: 1.53 $');
+llxFooter('$Date: 2011/08/19 22:15:23 $ - $Revision: 1.54 $');
 ?>

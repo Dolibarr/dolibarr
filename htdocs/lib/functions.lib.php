@@ -28,7 +28,7 @@
  *	\file			htdocs/lib/functions.lib.php
  *	\brief			A set of functions for Dolibarr
  *					This file contains all frequently used functions.
- *	\version		$Id: functions.lib.php,v 1.558 2011/08/17 16:33:53 eldy Exp $
+ *	\version		$Id: functions.lib.php,v 1.559 2011/08/19 22:15:22 hregis Exp $
  */
 
 // For compatibility during upgrade

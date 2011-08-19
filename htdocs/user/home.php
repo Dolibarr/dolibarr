@@ -19,7 +19,7 @@
 /**
  *	\file       htdocs/user/home.php
  *	\brief      Home page of users and groups management
- *	\version    $Id: home.php,v 1.49 2011/08/17 15:56:25 eldy Exp $
+ *	\version    $Id: home.php,v 1.50 2011/08/19 22:15:23 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -242,5 +242,5 @@ print '</table>';
 $db->close();
 
 
-llxFooter('$Date: 2011/08/17 15:56:25 $ - $Revision: 1.49 $');
+llxFooter('$Date: 2011/08/19 22:15:23 $ - $Revision: 1.50 $');
 ?>
