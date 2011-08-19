@@ -35,7 +35,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/images.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
 if ($conf->ldap->enabled) require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 if ($conf->adherent->enabled) require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
-if ($conf->multicompany->enabled) require_once(DOL_DOCUMENT_ROOT."/multicompany/class/actions_multicompany.class.php");
+if ($conf->multicompany->enabled) dol_include_once("/multicompany/class/actions_multicompany.class.php");
 
 // Define value to know what current user can do on users
 $canadduser=($user->admin || $user->rights->user->user->creer);

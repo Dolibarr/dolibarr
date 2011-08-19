@@ -103,7 +103,7 @@ if ($resql)
         //multicompany
         if($conf->multicompany->enabled && $conf->entity==0)
         {
-            require_once(DOL_DOCUMENT_ROOT."/multicompany/class/actions_multicompany.class.php");
+            dol_include_once("/multicompany/class/actions_multicompany.class.php");
             $mc = new ActionsMulticompany($db);
             $mc->getInfo($obj->entity);
             print '<td align="center">'.$mc->label.'</td>';
