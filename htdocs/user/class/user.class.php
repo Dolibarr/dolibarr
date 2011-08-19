@@ -25,7 +25,7 @@
 /**
  *  \file       htdocs/user/class/user.class.php
  *  \brief      Fichier de la classe utilisateur
- *  \version    $Id: user.class.php,v 1.48 2011/08/19 07:22:17 hregis Exp $
+ *  \version    $Id: user.class.php,v 1.49 2011/08/19 22:15:22 hregis Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
@@ -126,7 +126,7 @@ class User extends CommonObject
 	 */
 	function fetch($id='', $login='',$sid='',$loadpersonalconf=1)
 	{
-		global $conf;
+		global $conf, $user;
 
 		// Clean parameters
 		$login=trim($login);
@@ -144,10 +144,15 @@ class User extends CommonObject
 		$sql.= " u.photo as photo,";
 		$sql.= " u.openid as openid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-                if($conf->entity==0)
-                    $sql.= " WHERE u.entity IS NOT NULL";
-                else
-                    $sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+		
+		if($conf->multicompany->enabled && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && ! $user->entity)))
+		{
+			$sql.= " WHERE u.entity IS NOT NULL";
+		}
+		else
+		{
+			$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+		}
 
 		if ($sid)
 		{
