@@ -845,7 +845,7 @@ class Form
                         $out.= '>';
                     }
                     $out.= $userstatic->getFullName($langs);
-                    if($conf->entity==0 && !$conf->global->MULTICOMPANY_MODE_TRANVERSAL)
+                    if($conf->entity==0 && !$conf->global->MULTICOMPANY_TRANSVERSE_MODE)
                         $out.=" (".$obj->label.")";
 
                     //if ($obj->admin) $out.= ' *';
@@ -3554,7 +3554,7 @@ class Form
                     $out.= '>';
 
                     $out.= $obj->nom;
-                    if($conf->entity==0 && !$conf->global->MULTICOMPANY_MODE_TRANVERSAL)
+                    if($conf->entity==0 && !$conf->global->MULTICOMPANY_TRANSVERSE_MODE)
                         $out.= " (".$obj->label.")";
 
                     $out.= '</option>';
