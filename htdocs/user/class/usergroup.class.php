@@ -21,7 +21,7 @@
  *	 \file       htdocs/user/class/usergroup.class.php
  *	 \brief      Fichier de la classe des groupes d'utilisateur
  *	 \author     Rodolphe Qiedeville
- *	 \version    $Id: usergroup.class.php,v 1.13 2011/08/19 07:22:17 hregis Exp $
+ *	 \version    $Id: usergroup.class.php,v 1.14 2011/08/19 22:15:22 hregis Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
@@ -129,10 +129,16 @@ class UserGroup extends CommonObject
 		$sql.= " ".MAIN_DB_PREFIX."usergroup_user as ug";
 		$sql.= " WHERE ug.fk_usergroup = g.rowid";
 		$sql.= " AND ug.fk_user = ".$userid;
-                if($conf->entity==0)
-                    $sql.= " AND ug.entity IS NOT NULL";
-                else
-                    $sql.= " AND ug.entity IN (0,".$conf->entity.")";
+		
+		if($conf->multicompany->enabled && $conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1)
+		{
+			$sql.= " AND g.entity IS NOT NULL";
+		}
+		else
+		{
+			$sql.= " AND g.entity IN (0,".$conf->entity.")";
+		}
+
 		$sql.= " ORDER BY g.nom";
 
 		dol_syslog("UserGroup::listGroupsForUser sql=".$sql,LOG_DEBUG);
@@ -175,10 +181,15 @@ class UserGroup extends CommonObject
 		$sql.= " ".MAIN_DB_PREFIX."usergroup_user as ug";
 		$sql.= " WHERE ug.fk_user = u.rowid";
 		$sql.= " AND ug.fk_usergroup = ".$this->id;
-                if($conf->entity==0)
-                    $sql.= " AND u.entity IS NOT NULL";
-                else
-                    $sql.= " AND u.entity IN (0,".$conf->entity.")";
+		
+		if($conf->multicompany->enabled && $conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1)
+		{
+			$sql.= " AND u.entity IS NOT NULL";
+		}
+		else
+		{
+			$sql.= " AND u.entity IN (0,".$conf->entity.")";
+		}
 
 		dol_syslog("UserGroup::listUsersForGroup sql=".$sql,LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -510,6 +521,12 @@ class UserGroup extends CommonObject
 		global $user, $conf, $langs;
 
 		$now=dol_now();
+		
+		$entity=$conf->entity;
+		if($conf->multicompany->enabled && $conf->entity == 1)
+		{
+			$entity=$this->entity;
+		}
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."usergroup (";
 		$sql.= "datec";
@@ -518,7 +535,7 @@ class UserGroup extends CommonObject
 		$sql.= ") VALUES (";
 		$sql.= "'".$this->db->idate($now)."'";
 		$sql.= ",'".$this->db->escape($this->nom)."'";
-		$sql.= ",".($conf->entity==0 ? $this->entity : $conf->entity);
+		$sql.= ",".$entity;
 		$sql.= ")";
 
 		dol_syslog("UserGroup::Create sql=".$sql, LOG_DEBUG);
@@ -559,12 +576,18 @@ class UserGroup extends CommonObject
 		global $user, $conf, $langs;
 
 		$error=0;
+		
+		$entity=$conf->entity;
+		if($conf->multicompany->enabled && $conf->entity == 1)
+		{
+			$entity=$this->entity;
+		}
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."usergroup SET ";
-		$sql.= " nom = '".$this->db->escape($this->nom)."'";
-		$sql.= ", entity = ".($conf->entity==0 ? $this->entity : $conf->entity);
-		$sql.= ", note = '".$this->db->escape($this->note)."'";
-		$sql.= " WHERE rowid = ".$this->id;
+		$sql.= " nom = '" . $this->db->escape($this->nom) . "'";
+		$sql.= ", entity = " . $entity;
+		$sql.= ", note = '" . $this->db->escape($this->note) . "'";
+		$sql.= " WHERE rowid = " . $this->id;
 
 		dol_syslog("Usergroup::update sql=".$sql);
 		$resql = $this->db->query($sql);
