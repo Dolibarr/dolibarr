@@ -751,16 +751,19 @@ $heightforframes=48;
 // Switch to another entity
 if (!empty($conf->global->MAIN_MODULE_MULTICOMPANY))
 {
-	if (GETPOST('action') == 'switchentity' && $user->admin && ! $user->entity)
+	if (GETPOST('action') == 'switchentity')
 	{
-		require_once("../class/actions_multicompany.class.php");
-
-		$mc = new ActionsMulticompany($db);
-
-		if($mc->switchEntity(GETPOST('entity')) > 0)
+		$res = @dol_include_once("/multicompany/class/actions_multicompany.class.php");
+		
+		if ($res)
 		{
-			Header("Location: ".DOL_URL_ROOT.'/');
-			exit;
+			$mc = new ActionsMulticompany($db);
+	
+			if($mc->switchEntity(GETPOST('entity')) >= 0)
+			{
+				Header("Location: ".DOL_URL_ROOT.'/');
+				exit;
+			}
 		}
 	}
 }
@@ -1237,15 +1240,12 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	// Select entity
 	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY))
 	{
-		if ($user->admin && ! $user->entity)
-		{
-			$res=@dol_include_once('/multicompany/class/actions_multicompany.class.php');
+		$res=@dol_include_once('/multicompany/class/actions_multicompany.class.php');
 
-			if ($res)
-			{
-				$mc = new ActionsMulticompany($db);
-				$mc->showInfo($conf->entity);
-			}
+		if ($res)
+		{
+			$mc = new ActionsMulticompany($db);
+			$mc->showInfo($conf->entity);
 		}
 	}
 

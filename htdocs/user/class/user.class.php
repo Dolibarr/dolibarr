@@ -6,6 +6,7 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
+ * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -143,7 +144,10 @@ class User extends CommonObject
 		$sql.= " u.photo as photo,";
 		$sql.= " u.openid as openid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-		$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+                if($conf->entity==0)
+                    $sql.= " WHERE u.entity IS NOT NULL";
+                else
+                    $sql.= " WHERE u.entity IN (0,".$conf->entity.")";
 
 		if ($sid)
 		{
