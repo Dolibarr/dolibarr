@@ -25,7 +25,7 @@
 /**
  *  \file       htdocs/user/class/user.class.php
  *  \brief      Fichier de la classe utilisateur
- *  \version    $Id: user.class.php,v 1.48 2011/08/19 07:22:17 hregis Exp $
+ *  \version    $Id: user.class.php,v 1.49 2011/08/19 22:15:22 hregis Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");

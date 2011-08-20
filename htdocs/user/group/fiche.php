@@ -21,7 +21,7 @@
 /**
  *       \file       htdocs/user/group/fiche.php
  *       \brief      Onglet groupes utilisateurs
- *       \version    $Id: fiche.php,v 1.73 2011/08/19 09:26:42 hregis Exp $
+ *       \version    $Id: fiche.php,v 1.74 2011/08/19 22:15:23 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -521,5 +521,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/19 09:26:42 $ - $Revision: 1.73 $');
+llxFooter('$Date: 2011/08/19 22:15:23 $ - $Revision: 1.74 $');
 ?>
