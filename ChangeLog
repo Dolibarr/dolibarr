@@ -1,6 +1,6 @@
 --------------------------------------------------------------
 English Dolibarr ChangeLog
-$Id: ChangeLog,v 1.426 2011/08/17 16:21:22 simnandez Exp $
+$Id: ChangeLog,v 1.427 2011/08/20 23:57:09 eldy Exp $
 --------------------------------------------------------------
 
 ***** ChangeLog for 3.2 compared to 3.1 *****
@@ -9,9 +9,12 @@ For users:
 - New: task #11243: Show quantity into stocks for each subproducts into the subproduct tab
 - New: Task #10500: Option to choose if professionnal id are unique
 - New: Add hide option FOURN_PRODUCT_AVAILABILITY
+- New: task #11123: Add best supplier price
 
 For developers:
 - Qual: Removed no more used external libraries
+- Qual: Clean a lot of dead code
+
 
 ***** ChangeLog for 3.1 compared to 3.0 *****
 WARNING: IE6 browser is no more supported in this version.

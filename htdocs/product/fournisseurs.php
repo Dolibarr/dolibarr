@@ -23,13 +23,13 @@
  *  \file       htdocs/product/fournisseurs.php
  *  \ingroup    product
  *  \brief      Page of tab suppliers for products
- *  \version    $Id: fournisseurs.php,v 1.99 2011/08/17 16:44:38 simnandez Exp $
+ *  \version    $Id: fournisseurs.php,v 1.100 2011/08/20 23:56:04 eldy Exp $
  */
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
-require_once DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.product.class.php";
+require_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.product.class.php");
 
 $langs->load("products");
 $langs->load("suppliers");
@@ -228,8 +228,19 @@ if ($_GET["id"] || $_GET["ref"])
 			print '</td>';
 			print '</tr>';
 
-			// Libelle
+			// Label
 			print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$product->libelle.'</td></tr>';
+
+			// Minimum Price
+			print '<tr><td>'.$langs->trans("BuyingPriceMin").'</td>';
+            print '<td colspan="2">';
+			$product_fourn = new ProductFournisseur($db);
+			if ($product_fourn->find_min_price_product_fournisseur($product->id) > 0)
+			{
+			    if (isset($product_fourn->fourn_unitprice)) print $product_fourn->display_price_product_fournisseur();
+			    else print $langs->trans("NotDefined");
+			}
+            print '</td></tr>';
 
 			// Status (to buy)
 			print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')'.'</td><td>';
@@ -277,6 +288,7 @@ if ($_GET["id"] || $_GET["ref"])
 				}
 				print '</td></tr>';
 
+				// Ref supplier
 				print '<tr><td>'.$langs->trans("SupplierRef").'</td><td colspan="3">';
 				if ($_GET["rowid"])
 				{
@@ -288,14 +300,16 @@ if ($_GET["id"] || $_GET["ref"])
 				}
 				print '</td>';
 				print '</tr>';
-				
-				//Availability
+
+				// Availability
 				if(!empty($conf->global->FOURN_PRODUCT_AVAILABILITY))
 				{
 					print '<tr><td>'.$langs->trans("Availability").'</td><td colspan="3">';
 					$html->select_availability($product->fk_availability,"oselDispo",1);
 					print '</td></tr>'."\n";
 				}
+
+				// Qty min
 				print '<tr>';
 				print '<td>'.$langs->trans("QtyMin").'</td>';
 				print '<td>';
@@ -353,8 +367,8 @@ if ($_GET["id"] || $_GET["ref"])
 				print '<table class="noborder" width="100%">';
 				if ($product->isproduct()) $nblignefour=4;
 				else $nblignefour=4;
-				
-				$param="&id=".$product->id;	
+
+				$param="&id=".$product->id;
 				print '<tr class="liste_titre">';
 				print_liste_field_titre($langs->trans("Suppliers"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
 				print '<td class="liste_titre">'.$langs->trans("SupplierRef").'</td>';
@@ -366,78 +380,60 @@ if ($_GET["id"] || $_GET["ref"])
 				print '<td class="liste_titre"></td>';
 				print "</tr>\n";
 
-				// Suppliers list
-				$sql = "SELECT s.nom, s.rowid as socid,";
-				$sql.= " pf.ref_fourn,";
-				$sql.= " pfp.rowid, pfp.price, pfp.quantity, pfp.unitprice, pfp.fk_availability";
-				$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-				$sql.= ", ".MAIN_DB_PREFIX."product_fournisseur as pf";
-				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
-				$sql.= " ON pf.rowid = pfp.fk_product_fournisseur";
-				$sql.= " WHERE pf.fk_soc = s.rowid";
-				$sql.= " AND s.entity = ".$conf->entity;
-				$sql.= " AND pf.fk_product = ".$product->id;
-				//$sql.= " ORDER BY s.nom, pfp.quantity";
-				$sql.= $db->order($sortfield,$sortorder);
-				$resql=$db->query($sql);
-				if ($resql)
-				{
-					$num = $db->num_rows($resql);
-					$i = 0;
+				$product_fourn = new ProductFournisseur($db);
+				$product_fourn_list = $product_fourn->fetch_product_fournisseur($product->id);
 
-					$var=True;
-					while ($i < $num)
+				if (sizeof($product_fourn_list)>0)
+				{
+					$var=true;
+
+					foreach($product_fourn_list as $productfourn)
 					{
-						$objp = $db->fetch_object($resql);
 						$var=!$var;
 
-						print "<tr $bc[$var]>";
-						print '<td><a href="../fourn/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),'company').' '.$objp->nom.'</a></td>';
+						print "<tr ".$bc[$var].">";
+
+						print '<td>'.$productfourn->getSocNomUrl(1).'</td>';
 
 						// Supplier
-						print '<td align="left">'.$objp->ref_fourn.'</td>';
-						
+						print '<td align="left">'.$productfourn->fourn_ref.'</td>';
+
 						//Availability
 						if(!empty($conf->global->FOURN_PRODUCT_AVAILABILITY))
 						{
 							$html->load_cache_availability();
-                			$availability= $html->cache_availability[$objp->fk_availability]['label'];
+                			$availability= $html->cache_availability[$productfourn->fk_availability]['label'];
 							print '<td align="left">'.$availability.'</td>';
 						}
+
 						// Quantity
 						print '<td align="center">';
-						print $objp->quantity;
+						print $productfourn->fourn_qty;
 						print '</td>';
 
 						// Price quantity
 						print '<td align="right">';
-						print $objp->price?price($objp->price):"";
+						print $productfourn->fourn_price?price($productfourn->fourn_price):"";
 						print '</td>';
 
 						// Unit price
 						print '<td align="right">';
-						print $objp->unitprice? price($objp->unitprice) : ($objp->quantity?price($objp->price/$objp->quantity):"&nbsp;");
+						print price($productfourn->fourn_unitprice);
+						//print $objp->unitprice? price($objp->unitprice) : ($objp->quantity?price($objp->price/$objp->quantity):"&nbsp;");
 						print '</td>';
 
 						// Modify-Remove
 						print '<td align="center">';
 						if ($user->rights->produit->creer || $user->rights->service->creer)
 						{
-							print '<a href="fournisseurs.php?id='.$product->id.'&amp;socid='.$objp->socid.'&amp;action=add_price&amp;rowid='.$objp->rowid.'">'.img_edit()."</a>";
-							print '<a href="fournisseurs.php?id='.$product->id.'&amp;socid='.$objp->socid.'&amp;action=remove_pf&amp;rowid='.$objp->rowid.'">'.img_picto($langs->trans("Remove"),'disable.png').'</a>';
+							print '<a href="fournisseurs.php?id='.$product->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=add_price&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_edit()."</a>";
+							print '<a href="fournisseurs.php?id='.$product->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=remove_pf&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_picto($langs->trans("Remove"),'disable.png').'</a>';
 						}
 
 						print '</td>';
 
 						print '</tr>';
-
-						$i++;
 					}
-
-					$db->free($resql);
-				}
-				else {
-					dol_print_error($db);
 				}
 
 				print '</table>';
@@ -453,5 +449,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/17 16:44:38 $ - $Revision: 1.99 $');
+llxFooter('$Date: 2011/08/20 23:56:04 $ - $Revision: 1.100 $');
 ?>

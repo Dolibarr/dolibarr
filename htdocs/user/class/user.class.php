@@ -25,7 +25,7 @@
 /**
  *  \file       htdocs/user/class/user.class.php
  *  \brief      Fichier de la classe utilisateur
- *  \version    $Id: user.class.php,v 1.50 2011/08/20 16:59:18 eldy Exp $
+ *  \version    $Id: user.class.php,v 1.51 2011/08/20 23:56:03 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
@@ -118,6 +118,7 @@ class User extends CommonObject
 
 	/**
 	 *	Load a user from database with its id or ref (login)
+	 *
 	 *	@param      id		       		Si defini, id a utiliser pour recherche
 	 * 	@param      login       		Si defini, login a utiliser pour recherche
 	 *	@param      sid					Si defini, sid a utiliser pour recherche
@@ -145,7 +146,7 @@ class User extends CommonObject
 		$sql.= " u.openid as openid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 
-		if($conf->multicompany->enabled && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && ! $user->entity)))
+		if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && ! $user->entity)))
 		{
 			$sql.= " WHERE u.entity IS NOT NULL";
 		}
@@ -154,12 +155,11 @@ class User extends CommonObject
 			$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
 		}
 
-		if ($sid)
+		if ($sid)    // permet une recherche du user par son SID ActiveDirectory ou Samba
 		{
 			$sql.= " AND (u.ldap_sid = '".$sid."' OR u.login = '".$this->db->escape($login)."') LIMIT 1";
 		}
 		else if ($login)
-			// permet une recherche du user par son SID ActiveDirectory ou Samba
 		{
 			$sql.= " AND u.login = '".$this->db->escape($login)."'";
 		}

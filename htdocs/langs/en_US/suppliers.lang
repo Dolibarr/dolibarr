@@ -12,6 +12,7 @@ ListOfSuppliers=List of suppliers
 ShowSupplier=Show supplier
 OrderDate=Order date
 BuyingPrice=Buying price
+BuyingPriceMin=Minimum buying price
 AddSupplierPrice=Add supplier price
 ChangeSupplierPrice=Change supplier price
 ErrorQtyTooLowForThisSupplier=Quantity too low for this supplier or no price defined on this product for this supplier

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: list.tpl.php,v 1.4 2011/07/31 23:19:26 eldy Exp $
+ * $Id: list.tpl.php,v 1.5 2011/08/20 23:56:03 eldy Exp $
  */
 ?>
 
@@ -83,7 +83,7 @@
 <!-- FIELDS DATA -->
 
 <?php
-$var=True;
+$var=true;
 foreach($datas as $line) { 
 	$var=!$var;	?>
 	<tr <?php echo $bc[$var]; ?>>

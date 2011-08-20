@@ -25,7 +25,7 @@
  *	\file		htdocs/fourn/commande/fiche.php
  *	\ingroup	supplier, order
  *	\brief		Card supplier order
- *	\version	$Id: fiche.php,v 1.233 2011/08/04 21:46:51 eldy Exp $
+ *	\version	$Id: fiche.php,v 1.234 2011/08/20 23:56:04 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -141,8 +141,8 @@ if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 		{
 			$qty = $_POST['qty'] ? $_POST['qty'] : $_POST['pqty'];
 
-			$product = new ProductFournisseur($db);
-			$idprod=$product->get_buyprice($_POST['idprodfournprice'], $qty);
+			$productsupplier = new ProductFournisseur($db);
+			$idprod=$productsupplier->get_buyprice($_POST['idprodfournprice'], $qty);
 
 			//$societe='';
 			if ($object->socid)
@@ -153,20 +153,20 @@ if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 
 			if ($idprod > 0)
 			{
-				$res=$product->fetch($idprod);
+				$res=$productsupplier->fetch($idprod);
 
 				// cas special pour lequel on a les meme reference que le fournisseur
 				// $label = '['.$nv_prod->ref.'] - '. $nv_prod->libelle;
-				$label = $product->libelle;
+				$label = $productsupplier->libelle;
 
-				$desc = $product->description;
-				$desc.= $product->description && $_POST['np_desc'] ? "\n" : "";
+				$desc = $productsupplier->description;
+				$desc.= $productsupplier->description && $_POST['np_desc'] ? "\n" : "";
 				$desc.= $_POST['np_desc'];
 
 				$remise_percent = $_POST["remise_percent"] ? $_POST["remise_percent"] : $_POST["p_remise_percent"];
 
-				$tva_tx	= get_default_tva($societe,$mysoc,$product->id);
-				$type = $product->type;
+				$tva_tx	= get_default_tva($societe,$mysoc,$productsupplier->id);
+				$type = $productsupplier->type;
 
 				// Local Taxes
 				$localtax1_tx= get_localtax($tva_tx, 1, $societe);
@@ -179,9 +179,9 @@ if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 				$tva_tx,
 				$localtax1_tx,
 				$localtax2_tx,
-				$product->id,
+				$productsupplier->id,
 				$_POST['idprodfournprice'],
-				$product->fourn_ref,
+				$productsupplier->fourn_ref,
 				$remise_percent,
 				'HT',
 				$type
@@ -1542,5 +1542,5 @@ if ($id > 0 || ! empty($ref))
 
 $db->close();
 
-llxFooter('$Date: 2011/08/04 21:46:51 $	- $Revision: 1.233 $');
+llxFooter('$Date: 2011/08/20 23:56:04 $	- $Revision: 1.234 $');
 ?>
