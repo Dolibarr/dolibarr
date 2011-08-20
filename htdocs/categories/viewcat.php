@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
+/* Copyright (C) 2005      Matthieu Valleton	<mv@seeschloss.org>
  * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007      Patrick Raguin	  	  <patrick.raguin@gmail.com>
- * Copyright (C) 2005-2009 Regis Houssin	  	  <regis@dolibarr.fr>
+ * Copyright (C) 2007      Patrick Raguin		<patrick.raguin@gmail.com>
+ * Copyright (C) 2005-2011 Regis Houssin		<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
  *       \file       htdocs/categories/viewcat.php
  *       \ingroup    category
  *       \brief      Page to show a category card
- *       \version    $Revision: 1.53 $
+ *       \version    $Id:$
  */
 
 require("../main.inc.php");
@@ -30,11 +30,6 @@ require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/categories.lib.php");
 
 $langs->load("categories");
-
-// Security check
-if (! $user->rights->categorie->lire) accessforbidden();
-
-$mesg = '';
 
 $mesg = '';
 $id=GETPOST('id');
@@ -48,6 +43,9 @@ if ($id == "")
 	dol_print_error('','Missing parameter id');
 	exit();
 }
+
+// Security check
+$result = restrictedArea($user, 'categorie', $id);
 
 $object = new Categorie($db);
 $result=$object->fetch($id);
