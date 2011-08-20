@@ -23,7 +23,7 @@
  *       \file       htdocs/comm/action/fiche.php
  *       \ingroup    agenda
  *       \brief      Page for event card
- *       \version    $Id: fiche.php,v 1.228 2011/07/31 22:23:20 eldy Exp $
+ *       \version    $Id: fiche.php,v 1.229 2011/08/20 13:18:54 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -93,7 +93,7 @@ if ($action == 'add_action')
 	$_POST["apmonth"],
 	$_POST["apday"],
 	$_POST["apyear"]);
-	
+
 	$datef=dol_mktime(
 	$fulldayevent?'23':$_POST["p2hour"],
 	$fulldayevent?'59':$_POST["p2min"],
@@ -764,12 +764,12 @@ if ($id)
 
 		// Affected to
 		print '<tr><td nowrap>'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
-		$html->select_users($act->usertodo->id,'affectedto',1);
+		print $html->select_dolusers($act->usertodo->id>0?$act->usertodo->id:-1,'affectedto',1);
 		print '</td></tr>';
 
 		// Realised by
 		print '<tr><td nowrap>'.$langs->trans("ActionDoneBy").'</td><td colspan="3">';
-		$html->select_users($act->userdone->id,'doneby',1);
+		print $html->select_dolusers($act->userdone->id> 0?$act->userdone->id:-1,'doneby',1);
 		print '</td></tr>';
 
 		print '</table><br>';
@@ -1022,7 +1022,7 @@ if ($id)
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:20 $ - $Revision: 1.228 $');
+llxFooter('$Date: 2011/08/20 13:18:54 $ - $Revision: 1.229 $');
 
 
 /**
