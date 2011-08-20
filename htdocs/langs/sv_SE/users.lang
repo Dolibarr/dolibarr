@@ -46,7 +46,6 @@ NewUser=Ny användare
 CreateUser=Skapa användare
 SearchAGroup=Sök en grupp
 SearchAUser=Sök en användare
-ErrorFailedToSendPassword=Misslyckades med att skicka lösenord
 LoginNotDefined=Inloggning är inte definierat.
 NameNotDefined=Namn är inte definierad.
 ListOfUsers=Lista över användare

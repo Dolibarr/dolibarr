@@ -85,3 +85,4 @@ ErrorSelectAtLeastOne=Error. Select at least one entry.
 ErrorProductWithRefNotExist=Product with reference '<i>%s</i>' don't exist
 ErrorDeleteNotPossibleLineIsConsolidated=Delete not possible because record is linked to a bank transation that is conciliated
 ErrorProdIdAlreadyExist=%s is assigned to another third
+ErrorFailedToSendPassword=Failed to send password

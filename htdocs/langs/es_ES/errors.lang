@@ -85,3 +85,4 @@ ErrorSelectAtLeastOne=Error. Seleccione al menos una entrada.
 ErrorProductWithRefNotExist=La referencia de producto '<i>%s</i>' no existe
 ErrorDeleteNotPossibleLineIsConsolidated=Eliminación imposible ya que el registro está enlazado a una transacción bancaria conciliada
 ErrorProdIdAlreadyExist=%s se encuentra asignado a otro tercero
+ErrorFailedToSendPassword=Error en el envío de la contraseña

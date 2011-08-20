@@ -47,7 +47,6 @@ NewUser=مستخدم جديد
 CreateUser=إنشاء مستخدم
 SearchAGroup=فريق البحث
 SearchAUser=بحث المستخدم
-ErrorFailedToSendPassword=لم ترسل كلمة السر
 LoginNotDefined=ادخل ليست محددة.
 NameNotDefined=اسم غير محدد.
 ListOfUsers=قائمة المستخدمين

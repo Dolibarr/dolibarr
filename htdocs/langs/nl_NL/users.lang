@@ -38,7 +38,6 @@ NewUser=Nieuwe gebruiker
 CreateUser=CreÃ«er gebruiker
 SearchAGroup=Zoek een groep
 SearchAUser=Zoek een gebruiker
-ErrorFailedToSendPassword=Wachtwoord verzenden mislukt
 LoginNotDefined=Inlog is niet gedefiniÃ«erd.
 NameNotDefined=Naam is niet gedefiniÃ«erd.
 ListOfUsers=Lijst van gebruikers

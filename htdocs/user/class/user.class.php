@@ -25,7 +25,7 @@
 /**
  *  \file       htdocs/user/class/user.class.php
  *  \brief      Fichier de la classe utilisateur
- *  \version    $Id: user.class.php,v 1.49 2011/08/19 22:15:22 hregis Exp $
+ *  \version    $Id: user.class.php,v 1.50 2011/08/20 16:59:18 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
@@ -144,7 +144,7 @@ class User extends CommonObject
 		$sql.= " u.photo as photo,";
 		$sql.= " u.openid as openid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-		
+
 		if($conf->multicompany->enabled && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && ! $user->entity)))
 		{
 			$sql.= " WHERE u.entity IS NOT NULL";
@@ -1404,8 +1404,8 @@ class User extends CommonObject
 		}
 		else
 		{
+		    $langs->trans("errors");
 			$this->error=$langs->trans("ErrorFailedToSendPassword").' '.$mailfile->error;
-			//print nl2br($mesg);
 			return -1;
 		}
 	}

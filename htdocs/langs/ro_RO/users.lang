@@ -47,7 +47,6 @@ NewUser=Utilizator nou
 CreateUser=Creaţi utilizator
 SearchAGroup=Cauta un grup
 SearchAUser=Caută un utilizator
-ErrorFailedToSendPassword=Nu a reuşit să trimită parola
 LoginNotDefined=Login nu este definit.
 NameNotDefined=Numele nu este definit.
 ListOfUsers=Lista de utilizatori
