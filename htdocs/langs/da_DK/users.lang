@@ -49,7 +49,6 @@ NewUser=Ny bruger
 CreateUser=Opret bruger
 SearchAGroup=Søg en gruppe
 SearchAUser=Søg en bruger
-ErrorFailedToSendPassword=Det lykkedes ikke at sende password
 LoginNotDefined=Login er ikke defineret.
 NameNotDefined=Navn er ikke defineret.
 ListOfUsers=Liste over brugere

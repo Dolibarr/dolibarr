@@ -38,7 +38,6 @@ NewUser=Ny bruker
 CreateUser=Lag bruker
 SearchAGroup=Søk etter gruppe
 SearchAUser=Søk ette bruker
-ErrorFailedToSendPassword=Klarte ikke å sende passord
 LoginNotDefined=Brukernavn ikke oppgitt.
 NameNotDefined=Navn ikke oppgitt.
 ListOfUsers=Brukeroversikt

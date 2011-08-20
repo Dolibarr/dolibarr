@@ -64,12 +64,6 @@ ErrorPasswordsMustMatch=Her iki yazdığınız şifreler birbiriyle eşleşmesi 
 ErrorWrongValueForField=Alan <b>numarası%</b> için yanlış değer <b>'ler)</b> regex <b>kural%</b> uymuyor <b>s (değeri' %s </b>
 ErrorsOnXLines=<b>%s</b> Doğum Hatalar kaynak hatları <b>var</b>
 WarningsOnXLines=<b>%s</b> Uyarıları kaynak hatları <b>var</b>
-// STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
-
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> tr_TR
 ErrorBadEMail=EMail Ssss yanlış
 ErrorBadUrl=Url Ssss yanlış
 ErrorDirNotFound=Directory) safe_mode veya <b>Ssss</b> bulunamadı (Kötü yol, yanlış openbasedir PHP izinleri ya da erişim engellendi tarafından parametre
@@ -85,4 +79,4 @@ WarningNoDocumentModelActivated=Hiçbir model, belge nesil için, aktif olmuştu
 ErrorDatabaseParameterWrong=Veritabanı kurulum parametresi <b>"Ssss"</b> bir değere sahip olmalıdır (değer değil uyumlu kullanmak Dolibarr <b>Ssss</b> &#39;).
 ErrorNumRefModel=Bir referans veritabanı içine var (Ssss) ve bu numaralandırma kuralı ile uyumlu değildir. Kaldır kayıt veya referans adını bu modül etkinleştirin.
 ErrorQtyTooLowForThisSupplier=Miktar çok bu tedarikçi veya fiyat bu tedarikçi için bu ürün üzerinde tanımlanan düşük
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:42:21).
+ErrorFailedToSendPassword=Parola gönderilemedi

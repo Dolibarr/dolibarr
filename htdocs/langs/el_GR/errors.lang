@@ -90,4 +90,4 @@ ErrorBadMaskFailedToLocatePosOfSequence=Σφάλμα, μάσκα χωρίς το
 ErrorBadMaskBadRazMonth=Σφάλμα, κακή αξία επαναφορά
 ErrorSelectAtLeastOne=Σφάλμα. Επιλέξτε τουλάχιστον μία είσοδο.
 ErrorProductWithRefNotExist=Προϊόν με <i>«sssss</i> &#39;αναφοράς δεν υπάρχουν
-// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:38:29).
+ErrorFailedToSendPassword=Αποτυχία αποστολής κωδικού

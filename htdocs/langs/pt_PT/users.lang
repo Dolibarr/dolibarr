@@ -38,7 +38,6 @@ NewUser=Novo Utilizador
 CreateUser=Criar Utilizador
 SearchAGroup=Procurar um Grupo
 SearchAUser=Procurar um Utilizador
-ErrorFailedToSendPassword=Erro ao enviar a palavra-passe
 LoginNotDefined=O Utilizador não está Definido
 NameNotDefined=O Nome não está definido
 ListOfUsers=Lista de Utilizadores

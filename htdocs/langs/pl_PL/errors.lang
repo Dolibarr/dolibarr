@@ -64,12 +64,6 @@ ErrorRecordHasChildren=Nie można usunąć rekordy, ponieważ ma pewne Childs.
 // Reference language: en_US
 MenuManager=Menu menedżera
 ErrorUrlNotValid=Adres strony internetowej jest nieprawidłowy
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
-
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> pl_PL
 Error=Błąd
 Errors=Błędy
 ErrorBadEMail=EMail sssss jest nie tak
@@ -94,4 +88,4 @@ WarningNoDocumentModelActivated=Nie modelu do generowania dokumentu, został akt
 ErrorDatabaseParameterWrong=parametr konfiguracji bazy danych <b>&quot;sssss&quot;</b> ma wartość nie jest zgodna korzystać Dolibarr (musi mieć wartość <b>&quot;sssss&quot;).</b>
 ErrorNumRefModel=Odniesienia nie istnieje w bazie danych (sssss) i nie jest zgodna z tą zasadą numeracji. Zmiana nazwy lub usuwanie zapisu w odniesieniu do aktywacji tego modułu.
 ErrorQtyTooLowForThisSupplier=Zbyt mała ilość tego dostawcy lub ceny nie określono tego produktu dla tego dostawca
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:42:06).
+ErrorFailedToSendPassword=Nie można wysłać hasło
