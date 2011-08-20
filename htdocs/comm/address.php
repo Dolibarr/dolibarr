@@ -20,8 +20,8 @@
 /**
  *      \file       htdocs/comm/address.php
  *      \ingroup    societe
- *      \brief      Onglet adresses d'un client
- *      \version    $Id: address.php,v 1.9 2011/08/03 00:46:27 eldy Exp $
+ *      \brief      Tab address of customer
+ *      \version    $Id: address.php,v 1.10 2011/08/20 15:11:32 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -49,7 +49,7 @@ $result = restrictedArea($user, 'societe', $socid);
 
 if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
 {
-	$address = new Address($db);
+    $address = new Address($db);
 
     $address->socid		= $_POST["socid"];
     $address->label		= ($_POST["label"]!=$langs->trans('RequiredField')?$_POST["label"]:'');
@@ -71,21 +71,21 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
 
         if ($result >= 0)
         {
-        	if ($origin == commande)
-        	{
-        		Header("Location: ../commande/fiche.php?action=editdelivery_adress&socid=".$socid."&id=".$originid);
-        		exit;
-        	}
-        	elseif ($origin == propal)
-        	{
-        		Header("Location: ../comm/propal.php?action=editdelivery_adress&socid=".$socid."&id=".$originid);
-        		exit;
-        	}
-        	else
-        	{
-        		Header("Location: ".$_SERVER['PHP_SELF']."?socid=".$socid);
-        		exit;
-        	}
+            if ($origin == commande)
+            {
+                Header("Location: ../commande/fiche.php?action=editdelivery_adress&socid=".$socid."&id=".$originid);
+                exit;
+            }
+            elseif ($origin == propal)
+            {
+                Header("Location: ../comm/propal.php?action=editdelivery_adress&socid=".$socid."&id=".$originid);
+                exit;
+            }
+            else
+            {
+                Header("Location: ".$_SERVER['PHP_SELF']."?socid=".$socid);
+                exit;
+            }
         }
         else
         {
@@ -103,29 +103,29 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
 
         if ($result >= 0)
         {
-        	if ($origin == commande)
-        	{
-        		Header("Location: ../commande/fiche.php?id=".$originid);
-        		exit;
-        	}
-        	elseif ($origin == propal)
-        	{
-        		Header("Location: ../comm/propal.php?id=".$originid);
-        		exit;
-        	}
-        	elseif ($origin == shipment)
-        	{
-        		Header("Location: ../expedition/fiche.php?id=".$originid);
-        		exit;
-        	}
-        	else
-        	{
-            Header("Location: ".$_SERVER['PHP_SELF']."?socid=".$socid);
-            exit;
-          }
-		}
-		else
-		{
+            if ($origin == commande)
+            {
+                Header("Location: ../commande/fiche.php?id=".$originid);
+                exit;
+            }
+            elseif ($origin == propal)
+            {
+                Header("Location: ../comm/propal.php?id=".$originid);
+                exit;
+            }
+            elseif ($origin == shipment)
+            {
+                Header("Location: ../expedition/fiche.php?id=".$originid);
+                exit;
+            }
+            else
+            {
+                Header("Location: ".$_SERVER['PHP_SELF']."?socid=".$socid);
+                exit;
+            }
+        }
+        else
+        {
             $reload = 0;
             $mesg = $address->error;
             $_GET["action"]= "edit";
@@ -136,18 +136,18 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
 
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes' && $user->rights->societe->supprimer)
 {
-	$address = new Address($db);
-	$result = $address->delete($_GET["id"], $socid);
+    $address = new Address($db);
+    $result = $address->delete($_GET["id"], $socid);
 
-	if ($result == 0)
+    if ($result == 0)
     {
-    	Header("Location: ".$_SERVER['PHP_SELF']."?socid=".$socid);
-    	exit ;
+        Header("Location: ".$_SERVER['PHP_SELF']."?socid=".$socid);
+        exit ;
     }
     else
     {
-    	$reload = 0;
-    	$_GET["action"]='';
+        $reload = 0;
+        $_GET["action"]='';
     }
 }
 
@@ -166,19 +166,19 @@ if (!empty($mesg)) print '<div class="error">'.$mesg.'</div>';
 
 if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
 {
-	if ($user->rights->societe->creer)
-  {
-  	/*
-     * Fiche adresse en mode creation
-     */
+    if ($user->rights->societe->creer)
+    {
+        /*
+         * Creation
+         */
 
-		$address = new Address($db);
+        $address = new Address($db);
 
-		$societe=new Societe($db);
-		$societe->fetch($socid);
-		$head = societe_prepare_head($societe);
+        $societe=new Societe($db);
+        $societe->fetch($socid);
+        $head = societe_prepare_head($societe);
 
-		dol_fiche_head($head, 'customer', $societe->nom);
+        dol_fiche_head($head, 'customer', $societe->nom);
 
         if ($_POST["label"] && $_POST["name"])
         {
@@ -264,16 +264,16 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
         print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" cols="40" rows="3" wrap="soft">';
         print $address->address;
         print '</textarea></td></tr>';
-        
+
         // Zip
-		print '<tr><td>'.$langs->trans('Zip').'</td><td>';
-		print $formcompany->select_ziptown($address->cp,'zipcode',array('town','selectpays_id'),6);
-		print '</td></tr>';
-		
-		// Town
-		print '<tr><td>'.$langs->trans('Town').'</td><td>';
-		print $formcompany->select_ziptown($address->ville,'town',array('zipcode','selectpays_id'));
-		print '</td></tr>';
+        print '<tr><td>'.$langs->trans('Zip').'</td><td>';
+        print $formcompany->select_ziptown($address->cp,'zipcode',array('town','selectpays_id'),6);
+        print '</td></tr>';
+
+        // Town
+        print '<tr><td>'.$langs->trans('Town').'</td><td>';
+        print $formcompany->select_ziptown($address->ville,'town',array('zipcode','selectpays_id'));
+        print '</td></tr>';
 
         print '<tr><td width="25%">'.$langs->trans('Country').'</td><td colspan="3">';
         $form->select_pays($address->pays_id,'pays_id');
@@ -300,16 +300,16 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
     /*
      * Fiche societe en mode edition
      */
-	$address = new Address($db);
+    $address = new Address($db);
 
-	$societe=new Societe($db);
-	$societe->fetch($_GET["socid"]);
-	$head = societe_prepare_head($societe);
+    $societe=new Societe($db);
+    $societe->fetch($_GET["socid"]);
+    $head = societe_prepare_head($societe);
 
-	dol_fiche_head($head, 'customer', $societe->nom);
+    dol_fiche_head($head, 'customer', $societe->nom);
 
-	print_titre($langs->trans("EditAddress"));
-	print "<br>\n";
+    print_titre($langs->trans("EditAddress"));
+    print "<br>\n";
 
     if ($socid)
     {
@@ -378,14 +378,14 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         print '</textarea></td></tr>';
 
         // Zip
-		print '<tr><td>'.$langs->trans('Zip').'</td><td>';
-		print $formcompany->select_ziptown($address->cp,'zipcode',array('town','selectpays_id'),6);
-		print '</td></tr>';
-		
-		// Town
-		print '<tr><td>'.$langs->trans('Town').'</td><td>';
-		print $formcompany->select_ziptown($address->ville,'town',array('zipcode','selectpays_id'));
-		print '</td></tr>';
+        print '<tr><td>'.$langs->trans('Zip').'</td><td>';
+        print $formcompany->select_ziptown($address->cp,'zipcode',array('town','selectpays_id'),6);
+        print '</td></tr>';
+
+        // Town
+        print '<tr><td>'.$langs->trans('Town').'</td><td>';
+        print $formcompany->select_ziptown($address->ville,'town',array('zipcode','selectpays_id'));
+        print '</td></tr>';
 
         print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
         $form->select_pays($address->pays_id,'pays_id');
@@ -407,114 +407,114 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 }
 else
 {
-	/*
-	* Fiche societe en mode visu
-	*/
-	$address = new Address($db);
-	$result=$address->fetch($socid);
-	if ($result < 0)
-	{
-		dol_print_error($db,$address->error);
-		exit;
-	}
+    /*
+     * Fiche societe en mode visu
+     */
+    $address = new Address($db);
+    $result=$address->fetch($socid);
+    if ($result < 0)
+    {
+        dol_print_error($db,$address->error);
+        exit;
+    }
 
-	$societe=new Societe($db);
-	$societe->fetch($address->socid);
-	$head = societe_prepare_head($societe);
+    $societe=new Societe($db);
+    $societe->fetch($address->socid);
+    $head = societe_prepare_head($societe);
 
-	dol_fiche_head($head, 'customer', $societe->nom);
-
-
-	// Confirmation de la suppression de l'adresse
-	if ($_GET["action"] == 'delete')
-	{
-		$html = new Form($db);
-		$ret=$html->form_confirm($_SERVER['PHP_SELF']."?socid=".$address->socid."&amp;id=".$_GET["id"],$langs->trans("DeleteAddress"),$langs->trans("ConfirmDeleteAddress"),"confirm_delete");
-		if ($ret == 'html') print '<br>';
-	}
-
-	if ($address->error)
-	{
-		print '<div class="error">';
-		print $address->error;
-		print '</div>';
-	}
-
-	$nblines = sizeof($address->lines);
-	if ($nblines)
-	{
-		for ($i = 0 ; $i < $nblines ; $i++)
-		{
-
-			print '<table class="border" width="100%">';
-
-			print '<tr><td width="20%">'.$langs->trans('AddressLabel').'</td><td colspan="3">'.$address->lines[$i]->label.'</td>';
-			print '<td valign="top" colspan="2" width="50%" rowspan="6">'.$langs->trans('Note').' :<br>'.nl2br($address->lines[$i]->note).'</td></tr>';
-			print '<tr><td width="20%">'.$langs->trans('Name').'</td><td colspan="3">'.$address->lines[$i]->name.'</td></tr>';
-
-			print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($address->lines[$i]->address)."</td></tr>";
-
-			print '<tr><td width="25%">'.$langs->trans('Zip').'</td><td width="25%">'.$address->lines[$i]->cp."</td></tr>";
-			print '<tr><td width="25%">'.$langs->trans('Town').'</td><td width="25%">'.$address->lines[$i]->ville."</td></tr>";
-
-			print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$address->lines[$i]->pays.'</td>';
-
-			print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dol_print_phone($address->lines[$i]->tel,$address->lines[$i]->pays_code,0,$address->socid,'AC_TEL').'</td></tr>';
-
-      		print '<tr><td>'.$langs->trans('Fax').'</td><td>'.dol_print_phone($address->lines[$i]->fax,$address->lines[$i]->pays_code,0,$address->socid,'AC_FAX').'</td></tr>';
-
-			print '</td></tr>';
-
-			print '</table>';
+    dol_fiche_head($head, 'customer', $societe->nom);
 
 
-			/*
-			*
-			*/
+    // Confirmation delete
+    if ($_GET["action"] == 'delete')
+    {
+        $html = new Form($db);
+        $ret=$html->form_confirm($_SERVER['PHP_SELF']."?socid=".$address->socid."&amp;id=".$_GET["id"],$langs->trans("DeleteAddress"),$langs->trans("ConfirmDeleteAddress"),"confirm_delete");
+        if ($ret == 'html') print '<br>';
+    }
 
-			print '<div class="tabsAction">';
+    if ($address->error)
+    {
+        print '<div class="error">';
+        print $address->error;
+        print '</div>';
+    }
 
-			if ($user->rights->societe->creer)
-			{
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$address->socid.'&amp;id='.$address->lines[$i]->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
-			}
+    $nblines = sizeof($address->lines);
+    if ($nblines)
+    {
+        for ($i = 0 ; $i < $nblines ; $i++)
+        {
 
-			if ($user->rights->societe->supprimer)
-			{
-				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?socid='.$address->socid.'&amp;id='.$address->lines[$i]->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
-			}
+            print '<table class="border" width="100%">';
+
+            print '<tr><td width="20%">'.$langs->trans('AddressLabel').'</td><td colspan="3">'.$address->lines[$i]->label.'</td>';
+            print '<td valign="top" colspan="2" width="50%" rowspan="6">'.$langs->trans('Note').' :<br>'.nl2br($address->lines[$i]->note).'</td></tr>';
+            print '<tr><td width="20%">'.$langs->trans('Name').'</td><td colspan="3">'.$address->lines[$i]->name.'</td></tr>';
+
+            print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($address->lines[$i]->address)."</td></tr>";
+
+            print '<tr><td width="25%">'.$langs->trans('Zip').'</td><td width="25%">'.$address->lines[$i]->cp."</td></tr>";
+            print '<tr><td width="25%">'.$langs->trans('Town').'</td><td width="25%">'.$address->lines[$i]->ville."</td></tr>";
+
+            print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$address->lines[$i]->pays.'</td>';
+
+            print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dol_print_phone($address->lines[$i]->tel,$address->lines[$i]->pays_code,0,$address->socid,'AC_TEL').'</td></tr>';
+
+            print '<tr><td>'.$langs->trans('Fax').'</td><td>'.dol_print_phone($address->lines[$i]->fax,$address->lines[$i]->pays_code,0,$address->socid,'AC_FAX').'</td></tr>';
+
+            print '</td></tr>';
+
+            print '</table>';
 
 
-			print '</div>';
-			print '<br>';
-		}
-	}
-	else
-	{
-		print $langs->trans("None");
-	}
-	print '</div>';
+            /*
+             *
+             */
+
+            print '<div class="tabsAction">';
+
+            if ($user->rights->societe->creer)
+            {
+                print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$address->socid.'&amp;id='.$address->lines[$i]->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
+            }
+
+            if ($user->rights->societe->supprimer)
+            {
+                print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?socid='.$address->socid.'&amp;id='.$address->lines[$i]->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+            }
 
 
-	/*
-	 * Bouton actions
-	 */
+            print '</div>';
+            print '<br>';
+        }
+    }
+    else
+    {
+        print $langs->trans("None");
+    }
+    print '</div>';
 
-	if ($_GET["action"] == '')
-	{
-		print '<div class="tabsAction">';
 
-		if ($user->rights->societe->creer)
-		{
-			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$address->socid.'&amp;action=create">'.$langs->trans("Add").'</a>';
-		}
-		print '</div>';
-	}
+    /*
+     * Bouton actions
+     */
+
+    if ($_GET["action"] == '')
+    {
+        print '<div class="tabsAction">';
+
+        if ($user->rights->societe->creer)
+        {
+            print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$address->socid.'&amp;action=create">'.$langs->trans("Add").'</a>';
+        }
+        print '</div>';
+    }
 
 }
 
 $db->close();
 
 
-llxFooter('$Date: 2011/08/03 00:46:27 $ - $Revision: 1.9 $');
+llxFooter('$Date: 2011/08/20 15:11:32 $ - $Revision: 1.10 $');
 ?>

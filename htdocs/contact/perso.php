@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  *       \file       htdocs/contact/perso.php
  *       \ingroup    societe
  *       \brief      Onglet informations personnelles d'un contact
- *       \version    $Id: perso.php,v 1.65 2011/07/31 23:54:12 eldy Exp $
+ *       \version    $Id: perso.php,v 1.66 2011/08/20 15:11:32 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -42,33 +42,35 @@ $result = restrictedArea($user, 'contact', $contactid, 'socpeople');
 
 if ($user->rights->societe->contact->creer)
 {
-	if ($_POST["action"] == 'update' && ! $_POST["cancel"])
-	{
-		$contact = new Contact($db);
-		$contact->fetch($_POST["contactid"]);
+    if ($_POST["action"] == 'update' && ! $_POST["cancel"])
+    {
+        $contact = new Contact($db);
+        $contact->fetch($_POST["contactid"]);
 
-		// Note: Correct date should be completed with location to have exact GM time of birth.
-		$contact->birthday = dol_mktime(0,0,0,$_POST["birthdaymonth"],$_POST["birthdayday"],$_POST["birthdayyear"]);
-		$contact->birthday_alert = $_POST["birthday_alert"];
+        // Note: Correct date should be completed with location to have exact GM time of birth.
+        $contact->birthday = dol_mktime(0,0,0,$_POST["birthdaymonth"],$_POST["birthdayday"],$_POST["birthdayyear"]);
+        $contact->birthday_alert = $_POST["birthday_alert"];
 
-		$result = $contact->update_perso($_POST["contactid"], $user);
+        $result = $contact->update_perso($_POST["contactid"], $user);
 
-		if ($result > 0)
-		{
-			$contact->old_name='';
-			$contact->old_firstname='';
-		}
-		else
-		{
-			$error = $contact->error;
-		}
-	}
+        if ($result > 0)
+        {
+            $contact->old_name='';
+            $contact->old_firstname='';
+        }
+        else
+        {
+            $error = $contact->error;
+        }
+    }
 }
 
 
 /*
-*	View
-*/
+ *	View
+ */
+
+$now=dol_now();
 
 llxHeader('',$langs->trans("ContactsAddresses"),'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
 
@@ -96,12 +98,12 @@ if ($_GET["action"] == 'edit')
     print '<input type="hidden" name="action" value="update">';
     print '<input type="hidden" name="contactid" value="'.$contact->id.'">';
 
-	// Ref
+    // Ref
     print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3">';
     print $contact->id;
     print '</td></tr>';
 
-	// Name
+    // Name
     print '<tr><td width="20%">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><td width="30%">'.$contact->nom.'</td>';
     print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="30%">'.$contact->prenom.'</td>';
 
@@ -123,12 +125,12 @@ if ($_GET["action"] == 'edit')
         }
     }
 
-	// Civility
+    // Civility
     print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="3">';
     print $contact->getCivilityLabel();
     print '</td></tr>';
 
-	// Date To Birth
+    // Date To Birth
     print '<tr><td>'.$langs->trans("DateToBirth").'</td><td>';
     $html=new Form($db);
     print $html->select_date($contact->birthday,'birthday',0,0,1,"perso");
@@ -162,12 +164,12 @@ else
      */
     print '<table class="border" width="100%">';
 
-	// Ref
+    // Ref
     print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3">';
-	print $form->showrefnav($contact,'id');
+    print $form->showrefnav($contact,'id');
     print '</td></tr>';
 
-	// Name
+    // Name
     print '<tr><td width="20%">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><td width="30%">'.$contact->name.'</td>';
     print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="30%">'.$contact->firstname.'</td></tr>';
 
@@ -190,19 +192,32 @@ else
         }
     }
 
-	// Civility
+    // Civility
     print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="3">';
     print $contact->getCivilityLabel();
     print '</td></tr>';
 
-	// Date To Birth
+    // Date To Birth
     if ($contact->birthday != '')
     {
+        include_once(DOL_DOCUMENT_ROOT.'/lib/date.lib.php');
+
         print '<tr><td>'.$langs->trans("DateToBirth").'</td><td colspan="3">'.dol_print_date($contact->birthday,"day");
-		print ' (';
+
+        print ' &nbsp; ';
+        //var_dump($birthdatearray);
+        //print ($now-$birthdate).' - '.ConvertSecondToTime($now-$birthdate,'year').'<br>';
+        $ageyear=ConvertSecondToTime($now-$contact->birthday,'year')-1970;
+        $agemonth=ConvertSecondToTime($now-$contact->birthday,'month')-1;
+        if ($ageyear >= 2) print '('.$ageyear.' '.$langs->trans("DurationYears").')';
+        else if ($agemonth >= 2) print '('.$agemonth.' '.$langs->trans("DurationMonths").')';
+        else print '('.$agemonth.' '.$langs->trans("DurationMonth").')';
+
+
+        print ' &nbsp; - &nbsp; ';
         if ($contact->birthday_alert) print $langs->trans("BirthdayAlertOn");
         else print $langs->trans("BirthdayAlertOff");
-        print ')</td>';
+        print '</td>';
     }
     else
     {
@@ -220,9 +235,9 @@ else
     {
         print '<div class="tabsAction">';
 
-				if ($user->rights->societe->contact->creer)
-    		{
-        	print '<a class="butAction" href="perso.php?id='.$_GET["id"].'&amp;action=edit">'.$langs->trans('Modify').'</a>';
+        if ($user->rights->societe->contact->creer)
+        {
+            print '<a class="butAction" href="perso.php?id='.$_GET["id"].'&amp;action=edit">'.$langs->trans('Modify').'</a>';
         }
 
         print "</div>";
@@ -232,5 +247,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:54:12 $ - $Revision: 1.65 $');
+llxFooter('$Date: 2011/08/20 15:11:32 $ - $Revision: 1.66 $');
 ?>

@@ -29,7 +29,7 @@
  *	\author     Rodolphe Qiedeville
  *	\author	    Eric Seigne
  *	\author	    Laurent Destailleur
- *	\version    $Id: propal.class.php,v 1.113 2011/08/10 22:47:35 eldy Exp $
+ *	\version    $Id: propal.class.php,v 1.114 2011/08/20 15:11:34 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
@@ -745,7 +745,7 @@ class Propal extends CommonObject
 					$result=$this->db->query($sql);
 				}
 
-				// Affectation de l'adresse de livraison
+				// Set delivery address
 				if (! $error && $this->fk_delivery_address)
 				{
 					$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
@@ -1260,9 +1260,9 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *      \brief      Definit une adresse de livraison
+	 *      \brief      Define delivery address
 	 *      \param      user        		Objet utilisateur qui modifie
-	 *      \param      adresse_livraison      Adresse de livraison
+	 *      \param      fk_address			Delivery address id
 	 *      \return     int         		<0 si ko, >0 si ok
 	 */
 	function set_adresse_livraison($user, $fk_address)

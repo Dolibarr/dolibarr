@@ -22,7 +22,7 @@
  *       \file       htdocs/adherents/fiche.php
  *       \ingroup    member
  *       \brief      Page of member
- *       \version    $Id: fiche.php,v 1.241 2011/08/10 22:47:35 eldy Exp $
+ *       \version    $Id: fiche.php,v 1.242 2011/08/20 15:11:33 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -236,9 +236,10 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->adhe
 		$object->zip         = trim($_POST["zipcode"]);
         $object->ville       = trim($_POST["town"]);       // deprecated
         $object->town        = trim($_POST["town"]);
-
-		$object->fk_departement = $_POST["departement_id"];
-		$object->pays_id        = $_POST["pays_id"];
+		$object->state_id    = $_POST["departement_id"];
+		$object->country_id  = $_POST["pays_id"];
+		$object->fk_departement = $_POST["departement_id"];   // deprecated
+		$object->pays_id        = $_POST["pays_id"];   // deprecated
 
 		$object->phone       = trim($_POST["phone"]);
 		$object->phone_perso = trim($_POST["phone_perso"]);
@@ -1526,5 +1527,5 @@ if ($rowid && $action != 'edit')
 
 $db->close();
 
-llxFooter('$Date: 2011/08/10 22:47:35 $ - $Revision: 1.241 $');
+llxFooter('$Date: 2011/08/20 15:11:33 $ - $Revision: 1.242 $');
 ?>
