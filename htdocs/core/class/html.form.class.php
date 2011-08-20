@@ -31,7 +31,7 @@
  *	\file       htdocs/core/class/html.form.class.php
  *  \ingroup    core
  *	\brief      File of class with all html predefined components
- *	\version	$Id: html.form.class.php,v 1.199 2011/08/19 22:15:22 hregis Exp $
+ *	\version	$Id: html.form.class.php,v 1.200 2011/08/20 09:03:38 hregis Exp $
  */
 
 
@@ -763,10 +763,11 @@ class Form
      * 	@param		disabled		If select list must be disabled
      *  @param      include         Array list of users id to include
      * 	@param		enableonly		Array list of users id to be enabled. All other must be disabled
+     *  @param		force_entity	Possibility to force entity
      */
-    function select_users($selected='',$htmlname='userid',$show_empty=0,$exclude='',$disabled=0,$include='',$enableonly='')
+    function select_users($selected='',$htmlname='userid',$show_empty=0,$exclude='',$disabled=0,$include='',$enableonly='',$force_entity=0)
     {
-    	print $this->select_dolusers($selected,$htmlname,$show_empty,$exclude,$disabled,$include,$enableonly);
+    	print $this->select_dolusers($selected,$htmlname,$show_empty,$exclude,$disabled,$include,$enableonly,$force_entity);
     }
 
     /**
@@ -778,8 +779,9 @@ class Form
      * 	@param		disabled		If select list must be disabled
      *  @param      include         Array list of users id to include
      * 	@param		enableonly		Array list of users id to be enabled. All other must be disabled
+     *  @param		force_entity	Possibility to force entity
      */
-    function select_dolusers($selected='',$htmlname='userid',$show_empty=0,$exclude='',$disabled=0,$include='',$enableonly='')
+    function select_dolusers($selected='',$htmlname='userid',$show_empty=0,$exclude='',$disabled=0,$include='',$enableonly='',$force_entity=0)
     {
         global $conf,$user,$langs;
 
@@ -803,7 +805,8 @@ class Form
         if($conf->multicompany->enabled && $conf->entity == 1 && $user->admin && ! $user->entity)
         {
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX ."entity as e on e.rowid=u.entity";
-            $sql.= " WHERE u.entity IS NOT NULL";
+            if ($force_entity) $sql.= " WHERE u.entity IN (0,".$force_entity.")";
+            else $sql.= " WHERE u.entity IS NOT NULL";
         }
         else
         {

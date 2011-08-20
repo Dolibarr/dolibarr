@@ -19,7 +19,7 @@
 /**
  *	\file       htdocs/user/home.php
  *	\brief      Home page of users and groups management
- *	\version    $Id: home.php,v 1.50 2011/08/19 22:15:23 hregis Exp $
+ *	\version    $Id: home.php,v 1.51 2011/08/20 09:03:38 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -197,16 +197,25 @@ if ($canreadperms)
 
 	$sql = "SELECT g.rowid, g.nom, g.note, g.entity, g.datec";
 	$sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g";
-	$sql.= " WHERE g.entity IN (0,".$conf->entity.")";
+	if($conf->multicompany->enabled && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && ! $user->entity)))
+	{
+		$sql.= " WHERE g.entity IS NOT NULL";
+	}
+	else
+	{
+		$sql.= " WHERE g.entity IN (0,".$conf->entity.")";
+	}
 	$sql.= $db->order("g.datec","DESC");
 	$sql.= $db->plimit($max);
 
 	$resql=$db->query($sql);
 	if ($resql)
 	{
+		$colspan=2;
+		if ($conf->multicompany->enabled) $colspan++;
 		$num = $db->num_rows($resql);
 		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastGroupsCreated",($num ? $num : $max)).'</td></tr>';
+		print '<tr class="liste_titre"><td colspan="'.$colspan.'">'.$langs->trans("LastGroupsCreated",($num ? $num : $max)).'</td></tr>';
 		$var = true;
 		$i = 0;
 
@@ -217,11 +226,19 @@ if ($canreadperms)
 
 			print "<tr $bc[$var]>";
 			print '<td><a href="'.DOL_URL_ROOT.'/user/group/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$obj->nom.'</a>';
-			if (!$obj->entity)
+			if (! $obj->entity)
 			{
 				print img_picto($langs->trans("GlobalGroup"),'redstar');
 			}
 			print "</td>";
+			if ($conf->multicompany->enabled)
+	        {
+	        	$mc = new ActionsMulticompany($db);
+	        	$mc->getInfo($obj->entity);
+	        	print '<td>';
+	        	print $mc->label;
+	        	print '</td>';
+	        }
 			print '<td nowrap="nowrap" align="right">'.dol_print_date($db->jdate($obj->datec),'dayhour').'</td>';
 			print "</tr>";
 			$i++;
@@ -242,5 +259,5 @@ print '</table>';
 $db->close();
 
 
-llxFooter('$Date: 2011/08/19 22:15:23 $ - $Revision: 1.50 $');
+llxFooter('$Date: 2011/08/20 09:03:38 $ - $Revision: 1.51 $');
 ?>

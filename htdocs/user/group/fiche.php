@@ -21,7 +21,7 @@
 /**
  *       \file       htdocs/user/group/fiche.php
  *       \brief      Onglet groupes utilisateurs
- *       \version    $Id: fiche.php,v 1.74 2011/08/19 22:15:23 hregis Exp $
+ *       \version    $Id: fiche.php,v 1.75 2011/08/20 09:03:38 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -374,7 +374,7 @@ else
                 print '<table class="noborder" width="100%">'."\n";
                 print '<tr class="liste_titre"><td class="liste_titre" width="25%">'.$langs->trans("NonAffectedUsers").'</td>'."\n";
                 print '<td>';
-                print $form->select_users('','user',1,$exclude);
+                print $form->select_users('','user',1,$exclude,0,'','',$object->entity);
                 print ' &nbsp; ';
                 // Multicompany
                 if ($conf->multicompany->enabled)
@@ -521,5 +521,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/19 22:15:23 $ - $Revision: 1.74 $');
+llxFooter('$Date: 2011/08/20 09:03:38 $ - $Revision: 1.75 $');
 ?>
