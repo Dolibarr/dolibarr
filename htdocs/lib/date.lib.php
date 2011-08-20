@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 /**
  *  \file		htdocs/lib/date.lib.php
  *  \brief		Set of function to manipulate dates
- *  \version	$Id: date.lib.php,v 1.35 2011/08/20 15:11:31 eldy Exp $
+ *  \version	$Id: date.lib.php,v 1.36 2011/08/20 21:27:22 hregis Exp $
  */
 
 
