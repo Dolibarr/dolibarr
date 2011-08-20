@@ -120,7 +120,7 @@ class UserGroup extends CommonObject
 	 */
 	function listGroupsForUser($userid)
 	{
-		global $conf;
+		global $conf, $user;
 
 		$ret=array();
 
@@ -130,7 +130,7 @@ class UserGroup extends CommonObject
 		$sql.= " WHERE ug.fk_usergroup = g.rowid";
 		$sql.= " AND ug.fk_user = ".$userid;
 		
-		if($conf->multicompany->enabled && $conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1)
+		if($conf->multicompany->enabled && $conf->entity == 1 && $user->admin && ! $user->entity)
 		{
 			$sql.= " AND g.entity IS NOT NULL";
 		}
@@ -172,7 +172,7 @@ class UserGroup extends CommonObject
 	 */
 	function listUsersForGroup()
 	{
-		global $conf;
+		global $conf, $user;
 
 		$ret=array();
 
@@ -182,7 +182,7 @@ class UserGroup extends CommonObject
 		$sql.= " WHERE ug.fk_user = u.rowid";
 		$sql.= " AND ug.fk_usergroup = ".$this->id;
 		
-		if($conf->multicompany->enabled && $conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1)
+		if($conf->multicompany->enabled && $conf->entity == 1 && $user->admin && ! $user->entity)
 		{
 			$sql.= " AND u.entity IS NOT NULL";
 		}
@@ -197,11 +197,11 @@ class UserGroup extends CommonObject
 		{
 			while ($obj = $this->db->fetch_object($result))
 			{
-				$user=new User($this->db);
-				$user->fetch($obj->rowid);
-				$user->usergroup_entity = $obj->usergroup_entity;
+				$userstatic=new User($this->db);
+				$userstatic->fetch($obj->rowid);
+				$userstatic->usergroup_entity = $obj->usergroup_entity;
 
-				$ret[]=$user;
+				$ret[]=$userstatic;
 			}
 
 			$this->db->free($result);
@@ -455,8 +455,8 @@ class UserGroup extends CommonObject
 					{
 						$this->rights->$row[0]->$row[1] = 1;
 					}
-
 				}
+				
 				$i++;
 			}
 		}
