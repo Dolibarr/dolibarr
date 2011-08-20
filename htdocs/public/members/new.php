@@ -21,7 +21,7 @@
  *	\file       htdocs/public/members/new.php
  *	\ingroup    member
  *	\brief      Example of form to add a new member
- *	\version    $Id: new.php,v 1.43 2011/07/31 23:23:21 eldy Exp $
+ *	\version    $Id: new.php,v 1.44 2011/08/20 15:11:33 eldy Exp $
  *
  *  Note that you can add following constant to change behaviour of page
  *  MEMBER_NEWFORM_AMOUNT               Default amount for autosubscribe form
@@ -203,9 +203,12 @@ if ($action == 'add')
         $adh->nom         = $_POST["nom"];
         $adh->civilite_id = $_POST["civilite_id"];
         $adh->societe     = $_POST["societe"];
-        $adh->adresse     = $_POST["address"];
-        $adh->cp          = $_POST["zipcode"];
-        $adh->ville       = $_POST["town"];
+        $adh->address     = $_POST["address"];
+        $adh->zip         = $_POST["zipcode"];
+        $adh->town        = $_POST["town"];
+        $adh->adresse     = $_POST["address"];    // TODO deprecated
+        $adh->cp          = $_POST["zipcode"];    // TODO deprecated
+        $adh->ville       = $_POST["town"];    // TODO deprecated
         $adh->email       = $_POST["email"];
         if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
         {
@@ -214,7 +217,9 @@ if ($action == 'add')
         }
         $adh->photo       = $_POST["photo"];
         $adh->note        = $_POST["note"];
-        $adh->pays_id     = $_POST["pays_id"];
+        $adh->country_id  = $_POST["pays_id"];
+        $adh->pays_id     = $_POST["pays_id"];    // TODO deprecated
+        $adh->state_id    = $_POST["state_id"];
         $adh->typeid      = $_POST["type"];
         $adh->note        = $_POST["comment"];
         $adh->morphy      = $_POST["morphy"];
@@ -288,7 +293,7 @@ if ($action == 'added')
     print $langs->trans("NewMemberbyWeb");
     print '</center>';
 
-    llxFooterVierge('$Date: 2011/07/31 23:23:21 $ - $Revision: 1.43 $');
+    llxFooterVierge('$Date: 2011/08/20 15:11:33 $ - $Revision: 1.44 $');
     exit;
 }
 
@@ -536,5 +541,5 @@ print "<br></form>\n";
 
 $db->close();
 
-llxFooterVierge('$Date: 2011/07/31 23:23:21 $ - $Revision: 1.43 $');
+llxFooterVierge('$Date: 2011/08/20 15:11:33 $ - $Revision: 1.44 $');
 ?>

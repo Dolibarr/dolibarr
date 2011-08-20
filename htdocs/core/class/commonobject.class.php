@@ -21,7 +21,7 @@
  *	\file       htdocs/core/class/commonobject.class.php
  *	\ingroup    core
  *	\brief      File of parent class of all other business classes (invoices, contracts, proposals, orders, ...)
- *	\version    $Id: commonobject.class.php,v 1.156 2011/08/14 03:13:50 eldy Exp $
+ *	\version    $Id: commonobject.class.php,v 1.157 2011/08/20 15:11:31 eldy Exp $
  */
 
 
@@ -529,8 +529,8 @@ class CommonObject
 	}
 
 	/**
-	 *		Charge l'adresse d'id $this->fk_address dans this->address
-	 *		@param      fk_address 		Id de l'adresse
+	 *		Load delivery adresse id into $this->fk_address
+	 *		@param      fk_address 		Id of address
 	 *		@return		int				<0 if KO, >0 if OK
 	 */
 	function fetch_address($fk_address)

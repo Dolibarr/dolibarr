@@ -24,7 +24,7 @@
  *	\file       htdocs/adherents/class/adherent.class.php
  *	\ingroup    member
  *	\brief      File of class to manage members of a foundation
- *	\version    $Id: adherent.class.php,v 1.49 2011/08/10 22:47:33 eldy Exp $
+ *	\version    $Id: adherent.class.php,v 1.50 2011/08/20 15:11:31 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
@@ -57,9 +57,15 @@ class Adherent extends CommonObject
     var $pass;
     var $societe;
     var $adresse;
+    var $address;
     var $cp;
+    var $zip;
     var $ville;
+    var $town;
 
+    var $state_id;
+    var $state_code;
+    var $state;
     var $fk_departement;		// Id of department
     var $departement_code;		// Code of department
     var $departement;			// Label of department
@@ -950,12 +956,17 @@ class Adherent extends CommonObject
                 $this->ville          = $obj->town;	    // TODO deprecated
                 $this->town           = $obj->town;
 
-                $this->fk_departement = $obj->fk_departement;
-                $this->departement_code = $obj->fk_departement?$obj->departement_code:'';
-                $this->departement	  = $obj->fk_departement?$obj->departement:'';
+                $this->state_id       = $obj->fk_departement;
+                $this->state_id       = $obj->fk_departement?$obj->departement_code:'';
+                $this->state_id       = $obj->fk_departement?$obj->departement:'';
+                $this->fk_departement = $obj->fk_departement;    // TODO deprecated
+                $this->departement_code = $obj->fk_departement?$obj->departement_code:'';    // TODO deprecated
+                $this->departement	  = $obj->fk_departement?$obj->departement:'';    // TODO deprecated
 
-                $this->pays_id        = $obj->pays_id;
-                $this->pays_code      = $obj->pays_code;
+                $this->country_id     = $obj->pays_id;
+                $this->country_code   = $obj->pays_code;
+                $this->pays_id        = $obj->pays_id;    // TODO deprecated
+                $this->pays_code      = $obj->pays_code;    // TODO deprecated
                 if ($langs->trans("Country".$obj->pays_code) != "Country".$obj->pays_code) $this->pays = $langs->trans("Country".$obj->pays_code);
                 elseif ($obj->pays_lib) $this->pays=$obj->pays_lib;
                 else $this->pays=$obj->pays;

@@ -32,7 +32,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 /* 		position: relative; */
 	}
 
-		.adresse {
+		.address {
 /* 			float: left; */
 			font-size: 12px;
 		}
@@ -96,7 +96,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 	<?php print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('/thumbs/'.$mysoc->logo_small).'">'; ?>
 	</div>
 	<div class="infos">
-		<p class="adresse"><?php echo $mysoc->name; ?><br>
+		<p class="address"><?php echo $mysoc->name; ?><br>
 		<?php echo $mysoc->address; ?><br>
 		<?php echo $mysoc->zip.' '.$mysoc->town; ?></p>
 

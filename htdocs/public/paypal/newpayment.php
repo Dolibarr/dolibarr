@@ -22,7 +22,7 @@
  *		\ingroup    paypal
  *		\brief      File to offer a way to make a payment for a particular Dolibarr entity
  *		\author	    Laurent Destailleur
- *		\version    $Id: newpayment.php,v 1.26 2011/07/31 23:23:20 eldy Exp $
+ *		\version    $Id: newpayment.php,v 1.27 2011/08/20 15:11:33 eldy Exp $
  */
 
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
@@ -882,7 +882,7 @@ if (GETPOST("source") == 'membersubscription' && $valid)
 
     // Shipping address
     $shipToName=$member->getFullName($langs);
-    $shipToStreet=$member->adresse;
+    $shipToStreet=$member->address;
     $shipToCity=$member->ville;
     $shipToState=$member->departement_code;
     $shipToCountryCode=$member->pays_code;
@@ -946,5 +946,5 @@ html_print_paypal_footer($mysoc,$langs);
 
 $db->close();
 
-llxFooterPaypal('$Date: 2011/07/31 23:23:20 $ - $Revision: 1.26 $');
+llxFooterPaypal('$Date: 2011/08/20 15:11:33 $ - $Revision: 1.27 $');
 ?>

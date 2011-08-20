@@ -28,7 +28,7 @@
  *	\file			htdocs/lib/functions.lib.php
  *	\brief			A set of functions for Dolibarr
  *					This file contains all frequently used functions.
- *	\version		$Id: functions.lib.php,v 1.560 2011/08/20 09:03:38 hregis Exp $
+ *	\version		$Id: functions.lib.php,v 1.561 2011/08/20 15:11:31 eldy Exp $
  */
 
 // For compatibility during upgrade
@@ -828,8 +828,8 @@ function dolibarr_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$chec
  * 	@param		hour			Hour	(can be -1 for undefined)
  *	@param		minute			Minute	(can be -1 for undefined)
  *	@param		second			Second	(can be -1 for undefined)
- *	@param		month			Month
- *	@param		day				Day
+ *	@param		month			Month (1 to 12)
+ *	@param		day				Day (1 to 31)
  *	@param		year			Year
  *	@param		gm				1=Input informations are GMT values, otherwise local to server TZ
  *	@param		check			0=No check on parameters (Can use day 32, etc...)

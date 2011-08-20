@@ -31,7 +31,7 @@
  *	\file       htdocs/core/class/html.form.class.php
  *  \ingroup    core
  *	\brief      File of class with all html predefined components
- *	\version	$Id: html.form.class.php,v 1.201 2011/08/20 13:18:54 eldy Exp $
+ *	\version	$Id: html.form.class.php,v 1.202 2011/08/20 15:11:32 eldy Exp $
  */
 
 
@@ -854,7 +854,7 @@ class Form
                         $out.= '>';
                     }
                     $out.= $userstatic->getFullName($langs);
-                    
+
                     if($conf->multicompany->enabled && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
                     {
                     	if ($obj->admin && ! $obj->entity) $out.=" (".$langs->trans("AllEntities").")";
@@ -1395,7 +1395,7 @@ class Form
     }
 
     /**
-     *    Retourne la liste deroulante des adresses
+     *    Return list of delivery address
      *    @param      selected          Id contact pre-selectionn
      *    @param      socid
      *    @param      htmlname          Name of HTML field

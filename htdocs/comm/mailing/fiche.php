@@ -20,7 +20,7 @@
  *       \file       htdocs/comm/mailing/fiche.php
  *       \ingroup    mailing
  *       \brief      Fiche mailing, onglet general
- *       \version    $Id: fiche.php,v 1.123 2011/08/03 00:46:33 eldy Exp $
+ *       \version    $Id: fiche.php,v 1.124 2011/08/20 15:11:32 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -157,7 +157,7 @@ if ($_REQUEST["action"] == 'sendallconfirmed' && $_REQUEST['confirm'] == 'yes')
 					dol_print_error($db);
 				}
 
-				// Boucle sur chaque adresse et envoie le mail
+				// Loop on each email and send it
 				$i = 0;
 
 				while ($i < $num && $i < $conf->global->MAILING_LIMIT_SENDBYWEB)
@@ -1072,5 +1072,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:33 $ - $Revision: 1.123 $');
+llxFooter('$Date: 2011/08/20 15:11:32 $ - $Revision: 1.124 $');
 ?>
