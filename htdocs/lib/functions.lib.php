@@ -28,7 +28,7 @@
  *	\file			htdocs/lib/functions.lib.php
  *	\brief			A set of functions for Dolibarr
  *					This file contains all frequently used functions.
- *	\version		$Id: functions.lib.php,v 1.561 2011/08/20 15:11:31 eldy Exp $
+ *	\version		$Id: functions.lib.php,v 1.562 2011/08/20 20:53:31 eldy Exp $
  */
 
 // For compatibility during upgrade
@@ -3976,7 +3976,7 @@ function dol_osencode($str)
 
 
 /**
- *      Return an id from a Code. Store Code-Id in a cache.
+ *      Return an id or code from a code or id. Store Code-Id in a cache.
  *
  * 		@param		db			Database handler
  * 		@param		key			Code to get Id
