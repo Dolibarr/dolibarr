@@ -21,7 +21,7 @@
  *	\file       htdocs/core/class/hookmanager.class.php
  *	\ingroup    core
  *	\brief      File of class to manage hooks
- *	\version    $Id: hookmanager.class.php,v 1.8 2011/08/18 07:05:13 hregis Exp $
+ *	\version    $Id: hookmanager.class.php,v 1.9 2011/08/20 17:00:34 eldy Exp $
  */
 
 
@@ -129,6 +129,8 @@ class HookManager
 		global $var;
 
         if (! is_array($this->hooks) || empty($this->hooks)) return '';
+
+        dol_syslog(get_class($this).'::executeHooks method='.$method." action=".$action);
 
         // Loop on each hook
         $resaction=0; $resprint='';
