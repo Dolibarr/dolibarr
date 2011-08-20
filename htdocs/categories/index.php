@@ -3,7 +3,7 @@
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
  *      \file       htdocs/categories/index.php
  *      \ingroup    category
  *      \brief      Home page of category area
- *	 	\version	$Id: index.php,v 1.55 2011/08/03 00:46:32 eldy Exp $
+ *	 	\version	$Id: index.php,v 1.56 2011/08/20 09:02:57 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -312,5 +312,5 @@ print "</table>";
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:32 $ - $Revision: 1.55 $');
+llxFooter('$Date: 2011/08/20 09:02:57 $ - $Revision: 1.56 $');
 ?>

@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
  *       \file       htdocs/categories/photos.php
  *       \ingroup    category
  *       \brief      Gestion des photos d'une categorie
- *       \version    $Id: photos.php,v 1.14 2011/08/17 15:56:26 eldy Exp $
+ *       \version    $Id: photos.php,v 1.15 2011/08/20 09:02:57 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -33,8 +33,6 @@ require_once(DOL_DOCUMENT_ROOT."/lib/categories.lib.php");
 $langs->load("categories");
 $langs->load("bills");
 
-// Security check
-if (!$user->rights->categorie->lire) accessforbidden();
 
 $mesg = '';
 
@@ -49,6 +47,9 @@ if ($id == "")
 	dol_print_error('','Missing parameter id');
 	exit();
 }
+
+// Security check
+$result = restrictedArea($user, 'categorie', $id);
 
 $object = new Categorie($db);
 
@@ -304,5 +305,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/17 15:56:26 $ - $Revision: 1.14 $');
+llxFooter('$Date: 2011/08/20 09:02:57 $ - $Revision: 1.15 $');
 ?>
