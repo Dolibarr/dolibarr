@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 /**
  *  \file		htdocs/lib/date.lib.php
  *  \brief		Set of function to manipulate dates
- *  \version	$Id: date.lib.php,v 1.34 2011/08/17 16:08:49 eldy Exp $
+ *  \version	$Id: date.lib.php,v 1.36 2011/08/20 21:27:22 hregis Exp $
  */
 
 
@@ -95,7 +95,7 @@ function ConvertTime2Seconds($iHours=0,$iMinutes=0,$iSeconds=0)
 
 /**	  	Return, in clear text, value of a number of seconds in days, hours and minutes
  *    	@param      iSecond		    Number of seconds
- *    	@param      format		    Output format (all: complete display, hour: displays only hours, min: displays only minutes, sec: displays only seconds)
+ *    	@param      format		    Output format (all: complete display, hour: displays only hours, min: displays only minutes, sec: displays only seconds, month: display month only, year: displays only year);
  *      @param      lengthOfDay     Length of day (default 86400 seconds for 1 day, 28800 for 8 hour)
  *      @param      lengthOfWeek    Length of week (default 7)
  *    	@return     sTime		    Formated text of duration
@@ -166,7 +166,15 @@ function ConvertSecondToTime($iSecond,$format='all',$lengthOfDay=86400,$lengthOf
     {
         $sTime=dol_print_date($iSecond,'%S',true);
     }
-	return trim($sTime);
+    else if ($format == 'month')
+    {
+        $sTime=dol_print_date($iSecond,'%m',true);
+    }
+    else if ($format == 'year')
+    {
+        $sTime=dol_print_date($iSecond,'%Y',true);
+    }
+    return trim($sTime);
 }
 
 
