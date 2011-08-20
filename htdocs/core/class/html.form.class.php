@@ -31,7 +31,7 @@
  *	\file       htdocs/core/class/html.form.class.php
  *  \ingroup    core
  *	\brief      File of class with all html predefined components
- *	\version	$Id: html.form.class.php,v 1.200 2011/08/20 09:03:38 hregis Exp $
+ *	\version	$Id: html.form.class.php,v 1.201 2011/08/20 13:18:54 eldy Exp $
  */
 
 
@@ -756,6 +756,7 @@ class Form
 
     /**
      *	Return select list of users
+     *
      *  @param      selected        Id user preselected
      *  @param      htmlname        Field name in form
      *  @param      show_empty      0=liste sans valeur nulle, 1=ajoute valeur inconnue
@@ -772,6 +773,7 @@ class Form
 
     /**
      *	Return select list of users
+     *
      *  @param      selected        User id or user object of user preselected. If -1, we use id of current user.
      *  @param      htmlname        Field name in form
      *  @param      show_empty      0=liste sans valeur nulle, 1=ajoute valeur inconnue
