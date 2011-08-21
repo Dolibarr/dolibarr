@@ -20,7 +20,7 @@
 /**
  *	\file       htdocs/index.php
  *	\brief      Dolibarr home page
- *	\version    $Id: index.php,v 1.204 2011/08/21 13:07:11 eldy Exp $
+ *	\version    $Id: index.php,v 1.203 2011/08/17 22:13:26 eldy Exp $
  */
 
 define('NOCSRFCHECK',1);	// This is login page. We must be able to go on it from another web site.
@@ -197,7 +197,7 @@ if ($user->societe_id == 0)
                   "BillsCustomers",
                   "Contracts");
     // Dashboard Link lines
-    $links=array(DOL_URL_ROOT.'/comm/list.php',
+    $links=array(DOL_URL_ROOT.'/comm/clients.php',
     DOL_URL_ROOT.'/comm/prospect/prospects.php',
     DOL_URL_ROOT.'/fourn/liste.php',
     DOL_URL_ROOT.'/adherents/liste.php?statut=1&amp;mainmenu=members',
@@ -565,7 +565,7 @@ if ($user->admin && empty($conf->global->MAIN_REMOVE_INSTALL_WARNING))
 
 $db->close();
 
-llxFooter('$Date: 2011/08/21 13:07:11 $ - $Revision: 1.204 $');
+llxFooter('$Date: 2011/08/17 22:13:26 $ - $Revision: 1.203 $');
 
 
 /**

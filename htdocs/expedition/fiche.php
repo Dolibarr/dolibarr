@@ -25,7 +25,7 @@
  *	\file       htdocs/expedition/fiche.php
  *	\ingroup    expedition
  *	\brief      Fiche descriptive d'une expedition
- *	\version    $Id: fiche.php,v 1.212 2011/08/21 12:41:29 eldy Exp $
+ *	\version    $Id: fiche.php,v 1.211 2011/08/21 11:00:43 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -469,7 +469,6 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
     }
 }
 
-
 /*
  * View
  */
@@ -487,7 +486,11 @@ if ($action == 'create2')
     $action=''; $id=''; $ref='';
 }
 
-// Mode creation
+/*********************************************************************
+ *
+ * Mode creation
+ *
+ *********************************************************************/
 if ($action == 'create')
 {
 	$expe = new Expedition($db);
@@ -1378,5 +1381,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/21 12:41:29 $ - $Revision: 1.212 $');
+llxFooter('$Date: 2011/08/21 11:00:43 $ - $Revision: 1.211 $');
 ?>
