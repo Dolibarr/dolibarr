@@ -29,7 +29,7 @@
  * 	\ingroup	core
  *  \brief      File that defines environment for all Dolibarr process (pages or scripts)
  * 				This script reads the conf file, init $lang, $db and and empty $user
- *  \version    $Id: master.inc.php,v 1.358 2011/08/18 22:26:02 eldy Exp $
+ *  \version    $Id: master.inc.php,v 1.359 2011/08/21 15:26:16 eldy Exp $
  */
 
 
@@ -293,19 +293,20 @@ if (! defined('MAIN_LABEL_MENTION_NPR') ) define('MAIN_LABEL_MENTION_NPR','NPR')
  * constant to path. Use '' to use include class path autodetect.
  */
 // Path to root libraries
-if (! defined('TCPDF_PATH'))           { define('TCPDF_PATH',         DOL_DOCUMENT_ROOT .'/includes/tcpdf/'); }
-if (! defined('FPDFI_PATH'))           { define('FPDFI_PATH',         DOL_DOCUMENT_ROOT .'/includes/fpdfi/'); }
-if (! defined('NUSOAP_PATH'))          { define('NUSOAP_PATH',        DOL_DOCUMENT_ROOT .'/includes/nusoap/lib/'); }
-if (! defined('PHPEXCEL_PATH'))        { define('PHPEXCEL_PATH',      DOL_DOCUMENT_ROOT .'/includes/phpexcel/'); }
-if (! defined('ODTPHP_PATH'))          { define('ODTPHP_PATH',          empty($dolibarr_lib_ODTPHP_PATH)?DOL_DOCUMENT_ROOT.'/includes/odtphp/':$dolibarr_lib_ODTPHP_PATH.'/'); }
-if (! defined('ODTPHP_PATHTOPCLZIP'))  { define('ODTPHP_PATHTOPCLZIP',  empty($dolibarr_lib_ODTPHP_PATHTOPCLZIP)?DOL_DOCUMENT_ROOT.'/includes/odtphp/zip/pclzip/':$dolibarr_lib_ODTPHP_PATHTOPCLZIP.'/'); }
-if (! defined('ARTICHOW_FONT'))        { define('ARTICHOW_FONT',        empty($dolibarr_font_DOL_DEFAULT_TTF_BOLD)?DOL_DOCUMENT_ROOT.'/includes/artichow/font':dirname($dolibarr_font_DOL_DEFAULT_TTF_BOLD)); }
+if (! defined('TCPDF_PATH'))           { define('TCPDF_PATH',           DOL_DOCUMENT_ROOT .'/includes/tcpdf/'); }
+if (! defined('FPDFI_PATH'))           { define('FPDFI_PATH',           DOL_DOCUMENT_ROOT .'/includes/fpdfi/'); }
+if (! defined('NUSOAP_PATH'))          { define('NUSOAP_PATH',          DOL_DOCUMENT_ROOT .'/includes/nusoap/lib/'); }
+if (! defined('PHPEXCEL_PATH'))        { define('PHPEXCEL_PATH',        DOL_DOCUMENT_ROOT .'/includes/phpexcel/'); }
+if (! defined('GEOIP_PATH'))           { define('GEOIP_PATH',           (!isset($dolibarr_lib_GEOIP_PATH))?DOL_DOCUMENT_ROOT.'/includes/geoip/':(empty($dolibarr_lib_GEOIP_PATH)?'':$dolibarr_lib_GEOIP_PATH.'/')); }
+if (! defined('ODTPHP_PATH'))          { define('ODTPHP_PATH',          (!isset($dolibarr_lib_ODTPHP_PATH))?DOL_DOCUMENT_ROOT.'/includes/odtphp/':(empty($dolibarr_lib_GEOIP_PATH)?'':$dolibarr_lib_ODTPHP_PATH.'/')); }
+if (! defined('ODTPHP_PATHTOPCLZIP'))  { define('ODTPHP_PATHTOPCLZIP',  (!isset($dolibarr_lib_ODTPHP_PATHTOPCLZIP))?DOL_DOCUMENT_ROOT.'/includes/odtphp/zip/pclzip/':(empty($dolibarr_lib_GEOIP_PATH)?'':$dolibarr_lib_ODTPHP_PATHTOPCLZIP.'/')); }
+if (! defined('ARTICHOW_FONT'))        { define('ARTICHOW_FONT',        (!isset($dolibarr_font_DOL_DEFAULT_TTF_BOLD))?DOL_DOCUMENT_ROOT.'/includes/artichow/font':dirname($dolibarr_font_DOL_DEFAULT_TTF_BOLD)); }
 // Other required path
-if (! defined('ARTICHOW_FONT_NAMES'))  { define('ARTICHOW_FONT_NAMES',  empty($dolibarr_font_DOL_DEFAULT_TTF_BOLD)?'Tuffy,TuffyBold,TuffyBoldItalic,TuffyItalic':'DejaVuSans,DejaVuSans-Bold,DejaVuSans-BoldOblique,DejaVuSans-Oblique'); }
-if (! defined('DOL_DEFAULT_TTF'))      { define('DOL_DEFAULT_TTF',      empty($dolibarr_font_DOL_DEFAULT_TTF)?DOL_DOCUMENT_ROOT.'/includes/barcode/php-barcode/fonts/Aerial.ttf':$dolibarr_font_DOL_DEFAULT_TTF); }
-if (! defined('DOL_DEFAULT_TTF_BOLD')) { define('DOL_DEFAULT_TTF_BOLD', empty($dolibarr_font_DOL_DEFAULT_TTF_BOLD)?DOL_DOCUMENT_ROOT.'/includes/barcode/php-barcode/fonts/AerialBd.ttf':$dolibarr_font_DOL_DEFAULT_TTF_BOLD); }
+if (! defined('ARTICHOW_FONT_NAMES'))  { define('ARTICHOW_FONT_NAMES',  (!isset($dolibarr_font_DOL_DEFAULT_TTF_BOLD))?'Tuffy,TuffyBold,TuffyBoldItalic,TuffyItalic':'DejaVuSans,DejaVuSans-Bold,DejaVuSans-BoldOblique,DejaVuSans-Oblique'); }
+if (! defined('DOL_DEFAULT_TTF'))      { define('DOL_DEFAULT_TTF',      (!isset($dolibarr_font_DOL_DEFAULT_TTF))?DOL_DOCUMENT_ROOT.'/includes/barcode/php-barcode/fonts/Aerial.ttf':(empty($dolibarr_lib_GEOIP_PATH)?'':$dolibarr_font_DOL_DEFAULT_TTF)); }
+if (! defined('DOL_DEFAULT_TTF_BOLD')) { define('DOL_DEFAULT_TTF_BOLD', (!isset($dolibarr_font_DOL_DEFAULT_TTF_BOLD))?DOL_DOCUMENT_ROOT.'/includes/barcode/php-barcode/fonts/AerialBd.ttf':(empty($dolibarr_lib_GEOIP_PATH)?'':$dolibarr_font_DOL_DEFAULT_TTF_BOLD)); }
 // Old path to root deprecated (not used). Kept for extensions.
-if (! defined('FPDF_PATH'))            { define('FPDF_PATH',          DOL_DOCUMENT_ROOT .'/includes/fpdf/fpdf/'); }
-if (! defined('PHP_WRITEEXCEL_PATH'))  { define('PHP_WRITEEXCEL_PATH',DOL_DOCUMENT_ROOT .'/includes/php_writeexcel/'); }
+if (! defined('FPDF_PATH'))            { define('FPDF_PATH',            DOL_DOCUMENT_ROOT .'/includes/fpdf/fpdf/'); }
+if (! defined('PHP_WRITEEXCEL_PATH'))  { define('PHP_WRITEEXCEL_PATH',  DOL_DOCUMENT_ROOT .'/includes/php_writeexcel/'); }
 
 ?>
