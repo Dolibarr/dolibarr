@@ -22,7 +22,7 @@
 /**
  *		\file       htdocs/theme/bureau2crea/style.css.php
  *		\brief      Fichier de style CSS du theme bureau2crea
- *		\version    $Id: style.css.php,v 1.56 2011/08/19 11:49:48 bureau2crea Exp $
+ *		\version    $Id: style.css.php,v 1.57 2011/08/21 19:46:52 cdelambert Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -1268,11 +1268,14 @@ background-repeat: repeat-x;
 }
 */
 
-
 .nocellnopadd {
 list-style-type:none;
 margin: 0px;
 padding: 0px;
+}
+
+.boxhandle {
+	margin: 1px 4px 0px 0px;
 }
 
 .notopnoleft {
@@ -1352,8 +1355,8 @@ border: 0px;
 padding: 0px 0px;
 }
 table.nobordernopadding td {
-    /*border: 0px;
-    padding: 0px 0px;*/
+    border: 0px;
+    padding: 0px 0px 0px 5px;
 }
 
 /* For lists */
