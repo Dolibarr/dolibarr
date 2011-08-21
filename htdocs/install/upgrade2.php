@@ -21,7 +21,7 @@
 /**
  *	\file       htdocs/install/upgrade2.php
  *	\brief      Upgrade some data
- *	\version    $Id: upgrade2.php,v 1.190 2011/08/21 13:28:05 eldy Exp $
+ *	\version    $Id: upgrade2.php,v 1.189 2011/08/11 21:03:42 eldy Exp $
  */
 
 include_once('./inc.php');
@@ -3404,7 +3404,6 @@ function migrate_reload_modules($db,$langs,$conf)
 
 /**
  * Reload menu if dynamic menus, if modified by version
- *
  * @param       $db
  * @param       $langs
  * @param       $conf
@@ -3425,18 +3424,10 @@ function migrate_reload_menu($db,$langs,$conf,$versionto)
 	$beforeversionarray=explode('.','2.9.9');
 	if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
 	{
-	    $listofmenuhandler['auguria']=1;   // We set here only dynamic menu handlers
+	    $listofmenuhandler[]='auguria';   // We set here only dinamic menu handlers
 	}
 
-    // Script for VX (X<3.2) -> V3.2
-	$afterversionarray=explode('.','3.1.9');
-	$beforeversionarray=explode('.','3.2.9');
-	if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
-	{
-	    $listofmenuhandler['auguria']=1;   // We set here only dynamic menu handlers
-	}
-
-    foreach ($listofmenuhandler as $key => $val)
+    foreach ($listofmenuhandler as $key)
     {
         print '<tr><td colspan="4">';
 

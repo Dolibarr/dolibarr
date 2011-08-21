@@ -19,10 +19,10 @@
  */
 
 /**
- *	\file       htdocs/comm/prospect/list.php
+ *	\file       htdocs/comm/prospect/prospects.php
  *	\ingroup    prospect
  *	\brief      Page to list prospects
- *	\version    $Id: list.php,v 1.1 2011/08/21 13:12:47 eldy Exp $
+ *	\version    $Id: prospects.php,v 1.85 2011/08/03 00:46:27 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -165,7 +165,7 @@ $htmlother=new FormOther($db);
 $sql = "SELECT s.rowid, s.nom, s.ville, s.datec, s.datea, s.status as status,";
 $sql.= " st.libelle as stcomm, s.prefix_comm, s.fk_stcomm, s.fk_prospectlevel,";
 $sql.= " d.nom as departement";
-// Updated by Matelli
+// Updated by Matelli 
 // We'll need these fields in order to filter by sale (including the case where the user can only see his prospects)
 if ($search_sale) $sql .= ", sc.fk_soc, sc.fk_user";
 // We'll need these fields in order to filter by categ
@@ -240,7 +240,7 @@ if ($resql)
 	}
 
 	$param='&amp;stcomm='.$stcomm.'&amp;search_nom='.urlencode($search_nom).'&amp;search_ville='.urlencode($search_ville);
- 	// Added by Matelli
+ 	// Added by Matelli 
  	// Store the status filter in the URL
  	if (isSet($search_cstc))
  	{
@@ -313,7 +313,7 @@ if ($resql)
 	print '<input class="flat" type="text" size="10" name="search_datec" value="'.$search_datec.'">';
     print '</td>';
 
- 	// Added by Matelli
+ 	// Added by Matelli 
  	print '<td class="liste_titre" align="center">';
  	// Generate in $options_from the list of each option sorted
  	$options_from = '<option value="">&nbsp;</option>';
@@ -426,5 +426,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/21 13:12:47 $ - $Revision: 1.1 $');
+llxFooter('$Date: 2011/08/03 00:46:27 $ - $Revision: 1.85 $');
 ?>
