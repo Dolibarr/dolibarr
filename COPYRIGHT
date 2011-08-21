@@ -14,7 +14,6 @@ In alphabetical order of includes directory:
 AdoDb-Date        0.21     Modified BSD License        Yes              Date convertion
 ArtiChow          1.07     Public Domain               Yes              Graphics
 CKEditor		  3.6.1	   GPL or LGPL 2.1 or MPL 1.1  Yes				Editor WYSIWYG
-FCKEditor         2.6.6    LGPL 2.1 or Mozilla PL 1.0  Yes              Editor WYSIWYG
 FPDI              1.4.1    Apache Software License 2.0 No GPL3 only     PDF templates management
 jQuery            1.6.1    GPL and MIT Licence         Yes              JS library
 jQuery UI         1.8.14   GPL and MIT Licence         Yes              JS library plugin UI
@@ -26,7 +25,6 @@ jQuery jNotify	  1.1.00   Apache Software License 2.0 No GPL3 only		JS library p
 jQuery Mobile	  1.0b1	   GPL and MIT Licence		   Yes			    JS library for smartphone (not used)
 jQuery Tiptip     1.3      GPL and MIT Licence         Yes              JS library for tooltips
 JSGantt           1.2      BSD Licence                 Yes              JS library (to build Gantt reports)
-MagPieRss         0.72     GPL 2.0                     Yes              Load RSS
 NuSoap            0.9.5    LGPL 2.1                    Yes              Interfaces with third tools
 OdtPHP            1.0.1    GPL 2.0                     Yes              Library to build/edit ODT files
 Php-barcode       0.3pl1   GPL 2.0                     Yes              Bar code generation

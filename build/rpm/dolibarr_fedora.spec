@@ -119,6 +119,7 @@ cui hai bisogno ed essere facile da usare.
 %_datadir/dolibarr/scripts/*
 
 %defattr(-, root, root, 0755)
+%exclude %_datadir/dolibarr/htdocs/langs/*/*.lang
 %doc %_datadir/doc/dolibarr
 %dir %_datadir/dolibarr/build/rpm
 %dir %_datadir/dolibarr/build/tgz

@@ -54,13 +54,7 @@ License: Public Domain
 Files: htdocs/includes/ckeditor/*
 License: GPL-2+
 
-Files: htdocs/includes/efc_xfss/*
-License: GPL-2+
-
-Files: htdocs/includes/fckeditor/*
-License: GPL-2+
-
-Files: htdocs/includes/magpierss/*
+Files: htdocs/includes/fpdi/*
 License: GPL-2+
 
 Files: htdocs/includes/jquery/*
@@ -72,7 +66,7 @@ License: Public Domain
 Files: htdocs/includes/jsgantt/*
 License: GPL-2+
 
-Files: htdocs/includes/phpwrite_excel/*
+Files: htdocs/includes/phpexcel/*
 License: LGPL 2.1
 
 Files: htdocs/includes/odtphp/*
