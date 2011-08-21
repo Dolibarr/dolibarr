@@ -130,14 +130,8 @@ cui hai bisogno ed essere facile da usare.
 %_datadir/dolibarr/build/tgz/*
 %_datadir/dolibarr/htdocs/*
 
-%defattr(0664, -, -)
-%config(noreplace) %{_sysconfdir}/dolibarr/conf.php
-%config(noreplace) %{_sysconfdir}/dolibarr/apache.conf
-%config(noreplace) %{_sysconfdir}/dolibarr/install.forced.php
-%config(noreplace) %{_sysconfdir}/dolibarr/file_contexts.dolibarr
-
 #lang(ar_SA) %_datadir/dolibarr/htdocs/langs/ar_SA
-#lang(ca_ES) %_datadir/dolibarr/htdocs/langs/ca_ES/*.lang
+#lang(ca_ES) %_datadir/dolibarr/htdocs/langs/ca_ES
 #lang(da_DK) %_datadir/dolibarr/htdocs/langs/da_DK
 #lang(de_AT) %_datadir/dolibarr/htdocs/langs/de_AT
 #lang(de_DE) %_datadir/dolibarr/htdocs/langs/de_DE
@@ -146,18 +140,24 @@ cui hai bisogno ed essere facile da usare.
 #lang(en_GB) %_datadir/dolibarr/htdocs/langs/el_GB
 #lang(en_IN) %_datadir/dolibarr/htdocs/langs/el_IN
 #lang(en_NZ) %_datadir/dolibarr/htdocs/langs/el_NZ
-#lang(en)    %_datadir/dolibarr/htdocs/langs/en_US
+#lang(en) %_datadir/dolibarr/htdocs/langs/en_US
 #lang(es_AR) %_datadir/dolibarr/htdocs/langs/es_AR
-#lang(es)    %_datadir/dolibarr/htdocs/langs/es_ES
+#lang(es) %_datadir/dolibarr/htdocs/langs/es_ES
 #lang(es_HN) %_datadir/dolibarr/htdocs/langs/es_HN
 #lang(es_MX) %_datadir/dolibarr/htdocs/langs/en_MX
 #lang(es_PR) %_datadir/dolibarr/htdocs/langs/en_PR
 #lang(fa_IR) %_datadir/dolibarr/htdocs/langs/fa_IR
-#lang(fi)    %_datadir/dolibarr/htdocs/langs/fi_FI
+#lang(fi_FI) %_datadir/dolibarr/htdocs/langs/fi_FI
 #lang(fr_BE) %_datadir/dolibarr/htdocs/langs/fr_BE
 #lang(fr_CA) %_datadir/dolibarr/htdocs/langs/fr_CA
 #lang(fr_CH) %_datadir/dolibarr/htdocs/langs/fr_CH
-#lang(fr)    %_datadir/dolibarr/htdocs/langs/fr_FR
+#lang(fr) %_datadir/dolibarr/htdocs/langs/fr_FR
+
+%defattr(0664, -, -)
+%config(noreplace) %{_sysconfdir}/dolibarr/conf.php
+%config(noreplace) %{_sysconfdir}/dolibarr/apache.conf
+%config(noreplace) %{_sysconfdir}/dolibarr/install.forced.php
+%config(noreplace) %{_sysconfdir}/dolibarr/file_contexts.dolibarr
 
 
 
@@ -294,7 +294,7 @@ fi
 # Remove apache link
 if [ -L $apachelink ] ;
 then
-    echo "Delete apache config link for Dolibarr ($apachelink)"
+    echo Delete apache config link for Dolibarr ($apachelink)
     %{__rm} -f $apachelink
     status=purge
 fi
