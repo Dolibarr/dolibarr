@@ -54,6 +54,7 @@ SendShippingByEMail=Send shipping by EMail
 SendShippingRef=Send shipping %s
 ActionsOnShipping=Acions on shipping
 LinkToTrackYourPackage=Link to track your package
+ShipmentCreationIsDoneFromOrder=For the moment, creation of a new shipment is done from the order card.
 
 # Sending methods
 SendingMethodCATCH=Catch by customer
