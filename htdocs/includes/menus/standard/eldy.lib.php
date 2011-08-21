@@ -20,7 +20,7 @@
 /**
  *  \file		htdocs/includes/menus/standard/eldy.lib.php
  *  \brief		Library for file eldy menus
- *  \version	$Id: eldy.lib.php,v 1.66 2011/08/21 13:01:48 eldy Exp $
+ *  \version	$Id: eldy.lib.php,v 1.67 2011/08/21 13:07:10 eldy Exp $
  */
 
 
@@ -720,7 +720,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
             if ($conf->societe->enabled)
             {
                 $langs->load("commercial");
-                $newmenu->add("/comm/clients.php?leftmenu=customers", $langs->trans("ListCustomersShort"), 1, $user->rights->societe->lire);
+                $newmenu->add("/comm/list.php?leftmenu=customers", $langs->trans("ListCustomersShort"), 1, $user->rights->societe->lire);
 
                 $newmenu->add("/societe/soc.php?leftmenu=customers&amp;action=create&amp;type=c", $langs->trans("MenuNewCustomer"), 2, $user->rights->societe->creer);
                 //$newmenu->add("/contact/index.php?leftmenu=customers&amp;type=c", $langs->trans("Contacts"), 2, $user->rights->societe->contact->lire);
