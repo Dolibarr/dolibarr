@@ -22,7 +22,7 @@
 /**
  *       \file       htdocs/user/group/perms.php
  *       \brief      Onglet user et permissions de la fiche utilisateur
- *       \version    $Id: perms.php,v 1.41 2011/08/17 15:56:24 eldy Exp $
+ *       \version    $Id: perms.php,v 1.42 2011/08/21 00:20:43 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -319,5 +319,5 @@ if ($id)
 
 $db->close();
 
-llxFooter('$Date: 2011/08/17 15:56:24 $ - $Revision: 1.41 $');
+llxFooter('$Date: 2011/08/21 00:20:43 $ - $Revision: 1.42 $');
 ?>

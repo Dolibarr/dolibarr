@@ -25,7 +25,7 @@
 /**
  *  \file       htdocs/user/class/user.class.php
  *  \brief      Fichier de la classe utilisateur
- *  \version    $Id: user.class.php,v 1.50 2011/08/20 16:59:18 eldy Exp $
+ *  \version    $Id: user.class.php,v 1.52 2011/08/21 00:20:43 hregis Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
@@ -118,6 +118,7 @@ class User extends CommonObject
 
 	/**
 	 *	Load a user from database with its id or ref (login)
+	 *
 	 *	@param      id		       		Si defini, id a utiliser pour recherche
 	 * 	@param      login       		Si defini, login a utiliser pour recherche
 	 *	@param      sid					Si defini, sid a utiliser pour recherche
@@ -126,7 +127,7 @@ class User extends CommonObject
 	 */
 	function fetch($id='', $login='',$sid='',$loadpersonalconf=1)
 	{
-		global $conf;
+		global $conf, $user;
 
 		// Clean parameters
 		$login=trim($login);
@@ -154,11 +155,10 @@ class User extends CommonObject
 			$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
 		}
 
-		if ($sid)
+		if ($sid)    // permet une recherche du user par son SID ActiveDirectory ou Samba
 		{
 			$sql.= " AND (u.ldap_sid = '".$sid."' OR u.login = '".$this->db->escape($login)."') LIMIT 1";
 		}
-		// permet une recherche du user par son SID ActiveDirectory ou Samba
 		else if ($login)
 		{
 			$sql.= " AND u.login = '".$this->db->escape($login)."'";

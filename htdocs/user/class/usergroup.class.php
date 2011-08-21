@@ -21,7 +21,7 @@
  *	 \file       htdocs/user/class/usergroup.class.php
  *	 \brief      Fichier de la classe des groupes d'utilisateur
  *	 \author     Rodolphe Qiedeville
- *	 \version    $Id: usergroup.class.php,v 1.14 2011/08/19 22:15:22 hregis Exp $
+ *	 \version    $Id: usergroup.class.php,v 1.15 2011/08/21 00:20:43 hregis Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");

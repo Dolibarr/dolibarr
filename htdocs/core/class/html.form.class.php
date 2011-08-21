@@ -31,7 +31,7 @@
  *	\file       htdocs/core/class/html.form.class.php
  *  \ingroup    core
  *	\brief      File of class with all html predefined components
- *	\version	$Id: html.form.class.php,v 1.202 2011/08/20 15:11:32 eldy Exp $
+ *	\version	$Id: html.form.class.php,v 1.203 2011/08/21 00:20:44 hregis Exp $
  */
 
 
