@@ -21,7 +21,7 @@
  *	\file       htdocs/societe/index.php
  *  \ingroup    societe
  *  \brief      Home page for third parties area
- *  \version    $Id: index.php,v 1.19 2011/08/21 13:12:48 eldy Exp $
+ *  \version    $Id: index.php,v 1.17 2011/07/31 23:22:57 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -115,13 +115,13 @@ else
     if ($conf->societe->enabled && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS))
     {
         $statstring = "<tr $bc[0]>";
-        $statstring.= '<td><a href="'.DOL_URL_ROOT.'/comm/prospect/list.php">'.$langs->trans("Prospects").'</a></td><td align="right">'.round($third['prospect']).'</td>';
+        $statstring.= '<td><a href="'.DOL_URL_ROOT.'/comm/prospect/prospects.php">'.$langs->trans("Prospects").'</a></td><td align="right">'.round($third['prospect']).'</td>';
         $statstring.= "</tr>";
     }
     if ($conf->societe->enabled && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS))
     {
         $statstring.= "<tr $bc[1]>";
-        $statstring.= '<td><a href="'.DOL_URL_ROOT.'/comm/list.php">'.$langs->trans("Customers").'</a></td><td align="right">'.round($third['customer']).'</td>';
+        $statstring.= '<td><a href="'.DOL_URL_ROOT.'/comm/clients.php">'.$langs->trans("Customers").'</a></td><td align="right">'.round($third['customer']).'</td>';
         $statstring.= "</tr>";
     }
     if ($conf->fournisseur->enabled && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS))
@@ -239,5 +239,5 @@ print '</td></tr></table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/21 13:12:48 $ - $Revision: 1.19 $');
+llxFooter('$Date: 2011/07/31 23:22:57 $ - $Revision: 1.17 $');
 ?>
