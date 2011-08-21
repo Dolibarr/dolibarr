@@ -5,7 +5,7 @@
 # This file is used by Dolibarr setup process to create true Dolibarr
 # config file called "conf.php".
 #
-# $Id: conf.php.example,v 1.52 2011/08/14 17:17:19 eldy Exp $
+# $Id: conf.php.example,v 1.53 2011/08/21 15:26:15 eldy Exp $
 
 
 ###################
@@ -253,6 +253,9 @@ $dolibarr_main_prod='0';
 ##############################
 # Path to external libraries #
 ##############################
+
+# Value to overwrite path to use shared libraries instead of embedded one
+#$dolibarr_lib_GEOIP_PATH='';
 
 # Value to overwrite some path to use shared libraries instead of embedded one
 #$dolibarr_lib_ODTPHP_PATHTOPCLZIP="/usr/share/php/libphp-pclzip";
