@@ -21,7 +21,7 @@
  *  \file       htdocs/product/liste.php
  *  \ingroup    produit
  *  \brief      Page to list products and services
- *  \version    $Id: liste.php,v 1.155 2011/08/21 00:36:29 eldy Exp $
+ *  \version    $Id: liste.php,v 1.154 2011/08/21 00:26:31 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -435,15 +435,20 @@ if ($resql)
 
 			// MinimumPrice
             print  '<td align="right">';
-            // TODO Find min price with a min on unitprice into select request instead of subrequests
-			if ($product_fourn->find_min_price_product_fournisseur($objp->rowid) > 0)
+			if ($conf->fournisseur->enabled && $user->rights->fournisseur->lire && $type != 1)
 			{
-			    if ($product_fourn->product_fourn_price_id > 0)
-			    {
-			        $htmltext=$product_fourn->display_price_product_fournisseur();
-                    if ($conf->fournisseur->enabled && $user->rights->fournisseur->lire) print $html->textwithpicto(price($product_fourn->fourn_unitprice),$htmltext);
-                    else print price($product_fourn->fourn_unitprice).' '.$langs->trans("HT");
-			    }
+				if ($objp->fk_product_type != 1)
+				{
+					if ($product_fourn->find_min_price_product_fournisseur($objp->rowid))
+					{
+					    if ($product_fourn->product_fourn_price_id > 0)
+					    {
+					        $htmltext=$product_fourn->display_price_product_fournisseur();
+                            if ($conf->fournisseur->enabled && $user->rights->fournisseur->lire) print $html->textwithpicto(price($product_fourn->fourn_unitprice),$htmltext);
+                            else print price($product_fourn->fourn_unitprice).' '.$langs->trans("HT");
+					    }
+					}
+				}
 			}
             print '</td>';
 
@@ -501,5 +506,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/21 00:36:29 $ - $Revision: 1.155 $');
+llxFooter('$Date: 2011/08/21 00:26:31 $ - $Revision: 1.154 $');
 ?>
