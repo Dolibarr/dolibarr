@@ -21,7 +21,7 @@
  *	\file       htdocs/core/class/hookmanager.class.php
  *	\ingroup    core
  *	\brief      File of class to manage hooks
- *	\version    $Id: hookmanager.class.php,v 1.9 2011/08/20 17:00:34 eldy Exp $
+ *	\version    $Id: hookmanager.class.php,v 1.10 2011/08/21 18:34:49 eldy Exp $
  */
 
 
@@ -78,9 +78,7 @@ class HookManager
 				{
 					if (in_array($type,$hooks))
 					{
-						$path		= $module;
-						if ($module == 'adherent') $path = 'adherents';
-						$path 		= '/'.$path.'/class/';
+						$path 		= '/'.$module.'/class/';
 						$actionfile = 'actions_'.$module.'.class.php';
 						$pathroot	= '';
 
