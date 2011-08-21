@@ -25,7 +25,7 @@
  *       \file       htdocs/comm/fiche.php
  *       \ingroup    commercial compta
  *       \brief      Page to show customer card of a third party
- *       \version    $Id: fiche.php,v 1.283 2011/08/08 16:15:05 eldy Exp $
+ *       \version    $Id: fiche.php,v 1.284 2011/08/21 13:01:34 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -648,7 +648,7 @@ if ($socid > 0)
 			if ($num > 0)
 			{
 				print '<tr class="liste_titre">';
-				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastInterventions",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/fichinter/index.php?socid='.$objsoc->id.'">'.$langs->trans("AllInterventions").' ('.$num.')</td></tr></table></td>';
+				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastInterventions",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/fichinter/list.php?socid='.$objsoc->id.'">'.$langs->trans("AllInterventions").' ('.$num.')</td></tr></table></td>';
 				print '</tr>';
 				$var=!$var;
 			}
@@ -891,5 +891,5 @@ else
 $db->close();
 
 
-llxFooter('$Date: 2011/08/08 16:15:05 $ - $Revision: 1.283 $');
+llxFooter('$Date: 2011/08/21 13:01:34 $ - $Revision: 1.284 $');
 ?>
