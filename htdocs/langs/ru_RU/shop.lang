@@ -13,10 +13,10 @@ Shop=Магазин
 ShopWeb=Интернет-магазин
 LastOrders=Последние заказы
 OnStandBy=В режиме ожидания
-TreatmentInProgress=Лечение продолжается
-LastCustomers=Последние клиенты
-OSCommerceShop=OSCommerce магазин
+TreatmentInProgress=В обработке
+LastCustomers=Последние Покупатели
+OSCommerceShop=магазин OSCommerce
 OSCommerce=OSCommerce
-AddProd=Продажа онлайн
+AddProd=Онлайн Продажа
 // Date 2009-01-19 21:30:52
 // STOP - Lines generated via parser
