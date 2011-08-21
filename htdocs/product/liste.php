@@ -21,7 +21,7 @@
  *  \file       htdocs/product/liste.php
  *  \ingroup    produit
  *  \brief      Page to list products and services
- *  \version    $Id: liste.php,v 1.155 2011/08/21 00:36:29 eldy Exp $
+ *  \version    $Id: liste.php,v 1.156 2011/08/21 10:12:18 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -39,9 +39,10 @@ $snom=GETPOST("snom");
 $sall=GETPOST("sall");
 $type=GETPOST("type","int");
 $search_sale = GETPOST("search_sale");
-$search_categ = GETPOST("search_categ");
+$search_categ = GETPOST("search_categ",'int');
 $tosell = GETPOST("tosell");
 $tobuy = GETPOST("tobuy");
+$fourn_id = GETPOST("fourn_id",'int');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -140,15 +141,17 @@ else
 
 $sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,';
 $sql.= ' p.fk_product_type, p.tms as datem,';
-$sql.= ' p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte';
-$sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
+$sql.= ' p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte,';
+$sql.= ' MIN(pfp.unitprice) as minsellprice';
+$sql.= ' FROM ('.MAIN_DB_PREFIX.'product as p';
 // We'll need this table joined to the select in order to filter by categ
 if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_product as cp";
-if ($_GET["fourn_id"] > 0)  // The DISTINCT is used to avoid duplicate from this link
-{
-	$fourn_id = $_GET["fourn_id"];
-	$sql.= ", ".MAIN_DB_PREFIX."product_fournisseur as pf";
-}
+$sql.= ') ';
+//if ($fourn_id > 0)  // The DISTINCT is used to avoid duplicate from this link
+//{
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur as pf ON p.rowid = pf.fk_product";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON pf.rowid = pfp.fk_product_fournisseur";
+//}
 $sql.= ' WHERE p.entity IN (0,'.(! empty($conf->entities['product']) ? $conf->entities['product'] : $conf->entity).')';
 if ($search_categ) $sql.= " AND p.rowid = cp.fk_product";	// Join for the needed table to filter by categ
 if ($sall)
@@ -158,48 +161,27 @@ if ($sall)
 # if the type is not 1, we show all products (type = 0,2,3)
 if (dol_strlen($type))
 {
-	if ($type==1) {
-		$sql.= " AND p.fk_product_type = '1'";
-	} else {
-		$sql.= " AND p.fk_product_type <> '1'";
-	}
+	if ($type == 1) $sql.= " AND p.fk_product_type = '1'";
+	else $sql.= " AND p.fk_product_type <> '1'";
 }
 if ($sref)     $sql.= " AND p.ref like '%".$sref."%'";
 if ($sbarcode) $sql.= " AND p.barcode like '%".$sbarcode."%'";
 if ($snom)     $sql.= " AND p.label like '%".$db->escape($snom)."%'";
-if (isset($tosell) && dol_strlen($tosell) > 0)
-{
-	$sql.= " AND p.tosell = ".$db->escape($tosell);
-}
-if (isset($tobuy) && dol_strlen($tobuy) > 0)
-{
-    $sql.= " AND p.tobuy = ".$db->escape($tobuy);
-}
-if (dol_strlen($canvas) > 0)
-{
-	$sql.= " AND p.canvas = '".$db->escape($canvas)."'";
-}
-if($catid)
-{
-	$sql.= " AND cp.fk_categorie = ".$catid;
-}
-if ($fourn_id > 0)
-{
-	$sql.= " AND p.rowid = pf.fk_product AND pf.fk_soc = ".$fourn_id;
-}
-// Insert categ filter
-if ($search_categ)
-{
-	$sql .= " AND cp.fk_categorie = ".$db->escape($search_categ);
-}
+if (isset($tosell) && dol_strlen($tosell) > 0) $sql.= " AND p.tosell = ".$db->escape($tosell);
+if (isset($tobuy) && dol_strlen($tobuy) > 0)   $sql.= " AND p.tobuy = ".$db->escape($tobuy);
+if (dol_strlen($canvas) > 0)                   $sql.= " AND p.canvas = '".$db->escape($canvas)."'";
+if ($catid)        $sql.= " AND cp.fk_categorie = ".$catid;
+if ($search_categ) $sql.= " AND cp.fk_categorie = ".$search_categ;
+if ($fourn_id > 0) $sql.= " AND pf.fk_soc = ".$fourn_id;
 $sql.= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,";
 $sql.= " p.fk_product_type, p.tms,";
 $sql.= " p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte";
-if (GETPOST("toolowstock")) $sql.= " HAVING SUM(s.reel) < p.seuil_stock_alerte";    // Not used yet
+//if (GETPOST("toolowstock")) $sql.= " HAVING SUM(s.reel) < p.seuil_stock_alerte";    // Not used yet
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit + 1 ,$offset);
-$resql = $db->query($sql) ;
 
+dol_syslog("sql=".$sql);
+$resql = $db->query($sql) ;
 if ($resql)
 {
 	$num = $db->num_rows($resql);
@@ -338,12 +320,9 @@ if ($resql)
         }
 
 		// Minimum buying Price
-		if ($conf->fournisseur->enabled && $user->rights->fournisseur->lire && $type != 1)
-		{
-			print '<td class="liste_titre">';
-			print '&nbsp;';
-			print '</td>';
-		}
+		print '<td class="liste_titre">';
+		print '&nbsp;';
+		print '</td>';
 
 		// Stock
 		if ($conf->stock->enabled && $user->rights->stock->lire && $type != 1)
@@ -433,18 +412,21 @@ if ($resql)
     			print '</td>';
 			}
 
-			// MinimumPrice
+			// Better buy price
             print  '<td align="right">';
-            // TODO Find min price with a min on unitprice into select request instead of subrequests
-			if ($product_fourn->find_min_price_product_fournisseur($objp->rowid) > 0)
-			{
-			    if ($product_fourn->product_fourn_price_id > 0)
-			    {
-			        $htmltext=$product_fourn->display_price_product_fournisseur();
-                    if ($conf->fournisseur->enabled && $user->rights->fournisseur->lire) print $html->textwithpicto(price($product_fourn->fourn_unitprice),$htmltext);
-                    else print price($product_fourn->fourn_unitprice).' '.$langs->trans("HT");
-			    }
-			}
+            if ($objp->minsellprice != '')
+            {
+                //print price($objp->minsellprice).' '.$langs->trans("HT");
+    			if ($product_fourn->find_min_price_product_fournisseur($objp->rowid) > 0)
+    			{
+    			    if ($product_fourn->product_fourn_price_id > 0)
+    			    {
+    			        $htmltext=$product_fourn->display_price_product_fournisseur();
+                        if ($conf->fournisseur->enabled && $user->rights->fournisseur->lire) print $html->textwithpicto(price($product_fourn->fourn_unitprice).' '.$langs->trans("HT"),$htmltext);
+                        else print price($product_fourn->fourn_unitprice).' '.$langs->trans("HT");
+    			    }
+    			}
+            }
             print '</td>';
 
 			// Show stock
@@ -501,5 +483,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/21 00:36:29 $ - $Revision: 1.155 $');
+llxFooter('$Date: 2011/08/21 10:12:18 $ - $Revision: 1.156 $');
 ?>
