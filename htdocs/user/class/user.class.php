@@ -126,7 +126,7 @@ class User extends CommonObject
 	 */
 	function fetch($id='', $login='',$sid='',$loadpersonalconf=1)
 	{
-		global $conf, $user;
+		global $conf;
 
 		// Clean parameters
 		$login=trim($login);
@@ -145,7 +145,7 @@ class User extends CommonObject
 		$sql.= " u.openid as openid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 
-		if($conf->multicompany->enabled && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && ! $user->entity)))
+		if($conf->multicompany->enabled && $conf->entity == 1)
 		{
 			$sql.= " WHERE u.entity IS NOT NULL";
 		}
@@ -158,8 +158,8 @@ class User extends CommonObject
 		{
 			$sql.= " AND (u.ldap_sid = '".$sid."' OR u.login = '".$this->db->escape($login)."') LIMIT 1";
 		}
+		// permet une recherche du user par son SID ActiveDirectory ou Samba
 		else if ($login)
-			// permet une recherche du user par son SID ActiveDirectory ou Samba
 		{
 			$sql.= " AND u.login = '".$this->db->escape($login)."'";
 		}

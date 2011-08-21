@@ -822,13 +822,14 @@ class Form
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            $out.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled="true"':'').'>';
-            if ($show_empty) $out.= '<option value="-1"'.($id==-1?' selected="selected"':'').'>&nbsp;</option>'."\n";
             $num = $this->db->num_rows($resql);
             $i = 0;
             if ($num)
             {
-                $userstatic=new User($this->db);
+            	$out.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled="true"':'').'>';
+            	if ($show_empty) $out.= '<option value="-1"'.($id==-1?' selected="selected"':'').'>&nbsp;</option>'."\n";
+                
+            	$userstatic=new User($this->db);
 
                 while ($i < $num)
                 {
@@ -866,6 +867,11 @@ class Form
                     $out.= '</option>';
                     $i++;
                 }
+            }
+        	else
+            {
+            	$out.= '<select class="flat" name="'.$htmlname.'" disabled="disabled">';
+            	$out.= '<option value="">'.$langs->trans("EmptyList").'</option>';
             }
             $out.= '</select>';
         }
@@ -3514,10 +3520,11 @@ class Form
      * 	@param		disabled		If select list must be disabled
      *  @param      include         Array list of groups id to include
      * 	@param		enableonly		Array list of groups id to be enabled. All other must be disabled
+     * 	@param		force_entity	Possibility to force entity
      */
-    function select_dolgroups($selected='',$htmlname='groupid',$show_empty=0,$exclude='',$disabled=0,$include='',$enableonly='')
+    function select_dolgroups($selected='',$htmlname='groupid',$show_empty=0,$exclude='',$disabled=0,$include='',$enableonly='',$force_entity)
     {
-        global $conf;
+        global $conf,$user,$langs;
 
         // Permettre l'exclusion de groupes
         if (is_array($exclude))	$excludeGroups = implode("','",$exclude);
@@ -3528,15 +3535,16 @@ class Form
 
         // On recherche les groupes
         $sql = "SELECT ug.rowid, ug.nom ";
-        if($conf->multicompany->enabled && $conf->entity == 1)
+        if($conf->multicompany->enabled && $conf->entity == 1 && $user->admin && ! $user->entity)
         {
         	$sql.= ", e.label";
         }
         $sql.= " FROM ".MAIN_DB_PREFIX."usergroup as ug ";
-        if($conf->multicompany->enabled && $conf->entity == 1)
+        if($conf->multicompany->enabled && $conf->entity == 1 && $user->admin && ! $user->entity)
         {
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."entity as e on e.rowid=ug.entity";
-            $sql.= " WHERE ug.entity IS NOT NULL";
+            if ($force_entity) $sql.= " WHERE ug.entity IN (0,".$force_entity.")";
+            else $sql.= " WHERE ug.entity IS NOT NULL";
         }
         else
         {
@@ -3550,12 +3558,13 @@ class Form
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            $out.= '<select class="flat" name="'.$htmlname.'"'.($disabled?' disabled="true"':'').'>';
-            if ($show_empty) $out.= '<option value="-1"'.($id==-1?' selected="selected"':'').'>&nbsp;</option>'."\n";
             $num = $this->db->num_rows($resql);
             $i = 0;
             if ($num)
             {
+            	$out.= '<select class="flat" name="'.$htmlname.'"'.($disabled?' disabled="true"':'').'>';
+            	if ($show_empty) $out.= '<option value="-1"'.($id==-1?' selected="selected"':'').'>&nbsp;</option>'."\n";
+            	
                 while ($i < $num)
                 {
                     $obj = $this->db->fetch_object($resql);
@@ -3579,6 +3588,11 @@ class Form
                     $out.= '</option>';
                     $i++;
                 }
+            }
+            else
+            {
+            	$out.= '<select class="flat" name="'.$htmlname.'" disabled="disabled">';
+            	$out.= '<option value="">'.$langs->trans("EmptyList").'</option>';
             }
             $out.= '</select>';
         }

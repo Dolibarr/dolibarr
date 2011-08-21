@@ -44,6 +44,11 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 $langs->load("users");
 $langs->load("other");
 
+$id=GETPOST("id");
+$action=GETPOST("action");
+$confirm=GETPOST("confirm");
+$userid=GETPOST("user","int");
+
 // Security check
 $result = restrictedArea($user, 'user', $_GET["id"], 'usergroup', 'user');
 
@@ -51,10 +56,6 @@ if($conf->multicompany->enabled && $conf->entity > 1 && $conf->global->MULTICOMP
 {
     accessforbidden();
 }
-
-$action=GETPOST("action");
-$confirm=GETPOST("confirm");
-$userid=GETPOST("user","int");
 
 $object = new Usergroup($db);
 
@@ -80,7 +81,7 @@ if ($action == 'confirm_delete' && $confirm == "yes")
 /**
  *  Action add group
  */
-if ($_POST["action"] == 'add')
+if ($action == 'add')
 {
     if($caneditperms)
     {
@@ -131,7 +132,7 @@ if ($action == 'adduser' || $action =='removeuser')
     {
         if ($userid)
         {
-            $object->fetch($_GET["id"]);
+            $object->fetch($id);
             $object->oldcopy=dol_clone($object);
 
 			$edituser = new User($db);
@@ -157,7 +158,7 @@ if ($action == 'adduser' || $action =='removeuser')
 }
 
 
-if ($_POST["action"] == 'update')
+if ($action == 'update')
 {
     if($caneditperms)
     {
@@ -165,7 +166,7 @@ if ($_POST["action"] == 'update')
 
         $db->begin();
 
-        $object->fetch($_GET["id"]);
+        $object->fetch($id);
 
         $object->oldcopy=dol_clone($object);
 
@@ -261,9 +262,9 @@ if ($action == 'create')
 /* ************************************************************************** */
 else
 {
-    if ($_GET["id"] )
+    if ($id)
     {
-        $object->fetch($_GET["id"]);
+        $object->fetch($id);
 
         /*
          * Affichage onglets
@@ -352,14 +353,12 @@ else
 
             // On selectionne les users qui ne sont pas deja dans le groupe
             $exclude = array();
-
-            $userslist = $object->listUsersForGroup();
             
-            if (! empty($userslist))
+            if (! empty($object->members))
             {
                 if( !($conf->multicompany->enabled && $conf->global->MULTICOMPANY_TRANSVERSE_MODE))
                 {
-                    foreach($userslist as $useringroup)
+                    foreach($object->members as $useringroup)
                     {
                         $exclude[]=$useringroup->id;
                     }
@@ -374,7 +373,7 @@ else
                 print '<table class="noborder" width="100%">'."\n";
                 print '<tr class="liste_titre"><td class="liste_titre" width="25%">'.$langs->trans("NonAffectedUsers").'</td>'."\n";
                 print '<td>';
-                print $form->select_users('','user',1,$exclude,0,'','',$object->entity);
+                print $form->select_dolusers('','user',1,$exclude,0,'','',$object->entity);
                 print ' &nbsp; ';
                 // Multicompany
                 if ($conf->multicompany->enabled)
@@ -405,23 +404,22 @@ else
              */
             print '<table class="noborder" width="100%">';
             print '<tr class="liste_titre">';
-            print '<td class="liste_titre" width="25%">'.$langs->trans("Login").'</td>';
-            if($conf->multicompany->enabled && $conf->entity == 1)
+            print '<td class="liste_titre">'.$langs->trans("Login").'</td>';
+            print '<td class="liste_titre">'.$langs->trans("Lastname").'</td>';
+            print '<td class="liste_titre">'.$langs->trans("Firstname").'</td>';
+			if($conf->multicompany->enabled && $conf->entity == 1)
             {
-            	print '<td class="liste_titre" width="25%">'.$langs->trans("Entity").'</td>';
+            	print '<td class="liste_titre">'.$langs->trans("Entity").'</td>';
             }
-            print '<td class="liste_titre" width="25%">'.$langs->trans("Lastname").'</td>';
-            print '<td class="liste_titre" width="25%">'.$langs->trans("Firstname").'</td>';
-            print '<td class="liste_titre" align="right">'.$langs->trans("Status").'</td>';
-            print '<td>&nbsp;</td>';
-            print "<td>&nbsp;</td>";
+            print '<td class="liste_titre" width="5" align="center">'.$langs->trans("Status").'</td>';
+            print '<td class="liste_titre" width="5" align="right">&nbsp;</td>';
             print "</tr>\n";
 
-            if (! empty($userslist))
+            if (! empty($object->members))
             {
             	$var=True;
-            	
-            	foreach($userslist as $useringroup)
+
+            	foreach($object->members as $useringroup)
             	{
             		$var=!$var;
             		
@@ -431,16 +429,15 @@ else
             		if ($useringroup->admin  && ! $useringroup->entity) print img_picto($langs->trans("SuperAdministrator"),'redstar');
             		else if ($useringroup->admin) print img_picto($langs->trans("Administrator"),'star');
             		print '</td>';
+            		print '<td>'.ucfirst(stripslashes($useringroup->lastname)).'</td>';
+            		print '<td>'.ucfirst(stripslashes($useringroup->firstname)).'</td>';
             		if($conf->multicompany->enabled && $conf->entity == 1)
             		{
             			$mc = new ActionsMulticompany($db);
             			$mc->getInfo($useringroup->usergroup_entity);
             			print '<td class="valeur">'.$mc->label."</td>";
             		}
-            		print '<td>'.ucfirst(stripslashes($useringroup->lastname)).'</td>';
-            		print '<td>'.ucfirst(stripslashes($useringroup->firstname)).'</td>';
-            		print '<td align="right">'.$useringroup->getLibStatut(5).'</td>';
-            		print '<td>&nbsp;</td>';
+            		print '<td align="center">'.$useringroup->getLibStatut(3).'</td>';
             		print '<td align="right">';
             		if ($user->admin)
             		{

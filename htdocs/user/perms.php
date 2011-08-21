@@ -31,9 +31,12 @@ require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
 $langs->load("users");
 $langs->load("admin");
 
-$module=isset($_GET["module"])?$_GET["module"]:$_POST["module"];
+$id=GETPOST("id");
+$action=GETPOST("action");
+$confirm=GETPOST("confirm");
+$module=GETPOST("module");
 
-if (! isset($_GET["id"]) || empty($_GET["id"])) accessforbidden();
+if (! isset($id) || empty($id)) accessforbidden();
 
 // Defini si peux lire les permissions
 $canreaduser=($user->admin || $user->rights->user->user->lire);
@@ -43,7 +46,7 @@ $caneditperms=($user->admin || $user->rights->user->user->creer);
 if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 {
 	$canreaduser=($user->admin || ($user->rights->user->user->lire && $user->rights->user->user_advance->readperms));
-	$caneditselfperms=($user->id == $_GET["id"] && $user->rights->user->self_advance->writeperms);
+	$caneditselfperms=($user->id == $id && $user->rights->user->self_advance->writeperms);
 	$caneditperms = '('.$caneditperms.' || '.$caneditselfperms.')';
 }
 
@@ -51,40 +54,40 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
-if ($user->id == $_GET["id"])	// A user can always read its own card
+if ($user->id == $id)	// A user can always read its own card
 {
 	$feature2='';
 	$canreaduser=1;
 }
-$result = restrictedArea($user, 'user', $_GET["id"], '', $feature2);
-if ($user->id <> $_REQUEST["id"] && ! $canreaduser) accessforbidden();
+$result = restrictedArea($user, 'user', $id, '', $feature2);
+if ($user->id <> $id && ! $canreaduser) accessforbidden();
 
 
 /**
  * Actions
  */
-if ($_GET["action"] == 'addrights' && $caneditperms)
+if ($action == 'addrights' && $caneditperms)
 {
     $edituser = new User($db);
-	$edituser->fetch($_GET["id"]);
+	$edituser->fetch($id);
     $edituser->addrights($_GET["rights"],$module);
 
 	// Si on a touche a ses propres droits, on recharge
-	if ($_GET["id"] == $user->id)
+	if ($id == $user->id)
 	{
 		$user->clearrights();
 		$user->getrights();
 	}
 }
 
-if ($_GET["action"] == 'delrights' && $caneditperms)
+if ($action == 'delrights' && $caneditperms)
 {
     $edituser = new User($db);
-	$edituser->fetch($_GET["id"]);
+	$edituser->fetch($id);
     $edituser->delrights($_GET["rights"],$module);
 
 	// Si on a touche a ses propres droits, on recharge
-	if ($_GET["id"] == $user->id)
+	if ($id == $user->id)
 	{
 		$user->clearrights();
 		$user->getrights();
@@ -104,7 +107,7 @@ llxHeader('',$langs->trans("Permissions"));
 $form=new Form($db);
 
 $fuser = new User($db);
-$fuser->fetch($_GET["id"]);
+$fuser->fetch($id);
 $fuser->getrights();
 
 /*
@@ -192,7 +195,7 @@ $sql = "SELECT r.id, r.libelle, r.module";
 $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r,";
 $sql.= " ".MAIN_DB_PREFIX."user_rights as ur";
 $sql.= " WHERE ur.fk_id = r.id";
-$sql.= " AND r.entity = ".$conf->entity;
+$sql.= " AND r.entity = ".$fuser->entity;
 $sql.= " AND ur.fk_user = ".$fuser->id;
 
 $result=$db->query($sql);
@@ -221,8 +224,8 @@ $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r,";
 $sql.= " ".MAIN_DB_PREFIX."usergroup_rights as gr,";
 $sql.= " ".MAIN_DB_PREFIX."usergroup_user as gu";
 $sql.= " WHERE gr.fk_id = r.id";
-$sql.= " AND r.entity = ".$conf->entity;
-$sql.= " AND gu.entity IN (0,".$conf->entity.")";
+$sql.= " AND r.entity = ".$fuser->entity;
+$sql.= " AND gu.entity IN (0,".$fuser->entity.")";
 $sql.= " AND gr.fk_usergroup = gu.fk_usergroup";
 $sql.= " AND gu.fk_user = ".$fuser->id;
 
@@ -285,7 +288,7 @@ print '</tr>'."\n";
 $sql = "SELECT r.id, r.libelle, r.module";
 $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
 $sql.= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
-$sql.= " AND r.entity = ".$conf->entity;
+$sql.= " AND r.entity = ".$fuser->entity;
 if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) $sql.= " AND r.perms NOT LIKE '%_advance'";  // Hide advanced perms if option is disable
 $sql.= " ORDER BY r.module, r.id";
 
