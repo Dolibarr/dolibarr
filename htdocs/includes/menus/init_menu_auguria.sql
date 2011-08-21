@@ -1,6 +1,6 @@
 --
--- $Id: init_menu_auguria.sql,v 1.127 2011/08/11 01:39:15 eldy Exp $
--- $Revision: 1.127 $
+-- $Id: init_menu_auguria.sql,v 1.128 2011/08/21 11:00:58 eldy Exp $
+-- $Revision: 1.128 $
 --
 -- Menu base entries
 -- This file is loaded when a menu handler base is activated (auguria, etc..)
@@ -109,8 +109,9 @@ insert into llx_menu (enabled, menu_handler, type, rowid, mainmenu, leftmenu, fk
 insert into llx_menu (enabled, menu_handler, type, rowid, mainmenu, leftmenu, fk_menu, url, titre, level, langs, perms, target, usertype, position, entity) values ('$conf->categorie->enabled', __HANDLER__, 'left', 3201__+MAX_llx_menu__, 'products', '', 3200__+MAX_llx_menu__, '/categories/fiche.php?action=create&amp;type=0', 'NewCategory', 1, 'categories', '$user->rights->categorie->creer', '', 2, 0, __ENTITY__);
 -- Product - Shipment
 insert into llx_menu (enabled, menu_handler, type, rowid, mainmenu, leftmenu, fk_menu, url, titre, level, langs, perms, target, usertype, position, entity) values ('$conf->expedition->enabled', __HANDLER__, 'left', 1300__+MAX_llx_menu__, 'commercial', '', 3__+MAX_llx_menu__, '/expedition/index.php?leftmenu=sendings', 'Shipments', 0, 'sendings', '$user->rights->expedition->lire', '', 2, 6, __ENTITY__);
-insert into llx_menu (enabled, menu_handler, type, rowid, mainmenu, leftmenu, fk_menu, url, titre, level, langs, perms, target, usertype, position, entity) values ('$conf->expedition->enabled && $leftmenu=="sendings"', __HANDLER__, 'left', 1301__+MAX_llx_menu__, 'commercial', '', 1300__+MAX_llx_menu__, '/expedition/liste.php?leftmenu=sendings', 'List', 1, 'sendings', '$user->rights->expedition->lire', '', 2, 0, __ENTITY__);
-insert into llx_menu (enabled, menu_handler, type, rowid, mainmenu, leftmenu, fk_menu, url, titre, level, langs, perms, target, usertype, position, entity) values ('$conf->expedition->enabled && $leftmenu=="sendings"', __HANDLER__, 'left', 1302__+MAX_llx_menu__, 'commercial', '', 1300__+MAX_llx_menu__, '/expedition/stats/index.php?leftmenu=sendings', 'Statistics', 1, 'sendings', '$user->rights->expedition->lire', '', 2, 1, __ENTITY__);
+insert into llx_menu (enabled, menu_handler, type, rowid, mainmenu, leftmenu, fk_menu, url, titre, level, langs, perms, target, usertype, position, entity) values ('$conf->expedition->enabled && $leftmenu=="sendings"', __HANDLER__, 'left', 1301__+MAX_llx_menu__, 'commercial', '', 1300__+MAX_llx_menu__, '/expedition/fiche.php?action=create2&leftmenu=sendings', 'NewSending', 1, 'sendings', '$user->rights->expedition->creer', '', 2, 0, __ENTITY__);
+insert into llx_menu (enabled, menu_handler, type, rowid, mainmenu, leftmenu, fk_menu, url, titre, level, langs, perms, target, usertype, position, entity) values ('$conf->expedition->enabled && $leftmenu=="sendings"', __HANDLER__, 'left', 1302__+MAX_llx_menu__, 'commercial', '', 1300__+MAX_llx_menu__, '/expedition/liste.php?leftmenu=sendings', 'List', 1, 'sendings', '$user->rights->expedition->lire', '', 2, 1, __ENTITY__);
+insert into llx_menu (enabled, menu_handler, type, rowid, mainmenu, leftmenu, fk_menu, url, titre, level, langs, perms, target, usertype, position, entity) values ('$conf->expedition->enabled && $leftmenu=="sendings"', __HANDLER__, 'left', 1303__+MAX_llx_menu__, 'commercial', '', 1300__+MAX_llx_menu__, '/expedition/stats/index.php?leftmenu=sendings', 'Statistics', 1, 'sendings', '$user->rights->expedition->lire', '', 2, 2, __ENTITY__);
 
 -- Commercial - Proposals
 insert into llx_menu (enabled, menu_handler, type, rowid, mainmenu, leftmenu, fk_menu, url, titre, level, langs, perms, target, usertype, position, entity) values ('$conf->propal->enabled', __HANDLER__, 'left', 1100__+MAX_llx_menu__, 'commercial', '', 5__+MAX_llx_menu__, '/comm/propal/index.php?leftmenu=propals', 'Prop', 0, 'propal', '$user->rights->propale->lire', '', 2, 4, __ENTITY__);
