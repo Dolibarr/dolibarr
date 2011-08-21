@@ -206,7 +206,7 @@ export apachelink="%{_sysconfdir}/apache2/conf.d/dolibarr.conf"
 # Remove apache link
 if [ -L $apachelink ] ;
 then
-    echo Delete apache config link for Dolibarr ($apachelink)
+    echo "Delete apache config link for Dolibarr ($apachelink)"
     %{__rm} -f $apachelink
     status=purge
 fi

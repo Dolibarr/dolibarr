@@ -119,7 +119,6 @@ cui hai bisogno ed essere facile da usare.
 %_datadir/dolibarr/scripts/*
 
 %defattr(-, root, root, 0755)
-%exclude %_datadir/dolibarr/htdocs/langs/*/*.lang
 %doc %_datadir/doc/dolibarr
 %dir %_datadir/dolibarr/build/rpm
 %dir %_datadir/dolibarr/build/tgz
@@ -147,7 +146,7 @@ export apachelink="%{_sysconfdir}/httpd/conf.d/dolibarr.conf"
 export apacheuser='apache';
 export apachegroup='apache';
 
-# Remove lock file
+# Remove dolibarr install/upgrade lock file if it exists
 %{__rm} -f $docdir/install.lock
 
 # Create empty directory for uploaded files and generated documents 
@@ -213,7 +212,7 @@ export apachelink="%{_sysconfdir}/httpd/conf.d/dolibarr.conf"
 # Remove apache link
 if [ -L $apachelink ] ;
 then
-    echo Delete apache config link for Dolibarr ($apachelink)
+    echo "Delete apache config link for Dolibarr ($apachelink)"
     %{__rm} -f $apachelink
     status=purge
 fi
@@ -234,5 +233,5 @@ fi
 
 
 %changelog
-* Wed Jul 31 2011 Laurent Destailleur 3.1.0-0.2.beta1
+* Wed Jul 31 2011 Laurent Destailleur 3.2.0-0.1.a
 - Initial version (#723326)
