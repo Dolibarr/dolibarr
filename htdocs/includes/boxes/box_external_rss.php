@@ -22,7 +22,7 @@
  * 	    \file       htdocs/includes/boxes/box_external_rss.php
  *      \ingroup    external_rss
  *      \brief      Fichier de gestion d'une box pour le module external_rss
- *      \version    $Id: box_external_rss.php,v 1.35 2011/08/17 13:44:16 eldy Exp $
+ *      \version    $Id: box_external_rss.php,v 1.36 2011/08/21 12:47:01 eldy Exp $
  */
 
 include_once(DOL_DOCUMENT_ROOT."/core/class/rssparser.class.php");
@@ -62,7 +62,7 @@ class box_external_rss extends ModeleBoxes {
      *  @param      $max        	Max numbe rof records to load
      *  @param		$cachedelay		Delay we accept for cache file
      */
-    function loadBox($max=5, $cachdelay=300)
+    function loadBox($max=5, $cachdelay=3600)
     {
         global $user, $langs, $conf;
         $langs->load("boxes");
