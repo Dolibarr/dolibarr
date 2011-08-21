@@ -24,7 +24,7 @@
 /**
  *       \file       htdocs/user/fiche.php
  *       \brief      Tab of user card
- *       \version    $Id: fiche.php,v 1.280 2011/08/21 00:20:44 hregis Exp $
+ *       \version    $Id: fiche.php,v 1.281 2011/08/21 10:01:37 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -35,7 +35,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/images.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
 if ($conf->ldap->enabled) require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 if ($conf->adherent->enabled) require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
-if ($conf->multicompany->enabled) dol_include_once("/multicompany/class/actions_multicompany.class.php");
+if (! empty($conf->multicompany->enabled)) dol_include_once("/multicompany/class/actions_multicompany.class.php");
 
 // Define value to know what current user can do on users
 $canadduser=($user->admin || $user->rights->user->user->creer);
@@ -51,7 +51,7 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 }
 
 //Multicompany in mode transversal
-if($conf->multicompany->enabled && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
+if(! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
 {
     accessforbidden();
 }
@@ -666,7 +666,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
         print '<td>';
         print $form->selectyesno('admin',$_POST["admin"],1);
 
-        if ($conf->multicompany->enabled && ! $user->entity && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+        if (! empty($conf->multicompany->enabled) && ! $user->entity && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
         {
             if ($conf->use_javascript_ajax)
             {
@@ -704,7 +704,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     }
         
     //Multicompany
-    if ($conf->multicompany->enabled)
+    if (! empty($conf->multicompany->enabled))
     {
         if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
         {
@@ -1039,7 +1039,7 @@ else
             print '</td></tr>'."\n";
             
             // Multicompany
-            if ($conf->multicompany->enabled && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
+            if (! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
             {
             	print '<tr><td valign="top">'.$langs->trans("Entity").'</td><td width="75%" class="valeur">';
             	if ($fuser->admin && ! $fuser->entity)
@@ -1295,7 +1295,7 @@ else
                     print $form->select_dolgroups('','group',1,$exclude,0,'','',$fuser->entity);
                     print ' &nbsp; ';
                     // Multicompany
-                    if ($conf->multicompany->enabled)
+                    if (! empty($conf->multicompany->enabled))
                     {
                         if ($conf->entity == 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
                         {
@@ -1325,7 +1325,7 @@ else
                 print '<table class="noborder" width="100%">';
                 print '<tr class="liste_titre">';
                 print '<td class="liste_titre" width="25%">'.$langs->trans("Groups").'</td>';
-                if($conf->multicompany->enabled && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
+                if(! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
                 {
                 	print '<td class="liste_titre" width="25%">'.$langs->trans("Entity").'</td>';
                 }
@@ -1350,7 +1350,7 @@ else
                             print img_object($langs->trans("ShowGroup"),"group").' '.$group->nom;
                         }
                         print '</td>';
-                        if($conf->multicompany->enabled && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
+                        if(! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
                         {
                             $mc = new ActionsMulticompany($db);
                             $mc->getInfo($group->usergroup_entity);
@@ -1507,7 +1507,7 @@ else
                 {
                     print $form->selectyesno('admin',$fuser->admin,1);
 
-                    if ($conf->multicompany->enabled && ! $user->entity && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+                    if (! empty($conf->multicompany->enabled) && ! $user->entity && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
                     {
                         if ($conf->use_javascript_ajax)
                         {
@@ -1563,7 +1563,7 @@ else
             }
 
             //Multicompany
-            if ($conf->multicompany->enabled)
+            if (! empty($conf->multicompany->enabled))
             {
             	if(empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
             	{
@@ -1776,7 +1776,7 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/21 00:20:44 $ - $Revision: 1.280 $');
+llxFooter('$Date: 2011/08/21 10:01:37 $ - $Revision: 1.281 $');
 
 
 

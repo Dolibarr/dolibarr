@@ -19,7 +19,7 @@
 /**
  *	\file       htdocs/user/home.php
  *	\brief      Home page of users and groups management
- *	\version    $Id: home.php,v 1.51 2011/08/20 09:03:38 hregis Exp $
+ *	\version    $Id: home.php,v 1.52 2011/08/21 10:01:37 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -100,7 +100,7 @@ $sql = "SELECT u.rowid, u.name, u.firstname, u.admin, u.login, u.fk_societe, u.d
 $sql.= " s.nom, s.canvas";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_societe = s.rowid";
-if($conf->multicompany->enabled && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && ! $user->entity)))
+if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && ! $user->entity)))
 {
 	$sql.= " WHERE u.entity IS NOT NULL";
 }
@@ -146,7 +146,7 @@ if ($resql)
             $companystatic->canvas=$obj->canvas;
             print $companystatic->getNomUrl(1);
 		}
-		else if ($conf->multicompany->enabled)
+		else if (! empty($conf->multicompany->enabled))
         {
         	if ($obj->admin && ! $obj->entity)
         	{
@@ -197,7 +197,7 @@ if ($canreadperms)
 
 	$sql = "SELECT g.rowid, g.nom, g.note, g.entity, g.datec";
 	$sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g";
-	if($conf->multicompany->enabled && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && ! $user->entity)))
+	if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && ! $user->entity)))
 	{
 		$sql.= " WHERE g.entity IS NOT NULL";
 	}
@@ -212,7 +212,7 @@ if ($canreadperms)
 	if ($resql)
 	{
 		$colspan=2;
-		if ($conf->multicompany->enabled) $colspan++;
+		if (! empty($conf->multicompany->enabled)) $colspan++;
 		$num = $db->num_rows($resql);
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre"><td colspan="'.$colspan.'">'.$langs->trans("LastGroupsCreated",($num ? $num : $max)).'</td></tr>';
@@ -231,7 +231,7 @@ if ($canreadperms)
 				print img_picto($langs->trans("GlobalGroup"),'redstar');
 			}
 			print "</td>";
-			if ($conf->multicompany->enabled)
+			if (! empty($conf->multicompany->enabled))
 	        {
 	        	$mc = new ActionsMulticompany($db);
 	        	$mc->getInfo($obj->entity);
@@ -259,5 +259,5 @@ print '</table>';
 $db->close();
 
 
-llxFooter('$Date: 2011/08/20 09:03:38 $ - $Revision: 1.51 $');
+llxFooter('$Date: 2011/08/21 10:01:37 $ - $Revision: 1.52 $');
 ?>

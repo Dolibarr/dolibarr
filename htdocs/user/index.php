@@ -21,11 +21,11 @@
  *      \file       htdocs/user/index.php
  * 		\ingroup	core
  *      \brief      Page of users
- *      \version    $Id: index.php,v 1.54 2011/08/19 22:15:23 hregis Exp $
+ *      \version    $Id: index.php,v 1.55 2011/08/21 10:01:36 hregis Exp $
  */
 
 require("../main.inc.php");
-if($conf->multicompany->enabled) dol_include_once("/multicompany/class/actions_multicompany.class.php");
+if(! empty($conf->multicompany->enabled)) dol_include_once("/multicompany/class/actions_multicompany.class.php");
 
 
 if (! $user->rights->user->user->lire && ! $user->admin) accessforbidden();
@@ -69,7 +69,7 @@ $sql.= " u.ldap_sid, u.statut, u.entity,";
 $sql.= " s.nom, s.canvas";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_societe = s.rowid";
-if($conf->multicompany->enabled && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && ! $user->entity)))
+if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && ! $user->entity)))
 {
 	$sql.= " WHERE u.entity IS NOT NULL";
 }
@@ -110,7 +110,7 @@ if ($result)
 
         print "<tr $bc[$var]>";
         print '<td><a href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->login.'</a>';
-        if ($conf->multicompany->enabled && $obj->admin && ! $obj->entity)
+        if (! empty($conf->multicompany->enabled) && $obj->admin && ! $obj->entity)
         {
           	print img_picto($langs->trans("SuperAdministrator"),'redstar');
         }
@@ -129,7 +129,7 @@ if ($result)
             $companystatic->canvas=$obj->canvas;
             print $companystatic->getNomUrl(1);
         }
-        else if ($conf->multicompany->enabled)
+        else if (! empty($conf->multicompany->enabled))
         {
         	if ($obj->admin && ! $obj->entity)
         	{
@@ -174,5 +174,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/19 22:15:23 $ - $Revision: 1.54 $');
+llxFooter('$Date: 2011/08/21 10:01:36 $ - $Revision: 1.55 $');
 ?>

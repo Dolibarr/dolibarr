@@ -28,7 +28,7 @@
  *	\file			htdocs/lib/functions.lib.php
  *	\brief			A set of functions for Dolibarr
  *					This file contains all frequently used functions.
- *	\version		$Id: functions.lib.php,v 1.562 2011/08/20 20:53:31 eldy Exp $
+ *	\version		$Id: functions.lib.php,v 1.563 2011/08/21 10:01:37 hregis Exp $
  */
 
 // For compatibility during upgrade
@@ -2224,7 +2224,7 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
                 $sql = "SELECT dbt.".$dbt_select;
                 $sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
                 $sql.= " WHERE dbt.".$dbt_select." = ".$objectid;
-                if (($feature == 'user' || $feature == 'usergroup') && $conf->multicompany->enabled && $conf->entity == 1 && $user->admin && ! $user->entity)
+                if (($feature == 'user' || $feature == 'usergroup') && ! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
                 {
                 	$sql.= " AND dbt.entity IS NOT NULL";
                 }
@@ -2252,7 +2252,7 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
                     $sql.= " AND s.entity IN (0,".(! empty($conf->entities[$dbtablename]) ? $conf->entities[$dbtablename] : $conf->entity).")";
                 }
                 // If multicompany and internal users with all permissions, check user is in correct entity
-                else if ($conf->multicompany->enabled)
+                else if (! empty($conf->multicompany->enabled))
                 {
                     $sql = "SELECT s.rowid";
                     $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -2281,7 +2281,7 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
                     $sql.= " AND dbt.entity IN (0,".(! empty($conf->entities[$dbtablename]) ? $conf->entities[$dbtablename] : $conf->entity).")";
                 }
                 // If multicompany and internal users with all permissions, check user is in correct entity
-                else if ($conf->multicompany->enabled)
+                else if (! empty($conf->multicompany->enabled))
                 {
                     $sql = "SELECT dbt.rowid";
                     $sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
@@ -2324,7 +2324,7 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
                     $sql.= " AND sc.fk_user = ".$user->id;
                 }
                 // If multicompany and internal users with all permissions, check user is in correct entity
-                else if ($conf->multicompany->enabled)
+                else if (! empty($conf->multicompany->enabled))
                 {
                     $sql = "SELECT dbt.".$dbt_select;
                     $sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
