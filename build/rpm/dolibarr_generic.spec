@@ -82,26 +82,28 @@ cui hai bisogno ed essere facile da usare.
 %{__rm} -rf $RPM_BUILD_ROOT
 
 %{__mkdir} -p $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr
-%{__install} -m 644 etc/dolibarr/conf.php $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr/conf.php
-%{__install} -m 644 etc/dolibarr/apache.conf $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr/apache.conf
-%{__install} -m 644 etc/dolibarr/file_contexts.dolibarr $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr/file_contexts.dolibarr
-%{__install} -m 644 usr/share/dolibarr/build/rpm/install.forced.php.generic $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr/install.forced.php
+%{__install} -m 644 build/rpm/conf.php $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr/conf.php
+%{__install} -m 644 build/rpm/httpd-dolibarr.conf $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr/apache.conf
+%{__install} -m 644 build/rpm/file_contexts.dolibarr $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr/file_contexts.dolibarr
+%{__install} -m 644 build/rpm/install.forced.php.fedora $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr/install.forced.php
 
 %{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/pixmaps
-%{__install} -m 644 usr/share/dolibarr/doc/images/dolibarr_48x48.png $RPM_BUILD_ROOT%{_datadir}/pixmaps/dolibarr.png
+%{__install} -m 644 doc/images/dolibarr_48x48.png $RPM_BUILD_ROOT%{_datadir}/pixmaps/dolibarr.png
 %{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/applications
-%{__install} -m 644 usr/share/dolibarr/build/rpm/dolibarr.desktop $RPM_BUILD_ROOT%{_datadir}/applications/dolibarr.desktop
+#desktop-file-install -m 644 build/rpm/dolibarr.desktop $RPM_BUILD_ROOT%{_datadir}/applications/dolibarr.desktop
+%{__install} -m 644 build/rpm/dolibarr.desktop $RPM_BUILD_ROOT%{_datadir}/applications/dolibarr.desktop
 
-%{__mkdir} -p $RPM_BUILD_ROOT/usr/share/dolibarr/build
+%{__mkdir} -p $RPM_BUILD_ROOT/usr/share/dolibarr/build/rpm
+%{__mkdir} -p $RPM_BUILD_ROOT/usr/share/dolibarr/build/tgz
 %{__mkdir} -p $RPM_BUILD_ROOT/usr/share/dolibarr/htdocs
 %{__mkdir} -p $RPM_BUILD_ROOT/usr/share/dolibarr/scripts
 %{__mkdir} -p $RPM_BUILD_ROOT/usr/share/doc/dolibarr
-%{__cp} -pr usr/share/dolibarr/build   $RPM_BUILD_ROOT/usr/share/dolibarr
-%{__cp} -pr usr/share/dolibarr/htdocs  $RPM_BUILD_ROOT/usr/share/dolibarr
-%{__cp} -pr usr/share/dolibarr/scripts $RPM_BUILD_ROOT/usr/share/dolibarr
-%{__cp} -pr usr/share/dolibarr/doc/*   $RPM_BUILD_ROOT/usr/share/doc/dolibarr
-%{__install} -m 644 usr/share/dolibarr/COPYRIGHT $RPM_BUILD_ROOT/usr/share/doc/dolibarr/COPYRIGHT
-
+%{__cp} -pr build/rpm/*     $RPM_BUILD_ROOT/usr/share/dolibarr/build/rpm
+%{__cp} -pr build/tgz/*     $RPM_BUILD_ROOT/usr/share/dolibarr/build/tgz
+%{__cp} -pr htdocs  $RPM_BUILD_ROOT/usr/share/dolibarr
+%{__cp} -pr scripts $RPM_BUILD_ROOT/usr/share/dolibarr
+%{__cp} -pr doc/*   $RPM_BUILD_ROOT/usr/share/doc/dolibarr
+%{__install} -m 644 COPYRIGHT $RPM_BUILD_ROOT/usr/share/doc/dolibarr/COPYRIGHT
 
 
 #---- clean
@@ -113,16 +115,21 @@ cui hai bisogno ed essere facile da usare.
 #---- files
 %files
 
+%defattr(0755, root, root, 0755)
+%dir %_datadir/dolibarr/scripts
+%_datadir/dolibarr/scripts/*
+
 %defattr(-, root, root, 0755)
 %doc %_datadir/doc/dolibarr
-%dir %_datadir/dolibarr/build
+%dir %_datadir/dolibarr/build/rpm
+%dir %_datadir/dolibarr/build/tgz
 %dir %_datadir/dolibarr/htdocs
-%dir %_datadir/dolibarr/scripts
 %_datadir/pixmaps/dolibarr.png
 %_datadir/applications/dolibarr.desktop
-%_datadir/dolibarr/build/*
+%_datadir/dolibarr/build/rpm/*
+%_datadir/dolibarr/build/tgz/*
 %_datadir/dolibarr/htdocs/*
-%_datadir/dolibarr/scripts/*
+
 #lang(ar_SA) %_datadir/dolibarr/htdocs/langs/ar_SA
 #lang(ca_ES) %_datadir/dolibarr/htdocs/langs/ca_ES
 #lang(da_DK) %_datadir/dolibarr/htdocs/langs/da_DK
@@ -287,7 +294,7 @@ fi
 # Remove apache link
 if [ -L $apachelink ] ;
 then
-    echo Delete apache config link for Dolibarr
+    echo Delete apache config link for Dolibarr ($apachelink)
     %{__rm} -f $apachelink
     status=purge
 fi
