@@ -23,7 +23,7 @@
  *  \file       htdocs/product/fournisseurs.php
  *  \ingroup    product
  *  \brief      Page of tab suppliers for products
- *  \version    $Id: fournisseurs.php,v 1.100 2011/08/20 23:56:04 eldy Exp $
+ *  \version    $Id: fournisseurs.php,v 1.101 2011/08/21 00:26:31 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -237,7 +237,7 @@ if ($_GET["id"] || $_GET["ref"])
 			$product_fourn = new ProductFournisseur($db);
 			if ($product_fourn->find_min_price_product_fournisseur($product->id) > 0)
 			{
-			    if (isset($product_fourn->fourn_unitprice)) print $product_fourn->display_price_product_fournisseur();
+			    if ($product_fourn->product_fourn_price_id > 0) print $product_fourn->display_price_product_fournisseur();
 			    else print $langs->trans("NotDefined");
 			}
             print '</td></tr>';
@@ -449,5 +449,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/20 23:56:04 $ - $Revision: 1.100 $');
+llxFooter('$Date: 2011/08/21 00:26:31 $ - $Revision: 1.101 $');
 ?>

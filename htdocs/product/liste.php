@@ -21,11 +21,12 @@
  *  \file       htdocs/product/liste.php
  *  \ingroup    produit
  *  \brief      Page to list products and services
- *  \version    $Id: liste.php,v 1.153 2011/08/20 23:56:04 eldy Exp $
+ *  \version    $Id: liste.php,v 1.154 2011/08/21 00:26:31 eldy Exp $
  */
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/product/class/product.class.php');
+require_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 if ($conf->categorie->enabled) require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
 
@@ -104,6 +105,7 @@ if ($conf->categorie->enabled && GETPOST('catid'))
  */
 
 $htmlother=new FormOther($db);
+$html=new Form($db);
 
 if (! empty($objcanvas->template_dir))
 {
@@ -295,8 +297,8 @@ if ($resql)
 		print_liste_field_titre($langs->trans("DateModification"), $_SERVER["PHP_SELF"], "p.tms",$param,"",'align="center"',$sortfield,$sortorder);
 		if ($conf->service->enabled && $type != 0) print_liste_field_titre($langs->trans("Duration"), $_SERVER["PHP_SELF"], "p.duration",$param,"",'align="center"',$sortfield,$sortorder);
 		if (empty($conf->global->PRODUIT_MULTIPRICES)) print_liste_field_titre($langs->trans("SellingPrice"), $_SERVER["PHP_SELF"], "p.price",$param,"",'align="right"',$sortfield,$sortorder);
+		print '<td class="liste_titre" align="right">'.$langs->trans("BuyingPriceMinShort").'</td>';
 		if ($conf->stock->enabled && $user->rights->stock->lire && $type != 1) print '<td class="liste_titre" align="right">'.$langs->trans("PhysicalStock").'</td>';
-		if ($conf->fournisseur->enabled && $user->rights->fournisseur->lire && $type != 1) print '<td class="liste_titre" align="right">'.$langs->trans("BuyingPriceMin").'</td>';
 		print_liste_field_titre($langs->trans("Sell"), $_SERVER["PHP_SELF"], "p.tosell",$param,"",'align="right"',$sortfield,$sortorder);
         print_liste_field_titre($langs->trans("Buy"), $_SERVER["PHP_SELF"], "p.tobuy",$param,"",'align="right"',$sortfield,$sortorder);
 		print "</tr>\n";
@@ -335,16 +337,16 @@ if ($resql)
     		print '</td>';
         }
 
-		// Stock
-		if ($conf->stock->enabled && $user->rights->stock->lire && $type != 1)
+		// Minimum buying Price
+		if ($conf->fournisseur->enabled && $user->rights->fournisseur->lire && $type != 1)
 		{
 			print '<td class="liste_titre">';
 			print '&nbsp;';
 			print '</td>';
 		}
-		
-		// Minimum buying Price
-		if ($conf->fournisseur->enabled && $user->rights->fournisseur->lire && $type != 1)
+
+		// Stock
+		if ($conf->stock->enabled && $user->rights->stock->lire && $type != 1)
 		{
 			print '<td class="liste_titre">';
 			print '&nbsp;';
@@ -363,6 +365,7 @@ if ($resql)
 
 
 		$product_static=new Product($db);
+		$product_fourn =new ProductFournisseur($db);
 
 		$var=true;
 		while ($i < min($num,$limit))
@@ -430,6 +433,25 @@ if ($resql)
     			print '</td>';
 			}
 
+			// MinimumPrice
+            print  '<td align="right">';
+			if ($conf->fournisseur->enabled && $user->rights->fournisseur->lire && $type != 1)
+			{
+				if ($objp->fk_product_type != 1)
+				{
+					if ($product_fourn->find_min_price_product_fournisseur($objp->rowid))
+					{
+					    if ($product_fourn->product_fourn_price_id > 0)
+					    {
+					        $htmltext=$product_fourn->display_price_product_fournisseur();
+                            if ($conf->fournisseur->enabled && $user->rights->fournisseur->lire) print $html->textwithpicto(price($product_fourn->fourn_unitprice),$htmltext);
+                            else print price($product_fourn->fourn_unitprice).' '.$langs->trans("HT");
+					    }
+					}
+				}
+			}
+            print '</td>';
+
 			// Show stock
 			if ($conf->stock->enabled && $user->rights->stock->lire && $type != 1)
 			{
@@ -441,25 +463,6 @@ if ($resql)
                     if ($product_static->stock_reel < $objp->seuil_stock_alerte) print img_warning($langs->trans("StockTooLow")).' ';
     				print $product_static->stock_reel;
 					print '</td>';
-				}
-				else
-				{
-					print '<td>&nbsp;</td>';
-				}
-			}
-			
-			// MinimumPrice
-			if ($conf->fournisseur->enabled && $user->rights->fournisseur->lire && $type != 1)
-			{
-				if ($objp->fk_product_type != 1)
-				{
-					require_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.product.class.php");
-					
-					$product_fourn = new ProductFournisseur($db);
-					if ($product_fourn->find_min_price_product_fournisseur($objp->rowid))
-					{
-						print  '<td align="right">'.$product_fourn->display_price_product_fournisseur().'</td>';
-					}
 				}
 				else
 				{
@@ -503,5 +506,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/20 23:56:04 $ - $Revision: 1.153 $');
+llxFooter('$Date: 2011/08/21 00:26:31 $ - $Revision: 1.154 $');
 ?>

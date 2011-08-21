@@ -22,7 +22,7 @@
  * 	\file       htdocs/fourn/class/fournisseur.product.class.php
  * 	\ingroup    produit
  * 	\brief      File of class to manage predefined suppliers products
- * 	\version    $Id: fournisseur.product.class.php,v 1.10 2011/08/20 23:56:03 eldy Exp $
+ * 	\version    $Id: fournisseur.product.class.php,v 1.11 2011/08/21 00:27:31 eldy Exp $
  */
 
 require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
@@ -540,6 +540,16 @@ class ProductFournisseur extends Product
     {
         global $conf;
 
+        $this->product_fourn_price_id = '';
+        $this->product_fourn_id       = '';
+        $this->fourn_ref              = '';
+        $this->fourn_price            = '';
+        $this->fourn_qty              = '';
+        $this->fourn_unitprice        = '';
+        $this->fourn_id			      = '';
+        $this->fourn_name			  = '';
+        $this->id					  = '';
+
         $sql = "SELECT s.nom as supplier_name, ";
         $sql.= " s.rowid as fourn_id,";
         $sql.= " pf.ref_fourn,";
@@ -547,12 +557,13 @@ class ProductFournisseur extends Product
         $sql.= " pf.rowid as product_fourn_id, ";
         $sql.= " pfp.price, pfp.quantity, pfp.unitprice";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-        $sql.= " INNER JOIN ".MAIN_DB_PREFIX."product_fournisseur as pf ON pf.fk_soc = s.rowid ";
+        $sql.= " INNER JOIN ".MAIN_DB_PREFIX."product_fournisseur as pf ON pf.fk_soc = s.rowid";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
         $sql.= " ON pf.rowid = pfp.fk_product_fournisseur";
         $sql.= " WHERE s.entity = ".$conf->entity;
         $sql.= " AND pf.fk_product = ".$prodid;
         $sql.= " ORDER BY pfp.unitprice";
+        $sql.= $this->db->plimit(1);
 
         dol_syslog(get_class($this)."::find_min_price_product_fournisseur sql=".$sql, LOG_DEBUG);
 
@@ -598,7 +609,7 @@ class ProductFournisseur extends Product
     {
         global $langs;
         $langs->load("suppliers");
-        $out=price($this->fourn_unitprice).' &nbsp; ('.$langs->trans("Supplier").': '.$this->getSocNomUrl(1).' / '.$langs->trans("SupplierRef").': '.$this->fourn_ref.')';
+        $out=price($this->fourn_unitprice).' '.$langs->trans("HT").' &nbsp; ('.$langs->trans("Supplier").': '.$this->getSocNomUrl(1).' / '.$langs->trans("SupplierRef").': '.$this->fourn_ref.')';
         return $out;
     }
 
