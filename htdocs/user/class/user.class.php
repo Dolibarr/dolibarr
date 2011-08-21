@@ -25,7 +25,7 @@
 /**
  *  \file       htdocs/user/class/user.class.php
  *  \brief      Fichier de la classe utilisateur
- *  \version    $Id: user.class.php,v 1.52 2011/08/21 00:20:43 hregis Exp $
+ *  \version    $Id: user.class.php,v 1.53 2011/08/21 10:01:37 hregis Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
@@ -146,7 +146,7 @@ class User extends CommonObject
 		$sql.= " u.openid as openid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 
-		if($conf->multicompany->enabled && $conf->entity == 1)
+		if(! empty($conf->multicompany->enabled) && $conf->entity == 1)
 		{
 			$sql.= " WHERE u.entity IS NOT NULL";
 		}

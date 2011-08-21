@@ -31,7 +31,7 @@
  *	\file       htdocs/core/class/html.form.class.php
  *  \ingroup    core
  *	\brief      File of class with all html predefined components
- *	\version	$Id: html.form.class.php,v 1.203 2011/08/21 00:20:44 hregis Exp $
+ *	\version	$Id: html.form.class.php,v 1.204 2011/08/21 10:01:37 hregis Exp $
  */
 
 
@@ -799,12 +799,12 @@ class Form
 
         // On recherche les utilisateurs
         $sql = "SELECT u.rowid, u.name, u.firstname, u.login, u.admin, u.entity";
-        if($conf->multicompany->enabled && $conf->entity == 1 && $user->admin && ! $user->entity)
+        if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
         {
         	$sql.= ", e.label";
         }
         $sql.= " FROM ".MAIN_DB_PREFIX ."user as u";
-        if($conf->multicompany->enabled && $conf->entity == 1 && $user->admin && ! $user->entity)
+        if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
         {
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX ."entity as e on e.rowid=u.entity";
             if ($force_entity) $sql.= " WHERE u.entity IN (0,".$force_entity.")";
@@ -856,7 +856,7 @@ class Form
                     }
                     $out.= $userstatic->getFullName($langs);
 
-                    if($conf->multicompany->enabled && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
+                    if(! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
                     {
                     	if ($obj->admin && ! $obj->entity) $out.=" (".$langs->trans("AllEntities").")";
 						else $out.=" (".$obj->label.")";
@@ -3535,12 +3535,12 @@ class Form
 
         // On recherche les groupes
         $sql = "SELECT ug.rowid, ug.nom ";
-        if($conf->multicompany->enabled && $conf->entity == 1 && $user->admin && ! $user->entity)
+        if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
         {
         	$sql.= ", e.label";
         }
         $sql.= " FROM ".MAIN_DB_PREFIX."usergroup as ug ";
-        if($conf->multicompany->enabled && $conf->entity == 1 && $user->admin && ! $user->entity)
+        if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
         {
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."entity as e on e.rowid=ug.entity";
             if ($force_entity) $sql.= " WHERE ug.entity IN (0,".$force_entity.")";
@@ -3580,7 +3580,7 @@ class Form
                     $out.= '>';
 
                     $out.= $obj->nom;
-                    if($conf->multicompany->enabled && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1)
+                    if(! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1)
                     {
                     	$out.= " (".$obj->label.")";
                     }

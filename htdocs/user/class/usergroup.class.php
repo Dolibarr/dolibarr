@@ -21,7 +21,7 @@
  *	 \file       htdocs/user/class/usergroup.class.php
  *	 \brief      Fichier de la classe des groupes d'utilisateur
  *	 \author     Rodolphe Qiedeville
- *	 \version    $Id: usergroup.class.php,v 1.15 2011/08/21 00:20:43 hregis Exp $
+ *	 \version    $Id: usergroup.class.php,v 1.16 2011/08/21 10:01:37 hregis Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
@@ -130,7 +130,7 @@ class UserGroup extends CommonObject
 		$sql.= " WHERE ug.fk_usergroup = g.rowid";
 		$sql.= " AND ug.fk_user = ".$userid;
 		
-		if($conf->multicompany->enabled && $conf->entity == 1 && $user->admin && ! $user->entity)
+		if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
 		{
 			$sql.= " AND g.entity IS NOT NULL";
 		}
@@ -182,7 +182,7 @@ class UserGroup extends CommonObject
 		$sql.= " WHERE ug.fk_user = u.rowid";
 		$sql.= " AND ug.fk_usergroup = ".$this->id;
 		
-		if($conf->multicompany->enabled && $conf->entity == 1 && $user->admin && ! $user->entity)
+		if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
 		{
 			$sql.= " AND u.entity IS NOT NULL";
 		}
@@ -523,7 +523,7 @@ class UserGroup extends CommonObject
 		$now=dol_now();
 		
 		$entity=$conf->entity;
-		if($conf->multicompany->enabled && $conf->entity == 1)
+		if(! empty($conf->multicompany->enabled) && $conf->entity == 1)
 		{
 			$entity=$this->entity;
 		}
@@ -578,7 +578,7 @@ class UserGroup extends CommonObject
 		$error=0;
 		
 		$entity=$conf->entity;
-		if($conf->multicompany->enabled && $conf->entity == 1)
+		if(! empty($conf->multicompany->enabled) && $conf->entity == 1)
 		{
 			$entity=$this->entity;
 		}

@@ -25,7 +25,7 @@
  *	\file       htdocs/main.inc.php
  *	\ingroup	core
  *	\brief      File that defines environment for Dolibarr pages only (variables not required by scripts)
- *	\version    $Id: main.inc.php,v 1.767 2011/08/19 15:06:28 cdelambert Exp $
+ *	\version    $Id: main.inc.php,v 1.768 2011/08/21 10:01:38 hregis Exp $
  */
 
 @ini_set('memory_limit', '64M');	// This may be useless if memory is hard limited by your PHP
@@ -539,7 +539,7 @@ if (! defined('NOLOGIN'))
 		$_SESSION["dol_screenwidth"]=isset($dol_screenwidth)?$dol_screenwidth:'';
 		$_SESSION["dol_screenheight"]=isset($dol_screenheight)?$dol_screenheight:'';
 		$_SESSION["dol_company"]=$conf->global->MAIN_INFO_SOCIETE_NOM;
-		if ($conf->multicompany->enabled) $_SESSION["dol_entity"]=$conf->entity;
+		if (! empty($conf->multicompany->enabled)) $_SESSION["dol_entity"]=$conf->entity;
 		dol_syslog("This is a new started user session. _SESSION['dol_login']=".$_SESSION["dol_login"].' Session id='.session_id());
 
 		$db->begin();

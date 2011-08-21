@@ -22,7 +22,7 @@
  *      \file       htdocs/user/group/index.php
  * 		\ingroup	core
  *      \brief      Page of user groups
- *      \version    $Id: index.php,v 1.28 2011/08/19 22:15:23 hregis Exp $
+ *      \version    $Id: index.php,v 1.30 2011/08/21 10:01:37 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -59,7 +59,7 @@ print_fiche_titre($langs->trans("ListOfGroups"));
 $sql = "SELECT g.rowid, g.nom, g.entity, g.datec, COUNT(ugu.rowid) as nb";
 $sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_usergroup = g.rowid";
-if($conf->multicompany->enabled && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && ! $user->entity)))
+if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && ! $user->entity)))
 {
 	$sql.= " WHERE g.entity IS NOT NULL";
 }
@@ -86,7 +86,7 @@ if ($resql)
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Group"),$_SERVER["PHP_SELF"],"g.nom",$param,"","",$sortfield,$sortorder);
     //multicompany
-    if($conf->multicompany->enabled && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1)
+    if(! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1)
     {
     	print_liste_field_titre($langs->trans("Entity"),$_SERVER["PHP_SELF"],"g.entity",$param,"",'align="center"',$sortfield,$sortorder);
     }
@@ -107,7 +107,7 @@ if ($resql)
         }
         print "</td>";
         //multicompany
-        if($conf->multicompany->enabled && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1)
+        if(! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1)
         {
             dol_include_once("/multicompany/class/actions_multicompany.class.php");
             $mc = new ActionsMulticompany($db);
@@ -129,6 +129,6 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/19 22:15:23 $ - $Revision: 1.28 $');
+llxFooter('$Date: 2011/08/21 10:01:37 $ - $Revision: 1.30 $');
 
 ?>

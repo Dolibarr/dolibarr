@@ -21,13 +21,13 @@
 /**
  *       \file       htdocs/user/group/fiche.php
  *       \brief      Onglet groupes utilisateurs
- *       \version    $Id: fiche.php,v 1.76 2011/08/21 00:20:44 hregis Exp $
+ *       \version    $Id: fiche.php,v 1.77 2011/08/21 10:01:37 hregis Exp $
  */
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
-if($conf->multicompany->enabled) dol_include_once("/multicompany/class/actions_multicompany.class.php");
+if(! empty($conf->multicompany->enabled)) dol_include_once("/multicompany/class/actions_multicompany.class.php");
 
 // Defini si peux lire/modifier utilisateurs et permisssions
 $canreadperms=($user->admin || $user->rights->user->user->lire);
@@ -52,7 +52,7 @@ $userid=GETPOST("user","int");
 // Security check
 $result = restrictedArea($user, 'user', $_GET["id"], 'usergroup', 'user');
 
-if($conf->multicompany->enabled && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
+if(! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
 {
     accessforbidden();
 }
@@ -220,7 +220,7 @@ if ($action == 'create')
 	print '<td class="valeur"><input size="30" type="text" name="nom" value=""></td></tr>';
 	
 	// Multicompany
-	if ($conf->multicompany->enabled)
+	if (! empty($conf->multicompany->enabled))
 	{
 		if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
 		{
@@ -307,7 +307,7 @@ else
 			print "</td></tr>\n";
 			
 			// Multicompany
-			if ($conf->multicompany->enabled && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
+			if (! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
 			{
 				$mc = new ActionsMulticompany($db);
 				$mc->getInfo($object->entity);
@@ -376,7 +376,7 @@ else
                 print $form->select_dolusers('','user',1,$exclude,0,'','',$object->entity);
                 print ' &nbsp; ';
                 // Multicompany
-                if ($conf->multicompany->enabled)
+                if (! empty($conf->multicompany->enabled))
                 {
                     if ($conf->entity == 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
                     {
@@ -407,7 +407,7 @@ else
             print '<td class="liste_titre">'.$langs->trans("Login").'</td>';
             print '<td class="liste_titre">'.$langs->trans("Lastname").'</td>';
             print '<td class="liste_titre">'.$langs->trans("Firstname").'</td>';
-			if($conf->multicompany->enabled && $conf->entity == 1)
+			if(! empty($conf->multicompany->enabled) && $conf->entity == 1)
             {
             	print '<td class="liste_titre">'.$langs->trans("Entity").'</td>';
             }
@@ -431,7 +431,7 @@ else
             		print '</td>';
             		print '<td>'.ucfirst(stripslashes($useringroup->lastname)).'</td>';
             		print '<td>'.ucfirst(stripslashes($useringroup->firstname)).'</td>';
-            		if($conf->multicompany->enabled && $conf->entity == 1)
+            		if(! empty($conf->multicompany->enabled) && $conf->entity == 1)
             		{
             			$mc = new ActionsMulticompany($db);
             			$mc->getInfo($useringroup->usergroup_entity);
@@ -474,7 +474,7 @@ else
             print "</td></tr>\n";
             
             // Multicompany
-            if ($conf->multicompany->enabled)
+            if (! empty($conf->multicompany->enabled))
             {
                 if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
                 {
@@ -518,5 +518,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/21 00:20:44 $ - $Revision: 1.76 $');
+llxFooter('$Date: 2011/08/21 10:01:37 $ - $Revision: 1.77 $');
 ?>
