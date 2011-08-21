@@ -22,7 +22,7 @@
  * 	\file       htdocs/fourn/class/fournisseur.product.class.php
  * 	\ingroup    produit
  * 	\brief      File of class to manage predefined suppliers products
- * 	\version    $Id: fournisseur.product.class.php,v 1.11 2011/08/21 00:27:31 eldy Exp $
+ * 	\version    $Id: fournisseur.product.class.php,v 1.12 2011/08/21 10:12:18 eldy Exp $
  */
 
 require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
@@ -76,7 +76,7 @@ class ProductFournisseur extends Product
         $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur";
         $sql.= " WHERE fk_product = ".$this->id." AND fk_soc = ".$id_fourn;
 
-        dol_syslog("ProductFournisseur::remove_fournisseur sql=".$sql);
+        dol_syslog(get_class($this)."::remove_fournisseur sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -86,12 +86,12 @@ class ProductFournisseur extends Product
                 $sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
                 $sql.= " WHERE fk_product_fournisseur = ".$obj->rowid;
 
-                dol_syslog("ProductFournisseur::remove_fournisseur sql=".$sql);
+                dol_syslog(get_class($this)."::remove_fournisseur sql=".$sql);
                 $resql2=$this->db->query($sql);
                 if (! $resql2)
                 {
                     $this->error=$this->db->lasterror();
-                    dol_syslog("ProductFournisseur::remove_fournisseur ".$this->error, LOG_ERR);
+                    dol_syslog(get_class($this)."::remove_fournisseur ".$this->error, LOG_ERR);
                     $ok=0;
                 }
             }
@@ -100,12 +100,12 @@ class ProductFournisseur extends Product
             $sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur";
             $sql.= " WHERE fk_product = ".$this->id." AND fk_soc = ".$id_fourn;
 
-            dol_syslog("ProductFournisseur::remove_fournisseur sql=".$sql);
+            dol_syslog(get_class($this)."::remove_fournisseur sql=".$sql);
             $resql=$this->db->query($sql);
             if (! $resql)
             {
                 $this->error=$this->db->lasterror();
-                dol_syslog("ProductFournisseur::remove_fournisseur ".$this->error, LOG_ERR);
+                dol_syslog(get_class($this)."::remove_fournisseur ".$this->error, LOG_ERR);
                 $ok=0;
             }
 
@@ -140,7 +140,7 @@ class ProductFournisseur extends Product
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur";
         $sql.= " WHERE rowid = ".$rowid;
 
-        dol_syslog("ProductFournisseur::remove_product_fournisseur sql=".$sql);
+        dol_syslog(get_class($this)."::remove_product_fournisseur sql=".$sql);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -167,7 +167,7 @@ class ProductFournisseur extends Product
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
         $sql.= " WHERE rowid = ".$rowid;
 
-        dol_syslog("ProductFournisseur::remove_product_fournisseur_price sql=".$sql);
+        dol_syslog(get_class($this)."::remove_product_fournisseur_price sql=".$sql);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -178,7 +178,7 @@ class ProductFournisseur extends Product
             $sql.= " WHERE pfp.rowid IS NULL";
             $sql.= " AND pf.entity = ".$conf->entity;
 
-            dol_syslog("ProductFournisseur::remove_product_fournisseur_price sql=".$sql);
+            dol_syslog(get_class($this)."::remove_product_fournisseur_price sql=".$sql);
             $resql = $this->db->query($sql);
             if ($resql)
             {
@@ -191,12 +191,12 @@ class ProductFournisseur extends Product
                     $sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur";
                     $sql.= " WHERE rowid = ".$rowidpf;
 
-                    dol_syslog("ProductFournisseur::remove_product_fournisseur_price sql=".$sql);
+                    dol_syslog(get_class($this)."::remove_product_fournisseur_price sql=".$sql);
                     $resql2 = $this->db->query($sql);
                     if (! $resql2)
                     {
                         $this->error=$this->db->lasterror();
-                        dol_syslog("ProductFournisseur::remove_product_fournisseur_price ".$this->error,LOG_ERR);
+                        dol_syslog(get_class($this)."::remove_product_fournisseur_price ".$this->error,LOG_ERR);
                         $ok=0;
                     }
                 }
@@ -215,7 +215,7 @@ class ProductFournisseur extends Product
             else
             {
                 $this->error=$this->db->lasterror();
-                dol_syslog("ProductFournisseur::remove_product_fournisseur_price ".$this->error,LOG_ERR);
+                dol_syslog(get_class($this)."::remove_product_fournisseur_price ".$this->error,LOG_ERR);
                 $this->db->rollback();
                 return -2;
             }
@@ -223,7 +223,7 @@ class ProductFournisseur extends Product
         else
         {
             $this->error=$this->db->lasterror();
-            dol_syslog("ProductFournisseur::remove_product_fournisseur_price ".$this->error,LOG_ERR);
+            dol_syslog(get_class($this)."::remove_product_fournisseur_price ".$this->error,LOG_ERR);
             $this->db->rollback();
             return -1;
         }
@@ -288,7 +288,7 @@ class ProductFournisseur extends Product
             $sql.= " ".$availability;
             $sql.=")";
 
-            dol_syslog("ProductFournisseur::update_buyprice sql=".$sql);
+            dol_syslog(get_class($this)."::update_buyprice sql=".$sql);
             if (! $this->db->query($sql))
             {
                 $error++;
@@ -391,7 +391,7 @@ class ProductFournisseur extends Product
         $sql.= " AND fk_soc = ".$fournid;
         $sql.= " AND entity = ".$conf->entity;
 
-        dol_syslog("Product::fetch_fourn_data sql=".$sql);
+        dol_syslog(get_class($this)."::fetch_fourn_data sql=".$sql);
         $result = $this->db->query($sql) ;
         if ($result)
         {
@@ -403,7 +403,7 @@ class ProductFournisseur extends Product
         else
         {
             $this->error=$this->db->error();
-            dol_syslog("ProductFournisseur::fetch_fourn_data error=".$this->error, LOG_ERR);
+            dol_syslog(get_class($this)."::fetch_fourn_data error=".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -423,7 +423,7 @@ class ProductFournisseur extends Product
         $sql.= " WHERE pfp.rowid = ".$rowid;
         $sql.= " AND pf.rowid = pfp.fk_product_fournisseur";
 
-        dol_syslog("ProductFournisseur::fetch_product_fournisseur_price sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::fetch_product_fournisseur_price sql=".$sql, LOG_DEBUG);
         $resql = $this->db->query($sql) ;
         if ($resql)
         {
@@ -449,7 +449,7 @@ class ProductFournisseur extends Product
         else
         {
             $this->error=$this->db->error();
-            dol_syslog("ProductFournisseur::fetch_product_fournisseur_price error=".$this->error, LOG_ERR);
+            dol_syslog(get_class($this)."::fetch_product_fournisseur_price error=".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -480,7 +480,7 @@ class ProductFournisseur extends Product
         $sql.= " AND pf.fk_product = ".$prodid;
         $sql.= " ORDER BY s.nom, pfp.quantity";
 
-        dol_syslog("ProductFournisseur::fetch_product_fournisseur sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::fetch_product_fournisseur sql=".$sql, LOG_DEBUG);
 
         $resql = $this->db->query($sql);
 
@@ -525,7 +525,7 @@ class ProductFournisseur extends Product
         else
         {
             $this->error=$this->db->error();
-            dol_syslog("ProductFournisseur::fetch_product_fournisseur error=".$this->error, LOG_ERR);
+            dol_syslog(get_class($this)."::fetch_product_fournisseur error=".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -556,12 +556,12 @@ class ProductFournisseur extends Product
         $sql.= " pfp.rowid as product_fourn_pri_id, ";
         $sql.= " pf.rowid as product_fourn_id, ";
         $sql.= " pfp.price, pfp.quantity, pfp.unitprice";
-        $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-        $sql.= " INNER JOIN ".MAIN_DB_PREFIX."product_fournisseur as pf ON pf.fk_soc = s.rowid";
+        $sql.= " FROM (".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product_fournisseur as pf)";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
         $sql.= " ON pf.rowid = pfp.fk_product_fournisseur";
         $sql.= " WHERE s.entity = ".$conf->entity;
         $sql.= " AND pf.fk_product = ".$prodid;
+        $sql.= " AND pf.fk_soc = s.rowid";
         $sql.= " ORDER BY pfp.unitprice";
         $sql.= $this->db->plimit(1);
 
