@@ -22,7 +22,7 @@
 /**
  *       \file       htdocs/user/group/perms.php
  *       \brief      Onglet user et permissions de la fiche utilisateur
- *       \version    $Id: perms.php,v 1.41 2011/08/17 15:56:24 eldy Exp $
+ *       \version    $Id: perms.php,v 1.42 2011/08/21 00:20:43 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -31,7 +31,10 @@ require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
 
 $langs->load("users");
 
-$module=isset($_GET["module"])?$_GET["module"]:$_POST["module"];
+$id=GETPOST("id");
+$action=GETPOST("action");
+$confirm=GETPOST("confirm");
+$module=GETPOST("module");
 
 // Defini si peux lire les permissions
 $canreadperms=($user->admin || $user->rights->user->user->lire);
@@ -52,17 +55,17 @@ if (! $canreadperms) accessforbidden();
 /**
  * Actions
  */
-if ($_GET["action"] == 'addrights' && $caneditperms)
+if ($action == 'addrights' && $caneditperms)
 {
     $editgroup = new Usergroup($db);
-    $result=$editgroup->fetch($_GET["id"]);
+    $result=$editgroup->fetch($id);
     if ($result > 0) $editgroup->addrights($_GET["rights"],$module);
 }
 
-if ($_GET["action"] == 'delrights' && $caneditperms)
+if ($action == 'delrights' && $caneditperms)
 {
     $editgroup = new Usergroup($db);
-    $result=$editgroup->fetch($_GET["id"]);
+    $result=$editgroup->fetch($id);
     if ($result > 0) $editgroup->delrights($_GET["rights"],$module);
 }
 
@@ -75,10 +78,10 @@ $form = new Form($db);
 
 llxHeader('',$langs->trans("Permissions"));
 
-if ($_GET["id"])
+if ($id)
 {
     $fgroup = new Usergroup($db);
-    $fgroup->fetch($_GET["id"]);
+    $fgroup->fetch($id);
     $fgroup->getrights();
 
     /*
@@ -167,7 +170,7 @@ if ($_GET["id"])
     $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
     $sql.= ", ".MAIN_DB_PREFIX."usergroup_rights as ugr";
     $sql.= " WHERE ugr.fk_id = r.id";
-    $sql.= " AND r.entity = ".$conf->entity;
+    $sql.= " AND r.entity = ".$fgroup->entity;
     $sql.= " AND ugr.fk_usergroup = ".$fgroup->id;
 
     $result=$db->query($sql);
@@ -232,7 +235,7 @@ if ($_GET["id"])
     $sql = "SELECT r.id, r.libelle, r.module";
     $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
     $sql.= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
-    $sql.= " AND r.entity = ".$conf->entity;
+    $sql.= " AND r.entity = ".$fgroup->entity;
     if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) $sql.= " AND r.perms NOT LIKE '%_advance'";  // Hide advanced perms if option is disable
     $sql.= " ORDER BY r.module, r.id";
 
@@ -316,5 +319,5 @@ if ($_GET["id"])
 
 $db->close();
 
-llxFooter('$Date: 2011/08/17 15:56:24 $ - $Revision: 1.41 $');
+llxFooter('$Date: 2011/08/21 00:20:43 $ - $Revision: 1.42 $');
 ?>

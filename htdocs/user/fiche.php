@@ -24,7 +24,7 @@
 /**
  *       \file       htdocs/user/fiche.php
  *       \brief      Tab of user card
- *       \version    $Id: fiche.php,v 1.279 2011/08/19 22:15:23 hregis Exp $
+ *       \version    $Id: fiche.php,v 1.280 2011/08/21 00:20:44 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -1292,7 +1292,7 @@ else
                     print '<table class="noborder" width="100%">'."\n";
                     print '<tr class="liste_titre"><td class="liste_titre" width="25%">'.$langs->trans("GroupsToAdd").'</td>'."\n";
                     print '<td>';
-                    print $form->select_dolgroups('','group',1,$exclude);
+                    print $form->select_dolgroups('','group',1,$exclude,0,'','',$fuser->entity);
                     print ' &nbsp; ';
                     // Multicompany
                     if ($conf->multicompany->enabled)
@@ -1776,7 +1776,7 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/19 22:15:23 $ - $Revision: 1.279 $');
+llxFooter('$Date: 2011/08/21 00:20:44 $ - $Revision: 1.280 $');
 
 
 
