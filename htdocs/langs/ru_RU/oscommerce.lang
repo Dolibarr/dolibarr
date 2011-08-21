@@ -9,12 +9,12 @@
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
 CHARSET=UTF-8
-OSCommerce=OS Коммерция
-OSCommerceSetup=OS Торгово модуль настройки
-OSCommerceSetupSaved=Торгово настройки ОС сохраняются
-OSCommerceServer=OS Commerce Server хост / IP
-OSCommerceDatabaseName=OS Торгово имя_базы_данных
-OSCommercePrefix=OS Торгово префикс таблиц
-OSCommerceUser=OS Торгово регистрационную базу данных
+OSCommerce=OS Commerce
+OSCommerceSetup=Настройка модуля OS Commerce
+OSCommerceSetupSaved=Настройка OS Commerce сохранена
+OSCommerceServer=Хост/IP сервера OS Commerce
+OSCommerceDatabaseName=Имя базы данных OS Commerce
+OSCommercePrefix=Префикс таблиц OS Commerce
+OSCommerceUser=Имя пользователя базы данных OS Commerce
 // Date 2009-01-19 21:30:52
 // STOP - Lines generated via parser
