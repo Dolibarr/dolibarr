@@ -21,7 +21,7 @@
 /**
  *		\file       htdocs/theme/eldy/style.css.php
  *		\brief      File for CSS style sheet Eldy
- *		\version    $Id: style.css.php,v 1.109 2011/08/17 14:29:14 eldy Exp $
+ *		\version    $Id: style.css.php,v 1.110 2011/08/22 18:24:28 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -243,7 +243,7 @@ div.fichehalfright {
 	<?php if (empty($conf->browser->phone)) { print "width: 50%;\n"; } ?>
 }
 div.ficheaddleft {
-	<?php if (empty($conf->browser->phone)) { print "padding-left: 8px;\n"; } ?>
+	<?php if (empty($conf->browser->phone)) { print "padding-left: 10px;\n"; } ?>
 }
 
 
@@ -1174,6 +1174,10 @@ border-bottom-color: #BBBBBB;
 border-bottom-style: solid;
 
 margin: 0px 0px 2px 0px;
+
+-moz-box-shadow: 4px 4px 4px #CCC;
+-webkit-box-shadow: 4px 4px 4px #CCC;
+box-shadow: 4px 4px 4px #CCC;
 }
 
 table.noborder tr {
@@ -1223,6 +1227,10 @@ border-bottom-style: solid;
 
 margin-bottom: 2px;
 margin-top: 0px;
+
+-moz-box-shadow: 4px 4px 4px #CCC;
+-webkit-box-shadow: 4px 4px 4px #CCC;
+box-shadow: 4px 4px 4px #CCC;
 }
 table.liste td {
 padding-right: 2px;
