@@ -26,7 +26,7 @@
  *	\file       htdocs/main.inc.php
  *	\ingroup	core
  *	\brief      File that defines environment for Dolibarr pages only (variables not required by scripts)
- *	\version    $Id: main.inc.php,v 1.771 2011/08/22 17:47:28 hregis Exp $
+ *	\version    $Id: main.inc.php,v 1.772 2011/08/22 22:26:57 eldy Exp $
  */
 
 @ini_set('memory_limit', '64M');	// This may be useless if memory is hard limited by your PHP
@@ -755,11 +755,11 @@ if (!empty($conf->global->MAIN_MODULE_MULTICOMPANY))
 	if (GETPOST('action') == 'switchentity')
 	{
 		$res = @dol_include_once("/multicompany/class/actions_multicompany.class.php");
-		
+
 		if ($res)
 		{
 			$mc = new ActionsMulticompany($db);
-	
+
 			if($mc->switchEntity(GETPOST('entity')) >= 0)
 			{
 				Header("Location: ".DOL_URL_ROOT.'/');
@@ -1536,6 +1536,7 @@ function getHelpParamFor($helppagename,$langs)
 
 /**
  *  Show a search area
+ *
  *  @param   urlaction          Url post
  *  @param   urlobject          Url of the link under the search box
  *  @param   title              Title search area
@@ -1544,7 +1545,8 @@ function getHelpParamFor($helppagename,$langs)
  */
 function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$htmlinputname)
 {
-	global $langs;
+	global $conf,$langs;
+
 	$ret='';
 	$ret.='<div class="menu_titre">';
 	$ret.='<a class="vsmenu" href="'.$urlobject.'">';
@@ -1554,7 +1556,10 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$
 	$ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	$ret.='<input type="hidden" name="mode" value="search">';
 	$ret.='<input type="hidden" name="mode-search" value="'.$htmlmodesearch.'">';
-	$ret.='<input type="text" class="flat" placeholder="'.$langs->trans("SearchOf").''.strip_tags($title).'" name="'.$htmlinputname.'" size="10" />&nbsp;';
+	$ret.='<input type="text" class="flat" ';
+	if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $ret.=' placeholder="'.$langs->trans("SearchOf").''.strip_tags($title).'"';
+	else $ret.=' title="'.$langs->trans("SearchOf").''.strip_tags($title).'"';
+	$ret.=' name="'.$htmlinputname.'" size="10" />&nbsp;';
 	$ret.='<input type="submit" class="button" value="'.$langs->trans("Go").'">';
 	$ret.="</form>\n";
 	return $ret;
