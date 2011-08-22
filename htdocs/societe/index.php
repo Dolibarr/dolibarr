@@ -21,7 +21,7 @@
  *	\file       htdocs/societe/index.php
  *  \ingroup    societe
  *  \brief      Home page for third parties area
- *  \version    $Id: index.php,v 1.19 2011/08/21 13:12:48 eldy Exp $
+ *  \version    $Id: index.php,v 1.20 2011/08/22 16:07:28 simnandez Exp $
  */
 
 require("../main.inc.php");
@@ -40,7 +40,7 @@ $langs->load("companies");
  */
 
 $transAreaType = $langs->trans("ThirdPartiesArea");
-$helpurl='EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Tierceros';
+$helpurl='EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Terceros';
 
 llxHeader("",$langs->trans("ThirdParties"),$helpurl);
 
@@ -239,5 +239,5 @@ print '</td></tr></table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/21 13:12:48 $ - $Revision: 1.19 $');
+llxFooter('$Date: 2011/08/22 16:07:28 $ - $Revision: 1.20 $');
 ?>
