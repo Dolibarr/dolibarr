@@ -21,7 +21,7 @@
  *  \file       htdocs/product/liste.php
  *  \ingroup    produit
  *  \brief      Page to list products and services
- *  \version    $Id: liste.php,v 1.157 2011/08/22 22:04:24 eldy Exp $
+ *  \version    $Id: liste.php,v 1.158 2011/08/22 22:07:09 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -33,6 +33,7 @@ if ($conf->categorie->enabled) require_once(DOL_DOCUMENT_ROOT."/categories/class
 $langs->load("products");
 $langs->load("stocks");
 
+$action = GETPOST('action');
 $sref=GETPOST("sref");
 $sbarcode=GETPOST("sbarcode");
 $snom=GETPOST("snom");
@@ -56,9 +57,6 @@ if (! $sortorder) $sortorder="ASC";
 
 $limit = $conf->liste_limit;
 
-$action = GETPOST('action');
-
-// Security check
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 //if ($id) $object->getCanvas($id);
@@ -483,5 +481,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/22 22:04:24 $ - $Revision: 1.157 $');
+llxFooter('$Date: 2011/08/22 22:07:09 $ - $Revision: 1.158 $');
 ?>
