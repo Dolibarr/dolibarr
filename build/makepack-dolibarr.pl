@@ -244,7 +244,10 @@ if ($nboftargetok) {
 	    }
 	    print "Clean $BUILDROOT\n";
         $ret=`rm -f  $BUILDROOT/$PROJECT/index.php`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/.buildpath`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/.cache`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/.git`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/.gitmodules`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/.project`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/.settings`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/pom.xml`;
