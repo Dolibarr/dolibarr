@@ -5,6 +5,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2008      Matteli
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1553,7 +1554,7 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$
 	$ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	$ret.='<input type="hidden" name="mode" value="search">';
 	$ret.='<input type="hidden" name="mode-search" value="'.$htmlmodesearch.'">';
-	$ret.='<input type="text" class="flat" name="'.$htmlinputname.'" size="10">&nbsp;';
+	$ret.='<input type="text" class="flat" placeholder="'.$langs->trans("recherche de").''.strip_tags($title).'" required="" name="'.$htmlinputname.'" size="10">&nbsp;';
 	$ret.='<input type="submit" class="button" value="'.$langs->trans("Go").'">';
 	$ret.="</form>\n";
 	return $ret;
