@@ -1554,7 +1554,7 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$
 	$ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	$ret.='<input type="hidden" name="mode" value="search">';
 	$ret.='<input type="hidden" name="mode-search" value="'.$htmlmodesearch.'">';
-	$ret.='<input type="text" class="flat" placeholder="'.$langs->trans("recherche de").''.strip_tags($title).'" required="" name="'.$htmlinputname.'" size="10">&nbsp;';
+	$ret.='<input type="text" class="flat" placeholder="'.$langs->trans("search").''.strip_tags($title).'" required="" name="'.$htmlinputname.'" size="10">&nbsp;';
 	$ret.='<input type="submit" class="button" value="'.$langs->trans("Go").'">';
 	$ret.="</form>\n";
 	return $ret;
