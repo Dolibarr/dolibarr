@@ -26,7 +26,7 @@
  *	\file       htdocs/main.inc.php
  *	\ingroup	core
  *	\brief      File that defines environment for Dolibarr pages only (variables not required by scripts)
- *	\version    $Id: main.inc.php,v 1.770 2011/08/22 15:52:24 hregis Exp $
+ *	\version    $Id: main.inc.php,v 1.771 2011/08/22 17:47:28 hregis Exp $
  */
 
 @ini_set('memory_limit', '64M');	// This may be useless if memory is hard limited by your PHP
@@ -1554,7 +1554,7 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$
 	$ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	$ret.='<input type="hidden" name="mode" value="search">';
 	$ret.='<input type="hidden" name="mode-search" value="'.$htmlmodesearch.'">';
-	$ret.='<input type="text" class="flat" placeholder="'.$langs->trans("Search").''.strip_tags($title).'" required="" name="'.$htmlinputname.'" size="10">&nbsp;';
+	$ret.='<input type="text" class="flat" placeholder="'.$langs->trans("SearchOf").''.strip_tags($title).'" name="'.$htmlinputname.'" size="10" />&nbsp;';
 	$ret.='<input type="submit" class="button" value="'.$langs->trans("Go").'">';
 	$ret.="</form>\n";
 	return $ret;
