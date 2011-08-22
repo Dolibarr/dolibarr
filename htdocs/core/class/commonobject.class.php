@@ -21,33 +21,24 @@
  *	\file       htdocs/core/class/commonobject.class.php
  *	\ingroup    core
  *	\brief      File of parent class of all other business classes (invoices, contracts, proposals, orders, ...)
- *	\version    $Id: commonobject.class.php,v 1.158 2011/08/20 15:30:38 eldy Exp $
+ *	\version    $Id: commonobject.class.php,v 1.159 2011/08/22 22:04:22 eldy Exp $
  */
 
 
 /**
  *	\class 		CommonObject
- *	\brief 		Class of all other business classes (invoices, contracts, proposals, orders, ...)
+ *	\brief 		Parent class of all other business classes (invoices, contracts, proposals, orders, ...)
  */
 
-class CommonObject
+abstract class CommonObject
 {
 	var $db;
 
-	var $linkedObjectBlock;
-	var $objectid;
+	var $canvas;                // Contains canvas name if it is
 
-	// Instantiate hook classe of thirdparty module
-	var $hooks=array();
 
-	/**
-	 *    Constructeur de la classe
-	 *    @param	DB		Handler acces base de donnees
-	 */
-	function CommonObject($DB)
-	{
-		$this->db = $DB;
-	}
+	// No constructor as it is an abstract class
+
 
 	/**
 	 *      \brief      Check if ref is used.
@@ -1408,31 +1399,39 @@ class CommonObject
 	}
 
     /**
-     *  Load type of canvas of an object
+     *  Load type of canvas of an object if it exists
+     *
      *  @param      id      Record id
      *  @param      ref     Record ref
+     *  @return		int		<0 if KO, 0 if nothing done, >0 if OK
      */
     function getCanvas($id=0,$ref='')
     {
         global $conf;
 
+        if (empty($id) && empty($ref)) return 0;
+        if (! empty($conf->global->MAIN_DISABLE_CANVAS)) return 0;    // To increase speed. Not enabled by default.
+
+        // Clean parameters
         $ref = trim($ref);
 
         $sql = "SELECT rowid, canvas";
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
         $sql.= " WHERE entity = ".$conf->entity;
-        if (!empty($id)) $sql.= " AND rowid = ".$id;
+        if (!empty($id))  $sql.= " AND rowid = ".$id;
         if (!empty($ref)) $sql.= " AND ref = '".$ref."'";
 
         $resql = $this->db->query($sql);
         if ($resql)
         {
             $obj = $this->db->fetch_object($resql);
-
-            $this->id       = $obj->rowid;
-            $this->canvas   = $obj->canvas;
-
-            return 1;
+            if ($obj)
+            {
+                $this->id       = $obj->rowid;
+                $this->canvas   = $obj->canvas;
+                return 1;
+            }
+            else return 0;
         }
         else
         {
@@ -1594,14 +1593,15 @@ class CommonObject
             }
 
         	// To work with non standard path
-            if ($objecttype == 'facture') { $tplpath = 'compta/'.$element; }
-            if ($objecttype == 'propal')  { $tplpath = 'comm/'.$element; }
-            if ($objecttype == 'shipping') { $tplpath = 'expedition'; }
-            if ($objecttype == 'delivery') { $tplpath = 'livraison'; }
+            if ($objecttype == 'facture')          { $tplpath = 'compta/'.$element; }
+            if ($objecttype == 'propal')           { $tplpath = 'comm/'.$element; }
+            if ($objecttype == 'shipping')         { $tplpath = 'expedition'; }
+            if ($objecttype == 'delivery')         { $tplpath = 'livraison'; }
             if ($objecttype == 'invoice_supplier') { $tplpath = 'fourn/facture'; }
             if ($objecttype == 'order_supplier')   { $tplpath = 'fourn/commande'; }
 
-            $this->linkedObjectBlock = $objects;
+            global $linkedObjectBlock;
+            $linkedObjectBlock = $objects;
 
             dol_include_once('/'.$tplpath.'/tpl/linkedobjectblock.tpl.php');
         }

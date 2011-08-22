@@ -21,7 +21,7 @@
  *  \file       htdocs/product/liste.php
  *  \ingroup    produit
  *  \brief      Page to list products and services
- *  \version    $Id: liste.php,v 1.156 2011/08/21 10:12:18 eldy Exp $
+ *  \version    $Id: liste.php,v 1.157 2011/08/22 22:04:24 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -61,8 +61,8 @@ $action = GETPOST('action');
 // Security check
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
-//if (!empty($id)) $object->getCanvas($id);
-$canvas = (!empty($object->canvas)?$object->canvas:GETPOST("canvas"));
+//if ($id) $object->getCanvas($id);
+$canvas = GETPOST("canvas");
 if (! empty($canvas))
 {
     require_once(DOL_DOCUMENT_ROOT."/core/class/canvas.class.php");
@@ -483,5 +483,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/21 10:12:18 $ - $Revision: 1.156 $');
+llxFooter('$Date: 2011/08/22 22:04:24 $ - $Revision: 1.157 $');
 ?>

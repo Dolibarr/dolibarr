@@ -25,7 +25,7 @@
  *  \file       htdocs/societe/soc.php
  *  \ingroup    societe
  *  \brief      Third party card page
- *  \version    $Id: soc.php,v 1.138 2011/08/18 22:25:46 eldy Exp $
+ *  \version    $Id: soc.php,v 1.139 2011/08/22 22:04:28 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -46,21 +46,19 @@ $langs->load("banks");
 $langs->load("users");
 if ($conf->notification->enabled) $langs->load("mails");
 
-$error=0; $errors=array();
+$mesg=''; $error=0; $errors=array();
 
 $action = GETPOST('action');
 $confirm = GETPOST('confirm');
+$socid = GETPOST("socid");
+if ($user->societe_id) $socid=$user->societe_id;
 
 $object = new Societe($db);
 $extrafields = new ExtraFields($db);
 
-// Security check
-$socid = GETPOST("socid");
-if ($user->societe_id) $socid=$user->societe_id;
-
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
-if (!empty($socid)) $object->getCanvas($socid);
-$canvas = (!empty($object->canvas)?$object->canvas:GETPOST("canvas"));
+if ($socid) $object->getCanvas($socid);
+$canvas = $object->canvas?$object->canvas:GETPOST("canvas");
 if (! empty($canvas))
 {
     require_once(DOL_DOCUMENT_ROOT."/core/class/canvas.class.php");
@@ -1975,5 +1973,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/18 22:25:46 $ - $Revision: 1.138 $');
+llxFooter('$Date: 2011/08/22 22:04:28 $ - $Revision: 1.139 $');
 ?>

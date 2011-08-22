@@ -23,7 +23,7 @@
  *       \file       htdocs/contact/fiche.php
  *       \ingroup    societe
  *       \brief      Card of a contact
- *       \version    $Id: fiche.php,v 1.225 2011/08/13 00:48:00 eldy Exp $
+ *       \version    $Id: fiche.php,v 1.226 2011/08/22 22:04:26 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -38,20 +38,18 @@ $langs->load("users");
 $langs->load("other");
 $langs->load("commercial");
 
-$error=0; $errors=array();
+$mesg=''; $error=0; $errors=array();
 
 $action = GETPOST('action');
-$socid = GETPOST("socid");
 $id = GETPOST("id");
-
-// Security check
+$socid = GETPOST("socid");
 if ($user->societe_id) $socid=$user->societe_id;
 
 $object = new Contact($db);
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
-if (!empty($id)) $object->getCanvas($id);
-$canvas = (!empty($object->canvas)?$object->canvas:GETPOST("canvas"));
+if ($id) $object->getCanvas($id);
+$canvas = $object->canvas?$object->canvas:GETPOST("canvas");
 if (! empty($canvas))
 {
     require_once(DOL_DOCUMENT_ROOT."/core/class/canvas.class.php");
@@ -949,5 +947,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/13 00:48:00 $ - $Revision: 1.225 $');
+llxFooter('$Date: 2011/08/22 22:04:26 $ - $Revision: 1.226 $');
 ?>

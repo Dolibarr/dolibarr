@@ -28,7 +28,7 @@
  *	\file			htdocs/lib/functions.lib.php
  *	\brief			A set of functions for Dolibarr
  *					This file contains all frequently used functions.
- *	\version		$Id: functions.lib.php,v 1.563 2011/08/21 10:01:37 hregis Exp $
+ *	\version		$Id: functions.lib.php,v 1.564 2011/08/22 22:04:21 eldy Exp $
  */
 
 // For compatibility during upgrade
@@ -2012,13 +2012,14 @@ function info_admin($text,$infoonimgalt=0)
 
 
 /**
- *	Check permissions of a user to show a page and an object. Check read permission
- * 	If $_REQUEST['action'] defined, we also check write and delete permission.
+ *	Check permissions of a user to show a page and an object. Check read permission.
+ * 	If GETPOST('action') defined, we also check write and delete permission.
+ *
  *	@param      user      	  	User to check
  *	@param      features	    Features to check (in most cases, it's module name)
  *	@param      objectid      	Object ID if we want to check permission on a particular record (optionnal)
  *	@param      dbtablename    	Table name where object is stored. Not used if objectid is null (optionnal)
- *	@param      feature2		Feature to check (second level of permission)
+ *	@param      feature2		Feature to check, second level of permission (optionnal)
  *  @param      dbt_keyfield    Field name for socid foreign key if not fk_soc. (optionnal)
  *  @param      dbt_select      Field name for select if not rowid. (optionnal)
  * 	@return		int				Always 1, die process if not allowed
@@ -2093,7 +2094,7 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 
     // Check write permission from module
     $createok=1;
-    if ( GETPOST("action") && GETPOST("action")  == 'create')
+    if (GETPOST("action") && GETPOST("action")  == 'create')
     {
         foreach ($features as $feature)
         {
