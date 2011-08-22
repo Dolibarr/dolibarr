@@ -2,7 +2,7 @@
 #----------------------------------------------------------------------------
 # \file         build/makepack-dolibarr.pl
 # \brief        Dolibarr package builder (tgz, zip, rpm, deb, exe, aps)
-# \version      $Id: makepack-dolibarr.pl,v 1.150 2011/08/21 16:20:41 eldy Exp $
+# \version      $Id: makepack-dolibarr.pl,v 1.151 2011/08/22 23:09:30 eldy Exp $
 # \author       (c)2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
 #----------------------------------------------------------------------------
 
@@ -45,7 +45,7 @@ if (-d "/usr/src/RPM")    { $RPMDIR="/usr/src/RPM"; } # mandrake
 
 
 use vars qw/ $REVISION $VERSION /;
-$REVISION='$Revision: 1.150 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
+$REVISION='$Revision: 1.151 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
 $VERSION="3.2 (build $REVISION)";
 
 
@@ -244,7 +244,10 @@ if ($nboftargetok) {
 	    }
 	    print "Clean $BUILDROOT\n";
         $ret=`rm -f  $BUILDROOT/$PROJECT/index.php`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/.buildpath`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/.cache`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/.git`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/.gitmodules`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/.project`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/.settings`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/pom.xml`;
