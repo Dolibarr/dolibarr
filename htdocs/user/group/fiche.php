@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  *
@@ -21,7 +21,7 @@
 /**
  *       \file       htdocs/user/group/fiche.php
  *       \brief      Onglet groupes utilisateurs
- *       \version    $Id: fiche.php,v 1.77 2011/08/21 10:01:37 hregis Exp $
+ *       \version    $Id: fiche.php,v 1.78 2011/08/23 22:10:25 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -218,7 +218,7 @@ if ($action == 'create')
 
 	print "<tr>".'<td valign="top" class="fieldrequired">'.$langs->trans("Name").'</td>';
 	print '<td class="valeur"><input size="30" type="text" name="nom" value=""></td></tr>';
-	
+
 	// Multicompany
 	if (! empty($conf->multicompany->enabled))
 	{
@@ -305,7 +305,7 @@ else
 				print img_redstar($langs->trans("GlobalGroup"));
 			}
 			print "</td></tr>\n";
-			
+
 			// Multicompany
 			if (! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
 			{
@@ -353,7 +353,7 @@ else
 
             // On selectionne les users qui ne sont pas deja dans le groupe
             $exclude = array();
-            
+
             if (! empty($object->members))
             {
                 if( !($conf->multicompany->enabled && $conf->global->MULTICOMPANY_TRANSVERSE_MODE))
@@ -422,15 +422,15 @@ else
             	foreach($object->members as $useringroup)
             	{
             		$var=!$var;
-            		
+
             		print "<tr $bc[$var]>";
             		print '<td>';
             		print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$useringroup->id.'">'.img_object($langs->trans("ShowUser"),"user").' '.$useringroup->login.'</a>';
             		if ($useringroup->admin  && ! $useringroup->entity) print img_picto($langs->trans("SuperAdministrator"),'redstar');
             		else if ($useringroup->admin) print img_picto($langs->trans("Administrator"),'star');
             		print '</td>';
-            		print '<td>'.ucfirst(stripslashes($useringroup->lastname)).'</td>';
-            		print '<td>'.ucfirst(stripslashes($useringroup->firstname)).'</td>';
+            		print '<td>'.$useringroup->lastname.'</td>';
+            		print '<td>'.$useringroup->firstname.'</td>';
             		if(! empty($conf->multicompany->enabled) && $conf->entity == 1)
             		{
             			$mc = new ActionsMulticompany($db);
@@ -472,7 +472,7 @@ else
             print '<tr><td width="25%" valign="top" class="fieldrequired">'.$langs->trans("Name").'</td>';
             print '<td width="75%" class="valeur"><input size="15" type="text" name="group" value="'.$object->nom.'">';
             print "</td></tr>\n";
-            
+
             // Multicompany
             if (! empty($conf->multicompany->enabled))
             {
@@ -518,5 +518,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/21 10:01:37 $ - $Revision: 1.77 $');
+llxFooter('$Date: 2011/08/23 22:10:25 $ - $Revision: 1.78 $');
 ?>
