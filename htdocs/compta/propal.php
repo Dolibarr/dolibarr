@@ -24,7 +24,7 @@
  *	\file       htdocs/compta/propal.php
  *	\ingroup    propale
  *	\brief      Page liste des propales (vision compta)
- *	\version	$Id: propal.php,v 1.194 2011/08/03 00:46:24 eldy Exp $
+ *	\version	$Id: propal.php,v 1.195 2011/08/23 18:40:48 hregis Exp $
  */
 
 require('../main.inc.php');
@@ -39,6 +39,11 @@ $langs->load('companies');
 $langs->load('compta');
 $langs->load('orders');
 $langs->load('bills');
+
+$id=GETPOST('id');
+$ref=GETPOST('ref');
+$socid=GETPOST('socid');
+$action=GETPOST('action');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -63,9 +68,9 @@ if (! empty($_GET["socid"]))
 	$module='societe';
 	$dbtable='';
 }
-else if (! empty($_GET["id"]))
+else if (! empty($id))
 {
-	$objectid=$_GET["id"];
+	$objectid=$id;
 	$module='propale';
 	$dbtable='propal';
 }
@@ -81,18 +86,18 @@ $object = new Propal($db);
 /*                     Actions                                                */
 /******************************************************************************/
 
-if ($_GET["action"] == 'setstatut')
+if ($action == 'setstatut')
 {
 	// Close proposal
-	$object->id = $_GET["id"];
+	$object->id = $id;
 	$object->cloture($user, $_GET["statut"], $note);
 
 }
 
 // Set project
-if ($_POST['action'] == 'classin')
+if ($action == 'classin')
 {
-	$object->fetch($_GET["id"]);
+	$object->fetch($id);
 	$object->setProject($_POST['projectid']);
 }
 
@@ -114,15 +119,13 @@ $propalstatic=new Propal($db);
 
 $now=gmmktime();
 
-$id = $_GET["id"];
-$ref= $_GET["ref"];
 if ($id > 0 || ! empty($ref))
 {
 	if ($mesg) print "$mesg<br>";
 
 	$product_static=new Product($db);
 
-	$object->fetch($_GET["id"],$_GET["ref"]);
+	$object->fetch($id,$ref);
 
 	$societe = new Societe($db);
 	$societe->fetch($object->socid);
@@ -148,7 +151,7 @@ if ($id > 0 || ! empty($ref))
 	print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
 	print $langs->trans('RefCustomer').'</td><td align="left">';
 	print '</td>';
-	if ($_GET['action'] != 'refclient' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;id='.$object->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
+	if ($action != 'refclient' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;id='.$object->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="5">';
 	print $object->ref_client;
@@ -209,10 +212,10 @@ if ($id > 0 || ! empty($ref))
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('PaymentConditionsShort');
 	print '</td>';
-	if ($_GET['action'] != 'editconditions' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+	if ($action != 'editconditions' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
-	if ($_GET['action'] == 'editconditions')
+	if ($action == 'editconditions')
 	{
 		$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->cond_reglement_id,'cond_reglement_id');
 	}
@@ -228,10 +231,10 @@ if ($id > 0 || ! empty($ref))
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('PaymentMode');
 	print '</td>';
-	if ($_GET['action'] != 'editmode' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+	if ($action != 'editmode' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
-	if ($_GET['action'] == 'editmode')
+	if ($action == 'editmode')
 	{
 		$html->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->mode_reglement_id,'mode_reglement_id');
 	}
@@ -250,10 +253,10 @@ if ($id > 0 || ! empty($ref))
 		print $langs->trans('Project').'</td>';
 		if (1 == 2 && $user->rights->propale->creer)
 		{
-			if ($_GET['action'] != 'classer') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classer&amp;id='.$object->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
+			if ($action != 'classify') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="3">';
-			if ($_GET['action'] == 'classer')
+			if ($action == 'classify')
 			{
 				$html->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'projectid');
 			}
@@ -367,7 +370,7 @@ if ($id > 0 || ! empty($ref))
 			if (! empty($objp->date_start)) $type=1;
 			if (! empty($objp->date_end)) $type=1;
 
-			if ($_GET['action'] != 'editline' || $_GET['rowid'] != $objp->rowid)
+			if ($action != 'editline' || $_GET['rowid'] != $objp->rowid)
 			{
 				print '<tr '.$bc[$var].'>';
 				if ($objp->fk_product > 0)
@@ -701,6 +704,6 @@ else
 $db->close();
 
 
-llxFooter('$Date: 2011/08/03 00:46:24 $ - $Revision: 1.194 $');
+llxFooter('$Date: 2011/08/23 18:40:48 $ - $Revision: 1.195 $');
 
 ?>

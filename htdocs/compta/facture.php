@@ -25,7 +25,7 @@
  *	\file       htdocs/compta/facture.php
  *	\ingroup    facture
  *	\brief      Page to create/see an invoice
- *	\version    $Id: facture.php,v 1.856 2011/08/23 15:23:19 hregis Exp $
+ *	\version    $Id: facture.php,v 1.857 2011/08/23 18:40:47 hregis Exp $
  */
 
 require('../main.inc.php');
@@ -2524,16 +2524,16 @@ else
                 print '<table class="nobordernopadding" width="100%"><tr><td>';
                 print $langs->trans('Project');
                 print '</td>';
-                if ($action != 'classin')
+                if ($action != 'classify')
                 {
-                    print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classin&amp;facid='.$object->id.'">';
+                    print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classify&amp;facid='.$object->id.'">';
                     print img_edit($langs->trans('SetProject'),1);
                     print '</a></td>';
                 }
                 print '</tr></table>';
 
                 print '</td><td colspan="3">';
-                if ($action == 'classin')
+                if ($action == 'classify')
                 {
                     $html->form_project($_SERVER['PHP_SELF'].'?facid='.$object->id,$object->socid,$object->fk_project,'projectid');
                 }
@@ -2546,7 +2546,7 @@ else
             }
             
             // Insert hooks
-            $parameters=array('colspan'=>'colspan="3"');
+            $parameters=array('colspan'=>' colspan="3"');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
             print '</table><br>';
@@ -3193,5 +3193,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/23 15:23:19 $ - $Revision: 1.856 $');
+llxFooter('$Date: 2011/08/23 18:40:47 $ - $Revision: 1.857 $');
 ?>

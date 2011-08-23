@@ -25,7 +25,7 @@
  *	\file		htdocs/fourn/commande/fiche.php
  *	\ingroup	supplier, order
  *	\brief		Card supplier order
- *	\version	$Id: fiche.php,v 1.234 2011/08/20 23:56:04 eldy Exp $
+ *	\version	$Id: fiche.php,v 1.235 2011/08/23 18:40:49 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -981,11 +981,11 @@ if ($id > 0 || ! empty($ref))
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('Project');
 			print '</td>';
-			if ($action != 'classer') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classer&amp;id='.$object->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
+			if ($action != 'classify') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="2">';
 			//print "$object->id, $object->socid, $object->fk_project";
-			if ($action == 'classer')
+			if ($action == 'classify')
 			{
 				$html->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'projectid');
 			}
@@ -1542,5 +1542,5 @@ if ($id > 0 || ! empty($ref))
 
 $db->close();
 
-llxFooter('$Date: 2011/08/20 23:56:04 $	- $Revision: 1.234 $');
+llxFooter('$Date: 2011/08/23 18:40:49 $	- $Revision: 1.235 $');
 ?>

@@ -25,7 +25,7 @@
  *	\file       htdocs/commande/fiche.php
  *	\ingroup    commande
  *	\brief      Page to show customer order
- *	\version    $Id: fiche.php,v 1.536 2011/08/23 15:23:19 hregis Exp $
+ *	\version    $Id: fiche.php,v 1.537 2011/08/23 18:40:45 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -1757,11 +1757,11 @@ else
                 print '<table class="nobordernopadding" width="100%"><tr><td>';
                 print $langs->trans('Project');
                 print '</td>';
-                if ($action != 'classer') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classer&amp;id='.$object->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
+                if ($action != 'classify') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
                 print '</tr></table>';
                 print '</td><td colspan="2">';
                 //print "$object->id, $object->socid, $object->fk_project";
-                if ($action == 'classer')
+                if ($action == 'classify')
                 {
                     $html->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'projectid');
                 }
@@ -1773,7 +1773,7 @@ else
             }
             
             // Insert hooks
-            $parameters=array('colspan'=>'colspan="2"');
+            $parameters=array('colspan'=>' colspan="2"');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
             // Lignes de 3 colonnes
@@ -2077,5 +2077,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/23 15:23:19 $ - $Revision: 1.536 $');
+llxFooter('$Date: 2011/08/23 18:40:45 $ - $Revision: 1.537 $');
 ?>

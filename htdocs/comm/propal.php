@@ -26,7 +26,7 @@
  *	\file       	htdocs/comm/propal.php
  *	\ingroup    	propale
  *	\brief      	Page of commercial proposals card and list
- *	\version		$Id: propal.php,v 1.622 2011/08/23 15:23:19 hregis Exp $
+ *	\version		$Id: propal.php,v 1.623 2011/08/23 18:40:45 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -1367,10 +1367,10 @@ if ($id > 0 || ! empty($ref))
 		print $langs->trans('Project').'</td>';
 		if ($user->rights->propale->creer)
 		{
-			if ($action != 'classer') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classer&amp;id='.$object->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
+			if ($action != 'classify') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="3">';
-			if ($action == 'classer')
+			if ($action == 'classify')
 			{
 				$html->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'projectid');
 			}
@@ -1401,7 +1401,7 @@ if ($id > 0 || ! empty($ref))
 	}
 	
 	// Insert hooks
-	$parameters=array('colspan'=>'colspan="3"');
+	$parameters=array('colspan'=>' colspan="3"');
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
 	// Amount HT
@@ -1936,6 +1936,6 @@ else
 }
 $db->close();
 
-llxFooter('$Date: 2011/08/23 15:23:19 $ - $Revision: 1.622 $');
+llxFooter('$Date: 2011/08/23 18:40:45 $ - $Revision: 1.623 $');
 
 ?>
