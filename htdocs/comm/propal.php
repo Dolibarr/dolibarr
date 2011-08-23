@@ -26,7 +26,7 @@
  *	\file       	htdocs/comm/propal.php
  *	\ingroup    	propale
  *	\brief      	Page of commercial proposals card and list
- *	\version		$Id: propal.php,v 1.621 2011/08/12 21:29:47 eldy Exp $
+ *	\version		$Id: propal.php,v 1.622 2011/08/23 15:23:19 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -1399,6 +1399,10 @@ if ($id > 0 || ! empty($ref))
 		}
 		print '</tr>';
 	}
+	
+	// Insert hooks
+	$parameters=array('colspan'=>'colspan="3"');
+	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
 	// Amount HT
 	print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';
@@ -1932,6 +1936,6 @@ else
 }
 $db->close();
 
-llxFooter('$Date: 2011/08/12 21:29:47 $ - $Revision: 1.621 $');
+llxFooter('$Date: 2011/08/23 15:23:19 $ - $Revision: 1.622 $');
 
 ?>

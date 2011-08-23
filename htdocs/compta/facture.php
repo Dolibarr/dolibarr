@@ -25,7 +25,7 @@
  *	\file       htdocs/compta/facture.php
  *	\ingroup    facture
  *	\brief      Page to create/see an invoice
- *	\version    $Id: facture.php,v 1.855 2011/08/11 15:14:50 hregis Exp $
+ *	\version    $Id: facture.php,v 1.856 2011/08/23 15:23:19 hregis Exp $
  */
 
 require('../main.inc.php');
@@ -1690,6 +1690,10 @@ if ($action == 'create')
         select_projects($soc->id, $projectid, 'projectid');
         print '</td></tr>';
     }
+    
+    // Insert hooks
+    $parameters=array();
+    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
     // Modele PDF
     print '<tr><td>'.$langs->trans('Model').'</td>';
@@ -2540,6 +2544,10 @@ else
                 print '</td>';
                 print '</tr>';
             }
+            
+            // Insert hooks
+            $parameters=array('colspan'=>'colspan="3"');
+            $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
             print '</table><br>';
 
@@ -3185,5 +3193,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/11 15:14:50 $ - $Revision: 1.855 $');
+llxFooter('$Date: 2011/08/23 15:23:19 $ - $Revision: 1.856 $');
 ?>

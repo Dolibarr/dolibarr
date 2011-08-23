@@ -23,7 +23,7 @@
  *	\file       htdocs/comm/addpropal.php
  *	\ingroup    propal
  *	\brief      Page to add a new commercial proposal
- *	\version    $Id: addpropal.php,v 1.132 2011/08/13 00:47:59 eldy Exp $
+ *	\version    $Id: addpropal.php,v 1.133 2011/08/23 15:23:19 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -41,6 +41,11 @@ $langs->load("companies");
 $langs->load("bills");
 $langs->load("orders");
 $langs->load("deliveries");
+
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+$hookmanager=new HookManager($db);
+$hookmanager->callHooks(array('propalcard'));
 
 /*
  * Actions
@@ -232,6 +237,10 @@ if ($_GET["action"] == 'create')
 		print '</td>';
 		print '</tr>';
 	}
+	
+	// Insert hooks
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
 	print "</table>";
 	print '<br>';
@@ -335,5 +344,5 @@ if ($_GET["action"] == 'create')
 
 $db->close();
 
-llxFooter('$Date: 2011/08/13 00:47:59 $ - $Revision: 1.132 $');
+llxFooter('$Date: 2011/08/23 15:23:19 $ - $Revision: 1.133 $');
 ?>

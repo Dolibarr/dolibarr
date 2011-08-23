@@ -25,7 +25,7 @@
  *	\file       htdocs/commande/fiche.php
  *	\ingroup    commande
  *	\brief      Page to show customer order
- *	\version    $Id: fiche.php,v 1.535 2011/08/12 05:41:02 hregis Exp $
+ *	\version    $Id: fiche.php,v 1.536 2011/08/23 15:23:19 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -1277,6 +1277,10 @@ if ($action == 'create' && $user->rights->commande->creer)
         }
         print '</td></tr>';
     }
+    
+    // Insert hooks
+    $parameters=array();
+    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
     print '<tr><td>'.$langs->trans('Model').'</td>';
     print '<td colspan="2">';
@@ -1745,7 +1749,6 @@ else
             //print '<a href="'.DOL_URL_ROOT.'/admin/dict.php?id=22&origin=order&originid='.$object->id.'">'.$langs->trans("DictionnarySource").'</a>';
             print '</td></tr>';
 
-
             // Project
             if ($conf->projet->enabled)
             {
@@ -1768,6 +1771,10 @@ else
                 }
                 print '</td></tr>';
             }
+            
+            // Insert hooks
+            $parameters=array('colspan'=>'colspan="2"');
+            $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
             // Lignes de 3 colonnes
 
@@ -2070,5 +2077,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/12 05:41:02 $ - $Revision: 1.535 $');
+llxFooter('$Date: 2011/08/23 15:23:19 $ - $Revision: 1.536 $');
 ?>
