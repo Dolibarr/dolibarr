@@ -22,7 +22,7 @@
  *	    \file       htdocs/contact/list.php
  *      \ingroup    societe
  *		\brief      Page to list all contacts
- *		\version    $Id: list.php,v 1.1 2011/08/21 13:19:26 eldy Exp $
+ *		\version    $Id: list.php,v 1.2 2011/08/23 20:57:41 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -242,9 +242,9 @@ if ($result)
 	$num = $db->num_rows($result);
     $i = 0;
 
-    print_barre_liste($titre ,$page, "index.php", $param, $sortfield, $sortorder,'',$num,$nbtotalofrecords);
+    print_barre_liste($titre ,$page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num,$nbtotalofrecords);
 
-    print '<form method="post" action="index.php">';
+    print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="view" value="'.$view.'">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -259,23 +259,23 @@ if ($result)
 
     // Ligne des titres
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Lastname"),"index.php","p.name", $begin, $param, '', $sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Firstname"),"index.php","p.firstname", $begin, $param, '', $sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("PostOrFunction"),"index.php","p.poste", $begin, $param, '', $sortfield,$sortorder);
-    if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) print_liste_field_titre($langs->trans("Company"),"index.php","s.nom", $begin, $param, '', $sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Lastname"),$_SERVER["PHP_SELF"],"p.name", $begin, $param, '', $sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Firstname"),$_SERVER["PHP_SELF"],"p.firstname", $begin, $param, '', $sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("PostOrFunction"),$_SERVER["PHP_SELF"],"p.poste", $begin, $param, '', $sortfield,$sortorder);
+    if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom", $begin, $param, '', $sortfield,$sortorder);
     if ($view == 'phone')
     {
-        print_liste_field_titre($langs->trans("Phone"),"index.php","p.phone", $begin, $param, '', $sortfield,$sortorder);
-        print_liste_field_titre($langs->trans("Mobile"),"index.php","p.phone_mob", $begin, $param, '', $sortfield,$sortorder);
-        print_liste_field_titre($langs->trans("Fax"),"index.php","p.fax", $begin, $param, '', $sortfield,$sortorder);
+        print_liste_field_titre($langs->trans("Phone"),$_SERVER["PHP_SELF"],"p.phone", $begin, $param, '', $sortfield,$sortorder);
+        print_liste_field_titre($langs->trans("Mobile"),$_SERVER["PHP_SELF"],"p.phone_mob", $begin, $param, '', $sortfield,$sortorder);
+        print_liste_field_titre($langs->trans("Fax"),$_SERVER["PHP_SELF"],"p.fax", $begin, $param, '', $sortfield,$sortorder);
     }
     else
     {
-        print_liste_field_titre($langs->trans("Phone"),"index.php","p.phone", $begin, $param, '', $sortfield,$sortorder);
-        print_liste_field_titre($langs->trans("EMail"),"index.php","p.email", $begin, $param, '', $sortfield,$sortorder);
+        print_liste_field_titre($langs->trans("Phone"),$_SERVER["PHP_SELF"],"p.phone", $begin, $param, '', $sortfield,$sortorder);
+        print_liste_field_titre($langs->trans("EMail"),$_SERVER["PHP_SELF"],"p.email", $begin, $param, '', $sortfield,$sortorder);
     }
-    print_liste_field_titre($langs->trans("DateModificationShort"),"index.php","p.tms", $begin, $param, 'align="center"', $sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("ContactVisibility"),"index.php","p.priv", $begin, $param, 'align="center"', $sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("DateModificationShort"),$_SERVER["PHP_SELF"],"p.tms", $begin, $param, 'align="center"', $sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("ContactVisibility"),$_SERVER["PHP_SELF"],"p.priv", $begin, $param, 'align="center"', $sortfield,$sortorder);
     print '<td class="liste_titre">&nbsp;</td>';
     print "</tr>\n";
 
@@ -420,5 +420,5 @@ print '<br>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/21 13:19:26 $ - $Revision: 1.1 $');
+llxFooter('$Date: 2011/08/23 20:57:41 $ - $Revision: 1.2 $');
 ?>
