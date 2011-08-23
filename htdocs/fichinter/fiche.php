@@ -22,7 +22,7 @@
  *	\file       htdocs/fichinter/fiche.php
  *	\brief      Fichier fiche intervention
  *	\ingroup    ficheinter
- *	\version    $Id: fiche.php,v 1.174 2011/08/23 18:40:49 hregis Exp $
+ *	\version    $Id: fiche.php,v 1.175 2011/08/23 20:52:39 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -74,7 +74,7 @@ $result = restrictedArea($user, 'ficheinter', $fichinterid, 'fichinter');
 
 if ($action != 'create' && $action != 'add'  && $action != 'classifybilled' && ! ($_REQUEST["id"] > 0) && empty($_REQUEST["ref"]))
 {
-    Header("Location: index.php");
+    Header("Location: ".DOL_URL_ROOT.'/fichinter/list.php');
     exit;
 }
 
@@ -235,7 +235,7 @@ if ($action == 'confirm_delete' && $_REQUEST['confirm'] == 'yes')
         $object->fetch($id);
         $object->delete($user);
     }
-    Header('Location: index.php?leftmenu=ficheinter');
+    Header('Location: '.DOL_URL_ROOT.'/fichinter/list.php?leftmenu=ficheinter');
     exit;
 }
 
@@ -1218,5 +1218,5 @@ elseif ($fichinterid)
 
 $db->close();
 
-llxFooter('$Date: 2011/08/23 18:40:49 $ - $Revision: 1.174 $');
+llxFooter('$Date: 2011/08/23 20:52:39 $ - $Revision: 1.175 $');
 ?>
