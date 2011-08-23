@@ -21,7 +21,7 @@
  *	 \file       htdocs/user/class/usergroup.class.php
  *	 \brief      Fichier de la classe des groupes d'utilisateur
  *	 \author     Rodolphe Qiedeville
- *	 \version    $Id: usergroup.class.php,v 1.16 2011/08/21 10:01:37 hregis Exp $
+ *	 \version    $Id: usergroup.class.php,v 1.17 2011/08/23 22:25:38 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
@@ -115,6 +115,7 @@ class UserGroup extends CommonObject
 
 	/**
 	 * 	Return array of groups objects for a particular user
+	 *
 	 *	@param		userid    User id to search
 	 * 	@return		array     Array of groups objects
 	 */
@@ -129,7 +130,6 @@ class UserGroup extends CommonObject
 		$sql.= " ".MAIN_DB_PREFIX."usergroup_user as ug";
 		$sql.= " WHERE ug.fk_usergroup = g.rowid";
 		$sql.= " AND ug.fk_user = ".$userid;
-		
 		if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
 		{
 			$sql.= " AND g.entity IS NOT NULL";
@@ -138,7 +138,6 @@ class UserGroup extends CommonObject
 		{
 			$sql.= " AND g.entity IN (0,".$conf->entity.")";
 		}
-
 		$sql.= " ORDER BY g.nom";
 
 		dol_syslog("UserGroup::listGroupsForUser sql=".$sql,LOG_DEBUG);
@@ -147,11 +146,11 @@ class UserGroup extends CommonObject
 		{
 			while ($obj = $this->db->fetch_object($result))
 			{
-				$group=new UserGroup($this->db);
-				$group->fetch($obj->rowid);
-				$group->usergroup_entity = $obj->usergroup_entity;
+				$newgroup=new UserGroup($this->db);
+				$newgroup->fetch($obj->rowid);
+				$newgroup->usergroup_entity = $obj->usergroup_entity;
 
-				$ret[]=$group;
+				$ret[]=$newgroup;
 			}
 
 			$this->db->free($result);
@@ -168,6 +167,7 @@ class UserGroup extends CommonObject
 
 	/**
 	 * 	Return array of users id for group
+	 *
 	 * 	@return		array of users
 	 */
 	function listUsersForGroup()
@@ -181,7 +181,6 @@ class UserGroup extends CommonObject
 		$sql.= " ".MAIN_DB_PREFIX."usergroup_user as ug";
 		$sql.= " WHERE ug.fk_user = u.rowid";
 		$sql.= " AND ug.fk_usergroup = ".$this->id;
-		
 		if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
 		{
 			$sql.= " AND u.entity IS NOT NULL";
@@ -190,18 +189,17 @@ class UserGroup extends CommonObject
 		{
 			$sql.= " AND u.entity IN (0,".$conf->entity.")";
 		}
-
 		dol_syslog("UserGroup::listUsersForGroup sql=".$sql,LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
 			while ($obj = $this->db->fetch_object($result))
 			{
-				$userstatic=new User($this->db);
-				$userstatic->fetch($obj->rowid);
-				$userstatic->usergroup_entity = $obj->usergroup_entity;
+				$newuser=new User($this->db);
+				$newuser->fetch($obj->rowid);
+				$newuser->usergroup_entity = $obj->usergroup_entity;
 
-				$ret[]=$userstatic;
+				$ret[]=$newuser;
 			}
 
 			$this->db->free($result);
@@ -456,7 +454,7 @@ class UserGroup extends CommonObject
 						$this->rights->$row[0]->$row[1] = 1;
 					}
 				}
-				
+
 				$i++;
 			}
 		}
@@ -521,7 +519,7 @@ class UserGroup extends CommonObject
 		global $user, $conf, $langs;
 
 		$now=dol_now();
-		
+
 		$entity=$conf->entity;
 		if(! empty($conf->multicompany->enabled) && $conf->entity == 1)
 		{
@@ -576,7 +574,7 @@ class UserGroup extends CommonObject
 		global $user, $conf, $langs;
 
 		$error=0;
-		
+
 		$entity=$conf->entity;
 		if(! empty($conf->multicompany->enabled) && $conf->entity == 1)
 		{

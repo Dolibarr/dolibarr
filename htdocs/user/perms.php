@@ -22,7 +22,7 @@
 /**
  *       \file       htdocs/user/perms.php
  *       \brief      Onglet user et permissions de la fiche utilisateur
- *       \version    $Id: perms.php,v 1.59 2011/08/21 00:20:44 hregis Exp $
+ *       \version    $Id: perms.php,v 1.60 2011/08/23 22:25:38 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -154,7 +154,7 @@ foreach($modulesdir as $dir)
 	$handle=opendir($dir);
     if (is_resource($handle))
     {
-    	while (($file = readdir($handle))!==false)
+        while (($file = readdir($handle))!==false)
     	{
     	    if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod'  && substr($file, dol_strlen($file) - 10) == '.class.php')
     	    {
@@ -164,6 +164,7 @@ foreach($modulesdir as $dir)
     	        {
     	            include_once($dir.$file);
     	            $objMod = new $modName($db);
+
     	            // Load all lang files of module
     	            if (isset($objMod->langfiles) && is_array($objMod->langfiles))
     	            {
@@ -173,8 +174,8 @@ foreach($modulesdir as $dir)
     	            	}
     	            }
     	            // Load all permissions
-    	            if ($objMod->rights_class) {
-
+    	            if ($objMod->rights_class)
+    	            {
     	                $ret=$objMod->insert_permissions(0);
 
     	                $modules[$objMod->rights_class]=$objMod;
@@ -195,7 +196,8 @@ $sql = "SELECT r.id, r.libelle, r.module";
 $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r,";
 $sql.= " ".MAIN_DB_PREFIX."user_rights as ur";
 $sql.= " WHERE ur.fk_id = r.id";
-$sql.= " AND r.entity = ".$fuser->entity;
+if (empty($conf->multicompany->enabled)) $sql.= " AND r.entity = ".$conf->entity;
+else $sql.= " AND r.entity = ".$fuser->entity;
 $sql.= " AND ur.fk_user = ".$fuser->id;
 
 $result=$db->query($sql);
@@ -224,8 +226,10 @@ $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r,";
 $sql.= " ".MAIN_DB_PREFIX."usergroup_rights as gr,";
 $sql.= " ".MAIN_DB_PREFIX."usergroup_user as gu";
 $sql.= " WHERE gr.fk_id = r.id";
-$sql.= " AND r.entity = ".$fuser->entity;
-$sql.= " AND gu.entity IN (0,".$fuser->entity.")";
+if (empty($conf->multicompany->enabled)) $sql.= " AND r.entity = ".$conf->entity;
+else $sql.= " AND r.entity = ".$fuser->entity;
+if (empty($conf->multicompany->enabled)) $sql.= " AND gu.entity IN (0,".$conf->entity.")";
+else $sql.= " AND gu.entity IN (0,".$fuser->entity.")";
 $sql.= " AND gr.fk_usergroup = gu.fk_usergroup";
 $sql.= " AND gu.fk_user = ".$fuser->id;
 
@@ -288,16 +292,19 @@ print '</tr>'."\n";
 $sql = "SELECT r.id, r.libelle, r.module";
 $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
 $sql.= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
-$sql.= " AND r.entity = ".$fuser->entity;
+if (empty($conf->multicompany->enabled)) $sql.= " AND r.entity = ".$conf->entity;
+else $sql.= " AND r.entity = ".$fuser->entity;
 if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) $sql.= " AND r.perms NOT LIKE '%_advance'";  // Hide advanced perms if option is disable
 $sql.= " ORDER BY r.module, r.id";
 
+dol_syslog("sql=".$sql);
 $result=$db->query($sql);
 if ($result)
 {
     $num = $db->num_rows($result);
     $i = 0;
     $var = True;
+
     while ($i < $num)
     {
         $obj = $db->fetch_object($result);
@@ -394,9 +401,10 @@ if ($result)
         $i++;
     }
 }
+else dol_print_error($db);
 print '</table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/21 00:20:44 $ - $Revision: 1.59 $');
+llxFooter('$Date: 2011/08/23 22:25:38 $ - $Revision: 1.60 $');
 ?>

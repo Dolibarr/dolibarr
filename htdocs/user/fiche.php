@@ -24,7 +24,7 @@
 /**
  *       \file       htdocs/user/fiche.php
  *       \brief      Tab of user card
- *       \version    $Id: fiche.php,v 1.281 2011/08/21 10:01:37 hregis Exp $
+ *       \version    $Id: fiche.php,v 1.282 2011/08/23 22:25:38 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -702,7 +702,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
         }
         print "</td></tr>\n";
     }
-        
+
     //Multicompany
     if (! empty($conf->multicompany->enabled))
     {
@@ -1037,7 +1037,7 @@ else
                 print yn($fuser->admin);
             }
             print '</td></tr>'."\n";
-            
+
             // Multicompany
             if (! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
             {
@@ -1046,7 +1046,7 @@ else
             	{
             		print $langs->trans("AllEntities");
             	}
-            	else 
+            	else
             	{
             		$mc = new ActionsMulticompany($db);
             		$mc->getInfo($fuser->entity);
@@ -1394,7 +1394,7 @@ else
             print '<table width="100%" class="border">';
 
             $rowspan=12;
-            
+
             if ($conf->societe->enabled) $rowspan++;
             if ($conf->adherent->enabled) $rowspan++;
             if ($conf->webcalendar->enabled) $rowspan++;
@@ -1596,7 +1596,7 @@ else
             	}
             	print '</td></tr>';
             }
-            
+
             // Tel pro
             print "<tr>".'<td valign="top">'.$langs->trans("PhonePro").'</td>';
             print '<td>';
@@ -1776,7 +1776,7 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/21 10:01:37 $ - $Revision: 1.281 $');
+llxFooter('$Date: 2011/08/23 22:25:38 $ - $Revision: 1.282 $');
 
 
 
