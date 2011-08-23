@@ -111,7 +111,9 @@ if ($_GET["socid"])
 		print '<tr><td>'.$langs->trans('Gencod').'</td><td colspan="3">'.$soc->gencod.'</td></tr>';
 	}
 
-	print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".dol_print_address($soc->address, 'gmap', 'thirdparty', $soc->id)."</td></tr>";
+	print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">";
+	dol_print_address($soc->address, 'gmap', 'thirdparty', $soc->id);
+	print "</td></tr>";
 
 	// Zip / Town
 	print '<tr><td width="25%">'.$langs->trans('Zip').'</td><td width="25%">'.$soc->cp."</td>";
