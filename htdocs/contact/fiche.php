@@ -23,7 +23,7 @@
  *       \file       htdocs/contact/fiche.php
  *       \ingroup    societe
  *       \brief      Card of a contact
- *       \version    $Id: fiche.php,v 1.226 2011/08/22 22:04:26 eldy Exp $
+ *       \version    $Id: fiche.php,v 1.227 2011/08/23 20:45:41 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -212,7 +212,7 @@ if (empty($reshook))
         $result = $object->delete();
         if ($result > 0)
         {
-            Header("Location: index.php");
+            Header("Location: ".DOL_URL_ROOT.'/contact/list.php');
             exit;
         }
         else
@@ -947,5 +947,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/22 22:04:26 $ - $Revision: 1.226 $');
+llxFooter('$Date: 2011/08/23 20:45:41 $ - $Revision: 1.227 $');
 ?>
