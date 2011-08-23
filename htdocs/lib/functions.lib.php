@@ -28,7 +28,7 @@
  *	\file			htdocs/lib/functions.lib.php
  *	\brief			A set of functions for Dolibarr
  *					This file contains all frequently used functions.
- *	\version		$Id: functions.lib.php,v 1.564 2011/08/22 22:04:21 eldy Exp $
+ *	\version		$Id: functions.lib.php,v 1.565 2011/08/23 23:50:25 eldy Exp $
  */
 
 // For compatibility during upgrade
@@ -3753,7 +3753,8 @@ function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
     	unset($_SESSION['mesgarray']);
     }
 
-    if (! empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) && ! preg_match('/<div class=".*">/i',$out))
+    // If inline message with no format, we add it.
+    if ((! empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) || $keepembedded) && ! preg_match('/<div class=".*">/i',$out))
     {
         $divstart='<div class="'.$style.'">';
         $divend='</div>';
@@ -3839,7 +3840,7 @@ function get_htmloutput_errors($mesgstring='', $mesgarray='', $keepembedded=0)
  *	@param		mesgstring		Message
  *	@param		mesgarray       Messages array
  *  @param      style           Which style to use ('ok', 'error')
- *  @param      keepembedded    Set to 1 in error message must be kept embedded into its html place (this disable jnotify)
+ *  @param      keepembedded    Set to 1 if message must be kept embedded into its html place (this disable jnotify)
  *  @see        dol_print_error
  *  @see        dol_htmloutput_errors
  */
