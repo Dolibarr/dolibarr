@@ -24,7 +24,7 @@
  *  \file       htdocs/societe/agenda.php
  *  \ingroup    societe
  *  \brief      Page of third party events
- *  \version    $Id: agenda.php,v 1.21 2011/07/31 23:22:57 eldy Exp $
+ *  \version    $Id: agenda.php,v 1.22 2011/08/23 23:31:10 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -111,7 +111,9 @@ if ($_GET["socid"])
 		print '<tr><td>'.$langs->trans('Gencod').'</td><td colspan="3">'.$soc->gencod.'</td></tr>';
 	}
 
-	print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".dol_print_address($soc->address, 'gmap', 'thirdparty', $soc->id)."</td></tr>";
+	print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">";
+	dol_print_address($soc->address, 'gmap', 'thirdparty', $soc->id);
+	print "</td></tr>";
 
 	// Zip / Town
 	print '<tr><td width="25%">'.$langs->trans('Zip').'</td><td width="25%">'.$soc->cp."</td>";
@@ -186,5 +188,5 @@ if ($_GET["socid"])
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:22:57 $ - $Revision: 1.21 $');
+llxFooter('$Date: 2011/08/23 23:31:10 $ - $Revision: 1.22 $');
 ?>
