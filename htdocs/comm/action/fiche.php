@@ -23,7 +23,7 @@
  *       \file       htdocs/comm/action/fiche.php
  *       \ingroup    agenda
  *       \brief      Page for event card
- *       \version    $Id: fiche.php,v 1.229 2011/08/20 13:18:54 eldy Exp $
+ *       \version    $Id: fiche.php,v 1.230 2011/08/24 12:19:32 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -58,6 +58,7 @@ $cactioncomm = new CActionComm($db);
 $actioncomm = new ActionComm($db);
 $contact = new Contact($db);
 //var_dump($_POST);
+
 
 /*
  * Action creation de l'action
@@ -303,23 +304,7 @@ if ($action == 'update')
 		$_POST["p2month"],
 		$_POST["p2day"],
 		$_POST["p2year"]);
-		/*$datea=dol_mktime($_POST["adhour"],
-		 $_POST["admin"],
-		 0,
-		 $_POST["admonth"],
-		 $_POST["adday"],
-		 $_POST["adyear"]);
-		 $datea2=dol_mktime($_POST["a2hour"],
-		 $_POST["a2min"],
-		 0,
-		 $_POST["a2month"],
-		 $_POST["a2day"],
-		 $_POST["a2year"]);
-		 */
 
-		//print $_POST["apmonth"].",".$_POST["apday"].",".$_POST["apyear"].",".$_POST["aphour"].",".$_POST["apmin"]."<br>\n";
-		//print $actioncomm->datep;
-		//print 'dddd'.$datep;
 		$actioncomm->label       = $_POST["label"];
 		$actioncomm->datep       = $datep;
 		$actioncomm->datef       = $datef;
@@ -1022,7 +1007,7 @@ if ($id)
 
 $db->close();
 
-llxFooter('$Date: 2011/08/20 13:18:54 $ - $Revision: 1.229 $');
+llxFooter('$Date: 2011/08/24 12:19:32 $ - $Revision: 1.230 $');
 
 
 /**
