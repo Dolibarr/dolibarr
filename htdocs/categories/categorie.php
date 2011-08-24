@@ -24,7 +24,7 @@
  *  \file       htdocs/categories/categorie.php
  *  \ingroup    category
  *  \brief      Page to show category tab
- *  \version    $Id: categorie.php,v 1.67 2011/08/24 11:16:43 eldy Exp $
+ *  \version    $Id: categorie.php,v 1.68 2011/08/24 12:20:06 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -459,7 +459,7 @@ function formCategory($db,$object,$typeid)
 	if ($user->rights->categorie->creer)
 	{
 		print '<td align="right">';
-		print "<a href='".DOL_URL_ROOT."/categories/fiche.php?action=create&amp;origin=".$object->id."&type=".$typeid."&urlfrom=".urlencode($_SERVER["PHP_SELF"].'?'.(($typeid==1||$typeid==2)?'socid':'id').'='.$object->id.'&type='.$typeid)."'>";
+		print '<a href="'.DOL_URL_ROOT.'/categories/fiche.php?action=create&amp;origin='.$object->id.'&type='.$typeid.'&urlfrom='.urlencode($_SERVER["PHP_SELF"].'?'.(($typeid==1||$typeid==2)?'socid':'id').'='.$object->id.'&type='.$typeid).'">';
 		print $langs->trans("CreateCat").' ';
 		print img_picto($langs->trans("Create"),'filenew');
 		print "</a>";
@@ -540,5 +540,5 @@ function formCategory($db,$object,$typeid)
 
 $db->close();
 
-llxFooter('$Date: 2011/08/24 11:16:43 $ - $Revision: 1.67 $');
+llxFooter('$Date: 2011/08/24 12:20:06 $ - $Revision: 1.68 $');
 ?>
