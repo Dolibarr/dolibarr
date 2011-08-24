@@ -31,7 +31,7 @@
  *	\file       htdocs/core/class/html.form.class.php
  *  \ingroup    core
  *	\brief      File of class with all html predefined components
- *	\version	$Id: html.form.class.php,v 1.204 2011/08/21 10:01:37 hregis Exp $
+ *	\version	$Id: html.form.class.php,v 1.205 2011/08/24 14:01:21 hregis Exp $
  */
 
 
@@ -3522,7 +3522,7 @@ class Form
      * 	@param		enableonly		Array list of groups id to be enabled. All other must be disabled
      * 	@param		force_entity	Possibility to force entity
      */
-    function select_dolgroups($selected='',$htmlname='groupid',$show_empty=0,$exclude='',$disabled=0,$include='',$enableonly='',$force_entity)
+    function select_dolgroups($selected='',$htmlname='groupid',$show_empty=0,$exclude='',$disabled=0,$include='',$enableonly='',$force_entity='')
     {
         global $conf,$user,$langs;
 
