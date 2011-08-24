@@ -24,7 +24,7 @@
  *  \file       htdocs/categories/categorie.php
  *  \ingroup    category
  *  \brief      Page to show category tab
- *  \version    $Id: categorie.php,v 1.68 2011/08/24 12:20:06 eldy Exp $
+ *  \version    $Id: categorie.php,v 1.69 2011/08/24 12:31:12 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -190,24 +190,19 @@ if ($socid)
 	$langs->load("companies");
 	if ($conf->notification->enabled) $langs->load("mails");
 
-	/*
-	 * Creation de l'objet client/fournisseur correspondant au socid
-	 */
 	$soc = new Societe($db);
 	$result = $soc->fetch($socid);
+
 	llxHeader("","",$langs->trans("Category"));
 
-
-	/*
-	 * Affichage onglets
-	 */
+	// Show tabs
 	$head = societe_prepare_head($soc);
 
 	dol_fiche_head($head, 'category', $langs->trans("ThirdParty"),0,'company');
 
 	print '<table class="border" width="100%">';
 
-	print '<tr><td width="25%">'.$langs->trans("Name").'</td><td colspan="3">';
+	print '<tr><td width="25%">'.$langs->trans("ThirdPartyName").'</td><td colspan="3">';
 	print $html->showrefnav($soc,'socid','',($user->societe_id?0:1),'rowid','nom');
 	print '</td></tr>';
 
@@ -540,5 +535,5 @@ function formCategory($db,$object,$typeid)
 
 $db->close();
 
-llxFooter('$Date: 2011/08/24 12:20:06 $ - $Revision: 1.68 $');
+llxFooter('$Date: 2011/08/24 12:31:12 $ - $Revision: 1.69 $');
 ?>
