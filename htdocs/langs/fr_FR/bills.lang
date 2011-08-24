@@ -182,7 +182,6 @@ RemainderToTake=Reste à encaisser
 AmountExpected=Montant réclamé
 ExcessReceived=Trop perçu
 EscompteOffered=Escompte (règlement avant échéance)
-CreateDraft=Créer brouillon
 SendBillRef=Envoi facture %s
 SendReminderBillRef=Relance facture %s
 StandingOrders=Prélèvements

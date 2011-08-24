@@ -186,7 +186,6 @@ RemainderToTake=Remainder to take
 AmountExpected=Amount claimed
 ExcessReceived=Excess received
 EscompteOffered=Discount offered (payment before term)
-CreateDraft=Create draft
 SendBillRef=Send invoice %s
 SendReminderBillRef=Send invoice %s (reminder)
 StandingOrders=Standing orders
