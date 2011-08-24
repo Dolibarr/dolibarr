@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
- * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2007      Patrick Raguin	  	<patrick.raguin@gmail.com>
  *
@@ -22,7 +22,7 @@
  *		\file       htdocs/categories/fiche.php
  *		\ingroup    category
  *		\brief      Page to create a new category
- *		\version	$Id: fiche.php,v 1.85 2011/08/03 00:46:32 eldy Exp $
+ *		\version	$Id: fiche.php,v 1.86 2011/08/24 11:16:43 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -234,5 +234,5 @@ if ($user->rights->categorie->creer)
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:32 $ - $Revision: 1.85 $');
+llxFooter('$Date: 2011/08/24 11:16:43 $ - $Revision: 1.86 $');
 ?>

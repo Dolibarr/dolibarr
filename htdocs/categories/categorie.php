@@ -24,7 +24,7 @@
  *  \file       htdocs/categories/categorie.php
  *  \ingroup    category
  *  \brief      Page to show category tab
- *  \version    $Id: categorie.php,v 1.66 2011/08/18 22:33:43 eldy Exp $
+ *  \version    $Id: categorie.php,v 1.67 2011/08/24 11:16:43 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -33,7 +33,10 @@ require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
 $langs->load("categories");
 $langs->load("products");
 
-$mesg=isset($_GET["mesg"])?'<div class="ok">'.$_GET["mesg"].'</div>':'';
+$socid=GETPOST('socid');
+$id=GETPOST('id');
+$ref=GETPOST('ref');
+$mesg=GETPOST('mesg');
 
 $dbtablename = '';
 
@@ -41,10 +44,11 @@ $dbtablename = '';
 // For categories on third parties
 if (! empty($_REQUEST["socid"])) {
 	$_REQUEST["id"]=$_REQUEST["socid"];
+	$id=$socid;
 }
 if (! isset($_REQUEST["type"])) $_REQUEST["type"]=0;
-if ($_REQUEST["type"] == 1) $_GET["socid"]=$_REQUEST["id"];
-if ($_REQUEST["type"] == 2) $_GET["socid"]=$_REQUEST["id"];
+if ($_REQUEST["type"] == 1) $socid=$id;
+if ($_REQUEST["type"] == 2) $socid=$id;
 
 if ($_REQUEST["id"] || $_REQUEST["ref"])
 {
@@ -56,13 +60,13 @@ if ($_REQUEST["id"] || $_REQUEST["ref"])
 		$fieldid = isset($_REQUEST["ref"])?'ref':'rowid';
 	}
 	if ($_REQUEST["type"] == 1) {
-		$type = 'fournisseur'; $socid = isset($_REQUEST["socid"])?$_REQUEST["socid"]:'';
+		$type = 'fournisseur';
 		$objecttype = 'societe&categorie';
 		$objectid = isset($_REQUEST["id"])?$_REQUEST["id"]:(isset($_REQUEST["socid"])?$_REQUEST["socid"]:'');
 		$fieldid = 'rowid';
 	}
 	if ($_REQUEST["type"] == 2) {
-		$type = 'societe'; $socid = isset($_REQUEST["socid"])?$_REQUEST["socid"]:'';
+		$type = 'societe';
 		$objecttype = 'societe&categorie';
 		$objectid = isset($_REQUEST["id"])?$_REQUEST["id"]:(isset($_REQUEST["socid"])?$_REQUEST["socid"]:'');
 		$fieldid = 'rowid';
@@ -161,8 +165,8 @@ if (isset($_REQUEST["catMere"]) && $_REQUEST["catMere"]>=0)
 	}
 	else
 	{
-		if ($cat->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') $mesg='<div class="warning">'.$langs->trans("ObjectAlreadyLinkedToCategory").'</div>';
-		else $mesg='<div class="error">'.$langs->trans("Error").' '.$cat->error.'</div>';
+		if ($cat->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') $mesg='<div class="error">'.$langs->trans("ObjectAlreadyLinkedToCategory").'</div>';
+		else $mesg=$langs->trans("Error").' '.$cat->error;
 	}
 
 }
@@ -174,10 +178,11 @@ if (isset($_REQUEST["catMere"]) && $_REQUEST["catMere"]>=0)
 
 $html = new Form($db);
 
+
 /*
  * Fiche categorie de client et/ou fournisseur
  */
-if ($_GET["socid"])
+if ($socid)
 {
 	require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 	require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
@@ -189,7 +194,7 @@ if ($_GET["socid"])
 	 * Creation de l'objet client/fournisseur correspondant au socid
 	 */
 	$soc = new Societe($db);
-	$result = $soc->fetch($_GET["socid"]);
+	$result = $soc->fetch($socid);
 	llxHeader("","",$langs->trans("Category"));
 
 
@@ -275,7 +280,7 @@ if ($_GET["socid"])
 
 	print '</div>';
 
-	if ($mesg) print($mesg);
+	dol_htmloutput_mesg($mesg);
 
 	if ($soc->client) formCategory($db,$soc,2);
 
@@ -336,7 +341,7 @@ else if ($_GET["id"] || $_GET["ref"])
 
 		print '</div>';
 
-		if ($mesg) print($mesg);
+		dol_htmloutput_mesg($mesg);
 
 		formCategory($db,$product,0);
 	}
@@ -455,6 +460,7 @@ function formCategory($db,$object,$typeid)
 	{
 		print '<td align="right">';
 		print "<a href='".DOL_URL_ROOT."/categories/fiche.php?action=create&amp;origin=".$object->id."&type=".$typeid."&urlfrom=".urlencode($_SERVER["PHP_SELF"].'?'.(($typeid==1||$typeid==2)?'socid':'id').'='.$object->id.'&type='.$typeid)."'>";
+		print $langs->trans("CreateCat").' ';
 		print img_picto($langs->trans("Create"),'filenew');
 		print "</a>";
 		print '</td>';
@@ -534,5 +540,5 @@ function formCategory($db,$object,$typeid)
 
 $db->close();
 
-llxFooter('$Date: 2011/08/18 22:33:43 $ - $Revision: 1.66 $');
+llxFooter('$Date: 2011/08/24 11:16:43 $ - $Revision: 1.67 $');
 ?>
