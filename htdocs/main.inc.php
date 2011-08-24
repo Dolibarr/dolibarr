@@ -26,7 +26,7 @@
  *	\file       htdocs/main.inc.php
  *	\ingroup	core
  *	\brief      File that defines environment for Dolibarr pages only (variables not required by scripts)
- *	\version    $Id: main.inc.php,v 1.772 2011/08/22 22:26:57 eldy Exp $
+ *	\version    $Id: main.inc.php,v 1.773 2011/08/24 06:52:08 eldy Exp $
  */
 
 @ini_set('memory_limit', '64M');	// This may be useless if memory is hard limited by your PHP
@@ -1311,7 +1311,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	if ($conf->societe->enabled && $conf->global->MAIN_SEARCHFORM_CONTACT && $user->rights->societe->lire)
 	{
 		$langs->load("companies");
-		$searchform.=printSearchForm(DOL_URL_ROOT.'/contact/index.php', DOL_URL_ROOT.'/contact/index.php',
+		$searchform.=printSearchForm(DOL_URL_ROOT.'/contact/list.php', DOL_URL_ROOT.'/contact/list.php',
 		img_object('','contact').' '.$langs->trans("Contacts"), 'contact', 'contactname');
 	}
 
