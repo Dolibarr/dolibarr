@@ -23,7 +23,7 @@
  *	\file       htdocs/lib/company.lib.php
  *	\brief      Ensemble de fonctions de base pour le module societe
  *	\ingroup    societe
- *	\version    $Id: company.lib.php,v 1.124 2011/08/17 19:43:18 hregis Exp $
+ *	\version    $Id: company.lib.php,v 1.125 2011/08/24 12:18:56 eldy Exp $
  */
 
 /**
@@ -195,12 +195,12 @@ function societe_admin_prepare_head($object)
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'company_admin');
-    
+
     $head[$h][0] = DOL_URL_ROOT.'/admin/societe_extrafields.php';
     $head[$h][1] = $langs->trans("ExtraFields");
     $head[$h][2] = 'attributes';
     $h++;
-    
+
     complete_head_from_modules($conf,$langs,$object,$head,$h,'company_admin','remove');
 
     return $head;
@@ -592,7 +592,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
  */
 function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
 {
-    global $bc;
+    global $bc,$user;
 
     $now=dol_now();
     $out='';
@@ -610,7 +610,17 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
 
         $out.='<table width="100%" class="noborder">';
         $out.='<tr class="liste_titre">';
-        $out.='<td colspan="6"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?socid='.$object->id.'&amp;status=todo">'.$langs->trans("ActionsToDoShort").'</a></td><td align="right">&nbsp;</td>';
+        $out.='<td colspan="2"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?socid='.$object->id.'&amp;status=todo">'.$langs->trans("ActionsToDoShort").'</a></td>';
+        $out.='<td colspan="5" align="right">';
+		$permok=$user->rights->agenda->myactions->create;
+        if (($object->id || $objcon->id) && $permok)
+		{
+            $out.='<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;socid='.$object->id.'&amp;contactid='.$objcon->id.'&amp;backtopage=1&amp;percentage=-1">';
+    		$out.=$langs->trans("AddAnAction").' ';
+    		$out.=img_picto($langs->trans("AddAnAction"),'filenew');
+    		$out.="</a>";
+		}
+        $out.='</td>';
         $out.='</tr>';
 
         $sql = "SELECT a.id, a.label,";
@@ -728,7 +738,7 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
  */
 function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
 {
-    global $bc;
+    global $bc,$user;
 
     $out='';
     $histo=array();
@@ -766,7 +776,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
             while ($i < $num)
             {
                 $obj = $db->fetch_object($resql);
-                $histo[$numaction]=array('type'=>'action','id'=>$obj->id,'date'=>$db->jdate($obj->dp2),'note'=>$obj->label,'percent'=>$obj->percent,
+                $histo[$numaction]=array('type'=>'action','id'=>$obj->id,'datestart'=>$db->jdate($obj->dp),'date'=>$db->jdate($obj->dp2),'note'=>$obj->label,'percent'=>$obj->percent,
 				'acode'=>$obj->acode,'libelle'=>$obj->libelle,
 				'userid'=>$obj->user_id,'login'=>$obj->login,
 				'contact_id'=>$obj->fk_contact,'name'=>$obj->name,'firstname'=>$obj->firstname,
@@ -839,7 +849,17 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
         $out.="\n";
         $out.='<table class="noborder" width="100%">';
         $out.='<tr class="liste_titre">';
-        $out.='<td colspan="7"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?socid='.$object->id.'&amp;status=done">'.$langs->trans("ActionsDoneShort").'</a></td>';
+        $out.='<td colspan="2"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?socid='.$object->id.'&amp;status=done">'.$langs->trans("ActionsDoneShort").'</a></td>';
+        $out.='<td colspan="5" align="right">';
+		$permok=$user->rights->agenda->myactions->create;
+        if (($object->id || $objcon->id) && $permok)
+		{
+            $out.='<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;socid='.$object->id.'&amp;contactid='.$objcon->id.'&amp;backtopage=1&amp;percentage=-1">';
+    		$out.=$langs->trans("AddAnAction").' ';
+    		$out.=img_picto($langs->trans("AddAnAction"),'filenew');
+    		$out.="</a>";
+		}
+        $out.='</td>';
         $out.='</tr>';
 
         foreach ($histo as $key=>$value)
@@ -848,7 +868,10 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
             $out.="<tr ".$bc[$var].">";
 
             // Champ date
-            $out.='<td width="120" nowrap="nowrap">'.dol_print_date($histo[$key]['date'],'dayhour')."</td>\n";
+            $out.='<td width="120" nowrap="nowrap">';
+            if ($histo[$key]['date']) $out.=dol_print_date($histo[$key]['date'],'dayhour');
+            else if ($histo[$key]['datestart']) $out.=dol_print_date($histo[$key]['datestart'],'dayhour');
+            $out.="</td>\n";
 
             // Picto
             $out.='<td width="16">&nbsp;</td>';
