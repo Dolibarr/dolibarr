@@ -137,31 +137,6 @@ session_start();
 // This include will set: $conf, $db, $langs, $user, $mysoc objects
 require_once("master.inc.php");
 
-// Activate error interceptions
-/*
-function processError($code, $message, $file, $line, $context)
-{
-	$errmess='ERROR '.$file.' - '.$line.' - '.error_reporting()." - ".$code."<br>\n";
-	//print $errmess;
-	if (error_reporting() & $code) {
-		print $errmess;
-		throw new Exception($message, $code);
-    }
-}
-set_error_handler('processError');
-*/
-
-// GET and POST converter
-/*
-foreach($_REQUEST as $key => $value)
-{
-	// For prevent conflict
-	$var = '__'.$key;
-	// Create variable with tested value
-	$$var = GETPOST($key);
-}
-*/
-
 // Activate end of page function
 register_shutdown_function('dol_shutdown');
 
