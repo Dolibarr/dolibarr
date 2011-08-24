@@ -23,7 +23,7 @@
  *		\brief      File for Tanslate class
  *		\author	    Eric Seigne
  *		\author	    Laurent Destailleur
- *		\version    $Id: translate.class.php,v 1.52 2011/08/17 21:51:20 eldy Exp $
+ *		\version    $Id: translate.class.php,v 1.53 2011/08/24 02:17:57 eldy Exp $
  */
 
 
@@ -148,7 +148,11 @@ class Translate {
      *  tab_loaded is completed with $domain key.
      *  Value for hash are: 1:Loaded from disk, 2:Not found, 3:Loaded from cache
      *
-	 *  @param      domain      		File name to load (.lang file). Use file@module if file is in a module directory.
+	 *  @param      domain      		File name to load (.lang file). Must be "file" or "file@module" if file is in a module directory.
+ 	 *									If $domain is "file@module" instead of "file" then we look for module lang file
+	 *									in htdocs/custom/modules/mymodule/langs/code_CODE/file.lang
+	 *									and in htdocs/mymodule/langs/code_CODE/file.lang for backward compatibility
+	 *									instead of file htdocs/langs/code_CODE/file.lang
 	 *  @param      alt         		0 (try xx_ZZ then 1), 1 (try xx_XX then 2), 2 (try en_US or fr_FR or es_ES)
 	 * 	@param		stopafterdirection	Stop when the DIRECTION tag is found (optimize)
 	 * 	@param		forcelangdir		To force a lang directory
@@ -171,11 +175,11 @@ class Translate {
 		$newdomain = $domain;
 		$modulename = '';
 
-		// Search if module directory name is different of lang file name
-		if (preg_match('/^([^@]+)?@([^@]+)$/i',$domain,$regs))
+		// Search if a module directory name is provided into lang file name
+		if (preg_match('/^([^@]+)@([^@]+)$/i',$domain,$regs))
 		{
-			$newdomain = (!empty($regs[1])?$regs[1]:$regs[2]);
-			$modulename = (!empty($regs[1])?$regs[2]:'');
+			$newdomain = $regs[1];
+			$modulename = $regs[2];
 		}
 
         // Check cache
@@ -193,18 +197,11 @@ class Translate {
 		if ($alt < 1 && strtolower($langarray[0]) == strtolower($langarray[1])) $alt=1;
 		if ($alt < 2 && (strtolower($langofdir) == 'en_us' || strtolower($langofdir) == 'fr_fr' || strtolower($langofdir) == 'es_es')) $alt=2;
 
+
 		foreach($this->dir as $keydir => $searchdir)
 		{
-			// If $domain is "file@module" instead of "file" then we look for module lang file
-			// in htdocs/custom/modules/mymodule/langs/code_CODE/file.lang
-			// and in htdocs/mymodule/langs/code_CODE/file.lang for backward compatibility
-			// instead of file htdocs/langs/code_CODE/filelang
-			if (preg_match('/@/',$domain))	$searchdir = $searchdir."/".(!empty($modulename)?$modulename:$newdomain)."/langs";
-			else $searchdir=$searchdir."/langs";
-
 			// Directory of translation files
-			$scandir = $searchdir."/".$langofdir;
-			$file_lang =  $scandir . "/".$newdomain.".lang";
+			$file_lang = $searchdir.($modulename?'/'.$modulename:'')."/langs/".$langofdir."/".$newdomain.".lang";
 			$file_lang_osencoded=dol_osencode($file_lang);
 			$filelangexists=is_file($file_lang_osencoded);
 
@@ -212,7 +209,8 @@ class Translate {
 
 			if ($filelangexists)
 			{
-				$found=false;
+				// TODO Move cache read out of loop on dirs
+			    $found=false;
 
 				// Enable caching of lang file in memory (not by default)
 				$usecachekey='';
@@ -260,12 +258,6 @@ class Translate {
 								{
 									$value=trim(preg_replace('/\\n/',"\n",$tab[1]));
 
-									//if ($key == 'CHARSET')		// This is to declare in which charset files are encoded
-									//{
-									//	$this->charset_inputfile[$newdomain]=strtoupper($value);
-										//print 'File '.$file_lang.' is declared to have format '.$this->charset_inputfile[$newdomain].'<br>';
-									//}
-									//else
 									if ($key == 'DIRECTION')	// This is to declare direction of language
 									{
 										if ($alt < 2 || empty($this->tab_translate[$key]))	// We load direction only for primary files or if not yet loaded
@@ -289,6 +281,7 @@ class Translate {
 						fclose($fp);
 						$fileread=1;
 
+						// TODO Move cache write out of loop on dirs
 						// To save lang content for usecachekey into cache
 						if ($usecachekey && sizeof($tabtranslatedomain))
 						{
