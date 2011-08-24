@@ -23,7 +23,7 @@
  *	\file       htdocs/lib/company.lib.php
  *	\brief      Ensemble de fonctions de base pour le module societe
  *	\ingroup    societe
- *	\version    $Id: company.lib.php,v 1.125 2011/08/24 12:18:56 eldy Exp $
+ *	\version    $Id: company.lib.php,v 1.126 2011/08/24 18:05:58 eldy Exp $
  */
 
 /**
@@ -210,14 +210,19 @@ function societe_admin_prepare_head($object)
 
 /**
  *    Return country label, code or id from an id or a code
+ *
  *    @param      id            Id or code of country
- *    @param      withcode      0=Return label, 1=Return code + label, 2=Return code from id, 3=Return id from code
+ *    @param      withcode      '0'=Return label,
+ *    							'1'=Return code + label,
+ *    							'2'=Return code from id,
+ *    							'3'=Return id from code,
+ *    							'all'=Return array('id'=>,'code'=>,'label'=>)
  *    @param      dbtouse       Database handler (using in global way may fail because of conflicts with some autoload features)
  *    @param      outputlangs   Langs object for output translation
  *    @param      entconv       0=Return value without entities and not converted to output charset
  *    @return     string        String with country code or translated country name
  */
-function getCountry($id,$withcode=0,$dbtouse=0,$outputlangs='',$entconv=1)
+function getCountry($id,$withcode='',$dbtouse=0,$outputlangs='',$entconv=1)
 {
     global $db,$langs;
 
@@ -242,9 +247,10 @@ function getCountry($id,$withcode=0,$dbtouse=0,$outputlangs='',$entconv=1)
                 if ($entconv) $label=($obj->code && ($outputlangs->trans("Country".$obj->code)!="Country".$obj->code))?$outputlangs->trans("Country".$obj->code):$label;
                 else $label=($obj->code && ($outputlangs->transnoentitiesnoconv("Country".$obj->code)!="Country".$obj->code))?$outputlangs->transnoentitiesnoconv("Country".$obj->code):$label;
             }
-            if ($withcode == 1) return $label?"$obj->code - $label":"$obj->code";
-            else if ($withcode == 2) return $obj->code;
-            else if ($withcode == 3) return $obj->rowid;
+            if ($withcode == '1') return $label?"$obj->code - $label":"$obj->code";
+            else if ($withcode == '2') return $obj->code;
+            else if ($withcode == '3') return $obj->rowid;
+            else if ($withcode == 'all') return array('id'=>$obj->rowid,'code'=>$obj->code,'label'=>$label);
             else return $label;
         }
         else
@@ -257,12 +263,16 @@ function getCountry($id,$withcode=0,$dbtouse=0,$outputlangs='',$entconv=1)
 
 /**
  *    Return state translated from an id
+ *
  *    @param      id          id of state (province/departement)
- *    @param      withcode    0=Return label, 1=Return code + label, 2=Return code
+ *    @param      withcode    '0'=Return label,
+ *    						  '1'=Return string code + label,
+ *    						  '2'=Return code,
+ *    						  'all'=return array('id'=>,'code'=>,'label'=>)
  *    @param      dbtouse     Database handler (using in global way may fail because of conflicts with some autoload features)
  *    @return     string      String with state code or translated state name
  */
-function getState($id,$withcode=0,$dbtouse=0)
+function getState($id,$withcode='',$dbtouse=0)
 {
     global $db,$langs;
 
@@ -279,8 +289,9 @@ function getState($id,$withcode=0,$dbtouse=0)
         if ($obj)
         {
             $label=$obj->label;
-            if ($withcode == 1) return $label=$obj->code?"$obj->code":"$obj->code - $label";
-            else if ($withcode == 2) return $label=$obj->code;
+            if ($withcode == '1') return $label=$obj->code?"$obj->code":"$obj->code - $label";
+            else if ($withcode == '2') return $label=$obj->code;
+            else if ($withcode == 'all') return array('id'=>$obj->rowid,'code'=>$obj->code,'label'=>$label);
             else return $label;
         }
         else
@@ -292,12 +303,13 @@ function getState($id,$withcode=0,$dbtouse=0)
 }
 
 /**
- *    \brief      Retourne le nom traduit ou code+nom d'une devise
- *    \param      code_iso       Code iso de la devise
- *    \param      withcode       1=affiche code + nom
- *    \return     string         Nom traduit de la devise
+ *    Retourne le nom traduit ou code+nom d'une devise
+ *
+ *    @param      code_iso       Code iso de la devise
+ *    @param      withcode       '1'=affiche code + nom
+ *    @return     string         Nom traduit de la devise
  */
-function currency_name($code_iso,$withcode=0)
+function currency_name($code_iso,$withcode='')
 {
     global $langs,$db;
 
@@ -333,6 +345,7 @@ function currency_name($code_iso,$withcode=0)
 
 /**
  *    Retourne le nom traduit de la forme juridique
+ *
  *    @param      code        Code de la forme juridique
  *    @return     string      Nom traduit du pays
  */
@@ -369,6 +382,7 @@ function getFormeJuridiqueLabel($code)
 
 /**
  * 		Show html area for list of projects
+ *
  *		@param		conf		Object conf
  * 		@param		langs		Object langs
  * 		@param		db			Database handler

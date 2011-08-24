@@ -25,7 +25,7 @@
  *  \file       htdocs/societe/soc.php
  *  \ingroup    societe
  *  \brief      Third party card page
- *  \version    $Id: soc.php,v 1.139 2011/08/22 22:04:28 eldy Exp $
+ *  \version    $Id: soc.php,v 1.140 2011/08/24 18:06:11 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -649,28 +649,16 @@ else
             }
         }
 
-        ### Gestion du logo de la société
-        // We set pays_id, pays_code and label for the selected country
+        // We set country_id, country_code and country for the selected country
         $object->country_id=$_POST["pays_id"]?$_POST["pays_id"]:$mysoc->country_id;
         $object->pays_id=$_POST["pays_id"]?$_POST["pays_id"]:$mysoc->country_id;
         if ($object->pays_id)
         {
-            $sql = "SELECT code, libelle";
-            $sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
-            $sql.= " WHERE rowid = ".$object->pays_id;
-            $resql=$db->query($sql);
-            if ($resql)
-            {
-                $obj = $db->fetch_object($resql);
-            }
-            else
-            {
-                dol_print_error($db);
-            }
-            $object->pays_code=$obj->code;
-            $object->pays=$obj->libelle;
-            $object->country_code=$obj->code;
-            $object->country=$obj->libelle;
+            $tmparray=getCountry($object->pays_id,'all',$db,$langs,0);
+            $object->pays_code=$tmparray['code'];
+            $object->pays=$tmparray['label'];
+            $object->country_code=$tmparray['code'];
+            $object->country=$tmparray['label'];
         }
         $object->forme_juridique_code=$_POST['forme_juridique_code'];
         /* Show create form */
@@ -1609,7 +1597,7 @@ else
         print '</td></tr>';
 
         // State
-        if (empty($conf->global->SOCIETE_DISABLE_STATE)) print '<tr><td>'.$langs->trans('State').'</td><td colspan="'.(2+($object->logo?0:1)).'">'.$object->departement.'</td>';
+        if (empty($conf->global->SOCIETE_DISABLE_STATE)) print '<tr><td>'.$langs->trans('State').'</td><td colspan="'.(2+($object->logo?0:1)).'">'.$object->state.'</td>';
 
         print '<tr><td>'.$langs->trans('Phone').'</td><td style="min-width: 25%;">'.dol_print_phone($object->tel,$object->pays_code,0,$object->id,'AC_TEL').'</td>';
         print '<td>'.$langs->trans('Fax').'</td><td style="min-width: 25%;">'.dol_print_phone($object->fax,$object->pays_code,0,$object->id,'AC_FAX').'</td></tr>';
@@ -1973,5 +1961,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/22 22:04:28 $ - $Revision: 1.139 $');
+llxFooter('$Date: 2011/08/24 18:06:11 $ - $Revision: 1.140 $');
 ?>
