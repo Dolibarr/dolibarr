@@ -1,5 +1,5 @@
 --
--- $Id: 3.0.0-3.1.0.sql,v 1.88 2011/08/08 22:27:01 hregis Exp $
+-- $Id: 3.0.0-3.1.0.sql,v 1.89 2011/08/24 12:54:19 eldy Exp $
 --
 -- Be carefull to requests order.
 -- This file must be loaded by calling /install/index.php page
@@ -131,6 +131,8 @@ ALTER TABLE llx_usergroup_user ADD CONSTRAINT fk_usergroup_user_fk_user      FOR
 -- V4.1 DELETE FROM llx_usergroup_user WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 ALTER TABLE llx_usergroup_user ADD CONSTRAINT fk_usergroup_user_fk_usergroup FOREIGN KEY (fk_usergroup)    REFERENCES llx_usergroup (rowid);
 
+-- V4.1 DELETE FROM llx_product_fournisseur_price_log where fk_product_fournisseur NOT IN (SELECT pf.rowid from llx_product_fournisseur as pf, llx_product as p WHERE pf.fk_product = p.rowid);
+-- V4.1 DELETE FROM llx_product_fournisseur_price where fk_product_fournisseur NOT IN (SELECT pf.rowid from llx_product_fournisseur as pf, llx_product as p WHERE pf.fk_product = p.rowid);
 -- V4.1 DELETE FROM llx_product_fournisseur where fk_product NOT IN (SELECT rowid from llx_product);
 ALTER TABLE llx_product_fournisseur ADD CONSTRAINT fk_product_fournisseur_fk_product FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
 
