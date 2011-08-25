@@ -597,6 +597,7 @@ IM=Mensajería instantánea
 NewAttribute=Nuevo atributo
 AttributeCode=Código atributo
 OptionalFieldsSetup=Configuración de los atributos opcionales
+CreateDraft=Crear borrador
 
 # Week day
 Monday=Lunes

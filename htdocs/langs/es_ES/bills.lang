@@ -182,7 +182,6 @@ RemainderToTake=Queda por cobrar
 AmountExpected=Importe reclamado
 ExcessReceived=Recibido en exceso
 EscompteOffered=Descuento (Pronto pago)
-CreateDraft=Crear borrador
 SendBillRef=Envío de la factura %s
 SendReminderBillRef=Recordatorio de la factura %s
 StandingOrders=Domiciliaciones
