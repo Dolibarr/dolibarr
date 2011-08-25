@@ -9,117 +9,74 @@
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
 CHARSET=UTF-8
-BoxLastRssInfos=Rss информации
-BoxLastProducts=Последние продукты / услуги
-BoxLastProductsInContract=Последний контракт продукции / услуг
-BoxLastSupplierBills=Последнее поставщиком счета-фактуры
-BoxLastCustomerBills=Последнее клиента счета-фактуры
+BoxLastRssInfos=Информация RSS
+BoxLastProducts=Последние %s товаров / услуг
+BoxLastProductsInContract=Последние %s проданных товаров / услуг
+BoxLastSupplierBills=Последние счета-фактуры поставщиков
+BoxLastCustomerBills=Последние счета-фактуры покупателям
 BoxLastProposals=Последние коммерческие предложения
-BoxLastProspects=Последнее перспективы
-BoxLastCustomers=Последние клиенты
-BoxLastCustomerOrders=Последние заказы
-BoxLastSuppliers=Последнее поставщиков
-BoxLastBooks=Последние книги
+BoxLastProspects=Последние измененные потенциальные покупатели
+BoxLastCustomers=Последние измененные покупатели
+BoxLastCustomerOrders=Последние заказы покупателей
+BoxLastSuppliers=Последние измененные поставщики
+BoxLastBooks=Последние сделки
 BoxLastActions=Последние действия
-BoxCurrentAccounts=Текущий баланс счетов
+BoxCurrentAccounts=Текущие остатки на счетах
 BoxSalesTurnover=Оборот по продажам
-BoxTitleLastBooks=Последнее %s зарегистрированные книг
-BoxTitleNbOfCustomers=Имя клиента
-BoxTitleLastRssInfos=Последние новости %s% от S
-BoxTitleLastProducts=Последнее %s модифицированных продуктов / услуг
-BoxTitleLastCustomerOrders=Последнее %s измененных заказов
-BoxTitleLastSuppliers=Последнее %s зарегистрированных поставщиков
-BoxTitleLastCustomers=Последнее %s зарегистрированных клиентов
-BoxTitleLastCustomersOrProspects=Последнее %s зарегистрированные клиенты и перспективы
-BoxTitleLastPropals=Последнее %s зарегистрированы предложения
-BoxTitleLastCustomerBills=Последнее% с клиента счета
-BoxTitleLastSupplierBills=Последнее% с поставщиком счета-фактуры
-BoxTitleLastProspects=Последнее %s зарегистрированные перспективы
-BoxTitleCurrentAccounts=Текущий счет в остатках
+BoxTitleLastBooks=Последние %s зарегистрированных сделок
+BoxTitleNbOfCustomers=Кол-во покупателей
+BoxTitleLastRssInfos=Последние новости %s из %s
+BoxTitleLastProducts=Последние %s измененных товаров / услуг
+BoxTitleLastCustomerOrders=Последние %s измененных заказов покупателей
+BoxTitleLastSuppliers=Последние %s зарегистрированных поставщиков
+BoxTitleLastCustomers=Последние %s зарегистрированных покупателей
+BoxTitleLastCustomersOrProspects=Последние %s зарегистрированных покупателей и потенциальных клиентов
+BoxTitleLastPropals=Последние %s зарегистрированных предложений
+BoxTitleLastCustomerBills=Последние %s счетов-фактур покупателям
+BoxTitleLastSupplierBills=Последние %s счетов-фактур поставщиков
+BoxTitleLastProspects=Последние %s зарегистрированных потенциальных клиентов
+BoxTitleCurrentAccounts=Остатки на текущих счетах
 BoxTitleSalesTurnover=Оборот по продажам
-BoxMyLastBookmarks=Мой последний% с закладками
-FailedToRefreshDataInfoNotUpToDate=Не удалось обновить RSS поток. Последняя дата обновления успешным: %s
-NoRecordedBookmarks=No bookmarks defined. Click <a href=Нет закладок определены. Нажмите <a href="%s">здесь,</a> чтобы добавить закладку.
+BoxMyLastBookmarks=Мои последние %s закладок
+FailedToRefreshDataInfoNotUpToDate=Не удалось обновить RSS-поток. Дата последнего успешного обновления: %s
+NoRecordedBookmarks=Закладки не созданы.
+ClickToAdd=Нажмите здесь, чтобы добавить.
 NoRecordedCustomers=Нет зарегистрированных клиентов
-BoxTitleLastActionsToDo=Последнее% с действиями делать
-NoActionsToDo=Нет действия, сделать
-NoRecordedOrders=Нет зарегистрированных клиентов заказы
-NoRecordedProposals=Зарегистрировано ни одного предложения
-NoRecordedInvoices=Зарегистрировано ни одного клиента счета
-NoRecordedSupplierInvoices=Зарегистрировано ни одного поставщика, счета-фактуры
+BoxTitleLastActionsToDo=Последние %s действий для выполнения
+NoActionsToDo=Нет действий для выполнения
+NoRecordedOrders=Нет зарегистрированных заказы покупателей
+NoRecordedProposals=Нет зарегистрированных предложений
+NoRecordedInvoices=Нет зарегистрированных счетов-фактур покупателям
+NoRecordedSupplierInvoices=Нет зарегистрированных счетов-фактур поставщиков
 // Date 2009-01-19 21:30:52
 // STOP - Lines generated via parser
 
 // START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
 // Reference language: en_US
-LastRefreshDate=Последняя дата обновления
-NoRecordedProducts=Нет зарегистрированных продуктов / услуг
-NoRecordedProspects=Не зарегистрированы перспективы
-NoContractedProducts=Нет товаров / услуг по контракту
+LastRefreshDate=Дата последнего обновления
+NoRecordedProducts=Нет зарегистрированных товаров / услуг
+NoRecordedProspects=Нет зарегистрированных потенциальных клиентов
+NoContractedProducts=Нет законтрактованных товаров / услуг
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
 
 
 // START - Lines generated via autotranslator.php tool (2009-08-19 20:18:27).
 // Reference language: en_US
-BoxOldestUnpaidCustomerBills=Старые неоплачиваемым клиента счета
-BoxOldestUnpaidSupplierBills=Старые неоплачиваемым поставщиком счета-фактуры
-BoxTotalUnpaidCustomerBills=Общая сумма невыплаченных счетов клиентов
-BoxTotalUnpaidSuppliersBills=Общая сумма невыплаченных поставщиком счета-фактуры
-BoxTitleOldestUnpaidCustomerBills=Старые% с неоплачиваемой клиента счета
-BoxTitleOldestUnpaidSupplierBills=Старые% с неоплачиваемой поставщиком счета-фактуры
-BoxTitleTotalUnpaidCustomerBills=Неоплаченные счета клиента
-BoxTitleTotalUnpaidSuppliersBills=Неоплаченные счета-фактуры поставщика
-NoUnpaidCustomerBills=Нет неоплачиваемым клиента счета
-NoUnpaidSupplierBills=Нет неоплачиваемым поставщиком счета-фактуры
+BoxOldestUnpaidCustomerBills=Самые старые неоплаченные счета-фактуры покупателям
+BoxOldestUnpaidSupplierBills=Самые старые неоплаченные счета-фактуры поставщиков
+BoxTotalUnpaidCustomerBills=Общая сумма неоплаченных счетов-фактур покупателям
+BoxTotalUnpaidSuppliersBills=Общая сумма неоплаченных счетов-фактур поставщиков
+BoxTitleOldestUnpaidCustomerBills=%s самых старых неоплаченных счетов-фактур покупателям
+BoxTitleOldestUnpaidSupplierBills=%s самых старых неоплаченных счетов-фактур поставщиков
+BoxTitleTotalUnpaidCustomerBills=Неоплаченные счета-фактуры покупателям
+BoxTitleTotalUnpaidSuppliersBills=Неоплаченные счета-фактуры поставщиков
+NoUnpaidCustomerBills=Нет неоплаченных счетов-фактур покупателям
+NoUnpaidSupplierBills=Нет неоплаченных счетов-фактур поставщиков
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:18:27).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 12:08:18).
-// Reference language: en_US
-BoxLastContracts=Siste kontrakter
-LastRefreshDate=Siste oppdatering dato
-BoxTitleLastContracts=Siste %s kontrakter
-NoModifiedSupplierBills=Ingen registrert leverandørens faktura
-NoRecordedProducts=Ingen registrert produkter / tjenester
-NoRecordedProspects=Ingen registrert utsikter
-NoContractedProducts=Ingen produkter / tjenester innleide
-NoRecordedContracts=Ingen registrert kontrakter
-BoxLastContracts=Laatste contracten
-BoxTitleLastContracts=Laatste sssss contracten
-NoModifiedSupplierBills=Geen geregistreerd leverancier facturen
-NoRecordedContracts=Geen geregistreerde overeenkomsten
-BoxOldestUnpaidCustomerBills=Oudste onbetaalde facturen klant
-BoxOldestUnpaidSupplierBills=Oudste onbetaalde facturen van de leverancier
-BoxLastContracts=Laatste contracten
-BoxTotalUnpaidCustomerBills=Totaal aantal onbetaalde facturen klant
-BoxTotalUnpaidSuppliersBills=Totaal aantal onbetaalde facturen van de leverancier
-BoxTitleOldestUnpaidCustomerBills=Oudste sssss onbetaalde facturen klant
-BoxTitleOldestUnpaidSupplierBills=Oudste sssss onbetaalde facturen van de leverancier
-BoxTitleTotalUnpaidCustomerBills=Onbetaalde facturen klant
-BoxTitleTotalUnpaidSuppliersBills=Onbetaalde facturen van de leverancier
-BoxTitleLastContracts=Laatste sssss contracten
-NoModifiedSupplierBills=Geen geregistreerd leverancier facturen
-NoRecordedContracts=Geen geregistreerde overeenkomsten
-BoxLastContracts=Ostatnie zamówienia
-BoxTitleLastProductsInContract=Ostatnie sssss produktów / usług w umowie
-BoxTitleLastContracts=Ostatnie sssss umów
-NoModifiedSupplierBills=Nie zarejestrowane faktury dostawcy
-NoRecordedContracts=Umów nie zarejestrowanych
-BoxLastContracts=Última contratos
-BoxTitleLastContracts=Última contratos %s
-NoModifiedSupplierBills=Nenhum fornecedor facturas registadas na
-NoRecordedContracts=Sem contratos registrados
-BoxLastContracts=Последние контракты
-BoxTitleLastProductsInContract=Последние продукты %s / услуги на основании договора
-BoxTitleLastContracts=Последние контракты %s
-NoModifiedSupplierBills=Нет зарегистрированных поставщиков счетов
-NoRecordedContracts=Нет зарегистрированных контрактов
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 12:08:25).
-
 
 // START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
 // Reference language: en_US -> ru_RU
-BoxTitleLastModifiedSuppliers=Последнее изменение %s поставщиков
-BoxTitleLastModifiedCustomers=Последнее изменение %s клиентов
-BoxTitleLastModifiedProspects=Последнее изменение %s перспективы
+BoxTitleLastModifiedSuppliers=Последнее %s измененных поставщиков
+BoxTitleLastModifiedCustomers=Последнее %s измененных клиентов
+BoxTitleLastModifiedProspects=Последнее %s измененных потенциальных клиентов
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:40).
