@@ -43,7 +43,6 @@ ConfirmReinitPassword=Weet u zeker dat u voor gebruiker <b>%s</b> een nieuw wach
 ConfirmSendNewPassword=Weet u zeker dat u een nieuw wachtwoord wilt genereren en verzenden voor gebruiker <b>%s</b>?
 SearchAGroup=Zoek een groep
 SearchAUser=Zoek een gebruiker
-ErrorFailedToSendPassword=Mislukt om wachtwoord te verzenden
 LoginNotDefined=Inloggen is niet gedefiniëerd.
 NameNotDefined=Naam is niet gedefiniëerd.
 DolibarrUsers=Dolibarr gebruikers

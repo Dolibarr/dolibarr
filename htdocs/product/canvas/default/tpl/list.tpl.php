@@ -12,10 +12,9 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id$
+ * $Id: list.tpl.php,v 1.5 2011/08/20 23:56:03 eldy Exp $
  */
 ?>
 
@@ -84,7 +83,7 @@
 <!-- FIELDS DATA -->
 
 <?php
-$var=True;
+$var=true;
 foreach($datas as $line) { 
 	$var=!$var;	?>
 	<tr <?php echo $bc[$var]; ?>>

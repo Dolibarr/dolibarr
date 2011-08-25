@@ -133,6 +133,7 @@ CopyOf=Còpia de
 Show=Veure
 ShowCardHere=Veure la fitxa aquí
 Search=Cercar
+SearchOf=Cerca de
 Valid=Validar
 Approve=Aprovar
 ReOpen=Reobrir
@@ -298,7 +299,7 @@ VAT=IVA
 VATRate=Taxa IVA
 Average=Mitja
 Sum=Suma
-Delta=Divergència
+Delta=Diferència
 Module=Mòdul
 Option=Opció
 List=Llistat
@@ -596,6 +597,7 @@ IM=Missatgeria instantània
 NewAttribute=Nou atribut
 AttributeCode=Codi atribut
 OptionalFieldsSetup=Configuració dels atributs opcionals
+CreateDraft=Crea esborrany
 
 # Week day
 Monday=Dilluns

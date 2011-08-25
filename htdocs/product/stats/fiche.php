@@ -15,15 +15,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *       \file       htdocs/product/stats/fiche.php
  *       \ingroup    product
- *       \brief      Page des stats produits
- *       \version    $Id$
+ *       \brief      Page of product statistics
+ *       \version    $Id: fiche.php,v 1.111 2011/08/08 16:07:48 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -37,6 +36,8 @@ $langs->load("bills");
 $langs->load("other");
 
 $mode=isset($_GET["mode"])?$_GET["mode"]:'byunit';
+$error=0;
+$mesg='';
 
 // Security check
 if (isset($_GET["id"]) || isset($_GET["ref"]))
@@ -46,8 +47,6 @@ if (isset($_GET["id"]) || isset($_GET["ref"]))
 $fieldid = isset($_GET["ref"])?'ref':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'produit|service',$id,'product','','',$fieldid);
-
-$mesg = '';
 
 
 /*
@@ -135,9 +134,10 @@ if ($_GET["id"] || $_GET["ref"])
 		$dir = (!empty($conf->product->dir_temp)?$conf->product->dir_temp:$conf->service->dir_temp);
 		if (! file_exists($dir.'/'.$product->id))
 		{
-			if (create_exdir($dir.'/'.$product->id) < 0)
+			if (dol_mkdir($dir.'/'.$product->id) < 0)
 			{
 				$mesg = $langs->trans("ErrorCanNotCreateDir",$dir);
+				$error++;
 			}
 		}
 
@@ -161,44 +161,48 @@ if ($_GET["id"] || $_GET["ref"])
 		);
 
 		$px = new DolGraph();
-		$mesg = $px->isGraphKo();
-		if (! $mesg)
+
+		if (! $error)
 		{
-			foreach($graphfiles as $key => $val)
+			$mesg = $px->isGraphKo();
+			if (! $mesg)
 			{
-				if (! $graphfiles[$key]['file']) continue;
-
-				$graph_data = array();
-
-				// TODO Test si deja existant et recent, on ne genere pas
-				if ($key == 'propal')            $graph_data = $product->get_nb_propal($socid,$mode);
-				if ($key == 'orders')            $graph_data = $product->get_nb_order($socid,$mode);
-				if ($key == 'invoices')          $graph_data = $product->get_nb_vente($socid,$mode);
-				if ($key == 'invoicessuppliers') $graph_data = $product->get_nb_achat($socid,$mode);
-				if (is_array($graph_data))
+				foreach($graphfiles as $key => $val)
 				{
-					$px->SetData($graph_data);
-					$px->SetMaxValue($px->GetCeilMaxValue()<0?0:$px->GetCeilMaxValue());
-					$px->SetMinValue($px->GetFloorMinValue()>0?0:$px->GetFloorMinValue());
-					$px->SetWidth($WIDTH);
-					$px->SetHeight($HEIGHT);
-					$px->SetHorizTickIncrement(1);
-					$px->SetPrecisionY(0);
-					$px->SetShading(3);
-					//print 'x '.$key.' '.$graphfiles[$key]['file'];
+					if (! $graphfiles[$key]['file']) continue;
 
-					$px->draw($dir."/".$graphfiles[$key]['file']);
-				}
-				else
-				{
-					dol_print_error($db,'Error for calculating graph on key='.$key.' - '.$product->error);
+					$graph_data = array();
+
+					// TODO Test si deja existant et recent, on ne genere pas
+					if ($key == 'propal')            $graph_data = $product->get_nb_propal($socid,$mode);
+					if ($key == 'orders')            $graph_data = $product->get_nb_order($socid,$mode);
+					if ($key == 'invoices')          $graph_data = $product->get_nb_vente($socid,$mode);
+					if ($key == 'invoicessuppliers') $graph_data = $product->get_nb_achat($socid,$mode);
+					if (is_array($graph_data))
+					{
+						$px->SetData($graph_data);
+						$px->SetMaxValue($px->GetCeilMaxValue()<0?0:$px->GetCeilMaxValue());
+						$px->SetMinValue($px->GetFloorMinValue()>0?0:$px->GetFloorMinValue());
+						$px->SetWidth($WIDTH);
+						$px->SetHeight($HEIGHT);
+						$px->SetHorizTickIncrement(1);
+						$px->SetPrecisionY(0);
+						$px->SetShading(3);
+						//print 'x '.$key.' '.$graphfiles[$key]['file'];
+
+						$px->draw($dir."/".$graphfiles[$key]['file']);
+					}
+					else
+					{
+						dol_print_error($db,'Error for calculating graph on key='.$key.' - '.$product->error);
+					}
 				}
 			}
+
+			$mesg = $langs->trans("ChartGenerated");
 		}
 
-		$mesg = $langs->trans("ChartGenerated");
-
-		// Affichage graphs
+		// Show graphs
 		$i=0;
 		foreach($graphfiles as $key => $val)
 		{
@@ -266,5 +270,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/08 16:07:48 $ - $Revision: 1.111 $');
 ?>

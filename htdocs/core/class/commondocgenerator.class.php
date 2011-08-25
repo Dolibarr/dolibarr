@@ -15,8 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * or see http://www.gnu.org/
  */
 
@@ -24,7 +23,7 @@
  *	    \file       htdocs/core/class/commondocgenerator.class.php
  *		\ingroup    core
  *		\brief      File of parent class for documents generators
- *		\version    $Id$
+ *		\version    $Id: commondocgenerator.class.php,v 1.8 2011/08/22 22:11:53 eldy Exp $
  */
 
 
@@ -32,7 +31,7 @@
  *	\class      CommonDocGenerator
  *	\brief      Parent class for documents generators
  */
-class CommonDocGenerator
+abstract class CommonDocGenerator
 {
 	var $error='';
 
@@ -86,7 +85,8 @@ class CommonDocGenerator
             'mycompany_address'=>$mysoc->address,
             'mycompany_zip'=>$mysoc->zip,
             'mycompany_town'=>$mysoc->town,
-            'mycompany_country'=>$mysoc->country,
+            'mycompany_country'=>$outputlangs->transnoentitiesnoconv("Country".$mysoc->pays_code),
+            'mycompany_country_code'=>$mysoc->pays_code,
             'mycompany_web'=>$mysoc->url,
             'mycompany_juridicalstatus'=>$mysoc->forme_juridique,
             'mycompany_capital'=>$mysoc->capital,

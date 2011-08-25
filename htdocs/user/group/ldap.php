@@ -13,15 +13,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *       \file       htdocs/user/group/ldap.php
  *       \ingroup    ldap
  *       \brief      Page fiche LDAP groupe
- *       \version    $Id$
+ *       \version    $Id: ldap.php,v 1.27 2011/08/17 15:56:24 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -116,7 +115,7 @@ print '<tr><td width="25%" valign="top">'.$langs->trans("Name").'</td>';
 print '<td width="75%" class="valeur">'.$fgroup->nom;
 if (!$fgroup->entity)
 {
-	print img_redstar($langs->trans("GlobalGroup"));
+	print img_picto($langs->trans("GlobalGroup"),'redstar');
 }
 print "</td></tr>\n";
 
@@ -186,7 +185,7 @@ if ($result > 0)
 	//var_dump($records);
 
 	// Affichage arbre
-	if (sizeof($records) && (! isset($records['count']) || $records['count'] > 0))
+	if (count($records) && (! isset($records['count']) || $records['count'] > 0))
 	{
 		if (! is_array($records))
 		{
@@ -216,5 +215,5 @@ print '</table>';
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/17 15:56:24 $ - $Revision: 1.27 $');
 ?>

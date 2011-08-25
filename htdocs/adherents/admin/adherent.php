@@ -18,15 +18,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *   	\file       htdocs/adherents/admin/adherent.php
  *		\ingroup    member
  *		\brief      Page to setup the module Foundation
- *		\version    $Id$
+ *		\version    $Id: adherent.php,v 1.19 2011/08/17 15:56:23 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -196,7 +195,7 @@ print '<br>';
 $var=!$var;
 if ($conf->global->ADHERENT_USE_MAILMAN)
 {
-    $lien=img_tick().' ';
+    $lien=img_picto($langs->trans("Active"),'tick').' ';
     $lien.='<a href="'.$_SERVER["PHP_SELF"].'?action=unset&value=0&name=ADHERENT_USE_MAILMAN">'.$langs->trans("Disable").'</a>';
     // Edition des varibales globales
     $constantes=array('ADHERENT_MAILMAN_LISTS',
@@ -239,7 +238,7 @@ else
 $var=!$var;
 if ($conf->global->ADHERENT_USE_SPIP)
 {
-    $lien=img_tick().' ';
+    $lien=img_picto($langs->trans("Active"),'tick').' ';
     $lien.='<a href="'.$_SERVER["PHP_SELF"].'?action=unset&value=0&name=ADHERENT_USE_SPIP">'.$langs->trans("Disable").'</a>';
     // Edition des varibales globales
     $constantes=array('ADHERENT_USE_SPIP_AUTO',
@@ -332,7 +331,7 @@ $db->close();
 
 print '<br>';
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/17 15:56:23 $ - $Revision: 1.19 $');
 
 
 

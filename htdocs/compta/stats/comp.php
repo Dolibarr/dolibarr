@@ -14,14 +14,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *      \file       htdocs/compta/stats/comp.php
  *      \ingroup    commercial
- *  	\version	$Id$
+ *  	\version	$Id: comp.php,v 1.45 2011/07/31 22:23:14 eldy Exp $
  * 		TODO	Remove or add page in menus
  */
 
@@ -40,19 +39,17 @@ function propals ($db, $year, $month)
 {
 	global $bc,$langs,$conf;
 
-	$sql = "SELECT s.nom, s.rowid as socid, p.rowid as propalid, p.price, p.ref, p.datep as dp, c.label as statut, c.id as statutid";
+	$sql = "SELECT s.nom, s.rowid as socid, p.rowid as propalid, p.price, p.ref, p.datep as dp, p.fk_statut as statutid, c.label as statut";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql.= ", ".MAIN_DB_PREFIX."propal as p";
 	$sql.= ", ".MAIN_DB_PREFIX."c_propalst as c";
-	$sql.= " WHERE p.fk_soc = s.rowid";
+	$sql.= " WHERE p.fk_soc = s.rowid AND p.fk_statut = c.id";
 	$sql.= " AND p.entity = ".$conf->entity;
-	$sql.= " AND p.fk_statut = c.id";
-	$sql.= " AND c.id in (1,2,4)";
-	$sql.= " AND date_format(p.datep, '%Y') = ".$year;
-	$sql.= " AND round(date_format(p.datep, '%m')) = ".$month;
-
-
-	$sql .= " ORDER BY p.fk_statut";
+	$sql.= " AND p.fk_statut in (1,2,4)";
+	// TODO Use between instead of date_format
+	$sql.= " AND date_format(p.datep, '%Y') = '".$year."'";
+	$sql.= " AND round(date_format(p.datep, '%m')) = '".$month."'";
+	$sql.= " ORDER BY p.fk_statut";
 
 	$result = $db->query($sql);
 	$num = $db->num_rows($result);
@@ -77,7 +74,7 @@ function propals ($db, $year, $month)
 			print "<tr class=\"liste_titre\">";
 			print "<td>Societe</td>";
 			print "<td>".$langs->trans("Ref")."</td>";
-			print "<td align=\"right\">Date</td>";
+			print "<td align=\"right\">".$langs->trans("Date")."</td>";
 			print "<td align=\"right\">".$langs->trans("Price")."</td>";
 			print "<td align=\"center\">".$langs->trans("Status")."</td>";
 			print "</tr>\n";
@@ -124,7 +121,7 @@ function factures ($db, $year, $month, $paye)
 	$sql.= " AND f.entity = ".$conf->entity;
 	if ($conf->compta->mode != 'CREANCES-DETTES')	$sql.= " AND f.paye = ".$paye;
 	$sql.= " AND f.fk_soc = s.rowid";
-	$sql.= " AND date_format(f.datef, '%Y') = ".$year;
+	$sql.= " AND date_format(f.datef, '%Y') = '".$year."'";
 	$sql.= " AND round(date_format(f.datef, '%m')) = ".$month;
 	$sql.= " ORDER BY f.datef DESC ";
 
@@ -274,7 +271,7 @@ function ppt ($db, $year, $socid)
 	$sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
 	$sql.= " WHERE p.fk_statut in (1,2,4)";
 	$sql.= " AND p.entity = ".$conf->entity;
-	$sql.= " AND date_format(p.datep,'%Y') = ".$year;
+	$sql.= " AND date_format(p.datep,'%Y') = '".$year."'";
 	if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
 	$sql.= " GROUP BY dm";
 
@@ -287,7 +284,7 @@ function ppt ($db, $year, $socid)
 	$sql.= " WHERE f.fk_statut in (1,2)";
 	$sql.= " AND f.entity = ".$conf->entity;
 	if ($conf->compta->mode != 'CREANCES-DETTES')	$sql.= " AND f.paye = 1";
-	$sql.= " AND date_format(f.datef,'%Y') = ".$year;
+	$sql.= " AND date_format(f.datef,'%Y') = '".$year."'";
 	if ($socid)	$sql.= " AND f.fk_soc = ".$socid;
 	$sql.= " GROUP BY dm";
 
@@ -353,5 +350,5 @@ if ($details == 1)
 $db->close();
 
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/31 22:23:14 $ - $Revision: 1.45 $');
 ?>

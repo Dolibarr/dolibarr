@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *		\file   	htdocs/compta/paiement/cheque/pre.inc.php
  *		\ingroup    compta
  *		\brief  	Fichier gestionnaire du menu cheques
- *		\version	$Id$
+ *		\version	$Id: pre.inc.php,v 1.20 2011/08/03 00:46:28 eldy Exp $
  */
 
 require_once("../../../main.inc.php");
@@ -72,16 +71,11 @@ function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0
 			while ($i < $numr)
 			{
 				$objp = $db->fetch_object($resql);
-				$menu->add_submenu('/compta/bank/fiche.php?id='.$objp->rowid,$objp->label,1,$user->rights->banque->lire);
+				$menu->add('/compta/bank/fiche.php?id='.$objp->rowid,$objp->label,1,$user->rights->banque->lire);
                 if ($objp->rappro && $objp->courant != 2)  // If not cash account and can be reconciliate
                 {
-				    $menu->add_submenu('/compta/bank/rappro.php?account='.$objp->rowid,$langs->trans("Conciliate"),2,$user->rights->banque->consolidate);
+				    $menu->add('/compta/bank/rappro.php?account='.$objp->rowid,$langs->trans("Conciliate"),2,$user->rights->banque->consolidate);
                 }
-/*
-				$menu->add_submenu("/compta/bank/annuel.php?account=".$objp->rowid ,$langs->trans("IOMonthlyReporting"));
-				$menu->add_submenu("/compta/bank/graph.php?account=".$objp->rowid ,$langs->trans("Graph"));
-				if ($objp->courant != 2) $menu->add_submenu("/compta/bank/releve.php?account=".$objp->rowid ,$langs->trans("AccountStatements"));
-*/
 				$i++;
 			}
 		}

@@ -21,15 +21,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/core/class/html.formother.class.php
  *  \ingroup    core
  *	\brief      Fichier de la classe des fonctions predefinie de composants html autre
- *	\version	$Id: html.formother.class.php,v 1.16 2011/06/26 09:32:13 hregis Exp $
+ *	\version	$Id: html.formother.class.php,v 1.19 2011/08/17 16:07:41 eldy Exp $
  */
 
 
@@ -562,6 +561,8 @@ class FormOther
      */
     function select_month($selected='',$htmlname='monthid',$useempty=0)
     {
+        require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
+
         $month = monthArrayOrSelected(-1);	// Get array
 
         $select_month = '<select class="flat" name="'.$htmlname.'">';
@@ -597,7 +598,7 @@ class FormOther
     {
     	print $this->selectyear($selected,$htmlname,$useempty,$min_year,$max_year,$offset,$invert,$option);
     }
-    
+
     /**
      *    	Return HTML combo list of years
      *      @param      selected          Preselected value (''=current year, -1=none, year otherwise)
@@ -609,7 +610,7 @@ class FormOther
 	function selectyear($selected='',$htmlname='yearid',$useempty=0, $min_year=10, $max_year=5, $offset=0, $invert=0, $option='')
     {
     	$out='';
-    	
+
         $currentyear = date("Y")+$offset;
     	$max_year = $currentyear+$max_year;
         $min_year = $currentyear-$min_year;
@@ -640,7 +641,7 @@ class FormOther
 	        }
         }
         $out.= "</select>\n";
-        
+
         return $out;
     }
 
@@ -653,7 +654,8 @@ class FormOther
  * @param 	$parent
  * @param 	$lines
  * @param 	$level
- * @param 	$selected
+ * @param 	$selectedtask
+ * @param 	$selectedproject
  */
 function PLineSelect(&$inc, $parent, $lines, $level=0, $selectedtask=0, $selectedproject=0)
 {

@@ -15,15 +15,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/commande/liste.php
  *	\ingroup    commande
  *	\brief      Page to list orders
- *	\version    $Id$
+ *	\version    $Id: liste.php,v 1.78 2011/07/31 22:23:15 eldy Exp $
  */
 
 
@@ -115,19 +114,19 @@ if ($viewstatut <> '')
 }
 if ($_GET['ordermonth'] > 0)
 {
-	$sql.= " AND date_format(c.date_valid, '%Y-%m') = '$orderyear-$ordermonth'";
+	$sql.= " AND date_format(c.date_valid, '%Y-%m') = '".$orderyear."-".$ordermonth."'";
 }
 if ($_GET['orderyear'] > 0)
 {
-	$sql.= " AND date_format(c.date_valid, '%Y') = $orderyear";
+	$sql.= " AND date_format(c.date_valid, '%Y') = '".$orderyear."'";
 }
 if ($_GET['deliverymonth'] > 0)
 {
-	$sql.= " AND date_format(c.date_livraison, '%Y-%m') = '$deliveryyear-$deliverymonth'";
+	$sql.= " AND date_format(c.date_livraison, '%Y-%m') = '".$deliveryyear."-".$deliverymonth."'";
 }
 if ($_GET['deliveryyear'] > 0)
 {
-	$sql.= " AND date_format(c.date_livraison, '%Y') = $deliveryyear";
+	$sql.= " AND date_format(c.date_livraison, '%Y') = '".$deliveryyear."'";
 }
 if (!empty($snom))
 {
@@ -278,5 +277,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/31 22:23:15 $ - $Revision: 1.78 $');
 ?>

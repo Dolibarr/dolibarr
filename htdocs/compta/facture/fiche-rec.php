@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/compta/facture/fiche-rec.php
  *	\ingroup    facture
  *	\brief      Page to show predefined invoice
- *	\version    $Id$
+ *	\version    $Id: fiche-rec.php,v 1.76 2011/08/10 19:55:22 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -109,12 +108,6 @@ if ($_GET["action"] == 'create')
 
 	$facture = new Facture($db);   // Source invoice
 	$product_static=new Product($db);
-
-	// Instantiate hooks of thirdparty module
-	if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
-	{
-		$facture->callHooks('objectcard');
-	}
 
 	if ($facture->fetch($_GET["facid"]) > 0)
 	{
@@ -576,5 +569,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/10 19:55:22 $ - $Revision: 1.76 $');
 ?>

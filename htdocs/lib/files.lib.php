@@ -12,15 +12,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * or see http://www.gnu.org/
  */
 
 /**
  *  \file		htdocs/lib/files.lib.php
  *  \brief		Library for file managing functions
- *  \version	$Id$
+ *  \version	$Id: files.lib.php,v 1.71 2011/07/31 23:25:43 eldy Exp $
  */
 
 /**
@@ -192,6 +191,7 @@ function dol_compare_file($a, $b)
  * 	@param		mode    	0=Return full mime, 1=otherwise short mime string, 2=image for mime type, 3=source language
  *	@return     string     	Return a mime type family
  *                          (text/xxx, application/xxx, image/xxx, audio, video, archive)
+ *  @see        image_format_supported (images.lib.php)
  */
 function dol_mimetype($file,$default='application/octet-stream',$mode=0)
 {
@@ -259,7 +259,12 @@ function dol_mimetype($file,$default='application/octet-stream',$mode=0)
 	// Audio
 	if (preg_match('/\.(mp3|ogg|au|wav|wma|mid)$/i',$tmpfile)) { $mime='audio'; $imgmime='audio.png'; }
 	// Video
-	if (preg_match('/\.(avi|divx|xvid|wmv|mpg|mpeg)$/i',$tmpfile))        { $mime='video'; $imgmime='video.png'; }
+    if (preg_match('/\.ogv$/i',$tmpfile))                      { $mime='video/ogg'; $imgmime='video.png'; }
+    if (preg_match('/\.webm$/i',$tmpfile))                     { $mime='video/webm'; $imgmime='video.png'; }
+    if (preg_match('/\.avi$/i',$tmpfile))                      { $mime='video/x-msvideo'; $imgmime='video.png'; }
+    if (preg_match('/\.divx$/i',$tmpfile))                     { $mime='video/divx'; $imgmime='video.png'; }
+    if (preg_match('/\.xvid$/i',$tmpfile))                     { $mime='video/xvid'; $imgmime='video.png'; }
+    if (preg_match('/\.(wmv|mpg|mpeg)$/i',$tmpfile))           { $mime='video'; $imgmime='video.png'; }
 	// Archive
 	if (preg_match('/\.(zip|rar|gz|tgz|z|cab|bz2|7z|tar|lzh)$/i',$tmpfile))   { $mime='archive'; $imgmime='archive.png'; }    // application/xxx where zzz is zip, ...
 	// Exe
@@ -454,11 +459,13 @@ function dol_move($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
  * 	@param	allowoverwrite		1=Overwrite target file if it already exists
  * 	@param	disablevirusscan	1=Disable virus scan
  * 	@param	uploaderrorcode		Value of upload error code ($_FILES['field']['error'])
+ * 	@param	notrigger			Disable all triggers
  *	@return int         		>0 if OK, <0 or string if KO
  */
-function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disablevirusscan=0, $uploaderrorcode=0)
+function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disablevirusscan=0, $uploaderrorcode=0, $notrigger=0)
 {
-	global $conf;
+	global $conf, $user, $langs, $db;
+	global $object;
 
 	$file_name = $dest_file;
 	// If an upload error has been reported
@@ -490,7 +497,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 	}
 
 	// If we need to make a virus scan
-	if (empty($disablevirusscan) && file_exists($src_file) && $conf->global->MAIN_ANTIVIRUS_COMMAND)
+	if (empty($disablevirusscan) && file_exists($src_file) && ! empty($conf->global->MAIN_ANTIVIRUS_COMMAND))
 	{
 		require_once(DOL_DOCUMENT_ROOT.'/lib/security.lib.php');
 		require_once(DOL_DOCUMENT_ROOT.'/lib/antivir.class.php');
@@ -552,6 +559,19 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 	{
 		if (! empty($conf->global->MAIN_UMASK)) @chmod($file_name_osencoded, octdec($conf->global->MAIN_UMASK));
 		dol_syslog("Functions.lib::dol_move_uploaded_file Success to move ".$src_file." to ".$file_name." - Umask=".$conf->global->MAIN_UMASK, LOG_DEBUG);
+
+		if (! $notrigger && is_object($object))
+		{
+			$object->src_file=$dest_file;
+
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			$interface=new Interfaces($db);
+			$result=$interface->run_triggers('FILE_UPLOAD',$object,$user,$langs,$conf);
+			if ($result < 0) { $error++; $errors=$interface->errors; }
+			// Fin appel triggers
+		}
+
 		return 1;	// Success
 	}
 	else
@@ -568,10 +588,15 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
  *  @param      file            File to delete or mask of file to delete
  *  @param      disableglob     Disable usage of glob like *
  *  @param      nophperrors     Disable all PHP output errors
+ *  @param		notrigger		Disable all triggers
+ *  @param      triggercode     Code of trigger TODO ???? why ?
+ *  @param      object          Object for trigger
  *  @return     boolean         True if file is deleted, False if error
  */
-function dol_delete_file($file,$disableglob=0,$nophperrors=0)
+function dol_delete_file($file,$disableglob=0,$nophperrors=0,$notrigger=0,$triggercode='FILE_DELETE',$object=null)
 {
+	global $db, $conf, $user, $langs;
+
     //print "x".$file." ".$disableglob;
     $ok=true;
     $file_osencoded=dol_osencode($file);    // New filename encoded in OS filesystem encoding charset
@@ -581,7 +606,22 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0)
         {
             if ($nophperrors) $ok=@unlink($filename);  // The unlink encapsulated by dolibarr
             else $ok=unlink($filename);  // The unlink encapsulated by dolibarr
-            if ($ok) dol_syslog("Removed file ".$filename,LOG_DEBUG);
+            if ($ok)
+            {
+            	dol_syslog("Removed file ".$filename,LOG_DEBUG);
+            	if (! $notrigger)
+            	{
+                    if (! is_object($object)) $object=(object) 'dummy';
+            		$object->src_file=$file;
+
+            		// Appel des triggers
+            		include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+            		$interface=new Interfaces($db);
+            		$result=$interface->run_triggers($triggercode,$object,$user,$langs,$conf);
+            		if ($result < 0) { $error++; $errors=$interface->errors; }
+            		// Fin appel triggers
+            	}
+            }
             else dol_syslog("Failed to remove file ".$filename,LOG_WARNING);
         }
     }
@@ -669,7 +709,7 @@ function dol_add_file_process($upload_dir,$allowoverwrite=0,$donotupdatesession=
 
 	if (! empty($_FILES['addedfile']['tmp_name']))
 	{
-		if (create_exdir($upload_dir) >= 0)
+		if (dol_mkdir($upload_dir) >= 0)
 		{
 			$resupload = dol_move_uploaded_file($_FILES['addedfile']['tmp_name'], $upload_dir . "/" . $_FILES['addedfile']['name'],$allowoverwrite,0, $_FILES['addedfile']['error']);
 			if (is_numeric($resupload) && $resupload > 0)
@@ -715,10 +755,11 @@ function dol_add_file_process($upload_dir,$allowoverwrite=0,$donotupdatesession=
  * Remove an uploaded file (for example after submitting a new file a mail form).
  * All information used are in db, conf, langs, user and _FILES.
  * @param	filenb					File nb to delete
- * @param	donotupdatesession		1=Do no edit _SESSION variable
+ * @param	donotupdatesession		1=Do not edit _SESSION variable
+ * @param   donotdeletefile         1=Do not delete physically file
  * @return	string					Message with result of upload and store.
  */
-function dol_remove_file_process($filenb,$donotupdatesession=0)
+function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=0)
 {
 	global $db,$user,$conf,$langs,$_FILES;
 
@@ -738,14 +779,16 @@ function dol_remove_file_process($filenb,$donotupdatesession=0)
 	{
 		$pathtodelete=$listofpaths[$keytodelete];
 		$filetodelete=$listofnames[$keytodelete];
-		$result = dol_delete_file($pathtodelete,1);
+		if (empty($donotdeletefile)) $result = dol_delete_file($pathtodelete,1);
+		else $result=0;
 		if ($result >= 0)
 		{
-			$langs->load("other");
-
-			$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved",$filetodelete).'</div>';
-			//print_r($_FILES);
-
+			if (empty($donotdeletefile))
+			{
+			    $langs->load("other");
+			    $mesg = '<div class="ok">'.$langs->trans("FileWasRemoved",$filetodelete).'</div>';
+    			//print_r($_FILES);
+			}
 			if (empty($donotupdatesession))
 			{
 				include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');

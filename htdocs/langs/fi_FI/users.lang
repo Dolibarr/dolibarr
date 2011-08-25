@@ -47,7 +47,6 @@ NewUser=Uusi käyttäjä
 CreateUser=Luo käyttäjä
 SearchAGroup=Etsi ryhmää
 SearchAUser=Etsi käyttäjä
-ErrorFailedToSendPassword=Epäonnistui lähettää salasana
 LoginNotDefined=Kirjaudu ei ole määritelty.
 NameNotDefined=Nimi ei ole määritelty.
 ListOfUsers=Luettelo käyttäjistä

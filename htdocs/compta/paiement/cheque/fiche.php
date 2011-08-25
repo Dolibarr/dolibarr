@@ -15,15 +15,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/compta/paiement/cheque/fiche.php
  *	\ingroup    bank, invoice
  *	\brief      Page for cheque deposits
- *	\version    $Id$
+ *	\version    $Id: fiche.php,v 1.78 2011/08/03 00:46:28 eldy Exp $
  */
 
 require("./pre.inc.php");	// We use pre.inc.php to have a dynamic menu
@@ -297,7 +296,8 @@ if ($action == 'new')
 
 	$now=dol_now();
 
-	print $langs->trans("SelectChequeTransactionAndGenerate").'<br>';
+	print $langs->trans("SelectChequeTransactionAndGenerate").'<br><br>'."\n";
+
 	print '<form class="nocellnopadd" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="action" value="new">';
     //print '<fieldset><legend>aaa</legend>';
@@ -354,7 +354,7 @@ if ($action == 'new')
 
 		if ($i == 0)
 		{
-			print $langs->trans("NoWaitingChecks").'<br>';
+			print '<b>'.$langs->trans("NoWaitingChecks").'</b><br>';
 		}
 	}
 
@@ -619,5 +619,5 @@ if ($action != 'new')
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/03 00:46:28 $ - $Revision: 1.78 $');
 ?>

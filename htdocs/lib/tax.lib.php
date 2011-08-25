@@ -13,27 +13,27 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *      \file       htdocs/lib/tax.lib.php
  *      \ingroup    tax
  *      \brief      Library for tax module
- *      \version    $Id$
+ *      \version    $Id: tax.lib.php,v 1.22 2011/07/31 23:26:01 eldy Exp $
  */
 
 
 /**
- *  \brief      Look for collectable VAT clients in the chosen year (and month)
- *  \param      db          Database handle
- *  \param      y           Year
- *  \param      date_start  Start date
- *  \param      date_end    End date
- *  \param      modetax     0 or 1 (option vat on debit)
- *  \param      direction   'sell' or 'buy'
- *  \return     array       List of customers third parties with vat, -1 if no accountancy module, -2 if not yet developped, -3 if error
+ *  Look for collectable VAT clients in the chosen year (and month)
+ *  @param      db          Database handle
+ *  @param      y           Year
+ *  @param      date_start  Start date
+ *  @param      date_end    End date
+ *  @param      modetax     0 or 1 (option vat on debit)
+ *  @param      direction   'sell' or 'buy'
+ *  @param      m			Month
+ *  @return     array       List of customers third parties with vat, -1 if no accountancy module, -2 if not yet developped, -3 if error
  */
 function vat_by_thirdparty($db, $y, $date_start, $date_end, $modetax, $direction, $m=0)
 {
@@ -141,8 +141,8 @@ function vat_by_thirdparty($db, $y, $date_start, $date_end, $modetax, $direction
     }
 
     if (! $sql) return -1;
-    if ($sql && $sql=='TODO') return -2;
-    if ($sql && $sql!='TODO')
+    if ($sql == 'TODO') return -2;
+    if ($sql != 'TODO')
     {
         dol_syslog("Tax.lib:thirdparty sql=".$sql);
         $resql = $db->query($sql);
@@ -315,8 +315,8 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
 
     //print $sql.'<br>';
     if (! $sql) return -1;
-    if ($sql && $sql=='TODO') return -2;
-    if ($sql && $sql!='TODO')
+    if ($sql == 'TODO') return -2;
+    if ($sql != 'TODO')
     {
         dol_syslog("Tax.lib.php::vat_by_date sql=".$sql);
 
@@ -476,8 +476,8 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
         dol_syslog("Tax.lib.php::vat_by_date no accountancy module enabled".$sql,LOG_ERR);
         return -1;  // -1 = Not accountancy module enabled
     }
-    if ($sql && $sql=='TODO') return -2; // -2 = Feature not yet available
-    if ($sql && $sql!='TODO')
+    if ($sql == 'TODO') return -2; // -2 = Feature not yet available
+    if ($sql != 'TODO')
     {
         dol_syslog("Tax.lib.php::vat_by_date sql=".$sql);
         $resql = $db->query($sql);

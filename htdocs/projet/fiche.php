@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/projet/fiche.php
  *	\ingroup    projet
  *	\brief      Project card
- *	\version    $Id$
+ *	\version    $Id: fiche.php,v 1.127 2011/07/31 23:23:36 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -54,6 +53,13 @@ $result = restrictedArea($user, 'projet', $projectid);
 /*
  * Actions
  */
+
+// Cancel
+if (GETPOST("cancel") && GETPOST('backtopage'))
+{
+    header("Location: ".GETPOST('backtopage'));
+    exit;
+}
 
 if ($_POST["action"] == 'add' && $user->rights->projet->creer)
 {
@@ -270,8 +276,10 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<table class="border" width="100%">';
     print '<input type="hidden" name="action" value="add">';
+    print '<input type="hidden" name="backtopage" value="'.GETPOST('backtopage').'">';
+    
+    print '<table class="border" width="100%">';
 
     $project = new Project($db);
 
@@ -323,7 +331,14 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 
     print '</table>';
 
-    print '<br><center><input type="submit" class="button" value="'.$langs->trans("Create").'"></center>';
+    print '<br><center>';
+    print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
+    if (GETPOST('backtopage'))
+    {
+        print ' &nbsp; &nbsp; ';
+	    print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+    }
+    print '</center>';
     print '</form>';
 
 }
@@ -592,5 +607,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/31 23:23:36 $ - $Revision: 1.127 $');
 ?>

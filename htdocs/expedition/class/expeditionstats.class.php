@@ -13,15 +13,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *  \file       htdocs/expedition/class/expeditionstats.class.php
  *  \ingroup    expedition
  *  \brief      Fichier des classes expedition
- *  \version    $Id$
+ *  \version    $Id: expeditionstats.class.php,v 1.5 2011/07/31 23:50:54 eldy Exp $
  */
 
 /**
@@ -78,7 +77,7 @@ class ExpeditionStats
     $result = array();
     $sql = "SELECT count(*), date_format(date_expedition,'%m') as dm";
     $sql.= " FROM ".MAIN_DB_PREFIX."expedition";
-    $sql.= " WHERE date_format(date_expedition,'%Y') = ".$year;
+    $sql.= " WHERE date_format(date_expedition,'%Y') = '".$year."'";
     $sql.= " AND fk_statut > 0";
     $sql.= " AND entity = ".$conf->entity;
     $sql.= " GROUP BY dm DESC";

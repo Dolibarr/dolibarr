@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2008 Jeremie Ollivier    <jeremie.o@laposte.net>
  * Copyright (C) 2008-2009 Laurent Destailleur <eldy@uers.sourceforge.net>
+ * Copyright (C) 2011	   Juanjo Menent	   <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,8 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 require('../main.inc.php');
@@ -27,7 +27,10 @@ require_once(DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php');
 $obj_facturation = unserialize($_SESSION['serObjFacturation']);
 unset ($_SESSION['serObjFacturation']);
 
-switch ( $_GET['action'] )
+$action =GETPOST('action');
+$bankaccountid=GETPOST('cashdeskbank');
+
+switch ($action)
 {
 
 	default:
@@ -246,8 +249,8 @@ switch ( $_GET['action'] )
 				$paiement_id = $payment->create($user);
 				if ($paiement_id > 0)
 				{
-                    $bankaccountid=0;
-                    if ( $obj_facturation->mode_reglement() == 'ESP' )
+                  
+                    /*if ( $obj_facturation->mode_reglement() == 'ESP' )
                     {
                         $bankaccountid=$conf_fkaccount_cash;
                     }
@@ -258,7 +261,7 @@ switch ( $_GET['action'] )
                     if ( $obj_facturation->mode_reglement() == 'CB' )
                     {
                         $bankaccountid=$conf_fkaccount_cb;
-                    }
+                    }*/
 
                     if (! $error)
                     {

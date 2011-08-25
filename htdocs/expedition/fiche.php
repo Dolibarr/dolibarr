@@ -25,7 +25,7 @@
  *	\file       htdocs/expedition/fiche.php
  *	\ingroup    expedition
  *	\brief      Fiche descriptive d'une expedition
- *	\version    $Id$
+ *	\version    $Id: fiche.php,v 1.212 2011/08/21 12:41:29 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -291,9 +291,9 @@ if ($_POST['addfile'])
 
     // Set tmp user directory TODO Use a dedicated directory for temp mails files
     $vardir=$conf->user->dir_output."/".$user->id;
-    $upload_dir = $vardir.'/temp/';
+    $upload_dir_tmp = $vardir.'/temp';
 
-    $mesg=dol_add_file_process($upload_dir,0,0);
+    $mesg=dol_add_file_process($upload_dir_tmp,0,0);
 
     $action ='presend';
 }
@@ -307,7 +307,7 @@ if (! empty($_POST['removedfile']))
 
     // Set tmp user directory
     $vardir=$conf->user->dir_output."/".$user->id;
-    $upload_dir = $vardir.'/temp/';
+    $upload_dir_tmp = $vardir.'/temp';
 
     $mesg=dol_remove_file_process($_POST['removedfile'],0);
 
@@ -337,10 +337,10 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
                 $sendto = $_POST['sendto'];
                 $sendtoid = 0;
             }
-            elseif ($_POST['receiver'])
+            elseif ($_POST['receiver'] != '-1')
             {
-                // Le destinataire a ete fourni via la liste deroulante
-                if ($_POST['receiver'] < 0)	// Id du tiers
+                // Recipient was provided from combo list
+                if ($_POST['receiver'] == 'thirdparty') // Id of third party
                 {
                     $sendto = $object->client->email;
                     $sendtoid = 0;
@@ -398,7 +398,7 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
                     $result=$mailfile->sendfile();
                     if ($result)
                     {
-                        $_SESSION['mesg']=$langs->trans('MailSuccessfulySent',$from,$sendto);
+                        $_SESSION['mesg']=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));
 
                         $error=0;
 
@@ -469,6 +469,7 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
     }
 }
 
+
 /*
  * View
  */
@@ -479,11 +480,14 @@ $html = new Form($db);
 $formfile = new FormFile($db);
 $formproduct = new FormProduct($db);
 
-/*********************************************************************
- *
- * Mode creation
- *
- *********************************************************************/
+if ($action == 'create2')
+{
+	print_fiche_titre($langs->trans("CreateASending")).'<br>';
+    print $langs->trans("ShipmentCreationIsDoneFromOrder");
+    $action=''; $id=''; $ref='';
+}
+
+// Mode creation
 if ($action == 'create')
 {
 	$expe = new Expedition($db);
@@ -494,10 +498,7 @@ if ($action == 'create')
 		$mesg='<div class="error">'.$langs->trans("ErrorBadParameters").'</div>';
 	}
 
-	if ($mesg)
-	{
-		print $mesg.'<br>';
-	}
+	dol_htmloutput_mesg($mesg);
 
 	if ($origin)
 	{
@@ -1373,13 +1374,9 @@ else
 			show_list_sending_receive($object->origin,$object->origin_id);
 		}
 	}
-	else
-	{
-		print "Expedition inexistante ou acces refuse";
-	}
 }
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/21 12:41:29 $ - $Revision: 1.212 $');
 ?>

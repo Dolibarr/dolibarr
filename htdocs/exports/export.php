@@ -13,15 +13,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *       \file       htdocs/exports/export.php
  *       \ingroup    export
  *       \brief      Pages of export Wizard
- *       \version    $Id$
+ *       \version    $Id: export.php,v 1.84 2011/08/11 19:12:59 eldy Exp $
  */
 
 require_once("../main.inc.php");
@@ -780,7 +779,7 @@ if ($step == 4 && $datatoexport)
 
     print '<table width="100%"><tr><td width="50%">';
 
-    if (! is_dir($conf->export->dir_temp)) create_exdir($conf->export->dir_temp);
+    if (! is_dir($conf->export->dir_temp)) dol_mkdir($conf->export->dir_temp);
 
     // Affiche liste des documents
     // NB: La fonction show_documents rescanne les modules qd genallowed=1, sinon prend $liste
@@ -788,18 +787,6 @@ if ($step == 4 && $datatoexport)
 
     print '</td><td width="50%">&nbsp;</td></tr>';
     print '</table>';
-
-	// If external library PHPEXCELREADER is available
-	// and defined by PHPEXCELREADER constant.
-    if (file_exists(PHPEXCELREADER.'excelreader.php'))
-    {
-    	// Test d'affichage du tableau excel et csv
-    	//print '<table width="100%"><tr><td>';
-	    //require_once(DOL_DOCUMENT_ROOT.'/lib/viewfiles.lib.php');
-		//viewExcelFileContent($conf->export->dir_temp.'/1/export_member_1.xls',5,3);
-	    //viewCsvFileContent($conf->export->dir_temp.'/1/export_member_1.csv',5);
-	    //print '</td></tr></table>';
-    }
 }
 
 
@@ -808,7 +795,7 @@ print '<br>';
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/11 19:12:59 $ - $Revision: 1.84 $');
 
 
 /**

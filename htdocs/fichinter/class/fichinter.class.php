@@ -2,6 +2,7 @@
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,14 +15,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**	    \file       htdocs/fichinter/class/fichinter.class.php
  *		\ingroup    ficheinter
  *		\brief      Fichier de la classe des gestion des fiches interventions
- *		\version    $Id$
+ *		\version    $Id: fichinter.class.php,v 1.22 2011/07/31 23:50:56 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
@@ -50,7 +50,7 @@ class Fichinter extends CommonObject
 	var $datev;
 	var $datem;
 	var $duree;
-	var $statut;		// 0=draft, 1=validated
+	var $statut;		// 0=draft, 1=validated, 2=invoiced
 	var $description;
 	var $note_private;
 	var $note_public;
@@ -60,14 +60,12 @@ class Fichinter extends CommonObject
 	var $lines = array();
 
 	/**
-	 *    \brief      Constructeur de la classe
-	 *    \param      DB            Handler acces base de donnees
-	 *    \param      socid			Id societe
+	 *	Class constructor
+	 *	@param      DB		Data base handler access
 	 */
-	function Fichinter($DB, $socid="")
+	function Fichinter($DB)
 	{
 		$this->db = $DB ;
-		$this->socid = $socid;
 		$this->products = array();
 		$this->fk_project = 0;
 		$this->statut = 0;
@@ -75,14 +73,16 @@ class Fichinter extends CommonObject
 		// List of language codes for status
 		$this->statuts[0]='Draft';
 		$this->statuts[1]='Validated';
+		$this->statuts[2]='Invoiced';
 		$this->statuts_short[0]='Draft';
 		$this->statuts_short[1]='Validated';
+		$this->statuts_short[2]='Invoiced';
 	}
 
 
-	/*
-	 *    	\brief      Cree une fiche intervention en base
-	 *		\return		int		<0 if KO, >0 if OK
+	/**
+	 *	Create a intervention into data base
+	 *	@return		int		<0 if KO, >0 if OK
 	 */
 	function create()
 	{
@@ -165,11 +165,11 @@ class Fichinter extends CommonObject
 
 	}
 
-	/*
-	 *	\brief		Met a jour une intervention
-	 *	\return		int		<0 si ko, >0 si ok
+	/**
+	 *	Update a intervention
+	 *	@return		int		<0 if KO, >0 if OK
 	 */
-	function update($id)
+	function update($user)
 	{
 		global $conf;
 
@@ -183,7 +183,7 @@ class Fichinter extends CommonObject
 		$sql.= ", description  = '".$this->db->escape($this->description)."'";
 		$sql.= ", duree = ".$this->duree;
 		$sql.= ", fk_projet = ".$this->fk_project;
-		$sql.= " WHERE rowid = ".$id;
+		$sql.= " WHERE rowid = ".$this->id;
 		$sql.= " AND entity = ".$conf->entity;
 
 		dol_syslog("Fichinter::update sql=".$sql);
@@ -198,9 +198,10 @@ class Fichinter extends CommonObject
 	}
 
 	/**
-	 *		\brief		Charge en memoire la fiche intervention
-	 *		\param		rowid		Id de la fiche a charger
-	 *		\return		int			<0 si ko, >0 si ok
+	 *	Fetch a intervention
+	 *	@param		rowid		Id of intervention
+	 *	@param		ref			Ref of intervention
+	 *	@return		int			<0 if ko, >0 if ok
 	 */
 	function fetch($rowid,$ref='')
 	{
@@ -237,6 +238,14 @@ class Fichinter extends CommonObject
 
 				if ($this->statut == 0) $this->brouillon = 1;
 
+				/*
+				 * Lines
+				 */
+				$result=$this->fetch_lines();
+				if ($result < 0)
+				{
+					return -3;
+				}
 				$this->db->free($resql);
 				return 1;
 			}
@@ -250,8 +259,8 @@ class Fichinter extends CommonObject
 	}
 
 	/**
-	 *		\brief		Set status to draft
-	 *		\return		int			<0 if KO, >0 if OK
+	 *	Set status to draft
+	 *	@return		int			<0 if KO, >0 if OK
 	 */
 	function setDraft($user)
 	{
@@ -284,9 +293,10 @@ class Fichinter extends CommonObject
 	}
 
 	/**
-	 *		\brief		Valide une fiche intervention
-	 *		\param		user		User qui valide
-	 *		\return		int			<0 if KO, >0 if OK
+	 *	Validate a intervention
+	 *	@param		user		User that validate
+	 *	@param		outputdir
+	 *	@return		int			<0 if KO, >0 if OK
 	 */
 	function setValid($user, $outputdir)
 	{
@@ -339,9 +349,34 @@ class Fichinter extends CommonObject
 	}
 
 	/**
-	 *    \brief      Retourne le libelle du statut
-	 *    \param      mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 * 	  \return     string      Libelle
+	 * 	Set intervetnion as billed
+	 *  @return int     <0 si ko, >0 si ok
+	 */
+	function setBilled()
+	{
+		global $conf;
+
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'fichinter SET fk_statut = 2';
+		$sql.= ' WHERE rowid = '.$this->id;
+		$sql.= " AND entity = ".$conf->entity;
+		$sql.= " AND fk_statut = 1";
+
+		if ($this->db->query($sql) )
+		{
+			return 1;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
+
+
+	/**
+	 *	Returns the label status
+	 *	@param      mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *	@return     string      Label
 	 */
 	function getLibStatut($mode=0)
 	{
@@ -349,10 +384,10 @@ class Fichinter extends CommonObject
 	}
 
 	/**
-	 *    \brief      Renvoi le libelle d'un statut donne
-	 *    \param      statut      id statut
-	 *    \param      mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 *    \return     string      Libelle
+	 *	Returns the label of a statut
+	 *	@param      statut      id statut
+	 *	@param      mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *	@return     string      Label
 	 */
 	function LibStatut($statut,$mode=0)
 	{
@@ -369,29 +404,33 @@ class Fichinter extends CommonObject
 		if ($mode == 2)
 		{
 			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts_short[$statut]);
-			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts_short[$statut]);
+			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts_short[$statut]);
+			if ($statut==2) return img_picto($langs->trans('StatusInterInvoiced'),'statut6').' '.$langs->trans('StatusOrderProcessed');
 		}
 		if ($mode == 3)
 		{
 			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
-			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
+			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
+			if ($statut==2) return img_picto($langs->trans('StatusInterInvoiced'),'statut6');
 		}
 		if ($mode == 4)
 		{
 			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut==2) return img_picto($langs->trans('StatusInterInvoiced'),'statut6').' '.$langs->trans('StatusInterInvoiced');
 		}
 		if ($mode == 5)
 		{
 			if ($statut==0) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
-			if ($statut==1) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
+			if ($statut==1) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
+			if ($statut==2) return $langs->trans('StatusInterInvoiced').' '.img_picto($langs->trans('StatusInterInvoiced'),'statut6');
 		}
 	}
 
 	/**
-	 *	\brief      Return clicable name (with picto eventually)
-	 *	\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-	 *	\return		string			Chaine avec URL
+	 *	Return clicable name (with picto eventually)
+	 *	@param		withpicto		0=_No picto, 1=Includes the picto in the linkn, 2=Picto only
+	 *	@return		string			String with URL
 	 */
 	function getNomUrl($withpicto=0)
 	{
@@ -414,10 +453,10 @@ class Fichinter extends CommonObject
 
 
 	/**
-	 *      \brief      Renvoie la reference de fiche intervention suivante non utilisee en fonction du module
-	 *                  de numerotation actif defini dans FICHEINTER_ADDON
-	 *      \param	    soc  		            objet societe
-	 *      \return     string              reference libre pour la fiche intervention
+	 *	Returns the next non used reference of intervention
+	 *	depending on the module numbering assets within FICHEINTER_ADDON
+	 *	@param	    soc		Object society
+	 *	@return     string	Free reference for intervention
 	 */
 	function getNextNumRef($soc)
 	{
@@ -462,8 +501,8 @@ class Fichinter extends CommonObject
 	}
 
 	/**
-	 *      \brief      Information sur l'objet fiche intervention
-	 *      \param      id      id de la fiche d'intervention
+	 * 	Information sur l'objet fiche intervention
+	 *	@param      id      id de la fiche d'intervention
 	 */
 	function info($id)
 	{
@@ -511,8 +550,8 @@ class Fichinter extends CommonObject
 	}
 
 	/**
-	 *    \brief      Efface fiche intervention
-	 *    \param      user        Objet du user qui efface
+	 *	Delete intervetnion
+	 *	@param      user	Object user who deletes
 	 */
 	function delete($user)
 	{
@@ -523,17 +562,29 @@ class Fichinter extends CommonObject
 
 		$this->db->begin();
 
-		if (! $error)
+		// Delete linked object
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_element";
+		$sql.= " WHERE fk_target = ".$this->id;
+		$sql.= " AND targettype = '".$this->element."'";
+		dol_syslog("Fichinter::delete sql=".$sql);
+		if (! $this->db->query($sql) )
 		{
-			// Delete linked contacts
-			$res = $this->delete_linked_contact();
-			if ($res < 0)
-			{
-				$this->error='ErrorFailToDeleteLinkedContact';
-				//$error++;
-				$this->db->rollback();
-				return 0;
-			}
+			dol_syslog("Fichinter::delete error", LOG_ERR);
+			$error++;
+		}
+
+		// Delete linked contacts
+		$res = $this->delete_linked_contact();
+		if ($res < 0)
+		{
+			$this->error='ErrorFailToDeleteLinkedContact';
+			$error++;
+		}
+
+		if ($err > 0)
+		{
+			$this->db->rollback();
+			return -1;
 		}
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinterdet";
@@ -595,10 +646,10 @@ class Fichinter extends CommonObject
 	}
 
 	/**
-	 *      \brief      Definit une date de livraison du bon d'intervention
-	 *      \param      user        		Objet utilisateur qui modifie
-	 *      \param      date_creation   date de livraison
-	 *      \return     int         		<0 si ko, >0 si ok
+	 *	Defines a delivery date of intervention
+	 *	@param      user			Object user who define
+	 *	@param      date_delivery   date of delivery
+	 *	@return     int				<0 if ko, >0 if ok
 	 */
 	function set_date_delivery($user, $date_delivery)
 	{
@@ -627,10 +678,10 @@ class Fichinter extends CommonObject
 	}
 
 	/**
-	 *      \brief      Definit le label de l'intervention
-	 *      \param      user        		Objet utilisateur qui modifie
-	 *      \param      description     description
-	 *      \return     int         		<0 si ko, >0 si ok
+	 *	Define the label of the intervention
+	 *	@param      user			Object user who modify
+	 *	@param      description     description
+	 *	@return     int				<0 if ko, >0 if ok
 	 */
 	function set_description($user, $description)
 	{
@@ -659,12 +710,12 @@ class Fichinter extends CommonObject
 	}
 
 	/**
-	 *  	\brief     	Ajout d'une ligne d'intervention, en base
-	 * 		\param    	fichinterid      	  Id de la fiche d'intervention
-	 * 		\param    	desc            	  Description de la ligne
-	 *    \param      date_intervention   Date de l'intervention
-	 *    \param      duration            Duree de l'intervention
-	 *    	\return    	int             	>0 si ok, <0 si ko
+	 *	Adding a line of intervention into data base
+	 *	@param    	fichinterid			Id of intervention
+	 *	@param    	desc				Line description
+	 *	@param      date_intervention  	Intervention date
+	 *	@param      duration            Intervention duration
+	 *	@return    	int             	>0 if ok, <0 if ko
 	 */
 	function addline($fichinterid, $desc, $date_intervention, $duration)
 	{
@@ -700,8 +751,8 @@ class Fichinter extends CommonObject
 
 
 	/**
-	 *		\brief		Initialise la fiche intervention avec valeurs fictives aleatoire
-	 *					Sert a generer une fiche intervention pour l'aperu des modeles ou demo
+	 *	Initializes the intervention with random values
+	 *	Used to generate a intervention for the preview or demo models
 	 */
 	function initAsSpecimen()
 	{
@@ -761,13 +812,12 @@ class Fichinter extends CommonObject
 	}
 
 	/**
-	 *		\brief		Initialise la fiche intervention avec valeurs fictives aleatoire
-	 *					Sert a generer une fiche intervention pour l'aperu des modeles ou demo
-	 * 		\return		int		<0 OK,	>0 KO
+	 *	Load array lines
+	 *	@return		int		<0 if Ko,	>0 if OK
 	 */
 	function fetch_lines()
 	{
-		$sql = 'SELECT rowid';
+		$sql = 'SELECT rowid, description, duree, date, rang';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'fichinterdet';
 		$sql.= ' where fk_fichinter = '.$this->id;
 
@@ -775,21 +825,26 @@ class Fichinter extends CommonObject
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			$num = $this->db->num_rows($result);
+			$num = $this->db->num_rows($resql);
 			$i = 0;
 			while ($i < $num)
 			{
-				$objp = $this->db->fetch_object($result);
+				$objp = $this->db->fetch_object($resql);
 
 				$line = new FichinterLigne($this->db);
 				$line->id = $objp->rowid;
-				//...
+				$line->desc = $objp->description;
+				//For invoicing we calculing hours
+				$line->qty = round($objp->duree/3600,2);
+				$line->date	= $this->db->jdate($objp->date);
+				$line->rang	= $objp->rang;
+				$line->product_type = 1;
 
 				$this->lines[$i] = $line;
 
 				$i++;
 			}
-			$this->db->free($result);
+			$this->db->free($resql);
 
 			return 1;
 		}
@@ -829,8 +884,8 @@ class FichinterLigne
 	}
 
 	/**
-	 *      \brief     Recupere l'objet ligne d'intervention
-	 *      \param     rowid           id de la ligne
+	 *	Retrieve the line of intervention
+	 *	@param     rowid	line id
 	 */
 	function fetch($rowid)
 	{
@@ -863,8 +918,8 @@ class FichinterLigne
 	}
 
 	/**
-	 *      \brief     	Insere l'objet ligne d'intervention en base
-	 *		\return		int		<0 si ko, >0 si ok
+	 *	Insert the line into database
+	 *	@return		int		<0 if ko, >0 if ok
 	 */
 	function insert()
 	{
@@ -930,8 +985,8 @@ class FichinterLigne
 
 
 	/**
-	 *      \brief     	Mise a jour de l'objet ligne d'intervention en base
-	 *		\return		int		<0 si ko, >0 si ok
+	 *	Update intervention into database
+	 *	@return		int		<0 if ko, >0 if ok
 	 */
 	function update()
 	{
@@ -973,8 +1028,8 @@ class FichinterLigne
 	}
 
 	/**
-	 *      \brief     	Mise a jour duree total dans table llx_fichinter
-	 *		\return		int		<0 si ko, >0 si ok
+	 *	Update total duration into llx_fichinter
+	 *	@return		int		<0 si ko, >0 si ok
 	 */
 	function update_total()
 	{
@@ -1024,8 +1079,8 @@ class FichinterLigne
 	}
 
 	/**
-	 *      \brief      Supprime une ligne d'intervention
-	 *      \return     int         >0 si ok, <0 si ko
+	 *	Delete a intervention line
+	 *	@return     int		>0 if ok, <0 if ko
 	 */
 	function deleteline()
 	{

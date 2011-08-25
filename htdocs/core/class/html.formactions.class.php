@@ -1,5 +1,7 @@
 <?php
 /* Copyright (c) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *      \file       htdocs/core/class/html.formactions.class.php
  *      \ingroup    core
  *      \brief      Fichier de la classe des fonctions predefinie de composants html actions
- *		\version	$Id$
+ *		\version	$Id: html.formactions.class.php,v 1.22 2011/08/24 12:17:49 eldy Exp $
  */
 
 
@@ -66,23 +67,29 @@ class FormActions
         {
             print "\n";
             print '<script type="text/javascript">'."\n";
+            print 'jQuery(document).ready(function () {'."\n";
+            print 'jQuery("#select'.$htmlname.'").change(function() { select_status(document.'.$formname.'.status.value); });'."\n";
+            print 'jQuery("#val'.$htmlname.'").change(function()    { select_status(document.'.$formname.'.status.value); });'."\n";
+            print 'select_status(document.'.$formname.'.status.value);'."\n";
+            print '});'."\n";
             print 'function select_status(mypercentage) {'."\n";
             print 'document.'.$formname.'.percentageshown.value=(mypercentage>=0?mypercentage:\'\');'."\n";
             print 'document.'.$formname.'.percentage.value=mypercentage;'."\n";
-            print 'if (mypercentage == -1) { document.'.$formname.'.percentageshown.disabled=true; }'."\n";
-            print 'else if (mypercentage == 0) { document.'.$formname.'.percentageshown.disabled=true; }'."\n";
-            print 'else if (mypercentage == 100) { document.'.$formname.'.percentageshown.disabled=true; }'."\n";
+            print 'if (mypercentage == -1) { document.'.$formname.'.percentageshown.disabled=true; jQuery(".hideifna").hide(); }'."\n";
+            print 'else if (mypercentage == 0) { document.'.$formname.'.percentageshown.disabled=true; jQuery(".hideifna").show();}'."\n";
+            print 'else if (mypercentage == 100) { document.'.$formname.'.percentageshown.disabled=true; jQuery(".hideifna").show();}'."\n";
             print 'else { document.'.$formname.'.percentageshown.disabled=false; }'."\n";
             print '}'."\n";
             print '</script>'."\n";
-            print '<select '.($canedit?'':'disabled="true" ').'name="status" id="select'.$htmlname.'" class="flat" onChange="select_status(document.'.$formname.'.status.value)">';
+            print '<select '.($canedit?'':'disabled="true" ').'name="status" id="select'.$htmlname.'" class="flat">';
             foreach($listofstatus as $key => $val)
             {
                 print '<option value="'.$key.'"'.($selected == $key?' selected="selected"':'').'>'.$val.'</option>';
             }
             print '</select>';
             if ($selected == 0 || $selected == 100) $canedit=0;
-            print ' <input type="text" id="val'.$htmlname.'" name="percentageshown" class="flat" value="'.($selected>=0?$selected:'').'" size="2"'.($canedit&&($selected>=0)?'':' disabled="true"').' onChange="select_status(document.'.$formname.'.percentageshown.value)">%';
+            print ' <input type="text" id="val'.$htmlname.'" name="percentageshown" class="flat hideifna" value="'.($selected>=0?$selected:'').'" size="2"'.($canedit&&($selected>=0)?'':' disabled="true"').'>';
+            print '<span class="hideifna">%</span>';
             print ' <input type="hidden" name="percentage" value="'.$selected.'">';
         }
         else
@@ -95,7 +102,7 @@ class FormActions
     /**
      *    	Show list of actions for element
      *    	@param      object			Object
-     *    	@param      typeelement		'invoice','propal','order','invoice_supplier','order_supplier'
+     *    	@param      typeelement		'invoice','propal','order','invoice_supplier','order_supplier','fichinter'
      *		@param		socid			socid of user
      *		@return		int				<0 if KO, >=0 if OK
      */
@@ -103,25 +110,27 @@ class FormActions
     {
         global $langs,$conf,$user;
         global $bc;
-        
+
         require_once(DOL_DOCUMENT_ROOT."/comm/action/class/actioncomm.class.php");
-        
+
         $actioncomm = new ActionComm($this->db);
         $actioncomm->getActions($socid, $object->id, $typeelement);
-        
+
         $num = count($actioncomm->actions);
         if ($num)
         {
-        	if ($typeelement == 'invoice') $title=$langs->trans('ActionsOnBill');
-        	if ($typeelement == 'invoice_supplier' || $typeelement == 'supplier_invoice') $title=$langs->trans('ActionsOnBill');
-        	if ($typeelement == 'propal')  $title=$langs->trans('ActionsOnPropal');
-        	if ($typeelement == 'order')   $title=$langs->trans('ActionsOnOrder');
-        	if ($typeelement == 'order_supplier' || $typeelement == 'supplier_order')   $title=$langs->trans('ActionsOnOrder');
-        	if ($typeelement == 'project') $title=$langs->trans('ActionsOnProject');
-        	if ($typeelement == 'shipping') $title=$langs->trans('ActionsOnShipping');
-        	
+        	if ($typeelement == 'invoice')   $title=$langs->trans('ActionsOnBill');
+        	elseif ($typeelement == 'invoice_supplier' || $typeelement == 'supplier_invoice') $title=$langs->trans('ActionsOnBill');
+        	elseif ($typeelement == 'propal')    $title=$langs->trans('ActionsOnPropal');
+        	elseif ($typeelement == 'order')     $title=$langs->trans('ActionsOnOrder');
+        	elseif ($typeelement == 'order_supplier' || $typeelement == 'supplier_order')   $title=$langs->trans('ActionsOnOrder');
+        	elseif ($typeelement == 'project')   $title=$langs->trans('ActionsOnProject');
+        	elseif ($typeelement == 'shipping')  $title=$langs->trans('ActionsOnShipping');
+            elseif ($typeelement == 'fichinter') $title=$langs->trans('ActionsOnFicheInter');
+        	else $title=$langs->trans("Actions");
+
         	print_titre($title);
-        	
+
         	$total = 0;	$var=true;
         	print '<table class="border" width="100%">';
         	print '<tr '.$bc[$var].'><td>'.$langs->trans('Ref').'</td><td>'.$langs->trans('Date').'</td><td>'.$langs->trans('Action').'</td><td>'.$langs->trans('By').'</td></tr>';
@@ -143,7 +152,7 @@ class FormActions
         	}
         	print '</table>';
         }
-        
+
         return $num;
     }
 

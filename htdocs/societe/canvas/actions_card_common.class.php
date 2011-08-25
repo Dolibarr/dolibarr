@@ -13,15 +13,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/societe/canvas/actions_card_common.class.php
  *	\ingroup    thirdparty
  *	\brief      Fichier de la classe Thirdparty card controller (common)
- *	\version    $Id$
+ *	\version    $Id: actions_card_common.class.php,v 1.25 2011/08/18 22:25:46 eldy Exp $
  */
 
 /**
@@ -108,12 +107,15 @@ class ActionsCardCommon
                 $this->object->nom                   = $_POST["nom"];
             }
 
+            $this->object->adresse                  = $_POST["adresse"]; // TODO deprecated
             $this->object->address                  = $_POST["adresse"];
-            $this->object->adresse                  = $_POST["adresse"]; // TODO obsolete
-            $this->object->cp                       = $_POST["zipcode"];
-            $this->object->ville                    = $_POST["town"];
-            $this->object->pays_id                  = $_POST["pays_id"];
-            $this->object->departement_id           = $_POST["departement_id"];
+            $this->object->cp                       = $_POST["zipcode"]; // TODO deprecated
+            $this->object->zip                      = $_POST["zipcode"];
+            $this->object->ville                    = $_POST["town"];    // TODO deprecated
+            $this->object->town                     = $_POST["town"];
+            $this->object->pays_id                  = $_POST["pays_id"]; // TODO deprecated
+            $this->object->country_id               = $_POST["pays_id"];
+            $this->object->state_id                 = $_POST["departement_id"];
             $this->object->tel                      = $_POST["tel"];
             $this->object->fax                      = $_POST["fax"];
             $this->object->email                    = trim($_POST["email"]);
@@ -259,7 +261,7 @@ class ActionsCardCommon
 
                     $oldsoccanvas = new Canvas($this->db);
                     $oldsoccanvas->getCanvas('thirdparty','card',$this->object->canvas);
-                    $result=$oldsoccanvas->fetch($socid);
+                    $result=$oldsoccanvas->control->object->fetch($socid);
 
                     // To avoid setting code if third party is not concerned. But if it had values, we keep them.
                     if (empty($this->object->client) && empty($oldsoccanvas->control->object->code_client))             $this->object->code_client='';
@@ -492,7 +494,7 @@ class ActionsCardCommon
             if ($user->admin) $this->tpl['info_admin'] = info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 
             // State
-            if ($this->object->pays_id) $this->tpl['select_state'] = $formcompany->select_state($this->object->departement_id,$this->object->pays_code);
+            if ($this->object->pays_id) $this->tpl['select_state'] = $formcompany->select_state($this->object->state_id,$this->object->pays_code);
             else $this->tpl['select_state'] = $countrynotdefined;
 
             // Language
@@ -535,13 +537,11 @@ class ActionsCardCommon
         }
         else
         {
-            /* TODO dol_fiche_head and dol_fiche_end must return a string and not do a print
             $head = societe_prepare_head($this->object);
             $title = $this->getTitle($action);
 
-            $this->tpl['showhead']=dol_fiche_head($head, 'card', $title, 0, 'company');
-            $this->tpl['showend']=dol_fiche_end();
-            */
+            $this->tpl['showhead']=dol_get_fiche_head($head, 'card', $title, 0, 'company');
+            $this->tpl['showend']=dol_get_fiche_end();
 
             $this->tpl['showrefnav'] 		= $form->showrefnav($this->object,'socid','',($user->societe_id?0:1),'rowid','nom');
 
@@ -666,7 +666,8 @@ class ActionsCardCommon
         $this->object->zip					=	$_POST["zipcode"];
         $this->object->town					=	$_POST["town"];
         $this->object->pays_id				=	$_POST["pays_id"]?$_POST["pays_id"]:$mysoc->pays_id;
-        $this->object->departement_id		=	$_POST["departement_id"];
+        $this->object->country_id			=	$_POST["pays_id"]?$_POST["pays_id"]:$mysoc->pays_id;
+        $this->object->state_id		        =	$_POST["departement_id"];
         $this->object->tel					=	$_POST["tel"];
         $this->object->fax					=	$_POST["fax"];
         $this->object->email				=	$_POST["email"];

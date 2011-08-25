@@ -1,7 +1,8 @@
-<?PHP
+#!/usr/bin/php
+<?php
 /**
- * Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2009-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,15 +15,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *      \file       scripts/company/export-contacts-xls-example.php
  *      \ingroup    company
- *      \brief      Export third parties' contacts with emails
- *		\version	$Id$
+ *      \brief      Script file to export contacts into an Excel file
+ *		\version	$Id: export-contacts-xls-example.php,v 1.9 2011/08/11 19:13:04 eldy Exp $
  */
 
 $sapi_type = php_sapi_name();
@@ -42,29 +42,38 @@ if (! isset($argv[1]) || ! $argv[1]) {
 $now=$argv[1];
 
 // Recupere env dolibarr
-$version='$Revision$';
+$version='$Revision: 1.9 $';
 
-require_once("../../htdocs/master.inc.php");
-require_once(PHP_WRITEEXCEL_PATH."/class.writeexcel_workbook.inc.php");
-require_once(PHP_WRITEEXCEL_PATH."/class.writeexcel_worksheet.inc.php");
+require_once($path."../../htdocs/master.inc.php");
+//require_once(PHP_WRITEEXCEL_PATH."/class.writeexcel_workbook.inc.php");
+//require_once(PHP_WRITEEXCEL_PATH."/class.writeexcel_worksheet.inc.php");
 
-$error = 0;
+require_once(PHPEXCEL_PATH."/PHPExcel.php");
+//require_once(PHPEXCEL_PATH."/PHPExcel/Writer/Excel2007.php");
+require_once(PHPEXCEL_PATH."/PHPExcel/Writer/Excel5.php");
+
 
 
 $fname = DOL_DATA_ROOT.'/export-contacts.xls';
 
-$workbook = new writeexcel_workbook($fname);
+//$objPHPExcel = new writeexcel_workbook($fname);
+$objPHPExcel = new PHPExcel();
+$objPHPExcel->getProperties()->setCreator("Maarten Balliauw");
+$objPHPExcel->getProperties()->setLastModifiedBy("Maarten Balliauw");
+$objPHPExcel->getProperties()->setTitle("Test Document");
+$objPHPExcel->getProperties()->setSubject("Test Document");
+$objPHPExcel->getProperties()->setDescription("Test document, generated using PHP classes.");
 
-$page = &$workbook->addworksheet('Export Dolibarr');
 
-$page->set_column(0,4,18); // A
+//$page = &$objPHPExcel->addworksheet('Export Dolibarr');
+$objPHPExcel->setActiveSheetIndex(0);
+$objPHPExcel->getActiveSheet()->setTitle('Contacts');
 
-$sql = "SELECT distinct c.email, c.name, c.firstname, s.nom ";
-$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
-$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-$sql .= " WHERE s.rowid = c.fk_soc";
-$sql .= " AND c.email IS NOT NULL";
-$sql .= " ORDER BY c.email ASC";
+//$page->set_column(0,4,18); // A
+
+$sql = "SELECT distinct c.name, c.firstname, c.email, s.nom";
+$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = c.fk_soc";
 
 $resql=$db->query($sql);
 if ($resql)
@@ -76,34 +85,40 @@ if ($resql)
 	$i = 0;
 	$j = 1;
 
-	$page->write_string(0, 0,  $langs->trans("ThirdParty"));
-	$page->write_string(0, 1,  $langs->trans("Firstname"));
-	$page->write_string(0, 2,  $langs->trans("Lastname"));
-	$page->write_string(0, 3,  $langs->trans("Email"));
-
-	$oldemail = "";
+	//$page->write_string(0, 0,  $langs->trans("ThirdParty"));
+	$objPHPExcel->getActiveSheet()->SetCellValue('A1', $langs->trans("Firstname"));
+	//$page->write_string(0, 1,  $langs->trans("Firstname"));
+	$objPHPExcel->getActiveSheet()->SetCellValue('B1', $langs->trans("Lastname"));
+	//$page->write_string(0, 2,  $langs->trans("Lastname"));
+	$objPHPExcel->getActiveSheet()->SetCellValue('C1', $langs->trans("Email"));
+	//$page->write_string(0, 3,  $langs->trans("Email"));
+	$objPHPExcel->getActiveSheet()->SetCellValue('D1', $langs->trans("ThirdPart"));
 
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($resql);
 
-		if ($obj->email <> $oldemail)
-		{
-			$page->write_string($j, 0,  $obj->nom);
-			$page->write_string($j, 1,  $obj->firstname);
-			$page->write_string($j, 2,  $obj->name);
-			$page->write_string($j, 3,  $obj->email);
-			$j++;
+		//$page->write_string($j, 0,  $obj->nom);
+    	$objPHPExcel->getActiveSheet()->SetCellValue('A'.($i+2), $obj->firstname);
+		//$page->write_string($j, 1,  $obj->firstname);
+    	$objPHPExcel->getActiveSheet()->SetCellValue('B'.($i+2), $obj->name);
+		//$page->write_string($j, 2,  $obj->name);
+    	$objPHPExcel->getActiveSheet()->SetCellValue('C'.($i+2), $obj->email);
+		//$page->write_string($j, 3,  $obj->email);
+    	$objPHPExcel->getActiveSheet()->SetCellValue('D'.($i+2), $obj->nom);
 
-			$oldemail = $obj->email;
-		}
-
+		$j++;
 		$i++;
-
 	}
-
-	print 'File '.$fname.' was generated.'."\n";
 }
 
-$workbook->close();
+
+//$objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
+$objWriter = new PHPExcel_Writer_Excel5($objPHPExcel);
+$objWriter->save($fname);
+
+//$objPHPExcel->close();
+
+print 'File '.$fname.' was generated.'."\n";
+
 ?>

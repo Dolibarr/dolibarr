@@ -14,10 +14,9 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program; if not, write to the Free Software
--- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+-- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- $Id$
+-- $Id: llx_propaldet.sql,v 1.10 2011/08/08 01:53:25 eldy Exp $
 -- ===================================================================
 
 create table llx_propaldet
@@ -50,7 +49,7 @@ create table llx_propaldet
   marge_tx          double(6,3)  DEFAULT 0,          -- taux de marge (marge sur prix d'achat)
   marque_tx         double(6,3)  DEFAULT 0,          -- taux de marque (marge sur prix de vente)
 
-  special_code      integer UNSIGNED DEFAULT 0,      -- code pour les lignes speciales
+  special_code      integer      DEFAULT 0,          -- code pour les lignes speciales
   rang              integer      DEFAULT 0           -- ordre affichage sur la propal
 )ENGINE=innodb;
 

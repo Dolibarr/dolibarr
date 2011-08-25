@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,8 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * or see http://www.gnu.org/
  */
 
@@ -23,7 +22,7 @@
  *		\file       htdocs/viewimage.php
  *		\brief      Wrapper to show images into Dolibarr screens
  *      \remarks    Call to wrapper is '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=diroffile&file=relativepathofofile&cache=0">'
- *		\version    $Id$
+ *		\version    $Id: viewimage.php,v 1.97 2011/07/31 23:19:04 eldy Exp $
  */
 
 // Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
@@ -44,7 +43,11 @@ if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 // Pour autre que companylogo, on charge environnement + info issus de logon comme le user
 if (($modulepart == 'companylogo') && ! defined("NOLOGIN")) define("NOLOGIN",'1');
 
-// C'est un wrapper, donc header vierge
+/**
+ * Wrapper, donc header vierge
+ *
+ * @return  null
+ */
 function llxHeader() { }
 
 
@@ -88,7 +91,8 @@ else $type=dol_mimetype($original_file);
 // Suppression de la chaine de caractere ../ dans $original_file
 $original_file = str_replace("../","/", $original_file);
 
-// Security check
+// Security checks
+if (empty($modulepart)) accessforbidden('Bad value for parameter modulepart');
 $accessallowed=0;
 if ($modulepart)
 {
@@ -116,7 +120,7 @@ if ($modulepart)
     }
 
     // Wrapping pour les images des societes
-    if ($modulepart == 'societe')
+    elseif ($modulepart == 'societe')
     {
         $accessallowed=1;
         $original_file=$conf->societe->dir_output.'/'.$original_file;
@@ -376,8 +380,7 @@ if (! $accessallowed)
 }
 
 // Security:
-// On interdit les remontees de repertoire ainsi que les pipe dans
-// les noms de fichiers.
+// On interdit les remontees de repertoire ainsi que les pipe dans les noms de fichiers.
 if (preg_match('/\.\./',$original_file) || preg_match('/[<>|]/',$original_file))
 {
     dol_syslog("Refused to deliver file ".$original_file, LOG_WARNING);
@@ -420,19 +423,23 @@ else					// Open and return file
     $original_file_osencoded=dol_osencode($original_file);
 
     // This test if file exists should be useless. We keep it to find bug more easily
-    if (! file_exists($original_file_osencoded))
+	if (! dol_is_file($original_file_osencoded))
     {
-        dol_print_error(0,'Error: File '.$_GET["file"].' does not exists');
+        $error='Error: File '.$_GET["file"].' does not exists or filesystems permissions are not allowed';
+        dol_print_error(0,$error);
+        print $error;
         exit;
     }
 
     // Les drois sont ok et fichier trouve
     if ($type)
     {
+        header('Content-Disposition: inline; filename="'.basename($original_file).'"');
         header('Content-type: '.$type);
     }
     else
     {
+        header('Content-Disposition: inline; filename="'.basename($original_file).'"');
         header('Content-type: image/png');
     }
 

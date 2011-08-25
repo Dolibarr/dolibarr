@@ -12,22 +12,21 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *      \file       htdocs/includes/triggers/interface_modLdap_Ldapsynchro.class.php
  *      \ingroup    core
  *      \brief      Fichier de gestion des triggers LDAP
- *		\version	$Id$
+ *		\version	$Id: interface_modLdap_Ldapsynchro.class.php,v 1.20 2011/07/31 23:29:46 eldy Exp $
  */
 require_once (DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 
 
 /**
  *       \class      InterfaceLdapsynchro
- *       \brief      Classe des fonctions triggers des actions de synchro LDAP
+ *       \brief      Class of triggers for ldap module
  */
 class InterfaceLdapsynchro
 {
@@ -47,6 +46,7 @@ class InterfaceLdapsynchro
         $this->family = "ldap";
         $this->description = "Triggers of this module allows to synchronize Dolibarr toward a LDAP database.";
         $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
+        $this->picto = 'technic';
     }
 
     /**

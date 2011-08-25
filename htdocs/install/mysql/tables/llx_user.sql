@@ -1,6 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2007-2009 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -14,10 +14,9 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program; if not, write to the Free Software
--- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+-- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- $Id$
+-- $Id: llx_user.sql,v 1.10 2011/08/03 01:25:35 eldy Exp $
 -- ===========================================================================
 
 create table llx_user
@@ -33,12 +32,14 @@ create table llx_user
   pass              varchar(32),
   pass_crypted      varchar(128),
   pass_temp         varchar(32),			    -- temporary password when asked for forget password
+  civilite          varchar(6),
   name              varchar(50),
   firstname         varchar(50),
   office_phone      varchar(20),
   office_fax        varchar(20),
   user_mobile       varchar(20),
   email             varchar(255),
+  signature         text DEFAULT NULL,
   admin             smallint DEFAULT 0,
   webcal_login      varchar(25),			-- TODO move to an extra table (ex: llx_extra_fields)
   phenix_login      varchar(25),			-- TODO move to an extra table (ex: llx_extra_fields)

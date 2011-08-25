@@ -17,14 +17,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/lib/databases/pgsql.lib.php
  *	\brief      Fichier de la classe permettant de gerer une base pgsql
- *	\version	$Id$
+ *	\version	$Id: pgsql.lib.php,v 1.111 2011/08/04 13:58:14 eldy Exp $
  */
 // For compatibility during upgrade
 if (! defined('DOL_DOCUMENT_ROOT'))	 define('DOL_DOCUMENT_ROOT', '../..');
@@ -1104,19 +1103,19 @@ class DoliDb
 		// ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
 		$sql= "ALTER TABLE ".$table." ADD ".$field_name." ";
 		$sql .= $field_desc['type'];
-		if( preg_match("/^[^\s]/i",$field_desc['value']))
-		$sql  .= "(".$field_desc['value'].")";
-		if( preg_match("/^[^\s]/i",$field_desc['attribute']))
-		$sql  .= " ".$field_desc['attribute'];
-		if( preg_match("/^[^\s]/i",$field_desc['null']))
-		$sql  .= " ".$field_desc['null'];
-		if( preg_match("/^[^\s]/i",$field_desc['default']))
-		if(preg_match("/null/i",$field_desc['default']))
-		$sql  .= " default ".$field_desc['default'];
+		if ($field_desc['type'] != 'int' && preg_match("/^[^\s]/i",$field_desc['value']))
+		$sql .= "(".$field_desc['value'].")";
+		if (preg_match("/^[^\s]/i",$field_desc['attribute']))
+		$sql .= " ".$field_desc['attribute'];
+		if (preg_match("/^[^\s]/i",$field_desc['null']))
+		$sql .= " ".$field_desc['null'];
+		if (preg_match("/^[^\s]/i",$field_desc['default']))
+		if (preg_match("/null/i",$field_desc['default']))
+		$sql .= " default ".$field_desc['default'];
 		else
-		$sql  .= " default '".$field_desc['default']."'";
-		if( preg_match("/^[^\s]/i",$field_desc['extra']))
-		$sql  .= " ".$field_desc['extra'];
+		$sql .= " default '".$field_desc['default']."'";
+		if (preg_match("/^[^\s]/i",$field_desc['extra']))
+		$sql .= " ".$field_desc['extra'];
 		$sql .= " ".$field_position;
 
 		dol_syslog($sql,LOG_DEBUG);
@@ -1234,8 +1233,8 @@ class DoliDb
 	}
 
 	/**
-	 *	\brief		Return full path of dump program
-	 *	\return		string		Full path of dump program
+	 *	Return full path of dump program
+	 *	@return		string		Full path of dump program
 	 */
 	function getPathOfDump()
 	{
@@ -1260,10 +1259,10 @@ class DoliDb
 		return $fullpathofdump;
 	}
 
-	/**
-	 *	\brief		Return full path of restore program
-	 *	\return		string		Full path of restore program
-	 */
+    /**
+     *	Return full path of restore program
+     *	@return		string		Full path of restore program
+     */
 	function getPathOfRestore()
 	{
 		$fullpathofdump='/pathtopgrestore/pg_restore';

@@ -16,14 +16,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/lib/databases/mysqli.lib.php
  *	\brief      Class file to manage Dolibarr database access for a Mysql database
- *	\version	$Id$
+ *	\version	$Id: mysqli.lib.php,v 1.115 2011/08/04 13:58:55 eldy Exp $
  */
 
 // For compatibility during upgrade
@@ -1156,8 +1155,8 @@ class DoliDb
     }
 
     /**
-     *	\brief		Return full path of dump program
-     *	\return		string		Full path of dump program
+	 *	Return full path of dump program
+	 *	@return		string		Full path of dump program
      */
     function getPathOfDump()
     {
@@ -1168,14 +1167,14 @@ class DoliDb
         {
             $liste=$this->fetch_array($resql);
             $basedir=$liste['Value'];
-            $fullpathofdump=$basedir.'bin/mysqldump';
+            $fullpathofdump=$basedir.(preg_match('/\/$/',$basedir)?'':'/').'bin/mysqldump';
         }
         return $fullpathofdump;
     }
 
     /**
-     *	\brief		Return full path of restore program
-     *	\return		string		Full path of restore program
+     *	Return full path of restore program
+     *	@return		string		Full path of restore program
      */
     function getPathOfRestore()
     {
@@ -1186,7 +1185,7 @@ class DoliDb
         {
             $liste=$this->fetch_array($resql);
             $basedir=$liste['Value'];
-            $fullpathofimport=$basedir.'bin/mysql';
+            $fullpathofimport=$basedir.(preg_match('/\/$/',$basedir)?'':'/').'bin/mysql';
         }
         return $fullpathofimport;
     }

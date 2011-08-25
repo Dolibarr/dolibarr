@@ -1,0 +1,5 @@
+# This file is useless.
+# It is provided as example to know contexts modified by installer
+# to make Dolibarr working.
+/etc/dolibarr(/.*?)     	system_u:object_r:httpd_sys_script_rw_t:s0
+/var/lib/dolibarr(/.*?)  	system_u:object_r:httpd_sys_script_rw_t:s0

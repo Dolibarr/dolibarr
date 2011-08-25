@@ -17,15 +17,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/fourn/facture/fiche.php
  *	\ingroup    facture, fournisseur
  *	\brief      Page for supplier invoice card (view, edit, validate)
- *	\version    $Id$
+ *	\version    $Id: fiche.php,v 1.264 2011/08/23 18:40:49 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -629,9 +628,9 @@ if ($_POST['addfile'])
 
     // Set tmp user directory TODO Use a dedicated directory for temp mails files
     $vardir=$conf->user->dir_output."/".$user->id;
-    $upload_dir = $vardir.'/temp/';
+    $upload_dir_tmp = $vardir.'/temp';
 
-    $mesg=dol_add_file_process($upload_dir,0,0);
+    $mesg=dol_add_file_process($upload_dir_tmp,0,0);
 
     $_GET["action"]='presend';
     $_POST["action"]='presend';
@@ -646,7 +645,7 @@ if (! empty($_POST['removedfile']))
 
     // Set tmp user directory
     $vardir=$conf->user->dir_output."/".$user->id;
-    $upload_dir = $vardir.'/temp/';
+    $upload_dir_tmp = $vardir.'/temp';
 
     $mesg=dol_remove_file_process($_POST['removedfile'],0);
 
@@ -677,10 +676,10 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile']
                 $sendto = $_POST['sendto'];
                 $sendtoid = 0;
             }
-            elseif ($_POST['receiver'])
+            elseif ($_POST['receiver'] != '-1')
             {
-                // Le destinataire a ete fourni via la liste deroulante
-                if ($_POST['receiver'] < 0)	// Id du tiers
+                // Recipient was provided from combo list
+                if ($_POST['receiver'] == 'thirdparty') // Id of third party
                 {
                     $sendto = $facturefourn->client->email;
                     $sendtoid = 0;
@@ -738,7 +737,7 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile']
                     $result=$mailfile->sendfile();
                     if ($result)
                     {
-                        $mesg=$langs->trans('MailSuccessfulySent',$from,$sendto);		// Must not contain "
+                        $mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));		// Must not contain "
 
                         $error=0;
 
@@ -1115,7 +1114,7 @@ if ($_GET['action'] == 'create')
 	            print '<td><input size="50" name="label'.$i.'" value="'.$value_label.'" type="text"></td>';
 	            print '<td align="right"><input type="text" size="8" name="amount'.$i.'" value="'.$value_pu.'"></td>';
 	            print '<td align="right">';
-	            $html->select_tva('tauxtva'.$i,$value_tauxtva,$societe,$mysoc);
+	            print $html->load_tva('tauxtva'.$i,$value_tauxtva,$societe,$mysoc);
 	            print '</td>';
 	            print '<td align="right"><input type="text" size="3" name="qty'.$i.'" value="'.$value_qty.'"></td>';
 	            print '<td align="right"><input type="text" size="8" name="amountttc'.$i.'" value=""></td></tr>';
@@ -1459,16 +1458,16 @@ else
                 print '<table class="nobordernopadding" width="100%"><tr><td>';
                 print $langs->trans('Project');
                 print '</td>';
-                if ($_GET['action'] != 'classer')
+                if ($_GET['action'] != 'classify')
                 {
-                    print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classer&amp;facid='.$fac->id.'">';
+                    print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classify&amp;facid='.$fac->id.'">';
                     print img_edit($langs->trans('SetProject'),1);
                     print '</a></td>';
                 }
                 print '</tr></table>';
 
                 print '</td><td colspan="3">';
-                if ($_GET['action'] == 'classer')
+                if ($_GET['action'] == 'classify')
                 {
                     $html->form_project($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->socid,$fac->fk_project,'projectid');
                 }
@@ -1550,7 +1549,7 @@ else
 
                     // VAT
                     print '<td align="right">';
-                    $html->select_tva('tauxtva',$fac->lines[$i]->tva_tx,$societe,$mysoc);
+                    print $html->load_tva('tauxtva',$fac->lines[$i]->tva_tx,$societe,$mysoc);
                     print '</td>';
 
                     // Unit price
@@ -1679,7 +1678,7 @@ else
 
                 print '</td>';
                 print '<td align="right">';
-                print $html->select_tva('tauxtva',$conf->defaulttx,$societe,$mysoc);
+                print $html->load_tva('tauxtva',($_POST["tauxtva"]?$_POST["tauxtva"]:-1),$societe,$mysoc);
                 print '</td>';
                 print '<td align="right">';
                 print '<input size="4" name="amount" type="text">';
@@ -1916,5 +1915,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/23 18:40:49 $ - $Revision: 1.264 $');
 ?>

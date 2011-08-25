@@ -15,15 +15,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/install/check.php
  *	\ingroup    install
  *	\brief      Test if file conf can be modified and if does not exists, test if install process can create it
- *	\version    $Id$
+ *	\version    $Id: check.php,v 1.89 2011/08/15 12:14:25 eldy Exp $
  */
 include_once("./inc.php");
 
@@ -39,7 +38,9 @@ $langs->load("install");
 
 // Init "forced values" to nothing. "forced values" are used after an doliwamp install wizard.
 if (! isset($force_install_dolibarrlogin))     $force_install_dolibarrlogin='';
-if (file_exists("./install.forced.php")) include_once("./install.forced.php");
+$useforcedwizard=false;
+if (file_exists("./install.forced.php")) { $useforcedwizard=true; include_once("./install.forced.php"); }
+else if (file_exists("/etc/dolibarr/install.forced.php")) { $useforcedwizard=include_once("/etc/dolibarr/install.forced.php"); }
 
 dolibarr_install_syslog("Dolibarr install/upgrade process started");
 
@@ -65,14 +66,14 @@ print '<b>'.$langs->trans("MiscellanousChecks")."</b>:<br>\n";
 
 
 // Check PHP version
-if (versioncompare(versionphparray(),array(4,3,10)) < 0)        // Minimum to try (error if lower)
+if (versioncompare(versionphparray(),array(4,3,10)) < 0)        // Minimum to use (error if lower)
 {
 	print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow",'4.3.10');
 	$checksok=0;
 }
-else if (versioncompare(versionphparray(),array(5,0,0)) < 0)    // Minimum supported (warning if lower)
+else if (versioncompare(versionphparray(),array(5,2,0)) < 0)    // Minimum supported (warning if lower)
 {
-    print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("WarningPHPVersionTooLow",'5.0.0');
+    print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("WarningPHPVersionTooLow",'5.2.0');
     $checksok=0;
 }
 else
@@ -214,10 +215,9 @@ else
 // Si fichier absent et n'a pu etre cree
 if (! file_exists($conffile))
 {
-	//print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ConfFileDoesNotExistsAndCouldNotBeCreated",$conffile);
-	print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ConfFileDoesNotExistsAndCouldNotBeCreated",'conf.php');
+	print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ConfFileDoesNotExistsAndCouldNotBeCreated",$conffiletoshow);
 	print "<br><br>";
-	print $langs->trans("YouMustCreateWithPermission",'htdocs/conf/conf.php');
+	print $langs->trans("YouMustCreateWithPermission",$conffiletoshow);
 	print "<br><br>";
 
 	print $langs->trans("CorrectProblemAndReloadPage",$_SERVER['PHP_SELF'].'?testget=ok');
@@ -230,14 +230,14 @@ else
 	{
 		if ($confexists)
 		{
-			print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("ConfFileExists",'conf.php');
+			print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("ConfFileExists",$conffiletoshow);
 		}
 		else
 		{
-			print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("ConfFileCouldBeCreated",'conf.php');
+			print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("ConfFileCouldBeCreated",$conffiletoshow);
 		}
 		print "<br>";
-		print '<img src="../theme/eldy/img/tick.png" alt="Warning"> '.$langs->trans("ConfFileIsNotWritable",'htdocs/conf/conf.php');
+		print '<img src="../theme/eldy/img/tick.png" alt="Warning"> '.$langs->trans("ConfFileIsNotWritable",$conffiletoshow);
 		print "<br>\n";
 
 		$allowinstall=0;
@@ -247,14 +247,14 @@ else
 	{
 		if ($confexists)
 		{
-			print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("ConfFileExists",'conf.php');
+			print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("ConfFileExists",$conffiletoshow);
 		}
 		else
 		{
-			print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("ConfFileCouldBeCreated",'conf.php');
+			print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("ConfFileCouldBeCreated",$conffiletoshow);
 		}
 		print "<br>";
-		print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("ConfFileIsWritable",'conf.php');
+		print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("ConfFileIsWritable",$conffiletoshow);
 		print "<br>\n";
 
 		$allowinstall=1;
@@ -274,8 +274,8 @@ else
 			{
 				if (! file_exists($dolibarr_main_document_root."/lib/admin.lib.php"))
 				{
-				    print '<font class="error">A conf.php file exists with a dolibarr_main_document_root to '.$dolibarr_main_document_root.' that seems wrong. Try to fix or remove the conf.php file.</font><br>'."\n";
-				    dol_syslog("A conf.php file exists with a dolibarr_main_document_root to ".$dolibarr_main_document_root." that seems wrong. Try to fix or remove the conf.php file.", LOG_WARNING);
+				    print '<font class="error">A '.$conffiletoshow.' file exists with a dolibarr_main_document_root to '.$dolibarr_main_document_root.' that seems wrong. Try to fix or remove the '.$conffiletoshow.' file.</font><br>'."\n";
+				    dol_syslog("A '.$conffiletoshow.' file exists with a dolibarr_main_document_root to ".$dolibarr_main_document_root." that seems wrong. Try to fix or remove the '.$conffiletoshow.' file.", LOG_WARNING);
 				}
 				else
 				{
@@ -378,17 +378,23 @@ else
 								array('from'=>'2.7.0', 'to'=>'2.8.0'),
 								array('from'=>'2.8.0', 'to'=>'2.9.0'),
                                 array('from'=>'2.9.0', 'to'=>'3.0.0'),
-                                array('from'=>'3.0.0', 'to'=>'3.1.0')
+                                array('from'=>'3.0.0', 'to'=>'3.1.0'),
+                                array('from'=>'3.1.0', 'to'=>'3.2.0')
                                 );
 
 		$count=0;
 		foreach ($migrationscript as $migarray)
 		{
 			$count++;
-			$versionfrom=$migarray['from'];
-			$versionto=$migarray['to'];
-		    $newversionfrom=preg_replace('/(\.[0-9]+)$/i','.*',$versionfrom);
-		    $newversionto=preg_replace('/(\.[0-9]+)$/i','.*',$versionto);
+            $versionfrom=$migarray['from'];
+            $versionto=$migarray['to'];
+            $newversionfrom=preg_replace('/(\.[0-9]+)$/i','.*',$versionfrom);
+            $newversionto=preg_replace('/(\.[0-9]+)$/i','.*',$versionto);
+            $dolibarrversionfromarray=preg_split('/[\.-]/',$versionfrom);
+            $dolibarrversiontoarray=preg_split('/[\.-]/',$versionto);
+            $version=preg_split('/[\.-]/',DOL_VERSION);
+            $newversionfrombis='';
+            if (versioncompare($dolibarrversiontoarray,$version) < -2) $newversionfrombis='/'.$versionto;
 			print '<tr><td nowrap="nowrap" align="center"><b>'.$langs->trans("Upgrade").'<br>'.$newversionfrom.' -> '.$newversionto.'</b></td>';
 			print '<td>';
 			print $langs->trans("UpgradeDesc");
@@ -396,8 +402,6 @@ else
 			{
 				if (sizeof($dolibarrlastupgradeversionarray) >= 2)	// If a database access is available and a version x.y already available
 				{
-					$dolibarrversionfromarray=preg_split('/[\.-]/',$versionfrom);
-					$dolibarrversiontoarray=preg_split('/[\.-]/',$versionto);
 					// Now we check if this is the first qualified choice
 					if ($allowupgrade && empty($foundrecommandedchoice) && versioncompare($dolibarrversiontoarray,$dolibarrlastupgradeversionarray) > 0)
 					{

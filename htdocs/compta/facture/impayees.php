@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -15,15 +15,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *		\file       htdocs/compta/facture/impayees.php
  *		\ingroup    facture
  *		\brief      Page to list and build liste of unpaid invoices
- *		\version    $Revision$
+ *		\version    $Revision: 1.86 $
  */
 
 require("../../main.inc.php");
@@ -31,6 +30,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/paiement/class/paiement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 
 
 $langs->load("bills");
@@ -53,9 +53,6 @@ if ($_POST["action"] == "builddoc" && $user->rights->facture->lire)
 {
 	if (is_array($_POST['toGenerate']))
 	{
-        require_once(DOL_DOCUMENT_ROOT."/includes/fpdf/fpdfi/fpdi.php");
-        require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
-
 		$factures = dol_dir_list($conf->facture->dir_output,'all',1,implode('\.pdf|',$_POST['toGenerate']).'\.pdf','\.meta$|\.png','date',SORT_DESC) ;
 
 		// liste les fichiers
@@ -69,22 +66,27 @@ if ($_POST["action"] == "builddoc" && $user->rights->facture->lire)
 			}
 		}
 
-		// Create empty PDF
-		$pdf=new FPDI('P','mm','A4');
-		if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
+        // Define output language (Here it is not used because we do only merging existing PDF)
+        $outputlangs = $langs;
+        $newlang='';
+        if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
+        if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+        if (! empty($newlang))
+        {
+            $outputlangs = new Translate("",$conf);
+            $outputlangs->setDefaultLang($newlang);
+        }
 
-		if (class_exists('TCPDF'))
-		{
-			$pdf->setPrintHeader(false);
-			$pdf->setPrintFooter(false);
-		}
-        //$pdf->SetFont(pdf_getPDFFont($outputlangs));
+        // Create empty PDF
+        $pdf=pdf_getInstance();
+        if (class_exists('TCPDF'))
+        {
+            $pdf->setPrintHeader(false);
+            $pdf->setPrintFooter(false);
+        }
+        $pdf->SetFont(pdf_getPDFFont($outputlangs));
 
-		//$pdf->Open();
-		//$pdf->AddPage();
-		//$title=$langs->trans("BillsCustomersUnpaid");
-		//if ($option=='late') $title=$langs->trans("BillsCustomersUnpaid");
-		//$pdf->MultiCell(100, 3, $title, 0, 'J');
+        if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
 
 		// Add all others
 		foreach($files as $file)
@@ -268,7 +270,7 @@ if ($result)
 	print_fiche_titre($titre,$link);
 	//print_barre_liste($titre,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',0);	// We don't want pagination on this page
 
-	if ($mesg) print $mesg;
+	dol_htmloutput_mesg($mesg);
 
 	$i = 0;
 	print '<table class="liste" width="100%">';
@@ -351,10 +353,10 @@ if ($result)
 
 			// PDF Picto
 			print '<td width="16" align="right" class="nobordernopadding">';
-			$filename=dol_sanitizeFileName($objp->facnumber);
+            $filename=dol_sanitizeFileName($objp->facnumber);
 			$filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($objp->facnumber);
 			$foundpdf=$formfile->show_documents('facture',$filename,$filedir,$urlsource,'','','',1,'',1,$param);
-			print '</td>';
+            print '</td>';
 
 			print '</tr></table>';
 
@@ -425,5 +427,5 @@ if ($result)
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/11 12:14:03 $ - $Revision: 1.86 $');
 ?>

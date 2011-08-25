@@ -15,16 +15,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * or see http://www.gnu.org/
  */
 
 /**
  *	\file       htdocs/includes/modules/livraison/pdf/pdf_sirocco.modules.php
  *	\ingroup    livraison
- *	\brief      Fichier de la classe permettant de generer les bons de livraison au mod�le Sirocco
- *	\version    $Id$
+ *	\brief      File of class to manage receving receipts with template Sirocco
+ *	\version    $Id: pdf_sirocco.modules.php,v 1.79 2011/08/11 12:14:02 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/livraison/modules_livraison.php");
@@ -86,7 +85,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!class_exists('TCPDF')) $outputlangs->charset_output='ISO-8859-1';
+		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
@@ -411,11 +410,11 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 	    if (! empty($object->linkedObjects))
 		{
 			$outputlangs->load('orders');
-			
+
 			foreach($object->linkedObjects as $elementtype => $objects)
 			{
 				$object->fetchObjectLinked('','',$objects[0]->id,$objects[0]->element);
-				
+
 				foreach($object->linkedObjects as $elementtype => $objects)
 				{
 					$num=sizeof($objects);

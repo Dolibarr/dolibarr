@@ -35,7 +35,7 @@ ErrorInternalErrorDetected=Error detected
 ErrorNoRequestRan=No request ran
 ErrorWrongHostParameter=Wrong host parameter
 ErrorYourCountryIsNotDefined=Your country is not defined. Go to Home-Setup-Edit and post again the form.
-ErrorRecordIsUsedByChild=Failed to delete this record. This record is used by at least on child records.
+ErrorRecordIsUsedByChild=Failed to delete this record. This record is used by at least one child records.
 ErrorWrongValue=Wrong value
 ErrorWrongValueForParameterX=Wrong value for parameter %s
 ErrorNoRequestInError=No request in error
@@ -134,6 +134,7 @@ CopyOf=Copy of
 Show=Show
 ShowCardHere=Show card
 Search=Search
+SearchOf=Search
 Valid=Valid
 Approve=Approve
 ReOpen=Re-Open
@@ -598,6 +599,8 @@ IM=Instant messaging
 NewAttribute=New attribute
 AttributeCode=Attribute code
 OptionalFieldsSetup=Extra attributes setup
+URLPhoto=Url of photo/logo
+CreateDraft=Create draft
 
 # Week day
 Monday=Monday

@@ -16,15 +16,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *       \file       htdocs/contrat/fiche.php
  *       \ingroup    contrat
  *       \brief      Page of a contract
- *       \version    $Id$
+ *       \version    $Id: fiche.php,v 1.201 2011/08/23 18:40:48 hregis Exp $
  */
 
 require ("../main.inc.php");
@@ -551,12 +550,13 @@ if ($action == 'create')
     	print '</textarea></td></tr>';
     }
 
-    print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
-
     print "</table>\n";
+
+    print '<br><center><input type="submit" class="button" value="'.$langs->trans("Create").'"></center>';
+
     print "</form>\n";
 
-    print '</div>';
+    dol_fiche_end();
 }
 else
 /* *************************************************************************** */
@@ -681,10 +681,10 @@ else
             print '<table width="100%" class="nobordernopadding"><tr><td>';
             print $langs->trans("Project");
             print '</td>';
-            if ($action != "classer" && $user->rights->projet->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classer&amp;id='.$id.'">'.img_edit($langs->trans("SetProject")).'</a></td>';
+            if ($action != "classify" && $user->rights->projet->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classify&amp;id='.$id.'">'.img_edit($langs->trans("SetProject")).'</a></td>';
             print '</tr></table>';
             print '</td><td colspan="3">';
-            if ($action == "classer")
+            if ($action == "classify")
             {
                 $form->form_project("fiche.php?id=$id",$object->socid,$object->fk_project,"projectid");
             }
@@ -758,7 +758,7 @@ else
 
 				$var=!$var;
 
-				if ($action != 'editline' || $_GET["rowid"] != $objp->rowid)
+				if ($_REQUEST["action"] != 'editline' || $_GET["rowid"] != $objp->rowid)
 				{
 					print '<tr '.$bc[$var].' valign="top">';
 					// Libelle
@@ -876,7 +876,7 @@ else
 					}
 					print '<textarea name="eldesc" cols="70" rows="1">'.$objp->description.'</textarea></td>';
 					print '<td align="right">';
-					print $form->select_tva("eltva_tx",$objp->tva_tx,$mysoc,$object->societe);
+					print $form->load_tva("eltva_tx",$objp->tva_tx,$mysoc,$object->societe);
 					print '</td>';
 					print '<td align="right"><input size="5" type="text" name="elprice" value="'.price($objp->subprice).'"></td>';
 					print '<td align="center"><input size="2" type="text" name="elqty" value="'.$objp->qty.'"></td>';
@@ -1196,7 +1196,7 @@ else
 			print '<td><textarea name="desc" cols="70" rows="'.ROWS_2.'"></textarea></td>';
 
 			print '<td>';
-			$form->select_tva("tva_tx",$conf->defaulttx,$mysoc,$object->societe);
+			print $form->load_tva("tva_tx",-1,$mysoc,$object->societe);
 			print '</td>';
 			print '<td align="right"><input type="text" class="flat" size="4" name="pu" value=""></td>';
 			print '<td align="center"><input type="text" class="flat" size="2" name="pqty" value="1"></td>';
@@ -1287,5 +1287,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/23 18:40:48 $ - $Revision: 1.201 $');
 ?>

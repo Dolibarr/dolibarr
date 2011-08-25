@@ -15,8 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
@@ -24,7 +23,7 @@
  *		\ingroup    facture
  *		\brief      Page of a customer payment
  *		\remarks	Nearly same file than fournisseur/paiement/fiche.php
- *		\version    $Id$
+ *		\version    $Id: fiche.php,v 1.77 2011/08/05 21:06:55 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -85,7 +84,8 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes' && $user->rights-
 	}
 	else
 	{
-		$mesg='<div class="error">'.$paiement->error.'</div>';
+	    $langs->load("errors");
+		$mesg='<div class="error">'.$langs->trans($paiement->error).'</div>';
         $db->rollback();
 	}
 }
@@ -121,7 +121,8 @@ if ($action == 'confirm_valide' && GETPOST('confirm') == 'yes' && $user->rights-
 	}
 	else
 	{
-		$mesg='<div class="error">'.$paiement->error.'</div>';
+	    $langs->load("errors");
+		$mesg='<div class="error">'.$langs->trans($paiement->error).'</div>';
 		$db->rollback();
 	}
 }
@@ -179,7 +180,7 @@ if ($action == 'valide')
 }
 
 
-if ($mesg) print $mesg.'<br>';
+dol_htmloutput_mesg($mesg);
 
 
 print '<table class="border" width="100%">';
@@ -348,7 +349,7 @@ if ($user->societe_id == 0 && $action == '')
 		}
 		else
 		{
-			print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("CantRemovePaymentWithOneInvoicePaid")).'">'.$langs->trans('Delete').'</a>';
+			print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("CantRemovePaymentWithOneInvoicePaid")).'">'.$langs->trans('Delete').'</a>';
 		}
 	}
 }
@@ -357,5 +358,5 @@ print '</div>';
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/05 21:06:55 $ - $Revision: 1.77 $');
 ?>

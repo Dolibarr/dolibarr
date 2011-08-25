@@ -12,23 +12,24 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *   \file			htdocs/core/class/dolexception.class.php
  *   \ingroup		core
  *   \brief			File of class for exceptions
- *   \version		$Id$
+ *   \version		$Id: dolexception.class.php,v 1.4 2011/08/10 12:46:04 eldy Exp $
  */
 
 
 /**
  *    \class      DolException
- *    \brief      Classe de la gestion des exceptions
+ *    \brief      Class to manage exceptions
  */
 class DolException extends Exception
 {
-
+    function DolException()
+    {
+    }
 }

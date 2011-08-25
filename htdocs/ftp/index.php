@@ -13,15 +13,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/ftp/index.php
  *	\ingroup    ftp
  *	\brief      Main page for FTP section area
- *	\version    $Id$
+ *	\version    $Id: index.php,v 1.25 2011/08/17 15:56:27 eldy Exp $
  *	\author		Laurent Destailleur
  */
 
@@ -39,14 +38,11 @@ $langs->load("other");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'ftp','');
 
-// Load permissions
-$user->getrights('ftp');
-
 // Get parameters
 $action = isset($_GET["action"])?$_GET["action"]:$_POST['action'];
 $section=isset($_GET["section"])?$_GET["section"]:$_POST['section'];
 if (! $section) $section='/';
-$numero_ftp = isset($_GET["numero_ftp"])?$_GET["numero_ftp"]:$_POST['numero_ftp'];
+$numero_ftp = GETPOST("numero_ftp");
 if (! $numero_ftp) $numero_ftp=1;
 $file=isset($_GET["file"])?$_GET["file"]:$_POST['file'];
 
@@ -447,6 +443,7 @@ else
 
 
 		print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+        print '<input type="hidden" name="numero_ftp" value="'.$numero_ftp.'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 
@@ -535,7 +532,7 @@ else
 				print '<td>';
 				$newsection=$section.(preg_match('@[\\\/]$@',$section)?'':'/').$file;
 				$newsection=preg_replace('@[\\\/][^\\\/]+[\\\/]\.\.$@','/',$newsection);	// Change aaa/xxx/.. to new aaa
-				if ($is_directory) print '<a href="'.$_SERVER["PHP_SELF"].'?section='.urlencode($newsection).'">';
+				if ($is_directory) print '<a href="'.$_SERVER["PHP_SELF"].'?section='.urlencode($newsection).'&numero_ftp='.$numero_ftp.'">';
 				print $file;
 				if ($is_directory) print '</a>';
 				print '</td>';
@@ -575,7 +572,7 @@ else
 				}
 				else
 				{
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=download&numero_ftp='.$numero_ftp.'&section='.urlencode($section).'&file='.urlencode($file).'">'.img_file().'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=download&numero_ftp='.$numero_ftp.'&section='.urlencode($section).'&file='.urlencode($file).'">'.img_picto('','file').'</a>';
 					print ' &nbsp; ';
 					print '<input type="checkbox" class="flat checkboxfordelete" id="check_'.$i.'" name="const['.$i.'][check]" value="1">';
 					print ' &nbsp; ';
@@ -627,7 +624,7 @@ if ($conn_id) ftp_close($conn_id);
 // End of page
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/17 15:56:27 $ - $Revision: 1.25 $');
 
 
 /**

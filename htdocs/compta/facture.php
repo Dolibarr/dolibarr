@@ -18,15 +18,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/compta/facture.php
  *	\ingroup    facture
  *	\brief      Page to create/see an invoice
- *	\version    $Id$
+ *	\version    $Id: facture.php,v 1.857 2011/08/23 18:40:47 hregis Exp $
  */
 
 require('../main.inc.php');
@@ -61,6 +60,7 @@ $action=GETPOST('action');
 $confirm=GETPOST('confirm');
 $lineid=GETPOST('lineid');
 $userid=GETPOST('userid');
+$search_ref=GETPOST('sf_ref')?GETPOST('sf_ref'):GETPOST('search_ref');
 
 // Security check
 $fieldid = isset($_GET["ref"])?'facnumber':'rowid';
@@ -74,27 +74,18 @@ $usehm=$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE;
 
 $object=new Facture($db);
 
-// Instantiate hooks of thirdparty module
-if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
-{
-    $object->callHooks('objectcard');
-}
-
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+$hookmanager=new HookManager($db);
+$hookmanager->callHooks(array('invoicecard'));
 
 
 /******************************************************************************/
 /*                     Actions                                                */
 /******************************************************************************/
 
-// Hook of thirdparty module
-if (! empty($object->hooks['objectcard']))
-{
-    foreach($object->hooks['objectcard'] as $module)
-    {
-        $module->doActions($object);
-        $mesg = $module->error;
-    }
-}
+$parameters=array('socid'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
 // Action clone object
 if ($action == 'confirm_clone' && $confirm == 'yes')
@@ -105,7 +96,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes')
     }
     else
     {
-        $result=$object->createFromClone($id);
+        $result=$object->createFromClone($id,0,$hookmanager);
         if ($result > 0)
         {
             header("Location: ".$_SERVER['PHP_SELF'].'?facid='.$result);
@@ -180,7 +171,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes')
                 $outputlangs = new Translate("",$conf);
                 $outputlangs->setDefaultLang($newlang);
             }
-            $result=facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
+            $result=facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
             if ($result > 0)
             {
                 Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id);
@@ -230,6 +221,14 @@ if ($action == 'valid')
             $action='';
         }
     }
+}
+
+if ($action == 'set_thirdparty')
+{
+    $object->updateObjectField('facture',$id,'fk_soc',$socid);
+
+        Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id);
+        exit;
 }
 
 if ($action == 'classin')
@@ -333,7 +332,7 @@ if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->facture->v
             $outputlangs = new Translate("",$conf);
             $outputlangs->setDefaultLang($newlang);
         }
-        facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
+        facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
     }
     else
     {
@@ -390,7 +389,7 @@ if ($action == 'modif' && ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $us
             $outputlangs = new Translate("",$conf);
             $outputlangs->setDefaultLang($newlang);
         }
-        facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
+        facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
     }
 }
 
@@ -690,6 +689,7 @@ if ($action == 'add' && $user->rights->facture->creer)
                 if ($element == 'order')    { $element = $subelement = 'commande'; }
                 if ($element == 'propal')   { $element = 'comm/propal'; $subelement = 'propal'; }
                 if ($element == 'contract') { $element = $subelement = 'contrat'; }
+                if ($element == 'inter')    { $element = $subelement = 'ficheinter'; }
 
                 $object->origin    = $_POST['origin'];
                 $object->origin_id = $_POST['originid'];
@@ -715,69 +715,76 @@ if ($action == 'add' && $user->rights->facture->creer)
 
                         for ($i=0;$i<$num;$i++)
                         {
-                            $desc=($lines[$i]->desc?$lines[$i]->desc:$lines[$i]->libelle);
-                            $product_type=($lines[$i]->product_type?$lines[$i]->product_type:0);
-
-                            // Dates
-                            // TODO mutualiser
-                            $date_start=$lines[$i]->date_debut_prevue;
-                            if ($lines[$i]->date_debut_reel) $date_start=$lines[$i]->date_debut_reel;
-                            if ($lines[$i]->date_start) $date_start=$lines[$i]->date_start;
-                            $date_end=$lines[$i]->date_fin_prevue;
-                            if ($lines[$i]->date_fin_reel) $date_end=$lines[$i]->date_fin_reel;
-                            if ($lines[$i]->date_end) $date_end=$lines[$i]->date_end;
-
-                            // Reset fk_parent_line for no child products and special product
-                            if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
-                                $fk_parent_line = 0;
-                            }
-
-                            $result = $object->addline(
-                            $id,
-                            $desc,
-                            $lines[$i]->subprice,
-                            $lines[$i]->qty,
-                            $lines[$i]->tva_tx,
-                            $lines[$i]->localtax1_tx,
-                            $lines[$i]->localtax2_tx,
-                            $lines[$i]->fk_product,
-                            $lines[$i]->remise_percent,
-                            $date_start,
-                            $date_end,
-                            0,
-                            $lines[$i]->info_bits,
-                            $lines[$i]->fk_remise_except,
-							'HT',
-                            0,
-                            $product_type,
-                            $lines[$i]->rang,
-                            $lines[$i]->special_code,
-                            $object->origin,
-                            $lines[$i]->rowid,
-                            $fk_parent_line
-                            );
-
-                            if ($result < 0)
+                            if ($lines[$i]->subprice < 0)
                             {
-                                $error++;
-                                break;
+                                // Negative line, we create a discount line
+                                // TODO
                             }
+                            else
+                            {
+                                // Positive line
+                                $desc=($lines[$i]->desc?$lines[$i]->desc:$lines[$i]->libelle);
+                                $product_type=($lines[$i]->product_type?$lines[$i]->product_type:0);
 
-                            // Defined the new fk_parent_line
-                            if ($result > 0 && $lines[$i]->product_type == 9) {
-                                $fk_parent_line = $result;
+                                // Date start
+                                $date_start=false;
+                                if ($lines[$i]->date_debut_prevue) $date_start=$lines[$i]->date_debut_prevue;
+                                if ($lines[$i]->date_debut_reel) $date_start=$lines[$i]->date_debut_reel;
+                                if ($lines[$i]->date_start) $date_start=$lines[$i]->date_start;
+
+                                //Date end
+                                $date_end=false;
+                                if ($lines[$i]->date_fin_prevue) $date_end=$lines[$i]->date_fin_prevue;
+                                if ($lines[$i]->date_fin_reel) $date_end=$lines[$i]->date_fin_reel;
+                                if ($lines[$i]->date_end) $date_end=$lines[$i]->date_end;
+
+                                // Reset fk_parent_line for no child products and special product
+                                if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
+                                    $fk_parent_line = 0;
+                                }
+
+                                $result = $object->addline(
+                                $id,
+                                $desc,
+                                $lines[$i]->subprice,
+                                $lines[$i]->qty,
+                                $lines[$i]->tva_tx,
+                                $lines[$i]->localtax1_tx,
+                                $lines[$i]->localtax2_tx,
+                                $lines[$i]->fk_product,
+                                $lines[$i]->remise_percent,
+                                $date_start,
+                                $date_end,
+                                0,
+                                $lines[$i]->info_bits,
+                                $lines[$i]->fk_remise_except,
+    							'HT',
+                                0,
+                                $product_type,
+                                $lines[$i]->rang,
+                                $lines[$i]->special_code,
+                                $object->origin,
+                                $lines[$i]->rowid,
+                                $fk_parent_line
+                                );
+
+                                if ($result < 0)
+                                {
+                                    $error++;
+                                    break;
+                                }
+
+                                // Defined the new fk_parent_line
+                                if ($result > 0 && $lines[$i]->product_type == 9) {
+                                    $fk_parent_line = $result;
+                                }
                             }
                         }
 
                         // Hooks
-                        if (! empty($object->hooks['objectcard']))
-                        {
-                            foreach($object->hooks['objectcard'] as $module)
-                            {
-                                $res = $module->createfrom($srcobject,$id,$object->element);
-                                if ($res < 0) $error++;
-                            }
-                        }
+                        $parameters=array('objFrom'=>$srcobject);
+                        $reshook=$hookmanager->executeHooks('createfrom',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+                        if ($reshook < 0) $error++;
                     }
                     else
                     {
@@ -990,7 +997,7 @@ if (($action == 'addline' || $action == 'addline_predef') && $user->rights->fact
             $outputlangs = new Translate("",$conf);
             $outputlangs->setDefaultLang($newlang);
         }
-        facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
+        facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
 
         unset($_POST['qty']);
         unset($_POST['type']);
@@ -1088,7 +1095,7 @@ if ($action == 'updateligne' && $user->rights->facture->creer && $_POST['save'] 
             $outputlangs = new Translate("",$conf);
             $outputlangs->setDefaultLang($newlang);
         }
-        facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
+        facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
     }
 }
 
@@ -1116,7 +1123,7 @@ if ($action == 'up' && $user->rights->facture->creer)
         $outputlangs = new Translate("",$conf);
         $outputlangs->setDefaultLang($newlang);
     }
-    facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
+    facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
 
     Header ('Location: '.$_SERVER["PHP_SELF"].'?facid='.$object->id.'#'.$_GET['rowid']);
     exit;
@@ -1138,7 +1145,7 @@ if ($action == 'down' && $user->rights->facture->creer)
         $outputlangs = new Translate("",$conf);
         $outputlangs->setDefaultLang($newlang);
     }
-    facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
+    facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
 
     Header ('Location: '.$_SERVER["PHP_SELF"].'?facid='.$object->id.'#'.$_GET['rowid']);
     exit;
@@ -1153,9 +1160,9 @@ if ($_POST['addfile'])
 
     // Set tmp user directory
     $vardir=$conf->user->dir_output."/".$user->id;
-    $upload_dir = $vardir.'/temp/';
+    $upload_dir_tmp = $vardir.'/temp';
 
-    $mesg=dol_add_file_process($upload_dir,0,0);
+    $mesg=dol_add_file_process($upload_dir_tmp,0,0);
 
     $action='presend';
 }
@@ -1169,7 +1176,7 @@ if (! empty($_POST['removedfile']))
 
     // Set tmp user directory
     $vardir=$conf->user->dir_output."/".$user->id;
-    $upload_dir = $vardir.'/temp/';
+    $upload_dir_tmp = $vardir.'/temp';
 
     $mesg=dol_remove_file_process($_POST['removedfile'],0);
 
@@ -1201,10 +1208,10 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
                 $sendto = $_POST['sendto'];
                 $sendtoid = 0;
             }
-            elseif ($_POST['receiver'])
+            elseif ($_POST['receiver'] != '-1')
             {
-                // Le destinataire a ete fourni via la liste deroulante
-                if ($_POST['receiver'] < 0)	// Id du tiers
+                // Recipient was provided from combo list
+                if ($_POST['receiver'] == 'thirdparty') // Id of third party
                 {
                     $sendto = $object->client->email;
                     $sendtoid = 0;
@@ -1275,7 +1282,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
                     $result=$mailfile->sendfile();
                     if ($result)
                     {
-                        $mesg=$langs->trans('MailSuccessfulySent',$from,$sendto);		// Must not contain "
+                        $mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));		// Must not contain "
 
                         $error=0;
 
@@ -1371,7 +1378,7 @@ if (GETPOST('action') == 'builddoc')	// En get ou en post
         $outputlangs = new Translate("",$conf);
         $outputlangs->setDefaultLang($newlang);
     }
-    $result=facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
+    $result=facture_pdf_create($db, $object, '', $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
     if ($result <= 0)
     {
         dol_print_error($db,$result);
@@ -1409,7 +1416,7 @@ if ($action == 'create')
 
     print_fiche_titre($langs->trans('NewBill'));
 
-    if ($mesg) print $mesg;
+    dol_htmloutput_mesg($mesg);
 
     $soc = new Societe($db);
     if ($socid) $res=$soc->fetch($socid);
@@ -1683,6 +1690,10 @@ if ($action == 'create')
         select_projects($soc->id, $projectid, 'projectid');
         print '</td></tr>';
     }
+    
+    // Insert hooks
+    $parameters=array();
+    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
     // Modele PDF
     print '<tr><td>'.$langs->trans('Model').'</td>';
@@ -1828,7 +1839,7 @@ if ($action == 'create')
 
         print '<table class="noborder" width="100%">';
 
-        $objectsrc->printOriginLinesList($object);
+        $objectsrc->printOriginLinesList($hookmanager);
 
         print '</table>';
     }
@@ -2028,13 +2039,10 @@ else
                 $formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id,$langs->trans('CloneInvoice'),$langs->trans('ConfirmCloneInvoice',$object->ref),'confirm_clone',$formquestion,'yes',1);
             }
 
-            // Hook of thirdparty module
-            if (empty($formconfirm) && ! empty($object->hooks['objectcard']))
+            if (! $formconfirm)
             {
-                foreach($object->hooks['objectcard'] as $module)
-                {
-                    if (empty($formconfirm)) $formconfirm = $module->formconfirm($action,$object,$lineid);
-                }
+                $parameters=array('lineid'=>$lineid);
+                $formconfirm=$hookmanager->executeHooks('formconfirm',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             }
 
             // Print form confirm
@@ -2063,10 +2071,24 @@ else
             print '</td></tr>';
 
             // Third party
+			print '<tr><td>';
+            print '<table class="nobordernopadding" width="100%">';
             print '<tr><td>'.$langs->trans('Company').'</td>';
-            print '<td colspan="5">'.$soc->getNomUrl(1,'compta');
-            print ' &nbsp; (<a href="'.DOL_URL_ROOT.'/compta/facture.php?socid='.$object->socid.'">'.$langs->trans('OtherBills').'</a>)</td>';
-            print '</tr>';
+			print '</td><td colspan="5">';
+			if ($conf->global->FACTURE_CHANGE_THIRDPARTY && $action != 'editthirdparty' && $object->brouillon && $user->rights->facture->creer)
+            print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editthirdparty&amp;facid='.$object->id.'">'.img_edit($langs->trans('SetLinkToThirdParty'),1).'</a></td>';
+            print '</tr></table>';
+            print '</td><td colspan="5">';
+			if ($action == 'editthirdparty')
+            {
+                $html->form_thirdparty($_SERVER['PHP_SELF'].'?facid='.$object->id,$object->socid,'socid');
+            }
+			else
+			{
+			print ' &nbsp;'.$soc->getNomUrl(1,'compta');
+            print ' &nbsp; (<a href="'.DOL_URL_ROOT.'/compta/facture.php?socid='.$object->socid.'">'.$langs->trans('OtherBills').'</a>)';
+			}
+			print '</tr>';
 
             // Type
             print '<tr><td>'.$langs->trans('Type').'</td><td colspan="5">';
@@ -2502,16 +2524,16 @@ else
                 print '<table class="nobordernopadding" width="100%"><tr><td>';
                 print $langs->trans('Project');
                 print '</td>';
-                if ($action != 'classin')
+                if ($action != 'classify')
                 {
-                    print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classin&amp;facid='.$object->id.'">';
+                    print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classify&amp;facid='.$object->id.'">';
                     print img_edit($langs->trans('SetProject'),1);
                     print '</a></td>';
                 }
                 print '</tr></table>';
 
                 print '</td><td colspan="3">';
-                if ($action == 'classin')
+                if ($action == 'classify')
                 {
                     $html->form_project($_SERVER['PHP_SELF'].'?facid='.$object->id,$object->socid,$object->fk_project,'projectid');
                 }
@@ -2522,6 +2544,10 @@ else
                 print '</td>';
                 print '</tr>';
             }
+            
+            // Insert hooks
+            $parameters=array('colspan'=>' colspan="3"');
+            $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
             print '</table><br>';
 
@@ -2539,7 +2565,7 @@ else
             print '<table id="tablelines" class="noborder" width="100%">';
 
             // Show object lines
-            if (! empty($object->lines)) $object->printObjectLines($action,$mysoc,$soc,$lineid,1);
+            if (! empty($object->lines)) $object->printObjectLines($action,$mysoc,$soc,$lineid,1,$hookmanager);
 
             /*
              * Form to add new line
@@ -2548,24 +2574,17 @@ else
             {
                 $var=true;
 
-                $object->formAddFreeProduct(1,$mysoc,$soc);
+                $object->formAddFreeProduct(1,$mysoc,$soc,$hookmanager);
 
                 // Add predefined products/services
                 if ($conf->product->enabled || $conf->service->enabled)
                 {
                     $var=!$var;
-                    $object->formAddPredefinedProduct(1,$mysoc,$soc);
+                    $object->formAddPredefinedProduct(1,$mysoc,$soc,$hookmanager);
                 }
 
-                // Hook of thirdparty module
-                if (! empty($object->hooks['objectcard']))
-                {
-                    foreach($object->hooks['objectcard'] as $module)
-                    {
-                        $var=!$var;
-                        $module->formAddObject($object);
-                    }
-                }
+                $parameters=array();
+                $reshook=$hookmanager->executeHooks('formAddObject',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             }
 
             print "</table>\n";
@@ -2801,7 +2820,7 @@ else
                 $delallowed=$user->rights->facture->supprimer;
 
                 print '<br>';
-                $somethingshown=$formfile->show_documents('facture',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang,$object->hooks['objectcard']);
+                $somethingshown=$formfile->show_documents('facture',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang,$hookmanager);
 
                 /*
                  * Linked object block
@@ -2855,7 +2874,7 @@ else
                         $outputlangs = new Translate("",$conf);
                         $outputlangs->setDefaultLang($newlang);
                     }
-                    $result=facture_pdf_create($db, $object, '', $_REQUEST['model'], $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
+                    $result=facture_pdf_create($db, $object, '', $_REQUEST['model'], $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
                     if ($result <= 0)
                     {
                         dol_print_error($db,$result);
@@ -2992,9 +3011,9 @@ else
         {
             $sql.= " AND f.datef BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
         }
-        if ($_POST['sf_ref'])
+        if (trim($search_ref) != '')
         {
-            $sql.= ' AND f.facnumber LIKE \'%'.$db->escape(trim($_POST['sf_ref'])) . '%\'';
+            $sql.= ' AND f.facnumber LIKE \'%'.$db->escape(trim($search_ref)) . '%\'';
         }
         if ($sall)
         {
@@ -3046,17 +3065,17 @@ else
             //print '<td class="liste_titre">&nbsp;</td>';
             print '</tr>';
 
-            // Lignes des champs de filtre
-
+            // Filters lines
             print '<tr class="liste_titre">';
             print '<td class="liste_titre" align="left">';
-            print '<input class="flat" size="10" type="text" name="search_ref" value="'.$_GET['search_ref'].'">';
-            print '<td class="liste_titre" colspan="1" align="center">';
+            print '<input class="flat" size="10" type="text" name="search_ref" value="'.$search_ref.'">';
+            print '</td>';
+            print '<td class="liste_titre" align="center">';
             print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
-            //print '&nbsp;'.$langs->trans('Year').': ';
-            $syear = $year;
+            //print '&nbsp;'.$langs->trans('Year').': '.$syear;
+            //print 'xx'.$syear.'zz';
             //if ($syear == '') $syear = date("Y");
-            $htmlother->select_year($syear,'year',1, 20, 5);
+            $htmlother->select_year($syear?$syear:-1,'year',1, 20, 5);
             print '</td>';
             print '<td class="liste_titre" align="left">&nbsp;</td>';
             print '<td class="liste_titre" align="left">';
@@ -3174,5 +3193,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/23 18:40:47 $ - $Revision: 1.857 $');
 ?>

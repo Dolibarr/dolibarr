@@ -14,14 +14,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**	    \file       htdocs/paypal/admin/paypal.php
  *		\ingroup    paypal
  *		\brief      Page to setup paypal module
- *		\version    $Id$
+ *		\version    $Id: paypal.php,v 1.23 2011/07/31 23:24:25 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -89,11 +88,21 @@ print $langs->trans("PaypalDesc")."<br>\n";
 if ($conf->use_javascript_ajax)
 {
     print "\n".'<script type="text/javascript" language="javascript">';
-    print 'jQuery(document).ready(function () {
-            jQuery("#apidoc").hide();
-            jQuery("#apidoca").click(function() {
-                jQuery("#apidoca").hide();
-                jQuery("#apidoc").show();
+    print '$(document).ready(function () {
+            $("#apidoc").hide();
+            $("#apidoca").click(function() {
+                $("#apidoca").hide();
+                $("#apidoc").show();
+            });
+            
+            $("#generate_token").click(function() {
+            	$.get( "'.DOL_URL_ROOT.'/core/ajaxsecurity.php", {
+            		action: \'getrandompassword\',
+            		generic: true
+				},
+				function(token) {
+					$("#PAYPAL_SECURITY_TOKEN").val(token);
+				});
             });
     });';
     print '</script>';
@@ -177,7 +186,8 @@ print '</td></tr>';
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("SecurityToken").'</td><td>';
-print '<input size="64" type="text" name="PAYPAL_SECURITY_TOKEN" value="'.$conf->global->PAYPAL_SECURITY_TOKEN.'">';
+print '<input size="48" type="text" id="PAYPAL_SECURITY_TOKEN" name="PAYPAL_SECURITY_TOKEN" value="'.$conf->global->PAYPAL_SECURITY_TOKEN.'">';
+print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
 print '</td></tr>';
 
 $var=!$var;
@@ -262,5 +272,5 @@ print info_admin($langs->trans("YouCanAddTagOnUrl"));
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/31 23:24:25 $ - $Revision: 1.23 $');
 ?>

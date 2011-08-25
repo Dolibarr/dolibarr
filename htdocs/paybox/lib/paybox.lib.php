@@ -13,16 +13,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file			htdocs/paybox/lib/paybox.lib.php
  *	\ingroup		paybox
  *  \brief			Library for common paybox functions
- *  \version		$Id$
+ *  \version		$Id: paybox.lib.php,v 1.10 2011/08/03 01:34:59 eldy Exp $
  */
 function llxHeaderPaybox($title, $head = "")
 {

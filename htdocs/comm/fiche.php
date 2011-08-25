@@ -18,15 +18,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *       \file       htdocs/comm/fiche.php
- *       \ingroup    commercial, compta
+ *       \ingroup    commercial compta
  *       \brief      Page to show customer card of a third party
- *       \version    $Id$
+ *       \version    $Id: fiche.php,v 1.285 2011/08/23 20:48:20 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -223,7 +222,7 @@ if ($socid > 0)
 
 	// Address
 	print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3">';
-	dol_print_address($objsoc->address,'gmap','contact',$objsoc->id);
+	dol_print_address($objsoc->address,'gmap','thirdparty',$objsoc->id);
 	print "</td></tr>";
 
 	// Zip / Town
@@ -649,7 +648,7 @@ if ($socid > 0)
 			if ($num > 0)
 			{
 				print '<tr class="liste_titre">';
-				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastInterventions",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/fichinter/index.php?socid='.$objsoc->id.'">'.$langs->trans("AllInterventions").' ('.$num.')</td></tr></table></td>';
+				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastInterventions",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/fichinter/list.php?socid='.$objsoc->id.'">'.$langs->trans("AllInterventions").' ('.$num.')</td></tr></table></td>';
 				print '</tr>';
 				$var=!$var;
 			}
@@ -745,46 +744,6 @@ if ($socid > 0)
 		{
 			dol_print_error($db);
 		}
-		print "</table>";
-	}
-
-	/*
-	 * Last linked chronodocs
-	 */
-	// TODO add function to add an external module
-	if(!empty($conf->global->MAIN_MODULE_CHRONODOCS) && $user->rights->chronodocs->entries->read)
-	{
-		print '<table class="noborder" width=100%>';
-		$chronodocs_static=new Chronodocs_entries($db);
-		$result=$chronodocs_static->get_list($MAXLIST,0,"f.date_c","DESC",$objsoc->id);
-		if (is_array($result))
-		{
-			$var=true;
-			$i = 0 ;
-			//$num = sizeOf($result);
-			$num=$chronodocs_static->get_nb_chronodocs($objsoc->id);
-
-			if ($num > 0)
-			{
-				print '<tr class="liste_titre">';
-				print '<td colspan="3"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastChronodocs",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/chronodocs/index.php?socid='.$objsoc->id.'">'.$langs->trans("AllChronodocs").' ('.$num.')</td></tr></table></td>';
-				print '</tr>';
-			}
-			while ($i < $num && $i < $MAXLIST)
-			{
-				$obj = array_shift($result);
-				$var = !$var;
-				print "<tr $bc[$var]>";
-				print '<td><a href="'.DOL_URL_ROOT.'/chronodocs/fiche.php?id='.$obj->fichid.'">'.img_object($langs->trans("ShowChronodocs"),"generic")." ".$obj->ref.'</a></td>';
-
-				print "<td align=\"left\">".dol_trunc($obj->title,30) ."</td>";
-				print "<td align=\"right\">".dol_print_date($db->jdate($obj->dp),'day')."</td>\n";
-				print "</tr>";
-
-				$i++;
-			}
-		}
-
 		print "</table>";
 	}
 
@@ -892,5 +851,5 @@ else
 $db->close();
 
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/23 20:48:20 $ - $Revision: 1.285 $');
 ?>

@@ -2,6 +2,7 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,15 +15,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/projet/tasks/time.php
  *	\ingroup    projet
  *	\brief      Page to add new time spent on a task
- *	\version    $Id$
+ *	\version    $Id: time.php,v 1.33 2011/07/31 23:23:36 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -307,7 +307,8 @@ if ($_GET["id"] > 0)
 		print '<td align="right">'.$langs->trans("Duration").'</td>';
 		print '<td>&nbsp;</td>';
 		print "</tr>\n";
-
+		
+		$total = 0;
 		foreach ($tasks as $task_time)
 		{
 			$var=!$var;
@@ -389,8 +390,12 @@ if ($_GET["id"] > 0)
 			print '</td>';
 
 			print "</tr>\n";
+			$total += $task_time->task_duration;
 		}
-
+		print '<tr class="liste_total"><td colspan="3" class="liste_total">'.$langs->trans("Total").'</td>';
+		print '<td align="right" nowrap="nowrap" class="liste_total">'.ConvertSecondToTime($total).'</td><td>&nbsp;</td>';
+		print '</tr>';
+		
 		print "</table>";
 		print "</form>";
 	}
@@ -398,5 +403,5 @@ if ($_GET["id"] > 0)
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/31 23:23:36 $ - $Revision: 1.33 $');
 ?>

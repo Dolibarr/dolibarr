@@ -12,15 +12,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/projet/document.php
  *	\ingroup    project
  *	\brief      Page de gestion des documents attachees a un projet
- *	\version    $Id$
+ *	\version    $Id: document.php,v 1.14 2011/07/31 23:23:36 eldy Exp $
  */
 
 require('../main.inc.php');
@@ -135,7 +134,7 @@ if ($id > 0 || ! empty($ref))
 	dol_fiche_head($head, 'document', $langs->trans("Project"), 0, ($project->public?'projectpub':'project'));
 
 	// Files list constructor
-	$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
+	$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 	$totalsize=0;
 	foreach($filearray as $key => $file)
 	{
@@ -203,5 +202,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/31 23:23:36 $ - $Revision: 1.14 $');
 ?>

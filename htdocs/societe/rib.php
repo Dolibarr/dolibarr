@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -15,15 +15,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	    \file       htdocs/societe/rib.php
  *      \ingroup    societe
  *		\brief      BAN tab for companies
- *		\version    $Id$
+ *		\version    $Id: rib.php,v 1.38 2011/08/13 00:48:00 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -73,7 +72,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
 	$result = $account->update($user);
 	if (! $result)
 	{
-		$message=$account->error();
+		$message=$account->error;
 		$_GET["action"]='edit';     // Force chargement page edition
 	}
 	else
@@ -116,7 +115,7 @@ if ($_GET["socid"] && $_GET["action"] != 'edit')
 
 	print '<table class="border" width="100%">';
 
-	print '<tr><td valign="top">'.$langs->trans("Bank").'</td>';
+	print '<tr><td valign="top" width="35%">'.$langs->trans("Bank").'</td>';
 	print '<td colspan="4">'.$account->bank.'</td></tr>';
 
 	if ($account->useDetailedBBAN() == 1)
@@ -173,7 +172,6 @@ if ($_GET["socid"] && $_GET["action"] != 'edit')
 
 	/*
 	 * Barre d'actions
-	 *
 	 */
 	print '<div class="tabsAction">';
 
@@ -206,7 +204,7 @@ if ($_GET["socid"] && $_GET["action"] == 'edit' && $user->rights->societe->creer
 
 	print '<table class="border" width="100%">';
 
-	print '<tr><td valign="top">'.$langs->trans("Bank").'</td>';
+	print '<tr><td valign="top" width="35%">'.$langs->trans("Bank").'</td>';
 	print '<td colspan="4"><input size="30" type="text" name="bank" value="'.$account->bank.'"></td></tr>';
 
 	// BBAN
@@ -259,18 +257,20 @@ if ($_GET["socid"] && $_GET["action"] == 'edit' && $user->rights->societe->creer
 	print $account->adresse_proprio;
 	print "</textarea></td></tr>";
 
-	print '<tr><td align="center" colspan="5"><input class="button" value="'.$langs->trans("Modify").'" type="submit">';
+	print '</table><br>';
+
+	print '<center><input class="button" value="'.$langs->trans("Modify").'" type="submit">';
 	print ' &nbsp; <input name="cancel" class="button" value="'.$langs->trans("Cancel").'" type="submit">';
-	print '</td></tr>';
+	print '</center>';
 
 	print '</form>';
-	print '</table>';
 }
 
 
+dol_fiche_end();
 
 $db->close();
 
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/13 00:48:00 $ - $Revision: 1.38 $');
 ?>

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -13,14 +13,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *       \file       htdocs/admin/sms.php
  *       \brief      Page to setup emails sending
- *       \version    $Id$
+ *       \version    $Id: sms.php,v 1.10 2011/08/13 13:03:03 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -156,8 +155,7 @@ print "<br>\n";
 if ($message) print $message.'<br>';
 
 // List of sending methods
-$listofmethods=$conf->sms_engine;
-$listofmethods['']='';
+$listofmethods=(is_array($conf->sms_engine)?$conf->sms_engine:array());
 asort($listofmethods);
 
 if ($action == 'edit')
@@ -189,7 +187,7 @@ if ($action == 'edit')
 	// Method
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_SMS_SENDMODE").'</td><td>';
-	if (sizeof($listofmethods)) print $html->selectarray('MAIN_SMS_SENDMODE',$listofmethods,$conf->global->MAIN_SMS_SENDMODE);
+	if (count($listofmethods)) print $html->selectarray('MAIN_SMS_SENDMODE',$listofmethods,$conf->global->MAIN_SMS_SENDMODE,1);
 	else print '<font class="error">'.$langs->trans("None").'</font>';
     print '</td></tr>';
 
@@ -210,7 +208,7 @@ if ($action == 'edit')
 	print '<br><center>';
 	print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'"'.(!sizeof($listofmethods)?' disabled="disbaled"':'').'>';
 	print ' &nbsp; &nbsp; ';
-	print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"'.(!sizeof($listofmethods)?' disabled="disbaled"':'').'>';
+	print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</center>';
 
 	print '</form>';
@@ -348,5 +346,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/13 13:03:03 $ - $Revision: 1.10 $');
 ?>

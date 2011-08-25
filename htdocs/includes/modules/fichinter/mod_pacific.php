@@ -13,18 +13,16 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * or see http://www.gnu.org/
  */
 
 /**
- \file       htdocs/includes/modules/fichinter/mod_pacific.php
- \ingroup    fiche intervention
- \brief      Fichier contenant la classe du modele de numerotation de reference de fiche intervention Pacific
- \version    $Id$
+ *  \file       htdocs/includes/modules/fichinter/mod_pacific.php
+ *  \ingroup    fiche intervention
+ *  \brief      File with Pacific numbering module for interventions
+ *  \version    $Id: mod_pacific.php,v 1.13 2011/07/31 23:28:15 eldy Exp $
  */
-
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/modules_fichinter.php");
 
 /**
@@ -33,6 +31,7 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/modules_fichinter.p
  */
 class mod_pacific extends ModeleNumRefFicheinter
 {
+    var $version='dolibarr';        // 'development', 'experimental', 'dolibarr'
 	var $prefix='FI';
 	var $error='';
 	var $nom = 'pacific';
@@ -124,7 +123,7 @@ class mod_pacific extends ModeleNumRefFicheinter
 	}
 
 	/**		\brief      Return next free value
-	 *      	\param      objsoc      Object third party
+	 *      \param      objsoc      Object third party
 	 * 		\param		objforref	Object for number to search
 	 *   	\return     string      Next free value
 	 */

@@ -5,7 +5,7 @@
 # This file is used by Dolibarr setup process to create true Dolibarr
 # config file called "conf.php".
 #
-# $Id$
+# $Id: conf.php.example,v 1.53 2011/08/21 15:26:15 eldy Exp $
 
 
 ###################
@@ -212,7 +212,7 @@ $dolibarr_main_force_https='0';
 # dolibarr_nocsrfcheck
 # This parameter can be used to disable CSRF protection.
 # This might be required if you access Dolibarr behind a proxy that make
-# URL rewriting to avoid false alarms.
+# URL rewriting, to avoid false alarms.
 # Default value: 0
 # Possible values: 0 or 1
 # Examples:
@@ -249,13 +249,23 @@ $dolibarr_main_prod='0';
 # Examples:
 # $dolibarr_mailing_limit_sendbyweb='0';
 
-# This is an development feature to allow external components to overwrite
-# some Dolibarr kernel files to be overwritten by versions provided by
-# third parties modules.
-# !! This feature is not working yet and breaks Dolibarr stability !!
-# Default value: 0
-# Possible values: 0 or 1
-# Examples:
-# $dolibarr_allow_overwritekernel='0';
+
+##############################
+# Path to external libraries #
+##############################
+
+# Value to overwrite path to use shared libraries instead of embedded one
+#$dolibarr_lib_GEOIP_PATH='';
+
+# Value to overwrite some path to use shared libraries instead of embedded one
+#$dolibarr_lib_ODTPHP_PATHTOPCLZIP="/usr/share/php/libphp-pclzip";
+
+##############################
+# Path to external font      #
+##############################
+
+# Value to overwrite some path to use font instead of embedded one
+#$dolibarr_font_DOL_DEFAULT_TTF="/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans.ttf";
+#$dolibarr_font_DOL_DEFAULT_TTF_BOLD="/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans-Bold.ttf";
 
 ?>

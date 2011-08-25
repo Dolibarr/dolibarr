@@ -12,14 +12,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/asterisk/wrapper.php
  *  \brief      File that is entry point to call an Asterisk server
- *  \version    $Id$
+ *  \version    $Id: wrapper.php,v 1.10 2011/08/20 15:11:32 eldy Exp $
  *	\remarks	To be used, an Asterisk user must be created by adding this
  * 				in /etc/asterisk/manager.conf
  * 				[dolibarr]
@@ -77,7 +76,7 @@ $password = $_GET['password'];
 $caller = $_GET['caller'];
 $called = $_GET['called'];
 
-# Adresse IP du serveur Asterisk
+# IP address of Asterisk server
 $strHost = $conf->global->ASTERISK_HOST;
 #Spécifiez le type d'extension par laquelle vous poste est connecte.
 #ex: SIP/, IAX2/, ZAP/, etc

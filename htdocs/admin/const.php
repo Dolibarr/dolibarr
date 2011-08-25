@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/admin/const.php
  *	\ingroup    setup
  *	\brief      Admin page to define miscellaneous constants
- *	\version    $Id$
+ *	\version    $Id: const.php,v 1.71 2011/08/21 10:01:37 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -144,7 +143,7 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print '<td>'.$langs->trans("Comment").'</td>';
-if ($conf->multicompany->enabled && !$user->entity) print '<td>'.$langs->trans("Entity").'</td>';
+if (! empty($conf->multicompany->enabled) && !$user->entity) print '<td>'.$langs->trans("Entity").'</td>';
 print '<td align="center">'.$langs->trans("Action").'</td>';
 print "</tr>\n";
 
@@ -166,7 +165,7 @@ print '</td><td>';
 print '<input type="text" class="flat" size="40" name="constnote" value="">';
 print '</td>';
 // Limit to superadmin
-if ($conf->multicompany->enabled && !$user->entity)
+if (! empty($conf->multicompany->enabled) && !$user->entity)
 {
 	print '<td>';
 	print '<input type="text" class="flat" size="1" name="entity" value="'.$conf->entity.'">';
@@ -232,7 +231,7 @@ if ($result)
 		print '</td>';
 
 		// Entity limit to superadmin
-		if ($conf->multicompany->enabled && !$user->entity)
+		if (! empty($conf->multicompany->enabled) && !$user->entity)
 		{
 			print '<td>';
 			print '<input type="text" class="flat" size="1" name="const['.$i.'][entity]" value="'.$obj->entity.'">';
@@ -280,5 +279,5 @@ print "</form>\n";
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/21 10:01:37 $ - $Revision: 1.71 $');
 ?>

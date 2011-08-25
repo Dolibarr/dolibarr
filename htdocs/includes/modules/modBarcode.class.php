@@ -14,14 +14,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\defgroup   barcode         Module barcode
  *	\brief      Module pour gerer les codes barres
- *	\version	$Id$
+ *	\version	$Id: modBarcode.class.php,v 1.31 2011/08/16 10:11:01 eldy Exp $
  */
 
 /**
@@ -62,16 +61,18 @@ class modBarcode extends DolibarrModules
 		$this->dirs = array("/barcode/temp");
 
 		// Dependances
-		$this->depends = array("modProduct");
+		$this->depends = array();        // May be used for product or service or third party module
 		$this->requiredby = array();
 
 		// Config pages
-		$this->config_page_url = array("barcode.php@includes/modules/barcode");
+		$this->config_page_url = array("barcode.php");
 
 		// Constants
 		// Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',0),
 		//                            1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0) );
-		$this->const = array(0=>array('GENBARCODE_LOCATION','chaine',DOL_DOCUMENT_ROOT.'/includes/barcode/php-barcode/genbarcode/genbarcode','Path to genbarcode command line tool',0));
+		$this->const = array(
+		                //0=>array('GENBARCODE_LOCATION','chaine',DOL_DOCUMENT_ROOT.'/includes/barcode/php-barcode/genbarcode/genbarcode','Path to genbarcode command line tool',0)
+		                );
 
 		// Boxes
 		$this->boxes = array();

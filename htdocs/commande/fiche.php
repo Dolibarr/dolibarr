@@ -18,15 +18,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/commande/fiche.php
  *	\ingroup    commande
  *	\brief      Page to show customer order
- *	\version    $Id$
+ *	\version    $Id: fiche.php,v 1.537 2011/08/23 18:40:45 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -57,35 +56,26 @@ $socid   = GETPOST('socid');
 $action  = GETPOST('action');
 $confirm = GETPOST('confirm');
 $lineid  = GETPOST('lineid');
+$mesg    = GETPOST('mesg');
+
+$object = new Commande($db);
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'commande',$id,'');
 
-$mesg=isset($_GET['mesg'])?$_GET['mesg']:'';
-
-$object = new Commande($db);
-
-// Instantiate hooks of thirdparty module
-if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
-{
-    $object->callHooks('objectcard');
-}
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+$hookmanager=new HookManager($db);
+$hookmanager->callHooks(array('ordercard'));
 
 
 /******************************************************************************/
 /*                     Actions                                                */
 /******************************************************************************/
 
-// Hook of thirdparty module
-if (! empty($object->hooks['objectcard']))
-{
-    foreach($object->hooks['objectcard'] as $module)
-    {
-        $module->doActions($object);
-        $mesg = $module->error;
-    }
-}
+$parameters=array('socid'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
 // Action clone object
 if ($action == 'confirm_clone' && $confirm == 'yes')
@@ -96,7 +86,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes')
     }
     else
     {
-        $result=$object->createFromClone($id, 0, GETPOST('socid'));
+        $result=$object->createFromClone($id, 0, GETPOST('socid'), $hookmanager);
         if ($result > 0)
         {
             header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
@@ -169,7 +159,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes')
                 $outputlangs = new Translate("",$conf);
                 $outputlangs->setDefaultLang($newlang);
             }
-            commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
+            commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
         }
         else
         {
@@ -305,14 +295,9 @@ if ($action == 'add' && $user->rights->commande->creer)
                 }
 
                 // Hooks
-                if (! empty($object->hooks['objectcard']))
-                {
-                    foreach($object->hooks['objectcard'] as $module)
-                    {
-                        $res = $module->createfrom($srcobject,$object_id,$object->element);
-                        if ($res < 0) $error++;
-                    }
-                }
+                $parameters=array('objFrom'=>$srcobject);
+                $reshook=$hookmanager->executeHooks('createfrom',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+                if ($reshook < 0) $error++;
             }
             else
             {
@@ -628,7 +613,7 @@ if ($action == 'addline' && $user->rights->commande->creer)
                         $outputlangs = new Translate("",$conf);
                         $outputlangs->setDefaultLang($newlang);
                     }
-                    commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
+                    commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
 
                     unset($_POST['qty']);
                     unset($_POST['type']);
@@ -736,7 +721,7 @@ if ($action == 'updateligne' && $user->rights->commande->creer && $_POST['save']
                 $outputlangs = new Translate("",$conf);
                 $outputlangs->setDefaultLang($newlang);
             }
-            commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
+            commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
         }
         else
         {
@@ -770,7 +755,7 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->command
             $outputlangs = new Translate("",$conf);
             $outputlangs->setDefaultLang($newlang);
         }
-        commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
+        commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
     }
 }
 
@@ -810,7 +795,7 @@ if ($action == 'modif' && $user->rights->commande->creer)
             $outputlangs = new Translate("",$conf);
             $outputlangs->setDefaultLang($newlang);
         }
-        commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
+        commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
     }
 }
 
@@ -835,7 +820,7 @@ if ($action == 'up' && $user->rights->commande->creer)
         $outputlangs->setDefaultLang($newlang);
     }
 
-    commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
+    commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
 
     Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.'#'.$_GET['rowid']);
     exit;
@@ -857,7 +842,7 @@ if ($action == 'down' && $user->rights->commande->creer)
         $outputlangs = new Translate("",$conf);
         $outputlangs->setDefaultLang($newlang);
     }
-    commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
+    commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
 
     Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.'#'.$_GET['rowid']);
     exit;
@@ -889,7 +874,7 @@ if ($action == 'builddoc')	// In get or post
         $outputlangs = new Translate("",$conf);
         $outputlangs->setDefaultLang($newlang);
     }
-    $result=commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
+    $result=commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
     if ($result <= 0)
     {
         dol_print_error($db,$result);
@@ -909,7 +894,7 @@ if ($action == 'remove_file')
     {
         require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 
-        $upload_dir = $conf->commande->dir_output . "/";
+        $upload_dir = $conf->commande->dir_output;
         $file = $upload_dir . '/' . $_GET['file'];
         dol_delete_file($file);
         $mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
@@ -925,9 +910,9 @@ if ($_POST['addfile'])
 
     // Set tmp user directory TODO Use a dedicated directory for temp mails files
     $vardir=$conf->user->dir_output."/".$user->id;
-    $upload_dir = $vardir.'/temp/';
+    $upload_dir_tmp = $vardir.'/temp';
 
-    $mesg=dol_add_file_process($upload_dir,0,0);
+    $mesg=dol_add_file_process($upload_dir_tmp,0,0);
 
     $action ='presend';
 }
@@ -941,7 +926,7 @@ if (! empty($_POST['removedfile']))
 
     // Set tmp user directory
     $vardir=$conf->user->dir_output."/".$user->id;
-    $upload_dir = $vardir.'/temp/';
+    $upload_dir_tmp = $vardir.'/temp';
 
     $mesg=dol_remove_file_process($_POST['removedfile'],0);
 
@@ -971,10 +956,10 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
                 $sendto = $_POST['sendto'];
                 $sendtoid = 0;
             }
-            elseif ($_POST['receiver'])
+            elseif ($_POST['receiver'] != '-1')
             {
-                // Le destinataire a ete fourni via la liste deroulante
-                if ($_POST['receiver'] < 0)	// Id du tiers
+                // Recipient was provided from combo list
+                if ($_POST['receiver'] == 'thirdparty') // Id of third party
                 {
                     $sendto = $object->client->email;
                     $sendtoid = 0;
@@ -1032,7 +1017,7 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
                     $result=$mailfile->sendfile();
                     if ($result)
                     {
-                        $mesg=$langs->trans('MailSuccessfulySent',$from,$sendto);	// Must not contains "
+                        $mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));	// Must not contains "
 
                         $error=0;
 
@@ -1268,9 +1253,9 @@ if ($action == 'create' && $user->rights->commande->creer)
     $html->select_types_paiements($soc->mode_reglement,'mode_reglement_id');
     print '</td></tr>';
 
-    // delai de livraison
+    // Delivery delay
     print '<tr><td>'.$langs->trans('AvailabilityPeriod').'</td><td colspan="2">';
-    $html->select_availability($propal->availability,'availability_id');
+    $html->select_availability($propal->availability,'availability_id','',1);
     print '</td></tr>';
 
     // What trigger creation
@@ -1292,6 +1277,10 @@ if ($action == 'create' && $user->rights->commande->creer)
         }
         print '</td></tr>';
     }
+    
+    // Insert hooks
+    $parameters=array();
+    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
     print '<tr><td>'.$langs->trans('Model').'</td>';
     print '<td colspan="2">';
@@ -1407,7 +1396,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 
         print '<table class="noborder" width="100%">';
 
-        $objectsrc->printOriginLinesList($object);
+        $objectsrc->printOriginLinesList($hookmanager);
 
         print '</table>';
     }
@@ -1515,13 +1504,10 @@ else
                 $formconfirm=$html->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneOrder'),$langs->trans('ConfirmCloneOrder',$object->ref),'confirm_clone',$formquestion,'yes',1);
             }
 
-            // Hook of thirdparty module
-            if (empty($formconfirm) && ! empty($object->hooks['objectcard']))
+            if (! $formconfirm)
             {
-                foreach($object->hooks['objectcard'] as $module)
-                {
-                    if (empty($formconfirm)) $formconfirm = $module->formconfirm($action,$object,$lineid);
-                }
+                $parameters=array('lineid'=>$lineid);
+                $formconfirm=$hookmanager->executeHooks('formconfirm',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             }
 
             // Print form confirm
@@ -1617,7 +1603,7 @@ else
 
             if ($action != 'editdate' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDate'),1).'</a></td>';
             print '</tr></table>';
-            print '</td><td colspan="2">';
+            print '</td><td colspan="3">';
             if ($action == 'editdate')
             {
                 print '<form name="setdate" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
@@ -1630,16 +1616,6 @@ else
             else
             {
                 print $object->date ? dol_print_date($object->date,'daytext') : '&nbsp;';
-            }
-            print '</td>';
-
-            print '<td width="50%">'.$langs->trans('Source').' : '.$object->getLabelSource();
-            if ($object->source == 0 && $conf->propal->enabled && $object->propale_id)
-            {
-                // Si source = propal
-                $propal = new Propal($db);
-                $propal->fetch($object->propale_id);
-                print ' -> <a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$propal->id.'">'.$propal->ref.'</a>';
             }
             print '</td>';
             print '</tr>';
@@ -1700,17 +1676,16 @@ else
             print '<table class="nobordernopadding" width="100%"><tr><td>';
             print $langs->trans('PaymentConditionsShort');
             print '</td>';
-
             if ($action != 'editconditions' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
             print '</tr></table>';
             print '</td><td colspan="2">';
             if ($action == 'editconditions')
             {
-                $html->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->cond_reglement_id,'cond_reglement_id');
+                $html->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->cond_reglement_id,'cond_reglement_id',1);
             }
             else
             {
-                $html->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->cond_reglement_id,'none');
+                $html->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->cond_reglement_id,'none',1);
             }
             print '</td>';
 
@@ -1744,15 +1719,15 @@ else
             print '</td><td colspan="2">';
             if ($action == 'editavailability')
             {
-                $html->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id,$object->availability_id,'availability_id');
+                $html->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id,$object->availability_id,'availability_id',1);
             }
             else
             {
-                $html->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id,$object->availability_id,'none');
+                $html->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id,$object->availability_id,'none',1);
             }
             print '</td></tr>';
 
-            // Origine de la demande
+            // Source
             print '<tr><td height="10">';
             print '<table class="nobordernopadding" width="100%"><tr><td>';
             print $langs->trans('Source');
@@ -1774,7 +1749,6 @@ else
             //print '<a href="'.DOL_URL_ROOT.'/admin/dict.php?id=22&origin=order&originid='.$object->id.'">'.$langs->trans("DictionnarySource").'</a>';
             print '</td></tr>';
 
-
             // Project
             if ($conf->projet->enabled)
             {
@@ -1783,11 +1757,11 @@ else
                 print '<table class="nobordernopadding" width="100%"><tr><td>';
                 print $langs->trans('Project');
                 print '</td>';
-                if ($action != 'classer') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classer&amp;id='.$object->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
+                if ($action != 'classify') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
                 print '</tr></table>';
                 print '</td><td colspan="2">';
                 //print "$object->id, $object->socid, $object->fk_project";
-                if ($action == 'classer')
+                if ($action == 'classify')
                 {
                     $html->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'projectid');
                 }
@@ -1797,6 +1771,10 @@ else
                 }
                 print '</td></tr>';
             }
+            
+            // Insert hooks
+            $parameters=array('colspan'=>' colspan="2"');
+            $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
             // Lignes de 3 colonnes
 
@@ -1853,7 +1831,7 @@ else
             print '<table id="tablelines" class="noborder" width="100%">';
 
             // Show object lines
-            if (! empty($object->lines)) $object->printObjectLines($action,$mysoc,$soc,$lineid,1);
+            if (! empty($object->lines)) $object->printObjectLines($action,$mysoc,$soc,$lineid,1,$hookmanager);
 
             /*
              * Form to add new line
@@ -1864,24 +1842,17 @@ else
                 {
                     $var=true;
 
-                    $object->formAddFreeProduct(1,$mysoc,$soc);
+                    $object->formAddFreeProduct(1,$mysoc,$soc,$hookmanager);
 
                     // Add predefined products/services
                     if ($conf->product->enabled || $conf->service->enabled)
                     {
                         $var=!$var;
-                        $object->formAddPredefinedProduct(1,$mysoc,$soc);
+                        $object->formAddPredefinedProduct(1,$mysoc,$soc,$hookmanager);
                     }
 
-                    // Hook of thirdparty module
-                    if (! empty($object->hooks['objectcard']))
-                    {
-                        foreach($object->hooks['objectcard'] as $module)
-                        {
-                            $var=!$var;
-                            $module->formAddObject($object);
-                        }
-                    }
+                    $parameters=array();
+                    $reshook=$hookmanager->executeHooks('formAddObject',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
                 }
             }
             print '</table>';
@@ -1932,14 +1903,23 @@ else
 
                         if ($object->statut > 0 && $object->statut < 3 && $object->getNbOfProductsLines() > 0)
                         {
-                            if ($user->rights->expedition->creer)
-                            {
-                                print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/shipment.php?id='.$object->id.'">'.$langs->trans('ShipProduct').'</a>';
-                            }
-                            else
-                            {
-                                print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('ShipProduct').'</a>';
-                            }
+						    if (($conf->expedition_bon->enabled && $user->rights->expedition->creer)
+	                        || ($conf->livraison_bon->enabled && $user->rights->expedition->livraison->creer))
+	                        {
+                                if ($user->rights->expedition->creer)
+                                {
+                                    print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/shipment.php?id='.$object->id.'">'.$langs->trans('ShipProduct').'</a>';
+                                }
+                                else
+                                {
+                                    print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('ShipProduct').'</a>';
+                                }
+	                        }
+	                        else
+	                        {
+                                $langs->load("errors");
+	                            print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("ErrorModuleSetupNotComplete")).'">'.$langs->trans('ShipProduct').'</a>';
+	                        }
                         }
                     }
 
@@ -2017,7 +1997,7 @@ else
                 $genallowed=$user->rights->commande->creer;
                 $delallowed=$user->rights->commande->supprimer;
 
-                $somethingshown=$formfile->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang,$object->hooks['objectcard']);
+                $somethingshown=$formfile->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang,$hookmanager);
 
                 /*
                  * Linked object block
@@ -2097,5 +2077,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/23 18:40:45 $ - $Revision: 1.537 $');
 ?>

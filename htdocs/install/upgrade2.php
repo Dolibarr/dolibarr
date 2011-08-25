@@ -15,14 +15,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/install/upgrade2.php
  *	\brief      Upgrade some data
- *	\version    $Id$
+ *	\version    $Id: upgrade2.php,v 1.190 2011/08/21 13:28:05 eldy Exp $
  */
 
 include_once('./inc.php');
@@ -135,24 +134,6 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 
 	// Chargement config
 	if (! $error) $conf->setValues($db);
-
-
-	/*
-	 * Pour utiliser d'autres versions des librairies externes que les
-	 * versions embarquees dans Dolibarr, definir les constantes adequates:
-	 * Pour FPDF:           FPDF_PATH
-	 * Pour PHP_WriteExcel: PHP_WRITEEXCEL_PATH
-	 * Pour MagpieRss:      MAGPIERSS_PATH
-	 * Pour NuSOAP:         NUSOAP_PATH
-	 * Pour TCPDF:          TCPDF_PATH
-	 */
-	if (! defined('FPDF_PATH'))           { define('FPDF_PATH',          DOL_DOCUMENT_ROOT .'/includes/fpdf/fpdf/'); }
-	if (! defined('PHP_WRITEEXCEL_PATH')) { define('PHP_WRITEEXCEL_PATH',DOL_DOCUMENT_ROOT .'/includes/php_writeexcel/'); }
-	if (! defined('MAGPIERSS_PATH'))      { define('MAGPIERSS_PATH',     DOL_DOCUMENT_ROOT .'/includes/magpierss/'); }
-	if (! defined('NUSOAP_PATH'))         { define('NUSOAP_PATH',        DOL_DOCUMENT_ROOT .'/includes/nusoap/lib/'); }
-	// Les autres path
-	if (! defined('MAGPIE_DIR'))          { define('MAGPIE_DIR',         MAGPIERSS_PATH); }
-	if (! defined('MAGPIE_CACHE_DIR'))    { define('MAGPIE_CACHE_DIR',   DOL_DATA_ROOT .'/rss/temp'); }
 
 
 	/***************************************************************************************
@@ -305,8 +286,6 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 
             // Reload menus
             migrate_reload_menu($db,$langs,$conf,$versionto);
-
-            print $langs->trans("MigrationFinished");
         }
 
         // Script for VX (X<3.1) -> V3.1
@@ -323,9 +302,22 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 
             // Reload menus
             migrate_reload_menu($db,$langs,$conf,$versionto);
-
-            print $langs->trans("MigrationFinished");
         }
+
+        // Script for VX (X<3.2) -> V3.2
+        $afterversionarray=explode('.','3.1.9');
+        $beforeversionarray=explode('.','3.2.9');
+        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+        {
+            // Reload modules
+            migrate_reload_modules($db,$langs,$conf);
+
+            // Reload menus
+            migrate_reload_menu($db,$langs,$conf,$versionto);
+        }
+
+
+        print '<tr><td colspan="4"><br>'.$langs->trans("MigrationFinished").'</td></tr>';
 
         // On commit dans tous les cas.
 		// La procedure etant concue pour pouvoir passer plusieurs fois quelquesoit la situation.
@@ -3158,7 +3150,7 @@ function migrate_directories($db,$langs,$conf,$oldname,$newname)
 
 
 /*
- * Supprime fichiers obsoletes
+ * Delete depracted files
  */
 function migrate_delete_old_files($db,$langs,$conf)
 {
@@ -3172,15 +3164,22 @@ function migrate_delete_old_files($db,$langs,$conf)
     DOL_DOCUMENT_ROOT.'/includes/menus/barre_left/default.php',
     DOL_DOCUMENT_ROOT.'/includes/menus/barre_top/default.php',
     DOL_DOCUMENT_ROOT.'/includes/modules/modComptabiliteExpert.class.php',
+    DOL_DOCUMENT_ROOT.'/includes/modules/modCommercial.class.php',
     DOL_DOCUMENT_ROOT.'/includes/modules/modProduit.class.php',
     DOL_DOCUMENT_ROOT.'/phenix/inc/triggers/interface_modPhenix_Phenixsynchro.class.php',
     DOL_DOCUMENT_ROOT.'/webcalendar/inc/triggers/interface_modWebcalendar_webcalsynchro.class.php',
+    DOL_DOCUMENT_ROOT.'/includes/triggers/interface_modWebcalendar_Webcalsynchro.class.php',
     DOL_DOCUMENT_ROOT.'/includes/triggers/interface_modCommande_Ecotax.class.php',
     DOL_DOCUMENT_ROOT.'/includes/triggers/interface_modCommande_fraisport.class.php',
     DOL_DOCUMENT_ROOT.'/includes/triggers/interface_modPropale_PropalWorkflow.class.php',
+    DOL_DOCUMENT_ROOT.'/includes/menus/smartphone/iphone.lib.php',
+    DOL_DOCUMENT_ROOT.'/includes/menus/smartphone/iphone_backoffice.php',
+    DOL_DOCUMENT_ROOT.'/includes/menus/smartphone/iphone_frontoffice.php',
     DOL_DOCUMENT_ROOT.'/includes/modules/mailings/dolibarr_services_expired.modules.php',
     DOL_DOCUMENT_ROOT.'/includes/modules/mailings/poire.modules.php',
-    DOL_DOCUMENT_ROOT.'/includes/modules/mailings/kiwi.modules.php'
+    DOL_DOCUMENT_ROOT.'/includes/modules/mailings/kiwi.modules.php',
+    DOL_DOCUMENT_ROOT.'/includes/modules/facture/pdf_crabe.modules.php',
+    DOL_DOCUMENT_ROOT.'/includes/modules/facture/pdf_oursin.modules.php'
     );
 
     foreach ($filetodeletearray as $filetodelete)
@@ -3405,6 +3404,7 @@ function migrate_reload_modules($db,$langs,$conf)
 
 /**
  * Reload menu if dynamic menus, if modified by version
+ *
  * @param       $db
  * @param       $langs
  * @param       $conf
@@ -3425,10 +3425,18 @@ function migrate_reload_menu($db,$langs,$conf,$versionto)
 	$beforeversionarray=explode('.','2.9.9');
 	if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
 	{
-	    $listofmenuhandler[]='auguria';   // We set here only dinamic menu handlers
+	    $listofmenuhandler['auguria']=1;   // We set here only dynamic menu handlers
 	}
 
-    foreach ($listofmenuhandler as $key)
+    // Script for VX (X<3.2) -> V3.2
+	$afterversionarray=explode('.','3.1.9');
+	$beforeversionarray=explode('.','3.2.9');
+	if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+	{
+	    $listofmenuhandler['auguria']=1;   // We set here only dynamic menu handlers
+	}
+
+    foreach ($listofmenuhandler as $key => $val)
     {
         print '<tr><td colspan="4">';
 

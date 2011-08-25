@@ -25,7 +25,7 @@
  *	\file		htdocs/fourn/commande/fiche.php
  *	\ingroup	supplier, order
  *	\brief		Card supplier order
- *	\version	$Id$
+ *	\version	$Id: fiche.php,v 1.235 2011/08/23 18:40:49 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -141,8 +141,8 @@ if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 		{
 			$qty = $_POST['qty'] ? $_POST['qty'] : $_POST['pqty'];
 
-			$product = new ProductFournisseur($db);
-			$idprod=$product->get_buyprice($_POST['idprodfournprice'], $qty);
+			$productsupplier = new ProductFournisseur($db);
+			$idprod=$productsupplier->get_buyprice($_POST['idprodfournprice'], $qty);
 
 			//$societe='';
 			if ($object->socid)
@@ -153,20 +153,20 @@ if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 
 			if ($idprod > 0)
 			{
-				$res=$product->fetch($idprod);
+				$res=$productsupplier->fetch($idprod);
 
 				// cas special pour lequel on a les meme reference que le fournisseur
 				// $label = '['.$nv_prod->ref.'] - '. $nv_prod->libelle;
-				$label = $product->libelle;
+				$label = $productsupplier->libelle;
 
-				$desc = $product->description;
-				$desc.= $product->description && $_POST['np_desc'] ? "\n" : "";
+				$desc = $productsupplier->description;
+				$desc.= $productsupplier->description && $_POST['np_desc'] ? "\n" : "";
 				$desc.= $_POST['np_desc'];
 
 				$remise_percent = $_POST["remise_percent"] ? $_POST["remise_percent"] : $_POST["p_remise_percent"];
 
-				$tva_tx	= get_default_tva($societe,$mysoc,$product->id);
-				$type = $product->type;
+				$tva_tx	= get_default_tva($societe,$mysoc,$productsupplier->id);
+				$type = $productsupplier->type;
 
 				// Local Taxes
 				$localtax1_tx= get_localtax($tva_tx, 1, $societe);
@@ -179,9 +179,9 @@ if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 				$tva_tx,
 				$localtax1_tx,
 				$localtax2_tx,
-				$product->id,
+				$productsupplier->id,
 				$_POST['idprodfournprice'],
-				$product->fourn_ref,
+				$productsupplier->fourn_ref,
 				$remise_percent,
 				'HT',
 				$type
@@ -559,7 +559,7 @@ if ($action	== 'create')
 		}
 
 		$id=$orderid;
-		
+
 		$db->commit();
 	}
 	else
@@ -578,9 +578,9 @@ if ($_POST['addfile'])
 
 	// Set tmp user directory TODO Use a dedicated directory for temp mails files
 	$vardir=$conf->user->dir_output."/".$user->id;
-	$upload_dir = $vardir.'/temp/';
+	$upload_dir_tmp = $vardir.'/temp';
 
-	$mesg=dol_add_file_process($upload_dir,0,0);
+	$mesg=dol_add_file_process($upload_dir_tmp,0,0);
 
 	$action='presend';
 }
@@ -594,7 +594,7 @@ if (! empty($_POST['removedfile']))
 
 	// Set tmp user directory
 	$vardir=$conf->user->dir_output."/".$user->id;
-	$upload_dir = $vardir.'/temp/';
+	$upload_dir_tmp = $vardir.'/temp';
 
 	$mesg=dol_remove_file_process($_POST['removedfile'],0);
 
@@ -624,10 +624,10 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
 				$sendto = $_POST['sendto'];
 				$sendtoid = 0;
 			}
-			elseif ($_POST['receiver'])
-			{
-				// Le destinataire a ete fourni via la liste deroulante
-				if ($_POST['receiver'] < 0)	// Id du tiers
+            elseif ($_POST['receiver'] != '-1')
+            {
+                // Recipient was provided from combo list
+                if ($_POST['receiver'] == 'thirdparty') // Id of third party
 				{
 					$sendto = $object->client->email;
 					$sendtoid = 0;
@@ -685,7 +685,7 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
 					$result=$mailfile->sendfile();
 					if ($result)
 					{
-						$mesg=$langs->trans('MailSuccessfulySent',$from,$sendto);		// Must not contain "
+						$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));		// Must not contain "
 
 						$error=0;
 
@@ -981,11 +981,11 @@ if ($id > 0 || ! empty($ref))
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('Project');
 			print '</td>';
-			if ($action != 'classer') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classer&amp;id='.$object->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
+			if ($action != 'classify') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="2">';
 			//print "$object->id, $object->socid, $object->fk_project";
-			if ($action == 'classer')
+			if ($action == 'classify')
 			{
 				$html->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'projectid');
 			}
@@ -1174,7 +1174,7 @@ if ($id > 0 || ! empty($ref))
 
 		      	print '</td>';
 				print '<td>';
-				$html->select_tva('tva_tx',$line->tva_tx);
+				print $html->load_tva('tva_tx',$line->tva_tx);
 				print '</td>';
 				print '<td align="right"><input	size="5" type="text" name="pu"	value="'.price($line->subprice).'"></td>';
 				print '<td align="right"><input size="2" type="text" name="qty" value="'.$line->qty.'"></td>';
@@ -1227,10 +1227,7 @@ if ($id > 0 || ! empty($ref))
 
 			print '</td>';
 			print '<td align="center">';
-			//if($soc->tva_assuj == "0")
-			//print '<input type="hidden" name="tva_tx" value="0">0';
-			//else
-			print $html->select_tva('tva_tx',($_POST["tva_tx"]?$_POST["tva_tx"]:$conf->defaulttx),$soc,$mysoc);
+			print $html->load_tva('tva_tx',($_POST["tva_tx"]?$_POST["tva_tx"]:-1),$soc,$mysoc);
 			print '</td>';
 			print '<td align="right"><input type="text" name="pu" size="5" value="'.$_POST["pu"].'"></td>';
 			print '<td align="right"><input type="text" name="qty" value="'.($_POST["qty"]?$_POST["qty"]:'1').'" size="2"></td>';
@@ -1545,5 +1542,5 @@ if ($id > 0 || ! empty($ref))
 
 $db->close();
 
-llxFooter('$Date$	- $Revision$');
+llxFooter('$Date: 2011/08/23 18:40:49 $	- $Revision: 1.235 $');
 ?>

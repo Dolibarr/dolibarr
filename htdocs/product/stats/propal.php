@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	    \file       htdocs/product/stats/propal.php
- *      \ingroup    product, service, propal
+ *      \ingroup    product service propal
  *		\brief      Page des stats des propals pour un produit
- *		\version    $Id$
+ *		\version    $Id: propal.php,v 1.58 2011/08/08 16:07:47 eldy Exp $
  */
 
 
@@ -185,5 +184,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/08 16:07:47 $ - $Revision: 1.58 $');
 ?>

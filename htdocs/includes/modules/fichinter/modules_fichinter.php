@@ -14,8 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * or see http://www.gnu.org/
  */
 
@@ -24,11 +23,10 @@
  *  \ingroup    ficheinter
  *  \brief      Fichier contenant la classe mere de generation des fiches interventions en PDF
  *   et la classe mere de numerotation des fiches interventions
- *   \version    $Id$
+ *   \version    $Id: modules_fichinter.php,v 1.44 2011/08/11 12:14:03 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
-require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 
 
 /**
@@ -172,10 +170,10 @@ function fichinter_create($db, $object, $modele='', $outputlangs='')
 
 	// Charge le modele
 	$file = "pdf_".$modele.".modules.php";
-	
+
 	// On verifie l'emplacement du modele
 	$file = dol_buildpath($dir.$file);
-	
+
 	if (file_exists($file))
 	{
 		$classname = "pdf_".$modele;
@@ -220,7 +218,7 @@ function fichinter_delete_preview($db, $fichinterid, $fichinterref='')
 
 	if (!$fichinterref)
 	{
-		$fichinter = new Fichinter($db,"",$fichinterid);
+		$fichinter = new Fichinter($db);
 		$fichinter->fetch($fichinterid);
 		$fichinterref = $fichinter->ref;
 	}

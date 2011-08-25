@@ -15,15 +15,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	    \file       htdocs/comm/action/rapport/index.php
  *      \ingroup    commercial
  *		\brief      Page with reports of actions
- *		\version    $Id$
+ *		\version    $Id: index.php,v 1.49 2011/08/17 15:56:26 eldy Exp $
  */
 
 require("../../../main.inc.php");
@@ -117,7 +116,7 @@ if ($resql)
 			print '<td align="center">'.$obj->cc.'</td>';
 
 			print '<td>';
-			print '<a href="index.php?action=builddoc&amp;page='.$page.'&amp;month='.$obj->month.'&amp;year='.$obj->year.'">'.img_file_new().'</a>';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?action=builddoc&amp;page='.$page.'&amp;month='.$obj->month.'&amp;year='.$obj->year.'">'.img_picto('','filenew').'</a>';
 			print '</td>';
 
 			$name = "actions-".$obj->month."-".$obj->year.".pdf";
@@ -151,5 +150,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/17 15:56:26 $ - $Revision: 1.49 $');
 ?>

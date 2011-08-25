@@ -32,11 +32,11 @@
    *
    * @author Walter Torres <walter@torres.ws> [with a *lot* of help!]
    *
-   * @version $Revision$
+   * @version $Revision: 1.15 $
    * @copyright copyright information
    * @license GNU General Public Licence
    *
-   * $Id$
+   * $Id: SMTPs.php,v 1.15 2011/07/12 22:19:02 eldy Exp $
    *
    **/
 
@@ -1918,8 +1918,8 @@ class SMTPs
     */
     function setBodyContent ( $strContent, $strType = 'plain' )
     {
-        if ( $strContent )
-        {
+        //if ( $strContent )
+        //{
             if ( $strType == 'html' )
                 $strMimeType = 'text/html';
             else
@@ -1937,7 +1937,7 @@ class SMTPs
 
             if ( $this->getMD5flag() )
                 $this->_msgContent[$strType]['md5']      = md5($strContent);
-        }
+        //}
     }
 
    /**
@@ -2520,7 +2520,10 @@ class SMTPs
 // ** CSV Version Control Info
 
  /**
-  * $Log$
+  * $Log: SMTPs.php,v $
+  * Revision 1.15  2011/07/12 22:19:02  eldy
+  * Fix: Attachment fails if content was empty
+  *
   * Revision 1.14  2011/06/20 23:17:50  hregis
   * Fix: use best structure of mail
   *

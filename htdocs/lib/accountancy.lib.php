@@ -13,28 +13,29 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file			htdocs/lib/accountancy.lib.php
  *  \brief			Library of accountancy functions
- * 	\version		$Id$
+ * 	\version		$Id: accountancy.lib.php,v 1.3 2011/07/31 23:25:31 eldy Exp $
  */
 
-
+/**
+ * @param $db
+ * @param $year
+ * @param $socid
+ */
 function get_ca_propal ($db, $year, $socid)
 {
-
-	$sql = "SELECT sum(f.price - f.remise) as sum FROM ".MAIN_DB_PREFIX."propal as f WHERE fk_statut in (1,2,4) AND date_format(f.datep, '%Y') = $year ";
+	$sql = "SELECT sum(f.price - f.remise) as sum FROM ".MAIN_DB_PREFIX."propal as f WHERE fk_statut in (1,2,4) AND date_format(f.datep, '%Y') = '".$year."'";
 	if ($socid)
 	{
 		$sql .= " AND f.fk_soc = $socid";
 	}
 
 	$result = $db->query($sql);
-
 	if ($result)
 	{
 		$res = $db->fetch_object($result);
@@ -56,14 +57,13 @@ function get_ca ($db, $year, $socid)
 	if ($conf->compta->mode != 'CREANCES-DETTES') {
 		$sql .= " AND f.paye = 1";
 	}
-	$sql .= " AND date_format(f.datef , '%Y') = $year ";
+	$sql .= " AND date_format(f.datef , '%Y') = '".$year."'";
 	if ($socid)
 	{
 		$sql .= " AND f.fk_soc = $socid";
 	}
 
 	$result = $db->query($sql);
-
 	if ($result)
 	{
 		$res = $db->fetch_object($result);

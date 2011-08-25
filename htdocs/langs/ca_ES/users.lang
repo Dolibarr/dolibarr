@@ -38,7 +38,6 @@ NewUser=Nou usuari
 CreateUser=Crear usuari
 SearchAGroup=Cercar un grup
 SearchAUser=Cercar un usuari
-ErrorFailedToSendPassword=Error en l'enviament de la contrasenya
 LoginNotDefined=L'usuari no està definit
 NameNotDefined=El nom no està definit
 ListOfUsers=Llistat d'usuaris

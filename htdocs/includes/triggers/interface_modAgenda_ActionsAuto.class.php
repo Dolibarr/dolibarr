@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2009-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/includes/triggers/interface_modAgenda_ActionsAuto.class.php
  *  \ingroup    agenda
  *  \brief      Trigger file for agenda module
- *	\version	$Id$
+ *	\version	$Id: interface_modAgenda_ActionsAuto.class.php,v 1.36 2011/07/31 23:29:46 eldy Exp $
  */
 
 
@@ -50,6 +51,7 @@ class InterfaceActionsAuto
         $this->family = "agenda";
         $this->description = "Triggers of this module add actions in agenda according to setup made in agenda setup.";
         $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
+        $this->picto = 'action';
     }
 
     /**
@@ -330,9 +332,9 @@ class InterfaceActionsAuto
             $langs->load("interventions");
             $langs->load("agenda");
 
-            $object->actiontypecode='AC_OTH';
-            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InterventionValidatedInDolibarr",$object->ref);
-            $object->actionmsg=$langs->transnoentities("InterventionValidatedInDolibarr",$object->ref);
+            $object->actiontypecode='AC_EMAIL';
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InterventionSentByEMail",$object->ref);
+            $object->actionmsg=$langs->transnoentities("InterventionSentByEMail",$object->ref);
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
             // Parameters $object->sendotid defined by caller
@@ -548,8 +550,14 @@ class InterfaceActionsAuto
         {
 			$now=dol_now();
 
+            require_once(DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php');
+            require_once(DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php');
+			$contactforaction=new Contact($this->db);
+            $societeforaction=new Societe($this->db);
+            if ($object->sendtoid > 0) $contactforaction->fetch($object->sendtoid);
+            if ($object->socid > 0)    $societeforaction->fetch($object->socid);
+
 			// Insertion action
-			require_once(DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php');
 			require_once(DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php');
 			$actioncomm = new ActionComm($this->db);
 			$actioncomm->type_code   = $object->actiontypecode;
@@ -560,8 +568,8 @@ class InterfaceActionsAuto
 			$actioncomm->durationp   = 0;
 			$actioncomm->punctual    = 1;
 			$actioncomm->percentage  = -1;   // Not applicable
-			$actioncomm->contact     = new Contact($this->db,$object->sendtoid);
-			$actioncomm->societe     = new Societe($this->db,$object->socid);
+			$actioncomm->contact     = $contactforaction;
+			$actioncomm->societe     = $societeforaction;
 			$actioncomm->author      = $user;   // User saving action
 			//$actioncomm->usertodo  = $user;	// User affected to action
 			$actioncomm->userdone    = $user;	// User doing action

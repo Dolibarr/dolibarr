@@ -14,41 +14,31 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/core/class/commonobject.class.php
  *	\ingroup    core
  *	\brief      File of parent class of all other business classes (invoices, contracts, proposals, orders, ...)
- *	\version    $Id$
+ *	\version    $Id: commonobject.class.php,v 1.159 2011/08/22 22:04:22 eldy Exp $
  */
 
 
 /**
  *	\class 		CommonObject
- *	\brief 		Class of all other business classes (invoices, contracts, proposals, orders, ...)
+ *	\brief 		Parent class of all other business classes (invoices, contracts, proposals, orders, ...)
  */
 
-class CommonObject
+abstract class CommonObject
 {
 	var $db;
 
-	var $linkedObjectBlock;
-	var $objectid;
+	var $canvas;                // Contains canvas name if it is
 
-	// Instantiate hook classe of thirdparty module
-	var $hooks=array();
 
-	/**
-	 *    Constructeur de la classe
-	 *    @param	DB		Handler acces base de donnees
-	 */
-	function CommonObject($DB)
-	{
-		$this->db = $DB;
-	}
+	// No constructor as it is an abstract class
+
 
 	/**
 	 *      \brief      Check if ref is used.
@@ -78,11 +68,12 @@ class CommonObject
 	}
 
 	/**
-	 *      \brief      Add a link between element $this->element and a contact
-	 *      \param      fk_socpeople        Id of contact to link
-	 *   	\param 		type_contact 		Type of contact (code or id)
-	 *      \param      source              external=Contact extern (llx_socpeople), internal=Contact intern (llx_user)
-	 *      \return     int                 <0 if KO, >0 if OK
+	 *      Add a link between element $this->element and a contact
+	 *      @param      fk_socpeople        Id of contact to link
+	 *   	@param 		type_contact 		Type of contact (code or id)
+	 *      @param      source              external=Contact extern (llx_socpeople), internal=Contact intern (llx_user)
+	 *      @param      notrigger			Disable all triggers
+	 *      @return     int                 <0 if KO, >0 if OK
 	 */
 	function add_contact($fk_socpeople, $type_contact, $source='external',$notrigger=0)
 	{
@@ -168,37 +159,38 @@ class CommonObject
 	}
 
 	/**
-	 *      \brief      Update a link to contact line
-	 *      \param      rowid               Id of line contact-element
-	 * 		\param		statut	            New status of link
-	 *      \param      type_contact_id     Id of contact type
-	 *      \return     int                 <0 if KO, >= 0 if OK
+	 *      Update a link to contact line
+	 *      @param      rowid               Id of line contact-element
+	 * 		@param		statut	            New status of link
+	 *      @param      type_contact_id     Id of contact type (not modified if 0)
+	 *      @return     int                 <0 if KO, >= 0 if OK
 	 */
-	function update_contact($rowid, $statut, $type_contact_id)
+	function update_contact($rowid, $statut, $type_contact_id=0)
 	{
 		// Insertion dans la base
 		$sql = "UPDATE ".MAIN_DB_PREFIX."element_contact set";
-		$sql.= " statut = ".$statut.",";
-		$sql.= " fk_c_type_contact = '".$type_contact_id ."'";
+		$sql.= " statut = ".$statut;
+		if ($type_contact_id) $sql.= ", fk_c_type_contact = '".$type_contact_id ."'";
 		$sql.= " where rowid = ".$rowid;
-		// Retour
-		if (  $this->db->query($sql) )
+		$resql=$this->db->query($sql);
+		if ($resql)
 		{
 			return 0;
 		}
 		else
 		{
-			dol_print_error($this->db);
+			$this->error=$this->db->lasterror();
 			return -1;
 		}
 	}
 
 	/**
-	 *    \brief      Delete a link to contact line
-	 *    \param      rowid			Id of link line to delete
-	 *    \return     statur        >0 si ok, <0 si ko
+	 *    Delete a link to contact line
+	 *    @param      	rowid			Id of contact link line to delete
+	 *    @param		notrigger		Disable all triggers
+	 *    @return     	int				>0 if OK, <0 if KO
 	 */
-	function delete_contact($rowid,$notrigger=0)
+	function delete_contact($rowid, $notrigger=0)
 	{
 		global $user,$langs,$conf;
 
@@ -262,10 +254,10 @@ class CommonObject
 
 	/**
 	 *    Get array of all contacts for an object
-	 *    @param		statut		Status of lines to get (-1=all)
-	 *    @param		source		Source of contact: external or thirdparty (llx_socpeople) or internal (llx_user)
-	 *    @param		list		0:all, 1:just id
-	 *    @return		array		Array of contacts
+	 *    @param		statut		int          Status of lines to get (-1=all)
+	 *    @param		source		string       Source of contact: external or thirdparty (llx_socpeople) or internal (llx_user)
+	 *    @param		int         list         0:Return array contains all properties, 1:Return array contains just id
+	 *    @return		array		             Array of contacts
 	 */
 	function liste_contact($statut=-1,$source='external',$list=0)
 	{
@@ -276,7 +268,7 @@ class CommonObject
 		$sql = "SELECT ec.rowid, ec.statut, ec.fk_socpeople as id";
 		if ($source == 'internal') $sql.=", '-1' as socid";
 		if ($source == 'external' || $source == 'thirdparty') $sql.=", t.fk_soc as socid";
-		$sql.= ", t.name as nom, t.firstname";
+		$sql.= ", t.civilite as civility, t.name as lastname, t.firstname, t.email";
 		$sql.= ", tc.source, tc.element, tc.code, tc.libelle";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact tc";
 		$sql.= ", ".MAIN_DB_PREFIX."element_contact ec";
@@ -305,7 +297,9 @@ class CommonObject
 				{
 					$transkey="TypeContact_".$obj->element."_".$obj->source."_".$obj->code;
 					$libelle_type=($langs->trans($transkey)!=$transkey ? $langs->trans($transkey) : $obj->libelle);
-					$tab[$i]=array('source'=>$obj->source,'socid'=>$obj->socid,'id'=>$obj->id,'nom'=>$obj->nom, 'firstname'=>$obj->firstname,
+					$tab[$i]=array('source'=>$obj->source,'socid'=>$obj->socid,'id'=>$obj->id,
+					               'nom'=>$obj->lastname,      // For backward compatibility
+					               'civility'=>$obj->civility, 'lastname'=>$obj->lastname, 'firstname'=>$obj->firstname, 'email'=>$obj->email,
 					               'rowid'=>$obj->rowid,'code'=>$obj->code,'libelle'=>$libelle_type,'status'=>$obj->statut);
 				}
 				else
@@ -326,43 +320,51 @@ class CommonObject
 		}
 	}
 
-	/**
-	 *    \brief      Le detail d'un contact
-	 *    \param      rowid      L'identifiant du contact
-	 *    \return     object     L'objet construit par DoliDb.fetch_object
-	 */
-	function detail_contact($rowid)
+
+    /**
+     * 		Update status of a contact linked to object
+     *
+     * 		@param		$rowid		Id of link between object and contact
+     * 		@return		int			<0 if KO, >=0 if OK
+     */
+	function swapContactStatus($rowid)
 	{
 		$sql = "SELECT ec.datecreate, ec.statut, ec.fk_socpeople, ec.fk_c_type_contact,";
-		$sql.= " tc.code, tc.libelle,";
-		$sql.= " s.fk_soc";
+		$sql.= " tc.code, tc.libelle";
+		//$sql.= ", s.fk_soc";
 		$sql.= " FROM (".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as tc)";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as s ON ec.fk_socpeople=s.rowid";	// Si contact de type external, alors il est li� � une societe
+		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as s ON ec.fk_socpeople=s.rowid";	// Si contact de type external, alors il est lie a une societe
 		$sql.= " WHERE ec.rowid =".$rowid;
 		$sql.= " AND ec.fk_c_type_contact=tc.rowid";
 		$sql.= " AND tc.element = '".$this->element."'";
 
+		dol_syslog(get_class($object)."::swapContactStatus sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
 			$obj = $this->db->fetch_object($resql);
-			return $obj;
+		    $newstatut = ($obj->statut == 4) ? 5 : 4;
+		    $result = $this->update_contact($rowid, $newstatut);
+		    $this->db->free($resql);
+		    return $result;
 		}
 		else
 		{
 			$this->error=$this->db->error();
 			dol_print_error($this->db);
-			return null;
+			return -1;
 		}
+
 	}
 
 	/**
 	 *      Return array with list of possible values for type of contacts
 	 *      @param      source      internal, external or all if not defined
 	 *      @param		order		Sort order by : code or rowid
-	 *      @return     array       List of type of contacts
+	 *      @param      option      0=Return array id->label, 1=Return array code->label
+	 *      @return     array       Array list of type of contacts (id->label if option=0, code->label if option=1)
 	 */
-	function liste_type_contact($source='internal', $order='code')
+	function liste_type_contact($source='internal', $order='code', $option=0)
 	{
 		global $langs;
 
@@ -385,7 +387,8 @@ class CommonObject
 
 				$transkey="TypeContact_".$this->element."_".$source."_".$obj->code;
 				$libelle_type=($langs->trans($transkey)!=$transkey ? $langs->trans($transkey) : $obj->libelle);
-				$tab[$obj->rowid]=$libelle_type;
+				if (empty($option)) $tab[$obj->rowid]=$libelle_type;
+				else $tab[$obj->code]=$libelle_type;
 				$i++;
 			}
 			return $tab;
@@ -517,8 +520,8 @@ class CommonObject
 	}
 
 	/**
-	 *		Charge l'adresse d'id $this->fk_address dans this->address
-	 *		@param      fk_address 		Id de l'adresse
+	 *		Load delivery adresse id into $this->fk_address
+	 *		@param      fk_address 		Id of address
 	 *		@return		int				<0 if KO, >0 if OK
 	 */
 	function fetch_address($fk_address)
@@ -585,15 +588,21 @@ class CommonObject
 	{
 		global $conf;
 
-		$result=false;
-
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$table." SET ";
 		$sql.= $field." = '".$value."'";
 		$sql.= " WHERE rowid = ".$id;
 
 		dol_syslog("CommonObject::updateObjectField sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (! $resql) dol_print_error($this->db);
+		if ($resql)
+		{
+			return 1;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			return -1;
+		}
 	}
 
 	/**
@@ -1275,12 +1284,13 @@ class CommonObject
 					$classpath = $element.'/class';
 
 					// To work with non standard path
-					if ($objecttype == 'facture') { $classpath = 'compta/facture/class'; }
-		            if ($objecttype == 'propal')  { $classpath = 'comm/propal/class'; }
-		            if ($objecttype == 'shipping') { $classpath = 'expedition/class'; $subelement = 'expedition'; $module = 'expedition_bon'; }
-		            if ($objecttype == 'delivery') { $classpath = 'livraison/class'; $subelement = 'livraison'; $module = 'livraison_bon'; }
-		            if ($objecttype == 'invoice_supplier') { $classpath = 'fourn/class'; }
-		            if ($objecttype == 'order_supplier')   { $classpath = 'fourn/class'; }
+					if ($objecttype == 'facture')			{ $classpath = 'compta/facture/class'; }
+		            if ($objecttype == 'propal')			{ $classpath = 'comm/propal/class'; }
+		            if ($objecttype == 'shipping')			{ $classpath = 'expedition/class'; $subelement = 'expedition'; $module = 'expedition_bon'; }
+		            if ($objecttype == 'delivery')			{ $classpath = 'livraison/class'; $subelement = 'livraison'; $module = 'livraison_bon'; }
+		            if ($objecttype == 'invoice_supplier')	{ $classpath = 'fourn/class'; }
+		            if ($objecttype == 'order_supplier')	{ $classpath = 'fourn/class'; }
+		            if ($objecttype == 'fichinter')			{ $classpath = 'fichinter/class'; $subelement ='fichinter'; $module ='ficheinter'; }
 
 		            $classfile = strtolower($subelement); $classname = ucfirst($subelement);
 		            if ($objecttype == 'invoice_supplier') { $classfile = 'fournisseur.facture'; $classname='FactureFournisseur'; }
@@ -1314,8 +1324,8 @@ class CommonObject
 	/**
 	 *      Set statut of an object
 	 *      @param		statut			Statut to set
-	 *      @param		elementid		Id of element to force (use this->id by default)
-	 *      @param		elementtype		Type of element to force (use ->this->element by default)
+	 *      @param		elementId		Id of element to force (use this->id by default)
+	 *      @param		elementType		Type of element to force (use ->this->element by default)
 	 *      @return     int				<0 if ko, >0 if ok
 	 */
 	function setStatut($statut,$elementId='',$elementType='')
@@ -1389,31 +1399,39 @@ class CommonObject
 	}
 
     /**
-     *  Load type of canvas of an object
+     *  Load type of canvas of an object if it exists
+     *
      *  @param      id      Record id
      *  @param      ref     Record ref
+     *  @return		int		<0 if KO, 0 if nothing done, >0 if OK
      */
     function getCanvas($id=0,$ref='')
     {
         global $conf;
 
+        if (empty($id) && empty($ref)) return 0;
+        if (! empty($conf->global->MAIN_DISABLE_CANVAS)) return 0;    // To increase speed. Not enabled by default.
+
+        // Clean parameters
         $ref = trim($ref);
 
         $sql = "SELECT rowid, canvas";
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
         $sql.= " WHERE entity = ".$conf->entity;
-        if (!empty($id)) $sql.= " AND rowid = ".$id;
+        if (!empty($id))  $sql.= " AND rowid = ".$id;
         if (!empty($ref)) $sql.= " AND ref = '".$ref."'";
 
         $resql = $this->db->query($sql);
         if ($resql)
         {
             $obj = $this->db->fetch_object($resql);
-
-            $this->id       = $obj->rowid;
-            $this->canvas   = $obj->canvas;
-
-            return 1;
+            if ($obj)
+            {
+                $this->id       = $obj->rowid;
+                $this->canvas   = $obj->canvas;
+                return 1;
+            }
+            else return 0;
         }
         else
         {
@@ -1422,55 +1440,6 @@ class CommonObject
         }
     }
 
-
-	/**
-	 *	Instantiate hooks of thirdparty module
-	 *	@param	$type	Type of hook
-	 */
-	function callHooks($arraytype)
-	{
-		global $conf;
-
-		if (! is_array($arraytype)) $arraytype=array($arraytype);
-
-		foreach($conf->hooks_modules as $module => $hooks)
-		{
-			if ($conf->$module->enabled)
-			{
-				foreach($arraytype as $type)
-				{
-					if (in_array($type,$hooks))
-					{
-						$path 		= '/'.$module.'/class/';
-						$actionfile = 'actions_'.$module.'.class.php';
-						$daofile 	= 'dao_'.$module.'.class.php';
-						$pathroot	= '';
-
-						// Include actions class (controller)
-						$resaction=dol_include_once($path.$actionfile);
-
-						// Include dataservice class (model)
-						$resdao=dol_include_once($path.$daofile);
-
-						// Instantiate actions class (controller)
-						if ($resaction)
-						{
-    						$controlclassname = 'Actions'.ucfirst($module);
-    						$objModule = new $controlclassname($this->db);
-    						$this->hooks[$type][$objModule->module_number] = $objModule;
-						}
-
-                        if ($resdao)
-                        {
-    						// Instantiate dataservice class (model)
-    						$modelclassname = 'Dao'.ucfirst($module);
-    						$this->hooks[$type][$objModule->module_number]->object = new $modelclassname($this->db);
-                        }
-					}
-				}
-			}
-		}
-	}
 
 	/**
 	 * 	Get special code of line
@@ -1624,14 +1593,15 @@ class CommonObject
             }
 
         	// To work with non standard path
-            if ($objecttype == 'facture') { $tplpath = 'compta/'.$element; }
-            if ($objecttype == 'propal')  { $tplpath = 'comm/'.$element; }
-            if ($objecttype == 'shipping') { $tplpath = 'expedition'; }
-            if ($objecttype == 'delivery') { $tplpath = 'livraison'; }
+            if ($objecttype == 'facture')          { $tplpath = 'compta/'.$element; }
+            if ($objecttype == 'propal')           { $tplpath = 'comm/'.$element; }
+            if ($objecttype == 'shipping')         { $tplpath = 'expedition'; }
+            if ($objecttype == 'delivery')         { $tplpath = 'livraison'; }
             if ($objecttype == 'invoice_supplier') { $tplpath = 'fourn/facture'; }
             if ($objecttype == 'order_supplier')   { $tplpath = 'fourn/commande'; }
 
-            $this->linkedObjectBlock = $objects;
+            global $linkedObjectBlock;
+            $linkedObjectBlock = $objects;
 
             dol_include_once('/'.$tplpath.'/tpl/linkedobjectblock.tpl.php');
         }
@@ -1648,8 +1618,10 @@ class CommonObject
      *  TODO Edit templates to use global variables and include them directly in controller call
 	 *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
      *  @param          $dateSelector       1=Show also date range input fields
+     *  @param			$seller				Object thirdparty who sell
+     *  @param			$buyer				Object thirdparty who buy
 	 */
-	function formAddPredefinedProduct($dateSelector,$seller,$buyer)
+	function formAddPredefinedProduct($dateSelector,$seller,$buyer,$hookmanager=false)
 	{
 		global $conf,$langs,$object;
 		global $html,$bcnd,$var;
@@ -1664,7 +1636,7 @@ class CommonObject
      *  But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
      *  @param          $dateSelector       1=Show also date range input fields
      */
-	function formAddFreeProduct($dateSelector,$seller,$buyer)
+	function formAddFreeProduct($dateSelector,$seller,$buyer,$hookmanager=false)
 	{
 		global $conf,$langs,$object;
 		global $html,$bcnd,$var;
@@ -1683,12 +1655,13 @@ class CommonObject
      *  TODO Move this into an output class file (htmlline.class.php)
      *  If lines are into a template, title must also be into a template
      *  But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
-     *  @param      $seller            Object of seller third party
-     *  @param      $buyer             Object of buyer third party
-     *  @param		$selected		   Object line selected
-     *  @param      $dateSelector      1=Show also date range input fields
+     *  @param      $action				Action code
+     *  @param      $seller            	Object of seller third party
+     *  @param      $buyer             	Object of buyer third party
+     *  @param		$selected		   	Object line selected
+     *  @param      $dateSelector      	1=Show also date range input fields
 	 */
-	function printObjectLines($action='viewline',$seller,$buyer,$selected=0,$dateSelector=0)
+	function printObjectLines($action='viewline',$seller,$buyer,$selected=0,$dateSelector=0,$hookmanager=false)
 	{
 		global $conf,$langs;
 
@@ -1731,13 +1704,17 @@ class CommonObject
 		{
 			$var=!$var;
 
-			if (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line))
+			if (is_object($hookmanager) && ( ($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line) ) )
 			{
-				if (empty($line->fk_parent_line)) $this->hooks['objectcard'][$line->special_code]->printObjectLine($action,$this,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected);
+				if (empty($line->fk_parent_line))
+				{
+					$parameters = array('line'=>$line,'var'=>$var,'num'=>$num,'i'=>$i,'dateSelector'=>$dateSelector,'seller'=>$seller,'buyer'=>$buyer,'selected'=>$selected);
+					$reshook=$hookmanager->executeHooks('printObjectLine',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+				}
 			}
 			else
 			{
-				$this->printLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected);
+				$this->printLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected,$hookmanager);
 			}
 
 			$i++;
@@ -1761,7 +1738,7 @@ class CommonObject
      *  @param      $buyer             Object of buyer third party
      *  @param		$selected		   Object line selected
 	 */
-	function printLine($action='viewline',$line,$var=true,$num=0,$i=0,$dateSelector=0,$seller,$buyer,$selected=0)
+	function printLine($action='viewline',$line,$var=true,$num=0,$i=0,$dateSelector=0,$seller,$buyer,$selected=0,$hookmanager=false)
 	{
 		global $conf,$langs,$user;
 		global $html,$bc,$bcdd;
@@ -1829,7 +1806,7 @@ class CommonObject
      *  If lines are into a template, title must also be into a template
      *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
 	 */
-	function printOriginLinesList($object)
+	function printOriginLinesList($hookmanager=false)
 	{
 		global $langs;
 
@@ -1849,9 +1826,13 @@ class CommonObject
 		{
 			$var=!$var;
 
-			if (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line))
+			if (is_object($hookmanager) && ( ($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line) ) )
 			{
-				if (empty($line->fk_parent_line)) $object->hooks['objectcard'][$line->special_code]->printOriginObjectLine($this,$line,$var,$i);
+				if (empty($line->fk_parent_line))
+				{
+					$parameters=array('line'=>$line,'var'=>$var,'i'=>$i);
+					$reshook=$hookmanager->executeHooks('printOriginObjectLine',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+				}
 			}
 			else
 			{
@@ -1899,7 +1880,7 @@ class CommonObject
 			$this->tpl['label'].= $productstatic->getNomUrl(1);
 			$this->tpl['label'].= $line->label?' - '.$line->label:'';
 			// Dates
-			if ($date_start || $date_end)
+			if ($line->product_type == 1 && ($date_start || $date_end))
 			{
 				$this->tpl['label'].= get_date_range($date_start,$date_end);
 			}
@@ -1909,7 +1890,7 @@ class CommonObject
 			$this->tpl['label'].= ($line->product_type == -1 ? '&nbsp;' : ($line->product_type == 1 ? img_object($langs->trans(''),'service') : img_object($langs->trans(''),'product')));
 			$this->tpl['label'].= ($line->label ? '&nbsp;'.$line->label : '');
 			// Dates
-			if ($date_start || $date_end)
+			if ($line->product_type == 1 && ($date_start || $date_end))
 			{
 				$this->tpl['label'].= get_date_range($date_start,$date_end);
 			}
@@ -1950,11 +1931,10 @@ class CommonObject
 
 	/**
 	 *     Add/Update extra fields
-	 *     TODO Use also type of field to do manage date fields
 	 */
 	function insertExtraFields()
 	{
-        if (sizeof($this->array_options) > 0)
+	    if (sizeof($this->array_options) > 0)
         {
             $this->db->begin();
 

@@ -31,6 +31,7 @@ ErrorSupplierCodeAlreadyUsed=Código de proveedor ya utilizado
 ErrorBadParameters=Parámetros incorrectos
 ErrorBadValueForParameter=Valor '%s' incorrecto para el parámetro '%s'
 ErrorBadImageFormat=La imagen no tiene un formato reconocido
+ErrorBadDateFormat=El valor '%s' tiene un formato de fecha no reconocido
 ErrorFailedToWriteInDir=Imposible escribir en el directorio %s
 ErrorFoundBadEmailInFile=Encontrada sintaxis incorrecta en email en %s líneas en archivo (ejemplo linea %s con email=%s)
 ErrorUserCannotBeDelete=El usuario no puede ser eliminado. Quizá esté asociado a elementos de Dolibarr.
@@ -82,3 +83,7 @@ ErrorBadMask=Error en la máscara
 ErrorBadMaskFailedToLocatePosOfSequence=Error, sin número de secuencia en la máscara
 ErrorBadMaskBadRazMonth=Error, valor de vuelta a 0 incorrecto
 ErrorSelectAtLeastOne=Error. Seleccione al menos una entrada.
+ErrorProductWithRefNotExist=La referencia de producto '<i>%s</i>' no existe
+ErrorDeleteNotPossibleLineIsConsolidated=Eliminación imposible ya que el registro está enlazado a una transacción bancaria conciliada
+ErrorProdIdAlreadyExist=%s se encuentra asignado a otro tercero
+ErrorFailedToSendPassword=Error en el envío de la contraseña

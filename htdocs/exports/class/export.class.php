@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,21 +13,20 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/exports/class/export.class.php
  *	\ingroup    export
- *	\brief      Fichier de la classe des exports
- *	\version    $Id$
+ *	\brief      File of class to manage exports
+ *	\version    $Id: export.class.php,v 1.14 2011/08/12 07:11:08 hregis Exp $
  */
 
 
 /**
  *	\class 		Export
- *	\brief 		Classe permettant la gestion des exports
+ *	\brief 		Class to manage exports
  */
 class Export
 {
@@ -72,12 +71,33 @@ class Export
 
         $var=true;
         $i=0;
-
-		//$dir=DOL_DOCUMENT_ROOT."/includes/modules";
-		foreach($conf->file->dol_document_root as $dirroot)
+        
+        foreach ($conf->file->dol_document_root as $type => $dirroot)
 		{
-			$dir = $dirroot.'/includes/modules';
+			$modulesdir[] = $dirroot . "/includes/modules/";
+			
+			if ($type == 'alt')
+			{	
+				$handle=@opendir($dirroot);
+				if (is_resource($handle))
+				{
+					while (($file = readdir($handle))!==false)
+					{
+					    if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
+					    {
+					    	if (is_dir($dirroot . '/' . $file . '/includes/modules/'))
+					    	{
+					    		$modulesdir[] = $dirroot . '/' . $file . '/includes/modules/';
+					    	}
+					    }
+					}
+					closedir($handle);
+				}
+			}
+		}
 
+		foreach($modulesdir as $dir)
+		{
 			// Search available exports
 			$handle=@opendir($dir);
 			if (is_resource($handle))
@@ -85,7 +105,7 @@ class Export
                 // Search module files
 			    while (($file = readdir($handle))!==false)
 				{
-					if (preg_match("/^(mod.*)\.class\.php$/i",$file,$reg))
+					if (is_readable($dir.$file) && preg_match("/^(mod.*)\.class\.php$/i",$file,$reg))
 					{
 						$modulename=$reg[1];
 
@@ -97,7 +117,7 @@ class Export
 						if ($enabled)
 						{
 							// Chargement de la classe
-							$file = $dir."/".$modulename.".class.php";
+							$file = $dir.$modulename.".class.php";
 							$classname = $modulename;
 							require_once($file);
 							$module = new $classname($this->db);
@@ -174,8 +194,8 @@ class Export
 						}
 					}
 				}
+                closedir($handle);
 			}
-			closedir($handle);
 		}
 	}
 
@@ -214,11 +234,12 @@ class Export
 	 *      \param      model               Export format
 	 *      \param      datatoexport        Name of dataset to export
 	 *      \param      array_selected      Filter on array of fields to export
+	 *      \param		sqlquery = ''		if set, transmit a sql query instead of building it from arrays
 	 *      \remarks    Les tableaux array_export_xxx sont deja chargees pour le bon datatoexport
 	 *                  aussi le parametre datatoexport est inutilise
 	 */
-	function build_file($user, $model, $datatoexport, $array_selected)
-	{
+	function build_file($user, $model, $datatoexport, $array_selected, $sqlquery = '')
+ 	{
 		global $conf,$langs;
 
 		$indice=0;
@@ -233,7 +254,8 @@ class Export
 		require_once($dir.$file);
 		$objmodel = new $classname($db);
 
-		$sql=$this->build_sql($indice,$array_selected);
+		if ($sqlquery) $sql = $sqlquery;
+        else $sql=$this->build_sql($indice,$array_selected);
 
 		// Run the sql
 		$this->sqlusedforexport=$sql;

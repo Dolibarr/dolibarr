@@ -16,15 +16,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/product/price.php
  *	\ingroup    product
  *	\brief      Page to show product prices
- *	\version    $Id$
+ *	\version    $Id: price.php,v 1.111 2011/08/04 21:46:50 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -318,7 +317,7 @@ if ($_GET["action"] == 'edit_price' && ($user->rights->produit->creer || $user->
 
         // VAT
         print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
-        print $html->select_tva("tva_tx",$product->tva_tx,$mysoc,'',$product->id);
+        print $html->load_tva("tva_tx",$product->tva_tx,$mysoc,'',$product->id);
         print '</td></tr>';
 
 		// Price base
@@ -378,7 +377,7 @@ if ($_GET["action"] == 'edit_price' && ($user->rights->produit->creer || $user->
             if ($i == 1)
             {
                 print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
-                print $html->select_tva("tva_tx_".$i,$product->multiprices_tva_tx["$i"],$mysoc,'',$product->id);
+                print $html->load_tva("tva_tx_".$i,$product->multiprices_tva_tx["$i"],$mysoc,'',$product->id);
                 print '</td></tr>';
             }
             else
@@ -535,5 +534,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/04 21:46:50 $ - $Revision: 1.111 $');
 ?>

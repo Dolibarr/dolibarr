@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
- * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2007      Patrick Raguin	  	<patrick.raguin@gmail.com>
  *
@@ -15,15 +15,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *		\file       htdocs/categories/fiche.php
  *		\ingroup    category
  *		\brief      Page to create a new category
- *		\version	$Id$
+ *		\version	$Id: fiche.php,v 1.86 2011/08/24 11:16:43 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -131,7 +130,7 @@ if ($action == 'add' && $user->rights->categorie->creer)
 }
 
 // Confirm action
-if ($action == 'add' && $user->rights->categorie->creer)
+if (($action == 'add' || $action == 'confirmed') && $user->rights->categorie->creer)
 {
 	// Action confirmation de creation categorie
 	if ($action == 'confirmed')
@@ -235,5 +234,5 @@ if ($user->rights->categorie->creer)
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/24 11:16:43 $ - $Revision: 1.86 $');
 ?>

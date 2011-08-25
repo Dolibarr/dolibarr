@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *      \file       htdocs/adherents/admin/adherent_extrafields.php
  *		\ingroup    member
  *		\brief      Page to setup extra fields of members
- *		\version    $Id$
+ *		\version    $Id: adherent_extrafields.php,v 1.5 2011/08/03 00:45:42 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -174,7 +173,7 @@ llxHeader('',$langs->trans("MembersSetup"),$help_url);
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("OptionalFieldsSetup"),$linkback,'setup');
+print_fiche_titre($langs->trans("MembersSetup"),$linkback,'setup');
 
 
 $head = member_admin_prepare_head($adh);
@@ -204,13 +203,13 @@ $var=True;
 foreach($extrafields->attribute_type as $key => $value)
 {
 	$var=!$var;
-	print "<tr $bc[$var]>";
+	print "<tr ".$bc[$var].">";
     print "<td>".$extrafields->attribute_label[$key]."</td>\n";
 	print "<td>".$key."</td>\n";
 	print "<td>".$type2label[$extrafields->attribute_type[$key]]."</td>\n";
 	print '<td align="right">'.$extrafields->attribute_size[$key]."</td>\n";
-	print '<td align="right"><a href="".$_SERVER["PHP_SELF"]."?action=edit&attrname='.$key.'">'.img_edit().'</a>';
-	print "&nbsp; <a href=\"".$_SERVER["PHP_SELF"]."?action=delete&attrname=$key\">".img_delete()."</a></td>\n";
+	print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&attrname='.$key.'">'.img_edit().'</a>';
+	print "&nbsp; <a href=\"".$_SERVER["PHP_SELF"]."?action=delete&attrname=".$key."\">".img_delete()."</a></td>\n";
 	print "</tr>";
 	//      $i++;
 }
@@ -312,5 +311,5 @@ if ($_GET["attrname"] && $action == 'edit')
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/03 00:45:42 $ - $Revision: 1.5 $');
 ?>

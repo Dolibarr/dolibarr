@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	    \file       htdocs/contrat/index.php
  *      \ingroup    contrat
- *		\brief      Page liste des contrats
- *		\version    $Revision$
+ *		\brief      Home page of contract area
+ *		\version    $Revision: 1.85 $
  */
 
 require ("../main.inc.php");
@@ -46,6 +45,14 @@ $result = restrictedArea($user, 'contrat',$contratid,'');
 $staticcompany=new Societe($db);
 $staticcontrat=new Contrat($db);
 $staticcontratligne=new ContratLigne($db);
+$productstatic=new Product($db);
+
+
+/*
+ * Action
+ */
+
+// None
 
 
 /*
@@ -356,13 +363,94 @@ else
 
 print '<br>';
 
-
-// Not activated services
-$sql = "SELECT c.ref, c.fk_soc, cd.rowid as cid, cd.statut, cd.label, cd.description as note, cd.fk_contrat, s.nom";
-$sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
+// Last modified services
+$sql = "SELECT c.ref, c.fk_soc, ";
+$sql.= " cd.rowid as cid, cd.statut, cd.label, cd.fk_product, cd.description as note, cd.fk_contrat, cd.date_fin_validite,";
+$sql.= " s.nom,";
+$sql.= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype";
+$sql.= " FROM (".MAIN_DB_PREFIX."contratdet as cd";
 $sql.= ", ".MAIN_DB_PREFIX."contrat as c";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql.= " ) LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
+$sql.= " WHERE cd.fk_contrat = c.rowid";
+$sql.= " AND c.fk_soc = s.rowid";
+$sql.= " AND s.entity = ".$conf->entity;
+if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+if ($socid) $sql.= " AND s.rowid = ".$socid;
+$sql.= " ORDER BY cd.tms DESC";
+
+$resql=$db->query($sql);
+if ($resql)
+{
+	$num = $db->num_rows($resql);
+	$i = 0;
+
+	print '<table class="noborder" width="100%">';
+
+	print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("LastModifiedServices",$max).'</td>';
+	print "</tr>\n";
+
+	$var=True;
+	while ($i < min($num,$max))
+	{
+		$obj = $db->fetch_object($resql);
+		$var=!$var;
+		print '<tr '.$bc[$var].'>';
+		print '<td width="100" nowrap="nowrap">';
+		$staticcontrat->ref=($obj->ref?$obj->ref:$obj->fk_contrat);
+		$staticcontrat->id=$obj->fk_contrat;
+		print $staticcontrat->getNomUrl(1,16);
+		//if (1 == 1) print img_warning($langs->trans("Late"));
+		print '</td>';
+		print '<td>';
+		if ($obj->fk_product > 0)
+		{
+    		$productstatic->id=$obj->fk_product;
+            $productstatic->type=$obj->ptype;
+            $productstatic->ref=$obj->pref;
+            print $productstatic->getNomUrl(1,'',20);
+		}
+		else
+		{
+		    print '<a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"),"service");
+            if ($obj->label) print ' '.dol_trunc($obj->label,20).'</a>';
+            else print '</a> '.dol_trunc($obj->note,20);
+		}
+		print '</td>';
+		print '<td>';
+		$staticcompany->id=$obj->fk_soc;
+		$staticcompany->nom=$obj->nom;
+		print $staticcompany->getNomUrl(1,'',20);
+		print '</td>';
+		print '<td nowrap="nowrap" align="right"><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
+		$dateend=$db->jdate($obj->date_fin_validite);
+		print $staticcontratligne->LibStatut($obj->statut, 3, ($dateend && $dateend < $now)?1:0);
+		print '</a></td>';
+		print "</tr>\n";
+		$i++;
+	}
+	$db->free();
+
+	print "</table>";
+
+}
+else
+{
+	dol_print_error($db);
+}
+
+print '<br>';
+
+// Not activated services
+$sql = "SELECT c.ref, c.fk_soc, cd.rowid as cid, cd.statut, cd.label, cd.fk_product, cd.description as note, cd.fk_contrat,";
+$sql.= " s.nom,";
+$sql.= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype";
+$sql.= " FROM (".MAIN_DB_PREFIX."contratdet as cd";
+$sql.= ", ".MAIN_DB_PREFIX."contrat as c";
+$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql.= " ) LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
 $sql.= " WHERE c.statut=1";
 $sql.= " AND cd.statut = 0";
 $sql.= " AND cd.fk_contrat = c.rowid";
@@ -380,7 +468,7 @@ if ($resql)
 
 	print '<table class="noborder" width="100%">';
 
-	print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("NotActivatedServices").'</td>';
+	print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("NotActivatedServices").' <a href="'.DOL_URL_ROOT.'/contrat/services.php?mode=0">('.$num.')</a></td>';
 	print "</tr>\n";
 
 	$var=True;
@@ -395,10 +483,21 @@ if ($resql)
 		$staticcontrat->id=$obj->fk_contrat;
 		print $staticcontrat->getNomUrl(1,16);
 		print '</td>';
-		print '<td nowrap="1">';
-		print '<a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"),"service");
-		if ($obj->label) print ' '.dol_trunc($obj->label,20).'</a></td>';
-		else print '</a> '.dol_trunc($obj->note,20).'</td>';
+		print '<td nowrap="nowrap">';
+		if ($obj->fk_product > 0)
+		{
+    		$productstatic->id=$obj->fk_product;
+            $productstatic->type=$obj->ptype;
+            $productstatic->ref=$obj->pref;
+            print $productstatic->getNomUrl(1,'',20);
+		}
+		else
+		{
+		    print '<a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"),"service");
+            if ($obj->label) print ' '.dol_trunc($obj->label,20).'</a>';
+            else print '</a> '.dol_trunc($obj->note,20);
+		}
+        print '</td>';
 		print '<td>';
 		$staticcompany->id=$obj->fk_soc;
 		$staticcompany->nom=$obj->nom;
@@ -422,17 +521,19 @@ else
 
 print '<br>';
 
-// Last modified services
-$max=5;
-
-$sql = "SELECT c.ref, c.fk_soc, ";
-$sql.= " cd.rowid as cid, cd.statut, cd.label, cd.description as note, cd.fk_contrat, cd.date_fin_validite,";
-$sql.= " s.nom";
-$sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
+// Expired services
+$sql = "SELECT c.ref, c.fk_soc, cd.rowid as cid, cd.statut, cd.label, cd.fk_product, cd.description as note, cd.fk_contrat,";
+$sql.= " s.nom,";
+$sql.= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype";
+$sql.= " FROM (".MAIN_DB_PREFIX."contratdet as cd";
 $sql.= ", ".MAIN_DB_PREFIX."contrat as c";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= " WHERE cd.fk_contrat = c.rowid";
+$sql.= " ) LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
+$sql.= " WHERE c.statut=1";
+$sql.= " AND cd.statut = 4";
+$sql.= " AND cd.date_fin_validite < '".$db->idate($now)."'";
+$sql.= " AND cd.fk_contrat = c.rowid";
 $sql.= " AND c.fk_soc = s.rowid";
 $sql.= " AND s.entity = ".$conf->entity;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -447,32 +548,43 @@ if ($resql)
 
 	print '<table class="noborder" width="100%">';
 
-	print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("LastModifiedServices",min($num,$max)).'</td>';
+	print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("ListOfExpiredServices").' <a href="'.DOL_URL_ROOT.'/contrat/services.php?mode=4&filter=expired">('.$num.')</a></td>';
 	print "</tr>\n";
 
 	$var=True;
-	while ($i < min($num,$max))
+	while ($i < $num)
 	{
 		$obj = $db->fetch_object($resql);
 		$var=!$var;
 		print '<tr '.$bc[$var].'>';
+
 		print '<td width="100" nowrap="nowrap">';
 		$staticcontrat->ref=($obj->ref?$obj->ref:$obj->fk_contrat);
 		$staticcontrat->id=$obj->fk_contrat;
 		print $staticcontrat->getNomUrl(1,16);
-		//if (1 == 1) print img_warning($langs->trans("Late"));
 		print '</td>';
-		print '<td><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"),"service");
-		if ($obj->label) print ' '.dol_trunc($obj->label,20).'</a></td>';
-		else print '</a> '.dol_trunc($obj->note,20).'</td>';
+		print '<td nowrap="nowrap">';
+		if ($obj->fk_product > 0)
+		{
+    		$productstatic->id=$obj->fk_product;
+            $productstatic->type=$obj->ptype;
+            $productstatic->ref=$obj->pref;
+            print $productstatic->getNomUrl(1,'',20);
+		}
+		else
+		{
+		    print '<a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"),"service");
+            if ($obj->label) print ' '.dol_trunc($obj->label,20).'</a>';
+            else print '</a> '.dol_trunc($obj->note,20);
+		}
+		print '</td>';
 		print '<td>';
 		$staticcompany->id=$obj->fk_soc;
 		$staticcompany->nom=$obj->nom;
 		print $staticcompany->getNomUrl(1,'',20);
 		print '</td>';
-		print '<td nowrap="nowrap" align="right"><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
-		$dateend=$db->jdate($obj->date_fin_validite);
-		print $staticcontratligne->LibStatut($obj->statut, 3, ($dateend && $dateend < $now)?1:0);
+		print '<td width="16" align="right"><a href="ligne.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
+		print $staticcontratligne->LibStatut($obj->statut,3,1);
 		print '</a></td>';
 		print "</tr>\n";
 		$i++;
@@ -493,5 +605,5 @@ print '<br>';
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/08 14:25:44 $ - $Revision: 1.85 $');
 ?>

@@ -1,4 +1,4 @@
-# Doxyfile 1.7.1
+# Doxyfile 1.7.3
 
 # This file describes the settings to be used by the documentation system
 # doxygen (www.doxygen.org) for a project
@@ -31,7 +31,7 @@ PROJECT_NAME = dolibarr
 # This could be handy for archiving the generated documentation or
 # if some version control system is used.
 
-PROJECT_NUMBER = 3.0.0
+PROJECT_NUMBER = 3.1.0
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute)
 # base path where the generated documentation will be put.
@@ -105,7 +105,7 @@ INLINE_INHERITED_MEMB = NO
 # path before files name in the file list and in the header files. If set
 # to NO the shortest path that makes the file name unique will be used.
 
-FULL_PATH_NAMES = NO
+FULL_PATH_NAMES = YES
 
 # If the FULL_PATH_NAMES tag is set to YES then the STRIP_FROM_PATH tag
 # can be used to strip a user-defined part of the path. Stripping is
@@ -114,7 +114,7 @@ FULL_PATH_NAMES = NO
 # If left blank the directory from which doxygen is run is used as the
 # path to strip.
 
-STRIP_FROM_PATH = 
+STRIP_FROM_PATH = "/media/DATA/Mes Developpements/dolibarr"
 
 # The STRIP_FROM_INC_PATH tag can be used to strip a user-defined part of
 # the path mentioned in the documentation of a class, which tells
@@ -611,7 +611,7 @@ RECURSIVE = YES
 # excluded from the INPUT source files. This way you can easily exclude a
 # subdirectory from a directory tree whose root is specified with the INPUT tag.
 
-EXCLUDE = ../../mssql ../../mysql ../../pgsql ../../CVS ../../build ../../dev ../../doc ../../documents ../../htdocs/conf/conf.php ../../htdocs/includes/adodbtime ../../htdocs/includes/artichow ../../htdocs/includes/barcode ../../htdocs/includes/ckeditor ../../htdocs/includes/efc_xfss ../../htdocs/includes/fckeditor ../../htdocs/includes/flot ../../htdocs/includes/fpdf ../../htdocs/includes/geoip ../../htdocs/includes/jquery ../../htdocs/includes/magpierss ../../htdocs/includes/nusoap ../../htdocs/includes/odtphp ../../htdocs/includes/pear ../../htdocs/includes/phpexcel ../../htdocs/includes/php_writeexcel ../../htdocs/includes/phplot ../../htdocs/includes/phplot5 ../../htdocs/includes/pwc ../../htdocs/includes/scriptaculous ../../htdocs/includes/simplemail ../../htdocs/includes/smarty ../../htdocs/includes/smtps ../../htdocs/includes/tcpdf ../../htdocs/includes/vcard ../../htdocs/cashdesk/include/jscalendar ../../htdocs/avoir ../../htdocs/document ../../htdocs/documents ../../htdocs/lolix ../../htdocs/postnuke ../../htdocs/rapport ../../htdocs/telephonie ../../htdocs/voyage ../../htdocs/oscommerce_ws/ws_client_demo ../../htdocs/oscommerce_ws/ws_server ../../scripts/addons ../../scripts/courrier ../../scripts/lolix ../../scripts/energie
+EXCLUDE = ../../mssql ../../mysql ../../pgsql ../../CVS ../../build ../../dev ../../doc ../../documents ../../htdocs/conf/conf.php ../../htdocs/includes/adodbtime ../../htdocs/includes/artichow ../../htdocs/includes/barcode ../../htdocs/includes/ckeditor ../../htdocs/includes/fckeditor ../../htdocs/includes/fpdi ../../htdocs/includes/geoip ../../htdocs/includes/jquery ../../htdocs/includes/nusoap ../../htdocs/includes/odtphp ../../htdocs/includes/pear ../../htdocs/includes/phpexcel ../../htdocs/includes/smtps ../../htdocs/includes/tcpdf ../../htdocs/includes/vcard ../../htdocs/cashdesk/include/jscalendar ../../htdocs/avoir ../../htdocs/document ../../htdocs/documents ../../htdocs/lolix ../../htdocs/postnuke ../../htdocs/rapport ../../htdocs/telephonie ../../htdocs/voyage ../../htdocs/oscommerce_ws/ws_client_demo ../../htdocs/oscommerce_ws/ws_server ../../scripts/addons ../../scripts/courrier ../../scripts/lolix ../../scripts/energie
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or
 # directories that are symbolic links (a Unix filesystem feature) are excluded
@@ -796,13 +796,15 @@ HTML_FILE_EXTENSION = .html
 # each generated HTML page. If it is left blank doxygen will generate a
 # standard header.
 
-HTML_HEADER = 
+# Does not work with 1.7.3
+#HTML_HEADER = doxygen_header.html
 
 # The HTML_FOOTER tag can be used to specify a personal HTML footer for
 # each generated HTML page. If it is left blank doxygen will generate a
 # standard footer.
 
-HTML_FOOTER = 
+# Does not work with 1.7.3
+HTML_FOOTER = doxygen_footer.html
 
 # The HTML_STYLESHEET tag can be used to specify a user-defined cascading
 # style sheet that is used by each HTML page. It can be used to
@@ -1001,7 +1003,7 @@ QHG_LOCATION =
 # the ECLIPSE_DOC_ID value. After copying Eclipse needs to be restarted before
 # the help appears.
 
-GENERATE_ECLIPSEHELP = NO
+GENERATE_ECLIPSEHELP = YES
 
 # A unique identifier for the eclipse help plugin. When installing the plugin
 # the directory name containing the HTML and XML files should also have
@@ -1442,7 +1444,7 @@ PERL_PATH = /usr/bin/perl
 # fallback. It is recommended to install and use dot, since it yields more
 # powerful graphs.
 
-CLASS_DIAGRAMS = YES
+CLASS_DIAGRAMS = NO
 
 # You can define message sequence charts within doxygen comments using the \msc
 # command. Doxygen will then run the mscgen tool (see
@@ -1457,14 +1459,14 @@ MSCGEN_PATH =
 # inheritance and usage relations if the target is undocumented
 # or is not a class.
 
-HIDE_UNDOC_RELATIONS = YES
+HIDE_UNDOC_RELATIONS = NO
 
 # If you set the HAVE_DOT tag to YES then doxygen will assume the dot tool is
 # available from the path. This tool is part of Graphviz, a graph visualization
 # toolkit from AT&T and Lucent Bell Labs. The other options in this section
 # have no effect if this option is set to NO (the default)
 
-HAVE_DOT = NO
+HAVE_DOT = YES
 
 # The DOT_NUM_THREADS specifies the number of dot invocations doxygen is
 # allowed to run in parallel. When set to 0 (the default) doxygen will

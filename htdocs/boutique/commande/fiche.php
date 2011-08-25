@@ -14,17 +14,16 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id$
+ * $Id: fiche.php,v 1.25 2011/08/20 15:11:33 eldy Exp $
  */
 
 /**
  \file       htdocs/boutique/commande/fiche.php
  \ingroup    boutique
  \brief      Page fiche commande OSCommerce
- \version    $Revision$
+ \version    $Revision: 1.25 $
  */
 
 require("../../main.inc.php");
@@ -56,7 +55,7 @@ if ($_GET['id'])
 
 		print '<td width="20%">Paiement</td><td width="80%" colspan="2">'.$commande->payment_method.'</td></tr>';
 
-		print "<tr><td>Adresses</td><td>Livraison</td><td>Facturation</td></tr>";
+		print "<tr><td>".$langs->trans("Address")."</td><td>".$langs->trans("Delivery")."</td><td>".$langs->trans("Invoice")."</td></tr>";
 
 		print "<td>&nbsp;</td><td>".$commande->delivery_adr->name."<br>".$commande->delivery_adr->street."<br>".$commande->delivery_adr->cp."<br>".$commande->delivery_adr->city."<br>".$commande->delivery_adr->country."</td>";
 		print "<td>".$commande->billing_adr->name."<br>".$commande->billing_adr->street."<br>".$commande->billing_adr->cp."<br>".$commande->billing_adr->city."<br>".$commande->billing_adr->country."</td>";
@@ -155,5 +154,5 @@ print '</table><br>';
 
 $dbosc->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter("<em>Derni&egrave;re modification $Date: 2011/08/20 15:11:33 $ r&eacute;vision $Revision: 1.25 $</em>");
 ?>

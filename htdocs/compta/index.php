@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/compta/index.php
  *	\ingroup    compta
  *	\brief      Main page of accountancy area
- *	\version    $Id$
+ *	\version    $Id: index.php,v 1.186 2011/08/23 23:01:47 eldy Exp $
  */
 
 require('../main.inc.php');
@@ -100,18 +99,13 @@ print_fiche_titre($langs->trans("AccountancyTreasuryArea"));
 print '<table border="0" width="100%" class="notopnoleftnoright">';
 
 print '<tr>';
-
-if (($conf->facture->enabled && $user->rights->facture->lire) ||
-    ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire))
-{
-	print '<td valign="top" width="30%" class="notopnoleft">';
-}
+print '<td valign="top" width="30%" class="notopnoleft">';
 
 $max=3;
 
 
 /*
- * Find invoices
+ * Search invoices
  */
 if ($conf->facture->enabled && $user->rights->facture->lire)
 {
@@ -127,6 +121,9 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 	print "</table></form><br>";
 }
 
+/*
+ * Search supplier invoices
+ */
 if ($conf->fournisseur->enabled && $user->rights->fournisseur->lire)
 {
 	print '<form method="post" action="'.DOL_URL_ROOT.'/fourn/facture/index.php">';
@@ -141,6 +138,39 @@ if ($conf->fournisseur->enabled && $user->rights->fournisseur->lire)
 	print "</table></form><br>";
 }
 
+/*
+ * Search donations
+ */
+if ($conf->don->enabled && $user->rights->don->lire)
+{
+    print '<form method="post" action="'.DOL_URL_ROOT.'/compta/dons/liste.php">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchADonation").'</td></tr>';
+    print "<tr ".$bc[0].">";
+    print "<td>".$langs->trans("Ref").':</td><td><input type="text" name="search_ref" class="flat" size="18"></td>';
+    print '<td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+    //print "<tr ".$bc[0]."><td>".$langs->trans("Other").':</td><td><input type="text" name="sall" class="flat" size="18"></td>';
+    print '</tr>';
+    print "</table></form><br>";
+}
+
+/*
+ * Search expenses
+ */
+if ($conf->deplacement->enabled && $user->rights->deplacement->lire)
+{
+    print '<form method="post" action="'.DOL_URL_ROOT.'/compta/deplacement/list.php">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchATripAndExpense").'</td></tr>';
+    print "<tr ".$bc[0].">";
+    print "<td>".$langs->trans("Ref").':</td><td><input type="text" name="search_ref" class="flat" size="18"></td>';
+    print '<td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+    //print "<tr ".$bc[0]."><td>".$langs->trans("Other").':</td><td><input type="text" name="sall" class="flat" size="18"></td>';
+    print '</tr>';
+    print "</table></form><br>";
+}
 
 /**
  * Draft customers invoices
@@ -285,16 +315,8 @@ if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
 	}
 }
 
-if (($conf->facture->enabled && $user->rights->facture->lire) ||
-    ($conf->fournisseur->enabled && $user->rights->fournisseur->lire))
-{
-	print '</td>';
-	print '<td valign="top" width="70%" class="notopnoleftnoright">';
-}
-else
-{
-	print '<td valign="top" width="100%" class="notopnoleftnoright">';
-}
+print '</td>';
+print '<td valign="top" width="70%" class="notopnoleftnoright">';
 
 // Last modified customer invoices
 if ($conf->facture->enabled && $user->rights->facture->lire)
@@ -325,7 +347,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 		$i = 0;
 
 		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("BoxTitleLastCustomerBills",min($max,$num)).'</td>';
+		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("BoxTitleLastCustomerBills",$max).'</td>';
 		if ($conf->global->MAIN_SHOW_HT_ON_SUMMARY) print '<td align="right">'.$langs->trans("AmountHT").'</td>';
 		print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
 		print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
@@ -422,7 +444,7 @@ if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
 		$num = $db->num_rows($resql);
 
 		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("BoxTitleLastSupplierBills",min($max,$num)).'</td>';
+		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("BoxTitleLastSupplierBills",$max).'</td>';
 		if ($conf->global->MAIN_SHOW_HT_ON_SUMMARY) print '<td align="right">'.$langs->trans("AmountHT").'</td>';
 		print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
 		print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
@@ -474,20 +496,17 @@ if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
 
 
 
-// Last customers
-if ($conf->societe->enabled && $user->rights->societe->lire)
+// Last donations
+if ($conf->don->enabled && $user->rights->societe->lire)
 {
-	include_once(DOL_DOCUMENT_ROOT.'/societe/class/client.class.php');
+	include_once(DOL_DOCUMENT_ROOT.'/compta/dons/class/don.class.php');
 
 	$langs->load("boxes");
+    $donationstatic=new Don($db);
 
-	$sql = "SELECT s.nom, s.rowid, s.datec as dc, s.tms as dm";
-	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= " WHERE s.client IN (1, 3)";
-	$sql.= " AND s.entity = ".$conf->entity;
-	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-	if ($socid)	$sql.= " AND s.rowid = ".$socid;
+	$sql = "SELECT s.rowid, s.nom, s.prenom, s.societe, s.datedon as date, s.tms as dm, s.amount, s.fk_statut";
+	$sql.= " FROM ".MAIN_DB_PREFIX."don as s";
+	$sql.= " WHERE s.entity = ".$conf->entity;
 	$sql.= $db->order("s.tms","DESC");
 	$sql.= $db->plimit($max, 0);
 
@@ -500,25 +519,32 @@ if ($conf->societe->enabled && $user->rights->societe->lire)
 		$i = 0;
 
 		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><td>'.$langs->trans("BoxTitleLastModifiedCustomers",min($max,$num)).'</td>';
+		print '<tr class="liste_titre"><td>'.$langs->trans("BoxTitleLastModifiedDonations",$max).'</td>';
+        print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
 		print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
+        print '<td width="16">&nbsp;</td>';
 		print '</tr>';
 		if ($num)
 		{
 			$var = True;
 			$total_ttc = $totalam = $total = 0;
 
-			$customerstatic=new Client($db);
 			$var=true;
 			while ($i < $num && $i < $max)
 			{
 				$objp = $db->fetch_object($result);
-				$customerstatic->id=$objp->rowid;
-				$customerstatic->nom=$objp->nom;
 				$var=!$var;
 				print '<tr '.$bc[$var].'>';
-				print '<td>'.$customerstatic->getNomUrl(1).'</td>';
+				$donationstatic->id=$objp->rowid;
+				$donationstatic->nom=$objp->nom;
+				$donationstatic->prenom=$objp->prenom;
+				$label=$donationstatic->getFullName($langs);
+				if ($objp->societe) $label.=($label?' - ':'').$objp->societe;
+				$donationstatic->ref=$label;
+				print '<td>'.$donationstatic->getNomUrl(1).'</td>';
+                print '<td align="right">'.price($objp->amount).'</td>';
 				print '<td align="right">'.dol_print_date($db->jdate($objp->dm),'day').'</td>';
+                print '<td>'.$donationstatic->LibStatut($objp->fk_statut,3).'</td>';
 				print '</tr>';
 
 				$i++;
@@ -531,22 +557,25 @@ if ($conf->societe->enabled && $user->rights->societe->lire)
 		}
 		print '</table><br>';
 	}
+	else dol_print_error($db);
 }
 
 
-// Last suppliers
-if ($conf->fournisseur->enabled && $user->rights->societe->lire)
+// Last trips and expenses
+if ($conf->deplacement->enabled && $user->rights->deplacement->lire)
 {
-	$langs->load("boxes");
+    include_once(DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php');
 
-	$sql = "SELECT s.nom, s.rowid, s.datec as dc, s.tms as dm";
-	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= " WHERE s.fournisseur = 1";
-	$sql.= " AND s.entity = ".$conf->entity;
-	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-	if ($socid)	$sql.= " AND s.rowid = ".$socid;
-	$sql.= $db->order("s.tms","DESC");
+    $langs->load("boxes");
+
+	$sql = "SELECT u.rowid as uid, u.name, u.firstname, d.rowid, d.dated as date, d.tms as dm, d.km";
+	$sql.= " FROM ".MAIN_DB_PREFIX."deplacement as d, ".MAIN_DB_PREFIX."user as u";
+	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql.= " WHERE u.rowid = d.fk_user";
+	$sql.= " AND d.entity = ".$conf->entity;
+	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND d.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+	if ($socid)	$sql.= " AND d.fk_soc = ".$socid;
+	$sql.= $db->order("d.tms","DESC");
 	$sql.= $db->plimit($max, 0);
 
 	$result = $db->query($sql);
@@ -558,22 +587,32 @@ if ($conf->fournisseur->enabled && $user->rights->societe->lire)
 		$i = 0;
 
 		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><td>'.$langs->trans("BoxTitleLastModifiedSuppliers",min($max,$num)).'</td>';
+		print '<tr class="liste_titre">';
+		print '<td colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses",$max).'</td>';
+        print '<td align="right">'.$langs->trans("FeesKilometersOrAmout").'</td>';
 		print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
+        print '<td width="16">&nbsp;</td>';
 		print '</tr>';
 		if ($num)
 		{
 			$total_ttc = $totalam = $total = 0;
 
-			$customerstatic=new Client($db);
+			$deplacementstatic=new Deplacement($db);
+			$userstatic=new User($db);
 			while ($i < $num && $i < $max)
 			{
 				$objp = $db->fetch_object($result);
-				$customerstatic->id=$objp->rowid;
-				$customerstatic->nom=$objp->nom;
+				$deplacementstatic->ref=$objp->rowid;
+				$deplacementstatic->id=$objp->rowid;
+				$userstatic->id=$objp->uid;
+				$userstatic->nom=$objp->name;
+				$userstatic->prenom=$objp->firstname;
 				print '<tr '.$bc[$var].'>';
-				print '<td>'.$customerstatic->getNomUrl(1).'</td>';
+                print '<td>'.$deplacementstatic->getNomUrl(1).'</td>';
+				print '<td>'.$userstatic->getNomUrl(1).'</td>';
+                print '<td align="right">'.$objp->km.'</td>';
 				print '<td align="right">'.dol_print_date($db->jdate($objp->dm),'day').'</td>';
+                print '<td>'.$deplacementstatic->LibStatut($objp->fk_statut,3).'</td>';
 				print '</tr>';
 				$var=!$var;
 				$i++;
@@ -582,10 +621,11 @@ if ($conf->fournisseur->enabled && $user->rights->societe->lire)
 		}
 		else
 		{
-			print '<tr '.$bc[$var].'><td colspan="2">'.$langs->trans("None").'</td></tr>';
+			print '<tr '.$bc[$var].'><td colspan="5">'.$langs->trans("None").'</td></tr>';
 		}
 		print '</table><br>';
 	}
+    else dol_print_error($db);
 }
 
 
@@ -798,7 +838,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 		$i = 0;
 
 		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("BillsCustomersUnpaid",min($conf->liste_limit,$num)).' <a href="'.DOL_URL_ROOT.'/compta/facture/impayees.php">('.$num.')</a></td>';
+		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("BillsCustomersUnpaid",$num).' <a href="'.DOL_URL_ROOT.'/compta/facture/impayees.php">('.$num.')</a></td>';
 		if ($conf->global->MAIN_SHOW_HT_ON_SUMMARY) print '<td align="right">'.$langs->trans("AmountHT").'</td>';
 		print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
 		print '<td align="right">'.$langs->trans("Received").'</td>';
@@ -903,7 +943,7 @@ if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
 		$num = $db->num_rows($resql);
 
 		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("BillsSuppliersUnpaid",min($conf->liste_limit,$num)).' <a href="'.DOL_URL_ROOT.'/fourn/facture/impayees.php">('.$num.')</a></td>';
+		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("BillsSuppliersUnpaid",$num).' <a href="'.DOL_URL_ROOT.'/fourn/facture/impayees.php">('.$num.')</a></td>';
 		if ($conf->global->MAIN_SHOW_HT_ON_SUMMARY) print '<td align="right">'.$langs->trans("AmountHT").'</td>';
 		print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
 		print '<td align="right">'.$langs->trans("Paid").'</td>';
@@ -991,5 +1031,5 @@ print '</table>';
 $db->close();
 
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/23 23:01:47 $ - $Revision: 1.186 $');
 ?>

@@ -15,14 +15,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       	htdocs/lib/databases/mssql.lib.php
  *	\brief			Fichier de la classe permettant de gerer une base mssql
- *	\version		$Id$
+ *	\version		$Id: mssql.lib.php,v 1.87 2011/08/04 13:58:14 eldy Exp $
  */
 
 // Pour compatibilite lors de l'upgrade
@@ -1023,14 +1022,24 @@ class DoliDb
 		return ''; // attente debugage
 	}
 
+	/*
+	 *  Return full path of dump program
+	 *	@return		string		Full path of dump program
+	 */
 	function getPathOfDump()
 	{
 
+	    return '';
 	}
 
+    /**
+     *	Return full path of restore program
+     *	@return		string		Full path of restore program
+     */
 	function getPathOfRestore()
 	{
 
+	    return '';
 	}
 }
 

@@ -13,16 +13,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id$
+ * $Id: html.formbarcode.class.php,v 1.17 2011/08/16 10:11:01 eldy Exp $
  */
 
 /**
         \file       htdocs/includes/barcode/html.formbarcode.class.php
         \brief      Fichier de la classe des fonctions predefinie de composants html
-        \version    $Revision$
+        \version    $Revision: 1.17 $
 */
 
 
@@ -83,7 +82,7 @@ class FormBarCode
 			$disable = 'disabled="disabled"';
 		}
 
-		$select_encoder = '<form action="'.DOL_URL_ROOT.'/includes/modules/barcode/admin/barcode.php" method="post" id="form'.$idForm.'">';
+		$select_encoder = '<form action="'.DOL_URL_ROOT.'/admin/barcode.php" method="post" id="form'.$idForm.'">';
 		$select_encoder.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		$select_encoder.= '<input type="hidden" name="action" value="update">';
 		$select_encoder.= '<input type="hidden" name="code_id" value="'.$code_id.'">';

@@ -15,15 +15,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *   \file       htdocs/societe/socnote.php
  *   \brief      Tab for notes on third party
  *   \ingroup    societe
- *   \version    $Id$
+ *   \version    $Id: socnote.php,v 1.23 2011/07/31 23:22:56 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -44,13 +43,13 @@ $result = restrictedArea($user, 'societe', $socid);
  * Actions
  */
 
-if ($action == 'add')
+if ($action == 'add' && ! GETPOST('cancel'))
 {
-  $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET note='".$db->escape($_POST["note"])."' WHERE rowid=".$_POST["socid"];
-  $result = $db->query($sql);
+    $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET note='".$db->escape($_POST["note"])."' WHERE rowid=".$_POST["socid"];
+    $result = $db->query($sql);
 
-  $_GET["socid"]=$_POST["socid"];   // Pour retour sur fiche
-  $socid = $_GET["socid"];
+    $_GET["socid"]=$_POST["socid"];   // Pour retour sur fiche
+    $socid = $_GET["socid"];
 }
 
 
@@ -70,25 +69,25 @@ if ($socid > 0)
     $societe = new Societe($db, $socid);
     $societe->fetch($socid);
 
-	/*
-	 * Affichage onglets
-	 */
+    /*
+     * Affichage onglets
+     */
     if ($conf->notification->enabled) $langs->load("mails");
 
-	$head = societe_prepare_head($societe);
+    $head = societe_prepare_head($societe);
 
-	dol_fiche_head($head, 'note', $langs->trans("ThirdParty"),0,'company');
+    dol_fiche_head($head, 'note', $langs->trans("ThirdParty"),0,'company');
 
 
-	print "<form method=\"post\" action=\"".DOL_URL_ROOT."/societe/socnote.php\">";
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print "<form method=\"post\" action=\"".DOL_URL_ROOT."/societe/socnote.php\">";
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-	print '<table class="border" width="100%">';
+    print '<table class="border" width="100%">';
 
-	print '<tr><td width="20%">'.$langs->trans('ThirdPartyName').'</td>';
-	print '<td colspan="3">';
-	print $form->showrefnav($societe,'socid','',($user->societe_id?0:1),'rowid','nom');
-	print '</td></tr>';
+    print '<tr><td width="20%">'.$langs->trans('ThirdPartyName').'</td>';
+    print '<td colspan="3">';
+    print $form->showrefnav($societe,'socid','',($user->societe_id?0:1),'rowid','nom');
+    print '</td></tr>';
 
     if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
     {
@@ -113,32 +112,36 @@ if ($socid > 0)
         print '</td></tr>';
     }
 
-	print '<tr><td valign="top">'.$langs->trans("Note").'</td>';
-	print '<td valign="top">';
-	if ($action == 'edit' && $user->rights->societe->creer)
-	{
-		print "<input type=\"hidden\" name=\"action\" value=\"add\">";
-		print "<input type=\"hidden\" name=\"socid\" value=\"".$societe->id."\">";
+    print '<tr><td valign="top">'.$langs->trans("Note").'</td>';
+    print '<td valign="top">';
+    if ($action == 'edit' && $user->rights->societe->creer)
+    {
+        print "<input type=\"hidden\" name=\"action\" value=\"add\">";
+        print "<input type=\"hidden\" name=\"socid\" value=\"".$societe->id."\">";
 
-	    // Editeur wysiwyg
-		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-		$doleditor=new DolEditor('note',$societe->note,'',360,'dolibarr_notes','In',true,false,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_SOCIETE,20,70);
-		$doleditor->Create();
-	}
-	else
-	{
-		print dol_textishtml($societe->note)?$societe->note:dol_nl2br($societe->note,1,true);
-	}
-	print "</td></tr>";
+        // Editeur wysiwyg
+        require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+        $doleditor=new DolEditor('note',$societe->note,'',360,'dolibarr_notes','In',true,false,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_SOCIETE,20,70);
+        $doleditor->Create();
+    }
+    else
+    {
+        print dol_textishtml($societe->note)?$societe->note:dol_nl2br($societe->note,1,true);
+    }
+    print "</td></tr>";
 
-	if ($action == 'edit')
-	{
-		print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
-	}
+    if ($action == 'edit')
+    {
+        print '<tr><td colspan="2" align="center">';
+        print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+        print ' &nbsp; ';
+        print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+        print '</td></tr>';
+    }
 
-	print "</table>";
+    print "</table>";
 
-	print '</form>';
+    print '</form>';
 }
 
 print '</div>';
@@ -163,5 +166,5 @@ if ($action != 'edit')
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/31 23:22:56 $ - $Revision: 1.23 $');
 ?>

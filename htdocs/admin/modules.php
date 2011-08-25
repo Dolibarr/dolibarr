@@ -3,7 +3,8 @@
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,14 +17,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *  \file       htdocs/admin/modules.php
  *  \brief      Page to activate/disable all modules
- *  \version    $Id$
+ *  \version    $Id: modules.php,v 1.159 2011/08/04 21:07:33 simnandez Exp $
  */
 
 require("../main.inc.php");
@@ -80,12 +80,36 @@ $modules = array();
 $orders = array();
 $categ = array();
 $dirmod = array();
+$modulesdir = array();
 $i = 0;	// is a sequencer of modules found
 $j = 0;	// j is module number. Automatically affected if module number not defined.
-foreach ($conf->file->dol_document_root as $dirroot)
-{
-	$dir = $dirroot . "/includes/modules/";
 
+foreach ($conf->file->dol_document_root as $type => $dirroot)
+{
+	$modulesdir[] = $dirroot . "/includes/modules/";
+	
+	if ($type == 'alt')
+	{	
+		$handle=@opendir($dirroot);
+		if (is_resource($handle))
+		{
+			while (($file = readdir($handle))!==false)
+			{
+			    if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
+			    {
+			    	if (is_dir($dirroot . '/' . $file . '/includes/modules/'))
+			    	{
+			    		$modulesdir[] = $dirroot . '/' . $file . '/includes/modules/';
+			    	}
+			    }
+			}
+			closedir($handle);
+		}
+	}
+}
+
+foreach ($modulesdir as $dir)
+{
 	// Load modules attributes in arrays (name, numero, orders) from dir directory
 	//print $dir."\n<br>";
 	dol_syslog("Scan directory ".$dir." for modules");
@@ -351,7 +375,7 @@ if ($mode != 4)
                 else
                 {
                 	print '<a href="modules.php?id='.$objMod->numero.'&amp;action=reset&amp;value=' . $modName . '&amp;mode=' . $mode . '">';
-                	print img_picto($langs->trans("Activated"),'on');
+                	print img_picto($langs->trans("Activated"),'switch_on');
                 	print '</a></td>'."\n";
                 }
 
@@ -409,7 +433,7 @@ if ($mode != 4)
 
                 // Module non actif
                	print '<a href="modules.php?id='.$objMod->numero.'&amp;action=set&amp;value=' . $modName . '&amp;mode=' . $mode . '">';
-               	print img_picto($langs->trans("Disabled"),'off');
+               	print img_picto($langs->trans("Disabled"),'switch_off');
                	print "</a></td>\n  <td>&nbsp;</td>\n";
             }
 
@@ -450,5 +474,5 @@ print '</div>';
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/04 21:07:33 $ - $Revision: 1.159 $');
 ?>

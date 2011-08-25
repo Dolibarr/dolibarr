@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	    \file       htdocs/comm/remx.php
  *      \ingroup    societe
  *		\brief      Page to edit absolute discounts for a customer
- *		\version    $Id$
+ *		\version    $Id: remx.php,v 1.53 2011/08/04 21:46:51 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -210,7 +209,7 @@ llxHeader();
 
 if ($_socid > 0)
 {
-	if ($mesg) print $mesg."<br>";
+	dol_htmloutput_mesg($mesg);
 
 	// On recupere les donnees societes par l'objet
 	$objsoc = new Societe($db);
@@ -271,7 +270,7 @@ if ($_socid > 0)
 	print '<td><input type="text" size="5" name="amount_ht" value="'.$_POST["amount_ht"].'">&nbsp;'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 	print '<tr><td width="38%">'.$langs->trans("VAT").'</td>';
 	print '<td>';
-	$form->select_tva('tva_tx','0','',$mysoc,'');
+	print $form->load_tva('tva_tx','0','',$mysoc,'');
 	print '</td></tr>';
 	print '<tr><td>'.$langs->trans("NoteReason").'</td>';
 	print '<td><input type="text" size="60" name="desc" value="'.$_POST["desc"].'"></td></tr>';
@@ -483,9 +482,9 @@ if ($_socid > 0)
 			$tab_sqlobjOrder[]= $db->jdate($sqlobj->dc);
 		}
 		$db->free($resql2);
-		array_multisort ($tab_sqlobjOrder,SORT_DESC,$tab_sqlobj);
+		array_multisort($tab_sqlobjOrder,SORT_DESC,$tab_sqlobj);
 
-		$num = sizeOf($tab_sqlobj);
+		$num = count($tab_sqlobj);
 		$i = 0 ;
 		while ($i < $num )
 		{
@@ -539,5 +538,5 @@ if ($_socid > 0)
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/04 21:46:51 $ - $Revision: 1.53 $');
 ?>

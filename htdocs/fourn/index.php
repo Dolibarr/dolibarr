@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/fourn/index.php
  *	\ingroup    fournisseur
- *	\brief      Page accueil de la zone fournisseurs
- *	\version    $Id$
+ *	\brief      Home page of suppliers area
+ *	\version    $Id: index.php,v 1.69 2011/08/08 15:28:01 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -224,7 +223,7 @@ if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
 }
 
 print "</td>\n";
-print '<td valign="top" width="70%" class="notopnoleft">';
+print '<td valign="top" width="70%" class="notopnoleftnoright">';
 
 /*
  * List last modified supliers
@@ -321,5 +320,5 @@ print "</table>\n";
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/08 15:28:01 $ - $Revision: 1.69 $');
 ?>

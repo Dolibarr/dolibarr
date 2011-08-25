@@ -1,4 +1,5 @@
-<?PHP
+#!/usr/bin/php
+<?php
 /* Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -12,15 +13,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *      \file       dev/translation/autotranslator.php
  *		\ingroup    mymodule othermodule1 othermodule2
  *      \brief      This file is an example for a command line script
- *      \version    $Id: autotranslator.php,v 1.11 2011/06/26 18:52:49 eldy Exp $
+ *      \version    $Id: autotranslator.php,v 1.13 2011/07/31 22:21:59 eldy Exp $
  * 		\author		Put author name here
  *		\remarks	Put here some comments
  */
@@ -44,7 +44,7 @@ require_once($path.'../../htdocs/lib/files.lib.php');
 $langs->load("main");
 
 // Global variables
-$version='$Revision: 1.11 $';
+$version='$Revision: 1.13 $';
 $error=0;
 
 

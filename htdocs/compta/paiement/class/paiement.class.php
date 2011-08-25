@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/compta/paiement/class/paiement.class.php
  *	\ingroup    facture
  *	\brief      File of class to manage payments of customers invoices
- *	\version    $Id$
+ *	\version    $Id: paiement.class.php,v 1.24 2011/08/08 01:01:45 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
 
@@ -201,7 +200,8 @@ class Paiement extends CommonObject
                                 }
                             }
 
-                            if ($remaintopay) dol_syslog("Remain to pay for invoice ".$facid." not null. We do nothing more.");
+                            if ($invoice->type != 0 && $invoice->type != 1) dol_syslog("Invoice ".$facid." is not a standard nor replacement invoice. We do nothing more.");
+                            else if ($remaintopay) dol_syslog("Remain to pay for invoice ".$facid." not null. We do nothing more.");
                             else if ($mustwait) dol_syslog("There is ".$mustwait." differed payment to process, we do nothing more.");
                             else $result=$invoice->set_paid($user,'','');
 					    }
@@ -260,9 +260,9 @@ class Paiement extends CommonObject
 	function delete($notrigger=0)
 	{
 		global $conf, $user, $langs;
-		
+
 		$error=0;
-		
+
 		$bank_line_id = $this->bank_line;
 
 		$this->db->begin();
@@ -274,7 +274,7 @@ class Paiement extends CommonObject
 		{
 			if (sizeof($billsarray))
 			{
-				$this->error="Impossible de supprimer un paiement portant sur au moins une facture fermee";
+				$this->error="ErrorDeletePaymentLinkedToAClosedInvoiceNotPossible";
 				$this->db->rollback();
 				return -1;
 			}
@@ -285,18 +285,18 @@ class Paiement extends CommonObject
 			return -2;
 		}
 
-		// Verifier si paiement ne porte pas sur ecriture bancaire rapprochee
-		// Si c'est le cas, on refuse le paiement
+		// Delete bank urls. If payment if on a conciliated line, return error.
 		if ($bank_line_id)
 		{
-			$accline = new AccountLine($this->db,$bank_line_id);
+			$accline = new AccountLine($this->db);
 			$accline->fetch($bank_line_id);
-			if ($accline->rappro)
-			{
-				$this->error="Impossible de supprimer un paiement qui a genere une ecriture qui a ete rapprochee";
+            $result=$accline->delete_urls($user);
+            if ($result < 0)
+            {
+                $this->error=$accline->error;
 				$this->db->rollback();
 				return -3;
-			}
+            }
 		}
 
 		// Delete payment (into paiement_facture and paiement)
@@ -310,7 +310,7 @@ class Paiement extends CommonObject
 			$result = $this->db->query($sql);
 			if (! $result)
 			{
-				$this->error=$this->db->error();
+				$this->error=$this->db->lasterror();
 				$this->db->rollback();
 				return -3;
 			}
@@ -328,7 +328,7 @@ class Paiement extends CommonObject
 					return -4;
 				}
 			}
-			
+
 			if (! $notrigger)
 			{
 				// Appel des triggers

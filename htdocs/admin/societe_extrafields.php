@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *      \file       htdocs/admin/societe_extrafields.php
  *		\ingroup    societe
  *		\brief      Page to setup extra fields of third party
- *		\version    $Id$
+ *		\version    $Id: societe_extrafields.php,v 1.6 2011/07/31 22:23:21 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -169,12 +168,12 @@ if ($action == 'delete')
 
 $textobject=$langs->transnoentitiesnoconv("ThirdParty");
 
-$help_url='EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
+$help_url='EN:Module Third Parties setup|FR:Paramétrage_du_module_Tiers';
 llxHeader('',$langs->trans("CompanySetup"),$help_url);
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("OptionalFieldsSetup"),$linkback,'setup');
+print_fiche_titre($langs->trans("CompanySetup"),$linkback,'setup');
 
 
 $head = societe_admin_prepare_head($adh);
@@ -312,5 +311,5 @@ if ($_GET["attrname"] && $action == 'edit')
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/31 22:23:21 $ - $Revision: 1.6 $');
 ?>

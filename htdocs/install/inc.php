@@ -15,17 +15,16 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**	    \file       htdocs/install/inc.php
  * 		\ingroup	core
  *		\brief      File that define environment for install pages
- *		\version    $Id$
+ *		\version    $Id: inc.php,v 1.140 2011/08/11 20:54:08 eldy Exp $
  */
 
-define('DOL_VERSION','3.1.0-alpha');	// Also defined in htdocs/master.inc.php (Ex: x.y.z-alpha, x.y.z)
+define('DOL_VERSION','3.2.0-alpha');	// Also defined in htdocs/master.inc.php (Ex: x.y.z-alpha, x.y.z)
 
 require_once('../core/class/translate.class.php');
 require_once('../lib/functions.lib.php');
@@ -69,7 +68,17 @@ else
 }
 
 $includeconferror='';
+
+
+# Define vars
+$conffiletoshowshort = "conf.php";
+# Define localization of conf file
 $conffile = "../conf/conf.php";
+$conffiletoshow = "htdocs/conf/conf.php";
+# For debian/redhat like systems
+#$conffile = "/etc/dolibarr/conf.php";
+#$conffiletoshow = "/etc/dolibarr/conf.php";
+
 
 if (! defined('DONOTLOADCONF') && file_exists($conffile))
 {
@@ -118,7 +127,6 @@ if (! defined('DONOTLOADCONF') && file_exists($conffile))
 }
 $conf->global->MAIN_LOGTOHTML=1;
 
-
 // Define prefix
 if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_';
 define('MAIN_DB_PREFIX',(isset($dolibarr_main_db_prefix)?$dolibarr_main_db_prefix:''));
@@ -159,18 +167,32 @@ if (! empty($dolibarr_main_document_root_alt))
 // Security check
 if (preg_match('/install.lock/i',$_SERVER["SCRIPT_FILENAME"]))
 {
-	print 'Install pages have been disabled for security reason (directory renamed with .lock).';
-	print '<a href="'.$dolibarr_main_url_root .'/admin/index.php?mainmenu=home&leftmenu=setup'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
-	print 'Click here to go to Dolibarr';
-	print '</a>';
+	print 'Install pages have been disabled for security reason (directory renamed with .lock suffix).';
+    if (! empty($dolibarr_main_url_root))
+    {
+       print 'Click on following link. ';
+       print '<a href="'.$dolibarr_main_url_root .'/admin/index.php?mainmenu=home&leftmenu=setup'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
+	   print 'Click here to go to Dolibarr';
+	   print '</a>';
+    }
 	exit;
 }
-if (file_exists('../../install.lock'))
+$lockfile=DOL_DATA_ROOT.'/install.lock';
+if (constant('DOL_DATA_ROOT') && file_exists($lockfile))
 {
-	print 'Install pages have been disabled for security reason (by lock file install.lock in dolibarr root directory. Remove it manually if following link loops to this page).<br>';
-	print '<a href="'.$dolibarr_main_url_root .'/admin/index.php?mainmenu=home&leftmenu=setup'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
-	print 'Click here to go to Dolibarr';
-	print '</a>';
+	print 'Install pages have been disabled for security reason (by lock file install.lock into dolibarr root directory).<br>';
+	if (! empty($dolibarr_main_url_root))
+	{
+	    print 'Click on following link. ';
+	    print 'If you always reach this page, you must remove install.lock file manually.<br>';
+    	print '<a href="'.$dolibarr_main_url_root .'/admin/index.php?mainmenu=home&leftmenu=setup'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
+    	print 'Click here to go to Dolibarr';
+    	print '</a>';
+	}
+    else
+    {
+        print 'If you always reach this page, you must remove install.lock file manually.<br>';
+    }
 	exit;
 }
 

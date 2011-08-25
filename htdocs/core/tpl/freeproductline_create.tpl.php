@@ -13,10 +13,9 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id$
+ * $Id: freeproductline_create.tpl.php,v 1.18 2011/08/10 22:47:33 eldy Exp $
  *
  * Need to have following variables defined:
  * $conf
@@ -47,14 +46,13 @@
 	<?php
 	echo $html->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1);
 	if (($conf->product->enabled && $conf->service->enabled) || (empty($conf->product->enabled) && empty($conf->service->enabled))) echo '<br>';
-	
-	if (! empty($object->hooks['objectcard'])) {
-		foreach($object->hooks['objectcard'] as $module) {
-			$module->formCreateProductOptions($object);
-		}
-		echo '<br>';
+
+	if (is_object($hookmanager))
+	{
+	    $parameters=array();
+	    $hookmanager->executeHooks('formCreateProductOptions',$parameters,$object,$action);
 	}
-	
+
 	// Editor wysiwyg
 	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
     $nbrows=ROWS_2;
@@ -67,7 +65,7 @@
 	<td align="right">
 	<?php
 	if ($buyer->tva_assuj == "0") echo '<input type="hidden" name="np_tva_tx" value="0">0';
-	else $html->select_tva('np_tva_tx', $conf->defaulttx, $seller, $buyer);
+	else echo $html->load_tva('np_tva_tx', -1, $seller, $buyer);
 	?>
 	</td>
 	<td align="right"><input type="text" size="5" name="np_price"></td>

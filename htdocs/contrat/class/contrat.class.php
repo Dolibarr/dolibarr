@@ -17,15 +17,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/contrat/class/contrat.class.php
  *	\ingroup    contrat
  *	\brief      Fichier de la classe des contrats
- *	\version    $Id$
+ *	\version    $Id: contrat.class.php,v 1.24 2011/08/08 14:25:44 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
@@ -1543,8 +1542,8 @@ class ContratLigne
 
 
 	/**
-	 *      \brief     Constructeur d'objets ligne de contrat
-	 *      \param     DB      Database access handler
+	 *      Constructeur d'objets ligne de contrat
+	 *      @param     DB      Database access handler
 	 */
 	function ContratLigne($DB)
 	{
@@ -1553,9 +1552,9 @@ class ContratLigne
 
 
 	/**
-	 *    	\brief      Return label of this contract line status
-	 *		\param      mode        	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *    	\return     string      	Libelle
+	 *    	Return label of this contract line status
+	 *		@param      mode        	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *    	@return     string      	Libelle
 	 */
 	function getLibStatut($mode)
 	{
@@ -1563,11 +1562,11 @@ class ContratLigne
 	}
 
 	/**
-	 *    	\brief      Return label of a contract line status
-	 *    	\param      statut      id statut
-	 *		\param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *		\param		expired		0=Not expired, 1=Expired, -1=Both or unknown
-	 *    	\return     string      Libelle
+	 *    	Return label of a contract line status
+	 *    	@param      statut      id statut
+	 *		@param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *		@param		expired		0=Not expired, 1=Expired, -1=Both or unknown
+	 *    	@return     string      Libelle
 	 */
 	function LibStatut($statut,$mode,$expired=-1)
 	{
@@ -1624,10 +1623,10 @@ class ContratLigne
 	}
 
 	/**
-		\brief      Renvoie nom clicable (avec eventuellement le picto)
-		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-		\return		string			Chaine avec URL
-		*/
+	 *	Renvoie nom clicable (avec eventuellement le picto)
+	 *  @param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *  @return		string			Chaine avec URL
+ 	 */
 	function getNomUrl($withpicto=0,$maxlength=0)
 	{
 		global $langs;
@@ -1648,10 +1647,10 @@ class ContratLigne
 	}
 
 	/**
-	 *    	\brief      Load object in memory from database
-	 *    	\param      id          id object
-	 * 		\param		ref			Ref of contract
-	 *    	\return     int         <0 if KO, >0 if OK
+	 *    	Load object in memory from database
+	 *    	@param      id          id object
+	 * 		@param		ref			Ref of contract
+	 *    	@return     int         <0 if KO, >0 if OK
 	 */
 	function fetch($id, $ref='')
 	{
@@ -1753,11 +1752,11 @@ class ContratLigne
 	}
 
 
-	/*
-	 *      \brief      Update database for contract line
-	 *      \param      user        	User that modify
-	 *      \param      notrigger	    0=no, 1=yes (no update trigger)
-	 *      \return     int         	<0 if KO, >0 if OK
+	/**
+	 *      Update database for contract line
+	 *      @param      user        	User that modify
+	 *      @param      notrigger	    0=no, 1=yes (no update trigger)
+	 *      @return     int         	<0 if KO, >0 if OK
 	 */
 	function update($user, $notrigger=0)
 	{
@@ -1855,9 +1854,9 @@ class ContratLigne
 
 
 	/**
-	 *      \brief     	Mise a jour en base des champs total_xxx de ligne
-	 *		\remarks	Utilise par migration
-	 *		\return		int		<0 si ko, >0 si ok
+	 *      Mise a jour en base des champs total_xxx de ligne
+	 *		Used by migration process
+	 *		@return		int		<0 if KO, >0 if OK
 	 */
 	function update_total()
 	{

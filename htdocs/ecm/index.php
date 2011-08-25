@@ -13,15 +13,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/ecm/index.php
  *	\ingroup    ecm
  *	\brief      Main page for ECM section area
- *	\version    $Id$
+ *	\version    $Id: index.php,v 1.104 2011/08/15 17:43:41 eldy Exp $
  *	\author		Laurent Destailleur
  */
 
@@ -298,30 +297,25 @@ if (GETPOST("action") == 'refreshmanual')
 //print "xx".$_SESSION["dol_screenheight"];
 $maxheightwin=(isset($_SESSION["dol_screenheight"]) && $_SESSION["dol_screenheight"] > 500)?($_SESSION["dol_screenheight"]-166):660;
 
-$morehead="<style type=\"text/css\">
-html, body {
-        width:      100%;
-        height:     100%;
-        padding:    0;
-        margin:     0;
-        overflow:   auto; /* when page gets too small */
-    }
+$morecss="
+<!-- dol_screenheight=".$_SESSION["dol_screenheight"]." -->
+<style type=\"text/css\">
     #containerlayout {
-        background: #999;
         height:     ".$maxheightwin."px;
         margin:     0 auto;
         width:      100%;
         min-width:  700px;
         _width:     700px; /* min-width for IE6 */
     }
-    .pane {
-        display:    none; /* will appear when layout inits */
-    }
-</style>
-<SCRIPT type=\"text/javascript\">
+</style>";
+$morejs="
+<script type=\"text/javascript\">
     jQuery(document).ready(function () {
         jQuery('#containerlayout').layout({
         	name: \"ecmlayout\"
+        ,   paneClass:    \"ecm-layout-pane\"
+        ,   esizerClass: \"ecm-layout-resizer\"
+        ,   togglerClass: \"ecm-layout-toggler\"
         ,   center__paneSelector:   \"#ecm-layout-center\"
         ,   north__paneSelector:    \"#ecm-layout-north\"
         ,   west__paneSelector:     \"#ecm-layout-west\"
@@ -346,9 +340,10 @@ html, body {
         ,   south__closable:    false
             });
     });
-</SCRIPT>";
+</script>";
 
-llxHeader($morehead,$langs->trans("ECM"),'','','','','','',0,0);
+llxHeader($morecss.$morejs,$langs->trans("ECM"),'','','','','','',0,0);
+
 
 // Ajout rubriques automatiques
 $rowspan=0;
@@ -379,10 +374,10 @@ if (GETPOST('action') == 'delete')
 	if ($ret == 'html') print '<br>';
 }
 
-if ($mesg) { print $mesg."<br>"; }
+dol_htmloutput_mesg($mesg);
 
 // Toolbar
-$head = ecm_prepare_head_fm($fac);
+//$head = ecm_prepare_head_fm($fac);
 //dol_fiche_head($head, 'file_manager', '', 1);
 
 
@@ -393,7 +388,7 @@ if ($conf->use_javascript_ajax)
 {
 ?>
 <div id="containerlayout"> <!-- begin div id="containerlayout" -->
-    <div id="ecm-layout-north" class="pane toolbar">
+    <div id="ecm-layout-north" class="toolbar">
 <?php
 }
 else
@@ -433,7 +428,7 @@ if ($conf->use_javascript_ajax)
 ?>
    </div>
 
-    <div id="ecm-layout-west" class="pane">
+    <div id="ecm-layout-west" class="hidden">
 <?php
 }
 else
@@ -795,7 +790,7 @@ if ($conf->use_javascript_ajax)
 ?>
     </div>
 
-    <div id="ecm-layout-center" class="pane layout-with-no-border">
+    <div id="ecm-layout-center" class="hidden">
 
         <div class="pane-in ecm-in-layout-center">
 <?php
@@ -807,14 +802,16 @@ else
 
 $formfile=new FormFile($db);
 
+$param=($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'');
+
 // Right area
 if ($module == 'invoice_supplier')  // Auto area for suppliers invoices
 {
     $relativepath='facture';
     $upload_dir = $conf->fournisseur->dir_output.'/'.$relativepath;
-    $filearray=dol_dir_list($upload_dir,"files",1,'',array('^SPECIMEN\.pdf$','^\.','\.meta$','^temp$','^CVS$'),$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
+    $filearray=dol_dir_list($upload_dir,"files",1,'',array('^SPECIMEN\.pdf$','^\.','\.meta$','^temp$','^CVS$'),$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 
-    $param='&amp;module='.$module;
+    $param.='&module='.$module;
     $textifempty=($section?$langs->trans("NoFileFound"):($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("ECMSelectASection")));
 
     $formfile->list_of_autoecmfiles($upload_dir,$filearray,$module,$param,1,'',$user->rights->ecm->upload,1,$textifempty,40);
@@ -822,9 +819,9 @@ if ($module == 'invoice_supplier')  // Auto area for suppliers invoices
 else if ($module == 'invoice')  // Auto area for suppliers invoices
 {
     $upload_dir = $conf->facture->dir_output;
-    $filearray=dol_dir_list($upload_dir,"files",1,'',array('^SPECIMEN\.pdf$','^\.','\.meta$','^temp$','^payments$','^CVS$'),$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
+    $filearray=dol_dir_list($upload_dir,"files",1,'',array('^SPECIMEN\.pdf$','^\.','\.meta$','^temp$','^payments$','^CVS$'),$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 
-    $param='&amp;module='.$module;
+    $param.='&module='.$module;
     $textifempty=($section?$langs->trans("NoFileFound"):($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("ECMSelectASection")));
 
     $formfile->list_of_autoecmfiles($upload_dir,$filearray,$module,$param,1,'',$user->rights->ecm->upload,1,$textifempty,40);
@@ -833,9 +830,9 @@ else    // Manual area
 {
     $relativepath=$ecmdir->getRelativePath();
     $upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
-    $filearray=dol_dir_list($upload_dir,"files",0,'',array('^\.','\.meta$'),$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
+    $filearray=dol_dir_list($upload_dir,"files",0,'',array('^\.','\.meta$'),$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 
-    $param='&amp;section='.$section;
+    $param.='&section='.$section;
     $textifempty=($section?$langs->trans("NoFileFound"):($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("ECMSelectASection")));
 
     $formfile->list_of_documents($filearray,'','ecm',$param,1,$relativepath,$user->rights->ecm->upload,1,$textifempty,40);
@@ -878,10 +875,6 @@ if ($conf->use_javascript_ajax)
         </div>
     </div>
 
-<!--    <div id="ecm-layout-east" class="pane"></div> -->
-
-<!--    <div id="ecm-layout-south" class="pane"></div> -->
-
 </div> <!-- end div id="containerlayout" -->
 
 
@@ -898,5 +891,5 @@ else
 // End of page
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/15 17:43:41 $ - $Revision: 1.104 $');
 ?>

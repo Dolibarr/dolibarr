@@ -17,65 +17,118 @@ set -e
 # for details, see /usr/share/doc/packaging-manual/
 
 
-. /usr/share/debconf/confmodule
+
+lighttpd_remove() {
+	if [ -f /etc/lighttpd/conf-available/50-dolibarr.conf ] ; then
+		echo "postrm Remove link for Lighttpd config file"
+		rm -f /etc/lighttpd/conf-available/50-dolibarr.conf
+		if which lighty-enable-mod >/dev/null 2>&1 ; then
+			lighty-disable-mod dolibarr
+		else
+			echo "postrm Lighttpd not installed, skipping"
+		fi
+		# See bug #448682
+		if [ -h /etc/lighttpd/conf-enabled/50-dolibarr.conf ] ; then
+		    echo "postrm Manually deleting lighttpd/dolibarr configuration link"
+		    rm /etc/lighttpd/conf-enabled/50-dolibarr.conf
+		fi
+	fi
+}
+
+apache_remove() {
+	if [ -d /etc/$webserver/conf.d ] && [ -L /etc/$webserver/conf.d/dolibarr.conf ]; then
+		echo "postrm Remove link for Apache config file"
+		rm -f /etc/$webserver/conf.d/dolibarr.conf
+	fi
+}
+
+
+
+if [ -f /usr/share/debconf/confmodule ]; then
+    . /usr/share/debconf/confmodule
+fi
 
 db_version 2.0
 
 echo Run the dolibarr postrm script
 
-#echo "postrm db_get dolibarr/webserver"
-# We disable set -e to avoid premature end of script if error
-set +e
-#db_get "dolibarr/webserver" || true
-set -e
-export webserver="$RET"
 
-# Allows us to loop and substitute in one pass
-case $webserver in
-	Apache)		webservers="apache2" ;;
-	Apache-SSL)	webservers="apache2-ssl" ;;
-	Both)		webservers="apache2 apache2-ssl" ;;
-	*)		    webservers="apache2 apache2-ssl" ;;
-esac
-export includefile=/etc/dolibarr/apache.conf
+docdir='/var/lib/dolibarr/documents'
+config="/etc/dolibarr/conf.php"
+lockfile="$docdir/install.lock"
+
+
 
 case "$1" in
+
+    # Call when we upgrade
+	upgrade)
+		echo "postrm upgrade"
+	;;
+
+    # Call when we uninstall
+	remove)
+		echo "postrm remove"
+		rm -f $lockfile
+
+		# Reconfigure web server
+		db_get dolibarr/reconfigure-webserver
+
+		webservers="$RET"
+
+		# Restart web servers
+		for webserver in $webservers; do
+			webserver=${webserver%,}
+			if [ "$webserver" = "lighttpd" ] ; then
+				lighttpd_remove
+			else
+				apache_remove $webserver
+			fi
+			# Redirection of 3 is needed because Debconf uses it and it might 
+			# be inherited by webserver. See bug #446324.
+			if [ -f /etc/init.d/$webserver ] ; then
+				if [ -x /usr/sbin/invoke-rc.d ]; then
+					invoke-rc.d $webserver reload 3>/dev/null || true
+				else
+					/etc/init.d/$webserver reload 3>/dev/null || true
+				fi
+			fi
+		done
+	;;
+
     # Call when we uninstall and purge
 	purge)
-		echo "postrm purge webservers=$webservers includefile=$includefile"
+		echo "postrm purge"
 
 		# Ask if we must delete database
 		echo "postrm db_input dolibarr/postrm"
-		db_input critical "dolibarr/postrm" || true
+		db_input critical dolibarr/postrm || true
 		db_go || true
 
 		echo "postrm db_get dolibarr/postrm"
 		# We disable set -e to avoid premature end of script if error
 		set +e
-		db_get "dolibarr/postrm"
+		db_get dolibarr/postrm
 		set -e
 	
 		if [ "$RET" = "true" ] ; then
 			echo postrm Mysql database deletion
 			# Get database configuration
 			dbserver="localhost"
-			dbname="dolibarr"
+			dbuser="dolibarrdebian"
+			dbname="dolibarrdebian"
 			#db_get "dolibarr/db/name"
 			#dbname="$RET"
 			superuserlogin=''
 			superuserpassword=''
 			if [ -f /etc/mysql/debian.cnf ] ; then
 				# Load superuser login and pass
-				superuserlogin=$(/bin/grep --max-count=1 "user" /etc/mysql/debian.cnf | /bin/sed -e 's/^user[ =]*//g')
-				superuserpassword=$(/bin/grep --max-count=1 "password" /etc/mysql/debian.cnf | /bin/sed -e 's/^password[ =]*//g')
+				superuserlogin=$(grep --max-count=1 "user" /etc/mysql/debian.cnf | sed -e 's/^user[ =]*//g')
+				superuserpassword=$(grep --max-count=1 "password" /etc/mysql/debian.cnf | sed -e 's/^password[ =]*//g')
 			fi
 			echo postrm Mysql superuser found to use is $superuserlogin
 			dbadmin="$superuserlogin"
 			dbadmpass="$superuserpassword"
-			#db_get "dolibarr/db/admin/name"
-			#dbadmin="$RET"
-			#db_get "dolibarr/db/admin/password"
-			#dbadmpass="$RET"
 			dbtype="mysql"
 			
 			# To delete a mysql user (disabled)
@@ -124,142 +177,62 @@ case "$1" in
 			fi
 			mysqlcmd="mysql $hostopt $passopt -u $dbadmin"
 
+		    # Now run the drop user
+			if eval $mysqlcmd -f -e "\"DROP USER '$dbuser'@'localhost';\"" ; then
+				echo postrm Database login $dbuser removed
+			else
+			    error="Unable to run $mysqlcmd -f -e \"DROP USER '$dbuser'@'localhost';\""
+				echo postrm $error
+			fi
+
 		    # Now run the drop commands
 		    if eval $mysqlcmd -f -e "\"show databases;\"" | grep -e "^$dbname" > /dev/null 2>&1 ; then
-			log="${log}Droping database $dbname."
-			if eval $mysqlcmd -f -e "\"DROP DATABASE $dbname;\"" ; then
-			    if eval $mysqlcmd -f -e "\"show databases;\"" | grep -e "^$dbname" > /dev/null 2>&1 ; then
-				error="Database $dbname NOT successfully droped. You have to do it manually."
-				echo $error
-			    else
-				status=drop
-			    fi
-			else
-			    error="Unable to run the drop database script."
-				echo $error
-			fi
+				log="${log}Droping database $dbname."
+				if eval $mysqlcmd -f -e "\"DROP DATABASE $dbname;\"" ; then
+				    if eval $mysqlcmd -f -e "\"show databases;\"" | grep -e "^$dbname" > /dev/null 2>&1 ; then
+					error="Database $dbname NOT successfully droped. You have to do it manually."
+					echo postrm $error
+				    else
+					status=drop
+				    fi
+				else
+				    error="Unable to run the drop database script."
+					echo postrm $error
+				fi
 		    else
-			status=nothing
-			log="${log}Database $dbname already not exists."
+				status=nothing
+				log="${log}Database $dbname already not exists."
 		    fi
 
+		    echo "postrm Remove directory $docdir"
+		    rm -rf $docdir ; 
+ 
 		else
-			echo "postrm Delete of dolibarr database not wanted" 
+			echo "postrm Delete of dolibarr database and uploaded files not wanted" 
 		fi
 	
-		# Remove include files
-		for server in $webservers ; do
-            
-            # Old usage
-			#export conffile="/etc/$server/httpd.conf"
-            #export error=""     
-			#echo "postrm conffile=$conffile" 
-			#if [ -f $conffile ] ;
-			#then
-			#	if [ -s $conffile ] ;
-			#	then
-            #        echo postrm remove dolibarr include from /etc/dolibarr/apache.conf
-			#		# We disable set -e to avoid premature end of script if error
-			#		set +e
-			#	    GREP="Include[[:space:]]\+$includefile\b"
-			#	    if grep -e "$GREP" $conffile > /dev/null 2>&1; then
-			#		log="${log}Include of $includefile found in $conffile file, purging."
-			#		status=purge
-			#		grep -v -e "$GREP" < $conffile > $conffile.purg
-			#		mv $conffile.purg $conffile
-			#		fi
-			#		# We restore blocking errors
-			#		set -e
-			#	fi
-			#fi
-			
-			# New usage
-			export conffile="/etc/$server/conf.d/dolibarr.conf"
-            if [ -f $conffile ] ;
-            then
-	           rm -f $conffile
-	           status=purge
-		    fi
-			
-			if [ "$status" = "purge" ] ;
-				then restart="$restart $server"
-			fi
-		done
-
 		rm -rf /etc/dolibarr
 
-		# Restart servers
-		servers="apache2-ssl apache2 mysql"
-		if [ -f /usr/share/wwwconfig-common/restart.sh ] ;
-		then
-			. /usr/share/wwwconfig-common/restart.sh
-		else
-			# Another way to restart
-			for server in $servers ; do
-                # We disable blocking errors
-                set +e
-                echo "Restart server $server if exists"
-        		if [ -x /usr/sbin/invoke-rc.d ]; then
-        		     invoke-rc.d $server reload || true
-        		else
-        		     /etc/init.d/$server reload || true
-        		fi
-        		# We restore blocking errors
-        		set -e
-			done
-		fi
-		
-		# Remove file and conf file
-		for dir in /usr/share/dolibarr ; do
-			if [ -d $dir ] ; then 
-                # We disable blocking errors
-                set +e
-			    echo "Remove directory $dir"
-			    rm -rf $dir ; 
-                # We restore blocking errors
-                set -e
-			fi
-		done
-		
 		# We clean variable (we ignore errors because db_reset can fails if var was never set)
         set +e
-		db_reset "dolibarr/postrm"
+		db_reset dolibarr/reconfigure-webserver
+		db_reset dolibarr/postrm
         set -e
-        
-		db_purge
-	;;
 
-    # Call when we uninstall
-	remove)
-		echo "postrm Force remove of /usr/share/dolibarr/htdocs/install"
-		rm -fr /usr/share/dolibarr/htdocs/install
-
-        echo "postrm Force remove of /usr/share/dolibarr/htdocs/conf"
-        rm -fr /usr/share/dolibarr/htdocs/conf
-
-		#echo "postrm Remove menu entry and image"
-		#fileorig="/usr/share/applications/dolibarr.desktop"
-		#rm -f $fileorig
-		#fileorig="/usr/share/pixmaps/dolibarr.xpm"
-		#rm -f $fileorig
-		# Not sure this is usefull
-		if test -x /usr/bin/update-menus; then update-menus; fi
-	;;
-
-	upgrade)
+		#db_purge
 	;;
 
 	failed-upgrade|abort-install|abort-upgrade|disappear)
 	;;
 
 	*)
-		echo "postrm called with unknown argument \`$1'" >&2
+		echo "postrm called with unknown argument $1" >&2
 		exit 0
 	;;
 esac
 
-db_stop
-
 #DEBHELPER#
+
+db_stop
 
 exit 0

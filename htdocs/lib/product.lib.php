@@ -14,8 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * or see http://www.gnu.org/
  */
 
@@ -23,7 +22,7 @@
  *	\file       htdocs/lib/product.lib.php
  *	\brief      Ensemble de fonctions de base pour le module produit et service
  * 	\ingroup	product
- *	\version    $Id$
+ *	\version    $Id: product.lib.php,v 1.44 2011/07/31 23:25:32 eldy Exp $
  *
  * 	Ensemble de fonctions de base de dolibarr sous forme d'include
  */
@@ -262,9 +261,9 @@ function show_stats_for_company($product,$socid)
 
 /**
  *	Return translation label of a unit key
- *	@param  int                 Unit key (-3,0,3,98,99...)
- *	@param  measuring_style     Style of unit: weight, volume,...
- *	@return	string	             Unit string
+ *	@param  	unit                Unit key (-3,0,3,98,99...)
+ *	@param  	measuring_style     Style of unit: weight, volume,...
+ *	@return		string	            Unit string
  * 	@see	load_measuring_units
  */
 function measuring_units_string($unit,$measuring_style='')

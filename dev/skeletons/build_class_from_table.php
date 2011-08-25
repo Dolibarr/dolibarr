@@ -1,5 +1,6 @@
+#!/usr/bin/php
 <?php
-/* Copyright (C) 2008-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,15 +13,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       dev/skeletons/build_class_from_table.php
  *  \ingroup    core
  *  \brief      Create a complete class file from a table in database
- *  \version    $Id$
+ *  \version    $Id: build_class_from_table.php,v 1.33 2011/07/31 22:21:58 eldy Exp $
  */
 
 $sapi_type = php_sapi_name();
@@ -38,7 +38,7 @@ require_once($path."../../htdocs/master.inc.php");
 // After this $db is a defined handler to database.
 
 // Main
-$version='$Revision$';
+$version='$Revision: 1.33 $';
 @set_time_limit(0);
 $error=0;
 

@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * or see http://www.gnu.org/
  */
 
 /**
  *  \file		htdocs/lib/agenda.lib.php
  *  \brief		Set of function for the agenda module
- *  \version	$Id$
+ *  \version	$Id: agenda.lib.php,v 1.44 2011/08/17 16:05:04 cdelambert Exp $
  */
 
 
@@ -48,7 +47,7 @@ function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirt
 	// Filters
 	if ($canedit || $conf->projet->enabled)
 	{
-		print '<form name="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		print '<form name="listactionsfilter" class="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="status" value="'.$status.'">';
 		print '<input type="hidden" name="year" value="'.$year.'">';
@@ -324,13 +323,11 @@ function agenda_prepare_head()
 	$head[$h][2] = 'xcal';
 	$h++;
 
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 2)   // In dev version only for the moment
-	{
-    	$head[$h][0] = DOL_URL_ROOT."/admin/agenda_extsites.php";
-    	$head[$h][1] = $langs->trans("ExtSites");
-    	$head[$h][2] = 'extsites';
-    	$h++;
-	}
+	$head[$h][0] = DOL_URL_ROOT."/admin/agenda_extsites.php";
+	$head[$h][1] = $langs->trans("ExtSites");
+	$head[$h][2] = 'extsites';
+	$h++;
+
 
 	return $head;
 }

@@ -13,17 +13,16 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id$
+ * $Id: fckeditor.php,v 1.34 2011/08/17 15:56:23 eldy Exp $
  */
 
 /**
  *  \file       htdocs/admin/fckeditor.php
  *  \ingroup    fckeditor
  *  \brief      Page d'activation du module FCKeditor dans les autres modules
- *  \version    $Revision$
+ *  \version    $Revision: 1.34 $
  */
 
 require("../main.inc.php");
@@ -108,9 +107,6 @@ llxHeader();
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("AdvancedEditor"),$linkback,'setup');
 print '<br>';
-/*
- * Activation/desactivation de FCKeditor
- */
 
 $var=true;
 
@@ -136,7 +132,7 @@ foreach($modules as $const => $desc)
 	$constante = 'FCKEDITOR_ENABLE_'.$const;
 	$value = $conf->global->$constante;
 
-	print $value == 1 ? img_tick() : '&nbsp;';
+	print $value == 1 ? img_picto($langs->trans("Active"),'tick') : '&nbsp;';
 
 	print '</td>';
 	print '<td align="center" width="100">';
@@ -164,7 +160,7 @@ print '<form name="formtest" method="POST" action="'.$_SERVER["PHP_SELF"].'">'."
 $uselocalbrowser=true;
 $editor=new DolEditor('formtestfield',isset($conf->global->FCKEDITOR_TEST)?$conf->global->FCKEDITOR_TEST:'Test','',200,'dolibarr_notes','In', true, $uselocalbrowser);
 $editor->Create();
-print '<center><input class="button" type="submit" name="save" value="'.$langs->trans("Save").'"></center>'."\n";
+print '<center><br><input class="button" type="submit" name="save" value="'.$langs->trans("Save").'"></center>'."\n";
 print '</form>'."\n";
 
 /*
@@ -176,5 +172,5 @@ print $conf->global->FCKEDITOR_TEST;
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/17 15:56:23 $ - $Revision: 1.34 $');
 ?>

@@ -15,8 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * or see http://www.gnu.org/
  *
  * Lots of code inspired from Dan Potter's CMailFile class
@@ -25,7 +24,7 @@
 /**
  *      \file       htdocs/lib/CMailFile.class.php
  *      \brief      File of class to send emails (with attachments or not)
- *		\version    $Id$
+ *		\version    $Id: CMailFile.class.php,v 1.148 2011/07/31 23:25:43 eldy Exp $
  *      \author     Dan Potter.
  *      \author	    Eric Seigne
  *      \author	    Laurent Destailleur.
@@ -57,11 +56,6 @@ class CMailFile
 
 	var $smtps;			// Contains SMTPs object (if this method is used)
 
-	// simplemail
-	//var $simplemail;  // Contains simplemail object (if this method is used)
-	//var $sName;
-	//var $sEmail;
-
 	//CSS
 	var $css;
 	//! Defined css style for body background
@@ -86,20 +80,21 @@ class CMailFile
 
 
 	/**
-	 *	\brief 	CMailFile
-	 *	\param 	subject             Topic/Subject of mail
-	 *	\param 	to                  Recipients emails (RFC 2822: "Nom prenom <email>[, ...]" ou "email[, ...]" ou "<email>[, ...]")
-	 *	\param 	from                Sender email      (RFC 2822: "Nom prenom <email>[, ...]" ou "email[, ...]" ou "<email>[, ...]")
-	 *	\param 	msg                 Message
-	 *	\param 	filename_list       List of files to attach (full path of filename on file system)
-	 *	\param 	mimetype_list       List of MIME type of attached files
-	 *	\param 	mimefilename_list   List of attached file name in message
-	 *	\param 	addr_cc             Email cc
-	 *	\param 	addr_bcc            Email bcc
-	 *	\param 	deliveryreceipt		  Ask a delivery receipt
-	 *	\param 	msgishtml       		1=String IS already html, 0=String IS NOT html, -1=Unknown need autodetection
-	 *	\param 	error_to        		Email errors
-	 *	\param	css			            Css option
+	 *	CMailFile
+	 *
+	 *	@param 	subject             Topic/Subject of mail
+	 *	@param 	to                  Recipients emails (RFC 2822: "Nom prenom <email>[, ...]" ou "email[, ...]" ou "<email>[, ...]")
+	 *	@param 	from                Sender email      (RFC 2822: "Nom prenom <email>[, ...]" ou "email[, ...]" ou "<email>[, ...]")
+	 *	@param 	msg                 Message
+	 *	@param 	filename_list       List of files to attach (full path of filename on file system)
+	 *	@param 	mimetype_list       List of MIME type of attached files
+	 *	@param 	mimefilename_list   List of attached file name in message
+	 *	@param 	addr_cc             Email cc
+	 *	@param 	addr_bcc            Email bcc
+	 *	@param 	deliveryreceipt		Ask a delivery receipt
+	 *	@param 	msgishtml       	1=String IS already html, 0=String IS NOT html, -1=Unknown need autodetection
+	 *	@param 	errors_to      		Email errors
+	 *	@param	css			        Css option
 	 */
 	function CMailFile($subject,$to,$from,$msg,
 	$filename_list=array(),$mimetype_list=array(),$mimefilename_list=array(),
@@ -107,10 +102,10 @@ class CMailFile
 	{
 		global $conf;
 
-		// On definit fin de ligne
-		$this->eol="\n";
-		if (preg_match('/^win/i',PHP_OS)) $this->eol="\r\n";
-		if (preg_match('/^mac/i',PHP_OS)) $this->eol="\r";
+		// We define end of line (RFC 822bis section 2.3)
+		$this->eol="\r\n";
+		//if (preg_match('/^win/i',PHP_OS)) $this->eol="\r\n";
+		//if (preg_match('/^mac/i',PHP_OS)) $this->eol="\r";
 
 		// On defini mixed_boundary
 		$this->mixed_boundary = md5(uniqid("dolibarr1"));
@@ -344,13 +339,17 @@ class CMailFile
 					dol_syslog("CMailFile::sendfile: mail start HOST=".ini_get('SMTP').", PORT=".ini_get('smtp_port'), LOG_DEBUG);
 
 					$bounce = '';	// By default
-					if ($conf->global->MAIN_MAIL_ALLOW_SENDMAIL_F)
+					if (! empty($conf->global->MAIN_MAIL_ALLOW_SENDMAIL_F))
 					{
 						// le return-path dans les header ne fonctionne pas avec tous les MTA
 						// Le passage par -f est donc possible si la constante MAIN_MAIL_ALLOW_SENDMAIL_F est definie.
 						// La variable definie pose des pb avec certains sendmail securisee (option -f refusee car dangereuse)
-						$bounce = $this->addr_from != '' ? "-f {$this->addr_from}" : "";
+						$bounce .= ($bounce?' ':'').(! empty($conf->global->MAIN_MAIL_ERRORS_TO) ? '-f' . $conf->global->MAIN_MAIL_ERRORS_TO : ($this->addr_from != '' ? '-f' . $this->addr_from : '') );
 					}
+                    if (! empty($conf->global->MAIN_MAIL_SENDMAIL_FORCE_BA))    // To force usage of -ba option. This option tells sendmail to read From: or Sender: to setup sender
+                    {
+                        $bounce .= ($bounce?' ':'').'-ba';
+                    }
 
 					$this->message=stripslashes($this->message);
 
@@ -416,7 +415,7 @@ class CMailFile
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					$res=false;
 				}
-				
+
 				if ($res)
 				{
 					if (! empty($conf->global->MAIN_MAIL_DEBUG)) $this->smtps->setDebug(true);
@@ -465,7 +464,7 @@ class CMailFile
 	}
 
 	/**
-	 * Read a file on disk and return encoded content for emails
+	 * Read a file on disk and return encoded content for emails (mode = 'mail')
 	 *
 	 * @param      sourcefile
 	 * @return     <0 if KO, encoded string if OK
@@ -604,14 +603,14 @@ class CMailFile
 
 		$out.= "Content-Type: multipart/mixed; boundary=\"".$this->mixed_boundary."\"".$this->eol;
 		$out.= "Content-Transfer-Encoding: 8bit".$this->eol;
-		
+
 		dol_syslog("CMailFile::write_smtpheaders smtp_header=\n".$out);
 		return $out;
 	}
 
 
 	/**
-	 * Creation header MIME (mode = 'mail')
+	 * Create header MIME (mode = 'mail')
 	 *
 	 * @param 		filename_list
 	 * @param 		mimefilename_list
@@ -640,7 +639,7 @@ class CMailFile
 	}
 
 	/**
-	 * Permet d'ecrire le corps du message (mode = 'mail')
+	 * Return email content (mode = 'mail')
 	 *
 	 * @param 		msgtext
 	 */
@@ -649,7 +648,7 @@ class CMailFile
 		global $conf;
 
 		$out='';
-		
+
 		if ($this->atleastoneimage)
 		{
 			$out.= "--" . $this->mixed_boundary . $this->eol;
@@ -661,7 +660,7 @@ class CMailFile
 		{
 			$out.= "--" . $this->mixed_boundary . $this->eol;
 		}
-		
+
 		if ($this->msgishtml)
 		{
 			// Check if html header already in message
@@ -680,7 +679,7 @@ class CMailFile
 
 		if ($this->msgishtml)
 		{
-			if ($this->atleastoneimage) 
+			if ($this->atleastoneimage)
 			{
 				$out.= "Content-Type: text/plain; charset=".$conf->file->character_set_client.$this->eol;
 				$out.= $this->eol.strip_tags($strContent).$this->eol; // Add plain text message
@@ -697,14 +696,14 @@ class CMailFile
 			$out.= "Content-Type: text/plain; charset=".$conf->file->character_set_client.$this->eol;
 			$out.= $this->eol.$strContent.$this->eol;
 		}
-		
+
 		$out.= $this->eol;
 
 		return $out;
 	}
 
 	/**
-	 * Permet d'attacher un fichier (mode = 'mail')
+	 * Attach file to email (mode = 'mail')
 	 *
 	 * @param 		filename_list		Tableau
 	 * @param 		mimetype_list		Tableau
@@ -749,7 +748,7 @@ class CMailFile
 
 
 	/**
-	 * Permet d'attacher une image (mode = 'mail')
+	 * Attach an image to email (mode = 'mail')
 	 *
 	 * @param 		images_list		Tableau
 	 * @return		out				Chaine images encodees
@@ -782,8 +781,8 @@ class CMailFile
 	/**
 	 * Try to create a socket connection
 	 *
-	 * @param 		$host. Add ssl:// for SSL/TLS.
-	 * @param 		$port. Example: 25, 465
+	 * @param 		$host		Add ssl:// for SSL/TLS.
+	 * @param 		$port		Example: 25, 465
 	 * @return 		Socket id if ok, 0 if KO
 	 */
 	function check_server_port($host,$port)
@@ -818,9 +817,9 @@ class CMailFile
 	}
 
 	/**
-	 * This function has been modified as provided
-     * by SirSir to allow multiline responses when
+	 * This function has been modified as provided by SirSir to allow multiline responses when
 	 * using SMTP Extensions.
+	 *
 	 * @param      socket
 	 * @param      response
 	 * @return     boolean
@@ -849,9 +848,9 @@ class CMailFile
 	}
 
 	/**
-	 * Recherche la presence d'images dans le message html
+	 * Seearch images into html message and init array this->images_encoded if found
 	 *
-	 * @param 		images_dir		Emplacement des images
+	 * @param 		images_dir		Location of physical images files
 	 * @return		int         	>0 if OK, <0 if KO
 	 */
 	function findHtmlImages($images_dir)
@@ -940,7 +939,7 @@ class CMailFile
 	/**
 	 * Return an address for SMTP protocol
 	 *
-	 * @param      adresses		Example: 'John Doe <john@doe.com>' or 'john@doe.com'
+	 * @param       adresses		Example: 'John Doe <john@doe.com>' or 'john@doe.com'
 	 * @param		format			0=Auto, 1=emails with <>, 2=emails without <>
 	 * @param		encode			1=Encode name to RFC2822
 	 * @return	    string			If format 1: '<john@doe.com>' or 'John Doe <john@doe.com>'

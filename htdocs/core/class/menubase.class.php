@@ -13,14 +13,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *  \file       htdocs/core/class/menubase.class.php
  *  \ingroup    core
- *  \version	$Id$
+ *  \version	$Id: menubase.class.php,v 1.28 2011/07/31 23:45:14 eldy Exp $
  *  \brief      File of class to manage dynamic menu entries
  *  \remarks	Initialy built by build_class_from_table on 2008-01-12 14:19
  */
@@ -78,7 +77,7 @@ class Menubase
      *      @param      user        User that create
      *      @return     int         <0 if KO, Id of record if OK
      */
-    function create($user)
+    function create($user=0)
     {
         global $conf, $langs;
 

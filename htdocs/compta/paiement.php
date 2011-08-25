@@ -16,15 +16,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/compta/paiement.php
  *	\ingroup    compta
  *	\brief      Page to create a payment
- *	\version    $Id$
+ *	\version    $Id: paiement.php,v 1.114 2011/08/08 01:01:46 eldy Exp $
  */
 
 require('../main.inc.php');
@@ -253,8 +252,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         	if (! empty($conf->global->PAYPAL_BANK_ACCOUNT)) $accountid=$conf->global->PAYPAL_BANK_ACCOUNT;
         	$paymentnum=$facture->ref_int;
         }
-
-        if ($conf->use_javascript_ajax)
+        if ($conf->use_javascript_ajax && !empty($conf->global->MAIN_JS_ON_PAYMENT))
         {
             print "\n".'<script type="text/javascript" language="javascript">';
             print 'jQuery(document).ready(function () {';
@@ -272,20 +270,76 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                             {
                                 jQuery(\'.fieldrequireddyn\').removeClass(\'fieldrequired\');
                             }
-                        });';
-            print 'jQuery("#amountpayment").keyup(function() {
-                            alter_amount_payment();
-                        });';
-            print 'jQuery("#amountpayment").change(function() {
-                            alter_amount_payment();
-                        });';
-            print 'alter_amount_payment();';
-            print '});';
+                        });
 
-            print '</script>'."\n";
+        			function elemToJson(selector)
+            		{
+            			var subJson = {};
+            			jQuery.map(selector.serializeArray(), function(n,i)
+            			{
+            				subJson[n["name"]] = n["value"];
+            			});
+            			return subJson;
+            		}
+            		function callForResult(imgId)
+            		{
+            		    var json = {};
+		            	var form = jQuery("#payment_form");
+
+		            	json["amountPayment"] = jQuery("#amountpayment").attr("value");
+		            	json["amounts"] = elemToJson(form.find("input[name*=\"amount_\"]"));
+		            	json["remains"] = elemToJson(form.find("input[name*=\"remain_\"]"));
+
+		            	if(imgId != null)json["imgClicked"] = imgId;
+
+            			jQuery.post("ajaxpayment.php", json, function(data)
+            			{
+            				json = jQuery.parseJSON(data);
+
+            				form.data(json);
+
+            				for(var key in json)
+            				{
+            					if(key == "result")	{
+            						if(json["makeRed"]) {
+            							jQuery("#"+key).css("color", "red");
+            						} else {
+            							jQuery("#"+key).removeAttr("style");
+            						}
+            						json[key]=json["label"]+" "+json[key];
+            						jQuery("#"+key).text(json[key]);
+            					} else {
+            						form.find("input[name*=\""+key+"\"]").each(function() {
+            							jQuery(this).attr("value", json[key]);
+            						});
+            					}
+            				}
+            			});
+
+            		}
+            		function callToBreakdown(imgSelector) {
+		            	var form = jQuery("#payment_form"), imgId;
+
+		            	imgId =  imgSelector.attr("id");
+		            	callForResult(imgId);
+            		}
+
+            		jQuery("#payment_form").find("img").click(function() {
+            				callToBreakdown(jQuery(this));
+                    	});
+
+            			jQuery("#payment_form").find("input[name*=\"amount_\"]").change(function() {
+            				callForResult();
+                    	});
+
+            			jQuery("#amountpayment").change(function() {
+            				callForResult();
+                    	});
+             	});
+             </script>'."\n";
         }
 
-        print '<form name="add_paiement" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+        print '<form id="payment_form" name="add_paiement" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="add_paiement">';
         print '<input type="hidden" name="facid" value="'.$facture->id.'">';
@@ -307,7 +361,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         print '<td>'.$langs->trans('Comments').'</td></tr>';
 
         $rowspan=5;
-        if (! empty($conf->global->MAIN_JS_ON_PAYMENT)) $rowspan++;
+        if ($conf->use_javascript_ajax) $rowspan++;
 
         // Payment mode
         print '<tr><td><span class="fieldrequired">'.$langs->trans('PaymentMode').'</span></td><td>';
@@ -318,7 +372,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         print '</tr>';
 
         // Payment amount
-        if (! empty($conf->global->MAIN_JS_ON_PAYMENT))
+        if ($conf->use_javascript_ajax && !empty($conf->global->MAIN_JS_ON_PAYMENT))
         {
             print '<tr><td><span class="fieldrequired">'.$langs->trans('AmountPayment').'</span></td>';
             print '<td>';
@@ -409,114 +463,6 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                 print '<td align="right">&nbsp;</td>';
                 print "</tr>\n";
 
-                // FIXME Does not work yet because :
-                // - Does not support non , and non . decimal separator.
-                // - Does not use dolibarr param rounding
-                // - Other minor bugs
-                if (! empty($conf->global->MAIN_JS_ON_PAYMENT))
-                {
-                    print '<script type="text/javascript" language="javascript">
-
-    				// This Array is used to get and store Array containing (String format):
-    				//			[0]-> the $namef of the linked text field (in order to get and set ElementsById)
-    				//			[1]-> the linked invoice amount
-    				//			[2]-> the linked amount payed (in order to calculate the remaining payment amount)
-    				var amountInput = new Array();
-
-    				var totalAmount = 0;
-    				var paymentRemaining = 0;
-
-    				// This function is used to round floats to monetary format
-    				function roundNumber(num,dec) {
-    					var result = Math.round(num*Math.pow(10,dec))/Math.pow(10,dec);
-    					return result;
-    				}
-
-    				// This function is used to parse php Strings(floats with coma) to javascript floats (with stops)
-    				function convertFloat(str)
-    				{
-    						return parseFloat(str.replace(/,/, \'.\').split(\' \').join(\'\'));
-    				}
-
-    				// This function is used to convert javascript floats (stored as String) to coma floats (as String too)
-    				function toComaStr(str)
-    				{
-    						return str.replace(/\./, ",");
-    				}
-
-    				// This function is called onclick of the buttons linked to the invoices. It refreshes the linked payed amount
-    				// contained by the corresponding array, and the text field linked to the corresponding invoice
-    				function calcRemind(index)
-    				{
-    						invoiceAmount = convertFloat(amountInput[index][1]);
-    						var payedAmount = amountInput[index][2] != 0 ? convertFloat(amountInput[index][2]) : 0;
-    						paymentRemaining = paymentRemaining + payedAmount;
-    						payedAmount = 0;
-    						if(paymentRemaining - invoiceAmount < 0)
-    						{
-    							payedAmount = paymentRemaining;
-    							paymentRemaining = 0;
-    						}else
-    						{
-    							paymentRemaining -= invoiceAmount;
-    							payedAmount = invoiceAmount;
-    						}
-    						if(payedAmount < 0)
-    						{
-    							paymentRemaining += payedAmount;
-    							payedAmount = 0;
-    						}
-    						amountInput[index][2] = payedAmount.toString();
-    						document.getElementById(amountInput[index][0]).value = toComaStr(roundNumber(payedAmount,2).toString());
-    						changeSumAmount();
-    				}
-
-    				// This function is called when the payment\'s amount is change. It refreshes the array containing
-    				// the amounts payed (from the text fields linked to invoices)
-    				function alter_amount_payment()
-    				{
-    						totalAmount = document.add_paiement.amountpayment.value != 0 ? convertFloat(document.add_paiement.amountpayment.value) : 0;
-    						totalAmount = isNaN(totalAmount) ? 0 : totalAmount;
-    						paymentRemaining = totalAmount;
-    						for(var ii=0; ii<amountInput.length; ii++)
-    						{
-    							if(isNaN(convertFloat(document.getElementById(amountInput[ii][0]).value)))
-    								amountInput[ii][2] = 0;
-    							else
-    								paymentRemaining -= convertFloat(document.getElementById(amountInput[ii][0]).value);
-    						}
-    						changeSumAmount();
-    				}
-
-    				// This function is called when a change occurs on the text fields link to the invoices amount
-    				// to pay
-    				function changeAmount(index)
-    				{
-    						var oldAmount =	amountInput[index][2];
-    						var newAmount = isNaN(document.getElementById(amountInput[index][0]).value) ? 0 : document.getElementById(amountInput[index][0]).value;
-    						paymentRemaining += oldAmount - newAmount ;
-    						amountInput[index][2] = newAmount;
-    						changeSumAmount();
-    				}
-
-    				// This function is called when any change occurs on the amounts objects to print the remaining
-    				// amount of the payment to divide into invoices amount
-    				function changeSumAmount(t)
-    				{
-    						var dispatchRemaining = totalAmount;
-    						for(var ii = 0; ii < amountInput.length; ii++)
-    						{
-    							dispatchRemaining -= amountInput[ii][2] != 0 ? convertFloat(amountInput[ii][2]) : 0;
-    						}
-    						if(dispatchRemaining < 0)
-    							document.getElementById("amount_sum_payment").style.setProperty("color","#ff0000","");
-    						else
-    							document.getElementById("amount_sum_payment").style.removeProperty("color");
-    						document.getElementById("amount_sum_payment").innerHTML= "'.$langs->trans('RemainToDivide').' "+toComaStr(roundNumber(dispatchRemaining,2).toString());
-    				}
-    				</script>';
-                }
-
                 $var=True;
                 $total=0;
                 $totalrecu=0;
@@ -563,25 +509,21 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
                     // Add remind amount
                     $namef = 'amount_'.$objp->facid;
+                    $nameRemain = 'remain_'.$objp->facid;
 
-                    $namef = 'amount_'.$objp->facid;
                     if ($action != 'add_paiement')
                     {
-                        if (! empty($conf->global->MAIN_JS_ON_PAYMENT))
+                        if ($conf->use_javascript_ajax && !empty($conf->global->MAIN_JS_ON_PAYMENT))
                         {
-                            print img_picto($langs->trans('AddRemind'),'rightarrow.png','id="calcRemind'.$i.'" onclick="calcRemind(\''.$i.'\');return false;"');
-                            print '<script type="text/javascript" language="javascript">';
-                            print 'amountInput.push(new Array("'.$namef.'","'.price(price2num($objp->total_ttc - $paiement - $creditnotes - $deposits)).'","0"));'; // Push a new Array into the amountInput Array
-                            print 'jQuery(document).ready(function () {';
-                            print 'jQuery("#'.$namef.'").keyup(function() { changeAmount('.$i.'); });';
-                            print '});</script>';
+                            print img_picto($langs->trans('AddRemind'),'rightarrow.png','id="'.$objp->facid.'" "');
                         }
-                        print '<input id="'.$namef.'" type="text" size="8" name="'.$namef.'" value="'.$_POST[$namef].'">';
+                        print '<input type=hidden name="'.$nameRemain.'" value="'.$remaintopay.'">';
+                        print '<input type="text" size="8" name="'.$namef.'" value="'.$_POST[$namef].'">';
                     }
                     else
                     {
                         print '<input type="text" size="8" name="'.$namef.'_disabled" value="'.$_POST[$namef].'" disabled="true">';
-                        print '<input id="'.$namef.'" type="hidden" name="'.$namef.'" value="'.$_POST[$namef].'">';
+                        print '<input type="hidden" name="'.$namef.'" value="'.$_POST[$namef].'">';
                     }
                     print "</td>";
 
@@ -614,7 +556,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                     if ($totalrecudeposits) print '+'.price($totalrecudeposits);
                     print '</b></td>';
                     print '<td align="right"><b>'.price(price2num($total_ttc - $totalrecu - $totalrecucreditnote - $totalrecudeposits,'MT')).'</b></td>';
-                    print '<td align="right" id="amount_sum_payment" style="font-weight:bold;"></td>';
+                    print '<td align="right" id="result" style="font-weight:bold;"></td>';
                     print '<td align="center">&nbsp;</td>';
                     print "</tr>\n";
                 }
@@ -639,7 +581,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                 $langs->load("withdrawals");
                 if ($conf->global->WITHDRAW_DISABLE_AUTOCREATE_ONPAYMENTS) print '<br>'.$langs->trans("IfInvoiceNeedOnWithdrawPaymentWontBeClosed");
             }*/
-            print '<br><input type="submit" class="button" value="'.$langs->trans('Save').'"></center>';
+            print '<br><input type="submit" class="button" value="'.$langs->trans('Save').'"><br><br></center>';
             //			print '</td></tr>';
         }
 
@@ -730,5 +672,5 @@ if (! GETPOST('action'))
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/08 01:01:46 $ - $Revision: 1.114 $');
 ?>

@@ -182,7 +182,6 @@ RemainderToTake=Reste à encaisser
 AmountExpected=Montant réclamé
 ExcessReceived=Trop perçu
 EscompteOffered=Escompte (règlement avant échéance)
-CreateDraft=Créer brouillon
 SendBillRef=Envoi facture %s
 SendReminderBillRef=Relance facture %s
 StandingOrders=Prélèvements
@@ -366,7 +365,7 @@ DisabledBecausePayments=Non disponible car il existe des paiements
 CantRemovePaymentWithOneInvoicePaid=Suppression impossible quand il existe au moins une facture classée payée.
 ExpectedToPay=Paiement attendu
 PayedByThisPayment=Règlé par ce paiement
-ClosePaidInvoicesAutomatically=Classer automatiquement à "Payé" les factures entièrement payées. 
+ClosePaidInvoicesAutomatically=Classer automatiquement à "Payé" les factures standards et de remplacement entièrement payées. 
 AllCompletelyPayedInvoiceWillBeClosed=Toutes les factures avec un reste à payer nul seront automatiquement fermées au statut "Payé".
 ##### Types de contacts #####
 TypeContact_facture_internal_SALESREPFOLL=Responsable suivi facture client

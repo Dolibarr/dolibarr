@@ -17,15 +17,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/contact/class/contact.class.php
  *	\ingroup    societe
  *	\brief      File of contacts class
- *	\version    $Id$
+ *	\version    $Id: contact.class.php,v 1.32 2011/07/31 23:54:12 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
 
@@ -42,15 +41,16 @@ class Contact extends CommonObject
 	var $table_element='socpeople';
 
 	var $id;
-	var $civilite_id;
-	var $name;
-	var $nom;
+	var $civilite_id;  // In fact we stor civility_code
+    var $lastname;
+	var $name;         // TODO deprecated
+	var $nom;          // TODO deprecated
 	var $firstname;
-	var $prenom;
+	var $prenom;       // TODO deprecated
 	var $address;
-	var $cp;	// TODO deprecated
+	var $cp;	       // TODO deprecated
 	var $zip;
-	var $ville;	// TODO deprecated
+	var $ville;	       // TODO deprecated
 	var $town;
 
 	var $fk_departement;		// Id of department
@@ -83,7 +83,6 @@ class Contact extends CommonObject
 	/**
 	 *      Constructor of class Contact
 	 *      @param      DB      Habler d'acces base
-	 *      @param      id      Id contact
 	 */
 	function Contact($DB)
 	{
@@ -583,7 +582,7 @@ class Contact extends CommonObject
 	}
 
 
-	/*
+	/**
 	 *    \brief        Charge le nombre d'elements auquel est lie ce contact
 	 *                  ref_facturation
 	 *                  ref_contrat
@@ -626,9 +625,10 @@ class Contact extends CommonObject
 		}
 	}
 
-	/*
-	 *   \brief      Efface le contact de la base
-	 *	\return		int		<0 si ko, >0 si ok
+	/**
+	 *   	Efface le contact de la base
+	 *   	@param		notrigger	Disable all trigger
+	 *		@return		int			<0 if KO, >0 if OK
 	 */
 	function delete($notrigger=0)
 	{

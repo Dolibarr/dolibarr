@@ -38,7 +38,6 @@ NewUser=Nov uporabnik
 CreateUser=Kreiraj uporabnika
 SearchAGroup=Išči skupino
 SearchAUser=Išči uporabnika
-ErrorFailedToSendPassword=Napaka pri pošiljanju gesla
 LoginNotDefined=Uporabniško ime ni določeno.
 NameNotDefined=Ime ni določeno.
 ListOfUsers=Seznam uporabnikov

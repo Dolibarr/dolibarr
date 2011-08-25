@@ -75,4 +75,5 @@ ErrorDatabaseParameterWrong=Parameter nastavitve baze podatkov '<b>%s</b>' ima v
 ErrorNumRefModel=V bazi podatkov obstaja referenca (%s), ki ni kompatibilna s tem pravilom za številčenje. Odstranite zapis ali preimenujte referenco za aktivacijo tega modula.
 ErrorQtyTooLowForThisSupplier=Premajhna količina za tega dobavitelja ali ni določena cena tega izdelka za tega dobavitelja
 ErrorModuleSetupNotComplete=Kaže, da nastavitev tega modula ni kompletna. Za dokončanje pojdite na Nastavitve - Moduli.
+ErrorFailedToSendPassword=Napaka pri pošiljanju gesla
 

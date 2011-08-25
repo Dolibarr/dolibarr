@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,8 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * or see http://www.gnu.org/
  */
 
@@ -24,11 +23,10 @@
  *  \ingroup    propale
  *  \brief      Fichier contenant la classe mere de generation des propales en PDF
  *  			et la classe mere de numerotation des propales
- *	\version    $Id$
+ *	\version    $Id: modules_propale.php,v 1.66 2011/08/11 12:14:03 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
-require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");   // Requis car utilise dans les classes qui heritent
 
 
@@ -132,18 +130,18 @@ class ModeleNumRefPropales
 
 /**
  * 	Cree une propale sur disque en fonction du modele de PROPALE_ADDON_PDF
- * 	@param	    db  			objet base de donnee
- * 	@param	    id				id de la propale a creer
- * 	@param	    modele			force le modele a utiliser ('' to not force)
- * 	@param		outputlangs		objet lang a utiliser pour traduction
+ * 	@param	    db  			Database handler
+ * 	@param	    object			Object proposal
+ * 	@param	    modele			Force model to use ('' to not force)
+ * 	@param		outputlangs		Object langs to use for output
  *  @param      hidedetails     Hide details of lines
  *  @param      hidedesc        Hide description
  *  @param      hideref         Hide ref
  * 	@return     int         	0 if KO, 1 if OK
  */
-function propale_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+function propale_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $hookmanager=false)
 {
-	global $conf,$langs;
+	global $conf,$user,$langs;
 	$langs->load("propale");
 
 	$dir = "/includes/modules/propale/";
@@ -192,11 +190,19 @@ function propale_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0,
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
 		$sav_charset_output=$outputlangs->charset_output;
-		if ($obj->write_file($object, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc) > 0)
+		if ($obj->write_file($object, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $hookmanager) > 0)
 		{
 			$outputlangs->charset_output=$sav_charset_output;
 			// on supprime l'image correspondant au preview
 			propale_delete_preview($db, $object->id);
+
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			$interface=new Interfaces($db);
+			$result=$interface->run_triggers('PROPAL_BUILDDOC',$object,$user,$langs,$conf);
+			if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			// Fin appel triggers
+
 			return 1;
 		}
 		else

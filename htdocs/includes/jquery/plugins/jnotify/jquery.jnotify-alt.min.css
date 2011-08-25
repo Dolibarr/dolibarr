@@ -24,7 +24,7 @@
     left: 0; 
     width: 100%; 
     height: 100%;
-    background-color: #4c4c4c; 
+    background-color: #e3f0db; 
     filter: alpha(opacity=90); 
     -moz-opacity: 0.90; 
     opacity: 0.90; 
@@ -48,7 +48,6 @@
     padding: 0 5px;
     font: bold 1.4em Arial,Helvetica,sans-serif;
     line-height: 1em;
-    color: #fff;
     text-decoration: none;
     z-index: 3;
     cursor: pointer;
@@ -59,8 +58,8 @@
     z-index: 2; 
     padding: 20px;
     text-align: left;
-    color: #fff;
-    font: bold 1.4em Arial,Helvetica,sans-serif;
+    color: #446548;    
+    font: bold 1.2em verdana, arial, helvetica;
     line-height: 1.2em; 
 }
 
@@ -70,7 +69,7 @@
 
 /* notification type == "error" */
 .jnotify-container .jnotify-notification-error .jnotify-background {
-    background-color: #d79eac; 
+    background-color: #d79eac !important; 
 }
 
 .jnotify-container .jnotify-notification-error .jnotify-close,
@@ -80,7 +79,7 @@
 
 /* notification type == "warning" */
 .jnotify-container .jnotify-notification-warning .jnotify-background {
-    background-color: #fff7d1; 
+    background-color: #fff7d1 !important; 
 }
 
 .jnotify-container .jnotify-notification-warning .jnotify-close,

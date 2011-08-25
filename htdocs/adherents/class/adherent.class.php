@@ -17,15 +17,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/adherents/class/adherent.class.php
  *	\ingroup    member
  *	\brief      File of class to manage members of a foundation
- *	\version    $Id$
+ *	\version    $Id: adherent.class.php,v 1.50 2011/08/20 15:11:31 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
@@ -58,9 +57,15 @@ class Adherent extends CommonObject
     var $pass;
     var $societe;
     var $adresse;
+    var $address;
     var $cp;
+    var $zip;
     var $ville;
+    var $town;
 
+    var $state_id;
+    var $state_code;
+    var $state;
     var $fk_departement;		// Id of department
     var $departement_code;		// Code of department
     var $departement;			// Label of department
@@ -274,7 +279,7 @@ class Adherent extends CommonObject
         $sql.= " VALUES (";
         $sql.= " '".$this->db->idate($this->datec)."'";
         $sql.= ", ".($this->login?"'".$this->db->escape($this->login)."'":"null");
-        $sql.= ", ".($user->id>0?$user->id:"null");	// Can be null because member can be create by a guest or a script
+        $sql.= ", ".($user->id>0?$user->id:"null");	// Can be null because member can be createb by a guest or a script
         $sql.= ", null, null, '".$this->morphy."'";
         $sql.= ", '".$this->typeid."'";
         $sql.= ", ".$conf->entity;
@@ -288,6 +293,7 @@ class Adherent extends CommonObject
             if ($id > 0)
             {
                 $this->id=$id;
+                $this->ref=$id;
 
                 // Update minor fields
                 $result=$this->update($user,1,1); // nosync is 1 to avoid update data of user
@@ -421,11 +427,21 @@ class Adherent extends CommonObject
         {
             $nbrowsaffected+=$this->db->affected_rows($resql);
 
-            $result=$this->insertExtraFields();
-            if ($result < 0)
+            // Actions on extra fields (by external module or standard code)
+            include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+            $hookmanager=new HookManager($this->db);
+            $hookmanager->callHooks(array('member_extrafields'));
+            $parameters=array('socid'=>$socid);
+            $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+            if (empty($reshook))
             {
-                $error++;
+                $result=$this->insertExtraFields();
+                if ($result < 0)
+                {
+                    $error++;
+                }
             }
+            else if ($reshook < 0) $error++;
 
             // Update password
             if (! $error && $this->pass)
@@ -940,12 +956,17 @@ class Adherent extends CommonObject
                 $this->ville          = $obj->town;	    // TODO deprecated
                 $this->town           = $obj->town;
 
-                $this->fk_departement = $obj->fk_departement;
-                $this->departement_code = $obj->fk_departement?$obj->departement_code:'';
-                $this->departement	  = $obj->fk_departement?$obj->departement:'';
+                $this->state_id       = $obj->fk_departement;
+                $this->state_id       = $obj->fk_departement?$obj->departement_code:'';
+                $this->state_id       = $obj->fk_departement?$obj->departement:'';
+                $this->fk_departement = $obj->fk_departement;    // TODO deprecated
+                $this->departement_code = $obj->fk_departement?$obj->departement_code:'';    // TODO deprecated
+                $this->departement	  = $obj->fk_departement?$obj->departement:'';    // TODO deprecated
 
-                $this->pays_id        = $obj->pays_id;
-                $this->pays_code      = $obj->pays_code;
+                $this->country_id     = $obj->pays_id;
+                $this->country_code   = $obj->pays_code;
+                $this->pays_id        = $obj->pays_id;    // TODO deprecated
+                $this->pays_code      = $obj->pays_code;    // TODO deprecated
                 if ($langs->trans("Country".$obj->pays_code) != "Country".$obj->pays_code) $this->pays = $langs->trans("Country".$obj->pays_code);
                 elseif ($obj->pays_lib) $this->pays=$obj->pays_lib;
                 else $this->pays=$obj->pays;

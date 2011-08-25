@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *      \file       htdocs/fourn/facture/contact.php
  *      \ingroup    facture, fournisseur
  *      \brief      Onglet de gestion des contacts des factures
- *      \version    $Id$
+ *      \version    $Id: contact.php,v 1.29 2011/08/14 03:13:50 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -77,51 +76,16 @@ if ($_POST["action"] == 'addcontact' && $user->rights->fournisseur->facture->cre
 		}
 	}
 }
-// modification d'un contact. On enregistre le type
-if ($_POST["action"] == 'updateligne' && $user->rights->fournisseur->facture->creer)
-{
-	$facture = new FactureFournisseur($db);
-	if ($facture->fetch($_GET["facid"]))
-	{
-		$contact = $facture->detail_contact($_POST["elrowid"]);
-		$type = $_POST["type"];
-		$statut = $contact->statut;
-
-		$result = $facture->update_contact($_POST["elrowid"], $statut, $type);
-		if ($result >= 0)
-		{
-			$db->commit();
-		} else
-		{
-			dol_print_error($db, "result=$result");
-			$db->rollback();
-		}
-	} else
-	{
-		dol_print_error($db);
-	}
-}
 
 // bascule du statut d'un contact
 if ($_GET["action"] == 'swapstatut' && $user->rights->fournisseur->facture->creer)
 {
 	$facture = new FactureFournisseur($db);
-	if ($facture->fetch($_GET["facid"]))
+	if ($facture->fetch(GETPOST("facid")))
 	{
-		$contact = $facture->detail_contact($_GET["ligne"]);
-		$id_type_contact = $contact->fk_c_type_contact;
-		$statut = ($contact->statut == 4) ? 5 : 4;
-
-		$result = $facture->update_contact($_GET["ligne"], $statut, $id_type_contact);
-		if ($result >= 0)
-		{
-			$db->commit();
-		} else
-		{
-			dol_print_error($db, "result=$result");
-			$db->rollback();
-		}
-	} else
+	    $result=$facture->swapContactStatus(GETPOST('ligne'));
+	}
+	else
 	{
 		dol_print_error($db);
 	}
@@ -162,7 +126,8 @@ $userstatic=new User($db);
 /* Mode vue et edition                                                         */
 /*                                                                             */
 /* *************************************************************************** */
-if (isset($mesg)) print $mesg;
+dol_htmloutput_mesg($mesg);
+
 $id = $_GET["facid"];
 if ($id > 0)
 {
@@ -385,5 +350,5 @@ if ($id > 0)
 
 $db->close();
 
-llxFooter('$Date$');
+llxFooter('$Date: 2011/08/14 03:13:50 $');
 ?>

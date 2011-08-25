@@ -54,20 +54,8 @@ ErrorCantSaveADoneUserWithZeroPercentage=Не удается сохранить 
 ErrorRefAlreadyExists=Ссылки, используемые для создания, уже существует.
 ErrorPleaseTypeBankTransactionReportName=Введите название банка, где получение сделки (в формате ГГГГММ или ГГГГММДД)
 ErrorRecordHasChildren=Не удается удалить записи, поскольку он имеет некоторые хлеб.
-// Date 2009-01-19 21:30:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
-// Reference language: en_US
 MenuManager=Меню менеджера
 ErrorUrlNotValid=Адрес веб-сайта, является неверным
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
-
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> ru_RU
 Error=Ошибка
 Errors=Ошибки
 ErrorBadEMail=EMail %s неправильно
@@ -92,4 +80,4 @@ WarningNoDocumentModelActivated=Ни одна из моделей, для ген
 ErrorDatabaseParameterWrong=База данных установки параметра <b>&quot;%s&quot;</b> имеет значение не совместимы с использованием Dolibarr (должно иметь значение <b>&#39;%s&#39;).</b>
 ErrorNumRefModel=Ссылка есть в базе данных (%s) и не совместимы с данным правилом нумерации. Удаление записей или переименован ссылкой для активации этого модуля.
 ErrorQtyTooLowForThisSupplier=Количество слишком мало для этого поставщика или не определена цена на этот продукт для этого поставщика
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:42:17).
+ErrorFailedToSendPassword=Не удалось отправить пароль

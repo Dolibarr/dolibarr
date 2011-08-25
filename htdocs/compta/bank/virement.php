@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *		\file       htdocs/compta/bank/virement.php
  *		\ingroup    banque
  *		\brief      Page de saisie d'un virement
- *		\version    $Id$
+ *		\version    $Id: virement.php,v 1.49 2011/07/31 22:23:17 eldy Exp $
  */
 
 require("./pre.inc.php");
@@ -49,7 +48,7 @@ if ($_POST["action"] == 'add')
 	if (! $label)
 	{
 		$error=1;
-		$mesg.="<div class=\"error\">".$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label"))."</div>";
+		$mesg.="<div class=\"error\">".$langs->trans("ErrorFieldRequired",$langs->transnoentities("Description"))."</div>";
 	}
 	if (! $amount)
 	{
@@ -138,9 +137,7 @@ $html=new Form($db);
 
 print_fiche_titre($langs->trans("BankTransfer"));
 
-if ($mesg) {
-    print "$mesg<br>";
-}
+dol_htmloutput_mesg($mesg);
 
 print $langs->trans("TransferDesc");
 print "<br><br>";
@@ -178,5 +175,5 @@ print "</form>";
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/31 22:23:17 $ - $Revision: 1.49 $');
 ?>

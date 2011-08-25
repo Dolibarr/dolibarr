@@ -2,15 +2,12 @@
 This file describe changes made on external library after beeing included
 in Dolibarr root.
 
+
+
 ALL:
 ----
 Replace "& new" by "new"
 
-
-CKEDITOR:
----------
-Remove border and padding into style .cke_skin_kama
-into file includes/ckeditor/skins/kama/editor.css
 
 
 NUSOAP:
@@ -24,18 +21,6 @@ By
 * In file nusoap.php, to avoid a warning,
 Replace call to serialize_val with no bugged value
 
-
-FPDF:
------
-* All changes were added in fpdf.php file and marked with tag DOLCHANGE or DOL_CHANGE
-Example:
-$tmp=tempnam('.','gif') into $tmp=tempnam(DOL_DATA_ROOT,'gif') to avoid creating files out of the htdocs directory.
-
-
-FPDFI and FPDF_TPL:
--------------------
-* Added the include FPDF at beginning of fpdf_tpl.php
-* Replaced all sprintf(%0.2f) by sprintf(%0.2F) (Fix bug)
 
 
 TCPDF:
@@ -54,6 +39,7 @@ if (! function_exists('getmypid')) {
 }
 
 
+
 JSGANTT:
 --------
 * Replace in function JSGantt.taskLink
@@ -70,8 +56,9 @@ PHP-BARCODE:
 ------------
 If files are replaced by new version, following changes must be done:
 
-* Add lines into barcode_outimage function
-*******************************************
+* Restore changes done into php-barcode.php marked with DOL_CHANGE LDR
+
+* Add lines into barcode_outimage function:
 	// DOLCHANGE LDR
     global $filebarcode;
 

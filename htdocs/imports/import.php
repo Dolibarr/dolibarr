@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -13,15 +13,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *      \file       htdocs/imports/import.php
  *      \ingroup    import
  *      \brief      Pages of import Wizard
- *      \version    $Id$
+ *      \version    $Id: import.php,v 1.70 2011/08/17 15:56:26 eldy Exp $
  */
 
 require_once("../main.inc.php");
@@ -195,8 +194,8 @@ if ($step == 3 && $datatoimport)
 
 	if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	{
-		create_exdir($conf->import->dir_temp);
-		$nowyearmonth=dol_date('YmdHis',dol_now(),0);
+		dol_mkdir($conf->import->dir_temp);
+		$nowyearmonth=dol_print_date(dol_now(),'%Y%m%d%H%M%S');
 
 		$fullpath=$conf->import->dir_temp . "/" . $nowyearmonth . '-'.$_FILES['userfile']['name'];
 		if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $fullpath,1) > 0)
@@ -424,13 +423,13 @@ if ($step == 2 && $datatoimport)
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
 
+	print $langs->trans("ChooseFormatOfFileToImport",img_picto('','filenew')).'<br>';
 	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
 	$filetoimport='';
 	$var=true;
 
 	// Add format informations and link to download example
-	print '<tr><td colspan="4">'.$langs->trans("ChooseFormatOfFileToImport",img_picto('','filenew')).'</td></tr>';
 	print '<tr class="liste_titre"><td colspan="6">';
 	print $langs->trans("FileMustHaveOneOfFollowingFormat");
 	print '</td></tr>';
@@ -1327,7 +1326,7 @@ if ($step == 5 && $datatoimport)
         $db->rollback();    // We force rollback because this was just a simulation.
 
         // Show OK
-        if (! sizeof($arrayoferrors) && ! sizeof($arrayofwarnings)) print img_tick().' <b>'.$langs->trans("NoError").'</b><br><br>';
+        if (! sizeof($arrayoferrors) && ! sizeof($arrayofwarnings)) print img_picto($langs->trans("OK"),'tick').' <b>'.$langs->trans("NoError").'</b><br><br>';
         else print $langs->trans("NbOfLinesOK",$nbok).'</b><br><br>';
 
         // Show Errors
@@ -1669,7 +1668,7 @@ print '<br>';
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/17 15:56:26 $ - $Revision: 1.70 $');
 
 
 /*
@@ -1708,7 +1707,6 @@ function show_elem($fieldssource,$i,$pos,$key,$var,$nostyle='')
 	else	// Print field of source file
 	{
 		print '<tr '.($nostyle?'':$bc[$var]).' height="20">';
-		//print '<td width="16">'.img_file('','').'</td>';
 		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
 		// The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
 		print img_picto($langs->trans("MoveField",$pos),'uparrow','class="boxhandle" style="cursor:move;"');
@@ -1729,8 +1727,8 @@ function show_elem($fieldssource,$i,$pos,$key,$var,$nostyle='')
 
 /**
  * Return not used field number
- *
- * @param 	$listofkey
+ * @param 	$fieldssource
+ * @param	$listofkey
  * @return
  */
 function getnewkey(&$fieldssource,&$listofkey)

@@ -13,15 +13,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	    \file       htdocs/compta/dons/index.php
  *		\ingroup    don
  *		\brief      Home page of donation module
- *		\version    $Id$
+ *		\version    $Id: index.php,v 1.29 2011/08/03 00:46:37 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -43,9 +42,10 @@ $donation_static=new Don($db);
  * View
  */
 
-llxHeader('',$langs->trans("Donations"),'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Subvenciones');
-
 $donstatic=new Don($db);
+
+$help_url='EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Subvenciones';
+llxHeader('',$langs->trans("Donations"),$help_url);
 
 $sql = "SELECT count(d.rowid) as nb, sum(d.amount) as somme , d.fk_statut";
 $sql.= " FROM ".MAIN_DB_PREFIX."don as d";
@@ -133,8 +133,7 @@ print "</table>";
 print '</td><td valign="top">';
 
 
-
-$max=5;
+$max=10;
 
 /*
  * Last modified proposals
@@ -202,5 +201,5 @@ print '</td></tr></table>';
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/03 00:46:37 $ - $Revision: 1.29 $');
 ?>

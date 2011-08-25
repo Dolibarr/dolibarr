@@ -12,8 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * or see http://www.gnu.org/
  */
 
@@ -21,7 +20,7 @@
  *  \file		htdocs/lib/dolgeoip.class.php
  * 	\ingroup	geoip
  *  \brief		Library for managing module geoip
- *  \version	$Id$
+ *  \version	$Id: dolgeoip.class.php,v 1.6 2011/08/21 15:26:16 eldy Exp $
  */
 
 
@@ -46,8 +45,16 @@ class DolGeoIP
 	 */
 	function DolGeoIP($type,$datfile)
 	{
-		if ($type == 'country') require_once(DOL_DOCUMENT_ROOT."/includes/geoip/geoip.inc");
-		else if ($type == 'city') require_once(DOL_DOCUMENT_ROOT."/includes/geoip/geoipcity.inc");
+		if ($type == 'country')
+		{
+		    // geoip may have been already included with PEAR
+		    if (! function_exists('geoip_country_code_by_name')) $res=include_once(GEOIP_PATH."geoip.inc");
+		}
+		else if ($type == 'city')
+		{
+		    // geoip may have been already included with PEAR
+		    if (! function_exists('geoip_country_code_by_name')) $res=include_once(GEOIP_PATH."geoipcity.inc");
+		}
 		else { print 'ErrorBadParameterInConstructor'; return 0; }
 
 		if (empty($type) || empty($datfile))

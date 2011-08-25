@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -13,15 +13,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *      \file       htdocs/compta/sociales/charges.php
  *		\ingroup    tax
  *		\brief      Social contribution car page
- *		\version    $Id$
+ *		\version    $Id: charges.php,v 1.66 2011/08/05 21:11:50 eldy Exp $
  */
 
 require('../../main.inc.php');
@@ -30,10 +29,10 @@ require(DOL_DOCUMENT_ROOT."/compta/sociales/class/chargesociales.class.php");
 $langs->load("compta");
 $langs->load("bills");
 
-$chid=isset($_GET["id"])?$_GET["id"]:$_POST["id"];
+$chid=GETPOST("id");
 
 // Security check
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$socid = GETPOST("socid");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
@@ -63,7 +62,7 @@ if ($_REQUEST["action"] == 'confirm_paid' && $_REQUEST["confirm"] == 'yes')
 if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes')
 {
 	$chargesociales=new ChargeSociales($db);
-	$chargesociales->id=$_GET["id"];
+	$chargesociales->fetch($chid);
 	$result=$chargesociales->delete($user);
 	if ($result > 0)
 	{
@@ -130,8 +129,8 @@ if ($_POST["action"] == 'add' && $user->rights->tax->charges->creer)
 
 if ($_GET["action"] == 'update' && ! $_POST["cancel"] && $user->rights->tax->charges->creer)
 {
-	$dateech=@dol_mktime($_POST["echhour"],$_POST["echmin"],$_POST["echsec"],$_POST["echmonth"],$_POST["echday"],$_POST["echyear"]);
-	$dateperiod=@dol_mktime($_POST["periodhour"],$_POST["periodmin"],$_POST["periodsec"],$_POST["periodmonth"],$_POST["periodday"],$_POST["periodyear"]);
+	$dateech=dol_mktime($_POST["echhour"],$_POST["echmin"],$_POST["echsec"],$_POST["echmonth"],$_POST["echday"],$_POST["echyear"]);
+	$dateperiod=dol_mktime($_POST["periodhour"],$_POST["periodmin"],$_POST["periodsec"],$_POST["periodmonth"],$_POST["periodday"],$_POST["periodyear"]);
 	if (! $dateech)
 	{
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("DateDue")).'</div>';
@@ -173,10 +172,7 @@ llxHeader('',$langs->trans("SocialContribution"));
 
 $html = new Form($db);
 
-/*
- * Mode creation
- *
- */
+// Mode creation
 if ($_GET["action"] == 'create')
 {
 	print_fiche_titre($langs->trans("NewSocialContribution"));
@@ -252,7 +248,7 @@ if ($chid > 0)
 
 	if ($result > 0)
 	{
-		if ($mesg) print $mesg.'<br>';
+		dol_htmloutput_mesg($mesg);
 
 		$h = 0;
 		$head[$h][0] = DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$cha->id;
@@ -269,15 +265,13 @@ if ($chid > 0)
 		if ($_GET["action"] == 'paid')
 		{
 			$text=$langs->trans('ConfirmPaySocialContribution');
-			$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=$cha->id&amp;action=confirm_paid",$langs->trans('PaySocialContribution'),$text,"confirm_paid");
-			if ($ret == 'html') print '<br>';
+			print $html->formconfirm($_SERVER["PHP_SELF"]."?id=".$cha->id,$langs->trans('PaySocialContribution'),$text,"confirm_paid",'','',2);
 		}
 
 		if ($_GET['action'] == 'delete')
 		{
 			$text=$langs->trans('ConfirmDeleteSocialContribution');
-			$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$cha->id,$langs->trans('DeleteSocialContribution'),$text,'confirm_delete');
-			if ($ret == 'html') print '<br>';
+			print $html->formconfirm($_SERVER['PHP_SELF'].'?id='.$cha->id,$langs->trans('DeleteSocialContribution'),$text,'confirm_delete','','',2);
 		}
 
 		if ($_GET['action'] == 'edit')
@@ -354,9 +348,9 @@ if ($chid > 0)
 			{
 				$objp = $db->fetch_object($resql);
 				$var=!$var;
-				print "<tr $bc[$var]><td>";
+				print "<tr ".$bc[$var]."><td>";
 				print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").'</a> ';
-				print dol_print_date($db->jdate($objp->dp))."</td>\n";
+				print dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 				print "<td>".$objp->paiement_type.' '.$objp->num_paiement."</td>\n";
 				print '<td align="right">'.price($objp->amount)."</td><td>&nbsp;".$langs->trans("Currency".$conf->monnaie)."</td>\n";
 				print "</tr>";
@@ -446,7 +440,7 @@ if ($chid > 0)
 			}
 
 			// Delete
-			if ($cha->paye == 0 && $totalpaye <=0 && $user->rights->tax->charges->supprimer)
+			if ($user->rights->tax->charges->supprimer)
 			{
 				print "<a class=\"butActionDelete\" href=\"".DOL_URL_ROOT."/compta/sociales/charges.php?id=$cha->id&amp;action=delete\">".$langs->trans("Delete")."</a>";
 			}
@@ -463,5 +457,5 @@ if ($chid > 0)
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/05 21:11:50 $ - $Revision: 1.66 $');
 ?>

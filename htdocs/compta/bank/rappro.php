@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *       \file       htdocs/compta/bank/rappro.php
  *       \ingroup    banque
  *       \brief      Page to reconciliate bank transactions
- *       \version    $Id$
+ *       \version    $Id: rappro.php,v 1.68 2011/07/31 22:23:16 eldy Exp $
  */
 
 require("./pre.inc.php");
@@ -151,10 +150,10 @@ if ($resql)
     // Show last bank receipts
     $nbmax=5;
     $liste="";
-    $sql = "SELECT distinct num_releve FROM ".MAIN_DB_PREFIX."bank";
-    $sql.= " WHERE fk_account=".$_GET["account"];
-    $sql.= " ORDER BY num_releve DESC";
-    $sql.= " LIMIT ".($nbmax+1);
+    $sql = "SELECT DISTINCT num_releve FROM ".MAIN_DB_PREFIX."bank";
+    $sql.= " WHERE fk_account=".$_GET["account"]." AND num_releve IS NOT NULL";
+    $sql.= $db->order("num_releve","DESC");
+    $sql.= $db->plimit($nbmax+1);
     print $langs->trans("LastAccountStatements").' : ';
     $resqlr=$db->query($sql);
     if ($resqlr)
@@ -166,19 +165,20 @@ if ($resql)
             $objr = $db->fetch_object($resqlr);
             $last_releve = $objr->num_releve;
             $i++;
-            $liste='<a href="releve.php?account='.$_GET["account"].'&amp;num='.$objr->num_releve.'">'.$objr->num_releve.'</a> &nbsp; '.$liste;
+            $liste='<a href="'.DOL_URL_ROOT.'/compta/bank/releve.php?account='.$_GET["account"].'&amp;num='.$objr->num_releve.'">'.$objr->num_releve.'</a> &nbsp; '.$liste;
         }
         if ($numr >= $nbmax) $liste="... &nbsp; ".$liste;
         print $liste;
+
         if ($numr > 0) print '<br><br>';
-        else print $langs->trans("None").'<br><br>';
+        else print '<b>'.$langs->trans("None").'</b><br><br>';
     }
     else
     {
         dol_print_error($db);
     }
 
-    print '<table class="border" width="100%">';
+    print '<table class="liste" width="100%">';
     print "<tr class=\"liste_titre\">\n";
     print '<td align="center">'.$langs->trans("DateOperationShort").'</td>';
     print '<td align="center">'.$langs->trans("DateValueShort").'</td>';
@@ -402,5 +402,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/31 22:23:16 $ - $Revision: 1.68 $');
 ?>

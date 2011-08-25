@@ -15,8 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * or see http://www.gnu.org/
  *
  * Lots of code inspired from Dan Potter's CSMSFile class
@@ -25,7 +24,7 @@
 /**
  *      \file       htdocs/lib/CSMSFile.class.php
  *      \brief      File of class to send sms
- *		\version    $Id$
+ *		\version    $Id: CSMSFile.class.php,v 1.6 2011/07/31 23:25:22 eldy Exp $
  *      \author	    Laurent Destailleur.
  */
 
@@ -54,6 +53,9 @@ class CSMSFile
 	 *	@param 	from                Sender SMS
 	 *	@param 	msg                 Message
 	 *	@param 	deliveryreceipt		Ask a delivery receipt
+	 *	@param 	deferred			Deferred or not
+	 *	@param 	priority			Priority
+	 *	@param 	class				Class
 	 */
 	function CSMSFile($to,$from,$msg,$deliveryreceipt=0,$deferred=0,$priority=3,$class=1)
 	{
@@ -137,7 +139,7 @@ class CSMSFile
 				if ($res <= 0)
 				{
 					$this->error=$ovhsms->error;
-					dol_syslog("CSMSFile::sendfile: sms send error=".$this->error, LOG_ERROR);
+					dol_syslog("CSMSFile::sendfile: sms send error=".$this->error, LOG_ERR);
 				}
 				else
 				{

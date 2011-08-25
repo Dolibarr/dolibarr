@@ -13,14 +13,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *  \file       htdocs/admin/system/dolibarr.php
  *  \brief      Page to show Dolibarr informations
- *  \version    $Id$
+ *  \version    $Id: dolibarr.php,v 1.59 2011/07/31 22:23:14 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -163,7 +162,7 @@ if (function_exists('date_default_timezone_get'))
 	print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("CurrentTimeZone").'</td><td>';	// Timezone server PHP
 	$a=date_default_timezone_get();
 	$a.=' ('.(-dol_mktime(0,0,0,1,1,1970)>0?'+':'').(-dol_mktime(0,0,0,1,1,1970)).')';
-    print $form->textwithtooltip($a,$txt,2,1,img_info());
+    print $form->textwithtooltip($a,$txt,2,1,img_info(''));
 	print '</td></tr>'."\n";	// value defined in http://fr3.php.net/manual/en/timezones.europe.php
 }
 else
@@ -171,7 +170,7 @@ else
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("PHPServerOffsetWithGreenwich").'</td><td>';
     $a=(-dol_mktime(0,0,0,1,1,1970)>0?'+':'').(-dol_mktime(0,0,0,1,1,1970));
-    print $form->textwithtooltip($a,$txt,2,1,img_info());
+    print $form->textwithtooltip($a,$txt,2,1,img_info(''));
     print '</td></tr>'."\n";
 }
 $var=!$var;
@@ -213,5 +212,5 @@ print '<tr '.$bc[$var].'><td width="300">=> '.$langs->trans("File encoding").'</
 print '</table>';
 print '<br>';
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/31 22:23:14 $ - $Revision: 1.59 $');
 ?>

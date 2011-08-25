@@ -12,14 +12,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *       \file       htdocs/webservices/server_thirdparty.php
  *       \brief      File that is entry point to call Dolibarr WebServices
- *       \version    $Id$
+ *       \version    $Id: server_thirdparty.php,v 1.14 2011/08/18 22:26:10 eldy Exp $
  */
 
 // This is to make Dolibarr working with Plesk
@@ -181,11 +180,11 @@ function getThirdParty($authentication,$id='',$ref='',$ref_ext='')
 //			    		'date_creation' => $thirdparty->
 //			    		'date_modification' => $thirdparty->
 			            'address' => $thirdparty->address,
-				        'zip' => $thirdparty->cp,
-				        'town' => $thirdparty->ville,
-				        'province_id' => $thirdparty->departement_id,
-				        'country_id' => $thirdparty->pays_id,
-				        'country_code' => $thirdparty->pays_code,
+				        'zip' => $thirdparty->zip,
+				        'town' => $thirdparty->town,
+				        'province_id' => $thirdparty->state_id,
+				        'country_id' => $thirdparty->country_id,
+				        'country_code' => $thirdparty->country_code,
 				        'country' => $thirdparty->country,
 			            'phone' => $thirdparty->tel,
 				        'fax' => $thirdparty->fax,

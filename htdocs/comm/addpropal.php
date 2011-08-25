@@ -16,15 +16,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/comm/addpropal.php
  *	\ingroup    propal
  *	\brief      Page to add a new commercial proposal
- *	\version    $Id$
+ *	\version    $Id: addpropal.php,v 1.133 2011/08/23 15:23:19 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -42,6 +41,11 @@ $langs->load("companies");
 $langs->load("bills");
 $langs->load("orders");
 $langs->load("deliveries");
+
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+$hookmanager=new HookManager($db);
+$hookmanager->callHooks(array('propalcard'));
 
 /*
  * Actions
@@ -121,12 +125,12 @@ if ($_GET["action"] == 'create')
 	// Ref
 	print '<tr><td class="fieldrequired">'.$langs->trans("Ref").'</td><td colspan="2"><input name="ref" value="'.$numpr.'"></td></tr>';
 
-	// Reference client
+	// Ref customer
 	print '<tr><td>'.$langs->trans('RefCustomer').'</td><td colspan="2">';
 	print '<input type="text" name="ref_client" value=""></td>';
 	print '</tr>';
 
-	// Societe
+	// Third party
 	print '<tr><td class="fieldrequired">'.$langs->trans('Company').'</td><td colspan="2">'.$soc->getNomUrl(1);
 	print '<input type="hidden" name="socid" value="'.$soc->id.'">';
 	print '</td>';
@@ -153,10 +157,11 @@ if ($_GET["action"] == 'create')
 	$html->select_date('','','','','',"addprop");
 	print '</td></tr>';
 
+	// Validaty duration
 	print '<tr><td class="fieldrequired">'.$langs->trans("ValidityDuration").'</td><td colspan="2"><input name="duree_validite" size="5" value="'.$conf->global->PROPALE_VALIDITY_DURATION.'"> '.$langs->trans("days").'</td></tr>';
 
 	// Terms of payment
-	print '<tr><td nowrap>'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
+	print '<tr><td nowrap="nowrap" class="fieldrequired">'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
 	$html->select_conditions_paiements($soc->cond_reglement,'cond_reglement_id');
 	print '</td></tr>';
 
@@ -170,9 +175,9 @@ if ($_GET["action"] == 'create')
     $html->select_demand_reason($propal->demand_reason,'demand_reason_id',"SRC_PROP",1);
     print '</td></tr>';
 
-	// delai de livraison
+	// Delivery delay
     print '<tr><td>'.$langs->trans('AvailabilityPeriod').'</td><td colspan="2">';
-    $html->select_availability($propal->availability,'availability_id');
+    $html->select_availability($propal->availability,'availability_id','',1);
     print '</td></tr>';
 
 	// Delivery date (or manufacturing)
@@ -232,6 +237,10 @@ if ($_GET["action"] == 'create')
 		print '</td>';
 		print '</tr>';
 	}
+	
+	// Insert hooks
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
 	print "</table>";
 	print '<br>';
@@ -240,12 +249,13 @@ if ($_GET["action"] == 'create')
 	 * Combobox pour la fonction de copie
 	 */
 
-	print '<table>';
 	if (empty($conf->global->PROPAL_CLONE_ON_CREATE_PAGE))
 	{
-		print '<tr><td colspan="3"><input type="hidden" name="createmode" value="empty"></td></tr>';
+		print '<input type="hidden" name="createmode" value="empty">';
 	}
-	else
+
+	print '<table>';
+	if (! empty($conf->global->PROPAL_CLONE_ON_CREATE_PAGE))
 	{
 		// For backward compatibility
 		print '<tr>';
@@ -289,7 +299,7 @@ if ($_GET["action"] == 'create')
 		print '<td valign="top" colspan="2">'.$langs->trans("CreateEmptyPropal").'</td></tr>';
 	}
 
-	if ($conf->global->PRODUCT_SHOW_WHEN_CREATE)
+	if (! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE))
 	{
 		print '<tr><td colspan="3">';
 		if ($conf->product->enabled || $conf->service->enabled)
@@ -319,10 +329,6 @@ if ($_GET["action"] == 'create')
 			print "</table>";
 
 		}
-		else
-		{
-			print '&nbsp;';
-		}
 		print '</td></tr>';
 	}
 	print '</table>';
@@ -338,5 +344,5 @@ if ($_GET["action"] == 'create')
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/23 15:23:19 $ - $Revision: 1.133 $');
 ?>

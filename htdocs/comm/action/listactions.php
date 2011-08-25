@@ -15,15 +15,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	    \file       htdocs/comm/action/listactions.php
  *      \ingroup    agenda
  *		\brief      Page to list actions
- *		\version    $Id$
+ *		\version    $Id: listactions.php,v 1.56 2011/07/31 22:23:20 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -213,7 +212,7 @@ if ($resql)
     //print '<br>';
 
 	$i = 0;
-	print "<table class=\"noborder\" width=\"100%\">";
+	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"acode",$param,"","",$sortfield,$sortorder);
 	//print_liste_field_titre($langs->trans("Title"),$_SERVER["PHP_SELF"],"a.label",$param,"","",$sortfield,$sortorder);
@@ -348,5 +347,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/31 22:23:20 $ - $Revision: 1.56 $');
 ?>

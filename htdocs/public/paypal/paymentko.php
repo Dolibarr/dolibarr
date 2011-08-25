@@ -13,18 +13,17 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
- *     	\file       htdocs/public/paybox/paymentko.php
- *		\ingroup    paybox
+ *     	\file       htdocs/public/paypal/paymentko.php
+ *		\ingroup    paypal
  *		\brief      File to show page after a failed payment.
  *                  This page is called by paypal with url provided to payal competed with parameter TOKEN=xxx
  *                  This token can be used to get more informations.
  *		\author	    Laurent Destailleur
- *		\version    $Id$
+ *		\version    $Id: paymentko.php,v 1.8 2011/08/08 16:00:19 eldy Exp $
  */
 
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
@@ -82,5 +81,5 @@ html_print_paypal_footer($mysoc,$langs);
 
 $db->close();
 
-llxFooterPaypal('$Date$ - $Revision$');
+llxFooterPaypal('$Date: 2011/08/08 16:00:19 $ - $Revision: 1.8 $');
 ?>

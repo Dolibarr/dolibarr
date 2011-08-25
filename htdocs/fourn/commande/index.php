@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	 \file       htdocs/fourn/commande/index.php
- *	 \ingroup    commande
- *	 \brief      Page accueil commandes fournisseurs
- *   \version    $Revision$
+ *	 \ingroup    commande fournisseur
+ *	 \brief      Home page of supplier's orders area
+ *   \version    $Revision: 1.44 $
  */
 
 require("../../main.inc.php");
@@ -241,7 +240,7 @@ else
 }
 
 
-print '</td><td width="70%" valign="top" class="notopnoleft">';
+print '</td><td width="70%" valign="top" class="notopnoleftnoright">';
 
 
 /*
@@ -388,5 +387,5 @@ print '</td></tr></table>';
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/08 15:28:00 $ - $Revision: 1.44 $');
 ?>

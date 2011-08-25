@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Brice Davoleau       <brice.davoleau@gmail.com>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin  		<patrick.raguin@gmail.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
@@ -17,15 +17,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *  \file       htdocs/categories/categorie.php
  *  \ingroup    category
  *  \brief      Page to show category tab
- *  \version    $Id$
+ *  \version    $Id: categorie.php,v 1.69 2011/08/24 12:31:12 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -34,7 +33,10 @@ require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
 $langs->load("categories");
 $langs->load("products");
 
-$mesg=isset($_GET["mesg"])?'<div class="ok">'.$_GET["mesg"].'</div>':'';
+$socid=GETPOST('socid');
+$id=GETPOST('id');
+$ref=GETPOST('ref');
+$mesg=GETPOST('mesg');
 
 $dbtablename = '';
 
@@ -42,10 +44,11 @@ $dbtablename = '';
 // For categories on third parties
 if (! empty($_REQUEST["socid"])) {
 	$_REQUEST["id"]=$_REQUEST["socid"];
+	$id=$socid;
 }
 if (! isset($_REQUEST["type"])) $_REQUEST["type"]=0;
-if ($_REQUEST["type"] == 1) $_GET["socid"]=$_REQUEST["id"];
-if ($_REQUEST["type"] == 2) $_GET["socid"]=$_REQUEST["id"];
+if ($_REQUEST["type"] == 1) $socid=$id;
+if ($_REQUEST["type"] == 2) $socid=$id;
 
 if ($_REQUEST["id"] || $_REQUEST["ref"])
 {
@@ -57,13 +60,13 @@ if ($_REQUEST["id"] || $_REQUEST["ref"])
 		$fieldid = isset($_REQUEST["ref"])?'ref':'rowid';
 	}
 	if ($_REQUEST["type"] == 1) {
-		$type = 'fournisseur'; $socid = isset($_REQUEST["socid"])?$_REQUEST["socid"]:'';
+		$type = 'fournisseur';
 		$objecttype = 'societe&categorie';
 		$objectid = isset($_REQUEST["id"])?$_REQUEST["id"]:(isset($_REQUEST["socid"])?$_REQUEST["socid"]:'');
 		$fieldid = 'rowid';
 	}
 	if ($_REQUEST["type"] == 2) {
-		$type = 'societe'; $socid = isset($_REQUEST["socid"])?$_REQUEST["socid"]:'';
+		$type = 'societe';
 		$objecttype = 'societe&categorie';
 		$objectid = isset($_REQUEST["id"])?$_REQUEST["id"]:(isset($_REQUEST["socid"])?$_REQUEST["socid"]:'');
 		$fieldid = 'rowid';
@@ -162,8 +165,8 @@ if (isset($_REQUEST["catMere"]) && $_REQUEST["catMere"]>=0)
 	}
 	else
 	{
-		if ($cat->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') $mesg='<div class="warning">'.$langs->trans("ObjectAlreadyLinkedToCategory").'</div>';
-		else $mesg='<div class="error">'.$langs->trans("Error").' '.$cat->error.'</div>';
+		if ($cat->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') $mesg='<div class="error">'.$langs->trans("ObjectAlreadyLinkedToCategory").'</div>';
+		else $mesg=$langs->trans("Error").' '.$cat->error;
 	}
 
 }
@@ -175,10 +178,11 @@ if (isset($_REQUEST["catMere"]) && $_REQUEST["catMere"]>=0)
 
 $html = new Form($db);
 
+
 /*
  * Fiche categorie de client et/ou fournisseur
  */
-if ($_GET["socid"])
+if ($socid)
 {
 	require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 	require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
@@ -186,24 +190,19 @@ if ($_GET["socid"])
 	$langs->load("companies");
 	if ($conf->notification->enabled) $langs->load("mails");
 
-	/*
-	 * Creation de l'objet client/fournisseur correspondant au socid
-	 */
 	$soc = new Societe($db);
-	$result = $soc->fetch($_GET["socid"]);
+	$result = $soc->fetch($socid);
+
 	llxHeader("","",$langs->trans("Category"));
 
-
-	/*
-	 * Affichage onglets
-	 */
+	// Show tabs
 	$head = societe_prepare_head($soc);
 
 	dol_fiche_head($head, 'category', $langs->trans("ThirdParty"),0,'company');
 
 	print '<table class="border" width="100%">';
 
-	print '<tr><td width="25%">'.$langs->trans("Name").'</td><td colspan="3">';
+	print '<tr><td width="25%">'.$langs->trans("ThirdPartyName").'</td><td colspan="3">';
 	print $html->showrefnav($soc,'socid','',($user->societe_id?0:1),'rowid','nom');
 	print '</td></tr>';
 
@@ -276,7 +275,7 @@ if ($_GET["socid"])
 
 	print '</div>';
 
-	if ($mesg) print($mesg);
+	dol_htmloutput_mesg($mesg);
 
 	if ($soc->client) formCategory($db,$soc,2);
 
@@ -337,7 +336,7 @@ else if ($_GET["id"] || $_GET["ref"])
 
 		print '</div>';
 
-		if ($mesg) print($mesg);
+		dol_htmloutput_mesg($mesg);
 
 		formCategory($db,$product,0);
 	}
@@ -419,7 +418,7 @@ else if ($_GET["id"] || $_GET["ref"])
 
 		print '</div>';
 
-		if ($mesg) print($mesg);
+		dol_htmloutput_mesg($mesg);
 
 		formCategory($db,$member,3);
 	}
@@ -448,14 +447,15 @@ function formCategory($db,$object,$typeid)
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td width="40%">';
-	print $langs->trans("ClassifyInCategory");
+	print $langs->trans("ClassifyInCategory").' &nbsp;';
 	print $html->select_all_categories($typeid);
 	print '</td><td>';
 	print '<input type="submit" class="button" value="'.$langs->trans("Classify").'"></td>';
 	if ($user->rights->categorie->creer)
 	{
 		print '<td align="right">';
-		print "<a href='".DOL_URL_ROOT."/categories/fiche.php?action=create&amp;origin=".$object->id."&type=".$typeid."&urlfrom=".urlencode($_SERVER["PHP_SELF"].'?'.(($typeid==1||$typeid==2)?'socid':'id').'='.$object->id.'&type='.$typeid)."'>";
+		print '<a href="'.DOL_URL_ROOT.'/categories/fiche.php?action=create&amp;origin='.$object->id.'&type='.$typeid.'&urlfrom='.urlencode($_SERVER["PHP_SELF"].'?'.(($typeid==1||$typeid==2)?'socid':'id').'='.$object->id.'&type='.$typeid).'">';
+		print $langs->trans("CreateCat").' ';
 		print img_picto($langs->trans("Create"),'filenew');
 		print "</a>";
 		print '</td>';
@@ -535,5 +535,5 @@ function formCategory($db,$object,$typeid)
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/24 12:31:12 $ - $Revision: 1.69 $');
 ?>

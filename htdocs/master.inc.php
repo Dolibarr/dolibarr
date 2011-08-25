@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2005 	   Simon Tosser         <simon@kornog-computing.com>
  * Copyright (C) 2006 	   Andre Cianfarani     <andre.cianfarani@acdeveloppement.net>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
@@ -21,16 +21,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/master.inc.php
  * 	\ingroup	core
  *  \brief      File that defines environment for all Dolibarr process (pages or scripts)
- * 				This script reads the conf.php file, init $lang, $db and empty $user
- *  \version    $Id$
+ * 				This script reads the conf file, init $lang, $db and and empty $user
+ *  \version    $Id: master.inc.php,v 1.359 2011/08/21 15:26:16 eldy Exp $
  */
 
 
@@ -65,20 +64,20 @@ if (defined('TEST_DB_FORCE_TYPE')) $conf->db->type=constant('TEST_DB_FORCE_TYPE'
 $conf->file->main_authentication = empty($dolibarr_main_authentication)?'':$dolibarr_main_authentication;
 // Force https
 $conf->file->main_force_https = empty($dolibarr_main_force_https)?'':$dolibarr_main_force_https;
-// Define charset for HTML Output (can set hidden value force_charset in conf.php file)
+// Define charset for HTML Output (can set hidden value force_charset in conf file)
 $conf->file->character_set_client=strtoupper($force_charset_do_notuse);
 // Cookie cryptkey
 $conf->file->cookie_cryptkey = empty($dolibarr_main_cookie_cryptkey)?'':$dolibarr_main_cookie_cryptkey;
 
 // Define array of document root directories
-$conf->file->dol_document_root=array(DOL_DOCUMENT_ROOT);
+$conf->file->dol_document_root=array('main' => DOL_DOCUMENT_ROOT);
 if (! empty($dolibarr_main_document_root_alt))
 {
 	// dolibarr_main_document_root_alt contains several directories
 	$values=preg_split('/[;,]/',$dolibarr_main_document_root_alt);
 	foreach($values as $value)
 	{
-		$conf->file->dol_document_root[]=$value;
+		$conf->file->dol_document_root['alt']=$value;
 	}
 }
 
@@ -204,7 +203,7 @@ if (! empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED))
 }
 
 /*
- * Create object $mysoc (A "Societe" object that contains properties of companies managed by Dolibarr.
+ * Create object $mysoc (A thirdparty object that contains properties of companies managed by Dolibarr.
  */
 if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 {
@@ -220,7 +219,6 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 	$mysoc->zip=$conf->global->MAIN_INFO_SOCIETE_CP;
 	$mysoc->ville=$conf->global->MAIN_INFO_SOCIETE_VILLE; 		// TODO deprecated
 	$mysoc->town=$conf->global->MAIN_INFO_SOCIETE_VILLE;
-	$mysoc->departement_id=$conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT;	// TODO deprecated
 	$mysoc->state_id=$conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT;
 	$mysoc->note=empty($conf->global->MAIN_INFO_SOCIETE_NOTE)?'':$conf->global->MAIN_INFO_SOCIETE_NOTE;
 
@@ -282,38 +280,33 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 }
 
 
-/*
- * Set default language (must be after the setValues of $conf)
- */
+// Set default language (must be after the setValues of $conf)
 if (! defined('NOREQUIRETRAN'))
 {
 	$langs->setDefaultLang($conf->global->MAIN_LANG_DEFAULT);
 }
 
-/*
- * Pour utiliser d'autres versions des librairies externes que les
- * versions embarquees dans Dolibarr, definir les constantes adequates:
- * Pour FPDF:           FPDF_PATH
- * Pour PHP_WriteExcel: PHP_WRITEEXCEL_PATH
- * Pour MagpieRss:      MAGPIERSS_PATH
- * Pour PHPlot:         PHPLOT_PATH
- * Pour JPGraph:        JPGRAPH_PATH
- * Pour NuSOAP:         NUSOAP_PATH
- * Pour TCPDF:          TCPDF_PATH
- */
-// Les path racines
-if (! defined('FPDF_PATH'))           { define('FPDF_PATH',          DOL_DOCUMENT_ROOT .'/includes/fpdf/fpdf/'); }
-if (! defined('FPDFI_PATH'))          { define('FPDFI_PATH',         DOL_DOCUMENT_ROOT .'/includes/fpdf/fpdfi/'); }
-if (! defined('MAGPIERSS_PATH'))      { define('MAGPIERSS_PATH',     DOL_DOCUMENT_ROOT .'/includes/magpierss/'); }
-if (! defined('JPGRAPH_PATH'))        { define('JPGRAPH_PATH',       DOL_DOCUMENT_ROOT .'/includes/jpgraph/'); }
-if (! defined('NUSOAP_PATH'))         { define('NUSOAP_PATH',        DOL_DOCUMENT_ROOT .'/includes/nusoap/lib/'); }
-if (! defined('PHP_WRITEEXCEL_PATH')) { define('PHP_WRITEEXCEL_PATH',DOL_DOCUMENT_ROOT .'/includes/php_writeexcel/'); }
-if (! defined('PHPEXCELREADER'))      { define('PHPEXCELREADER',     DOL_DOCUMENT_ROOT .'/includes/phpexcelreader/'); }
-// Les autres path
-if (! defined('MAGPIE_DIR'))          { define('MAGPIE_DIR',         MAGPIERSS_PATH); }
-if (! defined('MAGPIE_CACHE_DIR'))    { define('MAGPIE_CACHE_DIR',   $conf->externalrss->dir_temp); }
-
-
 if (! defined('MAIN_LABEL_MENTION_NPR') ) define('MAIN_LABEL_MENTION_NPR','NPR');
+
+/*
+ * To us other version of external libraries than embeded libraries, define here
+ * constant to path. Use '' to use include class path autodetect.
+ */
+// Path to root libraries
+if (! defined('TCPDF_PATH'))           { define('TCPDF_PATH',           DOL_DOCUMENT_ROOT .'/includes/tcpdf/'); }
+if (! defined('FPDFI_PATH'))           { define('FPDFI_PATH',           DOL_DOCUMENT_ROOT .'/includes/fpdfi/'); }
+if (! defined('NUSOAP_PATH'))          { define('NUSOAP_PATH',          DOL_DOCUMENT_ROOT .'/includes/nusoap/lib/'); }
+if (! defined('PHPEXCEL_PATH'))        { define('PHPEXCEL_PATH',        DOL_DOCUMENT_ROOT .'/includes/phpexcel/'); }
+if (! defined('GEOIP_PATH'))           { define('GEOIP_PATH',           (!isset($dolibarr_lib_GEOIP_PATH))?DOL_DOCUMENT_ROOT.'/includes/geoip/':(empty($dolibarr_lib_GEOIP_PATH)?'':$dolibarr_lib_GEOIP_PATH.'/')); }
+if (! defined('ODTPHP_PATH'))          { define('ODTPHP_PATH',          (!isset($dolibarr_lib_ODTPHP_PATH))?DOL_DOCUMENT_ROOT.'/includes/odtphp/':(empty($dolibarr_lib_GEOIP_PATH)?'':$dolibarr_lib_ODTPHP_PATH.'/')); }
+if (! defined('ODTPHP_PATHTOPCLZIP'))  { define('ODTPHP_PATHTOPCLZIP',  (!isset($dolibarr_lib_ODTPHP_PATHTOPCLZIP))?DOL_DOCUMENT_ROOT.'/includes/odtphp/zip/pclzip/':(empty($dolibarr_lib_GEOIP_PATH)?'':$dolibarr_lib_ODTPHP_PATHTOPCLZIP.'/')); }
+if (! defined('ARTICHOW_FONT'))        { define('ARTICHOW_FONT',        (!isset($dolibarr_font_DOL_DEFAULT_TTF_BOLD))?DOL_DOCUMENT_ROOT.'/includes/artichow/font':dirname($dolibarr_font_DOL_DEFAULT_TTF_BOLD)); }
+// Other required path
+if (! defined('ARTICHOW_FONT_NAMES'))  { define('ARTICHOW_FONT_NAMES',  (!isset($dolibarr_font_DOL_DEFAULT_TTF_BOLD))?'Tuffy,TuffyBold,TuffyBoldItalic,TuffyItalic':'DejaVuSans,DejaVuSans-Bold,DejaVuSans-BoldOblique,DejaVuSans-Oblique'); }
+if (! defined('DOL_DEFAULT_TTF'))      { define('DOL_DEFAULT_TTF',      (!isset($dolibarr_font_DOL_DEFAULT_TTF))?DOL_DOCUMENT_ROOT.'/includes/barcode/php-barcode/fonts/Aerial.ttf':(empty($dolibarr_lib_GEOIP_PATH)?'':$dolibarr_font_DOL_DEFAULT_TTF)); }
+if (! defined('DOL_DEFAULT_TTF_BOLD')) { define('DOL_DEFAULT_TTF_BOLD', (!isset($dolibarr_font_DOL_DEFAULT_TTF_BOLD))?DOL_DOCUMENT_ROOT.'/includes/barcode/php-barcode/fonts/AerialBd.ttf':(empty($dolibarr_lib_GEOIP_PATH)?'':$dolibarr_font_DOL_DEFAULT_TTF_BOLD)); }
+// Old path to root deprecated (not used). Kept for extensions.
+if (! defined('FPDF_PATH'))            { define('FPDF_PATH',            DOL_DOCUMENT_ROOT .'/includes/fpdf/fpdf/'); }
+if (! defined('PHP_WRITEEXCEL_PATH'))  { define('PHP_WRITEEXCEL_PATH',  DOL_DOCUMENT_ROOT .'/includes/php_writeexcel/'); }
 
 ?>

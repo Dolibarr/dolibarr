@@ -15,15 +15,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *       \file       htdocs/comm/action/class/actioncomm.class.php
  *       \ingroup    commercial
  *       \brief      File of class to manage agenda events (actions)
- *       \version    $Id$
+ *       \version    $Id: actioncomm.class.php,v 1.44 2011/08/17 13:44:16 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php');
@@ -81,7 +80,7 @@ class ActionComm extends CommonObject
     // Ical
     var $icalname;
     var $icalcolor;
-    
+
     var $actions=array();
 
 
@@ -391,8 +390,10 @@ class ActionComm extends CommonObject
 
 	/**
 	*    Load all objects with filters
-	*    @param		socid		Filter by thirdparty
-	*    @param		filter		Other filter
+	*    @param		socid			Filter by thirdparty
+	* 	 @param		fk_element		Id of element action is linked to
+ 	*  	 @param		elementtype		Type of element action is linked to
+	*    @param		filter			Other filter
 	*/
 	function getActions($socid=0, $fk_element=0, $elementtype='', $filter='')
 	{
@@ -414,7 +415,7 @@ class ActionComm extends CommonObject
 		if ($resql)
 		{
 			$num = $this->db->num_rows($resql);
-			
+
 			if ($num)
 			{
 				for($i=0;$i<$num;$i++)
@@ -603,7 +604,7 @@ class ActionComm extends CommonObject
 	 *      Utilise $this->id, $this->code et $this->label
 	 * 		@param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
 	 *		@param		maxlength		Nombre de caracteres max dans libelle
-	 *		@param		class			Force style class on a link
+	 *		@param		classname		Force style class on a link
 	 * 		@param		option			''=Link to action,'birthday'=Link to contact
 	 *		@return		string			Chaine avec URL
 	 */
@@ -673,9 +674,8 @@ class ActionComm extends CommonObject
 		}
 
 		// Create dir and define output file (definitive and temporary)
-		$result=create_exdir($conf->agenda->dir_temp);
+		$result=dol_mkdir($conf->agenda->dir_temp);
 		$outputfile=$conf->agenda->dir_temp.'/'.$filename;
-		$outputfiletmp=tempnam($conf->agenda->dir_temp,'tmp');	// Temporary file (allow call of function by different threads
 
 		$result=0;
 
@@ -697,7 +697,7 @@ class ActionComm extends CommonObject
 
 		if ($buildfile)
 		{
-			// Build event array
+            // Build event array
 			$eventarray=array();
 
 			$sql = "SELECT a.id,";
@@ -835,7 +835,11 @@ class ActionComm extends CommonObject
 				$desc.=$langs->convToOutputCharset(' ('.$mysoc->name.' - built by Dolibarr)');
 			}
 
-			// Write file
+			// Create temp file
+            $outputfiletmp=tempnam($conf->agenda->dir_temp,'tmp');  // Temporary file (allow call of function by different threads
+            @chmod($outputfiletmp, octdec($conf->global->MAIN_UMASK));
+
+            // Write file
             if ($format == 'vcal') $result=build_calfile($format,$title,$desc,$eventarray,$outputfiletmp);
 			if ($format == 'ical') $result=build_calfile($format,$title,$desc,$eventarray,$outputfiletmp);
 			if ($format == 'rss')  $result=build_rssfile($format,$title,$desc,$eventarray,$outputfiletmp);
@@ -843,10 +847,17 @@ class ActionComm extends CommonObject
 			if ($result >= 0)
 			{
 				if (rename($outputfiletmp,$outputfile)) $result=1;
-				else $result=-1;
+				else
+				{
+				    dol_syslog("ActionComm::build_exportfile failed to rename ".$outputfiletmp." to ".$outputfile, LOG_ERR);
+                    dol_delete_file($outputfiletmp,0,1);
+				    $result=-1;
+				}
 			}
 			else
 			{
+                dol_syslog("ActionComm::build_exportfile build_xxxfile function fails to for format=".$format." outputfiletmp=".$outputfile, LOG_ERR);
+			    dol_delete_file($outputfiletmp,0,1);
 				$langs->load("errors");
 				$this->error=$langs->trans("ErrorFailToCreateFile",$outputfile);
 			}

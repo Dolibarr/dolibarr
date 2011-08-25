@@ -16,15 +16,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *       \file       htdocs/contact/fiche.php
  *       \ingroup    societe
  *       \brief      Card of a contact
- *       \version    $Id$
+ *       \version    $Id: fiche.php,v 1.227 2011/08/23 20:45:41 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -39,20 +38,18 @@ $langs->load("users");
 $langs->load("other");
 $langs->load("commercial");
 
-$error=0; $errors=array();
+$mesg=''; $error=0; $errors=array();
 
 $action = GETPOST('action');
-$socid = GETPOST("socid");
 $id = GETPOST("id");
-
-// Security check
+$socid = GETPOST("socid");
 if ($user->societe_id) $socid=$user->societe_id;
 
 $object = new Contact($db);
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
-if (!empty($id)) $object->getCanvas($id);
-$canvas = (!empty($object->canvas)?$object->canvas:GETPOST("canvas"));
+if ($id) $object->getCanvas($id);
+$canvas = $object->canvas?$object->canvas:GETPOST("canvas");
 if (! empty($canvas))
 {
     require_once(DOL_DOCUMENT_ROOT."/core/class/canvas.class.php");
@@ -68,38 +65,45 @@ else
     $result = restrictedArea($user, 'contact', $id, 'socpeople'); // If we create a contact with no company (shared contacts), no check on write permission
 }
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+$hookmanager=new HookManager($db);
+$hookmanager->callHooks(array('contactcard'));
+
 
 /*
  *	Actions
  */
 
+$parameters=array('id'=>$id);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+
+
+// ---------- start deprecated. Use hook to hook actions.
 // If canvas actions are defined, because on url, or because contact was created with canvas feature on, we use the canvas feature.
 // If canvas actions are not defined, we use standard feature.
 if (method_exists($objcanvas->control,'doActions'))
 {
-    // -----------------------------------------
-    // When used with CANVAS
-    // -----------------------------------------
     $objcanvas->doActions($id);
-    if (empty($objcanvas->error) && (empty($objcanvas->errors) || sizeof($objcanvas->errors) == 0))
-    {
-        if ($action=='add')    { $objcanvas->action='create'; $action='create'; }
-        if ($action=='update') { $objcanvas->action='view';   $action='view'; }
-    }
-    else
+    if (! empty($objcanvas->error) || (! empty($objcanvas->errors) && sizeof($objcanvas->errors) > 0))
     {
         $error=$objcanvas->error; $errors=$objcanvas->errors;
         if ($action=='add')    { $objcanvas->action='create'; $action='create'; }
         if ($action=='update') { $objcanvas->action='edit';   $action='edit'; }
     }
 }
-else
-{
-    // -----------------------------------------
-    // When used in standard mode
-    // -----------------------------------------
+// ---------- end deprecated.
 
-    // Creation utilisateur depuis contact
+if (empty($reshook))
+{
+    // Cancel
+    if (GETPOST("cancel") && GETPOST('backtopage'))
+    {
+        header("Location: ".GETPOST('backtopage'));
+        exit;
+    }
+
+	// Creation utilisateur depuis contact
     if ($_POST["action"] == 'confirm_create_user' && $_POST["confirm"] == 'yes' && $user->rights->user->user->creer)
     {
         // Recuperation contact actuel
@@ -136,13 +140,6 @@ else
         {
             $error=$object->error; $errors=$object->errors;
         }
-    }
-
-    // Cancel
-    if (GETPOST("cancel") && GETPOST('backtopage'))
-    {
-        header("Location: ".GETPOST('backtopage'));
-        exit;
     }
 
     // Add contact
@@ -215,7 +212,7 @@ else
         $result = $object->delete();
         if ($result > 0)
         {
-            Header("Location: index.php");
+            Header("Location: ".DOL_URL_ROOT.'/contact/list.php');
             exit;
         }
         else
@@ -303,26 +300,26 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
     // -----------------------------------------
     if ($action == 'create')
     {
-        $objcanvas->assign_post();            // Assign POST data
+        $objcanvas->assign_post();            // TODO: Put code of assign_post into assign_values to keep only assign_values
         $objcanvas->assign_values($action);   // Set value for templates
         $objcanvas->display_canvas($action);  // Show template
     }
     else if ($action == 'edit')
     {
-        $objcanvas->control->object=$objcanvas->getObject($id);  // Load object
+        $objcanvas->control->object=$objcanvas->getObject($id);  // TODO: Getting and storing object should be done into assign_values (for template with no code) or into tpl
         if (empty($objcanvas->control->object))
         {
             $object = new Contact($db);
             $object->fetch($id,$user);
             $objcanvas->control->object=$object;
         }
-       	$objcanvas->assign_post();            // Assign POST data
+       	$objcanvas->assign_post();            // TODO: Put code of assign_post into assign_values to keep only assign_values
         $objcanvas->assign_values($action);   // Set value for templates
         $objcanvas->display_canvas($action);  // Show template
     }
     else
     {
-        $objcanvas->control->object=$objcanvas->getObject($id);  // Load object
+        $objcanvas->control->object=$objcanvas->getObject($id);  // TODO: Getting and storing object should be done into assign_values (for template with no code) or into tpl
         if (empty($objcanvas->control->object))
         {
             $object = new Contact($db);
@@ -545,7 +542,7 @@ else
             }
             print '</tr>';
 
-            print "</table><br>";
+            print "</table><br><br>";
 
 
             print '<center>';
@@ -950,5 +947,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/23 20:45:41 $ - $Revision: 1.227 $');
 ?>

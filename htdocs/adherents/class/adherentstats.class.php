@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/adherents/class/adherentstats.class.php
  *	\ingroup    member
  *	\brief      Fichier de la classe de gestion des stats des adhérents
- *	\version    $Id$
+ *	\version    $Id: adherentstats.class.php,v 1.3 2011/08/03 00:45:44 eldy Exp $
  */
 
 include_once DOL_DOCUMENT_ROOT . "/core/class/stats.class.php";
@@ -90,7 +89,7 @@ class AdherentStats extends Stats
 		$sql = "SELECT date_format(p.dateadh,'%m') as dm, count(*)";
 		$sql.= " FROM ".$this->from;
 		//if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE date_format(p.dateadh,'%Y') = ".$year;
+		$sql.= " WHERE date_format(p.dateadh,'%Y') = '".$year."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');
@@ -126,7 +125,7 @@ class AdherentStats extends Stats
 		$sql = "SELECT date_format(p.dateadh,'%m') as dm, sum(p.".$this->field.")";
 		$sql.= " FROM ".$this->from;
 		//if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE date_format(p.dateadh,'%Y') = ".$year;
+		$sql.= " WHERE date_format(p.dateadh,'%Y') = '".$year."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');
@@ -144,7 +143,7 @@ class AdherentStats extends Stats
 		$sql = "SELECT date_format(p.dateadh,'%m') as dm, avg(p.".$this->field.")";
 		$sql.= " FROM ".$this->from;
 		//if (!$user->rights->societe->client->voir && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE date_format(p.dateadh,'%Y') = ".$year;
+		$sql.= " WHERE date_format(p.dateadh,'%Y') = '".$year."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');

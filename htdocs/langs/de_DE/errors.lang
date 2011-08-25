@@ -80,3 +80,4 @@ WarningNoDocumentModelActivated=Für das Erstellen von Dokumenten ist keine Vorl
 ErrorDatabaseParameterWrong=Der Datenbankeinstellungs-Parameter '<b>%s</b>' weist einen mit dem System inkompatiblen Wert auf (erfordert den Wert '<b>%s</b>').
 ErrorNumRefModel=Es besteht ein Bezug zur Datenbank (%s) der mit dieser Numerierungsfolge nicht kompatibel ist. Entfernen Sie den Eintrag oder benennen Sie den Verweis um, um dieses Modul zu aktivieren.
 ErrorQtyTooLowForThisSupplier=Die gewählte Menge liegt unterhalb der Mindestbestellmenge für diesen Lieferanten oder es wurde kein Lieferantenpreis zu diesem Anbieter eingetragen.
+ErrorFailedToSendPassword=Fehler beim Zusenden des Passworts

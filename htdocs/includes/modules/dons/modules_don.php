@@ -15,20 +15,17 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * or see http://www.gnu.org/
  */
 
 /**
-	    \file       htdocs/includes/modules/dons/modules_don.php
-		\ingroup    don
-		\brief      Fichier contenant la classe m�re de generation des dons
-		\version    $Id$
-*/
-
+ *	    \file       htdocs/includes/modules/dons/modules_don.php
+ *		\ingroup    don
+ *		\brief      File of class to manage donation document generation
+ *		\version    $Id: modules_don.php,v 1.23 2011/08/11 12:14:02 eldy Exp $
+ */
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
-require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 require_once(DOL_DOCUMENT_ROOT."/compta/dons/class/don.class.php");
 
 
@@ -41,22 +38,22 @@ class ModeleDon
 {
     var $error='';
 
-	/**
-	 *      \brief      Return list of active generation modules
-	 * 		\param		$db		Database handler
-	 */
-	function liste_modeles($db)
-	{
-		global $conf;
+    /**
+     *      \brief      Return list of active generation modules
+     * 		\param		$db		Database handler
+     */
+    function liste_modeles($db)
+    {
+        global $conf;
 
-		$type='donation';
-		$liste=array();
+        $type='donation';
+        $liste=array();
 
-		include_once(DOL_DOCUMENT_ROOT.'/lib/functions2.lib.php');
-		$liste=getListOfModels($db,$type,'');
+        include_once(DOL_DOCUMENT_ROOT.'/lib/functions2.lib.php');
+        $liste=getListOfModels($db,$type,'');
 
-		return $liste;
-	}
+        return $liste;
+    }
 }
 
 
@@ -68,13 +65,13 @@ class ModeleNumRefDons
 {
     var $error='';
 
-	/**     \brief     	Return if a module can be used or not
-	*      	\return		boolean     true if module can be used
-	*/
-	function isEnabled()
-	{
-		return true;
-	}
+    /**     \brief     	Return if a module can be used or not
+     *      	\return		boolean     true if module can be used
+     */
+    function isEnabled()
+    {
+        return true;
+    }
 
     /**     \brief      Renvoi la description par defaut du modele de num�rotation
      *      \return     string      Texte descripif
@@ -86,7 +83,7 @@ class ModeleNumRefDons
         return $langs->trans("NoDescription");
     }
 
-    /**     \brief      Renvoi un exemple de num�rotation
+    /**     \brief      Renvoi un exemple de numerotation
      *      \return     string      Example
      */
     function getExample()
@@ -96,8 +93,8 @@ class ModeleNumRefDons
         return $langs->trans("NoExample");
     }
 
-    /**     \brief      Test si les num�ros d�j� en vigueur dans la base ne provoquent pas de
-     *                  de conflits qui empechera cette num�rotation de fonctionner.
+    /**     \brief      Test si les numeros deja en vigueur dans la base ne provoquent pas d
+     *                  de conflits qui empechera cette numerotation de fonctionner.
      *      \return     boolean     false si conflit, true si ok
      */
     function canBeActivated()
@@ -105,7 +102,7 @@ class ModeleNumRefDons
         return true;
     }
 
-    /**     \brief      Renvoi prochaine valeur attribu�e
+    /**     \brief      Renvoi prochaine valeur attribuee
      *      \return     string      Valeur
      */
     function getNextValue()
@@ -114,31 +111,31 @@ class ModeleNumRefDons
         return $langs->trans("NotAvailable");
     }
 
-	/**     \brief      Renvoi version du module numerotation
-	*      	\return     string      Valeur
-	*/
-	function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
+    /**     \brief      Renvoi version du module numerotation
+     *      	\return     string      Valeur
+     */
+    function getVersion()
+    {
+        global $langs;
+        $langs->load("admin");
 
-		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		if ($this->version == 'dolibarr') return DOL_VERSION;
-		return $langs->trans("NotAvailable");
-	}
+        if ($this->version == 'development') return $langs->trans("VersionDevelopment");
+        if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
+        if ($this->version == 'dolibarr') return DOL_VERSION;
+        return $langs->trans("NotAvailable");
+    }
 }
 
 
 /**
-    \brief      Cr�e un don sur disque en fonction du mod�le de DON_ADDON_PDF
-    \param	    db  			objet base de donn�e
-    \param	    id				id du don � cr�er
-    \param	    message			message
-	\param	    modele			force le modele � utiliser ('' par defaut)
-	\param		outputlangs		objet lang a utiliser pour traduction
-    \return     int         	0 si KO, 1 si OK
-*/
+ *	\brief      Cree un don sur disque en fonction du modele de DON_ADDON_PDF
+ *	\param	    db  			objet base de donnee
+ *	\param	    id				id du don e creer
+ *	\param	    message			message
+ *	\param	    modele			force le modele a utiliser ('' par defaut)
+ *	\param		outputlangs		objet lang a utiliser pour traduction
+ *	\return     int         	0 si KO, 1 si OK
+ */
 function don_create($db, $id, $message, $modele, $outputlangs)
 {
     global $conf, $langs;
@@ -146,24 +143,24 @@ function don_create($db, $id, $message, $modele, $outputlangs)
 
     $dir = DOL_DOCUMENT_ROOT . "/includes/modules/dons/";
 
-	// Positionne modele sur le nom du modele � utiliser
-	if (! dol_strlen($modele))
-	{
-		if ($conf->global->DON_ADDON_MODEL)
-		{
-			$modele = $conf->global->DON_ADDON_MODEL;
-		}
-		else
-		{
-			print $langs->trans("Error")." ".$langs->trans("Error_DON_ADDON_MODEL_NotDefined");
-			return 0;
-		}
-	}
+    // Positionne modele sur le nom du modele � utiliser
+    if (! dol_strlen($modele))
+    {
+        if ($conf->global->DON_ADDON_MODEL)
+        {
+            $modele = $conf->global->DON_ADDON_MODEL;
+        }
+        else
+        {
+            print $langs->trans("Error")." ".$langs->trans("Error_DON_ADDON_MODEL_NotDefined");
+            return 0;
+        }
+    }
 
-	// Charge le modele
-	$file = $modele.".modules.php";
-	if (file_exists($dir.$file))
-	{
+    // Charge le modele
+    $file = $modele.".modules.php";
+    if (file_exists($dir.$file))
+    {
         $classname = $modele;
 
         require_once($dir.$file);
@@ -172,40 +169,40 @@ function don_create($db, $id, $message, $modele, $outputlangs)
 
         $obj->message = $message;
 
-		// We save charset_output to restore it because write_file can change it if needed for
-		// output format that does not support UTF8.
-		$sav_charset_output=$outputlangs->charset_output;
+        // We save charset_output to restore it because write_file can change it if needed for
+        // output format that does not support UTF8.
+        $sav_charset_output=$outputlangs->charset_output;
         if ($obj->write_file($id,$outputlangs) > 0)
         {
-            // Succ�s de la cr�ation de la facture. On g�n�re le fichier meta
+            // Success. We build meta file
             don_meta_create($db, $id);
             // et on supprime l'image correspondant au preview
             don_delete_preview($db, $id);
 
-			$outputlangs->charset_output=$sav_charset_output;
+            $outputlangs->charset_output=$sav_charset_output;
             return 1;
         }
         else
         {
-			$outputlangs->charset_output=$sav_charset_output;
-        	dol_syslog("Erreur dans don_create");
+            $outputlangs->charset_output=$sav_charset_output;
+            dol_syslog("Erreur dans don_create");
             dol_print_error($db,$obj->error);
             return 0;
         }
     }
-	else
-	{
-		print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file);
-		return 0;
-	}
+    else
+    {
+        print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file);
+        return 0;
+    }
 }
 
 /**
-   \brief       Cr�� un meta fichier � c�t� de la facture sur le disque pour faciliter les recherches en texte plein. Pourquoi ? tout simplement parcequ'en fin d'exercice quand je suis avec mon comptable je n'ai pas de connexion internet "rapide" pour retrouver en 2 secondes une facture non pay�e ou compliqu�e � g�rer ... avec un rgrep c'est vite fait bien fait [eric seigne]
-   \param	    db  		Objet base de donn�e
-   \param	    donid		Id du don � cr�er
-   \param       message     Message
-*/
+ *	\brief       Cree un meta fichier a cote de la facture sur le disque pour faciliter les recherches en texte plein. Pourquoi ? tout simplement parcequ'en fin d'exercice quand je suis avec mon comptable je n'ai pas de connexion internet "rapide" pour retrouver en 2 secondes une facture non pay�e ou compliqu�e � g�rer ... avec un rgrep c'est vite fait bien fait [eric seigne
+ *	\param	    db  		Objet base de donnee
+ *	\param	    donid		Id du don a creer
+ *	\param       message     Message
+ */
 function don_meta_create($db, $donid, $message="")
 {
     global $langs,$conf;
@@ -217,13 +214,13 @@ function don_meta_create($db, $donid, $message="")
 
 
 /**
-   \brief       Supprime l'image de pr�visualitation, pour le cas de r�g�n�ration de facture
-   \param	    db  		Objet base de donn�e
-   \param	    donid		Id du don
-*/
+ *	\brief       Supprime l'image de previsualitation, pour le cas de r�g�n�ration de facture
+ *	\param	    db  		Objet base de donnee
+ *	\param	    donid		Id du don
+ */
 function don_delete_preview($db, $donid)
 {
-	global $langs,$conf;
+    global $langs,$conf;
 
     $don = new Don($db);
     $don->id=$donid;

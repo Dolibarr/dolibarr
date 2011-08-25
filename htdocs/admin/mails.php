@@ -13,14 +13,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *       \file       htdocs/admin/mails.php
  *       \brief      Page to setup emails sending
- *       \version    $Id$
+ *       \version    $Id: mails.php,v 1.75 2011/07/31 22:23:22 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -61,9 +60,9 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update' && empty($_POST["can
 	if (isset($_POST["MAIN_MAIL_SMTPS_ID"]))  dolibarr_set_const($db, "MAIN_MAIL_SMTPS_ID",  $_POST["MAIN_MAIL_SMTPS_ID"],'chaine',0,'',0);
 	if (isset($_POST["MAIN_MAIL_SMTPS_PW"]))  dolibarr_set_const($db, "MAIN_MAIL_SMTPS_PW",  $_POST["MAIN_MAIL_SMTPS_PW"],'chaine',0,'',0);
 	if (isset($_POST["MAIN_MAIL_EMAIL_TLS"])) dolibarr_set_const($db, "MAIN_MAIL_EMAIL_TLS", $_POST["MAIN_MAIL_EMAIL_TLS"],'chaine',0,'',0);
-    dolibarr_set_const($db, "MAIN_MAIL_EMAIL_INLINE_IMAGES", $_POST["MAIN_MAIL_EMAIL_INLINE_IMAGES"],'chaine',0,'',0);
 
 	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_FROM",     $_POST["MAIN_MAIL_EMAIL_FROM"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_ERRORS_TO",		$_POST["MAIN_MAIL_ERRORS_TO"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_MAIL_AUTOCOPY_TO",    $_POST["MAIN_MAIL_AUTOCOPY_TO"],'chaine',0,'',$conf->entity);
 
 	Header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
@@ -80,7 +79,7 @@ if ($_POST['addfile'] || $_POST['addfilehtml'])
 
 	// Set tmp user directory
 	$vardir=$conf->user->dir_output."/".$user->id;
-	$upload_dir = $vardir.'/temp/';
+	$upload_dir = $vardir.'/temp';
 
 	if (create_exdir($upload_dir) >= 0)
 	{
@@ -127,7 +126,7 @@ if (! empty($_POST['removedfile']) || ! empty($_POST['removedfilehtml']))
 {
 	// Set tmp user directory
 	$vardir=$conf->user->dir_output."/".$user->id;
-	$upload_dir = $vardir.'/temp/';
+	$upload_dir = $vardir.'/temp';
 
 	$keytodelete=isset($_POST['removedfile'])?$_POST['removedfile']:$_POST['removedfilehtml'];
 	$keytodelete--;
@@ -218,7 +217,7 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'sendhtml')
 
 		if ($result)
 		{
-			$message='<div class="ok">'.$langs->trans("MailSuccessfulySent",$email_from,$sendto).'</div>';
+			$message='<div class="ok">'.$langs->trans("MailSuccessfulySent",$mailfile->getValidAddress($email_from,2),$mailfile->getValidAddress($sendto,2)).'</div>';
 		}
 		else
 		{
@@ -283,8 +282,6 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
                             jQuery(".drag").hide();
                             jQuery("#MAIN_MAIL_EMAIL_TLS").val(0);
                             jQuery("#MAIN_MAIL_EMAIL_TLS").attr(\'disabled\', \'disabled\');
-                            jQuery("#MAIN_MAIL_EMAIL_INLINE_IMAGES").val('.$conf->global->MAIN_MAIL_EMAIL_INLINE_IMAGES.');
-                            jQuery("#MAIN_MAIL_EMAIL_INLINE_IMAGES").removeAttr(\'disabled\');
                             ';
         if ($linuxlike)
         {
@@ -300,8 +297,6 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
                             jQuery("#MAIN_MAIL_EMAIL_TLS").removeAttr(\'disabled\');
                             jQuery("#MAIN_MAIL_SMTP_SERVER").removeAttr(\'disabled\');
                             jQuery("#MAIN_MAIL_SMTP_PORT").removeAttr(\'disabled\');
-                            jQuery("#MAIN_MAIL_EMAIL_INLINE_IMAGES").val(0);
-                            jQuery("#MAIN_MAIL_EMAIL_INLINE_IMAGES").attr(\'disabled\', \'disabled\');
                         }
                     }
                     initfields();
@@ -463,15 +458,6 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	else print yn(0).' ('.$langs->trans("NotSupported").')';
 	print '</td></tr>';
 
-    // Inline images
-	if ($conf->global->MAIN_FEATURES_LEVEL > 0)
-	{
-		$var=!$var;
-		print '<tr '.$bcnd[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_INLINE_IMAGES").'</td><td>';
-		print $html->selectyesno('MAIN_MAIL_EMAIL_INLINE_IMAGES',$conf->global->MAIN_MAIL_EMAIL_INLINE_IMAGES,1);
-		print '</td></tr>';
-	}
-
 	// Separator
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td colspan="2">&nbsp;</td></tr>';
@@ -480,6 +466,12 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_FROM",ini_get('sendmail_from')?ini_get('sendmail_from'):$langs->transnoentities("Undefined")).'</td>';
 	print '<td><input class="flat" name="MAIN_MAIL_EMAIL_FROM" size="32" value="' . $conf->global->MAIN_MAIL_EMAIL_FROM;
+	print '"></td></tr>';
+
+	// From
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_ERRORS_TO").'</td>';
+	print '<td><input class="flat" name="MAIN_MAIL_ERRORS_TO" size="32" value="' . $conf->global->MAIN_MAIL_ERRORS_TO;
 	print '"></td></tr>';
 
 	// Autocopy to
@@ -571,15 +563,6 @@ else
 	else print yn(0).' ('.$langs->trans("NotSupported").')';
 	print '</td></tr>';
 
-	// Inline images
-	if ($conf->global->MAIN_FEATURES_LEVEL > 0)
-	{
-		$var=!$var;
-		print '<tr '.$bcnd[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_INLINE_IMAGES").'</td><td>';
-		print yn($conf->global->MAIN_MAIL_EMAIL_INLINE_IMAGES,1,0);
-		print '</td></tr>';
-	}
-
 	// Separator
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td colspan="2">&nbsp;</td></tr>';
@@ -589,6 +572,13 @@ else
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_FROM",ini_get('sendmail_from')?ini_get('sendmail_from'):$langs->transnoentities("Undefined")).'</td>';
 	print '<td>'.$conf->global->MAIN_MAIL_EMAIL_FROM;
 	if (!empty($conf->global->MAIN_MAIL_EMAIL_FROM) && ! isValidEmail($conf->global->MAIN_MAIL_EMAIL_FROM)) print img_warning($langs->trans("ErrorBadEMail"));
+	print '</td></tr>';
+
+	// Errors To
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_ERRORS_TO").'</td>';
+	print '<td>'.$conf->global->MAIN_MAIL_ERRORS_TO;
+	if (!empty($conf->global->MAIN_MAIL_ERRORS_TO) && ! isValidEmail($conf->global->MAIN_MAIL_ERRORS_TO)) print img_warning($langs->trans("ErrorBadEMail"));
 	print '</td></tr>';
 
 	// Autocopy to
@@ -601,8 +591,18 @@ else
 	print '</table>';
 
 
-	// Boutons actions
+    if ($linuxlike && $conf->global->MAIN_MAIL_SENDMODE == 'mail')
+    {
+       $sendmailoption=ini_get('mail.force_extra_parameters');
+       //print 'x'.$sendmailoption;
+       if (empty($sendmailoption) || ! preg_match('/ba/',$sendmailoption))
+       {
+            print '<br>'.info_admin($langs->trans("SendmailOptionNotComplete"));
+       }
+    }
 
+
+	// Boutons actions
 	print '<div class="tabsAction">';
 
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
@@ -746,5 +746,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/31 22:23:22 $ - $Revision: 1.75 $');
 ?>

@@ -16,15 +16,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *       \file      htdocs/install/etape5.php
  *	 	 \ingroup	install
  *       \brief     Last page of upgrade or install process
- *       \version   $Id: etape5.php,v 1.101 2011/06/26 12:56:31 eldy Exp $
+ *       \version   $Id: etape5.php,v 1.108 2011/08/04 12:07:30 eldy Exp $
  */
 
 include_once("./inc.php");
@@ -63,12 +62,9 @@ if (! isset($force_install_databasepass))      $force_install_databasepass='';
 if (! isset($force_install_databaserootlogin)) $force_install_databaserootlogin='';
 if (! isset($force_install_databaserootpass))  $force_install_databaserootpass='';
 if (! isset($force_install_lockinstall))       $force_install_lockinstall='';
-$usedoliwamp=false;
-if (file_exists("./install.forced.php"))
-{
-	$usedoliwamp=true;
-	include_once("./install.forced.php");
-}
+$useforcedwizard=false;
+if (file_exists("./install.forced.php")) { $useforcedwizard=true; include_once("./install.forced.php"); }
+else if (file_exists("/etc/dolibarr/install.forced.php")) { $useforcedwizard=include_once("/etc/dolibarr/install.forced.php"); }
 
 dolibarr_install_syslog("--- etape5: Entering etape5.php page", LOG_INFO);
 
@@ -105,11 +101,12 @@ if ($action == "set")
  */
 
 pHeader($langs->trans("SetupEnd"),"etape5");
+print '<br>';
 
 // Test if we can run a first install process
 if (! GETPOST("versionfrom") && ! GETPOST("versionto") && ! is_writable($conffile))
 {
-    print $langs->trans("ConfFileIsNotWritable",'htdocs/conf/conf.php');
+    print $langs->trans("ConfFileIsNotWritable",$conffiletoshow);
     pFooter(1,$setuplang,'jscheckparam');
     exit;
 }
@@ -208,7 +205,7 @@ if ($action == "set" || preg_match('/upgrade/i',$action))
 				if (! $resql) dol_print_error($db,'Error in setup program');
 				$conf->global->MAIN_VERSION_LAST_INSTALL=$targetversion;
 
-				if ($usedoliwamp)
+				if ($useforcedwizard)
 				{
 					dolibarr_install_syslog('install/etape5.php set MAIN_REMOVE_INSTALL_WARNING const to 1', LOG_DEBUG);
 					$resql=$db->query("DELETE FROM llx_const WHERE ".$db->decrypt('name')."='MAIN_REMOVE_INSTALL_WARNING'");
@@ -219,7 +216,6 @@ if ($action == "set" || preg_match('/upgrade/i',$action))
 				}
 
 				// If we ask to force some modules to be enabled
-				// This works only for module stored into root directory. Does not work for alternate modules.
 				if (! empty($force_install_module))
 				{
 					if (! defined('DOL_DOCUMENT_ROOT') && ! empty($dolibarr_main_document_root)) define('DOL_DOCUMENT_ROOT',$dolibarr_main_document_root);
@@ -318,8 +314,8 @@ if ($action == "set")
 		if (! empty($force_install_lockinstall))
 		{
 			// Install is finished, we create the lock file
-			$lockfile="../../install.lock";
-			$fp = @fopen($lockfile, "w");
+			$lockfile=DOL_DATA_ROOT.'/install.lock';
+		    $fp = @fopen($lockfile, "w");
 			if ($fp)
 			{
                 if ($force_install_lockinstall == 1) $force_install_lockinstall=444;    // For backward compatibility
@@ -368,8 +364,8 @@ elseif (preg_match('/upgrade/i',$action))
 		if (! empty($force_install_lockinstall))
 		{
 			// Upgrade is finished, we create the lock file
-			$lockfile="../../install.lock";
-			$fp = @fopen($lockfile, "w");
+			$lockfile=DOL_DATA_ROOT.'/install.lock';
+		    $fp = @fopen($lockfile, "w");
 			if ($fp)
 			{
                 if ($force_install_lockinstall == 1) $force_install_lockinstall=444;    // For backward compatibility
@@ -381,7 +377,7 @@ elseif (preg_match('/upgrade/i',$action))
 		}
 		if (empty($createlock))
 		{
-			print '<div class="warning">'.$langs->trans("WarningRemoveInstallDir")."</div>";
+			print '<br><div class="warning">'.$langs->trans("WarningRemoveInstallDir")."</div>";
 		}
 
 		print "<br>";

@@ -268,6 +268,7 @@ CurrencyMGA=Ariary
 CurrencyGBP=ГБ фунта
 CurrencyTND=TND
 CurrencyUSD=Доллар США
+CurrencyUAF=грн.
 CurrencyXAF=Франков КФА БГЦА
 CurrencyXOF=Франков КФА ЦБЗАГ
 // Date 2009-01-19 21:30:52
@@ -300,6 +301,7 @@ CurrencyNOK=Норвежских крон
 CurrencySingNOK=Норвежская крона
 CurrencySingTND=Тунисский динар
 CurrencySingUSD=Доллар США
+CurrencySingUAF=грн.
 CurrencySingXAF=Франк КФА СБЕР
 CurrencySingXOF=Франк КФА ЦБЗАГ
 CurrencyXPF=CFP франков

@@ -15,15 +15,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/comm/propal/note.php
  *	\ingroup    propale
  *	\brief      Fiche d'information sur une proposition commerciale
- *	\version    $Id$
+ *	\version    $Id: note.php,v 1.63 2011/08/14 02:11:45 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -113,7 +112,7 @@ if ($id > 0 || ! empty($ref))
 
 			print '<table class="border" width="100%">';
 
-			$linkback="<a href=\"".$_SERVER["PHP_SELF"]."?page=$page&socid=$socid&viewstatut=$viewstatut&sortfield=$sortfield&$sortorder\">".$langs->trans("BackToList")."</a>";
+			$linkback="<a href=\"".DOL_URL_ROOT.'/comm/propal.php'."?page=$page&socid=$socid&viewstatut=$viewstatut&sortfield=$sortfield&$sortorder\">".$langs->trans("BackToList")."</a>";
 
 			// Ref
 			print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">';
@@ -227,5 +226,5 @@ if ($id > 0 || ! empty($ref))
 }
 $db->close();
 
-llxFooter('$Date$ - $Revision: 1.15 ');
+llxFooter('$Date: 2011/08/14 02:11:45 $ - $Revision: 1.15 ');
 ?>

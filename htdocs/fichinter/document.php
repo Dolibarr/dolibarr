@@ -17,15 +17,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *       \file       htdocs/fichinter/document.php
  *       \ingroup    fichinter
  *       \brief      Page des documents joints sur les contrats
- *       \version    $Id$
+ *       \version    $Id: document.php,v 1.22 2011/07/31 23:50:54 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -37,6 +36,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 $langs->load("other");
 $langs->load("fichinter");
 $langs->load("companies");
+$langs->load("interventions");
 
 $fichinterid = GETPOST("id");
 $action = GETPOST("action");
@@ -133,7 +133,7 @@ if ($object->id)
 
 
 	// Construit liste des fichiers
-	$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
+	$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 	$totalsize=0;
 	foreach($filearray as $key => $file)
 	{
@@ -173,5 +173,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/31 23:50:54 $ - $Revision: 1.22 $');
 ?>

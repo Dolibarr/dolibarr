@@ -16,14 +16,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *		\file       htdocs/theme/eldy/style.css.php
  *		\brief      Fichier de style CSS du theme Cameleo
- *		\version    $Id$
+ *		\version    $Id: style.css.php,v 1.12 2011/08/17 13:08:19 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -196,12 +195,19 @@ div.float
     float:<?php print $left; ?>;
 }
 
-/* For hide object and add pointer cursor */
+/* ============================================================================== */
+/* Styles to hide objects                                                         */
+/* ============================================================================== */
 
 .hideobject { display: none; }
+<?php if (! empty($conf->browser->phone)) { ?>
+.hideonsmartphone { display: none; }
+<?php } ?>
 .linkobject { cursor: pointer; }
 
-/* For dragging lines */
+/* ============================================================================== */
+/* Styles for dragging lines                                                      */
+/* ============================================================================== */
 
 .dragClass {
 	color: #002255;
@@ -223,19 +229,35 @@ div.leftContent {
         background-color: #FFF;
 }
 
-
-td.vmenu {
-    margin-<?php print $right; ?>: 2px;
-    padding: 0px;
-    padding-bottom: 0px;
-    padding-top: 1px;
-    width: 200px;
-}
-
 div.fiche {
-        margin-<?php print $left; ?>: 5px;
-	margin-<?php print $right; ?>: 5px;*/
+	margin-<?php print $left; ?>: <?php print empty($conf->browser->phone)?'5':'2'; ?>px;
+	margin-<?php print $right; ?>: <?php print empty($conf->browser->phone)?'5':''; ?>px;
 }
+
+div.fichecenter {
+	width: 100%;
+	clear: both;	/* This is to have div fichecenter that are true rectangles */
+}
+div.fichethirdleft {
+	<?php if (empty($conf->browser->phone)) { print "float: ".$left.";\n"; } ?>
+	<?php if (empty($conf->browser->phone)) { print "width: 35%;\n"; } ?>
+}
+div.fichetwothirdright {
+	<?php if (empty($conf->browser->phone)) { print "float: ".$left.";\n"; } ?>
+	<?php if (empty($conf->browser->phone)) { print "width: 65%;\n"; } ?>
+}
+div.fichehalfleft {
+	<?php if (empty($conf->browser->phone)) { print "float: ".$left.";\n"; } ?>
+	<?php if (empty($conf->browser->phone)) { print "width: 50%;\n"; } ?>
+}
+div.fichehalfright {
+	<?php if (empty($conf->browser->phone)) { print "float: ".$left.";\n"; } ?>
+	<?php if (empty($conf->browser->phone)) { print "width: 50%;\n"; } ?>
+}
+div.ficheaddleft {
+	<?php if (empty($conf->browser->phone)) { print "padding-left: 6px;\n"; } ?>
+}
+
 
 /* ============================================================================== */
 /* Menu top et 1ere ligne tableau                                                 */
@@ -487,7 +509,7 @@ foreach($mainmenuusedarray as $key => $val)
 	{
 		if (file_exists($dirroot."/".$val."/img/".$val.".png"))
 		{
-			$url=DOL_URL_ROOT.'/'.$val.'/img/'.$val.'.png';
+			$url=dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
 			$found=1;
 			break;
 		}
@@ -565,8 +587,15 @@ img.login, img.printer, img.entity {
 /* Menu gauche                                                                    */
 /* ============================================================================== */
 
-<?php if ((GETPOST("optioncss") == 'print')
-|| (! empty($conf->browser->phone) && empty($conf->global->MAIN_SEARCHFORM_WITH_SMARTHPONE) && empty($conf->global->BOOKMARKS_SHOW_WITH_SMARTHPONE))) { ?>
+td.vmenu {
+    margin-<?php print $right; ?>: 2px;
+    padding: 0px;
+    padding-bottom: 0px;
+    padding-top: 1px;
+    width: 200px;
+}
+
+<?php if (GETPOST("optioncss") == 'print') { ?>
 .vmenu {
     display: none;
 }
@@ -775,10 +804,6 @@ td.photo {
  *  PANES and CONTENT-DIVs
  */
 
-#mainContent {
-	/*background: #ffffff url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/headbg2.jpg' ?>) 0 0 no-repeat;*/
-}
-
 #mainContent, #leftContent .ui-layout-pane {
     padding:    0px;
     overflow:	auto;
@@ -809,6 +834,7 @@ td.photo {
 .toolbar {
     background-image: url(<?php echo DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tmenu2.png' ?>) !important;
     background-repeat: repeat-x !important;
+    border: 1px solid #BBB !important;
 }
 
 .toolbarbutton {
@@ -857,98 +883,143 @@ td.photo {
  *  RESIZER-BARS
  */
 .ui-layout-resizer  { /* all 'resizer-bars' */
-    background:     #FFF;
-    border:         1px solid #BBB;
-    border-width:   0;
+	width: 8px !important;
+}
+.ui-layout-resizer-hover    {   /* affects both open and closed states */
+}
+/* NOTE: It looks best when 'hover' and 'dragging' are set to the same color,
+    otherwise color shifts while dragging when bar can't keep up with mouse */
+/*.ui-layout-resizer-open-hover ,*/ /* hover-color to 'resize' */
+.ui-layout-resizer-dragging {   /* resizer beging 'dragging' */
+    background: #DDD;
+    width: 8px;
+}
+.ui-layout-resizer-dragging {   /* CLONED resizer being dragged */
+    border-left:  1px solid #BBB;
+    border-right: 1px solid #BBB;
+}
+/* NOTE: Add a 'dragging-limit' color to provide visual feedback when resizer hits min/max size limits */
+.ui-layout-resizer-dragging-limit { /* CLONED resizer at min or max size-limit */
+    background: #E1A4A4; /* red */
+}
+.ui-layout-resizer-closed:hover {
+    background-color: #EEDDDD;
+}
+.ui-layout-resizer-sliding {    /* resizer when pane is 'slid open' */
+    opacity: .10; /* show only a slight shadow */
+    filter:  alpha(opacity=10);
     }
-    .ui-layout-resizer-drag {       /* REAL resizer while resize in progress */
+    .ui-layout-resizer-sliding-hover {  /* sliding resizer - hover */
+        opacity: 1.00; /* on-hover, show the resizer-bar normally */
+        filter:  alpha(opacity=100);
     }
-    .ui-layout-resizer-hover    {   /* affects both open and closed states */
-    }
-    /* NOTE: It looks best when 'hover' and 'dragging' are set to the same color,
-        otherwise color shifts while dragging when bar can't keep up with mouse */
-    /*.ui-layout-resizer-open-hover ,*/ /* hover-color to 'resize' */
-    .ui-layout-resizer-dragging {   /* resizer beging 'dragging' */
-        background: #AAA;
-    }
-    .ui-layout-resizer-dragging {   /* CLONED resizer being dragged */
-        border-left:  1px solid #BBB;
-        border-right: 1px solid #BBB;
-    }
-    /* NOTE: Add a 'dragging-limit' color to provide visual feedback when resizer hits min/max size limits */
-    .ui-layout-resizer-dragging-limit { /* CLONED resizer at min or max size-limit */
-        background: #E1A4A4; /* red */
-    }
-
-    .ui-layout-resizer-closed-hover { /* hover-color to 'slide open' */
-        background: #EBD5AA;
-    }
-    .ui-layout-resizer-sliding {    /* resizer when pane is 'slid open' */
-        opacity: .10; /* show only a slight shadow */
-        filter:  alpha(opacity=10);
-        }
-        .ui-layout-resizer-sliding-hover {  /* sliding resizer - hover */
-            opacity: 1.00; /* on-hover, show the resizer-bar normally */
-            filter:  alpha(opacity=100);
-        }
-        /* sliding resizer - add 'outside-border' to resizer on-hover
-         * this sample illustrates how to target specific panes and states */
-        .ui-layout-resizer-north-sliding-hover  { border-bottom-width:  1px; }
-        .ui-layout-resizer-south-sliding-hover  { border-top-width:     1px; }
-        .ui-layout-resizer-west-sliding-hover   { border-right-width:   1px; }
-        .ui-layout-resizer-east-sliding-hover   { border-left-width:    1px; }
+/* sliding resizer - add 'outside-border' to resizer on-hover
+ * this sample illustrates how to target specific panes and states */
+.ui-layout-resizer-north-sliding-hover  { border-bottom-width:  1px; }
+.ui-layout-resizer-south-sliding-hover  { border-top-width:     1px; }
+.ui-layout-resizer-west-sliding-hover   { border-right-width:   1px; }
+.ui-layout-resizer-east-sliding-hover   { border-left-width:    1px; }
 
 /*
  *  TOGGLER-BUTTONS
  */
 .ui-layout-toggler {
-    border: 0px solid #842F00; /* match pane-border */
-    background-color: #A81E00;
+    border-top: 1px solid #AAA; /* match pane-border */
+    border-right: 1px solid #AAA; /* match pane-border */
+    border-bottom: 1px solid #AAA; /* match pane-border */
+    background-color: #DDD;
+    top: 5px !important;
     }
-    .ui-layout-resizer-hover .ui-layout-toggler {
-        opacity: .60;
-        filter:  alpha(opacity=60);
+.ui-layout-toggler-open {
+	height: 48px !important;
+	width: 5px !important;
+    -moz-border-radius:0px 10px 10px 0px;
+	-webkit-border-radius:0px 10px 10px 0px;
+	border-radius:0px 10px 10px 0px;
+}
+.ui-layout-toggler-closed {
+	height: 48px !important;
+	width: 5px !important;
+    -moz-border-radius:0px 10px 10px 0px;
+	-webkit-border-radius:0px 10px 10px 0px;
+	border-radius:0px 10px 10px 0px;
+}
+.ui-layout-toggler .content {	/* style the text we put INSIDE the togglers */
+    color:          #666;
+    font-size:      12px;
+    font-weight:    bold;
+    width:          100%;
+    padding-bottom: 0.35ex; /* to 'vertically center' text inside text-span */
+}
+
+/* hide the toggler-button when the pane is 'slid open' */
+.ui-layout-resizer-sliding  ui-layout-toggler {
+    display: none;
+}
+
+.ui-layout-north {
+	height: <?php print (empty($conf->browser->phone)?'54':'21'); ?>px !important;
+}
+
+/* ECM */
+
+#containerlayout .ecm-layout-pane { /* all 'panes' */
+    background: #FFF;
+    border:     1px solid #BBB;
+    /* DO NOT add scrolling (or padding) to 'panes' that have a content-div,
+       otherwise you may get double-scrollbars - on the pane AND on the content-div
+    */
+    padding:    0px;
+    overflow:   auto;
+}
+/* (scrolling) content-div inside pane allows for fixed header(s) and/or footer(s) */
+#containerlayout .ecm-layout-content {
+	padding:    10px;
+	position:   relative; /* contain floated or positioned elements */
+	overflow:   auto; /* add scrolling to content-div */
+}
+
+.ecm-layout-toggler {
+    background-color: #DDD;
     }
-    .ui-layout-resizer-hover .ui-layout-toggler-hover { /* need specificity */
-        background-color: #FC6;
-        opacity: 1.00;
-        filter:  alpha(opacity=100);
-    }
-    .ui-layout-toggler-north ,
-    .ui-layout-toggler-south {
-        border-width: 0 1px; /* left/right borders */
-    }
-    .ui-layout-toggler-west ,
-    .ui-layout-toggler-east {
-        border-width: 1px 0; /* top/bottom borders */
-    }
-    /* hide the toggler-button when the pane is 'slid open' */
-    .ui-layout-resizer-sliding  ui-layout-toggler {
-        display: none;
-    }
-    /*
-     *  style the text we put INSIDE the togglers
-     */
-    .ui-layout-toggler .content {
-        color:          #666;
-        font-size:      12px;
-        font-weight:    bold;
-        width:          100%;
-        padding-bottom: 0.35ex; /* to 'vertically center' text inside text-span */
+.ecm-layout-toggler-open {
+	height: 48px !important;
+	width: 6px !important;
+}
+.ecm-layout-toggler-closed {
+	height: 48px !important;
+	width: 6px !important;
+}
+.ecm-layout-toggler .content {	/* style the text we put INSIDE the togglers */
+    color:          #666;
+    font-size:      12px;
+    font-weight:    bold;
+    width:          100%;
+    padding-bottom: 0.35ex; /* to 'vertically center' text inside text-span */
+}
+#ecm-layout-west-resizer {
+	width: 6px !important;
+}
+
+.ecm-layout-resizer  { /* all 'resizer-bars' */
+    background:     #EEE;
+    border:         1px solid #BBB;
+    border-width:   0;
     }
 
-.ui-in-layout-center {
-    border-left: 0px !important;
+.ecm-in-layout-center {
+    border-left: 1px !important;
     border-right: 0px !important;
     border-top: 0px !important;
 }
 
-.ui-in-layout-south {
+.ecm-in-layout-south {
     border-left: 0px !important;
     border-right: 0px !important;
     border-bottom: 0px !important;
     padding: 4px 0 4px 4px !important;
 }
+
 
 
 /* ============================================================================== */
@@ -1415,10 +1486,6 @@ font-family: <?php print $fontlist ?>;
 .warning { color: #887711; }
 .error   { color: #550000; font-weight: bold; }
 
-td.warning {	/* Utilise par Smarty */
-  background: #FF99A9;
-}
-
 div.ok {
   color: #114466;
 }
@@ -1475,10 +1542,6 @@ a.impayee:hover { font-weight: bold; color: #550000; }
  */
 
 .fieldrequired { font-weight: bold; color: #000055; }
-
-#pictotitle {
-	<?php print !empty($conf->browser->phone)?'display: none;':''; ?>
-}
 
 .photo {
 border: 0px;
@@ -2068,14 +2131,30 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 span.cke_skin_kama { padding: 0 !important; }
 .cke_wrapper { padding: 4px !important; }
 
-#label
+a.cke_dialog_ui_button
 {
-    text-align: right;
-    color: #666;
+    font-family: <?php print $fontlist ?> !important;
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/button_bg.png' ?>) !important;
+	background-position: bottom !important;
+    border: 1px solid #ACBCBB !important;
+	padding: 0.1em 0.7em !important;
+	margin: 0em 0.5em !important;
+    -moz-border-radius:0px 5px 0px 5px !important;
+	-webkit-border-radius:0px 5px 0px 5px !important;
+	border-radius:0px 5px 0px 5px !important;
+    -moz-box-shadow: 4px 4px 4px #CCC !important;
+    -webkit-box-shadow: 4px 4px 4px #CCC !important;
+    box-shadow: 4px 4px 4px #CCC !important;
 }
 
-#value
-{
-    font-weight: bold;
-    padding: 0 0px 0 10px;
+/* ============================================================================== */
+/*  File upload                                                                   */
+/* ============================================================================== */
+
+.template-upload {
+    height: 72px !important;
 }
+
+<?php
+if (is_object($db)) $db->close();
+?>

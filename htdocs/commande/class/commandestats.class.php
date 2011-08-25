@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *       \file       htdocs/commande/class/commandestats.class.php
  *       \ingroup    commandes
  *       \brief      Fichier de la classe de gestion des stats des commandes
- *       \version    $Id$
+ *       \version    $Id: commandestats.class.php,v 1.6 2011/07/31 22:23:15 eldy Exp $
  */
 include_once DOL_DOCUMENT_ROOT . "/core/class/stats.class.php";
 include_once DOL_DOCUMENT_ROOT . "/commande/class/commande.class.php";
@@ -102,7 +101,7 @@ class CommandeStats extends Stats
 		$sql = "SELECT date_format(c.date_valid,'%m') as dm, count(*) nb";
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE date_format(c.date_valid,'%Y') = ".$year;
+		$sql.= " WHERE date_format(c.date_valid,'%Y') = '".$year."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');
@@ -141,7 +140,7 @@ class CommandeStats extends Stats
 		$sql = "SELECT date_format(c.date_valid,'%m') as dm, sum(c.".$this->field.")";
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE date_format(c.date_valid,'%Y') = ".$year;
+		$sql.= " WHERE date_format(c.date_valid,'%Y') = '".$year."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');
@@ -161,7 +160,7 @@ class CommandeStats extends Stats
 		$sql = "SELECT date_format(c.date_valid,'%m') as dm, avg(c.".$this->field.")";
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE date_format(c.date_valid,'%Y') = ".$year;
+		$sql.= " WHERE date_format(c.date_valid,'%Y') = '".$year."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');

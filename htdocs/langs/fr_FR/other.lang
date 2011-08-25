@@ -53,6 +53,7 @@ PredefinedMailContentSendOrder=Veuillez trouver ci-joint la commande __ORDERREF_
 PredefinedMailContentSendSupplierOrder=Veuillez trouver ci-joint notre commande __ORDERREF__\n\nCordialement\n\n
 PredefinedMailContentSendSupplierInvoice=Veuillez trouver ci-joint la facture __FACREF__\n\nCordialement\n\n
 PredefinedMailContentSendShipping=Veuillez trouver ci-joint le bon d'expédition __SHIPPINGREF__\n\nCordialement\n\n
+PredefinedMailContentSendFichInter=Veuillez trouver ci-joint la fiche d'intervention __FICHINTERREF__\n\nCordialement\n\n
 DemoDesc=Dolibarr est un logiciel de gestion d'activité (professionnelle ou associative) composé de modules fonctionnels indépendants et optionnels. Une démonstration qui inclut tous ces modules n'a pas de sens car les modules ne sont jamais tous utilisés en même temps. Aussi, plusieurs profils type de démo sont disponibles.
 ChooseYourDemoProfil=Veuillez choisir le profil de démo qui correspond le mieux à votre activité...
 DemoFundation=Gestion des adhérents d'une association
@@ -158,6 +159,10 @@ ClickHere=Cliquez ici
 UseAdvancedPerms=Utiliser les droits avancés dans les permissions des modules
 FileFormat=Format de fichier
 SelectAColor=Choisissez une couleur
+AddFiles=Ajouter des fichiers
+StartUpload=Transférer
+CancelUpload=Annuler le transfert
+FileIsTooBig=Le fichier est trop volumineux
 
 ##### Bookmark #####
 Bookmark=Marque-page
@@ -178,11 +183,6 @@ UseAnExternalHttpLinkOrRelativeDolibarrLink=Saisir une URL http externe ou une U
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choisir si le raccourci doit ouvrir la page dans une nouvelle fenêtre ou fenêtre courante
 BookmarksManagement=Gestion des marque-pages
 ListOfBookmarks=Liste des marque-pages
-##### Webcal #####
-LoginWebcal=Login Webcalendar
-ErrorWebcalLoginNotDefined=Le login Webcalendar associé à votre login Dolibarr <b>%s</b> n'est pas défini.
-##### Phenix #####
-ErrorPhenixLoginNotDefined=Le login Phenix associé à votre login Dolibarr <b>%s</b> n'est pas défini.
 ##### Calendar common #####
 AddCalendarEntry=Ajouter entrée dans le calendrier %s
 NewCompanyToDolibarr=Société %s ajoutée dans Dolibarr

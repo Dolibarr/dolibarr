@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/societe/societe.php
  *	\ingroup    societe
  *	\brief      Page to show a third party
- *	\version    $Id$
+ *	\version    $Id: societe.php,v 1.13 2011/08/23 23:50:15 eldy Exp $
  */
 
 require_once("../main.inc.php");
@@ -159,8 +158,6 @@ if ($socname)
 	$search_nom=$socname;
 }
 
-// Affiche la confirmation de suppression d'un tiers
-if ($_GET['delsoc']) print '<div class="warning">'.$langs->trans("CompanyDeleted",$_GET['delsoc']).'</div><br>';
 
 /*
  * Mode Liste
@@ -281,6 +278,12 @@ if ($resql)
 	$params.= '&amp;search_idprof4='.$search_idprof4;
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"],$params,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
+
+    // Show delete result message
+    if (GETPOST('delsoc'))
+    {
+        dol_htmloutput_mesg($langs->trans("CompanyDeleted",GETPOST('delsoc')),'','ok');
+    }
 
 	$langs->load("other");
 	$textprofid=array();
@@ -430,5 +433,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/23 23:50:15 $ - $Revision: 1.13 $');
 ?>

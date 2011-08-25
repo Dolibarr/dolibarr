@@ -16,15 +16,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *      \file       htdocs/admin/facture.php
  *		\ingroup    facture
  *		\brief      Page to setup invoice module
- *		\version    $Id$
+ *		\version    $Id: facture.php,v 1.151 2011/08/16 09:57:02 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -587,7 +586,7 @@ if ($conf->banque->enabled)
         $num = $db->num_rows($resql);
         $i = 0;
         if ($num > 0) {
-            print "<select name=\"rib\">";
+            print '<select name="rib" class="flat" id="rib">';
             print '<option value="0">'.$langs->trans("DoNotSuggestPaymentMode").'</option>';
             while ($i < $num)
             {
@@ -614,7 +613,7 @@ $var=!$var;
 print '<tr '.$bc[$var].'>';
 print "<td>".$langs->trans("SuggestPaymentByChequeToAddress")."</td>";
 print "<td>";
-print '<select name="chq">';
+print '<select class="flat" name="chq" id="chq">';
 print '<option value="0">'.$langs->trans("DoNotSuggestPaymentMode").'</option>';
 print '<option value="-1"'.($conf->global->FACTURE_CHQ_NUMBER?' selected="selected"':'').'>'.$langs->trans("MenuCompanySetup").' ('.($mysoc->name?$mysoc->name:$langs->trans("NotDefined")).')</option>';
 
@@ -719,5 +718,5 @@ print "</table>\n";
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/16 09:57:02 $ - $Revision: 1.151 $');
 ?>

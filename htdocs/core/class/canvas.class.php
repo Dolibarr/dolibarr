@@ -13,15 +13,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *   \file			htdocs/core/class/canvas.class.php
  *   \ingroup		core
  *   \brief			File of class to manage canvas
- *   \version		$Id$
+ *   \version		$Id: canvas.class.php,v 1.45 2011/07/31 23:45:13 eldy Exp $
  */
 
 
@@ -135,7 +134,8 @@ class Canvas
 
     /**
      *  Execute actions
-     *  @param      id      Id of object (may be empty for creation)
+     *  @param          id      Id of object (may be empty for creation)
+     *  @deprecated     Use actions with hooks instead
      */
     function doActions($id)
     {
@@ -229,11 +229,12 @@ class Canvas
 	/**
 	 * 	   Display canvas
 	 *     @param      mode        'create', 'view', 'edit'
+	 *     @param      id          Id of object to show
 	 */
-	function display_canvas($mode='view')
+	function display_canvas($mode='view',$id=0)
 	{
 		global $db, $conf, $langs, $user, $canvas;
-		global $form, $formfile;
+		global $id, $form, $formfile;
 
 		//print $this->template_dir.$this->card.'_'.$mode.'.tpl.php';exit;
 		include($this->template_dir.$this->card.'_'.$mode.'.tpl.php');        // Include native PHP template

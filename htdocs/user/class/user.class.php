@@ -6,6 +6,7 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
+ * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,14 +19,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *  \file       htdocs/user/class/user.class.php
  *  \brief      Fichier de la classe utilisateur
- *  \version    $Id$
+ *  \version    $Id: user.class.php,v 1.53 2011/08/21 10:01:37 hregis Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
@@ -53,6 +53,7 @@ class User extends CommonObject
     var $firstname;
 	var $note;
 	var $email;
+	var $signature;
 	var $office_phone;
 	var $office_fax;
 	var $user_mobile;
@@ -98,8 +99,8 @@ class User extends CommonObject
 
 
 	/**
-	 *    Constructeur de la classe
-	 *    @param  DB         Handler acces base de donnees
+	 *    Constructor de la classe
+	 *    @param   DoliDb  $DB     Database handler
 	 */
 	function User($DB)
 	{
@@ -116,7 +117,8 @@ class User extends CommonObject
 	}
 
 	/**
-	 *	Charge un objet user avec toutes ces caracteristiques depuis un id ou login
+	 *	Load a user from database with its id or ref (login)
+	 *
 	 *	@param      id		       		Si defini, id a utiliser pour recherche
 	 * 	@param      login       		Si defini, login a utiliser pour recherche
 	 *	@param      sid					Si defini, sid a utiliser pour recherche
@@ -125,13 +127,13 @@ class User extends CommonObject
 	 */
 	function fetch($id='', $login='',$sid='',$loadpersonalconf=1)
 	{
-		global $conf;
+		global $conf, $user;
 
-		// Nettoyage parametres
+		// Clean parameters
 		$login=trim($login);
 
-		// Recupere utilisateur
-		$sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.office_phone, u.office_fax, u.user_mobile,";
+		// Get user
+        $sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.signature, u.office_phone, u.office_fax, u.user_mobile,";
 		$sql.= " u.admin, u.login, u.webcal_login, u.phenix_login, u.phenix_pass, u.note,";
 		$sql.= " u.pass, u.pass_crypted, u.pass_temp,";
 		$sql.= " u.fk_societe, u.fk_socpeople, u.fk_member, u.ldap_sid,";
@@ -143,14 +145,21 @@ class User extends CommonObject
 		$sql.= " u.photo as photo,";
 		$sql.= " u.openid as openid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-		$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
 
-		if ($sid)
+		if(! empty($conf->multicompany->enabled) && $conf->entity == 1)
+		{
+			$sql.= " WHERE u.entity IS NOT NULL";
+		}
+		else
+		{
+			$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+		}
+
+		if ($sid)    // permet une recherche du user par son SID ActiveDirectory ou Samba
 		{
 			$sql.= " AND (u.ldap_sid = '".$sid."' OR u.login = '".$this->db->escape($login)."') LIMIT 1";
 		}
 		else if ($login)
-			// permet une recherche du user par son SID ActiveDirectory ou Samba
 		{
 			$sql.= " AND u.login = '".$this->db->escape($login)."'";
 		}
@@ -184,6 +193,7 @@ class User extends CommonObject
 				$this->office_fax   = $obj->office_fax;
 				$this->user_mobile  = $obj->user_mobile;
 				$this->email = $obj->email;
+                $this->signature = $obj->signature;
 				$this->admin = $obj->admin;
 				$this->note = $obj->note;
 				$this->statut = $obj->statut;
@@ -583,8 +593,8 @@ class User extends CommonObject
 	}
 
 	/**
-	 *      \brief      Change status of a user
-	 *      \return     int     <0 if KO, 0 if nothing is done, >0 if OK
+	 *      Change status of a user
+	 *      @return     int     <0 if KO, 0 if nothing is done, >0 if OK
 	 */
 	function setstatus($statut)
 	{
@@ -733,6 +743,7 @@ class User extends CommonObject
 			if ($num)
 			{
 				$this->error = 'ErrorLoginAlreadyExists';
+				dol_syslog("User::Create ".$this->error, LOG_WARNING);
 				$this->db->rollback();
 				return -6;
 			}
@@ -1008,6 +1019,7 @@ class User extends CommonObject
 		$this->office_fax   = trim($this->office_fax);
 		$this->user_mobile  = trim($this->user_mobile);
 		$this->email        = trim($this->email);
+        $this->signature    = trim($this->signature);
 		$this->note         = trim($this->note);
 		$this->openid       = trim(empty($this->openid)?'':$this->openid);    // Avoid warning
 		$this->webcal_login = trim($this->webcal_login);
@@ -1038,6 +1050,7 @@ class User extends CommonObject
 		$sql.= ", office_fax = '".$this->db->escape($this->office_fax)."'";
 		$sql.= ", user_mobile = '".$this->db->escape($this->user_mobile)."'";
 		$sql.= ", email = '".$this->db->escape($this->email)."'";
+        $sql.= ", signature = '".addslashes($this->signature)."'";
 		$sql.= ", webcal_login = '".$this->db->escape($this->webcal_login)."'";
 		$sql.= ", phenix_login = '".$this->db->escape($this->phenix_login)."'";
 		$sql.= ", phenix_pass = '".$this->db->escape($this->phenix_pass)."'";
@@ -1391,8 +1404,8 @@ class User extends CommonObject
 		}
 		else
 		{
+		    $langs->trans("errors");
 			$this->error=$langs->trans("ErrorFailedToSendPassword").' '.$mailfile->error;
-			//print nl2br($mesg);
 			return -1;
 		}
 	}
@@ -1478,12 +1491,15 @@ class User extends CommonObject
 
 	/**
 	 *    Add user into a group
-	 *    @param       group       id du groupe
+	 *    @param       group       Id of group
+	 *    @param       entity      Entity
+	 *    @param       notrigger   Disable triggers
+	 *    @return      int         <0 if KO, >0 if OK
 	 */
 	function SetInGroup($group, $entity, $notrigger=0)
 	{
 		global $conf, $langs, $user;
-		
+
         $error=0;
 
 		$this->db->begin();
@@ -1510,7 +1526,7 @@ class User extends CommonObject
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// Fin appel triggers
 			}
-			
+
 			if (! $error)
 			{
 				$this->db->commit();
@@ -1535,12 +1551,15 @@ class User extends CommonObject
 
 	/**
 	 *    Remove a user from a group
-	 *    @param      group       id du groupe
+     *    @param       group       Id of group
+     *    @param       entity      Entity
+     *    @param       notrigger   Disable triggers
+     *    @return      int         <0 if KO, >0 if OK
 	 */
 	function RemoveFromGroup($group, $entity, $notrigger=0)
 	{
 		global $conf,$langs,$user;
-		
+
         $error=0;
 
         $this->db->begin();

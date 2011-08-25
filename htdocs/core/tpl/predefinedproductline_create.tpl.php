@@ -13,10 +13,9 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id$
+ * $Id: predefinedproductline_create.tpl.php,v 1.17 2011/08/11 07:41:41 hregis Exp $
  *
  * Need to have following variables defined:
  * $conf
@@ -59,12 +58,11 @@
 	$html->select_produits('','idprod','',$conf->product->limit_size);
 
 	if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) echo '<br>';
-	
-	if (! empty($object->hooks['objectcard'])) {
-		foreach($object->hooks['objectcard'] as $module) {
-			$module->formCreateProductOptions($object);
-		}
-		echo '<br>';
+
+	if (is_object($hookmanager))
+	{
+        $parameters=array('fk_parent_line'=>$_POST["fk_parent_line"]);
+	    $hookmanager->executeHooks('formCreateProductOptions',$parameters,$object,$action);
 	}
 
 	// Editor wysiwyg

@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/cashdesk/facturation.php
  *	\ingroup    cashdesk
  *	\brief      Include to show main page for cashdesk module
- *	\version    $Id$
+ *	\version    $Id: facturation.php,v 1.19 2011/07/31 22:23:27 eldy Exp $
  */
 
 // Get list of articles (in warehouse '$conf_fkentrepot' if defined and stock module enabled)

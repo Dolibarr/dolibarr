@@ -14,19 +14,19 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *  \file       htdocs/societe/lien.php
  *  \ingroup    societe
  *  \brief      Page of links to other third parties
- *  \version    $Id$
+ *  \version    $Id: lien.php,v 1.39 2011/08/13 00:48:00 eldy Exp $
  */
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formcompany.class.php");
 
 $langs->load("companies");
 $langs->load("customers");
@@ -44,7 +44,7 @@ $result = restrictedArea($user, 'societe','','');
  */
 
 // Positionne companie parente
-if($_GET["socid"] && $_GET["select"])
+if ($socid && $_GET["select"])
 {
 	if ($user->rights->societe->creer)
 	{
@@ -64,7 +64,7 @@ if($_GET["socid"] && $_GET["select"])
 }
 
 // Supprime companie parente
-if($_GET["socid"] && $_GET["delsocid"])
+if ($socid && $_GET["delsocid"])
 {
 	if ($user->rights->societe->creer)
 	{
@@ -93,13 +93,13 @@ $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$langs->trans("ThirdParty"),$help_url);
 
 $form = new Form($db);
+$formcompany = new FormCompany($db);
 
-if($_GET["socid"])
+if ($socid)
 {
 
 	$soc = new Societe($db);
-	$soc->id = $_GET["socid"];
-	$soc->fetch($_GET["socid"]);
+	$soc->fetch($socid);
 
 	$head=societe_prepare_head2($soc);
 
@@ -141,11 +141,50 @@ if($_GET["socid"])
 	if ($soc->url) { print '<a href="http://'.$soc->url.'">http://'.$soc->url.'</a>'; }
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->transcountry('ProfId1',$soc->pays_code).'</td><td><a target="_blank" href="http://www.societe.com/cgi-bin/recherche?rncs='.$soc->siren.'">'.$soc->siren.'</a>&nbsp;</td>';
+	$object=$soc;
+    print '<tr>';
+    // IdProf1 (SIREN for France)
+    $idprof=$langs->transcountry('ProfId1',$object->pays_code);
+    if ($idprof!='-')
+    {
+        print '<td>'.$idprof.'</td><td>';
+        print $formcompany->get_input_id_prof(1,'idprof1',$object->siren,$object->pays_code);
+        print '</td>';
+    }
+    else print '<td>&nbsp;</td><td>&nbsp;</td>';
+    // IdProf2 (SIRET for France)
+    $idprof=$langs->transcountry('ProfId2',$object->pays_code);
+    if ($idprof!='-')
+    {
+        print '<td>'.$idprof.'</td><td>';
+        print $formcompany->get_input_id_prof(2,'idprof2',$object->siret,$object->pays_code);
+        print '</td>';
+    }
+    else print '<td>&nbsp;</td><td>&nbsp;</td>';
+    print '</tr>';
+    print '<tr>';
+    // IdProf3 (APE for France)
+    $idprof=$langs->transcountry('ProfId3',$object->pays_code);
+    if ($idprof!='-')
+    {
+        print '<td>'.$idprof.'</td><td>';
+        print $formcompany->get_input_id_prof(3,'idprof3',$object->ape,$object->pays_code);
+        print '</td>';
+    }
+    else print '<td>&nbsp;</td><td>&nbsp;</td>';
+    // IdProf4 (NU for France)
+    $idprof=$langs->transcountry('ProfId4',$object->pays_code);
+    if ($idprof!='-')
+    {
+        print '<td>'.$idprof.'</td><td>';
+        print $formcompany->get_input_id_prof(4,'idprof4',$object->idprof4,$object->pays_code);
+        print '</td>';
+    }
+    else print '<td>&nbsp;</td><td>&nbsp;</td>';
+    print '</tr>';
 
-	print '<td>'.$langs->transcountry('ProfId2',$soc->pays_code).'</td><td>'.$soc->siret.'</td></tr>';
 
-	print '<tr><td>'.$langs->transcountry('ProfId3',$soc->pays_code).'</td><td>'.$soc->ape.'</td><td colspan="2">&nbsp;</td></tr>';
+	// Capital
 	print '<tr><td>'.$langs->trans("Capital").'</td><td colspan="3">'.$soc->capital.' '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
 	// Societe mere
@@ -295,5 +334,5 @@ if($_GET["socid"])
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/13 00:48:00 $ - $Revision: 1.39 $');
 ?>

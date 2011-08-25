@@ -14,14 +14,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file        htdocs/compta/stats/index.php
  *	\brief       Page reporting CA
- *	\version     $Id$
+ *	\version     $Id: index.php,v 1.51 2011/07/31 22:23:13 eldy Exp $
  */
 
 require('../../main.inc.php');
@@ -171,7 +170,7 @@ if ($modecompta != 'CREANCES-DETTES') {
  */
 
 print '<table width="100%" class="noborder">';
-print '<tr class="liste_titre"><td rowspan="2">'.$langs->trans("Month").'</td>';
+print '<tr class="liste_titre"><td>&nbsp;</td>';
 
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
@@ -184,7 +183,7 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 }
 print '</tr>';
 
-print '<tr class="liste_titre">';
+print '<tr class="liste_titre"><td>'.$langs->trans("Month").'</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
 	print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
@@ -207,7 +206,7 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 	$mois_modulo = $mois;// ajout
 	if($mois>12){$mois_modulo = $mois-12;} // ajout
 	$var=!$var;
-	print "<tr $bc[$var]>";
+	print "<tr ".$bc[$var].">";
 
 	print "<td>".dol_print_date(dol_mktime(12,0,0,$mois_modulo,1,2000),"%B")."</td>";
 	for ($annee = $year_start ; $annee <= $year_end ; $annee++)
@@ -498,6 +497,6 @@ print "</table>";
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/31 22:23:13 $ - $Revision: 1.51 $');
 
 ?>

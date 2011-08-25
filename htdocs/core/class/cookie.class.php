@@ -12,14 +12,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/core/class/cookie.class.php
  *	\ingroup    core
- *	\version	$Id$
+ *	\version	$Id: cookie.class.php,v 1.7 2011/07/31 23:45:13 eldy Exp $
  *	\brief      File of class to manage cookies
  */
 
@@ -129,86 +128,6 @@ class DolCookie
 		$decryptValue = $this->decryptCookie();
 
 		return $decryptValue;
-	}
-
-	/**
-	 *  \brief   	Add cookie cryptkey in config file
-	 *	\return		int		<0 if KO, >0 if OK
-	 */
-	function add_cookiecryptkeyconf()
-	{
-		dol_syslog("cookie.class::add_cookiecryptkeyconf", LOG_DEBUG);
-		$config = '';
-		$added=0;
-
-		if ($fp = fopen(DOL_DOCUMENT_ROOT.'/conf/conf.php','r'))
-		{
-			while(!feof($fp))
-			{
-				$buffer = fgets($fp,4096);
-
-				if (strstr($buffer,"\$dolibarr_main_cookie_cryptkey"))
-				{
-					$config .= "\$dolibarr_main_cookie_cryptkey=\"$this->myKey\";\n";
-					$added++;
-				}
-				else
-				{
-					$config .= $buffer;
-				}
-			}
-			fclose($fp);
-
-			if (!$added)
-			{
-				$config = '';
-
-				if ($fp = fopen(DOL_DOCUMENT_ROOT.'/conf/conf.php','r'))
-				{
-					while(!feof($fp))
-					{
-						$buffer = fgets($fp,4096);
-
-						if (strstr($buffer,"\$dolibarr_main_authentication"))
-						{
-							$config .= $buffer;
-							$config .= "\$dolibarr_main_cookie_cryptkey=\"$this->myKey\";\n";
-						}
-						else
-						{
-							$config .= $buffer;
-						}
-					}
-					fclose($fp);
-				}
-				else
-				{
-					dol_syslog("cookie.class::add_cookiecryptkeyconf Failed to read conf.php", LOG_ERR);
-					return -2;
-				}
-			}
-
-			$file=DOL_DOCUMENT_ROOT.'/conf/conf.php';
-			if ($fp = @fopen($file,'w'))
-			{
-				fputs($fp, $config, dol_strlen($config));
-				fclose($fp);
-				// It's config file, so we set permission for creator only
-				// @chmod($file, octdec('0600'));
-
-				return 1;
-			}
-			else
-			{
-				dol_syslog("cookie.class::add_cookiecryptkeyconf Failed to open conf.php file for writing", LOG_WARNING);
-				return -1;
-			}
-		}
-		else
-		{
-			dol_syslog("cookie.class::add_cookiecryptkeyconf Failed to read conf.php", LOG_ERR);
-			return -2;
-		}
 	}
 
 }

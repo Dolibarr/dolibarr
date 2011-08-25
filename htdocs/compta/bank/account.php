@@ -17,15 +17,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	    \file       htdocs/compta/bank/account.php
  *		\ingroup    banque
  *		\brief      List of details of bank transactions for an account
- *		\version    $Id$
+ *		\version    $Id: account.php,v 1.155 2011/07/31 22:23:16 eldy Exp $
  */
 
 require("./pre.inc.php");	// We use pre.inc.php to have a dynamic menu
@@ -491,7 +490,7 @@ if ($account || $_GET["ref"])
     if ($result)
     {
         $now=dol_now();
-        $nows=dol_date('Ymd',$now);
+        $nows=dol_print_date($now,'%Y%m%d');
 
         //$html->load_cache_types_paiements();
         //$html->cache_types_paiements
@@ -510,7 +509,7 @@ if ($account || $_GET["ref"])
                 $var=!$var;
 
                 // Is it a transaction in future ?
-                $dos=dol_date('Ymd',$db->jdate($objp->do));
+                $dos=dol_print_date($db->jdate($objp->do),'%Y%m%d');
                 //print "dos=".$dos." nows=".$nows;
                 if ($dos > $nows && !$sep)		// Yes, we show a subtotal
                 {
@@ -786,5 +785,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/31 22:23:16 $ - $Revision: 1.155 $');
 ?>

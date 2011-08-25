@@ -13,8 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
@@ -28,13 +27,13 @@
  *                  - Le nom de la classe doit etre InterfaceMytrigger
  *                  - Le nom de la methode constructeur doit etre InterfaceMytrigger
  *                  - Le nom de la propriete name doit etre Mytrigger
- *		\version	$Id$
+ *		\version	$Id: interface_all_Demo.class.php-NORUN,v 1.30 2011/07/31 23:29:46 eldy Exp $
  */
 
 
 /**
  *      \class      InterfaceDemo
- *      \brief      Classe des fonctions triggers des actions personalisees du workflow
+ *      \brief      Class of triggers for demo module
  */
 class InterfaceDemo
 {
@@ -52,6 +51,7 @@ class InterfaceDemo
         $this->family = "demo";
         $this->description = "Triggers of this module are empty functions. They have no effect. They are provided for tutorial purpose only.";
         $this->version = 'dolibarr';            // 'development', 'experimental', 'dolibarr' or version
+        $this->picto = 'technic';
     }
     
     
@@ -225,6 +225,10 @@ class InterfaceDemo
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
+        elseif ($action == 'ORDER_BUILDDOC')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
         elseif ($action == 'ORDER_SENTBYMAIL')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
@@ -266,6 +270,10 @@ class InterfaceDemo
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
         elseif ($action == 'PROPAL_VALIDATE')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
+        elseif ($action == 'PROPAL_BUILDDOC')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
@@ -338,6 +346,10 @@ class InterfaceDemo
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
         elseif ($action == 'BILL_VALIDATE')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
+        elseif ($action == 'BILL_BUILDDOC')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
@@ -490,6 +502,16 @@ class InterfaceDemo
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
         elseif ($action == 'SHIPPINGL_DELETE')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
+        
+        // File
+        elseif ($action == 'FILE_UPLOAD')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
+        elseif ($action == 'FILE_DELETE')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }

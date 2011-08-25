@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009 Meos
+/* Copyright (C) 2010-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2009      Meos
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,8 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 //if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
@@ -125,7 +124,7 @@ if ($_POST["action"] == 'confirm_crop')
  * View
  */
 
-llxHeader($head, $langs->trans("Image"), '', '', 0, 0, array('/includes/jcrop/js/jquery.Jcrop.min.js','/lib/lib_photosresize.js'), array('/includes/jcrop/css/jquery.Jcrop.css'));
+llxHeader($head, $langs->trans("Image"), '', '', 0, 0, array('/includes/jquery/plugins/jcrop/js/jquery.Jcrop.min.js','/lib/lib_photosresize.js'), array('/includes/jquery/plugins/jcrop/css/jquery.Jcrop.css'));
 
 
 print_fiche_titre($langs->trans("ImageEditor"));
@@ -201,5 +200,5 @@ print '</fieldset>';
 }
 
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/31 23:45:15 $ - $Revision: 1.14 $');
 ?>

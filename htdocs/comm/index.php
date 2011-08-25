@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/comm/index.php
  *	\ingroup    commercial
  *	\brief      Home page of commercial area
- *	\version    $Id$
+ *	\version    $Id: index.php,v 1.173 2011/08/08 14:25:44 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -276,7 +275,7 @@ $max=3;
 /*
  * Last modified proposals
  */
-
+/*
 if ($conf->propal->enabled && $user->rights->propale->lire)
 {
 	$sql = "SELECT s.nom as name, s.rowid as socid, s.client, s.canvas, p.rowid as propalid, p.total_ht, p.ref, p.fk_statut, p.datep as dp";
@@ -352,6 +351,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 		dol_print_error($db,'');
 	}
 }
+*/
 
 /*
  * Last modified customers or prospects
@@ -486,8 +486,7 @@ if ($user->rights->agenda->myactions->read)
 
 
 /*
- * Derniers contrats
- *
+ * Last contracts
  */
 if ($conf->contrat->enabled && $user->rights->contrat->lire && 0) // TODO A REFAIRE DEPUIS NOUVEAU CONTRAT
 {
@@ -546,8 +545,7 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire && 0) // TODO A REFA
 }
 
 /*
- * Propales ouvertes
- *
+ * Opened proposals
  */
 if ($conf->propal->enabled && $user->rights->propale->lire)
 {
@@ -632,5 +630,5 @@ print '</table>';
 $db->close();
 
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/08 14:25:44 $ - $Revision: 1.173 $');
 ?>

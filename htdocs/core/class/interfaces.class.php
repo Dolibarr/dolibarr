@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *   \file		    htdocs/core/class/interfaces.class.php
  *   \ingroup		core
  *   \brief			Fichier de la classe de gestion des triggers
- *   \version		$Id: interfaces.class.php,v 1.7 2011/06/27 10:41:31 hregis Exp $
+ *   \version		$Id: interfaces.class.php,v 1.10 2011/08/17 15:56:22 eldy Exp $
  */
 
 
@@ -72,7 +71,7 @@ class Interfaces
 		{
 			$dir=dol_buildpath($reldir,0);
 			//print "xx".$dir;exit;
-						
+
 			// Check if directory exists
 			if (!is_dir($dir)) continue;
 
@@ -122,7 +121,7 @@ class Interfaces
     					if ($objMod)
     					{
     						// Bypass if workflow module is enabled and if the trigger asked to be disable in such case
-    						if ($conf->workflow->enabled && ! empty($objMod->disabled_if_workflow))
+    						if (! empty($conf->workflow->enabled) && ! empty($objMod->disabled_if_workflow))
     						{
     							dol_syslog("Interfaces::run_triggers action=".$action." Bypass triggers for file '".$file."'",LOG_INFO);
     							continue;
@@ -195,7 +194,7 @@ class Interfaces
 		{
 			$dir=dol_buildpath($reldir,0);
 			//print "xx".$dir;exit;
-			
+
 			// Check if directory exists
 			if (!is_dir($dir)) continue;
 
@@ -268,7 +267,7 @@ class Interfaces
 			$triggers[$j]['picto'] = $objMod->picto?img_object('',$objMod->picto):img_object('','generic');
 			$triggers[$j]['file'] = $files[$key];
 			$triggers[$j]['version'] = $objMod->getVersion();
-			$triggers[$j]['status'] = img_tick();
+			$triggers[$j]['status'] = img_picto($langs->trans("Active"),'tick');
 			if ($disabledbyname > 0 || $disabledbymodule > 1) $triggers[$j]['status'] = "&nbsp;";
 
 			$text ='<b>'.$langs->trans("Description").':</b><br>';

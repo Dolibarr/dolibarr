@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
+/* Copyright (C) 2005      Matthieu Valleton	<mv@seeschloss.org>
  * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007      Patrick Raguin	  	  <patrick.raguin@gmail.com>
- * Copyright (C) 2005-2009 Regis Houssin	  	  <regis@dolibarr.fr>
+ * Copyright (C) 2007      Patrick Raguin		<patrick.raguin@gmail.com>
+ * Copyright (C) 2005-2011 Regis Houssin		<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,15 +15,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *       \file       htdocs/categories/viewcat.php
  *       \ingroup    category
  *       \brief      Page to show a category card
- *       \version    $Revision$
+ *       \version    $Id: viewcat.php,v 1.54 2011/08/20 09:02:58 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -31,11 +30,6 @@ require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/categories.lib.php");
 
 $langs->load("categories");
-
-// Security check
-if (! $user->rights->categorie->lire) accessforbidden();
-
-$mesg = '';
 
 $mesg = '';
 $id=GETPOST('id');
@@ -49,6 +43,9 @@ if ($id == "")
 	dol_print_error('','Missing parameter id');
 	exit();
 }
+
+// Security check
+$result = restrictedArea($user, 'categorie', $id);
 
 $object = new Categorie($db);
 $result=$object->fetch($id);
@@ -364,5 +361,5 @@ if ($object->type == 3)
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/20 09:02:58 $ - $Revision: 1.54 $');
 ?>

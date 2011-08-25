@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *      \file       htdocs/compta/deplacement/class/deplacement.class.php
  *      \ingroup    deplacement
  *      \brief      File of class to manage trips
- *      \version    $Id$
+ *      \version    $Id: deplacement.class.php,v 1.10 2011/07/31 22:23:20 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
@@ -326,6 +325,38 @@ class Deplacement extends CommonObject
 		if ($withpicto && $withpicto != 2) $result.=' ';
 		if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
 		return $result;
+	}
+
+
+	/**
+	 * List of types
+	 */
+	function listOfTypes($active=1)
+	{
+	   global $conf,$langs;
+
+	   $ret=array();
+
+        $sql = "SELECT id, code, libelle as label";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_type_fees";
+        $sql.= " WHERE active = ".$active;
+
+        dol_syslog("Deplacement::listOfTypes sql=".$sql, LOG_DEBUG);
+        $result = $this->db->query($sql) ;
+        if ( $result )
+        {
+            $num = $this->db->num_rows($result);
+            $i=0;
+            while ($i < $num)
+            {
+                $obj = $this->db->fetch_object($result);
+                $ret[$obj->id]=array('code'=>$obj->code, 'label'=>(($langs->trans($obj->code)!=$obj->code)?$langs->trans($obj->code):$obj->label));
+                $i++;
+            }
+        }
+        else dol_print_error($this->db);
+
+        return $ret;
 	}
 
 }

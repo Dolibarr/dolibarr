@@ -46,7 +46,6 @@ NewUser=Yeni kullanıcı
 CreateUser=Kullanıcı oluştur
 SearchAGroup=Arama bir grup
 SearchAUser=Bir kullanıcı ara
-ErrorFailedToSendPassword=Parola gönderilemedi
 LoginNotDefined=Giriş tanımlı değil.
 NameNotDefined=Adı tanımlı değil.
 ListOfUsers=Kullanıcı listesi

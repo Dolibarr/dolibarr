@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copytight (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *       \file       htdocs/compta/bank/index.php
  *       \ingroup    banque
  *       \brief      Page accueil banque
- *       \version    $Id$
+ *       \version    $Id: index.php,v 1.55 2011/07/31 22:23:16 eldy Exp $
  */
 
 require("./pre.inc.php");
@@ -81,7 +80,7 @@ if ($resql)
 /*
  * Comptes courants (courant = 1)
  */
-print '<table class="nobordernopadding" width="100%">';
+print '<table class="liste" width="100%">';
 print '<tr class="liste_titre"><td width="30%">'.$langs->trans("CurrentAccounts").'</td>';
 print '<td width="20%">'.$langs->trans("Bank").'</td>';
 print '<td align="left">'.$langs->trans("AccountIdShort").'</td>';
@@ -245,5 +244,5 @@ print "</div>";
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/31 22:23:16 $ - $Revision: 1.55 $');
 ?>

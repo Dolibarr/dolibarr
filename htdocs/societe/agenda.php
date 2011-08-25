@@ -17,15 +17,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *  \file       htdocs/societe/agenda.php
  *  \ingroup    societe
  *  \brief      Page of third party events
- *  \version    $Id$
+ *  \version    $Id: agenda.php,v 1.22 2011/08/23 23:31:10 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -112,7 +111,9 @@ if ($_GET["socid"])
 		print '<tr><td>'.$langs->trans('Gencod').'</td><td colspan="3">'.$soc->gencod.'</td></tr>';
 	}
 
-	print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".dol_print_address($soc->address, 'gmap', 'thirdparty', $soc->id)."</td></tr>";
+	print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">";
+	dol_print_address($soc->address, 'gmap', 'thirdparty', $soc->id);
+	print "</td></tr>";
 
 	// Zip / Town
 	print '<tr><td width="25%">'.$langs->trans('Zip').'</td><td width="25%">'.$soc->cp."</td>";
@@ -187,5 +188,5 @@ if ($_GET["socid"])
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/23 23:31:10 $ - $Revision: 1.22 $');
 ?>

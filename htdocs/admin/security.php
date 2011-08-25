@@ -13,15 +13,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *		\file       htdocs/admin/security.php
  *      \ingroup    setup
  *      \brief      Page de configuration du module securite
- *		\version    $Id$
+ *		\version    $Id: security.php,v 1.57 2011/08/17 15:56:23 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -269,8 +268,7 @@ foreach ($arrayhandler as $key => $module)
         print '<td width="100" align="center">';
         if ($conf->global->USER_PASSWORD_GENERATED == $key)
         {
-            $title='';
-            print img_tick($title);
+            print img_picto('','tick');
         }
         else
         {
@@ -303,7 +301,7 @@ print '<td colspan="3">'.$langs->trans("DoNotStoreClearPassword").'</td>';
 print '<td align="center" width="60">';
 if ($conf->global->DATABASE_PWD_ENCRYPTED)
 {
-	print img_tick();
+	print img_picto($langs->trans("Active"),'tick');
 }
 print '</td>';
 if (! $conf->global->DATABASE_PWD_ENCRYPTED)
@@ -337,7 +335,7 @@ print '<td colspan="3">'.$langs->trans("MainDbPasswordFileConfEncrypted").'</td>
 print '<td align="center" width="60">';
 if (preg_match('/crypted:/i',$dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
 {
-	print img_tick();
+	print img_picto($langs->trans("Active"),'tick');
 }
 
 print '</td>';
@@ -375,7 +373,7 @@ print '</td>';
 print '<td align="center" width="60">';
 if($conf->global->PDF_SECURITY_ENCRYPTION == 1)
 {
-	print img_tick();
+	print img_picto($langs->trans("Active"),'tick');
 }
 
 print '</td>';
@@ -403,7 +401,7 @@ print '<td colspan="3">'.$langs->trans("DisableForgetPasswordLinkOnLogonPage").'
 print '<td align="center" width="60">';
 if($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK == 1)
 {
-	print img_tick();
+	print img_picto($langs->trans("Active"),'tick');
 }
 print '</td>';
 if ($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK == 0)
@@ -432,5 +430,5 @@ print '</div>';
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/17 15:56:23 $ - $Revision: 1.57 $');
 ?>

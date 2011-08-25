@@ -14,14 +14,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *  \file       	htdocs/compta/deplacement/fiche.php
  *  \brief      	Page to show a trip card
- *  \version		$Id$
+ *  \version		$Id: fiche.php,v 1.57 2011/08/23 18:40:45 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -212,15 +211,18 @@ if ($_GET["action"] == 'create')
 	print $html->select_date($datec?$datec:-1,'','','','','add',1,1);
 	print '</td></tr>';
 
+	// Km
+    print '<tr><td class="fieldrequired">'.$langs->trans("FeesKilometersOrAmout").'</td><td><input name="km" size="10" value="'.($_POST["km"]?$_POST["km"]:'').'"></td></tr>';
+
+    // Company
 	print "<tr>";
 	print '<td>'.$langs->trans("CompanyVisited").'</td><td>';
 	print $html->select_societes($_POST["socid"]?$_POST["socid"]:$_GET["socid"],'socid','',1);
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("FeesKilometersOrAmout").'</td><td><input name="km" size="10" value="'.($_POST["km"]?$_POST["km"]:'').'"></td></tr>';
-	print '</table>';
+    print '</table>';
 
-	print '<br><center><input class="button" type="submit" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; ';
+    print '<br><center><input class="button" type="submit" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; ';
 	print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></center';
 
 	print '</form>';
@@ -282,17 +284,19 @@ else
 				print $html->select_users($_POST["fk_user"]?$_POST["fk_user"]:$deplacement->fk_user,'fk_user',0);
 				print '</td></tr>';
 
-				// Where
-				print "<tr>";
-				print '<td>'.$langs->trans("CompanyVisited").'</td><td>';
-				print $html->select_societes($soc->id,'socid','',1);
-				print '</td></tr>';
-
 				// Date
 				print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
 				print $html->select_date($deplacement->date,'','','','','update');
 				print '</td></tr>';
-				print '<tr><td>'.$langs->trans("FeesKilometersOrAmout").'</td><td><input name="km" class="flat" size="10" value="'.$deplacement->km.'"></td></tr>';
+
+                // Km
+                print '<tr><td class="fieldrequired">'.$langs->trans("FeesKilometersOrAmout").'</td><td><input name="km" class="flat" size="10" value="'.$deplacement->km.'"></td></tr>';
+
+				// Where
+                print "<tr>";
+                print '<td>'.$langs->trans("CompanyVisited").'</td><td>';
+                print $html->select_societes($soc->id,'socid','',1);
+                print '</td></tr>';
 
 				print '</table>';
 
@@ -336,12 +340,6 @@ else
 				print $userfee->getNomUrl(1);
 				print '</td></tr>';
 
-				// Where
-				print '<tr><td>'.$langs->trans("CompanyVisited").'</td>';
-				print '<td>';
-				if ($soc->id) print $soc->getNomUrl(1);
-				print '</td></tr>';
-
 				// Date
 				print '<tr><td>'.$langs->trans("Date").'</td><td>';
 				print dol_print_date($deplacement->date,'day');
@@ -349,6 +347,12 @@ else
 
 				// Km/Price
 				print '<tr><td>'.$langs->trans("FeesKilometersOrAmout").'</td><td>'.$deplacement->km.'</td></tr>';
+
+                // Where
+                print '<tr><td>'.$langs->trans("CompanyVisited").'</td>';
+                print '<td>';
+                if ($soc->id) print $soc->getNomUrl(1);
+                print '</td></tr>';
 
 				// Project
 				if ($conf->projet->enabled)
@@ -360,15 +364,15 @@ else
 					print '<table class="nobordernopadding" width="100%"><tr><td>';
 					print $langs->trans('Project');
 					print '</td>';
-					if ($_GET['action'] != 'classin')
+					if ($_GET['action'] != 'classify')
 					{
-						print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classin&amp;id='.$deplacement->id.'">';
+						print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classify&amp;id='.$deplacement->id.'">';
 						print img_edit($langs->trans('SetProject'),1);
 						print '</a></td>';
 					}
 					print '</tr></table>';
 					print '</td><td colspan="3">';
-					if ($_GET['action'] == 'classin')
+					if ($_GET['action'] == 'classify')
 					{
 						$html->form_project($_SERVER['PHP_SELF'].'?id='.$deplacement->id, $deplacement->socid, $deplacement->fk_project,'projectid');
 					}
@@ -428,5 +432,5 @@ print '</div>';
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/23 18:40:45 $ - $Revision: 1.57 $');
 ?>

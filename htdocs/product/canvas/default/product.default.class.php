@@ -12,16 +12,16 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/product/canvas/default/product.default.class.php
  *	\ingroup    produit
  *	\brief      Fichier de la classe des produits par defaut
- *	\version    $Id$
+ *	\version    $Id: product.default.class.php,v 1.42 2011/07/31 23:19:28 eldy Exp $
  */
+include_once(DOL_DOCUMENT_ROOT.'/product/class/product.class.php');
 
 /**
  *	\class      ProductDefault
@@ -44,7 +44,6 @@ class ProductDefault extends Product
 		$this->db 				= $DB;
 		$this->id 				= $id ;
 		$this->user 			= $user;
-		//$this->smarty			= 0;
 		$this->module 			= "produit";
 		$this->canvas 			= "default";
 		$this->name 			= "default";

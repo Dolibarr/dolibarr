@@ -14,14 +14,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *   \file       htdocs/admin/boxes.php
  *   \brief      Page to setup boxes
- *   \version    $Id$
+ *   \version    $Id: boxes.php,v 1.73 2011/08/01 13:26:22 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -279,7 +278,7 @@ if ($resql)
 		{
 			$boxname = $regs[1];
 			$module = $regs[2];
-			$sourcefile = "/".$module."/inc/boxes/".$boxname.".php";
+			$sourcefile = "/".$module."/includes/boxes/".$boxname.".php";
 		}
 		else
 		{
@@ -395,7 +394,7 @@ if ($resql)
 		{
 			$boxname = $regs[1];
 			$module = $regs[2];
-			$sourcefile = "/".$module."/inc/boxes/".$boxname.".php";
+			$sourcefile = "/".$module."/includes/boxes/".$boxname.".php";
 		}
 		else
 		{
@@ -471,5 +470,5 @@ print '</table>';
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/01 13:26:22 $ - $Revision: 1.73 $');
 ?>

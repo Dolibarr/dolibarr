@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,8 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * or see http://www.gnu.org/
  */
 
@@ -22,7 +22,7 @@
  *	    \file       htdocs/lib/project.lib.php
  *		\brief      Functions used by project module
  *      \ingroup    project
- *      \version    $Id$
+ *      \version    $Id: project.lib.php,v 1.70 2011/07/31 23:26:00 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
 
@@ -98,7 +98,7 @@ function project_prepare_head($object)
  *	    \file       htdocs/lib/project.lib.php
  *		\brief      Ensemble de fonctions de base pour le module projet
  *      \ingroup    societe
- *      \version    $Id$
+ *      \version    $Id: project.lib.php,v 1.70 2011/07/31 23:26:00 eldy Exp $
  */
 function task_prepare_head($object)
 {
@@ -239,14 +239,14 @@ function select_projects($socid=-1, $selected='', $htmlname='projectid')
 
 
 /**
- * Enter description here...
- *
+ * Output a task line
  * @param   $inc
  * @param   $parent
  * @param   $lines
  * @param   $level
  * @param   $projectsrole
- * @param   $mytask         0 or 1 to enable only if task is a task i am affected to
+ * @param   $tasksrole
+ * @param   $mytask			0 or 1 to enable only if task is a task i am affected to
  * @return  $inc
  */
 function PLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mytask=0)
@@ -375,6 +375,9 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole
 	$projectsArrayId=explode(',',$projectsListId);
 
 	$numlines=sizeof($lines);
+	
+	$total=0;
+	
 	for ($i = 0 ; $i < $numlines ; $i++)
 	{
 		if ($parent == 0) $level = 0;
@@ -485,6 +488,7 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole
 				$level++;
 				if ($lines[$i]->id) PLines($inc, $lines[$i]->id, $lines, $level, $var, $showproject, $taskrole, $projectsListId);
 				$level--;
+				$total += $lines[$i]->duration;
 			}
 		}
 		else
@@ -493,6 +497,14 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole
 		}
 	}
 
+	if ($total>0)
+	{
+		print '<tr class="liste_total"><td class="liste_total">'.$langs->trans("Total").'</td>';
+		print '<td></td>';
+		print '<td></td>';
+		print '<td align="right" nowrap="nowrap" class="liste_total">'.ConvertSecondToTime($total).'</td></tr>';
+	}
+	
 	return $inc;
 }
 

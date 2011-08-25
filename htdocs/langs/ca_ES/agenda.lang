@@ -44,6 +44,7 @@ InvoiceSentByEMail=Factura a client %s enviada per e-mail
 SupplierOrderSentByEMail=Comanda a proveïdor %s enviada per e-mail
 SupplierInvoiceSentByEMail=Factura de proveïdor %s enviada per e-mail
 ShippingSentByEMail=Expedició %s enviada per e-mail
+InterventionSentByEMail=Intervenció %s enviada per e-mail
 NewCompanyToDolibarr= Tercer creat
 DateActionPlannedStart= Data d'inici prevista
 DateActionPlannedEnd= Data fi prevista

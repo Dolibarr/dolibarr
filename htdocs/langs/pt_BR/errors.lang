@@ -48,5 +48,6 @@ ErrorCantSaveADoneUserWithZeroPercentage=No se pode cambiar uma acção ao estad
 ErrorRefAlreadyExists=a referencia utilizada para a criação já existe
 ErrorPleaseTypeBankTransactionReportName=Introduzca o Nome do registo bancario sobre a qual o escrito está constatado (formato AAAAMM ó AAAMMJJ)
 ErrorRecordHasChildren=não se pode eliminar o registo porque tem hijos.
+ErrorFailedToSendPassword=Erro ao enviar a senha
 
 

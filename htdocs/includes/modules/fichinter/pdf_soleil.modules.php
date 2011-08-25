@@ -14,8 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * or see http://www.gnu.org/
  */
 
@@ -23,7 +22,7 @@
  *	\file       htdocs/includes/modules/fichinter/pdf_soleil.modules.php
  *	\ingroup    ficheinter
  *	\brief      Fichier de la classe permettant de generer les fiches d'intervention au modele Soleil
- *	\version    $Id$
+ *	\version    $Id: pdf_soleil.modules.php,v 1.103 2011/08/11 12:14:03 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/fichinter/modules_fichinter.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
@@ -88,7 +87,7 @@ class pdf_soleil extends ModelePDFFicheinter
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!class_exists('TCPDF')) $outputlangs->charset_output='ISO-8859-1';
+		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
@@ -105,7 +104,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				$result=$fichinter->fetch($id);
 				if ($result < 0)
 				{
-					dol_print_error($db,$fichinter->error);
+					dol_print_error($this->db,$fichinter->error);
 				}
 			}
 

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * or see http://www.gnu.org/
  */
 
 /**
  *  \file		htdocs/lib/date.lib.php
  *  \brief		Set of function to manipulate dates
- *  \version	$Id$
+ *  \version	$Id: date.lib.php,v 1.36 2011/08/20 21:27:22 hregis Exp $
  */
 
 
@@ -96,7 +95,7 @@ function ConvertTime2Seconds($iHours=0,$iMinutes=0,$iSeconds=0)
 
 /**	  	Return, in clear text, value of a number of seconds in days, hours and minutes
  *    	@param      iSecond		    Number of seconds
- *    	@param      format		    Output format (all: complete display, hour: displays only hours, min: displays only minutes, sec: displays only seconds)
+ *    	@param      format		    Output format (all: complete display, hour: displays only hours, min: displays only minutes, sec: displays only seconds, month: display month only, year: displays only year);
  *      @param      lengthOfDay     Length of day (default 86400 seconds for 1 day, 28800 for 8 hour)
  *      @param      lengthOfWeek    Length of week (default 7)
  *    	@return     sTime		    Formated text of duration
@@ -167,7 +166,15 @@ function ConvertSecondToTime($iSecond,$format='all',$lengthOfDay=86400,$lengthOf
     {
         $sTime=dol_print_date($iSecond,'%S',true);
     }
-	return trim($sTime);
+    else if ($format == 'month')
+    {
+        $sTime=dol_print_date($iSecond,'%m',true);
+    }
+    else if ($format == 'year')
+    {
+        $sTime=dol_print_date($iSecond,'%Y',true);
+    }
+    return trim($sTime);
 }
 
 
@@ -242,6 +249,7 @@ function dol_get_next_month($month, $year)
 /**	Return previous week
  *  @param      day     Day
  * 	@param		week	Week
+ * 	@param		month	Month
  *	@param		year	Year
  *	@return		array	Previous year,month,day
  */
@@ -258,6 +266,7 @@ function dol_get_prev_week($day, $week, $month, $year)
 /**	Return next week
  *  @param      day     Day
  *  @param      week    Week
+ *  @param      month   Month
  *	@param		year	Year
  *	@return		array	Next year,month,day
  */
@@ -559,6 +568,52 @@ function num_open_day($timestampStart, $timestampEnd,$inhour=0,$lastday=0)
 	{
 		return $langs->trans("Error");
 	}
+}
+
+
+
+/**
+ *	Return array of translated months or selected month
+ *
+ *	@param   selected			-1 to return array of all months or motnh to select
+ *	@return  string or array	Month string or array if selected < 0
+ */
+function monthArrayOrSelected($selected=0)
+{
+    global $langs;
+
+    $month = array (
+    1  => $langs->trans("January"),
+    2  => $langs->trans("February"),
+    3  => $langs->trans("March"),
+    4  => $langs->trans("April"),
+    5  => $langs->trans("May"),
+    6  => $langs->trans("June"),
+    7  => $langs->trans("July"),
+    8  => $langs->trans("August"),
+    9  => $langs->trans("September"),
+    10 => $langs->trans("October"),
+    11 => $langs->trans("November"),
+    12 => $langs->trans("December")
+    );
+
+    if ($selected >=0)
+    {
+        $return='';
+        foreach ($month as $key => $val)
+        {
+            if ($selected == $key)
+            {
+                $return = $val;
+                break;
+            }
+        }
+        return $return;
+    }
+    else
+    {
+        return $month;
+    }
 }
 
 ?>

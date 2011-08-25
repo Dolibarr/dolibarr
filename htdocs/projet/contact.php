@@ -12,15 +12,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *       \file       htdocs/projet/contact.php
  *       \ingroup    project
  *       \brief      Onglet de gestion des contacts du projet
- *       \version    $Id$
+ *       \version    $Id: contact.php,v 1.30 2011/08/14 03:13:50 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -78,31 +77,6 @@ if ($_POST["action"] == 'addcontact' && $user->rights->projet->creer)
 		}
 	}
 }
-// modification d'un contact. On enregistre le type
-if ($_POST["action"] == 'updateline' && $user->rights->projet->creer)
-{
-	$project = new Project($db);
-	if ($project->fetch($projectid))
-	{
-		$contact = $project->detail_contact($_POST["elrowid"]);
-		$type = $_POST["type"];
-		$statut = $contact->statut;
-
-		$result = $project->update_contact($_POST["elrowid"], $statut, $type);
-		if ($result >= 0)
-		{
-			$db->commit();
-		} else
-		{
-			dol_print_error($db, "result=$result");
-			$db->rollback();
-		}
-	}
-	else
-	{
-		dol_print_error($db);
-	}
-}
 
 // bascule du statut d'un contact
 if ($_GET["action"] == 'swapstatut' && $user->rights->projet->creer)
@@ -110,19 +84,7 @@ if ($_GET["action"] == 'swapstatut' && $user->rights->projet->creer)
 	$project = new Project($db);
 	if ($project->fetch($projectid))
 	{
-		$contact = $project->detail_contact($_GET["ligne"]);
-		$id_type_contact = $contact->fk_c_type_contact;
-		$statut = ($contact->statut == 4) ? 5 : 4;
-
-		$result = $project->update_contact($_GET["ligne"], $statut, $id_type_contact);
-		if ($result >= 0)
-		{
-			$db->commit();
-		} else
-		{
-			dol_print_error($db, "result=$result");
-			$db->rollback();
-		}
+	    $result=$project->swapContactStatus(GETPOST('ligne'));
 	}
 	else
 	{
@@ -167,7 +129,7 @@ $userstatic=new User($db);
 /* Mode vue et edition                                                         */
 /*                                                                             */
 /* *************************************************************************** */
-if (isset($mesg)) print $mesg;
+dol_htmloutput_mesg($mesg);
 
 $id = $_GET['id'];
 $ref= $_GET['ref'];
@@ -416,5 +378,5 @@ if ($id > 0 || ! empty($ref))
 
 $db->close();
 
-llxFooter('$Date$');
+llxFooter('$Date: 2011/08/14 03:13:50 $');
 ?>

@@ -13,15 +13,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *  \file       htdocs/core/class/menu.class.php
  *  \ingroup    core
  *  \brief      Fichier de la classe de gestion du menu gauche
- *  \version    $Id$
+ *  \version    $Id: menu.class.php,v 1.5 2011/07/31 23:45:13 eldy Exp $
  */
 
 
@@ -74,20 +73,6 @@ class Menu {
     function remove_last()
     {
     	if (sizeof($this->liste) > 1) array_pop($this->liste);
-    }
-
-    /**
-     *  \brief      Add a menu entry
-     *  \param      url         Url to follown on click
-     *  \param      titre       Menu label to show
-     *  \param      level       Level of menu to show (0=First level, 1=Second...)
-     *  \param      enabled     Menu active or not
-     *  \param      target		Target lien
-     * 	\deprecated
-     */
-    function add_submenu($url, $titre, $level=1, $enabled=1, $target='')
-    {
-        $this->add($url, $titre, $level, $enabled, $target);
     }
 
 }

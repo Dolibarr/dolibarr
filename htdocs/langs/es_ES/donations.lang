@@ -24,3 +24,4 @@ ValidPromess=Validar promesa
 BuildDonationReceipt=Crear recibo
 DonationsModels=Modelo de documento de recepción de subvención
 LastModifiedDonations=Las %s últimas subvenciones modificadas
+SearchADonation=Buscar una subvención

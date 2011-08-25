@@ -13,15 +13,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *  \file       htdocs/lib/treeview.lib.php
  *  \ingroup    core
  *  \brief      Libraries for tree views
- *  \version    $Id$
+ *  \version    $Id: treeview.lib.php,v 1.13 2011/07/31 23:25:41 eldy Exp $
  */
 
 
@@ -75,9 +74,9 @@ function is_in_subtree($fulltree,$parentid,$childid)
 
 /**
  * Show picto of a tree view
- *
  * @param 	fulltree	Array of entries in correct order
  * @param 	key			Key of value to show picto
+ * @param 	selected	Selected value
  * @return	array		(0 or 1 if at least one of this level after, 0 or 1 if at least one of higher level after)
  */
 function tree_showpad(&$fulltree,$key,$selected=0)

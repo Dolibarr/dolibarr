@@ -133,6 +133,7 @@ CopyOf=Copia de
 Show=Ver
 ShowCardHere=Ver la ficha aquí
 Search=Buscar
+SearchOf=Búsqueda de
 Valid=Validar
 Approve=Aprobar
 ReOpen=Reabrir
@@ -298,7 +299,7 @@ VAT=IVA
 VATRate=Tasa IVA
 Average=Media
 Sum=Suma
-Delta=Divergencia
+Delta=Diferencia
 Module=Módulo
 Option=Opción
 List=Listado
@@ -596,6 +597,7 @@ IM=Mensajería instantánea
 NewAttribute=Nuevo atributo
 AttributeCode=Código atributo
 OptionalFieldsSetup=Configuración de los atributos opcionales
+CreateDraft=Crear borrador
 
 # Week day
 Monday=Lunes

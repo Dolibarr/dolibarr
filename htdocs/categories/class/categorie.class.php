@@ -2,8 +2,8 @@
 /* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
  * Copyright (C) 2005      Davoleau Brice       <brice.davoleau@gmail.com>
  * Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2008 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin	  	<patrick.raguin@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,15 +17,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/categories/class/categorie.class.php
  *	\ingroup    categorie
  *	\brief      File of class to manage categories
- *	\version	$Id$
+ *	\version	$Id: categorie.class.php,v 1.19 2011/08/20 09:02:56 hregis Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
@@ -50,6 +49,7 @@ class Categorie
 	var $description;
 	var $socid;
 	var $type;					// 0=Product, 1=Supplier, 2=Customer/Prospect, 3=Member
+	var $parentId;
 
 	var $cats=array();			// Tableau en memoire des categories
 	var $motherof = array();	// Tableau des correspondances id_fille -> id_mere
@@ -69,8 +69,8 @@ class Categorie
 	}
 
 	/**
-	 * 	Charge la categorie
-	 * 	@param	id		id de la categorie a charger
+	 * 	Load category into memory from database
+	 * 	@param		id		id of category
 	 */
 	function fetch($id)
 	{
@@ -109,6 +109,7 @@ class Categorie
 		{
 			$res = $this->db->fetch_array($resql);
 			$this->id_mere = $res['fk_categorie_mere'];
+			$this->parentId = $res['fk_categorie_mere'] ? $res['fk_categorie_mere'] : 0;
 			return $this->id;
 		}
 		else
@@ -119,7 +120,7 @@ class Categorie
 	}
 
 	/**
-	 * Ajoute la categorie dans la base de donnees
+	 * 	Add category into database
 	 * 	@return	int 	-1 : erreur SQL
 	 *          		-2 : nouvel ID inconnu
 	 *          		-3 : categorie invalide
@@ -131,6 +132,7 @@ class Categorie
 
 		// Clean parameters
 		if (empty($this->visible)) $this->visible=0;
+		$this->parentId = ($this->id_mere) != "" ? intval($this->id_mere) : 0;		 
 
 		if ($this->already_exists())
 		{
@@ -144,14 +146,19 @@ class Categorie
 		{
 			$sql.= "fk_soc,";
 		}
-		$sql.=  "visible, type) ";
-		$sql.= "VALUES ('".$this->db->escape($this->label)."', '".$this->db->escape($this->description)."',";
+		$sql.= " visible,";
+		$sql.= " type,";
+		$sql.= " entity";
+		//$sql.= ", fk_parent_id";
+		$sql.= ")";
+		$sql.= " VALUES ('".$this->db->escape($this->label)."', '".$this->db->escape($this->description)."',";
 		if ($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)
 		{
 			$sql.= ($this->socid != -1 ? $this->socid : 'null').",";
 		}
-		$sql.= "'".$this->visible."',".$this->type.")";
-
+		$sql.= "'".$this->visible."',".$this->type.",".$conf->entity;
+		//$sql.= ",".$this->parentId;
+		$sql.= ")";
 
 		$res  = $this->db->query ($sql);
 		if ($res)
@@ -199,12 +206,20 @@ class Categorie
 	 */
 	function update()
 	{
-		global $conf;
+		global $conf, $langs;
 
 		// Clean parameters
 		$this->label=trim($this->label);
 		$this->description=trim($this->description);
+		$this->parentId = ($this->id_mere) != "" ? intval($this->id_mere) : 0;
 
+		if ($this->already_exists())
+		{
+			$this->error=$langs->trans("ImpossibleUpdateCat");
+			$this->error.=" : ".$langs->trans("CategoryExistsAtSameLevel");
+			return -1;
+		}	
+			
 		$this->db->begin();
 
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'categorie_association';
@@ -243,6 +258,7 @@ class Categorie
 			$sql .= ", fk_soc = ".($this->socid != -1 ? $this->socid : 'null');
 		}
 		$sql .= ", visible = '".$this->visible."'";
+		//$sql .= ", fk_parent_id = ".$this->parentId;
 		$sql .= " WHERE rowid = ".$this->id;
 
 		dol_syslog("Categorie::update sql=".$sql);
@@ -594,11 +610,16 @@ class Categorie
 	 */
 	function get_full_arbo($type,$markafterid=0)
 	{
+		global $conf;
+		
 		$this->cats = array();
 
 		// Charge tableau des meres
-		$sql = "SELECT fk_categorie_mere as id_mere, fk_categorie_fille as id_fille";
-		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_association";
+		$sql = "SELECT ca.fk_categorie_mere as id_mere, ca.fk_categorie_fille as id_fille";
+		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_association ca";
+		$sql.= ", ".MAIN_DB_PREFIX."categorie as c";
+		$sql.= " WHERE ca.fk_categorie_mere = c.rowid";
+		$sql.= " AND c.entity = ".$conf->entity;
 
 		// Load array this->motherof
 		dol_syslog("Categorie::get_full_arbo build motherof array sql=".$sql, LOG_DEBUG);
@@ -620,8 +641,9 @@ class Categorie
 		$sql = "SELECT DISTINCT c.rowid, c.label as label, ca.fk_categorie_fille as rowid_fille";	// Distinct reduce pb with old tables with duplicates
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie as c";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_association as ca";
-		$sql.= " ON c.rowid=ca.fk_categorie_mere";
+		$sql.= " ON c.rowid = ca.fk_categorie_mere";
 		$sql.= " WHERE c.type = ".$type;
+		$sql.= " AND c.entity = ".$conf->entity;
 		$sql.= " ORDER BY c.label, c.rowid";
 
 		dol_syslog("Categorie::get_full_arbo get category list sql=".$sql, LOG_DEBUG);
@@ -803,21 +825,51 @@ class Categorie
 	}
 
 	/**
-	 * 	\brief		Check if no category with same label already exists
-	 * 	\return		boolean		1 if already exist, 0 otherwise, -1 if error
+	 * 	Check if no category with same label already exists for this cat's parent or root and for this cat's type
+	 * 	@return		boolean		1 if already exist, 0 otherwise, -1 if error
 	 */
 	function already_exists()
 	{
-		$sql = "SELECT count(c.rowid)";
-		$sql.= " FROM ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_association as ca";
-		$sql.= " WHERE c.label = '".$this->db->escape($this -> label)."' AND type=".$this->type;
+		if($this->id_mere != "")					// mother_id defined
+		{
+			/* We have to select any rowid from llx_categorie which category's mother and label
+			 * are equals to those of the calling category
+			 */
+			$sql = "SELECT c.rowid";
+			$sql.= " FROM ".MAIN_DB_PREFIX."categorie as c ";
+			$sql.= " JOIN ".MAIN_DB_PREFIX."categorie_association as ca";
+			$sql.= " ON c.rowid=ca.fk_categorie_fille";
+			$sql.= " WHERE ca.fk_categorie_mere=".$this->id_mere;
+			$sql.= " AND c.label='".$this->db->escape($this->label)."'";	
+		}
+		else 										// mother_id undefined (so it's root)
+		{
+			/* We have to select any rowid from llx_categorie which which category's type and label
+			 * are equals to those of the calling category, AND which doesn't exist in categorie association
+			 * as children (rowid != fk_categorie_fille)
+			 */
+			$sql = "SELECT c.rowid";
+			$sql.= " FROM ".MAIN_DB_PREFIX."categorie as c ";
+			$sql.= " JOIN ".MAIN_DB_PREFIX."categorie_association as ca";
+			$sql.= " ON c.rowid!=ca.fk_categorie_fille";
+			$sql.= " WHERE c.type=".$this->type;
+			$sql.= " AND c.label='".$this->db->escape($this->label)."'";		
+		}
 		dol_syslog("Categorie::already_exists sql=".$sql);
 		$res  = $this->db->query($sql);
 		if ($res)
-		{
-			$obj = $this->db->fetch_array($res);
-			if($obj[0] > 0) return 1;
-			else return 0;
+		{			
+			if($this->db->num_rows($resql) > 0)						// Checking for empty resql
+			{				
+				$obj = $this->db->fetch_array($res);
+				/* If object called create, obj cannot have is id.
+				 * If object called update, he mustn't have the same label as an other category for this mother.
+				 * So if the result have the same id, update is not for label, and if result have an other one,
+				 * update may be for label.
+				 */
+				if($obj[0] > 0 && $obj[0] != $this->id) return 1;
+			}				
+			return 0;
 		}
 		else
 		{

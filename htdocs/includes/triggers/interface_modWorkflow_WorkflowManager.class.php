@@ -13,21 +13,20 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *      \file       htdocs/includes/triggers/interface_modWorkflow_WorkflowManager.class.php
  *      \ingroup    core
  *      \brief      Trigger file for workflows
- *      \version	$Id$
+ *      \version	$Id: interface_modWorkflow_WorkflowManager.class.php,v 1.10 2011/08/12 05:41:01 hregis Exp $
  */
 
 
 /**
- *      \class      InterfaceWorkflow
- *      \brief      Classe des fonctions triggers des actions personalisees du workflow
+ *      \class      InterfaceWorkflowManager
+ *      \brief      Class of triggers for workflow module
  */
 
 class InterfaceWorkflowManager
@@ -46,6 +45,7 @@ class InterfaceWorkflowManager
         $this->family = "core";
         $this->description = "Triggers of this module allows to manage workflows";
         $this->version = 'dolibarr';            // 'development', 'experimental', 'dolibarr' or version
+        $this->picto = 'technic';
     }
 
 
@@ -105,7 +105,13 @@ class InterfaceWorkflowManager
             {
                 include_once(DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php');
                 $order = new Commande($this->db);
-                $ret=$order->createFromProposal($object,0);
+                
+                // Actions on extra fields (by external module or standard code)
+                include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+                $hookmanager=new HookManager($this->db);
+                $hookmanager->callHooks(array('ordercard'));
+                
+                $ret=$order->createFromProposal($object,$hookmanager);
                 if ($ret < 0) { $this->error=$invoice->error; $this->errors[]=$invoice->error; }
                 return $ret;
             }
@@ -119,7 +125,13 @@ class InterfaceWorkflowManager
             {
                 include_once(DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php');
                 $invoice = new Facture($this->db);
-                $ret=$invoice->createFromOrder($object,0);
+                
+                // Actions on extra fields (by external module or standard code)
+                include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+                $hookmanager=new HookManager($this->db);
+                $hookmanager->callHooks(array('invoicecard'));
+                
+                $ret=$invoice->createFromOrder($object,$hookmanager);
                 if ($ret < 0) { $this->error=$invoice->error; $this->errors[]=$invoice->error; }
                 return $ret;
             }

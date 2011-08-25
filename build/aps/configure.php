@@ -1,11 +1,12 @@
+#!/usr/bin/php
 <?php
 /*-----------------------------------------------------
  *
  *----------------------------------------------------- */
 
-// This is list of predefined languages when script is ran.
-// We set them manually for test purpose
-putenv('SETTINGS_admin_name=admin');
+// This is list of predefined variables when script is ran
+// We have to set them manually to run script outside context.
+/*putenv('SETTINGS_admin_name=admin');
 putenv('SETTINGS_admin_password=admin-ad');
 putenv('BASE_URL_SCHEME=http');
 putenv('BASE_URL_HOST=localhost');
@@ -18,7 +19,7 @@ putenv('DB_main_HOST=localhost');
 putenv('DB_main_PORT=3306');
 putenv('DB_main_LOGIN=root');
 putenv('DB_main_PASSWORD=root');
-
+*/
 
 // Check parameters
 if(count($_SERVER['argv']) < 2)

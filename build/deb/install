@@ -1,0 +1,6 @@
+etc/dolibarr/apache.conf
+etc/dolibarr/lighttpd.conf
+usr/share/applications/dolibarr.desktop
+usr/share/dolibarr
+usr/share/doc/dolibarr
+usr/share/pixmaps

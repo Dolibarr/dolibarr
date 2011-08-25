@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,15 +15,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *      \file       htdocs/user/group/index.php
  * 		\ingroup	core
  *      \brief      Page of user groups
- *      \version    $Id$
+ *      \version    $Id: index.php,v 1.30 2011/08/21 10:01:37 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -59,12 +59,19 @@ print_fiche_titre($langs->trans("ListOfGroups"));
 $sql = "SELECT g.rowid, g.nom, g.entity, g.datec, COUNT(ugu.rowid) as nb";
 $sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_usergroup = g.rowid";
-$sql.= " WHERE g.entity IN (0,".$conf->entity.")";
+if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && ! $user->entity)))
+{
+	$sql.= " WHERE g.entity IS NOT NULL";
+}
+else
+{
+	$sql.= " WHERE g.entity IN (0,".$conf->entity.")";
+}
 if ($_POST["search_group"])
 {
-    $sql .= " AND (g.nom like '%".$_POST["search_group"]."%' OR g.note like '%".$_POST["search_group"]."%')";
+    $sql .= " AND (g.nom LIKE '%".$_POST["search_group"]."%' OR g.note LIKE '%".$_POST["search_group"]."%')";
 }
-if ($sall) $sql.= " AND (g.nom like '%".$sall."%' OR g.note like '%".$sall."%')";
+if ($sall) $sql.= " AND (g.nom LIKE '%".$sall."%' OR g.note LIKE '%".$sall."%')";
 $sql.= " GROUP BY g.rowid, g.nom, g.entity, g.datec";
 $sql.= $db->order($sortfield,$sortorder);
 
@@ -75,9 +82,14 @@ if ($resql)
     $i = 0;
 
     $param="search_group=$search_group&amp;sall=$sall";
-    print "<table class=\"noborder\" width=\"100%\">";
+    print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Group"),$_SERVER["PHP_SELF"],"g.nom",$param,"","",$sortfield,$sortorder);
+    //multicompany
+    if(! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1)
+    {
+    	print_liste_field_titre($langs->trans("Entity"),$_SERVER["PHP_SELF"],"g.entity",$param,"",'align="center"',$sortfield,$sortorder);
+    }
     print_liste_field_titre($langs->trans("NbOfUsers"),$_SERVER["PHP_SELF"],"g.nb",$param,"",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"g.datec",$param,"",'align="right"',$sortfield,$sortorder);
     print "</tr>\n";
@@ -91,9 +103,17 @@ if ($resql)
         print '<td><a href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$obj->nom.'</a>';
         if (!$obj->entity)
         {
-        	print img_redstar($langs->trans("GlobalGroup"));
+        	print img_picto($langs->trans("GlobalGroup"),'redstar');
         }
         print "</td>";
+        //multicompany
+        if(! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1)
+        {
+            dol_include_once("/multicompany/class/actions_multicompany.class.php");
+            $mc = new ActionsMulticompany($db);
+            $mc->getInfo($obj->entity);
+            print '<td align="center">'.$mc->label.'</td>';
+        }
         print '<td align="center">'.$obj->nb.'</td>';
         print '<td align="right" nowrap="nowrap">'.dol_print_date($db->jdate($obj->datec),"dayhour").'</td>';
         print "</tr>\n";
@@ -109,6 +129,6 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/21 10:01:37 $ - $Revision: 1.30 $');
 
 ?>

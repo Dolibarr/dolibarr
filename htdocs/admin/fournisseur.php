@@ -18,15 +18,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *  \file       htdocs/admin/fournisseur.php
  *  \ingroup    fournisseur
  *  \brief      Page d'administration-configuration du module Fournisseur
- *  \version    $Id$
+ *  \version    $Id: fournisseur.php,v 1.64 2011/08/11 12:14:02 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -110,10 +109,11 @@ if ($action == 'specimenfacture')   // For invoices
 	// Charge le modele
 	$dir = "/includes/modules/supplier_invoice/pdf/";
 	$file = "pdf_".$modele.".modules.php";
-	if (file_exists($dir.$file))
+	$file = dol_buildpath($dir.$file);
+    if (file_exists($file))
 	{
 		$classname = "pdf_".$modele;
-		require_once($dir.$file);
+		require_once($file);
 
 		$obj = new $classname($db,$facture);
 
@@ -500,6 +500,7 @@ else
 	dol_print_error($db);
 }
 
+
 print '<table class="noborder" width="100%">'."\n";
 print '<tr class="liste_titre">'."\n";
 print '<td width="100">'.$langs->trans("Name").'</td>'."\n";
@@ -618,5 +619,5 @@ print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">'
 print "</td></tr>\n";
 print '</form>';
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/11 12:14:02 $ - $Revision: 1.64 $');
 ?>

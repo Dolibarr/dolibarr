@@ -16,15 +16,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *		\file       htdocs/install/etape1.php
  *		\ingroup	install
  *		\brief      Build conf file on disk
- *		\version    $Id$
+ *		\version    $Id: etape1.php,v 1.142 2011/08/20 09:58:05 eldy Exp $
  */
 
 define('DONOTLOADCONF',1);	// To avoid loading conf by file inc.php
@@ -39,7 +38,9 @@ $langs->load("admin");
 $langs->load("install");
 
 // Init "forced values" to nothing. "forced values" are used after an doliwamp install wizard.
-if (file_exists("./install.forced.php")) include_once("./install.forced.php");
+$useforcedwizard=false;
+if (file_exists("./install.forced.php")) { $useforcedwizard=true; include_once("./install.forced.php"); }
+else if (file_exists("/etc/dolibarr/install.forced.php")) { $useforcedwizard=include_once("/etc/dolibarr/install.forced.php"); }
 
 dolibarr_install_syslog("--- etape1: Entering etape1.php page");
 
@@ -53,7 +54,7 @@ pHeader($langs->trans("ConfigurationFile"),"etape2");
 // Test if we can run a first install process
 if (! is_writable($conffile))
 {
-    print $langs->trans("ConfFileIsNotWritable",'htdocs/conf/conf.php');
+    print $langs->trans("ConfFileIsNotWritable",$conffiletoshow);
     pFooter(1,$setuplang,'jscheckparam');
     exit;
 }
@@ -63,14 +64,14 @@ $error = 0;
 // Repertoire des pages dolibarr
 $main_dir=isset($_POST["main_dir"])?trim($_POST["main_dir"]):'';
 
-// On supprime /  de fin dans main_dir
+// Remove last / into dans main_dir
 if (substr($main_dir, dol_strlen($main_dir) -1) == "/")
 {
 	$main_dir = substr($main_dir, 0, dol_strlen($main_dir)-1);
 }
 
-// On supprime /  de fin dans main_url
-if (substr($_POST["main_url"], dol_strlen($_POST["main_url"]) -1) == "/")
+// Remove last / into dans main_url
+if (! empty($_POST["main_url"]) && substr($_POST["main_url"], dol_strlen($_POST["main_url"]) -1) == "/")
 {
 	$_POST["main_url"] = substr($_POST["main_url"], 0, dol_strlen($_POST["main_url"])-1);
 }
@@ -161,13 +162,13 @@ if ($action == "set")
 			}
 
 			// Les documents sont en dehors de htdocs car ne doivent pas pouvoir etre telecharges en passant outre l'authentification
-			$dir[0] = "$main_data_dir/facture";
-			$dir[1] = "$main_data_dir/users";
-			$dir[2] = "$main_data_dir/propale";
-			$dir[3] = "$main_data_dir/mycompany";
-			$dir[4] = "$main_data_dir/ficheinter";
-			$dir[5] = "$main_data_dir/produit";
-			$dir[6] = "$main_data_dir/rapport";
+			$dir[0] = $main_data_dir."/mycompany";
+			$dir[1] = $main_data_dir."/users";
+			$dir[2] = $main_data_dir."/custom";
+			$dir[3] = $main_data_dir."/facture";
+			$dir[4] = $main_data_dir."/propale";
+			$dir[5] = $main_data_dir."/ficheinter";
+			$dir[6] = $main_data_dir."/produit";
 
 			// Boucle sur chaque repertoire de dir[] pour les creer s'ils nexistent pas
 			for ($i = 0 ; $i < sizeof($dir) ; $i++)
@@ -230,6 +231,12 @@ if ($action == "set")
 
 		$error+=write_conf_file($conffile);
 	}
+
+	/**
+	 * Write main.inc.php and master.inc.php into documents/custom dir
+	 */
+	$error+=write_main_file($main_data_dir.'/custom/main.inc.php',$main_dir);
+	$error+=write_master_file($main_data_dir.'/custom/master.inc.php',$main_dir);
 
 	/**
 	 * Create database and admin user database
@@ -516,8 +523,49 @@ pFooter($error,$setuplang,'jsinfo');
 
 
 /**
+ *  Create main file. No particular permissions are set by installer.
+ *
+ *  @param      mainfile        Path to conf file to generate/update
+ */
+function write_main_file($mainfile,$main_dir)
+{
+	$fp = fopen("$mainfile", "w");
+	if($fp)
+	{
+		clearstatcache();
+        fputs($fp, '<?php'."\n");
+		fputs($fp, "# Wrapper to include main into htdocs\n");
+        fputs($fp, "include_once('".$main_dir."/main.inc.php');\n");
+		fputs($fp, '?>');
+		fclose($fp);
+	}
+}
+
+
+/**
+ *  Create master file. No particular permissions are set by installer.
+ *
+ *  @param      masterfile        Path to conf file to generate/update
+ */
+function write_master_file($masterfile,$main_dir)
+{
+	$fp = fopen("$masterfile", "w");
+	if($fp)
+	{
+		clearstatcache();
+        fputs($fp, '<?php'."\n");
+		fputs($fp, "# Wrapper to include master into htdocs\n");
+        fputs($fp, "include_once('".$main_dir."/master.inc.php');\n");
+		fputs($fp, '?>');
+		fclose($fp);
+	}
+}
+
+
+/**
  *  Save configuration file. No particular permissions are set by installer.
- *  @param      conffile        Path to conf file
+ *
+ *  @param      conffile        Path to conf file to generate/update
  */
 function write_conf_file($conffile)
 {
@@ -526,6 +574,9 @@ function write_conf_file($conffile)
 	global $dolibarr_main_url_root,$dolibarr_main_document_root,$dolibarr_main_data_root,$dolibarr_main_db_host;
 	global $dolibarr_main_db_port,$dolibarr_main_db_name,$dolibarr_main_db_user,$dolibarr_main_db_pass;
 	global $dolibarr_main_db_type,$dolibarr_main_db_character_set,$dolibarr_main_db_collation,$dolibarr_main_authentication;
+    global $conffile,$conffiletoshow,$conffiletoshowshort;
+    global $force_dolibarr_lib_ODTPHP_PATH, $force_dolibarr_lib_ODTPHP_PATHTOPCLZIP;
+    global $force_dolibarr_font_DOL_DEFAULT_TTF, $force_dolibarr_font_DOL_DEFAULT_TTF_BOLD;
 
 	$error=0;
 
@@ -542,7 +593,7 @@ function write_conf_file($conffile)
 		fputs($fp,"# File generated by Dolibarr installer ".DOL_VERSION." on ".dol_print_date(dol_now(),''));
 		fputs($fp,"\n");
 		fputs($fp,"#\n");
-		fputs($fp,"# Take a look at conf.php.example file for an example of conf.php file\n");
+		fputs($fp,"# Take a look at conf.php.example file for an example of ".$conffiletoshowshort." file\n");
 		fputs($fp,"# and explanations for all possibles parameters.\n");
 		fputs($fp,"#\n");
 
@@ -605,6 +656,24 @@ function write_conf_file($conffile)
 		fputs($fp,"\n");
 
 		fputs($fp, '$dolibarr_mailing_limit_sendbyweb=\'0\';');
+        fputs($fp,"\n");
+
+        // Write params to overwrites default lib path
+        fputs($fp,"\n");
+        if (empty($force_dolibarr_lib_ODTPHP_PATH)) { fputs($fp, '#'); $force_dolibarr_lib_ODTPHP_PATH=''; }
+        fputs($fp, '$dolibarr_lib_ODTPHP_PATH=\''.$force_dolibarr_lib_ODTPHP_PATH.'\';');
+        fputs($fp,"\n");
+        if (empty($force_dolibarr_lib_ODTPHP_PATHTOPCLZIP)) { fputs($fp, '#'); $force_dolibarr_lib_ODTPHP_PATHTOPCLZIP=''; }
+        fputs($fp, '$dolibarr_lib_ODTPHP_PATHTOPCLZIP=\''.$force_dolibarr_lib_ODTPHP_PATHTOPCLZIP.'\';');
+        fputs($fp,"\n");
+
+        // Write params to overwrites default font path
+        fputs($fp,"\n");
+        if (empty($force_dolibarr_font_DOL_DEFAULT_TTF)) { fputs($fp, '#'); $force_dolibarr_font_DOL_DEFAULT_TTF=''; }
+   		fputs($fp, '$dolibarr_font_DOL_DEFAULT_TTF=\''.$force_dolibarr_font_DOL_DEFAULT_TTF.'\';');
+        fputs($fp,"\n");
+        if (empty($force_dolibarr_font_DOL_DEFAULT_TTF_BOLD)) { fputs($fp, '#'); $force_dolibarr_font_DOL_DEFAULT_TTF_BOLD=''; }
+        fputs($fp, '$dolibarr_font_DOL_DEFAULT_TTF_BOLD=\''.$force_dolibarr_font_DOL_DEFAULT_TTF_BOLD.'\';');
         fputs($fp,"\n");
 
 		fputs($fp, '?>');

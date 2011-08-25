@@ -16,15 +16,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *  \file       htdocs/comm/action/index.php
  *  \ingroup    agenda
  *  \brief      Home page of calendar events
- *  \version    $Id$
+ *  \version    $Id: index.php,v 1.184 2011/07/31 22:23:20 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -487,24 +486,23 @@ if ($showbirthday)
 
 //Exernal Calendars
 $listofextcals=array();
-if ($conf->global->MAIN_FEATURES_LEVEL>=2)
+
+if (empty($conf->global->AGENDA_DISABLE_EXT) && $conf->global->AGENDA_EXT_NB > 0)
 {
-    if (empty($conf->global->AGENDA_DISABLE_EXT) && $conf->global->AGENDA_EXT_NB > 0)
-    {
-        $i=0;
-        while($i < $conf->global->AGENDA_EXT_NB)
-        {
-            $i++;
-            $paramkey='AGENDA_EXT_SRC'.$i;
-            $url=$conf->global->$paramkey;
-            $paramkey='AGENDA_EXT_NAME'.$i;
-            $namecal = $conf->global->$paramkey;
-            $paramkey='AGENDA_EXT_COLOR'.$i;
-            $colorcal = $conf->global->$paramkey;
-            if ($url && $namecal) $listofextcals[]=array('src'=>$url,'name'=>$namecal,'color'=>$colorcal);
-        }
-    }
+	$i=0;
+	while($i < $conf->global->AGENDA_EXT_NB)
+	{
+		$i++;
+		$paramkey='AGENDA_EXT_SRC'.$i;
+		$url=$conf->global->$paramkey;
+		$paramkey='AGENDA_EXT_NAME'.$i;
+		$namecal = $conf->global->$paramkey;
+		$paramkey='AGENDA_EXT_COLOR'.$i;
+		$colorcal = $conf->global->$paramkey;
+		if ($url && $namecal) $listofextcals[]=array('src'=>$url,'name'=>$namecal,'color'=>$colorcal);
+	}
 }
+
 if (sizeof($listofextcals))
 {
     require_once(DOL_DOCUMENT_ROOT."/comm/action/class/ical.class.php");
@@ -787,7 +785,7 @@ $("#actionagenda_vcal_link").attr("href","/public/agenda/agendaexport.php?format
 ';
 */
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/31 22:23:20 $ - $Revision: 1.184 $');
 
 
 /**

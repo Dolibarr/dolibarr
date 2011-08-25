@@ -46,7 +46,6 @@ NewUser=Nýr notandi
 CreateUser=Búa til notanda
 SearchAGroup=Leita hóp
 SearchAUser=Leita notanda
-ErrorFailedToSendPassword=Tókst ekki að senda lykilorð
 LoginNotDefined=Innskráning er ekki skilgreind.
 NameNotDefined=Nafnið er ekki skilgreind.
 ListOfUsers=Notendalisti

@@ -16,15 +16,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
 	    \file       htdocs/compta/tva/quadri.php
         \ingroup    tax
 		\brief      Trimestrial page
-		\version    $Id$
+		\version    $Id: quadri.php,v 1.16 2011/08/03 00:46:24 eldy Exp $
 		\todo 		Deal with recurrent invoices as well
 */
 
@@ -49,13 +48,12 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 /**
  * Gets VAT to collect for the given month of the given year
- *
  * The function gets the VAT in split results, as the VAT declaration asks
  * to report the amounts for different VAT rates as different lines.
  * This function also accounts recurrent invoices
- * @param		object		Database handler object
- * @param		integer		Year
- * @param		integer		Year quarter (1-4)
+ * @param		db		Database handler
+ * @param		y		Year
+ * @param		q		Year quarter (1-4)
  */
 function tva_coll($db,$y,$q)
 {
@@ -71,9 +69,9 @@ function tva_coll($db,$y,$q)
         $sql.= " AND s.entity = ".$conf->entity;
         $sql.= " AND f.fk_statut in (1,2)";
         $sql.= " AND f.rowid = d.fk_facture ";
-        $sql.= " AND date_format(f.datef,'%Y') = ".$y;
-        $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3);
-        $sql.= " AND date_format(f.datef,'%m') <= ".($q*3).")";
+        $sql.= " AND date_format(f.datef,'%Y') = '".$y."'";
+        $sql.= " AND (round(date_format(f.datef,'%m') > ".(($q-1)*3);
+        $sql.= " AND round(date_format(f.datef,'%m')) <= ".($q*3).")";
         $sql.= " ORDER BY rate, facid";
 
     }
@@ -116,12 +114,11 @@ function tva_coll($db,$y,$q)
 
 /**
  * Gets VAT to pay for the given month of the given year
- *
  * The function gets the VAT in split results, as the VAT declaration asks
  * to report the amounts for different VAT rates as different lines.
  * @param		object		Database handler object
- * @param		integer		Year
- * @param		integer		Year quarter (1-4)
+ * @param		y			Year
+ * @param		q			Year quarter (1-4)
  */
 function tva_paye($db, $y,$q)
 {
@@ -138,9 +135,9 @@ function tva_paye($db, $y,$q)
         $sql.= " AND s.entity = ".$conf->entity;
         $sql.= " AND f.fk_statut = 1 ";
         $sql.= " AND f.rowid = d.fk_facture_fourn ";
-        $sql.= " AND date_format(f.datef,'%Y') = ".$y;
-        $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3);
-        $sql.= " AND date_format(f.datef,'%m') <= ".($q*3).")";
+        $sql.= " AND date_format(f.datef,'%Y') = '".$y."'";
+        $sql.= " AND (round(date_format(f.datef,'%m')) > ".(($q-1)*3);
+        $sql.= " AND round(date_format(f.datef,'%m')) <= ".($q*3).")";
         $sql.= " ORDER BY rate, facid ";
     }
     else
@@ -317,5 +314,5 @@ echo '</table>';
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/03 00:46:24 $ - $Revision: 1.16 $');
 ?>

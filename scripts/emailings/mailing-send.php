@@ -15,8 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 
@@ -24,7 +23,7 @@
  *      \file       scripts/emailings/mailing-send.php
  *      \ingroup    mailing
  *      \brief      Script d'envoi d'un mailing prepare et valide
- *		\version	$Id$
+ *		\version	$Id: mailing-send.php,v 1.21 2011/08/20 15:11:32 eldy Exp $
  */
 
 $sapi_type = php_sapi_name();
@@ -116,7 +115,7 @@ if ($resql)
 			dol_print_error($db);
 		}
 
-		// Boucle sur chaque adresse et envoie le mail
+		// Look on each email and sent message
 		$i = 0;
 		while ($i < $num)
 		{

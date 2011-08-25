@@ -13,10 +13,9 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id$
+ * $Id: freeproductline_edit.tpl.php,v 1.19 2011/08/11 09:25:07 hregis Exp $
  *
  * Need to have following variables defined:
  * $conf
@@ -38,13 +37,12 @@
 <tr <?php echo $bc[$var]; ?>>
 	<td>
 	<a name="<?php echo $line->id; ?>"></a>
-	
+
 	<?php
-	if (! empty($this->hooks['objectcard'])) {
-		foreach($this->hooks['objectcard'] as $module) {
-			$module->formEditProductOptions($this,$line->fk_parent_line);
-			echo '<br>';
-		}
+	if (is_object($hookmanager))
+	{
+	    $parameters=array('fk_parent_line'=>$line->fk_parent_line);
+	    $hookmanager->executeHooks('formEditProductOptions',$parameters,$this,$action);
 	}
 
 	// editeur wysiwyg
@@ -56,7 +54,7 @@
 	?>
 	</td>
 
-	<td align="right"><?php echo $html->select_tva('tva_tx',$line->tva_tx,$seller,$buyer,0,$line->info_bits,$line->product_type); ?></td>
+	<td align="right"><?php echo $html->load_tva('tva_tx',$line->tva_tx,$seller,$buyer,0,$line->info_bits,$line->product_type); ?></td>
 
 	<td align="right"><input size="6" type="text" class="flat" name="subprice" value="<?php echo price($line->subprice,0,'',0); ?>"></td>
 

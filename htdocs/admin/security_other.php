@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -13,15 +13,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	    \file       htdocs/admin/security_other.php
  *      \ingroup    core
  *      \brief      Security options setup
- *		\version    $Id$
+ *		\version    $Id: security_other.php,v 1.42 2011/08/17 15:56:23 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -79,19 +78,6 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
     }
 }
 
-if ($_GET["action"] == 'set_main_upload_doc')
-{
-	if (! dolibarr_set_const($db, 'MAIN_UPLOAD_DOC',$_POST["MAIN_UPLOAD_DOC"],'chaine',0,'',$conf->entity))
-	{
-		dol_print_error($db);
-	}
-	else
-	{
-		Header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
-	}
-}
-
 if ($_GET["action"] == 'activate_captcha')
 {
 	dolibarr_set_const($db, "MAIN_SECURITY_ENABLECAPTCHA", '1','chaine',0,'',$conf->entity);
@@ -120,30 +106,32 @@ else if ($_GET["action"] == 'disable_advancedperms')
 
 if ($_GET["action"] == 'MAIN_SESSION_TIMEOUT')
 {
-	dolibarr_set_const($db, "MAIN_SESSION_TIMEOUT", $_POST["MAIN_SESSION_TIMEOUT"],'chaine',0,'',$conf->entity);
-	Header("Location: security_other.php");
-	exit;
+	if (! dolibarr_set_const($db, "MAIN_SESSION_TIMEOUT", $_POST["MAIN_SESSION_TIMEOUT"],'chaine',0,'',$conf->entity)) dol_print_error($db);
+	else $mesg=$langs->trans("RecordModifiedSuccessfully");
+}
+
+if ($_GET["action"] == 'MAIN_UPLOAD_DOC')
+{
+	if (! dolibarr_set_const($db, 'MAIN_UPLOAD_DOC',$_POST["MAIN_UPLOAD_DOC"],'chaine',0,'',$conf->entity)) dol_print_error($db);
+	else $mesg=$langs->trans("RecordModifiedSuccessfully");
 }
 
 if ($_GET["action"] == 'MAIN_UMASK')
 {
-	dolibarr_set_const($db, "MAIN_UMASK", $_POST["MAIN_UMASK"],'chaine',0,'',$conf->entity);
-	Header("Location: security_other.php");
-	exit;
+	if (! dolibarr_set_const($db, "MAIN_UMASK", $_POST["MAIN_UMASK"],'chaine',0,'',$conf->entity)) dol_print_error($db);
+	else $mesg=$langs->trans("RecordModifiedSuccessfully");
 }
 
 if ($_GET["action"] == 'MAIN_ANTIVIRUS_COMMAND')
 {
-	dolibarr_set_const($db, "MAIN_ANTIVIRUS_COMMAND", $_POST["MAIN_ANTIVIRUS_COMMAND"],'chaine',0,'',$conf->entity);
-	Header("Location: security_other.php");
-	exit;
+	if (! dolibarr_set_const($db, "MAIN_ANTIVIRUS_COMMAND", $_POST["MAIN_ANTIVIRUS_COMMAND"],'chaine',0,'',$conf->entity)) dol_print_error($db);
+	else $mesg=$langs->trans("RecordModifiedSuccessfully");
 }
 
 if ($_GET["action"] == 'MAIN_ANTIVIRUS_PARAM')
 {
-	dolibarr_set_const($db, "MAIN_ANTIVIRUS_PARAM", $_POST["MAIN_ANTIVIRUS_PARAM"],'chaine',0,'',$conf->entity);
-	Header("Location: security_other.php");
-	exit;
+	if (! dolibarr_set_const($db, "MAIN_ANTIVIRUS_PARAM", $_POST["MAIN_ANTIVIRUS_PARAM"],'chaine',0,'',$conf->entity)) dol_print_error($db);
+	else $mesg=$langs->trans("RecordModifiedSuccessfully");
 }
 
 
@@ -214,11 +202,11 @@ if (function_exists("imagecreatefrompng"))
 {
 	if ($conf->global->MAIN_SECURITY_ENABLECAPTCHA == 0)
 	{
-		print '<a href="security_other.php?action=activate_captcha">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+		print '<a href="security_other.php?action=activate_captcha">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 	}
 	if($conf->global->MAIN_SECURITY_ENABLECAPTCHA == 1)
 	{
-		print '<a href="security_other.php?action=disable_captcha">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+		print '<a href="security_other.php?action=disable_captcha">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
 	}
 }
 else
@@ -239,11 +227,11 @@ print '<td colspan="3">'.$langs->trans("UseAdvancedPerms").'</td>';
 print '<td align="right">';
 if ($conf->global->MAIN_USE_ADVANCED_PERMS == 0)
 {
-	print '<a href="security_other.php?action=activate_advancedperms">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+	print '<a href="security_other.php?action=activate_advancedperms">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 }
 if($conf->global->MAIN_USE_ADVANCED_PERMS == 1)
 {
-	print '<a href="security_other.php?action=disable_advancedperms">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+	print '<a href="security_other.php?action=disable_advancedperms">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
 }
 print "</td>";
 
@@ -266,7 +254,7 @@ print '<td>'.$langs->trans("Value").'</td>';
 print '<td width="100">&nbsp;</td>';
 print '</tr>';
 
-print '<form action="'.$_SERVER["PHP_SELF"].'?action=set_main_upload_doc" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'?action=MAIN_UPLOAD_DOC" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<tr '.$bc[$var].'>';
 print '<td colspan="2">'.$langs->trans("MaxSizeForUploadedFiles").'.';
@@ -349,7 +337,7 @@ print '</div>';
 
 
 // Form to test upload
-if ($mesg) print $mesg;
+dol_htmloutput_mesg($mesg);
 
 // Affiche formulaire upload
 print '<br>';
@@ -359,5 +347,5 @@ $formfile->form_attach_new_file(DOL_URL_ROOT.'/admin/security_other.php',$langs-
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/17 15:56:23 $ - $Revision: 1.42 $');
 ?>

@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2006      Auguria SARL         <info@auguria.org>
- * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,25 +18,25 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *  \file       htdocs/product/fiche.php
  *  \ingroup    product
  *  \brief      Page to show product
- *  \version    $Id$
+ *  \version    $Id: fiche.php,v 1.378 2011/08/22 22:04:25 eldy Exp $
  */
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/canvas.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
-if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
-if ($conf->facture->enabled) require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
+if ($conf->propal->enabled)   require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
+if ($conf->facture->enabled)  require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
 
 $langs->load("products");
@@ -44,25 +44,34 @@ $langs->load("other");
 if ($conf->stock->enabled) $langs->load("stocks");
 if ($conf->facture->enabled) $langs->load("bills");
 
+$mesg = ''; $error=0; $errors=array();
+
 $id=GETPOST('id');
 $ref=GETPOST('ref');
 $action=GETPOST('action');
 $confirm=GETPOST('confirm');
+$socid=GETPOST("socid");
+if ($user->societe_id) $socid=$user->societe_id;
+
+$object = new Product($db);
+$extrafields = new ExtraFields($db);
+
+// Get object canvas (By default, this is not defined, so standard usage of dolibarr)
+if ($id) $object->getCanvas($id);
+$canvas = $object->canvas?$object->canvas:GETPOST("canvas");
+if (! empty($canvas))
+{
+    require_once(DOL_DOCUMENT_ROOT."/core/class/canvas.class.php");
+    $objcanvas = new Canvas($db,$action);
+    $objcanvas->getCanvas('product','card',$canvas);
+}
 
 // Security check
 if (isset($id) || isset($ref)) $value = isset($id)?$id:(isset($ref)?$ref:'');
 $type = isset($ref)?'ref':'rowid';
-$socid=$user->societe_id?$user->societe_id:0;
 $result=restrictedArea($user,'produit|service',$value,'product','','',$type);
 
-// For canvas usage
-if (empty($_GET["canvas"]))
-{
-	$_GET["canvas"] = 'default@product';
-	if ($_GET["type"] == 1) $_GET["canvas"] = 'service@product';
-}
 
-$mesg = '';
 
 
 /*
@@ -72,7 +81,7 @@ $mesg = '';
 if ($action == 'setproductaccountancycodebuy')
 {
 	$product = new Product($db);
-	$result=$product->fetch($_POST['id']);
+	$result=$product->fetch($id);
 	$product->accountancy_code_buy=$_POST["productaccountancycodebuy"];
 	$result=$product->update($product->id,$user,1,0,1);
 	if ($result < 0)
@@ -294,6 +303,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->produit->
 		{
 			$product->ref = GETPOST('clone_ref');
 			$product->status = 0;
+			$product->status_buy = 0;
 			$product->finished = 1;
 			$product->id = null;
 
@@ -659,7 +669,7 @@ if ($action == 'create' && ($user->rights->produit->creer || $user->rights->serv
 		else $title=$langs->trans("NewProduct");
 		print_fiche_titre($title);
 
-		if ($mesg) print $mesg."\n";
+		dol_htmloutput_mesg($mesg);
 
 		print '<table class="border" width="100%">';
 		print '<tr>';
@@ -793,7 +803,7 @@ if ($action == 'create' && ($user->rights->produit->creer || $user->rights->serv
 
 			// VAT
 			print '<tr><td width="20%">'.$langs->trans("VATRate").'</td><td>';
-			print $html->select_tva("tva_tx",$conf->defaulttx,$mysoc,'');
+			print $html->load_tva("tva_tx",-1,$mysoc,'');
 			print '</td></tr>';
 
 			print '</table>';
@@ -856,9 +866,7 @@ if ($id || $ref)
 			if ($product->isservice()) $type = $langs->trans('Service');
 			print_fiche_titre($langs->trans('Modify').' '.$type.' : '.$product->ref, "");
 
-			if ($mesg) {
-				print '<br><div class="error">'.$mesg.'</div><br>';
-			}
+			dol_htmloutput_errors($mesg);
 
 			// Main official, simple, and not duplicated code
 			print '<form action="fiche.php" method="POST">'."\n";
@@ -1286,7 +1294,7 @@ if ($product->id && $action == '' && $product->status)
 		$sql.= " AND p.entity = ".$conf->entity;
 		$sql.= " AND p.fk_statut = 0";
 		$sql.= " AND p.fk_user_author = ".$user->id;
-		$sql.= " ORDER BY p.datec DESC, tms DESC";
+		$sql.= " ORDER BY p.datec DESC, p.tms DESC";
 
 		$result=$db->query($sql);
 		if ($result)
@@ -1645,6 +1653,6 @@ if ($product->id && $action == '' && $product->status)
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/22 22:04:25 $ - $Revision: 1.378 $');
 
 ?>

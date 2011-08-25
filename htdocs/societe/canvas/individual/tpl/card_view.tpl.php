@@ -12,20 +12,19 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id$
+ * $Id: card_view.tpl.php,v 1.12 2011/07/31 23:22:59 eldy Exp $
  */
 
-$soc = $GLOBALS['objcanvas']->control->object;
+$object = $GLOBALS['objcanvas']->control->object;
 
 ?>
 
 <!-- BEGIN PHP TEMPLATE CARD_VIEW.TPL.PHP INDIVIDUAL -->
 <?php
 
-$head = societe_prepare_head($soc);
+$head = societe_prepare_head($object);
 
 dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
 
@@ -223,13 +222,13 @@ $somethingshown=$formfile->show_documents('company',$socid,$filedir,$urlsource,$
 
 <?php
 // Subsidiaries list
-$result=show_subsidiaries($conf,$langs,$db,$soc);
+$result=show_subsidiaries($conf,$langs,$db,$object);
 
 // Contacts list
-$result=show_contacts($conf,$langs,$db,$soc);
+$result=show_contacts($conf,$langs,$db,$object);
 
 // Projects list
-$result=show_projects($conf,$langs,$db,$soc);
+$result=show_projects($conf,$langs,$db,$object);
 ?>
 
 <!-- END PHP TEMPLATE -->

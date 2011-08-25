@@ -1,4 +1,3 @@
-
 # Dolibarr language file - ca_ES - errors 
 CHARSET=UTF-8
 MenuManager=Gestor de menú
@@ -32,6 +31,7 @@ ErrorSupplierCodeAlreadyUsed=Codi de proveïdor ja utilitzat
 ErrorBadParameters=Paràmetres incorrectes
 ErrorBadValueForParameter=Valor '%s' incorrecte per al paràmetre '%s'
 ErrorBadImageFormat=La imatge no té un format reconegut
+ErrorBadDateFormat=El valor '%s' té un format de data no reconegut
 ErrorFailedToWriteInDir=No es pot escriure a la carpeta %s
 ErrorFoundBadEmailInFile=Trobada sintaxi incorrecta en email a %s línies en fitxer (exemple linia %s amb email=%s)
 ErrorUserCannotBeDelete=L'usuari no pot ser eliminat. Potser estigui associat a elements de Dolibarr.
@@ -83,3 +83,7 @@ ErrorBadMask=Error en la màscara
 ErrorBadMaskFailedToLocatePosOfSequence=Error, sense número de seqüència en la màscara
 ErrorBadMaskBadRazMonth=Error, valor de tornada a 0 incorrecte
 ErrorSelectAtLeastOne=Error. Seleccioneu com a mínim una entrada.
+ErrorProductWithRefNotExist=La referència de producte '<i>%s</i>' no existeix
+ErrorDeleteNotPossibleLineIsConsolidated=Eliminació impossible ja que el registre està enllaçat a una transacció bancària conciliada
+ErrorProdIdAlreadyExist=%s es troba assignat a altre tercer
+ErrorFailedToSendPassword=Error en l'enviament de la contrasenya

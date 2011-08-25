@@ -13,15 +13,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *       \file       htdocs/core/class/html.formmail.class.php
  *       \ingroup    core
  *       \brief      Fichier de la classe permettant la generation du formulaire html d'envoi de mail unitaire
- *       \version    $Id$
+ *       \version    $Id: html.formsms.class.php,v 1.13 2011/07/31 23:45:14 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT ."/core/class/html.form.class.php");
 
@@ -229,14 +228,13 @@ function limitChars(textarea, limit, infodiv)
 				if (! empty($this->withtosocid) && $this->withtosocid > 0)
 				{
 					$liste=array();
-					$liste[0]='&nbsp;';
 					foreach ($soc->thirdparty_and_contact_phone_array() as $key=>$value)
 					{
 						$liste[$key]=$value;
 					}
 					print " ".$langs->trans("or")." ";
 					//var_dump($_REQUEST);exit;
-					print $form->selectarray("receiver", $liste, isset($_REQUEST["receiver"])?$_REQUEST["receiver"]:0);
+					print $form->selectarray("receiver", $liste, GETPOST("receiver"), 1);
 				}
 				print ' '.$langs->trans("SmsInfoNumero");
 			}

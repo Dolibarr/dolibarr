@@ -16,14 +16,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *		\file       htdocs/theme/bureau2crea/style.css.php
  *		\brief      Fichier de style CSS du theme bureau2crea
- *		\version    $Id$
+ *		\version    $Id: style.css.php,v 1.57 2011/08/21 19:46:52 cdelambert Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -116,6 +115,11 @@ body {
 	margin: 0px 20px 20px 20px;
     }
 
+#ad_banner {
+	text-align: center;
+	vertical-align: bottom;
+}
+
 a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; font-weight: bold; color: #000000; text-decoration: none; }
 
 input {
@@ -168,7 +172,7 @@ input.button[type=submit] {
     padding: 0px 10px 0px 10px;
     margin: 0px;
     background-repeat: repeat-x;
-    border: 2px solid #336600;
+    /*border: 2px solid #336600;*/
     color: #FFFFFF;
     cursor: pointer;
     font-size: 10px;
@@ -205,12 +209,19 @@ form {
     margin: 0em 0em 0em 0em;
 }
 
-/* For hide object and add pointer cursor */
+/* ============================================================================== */
+/* Styles to hide objects                                                         */
+/* ============================================================================== */
 
 .hideobject { display: none; }
+<?php if (! empty($conf->browser->phone)) { ?>
+.hideonsmartphone { display: none; }
+<?php } ?>
 .linkobject { cursor: pointer; }
 
-/* For dragging lines */
+/* ============================================================================== */
+/* Styles for dragging lines                                                      */
+/* ============================================================================== */
 
 .dragClass {
     color: #002255;
@@ -236,14 +247,40 @@ div.vmenu {
 	position: relative;
     float: left;
     margin: 0px;
-    width: 220px;
+    width: 180px;
+    margin-left: 10px;
 }
 
 div.fiche {
-	margin: 0px 20px 20px 40px;
+	margin-<?php print $left; ?>: <?php print empty($conf->browser->phone)?'10':'2'; ?>px;
+	margin-<?php print $right; ?>: <?php print empty($conf->browser->phone)?'10':''; ?>px;
     padding: 0px;
     position: relative;
     height: auto;
+}
+
+div.fichecenter {
+	width: 100%;
+	clear: both;	/* This is to have div fichecenter that are true rectangles */
+}
+div.fichethirdleft {
+	<?php if (empty($conf->browser->phone)) { print "float: ".$left.";\n"; } ?>
+	<?php if (empty($conf->browser->phone)) { print "width: 35%;\n"; } ?>
+}
+div.fichetwothirdright {
+	<?php if (empty($conf->browser->phone)) { print "float: ".$left.";\n"; } ?>
+	<?php if (empty($conf->browser->phone)) { print "width: 65%;\n"; } ?>
+}
+div.fichehalfleft {
+	<?php if (empty($conf->browser->phone)) { print "float: ".$left.";\n"; } ?>
+	<?php if (empty($conf->browser->phone)) { print "width: 50%;\n"; } ?>
+}
+div.fichehalfright {
+	<?php if (empty($conf->browser->phone)) { print "float: ".$left.";\n"; } ?>
+	<?php if (empty($conf->browser->phone)) { print "width: 50%;\n"; } ?>
+}
+div.ficheaddleft {
+	<?php if (empty($conf->browser->phone)) { print "padding-left: 6px;\n"; } ?>
 }
 
 
@@ -284,7 +321,7 @@ div.tmenu {
     padding: 0px;
     margin: 10px 0px 10px 0px;
     font-size: 13px;
-    background-image : url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_tmenu.jpg' ?>) ;
+    background-image : url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_mainNav.jpg' ?>) ;
     height: 22px;
     border-bottom: 2px solid #842F00;
 <?php } ?>
@@ -442,8 +479,6 @@ li.tmenu span, li.tmenusel span {
     }
 
 li.tmenu {
-    background-image : url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_tmenu_btnD.jpg' ?>);
-    background-position: right;
     }
 .tmenuimage {
 margin: 0 !important;
@@ -454,33 +489,28 @@ li.tmenu a {
 	position: relative;
 	display: block;
     height: 22px;
-    background-image : url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_tmenu_btnG.jpg' ?>);
-    background-position: left center;
-	background-repeat: no-repeat;
     font-size: 12px;
     font-family: Geneva, Verdana, sans-serif;
-    line-height: 25px;
+    line-height: 22px;
     color: #FFF;
     font-weight: normal;
     float: left;
     }
 
 li.tmenu a:hover {
-	color: #a1ad23;
+	color: #FFFFFF;
+    background-color: #D45416;
     }
-    
+
+li.tmenu a.tmenusel,
+li.tmenu a.tmenusel:hover {
+	color: #842F00;
+    font-weight: bold;
+    background-color: #FFF;
+    }
+
 li.tmenu .tmenusel {
-	color: #FFF;
- 	padding: 0px 10px 0px 10px;
-	-moz-border-radius-topleft:4px;
-    -moz-border-radius-topright:4px;
-    border-top-left-radius:4px;
-    border-top-right-radius:4px;
-    border-right: 1px solid #555555;
-    border-bottom: 0px solid #555555;
-    border-left: 1px solid #D0D0D0;
-    border-top: 1px solid #D8D8D8;
-    background: #606060; 
+    background: #FFFFFF;
 	}
 
 
@@ -512,7 +542,7 @@ li.tmenusel a:hover {
 li.tmenu a.tmenudisabled {
 	color: #CCC;
     }
-    
+
 /* --- end nav --- */
 
 
@@ -523,10 +553,11 @@ li.tmenu a.tmenudisabled {
 div.login_block {
 	position: absolute;
 	<?php print $right; ?>: 5px;
-	top: 3px;
+	top: 6px;
 	font-weight: bold;
 	<?php if (GETPOST("optioncss") == 'print') { ?>
 	display: none;
+    color: #FFF;
 	<?php } ?>
 }
 
@@ -541,7 +572,7 @@ div.login {
 	font-weight: bold;
 }
 div.login a {
-	color: #234046;
+	color: #FFFFFF;
 }
 div.login a:hover {
 	color: black;
@@ -563,10 +594,9 @@ img.login, img.printer, img.entity {
 .vmenu{
 margin: 0;
 position: relative;
-width: 210px;
+width: 180px;
 }
-<?php if ((GETPOST("optioncss") == 'print')
-|| (! empty($conf->browser->phone) && class_exists('Smartphone') && empty($conf->global->MAIN_SEARCHFORM_WITH_SMARTHPONE) && empty($conf->global->BOOKMARKS_SHOW_WITH_SMARTHPONE))) { ?>
+<?php if (GETPOST("optioncss") == 'print') { ?>
 .vmenu {
 	display: none;
 }
@@ -597,7 +627,7 @@ div.blockvmenupair
 	padding: 0px;
 	width: 100%;
     background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_leftCategorie.jpg' ?>);
-    background-position: top left;
+    background-position: top right;
     background-repeat: no-repeat;
 
 }
@@ -608,7 +638,7 @@ div.blockvmenuimpair
 	padding: 0px;
 	width: 100%;
     background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_leftCategorie.jpg' ?>);
-    background-position: top left;
+    background-position: top right;
     background-repeat: no-repeat;
 
 }
@@ -642,24 +672,24 @@ div.menu_titre
 }
 
 div.menu_titre a.vmenu {
-	font-weight: bold;
-    font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
-    font-size: 13px;
+	/*font-weight: bold;*/
+    /*font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;*/
+    font-size: 12px;
 }
 
 div.blockvmenusearch
 {
 	margin: 3px 0px 15px 0px;
 	padding: 25px 0px 2px 2px;
-	width: 220px;
+	width: 180px;
     background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_leftMenu.jpg' ?>);
-    background-position: top left;
+    background-position: top right;
     background-repeat: no-repeat;
 }
 
 div.blockvmenusearch input[type="text"] {
 	float: left;
-    width: 150px;
+    width: 110px;
     border: 1px solid #333;
     font-size: 10px;
     height: 16px;
@@ -688,7 +718,7 @@ div.blockvmenubookmarks
 	padding: 0px;
 	width: 100%;
     background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_leftCategorie.jpg' ?>);
-    background-position: top left;
+    background-position: top right;
     background-repeat: no-repeat;
     margin-bottom: 15px;
 }
@@ -751,9 +781,12 @@ td.barre_select {
 }
 
 td.photo {
-	background: #F4F4F4;
-	color: #000000;
-    border: 1px solid #b3c5cc;
+	box-shadow: 2px 4px 2px #CCCCCC;
+	-moz-box-shadow: 2px 4px 2px #CCCCCC;
+	-webkit-box-shadow: 2px 4px 2px #CCCCCC;
+	border-collapse: collapse;
+	border: 1px solid #666;
+    background-color: #EDEDED;
 }
 
 
@@ -764,10 +797,6 @@ td.photo {
 /*
  *  PANES and CONTENT-DIVs
  */
-
-#mainContent {
-
-}
 
 #mainContent, #leftContent .ui-layout-pane {
     padding:    0px;
@@ -788,6 +817,7 @@ td.photo {
 .toolbar {
     background-image: url(<?php echo DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tmenu2.png' ?>) !important;
     background-repeat: repeat-x !important;
+    border: 1px solid #BBB !important;
 }
 
 .toolbarbutton {
@@ -803,6 +833,15 @@ td.photo {
 /* ============================================================================== */
 /* Panes for ECM or Filemanager                                                   */
 /* ============================================================================== */
+
+#containerlayout .layout-with-no-border {
+    border: 0 !important;
+    border-width: 0 !important;
+}
+
+#containerlayout .layout-padding {
+    padding: 2px !important;
+}
 
 /*
  *  PANES and CONTENT-DIVs
@@ -827,88 +866,132 @@ td.photo {
  *  RESIZER-BARS
  */
 .ui-layout-resizer  { /* all 'resizer-bars' */
-    background:     #EEE;
-    border:         1px solid #BBB;
-    border-width:   0;
+	width: 8px !important;
+}
+.ui-layout-resizer-hover    {   /* affects both open and closed states */
+}
+/* NOTE: It looks best when 'hover' and 'dragging' are set to the same color,
+    otherwise color shifts while dragging when bar can't keep up with mouse */
+/*.ui-layout-resizer-open-hover ,*/ /* hover-color to 'resize' */
+.ui-layout-resizer-dragging {   /* resizer beging 'dragging' */
+    background: #DDD;
+    width: 8px;
+}
+.ui-layout-resizer-dragging {   /* CLONED resizer being dragged */
+    border-left:  1px solid #BBB;
+    border-right: 1px solid #BBB;
+}
+/* NOTE: Add a 'dragging-limit' color to provide visual feedback when resizer hits min/max size limits */
+.ui-layout-resizer-dragging-limit { /* CLONED resizer at min or max size-limit */
+    background: #E1A4A4; /* red */
+}
+.ui-layout-resizer-closed:hover {
+    background-color: #EEDDDD;
+}
+.ui-layout-resizer-sliding {    /* resizer when pane is 'slid open' */
+    opacity: .10; /* show only a slight shadow */
+    filter:  alpha(opacity=10);
     }
-    .ui-layout-resizer-drag {       /* REAL resizer while resize in progress */
+    .ui-layout-resizer-sliding-hover {  /* sliding resizer - hover */
+        opacity: 1.00; /* on-hover, show the resizer-bar normally */
+        filter:  alpha(opacity=100);
     }
-    .ui-layout-resizer-hover    {   /* affects both open and closed states */
-    }
-    /* NOTE: It looks best when 'hover' and 'dragging' are set to the same color,
-        otherwise color shifts while dragging when bar can't keep up with mouse */
-    /* .ui-layout-resizer-open-hover , */ /* hover-color to 'resize' */
-    .ui-layout-resizer-dragging {   /* resizer beging 'dragging' */
-        background: #AAA;
-    }
-    .ui-layout-resizer-dragging {   /* CLONED resizer being dragged */
-        border-left:  1px solid #BBB;
-        border-right: 1px solid #BBB;
-    }
-    /* NOTE: Add a 'dragging-limit' color to provide visual feedback when resizer hits min/max size limits */
-    .ui-layout-resizer-dragging-limit { /* CLONED resizer at min or max size-limit */
-        background: #E1A4A4; /* red */
-    }
-
-    .ui-layout-resizer-closed-hover { /* hover-color to 'slide open' */
-        background: #EBD5AA;
-    }
-    .ui-layout-resizer-sliding {    /* resizer when pane is 'slid open' */
-        opacity: .10; /* show only a slight shadow */
-        filter:  alpha(opacity=10);
-        }
-        .ui-layout-resizer-sliding-hover {  /* sliding resizer - hover */
-            opacity: 1.00; /* on-hover, show the resizer-bar normally */
-            filter:  alpha(opacity=100);
-        }
-        /* sliding resizer - add 'outside-border' to resizer on-hover
-         * this sample illustrates how to target specific panes and states */
-        .ui-layout-resizer-north-sliding-hover  { border-bottom-width:  1px; }
-        .ui-layout-resizer-south-sliding-hover  { border-top-width:     1px; }
-        .ui-layout-resizer-west-sliding-hover   { border-right-width:   1px; }
-        .ui-layout-resizer-east-sliding-hover   { border-left-width:    1px; }
+/* sliding resizer - add 'outside-border' to resizer on-hover
+ * this sample illustrates how to target specific panes and states */
+.ui-layout-resizer-north-sliding-hover  { border-bottom-width:  1px; }
+.ui-layout-resizer-south-sliding-hover  { border-top-width:     1px; }
+.ui-layout-resizer-west-sliding-hover   { border-right-width:   1px; }
+.ui-layout-resizer-east-sliding-hover   { border-left-width:    1px; }
 
 /*
  *  TOGGLER-BUTTONS
  */
 .ui-layout-toggler {
-    border: 1px solid #BBB; /* match pane-border */
-    background-color: #BBB;
+    border-top: 1px solid #AAA; /* match pane-border */
+    border-right: 1px solid #AAA; /* match pane-border */
+    border-bottom: 1px solid #AAA; /* match pane-border */
+    background-color: #DDD;
+    top: 5px !important;
     }
-    .ui-layout-resizer-hover .ui-layout-toggler {
-        opacity: .60;
-        filter:  alpha(opacity=60);
+.ui-layout-toggler-open {
+	height: 48px !important;
+	width: 5px !important;
+    -moz-border-radius:0px 10px 10px 0px;
+	-webkit-border-radius:0px 10px 10px 0px;
+	border-radius:0px 10px 10px 0px;
+}
+.ui-layout-toggler-closed {
+	height: 48px !important;
+	width: 5px !important;
+    -moz-border-radius:0px 10px 10px 0px;
+	-webkit-border-radius:0px 10px 10px 0px;
+	border-radius:0px 10px 10px 0px;
+}
+.ui-layout-toggler .content {	/* style the text we put INSIDE the togglers */
+    color:          #666;
+    font-size:      12px;
+    font-weight:    bold;
+    width:          100%;
+    padding-bottom: 0.35ex; /* to 'vertically center' text inside text-span */
+}
+
+/* hide the toggler-button when the pane is 'slid open' */
+.ui-layout-resizer-sliding  ui-layout-toggler {
+    display: none;
+}
+
+.ui-layout-north {
+	height: <?php print (empty($conf->browser->phone)?'40':'40'); ?>px !important;
+}
+
+/* ECM */
+
+#containerlayout .ecm-layout-pane { /* all 'panes' */
+    background: #FFF;
+    border:     1px solid #BBB;
+    /* DO NOT add scrolling (or padding) to 'panes' that have a content-div,
+       otherwise you may get double-scrollbars - on the pane AND on the content-div
+    */
+    padding:    0px;
+    overflow:   auto;
+}
+/* (scrolling) content-div inside pane allows for fixed header(s) and/or footer(s) */
+#containerlayout .ecm-layout-content {
+	padding:    10px;
+	position:   relative; /* contain floated or positioned elements */
+	overflow:   auto; /* add scrolling to content-div */
+}
+
+.ecm-layout-toggler {
+    background-color: #DDD;
     }
-    .ui-layout-resizer-hover .ui-layout-toggler-hover { /* need specificity */
-        background-color: #FC6;
-        opacity: 1.00;
-        filter:  alpha(opacity=100);
-    }
-    .ui-layout-toggler-north ,
-    .ui-layout-toggler-south {
-        border-width: 0 1px; /* left/right borders */
-    }
-    .ui-layout-toggler-west ,
-    .ui-layout-toggler-east {
-        border-width: 1px 0; /* top/bottom borders */
-    }
-    /* hide the toggler-button when the pane is 'slid open' */
-    .ui-layout-resizer-sliding  ui-layout-toggler {
-        display: none;
-    }
-    /*
-     *  style the text we put INSIDE the togglers
-     */
-    .ui-layout-toggler .content {
-        color:          #666;
-        font-size:      12px;
-        font-weight:    bold;
-        width:          100%;
-        padding-bottom: 0.35ex; /* to 'vertically center' text inside text-span */
+.ecm-layout-toggler-open {
+	height: 48px !important;
+	width: 6px !important;
+}
+.ecm-layout-toggler-closed {
+	height: 48px !important;
+	width: 6px !important;
+}
+.ecm-layout-toggler .content {	/* style the text we put INSIDE the togglers */
+    color:          #666;
+    font-size:      12px;
+    font-weight:    bold;
+    width:          100%;
+    padding-bottom: 0.35ex; /* to 'vertically center' text inside text-span */
+}
+#ecm-layout-west-resizer {
+	width: 6px !important;
+}
+
+.ecm-layout-resizer  { /* all 'resizer-bars' */
+    background:     #EEE;
+    border:         1px solid #BBB;
+    border-width:   0;
     }
 
 .ecm-in-layout-center {
-    border-left: 0px !important;
+    border-left: 1px !important;
     border-right: 0px !important;
     border-top: 0px !important;
 }
@@ -921,52 +1004,61 @@ td.photo {
 }
 
 
+
 /* ============================================================================== */
 /* Onglets                                                                        */
 /* ============================================================================== */
 
 div.tabs {
     top: 20px;
-    margin: 10px 0px 0px 0px;
+    margin: 0px 0px 10px 0px;
     text-align: left;
     width: 100%;
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_tmenu.jpg' ?>);
-    height: 18px;
-    border-bottom: 2px solid #842F00;
+    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_navHorizontal.jpg' ?>);
+    height: 25px;
     background-repeat: repeat-x;
-    background-position: bottom;
+    background-position: left;
 }
 
 div.tabs a.tabTitle {
-	margin-right: 5px;
+	padding: 4px 10px;
+    margin-left: 25px;
     position: relative;
     float: left;
+    height: 17px;
+    color: #FFF;
+    line-height: 16px;
+    font-weight: bold;
+    font-size: 14px;
+    display: block;
+    background-color: #202020;
+}
+
+div.tabs a.tabTitle img {
+position: absolute;
+top: 4px;
+left: -20px;
 }
 
 div.tabs a.tab {
 	display: block;
 	width: auto;
-    font-size: 10px;
-    height: 18px;
-    background-position: right;
-    line-height: 18px;
+    font-size: 11px;
+    height: 25px;
+    line-height: 25px;
     color: #FFFFFF;
     text-decoration: none;
     position: relative;
     float: left;
-    margin-left: 10px;
     padding: 0px 10px 0px 10px;
-    margin-bottom: -2px;
-    border: 1px solid #666;
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_btnGrey.jpg' ?>);
 }
 
 div.tabs a.tab#active {
     background-color: #FFF;
-    color: #842F00;
-    border: 1px solid #842F00;
+    color: #D45416;
     border-bottom: 0px;
     background-image: none;
+
 }
 
 div.tabs a.tab span {
@@ -984,7 +1076,8 @@ div.tabs a.tab#active span {
 }
 
 div.tabs a.tab:hover {
-	color: #333333;
+	color: #FFFFFF;
+    background-color: #505050;
 }
 
 /*div.tabs {
@@ -1119,7 +1212,6 @@ span.tabspan {
 	font-family:"Trebuchet MS",Arial,Helvetica,sans-serif;
 	font-weight: bold;
 	background: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_btnBlue.jpg' ?>) repeat-x;
-	border: 2px solid #063953;
 	color: #FFF;
 	padding: 0px 10px 0px 10px;
 	margin: 0px 10px 0px 10px;
@@ -1130,22 +1222,21 @@ span.tabspan {
     height: 18px;
     line-height: 18px;
     cursor: pointer;
+    margin-bottom: 10px;
 }
 
 .butAction:hover   {
-	background: #dee7ec;
 }
 
 .butActionDelete    {
-	border: 1px solid red;
+	background: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_btnRed.jpg' ?>) repeat-x !important;
+    color: #FFF;
 }
 
 .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
-	border: 1px solid #997777;
 }
 
 .butActionDelete:hover {
-	background: #FFe7ec;
 }
 
 .butActionRefused {
@@ -1177,11 +1268,14 @@ background-repeat: repeat-x;
 }
 */
 
-
 .nocellnopadd {
 list-style-type:none;
 margin: 0px;
 padding: 0px;
+}
+
+.boxhandle {
+	margin: 1px 4px 0px 0px;
 }
 
 .notopnoleft {
@@ -1189,7 +1283,7 @@ border-collapse: collapse;
 border: 0px;
 padding-top: 0px;
 padding-<?php print $left; ?>: 0px;
-padding-<?php print $right; ?>: 4px;
+padding-<?php print $right; ?>: 10px;
 padding-bottom: 4px;
 margin: 0px 0px;
 }
@@ -1205,13 +1299,26 @@ margin: 0px 0px 0px 0px;
 
 
 table.border {
-border: 2px solid #666666;
+-webkit-box-shadow: #CCC 2px 4px 2px;
+border: 1px solid #666;
+/*border-collapse: collapse;*/
+padding: 10px;
+}
+
+table.border.formdoc {
+padding: 0px;
 border-collapse: collapse;
+border-right: 1px solid #666;
+}
+
+table.border.formdoc td {
+margin: 0px;
+padding: 0px;
 }
 
 table.border td {
 padding: 1px 2px;
-border: 1px solid #EFEFEF;
+/*border: 1px solid #EFEFEF;*/
 border-collapse: collapse;
 }
 
@@ -1225,8 +1332,12 @@ border-left: 1px solid #000000;
 /* Main boxes */
 
 table.noborder {
+	/*box-shadow: 2px 4px 2px #CCCCCC;
+	-moz-box-shadow: 2px 4px 2px #CCCCCC;
+	-webkit-box-shadow: 2px 4px 2px #CCCCCC; */
 	border-collapse: collapse;
-	border: 1px solid #666;
+	/*border: 1px solid #666;*/
+
 }
 
 table.noborder tr {
@@ -1244,45 +1355,34 @@ border: 0px;
 padding: 0px 0px;
 }
 table.nobordernopadding td {
-    /*border: 0px;
-    padding: 0px 0px;*/
+    border: 0px;
+    padding: 0px 0px 0px 5px;
 }
 
 /* For lists */
 
 table.liste {
-width: 100%;
-border-collapse: collapse;
-border-top-color: #FEFEFE;
-
-border-right-width: 1px;
-border-right-color: #BBBBBB;
-border-right-style: solid;
-
-border-bottom-width: 1px;
-border-bottom-color: #BBBBBB;
-border-bottom-style: solid;
-
-margin-bottom: 2px;
-margin-top: 0px;
+    /*background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_centerBlock-title.jpg' ?>);*/
+    background-repeat: no-repeat;
+    background-position: top right;
+    vertical-align: text-top;
+    border-collapse: collapse;
 }
 table.liste td {
-padding-right: 2px;
+padding: 0px 5px;
 }
 
 table.noborder {
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_centerBlock-title.jpg' ?>);
+    /*background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_centerBlock-title.jpg' ?>);*/
     background-repeat: no-repeat;
     background-position: top right;
     vertical-align: text-top;
 }
 
 tr.liste_titre {
-    height: 20px;
- 	background: #7699A9;
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/menus/trtitle.png' ?>);
+    height: 25px;
     background-repeat: repeat-x;
-    color: #FFFFFF;
+    color: #333333;
     font-family: <?php print $fontlist ?>;
     font-weight: normal;
     /* text-decoration: underline; */
@@ -1290,18 +1390,46 @@ tr.liste_titre {
     white-space: nowrap;
 }
 
+tr.liste_titre:first-child {
+    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_centerBlock-title.jpg' ?>);
+    background-position: top right;
+}
+
+td.liste_titre_sel,   
+tr.liste_titre:first-child td {   
+    color: #FFFFFF !important;
+}
+
+tr.liste_titre {
+    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_centerBlock-title2.jpg' ?>);
+}
+
+tr.liste_total {
+height: 25px;
+border-top: 1px solid #333;
+}
+
+div#stats {
+}
+
+tr.liste_titre a {
+color: #333333;
+margin: 0px 5px;
+}
+
 tr.liste_titre td {
-	padding-left: 3px;
-    vertical-align: text-top;
+	padding: 0px 5px;
+    vertical-align: middle;
 }
 
 td.liste_titre {
     background-repeat: repeat-x;
-    color: #FFFFFF;
+    color: #333333;
     font-family: <?php print $fontlist ?>;
     font-weight: normal;
     white-space: nowrap;
     background-image: none;
+    background: none;
 }
 
 /*tr.liste_titre select.flat {
@@ -1314,12 +1442,11 @@ td.liste_titre {
 tr.liste_titre input.button {
 	float: left;
     position: relative;
-    margin: 30px 10px 10px 0px;
+    /*margin: 30px 10px 10px 0px;*/
 }
 
 td.liste_titre_sel {
-    background: #7699A9;
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/menus/trtitle.png' ?>);
+    background: #505050;
     background-repeat: repeat-x;
     color: #FFFFFF;
     font-family: <?php print $fontlist ?>;
@@ -1343,7 +1470,7 @@ background-repeat: repeat-x;
 color: #332266;
 font-weight: normal;
 white-space: nowrap;
-padding: 3px;
+padding: 5px;
 }
 
 th {
@@ -1380,7 +1507,7 @@ border: 0px;
 }
 
 .pair td, .impair td {
-	padding: 3px !important;
+	padding: 2px 3px !important;
 }
 
 .pair:hover {
@@ -1443,10 +1570,6 @@ font-family: <?php print $fontlist ?>;
 
 td.highlights { background: #f9c5c6; }
 
-td.warning {	/* Utilise par Smarty */
-  background: #FF99A9;
-}
-
 div.ok {
   color: #114466;
 }
@@ -1470,6 +1593,10 @@ div.error {
   line-height: 20px;
   margin-bottom: 20px;
 }
+
+#login div.error {
+	margin-top: 20px;
+    }
 
 /* Info admin */
 div.info {
@@ -1503,10 +1630,6 @@ a.impayee:hover { font-weight: bold; color: #550000; }
 
 .fieldrequired { font-weight: bold; color: #000055; }
 
-#pictotitle {
-	<?php print !empty($conf->browser->phone)?'display: none;':''; ?>
-}
-
 .photo {
 border: 0px;
 /* filter:alpha(opacity=55); */
@@ -1517,11 +1640,13 @@ div.titre {
 	font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
 	font-weight: normal;
 	color: #842F00;
-    font-size: 20px;
+    font-size: 16px;
 	text-decoration: none;
-    margin-left: 20px;
 }
 
+#pictotitle {
+margin-right: 15px;
+}
 
 /* ============================================================================== */
 /* Formulaire confirmation (When Ajax JQuery is used)                             */
@@ -2029,6 +2154,7 @@ table.noborder {
 	margin-bottom: 10px;
     position: relative;
     float: left;
+    border: none;
 }
 
 div.leftContent {
@@ -2046,3 +2172,149 @@ div.leftContent {
 }
 span.cke_skin_kama { padding: 0 !important; }
 .cke_wrapper { padding: 4px !important; }
+
+a.cke_dialog_ui_button
+{
+    font-family: <?php print $fontlist ?> !important;
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/button_bg.png' ?>) !important;
+	background-position: bottom !important;
+    border: 1px solid #ACBCBB !important;
+	padding: 0.1em 0.7em !important;
+	margin: 0em 0.5em !important;
+    -moz-border-radius:0px 5px 0px 5px !important;
+	-webkit-border-radius:0px 5px 0px 5px !important;
+	border-radius:0px 5px 0px 5px !important;
+    -moz-box-shadow: 4px 4px 4px #CCC !important;
+    -webkit-box-shadow: 4px 4px 4px #CCC !important;
+    box-shadow: 4px 4px 4px #CCC !important;
+}
+
+
+/* ============================================================================== */
+/*  File upload                                                                   */
+/* ============================================================================== */
+
+.template-upload {
+    height: 72px !important;
+}
+
+
+/* ============================================================================== */
+/*  Login                                                                   */
+/* ============================================================================== */
+
+#login {
+	position: relative;
+    display: block;
+    width: 480px;
+    height: auto;
+    top: 20px;
+    left: 50%;
+    margin-left: -240px;
+    margin-bottom: 30px;
+    }
+    
+div#infoVersion {
+	position: relative;
+    width: 100%;
+    height: 15px;
+    line-height: 15px;
+    text-align: center;
+    font-size: 10px;
+    background-color: #D6D6D6;
+    }
+    
+div#logoBox {
+	position: relative;
+    width: 100%;
+    height: auto;
+    margin-top: 30px;
+    }
+    
+div#parameterBox {
+	position: relative;
+    width: 100%;
+    height: auto;
+    border: 1px solid #666;
+    border-top: 2px solid #842F00;
+    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_connectionBox.jpg' ?>);
+    background-repeat: no-repeat;
+    background-position: top center;
+    }
+    
+div#parameterBox div {
+	width: 100%;
+    height: 20px;
+    position: relative;
+    line-height: 20px;
+    }
+    
+div#parameterBox div label {
+	width: 190px;
+    text-align: right;
+    display: block;
+    float: left;
+    margin-right: 10px;
+    }
+    
+div#parameterBox div input[type="text"],
+div#parameterBox div input[type="password"] {
+	width: 180px;
+    height: 16px;
+    font-size: 10px;
+    margin-top: 2px;
+    }
+    
+div#connectionLine {
+	margin: 10px 0px;
+	text-align: center;
+    }
+    
+div#logBox {
+margin-top: 25px;
+}
+
+div.captchaBox {
+	margin-top: 10px;
+    }
+    
+div.captchaImg {
+	margin-bottom: 10px;
+    margin-top: 5px;
+    height: 40px !important;
+    }
+
+img#captcha {
+	margin-left: 200px;
+    }
+    
+div#infoLogin {
+    width: 100%;
+    height: auto;
+    text-align: center;
+    margin-top: 20px;
+    color: #666;
+    position: relative;
+    margin-bottom: 20px;
+}
+
+div.other {
+	margin: 10px 0px;
+    text-align: center;
+    position: relative;
+    width: 480px;
+    left: 50%;
+    margin-left: -240px;
+    }
+    
+form.listactionsfilter img {
+	display: none;
+    }
+    
+form.listactionsfilter input[type="submit"] {
+	margin: 2px 0px;
+}
+
+<?php
+if (is_object($db)) $db->close();
+?>

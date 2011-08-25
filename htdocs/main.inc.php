@@ -5,6 +5,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2008      Matteli
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,15 +19,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/main.inc.php
  *	\ingroup	core
  *	\brief      File that defines environment for Dolibarr pages only (variables not required by scripts)
- *	\version    $Id: main.inc.php,v 1.744 2011/06/26 00:42:06 eldy Exp $
+ *	\version    $Id: main.inc.php,v 1.773 2011/08/24 06:52:08 eldy Exp $
  */
 
 @ini_set('memory_limit', '64M');	// This may be useless if memory is hard limited by your PHP
@@ -138,31 +138,6 @@ session_start();
 // This include will set: $conf, $db, $langs, $user, $mysoc objects
 require_once("master.inc.php");
 
-// Activate error interceptions
-/*
-function processError($code, $message, $file, $line, $context)
-{
-	$errmess='ERROR '.$file.' - '.$line.' - '.error_reporting()." - ".$code."<br>\n";
-	//print $errmess;
-	if (error_reporting() & $code) {
-		print $errmess;
-		throw new Exception($message, $code);
-    }
-}
-set_error_handler('processError');
-*/
-
-// GET and POST converter
-/*
-foreach($_REQUEST as $key => $value)
-{
-	// For prevent conflict
-	$var = '__'.$key;
-	// Create variable with tested value
-	$$var = GETPOST($key);
-}
-*/
-
 // Activate end of page function
 register_shutdown_function('dol_shutdown');
 
@@ -194,6 +169,9 @@ if (isset($_SERVER["HTTP_USER_AGENT"]))
 	// Other
 	if (in_array($conf->browser->name,array('firefox','iceweasel'))) $conf->browser->firefox=1;
 	//$conf->browser->phone='android';
+
+    // Force usage of left menu when smartphone is used
+	if ($conf->browser->phone && ! empty($conf->global->MAIN_MENU_FORCE_USE_JQUERY_LAYOUT)) $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT='forced';
 }
 
 
@@ -254,12 +232,14 @@ if (! empty($conf->global->MAIN_NOT_INSTALLED) || ! empty($conf->global->MAIN_NO
 if ((! empty($conf->global->MAIN_VERSION_LAST_UPGRADE) && ($conf->global->MAIN_VERSION_LAST_UPGRADE != DOL_VERSION))
 || (empty($conf->global->MAIN_VERSION_LAST_UPGRADE) && ! empty($conf->global->MAIN_VERSION_LAST_INSTALL) && ($conf->global->MAIN_VERSION_LAST_INSTALL != DOL_VERSION)))
 {
-	require_once(DOL_DOCUMENT_ROOT ."/lib/admin.lib.php");
-	$dolibarrversionlastupgrade=preg_split('/[.-]/',$conf->global->MAIN_VERSION_LAST_UPGRADE);
+    $versiontocompare=empty($conf->global->MAIN_VERSION_LAST_UPGRADE)?$conf->global->MAIN_VERSION_LAST_INSTALL:$conf->global->MAIN_VERSION_LAST_UPGRADE;
+    require_once(DOL_DOCUMENT_ROOT ."/lib/admin.lib.php");
+	$dolibarrversionlastupgrade=preg_split('/[.-]/',$versiontocompare);
 	$dolibarrversionprogram=preg_split('/[.-]/',DOL_VERSION);
-	if (versioncompare($dolibarrversionprogram,$dolibarrversionlastupgrade) > 0)	// Programs have a version higher than database
+    $rescomp=versioncompare($dolibarrversionprogram,$dolibarrversionlastupgrade);
+    if ($rescomp > 0)   // Programs have a version higher than database. We did not add "&& $rescomp < 3" because we want upgrade process for build upgrades
 	{
-		dol_syslog("main.inc: database version ".$conf->global->MAIN_VERSION_LAST_UPGRADE." is lower than programs version ".DOL_VERSION.". Redirect to install page.", LOG_WARNING);
+		dol_syslog("main.inc: database version ".$versiontocompare." is lower than programs version ".DOL_VERSION.". Redirect to install page.", LOG_WARNING);
 		Header("Location: ".DOL_URL_ROOT."/install/index.php");
 		exit;
 	}
@@ -294,31 +274,6 @@ if (! empty($_SESSION["disablemodules"]))
 	foreach($disabled_modules as $module)
 	{
 		if ($module) $conf->$module->enabled=false;
-	}
-}
-
-// Init Smarty (used by some modules like multicompany)
-if (sizeof($conf->need_smarty) > 0)
-{
-	// Usage of const in conf.php file (deprecated) can overwrite default dir.
-	$dolibarr_smarty_libs_dir=DOL_DOCUMENT_ROOT.'/includes/smarty/libs/';
-	$dolibarr_smarty_compile=DOL_DATA_ROOT.'/smarty/templates/temp';
-	$dolibarr_smarty_cache=DOL_DATA_ROOT.'/smarty/cache/temp';
-
-	// Create directory if not exist
-	if (! is_dir($dolibarr_smarty_compile)) create_exdir($dolibarr_smarty_compile);
-	if (! is_dir($dolibarr_smarty_cache))	create_exdir($dolibarr_smarty_cache);
-
-	$smarty_libs = $dolibarr_smarty_libs_dir. "Smarty.class.php";
-	if (@include_once($smarty_libs))
-	{
-		$smarty = new Smarty();
-		$smarty->compile_dir = $dolibarr_smarty_compile;
-		$smarty->cache_dir = $dolibarr_smarty_cache;
-	}
-	else
-	{
-		dol_print_error('',"Library Smarty ".$smarty_libs." not found.");
 	}
 }
 
@@ -585,7 +540,7 @@ if (! defined('NOLOGIN'))
 		$_SESSION["dol_screenwidth"]=isset($dol_screenwidth)?$dol_screenwidth:'';
 		$_SESSION["dol_screenheight"]=isset($dol_screenheight)?$dol_screenheight:'';
 		$_SESSION["dol_company"]=$conf->global->MAIN_INFO_SOCIETE_NOM;
-		if ($conf->multicompany->enabled) $_SESSION["dol_entity"]=$conf->entity;
+		if (! empty($conf->multicompany->enabled)) $_SESSION["dol_entity"]=$conf->entity;
 		dol_syslog("This is a new started user session. _SESSION['dol_login']=".$_SESSION["dol_login"].' Session id='.session_id());
 
 		$db->begin();
@@ -797,16 +752,19 @@ $heightforframes=48;
 // Switch to another entity
 if (!empty($conf->global->MAIN_MODULE_MULTICOMPANY))
 {
-	if (GETPOST('action') == 'switchentity' && $user->admin && ! $user->entity)
+	if (GETPOST('action') == 'switchentity')
 	{
-		require_once("../class/actions_multicompany.class.php");
+		$res = @dol_include_once("/multicompany/class/actions_multicompany.class.php");
 
-		$mc = new ActionsMulticompany($db);
-
-		if($mc->switchEntity(GETPOST('entity')) > 0)
+		if ($res)
 		{
-			Header("Location: ".DOL_URL_ROOT.'/');
-			exit;
+			$mc = new ActionsMulticompany($db);
+
+			if($mc->switchEntity(GETPOST('entity')) >= 0)
+			{
+				Header("Location: ".DOL_URL_ROOT.'/');
+				exit;
+			}
 		}
 	}
 }
@@ -814,22 +772,22 @@ if (!empty($conf->global->MAIN_MODULE_MULTICOMPANY))
 
 // Functions
 
-/**
- *	Show HTML header HTML + BODY + Top menu + left menu + DIV
- * 	@param   	head			Add optionnal head lines
- *  @param      title   		Title of web page
- * 	@param      help_url		Url links to help page
- *                              Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage
- *                                         For other external page: http://server/url
- *  @param      target  		Target to use in menu links
- *	@param		disablejs		Do not output links to js (Ex: qd fonction utilisee par sous formulaire Ajax)
- *	@param		disablehead		Do not output head section
- *	@param		arrayofjs		Array of js files to add in header
- *	@param		arrayofcss		Array of css files to add in header
- *  @param		morequerystring Query string to add to the link "print" to get same parameters (use only if autodetect fails)
- */
 if (! function_exists("llxHeader"))
 {
+	/**
+	 *	Show HTML header HTML + BODY + Top menu + left menu + DIV
+	 * 	@param   	head			Add optionnal head lines
+	 *  @param      title   		Title of web page
+	 * 	@param      help_url		Url links to help page
+	 *                              Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage
+	 *                                         For other external page: http://server/url
+	 *  @param      target  		Target to use in menu links
+	 *	@param		disablejs		Do not output links to js (Ex: qd fonction utilisee par sous formulaire Ajax)
+	 *	@param		disablehead		Do not output head section
+	 *	@param		arrayofjs		Array of js files to add in header
+	 *	@param		arrayofcss		Array of css files to add in header
+	 *  @param		morequerystring Query string to add to the link "print" to get same parameters (use only if autodetect fails)
+	 */
 	function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $morequerystring='')
 	{
 		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);	// Show html headers
@@ -889,8 +847,8 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		// Displays meta
 		print '<meta name="robots" content="noindex,nofollow">'."\n";      // Evite indexation par robots
 		print '<meta name="author" content="Dolibarr Development Team">'."\n";
-		print '<link rel="shortcut icon" type="image/x-icon" href="'.DOL_URL_ROOT.'/favicon.ico">'."\n";
-
+		$favicon=DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/favicon.ico';
+		print '<link rel="shortcut icon" type="image/x-icon" href="'.$favicon.'"/>'."\n";
 		// Displays title
 		$appli='Dolibarr';
 		if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $appli=$conf->global->MAIN_APPLICATION_TITLE;
@@ -904,10 +862,14 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             print '<!-- Includes for JQuery (Ajax library) -->'."\n";
             $jquerytheme = 'smoothness';
             if (!empty($conf->global->MAIN_USE_JQUERY_THEME)) $jquerytheme = $conf->global->MAIN_USE_JQUERY_THEME;
-            print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/css/'.$jquerytheme.'/jquery-ui-latest.custom.css" type="text/css" />'."\n";    // JQuery
-            print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/tooltip/jquery.tooltip.css" type="text/css" />'."\n";                  // Tooltip
-            print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify-alt.min.css" type="text/css" />'."\n";              // JNotify
-            //print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/lightbox/css/jquery.lightbox-0.5.css" media="screen" />'."\n";          // Lightbox
+            print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/css/'.$jquerytheme.'/jquery-ui-latest.custom.css" />'."\n";    // JQuery
+            print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/tiptip/tipTip.css" />'."\n";                           // Tooltip
+            print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify-alt.min.css" />'."\n";          // JNotify
+            //print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/lightbox/css/jquery.lightbox-0.5.css" media="screen" />'."\n";       // Lightbox
+            if (! empty($conf->global->MAIN_USE_JQUERY_FILEUPLOAD))     // jQuery fileupload
+            {
+            	print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/jquery.fileupload-ui.css" type="text/css" />'."\n";
+            }
         }
 
         print '<!-- Includes for Dolibarr, modules or specific pages-->'."\n";
@@ -956,26 +918,34 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-latest.min'.$ext.'"></script>'."\n";
 			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-ui-latest.custom.min'.$ext.'"></script>'."\n";
 			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tablednd/jquery.tablednd_0_5'.$ext.'"></script>'."\n";
-            print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tooltip/jquery.tooltip.min'.$ext.'"></script>'."\n";
+            print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tiptip/jquery.tipTip.min'.$ext.'"></script>'."\n";
             //print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/lightbox/js/jquery.lightbox-0.5.min'.$ext.'"></script>'."\n";
             // jQuery Layout
 			if (!empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) || defined('REQUIRE_JQUERY_LAYOUT'))
 			{
-				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/layout/jquery.layout-latest.min'.$ext.'"></script>'."\n";
+                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/layout/jquery.layout-latest'.$ext.'"></script>'."\n";
 			}
 			// jQuery jnotify
 			if (empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY))	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify.min.js"></script>'."\n";
             // Flot
-            print '<!--[if lte IE 8]><script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/flot/excanvas.min.js"></script><![endif]-->'."\n";
-			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/flot/jquery.flot.min.js"></script>'."\n";
-            print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/flot/jquery.flot.pie.min.js"></script>'."\n";
-            print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/flot/jquery.flot.stack.min.js"></script>'."\n";
+            print '<!--[if lte IE 8]><script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/excanvas.min.js"></script><![endif]-->'."\n";
+			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.min.js"></script>'."\n";
+            print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.pie.min.js"></script>'."\n";
+            print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.stack.min.js"></script>'."\n";
             // CKEditor
             if (!empty($conf->fckeditor->enabled) && !empty($conf->global->FCKEDITOR_EDITORNAME) && $conf->global->FCKEDITOR_EDITORNAME == 'ckeditor')
             {
                 print '<!-- Includes JS for CKEditor -->'."\n";
                 print '<script type="text/javascript">var CKEDITOR_BASEPATH = \''.DOL_URL_ROOT.'/includes/ckeditor/\';</script>'."\n";
-                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/ckeditor/ckeditor'.$ext.'"></script>'."\n";
+                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/ckeditor/ckeditor_basic.js"></script>'."\n";
+            }
+            // File Upload
+            if (! empty($conf->global->MAIN_USE_JQUERY_FILEUPLOAD))
+            {
+            	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/jquery.tmpl.min.js"></script>'."\n";
+				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/jquery.iframe-transport.js"></script>'."\n";
+				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/jquery.fileupload.js"></script>'."\n";
+				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/jquery.fileupload-ui.js"></script>'."\n";
             }
             // Global js function
             print '<!-- Includes JS of Dolibarr -->'."\n";
@@ -1001,6 +971,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		}
 
 		// Define tradMonths javascript array (we define this in datapicker AND in parent page to avoid errors with IE8)
+        print '<script type="text/javascript">'."\n";
 		$tradMonths=array($langs->trans("January"),
 		$langs->trans("February"),
 		$langs->trans("March"),
@@ -1014,9 +985,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		$langs->trans("November"),
 		$langs->trans("December")
 		);
-		print '<script type="text/javascript">';
-		print 'var tradMonths = '.json_encode($tradMonths).';';
-		print '</script>'."\n";
+		print 'var tradMonths = '.json_encode($tradMonths).';'."\n";
 
 		// Define tradMonthsMin javascript array (we define this in datapicker AND in parent page to avoid errors with IE8)
 		$tradMonthsMin=array($langs->trans("JanuaryMin"),
@@ -1032,9 +1001,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		$langs->trans("NovemberMin"),
 		$langs->trans("DecemberMin")
 		);
-		print '<script type="text/javascript">';
-		print 'var tradMonthsMin = '.json_encode($tradMonthsMin).';';
-		print '</script>'."\n";
+		print 'var tradMonthsMin = '.json_encode($tradMonthsMin).';'."\n";
 
 		// Define tradDays javascript array (we define this in datapicker AND in parent page to avoid errors with IE8)
 		$tradDays=array($langs->trans("Monday"),
@@ -1045,9 +1012,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		$langs->trans("Saturday"),
 		$langs->trans("Sunday")
 		);
-		print '<script type="text/javascript">';
-		print 'var tradDays = '.json_encode($tradDays).';';
-		print '</script>'."\n";
+		print 'var tradDays = '.json_encode($tradDays).';'."\n";
 
 		// Define tradDaysMin javascript array (we define this in datapicker AND in parent page to avoid errors with IE8)
 		$tradDaysMin=array($langs->trans("MondayMin"),
@@ -1058,8 +1023,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		$langs->trans("SaturdayMin"),
 		$langs->trans("SundayMin")
 		);
-		print '<script type="text/javascript">';
-		print 'var tradDaysMin = '.json_encode($tradDaysMin).';';
+		print 'var tradDaysMin = '.json_encode($tradDaysMin).';'."\n";
 		print '</script>'."\n";
 
 		if (! empty($head)) print $head."\n";
@@ -1118,19 +1082,20 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 						//contentIgnoreSelector: "span",
 						togglerTip_open: "Close This Pane",
 						togglerTip_closed: "Open This Pane",
-						resizerTip:	"Resize This Pane"
+						resizerTip:	"Resize This Pane",
+						fxSpeed: "fast"
 					},
 					west: {
 						paneClass: "leftContent",
-						spacing_closed:	14,
-						togglerLength_closed: 14,
-						togglerAlign_closed: "top",
+						//spacing_closed:	14,
+						//togglerLength_closed: 14,
+						//togglerAlign_closed: "auto",
 						//togglerLength_open: 0,
 						//	effect defaults - overridden on some panes
 						//slideTrigger_open:	"mouseover",
 						//initClosed:	true,
 						fxName:	"drop",
-						fxSpeed: "normal",
+						fxSpeed: "fast",
 						fxSettings: { easing: "" }
 					},
 					north: {
@@ -1141,7 +1106,8 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 						togglerLength_open:	0,
 						togglerLength_closed: -1,
 						slidable: false,
-						fxName:	"none"
+						fxName:	"none",
+						fxSpeed: "fast"
 					},
 					center: {
 						paneSelector: "#mainContent"
@@ -1167,20 +1133,12 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
     	// Wrapper to show tooltips
     	print "\n".'<script type="text/javascript">
-                jQuery(function() {
-                    jQuery(".classfortooltip").tooltip({
-                        track: true,
-                        delay: 0,
-                        showURL: false,
-                        //extraClass: "pretty fancy",
-                        //fixPNG: true,
-                        positionLeft: false,
-                        bodyHandler: function() {
-                        //console.log(jQuery(this).attr("tooltipText"));
-                        return jQuery(this).attr("tooltipText"); }
+                    jQuery(document).ready(function () {
+                    	jQuery(function() {
+                        	jQuery(".classfortooltip").tipTip({maxWidth: "'.dol_size(600,'width').'px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50});
+                        });
                     });
-                });
-    	</script>';
+                </script>';
 	}
 
 	/*
@@ -1245,9 +1203,13 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	if (! empty($conf->browser->phone)) $loginhtmltext.='<br><b>'.$langs->trans("Phone").'</b>: '.$conf->browser->phone;
 	if (! empty($_SESSION["disablemodules"])) $loginhtmltext.='<br><b>'.$langs->trans("DisabledModules").'</b>: <br>'.join(', ',explode(',',$_SESSION["disablemodules"]));
 
+	$appli='Dolibarr';
+	if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $appli=$conf->global->MAIN_APPLICATION_TITLE;
+
 	// Link info
-	$logouthtmltext=''; $logouttext='';
-	$logouthtmltext=$langs->trans("Logout").'<br>';
+	$logouttext='';
+	$logouthtmltext=$appli.' '.DOL_VERSION.'<br>';
+	$logouthtmltext.=$langs->trans("Logout").'<br>';
 	//$logouthtmltext.="<br>";
 	if ($_SESSION["dol_authmode"] != 'forceuser'
 	&& $_SESSION["dol_authmode"] != 'http')
@@ -1275,15 +1237,12 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	// Select entity
 	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY))
 	{
-		if ($user->admin && ! $user->entity)
-		{
-			$res=@dol_include_once('/multicompany/class/actions_multicompany.class.php');
+		$res=@dol_include_once('/multicompany/class/actions_multicompany.class.php');
 
-			if ($res)
-			{
-				$mc = new ActionsMulticompany($db);
-				$mc->showInfo($conf->entity);
-			}
+		if ($res)
+		{
+			$mc = new ActionsMulticompany($db);
+			$mc->showInfo($conf->entity);
 		}
 	}
 
@@ -1337,12 +1296,9 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	print "\n";
 
 	// Instantiate hooks of thirdparty module
-	if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
-	{
-		require_once(DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php');
-		$object = new CommonObject($db);
-		$object->callHooks(array('searchform','leftblock'));
-	}
+    include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+    $hookmanager=new HookManager($db);
+    $hookmanager->callHooks(array('searchform','leftblock'));
 
 	// Define $searchform
 	if ($conf->societe->enabled && $conf->global->MAIN_SEARCHFORM_SOCIETE && $user->rights->societe->lire)
@@ -1355,7 +1311,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	if ($conf->societe->enabled && $conf->global->MAIN_SEARCHFORM_CONTACT && $user->rights->societe->lire)
 	{
 		$langs->load("companies");
-		$searchform.=printSearchForm(DOL_URL_ROOT.'/contact/index.php', DOL_URL_ROOT.'/contact/index.php',
+		$searchform.=printSearchForm(DOL_URL_ROOT.'/contact/list.php', DOL_URL_ROOT.'/contact/list.php',
 		img_object('','contact').' '.$langs->trans("Contacts"), 'contact', 'contactname');
 	}
 
@@ -1374,18 +1330,9 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 		img_object('','user').' '.$langs->trans("Members"), 'member', 'sall');
 	}
 
-	// Search form hook of thirdparty module
-	if (! empty($object->hooks['searchform']))
-	{
-		$searchform.='<!-- Begin search form hook area -->'."\n";
-
-		foreach($object->hooks['searchform'] as $module)
-		{
-			$searchform.=$module->printSearchForm();
-        }
-
-        $searchform.="\n".'<!-- End of search form hook area -->'."\n";
-    }
+	// Execute hook printSearchForm
+	$parameters=array();
+    $searchform.=$hookmanager->executeHooks('printSearchForm',$parameters);    // Note that $action and $object may have been modified by some hooks
 
 	// Define $bookmarks
 	if ($conf->bookmark->enabled && $user->rights->bookmark->lire)
@@ -1495,18 +1442,10 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 
 	print "\n";
 
-	// Left block hook of thirdparty module
-	if (! empty($object->hooks['leftblock']))
-	{
-		print '<!-- Begin left block hook area -->'."\n";
-
-		foreach($object->hooks['leftblock'] as $module)
-		{
-			$module->printLeftBlock();
-        }
-
-        print "\n".'<!-- End of left block hook area -->'."\n";
-    }
+	// Execute hook printLeftBlock
+	$parameters=array();
+    $leftblock.=$hookmanager->executeHooks('printLeftBlock',$parameters);    // Note that $action and $object may have been modified by some hooks
+    print $leftblock;
 
 	if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '</div> <!-- End left layout -->'."\n";
 	else print '</td>';
@@ -1597,6 +1536,7 @@ function getHelpParamFor($helppagename,$langs)
 
 /**
  *  Show a search area
+ *
  *  @param   urlaction          Url post
  *  @param   urlobject          Url of the link under the search box
  *  @param   title              Title search area
@@ -1605,7 +1545,8 @@ function getHelpParamFor($helppagename,$langs)
  */
 function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$htmlinputname)
 {
-	global $langs;
+	global $conf,$langs;
+
 	$ret='';
 	$ret.='<div class="menu_titre">';
 	$ret.='<a class="vsmenu" href="'.$urlobject.'">';
@@ -1615,7 +1556,10 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$
 	$ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	$ret.='<input type="hidden" name="mode" value="search">';
 	$ret.='<input type="hidden" name="mode-search" value="'.$htmlmodesearch.'">';
-	$ret.='<input type="text" class="flat" name="'.$htmlinputname.'" size="10">&nbsp;';
+	$ret.='<input type="text" class="flat" ';
+	if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $ret.=' placeholder="'.$langs->trans("SearchOf").''.strip_tags($title).'"';
+	else $ret.=' title="'.$langs->trans("SearchOf").''.strip_tags($title).'"';
+	$ret.=' name="'.$htmlinputname.'" size="10" />&nbsp;';
 	$ret.='<input type="submit" class="button" value="'.$langs->trans("Go").'">';
 	$ret.="</form>\n";
 	return $ret;

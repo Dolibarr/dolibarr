@@ -12,10 +12,9 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id$
+ * $Id: login.tpl.php,v 1.22 2011/08/20 15:33:16 eldy Exp $
  */
 
 header('Cache-Control: Public, must-revalidate');
@@ -37,6 +36,7 @@ header("Content-type: text/html; charset=".$conf->file->character_set_client);
 <title><?php echo $langs->trans('Login'); ?></title>
 <script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/js/jquery-latest.min.js"></script>
 <link rel="stylesheet" type="text/css" href="<?php echo $conf_css; ?>" />
+<link rel="shortcut icon" type="image/x-icon" href="<?php echo DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/favicon.ico'; ?>" />
 <style type="text/css">
 <!--
 #login {
@@ -46,7 +46,7 @@ header("Content-type: text/html; charset=".$conf->file->character_set_client);
 	font: 12px arial,helvetica;
 }
 #login table {
-	width: 498px;
+	width: 512px;
 	border: 1px solid #C0C0C0;
 	background: #F0F0F0 url(<?php echo $login_background; ?>) repeat-x;
 	font-size: 12px;

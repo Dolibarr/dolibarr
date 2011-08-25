@@ -15,14 +15,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/compta/prelevement/create.php
  *	\brief      Prelevement
- *	\version    $Id$
+ *	\version    $Id: create.php,v 1.35 2011/07/31 22:23:29 eldy Exp $
  */
 
 require("../bank/pre.inc.php");
@@ -42,6 +41,7 @@ $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
 // Get supervariables
 $action = GETPOST("action");
+
 
 /*
  * Actions
@@ -141,7 +141,7 @@ if ($nb)
 }
 else
 {
-    print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoInvoiceToWithdraw")).'">'.$langs->trans("CreateAll")."</a>\n";
+    print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoInvoiceToWithdraw")).'">'.$langs->trans("CreateAll")."</a>\n";
 }
     //if ($nb11) print '<a class="butAction" href="create.php?action=create&amp;banque=1">'.$langs->trans("CreateBanque")."</a>\n";
     //if ($nb1)  print '<a class="butAction" href="create.php?action=create&amp;banque=1&amp;guichet=1">'.$langs->trans("CreateGuichet")."</a>\n";
@@ -171,17 +171,18 @@ if ($resql)
     $num = $db->num_rows($resql);
     $i = 0;
 
-    print_fiche_titre($langs->trans("InvoiceWaitingWithdraw").' ('.$num.')','','');
+    print_fiche_titre($langs->trans("InvoiceWaitingWithdraw").($num > 0?' ('.$num.')':''),'','');
+
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<td>'.$langs->trans("Invoice").'</td>';
+    print '<td>'.$langs->trans("ThirdParty").'</td>';
+    print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
+    print '<td align="right">'.$langs->trans("DateRequest").'</td>';
+    print '</tr>';
 
     if ($num)
     {
-        print '<table class="noborder" width="100%">';
-        print '<tr class="liste_titre">';
-        print '<td>'.$langs->trans("Invoice").'</td>';
-        print '<td>'.$langs->trans("ThirdParty").'</td>';
-        print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
-        print '<td align="right">'.$langs->trans("DateRequest").'</td>';
-        print '</tr>';
         $var = True;
         while ($i < $num && $i < 20)
         {
@@ -207,10 +208,10 @@ if ($resql)
             print '</tr>';
             $i++;
         }
-
-        print "</table><br>";
-
     }
+    else print '<tr><td colspan="4">'.$langs->trans("None").'</td></tr>';
+    print "</table>";
+    print "<br>\n";
 }
 else
 {
@@ -274,5 +275,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/31 22:23:29 $ - $Revision: 1.35 $');
 ?>

@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2005 	   Simon Tosser         <simon@kornog-computing.com>
  * Copyright (C) 2006 	   Andre Cianfarani     <andre.cianfarani@acdeveloppement.net>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
@@ -20,18 +20,17 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/filefunc.inc.php
  * 	\ingroup	core
  *  \brief      File that include conf.php file and functions.lib.php
- *  \version    $Id: filefunc.inc.php,v 1.16 2011/06/26 18:53:16 eldy Exp $
+ *  \version    $Id: filefunc.inc.php,v 1.23 2011/08/11 20:54:08 eldy Exp $
  */
 
-define('DOL_VERSION','3.1.0-alpha');	// Also defined in htdocs/install/inc.php (Ex: x.y.z-alpha, x.y.z)
+define('DOL_VERSION','3.2.0-alpha');	// Also defined in htdocs/install/inc.php (Ex: x.y.z-alpha, x.y.z)
 define('EURO',chr(128));
 
 // Definition des constantes syslog
@@ -61,8 +60,18 @@ error_reporting(E_ALL ^ E_NOTICE);
 //error_reporting(E_ALL);
 
 
+# Define vars
+$conffiletoshowshort = "conf.php";
+# Define localization of conf file
+$conffile = "conf/conf.php";
+$conffiletoshow = "htdocs/conf/conf.php";
+# For debian/redhat like systems
+#$conffile = "/etc/dolibarr/conf.php";
+#$conffiletoshow = "/etc/dolibarr/conf.php";
+
+
 // Include configuration
-$result=@include_once("conf/conf.php");
+$result=@include_once($conffile);
 if (! $result && ! empty($_SERVER["GATEWAY_INTERFACE"]))    // If install not done and we are in a web session
 {
 	header("Location: install/index.php");
@@ -92,8 +101,8 @@ if (! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && ! empty($_SERVER
 }
 if (empty($dolibarr_main_db_host))
 {
-	print 'Dolibarr setup was run but was not completed.<br>'."\n";
-	print 'Please, click <a href="install/index.php">here to finish Dolibarr install process</a> ...'."\n";
+	print 'Dolibarr setup is not yet complete.<br><br>'."\n";
+	print '<a href="install/index.php">Click here to finish Dolibarr install process</a> ...'."\n";
 	die;
 }
 if (empty($dolibarr_main_url_root))

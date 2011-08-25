@@ -13,8 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * or see http://www.gnu.org/
  */
 
@@ -22,7 +21,7 @@
 /**
  *	    \file       htdocs/lib/usergroups.lib.php
  *		\brief      Ensemble de fonctions de base pour la gestion des utilisaterus et groupes
- *		\version    $Id$
+ *		\version    $Id: usergroups.lib.php,v 1.31 2011/08/18 08:25:09 hregis Exp $
  */
 function user_prepare_head($object)
 {
@@ -144,17 +143,18 @@ function group_prepare_head($object)
 
 /**
  * 		Show list of themes. Show all thumbs of themes
- * 		@param		fuser		User concerned or '' for global theme
- * 		@param		edit		1 to add edit form
+ * 		@param		fuser				User concerned or '' for global theme
+ * 		@param		edit				1 to add edit form
+ * 		@param		foruserprofile		Show for user profile view
  */
 function show_theme($fuser,$edit=0,$foruserprofile=false)
 {
     global $conf,$langs,$bc;
 
-    
+
 	$dirtheme=dol_buildpath($conf->global->MAIN_FORCETHEMEDIR.'/theme',0);
 	$urltheme=dol_buildpath($conf->global->MAIN_FORCETHEMEDIR.'/theme',1);
-	
+
     $selected_theme=$conf->global->MAIN_THEME;
     if (! empty($fuser)) $selected_theme=$fuser->conf->MAIN_THEME;
 
@@ -177,6 +177,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     	print '<td align="right">';
     	$url='http://www.dolistore.com/lang-en/4-skins';
     	if (preg_match('/fr/i',$langs->defaultlang)) $url='http://www.dolistore.com/lang-fr/4-themes';
+    	//if (preg_match('/es/i',$langs->defaultlang)) $url='http://www.dolistore.com/lang-es/4-themes';
     	print '<a href="'.$url.'" target="_blank">';
     	print $langs->trans('DownloadMoreSkins');
     	print '</a>';
@@ -202,7 +203,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	    print '<td'.($foruserprofile?' colspan="3"':'').'>'.$dirtheme.'</td>';
 	    print '</tr>';
     }
-        
+
 	if ($edit)
 	{
 		if ($subdir == $conf->global->MAIN_THEME) $title=$langs->trans("ThemeCurrentlyActive");
@@ -221,7 +222,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
         	&& substr($subdir, 0, 3) <> 'CVS' && ! preg_match('/common|phones/i',$subdir))
         {
 			// Disable not stable themes
-        	if ($conf->global->MAIN_FEATURES_LEVEL < 1 && preg_match('/bureau2crea/i',$subdir)) continue;
+        	//if ($conf->global->MAIN_FEATURES_LEVEL < 1 && preg_match('/bureau2crea/i',$subdir)) continue;
 
             if ($i % $thumbsbyrow == 0)
             {

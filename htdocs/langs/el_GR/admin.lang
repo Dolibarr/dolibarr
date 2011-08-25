@@ -1234,7 +1234,6 @@ RunCommandSummaryToLaunch=Backup μπορεί να ξεκινήσει με τη�
 ImportPostgreSqlDesc=Για την εισαγωγή ενός αντιγράφου ασφαλείας, πρέπει να χρησιμοποιήσετε pg_restore εντολή από την γραμμή εντολών:
 ImportPostgreSqlCommand=Sssss sssss mybackupfile.sql
 FullPathToPostgreSQLdumpCommand=Η πλήρης διαδρομή προς pg_dump εντολή
-MAIN_MAIL_EMAIL_INLINE_IMAGES=Δυνατότητα για την ενσωμάτωση εικόνων σε μηνύματα ηλεκτρονικού ταχυδρομείου
 MAIN_DISABLE_ALL_SMS=Απενεργοποίηση όλων σας αποστολές SMS (για λόγους δοκιμής ή demos)
 MAIN_SMS_SENDMODE=Μέθοδος να χρησιμοποιήσετε για την αποστολή SMS
 MAIN_MAIL_SMS_FROM=Προεπιλογή αριθμού τηλεφώνου αποστολέα για την αποστολή SMS

@@ -14,10 +14,9 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program; if not, write to the Free Software
--- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+-- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- $Id$
+-- $Id: llx_commande.sql,v 1.14 2011/08/03 01:25:34 eldy Exp $
 -- ===================================================================
 
 create table llx_commande
@@ -61,6 +60,7 @@ create table llx_commande
   fk_mode_reglement     integer,                       -- mode de reglement
   date_livraison 	    date 	  default NULL,
   fk_availability 		integer NULL,
+  fk_demand_reason		integer,					   -- should be named fk_input_reason
   fk_adresse_livraison  integer,                       -- delivery address (deprecated)
   import_key            varchar(14)
 )ENGINE=innodb;

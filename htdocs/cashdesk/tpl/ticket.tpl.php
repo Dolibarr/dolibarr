@@ -15,8 +15,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+along with this program. If not, see <http://www.gnu.org/licenses/>.
 -->
 <html>
 <head>
@@ -33,7 +32,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 /* 		position: relative; */
 	}
 
-		.adresse {
+		.address {
 /* 			float: left; */
 			font-size: 12px;
 		}
@@ -97,7 +96,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 	<?php print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('/thumbs/'.$mysoc->logo_small).'">'; ?>
 	</div>
 	<div class="infos">
-		<p class="adresse"><?php echo $mysoc->name; ?><br>
+		<p class="address"><?php echo $mysoc->name; ?><br>
 		<?php echo $mysoc->address; ?><br>
 		<?php echo $mysoc->zip.' '.$mysoc->town; ?></p>
 

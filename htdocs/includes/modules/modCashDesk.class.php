@@ -12,14 +12,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *      \defgroup   pos       Module points of sale
  *      \brief      Module to manage points of sale
- *		\version	$Id$
+ *		\version	$Id: modCashDesk.class.php,v 1.26 2011/07/31 23:28:12 eldy Exp $
  */
 
 /**
@@ -55,7 +54,7 @@ class modCashDesk extends DolibarrModules
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "CashDesk module";
 
-		$this->revision = explode(' ','$Revision$');
+		$this->revision = explode(' ','$Revision: 1.26 $');
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
@@ -97,7 +96,7 @@ class modCashDesk extends DolibarrModules
 									'titre'=>'CashDeskMenu',
 									'mainmenu'=>'cashdesk',
 									'leftmenu'=>'1',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
-									'url'=>'/cashdesk/index.php',
+									'url'=>'/cashdesk/index.php?user=__LOGIN__',
 									'langs'=>'cashdesk',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 									'position'=>100,
                                     'enabled'=>'$conf->cashdesk->enabled',

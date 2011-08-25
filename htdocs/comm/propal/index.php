@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/comm/propal/index.php
  *	\ingroup    propal
  *	\brief      Home page of proposal area
- *	\version    $Id$
+ *	\version    $Id: index.php,v 1.8 2011/08/08 14:25:44 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -48,7 +47,7 @@ if ($user->societe_id > 0)
  * View
  */
 
-$propal_static=new Propal($db);
+$propalstatic=new Propal($db);
 $html = new Form($db);
 $formfile = new FormFile($db);
 $help_url="EN:Module_Commercial_Proposals|FR:Module_Propositions_commerciales|ES:Módulo Presupuestos";
@@ -123,12 +122,12 @@ if ($resql)
     $listofstatus=array(0,1,2,3,4);
     foreach ($listofstatus as $status)
     {
-        $dataseries[]=array('label'=>$propal_static->LibStatut($status,1),'values'=>array(0=>(isset($vals[$status])?$vals[$status]:0)));
+        $dataseries[]=array('label'=>$propalstatic->LibStatut($status,1),'values'=>array(0=>(isset($vals[$status])?$vals[$status]:0)));
         if (! $conf->use_javascript_ajax)
         {
             $var=!$var;
             print "<tr ".$bc[$var].">";
-            print '<td>'.$propal_static->LibStatut($status,0).'</td>';
+            print '<td>'.$propalstatic->LibStatut($status,0).'</td>';
             print '<td align="right"><a href="liste.php?statut='.$status.'">'.(isset($vals[$status])?$vals[$status]:0).'</a></td>';
             print "</tr>\n";
         }
@@ -235,12 +234,12 @@ if ($resql)
 			print "<tr $bc[$var]>";
 			print '<td width="20%" nowrap="nowrap">';
 
-			$propal_static->id=$obj->rowid;
-			$propal_static->ref=$obj->ref;
+			$propalstatic->id=$obj->rowid;
+			$propalstatic->ref=$obj->ref;
 
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 			print '<td width="96" class="nobordernopadding" nowrap="nowrap">';
-			print $propal_static->getNomUrl(1);
+			print $propalstatic->getNomUrl(1);
 			print '</td>';
 
 			print '<td width="16" class="nobordernopadding" nowrap="nowrap">';
@@ -249,7 +248,7 @@ if ($resql)
 
 			print '<td width="16" align="right" class="nobordernopadding">';
 			$filename=dol_sanitizeFileName($obj->ref);
-			$filedir=$conf->propal->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+			$filedir=$conf->propale->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 			$formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','',1,'',1);
 			print '</td></tr></table>';
@@ -258,7 +257,7 @@ if ($resql)
 
 			print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
 			print '<td>'.dol_print_date($db->jdate($obj->datec),'day').'</td>';
-			print '<td align="right">'.$propal_static->LibStatut($obj->fk_statut,5).'</td>';
+			print '<td align="right">'.$propalstatic->LibStatut($obj->fk_statut,5).'</td>';
 			print '</tr>';
 			$i++;
 		}
@@ -267,6 +266,85 @@ if ($resql)
 }
 else dol_print_error($db);
 
+
+/*
+ * Opened proposals
+ */
+if ($conf->propal->enabled && $user->rights->propale->lire)
+{
+	$langs->load("propal");
+
+	$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.total as total_ttc, p.total_ht, p.ref, p.fk_statut, p.datep as dp";
+	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+	$sql.= ", ".MAIN_DB_PREFIX."propal as p";
+	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql.= " WHERE p.fk_soc = s.rowid";
+	$sql.= " AND p.entity = ".$conf->entity;
+	$sql.= " AND p.fk_statut = 1";
+	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+	if ($socid) $sql.= " AND s.rowid = ".$socid;
+	$sql.= " ORDER BY p.rowid DESC";
+
+	$result=$db->query($sql);
+	if ($result)
+	{
+		$total = 0;
+		$num = $db->num_rows($result);
+		$i = 0;
+		if ($num > 0)
+		{
+			$var=true;
+
+			print '<table class="noborder" width="100%">';
+			print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("ProposalsOpened").' <a href="'.DOL_URL_ROOT.'/comm/propal.php?viewstatut=1">('.$num.')</a></td></tr>';
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($result);
+				$var=!$var;
+				print '<tr '.$bc[$var].'>';
+
+				// Ref
+				print '<td nowrap="nowrap" width="140">';
+
+				$propalstatic->id=$obj->propalid;
+				$propalstatic->ref=$obj->ref;
+
+				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+				print '<td class="nobordernopadding" nowrap="nowrap">';
+				print $propalstatic->getNomUrl(1);
+				print '</td>';
+				print '<td width="18" class="nobordernopadding" nowrap="nowrap">';
+				if ($db->jdate($obj->dp) < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+				print '</td>';
+				print '<td width="16" align="center" class="nobordernopadding">';
+				$filename=dol_sanitizeFileName($obj->ref);
+				$filedir=$conf->propale->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->propalid;
+				$formfile->show_documents('propal',$filename,$filedir,$urlsource,'','','',1,'',1);
+				print '</td></tr></table>';
+
+				print "</td>";
+
+				print '<td align="left"><a href="fiche.php?socid='.$obj->rowid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->nom,44).'</a></td>'."\n";
+				print '<td align="right">';
+				print dol_print_date($db->jdate($obj->dp),'day').'</td>'."\n";
+				print '<td align="right">'.price($obj->total_ttc).'</td>';
+				print '<td align="center" width="14">'.$propalstatic->LibStatut($obj->fk_statut,3).'</td>'."\n";
+				print '</tr>'."\n";
+				$i++;
+				$total += $obj->total_ttc;
+			}
+			if ($total>0) {
+				print '<tr class="liste_total"><td colspan="3">'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td><td>&nbsp;</td></tr>";
+			}
+			print "</table><br>";
+		}
+	}
+	else
+	{
+		dol_print_error($db);
+	}
+}
 
 /*
  * Proposals to process
@@ -305,12 +383,12 @@ if ($conf->propal->enabled)
 				print "<tr $bc[$var]>";
 				print '<td nowrap="nowrap">';
 
-				$propal_static->id=$obj->rowid;
-				$propal_static->ref=$obj->ref;
+				$propalstatic->id=$obj->rowid;
+				$propalstatic->ref=$obj->ref;
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 				print '<td width="96" class="nobordernopadding" nowrap="nowrap">';
-				print $propal_static->getNomUrl(1);
+				print $propalstatic->getNomUrl(1);
 				print '</td>';
 
 				print '<td width="16" class="nobordernopadding" nowrap="nowrap">';
@@ -328,7 +406,7 @@ if ($conf->propal->enabled)
 
 				print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->nom,24).'</a></td>';
 
-				print '<td align="right">'.$propal_static->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
+				print '<td align="right">'.$propalstatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
 
 				print '</tr>';
 				$i++;
@@ -377,12 +455,12 @@ if ($conf->propal->enabled)
 				print "<tr $bc[$var]>";
 				print '<td width="20%" nowrap="nowrap">';
 
-				$propal_static->id=$obj->rowid;
-				$propal_static->ref=$obj->ref;
+				$propalstatic->id=$obj->rowid;
+				$propalstatic->ref=$obj->ref;
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 				print '<td width="96" class="nobordernopadding" nowrap="nowrap">';
-				print $propal_static->getNomUrl(1);
+				print $propalstatic->getNomUrl(1);
 				print '</td>';
 
 				print '<td width="16" class="nobordernopadding" nowrap="nowrap">';
@@ -400,7 +478,7 @@ if ($conf->propal->enabled)
 
 				print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
 
-				print '<td align="right">'.$propal_static->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
+				print '<td align="right">'.$propalstatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
 
 				print '</tr>';
 				$i++;
@@ -416,6 +494,6 @@ print '</td></tr></table>';
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/08 14:25:44 $ - $Revision: 1.8 $');
 
 ?>

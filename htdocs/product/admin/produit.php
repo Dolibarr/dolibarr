@@ -16,15 +16,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *  \file       htdocs/product/admin/produit.php
  *  \ingroup    produit
  *  \brief      Page d'administration/configuration du module Produit
- *  \version    $Id$
+ *  \version    $Id: produit.php,v 1.8 2011/08/17 15:56:26 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -268,7 +267,7 @@ if ($conf->global->PRODUCT_CANVAS_ABILITY)
 
     					if ($conf->global->$const)
     					{
-    						print img_tick();
+    						print img_picto($langs->trans("Active"),'tick');
     						print '</td><td align="right">';
     						print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;spe='.$file.'&amp;value=0">'.$langs->trans("Disable").'</a>';
     					}
@@ -295,5 +294,5 @@ if ($conf->global->PRODUCT_CANVAS_ABILITY)
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/17 15:56:26 $ - $Revision: 1.8 $');
 ?>

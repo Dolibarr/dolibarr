@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005      Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin         <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,15 +15,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *       \file       htdocs/comm/propal/document.php
  *       \ingroup    propale
  *       \brief      Page de gestion des documents attaches a une proposition commerciale
- *       \version    $Id$
+ *       \version    $Id: document.php,v 1.69 2011/08/14 02:11:45 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -35,14 +34,14 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 $langs->load('compta');
 $langs->load('other');
 
-$action=empty($_GET['action']) ? (empty($_POST['action']) ? '' : $_POST['action']) : $_GET['action'];
-
-$id = isset($_GET["id"])?$_GET["id"]:'';
+$action		= GETPOST('action');
+$confirm	= GETPOST('confirm');
+$id			= GETPOST('id');
+$ref		= GETPOST('ref');
 
 // Security check
 if ($user->societe_id)
 {
-	unset($_GET["action"]);
 	$action='';
 	$socid = $user->societe_id;
 }
@@ -59,6 +58,7 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="name";
 
+$object = new Propal($db);
 
 /*
  * Actions
@@ -67,13 +67,11 @@ if (! $sortfield) $sortfield="name";
 // Envoi fichier
 if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
-	require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
-
-	$propal = new Propal($db);
-
-	if ($propal->fetch($id))
+	if ($object->fetch($id))
     {
-        $upload_dir = $conf->propale->dir_output . "/" . dol_sanitizeFileName($propal->ref);
+        $object->fetch_thirdparty();
+
+    	$upload_dir = $conf->propale->dir_output . "/" . dol_sanitizeFileName($object->ref);
 
 		if (create_exdir($upload_dir) >= 0)
 		{
@@ -103,16 +101,15 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 }
 
 // Delete
-if ($action=='delete')
+if ($action == 'confirm_deletefile' && $confirm == 'yes')
 {
-	$propal = new Propal($db);
-
-	$id=$_GET["id"];
-	if ($propal->fetch($id))
+	if ($object->fetch($id))
     {
-        $upload_dir = $conf->propale->dir_output . "/" . dol_sanitizeFileName($propal->ref);
+    	$object->fetch_thirdparty();
+
+        $upload_dir = $conf->propale->dir_output . "/" . dol_sanitizeFileName($object->ref);
     	$file = $upload_dir . '/' . $_GET['urlfile'];	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-    	dol_delete_file($file);
+    	dol_delete_file($file,0,0,0,'FILE_DELETE',$object);
         $mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
     }
 }
@@ -126,24 +123,20 @@ llxHeader();
 
 $html = new Form($db);
 
-$id = $_GET["id"];
-$ref= $_GET["ref"];
 if ($id > 0 || ! empty($ref))
 {
-	$propal = new Propal($db);
-	if ($propal->fetch($id,$ref))
+	if ($object->fetch($id,$ref))
     {
-		$upload_dir = $conf->propale->dir_output.'/'.dol_sanitizeFileName($propal->ref);
+    	$object->fetch_thirdparty();
 
-        $societe = new Societe($db);
-        $societe->fetch($propal->socid);
+		$upload_dir = $conf->propale->dir_output.'/'.dol_sanitizeFileName($object->ref);
 
-		$head = propal_prepare_head($propal);
+		$head = propal_prepare_head($object);
 		dol_fiche_head($head, 'document', $langs->trans('Proposal'), 0, 'propal');
 
 
 		// Construit liste des fichiers
-		$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
+		$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 		$totalsize=0;
 		foreach($filearray as $key => $file)
 		{
@@ -153,11 +146,11 @@ if ($id > 0 || ! empty($ref))
 
         print '<table class="border"width="100%">';
 
-		$linkback="<a href=\"".$_SERVER["PHP_SELF"]."?page=$page&socid=$socid&viewstatut=$viewstatut&sortfield=$sortfield&$sortorder\">".$langs->trans("BackToList")."</a>";
+		$linkback='<a href="'.DOL_URL_ROOT.'/comm/propal.php'."?page=$page&socid=$socid&viewstatut=$viewstatut&sortfield=$sortfield&$sortorder".'">'.$langs->trans("BackToList").'</a>';
 
 		// Ref
 		print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">';
-		print $html->showrefnav($propal,'ref',$linkback,1,'ref','ref','');
+		print $html->showrefnav($object,'ref',$linkback,1,'ref','ref','');
 		print '</td></tr>';
 
 		// Ref client
@@ -167,15 +160,13 @@ if ($id > 0 || ! empty($ref))
 		print '</td>';
 		print '</tr></table>';
 		print '</td><td colspan="3">';
-		print $propal->ref_client;
+		print $object->ref_client;
 		print '</td>';
 		print '</tr>';
 
 		// Customer
-		if ( is_null($propal->client) )
-			$propal->fetch_thirdparty();
 		print "<tr><td>".$langs->trans("Company")."</td>";
-		print '<td colspan="3">'.$propal->client->getNomUrl(1).'</td></tr>';
+		print '<td colspan="3">'.$object->thirdparty->getNomUrl(1).'</td></tr>';
 
         print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
         print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
@@ -184,16 +175,25 @@ if ($id > 0 || ! empty($ref))
 
         print '</div>';
 
-        if ($mesg) { print "$mesg<br>"; }
+        dol_htmloutput_mesg($mesg,$mesgs);
+
+    	/*
+		 * Confirmation suppression fichier
+		 */
+		if ($action == 'delete')
+		{
+			$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id.'&urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
+			if ($ret == 'html') print '<br>';
+		}
 
         // Affiche formulaire upload
        	$formfile=new FormFile($db);
-		$formfile->form_attach_new_file(DOL_URL_ROOT.'/comm/propal/document.php?id='.$propal->id,'',0,0,$user->rights->propale->creer);
+		$formfile->form_attach_new_file(DOL_URL_ROOT.'/comm/propal/document.php?id='.$object->id,'',0,0,$user->rights->propale->creer);
 
 
 		// List of document
-		$param='&id='.$propal->id;
-		$formfile->list_of_documents($filearray,$propal,'propal',$param);
+		$param='&id='.$object->id;
+		$formfile->list_of_documents($filearray,$object,'propal',$param);
 
 	}
 	else
@@ -208,5 +208,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/14 02:11:45 $ - $Revision: 1.69 $');
 ?>

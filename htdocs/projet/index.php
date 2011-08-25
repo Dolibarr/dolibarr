@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *       \file       htdocs/projet/index.php
  *       \ingroup    projet
  *       \brief      Main project home page
- *       \version    $Id$
+ *       \version    $Id: index.php,v 1.76 2011/08/08 15:28:01 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -72,7 +71,7 @@ print '<tr><td width="30%" valign="top" class="notopnoleft">';
 
 print_projecttasks_array($db,$socid,$projectsListId);
 
-print '</td><td width="70%" valign="top" class="notopnoleft">';
+print '</td><td width="70%" valign="top" class="notopnoleftnoright">';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -131,5 +130,5 @@ print '</td></tr></table>';
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/08 15:28:01 $ - $Revision: 1.76 $');
 ?>

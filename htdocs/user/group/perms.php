@@ -16,14 +16,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *       \file       htdocs/user/group/perms.php
  *       \brief      Onglet user et permissions de la fiche utilisateur
- *       \version    $Id$
+ *       \version    $Id: perms.php,v 1.43 2011/08/23 22:25:37 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -32,7 +31,10 @@ require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
 
 $langs->load("users");
 
-$module=isset($_GET["module"])?$_GET["module"]:$_POST["module"];
+$id=GETPOST("id");
+$action=GETPOST("action");
+$confirm=GETPOST("confirm");
+$module=GETPOST("module");
 
 // Defini si peux lire les permissions
 $canreadperms=($user->admin || $user->rights->user->user->lire);
@@ -42,9 +44,9 @@ $caneditperms=($user->admin || $user->rights->user->user->creer);
 $advancedpermsactive=false;
 if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 {
-	$advancedpermsactive=true;
-	$canreadperms=($user->admin || ($user->rights->user->group_advance->read && $user->rights->user->group_advance->readperms));
-	$caneditperms=($user->admin || $user->rights->user->group_advance->write);
+    $advancedpermsactive=true;
+    $canreadperms=($user->admin || ($user->rights->user->group_advance->read && $user->rights->user->group_advance->readperms));
+    $caneditperms=($user->admin || $user->rights->user->group_advance->write);
 }
 
 if (! $canreadperms) accessforbidden();
@@ -53,89 +55,111 @@ if (! $canreadperms) accessforbidden();
 /**
  * Actions
  */
-if ($_GET["action"] == 'addrights' && $caneditperms)
+if ($action == 'addrights' && $caneditperms)
 {
     $editgroup = new Usergroup($db);
-    $result=$editgroup->fetch($_GET["id"]);
+    $result=$editgroup->fetch($id);
     if ($result > 0) $editgroup->addrights($_GET["rights"],$module);
 }
 
-if ($_GET["action"] == 'delrights' && $caneditperms)
+if ($action == 'delrights' && $caneditperms)
 {
     $editgroup = new Usergroup($db);
-    $result=$editgroup->fetch($_GET["id"]);
+    $result=$editgroup->fetch($id);
     if ($result > 0) $editgroup->delrights($_GET["rights"],$module);
 }
 
 
-/* ************************************************************************** */
-/*                                                                            */
-/* Visu et edition                                                            */
-/*                                                                            */
-/* ************************************************************************** */
+/**
+ * View
+ */
 
 $form = new Form($db);
 
 llxHeader('',$langs->trans("Permissions"));
 
-if ($_GET["id"])
+if ($id)
 {
     $fgroup = new Usergroup($db);
-    $fgroup->fetch($_GET["id"]);
+    $fgroup->fetch($id);
     $fgroup->getrights();
 
-	/*
-	 * Affichage onglets
-	 */
-	$head = group_prepare_head($fgroup);
-	$title = $langs->trans("Group");
-	dol_fiche_head($head, 'rights', $title, 0, 'group');
+    /*
+     * Affichage onglets
+     */
+    $head = group_prepare_head($fgroup);
+    $title = $langs->trans("Group");
+    dol_fiche_head($head, 'rights', $title, 0, 'group');
 
 
     $db->begin();
 
     // Charge les modules soumis a permissions
     $modules = array();
-    foreach ($conf->file->dol_document_root as $dirroot)
+    $modulesdir = array();
+
+	foreach ($conf->file->dol_document_root as $type => $dirroot)
 	{
-		$dir = $dirroot . "/includes/modules/";
+		$modulesdir[] = $dirroot . "/includes/modules/";
 
-		// Load modules attributes in arrays (name, numero, orders) from dir directory
-		//print $dir."\n<br>";
-		$handle=@opendir($dir);
-		if (is_resource($handle))
+		if ($type == 'alt')
 		{
-		    while (($file = readdir($handle))!==false)
-		    {
-		        if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod'  && substr($file, dol_strlen($file) - 10) == '.class.php')
-		        {
-		            $modName = substr($file, 0, dol_strlen($file) - 10);
-
-		            if ($modName)
-		            {
-		                include_once($dir."/".$file);
-		                $objMod = new $modName($db);
-		                // Load all lang files of module
-		                if (isset($objMod->langfiles) && is_array($objMod->langfiles))
-		                {
-		                	foreach($objMod->langfiles as $domain)
-		                	{
-		                		$langs->load($domain);
-		                	}
-		                }
-		                // Load all permissions
-		                if ($objMod->rights_class) {
-
-		                    $ret=$objMod->insert_permissions(0);
-
-		                    $modules[$objMod->rights_class]=$objMod;
-		                    //print "modules[".$objMod->rights_class."]=$objMod;";
-		                }
-		            }
-		        }
-		    }
+			$handle=@opendir($dirroot);
+			if (is_resource($handle))
+			{
+				while (($file = readdir($handle))!==false)
+				{
+				    if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
+				    {
+				    	if (is_dir($dirroot . '/' . $file . '/includes/modules/'))
+				    	{
+				    		$modulesdir[] = $dirroot . '/' . $file . '/includes/modules/';
+				    	}
+				    }
+				}
+				closedir($handle);
+			}
 		}
 	}
+
+    foreach ($modulesdir as $dir)
+    {
+        // Load modules attributes in arrays (name, numero, orders) from dir directory
+        //print $dir."\n<br>";
+        $handle=@opendir($dir);
+        if (is_resource($handle))
+        {
+            while (($file = readdir($handle))!==false)
+            {
+                if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod'  && substr($file, dol_strlen($file) - 10) == '.class.php')
+                {
+                    $modName = substr($file, 0, dol_strlen($file) - 10);
+
+                    if ($modName)
+                    {
+                        include_once($dir."/".$file);
+                        $objMod = new $modName($db);
+                        // Load all lang files of module
+                        if (isset($objMod->langfiles) && is_array($objMod->langfiles))
+                        {
+                            foreach($objMod->langfiles as $domain)
+                            {
+                                $langs->load($domain);
+                            }
+                        }
+                        // Load all permissions
+                        if ($objMod->rights_class) {
+
+                            $ret=$objMod->insert_permissions(0);
+
+                            $modules[$objMod->rights_class]=$objMod;
+                            //print "modules[".$objMod->rights_class."]=$objMod;";
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     $db->commit();
 
@@ -146,7 +170,8 @@ if ($_GET["id"])
     $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
     $sql.= ", ".MAIN_DB_PREFIX."usergroup_rights as ugr";
     $sql.= " WHERE ugr.fk_id = r.id";
-    $sql.= " AND r.entity = ".$conf->entity;
+    if (empty($conf->multicompany->enabled)) $sql.= " AND r.entity = ".$conf->entity;
+    else $sql.= " AND r.entity = ".$fgroup->entity;
     $sql.= " AND ugr.fk_usergroup = ".$fgroup->id;
 
     $result=$db->query($sql);
@@ -187,7 +212,7 @@ if ($_GET["id"])
     print '<td colspan="2">'.$fgroup->nom.'';
     if (! $fgroup->entity)
     {
-    	print img_redstar($langs->trans("GlobalGroup"));
+        print img_picto($langs->trans("GlobalGroup"),'redstar');
     }
     print "</td></tr>\n";
 
@@ -211,7 +236,8 @@ if ($_GET["id"])
     $sql = "SELECT r.id, r.libelle, r.module";
     $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
     $sql.= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
-    $sql.= " AND r.entity = ".$conf->entity;
+    if (empty($conf->multicompany->enabled)) $sql.= " AND r.entity = ".$conf->entity;
+    else $sql.= " AND r.entity = ".$fgroup->entity;
     if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) $sql.= " AND r.perms NOT LIKE '%_advance'";  // Hide advanced perms if option is disable
     $sql.= " ORDER BY r.module, r.id";
 
@@ -243,22 +269,22 @@ if ($_GET["id"])
 
                 if ($caneditperms)
                 {
-                   print '<tr '. $bc[$var].'>';
-                   print '<td nowrap="nowrap">'.img_object('',$picto).' '.$objMod->getName();
-                   print '<a name="'.$objMod->getName().'">&nbsp;</a></td>';
-                   print '<td align="center" nowrap="nowrap">';
-                   print '<a title='.$langs->trans("All").' alt='.$langs->trans("All").' href="perms.php?id='.$fgroup->id.'&amp;action=addrights&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("All")."</a>";
-                   print '/';
-                   print '<a title='.$langs->trans("None").' alt='.$langs->trans("None").' href="perms.php?id='.$fgroup->id.'&amp;action=delrights&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("None")."</a>";
-                   print '</td>';
-                   print '<td colspan="2">&nbsp;</td>';
-                   print '</tr>';
+                    print '<tr '. $bc[$var].'>';
+                    print '<td nowrap="nowrap">'.img_object('',$picto).' '.$objMod->getName();
+                    print '<a name="'.$objMod->getName().'">&nbsp;</a></td>';
+                    print '<td align="center" nowrap="nowrap">';
+                    print '<a title='.$langs->trans("All").' alt='.$langs->trans("All").' href="perms.php?id='.$fgroup->id.'&amp;action=addrights&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("All")."</a>";
+                    print '/';
+                    print '<a title='.$langs->trans("None").' alt='.$langs->trans("None").' href="perms.php?id='.$fgroup->id.'&amp;action=delrights&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("None")."</a>";
+                    print '</td>';
+                    print '<td colspan="2">&nbsp;</td>';
+                    print '</tr>';
                 }
             }
 
             print '<tr '. $bc[$var].'>';
 
-			// Module
+            // Module
             print '<td nowrap="nowrap">'.img_object('',$picto).' '.$objMod->getName().'</td>';
 
             if (in_array($obj->id, $permsgroup))
@@ -269,7 +295,7 @@ if ($_GET["id"])
                     print '<td align="center"><a href="perms.php?id='.$fgroup->id.'&amp;action=delrights&amp;rights='.$obj->id.'#'.$objMod->getName().'">'.img_edit_remove($langs->trans("Remove")).'</a></td>';
                 }
                 print '<td align="center">';
-                print img_tick();
+                print img_picto($langs->trans("Active"),'tick');
                 print '</td>';
             }
             else
@@ -295,5 +321,5 @@ if ($_GET["id"])
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/23 22:25:37 $ - $Revision: 1.43 $');
 ?>

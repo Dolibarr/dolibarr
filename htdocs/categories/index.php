@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,15 +16,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *      \file       htdocs/categories/index.php
  *      \ingroup    category
  *      \brief      Home page of category area
- *	 	\version	$Id$
+ *	 	\version	$Id: index.php,v 1.56 2011/08/20 09:02:57 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -129,7 +128,7 @@ $fulltree=$cate_arbo;
 
 
 
-print '<table class="nobordernopadding" width="100%">';
+print '<table class="liste" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Categories").'</td><td colspan="3">'.$langs->trans("Description").'</td></tr>';
 
 
@@ -264,7 +263,7 @@ foreach($fulltree as $key => $val)
 		$categstatic->ref=$val['label'];
 		$categstatic->type=$type;
 		print ' &nbsp;'.$categstatic->getNomUrl(0,'',28);
-		
+
 		//print ' &nbsp;'.dol_trunc($val['label'],28);
 		//if ($section == $val['id']) print '</u>';
 		print '</td>';
@@ -313,5 +312,5 @@ print "</table>";
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/08/20 09:02:57 $ - $Revision: 1.56 $');
 ?>

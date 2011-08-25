@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *   	\file       htdocs/compta/sociales/index.php
  *		\ingroup    tax
  *		\brief      Page to list all social contributions
- *		\version    $Id$
+ *		\version    $Id: index.php,v 1.66 2011/07/31 22:23:20 eldy Exp $
  */
 
 require('../../main.inc.php');
@@ -86,8 +85,8 @@ if ($year > 0)
     $sql .= " AND (";
     // Si period renseignee on l'utilise comme critere de date, sinon on prend date echeance,
     // ceci afin d'etre compatible avec les cas ou la periode n'etait pas obligatoire
-    $sql .= "   (s.periode is not null and date_format(s.periode, '%Y') = ".$year.") ";
-    $sql .= "or (s.periode is null     and date_format(s.date_ech, '%Y') = ".$year.")";
+    $sql .= "   (s.periode is not null and date_format(s.periode, '%Y') = '".$year."') ";
+    $sql .= "or (s.periode is null     and date_format(s.date_ech, '%Y') = '".$year."')";
     $sql .= ")";
 }
 if ($filtre) {
@@ -229,5 +228,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter('$Date: 2011/07/31 22:23:20 $ - $Revision: 1.66 $');
 ?>

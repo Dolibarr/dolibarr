@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,8 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
@@ -23,16 +22,17 @@
  *	\brief      File of class to manage widget boxes
  *	\author     Rodolphe Qiedeville
  *	\author	    Laurent Destailleur
- *	\version    $Id$
+ *	\version    $Id: boxes.php,v 1.59 2011/08/17 22:20:29 eldy Exp $
  */
 
 
 
 /**
- * 		\brief	Show a HTML Tab with boxes of a particular area including personalized choices of user
- * 		\param	user		User
- * 		\param	areacode	Code of area for pages (0=value for Home page)
- * 		\return	int			<0 if KO, Nb of boxes shown of OK (0 to n)
+ * 		Show a HTML Tab with boxes of a particular area including personalized choices of user
+ *
+ * 		@param	   User         $user		 Object User
+ * 		@param	   String       $areacode    Code of area for pages (0=value for Home page)
+ * 		@return    int                       <0 if KO, Nb of boxes shown of OK (0 to n)
  */
 function printBoxesArea($user,$areacode)
 {
@@ -41,18 +41,15 @@ function printBoxesArea($user,$areacode)
 	$infobox=new InfoBox($db);
 	$boxarray=$infobox->listboxes($areacode,$user);
 
-	//$boxid_left = array();
-	//$boxid_right = array();
-	if (sizeof($boxarray))
+	if (count($boxarray))
 	{
-		print_fiche_titre($langs->trans("OtherInformationsBoxes"),'','','','otherboxes');
+		print load_fiche_titre($langs->trans("OtherInformationsBoxes"),'','','','otherboxes');
 		print '<table width="100%" class="notopnoleftnoright">';
 		print '<tr><td class="notopnoleftnoright">'."\n";
 
-		print '<table width="100%" style="border-collapse: collapse; border: 0px; margin: 0px; padding: 0px;"><tr>';
 
-		// Affichage colonne gauche
-		print '<td width="50%" valign="top" style="padding-right: 4px;">'."\n";
+        print '<div class="fichehalfleft">';
+
 
 		print "\n<!-- Box left container -->\n";
 		print '<div id="left" class="connectedSortable">'."\n";
@@ -65,29 +62,22 @@ function printBoxesArea($user,$areacode)
 				$ii++;
 				//print 'box_id '.$boxarray[$ii]->box_id.' ';
 				//print 'box_order '.$boxarray[$ii]->box_order.'<br>';
-				//$boxid_left[$key] = $box->box_id;
 				// Affichage boite key
 				$box->loadBox($conf->box_max_lines);
 				$box->showBox();
 			}
 		}
 
-		// If no box on left, we add an invisible empty box
-//		if ($ii==0)
-//		{
-			$emptybox=new ModeleBoxes($db);
-			$emptybox->box_id='A';
-			$emptybox->info_box_head=array();
-			$emptybox->info_box_contents=array();
-			$emptybox->showBox(array(),array());
-//		}
+		$emptybox=new ModeleBoxes($db);
+		$emptybox->box_id='A';
+		$emptybox->info_box_head=array();
+		$emptybox->info_box_contents=array();
+		$emptybox->showBox(array(),array());
 
 		print "</div>\n";
 		print "<!-- End box container -->\n";
 
-		print "</td>\n";
-		// Affichage colonne droite
-		print '<td width="50%" valign="top" style="padding-right: 2px;">';
+        print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 		print "\n<!-- Box right container -->\n";
 		print '<div id="right" class="connectedSortable">'."\n";
@@ -100,27 +90,22 @@ function printBoxesArea($user,$areacode)
 				$ii++;
 				//print 'box_id '.$boxarray[$ii]->box_id.' ';
 				//print 'box_order '.$boxarray[$ii]->box_order.'<br>';
-				//$boxid_right[$key] = $boxarray[$key]->box_id;
 				// Affichage boite key
 				$box->loadBox($conf->box_max_lines);
 				$box->showBox();
 			}
 		}
 
-		// If no box on right, we show add an invisible empty box
-//		if ($ii==0)
-//		{
-			$emptybox=new ModeleBoxes($db);
-			$emptybox->box_id='B';
-			$emptybox->info_box_head=array();
-			$emptybox->info_box_contents=array();
-			$emptybox->showBox(array(),array());
-//		}
+		$emptybox=new ModeleBoxes($db);
+		$emptybox->box_id='B';
+		$emptybox->info_box_head=array();
+		$emptybox->info_box_contents=array();
+		$emptybox->showBox(array(),array());
 
 		print "</div>\n";
 		print "<!-- End box container -->\n";
-		print "</td>";
-		print "</tr></table>\n";
+
+		print '</div></div>';
 		print "\n";
 
 		print "</td></tr>";
@@ -157,22 +142,22 @@ function printBoxesArea($user,$areacode)
 		}
 	}
 
-	return sizeof($boxarray);
+	return count($boxarray);
 }
 
 
 
 /**
- *	\class      InfoBox
- *	\brief      Classe permettant la gestion des boxes sur une page
+ *	Class to manage boxes on pages
  */
 class InfoBox
 {
 	var $db;
 
 	/**
-	 *      \brief      Constructeur de la classe
-	 *      \param      $DB         Handler d'acc�s base
+	 *      Constructor
+	 *
+	 *      @param      DoliDb     $DB        Database handler
 	 */
 	function InfoBox($DB)
 	{
@@ -181,10 +166,11 @@ class InfoBox
 
 
 	/**
-	 *      \brief      Retourne tableau des boites elligibles pour la zone et le user
-	 *      \param      $zone       ID de la zone (0 pour la Homepage, ...)
-	 *      \param      $user		Objet user
-	 *      \return     array       Tableau d'objet box
+	 *      Return array of boxes qualified for area and user
+	 *
+	 *      @param      string     $zone      Name or area (0 for Homepage, ...)
+	 *      @param      User       $user	  Objet user
+	 *      @return     array                 Array of boxes
 	 */
 	function listBoxes($zone,$user)
 	{
@@ -219,7 +205,7 @@ class InfoBox
 					{
 						$boxname = $regs[1];
 						$module = $regs[2];
-						$sourcefile = dol_buildpath("/".$module."/inc/boxes/".$boxname.".php");
+						$sourcefile = dol_buildpath("/".$module."/includes/boxes/".$boxname.".php");
 					}
 					else
 					{
@@ -236,7 +222,7 @@ class InfoBox
 					$box->box_order=$obj->box_order;
 					$box->fk_user=$obj->fk_user;
 					$enabled=true;
-					if ($box->depends && sizeof($box->depends) > 0)
+					if ($box->depends && count($box->depends) > 0)
 					{
 						foreach($box->depends as $module)
 						{
@@ -280,7 +266,7 @@ class InfoBox
 					{
 						$boxname = $regs[1];
 						$module = $regs[2];
-						$sourcefile = "/".$module."/inc/boxes/".$boxname.".php";
+						$sourcefile = "/".$module."/includes/boxes/".$boxname.".php";
 					}
 					else
 					{
@@ -302,7 +288,7 @@ class InfoBox
 					}
 					$box->fk_user=$obj->fk_user;
 					$enabled=true;
-					if ($box->depends && sizeof($box->depends) > 0)
+					if ($box->depends && count($box->depends) > 0)
 					{
 						foreach($box->depends as $module)
 						{
@@ -325,13 +311,15 @@ class InfoBox
 	}
 
 
-	/**
-	 *      \brief      Sauvegarde sequencement des boites pour la zone et le user
-	 *      \param      $zone       ID de la zone (0 pour la Homepage, ...)
-	 *      \param      $boxorder   Liste des boites dans le bon ordre 'A:123,456,...-B:789,321...'
-	 *      \param      $userid     Id du user
-	 *      \return     int         <0 si ko, >= 0 si ok
-	 */
+
+    /**
+     *      Save order of boxes for area and user
+     *
+     *      @param      string     $zone       Name of area (0 for Homepage, ...)
+     *      @param      string     $boxorder   List of boxes with correct order 'A:123,456,...-B:789,321...'
+     *      @param      int        $userid     Id of user
+     *      @return     int                    <0 if KO, >= 0 if OK
+     */
 	function saveboxorder($zone,$boxorder,$userid=0)
 	{
 		global $conf;
@@ -382,7 +370,7 @@ class InfoBox
 				{
 					if (is_numeric($id))
 					{
-						//dol_syslog("aaaaa".sizeof($listarray));
+						//dol_syslog("aaaaa".count($listarray));
 						$i++;
 						$ii=sprintf('%02d',$i);
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes";
@@ -426,8 +414,5 @@ class InfoBox
 	}
 
 }
-
-
-
 
 ?>

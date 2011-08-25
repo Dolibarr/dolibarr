@@ -14,15 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/includes/boxes/box_actions.php
  *	\ingroup    actions
- *	\brief      Module de generation de l'affichage de la box actions
- *	\version	$Id$
+ *	\brief      Module to build boxe for events
+ *	\version	$Id: box_actions.php,v 1.49 2011/07/31 23:29:09 eldy Exp $
  */
 
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
@@ -79,7 +78,7 @@ class box_actions extends ModeleBoxes {
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid AND s.entity IN (0, ".$conf->entity.")";
 			$sql.= " WHERE a.fk_action = ta.id";
 			$sql.= " AND a.entity = ".$conf->entity;
-			$sql.= " AND a.percent <> 100";
+			$sql.= " AND a.percent >= 0 AND a.percent < 100";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 			if($user->societe_id)	$sql.= " AND s.rowid = ".$user->societe_id;
 			$sql.= " ORDER BY a.datec DESC";
@@ -100,7 +99,7 @@ class box_actions extends ModeleBoxes {
 					$objp = $db->fetch_object($result);
 					$datelimite=$db->jdate($objp->dp);
 
-					if ($datelimite  < ($now - $delay_warning)) $late=img_warning($langs->trans("Late"));
+					if ($objp->percentage >= 0 && $objp->percentage < 100 && $datelimite  < ($now - $delay_warning)) $late=img_warning($langs->trans("Late"));
 
 					//($langs->transnoentities("Action".$objp->code)!=("Action".$objp->code) ? $langs->transnoentities("Action".$objp->code) : $objp->label)
 					$label=$objp->label;

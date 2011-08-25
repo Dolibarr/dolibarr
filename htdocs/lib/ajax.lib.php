@@ -13,15 +13,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * or see http://www.gnu.org/
  */
 
 /**
  *  \file		htdocs/lib/ajax.lib.php
  *  \brief		Page called by Ajax request for produts
- *  \version	$Id$
+ *  \version	$Id: ajax.lib.php,v 1.60 2011/07/31 23:25:18 eldy Exp $
  */
 
 
@@ -201,7 +200,10 @@ function ajax_dialog($title,$message,$w=350,$h=150)
 }
 
 /**
- * 	Convert combox
+ * 	Convert a select html field into an ajax combobox
+ *
+ * 	@param		htmlname		Name of html field
+ *  @return		string			Return html string to convert a select field into a combo
  */
 function ajax_combobox($htmlname)
 {
@@ -218,14 +220,20 @@ function ajax_combobox($htmlname)
 
 /**
  * 	On/off button for constant
+ *
  * 	@param		code	Name of constant
+ * 	@param		input	Input element
+ * 	TODO add different method for other input (show/hide, disable, ..)
  */
-function ajax_constantonoff($code)
+function ajax_constantonoff($code,$input=array())
 {
 	global $conf, $langs;
 
 	$out= '<script type="text/javascript">
 		$(function() {
+			var input='.json_encode($input).';
+
+			// Set constant
 			$( "#set_'.$code.'" ).click(function() {
 				$.get( "'.DOL_URL_ROOT.'/core/ajaxconstantonoff.php", {
 					action: \'set\',
@@ -234,8 +242,16 @@ function ajax_constantonoff($code)
 				function() {
 					$( "#set_'.$code.'" ).hide();
 					$( "#del_'.$code.'" ).show();
+					// Enable another object
+					if (input.length > 0) {
+						$.each(input, function(key,value) {
+							$( "#" + value).removeAttr("disabled");
+						});
+					}
 				});
 			});
+
+			// Del constant
 			$( "#del_'.$code.'" ).click(function() {
 				$.get( "'.DOL_URL_ROOT.'/core/ajaxconstantonoff.php", {
 					action: \'del\',
@@ -244,6 +260,12 @@ function ajax_constantonoff($code)
 				function() {
 					$( "#del_'.$code.'" ).hide();
 					$( "#set_'.$code.'" ).show();
+					// Disable another object
+					if (input.length > 0) {
+						$.each(input, function(key,value) {
+							$( "#" + value).attr("disabled", true);
+						});
+					}
 				});
 			});
 		});

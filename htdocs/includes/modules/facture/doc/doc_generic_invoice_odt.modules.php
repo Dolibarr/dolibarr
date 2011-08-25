@@ -12,8 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * or see http://www.gnu.org/
  */
 
@@ -22,7 +21,7 @@
  *	\ingroup    societe
  *	\brief      File of class to build ODT documents for third parties
  *	\author	    Laurent Destailleur
- *	\version    $Id$
+ *	\version    $Id: doc_generic_invoice_odt.modules.php,v 1.21 2011/08/14 13:26:07 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/facture/modules_facture.php");
@@ -196,37 +195,9 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		$texthelp=$langs->trans("ListOfDirectoriesForModelGenODT");
 		// Add list of substitution keys
 		$texthelp.='<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
-        /*$dummy=new User($db);
-        $tmparray=$this->get_substitutionarray_user($dummy,$langs);
-        $nb=0;
-        foreach($tmparray as $key => $val)
-        {
-            $texthelp.='{'.$key.'}<br>';
-            $nb++;
-            if ($nb >= 5) { $texthelp.='...<br>'; break; }
-        }
-		$dummy=new Societe($db);
-		$tmparray=$this->get_substitutionarray_mysoc($dummy,$langs);
-		$nb=0;
-		foreach($tmparray as $key => $val)
-		{
-			$texthelp.='{'.$key.'}<br>';
-			$nb++;
-			if ($nb >= 5) { $texthelp.='...<br>'; break; }
-		}
-		$tmparray=$this->get_substitutionarray_thirdparty($dummy,$langs);
-		$nb=0;
-		foreach($tmparray as $key => $val)
-		{
-			$texthelp.='{'.$key.'}<br>';
-			$nb++;
-			if ($nb >= 5) { $texthelp.='...<br>'; break; }
-		}*/
-		$texthelp.=$langs->trans("FullListOnOnlineDocumentation");
+ 		$texthelp.=$langs->transnoentitiesnoconv("FullListOnOnlineDocumentation");    // This contains an url, we don't modify it
 
-		$texte.= $form->textwithpicto($texttitle,$texthelp,1,'help');
-		//var_dump($listofdir);
-
+		$texte.= $form->textwithpicto($texttitle,$texthelp,1,'help','',1);
 		$texte.= '<table><tr><td>';
 		$texte.= '<textarea class="flat" cols="60" name="value1">';
 		$texte.=$conf->global->FACTURE_ADDON_PDF_ODT_PATH;
@@ -372,7 +343,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 			    }
 
                 // Open and load template
-				require_once(DOL_DOCUMENT_ROOT.'/includes/odtphp/odf.php');
+				require_once(ODTPHP_PATH.'odf.php');
 				$odfHandler = new odf($srctemplatepath, array(
 						'PATH_TO_TMP'	  => $conf->facture->dir_temp,
 						'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -14,14 +14,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  *  \file       htdocs/admin/system/index.php
- *  \brief      Page accueil infos systeme
- *  \version    $Id$
+ *  \brief      Home page of system information
+ *  \version    $Id: index.php,v 1.50 2011/08/13 00:48:00 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -37,6 +36,13 @@ if (!$user->admin)
 
 
 /*
+ * Actions
+ */
+
+// None
+
+
+/*
  * View
  */
 
@@ -44,8 +50,6 @@ llxHeader();
 
 print_fiche_titre($langs->trans("SummarySystem"),'','setup');
 
-//print "<br>\n";
-print info_admin($langs->trans("SystemInfoDesc")).'<br>';
 
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\"><td colspan=\"2\">Dolibarr</td></tr>\n";
@@ -97,9 +101,9 @@ if ($db->type == 'pgsql')
 	if ($paramarray['standard_conforming_strings'] != 'on' && $paramarray['standard_conforming_strings'] != 1)
 	{
 		$langs->load("errors");
-		print '<div class="error">'.$langs->trans("ErrorDatabaseParameterWrong",'standard_conforming_strings','on').'</div>';
+		//print '<div class="error">'.$langs->trans("ErrorDatabaseParameterWrong",'standard_conforming_strings','on').'</div>';
 	}
-	// Check option standard_conforming_strings is on
+	// Check option backslash_quote is on
 	/*$paramarray=$db->getServerParametersValues('backslash_quote');
 	if ($paramarray['backslash_quote'] != 'on' && $paramarray['backslash_quote'] != 1)
 	{
@@ -118,5 +122,9 @@ print '</table>';
 print '<br>';
 
 
-llxFooter('$Date$ - $Revision$');
+//print "<br>\n";
+print info_admin($langs->trans("SystemInfoDesc")).'<br>';
+
+
+llxFooter('$Date: 2011/08/13 00:48:00 $ - $Revision: 1.50 $');
 ?>
