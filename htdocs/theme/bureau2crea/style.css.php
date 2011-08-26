@@ -22,7 +22,7 @@
 /**
  *		\file       htdocs/theme/bureau2crea/style.css.php
  *		\brief      Fichier de style CSS du theme bureau2crea
- *		\version    $Id: style.css.php,v 1.57 2011/08/21 19:46:52 cdelambert Exp $
+ *		\version    $Id: style.css.php,v 1.58 2011/08/26 11:53:51 bureau2crea Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -1299,27 +1299,35 @@ margin: 0px 0px 0px 0px;
 
 
 table.border {
--webkit-box-shadow: #CCC 2px 4px 2px;
-border: 1px solid #666;
-/*border-collapse: collapse;*/
+-webkit-box-shadow: #CCCCCC 2px 4px 2px;
+border: 2px solid #BBBBBB;
+border-collapse: collapse;
 padding: 10px;
+border-spacing: 2px;
 }
 
 table.border.formdoc {
 padding: 0px;
 border-collapse: collapse;
-border-right: 1px solid #666;
+border: 1px solid #666;
 }
 
 table.border.formdoc td {
 margin: 0px;
 padding: 0px;
+border: none;
 }
 
 table.border td {
-padding: 1px 2px;
-/*border: 1px solid #EFEFEF;*/
-border-collapse: collapse;
+padding: 4px;
+border: 1px solid #EFEFEF;
+border-spacing: 0px;
+/*border-collapse: collapse;*/
+margin: 0px;
+}
+
+table.border table td {
+border: none;
 }
 
 td.border {
@@ -1420,6 +1428,7 @@ margin: 0px 5px;
 tr.liste_titre td {
 	padding: 0px 5px;
     vertical-align: middle;
+    background: none !important;
 }
 
 td.liste_titre {
