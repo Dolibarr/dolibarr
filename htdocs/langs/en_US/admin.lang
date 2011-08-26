@@ -259,7 +259,7 @@ ThisIsProcessToFollow=This is setup to process:
 StepNb=Step %s
 FindPackageFromWebSite=Find a package that provides feature you want (for example on official web site %s).
 DownloadPackageFromWebSite=Download package.
-UnpackPackageInDolibarrRoot=Unpack package file into Dolibarr's root directory <b>%s</b>
+UnpackPackageInDolibarrRoot=Unpack package file into Dolibarr's document directory <b>%s</b>
 SetupIsReadyForUse=Install is finished and Dolibarr is ready to use with this new component.
 CurrentVersion=Dolibarr current version
 CallUpdatePage=Go to the page that updates the database structure and datas: %s.
@@ -308,6 +308,9 @@ SmsTestMessage=Test message from __PHONEFROM__ to __PHONETO__
 ModuleMustBeEnabledFirst=Module <b>%s</b> must be enabled first before using this feature.
 SecurityToken=Key to encrypt urls
 NoSmsEngine=No SMS sender manager available. SMS sender manager are not installed with default distribution (because they depends on an external supplier) but you can find some on http://www.dolistore.com
+PDF=PDF
+PDFDesc=You can set each global options related to the PDF generation
+PDFAddressForging=Rules to forge address boxes
 
 # Modules
 Module0Name=Users & groups
@@ -872,6 +875,7 @@ NotificationsDesc=EMails notifications feature allows you to silently send autom
 ModelModules=Documents templates
 DocumentModelOdt=Generate documents from OpenDocuments templates (.ODT files for OpenOffice, KOffice, TextEdit,...)
 WatermarkOnDraft=Watermark on draft document
+CompanyIdProfChecker=Professional Id unique
 ##### Webcal setup #####
 WebCalSetup=Webcalendar link setup
 WebCalSyncro=Add Dolibarr events to WebCalendar

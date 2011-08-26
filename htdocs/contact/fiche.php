@@ -23,7 +23,7 @@
  *       \file       htdocs/contact/fiche.php
  *       \ingroup    societe
  *       \brief      Card of a contact
- *       \version    $Id: fiche.php,v 1.222 2011/07/31 23:54:12 eldy Exp $
+ *       \version    $Id: fiche.php,v 1.227 2011/08/23 20:45:41 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -38,20 +38,18 @@ $langs->load("users");
 $langs->load("other");
 $langs->load("commercial");
 
-$error=0; $errors=array();
+$mesg=''; $error=0; $errors=array();
 
 $action = GETPOST('action');
-$socid = GETPOST("socid");
 $id = GETPOST("id");
-
-// Security check
+$socid = GETPOST("socid");
 if ($user->societe_id) $socid=$user->societe_id;
 
 $object = new Contact($db);
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
-if (!empty($id)) $object->getCanvas($id);
-$canvas = (!empty($object->canvas)?$object->canvas:GETPOST("canvas"));
+if ($id) $object->getCanvas($id);
+$canvas = $object->canvas?$object->canvas:GETPOST("canvas");
 if (! empty($canvas))
 {
     require_once(DOL_DOCUMENT_ROOT."/core/class/canvas.class.php");
@@ -67,43 +65,19 @@ else
     $result = restrictedArea($user, 'contact', $id, 'socpeople'); // If we create a contact with no company (shared contacts), no check on write permission
 }
 
-// Instantiate hooks of thirdparty module
-if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
-{
-    $object->callHooks('contactcard');
-}
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+$hookmanager=new HookManager($db);
+$hookmanager->callHooks(array('contactcard'));
 
 
 /*
  *	Actions
  */
 
-$reshook=0;
+$parameters=array('id'=>$id);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
-// Hook of actions. After that, reshook is 0 if we need to process standard actions, >0 otherwise.
-if (! empty($object->hooks))
-{
-    foreach($object->hooks as $hook)
-    {
-        if (! empty($hook['modules']))
-        {
-            foreach($hook['modules'] as $module)
-            {
-                if (method_exists($module,'doActions'))
-                {
-                    $resaction+=$module->doActions($object,$action,$id); // object is deprecated, action can be changed by method (to go back to other action for example), id can be changed/set by method (during creation for example)
-                    if ($resaction < 0 || ! empty($module->error) || (! empty($module->errors) && sizeof($module->errors) > 0))
-                    {
-                        $error=$module->error; $errors=$module->errors;
-                        if ($action=='add')    $action='create';
-                        if ($action=='update') $action='edit';
-                    }
-                    else $reshook+=$resaction;
-                }
-            }
-        }
-    }
-}
 
 // ---------- start deprecated. Use hook to hook actions.
 // If canvas actions are defined, because on url, or because contact was created with canvas feature on, we use the canvas feature.
@@ -238,7 +212,7 @@ if (empty($reshook))
         $result = $object->delete();
         if ($result > 0)
         {
-            Header("Location: index.php");
+            Header("Location: ".DOL_URL_ROOT.'/contact/list.php');
             exit;
         }
         else
@@ -568,7 +542,7 @@ else
             }
             print '</tr>';
 
-            print "</table><br>";
+            print "</table><br><br>";
 
 
             print '<center>';
@@ -973,5 +947,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:54:12 $ - $Revision: 1.222 $');
+llxFooter('$Date: 2011/08/23 20:45:41 $ - $Revision: 1.227 $');
 ?>

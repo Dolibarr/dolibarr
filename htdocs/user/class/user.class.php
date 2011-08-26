@@ -6,6 +6,7 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
+ * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +25,7 @@
 /**
  *  \file       htdocs/user/class/user.class.php
  *  \brief      Fichier de la classe utilisateur
- *  \version    $Id: user.class.php,v 1.47 2011/07/31 23:21:26 eldy Exp $
+ *  \version    $Id: user.class.php,v 1.53 2011/08/21 10:01:37 hregis Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
@@ -117,6 +118,7 @@ class User extends CommonObject
 
 	/**
 	 *	Load a user from database with its id or ref (login)
+	 *
 	 *	@param      id		       		Si defini, id a utiliser pour recherche
 	 * 	@param      login       		Si defini, login a utiliser pour recherche
 	 *	@param      sid					Si defini, sid a utiliser pour recherche
@@ -125,7 +127,7 @@ class User extends CommonObject
 	 */
 	function fetch($id='', $login='',$sid='',$loadpersonalconf=1)
 	{
-		global $conf;
+		global $conf, $user;
 
 		// Clean parameters
 		$login=trim($login);
@@ -143,14 +145,21 @@ class User extends CommonObject
 		$sql.= " u.photo as photo,";
 		$sql.= " u.openid as openid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-		$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
 
-		if ($sid)
+		if(! empty($conf->multicompany->enabled) && $conf->entity == 1)
+		{
+			$sql.= " WHERE u.entity IS NOT NULL";
+		}
+		else
+		{
+			$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+		}
+
+		if ($sid)    // permet une recherche du user par son SID ActiveDirectory ou Samba
 		{
 			$sql.= " AND (u.ldap_sid = '".$sid."' OR u.login = '".$this->db->escape($login)."') LIMIT 1";
 		}
 		else if ($login)
-			// permet une recherche du user par son SID ActiveDirectory ou Samba
 		{
 			$sql.= " AND u.login = '".$this->db->escape($login)."'";
 		}
@@ -1395,8 +1404,8 @@ class User extends CommonObject
 		}
 		else
 		{
+		    $langs->trans("errors");
 			$this->error=$langs->trans("ErrorFailedToSendPassword").' '.$mailfile->error;
-			//print nl2br($mesg);
 			return -1;
 		}
 	}

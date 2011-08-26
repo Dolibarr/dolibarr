@@ -24,7 +24,7 @@
  *	\file       htdocs/fourn/facture/fiche.php
  *	\ingroup    facture, fournisseur
  *	\brief      Page for supplier invoice card (view, edit, validate)
- *	\version    $Id: fiche.php,v 1.263 2011/08/04 21:46:50 eldy Exp $
+ *	\version    $Id: fiche.php,v 1.264 2011/08/23 18:40:49 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -1458,16 +1458,16 @@ else
                 print '<table class="nobordernopadding" width="100%"><tr><td>';
                 print $langs->trans('Project');
                 print '</td>';
-                if ($_GET['action'] != 'classer')
+                if ($_GET['action'] != 'classify')
                 {
-                    print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classer&amp;facid='.$fac->id.'">';
+                    print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classify&amp;facid='.$fac->id.'">';
                     print img_edit($langs->trans('SetProject'),1);
                     print '</a></td>';
                 }
                 print '</tr></table>';
 
                 print '</td><td colspan="3">';
-                if ($_GET['action'] == 'classer')
+                if ($_GET['action'] == 'classify')
                 {
                     $html->form_project($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->socid,$fac->fk_project,'projectid');
                 }
@@ -1915,5 +1915,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/04 21:46:50 $ - $Revision: 1.263 $');
+llxFooter('$Date: 2011/08/23 18:40:49 $ - $Revision: 1.264 $');
 ?>

@@ -24,7 +24,7 @@
  *       \file       htdocs/install/fileconf.php
  *       \ingroup    install
  *       \brief      Ask all informations required to build Dolibarr htdocs/conf/conf.php file (will be wrote on disk on next page)
- *       \version    $Id: fileconf.php,v 1.95 2011/08/06 23:10:01 eldy Exp $
+ *       \version    $Id: fileconf.php,v 1.97 2011/08/12 20:16:00 eldy Exp $
  */
 include_once("./inc.php");
 
@@ -347,7 +347,7 @@ if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if t
 		<td class="label" valign="top"><b> <?php echo $langs->trans("DatabaseName"); ?>	</b></td>
 
 		<td class="label" valign="top"><input type="text" id="db_name" name="db_name"
-			value="<?php echo (! empty($dolibarr_main_db_name))?$dolibarr_main_db_name:$force_install_database; ?>"></td>
+			value="<?php echo (! empty($dolibarr_main_db_name))?$dolibarr_main_db_name:($force_install_database?$force_install_database:'dolibarr'); ?>"></td>
 		<td class="comment"><?php echo $langs->trans("DatabaseName"); ?></td>
 	</tr>
 
@@ -404,10 +404,16 @@ if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if t
 		<td class="label" valign="top"><?php echo $langs->trans("Login"); ?></td>
 		<td class="label" valign="top"><input type="text" id="db_user_root" name="db_user_root" class="needroot"
 			value="<?php print (! empty($db_user_root))?$db_user_root:$force_install_databaserootlogin; ?>"></td>
-		<td class="label">
-		<div class="comment"><?php echo $langs->trans("DatabaseRootLoginDescription"); ?>
-		</div>
+		<td class="comment">
+		<?php echo $langs->trans("DatabaseRootLoginDescription"); ?>
+		<!--
+		<?php echo '<br>'.$langs->trans("Examples").':<br>' ?>
+		<ul>
+			<li>root (Mysql)</li>
+			<li>postgres (PostgreSql)</li>
+		</ul>
 		</td>
+		 -->
 	</tr>
 
 	<tr>
@@ -415,9 +421,8 @@ if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if t
 		</td>
 		<td class="label" valign="top"><input type="password" id="db_pass_root" name="db_pass_root" class="needroot"
 			value="<?php print (! empty($db_pass_root))?$db_pass_root:$force_install_databaserootpass; ?>"></td>
-		<td class="label">
-		<div class="comment"><?php echo $langs->trans("KeepEmptyIfNoPassword"); ?>
-		</div>
+		<td class="comment">
+		<?php echo $langs->trans("KeepEmptyIfNoPassword"); ?>
 		</td>
 	</tr>
 

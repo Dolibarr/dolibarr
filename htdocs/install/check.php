@@ -22,7 +22,7 @@
  *	\file       htdocs/install/check.php
  *	\ingroup    install
  *	\brief      Test if file conf can be modified and if does not exists, test if install process can create it
- *	\version    $Id: check.php,v 1.87 2011/07/31 23:26:19 eldy Exp $
+ *	\version    $Id: check.php,v 1.89 2011/08/15 12:14:25 eldy Exp $
  */
 include_once("./inc.php");
 
@@ -66,14 +66,14 @@ print '<b>'.$langs->trans("MiscellanousChecks")."</b>:<br>\n";
 
 
 // Check PHP version
-if (versioncompare(versionphparray(),array(4,3,10)) < 0)        // Minimum to try (error if lower)
+if (versioncompare(versionphparray(),array(4,3,10)) < 0)        // Minimum to use (error if lower)
 {
 	print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow",'4.3.10');
 	$checksok=0;
 }
-else if (versioncompare(versionphparray(),array(5,0,0)) < 0)    // Minimum supported (warning if lower)
+else if (versioncompare(versionphparray(),array(5,2,0)) < 0)    // Minimum supported (warning if lower)
 {
-    print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("WarningPHPVersionTooLow",'5.0.0');
+    print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("WarningPHPVersionTooLow",'5.2.0');
     $checksok=0;
 }
 else
@@ -378,7 +378,8 @@ else
 								array('from'=>'2.7.0', 'to'=>'2.8.0'),
 								array('from'=>'2.8.0', 'to'=>'2.9.0'),
                                 array('from'=>'2.9.0', 'to'=>'3.0.0'),
-                                array('from'=>'3.0.0', 'to'=>'3.1.0')
+                                array('from'=>'3.0.0', 'to'=>'3.1.0'),
+                                array('from'=>'3.1.0', 'to'=>'3.2.0')
                                 );
 
 		$count=0;

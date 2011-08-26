@@ -23,11 +23,10 @@
  *	\file       htdocs/includes/modules/member/cards/modules_cards.php
  *	\ingroup    member
  *	\brief      File of parent class of document generator for members cards.
- *	\version    $Id: modules_cards.php,v 1.11 2011/07/31 23:28:18 eldy Exp $
+ *	\version    $Id: modules_cards.php,v 1.13 2011/08/11 12:13:59 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
-require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 
 

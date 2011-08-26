@@ -1,6 +1,0 @@
-#Wed Aug 24 17:30:40 CEST 2011
-eclipse.preferences.version=1
-include_path=0;/dolibarrgitoldssh
-org.eclipse.php.core.taskCaseSensitive=enabled
-org.eclipse.php.core.taskPriorities=NORMAL,HIGH,NORMAL
-org.eclipse.php.core.taskTags=TODO,FIXME,@todo

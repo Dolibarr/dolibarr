@@ -29,7 +29,7 @@
  *	\author     Rodolphe Qiedeville
  *	\author	    Eric Seigne
  *	\author	    Laurent Destailleur
- *	\version    $Id: propal.class.php,v 1.111 2011/08/08 01:53:26 eldy Exp $
+ *	\version    $Id: propal.class.php,v 1.114 2011/08/20 15:11:34 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
@@ -745,7 +745,7 @@ class Propal extends CommonObject
 					$result=$this->db->query($sql);
 				}
 
-				// Affectation de l'adresse de livraison
+				// Set delivery address
 				if (! $error && $this->fk_delivery_address)
 				{
 					$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
@@ -826,7 +826,7 @@ class Propal extends CommonObject
 	 *		@param		socid			Id of thirdparty
 	 * 	 	@return		int				New id of clone
 	 */
-	function createFromClone($fromid,$invertdetail=0,$socid=0)
+	function createFromClone($fromid,$invertdetail=0,$socid=0,$hookmanager=false)
 	{
 		global $user,$langs,$conf;
 
@@ -835,12 +835,6 @@ class Propal extends CommonObject
 		$now=dol_now();
 
 		$object=new Propal($this->db);
-
-		// Instantiate hooks of thirdparty module
-		if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
-		{
-			$object->callHooks('propalcard');
-		}
 
 		$this->db->begin();
 
@@ -906,24 +900,13 @@ class Propal extends CommonObject
 
 		if (! $error)
 		{
-			// Hook for external modules
-            if (! empty($object->hooks))
-            {
-            	foreach($object->hooks as $hook)
-            	{
-            		if (! empty($hook['modules']))
-            		{
-            			foreach($hook['modules'] as $module)
-            			{
-            				if (method_exists($module,'createfrom'))
-            				{
-            					$result = $module->createfrom($objFrom,$result,$object->element);
-            					if ($result < 0) $error++;
-            				}
-            			}
-            		}
-            	}
-            }
+			// Hook of thirdparty module
+			if (is_object($hookmanager))
+			{
+			    $parameters=array('objFrom'=>$objFrom);
+				$reshook=$hookmanager->executeHooks('createfrom',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+				if ($reshook < 0) $error++;
+			}
 
 			// Appel des triggers
 			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
@@ -1277,9 +1260,9 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *      \brief      Definit une adresse de livraison
+	 *      \brief      Define delivery address
 	 *      \param      user        		Objet utilisateur qui modifie
-	 *      \param      adresse_livraison      Adresse de livraison
+	 *      \param      fk_address			Delivery address id
 	 *      \return     int         		<0 si ko, >0 si ok
 	 */
 	function set_adresse_livraison($user, $fk_address)

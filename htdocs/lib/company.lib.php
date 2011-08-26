@@ -23,7 +23,7 @@
  *	\file       htdocs/lib/company.lib.php
  *	\brief      Ensemble de fonctions de base pour le module societe
  *	\ingroup    societe
- *	\version    $Id: company.lib.php,v 1.123 2011/07/31 23:25:41 eldy Exp $
+ *	\version    $Id: company.lib.php,v 1.126 2011/08/24 18:05:58 eldy Exp $
  */
 
 /**
@@ -190,16 +190,18 @@ function societe_admin_prepare_head($object)
     $head[$h][2] = 'general';
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/admin/societe_extrafields.php';
-    $head[$h][1] = $langs->trans("ExtraFields");
-    $head[$h][2] = 'attributes';
-    $h++;
-
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'company_admin');
+
+    $head[$h][0] = DOL_URL_ROOT.'/admin/societe_extrafields.php';
+    $head[$h][1] = $langs->trans("ExtraFields");
+    $head[$h][2] = 'attributes';
+    $h++;
+
+    complete_head_from_modules($conf,$langs,$object,$head,$h,'company_admin','remove');
 
     return $head;
 }
@@ -208,14 +210,19 @@ function societe_admin_prepare_head($object)
 
 /**
  *    Return country label, code or id from an id or a code
+ *
  *    @param      id            Id or code of country
- *    @param      withcode      0=Return label, 1=Return code + label, 2=Return code from id, 3=Return id from code
+ *    @param      withcode      '0'=Return label,
+ *    							'1'=Return code + label,
+ *    							'2'=Return code from id,
+ *    							'3'=Return id from code,
+ *    							'all'=Return array('id'=>,'code'=>,'label'=>)
  *    @param      dbtouse       Database handler (using in global way may fail because of conflicts with some autoload features)
  *    @param      outputlangs   Langs object for output translation
  *    @param      entconv       0=Return value without entities and not converted to output charset
  *    @return     string        String with country code or translated country name
  */
-function getCountry($id,$withcode=0,$dbtouse=0,$outputlangs='',$entconv=1)
+function getCountry($id,$withcode='',$dbtouse=0,$outputlangs='',$entconv=1)
 {
     global $db,$langs;
 
@@ -240,9 +247,10 @@ function getCountry($id,$withcode=0,$dbtouse=0,$outputlangs='',$entconv=1)
                 if ($entconv) $label=($obj->code && ($outputlangs->trans("Country".$obj->code)!="Country".$obj->code))?$outputlangs->trans("Country".$obj->code):$label;
                 else $label=($obj->code && ($outputlangs->transnoentitiesnoconv("Country".$obj->code)!="Country".$obj->code))?$outputlangs->transnoentitiesnoconv("Country".$obj->code):$label;
             }
-            if ($withcode == 1) return $label?"$obj->code - $label":"$obj->code";
-            else if ($withcode == 2) return $obj->code;
-            else if ($withcode == 3) return $obj->rowid;
+            if ($withcode == '1') return $label?"$obj->code - $label":"$obj->code";
+            else if ($withcode == '2') return $obj->code;
+            else if ($withcode == '3') return $obj->rowid;
+            else if ($withcode == 'all') return array('id'=>$obj->rowid,'code'=>$obj->code,'label'=>$label);
             else return $label;
         }
         else
@@ -255,12 +263,16 @@ function getCountry($id,$withcode=0,$dbtouse=0,$outputlangs='',$entconv=1)
 
 /**
  *    Return state translated from an id
+ *
  *    @param      id          id of state (province/departement)
- *    @param      withcode    0=Return label, 1=Return code + label, 2=Return code
+ *    @param      withcode    '0'=Return label,
+ *    						  '1'=Return string code + label,
+ *    						  '2'=Return code,
+ *    						  'all'=return array('id'=>,'code'=>,'label'=>)
  *    @param      dbtouse     Database handler (using in global way may fail because of conflicts with some autoload features)
  *    @return     string      String with state code or translated state name
  */
-function getState($id,$withcode=0,$dbtouse=0)
+function getState($id,$withcode='',$dbtouse=0)
 {
     global $db,$langs;
 
@@ -277,8 +289,9 @@ function getState($id,$withcode=0,$dbtouse=0)
         if ($obj)
         {
             $label=$obj->label;
-            if ($withcode == 1) return $label=$obj->code?"$obj->code":"$obj->code - $label";
-            else if ($withcode == 2) return $label=$obj->code;
+            if ($withcode == '1') return $label=$obj->code?"$obj->code":"$obj->code - $label";
+            else if ($withcode == '2') return $label=$obj->code;
+            else if ($withcode == 'all') return array('id'=>$obj->rowid,'code'=>$obj->code,'label'=>$label);
             else return $label;
         }
         else
@@ -290,12 +303,13 @@ function getState($id,$withcode=0,$dbtouse=0)
 }
 
 /**
- *    \brief      Retourne le nom traduit ou code+nom d'une devise
- *    \param      code_iso       Code iso de la devise
- *    \param      withcode       1=affiche code + nom
- *    \return     string         Nom traduit de la devise
+ *    Retourne le nom traduit ou code+nom d'une devise
+ *
+ *    @param      code_iso       Code iso de la devise
+ *    @param      withcode       '1'=affiche code + nom
+ *    @return     string         Nom traduit de la devise
  */
-function currency_name($code_iso,$withcode=0)
+function currency_name($code_iso,$withcode='')
 {
     global $langs,$db;
 
@@ -331,6 +345,7 @@ function currency_name($code_iso,$withcode=0)
 
 /**
  *    Retourne le nom traduit de la forme juridique
+ *
  *    @param      code        Code de la forme juridique
  *    @return     string      Nom traduit du pays
  */
@@ -367,6 +382,7 @@ function getFormeJuridiqueLabel($code)
 
 /**
  * 		Show html area for list of projects
+ *
  *		@param		conf		Object conf
  * 		@param		langs		Object langs
  * 		@param		db			Database handler
@@ -590,7 +606,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
  */
 function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
 {
-    global $bc;
+    global $bc,$user;
 
     $now=dol_now();
     $out='';
@@ -608,7 +624,17 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
 
         $out.='<table width="100%" class="noborder">';
         $out.='<tr class="liste_titre">';
-        $out.='<td colspan="6"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?socid='.$object->id.'&amp;status=todo">'.$langs->trans("ActionsToDoShort").'</a></td><td align="right">&nbsp;</td>';
+        $out.='<td colspan="2"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?socid='.$object->id.'&amp;status=todo">'.$langs->trans("ActionsToDoShort").'</a></td>';
+        $out.='<td colspan="5" align="right">';
+		$permok=$user->rights->agenda->myactions->create;
+        if (($object->id || $objcon->id) && $permok)
+		{
+            $out.='<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;socid='.$object->id.'&amp;contactid='.$objcon->id.'&amp;backtopage=1&amp;percentage=-1">';
+    		$out.=$langs->trans("AddAnAction").' ';
+    		$out.=img_picto($langs->trans("AddAnAction"),'filenew');
+    		$out.="</a>";
+		}
+        $out.='</td>';
         $out.='</tr>';
 
         $sql = "SELECT a.id, a.label,";
@@ -726,7 +752,7 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
  */
 function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
 {
-    global $bc;
+    global $bc,$user;
 
     $out='';
     $histo=array();
@@ -764,7 +790,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
             while ($i < $num)
             {
                 $obj = $db->fetch_object($resql);
-                $histo[$numaction]=array('type'=>'action','id'=>$obj->id,'date'=>$db->jdate($obj->dp2),'note'=>$obj->label,'percent'=>$obj->percent,
+                $histo[$numaction]=array('type'=>'action','id'=>$obj->id,'datestart'=>$db->jdate($obj->dp),'date'=>$db->jdate($obj->dp2),'note'=>$obj->label,'percent'=>$obj->percent,
 				'acode'=>$obj->acode,'libelle'=>$obj->libelle,
 				'userid'=>$obj->user_id,'login'=>$obj->login,
 				'contact_id'=>$obj->fk_contact,'name'=>$obj->name,'firstname'=>$obj->firstname,
@@ -837,7 +863,17 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
         $out.="\n";
         $out.='<table class="noborder" width="100%">';
         $out.='<tr class="liste_titre">';
-        $out.='<td colspan="7"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?socid='.$object->id.'&amp;status=done">'.$langs->trans("ActionsDoneShort").'</a></td>';
+        $out.='<td colspan="2"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?socid='.$object->id.'&amp;status=done">'.$langs->trans("ActionsDoneShort").'</a></td>';
+        $out.='<td colspan="5" align="right">';
+		$permok=$user->rights->agenda->myactions->create;
+        if (($object->id || $objcon->id) && $permok)
+		{
+            $out.='<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;socid='.$object->id.'&amp;contactid='.$objcon->id.'&amp;backtopage=1&amp;percentage=-1">';
+    		$out.=$langs->trans("AddAnAction").' ';
+    		$out.=img_picto($langs->trans("AddAnAction"),'filenew');
+    		$out.="</a>";
+		}
+        $out.='</td>';
         $out.='</tr>';
 
         foreach ($histo as $key=>$value)
@@ -846,7 +882,10 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
             $out.="<tr ".$bc[$var].">";
 
             // Champ date
-            $out.='<td width="120" nowrap="nowrap">'.dol_print_date($histo[$key]['date'],'dayhour')."</td>\n";
+            $out.='<td width="120" nowrap="nowrap">';
+            if ($histo[$key]['date']) $out.=dol_print_date($histo[$key]['date'],'dayhour');
+            else if ($histo[$key]['datestart']) $out.=dol_print_date($histo[$key]['datestart'],'dayhour');
+            $out.="</td>\n";
 
             // Picto
             $out.='<td width="16">&nbsp;</td>';

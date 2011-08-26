@@ -23,7 +23,7 @@
  *       \file       htdocs/contrat/fiche.php
  *       \ingroup    contrat
  *       \brief      Page of a contract
- *       \version    $Id: fiche.php,v 1.199 2011/08/04 21:46:51 eldy Exp $
+ *       \version    $Id: fiche.php,v 1.201 2011/08/23 18:40:48 hregis Exp $
  */
 
 require ("../main.inc.php");
@@ -550,12 +550,13 @@ if ($action == 'create')
     	print '</textarea></td></tr>';
     }
 
-    print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
-
     print "</table>\n";
+
+    print '<br><center><input type="submit" class="button" value="'.$langs->trans("Create").'"></center>';
+
     print "</form>\n";
 
-    print '</div>';
+    dol_fiche_end();
 }
 else
 /* *************************************************************************** */
@@ -680,10 +681,10 @@ else
             print '<table width="100%" class="nobordernopadding"><tr><td>';
             print $langs->trans("Project");
             print '</td>';
-            if ($action != "classer" && $user->rights->projet->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classer&amp;id='.$id.'">'.img_edit($langs->trans("SetProject")).'</a></td>';
+            if ($action != "classify" && $user->rights->projet->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classify&amp;id='.$id.'">'.img_edit($langs->trans("SetProject")).'</a></td>';
             print '</tr></table>';
             print '</td><td colspan="3">';
-            if ($action == "classer")
+            if ($action == "classify")
             {
                 $form->form_project("fiche.php?id=$id",$object->socid,$object->fk_project,"projectid");
             }
@@ -1286,5 +1287,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/04 21:46:51 $ - $Revision: 1.199 $');
+llxFooter('$Date: 2011/08/23 18:40:48 $ - $Revision: 1.201 $');
 ?>

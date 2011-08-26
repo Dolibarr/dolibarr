@@ -60,12 +60,11 @@
  *	\author	    Laurent Passebecq
  *	\author	    Rodolphe Quiedville
  *	\author	    Jean Louis Bergamo.
- *	\version    $Id: pdf_standardlabel.class.php,v 1.13 2011/07/31 23:28:14 eldy Exp $
+ *	\version    $Id: pdf_standardlabel.class.php,v 1.15 2011/08/11 12:14:01 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/lib/format_cards.lib.php');
-require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 
 
 /**
@@ -354,7 +353,7 @@ class pdf_standardlabel {
 
         if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!class_exists('TCPDF')) $outputlangs->charset_output='ISO-8859-1';
+		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
         $outputlangs->load("main");
         $outputlangs->load("dict");

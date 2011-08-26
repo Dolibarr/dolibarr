@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 /**
  *	\file       htdocs/user/home.php
  *	\brief      Home page of users and groups management
- *	\version    $Id: home.php,v 1.48 2011/07/31 23:19:42 eldy Exp $
+ *	\version    $Id: home.php,v 1.52 2011/08/21 10:01:37 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -100,7 +100,14 @@ $sql = "SELECT u.rowid, u.name, u.firstname, u.admin, u.login, u.fk_societe, u.d
 $sql.= " s.nom, s.canvas";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_societe = s.rowid";
-$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && ! $user->entity)))
+{
+	$sql.= " WHERE u.entity IS NOT NULL";
+}
+else
+{
+	$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+}
 if (!empty($socid)) $sql.= " AND u.fk_societe = ".$socid;
 $sql.= $db->order("u.datec","DESC");
 $sql.= $db->plimit($max);
@@ -123,7 +130,7 @@ if ($resql)
 		print '<td><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->firstname.' '.$obj->name.'</a>';
 		if ($conf->global->MAIN_MODULE_MULTICOMPANY && $obj->admin && ! $obj->entity)
 		{
-			print img_redstar($langs->trans("SuperAdministrator"));
+			print img_picto($langs->trans("SuperAdministrator"),'redstar');
 		}
 		else if ($obj->admin)
 		{
@@ -139,11 +146,27 @@ if ($resql)
             $companystatic->canvas=$obj->canvas;
             print $companystatic->getNomUrl(1);
 		}
+		else if (! empty($conf->multicompany->enabled))
+        {
+        	if ($obj->admin && ! $obj->entity)
+        	{
+        		print $langs->trans("AllEntities");
+        	}
+        	else
+        	{
+        		$mc = new ActionsMulticompany($db);
+        		$mc->getInfo($obj->entity);
+        		print $mc->label;
+        	}
+        }
 		else if ($obj->ldap_sid)
 		{
 			print $langs->trans("DomainUser");
 		}
-		else print $langs->trans("InternalUser");
+		else
+		{
+			print $langs->trans("InternalUser");
+		}
 		print '</td>';
 		print '<td align="right">'.dol_print_date($db->jdate($obj->datec),'dayhour').'</td>';
         print '<td align="right">';
@@ -174,16 +197,25 @@ if ($canreadperms)
 
 	$sql = "SELECT g.rowid, g.nom, g.note, g.entity, g.datec";
 	$sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g";
-	$sql.= " WHERE g.entity IN (0,".$conf->entity.")";
+	if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && ! $user->entity)))
+	{
+		$sql.= " WHERE g.entity IS NOT NULL";
+	}
+	else
+	{
+		$sql.= " WHERE g.entity IN (0,".$conf->entity.")";
+	}
 	$sql.= $db->order("g.datec","DESC");
 	$sql.= $db->plimit($max);
 
 	$resql=$db->query($sql);
 	if ($resql)
 	{
+		$colspan=2;
+		if (! empty($conf->multicompany->enabled)) $colspan++;
 		$num = $db->num_rows($resql);
 		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastGroupsCreated",($num ? $num : $max)).'</td></tr>';
+		print '<tr class="liste_titre"><td colspan="'.$colspan.'">'.$langs->trans("LastGroupsCreated",($num ? $num : $max)).'</td></tr>';
 		$var = true;
 		$i = 0;
 
@@ -194,11 +226,19 @@ if ($canreadperms)
 
 			print "<tr $bc[$var]>";
 			print '<td><a href="'.DOL_URL_ROOT.'/user/group/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$obj->nom.'</a>';
-			if (!$obj->entity)
+			if (! $obj->entity)
 			{
 				print img_picto($langs->trans("GlobalGroup"),'redstar');
 			}
 			print "</td>";
+			if (! empty($conf->multicompany->enabled))
+	        {
+	        	$mc = new ActionsMulticompany($db);
+	        	$mc->getInfo($obj->entity);
+	        	print '<td>';
+	        	print $mc->label;
+	        	print '</td>';
+	        }
 			print '<td nowrap="nowrap" align="right">'.dol_print_date($db->jdate($obj->datec),'dayhour').'</td>';
 			print "</tr>";
 			$i++;
@@ -219,5 +259,5 @@ print '</table>';
 $db->close();
 
 
-llxFooter('$Date: 2011/07/31 23:19:42 $ - $Revision: 1.48 $');
+llxFooter('$Date: 2011/08/21 10:01:37 $ - $Revision: 1.52 $');
 ?>

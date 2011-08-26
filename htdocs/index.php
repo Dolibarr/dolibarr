@@ -20,7 +20,7 @@
 /**
  *	\file       htdocs/index.php
  *	\brief      Dolibarr home page
- *	\version    $Id: index.php,v 1.201 2011/08/04 12:07:30 eldy Exp $
+ *	\version    $Id: index.php,v 1.205 2011/08/21 13:13:21 eldy Exp $
  */
 
 define('NOCSRFCHECK',1);	// This is login page. We must be able to go on it from another web site.
@@ -51,7 +51,7 @@ if (!isset($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_IN
  * View
  */
 
-// If smartphone mode, we do no show main page, we show only menu
+// If smartphone mode, we do not show main page, we show only menu
 if (preg_match('/^smartphone/',$conf->smart_menu) && isset($conf->browser->phone))
 {
     $limitmenuto=GETPOST('limitmenuto')?GETPOST('limitmenuto'):0;
@@ -89,23 +89,13 @@ if (! empty($conf->global->MAIN_MOTD))
     }
 }
 
-print '<table width="100%" class="notopnoleftnoright">';
 
-print '<tr><td valign="top" class="notopnoleft">';
+print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
 /*
  * Informations area
  */
-
-if (file_exists(DOL_DOCUMENT_ROOT.'/logo.png'))
-{
-    print '<table class="noborder" width="100%">';
-    print '<tr><td colspan="3" style="text-align:center;">';
-    print '<img src="/logo.png"></td></tr>';
-    print "</table><br>\n";
-}
-
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Informations").'</td></tr>';
@@ -207,8 +197,8 @@ if ($user->societe_id == 0)
                   "BillsCustomers",
                   "Contracts");
     // Dashboard Link lines
-    $links=array(DOL_URL_ROOT.'/comm/clients.php',
-    DOL_URL_ROOT.'/comm/prospect/prospects.php',
+    $links=array(DOL_URL_ROOT.'/comm/list.php',
+    DOL_URL_ROOT.'/comm/prospect/list.php',
     DOL_URL_ROOT.'/fourn/liste.php',
     DOL_URL_ROOT.'/adherents/liste.php?statut=1&amp;mainmenu=members',
     DOL_URL_ROOT.'/product/liste.php?type=0&amp;mainmenu=products',
@@ -263,7 +253,8 @@ if ($user->societe_id == 0)
     print '</table>';
 }
 
-print '</td><td width="65%" valign="top" class="notopnoleftnoright">';
+
+print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 /*
@@ -523,9 +514,8 @@ foreach($dashboardlines as $key => $board)
 print '</table>';   // End table array
 
 
-print '</td></tr></table>';      // End table left area
+print '</div></div></div><div class="fichecenter"><br>';
 
-print '<br>';
 
 
 /*
@@ -535,6 +525,7 @@ print '<br>';
 printBoxesArea($user,"0");
 
 
+print '</div>';
 
 /*
  * Show security warnings
@@ -574,7 +565,7 @@ if ($user->admin && empty($conf->global->MAIN_REMOVE_INSTALL_WARNING))
 
 $db->close();
 
-llxFooter('$Date: 2011/08/04 12:07:30 $ - $Revision: 1.201 $');
+llxFooter('$Date: 2011/08/21 13:13:21 $ - $Revision: 1.205 $');
 
 
 /**

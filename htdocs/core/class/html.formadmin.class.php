@@ -21,7 +21,7 @@
  *      \file       htdocs/core/class/html.formadmin.class.php
  *      \ingroup    core
  *      \brief      File of class for html functions for admin pages
- *		\version	$Id: html.formadmin.class.php,v 1.23 2011/07/31 23:45:14 eldy Exp $
+ *		\version	$Id: html.formadmin.class.php,v 1.24 2011/08/11 01:34:54 eldy Exp $
  */
 
 
@@ -77,7 +77,7 @@ class FormAdmin
 
 		$out='';
 
-		$out.= '<select class="flat" name="'.$htmlname.'">';
+		$out.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
 		if ($showempty)
 		{
 			$out.= '<option value=""';
@@ -249,7 +249,7 @@ class FormAdmin
 		ksort($menuarray);
 
 		// Affichage liste deroulante des menus
-        print '<select class="flat" name="'.$htmlname.'">';
+        print '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
         $oldprefix='';
 		foreach ($menuarray as $key => $val)
 		{
@@ -280,7 +280,7 @@ class FormAdmin
     {
 		global $langs,$conf;
 
-        print '<select class="flat" name="'.$htmlname.'">';
+        print '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
 		print '<option value="-1">&nbsp;</option>';
 
 		$arraytz=array(
@@ -319,5 +319,59 @@ class FormAdmin
 		print '</select>';
 	}
 
+
+
+	/**
+	 *    	Return html select list with available languages (key='en_US', value='United States' for example)
+	 *    	@param      selected        Langue pre-selectionnee
+	 *    	@param      htmlname        Nom de la zone select
+	 * 		@param		filter			Key to filter
+	 * 		@param		showempty		Add empty value
+	 */
+	function select_paper_format($selected='',$htmlname='paperformat_id',$filter=0,$showempty=0)
+	{
+		global $langs;
+
+		$sql="SELECT code, label, width, height, unit FROM ".MAIN_DB_PREFIX."c_paper_format where active=1";
+        if ($filter) $sql.=" WHERE code LIKE '%".$filter."%'";
+
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $num=$this->db->num_rows($resql);
+            $i=0;
+            while ($i < $num)
+            {
+                $obj=$this->db->fetch_object($resql);
+                $paperformat[$obj->code]=$obj->label.' - '.round($obj->width).'x'.round($obj->height).' '.$obj->unit;
+
+                $i++;
+            }
+        }
+        else dol_print_error($this->db);
+		$out='';
+
+		$out.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
+		if ($showempty)
+		{
+			$out.= '<option value=""';
+			if ($selected == '') $out.= ' selected="selected"';
+			$out.= '>&nbsp;</option>';
+		}
+		foreach ($paperformat as $key => $value)
+		{
+            if ($selected == $key)
+			{
+				$out.= '<option value="'.$key.'" selected="selected">'.$value.'</option>';
+			}
+			else
+			{
+				$out.= '<option value="'.$key.'">'.$value.'</option>';
+			}
+		}
+		$out.= '</select>';
+
+		return $out;
+	}
 }
 ?>

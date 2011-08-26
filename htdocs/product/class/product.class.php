@@ -24,7 +24,7 @@
  *	\file       htdocs/product/class/product.class.php
  *	\ingroup    produit
  *	\brief      Fichier de la classe des produits predefinis
- *	\version    $Id: product.class.php,v 1.49 2011/08/04 21:46:51 eldy Exp $
+ *	\version    $Id: product.class.php,v 1.51 2011/08/18 16:16:04 simnandez Exp $
  */
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
 
@@ -2080,6 +2080,40 @@ class Product extends CommonObject
 		}
 		return $this->res;
 	}
+	
+	
+	/**
+	 *  Return all Father products fo current product
+	 *  @return 	array prod
+	 */
+	function getFather()
+	{
+
+		$sql = "SELECT p.label as label,p.rowid,pa.fk_product_pere as id,p.fk_product_type";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product_association as pa,";
+		$sql.= " ".MAIN_DB_PREFIX."product as p";
+		$sql.= " WHERE p.rowid = pa.fk_product_pere";
+		$sql.= " AND pa.fk_product_fils=".$this->id;
+
+		$res = $this->db->query($sql);
+		if ($res)
+		{
+			$prods = array ();
+			while ($record = $this->db->fetch_array ($res))
+			{
+				$prods[$record['id']]['id'] =  $record['rowid'];
+				$prods[$record['id']]['label'] =  $this->db->escape($record['label']);
+				$prods[$record['id']]['fk_product_type'] =  $record['fk_product_type'];
+			}
+			return $prods;
+		}
+		else
+		{
+			dol_print_error ($this->db);
+			return -1;
+		}
+	}
+	
 
 	/**
 	 *  Return all parent products fo current product
@@ -2580,7 +2614,7 @@ class Product extends CommonObject
     							// On propose la generation de la vignette si elle n'existe pas et si la taille est superieure aux limites
     							if ($photo_vignette && preg_match('/(\.bmp|\.gif|\.jpg|\.jpeg|\.png)$/i',$photo) && ($product->imgWidth > $maxWidth || $product->imgHeight > $maxHeight))
     							{
-    								$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=addthumb&amp;file='.urlencode($pdir.$viewfilename).'">'.img_refresh($langs->trans('GenerateThumb')).'&nbsp;&nbsp;</a>';
+    								$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=addthumb&amp;file='.urlencode($pdir.$viewfilename).'">'.img_picto($langs->trans('GenerateThumb'),'refresh').'&nbsp;&nbsp;</a>';
     							}
     							if ($user->rights->produit->creer || $user->rights->service->creer)
     							{

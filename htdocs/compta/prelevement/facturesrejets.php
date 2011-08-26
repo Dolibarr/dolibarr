@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: facturesrejets.php,v 1.13 2011/07/31 22:23:29 eldy Exp $
+ * $Id: facturesrejets.php,v 1.14 2011/08/17 15:56:27 eldy Exp $
  *
  */
 
@@ -124,7 +124,7 @@ if ($result)
       print "<td>";
 
       print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">';
-      print img_file();
+      print img_picto('','file');
       print '</a>&nbsp;';
 
       print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">'.$obj->facnumber."</a></td>\n";
@@ -155,5 +155,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:29 $ - $Revision: 1.13 $');
+llxFooter('$Date: 2011/08/17 15:56:27 $ - $Revision: 1.14 $');
 ?>

@@ -25,17 +25,18 @@
  *  \file       htdocs/product/fiche.php
  *  \ingroup    product
  *  \brief      Page to show product
- *  \version    $Id: fiche.php,v 1.376 2011/08/05 12:59:17 simnandez Exp $
+ *  \version    $Id: fiche.php,v 1.378 2011/08/22 22:04:25 eldy Exp $
  */
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/canvas.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
-if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
-if ($conf->facture->enabled) require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
+if ($conf->propal->enabled)   require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
+if ($conf->facture->enabled)  require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
 
 $langs->load("products");
@@ -43,25 +44,34 @@ $langs->load("other");
 if ($conf->stock->enabled) $langs->load("stocks");
 if ($conf->facture->enabled) $langs->load("bills");
 
+$mesg = ''; $error=0; $errors=array();
+
 $id=GETPOST('id');
 $ref=GETPOST('ref');
 $action=GETPOST('action');
 $confirm=GETPOST('confirm');
+$socid=GETPOST("socid");
+if ($user->societe_id) $socid=$user->societe_id;
+
+$object = new Product($db);
+$extrafields = new ExtraFields($db);
+
+// Get object canvas (By default, this is not defined, so standard usage of dolibarr)
+if ($id) $object->getCanvas($id);
+$canvas = $object->canvas?$object->canvas:GETPOST("canvas");
+if (! empty($canvas))
+{
+    require_once(DOL_DOCUMENT_ROOT."/core/class/canvas.class.php");
+    $objcanvas = new Canvas($db,$action);
+    $objcanvas->getCanvas('product','card',$canvas);
+}
 
 // Security check
 if (isset($id) || isset($ref)) $value = isset($id)?$id:(isset($ref)?$ref:'');
 $type = isset($ref)?'ref':'rowid';
-$socid=$user->societe_id?$user->societe_id:0;
 $result=restrictedArea($user,'produit|service',$value,'product','','',$type);
 
-// For canvas usage
-if (empty($_GET["canvas"]))
-{
-	$_GET["canvas"] = 'default@product';
-	if ($_GET["type"] == 1) $_GET["canvas"] = 'service@product';
-}
 
-$mesg = '';
 
 
 /*
@@ -71,7 +81,7 @@ $mesg = '';
 if ($action == 'setproductaccountancycodebuy')
 {
 	$product = new Product($db);
-	$result=$product->fetch($_POST['id']);
+	$result=$product->fetch($id);
 	$product->accountancy_code_buy=$_POST["productaccountancycodebuy"];
 	$result=$product->update($product->id,$user,1,0,1);
 	if ($result < 0)
@@ -659,7 +669,7 @@ if ($action == 'create' && ($user->rights->produit->creer || $user->rights->serv
 		else $title=$langs->trans("NewProduct");
 		print_fiche_titre($title);
 
-		if ($mesg) print $mesg."\n";
+		dol_htmloutput_mesg($mesg);
 
 		print '<table class="border" width="100%">';
 		print '<tr>';
@@ -856,9 +866,7 @@ if ($id || $ref)
 			if ($product->isservice()) $type = $langs->trans('Service');
 			print_fiche_titre($langs->trans('Modify').' '.$type.' : '.$product->ref, "");
 
-			if ($mesg) {
-				print '<br><div class="error">'.$mesg.'</div><br>';
-			}
+			dol_htmloutput_errors($mesg);
 
 			// Main official, simple, and not duplicated code
 			print '<form action="fiche.php" method="POST">'."\n";
@@ -1645,6 +1653,6 @@ if ($product->id && $action == '' && $product->status)
 
 $db->close();
 
-llxFooter('$Date: 2011/08/05 12:59:17 $ - $Revision: 1.376 $');
+llxFooter('$Date: 2011/08/22 22:04:25 $ - $Revision: 1.378 $');
 
 ?>

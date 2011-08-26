@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: freeproductline_create.tpl.php,v 1.16 2011/08/04 21:46:50 eldy Exp $
+ * $Id: freeproductline_create.tpl.php,v 1.18 2011/08/10 22:47:33 eldy Exp $
  *
  * Need to have following variables defined:
  * $conf
@@ -47,17 +47,10 @@
 	echo $html->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1);
 	if (($conf->product->enabled && $conf->service->enabled) || (empty($conf->product->enabled) && empty($conf->service->enabled))) echo '<br>';
 
-	if (! empty($this->hooks)) {
-		foreach($this->hooks as $hook) {
-			if (! empty($hook['modules'])) {
-				foreach($hook['modules'] as $module) {
-					if (method_exists($module,'formCreateProductOptions')) {
-						$module->formCreateProductOptions($object);
-						echo '<br>';
-					}
-				}
-			}
-		}
+	if (is_object($hookmanager))
+	{
+	    $parameters=array();
+	    $hookmanager->executeHooks('formCreateProductOptions',$parameters,$object,$action);
 	}
 
 	// Editor wysiwyg

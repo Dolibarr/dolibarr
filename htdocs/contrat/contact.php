@@ -20,7 +20,7 @@
         \file       htdocs/contrat/contact.php
         \ingroup    contrat
         \brief      Onglet de gestion des contacts des contrats
-        \version    $Id: contact.php,v 1.46 2011/07/31 23:46:55 eldy Exp $
+        \version    $Id: contact.php,v 1.48 2011/08/14 03:13:50 eldy Exp $
 */
 
 require ("../main.inc.php");
@@ -73,54 +73,14 @@ if ($_POST["action"] == 'addcontact' && $user->rights->contrat->creer)
 		}
 	}
 }
-// modification d'un contact. On enregistre le type
-if ($_POST["action"] == 'updateligne' && $user->rights->contrat->creer)
-{
-	$contrat = new Contrat($db);
-	if ($contrat->fetch($_GET["id"]))
-	{
-		$contact = $contrat->detail_contact($_POST["elrowid"]);
-		$type = $_POST["type"];
-		$statut = $contact->statut;
-
-		$result = $contrat->update_contact($_POST["elrowid"], $statut, $type);
-		if ($result >= 0)
-		{
-			$db->commit();
-		} else
-		{
-			dol_print_error($db, "result=$result");
-			$db->rollback();
-		}
-	} else
-	{
-		dol_print_error($db);
-	}
-}
 
 // bascule du statut d'un contact
 if ($_GET["action"] == 'swapstatut' && $user->rights->contrat->creer)
 {
 	$contrat = new Contrat($db);
-	if ($contrat->fetch($_GET["id"]))
+	if ($contrat->fetch(GETPOST("id")))
 	{
-		$db->begin();
-
-		$contact = $contrat->detail_contact($_GET["ligne"]);
-		$id_type_contact = $contact->fk_c_type_contact;
-
-		$statut = ($contact->statut == 4) ? 5 : 4;
-
-		$result = $contrat->update_contact($_GET["ligne"], $statut, $id_type_contact);
-		if ($result >= 0)
-		{
-			$db->commit();
-		}
-		else
-		{
-			dol_print_error($db, "result=$result");
-			$db->rollback();
-		}
+	    $result=$contrat->swapContactStatus(GETPOST('ligne'));
 	}
 	else
 	{
@@ -154,6 +114,7 @@ $formcompany= new FormCompany($db);
 $contactstatic=new Contact($db);
 $userstatic=new User($db);
 
+dol_htmloutput_mesg($mesg);
 
 /* *************************************************************************** */
 /*                                                                             */
@@ -400,5 +361,5 @@ if ($id > 0)
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:46:55 $');
+llxFooter('$Date: 2011/08/14 03:13:50 $');
 ?>

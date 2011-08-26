@@ -10,7 +10,7 @@ Name: dolibarr
 Version: __VERSION__
 Release: __RELEASE__
 Summary: ERP and CRM software for small and medium companies or foundations 
-Summary(es): Software ERP y CRM para pequeñas y medianas empresas o, asociaciones o autónomos
+Summary(es): Software ERP y CRM para pequeñas y medianas empresas, asociaciones o autónomos
 Summary(fr): Logiciel ERP & CRM de gestion de PME/PMI, autoentrepreneurs ou associations
 Summary(it): Programmo gestionale per piccole imprese, fondazioni e liberi professionisti
 
@@ -24,17 +24,9 @@ BuildArch: noarch
 #BuildArchitectures: noarch
 BuildRoot: %{_tmppath}/%{name}-%{version}-build
 
-# For Mandriva-Mageia
-Group: Networking/WWW
-# For all other distrib
-Group: Applications/Internet
-# Requires for Fedora-Redhat
+Group: Applications/Productivity
 Requires: mysql-server mysql httpd php php-cli php-gd php-ldap php-imap 
 Requires: php-mysql >= 4.1.0 
-# Requires for OpenSuse
-#Requires: mysql-community-server mysql-community-server-client apache2 apache2-mod_php5 php5 php5-gd php5-ldap php5-imap php5-mysql php5-openssl 
-# Requires for Mandriva-Mageia
-#Requires: mysql mysql-client apache-base apache-mod_php php-cgi php-cli php-bz2 php-gd php-ldap php-imap php-mysqli php-openssl 
 
 # Set yes to build test package, no for release (this disable need of /usr/bin/php not found by OpenSuse)
 AutoReqProv: no
@@ -90,26 +82,28 @@ cui hai bisogno ed essere facile da usare.
 %{__rm} -rf $RPM_BUILD_ROOT
 
 %{__mkdir} -p $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr
-%{__install} -m 644 etc/dolibarr/conf.php $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr/conf.php
-%{__install} -m 644 etc/dolibarr/install.forced.php $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr/install.forced.php
-%{__install} -m 644 etc/dolibarr/apache.conf $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr/apache.conf
-%{__install} -m 644 etc/dolibarr/file_contexts.dolibarr $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr/file_contexts.dolibarr
+%{__install} -m 644 build/rpm/conf.php $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr/conf.php
+%{__install} -m 644 build/rpm/httpd-dolibarr.conf $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr/apache.conf
+%{__install} -m 644 build/rpm/file_contexts.dolibarr $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr/file_contexts.dolibarr
+%{__install} -m 644 build/rpm/install.forced.php.fedora $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr/install.forced.php
 
 %{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/pixmaps
-%{__install} -m 644 usr/share/dolibarr/doc/images/dolibarr_48x48.png $RPM_BUILD_ROOT%{_datadir}/pixmaps/dolibarr.png
+%{__install} -m 644 doc/images/dolibarr_48x48.png $RPM_BUILD_ROOT%{_datadir}/pixmaps/dolibarr.png
 %{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/applications
-%{__install} -m 644 usr/share/dolibarr/build/rpm/dolibarr.desktop $RPM_BUILD_ROOT%{_datadir}/applications/dolibarr.desktop
+#desktop-file-install -m 644 build/rpm/dolibarr.desktop $RPM_BUILD_ROOT%{_datadir}/applications/dolibarr.desktop
+%{__install} -m 644 build/rpm/dolibarr.desktop $RPM_BUILD_ROOT%{_datadir}/applications/dolibarr.desktop
 
-%{__mkdir} -p $RPM_BUILD_ROOT/usr/share/dolibarr/build
+%{__mkdir} -p $RPM_BUILD_ROOT/usr/share/dolibarr/build/rpm
+%{__mkdir} -p $RPM_BUILD_ROOT/usr/share/dolibarr/build/tgz
 %{__mkdir} -p $RPM_BUILD_ROOT/usr/share/dolibarr/htdocs
 %{__mkdir} -p $RPM_BUILD_ROOT/usr/share/dolibarr/scripts
 %{__mkdir} -p $RPM_BUILD_ROOT/usr/share/doc/dolibarr
-%{__cp} -pr usr/share/dolibarr/build   $RPM_BUILD_ROOT/usr/share/dolibarr
-%{__cp} -pr usr/share/dolibarr/htdocs  $RPM_BUILD_ROOT/usr/share/dolibarr
-%{__cp} -pr usr/share/dolibarr/scripts $RPM_BUILD_ROOT/usr/share/dolibarr
-%{__cp} -pr usr/share/dolibarr/doc/*   $RPM_BUILD_ROOT/usr/share/doc/dolibarr
-%{__install} -m 644 usr/share/dolibarr/COPYRIGHT $RPM_BUILD_ROOT/usr/share/doc/dolibarr/COPYRIGHT
-
+%{__cp} -pr build/rpm/*     $RPM_BUILD_ROOT/usr/share/dolibarr/build/rpm
+%{__cp} -pr build/tgz/*     $RPM_BUILD_ROOT/usr/share/dolibarr/build/tgz
+%{__cp} -pr htdocs  $RPM_BUILD_ROOT/usr/share/dolibarr
+%{__cp} -pr scripts $RPM_BUILD_ROOT/usr/share/dolibarr
+%{__cp} -pr doc/*   $RPM_BUILD_ROOT/usr/share/doc/dolibarr
+%{__install} -m 644 COPYRIGHT $RPM_BUILD_ROOT/usr/share/doc/dolibarr/COPYRIGHT
 
 
 #---- clean
@@ -121,18 +115,29 @@ cui hai bisogno ed essere facile da usare.
 #---- files
 %files
 
+%defattr(0755, root, root, 0755)
+%dir %_datadir/dolibarr/scripts
+%_datadir/dolibarr/scripts/*
+
 %defattr(-, root, root, 0755)
 %doc %_datadir/doc/dolibarr
-%dir %_datadir/dolibarr/build
+%dir %_datadir/dolibarr/build/rpm
+%dir %_datadir/dolibarr/build/tgz
 %dir %_datadir/dolibarr/htdocs
-%dir %_datadir/dolibarr/scripts
 %_datadir/pixmaps/dolibarr.png
 %_datadir/applications/dolibarr.desktop
-%_datadir/dolibarr/build/*
+%_datadir/dolibarr/build/rpm/*
+%_datadir/dolibarr/build/tgz/*
 %_datadir/dolibarr/htdocs/*
-%_datadir/dolibarr/scripts/*
+
+%defattr(0664, -, -)
+%config(noreplace) %{_sysconfdir}/dolibarr/conf.php
+%config(noreplace) %{_sysconfdir}/dolibarr/apache.conf
+%config(noreplace) %{_sysconfdir}/dolibarr/install.forced.php
+%config(noreplace) %{_sysconfdir}/dolibarr/file_contexts.dolibarr
+
 #lang(ar_SA) %_datadir/dolibarr/htdocs/langs/ar_SA
-#lang(ca_ES) %_datadir/dolibarr/htdocs/langs/ca_ES
+#lang(ca_ES) %_datadir/dolibarr/htdocs/langs/ca_ES/*.lang
 #lang(da_DK) %_datadir/dolibarr/htdocs/langs/da_DK
 #lang(de_AT) %_datadir/dolibarr/htdocs/langs/de_AT
 #lang(de_DE) %_datadir/dolibarr/htdocs/langs/de_DE
@@ -141,24 +146,18 @@ cui hai bisogno ed essere facile da usare.
 #lang(en_GB) %_datadir/dolibarr/htdocs/langs/el_GB
 #lang(en_IN) %_datadir/dolibarr/htdocs/langs/el_IN
 #lang(en_NZ) %_datadir/dolibarr/htdocs/langs/el_NZ
-#lang(en) %_datadir/dolibarr/htdocs/langs/en_US
+#lang(en)    %_datadir/dolibarr/htdocs/langs/en_US
 #lang(es_AR) %_datadir/dolibarr/htdocs/langs/es_AR
-#lang(es) %_datadir/dolibarr/htdocs/langs/es_ES
+#lang(es)    %_datadir/dolibarr/htdocs/langs/es_ES
 #lang(es_HN) %_datadir/dolibarr/htdocs/langs/es_HN
 #lang(es_MX) %_datadir/dolibarr/htdocs/langs/en_MX
 #lang(es_PR) %_datadir/dolibarr/htdocs/langs/en_PR
 #lang(fa_IR) %_datadir/dolibarr/htdocs/langs/fa_IR
-#lang(fi_FI) %_datadir/dolibarr/htdocs/langs/fi_FI
+#lang(fi)    %_datadir/dolibarr/htdocs/langs/fi_FI
 #lang(fr_BE) %_datadir/dolibarr/htdocs/langs/fr_BE
 #lang(fr_CA) %_datadir/dolibarr/htdocs/langs/fr_CA
 #lang(fr_CH) %_datadir/dolibarr/htdocs/langs/fr_CH
-#lang(fr) %_datadir/dolibarr/htdocs/langs/fr_FR
-
-%defattr(0664, -, -)
-%config(noreplace) %{_sysconfdir}/dolibarr/conf.php
-%config(noreplace) %{_sysconfdir}/dolibarr/apache.conf
-%config(noreplace) %{_sysconfdir}/dolibarr/install.forced.php
-%config(noreplace) %{_sysconfdir}/dolibarr/file_contexts.dolibarr
+#lang(fr)    %_datadir/dolibarr/htdocs/langs/fr_FR
 
 
 
@@ -215,7 +214,7 @@ then
 	    superuserpassword=$(/bin/grep --max-count=1 "password" %{_sysconfdir}/mysql/debian.cnf | /bin/sed -e 's/^password[ =]*//g')
 	fi
 	echo Mysql superuser found to use is $superuserlogin
-	%{__cat} /usr/share/dolibarr/build/rpm/install.forced.php.install | sed -e 's/__SUPERUSERLOGIN__/'$superuserlogin'/g' | sed -e 's/__SUPERUSERPASSWORD__/'$superuserpassword'/g' > $installconfig
+	%{__cat} /usr/share/dolibarr/build/rpm/install.forced.php.generic | sed -e 's/__SUPERUSERLOGIN__/'$superuserlogin'/g' | sed -e 's/__SUPERUSERPASSWORD__/'$superuserpassword'/g' > $installconfig
 	%{__chmod} -R 660 $installconfig
 fi
 
@@ -295,7 +294,7 @@ fi
 # Remove apache link
 if [ -L $apachelink ] ;
 then
-    echo Delete apache config link for Dolibarr
+    echo "Delete apache config link for Dolibarr ($apachelink)"
     %{__rm} -f $apachelink
     status=purge
 fi

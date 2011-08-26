@@ -21,7 +21,7 @@
  *	\file       htdocs/societe/societe.php
  *	\ingroup    societe
  *	\brief      Page to show a third party
- *	\version    $Id: societe.php,v 1.12 2011/07/31 23:22:56 eldy Exp $
+ *	\version    $Id: societe.php,v 1.13 2011/08/23 23:50:15 eldy Exp $
  */
 
 require_once("../main.inc.php");
@@ -158,8 +158,6 @@ if ($socname)
 	$search_nom=$socname;
 }
 
-// Affiche la confirmation de suppression d'un tiers
-if ($_GET['delsoc']) print '<div class="warning">'.$langs->trans("CompanyDeleted",$_GET['delsoc']).'</div><br>';
 
 /*
  * Mode Liste
@@ -280,6 +278,12 @@ if ($resql)
 	$params.= '&amp;search_idprof4='.$search_idprof4;
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"],$params,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
+
+    // Show delete result message
+    if (GETPOST('delsoc'))
+    {
+        dol_htmloutput_mesg($langs->trans("CompanyDeleted",GETPOST('delsoc')),'','ok');
+    }
 
 	$langs->load("other");
 	$textprofid=array();
@@ -429,5 +433,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:22:56 $ - $Revision: 1.12 $');
+llxFooter('$Date: 2011/08/23 23:50:15 $ - $Revision: 1.13 $');
 ?>

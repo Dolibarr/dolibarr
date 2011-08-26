@@ -20,7 +20,7 @@
 /**
  *       \file       htdocs/admin/ihm.php
  *       \brief      Page to setup GUI display options
- *       \version    $Id: ihm.php,v 1.130 2011/07/31 22:23:24 eldy Exp $
+ *       \version    $Id: ihm.php,v 1.132 2011/08/18 23:17:23 cdelambert Exp $
  */
 
 require("../main.inc.php");
@@ -61,14 +61,15 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 	dolibarr_set_const($db, "MAIN_MULTILANGS",         $_POST["main_multilangs"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_SIZE_LISTE_LIMIT",   $_POST["main_size_liste_limit"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT", $_POST["main_disable_javascript"],'chaine',0,'',$conf->entity);
-	//dolibarr_set_const($db, "MAIN_CONFIRM_AJAX",       $_POST["MAIN_CONFIRM_AJAX"],'chaine',0,'',$conf->entity);
-	//dolibarr_set_const($db, "MAIN_POPUP_CALENDAR",     $_POST["MAIN_POPUP_CALENDAR"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_USE_PREVIEW_TABS",   $_POST["main_use_preview_tabs"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_START_WEEK",         $_POST["MAIN_START_WEEK"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_SHOW_LOGO",          $_POST["MAIN_SHOW_LOGO"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_FIRSTNAME_NAME_POSITION",          $_POST["MAIN_FIRSTNAME_NAME_POSITION"],'chaine',0,'',$conf->entity);
 
 	dolibarr_set_const($db, "MAIN_THEME",              $_POST["main_theme"],'chaine',0,'',$conf->entity);
+	if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/init_ihm.php')){
+		include_once (DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/init_ihm.php');
+	}
 
 	dolibarr_set_const($db, "MAIN_SEARCHFORM_CONTACT", $_POST["MAIN_SEARCHFORM_CONTACT"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_SEARCHFORM_SOCIETE", $_POST["MAIN_SEARCHFORM_SOCIETE"],'chaine',0,'',$conf->entity);
@@ -80,11 +81,6 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 	dolibarr_set_const($db, "MAIN_HOME",                   dol_htmlcleanlastbr($_POST["main_home"]),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_HELP_DISABLELINK",       $_POST["MAIN_HELP_DISABLELINK"],'chaine',0,'',0);	    // Param for all entities
 	dolibarr_set_const($db, "MAIN_BUGTRACK_ENABLELINK",    $_POST["MAIN_BUGTRACK_ENABLELINK"],'chaine',0,'',$conf->entity);
-
-	dolibarr_set_const($db, "MAIN_PROFID1_IN_ADDRESS",    $_POST["MAIN_PROFID1_IN_ADDRESS"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_PROFID2_IN_ADDRESS",    $_POST["MAIN_PROFID2_IN_ADDRESS"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_PROFID3_IN_ADDRESS",    $_POST["MAIN_PROFID3_IN_ADDRESS"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_PROFID4_IN_ADDRESS",    $_POST["MAIN_PROFID4_IN_ADDRESS"],'chaine',0,'',$conf->entity);
 
 	$_SESSION["mainmenu"]="";   // Le gestionnaire de menu a pu changer
 
@@ -191,34 +187,6 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')	// Edit
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
-    // Use Ajax popups for confirmation
-	/*$var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ConfirmAjax").'</td><td>';
-    print $html->selectyesno('MAIN_CONFIRM_AJAX',isset($conf->global->MAIN_CONFIRM_AJAX)?$conf->global->MAIN_CONFIRM_AJAX:0,1);
-    print ' ('.$langs->trans("AvailableOnlyIfJavascriptAndAjaxNotDisabled").')';
-    print '</td>';
-	print '<td width="20">';
-	//print $html->textwithpicto('',$langs->trans("FeatureDevelopment"));
-	print '&nbsp;</td>';
-	print '</tr>';
-	*/
-
-    // Desactiver le calendrier popup
-    /*$var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("UsePopupCalendar").'</td><td>';
-    $liste_popup_calendar=array(
-		'0'=>$langs->trans("No"),
-		'eldy'=>$langs->trans("Yes")
-		//'eldy'=>$langs->trans("Yes").' (style eldy)',
-		//'andre'=>$langs->trans("Yes").' (style andre)'
-		);
-    print $html->selectarray('MAIN_POPUP_CALENDAR',$liste_popup_calendar,$conf->global->MAIN_POPUP_CALENDAR);
-    print ' ('.$langs->trans("AvailableOnlyIfJavascriptNotDisabled").')';
-    print '</td>';
-	print '<td width="20">&nbsp;</td>';
-	print '</tr>';
-    */
-
     // Activate preview tab on element card
     if (class_exists("Imagick"))
 	{
@@ -290,40 +258,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')	// Edit
 	print '</tr>';
 	*/
 
-	print '</table><br>'."\n";
-
-
-    // PDF
-    print_fiche_titre($langs->trans("PDF"),'','').'<br>';
-	$var=true;
-    print '<table summary="more" class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td colspan="2">'.$langs->trans("Value").'</td></tr>';
-
-    // Show prof id 1 in address into pdf
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowProfIdInAddress").' - '.$langs->transcountry("ProfId1",$mysoc->pays_code).'</td><td>';
-	print $html->selectyesno('MAIN_PROFID1_IN_ADDRESS',isset($conf->global->MAIN_PROFID1_IN_ADDRESS)?$conf->global->MAIN_PROFID1_IN_ADDRESS:0,1);
-    print '</td></tr>';
-
-    // Show prof id 2 in address into pdf
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowProfIdInAddress").' - '.$langs->transcountry("ProfId2",$mysoc->pays_code).'</td><td>';
-	print $html->selectyesno('MAIN_PROFID2_IN_ADDRESS',isset($conf->global->MAIN_PROFID2_IN_ADDRESS)?$conf->global->MAIN_PROFID2_IN_ADDRESS:0,1);
-    print '</td></tr>';
-
-    // Show prof id 3 in address into pdf
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowProfIdInAddress").' - '.$langs->transcountry("ProfId3",$mysoc->pays_code).'</td><td>';
-	print $html->selectyesno('MAIN_PROFID3_IN_ADDRESS',isset($conf->global->MAIN_PROFID3_IN_ADDRESS)?$conf->global->MAIN_PROFID3_IN_ADDRESS:0,1);
-    print '</td></tr>';
-
-    // Show prof id 4 in address into pdf
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowProfIdInAddress").' - '.$langs->transcountry("ProfId4",$mysoc->pays_code).'</td><td>';
-	print $html->selectyesno('MAIN_PROFID4_IN_ADDRESS',isset($conf->global->MAIN_PROFID4_IN_ADDRESS)?$conf->global->MAIN_PROFID4_IN_ADDRESS:0,1);
-    print '</td></tr>';
-
-	print '</table>';
+	print '</table>'."\n";
 
 
     print '<br><center>';
@@ -403,25 +338,6 @@ else	// Show
 	print '<td width="20">&nbsp;</td>';
 	print "</tr>";
 
-    // Confirm ajax
-    /*$var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ConfirmAjax").'</td><td>';
-    if ($conf->global->MAIN_DISABLE_JAVASCRIPT) print $langs->trans("No").' ('.$langs->trans("JavascriptDisabled").')';
-    else print yn(isset($conf->global->MAIN_CONFIRM_AJAX)?$conf->global->MAIN_CONFIRM_AJAX:0)."</td>";
-	print '<td width="20">&nbsp;</td>';
-	print "</tr>";
-	*/
-
-    // Calendrier en popup
-    /*$var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("UsePopupCalendar").'</td><td>';
-    if ($conf->global->MAIN_DISABLE_JAVASCRIPT) print $langs->trans("No").' ('.$langs->trans("JavascriptDisabled").')';
-    else print ($conf->global->MAIN_POPUP_CALENDAR?$langs->trans("Yes"):$langs->trans("No"));
-    print "</td>";
-	print '<td width="20">&nbsp;</td>';
-	print "</tr>";
-	*/
-
     // Activate preview tab on element card
     if (class_exists("Imagick"))
 	{
@@ -482,40 +398,7 @@ else	// Show
 	print "</tr>";
 	*/
 
-    print '</table><br>'."\n";
-
-
-    $var=true;
-    //print_fiche_titre($langs->trans("PDF"),'','').'<br>';
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
-
-    // Show prof id 1 in address into pdf
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowProfIdInAddress").' - '.$langs->transcountry("ProfId1",$mysoc->pays_code).'</td><td>';
-    print yn($conf->global->MAIN_PROFID1_IN_ADDRESS,1);
-    print '</td></tr>';
-
-    // Show prof id 2 in address into pdf
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowProfIdInAddress").' - '.$langs->transcountry("ProfId2",$mysoc->pays_code).'</td><td>';
-    print yn($conf->global->MAIN_PROFID2_IN_ADDRESS,1);
-    print '</td></tr>';
-
-    // Show prof id 3 in address into pdf
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowProfIdInAddress").' - '.$langs->transcountry("ProfId3",$mysoc->pays_code).'</td><td>';
-    print yn($conf->global->MAIN_PROFID3_IN_ADDRESS,1);
-    print '</td></tr>';
-
-    // Show prof id 4 in address into pdf
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowProfIdInAddress").' - '.$langs->transcountry("ProfId4",$mysoc->pays_code).'</td><td>';
-    print yn($conf->global->MAIN_PROFID4_IN_ADDRESS,1);
-    print '</td></tr>';
-
     print '</table>'."\n";
-
 
     print '<div class="tabsAction">';
     print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
@@ -526,5 +409,5 @@ else	// Show
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:24 $ - $Revision: 1.130 $');
+llxFooter('$Date: 2011/08/18 23:17:23 $ - $Revision: 1.132 $');
 ?>

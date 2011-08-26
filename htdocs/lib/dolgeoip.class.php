@@ -20,7 +20,7 @@
  *  \file		htdocs/lib/dolgeoip.class.php
  * 	\ingroup	geoip
  *  \brief		Library for managing module geoip
- *  \version	$Id: dolgeoip.class.php,v 1.5 2011/07/31 23:26:01 eldy Exp $
+ *  \version	$Id: dolgeoip.class.php,v 1.6 2011/08/21 15:26:16 eldy Exp $
  */
 
 
@@ -45,8 +45,16 @@ class DolGeoIP
 	 */
 	function DolGeoIP($type,$datfile)
 	{
-		if ($type == 'country') require_once(DOL_DOCUMENT_ROOT."/includes/geoip/geoip.inc");
-		else if ($type == 'city') require_once(DOL_DOCUMENT_ROOT."/includes/geoip/geoipcity.inc");
+		if ($type == 'country')
+		{
+		    // geoip may have been already included with PEAR
+		    if (! function_exists('geoip_country_code_by_name')) $res=include_once(GEOIP_PATH."geoip.inc");
+		}
+		else if ($type == 'city')
+		{
+		    // geoip may have been already included with PEAR
+		    if (! function_exists('geoip_country_code_by_name')) $res=include_once(GEOIP_PATH."geoipcity.inc");
+		}
 		else { print 'ErrorBadParameterInConstructor'; return 0; }
 
 		if (empty($type) || empty($datfile))

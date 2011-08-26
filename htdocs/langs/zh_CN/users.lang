@@ -46,7 +46,6 @@ NewUser=新用户
 CreateUser=创建用户
 SearchAGroup=搜索一组
 SearchAUser=搜索用户
-ErrorFailedToSendPassword=无法传送密码
 LoginNotDefined=登录没有定义。
 NameNotDefined=名称没有定义。
 ListOfUsers=用户名单

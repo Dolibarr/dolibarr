@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 /**
  *       \file       htdocs/admin/sms.php
  *       \brief      Page to setup emails sending
- *       \version    $Id: sms.php,v 1.9 2011/07/31 22:23:22 eldy Exp $
+ *       \version    $Id: sms.php,v 1.10 2011/08/13 13:03:03 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -208,7 +208,7 @@ if ($action == 'edit')
 	print '<br><center>';
 	print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'"'.(!sizeof($listofmethods)?' disabled="disbaled"':'').'>';
 	print ' &nbsp; &nbsp; ';
-	print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"'.(!sizeof($listofmethods)?' disabled="disbaled"':'').'>';
+	print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</center>';
 
 	print '</form>';
@@ -346,5 +346,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:22 $ - $Revision: 1.9 $');
+llxFooter('$Date: 2011/08/13 13:03:03 $ - $Revision: 1.10 $');
 ?>

@@ -22,7 +22,7 @@
 /**
  *       \file       htdocs/user/perms.php
  *       \brief      Onglet user et permissions de la fiche utilisateur
- *       \version    $Id: perms.php,v 1.57 2011/08/01 13:15:54 hregis Exp $
+ *       \version    $Id: perms.php,v 1.60 2011/08/23 22:25:38 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -31,9 +31,12 @@ require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
 $langs->load("users");
 $langs->load("admin");
 
-$module=isset($_GET["module"])?$_GET["module"]:$_POST["module"];
+$id=GETPOST("id");
+$action=GETPOST("action");
+$confirm=GETPOST("confirm");
+$module=GETPOST("module");
 
-if (! isset($_GET["id"]) || empty($_GET["id"])) accessforbidden();
+if (! isset($id) || empty($id)) accessforbidden();
 
 // Defini si peux lire les permissions
 $canreaduser=($user->admin || $user->rights->user->user->lire);
@@ -43,7 +46,7 @@ $caneditperms=($user->admin || $user->rights->user->user->creer);
 if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 {
 	$canreaduser=($user->admin || ($user->rights->user->user->lire && $user->rights->user->user_advance->readperms));
-	$caneditselfperms=($user->id == $_GET["id"] && $user->rights->user->self_advance->writeperms);
+	$caneditselfperms=($user->id == $id && $user->rights->user->self_advance->writeperms);
 	$caneditperms = '('.$caneditperms.' || '.$caneditselfperms.')';
 }
 
@@ -51,40 +54,40 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
-if ($user->id == $_GET["id"])	// A user can always read its own card
+if ($user->id == $id)	// A user can always read its own card
 {
 	$feature2='';
 	$canreaduser=1;
 }
-$result = restrictedArea($user, 'user', $_GET["id"], '', $feature2);
-if ($user->id <> $_REQUEST["id"] && ! $canreaduser) accessforbidden();
+$result = restrictedArea($user, 'user', $id, '', $feature2);
+if ($user->id <> $id && ! $canreaduser) accessforbidden();
 
 
 /**
  * Actions
  */
-if ($_GET["action"] == 'addrights' && $caneditperms)
+if ($action == 'addrights' && $caneditperms)
 {
     $edituser = new User($db);
-	$edituser->fetch($_GET["id"]);
+	$edituser->fetch($id);
     $edituser->addrights($_GET["rights"],$module);
 
 	// Si on a touche a ses propres droits, on recharge
-	if ($_GET["id"] == $user->id)
+	if ($id == $user->id)
 	{
 		$user->clearrights();
 		$user->getrights();
 	}
 }
 
-if ($_GET["action"] == 'delrights' && $caneditperms)
+if ($action == 'delrights' && $caneditperms)
 {
     $edituser = new User($db);
-	$edituser->fetch($_GET["id"]);
+	$edituser->fetch($id);
     $edituser->delrights($_GET["rights"],$module);
 
 	// Si on a touche a ses propres droits, on recharge
-	if ($_GET["id"] == $user->id)
+	if ($id == $user->id)
 	{
 		$user->clearrights();
 		$user->getrights();
@@ -104,7 +107,7 @@ llxHeader('',$langs->trans("Permissions"));
 $form=new Form($db);
 
 $fuser = new User($db);
-$fuser->fetch($_GET["id"]);
+$fuser->fetch($id);
 $fuser->getrights();
 
 /*
@@ -125,9 +128,9 @@ $modulesdir = array();
 foreach ($conf->file->dol_document_root as $type => $dirroot)
 {
 	$modulesdir[] = $dirroot . "/includes/modules/";
-	
+
 	if ($type == 'alt')
-	{	
+	{
 		$handle=@opendir($dirroot);
 		if (is_resource($handle))
 		{
@@ -151,7 +154,7 @@ foreach($modulesdir as $dir)
 	$handle=opendir($dir);
     if (is_resource($handle))
     {
-    	while (($file = readdir($handle))!==false)
+        while (($file = readdir($handle))!==false)
     	{
     	    if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod'  && substr($file, dol_strlen($file) - 10) == '.class.php')
     	    {
@@ -161,6 +164,7 @@ foreach($modulesdir as $dir)
     	        {
     	            include_once($dir.$file);
     	            $objMod = new $modName($db);
+
     	            // Load all lang files of module
     	            if (isset($objMod->langfiles) && is_array($objMod->langfiles))
     	            {
@@ -170,8 +174,8 @@ foreach($modulesdir as $dir)
     	            	}
     	            }
     	            // Load all permissions
-    	            if ($objMod->rights_class) {
-
+    	            if ($objMod->rights_class)
+    	            {
     	                $ret=$objMod->insert_permissions(0);
 
     	                $modules[$objMod->rights_class]=$objMod;
@@ -192,7 +196,8 @@ $sql = "SELECT r.id, r.libelle, r.module";
 $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r,";
 $sql.= " ".MAIN_DB_PREFIX."user_rights as ur";
 $sql.= " WHERE ur.fk_id = r.id";
-$sql.= " AND r.entity = ".$conf->entity;
+if (empty($conf->multicompany->enabled)) $sql.= " AND r.entity = ".$conf->entity;
+else $sql.= " AND r.entity = ".$fuser->entity;
 $sql.= " AND ur.fk_user = ".$fuser->id;
 
 $result=$db->query($sql);
@@ -221,8 +226,10 @@ $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r,";
 $sql.= " ".MAIN_DB_PREFIX."usergroup_rights as gr,";
 $sql.= " ".MAIN_DB_PREFIX."usergroup_user as gu";
 $sql.= " WHERE gr.fk_id = r.id";
-$sql.= " AND r.entity = ".$conf->entity;
-$sql.= " AND gu.entity IN (0,".$conf->entity.")";
+if (empty($conf->multicompany->enabled)) $sql.= " AND r.entity = ".$conf->entity;
+else $sql.= " AND r.entity = ".$fuser->entity;
+if (empty($conf->multicompany->enabled)) $sql.= " AND gu.entity IN (0,".$conf->entity.")";
+else $sql.= " AND gu.entity IN (0,".$fuser->entity.")";
 $sql.= " AND gr.fk_usergroup = gu.fk_usergroup";
 $sql.= " AND gu.fk_user = ".$fuser->id;
 
@@ -285,16 +292,19 @@ print '</tr>'."\n";
 $sql = "SELECT r.id, r.libelle, r.module";
 $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
 $sql.= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
-$sql.= " AND r.entity = ".$conf->entity;
+if (empty($conf->multicompany->enabled)) $sql.= " AND r.entity = ".$conf->entity;
+else $sql.= " AND r.entity = ".$fuser->entity;
 if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) $sql.= " AND r.perms NOT LIKE '%_advance'";  // Hide advanced perms if option is disable
 $sql.= " ORDER BY r.module, r.id";
 
+dol_syslog("sql=".$sql);
 $result=$db->query($sql);
 if ($result)
 {
     $num = $db->num_rows($result);
     $i = 0;
     $var = True;
+
     while ($i < $num)
     {
         $obj = $db->fetch_object($result);
@@ -346,7 +356,7 @@ if ($result)
                 print '<td align="center">'.img_picto($langs->trans("Administrator"),'star').'</td>';
             }
             print '<td align="center" nowrap="nowrap">';
-            print img_tick();
+            print img_picto($langs->trans("Active"),'tick');
             print '</td>';
         }
         else if (in_array($obj->id, $permsuser))
@@ -357,7 +367,7 @@ if ($result)
                 print '<td align="center"><a href="perms.php?id='.$fuser->id.'&amp;action=delrights&amp;rights='.$obj->id.'#'.$objMod->getName().'">'.img_edit_remove($langs->trans("Remove")).'</a></td>';
             }
             print '<td align="center" nowrap="nowrap">';
-            print img_tick();
+            print img_picto($langs->trans("Active"),'tick');
             print '</td>';
         }
         else if (in_array($obj->id, $permsgroup)) {
@@ -370,7 +380,7 @@ if ($result)
 				print '</td>';
             }
             print '<td align="center" nowrap="nowrap">';
-            print img_tick();
+            print img_picto($langs->trans("Active"),'tick');
             print '</td>';
         }
         else
@@ -391,9 +401,10 @@ if ($result)
         $i++;
     }
 }
+else dol_print_error($db);
 print '</table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/01 13:15:54 $ - $Revision: 1.57 $');
+llxFooter('$Date: 2011/08/23 22:25:38 $ - $Revision: 1.60 $');
 ?>

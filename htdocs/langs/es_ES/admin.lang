@@ -309,6 +309,9 @@ SmsTestMessage=Mensaje de prueba de __PHONEFROM__ para __PHONETO__
 ModuleMustBeEnabledFirst=Para usar esta función debe estar activado el módulo <b>%s</b>.
 SecurityToken=Clave para encriptar urls
 NoSmsEngine=No hay disponible ningún gestor de envío de SMS. Los gestores de envío de SMS no se instalan en estándar (ya que dependen de un proveedor), pero puede encontrar en la plataforma http://www.dolistore.com
+PDF=PDF
+PDFDesc=Puede definir aquí las opciones globales para la generación de los PDF
+PDFAddressForging=Reglas de visualización de direcciones
 # Modules
 Module0Name=Usuarios y grupos
 Module0Desc=Gestión de usuarios y grupos
@@ -415,9 +418,7 @@ Module2700Desc=Utiliza el servicio en línea de Gravatar (www.gravatar.com) para
 Module2900Name=GeoIPMaxmind
 Module2900Desc=Capacidades de conversión GeoIP Maxmind
 Module5000Name=Multi-empresa
-Module5000Desc=Permite gestionar varias empresas
-Module13452Name=SpeedFinder
-Module13452Desc=Motor de búsqueda en AJAX para buscar en 2 segundos un nombre basándose en parte de un número de teléfono 
+Module5000Desc=Permite gestionar varias empresas 
 Module50000Name=PayBox
 Module50000Desc=Módulo para proporcionar un pago en línea con tarjeta de crédito mediante Paybox
 Module50100Name=TPV
@@ -854,8 +855,8 @@ MAIN_PROXY_USER=Login del servidor proxy
 MAIN_PROXY_PASS=Contraseña del servidor proxy
 DefineHereComplementaryAttributes=Defina aquí la lista de atributos adicionales, no disponibles en estándar, y que desea gestionar para %s.
 ExtraFields=Atributos adicionales
-SendmailOptionNotComplete=Atención, en algunos sistemas Linux, con este método de envio, para poder enviar mails en su nombre, la configuración de sendmail debe contener la opción <b>-ba</b> (parámetro <b>mail.force_extra_parameters</b> en el archivo <b>php.ini</b>). Si algunos de sus destinatarios no reciben sus mensajes, pruebe a modificar este parámetro PHP con <b>mail.force_extra_parameters = -ba</b>.
-	 
+SendingMailSetup=Configuración del envío por mail
+SendmailOptionNotComplete=Atención, en algunos sistemas Linux, con este método de envio, para poder enviar mails en su nombre, la configuración de sendmail debe contener la opción <b>-ba</b> (parámetro <b>mail.force_extra_parameters</b> en el archivo <b>php.ini</b>). Si algunos de sus destinatarios no reciben sus mensajes, pruebe a modificar este parámetro PHP con <b>mail.force_extra_parameters=-ba</b>.
 ##### Module password generation
 PasswordGenerationStandard=Devuelve una contraseña generada por el algoritmo interno Dolibarr: 8 caracteres, números y caracteres en minúsculas mezcladas.
 PasswordGenerationNone=No ofrece contraseñas. La contraseña se introduce manualmente.
@@ -880,6 +881,7 @@ NotificationsDesc=La función de las notificaciones permite enviar automáticame
 ModelModules=Modelos de documentos
 DocumentModelOdt=Generación desde los documentos OpenDocument (Archivo .ODT OpenOffice, KOffice, TextEdit,...)
 WatermarkOnDraft=Marca de agua en los documentos borrador
+CompanyIdProfChecker=Id Profesional único
 ##### Webcal setup #####
 WebCalSetup=Configuración de enlace con el calendario Webcalendar
 WebCalSyncro=Integrar los eventos Dolibarr en WebCalendar
@@ -1155,7 +1157,7 @@ SendingsReceiptModel=Modelo de notas de entrega
 SendingsNumberingModules=Módulos de numeración de notas de entrega
 SendingsAbility=Uso de notas de entrega para los envíos a clientes
 NoNeedForDeliveryReceipts=En la mayoría de los casos, las notas de entrega (lista de productos enviados ) también actúan como notas de recepción y son firmadas por el cliente. La gestión de las notas de recepción es por lo tanto redundante y rara vez se activará.
-FreeLegalTextOnDeliveryReceipts=Texto libre en las notas de recepción
+FreeLegalTextOnShippings=Mención complementaria en las notas de entrega
 ##### Deliveries #####
 DeliveryOrderNumberingModules=Módulo de numeración de las notas de entraga
 DeliveryOrderModel=Modelo de notas de recepción

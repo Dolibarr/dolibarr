@@ -46,3 +46,4 @@ ErrorCantSaveADoneUserWithZeroPercentage=Can't save an action with "statut not s
 ErrorRefAlreadyExists=Ref gebruikt voor de oprichting bestaat al.
 ErrorPleaseTypeBankTransactionReportName=Vul bankontvangst naam in waar transactie wordt gemeld (Formaat YYYYMM of JJJJMMDD)
 ErrorRecordHasChildren=Mislukt om records te verwijderen omdat er nog gelinkte bestanden zijn.
+ErrorFailedToSendPassword=Mislukt om wachtwoord te verzenden

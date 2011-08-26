@@ -21,7 +21,7 @@
  *      \file       htdocs/core/class/html.formactions.class.php
  *      \ingroup    core
  *      \brief      Fichier de la classe des fonctions predefinie de composants html actions
- *		\version	$Id: html.formactions.class.php,v 1.21 2011/07/31 23:45:14 eldy Exp $
+ *		\version	$Id: html.formactions.class.php,v 1.22 2011/08/24 12:17:49 eldy Exp $
  */
 
 
@@ -67,23 +67,29 @@ class FormActions
         {
             print "\n";
             print '<script type="text/javascript">'."\n";
+            print 'jQuery(document).ready(function () {'."\n";
+            print 'jQuery("#select'.$htmlname.'").change(function() { select_status(document.'.$formname.'.status.value); });'."\n";
+            print 'jQuery("#val'.$htmlname.'").change(function()    { select_status(document.'.$formname.'.status.value); });'."\n";
+            print 'select_status(document.'.$formname.'.status.value);'."\n";
+            print '});'."\n";
             print 'function select_status(mypercentage) {'."\n";
             print 'document.'.$formname.'.percentageshown.value=(mypercentage>=0?mypercentage:\'\');'."\n";
             print 'document.'.$formname.'.percentage.value=mypercentage;'."\n";
-            print 'if (mypercentage == -1) { document.'.$formname.'.percentageshown.disabled=true; }'."\n";
-            print 'else if (mypercentage == 0) { document.'.$formname.'.percentageshown.disabled=true; }'."\n";
-            print 'else if (mypercentage == 100) { document.'.$formname.'.percentageshown.disabled=true; }'."\n";
+            print 'if (mypercentage == -1) { document.'.$formname.'.percentageshown.disabled=true; jQuery(".hideifna").hide(); }'."\n";
+            print 'else if (mypercentage == 0) { document.'.$formname.'.percentageshown.disabled=true; jQuery(".hideifna").show();}'."\n";
+            print 'else if (mypercentage == 100) { document.'.$formname.'.percentageshown.disabled=true; jQuery(".hideifna").show();}'."\n";
             print 'else { document.'.$formname.'.percentageshown.disabled=false; }'."\n";
             print '}'."\n";
             print '</script>'."\n";
-            print '<select '.($canedit?'':'disabled="true" ').'name="status" id="select'.$htmlname.'" class="flat" onChange="select_status(document.'.$formname.'.status.value)">';
+            print '<select '.($canedit?'':'disabled="true" ').'name="status" id="select'.$htmlname.'" class="flat">';
             foreach($listofstatus as $key => $val)
             {
                 print '<option value="'.$key.'"'.($selected == $key?' selected="selected"':'').'>'.$val.'</option>';
             }
             print '</select>';
             if ($selected == 0 || $selected == 100) $canedit=0;
-            print ' <input type="text" id="val'.$htmlname.'" name="percentageshown" class="flat" value="'.($selected>=0?$selected:'').'" size="2"'.($canedit&&($selected>=0)?'':' disabled="true"').' onChange="select_status(document.'.$formname.'.percentageshown.value)">%';
+            print ' <input type="text" id="val'.$htmlname.'" name="percentageshown" class="flat hideifna" value="'.($selected>=0?$selected:'').'" size="2"'.($canedit&&($selected>=0)?'':' disabled="true"').'>';
+            print '<span class="hideifna">%</span>';
             print ' <input type="hidden" name="percentage" value="'.$selected.'">';
         }
         else

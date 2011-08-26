@@ -25,11 +25,10 @@
  *  \ingroup		commande
  *  \brief			Fichier contenant la classe mere de generation des commandes en PDF
  *  				et la classe mere de numerotation des commandes
- *  \version    	$Id: modules_commande.php,v 1.48 2011/07/31 23:28:13 eldy Exp $
+ *  \version    	$Id: modules_commande.php,v 1.51 2011/08/11 12:14:00 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
-require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");	// requis car utilise par les classes qui heritent
 require_once(DOL_DOCUMENT_ROOT.'/core/class/discount.class.php');
 
@@ -143,7 +142,7 @@ class ModeleNumRefCommandes
  *  @param      hideref         Hide ref
  *  @return     int             0 if KO, 1 if OK
  */
-function commande_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+function commande_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $hookmanager=false)
 {
 	global $conf,$user,$langs;
 	$langs->load("orders");
@@ -192,19 +191,19 @@ function commande_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
 		$sav_charset_output=$outputlangs->charset_output;
-		if ($obj->write_file($object, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc) > 0)
+		if ($obj->write_file($object, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $hookmanager) > 0)
 		{
 			$outputlangs->charset_output=$sav_charset_output;
 			// on supprime l'image correspondant au preview
 			commande_delete_preview($db, $object->id);
-			
+
 			// Appel des triggers
 			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 			$interface=new Interfaces($db);
 			$result=$interface->run_triggers('ORDER_BUILDDOC',$object,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
-			
+
 			return 1;
 		}
 		else

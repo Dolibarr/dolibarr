@@ -22,7 +22,7 @@
  *       \file       htdocs/comm/action/class/actioncomm.class.php
  *       \ingroup    commercial
  *       \brief      File of class to manage agenda events (actions)
- *       \version    $Id: actioncomm.class.php,v 1.43 2011/08/03 00:46:20 eldy Exp $
+ *       \version    $Id: actioncomm.class.php,v 1.44 2011/08/17 13:44:16 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php');
@@ -674,7 +674,7 @@ class ActionComm extends CommonObject
 		}
 
 		// Create dir and define output file (definitive and temporary)
-		$result=create_exdir($conf->agenda->dir_temp);
+		$result=dol_mkdir($conf->agenda->dir_temp);
 		$outputfile=$conf->agenda->dir_temp.'/'.$filename;
 
 		$result=0;

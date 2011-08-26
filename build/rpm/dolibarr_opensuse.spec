@@ -10,7 +10,7 @@ Name: dolibarr
 Version: __VERSION__
 Release: __RELEASE__
 Summary: ERP and CRM software for small and medium companies or foundations 
-Summary(es): Software ERP y CRM para pequeñas y medianas empresas o, asociaciones o autónomos
+Summary(es): Software ERP y CRM para pequeñas y medianas empresas, asociaciones o autónomos
 Summary(fr): Logiciel ERP & CRM de gestion de PME/PMI, autoentrepreneurs ou associations
 Summary(it): Programmo gestionale per piccole imprese, fondazioni e liberi professionisti
 
@@ -24,8 +24,8 @@ BuildArch: noarch
 #BuildArchitectures: noarch
 BuildRoot: %{_tmppath}/%{name}-%{version}-build
 
-Group: Applications/Internet
-Requires: mysql-community-server mysql-community-server-client apache2 apache2-mod_php5 php5 php5-gd php5-ldap php5-imap php5-mysql php5-openssl 
+Group: Productivity/Office/Management
+Requires: mysql-community-server mysql-community-server-client apache2 apache2-mod_php5 php5 php5-gd php5-ldap php5-imap php5-mysql php5-openssl fonts-ttf-dejavu 
 
 # Set yes to build test package, no for release (this disable need of /usr/bin/php not found by OpenSuse)
 AutoReqProv: no
@@ -79,26 +79,34 @@ cui hai bisogno ed essere facile da usare.
 %{__rm} -rf $RPM_BUILD_ROOT
 
 %{__mkdir} -p $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr
-%{__install} -m 644 etc/dolibarr/conf.php $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr/conf.php
-%{__install} -m 644 etc/dolibarr/install.forced.php $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr/install.forced.php
-%{__install} -m 644 etc/dolibarr/apache.conf $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr/apache.conf
-%{__install} -m 644 etc/dolibarr/file_contexts.dolibarr $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr/file_contexts.dolibarr
+%{__install} -m 644 build/rpm/conf.php $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr/conf.php
+%{__install} -m 644 build/rpm/httpd-dolibarr.conf $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr/apache.conf
+%{__install} -m 644 build/rpm/file_contexts.dolibarr $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr/file_contexts.dolibarr
+%{__install} -m 644 build/rpm/install.forced.php.fedora $RPM_BUILD_ROOT%{_sysconfdir}/dolibarr/install.forced.php
 
 %{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/pixmaps
-%{__install} -m 644 usr/share/dolibarr/doc/images/dolibarr_48x48.png $RPM_BUILD_ROOT%{_datadir}/pixmaps/dolibarr.png
+%{__install} -m 644 doc/images/dolibarr_48x48.png $RPM_BUILD_ROOT%{_datadir}/pixmaps/dolibarr.png
 %{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/applications
-%{__install} -m 644 usr/share/dolibarr/build/rpm/dolibarr.desktop $RPM_BUILD_ROOT%{_datadir}/applications/dolibarr.desktop
+#desktop-file-install -m 644 build/rpm/dolibarr.desktop $RPM_BUILD_ROOT%{_datadir}/applications/dolibarr.desktop
+%{__install} -m 644 build/rpm/dolibarr.desktop $RPM_BUILD_ROOT%{_datadir}/applications/dolibarr.desktop
 
-%{__mkdir} -p $RPM_BUILD_ROOT/usr/share/dolibarr/build
+%{__mkdir} -p $RPM_BUILD_ROOT/usr/share/dolibarr/build/rpm
+%{__mkdir} -p $RPM_BUILD_ROOT/usr/share/dolibarr/build/tgz
 %{__mkdir} -p $RPM_BUILD_ROOT/usr/share/dolibarr/htdocs
 %{__mkdir} -p $RPM_BUILD_ROOT/usr/share/dolibarr/scripts
 %{__mkdir} -p $RPM_BUILD_ROOT/usr/share/doc/dolibarr
-%{__cp} -pr usr/share/dolibarr/build   $RPM_BUILD_ROOT/usr/share/dolibarr
-%{__cp} -pr usr/share/dolibarr/htdocs  $RPM_BUILD_ROOT/usr/share/dolibarr
-%{__cp} -pr usr/share/dolibarr/scripts $RPM_BUILD_ROOT/usr/share/dolibarr
-%{__cp} -pr usr/share/dolibarr/doc/*   $RPM_BUILD_ROOT/usr/share/doc/dolibarr
-%{__install} -m 644 usr/share/dolibarr/COPYRIGHT $RPM_BUILD_ROOT/usr/share/doc/dolibarr/COPYRIGHT
+%{__cp} -pr build/rpm/*     $RPM_BUILD_ROOT/usr/share/dolibarr/build/rpm
+%{__cp} -pr build/tgz/*     $RPM_BUILD_ROOT/usr/share/dolibarr/build/tgz
+%{__cp} -pr htdocs  $RPM_BUILD_ROOT/usr/share/dolibarr
+%{__cp} -pr scripts $RPM_BUILD_ROOT/usr/share/dolibarr
+%{__cp} -pr doc/*   $RPM_BUILD_ROOT/usr/share/doc/dolibarr
+%{__install} -m 644 COPYRIGHT $RPM_BUILD_ROOT/usr/share/doc/dolibarr/COPYRIGHT
 
+# Enable this command to tag desktop file for suse
+#%suse_update_desktop_file dolibarr
+
+# Enable this command to allow suse detection of duplicate files and create hardlinks instead
+#%fdupes
 
 
 #---- clean
@@ -110,16 +118,20 @@ cui hai bisogno ed essere facile da usare.
 #---- files
 %files
 
+%defattr(0755, root, root, 0755)
+%dir %_datadir/dolibarr/scripts
+%_datadir/dolibarr/scripts/*
+
 %defattr(-, root, root, 0755)
 %doc %_datadir/doc/dolibarr
-%dir %_datadir/dolibarr/build
+%dir %_datadir/dolibarr/build/rpm
+%dir %_datadir/dolibarr/build/tgz
 %dir %_datadir/dolibarr/htdocs
-%dir %_datadir/dolibarr/scripts
 %_datadir/pixmaps/dolibarr.png
 %_datadir/applications/dolibarr.desktop
-%_datadir/dolibarr/build/*
+%_datadir/dolibarr/build/rpm/*
+%_datadir/dolibarr/build/tgz/*
 %_datadir/dolibarr/htdocs/*
-%_datadir/dolibarr/scripts/*
 
 %defattr(0664, -, -)
 %config(noreplace) %{_sysconfdir}/dolibarr/conf.php
@@ -194,7 +206,7 @@ export apachelink="%{_sysconfdir}/apache2/conf.d/dolibarr.conf"
 # Remove apache link
 if [ -L $apachelink ] ;
 then
-    echo Delete apache config link for Dolibarr
+    echo "Delete apache config link for Dolibarr ($apachelink)"
     %{__rm} -f $apachelink
     status=purge
 fi

@@ -26,8 +26,8 @@
 /**
  *	\file       htdocs/compta/facture/class/facture.class.php
  *	\ingroup    facture
- *	\brief      Fichier de la classe des factures clients
- *	\version    $Id: facture.class.php,v 1.124 2011/08/03 00:46:25 eldy Exp $
+ *	\brief      File of class to manage invoices
+ *	\version    $Id: facture.class.php,v 1.129 2011/08/14 00:00:06 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
@@ -37,7 +37,7 @@ require_once(DOL_DOCUMENT_ROOT ."/societe/class/client.class.php");
 
 /**
  *	\class      Facture
- *	\brief      Classe permettant la gestion des factures clients
+ *	\brief      Class to manage invoices
  */
 class Facture extends CommonObject
 {
@@ -518,7 +518,7 @@ class Facture extends CommonObject
      *		@param		invertdetail	Reverse sign of amounts for lines
      * 	 	@return		int				New id of clone
      */
-    function createFromClone($fromid,$invertdetail=0)
+    function createFromClone($fromid,$invertdetail=0,$hookmanager=false)
     {
         global $conf,$user,$langs;
 
@@ -531,12 +531,6 @@ class Facture extends CommonObject
         // Load new object
         $object=new Facture($this->db);
         $object->fetch($fromid);
-
-        // Instantiate hooks of thirdparty module
-        if (is_array($conf->hooks_modules) && ! empty($conf->hooks_modules))
-        {
-            $object->callHooks('invoicecard');
-        }
 
         $this->db->begin();
 
@@ -576,24 +570,13 @@ class Facture extends CommonObject
 
         if (! $error)
         {
-            // Hook for external modules
-            if (! empty($object->hooks))
-            {
-            	foreach($object->hooks as $hook)
-            	{
-            		if (! empty($hook['modules']))
-            		{
-            			foreach($hook['modules'] as $module)
-            			{
-            				if (method_exists($module,'createfrom'))
-            				{
-            					$result = $module->createfrom($objFrom,$result,$object->element);
-            					if ($result < 0) $error++;
-            				}
-            			}
-            		}
-            	}
-            }
+        	// Hook of thirdparty module
+			if (is_object($hookmanager))
+			{
+			    $parameters=array('objFrom'=>$objFrom);
+				$reshook=$hookmanager->executeHooks('createfrom',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+				if ($reshook < 0) $error++;
+			}
 
             // Appel des triggers
             include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
@@ -621,7 +604,7 @@ class Facture extends CommonObject
      *      @param      object          Object source
      *      @return     int             <0 if KO, 0 if nothing done, 1 if OK
      */
-    function createFromOrder($object)
+    function createFromOrder($object, $hookmanager=false)
     {
         global $conf,$user,$langs;
 
@@ -635,22 +618,27 @@ class Facture extends CommonObject
         {
             $line = new FactureLigne($this->db);
 
-            $line->libelle           = $object->lines[$i]->libelle;
-            $line->desc              = $object->lines[$i]->desc;
-            $line->price             = $object->lines[$i]->price;
-            $line->subprice          = $object->lines[$i]->subprice;
-            $line->tva_tx            = $object->lines[$i]->tva_tx;
-            $line->localtax1_tx      = $object->lines[$i]->localtax1_tx;
-            $line->localtax2_tx      = $object->lines[$i]->localtax2_tx;
-            $line->qty               = $object->lines[$i]->qty;
-            $line->fk_remise_except  = $object->lines[$i]->fk_remise_except;
-            $line->remise_percent    = $object->lines[$i]->remise_percent;
-            $line->fk_product        = $object->lines[$i]->fk_product;
-            $line->info_bits         = $object->lines[$i]->info_bits;
-            $line->product_type      = $object->lines[$i]->product_type;
-            $line->rang              = $object->lines[$i]->rang;
-            $line->special_code      = $object->lines[$i]->special_code;
-            $line->fk_parent_line    = $object->lines[$i]->fk_parent_line;
+            $line->libelle			= $object->lines[$i]->libelle;
+            $line->desc				= $object->lines[$i]->desc;
+            $line->price			= $object->lines[$i]->price;
+            $line->subprice			= $object->lines[$i]->subprice;
+            $line->tva_tx			= $object->lines[$i]->tva_tx;
+            $line->localtax1_tx		= $object->lines[$i]->localtax1_tx;
+            $line->localtax2_tx		= $object->lines[$i]->localtax2_tx;
+            $line->qty				= $object->lines[$i]->qty;
+            $line->fk_remise_except	= $object->lines[$i]->fk_remise_except;
+            $line->remise_percent	= $object->lines[$i]->remise_percent;
+            $line->fk_product		= $object->lines[$i]->fk_product;
+            $line->info_bits		= $object->lines[$i]->info_bits;
+            $line->product_type		= $object->lines[$i]->product_type;
+            $line->rang				= $object->lines[$i]->rang;
+            $line->special_code		= $object->lines[$i]->special_code;
+            $line->fk_parent_line	= $object->lines[$i]->fk_parent_line;
+
+            // TODO it's ok ?
+            $line->total_ht			= $object->lines[$i]->total_ht;
+            $line->total_tva		= $object->lines[$i]->total_tva;
+            $line->total_ttc		= $object->lines[$i]->total_ttc;
 
             $this->lines[$i] = $line;
         }
@@ -675,24 +663,13 @@ class Facture extends CommonObject
 
         if ($ret > 0)
         {
-        	// Hook for external modules
-            if (! empty($object->hooks))
-            {
-            	foreach($object->hooks as $hook)
-            	{
-            		if (! empty($hook['modules']))
-            		{
-            			foreach($hook['modules'] as $module)
-            			{
-            				if (method_exists($module,'createfrom'))
-            				{
-            					$result = $module->createfrom($objFrom,$result,$object->element);
-            					if ($result < 0) $error++;
-            				}
-            			}
-            		}
-            	}
-            }
+        	// Hook of thirdparty module
+			if (is_object($hookmanager))
+			{
+			    $parameters=array('objFrom'=>$object);
+				$reshook=$hookmanager->executeHooks('createfrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+				if ($reshook < 0) $error++;
+			}
 
             if (! $error)
             {
@@ -1664,7 +1641,7 @@ class Facture extends CommonObject
             if (! $error)
             {
             	$this->oldref = '';
-            	
+
                 // Rename directory if dir was a temporary ref
                 if (preg_match('/^[\(]?PROV/i', $this->ref))
                 {
@@ -1681,7 +1658,7 @@ class Facture extends CommonObject
                         if (@rename($dirsource, $dirdest))
                         {
                         	$this->oldref = $facref;
-                        	
+
                             dol_syslog("Rename ok");
                             // Suppression ancien fichier PDF dans nouveau rep
                             dol_delete_file($conf->facture->dir_output.'/'.$snumfa.'/'.$facref.'.*');
@@ -2023,12 +2000,12 @@ class Facture extends CommonObject
 
             // Update line into database
             $this->line=new FactureLigne($this->db);
-            
+
             // Stock previous line records
 			$staticline=new FactureLigne($this->db);
 			$staticline->fetch($rowid);
 			$this->line->oldline = $staticline;
-			
+
             $this->line->rowid				= $rowid;
             $this->line->desc				= $desc;
             $this->line->qty				= $qty;
@@ -3275,7 +3252,7 @@ class FactureLigne
 {
     var $db;
     var $error;
-    
+
     var $oldline;
 
     //! From llx_facturedet

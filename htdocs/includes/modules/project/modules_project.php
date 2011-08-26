@@ -21,10 +21,9 @@
  *      \ingroup    project
  *      \brief      File that contain parent class for projects models
  *                  and parent class for projects numbering models
- *      \version    $Id: modules_project.php,v 1.12 2011/07/31 23:28:09 eldy Exp $
+ *      \version    $Id: modules_project.php,v 1.14 2011/08/11 12:14:01 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
-require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 
 
 /**

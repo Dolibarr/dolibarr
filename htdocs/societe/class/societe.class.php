@@ -6,7 +6,7 @@
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2008      Patrick Raguin       <patrick.raguin@auguria.net>
- * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
  *	\file       htdocs/societe/class/societe.class.php
  *	\ingroup    societe
  *	\brief      File for third party class
- *	\version    $Id: societe.class.php,v 1.92 2011/07/31 23:22:58 eldy Exp $
+ *	\version    $Id: societe.class.php,v 1.102 2011/08/24 18:06:45 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 
@@ -55,6 +55,9 @@ class Societe extends CommonObject
     var $ville;
     var $status; // 0=activity ceased, 1= in activity
 
+    var $state_id;
+    var $state_code;
+    var $state;
     var $departement_id;
     var $departement_code;
     var $departement;
@@ -219,7 +222,7 @@ class Societe extends CommonObject
             {
                 $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."societe");
 
-                $ret = $this->update($this->id,$user,0,1,1);
+                $ret = $this->update($this->id,$user,0,1,1,'add');
 
                 // si un commercial cree un client il lui est affecte automatiquement
                 if (!$user->rights->societe->client->voir)
@@ -368,7 +371,7 @@ class Societe extends CommonObject
      *		@param		allowmodcodefournisseur		Inclut modif code fournisseur et code compta fournisseur
      *      @return     int             			<0 if KO, >=0 if OK
      */
-    function update($id, $user='', $call_trigger=1, $allowmodcodeclient=0, $allowmodcodefournisseur=0)
+    function update($id, $user='', $call_trigger=1, $allowmodcodeclient=0, $allowmodcodefournisseur=0, $action='update')
     {
         require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 
@@ -396,7 +399,7 @@ class Societe extends CommonObject
         $this->cp=$this->zip;           // TODO obsolete
         $this->town=$this->town?trim($this->town):trim($this->ville);
         $this->ville=$this->town;       // TODO obsolete
-        $this->departement_id=trim($this->departement_id);
+        $this->state_id=trim($this->state_id);
         $this->pays_id=trim($this->pays_id);
         $this->tel=trim($this->tel);
         $this->fax=trim($this->fax);
@@ -462,7 +465,7 @@ class Societe extends CommonObject
             $sql.= ",cp = ".($this->zip?"'".$this->zip."'":"null");
             $sql.= ",ville = ".($this->town?"'".$this->db->escape($this->town)."'":"null");
 
-            $sql .= ",fk_departement = '" . ($this->departement_id?$this->departement_id:'0') ."'";
+            $sql .= ",fk_departement = '" . ($this->state_id?$this->state_id:'0') ."'";
             $sql .= ",fk_pays = '" . ($this->pays_id?$this->pays_id:'0') ."'";
 
             $sql .= ",tel = ".($this->tel?"'".$this->db->escape($this->tel)."'":"null");
@@ -533,11 +536,21 @@ class Societe extends CommonObject
                 // Si le fournisseur est classe on l'ajoute
                 $this->AddFournisseurInCategory($this->fournisseur_categorie);
 
-                $result=$this->insertExtraFields();
-                if ($result < 0)
+                // Actions on extra fields (by external module or standard code)
+                include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+                $hookmanager=new HookManager($this->db);
+                $hookmanager->callHooks(array('thirdparty_extrafields'));
+                $parameters=array('socid'=>$socid);
+                $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+                if (empty($reshook))
                 {
-                    $error++;
+                    $result=$this->insertExtraFields();
+                    if ($result < 0)
+                    {
+                        $error++;
+                    }
                 }
+                else if ($reshook < 0) $error++;
 
                 if (! $error && $call_trigger)
                 {
@@ -683,10 +696,9 @@ class Societe extends CommonObject
                 $this->country_code = $obj->fk_pays?$obj->pays_code:'';
                 $this->pays 		= $obj->fk_pays?($langs->trans('Country'.$obj->pays_code)!='Country'.$obj->pays_code?$langs->trans('Country'.$obj->pays_code):$obj->pays):''; // TODO obsolete
                 $this->country 		= $obj->fk_pays?($langs->trans('Country'.$obj->pays_code)!='Country'.$obj->pays_code?$langs->trans('Country'.$obj->pays_code):$obj->pays):'';
-
-                $this->departement_id = $obj->fk_departement;				// TODO obsolete
-                $this->state_id       = $obj->fk_departement;
-                $this->departement	= $obj->fk_departement?$obj->departement:'';
+                $this->state_id     = $obj->fk_departement;
+                $this->state_code   = $obj->departement_code;
+                $this->state        = $obj->departement;
 
                 $transcode=$langs->trans('StatusProspect'.$obj->fk_stcomm);
                 $libelle=($transcode!='StatusProspect'.$obj->fk_stcomm?$transcode:$obj->stcomm);
@@ -840,6 +852,7 @@ class Societe extends CommonObject
 
     /**
      *    Delete a third party from database and all its dependencies (contacts, rib...)
+     *
      *    @param      id      id of third party to delete
      */
     function delete($id)
@@ -848,7 +861,7 @@ class Societe extends CommonObject
         require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 
         dol_syslog("Societe::Delete", LOG_DEBUG);
-        $sqr = 0;
+        $error = 0;
 
         // Test if child exists
         $listtable=array("propal","commande","facture","contrat","facture_fourn","commande_fournisseur");
@@ -884,8 +897,6 @@ class Societe extends CommonObject
 
         if ($this->db->begin())
         {
-            // Added by Matelli (see http://matelli.fr/showcases/patchs-dolibarr/fix-third-party-deleting.html)
-            // Removing every "categorie" link with this company
             require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
 
             $static_cat = new Categorie($this->db);
@@ -911,62 +922,83 @@ class Societe extends CommonObject
             }
 
             // Remove contacts
-            $sql = "DELETE from ".MAIN_DB_PREFIX."socpeople";
-            $sql.= " WHERE fk_soc = " . $id;
-            dol_syslog("Societe::Delete sql=".$sql, LOG_DEBUG);
-            if ($this->db->query($sql))
+            if (! $error)
             {
-                $sqr++;
-            }
-            else
-            {
-                $this->error .= $this->db->lasterror();
-                dol_syslog("Societe::Delete erreur -1 ".$this->error, LOG_ERR);
+                $sql = "DELETE from ".MAIN_DB_PREFIX."socpeople";
+                $sql.= " WHERE fk_soc = " . $id;
+                dol_syslog("Societe::Delete sql=".$sql, LOG_DEBUG);
+                if (! $this->db->query($sql))
+                {
+                    $error++;
+                    $this->error .= $this->db->lasterror();
+                    dol_syslog("Societe::Delete erreur -1 ".$this->error, LOG_ERR);
+                }
             }
 
             // Update link in member table
-            $sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
-            $sql.= " SET fk_soc = NULL WHERE fk_soc = " . $id;
-            dol_syslog("Societe::Delete sql=".$sql, LOG_DEBUG);
-            if ($this->db->query($sql))
+            if (! $error)
             {
-                $sqr++;
-            }
-            else
-            {
-                $this->error .= $this->db->lasterror();
-                dol_syslog("Societe::Delete erreur -1 ".$this->error, LOG_ERR);
+                $sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
+                $sql.= " SET fk_soc = NULL WHERE fk_soc = " . $id;
+                dol_syslog("Societe::Delete sql=".$sql, LOG_DEBUG);
+                if (! $this->db->query($sql))
+                {
+                    $error++;
+                    $this->error .= $this->db->lasterror();
+                    dol_syslog("Societe::Delete erreur -1 ".$this->error, LOG_ERR);
+                }
             }
 
             // Remove ban
-            $sql = "DELETE from ".MAIN_DB_PREFIX."societe_rib";
-            $sql.= " WHERE fk_soc = " . $id;
-            dol_syslog("Societe::Delete sql=".$sql, LOG_DEBUG);
-            if ($this->db->query($sql))
+            if (! $error)
             {
-                $sqr++;
-            }
-            else
-            {
-                $this->error = $this->db->lasterror();
-                dol_syslog("Societe::Delete erreur -2 ".$this->error, LOG_ERR);
+                $sql = "DELETE from ".MAIN_DB_PREFIX."societe_rib";
+                $sql.= " WHERE fk_soc = " . $id;
+                dol_syslog("Societe::Delete sql=".$sql, LOG_DEBUG);
+                if (! $this->db->query($sql))
+                {
+                    $error++;
+                    $this->error = $this->db->lasterror();
+                    dol_syslog("Societe::Delete erreur -2 ".$this->error, LOG_ERR);
+                }
             }
 
             // Remove third party
-            $sql = "DELETE from ".MAIN_DB_PREFIX."societe";
-            $sql.= " WHERE rowid = " . $id;
-            dol_syslog("Societe::Delete sql=".$sql, LOG_DEBUG);
-            if ($this->db->query($sql))
+            if (! $error)
             {
-                $sqr++;
-            }
-            else
-            {
-                $this->error = $this->db->lasterror();
-                dol_syslog("Societe::Delete erreur -3 ".$this->error, LOG_ERR);
+                $sql = "DELETE from ".MAIN_DB_PREFIX."societe";
+                $sql.= " WHERE rowid = " . $id;
+                dol_syslog("Societe::Delete sql=".$sql, LOG_DEBUG);
+                if (! $this->db->query($sql))
+                {
+                    $error++;
+                    $this->error = $this->db->lasterror();
+                    dol_syslog("Societe::Delete erreur -3 ".$this->error, LOG_ERR);
+                }
             }
 
-            if ($sqr == 4)
+            if (! $error)
+            {
+            	// Actions on extra fields (by external module or standard code)
+                include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+                $hookmanager=new HookManager($this->db);
+                $hookmanager->callHooks(array('thirdparty_extrafields'));
+                $parameters=array();
+                $reshook=$hookmanager->executeHooks('deleteExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+                if (! empty($hookmanager->error))
+                {
+                    $error++;
+                    $this->error=$hookmanager->error;
+                }
+                else if (empty($reshook))
+                {
+                    // TODO
+                	//$result=$this->deleteExtraFields($this);
+                    //if ($result < 0) $error++;
+                }
+            }
+
+            if (! $error)
             {
                 // Appel des triggers
                 include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
@@ -974,10 +1006,13 @@ class Societe extends CommonObject
                 $result=$interface->run_triggers('COMPANY_DELETE',$this,$user,$langs,$conf);
                 if ($result < 0) { $error++; $this->errors=$interface->errors; }
                 // Fin appel triggers
+            }
 
+            if (! $error)
+            {
                 $this->db->commit();
 
-                // Suppression du repertoire document
+                // Delete directory
                 $docdir = $conf->societe->dir_output . "/" . $id;
                 if (file_exists ($docdir))
                 {
@@ -1947,6 +1982,82 @@ class Societe extends CommonObject
                 return -1;
             }
         }
+    }
+
+	/**
+     *    Returns if a profid sould be verified
+     *    @param      idprof          1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
+     *    @return     boolean         true , false
+     */
+    function id_prof_verifiable($idprof)
+    {
+	    global $conf;
+
+     	switch($idprof)
+        {
+        	case 1:
+        		$ret=(!$conf->global->SOCIETE_IDPROF1_UNIQUE?false:true);
+        		break;
+        	case 2:
+        		$ret=(!$conf->global->SOCIETE_IDPROF2_UNIQUE?false:true);
+        		break;
+        	case 3:
+        		$ret=(!$conf->global->SOCIETE_IDPROF3_UNIQUE?false:true);
+        		break;
+        	case 4:
+        		$ret=(!$conf->global->SOCIETE_IDPROF4_UNIQUE?false:true);
+        		break;
+        	default:
+        		$ret=false;
+        }
+
+        return $ret;
+    }
+
+	/**
+     *    Verify if a profid exists into database for others thirds
+     *    @param      	idprof		1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
+     *    @param		value		value of profid
+     *    @param		socid		id of society if update
+     *    @return     	boolean		true if exists, false if not
+     */
+    function id_prof_exists($idprof,$value,$socid=0)
+    {
+     	switch($idprof)
+        {
+        	case 1:
+        		$field="siren";
+        		break;
+        	case 2:
+        		$field="siret";
+        		break;
+        	case 3:
+        		$field="ape";
+        		break;
+        	case 4:
+        		$field="idprof4";
+        		break;
+        }
+
+         //Verify duplicate entries
+        $sql  = "SELECT COUNT(*) as idprof FROM ".MAIN_DB_PREFIX."societe WHERE ".$field." = '".$value."'";
+        if($socid) $sql .= " AND rowid <> ".$socid;
+        $resql = $this->db->query($sql);
+        if ($resql)
+        {
+            $nump = $this->db->num_rows($resql);
+            $obj = $this->db->fetch_object($resql);
+            $count = $obj->idprof;
+        }
+        else
+        {
+            $count = 0;
+            print $this->db->error();
+        }
+        $this->db->free($resql);
+
+		if ($count > 0) return true;
+		else return false;
     }
 
     /**

@@ -27,7 +27,7 @@
  *      \file       htdocs/includes/modules/modMyModule.class.php
  *      \ingroup    mymodule
  *      \brief      Description and activation file for module MyModule
- *		\version	$Id: modMyModule.class.php,v 1.67 2011/08/01 13:26:21 hregis Exp $
+ *		\version	$Id: modMyModule.class.php,v 1.68 2011/08/10 23:30:20 eldy Exp $
  */
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
@@ -45,7 +45,7 @@ class modMyModule extends DolibarrModules
 	function modMyModule($DB)
 	{
         global $langs,$conf;
-		
+
         $this->db = $DB;
 
 		// Id for module (must be unique).
@@ -97,7 +97,6 @@ class modMyModule extends DolibarrModules
 		// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
 		// Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',1),
 		//                             1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0) );
-		//                             2=>array('MAIN_MODULE_MYMODULE_NEEDSMARTY','chaine',1,'Constant to say module need smarty',1)
 		$this->const = array();
 
 		// Array to add new pages in new tabs

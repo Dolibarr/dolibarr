@@ -21,7 +21,7 @@
  *	\file       htdocs/compta/facture/fiche-rec.php
  *	\ingroup    facture
  *	\brief      Page to show predefined invoice
- *	\version    $Id: fiche-rec.php,v 1.75 2011/07/31 22:23:13 eldy Exp $
+ *	\version    $Id: fiche-rec.php,v 1.76 2011/08/10 19:55:22 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -109,12 +109,15 @@ if ($_GET["action"] == 'create')
 	$facture = new Facture($db);   // Source invoice
 	$product_static=new Product($db);
 
+<<<<<<< HEAD
 	// Instantiate hooks of thirdparty module
 	if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
 	{
 		$facture->callHooks('invoicecard');
 	}
 
+=======
+>>>>>>> 19bde3ab1589c9d549615183416556fbca667b72
 	if ($facture->fetch($_GET["facid"]) > 0)
 	{
 		print '<form action="fiche-rec.php" method="post">';
@@ -575,5 +578,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:13 $ - $Revision: 1.75 $');
+llxFooter('$Date: 2011/08/10 19:55:22 $ - $Revision: 1.76 $');
 ?>

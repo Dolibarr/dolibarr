@@ -20,7 +20,7 @@
  *	\file       htdocs/ftp/index.php
  *	\ingroup    ftp
  *	\brief      Main page for FTP section area
- *	\version    $Id: index.php,v 1.24 2011/08/01 00:01:02 eldy Exp $
+ *	\version    $Id: index.php,v 1.25 2011/08/17 15:56:27 eldy Exp $
  *	\author		Laurent Destailleur
  */
 
@@ -572,7 +572,7 @@ else
 				}
 				else
 				{
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=download&numero_ftp='.$numero_ftp.'&section='.urlencode($section).'&file='.urlencode($file).'">'.img_file().'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=download&numero_ftp='.$numero_ftp.'&section='.urlencode($section).'&file='.urlencode($file).'">'.img_picto('','file').'</a>';
 					print ' &nbsp; ';
 					print '<input type="checkbox" class="flat checkboxfordelete" id="check_'.$i.'" name="const['.$i.'][check]" value="1">';
 					print ' &nbsp; ';
@@ -624,7 +624,7 @@ if ($conn_id) ftp_close($conn_id);
 // End of page
 $db->close();
 
-llxFooter('$Date: 2011/08/01 00:01:02 $ - $Revision: 1.24 $');
+llxFooter('$Date: 2011/08/17 15:56:27 $ - $Revision: 1.25 $');
 
 
 /**

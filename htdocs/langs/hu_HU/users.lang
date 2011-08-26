@@ -38,7 +38,6 @@ NewUser=Új felhasználó
 CreateUser=Felhasználó létrehozása
 SearchAGroup=Csoport keresése
 SearchAUser=Felhasználó keresése
-ErrorFailedToSendPassword=Nem sikerült a jelszavat elküldeni
 LoginNotDefined=Bejelentkezés nincs definiálva.
 NameNotDefined=Név nincs megadva.
 ListOfUsers=Felhasználók listája

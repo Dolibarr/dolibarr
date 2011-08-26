@@ -30,6 +30,7 @@ ErrorSupplierCodeAlreadyUsed=Supplier code already used
 ErrorBadParameters=Bad parameters
 ErrorBadValueForParameter=Wrong value '%s' for parameter incorrect '%s'
 ErrorBadImageFormat=Image file has not a supported format
+ErrorBadDateFormat=Value '%s' has wrong date format
 ErrorFailedToWriteInDir=Failed to write in directory %s
 ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=%s)
 ErrorUserCannotBeDelete=User can not be deleted. May be it is associated on Dolibarr entities.
@@ -82,4 +83,6 @@ ErrorBadMaskFailedToLocatePosOfSequence=Error, mask without sequence number
 ErrorBadMaskBadRazMonth=Error, bad reset value
 ErrorSelectAtLeastOne=Error. Select at least one entry.
 ErrorProductWithRefNotExist=Product with reference '<i>%s</i>' don't exist
-ErrorDeleteNotPossibleLineIsConsolidated=Delete not possible because record is linked to a bank transation that is conciliated 
+ErrorDeleteNotPossibleLineIsConsolidated=Delete not possible because record is linked to a bank transation that is conciliated
+ErrorProdIdAlreadyExist=%s is assigned to another third
+ErrorFailedToSendPassword=Failed to send password

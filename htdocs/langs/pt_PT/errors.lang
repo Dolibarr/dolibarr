@@ -81,4 +81,4 @@ WarningNoDocumentModelActivated=Não existe um modelo para geração de document
 ErrorDatabaseParameterWrong=Banco de dados do parâmetro de configuração <b>&quot;%s&quot;</b> tem um valor não compatível para uso Dolibarr (deve ter valor <b>&quot;%s&quot;).</b>
 ErrorNumRefModel=Existe uma referência em banco de dados (%s) e não é compatível com esta regra de numeração. Remover registro ou renomeado de referência para ativar este módulo.
 ErrorQtyTooLowForThisSupplier=Quantidade muito baixa para este fornecedor ou sem preço definido sobre este produto para o fornecedor
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:42:12).
+ErrorFailedToSendPassword=Erro ao enviar a palavra-passe

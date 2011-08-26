@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2007      Regis Houssin        <regis@dolibarr.fr>
 -- Copyright (C) 2011      Laurent Destailleur  <eldy@users.sourceforge.net>
 --
@@ -16,7 +16,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- $Id: llx_export_model.key.sql,v 1.3 2011/08/08 23:24:30 eldy Exp $
+-- $Id: llx_export_model.key.sql,v 1.4 2011/08/09 14:27:38 hregis Exp $
 -- ===================================================================
 
 

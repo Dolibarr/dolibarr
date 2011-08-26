@@ -79,4 +79,4 @@ WarningNoDocumentModelActivated=Ingen modell för handling generation, har aktiv
 ErrorDatabaseParameterWrong=Database setup parameter <b>&quot;%s&quot;</b> har ett värde som inte är förenligt att använda Dolibarr (måste ha värdet <b>&quot;%s).</b>
 ErrorNumRefModel=En hänvisning finns i databasen (%s) och är inte förenligt med denna numrering regel. Ta bort post eller bytt namn hänvisning till aktivera den här modulen.
 ErrorQtyTooLowForThisSupplier=Kvantitet för låg för denna leverantör eller något pris som anges på denna produkt för denna leverantör
-// STOP - Lines generated via autotranslator.php tool (2010-08-27 08:54:05).
+ErrorFailedToSendPassword=Misslyckades med att skicka lösenord

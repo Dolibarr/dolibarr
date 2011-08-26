@@ -4,9 +4,10 @@
 // This file must be present into htdocs/install directory
 // during install process to be used.
 //
-// $Id: install.forced.php.install,v 1.9 2011/07/30 14:56:12 eldy Exp $
+// $Id: install.forced.php.install,v 1.13 2011/08/21 16:20:41 eldy Exp $
 //
 
+$force_install_packager='deb';
 $force_install_noedit=2;
 $force_install_message='KeepDefaultValuesDeb';
 #$force_install_main_data_root='/usr/share/dolibarr/documents';
@@ -24,4 +25,9 @@ $force_install_databaserootpass='__SUPERUSERPASSWORD__';
 $force_install_dolibarrlogin='admin';
 $force_install_nophpinfo='1';
 $force_install_lockinstall='444';
+
+$force_dolibarr_lib_GEOIP_PATH='';
+$force_dolibarr_lib_ODTPHP_PATHTOPCLZIP='/usr/share/php/libphp-pclzip';
+$force_dolibarr_font_DOL_DEFAULT_TTF_BOLD='/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans-Bold.ttf';
+
 ?>

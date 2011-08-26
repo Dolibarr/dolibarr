@@ -38,7 +38,6 @@ NewUser=New user
 CreateUser=Create user
 SearchAGroup=Search a group
 SearchAUser=Search a user
-ErrorFailedToSendPassword=Failed to send password
 LoginNotDefined=Login is not defined.
 NameNotDefined=Name is not defined.
 ListOfUsers=List of users

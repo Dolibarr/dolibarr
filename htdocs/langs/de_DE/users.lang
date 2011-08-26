@@ -44,7 +44,6 @@ NewUser=Neuer Benutzer
 CreateUser=Benutzer anlegen
 SearchAGroup=Suche Gruppe
 SearchAUser=Suche Benutzer
-ErrorFailedToSendPassword=Fehler beim Zusenden des Passworts
 LoginNotDefined=Benutzername ist nicht gesetzt.
 NameNotDefined=Name ist nicht gesetzt.
 ListOfUsers=Liste der Benutzer

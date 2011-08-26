@@ -22,7 +22,7 @@
  *	\file       htdocs/fichinter/fiche.php
  *	\brief      Fichier fiche intervention
  *	\ingroup    ficheinter
- *	\version    $Id: fiche.php,v 1.173 2011/07/31 23:50:53 eldy Exp $
+ *	\version    $Id: fiche.php,v 1.175 2011/08/23 20:52:39 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -74,7 +74,7 @@ $result = restrictedArea($user, 'ficheinter', $fichinterid, 'fichinter');
 
 if ($action != 'create' && $action != 'add'  && $action != 'classifybilled' && ! ($_REQUEST["id"] > 0) && empty($_REQUEST["ref"]))
 {
-    Header("Location: index.php");
+    Header("Location: ".DOL_URL_ROOT.'/fichinter/list.php');
     exit;
 }
 
@@ -235,7 +235,7 @@ if ($action == 'confirm_delete' && $_REQUEST['confirm'] == 'yes')
         $object->fetch($id);
         $object->delete($user);
     }
-    Header('Location: index.php?leftmenu=ficheinter');
+    Header('Location: '.DOL_URL_ROOT.'/fichinter/list.php?leftmenu=ficheinter');
     exit;
 }
 
@@ -843,15 +843,15 @@ elseif ($fichinterid)
         print '<table class="nobordernopadding" width="100%"><tr><td>';
         print $langs->trans('Project');
         print '</td>';
-        if ($action != 'classin')
+        if ($action != 'classify')
         {
-            print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classin&amp;id='.$object->id.'">';
+            print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classify&amp;id='.$object->id.'">';
             print img_edit($langs->trans('SetProject'),1);
             print '</a></td>';
         }
         print '</tr></table>';
         print '</td><td colspan="3">';
-        if ($action == 'classin')
+        if ($action == 'classify')
         {
             $html->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project,'projectid');
         }
@@ -1218,5 +1218,5 @@ elseif ($fichinterid)
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:50:53 $ - $Revision: 1.173 $');
+llxFooter('$Date: 2011/08/23 20:52:39 $ - $Revision: 1.175 $');
 ?>

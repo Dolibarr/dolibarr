@@ -3,6 +3,7 @@
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +23,7 @@
  *	\file       htdocs/admin/societe.php
  *	\ingroup    company
  *	\brief      Third party module setup page
- *	\version    $Id: societe.php,v 1.61 2011/07/31 22:23:23 eldy Exp $
+ *	\version    $Id: societe.php,v 1.63 2011/08/17 07:50:29 simnandez Exp $
  */
 
 require("../main.inc.php");
@@ -34,10 +35,12 @@ $langs->load("admin");
 if (!$user->admin)
 accessforbidden();
 
+$action=GETPOST("action");
+
 /*
  * Actions
  */
-if ($_GET["action"] == 'setcodeclient')
+if ($action == 'setcodeclient')
 {
 	if (dolibarr_set_const($db, "SOCIETE_CODECLIENT_ADDON",$_GET["value"],'chaine',0,'',$conf->entity) > 0)
 	{
@@ -50,7 +53,7 @@ if ($_GET["action"] == 'setcodeclient')
 	}
 }
 
-if ($_GET["action"] == 'setcodecompta')
+if ($action == 'setcodecompta')
 {
 	if (dolibarr_set_const($db, "SOCIETE_CODECOMPTA_ADDON",$_GET["value"],'chaine',0,'',$conf->entity) > 0)
 	{
@@ -63,7 +66,7 @@ if ($_GET["action"] == 'setcodecompta')
 	}
 }
 
-if ($_POST["action"] == 'COMPANY_USE_SEARCH_TO_SELECT')
+if ($action == 'COMPANY_USE_SEARCH_TO_SELECT')
 {
 	if (dolibarr_set_const($db, "COMPANY_USE_SEARCH_TO_SELECT", $_POST["activate_COMPANY_USE_SEARCH_TO_SELECT"],'chaine',0,'',$conf->entity))
 	{
@@ -77,7 +80,7 @@ if ($_POST["action"] == 'COMPANY_USE_SEARCH_TO_SELECT')
 }
 
 // define constants for models generator that need parameters
-if ($_POST["action"] == 'setModuleOptions')
+if ($action == 'setModuleOptions')
 {
 	$post_size=count($_POST);
 	for($i=0;$i < $post_size;$i++)
@@ -92,7 +95,7 @@ if ($_POST["action"] == 'setModuleOptions')
 }
 
 // Activate a document generator module
-if ($_GET["action"] == 'set')
+if ($action == 'set')
 {
 	$type='company';
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
@@ -108,7 +111,7 @@ if ($_GET["action"] == 'set')
 }
 
 // Disable a document generator module
-if ($_GET["action"] == 'del')
+if ($action== 'del')
 {
 	$type='company';
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
@@ -121,7 +124,7 @@ if ($_GET["action"] == 'del')
 }
 
 // Define default generator
-if ($_GET["action"] == 'setdoc')
+if ($action == 'setdoc')
 {
 	$db->begin();
 
@@ -157,6 +160,20 @@ if ($_GET["action"] == 'setdoc')
 	}
 }
 
+//Activate ProfId
+if ($action == 'setprofid')
+{
+	$idprof="SOCIETE_IDPROF".$_GET["value"]."_UNIQUE";
+	if (dolibarr_set_const($db, $idprof,$_GET["status"],'chaine',0,'',$conf->entity) > 0)
+	{
+		Header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	}
+	else
+	{
+		dol_print_error($db);
+	}
+}
 
 
 /*
@@ -165,7 +182,7 @@ if ($_GET["action"] == 'setdoc')
 
 $form=new Form($db);
 
-$help_url='EN:Module Third Parties setup|FR:Paramétrage_du_module_Tiers';
+$help_url='EN:Module Third Parties setup|FR:Paramétrage_du_module_Tiers|ES:Configuración_del_módulo_terceros';
 llxHeader('',$langs->trans("CompanySetup"),$help_url);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
@@ -222,13 +239,13 @@ if (is_resource($handle))
 			if ($conf->global->SOCIETE_CODECLIENT_ADDON == "$file")
 			{
 				print "<td align=\"center\">\n";
-				print img_picto($langs->trans("Activated"),'on');
+				print img_picto($langs->trans("Activated"),'switch_on');
 				print "</td>\n";
 			}
 			else
 			{
 				print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setcodeclient&amp;value='.$file.'">';
-				print img_picto($langs->trans("Disabled"),'off');
+				print img_picto($langs->trans("Disabled"),'switch_off');
 				print '</a></td>';
 			}
 
@@ -288,13 +305,13 @@ if (is_resource($handle))
 			if ($conf->global->SOCIETE_CODECOMPTA_ADDON == "$file")
 			{
 				print '<td align="center">';
-				print img_picto($langs->trans("Activated"),'on');
+				print img_picto($langs->trans("Activated"),'switch_on');
 				print '</td>';
 			}
 			else
 			{
 				print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setcodecompta&amp;value='.$file.'">';
-				print img_picto($langs->trans("Disabled"),'off');
+				print img_picto($langs->trans("Disabled"),'switch_off');
 				print '</a></td>';
 			}
 			print '<td>&nbsp;</td>';
@@ -387,7 +404,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 							//if ($conf->global->COMPANY_ADDON_PDF != "$name")
 							//{
 								print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
-								print img_picto($langs->trans("Enabled"),'on');
+								print img_picto($langs->trans("Enabled"),'switch_on');
 								print '</a>';
 							//}
 							//else
@@ -401,13 +418,13 @@ foreach ($conf->file->dol_document_root as $dirroot)
 							if (versioncompare($module->phpmin,versionphparray()) > 0)
 							{
 								print "<td align=\"center\">\n";
-								print img_picto(dol_escape_htmltag($langs->trans("ErrorModuleRequirePHPVersion",join('.',$module->phpmin))),'off');
+								print img_picto(dol_escape_htmltag($langs->trans("ErrorModuleRequirePHPVersion",join('.',$module->phpmin))),'switch_off');
 								print "</td>";
 							}
 							else
 							{
 								print "<td align=\"center\">\n";
-								print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+								print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 								print "</td>";
 							}
 						}
@@ -450,6 +467,72 @@ foreach ($conf->file->dol_document_root as $dirroot)
 print '</table>';
 
 print '<br>';
+
+//IDProf
+print_titre($langs->trans("CompanyIdProfChecker"));
+
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Name").'</td>';
+print '<td>'.$langs->trans("Description").'</td>';
+print '<td align="center">'.$langs->trans("Value").'</td>';
+print "</tr>\n";
+
+$profid[0][0]=$langs->trans("ProfId1");
+$profid[0][1]=$langs->transcountry('ProfId1' ,$mysoc->pays_code);
+$profid[1][0]=$langs->trans("ProfId2");
+$profid[1][1]=$langs->transcountry('ProfId2' ,$mysoc->pays_code);
+$profid[2][0]=$langs->trans("ProfId3");
+$profid[2][1]=$langs->transcountry('ProfId3' ,$mysoc->pays_code);
+$profid[3][0]=$langs->trans("ProfId4");
+$profid[3][1]=$langs->transcountry('ProfId4' ,$mysoc->pays_code);
+
+$var = true;
+$i=0;
+
+while ($i < sizeof($profid))
+{
+	$var = !$var;
+
+	print '<tr '.$bc[$var].'>';
+	print '<td>'.$profid[$i][0]."</td><td>\n";
+	print $profid[$i][1];
+	print '</td>';
+
+	switch($i)
+	{
+        case 0:
+        	$verif=(!$conf->global->SOCIETE_IDPROF1_UNIQUE?false:true);
+        	break;
+        case 1:
+        	$verif=(!$conf->global->SOCIETE_IDPROF2_UNIQUE?false:true);
+        	break;
+        case 2:
+        	$verif=(!$conf->global->SOCIETE_IDPROF3_UNIQUE?false:true);
+        	break;
+        case 3:
+        	$verif=(!$conf->global->SOCIETE_IDPROF4_UNIQUE?false:true);
+        	break;
+	}
+	
+	if ($verif)
+	{
+		print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setprofid&amp;value='.($i+1).'&amp;status=0">';
+		print img_picto($langs->trans("Activated"),'switch_on');
+		print '</a></td>';
+	}
+	else
+	{
+		print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setprofid&amp;value='.($i+1).'&amp;status=1">';
+		print img_picto($langs->trans("Disabled"),'switch_off');
+		print '</a></td>';
+	}
+	print "</tr>\n";
+	$i++;
+}
+
+print "</table>\n";
+
 
 print_titre($langs->trans("Other"));
 
@@ -498,5 +581,5 @@ dol_fiche_end();
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:23 $ - $Revision: 1.61 $');
+llxFooter('$Date: 2011/08/17 07:50:29 $ - $Revision: 1.63 $');
 ?>

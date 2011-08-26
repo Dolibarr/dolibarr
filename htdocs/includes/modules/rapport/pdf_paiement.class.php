@@ -21,10 +21,9 @@
  *	\file       htdocs/includes/modules/rapport/pdf_paiement.class.php
  *	\ingroup    banque
  *	\brief      File to build payment reports
- *	\version    $Id: pdf_paiement.class.php,v 1.64 2011/07/31 23:28:13 eldy Exp $
+ *	\version    $Id: pdf_paiement.class.php,v 1.66 2011/08/11 12:14:01 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
-require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 
@@ -81,7 +80,7 @@ class pdf_paiement
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!class_exists('TCPDF')) $outputlangs->charset_output='ISO-8859-1';
+		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
 		$this->month=$month;
 		$this->year=$year;

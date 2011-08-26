@@ -20,7 +20,7 @@
  *      \file       htdocs/includes/triggers/interface_modWorkflow_WorkflowManager.class.php
  *      \ingroup    core
  *      \brief      Trigger file for workflows
- *      \version	$Id: interface_modWorkflow_WorkflowManager.class.php,v 1.8 2011/07/31 23:29:45 eldy Exp $
+ *      \version	$Id: interface_modWorkflow_WorkflowManager.class.php,v 1.10 2011/08/12 05:41:01 hregis Exp $
  */
 
 
@@ -105,7 +105,13 @@ class InterfaceWorkflowManager
             {
                 include_once(DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php');
                 $order = new Commande($this->db);
-                $ret=$order->createFromProposal($object,0);
+                
+                // Actions on extra fields (by external module or standard code)
+                include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+                $hookmanager=new HookManager($this->db);
+                $hookmanager->callHooks(array('ordercard'));
+                
+                $ret=$order->createFromProposal($object,$hookmanager);
                 if ($ret < 0) { $this->error=$invoice->error; $this->errors[]=$invoice->error; }
                 return $ret;
             }
@@ -119,7 +125,13 @@ class InterfaceWorkflowManager
             {
                 include_once(DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php');
                 $invoice = new Facture($this->db);
-                $ret=$invoice->createFromOrder($object,0);
+                
+                // Actions on extra fields (by external module or standard code)
+                include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+                $hookmanager=new HookManager($this->db);
+                $hookmanager->callHooks(array('invoicecard'));
+                
+                $ret=$invoice->createFromOrder($object,$hookmanager);
                 if ($ret < 0) { $this->error=$invoice->error; $this->errors[]=$invoice->error; }
                 return $ret;
             }

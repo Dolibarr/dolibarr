@@ -21,7 +21,7 @@
  *      \file       scripts/invoices/rebuild_merge_pdf.php
  *      \ingroup    facture
  *      \brief      Script to rebuild PDF and merge PDF files into one
- *		\version	$Id: rebuild_merge_pdf.php,v 1.21 2011/07/31 22:22:11 eldy Exp $
+ *		\version	$Id: rebuild_merge_pdf.php,v 1.23 2011/08/11 12:14:22 eldy Exp $
  */
 
 $sapi_type = php_sapi_name();
@@ -40,7 +40,6 @@ require_once($path."../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/cron/functions_cron.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/facture/modules_facture.php");
-require_once(DOL_DOCUMENT_ROOT."/includes/fpdf/fpdfi/fpdi.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 
 
@@ -48,7 +47,7 @@ require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 $langs->load("main");
 
 // Global variables
-$version='$Revision: 1.21 $';
+$version='$Revision: 1.23 $';
 $error=0;
 
 
@@ -290,16 +289,17 @@ if ( $resql=$db->query($sql) )
 		//---------------------------------------------------------
 
         // Create empty PDF
-		$pdf=new FPDI('P','mm','A4');
-		if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
-		//$pdf->SetCompression(false);
-
+        $pdf=pdf_getInstance();
         if (class_exists('TCPDF'))
         {
             $pdf->setPrintHeader(false);
             $pdf->setPrintFooter(false);
         }
         $pdf->SetFont(pdf_getPDFFont($outputlangs));
+
+        if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
+		//$pdf->SetCompression(false);
+
 
 		//$pdf->Open();
 		//$pdf->AddPage();

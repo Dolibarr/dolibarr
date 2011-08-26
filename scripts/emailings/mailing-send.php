@@ -23,7 +23,7 @@
  *      \file       scripts/emailings/mailing-send.php
  *      \ingroup    mailing
  *      \brief      Script d'envoi d'un mailing prepare et valide
- *		\version	$Id: mailing-send.php,v 1.20 2011/07/31 22:22:12 eldy Exp $
+ *		\version	$Id: mailing-send.php,v 1.21 2011/08/20 15:11:32 eldy Exp $
  */
 
 $sapi_type = php_sapi_name();
@@ -115,7 +115,7 @@ if ($resql)
 			dol_print_error($db);
 		}
 
-		// Boucle sur chaque adresse et envoie le mail
+		// Look on each email and sent message
 		$i = 0;
 		while ($i < $num)
 		{

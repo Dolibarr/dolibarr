@@ -1,0 +1,19 @@
+/*
+ * Language code: ru_UA
+ */
+
+CHARSET=UTF-8
+FONTFORPDF=freemono
+// FONTFORPDF=DejaVuSans
+FONTSIZEFORPDF=8
+DIRECTION=ltr
+SeparatorDecimal=,
+SeparatorThousand=
+FormatDateShort=%d.%m.%Y
+FormatDateShortJava=dd.MM.yyyy
+FormatHourShort=%H:%M
+FormatDateTextShort=%d %b %Y
+FormatDateText=%d %B %Y
+FormatDateHourShort=%d.%m.%Y %H:%M
+FormatDateHourTextShort=%d %b %Y %H:%M
+FormatDateHourText=%d %B %Y %H:%M

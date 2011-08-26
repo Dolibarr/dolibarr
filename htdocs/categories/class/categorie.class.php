@@ -2,7 +2,7 @@
 /* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
  * Copyright (C) 2005      Davoleau Brice       <brice.davoleau@gmail.com>
  * Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2008 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2006-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin	  	<patrick.raguin@gmail.com>
  *
@@ -24,7 +24,7 @@
  *	\file       htdocs/categories/class/categorie.class.php
  *	\ingroup    categorie
  *	\brief      File of class to manage categories
- *	\version	$Id: categorie.class.php,v 1.18 2011/08/03 00:46:39 eldy Exp $
+ *	\version	$Id: categorie.class.php,v 1.19 2011/08/20 09:02:56 hregis Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
@@ -147,7 +147,8 @@ class Categorie
 			$sql.= "fk_soc,";
 		}
 		$sql.= " visible,";
-		$sql.= " type";
+		$sql.= " type,";
+		$sql.= " entity";
 		//$sql.= ", fk_parent_id";
 		$sql.= ")";
 		$sql.= " VALUES ('".$this->db->escape($this->label)."', '".$this->db->escape($this->description)."',";
@@ -155,7 +156,7 @@ class Categorie
 		{
 			$sql.= ($this->socid != -1 ? $this->socid : 'null').",";
 		}
-		$sql.= "'".$this->visible."',".$this->type;
+		$sql.= "'".$this->visible."',".$this->type.",".$conf->entity;
 		//$sql.= ",".$this->parentId;
 		$sql.= ")";
 
@@ -609,11 +610,16 @@ class Categorie
 	 */
 	function get_full_arbo($type,$markafterid=0)
 	{
+		global $conf;
+		
 		$this->cats = array();
 
 		// Charge tableau des meres
-		$sql = "SELECT fk_categorie_mere as id_mere, fk_categorie_fille as id_fille";
-		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_association";
+		$sql = "SELECT ca.fk_categorie_mere as id_mere, ca.fk_categorie_fille as id_fille";
+		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_association ca";
+		$sql.= ", ".MAIN_DB_PREFIX."categorie as c";
+		$sql.= " WHERE ca.fk_categorie_mere = c.rowid";
+		$sql.= " AND c.entity = ".$conf->entity;
 
 		// Load array this->motherof
 		dol_syslog("Categorie::get_full_arbo build motherof array sql=".$sql, LOG_DEBUG);
@@ -635,8 +641,9 @@ class Categorie
 		$sql = "SELECT DISTINCT c.rowid, c.label as label, ca.fk_categorie_fille as rowid_fille";	// Distinct reduce pb with old tables with duplicates
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie as c";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_association as ca";
-		$sql.= " ON c.rowid=ca.fk_categorie_mere";
+		$sql.= " ON c.rowid = ca.fk_categorie_mere";
 		$sql.= " WHERE c.type = ".$type;
+		$sql.= " AND c.entity = ".$conf->entity;
 		$sql.= " ORDER BY c.label, c.rowid";
 
 		dol_syslog("Categorie::get_full_arbo get category list sql=".$sql, LOG_DEBUG);

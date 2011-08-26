@@ -18,7 +18,7 @@
 /**
  *	\file       htdocs/asterisk/wrapper.php
  *  \brief      File that is entry point to call an Asterisk server
- *  \version    $Id: wrapper.php,v 1.9 2011/08/03 00:45:45 eldy Exp $
+ *  \version    $Id: wrapper.php,v 1.10 2011/08/20 15:11:32 eldy Exp $
  *	\remarks	To be used, an Asterisk user must be created by adding this
  * 				in /etc/asterisk/manager.conf
  * 				[dolibarr]
@@ -76,7 +76,7 @@ $password = $_GET['password'];
 $caller = $_GET['caller'];
 $called = $_GET['called'];
 
-# Adresse IP du serveur Asterisk
+# IP address of Asterisk server
 $strHost = $conf->global->ASTERISK_HOST;
 #Spécifiez le type d'extension par laquelle vous poste est connecte.
 #ex: SIP/, IAX2/, ZAP/, etc

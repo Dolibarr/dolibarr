@@ -20,7 +20,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- $Id: llx_c_tva.sql,v 1.27 2011/08/03 01:25:44 eldy Exp $
+-- $Id: llx_c_tva.sql,v 1.28 2011/08/22 22:48:34 eldy Exp $
 --
 
 --
@@ -199,6 +199,10 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (10
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (105,10,   '15','0','VAT 12% Majoré à 25% (15%)',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (106,10, '22.5','0','VAT 18% Majoré à 25% (22.5%)',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (107,10,    '0','0','VAT Rate 0',  1);
+
+-- UKRAINE (id country=226)
+INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (2261,226,  '20','0','VAT standart rate',1);
+INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (2262,226,   '0','0','VAT Rate 0',1);
 
 -- UNITED OF KINGDOM (id country=7)
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 71, 7,  	 '20','0','VAT standard rate',1);

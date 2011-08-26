@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
  *       \file       htdocs/categories/photos.php
  *       \ingroup    category
  *       \brief      Gestion des photos d'une categorie
- *       \version    $Id: photos.php,v 1.13 2011/08/03 00:46:32 eldy Exp $
+ *       \version    $Id: photos.php,v 1.15 2011/08/20 09:02:57 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -33,8 +33,6 @@ require_once(DOL_DOCUMENT_ROOT."/lib/categories.lib.php");
 $langs->load("categories");
 $langs->load("bills");
 
-// Security check
-if (!$user->rights->categorie->lire) accessforbidden();
 
 $mesg = '';
 
@@ -49,6 +47,9 @@ if ($id == "")
 	dol_print_error('','Missing parameter id');
 	exit();
 }
+
+// Security check
+$result = restrictedArea($user, 'categorie', $id);
 
 $object = new Categorie($db);
 
@@ -266,7 +267,7 @@ if (!empty($id) || !empty($ref))
 				// On propose la generation de la vignette si elle n'existe pas et si la taille est superieure aux limites
 				if (!$obj['photo_vignette'] && preg_match('/(\.bmp|\.gif|\.jpg|\.jpeg|\.png)$/i',$obj['photo']) && ($object->imgWidth > $maxWidth || $object->imgHeight > $maxHeight))
 				{
-					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=addthumb&amp;type='.$type.'&amp;file='.urlencode($pdir.$viewfilename).'">'.img_refresh($langs->trans('GenerateThumb')).'&nbsp;&nbsp;</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=addthumb&amp;type='.$type.'&amp;file='.urlencode($pdir.$viewfilename).'">'.img_picto($langs->trans('GenerateThumb'),'refresh').'&nbsp;&nbsp;</a>';
 				}
 				if ($user->rights->categorie->creer)
 				{
@@ -304,5 +305,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:32 $ - $Revision: 1.13 $');
+llxFooter('$Date: 2011/08/20 09:02:57 $ - $Revision: 1.15 $');
 ?>

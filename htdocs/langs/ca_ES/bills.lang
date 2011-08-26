@@ -182,7 +182,6 @@ RemainderToTake=Queda per cobrar
 AmountExpected=Import reclamat
 ExcessReceived=Rebut en excés
 EscompteOffered=Descompte (pagament aviat)
-CreateDraft=Crea esborrany
 SendBillRef=Enviament de la factura %s
 SendReminderBillRef=Recordatori de la factura %s
 StandingOrders=Domiciliacions

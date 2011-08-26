@@ -21,33 +21,24 @@
  *	\file       htdocs/core/class/commonobject.class.php
  *	\ingroup    core
  *	\brief      File of parent class of all other business classes (invoices, contracts, proposals, orders, ...)
- *	\version    $Id: commonobject.class.php,v 1.148 2011/07/31 23:45:14 eldy Exp $
+ *	\version    $Id: commonobject.class.php,v 1.159 2011/08/22 22:04:22 eldy Exp $
  */
 
 
 /**
  *	\class 		CommonObject
- *	\brief 		Class of all other business classes (invoices, contracts, proposals, orders, ...)
+ *	\brief 		Parent class of all other business classes (invoices, contracts, proposals, orders, ...)
  */
 
-class CommonObject
+abstract class CommonObject
 {
 	var $db;
 
-	var $linkedObjectBlock;
-	var $objectid;
+	var $canvas;                // Contains canvas name if it is
 
-	// Instantiate hook classe of thirdparty module
-	var $hooks=array();
 
-	/**
-	 *    Constructeur de la classe
-	 *    @param	DB		Handler acces base de donnees
-	 */
-	function CommonObject($DB)
-	{
-		$this->db = $DB;
-	}
+	// No constructor as it is an abstract class
+
 
 	/**
 	 *      \brief      Check if ref is used.
@@ -171,24 +162,24 @@ class CommonObject
 	 *      Update a link to contact line
 	 *      @param      rowid               Id of line contact-element
 	 * 		@param		statut	            New status of link
-	 *      @param      type_contact_id     Id of contact type
+	 *      @param      type_contact_id     Id of contact type (not modified if 0)
 	 *      @return     int                 <0 if KO, >= 0 if OK
 	 */
-	function update_contact($rowid, $statut, $type_contact_id)
+	function update_contact($rowid, $statut, $type_contact_id=0)
 	{
 		// Insertion dans la base
 		$sql = "UPDATE ".MAIN_DB_PREFIX."element_contact set";
-		$sql.= " statut = ".$statut.",";
-		$sql.= " fk_c_type_contact = '".$type_contact_id ."'";
+		$sql.= " statut = ".$statut;
+		if ($type_contact_id) $sql.= ", fk_c_type_contact = '".$type_contact_id ."'";
 		$sql.= " where rowid = ".$rowid;
-		// Retour
-		if (  $this->db->query($sql) )
+		$resql=$this->db->query($sql);
+		if ($resql)
 		{
 			return 0;
 		}
 		else
 		{
-			dol_print_error($this->db);
+			$this->error=$this->db->lasterror();
 			return -1;
 		}
 	}
@@ -199,7 +190,7 @@ class CommonObject
 	 *    @param		notrigger		Disable all triggers
 	 *    @return     	int				>0 if OK, <0 if KO
 	 */
-	function delete_contact($rowid,$notrigger=0)
+	function delete_contact($rowid, $notrigger=0)
 	{
 		global $user,$langs,$conf;
 
@@ -329,35 +320,41 @@ class CommonObject
 		}
 	}
 
-	/**
-	 *    Return fetch cursor of a contact
-	 *    FIXME We should never return an open db cursor
-	 *    @param      rowid      L'identifiant du contact
-	 *    @return     object     L'objet construit par DoliDb.fetch_object
-	 */
-	function detail_contact($rowid)
+
+    /**
+     * 		Update status of a contact linked to object
+     *
+     * 		@param		$rowid		Id of link between object and contact
+     * 		@return		int			<0 if KO, >=0 if OK
+     */
+	function swapContactStatus($rowid)
 	{
 		$sql = "SELECT ec.datecreate, ec.statut, ec.fk_socpeople, ec.fk_c_type_contact,";
-		$sql.= " tc.code, tc.libelle,";
-		$sql.= " s.fk_soc";
+		$sql.= " tc.code, tc.libelle";
+		//$sql.= ", s.fk_soc";
 		$sql.= " FROM (".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as tc)";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as s ON ec.fk_socpeople=s.rowid";	// Si contact de type external, alors il est li� � une societe
+		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as s ON ec.fk_socpeople=s.rowid";	// Si contact de type external, alors il est lie a une societe
 		$sql.= " WHERE ec.rowid =".$rowid;
 		$sql.= " AND ec.fk_c_type_contact=tc.rowid";
 		$sql.= " AND tc.element = '".$this->element."'";
 
+		dol_syslog(get_class($object)."::swapContactStatus sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
 			$obj = $this->db->fetch_object($resql);
-			return $obj;
+		    $newstatut = ($obj->statut == 4) ? 5 : 4;
+		    $result = $this->update_contact($rowid, $newstatut);
+		    $this->db->free($resql);
+		    return $result;
 		}
 		else
 		{
 			$this->error=$this->db->error();
 			dol_print_error($this->db);
-			return null;
+			return -1;
 		}
+
 	}
 
 	/**
@@ -523,8 +520,8 @@ class CommonObject
 	}
 
 	/**
-	 *		Charge l'adresse d'id $this->fk_address dans this->address
-	 *		@param      fk_address 		Id de l'adresse
+	 *		Load delivery adresse id into $this->fk_address
+	 *		@param      fk_address 		Id of address
 	 *		@return		int				<0 if KO, >0 if OK
 	 */
 	function fetch_address($fk_address)
@@ -1402,31 +1399,39 @@ class CommonObject
 	}
 
     /**
-     *  Load type of canvas of an object
+     *  Load type of canvas of an object if it exists
+     *
      *  @param      id      Record id
      *  @param      ref     Record ref
+     *  @return		int		<0 if KO, 0 if nothing done, >0 if OK
      */
     function getCanvas($id=0,$ref='')
     {
         global $conf;
 
+        if (empty($id) && empty($ref)) return 0;
+        if (! empty($conf->global->MAIN_DISABLE_CANVAS)) return 0;    // To increase speed. Not enabled by default.
+
+        // Clean parameters
         $ref = trim($ref);
 
         $sql = "SELECT rowid, canvas";
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
         $sql.= " WHERE entity = ".$conf->entity;
-        if (!empty($id)) $sql.= " AND rowid = ".$id;
+        if (!empty($id))  $sql.= " AND rowid = ".$id;
         if (!empty($ref)) $sql.= " AND ref = '".$ref."'";
 
         $resql = $this->db->query($sql);
         if ($resql)
         {
             $obj = $this->db->fetch_object($resql);
-
-            $this->id       = $obj->rowid;
-            $this->canvas   = $obj->canvas;
-
-            return 1;
+            if ($obj)
+            {
+                $this->id       = $obj->rowid;
+                $this->canvas   = $obj->canvas;
+                return 1;
+            }
+            else return 0;
         }
         else
         {
@@ -1435,64 +1440,6 @@ class CommonObject
         }
     }
 
-
-	/**
-	 *	Init array this->hooks with instantiated controler and/or dao
-	 *	@param	     arraytype	      Array list of hooked tab/features. For example: thirdpartytab, ...
-	 */
-	function callHooks($arraytype)
-	{
-		global $conf;
-
-		if (! is_array($arraytype)) $arraytype=array($arraytype);
-
-		$i=0;
-
-		foreach($conf->hooks_modules as $module => $hooks)
-		{
-			if ($conf->$module->enabled)
-			{
-				foreach($arraytype as $type)
-				{
-					if (in_array($type,$hooks))
-					{
-						$path 		= '/'.$module.'/class/';
-						$actionfile = 'actions_'.$module.'.class.php';
-						$daofile 	= 'dao_'.$module.'.class.php';
-						$pathroot	= '';
-
-						$this->hooks[$i]['type']=$type;
-
-						// Include actions class (controller)
-                        //print 'include '.$path.$actionfile."\n";
-						$resaction=dol_include_once($path.$actionfile);
-
-						// Include dataservice class (model)
-                        //print 'include '.$path.$daofile."\n";
-						$resdao=dol_include_once($path.$daofile);
-
-						// Instantiate actions class (controller)
-						if ($resaction)
-						{
-    						$controlclassname = 'Actions'.ucfirst($module);
-    						$objModule = new $controlclassname($this->db);
-    						$this->hooks[$i]['modules'][$objModule->module_number] = $objModule;
-						}
-
-						// TODO storing dao is useless here. It's goal of controller to known which dao to manage
-                        if ($resdao)
-                        {
-    						// Instantiate dataservice class (model)
-    						$modelclassname = 'Dao'.ucfirst($module);
-    						$this->hooks[$i]['modules'][$objModule->module_number]->object = new $modelclassname($this->db);
-                        }
-
-                        $i++;
-					}
-				}
-			}
-		}
-	}
 
 	/**
 	 * 	Get special code of line
@@ -1646,14 +1593,15 @@ class CommonObject
             }
 
         	// To work with non standard path
-            if ($objecttype == 'facture') { $tplpath = 'compta/'.$element; }
-            if ($objecttype == 'propal')  { $tplpath = 'comm/'.$element; }
-            if ($objecttype == 'shipping') { $tplpath = 'expedition'; }
-            if ($objecttype == 'delivery') { $tplpath = 'livraison'; }
+            if ($objecttype == 'facture')          { $tplpath = 'compta/'.$element; }
+            if ($objecttype == 'propal')           { $tplpath = 'comm/'.$element; }
+            if ($objecttype == 'shipping')         { $tplpath = 'expedition'; }
+            if ($objecttype == 'delivery')         { $tplpath = 'livraison'; }
             if ($objecttype == 'invoice_supplier') { $tplpath = 'fourn/facture'; }
             if ($objecttype == 'order_supplier')   { $tplpath = 'fourn/commande'; }
 
-            $this->linkedObjectBlock = $objects;
+            global $linkedObjectBlock;
+            $linkedObjectBlock = $objects;
 
             dol_include_once('/'.$tplpath.'/tpl/linkedobjectblock.tpl.php');
         }
@@ -1673,7 +1621,7 @@ class CommonObject
      *  @param			$seller				Object thirdparty who sell
      *  @param			$buyer				Object thirdparty who buy
 	 */
-	function formAddPredefinedProduct($dateSelector,$seller,$buyer)
+	function formAddPredefinedProduct($dateSelector,$seller,$buyer,$hookmanager=false)
 	{
 		global $conf,$langs,$object;
 		global $html,$bcnd,$var;
@@ -1688,7 +1636,7 @@ class CommonObject
      *  But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
      *  @param          $dateSelector       1=Show also date range input fields
      */
-	function formAddFreeProduct($dateSelector,$seller,$buyer)
+	function formAddFreeProduct($dateSelector,$seller,$buyer,$hookmanager=false)
 	{
 		global $conf,$langs,$object;
 		global $html,$bcnd,$var;
@@ -1713,7 +1661,7 @@ class CommonObject
      *  @param		$selected		   	Object line selected
      *  @param      $dateSelector      	1=Show also date range input fields
 	 */
-	function printObjectLines($action='viewline',$seller,$buyer,$selected=0,$dateSelector=0)
+	function printObjectLines($action='viewline',$seller,$buyer,$selected=0,$dateSelector=0,$hookmanager=false)
 	{
 		global $conf,$langs;
 
@@ -1756,22 +1704,17 @@ class CommonObject
 		{
 			$var=!$var;
 
-			if (! empty($this->hooks) && ( ($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line) ) )
+			if (is_object($hookmanager) && ( ($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line) ) )
 			{
 				if (empty($line->fk_parent_line))
 				{
-					foreach($this->hooks as $hook)
-					{
-						if (method_exists($hook['modules'][$line->special_code],'printObjectLine'))
-						{
-							$hook['modules'][$line->special_code]->printObjectLine($action,$this,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected);
-						}
-					}
+					$parameters = array('line'=>$line,'var'=>$var,'num'=>$num,'i'=>$i,'dateSelector'=>$dateSelector,'seller'=>$seller,'buyer'=>$buyer,'selected'=>$selected);
+					$reshook=$hookmanager->executeHooks('printObjectLine',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 				}
 			}
 			else
 			{
-				$this->printLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected);
+				$this->printLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected,$hookmanager);
 			}
 
 			$i++;
@@ -1795,7 +1738,7 @@ class CommonObject
      *  @param      $buyer             Object of buyer third party
      *  @param		$selected		   Object line selected
 	 */
-	function printLine($action='viewline',$line,$var=true,$num=0,$i=0,$dateSelector=0,$seller,$buyer,$selected=0)
+	function printLine($action='viewline',$line,$var=true,$num=0,$i=0,$dateSelector=0,$seller,$buyer,$selected=0,$hookmanager=false)
 	{
 		global $conf,$langs,$user;
 		global $html,$bc,$bcdd;
@@ -1863,7 +1806,7 @@ class CommonObject
      *  If lines are into a template, title must also be into a template
      *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
 	 */
-	function printOriginLinesList()
+	function printOriginLinesList($hookmanager=false)
 	{
 		global $langs;
 
@@ -1883,14 +1826,12 @@ class CommonObject
 		{
 			$var=!$var;
 
-			if (! empty($this->hooks) && ( ($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line) ) )
+			if (is_object($hookmanager) && ( ($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line) ) )
 			{
 				if (empty($line->fk_parent_line))
 				{
-					foreach($this->hooks as $hook)
-					{
-						if (method_exists($hook['modules'][$line->special_code],'printOriginObjectLine')) $hook['modules'][$line->special_code]->printOriginObjectLine($this,$line,$var,$i);
-					}
+					$parameters=array('line'=>$line,'var'=>$var,'i'=>$i);
+					$reshook=$hookmanager->executeHooks('printOriginObjectLine',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 				}
 			}
 			else
@@ -1990,11 +1931,10 @@ class CommonObject
 
 	/**
 	 *     Add/Update extra fields
-	 *     TODO Use also type of field to do manage date fields
 	 */
 	function insertExtraFields()
 	{
-        if (sizeof($this->array_options) > 0)
+	    if (sizeof($this->array_options) > 0)
         {
             $this->db->begin();
 

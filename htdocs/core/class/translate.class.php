@@ -23,7 +23,7 @@
  *		\brief      File for Tanslate class
  *		\author	    Eric Seigne
  *		\author	    Laurent Destailleur
- *		\version    $Id: translate.class.php,v 1.49 2011/08/01 22:03:50 eldy Exp $
+ *		\version    $Id: translate.class.php,v 1.53 2011/08/24 02:17:57 eldy Exp $
  */
 
 
@@ -35,20 +35,21 @@ class Translate {
 
 	var $dir;						// Directories that contains /langs subdirectory
 
-	var $defaultlang;				// Langue courante en vigueur de l'utilisateur
+	var $defaultlang;				// Current language for current user
 	var $direction = 'ltr';			// Left to right or Right to left
-
-	var $tab_translate=array();		// Tableau des traductions
-	var $tab_loaded=array();		// Array to store result after loading each language file
-
-	var $cache_labels=array();		// Cache for labels
-
 	var $charset_inputfile=array();	// To store charset encoding used for language
 	var $charset_output='UTF-8';	// Codage used by "trans" method outputs
+
+	var $tab_translate=array();		// Array of all translations key=>value
+	var $tab_loaded=array();		// Array to store result after loading each language file
+
+	var $cache_labels=array();		// Cache for labels return by trans method
+
 
 
 	/**
 	 *  Constructor
+	 *
 	 *  @param      dir             Force directory that contains /langs subdirectory (value is sometine '..' like into install/* pages
 	 *                              or support/* pages).
 	 *  @param      conf			Object with Dolibarr configuration
@@ -61,9 +62,9 @@ class Translate {
 	}
 
 
-
 	/**
 	 *  Set accessor for this->defaultlang
+	 *
 	 *  @param      srclang     	Language to use
 	 */
 	function setDefaultLang($srclang='fr_FR')
@@ -76,10 +77,14 @@ class Translate {
 		if (! empty($conf->global->MAIN_FORCELANGDIR))
 		{
 			$more=array();
+			$i=0;
 			foreach($conf->file->dol_document_root as $dir)
 			{
 				$newdir=$dir.$conf->global->MAIN_FORCELANGDIR;
-				if (! in_array($newdir,$this->dir)) $more[]=$newdir;
+				if (! in_array($newdir,$this->dir))
+				{
+				    $more['module_'.$i]=$newdir; $i++;
+				}
 			}
 			$this->dir=array_merge($more,$this->dir);
 		}
@@ -125,6 +130,7 @@ class Translate {
 	/**
 	 *  Return active language code for current user
 	 * 	It's an accessor for this->defaultlang
+	 *
 	 *  @param     mode        0=Long language code, 1=Short language code
 	 *  @return    string      Language code used (en_US, en_AU, fr_FR, ...)
 	 */
@@ -141,7 +147,12 @@ class Translate {
 	 * 	All data in translation array are stored in UTF-8 format.
      *  tab_loaded is completed with $domain key.
      *  Value for hash are: 1:Loaded from disk, 2:Not found, 3:Loaded from cache
-	 *  @param      domain      		File name to load (.lang file). Use file@module if file is in a module directory.
+     *
+	 *  @param      domain      		File name to load (.lang file). Must be "file" or "file@module" if file is in a module directory.
+ 	 *									If $domain is "file@module" instead of "file" then we look for module lang file
+	 *									in htdocs/custom/modules/mymodule/langs/code_CODE/file.lang
+	 *									and in htdocs/mymodule/langs/code_CODE/file.lang for backward compatibility
+	 *									instead of file htdocs/langs/code_CODE/file.lang
 	 *  @param      alt         		0 (try xx_ZZ then 1), 1 (try xx_XX then 2), 2 (try en_US or fr_FR or es_ES)
 	 * 	@param		stopafterdirection	Stop when the DIRECTION tag is found (optimize)
 	 * 	@param		forcelangdir		To force a lang directory
@@ -151,6 +162,7 @@ class Translate {
 	{
 		global $conf;
 
+		//var_dump($this->dir);exit;
 		// Check parameters
 		if (empty($domain))
 		{
@@ -163,11 +175,11 @@ class Translate {
 		$newdomain = $domain;
 		$modulename = '';
 
-		// Search if module directory name is different of lang file name
-		if (preg_match('/^([^@]+)?@([^@]+)$/i',$domain,$regs))
+		// Search if a module directory name is provided into lang file name
+		if (preg_match('/^([^@]+)@([^@]+)$/i',$domain,$regs))
 		{
-			$newdomain = (!empty($regs[1])?$regs[1]:$regs[2]);
-			$modulename = (!empty($regs[1])?$regs[2]:'');
+			$newdomain = $regs[1];
+			$modulename = $regs[2];
 		}
 
         // Check cache
@@ -185,33 +197,27 @@ class Translate {
 		if ($alt < 1 && strtolower($langarray[0]) == strtolower($langarray[1])) $alt=1;
 		if ($alt < 2 && (strtolower($langofdir) == 'en_us' || strtolower($langofdir) == 'fr_fr' || strtolower($langofdir) == 'es_es')) $alt=2;
 
-		foreach($this->dir as $searchdir)
-		{
-			// If $domain is "file@module" instead of "file" then we look for module lang file
-			// in htdocs/custom/modules/mymodule/langs/code_CODE/file.lang
-			// and in htdocs/mymodule/langs/code_CODE/file.lang for backward compatibility
-			// instead of file htdocs/langs/code_CODE/filelang
-			if (preg_match('/@/',$domain))	$searchdir = $searchdir."/".(!empty($modulename)?$modulename:$newdomain)."/langs";
-			else $searchdir=$searchdir."/langs";
 
+		foreach($this->dir as $keydir => $searchdir)
+		{
 			// Directory of translation files
-			$scandir = $searchdir."/".$langofdir;
-			$file_lang =  $scandir . "/".$newdomain.".lang";
+			$file_lang = $searchdir.($modulename?'/'.$modulename:'')."/langs/".$langofdir."/".$newdomain.".lang";
 			$file_lang_osencoded=dol_osencode($file_lang);
 			$filelangexists=is_file($file_lang_osencoded);
 
-			//dol_syslog('Translate::Load Try to read for alt='.$alt.' langofdir='.$langofdir.' file_lang='.$file_lang." => ".$filelangexists);
+			//dol_syslog('Translate::Load Try to read for alt='.$alt.' langofdir='.$langofdir.' file_lang='.$file_lang." => filelangexists=".$filelangexists);
 
 			if ($filelangexists)
 			{
-				$found=false;
+				// TODO Move cache read out of loop on dirs
+			    $found=false;
 
-				// Enable cache of lang file in memory (not by default)
+				// Enable caching of lang file in memory (not by default)
 				$usecachekey='';
 				// Using a memcached server
 				if (! empty($conf->memcached->enabled) && ! empty($conf->global->MEMCACHED_SERVER))
 				{
-					$usecachekey=$newdomain.'_'.$langofdir;
+					$usecachekey=$newdomain.'_'.$langofdir.'_'.md5($file_lang);    // Should not contains special chars
 				}
 				// Using cache with shmop. Speed gain: 40ms - Memory overusage: 200ko (Size of session cache file)
 				else if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02))
@@ -221,7 +227,9 @@ class Translate {
 
 				if ($usecachekey)
 				{
-					require_once(DOL_DOCUMENT_ROOT ."/lib/memory.lib.php");
+			        //dol_syslog('Translate::Load we will cache result into usecachekey '.$usecachekey);
+
+				    require_once(DOL_DOCUMENT_ROOT ."/lib/memory.lib.php");
 					$tmparray=dol_getcache($usecachekey);
 					if (is_array($tmparray) && sizeof($tmparray))
 					{
@@ -250,17 +258,11 @@ class Translate {
 								{
 									$value=trim(preg_replace('/\\n/',"\n",$tab[1]));
 
-									if ($key == 'CHARSET')		// This is to declare in which charset files are encoded
+									if ($key == 'DIRECTION')	// This is to declare direction of language
 									{
-										$this->charset_inputfile[$newdomain]=strtoupper($value);
-										//print 'File '.$file_lang.' is declared to have format '.$this->charset_inputfile[$newdomain].'<br>';
-									}
-									elseif ($key == 'DIRECTION')	// This is to declare direction of language
-									{
-										if ($alt < 2 || empty($this->tab_translate[$key]))	// We load direction only for primary files or if not yer load
+										if ($alt < 2 || empty($this->tab_translate[$key]))	// We load direction only for primary files or if not yet loaded
 										{
                                             $this->tab_translate[$key]=$value;
-
 											if ($stopafterdirection) break;	// We do not save tab if we stop after DIRECTION
 											else if ($usecachekey) $tabtranslatedomain[$key]=$value;
 										}
@@ -268,11 +270,9 @@ class Translate {
 									else
 									{
 										// On stocke toujours dans le tableau Tab en UTF-8
-										if (empty($this->charset_inputfile[$newdomain]) || $this->charset_inputfile[$newdomain] == 'ISO-8859-1') $value=utf8_encode($value);
+										//if (! empty($this->charset_inputfile[$newdomain]) && $this->charset_inputfile[$newdomain] == 'ISO-8859-1') $value=utf8_encode($value);
 
-										//print 'XX'.$key;
 										$this->tab_translate[$key]=$value;
-
 										if ($usecachekey) $tabtranslatedomain[$key]=$value;	// To save lang content in cache
 									}
 								}
@@ -281,14 +281,20 @@ class Translate {
 						fclose($fp);
 						$fileread=1;
 
+						// TODO Move cache write out of loop on dirs
 						// To save lang content for usecachekey into cache
 						if ($usecachekey && sizeof($tabtranslatedomain))
 						{
-							require_once(DOL_DOCUMENT_ROOT ."/lib/memory.lib.php");
-							$size=dol_setcache($usecachekey,$tabtranslatedomain);
+							$ressetcache=dol_setcache($usecachekey,$tabtranslatedomain);
+							if ($ressetcache < 0)
+							{
+							    $error='Failed to set cache for usecachekey='.$usecachekey.' result='.$ressetcache;
+							    dol_syslog($error, LOG_ERR);
+							}
 						}
 						//exit;
-						break;		// Break loop on each root dir
+
+						if (empty($conf->global->MAIN_FORCELANGDIR)) break;		// Break loop on each root dir. If a module has forced dir, we do not stop loop.
 					}
 				}
 			}
@@ -375,6 +381,7 @@ class Translate {
 	 *              Si il n'y a pas de correspondance pour ce texte, on cherche dans fichier alternatif
 	 *              et si toujours pas trouve, il est retourne tel quel
 	 *              Les parametres de cette methode peuvent contenir de balises HTML.
+	 *
 	 *  @param      key         cle de chaine a traduire
 	 *  @param      param1      chaine de param1
 	 *  @param      param2      chaine de param2
@@ -418,6 +425,7 @@ class Translate {
 	 *               Si il n'y a pas de correspondance pour ce texte, on cherche dans fichier alternatif
 	 *               et si toujours pas trouve, il est retourne tel quel.
 	 *               Parameters of this method must not contains any HTML tags.
+	 *
 	 *  @param       key         key of string to translate
 	 *  @param       param1      chaine de param1
 	 *  @param       param2      chaine de param2
@@ -446,6 +454,7 @@ class Translate {
 	 *               et si toujours pas trouve, il est retourne tel quel.
 	 *               No convert to encoding charset of lang object is done.
 	 *               Parameters of this method must not contains any HTML tags.
+	 *
 	 *  @param       key         key of string to translate
 	 *  @param       param1      chaine de param1
 	 *  @param       param2      chaine de param1
@@ -470,6 +479,7 @@ class Translate {
 
 	/**
 	 *  Return translation of a key depending on country
+	 *
 	 *  @param       str            string root to translate
 	 *  @param       countrycode    country code (FR, ...)
 	 *  @return      string         translated string
@@ -483,6 +493,7 @@ class Translate {
 
 	/**
 	 *  Retourne la version traduite du texte passe en parametre complete du code pays
+	 *
 	 *  @param       str            string root to translate
 	 *  @param       countrycode    country code (FR, ...)
 	 *  @return      string         translated string
@@ -496,6 +507,7 @@ class Translate {
 
 	/**
 	 *  Convert a string into output charset (this->charset_output that should be defined to conf->file->character_set_client)
+	 *
 	 *  @param      str            	String to convert
 	 *  @param		pagecodefrom	Page code of src string
 	 *  @return     string         	Converted string
@@ -510,6 +522,7 @@ class Translate {
 
 	/**
 	 *  Return list of all available languages
+	 *
 	 * 	@param		langdir		Directory to scan
 	 *  @param      maxlength   Max length for each value in combo box (will be truncated)
 	 *  @param		usecode		Show code instead of country name for language variant
@@ -544,6 +557,7 @@ class Translate {
 
 	/**
 	 *  Return if a filename $filename exists for current language (or alternate language)
+	 *
 	 *  @param      filename        Language filename to search
 	 *  @param      searchalt       Search also alernate language file
 	 *  @return     boolean         true if exists and readable
@@ -571,7 +585,8 @@ class Translate {
 	/**
 	 *      Return full text translated to language label for a key. Store key-label in a cache.
      *      This function need module "numberwords" to be installed. If not it will return
-     *                  same number (this module is not provided by default as it use non GPL source code).
+     *      same number (this module is not provided by default as it use non GPL source code).
+	 *
 	 *		@param		number		Number to encode in full text
 	 * 		@param		isamount	1=It's an amount, 0=it's just a number
 	 *      @return     string		Label translated in UTF8 (but without entities)
@@ -608,13 +623,14 @@ class Translate {
 
 	/**
 	 *      Return a label for a key. Store key-label into cache variable $this->cache_labels to save SQL requests to get labels.
+	 *      This function can be used to get label in database but more often to get code from key id.
+	 *
 	 * 		@param		db			Database handler
 	 * 		@param		key			Key to get label (key in language file)
 	 * 		@param		tablename	Table name without prefix
 	 * 		@param		fieldkey	Field for key
 	 * 		@param		fieldlabel	Field for label
 	 *      @return     string		Label in UTF8 (but without entities)
-	 *		@remarks	This function can be used to get label in database but more often to get code from key id.
 	 */
 	function getLabelFromKey($db,$key,$tablename,$fieldkey,$fieldlabel)
 	{

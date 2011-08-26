@@ -47,7 +47,6 @@ NewUser=Новый пользователь
 CreateUser=Создать пользователя
 SearchAGroup=Поиск группы
 SearchAUser=Поиск пользователей
-ErrorFailedToSendPassword=Не удалось отправить пароль
 LoginNotDefined=Логин не определены.
 NameNotDefined=Имя не определено.
 ListOfUsers=Список пользователей

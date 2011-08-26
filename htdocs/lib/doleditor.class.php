@@ -19,15 +19,14 @@
 /**
  *       \file       htdocs/lib/doleditor.class.php
  *       \brief      Class to manage a WYSIWYG editor
- *       \version    $Id: doleditor.class.php,v 1.45 2011/07/31 23:26:01 eldy Exp $
+ *       \version    $Id: doleditor.class.php,v 1.46 2011/08/14 23:55:35 eldy Exp $
  */
 
 /**
  * 		\class      DolEditor
- *      \brief      Classe de gestion de FCKEditor
- *      \remarks    Usage:
- *		\remarks	$doleditor=new DolEditor('body',$message,320,'toolbar_mailing');
- *		\remarks	$doleditor->Create();
+ *      \brief      Class to manage a WYSIWYG editor.
+ *		            Usage: $doleditor=new DolEditor('body',$message,320,'toolbar_mailing');
+ *		                   $doleditor->Create();
  */
 class DolEditor
 {
@@ -49,6 +48,7 @@ class DolEditor
 
     /**
      *      Create an object to build an HTML area to edit a large string content
+     *
      *      @param 	htmlname		        HTML name of WYSIWIG form
      *      @param 	content			        Content of WYSIWIG form
      *      @param	width					Width in pixel of edit area (auto by default)
@@ -79,6 +79,8 @@ class DolEditor
         {
             $this->tool = 'textarea';
         }
+
+        // Define content and some properties
         if ($this->tool == 'ckeditor')
         {
             $content=dol_htmlentitiesbr($content);  // If content is not HTML, we convert to HTML.
@@ -116,6 +118,7 @@ class DolEditor
     		}
     	}
 
+    	// Define some properties
         if (in_array($this->tool,array('textarea','ckeditor')))
         {
     	    $this->content				= $content;
@@ -131,7 +134,9 @@ class DolEditor
     }
 
     /**
-     *		Output edit area inside the HTML stream
+     *		Output edit area inside the HTML stream.
+     *		Output depends on this->tool (fckeditor, ckeditor, texatrea, ...)
+     *
      *      @param      noprint     1=Return HTML string instead of printing it to output
      */
     function Create($noprint=0)
@@ -192,10 +197,10 @@ class DolEditor
             	{
                     $out.= ','."\n";
                     // To use filemanager with old fckeditor (GPL)
-                    $out.= '    filebrowserBrowseUrl : \''.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanagerdol/browser/default/browser.html?Connector='.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanagerdol/connectors/php/connector.php\',';
+                    $out.= '    filebrowserBrowseUrl : \''.DOL_URL_ROOT.'/core/filemanagerdol/browser/default/browser.php?Connector='.DOL_URL_ROOT.'/core/filemanagerdol/connectors/php/connector.php\',';
+                    $out.= '    filebrowserImageBrowseUrl : \''.DOL_URL_ROOT.'/core/filemanagerdol/browser/default/browser.php?Type=Image&Connector='.DOL_URL_ROOT.'/core/filemanagerdol/connectors/php/connector.php\',';
                     //$out.= '    filebrowserUploadUrl : \''.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanagerdol/connectors/php/upload.php?Type=File\',';
-                    $out.= '    filebrowserImageBrowseUrl : \''.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanagerdol/browser/default/browser.html?Type=Image&Connector='.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanagerdol/connectors/php/connector.php\',';
-                    //print '    filebrowserImageUploadUrl : \''.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanagerdol/connectors/php/upload.php?Type=Image\',';
+                    //$out.= '    filebrowserImageUploadUrl : \''.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanagerdol/connectors/php/upload.php?Type=Image\',';
                     $out.= "\n";
                     // To use filemanager with ckfinder (Non free) and ckfinder directory is inside htdocs/includes
 /*                  $out.= '    filebrowserBrowseUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/ckfinder.html\',

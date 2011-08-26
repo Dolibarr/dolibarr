@@ -6,4 +6,4 @@ custom2/
 nbproject
 .settings/
 .buildpath
-/.git
+.gitmodules

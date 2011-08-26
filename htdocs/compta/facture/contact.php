@@ -20,7 +20,7 @@
  *       \file       htdocs/compta/facture/contact.php
  *       \ingroup    facture
  *       \brief      Onglet de gestion des contacts des factures
- *       \version    $Id: contact.php,v 1.48 2011/07/31 22:23:13 eldy Exp $
+ *       \version    $Id: contact.php,v 1.50 2011/08/14 03:13:50 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -74,51 +74,16 @@ if ($_POST["action"] == 'addcontact' && $user->rights->facture->creer)
 		}
 	}
 }
-// modification d'un contact. On enregistre le type
-if ($_POST["action"] == 'updateligne' && $user->rights->facture->creer)
-{
-	$facture = new Facture($db);
-	if ($facture->fetch($_GET["facid"]))
-	{
-		$contact = $facture->detail_contact($_POST["elrowid"]);
-		$type = $_POST["type"];
-		$statut = $contact->statut;
-
-		$result = $facture->update_contact($_POST["elrowid"], $statut, $type);
-		if ($result >= 0)
-		{
-			$db->commit();
-		} else
-		{
-			dol_print_error($db, "result=$result");
-			$db->rollback();
-		}
-	} else
-	{
-		dol_print_error($db);
-	}
-}
 
 // bascule du statut d'un contact
 if ($_GET["action"] == 'swapstatut' && $user->rights->facture->creer)
 {
 	$facture = new Facture($db);
-	if ($facture->fetch($_GET["facid"]))
+	if ($facture->fetch(GETPOST("facid")))
 	{
-		$contact = $facture->detail_contact($_GET["ligne"]);
-		$id_type_contact = $contact->fk_c_type_contact;
-		$statut = ($contact->statut == 4) ? 5 : 4;
-
-		$result = $facture->update_contact($_GET["ligne"], $statut, $id_type_contact);
-		if ($result >= 0)
-		{
-			$db->commit();
-		} else
-		{
-			dol_print_error($db, "result=$result");
-			$db->rollback();
-		}
-	} else
+	    $result=$facture->swapContactStatus(GETPOST('ligne'));
+	}
+	else
 	{
 		dol_print_error($db);
 	}
@@ -159,7 +124,7 @@ $userstatic=new User($db);
 /* Mode vue et edition                                                         */
 /*                                                                             */
 /* *************************************************************************** */
-if (isset($mesg)) print $mesg;
+dol_htmloutput_mesg($mesg);
 
 $id = $_GET['facid'];
 $ref= $_GET['ref'];
@@ -395,5 +360,5 @@ if ($id > 0 || ! empty($ref))
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:13 $');
+llxFooter('$Date: 2011/08/14 03:13:50 $');
 ?>

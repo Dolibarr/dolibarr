@@ -21,7 +21,7 @@
  *	 \file       htdocs/user/class/usergroup.class.php
  *	 \brief      Fichier de la classe des groupes d'utilisateur
  *	 \author     Rodolphe Qiedeville
- *	 \version    $Id: usergroup.class.php,v 1.12 2011/07/31 23:21:26 eldy Exp $
+ *	 \version    $Id: usergroup.class.php,v 1.17 2011/08/23 22:25:38 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
@@ -115,12 +115,13 @@ class UserGroup extends CommonObject
 
 	/**
 	 * 	Return array of groups objects for a particular user
+	 *
 	 *	@param		userid    User id to search
 	 * 	@return		array     Array of groups objects
 	 */
 	function listGroupsForUser($userid)
 	{
-		global $conf;
+		global $conf, $user;
 
 		$ret=array();
 
@@ -129,7 +130,14 @@ class UserGroup extends CommonObject
 		$sql.= " ".MAIN_DB_PREFIX."usergroup_user as ug";
 		$sql.= " WHERE ug.fk_usergroup = g.rowid";
 		$sql.= " AND ug.fk_user = ".$userid;
-		$sql.= " AND ug.entity IN (0,".$conf->entity.")";
+		if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
+		{
+			$sql.= " AND g.entity IS NOT NULL";
+		}
+		else
+		{
+			$sql.= " AND g.entity IN (0,".$conf->entity.")";
+		}
 		$sql.= " ORDER BY g.nom";
 
 		dol_syslog("UserGroup::listGroupsForUser sql=".$sql,LOG_DEBUG);
@@ -138,11 +146,11 @@ class UserGroup extends CommonObject
 		{
 			while ($obj = $this->db->fetch_object($result))
 			{
-				$group=new UserGroup($this->db);
-				$group->fetch($obj->rowid);
-				$group->usergroup_entity = $obj->usergroup_entity;
+				$newgroup=new UserGroup($this->db);
+				$newgroup->fetch($obj->rowid);
+				$newgroup->usergroup_entity = $obj->usergroup_entity;
 
-				$ret[]=$group;
+				$ret[]=$newgroup;
 			}
 
 			$this->db->free($result);
@@ -159,11 +167,12 @@ class UserGroup extends CommonObject
 
 	/**
 	 * 	Return array of users id for group
+	 *
 	 * 	@return		array of users
 	 */
 	function listUsersForGroup()
 	{
-		global $conf;
+		global $conf, $user;
 
 		$ret=array();
 
@@ -172,19 +181,25 @@ class UserGroup extends CommonObject
 		$sql.= " ".MAIN_DB_PREFIX."usergroup_user as ug";
 		$sql.= " WHERE ug.fk_user = u.rowid";
 		$sql.= " AND ug.fk_usergroup = ".$this->id;
-		$sql.= " AND u.entity IN (0,".$conf->entity.")";
-
+		if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
+		{
+			$sql.= " AND u.entity IS NOT NULL";
+		}
+		else
+		{
+			$sql.= " AND u.entity IN (0,".$conf->entity.")";
+		}
 		dol_syslog("UserGroup::listUsersForGroup sql=".$sql,LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
 			while ($obj = $this->db->fetch_object($result))
 			{
-				$user=new User($this->db);
-				$user->fetch($obj->rowid);
-				$user->usergroup_entity = $obj->usergroup_entity;
+				$newuser=new User($this->db);
+				$newuser->fetch($obj->rowid);
+				$newuser->usergroup_entity = $obj->usergroup_entity;
 
-				$ret[]=$user;
+				$ret[]=$newuser;
 			}
 
 			$this->db->free($result);
@@ -438,8 +453,8 @@ class UserGroup extends CommonObject
 					{
 						$this->rights->$row[0]->$row[1] = 1;
 					}
-
 				}
+
 				$i++;
 			}
 		}
@@ -505,6 +520,12 @@ class UserGroup extends CommonObject
 
 		$now=dol_now();
 
+		$entity=$conf->entity;
+		if(! empty($conf->multicompany->enabled) && $conf->entity == 1)
+		{
+			$entity=$this->entity;
+		}
+
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."usergroup (";
 		$sql.= "datec";
 		$sql.= ", nom";
@@ -512,7 +533,7 @@ class UserGroup extends CommonObject
 		$sql.= ") VALUES (";
 		$sql.= "'".$this->db->idate($now)."'";
 		$sql.= ",'".$this->db->escape($this->nom)."'";
-		$sql.= ",".($this->globalgroup ? 0 : $conf->entity);
+		$sql.= ",".$entity;
 		$sql.= ")";
 
 		dol_syslog("UserGroup::Create sql=".$sql, LOG_DEBUG);
@@ -554,11 +575,17 @@ class UserGroup extends CommonObject
 
 		$error=0;
 
+		$entity=$conf->entity;
+		if(! empty($conf->multicompany->enabled) && $conf->entity == 1)
+		{
+			$entity=$this->entity;
+		}
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX."usergroup SET ";
-		$sql.= " nom = '".$this->db->escape($this->nom)."'";
-		$sql.= ", entity = ".(empty($this->globalgroup) ? $conf->entity : 0);
-		$sql.= ", note = '".$this->db->escape($this->note)."'";
-		$sql.= " WHERE rowid = ".$this->id;
+		$sql.= " nom = '" . $this->db->escape($this->nom) . "'";
+		$sql.= ", entity = " . $entity;
+		$sql.= ", note = '" . $this->db->escape($this->note) . "'";
+		$sql.= " WHERE rowid = " . $this->id;
 
 		dol_syslog("Usergroup::update sql=".$sql);
 		$resql = $this->db->query($sql);

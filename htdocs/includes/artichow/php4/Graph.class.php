@@ -29,7 +29,7 @@ require_once ARTICHOW."/inc/Font.class.php";
 require_once ARTICHOW."/inc/Gradient.class.php";
 
 /**
- * A graph 
+ * A graph
  *
  * @package Artichow
  */
@@ -48,35 +48,35 @@ class awGraph extends awImage {
 	 * @var int
 	 */
 	var $timeout = 0;
-	
+
 	/**
 	 * Graph timing ?
 	 *
 	 * @var bool
 	 */
 	var $timing;
-	
+
 	/**
 	 * Components
 	 *
 	 * @var array
 	 */
 	var $components = array();
-	
+
 	/**
 	 * Some labels to add to the component
 	 *
 	 * @var array
 	 */
 	var $labels = array();
-	
+
 	/**
 	 * Graph title
 	 *
 	 * @var Label
 	 */
 	var $title;
-	
+
 	/**
 	 * Construct a new graph
 	 *
@@ -86,29 +86,33 @@ class awGraph extends awImage {
 	 * @param int $timeout Cache timeout (unix timestamp)
 	 */
 	 function awGraph($width = NULL, $height = NULL, $name = NULL, $timeout = 0) {
-		
+
+	     // DOL_CHANGE LDR Fix to allow usage of other fonts
+	    global $artichow_defaultfont;
+	    $classfontname='aw'.str_replace('-','_',$artichow_defaultfont);
+
 		parent::awImage();
-	
+
 		$this->setSize($width, $height);
 
 		if(ARTICHOW_CACHE) {
-	
+
 			$this->name = $name;
 			$this->timeout = $timeout;
-			
+
 			// Clean sometimes all the cache
 			if(mt_rand(0, 5000) ===  0) {
 				awGraph::cleanCache();
 			}
-			
+
 			if($this->name !== NULL) {
-			
+
 				$file = ARTICHOW_CACHE_DIRECTORY."/".$this->name."-time";
-				
+
 				if(is_file($file)) {
-				
+
 					$type = awGraph::cleanGraphCache($file);
-					
+
 					if($type === NULL) {
 						awGraph::deleteFromCache($this->name);
 					} else {
@@ -116,23 +120,23 @@ class awGraph extends awImage {
 						readfile(ARTICHOW_CACHE_DIRECTORY."/".$this->name."");
 						exit;
 					}
-					
+
 				}
-			
+
 			}
-		
+
 		}
-		
+
 		$this->title = new awLabel(
 			NULL,
-			new awTuffy(16),
+			new $classfontname(16),
 			NULL,
 			0
 		);
 		$this->title->setAlign(LABEL_CENTER, LABEL_BOTTOM);
-	
+
 	}
-	
+
 	/**
 	 * Delete a graph from the cache
 	 *
@@ -142,59 +146,59 @@ class awGraph extends awImage {
 	  function deleteFromCache($name) {
 
 		if(ARTICHOW_CACHE) {
-		
+
 			if(is_file(ARTICHOW_CACHE_DIRECTORY."/".$name."-time")) {
 				unlink(ARTICHOW_CACHE_DIRECTORY."/".$name."");
 				unlink(ARTICHOW_CACHE_DIRECTORY."/".$name."-time");
 			}
-			
+
 		}
-		
+
 	}
-	
+
 	/**
 	 * Delete all graphs from the cache
 	 */
 	  function deleteAllCache() {
 
 		if(ARTICHOW_CACHE) {
-	
+
 			$dp = opendir(ARTICHOW_CACHE_DIRECTORY);
-			
+
 			while($file = readdir($dp)) {
 				if($file !== '.' and $file != '..') {
 					unlink(ARTICHOW_CACHE_DIRECTORY."/".$file);
 				}
 			}
-			
+
 		}
-	
+
 	}
-	
+
 	/**
 	 * Clean cache
 	 */
 	  function cleanCache() {
 
 		if(ARTICHOW_CACHE) {
-	
+
 			$glob = glob(ARTICHOW_CACHE_DIRECTORY."/*-time");
-			
+
 			foreach($glob as $file) {
-				
+
 				$type = awGraph::cleanGraphCache($file);
-				
+
 				if($type === NULL) {
 					$name = ereg_replace(".*/(.*)\-time", "\\1", $file);
 					awGraph::deleteFromCache($name);
 				}
-			
+
 			}
-			
+
 		}
-		
+
 	}
-	
+
 	/**
 	 * Enable/Disable Graph timing
 	 *
@@ -203,18 +207,18 @@ class awGraph extends awImage {
 	 function setTiming($timing) {
 		$this->timing = (bool)$timing;
 	}
-	 
+
 	/**
 	 * Add a component to the graph
 	 *
 	 * @param &$component
 	 */
 	 function add(&$component) {
-	
+
 		$this->components[] = $component;
-	
+
 	}
-	
+
 	/**
 	 * Add a label to the component
 	 *
@@ -223,13 +227,13 @@ class awGraph extends awImage {
 	 * @param int $y Position on Y axis of the center of the text
 	 */
 	 function addLabel(&$label, $x, $y) {
-	
+
 		$this->labels[] = array(
 			$label, $x, $y
 		);
-		
+
 	}
-	
+
 	/**
 	 * Add a label to the component with aboslute position
 	 *
@@ -237,13 +241,13 @@ class awGraph extends awImage {
 	 * @param $point Text position
 	 */
 	 function addAbsLabel(&$label, $point) {
-	
+
 		$this->labels[] = array(
 			$label, $point
 		);
-		
+
 	}
-	
+
 	/**
 	 * Build the graph and draw component on it
 	 * Image is sent to the user browser
@@ -251,23 +255,23 @@ class awGraph extends awImage {
 	 * @param string $file Save the image in the specified file. Let it null to print image to screen.
 	 */
 	 function draw($file = NULL) {
-		
+
 		if($this->timing) {
 			$time = microtimeFloat();
 		}
-	
+
 		$this->create();
-		
+
 		foreach($this->components as $component) {
-		
+
 			$this->drawComponent($component);
-		
+
 		}
-		
+
 		$this->drawTitle();
 		$this->drawShadow();
 		$this->drawLabels();
-		
+
 		if($this->timing) {
 			$this->drawTiming(microtimeFloat() - $time);
 		}
@@ -275,104 +279,104 @@ class awGraph extends awImage {
 		if(ARTICHOW_CACHE and $this->name !== NULL) {
 			ob_start();
 		}
-		
+
 		$this->send($file);
-		
+
 		if(ARTICHOW_CACHE and $this->name !== NULL) {
-		
+
 			$data = ob_get_contents();
-			
+
 			if(is_writable(ARTICHOW_CACHE_DIRECTORY) === FALSE) {
 				trigger_error("Cache directory is not writable");
 			}
-		
+
 			$file = ARTICHOW_CACHE_DIRECTORY."/".$this->name."";
 			file_put_contents($file, $data);
-		
+
 			$file .= "-time";
 			file_put_contents($file, $this->timeout."\n".$this->getFormat());
 
 			ob_clean();
 
 			echo $data;
-			
+
 		}
-	
+
 	}
-	
+
 	 function drawLabels() {
-	
+
 		$drawer = $this->getDrawer();
-	
+
 		foreach($this->labels as $array) {
-		
+
 			if(count($array) === 3) {
-			
+
 				// Text in relative position
 				list($label, $x, $y) = $array;
-				
+
 				$point = new awPoint(
 					$x * $this->width,
 					$y * $this->height
 				);
-				
+
 			} else {
-			
+
 				// Text in absolute position
 				list($label, $point) = $array;
-			
+
 			}
-				
+
 			$label->draw($drawer, $point);
-		
+
 		}
-		
+
 	}
-		
+
 	 function drawTitle() {
-	
+
 		$drawer = $this->getDrawer();
-	
+
 		$point = new awPoint(
 			$this->width / 2,
 			10
 		);
-		
+
 		$this->title->draw($drawer, $point);
-	
+
 	}
-	
+
 	 function drawTiming($time) {
-	
+
 		$drawer = $this->getDrawer();
-		
+
 		$label = new awLabel;
 		$label->set("(".sprintf("%.3f", $time)." s)");
 		$label->setAlign(LABEL_LEFT, LABEL_TOP);
 		$label->border->show();
 		$label->setPadding(1, 0, 0, 0);
 		$label->setBackgroundColor(new awColor(230, 230, 230, 25));
-		
+
 		$label->draw($drawer, new awPoint(5, $drawer->height - 5));
-	
+
 	}
-	
+
 	  function cleanGraphCache($file) {
-	
+
 		list(
 			$time,
 			$type
 		) = explode("\n", file_get_contents($file));
-		
+
 		$time = (int)$time;
-		
+
 		if($time !== 0 and $time < time()) {
 			return NULL;
 		} else {
 			return $type;
 		}
-		
-		
+
+
 	}
 
 }
@@ -382,8 +386,8 @@ registerClass('Graph');
 /*
  * To preserve PHP 4 compatibility
  */
-function microtimeFloat() { 
-	list($usec, $sec) = explode(" ", microtime()); 
-	return (float)$usec + (float)$sec; 
+function microtimeFloat() {
+	list($usec, $sec) = explode(" ", microtime());
+	return (float)$usec + (float)$sec;
 }
 ?>

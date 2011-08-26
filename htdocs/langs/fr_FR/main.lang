@@ -133,6 +133,7 @@ CopyOf=Copie de
 Show=Voir
 ShowCardHere=Voir la fiche ici
 Search=Rechercher
+SearchOf=Recherche de
 Valid=Valider
 Approve=Approuver
 ReOpen=Réouvrir
@@ -599,6 +600,7 @@ NewAttribute=Nouvel attribut
 AttributeCode=Code de l'attribut
 OptionalFieldsSetup=Configuration des attributs complémentaires
 URLPhoto=Url vers photo/logo
+CreateDraft=Créer brouillon
 
 # Week day
 Monday=Lundi

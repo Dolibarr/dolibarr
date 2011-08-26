@@ -38,7 +38,6 @@ NewUser=Νέος χρήστης
 CreateUser=Δημιουργία χρήστη
 SearchAGroup=Εύρεση ομάδας
 SearchAUser=Εύρεση χρήστη
-ErrorFailedToSendPassword=Αποτυχία αποστολής κωδικού
 LoginNotDefined=Το όνομα χρήστη δεν είναι καθορισμένο
 NameNotDefined=Το όνομα δεν είναι καθορισμένο
 ListOfUsers=Λίστα χρηστών

@@ -5,6 +5,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2008      Matteli
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,7 +26,7 @@
  *	\file       htdocs/main.inc.php
  *	\ingroup	core
  *	\brief      File that defines environment for Dolibarr pages only (variables not required by scripts)
- *	\version    $Id: main.inc.php,v 1.756 2011/07/31 23:19:05 eldy Exp $
+ *	\version    $Id: main.inc.php,v 1.773 2011/08/24 06:52:08 eldy Exp $
  */
 
 @ini_set('memory_limit', '64M');	// This may be useless if memory is hard limited by your PHP
@@ -168,6 +169,9 @@ if (isset($_SERVER["HTTP_USER_AGENT"]))
 	// Other
 	if (in_array($conf->browser->name,array('firefox','iceweasel'))) $conf->browser->firefox=1;
 	//$conf->browser->phone='android';
+
+    // Force usage of left menu when smartphone is used
+	if ($conf->browser->phone && ! empty($conf->global->MAIN_MENU_FORCE_USE_JQUERY_LAYOUT)) $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT='forced';
 }
 
 
@@ -536,7 +540,7 @@ if (! defined('NOLOGIN'))
 		$_SESSION["dol_screenwidth"]=isset($dol_screenwidth)?$dol_screenwidth:'';
 		$_SESSION["dol_screenheight"]=isset($dol_screenheight)?$dol_screenheight:'';
 		$_SESSION["dol_company"]=$conf->global->MAIN_INFO_SOCIETE_NOM;
-		if ($conf->multicompany->enabled) $_SESSION["dol_entity"]=$conf->entity;
+		if (! empty($conf->multicompany->enabled)) $_SESSION["dol_entity"]=$conf->entity;
 		dol_syslog("This is a new started user session. _SESSION['dol_login']=".$_SESSION["dol_login"].' Session id='.session_id());
 
 		$db->begin();
@@ -748,16 +752,19 @@ $heightforframes=48;
 // Switch to another entity
 if (!empty($conf->global->MAIN_MODULE_MULTICOMPANY))
 {
-	if (GETPOST('action') == 'switchentity' && $user->admin && ! $user->entity)
+	if (GETPOST('action') == 'switchentity')
 	{
-		require_once("../class/actions_multicompany.class.php");
+		$res = @dol_include_once("/multicompany/class/actions_multicompany.class.php");
 
-		$mc = new ActionsMulticompany($db);
-
-		if($mc->switchEntity(GETPOST('entity')) > 0)
+		if ($res)
 		{
-			Header("Location: ".DOL_URL_ROOT.'/');
-			exit;
+			$mc = new ActionsMulticompany($db);
+
+			if($mc->switchEntity(GETPOST('entity')) >= 0)
+			{
+				Header("Location: ".DOL_URL_ROOT.'/');
+				exit;
+			}
 		}
 	}
 }
@@ -840,8 +847,8 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		// Displays meta
 		print '<meta name="robots" content="noindex,nofollow">'."\n";      // Evite indexation par robots
 		print '<meta name="author" content="Dolibarr Development Team">'."\n";
-		print '<link rel="shortcut icon" type="image/x-icon" href="'.DOL_URL_ROOT.'/favicon.ico">'."\n";
-
+		$favicon=DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/favicon.ico';
+		print '<link rel="shortcut icon" type="image/x-icon" href="'.$favicon.'"/>'."\n";
 		// Displays title
 		$appli='Dolibarr';
 		if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $appli=$conf->global->MAIN_APPLICATION_TITLE;
@@ -1075,19 +1082,20 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 						//contentIgnoreSelector: "span",
 						togglerTip_open: "Close This Pane",
 						togglerTip_closed: "Open This Pane",
-						resizerTip:	"Resize This Pane"
+						resizerTip:	"Resize This Pane",
+						fxSpeed: "fast"
 					},
 					west: {
 						paneClass: "leftContent",
-						spacing_closed:	14,
-						togglerLength_closed: 14,
-						togglerAlign_closed: "top",
+						//spacing_closed:	14,
+						//togglerLength_closed: 14,
+						//togglerAlign_closed: "auto",
 						//togglerLength_open: 0,
 						//	effect defaults - overridden on some panes
 						//slideTrigger_open:	"mouseover",
 						//initClosed:	true,
 						fxName:	"drop",
-						fxSpeed: "normal",
+						fxSpeed: "fast",
 						fxSettings: { easing: "" }
 					},
 					north: {
@@ -1098,7 +1106,8 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 						togglerLength_open:	0,
 						togglerLength_closed: -1,
 						slidable: false,
-						fxName:	"none"
+						fxName:	"none",
+						fxSpeed: "fast"
 					},
 					center: {
 						paneSelector: "#mainContent"
@@ -1126,7 +1135,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
     	print "\n".'<script type="text/javascript">
                     jQuery(document).ready(function () {
                     	jQuery(function() {
-                        	$(".classfortooltip").tipTip({maxWidth: "600px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50});
+                        	jQuery(".classfortooltip").tipTip({maxWidth: "'.dol_size(600,'width').'px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50});
                         });
                     });
                 </script>';
@@ -1194,9 +1203,13 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	if (! empty($conf->browser->phone)) $loginhtmltext.='<br><b>'.$langs->trans("Phone").'</b>: '.$conf->browser->phone;
 	if (! empty($_SESSION["disablemodules"])) $loginhtmltext.='<br><b>'.$langs->trans("DisabledModules").'</b>: <br>'.join(', ',explode(',',$_SESSION["disablemodules"]));
 
+	$appli='Dolibarr';
+	if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $appli=$conf->global->MAIN_APPLICATION_TITLE;
+
 	// Link info
-	$logouthtmltext=''; $logouttext='';
-	$logouthtmltext=$langs->trans("Logout").'<br>';
+	$logouttext='';
+	$logouthtmltext=$appli.' '.DOL_VERSION.'<br>';
+	$logouthtmltext.=$langs->trans("Logout").'<br>';
 	//$logouthtmltext.="<br>";
 	if ($_SESSION["dol_authmode"] != 'forceuser'
 	&& $_SESSION["dol_authmode"] != 'http')
@@ -1224,15 +1237,12 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	// Select entity
 	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY))
 	{
-		if ($user->admin && ! $user->entity)
-		{
-			$res=@dol_include_once('/multicompany/class/actions_multicompany.class.php');
+		$res=@dol_include_once('/multicompany/class/actions_multicompany.class.php');
 
-			if ($res)
-			{
-				$mc = new ActionsMulticompany($db);
-				$mc->showInfo($conf->entity);
-			}
+		if ($res)
+		{
+			$mc = new ActionsMulticompany($db);
+			$mc->showInfo($conf->entity);
 		}
 	}
 
@@ -1286,12 +1296,9 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	print "\n";
 
 	// Instantiate hooks of thirdparty module
-	if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
-	{
-		require_once(DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php');
-		$object = new CommonObject($db);
-		$object->callHooks(array('searchform','leftblock'));
-	}
+    include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+    $hookmanager=new HookManager($db);
+    $hookmanager->callHooks(array('searchform','leftblock'));
 
 	// Define $searchform
 	if ($conf->societe->enabled && $conf->global->MAIN_SEARCHFORM_SOCIETE && $user->rights->societe->lire)
@@ -1304,7 +1311,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	if ($conf->societe->enabled && $conf->global->MAIN_SEARCHFORM_CONTACT && $user->rights->societe->lire)
 	{
 		$langs->load("companies");
-		$searchform.=printSearchForm(DOL_URL_ROOT.'/contact/index.php', DOL_URL_ROOT.'/contact/index.php',
+		$searchform.=printSearchForm(DOL_URL_ROOT.'/contact/list.php', DOL_URL_ROOT.'/contact/list.php',
 		img_object('','contact').' '.$langs->trans("Contacts"), 'contact', 'contactname');
 	}
 
@@ -1323,24 +1330,9 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 		img_object('','user').' '.$langs->trans("Members"), 'member', 'sall');
 	}
 
-	// Search form hook for external modules
-	if (! empty($object->hooks))
-	{
-		$searchform.='<!-- Begin search form hook area -->'."\n";
-
-		foreach($object->hooks as $hook)
-		{
-			if ($hook['type'] == 'searchform' && ! empty($hook['modules']))
-			{
-				foreach($hook['modules'] as $module)
-				{
-					if (method_exists($module,'printSearchForm')) $searchform.=$module->printSearchForm();
-				}
-			}
-		}
-
-        $searchform.="\n".'<!-- End of search form hook area -->'."\n";
-    }
+	// Execute hook printSearchForm
+	$parameters=array();
+    $searchform.=$hookmanager->executeHooks('printSearchForm',$parameters);    // Note that $action and $object may have been modified by some hooks
 
 	// Define $bookmarks
 	if ($conf->bookmark->enabled && $user->rights->bookmark->lire)
@@ -1450,24 +1442,10 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 
 	print "\n";
 
-	// Left block hook for external modules
-	if (! empty($object->hooks))
-	{
-		print '<!-- Begin left block hook area -->'."\n";
-
-		foreach($object->hooks as $hook)
-		{
-			if ($hook['type'] == 'leftblock' && ! empty($hook['modules']))
-			{
-				foreach($hook['modules'] as $module)
-				{
-					if (method_exists($module,'printLeftBlock')) $module->printLeftBlock();
-				}
-			}
-		}
-
-        print "\n".'<!-- End of left block hook area -->'."\n";
-    }
+	// Execute hook printLeftBlock
+	$parameters=array();
+    $leftblock.=$hookmanager->executeHooks('printLeftBlock',$parameters);    // Note that $action and $object may have been modified by some hooks
+    print $leftblock;
 
 	if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print '</div> <!-- End left layout -->'."\n";
 	else print '</td>';
@@ -1558,6 +1536,7 @@ function getHelpParamFor($helppagename,$langs)
 
 /**
  *  Show a search area
+ *
  *  @param   urlaction          Url post
  *  @param   urlobject          Url of the link under the search box
  *  @param   title              Title search area
@@ -1566,7 +1545,8 @@ function getHelpParamFor($helppagename,$langs)
  */
 function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$htmlinputname)
 {
-	global $langs;
+	global $conf,$langs;
+
 	$ret='';
 	$ret.='<div class="menu_titre">';
 	$ret.='<a class="vsmenu" href="'.$urlobject.'">';
@@ -1576,7 +1556,10 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$
 	$ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	$ret.='<input type="hidden" name="mode" value="search">';
 	$ret.='<input type="hidden" name="mode-search" value="'.$htmlmodesearch.'">';
-	$ret.='<input type="text" class="flat" name="'.$htmlinputname.'" size="10">&nbsp;';
+	$ret.='<input type="text" class="flat" ';
+	if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $ret.=' placeholder="'.$langs->trans("SearchOf").''.strip_tags($title).'"';
+	else $ret.=' title="'.$langs->trans("SearchOf").''.strip_tags($title).'"';
+	$ret.=' name="'.$htmlinputname.'" size="10" />&nbsp;';
 	$ret.='<input type="submit" class="button" value="'.$langs->trans("Go").'">';
 	$ret.="</form>\n";
 	return $ret;

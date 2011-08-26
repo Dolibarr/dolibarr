@@ -21,7 +21,7 @@
  *   \file		    htdocs/core/class/interfaces.class.php
  *   \ingroup		core
  *   \brief			Fichier de la classe de gestion des triggers
- *   \version		$Id: interfaces.class.php,v 1.9 2011/07/31 23:45:13 eldy Exp $
+ *   \version		$Id: interfaces.class.php,v 1.10 2011/08/17 15:56:22 eldy Exp $
  */
 
 
@@ -71,7 +71,7 @@ class Interfaces
 		{
 			$dir=dol_buildpath($reldir,0);
 			//print "xx".$dir;exit;
-						
+
 			// Check if directory exists
 			if (!is_dir($dir)) continue;
 
@@ -194,7 +194,7 @@ class Interfaces
 		{
 			$dir=dol_buildpath($reldir,0);
 			//print "xx".$dir;exit;
-			
+
 			// Check if directory exists
 			if (!is_dir($dir)) continue;
 
@@ -267,7 +267,7 @@ class Interfaces
 			$triggers[$j]['picto'] = $objMod->picto?img_object('',$objMod->picto):img_object('','generic');
 			$triggers[$j]['file'] = $files[$key];
 			$triggers[$j]['version'] = $objMod->getVersion();
-			$triggers[$j]['status'] = img_tick();
+			$triggers[$j]['status'] = img_picto($langs->trans("Active"),'tick');
 			if ($disabledbyname > 0 || $disabledbymodule > 1) $triggers[$j]['status'] = "&nbsp;";
 
 			$text ='<b>'.$langs->trans("Description").':</b><br>';

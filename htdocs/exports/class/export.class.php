@@ -20,7 +20,7 @@
  *	\file       htdocs/exports/class/export.class.php
  *	\ingroup    export
  *	\brief      File of class to manage exports
- *	\version    $Id: export.class.php,v 1.13 2011/08/05 06:29:50 tiaris Exp $
+ *	\version    $Id: export.class.php,v 1.14 2011/08/12 07:11:08 hregis Exp $
  */
 
 
@@ -71,8 +71,8 @@ class Export
 
         $var=true;
         $i=0;
-
-		foreach ($conf->file->dol_document_root as $type => $dirroot)
+        
+        foreach ($conf->file->dol_document_root as $type => $dirroot)
 		{
 			$modulesdir[] = $dirroot . "/includes/modules/";
 			
