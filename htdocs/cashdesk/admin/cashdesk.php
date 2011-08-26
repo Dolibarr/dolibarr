@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2008-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2011 	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +20,7 @@
  *	\file       htdocs/cashdesk/admin/cashdesk.php
  *	\ingroup    cashdesk
  *	\brief      Setup page for cashdesk module
- *	\version    $Id: cashdesk.php,v 1.7 2011/08/03 00:46:38 eldy Exp $
+ *	\version    $Id: cashdesk.php,v 1.8 2011/08/26 14:52:00 simnandez Exp $
  */
 
 require("../../main.inc.php");
@@ -45,22 +46,36 @@ $langs->load("cashdesk");
 /*
  * Actions
  */
-if ($_POST["action"] == 'set')
+if (GETPOST("action") == 'set')
 {
-	if ($_POST["socid"] < 0) $_POST["socid"]='';
-	if ($_POST["CASHDESK_ID_BANKACCOUNT"] < 0)  $_POST["CASHDESK_ID_BANKACCOUNT"]='';
-	if ($_POST["CASHDESK_ID_WAREHOUSE"] < 0)  $_POST["CASHDESK_ID_WAREHOUSE"]='';
+	$db->begin();
+	 
+	if (GETPOST("socid") < 0) $_POST["socid"]='';
+	/*if (GETPOST("CASHDESK_ID_BANKACCOUNT") < 0)  $_POST["CASHDESK_ID_BANKACCOUNT"]='';
+	if (GETPOST("CASHDESK_ID_WAREHOUSE") < 0)  $_POST["CASHDESK_ID_WAREHOUSE"]='';*/
 
-	dolibarr_set_const($db,"CASHDESK_ID_THIRDPARTY",$_POST["socid"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db,"CASHDESK_ID_BANKACCOUNT_CASH",$_POST["CASHDESK_ID_BANKACCOUNT_CASH"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db,"CASHDESK_ID_BANKACCOUNT_CHEQUE",$_POST["CASHDESK_ID_BANKACCOUNT_CHEQUE"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db,"CASHDESK_ID_BANKACCOUNT_CB",$_POST["CASHDESK_ID_BANKACCOUNT_CB"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db,"CASHDESK_ID_WAREHOUSE",$_POST["CASHDESK_ID_WAREHOUSE"],'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db,"CASHDESK_ID_THIRDPARTY",GETPOST("socid"),'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db,"CASHDESK_ID_BANKACCOUNT_CASH",GETPOST("CASHDESK_ID_BANKACCOUNT_CASH"),'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db,"CASHDESK_ID_BANKACCOUNT_CHEQUE",GETPOST("CASHDESK_ID_BANKACCOUNT_CHEQUE"),'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db,"CASHDESK_ID_BANKACCOUNT_CB",GETPOST("CASHDESK_ID_BANKACCOUNT_CB"),'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db,"CASHDESK_ID_WAREHOUSE",GETPOST("CASHDESK_ID_WAREHOUSE"),'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db,"CASHDESK_SERVICES", GETPOST("CASHDESK_SERVICES"),'chaine',0,'',$conf->entity);
 
-	dol_syslog("admin/cashdesk: level ".$_POST["level"]);
+	dol_syslog("admin/cashdesk: level ".GETPOST("level"));
+	
+	if (! $res > 0) $error++;
+	
+ 	if (! $error)
+    {
+        $db->commit();
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    }
+    else
+    {
+        $db->rollback();
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+    }
 }
-
-
 
 /*
  * View
@@ -121,6 +136,13 @@ if ($conf->stock->enabled)
 	print '</td></tr>';
 }
 
+$var=! $var;
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("CashdeskShowServices");
+print '<td colspan="2">';;
+print $form->selectyesno("CASHDESK_SERVICES",$conf->global->CASHDESK_SERVICES,1);
+print "</td></tr>\n";
+
 print '</table>';
 print '<br>';
 
@@ -128,5 +150,7 @@ print '<center><input type="submit" class="button" value="'.$langs->trans("Save"
 
 print "</form>\n";
 
-llxFooter('$Date: 2011/08/03 00:46:38 $ - $Revision: 1.7 $');
+dol_htmloutput_mesg($mesg);
+
+llxFooter('$Date: 2011/08/26 14:52:00 $ - $Revision: 1.8 $');
 ?>
