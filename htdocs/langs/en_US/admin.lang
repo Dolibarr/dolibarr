@@ -877,7 +877,6 @@ DocumentModelOdt=Generate documents from OpenDocuments templates (.ODT files for
 WatermarkOnDraft=Watermark on draft document
 CompanyIdProfChecker=Professional Id unique
 MustBeUnique=Must be unique ?
-Miscellanous=Miscellanous
 ##### Webcal setup #####
 WebCalSetup=Webcalendar link setup
 WebCalSyncro=Add Dolibarr events to WebCalendar

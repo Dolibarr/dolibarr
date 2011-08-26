@@ -86,4 +86,3 @@ ErrorProductWithRefNotExist=Product with reference '<i>%s</i>' don't exist
 ErrorDeleteNotPossibleLineIsConsolidated=Delete not possible because record is linked to a bank transation that is conciliated
 ErrorProdIdAlreadyExist=%s is assigned to another third
 ErrorFailedToSendPassword=Failed to send password
-ErrorFailedToLoadRSSFile=Fails to get RSS feed. Try to add constant MAIN_SIMPLEXMLLOAD_DEBUG if error messages does not provide enough information.

@@ -20,7 +20,7 @@
  *	\file       htdocs/cashdesk/admin/cashdesk.php
  *	\ingroup    cashdesk
  *	\brief      Setup page for cashdesk module
- *	\version    $Id: cashdesk.php,v 1.9 2011/08/26 15:05:41 simnandez Exp $
+ *	\version    $Id: cashdesk.php,v 1.8 2011/08/26 14:52:00 simnandez Exp $
  */
 
 require("../../main.inc.php");
@@ -151,7 +151,6 @@ print '<center><input type="submit" class="button" value="'.$langs->trans("Save"
 print "</form>\n";
 
 dol_htmloutput_mesg($mesg);
-$db->close();
 
-llxFooter('$Date: 2011/08/26 15:05:41 $ - $Revision: 1.9 $');
+llxFooter('$Date: 2011/08/26 14:52:00 $ - $Revision: 1.8 $');
 ?>

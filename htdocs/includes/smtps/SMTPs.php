@@ -18,7 +18,8 @@
    *    - attachments
    *  - GPG access
    *
-   * This Class is based off of 'SMTP PHP MAIL' by Dirk Paehl, http://www.paehl.de
+   * This Class is based off of 'SMTP PHP MAIL'
+   *    by Dirk Paehl, http://www.paehl.de
    *
    * @package SMTPs
    *
@@ -30,13 +31,12 @@
    * @reference http://www.gordano.com/kb.htm?q=803
    *
    * @author Walter Torres <walter@torres.ws> [with a *lot* of help!]
-   * @author Laurent Destailleur <eldy@users.sourceforge.net>
-   * @author Regis Houssin
    *
-   * @version $Revision: 1.1 $
+   * @version $Revision: 1.15 $
+   * @copyright copyright information
    * @license GNU General Public Licence
    *
-   * $Id: smtps.php,v 1.1 2011/08/26 23:19:54 eldy Exp $
+   * $Id: SMTPs.php,v 1.15 2011/07/12 22:19:02 eldy Exp $
    *
    **/
 
@@ -2520,10 +2520,7 @@ class SMTPs
 // ** CSV Version Control Info
 
  /**
-  * $Log: smtps.php,v $
-  * Revision 1.1  2011/08/26 23:19:54  eldy
-  * Qual: smtps is not really an external project but now a specific dolibarr class file, so i moved it into core/class
-  *
+  * $Log: SMTPs.php,v $
   * Revision 1.15  2011/07/12 22:19:02  eldy
   * Fix: Attachment fails if content was empty
   *
