@@ -19,14 +19,14 @@
  *      \file       htdocs/core/class/rssparser.class.php
  *      \ingroup    core
  *      \brief      File of class to parse rss feeds
- *      \version    $Id: rssparser.class.php,v 1.4 2011/08/26 22:38:27 eldy Exp $
+ *      \version    $Id: rssparser.class.php,v 1.5 2011/08/26 23:06:16 eldy Exp $
  */
 class RssParser
 {
     var $db;
     var $error;
 
-	protected $_format='rss';
+	protected $_format='';
 	protected $_urlRSS;
 	protected $_language;
 	protected $_generator;
@@ -55,7 +55,8 @@ class RssParser
 
 
 	// For parsing with xmlparser
-    var $stack              = array(); // parser stack
+    var $stack               = array(); // parser stack
+    var $_CONTENT_CONSTRUCTS = array('content', 'summary', 'info', 'title', 'tagline', 'copyright');
 
 
 	/**
@@ -212,6 +213,7 @@ class RssParser
 			}
 			else if ($rss->_format == 'atom')
 			{
+			    //var_dump($rss);
     			if (! empty($conf->global->EXTERNALRSS_USE_SIMPLEXML))
     			{
     			    if (!empty($rss->generator))     $this->_generator = (string) $rss->generator;
@@ -222,14 +224,14 @@ class RssParser
     			}
     			else
     			{
-        			if (!empty($rss->channel['rss_language']))      $this->_language = (string) $rss->channel['rss_language'];
-        			if (!empty($rss->channel['rss_generator']))     $this->_generator = (string) $rss->channel['rss_generator'];
-        			if (!empty($rss->channel['rss_copyright']))     $this->_copyright = (string) $rss->channel['rss_copyright'];
-        			if (!empty($rss->channel['rss_lastbuilddate'])) $this->_lastbuilddate = (string) $rss->channel['rss_lastbuilddate'];
-        			if (!empty($rss->image['rss_url']))             $this->_imageurl = (string) $rss->image['rss_url'];
-        			if (!empty($rss->channel['rss_link']))		    $this->_link = (string) $rss->channel['rss_link'];
-        			if (!empty($rss->channel['rss_title']))         $this->_title = (string) $rss->channel['rss_title'];
-        			if (!empty($rss->channel['rss_description']))   $this->_description = (string) $rss->channel['rss_description'];
+        			//if (!empty($rss->channel['rss_language']))      $this->_language = (string) $rss->channel['rss_language'];
+        			if (!empty($rss->channel['generator']))     $this->_generator = (string) $rss->channel['generator'];
+        			//if (!empty($rss->channel['rss_copyright']))     $this->_copyright = (string) $rss->channel['rss_copyright'];
+        			if (!empty($rss->channel['modified'])) $this->_lastbuilddate = (string) $rss->channel['modified'];
+        			//if (!empty($rss->image['rss_url']))             $this->_imageurl = (string) $rss->image['rss_url'];
+        			if (!empty($rss->channel['link']))		    $this->_link = (string) $rss->channel['link'];
+        			if (!empty($rss->channel['title']))         $this->_title = (string) $rss->channel['title'];
+        			//if (!empty($rss->channel['rss_description']))   $this->_description = (string) $rss->channel['rss_description'];
     			}
     			if (! empty($conf->global->EXTERNALRSS_USE_SIMPLEXML))  { $tmprss=xml2php($rss); $items=$tmprss['entry'];} // With simplexml
     			else $items=$rss->items;                                                              // With xmlparse
@@ -281,16 +283,16 @@ class RssParser
         				$itemDescription = (string) $item['summary'];
         			    $itemPubDate = (string) $item['created'];
                         $itemId = (string) $item['id'];
-                        $itemAuthor = '';
+                        $itemAuthor = (string) ($item['author']?$item['author']:$item['author_name']);
     			    }
     			    else
     			    {
-        			    $itemLink = (string) $item['rss_link'];
-        			    $itemTitle = (string) $item['rss_title'];
-        				$itemDescription = (string) $item['rss_description'];
-        			    $itemPubDate = (string) $item['rss_pubdate'];
-                        $itemId = (string) $item['rss_guid'];
-                        $itemAuthor = (string) $item['rss_author'];
+        			    $itemLink = (string) $item['link']['href'];
+        			    $itemTitle = (string) $item['title'];
+        				$itemDescription = (string) $item['summary'];
+        			    $itemPubDate = (string) $item['created'];
+                        $itemId = (string) $item['id'];
+                        $itemAuthor = (string) ($item['author']?$item['author']:$item['author_name']);
     			    }
     			}
     			else print 'ErrorBadFeedFormat';
@@ -342,10 +344,9 @@ class RssParser
             $this->current_namespace = $ns;
         }
 
-        # if feed type isn't set, then this is first element of feed
-        # identify feed from root element
-        #
-        if (!isset($this->_format) ) {
+        // if feed type isn't set, then this is first element of feed identify feed from root element
+        if (empty($this->_format))
+        {
             if ( $el == 'rdf' ) {
                 $this->_format = 'rss';
                 $this->feed_version = '1.0';
