@@ -24,7 +24,7 @@
 /**
  *      \file       htdocs/lib/CMailFile.class.php
  *      \brief      File of class to send emails (with attachments or not)
- *		\version    $Id: CMailFile.class.php,v 1.148 2011/07/31 23:25:43 eldy Exp $
+ *		\version    $Id: CMailFile.class.php,v 1.149 2011/08/26 23:19:53 eldy Exp $
  *      \author     Dan Potter.
  *      \author	    Eric Seigne
  *      \author	    Laurent Destailleur.
@@ -235,7 +235,7 @@ class CMailFile
 			// Use SMTPS library
 			// ------------------------------------------
 
-			require_once(DOL_DOCUMENT_ROOT."/includes/smtps/SMTPs.php");
+			require_once(DOL_DOCUMENT_ROOT."/core/class/smtps.php");
 			$smtps = new SMTPs();
 			$smtps->setCharSet($conf->file->character_set_client);
 
