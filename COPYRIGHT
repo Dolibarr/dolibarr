@@ -29,9 +29,7 @@ NuSoap            0.9.5    LGPL 2.1                    Yes              Interfac
 OdtPHP            1.0.1    GPL 2.0                     Yes              Library to build/edit ODT files
 Php-barcode       0.3pl1   GPL 2.0                     Yes              Bar code generation
 PHPExcel		  1.7.6    LGPL 2.1                    Yes              Read/Write XLS files, read ODS files
-SMTPs             1.15     GPL                         Yes              SMTPS library
 TCPDF             5.9.098  LGPL 3.0                    Yes				PDF generation
-VCard             2.0      GPL 2.0                     Yes              VCard library
 
 For licenses compatibility informations:
 http://www.fsf.org/licensing/licenses/index_html
@@ -44,6 +42,8 @@ Copyright (C) 2011
 - Laurent Destailleur <eldy@users.sourceforge.net>
 - Regis Houssin <regis@dolibarr.fr>
 - Juanjo Menent
+- Philippe Grand
+- Jean Heimburger <jean@tiaris.info>
 - Philippe Grand
 
 Copyright (C) 2010
