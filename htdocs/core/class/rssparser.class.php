@@ -19,7 +19,7 @@
  *      \file       htdocs/core/class/rssparser.class.php
  *      \ingroup    core
  *      \brief      File of class to parse rss feeds
- *      \version    $Id: rssparser.class.php,v 1.2 2011/08/26 17:59:14 eldy Exp $
+ *      \version    $Id: rssparser.class.php,v 1.3 2011/08/26 19:09:02 eldy Exp $
  */
 class RssParser
 {
@@ -116,9 +116,15 @@ class RssParser
 		else
 		{
 		    try {
-		        $rss = @simplexml_load_file($this->_urlRSS);
-var_dump($this->_urlRSS);
-		    		    }
+		        ini_set("user_agent","Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)");
+                ini_set("max_execution_time", 10);
+		        if (! empty($conf->global->MAIN_SIMPLEXMLLOAD_DEBUG)) $rss = simplexml_load_file($this->_urlRSS);
+		        else
+		        {
+		            //libxml_use_internal_errors(false);
+		            $rss = @simplexml_load_file($this->_urlRSS);
+		        }
+		    }
 		    catch (Exception $e) {
 		         print 'Error retrieving URL '.$this->urlRSS.' - '.$e->getMessage();
 		    }
@@ -127,6 +133,8 @@ var_dump($this->_urlRSS);
 		// If $rss loaded
 		if ($rss)
 		{
+		    $items=array();
+
 		    // Save file into cache
 		    if (empty($foundintocache) && $cachedir)
 		    {
@@ -141,33 +149,60 @@ var_dump($this->_urlRSS);
 		        $this->_lastfetchdate=$nowgmt;
 		    }
 
-			// Save description entries
-			if (!empty($rss->channel->language))      $this->_language = (string) $rss->channel->language;
-			if (!empty($rss->channel->generator))     $this->_generator = (string) $rss->channel->generator;
-			if (!empty($rss->channel->copyright))     $this->_copyright = (string) $rss->channel->copyright;
-			if (!empty($rss->channel->lastbuilddate)) $this->_lastbuilddate = (string) $rss->channel->lastbuilddate;
-			if (!empty($rss->channel->image->url[0])) $this->_imageurl = (string) $rss->channel->image->url[0];
-			if (!empty($rss->channel->link))		  $this->_link = (string) $rss->channel->link;
-			if (!empty($rss->channel->title))         $this->_title = (string) $rss->channel->title;
-			if (!empty($rss->channel->description))	  $this->_description = (string) $rss->channel->description;
-            // TODO imageurl
+		    $rss->_format='rss';
+		    if (empty($rss->channel)) $rss->_format='atom';
+
+		    // Save description entries
+			if ($rss->_format == 'rss')
+			{
+    			if (!empty($rss->channel->language))      $this->_language = (string) $rss->channel->language;
+    			if (!empty($rss->channel->generator))     $this->_generator = (string) $rss->channel->generator;
+    			if (!empty($rss->channel->copyright))     $this->_copyright = (string) $rss->channel->copyright;
+    			if (!empty($rss->channel->lastbuilddate)) $this->_lastbuilddate = (string) $rss->channel->lastbuilddate;
+    			if (!empty($rss->channel->image->url[0])) $this->_imageurl = (string) $rss->channel->image->url[0];
+    			if (!empty($rss->channel->link))		  $this->_link = (string) $rss->channel->link;
+    			if (!empty($rss->channel->title))         $this->_title = (string) $rss->channel->title;
+    			if (!empty($rss->channel->description))	  $this->_description = (string) $rss->channel->description;
+    			$items=$rss->channel->item;
+			}
+			else if ($rss->_format == 'atom')
+			{
+    			if (!empty($rss->generator))     $this->_generator = (string) $rss->generator;
+    			if (!empty($rss->lastbuilddate)) $this->_lastbuilddate = (string) $rss->modified;
+    			if (!empty($rss->link->href))    $this->_link = (string) $rss->link->href;
+    			if (!empty($rss->title))         $this->_title = (string) $rss->title;
+    			if (!empty($rss->description))	 $this->_description = (string) $rss->description;
+    			$tmprss=xml2php($rss);
+    			$items=$tmprss['entry'];
+			}
 
 			$i = 0;
-
 			// Loop on each record
-			foreach($rss->channel->item as $item)
+			foreach($items as $item)
 			{
-				$itemLink = (string) $item->link;
-			    $itemTitle = (string) $item->title;
-				$itemDescription = (string) $item->description;
-			    $itemPubDate = (string) $item->pubDate;
+    			if ($rss->_format == 'rss')
+    			{
+    			    $itemLink = (string) $item->link;
+    			    $itemTitle = (string) $item->title;
+    				$itemDescription = (string) $item->description;
+    			    $itemPubDate = (string) $item->pubDate;
+                    $itemId = '';
 
-				// Loop on each category
-				$itemCategory=array();
-				foreach ($item->category as $cat)
-				{
-					$itemCategory[] = (string) $cat;
-				}
+    				// Loop on each category
+    				$itemCategory=array();
+    				foreach ($item->category as $cat)
+    				{
+    					$itemCategory[] = (string) $cat;
+    				}
+    			}
+    			else if ($rss->_format == 'atom')
+    			{
+    			    $itemLink = (string) $item['link']['href'];
+    			    $itemTitle = (string) $item['title'];
+    				$itemDescription = (string) $item['summary'];
+    			    $itemPubDate = (string) $item['created'];
+                    $itemId = (string) $item['id'];
+    			}
 
 				// Add record to result array
 				$this->_rssarray[$i] = array(
@@ -175,7 +210,8 @@ var_dump($this->_urlRSS);
 					'title'=>$itemTitle,
 					'description'=>$itemDescription,
 					'pubDate'=>$itemPubDate,
-					'category'=>$itemCategory);
+					'category'=>$itemCategory,
+				    'id'=>$itemId);
 
 				$i++;
 
@@ -192,4 +228,59 @@ var_dump($this->_urlRSS);
 	}
 
 }
+
+
+/**
+ * Function to convert an XML object into an array
+ */
+function xml2php($xml)
+{
+   $fils = 0;
+   $tab = false;
+   $array = array();
+   foreach($xml->children() as $key => $value)
+   {
+       $child = xml2php($value);
+
+       //To deal with the attributes
+       foreach($value->attributes() as $ak=>$av)
+       {
+           $child[$ak] = (string)$av;
+
+       }
+
+       //Let see if the new child is not in the array
+       if($tab==false && in_array($key,array_keys($array)))
+       {
+           //If this element is already in the array we will create an indexed array
+           $tmp = $array[$key];
+           $array[$key] = NULL;
+           $array[$key][] = $tmp;
+           $array[$key][] = $child;
+           $tab = true;
+       }
+       elseif($tab == true)
+       {
+           //Add an element in an existing array
+           $array[$key][] = $child;
+       }
+       else
+       {
+           //Add a simple element
+           $array[$key] = $child;
+       }
+
+       $fils++;
+     }
+
+
+   if($fils==0)
+   {
+       return (string)$xml;
+   }
+
+   return $array;
+
+}
+
 ?>
