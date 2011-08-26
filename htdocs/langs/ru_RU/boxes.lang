@@ -10,12 +10,12 @@
 // Reference language: en_US
 CHARSET=UTF-8
 BoxLastRssInfos=Информация RSS
-BoxLastProducts=Последние %s товаров / услуг
-BoxLastProductsInContract=Последние %s проданных товаров / услуг
+BoxLastProducts=Последние %s товары / услуги
+BoxLastProductsInContract=Последние %s проданные товары / услуги
 BoxLastSupplierBills=Последние счета-фактуры поставщиков
 BoxLastCustomerBills=Последние счета-фактуры покупателям
 BoxLastProposals=Последние коммерческие предложения
-BoxLastProspects=Последние измененные потенциальные покупатели
+BoxLastProspects=Последние измененные потенциальные клиенты
 BoxLastCustomers=Последние измененные покупатели
 BoxLastCustomerOrders=Последние заказы покупателей
 BoxLastSuppliers=Последние измененные поставщики
@@ -26,8 +26,8 @@ BoxSalesTurnover=Оборот по продажам
 BoxTitleLastBooks=Последние %s зарегистрированных сделок
 BoxTitleNbOfCustomers=Кол-во покупателей
 BoxTitleLastRssInfos=Последние новости %s из %s
-BoxTitleLastProducts=Последние %s измененных товаров / услуг
-BoxTitleLastCustomerOrders=Последние %s измененных заказов покупателей
+BoxTitleLastProducts=Последние %s измененные товары / услуги
+BoxTitleLastCustomerOrders=Последние %s измененные заказы покупателей
 BoxTitleLastSuppliers=Последние %s зарегистрированных поставщиков
 BoxTitleLastCustomers=Последние %s зарегистрированных покупателей
 BoxTitleLastCustomersOrProspects=Последние %s зарегистрированных покупателей и потенциальных клиентов
@@ -48,20 +48,10 @@ NoRecordedOrders=Нет зарегистрированных заказы пок
 NoRecordedProposals=Нет зарегистрированных предложений
 NoRecordedInvoices=Нет зарегистрированных счетов-фактур покупателям
 NoRecordedSupplierInvoices=Нет зарегистрированных счетов-фактур поставщиков
-// Date 2009-01-19 21:30:52
-// STOP - Lines generated via parser
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
-// Reference language: en_US
 LastRefreshDate=Дата последнего обновления
 NoRecordedProducts=Нет зарегистрированных товаров / услуг
 NoRecordedProspects=Нет зарегистрированных потенциальных клиентов
 NoContractedProducts=Нет законтрактованных товаров / услуг
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:18:27).
-// Reference language: en_US
 BoxOldestUnpaidCustomerBills=Самые старые неоплаченные счета-фактуры покупателям
 BoxOldestUnpaidSupplierBills=Самые старые неоплаченные счета-фактуры поставщиков
 BoxTotalUnpaidCustomerBills=Общая сумма неоплаченных счетов-фактур покупателям
@@ -72,11 +62,21 @@ BoxTitleTotalUnpaidCustomerBills=Неоплаченные счета-факту�
 BoxTitleTotalUnpaidSuppliersBills=Неоплаченные счета-фактуры поставщиков
 NoUnpaidCustomerBills=Нет неоплаченных счетов-фактур покупателям
 NoUnpaidSupplierBills=Нет неоплаченных счетов-фактур поставщиков
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:18:27).
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> ru_RU
 BoxTitleLastModifiedSuppliers=Последнее %s измененных поставщиков
-BoxTitleLastModifiedCustomers=Последнее %s измененных клиентов
+BoxTitleLastModifiedCustomers=Последнее %s измененных покупателей
 BoxTitleLastModifiedProspects=Последнее %s измененных потенциальных клиентов
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:40).
+BoxLastContracts=Последние договоры
+BoxLastContacts=Последние контакты / адреса
+BoxLastMembers=Последнее участники
+BoxTitleLastModifiedCustomers=Последние %s измененных покупателей
+BoxTitleLastModifiedProspects=Последние %s измененных потенциальных клиентов
+BoxTitleLastProductsInContract=Последние %s товаров / услуг в договорах
+BoxTitleLastModifiedMembers=Последние %s измененных участников
+BoxTitleLastModifiedContacts=Последние %s измененных контактов / адресов
+NoRecordedContacts=Нет введенных контактов
+BoxTitleLastContracts=Последние %s договоров
+BoxTitleLastModifiedDonations=Последние %s измененных пожертвований
+BoxTitleLastModifiedExpenses=Последние %s измененных расходов
+NoModifiedSupplierBills=Нет введенных счетов-фактур поставщиков
+NoRecordedContracts=Нет введенных договоров
+// STOP - Lines generated via autotranslator.php tool (2011-08-25 22:47:13).
