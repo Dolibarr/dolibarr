@@ -19,7 +19,7 @@
  *      \file       htdocs/core/class/rssparser.class.php
  *      \ingroup    core
  *      \brief      File of class to parse rss feeds
- *      \version    $Id: rssparser.class.php,v 1.3 2011/08/26 19:09:02 eldy Exp $
+ *      \version    $Id: rssparser.class.php,v 1.4 2011/08/26 22:38:27 eldy Exp $
  */
 class RssParser
 {
@@ -53,6 +53,11 @@ class RssParser
 	public function getLastFetchDate() { return $this->_lastfetchdate; }
 	public function getItems()         { return $this->_rssarray; }
 
+
+	// For parsing with xmlparser
+    var $stack              = array(); // parser stack
+
+
 	/**
 	 * 		Constructor
 	 */
@@ -74,6 +79,8 @@ class RssParser
 	public function parser($urlRSS, $maxNb=0, $cachedelay=60, $cachedir='')
 	{
 	    include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
+
+	    $str='';    // This will contain content of feed
 
 	    // Check parameters
 	    if (! dol_is_url($urlRSS))
@@ -107,41 +114,54 @@ class RssParser
 			}
         }
 
-		// Load file into $rss
+		// Load file into $str
 		if ($foundintocache)    // Cache file found and is not too old
 		{
 		    $str = file_get_contents($newpathofdestfile);
-		    $rss = simplexml_load_string(unserialize($str));
 		}
 		else
 		{
 		    try {
 		        ini_set("user_agent","Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)");
                 ini_set("max_execution_time", 10);
-		        if (! empty($conf->global->MAIN_SIMPLEXMLLOAD_DEBUG)) $rss = simplexml_load_file($this->_urlRSS);
-		        else
-		        {
-		            //libxml_use_internal_errors(false);
-		            $rss = @simplexml_load_file($this->_urlRSS);
-		        }
+                $str = file_get_contents($this->_urlRSS);
 		    }
 		    catch (Exception $e) {
 		         print 'Error retrieving URL '.$this->urlRSS.' - '.$e->getMessage();
 		    }
 		}
 
+		// Convert $str into xml
+		if (! empty($conf->global->EXTERNALRSS_USE_SIMPLEXML))
+        {
+            //print 'xx'.LIBXML_NOCDATA;
+            libxml_use_internal_errors(false);
+            $rss = simplexml_load_string($str, "SimpleXMLElement", LIBXML_NOCDATA);
+        }
+        else
+        {
+            $xmlparser=xml_parser_create('');
+            if (!is_resource($xmlparser)) { $this->error="ErrorFailedToCreateParser"; return -1; }
+
+            xml_set_object( $xmlparser, $this );
+            xml_set_element_handler($xmlparser, 'feed_start_element', 'feed_end_element' );
+            xml_set_character_data_handler( $xmlparser, 'feed_cdata' );
+            $status = xml_parse( $xmlparser, $str );
+            xml_parser_free( $xmlparser );
+            $rss=$this;
+            //var_dump($this);exit;
+        }
+
 		// If $rss loaded
 		if ($rss)
 		{
-		    $items=array();
-
 		    // Save file into cache
 		    if (empty($foundintocache) && $cachedir)
 		    {
 				dol_syslog("RssParser::parser cache file ".$newpathofdestfile." is saved onto disk.");
 		        if (! dol_is_dir($cachedir)) dol_mkdir($cachedir);
 		        $fp = fopen($newpathofdestfile, 'w');
-                fwrite($fp, serialize($rss->asXML()));
+                fwrite($fp, $str);
                 fclose($fp);
 		        if (! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
 		        @chmod($newpathofdestfile, octdec($newmask));
@@ -149,60 +169,131 @@ class RssParser
 		        $this->_lastfetchdate=$nowgmt;
 		    }
 
-		    $rss->_format='rss';
-		    if (empty($rss->channel)) $rss->_format='atom';
+		    unset($str);    // Free memory
+
+		    if (empty($rss->_format))    // If format not detected automatically
+		    {
+		        $rss->_format='rss';
+		        if (empty($rss->channel)) $rss->_format='atom';
+		    }
+
+		    $items=array();
 
 		    // Save description entries
 			if ($rss->_format == 'rss')
 			{
-    			if (!empty($rss->channel->language))      $this->_language = (string) $rss->channel->language;
-    			if (!empty($rss->channel->generator))     $this->_generator = (string) $rss->channel->generator;
-    			if (!empty($rss->channel->copyright))     $this->_copyright = (string) $rss->channel->copyright;
-    			if (!empty($rss->channel->lastbuilddate)) $this->_lastbuilddate = (string) $rss->channel->lastbuilddate;
-    			if (!empty($rss->channel->image->url[0])) $this->_imageurl = (string) $rss->channel->image->url[0];
-    			if (!empty($rss->channel->link))		  $this->_link = (string) $rss->channel->link;
-    			if (!empty($rss->channel->title))         $this->_title = (string) $rss->channel->title;
-    			if (!empty($rss->channel->description))	  $this->_description = (string) $rss->channel->description;
-    			$items=$rss->channel->item;
+			    //var_dump($rss);
+    			if (! empty($conf->global->EXTERNALRSS_USE_SIMPLEXML))
+    			{
+        			if (!empty($rss->channel->language))      $this->_language = (string) $rss->channel->language;
+        			if (!empty($rss->channel->generator))     $this->_generator = (string) $rss->channel->generator;
+        			if (!empty($rss->channel->copyright))     $this->_copyright = (string) $rss->channel->copyright;
+        			if (!empty($rss->channel->lastbuilddate)) $this->_lastbuilddate = (string) $rss->channel->lastbuilddate;
+        			if (!empty($rss->channel->image->url[0])) $this->_imageurl = (string) $rss->channel->image->url[0];
+        			if (!empty($rss->channel->link))		  $this->_link = (string) $rss->channel->link;
+        			if (!empty($rss->channel->title))         $this->_title = (string) $rss->channel->title;
+        			if (!empty($rss->channel->description))	  $this->_description = (string) $rss->channel->description;
+    			}
+    			else
+    			{
+        			if (!empty($rss->channel['rss_language']))      $this->_language = (string) $rss->channel['rss_language'];
+        			if (!empty($rss->channel['rss_generator']))     $this->_generator = (string) $rss->channel['rss_generator'];
+        			if (!empty($rss->channel['rss_copyright']))     $this->_copyright = (string) $rss->channel['rss_copyright'];
+        			if (!empty($rss->channel['rss_lastbuilddate'])) $this->_lastbuilddate = (string) $rss->channel['rss_lastbuilddate'];
+        			if (!empty($rss->image['rss_url']))             $this->_imageurl = (string) $rss->image['rss_url'];
+        			if (!empty($rss->channel['rss_link']))		    $this->_link = (string) $rss->channel['rss_link'];
+        			if (!empty($rss->channel['rss_title']))         $this->_title = (string) $rss->channel['rss_title'];
+        			if (!empty($rss->channel['rss_description']))   $this->_description = (string) $rss->channel['rss_description'];
+    			}
+
+    			if (! empty($conf->global->EXTERNALRSS_USE_SIMPLEXML)) $items=$rss->channel->item;    // With simplexml
+    			else $items=$rss->items;                                                              // With xmlparse
+    			//var_dump($items);exit;
 			}
 			else if ($rss->_format == 'atom')
 			{
-    			if (!empty($rss->generator))     $this->_generator = (string) $rss->generator;
-    			if (!empty($rss->lastbuilddate)) $this->_lastbuilddate = (string) $rss->modified;
-    			if (!empty($rss->link->href))    $this->_link = (string) $rss->link->href;
-    			if (!empty($rss->title))         $this->_title = (string) $rss->title;
-    			if (!empty($rss->description))	 $this->_description = (string) $rss->description;
-    			$tmprss=xml2php($rss);
-    			$items=$tmprss['entry'];
+    			if (! empty($conf->global->EXTERNALRSS_USE_SIMPLEXML))
+    			{
+    			    if (!empty($rss->generator))     $this->_generator = (string) $rss->generator;
+        			if (!empty($rss->lastbuilddate)) $this->_lastbuilddate = (string) $rss->modified;
+        			if (!empty($rss->link->href))    $this->_link = (string) $rss->link->href;
+        			if (!empty($rss->title))         $this->_title = (string) $rss->title;
+        			if (!empty($rss->description))	 $this->_description = (string) $rss->description;
+    			}
+    			else
+    			{
+        			if (!empty($rss->channel['rss_language']))      $this->_language = (string) $rss->channel['rss_language'];
+        			if (!empty($rss->channel['rss_generator']))     $this->_generator = (string) $rss->channel['rss_generator'];
+        			if (!empty($rss->channel['rss_copyright']))     $this->_copyright = (string) $rss->channel['rss_copyright'];
+        			if (!empty($rss->channel['rss_lastbuilddate'])) $this->_lastbuilddate = (string) $rss->channel['rss_lastbuilddate'];
+        			if (!empty($rss->image['rss_url']))             $this->_imageurl = (string) $rss->image['rss_url'];
+        			if (!empty($rss->channel['rss_link']))		    $this->_link = (string) $rss->channel['rss_link'];
+        			if (!empty($rss->channel['rss_title']))         $this->_title = (string) $rss->channel['rss_title'];
+        			if (!empty($rss->channel['rss_description']))   $this->_description = (string) $rss->channel['rss_description'];
+    			}
+    			if (! empty($conf->global->EXTERNALRSS_USE_SIMPLEXML))  { $tmprss=xml2php($rss); $items=$tmprss['entry'];} // With simplexml
+    			else $items=$rss->items;                                                              // With xmlparse
+    			//var_dump($items);exit;
 			}
 
 			$i = 0;
 			// Loop on each record
 			foreach($items as $item)
 			{
+			    //var_dump($item);exit;
     			if ($rss->_format == 'rss')
     			{
-    			    $itemLink = (string) $item->link;
-    			    $itemTitle = (string) $item->title;
-    				$itemDescription = (string) $item->description;
-    			    $itemPubDate = (string) $item->pubDate;
-                    $itemId = '';
+    			    if (! empty($conf->global->EXTERNALRSS_USE_SIMPLEXML))
+    			    {
+        			    $itemLink = (string) $item->link;
+        			    $itemTitle = (string) $item->title;
+        				$itemDescription = (string) $item->description;
+        			    $itemPubDate = (string) $item->pubDate;
+                        $itemId = '';
+                        $itemAuthor = '';
+    			    }
+    			    else
+    			    {
+        			    $itemLink = (string) $item['rss_link'];
+        			    $itemTitle = (string) $item['rss_title'];
+        				$itemDescription = (string) $item['rss_description'];
+        			    $itemPubDate = (string) $item['rss_pubdate'];
+                        $itemId = (string) $item['rss_guid'];
+                        $itemAuthor = (string) $item['rss_author'];
+    			    }
 
     				// Loop on each category
     				$itemCategory=array();
-    				foreach ($item->category as $cat)
+    				if (is_array($item->category))
     				{
-    					$itemCategory[] = (string) $cat;
+        				foreach ($item->category as $cat)
+        				{
+        					$itemCategory[] = (string) $cat;
+        				}
     				}
     			}
     			else if ($rss->_format == 'atom')
     			{
-    			    $itemLink = (string) $item['link']['href'];
-    			    $itemTitle = (string) $item['title'];
-    				$itemDescription = (string) $item['summary'];
-    			    $itemPubDate = (string) $item['created'];
-                    $itemId = (string) $item['id'];
+    			    if (! empty($conf->global->EXTERNALRSS_USE_SIMPLEXML))
+    			    {
+    			        $itemLink = (string) $item['link']['href'];
+        			    $itemTitle = (string) $item['title'];
+        				$itemDescription = (string) $item['summary'];
+        			    $itemPubDate = (string) $item['created'];
+                        $itemId = (string) $item['id'];
+                        $itemAuthor = '';
+    			    }
+    			    else
+    			    {
+        			    $itemLink = (string) $item['rss_link'];
+        			    $itemTitle = (string) $item['rss_title'];
+        				$itemDescription = (string) $item['rss_description'];
+        			    $itemPubDate = (string) $item['rss_pubdate'];
+                        $itemId = (string) $item['rss_guid'];
+                        $itemAuthor = (string) $item['rss_author'];
+    			    }
     			}
+    			else print 'ErrorBadFeedFormat';
 
 				// Add record to result array
 				$this->_rssarray[$i] = array(
@@ -211,7 +302,8 @@ class RssParser
 					'description'=>$itemDescription,
 					'pubDate'=>$itemPubDate,
 					'category'=>$itemCategory,
-				    'id'=>$itemId);
+				    'id'=>$itemId,
+				    'author'=>$itemAuthor);
 
 				$i++;
 
@@ -226,6 +318,270 @@ class RssParser
 			return -1;
 		}
 	}
+
+
+
+	/**
+	 * 	Triggered when opened tag is found
+	 *
+	 * 	@param		$p
+	 *  @param		$element	Tag
+	 *  @param		$attrs		Attributes of tags
+	 */
+    function feed_start_element($p, $element, &$attrs)
+    {
+        $el = $element = strtolower($element);
+        $attrs = array_change_key_case($attrs, CASE_LOWER);
+
+        // check for a namespace, and split if found
+        $ns = false;
+        if ( strpos( $element, ':' ) ) {
+            list($ns, $el) = explode( ':', $element, 2);
+        }
+        if ( $ns and $ns != 'rdf' ) {
+            $this->current_namespace = $ns;
+        }
+
+        # if feed type isn't set, then this is first element of feed
+        # identify feed from root element
+        #
+        if (!isset($this->_format) ) {
+            if ( $el == 'rdf' ) {
+                $this->_format = 'rss';
+                $this->feed_version = '1.0';
+            }
+            elseif ( $el == 'rss' ) {
+                $this->_format = 'rss';
+                $this->feed_version = $attrs['version'];
+            }
+            elseif ( $el == 'feed' ) {
+                $this->_format = 'atom';
+                $this->feed_version = $attrs['version'];
+                $this->inchannel = true;
+            }
+            return;
+        }
+
+        if ( $el == 'channel' )
+        {
+            $this->inchannel = true;
+        }
+        elseif ($el == 'item' or $el == 'entry' )
+        {
+            $this->initem = true;
+            if ( isset($attrs['rdf:about']) ) {
+                $this->current_item['about'] = $attrs['rdf:about'];
+            }
+        }
+
+        // if we're in the default namespace of an RSS feed,
+        //  record textinput or image fields
+        elseif (
+            $this->_format == 'rss' and
+            $this->current_namespace == '' and
+            $el == 'textinput' )
+        {
+            $this->intextinput = true;
+        }
+
+        elseif (
+            $this->_format == 'rss' and
+            $this->current_namespace == '' and
+            $el == 'image' )
+        {
+            $this->inimage = true;
+        }
+
+        # handle atom content constructs
+        elseif ( $this->_format == 'atom' and in_array($el, $this->_CONTENT_CONSTRUCTS) )
+        {
+            // avoid clashing w/ RSS mod_content
+            if ($el == 'content' ) {
+                $el = 'atom_content';
+            }
+
+            $this->incontent = $el;
+
+
+        }
+
+        // if inside an Atom content construct (e.g. content or summary) field treat tags as text
+        elseif ($this->_format == 'atom' and $this->incontent )
+        {
+            // if tags are inlined, then flatten
+            $attrs_str = join(' ',
+                    array_map('map_attrs',
+                    array_keys($attrs),
+                    array_values($attrs) ) );
+
+            $this->append_content( "<$element $attrs_str>"  );
+
+            array_unshift( $this->stack, $el );
+        }
+
+        // Atom support many links per containging element.
+        // Magpie treats link elements of type rel='alternate'
+        // as being equivalent to RSS's simple link element.
+        //
+        elseif ($this->_format == 'atom' and $el == 'link' )
+        {
+            if ( isset($attrs['rel']) and $attrs['rel'] == 'alternate' )
+            {
+                $link_el = 'link';
+            }
+            else {
+                $link_el = 'link_' . $attrs['rel'];
+            }
+
+            $this->append($link_el, $attrs['href']);
+        }
+        // set stack[0] to current element
+        else {
+            array_unshift($this->stack, $el);
+        }
+    }
+
+
+	/**
+	 * 	Triggered when CDATA is found
+	 *
+	 * 	@param		$p
+	 *  @param		$element	Tag
+	 *  @param		$attrs		Attributes of tags
+	 */
+    function feed_cdata ($p, $text) {
+        if ($this->_format == 'atom' and $this->incontent)
+        {
+            $this->append_content( $text );
+        }
+        else {
+            $current_el = join('_', array_reverse($this->stack));
+            $this->append($current_el, $text);
+        }
+    }
+
+	/**
+	 * 	Triggered when closed tag is found
+	 *
+	 * 	@param		$p
+	 *  @param		$element	Tag
+	 */
+    function feed_end_element ($p, $el) {
+        $el = strtolower($el);
+
+        if ( $el == 'item' or $el == 'entry' )
+        {
+            $this->items[] = $this->current_item;
+            $this->current_item = array();
+            $this->initem = false;
+        }
+        elseif ($this->_format == 'rss' and $this->current_namespace == '' and $el == 'textinput' )
+        {
+            $this->intextinput = false;
+        }
+        elseif ($this->_format == 'rss' and $this->current_namespace == '' and $el == 'image' )
+        {
+            $this->inimage = false;
+        }
+        elseif ($this->_format == 'atom' and in_array($el, $this->_CONTENT_CONSTRUCTS) )
+        {
+            $this->incontent = false;
+        }
+        elseif ($el == 'channel' or $el == 'feed' )
+        {
+            $this->inchannel = false;
+        }
+        elseif ($this->_format == 'atom' and $this->incontent  ) {
+            // balance tags properly
+            // note:  i don't think this is actually neccessary
+            if ( $this->stack[0] == $el )
+            {
+                $this->append_content("</$el>");
+            }
+            else {
+                $this->append_content("<$el />");
+            }
+
+            array_shift( $this->stack );
+        }
+        else {
+            array_shift( $this->stack );
+        }
+
+        $this->current_namespace = false;
+    }
+
+
+	/**
+	 * 	To concat 2 string with no warning if an operand is not defined
+	 *
+	 * 	@param		$str1
+	 *  @param		$str2
+	 */
+    function concat (&$str1, $str2="") {
+        if (!isset($str1) ) {
+            $str1="";
+        }
+        $str1 .= $str2;
+    }
+
+	/**
+	 */
+    function append_content($text) {
+        if ( $this->initem ) {
+            $this->concat( $this->current_item[ $this->incontent ], $text );
+        }
+        elseif ( $this->inchannel ) {
+            $this->concat( $this->channel[ $this->incontent ], $text );
+        }
+    }
+
+	/**
+	 * 	smart append - field and namespace aware
+	 */
+    function append($el, $text) {
+        if (!$el) {
+            return;
+        }
+        if ( $this->current_namespace )
+        {
+            if ( $this->initem ) {
+                $this->concat(
+                    $this->current_item[ $this->current_namespace ][ $el ], $text);
+            }
+            elseif ($this->inchannel) {
+                $this->concat(
+                    $this->channel[ $this->current_namespace][ $el ], $text );
+            }
+            elseif ($this->intextinput) {
+                $this->concat(
+                    $this->textinput[ $this->current_namespace][ $el ], $text );
+            }
+            elseif ($this->inimage) {
+                $this->concat(
+                    $this->image[ $this->current_namespace ][ $el ], $text );
+            }
+        }
+        else {
+            if ( $this->initem ) {
+                $this->concat(
+                    $this->current_item[ $el ], $text);
+            }
+            elseif ($this->intextinput) {
+                $this->concat(
+                    $this->textinput[ $el ], $text );
+            }
+            elseif ($this->inimage) {
+                $this->concat(
+                    $this->image[ $el ], $text );
+            }
+            elseif ($this->inchannel) {
+                $this->concat(
+                    $this->channel[ $el ], $text );
+            }
+
+        }
+    }
 
 }
 
