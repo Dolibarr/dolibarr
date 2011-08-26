@@ -20,7 +20,7 @@
  *	\file       htdocs/cashdesk/admin/cashdesk.php
  *	\ingroup    cashdesk
  *	\brief      Setup page for cashdesk module
- *	\version    $Id: cashdesk.php,v 1.10 2011/08/26 23:56:14 eldy Exp $
+ *	\version    $Id: cashdesk.php,v 1.9 2011/08/26 15:05:41 simnandez Exp $
  */
 
 require("../../main.inc.php");
@@ -49,7 +49,7 @@ $langs->load("cashdesk");
 if (GETPOST("action") == 'set')
 {
 	$db->begin();
-
+	 
 	if (GETPOST("socid") < 0) $_POST["socid"]='';
 	/*if (GETPOST("CASHDESK_ID_BANKACCOUNT") < 0)  $_POST["CASHDESK_ID_BANKACCOUNT"]='';
 	if (GETPOST("CASHDESK_ID_WAREHOUSE") < 0)  $_POST["CASHDESK_ID_WAREHOUSE"]='';*/
@@ -62,9 +62,9 @@ if (GETPOST("action") == 'set')
 	$res = dolibarr_set_const($db,"CASHDESK_SERVICES", GETPOST("CASHDESK_SERVICES"),'chaine',0,'',$conf->entity);
 
 	dol_syslog("admin/cashdesk: level ".GETPOST("level"));
-
+	
 	if (! $res > 0) $error++;
-
+	
  	if (! $error)
     {
         $db->commit();
@@ -84,7 +84,7 @@ if (GETPOST("action") == 'set')
 $form=new Form($db);
 $formproduct=new FormProduct($db);
 
-llxHeader('',$langs->trans("CashDeskSetup"));
+llxHeader();
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("CashDeskSetup"),$linkback,'setup');
@@ -136,15 +136,12 @@ if ($conf->stock->enabled)
 	print '</td></tr>';
 }
 
-if ($conf->service->enabled)
-{
-    $var=! $var;
-    print '<tr '.$bc[$var].'><td>';
-    print $langs->trans("CashdeskShowServices");
-    print '<td colspan="2">';;
-    print $form->selectyesno("CASHDESK_SERVICES",$conf->global->CASHDESK_SERVICES,1);
-    print "</td></tr>\n";
-}
+$var=! $var;
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("CashdeskShowServices");
+print '<td colspan="2">';;
+print $form->selectyesno("CASHDESK_SERVICES",$conf->global->CASHDESK_SERVICES,1);
+print "</td></tr>\n";
 
 print '</table>';
 print '<br>';
@@ -154,8 +151,7 @@ print '<center><input type="submit" class="button" value="'.$langs->trans("Save"
 print "</form>\n";
 
 dol_htmloutput_mesg($mesg);
-
 $db->close();
 
-llxFooter('$Date: 2011/08/26 23:56:14 $ - $Revision: 1.10 $');
+llxFooter('$Date: 2011/08/26 15:05:41 $ - $Revision: 1.9 $');
 ?>

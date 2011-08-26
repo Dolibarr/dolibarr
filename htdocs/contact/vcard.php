@@ -20,13 +20,13 @@
  *	    \file       htdocs/contact/vcard.php
  *      \ingroup    societe
  *		\brief      Onglet vcard d'un contact
- *		\version    $Id: vcard.php,v 1.28 2011/08/26 23:40:49 eldy Exp $
+ *		\version    $Id: vcard.php,v 1.27 2011/07/31 23:54:12 eldy Exp $
  */
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/vcard.class.php");
+require_once(DOL_DOCUMENT_ROOT."/includes/vcard/vcard.class.php");
 
 
 $contact = new Contact($db);
