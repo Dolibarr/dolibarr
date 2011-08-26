@@ -875,7 +875,7 @@ UserMailRequired=EMail requis pour créer un nouvel utilisateur
 CompanySetup= Configuration du module Tiers
 CompanyCodeChecker= Modèle de génération et contrôle des codes tiers (clients/fournisseurs)
 AccountCodeManager= Modèle de génération des codes compta (clients/fournisseurs)
-ModuleCompanyCodeAquarium= Renvoie un code compta composé de 401 suivi du code tiers fournisseur pour le code compta fournisseur, et 411 suivi du code tiers client pour le code compta client.
+ModuleCompanyCodeAquarium= Renvoie un code compta composé de :<br>401 suivi du code tiers fournisseur pour le code compta fournisseur,<br>411 suivi du code tiers client pour le code compta client.
 ModuleCompanyCodePanicum= Renvoie un code compta vide.
 ModuleCompanyCodeDigitaria= Renvoie un code compta composé suivant le code tiers. Le code est composé du caractère 'C' en première position suivi des 5 premiers caractères du code tiers.
 UseNotifications= Utiliser les notifications
@@ -884,6 +884,7 @@ ModelModules=Modèle de documents
 DocumentModelOdt=Genération depuis des modèles OpenDocument (Fichier .ODT OpenOffice, KOffice, TextEdit...)
 WatermarkOnDraft=Filigrane sur les documents brouillons
 CompanyIdProfChecker=Id professionel unique 
+MustBeUnique=Doit être unique ?
 ##### Webcal setup #####
 WebCalSetup= Configuration du lien vers le calendrier Webcalendar
 WebCalSyncro= Intégrer les événements Dolibarr dans WebCalendar
