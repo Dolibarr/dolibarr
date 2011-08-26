@@ -885,7 +885,6 @@ DocumentModelOdt=Genération depuis des modèles OpenDocument (Fichier .ODT Open
 WatermarkOnDraft=Filigrane sur les documents brouillons
 CompanyIdProfChecker=Id professionel unique 
 MustBeUnique=Doit être unique ?
-Miscellanous=Miscellanous
 ##### Webcal setup #####
 WebCalSetup= Configuration du lien vers le calendrier Webcalendar
 WebCalSyncro= Intégrer les événements Dolibarr dans WebCalendar
