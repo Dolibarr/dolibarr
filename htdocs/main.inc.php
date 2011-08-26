@@ -26,7 +26,7 @@
  *	\file       htdocs/main.inc.php
  *	\ingroup	core
  *	\brief      File that defines environment for Dolibarr pages only (variables not required by scripts)
- *	\version    $Id: main.inc.php,v 1.773 2011/08/24 06:52:08 eldy Exp $
+ *	\version    $Id: main.inc.php,v 1.774 2011/08/26 14:11:35 hregis Exp $
  */
 
 @ini_set('memory_limit', '64M');	// This may be useless if memory is hard limited by your PHP
@@ -836,7 +836,8 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 	//print '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
 	//print '<!DOCTYPE html>';
 	print "\n";
-	print "<html>\n";
+	if (! empty($conf->global->MAIN_USE_CACHE_MANIFEST)) print '<html manifest="cache.manifest">'."\n";
+	else print '<html>'."\n";
 	//print '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr">'."\n";
 	if (empty($disablehead))
 	{
