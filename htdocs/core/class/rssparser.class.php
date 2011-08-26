@@ -19,7 +19,7 @@
  *      \file       htdocs/core/class/rssparser.class.php
  *      \ingroup    core
  *      \brief      File of class to parse rss feeds
- *      \version    $Id: rssparser.class.php,v 1.2 2011/08/26 17:59:14 eldy Exp $
+ *      \version    $Id: rssparser.class.php,v 1.1 2011/08/17 13:44:13 eldy Exp $
  */
 class RssParser
 {
@@ -75,15 +75,8 @@ class RssParser
 	{
 	    include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
 
-	    // Check parameters
-	    if (! dol_is_url($urlRSS))
-	    {
-	        $this->error="ErrorBadUrl";
-	        return -1;
-	    }
-
 		$this->_urlRSS = $urlRSS;
-	    $newpathofdestfile=$cachedir.'/'.md5($this->_urlRSS);
+		$newpathofdestfile=$cachedir.'/'.md5($this->_urlRSS);
 		$newmask=octdec('0644');
 
 		//dol_syslog("RssPArser::parser parse url=".$urlRSS." => cache file=".$newpathofdestfile);
@@ -117,8 +110,7 @@ class RssParser
 		{
 		    try {
 		        $rss = @simplexml_load_file($this->_urlRSS);
-var_dump($this->_urlRSS);
-		    		    }
+		    }
 		    catch (Exception $e) {
 		         print 'Error retrieving URL '.$this->urlRSS.' - '.$e->getMessage();
 		    }
