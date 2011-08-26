@@ -19,7 +19,7 @@
 /**
  *  \file		htdocs/lib/files.lib.php
  *  \brief		Library for file managing functions
- *  \version	$Id: files.lib.php,v 1.71 2011/07/31 23:25:43 eldy Exp $
+ *  \version	$Id: files.lib.php,v 1.72 2011/08/26 17:59:14 eldy Exp $
  */
 
 /**
@@ -186,6 +186,7 @@ function dol_compare_file($a, $b)
 
 /**
  *	Return mime type of a file
+ *
  *	@param      file		Filename we looking for MIME type
  *  @param      default     Default mime type if extension not found in known list
  * 	@param		mode    	0=Return full mime, 1=otherwise short mime string, 2=image for mime type, 3=source language
@@ -295,6 +296,7 @@ function dol_mimetype($file,$default='application/octet-stream',$mode=0)
 
 /**
  *  Test if filename is a directory
+ *
  *  @param      folder      Name of folder
  *  @return     boolean     True if it's a directory, False if not found
  */
@@ -307,6 +309,7 @@ function dol_is_dir($folder)
 
 /**
  * Return if path is a file
+ *
  * @param   $pathoffile
  * @return  boolean         True or false
  */
@@ -317,7 +320,25 @@ function dol_is_file($pathoffile)
 }
 
 /**
+ * Return if path is an URL
+ *
+ * @param   $url
+ * @return  boolean         True or false
+ */
+function dol_is_url($url)
+{
+    $tmpprot=array('file','http','ftp','zlib','data','ssh2','ogg','expect');
+    foreach($tmpprot as $prot)
+    {
+        if (preg_match('/^'.$prot.':/i',$url)) return true;
+    }
+    return false;
+}
+
+
+/**
  * 	Test if a folder is empty
+ *
  * 	@param		folder		Name of folder
  * 	@return 	boolean		True if dir is empty or non-existing, False if it contains files
  */
