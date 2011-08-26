@@ -1,5 +1,8 @@
 htdocs/conf/conf.php
-documents
+htdocs/conf/conf.php.old
+documents/
+custom/
 nbproject
-htdocs/install
-/.settings/
+.settings/
+.buildpath
+.gitmodules
