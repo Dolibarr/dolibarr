@@ -23,7 +23,7 @@
  *	\file       htdocs/admin/societe.php
  *	\ingroup    company
  *	\brief      Third party module setup page
- *	\version    $Id: societe.php,v 1.63 2011/08/17 07:50:29 simnandez Exp $
+ *	\version    $Id: societe.php,v 1.64 2011/08/26 11:48:36 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -357,7 +357,7 @@ print '<tr class="liste_titre">';
 print '<td width="140">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td align="center">'.$langs->trans("Status").'</td>';
-print '<td align="center" width="60" colspan="2">'.$langs->trans("Infos").'</td>';
+print '<td align="center" width="60">'.$langs->trans("Infos").'</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -440,20 +440,16 @@ foreach ($conf->file->dol_document_root as $dirroot)
 						$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraft").': '.yn($module->option_draft_watermark,1,1);
 
 
-						print '<td align="center">';
-						print $form->textwithpicto('',$htmltooltip,1,0);
-						print '</td>';
-
-						// Preview
-						print '<td align="center">';
+						print '<td align="center" nowrap="nowrap">';
 						if ($modele->type == 'pdf')
 						{
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'bill').'</a>';
+							$linkspec='<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'bill').'</a>';
 						}
 						else
 						{
-							print img_object($langs->trans("PreviewNotAvailable"),'generic');
+							$linkspec=img_object($langs->trans("PreviewNotAvailable"),'generic');
 						}
+						print $form->textwithpicto(' &nbsp; '.$linkspec,$htmltooltip,1,0);
 						print '</td>';
 
 						print "</tr>\n";
@@ -475,7 +471,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
-print '<td align="center">'.$langs->trans("Value").'</td>';
+print '<td align="center">'.$langs->trans("MustBeUnique").'</td>';
 print "</tr>\n";
 
 $profid[0][0]=$langs->trans("ProfId1");
@@ -531,7 +527,7 @@ while ($i < sizeof($profid))
 	$i++;
 }
 
-print "</table>\n";
+print "</table><br>\n";
 
 
 print_titre($langs->trans("Other"));
@@ -581,5 +577,5 @@ dol_fiche_end();
 
 $db->close();
 
-llxFooter('$Date: 2011/08/17 07:50:29 $ - $Revision: 1.63 $');
+llxFooter('$Date: 2011/08/26 11:48:36 $ - $Revision: 1.64 $');
 ?>
