@@ -74,53 +74,17 @@ $usehm=$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE;
 
 $object=new Facture($db);
 
-<<<<<<< HEAD
-// Instantiate hooks of thirdparty module
-if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
-{
-    $object->callHooks('invoicecard');
-}
-
-=======
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
 $hookmanager=new HookManager($db);
 $hookmanager->callHooks(array('invoicecard'));
->>>>>>> 19bde3ab1589c9d549615183416556fbca667b72
-
 
 /******************************************************************************/
 /*                     Actions                                                */
 /******************************************************************************/
 
-<<<<<<< HEAD
-// Hook of actions
-if (! empty($object->hooks))
-{
-	foreach($object->hooks as $hook)
-	{
-		if (! empty($hook['modules']))
-		{
-			foreach($hook['modules'] as $module)
-			{
-				if (method_exists($module,'doActions'))
-				{
-					$reshook+=$module->doActions($object);
-			        if (! empty($module->error) || (! empty($module->errors) && sizeof($module->errors) > 0))
-			        {
-			            $mesg=$module->error; $mesgs=$module->errors;
-			            if ($action=='add')    $action='create';
-			            if ($action=='update') $action='edit';
-			        }
-				}
-			}
-		}
-	}
-}
-=======
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
->>>>>>> 19bde3ab1589c9d549615183416556fbca667b72
 
 // Action clone object
 if ($action == 'confirm_clone' && $confirm == 'yes')
@@ -817,29 +781,9 @@ if ($action == 'add' && $user->rights->facture->creer)
                         }
 
                         // Hooks
-<<<<<<< HEAD
-                        if (! empty($object->hooks))
-                        {
-                        	foreach($object->hooks as $hook)
-                        	{
-                        		if (! empty($hook['modules']))
-                        		{
-                        			foreach($hook['modules'] as $module)
-                        			{
-                        				if (method_exists($module,'createfrom'))
-                        				{
-                        					$res = $module->createfrom($srcobject,$id,$object->element);
-                        					if ($res < 0) $error++;
-                        				}
-                        			}
-                        		}
-                        	}
-                        }
-=======
                         $parameters=array('objFrom'=>$srcobject);
                         $reshook=$hookmanager->executeHooks('createfrom',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
                         if ($reshook < 0) $error++;
->>>>>>> 19bde3ab1589c9d549615183416556fbca667b72
                     }
                     else
                     {

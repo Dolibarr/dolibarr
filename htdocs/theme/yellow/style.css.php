@@ -759,11 +759,7 @@ td.photo {
     }
 
 .ecm-in-layout-center {
-<<<<<<< HEAD
-    border-left: 0px !important;
-=======
     border-left: 1px !important;
->>>>>>> 19bde3ab1589c9d549615183416556fbca667b72
     border-right: 0px !important;
     border-top: 0px !important;
 }

@@ -109,15 +109,6 @@ if ($_GET["action"] == 'create')
 	$facture = new Facture($db);   // Source invoice
 	$product_static=new Product($db);
 
-<<<<<<< HEAD
-	// Instantiate hooks of thirdparty module
-	if (is_array($conf->hooks_modules) && !empty($conf->hooks_modules))
-	{
-		$facture->callHooks('invoicecard');
-	}
-
-=======
->>>>>>> 19bde3ab1589c9d549615183416556fbca667b72
 	if ($facture->fetch($_GET["facid"]) > 0)
 	{
 		print '<form action="fiche-rec.php" method="post">';
