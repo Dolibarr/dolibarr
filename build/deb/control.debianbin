@@ -13,7 +13,7 @@ Depends: libapache2-mod-php5 | libapache2-mod-php5filter | php5-cgi | php5-fpm |
 Section: web
 Priority: optional
 Homepage: http://www.dolibarr.org
-Description: Easy to use web based ERP & CRM software
+Description: Web based software to manage a small company or foundation
  Dolibarr ERP & CRM is an easy to use open source/free software for small 
  and medium companies, foundations or freelances. It includes different 
  features for Enterprise Resource Planning (ERP) and Customer Relationship

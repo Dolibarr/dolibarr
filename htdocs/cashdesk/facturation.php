@@ -21,7 +21,7 @@
  *	\file       htdocs/cashdesk/facturation.php
  *	\ingroup    cashdesk
  *	\brief      Include to show main page for cashdesk module
- *	\version    $Id: facturation.php,v 1.19 2011/07/31 22:23:27 eldy Exp $
+ *	\version    $Id: facturation.php,v 1.20 2011/08/26 14:52:00 simnandez Exp $
  */
 
 // Get list of articles (in warehouse '$conf_fkentrepot' if defined and stock module enabled)
@@ -30,12 +30,12 @@ if ( $_GET['filtre'] ) {
 	// Avec filtre
 	$ret=array(); $i=0;
 
-	$sql = "SELECT p.rowid, p.ref, p.label, p.tva_tx";
+	$sql = "SELECT p.rowid, p.ref, p.label, p.tva_tx, p.fk_product_type";
 	if ($conf->stock->enabled && !empty($conf_fkentrepot)) $sql.= ", ps.reel";
 	$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 	if ($conf->stock->enabled && !empty($conf_fkentrepot)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot = '".$conf_fkentrepot."'";
 	$sql.= " WHERE p.tosell = 1";
-	$sql.= " AND p.fk_product_type = 0";
+	if(!$conf->global->CASHDESK_SERVICES) $sql.= " AND p.fk_product_type = 0";
 	$sql.= " AND (p.ref LIKE '%".$_GET['filtre']."%' OR p.label LIKE '%".$_GET['filtre']."%' ";
 	if ($conf->barcode->enabled) $sql.= " OR p.barcode='".$_GET['filtre']."')";
 	else $sql.= ")";
@@ -66,12 +66,12 @@ if ( $_GET['filtre'] ) {
 	$ret=array();
 	$i=0;
 
-	$sql = "SELECT p.rowid, ref, label, tva_tx";
+	$sql = "SELECT p.rowid, ref, label, tva_tx, p.fk_product_type";
 	if ($conf->stock->enabled && !empty($conf_fkentrepot)) $sql.= ", ps.reel";
 	$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 	if ($conf->stock->enabled && !empty($conf_fkentrepot)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot = '".$conf_fkentrepot."'";
 	$sql.= " WHERE p.tosell = 1";
-	$sql.= " AND p.fk_product_type = 0";
+	if(!$conf->global->CASHDESK_SERVICES) $sql.= " AND p.fk_product_type = 0";
 	$sql.= " ORDER BY p.label";
 
 	dol_syslog($sql);
