@@ -61,8 +61,7 @@ class ExportExcel extends ModeleExports
 		$this->desc='<b>Excel</b> file format (.xls)<br>This is native Excel 95 format.';
 		$this->extension='xls';             // Extension for generated file by this driver
         $this->picto='mime/xls';					// Picto
-		$ver=explode(' ','$Revision: 1.30 $');
-		$this->version=$ver[2];             // Driver version
+		$this->version='1.30';             // Driver version
 
 		// If driver use an external library, put its name here
 		$this->label_lib='PhpExcel';

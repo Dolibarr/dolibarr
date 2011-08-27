@@ -73,7 +73,7 @@ if (empty($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY))
 
 	llxHeaderVierge();
 	print '<div class="error">Module Agenda was not configured properly.</div>';
-	llxFooterVierge('$Date: 2011/08/27 16:15:40 $ - $Revision: 1.19 $');
+	llxFooterVierge();
 	exit;
 }
 
@@ -84,7 +84,7 @@ if (empty($_GET["exportkey"]) || $conf->global->MAIN_AGENDA_XCAL_EXPORTKEY != $_
 
 	llxHeaderVierge();
 	print '<div class="error">Bad value for key.</div>';
-	llxFooterVierge('$Date: 2011/08/27 16:15:40 $ - $Revision: 1.19 $');
+	llxFooterVierge();
 	exit;
 }
 
@@ -116,7 +116,7 @@ if ($shortfilename=='dolibarrcalendar')
 	$langs->load("errors");
 	llxHeaderVierge();
     print '<div class="error">'.$langs->trans("ErrorWrongValueForParameterX",'format').'</div>';
-	llxFooterVierge('$Date: 2011/08/27 16:15:40 $ - $Revision: 1.19 $');
+	llxFooterVierge();
 	exit;
 }
 
@@ -201,5 +201,5 @@ if ($format == 'rss')
 
 llxHeaderVierge();
 print '<div class="error">'.$agenda->error.'</div>';
-llxFooterVierge('$Date: 2011/08/27 16:15:40 $ - $Revision: 1.19 $');
+llxFooterVierge();
 ?>

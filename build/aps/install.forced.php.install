@@ -4,7 +4,6 @@
 // This file must be present into htdocs/install directory
 // during install process to be used.
 //
-// $Id: install.forced.php.install,v 1.2 2011/06/26 11:41:50 eldy Exp $
 //
 $force_install_noedit=1;
 $force_install_message='KeepDefaultValuesDeb';

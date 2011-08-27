@@ -13,5 +13,3 @@ where:
 > -NORUN is optionnal and disable completely a trigger file if set. To use 
             a trigger with such a name, rename file to remove the -NORUN part.
 
-
-$Id$

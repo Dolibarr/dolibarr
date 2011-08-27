@@ -33,10 +33,8 @@
  * @author Laurent Destailleur <eldy@users.sourceforge.net>
  * @author Regis Houssin
  *
- * @version $Revision: 1.2 $
  * @license GNU General Public Licence
  *
- * $Id: smtps.php,v 1.2 2011/08/26 23:40:48 eldy Exp $
  *
  */
 
@@ -2526,6 +2524,9 @@ class SMTPs
 
 /**
  * $Log: smtps.php,v $
+ * Revision 1.3  2011/08/27 19:15:41  hregis
+ * Fix: remove obsolete tags
+ *
  * Revision 1.2  2011/08/26 23:40:48  eldy
  * Qual: vcard is not really an external project but now a specific dolibarr class file, so i moved it into core/class
  *

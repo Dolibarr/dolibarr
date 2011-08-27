@@ -1,6 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
--- Copyright (C) 2005 Marc Barilley / Oc�bo <marc@ocebo.com>
+-- Copyright (C) 2005 Marc Barilley / Ocebo <marc@ocebo.com>
 -- Copyright (C) 2005 Laurent Destailleur   <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -16,7 +16,6 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- $Id: llx_paiementfourn_facturefourn.sql,v 1.6 2011/08/03 01:25:26 eldy Exp $
 -- ===========================================================================
 
 create table llx_paiementfourn_facturefourn

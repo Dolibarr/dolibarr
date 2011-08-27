@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: contactcard_create.tpl.php,v 1.7 2011/07/31 23:54:12 eldy Exp $
  */
 ?>
 

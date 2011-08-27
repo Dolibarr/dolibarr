@@ -292,7 +292,7 @@ if ($action == 'added')
     print $langs->trans("NewMemberbyWeb");
     print '</center>';
 
-    llxFooterVierge('$Date: 2011/08/27 16:15:36 $ - $Revision: 1.45 $');
+    llxFooterVierge();
     exit;
 }
 
@@ -540,5 +540,5 @@ print "<br></form>\n";
 
 $db->close();
 
-llxFooterVierge('$Date: 2011/08/27 16:15:36 $ - $Revision: 1.45 $');
+llxFooterVierge();
 ?>

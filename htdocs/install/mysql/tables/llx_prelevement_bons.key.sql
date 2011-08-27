@@ -1,5 +1,5 @@
 -- ============================================================================
--- Copyright (C) 2009 Regis Houssin        <regis@dolibarr.fr>
+-- Copyright (C) 2009 Regis Houssin	<regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -14,7 +14,6 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- $Id: llx_prelevement_bons.key.sql,v 1.2 2011/08/03 01:25:38 eldy Exp $
 -- ============================================================================
 
 

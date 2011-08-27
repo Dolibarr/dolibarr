@@ -44,7 +44,7 @@ print "<br>\n";
 if (!function_exists('xcache_info'))
 {
     print 'XCache seems to be not installed. Function xcache_info not found.';
-	llxfooter('$Date: 2011/08/27 14:24:36 $ - $Revision: 1.3 $');
+	llxFooter();
 	exit;
 }
 
@@ -68,5 +68,5 @@ if ($action == 'clear')
 }
 */
 
-llxfooter('$Date: 2011/08/27 14:24:36 $ - $Revision: 1.3 $');
+llxFooter();
 ?>

@@ -36,7 +36,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 // Global variables
-$version='$Revision: 1.29 $';
+$version='1.29';
 $error=0;
 
 

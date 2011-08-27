@@ -53,7 +53,7 @@ class modCashDesk extends DolibarrModules
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "CashDesk module";
 
-		$this->revision = explode(' ','$Revision: 1.27 $');
+		$this->revision = '1.27';
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);

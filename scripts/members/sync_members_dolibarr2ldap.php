@@ -35,7 +35,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 // Main
-$version='$Revision: 1.11 $';
+$version='1.11';
 $path=str_replace($script_file,'',$_SERVER["PHP_SELF"]);
 @set_time_limit(0);
 $error=0;

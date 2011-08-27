@@ -43,7 +43,7 @@ require_once($path.'../../htdocs/lib/files.lib.php');
 $langs->load("main");
 
 // Global variables
-$version='$Revision: 1.14 $';
+$version='1.14';
 $error=0;
 
 

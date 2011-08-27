@@ -15,7 +15,6 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- $Id: llx_export_model.key.sql,v 1.4 2011/08/09 14:27:38 hregis Exp $
 -- ===================================================================
 
 

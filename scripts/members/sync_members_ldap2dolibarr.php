@@ -35,7 +35,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 // Main
-$version='$Revision: 1.14 $';
+$version='1.14';
 @set_time_limit(0);
 $error=0;
 $forcecommit=0;

@@ -37,7 +37,7 @@ require_once($path."../../htdocs/master.inc.php");
 // After this $db is a defined handler to database.
 
 // Main
-$version='$Revision: 1.8 $';
+$version='1.8';
 @set_time_limit(0);
 $error=0;
 

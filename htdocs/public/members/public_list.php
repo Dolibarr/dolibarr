@@ -142,5 +142,5 @@ else
 
 $db->close();
 
-llxFooterVierge('$Date: 2011/08/27 16:15:36 $ - $Revision: 1.19 $');
+llxFooterVierge();
 ?>

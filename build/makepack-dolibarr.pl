@@ -44,7 +44,7 @@ if (-d "/usr/src/RPM")    { $RPMDIR="/usr/src/RPM"; } # mandrake
 
 
 use vars qw/ $REVISION $VERSION /;
-$REVISION='$Revision: 1.152 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
+$REVISION='1.152';
 $VERSION="3.2 (build $REVISION)";
 
 

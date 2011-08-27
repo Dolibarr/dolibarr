@@ -21,7 +21,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-$Id: facturation1.tpl.php,v 1.16 2011/08/26 14:52:00 simnandez Exp $
 -->
 <script type="text/javascript" src="javascript/facturation1.js"></script>
 <script type="text/javascript" src="javascript/dhtml.js"></script>

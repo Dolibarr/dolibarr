@@ -352,7 +352,7 @@ if (! empty($conf->global->MAIN_GOOGLE_AN_ID))
 }
 
 
-llxFooterVierge('$Date: 2011/08/27 16:15:37 $ - $Revision: 1.62 $');
+llxFooterVierge();
 
 
 

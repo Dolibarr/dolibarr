@@ -63,8 +63,7 @@ class ExportCsv extends ModeleExports
 		$this->desc=$langs->trans("CSVFormatDesc",$this->separator,$this->enclosure,$this->escape);
 		$this->extension='csv';         // Extension for generated file by this driver
 		$this->picto='mime/other';		// Picto
-		$ver=explode(' ','$Revision: 1.32 $');
-		$this->version=$ver[2];         // Driver version
+		$this->version='1.32';         // Driver version
 
 		// If driver use an external library, put its name here
 		$this->label_lib='Dolibarr';

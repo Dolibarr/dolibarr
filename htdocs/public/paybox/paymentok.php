@@ -76,5 +76,5 @@ html_print_paybox_footer($mysoc,$langs);
 
 $db->close();
 
-llxFooterPayBox('$Date: 2011/08/27 16:15:23 $ - $Revision: 1.10 $');
+llxFooterPayBox();
 ?>

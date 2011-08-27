@@ -120,5 +120,5 @@ if (isset($title))
 print "$chaine\n";	// Ne pas centrer la reponse php car certains tableau du bas tres large rendent ceux du haut completement a droite
 print "<br>\n";
 
-llxfooter('$Date: 2011/08/27 14:24:35 $ - $Revision: 1.20 $');
+llxFooter();
 ?>

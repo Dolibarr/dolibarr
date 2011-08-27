@@ -41,7 +41,7 @@ if (! isset($argv[1]) || ! $argv[1]) {
 $now=$argv[1];
 
 // Recupere env dolibarr
-$version='$Revision: 1.25 $';
+$version='1.25';
 
 require_once($path."../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");

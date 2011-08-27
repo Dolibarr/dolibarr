@@ -7,10 +7,6 @@ class SegmentException extends Exception
  * You need PHP 5.2 at least
  * You need Zip Extension or PclZip library
  * Encoding : ISO-8859-1
- * Last commit by $Author$
- * Date - $Date$
- * SVN Revision - $Rev: 44 $
- * Id : $Id$
  *
  * @copyright  GPL License 2008 - Julien Pauli - Cyril PIERRE de GEYER - Anaska (http://www.anaska.com)
  * @license    http://www.gnu.org/copyleft/gpl.html  GPL License

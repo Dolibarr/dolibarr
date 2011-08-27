@@ -24,7 +24,7 @@ $PROJECT="dolibarr";
 
 
 use vars qw/ $REVISION $VERSION /;
-$REVISION='$Revision: 1.11 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
+$REVISION='1.11';
 $VERSION="1.0 (build $REVISION)";
 
 

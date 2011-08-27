@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: tva.php,v 1.13 2011/08/27 14:24:30 hregis Exp $
  */
 
 /*	\deprecated	Ce fichier semble ne plus servir. A virer */

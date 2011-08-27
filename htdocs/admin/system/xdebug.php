@@ -42,7 +42,7 @@ print "<br>\n";
 if (!function_exists('xdebug_is_enabled'))
 {
     print 'XDebug seems to be not installed. Function xdebug_is_enabled not found.';
-	llxfooter('$Date: 2011/08/27 14:24:35 $ - $Revision: 1.7 $');
+	llxFooter();
 	exit;
 }
 
@@ -99,5 +99,5 @@ else
 }
 
 
-llxfooter('$Date: 2011/08/27 14:24:35 $ - $Revision: 1.7 $');
+llxFooter();
 ?>

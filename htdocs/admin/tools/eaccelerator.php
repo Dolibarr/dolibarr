@@ -38,7 +38,7 @@ llxHeader();
 if (!function_exists('eaccelerator_info'))
 {
 	print 'eAccelerator is not installed.';
-	llxfooter('$Date: 2011/08/27 14:24:49 $ - $Revision: 1.19 $');
+	llxFooter();
 	exit;
 }
 
@@ -337,5 +337,5 @@ print '<strong>Eaccelerator is created by the eAccelerator team, <a href="http:/
 print "</td></tr></table>";
 
 
-llxfooter('$Date: 2011/08/27 14:24:49 $ - $Revision: 1.19 $');
+llxFooter();
 ?>

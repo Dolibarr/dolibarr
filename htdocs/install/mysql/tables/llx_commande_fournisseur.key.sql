@@ -15,11 +15,10 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- $Id: llx_commande_fournisseur.key.sql,v 1.2 2011/08/03 01:25:38 eldy Exp $
 -- ============================================================================
 
 
--- Supprimme orphelins pour permettre mont�e de la cl�
+-- Delete orphans
 -- V4 DELETE llx_commande_fournisseur FROM llx_commande_fournisseur LEFT JOIN llx_societe ON llx_commande_fournisseur.fk_soc = llx_societe.rowid WHERE llx_societe.rowid IS NULL; 
 
 ALTER TABLE llx_commande_fournisseur ADD UNIQUE INDEX uk_commande_fournisseur_ref (ref, fk_soc, entity);

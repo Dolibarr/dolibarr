@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: mantis.class.php,v 1.3 2011/08/27 14:24:48 hregis Exp $
  */
 
 /**

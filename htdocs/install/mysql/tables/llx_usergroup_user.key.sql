@@ -14,7 +14,6 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- $Id: llx_usergroup_user.key.sql,v 1.3 2011/08/03 01:25:36 eldy Exp $
 -- ===========================================================================
 
 ALTER TABLE llx_usergroup_user ADD UNIQUE INDEX uk_usergroup_user (entity,fk_user,fk_usergroup);

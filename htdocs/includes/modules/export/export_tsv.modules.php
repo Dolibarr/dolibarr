@@ -58,8 +58,7 @@ class ExportTsv extends ModeleExports
         $this->desc='<b>Tab Separated Value</b> file format (.tsv)<br>This is a text file format where fields are separated by separator [tab].';
         $this->extension='tsv';         // Extension for generated file by this driver
         $this->picto='mime/other';		// Picto
-        $ver=explode(' ','$Revision: 1.15 $');
-        $this->version=$ver[2];         // Driver version
+        $this->version='1.15';         // Driver version
 
         // If driver use an external library, put its name here
         $this->label_lib='Dolibarr';

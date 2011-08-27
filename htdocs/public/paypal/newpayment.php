@@ -945,5 +945,5 @@ html_print_paypal_footer($mysoc,$langs);
 
 $db->close();
 
-llxFooterPaypal('$Date: 2011/08/27 16:15:22 $ - $Revision: 1.28 $');
+llxFooterPaypal();
 ?>

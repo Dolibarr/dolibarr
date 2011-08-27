@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: contactcard_view.tpl.php,v 1.10 2011/07/31 23:54:12 eldy Exp $
  */
 
 $contact = $GLOBALS['objcanvas']->control->object;

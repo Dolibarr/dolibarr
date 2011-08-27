@@ -1,5 +1,4 @@
 This is the Unicode coverage file for DejaVu fonts
-($Id$)
 
 Control and similar characters are discounted from totals.
 

@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: predefinedproductline_edit.tpl.php,v 1.21 2011/08/24 21:19:04 hregis Exp $
  *
  * Need to have following variables defined:
  * $conf

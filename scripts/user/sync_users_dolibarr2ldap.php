@@ -41,7 +41,7 @@ if (! isset($argv[1]) || ! $argv[1]) {
 $now=$argv[1];
 
 // Recupere env dolibarr
-$version='$Revision: 1.13 $';
+$version='1.13';
 
 require_once($path."../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");

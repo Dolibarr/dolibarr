@@ -1,7 +1,4 @@
 --
--- $Id$
--- $Revision$
---
 -- Attention a l ordre des requetes.
 -- Ce fichier doit etre charge sur une version 2.0.0 
 -- sans AUCUNE erreur ni warning

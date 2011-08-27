@@ -46,7 +46,7 @@ require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 $langs->load("main");
 
 // Global variables
-$version='$Revision: 1.24 $';
+$version='1.24';
 $error=0;
 
 
