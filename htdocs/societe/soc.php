@@ -88,10 +88,8 @@ $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 $error=$hookmanager->error; $errors=$hookmanager->errors;
 
-// ---------- start deprecated. Use hook to hook actions.
-// If canvas actions are defined, because on url, or because contact was created with canvas feature on, we use the canvas feature.
-// If canvas actions are not defined, we use standard feature.
-if (method_exists($objcanvas->control,'doActions'))
+// ---------- start deprecated. Must use hook to hook actions.
+/*if (method_exists($objcanvas->control,'doActions'))
 {
     $objcanvas->doActions($socid);
 
@@ -101,7 +99,7 @@ if (method_exists($objcanvas->control,'doActions'))
         if ($action=='add')    { $objcanvas->action='create'; $action='create'; }
         if ($action=='update') { $objcanvas->action='edit';   $action='edit'; }
     }
-}
+}*/
 // ---------- end deprecated.
 
 
