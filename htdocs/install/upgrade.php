@@ -20,7 +20,6 @@
 /**
  *		\file       htdocs/install/upgrade.php
  *      \brief      Run migration script
- *      \version    $Id: upgrade.php,v 1.74 2011/07/31 23:26:22 eldy Exp $
  */
 
 include_once("./inc.php");

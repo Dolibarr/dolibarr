@@ -21,7 +21,6 @@
  *	\file       htdocs/projet/tasks/index.php
  *	\ingroup    project
  *	\brief      List all task of a project
- *	\version    $Id: index.php,v 1.43 2011/07/31 23:23:36 eldy Exp $
  */
 
 require ("../../main.inc.php");
@@ -112,5 +111,5 @@ if ($user->rights->projet->creer)
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:23:36 $ - $Revision: 1.43 $');
+llxFooter();
 ?>

@@ -21,7 +21,6 @@
  *		\file        htdocs/compta/bank/annuel.php
  *		\ingroup     banque
  *		\brief       Page reporting mensuel Entrees/Sorties d'un compte bancaire
- *		\version     $Id: annuel.php,v 1.29 2011/07/31 22:23:19 eldy Exp $
  */
 
 require("./pre.inc.php");
@@ -274,6 +273,6 @@ print "\n</div>\n";
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:19 $ - $Revision: 1.29 $');
+llxFooter();
 
 ?>

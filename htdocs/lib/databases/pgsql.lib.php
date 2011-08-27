@@ -23,7 +23,6 @@
 /**
  *	\file       htdocs/lib/databases/pgsql.lib.php
  *	\brief      Fichier de la classe permettant de gerer une base pgsql
- *	\version	$Id: pgsql.lib.php,v 1.111 2011/08/04 13:58:14 eldy Exp $
  */
 // For compatibility during upgrade
 if (! defined('DOL_DOCUMENT_ROOT'))	 define('DOL_DOCUMENT_ROOT', '../..');

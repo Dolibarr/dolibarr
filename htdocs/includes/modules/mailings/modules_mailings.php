@@ -22,7 +22,6 @@
  *	    \file       htdocs/includes/modules/mailings/modules_mailings.php
  *		\ingroup    mailing
  *		\brief      File with parent class of emailing target selectors modules
- *		\version    $Id: modules_mailings.php,v 1.21 2011/07/31 23:28:15 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT.'/lib/functions.lib.php');
 

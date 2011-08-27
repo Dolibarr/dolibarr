@@ -20,7 +20,6 @@
  *      \file       htdocs/includes/modules/security/generate/modGeneratePassStandard.class.php
  *      \ingroup    core
  *		\brief      File to manage password generation according to standard rule
- *		\version	$Id: modGeneratePassStandard.class.php,v 1.10 2011/07/31 23:28:16 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/security/generate/modules_genpassword.php");

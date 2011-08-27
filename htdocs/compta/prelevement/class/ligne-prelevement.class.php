@@ -16,14 +16,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: ligne-prelevement.class.php,v 1.6 2011/07/31 22:23:31 eldy Exp $
  */
 
-/*
- \file       htdocs/compta/prelevement/ligne-prelevement.class.php
- \ingroup    prelevement
- \brief      Fichier de la classe des lignes de prelevements
- \version    $Revision: 1.6 $
+/**
+ *  \file       htdocs/compta/prelevement/ligne-prelevement.class.php
+ *  \ingroup    prelevement
+ *  \brief      Fichier de la classe des lignes de prelevements
  */
 
 

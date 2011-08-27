@@ -23,7 +23,6 @@
  *     	\file       htdocs/admin/ldap_groups.php
  *     	\ingroup    ldap
  *		\brief      Page to setup LDAP synchronization for groups
- *     	\version    $Id: ldap_groups.php,v 1.34 2011/07/31 22:23:22 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -248,5 +247,5 @@ if (function_exists("ldap_connect"))
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:22 $ - $Revision: 1.34 $');
+llxFooter();
 ?>

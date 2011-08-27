@@ -23,7 +23,6 @@
  *       \file       htdocs/contrat/fiche.php
  *       \ingroup    contrat
  *       \brief      Page of a contract
- *       \version    $Id: fiche.php,v 1.201 2011/08/23 18:40:48 hregis Exp $
  */
 
 require ("../main.inc.php");
@@ -1287,5 +1286,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/23 18:40:48 $ - $Revision: 1.201 $');
+llxFooter();
 ?>

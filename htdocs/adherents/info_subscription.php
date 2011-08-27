@@ -20,8 +20,7 @@
  *      \file       htdocs/adherents/info_subscription.php
  *      \ingroup    member
  *		\brief      Page with information of subscriptions of a member
- *		\version    $Id: info_subscription.php,v 1.13 2011/08/08 16:00:18 eldy Exp $
-*/
+ */
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
@@ -80,5 +79,5 @@ print '</div>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/08 16:00:18 $ - $Revision: 1.13 $');
+llxFooter();
 ?>

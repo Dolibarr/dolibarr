@@ -21,7 +21,6 @@
  *	\file       htdocs/product/stock/mouvement.php
  *	\ingroup    stock
  *	\brief      Page to list stock movements
- *	\version    $Id: mouvement.php,v 1.63 2011/07/31 23:24:01 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -338,5 +337,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:24:01 $ - $Revision: 1.63 $');
+llxFooter();
 ?>

@@ -20,7 +20,6 @@
  *	    \file       htdocs/admin/security_other.php
  *      \ingroup    core
  *      \brief      Security options setup
- *		\version    $Id: security_other.php,v 1.42 2011/08/17 15:56:23 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -347,5 +346,5 @@ $formfile->form_attach_new_file(DOL_URL_ROOT.'/admin/security_other.php',$langs-
 
 $db->close();
 
-llxFooter('$Date: 2011/08/17 15:56:23 $ - $Revision: 1.42 $');
+llxFooter();
 ?>

@@ -21,7 +21,6 @@
  *      \file       htdocs/product/stock/liste.php
  *      \ingroup    stock
  *      \brief      Page liste des stocks
- *      \version    $Id: liste.php,v 1.22 2011/07/31 23:24:01 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -110,5 +109,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:24:01 $ - $Revision: 1.22 $');
+llxFooter();
 ?>

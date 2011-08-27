@@ -16,14 +16,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: index.php,v 1.32 2011/08/08 15:28:01 eldy Exp $
  */
 
 /**
  *  \file       htdocs/product/stock/index.php
  *  \ingroup    stock
  *  \brief      Home page of stock area
- *  \version    $Revision: 1.32 $
  */
 
 require("../../main.inc.php");
@@ -163,5 +161,5 @@ print '</td></tr></table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/08 15:28:01 $ - $Revision: 1.32 $');
+llxFooter();
 ?>

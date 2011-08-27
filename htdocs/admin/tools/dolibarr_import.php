@@ -19,7 +19,6 @@
  *		\file 		htdocs/admin/tools/dolibarr_import.php
  *		\ingroup	core
  * 		\brief      Page to import database
- *		\version    $Id: dolibarr_import.php,v 1.24 2011/08/03 00:45:43 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -184,5 +183,5 @@ else if ($db->label == 'PostgreSQL')
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:45:43 $ - $Revision: 1.24 $');
+llxFooter();
 ?>

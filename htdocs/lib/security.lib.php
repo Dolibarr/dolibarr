@@ -20,7 +20,6 @@
 /**
  *  \file			htdocs/lib/security.lib.php
  *  \brief			Set of function used for dolibarr security
- *  \version		$Id: security.lib.php,v 1.128 2011/08/17 15:56:24 eldy Exp $
  */
 
 

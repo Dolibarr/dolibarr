@@ -24,7 +24,6 @@
  *   	\file       htdocs/admin/user.php
  *		\ingroup    core
  *		\brief      Page to setup user module
- *		\version    $Id: user.php,v 1.5 2011/07/31 22:23:21 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -122,5 +121,5 @@ $db->close();
 
 print '<br>';
 
-llxFooter('$Date: 2011/07/31 22:23:21 $ - $Revision: 1.5 $');
+llxFooter();
 ?>

@@ -18,7 +18,6 @@
 /**
  *	\file       htdocs/product/class/html.formproduct.class.php
  *	\brief      Fichier de la classe des fonctions predefinie de composants html
- *	\version	$Id: html.formproduct.class.php,v 1.11 2011/07/31 23:24:03 eldy Exp $
  */
 
 

@@ -23,7 +23,6 @@
  *	\file       htdocs/includes/modules/commande/pdf_edison.modules.php
  *	\ingroup    commande
  *	\brief      Fichier de la classe permettant de generer les commandes au modele Edison
- *	\version    $Id: pdf_edison.modules.php,v 1.91 2011/08/11 12:14:00 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/commande/modules_commande.php");

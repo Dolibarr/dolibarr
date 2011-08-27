@@ -21,7 +21,6 @@
  *       \file       htdocs/compta/facture/class/facturestats.class.php
  *       \ingroup    factures
  *       \brief      Fichier de la classe de gestion des stats des factures
- *       \version    $Id: facturestats.class.php,v 1.7 2011/08/03 00:46:25 eldy Exp $
  */
 include_once DOL_DOCUMENT_ROOT . "/core/class/stats.class.php";
 include_once DOL_DOCUMENT_ROOT . "/compta/facture/class/facture.class.php";

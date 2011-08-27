@@ -21,7 +21,6 @@
  *	\file       htdocs/compta/bank/treso.php
  *	\ingroup    banque
  *	\brief      Page de detail du budget de tresorerie
- *	\version    $Id: treso.php,v 1.36 2011/07/31 22:23:20 eldy Exp $
  */
 
 require("./pre.inc.php");
@@ -344,5 +343,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:20 $ - $Revision: 1.36 $');
+llxFooter();
 ?>

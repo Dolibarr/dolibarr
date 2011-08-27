@@ -20,7 +20,6 @@
  *		\file       htdocs/core/class/discount.class.php
  * 		\ingroup    core propal facture commande
  *		\brief      File of class to manage absolute discounts
- *		\version    $Id: discount.class.php,v 1.7 2011/07/31 23:45:14 eldy Exp $
  */
 
 

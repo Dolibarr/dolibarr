@@ -21,7 +21,6 @@
  *   \file       htdocs/includes/boxes/box_prospect.php
  *   \ingroup    societe
  *   \brief      Module to generate the last prospects box.
- *	\version	$Id: box_prospect.php,v 1.43 2011/07/31 23:29:10 eldy Exp $
  */
 
 

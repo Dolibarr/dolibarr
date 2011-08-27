@@ -19,7 +19,6 @@
  *      \file       htdocs/includes/login/functions_empty.php
  *      \ingroup    core
  *      \brief      Empty authentication functions for test
- *		\version	$Id: functions_empty.php,v 1.2 2011/07/31 23:29:10 eldy Exp $
  */
 
 

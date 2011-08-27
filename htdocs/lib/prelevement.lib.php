@@ -22,9 +22,6 @@
  *	\file       htdocs/lib/prelevement.lib.php
  *	\brief      Ensemble de fonctions de base pour le module prelevement
  *	\ingroup    propal
- *	\version    $Id: prelevement.lib.php,v 1.9 2011/07/31 23:25:28 eldy Exp $
- *
- * 	Ensemble de fonctions de base de dolibarr sous forme d'include
  */
 
 

@@ -20,7 +20,6 @@
  *	\file       htdocs/contact/canvas/default/actions_contactcard_default.class.php
  *	\ingroup    thirdparty
  *	\brief      Fichier de la classe Thirdparty contact card controller (default canvas)
- *	\version    $Id: actions_contactcard_default.class.php,v 1.10 2011/07/31 23:54:11 eldy Exp $
  */
 include_once(DOL_DOCUMENT_ROOT.'/contact/canvas/actions_contactcard_common.class.php');
 

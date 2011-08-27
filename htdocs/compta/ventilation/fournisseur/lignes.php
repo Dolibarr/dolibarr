@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005 Simon TOSSER <simon@kornog-computing.com>
+/* Copyright (C) 2002-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2005		Simon TOSSER			<simon@kornog-computing.com>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -14,15 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: lignes.php,v 1.6 2011/07/31 22:23:30 eldy Exp $
  */
 
 /**
-   \file       htdocs/compta/ventilation/fournisseur/lignes.php
-   \ingroup    facture
-   \brief      Page de detail des lignes de ventilation d'une facture
-   \version    $Revision: 1.6 $
-*/
+ *   \file       htdocs/compta/ventilation/fournisseur/lignes.php
+ *   \ingroup    facture
+ *   \brief      Page de detail des lignes de ventilation d'une facture
+ */
 
 require('../../../main.inc.php');
 
@@ -31,7 +29,7 @@ $langs->load("bills");
 if (!$user->rights->facture->lire) accessforbidden();
 if (!$user->rights->compta->ventilation->creer) accessforbidden();
 /*
- * S�curit� acc�s client
+ * Securite acces client
  */
 if ($user->societe_id > 0) accessforbidden();
 
@@ -69,7 +67,7 @@ if ($result)
   $num_lignes = $db->num_rows($result);
   $i = 0;
 
-  print_barre_liste("Lignes de facture ventil�es",$page,"lignes.php","",$sortfield,$sortorder,'',$num_lignes);
+  print_barre_liste("Lignes de facture ventilées",$page,"lignes.php","",$sortfield,$sortorder,'',$num_lignes);
 
   print '<form method="GET" action="lignes.php">';
   print '<table class="noborder" width="100%">';
@@ -113,5 +111,5 @@ print "</table></form>";
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date: 2011/07/31 22:23:30 $ r&eacute;vision $Revision: 1.6 $</em>");
+llxFooter();
 ?>

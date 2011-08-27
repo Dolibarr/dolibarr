@@ -19,7 +19,6 @@
  *       \file       htdocs/adherents/fiche_subscription.php
  *       \ingroup    member
  *       \brief      Page to add/edit/remove a member subscription
- *       \version    $Id: fiche_subscription.php,v 1.31 2011/08/08 18:47:41 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -392,5 +391,5 @@ if ($rowid && $action != 'edit')
 
 $db->close();
 
-llxFooter('$Date: 2011/08/08 18:47:41 $ - $Revision: 1.31 $');
+llxFooter();
 ?>

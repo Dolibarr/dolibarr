@@ -21,7 +21,6 @@
  *	\file       htdocs/admin/compta.php
  *	\ingroup    compta
  *	\brief      Page to setup accountancy module
- *	\version    $Id: compta.php,v 1.33 2011/07/31 22:23:22 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -186,5 +185,5 @@ if ($num)
 $db->close();
 
 
-llxFooter('$Date: 2011/07/31 22:23:22 $ - $Revision: 1.33 $');
+llxFooter();
 ?>

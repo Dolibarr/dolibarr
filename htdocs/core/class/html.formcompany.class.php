@@ -19,7 +19,6 @@
  *	\file       htdocs/core/class/html.formcompany.class.php
  *  \ingroup    core
  *	\brief      File of class to build HTML component for third parties management
- *	\version	$Id: html.formcompany.class.php,v 1.34 2011/07/31 23:45:14 eldy Exp $
  */
 
 

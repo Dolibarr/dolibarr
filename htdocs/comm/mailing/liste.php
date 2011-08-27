@@ -20,7 +20,6 @@
  *       \file       htdocs/comm/mailing/liste.php
  *       \ingroup    mailing
  *       \brief      Liste des mailings
- *       \version    $Id: liste.php,v 1.23 2011/08/03 00:46:33 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -195,5 +194,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:33 $ - $Revision: 1.23 $');
+llxFooter();
 ?>

@@ -20,7 +20,6 @@
 /**
  *       \file       htdocs/core/tools.php
  *       \brief      Home page for top menu tools
- *       \version    $Id: tools.php,v 1.3 2011/07/31 23:45:15 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -54,5 +53,5 @@ print $langs->trans("ToolsDesc").'<br><br>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:45:15 $ - $Revision: 1.3 $');
+llxFooter();
 ?>

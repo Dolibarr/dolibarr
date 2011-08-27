@@ -15,15 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: liste.php,v 1.12 2011/07/31 22:23:31 eldy Exp $
  */
 
 /**
-        \file       htdocs/compta/param/comptes/liste.php
-        \ingroup    compta
-        \brief      Onglet de gestion de parametrages des ventilations
-        \version    $Revision: 1.12 $
-*/
+ *      \file       htdocs/compta/param/comptes/liste.php
+ *      \ingroup    compta
+ *      \brief      Onglet de gestion de parametrages des ventilations
+ */
 
 require("../../../main.inc.php");
 
@@ -77,7 +75,7 @@ if ($resql)
   $num = $db->num_rows($resql);
   $i = 0;
 
-  print_barre_liste("Comptes g�n�raux", $page, "liste.php", "", $sortfield, $sortorder, '', $num);
+  print_barre_liste("Comptes généraux", $page, "liste.php", "", $sortfield, $sortorder, '', $num);
 
   print '<table class="liste">';
   print '<tr class="liste_titre">';
@@ -124,5 +122,5 @@ else
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date: 2011/07/31 22:23:31 $ r&eacute;vision $Revision: 1.12 $</em>");
+llxFooter();
 ?>

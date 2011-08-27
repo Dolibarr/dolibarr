@@ -21,7 +21,6 @@
  *	\file       htdocs/cashdesk/index.php
  * 	\ingroup	cashdesk
  *  \brief      File to login to point of sales
- *  \version    $Id: index.php,v 1.34 2011/07/31 22:23:26 eldy Exp $
  */
 
 // Set and init common variables

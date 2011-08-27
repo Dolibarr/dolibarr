@@ -22,7 +22,6 @@
  *	\file       htdocs/comm/prospect/list.php
  *	\ingroup    prospect
  *	\brief      Page to list prospects
- *	\version    $Id: list.php,v 1.1 2011/08/21 13:12:47 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -426,5 +425,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/21 13:12:47 $ - $Revision: 1.1 $');
+llxFooter();
 ?>

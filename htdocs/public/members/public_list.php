@@ -21,7 +21,6 @@
  *	\file       htdocs/public/members/public_list.php
  *	\ingroup    member
  *  \brief      File sample to list members
- *  \version    $Id: public_list.php,v 1.18 2011/07/31 23:23:21 eldy Exp $
  */
 
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
@@ -143,5 +142,5 @@ else
 
 $db->close();
 
-llxFooterVierge('$Date: 2011/07/31 23:23:21 $ - $Revision: 1.18 $');
+llxFooterVierge();
 ?>

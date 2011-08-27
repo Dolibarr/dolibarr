@@ -1,5 +1,4 @@
 This is the language coverage file for DejaVu fonts
-($Id$)
 
                                                 Sans               Serif              Sans Mono          
 aa     Afar                                     100% (62/62)       100% (62/62)       100% (62/62)      

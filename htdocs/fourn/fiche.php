@@ -23,7 +23,6 @@
  *	\file       htdocs/fourn/fiche.php
  *	\ingroup    fournisseur, facture
  *	\brief      Page for supplier third party card (view, edit)
- *	\version	$Id: fiche.php,v 1.140 2011/07/31 23:57:03 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -420,5 +419,5 @@ else
 }
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:57:03 $ - $Revision: 1.140 $');
+llxFooter();
 ?>

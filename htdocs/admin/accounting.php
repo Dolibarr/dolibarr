@@ -20,7 +20,6 @@
  *	    \file       htdocs/admin/accounting.php
  *      \ingroup    accounting
  *      \brief      Page de configuration du module comptabilite expert
- *		\version    $Id: accounting.php,v 1.3 2011/07/31 22:23:26 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -168,6 +167,6 @@ if ($result)
 $db->close();
 
 
-llxFooter('$Date: 2011/07/31 22:23:26 $ - $Revision: 1.3 $');
+llxFooter();
 
 ?>

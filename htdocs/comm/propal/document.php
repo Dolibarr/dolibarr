@@ -22,7 +22,6 @@
  *       \file       htdocs/comm/propal/document.php
  *       \ingroup    propale
  *       \brief      Page de gestion des documents attaches a une proposition commerciale
- *       \version    $Id: document.php,v 1.69 2011/08/14 02:11:45 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -208,5 +207,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/14 02:11:45 $ - $Revision: 1.69 $');
+llxFooter();
 ?>

@@ -20,7 +20,6 @@
  *		\file       htdocs/theme/auguria/graph-color.php
  *		\brief      File to declare colors to use to build graphics with theme Auguria
  *      \ingroup    core
- *		\version    $Id: graph-color.php,v 1.9 2011/07/31 23:22:04 eldy Exp $
  */
 
 global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;

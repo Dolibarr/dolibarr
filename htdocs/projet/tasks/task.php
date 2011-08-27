@@ -21,7 +21,6 @@
  *	\file       htdocs/projet/tasks/task.php
  *	\ingroup    projet
  *	\brief      Fiche taches d'un projet
- *	\version    $Id: task.php,v 1.43 2011/07/31 23:23:36 eldy Exp $
  */
 
 require ("../../main.inc.php");
@@ -291,5 +290,5 @@ if ($taskid)
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:23:36 $ - $Revision: 1.43 $');
+llxFooter();
 ?>

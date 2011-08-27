@@ -20,7 +20,6 @@
  *	    \file       htdocs/contact/vcard.php
  *      \ingroup    societe
  *		\brief      Onglet vcard d'un contact
- *		\version    $Id: vcard.php,v 1.28 2011/08/26 23:40:49 eldy Exp $
  */
 
 require("../main.inc.php");

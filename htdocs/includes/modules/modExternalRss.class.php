@@ -19,7 +19,6 @@
 /**
  *  \defgroup   externalrss     Module externalrss
  *	\brief      Module pour inclure des informations externes RSS
- *	\version	$Id: modExternalRss.class.php,v 1.37 2011/07/31 23:28:12 eldy Exp $
  */
 
 /**

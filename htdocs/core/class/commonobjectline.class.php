@@ -19,7 +19,6 @@
  *       \file       htdocs/core/class/commonobjectline.class.php
  *       \ingroup    core
  *       \brief      File of the superclass of classes of lines of business objects (invoice, contract, PROPAL, commands, etc. ...)
- *       \version    $Id: commonobjectline.class.php,v 1.6 2011/08/22 22:11:54 eldy Exp $
  */
 
 

@@ -19,7 +19,6 @@
  *		\file       htdocs/boutique/critiques/class/critique.class.php
  *		\ingroup    osc
  *		\brief      Fichier de la classe des critiques OSCommerce
- *		\version    $Id: critique.class.php,v 1.4 2011/08/03 00:45:42 eldy Exp $
  */
 
 

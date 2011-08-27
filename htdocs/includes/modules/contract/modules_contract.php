@@ -25,7 +25,6 @@
  *  \file       htdocs/includes/modules/contract/modules_contract.php
  *  \ingroup    contract
  *  \brief      File of class to manage contract numbering
- *  \version    $Id: modules_contract.php,v 1.3 2011/07/31 23:28:16 eldy Exp $
  */
 
 class ModelNumRefContracts

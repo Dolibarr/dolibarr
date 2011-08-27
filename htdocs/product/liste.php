@@ -21,7 +21,6 @@
  *  \file       htdocs/product/liste.php
  *  \ingroup    produit
  *  \brief      Page to list products and services
- *  \version    $Id: liste.php,v 1.158 2011/08/22 22:07:09 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -481,5 +480,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/22 22:07:09 $ - $Revision: 1.158 $');
+llxFooter();
 ?>

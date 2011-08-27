@@ -22,7 +22,6 @@
  *		\file   	htdocs/compta/bank/pre.inc.php
  *		\ingroup    compta
  *		\brief  	Fichier gestionnaire du menu compta banque
- *		\version	$Id: pre.inc.php,v 1.52 2011/07/31 22:23:16 eldy Exp $
  */
 
 require_once("../../main.inc.php");

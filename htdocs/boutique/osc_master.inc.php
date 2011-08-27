@@ -18,7 +18,6 @@
 /**
  *       \file       htdocs/boutique/osc_master.inc.php
  *       \brief      Fichier de preparation de l'environnement Dolibarr pour OSCommerce
- *       \version    $Id: osc_master.inc.php,v 1.6 2011/08/03 01:17:17 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/lib/databases/".$conf->db->type.".lib.php");

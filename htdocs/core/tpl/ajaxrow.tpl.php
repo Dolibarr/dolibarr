@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: ajaxrow.tpl.php,v 1.15 2011/07/31 23:45:12 eldy Exp $
  */
 ?>
 

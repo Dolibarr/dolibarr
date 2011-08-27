@@ -22,7 +22,6 @@
  *       \file       htdocs/adherents/fiche.php
  *       \ingroup    member
  *       \brief      Page of member
- *       \version    $Id: fiche.php,v 1.242 2011/08/20 15:11:33 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -1527,5 +1526,5 @@ if ($rowid && $action != 'edit')
 
 $db->close();
 
-llxFooter('$Date: 2011/08/20 15:11:33 $ - $Revision: 1.242 $');
+llxFooter();
 ?>

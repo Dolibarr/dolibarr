@@ -20,16 +20,15 @@
  *		\file       htdocs/includes/modules/supplier_invoice/modules_facturefournisseur.php
  *      \ingroup    facture fourniseur
  *      \brief      File that contain parent class for supplier invoices models
- *      \version    $Id: modules_facturefournisseur.php,v 1.11 2011/08/11 12:14:04 eldy Exp $
  */
-require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
+require_once(DOL_DOCUMENT_ROOT."/core/class/commondocgenerator.class.php");
 
 
 /**
  *	\class      ModelePDFSuppliersInvoices
  *	\brief      Parent class for supplier invoices models
  */
-class ModelePDFSuppliersInvoices
+abstract class ModelePDFSuppliersInvoices extends CommonDocGenerator
 {
 	var $error='';
 

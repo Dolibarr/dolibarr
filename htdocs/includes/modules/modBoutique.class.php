@@ -21,7 +21,6 @@
 /**    
  * 	\defgroup   oscommerce     Module oscommerce
  *	\brief      Module pour gerer une boutique et interface avec OSCommerce
- *	\version	$Id: modBoutique.class.php,v 1.39 2011/07/31 23:28:12 eldy Exp $
  */
 
 /**

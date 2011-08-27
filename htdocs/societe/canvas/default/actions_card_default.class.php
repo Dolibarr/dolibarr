@@ -20,7 +20,6 @@
  *	\file       htdocs/societe/canvas/default/actions_card_default.class.php
  *	\ingroup    thirdparty
  *	\brief      Fichier de la classe Thirdparty card controller (default canvas)
- *	\version    $Id: actions_card_default.class.php,v 1.13 2011/07/31 23:22:58 eldy Exp $
  */
 include_once(DOL_DOCUMENT_ROOT.'/societe/canvas/actions_card_common.class.php');
 

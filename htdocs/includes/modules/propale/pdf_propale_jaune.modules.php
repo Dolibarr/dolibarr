@@ -23,7 +23,6 @@
  * 	\file       htdocs/includes/modules/propale/pdf_propale_jaune.modules.php
  *	\ingroup    propale
  *	\brief      Fichier de la classe permettant de generer les propales au modele Jaune
- *	\version    $Id: pdf_propale_jaune.modules.php,v 1.119 2011/08/11 12:14:03 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php");

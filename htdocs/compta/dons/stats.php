@@ -17,11 +17,10 @@
  */
 
 /**
-	    \file       htdocs/compta/dons/stats.php
-        \ingroup    don
-		\brief      Page des statistiques de dons
-		\version    $Id: stats.php,v 1.17 2011/08/03 00:46:37 eldy Exp $
-*/
+ * 	    \file       htdocs/compta/dons/stats.php
+ *      \ingroup    don
+ *      \brief      Page des statistiques de dons
+ */
 
 require("../../main.inc.php");
 
@@ -80,5 +79,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:37 $ - $Revision: 1.17 $');
+llxFooter();
 ?>

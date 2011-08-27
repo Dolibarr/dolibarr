@@ -20,7 +20,6 @@
  *      \file       htdocs/core/class/events.class.php
  *      \ingroup    core
  *		\brief      File of class to manage security events.
- *		\version    $Id: events.class.php,v 1.8 2011/07/31 23:45:14 eldy Exp $
  *		\author		Laurent Destailleur
  */
 

@@ -18,7 +18,6 @@
 /**
  *		\file       htdocs/theme/phones/smartphone/theme/default/default.css.php
  *		\brief      Fichier de style CSS du theme Smartphone default
- *		\version    $Id: default.css.php,v 1.15 2011/08/15 17:43:42 eldy Exp $
  */
 
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal

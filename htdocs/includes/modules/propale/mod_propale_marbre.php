@@ -21,7 +21,6 @@
  *    	\file       htdocs/includes/modules/propale/mod_propale_marbre.php
  *		\ingroup    propale
  *		\brief      File of class to manage commercial proposal numbering rules Marbre
- *		\version    $Id: mod_propale_marbre.php,v 1.28 2011/07/31 23:28:16 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php");

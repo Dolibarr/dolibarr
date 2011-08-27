@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: login.tpl.php,v 1.22 2011/08/20 15:33:16 eldy Exp $
  */
 
 header('Cache-Control: Public, must-revalidate');

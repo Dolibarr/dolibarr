@@ -21,7 +21,6 @@
  *      \file       htdocs/projet/element.php
  *      \ingroup    projet facture
  *		\brief      Page of project referrers
- *		\version    $Id: element.php,v 1.49 2011/07/31 23:23:39 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -283,5 +282,5 @@ foreach ($listofreferent as $key => $value)
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:23:39 $ - $Revision: 1.49 $');
+llxFooter();
 ?>

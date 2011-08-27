@@ -20,7 +20,6 @@
 /**
  *  \file       	htdocs/compta/deplacement/fiche.php
  *  \brief      	Page to show a trip card
- *  \version		$Id: fiche.php,v 1.57 2011/08/23 18:40:45 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -432,5 +431,5 @@ print '</div>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/23 18:40:45 $ - $Revision: 1.57 $');
+llxFooter();
 ?>

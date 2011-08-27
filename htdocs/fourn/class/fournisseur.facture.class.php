@@ -24,7 +24,6 @@
  *	\file       htdocs/fourn/class/fournisseur.facture.class.php
  *	\ingroup    fournisseur,facture
  *	\brief      File of class to manage suppliers invoices
- *	\version    $Id: fournisseur.facture.class.php,v 1.35 2011/07/31 23:57:02 eldy Exp $
  */
 
 include_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");

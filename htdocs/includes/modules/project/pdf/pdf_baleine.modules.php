@@ -21,7 +21,6 @@
  *	\ingroup    project
  *	\brief      Fichier de la classe permettant de generer les projets au modele Baleine
  *	\author	    Regis Houssin
- *	\version    $Id: pdf_baleine.modules.php,v 1.40 2011/08/11 12:14:04 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/project/modules_project.php");

@@ -20,7 +20,6 @@
  *      \file       test/phpunit/CompanyBankAccount.php
  *		\ingroup    test
  *      \brief      PHPUnit test
- *      \version    $Id$
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 

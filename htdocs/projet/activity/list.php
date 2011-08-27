@@ -22,7 +22,6 @@
  *	\file       htdocs/projet/activity/list.php
  *	\ingroup    projet
  *	\brief      List activities of tasks
- *	\version    $Id: list.php,v 1.31 2011/07/31 23:23:39 eldy Exp $
  */
 
 require ("../../main.inc.php");
@@ -146,5 +145,5 @@ print '</div>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:23:39 $ - $Revision: 1.31 $');
+llxFooter();
 ?>

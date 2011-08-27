@@ -16,7 +16,6 @@
 // | Authors: Jesus M. Castagnetto <jmcastagnetto@php.net>                |
 // +----------------------------------------------------------------------+
 //
-// $Id$
 //
 
 include_once 'PEAR.php';

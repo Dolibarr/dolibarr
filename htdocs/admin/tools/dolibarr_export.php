@@ -19,7 +19,6 @@
  *		\file 		htdocs/admin/tools/dolibarr_export.php
  *		\ingroup	core
  *		\brief      Page to export database
- *		\version    $Id: dolibarr_export.php,v 1.40 2011/08/03 00:45:43 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -331,5 +330,5 @@ $result=$formfile->show_documents('systemtools','backup',$conf->admin->dir_outpu
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:45:43 $ - $Revision: 1.40 $');
+llxFooter();
 ?>

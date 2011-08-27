@@ -22,7 +22,6 @@
  *	\file       htdocs/projet/tasks/time.php
  *	\ingroup    projet
  *	\brief      Page to add new time spent on a task
- *	\version    $Id: time.php,v 1.33 2011/07/31 23:23:36 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -403,5 +402,5 @@ if ($_GET["id"] > 0)
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:23:36 $ - $Revision: 1.33 $');
+llxFooter();
 ?>

@@ -20,7 +20,6 @@
  *	\file       htdocs/societe/canvas/actions_card_common.class.php
  *	\ingroup    thirdparty
  *	\brief      Fichier de la classe Thirdparty card controller (common)
- *	\version    $Id: actions_card_common.class.php,v 1.25 2011/08/18 22:25:46 eldy Exp $
  */
 
 /**

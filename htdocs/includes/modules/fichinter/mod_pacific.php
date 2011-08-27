@@ -21,7 +21,6 @@
  *  \file       htdocs/includes/modules/fichinter/mod_pacific.php
  *  \ingroup    fiche intervention
  *  \brief      File with Pacific numbering module for interventions
- *  \version    $Id: mod_pacific.php,v 1.13 2011/07/31 23:28:15 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/modules_fichinter.php");
 

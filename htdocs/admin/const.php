@@ -21,7 +21,6 @@
  *	\file       htdocs/admin/const.php
  *	\ingroup    setup
  *	\brief      Admin page to define miscellaneous constants
- *	\version    $Id: const.php,v 1.71 2011/08/21 10:01:37 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -279,5 +278,5 @@ print "</form>\n";
 
 $db->close();
 
-llxFooter('$Date: 2011/08/21 10:01:37 $ - $Revision: 1.71 $');
+llxFooter();
 ?>

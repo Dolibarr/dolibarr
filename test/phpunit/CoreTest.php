@@ -20,7 +20,6 @@
  *      \file       test/phpunit/SecurityTest.php
  *		\ingroup    test
  *      \brief      PHPUnit test
- *      \version    $Id: CoreTest.php,v 1.4 2011/08/20 21:21:07 eldy Exp $
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 

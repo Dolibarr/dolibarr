@@ -20,7 +20,6 @@
  *	    \file       htdocs/includes/boxes/modules_boxes.php
  *		\ingroup    facture
  *		\brief      Fichier contenant la classe mere des boites
- *		\version    $Id: modules_boxes.php,v 1.56 2011/07/31 23:29:10 eldy Exp $
  */
 
 

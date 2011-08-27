@@ -21,7 +21,6 @@
  *		\ingroup    member
  *		\brief      File of main public page for member module
  *		\author	    Laurent Destailleur
- *		\version    $Id: public.php,v 1.3 2011/08/03 00:45:42 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -186,5 +185,5 @@ print '</table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:45:42 $ - $Revision: 1.3 $');
+llxFooter();
 ?>

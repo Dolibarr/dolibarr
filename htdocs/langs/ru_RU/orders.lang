@@ -152,3 +152,15 @@ TypeContact_order_supplier_external_SHIPPING=Поставщик доставка
 TypeContact_order_supplier_external_CUSTOMER=Поставщик связаться следующие меры для
 PDFEdisonDescription=Простая модель для
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:34:31).
+
+
+// START - Lines generated via autotranslator.php tool (2011-08-27 16:56:14).
+// Reference language: en_US -> ru_RU
+SuppliersOrdersToProcess=Поставщика заказов для обработки
+StatusOrderSentShort=В процессе
+OrderByMail=Почта
+OrderByFax=Факс
+OrderByEMail=EMail
+OrderByWWW=Интернет
+OrderByPhone=Телефон
+// STOP - Lines generated via autotranslator.php tool (2011-08-27 17:00:04).

@@ -20,7 +20,6 @@
 /**
  *  \file		htdocs/includes/menus/standard/auguria.lib.php
  *  \brief		Library for file auguria menus
- *  \version	$Id: auguria.lib.php,v 1.21 2011/07/31 23:46:07 eldy Exp $
  */
 
 

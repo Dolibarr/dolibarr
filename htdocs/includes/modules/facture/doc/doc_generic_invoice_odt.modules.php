@@ -21,7 +21,6 @@
  *	\ingroup    societe
  *	\brief      File of class to build ODT documents for third parties
  *	\author	    Laurent Destailleur
- *	\version    $Id: doc_generic_invoice_odt.modules.php,v 1.21 2011/08/14 13:26:07 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/facture/modules_facture.php");

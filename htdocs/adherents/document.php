@@ -22,7 +22,6 @@
  *  \file       htdocs/adherents/document.php
  *  \brief      Tab for documents linked to third party
  *  \ingroup    societe
- *  \version    $Id: document.php,v 1.9 2011/07/31 22:23:28 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -230,6 +229,6 @@ else
 $db->close();
 
 
-llxFooter('$Date: 2011/07/31 22:23:28 $ - $Revision: 1.9 $');
+llxFooter();
 
 ?>

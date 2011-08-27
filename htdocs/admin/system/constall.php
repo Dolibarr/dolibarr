@@ -20,7 +20,6 @@
 /**
  *		\file 		htdocs/admin/system/constall.php
  *		\brief      Page to show all Dolibarr setup (config file and database constants)
- *		\version    $Id: constall.php,v 1.24 2011/07/31 22:23:14 eldy Exp $
  */
 
 require("../../main.inc.php");

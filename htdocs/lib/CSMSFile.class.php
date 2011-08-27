@@ -24,7 +24,6 @@
 /**
  *      \file       htdocs/lib/CSMSFile.class.php
  *      \brief      File of class to send sms
- *		\version    $Id: CSMSFile.class.php,v 1.6 2011/07/31 23:25:22 eldy Exp $
  *      \author	    Laurent Destailleur.
  */
 

@@ -20,7 +20,6 @@
  *  \file       htdocs/lib/treeview.lib.php
  *  \ingroup    core
  *  \brief      Libraries for tree views
- *  \version    $Id: treeview.lib.php,v 1.13 2011/07/31 23:25:41 eldy Exp $
  */
 
 

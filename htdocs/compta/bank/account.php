@@ -24,7 +24,6 @@
  *	    \file       htdocs/compta/bank/account.php
  *		\ingroup    banque
  *		\brief      List of details of bank transactions for an account
- *		\version    $Id: account.php,v 1.155 2011/07/31 22:23:16 eldy Exp $
  */
 
 require("./pre.inc.php");	// We use pre.inc.php to have a dynamic menu
@@ -785,5 +784,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:16 $ - $Revision: 1.155 $');
+llxFooter();
 ?>

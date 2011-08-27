@@ -23,7 +23,6 @@
  *      \file       htdocs/categories/index.php
  *      \ingroup    category
  *      \brief      Home page of category area
- *	 	\version	$Id: index.php,v 1.56 2011/08/20 09:02:57 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -312,5 +311,5 @@ print "</table>";
 
 $db->close();
 
-llxFooter('$Date: 2011/08/20 09:02:57 $ - $Revision: 1.56 $');
+llxFooter();
 ?>

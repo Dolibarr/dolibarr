@@ -19,7 +19,6 @@
 /**
  *       \file       htdocs/user/passwordforgotten.php
  *       \brief      Page to ask a new password
- *       \version    $Id: passwordforgotten.php,v 1.78 2011/08/19 15:52:20 cdelambert Exp $
  */
 
 define("NOLOGIN",1);	// This means this output page does not require to be logged.

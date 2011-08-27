@@ -22,7 +22,6 @@
  *      \file       scripts/company/export-contacts-xls-example.php
  *      \ingroup    company
  *      \brief      Script file to export contacts into an Excel file
- *		\version	$Id: export-contacts-xls-example.php,v 1.9 2011/08/11 19:13:04 eldy Exp $
  */
 
 $sapi_type = php_sapi_name();
@@ -42,7 +41,7 @@ if (! isset($argv[1]) || ! $argv[1]) {
 $now=$argv[1];
 
 // Recupere env dolibarr
-$version='$Revision: 1.9 $';
+$version='1.10';
 
 require_once($path."../../htdocs/master.inc.php");
 //require_once(PHP_WRITEEXCEL_PATH."/class.writeexcel_workbook.inc.php");

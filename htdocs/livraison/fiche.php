@@ -23,7 +23,6 @@
  *	\file       htdocs/livraison/fiche.php
  *	\ingroup    livraison
  *	\brief      Fiche descriptive d'un bon de livraison=reception
- *	\version    $Id: fiche.php,v 1.114 2011/07/31 23:24:38 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -636,5 +635,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:24:38 $ - $Revision: 1.114 $');
+llxFooter();
 ?>

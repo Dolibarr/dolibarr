@@ -20,7 +20,6 @@
 /**
  *       \file       htdocs/admin/pdf.php
  *       \brief      Page to setup PDF options
- *       \version    $Id: pdf.php,v 1.2 2011/08/11 01:34:54 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -204,5 +203,5 @@ else	// Show
 
 $db->close();
 
-llxFooter('$Date: 2011/08/11 01:34:54 $ - $Revision: 1.2 $');
+llxFooter();
 ?>

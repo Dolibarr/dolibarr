@@ -18,7 +18,6 @@
 /**
  *		\file       htdocs/projet/jsgantt_language.js.php
  *		\brief      Fichier de javascript de traduction pour JSGantt
- *		\version    $Id: jsgantt_language.js.php,v 1.4 2011/07/31 23:23:39 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language

@@ -4,7 +4,6 @@
 //
 // \file       htdocs/lib/lib_rare.js
 // \brief      File that include javascript functions not frequently used (included if option use_javascript activated)
-// \version    $Revision$
 
 
 // in [-]HH:MM format...

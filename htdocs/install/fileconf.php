@@ -24,7 +24,6 @@
  *       \file       htdocs/install/fileconf.php
  *       \ingroup    install
  *       \brief      Ask all informations required to build Dolibarr htdocs/conf/conf.php file (will be wrote on disk on next page)
- *       \version    $Id: fileconf.php,v 1.97 2011/08/12 20:16:00 eldy Exp $
  */
 include_once("./inc.php");
 

@@ -22,7 +22,6 @@
  *      \file       scripts/invoices/email_unpaid_invoices_to_representatives.php
  *      \ingroup    facture
  *      \brief      Script to send a mail to dolibarr users linked to companies with unpaid invoices
- *		\version	$Id: email_unpaid_invoices_to_representatives.php,v 1.10 2011/07/31 22:22:11 eldy Exp $
  */
 
 $sapi_type = php_sapi_name();

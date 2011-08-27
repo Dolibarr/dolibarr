@@ -20,7 +20,6 @@
  *      \file       htdocs/compta/sociales/class/chargesociales.class.php
  *		\ingroup    facture
  *		\brief      Fichier de la classe des charges sociales
- *		\version    $Id: chargesociales.class.php,v 1.15 2011/08/05 21:11:50 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");

@@ -19,7 +19,6 @@
  *   \file			htdocs/core/class/dolexception.class.php
  *   \ingroup		core
  *   \brief			File of class for exceptions
- *   \version		$Id: dolexception.class.php,v 1.4 2011/08/10 12:46:04 eldy Exp $
  */
 
 

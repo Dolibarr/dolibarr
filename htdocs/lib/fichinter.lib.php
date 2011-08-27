@@ -21,9 +21,6 @@
  *	\file       htdocs/lib/fichinter.lib.php
  *	\brief      Ensemble de fonctions de base pour le module fichinter
  *	\ingroup    fichinter
- *	\version    $Id: fichinter.lib.php,v 1.15 2011/07/31 23:25:17 eldy Exp $
- *
- * 	Ensemble de fonctions de base de dolibarr sous forme d'include
  */
 
 function fichinter_prepare_head($object)

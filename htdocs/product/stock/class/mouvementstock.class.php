@@ -21,7 +21,6 @@
  *	\file       htdocs/product/stock/class/mouvementstock.class.php
  *	\ingroup    stock
  *	\brief      Fichier de la classe de gestion des mouvements de stocks
- *	\version    $Revision: 1.13 $
  */
 
 

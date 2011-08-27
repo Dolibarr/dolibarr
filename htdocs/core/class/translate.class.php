@@ -23,7 +23,6 @@
  *		\brief      File for Tanslate class
  *		\author	    Eric Seigne
  *		\author	    Laurent Destailleur
- *		\version    $Id: translate.class.php,v 1.53 2011/08/24 02:17:57 eldy Exp $
  */
 
 
@@ -392,11 +391,12 @@ class Translate {
 	 */
 	function trans($key, $param1='', $param2='', $param3='', $param4='', $maxsize=0)
 	{
-		if (! empty($this->tab_translate[$key]))	// Translation is available
+	    if (! empty($this->tab_translate[$key]))	// Translation is available
 		{
             $str=$this->tab_translate[$key];
 
-			if (! preg_match('/^Format/',$key)) $str=sprintf($str,$param1,$param2,$param3,$param4);	// Replace %s and %d except for FormatXXX strings.
+            if (! preg_match('/^Format/',$key)) $str=sprintf($str,$param1,$param2,$param3,$param4);	// Replace %s and %d except for FormatXXX strings.
+
 			if ($maxsize) $str=dol_trunc($str,$maxsize);
 
 			// We replace some HTML tags by __xx__ to avoid having them encoded by htmlentities

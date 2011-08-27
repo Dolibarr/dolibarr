@@ -20,9 +20,6 @@
  *	\file       htdocs/lib/categories.lib.php
  *	\brief      Ensemble de fonctions de base pour le module categorie
  *	\ingroup    categorie
- *	\version    $Id: categories.lib.php,v 1.2 2011/07/31 23:26:02 eldy Exp $
- *
- * 	Ensemble de fonctions de base de dolibarr sous forme d'include
  */
 
 function categories_prepare_head($object,$type)

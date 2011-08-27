@@ -17,11 +17,10 @@
  */
 
 /**
-	    \file       htdocs/comm/propal/stats/month.php
-        \ingroup    propale
-		\brief      Page des stats propositions commerciales par mois
-		\version    $Id: month.php,v 1.27 2011/08/03 00:46:38 eldy Exp $
-*/
+ * 	    \file       htdocs/comm/propal/stats/month.php
+ *      \ingroup    propale
+ *      \brief      Page des stats propositions commerciales par mois
+ */
 
 require("../../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propalestats.class.php");
@@ -174,5 +173,5 @@ print '</td></tr></table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:38 $ - $Revision: 1.27 $');
+llxFooter();
 ?>

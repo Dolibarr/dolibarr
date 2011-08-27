@@ -20,7 +20,6 @@
  *  \file       htdocs/lib/ecm.lib.php
  *  \brief      Ensemble de fonctions de base pour le module ecm
  *  \ingroup    ecm
- *  \version    $Id: ecm.lib.php,v 1.5 2011/07/31 23:25:21 eldy Exp $
  */
 
 

@@ -21,7 +21,6 @@
  *		\file       htdocs/admin/menus/edit.php
  *		\ingroup    core
  *		\brief      Tool to edit menus
- *		\version	$Id: edit.php,v 1.42 2011/07/31 22:23:15 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -418,5 +417,5 @@ elseif (isset($_GET["action"]) && $_GET["action"] == 'edit')
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:15 $ - $Revision: 1.42 $');
+llxFooter();
 ?>

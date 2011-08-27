@@ -20,7 +20,6 @@
  *  \file       htdocs/expedition/class/expeditionstats.class.php
  *  \ingroup    expedition
  *  \brief      Fichier des classes expedition
- *  \version    $Id: expeditionstats.class.php,v 1.5 2011/07/31 23:50:54 eldy Exp $
  */
 
 /**

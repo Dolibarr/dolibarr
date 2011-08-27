@@ -23,7 +23,6 @@
  *	\file       htdocs/compta/paiement.php
  *	\ingroup    compta
  *	\brief      Page to create a payment
- *	\version    $Id: paiement.php,v 1.114 2011/08/08 01:01:46 eldy Exp $
  */
 
 require('../main.inc.php');
@@ -672,5 +671,5 @@ if (! GETPOST('action'))
 
 $db->close();
 
-llxFooter('$Date: 2011/08/08 01:01:46 $ - $Revision: 1.114 $');
+llxFooter();
 ?>

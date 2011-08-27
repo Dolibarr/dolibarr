@@ -22,7 +22,6 @@
  *	\file       	htdocs/product/stock/user.php
  *	\ingroup    	stock
  *	\brief      	Page to link dolibarr users with warehouses
- *	\version    	$Id: user.php,v 1.16 2011/07/31 23:24:01 eldy Exp $
  * 	\deprecated		This page is never called. Feature will never be developped.
  */
 
@@ -175,5 +174,5 @@ if ($_GET["id"])
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:24:01 $ - $Revision: 1.16 $');
+llxFooter();
 ?>

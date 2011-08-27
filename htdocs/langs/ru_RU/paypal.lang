@@ -1,0 +1,27 @@
+/*
+ * Language code: ru_RU
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2011-08-27 16:56:14
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2011-08-27 16:56:14).
+// Reference language: en_US -> ru_RU
+CHARSET=UTF-8
+PaypalSetup=PayPal модуль установки
+PaypalDesc=Этот модуль предлагает страниц, чтобы выплаты по <a href="http://www.paypal.com" target="_blank">PayPal</a> клиентами. Это может быть использовано для свободного оплаты или оплаты на определенный объект Dolibarr (счет-фактура, заказ, ...)
+PaypalOrCBDoPayment=Оплатить с помощью кредитной карты или Paypal
+PaypalDoPayment=Оплатить с помощью Paypal
+PaypalCBDoPayment=Оплата кредитной картой
+PAYPAL_API_SANDBOX=Режим тестирования / песочнице
+PAYPAL_API_USER=API имя пользователя
+PAYPAL_API_PASSWORD=API пароль
+PAYPAL_API_SIGNATURE=API подпись
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Предложение платежа &quot;Интеграл&quot; (кредитные карточки + Paypal) или &quot;PayPal&quot;, только
+PAYPAL_CSS_URL=Optionnal адрес таблицы стилей CSS на странице оплаты
+ThisIsTransactionId=Это идентификатор сделки: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Добавить адрес Paypal оплата при отправке документа по почте
+PAYPAL_IPN_MAIL_ADDRESS=Адрес электронной почты для мгновенного уведомления об оплате (IPN)
+PredefinedMailContentSendOrderWithPaypalLink=Вы найдете здесь порядок __ORDERREF__ \ п \ nВы можете нажать на ссылку ниже безопасного, чтобы сделать платеж через PayPal \ п \ n%s \ п \ nSincerely \ п \ п
+PredefinedMailContentSendInvoiceWithPaypalLink=Только здесь вы найдете счета __FACREF__ \ п \ nВы можете нажать на ссылку ниже безопасного, чтобы сделать платеж через PayPal \ п \ n%s \ п \ nSincerely \ п \ п
+// STOP - Lines generated via autotranslator.php tool (2011-08-27 17:00:37).

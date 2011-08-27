@@ -20,7 +20,6 @@
  *      \file       htdocs/societe/info.php
  *      \ingroup    societe
  *      \brief      Page des informations d'une societe
- *      \version    $Id: info.php,v 1.24 2011/07/31 23:22:56 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -67,5 +66,5 @@ print '</div>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:22:56 $ - $Revision: 1.24 $');
+llxFooter();
 ?>

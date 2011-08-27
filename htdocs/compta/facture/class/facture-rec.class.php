@@ -22,7 +22,6 @@
  *	\file       htdocs/compta/facture/class/facture-rec.class.php
  *	\ingroup    facture
  *	\brief      Fichier de la classe des factures recurentes
- *	\version    $Id: facture-rec.class.php,v 1.16 2011/08/03 00:46:25 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/class/notify.class.php");

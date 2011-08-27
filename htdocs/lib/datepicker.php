@@ -23,7 +23,6 @@
 /**
  *       \file       htdocs/lib/datepicker.php
  *       \brief      Fichier de gestion de la popup de selection de date eldy
- *       \version    $Id: datepicker.php,v 1.32 2011/07/31 23:25:29 eldy Exp $
  */
 
 if (! defined('NOREQUIREUSER'))   define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language

@@ -20,7 +20,6 @@
  *       \file       htdocs/contact/perso.php
  *       \ingroup    societe
  *       \brief      Onglet informations personnelles d'un contact
- *       \version    $Id: perso.php,v 1.66 2011/08/20 15:11:32 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -247,5 +246,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/20 15:11:32 $ - $Revision: 1.66 $');
+llxFooter();
 ?>

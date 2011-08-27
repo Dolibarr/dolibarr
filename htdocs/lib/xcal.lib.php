@@ -19,7 +19,6 @@
 /**
  *  \file       htdocs/lib/xcal.lib.php
  *  \brief      Function to manage calendar files (vcal/ical/...)
- *  \version    $Id: xcal.lib.php,v 1.40 2011/07/31 23:25:58 eldy Exp $
  */
 
 /**

@@ -21,7 +21,6 @@
  *	    \file       htdocs/comm/propal/stats/index.php
  *      \ingroup    propale
  *		\brief      Page des stats propositions commerciales
- *		\version    $Id: index.php,v 1.34 2011/08/03 00:46:38 eldy Exp $
  */
 
 require("../../../main.inc.php");
@@ -224,5 +223,5 @@ print '</td></tr></table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:38 $ - $Revision: 1.34 $');
+llxFooter();
 ?>

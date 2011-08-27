@@ -20,7 +20,6 @@
 /**
  *	\defgroup   barcode         Module barcode
  *	\brief      Module pour gerer les codes barres
- *	\version	$Id: modBarcode.class.php,v 1.31 2011/08/16 10:11:01 eldy Exp $
  */
 
 /**

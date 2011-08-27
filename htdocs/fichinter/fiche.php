@@ -22,7 +22,6 @@
  *	\file       htdocs/fichinter/fiche.php
  *	\brief      Fichier fiche intervention
  *	\ingroup    ficheinter
- *	\version    $Id: fiche.php,v 1.175 2011/08/23 20:52:39 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -709,8 +708,7 @@ if ($action == 'create')
         print '<tr>';
         print '<td>'.$langs->trans("DefaultModel").'</td>';
         print '<td colspan="2">';
-        $model=new ModelePDFFicheinter();
-        $liste=$model->liste_modeles($db);
+        $liste=ModelePDFFicheinter::liste_modeles($db);
         print $html->selectarray('model',$liste,$conf->global->FICHEINTER_ADDON_PDF);
         print "</td></tr>";
 
@@ -1218,5 +1216,5 @@ elseif ($fichinterid)
 
 $db->close();
 
-llxFooter('$Date: 2011/08/23 20:52:39 $ - $Revision: 1.175 $');
+llxFooter();
 ?>

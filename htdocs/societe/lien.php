@@ -21,7 +21,6 @@
  *  \file       htdocs/societe/lien.php
  *  \ingroup    societe
  *  \brief      Page of links to other third parties
- *  \version    $Id: lien.php,v 1.39 2011/08/13 00:48:00 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -334,5 +333,5 @@ if ($socid)
 
 $db->close();
 
-llxFooter('$Date: 2011/08/13 00:48:00 $ - $Revision: 1.39 $');
+llxFooter();
 ?>

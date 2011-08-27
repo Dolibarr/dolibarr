@@ -25,7 +25,6 @@
  *  \file       htdocs/product/fiche.php
  *  \ingroup    product
  *  \brief      Page to show product
- *  \version    $Id: fiche.php,v 1.378 2011/08/22 22:04:25 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -57,7 +56,7 @@ $object = new Product($db);
 $extrafields = new ExtraFields($db);
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
-if ($id) $object->getCanvas($id);
+if ($id || $ref) $object->getCanvas($id,$ref);
 $canvas = $object->canvas?$object->canvas:GETPOST("canvas");
 if (! empty($canvas))
 {
@@ -71,12 +70,20 @@ if (isset($id) || isset($ref)) $value = isset($id)?$id:(isset($ref)?$ref:'');
 $type = isset($ref)?'ref':'rowid';
 $result=restrictedArea($user,'produit|service',$value,'product','','',$type);
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+$hookmanager=new HookManager($db);
+$hookmanager->callHooks(array('product'));
 
 
 
 /*
  * Actions
  */
+
+$parameters=array('socid'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$error=$hookmanager->error; $errors=$hookmanager->errors;
 
 if ($action == 'setproductaccountancycodebuy')
 {
@@ -140,13 +147,10 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 
 	$product=new Product($db);
 
-	$usecanvas=$_POST["canvas"];
-	if (empty($conf->global->MAIN_USE_CANVAS)) $usecanvas=0;
-
-	if (! empty($usecanvas))	// Overwrite product here
+	if (! empty($canvas))	// Overwrite product here
 	{
-		$canvas = new Canvas($db,$user);
-		$product = $canvas->load_canvas('product',$_POST["canvas"]);
+		$objcanvas = new Canvas($db,$user);
+		$product = $objcanvas->load_canvas('product',$canvas);
 	}
 
 	if (! $error)
@@ -231,13 +235,10 @@ if ($action == 'update' && ($user->rights->produit->creer || $user->rights->serv
 	{
 		$product=new Product($db);
 
-		$usecanvas=$_POST["canvas"];
-		if (empty($conf->global->MAIN_USE_CANVAS)) $usecanvas=0;
-
-		if (! empty($usecanvas))	// Overwrite product here
+		if (! empty($canvas))	// Overwrite product here
 		{
-			$canvas = new Canvas($db,$user);
-			$product = $canvas->load_canvas('product',$_POST["canvas"]);
+			$objcanvas = new Canvas($db,$user);
+			$product = $objcanvas->load_canvas('product',$_POST["canvas"]);
 		}
 
 		if ($product->fetch($id))
@@ -643,23 +644,57 @@ if ($_POST["cancel"] == $langs->trans("Cancel"))
 $html = new Form($db);
 $formproduct = new FormProduct($db);
 
-
-/*
- * Fiche creation du produit
- */
-if ($action == 'create' && ($user->rights->produit->creer || $user->rights->service->creer))
+// TODO Mutualize this part of code (same than societe/soc.php and contact/fiche.php)
+if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 {
-	$helpurl='';
-	if (isset($_GET["type"]) && $_GET["type"] == 0) $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
-	if (isset($_GET["type"]) && $_GET["type"] == 1)	$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+    // -----------------------------------------
+    // When used with CANVAS
+    // -----------------------------------------
+    if ($action == 'create')
+    {
+        $objcanvas->assign_post();              // TODO: Put code of assign_post into assign_values to keep only assign_values
+        $objcanvas->assign_values($action);     // Set value for templates
+        $objcanvas->display_canvas($action,0);  // Show template
+    }
+    elseif ($action == 'edit')
+    {
+        $objcanvas->control->object=$objcanvas->getObject($socid);  // TODO: Getting and storing object should be done into assign_values (for template with no code) or into tpl
+        if (empty($objcanvas->control->object))
+        {
+            $object = new Societe($db);
+            $object->fetch($socid);
+            $objcanvas->control->object=$object;
+        }
+        $objcanvas->assign_post();              // TODO: Put code of assign_post into assign_values to keep only assign_values
+        $objcanvas->assign_values($action);     // Set value for templates
+        $objcanvas->display_canvas($action);    // Show template
+    }
+    else
+    {
+        $objcanvas->control->object=$objcanvas->getObject($socid);  // TODO: Getting and storing object should be done into assign_values (for template with no code) or into tpl
+        if (empty($objcanvas->control->object))
+        {
+            $object = new Societe($db);
+            $object->fetch($socid);
+            $objcanvas->control->object=$object;
+        }
+        $objcanvas->assign_values('view');
+        $objcanvas->display_canvas('view');  	// Show template
+    }
+}
+else
+{
+    // -----------------------------------------
+    // When used in standard mode
+    // -----------------------------------------
+    if ($action == 'create' && ($user->rights->produit->creer || $user->rights->service->creer))
+    {
+    	$helpurl='';
+    	if (isset($_GET["type"]) && $_GET["type"] == 0) $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+    	if (isset($_GET["type"]) && $_GET["type"] == 1)	$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 
-	llxHeader('',$langs->trans("CardProduct".$_GET["type"]),$helpurl);
+    	llxHeader('',$langs->trans("CardProduct".$_GET["type"]),$helpurl);
 
-	$usecanvas=$_GET["canvas"];
-	if (empty($conf->global->MAIN_USE_CANVAS)) $usecanvas=0;
-
-	if (empty($usecanvas))
-	{
 		print '<form action="fiche.php" method="post">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="add">';
@@ -814,54 +849,24 @@ if ($action == 'create' && ($user->rights->produit->creer || $user->rights->serv
 		print '<center><input type="submit" class="button" value="'.$langs->trans("Create").'"></center>';
 
 		print '</form>';
-	}
-	else
-	{
-		$canvas = new Canvas($db,$user);
-		$product = $canvas->load_canvas('product',$_GET["canvas"]);
+    }
 
-		$canvas->assign_values('create');
-		$canvas->display_canvas();
-	}
-}
+    /**
+     * Product card
+     */
 
-/**
- * Product card
- */
+    if ($id || $ref)
+    {
+    	$product=new Product($db);
+    	$product->fetch($id,$ref);
 
-if ($id || $ref)
-{
-	$product=new Product($db);
+    	llxHeader('',$langs->trans("CardProduct".$product->type));
 
-	// TODO en attendant d'inclure le nom du canvas dans les liens
-	$productstatic = new Product($db);
-	$result = $productstatic->getCanvas($id,$ref);
-	$usecanvas=$productstatic->canvas;
-	if (empty($conf->global->MAIN_USE_CANVAS)) $usecanvas=0;
-
-	if (empty($usecanvas))
-	{
-		$product->fetch($id,$ref);
-	}
-	else 	// Gestion des produits specifiques
-	{
-		$canvas = new Canvas($db,$user);
-
-		$product = $canvas->load_canvas('product',$productstatic->canvas);
-		if (! $product) dol_print_error('','Faled to load canvas product-'.$productstatic->canvas);
-
-		$canvas->fetch($productstatic->id,'',$action);
-	}
-
-	llxHeader('',$langs->trans("CardProduct".$product->type));
-
-	/*
-	 * Fiche en mode edition
-	 */
-	if ($action == 'edit' && ($user->rights->produit->creer || $user->rights->service->creer))
-	{
-		if (empty($usecanvas))
-		{
+    	/*
+    	 * Fiche en mode edition
+    	 */
+    	if ($action == 'edit' && ($user->rights->produit->creer || $user->rights->service->creer))
+    	{
 			$type = $langs->trans('Product');
 			if ($product->isservice()) $type = $langs->trans('Service');
 			print_fiche_titre($langs->trans('Modify').' '.$type.' : '.$product->ref, "");
@@ -1006,32 +1011,24 @@ if ($id || $ref)
 			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
 
 			print '</form>';
-		}
-		else
-		{
-			$canvas->assign_values('edit');
-			$canvas->display_canvas();
-		}
-	}
-	/*
-	 * Fiche en mode visu
-	 */
-	else
-	{
-		$head=product_prepare_head($product, $user);
-		$titre=$langs->trans("CardProduct".$product->type);
-		$picto=($product->type==1?'service':'product');
-		dol_fiche_head($head, 'card', $titre, 0, $picto);
+    	}
+    	/*
+    	 * Fiche en mode visu
+    	 */
+    	else
+    	{
+    		$head=product_prepare_head($product, $user);
+    		$titre=$langs->trans("CardProduct".$product->type);
+    		$picto=($product->type==1?'service':'product');
+    		dol_fiche_head($head, 'card', $titre, 0, $picto);
 
-		// Confirm delete product
-		if ($action == 'delete' || $conf->use_javascript_ajax)
-		{
-			$ret=$html->form_confirm("fiche.php?id=".$product->id,$langs->trans("DeleteProduct"),$langs->trans("ConfirmDeleteProduct"),"confirm_delete",'',0,"action-delete");
-			if ($ret == 'html') print '<br>';
-		}
+    		// Confirm delete product
+    		if ($action == 'delete' || $conf->use_javascript_ajax)
+    		{
+    			$ret=$html->form_confirm("fiche.php?id=".$product->id,$langs->trans("DeleteProduct"),$langs->trans("ConfirmDeleteProduct"),"confirm_delete",'',0,"action-delete");
+    			if ($ret == 'html') print '<br>';
+    		}
 
-		if (empty($usecanvas))
-		{
             $isphoto=$product->is_photo_available($conf->product->dir_output);
 
 		    // En mode visu
@@ -1168,23 +1165,17 @@ if ($id || $ref)
 			print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="2">'.(dol_textishtml($product->note)?$product->note:dol_nl2br($product->note,1,true)).'</td></tr>';
 
 			print "</table>\n";
-		}
-		else
-		{
-			$canvas->assign_values('view');
-			$canvas->display_canvas();
-		}
 
-		dol_fiche_end();
-	}
+    		dol_fiche_end();
+    	}
 
+    }
+    else if ($action != 'create')
+    {
+    	Header("Location: index.php");
+    	exit;
+    }
 }
-else if ($action != 'create')
-{
-	Header("Location: index.php");
-	exit;
-}
-
 
 
 // Clone confirmation
@@ -1653,6 +1644,6 @@ if ($product->id && $action == '' && $product->status)
 
 $db->close();
 
-llxFooter('$Date: 2011/08/22 22:04:25 $ - $Revision: 1.378 $');
+llxFooter();
 
 ?>

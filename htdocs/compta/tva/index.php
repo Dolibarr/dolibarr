@@ -22,7 +22,6 @@
  *	    \file       htdocs/compta/tva/index.php
  *      \ingroup    tax
  *		\brief      Index page of VAT reports
- *		\version    $Id: index.php,v 1.43 2011/08/03 00:46:24 eldy Exp $
  */
 require('../../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/tax.lib.php");
@@ -235,5 +234,5 @@ echo '</table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:24 $ - $Revision: 1.43 $');
+llxFooter();
 ?>

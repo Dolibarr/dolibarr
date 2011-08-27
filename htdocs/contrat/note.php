@@ -17,11 +17,10 @@
  */
 
 /**
-        \file       htdocs/contrat/note.php
-        \ingroup    contrat
-        \brief      Fiche de notes sur un contrat
-		\version    $Id: note.php,v 1.28 2011/07/31 23:46:55 eldy Exp $
-*/
+ *      \file       htdocs/contrat/note.php
+ *      \ingroup    contrat
+ *      \brief      Fiche de notes sur un contrat
+ */
 
 require ("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/contract.lib.php');
@@ -185,5 +184,5 @@ if ($_GET["id"])
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:46:55 $ - $Revision: 1.28 $');
+llxFooter();
 ?>

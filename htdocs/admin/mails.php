@@ -19,7 +19,6 @@
 /**
  *       \file       htdocs/admin/mails.php
  *       \brief      Page to setup emails sending
- *       \version    $Id: mails.php,v 1.75 2011/07/31 22:23:22 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -746,5 +745,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:22 $ - $Revision: 1.75 $');
+llxFooter();
 ?>

@@ -19,7 +19,6 @@
  *	\file       htdocs/accountancy/class/accountancyaccount.class.php
  * 	\ingroup    accounting
  * 	\brief      Fichier de la classe des comptes comptables
- * 	\version    $Id: accountancyaccount.class.php,v 1.2 2011/08/03 00:45:22 eldy Exp $
  */
 
 

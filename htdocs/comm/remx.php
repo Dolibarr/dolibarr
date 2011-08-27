@@ -21,7 +21,6 @@
  *	    \file       htdocs/comm/remx.php
  *      \ingroup    societe
  *		\brief      Page to edit absolute discounts for a customer
- *		\version    $Id: remx.php,v 1.53 2011/08/04 21:46:51 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -538,5 +537,5 @@ if ($_socid > 0)
 
 $db->close();
 
-llxFooter('$Date: 2011/08/04 21:46:51 $ - $Revision: 1.53 $');
+llxFooter();
 ?>

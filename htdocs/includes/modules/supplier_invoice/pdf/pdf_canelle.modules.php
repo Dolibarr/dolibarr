@@ -21,7 +21,6 @@
  *	\file       htdocs/includes/modules/supplier_invoice/pdf/pdf_canelle.modules.php
  *	\ingroup    fournisseur
  *	\brief      Class file to generate the supplier invoices with the canelle model
- *	\version    $Id: pdf_canelle.modules.php,v 1.36 2011/08/11 12:14:01 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/supplier_invoice/modules_facturefournisseur.php");

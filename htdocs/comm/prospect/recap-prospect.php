@@ -20,7 +20,6 @@
  *   	\file       htdocs/fourn/recap-fourn.php
  *		\ingroup    fournisseur
  *		\brief      Page de fiche recap fournisseur
- *		\version    $Id: recap-prospect.php,v 1.9 2011/08/03 00:46:28 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -92,5 +91,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:28 $ - $Revision: 1.9 $');
+llxFooter();
 ?>

@@ -20,7 +20,6 @@
 /**
  *       \file       htdocs/admin/ihm.php
  *       \brief      Page to setup GUI display options
- *       \version    $Id: ihm.php,v 1.132 2011/08/18 23:17:23 cdelambert Exp $
  */
 
 require("../main.inc.php");
@@ -409,5 +408,5 @@ else	// Show
 
 $db->close();
 
-llxFooter('$Date: 2011/08/18 23:17:23 $ - $Revision: 1.132 $');
+llxFooter();
 ?>

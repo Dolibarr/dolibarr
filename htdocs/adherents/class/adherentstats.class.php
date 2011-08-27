@@ -21,7 +21,6 @@
  *	\file       htdocs/adherents/class/adherentstats.class.php
  *	\ingroup    member
  *	\brief      Fichier de la classe de gestion des stats des adhérents
- *	\version    $Id: adherentstats.class.php,v 1.3 2011/08/03 00:45:44 eldy Exp $
  */
 
 include_once DOL_DOCUMENT_ROOT . "/core/class/stats.class.php";

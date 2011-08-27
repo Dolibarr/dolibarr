@@ -19,7 +19,6 @@
 /**
  *   	\file       htdocs/admin/index.php
  *		\brief      Page d'accueil de l'espace administration/configuration
- *		\version    $Id: index.php,v 1.83 2011/07/31 22:23:25 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -84,5 +83,5 @@ print '</table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:25 $ - $Revision: 1.83 $');
+llxFooter();
 ?>

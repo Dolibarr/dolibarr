@@ -21,7 +21,6 @@
  *	\file       htdocs/public/members/public_card.php
  *	\ingroup    member
  * 	\brief      File to show a public card of a member
- *	\version    $Id: public_card.php,v 1.12 2011/07/31 23:23:21 eldy Exp $
  */
 
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
@@ -113,7 +112,7 @@ if ($rowid > 0)
 
 $db->close();
 
-llxFooterVierge('$Date: 2011/07/31 23:23:21 $ - $Revision: 1.12 $');
+llxFooterVierge();
 
 
 /* Functions header and footer */

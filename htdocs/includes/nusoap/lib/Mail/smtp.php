@@ -22,7 +22,6 @@
  * Net_SMTP:: class.
  * @access public
  * @package Mail
- * @version $Revision$
  */
 class Mail_smtp extends Mail {
 

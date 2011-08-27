@@ -21,7 +21,6 @@
  *	\file       htdocs/core/class/commonobject.class.php
  *	\ingroup    core
  *	\brief      File of parent class of all other business classes (invoices, contracts, proposals, orders, ...)
- *	\version    $Id: commonobject.class.php,v 1.159 2011/08/22 22:04:22 eldy Exp $
  */
 
 

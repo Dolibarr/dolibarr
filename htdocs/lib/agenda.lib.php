@@ -21,7 +21,6 @@
 /**
  *  \file		htdocs/lib/agenda.lib.php
  *  \brief		Set of function for the agenda module
- *  \version	$Id: agenda.lib.php,v 1.44 2011/08/17 16:05:04 cdelambert Exp $
  */
 
 

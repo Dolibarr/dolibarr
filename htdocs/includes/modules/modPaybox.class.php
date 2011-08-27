@@ -16,15 +16,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**     \defgroup   paybox     Module paybox
- *      \brief      Add integration with Paybox online payment system.
+/**
+ * \defgroup   paybox     Module paybox
+ * \brief      Add integration with Paybox online payment system.
  */
 
 /**
  *      \file       htdocs/includes/modules/modPaybox.class.php
  *      \ingroup    paybox
  *      \brief      Description and activation file for module Paybox
- *		\version	$Id: modPaybox.class.php,v 1.20 2011/07/31 23:28:11 eldy Exp $
  */
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 

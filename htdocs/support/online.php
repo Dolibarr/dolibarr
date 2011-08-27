@@ -19,7 +19,6 @@
  *       \file      htdocs/support/online.php
  *       \ingroup   install
  *       \brief     Provide an Online Help support
- *       \version   $Id: online.php,v 1.28 2011/07/31 23:22:33 eldy Exp $
  */
 
 error_reporting(0);

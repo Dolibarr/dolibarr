@@ -19,7 +19,6 @@
  *      \file       htdocs/includes/boxes/box_bookmarks.php
  *      \ingroup    bookmark
  *      \brief      Module to generate box of bookmarks list
- *		\version	$Id: box_bookmarks.php,v 1.18 2011/07/31 23:29:10 eldy Exp $
  */
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
 

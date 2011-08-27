@@ -19,7 +19,6 @@
  *       \file       htdocs/ftp/admin/ftpclient.php
  *       \ingroup    ftp
  *       \brief      Admin page to setup FTP client module
- *       \version    $Id: ftpclient.php,v 1.5 2011/08/01 00:01:01 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -286,5 +285,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/01 00:01:01 $ - $Revision: 1.5 $');
+llxFooter();
 ?>

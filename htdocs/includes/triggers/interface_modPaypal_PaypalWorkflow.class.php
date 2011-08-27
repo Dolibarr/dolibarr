@@ -19,7 +19,6 @@
  *      \file       /htdocs/includes/triggers/interface_modPaypal_PaypalWorkflow.class.php
  *      \ingroup    paypal
  *      \brief      Trigger file for paypal workflow
- *      \version	$Id: interface_modPaypal_PaypalWorkflow.class.php,v 1.8 2011/07/31 23:29:46 eldy Exp $
  */
 
 

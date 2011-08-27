@@ -20,7 +20,6 @@
  *   	\file       htdocs/fourn/paiement/info.php
  *		\ingroup    facture
  *		\brief      Onglet info d'un paiement fournisseur
- *		\version    $Id: info.php,v 1.11 2011/07/31 23:57:03 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -63,5 +62,5 @@ print '</div>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:57:03 $ - $Revision: 1.11 $');
+llxFooter();
 ?>

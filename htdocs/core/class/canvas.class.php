@@ -20,7 +20,6 @@
  *   \file			htdocs/core/class/canvas.class.php
  *   \ingroup		core
  *   \brief			File of class to manage canvas
- *   \version		$Id: canvas.class.php,v 1.45 2011/07/31 23:45:13 eldy Exp $
  */
 
 

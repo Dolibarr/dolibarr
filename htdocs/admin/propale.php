@@ -25,7 +25,6 @@
  *	    \file       htdocs/admin/propale.php
  *		\ingroup    propale
  *		\brief      Page d'administration/configuration du module Propale
- *		\version    $Id: propale.php,v 1.108 2011/07/31 22:23:25 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -543,5 +542,5 @@ print "</table>\n<br>";
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:25 $ - $Revision: 1.108 $');
+llxFooter();
 ?>

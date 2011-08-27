@@ -19,7 +19,6 @@
  *       \file       htdocs/imports/index.php
  *       \ingroup    import
  *       \brief      Page accueil de la zone import
- *       \version    $Id: index.php,v 1.13 2011/07/31 23:46:39 eldy Exp $
  */
 
 require_once("../main.inc.php");
@@ -138,6 +137,6 @@ print '</table>';
 $db->close();
 
 
-llxFooter('$Date: 2011/07/31 23:46:39 $ - $Revision: 1.13 $');
+llxFooter();
 
 ?>

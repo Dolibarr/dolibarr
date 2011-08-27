@@ -21,7 +21,6 @@
 /**
  *  \file		htdocs/lib/date.lib.php
  *  \brief		Set of function to manipulate dates
- *  \version	$Id: date.lib.php,v 1.36 2011/08/20 21:27:22 hregis Exp $
  */
 
 

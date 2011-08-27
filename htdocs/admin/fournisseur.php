@@ -25,7 +25,6 @@
  *  \file       htdocs/admin/fournisseur.php
  *  \ingroup    fournisseur
  *  \brief      Page d'administration-configuration du module Fournisseur
- *  \version    $Id: fournisseur.php,v 1.64 2011/08/11 12:14:02 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -619,5 +618,5 @@ print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">'
 print "</td></tr>\n";
 print '</form>';
 
-llxFooter('$Date: 2011/08/11 12:14:02 $ - $Revision: 1.64 $');
+llxFooter();
 ?>

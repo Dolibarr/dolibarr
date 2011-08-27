@@ -20,7 +20,6 @@
  *	    \file       htdocs/admin/agenda_extsites.php
  *      \ingroup    agenda
  *      \brief      Page to setup external calendars for agenda module
- *      \version    $Id: agenda_extsites.php,v 1.9 2011/07/31 22:23:21 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -192,5 +191,5 @@ dol_htmloutput_mesg($mesg);
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:21 $ - $Revision: 1.9 $');
+llxFooter();
 ?>

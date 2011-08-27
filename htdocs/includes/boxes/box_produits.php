@@ -21,7 +21,6 @@
  *	\file       htdocs/includes/boxes/box_produits.php
  *	\ingroup    produits,services
  *	\brief      Module to generate box of last products/services
- *	\version	$Id: box_produits.php,v 1.41 2011/07/31 23:29:10 eldy Exp $
  */
 
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");

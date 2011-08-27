@@ -20,7 +20,6 @@
  *      \file       htdocs/includes/modules/security/generate/modGeneratePassNone.class.php
  *      \ingroup    core
  *      \brief      File to manage no password generation.
- *		\version	$Id: modGeneratePassNone.class.php,v 1.7 2011/07/31 23:28:16 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/security/generate/modules_genpassword.php");

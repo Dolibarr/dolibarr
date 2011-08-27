@@ -25,7 +25,6 @@
  *  \file       htdocs/societe/soc.php
  *  \ingroup    societe
  *  \brief      Third party card page
- *  \version    $Id: soc.php,v 1.140 2011/08/24 18:06:11 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -89,10 +88,8 @@ $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 $error=$hookmanager->error; $errors=$hookmanager->errors;
 
-// ---------- start deprecated. Use hook to hook actions.
-// If canvas actions are defined, because on url, or because contact was created with canvas feature on, we use the canvas feature.
-// If canvas actions are not defined, we use standard feature.
-if (method_exists($objcanvas->control,'doActions'))
+// ---------- start deprecated. Must use hook to hook actions.
+/*if (method_exists($objcanvas->control,'doActions'))
 {
     $objcanvas->doActions($socid);
 
@@ -102,7 +99,7 @@ if (method_exists($objcanvas->control,'doActions'))
         if ($action=='add')    { $objcanvas->action='create'; $action='create'; }
         if ($action=='update') { $objcanvas->action='edit';   $action='edit'; }
     }
-}
+}*/
 // ---------- end deprecated.
 
 
@@ -501,6 +498,7 @@ $formcompany = new FormCompany($db);
 
 $countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
+// TODO Mutualize this part of code (same than product/fiche.php and contact/fiche.php)
 if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 {
     // -----------------------------------------
@@ -1961,5 +1959,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/24 18:06:11 $ - $Revision: 1.140 $');
+llxFooter();
 ?>

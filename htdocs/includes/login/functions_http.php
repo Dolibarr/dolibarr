@@ -16,11 +16,10 @@
  */
 
 /**
-        \file       htdocs/includes/login/functions_http.php
-        \ingroup    core
-        \brief      Authentication functions for HTTP Basic
-		\version	$Id: functions_http.php,v 1.4 2011/07/31 23:29:11 eldy Exp $
-*/
+ * \file       htdocs/includes/login/functions_http.php
+ * \ingroup    core
+ * \brief      Authentication functions for HTTP Basic
+ */
 
 
 /**

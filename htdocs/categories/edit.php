@@ -22,7 +22,6 @@
  *      \file       htdocs/categories/edit.php
  *      \ingroup    category
  *      \brief      Page d'edition de categorie produit
- *      \version    $Id: edit.php,v 1.40 2011/08/20 09:02:57 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -161,5 +160,5 @@ print '</td></tr></table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/20 09:02:57 $ - $Revision: 1.40 $');
+llxFooter();
 ?>

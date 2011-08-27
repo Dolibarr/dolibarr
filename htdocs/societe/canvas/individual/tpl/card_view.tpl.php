@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: card_view.tpl.php,v 1.12 2011/07/31 23:22:59 eldy Exp $
  */
 
 $object = $GLOBALS['objcanvas']->control->object;

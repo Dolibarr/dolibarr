@@ -22,7 +22,6 @@
  * 	    \file       htdocs/includes/boxes/box_external_rss.php
  *      \ingroup    external_rss
  *      \brief      Fichier de gestion d'une box pour le module external_rss
- *      \version    $Id: box_external_rss.php,v 1.36 2011/08/21 12:47:01 eldy Exp $
  */
 
 include_once(DOL_DOCUMENT_ROOT."/core/class/rssparser.class.php");

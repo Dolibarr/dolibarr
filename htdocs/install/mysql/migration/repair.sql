@@ -1,6 +1,4 @@
 --
--- $Id$
---
 -- Script to repair some fatal errors due to database corruption
 -- when current version is 2.6.0 or higher. 
 --

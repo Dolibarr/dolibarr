@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      �ric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -16,16 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: liste.php,v 1.4 2011/07/31 22:23:30 eldy Exp $
  */
 
 
 /**
-  \file       htdocs/compta/ventilation/liste.php
-  \ingroup    compta
-  \brief      Page de ventilation des lignes de facture
-  \version    $Revision: 1.4 $
-*/
+ *   \file       htdocs/compta/ventilation/liste.php
+ *   \ingroup    compta
+ *   \brief      Page de ventilation des lignes de facture
+ */
 
 require('../../../main.inc.php');
 
@@ -34,7 +32,7 @@ $langs->load("bills");
 if (!$user->rights->facture->lire) accessforbidden();
 if (!$user->rights->compta->ventilation->creer) accessforbidden();
 /*
- * S�curit� acc�s client
+ * Securite acces client
  */
 if ($user->societe_id > 0) accessforbidden();
 
@@ -62,7 +60,7 @@ if ($result)
   $num_lignes = $db->num_rows($result);
   $i = 0;
 
-  print_barre_liste("Lignes de facture � ventiler",$page,"liste.php","",$sortfield,$sortorder,'',$num_lignes);
+  print_barre_liste("Lignes de facture à ventiler",$page,"liste.php","",$sortfield,$sortorder,'',$num_lignes);
 
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre"><td>Facture</td>';
@@ -104,5 +102,5 @@ else
 }
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date: 2011/07/31 22:23:30 $ r&eacute;vision $Revision: 1.4 $</em>");
+llxFooter();
 ?>

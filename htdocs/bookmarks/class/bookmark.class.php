@@ -19,7 +19,6 @@
  *      \file       htdocs/bookmarks/class/bookmark.class.php
  *      \ingroup    bookmark
  *      \brief      File of class to manage bookmarks
- *      \version    $Id: bookmark.class.php,v 1.7 2011/08/03 00:45:47 eldy Exp $
  */
 
 

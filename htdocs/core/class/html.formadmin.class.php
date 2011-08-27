@@ -21,7 +21,6 @@
  *      \file       htdocs/core/class/html.formadmin.class.php
  *      \ingroup    core
  *      \brief      File of class for html functions for admin pages
- *		\version	$Id: html.formadmin.class.php,v 1.24 2011/08/11 01:34:54 eldy Exp $
  */
 
 

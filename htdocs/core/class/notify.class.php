@@ -20,7 +20,6 @@
  *      \file       htdocs/core/class/notify.class.php
  *      \ingroup    notification
  *      \brief      File of class to manage notifications
- *      \version    $Id: notify.class.php,v 1.13 2011/07/31 23:45:14 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT ."/lib/CMailFile.class.php");
 

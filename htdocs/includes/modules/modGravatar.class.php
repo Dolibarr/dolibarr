@@ -16,15 +16,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**     \defgroup   gravatar     Module gravatar
- *      \brief      Module to use Gravatar to show photo of users
+/**
+ * \defgroup   gravatar     Module gravatar
+ * \brief      Module to use Gravatar to show photo of users
  */
 
 /**
  *      \file       htdocs/includes/modules/modGravatar.class.php
  *      \ingroup    gravatar
  *      \brief      Description and activation file for module Gravatar
- *		\version	$Id: modGravatar.class.php,v 1.10 2011/07/31 23:28:12 eldy Exp $
  */
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 

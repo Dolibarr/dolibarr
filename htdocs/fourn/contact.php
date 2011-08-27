@@ -21,7 +21,6 @@
  *	    \file       htdocs/fourn/contact.php
  *      \ingroup    fournisseur
  *		\brief      Liste des contacts fournisseurs
- *		\version    $Id: contact.php,v 1.34 2011/07/31 23:57:03 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -130,5 +129,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:57:03 $ - $Revision: 1.34 $');
+llxFooter();
 ?>

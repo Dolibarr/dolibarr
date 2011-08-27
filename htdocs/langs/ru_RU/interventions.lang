@@ -47,3 +47,13 @@ PacificNumRefModelError=Вмешательство карточки начина
 // Reference language: en_US
 ModifyIntervention=Изменить вмешательства
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
+
+
+// START - Lines generated via autotranslator.php tool (2011-08-27 16:56:14).
+// Reference language: en_US -> ru_RU
+ActionsOnFicheInter=Действия по вмешательству
+ClassifyBilled=Классифицировать &quot;Объявленный&quot;
+StatusInterInvoiced=Объявленный
+RelatedInterventions=Связанные с ней мероприятия
+ShowIntervention=Показать вмешательства
+// STOP - Lines generated via autotranslator.php tool (2011-08-27 16:59:22).

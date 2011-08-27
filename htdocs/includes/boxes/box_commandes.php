@@ -21,7 +21,6 @@
  *		\file       htdocs/includes/boxes/box_commandes.php
  *		\ingroup    commande
  *		\brief      Module de generation de l'affichage de la box commandes
- *		\version	$Id: box_commandes.php,v 1.33 2011/07/31 23:29:10 eldy Exp $
  */
 
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");

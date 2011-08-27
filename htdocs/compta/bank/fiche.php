@@ -22,7 +22,6 @@
  *	    \file       htdocs/compta/bank/fiche.php
  *      \ingroup    banque
  *		\brief      Page to create/view a bank account
- *		\version    $Id: fiche.php,v 1.78 2011/07/31 22:23:16 eldy Exp $
  */
 
 require("./pre.inc.php");
@@ -607,5 +606,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:16 $ - $Revision: 1.78 $');
+llxFooter();
 ?>

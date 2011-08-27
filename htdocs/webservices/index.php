@@ -18,7 +18,6 @@
 /**
  *       \file       htdocs/webservices/server_invoice.php
  *       \brief      File that is entry point to call Dolibarr WebServices
- *       \version    $Id: index.php,v 1.5 2011/07/31 23:21:08 eldy Exp $
  */
 
 // This is to make Dolibarr working with Plesk

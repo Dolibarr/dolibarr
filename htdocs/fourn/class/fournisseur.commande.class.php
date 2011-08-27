@@ -24,7 +24,6 @@
  *	\file       htdocs/fourn/class/fournisseur.commande.class.php
  *	\ingroup    fournisseur,commande
  *	\brief      File of class to manage suppliers orders
- *	\version    $Id: fournisseur.commande.class.php,v 1.48 2011/07/31 23:57:02 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");

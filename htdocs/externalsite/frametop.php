@@ -20,7 +20,6 @@
  *		\file 		htdocs/externalsite/frametop.php
  *      \ingroup    externalsite
  *		\brief      Top frame to show external web application
- *		\version    $Id: frametop.php,v 1.5 2011/07/31 23:50:56 eldy Exp $
  */
 
 require ("../main.inc.php");

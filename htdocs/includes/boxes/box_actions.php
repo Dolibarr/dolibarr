@@ -21,7 +21,6 @@
  *	\file       htdocs/includes/boxes/box_actions.php
  *	\ingroup    actions
  *	\brief      Module to build boxe for events
- *	\version	$Id: box_actions.php,v 1.49 2011/07/31 23:29:09 eldy Exp $
  */
 
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");

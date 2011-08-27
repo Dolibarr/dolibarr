@@ -19,7 +19,6 @@
  *       \file       htdocs/exports/index.php
  *       \ingroup    export
  *       \brief      Home page of export tools
- *       \version    $Id: index.php,v 1.31 2011/07/31 23:50:55 eldy Exp $
  */
 
 require_once("../main.inc.php");
@@ -67,7 +66,7 @@ print '</tr>';
 
 include_once(DOL_DOCUMENT_ROOT.'/includes/modules/export/modules_export.php');
 $model=new ModeleExports();
-$liste=$model->liste_modeles($db);
+$liste=$model->liste_modeles($db);    // This is not a static method for exports because method load non static properties
 
 $var=true;
 foreach($liste as $key => $val)
@@ -148,5 +147,5 @@ print '</table>';
 $db->close();
 
 
-llxFooter('$Date: 2011/07/31 23:50:55 $ - $Revision: 1.31 $');
+llxFooter();
 ?>

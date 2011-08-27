@@ -15,11 +15,10 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- $Id: llx_user_rights.key.sql,v 1.3 2011/08/03 01:25:39 eldy Exp $
 -- ===========================================================================
 
 
--- Supprimme orhpelins pour permettre mont�e de la cl�
+-- Delete orphans
 -- V4 DELETE llx_user_rights FROM llx_user_rights LEFT JOIN llx_user ON llx_user_rights.fk_user = llx_user.rowid WHERE llx_user.rowid IS NULL;
 
 

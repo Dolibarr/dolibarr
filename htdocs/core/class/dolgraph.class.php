@@ -20,7 +20,6 @@
  *	\file       htdocs/core/class/dolgraph.class.php
  *  \ingroup    core
  *	\brief      Fichier de la classe mere de gestion des graph
- *	\version    $Id: dolgraph.class.php,v 1.8 2011/08/14 18:26:26 eldy Exp $
  *
  *	Usage:
  *	$graph_data = array(array('labelA',yA),array('labelB',yB));

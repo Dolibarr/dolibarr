@@ -15,14 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: fckeditor.php,v 1.34 2011/08/17 15:56:23 eldy Exp $
  */
 
 /**
  *  \file       htdocs/admin/fckeditor.php
  *  \ingroup    fckeditor
  *  \brief      Page d'activation du module FCKeditor dans les autres modules
- *  \version    $Revision: 1.34 $
  */
 
 require("../main.inc.php");
@@ -172,5 +170,5 @@ print $conf->global->FCKEDITOR_TEST;
 
 $db->close();
 
-llxFooter('$Date: 2011/08/17 15:56:23 $ - $Revision: 1.34 $');
+llxFooter();
 ?>

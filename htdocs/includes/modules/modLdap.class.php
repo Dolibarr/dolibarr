@@ -26,7 +26,6 @@
  *	\file       htdocs/includes/modules/modLdap.class.php
  *	\ingroup    ldap
  *	\brief      Fichier de description et activation du module Ldap
- *	\version	$Id: modLdap.class.php,v 1.35 2011/07/31 23:28:12 eldy Exp $
  */
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 

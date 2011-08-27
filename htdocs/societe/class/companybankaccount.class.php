@@ -16,11 +16,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
+/**
  * 		\files		htdocs/societe/class/companybankaccount.class.php
  *		\ingroup    societe
  *		\brief      File of class to manage bank accounts description of third parties
- *   	\version	$Id: companybankaccount.class.php,v 1.11 2011/07/31 23:22:58 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/compta/bank/class/account.class.php");

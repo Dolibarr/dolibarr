@@ -20,7 +20,6 @@
  *       \file       htdocs/contact/ldap.php
  *       \ingroup    ldap
  *       \brief      Page fiche LDAP contact
- *       \version    $Id: ldap.php,v 1.33 2011/07/31 23:54:12 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -209,5 +208,5 @@ print '</table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:54:12 $ - $Revision: 1.33 $');
+llxFooter();
 ?>

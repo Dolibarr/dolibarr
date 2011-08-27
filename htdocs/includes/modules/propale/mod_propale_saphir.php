@@ -20,19 +20,18 @@
  */
 
 /**
-	\file       htdocs/includes/modules/propale/mod_propale_saphir.php
-	\ingroup    propale
-	\brief      File that contains the numbering module rules Saphir
-	\version    $Id: mod_propale_saphir.php,v 1.28 2011/07/31 23:28:16 eldy Exp $
-*/
+ * \file       htdocs/includes/modules/propale/mod_propale_saphir.php
+ * \ingroup    propale
+ * \brief      File that contains the numbering module rules Saphir
+ */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php");
 
 
 /**
-	\class      mod_propale_saphir
-	\brief      Class of file that contains the numbering module rules Saphir
-*/
+ * \class      mod_propale_saphir
+ * \brief      Class of file that contains the numbering module rules Saphir
+ */
 class mod_propale_saphir extends ModeleNumRefPropales
 {
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'

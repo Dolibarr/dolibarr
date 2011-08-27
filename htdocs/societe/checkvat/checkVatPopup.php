@@ -19,7 +19,6 @@
  *		\file       htdocs/societe/checkvat/checkVatPopup.php
  *		\ingroup    societe
  *		\brief      Popup screen to validate VAT
- *		\version    $Id: checkVatPopup.php,v 1.20 2011/07/31 23:22:59 eldy Exp $
  */
 
 require ("../../main.inc.php");
@@ -166,5 +165,5 @@ if ($messagetoshow)
 }
 
 
-llxFooter('$Date: 2011/07/31 23:22:59 $ - $Revision: 1.20 $',0);
+llxFooter();
 ?>

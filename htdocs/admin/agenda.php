@@ -20,7 +20,6 @@
  *	    \file       htdocs/admin/agenda.php
  *      \ingroup    agenda
  *      \brief      Autocreate actions for agenda module setup page
- *      \version    $Id: agenda.php,v 1.23 2011/07/31 22:23:23 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -159,5 +158,5 @@ print "<br>";
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:23 $ - $Revision: 1.23 $');
+llxFooter();
 ?>

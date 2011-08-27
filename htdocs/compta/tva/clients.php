@@ -22,7 +22,6 @@
  *	    \file       htdocs/compta/tva/clients.php
  *      \ingroup    tax
  *		\brief      Page des societes
- *		\version    $Id: clients.php,v 1.32 2011/08/03 00:46:25 eldy Exp $
  */
 
 require('../../main.inc.php');
@@ -326,5 +325,5 @@ print '</table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:25 $ - $Revision: 1.32 $');
+llxFooter();
 ?>

@@ -19,7 +19,6 @@
  *      \file       htdocs/admin/dons.php
  *		\ingroup    dons
  *		\brief      Page d'administration/configuration du module Dons
- *		\version    $Id: dons.php,v 1.26 2011/07/31 22:23:21 eldy Exp $
  */
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
@@ -275,5 +274,5 @@ print "<br>";
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:21 $ - $Revision: 1.26 $');
+llxFooter();
 ?>

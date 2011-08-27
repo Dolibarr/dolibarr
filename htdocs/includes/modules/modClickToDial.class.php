@@ -25,7 +25,6 @@
  *	\file       htdocs/includes/modules/modClickToDial.class.php
  *	\ingroup    clicktodial
  *	\brief      Fichier de description et activation du module de click to Dial
- *	\version	$Id: modClickToDial.class.php,v 1.22 2011/07/31 23:28:10 eldy Exp $
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");

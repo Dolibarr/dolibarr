@@ -23,7 +23,6 @@
  *       \file       htdocs/contact/fiche.php
  *       \ingroup    societe
  *       \brief      Card of a contact
- *       \version    $Id: fiche.php,v 1.227 2011/08/23 20:45:41 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -293,6 +292,7 @@ if ($socid > 0)
     $objsoc->fetch($socid);
 }
 
+// TODO Mutualize this part of code (same than societe/soc.php and product/fiche.php)
 if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 {
     // -----------------------------------------
@@ -947,5 +947,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/23 20:45:41 $ - $Revision: 1.227 $');
+llxFooter();
 ?>

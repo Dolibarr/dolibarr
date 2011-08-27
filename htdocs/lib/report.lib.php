@@ -19,7 +19,6 @@
 /**
  *  \file       	htdocs/lib/report.lib.php
  *  \brief      	Set of functions for reporting
- *  \version		$Id: report.lib.php,v 1.6 2011/07/31 23:25:39 eldy Exp $
  */
 
 

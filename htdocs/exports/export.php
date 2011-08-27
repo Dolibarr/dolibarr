@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,7 +20,6 @@
  *       \file       htdocs/exports/export.php
  *       \ingroup    export
  *       \brief      Pages of export Wizard
- *       \version    $Id: export.php,v 1.84 2011/08/11 19:12:59 eldy Exp $
  */
 
 require_once("../main.inc.php");
@@ -795,7 +794,7 @@ print '<br>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/11 19:12:59 $ - $Revision: 1.84 $');
+llxFooter();
 
 
 /**

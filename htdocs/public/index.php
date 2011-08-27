@@ -20,7 +20,6 @@
  *		\ingroup    core
  *		\brief      A redirect page to an error
  *		\author	    Laurent Destailleur
- *		\version    $Id: index.php,v 1.5 2011/07/31 23:23:21 eldy Exp $
  */
 
 require("../master.inc.php");

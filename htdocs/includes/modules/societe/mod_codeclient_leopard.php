@@ -21,15 +21,14 @@
  *       \file       htdocs/includes/modules/societe/mod_codeclient_leopard.php
  *       \ingroup    societe
  *       \brief      Fichier de la classe des gestion leopard des codes clients
- *       \version    $Id: mod_codeclient_leopard.php,v 1.17 2011/07/31 23:28:14 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/societe/modules_societe.class.php");
 
 
 /**
- \class 		mod_codeclient_leopard
- \brief 		Classe permettant la gestion leopard des codes tiers
+ *	\class 		mod_codeclient_leopard
+ *	\brief 		Classe permettant la gestion leopard des codes tiers
  */
 class mod_codeclient_leopard extends ModeleThirdPartyCode
 {
@@ -37,24 +36,22 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 	 * Attention ce module est utilise par defaut si aucun module n'a
 	 * ete definit dans la configuration
 	 *
-	 * Le fonctionnement de celui-ci doit dont rester le plus ouvert possible
+	 * Le fonctionnement de celui-ci doit donc rester le plus ouvert possible
 	 */
 
-	var $nom;							// Nom du modele
+	var $nom='Leopard';					// Nom du modele
 	var $code_modifiable;				// Code modifiable
 	var $code_modifiable_invalide;		// Code modifiable si il est invalide
 	var $code_modifiable_null;			// Code modifiables si il est null
 	var $code_null;						// Code facultatif
-	var $version;		// 'development', 'experimental', 'dolibarr'
-	var $code_auto; 	// Numerotation automatique
+	var $version='dolibarr';    		// 'development', 'experimental', 'dolibarr'
+	var $code_auto; 	                // Numerotation automatique
 
 
-	/**		\brief      Constructeur classe
+	/**		Constructor
 	 */
 	function mod_codeclient_leopard()
 	{
-		$this->nom = "Leopard";
-		$this->version = "dolibarr";
 		$this->code_null = 1;
 		$this->code_modifiable = 1;
 		$this->code_modifiable_invalide = 1;
@@ -63,9 +60,10 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 	}
 
 
-	/**
-	 *		\brief      Renvoie la description du module
-	 *		\return     string      Texte descripif
+	/**		Return description of module
+	 *
+	 * 		@param 		$langs		Object langs
+	 * 		@return     string      Description of module
 	 */
 	function info($langs)
 	{
@@ -73,8 +71,11 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 	}
 
 
-	/**     \brief      Return next value available
-	 *      \return     string      Value
+	/**		Return an example of result returned by getNextValue
+	 *
+	 *      @param		$langs		Object langs
+	 *      @param		$objsoc		Object thirdparty
+	 *      @param		$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 */
 	function getNextValue($objsoc=0,$type=-1)
 	{
@@ -84,12 +85,13 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 
 
 	/**
-	 * 		\brief		Check validity of code according to its rules
-	 *		\param		$db			Database handler
-	 *		\param		$code		Code to check/correct
-	 *		\param		$soc		Object third party
-	 *   	\param    	$type   	0 = customer/prospect , 1 = supplier
-	 *    	\return     int		0 if OK
+	 * 		Check validity of code according to its rules
+	 *
+	 *		@param		$db		Database handler
+	 *		@param		$code	Code to check/correct
+	 *		@param		$soc	Object third party
+	 *   	@param    	$type   0 = customer/prospect , 1 = supplier
+	 *    	@return     int		0 if OK
 	 * 							-1 ErrorBadCustomerCodeSyntax
 	 * 							-2 ErrorCustomerCodeRequired
 	 * 							-3 ErrorCustomerCodeAlreadyUsed

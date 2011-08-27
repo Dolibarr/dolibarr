@@ -20,7 +20,6 @@
  *  \file       htdocs/core/class/menu.class.php
  *  \ingroup    core
  *  \brief      Fichier de la classe de gestion du menu gauche
- *  \version    $Id: menu.class.php,v 1.5 2011/07/31 23:45:13 eldy Exp $
  */
 
 

@@ -18,7 +18,6 @@
 /**
  *	\file       htdocs/includes/modules/expedition/methode_expedition_enl.modules.php
  *	\ingroup    expedition
- * 	\version	$Id$
  */
 include_once "methode_expedition.modules.php";
 

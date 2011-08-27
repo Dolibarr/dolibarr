@@ -37,3 +37,18 @@ SetupPayBoxToHavePaymentCreatedAutomatically=Настройте PayBox с <b>URL
 // Reference language: en_US -> ru_RU
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL предложить оплаты %s онлайн пользовательский интерфейс для членов подписки
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:33:43).
+
+
+// START - Lines generated via autotranslator.php tool (2011-08-27 16:56:14).
+// Reference language: en_US -> ru_RU
+YourPaymentHasBeenRecorded=Эта страница подтверждает, что ваш платеж был записан. Спасибо.
+YourPaymentHasNotBeenRecorded=Вы платеж не был записан и сделка была отменена. Спасибо.
+AccountParameter=Счет параметры
+UsageParameter=Использование параметров
+InformationToFindParameters=Помогите найти %s информацию об учетной записи
+PAYBOX_CGI_URL_V2=Url модуля Paybox CGI для оплаты
+VendorName=Имя поставщика
+CSSUrlForPaymentForm=CSS-стилей URL для оплаты форме
+MessageOK=Сообщение на странице проверки возвращение оплаты
+MessageKO=Сообщение на странице отменен возврат оплаты
+// STOP - Lines generated via autotranslator.php tool (2011-08-27 17:00:26).

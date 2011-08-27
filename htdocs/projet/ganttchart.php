@@ -19,7 +19,6 @@
  *	\file       htdocs/projet/ganttchart.php
  *	\ingroup    projet
  *	\brief      Gantt diagram of a project
- *	\version    $Id: ganttchart.php,v 1.8 2011/08/08 16:00:46 eldy Exp $
  */
 
 ?>

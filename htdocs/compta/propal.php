@@ -24,7 +24,6 @@
  *	\file       htdocs/compta/propal.php
  *	\ingroup    propale
  *	\brief      Page liste des propales (vision compta)
- *	\version	$Id: propal.php,v 1.195 2011/08/23 18:40:48 hregis Exp $
  */
 
 require('../main.inc.php');
@@ -704,6 +703,6 @@ else
 $db->close();
 
 
-llxFooter('$Date: 2011/08/23 18:40:48 $ - $Revision: 1.195 $');
+llxFooter();
 
 ?>

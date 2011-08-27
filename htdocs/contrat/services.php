@@ -21,7 +21,6 @@
  *	    \file       htdocs/contrat/services.php
  *      \ingroup    contrat
  *		\brief      Page to list services in contracts
- *		\version    $Id: services.php,v 1.58 2011/08/08 14:25:44 eldy Exp $
  */
 
 require ("../main.inc.php");
@@ -266,5 +265,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/08 14:25:44 $ - $Revision: 1.58 $');
+llxFooter();
 ?>

@@ -20,9 +20,6 @@
  *	    \file       htdocs/lib/invoice.lib.php
  *		\brief      Ensemble de fonctions de base pour le module factures
  * 		\ingroup	invoice
- *		\version    $Id: invoice.lib.php,v 1.15 2011/07/31 23:25:41 eldy Exp $ *
- *
- *		Ensemble de fonctions de base de dolibarr sous forme d'include
  */
 
 function facture_prepare_head($object)

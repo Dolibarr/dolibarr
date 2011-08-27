@@ -20,7 +20,6 @@
 /**
  *       \file       htdocs/product/ajaxproducts.php
  *       \brief      File to return Ajax response on product list request
- *       \version    $Id: ajaxproducts.php,v 1.37 2011/07/31 23:19:26 eldy Exp $
  */
 
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL',1); // Disables token renewal

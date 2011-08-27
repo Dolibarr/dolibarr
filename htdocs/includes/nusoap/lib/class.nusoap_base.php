@@ -1,7 +1,6 @@
 <?php
 
 /*
-$Id: class.nusoap_base.php,v 1.7 2011/08/03 16:46:46 eldy Exp $
 
 NuSOAP - Web Services Toolkit for PHP
 
@@ -78,7 +77,6 @@ $GLOBALS['_transient']['static']['nusoap_base']['globalDebugLevel'] = 9;
 *
 * @author   Dietrich Ayala <dietrich@ganx4.com>
 * @author   Scott Nichol <snichol@users.sourceforge.net>
-* @version  $Id: class.nusoap_base.php,v 1.7 2011/08/03 16:46:46 eldy Exp $
 * @access   public
 */
 class nusoap_base {
@@ -102,7 +100,7 @@ class nusoap_base {
 	 * @var string
 	 * @access private
 	 */
-	var $revision = '$Revision: 1.7 $';
+	var $revision = '1.7';
     /**
      * Current error string (manipulated by getError/setError)
 	 *

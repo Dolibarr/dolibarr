@@ -20,7 +20,6 @@
  *      \file       test/phpunit/DateLibTest.php
  *		\ingroup    test
  *      \brief      PHPUnit test
- *      \version    $Id: WebservicesTest.php,v 1.1 2011/07/08 11:18:00 eldy Exp $
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 

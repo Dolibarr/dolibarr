@@ -11,7 +11,6 @@
 * xsd:anyType and user-defined types.
 *
 * @author   Dietrich Ayala <dietrich@ganx4.com>
-* @version  $Id$
 * @access   public
 */
 class soapval extends nusoap_base {

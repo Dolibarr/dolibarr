@@ -19,7 +19,6 @@
 /**
  *		\file       htdocs/includes/menus/smartphone/smartphone_backoffice.php
  *		\brief      Gestionnaire nomme smartphone du menu smartphone
- *		\version    $Id: smartphone_backoffice.php,v 1.4 2011/07/31 23:46:08 eldy Exp $
  */
 
 

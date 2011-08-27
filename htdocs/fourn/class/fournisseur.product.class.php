@@ -22,7 +22,6 @@
  * 	\file       htdocs/fourn/class/fournisseur.product.class.php
  * 	\ingroup    produit
  * 	\brief      File of class to manage predefined suppliers products
- * 	\version    $Id: fournisseur.product.class.php,v 1.12 2011/08/21 10:12:18 eldy Exp $
  */
 
 require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";

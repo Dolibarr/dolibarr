@@ -18,7 +18,6 @@
 /**
  *		\file 		htdocs/admin/tools/purge.php
  *		\brief      Page to purge files (temporary or not)
- *		\version    $Id: purge.php,v 1.19 2011/08/03 00:45:43 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -171,5 +170,5 @@ if (preg_match('/^confirm/i',$_REQUEST["choice"]))
 }
 
 
-llxFooter('$Date: 2011/08/03 00:45:43 $ - $Revision: 1.19 $');
+llxFooter();
 ?>

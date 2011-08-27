@@ -27,7 +27,6 @@
  *                  - Le nom de la classe doit etre InterfaceMytrigger
  *                  - Le nom de la methode constructeur doit etre InterfaceMytrigger
  *                  - Le nom de la propriete name doit etre Mytrigger
- *		\version	$Id: interface_all_Demo.class.php-NORUN,v 1.30 2011/07/31 23:29:46 eldy Exp $
  */
 
 

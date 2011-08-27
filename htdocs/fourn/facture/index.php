@@ -21,7 +21,6 @@
  *       \file       htdocs/fourn/facture/index.php
  *       \ingroup    fournisseur,facture
  *       \brief      List of suppliers invoices
- *       \version    $Id: index.php,v 1.85 2011/07/31 23:57:01 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -292,5 +291,5 @@ else
 $db->close();
 
 
-llxFooter('$Date: 2011/07/31 23:57:01 $ - $Revision: 1.85 $');
+llxFooter();
 ?>

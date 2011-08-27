@@ -21,7 +21,6 @@
  *      \file       htdocs/compta/bank/admin/bank.php
  *		\ingroup    bank
  *		\brief      Page to setup the bank module
- *		\version    $Id: bank.php,v 1.8 2011/07/31 22:23:31 eldy Exp $
  */
 
 require("../../../main.inc.php");
@@ -171,5 +170,5 @@ print "</table>\n";
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:31 $ - $Revision: 1.8 $');
+llxFooter();
 ?>

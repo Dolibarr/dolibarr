@@ -17,8 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- * 	\version	$Id: rejets.php,v 1.21 2011/07/31 22:23:29 eldy Exp $
+/**
+ * 
  */
 
 require("../bank/pre.inc.php");
@@ -118,5 +118,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:29 $ - $Revision: 1.21 $');
+llxFooter();
 ?>

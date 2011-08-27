@@ -21,7 +21,6 @@
  *       \file       htdocs/commande/class/commandestats.class.php
  *       \ingroup    commandes
  *       \brief      Fichier de la classe de gestion des stats des commandes
- *       \version    $Id: commandestats.class.php,v 1.6 2011/07/31 22:23:15 eldy Exp $
  */
 include_once DOL_DOCUMENT_ROOT . "/core/class/stats.class.php";
 include_once DOL_DOCUMENT_ROOT . "/commande/class/commande.class.php";

@@ -23,7 +23,6 @@
  *	\file       htdocs/includes/modules/supplier_order/pdf/pdf_muscadet.modules.php
  *	\ingroup    fournisseur
  *	\brief      Fichier de la classe permettant de generer les commandes fournisseurs au modele Muscadet
- *	\version    $Id: pdf_muscadet.modules.php,v 1.88 2011/08/11 12:14:00 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/supplier_order/modules_commandefournisseur.php");

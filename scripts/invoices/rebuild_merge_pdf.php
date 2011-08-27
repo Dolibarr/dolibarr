@@ -21,7 +21,6 @@
  *      \file       scripts/invoices/rebuild_merge_pdf.php
  *      \ingroup    facture
  *      \brief      Script to rebuild PDF and merge PDF files into one
- *		\version	$Id: rebuild_merge_pdf.php,v 1.23 2011/08/11 12:14:22 eldy Exp $
  */
 
 $sapi_type = php_sapi_name();
@@ -47,7 +46,7 @@ require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 $langs->load("main");
 
 // Global variables
-$version='$Revision: 1.23 $';
+$version='1.24';
 $error=0;
 
 

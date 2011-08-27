@@ -21,7 +21,6 @@
  *   	\file       htdocs/compta/sociales/index.php
  *		\ingroup    tax
  *		\brief      Page to list all social contributions
- *		\version    $Id: index.php,v 1.66 2011/07/31 22:23:20 eldy Exp $
  */
 
 require('../../main.inc.php');
@@ -228,5 +227,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:20 $ - $Revision: 1.66 $');
+llxFooter();
 ?>

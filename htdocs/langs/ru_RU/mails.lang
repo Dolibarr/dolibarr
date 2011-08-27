@@ -127,3 +127,11 @@ SentTo=Направлено в <b>%s</b>
 LimitSendingEmailing=В строке отправки emailings ограничены для обеспечения безопасности и тайм-аут причин <b>%s</b> получателей, отправив сессии.
 ListOfNotificationsDone=Список всех уведомлений по электронной почте отправлено
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:34:57).
+
+
+// START - Lines generated via autotranslator.php tool (2011-08-27 16:56:14).
+// Reference language: en_US -> ru_RU
+MailingModuleDescContactsByCompanyCategory=Контакты третьих лиц (по третьей категории сторон)
+MailingModuleDescMembersCategories=Фонд членов (по категориям)
+MailingModuleDescContactsByFunction=Контакты третьих лиц (по должности / функции)
+// STOP - Lines generated via autotranslator.php tool (2011-08-27 16:59:25).

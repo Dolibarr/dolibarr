@@ -21,7 +21,6 @@
  *     \file       htdocs/admin/taxes.php
  *     \ingroup    tax
  *     \brief      Page de configuration du module tax
- *     \version    $Id: taxes.php,v 1.10 2011/07/31 22:23:24 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -181,5 +180,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:24 $ - $Revision: 1.10 $');
+llxFooter();
 ?>

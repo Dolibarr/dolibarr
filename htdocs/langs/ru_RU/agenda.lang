@@ -68,3 +68,27 @@ InterventionValidatedInDolibarr=%s Intervenção validado
 MenuToDoActions=Все действия неполным
 InterventionValidatedInDolibarr=Вмешательство %s проверки
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:42:54).
+
+
+// START - Lines generated via autotranslator.php tool (2011-08-27 16:56:14).
+// Reference language: en_US -> ru_RU
+EventOnFullDay=Событие на весь день
+ViewDay=Обзор дня
+ViewWeek=Обзор недели
+AgendaExtSitesDesc=Эта страница позволяет настроить внешний календарей.
+InvoiceBackToDraftInDolibarr=Счет %s вернуться к проекту статус
+ProposalSentByEMail=Коммерческое предложение %s отправлены по электронной почте
+OrderSentByEMail=Покупатель делает заказ %s отправлены по электронной почте
+InvoiceSentByEMail=Клиенту счет-фактура %s отправлены по электронной почте
+SupplierOrderSentByEMail=Поставщик порядке %s отправлены по электронной почте
+SupplierInvoiceSentByEMail=Поставщиком счета %s отправлены по электронной почте
+ShippingSentByEMail=Доставка %s отправлены по электронной почте
+InterventionSentByEMail=Вмешательство %s отправлены по электронной почте
+ExtSites=Внешние календари
+ExtSites=Внешние Календари
+ExtSitesEnableThisTool=как внешние календари в повестку дня
+ExtSitesNbOfAgenda=Количество календарей
+AgendaExtNb=Календарь NB %s
+ExtSiteUrlAgenda=URL для доступа. Ческих файлов
+ExtSiteNoLabel=Нет описания
+// STOP - Lines generated via autotranslator.php tool (2011-08-27 16:57:56).

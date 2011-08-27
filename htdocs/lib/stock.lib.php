@@ -19,7 +19,6 @@
 /**
  *	    \file       htdocs/lib/stock.lib.php
  *		\brief      Library file with function for stock module
- *		\version    $Id: stock.lib.php,v 1.8 2011/07/31 23:25:15 eldy Exp $
  */
 
 /**

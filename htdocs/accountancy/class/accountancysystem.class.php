@@ -19,7 +19,6 @@
  *	\file       htdocs/accountancy/class/accountancysystem.class.php
  * 	\ingroup    accounting
  * 	\brief      File of class to manage accountancy systems
- * 	\version    $Id: accountancysystem.class.php,v 1.3 2011/08/03 00:45:22 eldy Exp $
  */
 
 

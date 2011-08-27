@@ -64,5 +64,5 @@ $somethingshown=$myobject->showLinkedObjectBlock();
 
 // End of page
 $db->close();
-llxFooter('$Date: 2011/08/03 00:46:37 $ - $Revision: 1.4 $');
+llxFooter();
 ?>

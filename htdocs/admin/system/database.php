@@ -21,7 +21,6 @@
 /**
  *   \file       htdocs/admin/system/database.php
  *   \brief      Page with system information of database
- *   \version    $Id: database.php,v 1.28 2011/07/31 22:23:14 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -136,5 +135,5 @@ else
 	}
 }
 
-llxFooter('$Date: 2011/07/31 22:23:14 $ - $Revision: 1.28 $');
+llxFooter();
 ?>

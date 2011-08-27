@@ -19,7 +19,6 @@
  *  \file       htdocs/admin/project.php
  *  \ingroup    project
  *  \brief      Page d'administration-configuration du module Projet
- *  \version    $Id: project.php,v 1.14 2011/07/31 22:23:25 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -379,5 +378,5 @@ if (is_resource($handle))
 
 print '</table><br/>';
 
-llxFooter('$Date: 2011/07/31 22:23:25 $ - $Revision: 1.14 $');
+llxFooter();
 ?>

@@ -19,7 +19,6 @@
  * 		\file       htdocs/includes/boxes/box_contracts.php
  * 		\ingroup    contracts
  * 		\brief      Module de generation de l'affichage de la box contracts
- * 		\version	$Id: box_contracts.php,v 1.10 2011/07/31 23:29:10 eldy Exp $
  */
 
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");

@@ -19,7 +19,6 @@
  *       \file      htdocs/support/index.php
  *       \ingroup   support
  *       \brief     Provide an Online Help support
- *       \version   $Id: index.php,v 1.23 2011/07/31 23:22:33 eldy Exp $
  */
 
 error_reporting(0);

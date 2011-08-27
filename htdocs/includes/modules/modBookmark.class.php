@@ -19,7 +19,6 @@
 /**
  *	\defgroup   bookmark    Module bookmarks
  *	\brief      Module to manage Bookmarks
- *	\version	$Id: modBookmark.class.php,v 1.26 2011/07/31 23:28:12 eldy Exp $
  */
 
 /**

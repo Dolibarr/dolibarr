@@ -19,7 +19,6 @@
 /**
  *      \defgroup   category       Module categories
  *      \brief      Module to manage categories
- *		\version	$Id: modCategorie.class.php,v 1.39 2011/07/31 23:28:09 eldy Exp $
  */
 
 /**

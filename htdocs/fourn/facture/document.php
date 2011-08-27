@@ -22,7 +22,6 @@
  *       \file       htdocs/fourn/facture/document.php
  *       \ingroup    facture, fournisseur
  *       \brief      Page de gestion des documents attachees a une facture fournisseur
- *       \version    $Id: document.php,v 1.46 2011/07/31 23:57:01 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -195,5 +194,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:57:01 $ - $Revision: 1.46 $');
+llxFooter();
 ?>

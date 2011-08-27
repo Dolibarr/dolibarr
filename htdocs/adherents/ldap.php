@@ -20,7 +20,6 @@
  *       \file       htdocs/adherents/ldap.php
  *       \ingroup    ldap member
  *       \brief      Page fiche LDAP adherent
- *       \version    $Id: ldap.php,v 1.32 2011/07/31 22:23:27 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -232,5 +231,5 @@ print '</table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:27 $ - $Revision: 1.32 $');
+llxFooter();
 ?>

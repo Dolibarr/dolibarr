@@ -111,3 +111,9 @@ ExpiredSince=Срок действия
 // Reference language: en_US -> ru_RU
 RelatedContracts=Связанные контрактов
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:38:52).
+
+
+// START - Lines generated via autotranslator.php tool (2011-08-27 16:56:14).
+// Reference language: en_US -> ru_RU
+Error_CONTRACT_ADDON_NotDefined=Постоянное CONTRACT_ADDON не определена
+// STOP - Lines generated via autotranslator.php tool (2011-08-27 16:58:57).

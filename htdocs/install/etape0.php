@@ -21,7 +21,6 @@
  *	\file       htdocs/install/etape0.php
  *	\ingroup	install
  *	\brief      Show and ask charset for database
- *	\version    $Id: etape0.php,v 1.42 2011/07/31 23:26:25 eldy Exp $
  */
 
 define('DONOTLOADCONF',1);	// To avoid loading conf by file inc.php

@@ -29,7 +29,6 @@
  *	\author     Rodolphe Qiedeville
  *	\author	    Eric Seigne
  *	\author	    Laurent Destailleur
- *	\version    $Id: propal.class.php,v 1.114 2011/08/20 15:11:34 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");

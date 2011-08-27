@@ -21,7 +21,6 @@
  *	    \file       htdocs/compta/bank/budget.php
  *      \ingroup    banque
  *		\brief      Page de budget
- *		\version    $Id: budget.php,v 1.33 2011/07/31 22:23:16 eldy Exp $
  */
 
 require("./pre.inc.php");
@@ -97,5 +96,5 @@ print "</table>";
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:16 $ - $Revision: 1.33 $');
+llxFooter();
 ?>

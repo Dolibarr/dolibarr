@@ -22,7 +22,6 @@
  *	\file       htdocs/compta/facture/prelevement.php
  *	\ingroup    facture
  *	\brief      Gestion des prelevement d'une facture
- *	\version    $Id: prelevement.php,v 1.39 2011/07/31 22:23:13 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -559,5 +558,5 @@ if ($_REQUEST["facid"] > 0 || $_REQUEST["ref"])
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:13 $ - $Revision: 1.39 $');
+llxFooter();
 ?>

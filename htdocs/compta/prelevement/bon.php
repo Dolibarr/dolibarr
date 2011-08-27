@@ -21,7 +21,6 @@
  *      \file       htdocs/compta/prelevement/bon.php
  *      \ingroup    prelevement
  *      \brief      Fiche apercu du bon de prelevement
- *      \version    $Id: bon.php,v 1.15 2011/07/31 22:23:29 eldy Exp $
  */
 
 require("../bank/pre.inc.php");
@@ -98,5 +97,5 @@ if ($id > 0 || ! empty($ref))
 
 print "</div>";
 
-llxFooter('$Date: 2011/07/31 22:23:29 $ - $Revision: 1.15 $');
+llxFooter();
 ?>

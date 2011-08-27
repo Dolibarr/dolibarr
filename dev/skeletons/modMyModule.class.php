@@ -27,7 +27,6 @@
  *      \file       htdocs/includes/modules/modMyModule.class.php
  *      \ingroup    mymodule
  *      \brief      Description and activation file for module MyModule
- *		\version	$Id: modMyModule.class.php,v 1.68 2011/08/10 23:30:20 eldy Exp $
  */
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 

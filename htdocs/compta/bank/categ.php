@@ -18,11 +18,10 @@
  */
 
 /**
-        \file       htdocs/compta/bank/categ.php
-        \ingroup    compta
-        \brief      Page ajout de cat�gories bancaires
-        \version    $Id: categ.php,v 1.31 2011/07/31 22:23:20 eldy Exp $
-*/
+ *      \file       htdocs/compta/bank/categ.php
+ *      \ingroup    compta
+ *      \brief      Page ajout de categories bancaires
+ */
 
 require("./pre.inc.php");
 
@@ -134,5 +133,5 @@ print "</table></form>";
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:20 $ - $Revision: 1.31 $');
+llxFooter();
 ?>

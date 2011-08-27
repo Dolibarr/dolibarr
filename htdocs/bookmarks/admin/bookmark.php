@@ -19,7 +19,6 @@
 /**	    \file       htdocs/bookmarks/admin/bookmark.php
  *		\ingroup    bookmark
  *		\brief      Page to setup bookmark module
- *		\version    $Id: bookmark.php,v 1.3 2011/08/03 00:45:46 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -83,5 +82,5 @@ print '</table></form>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:45:46 $ - $Revision: 1.3 $');
+llxFooter();
 ?>

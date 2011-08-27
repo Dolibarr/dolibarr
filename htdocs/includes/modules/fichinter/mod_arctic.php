@@ -23,7 +23,6 @@
  *	\file       htdocs/includes/modules/fichinter/mod_arctic.php
  *	\ingroup    fiche intervention
  *	\brief      File with Arctic numbering module for interventions
- *	\version    $Id: mod_arctic.php,v 1.19 2011/07/31 23:28:15 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/modules_fichinter.php");
 

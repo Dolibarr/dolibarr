@@ -20,7 +20,6 @@
 /**
  *	\file			htdocs/lib/admin.lib.php
  *  \brief			Library of admin functions
- *  \version		$Id: admin.lib.php,v 1.99 2011/08/01 12:53:37 hregis Exp $
  */
 
 
@@ -467,7 +466,6 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
 /**
  *  \brief      	Define head array for tabs of security setup pages
  *  \return			Array of head
- *  \version    	$Id: admin.lib.php,v 1.99 2011/08/01 12:53:37 hregis Exp $
  */
 function security_prepare_head()
 {

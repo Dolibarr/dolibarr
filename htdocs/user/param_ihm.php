@@ -19,7 +19,6 @@
 /**
  *       \file       htdocs/user/param_ihm.php
  *       \brief      Page to show user setup for display
- *       \version    $Id: param_ihm.php,v 1.53 2011/07/31 23:19:43 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -258,5 +257,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:19:43 $ - $Revision: 1.53 $');
+llxFooter();
 ?>

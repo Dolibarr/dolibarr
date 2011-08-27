@@ -20,9 +20,7 @@
  *      \file       compta/bank/class/bankcateg.class.php
  *      \ingroup    banque
  *      \brief      This file is CRUD class file (Create/Read/Update/Delete) for bank categories
- *		\version    $Id: bankcateg.class.php,v 1.9 2011/07/31 22:23:30 eldy Exp $
  *		\author		Laurent Destailleur
- *		\remarks	Initialy built by build_class_from_table on 2009-01-02 15:26
  */
 
 // Put here all includes required by your class file

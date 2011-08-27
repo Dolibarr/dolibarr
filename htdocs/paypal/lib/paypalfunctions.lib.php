@@ -16,10 +16,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**	    \file       htdocs/paypal/lib/paypalfunctions.lib.php
- *		\ingroup    paypal
- *		\brief      Page with Paypal init var.
- *		\version    $Id: paypalfunctions.lib.php,v 1.8 2011/08/03 01:34:59 eldy Exp $
+/**
+ * \file       htdocs/paypal/lib/paypalfunctions.lib.php
+ * \ingroup    paypal
+ * \brief      Page with Paypal init var.
  */
 
 if (session_id() == "") session_start();

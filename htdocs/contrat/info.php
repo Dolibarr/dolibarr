@@ -16,11 +16,10 @@
  */
 
 /**
-        \file       htdocs/contrat/info.php
-        \ingroup    contrat
-		\brief      Page des informations d'un contrat
-		\version    $Id: info.php,v 1.25 2011/07/31 23:46:54 eldy Exp $
-*/
+ *      \file       htdocs/contrat/info.php
+ *      \ingroup    contrat
+ *      \brief      Page des informations d'un contrat
+ */
 
 require ("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
@@ -58,5 +57,5 @@ print '</div>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:46:54 $ - $Revision: 1.25 $');
+llxFooter();
 ?>

@@ -21,7 +21,6 @@
  *	\file       htdocs/projet/fiche.php
  *	\ingroup    projet
  *	\brief      Project card
- *	\version    $Id: fiche.php,v 1.127 2011/07/31 23:23:36 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -607,5 +606,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:23:36 $ - $Revision: 1.127 $');
+llxFooter();
 ?>

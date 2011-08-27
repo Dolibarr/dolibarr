@@ -15,8 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: facturesrejets.php,v 1.14 2011/08/17 15:56:27 eldy Exp $
- *
  */
 
 require("../bank/pre.inc.php");
@@ -155,5 +153,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/17 15:56:27 $ - $Revision: 1.14 $');
+llxFooter();
 ?>

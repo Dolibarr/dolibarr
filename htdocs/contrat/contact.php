@@ -17,11 +17,10 @@
  */
 
 /**
-        \file       htdocs/contrat/contact.php
-        \ingroup    contrat
-        \brief      Onglet de gestion des contacts des contrats
-        \version    $Id: contact.php,v 1.48 2011/08/14 03:13:50 eldy Exp $
-*/
+ *      \file       htdocs/contrat/contact.php
+ *      \ingroup    contrat
+ *      \brief      Onglet de gestion des contacts des contrats
+ */
 
 require ("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/contract.lib.php');
@@ -361,5 +360,5 @@ if ($id > 0)
 
 $db->close();
 
-llxFooter('$Date: 2011/08/14 03:13:50 $');
+llxFooter();
 ?>

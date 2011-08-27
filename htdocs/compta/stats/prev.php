@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: prev.php,v 1.21 2011/07/31 22:23:13 eldy Exp $
  */
 
 require('../../main.inc.php');
@@ -129,5 +128,5 @@ print "</td></tr></table>";
 $db->close();
 
 
-llxFooter("<em>Derni&egrave;re modification $Date: 2011/07/31 22:23:13 $ r&eacute;vision $Revision: 1.21 $</em>");
+llxFooter();
 ?>

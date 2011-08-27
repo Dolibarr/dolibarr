@@ -19,7 +19,6 @@
  *       \file       htdocs/bookmarks/liste.php
  *       \brief      Page to display list of bookmarks
  *       \ingroup    bookmark
- *       \version    $Id: liste.php,v 1.25 2011/08/03 00:45:45 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -206,5 +205,5 @@ print '</div>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:45:45 $ - $Revision: 1.25 $');
+llxFooter();
 ?>

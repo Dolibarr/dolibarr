@@ -18,7 +18,6 @@
 /**
  *       \file       htdocs/core/ajaxconstantonoff.php
  *       \brief      File to set or del an on/off constant
- *       \version    $Id: ajaxconstantonoff.php,v 1.3 2011/07/31 23:45:15 eldy Exp $
  */
 
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal

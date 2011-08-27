@@ -26,9 +26,8 @@
  *      \ingroup    commande
  *      \brief      File that contain parent class for supplier orders models
  *                  and parent class for supplier orders numbering models
- *      \version    $Id: modules_commandefournisseur.php,v 1.24 2011/08/11 12:14:04 eldy Exp $
  */
-require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
+require_once(DOL_DOCUMENT_ROOT."/core/class/commondocgenerator.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");	// requis car utilise par les classes qui heritent
 
 
@@ -36,7 +35,7 @@ require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");	// requi
  *	\class      ModelePDFSuppliersOrders
  *	\brief      Parent class for supplier orders models
  */
-class ModelePDFSuppliersOrders
+abstract class ModelePDFSuppliersOrders extends CommonDocGenerator
 {
 	var $error='';
 
@@ -171,8 +170,7 @@ function supplier_order_pdf_create($db, $object, $model, $outputlangs, $hidedeta
 	// Si model pas encore bon
 	if (! $modelisok)
 	{
-		$modele=new ModelePDFSuppliersOrders();
-		$liste=$modele->liste_modeles($db);
+		$liste=ModelePDFSuppliersOrders::liste_modeles($db);
 		$modele=key($liste);        // Renvoie la premiere valeur de cle trouvee dans le tableau
 		$file = "pdf_".$model.".modules.php";
 		// On verifie l'emplacement du modele

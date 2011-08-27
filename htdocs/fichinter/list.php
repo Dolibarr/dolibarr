@@ -22,7 +22,6 @@
  *	\file       htdocs/fichinter/list.php
  *	\brief      List of all interventions
  *	\ingroup    ficheinter
- *	\version    $Id: list.php,v 1.1 2011/08/21 13:01:35 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -172,5 +171,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/21 13:01:35 $ - $Revision: 1.1 $');
+llxFooter();
 ?>

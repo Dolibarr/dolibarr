@@ -21,7 +21,6 @@
  *	\file       htdocs/includes/triggers/interface_modAgenda_ActionsAuto.class.php
  *  \ingroup    agenda
  *  \brief      Trigger file for agenda module
- *	\version	$Id: interface_modAgenda_ActionsAuto.class.php,v 1.36 2011/07/31 23:29:46 eldy Exp $
  */
 
 

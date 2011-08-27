@@ -22,7 +22,6 @@
 /**
  *       \file       htdocs/admin/system/about.php
  *       \brief      About Dolibarr File page
- *       \version    $Id: about.php,v 1.5 2011/07/31 22:23:14 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -122,7 +121,7 @@ print '</form>';
 print '</ul>';
 
 
-llxFooter('$Date: 2011/07/31 22:23:14 $ - $Revision: 1.5 $');
+llxFooter();
 ?>
 
 

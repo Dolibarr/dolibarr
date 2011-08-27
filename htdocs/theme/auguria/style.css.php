@@ -20,7 +20,6 @@
 /**
  *		\file       htdocs/theme/auguria/style.css.php
  *		\brief      File for CSS style sheet Auguria
- *		\version    $Id: style.css.php,v 1.103 2011/08/22 18:24:28 eldy Exp $
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language

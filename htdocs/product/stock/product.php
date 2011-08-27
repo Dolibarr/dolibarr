@@ -23,7 +23,6 @@
  *	\file       htdocs/product/stock/product.php
  *	\ingroup    product stock
  *	\brief      Page to list detailed stock of a product
- *	\version    $Id: product.php,v 1.109 2011/08/08 16:07:48 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -518,5 +517,5 @@ print "</table>";
 $db->close();
 
 
-llxFooter('$Date: 2011/08/08 16:07:48 $ - $Revision: 1.109 $');
+llxFooter();
 ?>

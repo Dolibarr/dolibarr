@@ -21,7 +21,6 @@
  *  \file       htdocs/product/reassort.php
  *  \ingroup    produit
  *  \brief      Page to list stocks
- *  \version    $Id: reassort.php,v 1.62 2011/07/31 23:19:25 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -360,5 +359,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:19:25 $ - $Revision: 1.62 $');
+llxFooter();
 ?>
