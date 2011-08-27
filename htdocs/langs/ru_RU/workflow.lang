@@ -1,0 +1,18 @@
+/*
+ * Language code: ru_RU
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2011-08-27 16:56:14
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2011-08-27 16:56:14).
+// Reference language: en_US -> ru_RU
+CHARSET=UTF-8
+WorkflowSetup=Рабочий процесс установки модуля
+WorkflowDesc=Этот модуль является desinged изменить поведение автоматического действия в приложении. По умолчанию рабочий процесс открыт (вы делаете вещь, чтобы вы хотите). Вы можете включить автоматическую действия, которые вам интересны дюйма
+ThereIsNoWorkflowToModify=Существует не рабочий процесс можно изменить для модуля активации.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Создать заказ клиента автоматически после коммерческое предложение подписано
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Создать счет клиента автоматически после коммерческое предложение подписано
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Создать счет клиента автоматически после контракт проверяется
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Создать счет клиента автоматически после заказа клиента закрыт
+// STOP - Lines generated via autotranslator.php tool (2011-08-27 17:01:58).
