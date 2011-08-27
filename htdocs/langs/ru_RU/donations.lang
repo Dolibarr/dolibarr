@@ -9,41 +9,30 @@
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
 CHARSET=UTF-8
-Donation=Пожертвования
-Donationss=Пожертвования
+Donation=Пожертвование
+Donations=Пожертвования
 Donor=Донор
 Donors=Доноры
 AddDonation=Добавить пожертвование
-NewDonation=Новые пожертвование
-DonationPromise=Подарочные обещание
-PromisesNotValid=Не подтверждены обещания
-PromisesValid=Удостоверенная обещания
-DonationsPaid=Пожертвования оплачивается
-DonationsReceived=Пожертвования, полученные
-PublicDonation=Общественная пожертвование
-DonationsNumber=Пожертвования число
-DonationsArea=Пожертвования области
-DonationStatusPromiseNotValidated=Проект обещают
-DonationStatusPromiseValidated=Удостоверенная обещание
-DonationStatusPaid=Полученные пожертвования
-DonationStatusPromiseNotValidatedShort=Черновик
-DonationStatusPromiseValidatedShort=Подтвержденные
-DonationStatusPaidShort=Поступило
-ValidPromise=Проверить обещания
-BuildDonationReceipt=Build получения
-DonationsModels=Документы моделей пожертвование квитанции
-// Date 2009-01-19 21:30:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
-// Reference language: en_US
-Donations=Пожертвования
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
-
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> ru_RU
-ValidPromess=Проверить обещания
+NewDonation=Новое пожертвование
+DonationPromise=Обещание пожертвования
+PromisesNotValid=Неподтвержденные обещания
+PromisesValid=Подтвержденные обещания
+DonationsPaid=Оплаченные пожертвования
+DonationsReceived=Полученные пожертвования
+PublicDonation=Общественное пожертвование
+DonationsNumber=Номер пожертвования
+DonationsArea=Пожертвования
+DonationStatusPromiseNotValidated=Проект обещания
+DonationStatusPromiseValidated=Подтвержденное обещание
+DonationStatusPaid=Полученное пожертвование
+DonationStatusPromiseNotValidatedShort=Проект
+DonationStatusPromiseValidatedShort=Подтверждено
+DonationStatusPaidShort=Получено
+ValidPromise=Подтвердить обещание
+BuildDonationReceipt=Создать подтверждение получения
+DonationsModels=Модели документов для подтверждение получения пожертвования
+LastModifiedDonations=Последние %s измененных пожертвований
+SearchADonation=Поиск пожертвования
+ValidPromess=Подтвердить обещание
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:40:14).
