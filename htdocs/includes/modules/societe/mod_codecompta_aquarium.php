@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005 Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,85 +19,83 @@
  */
 
 /**
- \file       htdocs/includes/modules/societe/mod_codecompta_aquarium.php
- \ingroup    societe
- \brief      Fichier de la classe des gestion aquarium des codes compta des societes clientes
- \version    $Id: mod_codecompta_aquarium.php,v 1.17 2011/07/31 23:28:14 eldy Exp $
+ *	\file       htdocs/includes/modules/societe/mod_codecompta_aquarium.php
+ *	\ingroup    societe
+ *	\brief      File of class to manage accountancy code of thirdparties with Panicum rules
+ *	\version    $Id: mod_codecompta_aquarium.php,v 1.18 2011/08/27 13:15:38 eldy Exp $
  */
-
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/societe/modules_societe.class.php");
 
+
 /**
- \class 		mod_codecompta_aquarium
- \brief 		Classe permettant la gestion aquarium des codes compta des societes clients
+ *	\class 		mod_codecompta_aquarium
+ *	\brief 		Class to manage accountancy code of thirdparties with Aquarium rules
  */
 class mod_codecompta_aquarium extends ModeleAccountancyCode
 {
-	var $nom;
+	var $nom='Aquarium';
+    var $version='dolibarr';        // 'development', 'experimental', 'dolibarr'
+
+	var	$prefixcodecomptacustomer='411';
+	var	$prefixcodecomptasupplier='401';
 
 
 	/**
-	 * 	\brief	Constructor
+	 * 	Constructor
 	 */
 	function mod_codecompta_aquarium()
 	{
-		$this->nom = "Aquarium";
 	}
 
 
-	/**
-	 * \brief	Return description of module
-	 * \param 	$langs		Object langs
-	 * \return 	string		Description
+	/**		Return description of module
+	 *
+	 * 		@param 		$langs		Object langs
+	 * 		@return     string      Description of module
 	 */
 	function info($langs)
 	{
 		return $langs->trans("ModuleCompanyCode".$this->nom);
 	}
 
+	/**		Return an example of result returned by getNextValue
+	 *
+	 *      @param		$langs		Object langs
+	 *      @param		$objsoc		Object thirdparty
+	 *      @param		$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 */
+	function getExample($langs,$objsoc=0,$type=-1)
+	{
+	    return $this->prefixcodecomptacustomer.'MYTHIRDPARTY';
+	}
+
 
 	/**
-	 *  \brief      Return accountancy account code for a third party
-	 *  \param      DB              Database handler
-	 *  \param      societe         Third party object
-	 *  \param      type			'customer' or 'supplier'
-	 *  \return		int				>=0 if OK, <0 if KO
+	 *  Set accountancy account code for a third party into this->code
+	 *
+	 *  @param      db              Database handler
+	 *  @param      societe         Third party object
+	 *  @param      type			'customer' or 'supplier'
+	 *  @return		int				>=0 if OK, <0 if KO
 	 */
-	function get_code($DB, $societe, $type)
+	function get_code($db, $societe, $type)
 	{
-		$prefixcodecomptacustomer='411';
-		$prefixcodecomptasupplier='401';
-
 		$i = 0;
-		$this->db = $DB;
+		$this->db = $db;
 
 		dol_syslog("mod_codecompta_aquarium::get_code search code for type=".$type." company=".$societe->nom);
 
 		// Regle gestion compte compta
 		$codetouse='';
-		if ($type == 'customer') $codetouse = $prefixcodecomptacustomer;
-		if ($type == 'supplier') $codetouse = $prefixcodecomptasupplier;
-		if ($type == 'customer') $codetouse.=$societe->code_client;
-		if ($type == 'supplier') $codetouse.=$societe->code_fournisseur;
+		if ($type == 'customer') $codetouse = $this->prefixcodecomptacustomer;
+		if ($type == 'supplier') $codetouse = $this->prefixcodecomptasupplier;
+		if ($type == 'customer') $codetouse.= ($societe->code_client?$societe->code_client:'CustomerCode');
+		if ($type == 'supplier') $codetouse.= ($societe->code_fournisseur?$societe->code_fournisseur:'SupplierCode');
 		$codetouse=strtoupper(preg_replace('/([^a-z0-9])/i','',$codetouse));
 
-		$is_dispo = $this->verif($DB, $codetouse, $societe, $type);
+		$is_dispo = $this->verif($db, $codetouse, $societe, $type);
 		if (! $is_dispo)
 		{
-			/*
-			 // On tente ajout suffix
-			 while ($is_dispo == 0 && $i < 37)
-			 {
-			 $arr = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-			 $altcodetouse = $codetouse . substr($arr, $i, 1);
-
-			 $is_dispo = $this->verif($DB, $altcodetouse, $societe, $type);
-
-			 $i++;
-			 }
-			 */
-			// Pour retour
-			//			$this->code=$altcodetouse;
 			$this->code=$codetouse;
 		}
 		else
@@ -111,12 +109,13 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 
 
 	/**
-	 *   \brief		Return if a code is available
-	 *	\param		db			Database handler
-	 * 	\param		code		Code of third party
-	 * 	\param		societe		Object third party
-	 * 	\param		type		'supplier' or 'customer'
-	 *	\return		int			0 if OK but not available, >0 if OK and available, <0 if KO
+	 *  Return if a code is available
+	 *
+	 *	@param		db			Database handler
+	 * 	@param		code		Code of third party
+	 * 	@param		societe		Object third party
+	 * 	@param		type		'supplier' or 'customer'
+	 *	@return		int			0 if OK but not available, >0 if OK and available, <0 if KO
 	 */
 	function verif($db, $code, $societe, $type)
 	{

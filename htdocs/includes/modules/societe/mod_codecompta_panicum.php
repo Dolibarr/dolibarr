@@ -20,46 +20,60 @@
 /**
  *      \file       htdocs/includes/modules/societe/mod_codecompta_panicum.php
  *      \ingroup    societe
- *      \brief      Fichier de la classe des gestion panicum des codes compta des societes clientes
- *      \version    $Id: mod_codecompta_panicum.php,v 1.8 2011/07/31 23:28:14 eldy Exp $
+ *      \brief      File of class to manage accountancy code of thirdparties with Panicum rules
+ *      \version    $Id: mod_codecompta_panicum.php,v 1.9 2011/08/27 13:15:38 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/societe/modules_societe.class.php");
 
 
 /**
  *      \class 		mod_codecompta_panicum
- *      \brief 		Classe permettant la gestion panicum des codes compta des societes clients
+ *		\brief 		Class to manage accountancy code of thirdparties with Panicum rules
  */
 class mod_codecompta_panicum extends ModeleAccountancyCode
 {
-	var $nom;
+	var $nom='Panicum';
+    var $version='dolibarr';        // 'development', 'experimental', 'dolibarr'
 
 
+	/**
+	 * 	Constructor
+	 */
 	function mod_codecompta_panicum()
 	{
-		$this->nom = "Panicum";
 	}
 
 
+	/**		Return description of module
+	 *
+	 * 		@param 		$langs		Object langs
+	 * 		@return     string      Description of module
+	 */
 	function info($langs)
 	{
 		return $langs->trans("ModuleCompanyCode".$this->nom);
 	}
 
-	/**
-	 *    \brief      Return example
+	/**		Return an example of result returned by getNextValue
+	 *
+	 *      @param		$langs		Object langs
+	 *      @param		$objsoc		Object thirdparty
+	 *      @param		$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 */
-	function getExample()
+	function getExample($langs,$objsoc=0,$type=-1)
 	{
 		return '';
 	}
 
 	/**
-	 *    \brief      Renvoi code
-	 *    \param      DB              Handler d'acc�s base
-	 *    \param      societe         Objet societe
+	 *  Set accountancy account code for a third party into this->code
+	 *
+	 *  @param      db              Database handler
+	 *  @param      societe         Third party object
+	 *  @param      type			'customer' or 'supplier'
+	 *  @return		int				>=0 if OK, <0 if KO
 	 */
-	function get_code($DB, $societe)
+	function get_code($db, $societe, $type='')
 	{
 		// Renvoie toujours ok
 		$this->code = $societe->code_compta;
