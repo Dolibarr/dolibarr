@@ -1,6 +1,6 @@
 --------------------------------------------------------------
 English Dolibarr ChangeLog
-$Id: ChangeLog,v 1.427 2011/08/20 23:57:09 eldy Exp $
+$Id: ChangeLog,v 1.428 2011/08/27 15:40:08 eldy Exp $
 --------------------------------------------------------------
 
 ***** ChangeLog for 3.2 compared to 3.1 *****
@@ -10,6 +10,7 @@ For users:
 - New: Task #10500: Option to choose if professionnal id are unique
 - New: Add hide option FOURN_PRODUCT_AVAILABILITY
 - New: task #11123: Add best supplier price
+- New: Enhancement in styles.
 
 For developers:
 - Qual: Removed no more used external libraries

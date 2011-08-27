@@ -1276,7 +1276,7 @@ if ($action == 'create' && $user->rights->commande->creer)
         }
         print '</td></tr>';
     }
-    
+
     // Insert hooks
     $parameters=array();
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -1285,8 +1285,7 @@ if ($action == 'create' && $user->rights->commande->creer)
     print '<td colspan="2">';
     // pdf
     include_once(DOL_DOCUMENT_ROOT.'/includes/modules/commande/modules_commande.php');
-    $model=new ModelePDFCommandes();
-    $liste=$model->liste_modeles($db);
+    $liste=ModelePDFCommandes::liste_modeles($db);
     print $html->selectarray('model',$liste,$conf->global->COMMANDE_ADDON_PDF);
     print "</td></tr>";
 
@@ -1770,7 +1769,7 @@ else
                 }
                 print '</td></tr>';
             }
-            
+
             // Insert hooks
             $parameters=array('colspan'=>' colspan="2"');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook

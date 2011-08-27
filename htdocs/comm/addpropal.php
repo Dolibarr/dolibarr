@@ -214,8 +214,7 @@ if ($_GET["action"] == 'create')
 	print '<tr>';
 	print '<td>'.$langs->trans("DefaultModel").'</td>';
 	print '<td colspan="2">';
-	$model=new ModelePDFPropales();
-	$liste=$model->liste_modeles($db);
+	$liste=ModelePDFPropales::liste_modeles($db);
 	print $html->selectarray('model',$liste,$conf->global->PROPALE_ADDON_PDF);
 	print "</td></tr>";
 
@@ -236,7 +235,7 @@ if ($_GET["action"] == 'create')
 		print '</td>';
 		print '</tr>';
 	}
-	
+
 	// Insert hooks
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook

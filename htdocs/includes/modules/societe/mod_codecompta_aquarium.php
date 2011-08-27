@@ -22,7 +22,7 @@
  *	\file       htdocs/includes/modules/societe/mod_codecompta_aquarium.php
  *	\ingroup    societe
  *	\brief      File of class to manage accountancy code of thirdparties with Panicum rules
- *	\version    $Id: mod_codecompta_aquarium.php,v 1.18 2011/08/27 13:15:38 eldy Exp $
+ *	\version    $Id: mod_codecompta_aquarium.php,v 1.19 2011/08/27 15:40:08 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/societe/modules_societe.class.php");
 
@@ -36,8 +36,8 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	var $nom='Aquarium';
     var $version='dolibarr';        // 'development', 'experimental', 'dolibarr'
 
-	var	$prefixcodecomptacustomer='411';
-	var	$prefixcodecomptasupplier='401';
+	var	$prefixcustomeraccountancycode='411';
+	var	$prefixsupplieraccountancycode='401';
 
 
 	/**
@@ -45,6 +45,9 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	 */
 	function mod_codecompta_aquarium()
 	{
+	    global $conf;
+	    $this->prefixcustomeraccountancycode=$conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER;
+	    $this->prefixsupplieraccountancycode=$conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER;
 	}
 
 
@@ -55,7 +58,28 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	 */
 	function info($langs)
 	{
-		return $langs->trans("ModuleCompanyCode".$this->nom);
+	    global $conf;
+
+		$langs->load("companies");
+
+		$form = new Form($db);
+
+        $tooltip='';
+		$texte = '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		$texte.= '<input type="hidden" name="action" value="setModuleOptions">';
+		$texte.= '<input type="hidden" name="param1" value="COMPANY_AQUARIUM_MASK_SUPPLIER">';
+		$texte.= '<input type="hidden" name="param2" value="COMPANY_AQUARIUM_MASK_CUSTOMER">';
+		$texte.= '<table class="nobordernopadding" width="100%">';
+		$s1= $form->textwithpicto('<input type="text" class="flat" size="4" name="value1" value="'.$conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER.'">',$tooltip,1,1);
+		$s2= $form->textwithpicto('<input type="text" class="flat" size="4" name="value2" value="'.$conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER.'">',$tooltip,1,1);
+		$texte.= '<tr><td>'.$langs->trans("ModuleCompanyCode".$this->nom,$s1,$s2)."<br>\n";
+		$texte.= '</td>';
+		$texte.= '<td align="left">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+        $texte.= '</tr></table>';
+        $texte.= '</form>';
+
+		return $texte;
 	}
 
 	/**		Return an example of result returned by getNextValue
@@ -66,7 +90,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	 */
 	function getExample($langs,$objsoc=0,$type=-1)
 	{
-	    return $this->prefixcodecomptacustomer.'MYTHIRDPARTY';
+	    return $this->prefixsupplieraccountancycode.'MYSUPPLIERCODE'."<br>\n".$this->prefixcustomeraccountancycode.'MYCUSTOMERCODE';
 	}
 
 
@@ -87,8 +111,8 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 
 		// Regle gestion compte compta
 		$codetouse='';
-		if ($type == 'customer') $codetouse = $this->prefixcodecomptacustomer;
-		if ($type == 'supplier') $codetouse = $this->prefixcodecomptasupplier;
+		if ($type == 'customer') $codetouse = $this->prefixcustomeraccountancycode;
+		if ($type == 'supplier') $codetouse = $this->prefixsupplieraccountancycode;
 		if ($type == 'customer') $codetouse.= ($societe->code_client?$societe->code_client:'CustomerCode');
 		if ($type == 'supplier') $codetouse.= ($societe->code_fournisseur?$societe->code_fournisseur:'SupplierCode');
 		$codetouse=strtoupper(preg_replace('/([^a-z0-9])/i','',$codetouse));

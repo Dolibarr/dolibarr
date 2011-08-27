@@ -25,10 +25,9 @@
  *  \ingroup		commande
  *  \brief			Fichier contenant la classe mere de generation des commandes en PDF
  *  				et la classe mere de numerotation des commandes
- *  \version    	$Id: modules_commande.php,v 1.51 2011/08/11 12:14:00 eldy Exp $
  */
 
-require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
+require_once(DOL_DOCUMENT_ROOT."/core/class/commondocgenerator.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");	// requis car utilise par les classes qui heritent
 require_once(DOL_DOCUMENT_ROOT.'/core/class/discount.class.php');
 
@@ -37,7 +36,7 @@ require_once(DOL_DOCUMENT_ROOT.'/core/class/discount.class.php');
  *  \class      ModelePDFCommandes
  *  \brief      Classe mere des modeles de commandes
  */
-class ModelePDFCommandes
+abstract class ModelePDFCommandes extends CommonDocGenerator
 {
 	var $error='';
 
@@ -171,8 +170,7 @@ function commande_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0
 	// Si model pas encore bon
 	if (! $modelisok)
 	{
-		$model=new ModelePDFCommandes();
-		$liste=$model->liste_modeles($db);
+		$liste=ModelePDFCommandes::liste_modeles($db);
 		$modele=key($liste);        // Renvoie premiere valeur de cle trouvee dans le tableau
 		$file = "pdf_".$modele.".modules.php";
 		// On verifie l'emplacement du modele

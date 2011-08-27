@@ -23,27 +23,20 @@
  *  \ingroup    ficheinter
  *  \brief      Fichier contenant la classe mere de generation des fiches interventions en PDF
  *   et la classe mere de numerotation des fiches interventions
- *   \version    $Id: modules_fichinter.php,v 1.44 2011/08/11 12:14:03 eldy Exp $
+ *   \version    $Id: modules_fichinter.php,v 1.45 2011/08/27 15:40:11 eldy Exp $
  */
 
-require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
+require_once(DOL_DOCUMENT_ROOT."/core/class/commondocgenerator.class.php");
 
 
 /**
  *	\class      ModelePDFFicheinter
  *	\brief      Classe mere des modeles de fiche intervention
  */
-class ModelePDFFicheinter
+abstract class ModelePDFFicheinter extends CommonDocGenerator
 {
 	var $error='';
 
-	/**
-	 *	\brief      Constructeur
-	 */
-	function ModelePDFFicheinter()
-	{
-
-	}
 
 	/**
 	 *      \brief      Return list of active generation modules

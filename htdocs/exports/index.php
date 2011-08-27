@@ -66,7 +66,7 @@ print '</tr>';
 
 include_once(DOL_DOCUMENT_ROOT.'/includes/modules/export/modules_export.php');
 $model=new ModeleExports();
-$liste=$model->liste_modeles($db);
+$liste=$model->liste_modeles($db);    // This is not a static method for exports because method load non static properties
 
 $var=true;
 foreach($liste as $key => $val)

@@ -225,9 +225,14 @@ abstract class ModeleThirdPartyCode
         return $s;
     }
 
+	/**
+	 *   Check if mask/numbering use prefix
+	 *
+	 *   @param		int		0=no, 1=yes
+	 */
     function verif_prefixIsUsed()
     {
-        return false;
+        return 0;
     }
 
 }

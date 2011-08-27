@@ -708,8 +708,7 @@ if ($action == 'create')
         print '<tr>';
         print '<td>'.$langs->trans("DefaultModel").'</td>';
         print '<td colspan="2">';
-        $model=new ModelePDFFicheinter();
-        $liste=$model->liste_modeles($db);
+        $liste=ModelePDFFicheinter::liste_modeles($db);
         print $html->selectarray('model',$liste,$conf->global->FICHEINTER_ADDON_PDF);
         print "</td></tr>";
 

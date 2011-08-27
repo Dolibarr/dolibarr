@@ -22,7 +22,7 @@
  *       \file       htdocs/includes/modules/societe/mod_codeclient_elephant.php
  *       \ingroup    societe
  *       \brief      File of class to manage third party code with elephant rule
- *       \version    $Id: mod_codeclient_elephant.php,v 1.16 2011/08/27 13:15:38 eldy Exp $
+ *       \version    $Id: mod_codeclient_elephant.php,v 1.17 2011/08/27 15:40:08 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/societe/modules_societe.class.php");
@@ -67,7 +67,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	 */
 	function info($langs)
 	{
-		global $conf,$langs;
+		global $conf;
 
 		$langs->load("companies");
 
@@ -172,7 +172,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		}
 		else return -1;
 
-		$now=gmmktime();
+		$now=dol_now();
 
 		$numFinal=get_next_value($db,$mask,'societe',$field,$where,'',$now);
 
@@ -181,7 +181,9 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 
 
 	/**
-	 *   Verifie si le mask utilise le prefix
+	 *   Check if mask/numbering use prefix
+	 *
+	 *   @param		int		0=no, 1=yes
 	 */
 	function verif_prefixIsUsed()
 	{

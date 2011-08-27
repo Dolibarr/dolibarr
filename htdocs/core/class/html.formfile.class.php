@@ -220,8 +220,7 @@ class FormFile
                 else
                 {
                     include_once(DOL_DOCUMENT_ROOT.'/includes/modules/societe/modules_societe.class.php');
-                    $model=new ModeleThirdPartyDoc();
-                    $modellist=$model->liste_modeles($this->db);
+                    $modellist=ModeleThirdPartyDoc::liste_modeles($this->db);
                 }
             }
             else if ($modulepart == 'propal')
@@ -230,8 +229,7 @@ class FormFile
                 else
                 {
                     include_once(DOL_DOCUMENT_ROOT.'/includes/modules/propale/modules_propale.php');
-                    $model=new ModelePDFPropales();
-                    $modellist=$model->liste_modeles($this->db);
+                    $modellist=ModelePDFPropales::liste_modeles($this->db);
                 }
             }
             else if ($modulepart == 'commande')
@@ -240,8 +238,7 @@ class FormFile
                 else
                 {
                     include_once(DOL_DOCUMENT_ROOT.'/includes/modules/commande/modules_commande.php');
-                    $model=new ModelePDFCommandes();
-                    $modellist=$model->liste_modeles($this->db);
+                    $modellist=ModelePDFCommandes::liste_modeles($this->db);
                 }
             }
             elseif ($modulepart == 'expedition')
@@ -250,8 +247,7 @@ class FormFile
                 else
                 {
                     include_once(DOL_DOCUMENT_ROOT.'/includes/modules/expedition/pdf/ModelePdfExpedition.class.php');
-                    $model=new ModelePDFExpedition();
-                    $modellist=$model->liste_modeles($this->db);
+                    $modellist=ModelePDFExpedition::liste_modeles($this->db);
                 }
             }
             elseif ($modulepart == 'livraison')
@@ -260,8 +256,7 @@ class FormFile
                 else
                 {
                     include_once(DOL_DOCUMENT_ROOT.'/includes/modules/livraison/modules_livraison.php');
-                    $model=new ModelePDFDeliveryOrder();
-                    $modellist=$model->liste_modeles($this->db);
+                    $modellist=ModelePDFDeliveryOrder::liste_modeles($this->db);
                 }
             }
             else if ($modulepart == 'ficheinter')
@@ -270,8 +265,7 @@ class FormFile
                 else
                 {
                     include_once(DOL_DOCUMENT_ROOT.'/includes/modules/fichinter/modules_fichinter.php');
-                    $model=new ModelePDFFicheinter();
-                    $modellist=$model->liste_modeles($this->db);
+                    $modellist=ModelePDFFicheinter::liste_modeles($this->db);
                 }
             }
             elseif ($modulepart == 'facture')
@@ -280,8 +274,7 @@ class FormFile
                 else
                 {
                     include_once(DOL_DOCUMENT_ROOT.'/includes/modules/facture/modules_facture.php');
-                    $model=new ModelePDFFactures();
-                    $modellist=$model->liste_modeles($this->db);
+                    $modellist=ModelePDFFactures::liste_modeles($this->db);
 
                     // This is to allow to join external files to invoices
                     if (! empty($conf->concatpdf->enabled))
@@ -301,8 +294,7 @@ class FormFile
                 else
                 {
                     include_once(DOL_DOCUMENT_ROOT.'/includes/modules/project/modules_project.php');
-                    $model=new ModelePDFProjects();
-                    $modellist=$model->liste_modeles($this->db);
+                    $modellist=ModelePDFProjects::liste_modeles($this->db);
                 }
             }
             elseif ($modulepart == 'export')
@@ -311,8 +303,7 @@ class FormFile
                 else
                 {
                     include_once(DOL_DOCUMENT_ROOT.'/includes/modules/export/modules_export.php');
-                    $model=new ModeleExports();
-                    $modellist=$model->liste_modeles($this->db);
+                    $modellist=ModeleExports::liste_modeles($this->db);
                 }
             }
             else if ($modulepart == 'commande_fournisseur')
@@ -321,8 +312,7 @@ class FormFile
                 else
                 {
                     include_once(DOL_DOCUMENT_ROOT.'/includes/modules/supplier_order/modules_commandefournisseur.php');
-                    $model=new ModelePDFSuppliersOrders();
-                    $modellist=$model->liste_modeles($this->db);
+                    $modellist=ModelePDFSuppliersOrders::liste_modeles($this->db);
                 }
             }
             else if ($modulepart == 'facture_fournisseur')
@@ -331,8 +321,7 @@ class FormFile
                 else
                 {
                     include_once(DOL_DOCUMENT_ROOT.'/includes/modules/supplier_invoice/modules_facturefournisseur.php');
-                    $model=new ModelePDFSuppliersInvoices();
-                    $modellist=$model->liste_modeles($this->db);
+                    $modellist=ModelePDFSuppliersInvoices::liste_modeles($this->db);
                 }
             }
             else if ($modulepart == 'remisecheque')
@@ -341,8 +330,7 @@ class FormFile
                 else
                 {
                     include_once(DOL_DOCUMENT_ROOT.'/includes/modules/cheque/pdf/modules_chequereceipts.php');
-                    $model=new ModeleChequeReceipts();
-                    $modellist=$model->liste_modeles($this->db);
+                    $modellist=ModeleChequeReceipts::liste_modeles($this->db);
                 }
             }
             elseif ($modulepart == 'donation')
@@ -351,8 +339,7 @@ class FormFile
                 else
                 {
                     include_once(DOL_DOCUMENT_ROOT.'/includes/modules/dons/modules_don.php');
-                    $model=new ModeleDon();
-                    $modellist=$model->liste_modeles($this->db);
+                    $modellist=ModeleDon::liste_modeles($this->db);
                 }
             }
             else if ($modulepart == 'unpaid')
@@ -370,8 +357,7 @@ class FormFile
                 $class='Modele'.ucfirst($modulepart);
                 if (class_exists($class))
                 {
-                    $model=new $class();
-                    $modellist=$model->liste_modeles($this->db);
+                    $modellist=$class::liste_modeles($this->db);
                 }
                 else
                 {

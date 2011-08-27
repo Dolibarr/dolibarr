@@ -23,10 +23,10 @@
  *	\file       htdocs/includes/modules/cheque/pdf/modules_chequereceipts.php
  *	\ingroup    facture
  *	\brief      File with parent class of check receipt document generators
- *	\version    $Id: modules_chequereceipts.php,v 1.7 2011/08/11 12:14:03 eldy Exp $
+ *	\version    $Id: modules_chequereceipts.php,v 1.8 2011/08/27 15:40:10 eldy Exp $
  */
 
-require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
+require_once(DOL_DOCUMENT_ROOT."/core/class/commondocgenerator.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");   // Requis car utilise dans les classes qui heritent
 
@@ -35,7 +35,7 @@ require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");   // Req
  *	\class      ModeleChequeReceipts
  *	\brief      Classe mere des modeles de facture
  */
-class ModeleChequeReceipts
+abstract class ModeleChequeReceipts extends CommonDocGenerator
 {
 	var $error='';
 
