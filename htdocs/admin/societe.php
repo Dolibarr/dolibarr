@@ -36,6 +36,7 @@ accessforbidden();
 
 $action=GETPOST("action");
 
+
 /*
  * Actions
  */
@@ -78,7 +79,7 @@ if ($action == 'COMPANY_USE_SEARCH_TO_SELECT')
 	}
 }
 
-// define constants for models generator that need parameters
+// Define constants for submodules that contains parameters (forms with param1, param2, ... and value1, value2, ...)
 if ($action == 'setModuleOptions')
 {
 	$post_size=count($_POST);
@@ -91,6 +92,7 @@ if ($action == 'setModuleOptions')
     		if ($param) dolibarr_set_const($db,$param,$value,'chaine',0,'',$conf->entity);
     	}
     }
+    $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
 }
 
 // Activate a document generator module
@@ -188,12 +190,14 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 print_fiche_titre($langs->trans("CompanySetup"),$linkback,'setup');
 
 
-$head = societe_admin_prepare_head($soc);
+$head = societe_admin_prepare_head(null);
 
 dol_fiche_head($head, 'general', $langs->trans("ThirdParty"), 0, 'company');
 
+dol_htmloutput_mesg($mesg);
 
-// Choix du module de gestion des codes clients / fournisseurs
+
+// Module to manage customer/supplier code
 
 print_titre($langs->trans("CompanyCodeChecker"));
 
@@ -202,7 +206,7 @@ print "<tr class=\"liste_titre\">\n";
 print '  <td>'.$langs->trans("Name").'</td>';
 print '  <td>'.$langs->trans("Description").'</td>';
 print '  <td>'.$langs->trans("Example").'</td>';
-print '  <td align="center">'.$langs->trans("Status").'</td>';
+print '  <td align="center" width="80">'.$langs->trans("Status").'</td>';
 print '  <td align="center" width="60">'.$langs->trans("Infos").'</td>';
 print "</tr>\n";
 
@@ -249,7 +253,7 @@ if (is_resource($handle))
 			}
 
 			print '<td align="center">';
-			$s=$modCodeTiers->getToolTip($langs,$soc,-1);
+			$s=$modCodeTiers->getToolTip($langs,null,-1);
 			print $form->textwithpicto('',$s,1);
 			print '</td>';
 
@@ -264,7 +268,7 @@ print '</table>';
 print "<br>";
 
 
-// Choix du module de gestion des codes compta
+// Select accountancy code numbering module
 
 print_titre($langs->trans("AccountCodeManager"));
 
@@ -273,7 +277,7 @@ print '<tr class="liste_titre">';
 print '<td width="140">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td>'.$langs->trans("Example").'</td>';
-print '<td align="center">'.$langs->trans("Status").'</td>';
+print '<td align="center" width="80">'.$langs->trans("Status").'</td>';
 print '<td align="center" width="60">&nbsp;</td>';
 print "</tr>\n";
 
@@ -313,7 +317,10 @@ if (is_resource($handle))
 				print img_picto($langs->trans("Disabled"),'switch_off');
 				print '</a></td>';
 			}
-			print '<td>&nbsp;</td>';
+			print '<td align="center">';
+			$s=$modCodeCompta->getToolTip($langs,null,-1);
+			print $form->textwithpicto('',$s,1);
+			print '</td>';
 			print "</tr>\n";
 		}
 	}
@@ -355,7 +362,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="140">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
-print '<td align="center">'.$langs->trans("Status").'</td>';
+print '<td align="center" width="80">'.$langs->trans("Status").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Infos").'</td>';
 print "</tr>\n";
 
@@ -509,7 +516,7 @@ while ($i < sizeof($profid))
         	$verif=(!$conf->global->SOCIETE_IDPROF4_UNIQUE?false:true);
         	break;
 	}
-	
+
 	if ($verif)
 	{
 		print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setprofid&amp;value='.($i+1).'&amp;status=0">';

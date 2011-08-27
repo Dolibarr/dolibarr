@@ -22,7 +22,7 @@
  *	\file       htdocs/includes/modules/societe/mod_codecompta_aquarium.php
  *	\ingroup    societe
  *	\brief      File of class to manage accountancy code of thirdparties with Panicum rules
- *	\version    $Id: mod_codecompta_aquarium.php,v 1.19 2011/08/27 15:40:08 eldy Exp $
+ *	\version    $Id: mod_codecompta_aquarium.php,v 1.20 2011/08/27 16:03:49 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/societe/modules_societe.class.php");
 
@@ -90,7 +90,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	 */
 	function getExample($langs,$objsoc=0,$type=-1)
 	{
-	    return $this->prefixsupplieraccountancycode.'MYSUPPLIERCODE'."<br>\n".$this->prefixcustomeraccountancycode.'MYCUSTOMERCODE';
+	    return $this->prefixsupplieraccountancycode.'SUPPCODE'."<br>\n".$this->prefixcustomeraccountancycode.'CUSTCODE';
 	}
 
 
@@ -113,8 +113,8 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		$codetouse='';
 		if ($type == 'customer') $codetouse = $this->prefixcustomeraccountancycode;
 		if ($type == 'supplier') $codetouse = $this->prefixsupplieraccountancycode;
-		if ($type == 'customer') $codetouse.= ($societe->code_client?$societe->code_client:'CustomerCode');
-		if ($type == 'supplier') $codetouse.= ($societe->code_fournisseur?$societe->code_fournisseur:'SupplierCode');
+		if ($type == 'customer') $codetouse.= ($societe->code_client?$societe->code_client:'CUSTCODE');
+		if ($type == 'supplier') $codetouse.= ($societe->code_fournisseur?$societe->code_fournisseur:'SUPPCODE');
 		$codetouse=strtoupper(preg_replace('/([^a-z0-9])/i','',$codetouse));
 
 		$is_dispo = $this->verif($db, $codetouse, $societe, $type);
