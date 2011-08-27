@@ -1,20 +1,26 @@
 --------------------------------------------------------------
 English Dolibarr ChangeLog
-$Id: ChangeLog,v 1.428 2011/08/27 15:40:08 eldy Exp $
+$Id: ChangeLog,v 1.429 2011/08/27 16:55:10 eldy Exp $
 --------------------------------------------------------------
 
 ***** ChangeLog for 3.2 compared to 3.1 *****
 
 For users:
 - New: task #11243: Show quantity into stocks for each subproducts into the subproduct tab
-- New: Task #10500: Option to choose if professionnal id are unique
-- New: Add hide option FOURN_PRODUCT_AVAILABILITY
+- New: task #10500: Option to choose if professionnal id are unique
+- New: Add hiden option FOURN_PRODUCT_AVAILABILITY
 - New: task #11123: Add best supplier price
 - New: Enhancement in styles.
+- New: task #11289 : Modify third party acountacy code generator auqarium
+- New: task #10606 : more comprehensive message error
+- New: task #11278 : Option into point of sale module to add services in list
+- New: task #11261 : Add an entry into menu called "New shipment".
 
 For developers:
-- Qual: Removed no more used external libraries
-- Qual: Clean a lot of dead code
+- Qual: Removed no more used external libraries.
+- Qual: Cleaned a lot of dead code.
+- Qual: Parent "templates" classes were moved as abstract classes.
+- Qual: Added more hooks
 
 
 ***** ChangeLog for 3.1 compared to 3.0 *****
