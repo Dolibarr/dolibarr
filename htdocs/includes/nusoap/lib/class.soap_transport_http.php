@@ -9,7 +9,7 @@
 *
 * @author   Dietrich Ayala <dietrich@ganx4.com>
 * @author   Scott Nichol <snichol@users.sourceforge.net>
-* @version  $Id$
+* @version  $Id: class.soap_transport_http.php,v 1.8 2010/12/12 17:19:03 tiaris Exp $
 * @access public
 */
 class soap_transport_http extends nusoap_base {

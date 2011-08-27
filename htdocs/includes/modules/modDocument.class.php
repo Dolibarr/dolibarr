@@ -20,7 +20,7 @@
 /**
  *	\defgroup   	document     Module mass mailings
  *	\brief      	Module pour gerer des generations de documents
- *	\version		$Id$
+ *	\version		$Id: modDocument.class.php,v 1.22 2011/01/22 10:40:02 eldy Exp $
  */
 
 /**

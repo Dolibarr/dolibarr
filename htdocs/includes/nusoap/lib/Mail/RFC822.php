@@ -52,7 +52,7 @@
  *
  * @author  Richard Heyes <richard@phpguru.org>
  * @author  Chuck Hagenbuch <chuck@horde.org>
- * @version $Revision$
+ * @version $Revision: 1.1 $
  * @license BSD
  * @package Mail
  */

@@ -4,33 +4,27 @@
  * Generation date 2009-01-19 21:30:52
  */
 
-
 // Date 2009-01-19 21:30:52
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
 CHARSET=UTF-8
 Trip=Поездка
-Trips=Экскурсии
-TripsAndExpenses=Экскурсии и расходы
-TripCard=Дорожные карточки
+Trips=Поездки
+TripsAndExpenses=Поездки и расходы
+TripCard=Карточка поездки
 AddTrip=Добавить поездку
-ListOfTrips=Перечень экскурсий
+ListOfTrips=Список поездок
 ListOfFees=Список сборов
-NewTrip=Новое путешествие
-CompanyVisited=Компании / Фонд посетил
+NewTrip=Новая Поездка
+CompanyVisited=Посещенная организация
 Kilometers=Километры
 FeesKilometersOrAmout=Сумма или километры
-DeleteTrip=Удалить путешествие
+DeleteTrip=Удалить поездку
 ConfirmDeleteTrip=Вы уверены, что хотите удалить эту поездку?
-TF_OTHER=Другой
+TF_OTHER=Другое
 TF_LUNCH=Обед
 TF_TRIP=Поездка
-// Date 2009-01-19 21:30:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 02:09:13).
-// Reference language: en_US -> ru_RU
-TripsAndExpensesStatistics=Экскурсии и расходы статистика
-ListTripsAndExpenses=Список поездок и расходы
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 02:20:13).
+TripsAndExpensesStatistics=Статистика поездок и расходов
+ListTripsAndExpenses=Список поездок и расходов
+ExpensesArea=Область поездок и расходов
+SearchATripAndExpense=Поиск поездок и расходов

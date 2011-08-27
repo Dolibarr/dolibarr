@@ -269,8 +269,6 @@ Any executables containing that work also fall under Section 6,
 whether or not they are linked directly with the Library itself.
 
   6. As an exception to the Sections above, you may also combine or
-
-  6. As an exception to the Sections above, you may also combine or
 link a "work that uses the Library" with the Library to produce a
 work containing portions of the Library, and distribute that work
 under terms of your choice, provided that the terms permit

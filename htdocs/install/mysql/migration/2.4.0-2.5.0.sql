@@ -1,5 +1,5 @@
 --
--- $Id$
+-- $Id: 2.4.0-2.5.0.sql,v 1.3 2010/10/06 09:40:18 eldy Exp $
 --
 -- Be carefull to requests order.
 -- This file must be loaded by calling /install/index.php page

@@ -1,5 +1,5 @@
 --
--- $Id$
+-- $Id: 2.2.0-2.4.0.sql,v 1.7 2011/05/17 09:00:18 eldy Exp $
 --
 -- Attention a l ordre des requetes.
 -- Ce fichier doit etre charge sur une version 2.2.0 

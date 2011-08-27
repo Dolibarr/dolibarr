@@ -13,7 +13,7 @@
  *	\file       htdocs/includes/modules/mailings/framboise.modules.php
  *	\ingroup    mailing
  *	\brief      Example file to provide a list of recipients for mailing module
- *	\version    $Revision$
+ *	\version    $Revision: 1.5 $
  */
 
 include_once DOL_DOCUMENT_ROOT.'/includes/modules/mailings/modules_mailings.php';

@@ -18,7 +18,7 @@
 /**
  *	\file       htdocs/includes/modules/expedition/methode_expedition_lettremax.modules.php
  *	\ingroup    expedition
- * 	\version	$Id$
+ * 	\version	$Id: methode_expedition_lettremax.modules.php,v 1.1 2011/05/25 16:53:41 hregis Exp $
  */
 
 include_once "methode_expedition.modules.php";
