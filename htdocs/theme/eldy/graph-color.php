@@ -20,7 +20,6 @@
  *		\file       htdocs/theme/eldy/graph-color.php
  *		\brief      File to declare colors to use to build graphics with theme Eldy
  *      \ingroup    core
- *		\version    $Id: graph-color.php,v 1.10 2011/07/31 23:22:05 eldy Exp $
  */
 
 global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;

@@ -15,13 +15,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**	    \file       htdocs/public/agenda/agendaexport.php
- *      \ingroup    agenda
- *		\brief      Page to export agenda
- *                  http://127.0.0.1/dolibarr/public/agenda/agendaexport.php?format=vcal&exportkey=cle
- *                  http://127.0.0.1/dolibarr/public/agenda/agendaexport.php?format=ical&type=event&exportkey=cle
- *					http://127.0.0.1/dolibarr/public/agenda/agendaexport.php?format=rss&exportkey=cle
- *		\version    $Id: agendaexport.php,v 1.18 2011/07/31 23:23:21 eldy Exp $
+/**
+ * 	\file       htdocs/public/agenda/agendaexport.php
+ * 	\ingroup    agenda
+ * 	\brief      Page to export agenda
+ * 				http://127.0.0.1/dolibarr/public/agenda/agendaexport.php?format=vcal&exportkey=cle
+ * 				http://127.0.0.1/dolibarr/public/agenda/agendaexport.php?format=ical&type=event&exportkey=cle
+ * 				http://127.0.0.1/dolibarr/public/agenda/agendaexport.php?format=rss&exportkey=cle
  */
 
 //if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
@@ -73,7 +73,7 @@ if (empty($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY))
 
 	llxHeaderVierge();
 	print '<div class="error">Module Agenda was not configured properly.</div>';
-	llxFooterVierge('$Date: 2011/07/31 23:23:21 $ - $Revision: 1.18 $');
+	llxFooterVierge('$Date: 2011/08/27 16:15:40 $ - $Revision: 1.19 $');
 	exit;
 }
 
@@ -84,7 +84,7 @@ if (empty($_GET["exportkey"]) || $conf->global->MAIN_AGENDA_XCAL_EXPORTKEY != $_
 
 	llxHeaderVierge();
 	print '<div class="error">Bad value for key.</div>';
-	llxFooterVierge('$Date: 2011/07/31 23:23:21 $ - $Revision: 1.18 $');
+	llxFooterVierge('$Date: 2011/08/27 16:15:40 $ - $Revision: 1.19 $');
 	exit;
 }
 
@@ -116,7 +116,7 @@ if ($shortfilename=='dolibarrcalendar')
 	$langs->load("errors");
 	llxHeaderVierge();
     print '<div class="error">'.$langs->trans("ErrorWrongValueForParameterX",'format').'</div>';
-	llxFooterVierge('$Date: 2011/07/31 23:23:21 $ - $Revision: 1.18 $');
+	llxFooterVierge('$Date: 2011/08/27 16:15:40 $ - $Revision: 1.19 $');
 	exit;
 }
 
@@ -201,5 +201,5 @@ if ($format == 'rss')
 
 llxHeaderVierge();
 print '<div class="error">'.$agenda->error.'</div>';
-llxFooterVierge('$Date: 2011/07/31 23:23:21 $ - $Revision: 1.18 $');
+llxFooterVierge('$Date: 2011/08/27 16:15:40 $ - $Revision: 1.19 $');
 ?>

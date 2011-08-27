@@ -20,7 +20,6 @@
  *       \file       htdocs/user/group/ldap.php
  *       \ingroup    ldap
  *       \brief      Page fiche LDAP groupe
- *       \version    $Id: ldap.php,v 1.28 2011/08/27 14:24:55 hregis Exp $
  */
 
 require("../../main.inc.php");

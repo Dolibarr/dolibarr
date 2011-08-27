@@ -21,7 +21,6 @@
  *		\file       htdocs/theme/bureau2crea/graph-color.php
  *		\brief      File to declare colors to use to build graphics with theme Bure2Crea
  *      \ingroup    core
- *		\version    $Id: graph-color.php,v 1.3 2011/08/17 15:47:49 cdelambert Exp $
  */
 
 global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;

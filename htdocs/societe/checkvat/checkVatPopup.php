@@ -19,7 +19,6 @@
  *		\file       htdocs/societe/checkvat/checkVatPopup.php
  *		\ingroup    societe
  *		\brief      Popup screen to validate VAT
- *		\version    $Id: checkVatPopup.php,v 1.21 2011/08/27 14:25:04 hregis Exp $
  */
 
 require ("../../main.inc.php");

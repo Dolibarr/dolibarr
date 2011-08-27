@@ -21,7 +21,6 @@
  *	\file       htdocs/societe/index.php
  *  \ingroup    societe
  *  \brief      Home page for third parties area
- *  \version    $Id: index.php,v 1.21 2011/08/27 14:24:31 hregis Exp $
  */
 
 require("../main.inc.php");

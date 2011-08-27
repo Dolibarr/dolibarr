@@ -21,7 +21,6 @@
  *      \ingroup    project
  *      \brief      File that contain parent class for projects models
  *                  and parent class for projects numbering models
- *      \version    $Id: modules_project.php,v 1.15 2011/08/27 15:40:09 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT."/core/class/commondocgenerator.class.php");
 

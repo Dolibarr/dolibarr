@@ -21,7 +21,6 @@
  *       \file       htdocs/includes/modules/societe/mod_codeclient_leopard.php
  *       \ingroup    societe
  *       \brief      Fichier de la classe des gestion leopard des codes clients
- *       \version    $Id: mod_codeclient_leopard.php,v 1.18 2011/08/27 13:15:37 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/societe/modules_societe.class.php");

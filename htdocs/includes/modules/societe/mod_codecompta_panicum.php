@@ -21,7 +21,6 @@
  *      \file       htdocs/includes/modules/societe/mod_codecompta_panicum.php
  *      \ingroup    societe
  *      \brief      File of class to manage accountancy code of thirdparties with Panicum rules
- *      \version    $Id: mod_codecompta_panicum.php,v 1.9 2011/08/27 13:15:38 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/societe/modules_societe.class.php");
 

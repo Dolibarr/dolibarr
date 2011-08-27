@@ -22,7 +22,6 @@
  *		\ingroup    paypal
  *		\brief      File to offer a way to make a payment for a particular Dolibarr entity
  *		\author	    Laurent Destailleur
- *		\version    $Id: newpayment.php,v 1.27 2011/08/20 15:11:33 eldy Exp $
  */
 
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
@@ -946,5 +945,5 @@ html_print_paypal_footer($mysoc,$langs);
 
 $db->close();
 
-llxFooterPaypal('$Date: 2011/08/20 15:11:33 $ - $Revision: 1.27 $');
+llxFooterPaypal('$Date: 2011/08/27 16:15:22 $ - $Revision: 1.28 $');
 ?>

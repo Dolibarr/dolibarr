@@ -20,7 +20,6 @@
  *	\ingroup    export
  *	\brief      File of class to generate export file with Excel format
  *	\author	    Laurent Destailleur
- *	\version    $Id: export_excel.modules.php,v 1.29 2011/08/11 19:13:04 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/export/modules_export.php");
@@ -62,7 +61,7 @@ class ExportExcel extends ModeleExports
 		$this->desc='<b>Excel</b> file format (.xls)<br>This is native Excel 95 format.';
 		$this->extension='xls';             // Extension for generated file by this driver
         $this->picto='mime/xls';					// Picto
-		$ver=explode(' ','$Revision: 1.29 $');
+		$ver=explode(' ','$Revision: 1.30 $');
 		$this->version=$ver[2];             // Driver version
 
 		// If driver use an external library, put its name here

@@ -20,7 +20,6 @@
  *      \file       htdocs/user/note.php
  *      \ingroup    usergroup
  *      \brief      Fiche de notes sur un utilisateur Dolibarr
- *		\version    $Id: note.php,v 1.25 2011/08/27 14:24:50 hregis Exp $
  */
 
 require("../main.inc.php");

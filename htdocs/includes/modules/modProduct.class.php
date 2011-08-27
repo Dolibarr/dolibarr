@@ -22,7 +22,6 @@
 /**
  *	\defgroup   produit     Module products
  *	\brief      Module pour gerer le suivi de produits predefinis
- *	\version	$Id: modProduct.class.php,v 1.14 2011/08/05 22:11:23 eldy Exp $
  */
 
 /**

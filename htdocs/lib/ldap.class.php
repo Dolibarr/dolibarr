@@ -22,7 +22,6 @@
 /**
  *	\file 		htdocs/lib/ldap.class.php
  *	\brief 		File of class to manage LDAP features
- *	\version 	$Id: ldap.class.php,v 1.77 2011/07/31 23:25:43 eldy Exp $
  */
 
 /**

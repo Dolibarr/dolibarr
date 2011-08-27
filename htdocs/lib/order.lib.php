@@ -23,7 +23,6 @@
  *  \file       htdocs/lib/order.lib.php
  *  \brief      Ensemble de fonctions de base pour le module commande
  *  \ingroup    commande
- *  \version    $Id: order.lib.php,v 1.27 2011/07/31 23:25:41 eldy Exp $
  */
 
 function commande_prepare_head($object)

@@ -22,7 +22,6 @@
  *       \file       htdocs/includes/modules/societe/mod_codeclient_elephant.php
  *       \ingroup    societe
  *       \brief      File of class to manage third party code with elephant rule
- *       \version    $Id: mod_codeclient_elephant.php,v 1.17 2011/08/27 15:40:08 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/societe/modules_societe.class.php");

@@ -21,7 +21,6 @@
  *	\file       htdocs/product/stats/commande_fournisseur.php
  *	\ingroup    product service commande
  *	\brief      Page des stats des commandes fournisseurs pour un produit
- *	\version    $Id: commande_fournisseur.php,v 1.35 2011/08/27 14:24:42 hregis Exp $
  */
 
 require("../../main.inc.php");

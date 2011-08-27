@@ -25,7 +25,6 @@
  *  \file       htdocs/product/fiche.php
  *  \ingroup    product
  *  \brief      Page to show product
- *  \version    $Id: fiche.php,v 1.379 2011/08/27 14:24:38 hregis Exp $
  */
 
 require("../main.inc.php");

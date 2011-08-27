@@ -18,10 +18,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**     \file       htdocs/product/popuprop.php
- *		\ingroup    propal, produit
- *		\brief      Liste des produits/services par popularite
- *		\version    $Id: popuprop.php,v 1.43 2011/08/27 14:24:38 hregis Exp $
+/**
+ * \file       htdocs/product/popuprop.php
+ * \ingroup    propal, produit
+ * \brief      Liste des produits/services par popularite
  */
 
 require("../main.inc.php");

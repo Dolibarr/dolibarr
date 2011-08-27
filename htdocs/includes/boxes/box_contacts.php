@@ -21,7 +21,6 @@
  *	\file       htdocs/includes/boxes/box_contacts.php
  *	\ingroup    societes
  *	\brief      Module to show box of contacts
- *	\version	$Id: box_contacts.php,v 1.3 2011/07/31 23:29:10 eldy Exp $
  */
 
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");

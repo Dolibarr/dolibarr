@@ -17,11 +17,10 @@
  */
 
 /**
-    \file       htdocs/includes/boxes/box_osc_client.php
-    \ingroup    osc
-    \brief      Module to generate box of shop customers
-	\version	$Id: box_osc_client.php,v 1.17 2011/07/31 23:29:10 eldy Exp $
-*/
+ * \file       htdocs/includes/boxes/box_osc_client.php
+ * \ingroup    osc
+ * \brief      Module to generate box of shop customers
+ */
 
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
 

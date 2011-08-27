@@ -19,7 +19,6 @@
  *	\file       htdocs/societe/canvas/individual/actions_card_individual.class.php
  *	\ingroup    thirdparty
  *	\brief      Fichier de la classe Thirdparty card controller (individual canvas)
- *	\version    $Id: actions_card_individual.class.php,v 1.13 2011/07/31 23:22:59 eldy Exp $
  */
 include_once(DOL_DOCUMENT_ROOT.'/societe/canvas/actions_card_common.class.php');
 

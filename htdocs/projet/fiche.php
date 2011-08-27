@@ -21,7 +21,6 @@
  *	\file       htdocs/projet/fiche.php
  *	\ingroup    projet
  *	\brief      Project card
- *	\version    $Id: fiche.php,v 1.128 2011/08/27 14:24:16 hregis Exp $
  */
 
 require("../main.inc.php");

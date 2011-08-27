@@ -17,15 +17,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**     \defgroup   paypal     Module paypal
- *      \brief      Add integration with Paypal online payment system.
+/**
+ * \defgroup   paypal     Module paypal
+ * \brief      Add integration with Paypal online payment system.
  */
 
 /**
  *      \file       htdocs/includes/modules/modPaypal.class.php
  *      \ingroup    paypal
  *      \brief      Description and activation file for module Paypal
- *		\version	$Id: modPaypal.class.php,v 1.12 2011/07/31 23:28:12 eldy Exp $
  */
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 

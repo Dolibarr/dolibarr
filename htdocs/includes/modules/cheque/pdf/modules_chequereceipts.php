@@ -23,7 +23,6 @@
  *	\file       htdocs/includes/modules/cheque/pdf/modules_chequereceipts.php
  *	\ingroup    facture
  *	\brief      File with parent class of check receipt document generators
- *	\version    $Id: modules_chequereceipts.php,v 1.8 2011/08/27 15:40:10 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/class/commondocgenerator.class.php");

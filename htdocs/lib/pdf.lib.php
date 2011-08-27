@@ -24,7 +24,6 @@
  *	\file       htdocs/lib/pdf.lib.php
  *	\brief      Set of functions used for PDF generation
  *	\ingroup    core
- *	\version    $Id: pdf.lib.php,v 1.105 2011/08/18 22:25:46 eldy Exp $
  */
 
 

@@ -20,7 +20,6 @@
  *      \file       htdocs/webservices/admin/webservices.php
  *		\ingroup    webservices
  *		\brief      Page to setup webservices module
- *		\version    $Id: webservices.php,v 1.9 2011/08/27 14:24:55 hregis Exp $
  */
 
 require("../../main.inc.php");

@@ -19,7 +19,6 @@
 /**
  *      \defgroup   workflow     Module workflow
  *      \brief      Workflow management
- *      \version    $Id: modWorkflow.class.php,v 1.11 2011/08/01 13:26:22 hregis Exp $
  */
 
 /**

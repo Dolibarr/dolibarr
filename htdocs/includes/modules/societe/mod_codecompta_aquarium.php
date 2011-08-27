@@ -22,7 +22,6 @@
  *	\file       htdocs/includes/modules/societe/mod_codecompta_aquarium.php
  *	\ingroup    societe
  *	\brief      File of class to manage accountancy code of thirdparties with Panicum rules
- *	\version    $Id: mod_codecompta_aquarium.php,v 1.20 2011/08/27 16:03:49 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/societe/modules_societe.class.php");
 

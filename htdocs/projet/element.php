@@ -21,7 +21,6 @@
  *      \file       htdocs/projet/element.php
  *      \ingroup    projet facture
  *		\brief      Page of project referrers
- *		\version    $Id: element.php,v 1.50 2011/08/27 14:24:16 hregis Exp $
  */
 
 require("../main.inc.php");

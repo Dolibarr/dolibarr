@@ -22,7 +22,6 @@
  *	\file       htdocs/product/traduction.php
  *	\ingroup    product
  *	\brief      Page de traduction des produits
- *	\version    $Id: traduction.php,v 1.46 2011/08/27 14:24:38 hregis Exp $
  */
 
 require("../main.inc.php");

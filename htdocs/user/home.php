@@ -19,7 +19,6 @@
 /**
  *	\file       htdocs/user/home.php
  *	\brief      Home page of users and groups management
- *	\version    $Id: home.php,v 1.53 2011/08/27 14:24:50 hregis Exp $
  */
 
 require("../main.inc.php");

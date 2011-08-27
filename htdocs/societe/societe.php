@@ -21,7 +21,6 @@
  *	\file       htdocs/societe/societe.php
  *	\ingroup    societe
  *	\brief      Page to show a third party
- *	\version    $Id: societe.php,v 1.14 2011/08/27 14:24:32 hregis Exp $
  */
 
 require_once("../main.inc.php");

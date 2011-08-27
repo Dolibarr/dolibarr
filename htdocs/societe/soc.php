@@ -25,7 +25,6 @@
  *  \file       htdocs/societe/soc.php
  *  \ingroup    societe
  *  \brief      Third party card page
- *  \version    $Id: soc.php,v 1.141 2011/08/27 14:24:31 hregis Exp $
  */
 
 require("../main.inc.php");

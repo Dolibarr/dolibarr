@@ -20,7 +20,6 @@
  *	\file       htdocs/product/stock/fiche-valo.php
  *	\ingroup    stock
  *	\brief      Page fiche de valorisation du stock dans l'entrepot
- *	\version    $Id: fiche-valo.php,v 1.18 2011/08/27 14:24:58 hregis Exp $
  */
 
 require("../../main.inc.php");

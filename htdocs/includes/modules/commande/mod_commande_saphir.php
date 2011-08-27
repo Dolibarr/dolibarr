@@ -20,11 +20,10 @@
  */
 
 /**
-	\file       htdocs/includes/modules/commande/mod_commande_saphir.php
-	\ingroup    commande
-	\brief      Fichier contenant la classe du modele de numerotation de reference de commande Saphir
-	\version    $Id: mod_commande_saphir.php,v 1.26 2011/07/31 23:28:13 eldy Exp $
-*/
+ * \file       htdocs/includes/modules/commande/mod_commande_saphir.php
+ * \ingroup    commande
+ * \brief      Fichier contenant la classe du modele de numerotation de reference de commande Saphir
+ */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/commande/modules_commande.php");
 

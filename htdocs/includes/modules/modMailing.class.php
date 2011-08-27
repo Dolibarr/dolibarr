@@ -20,7 +20,6 @@
 /**
  *	\defgroup   mailing  Module emailing
  *	\brief      Module to manage EMailings
- *	\version	$Id: modMailing.class.php,v 1.23 2011/08/03 01:16:25 eldy Exp $
  */
 
 /**

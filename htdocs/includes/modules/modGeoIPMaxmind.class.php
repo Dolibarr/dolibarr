@@ -15,9 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**     \defgroup   geoip      Module GeoIP
- *		\brief      Module to make geoip conversions
- *		\version	$Id: modGeoIPMaxmind.class.php,v 1.6 2011/07/31 23:28:12 eldy Exp $
+/**
+ * \defgroup   geoip      Module GeoIP
+ * \brief      Module to make geoip conversions
  */
 
 /**

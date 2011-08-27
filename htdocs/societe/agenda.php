@@ -24,7 +24,6 @@
  *  \file       htdocs/societe/agenda.php
  *  \ingroup    societe
  *  \brief      Page of third party events
- *  \version    $Id: agenda.php,v 1.23 2011/08/27 14:24:31 hregis Exp $
  */
 
 require("../main.inc.php");

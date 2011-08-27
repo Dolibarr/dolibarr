@@ -19,7 +19,6 @@
  *	\file       htdocs/societe/canvas/individual/dao_thirdparty_individual.class.php
  *	\ingroup    thirdparty
  *	\brief      Fichier de la classe des particuliers
- *	\version    $Id: dao_thirdparty_individual.class.php,v 1.6 2011/07/31 23:22:59 eldy Exp $
  */
 
 /**

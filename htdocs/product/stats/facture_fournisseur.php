@@ -21,7 +21,6 @@
  *       \file       htdocs/product/stats/facture_fournisseur.php
  *       \ingroup    product service facture
  *       \brief      Page des stats des factures fournisseurs pour un produit
- *       \version    $Id: facture_fournisseur.php,v 1.34 2011/08/27 14:24:41 hregis Exp $
  */
 
 require("../../main.inc.php");

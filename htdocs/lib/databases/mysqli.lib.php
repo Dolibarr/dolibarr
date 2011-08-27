@@ -22,7 +22,6 @@
 /**
  *	\file       htdocs/lib/databases/mysqli.lib.php
  *	\brief      Class file to manage Dolibarr database access for a Mysql database
- *	\version	$Id: mysqli.lib.php,v 1.115 2011/08/04 13:58:55 eldy Exp $
  */
 
 // For compatibility during upgrade

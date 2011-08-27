@@ -20,7 +20,6 @@
  *	\file			htdocs/paypal/lib/paypal.lib.php
  *  \ingroup		paypal
  *  \brief			Library for common paypal functions
- *  \version		$Id: paypal.lib.php,v 1.27 2011/08/03 01:34:59 eldy Exp $
  */
 function llxHeaderPaypal($title, $head = "")
 {

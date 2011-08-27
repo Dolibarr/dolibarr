@@ -21,7 +21,6 @@
  *	    \file       htdocs/societe/notify/fiche.php
  *      \ingroup    societe notification
  *		\brief      Tab for notifications of third party
- *		\version    $Id: fiche.php,v 1.72 2011/08/27 14:24:46 hregis Exp $
  */
 
 require("../../main.inc.php");

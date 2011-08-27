@@ -21,7 +21,6 @@
  *       \file       htdocs/product/barcode.php
  *       \ingroup    product
  *       \brief      Page with bar code informations of product
- *       \version    $Id: barcode.php,v 1.53 2011/08/27 14:24:38 hregis Exp $
  */
 
 require("../main.inc.php");

@@ -20,15 +20,15 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**     \defgroup   tax		Module taxes
- \brief      Module pour inclure des fonctions de saisies des taxes (tva) et charges sociales
+/**
+ * \defgroup   tax		Module taxes
+ * \brief      Module pour inclure des fonctions de saisies des taxes (tva) et charges sociales
  */
 
 /**
  *      \file       htdocs/includes/modules/modTax.class.php
  *      \ingroup    tax
  *      \brief      Fichier de description et activation du module Taxe
- *		\version	$Id$
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");

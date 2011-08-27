@@ -20,8 +20,6 @@
  *      \file       htdocs/projet/class/task.class.php
  *      \ingroup    project
  *      \brief      This file is a CRUD class file for Task (Create/Read/Update/Delete)
- *		\version    $Id: task.class.php,v 1.12 2011/07/31 23:23:39 eldy Exp $
- *		\remarks	Initialy built by build_class_from_table on 2008-09-10 12:41
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");

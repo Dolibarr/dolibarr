@@ -20,7 +20,6 @@
  *   	\file       htdocs/societe/class/client.class.php
  *		\ingroup    societe
  *		\brief      File for class of customers
- *		\version    $Id: client.class.php,v 1.4 2011/07/31 23:22:58 eldy Exp $
  */
 include_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
 

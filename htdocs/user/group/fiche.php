@@ -21,7 +21,6 @@
 /**
  *       \file       htdocs/user/group/fiche.php
  *       \brief      Onglet groupes utilisateurs
- *       \version    $Id: fiche.php,v 1.79 2011/08/27 14:24:55 hregis Exp $
  */
 
 require("../../main.inc.php");

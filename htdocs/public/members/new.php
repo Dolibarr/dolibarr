@@ -21,7 +21,6 @@
  *	\file       htdocs/public/members/new.php
  *	\ingroup    member
  *	\brief      Example of form to add a new member
- *	\version    $Id: new.php,v 1.44 2011/08/20 15:11:33 eldy Exp $
  *
  *  Note that you can add following constant to change behaviour of page
  *  MEMBER_NEWFORM_AMOUNT               Default amount for autosubscribe form
@@ -293,7 +292,7 @@ if ($action == 'added')
     print $langs->trans("NewMemberbyWeb");
     print '</center>';
 
-    llxFooterVierge('$Date: 2011/08/20 15:11:33 $ - $Revision: 1.44 $');
+    llxFooterVierge('$Date: 2011/08/27 16:15:36 $ - $Revision: 1.45 $');
     exit;
 }
 
@@ -541,5 +540,5 @@ print "<br></form>\n";
 
 $db->close();
 
-llxFooterVierge('$Date: 2011/08/20 15:11:33 $ - $Revision: 1.44 $');
+llxFooterVierge('$Date: 2011/08/27 16:15:36 $ - $Revision: 1.45 $');
 ?>

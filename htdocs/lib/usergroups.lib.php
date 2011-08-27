@@ -21,7 +21,6 @@
 /**
  *	    \file       htdocs/lib/usergroups.lib.php
  *		\brief      Ensemble de fonctions de base pour la gestion des utilisaterus et groupes
- *		\version    $Id: usergroups.lib.php,v 1.31 2011/08/18 08:25:09 hregis Exp $
  */
 function user_prepare_head($object)
 {

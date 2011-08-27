@@ -20,7 +20,6 @@
 /**
  *  \file		htdocs/includes/menus/standard/eldy.lib.php
  *  \brief		Library for file eldy menus
- *  \version	$Id: eldy.lib.php,v 1.69 2011/08/21 13:19:26 eldy Exp $
  */
 
 

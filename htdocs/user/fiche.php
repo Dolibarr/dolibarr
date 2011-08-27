@@ -24,7 +24,6 @@
 /**
  *       \file       htdocs/user/fiche.php
  *       \brief      Tab of user card
- *       \version    $Id: fiche.php,v 1.283 2011/08/27 14:24:50 hregis Exp $
  */
 
 require("../main.inc.php");

@@ -21,7 +21,6 @@
  *	\file       htdocs/includes/boxes/box_members.php
  *	\ingroup    societes
  *	\brief      Module de generation de l'affichage de la box clients
- *	\version	$Id: box_members.php,v 1.4 2011/07/31 23:29:09 eldy Exp $
  */
 
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");

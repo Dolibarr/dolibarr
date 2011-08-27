@@ -24,7 +24,6 @@
  *	\ingroup    propale
  *	\brief      Fichier de la classe permettant de generer les propales au modele Azur
  *	\author	    Laurent Destailleur
- *	\version    $Id: pdf_propale_azur.modules.php,v 1.245 2011/08/11 12:14:03 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/propale/modules_propale.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");

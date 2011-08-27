@@ -22,7 +22,6 @@
 /**
  *	\file       	htdocs/lib/databases/mysql.lib.php
  *	\brief      	Class file to manage Dolibarr database access for a Mysql database
- *	\version		$Id: mysql.lib.php,v 1.121 2011/08/04 13:58:55 eldy Exp $
  */
 // For compatibility during upgrade
 if (! defined('DOL_DOCUMENT_ROOT'))	 define('DOL_DOCUMENT_ROOT', '../..');

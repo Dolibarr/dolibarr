@@ -21,7 +21,6 @@
  *	\file       htdocs/includes/modules/project/mod_project_simple.php
  *	\ingroup    project
  *	\brief      File with class to manage the numbering module Simple for project references
- *	\version    $Id: mod_project_simple.php,v 1.6 2011/07/31 23:28:09 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/project/modules_project.php");

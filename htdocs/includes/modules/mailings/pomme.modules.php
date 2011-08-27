@@ -21,7 +21,6 @@
  *	\file       htdocs/includes/modules/mailings/pomme.modules.php
  *	\ingroup    mailing
  *	\brief      File of class to offer a selector of emailing targets with Rule 'Pomme'.
- *	\version    $Id: pomme.modules.php,v 1.19 2011/07/31 23:28:15 eldy Exp $
  */
 include_once DOL_DOCUMENT_ROOT.'/includes/modules/mailings/modules_mailings.php';
 

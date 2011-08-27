@@ -20,7 +20,6 @@
 /**
  *	\defgroup   contrat     Module contract
  *	\brief      Module pour gerer la tenue de contrat de services
- *	\version	$Id: modContrat.class.php,v 1.41 2011/07/31 23:28:11 eldy Exp $
  */
 
 /**

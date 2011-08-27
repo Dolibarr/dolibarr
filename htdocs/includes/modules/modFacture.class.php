@@ -22,7 +22,6 @@
 /**
  * 		\defgroup   facture     Module invoices
  *      \brief      Module pour gerer les factures clients et/ou fournisseurs
- *		\version	$Id: modFacture.class.php,v 1.115 2011/07/31 23:28:10 eldy Exp $
  */
 
 

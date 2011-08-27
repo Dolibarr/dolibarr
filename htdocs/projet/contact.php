@@ -19,7 +19,6 @@
  *       \file       htdocs/projet/contact.php
  *       \ingroup    project
  *       \brief      Onglet de gestion des contacts du projet
- *       \version    $Id: contact.php,v 1.31 2011/08/27 14:24:16 hregis Exp $
  */
 
 require("../main.inc.php");

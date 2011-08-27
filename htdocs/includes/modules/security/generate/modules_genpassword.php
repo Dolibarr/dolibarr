@@ -20,7 +20,6 @@
  *		\file       htdocs/includes/modules/security/generate/modules_genpassword.php
  *		\ingroup    core
  *		\brief      File with parent class for password generating classes
- *		\version    $Id: modules_genpassword.php,v 1.7 2011/07/31 23:28:16 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT.'/lib/functions.lib.php');
 

@@ -21,7 +21,6 @@
  *       \file       htdocs/includes/modules/societe/mod_codeclient_monkey.php
  *       \ingroup    societe
  *       \brief      Fichier de la classe des gestion lion des codes clients
- *       \version    $Id: mod_codeclient_monkey.php,v 1.12 2011/08/27 13:15:38 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/societe/modules_societe.class.php");

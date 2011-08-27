@@ -22,7 +22,6 @@
  *	    \file       htdocs/lib/project.lib.php
  *		\brief      Functions used by project module
  *      \ingroup    project
- *      \version    $Id: project.lib.php,v 1.70 2011/07/31 23:26:00 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
 
@@ -98,7 +97,6 @@ function project_prepare_head($object)
  *	    \file       htdocs/lib/project.lib.php
  *		\brief      Ensemble de fonctions de base pour le module projet
  *      \ingroup    societe
- *      \version    $Id: project.lib.php,v 1.70 2011/07/31 23:26:00 eldy Exp $
  */
 function task_prepare_head($object)
 {

@@ -19,7 +19,6 @@
  *	    \file       htdocs/public/donations/donateurs_code.php
  *      \ingroup    donation
  *		\brief      Page to list donators
- * 		\version	$Id: donateurs_code.php,v 1.13 2011/07/31 23:23:21 eldy Exp $
  */
 
 define("NOLOGIN",1);		// This means this output page does not require to be logged.

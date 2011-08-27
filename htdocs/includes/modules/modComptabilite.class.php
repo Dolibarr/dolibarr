@@ -18,16 +18,16 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**     \defgroup   comptabilite     Module comptabilite
-        \brief      Module pour inclure des fonctions de comptabilite (gestion de comptes comptables et rapports)
-		\version	$Id: modComptabilite.class.php,v 1.57 2011/07/31 23:28:11 eldy Exp $
-*/
+/**
+ * \defgroup   comptabilite     Module comptabilite
+ * \brief      Module pour inclure des fonctions de comptabilite (gestion de comptes comptables et rapports)
+ */
 
 /**
-        \file       htdocs/includes/modules/modComptabilite.class.php
-        \ingroup    comptabilite
-        \brief      Fichier de description et activation du module Comptabilite
-*/
+ * \file       htdocs/includes/modules/modComptabilite.class.php
+ * \ingroup    comptabilite
+ * \brief      Fichier de description et activation du module Comptabilite
+ */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 

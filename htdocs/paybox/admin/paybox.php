@@ -16,10 +16,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**	    \file       htdocs/paybox/admin/paybox.php
- *		\ingroup    paybox
- *		\brief      Page to setup paybox module
- *		\version    $Id: paybox.php,v 1.15 2011/08/27 14:24:45 hregis Exp $
+/**
+ * \file       htdocs/paybox/admin/paybox.php
+ * \ingroup    paybox
+ * \brief      Page to setup paybox module
  */
 
 require("../../main.inc.php");

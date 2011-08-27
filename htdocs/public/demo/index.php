@@ -22,7 +22,6 @@
  *		\ingroup    core
  *		\brief      Entry page to access demo
  *		\author	    Laurent Destailleur
- *		\version    $Id: index.php,v 1.61 2011/07/31 23:23:21 eldy Exp $
  */
 
 define("NOLOGIN",1);	// This means this output page does not require to be logged.
@@ -353,7 +352,7 @@ if (! empty($conf->global->MAIN_GOOGLE_AN_ID))
 }
 
 
-llxFooterVierge('$Date: 2011/07/31 23:23:21 $ - $Revision: 1.61 $');
+llxFooterVierge('$Date: 2011/08/27 16:15:37 $ - $Revision: 1.62 $');
 
 
 

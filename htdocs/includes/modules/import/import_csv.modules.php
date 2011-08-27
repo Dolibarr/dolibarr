@@ -22,7 +22,6 @@
  *		\ingroup    import
  *		\brief      File to load import files with CSV format
  *		\author	    Laurent Destailleur
- *		\version    $Id: import_csv.modules.php,v 1.33 2011/07/31 23:28:17 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/import/modules_import.php");
@@ -71,7 +70,7 @@ class ImportCsv extends ModeleImports
 		$this->desc=$langs->trans("CSVFormatDesc",$this->separator,$this->enclosure,$this->escape);
 		$this->extension='csv';         // Extension for generated file by this driver
 		$this->picto='mime/other';		// Picto
-		$ver=explode(' ','$Revision: 1.33 $');
+		$ver=explode(' ','$Revision: 1.34 $');
 		$this->version=$ver[2];         // Driver version
 
 		// If driver use an external library, put its name here

@@ -21,7 +21,6 @@
  *	\file       htdocs/includes/modules/rapport/pdf_paiement.class.php
  *	\ingroup    banque
  *	\brief      File to build payment reports
- *	\version    $Id: pdf_paiement.class.php,v 1.66 2011/08/11 12:14:01 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");

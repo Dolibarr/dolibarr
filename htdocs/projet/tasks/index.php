@@ -21,7 +21,6 @@
  *	\file       htdocs/projet/tasks/index.php
  *	\ingroup    project
  *	\brief      List all task of a project
- *	\version    $Id: index.php,v 1.44 2011/08/27 14:24:49 hregis Exp $
  */
 
 require ("../../main.inc.php");

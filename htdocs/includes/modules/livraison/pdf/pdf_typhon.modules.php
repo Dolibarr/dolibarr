@@ -24,7 +24,6 @@
  *	\ingroup    livraison
  *	\brief      File of class to manage receving receipts with template Typhon
  *	\author	    Laurent Destailleur
- *	\version    $Id: pdf_typhon.modules.php,v 1.88 2011/08/11 12:14:02 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/livraison/modules_livraison.php");

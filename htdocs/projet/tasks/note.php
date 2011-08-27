@@ -19,7 +19,6 @@
  *	\file       htdocs/projet/tasks/note.php
  *	\ingroup    project
  *	\brief      Page to show information on a task
- *	\version    $Id: note.php,v 1.14 2011/08/27 14:24:49 hregis Exp $
  */
 
 require ("../../main.inc.php");

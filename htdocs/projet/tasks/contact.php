@@ -21,7 +21,6 @@
  *	\file       htdocs/projet/tasks/contact.php
  *	\ingroup    project
  *	\brief      Actors of a task
- *	\version    $Id: contact.php,v 1.25 2011/08/27 14:24:49 hregis Exp $
  */
 
 require ("../../main.inc.php");

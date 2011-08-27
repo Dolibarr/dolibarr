@@ -22,7 +22,6 @@
  *	\file       	htdocs/product/stock/user.php
  *	\ingroup    	stock
  *	\brief      	Page to link dolibarr users with warehouses
- *	\version    	$Id: user.php,v 1.17 2011/08/27 14:24:57 hregis Exp $
  * 	\deprecated		This page is never called. Feature will never be developped.
  */
 

@@ -21,7 +21,6 @@
  *	\file       htdocs/projet/ganttview.php
  *	\ingroup    projet
  *	\brief      Gantt diagramm of a project
- *	\version    $Id: ganttview.php,v 1.15 2011/08/27 14:24:16 hregis Exp $
  */
 
 require ("../main.inc.php");

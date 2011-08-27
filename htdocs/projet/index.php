@@ -21,7 +21,6 @@
  *       \file       htdocs/projet/index.php
  *       \ingroup    projet
  *       \brief      Main project home page
- *       \version    $Id: index.php,v 1.77 2011/08/27 14:24:16 hregis Exp $
  */
 
 require("../main.inc.php");

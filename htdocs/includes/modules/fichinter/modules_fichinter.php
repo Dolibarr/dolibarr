@@ -22,8 +22,7 @@
  *  \file       htdocs/includes/modules/fichinter/modules_fichinter.php
  *  \ingroup    ficheinter
  *  \brief      Fichier contenant la classe mere de generation des fiches interventions en PDF
- *   et la classe mere de numerotation des fiches interventions
- *   \version    $Id: modules_fichinter.php,v 1.45 2011/08/27 15:40:11 eldy Exp $
+ *   			et la classe mere de numerotation des fiches interventions
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/class/commondocgenerator.class.php");

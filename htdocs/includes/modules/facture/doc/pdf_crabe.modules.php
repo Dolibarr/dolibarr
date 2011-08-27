@@ -24,7 +24,6 @@
  *	\ingroup    facture
  *	\brief      File of class to generate invoices from crab model
  *	\author	    Laurent Destailleur
- *	\version    $Id: pdf_crabe.modules.php,v 1.14 2011/08/11 12:14:02 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/facture/modules_facture.php");

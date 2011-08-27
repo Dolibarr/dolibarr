@@ -23,7 +23,6 @@
  *                  This page is called by paypal with url provided to payal competed with parameter TOKEN=xxx
  *                  This token can be used to get more informations.
  *		\author	    Laurent Destailleur
- *		\version    $Id: paymentok.php,v 1.12 2011/07/31 23:23:20 eldy Exp $
  */
 
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
@@ -188,5 +187,5 @@ html_print_paypal_footer($mysoc,$langs);
 
 $db->close();
 
-llxFooterPaypal('$Date: 2011/07/31 23:23:20 $ - $Revision: 1.12 $');
+llxFooterPaypal('$Date: 2011/08/27 16:15:22 $ - $Revision: 1.13 $');
 ?>

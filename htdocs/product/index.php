@@ -21,7 +21,6 @@
  *	\file       htdocs/product/index.php
  *  \ingroup    product
  *  \brief      Page accueil des produits et services
- *  \version    $Id: index.php,v 1.102 2011/08/27 14:24:38 hregis Exp $
  */
 
 require("../main.inc.php");

@@ -20,9 +20,6 @@
 /**
  *	    \file       htdocs/lib/contact.lib.php
  *		\brief      Ensemble de fonctions de base pour les contacts
- *		\version    $Id: contact.lib.php,v 1.10 2011/07/31 23:25:22 eldy Exp $
- *
- *		Ensemble de fonctions de base de dolibarr sous forme d'include
  */
 
 /**

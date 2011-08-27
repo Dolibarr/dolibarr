@@ -21,7 +21,6 @@
  *	\file       htdocs/product/stock/mouvement.php
  *	\ingroup    stock
  *	\brief      Page to list stock movements
- *	\version    $Id: mouvement.php,v 1.64 2011/08/27 14:24:57 hregis Exp $
  */
 
 require("../../main.inc.php");

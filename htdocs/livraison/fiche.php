@@ -23,7 +23,6 @@
  *	\file       htdocs/livraison/fiche.php
  *	\ingroup    livraison
  *	\brief      Fiche descriptive d'un bon de livraison=reception
- *	\version    $Id: fiche.php,v 1.115 2011/08/27 14:25:02 hregis Exp $
  */
 
 require("../main.inc.php");

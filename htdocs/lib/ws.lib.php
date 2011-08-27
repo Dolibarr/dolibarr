@@ -19,7 +19,6 @@
 /**
  *  \file		htdocs/lib/ws.lib.php
  *  \brief		Set of function for manipulating web services
- * 	\version	$Id: ws.lib.php,v 1.3 2011/07/31 23:25:42 eldy Exp $
  */
 
 

@@ -21,7 +21,6 @@
  *      \file       htdocs/includes/boxes/box_services_vendus.php
  *		\ingroup    produits,services
  *      \brief      Module de generation de l'affichage de la box services_vendus
- *		\version	$Id: box_services_vendus.php,v 1.54 2011/07/31 23:29:09 eldy Exp $
  */
 
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");

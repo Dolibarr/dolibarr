@@ -21,7 +21,6 @@
  *	\file       htdocs/projet/activity/index.php
  *	\ingroup    projet
  *	\brief      Page activite perso du module projet
- *	\version    $Id: index.php,v 1.38 2011/08/27 14:25:00 hregis Exp $
  */
 
 require ("../../main.inc.php");

@@ -21,7 +21,6 @@
  *	\file       htdocs/projet/tasks.php
  *	\ingroup    projet
  *	\brief      List all tasks of a project
- *	\version    $Id: tasks.php,v 1.9 2011/08/27 14:24:16 hregis Exp $
  */
 
 require ("../main.inc.php");

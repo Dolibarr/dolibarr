@@ -20,7 +20,6 @@
 /**
  *		\file 		htdocs/lib/price.lib.php
  *		\brief 		Librairie contenant les fonctions pour calculer un prix.
- *		\version 	$Id: price.lib.php,v 1.36 2011/07/31 23:26:01 eldy Exp $
  */
 
 

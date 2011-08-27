@@ -19,7 +19,6 @@
  *	\file       htdocs/projet/document.php
  *	\ingroup    project
  *	\brief      Page de gestion des documents attachees a un projet
- *	\version    $Id: document.php,v 1.15 2011/08/27 14:24:16 hregis Exp $
  */
 
 require('../main.inc.php');

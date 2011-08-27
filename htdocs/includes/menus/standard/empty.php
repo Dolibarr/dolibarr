@@ -18,7 +18,6 @@
 /**
  *	    \file       htdocs/includes/menus/standard/empty.php
  *		\brief      This is an example of an empty top menu handler
- *		\version    $Id: empty.php,v 1.6 2011/07/31 23:46:08 eldy Exp $
  */
 
 /**

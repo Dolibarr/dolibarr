@@ -19,7 +19,6 @@
  *       \file       htdocs/ftp/admin/ftpclient.php
  *       \ingroup    ftp
  *       \brief      Admin page to setup FTP client module
- *       \version    $Id: ftpclient.php,v 1.6 2011/08/27 14:24:29 hregis Exp $
  */
 
 require("../../main.inc.php");

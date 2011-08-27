@@ -23,7 +23,6 @@
 /**
  *	\defgroup   ficheinter     Module intervention cards
  *	\brief      Module to manage intervention cards
- *	\version	$Id$
  */
 
 /**

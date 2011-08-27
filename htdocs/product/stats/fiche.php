@@ -22,7 +22,6 @@
  *       \file       htdocs/product/stats/fiche.php
  *       \ingroup    product
  *       \brief      Page of product statistics
- *       \version    $Id: fiche.php,v 1.112 2011/08/27 14:24:41 hregis Exp $
  */
 
 require("../../main.inc.php");

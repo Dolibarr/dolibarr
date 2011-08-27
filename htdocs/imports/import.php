@@ -20,7 +20,6 @@
  *      \file       htdocs/imports/import.php
  *      \ingroup    import
  *      \brief      Pages of import Wizard
- *      \version    $Id: import.php,v 1.71 2011/08/27 14:24:59 hregis Exp $
  */
 
 require_once("../main.inc.php");

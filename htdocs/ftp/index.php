@@ -20,7 +20,6 @@
  *	\file       htdocs/ftp/index.php
  *	\ingroup    ftp
  *	\brief      Main page for FTP section area
- *	\version    $Id: index.php,v 1.26 2011/08/27 14:24:42 hregis Exp $
  *	\author		Laurent Destailleur
  */
 

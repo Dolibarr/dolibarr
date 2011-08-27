@@ -23,7 +23,6 @@
 /**
  *  \file           htdocs/includes/modules/DolibarrModules.class.php
  *  \brief          Fichier de description et activation des modules Dolibarr
- *  \version        $Id: DolibarrModules.class.php,v 1.163 2011/07/31 23:28:12 eldy Exp $
  */
 
 

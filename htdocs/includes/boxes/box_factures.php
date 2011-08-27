@@ -21,7 +21,6 @@
  *	\file       htdocs/includes/boxes/box_factures.php
  *	\ingroup    factures
  *	\brief      Module de generation de l'affichage de la box factures
- *	\version	$Id: box_factures.php,v 1.52 2011/07/31 23:29:09 eldy Exp $
  */
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
 

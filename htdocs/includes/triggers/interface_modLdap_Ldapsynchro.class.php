@@ -19,7 +19,6 @@
  *      \file       htdocs/includes/triggers/interface_modLdap_Ldapsynchro.class.php
  *      \ingroup    core
  *      \brief      Fichier de gestion des triggers LDAP
- *		\version	$Id: interface_modLdap_Ldapsynchro.class.php,v 1.20 2011/07/31 23:29:46 eldy Exp $
  */
 require_once (DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 

@@ -19,7 +19,6 @@
 /**
  *	\defgroup   deplacement     Module trips
  *	\brief      Module pour gerer les deplacements et notes de frais
- *	\version	$Id: modDeplacement.class.php,v 1.29 2011/07/31 23:28:12 eldy Exp $
  */
 
 /**

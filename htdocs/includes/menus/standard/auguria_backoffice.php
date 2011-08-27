@@ -20,7 +20,6 @@
 /**
  *	\file       htdocs/includes/menus/standard/auguria_backoffice.php
  *	\brief      Gestionnaire nomme Auguria du menu du haut
- *	\version    $Id: auguria_backoffice.php,v 1.4 2011/07/31 23:46:07 eldy Exp $
  *
  *	\remarks    La construction d'un gestionnaire pour le menu du haut est simple:
  *	\remarks    Toutes les entrees de menu a faire apparaitre dans la barre du haut

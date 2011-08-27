@@ -20,7 +20,6 @@
  *      \file       htdocs/lib/tax.lib.php
  *      \ingroup    tax
  *      \brief      Library for tax module
- *      \version    $Id: tax.lib.php,v 1.22 2011/07/31 23:26:01 eldy Exp $
  */
 
 

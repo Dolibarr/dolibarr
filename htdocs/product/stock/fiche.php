@@ -22,7 +22,6 @@
  *	\file       htdocs/product/stock/fiche.php
  *	\ingroup    stock
  *	\brief      Page fiche entrepot
- *	\version    $Id: fiche.php,v 1.101 2011/08/27 14:24:57 hregis Exp $
  */
 
 require("../../main.inc.php");

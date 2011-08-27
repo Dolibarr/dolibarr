@@ -21,7 +21,6 @@
  *	\file       htdocs/includes/modules/cheque/pdf/pdf_blochet.class.php
  *	\ingroup    banque
  *	\brief      File to build cheque deposit receipts
- *	\version    $Id: pdf_blochet.class.php,v 1.43 2011/08/11 12:14:03 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');

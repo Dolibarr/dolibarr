@@ -19,7 +19,6 @@
 /**
  *       \file       htdocs/user/clicktodial.php
  *       \brief      Page for Click to dial datas
- *       \version    $Id: clicktodial.php,v 1.26 2011/08/27 14:24:50 hregis Exp $
  */
 
 require("../main.inc.php");

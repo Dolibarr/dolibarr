@@ -23,7 +23,6 @@
  *	    \file       htdocs/includes/modules/dons/modules_don.php
  *		\ingroup    don
  *		\brief      File of class to manage donation document generation
- *		\version    $Id: modules_don.php,v 1.24 2011/08/27 15:40:09 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT."/core/class/commondocgenerator.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/dons/class/don.class.php");

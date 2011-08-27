@@ -19,7 +19,6 @@
  *	\file       htdocs/product/canvas/default/product.default.class.php
  *	\ingroup    produit
  *	\brief      Fichier de la classe des produits par defaut
- *	\version    $Id: product.default.class.php,v 1.42 2011/07/31 23:19:28 eldy Exp $
  */
 include_once(DOL_DOCUMENT_ROOT.'/product/class/product.class.php');
 

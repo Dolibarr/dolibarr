@@ -21,7 +21,6 @@
  *		\ingroup    paybox
  *		\brief      File to show page after a failed payment
  *		\author	    Laurent Destailleur
- *		\version    $Id: paymentko.php,v 1.9 2011/07/31 23:23:20 eldy Exp $
  */
 
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
@@ -77,5 +76,5 @@ html_print_paybox_footer($mysoc,$langs);
 
 $db->close();
 
-llxFooterPayBox('$Date: 2011/07/31 23:23:20 $ - $Revision: 1.9 $');
+llxFooterPayBox('$Date: 2011/08/27 16:15:23 $ - $Revision: 1.10 $');
 ?>

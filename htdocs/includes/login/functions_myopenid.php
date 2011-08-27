@@ -20,7 +20,6 @@
  *      \file       htdocs/includes/login/functions_dolibarr.php
  *      \ingroup    core
  *      \brief      Authentication functions for Dolibarr mode
- *		\version	$Id: functions_myopenid.php,v 1.4 2011/07/31 23:29:11 eldy Exp $
  */
 
 

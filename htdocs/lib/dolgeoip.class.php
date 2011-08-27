@@ -20,7 +20,6 @@
  *  \file		htdocs/lib/dolgeoip.class.php
  * 	\ingroup	geoip
  *  \brief		Library for managing module geoip
- *  \version	$Id: dolgeoip.class.php,v 1.6 2011/08/21 15:26:16 eldy Exp $
  */
 
 

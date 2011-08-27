@@ -18,7 +18,6 @@
 /**
  *      \defgroup   pos       Module points of sale
  *      \brief      Module to manage points of sale
- *		\version	$Id: modCashDesk.class.php,v 1.26 2011/07/31 23:28:12 eldy Exp $
  */
 
 /**
@@ -54,7 +53,7 @@ class modCashDesk extends DolibarrModules
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "CashDesk module";
 
-		$this->revision = explode(' ','$Revision: 1.26 $');
+		$this->revision = explode(' ','$Revision: 1.27 $');
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);

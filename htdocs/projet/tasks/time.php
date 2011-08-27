@@ -22,7 +22,6 @@
  *	\file       htdocs/projet/tasks/time.php
  *	\ingroup    projet
  *	\brief      Page to add new time spent on a task
- *	\version    $Id: time.php,v 1.34 2011/08/27 14:24:49 hregis Exp $
  */
 
 require("../../main.inc.php");

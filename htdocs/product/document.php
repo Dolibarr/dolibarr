@@ -23,7 +23,6 @@
  *       \file       htdocs/product/document.php
  *       \ingroup    product
  *       \brief      Page des documents joints sur les produits
- *       \version    $Id: document.php,v 1.70 2011/08/27 14:24:38 hregis Exp $
  */
 
 require('../main.inc.php');

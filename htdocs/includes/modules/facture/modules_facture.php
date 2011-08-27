@@ -24,7 +24,6 @@
  *	\ingroup    facture
  *	\brief      Fichier contenant la classe mere de generation des factures en PDF
  * 				et la classe mere de numerotation des factures
- *	\version    $Id: modules_facture.php,v 1.97 2011/08/27 15:40:09 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/class/commondocgenerator.class.php");

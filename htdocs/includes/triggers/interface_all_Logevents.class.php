@@ -20,7 +20,6 @@
  *      \file       htdocs/includes/triggers/interface_all_Logevents.class.php
  *      \ingroup    core
  *      \brief      Trigger file for
- *		\version	$Id: interface_all_Logevents.class.php,v 1.23 2011/07/31 23:29:45 eldy Exp $
  */
 
 

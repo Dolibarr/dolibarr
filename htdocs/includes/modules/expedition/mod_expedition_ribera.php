@@ -20,7 +20,6 @@
  *  \file       htdocs/includes/modules/expedition/mod_expedition_ribera.php
  *  \ingroup    expedition
  *  \brief      File of class to manage expedition numbering rules Ribera
- *  \version    $Id: mod_expedition_ribera.php,v 1.2 2011/07/31 23:28:14 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/expedition/modules_expedition.php");

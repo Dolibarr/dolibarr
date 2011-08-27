@@ -19,7 +19,6 @@
  *	\file       htdocs/societe/canvas/default/dao_thirdparty_default.class.php
  *	\ingroup    thirdparty
  *	\brief      Fichier de la classe des tiers par defaut
- *	\version    $Id: dao_thirdparty_default.class.php,v 1.5 2011/07/31 23:22:58 eldy Exp $
  */
 
 /**

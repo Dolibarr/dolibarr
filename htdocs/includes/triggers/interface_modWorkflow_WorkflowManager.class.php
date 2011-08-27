@@ -20,7 +20,6 @@
  *      \file       htdocs/includes/triggers/interface_modWorkflow_WorkflowManager.class.php
  *      \ingroup    core
  *      \brief      Trigger file for workflows
- *      \version	$Id: interface_modWorkflow_WorkflowManager.class.php,v 1.10 2011/08/12 05:41:01 hregis Exp $
  */
 
 

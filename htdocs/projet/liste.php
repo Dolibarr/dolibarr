@@ -22,7 +22,6 @@
  *	\file       htdocs/projet/liste.php
  *	\ingroup    projet
  *	\brief      Page to list projects
- *	\version    $Id: liste.php,v 1.50 2011/08/27 14:24:16 hregis Exp $
  */
 
 require("../main.inc.php");

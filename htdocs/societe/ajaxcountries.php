@@ -19,7 +19,6 @@
 /**
  *       \file       htdocs/societe/ajaxcountries.php
  *       \brief      File to return Ajax response on country request
- *       \version    $Id: ajaxcountries.php,v 1.15 2011/07/31 23:22:56 eldy Exp $
  */
 
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL',1); // Disables token renewal

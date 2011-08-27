@@ -19,8 +19,7 @@
  *      \file       htdocs/user/info.php
  *      \ingroup    core
  *		\brief      Page des informations d'un utilisateur
- *		\version    $Id: info.php,v 1.20 2011/08/27 14:24:50 hregis Exp $
-*/
+ */
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");

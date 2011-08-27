@@ -21,7 +21,6 @@
  *  \file       htdocs/societe/lien.php
  *  \ingroup    societe
  *  \brief      Page of links to other third parties
- *  \version    $Id: lien.php,v 1.40 2011/08/27 14:24:31 hregis Exp $
  */
 
 require("../main.inc.php");

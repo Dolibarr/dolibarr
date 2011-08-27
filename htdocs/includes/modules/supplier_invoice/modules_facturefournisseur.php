@@ -20,7 +20,6 @@
  *		\file       htdocs/includes/modules/supplier_invoice/modules_facturefournisseur.php
  *      \ingroup    facture fourniseur
  *      \brief      File that contain parent class for supplier invoices models
- *      \version    $Id: modules_facturefournisseur.php,v 1.12 2011/08/27 15:40:10 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT."/core/class/commondocgenerator.class.php");
 

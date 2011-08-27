@@ -21,7 +21,6 @@
  *  \file       htdocs/societe/commerciaux.php
  *  \ingroup    societe
  *  \brief      Page of links to sales representatives
- *  \version    $Id: commerciaux.php,v 1.30 2011/08/27 14:24:31 hregis Exp $
  */
 
 require("../main.inc.php");

@@ -22,7 +22,6 @@
  *	\file       htdocs/product/photos.php
  *	\ingroup    product
  *	\brief      Onglet photos de la fiche produit
- *	\version    $Id: photos.php,v 1.92 2011/08/27 14:24:37 hregis Exp $
  */
 
 require("../main.inc.php");

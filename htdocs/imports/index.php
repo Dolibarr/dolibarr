@@ -19,7 +19,6 @@
  *       \file       htdocs/imports/index.php
  *       \ingroup    import
  *       \brief      Page accueil de la zone import
- *       \version    $Id: index.php,v 1.14 2011/08/27 14:24:59 hregis Exp $
  */
 
 require_once("../main.inc.php");

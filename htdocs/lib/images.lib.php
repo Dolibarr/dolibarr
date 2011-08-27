@@ -20,7 +20,6 @@
 /**
  *  \file		htdocs/lib/images.lib.php
  *  \brief		Set of function for manipulating images
- * 	\version	$Id: images.lib.php,v 1.24 2011/07/31 23:26:02 eldy Exp $
  */
 
 // Define size of logo small and mini

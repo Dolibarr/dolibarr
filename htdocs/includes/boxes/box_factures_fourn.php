@@ -21,7 +21,6 @@
  *	    \file       htdocs/includes/boxes/box_factures_fourn.php
  *      \ingroup    supplier
  *		\brief      Fichier de gestion d'une box des factures fournisseurs
- *		\version    $Id: box_factures_fourn.php,v 1.36 2011/07/31 23:29:10 eldy Exp $
  */
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
 

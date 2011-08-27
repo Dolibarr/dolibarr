@@ -19,7 +19,6 @@
 /**
  *       \file       htdocs/user/param_ihm.php
  *       \brief      Page to show user setup for display
- *       \version    $Id: param_ihm.php,v 1.54 2011/08/27 14:24:50 hregis Exp $
  */
 
 require("../main.inc.php");

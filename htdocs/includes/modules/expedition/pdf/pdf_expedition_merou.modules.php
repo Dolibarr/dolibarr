@@ -22,7 +22,6 @@
  *	\file       htdocs/includes/modules/expedition/pdf/pdf_expedition_merou.modules.php
  *	\ingroup    expedition
  *	\brief      Fichier de la classe permettant de generer les bordereaux envoi au modele Merou
- *	\version    $Id: pdf_expedition_merou.modules.php,v 1.86 2011/08/11 12:14:00 eldy Exp $
  */
 
 require_once DOL_DOCUMENT_ROOT."/includes/modules/expedition/pdf/ModelePdfExpedition.class.php";

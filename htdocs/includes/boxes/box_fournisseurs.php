@@ -17,11 +17,10 @@
  */
 
 /**
-    \file       htdocs/includes/boxes/box_fournisseurs.php
-    \ingroup    fournisseurs
-    \brief      Module to generate box of suppliers
-	\version	$Id: box_fournisseurs.php,v 1.30 2011/07/31 23:29:10 eldy Exp $
-*/
+ * \file       htdocs/includes/boxes/box_fournisseurs.php
+ * \ingroup    fournisseurs
+ * \brief      Module to generate box of suppliers
+ */
 
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
 

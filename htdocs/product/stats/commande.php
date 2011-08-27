@@ -21,7 +21,6 @@
  *       \file       htdocs/product/stats/commande.php
  *       \ingroup    product service commande
  *       \brief      Page des stats des commandes clients pour un produit
- *       \version    $Id: commande.php,v 1.49 2011/08/27 14:24:42 hregis Exp $
  */
 
 require("../../main.inc.php");

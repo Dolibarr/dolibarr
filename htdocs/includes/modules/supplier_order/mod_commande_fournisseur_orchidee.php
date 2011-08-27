@@ -22,7 +22,6 @@
  *	\file       htdocs/includes/modules/supplier_order/mod_commande_fournisseur_orchidee.php
  *	\ingroup    commande
  *	\brief      Fichier contenant la classe du modele de numerotation de reference de commande fournisseur Orchidee
- *	\version    $Id: mod_commande_fournisseur_orchidee.php,v 1.9 2011/07/31 23:28:17 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/supplier_order/modules_commandefournisseur.php");

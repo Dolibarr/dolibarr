@@ -22,7 +22,6 @@
  *   \file       htdocs/societe/socnote.php
  *   \brief      Tab for notes on third party
  *   \ingroup    societe
- *   \version    $Id: socnote.php,v 1.24 2011/08/27 14:24:31 hregis Exp $
  */
 
 require("../main.inc.php");

@@ -21,7 +21,6 @@
  *  \file       htdocs/product/reassort.php
  *  \ingroup    produit
  *  \brief      Page to list stocks
- *  \version    $Id: reassort.php,v 1.63 2011/08/27 14:24:38 hregis Exp $
  */
 
 require("../main.inc.php");

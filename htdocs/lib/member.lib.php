@@ -19,9 +19,6 @@
 /**
  *	    \file       htdocs/lib/member.lib.php
  *		\brief      Ensemble de fonctions de base pour les adherents
- *		\version    $Id: member.lib.php,v 1.26 2011/08/17 19:43:18 hregis Exp $
- *
- *		Ensemble de fonctions de base de dolibarr sous forme d'include
  */
 
 /**

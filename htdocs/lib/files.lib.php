@@ -19,7 +19,6 @@
 /**
  *  \file		htdocs/lib/files.lib.php
  *  \brief		Library for file managing functions
- *  \version	$Id: files.lib.php,v 1.72 2011/08/26 17:59:14 eldy Exp $
  */
 
 /**

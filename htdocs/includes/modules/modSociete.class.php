@@ -22,7 +22,6 @@
 /**
  *	\defgroup   societe     Module societe
  *	\brief      Module to manage third parties (customers, prospects)
- *	\version	$Id: modSociete.class.php,v 1.124 2011/08/17 11:34:21 eldy Exp $
  */
 
 /**

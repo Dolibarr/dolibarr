@@ -16,9 +16,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**     \defgroup   ftp		Module FTP
- *      \brief      Module for FTP client module
- *		\version	$Id: modFTP.class.php,v 1.10 2011/07/31 23:28:11 eldy Exp $
+/**
+ * \defgroup   ftp		Module FTP
+ * \brief      Module for FTP client module
  */
 
 /**

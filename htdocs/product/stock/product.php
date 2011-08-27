@@ -23,7 +23,6 @@
  *	\file       htdocs/product/stock/product.php
  *	\ingroup    product stock
  *	\brief      Page to list detailed stock of a product
- *	\version    $Id: product.php,v 1.110 2011/08/27 14:24:57 hregis Exp $
  */
 
 require("../../main.inc.php");

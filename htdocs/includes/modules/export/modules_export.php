@@ -20,7 +20,6 @@
  *	\file       htdocs/includes/modules/export/modules_export.php
  *	\ingroup    export
  *	\brief      File of parent class for export modules
- *	\version    $Id: modules_export.php,v 1.26 2011/08/27 15:40:11 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/class/commondocgenerator.class.php");

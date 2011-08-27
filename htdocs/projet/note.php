@@ -19,7 +19,6 @@
  *	\file       htdocs/projet/note.php
  *	\ingroup    project
  *	\brief      Fiche d'information sur un projet
- *	\version    $Id: note.php,v 1.14 2011/08/27 14:24:16 hregis Exp $
  */
 
 require("../main.inc.php");

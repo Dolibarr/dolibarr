@@ -17,11 +17,10 @@
  */
 
 /**
-	    \file       htdocs/societe/notify/index.php
-		\ingroup    notification
-		\brief      List of done notifications
-		\version    $Id: index.php,v 1.18 2011/08/27 14:24:46 hregis Exp $
-*/
+ * \file       htdocs/societe/notify/index.php
+ * \ingroup    notification
+ * \brief      List of done notifications
+ */
 
 require("../../main.inc.php");
 $langs->load("companies");

@@ -23,7 +23,6 @@
  *  \file       htdocs/product/fournisseurs.php
  *  \ingroup    product
  *  \brief      Page of tab suppliers for products
- *  \version    $Id: fournisseurs.php,v 1.102 2011/08/27 14:24:37 hregis Exp $
  */
 
 require("../main.inc.php");

@@ -21,7 +21,6 @@
  *	\file       htdocs/product/stock/valo.php
  *  \ingroup    stock
  *  \brief      Page with stock values
- *  \version    $Id: valo.php,v 1.28 2011/08/27 14:24:58 hregis Exp $
  */
 
 require("../../main.inc.php");

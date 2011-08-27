@@ -19,7 +19,6 @@
  *	\file       htdocs/product/stock/info.php
  *	\ingroup    stock
  *	\brief      Page des informations d'un entrepot
- *	\version    $Id: info.php,v 1.17 2011/08/27 14:24:57 hregis Exp $
  */
 
 require("../../main.inc.php");

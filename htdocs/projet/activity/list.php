@@ -22,7 +22,6 @@
  *	\file       htdocs/projet/activity/list.php
  *	\ingroup    projet
  *	\brief      List activities of tasks
- *	\version    $Id: list.php,v 1.32 2011/08/27 14:25:00 hregis Exp $
  */
 
 require ("../../main.inc.php");

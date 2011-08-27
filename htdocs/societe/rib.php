@@ -22,7 +22,6 @@
  *	    \file       htdocs/societe/rib.php
  *      \ingroup    societe
  *		\brief      BAN tab for companies
- *		\version    $Id: rib.php,v 1.39 2011/08/27 14:24:32 hregis Exp $
  */
 
 require("../main.inc.php");

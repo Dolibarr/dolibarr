@@ -21,7 +21,6 @@
 /**
  *       \file       htdocs/societe/ajaxcompanies.php
  *       \brief      File to return Ajax response on third parties request
- *       \version    $Id: ajaxcompanies.php,v 1.30 2011/07/31 23:22:57 eldy Exp $
  */
 
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL',1); // Disables token renewal

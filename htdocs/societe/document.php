@@ -22,7 +22,6 @@
  *  \file       htdocs/societe/document.php
  *  \brief      Tab for documents linked to third party
  *  \ingroup    societe
- *  \version    $Id: document.php,v 1.40 2011/08/27 14:24:31 hregis Exp $
  */
 
 require("../main.inc.php");

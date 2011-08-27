@@ -17,10 +17,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**	    \file       htdocs/paypal/admin/paypal.php
- *		\ingroup    paypal
- *		\brief      Page to setup paypal module
- *		\version    $Id: paypal.php,v 1.24 2011/08/27 14:25:03 hregis Exp $
+/**
+ * \file       htdocs/paypal/admin/paypal.php
+ * \ingroup    paypal
+ * \brief      Page to setup paypal module
  */
 
 require("../../main.inc.php");

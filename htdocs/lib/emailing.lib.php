@@ -19,7 +19,6 @@
 /**
  *	    \file       htdocs/lib/emailing.lib.php
  *		\brief      Library file with function for emailing module
- *		\version    $Id: emailing.lib.php,v 1.3 2011/07/31 23:25:32 eldy Exp $
  */
 
 /**

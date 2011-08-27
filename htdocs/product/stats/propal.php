@@ -21,7 +21,6 @@
  *	    \file       htdocs/product/stats/propal.php
  *      \ingroup    product service propal
  *		\brief      Page des stats des propals pour un produit
- *		\version    $Id: propal.php,v 1.59 2011/08/27 14:24:42 hregis Exp $
  */
 
 

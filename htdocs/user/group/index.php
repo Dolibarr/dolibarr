@@ -22,7 +22,6 @@
  *      \file       htdocs/user/group/index.php
  * 		\ingroup	core
  *      \brief      Page of user groups
- *      \version    $Id: index.php,v 1.31 2011/08/27 14:24:55 hregis Exp $
  */
 
 require("../../main.inc.php");

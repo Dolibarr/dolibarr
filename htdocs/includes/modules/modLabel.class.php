@@ -18,7 +18,6 @@
 
 /**
  *	\defgroup   label         Module labels
- *	\version	$Id: modLabel.class.php,v 1.15 2011/08/03 01:03:47 eldy Exp $
  *	\brief      Module pour gerer les formats d'impression des etiquettes
  */
 
