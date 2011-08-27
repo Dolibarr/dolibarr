@@ -21,7 +21,6 @@
  *       \file       htdocs/compta/bank/index.php
  *       \ingroup    banque
  *       \brief      Page accueil banque
- *       \version    $Id: index.php,v 1.56 2011/08/27 14:24:42 hregis Exp $
  */
 
 require("./pre.inc.php");

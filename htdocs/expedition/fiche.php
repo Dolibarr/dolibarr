@@ -25,7 +25,6 @@
  *	\file       htdocs/expedition/fiche.php
  *	\ingroup    expedition
  *	\brief      Fiche descriptive d'une expedition
- *	\version    $Id: fiche.php,v 1.213 2011/08/27 14:24:44 hregis Exp $
  */
 
 require("../main.inc.php");

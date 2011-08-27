@@ -21,7 +21,6 @@
  *		\file       htdocs/compta/bank/virement.php
  *		\ingroup    banque
  *		\brief      Page de saisie d'un virement
- *		\version    $Id: virement.php,v 1.50 2011/08/27 14:24:42 hregis Exp $
  */
 
 require("./pre.inc.php");

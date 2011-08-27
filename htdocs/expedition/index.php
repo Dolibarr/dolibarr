@@ -21,7 +21,6 @@
  *       \file       htdocs/expedition/index.php
  *       \ingroup    expedition
  *       \brief      Home page of shipping area.
- *       \version    $Id: index.php,v 1.53 2011/08/27 14:24:44 hregis Exp $
  */
 
 require("../main.inc.php");

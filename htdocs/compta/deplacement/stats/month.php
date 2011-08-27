@@ -20,7 +20,6 @@
  *	    \file       htdocs/compta/deplacement/stats/month.php
  *      \ingroup    facture
  *		\brief      Page des stats notes de frais par mois
- *		\version    $Id: month.php,v 1.5 2011/08/27 14:24:30 hregis Exp $
  */
 
 require("../../../main.inc.php");

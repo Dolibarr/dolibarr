@@ -20,7 +20,6 @@
  *  \file       htdocs/ecm/docmine.php
  *	\ingroup    ecm
  *	\brief     	Card of a directory for ECM module
- *	\version    $Id: docmine.php,v 1.48 2011/08/27 14:24:46 hregis Exp $
  *	\author		Laurent Destailleur
  */
 

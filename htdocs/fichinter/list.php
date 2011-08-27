@@ -22,7 +22,6 @@
  *	\file       htdocs/fichinter/list.php
  *	\brief      List of all interventions
  *	\ingroup    ficheinter
- *	\version    $Id: list.php,v 1.2 2011/08/27 14:24:40 hregis Exp $
  */
 
 require("../main.inc.php");

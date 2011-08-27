@@ -22,7 +22,6 @@
  *	\file       htdocs/compta/facture/document.php
  *	\ingroup    facture
  *	\brief      Page for attached files on invoices
- *	\version    $Id: document.php,v 1.47 2011/08/27 14:24:16 hregis Exp $
  */
 
 require("../../main.inc.php");

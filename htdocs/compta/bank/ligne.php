@@ -22,7 +22,6 @@
  *	\file       htdocs/compta/bank/ligne.php
  *	\ingroup    compta
  *	\brief      Page to edit a bank transaction record
- *	\version    $Id: ligne.php,v 1.92 2011/08/27 14:24:42 hregis Exp $
  */
 
 require("./pre.inc.php");

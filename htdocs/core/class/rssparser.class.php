@@ -19,7 +19,6 @@
  *      \file       htdocs/core/class/rssparser.class.php
  *      \ingroup    core
  *      \brief      File of class to parse rss feeds
- *      \version    $Id: rssparser.class.php,v 1.5 2011/08/26 23:06:16 eldy Exp $
  */
 class RssParser
 {

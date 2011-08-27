@@ -18,10 +18,9 @@
  */
 
 /**
- \file       htdocs/commande/note.php
- \ingroup    commande
- \brief      Fiche de notes sur une commande
- \version    $Id: note.php,v 1.25 2011/08/27 14:24:38 hregis Exp $
+ *  \file       htdocs/commande/note.php
+ *  \ingroup    commande
+ *  \brief      Fiche de notes sur une commande
  */
 
 require("../main.inc.php");

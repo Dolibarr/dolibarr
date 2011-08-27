@@ -22,7 +22,6 @@
  *	\file       htdocs/compta/prelevement/ligne.php
  *	\ingroup    prelevement
  *	\brief      card of withdraw line
- *	\version    $Id: ligne.php,v 1.41 2011/08/27 14:24:41 hregis Exp $
  */
 
 require("../bank/pre.inc.php");

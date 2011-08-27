@@ -21,8 +21,7 @@
 /**
  *	    \file       htdocs/comm/action/rapport/index.php
  *      \ingroup    commercial
- *		\brief      Page with reports of actions
- *		\version    $Id: index.php,v 1.50 2011/08/27 14:25:00 hregis Exp $
+ *		\brief      Page with reports of actions $
  */
 
 require("../../../main.inc.php");

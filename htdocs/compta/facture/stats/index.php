@@ -20,7 +20,6 @@
  *  \file       htdocs/compta/facture/stats/index.php
  *  \ingroup    facture
  *  \brief      Page des stats factures
- *  \version    $Id: index.php,v 1.42 2011/08/27 14:24:26 hregis Exp $
  */
 
 require("../../../main.inc.php");

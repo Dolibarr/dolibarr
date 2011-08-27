@@ -21,7 +21,6 @@
  *       \file       htdocs/comm/mailing/index.php
  *       \ingroup    mailing
  *       \brief      Page accueil de la zone mailing
- *       \version    $Id: index.php,v 1.38 2011/08/27 14:24:34 hregis Exp $
  */
 
 require("../../main.inc.php");

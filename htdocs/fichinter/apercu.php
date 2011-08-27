@@ -21,7 +21,6 @@
  * 		\file		htdocs/fichinter/apercu.php
  * 		\ingroup	fichinter
  * 		\brief		Page de l'onglet apercu d'une fiche d'intervention
- * 		\version	$Id: apercu.php,v 1.26 2011/08/27 14:24:40 hregis Exp $
  */
 
 require("../main.inc.php");

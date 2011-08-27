@@ -20,8 +20,7 @@
  *      \file       htdocs/compta/facture/note.php
  *      \ingroup    facture
  *      \brief      Fiche de notes sur une facture
- *		\version    $Id: note.php,v 1.59 2011/08/27 14:24:17 hregis Exp $
-*/
+ */
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");

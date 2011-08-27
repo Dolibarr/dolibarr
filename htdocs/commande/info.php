@@ -20,7 +20,6 @@
  *      \file       htdocs/commande/info.php
  *      \ingroup    commande
  *		\brief      Page des informations d'une commande
- *		\version    $Id: info.php,v 1.23 2011/08/27 14:24:39 hregis Exp $
  */
 
 require("../main.inc.php");

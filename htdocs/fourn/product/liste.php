@@ -22,7 +22,6 @@
  *		\file       htdocs/fourn/product/liste.php
  *		\ingroup    produit
  *		\brief      Page liste des produits ou services
- *		\version    $Id: liste.php,v 1.43 2011/08/27 14:24:33 hregis Exp $
  */
 
 require("../../main.inc.php");

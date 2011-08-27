@@ -19,7 +19,6 @@
  *	\file       htdocs/contact/canvas/actions_contactcard_common.class.php
  *	\ingroup    thirdparty
  *	\brief      Fichier de la classe Thirdparty contact card controller (common)
- *	\version    $Id: actions_contactcard_common.class.php,v 1.25 2011/07/31 23:54:12 eldy Exp $
  */
 
 /**

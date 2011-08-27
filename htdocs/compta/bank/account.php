@@ -24,7 +24,6 @@
  *	    \file       htdocs/compta/bank/account.php
  *		\ingroup    banque
  *		\brief      List of details of bank transactions for an account
- *		\version    $Id: account.php,v 1.156 2011/08/27 14:24:43 hregis Exp $
  */
 
 require("./pre.inc.php");	// We use pre.inc.php to have a dynamic menu

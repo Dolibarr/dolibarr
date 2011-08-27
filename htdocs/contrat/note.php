@@ -17,11 +17,10 @@
  */
 
 /**
-        \file       htdocs/contrat/note.php
-        \ingroup    contrat
-        \brief      Fiche de notes sur un contrat
-		\version    $Id: note.php,v 1.29 2011/08/27 14:24:18 hregis Exp $
-*/
+ *      \file       htdocs/contrat/note.php
+ *      \ingroup    contrat
+ *      \brief      Fiche de notes sur un contrat
+ */
 
 require ("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/contract.lib.php');

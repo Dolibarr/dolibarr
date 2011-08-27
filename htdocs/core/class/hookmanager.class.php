@@ -21,7 +21,6 @@
  *	\file       htdocs/core/class/hookmanager.class.php
  *	\ingroup    core
  *	\brief      File of class to manage hooks
- *	\version    $Id: hookmanager.class.php,v 1.10 2011/08/21 18:34:49 eldy Exp $
  */
 
 

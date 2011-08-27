@@ -20,7 +20,6 @@
  *	    \file       htdocs/compta/facture/stats/month.php
  *      \ingroup    facture
  *		\brief      Page des stats factures par mois
- *		\version    $Id: month.php,v 1.34 2011/08/27 14:24:26 hregis Exp $
  */
 
 require("../../../main.inc.php");

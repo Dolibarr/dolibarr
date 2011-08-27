@@ -20,7 +20,6 @@
  *	    \file       htdocs/contact/info.php
  *      \ingroup    societe
  *		\brief      Onglet info d'un contact
- *		\version    $Id: info.php,v 1.35 2011/08/27 14:24:33 hregis Exp $
  */
 
 require("../main.inc.php");

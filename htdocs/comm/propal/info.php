@@ -18,11 +18,10 @@
  */
 
 /**
-        \file       htdocs/comm/propal/info.php
-        \ingroup    propale
-		\brief      Page d'affichage des infos d'une proposition commerciale
-		\version    $Id: info.php,v 1.35 2011/08/27 14:24:44 hregis Exp $
-*/
+ *      \file       htdocs/comm/propal/info.php
+ *      \ingroup    propale
+ *      \brief      Page d'affichage des infos d'une proposition commerciale
+ */
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");

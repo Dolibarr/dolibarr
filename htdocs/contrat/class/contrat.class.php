@@ -24,7 +24,6 @@
  *	\file       htdocs/contrat/class/contrat.class.php
  *	\ingroup    contrat
  *	\brief      Fichier de la classe des contrats
- *	\version    $Id: contrat.class.php,v 1.24 2011/08/08 14:25:44 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");

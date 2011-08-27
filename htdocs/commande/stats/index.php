@@ -20,7 +20,6 @@
  *	    \file       htdocs/commande/stats/index.php
  *      \ingroup    commande
  *		\brief      Page with customers or suppliers orders statistics
- *		\version    $Id: index.php,v 1.40 2011/08/27 14:24:58 hregis Exp $
  */
 
 require("../../main.inc.php");

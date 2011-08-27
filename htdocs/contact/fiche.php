@@ -23,7 +23,6 @@
  *       \file       htdocs/contact/fiche.php
  *       \ingroup    societe
  *       \brief      Card of a contact
- *       \version    $Id: fiche.php,v 1.228 2011/08/27 14:24:34 hregis Exp $
  */
 
 require("../main.inc.php");

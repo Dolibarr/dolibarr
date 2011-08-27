@@ -24,7 +24,6 @@
  *  \file       htdocs/commande/class/commande.class.php
  *  \ingroup    commande
  *  \brief      Fichier des classes de commandes
- *  \version    $Id: commande.class.php,v 1.125 2011/08/12 05:41:01 hregis Exp $
  */
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");

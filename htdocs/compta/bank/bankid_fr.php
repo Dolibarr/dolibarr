@@ -22,7 +22,6 @@
  *  \file       htdocs/compta/bank/bankid_fr.php
  *  \ingroup    banque
  *  \brief      Fiche creation compte bancaire
- *  \version    $Id: bankid_fr.php,v 1.29 2011/08/27 14:24:42 hregis Exp $
  */
 
 require("./pre.inc.php");

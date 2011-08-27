@@ -21,7 +21,6 @@
  *       \file       htdocs/fourn/commande/note.php
  *       \ingroup    commande
  *       \brief      Fiche note commande
- *       \version    $Id: note.php,v 1.39 2011/08/27 14:24:54 hregis Exp $
  */
 
 require("../../main.inc.php");

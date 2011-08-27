@@ -26,7 +26,6 @@
  *	\file       	htdocs/comm/propal.php
  *	\ingroup    	propale
  *	\brief      	Page of commercial proposals card and list
- *	\version		$Id: propal.php,v 1.624 2011/08/27 14:24:30 hregis Exp $
  */
 
 require("../main.inc.php");

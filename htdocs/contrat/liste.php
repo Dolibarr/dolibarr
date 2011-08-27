@@ -21,7 +21,6 @@
  *       \file       htdocs/contrat/liste.php
  *       \ingroup    contrat
  *       \brief      Page liste des contrats
- *       \version    $Id: liste.php,v 1.47 2011/08/27 14:24:18 hregis Exp $
  */
 
 require ("../main.inc.php");

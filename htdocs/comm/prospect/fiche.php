@@ -21,7 +21,6 @@
  *	\file       htdocs/comm/prospect/fiche.php
  *	\ingroup    prospect
  *	\brief      Page de la fiche prospect
- *	\version    $Id: fiche.php,v 1.128 2011/08/27 14:24:29 hregis Exp $
  */
 
 require_once("../../main.inc.php");

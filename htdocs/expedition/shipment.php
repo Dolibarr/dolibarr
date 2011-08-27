@@ -22,7 +22,6 @@
 /**
  *	\file       htdocs/expedition/shipment.php
  *	\ingroup    expedition
- *	\version    $Id: shipment.php,v 1.32 2011/08/27 14:24:44 hregis Exp $
  */
 
 require("../main.inc.php");

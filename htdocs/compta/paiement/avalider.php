@@ -17,11 +17,10 @@
  */
 
 /**
-        \file       htdocs/compta/paiement/avalider.php
-        \ingroup    compta
-        \brief      Page liste des paiements a valider des factures clients
-        \version    $Id: avalider.php,v 1.14 2011/08/27 14:24:47 hregis Exp $
-*/
+ * 	\file       htdocs/compta/paiement/avalider.php
+ * 	\ingroup    compta
+ * 	\brief      Page liste des paiements a valider des factures clients
+ */
 
 require("../../main.inc.php");
 

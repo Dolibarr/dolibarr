@@ -20,7 +20,6 @@
 /**
  *      \file       htdocs/compta/stats/comp.php
  *      \ingroup    commercial
- *  	\version	$Id: comp.php,v 1.46 2011/08/27 14:24:58 hregis Exp $
  * 		TODO	Remove or add page in menus
  */
 

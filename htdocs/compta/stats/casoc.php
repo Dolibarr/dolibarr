@@ -21,7 +21,6 @@
 /**
  *       \file        htdocs/compta/stats/casoc.php
  *       \brief       Page reporting CA par societe
- *       \version     $Id: casoc.php,v 1.50 2011/08/27 14:24:58 hregis Exp $
  */
 
 require('../../main.inc.php');

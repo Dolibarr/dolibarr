@@ -20,7 +20,6 @@
  *       \file       htdocs/contact/perso.php
  *       \ingroup    societe
  *       \brief      Onglet informations personnelles d'un contact
- *       \version    $Id: perso.php,v 1.67 2011/08/27 14:24:34 hregis Exp $
  */
 
 require("../main.inc.php");

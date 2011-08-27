@@ -22,7 +22,6 @@
  *	    \file       htdocs/contact/list.php
  *      \ingroup    societe
  *		\brief      Page to list all contacts
- *		\version    $Id: list.php,v 1.3 2011/08/27 14:24:34 hregis Exp $
  */
 
 require("../main.inc.php");

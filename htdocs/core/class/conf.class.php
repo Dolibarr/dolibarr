@@ -24,7 +24,6 @@
  *	\ingroup		core
  *  \brief      	File of class to manage storage of current setup
  *  				Config is stored into file conf.php
- *  \version    	$Id: conf.class.php,v 1.66 2011/08/10 23:30:19 eldy Exp $
  */
 
 

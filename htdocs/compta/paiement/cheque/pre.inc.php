@@ -21,7 +21,6 @@
  *		\file   	htdocs/compta/paiement/cheque/pre.inc.php
  *		\ingroup    compta
  *		\brief  	Fichier gestionnaire du menu cheques
- *		\version	$Id: pre.inc.php,v 1.20 2011/08/03 00:46:28 eldy Exp $
  */
 
 require_once("../../../main.inc.php");

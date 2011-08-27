@@ -17,11 +17,10 @@
  */
 
 /**
-        \file       htdocs/compta/param/index.php
-        \ingroup    compta
-		\brief      Page acceuil zone parametrage comptabilite
-		\version    $Id: index.php,v 1.14 2011/08/27 14:24:51 hregis Exp $
-*/
+ * 	\file       htdocs/compta/param/index.php
+ * 	\ingroup    compta
+ * 	\brief      Page acceuil zone parametrage comptabilite
+ */
 
 require("../../main.inc.php");
 

@@ -20,7 +20,6 @@
  *      \file       htdocs/comm/action/info.php
  *      \ingroup    agenda
  *		\brief      Page des informations d'une action
- *		\version    $Id: info.php,v 1.21 2011/08/27 14:24:45 hregis Exp $
  */
 
 require("../../main.inc.php");

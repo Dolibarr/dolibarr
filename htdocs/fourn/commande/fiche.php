@@ -25,7 +25,6 @@
  *	\file		htdocs/fourn/commande/fiche.php
  *	\ingroup	supplier, order
  *	\brief		Card supplier order
- *	\version	$Id: fiche.php,v 1.236 2011/08/27 14:24:54 hregis Exp $
  */
 
 require("../../main.inc.php");

@@ -21,7 +21,6 @@
 /**
  *  \file       htdocs/compta/prelevement/demandes.php
  *  \brief      Page to list withdraw requests
- *  \version    $Id: demandes.php,v 1.41 2011/08/27 14:24:41 hregis Exp $
  */
 require("../bank/pre.inc.php");
 require_once DOL_DOCUMENT_ROOT."/includes/modules/modPrelevement.class.php";

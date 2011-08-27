@@ -20,7 +20,6 @@
  *	    \file       htdocs/compta/dons/fiche.php
  *		\ingroup    don
  *		\brief      Page of donation card
- *		\version    $Id: fiche.php,v 1.78 2011/08/27 14:24:45 hregis Exp $
  */
 
 require("../../main.inc.php");

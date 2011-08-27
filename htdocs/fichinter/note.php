@@ -20,7 +20,6 @@
  *	\file       htdocs/fichinter/note.php
  *	\ingroup    fichinter
  *	\brief      Fiche d'information sur une fiche d'intervention
- *	\version    $Id: note.php,v 1.20 2011/08/27 14:24:40 hregis Exp $
  */
 
 require("../main.inc.php");

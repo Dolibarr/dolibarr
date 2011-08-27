@@ -21,7 +21,6 @@
  *	    \file       htdocs/compta/tva/fiche.php
  *      \ingroup    tax
  *		\brief      Page of VAT payments
- *		\version    $Id: fiche.php,v 1.35 2011/08/27 14:24:37 hregis Exp $
  */
 
 require('../../main.inc.php');

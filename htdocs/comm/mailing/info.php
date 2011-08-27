@@ -20,7 +20,6 @@
  *      \file       htdocs/comm/mailing/info.php
  *      \ingroup    mailing
  *		\brief      Page with log information for emailing
- *		\version    $Id: info.php,v 1.7 2011/08/27 14:24:34 hregis Exp $
  */
 
 require("../../main.inc.php");

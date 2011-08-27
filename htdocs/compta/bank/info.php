@@ -16,11 +16,10 @@
  */
 
 /**
-    	\file       htdocs/compta/bank/info.php
-		\ingroup    banque
-		\brief      Onglet info d'une ecriture bancaire
-		\version    $Id: info.php,v 1.11 2011/08/27 14:24:43 hregis Exp $
-*/
+ *     \file       htdocs/compta/bank/info.php
+ *     \ingroup    banque
+ *     \brief      Onglet info d'une ecriture bancaire
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");

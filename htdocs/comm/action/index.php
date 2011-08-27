@@ -23,7 +23,6 @@
  *  \file       htdocs/comm/action/index.php
  *  \ingroup    agenda
  *  \brief      Home page of calendar events
- *  \version    $Id: index.php,v 1.185 2011/08/27 14:24:45 hregis Exp $
  */
 
 require("../../main.inc.php");

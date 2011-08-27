@@ -22,7 +22,6 @@
  *  \file		htdocs/comm/propal/apercu.php
  *  \ingroup	propal
  *  \brief		Page de l'onglet apercu d'une propal
- *  \version	$Id: apercu.php,v 1.54 2011/08/27 14:24:44 hregis Exp $
  */
 
 require("../../main.inc.php");

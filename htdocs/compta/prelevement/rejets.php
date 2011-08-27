@@ -17,8 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- * 	\version	$Id: rejets.php,v 1.22 2011/08/27 14:24:41 hregis Exp $
+/**
+ * 
  */
 
 require("../bank/pre.inc.php");

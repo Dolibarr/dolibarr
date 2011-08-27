@@ -20,12 +20,11 @@
  */
 
 /**
-	    \file       htdocs/compta/tva/quadri.php
-        \ingroup    tax
-		\brief      Trimestrial page
-		\version    $Id: quadri.php,v 1.17 2011/08/27 14:24:37 hregis Exp $
-		\todo 		Deal with recurrent invoices as well
-*/
+ * 	    \file       htdocs/compta/tva/quadri.php
+ *      \ingroup    tax
+ *      \brief      Trimestrial page
+ *      TODO 		Deal with recurrent invoices as well
+ */
 
 require('../../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/compta/tva/class/tva.class.php");

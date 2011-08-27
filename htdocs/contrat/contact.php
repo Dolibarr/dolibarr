@@ -17,11 +17,10 @@
  */
 
 /**
-        \file       htdocs/contrat/contact.php
-        \ingroup    contrat
-        \brief      Onglet de gestion des contacts des contrats
-        \version    $Id: contact.php,v 1.49 2011/08/27 14:24:18 hregis Exp $
-*/
+ *      \file       htdocs/contrat/contact.php
+ *      \ingroup    contrat
+ *      \brief      Onglet de gestion des contacts des contrats
+ */
 
 require ("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/contract.lib.php');

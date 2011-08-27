@@ -21,7 +21,6 @@
  *   \file		    htdocs/core/class/interfaces.class.php
  *   \ingroup		core
  *   \brief			Fichier de la classe de gestion des triggers
- *   \version		$Id: interfaces.class.php,v 1.10 2011/08/17 15:56:22 eldy Exp $
  */
 
 

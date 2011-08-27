@@ -21,7 +21,6 @@
  *     \file       htdocs/commande/contact.php
  *     \ingroup    commande
  *     \brief      Onglet de gestion des contacts de commande
- *     \version    $Id: contact.php,v 1.46 2011/08/27 14:24:39 hregis Exp $
  */
 
 require("../main.inc.php");

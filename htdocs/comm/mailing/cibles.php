@@ -21,7 +21,6 @@
  *       \file       htdocs/comm/mailing/cibles.php
  *       \ingroup    mailing
  *       \brief      Page to define emailing targets
- *       \version    $Id: cibles.php,v 1.77 2011/08/27 14:24:34 hregis Exp $
  */
 
 require("../../main.inc.php");

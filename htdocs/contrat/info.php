@@ -16,11 +16,10 @@
  */
 
 /**
-        \file       htdocs/contrat/info.php
-        \ingroup    contrat
-		\brief      Page des informations d'un contrat
-		\version    $Id: info.php,v 1.26 2011/08/27 14:24:18 hregis Exp $
-*/
+ *      \file       htdocs/contrat/info.php
+ *      \ingroup    contrat
+ *      \brief      Page des informations d'un contrat
+ */
 
 require ("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");

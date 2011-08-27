@@ -20,7 +20,6 @@
 /**
  *  \file        htdocs/compta/resultat/clientfourn.php
  *	\brief       Page reporting
- *  \version     $Id: clientfourn.php,v 1.65 2011/08/27 14:25:01 hregis Exp $
  */
 
 require('../../main.inc.php');

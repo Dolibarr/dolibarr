@@ -21,7 +21,6 @@
  *	    \file       htdocs/contrat/services.php
  *      \ingroup    contrat
  *		\brief      Page to list services in contracts
- *		\version    $Id: services.php,v 1.59 2011/08/27 14:24:18 hregis Exp $
  */
 
 require ("../main.inc.php");

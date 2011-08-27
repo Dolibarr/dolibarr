@@ -21,7 +21,6 @@
  *	    \file       htdocs/compta/tva/reglement.php
  *      \ingroup    tax
  *		\brief      List of VAT payments
- *		\version    $Id: reglement.php,v 1.34 2011/08/27 14:24:37 hregis Exp $
  */
 
 require('../../main.inc.php');

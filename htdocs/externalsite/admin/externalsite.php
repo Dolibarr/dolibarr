@@ -23,7 +23,6 @@
  *    \file       htdocs/externalsite/admin/externalsite.php
  *    \ingroup    externalsite
  *    \brief      Page de configuration du module externalsite
- *    \version    $Id: externalsite.php,v 1.5 2011/08/27 14:25:00 hregis Exp $
  */
 
 require("../../main.inc.php");

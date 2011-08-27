@@ -20,7 +20,6 @@
  *       \file       htdocs/exports/export.php
  *       \ingroup    export
  *       \brief      Pages of export Wizard
- *       \version    $Id: export.php,v 1.85 2011/08/27 14:24:53 hregis Exp $
  */
 
 require_once("../main.inc.php");

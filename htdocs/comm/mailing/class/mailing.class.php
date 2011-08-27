@@ -21,7 +21,6 @@
  *	\file       htdocs/comm/mailing/class/mailing.class.php
  *	\ingroup    mailing
  *	\brief      Fichier de la classe de gestion des mailings
- *	\version    $Id: mailing.class.php,v 1.3 2011/08/03 00:46:38 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");

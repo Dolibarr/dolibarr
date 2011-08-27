@@ -22,7 +22,6 @@
  *	    \file       htdocs/compta/bank/fiche.php
  *      \ingroup    banque
  *		\brief      Page to create/view a bank account
- *		\version    $Id: fiche.php,v 1.79 2011/08/27 14:24:42 hregis Exp $
  */
 
 require("./pre.inc.php");

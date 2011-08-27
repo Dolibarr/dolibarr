@@ -20,7 +20,6 @@
  *      \file       htdocs/compta/deplacement/note.php
  *      \ingroup    trip
  *      \brief      Notes on a trip card
- *		\version    $Id: note.php,v 1.8 2011/08/27 14:24:48 hregis Exp $
  */
 
 require("../../main.inc.php");

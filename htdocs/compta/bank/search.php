@@ -21,7 +21,6 @@
  *	\file       htdocs/compta/bank/search.php
  *	\ingroup    banque
  *	\brief      List of bank transactions
- *	\version    $Id: search.php,v 1.55 2011/08/27 14:24:43 hregis Exp $
  */
 
 require("./pre.inc.php");

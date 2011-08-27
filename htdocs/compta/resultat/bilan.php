@@ -15,10 +15,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**     \file   	htdocs/compta/resultat/bilan.php
- *      \ingroup    compta
- *      \brief  	Fichier page bilan compta
- *		\version	$Id: bilan.php,v 1.13 2011/08/27 14:25:01 hregis Exp $
+/**
+ * 		\file   	htdocs/compta/resultat/bilan.php
+ * 		\ingroup    compta
+ * 		\brief  	Fichier page bilan compta
  */
 
 require('../../main.inc.php');

@@ -20,7 +20,6 @@
  *    \file       htdocs/expedition/stats/month.php
  *    \ingroup    commande
  *    \brief      Page des stats expeditions par mois
- *    \version    $Id: month.php,v 1.18 2011/08/27 14:25:04 hregis Exp $
  */
 
 require("../../main.inc.php");

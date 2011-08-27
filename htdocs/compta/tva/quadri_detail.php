@@ -22,8 +22,7 @@
  *	    \file       htdocs/compta/tva/quadri_detail.php
  *      \ingroup    tax
  *		\brief      Trimestrial page - detailed version
- *		\version    $Id: quadri_detail.php,v 1.45 2011/08/27 14:24:37 hregis Exp $
- *		\todo 		Deal with recurrent invoices as well
+ *		TODO 		Deal with recurrent invoices as well
  */
 
 require('../../main.inc.php');

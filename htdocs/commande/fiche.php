@@ -25,7 +25,6 @@
  *	\file       htdocs/commande/fiche.php
  *	\ingroup    commande
  *	\brief      Page to show customer order
- *	\version    $Id: fiche.php,v 1.538 2011/08/27 14:24:39 hregis Exp $
  */
 
 require("../main.inc.php");

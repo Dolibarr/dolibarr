@@ -21,7 +21,6 @@
  *	\file       htdocs/comm/multiprix.php
  *	\ingroup    societe
  *	\brief      Onglet choix du niveau de prix
- *	\version    $Id: multiprix.php,v 1.22 2011/08/27 14:24:31 hregis Exp $
  */
 
 require("../main.inc.php");

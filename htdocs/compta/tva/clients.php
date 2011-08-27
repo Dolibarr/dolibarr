@@ -22,7 +22,6 @@
  *	    \file       htdocs/compta/tva/clients.php
  *      \ingroup    tax
  *		\brief      Page des societes
- *		\version    $Id: clients.php,v 1.33 2011/08/27 14:24:37 hregis Exp $
  */
 
 require('../../main.inc.php');

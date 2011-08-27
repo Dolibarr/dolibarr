@@ -22,7 +22,6 @@
  *	\file       htdocs/fourn/commande/document.php
  *	\ingroup    supplier
  *	\brief      Page de gestion des documents attachees a une commande fournisseur
- *	\version    $Id: document.php,v 1.25 2011/08/27 14:24:54 hregis Exp $
  */
 
 require("../../main.inc.php");

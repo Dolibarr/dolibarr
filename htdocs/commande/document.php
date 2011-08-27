@@ -22,7 +22,6 @@
  *	\file       htdocs/commande/document.php
  *	\ingroup    order
  *	\brief      Page de gestion des documents attachees a une commande
- *	\version    $Id: document.php,v 1.37 2011/08/27 14:24:38 hregis Exp $
  */
 
 require("../main.inc.php");

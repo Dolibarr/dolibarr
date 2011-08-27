@@ -21,7 +21,6 @@
  *		\file        htdocs/compta/bank/annuel.php
  *		\ingroup     banque
  *		\brief       Page reporting mensuel Entrees/Sorties d'un compte bancaire
- *		\version     $Id: annuel.php,v 1.30 2011/08/27 14:24:42 hregis Exp $
  */
 
 require("./pre.inc.php");

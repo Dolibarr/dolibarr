@@ -20,7 +20,6 @@
 /**
  *      \file        htdocs/compta/stats/cabyuser.php
  *      \brief       Page reporting Salesover by user
- *      \version     $Id: cabyuser.php,v 1.42 2011/08/27 14:24:58 hregis Exp $
  */
 
 require('../../main.inc.php');

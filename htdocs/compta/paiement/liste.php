@@ -21,7 +21,6 @@
  *	\file       htdocs/compta/paiement/liste.php
  *  \ingroup    compta
  *  \brief      Page liste des paiements des factures clients
- *  \version    $Id: liste.php,v 1.53 2011/08/27 14:24:47 hregis Exp $
  */
 
 require("../../main.inc.php");

@@ -21,7 +21,6 @@
  *      \file       htdocs/compta/bank/admin/bank.php
  *		\ingroup    bank
  *		\brief      Page to setup the bank module
- *		\version    $Id: bank.php,v 1.9 2011/08/27 14:24:59 hregis Exp $
  */
 
 require("../../../main.inc.php");

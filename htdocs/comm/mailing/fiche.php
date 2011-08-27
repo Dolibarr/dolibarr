@@ -20,7 +20,6 @@
  *       \file       htdocs/comm/mailing/fiche.php
  *       \ingroup    mailing
  *       \brief      Fiche mailing, onglet general
- *       \version    $Id: fiche.php,v 1.125 2011/08/27 14:24:34 hregis Exp $
  */
 
 require("../../main.inc.php");

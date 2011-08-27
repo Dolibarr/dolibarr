@@ -21,7 +21,6 @@
  *       \file       htdocs/compta/deplacement/class/deplacementstats.class.php
  *       \ingroup    factures
  *       \brief      Fichier de la classe de gestion des stats des deplacement et notes de frais
- *       \version    $Id: deplacementstats.class.php,v 1.6 2011/07/31 22:23:20 eldy Exp $
  */
 include_once DOL_DOCUMENT_ROOT . "/core/class/stats.class.php";
 include_once DOL_DOCUMENT_ROOT . "/compta/deplacement/class/deplacement.class.php";

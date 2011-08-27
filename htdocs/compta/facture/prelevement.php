@@ -22,7 +22,6 @@
  *	\file       htdocs/compta/facture/prelevement.php
  *	\ingroup    facture
  *	\brief      Gestion des prelevement d'une facture
- *	\version    $Id: prelevement.php,v 1.40 2011/08/27 14:24:17 hregis Exp $
  */
 
 require("../../main.inc.php");

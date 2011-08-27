@@ -21,7 +21,6 @@
  *   	\file       htdocs/compta/dons/class/don.class.php
  *		\ingroup    don
  *		\brief      Fichier de la classe des dons
- *		\version    $Id: don.class.php,v 1.11 2011/08/03 00:46:39 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");

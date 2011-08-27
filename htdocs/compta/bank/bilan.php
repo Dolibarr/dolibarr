@@ -20,7 +20,6 @@
  *	    \file       htdocs/compta/bank/bilan.php
  *      \ingroup    banque
  *		\brief      Page de bilan
- *		\version    $Id: bilan.php,v 1.17 2011/08/27 14:24:43 hregis Exp $
  */
 
 require("./pre.inc.php");

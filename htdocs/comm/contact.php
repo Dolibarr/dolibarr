@@ -18,11 +18,10 @@
  */
 
 /**
-        \file       htdocs/comm/contact.php
-        \ingroup    commercial
-        \brief      Liste des contacts
-        \version    $Id: contact.php,v 1.51 2011/08/27 14:24:30 hregis Exp $
-*/
+ *      \file       htdocs/comm/contact.php
+ *      \ingroup    commercial
+ *      \brief      Liste des contacts
+ */
 
 require("../main.inc.php");
 

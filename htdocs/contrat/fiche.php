@@ -23,7 +23,6 @@
  *       \file       htdocs/contrat/fiche.php
  *       \ingroup    contrat
  *       \brief      Page of a contract
- *       \version    $Id: fiche.php,v 1.202 2011/08/27 14:24:18 hregis Exp $
  */
 
 require ("../main.inc.php");

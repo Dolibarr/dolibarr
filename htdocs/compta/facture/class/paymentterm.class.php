@@ -19,9 +19,7 @@
  *      \file       compta/facture/class/paymentterm.class.php
  *      \ingroup    facture
  *      \brief      This file is an example for a CRUD class file (Create/Read/Update/Delete)
- *		\version    $Id: paymentterm.class.php,v 1.5 2011/08/03 00:46:25 eldy Exp $
  *		\author		Put author name here
- *		\remarks	Initialy built by build_class_from_table on 2010-09-06 00:33
  */
 
 // Put here all includes required by your class file

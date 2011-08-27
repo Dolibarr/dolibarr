@@ -23,7 +23,6 @@
  *       \file       htdocs/comm/action/fiche.php
  *       \ingroup    agenda
  *       \brief      Page for event card
- *       \version    $Id: fiche.php,v 1.231 2011/08/27 14:24:45 hregis Exp $
  */
 
 require("../../main.inc.php");

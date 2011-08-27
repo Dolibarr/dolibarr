@@ -23,7 +23,6 @@
  *		\ingroup    facture
  *		\brief      Onglet payment of a social contribution
  *		\remarks	Fichier presque identique a fournisseur/paiement/fiche.php
- *		\version    $Id: fiche.php,v 1.15 2011/08/27 14:25:00 hregis Exp $
  */
 
 require('../../main.inc.php');

@@ -21,7 +21,6 @@
  *	\file       htdocs/fourn/product/categorie.php
  *	\ingroup    product
  *	\brief      Page of products categories
- *	\version    $Id: categorie.php,v 1.19 2011/08/27 14:24:32 hregis Exp $
  */
 
 require("../../main.inc.php");

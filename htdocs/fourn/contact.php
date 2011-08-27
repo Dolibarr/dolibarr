@@ -21,7 +21,6 @@
  *	    \file       htdocs/fourn/contact.php
  *      \ingroup    fournisseur
  *		\brief      Liste des contacts fournisseurs
- *		\version    $Id: contact.php,v 1.35 2011/08/27 14:24:32 hregis Exp $
  */
 
 require("../main.inc.php");

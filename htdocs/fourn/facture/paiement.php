@@ -23,7 +23,6 @@
  *	\file       htdocs/fourn/facture/paiement.php
  *	\ingroup    fournisseur,facture
  *	\brief      Payment page for suppliers invoices
- *	\version    $Id: paiement.php,v 1.95 2011/08/27 14:24:27 hregis Exp $
  */
 
 require("../../main.inc.php");

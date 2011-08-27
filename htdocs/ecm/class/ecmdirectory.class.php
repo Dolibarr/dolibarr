@@ -20,9 +20,7 @@
  *  \file       htdocs/ecm/class/ecmdirectory.class.php
  *  \ingroup    ecm
  *  \brief      This file is an example for a class file
- *  \version    $Id: ecmdirectory.class.php,v 1.13 2011/07/31 23:50:54 eldy Exp $
  *  \author		Laurent Destailleur
- *  \remarks	Initialy built by build_class_from_table on 2008-02-24 19:24
  */
 
 /**

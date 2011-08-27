@@ -21,7 +21,6 @@
  *		\file       htdocs/fourn/facture/impayees.php
  *		\ingroup    facture
  *		\brief      Page to list all unpaid invoices
- *		\version    $Id: impayees.php,v 1.26 2011/08/27 14:24:26 hregis Exp $
  */
 
 require("../../main.inc.php");

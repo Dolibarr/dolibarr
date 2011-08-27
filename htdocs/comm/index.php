@@ -21,7 +21,6 @@
  *	\file       htdocs/comm/index.php
  *	\ingroup    commercial
  *	\brief      Home page of commercial area
- *	\version    $Id: index.php,v 1.174 2011/08/27 14:24:30 hregis Exp $
  */
 
 require("../main.inc.php");

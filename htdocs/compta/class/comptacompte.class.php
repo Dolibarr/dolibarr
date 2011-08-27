@@ -19,7 +19,6 @@
  *	\file       htdocs/compta/class/comptacompte.class.php
  * 	\ingroup    compta
  * 	\brief      Fichier de la classe des comptes comptable
- * 	\version    $Id: comptacompte.class.php,v 1.3 2011/08/03 00:46:33 eldy Exp $
  */
 
 

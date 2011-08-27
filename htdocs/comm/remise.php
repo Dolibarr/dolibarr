@@ -20,7 +20,6 @@
  *	    \file       htdocs/comm/remise.php
  *      \ingroup    societe
  *		\brief      Onglet remise de la societe
- *		\version    $Id: remise.php,v 1.36 2011/08/27 14:24:31 hregis Exp $
  */
 
 require("../main.inc.php");

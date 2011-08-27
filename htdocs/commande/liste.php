@@ -22,7 +22,6 @@
  *	\file       htdocs/commande/liste.php
  *	\ingroup    commande
  *	\brief      Page to list orders
- *	\version    $Id: liste.php,v 1.79 2011/08/27 14:24:39 hregis Exp $
  */
 
 

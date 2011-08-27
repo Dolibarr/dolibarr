@@ -22,7 +22,6 @@
  *	\file       htdocs/comm/propal/note.php
  *	\ingroup    propale
  *	\brief      Fiche d'information sur une proposition commerciale
- *	\version    $Id: note.php,v 1.64 2011/08/27 14:24:44 hregis Exp $
  */
 
 require("../../main.inc.php");

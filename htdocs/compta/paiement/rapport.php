@@ -20,7 +20,6 @@
  *	\file       htdocs/compta/paiement/rapport.php
  *	\ingroup    facture
  *	\brief      Payment reports page
- *	\version    $Id: rapport.php,v 1.48 2011/08/27 14:24:47 hregis Exp $
  */
 
 require("../../main.inc.php");

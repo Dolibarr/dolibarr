@@ -21,7 +21,6 @@
  *		\file       htdocs/compta/paiement/cheque/index.php
  *		\ingroup    compta
  *		\brief      Home page for cheque receipts
- *		\version    $Id: index.php,v 1.22 2011/08/27 14:25:00 hregis Exp $
  */
 
 require("./pre.inc.php");

@@ -24,7 +24,6 @@
  *	\file       htdocs/fourn/facture/fiche.php
  *	\ingroup    facture, fournisseur
  *	\brief      Page for supplier invoice card (view, edit, validate)
- *	\version    $Id: fiche.php,v 1.265 2011/08/27 14:24:27 hregis Exp $
  */
 
 require("../../main.inc.php");

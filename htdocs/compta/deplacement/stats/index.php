@@ -20,7 +20,6 @@
  *  \file       htdocs/compta/deplacement/stats/index.php
  *  \ingroup    deplacement
  *  \brief      Page des stats deplacement et notes de frais
- *  \version    $Id: index.php,v 1.9 2011/08/27 14:24:30 hregis Exp $
  */
 
 require("../../../main.inc.php");

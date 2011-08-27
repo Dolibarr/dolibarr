@@ -21,7 +21,6 @@
  *	    \file       htdocs/comm/prospect/index.php
  *      \ingroup    commercial
  *		\brief      Home page of propest area
- *		\version    $Id: index.php,v 1.52 2011/08/27 14:24:29 hregis Exp $
  */
 
 require("../../main.inc.php");

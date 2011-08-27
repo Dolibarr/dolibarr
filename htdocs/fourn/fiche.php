@@ -23,7 +23,6 @@
  *	\file       htdocs/fourn/fiche.php
  *	\ingroup    fournisseur, facture
  *	\brief      Page for supplier third party card (view, edit)
- *	\version	$Id: fiche.php,v 1.141 2011/08/27 14:24:32 hregis Exp $
  */
 
 require("../main.inc.php");

@@ -23,7 +23,6 @@
  *		\brief      File for Tanslate class
  *		\author	    Eric Seigne
  *		\author	    Laurent Destailleur
- *		\version    $Id: translate.class.php,v 1.53 2011/08/24 02:17:57 eldy Exp $
  */
 
 

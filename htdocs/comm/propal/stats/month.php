@@ -17,11 +17,10 @@
  */
 
 /**
-	    \file       htdocs/comm/propal/stats/month.php
-        \ingroup    propale
-		\brief      Page des stats propositions commerciales par mois
-		\version    $Id: month.php,v 1.28 2011/08/27 14:24:48 hregis Exp $
-*/
+ * 	    \file       htdocs/comm/propal/stats/month.php
+ *      \ingroup    propale
+ *      \brief      Page des stats propositions commerciales par mois
+ */
 
 require("../../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propalestats.class.php");

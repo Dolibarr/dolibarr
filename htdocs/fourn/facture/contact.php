@@ -21,7 +21,6 @@
  *      \file       htdocs/fourn/facture/contact.php
  *      \ingroup    facture, fournisseur
  *      \brief      Onglet de gestion des contacts des factures
- *      \version    $Id: contact.php,v 1.30 2011/08/27 14:24:27 hregis Exp $
  */
 
 require("../../main.inc.php");

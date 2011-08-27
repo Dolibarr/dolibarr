@@ -21,7 +21,6 @@
  *      \file       htdocs/core/class/html.formactions.class.php
  *      \ingroup    core
  *      \brief      Fichier de la classe des fonctions predefinie de composants html actions
- *		\version	$Id: html.formactions.class.php,v 1.22 2011/08/24 12:17:49 eldy Exp $
  */
 
 

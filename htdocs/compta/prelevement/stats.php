@@ -21,7 +21,6 @@
 /**
  *       \file       htdocs/compta/prelevement/stats.php
  *       \brief      Page de stats des prelevements
- *       \version    $Id: stats.php,v 1.24 2011/08/27 14:24:41 hregis Exp $
  */
 
 require("../bank/pre.inc.php");

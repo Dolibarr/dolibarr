@@ -20,7 +20,6 @@
 /**
  *       \file       htdocs/core/tools.php
  *       \brief      Home page for top menu tools
- *       \version    $Id: tools.php,v 1.4 2011/08/27 14:24:58 hregis Exp $
  */
 
 require("../main.inc.php");

@@ -20,7 +20,6 @@
 /**
  *	\file       htdocs/compta/prelevement/fiche-stat.php
  *	\brief      Prelevement
- *	\version    $Id: fiche-stat.php,v 1.20 2011/08/27 14:24:41 hregis Exp $
  */
 
 require("../bank/pre.inc.php");

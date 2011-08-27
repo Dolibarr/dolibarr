@@ -23,7 +23,6 @@
  *	\file       htdocs/compta/paiement.php
  *	\ingroup    compta
  *	\brief      Page to create a payment
- *	\version    $Id: paiement.php,v 1.115 2011/08/27 14:24:29 hregis Exp $
  */
 
 require('../main.inc.php');

@@ -18,7 +18,6 @@
 /**
  *       \file       htdocs/core/ajaxrow.php
  *       \brief      File to return Ajax response on Row move
- *       \version    $Id: ajaxrow.php,v 1.4 2011/07/31 23:45:15 eldy Exp $
  */
 
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal

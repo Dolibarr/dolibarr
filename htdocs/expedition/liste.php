@@ -21,7 +21,6 @@
  *      \file       htdocs/expedition/liste.php
  *      \ingroup    expedition
  *      \brief      Page to list all shipments
- *		\version	$Id: liste.php,v 1.61 2011/08/27 14:24:44 hregis Exp $
  */
 
 require("../main.inc.php");

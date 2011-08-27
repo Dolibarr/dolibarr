@@ -19,7 +19,6 @@
  *	\file       htdocs/contact/canvas/default/dao_contact_default.class.php
  *	\ingroup    thirdparty
  *	\brief      Fichier de la classe des contacts par defaut
- *	\version    $Id: dao_contact_default.class.php,v 1.4 2011/07/31 23:54:11 eldy Exp $
  */
 
 /**

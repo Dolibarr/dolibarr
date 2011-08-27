@@ -21,7 +21,6 @@
 /**
  *  \file       htdocs/compta/deplacement/list.php
  *  \brief      Page list of expenses
- *  \version	$Id: list.php,v 1.4 2011/08/27 14:24:48 hregis Exp $
  */
 
 require("../../main.inc.php");

@@ -20,7 +20,6 @@
  *       \file       htdocs/fichinter/contact.php
  *       \ingroup    fichinter
  *       \brief      Onglet de gestion des contacts de fiche d'intervention
- *       \version    $Id: contact.php,v 1.33 2011/08/27 14:24:40 hregis Exp $
  */
 
 require("../main.inc.php");

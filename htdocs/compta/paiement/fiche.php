@@ -23,7 +23,6 @@
  *		\ingroup    facture
  *		\brief      Page of a customer payment
  *		\remarks	Nearly same file than fournisseur/paiement/fiche.php
- *		\version    $Id: fiche.php,v 1.78 2011/08/27 14:24:47 hregis Exp $
  */
 
 require("../../main.inc.php");

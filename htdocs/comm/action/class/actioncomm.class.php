@@ -22,7 +22,6 @@
  *       \file       htdocs/comm/action/class/actioncomm.class.php
  *       \ingroup    commercial
  *       \brief      File of class to manage agenda events (actions)
- *       \version    $Id: actioncomm.class.php,v 1.44 2011/08/17 13:44:16 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php');

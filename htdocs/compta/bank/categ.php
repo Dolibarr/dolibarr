@@ -18,11 +18,10 @@
  */
 
 /**
-        \file       htdocs/compta/bank/categ.php
-        \ingroup    compta
-        \brief      Page ajout de cat�gories bancaires
-        \version    $Id: categ.php,v 1.32 2011/08/27 14:24:43 hregis Exp $
-*/
+ *      \file       htdocs/compta/bank/categ.php
+ *      \ingroup    compta
+ *      \brief      Page ajout de categories bancaires
+ */
 
 require("./pre.inc.php");
 

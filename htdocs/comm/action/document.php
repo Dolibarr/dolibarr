@@ -23,7 +23,6 @@
  *       \file       htdocs/comm/action/document.php
  *       \ingroup    agenda
  *       \brief      Page des documents joints sur les actions
- *       \version    $Id: document.php,v 1.59 2011/08/27 14:24:46 hregis Exp $
  */
 
 require("../../main.inc.php");

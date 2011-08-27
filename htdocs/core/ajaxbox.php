@@ -19,7 +19,6 @@
 /**
  *       \file       htdocs/core/ajaxbox.php
  *       \brief      File to return Ajax response on Box move
- *       \version    $Id: ajaxbox.php,v 1.3 2011/07/31 23:45:15 eldy Exp $
  */
 
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal

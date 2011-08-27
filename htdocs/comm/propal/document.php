@@ -22,7 +22,6 @@
  *       \file       htdocs/comm/propal/document.php
  *       \ingroup    propale
  *       \brief      Page de gestion des documents attaches a une proposition commerciale
- *       \version    $Id: document.php,v 1.70 2011/08/27 14:24:44 hregis Exp $
  */
 
 require("../../main.inc.php");

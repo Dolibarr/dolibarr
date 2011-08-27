@@ -21,7 +21,6 @@
  *      \file       htdocs/fourn/facture/note.php
  *      \ingroup    facture
  *      \brief      Fiche de notes sur une facture fournisseur
- *		\version    $Id: note.php,v 1.23 2011/08/27 14:24:26 hregis Exp $
  */
 
 require("../../main.inc.php");

@@ -20,8 +20,7 @@
  *      \file       htdocs/compta/facture/info.php
  *      \ingroup    facture
  *		\brief      Page des informations d'une facture
- *		\version    $Id: info.php,v 1.32 2011/08/27 14:24:16 hregis Exp $
-*/
+ */
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");

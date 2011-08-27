@@ -20,7 +20,6 @@
 /**
  *  \file       	htdocs/compta/deplacement/fiche.php
  *  \brief      	Page to show a trip card
- *  \version		$Id: fiche.php,v 1.58 2011/08/27 14:24:48 hregis Exp $
  */
 
 require("../../main.inc.php");

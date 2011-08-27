@@ -20,7 +20,6 @@
  *	    \file       htdocs/compta/dons/index.php
  *		\ingroup    don
  *		\brief      Home page of donation module
- *		\version    $Id: index.php,v 1.30 2011/08/27 14:24:44 hregis Exp $
  */
 
 require("../../main.inc.php");

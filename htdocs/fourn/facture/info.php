@@ -21,7 +21,6 @@
  *      \file       htdocs/fourn/facture/info.php
  *      \ingroup    facture, fournisseur
  *		\brief      Page des informations d'une facture fournisseur
- *		\version    $Id: info.php,v 1.15 2011/08/27 14:24:27 hregis Exp $
  */
 
 require("../../main.inc.php");

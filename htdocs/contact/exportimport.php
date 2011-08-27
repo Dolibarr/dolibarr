@@ -20,7 +20,6 @@
  *	\file       htdocs/contact/exportimport.php
  *	\ingroup    societe
  *	\brief      Onglet exports-imports d'un contact
- *	\version    $Id: exportimport.php,v 1.30 2011/08/27 14:24:34 hregis Exp $
  */
 
 require("../main.inc.php");

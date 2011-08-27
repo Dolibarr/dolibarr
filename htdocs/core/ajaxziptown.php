@@ -20,7 +20,6 @@
  *       \file      htdocs/core/ajaxziptown.php
  *       \ingroup	core
  *       \brief     File to return Ajax response on zipcode or town request
- *       \version   $Id: ajaxziptown.php,v 1.12 2011/07/31 23:45:15 eldy Exp $
  */
 
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL',1); // Disables token renewal

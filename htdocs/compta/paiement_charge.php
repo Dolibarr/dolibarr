@@ -19,7 +19,6 @@
  *	    \file       htdocs/compta/paiement_charge.php
  *		\ingroup    tax
  *		\brief      Page to add payment of a tax
- *		\version    $Id: paiement_charge.php,v 1.54 2011/08/27 14:24:30 hregis Exp $
  */
 
 require('../main.inc.php');

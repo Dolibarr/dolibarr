@@ -17,10 +17,9 @@
  */
 
 /**
- \file       htdocs/fourn/product/photos.php
- \ingroup    product
- \brief      Page de la fiche produit
- \version    $Id: photos.php,v 1.29 2011/08/27 14:24:33 hregis Exp $
+ *  \file       htdocs/fourn/product/photos.php
+ *  \ingroup    product
+ *  \brief      Page de la fiche produit
  */
 
 require("../../main.inc.php");

@@ -25,7 +25,6 @@
  *       \file       htdocs/comm/fiche.php
  *       \ingroup    commercial compta
  *       \brief      Page to show customer card of a third party
- *       \version    $Id: fiche.php,v 1.286 2011/08/27 14:24:30 hregis Exp $
  */
 
 require("../main.inc.php");

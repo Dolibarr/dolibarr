@@ -22,7 +22,6 @@
  *	    \file       htdocs/comm/action/listactions.php
  *      \ingroup    agenda
  *		\brief      Page to list actions
- *		\version    $Id: listactions.php,v 1.57 2011/08/27 14:24:45 hregis Exp $
  */
 
 require("../../main.inc.php");

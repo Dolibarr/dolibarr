@@ -21,7 +21,6 @@
  *	\file       htdocs/comm/propal/index.php
  *	\ingroup    propal
  *	\brief      Home page of proposal area
- *	\version    $Id: index.php,v 1.9 2011/08/27 14:24:44 hregis Exp $
  */
 
 require("../../main.inc.php");

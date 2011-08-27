@@ -20,7 +20,6 @@
  *       \file       htdocs/comm/propal/contact.php
  *       \ingroup    propal
  *       \brief      Onglet de gestion des contacts de propal
- *       \version    $Id: contact.php,v 1.46 2011/08/27 14:24:44 hregis Exp $
  */
 
 require("../../main.inc.php");

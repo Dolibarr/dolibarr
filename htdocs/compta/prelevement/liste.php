@@ -22,7 +22,6 @@
  *      \file       htdocs/compta/prelevement/liste.php
  *      \ingroup    prelevement
  *      \brief      Page liste des prelevements
- *      \version    $Id: liste.php,v 1.36 2011/08/27 14:24:41 hregis Exp $
  */
 require("../bank/pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/bon-prelevement.class.php");

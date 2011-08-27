@@ -17,11 +17,10 @@
  */
 
 /**
-	    \file       htdocs/compta/dons/stats.php
-        \ingroup    don
-		\brief      Page des statistiques de dons
-		\version    $Id: stats.php,v 1.18 2011/08/27 14:24:45 hregis Exp $
-*/
+ * 	    \file       htdocs/compta/dons/stats.php
+ *      \ingroup    don
+ *      \brief      Page des statistiques de dons
+ */
 
 require("../../main.inc.php");
 

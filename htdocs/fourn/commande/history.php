@@ -21,7 +21,6 @@
  *       \file       htdocs/fourn/commande/history.php
  *       \ingroup    commande
  *       \brief      Fiche commande
- *       \version    $Id: history.php,v 1.37 2011/08/27 14:24:54 hregis Exp $
  */
 
 require("../../main.inc.php");

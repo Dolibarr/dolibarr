@@ -21,7 +21,6 @@
  *	\file       htdocs/fourn/index.php
  *	\ingroup    fournisseur
  *	\brief      Home page of suppliers area
- *	\version    $Id: index.php,v 1.70 2011/08/27 14:24:32 hregis Exp $
  */
 
 require("../main.inc.php");

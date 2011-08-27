@@ -22,7 +22,6 @@
  *		\file		htdocs/commande/apercu.php
  *		\ingroup	commande
  *		\brief		Page de l'onglet apercu d'une commande
- *		\version	$Id: apercu.php,v 1.53 2011/08/27 14:24:39 hregis Exp $
  */
 
 require("../main.inc.php");

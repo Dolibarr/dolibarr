@@ -21,7 +21,6 @@
  *	\file       htdocs/core/class/html.formfile.class.php
  *  \ingroup    core
  *	\brief      File of class to offer components to list and upload files
- *	\version	$Id: html.formfile.class.php,v 1.57 2011/08/16 09:36:00 eldy Exp $
  */
 
 

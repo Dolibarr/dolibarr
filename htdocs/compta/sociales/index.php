@@ -21,7 +21,6 @@
  *   	\file       htdocs/compta/sociales/index.php
  *		\ingroup    tax
  *		\brief      Page to list all social contributions
- *		\version    $Id: index.php,v 1.67 2011/08/27 14:24:59 hregis Exp $
  */
 
 require('../../main.inc.php');

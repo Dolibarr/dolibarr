@@ -24,7 +24,6 @@
  *       \file       htdocs/fichinter/document.php
  *       \ingroup    fichinter
  *       \brief      Page des documents joints sur les contrats
- *       \version    $Id: document.php,v 1.23 2011/08/27 14:24:40 hregis Exp $
  */
 
 require("../main.inc.php");

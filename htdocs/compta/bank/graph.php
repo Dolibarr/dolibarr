@@ -21,7 +21,6 @@
  *	\file       htdocs/compta/bank/graph.php
  *	\ingroup    banque
  *	\brief      Page graph des transactions bancaires
- *	\version    $Id: graph.php,v 1.52 2011/08/27 14:24:43 hregis Exp $
  */
 
 require("./pre.inc.php");

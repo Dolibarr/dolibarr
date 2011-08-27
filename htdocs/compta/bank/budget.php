@@ -21,7 +21,6 @@
  *	    \file       htdocs/compta/bank/budget.php
  *      \ingroup    banque
  *		\brief      Page de budget
- *		\version    $Id: budget.php,v 1.34 2011/08/27 14:24:43 hregis Exp $
  */
 
 require("./pre.inc.php");

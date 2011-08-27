@@ -23,7 +23,6 @@
  *       \file       htdocs/contrat/document.php
  *       \ingroup    contrat
  *       \brief      Page des documents joints sur les contrats
- *       \version    $Id: document.php,v 1.26 2011/08/27 14:24:18 hregis Exp $
  */
 
 require ("../main.inc.php");

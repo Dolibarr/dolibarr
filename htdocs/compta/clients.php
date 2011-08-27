@@ -21,7 +21,6 @@
  *	\file       htdocs/compta/clients.php
  *	\ingroup    compta
  *	\brief      Show list of customers to add an new invoice
- *	\version    $Id: clients.php,v 1.67 2011/08/27 14:24:30 hregis Exp $
  */
 
 require('../main.inc.php');

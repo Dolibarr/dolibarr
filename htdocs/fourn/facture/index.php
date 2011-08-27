@@ -21,7 +21,6 @@
  *       \file       htdocs/fourn/facture/index.php
  *       \ingroup    fournisseur,facture
  *       \brief      List of suppliers invoices
- *       \version    $Id: index.php,v 1.86 2011/08/27 14:24:27 hregis Exp $
  */
 
 require("../../main.inc.php");

@@ -20,7 +20,6 @@
 /**
  *       \file        htdocs/compta/resultat/index.php
  *       \brief       Page reporting resultat
- *       \version     $Id: index.php,v 1.50 2011/08/27 14:25:01 hregis Exp $
  */
 
 require('../../main.inc.php');

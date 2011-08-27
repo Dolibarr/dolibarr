@@ -21,7 +21,6 @@
  *	    \file       htdocs/compta/bank/releve.php
  *      \ingroup    banque
  *		\brief      Page d'affichage d'un releve
- *		\version    $Id: releve.php,v 1.52 2011/08/27 14:24:43 hregis Exp $
  */
 
 require("./pre.inc.php");

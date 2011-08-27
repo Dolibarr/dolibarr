@@ -20,7 +20,6 @@
  *      \file       htdocs/compta/sociales/charges.php
  *		\ingroup    tax
  *		\brief      Social contribution car page
- *		\version    $Id: charges.php,v 1.67 2011/08/27 14:24:59 hregis Exp $
  */
 
 require('../../main.inc.php');

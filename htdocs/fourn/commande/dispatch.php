@@ -24,7 +24,6 @@
  *	\file      htdocs/fourn/commande/dispatch.php
  *	\ingroup   commande
  *	\brief     Fiche de ventilation des commandes fournisseurs
- *	\version   $Id: dispatch.php,v 1.40 2011/08/27 14:24:54 hregis Exp $
  */
 
 require("../../main.inc.php");

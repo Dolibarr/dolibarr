@@ -19,7 +19,6 @@
  *       \file       htdocs/exports/index.php
  *       \ingroup    export
  *       \brief      Home page of export tools
- *       \version    $Id: index.php,v 1.32 2011/08/27 14:24:53 hregis Exp $
  */
 
 require_once("../main.inc.php");

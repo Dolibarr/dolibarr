@@ -21,7 +21,6 @@
  *   \file       htdocs/fourn/commande/liste.php
  *   \ingroup    fournisseur
  *   \brief      List of suppliers orders
- *   \version    $Id: liste.php,v 1.43 2011/08/27 14:24:54 hregis Exp $
  */
 
 require("../../main.inc.php");

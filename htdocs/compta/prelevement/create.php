@@ -21,7 +21,6 @@
 /**
  *	\file       htdocs/compta/prelevement/create.php
  *	\brief      Prelevement
- *	\version    $Id: create.php,v 1.36 2011/08/27 14:24:41 hregis Exp $
  */
 
 require("../bank/pre.inc.php");

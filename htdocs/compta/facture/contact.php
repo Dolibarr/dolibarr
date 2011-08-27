@@ -20,7 +20,6 @@
  *       \file       htdocs/compta/facture/contact.php
  *       \ingroup    facture
  *       \brief      Onglet de gestion des contacts des factures
- *       \version    $Id: contact.php,v 1.51 2011/08/27 14:24:17 hregis Exp $
  */
 
 require("../../main.inc.php");

@@ -21,7 +21,6 @@
 /**
  * 		\file       htdocs/compta/prelevement/fiche-rejet.php
  *		\brief      Prelevement
- * 		\version	$Id: fiche-rejet.php,v 1.25 2011/08/27 14:24:40 hregis Exp $
  */
 
 require("../bank/pre.inc.php");

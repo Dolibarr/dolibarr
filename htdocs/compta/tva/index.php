@@ -22,7 +22,6 @@
  *	    \file       htdocs/compta/tva/index.php
  *      \ingroup    tax
  *		\brief      Index page of VAT reports
- *		\version    $Id: index.php,v 1.44 2011/08/27 14:24:37 hregis Exp $
  */
 require('../../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/tax.lib.php");

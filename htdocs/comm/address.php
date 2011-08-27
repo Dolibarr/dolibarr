@@ -21,7 +21,6 @@
  *      \file       htdocs/comm/address.php
  *      \ingroup    societe
  *      \brief      Tab address of customer
- *      \version    $Id: address.php,v 1.11 2011/08/27 14:24:30 hregis Exp $
  */
 
 require("../main.inc.php");

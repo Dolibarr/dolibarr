@@ -20,7 +20,6 @@
  *	\file       htdocs/compta/dons/liste.php
  *	\ingroup    don
  *	\brief      Page de liste des dons
- *	\version    $Id: liste.php,v 1.36 2011/08/27 14:24:44 hregis Exp $
  */
 
 require("../../main.inc.php");

@@ -20,7 +20,6 @@
  *   	\file       htdocs/fourn/recap-fourn.php
  *		\ingroup    fournisseur
  *		\brief      Page de fiche recap fournisseur
- *		\version    $Id: recap-prospect.php,v 1.10 2011/08/27 14:24:29 hregis Exp $
  */
 
 require("../../main.inc.php");

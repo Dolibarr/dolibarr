@@ -22,7 +22,6 @@
  *       \file       htdocs/fourn/facture/document.php
  *       \ingroup    facture, fournisseur
  *       \brief      Page de gestion des documents attachees a une facture fournisseur
- *       \version    $Id: document.php,v 1.47 2011/08/27 14:24:26 hregis Exp $
  */
 
 require("../../main.inc.php");

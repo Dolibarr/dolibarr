@@ -21,7 +21,6 @@
  *	\file       htdocs/compta/index.php
  *	\ingroup    compta
  *	\brief      Main page of accountancy area
- *	\version    $Id: index.php,v 1.187 2011/08/27 14:24:29 hregis Exp $
  */
 
 require('../main.inc.php');

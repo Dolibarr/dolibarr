@@ -16,10 +16,9 @@
  */
 
 /**
-        \file       htdocs/comm/bookmark.php
-        \brief      Page affichage des bookmarks
-        \version    $Id: bookmark.php,v 1.25 2011/08/27 14:24:31 hregis Exp $
-*/
+ *      \file       htdocs/comm/bookmark.php
+ *      \brief      Page affichage des bookmarks
+ */
 
 
 require("../main.inc.php");

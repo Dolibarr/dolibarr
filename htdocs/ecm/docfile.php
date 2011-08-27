@@ -19,7 +19,6 @@
  *	\file      	htdocs/ecm/docfile.php
  *	\ingroup   	ecm
  *	\brief     	Card of a file for ECM module
- *	\version   	$Id: docfile.php,v 1.20 2011/08/27 14:24:46 hregis Exp $
  *	\author		Laurent Destailleur
  */
 

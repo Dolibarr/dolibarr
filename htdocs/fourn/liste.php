@@ -22,7 +22,6 @@
  *       \file       htdocs/fourn/liste.php
  *       \ingroup    fournisseur
  *       \brief      Home page of supplier area
- *       \version    $Id: liste.php,v 1.31 2011/08/27 14:24:32 hregis Exp $
  */
 
 require("../main.inc.php");

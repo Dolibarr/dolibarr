@@ -21,7 +21,6 @@
  *	\file       htdocs/compta/prelevement/fiche.php
  *	\ingroup    prelevement
  *	\brief      Fiche prelevement
- *	\version    $Id: fiche.php,v 1.60 2011/08/27 14:24:40 hregis Exp $
  */
 
 require("../bank/pre.inc.php");

@@ -21,7 +21,6 @@
  *	\file       htdocs/compta/bank/treso.php
  *	\ingroup    banque
  *	\brief      Page de detail du budget de tresorerie
- *	\version    $Id: treso.php,v 1.37 2011/08/27 14:24:43 hregis Exp $
  */
 
 require("./pre.inc.php");

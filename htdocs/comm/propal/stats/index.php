@@ -21,7 +21,6 @@
  *	    \file       htdocs/comm/propal/stats/index.php
  *      \ingroup    propale
  *		\brief      Page des stats propositions commerciales
- *		\version    $Id: index.php,v 1.35 2011/08/27 14:24:48 hregis Exp $
  */
 
 require("../../../main.inc.php");

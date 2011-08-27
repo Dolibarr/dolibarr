@@ -18,7 +18,6 @@
 /**
  * 	\file       	htdocs/ecm/class/htmlecm.form.class.php
  * 	\brief      	Fichier de la classe des fonctions predefinie de composants html
- * 	\version		$Id: htmlecm.form.class.php,v 1.4 2011/07/31 23:50:55 eldy Exp $
  */
 require_once(DOL_DOCUMENT_ROOT."/ecm/class/ecmdirectory.class.php");
 

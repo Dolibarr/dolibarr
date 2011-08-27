@@ -20,7 +20,6 @@
  *       \file       htdocs/contact/ldap.php
  *       \ingroup    ldap
  *       \brief      Page fiche LDAP contact
- *       \version    $Id: ldap.php,v 1.34 2011/08/27 14:24:34 hregis Exp $
  */
 
 require("../main.inc.php");

@@ -20,7 +20,6 @@
  *	\file       htdocs/ecm/index.php
  *	\ingroup    ecm
  *	\brief      Main page for ECM section area
- *	\version    $Id: index.php,v 1.105 2011/08/27 14:24:46 hregis Exp $
  *	\author		Laurent Destailleur
  */
 

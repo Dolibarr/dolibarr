@@ -20,7 +20,6 @@
  *	\file      	htdocs/ecm/docdir.php
  *	\ingroup   	ecm
  *	\brief     	Main page for ECM section area
- *	\version   	$Id: docdir.php,v 1.24 2011/08/27 14:24:46 hregis Exp $
  *	\author		Laurent Destailleur
  */
 

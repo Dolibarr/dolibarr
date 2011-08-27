@@ -20,7 +20,6 @@
  *   	\file       htdocs/compta/paiement/info.php
  *		\ingroup    facture
  *		\brief      Onglet info d'un paiement
- *		\version    $Id: info.php,v 1.19 2011/08/27 14:24:47 hregis Exp $
  */
 
 require("../../main.inc.php");

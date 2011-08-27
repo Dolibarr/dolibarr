@@ -21,7 +21,6 @@
  *	\file       htdocs/compta/facture/fiche-rec.php
  *	\ingroup    facture
  *	\brief      Page to show predefined invoice
- *	\version    $Id: fiche-rec.php,v 1.77 2011/08/27 14:24:17 hregis Exp $
  */
 
 require("../../main.inc.php");

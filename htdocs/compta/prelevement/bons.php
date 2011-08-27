@@ -19,11 +19,10 @@
  */
 
 /**
-        \file       htdocs/compta/prelevement/bons.php
-        \ingroup    prelevement
-        \brief      Page liste des bons de prelevements
-        \version    $Id: bons.php,v 1.27 2011/08/27 14:24:41 hregis Exp $
-*/
+ * 	\file       htdocs/compta/prelevement/bons.php
+ * 	\ingroup    prelevement
+ * 	\brief      Page liste des bons de prelevements
+ */
 
 require("../bank/pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/bon-prelevement.class.php");

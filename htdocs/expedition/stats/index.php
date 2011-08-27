@@ -21,7 +21,6 @@
  *     \file       htdocs/expedition/stats/index.php
  *     \ingroup    expedition
  *     \brief      Page des stats expeditions
- *     \version    $Id: index.php,v 1.14 2011/08/27 14:25:04 hregis Exp $
  */
 
 require("../../main.inc.php");

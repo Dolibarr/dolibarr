@@ -21,7 +21,6 @@
  *	\file       htdocs/commande/index.php
  *	\ingroup    commande
  *	\brief      Home page of customer order module
- *	\version    $Id: index.php,v 1.85 2011/08/27 14:24:39 hregis Exp $
  */
 
 require("../main.inc.php");

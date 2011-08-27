@@ -23,7 +23,6 @@
  *  \file       htdocs/expedition/class/expedition.class.php
  *  \ingroup    expedition
  *  \brief      Fichier de la classe de gestion des expeditions
- *  \version    $Id$
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");

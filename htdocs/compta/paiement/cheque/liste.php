@@ -21,7 +21,6 @@
  *   \file       htdocs/compta/paiement/cheque/liste.php
  *   \ingroup    compta
  *   \brief      Page liste des bordereau de remise de cheque
- *   \version    $Id: liste.php,v 1.32 2011/08/27 14:25:00 hregis Exp $
  */
 
 require("./pre.inc.php");

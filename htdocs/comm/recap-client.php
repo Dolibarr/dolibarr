@@ -20,7 +20,6 @@
  *   	\file       htdocs/comm/recap-client.php
  *		\ingroup    societe
  *		\brief      Page de fiche recap client
- *		\version    $Id: recap-client.php,v 1.14 2011/08/27 14:24:31 hregis Exp $
  */
 
 require("../main.inc.php");

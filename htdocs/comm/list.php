@@ -21,7 +21,6 @@
  *	\file       htdocs/comm/list.php
  *	\ingroup    commercial societe
  *	\brief      List of customers
- *	\version    $Id: list.php,v 1.2 2011/08/27 14:24:30 hregis Exp $
  */
 
 require("../main.inc.php");

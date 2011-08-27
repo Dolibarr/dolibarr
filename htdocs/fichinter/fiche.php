@@ -22,7 +22,6 @@
  *	\file       htdocs/fichinter/fiche.php
  *	\brief      Fichier fiche intervention
  *	\ingroup    ficheinter
- *	\version    $Id: fiche.php,v 1.176 2011/08/27 14:24:40 hregis Exp $
  */
 
 require("../main.inc.php");

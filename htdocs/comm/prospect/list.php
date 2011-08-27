@@ -22,7 +22,6 @@
  *	\file       htdocs/comm/prospect/list.php
  *	\ingroup    prospect
  *	\brief      Page to list prospects
- *	\version    $Id: list.php,v 1.2 2011/08/27 14:24:29 hregis Exp $
  */
 
 require("../../main.inc.php");
