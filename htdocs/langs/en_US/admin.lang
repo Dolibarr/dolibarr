@@ -867,7 +867,7 @@ UserMailRequired=EMail required to create a new user
 CompanySetup=Companies module setup
 CompanyCodeChecker=Module for third parties code generation and checking (customer or supplier)
 AccountCodeManager=Module for accountancy code generation (customer or supplier)
-ModuleCompanyCodeAquarium=Return an accountancy code built by "401" followed by third party supplier code for a supplier accountancy code, and "411" followed by third party customer code for a customer accountancy code.
+ModuleCompanyCodeAquarium=Return an accountancy code built by:<br>"401" followed by third party supplier code for a supplier accountancy code,<br>"411" followed by third party customer code for a customer accountancy code.
 ModuleCompanyCodePanicum=Return an empty accountancy code.
 ModuleCompanyCodeDigitaria=Accountancy code depends on third party code. The code is composed of the character "C" in the first position followed by the first 5 characters of the third party code.  
 UseNotifications=Use notifications
@@ -876,6 +876,8 @@ ModelModules=Documents templates
 DocumentModelOdt=Generate documents from OpenDocuments templates (.ODT files for OpenOffice, KOffice, TextEdit,...)
 WatermarkOnDraft=Watermark on draft document
 CompanyIdProfChecker=Professional Id unique
+MustBeUnique=Must be unique ?
+Miscellanous=Miscellanous
 ##### Webcal setup #####
 WebCalSetup=Webcalendar link setup
 WebCalSyncro=Add Dolibarr events to WebCalendar

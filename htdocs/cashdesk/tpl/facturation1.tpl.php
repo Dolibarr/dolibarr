@@ -21,7 +21,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-$Id: facturation1.tpl.php,v 1.15 2011/08/03 01:13:30 eldy Exp $
+$Id: facturation1.tpl.php,v 1.16 2011/08/26 14:52:00 simnandez Exp $
 -->
 <script type="text/javascript" src="javascript/facturation1.js"></script>
 <script type="text/javascript" src="javascript/dhtml.js"></script>
@@ -73,7 +73,7 @@ $Id: facturation1.tpl.php,v 1.15 2011/08/03 01:13:30 eldy Exp $
 								$label = $tab_designations[$i]['label'];
 
 								print '<option '.$selected.' value="'.$tab_designations[$i]['rowid'].'">'.dol_trunc($tab_designations[$i]['ref'],7).' - '.dol_trunc($label,35,'middle');
-								if ($conf->stock->enabled && !empty($conf_fkentrepot)) print ' ('.$langs->trans("CashDeskStock").': '.$tab_designations[$i]['reel'].')';
+								if ($conf->stock->enabled && !empty($conf_fkentrepot) && $tab_designations[$i]['fk_product_type']==0) print ' ('.$langs->trans("CashDeskStock").': '.$tab_designations[$i]['reel'].')';
 								print '</option>'."\n				";
 
 							}
@@ -91,7 +91,7 @@ $Id: facturation1.tpl.php,v 1.15 2011/08/03 01:13:30 eldy Exp $
 								$label = $tab_designations[$i]['label'];
 
 								print '<option '.$selected.' value="'.$tab_designations[$i]['rowid'].'">'.dol_trunc($tab_designations[$i]['ref'],7).' - '.dol_trunc($label,35,'middle');
-								if ($conf->stock->enabled && !empty($conf_fkentrepot)) print ' ('.$langs->trans("CashDeskStock").': '.(empty($tab_designations[$i]['reel'])?0:$tab_designations[$i]['reel']).')';
+								if ($conf->stock->enabled && !empty($conf_fkentrepot) && $tab_designations[$i]['fk_product_type']==0) print ' ('.$langs->trans("CashDeskStock").': '.(empty($tab_designations[$i]['reel'])?0:$tab_designations[$i]['reel']).')';
 								print '</option>'."\n				";
 
 							}
