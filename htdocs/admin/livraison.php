@@ -24,7 +24,6 @@
  *      \file       htdocs/admin/livraison.php
  *      \ingroup    livraison
  *      \brief      Page d'administration/configuration du module Livraison
- *      \version    $Id: livraison.php,v 1.57 2011/07/31 22:23:21 eldy Exp $
  */
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");

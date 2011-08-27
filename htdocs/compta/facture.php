@@ -25,7 +25,7 @@
  *	\file       htdocs/compta/facture.php
  *	\ingroup    facture
  *	\brief      Page to create/see an invoice
- *	\version    $Id: facture.php,v 1.857 2011/08/23 18:40:47 hregis Exp $
+ *	\version    $Id: facture.php,v 1.858 2011/08/27 14:24:29 hregis Exp $
  */
 
 require('../main.inc.php');
@@ -3193,5 +3193,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/23 18:40:47 $ - $Revision: 1.857 $');
+llxFooter();
 ?>

@@ -21,7 +21,7 @@
  *	\file       htdocs/comm/list.php
  *	\ingroup    commercial societe
  *	\brief      List of customers
- *	\version    $Id: list.php,v 1.1 2011/08/21 13:07:10 eldy Exp $
+ *	\version    $Id: list.php,v 1.2 2011/08/27 14:24:30 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -249,5 +249,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/21 13:07:10 $ - $Revision: 1.1 $');
+llxFooter();
 ?>

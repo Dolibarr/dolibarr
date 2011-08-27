@@ -21,7 +21,7 @@
  *       \file       htdocs/product/stats/facture_fournisseur.php
  *       \ingroup    product service facture
  *       \brief      Page des stats des factures fournisseurs pour un produit
- *       \version    $Id: facture_fournisseur.php,v 1.33 2011/08/08 16:07:47 eldy Exp $
+ *       \version    $Id: facture_fournisseur.php,v 1.34 2011/08/27 14:24:41 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -194,5 +194,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/08 16:07:47 $ - $Revision: 1.33 $');
+llxFooter();
 ?>

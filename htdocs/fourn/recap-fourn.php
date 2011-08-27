@@ -20,7 +20,7 @@
  *  	\file       htdocs/fourn/recap-fourn.php
  *		\ingroup    fournisseur
  *		\brief      Page de fiche recap fournisseur
- *		\version    $Id: recap-fourn.php,v 1.15 2011/07/31 23:57:03 eldy Exp $
+ *		\version    $Id: recap-fourn.php,v 1.16 2011/08/27 14:24:32 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -217,5 +217,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:57:03 $ - $Revision: 1.15 $');
+llxFooter();
 ?>

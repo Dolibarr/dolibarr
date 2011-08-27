@@ -21,7 +21,7 @@
  *		\file       htdocs/compta/bank/virement.php
  *		\ingroup    banque
  *		\brief      Page de saisie d'un virement
- *		\version    $Id: virement.php,v 1.49 2011/07/31 22:23:17 eldy Exp $
+ *		\version    $Id: virement.php,v 1.50 2011/08/27 14:24:42 hregis Exp $
  */
 
 require("./pre.inc.php");
@@ -175,5 +175,5 @@ print "</form>";
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:17 $ - $Revision: 1.49 $');
+llxFooter();
 ?>

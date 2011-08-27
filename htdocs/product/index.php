@@ -21,7 +21,7 @@
  *	\file       htdocs/product/index.php
  *  \ingroup    product
  *  \brief      Page accueil des produits et services
- *  \version    $Id: index.php,v 1.101 2011/07/31 23:19:25 eldy Exp $
+ *  \version    $Id: index.php,v 1.102 2011/08/27 14:24:38 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -247,5 +247,5 @@ print '</td></tr></table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:19:25 $ - $Revision: 1.101 $');
+llxFooter();
 ?>

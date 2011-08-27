@@ -24,7 +24,6 @@
  *	    \file       htdocs/admin/dict.php
  *		\ingroup    setup
  *		\brief      Page to administer data tables
- *		\version    $Id: dict.php,v 1.146 2011/07/31 22:23:22 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -896,7 +895,7 @@ print '<br>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:22 $ - $Revision: 1.146 $');
+llxFooter();
 
 
 /**

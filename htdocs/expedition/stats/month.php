@@ -20,7 +20,7 @@
  *    \file       htdocs/expedition/stats/month.php
  *    \ingroup    commande
  *    \brief      Page des stats expeditions par mois
- *    \version    $Id: month.php,v 1.17 2011/07/31 23:50:55 eldy Exp $
+ *    \version    $Id: month.php,v 1.18 2011/08/27 14:25:04 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -70,5 +70,5 @@ print '</table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:50:55 $ - $Revision: 1.17 $');
+llxFooter();
 ?>

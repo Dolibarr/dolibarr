@@ -21,7 +21,6 @@
 /**
  *  \file           htdocs/admin/system/dbtable.php
  *  \brief          Page d'info des contraintes d'une table
- *  \version        $Id: dbtable.php,v 1.12 2011/07/31 22:23:14 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -132,5 +131,5 @@ else
 	}
 }
 
-llxFooter('$Date: 2011/07/31 22:23:14 $ - $Revision: 1.12 $');
+llxFooter();
 ?>

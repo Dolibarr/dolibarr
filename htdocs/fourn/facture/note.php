@@ -21,7 +21,7 @@
  *      \file       htdocs/fourn/facture/note.php
  *      \ingroup    facture
  *      \brief      Fiche de notes sur une facture fournisseur
- *		\version    $Id: note.php,v 1.22 2011/07/31 23:57:01 eldy Exp $
+ *		\version    $Id: note.php,v 1.23 2011/08/27 14:24:26 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -173,5 +173,5 @@ if ($_GET["facid"])
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:57:01 $ - $Revision: 1.22 $');
+llxFooter();
 ?>

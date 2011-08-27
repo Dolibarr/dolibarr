@@ -19,7 +19,7 @@
  *	\file       htdocs/projet/tasks/document.php
  *	\ingroup    project
  *	\brief      Page de gestion des documents attachees a une tache d'un projet
- *	\version    $Id: document.php,v 1.16 2011/07/31 23:23:36 eldy Exp $
+ *	\version    $Id: document.php,v 1.17 2011/08/27 14:24:49 hregis Exp $
  */
 
 require('../../main.inc.php');
@@ -204,5 +204,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:23:36 $ - $Revision: 1.16 $');
+llxFooter();
 ?>

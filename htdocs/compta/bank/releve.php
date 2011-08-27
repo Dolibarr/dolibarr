@@ -21,7 +21,7 @@
  *	    \file       htdocs/compta/bank/releve.php
  *      \ingroup    banque
  *		\brief      Page d'affichage d'un releve
- *		\version    $Id: releve.php,v 1.51 2011/07/31 22:23:16 eldy Exp $
+ *		\version    $Id: releve.php,v 1.52 2011/08/27 14:24:43 hregis Exp $
  */
 
 require("./pre.inc.php");
@@ -442,5 +442,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:16 $ - $Revision: 1.51 $');
+llxFooter();
 ?>

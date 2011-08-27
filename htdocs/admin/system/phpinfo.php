@@ -19,7 +19,6 @@
 /**
  *      \file       htdocs/admin/system/phpinfo.php
  *		\brief      Page des infos systeme de php
- *		\version    $Id: phpinfo.php,v 1.19 2011/07/31 22:23:14 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -121,5 +120,5 @@ if (isset($title))
 print "$chaine\n";	// Ne pas centrer la reponse php car certains tableau du bas tres large rendent ceux du haut completement a droite
 print "<br>\n";
 
-llxfooter('$Date: 2011/07/31 22:23:14 $ - $Revision: 1.19 $');
+llxfooter('$Date: 2011/08/27 14:24:35 $ - $Revision: 1.20 $');
 ?>

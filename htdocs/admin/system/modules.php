@@ -20,7 +20,6 @@
 /**
  *  \file       htdocs/admin/system/modules.php
  *  \brief      File to list all Dolibarr modules
- *  \version    $Id: modules.php,v 1.16 2011/08/13 09:36:45 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -154,5 +153,5 @@ foreach($rights_ids as $right_id)
 	$old = $right_id;
 }
 
-llxFooter('$Date: 2011/08/13 09:36:45 $ - $Revision: 1.16 $');
+llxFooter();
 ?>

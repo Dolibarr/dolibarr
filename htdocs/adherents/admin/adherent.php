@@ -25,7 +25,6 @@
  *   	\file       htdocs/adherents/admin/adherent.php
  *		\ingroup    member
  *		\brief      Page to setup the module Foundation
- *		\version    $Id: adherent.php,v 1.19 2011/08/17 15:56:23 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -331,7 +330,7 @@ $db->close();
 
 print '<br>';
 
-llxFooter('$Date: 2011/08/17 15:56:23 $ - $Revision: 1.19 $');
+llxFooter();
 
 
 

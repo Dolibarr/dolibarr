@@ -22,7 +22,7 @@
  *	\file       htdocs/projet/liste.php
  *	\ingroup    projet
  *	\brief      Page to list projects
- *	\version    $Id: liste.php,v 1.49 2011/07/31 23:23:37 eldy Exp $
+ *	\version    $Id: liste.php,v 1.50 2011/08/27 14:24:16 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -205,5 +205,5 @@ print "</table>";
 $db->close();
 
 
-llxFooter('$Date: 2011/07/31 23:23:37 $ - $Revision: 1.49 $');
+llxFooter();
 ?>

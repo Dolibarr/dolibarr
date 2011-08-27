@@ -22,7 +22,6 @@
  *      \file       scripts/withdrawals/build_withdrawal_file.php
  *      \ingroup    prelevement
  *      \brief      Script de prelevement
- * 		\version	$Id: build_withdrawal_file.php,v 1.5 2011/07/31 22:22:12 eldy Exp $
  */
 
 $sapi_type = php_sapi_name();
@@ -36,7 +35,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 // Recupere env dolibarr
-$version='$Revision: 1.5 $';
+$version='$Revision: 1.6 $';
 
 require_once($path."../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/bon-prelevement.class.php");

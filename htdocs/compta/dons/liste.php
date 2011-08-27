@@ -20,7 +20,7 @@
  *	\file       htdocs/compta/dons/liste.php
  *	\ingroup    don
  *	\brief      Page de liste des dons
- *	\version    $Id: liste.php,v 1.35 2011/08/03 00:46:37 eldy Exp $
+ *	\version    $Id: liste.php,v 1.36 2011/08/27 14:24:44 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -192,5 +192,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:37 $ - $Revision: 1.35 $');
+llxFooter();
 ?>

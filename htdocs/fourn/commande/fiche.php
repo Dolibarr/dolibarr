@@ -25,7 +25,7 @@
  *	\file		htdocs/fourn/commande/fiche.php
  *	\ingroup	supplier, order
  *	\brief		Card supplier order
- *	\version	$Id: fiche.php,v 1.235 2011/08/23 18:40:49 hregis Exp $
+ *	\version	$Id: fiche.php,v 1.236 2011/08/27 14:24:54 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -1542,5 +1542,5 @@ if ($id > 0 || ! empty($ref))
 
 $db->close();
 
-llxFooter('$Date: 2011/08/23 18:40:49 $	- $Revision: 1.235 $');
+llxFooter();
 ?>

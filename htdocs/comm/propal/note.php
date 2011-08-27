@@ -22,7 +22,7 @@
  *	\file       htdocs/comm/propal/note.php
  *	\ingroup    propale
  *	\brief      Fiche d'information sur une proposition commerciale
- *	\version    $Id: note.php,v 1.63 2011/08/14 02:11:45 eldy Exp $
+ *	\version    $Id: note.php,v 1.64 2011/08/27 14:24:44 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -226,5 +226,5 @@ if ($id > 0 || ! empty($ref))
 }
 $db->close();
 
-llxFooter('$Date: 2011/08/14 02:11:45 $ - $Revision: 1.15 ');
+llxFooter();
 ?>

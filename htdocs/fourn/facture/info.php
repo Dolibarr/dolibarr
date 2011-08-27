@@ -21,7 +21,7 @@
  *      \file       htdocs/fourn/facture/info.php
  *      \ingroup    facture, fournisseur
  *		\brief      Page des informations d'une facture fournisseur
- *		\version    $Id: info.php,v 1.14 2011/07/31 23:57:00 eldy Exp $
+ *		\version    $Id: info.php,v 1.15 2011/08/27 14:24:27 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -64,5 +64,5 @@ print '</div>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:57:00 $ - $Revision: 1.14 $');
+llxFooter();
 ?>

@@ -45,5 +45,5 @@ print "Cet �tat n'est pas disponible.";
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date: 2011/08/03 00:46:31 $ r&eacute;vision $Revision: 1.10 $</em>");
+llxFooter();
 ?>

@@ -24,7 +24,7 @@
 /**
  *       \file       htdocs/user/fiche.php
  *       \brief      Tab of user card
- *       \version    $Id: fiche.php,v 1.282 2011/08/23 22:25:38 eldy Exp $
+ *       \version    $Id: fiche.php,v 1.283 2011/08/27 14:24:50 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -1776,7 +1776,7 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/23 22:25:38 $ - $Revision: 1.282 $');
+llxFooter();
 
 
 

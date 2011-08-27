@@ -20,7 +20,6 @@
  *   \file       htdocs/admin/clicktodial.php
  *   \ingroup    clicktodial
  *   \brief      Page to setup module clicktodial
- *   \version    $Id: clicktodial.php,v 1.24 2011/07/31 22:23:24 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -95,5 +94,5 @@ print '</table></form>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:24 $ - $Revision: 1.24 $');
+llxFooter();
 ?>

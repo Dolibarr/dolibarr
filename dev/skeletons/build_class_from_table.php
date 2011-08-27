@@ -20,7 +20,6 @@
  *	\file       dev/skeletons/build_class_from_table.php
  *  \ingroup    core
  *  \brief      Create a complete class file from a table in database
- *  \version    $Id: build_class_from_table.php,v 1.33 2011/07/31 22:21:58 eldy Exp $
  */
 
 $sapi_type = php_sapi_name();
@@ -38,7 +37,7 @@ require_once($path."../../htdocs/master.inc.php");
 // After this $db is a defined handler to database.
 
 // Main
-$version='$Revision: 1.33 $';
+$version='$Revision: 1.34 $';
 @set_time_limit(0);
 $error=0;
 

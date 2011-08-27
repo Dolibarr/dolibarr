@@ -18,7 +18,6 @@
 /**
  *     \file       htdocs/admin/system/xcache.php
  *     \brief      Page administration XCache
- *     \version    $Id: xcache.php,v 1.2 2011/07/31 22:23:14 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -45,7 +44,7 @@ print "<br>\n";
 if (!function_exists('xcache_info'))
 {
     print 'XCache seems to be not installed. Function xcache_info not found.';
-	llxfooter('$Date: 2011/07/31 22:23:14 $ - $Revision: 1.2 $');
+	llxfooter('$Date: 2011/08/27 14:24:36 $ - $Revision: 1.3 $');
 	exit;
 }
 
@@ -69,5 +68,5 @@ if ($action == 'clear')
 }
 */
 
-llxfooter('$Date: 2011/07/31 22:23:14 $ - $Revision: 1.2 $');
+llxfooter('$Date: 2011/08/27 14:24:36 $ - $Revision: 1.3 $');
 ?>

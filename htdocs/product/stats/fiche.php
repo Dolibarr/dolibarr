@@ -22,7 +22,7 @@
  *       \file       htdocs/product/stats/fiche.php
  *       \ingroup    product
  *       \brief      Page of product statistics
- *       \version    $Id: fiche.php,v 1.111 2011/08/08 16:07:48 eldy Exp $
+ *       \version    $Id: fiche.php,v 1.112 2011/08/27 14:24:41 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -270,5 +270,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/08 16:07:48 $ - $Revision: 1.111 $');
+llxFooter();
 ?>

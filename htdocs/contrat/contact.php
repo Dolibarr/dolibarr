@@ -20,7 +20,7 @@
         \file       htdocs/contrat/contact.php
         \ingroup    contrat
         \brief      Onglet de gestion des contacts des contrats
-        \version    $Id: contact.php,v 1.48 2011/08/14 03:13:50 eldy Exp $
+        \version    $Id: contact.php,v 1.49 2011/08/27 14:24:18 hregis Exp $
 */
 
 require ("../main.inc.php");
@@ -361,5 +361,5 @@ if ($id > 0)
 
 $db->close();
 
-llxFooter('$Date: 2011/08/14 03:13:50 $');
+llxFooter();
 ?>

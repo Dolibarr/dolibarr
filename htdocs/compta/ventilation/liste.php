@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      �ric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: liste.php,v 1.22 2011/08/03 00:46:37 eldy Exp $
  */
 
 
@@ -24,7 +23,6 @@
  * 		\file       htdocs/compta/ventilation/liste.php
  * 		\ingroup    compta
  * 		\brief      Page de ventilation des lignes de facture
- * 		\version    $Revision: 1.22 $
  */
 
 require('../../main.inc.php');
@@ -127,5 +125,5 @@ else
 }
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date: 2011/08/03 00:46:37 $ r&eacute;vision $Revision: 1.22 $</em>");
+llxFooter();
 ?>

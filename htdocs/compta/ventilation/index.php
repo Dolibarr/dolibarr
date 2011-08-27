@@ -15,15 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: index.php,v 1.13 2011/08/03 00:46:37 eldy Exp $
  */
 
 /**
-   \file       htdocs/compta/ventilation/index.php
-    \ingroup    compta
-     \brief      Page accueil ventilation
-      \version    $Revision: 1.13 $
-*/
+ *   \file       htdocs/compta/ventilation/index.php
+ *   \ingroup    compta
+ *   \brief      Page accueil ventilation
+ */
 
 require('../../main.inc.php');
 
@@ -94,6 +92,6 @@ print "</table>\n";
 
 print '</td></tr></table>';
 
-llxFooter('$Date: 2011/08/03 00:46:37 $ - $Revision: 1.13 $');
+llxFooter();
 
 ?>

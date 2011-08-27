@@ -20,7 +20,7 @@
  *      \file       htdocs/commande/info.php
  *      \ingroup    commande
  *		\brief      Page des informations d'une commande
- *		\version    $Id: info.php,v 1.22 2011/07/31 22:23:15 eldy Exp $
+ *		\version    $Id: info.php,v 1.23 2011/08/27 14:24:39 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -66,5 +66,5 @@ print '</div>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:15 $ - $Revision: 1.22 $');
+llxFooter();
 ?>

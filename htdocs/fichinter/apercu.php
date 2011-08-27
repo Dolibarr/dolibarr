@@ -21,7 +21,7 @@
  * 		\file		htdocs/fichinter/apercu.php
  * 		\ingroup	fichinter
  * 		\brief		Page de l'onglet apercu d'une fiche d'intervention
- * 		\version	$Id: apercu.php,v 1.25 2011/07/31 23:50:54 eldy Exp $
+ * 		\version	$Id: apercu.php,v 1.26 2011/08/27 14:24:40 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -186,5 +186,5 @@ print '</div>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:50:54 $ - $Revision: 1.25 $');
+llxFooter();
 ?>

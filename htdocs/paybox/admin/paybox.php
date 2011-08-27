@@ -19,7 +19,7 @@
 /**	    \file       htdocs/paybox/admin/paybox.php
  *		\ingroup    paybox
  *		\brief      Page to setup paybox module
- *		\version    $Id: paybox.php,v 1.14 2011/07/31 23:20:29 eldy Exp $
+ *		\version    $Id: paybox.php,v 1.15 2011/08/27 14:24:45 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -211,5 +211,5 @@ print info_admin($langs->trans("YouCanAddTagOnUrl"));
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:20:29 $ - $Revision: 1.14 $');
+llxFooter();
 ?>

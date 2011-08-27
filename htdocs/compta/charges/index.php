@@ -21,7 +21,7 @@
  *      \file       htdocs/compta/charges/index.php
  *      \ingroup    compta
  *		\brief      Page to list payments of social contributions and vat
- *		\version    $Id: index.php,v 1.42 2011/08/03 00:46:34 eldy Exp $
+ *		\version    $Id: index.php,v 1.43 2011/08/27 14:25:04 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -256,5 +256,5 @@ if (empty($_GET["mode"]) || $_GET["mode"] != 'sconly')
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:34 $ - $Revision: 1.42 $');
+llxFooter();
 ?>

@@ -21,7 +21,7 @@
         \file       htdocs/compta/bank/categ.php
         \ingroup    compta
         \brief      Page ajout de cat�gories bancaires
-        \version    $Id: categ.php,v 1.31 2011/07/31 22:23:20 eldy Exp $
+        \version    $Id: categ.php,v 1.32 2011/08/27 14:24:43 hregis Exp $
 */
 
 require("./pre.inc.php");
@@ -134,5 +134,5 @@ print "</table></form>";
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:20 $ - $Revision: 1.31 $');
+llxFooter();
 ?>

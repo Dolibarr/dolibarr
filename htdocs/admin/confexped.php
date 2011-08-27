@@ -21,7 +21,6 @@
  *	    \file       htdocs/admin/confexped.php
  *		\ingroup    produit
  *		\brief      Page to setup sending module
- *		\version    $Id: confexped.php,v 1.22 2011/07/31 22:23:21 eldy Exp $
  */
 
 require("../main.inc.php");

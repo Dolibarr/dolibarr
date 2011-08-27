@@ -21,7 +21,6 @@
  *       \ingroup    install
  *       \brief      Affichage page selection langue si premiere install.
  *					 Si reinstall, passe directement a la page check.php
- *       \version    $Id: index.php,v 1.36 2011/07/31 23:26:19 eldy Exp $
  */
 include_once("./inc.php");
 include_once("../core/class/html.form.class.php");

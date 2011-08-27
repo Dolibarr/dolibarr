@@ -20,7 +20,7 @@
  *	\file      	htdocs/ecm/docdir.php
  *	\ingroup   	ecm
  *	\brief     	Main page for ECM section area
- *	\version   	$Id: docdir.php,v 1.23 2011/07/31 23:50:55 eldy Exp $
+ *	\version   	$Id: docdir.php,v 1.24 2011/08/27 14:24:46 hregis Exp $
  *	\author		Laurent Destailleur
  */
 
@@ -230,5 +230,5 @@ if (! $_GET["action"] || $_GET["action"] == 'delete_section')
 // End of page
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:50:55 $ - $Revision: 1.23 $');
+llxFooter();
 ?>

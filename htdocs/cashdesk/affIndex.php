@@ -22,7 +22,6 @@
  *	\file       htdocs/cashdesk/affIndex.php
  *	\ingroup    cashdesk
  *	\brief      First page of point of sale module
- *	\version    $Id: affIndex.php,v 1.20 2011/07/31 22:23:27 eldy Exp $
  */
 require('../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php');

@@ -21,7 +21,7 @@
  *       \file       htdocs/projet/index.php
  *       \ingroup    projet
  *       \brief      Main project home page
- *       \version    $Id: index.php,v 1.76 2011/08/08 15:28:01 eldy Exp $
+ *       \version    $Id: index.php,v 1.77 2011/08/27 14:24:16 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -130,5 +130,5 @@ print '</td></tr></table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/08 15:28:01 $ - $Revision: 1.76 $');
+llxFooter();
 ?>

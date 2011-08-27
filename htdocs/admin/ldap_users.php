@@ -23,7 +23,6 @@
  *   	\file       htdocs/admin/ldap_users.php
  *		\ingroup    ldap
  *		\brief      Page d'administration/configuration du module Ldap
- *		\version    $Id: ldap_users.php,v 1.37 2011/07/31 22:23:22 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -340,5 +339,5 @@ if (function_exists("ldap_connect"))
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:22 $ - $Revision: 1.37 $');
+llxFooter();
 ?>

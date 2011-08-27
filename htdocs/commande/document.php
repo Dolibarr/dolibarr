@@ -22,7 +22,7 @@
  *	\file       htdocs/commande/document.php
  *	\ingroup    order
  *	\brief      Page de gestion des documents attachees a une commande
- *	\version    $Id: document.php,v 1.36 2011/07/31 22:23:15 eldy Exp $
+ *	\version    $Id: document.php,v 1.37 2011/08/27 14:24:38 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -192,5 +192,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:15 $ - $Revision: 1.36 $');
+llxFooter();
 ?>

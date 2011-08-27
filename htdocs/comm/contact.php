@@ -21,7 +21,7 @@
         \file       htdocs/comm/contact.php
         \ingroup    commercial
         \brief      Liste des contacts
-        \version    $Id: contact.php,v 1.50 2011/08/03 00:46:26 eldy Exp $
+        \version    $Id: contact.php,v 1.51 2011/08/27 14:24:30 hregis Exp $
 */
 
 require("../main.inc.php");
@@ -180,5 +180,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:26 $ - $Revision: 1.50 $');
+llxFooter();
 ?>

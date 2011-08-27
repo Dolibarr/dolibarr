@@ -23,7 +23,6 @@
  *	\file       htdocs/admin/societe.php
  *	\ingroup    company
  *	\brief      Third party module setup page
- *	\version    $Id: societe.php,v 1.64 2011/08/26 11:48:36 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -577,5 +576,5 @@ dol_fiche_end();
 
 $db->close();
 
-llxFooter('$Date: 2011/08/26 11:48:36 $ - $Revision: 1.64 $');
+llxFooter();
 ?>

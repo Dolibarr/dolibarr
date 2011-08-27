@@ -21,7 +21,7 @@
  *	\file       htdocs/compta/bank/graph.php
  *	\ingroup    banque
  *	\brief      Page graph des transactions bancaires
- *	\version    $Id: graph.php,v 1.51 2011/07/31 22:23:16 eldy Exp $
+ *	\version    $Id: graph.php,v 1.52 2011/08/27 14:24:43 hregis Exp $
  */
 
 require("./pre.inc.php");
@@ -856,5 +856,5 @@ print "\n</div>\n";
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:16 $ - $Revision: 1.51 $');
+llxFooter();
 ?>

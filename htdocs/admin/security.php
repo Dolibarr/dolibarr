@@ -20,7 +20,6 @@
  *		\file       htdocs/admin/security.php
  *      \ingroup    setup
  *      \brief      Page de configuration du module securite
- *		\version    $Id: security.php,v 1.57 2011/08/17 15:56:23 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -430,5 +429,5 @@ print '</div>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/17 15:56:23 $ - $Revision: 1.57 $');
+llxFooter();
 ?>

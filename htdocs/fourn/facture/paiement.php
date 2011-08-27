@@ -23,7 +23,7 @@
  *	\file       htdocs/fourn/facture/paiement.php
  *	\ingroup    fournisseur,facture
  *	\brief      Payment page for suppliers invoices
- *	\version    $Id: paiement.php,v 1.94 2011/07/31 23:57:01 eldy Exp $
+ *	\version    $Id: paiement.php,v 1.95 2011/08/27 14:24:27 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -487,5 +487,5 @@ if (! $_GET['action'] && ! $_POST['action'])
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:57:01 $ - $Revision: 1.94 $');
+llxFooter();
 ?>

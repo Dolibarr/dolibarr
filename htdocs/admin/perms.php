@@ -21,7 +21,6 @@
  *   	\file       htdocs/admin/perms.php
  *      \ingroup    core
  *		\brief      Page d'administration/configuration des permissions par defaut
- *		\version    $Id: perms.php,v 1.44 2011/08/17 15:56:23 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -217,5 +216,5 @@ print '</div>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/17 15:56:23 $ - $Revision: 1.44 $');
+llxFooter();
 ?>

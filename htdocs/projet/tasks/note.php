@@ -19,7 +19,7 @@
  *	\file       htdocs/projet/tasks/note.php
  *	\ingroup    project
  *	\brief      Page to show information on a task
- *	\version    $Id: note.php,v 1.13 2011/07/31 23:23:36 eldy Exp $
+ *	\version    $Id: note.php,v 1.14 2011/08/27 14:24:49 hregis Exp $
  */
 
 require ("../../main.inc.php");
@@ -202,5 +202,5 @@ if ($id > 0 || ! empty($ref))
 }
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:23:36 $ - $Revision: 1.15 ');
+llxFooter();
 ?>

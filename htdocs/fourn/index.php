@@ -21,7 +21,7 @@
  *	\file       htdocs/fourn/index.php
  *	\ingroup    fournisseur
  *	\brief      Home page of suppliers area
- *	\version    $Id: index.php,v 1.69 2011/08/08 15:28:01 eldy Exp $
+ *	\version    $Id: index.php,v 1.70 2011/08/27 14:24:32 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -320,5 +320,5 @@ print "</table>\n";
 
 $db->close();
 
-llxFooter('$Date: 2011/08/08 15:28:01 $ - $Revision: 1.69 $');
+llxFooter();
 ?>

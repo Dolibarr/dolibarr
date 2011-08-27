@@ -23,7 +23,7 @@
  *  \file       htdocs/product/admin/produit.php
  *  \ingroup    produit
  *  \brief      Page d'administration/configuration du module Produit
- *  \version    $Id: produit.php,v 1.8 2011/08/17 15:56:26 eldy Exp $
+ *  \version    $Id: produit.php,v 1.9 2011/08/27 14:25:01 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -294,5 +294,5 @@ if ($conf->global->PRODUCT_CANVAS_ABILITY)
 
 $db->close();
 
-llxFooter('$Date: 2011/08/17 15:56:26 $ - $Revision: 1.8 $');
+llxFooter();
 ?>

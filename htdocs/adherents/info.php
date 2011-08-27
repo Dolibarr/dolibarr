@@ -20,7 +20,6 @@
  *      \file       htdocs/adherents/info.php
  *      \ingroup    member
  *		\brief      Page des informations d'un adherent
- *		\version    $Id: info.php,v 1.15 2011/07/31 22:23:28 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -62,5 +61,5 @@ print '</div>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:28 $ - $Revision: 1.15 $');
+llxFooter();
 ?>

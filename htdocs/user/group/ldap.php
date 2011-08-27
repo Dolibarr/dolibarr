@@ -20,7 +20,7 @@
  *       \file       htdocs/user/group/ldap.php
  *       \ingroup    ldap
  *       \brief      Page fiche LDAP groupe
- *       \version    $Id: ldap.php,v 1.27 2011/08/17 15:56:24 eldy Exp $
+ *       \version    $Id: ldap.php,v 1.28 2011/08/27 14:24:55 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -215,5 +215,5 @@ print '</table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/17 15:56:24 $ - $Revision: 1.27 $');
+llxFooter();
 ?>

@@ -21,7 +21,7 @@
  \file       htdocs/commande/note.php
  \ingroup    commande
  \brief      Fiche de notes sur une commande
- \version    $Id: note.php,v 1.24 2011/07/31 22:23:15 eldy Exp $
+ \version    $Id: note.php,v 1.25 2011/08/27 14:24:38 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -174,5 +174,5 @@ if ($id > 0 || ! empty($ref))
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:15 $ - $Revision: 1.24 $');
+llxFooter();
 ?>

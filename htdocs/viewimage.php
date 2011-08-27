@@ -22,7 +22,6 @@
  *		\file       htdocs/viewimage.php
  *		\brief      Wrapper to show images into Dolibarr screens
  *      \remarks    Call to wrapper is '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=diroffile&file=relativepathofofile&cache=0">'
- *		\version    $Id: viewimage.php,v 1.97 2011/07/31 23:19:04 eldy Exp $
  */
 
 // Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).

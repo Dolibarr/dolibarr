@@ -2,7 +2,6 @@
 #--------------------------------------------------------------------
 # \brief	This script is a preprocessor for PHP files to be used
 #			on PHP source files before running Doxygen.
-# \version	$Id$
 # \author	Laurent Destailleur
 #--------------------------------------------------------------------
 

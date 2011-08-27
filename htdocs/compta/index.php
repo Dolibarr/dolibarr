@@ -21,7 +21,7 @@
  *	\file       htdocs/compta/index.php
  *	\ingroup    compta
  *	\brief      Main page of accountancy area
- *	\version    $Id: index.php,v 1.186 2011/08/23 23:01:47 eldy Exp $
+ *	\version    $Id: index.php,v 1.187 2011/08/27 14:24:29 hregis Exp $
  */
 
 require('../main.inc.php');
@@ -1031,5 +1031,5 @@ print '</table>';
 $db->close();
 
 
-llxFooter('$Date: 2011/08/23 23:01:47 $ - $Revision: 1.186 $');
+llxFooter();
 ?>

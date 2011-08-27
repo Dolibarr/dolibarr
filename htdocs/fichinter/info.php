@@ -21,7 +21,7 @@
  *	\file       htdocs/fichinter/info.php
  *	\ingroup    fichinter
  *	\brief      Page d'affichage des infos d'une fiche d'intervention
- *	\version    $Id: info.php,v 1.15 2011/07/31 23:50:54 eldy Exp $
+ *	\version    $Id: info.php,v 1.16 2011/08/27 14:24:40 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -64,5 +64,5 @@ print '</div>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:50:54 $ - $Revision: 1.15 $');
+llxFooter();
 ?>

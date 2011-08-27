@@ -21,7 +21,7 @@
  *	\file       htdocs/societe/societe.php
  *	\ingroup    societe
  *	\brief      Page to show a third party
- *	\version    $Id: societe.php,v 1.13 2011/08/23 23:50:15 eldy Exp $
+ *	\version    $Id: societe.php,v 1.14 2011/08/27 14:24:32 hregis Exp $
  */
 
 require_once("../main.inc.php");
@@ -433,5 +433,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/23 23:50:15 $ - $Revision: 1.13 $');
+llxFooter();
 ?>

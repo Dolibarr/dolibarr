@@ -22,7 +22,7 @@
  *	\file       htdocs/fichinter/fiche.php
  *	\brief      Fichier fiche intervention
  *	\ingroup    ficheinter
- *	\version    $Id: fiche.php,v 1.175 2011/08/23 20:52:39 eldy Exp $
+ *	\version    $Id: fiche.php,v 1.176 2011/08/27 14:24:40 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -1218,5 +1218,5 @@ elseif ($fichinterid)
 
 $db->close();
 
-llxFooter('$Date: 2011/08/23 20:52:39 $ - $Revision: 1.175 $');
+llxFooter();
 ?>

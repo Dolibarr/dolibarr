@@ -18,7 +18,7 @@
 /**     \file   	htdocs/compta/resultat/bilan.php
  *      \ingroup    compta
  *      \brief  	Fichier page bilan compta
- *		\version	$Id: bilan.php,v 1.12 2011/08/03 00:46:31 eldy Exp $
+ *		\version	$Id: bilan.php,v 1.13 2011/08/27 14:25:01 hregis Exp $
  */
 
 require('../../main.inc.php');
@@ -51,5 +51,5 @@ print "Cet �tat n'est pas disponible.";
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date: 2011/08/03 00:46:31 $ r&eacute;vision $Revision: 1.12 $</em>");
+llxFooter();
 ?>

@@ -24,7 +24,7 @@
  *	\file       htdocs/fourn/facture/fiche.php
  *	\ingroup    facture, fournisseur
  *	\brief      Page for supplier invoice card (view, edit, validate)
- *	\version    $Id: fiche.php,v 1.264 2011/08/23 18:40:49 hregis Exp $
+ *	\version    $Id: fiche.php,v 1.265 2011/08/27 14:24:27 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -1915,5 +1915,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/23 18:40:49 $ - $Revision: 1.264 $');
+llxFooter();
 ?>

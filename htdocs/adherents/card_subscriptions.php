@@ -21,7 +21,6 @@
  *       \file       htdocs/adherents/card_subscriptions.php
  *       \ingroup    member
  *       \brief      Onglet d'ajout, edition, suppression des adhesions d'un adherent
- *       \version    $Id: card_subscriptions.php,v 1.79 2011/07/31 22:23:28 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -995,5 +994,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:28 $ - $Revision: 1.79 $');
+llxFooter();
 ?>

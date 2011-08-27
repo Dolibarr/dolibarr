@@ -22,7 +22,6 @@
  *		\file       htdocs/compta/facture/impayees.php
  *		\ingroup    facture
  *		\brief      Page to list and build liste of unpaid invoices
- *		\version    $Revision: 1.86 $
  */
 
 require("../../main.inc.php");
@@ -427,5 +426,5 @@ if ($result)
 
 $db->close();
 
-llxFooter('$Date: 2011/08/11 12:14:03 $ - $Revision: 1.86 $');
+llxFooter();
 ?>

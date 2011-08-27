@@ -20,7 +20,7 @@
  *	\file       htdocs/ftp/index.php
  *	\ingroup    ftp
  *	\brief      Main page for FTP section area
- *	\version    $Id: index.php,v 1.25 2011/08/17 15:56:27 eldy Exp $
+ *	\version    $Id: index.php,v 1.26 2011/08/27 14:24:42 hregis Exp $
  *	\author		Laurent Destailleur
  */
 
@@ -624,7 +624,7 @@ if ($conn_id) ftp_close($conn_id);
 // End of page
 $db->close();
 
-llxFooter('$Date: 2011/08/17 15:56:27 $ - $Revision: 1.25 $');
+llxFooter();
 
 
 /**

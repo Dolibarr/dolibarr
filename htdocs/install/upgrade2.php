@@ -21,7 +21,6 @@
 /**
  *	\file       htdocs/install/upgrade2.php
  *	\brief      Upgrade some data
- *	\version    $Id: upgrade2.php,v 1.190 2011/08/21 13:28:05 eldy Exp $
  */
 
 include_once('./inc.php');

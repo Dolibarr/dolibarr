@@ -23,7 +23,6 @@
 /**
  *  \file       htdocs/admin/modules.php
  *  \brief      Page to activate/disable all modules
- *  \version    $Id: modules.php,v 1.159 2011/08/04 21:07:33 simnandez Exp $
  */
 
 require("../main.inc.php");
@@ -474,5 +473,5 @@ print '</div>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/04 21:07:33 $ - $Revision: 1.159 $');
+llxFooter();
 ?>

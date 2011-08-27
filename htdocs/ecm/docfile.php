@@ -19,7 +19,7 @@
  *	\file      	htdocs/ecm/docfile.php
  *	\ingroup   	ecm
  *	\brief     	Card of a file for ECM module
- *	\version   	$Id: docfile.php,v 1.19 2011/07/31 23:50:55 eldy Exp $
+ *	\version   	$Id: docfile.php,v 1.20 2011/08/27 14:24:46 hregis Exp $
  *	\author		Laurent Destailleur
  */
 
@@ -284,5 +284,5 @@ if ($_GET["action"] != 'edit')
 // End of page
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:50:55 $ - $Revision: 1.19 $');
+llxFooter();
 ?>

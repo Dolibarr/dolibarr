@@ -22,7 +22,7 @@
  *	    \file       htdocs/comm/action/rapport/index.php
  *      \ingroup    commercial
  *		\brief      Page with reports of actions
- *		\version    $Id: index.php,v 1.49 2011/08/17 15:56:26 eldy Exp $
+ *		\version    $Id: index.php,v 1.50 2011/08/27 14:25:00 hregis Exp $
  */
 
 require("../../../main.inc.php");
@@ -150,5 +150,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/17 15:56:26 $ - $Revision: 1.49 $');
+llxFooter();
 ?>

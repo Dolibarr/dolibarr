@@ -18,7 +18,6 @@
 /**
  *		\file       htdocs/admin/menus/menu.js.php
  *		\brief      File for js menu
- *		\version    $Id: menu.js.php,v 1.9 2011/07/31 22:23:15 eldy Exp $
  */
 
 

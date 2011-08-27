@@ -21,7 +21,7 @@
  *	\file       htdocs/fourn/product/categorie.php
  *	\ingroup    product
  *	\brief      Page of products categories
- *	\version    $Id: categorie.php,v 1.18 2011/07/31 23:57:03 eldy Exp $
+ *	\version    $Id: categorie.php,v 1.19 2011/08/27 14:24:32 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -172,6 +172,6 @@ if ($_GET["id"])
 $db->close();
 
 
-llxFooter("<em>Derni&egrave;re modification $Date: 2011/07/31 23:57:03 $ r&eacute;vision $Revision: 1.18 $</em>");
+llxFooter();
 ?>
 

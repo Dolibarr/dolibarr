@@ -18,7 +18,7 @@
 /**
         \file       htdocs/comm/bookmark.php
         \brief      Page affichage des bookmarks
-        \version    $Id: bookmark.php,v 1.24 2011/08/03 00:46:26 eldy Exp $
+        \version    $Id: bookmark.php,v 1.25 2011/08/27 14:24:31 hregis Exp $
 */
 
 
@@ -146,5 +146,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:26 $ - $Revision: 1.24 $');
+llxFooter();
 ?>

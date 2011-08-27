@@ -21,7 +21,7 @@
  *	    \file       htdocs/societe/notify/fiche.php
  *      \ingroup    societe notification
  *		\brief      Tab for notifications of third party
- *		\version    $Id: fiche.php,v 1.71 2011/08/08 16:00:16 eldy Exp $
+ *		\version    $Id: fiche.php,v 1.72 2011/08/27 14:24:46 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -349,6 +349,6 @@ if ( $soc->fetch($soc->id) )
 
 $db->close();
 
-llxFooter('$Date: 2011/08/08 16:00:16 $ - $Revision: 1.71 $');
+llxFooter();
 
 ?>

@@ -21,7 +21,7 @@
 /**     \file       htdocs/product/popuprop.php
  *		\ingroup    propal, produit
  *		\brief      Liste des produits/services par popularite
- *		\version    $Id: popuprop.php,v 1.42 2011/07/31 23:19:25 eldy Exp $
+ *		\version    $Id: popuprop.php,v 1.43 2011/08/27 14:24:38 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -156,5 +156,5 @@ print "</table>";
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:19:25 $ - $Revision: 1.42 $');
+llxFooter();
 ?>

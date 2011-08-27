@@ -22,7 +22,7 @@
  *  \file       htdocs/societe/document.php
  *  \brief      Tab for documents linked to third party
  *  \ingroup    societe
- *  \version    $Id: document.php,v 1.39 2011/07/31 23:22:57 eldy Exp $
+ *  \version    $Id: document.php,v 1.40 2011/08/27 14:24:31 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -240,6 +240,6 @@ else
 $db->close();
 
 
-llxFooter('$Date: 2011/07/31 23:22:57 $ - $Revision: 1.39 $');
+llxFooter();
 
 ?>

@@ -20,7 +20,7 @@
 /**
  *	\file        htdocs/compta/stats/index.php
  *	\brief       Page reporting CA
- *	\version     $Id: index.php,v 1.51 2011/07/31 22:23:13 eldy Exp $
+ *	\version     $Id: index.php,v 1.52 2011/08/27 14:24:58 hregis Exp $
  */
 
 require('../../main.inc.php');
@@ -497,6 +497,6 @@ print "</table>";
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:13 $ - $Revision: 1.51 $');
+llxFooter();
 
 ?>

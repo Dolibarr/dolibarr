@@ -25,7 +25,7 @@
  *	\file       htdocs/commande/fiche.php
  *	\ingroup    commande
  *	\brief      Page to show customer order
- *	\version    $Id: fiche.php,v 1.537 2011/08/23 18:40:45 hregis Exp $
+ *	\version    $Id: fiche.php,v 1.538 2011/08/27 14:24:39 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -2077,5 +2077,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/23 18:40:45 $ - $Revision: 1.537 $');
+llxFooter();
 ?>

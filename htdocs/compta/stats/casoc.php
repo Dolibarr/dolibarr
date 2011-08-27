@@ -21,7 +21,7 @@
 /**
  *       \file        htdocs/compta/stats/casoc.php
  *       \brief       Page reporting CA par societe
- *       \version     $Id: casoc.php,v 1.49 2011/07/31 22:23:14 eldy Exp $
+ *       \version     $Id: casoc.php,v 1.50 2011/08/27 14:24:58 hregis Exp $
  */
 
 require('../../main.inc.php');
@@ -310,5 +310,5 @@ print '<br>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:14 $ - $Revision: 1.49 $');
+llxFooter();
 ?>

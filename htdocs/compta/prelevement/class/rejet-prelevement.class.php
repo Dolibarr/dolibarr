@@ -16,14 +16,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: rejet-prelevement.class.php,v 1.16 2011/07/31 22:23:31 eldy Exp $
  */
 
 /**
- \file       htdocs/compta/prelevement/class/rejet-prelevement.class.php
- \ingroup    prelevement
- \brief      File of class to manage standing orders rejects
- \version    $Revision: 1.16 $
+ *  \file       htdocs/compta/prelevement/class/rejet-prelevement.class.php
+ *  \ingroup    prelevement
+ *  \brief      File of class to manage standing orders rejects
  */
 
 

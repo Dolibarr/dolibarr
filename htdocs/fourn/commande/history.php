@@ -21,7 +21,7 @@
  *       \file       htdocs/fourn/commande/history.php
  *       \ingroup    commande
  *       \brief      Fiche commande
- *       \version    $Id: history.php,v 1.36 2011/07/31 23:57:02 eldy Exp $
+ *       \version    $Id: history.php,v 1.37 2011/08/27 14:24:54 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -187,5 +187,5 @@ if ($id > 0 || ! empty($ref))
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:57:02 $ - $Revision: 1.36 $');
+llxFooter();
 ?>

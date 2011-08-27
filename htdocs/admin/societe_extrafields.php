@@ -21,7 +21,6 @@
  *      \file       htdocs/admin/societe_extrafields.php
  *		\ingroup    societe
  *		\brief      Page to setup extra fields of third party
- *		\version    $Id: societe_extrafields.php,v 1.6 2011/07/31 22:23:21 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -311,5 +310,5 @@ if ($_GET["attrname"] && $action == 'edit')
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:21 $ - $Revision: 1.6 $');
+llxFooter();
 ?>

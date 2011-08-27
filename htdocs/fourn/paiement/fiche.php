@@ -22,7 +22,7 @@
  *	\ingroup    facture, fournisseur
  *	\brief      Tab to show a payment of a supplier invoice
  *	\remarks	Fichier presque identique a compta/paiement/fiche.php
- *	\version    $Id: fiche.php,v 1.34 2011/07/31 23:57:03 eldy Exp $
+ *	\version    $Id: fiche.php,v 1.35 2011/08/27 14:24:28 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -359,5 +359,5 @@ dol_fiche_end();
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:57:03 $ - $Revision: 1.34 $');
+llxFooter();
 ?>

@@ -21,7 +21,6 @@
  *      \file       htdocs/admin/menus.php
  *      \ingroup    core
  *      \brief      Page to setup menu manager to use
- *		\version	$Id: menus.php,v 1.51 2011/07/31 22:23:23 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -248,5 +247,5 @@ if (! isset($_GET["action"]) || $_GET["action"] != 'edit')
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:23 $ - $Revision: 1.51 $');
+llxFooter();
 ?>

@@ -14,15 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: boutiqueclient.class.php,v 1.2 2011/08/03 00:45:46 eldy Exp $
- *
  */
 
 /**
  *      \file       htdocs/boutique/client/class/boutiqueclient.class.php
  *      \brief      Classe permettant de gerer des clients de la boutique online
  *      \author	    Rodolphe Quiedeville
- *      \version    $Revision: 1.2 $
  */
 
 /**

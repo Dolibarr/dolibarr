@@ -23,7 +23,7 @@
  *       \file       htdocs/comm/action/fiche.php
  *       \ingroup    agenda
  *       \brief      Page for event card
- *       \version    $Id: fiche.php,v 1.230 2011/08/24 12:19:32 eldy Exp $
+ *       \version    $Id: fiche.php,v 1.231 2011/08/27 14:24:45 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -1007,7 +1007,7 @@ if ($id)
 
 $db->close();
 
-llxFooter('$Date: 2011/08/24 12:19:32 $ - $Revision: 1.230 $');
+llxFooter();
 
 
 /**

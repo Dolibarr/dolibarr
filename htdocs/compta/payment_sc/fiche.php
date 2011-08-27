@@ -23,7 +23,7 @@
  *		\ingroup    facture
  *		\brief      Onglet payment of a social contribution
  *		\remarks	Fichier presque identique a fournisseur/paiement/fiche.php
- *		\version    $Id: fiche.php,v 1.14 2011/08/03 00:46:36 eldy Exp $
+ *		\version    $Id: fiche.php,v 1.15 2011/08/27 14:25:00 hregis Exp $
  */
 
 require('../../main.inc.php');
@@ -326,5 +326,5 @@ print '</div>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:36 $ - $Revision: 1.14 $');
+llxFooter();
 ?>

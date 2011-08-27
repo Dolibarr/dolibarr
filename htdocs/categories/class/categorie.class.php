@@ -24,7 +24,6 @@
  *	\file       htdocs/categories/class/categorie.class.php
  *	\ingroup    categorie
  *	\brief      File of class to manage categories
- *	\version	$Id: categorie.class.php,v 1.19 2011/08/20 09:02:56 hregis Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");

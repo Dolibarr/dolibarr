@@ -15,14 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: html.formbarcode.class.php,v 1.17 2011/08/16 10:11:01 eldy Exp $
  */
 
 /**
-        \file       htdocs/includes/barcode/html.formbarcode.class.php
-        \brief      Fichier de la classe des fonctions predefinie de composants html
-        \version    $Revision: 1.17 $
-*/
+ *      \file       htdocs/includes/barcode/html.formbarcode.class.php
+ *      \brief      Fichier de la classe des fonctions predefinie de composants html
+ */
 
 
 /**

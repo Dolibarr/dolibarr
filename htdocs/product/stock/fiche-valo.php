@@ -20,7 +20,7 @@
  *	\file       htdocs/product/stock/fiche-valo.php
  *	\ingroup    stock
  *	\brief      Page fiche de valorisation du stock dans l'entrepot
- *	\version    $Id: fiche-valo.php,v 1.17 2011/07/31 23:24:01 eldy Exp $
+ *	\version    $Id: fiche-valo.php,v 1.18 2011/08/27 14:24:58 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -142,5 +142,5 @@ if ($_GET["id"])
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:24:01 $ - $Revision: 1.17 $');
+llxFooter();
 ?>

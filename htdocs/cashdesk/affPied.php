@@ -19,7 +19,6 @@
  *	\file       htdocs/cashdesk/affPied.php
  *	\ingroup    cashdesk
  *	\brief      Bottom of main page of point of sale module
- *	\version    $Id: affPied.php,v 1.4 2011/07/31 22:23:27 eldy Exp $
  */
 
 ?>

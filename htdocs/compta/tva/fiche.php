@@ -21,7 +21,7 @@
  *	    \file       htdocs/compta/tva/fiche.php
  *      \ingroup    tax
  *		\brief      Page of VAT payments
- *		\version    $Id: fiche.php,v 1.34 2011/08/03 00:46:24 eldy Exp $
+ *		\version    $Id: fiche.php,v 1.35 2011/08/27 14:24:37 hregis Exp $
  */
 
 require('../../main.inc.php');
@@ -261,6 +261,6 @@ if ($id)
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:24 $ - $Revision: 1.34 $');
+llxFooter();
 
 ?>

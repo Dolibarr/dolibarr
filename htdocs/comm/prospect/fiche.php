@@ -21,7 +21,7 @@
  *	\file       htdocs/comm/prospect/fiche.php
  *	\ingroup    prospect
  *	\brief      Page de la fiche prospect
- *	\version    $Id: fiche.php,v 1.127 2011/08/03 00:46:27 eldy Exp $
+ *	\version    $Id: fiche.php,v 1.128 2011/08/27 14:24:29 hregis Exp $
  */
 
 require_once("../../main.inc.php");
@@ -337,5 +337,5 @@ if ($socid > 0)
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:27 $ - $Revision: 1.127 $');
+llxFooter();
 ?>

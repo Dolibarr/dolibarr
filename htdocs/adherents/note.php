@@ -20,7 +20,6 @@
  *      \file       htdocs/adherents/note.php
  *      \ingroup    member
  *      \brief      Fiche de notes sur un adherent
- *		\version    $Id: note.php,v 1.29 2011/07/31 22:23:28 eldy Exp $
 */
 
 require("../main.inc.php");
@@ -178,5 +177,5 @@ if ($id)
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:28 $ - $Revision: 1.29 $');
+llxFooter();
 ?>

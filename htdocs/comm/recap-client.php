@@ -20,7 +20,7 @@
  *   	\file       htdocs/comm/recap-client.php
  *		\ingroup    societe
  *		\brief      Page de fiche recap client
- *		\version    $Id: recap-client.php,v 1.13 2011/08/03 00:46:27 eldy Exp $
+ *		\version    $Id: recap-client.php,v 1.14 2011/08/27 14:24:31 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -92,5 +92,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:27 $ - $Revision: 1.13 $');
+llxFooter();
 ?>

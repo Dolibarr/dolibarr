@@ -22,7 +22,7 @@
  *      \file       htdocs/compta/prelevement/liste.php
  *      \ingroup    prelevement
  *      \brief      Page liste des prelevements
- *      \version    $Id: liste.php,v 1.35 2011/07/31 22:23:29 eldy Exp $
+ *      \version    $Id: liste.php,v 1.36 2011/08/27 14:24:41 hregis Exp $
  */
 require("../bank/pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/bon-prelevement.class.php");
@@ -185,5 +185,5 @@ else
 $db->close();
 
 
-llxFooter('$Date: 2011/07/31 22:23:29 $ - $Revision: 1.35 $');
+llxFooter();
 ?>

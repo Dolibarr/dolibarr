@@ -19,7 +19,6 @@
  *	    \file       htdocs/admin/menus/other.php
  *      \ingroup    core
  *      \brief      Menus options setup
- *		\version    $Id: other.php,v 1.6 2011/07/31 22:23:15 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -142,5 +141,5 @@ print '</table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:15 $ - $Revision: 1.6 $');
+llxFooter();
 ?>

@@ -20,7 +20,7 @@
  *       \file       htdocs/fichinter/contact.php
  *       \ingroup    fichinter
  *       \brief      Onglet de gestion des contacts de fiche d'intervention
- *       \version    $Id: contact.php,v 1.32 2011/08/14 03:13:50 eldy Exp $
+ *       \version    $Id: contact.php,v 1.33 2011/08/27 14:24:40 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -349,5 +349,5 @@ if ($id > 0)
 
 $db->close();
 
-llxFooter('$Date: 2011/08/14 03:13:50 $');
+llxFooter();
 ?>

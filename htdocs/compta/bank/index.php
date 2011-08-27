@@ -21,7 +21,7 @@
  *       \file       htdocs/compta/bank/index.php
  *       \ingroup    banque
  *       \brief      Page accueil banque
- *       \version    $Id: index.php,v 1.55 2011/07/31 22:23:16 eldy Exp $
+ *       \version    $Id: index.php,v 1.56 2011/08/27 14:24:42 hregis Exp $
  */
 
 require("./pre.inc.php");
@@ -244,5 +244,5 @@ print "</div>";
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:16 $ - $Revision: 1.55 $');
+llxFooter();
 ?>

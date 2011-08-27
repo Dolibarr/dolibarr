@@ -19,7 +19,6 @@
 /**
  *  \file       htdocs/admin/system/dolibarr.php
  *  \brief      Page to show Dolibarr informations
- *  \version    $Id: dolibarr.php,v 1.59 2011/07/31 22:23:14 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -212,5 +211,5 @@ print '<tr '.$bc[$var].'><td width="300">=> '.$langs->trans("File encoding").'</
 print '</table>';
 print '<br>';
 
-llxFooter('$Date: 2011/07/31 22:23:14 $ - $Revision: 1.59 $');
+llxFooter();
 ?>

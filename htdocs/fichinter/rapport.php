@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: rapport.php,v 1.26 2011/07/31 23:50:54 eldy Exp $
+ * $Id: rapport.php,v 1.27 2011/08/27 14:24:40 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -143,5 +143,5 @@ else
 }
 $db->close();
 
-llxFooter("$Date: 2011/07/31 23:50:54 $ - $Revision: 1.26 $");
+llxFooter();
 ?>

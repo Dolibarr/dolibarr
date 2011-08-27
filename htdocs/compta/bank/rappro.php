@@ -21,7 +21,7 @@
  *       \file       htdocs/compta/bank/rappro.php
  *       \ingroup    banque
  *       \brief      Page to reconciliate bank transactions
- *       \version    $Id: rappro.php,v 1.68 2011/07/31 22:23:16 eldy Exp $
+ *       \version    $Id: rappro.php,v 1.69 2011/08/27 14:24:43 hregis Exp $
  */
 
 require("./pre.inc.php");
@@ -402,5 +402,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:16 $ - $Revision: 1.68 $');
+llxFooter();
 ?>

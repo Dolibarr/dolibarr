@@ -21,7 +21,7 @@
  *		\file       htdocs/compta/paiement/cheque/index.php
  *		\ingroup    compta
  *		\brief      Home page for cheque receipts
- *		\version    $Id: index.php,v 1.21 2011/08/03 00:46:28 eldy Exp $
+ *		\version    $Id: index.php,v 1.22 2011/08/27 14:25:00 hregis Exp $
  */
 
 require("./pre.inc.php");
@@ -149,5 +149,5 @@ print "</table>\n";
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:28 $ - $Revision: 1.21 $');
+llxFooter();
 ?>

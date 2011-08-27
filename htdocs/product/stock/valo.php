@@ -21,7 +21,7 @@
  *	\file       htdocs/product/stock/valo.php
  *  \ingroup    stock
  *  \brief      Page with stock values
- *  \version    $Id: valo.php,v 1.27 2011/07/31 23:24:01 eldy Exp $
+ *  \version    $Id: valo.php,v 1.28 2011/08/27 14:24:58 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -161,5 +161,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:24:01 $ - $Revision: 1.27 $');
+llxFooter();
 ?>

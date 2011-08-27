@@ -20,7 +20,7 @@
 	    \file       htdocs/societe/notify/index.php
 		\ingroup    notification
 		\brief      List of done notifications
-		\version    $Id: index.php,v 1.17 2011/07/31 23:22:59 eldy Exp $
+		\version    $Id: index.php,v 1.18 2011/08/27 14:24:46 hregis Exp $
 */
 
 require("../../main.inc.php");
@@ -111,5 +111,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:22:59 $ - $Revision: 1.17 $');
+llxFooter();
 ?>

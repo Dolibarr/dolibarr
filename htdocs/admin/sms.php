@@ -19,7 +19,6 @@
 /**
  *       \file       htdocs/admin/sms.php
  *       \brief      Page to setup emails sending
- *       \version    $Id: sms.php,v 1.10 2011/08/13 13:03:03 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -346,5 +345,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/13 13:03:03 $ - $Revision: 1.10 $');
+llxFooter();
 ?>

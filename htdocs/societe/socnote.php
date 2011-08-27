@@ -22,7 +22,7 @@
  *   \file       htdocs/societe/socnote.php
  *   \brief      Tab for notes on third party
  *   \ingroup    societe
- *   \version    $Id: socnote.php,v 1.23 2011/07/31 23:22:56 eldy Exp $
+ *   \version    $Id: socnote.php,v 1.24 2011/08/27 14:24:31 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -166,5 +166,5 @@ if ($action != 'edit')
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:22:56 $ - $Revision: 1.23 $');
+llxFooter();
 ?>

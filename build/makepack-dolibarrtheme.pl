@@ -2,7 +2,6 @@
 #-----------------------------------------------------------------------------
 # \file         build/makepack-dolibarrtheme.pl
 # \brief        Script to build a theme Package for Dolibarr
-# \version      $Revision: 1.10 $
 # \author       (c)2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
 #-----------------------------------------------------------------------------
 
@@ -25,7 +24,7 @@ $PROJECT="dolibarr";
 
 
 use vars qw/ $REVISION $VERSION /;
-$REVISION='$Revision: 1.10 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
+$REVISION='$Revision: 1.11 $'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
 $VERSION="1.0 (build $REVISION)";
 
 

@@ -22,7 +22,6 @@
  *       \file       htdocs/categories/photos.php
  *       \ingroup    category
  *       \brief      Gestion des photos d'une categorie
- *       \version    $Id: photos.php,v 1.15 2011/08/20 09:02:57 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -305,5 +304,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/20 09:02:57 $ - $Revision: 1.15 $');
+llxFooter();
 ?>

@@ -24,7 +24,6 @@
  *	\file       htdocs/adherents/class/adherent.class.php
  *	\ingroup    member
  *	\brief      File of class to manage members of a foundation
- *	\version    $Id: adherent.class.php,v 1.50 2011/08/20 15:11:31 eldy Exp $
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");

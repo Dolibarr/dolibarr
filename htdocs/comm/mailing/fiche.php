@@ -20,7 +20,7 @@
  *       \file       htdocs/comm/mailing/fiche.php
  *       \ingroup    mailing
  *       \brief      Fiche mailing, onglet general
- *       \version    $Id: fiche.php,v 1.124 2011/08/20 15:11:32 eldy Exp $
+ *       \version    $Id: fiche.php,v 1.125 2011/08/27 14:24:34 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -1072,5 +1072,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/20 15:11:32 $ - $Revision: 1.124 $');
+llxFooter();
 ?>

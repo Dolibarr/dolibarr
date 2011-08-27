@@ -20,7 +20,7 @@
  *      \file       htdocs/compta/facture/note.php
  *      \ingroup    facture
  *      \brief      Fiche de notes sur une facture
- *		\version    $Id: note.php,v 1.58 2011/07/31 22:23:13 eldy Exp $
+ *		\version    $Id: note.php,v 1.59 2011/08/27 14:24:17 hregis Exp $
 */
 
 require("../../main.inc.php");
@@ -191,5 +191,5 @@ if ($id > 0 || ! empty($ref))
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:13 $ - $Revision: 1.58 $');
+llxFooter();
 ?>

@@ -20,7 +20,7 @@
  *   	\file       htdocs/compta/paiement/info.php
  *		\ingroup    facture
  *		\brief      Onglet info d'un paiement
- *		\version    $Id: info.php,v 1.18 2011/08/03 00:46:35 eldy Exp $
+ *		\version    $Id: info.php,v 1.19 2011/08/27 14:24:47 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -73,5 +73,5 @@ print '</div>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:35 $ - $Revision: 1.18 $');
+llxFooter();
 ?>

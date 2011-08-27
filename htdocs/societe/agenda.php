@@ -24,7 +24,7 @@
  *  \file       htdocs/societe/agenda.php
  *  \ingroup    societe
  *  \brief      Page of third party events
- *  \version    $Id: agenda.php,v 1.22 2011/08/23 23:31:10 eldy Exp $
+ *  \version    $Id: agenda.php,v 1.23 2011/08/27 14:24:31 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -188,5 +188,5 @@ if ($_GET["socid"])
 
 $db->close();
 
-llxFooter('$Date: 2011/08/23 23:31:10 $ - $Revision: 1.22 $');
+llxFooter();
 ?>

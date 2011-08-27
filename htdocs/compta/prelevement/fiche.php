@@ -21,7 +21,7 @@
  *	\file       htdocs/compta/prelevement/fiche.php
  *	\ingroup    prelevement
  *	\brief      Fiche prelevement
- *	\version    $Id: fiche.php,v 1.59 2011/07/31 22:23:29 eldy Exp $
+ *	\version    $Id: fiche.php,v 1.60 2011/08/27 14:24:40 hregis Exp $
  */
 
 require("../bank/pre.inc.php");
@@ -236,5 +236,5 @@ print "</div>";
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:29 $ - $Revision: 1.59 $');
+llxFooter();
 ?>

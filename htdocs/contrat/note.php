@@ -20,7 +20,7 @@
         \file       htdocs/contrat/note.php
         \ingroup    contrat
         \brief      Fiche de notes sur un contrat
-		\version    $Id: note.php,v 1.28 2011/07/31 23:46:55 eldy Exp $
+		\version    $Id: note.php,v 1.29 2011/08/27 14:24:18 hregis Exp $
 */
 
 require ("../main.inc.php");
@@ -185,5 +185,5 @@ if ($_GET["id"])
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:46:55 $ - $Revision: 1.28 $');
+llxFooter();
 ?>

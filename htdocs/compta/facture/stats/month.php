@@ -20,7 +20,7 @@
  *	    \file       htdocs/compta/facture/stats/month.php
  *      \ingroup    facture
  *		\brief      Page des stats factures par mois
- *		\version    $Id: month.php,v 1.33 2011/07/31 22:23:31 eldy Exp $
+ *		\version    $Id: month.php,v 1.34 2011/08/27 14:24:26 hregis Exp $
  */
 
 require("../../../main.inc.php");
@@ -168,5 +168,5 @@ print '</td></tr></table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:31 $ - $Revision: 1.33 $');
+llxFooter();
 ?>

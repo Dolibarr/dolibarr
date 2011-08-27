@@ -22,7 +22,7 @@
  *       \file       htdocs/fourn/liste.php
  *       \ingroup    fournisseur
  *       \brief      Home page of supplier area
- *       \version    $Id: liste.php,v 1.30 2011/07/31 23:57:03 eldy Exp $
+ *       \version    $Id: liste.php,v 1.31 2011/08/27 14:24:32 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -200,5 +200,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:57:03 $ - $Revision: 1.30 $');
+llxFooter();
 ?>

@@ -23,7 +23,7 @@
  *       \file       htdocs/comm/action/document.php
  *       \ingroup    agenda
  *       \brief      Page des documents joints sur les actions
- *       \version    $Id: document.php,v 1.58 2011/07/31 22:23:21 eldy Exp $
+ *       \version    $Id: document.php,v 1.59 2011/08/27 14:24:46 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -239,5 +239,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:21 $ - $Revision: 1.58 $');
+llxFooter();
 ?>

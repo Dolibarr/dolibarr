@@ -21,7 +21,7 @@
  *	\file       htdocs/product/stats/facture.php
  *	\ingroup    product service facture
  *	\brief      Page des stats des factures clients pour un produit
- *	\version    $Id: facture.php,v 1.84 2011/08/08 16:07:47 eldy Exp $
+ *	\version    $Id: facture.php,v 1.85 2011/08/27 14:24:41 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -193,5 +193,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/08 16:07:47 $ - $Revision: 1.84 $');
+llxFooter();
 ?>

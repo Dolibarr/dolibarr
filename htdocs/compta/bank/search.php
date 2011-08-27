@@ -21,7 +21,7 @@
  *	\file       htdocs/compta/bank/search.php
  *	\ingroup    banque
  *	\brief      List of bank transactions
- *	\version    $Id: search.php,v 1.54 2011/07/31 22:23:16 eldy Exp $
+ *	\version    $Id: search.php,v 1.55 2011/08/27 14:24:43 hregis Exp $
  */
 
 require("./pre.inc.php");
@@ -284,5 +284,5 @@ if ($_POST["action"] == "search" && ! $num)
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:16 $ - $Revision: 1.54 $');
+llxFooter();
 ?>

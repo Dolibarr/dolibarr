@@ -22,7 +22,7 @@
  *	\file       htdocs/compta/prelevement/ligne.php
  *	\ingroup    prelevement
  *	\brief      card of withdraw line
- *	\version    $Id: ligne.php,v 1.40 2011/07/31 22:23:30 eldy Exp $
+ *	\version    $Id: ligne.php,v 1.41 2011/08/27 14:24:41 hregis Exp $
  */
 
 require("../bank/pre.inc.php");
@@ -307,5 +307,5 @@ if ($id)
 	$db->close();
 }
 
-llxFooter('$Date: 2011/07/31 22:23:30 $ - $Revision: 1.40 $');
+llxFooter();
 ?>

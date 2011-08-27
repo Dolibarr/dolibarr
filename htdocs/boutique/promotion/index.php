@@ -17,11 +17,10 @@
  */
 
 /**
-	    \file       htdocs/boutique/promotion/index.php
-		\ingroup    boutique
-		\brief      Page gestion promotions OSCommerce
-		\version    $Id: index.php,v 1.14 2011/08/03 00:45:42 eldy Exp $
-*/
+ * 	    \file       htdocs/boutique/promotion/index.php
+ * 		\ingroup    boutique
+ * 		\brief      Page gestion promotions OSCommerce
+ */
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/boutique/osc_master.inc.php');
@@ -116,6 +115,6 @@ else
 }
 $dbosc->close();
 
-llxFooter('$Date: 2011/08/03 00:45:42 $ - $Revision: 1.14 $');
+llxFooter();
 
 ?>

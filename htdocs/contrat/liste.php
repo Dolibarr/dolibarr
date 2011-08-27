@@ -21,7 +21,7 @@
  *       \file       htdocs/contrat/liste.php
  *       \ingroup    contrat
  *       \brief      Page liste des contrats
- *       \version    $Id: liste.php,v 1.46 2011/07/31 23:46:55 eldy Exp $
+ *       \version    $Id: liste.php,v 1.47 2011/08/27 14:24:18 hregis Exp $
  */
 
 require ("../main.inc.php");
@@ -162,5 +162,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:46:55 $ - $Revision: 1.46 $');
+llxFooter();
 ?>

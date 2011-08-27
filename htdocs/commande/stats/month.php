@@ -21,7 +21,7 @@
  *	    \file       htdocs/commande/stats/month.php
  *      \ingroup    commande
  *		\brief      Page des stats commandes par mois
- *		\version    $Id: month.php,v 1.34 2011/08/03 00:46:39 eldy Exp $
+ *		\version    $Id: month.php,v 1.35 2011/08/27 14:24:58 hregis Exp $
  */
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
@@ -191,5 +191,5 @@ print '</td></tr></table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:39 $ - $Revision: 1.34 $');
+llxFooter();
 ?>

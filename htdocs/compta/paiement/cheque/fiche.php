@@ -22,7 +22,7 @@
  *	\file       htdocs/compta/paiement/cheque/fiche.php
  *	\ingroup    bank, invoice
  *	\brief      Page for cheque deposits
- *	\version    $Id: fiche.php,v 1.78 2011/08/03 00:46:28 eldy Exp $
+ *	\version    $Id: fiche.php,v 1.79 2011/08/27 14:25:00 hregis Exp $
  */
 
 require("./pre.inc.php");	// We use pre.inc.php to have a dynamic menu
@@ -619,5 +619,5 @@ if ($action != 'new')
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:28 $ - $Revision: 1.78 $');
+llxFooter();
 ?>

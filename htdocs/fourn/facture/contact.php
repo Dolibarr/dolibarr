@@ -21,7 +21,7 @@
  *      \file       htdocs/fourn/facture/contact.php
  *      \ingroup    facture, fournisseur
  *      \brief      Onglet de gestion des contacts des factures
- *      \version    $Id: contact.php,v 1.29 2011/08/14 03:13:50 eldy Exp $
+ *      \version    $Id: contact.php,v 1.30 2011/08/27 14:24:27 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -350,5 +350,5 @@ if ($id > 0)
 
 $db->close();
 
-llxFooter('$Date: 2011/08/14 03:13:50 $');
+llxFooter();
 ?>

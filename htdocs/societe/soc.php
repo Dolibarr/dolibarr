@@ -25,7 +25,7 @@
  *  \file       htdocs/societe/soc.php
  *  \ingroup    societe
  *  \brief      Third party card page
- *  \version    $Id: soc.php,v 1.140 2011/08/24 18:06:11 eldy Exp $
+ *  \version    $Id: soc.php,v 1.141 2011/08/27 14:24:31 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -1961,5 +1961,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/24 18:06:11 $ - $Revision: 1.140 $');
+llxFooter();
 ?>

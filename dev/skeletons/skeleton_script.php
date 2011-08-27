@@ -21,7 +21,6 @@
  *      \file       dev/skeletons/skeleton_script.php
  *		\ingroup    mymodule othermodule1 othermodule2
  *      \brief      This file is an example for a command line script
- *      \version    $Id: skeleton_script.php,v 1.28 2011/07/31 22:21:58 eldy Exp $
  *		\author		Put author name here
  *		\remarks	Put here some comments
  */
@@ -37,7 +36,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 // Global variables
-$version='$Revision: 1.28 $';
+$version='$Revision: 1.29 $';
 $error=0;
 
 

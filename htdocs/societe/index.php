@@ -21,7 +21,7 @@
  *	\file       htdocs/societe/index.php
  *  \ingroup    societe
  *  \brief      Home page for third parties area
- *  \version    $Id: index.php,v 1.20 2011/08/22 16:07:28 simnandez Exp $
+ *  \version    $Id: index.php,v 1.21 2011/08/27 14:24:31 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -239,5 +239,5 @@ print '</td></tr></table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/22 16:07:28 $ - $Revision: 1.20 $');
+llxFooter();
 ?>

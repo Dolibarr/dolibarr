@@ -23,7 +23,7 @@
  *  \file       htdocs/product/fournisseurs.php
  *  \ingroup    product
  *  \brief      Page of tab suppliers for products
- *  \version    $Id: fournisseurs.php,v 1.101 2011/08/21 00:26:31 eldy Exp $
+ *  \version    $Id: fournisseurs.php,v 1.102 2011/08/27 14:24:37 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -449,5 +449,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/21 00:26:31 $ - $Revision: 1.101 $');
+llxFooter();
 ?>

@@ -20,7 +20,7 @@
  *  \file       htdocs/compta/recap-compta.php
  *	\ingroup    compta
  *  \brief      Page de fiche recap compta
- *  \version    $Id: recap-compta.php,v 1.19 2011/08/03 00:46:24 eldy Exp $
+ *  \version    $Id: recap-compta.php,v 1.20 2011/08/27 14:24:29 hregis Exp $
  */
 
 require('../main.inc.php');
@@ -213,5 +213,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:24 $ - $Revision: 1.19 $');
+llxFooter();
 ?>

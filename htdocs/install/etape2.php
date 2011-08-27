@@ -20,7 +20,6 @@
  *      \file       htdocs/install/etape2.php
  *		\ingroup	install
  *      \brief      Create tables, primary keys, foreign keys, indexes and functions into database and then load reference data
- *      \version    $Id: etape2.php,v 1.106 2011/07/31 23:26:19 eldy Exp $
  */
 
 include("./inc.php");

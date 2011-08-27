@@ -20,7 +20,6 @@
  *      \file       	cron/functions_cron.lib.php
  *      \ingroup    	core
  *      \brief      	Functions for miscellaneous cron tasks
- *		\version		$Id: functions_cron.lib.php,v 1.7 2011/07/31 23:50:56 eldy Exp $
  */
 
 

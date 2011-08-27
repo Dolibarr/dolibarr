@@ -23,7 +23,7 @@
  *	\file       htdocs/comm/addpropal.php
  *	\ingroup    propal
  *	\brief      Page to add a new commercial proposal
- *	\version    $Id: addpropal.php,v 1.133 2011/08/23 15:23:19 hregis Exp $
+ *	\version    $Id: addpropal.php,v 1.134 2011/08/27 14:24:30 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -344,5 +344,5 @@ if ($_GET["action"] == 'create')
 
 $db->close();
 
-llxFooter('$Date: 2011/08/23 15:23:19 $ - $Revision: 1.133 $');
+llxFooter();
 ?>

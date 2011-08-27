@@ -21,7 +21,6 @@
  *	\file       htdocs/cashdesk/facturation.php
  *	\ingroup    cashdesk
  *	\brief      Include to show main page for cashdesk module
- *	\version    $Id: facturation.php,v 1.20 2011/08/26 14:52:00 simnandez Exp $
  */
 
 // Get list of articles (in warehouse '$conf_fkentrepot' if defined and stock module enabled)

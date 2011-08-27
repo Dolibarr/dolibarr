@@ -21,7 +21,6 @@
  *      \file       htdocs/adherents/admin/adherent_extrafields.php
  *		\ingroup    member
  *		\brief      Page to setup extra fields of members
- *		\version    $Id: adherent_extrafields.php,v 1.5 2011/08/03 00:45:42 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -311,5 +310,5 @@ if ($_GET["attrname"] && $action == 'edit')
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:45:42 $ - $Revision: 1.5 $');
+llxFooter();
 ?>

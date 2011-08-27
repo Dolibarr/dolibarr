@@ -22,7 +22,7 @@
  *	\file       htdocs/compta/facture/document.php
  *	\ingroup    facture
  *	\brief      Page for attached files on invoices
- *	\version    $Id: document.php,v 1.46 2011/07/31 22:23:13 eldy Exp $
+ *	\version    $Id: document.php,v 1.47 2011/08/27 14:24:16 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -212,5 +212,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:13 $ - $Revision: 1.46 $');
+llxFooter();
 ?>

@@ -23,7 +23,6 @@
  *       \file      htdocs/install/etape5.php
  *	 	 \ingroup	install
  *       \brief     Last page of upgrade or install process
- *       \version   $Id: etape5.php,v 1.108 2011/08/04 12:07:30 eldy Exp $
  */
 
 include_once("./inc.php");

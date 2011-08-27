@@ -20,7 +20,6 @@
  *	 \file       htdocs/install/licence.php
  *   \ingroup    install
  *	 \brief      Page to show licence (Removed from install process to save time)
- *	 \version    $Id: licence.php,v 1.21 2011/07/31 23:26:22 eldy Exp $
  */
 
 include_once("./inc.php");

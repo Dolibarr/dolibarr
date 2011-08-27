@@ -19,7 +19,7 @@
  *      \file       htdocs/user/info.php
  *      \ingroup    core
  *		\brief      Page des informations d'un utilisateur
- *		\version    $Id: info.php,v 1.19 2011/07/31 23:19:42 eldy Exp $
+ *		\version    $Id: info.php,v 1.20 2011/08/27 14:24:50 hregis Exp $
 */
 
 require("../main.inc.php");
@@ -72,5 +72,5 @@ print '</div>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:19:42 $ - $Revision: 1.19 $');
+llxFooter();
 ?>

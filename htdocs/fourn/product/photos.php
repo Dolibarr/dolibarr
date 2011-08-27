@@ -20,7 +20,7 @@
  \file       htdocs/fourn/product/photos.php
  \ingroup    product
  \brief      Page de la fiche produit
- \version    $Id: photos.php,v 1.28 2011/07/31 23:57:03 eldy Exp $
+ \version    $Id: photos.php,v 1.29 2011/08/27 14:24:33 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -214,5 +214,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:57:03 $ - $Revision: 1.28 $');
+llxFooter();
 ?>

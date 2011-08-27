@@ -23,7 +23,6 @@
  *      \file       htdocs/admin/facture.php
  *		\ingroup    facture
  *		\brief      Page to setup invoice module
- *		\version    $Id: facture.php,v 1.151 2011/08/16 09:57:02 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -718,5 +717,5 @@ print "</table>\n";
 
 $db->close();
 
-llxFooter('$Date: 2011/08/16 09:57:02 $ - $Revision: 1.151 $');
+llxFooter();
 ?>

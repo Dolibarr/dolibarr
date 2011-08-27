@@ -20,7 +20,6 @@
  *      \file       dev/skeletons/skeleton_class.class.php
  *      \ingroup    mymodule othermodule1 othermodule2
  *      \brief      This file is an example for a CRUD class file (Create/Read/Update/Delete)
- *		\version    $Id: skeleton_class.class.php,v 1.32 2011/07/31 22:21:58 eldy Exp $
  *		\author		Put author name here
  *		\remarks	Put here some comments
  */

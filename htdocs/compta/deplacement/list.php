@@ -21,7 +21,7 @@
 /**
  *  \file       htdocs/compta/deplacement/list.php
  *  \brief      Page list of expenses
- *  \version	$Id: list.php,v 1.3 2011/08/03 00:46:35 eldy Exp $
+ *  \version	$Id: list.php,v 1.4 2011/08/27 14:24:48 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -155,5 +155,5 @@ else
 }
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:35 $ - $Revision: 1.3 $');
+llxFooter();
 ?>

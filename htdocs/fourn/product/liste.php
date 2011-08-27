@@ -22,7 +22,7 @@
  *		\file       htdocs/fourn/product/liste.php
  *		\ingroup    produit
  *		\brief      Page liste des produits ou services
- *		\version    $Id: liste.php,v 1.42 2011/07/31 23:57:03 eldy Exp $
+ *		\version    $Id: liste.php,v 1.43 2011/08/27 14:24:33 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -259,5 +259,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:57:03 $ - $Revision: 1.42 $');
+llxFooter();
 ?>

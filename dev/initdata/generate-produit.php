@@ -22,7 +22,6 @@
 /**
  *      \file       htdocs/dev/generate-produit.php
  *		\brief      Script de generation de donnees aleatoires pour les produits
- *		\version    $Id: generate-produit.php,v 1.17 2011/07/31 22:21:57 eldy Exp $
  */
 
 // Test si mode batch

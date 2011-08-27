@@ -21,7 +21,7 @@
  *      \file       htdocs/comm/address.php
  *      \ingroup    societe
  *      \brief      Tab address of customer
- *      \version    $Id: address.php,v 1.10 2011/08/20 15:11:32 eldy Exp $
+ *      \version    $Id: address.php,v 1.11 2011/08/27 14:24:30 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -516,5 +516,5 @@ else
 $db->close();
 
 
-llxFooter('$Date: 2011/08/20 15:11:32 $ - $Revision: 1.10 $');
+llxFooter();
 ?>

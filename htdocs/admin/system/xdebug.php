@@ -18,7 +18,6 @@
 /**
  *     \file       htdocs/admin/system/xdebug.php
  *     \brief      Page administration XDebug
- *     \version    $Id: xdebug.php,v 1.6 2011/07/31 22:23:14 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -43,7 +42,7 @@ print "<br>\n";
 if (!function_exists('xdebug_is_enabled'))
 {
     print 'XDebug seems to be not installed. Function xdebug_is_enabled not found.';
-	llxfooter('$Date: 2011/07/31 22:23:14 $ - $Revision: 1.6 $');
+	llxfooter('$Date: 2011/08/27 14:24:35 $ - $Revision: 1.7 $');
 	exit;
 }
 
@@ -100,5 +99,5 @@ else
 }
 
 
-llxfooter('$Date: 2011/07/31 22:23:14 $ - $Revision: 1.6 $');
+llxfooter('$Date: 2011/08/27 14:24:35 $ - $Revision: 1.7 $');
 ?>

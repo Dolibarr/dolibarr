@@ -22,7 +22,6 @@
  *      \file       scripts/members/sync_members_ldap2dolibarr.php
  *      \ingroup    ldap member
  *      \brief      Script de mise a jour des adherents dans Dolibarr depuis LDAP
- * 		\version	$Id: sync_members_ldap2dolibarr.php,v 1.13 2011/07/31 22:22:12 eldy Exp $
  */
 
 $sapi_type = php_sapi_name();
@@ -36,7 +35,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 // Main
-$version='$Revision: 1.13 $';
+$version='$Revision: 1.14 $';
 @set_time_limit(0);
 $error=0;
 $forcecommit=0;

@@ -23,7 +23,6 @@
  *		\file       htdocs/install/etape1.php
  *		\ingroup	install
  *		\brief      Build conf file on disk
- *		\version    $Id: etape1.php,v 1.142 2011/08/20 09:58:05 eldy Exp $
  */
 
 define('DONOTLOADCONF',1);	// To avoid loading conf by file inc.php

@@ -22,7 +22,7 @@
  *  \file		htdocs/comm/propal/apercu.php
  *  \ingroup	propal
  *  \brief		Page de l'onglet apercu d'une propal
- *  \version	$Id: apercu.php,v 1.53 2011/08/03 00:46:34 eldy Exp $
+ *  \version	$Id: apercu.php,v 1.54 2011/08/27 14:24:44 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -217,5 +217,5 @@ print '</div>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:34 $ - $Revision: 1.53 $');
+llxFooter();
 ?>

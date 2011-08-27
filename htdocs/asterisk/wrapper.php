@@ -18,7 +18,6 @@
 /**
  *	\file       htdocs/asterisk/wrapper.php
  *  \brief      File that is entry point to call an Asterisk server
- *  \version    $Id: wrapper.php,v 1.10 2011/08/20 15:11:32 eldy Exp $
  *	\remarks	To be used, an Asterisk user must be created by adding this
  * 				in /etc/asterisk/manager.conf
  * 				[dolibarr]

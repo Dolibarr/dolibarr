@@ -26,7 +26,7 @@
  *	\file       	htdocs/comm/propal.php
  *	\ingroup    	propale
  *	\brief      	Page of commercial proposals card and list
- *	\version		$Id: propal.php,v 1.623 2011/08/23 18:40:45 hregis Exp $
+ *	\version		$Id: propal.php,v 1.624 2011/08/27 14:24:30 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -1936,6 +1936,6 @@ else
 }
 $db->close();
 
-llxFooter('$Date: 2011/08/23 18:40:45 $ - $Revision: 1.623 $');
+llxFooter();
 
 ?>

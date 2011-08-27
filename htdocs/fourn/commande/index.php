@@ -21,7 +21,6 @@
  *	 \file       htdocs/fourn/commande/index.php
  *	 \ingroup    commande fournisseur
  *	 \brief      Home page of supplier's orders area
- *   \version    $Revision: 1.44 $
  */
 
 require("../../main.inc.php");
@@ -387,5 +386,5 @@ print '</td></tr></table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/08 15:28:00 $ - $Revision: 1.44 $');
+llxFooter();
 ?>

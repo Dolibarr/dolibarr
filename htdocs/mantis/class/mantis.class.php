@@ -15,22 +15,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: mantis.class.php,v 1.2 2011/07/31 23:24:38 eldy Exp $
+ * $Id: mantis.class.php,v 1.3 2011/08/27 14:24:48 hregis Exp $
  */
 
 /**
-        \file       htdocs/mantis/class/mantis.class.php
-        \ingroup    mantis
-		\brief      Ensemble des fonctions permettant d'acceder a la database mantis.
-		\author     Laurent Destailleur.
-		\version    $Revision: 1.2 $
-*/
+ *      \file       htdocs/mantis/class/mantis.class.php
+ *      \ingroup    mantis
+ *      \brief      Ensemble des fonctions permettant d'acceder a la database mantis.
+ *      \author     Laurent Destailleur.
+ */
 
 
 /**
-        \class      Mantis
-		\brief      Classe permettant d'acceder a la database mantis
-*/
+ *     \class      Mantis
+ *     \brief      Classe permettant d'acceder a la database mantis
+ */
 
 class Mantis {
     

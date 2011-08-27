@@ -24,7 +24,6 @@
  *	\file       htdocs/admin/fichinter.php
  *	\ingroup    fichinter
  *	\brief      Setup page of module Interventions
- *	\version    $Id: fichinter.php,v 1.62 2011/07/31 22:23:22 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -452,5 +451,5 @@ print '<br>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:22 $ - $Revision: 1.62 $');
+llxFooter();
 ?>

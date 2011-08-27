@@ -21,7 +21,7 @@
  *     \file       htdocs/commande/contact.php
  *     \ingroup    commande
  *     \brief      Onglet de gestion des contacts de commande
- *     \version    $Id: contact.php,v 1.45 2011/08/14 03:13:50 eldy Exp $
+ *     \version    $Id: contact.php,v 1.46 2011/08/27 14:24:39 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -365,5 +365,5 @@ if ($id > 0 || ! empty($ref))
 
 $db->close();
 
-llxFooter('$Date: 2011/08/14 03:13:50 $');
+llxFooter();
 ?>

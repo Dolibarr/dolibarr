@@ -28,7 +28,7 @@
  *	\file			htdocs/lib/functions.lib.php
  *	\brief			A set of functions for Dolibarr
  *					This file contains all frequently used functions.
- *	\version		$Id: functions.lib.php,v 1.565 2011/08/23 23:50:25 eldy Exp $
+ *	\version		$Id: functions.lib.php,v 1.566 2011/08/27 14:24:51 hregis Exp $
  */
 
 // For compatibility during upgrade
@@ -2396,7 +2396,7 @@ function accessforbidden($message='',$printheader=1,$printfooter=1,$showonlymess
             print $langs->trans("ErrorForbidden3");
         }
     }
-    if ($printfooter && function_exists("llxFooter")) llxFooter('');
+    if ($printfooter && function_exists("llxFooter")) llxFooter();
     exit(0);
 }
 

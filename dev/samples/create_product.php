@@ -19,7 +19,6 @@
 /**
  *      \file       dev/samples/create_product.php
  *      \brief      This file is an example for a command line script
- *      \version    $Id: create_product.php,v 1.9 2011/07/31 22:21:59 eldy Exp $
  *		\author		Put author name here
  *		\remarks	Put here some comments
  */
@@ -35,7 +34,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 // Global variables
-$version='$Revision: 1.9 $';
+$version='$Revision: 1.10 $';
 $error=0;
 
 

@@ -21,7 +21,6 @@
  *	\file       htdocs/includes/modules/barcode/admin/barcode.php
  *	\ingroup    barcode
  *	\brief      Page d'administration/configuration du module Code barre
- *	\version    $Id: barcode.php,v 1.48 2011/08/16 10:11:02 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -297,5 +296,5 @@ print "<br>";
 
 $db->close();
 
-llxFooter('$Date: 2011/08/16 10:11:02 $ - $Revision: 1.48 $');
+llxFooter();
 ?>

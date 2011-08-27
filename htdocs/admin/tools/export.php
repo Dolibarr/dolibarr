@@ -18,7 +18,6 @@
 /**
  *		\file 		htdocs/admin/tools/export.php
  *		\brief      Page to export a database into a dump file
- *		\version    $Id: export.php,v 1.45 2011/08/03 00:45:43 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -316,5 +315,5 @@ print '<br>';
 
 $time_end = time();
 
-llxFooter('$Date: 2011/08/03 00:45:43 $ - $Revision: 1.45 $');
+llxFooter();
 ?>

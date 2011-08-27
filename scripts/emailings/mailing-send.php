@@ -23,7 +23,6 @@
  *      \file       scripts/emailings/mailing-send.php
  *      \ingroup    mailing
  *      \brief      Script d'envoi d'un mailing prepare et valide
- *		\version	$Id: mailing-send.php,v 1.21 2011/08/20 15:11:32 eldy Exp $
  */
 
 $sapi_type = php_sapi_name();

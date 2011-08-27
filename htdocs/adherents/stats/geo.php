@@ -19,7 +19,6 @@
  *	    \file       htdocs/adherents/stats/geo.php
  *      \ingroup    member
  *		\brief      Page with geographical statistics on members
- *		\version    $Id: geo.php,v 1.3 2011/08/08 16:00:20 eldy Exp $
  */
 
 require("../../main.inc.php");
@@ -274,5 +273,5 @@ dol_fiche_end();
 
 $db->close();
 
-llxFooter('$Date: 2011/08/08 16:00:20 $ - $Revision: 1.3 $');
+llxFooter();
 ?>

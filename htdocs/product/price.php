@@ -23,7 +23,7 @@
  *	\file       htdocs/product/price.php
  *	\ingroup    product
  *	\brief      Page to show product prices
- *	\version    $Id: price.php,v 1.111 2011/08/04 21:46:50 eldy Exp $
+ *	\version    $Id: price.php,v 1.112 2011/08/27 14:24:38 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -534,5 +534,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/08/04 21:46:50 $ - $Revision: 1.111 $');
+llxFooter();
 ?>

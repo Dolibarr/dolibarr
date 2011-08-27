@@ -19,7 +19,7 @@
  *       \file       htdocs/exports/index.php
  *       \ingroup    export
  *       \brief      Home page of export tools
- *       \version    $Id: index.php,v 1.31 2011/07/31 23:50:55 eldy Exp $
+ *       \version    $Id: index.php,v 1.32 2011/08/27 14:24:53 hregis Exp $
  */
 
 require_once("../main.inc.php");
@@ -148,5 +148,5 @@ print '</table>';
 $db->close();
 
 
-llxFooter('$Date: 2011/07/31 23:50:55 $ - $Revision: 1.31 $');
+llxFooter();
 ?>

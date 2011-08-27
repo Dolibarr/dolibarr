@@ -21,7 +21,7 @@
 /**
  *	\file       htdocs/compta/prelevement/lignes.php
  *	\brief      Prelevement
- *	\version    $Id: lignes.php,v 1.23 2011/07/31 22:23:30 eldy Exp $
+ *	\version    $Id: lignes.php,v 1.24 2011/08/27 14:24:41 hregis Exp $
  */
 
 require("../bank/pre.inc.php");
@@ -211,5 +211,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:30 $ - $Revision: 1.23 $');
+llxFooter();
 ?>

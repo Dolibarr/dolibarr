@@ -20,7 +20,7 @@
  *       \file       htdocs/exports/export.php
  *       \ingroup    export
  *       \brief      Pages of export Wizard
- *       \version    $Id: export.php,v 1.84 2011/08/11 19:12:59 eldy Exp $
+ *       \version    $Id: export.php,v 1.85 2011/08/27 14:24:53 hregis Exp $
  */
 
 require_once("../main.inc.php");
@@ -795,7 +795,7 @@ print '<br>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/11 19:12:59 $ - $Revision: 1.84 $');
+llxFooter();
 
 
 /**

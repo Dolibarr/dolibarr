@@ -22,7 +22,7 @@
  *	    \file       htdocs/compta/tva/quadri_detail.php
  *      \ingroup    tax
  *		\brief      Trimestrial page - detailed version
- *		\version    $Id: quadri_detail.php,v 1.44 2011/08/03 00:46:25 eldy Exp $
+ *		\version    $Id: quadri_detail.php,v 1.45 2011/08/27 14:24:37 hregis Exp $
  *		\todo 		Deal with recurrent invoices as well
  */
 
@@ -612,5 +612,5 @@ echo '</table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:25 $ - $Revision: 1.44 $');
+llxFooter();
 ?>

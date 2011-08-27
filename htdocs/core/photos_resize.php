@@ -200,5 +200,5 @@ print '</fieldset>';
 }
 
 
-llxFooter('$Date: 2011/07/31 23:45:15 $ - $Revision: 1.14 $');
+llxFooter();
 ?>

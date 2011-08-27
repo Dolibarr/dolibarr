@@ -21,7 +21,7 @@
  *	\file       htdocs/comm/multiprix.php
  *	\ingroup    societe
  *	\brief      Onglet choix du niveau de prix
- *	\version    $Id: multiprix.php,v 1.21 2011/08/03 00:46:27 eldy Exp $
+ *	\version    $Id: multiprix.php,v 1.22 2011/08/27 14:24:31 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -170,5 +170,5 @@ if ($_socid > 0)
 
 $db->close();
 
-llxFooter('$Date: 2011/08/03 00:46:27 $ - $Revision: 1.21 $');
+llxFooter();
 ?>

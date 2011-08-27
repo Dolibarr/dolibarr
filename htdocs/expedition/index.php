@@ -21,7 +21,7 @@
  *       \file       htdocs/expedition/index.php
  *       \ingroup    expedition
  *       \brief      Home page of shipping area.
- *       \version    $Id: index.php,v 1.52 2011/07/31 23:50:53 eldy Exp $
+ *       \version    $Id: index.php,v 1.53 2011/08/27 14:24:44 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -283,6 +283,6 @@ print '</td></tr></table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:50:53 $ - $Revision: 1.52 $');
+llxFooter();
 
 ?>

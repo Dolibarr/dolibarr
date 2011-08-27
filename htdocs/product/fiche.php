@@ -25,7 +25,7 @@
  *  \file       htdocs/product/fiche.php
  *  \ingroup    product
  *  \brief      Page to show product
- *  \version    $Id: fiche.php,v 1.378 2011/08/22 22:04:25 eldy Exp $
+ *  \version    $Id: fiche.php,v 1.379 2011/08/27 14:24:38 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -1653,6 +1653,6 @@ if ($product->id && $action == '' && $product->status)
 
 $db->close();
 
-llxFooter('$Date: 2011/08/22 22:04:25 $ - $Revision: 1.378 $');
+llxFooter();
 
 ?>

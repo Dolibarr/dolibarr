@@ -19,7 +19,7 @@
 /**
  *       \file       htdocs/user/clicktodial.php
  *       \brief      Page for Click to dial datas
- *       \version    $Id: clicktodial.php,v 1.25 2011/07/31 23:19:42 eldy Exp $
+ *       \version    $Id: clicktodial.php,v 1.26 2011/08/27 14:24:50 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -200,5 +200,5 @@ if ($_GET["id"])
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:19:42 $ - $Revision: 1.25 $');
+llxFooter();
 ?>

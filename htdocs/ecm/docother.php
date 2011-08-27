@@ -6,7 +6,7 @@
  *  \file       htdocs/ecm/docother.php
  *  \ingroup    ecm
  *  \brief      Main ecm page
- *  \version    $Id$
+ *  \version    $Id: docother.php,v 1.17 2011/08/27 14:24:46 hregis Exp $
  *  \author		Laurent Destailleur
  */
 
@@ -175,5 +175,5 @@ print $langs->trans("FeatureNotYetAvailable");
 // End of page
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooter();
 ?>

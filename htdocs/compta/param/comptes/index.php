@@ -15,15 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $Id: index.php,v 1.12 2011/08/08 15:28:01 eldy Exp $
  */
 
 /**
-        \file       htdocs/compta/param/comptes/index.php
-        \ingroup    compta
-		\brief      Page acceuil zone parametrages
-		\version    $Revision: 1.12 $
-*/
+ *		\file       htdocs/compta/param/comptes/index.php
+ *		\ingroup    compta
+ *		\brief      Page acceuil zone parametrages
+ */
 
 require("../../../main.inc.php");
 
@@ -31,7 +29,7 @@ $langs->load("compta");
 $langs->load("bills");
 
 /*
- * S�curit� acc�s client
+ * Securite acces client
  */
 if ($user->societe_id > 0)
 {
@@ -76,5 +74,5 @@ print '</table>';
 
 $db->close();
 
-llxFooter('$Date: 2011/08/08 15:28:01 $ - $Revision: 1.12 $');
+llxFooter();
 ?>

@@ -20,7 +20,7 @@
 /**
  *	\file       htdocs/compta/prelevement/fiche-stat.php
  *	\brief      Prelevement
- *	\version    $Id: fiche-stat.php,v 1.19 2011/07/31 22:23:29 eldy Exp $
+ *	\version    $Id: fiche-stat.php,v 1.20 2011/08/27 14:24:41 hregis Exp $
  */
 
 require("../bank/pre.inc.php");
@@ -156,5 +156,5 @@ if ($prev_id)
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:29 $ - $Revision: 1.19 $');
+llxFooter();
 ?>

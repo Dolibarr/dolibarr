@@ -19,7 +19,6 @@
  *	    \file       htdocs/admin/agenda_xcal.php
  *      \ingroup    agenda
  *      \brief      Page to setup miscellaneous options of agenda module
- *		\version    $Id: agenda_xcal.php,v 1.23 2011/07/31 22:23:25 eldy Exp $
  */
 
 require("../main.inc.php");
@@ -149,5 +148,5 @@ print info_admin($message);
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:25 $ - $Revision: 1.23 $');
+llxFooter();
 ?>

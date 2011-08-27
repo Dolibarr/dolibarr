@@ -203,5 +203,5 @@ print "</table>";
 
 // End of page
 $db->close();
-llxFooter('$Date: 2011/07/31 22:08:25 $ - $Revision: 1.10 $');
+llxFooter();
 ?>

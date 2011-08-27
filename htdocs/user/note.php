@@ -20,7 +20,7 @@
  *      \file       htdocs/user/note.php
  *      \ingroup    usergroup
  *      \brief      Fiche de notes sur un utilisateur Dolibarr
- *		\version    $Id: note.php,v 1.24 2011/07/31 23:19:42 eldy Exp $
+ *		\version    $Id: note.php,v 1.25 2011/08/27 14:24:50 hregis Exp $
  */
 
 require("../main.inc.php");
@@ -164,5 +164,5 @@ if ($id)
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:19:42 $ - $Revision: 1.24 $');
+llxFooter();
 ?>

@@ -20,7 +20,7 @@
  *      \file       htdocs/webservices/admin/webservices.php
  *		\ingroup    webservices
  *		\brief      Page to setup webservices module
- *		\version    $Id: webservices.php,v 1.8 2011/07/31 23:21:08 eldy Exp $
+ *		\version    $Id: webservices.php,v 1.9 2011/08/27 14:24:55 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -145,5 +145,5 @@ print '<br>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:21:08 $ - $Revision: 1.8 $');
+llxFooter();
 ?>

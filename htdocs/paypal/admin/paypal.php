@@ -20,7 +20,7 @@
 /**	    \file       htdocs/paypal/admin/paypal.php
  *		\ingroup    paypal
  *		\brief      Page to setup paypal module
- *		\version    $Id: paypal.php,v 1.23 2011/07/31 23:24:25 eldy Exp $
+ *		\version    $Id: paypal.php,v 1.24 2011/08/27 14:25:03 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -272,5 +272,5 @@ print info_admin($langs->trans("YouCanAddTagOnUrl"));
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 23:24:25 $ - $Revision: 1.23 $');
+llxFooter();
 ?>

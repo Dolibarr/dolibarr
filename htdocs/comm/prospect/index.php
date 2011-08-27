@@ -21,7 +21,7 @@
  *	    \file       htdocs/comm/prospect/index.php
  *      \ingroup    commercial
  *		\brief      Home page of propest area
- *		\version    $Id: index.php,v 1.51 2011/08/03 00:46:27 eldy Exp $
+ *		\version    $Id: index.php,v 1.52 2011/08/27 14:24:29 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -283,5 +283,5 @@ print '</table>';
 $db->close();
 
 
-llxFooter('$Date: 2011/08/03 00:46:27 $ - $Revision: 1.51 $');
+llxFooter();
 ?>

@@ -22,7 +22,7 @@
  *	    \file       htdocs/comm/action/listactions.php
  *      \ingroup    agenda
  *		\brief      Page to list actions
- *		\version    $Id: listactions.php,v 1.56 2011/07/31 22:23:20 eldy Exp $
+ *		\version    $Id: listactions.php,v 1.57 2011/08/27 14:24:45 hregis Exp $
  */
 
 require("../../main.inc.php");
@@ -347,5 +347,5 @@ else
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:20 $ - $Revision: 1.56 $');
+llxFooter();
 ?>

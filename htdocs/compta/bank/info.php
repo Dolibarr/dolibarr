@@ -19,7 +19,7 @@
     	\file       htdocs/compta/bank/info.php
 		\ingroup    banque
 		\brief      Onglet info d'une ecriture bancaire
-		\version    $Id: info.php,v 1.10 2011/07/31 22:23:16 eldy Exp $
+		\version    $Id: info.php,v 1.11 2011/08/27 14:24:43 hregis Exp $
 */
 
 require("./pre.inc.php");
@@ -64,5 +64,5 @@ print '</div>';
 
 $db->close();
 
-llxFooter('$Date: 2011/07/31 22:23:16 $ - $Revision: 1.10 $');
+llxFooter();
 ?>

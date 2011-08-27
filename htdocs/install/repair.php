@@ -20,7 +20,6 @@
 /**
  *		\file       htdocs/install/repair.php
  *      \brief      Run repair script
- *      \version    $Id: repair.php,v 1.11 2011/07/31 23:26:24 eldy Exp $
  */
 
 include_once("./inc.php");
