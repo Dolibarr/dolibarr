@@ -142,9 +142,10 @@ class Product extends CommonObject
 
 
 	/**
-	 *    \brief      Constructeur de la classe
-	 *    \param      DB          Handler acces base de donnees
-	 *    \param      id          Id produit (0 par defaut)
+	 *    Constructor
+	 *
+	 *    @param      DB          Handler acces base de donnees
+	 *    @param      id          Id produit (0 par defaut)
 	 */
 	function Product($DB, $id=0)
 	{
@@ -164,6 +165,7 @@ class Product extends CommonObject
 
 	/**
 	 *    Check that ref and label are ok
+	 *
 	 *    @return     int         >1 if OK, <=0 if KO
 	 */
 	function check()
@@ -189,6 +191,7 @@ class Product extends CommonObject
 
 	/**
 	 *	Insert product into database
+	 *
 	 *	@param    user     		User making insert
 	 *  @param	  notrigger		Disable triggers
 	 *	@return   int     		Id of product/service if OK or number of error < 0
@@ -394,6 +397,7 @@ class Product extends CommonObject
 
 	/**
 	 *	Update a record into database
+	 *
 	 *	@param      id          Id of product
 	 *	@param      user        Object user making update
 	 *	@return     int         1 if OK, -1 if ref already exists, -2 if other error
@@ -503,6 +507,7 @@ class Product extends CommonObject
 
 	/**
 	 *  Verification de l'utilisation du produit en base
+	 *
 	 *  @param      id          id du produit
 	 */
 	function verif_prod_use($id)
@@ -541,6 +546,7 @@ class Product extends CommonObject
 
 	/**
 	 *  Delete a product from database (if not used)
+	 *
 	 *	@param      id          Product id
 	 * 	@return		int			< 0 if KO, >= 0 if OK
 	 */
@@ -600,7 +606,7 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *	update ou cree les traductions des infos produits
+	 *	Update ou cree les traductions des infos produits
 	 */
 	function setMultiLangs()
 	{
@@ -706,6 +712,7 @@ class Product extends CommonObject
 
 	/**
 	 *  Ajoute un changement de prix en base dans l'historique des prix
+	 *
 	 *	@param  	user        Objet utilisateur qui modifie le prix
 	 *	@return		int			<0 si KO, >0 si OK
 	 */
@@ -737,6 +744,7 @@ class Product extends CommonObject
 
 	/**
 	 *  Delete a price line
+	 *
 	 * 	@param		user	Object user
 	 * 	@param		rowid	Line id to delete
 	 * 	@return		int		<0 if KO, >0 if OK
@@ -763,7 +771,8 @@ class Product extends CommonObject
 
 	/**
 	 *	Lit le prix pratique par un fournisseur
-	 *				On renseigne le couple prodfournprice/qty ou le triplet qty/product_id/fourn_ref)
+	 *	On renseigne le couple prodfournprice/qty ou le triplet qty/product_id/fourn_ref)
+	 *
 	 *  @param     	prodfournprice      Id du tarif = rowid table product_fournisseur_price
 	 *  @param     	qty                 Quantity asked
 	 *	@param		product_id			Filter on a particular product id
@@ -844,6 +853,7 @@ class Product extends CommonObject
 
 	/**
 	 *	Modify price of a product/Service
+	 *
 	 *	@param  	id          	Id of product/service to change
 	 *	@param  	newprice		New price
 	 *	@param  	newpricebase	HT or TTC
@@ -957,6 +967,7 @@ class Product extends CommonObject
 
 	/**
 	 *  Load a product in memory from database
+	 *
 	 *  @param      id      Id of product/service to load
 	 *  @param      ref     Ref of product/service to load
 	 *  @return     int     <0 if KO, >0 if OK
@@ -1131,6 +1142,7 @@ class Product extends CommonObject
 
 	/**
 	 *  Charge tableau des stats propale pour le produit/service
+	 *
 	 *  @param    socid       Id societe
 	 *  @return   array       Tableau des stats
 	 */
@@ -1173,6 +1185,7 @@ class Product extends CommonObject
 
 	/**
 	 *  Charge tableau des stats commande client pour le produit/service
+	 *
 	 *  @param    socid       	Id societe pour filtrer sur une societe
 	 *  @param    filtrestatut  Id statut pour filtrer sur un statut
 	 *  @return   array       	Tableau des stats
@@ -1214,6 +1227,7 @@ class Product extends CommonObject
 
 	/**
 	 *  Charge tableau des stats commande fournisseur pour le produit/service
+	 *
 	 *  @param    socid       	Id societe pour filtrer sur une societe
 	 *  @param    filtrestatut  Id des statuts pour filtrer sur des statuts
 	 *  @return   array       	Tableau des stats
@@ -1255,6 +1269,7 @@ class Product extends CommonObject
 
 	/**
 	 *  Charge tableau des stats expedition client pour le produit/service
+	 *
 	 *  @param    socid       	Id societe pour filtrer sur une societe
 	 *  @param    filtrestatut  Id statut pour filtrer sur un statut
 	 *  @return   array       	Tableau des stats
@@ -1298,6 +1313,7 @@ class Product extends CommonObject
 
 	/**
 	 *  Charge tableau des stats contrat pour le produit/service
+	 *
 	 *  @param    socid       Id societe
 	 *  @return   array       Tableau des stats
 	 */
@@ -1339,6 +1355,7 @@ class Product extends CommonObject
 
 	/**
 	 *  Charge tableau des stats facture pour le produit/service
+	 *
 	 *  @param    socid       Id societe
 	 *  @return   array       Tableau des stats
 	 */
@@ -1380,6 +1397,7 @@ class Product extends CommonObject
 
 	/**
 	 *  Charge tableau des stats facture pour le produit/service
+	 *
 	 *  @param    socid       Id societe
 	 *  @return   array       Tableau des stats
 	 */
@@ -1421,6 +1439,7 @@ class Product extends CommonObject
 
 	/**
 	 *  Return an array formated for showing graphs
+	 *
 	 *  @param		sql         Request to execute
 	 *  @param		mode		'byunit'=number of unit, 'bynumber'=nb of entities
 	 *  @return   	array       <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
@@ -1476,6 +1495,7 @@ class Product extends CommonObject
 
 	/**
 	 *  Return nb of units or customers invoices in which product is included
+	 *
 	 *  @param  	socid       Limit count on a particular third party id
 	 *  @param		mode		'byunit'=number of unit, 'bynumber'=nb of entities
 	 * 	@return   	array       <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
@@ -1504,6 +1524,7 @@ class Product extends CommonObject
 
 	/**
 	 *  Return nb of units or supplier invoices in which product is included
+	 *
 	 *  @param  	socid       Limit count on a particular third party id
 	 * 	@param		mode		'byunit'=number of unit, 'bynumber'=nb of entities
 	 * 	@return   	array       <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
@@ -1532,6 +1553,7 @@ class Product extends CommonObject
 
 	/**
 	 *  Return nb of units or proposals in which product is included
+	 *
 	 *  @param  	socid       Limit count on a particular third party id
 	 * 	@param		mode		'byunit'=number of unit, 'bynumber'=nb of entities
 	 * 	@return   	array       <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
@@ -1559,6 +1581,7 @@ class Product extends CommonObject
 
 	/**
 	 *  Return nb of units or orders in which product is included
+	 *
 	 *  @param  	socid       Limit count on a particular third party id
 	 *  @param		mode		'byunit'=number of unit, 'bynumber'=nb of entities
 	 * 	@return   	array       <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
@@ -1585,6 +1608,7 @@ class Product extends CommonObject
 
 	/**
 	 *  Lie un produit associe au produit/service
+	 *
 	 *  @param      id_pere    Id du produit auquel sera lie le produit a lier
 	 *  @param      id_fils    Id du produit a lier
 	 *  @return     int        < 0 if KO, > 0 if OK
@@ -1639,6 +1663,7 @@ class Product extends CommonObject
 
 	/**
 	 *  Retire le lien entre un sousproduit et un produit/service
+	 *
 	 *  @param      fk_parent		Id du produit auquel ne sera plus lie le produit lie
 	 *  @param      fk_child		Id du produit a ne plus lie
 	 *  @return     int			    < 0 si erreur, > 0 si ok
@@ -1660,6 +1685,7 @@ class Product extends CommonObject
 
 	/**
 	 *  Verifie si c'est un sous-produit
+	 *
 	 *  @param      fk_parent		Id du produit auquel le produit est lie
 	 *  @param      fk_child		Id du produit lie
 	 *  @return     int			    < 0 si erreur, > 0 si ok
@@ -1697,69 +1723,8 @@ class Product extends CommonObject
 
 
 	/**
-	 *  Remplit le tableau des sous-produits
-	 *  @return     int        < 0 si erreur, > 0 si ok
-	 *  @remark		Not used. Used by module droitpret only.
-	 */
-	/* Deprecated. Is not used
-	function load_subproduct()
-	{
-		$this->subproducts_id = array();
-		$i = 0;
-
-		$sql = "SELECT fk_product_subproduct";
-		$sql.= " FROM ".MAIN_DB_PREFIX."product_subproduct";
-		$sql.= " WHERE fk_product = ".$this->id;
-
-		if ($result = $this->db->query($sql))
-		{
-			while ($row = $this->db->fetch_row($result) )
-			{
-				$this->subproducts_id[$i] = $row[0];
-				$i++;
-			}
-			$this->db->free($result);
-			return 0;
-		}
-		else
-		{
-	 		return -1;
-		}
-	}
-    */
-
-	/**
-	 *  Lie un sous produit au produit/service
-	 *  @param      id_sub     Id du produit a lier
-	 *  @return     int        < 0 si erreur, > 0 si ok
-	 *  @remark		Not used. Used by module droitpret only.
-	 */
-    /* Deprecated. Is not used
-	function add_subproduct($id_sub)
-	{
-		if ($id_sub)
-		{
-			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'product_subproduct(fk_product,fk_product_subproduct)';
-			$sql .= ' VALUES ("'.$this->id.'","'.$id_sub.'")';
-			if (! $this->db->query($sql))
-			{
-				dol_print_error($this->db);
-				return -1;
-			}
-			else
-			{
-				return 0;
-			}
-		}
-		else
-		{
-			return -2;
-		}
-	}
-    */
-
-	/**
 	 *  Add a supplier reference for the product
+	 *
 	 *  @param      user        User that make link
 	 *  @param      id_fourn    Supplier id
 	 *  @param      ref_fourn   Supplier ref
@@ -1838,6 +1803,7 @@ class Product extends CommonObject
 
 	/**
 	 *  Renvoie la liste des fournisseurs du produit/service
+	 *
 	 *  @return 	array		Tableau des id de fournisseur
 	 */
 	function list_suppliers()
@@ -1869,6 +1835,7 @@ class Product extends CommonObject
 
 	/**
 	 *  Saisie une commande fournisseur
+	 *
 	 *	@param		user		Objet user de celui qui demande
 	 *	@return		int			<0 si ko, >0 si ok
 	 */
@@ -1890,6 +1857,7 @@ class Product extends CommonObject
 
 	/**
 	 *  Recopie les prix d'un produit/service sur un autre
+	 *
 	 *  @param    fromId      Id produit source
 	 *  @param    toId        Id produit cible
 	 *  @return   int         < 0 si erreur, > 0 si ok
@@ -1916,6 +1884,7 @@ class Product extends CommonObject
 
 	/**
 	 *  Recopie les fournisseurs et prix fournisseurs d'un produit/service sur un autre
+	 *
 	 *  @param    fromId      Id produit source
 	 *  @param    toId        Id produit cible
 	 *  @return   int         < 0 si erreur, > 0 si ok
@@ -1955,7 +1924,8 @@ class Product extends CommonObject
 
 	/**
 	 *  Fonction recursive uniquement utilisee par get_arbo_each_prod, recompose l'arborescence des sousproduits
-	 * 	@remarks	Define value of this->res
+	 * 	Define value of this->res
+	 *
 	 *	@param		multiply	Because each sublevel must be multiplicated by parent nb
 	 *  @return 	void
 	 */
@@ -2025,6 +1995,7 @@ class Product extends CommonObject
 
 	/**
 	 *  fonction recursive uniquement utilisee par get_each_prod, ajoute chaque sousproduits dans le tableau res
+	 *
 	 *  @return void
 	 */
 	function fetch_prods($prod)
@@ -2044,6 +2015,7 @@ class Product extends CommonObject
 
 	/**
 	 *  reconstruit l'arborescence des categories sous la forme d'un tableau
+	 *
 	 *  @return 	array 	$this->res
 	 */
 	function get_arbo_each_prod($multiply=1)
@@ -2062,6 +2034,7 @@ class Product extends CommonObject
 
 	/**
 	 *  renvoie tous les sousproduits dans le tableau res, chaque ligne de res contient : id -> qty
+	 *
 	 *  @return array $this->res
 	 */
 	function get_each_prod()
@@ -2079,10 +2052,11 @@ class Product extends CommonObject
 		}
 		return $this->res;
 	}
-	
-	
+
+
 	/**
 	 *  Return all Father products fo current product
+	 *
 	 *  @return 	array prod
 	 */
 	function getFather()
@@ -2112,10 +2086,11 @@ class Product extends CommonObject
 			return -1;
 		}
 	}
-	
+
 
 	/**
 	 *  Return all parent products fo current product
+	 *
 	 *  @return 	array prod
 	 */
 	function getParent()
@@ -2146,6 +2121,7 @@ class Product extends CommonObject
 
 	/**
 	 *  Return childs of prodcut with if fk_parent
+	 *
 	 * 	@param		fk_parent	Id of product to search childs of
 	 *  @return     array       Prod
 	 */
@@ -2183,7 +2159,8 @@ class Product extends CommonObject
 
 	/**
 	 * 	Return tree of all subproducts for product. Tree contains id, name and quantity.
-	 * 	@remarks	Set this->sousprods
+	 * 	Set this->sousprods
+	 *
 	 *  @return    	void
 	 */
 	function get_sousproduits_arbo()
@@ -2204,6 +2181,7 @@ class Product extends CommonObject
 
 	/**
 	 *    	Return clicable link of object (with eventually picto)
+	 *
 	 *		@param		withpicto		Add picto into link
 	 *		@param		option			Where point the link
 	 *		@param		maxlength		Maxlength of ref
@@ -2243,6 +2221,7 @@ class Product extends CommonObject
 
 	/**
 	 *    	Return label of status of object
+	 *
 	 *    	@param      mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *      @param      type        0=Shell, 1=Buy
 	 *    	@return     string      Label of status
@@ -2257,6 +2236,7 @@ class Product extends CommonObject
 
 	/**
 	 *     Return label of a given status
+	 *
 	 *     @param      status      Statut
 	 *     @param      mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *     @param      type        0=Status "to sell", 1=Status "to buy"
@@ -2303,6 +2283,7 @@ class Product extends CommonObject
 
 	/**
 	 *  Retourne le libelle du finished du produit
+	 *
 	 *  @return     string		Libelle
 	 */
 	function getLibFinished()
@@ -2318,6 +2299,7 @@ class Product extends CommonObject
 
 	/**
 	 *  Adjust stock in a warehouse for product
+	 *
 	 *  @param  	user            user asking change
 	 *  @param  	id_entrepot     id of warehouse
 	 *  @param  	nbpiece         nb of units
@@ -2356,6 +2338,7 @@ class Product extends CommonObject
 
 	/**
 	 *    Load information about stock of a product into stock_warehouse[] and stock_reel
+	 *
 	 *    @return     int             < 0 si erreur, > 0 si ok
 	 */
 	function load_stock()
@@ -2396,6 +2379,7 @@ class Product extends CommonObject
 
 	/**
 	 *  Deplace fichier uploade sous le nom $files dans le repertoire sdir
+	 *
 	 *  @param      sdir        Repertoire destination finale
 	 *  @param      $file       Nom du fichier uploade
 	 *  @param      maxWidth    Largeur maximum que dois faire la miniature (160 par defaut)
@@ -2427,6 +2411,7 @@ class Product extends CommonObject
 
 	/**
 	 *  Build thumb
+	 *
 	 *  @param      sdir           Repertoire destination finale
 	 *  @param      file           Chemin du fichier d'origine
 	 *  @param      maxWidth       Largeur maximum que dois faire la miniature (160 par defaut)
@@ -2445,6 +2430,7 @@ class Product extends CommonObject
 
 	/**
 	 *  Deplace fichier recupere sur internet (utilise pour interface avec OSC)
+	 *
 	 *  @param      sdir        		Repertoire destination finale
 	 *  @param      $files      		url de l'image
 	 *	@author	  Jean Heimburger	june 2007
@@ -2480,6 +2466,7 @@ class Product extends CommonObject
 
 	/**
 	 *  Affiche la premiere photo du produit
+	 *
 	 *  @param      sdir        Repertoire a scanner
 	 *  @return     boolean     true si photo dispo, false sinon
 	 */
@@ -2511,6 +2498,7 @@ class Product extends CommonObject
 
 	/**
 	 *    	Show photos of a product (nbmax maximum)
+	 *
 	 *    	@param      sdir        	Directory to scan
 	 *    	@param      size        	0=original size, 1 use thumbnail if possible
 	 *    	@param      nbmax       	Nombre maximum de photos (0=pas de max)
@@ -2678,6 +2666,7 @@ class Product extends CommonObject
 
 	/**
 	 *  Retourne tableau de toutes les photos du produit
+	 *
 	 *  @param      dir         Repertoire a scanner
 	 *  @param      nbmax       Nombre maximum de photos (0=pas de max)
 	 *  @return     array       Tableau de photos
@@ -2731,6 +2720,7 @@ class Product extends CommonObject
 
 	/**
 	 *  Efface la photo du produit et sa vignette
+	 *
 	 *  @param      file        Chemin de l'image
 	 */
 	function delete_photo($file)
@@ -2757,6 +2747,7 @@ class Product extends CommonObject
 
 	/**
 	 *  Load size of image file
+	 *
 	 *  @param      file        Path to file
 	 */
 	function get_image_size($file)
@@ -2769,6 +2760,7 @@ class Product extends CommonObject
 
 	/**
 	 *  Charge indicateurs this->nb de tableau de bord
+	 *
 	 *  @return     int         <0 si ko, >0 si ok
 	 */
 	function load_state_board()
@@ -2801,6 +2793,7 @@ class Product extends CommonObject
 
 	/**
 	 *  Mise a jour du code barre
+	 *
 	 *  @param      user    Utilisateur qui fait la modification
 	 */
 	function update_barcode($user)
@@ -2824,6 +2817,7 @@ class Product extends CommonObject
 
 	/**
 	 *  Mise a jour du type de code barre
+	 *
 	 *  @param      user     Utilisateur qui fait la modification
 	 */
 	function update_barcode_type($user)

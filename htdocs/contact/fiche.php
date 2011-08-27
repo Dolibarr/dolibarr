@@ -292,6 +292,7 @@ if ($socid > 0)
     $objsoc->fetch($socid);
 }
 
+// TODO Mutualize this part of code (same than societe/soc.php and product/fiche.php)
 if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 {
     // -----------------------------------------

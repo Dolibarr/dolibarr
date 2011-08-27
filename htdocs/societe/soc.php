@@ -498,7 +498,7 @@ $formcompany = new FormCompany($db);
 
 $countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
-// TODO Mutualize this part of code (same than product/fiche.php)
+// TODO Mutualize this part of code (same than product/fiche.php and contact/fiche.php)
 if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 {
     // -----------------------------------------

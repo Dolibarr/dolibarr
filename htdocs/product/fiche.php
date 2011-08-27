@@ -644,7 +644,7 @@ if ($_POST["cancel"] == $langs->trans("Cancel"))
 $html = new Form($db);
 $formproduct = new FormProduct($db);
 
-// TODO Mutualize this part of code (same than societe/soc.php)
+// TODO Mutualize this part of code (same than societe/soc.php and contact/fiche.php)
 if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 {
     // -----------------------------------------
