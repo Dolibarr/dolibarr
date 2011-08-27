@@ -182,3 +182,46 @@ DocForAllMembersCards=Создание визитной карточки для 
 DocForOneMemberCards=Создание визитной карточки для конкретного члена (формат для вывода на самом деле установки: <b>%s)</b>
 DocForLabels=Создание листов адрес (формат для вывода на самом деле установки: <b>%s)</b>
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:38:35).
+
+
+// START - Lines generated via autotranslator.php tool (2011-08-27 16:56:14).
+// Reference language: en_US -> ru_RU
+MembersWithSubscriptionToReceive=Члены с подпиской на получение
+NewSubscriptionDesc=Эта форма позволяет вам записывать вашу подписку в качестве нового члена Фонда. Если вы хотите продлить подписку (если уже зарегистрированы), пожалуйста, свяжитесь совета Фонда, а не по электронной почте, %s.
+BlankSubscriptionFormDesc=Dolibarr может предоставить вам на общедоступный ресурс, чтобы позволить внешним посетителям попросить, чтобы подписаться на фундамент. Если модуль онлайн оплаты включена, форма оплаты будет автоматически предоставляется.
+EnablePublicSubscriptionForm=Включить общественных авто-форму подписки
+ImportDataset_member_1=Члены
+GlobalConfigUsedIfNotDefined=Текст, определенный в настройках модуля Фонд будет использоваться, если не определено здесь
+MayBeOverwrited=Этот текст может быть overwrited от значения, определенного для типа пользователя
+SubscriptionPayment=Абонентская плата
+LastSubscriptionDate=Последний день подписки
+LastSubscriptionAmount=Последняя сумма подписки
+MembersStatisticsByCountries=Члены статистику по странам
+MembersStatisticsByState=Члены статистики штата / провинции
+MembersStatisticsByTowne=Члены статистики города
+NbOfMembers=Количество членов
+NoValidatedMemberYet=Нет проверки члены найдены
+MembersByCountryDesc=Этот экран покажет вам статистику членов странами. Графический зависит однако от Google сервис график онлайн и доступна, только если подключение к Интернету работает.
+MembersByStateDesc=Этот экран покажет вам статистику пользователей, штата / провинции / кантона.
+MembersByTownDesc=Этот экран покажет вам статистику пользователей, город.
+MembersStatisticsDesc=Выберите статистику вы хотите прочитать ...
+MenuMembersStats=Статистика
+LastMemberDate=Дата последнего члена
+Nature=Природа
+Public=Информационные общественности (нет = частных)
+Exports=Экспорт
+NewMemberbyWeb=Новый участник добавил. В ожидании утверждения
+NewMemberForm=Новая форма члена
+SubscriptionsStatistics=Статистика по подписке
+NbOfSubscriptions=Количество подписок
+AmountOfSubscriptions=Сумма подписки
+TurnoverOrBudget=Оборот (за компанию) или бюджета (за основу)
+DefaultAmount=По умолчанию количество подписки
+CanEditAmount=Посетитель может выбрать / изменить размер его подписке
+MEMBER_NEWFORM_PAYONLINE=Перейти по комплексному интернет страницу оплаты
+Associations=Устои
+Collectivités=Организаций
+Particuliers=Личный
+Entreprises=Компании
+DOLIBARRFOUNDATION_PAYMENT_FORM=Чтобы сделать вашу подписку оплаты с помощью банковского перевода, см. стр. <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a> . <br> Для оплаты с помощью кредитной карты или Paypal, нажмите на кнопку в нижней части этой страницы. <br>
+// STOP - Lines generated via autotranslator.php tool (2011-08-27 16:59:59).

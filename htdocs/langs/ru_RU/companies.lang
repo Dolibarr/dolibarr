@@ -322,3 +322,59 @@ ListSuppliersShort=Список поставщиков
 ListProspectsShort=Список перспективы
 ListCustomersShort=Список клиентов
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:39:58).
+
+
+// START - Lines generated via autotranslator.php tool (2011-08-27 16:56:14).
+// Reference language: en_US -> ru_RU
+SelectThirdParty=Выберите третьей стороны
+Subsidiary=Дочерняя компания
+Subsidiaries=Дочерние компании
+NoSubsidiary=Нет филиал
+ProfId5Short=Профессор ID 5
+ProfId5=Профессиональные ID 5
+ProfId5AR=-
+ProfId5AU=-
+ProfId5BE=-
+ProfId5CH=-
+ProfId1CL=Профессор Id 1 (БУТ)
+ProfId2CL=-
+ProfId3CL=-
+ProfId4CL=-
+ProfId5CL=-
+ProfId5DE=-
+ProfId5ES=-
+ProfId5FR=Профессор Id 5
+ProfId5GB=-
+ProfId1HN=Id проф. 1 (RTN)
+ProfId2HN=-
+ProfId3HN=-
+ProfId4HN=-
+ProfId5HN=-
+ProfId5IN=Профессор Id 5
+ProfId1MA=Id проф. 1 (RC)
+ProfId2MA=Id проф. 2 (Patente)
+ProfId3MA=Id проф. 3 (IF)
+ProfId4MA=Id проф. 4 (НКСО)
+ProfId5MA=-
+ProfId1MX=Профессор Id 1 (RFC).
+ProfId2MX=Профессор Id 2 (R.. P. ИМСС)
+ProfId3MX=Профессор Id 3 (Профессиональные Устава)
+ProfId4MX=-
+ProfId5MX=-
+ProfId5NL=-
+ProfId5PT=-
+ProfId1SN=RC
+ProfId2SN=NINEA
+ProfId3SN=-
+ProfId4SN=-
+ProfId5SN=-
+ProfId5TN=-
+ContactsAddresses=Контакты / Адреса
+ImportDataset_company_1=Третьи лица (компании / фонды) и свойства
+ThirdPartiesArea=Третьи лица области
+LastModifiedThirdParties=Последнее изменение %s третьим лицам
+UniqueThirdParties=Всего уникальных третьим лицам
+InActivity=Открыть
+ActivityCeased=Закрыто
+ActivityStateFilter=Активность статус
+// STOP - Lines generated via autotranslator.php tool (2011-08-27 16:58:46).

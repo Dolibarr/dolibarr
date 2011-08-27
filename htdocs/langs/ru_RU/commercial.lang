@@ -100,3 +100,14 @@ ToDoActionsFor=Неполные действия %s
 ActionAC_SUP_ORD=Отправить поставщиком заказы по почте
 ActionAC_SUP_INV=Отправить поставщиком счета по почте
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:53:01).
+
+
+// START - Lines generated via autotranslator.php tool (2011-08-27 16:56:14).
+// Reference language: en_US -> ru_RU
+StatusNotApplicable=Не применяется
+ActionAC_SHIP=Отправить доставку по почте
+ActionAC_OTH=Другой
+StatusProsp=Проспект статус
+DraftPropals=Проект коммерческих предложений
+SearchPropal=Поиск коммерческих предложений
+// STOP - Lines generated via autotranslator.php tool (2011-08-27 16:58:28).

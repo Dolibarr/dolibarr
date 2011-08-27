@@ -129,3 +129,9 @@ SourceRequired=Данные значения является обязатель
 SourceExample=Пример возможных значений данных
 CSVFormatDesc=<b>Разделителями-запятыми</b> файл (формат. CSV). <br> Это текстовый формат файла, в котором поля разделены сепаратором [%s]. Если разделитель находится внутри области содержания, поля окружены круглый характер [%s]. Escape характер бежать вокруг характер [%s].
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:53:44).
+
+
+// START - Lines generated via autotranslator.php tool (2011-08-27 16:56:14).
+// Reference language: en_US -> ru_RU
+FileWasImported=Файл был импортирован с номером <b>%s.</b>
+// STOP - Lines generated via autotranslator.php tool (2011-08-27 16:59:13).

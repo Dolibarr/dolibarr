@@ -111,3 +111,13 @@ TypeContact_project_task_internal_CONTRIBUTOR=Участник
 TypeContact_project_task_external_CONTRIBUTOR=Участник
 DocumentModelBaleine=доклад полной проекта модели (logo. ..)
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:12).
+
+
+// START - Lines generated via autotranslator.php tool (2011-08-27 16:56:14).
+// Reference language: en_US -> ru_RU
+TimesSpent=Время, проведенное
+TaskIsNotAffectedToYou=Задача не выделено для вас
+ErrorTimeSpentIsEmpty=Время, проведенное пуста
+ThisWillAlsoRemoveTasks=Это действие приведет к удалению всех задач проекта <b>(%s</b> задач на данный момент), и все входы затраченного времени.
+IfNeedToUseOhterObjectKeepEmpty=Если некоторые объекты (счет-фактура, заказ, ...), принадлежащей другому третьему лицу, должна быть увязана с проектом по созданию, держать этот пустой иметь проект, несколько третьих лиц.
+// STOP - Lines generated via autotranslator.php tool (2011-08-27 17:00:46).

@@ -155,3 +155,14 @@ ShowAllAccounts=Шоу для всех учетных записей
 // Reference language: en_US -> ru_RU
 BankAccountCountry=Счет страны
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:40).
+
+
+// START - Lines generated via autotranslator.php tool (2011-08-27 16:56:14).
+// Reference language: en_US -> ru_RU
+RIBControlError=Проверка целостности значений не удается. Это означает, что информацию для этой учетной записи числа не являются полными или неправильный (проверьте стране, цифры и IBAN).
+WithdrawalPayment=Снятие оплаты
+ShowCheckReceipt=Показать проверить депозита получения
+Graph=Графика
+FutureTransaction=Сделки в Futur. Ни в коем случае к согласительной процедуре.
+SelectChequeTransactionAndGenerate=Выбор / фильтр проверяет, включать в получении депозита проверки и нажмите кнопку &quot;Создать&quot;.
+// STOP - Lines generated via autotranslator.php tool (2011-08-27 16:58:01).

@@ -97,3 +97,11 @@ ConfirmDeleteWarehouse=Вы уверены, что хотите удалить �
 PersonalStock=Личный %s складе
 ThisWarehouseIsPersonalStock=Этот склад представляет собой персональный запас %s %s
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:02).
+
+
+// START - Lines generated via autotranslator.php tool (2011-08-27 16:56:14).
+// Reference language: en_US -> ru_RU
+SellPriceMin=Продажа Цена за штуку
+EstimatedStockValueSellShort=Значение продать
+EstimatedStockValueSell=Значение для продажи
+// STOP - Lines generated via autotranslator.php tool (2011-08-27 17:01:31).
