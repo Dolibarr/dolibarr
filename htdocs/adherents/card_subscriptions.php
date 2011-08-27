@@ -212,7 +212,15 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
     if (! $datecotisation)
     {
         $error++;
-        $errmsg=$langs->trans("BadDateFormat");
+        $langs->load("errors");
+        $errmsg=$langs->trans("ErrorBadDateFormat",$langs->transnoentitiesnoconv("DateSubscription"));
+        $action='addsubscription';
+    }
+    if (GETPOST('end') && ! $datesubend)
+    {
+        $error++;
+        $langs->load("errors");
+        $errmsg=$langs->trans("ErrorBadDateFormat",$langs->transnoentitiesnoconv("DateEndSubscription"));
         $action='addsubscription';
     }
     if (! $datesubend)
